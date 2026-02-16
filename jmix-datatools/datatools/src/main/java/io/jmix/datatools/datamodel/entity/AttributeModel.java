@@ -24,6 +24,9 @@ import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import java.util.UUID;
 
+/**
+ * Represents an attribute of an entity.
+ */
 @JmixEntity
 @SystemLevel
 public class AttributeModel {

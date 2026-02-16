@@ -112,7 +112,7 @@ public class EntityModelListView extends StandardListView<EntityModel> {
         if (entityNames == null) {
             List<EntityModel> model = dataModelManager.getDataModelProvider().getDataModels().values().stream()
                     .flatMap(e -> e.values().stream())
-                    .map(DataModel::getEntityModel)
+                    .map(DataModel::entityModel)
                     .filter(entityModel -> {
                         if (showSystemCheckBox.getValue()) {
                             return true;
@@ -207,7 +207,7 @@ public class EntityModelListView extends StandardListView<EntityModel> {
         dataModelManager.setFilteredModels(entityModelsDl.getContainer().getItems());
 
         // navigate to DataDiagramView
-        dataDiagramViewSupport.navigate();
+        dataDiagramViewSupport.open();
     }
 
     @Subscribe("entityModelsDataGrid")

@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package io.jmix.datatools.datamodel.engine.impl;
+package io.jmix.datatools.datamodel.engine.plantuml.impl;
 
-import io.jmix.datatools.datamodel.engine.PlantUMLEncoder;
+import io.jmix.datatools.datamodel.engine.plantuml.PlantUmlEncoder;
+import org.springframework.lang.Nullable;
 
 import java.nio.charset.StandardCharsets;
 
-public class PlantUMLEncoderImpl implements PlantUMLEncoder {
+public class PlantUmlEncoderImpl implements PlantUmlEncoder {
 
     protected static byte[] encodingAlphabet = {
             '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
@@ -36,7 +37,7 @@ public class PlantUMLEncoderImpl implements PlantUMLEncoder {
     protected static byte padding = encodingAlphabet[64];
 
     @Override
-    public String encode(byte[] compressedData) {
+    public String encode(@Nullable byte[] compressedData) {
         if (compressedData == null || compressedData.length == 0) {
             return "";
         }

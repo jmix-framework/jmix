@@ -1,49 +1,51 @@
 package io.jmix.datatools.datamodel.engine;
 
-import io.jmix.datatools.datamodel.app.RelationType;
+import io.jmix.datatools.datamodel.RelationType;
 import io.jmix.datatools.datamodel.entity.AttributeModel;
 
 import java.util.List;
 
 /**
- * Describes a diagram constructor that provides creating the necessary diagram descriptions (for PlantUML and Mermaid)
- * in a compatible string format
+ * Interface for constructing entity and relationship descriptions, as well as generating diagrams,
+ * designed to work with a specific diagramming library.
  */
 public interface DiagramConstructor {
 
     /**
-     * Creates an entity description suitable for use in the selected library
-     * @param entityName name of the entity for which the entity schema will be constructed
-     * @param dataStoreName name of data store
-     * @param attributeModelList list of attributes of this entity
-     * @return entity schema description that describes a single entity and its attributes in the form of
-     * a string description of the library required format for further embedding into the general code of
-     * the diagram to construct the final diagram
+     * Constructs a description of an entity in the format required by the selected diagramming library.
+     *
+     * @param entityName         the name of the entity to be described
+     * @param dataStoreName      the name of the data store where the entity resides
+     * @param attributeModelList a list of attributes that define the structure of the entity
+     * @return a string representing the description of the entity in the required format
      */
     String constructEntityDescription(String entityName, String dataStoreName, List<AttributeModel> attributeModelList);
 
     /**
-     * Creates a relationship description suitable for use in the selected library
-     * @param currentEntityType type of the entity for which the entity schema will be constructed
-     * @param refEntityType type of entity referenced by the currentEntityType argument
-     * @param relationType type of relationship between related entities
-     * @param dataStoreName name of data store
-     * @return the relationship between two entities in the form of a string description of the library required format
-     * for further embedding into the general code of the diagram to construct the final diagram
+     * Constructs a string representation of a relationship between two entities in a specific format
+     * for use with a diagramming library.
+     *
+     * @param currentEntityType the type of the current entity involved in the relationship
+     * @param refEntityType     the type of the referenced entity involved in the relationship
+     * @param relationType      the type of the relationship (e.g., MANY_TO_ONE, ONE_TO_MANY)
+     * @param dataStoreName     the name of the data store where the entities reside
+     * @return a string describing the relationship between the specified entities in the required format
      */
     String constructRelationDescription(String currentEntityType, String refEntityType, RelationType relationType, String dataStoreName);
 
     /**
-     * Creates a diagram file in PNG format
-     * @param entitiesDescription the full entity diagram in the format required by the selected library
-     * @param relationsDescriptions the full relationship diagram in the format required by the selected library
-     * @return a byte array representing the byte representation of the PNG image
+     * Generates a diagram in a binary format based on the provided descriptions of entities and their relationships.
+     *
+     * @param entitiesDescription   a string containing the descriptions of entities to be included in the diagram
+     * @param relationsDescriptions a string containing the descriptions of relationships between entities
+     * @return a byte array representing the generated diagram
      */
     byte[] getDiagram(String entitiesDescription, String relationsDescriptions);
 
     /**
-     * Checks the availability of the diagram generation service
-     * @return operation result. Returns true if the operation was successful, false otherwise
+     * Checks the availability of the remote diagramming service.
+     *
+     * @return {@code true} if the service is accessible, otherwise {@code false}.
      */
     boolean pingService();
 }

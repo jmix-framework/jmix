@@ -15,8 +15,6 @@
  */
 
 @NonNullApi
-@Internal
-package io.jmix.datatools.datamodel.engine.impl;
+package io.jmix.datatools.datamodel.engine.plantuml.impl;
 
-import io.jmix.core.annotation.Internal;
 import org.springframework.lang.NonNullApi;

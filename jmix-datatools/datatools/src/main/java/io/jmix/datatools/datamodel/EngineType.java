@@ -14,7 +14,13 @@
  * limitations under the License.
  */
 
-@Internal
-package io.jmix.datatools.datamodel.app;
+package io.jmix.datatools.datamodel;
 
-import io.jmix.core.annotation.Internal;
+/**
+ * Enum describes the engine types available for generating UML diagrams.
+ */
+public enum EngineType {
+
+    PLANTUML,
+    MERMAID
+}

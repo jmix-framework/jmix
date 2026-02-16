@@ -27,7 +27,7 @@ import jakarta.validation.constraints.NotNull;
 import java.util.UUID;
 
 /**
- * A DTO class that represents data model for one entity
+ * A DTO class that represents a data model for an entity
  */
 @JmixEntity
 @SystemLevel

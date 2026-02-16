@@ -28,30 +28,35 @@ public interface DataModelSupport {
     /**
      * Sets the list of models to filter by. This is necessary to provide a workaround for exchanging models
      * between ListView and DiagramView
+     *
      * @param filteredModels the list of models to filter by
      */
     void setFilteredModels(List<EntityModel> filteredModels);
 
     /**
      * Counting the specific models that were passed to build the final diagram
+     *
      * @return number of entity models
      */
     int filteredModelsCount();
 
     /**
      * Provides access to {@link DataModelProvider}
+     *
      * @return {@link DataModelProvider} reference
      */
     DataModelProvider getDataModelProvider();
 
     /**
      * Generate a PNG result diagram based on specific entity models
+     *
      * @return PNG representation of a diagram as a byte array
      */
     byte[] generateFilteredDiagram();
 
     /**
      * Generate a PNG result diagram.
+     *
      * @return PNG representation of a diagram as a byte array
      */
     byte[] generateDiagram();

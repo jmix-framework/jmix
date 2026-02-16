@@ -26,8 +26,8 @@ import io.jmix.data.persistence.DbmsType;
 import io.jmix.datatools.datamodel.DataModel;
 import io.jmix.datatools.datamodel.DataModelProvider;
 import io.jmix.datatools.datamodel.DataModelSupport;
-import io.jmix.datatools.datamodel.app.Relation;
-import io.jmix.datatools.datamodel.app.RelationType;
+import io.jmix.datatools.datamodel.Relation;
+import io.jmix.datatools.datamodel.RelationType;
 import io.jmix.datatools.datamodel.engine.DiagramConstructor;
 import io.jmix.datatools.datamodel.entity.AttributeModel;
 import io.jmix.datatools.datamodel.entity.EntityModel;
@@ -130,7 +130,7 @@ public class DataModelSupportImpl implements DataModelSupport {
                         AttributeModel temp = constructAttribute(field.getAnnotatedElement()
                                         .getAnnotation(AttributeOverrides.class).value()[i].column().name(),
                                 fieldName, fieldType, entity, field.isMandatory());
-                        AttributeModel dataModelEntityAttributes = embeddableDataModel.getAttributeModels().get(i);
+                        AttributeModel dataModelEntityAttributes = embeddableDataModel.attributeModels().get(i);
                         embeddableFieldName = fieldName + "." + dataModelEntityAttributes.getAttributeName();
                         embeddableJavaType = dataModelEntityAttributes.getJavaType();
 
@@ -391,7 +391,7 @@ public class DataModelSupportImpl implements DataModelSupport {
     protected List<Relation> crossRelationCheck(String currentEntity, String referencedEntity, String dataStore, RelationType relationType) {
         if (RelationType.getReverseRelation(relationType).equals(RelationType.ONE_TO_MANY)) {
             // inverse relation emulation for MANY_TO_ONE relation
-            return dataModelProvider.getDataModel(dataStore, currentEntity).getRelations().get(relationType).stream()
+            return dataModelProvider.getDataModel(dataStore, currentEntity).relations().get(relationType).stream()
                     .filter(el -> el.referencedClass().equals(referencedEntity))
                     .map(e -> new Relation(dataStore, currentEntity, e.relationDescription()))
                     .toList();
@@ -431,7 +431,7 @@ public class DataModelSupportImpl implements DataModelSupport {
 
         for (EntityModel model : filteredModels) {
             for (String dataStore : dataStoreNames) {
-                tempEntitiesDescription.append(dataModelProvider.getDataModel(dataStore, model.getName()).getEntityDescription());
+                tempEntitiesDescription.append(dataModelProvider.getDataModel(dataStore, model.getName()).entityDescription());
                 if (!dataModelProvider.hasRelations(dataStore, model.getName())) {
                     continue;
                 }
@@ -452,7 +452,7 @@ public class DataModelSupportImpl implements DataModelSupport {
 
         for (String dataStore : dataStoreNames) {
             filteredModels.addAll(dataModelProvider.getDataModels(dataStore).values().stream()
-                .map(DataModel::getEntityModel).toList());
+                .map(DataModel::entityModel).toList());
         }
 
         return generateFilteredDiagram();

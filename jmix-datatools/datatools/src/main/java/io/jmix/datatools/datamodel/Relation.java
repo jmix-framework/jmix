@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,14 @@
  * limitations under the License.
  */
 
-@Internal
-package io.jmix.datatools.datamodel.entity;
+package io.jmix.datatools.datamodel;
 
-import io.jmix.core.annotation.Internal;
+/**
+ * Represents a relationship between two entities in the data model.
+ *
+ * @param dataStore           the name of the data store where the relationship is defined
+ * @param referencedClass     the fully qualified name of the class being referenced in the relationship
+ * @param relationDescription a description providing details about the nature or purpose of the relationship
+ */
+public record Relation(String dataStore, String referencedClass, String relationDescription) {
+}

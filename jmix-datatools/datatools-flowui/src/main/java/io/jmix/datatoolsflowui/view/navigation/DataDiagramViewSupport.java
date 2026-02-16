@@ -19,7 +19,7 @@ package io.jmix.datatoolsflowui.view.navigation;
 public interface DataDiagramViewSupport {
 
     /**
-     * Provides navigation to the {@link io.jmix.datatoolsflowui.view.datadiagram.DataDiagramView}
+     * Open a view that displays data model diagram.
      */
-    void navigate();
+    void open();
 }

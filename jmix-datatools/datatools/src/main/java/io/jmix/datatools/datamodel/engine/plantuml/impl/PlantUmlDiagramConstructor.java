@@ -1,10 +1,26 @@
-package io.jmix.datatools.datamodel.engine.impl;
+/*
+ * Copyright 2026 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.jmix.datatools.datamodel.engine.plantuml.impl;
 
 import io.jmix.core.Metadata;
 import io.jmix.datatools.DatatoolsProperties;
-import io.jmix.datatools.datamodel.app.RelationType;
+import io.jmix.datatools.datamodel.RelationType;
 import io.jmix.datatools.datamodel.engine.DiagramConstructor;
-import io.jmix.datatools.datamodel.engine.PlantUMLEncoder;
+import io.jmix.datatools.datamodel.engine.plantuml.PlantUmlEncoder;
 import io.jmix.datatools.datamodel.entity.AttributeModel;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -25,7 +41,7 @@ import java.util.zip.Deflater;
 public class PlantUmlDiagramConstructor implements DiagramConstructor {
 
     protected final DatatoolsProperties datatoolsProperties;
-    protected final PlantUMLEncoder plantUMLEncoder;
+    protected final PlantUmlEncoder plantUmlEncoder;
     protected final String template;
     protected final String entityTemplate;
     protected final String attributeTemplate;
@@ -38,12 +54,13 @@ public class PlantUmlDiagramConstructor implements DiagramConstructor {
                                       Metadata metadata) {
         this.datatoolsProperties = datatoolsProperties;
         this.dataStoresCount = getDataStoresCount(metadata);
-        this.plantUMLEncoder = createEncoder();
+        this.plantUmlEncoder = createEncoder();
         this.template = createTemplate();
         this.urlTemplate = createURLTemplate();
         this.entityTemplate = createEntityTemplate();
         this.attributeTemplate = createAttributeTemplate();
         this.relationTemplate = createRelationTemplate();
+
         String baseUrl = createBaseURL();
         this.restClient = configureClient(baseUrl);
     }
@@ -62,12 +79,12 @@ public class PlantUmlDiagramConstructor implements DiagramConstructor {
                 : datatoolsProperties.getDiagramConstructor().getHost();
     }
 
-    protected PlantUMLEncoder createEncoder() {
-        return new PlantUMLEncoderImpl();
+    protected PlantUmlEncoder createEncoder() {
+        return new PlantUmlEncoderImpl();
     }
 
     protected String createTemplate() {
-        return  """
+        return """
                 @startuml
                 {0}
                 
@@ -86,6 +103,7 @@ public class PlantUmlDiagramConstructor implements DiagramConstructor {
         }
         return "entity %s {\n";
     }
+
     protected String createAttributeTemplate() {
         return "    %s : %s\n";
     }
@@ -126,7 +144,7 @@ public class PlantUmlDiagramConstructor implements DiagramConstructor {
 
         deflater.end();
 
-        endpoint = String.format(urlTemplate, plantUMLEncoder.encode(outputStream.toByteArray()));
+        endpoint = String.format(urlTemplate, plantUmlEncoder.encode(outputStream.toByteArray()));
 
         byte[] resultPngBuf = restClient
                 .get()
@@ -161,7 +179,7 @@ public class PlantUmlDiagramConstructor implements DiagramConstructor {
 
     @Override
     public String constructRelationDescription(String currentEntityType, String refEntityType, RelationType relationType, String dataStoreName) {
-        String relationSign = switch(relationType) {
+        String relationSign = switch (relationType) {
             case MANY_TO_ONE -> "}--";
             case ONE_TO_MANY -> "--{";
             case MANY_TO_MANY -> "}--{";
@@ -179,10 +197,10 @@ public class PlantUmlDiagramConstructor implements DiagramConstructor {
         HttpStatusCode responseStatus;
         try {
             responseStatus = restClient
-                .head()
-                .retrieve()
-                .toBodilessEntity()
-                .getStatusCode();
+                    .head()
+                    .retrieve()
+                    .toBodilessEntity()
+                    .getStatusCode();
         } catch (ResourceAccessException exception) {
             return false;
         }

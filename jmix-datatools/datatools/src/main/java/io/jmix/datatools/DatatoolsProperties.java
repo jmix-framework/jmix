@@ -1,6 +1,6 @@
 package io.jmix.datatools;
 
-import io.jmix.datatools.datamodel.app.EngineType;
+import io.jmix.datatools.datamodel.EngineType;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.lang.Nullable;
@@ -11,9 +11,9 @@ public class DatatoolsProperties {
     /**
      * If no configuration options are specified, it defaults to PlantUML with the default options.
      */
-    protected final DiagramConstructor diagramConstructor;
+    protected final DataModelDiagram dataModelDiagram;
 
-    public static class DiagramConstructor {
+    public static class DataModelDiagram {
 
         /**
          * The server address. This can be either an IP address with custom port or not. It could also be a domain name.
@@ -25,10 +25,10 @@ public class DatatoolsProperties {
          */
         protected final EngineType engineType;
 
-        public DiagramConstructor(@Nullable String host,
-                                  @DefaultValue("plantuml") String engineType) {
+        public DataModelDiagram(@Nullable String host,
+                                @DefaultValue("PLANTUML") EngineType engineType) {
             this.host = host;
-            this.engineType = EngineType.valueOf(engineType.toUpperCase());
+            this.engineType = engineType;
         }
 
         public EngineType getEngineType() {
@@ -41,13 +41,13 @@ public class DatatoolsProperties {
         }
     }
 
-    public DatatoolsProperties(@Nullable DiagramConstructor diagramConstructor) {
-        this.diagramConstructor = diagramConstructor == null
-                ? new DiagramConstructor(null, "plantuml")
-                : diagramConstructor;
+    public DatatoolsProperties(@Nullable DataModelDiagram dataModelDiagram) {
+        this.dataModelDiagram = dataModelDiagram == null
+                ? new DataModelDiagram(null, EngineType.PLANTUML)
+                : dataModelDiagram;
     }
 
-    public DiagramConstructor getDiagramConstructor() {
-        return diagramConstructor;
+    public DataModelDiagram getDiagramConstructor() {
+        return dataModelDiagram;
     }
 }

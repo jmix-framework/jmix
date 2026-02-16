@@ -22,7 +22,7 @@ import io.jmix.datatoolsflowui.view.navigation.DataDiagramViewSupport;
 public class DataDiagramViewSupportImpl implements DataDiagramViewSupport {
 
     @Override
-    public void navigate() {
+    public void open() {
         UI.getCurrent().getPage().open("datatl/data-diagram");
     }
 }

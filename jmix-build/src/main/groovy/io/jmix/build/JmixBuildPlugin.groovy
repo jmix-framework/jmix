@@ -137,13 +137,10 @@ class JmixBuildPlugin implements Plugin<Project> {
     }
 
     private void setupTestExecution(Project project) {
-        boolean testDebug = project.findProperty('testDebug')?.toString()?.toBoolean() ?: false
-        boolean testSqlDebug = project.findProperty('testSqlDebug')?.toString()?.toBoolean() ?: false
-
         project.tasks.withType(Test) {
-            systemProperty('org.slf4j.simpleLogger.defaultLogLevel', testDebug ? 'debug' : 'info')
+            systemProperty('org.slf4j.simpleLogger.defaultLogLevel', 'debug')
             systemProperty('org.slf4j.simpleLogger.log.org.springframework', 'info')
-            systemProperty('org.slf4j.simpleLogger.log.eclipselink.sql', testSqlDebug ? 'debug' : 'info')
+            systemProperty('org.slf4j.simpleLogger.log.eclipselink.sql', 'debug')
         }
         project.with {
             afterEvaluate {

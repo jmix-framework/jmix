@@ -18,34 +18,34 @@ package test_support;
 
 import io.jmix.core.JmixModules;
 import io.jmix.core.Resources;
-import io.jmix.core.Stores;
 import io.jmix.core.annotation.JmixModule;
-import io.jmix.core.cluster.ClusterApplicationEventChannelSupplier;
-import io.jmix.core.cluster.LocalApplicationEventChannelSupplier;
-import io.jmix.core.impl.JmixMessageSource;
 import io.jmix.core.repository.EnableJmixDataRepositories;
-import io.jmix.core.security.CoreSecurityConfiguration;
 import io.jmix.data.impl.JmixEntityManagerFactoryBean;
 import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.data.persistence.JpqlSortExpressionProvider;
 import io.jmix.eclipselink.EclipselinkConfiguration;
 import io.jmix.eclipselink.impl.JmixEclipselinkTransactionManager;
+import io.jmix.testsupport.config.CommonCoreTestBeans;
+import io.jmix.testsupport.config.CoreSecurityTestConfiguration;
+import io.jmix.testsupport.config.HsqlEmbeddedDataSourceTestBeans;
+import io.jmix.testsupport.config.JpaMainStoreTestBeans;
+import jakarta.persistence.EntityManagerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cache.CacheManager;
-import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
-import org.springframework.context.MessageSource;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import jakarta.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
 @Configuration
@@ -53,53 +53,9 @@ import javax.sql.DataSource;
 @PropertySource("classpath:/test_support/test-app.properties")
 @EnableJmixDataRepositories
 @JmixModule(dependsOn = EclipselinkConfiguration.class)
+@Import({CommonCoreTestBeans.class, HsqlEmbeddedDataSourceTestBeans.class,
+        JpaMainStoreTestBeans.class, CoreSecurityTestConfiguration.class})
 public class DataTestConfiguration {
-
-    @EnableWebSecurity
-    static class TestSecurityConfiguration extends CoreSecurityConfiguration {
-    }
-
-    @Bean
-    public MessageSource messageSource(JmixModules modules, Resources resources) {
-        return new JmixMessageSource(modules, resources);
-    }
-
-    @Bean
-    @Primary
-    DataSource dataSource() {
-        return new EmbeddedDatabaseBuilder()
-                .generateUniqueName(true)
-                .setType(EmbeddedDatabaseType.HSQL)
-                .build();
-    }
-
-    @Bean
-    @Primary
-    LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource,
-                                                                JpaVendorAdapter jpaVendorAdapter,
-                                                                DbmsSpecifics dbmsSpecifics,
-                                                                JmixModules jmixModules,
-                                                                Resources resources) {
-        return new JmixEntityManagerFactoryBean(Stores.MAIN, dataSource, jpaVendorAdapter, dbmsSpecifics, jmixModules, resources);
-    }
-
-    @Bean
-    @Primary
-    PlatformTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
-        return new JmixEclipselinkTransactionManager(Stores.MAIN, entityManagerFactory);
-    }
-
-    @Bean
-    @Primary
-    JdbcTemplate jdbcTemplate(DataSource dataSource) {
-        return new JdbcTemplate(dataSource);
-    }
-
-    @Bean
-    @Primary
-    TransactionTemplate transactionTemplate(PlatformTransactionManager transactionManager) {
-        return new TransactionTemplate(transactionManager);
-    }
 
     @Bean
     DataSource db1DataSource() {
@@ -114,7 +70,8 @@ public class DataTestConfiguration {
                                                                    DbmsSpecifics dbmsSpecifics,
                                                                    JmixModules jmixModules,
                                                                    Resources resources) {
-        return new JmixEntityManagerFactoryBean("db1", db1DataSource(), jpaVendorAdapter, dbmsSpecifics, jmixModules, resources);
+        return new JmixEntityManagerFactoryBean("db1", db1DataSource(), jpaVendorAdapter,
+                dbmsSpecifics, jmixModules, resources);
     }
 
     @Bean
@@ -139,15 +96,5 @@ public class DataTestConfiguration {
     @Primary
     JpqlSortExpressionProvider jpqlSortExpressionProvider() {
         return new TestJpqlSortExpressionProvider();
-    }
-
-    @Bean
-    public CacheManager cacheManager() {
-        return new ConcurrentMapCacheManager();
-    }
-
-    @Bean
-    public ClusterApplicationEventChannelSupplier clusterApplicationEventChannelSupplier() {
-        return new LocalApplicationEventChannelSupplier();
     }
 }

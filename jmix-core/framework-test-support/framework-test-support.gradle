@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,25 +14,21 @@
  * limitations under the License.
  */
 
-apply plugin: 'groovy'
 apply plugin: 'io.jmix'
 
-group = 'io.jmix.dynattr'
-archivesBaseName = 'jmix-dynattr'
+group = 'io.jmix.core'
+archivesBaseName = 'jmix-framework-test-support'
 
 dependencies {
+    api project(':core')
     api project(':data')
     api project(':eclipselink')
 
-    implementation 'com.google.code.gson:gson'
-
-    testImplementation 'org.springframework:spring-test'
-    testImplementation 'org.spockframework:spock-core'
-    testImplementation 'org.spockframework:spock-spring'
-    testImplementation project(':eclipselink')
-    testImplementation project(':pessimisticlock')
-    testImplementation project(':framework-test-support')
-    testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'
-    testRuntimeOnly 'org.slf4j:slf4j-simple'
-    testRuntimeOnly 'org.hsqldb:hsqldb'
+    api 'org.apache.commons:commons-dbcp2'
+    api 'org.liquibase:liquibase-core'
 }
+
+tasks.matching { it.name in ['enhanceJmixMain', 'copyJmixEnhancingResourcesMain'] }
+        .configureEach {
+            enabled = false
+        }

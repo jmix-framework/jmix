@@ -46,7 +46,7 @@ public class Select extends AbstractOverlayComponent<Select, SelectOverlay> {
      * @return {@code this} to call fluent API
      */
     public Select setValue(String value) {
-        if (getItemsOverlayElement().getDelegate().exists()) {
+        if (getItemsOverlayElement().getDelegate().isDisplayed()) {
             return getItemsOverlay().select(value);
         }
 
@@ -83,12 +83,12 @@ public class Select extends AbstractOverlayComponent<Select, SelectOverlay> {
 
     @Override
     protected SelenideElement getInputDelegate() {
-        return $(byChained(by, TagNames.SELECT_ITEM))
+        return $(byChained(by, TagNames.SELECT_VALUE_BUTTON, TagNames.SELECT_ITEM))
                 .shouldBe(VISIBLE);
     }
 
     @Override
     protected SelectOverlay getItemsOverlayElement() {
-        return new SelectOverlay(TagNames.SELECT_OVERLAY, this);
+        return new SelectOverlay(byChained(by, TagNames.SELECT_OVERLAY), this);
     }
 }

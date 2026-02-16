@@ -53,7 +53,7 @@ public abstract class AbstractMultiSelectComboBox<T extends AbstractMultiSelectC
     @Override
     protected ComboBoxOverlay<T> getItemsOverlayElement() {
         return new ComboBoxOverlay<>(
-                TagNames.MULTI_SELECT_COMBO_BOX_OVERLAY,
+                byChained(by, TagNames.MULTI_SELECT_COMBO_BOX_OVERLAY),
                 (T) this,
                 TagNames.MULTI_SELECT_COMBO_BOX_ITEM
         );
@@ -176,7 +176,7 @@ public abstract class AbstractMultiSelectComboBox<T extends AbstractMultiSelectC
             @Override
             public SelenideElement next() {
                 SelenideElement item = getMultiSelectComboBoxItemElementByIndex(overlayBy, index++);
-                item.sendKeys(Keys.ARROW_DOWN);
+                item.scrollIntoView(true);
                 return item;
             }
 

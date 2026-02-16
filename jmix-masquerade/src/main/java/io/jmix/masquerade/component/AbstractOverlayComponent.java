@@ -33,7 +33,7 @@ import static io.jmix.masquerade.Masquerade.UI_TEST_ID;
 public abstract class AbstractOverlayComponent<C extends AbstractOverlayComponent<C, O>, O extends AbstractOverlay<O, C>>
         extends AbstractField<C> {
 
-    protected static final String TOGGLE_BUTTON_CSS = "[part='toggle-button']";
+    protected static final String TOGGLE_BUTTON_CSS = "[part~='toggle-button']";
 
     public AbstractOverlayComponent(By by) {
         super(by);

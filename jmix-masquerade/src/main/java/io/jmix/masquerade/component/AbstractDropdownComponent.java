@@ -71,6 +71,6 @@ public abstract class AbstractDropdownComponent<T extends AbstractDropdownCompon
      */
     protected MenuBarOverlay<T> getMenuBarOverlay() {
         //noinspection unchecked
-        return new MenuBarOverlay<>(MENU_BAR_OVERLAY, ((T) this));
+        return new MenuBarOverlay<>(byChained(by, MENU_BAR_OVERLAY), ((T) this));
     }
 }

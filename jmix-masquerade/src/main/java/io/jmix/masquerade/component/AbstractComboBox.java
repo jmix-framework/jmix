@@ -22,6 +22,7 @@ import io.jmix.masquerade.sys.TagNames;
 import org.openqa.selenium.By;
 
 import static io.jmix.masquerade.JConditions.*;
+import static io.jmix.masquerade.JSelectors.byChained;
 
 /**
  * Abstract class for combobox-like web-element wrappers. Supports value typing and single value selecting.
@@ -85,6 +86,6 @@ public abstract class AbstractComboBox<T extends AbstractComboBox<T>>
     @Override
     protected ComboBoxOverlay<T> getItemsOverlayElement() {
         //noinspection unchecked
-        return new ComboBoxOverlay<>(TagNames.COMBO_BOX_OVERLAY, ((T) this), TagNames.COMBO_BOX_ITEM);
+        return new ComboBoxOverlay<>(byChained(by, TagNames.COMBO_BOX_OVERLAY), ((T) this), TagNames.COMBO_BOX_ITEM);
     }
 }

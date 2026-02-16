@@ -19,7 +19,7 @@ package io.jmix.flowui.kit.meta.action;
 import io.jmix.flowui.kit.meta.*;
 
 @StudioUiKit(requiredDependencies = "io.jmix.reports:jmix-reports-starter")
-public interface StudioReportsActions {
+interface StudioReportsActions {
 
         @StudioAction(
                 type = "report_runReport",

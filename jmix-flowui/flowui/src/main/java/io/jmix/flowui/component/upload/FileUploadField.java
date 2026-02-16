@@ -20,13 +20,16 @@ import com.google.common.base.Strings;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.upload.FileRejectedEvent;
 import com.vaadin.flow.component.upload.Upload;
+import com.vaadin.flow.server.streams.UploadHandler;
 import com.vaadin.flow.shared.Registration;
+import io.jmix.core.FileTypesHelper;
 import io.jmix.core.Messages;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.component.HasRequired;
 import io.jmix.flowui.component.SupportsStatusChangeHandler;
 import io.jmix.flowui.component.SupportsValidation;
 import io.jmix.flowui.component.delegate.FileFieldDelegate;
+import io.jmix.flowui.component.upload.handler.InMemoryUploadHandler;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.data.SupportsValueSource;
 import io.jmix.flowui.data.ValueSource;
@@ -93,7 +96,16 @@ public class FileUploadField extends JmixFileUploadField<FileUploadField> implem
 
         attachValueChangeListener(this::onValueChange);
 
+        uploadButton.setUploadHandler(createUploadHandler());
         attachUploadEvents(uploadButton);
+    }
+
+    @Override
+    protected UploadHandler createUploadHandler() {
+        InMemoryUploadHandler uploadHandler = applicationContext.getBean(InMemoryUploadHandler.class);
+        uploadHandler.setUploadSuccessHandler(this::onSucceeded);
+        uploadHandler.addTransferProgressListener(createDefaultTransferProgressListener());
+        return uploadHandler;
     }
 
     protected FileFieldDelegate<FileUploadField, byte[], byte[]> createFieldDelegate() {
@@ -279,5 +291,10 @@ public class FileUploadField extends JmixFileUploadField<FileUploadField> implem
     protected void applyI18nDefaults() {
         JmixUploadI18N i18nDefaults = applicationContext.getBean(UploadFieldI18NSupport.class).getI18nUploadField();
         setI18n(i18nDefaults);
+    }
+
+    @Override
+    protected String getContentType(String fileName) {
+        return FileTypesHelper.getMIMEType(fileName);
     }
 }

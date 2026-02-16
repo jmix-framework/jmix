@@ -13,6 +13,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.selection.SelectionEvent;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteAlias;
 import io.jmix.core.*;
 import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -71,7 +72,8 @@ import org.springframework.lang.Nullable;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-@Route(value = "reports/wizard", layout = DefaultMainViewParent.class)
+@RouteAlias(value = "reports/wizard", layout = DefaultMainViewParent.class)
+@Route(value = "report/wizard", layout = DefaultMainViewParent.class)
 @DialogMode(draggable = false, width = "45em")
 @ViewController("report_ReportWizardCreatorView")
 @ViewDescriptor("report-wizard-creator-view.xml")
@@ -137,10 +139,10 @@ public class ReportWizardCreatorView extends StandardView {
     @ViewComponent
     private TypedTextField<String> reportCodeField;
 
+    @ViewComponent
+    protected MessageBundle messageBundle;
     @Autowired
     protected Messages messages;
-    @Autowired
-    protected MessageBundle messageBundle;
     @Autowired
     protected Dialogs dialogs;
     @Autowired

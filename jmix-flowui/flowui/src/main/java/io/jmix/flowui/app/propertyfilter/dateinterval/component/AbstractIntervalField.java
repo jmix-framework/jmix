@@ -128,7 +128,6 @@ public abstract class AbstractIntervalField extends CustomField<DateInterval>
 
         numberField.setStatusChangeHandler(this::onValidationStatusChange);
         numberField.addValidationStatusChangeListener(__ -> updateInvalidState());
-        numberField.addClientValidatedEventListener(__ -> updateInvalidState());
         numberField.setRequiredMessage(
                 messages.getMessage(getClass(), "NextLastIntervalField.numberField.requiredMessage"));
         numberField.setRequired(true);
@@ -148,7 +147,6 @@ public abstract class AbstractIntervalField extends CustomField<DateInterval>
 
         timeUnitSelect.setStatusChangeHandler(this::onValidationStatusChange);
         timeUnitSelect.addValidationStatusChangeListener(__ -> updateInvalidState());
-        timeUnitSelect.addClientValidatedEventListener(__ -> updateInvalidState());
         timeUnitSelect.setRequiredMessage(
                 messages.getMessage(getClass(), "NextLastIntervalField.timeUnitSelect.requiredMessage"));
         timeUnitSelect.setRequired(true);

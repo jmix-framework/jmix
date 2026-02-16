@@ -18,6 +18,7 @@ package io.jmix.securityflowui.view.resourcerole;
 
 import com.google.common.io.Files;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteAlias;
 import com.vaadin.flow.router.RouteParameters;
 import io.jmix.core.Messages;
 import io.jmix.flowui.Notifications;
@@ -52,7 +53,8 @@ import static io.jmix.flowui.download.DownloadFormat.JSON;
 import static io.jmix.flowui.download.DownloadFormat.ZIP;
 import static io.jmix.security.model.RoleSourceType.DATABASE;
 
-@Route(value = "sec/resourcerolemodels", layout = DefaultMainViewParent.class)
+@RouteAlias(value = "sec/resourcerolemodels", layout = DefaultMainViewParent.class)
+@Route(value = "sec/resource-role-models", layout = DefaultMainViewParent.class)
 @ViewController("sec_ResourceRoleModel.list")
 @ViewDescriptor("resource-role-model-list-view.xml")
 @LookupComponent("roleModelsTable")
@@ -214,7 +216,7 @@ public class ResourceRoleModelListView extends StandardListView<ResourceRoleMode
     }
 
     @Subscribe("importField")
-    public void onImportFieldFileUploadSucceed(FileUploadSucceededEvent<FileUploadField> event) {
+    public void onImportFieldFileUploadSucceed(FileUploadSucceededEvent<FileUploadField, byte[]> event) {
         try {
             byte[] bytes = importField.getValue();
             Assert.notNull(bytes, "Uploaded file does not contains data");

@@ -24,6 +24,7 @@ import io.jmix.flowui.facet.SettingsFacet;
 import io.jmix.flowui.facet.UrlQueryParametersFacet;
 import io.jmix.flowui.facet.urlqueryparameters.AbstractUrlQueryParametersBinder;
 import io.jmix.flowui.facet.urlqueryparameters.PaginationUrlQueryParametersBinder;
+import io.jmix.flowui.facet.urlqueryparameters.UrlQueryParametersBinderUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -70,6 +71,7 @@ public class SettingsFacetUrlQueryParametersHelper {
      */
     protected boolean containsParametersForPagination(Map<String, List<String>> parameters,
                                                       PaginationUrlQueryParametersBinder paginationBinder) {
-        return parameters.containsKey(paginationBinder.getMaxResultsParam());
+        return parameters.containsKey(paginationBinder.getMaxResultsParam()) ||
+                parameters.containsKey(UrlQueryParametersBinderUtils.getPaginationMaxResultsParam(paginationBinder));
     }
 }

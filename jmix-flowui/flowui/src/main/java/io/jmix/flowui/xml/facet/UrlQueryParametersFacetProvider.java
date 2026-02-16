@@ -20,7 +20,9 @@ import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.facet.UrlQueryParametersFacet;
 import io.jmix.flowui.facet.impl.UrlQueryParametersFacetImpl;
 import io.jmix.flowui.facet.urlqueryparameters.UrlQueryParametersBinderProvider;
+import io.jmix.flowui.sys.registration.FacetRegistrationBuilder;
 import io.jmix.flowui.view.navigation.RouteSupport;
+import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.ComponentLoader.ComponentContext;
 import io.jmix.flowui.xml.layout.support.LoaderSupport;
 import org.apache.commons.collections4.CollectionUtils;
@@ -30,6 +32,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * @deprecated use {@link FacetRegistrationBuilder} instead
+ */
+@Deprecated(since = "3.0", forRemoval = true)
 @org.springframework.stereotype.Component("flowui_UrlQueryParametersFacetProvider")
 public class UrlQueryParametersFacetProvider implements FacetProvider<UrlQueryParametersFacet> {
 
@@ -73,7 +79,7 @@ public class UrlQueryParametersFacetProvider implements FacetProvider<UrlQueryPa
         }
     }
 
-    protected void loadBinder(UrlQueryParametersFacet facet, Element element, ComponentContext context) {
+    protected void loadBinder(UrlQueryParametersFacet facet, Element element, ComponentLoader.Context context) {
         for (UrlQueryParametersBinderProvider binderProvider : binderProviders) {
             if (binderProvider.supports(element)) {
                 binderProvider.load(facet, element, context);

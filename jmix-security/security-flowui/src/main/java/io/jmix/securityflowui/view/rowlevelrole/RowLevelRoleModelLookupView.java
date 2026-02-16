@@ -17,23 +17,32 @@
 package io.jmix.securityflowui.view.rowlevelrole;
 
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteAlias;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.view.*;
+import io.jmix.security.model.BaseRole;
+import io.jmix.security.model.RoleModelConverter;
+import io.jmix.security.model.RowLevelRoleModel;
 import io.jmix.security.role.RowLevelRoleRepository;
 import io.jmix.securityflowui.component.rolefilter.RoleFilter;
 import io.jmix.securityflowui.component.rolefilter.RoleFilterChangeEvent;
-import io.jmix.security.model.RoleModelConverter;
-import io.jmix.security.model.RowLevelRoleModel;
+import io.jmix.securityflowui.util.RoleAssignmentCandidatePredicate;
+import io.jmix.securityflowui.util.RoleHierarchyCandidatePredicate;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.lang.Nullable;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Route(value = "sec/rowlevelrolemodelslookup", layout = DefaultMainViewParent.class)
+import static io.jmix.securityflowui.util.PredicateUtils.combineRoleAssignmentPredicates;
+import static io.jmix.securityflowui.util.PredicateUtils.combineRoleHierarchyPredicates;
+
+@RouteAlias(value = "sec/rowlevelrolemodelslookup", layout = DefaultMainViewParent.class)
+@Route(value = "sec/row-level-role-models-lookup", layout = DefaultMainViewParent.class)
 @ViewController("sec_RowLevelRoleModel.lookup")
 @ViewDescriptor("row-level-role-model-lookup-view.xml")
 @LookupComponent("roleModelsTable")
@@ -50,11 +59,24 @@ public class RowLevelRoleModelLookupView extends StandardListView<RowLevelRoleMo
     @Autowired
     private RowLevelRoleRepository roleRepository;
 
+    @Autowired(required = false)
+    protected List<RoleAssignmentCandidatePredicate> roleAssignmentCandidatePredicates = Collections.emptyList();
+    @Autowired(required = false)
+    protected List<RoleHierarchyCandidatePredicate> roleHierarchyCandidatePredicates = Collections.emptyList();
+
+    protected RoleAssignmentCandidatePredicate compositeRoleAssignmentCandidatePredicate;
+    protected RoleHierarchyCandidatePredicate compositeRoleHierarchyCandidatePredicate;
+
     private List<String> excludedRolesCodes = Collections.emptyList();
+
+    private UserDetails user;
+    private BaseRole currentRole;
 
     @Subscribe
     public void onInit(InitEvent event) {
         initFilter();
+        compositeRoleAssignmentCandidatePredicate = combineRoleAssignmentPredicates(roleAssignmentCandidatePredicates);
+        compositeRoleHierarchyCandidatePredicate = combineRoleHierarchyPredicates(roleHierarchyCandidatePredicates);
     }
 
     private void initFilter() {
@@ -79,6 +101,18 @@ public class RowLevelRoleModelLookupView extends StandardListView<RowLevelRoleMo
                 .filter(role -> (event == null || event.matches(role))
                         && !excludedRolesCodes.contains(role.getCode())
                 )
+                .filter(role -> {
+                    boolean allowed = true;
+                    if (currentRole != null) {
+                        // apply hierarchy predicates to find available base role candidates
+                        allowed = allowed && compositeRoleHierarchyCandidatePredicate.test(currentRole, role);
+                    }
+                    if (allowed && user != null) {
+                        // apply user-based predicates to find roles available for user
+                        allowed = allowed && compositeRoleAssignmentCandidatePredicate.test(user, role);
+                    }
+                    return allowed;
+                })
                 .map(roleModelConverter::createRowLevelRoleModel)
                 .sorted(Comparator.comparing(RowLevelRoleModel::getName))
                 .collect(Collectors.toList());
@@ -87,5 +121,13 @@ public class RowLevelRoleModelLookupView extends StandardListView<RowLevelRoleMo
 
     public void setExcludedRoles(List<String> excludedRolesCodes) {
         this.excludedRolesCodes = excludedRolesCodes;
+    }
+
+    public void setUser(UserDetails user) {
+        this.user = user;
+    }
+
+    public void setCurrentRole(BaseRole currentRole) {
+        this.currentRole = currentRole;
     }
 }

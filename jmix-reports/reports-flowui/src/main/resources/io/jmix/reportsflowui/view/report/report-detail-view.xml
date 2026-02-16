@@ -127,7 +127,8 @@
                                           spacing="false"
                                           height="100%">
                                         <div width="100%" classNames="flex, justify-between">
-                                            <nativeLabel text="msg://report.groovyScript.title"
+                                            <nativeLabel id="codeEditorLabel"
+                                                         text="msg://report.groovyScript.title"
                                                          setFor="jsonGroovyCodeEditor"/>
                                             <button id="dataSetScriptFullScreenBtn" text="msg:///fullScreenBtn.title"
                                                     themeNames="tertiary-inline"/>
@@ -149,7 +150,8 @@
                                             <select id="dataStoreField"
                                                     emptySelectionAllowed="true"
                                                     label="msg://bandsTab.dataSetTypeLayout.dataStoreField.label"
-                                                    property="dataStore"/>
+                                                    property="dataStore"
+                                                    emptySelectionCaption="msg://bandsTab.dataSetTypeLayout.dataStoreField.emptySelectionCaption"/>
                                             <responsiveSteps>
                                                 <responsiveStep minWidth="0" columns="1"/>
                                                 <responsiveStep minWidth="30em" columns="2"/>

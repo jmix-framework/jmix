@@ -1,6 +1,7 @@
 package io.jmix.reportsflowui.view.group;
 
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteAlias;
 import io.jmix.core.EntityStates;
 import io.jmix.core.security.AccessDeniedException;
 import io.jmix.flowui.action.view.DetailSaveCloseAction;
@@ -15,7 +16,8 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.Optional;
 import java.util.UUID;
 
-@Route(value = "reports/groups/:id", layout = DefaultMainViewParent.class)
+@RouteAlias(value = "reports/groups/:id", layout = DefaultMainViewParent.class)
+@Route(value = "report/groups/:id", layout = DefaultMainViewParent.class)
 @ViewController("report_ReportGroup.detail")
 @ViewDescriptor("report-group-detail-view.xml")
 @EditedEntityContainer("groupDc")

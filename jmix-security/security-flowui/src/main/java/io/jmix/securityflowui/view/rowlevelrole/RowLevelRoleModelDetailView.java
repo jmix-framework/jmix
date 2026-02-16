@@ -17,6 +17,7 @@
 package io.jmix.securityflowui.view.rowlevelrole;
 
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteAlias;
 import io.jmix.core.Messages;
 import io.jmix.core.SaveContext;
 import io.jmix.flowui.DialogWindows;
@@ -41,7 +42,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Route(value = "sec/rowlevelrolemodels/:code", layout = DefaultMainViewParent.class)
+@RouteAlias(value = "sec/rowlevelrolemodels/:code", layout = DefaultMainViewParent.class)
+@Route(value = "sec/row-level-role-models/:code", layout = DefaultMainViewParent.class)
 @ViewController("sec_RowLevelRoleModel.detail")
 @ViewDescriptor("row-level-role-model-detail-view.xml")
 @EditedEntityContainer("roleModelDc")
@@ -150,8 +152,14 @@ public class RowLevelRoleModelDetailView extends StandardDetailView<RowLevelRole
 
     @Subscribe("childRolesTable.add")
     public void onChildRolesTableAdd(ActionPerformedEvent event) {
+        RowLevelRoleModel rowLevelRoleModel = getEditedEntity();
+        RowLevelRole currentRole = roleRepository.findRoleByCode(rowLevelRoleModel.getCode());
+
         DialogWindow<RowLevelRoleModelLookupView> lookupDialog = dialogWindows.lookup(childRolesTable)
                 .withViewClass(RowLevelRoleModelLookupView.class)
+                .withViewConfigurer(configurer -> {
+                    configurer.setCurrentRole(currentRole);
+                })
                 .build();
 
         List<String> excludedRolesCodes = childRolesDc.getItems().stream()
@@ -159,7 +167,7 @@ public class RowLevelRoleModelDetailView extends StandardDetailView<RowLevelRole
                 .collect(Collectors.toList());
 
         if (codeField.isReadOnly()) {
-            excludedRolesCodes.add(getEditedEntity().getCode());
+            excludedRolesCodes.add(rowLevelRoleModel.getCode());
         }
 
         lookupDialog.getView().setExcludedRoles(excludedRolesCodes);

@@ -20,6 +20,7 @@ import com.google.common.collect.Sets;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.function.ValueProvider;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteAlias;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
 import io.jmix.core.SaveContext;
@@ -49,7 +50,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Route(value = "sec/resourcerolemodels/:code", layout = DefaultMainViewParent.class)
+@RouteAlias(value = "sec/resourcerolemodels/:code", layout = DefaultMainViewParent.class)
+@Route(value = "sec/resource-role-models/:code", layout = DefaultMainViewParent.class)
 @ViewController("sec_ResourceRoleModel.detail")
 @ViewDescriptor("resource-role-model-detail-view.xml")
 @EditedEntityContainer("roleModelDc")
@@ -79,12 +81,12 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
     @ViewComponent
     private CollectionPropertyContainer<ResourcePolicyModel> resourcePoliciesDc;
 
+    @ViewComponent
+    private MessageBundle messageBundle;
     @Autowired
     private Messages messages;
     @Autowired
     private MessageTools messageTools;
-    @Autowired
-    private MessageBundle messageBundle;
     @Autowired(required = false)
     private RolePersistence rolePersistence;
     @Autowired
@@ -206,8 +208,14 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
 
     @Subscribe("childRolesTable.add")
     public void onChildRolesTableAdd(ActionPerformedEvent event) {
+        ResourceRoleModel resourceRoleModel = getEditedEntity();
+        ResourceRole currentRole = roleRepository.findRoleByCode(resourceRoleModel.getCode());
+
         DialogWindow<ResourceRoleModelLookupView> lookupDialog = dialogWindows.lookup(childRolesTable)
                 .withViewClass(ResourceRoleModelLookupView.class)
+                .withViewConfigurer(configurer -> {
+                    configurer.setCurrentRole(currentRole);
+                })
                 .build();
 
         List<String> excludedRolesCodes = childRolesDc.getItems().stream()
@@ -215,7 +223,7 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
                 .collect(Collectors.toList());
 
         if (codeField.isReadOnly()) {
-            excludedRolesCodes.add(getEditedEntity().getCode());
+            excludedRolesCodes.add(resourceRoleModel.getCode());
         }
 
         lookupDialog.getView().setExcludedRoles(excludedRolesCodes);
@@ -381,8 +389,6 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
                 return EntityResourcePolicyModelDetailView.class;
             case ResourcePolicyType.ENTITY_ATTRIBUTE:
                 return EntityAttributeResourcePolicyModelDetailView.class;
-            case ResourcePolicyType.GRAPHQL:
-                return GraphQLResourcePolicyModelDetailView.class;
             case ResourcePolicyType.SPECIFIC:
                 return SpecificResourcePolicyModelDetailView.class;
         }

@@ -28,13 +28,16 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.core.querycondition.PropertyConditionUtils;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import org.springframework.lang.Nullable;
+
+import static io.jmix.core.metamodel.model.MetaProperty.Type.ASSOCIATION;
+import static io.jmix.core.metamodel.model.MetaProperty.Type.COMPOSITION;
 
 @Component("data_PropertyConditionGenerator")
 @Order(JmixOrder.LOWEST_PRECEDENCE)
@@ -42,6 +45,12 @@ public class PropertyConditionGenerator implements ConditionGenerator {
 
     protected MetadataTools metadataTools;
     protected Metadata metadata;
+
+    @Value("${jmix.eclipselink.use-inner-join-in-condition:false}")
+    protected boolean useInnerJoinInCondition;
+
+    @Value("${jmix.eclipselink.condition-join-alias-prefix:cje_}")
+    protected String joinAliasPrefix;
 
     @Autowired
     public PropertyConditionGenerator(MetadataTools metadataTools, Metadata metadata) {
@@ -68,20 +77,27 @@ public class PropertyConditionGenerator implements ConditionGenerator {
         MetaClass metaClass = metadata.getClass(context.getEntityName());
 
         while (propertyName.contains(".")) {
-            String basePropertyName = StringUtils.substringBefore(propertyName, ".");
+            String baseProperty = StringUtils.substringBefore(propertyName, ".");
             String childProperty = StringUtils.substringAfter(propertyName, ".");
 
-            MetaProperty metaProperty = metaClass.getProperty(basePropertyName);
+            MetaProperty metaProperty = metaClass.getProperty(baseProperty);
 
-            if (metaProperty.getRange().getCardinality().isMany()) {
-                String joinAlias = basePropertyName.substring(0, 3) + RandomStringUtils.randomAlphabetic(3);
+            if ((useInnerJoinInCondition && metaProperty.getRange().getCardinality().isMany()) ||
+                    (metaProperty.getType() == ASSOCIATION || metaProperty.getType() == COMPOSITION)) {
+                String joinAlias = joinAliasPrefix + context.generateNextJoinIndex();
+
                 context.setJoinAlias(joinAlias);
                 context.setJoinProperty(childProperty);
                 context.setJoinMetaClass(metaProperty.getRange().asClass());
-                joinBuilder.append(" join " + joinPropertyBuilder + "." + basePropertyName + " " + joinAlias);
+                if (useInnerJoinInCondition) {
+                    joinBuilder.append(" join ");
+                } else {
+                    joinBuilder.append(" left join ");
+                }
+                joinBuilder.append(joinPropertyBuilder + "." + baseProperty + " " + joinAlias);
                 joinPropertyBuilder = new StringBuilder(joinAlias);
             } else {
-                joinPropertyBuilder.append(".").append(basePropertyName);
+                joinPropertyBuilder.append(".").append(baseProperty);
             }
             if (metaProperty.getRange().isClass()) {
                 metaClass = metaProperty.getRange().asClass();
@@ -90,6 +106,16 @@ public class PropertyConditionGenerator implements ConditionGenerator {
             }
 
             propertyName = childProperty;
+        }
+
+        MetaProperty metaProperty = metaClass.getProperty(propertyName);
+        if (metadataTools.isElementCollection(metaProperty)
+                && !propertyCondition.getOperation().equals(PropertyCondition.Operation.IS_COLLECTION_EMPTY)) {
+            String joinAlias = joinAliasPrefix + context.generateNextJoinIndex();
+            context.setJoinAlias(joinAlias);
+            context.setJoinProperty(propertyName);
+            context.setJoinMetaClass(null);
+            joinBuilder.append(" join " + joinPropertyBuilder + "." + propertyName + " " + joinAlias);
         }
 
         return joinBuilder.toString();
@@ -103,8 +129,13 @@ public class PropertyConditionGenerator implements ConditionGenerator {
         }
 
         if (context.getJoinAlias() != null && context.getJoinProperty() != null) {
-            String property = getProperty(context.getJoinProperty(), context.getJoinMetaClass().getName());
-            return generateWhere(propertyCondition, context.getJoinAlias(), property);
+            MetaClass joinMetaClass = context.getJoinMetaClass();
+            if (joinMetaClass != null) {
+                String property = getProperty(context.getJoinProperty(), joinMetaClass.getName());
+                return generateWhere(propertyCondition, context.getJoinAlias(), property);
+            } else { // case of ElementCollection
+                return generateWhere(propertyCondition, context.getJoinAlias(), null);
+            }
         } else {
             String entityAlias = context.getEntityAlias();
             String property = getProperty(propertyCondition.getProperty(), context.getEntityName());
@@ -139,29 +170,48 @@ public class PropertyConditionGenerator implements ConditionGenerator {
         return parameterValue;
     }
 
-    protected String generateWhere(PropertyCondition propertyCondition, String entityAlias, String property) {
-        if (PropertyConditionUtils.isUnaryOperation(propertyCondition)) {
-            return String.format("%s.%s %s",
-                    entityAlias,
-                    property,
-                    PropertyConditionUtils.getJpqlOperation(propertyCondition));
-        } else if (PropertyConditionUtils.isInIntervalOperation(propertyCondition)) {
-            return PropertyConditionUtils.getJpqlOperation(propertyCondition);
-        } else if (PropertyConditionUtils.isDateEqualsOperation(propertyCondition)) {
-            return PropertyConditionUtils.getJpqlOperation(propertyCondition)
-                    .formatted(entityAlias,
-                            property,
-                            propertyCondition.getParameterName());
-        } else if (PropertyConditionUtils.isMemberOfCollectionOperation(propertyCondition)) {
-            return String.format(":%s %s %s.%s",
-                    propertyCondition.getParameterName(),
-                    PropertyConditionUtils.getJpqlOperation(propertyCondition),
-                    entityAlias,
-                    property);
+    protected String generateWhere(PropertyCondition propertyCondition, String entityAlias, @Nullable String property) {
+        if (property != null) {
+            if (PropertyConditionUtils.isUnaryOperation(propertyCondition)) {
+                return String.format("%s.%s %s",
+                        entityAlias,
+                        property,
+                        PropertyConditionUtils.getJpqlOperation(propertyCondition));
+            } else if (PropertyConditionUtils.isInIntervalOperation(propertyCondition)) {
+                return PropertyConditionUtils.getJpqlOperation(propertyCondition)
+                        .formatted(entityAlias, property);
+            } else if (PropertyConditionUtils.isDateEqualsOperation(propertyCondition)) {
+                return PropertyConditionUtils.getJpqlOperation(propertyCondition)
+                        .formatted(entityAlias,
+                                property,
+                                propertyCondition.getParameterName());
+            } else if (PropertyConditionUtils.isMemberOfCollectionOperation(propertyCondition)) {
+                return String.format(":%s %s %s.%s",
+                        propertyCondition.getParameterName(),
+                        PropertyConditionUtils.getJpqlOperation(propertyCondition),
+                        entityAlias,
+                        property);
+            } else {
+                return String.format("%s.%s %s :%s",
+                        entityAlias,
+                        property,
+                        PropertyConditionUtils.getJpqlOperation(propertyCondition),
+                        propertyCondition.getParameterName());
+            }
         } else {
-            return String.format("%s.%s %s :%s",
+            // case of ElementCollection
+            if (PropertyConditionUtils.isInIntervalOperation(propertyCondition)
+                    || PropertyConditionUtils.isDateEqualsOperation(propertyCondition)
+                    || PropertyConditionUtils.isMemberOfCollectionOperation(propertyCondition)) {
+                throw new IllegalStateException("Unsupported property condition for ElementCollection: " + propertyCondition);
+            }
+            if (PropertyConditionUtils.isUnaryOperation(propertyCondition)) {
+                return String.format("%s %s",
+                        entityAlias,
+                        PropertyConditionUtils.getJpqlOperation(propertyCondition));
+            }
+            return String.format("%s %s :%s",
                     entityAlias,
-                    property,
                     PropertyConditionUtils.getJpqlOperation(propertyCondition),
                     propertyCondition.getParameterName());
         }

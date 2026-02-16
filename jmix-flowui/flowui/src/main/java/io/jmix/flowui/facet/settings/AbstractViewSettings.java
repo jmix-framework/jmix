@@ -21,7 +21,10 @@ import io.jmix.flowui.view.View;
 /**
  * Abstract base class that partially implements the {@link ViewSettings} interface
  * and provides common functionality related to managing settings for a specific {@link View}.
+ *
+ * @deprecated use {@link AbstractUiComponentSettings} instead
  */
+@Deprecated(since = "3.0", forRemoval = true)
 public abstract class AbstractViewSettings implements ViewSettings {
 
     protected String viewId;

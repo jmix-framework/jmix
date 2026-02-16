@@ -89,7 +89,7 @@ public class FieldMappingCreator {
             return Optional.empty();
         }
 
-        if (strategyPropertyValueExtractor == null & explicitPropertyValueExtractor == null) {
+        if (strategyPropertyValueExtractor == null && explicitPropertyValueExtractor == null) {
             log.debug("Property '{}' doesn't have any property value extractor", propertyPath);
             return Optional.empty();
         }

@@ -18,7 +18,7 @@ package io.jmix.flowui.component.image;
 
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.shared.HasThemeVariant;
-import com.vaadin.flow.server.StreamResource;
+import com.vaadin.flow.server.streams.DownloadHandler;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.FileRef;
 import io.jmix.core.FileStorageLocator;
@@ -139,8 +139,8 @@ public class JmixImage<V> extends Image implements SupportsValueSource<V>, HasTh
         Object resource = UiComponentUtils.createResource(value, fileStorageLocator);
         if (resource instanceof String stringResource) {
             setSrc(stringResource);
-        } else if (resource instanceof StreamResource streamResource) {
-            setSrc(streamResource);
+        } else if (resource instanceof DownloadHandler downloadHandler) {
+            setSrc(downloadHandler);
         } else {
             View<?> view = UiComponentUtils.findView(this);
             String frameId = view == null ? null : view.getId().orElse(null);

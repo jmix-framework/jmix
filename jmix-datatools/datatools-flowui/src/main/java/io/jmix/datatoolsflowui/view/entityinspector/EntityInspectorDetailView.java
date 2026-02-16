@@ -25,6 +25,7 @@ import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteAlias;
 import io.jmix.core.*;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -58,7 +59,8 @@ import java.util.HashMap;
 import static io.jmix.core.metamodel.model.MetaProperty.Type.ASSOCIATION;
 import static io.jmix.core.metamodel.model.MetaProperty.Type.COMPOSITION;
 
-@Route(value = "datatl/entityinspector/:entityName/:entityId", layout = DefaultMainViewParent.class)
+@RouteAlias(value = "datatl/entityinspector/:entityName/:entityId", layout = DefaultMainViewParent.class)
+@Route(value = "datatl/entity-inspector/:entityName/:entityId", layout = DefaultMainViewParent.class)
 @ViewController("datatl_entityInspectorDetailView")
 @ViewDescriptor("entity-inspector-detail-view.xml")
 @DialogMode(width = "50em", resizable = true)
@@ -91,9 +93,12 @@ public class EntityInspectorDetailView extends StandardDetailView<Object> {
     @Autowired
     protected DataManager dataManager;
     @Autowired
-    protected MessageBundle messageBundle;
-    @Autowired
     protected UrlParamSerializer urlParamSerializer;
+    @Autowired
+    protected EntityUpdateDispatcher entityUpdateDispatcher;
+
+    @ViewComponent
+    protected MessageBundle messageBundle;
 
     protected Tabs tabs;
     @Nullable
@@ -115,6 +120,8 @@ public class EntityInspectorDetailView extends StandardDetailView<Object> {
         dataContext = dataComponents.createDataContext();
         getViewData().setDataContext(dataContext);
         setReloadSaved(true);
+        dataContext.setSaveDelegate(saveContext ->
+                entityUpdateDispatcher.save(dataManager, saveContext));
     }
 
     @Override
@@ -292,7 +299,7 @@ public class EntityInspectorDetailView extends StandardDetailView<Object> {
             }
         }
 
-        if (tabs.getComponentCount() != 0) {
+        if (tabs.getTabCount() != 0) {
             tabs.setVisible(true);
         }
     }

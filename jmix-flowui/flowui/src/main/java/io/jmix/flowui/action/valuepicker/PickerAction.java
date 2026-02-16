@@ -18,17 +18,15 @@ package io.jmix.flowui.action.valuepicker;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.flowui.action.ExecutableAction;
 import io.jmix.flowui.action.SecuredBaseAction;
 import io.jmix.flowui.action.TargetAction;
 import io.jmix.flowui.component.PickerComponent;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.action.ActionVariant;
-import io.jmix.flowui.kit.action.BaseAction;
 import io.jmix.flowui.kit.component.KeyCombination;
-
 import org.springframework.lang.Nullable;
+
 import java.util.Objects;
 import java.util.function.Consumer;
 
@@ -118,18 +116,6 @@ public abstract class PickerAction<A extends PickerAction<A, C, V>, C extends Pi
 
     @SuppressWarnings("unchecked")
     @Override
-    public A withIcon(@Nullable VaadinIcon icon) {
-        return ((A) super.withIcon(icon));
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public A withTitle(@Nullable String title) {
-        return ((A) super.withTitle(title));
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
     public A withVariant(ActionVariant actionVariant) {
         return ((A) super.withVariant(actionVariant));
     }
@@ -144,18 +130,6 @@ public abstract class PickerAction<A extends PickerAction<A, C, V>, C extends Pi
     @Override
     public A withHandler(@Nullable Consumer<ActionPerformedEvent> handler) {
         return ((A) super.withHandler(handler));
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public A withEnabledByUiPermissions(boolean enabledByUiPermissions) {
-        return ((A) super.withEnabledByUiPermissions(enabledByUiPermissions));
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public A withVisibleByUiPermissions(boolean visibleByUiPermissions) {
-        return ((A) super.withVisibleByUiPermissions(visibleByUiPermissions));
     }
 
     protected void checkTarget() {

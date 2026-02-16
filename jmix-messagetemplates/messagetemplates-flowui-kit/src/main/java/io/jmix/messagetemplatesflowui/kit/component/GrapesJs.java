@@ -28,11 +28,16 @@ import elemental.json.JsonValue;
 import io.jmix.messagetemplatesflowui.kit.component.event.dom.GrapesJsValueChangedDomEvent;
 import io.jmix.messagetemplatesflowui.kit.component.serialization.GrapesJsSerializer;
 import jakarta.annotation.Nullable;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.safety.Safelist;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * GrapesJS component is used to create HTML templates using a web editor. This implementation is based on
@@ -60,6 +65,19 @@ import java.util.*;
 public class GrapesJs extends Component implements HasSize, HasStyle {
 
     private static final Logger log = LoggerFactory.getLogger(GrapesJs.class);
+
+    // regular expression for matching all Apache FreeMarker pseudo-tags
+    protected static final Pattern FM_PATTERN = Pattern.compile(
+            "(<#--.*?-->)" +                        // Freemarker comments
+                    "|(<@[A-Za-z0-9_]+(?:\\s+[^>]*)?>)" + // <@macro ...>
+                    "|(</@[A-Za-z0-9_]+>)" +              // </@macro>
+                    "|(<#[A-Za-z0-9_]+(?:\\s+[^>]*)?>)" + // <#if ...>
+                    "|(</#[A-Za-z0-9_]+>)" +              // </#if>
+                    "|(\\$\\{[^}]*})",                    // ${...}
+            Pattern.DOTALL
+    );
+
+    protected static final String FM_PLACEHOLDER = "___FM_%s___";
 
     protected GrapesJsSerializer serializer;
 
@@ -317,6 +335,7 @@ public class GrapesJs extends Component implements HasSize, HasStyle {
     protected void setValueInternal(@Nullable String value, boolean fromClient) {
         String oldValue = getValue();
         value = nullToEmptyValue(value);
+        value = sanitizeValue(value);
 
         if (Objects.equals(value, oldValue)) {
             return;
@@ -386,6 +405,41 @@ public class GrapesJs extends Component implements HasSize, HasStyle {
 
     protected String nullToEmptyValue(@Nullable String value) {
         return value == null ? getEmptyValue() : value;
+    }
+
+    protected String sanitizeValue(String html) {
+        List<String> placeholders = new ArrayList<>();
+        Matcher matcher = FM_PATTERN.matcher(html);
+
+        StringBuilder sb = new StringBuilder();
+        while (matcher.find()) {
+            String match = matcher.group();
+            String placeholder = FM_PLACEHOLDER.formatted(placeholders.size());
+
+            placeholders.add(match);
+            matcher.appendReplacement(sb, Matcher.quoteReplacement(placeholder));
+        }
+        matcher.appendTail(sb);
+
+        String protectedHtml = sb.toString();
+
+        var settings = new Document.OutputSettings();
+        settings.prettyPrint(false);
+
+        String sanitizedHtml = Jsoup.clean(protectedHtml, "",
+                Safelist.relaxed()
+                        .addTags("body", "style", "video", "input", "form", "textarea",
+                                "label", "button", "select", "option", "iframe")
+                        .addAttributes(":all", "style", "id", "class", "src", "type", "method", "value")
+                        .addProtocols("img", "src", "data"),
+                settings);
+
+
+        for (int i = 0; i < placeholders.size(); i++) {
+            sanitizedHtml = sanitizedHtml.replace(FM_PLACEHOLDER.formatted(i), placeholders.get(i));
+        }
+
+        return sanitizedHtml;
     }
 
     protected String getEmptyValue() {

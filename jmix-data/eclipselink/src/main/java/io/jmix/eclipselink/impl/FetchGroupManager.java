@@ -152,7 +152,7 @@ public class FetchGroupManager {
         List<FetchGroupField> refFields = new ArrayList<>();
         for (FetchGroupField field : fetchGroupFields) {
             if (field.metaProperty.getRange().isClass()
-                    && !metadataTools.isEmbedded(field.metaProperty)
+                    && field.metaProperty.getType() != MetaProperty.Type.EMBEDDED
                     && metadataTools.isJpaEntity(field.metaProperty.getRange().asClass())) {
                 refFields.add(field);
             }
@@ -558,9 +558,12 @@ public class FetchGroupManager {
 
         if (useFetchGroup) {
             for (MetaProperty metaProperty : entityMetaClass.getProperties()) {
-                if (metaProperty.getRange().isClass() && metadataTools.isJpa(metaProperty)
-                        && !metadataTools.isEmbedded(metaProperty)
-                        && !fetchPlan.containsProperty(metaProperty.getName())) {
+                if (metadataTools.isJpa(metaProperty)
+                        && (metaProperty.getRange().isClass()
+                            && metaProperty.getType() != MetaProperty.Type.EMBEDDED
+                            || metadataTools.isElementCollection(metaProperty))
+                        && !fetchPlan.containsProperty(metaProperty.getName())
+                ) {
                     fetchGroupFields.add(createFetchGroupField(entityClass, parentField, metaProperty.getName(), FetchMode.AUTO, true));
                 }
             }

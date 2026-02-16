@@ -27,7 +27,6 @@ import com.vaadin.flow.dom.PropertyChangeEvent;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.*;
-import io.jmix.flowui.kit.component.HasPlaceholder;
 import io.jmix.flowui.kit.component.formatter.Formatter;
 import jakarta.annotation.Nullable;
 
@@ -123,7 +122,7 @@ public abstract class ValuePickerBase<C extends ValuePickerBase<C, V>, V>
     protected void validate() {
         boolean isRequired = this.isRequiredIndicatorVisible();
         boolean isInvalid = ValidationUtil
-                .checkRequired(isRequired, getValue(), getEmptyValue())
+                .validateRequiredConstraint("", isRequired, getValue(), getEmptyValue())
                 .isError();
 
         setInvalid(isInvalid);

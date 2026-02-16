@@ -55,6 +55,7 @@ import io.jmix.flowui.util.OperationResult;
 import io.jmix.flowui.util.UnknownOperationResult;
 import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.navigation.RouteSupport;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import jakarta.persistence.Convert;
@@ -62,7 +63,8 @@ import jakarta.persistence.Convert;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Route(value = "app-settings", layout = DefaultMainViewParent.class)
+@RouteAlias(value = "app-settings", layout = DefaultMainViewParent.class)
+@Route(value = "appset/app-settings", layout = DefaultMainViewParent.class)
 @ViewController("appSettings.view")
 @ViewDescriptor("app-settings-entity-view.xml")
 @DialogMode(width = "50em", height = "37.5em")
@@ -80,6 +82,8 @@ public class AppSettingsEntityView extends StandardView {
     @ViewComponent
     protected HorizontalLayout buttonsPanel;
 
+    @ViewComponent
+    protected MessageBundle messageBundle;
     @Autowired
     protected AppSettings appSettings;
     @Autowired
@@ -96,12 +100,6 @@ public class AppSettingsEntityView extends StandardView {
     protected DataComponents dataComponents;
     @Autowired
     protected ViewValidation viewValidation;
-    // Keep for compatibility, to prevent possible compilation errors,
-    // if someone has extended this view and is using Messages.
-    @Autowired
-    protected Messages messages;
-    @ViewComponent
-    protected MessageBundle messageBundle;
     @Autowired
     protected AppSettingsTools appSettingsTools;
     @Autowired
@@ -415,7 +413,7 @@ public class AppSettingsEntityView extends StandardView {
         InstanceContainer container = dataComponents.createInstanceContainer(currentMetaClass.getJavaClass());
         entityToEdit = dataManager.load(currentMetaClass.getJavaClass())
                 .query(String.format(SELECT_APP_SETTINGS_ENTITY_QUERY, currentMetaClass.getName()))
-                .fetchPlan(fetchPlans.builder(currentMetaClass.getJavaClass()).addFetchPlan(FetchPlan.LOCAL).build())
+                .fetchPlan(createFetchPlan())
                 .hint(PersistenceHints.SOFT_DELETION, false)
                 .optional()
                 .orElse(null);
@@ -425,6 +423,16 @@ public class AppSettingsEntityView extends StandardView {
             entityToEdit = dataContext.merge(entityToEdit);
         }
         return container;
+    }
+
+    protected FetchPlan createFetchPlan() {
+        FetchPlanBuilder builder = fetchPlans.builder(currentMetaClass.getJavaClass()).addFetchPlan(FetchPlan.LOCAL);
+        for (MetaProperty property : currentMetaClass.getProperties()) {
+            if (metadataTools.isElementCollection(property)) {
+                builder.add(property.getName());
+            }
+        }
+        return builder.build();
     }
 
     protected boolean isApplicationSettingsEntity(MetaClass metaClass) {

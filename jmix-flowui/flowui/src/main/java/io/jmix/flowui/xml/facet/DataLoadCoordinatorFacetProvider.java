@@ -23,11 +23,12 @@ import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.facet.DataLoadCoordinator;
 import io.jmix.flowui.facet.DataLoadCoordinator.LikeClause;
-import io.jmix.flowui.facet.impl.DataLoadCoordinatorImpl;
+import io.jmix.flowui.facet.impl.ViewDataLoadCoordinatorImpl;
 import io.jmix.flowui.model.DataLoader;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.model.ViewData;
 import io.jmix.flowui.sys.autowire.ReflectionCacheManager;
+import io.jmix.flowui.sys.registration.FacetRegistrationBuilder;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewControllerUtils;
 import io.jmix.flowui.xml.layout.ComponentLoader;
@@ -36,6 +37,10 @@ import io.jmix.flowui.xml.layout.support.LoaderSupport;
 import org.dom4j.Element;
 import org.springframework.lang.Nullable;
 
+/**
+ * @deprecated use {@link FacetRegistrationBuilder} instead
+ */
+@Deprecated(since = "3.0", forRemoval = true)
 @org.springframework.stereotype.Component("flowui_DataLoadCoordinatorFacetProvider")
 public class DataLoadCoordinatorFacetProvider implements FacetProvider<DataLoadCoordinator> {
 
@@ -58,7 +63,7 @@ public class DataLoadCoordinatorFacetProvider implements FacetProvider<DataLoadC
 
     @Override
     public DataLoadCoordinator create() {
-        return new DataLoadCoordinatorImpl(reflectionCacheManager, queryParamValuesManager);
+        return new ViewDataLoadCoordinatorImpl(reflectionCacheManager, queryParamValuesManager);
     }
 
     @Override
@@ -188,7 +193,7 @@ public class DataLoadCoordinatorFacetProvider implements FacetProvider<DataLoadC
         }
 
         @Override
-        public void execute(ComponentContext context, View<?> view) {
+        public void execute(ComponentLoader.Context context) {
             Preconditions.checkNotNullArgument(facet.getOwner());
 
             ViewData viewData = ViewControllerUtils.getViewData(facet.getOwner());
@@ -213,7 +218,7 @@ public class DataLoadCoordinatorFacetProvider implements FacetProvider<DataLoadC
         }
 
         @Override
-        public void execute(ComponentContext context, View<?> view) {
+        public void execute(ComponentLoader.Context context) {
             Preconditions.checkNotNullArgument(facet.getOwner());
 
             ViewData viewData = ViewControllerUtils.getViewData(facet.getOwner());
@@ -243,7 +248,7 @@ public class DataLoadCoordinatorFacetProvider implements FacetProvider<DataLoadC
         }
 
         @Override
-        public void execute(ComponentContext context, View<?> view) {
+        public void execute(ComponentLoader.Context context) {
             Preconditions.checkNotNullArgument(facet.getOwner());
 
             ViewData viewData = ViewControllerUtils.getViewData(facet.getOwner());
@@ -263,7 +268,7 @@ public class DataLoadCoordinatorFacetProvider implements FacetProvider<DataLoadC
         }
 
         @Override
-        public void execute(ComponentContext context, View<?> view) {
+        public void execute(ComponentLoader.Context context) {
             facet.configureAutomatically();
         }
     }

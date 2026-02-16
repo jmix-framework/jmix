@@ -127,7 +127,7 @@ public class MappingDefinition {
      *
      * @return List of {@link MappingDefinitionElement}
      */
-    @Deprecated
+    @Deprecated(since = "3.0", forRemoval = true)
     public List<StaticAttributesGroupConfiguration> getElements() {
         return (List<StaticAttributesGroupConfiguration>) attributesGroupConfigurationMap.get(StaticAttributesGroupConfiguration.class);
     }
@@ -145,7 +145,7 @@ public class MappingDefinition {
         private final List<StaticAttributesGroupConfiguration> staticGroups = new ArrayList<>();
         private final List<DynamicAttributesGroupConfiguration> dynamicGroups = new ArrayList<>();
 
-        @Deprecated
+        @Deprecated(since = "3.0", forRemoval = true)
         public MappingDefinitionBuilder addElement(StaticAttributesGroupConfiguration element) {
             staticGroups.add(element);
             return this;

@@ -25,7 +25,6 @@ import io.jmix.flowui.xml.layout.support.ComponentLoaderSupport;
 import io.jmix.flowui.xml.layout.support.LoaderSupport;
 import org.dom4j.Element;
 import org.springframework.context.ApplicationContext;
-import org.springframework.core.env.Environment;
 
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -37,7 +36,6 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
     protected Context context;
 
     protected ApplicationContext applicationContext;
-    protected Environment environment;
 
     protected UiComponents factory;
     protected LoaderResolver loaderResolver;
@@ -58,11 +56,6 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
     }
 
     @Override
-    public void setEnvironment(Environment environment) {
-        this.environment = environment;
-    }
-
-    @Override
     public Context getContext() {
         return context;
     }
@@ -70,13 +63,6 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
     @Override
     public void setContext(Context context) {
         this.context = context;
-    }
-
-    protected ComponentContext getComponentContext() {
-        checkState(context instanceof ComponentContext,
-                "'context' must implement " + ComponentContext.class.getName());
-
-        return (ComponentContext) context;
     }
 
     protected abstract T createComponent();
@@ -107,11 +93,6 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
     @Override
     public void setElement(Element element) {
         this.element = element;
-    }
-
-    @Override
-    public Element getElement(Element element) {
-        return element;
     }
 
     @Override

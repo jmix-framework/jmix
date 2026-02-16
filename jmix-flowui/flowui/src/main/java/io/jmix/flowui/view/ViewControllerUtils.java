@@ -191,8 +191,8 @@ public final class ViewControllerUtils {
     /**
      * Returns a specific type of {@link Facet} associated with the given {@link View}.
      *
-     * @param view       the {@link View} from which the facet is to be retrieved; must not be null
-     * @param facetClass the class type of the facet to retrieve; must not be null
+     * @param view       the {@link View} from which the facet is to be retrieved; must not be {@code null}
+     * @param facetClass the class type of the facet to retrieve; must not be {@code null}
      * @param <T>        the type of the facet
      * @return the facet of the specified type if found; otherwise, {@code null}
      */
@@ -333,24 +333,6 @@ public final class ViewControllerUtils {
     public static Registration addPostReadyListener(View<?> view,
                                                     ComponentEventListener<View.PostReadyEvent> listener) {
         return view.getEventBus().addListener(View.PostReadyEvent.class, listener);
-    }
-
-    /**
-     * @deprecated use {@link ViewControllerUtils#addInitEntityEventListener(StandardDetailView, ComponentEventListener)} instead
-     */
-    @Deprecated(since = "2.2", forRemoval = true)
-    public static <T> Registration addInitEntityEvent(StandardDetailView<T> view,
-                                                      ComponentEventListener<InitEntityEvent<T>> listener) {
-        return view.addInitEntityListener(listener);
-    }
-
-    /**
-     * @deprecated use {@link ViewControllerUtils#addBeforeShowEventListener(View, ComponentEventListener)} instead
-     */
-    @Deprecated(since = "2.2", forRemoval = true)
-    public static Registration addBeforeShowEvent(View<?> view,
-                                                  ComponentEventListener<View.BeforeShowEvent> listener) {
-        return view.addBeforeShowListener(listener);
     }
 
     /**

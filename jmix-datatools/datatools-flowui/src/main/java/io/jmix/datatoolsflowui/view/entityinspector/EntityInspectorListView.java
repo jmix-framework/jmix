@@ -29,10 +29,7 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.data.selection.SelectionEvent;
-import com.vaadin.flow.router.BeforeEnterEvent;
-import com.vaadin.flow.router.QueryParameters;
-import com.vaadin.flow.router.Route;
-import com.vaadin.flow.router.RouteParameters;
+import com.vaadin.flow.router.*;
 import com.vaadin.flow.shared.Registration;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 import io.jmix.core.*;
@@ -101,7 +98,8 @@ import static io.jmix.flowui.download.DownloadFormat.JSON;
 import static io.jmix.flowui.download.DownloadFormat.ZIP;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
-@Route(value = "datatl/entityinspector", layout = DefaultMainViewParent.class)
+@RouteAlias(value = "datatl/entityinspector", layout = DefaultMainViewParent.class)
+@Route(value = "datatl/entity-inspector", layout = DefaultMainViewParent.class)
 @ViewController("datatl_entityInspectorListView")
 @ViewDescriptor("entity-inspector-list-view.xml")
 @LookupComponent("entitiesDataGrid")
@@ -133,10 +131,10 @@ public class EntityInspectorListView extends StandardListView<Object> {
     @ViewComponent
     protected JmixButton selectButton;
 
+    @ViewComponent
+    protected MessageBundle messageBundle;
     @Autowired
     protected Messages messages;
-    @Autowired
-    protected MessageBundle messageBundle;
     @Autowired
     protected Metadata metadata;
     @Autowired
@@ -185,6 +183,8 @@ public class EntityInspectorListView extends StandardListView<Object> {
     protected DatatoolsUiProperties datatoolsProperties;
     @Autowired(required = false)
     protected InspectorExportHelper exportHelper;
+    @Autowired
+    protected EntityUpdateDispatcher entityUpdateDispatcher;
 
     protected DataGrid<Object> entitiesDataGrid;
     protected GenericFilter entitiesGenericFilter;
@@ -673,6 +673,8 @@ public class EntityInspectorListView extends StandardListView<Object> {
     protected RemoveAction createRemoveAction(DataGrid<Object> dataGrid) {
         RemoveAction removeAction = actions.create(RemoveAction.ID);
         removeAction.setTarget(dataGrid);
+        removeAction.setDelegate(collection ->
+                entityUpdateDispatcher.remove(dataManager, (Collection<?>) collection));
         return removeAction;
     }
 
@@ -1069,10 +1071,14 @@ public class EntityInspectorListView extends StandardListView<Object> {
             this.metadata = metadata;
         }
 
+        protected boolean isEnabledBySpecificUiPermission() {
+            return importExportAvailableBySpecificUiPermission;
+        }
+
         @Override
-        public boolean isEnabledByUiPermissions() {
-            return importExportAvailableBySpecificUiPermission
-                    && super.isEnabledByUiPermissions();
+        protected void setEnabledInternal(boolean enabled) {
+            super.setEnabledInternal(enabled
+                    && isEnabledBySpecificUiPermission());
         }
 
         @Override
@@ -1125,7 +1131,8 @@ public class EntityInspectorListView extends StandardListView<Object> {
             MetaClass metaClass = metadata.getClass(fetchPlan.getEntityClass());
             LoadContext<?> ctx = new LoadContext<>(metaClass)
                     .setIds(ids)
-                    .setFetchPlan(fetchPlan);
+                    .setFetchPlan(fetchPlan)
+                    .setHint("jmix.softDeletion", false);
 
             return dataManager.loadList(ctx);
         }

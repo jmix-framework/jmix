@@ -16,7 +16,6 @@
 
 package io.jmix.fullcalendarflowui.kit.component.event.dom;
 
-import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.DomEvent;
 import com.vaadin.flow.component.EventData;
 import elemental.json.JsonObject;
@@ -26,19 +25,11 @@ import io.jmix.fullcalendarflowui.kit.component.JmixFullCalendar;
  * INTERNAL.
  */
 @DomEvent("jmix-event-click")
-public class EventClickDomEvent extends ComponentEvent<JmixFullCalendar> {
-
-    protected final JsonObject context;
+public class EventClickDomEvent extends AbstractEventClickDomEvent {
 
     public EventClickDomEvent(JmixFullCalendar source,
                               boolean fromClient,
                               @EventData("event.detail.context") JsonObject context) {
-        super(source, fromClient);
-
-        this.context = context;
-    }
-
-    public JsonObject getContext() {
-        return context;
+        super(source, fromClient, context);
     }
 }

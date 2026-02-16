@@ -25,11 +25,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import test_support.addon1.TestAddon1Configuration;
+import test_support.addon1.entity.Foo;
 import test_support.app.TestAppConfiguration;
+import test_support.app.entity.ExtFoo;
 import test_support.app.entity.Owner;
 import test_support.app.entity.Pet;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -55,5 +58,23 @@ class EntitySetTest {
 
         assertEquals(2, entitySet.getAll(Pet.class).size());
         assertEquals(1, entitySet.getAll(Owner.class).size());
+    }
+
+    @Test
+    void testEntityExtension() {
+        Foo foo1 = metadata.create(Foo.class);
+        foo1.setName("f1");
+        Foo foo2 = metadata.create(Foo.class);
+        foo2.setName("f2");
+        assertInstanceOf(ExtFoo.class, foo2);
+
+        EntitySet entitySet = EntitySet.of(Arrays.asList(foo1, foo2));
+
+        Foo foo = entitySet.get(Foo.class, foo1.getId());
+        assertSame(foo1, foo);
+
+        Optional<Foo> optionalFoo = entitySet.optional(Foo.class, foo1.getId());
+        assertTrue(optionalFoo.isPresent());
+        assertSame(foo1, optionalFoo.get());
     }
 }

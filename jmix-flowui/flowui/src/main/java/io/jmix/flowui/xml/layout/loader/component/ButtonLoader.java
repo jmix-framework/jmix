@@ -82,7 +82,7 @@ public class ButtonLoader extends AbstractComponentLoader<JmixButton> {
         componentLoader().loadThemeNames(resultComponent, element);
         iconLoaderSupport().loadIcon(element, resultComponent::setIcon);
 
-        // set event if an 'empty' value to clear a value from the action
+        // set even if an 'empty' value to clear a value from the action
         loadResourceString(element, "title", context.getMessageGroup(), false)
                 .ifPresent(resultComponent::setTitle);
         loadResourceString(element, "text", context.getMessageGroup(), false)

@@ -22,9 +22,12 @@ import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.router.QueryParameters;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter.Operation;
+import io.jmix.flowui.facet.UrlQueryParametersFacet;
 import io.jmix.flowui.facet.UrlQueryParametersFacet.UrlQueryParametersChangeEvent;
+import io.jmix.flowui.fragment.Fragment;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -165,10 +168,21 @@ public class PropertyFilterUrlQueryParametersBinder extends AbstractUrlQueryPara
      * @throws IllegalStateException if neither parameter nor filter ID is available
      */
     public String getParameter() {
-        return Strings.isNullOrEmpty(parameter)
-                ? filter.getId().orElseThrow(() ->
+        String parameterName = Strings.isNullOrEmpty(parameter)
+                ? UiComponentUtils.getComponentId(filter).orElseThrow(() ->
                 new IllegalStateException("Component has neither id nor explicit url query param"))
                 : parameter;
+
+        Fragment<?> fragment = UiComponentUtils.findFragment(filter);
+        if (fragment != null) {
+            // add fragment ID as a prefix in case of the fragment owner
+            parameterName = fragment.getId()
+                    .orElseThrow(() -> new IllegalStateException("A %s without an id can't use the %s"
+                            .formatted(Fragment.class.getSimpleName(), UrlQueryParametersFacet.class)))
+                    + "_" + parameterName;
+        }
+
+        return parameterName;
     }
 
     /**

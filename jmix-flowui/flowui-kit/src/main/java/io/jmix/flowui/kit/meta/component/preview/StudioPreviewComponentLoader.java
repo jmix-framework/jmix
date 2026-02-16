@@ -40,7 +40,20 @@ import org.dom4j.Element;
  */
 public interface StudioPreviewComponentLoader {
 
+    String MAIN_VIEW_SCHEMA = "http://jmix.io/schema/flowui/main-view";
+    String MAIN_VIEW_TAB_MODE_SCHEMA = "http://jmix.io/schema/tabmod/main-view";
+
     String VIEW_SCHEMA = "http://jmix.io/schema/flowui/view";
+    String FRAGMENT_SCHEMA = "http://jmix.io/schema/flowui/fragment";
+
+    List<String> VIEW_OR_FRAGMENT_SCHEMAS = List.of(
+            VIEW_SCHEMA, FRAGMENT_SCHEMA,
+            MAIN_VIEW_SCHEMA, MAIN_VIEW_TAB_MODE_SCHEMA
+    );
+
+    default boolean hasViewOrFragmentSchema(Element element) {
+        return VIEW_OR_FRAGMENT_SCHEMAS.contains(element.getNamespaceURI());
+    }
 
     /**
      * Define the element that this loader can load.

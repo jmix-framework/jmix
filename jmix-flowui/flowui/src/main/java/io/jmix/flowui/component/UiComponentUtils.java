@@ -22,7 +22,9 @@ import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.page.PendingJavaScriptResult;
 import com.vaadin.flow.component.shared.HasPrefix;
 import com.vaadin.flow.component.shared.HasSuffix;
-import com.vaadin.flow.server.StreamResource;
+import com.vaadin.flow.server.Attributes;
+import com.vaadin.flow.server.streams.DownloadHandler;
+import com.vaadin.flow.server.streams.DownloadResponse;
 import io.jmix.core.FileRef;
 import io.jmix.core.FileStorageLocator;
 import io.jmix.core.common.util.Preconditions;
@@ -33,7 +35,6 @@ import io.jmix.flowui.kit.component.HasActions;
 import io.jmix.flowui.kit.component.HasSubParts;
 import io.jmix.flowui.sys.ValuePathHelper;
 import io.jmix.flowui.view.View;
-import io.jmix.flowui.view.ViewChildrenVisitResult;
 import io.jmix.flowui.view.ViewControllerUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,16 +82,16 @@ public final class UiComponentUtils {
     }
 
     /**
-     * Returns the component with given id.
+     * Returns the component with the given id.
      *
-     * @param view view to find component from
-     * @param id   component id
+     * @param owner view or fragment to find component from
+     * @param id    component id
      * @return the component with given id
-     * @throws IllegalStateException    if view content is not a container
-     * @throws IllegalArgumentException if a component with given id is not found
+     * @throws IllegalStateException    if the owner content is not a container
+     * @throws IllegalArgumentException if a component with the given id is not found
      */
-    public static Component getComponent(View<?> view, String id) {
-        return findComponent(view, id)
+    public static Component getComponent(Composite<?> owner, String id) {
+        return findComponent(owner, id)
                 .orElseThrow(() -> new IllegalArgumentException(
                         String.format("Component with id '%s' not found", id)));
     }
@@ -228,7 +229,7 @@ public final class UiComponentUtils {
             return ((ComponentContainer) container).getOwnComponents();
         } else if (container instanceof HasComponents) {
             return container.getChildren().sequential().collect(Collectors.toList());
-        } else if (container instanceof View<?>) {
+        } else if (container instanceof View<?> || container instanceof Fragment<?>) {
             return container.getChildren().collect(Collectors.toList());
         } else {
             throw new IllegalArgumentException(container.getClass().getSimpleName() +
@@ -541,6 +542,25 @@ public final class UiComponentUtils {
     }
 
     /**
+     * Gets the id of the root element of this component.
+     * <p>
+     * Gets the id of the root element of this component, depending on the attachment context:
+     * <ul>
+     *     <li>If the component is attached to a fragment, the value of {@code fragmentId}
+     *     {@link Attributes attribute} will be returned.</li>
+     *     <li>If the component is attached to a view, the component's original id attribute will be returned.</li>
+     * </ul>
+     *
+     * @return the id, or and empty optional if no id has been set
+     * @see Component#setId(String)
+     * @see FragmentUtils#setComponentId(Component, String)
+     */
+    public static Optional<String> getComponentId(Component component) {
+        return FragmentUtils.getComponentId(component)
+                .or(component::getId);
+    }
+
+    /**
      * Returns the currently active view shown in this UI.
      * <p>
      * Note, that the current route might not be initialized if this method
@@ -685,43 +705,73 @@ public final class UiComponentUtils {
     }
 
     /**
-     * Copies the value to the clipboard using an asynchronous JavaScript function call from the UI DOM element.
+     * Writes the value to the clipboard using an asynchronous JavaScript function call from the UI DOM element.
+     * <p>
+     * NOTE: It's not guaranteed that this method will write a value to the clipboard due to "user activation",
+     * which means that an error may occur when a code is not executed as a direct result of the end user clicking
+     * or tapping on an HTML element (e.g., {@code <button>}).
      *
      * @param valueToCopy the value to copy
+     * @see <a href="https://developer.mozilla.org/en-US/docs/Web/Security/Defenses/User_activation">User activation</a>
+     * @see <a href="https://developer.mozilla.org/en-US/docs/Web/API/Clipboard_API">Clipboard API</a>
      */
     public static PendingJavaScriptResult copyToClipboard(String valueToCopy) {
         return UI.getCurrent().getElement().executeJs(getCopyToClipboardScript(), valueToCopy);
     }
 
     /**
-     * Creates a resources from the passed object.
+     * Creates a resource based on the provided value and file storage locator. The resource can be of
+     * different types depending on the input value, such as a {@link DownloadHandler} or a string.
      *
-     * @param value              the object from which the resource will be created
-     * @param fileStorageLocator fileStorageLocator
-     * @param <V>                type of resource value
-     * @return created resource or {@code null} if the value is of an unsupported type
-     * @throws IllegalArgumentException if the URI resource can't be converted to URL
+     * <p>If the provided {@code value} is:
+     * <ul>
+     *   <li>{@code null}, a {@link DownloadHandler} with an empty {@link InputStream} is created.</li>
+     *   <li>An instance of {@code byte[]}, a {@link DownloadHandler} based on this byte array is created.</li>
+     *   <li>An instance of {@link FileRef}, a {@link DownloadHandler} based on the file reference is created,
+     *       which uses the provided {@link FileStorageLocator} to locate the file.</li>
+     *   <li>An instance of {@code String}, the string itself is returned as the resource.</li>
+     *   <li>An instance of {@code URI}, an attempt is made to convert it to a string representation of its URL.</li>
+     *   <li>Any other type, {@code null} is returned.</li>
+     * </ul>
+     *
+     * @param <V>                The type of the input value.
+     * @param value              The value based on which the resource is created
+     * @param fileStorageLocator The file storage locator used for resolving {@link FileRef} resources.
+     *                           Cannot be {@code null}.
+     * @return an object representing the created resource, which can be a {@link String}, {@link DownloadHandler}, or
+     * {@code null} if the input value does not match any of the expected types
+     * @throws IllegalArgumentException If the input {@code value} is of type {@code URI} and cannot
+     *                                  be converted to a {@code URL}
      */
     @Nullable
     public static <V> Object createResource(@Nullable V value, FileStorageLocator fileStorageLocator) {
         if (value == null) {
-            return new StreamResource(UUID.randomUUID().toString(), InputStream::nullInputStream);
+            return DownloadHandler.fromInputStream(downloadEvent ->
+                    new DownloadResponse(InputStream.nullInputStream(),
+                            UUID.randomUUID().toString(), null, 0));
         }
+
         if (value instanceof byte[] byteValue) {
-            return new StreamResource(UUID.randomUUID().toString(), () -> new ByteArrayInputStream(byteValue));
+            return DownloadHandler.fromInputStream(downloadEvent ->
+                    new DownloadResponse(new ByteArrayInputStream(byteValue),
+                            UUID.randomUUID().toString(), null, byteValue.length));
         }
+
         if (value instanceof FileRef fileRef) {
-            return new StreamResource(fileRef.getFileName(), () ->
-                    fileStorageLocator.getByName(fileRef.getStorageName()).openStream(fileRef));
+            return DownloadHandler.fromInputStream(downloadEvent ->
+                    new DownloadResponse(fileStorageLocator.getByName(fileRef.getStorageName()).openStream(fileRef),
+                            fileRef.getFileName(), fileRef.getContentType(), -1));
         }
+
         if (value instanceof String) {
             return value;
         }
+
         if (value instanceof URI uri) {
             try {
                 return uri.toURL().toString();
             } catch (MalformedURLException e) {
-                throw new IllegalArgumentException("Cannot convert provided URI `" + uri + "' to URL", e);
+                throw new IllegalArgumentException("Cannot convert provided URI '" + uri + "' to URL", e);
             }
         }
 
@@ -729,53 +779,45 @@ public final class UiComponentUtils {
     }
 
     /**
-     * Gets JavaScript function for copying a value to the clipboard. A temporary invisible
-     * {@code textarea} DOM element is used for copying.
+     * Generates a JavaScript script for copying text to the clipboard. The script first attempts to use
+     * the modern Clipboard API. If the Clipboard API is unavailable or fails, it falls back to using
+     * the {@code document.execCommand} method as a compatibility solution.
      *
-     * @return JavaScript copy function script
+     * @return a string containing the JavaScript code for clipboard manipulation
      */
     private static String getCopyToClipboardScript() {
         return """
-                   const textarea = document.createElement("textarea");
-                   textarea.value = $0;
+                const text = $0;
+                try {
+                    // Attempt to use the modern Clipboard API first
+                    // This might fail if the server round-trip takes too long (losing user activation)
+                    await navigator.clipboard.writeText(text);
+                } catch (error) {
+                    console.error('Copying of the text failed: ' + error);
                 
-                   textarea.style.position = "absolute";
-                   textarea.style.opacity = "0";
+                    // Fallback to document.execCommand if navigator.clipboard fails
+                    // (e.g. due to NotAllowedError or lack of Secure Context)
+                    const textArea = document.createElement("textarea");
+                    textArea.value = text;
                 
-                   document.body.appendChild(textarea);
-                   textarea.select();
-                   document.execCommand("copy");
-                   document.body.removeChild(textarea);
+                    // Ensure the textarea is part of the DOM but hidden from view
+                    textArea.style.position = "absolute";
+                    textArea.style.opacity = "0";
+                
+                    document.body.appendChild(textArea);
+                    textArea.focus();
+                    textArea.select();
+                
+                    try {
+                        const successful = document.execCommand('copy');
+                        if (!successful) {
+                            throw new Error('Copying of the text failed.');
+                        }
+                    } finally {
+                        document.body.removeChild(textArea);
+                    }
+                }
                 """;
-    }
-
-    /**
-     * @deprecated Use {@link #traverseComponents(Component, Consumer)} instead.
-     */
-    @Deprecated(since = "2.6", forRemoval = true)
-    public static void walkComponents(View<?> view, Consumer<ViewChildrenVisitResult> viewChildrenVisitResultConsumer) {
-        __walkComponentsInternal(view, UiComponentUtils.getComponents(view), viewChildrenVisitResultConsumer, new HashSet<Component>());
-    }
-
-    @Deprecated(since = "2.6", forRemoval = true)
-    private static void __walkComponentsInternal(View<?> view,
-                                                 Collection<Component> currentChildrenComponents,
-                                                 Consumer<ViewChildrenVisitResult> callback,
-                                                 Set<Component> treeComponents) {
-        for (Component component : currentChildrenComponents) {
-            if (treeComponents.contains(component)) {
-                break;
-            }
-            ViewChildrenVisitResult visitResult = new ViewChildrenVisitResult();
-            visitResult.setComponent(component);
-            visitResult.setView(view);
-            visitResult.setComponentId(component.getId().orElse(null));
-            callback.accept(visitResult);
-
-            treeComponents.add(component);
-
-            __walkComponentsInternal(view, UiComponentUtils.getComponents(view), callback, treeComponents);
-        }
     }
 
     /**

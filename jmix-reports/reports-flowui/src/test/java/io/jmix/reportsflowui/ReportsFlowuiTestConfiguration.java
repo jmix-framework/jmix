@@ -32,13 +32,8 @@ import io.jmix.data.impl.JmixTransactionManager;
 import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.eclipselink.EclipselinkConfiguration;
 import io.jmix.flowui.FlowuiConfiguration;
-import io.jmix.flowui.Views;
-import io.jmix.flowui.sys.UiAccessChecker;
 import io.jmix.flowui.testassist.vaadin.TestServletContext;
-import io.jmix.flowui.view.ViewRegistry;
-import io.jmix.flowui.view.builder.WindowBuilderProcessor;
 import io.jmix.reports.ReportsConfiguration;
-import io.jmix.reportsflowui.test_support.TestWindowBuilderProcessor;
 import io.jmix.reportsflowui.test_support.role.FullAccessRole;
 import io.jmix.reportsflowui.test_support.role.TestResourceRole2;
 import io.jmix.reportsflowui.test_support.role.TestResourceRole4;
@@ -50,7 +45,6 @@ import jakarta.servlet.ServletContext;
 import liquibase.integration.spring.SpringLiquibase;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.*;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -173,12 +167,5 @@ public class ReportsFlowuiTestConfiguration {
     @Bean
     public ServletContext servletContext() {
         return new TestServletContext();
-    }
-
-    @Bean
-    @Primary
-    public WindowBuilderProcessor windowBuilderProcessor(ApplicationContext applicationContext, Views views, ViewRegistry viewRegistry,
-                                                         UiAccessChecker uiAccessChecker) {
-        return new TestWindowBuilderProcessor(applicationContext, views, viewRegistry, uiAccessChecker);
     }
 }

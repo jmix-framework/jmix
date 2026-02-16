@@ -68,6 +68,8 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     protected Registration datesSetDomRegistration;
     protected Registration moreLinkClickDomRegistration;
     protected Registration eventClickDomRegistration;
+    protected Registration eventSingleClickDomRegistration;
+    protected Registration eventDoubleClickDomRegistration;
     protected Registration eventMouseEnterDomRegistration;
     protected Registration eventMouseLeaveDomRegistration;
     protected Registration eventDropDomRegistration;
@@ -268,7 +270,6 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     public void setValidRangeEnd(@Nullable LocalDate end) {
         options.getValidRange().setEnd(end);
     }
-
 
     /**
      * Sets the date range where the user can navigate and where events can be displayed.
@@ -2052,6 +2053,30 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
         options.getProgressiveEventRendering().setValue(progressiveEventRendering);
     }
 
+    /**
+     * @return the threshold for event single-click
+     */
+    public int getEventSingleClickThreshold() {
+        return getElement().getProperty("eventSingleClickThreshold", 250);
+    }
+
+    /**
+     * Sets the threshold for event single-click. The threshold defines a delay, in milliseconds,
+     * after which the event is triggered.
+     * <p>
+     * The default value is {@code 250}.
+     *
+     * @param threshold the time interval in milliseconds. Must be a non-negative integer.
+     * @throws IllegalArgumentException if the threshold is negative
+     */
+    public void setEventSingleClickThreshold(int threshold) {
+        if (threshold < 0) {
+            throw new IllegalArgumentException("Threshold cannot be negative");
+        }
+
+        getElement().setProperty("eventSingleClickThreshold", threshold);
+    }
+
     protected JsonFactory createJsonFactory() {
         return new JreJsonFactory();
     }
@@ -2150,6 +2175,32 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
         if (eventClickDomRegistration != null) {
             eventClickDomRegistration.remove();
             eventClickDomRegistration = null;
+        }
+    }
+
+    protected void attachEventSingleClickDomEventListener() {
+        if (eventSingleClickDomRegistration == null) {
+            eventSingleClickDomRegistration = addListener(EventSingleClickDomEvent.class, this::onEventSingleClick);
+        }
+    }
+
+    protected void detachEventSingleClickDomEventListener() {
+        if (eventSingleClickDomRegistration != null) {
+            eventSingleClickDomRegistration.remove();
+            eventSingleClickDomRegistration = null;
+        }
+    }
+
+    protected void attachEventDoubleClickDomEventListener() {
+        if (eventDoubleClickDomRegistration == null) {
+            eventDoubleClickDomRegistration = addListener(EventDoubleClickDomEvent.class, this::onEventDoubleClick);
+        }
+    }
+
+    protected void detachEventDoubleClickDomEventListener() {
+        if (eventDoubleClickDomRegistration != null) {
+            eventDoubleClickDomRegistration.remove();
+            eventDoubleClickDomRegistration = null;
         }
     }
 
@@ -2259,6 +2310,14 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
     }
 
     protected void onEventClick(EventClickDomEvent event) {
+        // Stub, used in inheritors
+    }
+
+    protected void onEventSingleClick(EventSingleClickDomEvent event) {
+        // Stub, used in inheritors
+    }
+
+    protected void onEventDoubleClick(EventDoubleClickDomEvent event) {
         // Stub, used in inheritors
     }
 

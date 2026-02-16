@@ -35,6 +35,7 @@ import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.data.renderer.TextRenderer;
 import com.vaadin.flow.data.selection.SelectionEvent;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteAlias;
 import io.jmix.audit.EntityLog;
 import io.jmix.audit.entity.EntityLogAttr;
 import io.jmix.audit.entity.EntityLogItem;
@@ -95,7 +96,8 @@ import java.util.stream.Stream;
 import static io.jmix.flowui.download.DownloadFormat.JSON;
 import static io.jmix.flowui.download.DownloadFormat.ZIP;
 
-@Route(value = "audit/entitylog", layout = DefaultMainViewParent.class)
+@RouteAlias(value = "audit/entitylog", layout = DefaultMainViewParent.class)
+@Route(value = "audit/entity-log", layout = DefaultMainViewParent.class)
 @ViewController("entityLog.view")
 @ViewDescriptor("entity-log-view.xml")
 @LookupComponent("entityLogTable")
@@ -493,7 +495,7 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
                 enabledAttr = item.getAttributes();
             for (MetaProperty property : metaProperties) {
                 if (allowLogProperty(property)) {
-                    if (metadataTools.isEmbedded(property)) {
+                    if (property.getType() == MetaProperty.Type.EMBEDDED) {
                         MetaClass embeddedMetaClass = property.getRange().asClass();
                         for (MetaProperty embeddedProperty : embeddedMetaClass.getProperties()) {
                             if (allowLogProperty(embeddedProperty)) {
@@ -908,7 +910,7 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
     }
 
     @Subscribe("importField")
-    public void onImportFieldFileUploadSucceed(FileUploadSucceededEvent<FileUploadField> event) {
+    public void onImportFieldFileUploadSucceed(FileUploadSucceededEvent<FileUploadField, byte[]> event) {
         try {
             byte[] bytes = importField.getValue();
             Assert.notNull(bytes, "Uploaded file does not contains data");

@@ -286,7 +286,9 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
 
     protected void addAttributesToLocalFetchPlan(MetaClass metaClass, FetchPlanBuilder fetchPlanBuilder) {
         for (MetaProperty property : metaClass.getProperties()) {
-            if (!property.getRange().isClass() && isPersistent(metaClass, property)) {
+            if (isPersistent(metaClass, property)
+                    && !property.getRange().isClass()
+                    && !property.getRange().getCardinality().isMany()) {
                 fetchPlanBuilder.add(property.getName());
             }
         }
@@ -311,9 +313,9 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
                                                 Set<FetchPlanLoader.FetchPlanInfo> visited) {
         for (MetaProperty metaProperty : metaClass.getProperties()) {
             if (isPersistent(metaClass, metaProperty)) {
-                if (!metaProperty.getRange().isClass()) {
+                if (!metaProperty.getRange().isClass() && !metaProperty.getRange().getCardinality().isMany()) {
                     fetchPlanBuilder.add(metaProperty.getName());
-                } else if (metadataTools.isEmbedded(metaProperty)) {
+                } else if (metaProperty.getType() == MetaProperty.Type.EMBEDDED) {
                     addClassAttributeWithFetchPlan(metaProperty, FetchPlan.BASE, fetchPlanBuilder, info, visited);
                 }
             }

@@ -21,11 +21,10 @@ import com.vaadin.flow.component.Component;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.HasDataComponents;
 import io.jmix.flowui.exception.GuiDevelopmentException;
-import io.jmix.flowui.fragment.Fragment;
-import io.jmix.flowui.fragment.FragmentActions;
-import io.jmix.flowui.fragment.FragmentData;
-import io.jmix.flowui.fragment.FragmentUtils;
+import io.jmix.flowui.facet.Facet;
+import io.jmix.flowui.fragment.*;
 import io.jmix.flowui.kit.action.Action;
+import io.jmix.flowui.xml.facet.FacetLoader;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.LoaderResolver;
 import io.jmix.flowui.xml.layout.support.ActionLoaderSupport;
@@ -36,7 +35,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
-import org.springframework.core.env.Environment;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -50,11 +48,11 @@ public class FragmentLoader {
     public static final String CONTENT_ELEMENT_NAME = "content";
 
     protected ApplicationContext applicationContext;
-    protected Environment environment;
     protected LoaderResolver loaderResolver;
     protected LoaderSupport loaderSupport;
     protected ActionLoaderSupport actionLoaderSupport;
     protected DataComponentsLoaderSupport dataComponentsLoaderSupport;
+    protected FacetLoader facetLoader;
 
     protected final FragmentLoaderContext context;
     protected final Element element;
@@ -67,11 +65,6 @@ public class FragmentLoader {
     @Autowired
     public void setApplicationContext(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
-    }
-
-    @Autowired
-    public void setEnvironment(Environment environment) {
-        this.environment = environment;
     }
 
     @Autowired
@@ -89,6 +82,7 @@ public class FragmentLoader {
 
         loadData(element);
         loadActions(element);
+        loadFacets(element);
 
         ComponentLoader<?> componentLoader = getLoader(contentElement);
         componentLoader.initComponent();
@@ -147,6 +141,21 @@ public class FragmentLoader {
                         getActionLoaderSupport().loadDeclarativeAction(element));
     }
 
+    protected void loadFacets(Element element) {
+        Element facetsElement = element.element("facets");
+        if (facetsElement == null) {
+            return;
+        }
+
+        FragmentFacets fragmentFacets = FragmentUtils.getFragmentFacets(context.getFragment());
+        FacetLoader loader = getFacetLoader();
+
+        for (Element facetElement : facetsElement.elements()) {
+            Facet facet = loader.load(facetElement, context);
+            fragmentFacets.addFacet(facet);
+        }
+    }
+
     @SuppressWarnings("rawtypes")
     protected ComponentLoader<?> getLoader(Element element) {
         Class<? extends ComponentLoader> loaderClass = loaderResolver.getLoader(element);
@@ -176,7 +185,6 @@ public class FragmentLoader {
         }
 
         loader.setApplicationContext(applicationContext);
-        loader.setEnvironment(environment);
 
         loader.setContext(context);
         loader.setLoaderResolver(loaderResolver);
@@ -202,6 +210,14 @@ public class FragmentLoader {
         loader.setElement(element);
 
         return loader;
+    }
+
+    protected FacetLoader getFacetLoader() {
+        if (facetLoader == null) {
+            facetLoader = applicationContext.getBean(FacetLoader.class);
+        }
+
+        return facetLoader;
     }
 
     protected ActionLoaderSupport getActionLoaderSupport() {

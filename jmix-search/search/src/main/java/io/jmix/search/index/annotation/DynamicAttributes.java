@@ -25,12 +25,12 @@ import static io.jmix.search.index.annotation.ReferenceAttributesIndexingMode.*;
 /**
  * Annotation for marking methods in index definition interfaces that define dynamic attributes to be indexed.
  * This annotation is used to configure various indexing behavior for dynamic attributes.
- *
- * <h3>Container Annotation:</h3>
+ * <p>
+ * <b>Container Annotation:</b>
  * `DynamicAttributes.Container` is a repeatable container that allows multiple `DynamicAttributes` annotations
  * to be used on a single method.
- *
- * <h3>Usage:</h3>
+ * <p>
+ * <b>Usage:</b>
  * This annotation, along with its attributes, provides flexibility for indexing dynamic attributes while ensuring
  * exclusion and indexing modes can be explicitly defined when needed.
  *

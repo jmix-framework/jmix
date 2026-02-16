@@ -19,7 +19,7 @@ package io.jmix.flowui.kit.meta.action;
 import io.jmix.flowui.kit.meta.*;
 
 @StudioUiKit(requiredDependencies = "io.jmix.datatools:jmix-datatools-flowui-starter")
-public interface StudioDataToolsActions {
+interface StudioDataToolsActions {
 
     @StudioAction(
             type = "datatl_showEntityInfo",

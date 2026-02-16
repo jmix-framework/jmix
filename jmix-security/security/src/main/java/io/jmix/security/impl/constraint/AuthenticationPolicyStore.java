@@ -33,9 +33,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -75,8 +73,8 @@ public class AuthenticationPolicyStore implements PolicyStore {
 
         return extractRowLevelPoliciesFromAuthentication(rowLevelRole ->
                 suitableMetaClassNames.stream()
-                                .flatMap(metaClassName ->
-                                        rowLevelRole.getAllRowLevelPoliciesIndex().getRowLevelPoliciesByEntityName(metaClassName).stream())
+                        .flatMap(metaClassName ->
+                                rowLevelRole.getAllRowLevelPoliciesIndex().getRowLevelPoliciesByEntityName(metaClassName).stream())
         );
     }
 
@@ -96,9 +94,9 @@ public class AuthenticationPolicyStore implements PolicyStore {
     @Override
     public Stream<ResourcePolicy> getEntityResourcePoliciesByWildcard(String wildcard) {
         return extractResourcePoliciesFromAuthenticationByScope(resourceRole ->
-            getPoliciesStreamByTypeAndResources(resourceRole,
-                    ResourcePolicyType.ENTITY,
-                    Set.of(wildcard))
+                getPoliciesStreamByTypeAndResources(resourceRole,
+                        ResourcePolicyType.ENTITY,
+                        Set.of(wildcard))
         );
     }
 
@@ -131,16 +129,8 @@ public class AuthenticationPolicyStore implements PolicyStore {
                         Set.of(resourceName)));
     }
 
-    @Override
-    public Stream<ResourcePolicy> getGraphQLResourcePolicies(String resourceName) {
-        return extractResourcePoliciesFromAuthenticationByScope(resourceRole ->
-                getPoliciesStreamByTypeAndResources(resourceRole,
-                        ResourcePolicyType.GRAPHQL,
-                        Set.of(resourceName)));
-    }
-
     protected Stream<ResourcePolicy> extractResourcePoliciesFromAuthenticationByScope(Function<ResourceRole, Stream<ResourcePolicy>> extractor) {
-        Stream<ResourcePolicy> stream = Stream.empty();
+        List<Stream<ResourcePolicy>> streams = new ArrayList<>();
 
         Authentication authentication = currentAuthentication.getAuthentication();
         String scope = getScope(authentication);
@@ -158,18 +148,18 @@ public class AuthenticationPolicyStore implements PolicyStore {
                     if (isAppliedForScope(resourceRole, scope)) {
                         Stream<ResourcePolicy> extractedStream = extractor.apply(resourceRole);
                         if (extractedStream != null) {
-                            stream = Stream.concat(stream, extractedStream);
+                            streams.add(extractedStream);
                         }
                     }
                 }
             }
         }
 
-        return stream;
+        return streams.stream().flatMap(Function.identity());
     }
 
     protected Stream<RowLevelPolicy> extractRowLevelPoliciesFromAuthentication(Function<RowLevelRole, Stream<RowLevelPolicy>> extractor) {
-        Stream<RowLevelPolicy> stream = Stream.empty();
+        List<Stream<RowLevelPolicy>> streams = new ArrayList<>();
 
         Authentication authentication = currentAuthentication.getAuthentication();
         for (GrantedAuthority grantedAuthority : authentication.getAuthorities()) {
@@ -185,13 +175,13 @@ public class AuthenticationPolicyStore implements PolicyStore {
                     }
                     Stream<RowLevelPolicy> extractedStream = extractor.apply(rowLevelRole);
                     if (extractedStream != null) {
-                        stream = Stream.concat(stream, extractedStream);
+                        streams.add(extractedStream);
                     }
                 }
             }
         }
 
-        return stream;
+        return streams.stream().flatMap(Function.identity());
     }
 
     @Nullable

@@ -180,8 +180,8 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
         }
 
         return ImmutableMap.of(
-                getConfigurationParam(), configurationParam,
-                getConditionParam(), conditionParams
+                getConfigurationParamInternal(), configurationParam,
+                getConditionParamInternal(), conditionParams
         );
     }
 
@@ -216,23 +216,33 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
     public void updateState(QueryParameters queryParameters) {
         Map<String, List<String>> parameters = queryParameters.getParameters();
 
-        if (parameters.containsKey(getConfigurationParam())) {
-            List<String> configurationParam = parameters.get(getConfigurationParam());
+        if (parameters.containsKey(getConfigurationParam()) || parameters.containsKey(getConfigurationParamInternal())) {
+            List<String> configurationParam = parameters.containsKey(getConfigurationParamInternal())
+                    ? parameters.get(getConfigurationParamInternal())
+                    // the fallback option should be removed in future versions
+                    : parameters.get(getConfigurationParam());
+
             String configurationId = deserializeConfigurationId(configurationParam.get(0));
             Optional<Configuration> currentConfiguration = filter.getConfigurations().stream()
                     .filter(configuration -> configurationId.equals(configuration.getId()))
                     .findAny();
 
             currentConfiguration.ifPresent(configuration -> {
-                if (parameters.containsKey(getConditionParam())) {
-                    List<String> conditionParams = parameters.get(getConditionParam());
+                if (parameters.containsKey(getConditionParam()) || parameters.containsKey(getConditionParamInternal())) {
+                    List<String> conditionParams = parameters.containsKey(getConditionParamInternal())
+                            ? parameters.get(getConditionParamInternal())
+                            // the fallback option should be removed in future versions
+                            : parameters.get(getConditionParam());
                     updateConfigurationConditions(configuration, conditionParams);
                 }
 
                 FilterUtils.setCurrentConfiguration(filter, configuration, true);
             });
-        } else if (parameters.containsKey(getConditionParam())) {
-            List<String> conditionParams = parameters.get(getConditionParam());
+        } else if (parameters.containsKey(getConditionParam()) || parameters.containsKey(getConditionParamInternal())) {
+            List<String> conditionParams = parameters.containsKey(getConditionParamInternal())
+                    ? parameters.get(getConditionParamInternal())
+                    // the fallback option should be removed in future versions
+                    : parameters.get(getConditionParam());
 
             // For cases where there is a default design-time configuration.
             // The design-time configuration can't be modified, so an empty configuration is entered
@@ -445,9 +455,15 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
      * is null or empty, a default name is returned.
      *
      * @return the configuration parameter name if set, otherwise the default configuration parameter name
+     * @deprecated use {@link #getConfigurationParamInternal()} ()} instead
      */
+    @Deprecated(since = "3.0", forRemoval = true)
     public String getConfigurationParam() {
         return Strings.isNullOrEmpty(configurationParam) ? DEFAULT_CONFIGURATION_PARAM : configurationParam;
+    }
+
+    protected String getConfigurationParamInternal() {
+        return getOwnerId("genericFilter") + "_" + getConfigurationParam();
     }
 
     /**
@@ -464,9 +480,15 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
      * is null or empty, a default name is returned.
      *
      * @return the condition parameter name if set, otherwise the default condition parameter name
+     * @deprecated use {@link #getConditionParamInternal()} instead
      */
+    @Deprecated(since = "3.0", forRemoval = true)
     public String getConditionParam() {
         return Strings.isNullOrEmpty(conditionParam) ? DEFAULT_CONDITION_PARAM : conditionParam;
+    }
+
+    protected String getConditionParamInternal() {
+        return getOwnerId("genericFilter") + "_" + getConditionParam();
     }
 
     /**

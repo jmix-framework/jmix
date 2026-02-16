@@ -46,7 +46,6 @@ import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.view.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.lang.Nullable;
 
 import java.util.*;
@@ -607,16 +606,6 @@ public class InputDialog extends StandardView {
             } else {
                 return DialogAction.Type.CANCEL;
             }
-        }
-
-        /**
-         * Checks that the dialog was closed with the given {@code outcome}.
-         *
-         * @deprecated use {@link #closedWith(DialogOutcome)} instead
-         */
-        @Deprecated(since = "2.7.0", forRemoval = true)
-        public boolean closedWith(StandardOutcome outcome) {
-            return outcome.getCloseAction().equals(closeAction);
         }
 
         /**

@@ -3,6 +3,7 @@ package io.jmix.reportsflowui.view.region;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteAlias;
 import io.jmix.core.Metadata;
 import io.jmix.flowui.Actions;
 import io.jmix.flowui.Notifications;
@@ -30,7 +31,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
 
-@Route(value = "reports/region/:id", layout = DefaultMainViewParent.class)
+@RouteAlias(value = "reports/region/:id", layout = DefaultMainViewParent.class)
+@Route(value = "report/region/:id", layout = DefaultMainViewParent.class)
 @ViewController("report_WizardReportRegion.detail")
 @ViewDescriptor("report-region-wizard-detail-view.xml")
 @EditedEntityContainer("reportRegionDc")
@@ -53,10 +55,10 @@ public class ReportRegionWizardDetailView extends StandardDetailView<ReportRegio
     @ViewComponent
     private DataContext dataContext;
 
+    @ViewComponent
+    protected MessageBundle messageBundle;
     @Autowired
     protected UiComponents uiComponents;
-    @Autowired
-    protected MessageBundle messageBundle;
     @Autowired
     protected Notifications notifications;
     @Autowired

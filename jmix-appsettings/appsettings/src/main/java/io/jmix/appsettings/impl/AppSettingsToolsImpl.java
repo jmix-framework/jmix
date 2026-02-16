@@ -46,11 +46,15 @@ public class AppSettingsToolsImpl implements AppSettingsTools {
     @Autowired
     protected AppSettingsProperties appSettingsProperties;
 
+    @Autowired
+    protected FetchPlans fetchPlans;
+
     @Override
     public <T extends AppSettingsEntity> T loadAppSettingsEntityFromDataStore(Class<T> clazz) {
         //only one record for T can exist at the same time in database with default identifier
         return getDataManagerForAppSettingsEntity().load(clazz)
                 .id(Id.of(1, clazz))
+                .fetchPlan(createFetchPlan(clazz))
                 .optional().orElse(metadata.create(clazz, 1));
     }
 
@@ -112,6 +116,18 @@ public class AppSettingsToolsImpl implements AppSettingsTools {
 
     protected UnconstrainedDataManager getDataManagerForAppSettingsEntity() {
         return appSettingsProperties.isCheckPermissionsForAppSettingsEntity() ? dataManager : unconstrainedDataManager;
+    }
+
+    protected FetchPlan createFetchPlan(Class<?> clazz) {
+        FetchPlanBuilder builder = fetchPlans.builder(clazz).addFetchPlan(FetchPlan.LOCAL);
+        for (MetaProperty property : metadata.getClass(clazz).getProperties()) {
+            if (property.getRange().isClass()) {
+                builder.add(property.getName(), FetchPlan.BASE);
+            } else if (metadataTools.isElementCollection(property)) {
+                builder.add(property.getName());
+            }
+        }
+        return builder.build();
     }
 
     @Override

@@ -162,9 +162,16 @@ public class SimplePagination extends JmixSimplePagination implements Pagination
     }
 
     /**
-     * Sets default value for the select component.
+     * Sets default value for the select component. This value is applied when new loader is set or new items per page
+     * are provided:
+     * <ul>
+     *     <li>{@link #setPaginationLoader(PaginationDataLoader)}</li>
+     *     <li>{@link #setItemsPerPageItems(List)}</li>
+     * </ul>
+     * The {@code null} value makes component to use entity page size as default value.
      *
      * @param defaultValue value to set
+     * @see UiProperties#getEntityPageSize(String)
      */
     public void setItemsPerPageDefaultValue(@Nullable Integer defaultValue) {
         itemsPerPage.setItemsPerPageDefaultValue(defaultValue);
@@ -308,6 +315,10 @@ public class SimplePagination extends JmixSimplePagination implements Pagination
     protected void onRefreshItems(CollectionChangeType changeType) {
         samePage = CollectionChangeType.REFRESH != changeType;
         onCollectionChanged();
+
+        if (!refreshing) {
+            fireAfterRefreshEvent();
+        }
     }
 
     protected void removeListeners() {
@@ -422,7 +433,13 @@ public class SimplePagination extends JmixSimplePagination implements Pagination
 
         loader.setFirstResult(0);
         loader.setMaxResults(maxResult);
-        loader.refresh();
+
+        refreshing = true;
+        try {
+            loader.refresh();
+        } finally {
+            refreshing = false;
+        }
 
         fireAfterRefreshEvent();
     }

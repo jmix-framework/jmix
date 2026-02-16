@@ -24,9 +24,10 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.dynattr.*;
 import io.jmix.flowui.accesscontext.UiEntityAttributeContext;
 import io.jmix.flowui.accesscontext.UiEntityContext;
+import io.jmix.flowui.component.UiComponentUtils;
+import io.jmix.flowui.fragment.Fragment;
+import io.jmix.flowui.fragment.FragmentUtils;
 import io.jmix.flowui.model.*;
-import io.jmix.flowui.view.View;
-import org.springframework.util.Assert;
 
 import java.util.Comparator;
 import java.util.List;
@@ -53,30 +54,41 @@ public abstract class BaseEmbeddingStrategy implements EmbeddingStrategy {
 
     protected abstract void setLoadDynamicAttributes(Component component);
 
-    protected abstract void embed(Component component, View<?> owner, List<AttributeDefinition> attributes);
+    protected abstract void embed(Component component, List<AttributeDefinition> attributes);
 
     @Override
-    public void embed(Component component, View<?> owner) {
-        if (getWindowId(owner) != null) {
+    public void embed(Component component, Component owner) {
+        if (getOwnerId(owner) != null) {
 
             MetaClass entityMetaClass = getEntityMetaClass(component);
             if (metadataTools.isJpaEntity(entityMetaClass)) {
 
                 List<AttributeDefinition> attributes = findVisibleAttributes(
                         entityMetaClass,
-                        getWindowId(owner), component.getId().orElse(""));
+                        getOwnerId(owner), UiComponentUtils.getComponentId(component).orElse(""));
 
                 if (!attributes.isEmpty()) {
                     setLoadDynamicAttributes(component);
                 }
 
-                embed(component, owner, attributes);
+                embed(component, attributes);
             }
         }
     }
 
-    protected String getWindowId(View<?> view) {
-        return view.getId().orElseThrow();
+    protected String getOwnerId(Component owner) {
+        String ownerId = owner.getId()
+                .orElseThrow(() -> new IllegalStateException(
+                        "Cannot embed dynamic attributes into a component without an ID"));
+
+        if (owner instanceof Fragment<?> fragment) {
+            ownerId = FragmentUtils.getHostView(fragment)
+                    .getId()
+                    .orElseThrow(() -> new IllegalStateException(
+                            "Cannot embed dynamic attributes into a component with a host view without an ID"))
+                    + "." + ownerId;
+        }
+        return ownerId;
     }
 
     protected void setLoadDynamicAttributes(InstanceContainer<?> container) {

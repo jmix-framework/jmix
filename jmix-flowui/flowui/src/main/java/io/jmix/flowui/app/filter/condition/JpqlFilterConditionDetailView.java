@@ -80,12 +80,12 @@ public class JpqlFilterConditionDetailView extends FilterConditionDetailView<Jpq
     @ViewComponent
     protected JmixCheckbox hasInExpressionField;
 
+    @ViewComponent
+    protected MessageBundle messageBundle;
     @Autowired
     protected UiComponents uiComponents;
     @Autowired
     protected Messages messages;
-    @Autowired
-    protected MessageBundle messageBundle;
     @Autowired
     protected Metadata metadata;
     @Autowired

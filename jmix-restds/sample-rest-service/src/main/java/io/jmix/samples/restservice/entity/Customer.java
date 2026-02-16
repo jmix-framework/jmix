@@ -16,6 +16,7 @@ import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -78,6 +79,19 @@ public class Customer {
 
     @Column(name = "DOCUMENT", length = 1024)
     private FileRef document;
+
+    @ElementCollection
+    @CollectionTable(name = "CUSTOMER_PHONE", joinColumns = @JoinColumn(name = "CUSTOMER_ID"))
+    @Column(name = "PHONE")
+    private List<String> phones;
+
+    public List<String> getPhones() {
+        return phones;
+    }
+
+    public void setPhones(List<String> phones) {
+        this.phones = phones;
+    }
 
     public FileRef getDocument() {
         return document;

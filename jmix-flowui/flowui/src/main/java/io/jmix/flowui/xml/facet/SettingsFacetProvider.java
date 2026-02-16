@@ -19,12 +19,13 @@ package io.jmix.flowui.xml.facet;
 import com.google.common.base.Strings;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.facet.SettingsFacet;
-import io.jmix.flowui.facet.impl.SettingsFacetImpl;
+import io.jmix.flowui.facet.impl.ViewSettingsFacetImpl;
+import io.jmix.flowui.facet.settings.ComponentSettingsManager;
 import io.jmix.flowui.facet.settings.SettingsFacetUrlQueryParametersHelper;
-import io.jmix.flowui.facet.settings.ViewSettingsComponentManager;
 import io.jmix.flowui.settings.UserSettingsCache;
 import io.jmix.flowui.settings.UserSettingsService;
 import io.jmix.flowui.sys.autowire.ReflectionCacheManager;
+import io.jmix.flowui.sys.registration.FacetRegistrationBuilder;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.support.LoaderSupport;
 import org.apache.commons.collections4.CollectionUtils;
@@ -37,13 +38,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * @deprecated use {@link FacetRegistrationBuilder} instead
+ */
+@Deprecated(since = "3.0", forRemoval = true)
 @org.springframework.stereotype.Component("flowui_SettingsFacetProvider")
 public class SettingsFacetProvider implements FacetProvider<SettingsFacet> {
 
     protected LoaderSupport loaderSupport;
     protected SettingsFacetUrlQueryParametersHelper settingsHelper;
     protected ReflectionCacheManager reflectionCacheManager;
-    protected ViewSettingsComponentManager settingsManager;
+    protected ComponentSettingsManager settingsManager;
     protected UserSettingsCache userSettingsCache;
     @Nullable
     private final UserSettingsService userSettingsService;
@@ -52,7 +57,7 @@ public class SettingsFacetProvider implements FacetProvider<SettingsFacet> {
                                  SettingsFacetUrlQueryParametersHelper settingsHelper,
                                  ReflectionCacheManager reflectionCacheManager,
                                  UserSettingsCache userSettingsCache,
-                                 ViewSettingsComponentManager settingsManager,
+                                 ComponentSettingsManager settingsManager,
                                  @Nullable UserSettingsService userSettingsService) {
         this.loaderSupport = loaderSupport;
         this.settingsHelper = settingsHelper;
@@ -69,7 +74,7 @@ public class SettingsFacetProvider implements FacetProvider<SettingsFacet> {
 
     @Override
     public SettingsFacet create() {
-        return new SettingsFacetImpl(settingsHelper, reflectionCacheManager, userSettingsCache, settingsManager, userSettingsService);
+        return new ViewSettingsFacetImpl(settingsHelper, reflectionCacheManager, userSettingsCache, settingsManager, userSettingsService);
     }
 
     @Override

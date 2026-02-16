@@ -170,6 +170,15 @@ class FluentLoaderTest extends DataSpec {
         then:
 
         loadContext.fetchPlan == baseFP
+
+        when:
+
+        loader = dataManager.load(Customer).all().distinct()
+        loadContext = FluentLoaderTestAccess.createLoadContext(loader)
+
+        then:
+
+        loadContext.query.isDistinct()
     }
 
 
@@ -294,6 +303,15 @@ class FluentLoaderTest extends DataSpec {
 
         loadContext.query.condition == propertyCondition
 
+        when:
+
+        loader = dataManager.load(Customer).query('select c from sales_Customer c')
+                .distinct()
+        loadContext = FluentLoaderTestAccess.createLoadContext(loader)
+
+        then:
+
+        loadContext.query.isDistinct()
     }
 
     def "test LoadContext when loading by condition"() {
@@ -345,6 +363,16 @@ class FluentLoaderTest extends DataSpec {
 
         loadContext.query.firstResult == 10
         loadContext.query.maxResults == 100
+
+        when:
+
+        loader = dataManager.load(Customer).condition(propertyCondition)
+                .distinct()
+        loadContext = FluentLoaderTestAccess.createLoadContext(loader)
+
+        then:
+
+        loadContext.query.isDistinct()
     }
 
     def "test LoadContext when loading by collection of ids"() {

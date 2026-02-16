@@ -78,6 +78,10 @@ public class MetadataControllerFT extends AbstractRestControllerFT {
 
             assertEquals("io.jmix.samples.rest.entity.driver.DriverStatus", ctx.read("$.properties[?(@.name == 'status')].type", List.class).get(0));
             assertEquals("ENUM", ctx.read("$.properties[?(@.name == 'status')].attributeType", List.class).get(0));
+
+            assertEquals("DATATYPE", ctx.read("$.properties[?(@.name == 'phones')].attributeType", List.class).get(0));
+            assertEquals("string", ctx.read("$.properties[?(@.name == 'phones')].type", List.class).get(0));
+            assertEquals("ONE_TO_MANY", ctx.read("$.properties[?(@.name == 'phones')].cardinality", List.class).get(0));
         }
     }
 
@@ -89,31 +93,6 @@ public class MetadataControllerFT extends AbstractRestControllerFT {
             assertTrue(ctx.read("$.length()", Integer.class) > 1);
             assertEquals(1, ctx.read("$[?(@.entityName == 'sec$User')]", List.class).size());
             assertEquals(1, ctx.read("$[?(@.entityName == 'sec$User')].properties[?(@.name == 'login')]", List.class).size());
-        }
-    }
-
-    @Test
-    public void getView() throws Exception {
-        String url = baseUrl + "/metadata/entities/ref_Car/views/carEdit";
-        try (CloseableHttpResponse response = sendGet(url, oauthToken, null)) {
-            ReadContext ctx = parseResponse(response);
-            assertEquals("ref_Car", ctx.read("$.entity"));
-            Map<String, Object> viewProperties = (Map<String, Object>) ctx.read("$.properties[?(@.name == 'model')].fetchPlan", List.class).get(0);
-            assertEquals("_local", viewProperties.get("name"));
-
-            Map<String, Object> repairsViewProperties = (Map<String, Object>) ctx.read("$.properties[?(@.name == 'repairs')].fetchPlan", List.class).get(0);
-            assertEquals("repairEdit", repairsViewProperties.get("name"));
-            assertTrue(((Collection) repairsViewProperties.get("properties")).size() > 0);
-        }
-    }
-
-    @Test
-    public void getAllViews() throws Exception {
-        String url = baseUrl + "/metadata/entities/ref_Car/views";
-        try (CloseableHttpResponse response = sendGet(url, oauthToken, null)) {
-            ReadContext ctx = parseResponse(response);
-            assertTrue(ctx.read("$.length()", Integer.class) > 1);
-            assertEquals(1, ctx.read("$[?(@.name == 'carEdit')]", List.class).size());
         }
     }
 

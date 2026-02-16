@@ -30,6 +30,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.FontIcon;
+import com.vaadin.flow.component.html.NativeLabel;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
@@ -37,6 +38,7 @@ import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteAlias;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.*;
 import io.jmix.core.entity.EntityValues;
@@ -94,7 +96,8 @@ import org.springframework.lang.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Route(value = "reports/:id", layout = DefaultMainViewParent.class)
+@RouteAlias(value = "reports/:id", layout = DefaultMainViewParent.class)
+@Route(value = "report/reports/:id", layout = DefaultMainViewParent.class)
 @ViewController("report_Report.detail")
 @ViewDescriptor("report-detail-view.xml")
 @EditedEntityContainer("reportDc")
@@ -199,6 +202,8 @@ public class ReportDetailView extends StandardDetailView<Report> {
     protected Tab mainTabSheetDetailsTab;
     @ViewComponent
     protected MessageBundle messageBundle;
+    @ViewComponent
+    protected NativeLabel codeEditorLabel;
 
     @Autowired
     protected ReportsPersistence reportsPersistence;
@@ -326,10 +331,6 @@ public class ReportDetailView extends StandardDetailView<Report> {
     @Subscribe
     protected void onInitEntity(InitEntityEvent<Report> event) {
         Report report = event.getEntity();
-
-        if (report.getReportType() == null) {
-            report.setReportType(ReportType.SIMPLE);
-        }
 
         if (report.getBands().isEmpty()) {
             BandDefinition rootDefinition = createRootBandDefinition(report);
@@ -656,13 +657,13 @@ public class ReportDetailView extends StandardDetailView<Report> {
         Report editedReport = getEditedEntity();
         Optional<UUID> reportId;
 
-        if (reportCode == null) {
-            markFieldAndPreventSave(codeField, "detailsTab.codeField.isEmpty.text", event);
-            showNotificationIfAnotherTab(mainTabSheetDetailsTab, errors, codeField, "detailsTab.codeField.isEmpty.text");
-            return;
-        }
-
         try {
+            if (reportCode == null) {
+                markFieldAndPreventSave(codeField, "detailsTab.codeField.isEmpty.text", event);
+                showNotificationIfAnotherTab(mainTabSheetDetailsTab, errors, codeField, "detailsTab.codeField.isEmpty.text");
+                return;
+            }
+
             if (entityStates.isNew(editedReport)) {
                 if (reportRepository.existsReportByCode(reportCode)) {
                     markFieldAndPreventSave(codeField, "detailsTab.codeField.alreadyExists.text", event);
@@ -1262,12 +1263,19 @@ public class ReportDetailView extends StandardDetailView<Report> {
         if (dataSet.getType() != null) {
             switch (dataSet.getType()) {
                 case SQL:
+                    codeEditorLabel.setText(messageBundle.getMessage("report.sqlScript.title"));
+                    dataStoreField.setVisible(true);
+                    isProcessTemplateField.setVisible(true);
+                    dataSetScriptBox.setVisible(true);
+                    break;
                 case JPQL:
+                    codeEditorLabel.setText(messageBundle.getMessage("report.jpqlScript.title"));
                     dataStoreField.setVisible(true);
                     isProcessTemplateField.setVisible(true);
                     dataSetScriptBox.setVisible(true);
                     break;
                 case GROOVY:
+                    codeEditorLabel.setText(messageBundle.getMessage("report.groovyScript.title"));
                     dataSetScriptBox.setVisible(true);
                     break;
                 case SINGLE:
@@ -1383,9 +1391,12 @@ public class ReportDetailView extends StandardDetailView<Report> {
         dataStoreField.setItems(new ListDataProvider<>(stores));
         dataStoreField.setItemLabelGenerator(storeName -> {
             if (Stores.MAIN.equals(storeName)) {
-                return messageBundle.getMessage("dataSet.dataStoreMain");
+                return messageBundle.getMessage("bandsTab.dataSet.dataStoreMain");
             }
-            return Strings.nullToEmpty(storeName);
+            if (storeName == null) {
+                return dataStoreField.getEmptySelectionCaption();
+            }
+            return storeName;
         });
     }
 

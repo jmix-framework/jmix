@@ -21,7 +21,6 @@ import com.vaadin.flow.component.grid.Grid;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.facet.UrlQueryParametersFacet;
-import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.inittask.AbstractInitTask;
@@ -58,7 +57,7 @@ public class DataGridFilterUrlQueryParametersBinderProvider extends AbstractUrlQ
     }
 
     @Override
-    public void load(UrlQueryParametersFacet facet, Element element, ComponentLoader.ComponentContext context) {
+    public void load(UrlQueryParametersFacet facet, Element element, ComponentLoader.Context context) {
         String componentId = loadRequiredAttribute(element, "component", context);
         String binderId = loadAttribute(element, "id");
         String param = loadAttribute(element, "param");
@@ -96,16 +95,12 @@ public class DataGridFilterUrlQueryParametersBinderProvider extends AbstractUrlQ
         }
 
         @Override
-        public void execute(ComponentLoader.ComponentContext context, View<?> view) {
-            // Is not invoked, do nothing
-        }
-
-        @Override
         public void execute(ComponentLoader.Context context) {
             Preconditions.checkState(facet.getOwner() != null, "%s owner is not set",
                     UrlQueryParametersFacet.NAME);
 
-            com.vaadin.flow.component.Component component = UiComponentUtils.getComponent(facet.getOwner(), componentId);
+            com.vaadin.flow.component.Component component = getComponent(facet.getOwner(), componentId);
+
             if (!(component instanceof Grid<?>)) {
                 throw new IllegalStateException(String.format("'%s' is not a %s component", componentId,
                         Grid.class.getSimpleName()));

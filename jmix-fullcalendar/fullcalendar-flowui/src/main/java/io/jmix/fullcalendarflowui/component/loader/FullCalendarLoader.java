@@ -93,6 +93,7 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
         loadBoolean(element, "eventOrderStrict", resultComponent::setEventOrderStrict);
         loadBoolean(element, "eventOverlap", resultComponent::setEventOverlap);
         loadBoolean(element, "eventResizableFromStart", resultComponent::setEventResizableFromStart);
+        loadInteger(element, "eventSingleClickThreshold", resultComponent::setEventSingleClickThreshold);
         loadBoolean(element, "eventStartEditable", resultComponent::setEventStartEditable);
         loadString(element, "eventTextColor", resultComponent::setEventTextColor);
         loadBoolean(element, "expandRows", resultComponent::setExpandRows);

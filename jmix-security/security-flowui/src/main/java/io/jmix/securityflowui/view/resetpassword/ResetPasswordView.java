@@ -86,9 +86,9 @@ public class ResetPasswordView extends StandardView {
     @Autowired
     protected Icons icons;
     @Autowired
-    protected MessageBundle messageBundle;
-    @Autowired
     protected UiComponents uiComponents;
+    @ViewComponent
+    protected MessageBundle messageBundle;
 
     @Autowired(required = false)
     protected UiExportHelper uiExportHelper;

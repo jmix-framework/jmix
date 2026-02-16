@@ -17,7 +17,6 @@
 package io.jmix.flowui.component.valuepicker;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.HasElement;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.action.valuepicker.PickerAction;
 import io.jmix.flowui.component.PickerComponent;
@@ -35,27 +34,6 @@ import org.springframework.context.annotation.Scope;
 public class JmixValuePickerActionSupport extends ValuePickerActionSupport implements ApplicationContextAware {
 
     protected ApplicationContext applicationContext;
-
-    /**
-     * @deprecated use one of {@link JmixValuePickerActionSupport#JmixValuePickerActionSupport(Component)},
-     * {@link JmixValuePickerActionSupport#JmixValuePickerActionSupport(Component, String, String)}
-     */
-    @Deprecated(since = "2.2", forRemoval = true)
-    public JmixValuePickerActionSupport(HasElement component) {
-        //noinspection removal
-        super(component);
-    }
-
-    /**
-     * @deprecated use one of {@link JmixValuePickerActionSupport#JmixValuePickerActionSupport(Component)},
-     * {@link JmixValuePickerActionSupport#JmixValuePickerActionSupport(Component, String, String)}
-     */
-    @Deprecated(since = "2.2", forRemoval = true)
-    public JmixValuePickerActionSupport(PickerComponent<?> component,
-                                        String actionsSlot, String hasActionsAttribute) {
-        //noinspection removal
-        super(component, actionsSlot, hasActionsAttribute);
-    }
 
     public <C extends Component & PickerComponent<?>> JmixValuePickerActionSupport(C component) {
         super(component);

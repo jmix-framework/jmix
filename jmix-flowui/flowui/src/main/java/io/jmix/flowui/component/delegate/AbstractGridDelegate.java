@@ -42,6 +42,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.Fragments;
+import io.jmix.flowui.UiComponentProperties;
 import io.jmix.flowui.action.list.EditAction;
 import io.jmix.flowui.action.list.ReadAction;
 import io.jmix.flowui.app.datagrid.DataGridEmptyStateByPermissionsFragment;
@@ -59,6 +60,7 @@ import io.jmix.flowui.data.EntityDataUnit;
 import io.jmix.flowui.data.aggregation.Aggregation;
 import io.jmix.flowui.data.aggregation.Aggregations;
 import io.jmix.flowui.data.aggregation.impl.AggregatableDelegate;
+import io.jmix.flowui.data.grid.ContainerDataGridItems;
 import io.jmix.flowui.data.grid.DataGridItems;
 import io.jmix.flowui.data.provider.StringPresentationValueProvider;
 import io.jmix.flowui.kit.action.Action;
@@ -186,6 +188,11 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
         if (dataGridItems != null) {
             this.dataGridItems = dataGridItems;
 
+            if (dataGridItems instanceof ContainerDataGridItems<?> containerDataGridItems) {
+                UiComponentProperties properties = applicationContext.getBean(UiComponentProperties.class);
+                containerDataGridItems.setRefreshAllOnItemReplace(properties.isGridRefreshAllOnItemReplace());
+            }
+
             bind(dataGridItems);
             updateAggregationRow();
 
@@ -257,15 +264,21 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
                 break;
             }
         }
-        //selection model doesn't provide direct access to selected items,
-        //so to update the model we are forced to deselect all items and select new items again
-        //to handle any changes in item collection or items themselves
+
+        refreshSelectionInternal(itemsToSelect);
+    }
+
+    protected void refreshSelectionInternal(Collection<E> itemsToSelect) {
+        // Selection model doesn't provide direct access to selected items,
+        // so to update the model we are forced to deselect all items and select new items again
+        // to handle any changes in item collection or items themselves
         deselectAll();
         select(itemsToSelect);
     }
 
     protected void itemsValueChanged(DataGridItems.ValueChangeEvent<E> event) {
-        if (itemIsBeingEdited(event.getItem())) {
+        E item = event.getItem();
+        if (itemIsBeingEdited(item)) {
             DataGridEditor<E> editor = ((DataGridEditor<E>) getComponent().getEditor());
             // Do not interrupt the save process
             if (editor.isBuffered() && !editor.isSaving()) {
@@ -279,8 +292,22 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
             }
         }
 
-        component.getDataCommunicator().refresh(event.getItem());
+        component.getDataCommunicator().refresh(item);
+
+        if (ContainerDataGridItems.PROPERTY_REPLACE_ITEM.equals(event.getProperty())) {
+            // refresh selection because it contains an old item instance
+            refreshSelectionIfNeeded(item);
+        }
+
         updateAggregationRow();
+    }
+
+    protected void refreshSelectionIfNeeded(E replacedItem) {
+        Set<E> selectedItems = new HashSet<>(getSelectedItems());
+        if (selectedItems.remove(replacedItem)) {
+            selectedItems.add(replacedItem);
+            refreshSelectionInternal(selectedItems);
+        }
     }
 
     protected boolean itemIsBeingEdited(E item) {

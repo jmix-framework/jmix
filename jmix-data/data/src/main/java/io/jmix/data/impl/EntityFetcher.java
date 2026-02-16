@@ -126,42 +126,51 @@ public class EntityFetcher {
         MetaClass metaClass = metadata.getClass(entity);
         for (FetchPlanProperty property : fetchPlan.getProperties()) {
             MetaProperty metaProperty = metaClass.getProperty(property.getName());
-            if (!metaProperty.getRange().isClass() && !isLazyFetchedLocalAttribute(metaProperty)
+            if (!metaProperty.getRange().isClass()
+                    && !metadataTools.isElementCollection(metaProperty)
+                    && !isLazyFetchedLocalAttribute(metaProperty)
                     || !metadataTools.isJpa(metaProperty))
                 continue;
 
             if (log.isTraceEnabled()) log.trace("Fetching property " + property.getName());
 
             Object value = EntityValues.getValue(entity, property.getName());
-            FetchPlan propertyFetchPlan = property.getFetchPlan();
-            if (value != null && propertyFetchPlan != null) {
-                if (value instanceof Collection) {
-                    for (Object item : new ArrayList(((Collection) value))) {
-                        if (item instanceof Entity) {
-                            if (entityStates.isDetached(item)) {
-                                fetchReloaded(item, propertyFetchPlan, visited, optimizeForDetached, managed -> {
-                                    if (value instanceof List) {
-                                        List list = (List) value;
-                                        list.set(list.indexOf(item), managed);
+            if (value != null) {
+                if (metadataTools.isElementCollection(metaProperty)) {
+                    //noinspection ResultOfMethodCallIgnored
+                    ((Collection<?>) value).size();
+                } else {
+                    FetchPlan propertyFetchPlan = property.getFetchPlan();
+                    if (propertyFetchPlan != null) {
+                        if (value instanceof Collection) {
+                            for (Object item : new ArrayList(((Collection) value))) {
+                                if (item instanceof Entity) {
+                                    if (entityStates.isDetached(item)) {
+                                        fetchReloaded(item, propertyFetchPlan, visited, optimizeForDetached, managed -> {
+                                            if (value instanceof List) {
+                                                List list = (List) value;
+                                                list.set(list.indexOf(item), managed);
+                                            } else {
+                                                Collection collection = (Collection) value;
+                                                collection.remove(item);
+                                                collection.add(managed);
+                                            }
+                                        });
                                     } else {
-                                        Collection collection = (Collection) value;
-                                        collection.remove(item);
-                                        collection.add(managed);
+                                        fetch(item, propertyFetchPlan, visited, optimizeForDetached);
                                     }
+                                }
+                            }
+                        } else if (value instanceof Entity) {
+                            boolean isEmbeddable = EntitySystemAccess.isEmbeddable(value);
+                            if (!metaProperty.isReadOnly() && entityStates.isDetached(value) && !isEmbeddable) {
+                                fetchReloaded(value, propertyFetchPlan, visited, optimizeForDetached, managed -> {
+                                    EntityValues.setValue(entity, property.getName(), managed);
                                 });
                             } else {
-                                fetch(item, propertyFetchPlan, visited, optimizeForDetached);
+                                fetch(value, propertyFetchPlan, visited, optimizeForDetached);
                             }
                         }
-                    }
-                } else if (value instanceof Entity) {
-                    boolean isEmbeddable = EntitySystemAccess.isEmbeddable(value);
-                    if (!metaProperty.isReadOnly() && entityStates.isDetached(value) && !isEmbeddable) {
-                        fetchReloaded(value, propertyFetchPlan, visited, optimizeForDetached, managed -> {
-                            EntityValues.setValue(entity, property.getName(), managed);
-                        });
-                    } else {
-                        fetch(value, propertyFetchPlan, visited, optimizeForDetached);
                     }
                 }
             }

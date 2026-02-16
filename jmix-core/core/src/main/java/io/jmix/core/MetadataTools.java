@@ -42,8 +42,8 @@ import io.jmix.core.metamodel.model.Range;
 import io.jmix.core.security.CurrentAuthentication;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.PostConstruct;
-import jakarta.persistence.Id;
 import jakarta.persistence.*;
+import jakarta.persistence.Id;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
@@ -430,20 +430,6 @@ public class MetadataTools {
     }
 
     /**
-     * @deprecated Use {@code metaProperty.getType() == MetaProperty.Type.EMBEDDED}
-     *
-     * Determine whether the given property denotes an embedded object.
-     *
-     * @see Embedded
-     * @see EmbeddedId
-     */
-    @Deprecated
-    public boolean isEmbedded(MetaProperty metaProperty) {
-        Objects.requireNonNull(metaProperty, "metaProperty is null");
-        return metaProperty.getType() == MetaProperty.Type.EMBEDDED;
-    }
-
-    /**
      * Determine whether the given property is a LOB.
      *
      * @see Lob
@@ -499,6 +485,15 @@ public class MetadataTools {
     public boolean isSecret(MetaProperty metaProperty) {
         Objects.requireNonNull(metaProperty, "metaProperty is null");
         return Boolean.TRUE.equals(metaProperty.getAnnotatedElement().isAnnotationPresent(Secret.class));
+    }
+
+    /**
+     * Determine whether the given property is an element collection.
+     * An element collection is a collection of simple types, such as strings, numbers, or dates.
+     * In a JPA entity, an element collection attribute is annotated with {@code @ElementCollection}.
+     */
+    public boolean isElementCollection(MetaProperty metaProperty) {
+        return metaProperty.getRange().isDatatype() && metaProperty.getRange().getCardinality().isMany();
     }
 
     public Map<String, Object> getMetaAnnotationAttributes(Map<String, Object> metaAnnotations, Class<?> metaAnnotationClass) {
@@ -1287,7 +1282,7 @@ public class MetadataTools {
     }
 
     protected void internalTraverseAttributesByFetchPlan(FetchPlan fetchPlan, Object entity, EntityAttributeVisitor
-            visitor,
+                                                                 visitor,
                                                          Map<Object, Set<FetchPlan>> visited, boolean checkLoaded) {
         Set<FetchPlan> fetchPlans = visited.get(entity);
         if (fetchPlans == null) {

@@ -20,12 +20,17 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import io.jmix.core.JmixModulesAwareBeanSelector;
 import io.jmix.flowui.Facets;
+import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.facet.Facet;
-import io.jmix.flowui.xml.layout.ComponentLoader.ComponentContext;
+import io.jmix.flowui.xml.layout.ComponentLoader;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.List;
 
@@ -33,7 +38,9 @@ import java.util.List;
 public class FacetLoader {
 
     protected Multimap<String, FacetProvider<?>> registrations = HashMultimap.create();
+    protected FacetLoaderResolver facetLoaderResolver;
 
+    protected ApplicationContext applicationContext;
     protected JmixModulesAwareBeanSelector beanSelector;
     protected Facets facets;
 
@@ -49,8 +56,80 @@ public class FacetLoader {
         }
     }
 
+    @Autowired
+    protected void setFacetLoaderResolver(FacetLoaderResolver facetLoaderResolver) {
+        this.facetLoaderResolver = facetLoaderResolver;
+    }
+
+    @Autowired
+    protected void setApplicationContext(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
+
+    /**
+     * Creates and loads a facet from XML by the passed XML element.
+     *
+     * @param element element to create a facet from
+     * @param context loading context
+     * @return loaded facet
+     */
+    public Facet load(Element element, ComponentLoader.Context context) {
+        io.jmix.flowui.xml.facet.loader.FacetLoader<?> facetLoader = getLoader(element, context);
+        if (facetLoader == null) {
+            // fallback
+            // we can cast safety because loaders exist for the fragment facets
+            return _load(element, (ComponentLoader.ComponentContext) context);
+        }
+
+        facetLoader.initFacet();
+        facetLoader.loadFacet();
+        return facetLoader.getResultFacet();
+    }
+
+    @Nullable
+    protected io.jmix.flowui.xml.facet.loader.FacetLoader<?> getLoader(Element element,
+                                                                       ComponentLoader.Context context) {
+        Class<? extends io.jmix.flowui.xml.facet.loader.FacetLoader<?>> loaderClass =
+                facetLoaderResolver.getLoader(element);
+
+        if (loaderClass == null) {
+            return null;
+        }
+
+        return initLoader(element, loaderClass, context);
+    }
+
+    protected io.jmix.flowui.xml.facet.loader.FacetLoader<?> initLoader(
+            Element element,
+            Class<? extends io.jmix.flowui.xml.facet.loader.FacetLoader<?>> loaderClass,
+            ComponentLoader.Context context
+    ) {
+        Constructor<? extends io.jmix.flowui.xml.facet.loader.FacetLoader<?>> constructor;
+
+        try {
+            constructor = loaderClass.getConstructor();
+        } catch (NoSuchMethodException e) {
+            throw new GuiDevelopmentException("Unable to get constructor for facet loader: " + e, context);
+        }
+
+        io.jmix.flowui.xml.facet.loader.FacetLoader<?> loader;
+        try {
+            loader = constructor.newInstance();
+        } catch (InvocationTargetException | IllegalAccessException | InstantiationException e) {
+            throw new GuiDevelopmentException("Loader instantiation error: " + e, context);
+        }
+
+        loader.setApplicationContext(applicationContext);
+        loader.setContext(context);
+        loader.setElement(element);
+
+        return loader;
+    }
+
+    // for backward compatibility
+    @Deprecated(since = "3.0", forRemoval = true)
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public Facet load(Element element, ComponentContext context) {
+    protected Facet _load(Element element, ComponentLoader.ComponentContext context) {
         Collection<FacetProvider<?>> facetProviders = registrations.get(element.getName());
         FacetProvider facetProvider = beanSelector.selectFrom(facetProviders);
         if (facetProvider == null) {

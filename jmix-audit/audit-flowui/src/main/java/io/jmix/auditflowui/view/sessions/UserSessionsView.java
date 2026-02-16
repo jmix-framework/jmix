@@ -22,6 +22,8 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.data.renderer.TextRenderer;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteAlias;
+import com.vaadin.flow.server.VaadinSession;
 import io.jmix.audit.UserSessions;
 import io.jmix.audit.entity.EntityLogItem;
 import io.jmix.audit.entity.UserSession;
@@ -34,21 +36,22 @@ import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.timepicker.TypedTimePicker;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.model.CollectionLoader;
+import io.jmix.flowui.sys.SessionHolder;
 import io.jmix.flowui.view.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@Route(value = "audit/usersessions", layout = DefaultMainViewParent.class)
+@RouteAlias(value = "audit/usersessions", layout = DefaultMainViewParent.class)
+@Route(value = "audit/user-sessions", layout = DefaultMainViewParent.class)
 @ViewController("userSession.view")
 @ViewDescriptor("user-sessions-view.xml")
 @LookupComponent("sessionsTable")
@@ -76,6 +79,8 @@ public class UserSessionsView extends StandardListView<EntityLogItem> {
     protected Notifications notifications;
     @Autowired
     protected Messages messages;
+    @Autowired
+    protected SessionHolder sessionHolder;
 
     @Subscribe
     protected void onInit(InitEvent event) {
@@ -127,6 +132,8 @@ public class UserSessionsView extends StandardListView<EntityLogItem> {
         } else {
             for (UserSession session : sessionsTable.getSelectedItems()) {
                 userSessions.invalidate(session);
+                invalidateVaadinSession(session);
+
                 notifications.create(messages.formatMessage(UserSessionsView.class, "sessionInvalidated", session.getSessionId()))
                         .withType(Notifications.Type.DEFAULT)
                         .show();
@@ -153,6 +160,21 @@ public class UserSessionsView extends StandardListView<EntityLogItem> {
     protected void refreshDlItems() {
         sessionsTable.deselectAll();
         userSessionsDl.load();
+    }
+
+    protected void invalidateVaadinSession(UserSession session) {
+        UserDetails userDetails = (UserDetails) session.getPrincipal();
+        Map<String, List<VaadinSession>> userSessionsMap =
+                sessionHolder.getActiveSessionsForUsernames(List.of(userDetails.getUsername()));
+
+        List<VaadinSession> vaadinSessions = userSessionsMap.get(userDetails.getUsername());
+        for (VaadinSession vaadinSession : vaadinSessions) {
+            if (Objects.equals(vaadinSession.getSession().getId(), session.getSessionId())) {
+                vaadinSession.access(vaadinSession::close);
+                vaadinSession.getSession().invalidate();
+                break;
+            }
+        }
     }
 
     @Supply(to = "sessionsTable.lastRequest", subject = "renderer")

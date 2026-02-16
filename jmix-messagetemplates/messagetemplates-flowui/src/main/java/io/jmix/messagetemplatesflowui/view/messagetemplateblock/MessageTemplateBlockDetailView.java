@@ -24,6 +24,7 @@ import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteAlias;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.view.*;
@@ -33,7 +34,8 @@ import io.jmix.messagetemplatesflowui.kit.component.GrapesJs;
 import java.util.Locale;
 import java.util.stream.Stream;
 
-@Route(value = "msgtmp/messagetemplateblock/:id", layout = DefaultMainViewParent.class)
+@RouteAlias(value = "msgtmp/messagetemplateblock/:id", layout = DefaultMainViewParent.class)
+@Route(value = "msgtmp/message-template-block/:id", layout = DefaultMainViewParent.class)
 @ViewController("msgtmp_MessageTemplateBlock.detail")
 @ViewDescriptor("message-template-block-detail-view.xml")
 @EditedEntityContainer("messageTemplateBlockDc")

@@ -19,12 +19,22 @@ package io.jmix.autoconfigure.datatoolsflowui;
 import io.jmix.core.CoreConfiguration;
 import io.jmix.datatools.DatatoolsConfiguration;
 import io.jmix.datatoolsflowui.DatatoolsFlowuiConfiguration;
+import io.jmix.datatoolsflowui.view.navigation.DataDiagramViewSupport;
+import io.jmix.datatoolsflowui.view.navigation.Impl.DataDiagramViewSupportImpl;
 import io.jmix.flowui.FlowuiConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 
 @AutoConfiguration
 @Import({CoreConfiguration.class, FlowuiConfiguration.class, DatatoolsConfiguration.class,
         DatatoolsFlowuiConfiguration.class})
 public class DatatoolsFlowuiAutoConfiguration {
+
+    @Bean("flowui_DataDiagramViewSupport")
+    @ConditionalOnMissingBean(name = "tabmod_TabbedModeDataDiagramViewSupport")
+    public DataDiagramViewSupport loginViewSupport() {
+        return new DataDiagramViewSupportImpl();
+    }
 }

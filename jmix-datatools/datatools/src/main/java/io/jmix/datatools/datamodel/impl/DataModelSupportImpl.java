@@ -95,110 +95,24 @@ public class DataModelSupportImpl implements DataModelSupport, InitializingBean 
 
             if (field.getType().equals(MetaProperty.Type.DATATYPE)
                     && isAnnotationPresent(field, Column.class)) {
-                String fieldType = field.getJavaType().getSimpleName();
-
-                AttributeModel attributeModel = isEmbeddable
-                        ? constructAttribute(fieldName, fieldType, field.isMandatory())
-                        : constructAttribute(getAnnotation(field, Column.class).name(),
-                        fieldName, fieldType, entity, field.isMandatory());
-                attributeModelsList.add(attributeModel);
+                addDatatypeAttribute(entity, isEmbeddable, field, fieldName, attributeModelsList);
 
             } else if (field.getType().equals(MetaProperty.Type.EMBEDDED)) {
-                MetaClass embeddableClass = metadata.findClass(field.getJavaType());
-
-                if (embeddableClass == null) {
-                    throw new IllegalStateException("Embeddable class not found");
-                }
-
-                DataModel embeddableDataModel = createEntityDescription(embeddableClass, true);
-                String fieldType = field.getJavaType().getSimpleName();
-
-                if (isAnnotationPresent(field, AttributeOverrides.class)) {
-                    AttributeOverride[] attributeOverrides = getAnnotation(field, AttributeOverrides.class).value();
-
-                    for (int i = 0; i < attributeOverrides.length; i++) {
-                        AttributeModel temp = constructAttribute(field.getAnnotatedElement()
-                                        .getAnnotation(AttributeOverrides.class).value()[i].column().name(),
-                                fieldName, fieldType, entity, field.isMandatory());
-                        AttributeModel dataModelEntityAttributes = embeddableDataModel.attributeModels().get(i);
-                        String embeddableFieldName = fieldName + "." + dataModelEntityAttributes.getAttributeName();
-                        String embeddableJavaType = dataModelEntityAttributes.getJavaType();
-
-                        AttributeModel embeddableAttribute = constructAttribute(temp.getColumnName(),
-                                embeddableFieldName, embeddableJavaType, temp.getDbType(),
-                                isAnnotationPresent(field, NotNull.class));
-
-                        attributeModelsList.add(embeddableAttribute);
-                    }
-                }
+                addEmbeddedAttribute(entity, field, fieldName, attributeModelsList);
 
             } else if (isAnnotationPresent(field, ManyToOne.class)) {
-                String fieldType = field.getJavaType().getSimpleName();
-
-                AttributeModel attributeModel = isEmbeddable
-                        ? constructAttribute(fieldName, fieldType, isAnnotationPresent(field, NotNull.class))
-                        : constructAttribute(getAnnotation(field, JoinColumn.class).name(),
-                        fieldName, fieldType, entity, field.isMandatory());
-                attributeModelsList.add(attributeModel);
-
-                String relationDescription = diagramConstructor.constructRelationDescription(entity.getName(),
-                        fieldType, RelationType.MANY_TO_ONE, dataStoreName);
-                Relation relation = new Relation(dataStoreName, fieldType, relationDescription);
-                putRelation(relationsMap, RelationType.MANY_TO_ONE, relation);
+                addManyToOneAttribute(entity, isEmbeddable, field, fieldName,
+                        attributeModelsList, dataStoreName, relationsMap);
 
             } else if (isAnnotationPresent(field, OneToMany.class)) {
-                String fieldType = field.getRange().asClass().getName();
-
-                AttributeModel attributeModel =
-                        constructAttribute(fieldName, fieldType, isAnnotationPresent(field, NotNull.class));
-
-                String relationDescription = diagramConstructor.constructRelationDescription(entity.getName(),
-                        fieldType, RelationType.ONE_TO_MANY, dataStoreName);
-                Relation relation = new Relation(dataStoreName, fieldType, relationDescription);
-
-                putRelation(relationsMap, RelationType.ONE_TO_MANY, relation);
-                attributeModelsList.add(attributeModel);
+                addOneToManyAttribute(entity, field, fieldName, dataStoreName, relationsMap, attributeModelsList);
 
             } else if (isAnnotationPresent(field, OneToOne.class)) {
-                AttributeModel attributeModel = null;
-                String fieldType = field.getJavaType().getSimpleName();
-
-                if (isAnnotationPresent(field, JoinColumn.class)) {
-                    if (isEmbeddable) {
-                        attributeModel = constructAttribute(fieldName, fieldType, isAnnotationPresent(field, NotNull.class));
-                    } else {
-                        attributeModel = constructAttribute(getAnnotation(field, JoinColumn.class).name(),
-                                fieldName, fieldType, entity, field.isMandatory());
-                    }
-                } else {
-                    boolean isMandatory = getAnnotation(field, OneToOne.class).optional();
-                    attributeModel = constructAttribute(fieldName, fieldType, isMandatory);
-                }
-
-                String relationDescription = diagramConstructor.constructRelationDescription(entity.getName(),
-                        fieldType, RelationType.ONE_TO_ONE, dataStoreName);
-                Relation relation = new Relation(dataStoreName, fieldType, relationDescription);
-
-                putRelation(relationsMap, RelationType.ONE_TO_ONE, relation);
-                attributeModelsList.add(attributeModel);
+                addOneToOneAttribute(entity, isEmbeddable, field, fieldName,
+                        dataStoreName, relationsMap, attributeModelsList);
 
             } else if (isAnnotationPresent(field, ManyToMany.class)) {
-                String fieldType = field.getRange().asClass().getName();
-
-                AttributeModel attributeModel = constructAttribute(fieldName, fieldType, isAnnotationPresent(field, NotNull.class));
-
-                JoinTable annotation = getAnnotation(field, JoinTable.class);
-                String columnName = annotation.name()
-                        + "."
-                        + annotation.joinColumns()[0].name();
-                attributeModel.setColumnName(columnName);
-
-                String relationDescription = diagramConstructor.constructRelationDescription(entity.getName(),
-                        fieldType, RelationType.MANY_TO_MANY, dataStoreName);
-                Relation relation = new Relation(dataStoreName, fieldType, relationDescription);
-
-                putRelation(relationsMap, RelationType.MANY_TO_MANY, relation);
-                attributeModelsList.add(attributeModel);
+                addManyToManyAttribute(entity, field, fieldName, dataStoreName, relationsMap, attributeModelsList);
 
             } else {
                 log.warn("Cannot generate data model description for '{}'", field);
@@ -224,6 +138,128 @@ public class DataModelSupportImpl implements DataModelSupport, InitializingBean 
         dataModelProvider.putDataModel(dataModel);
 
         return dataModel;
+    }
+
+    protected void addDatatypeAttribute(MetaClass entity, boolean isEmbeddable, MetaProperty field,
+                                        String fieldName, List<AttributeModel> attributeModelsList) {
+        String fieldType = field.getJavaType().getSimpleName();
+
+        AttributeModel attributeModel = isEmbeddable
+                ? constructAttribute(fieldName, fieldType, field.isMandatory())
+                : constructAttribute(getAnnotation(field, Column.class).name(),
+                fieldName, fieldType, entity, field.isMandatory());
+        attributeModelsList.add(attributeModel);
+    }
+
+    protected void addEmbeddedAttribute(MetaClass entity, MetaProperty field, String fieldName,
+                                        List<AttributeModel> attributeModelsList) {
+        MetaClass embeddableClass = metadata.findClass(field.getJavaType());
+
+        if (embeddableClass == null) {
+            throw new IllegalStateException("Embeddable class not found");
+        }
+
+        DataModel embeddableDataModel = createEntityDescription(embeddableClass, true);
+        String fieldType = field.getJavaType().getSimpleName();
+
+        if (isAnnotationPresent(field, AttributeOverrides.class)) {
+            AttributeOverride[] attributeOverrides = getAnnotation(field, AttributeOverrides.class).value();
+
+            for (int i = 0; i < attributeOverrides.length; i++) {
+                AttributeModel temp = constructAttribute(field.getAnnotatedElement()
+                                .getAnnotation(AttributeOverrides.class).value()[i].column().name(),
+                        fieldName, fieldType, entity, field.isMandatory());
+                AttributeModel dataModelEntityAttributes = embeddableDataModel.attributeModels().get(i);
+                String embeddableFieldName = fieldName + "." + dataModelEntityAttributes.getAttributeName();
+                String embeddableJavaType = dataModelEntityAttributes.getJavaType();
+
+                AttributeModel embeddableAttribute = constructAttribute(temp.getColumnName(),
+                        embeddableFieldName, embeddableJavaType, temp.getDbType(),
+                        isAnnotationPresent(field, NotNull.class));
+
+                attributeModelsList.add(embeddableAttribute);
+            }
+        }
+    }
+
+    protected void addManyToOneAttribute(MetaClass entity, boolean isEmbeddable, MetaProperty field, String fieldName,
+                                         List<AttributeModel> attributeModelsList, String dataStoreName,
+                                         Map<RelationType, List<Relation>> relationsMap) {
+        String fieldType = field.getJavaType().getSimpleName();
+
+        AttributeModel attributeModel = isEmbeddable
+                ? constructAttribute(fieldName, fieldType, isAnnotationPresent(field, NotNull.class))
+                : constructAttribute(getAnnotation(field, JoinColumn.class).name(),
+                fieldName, fieldType, entity, field.isMandatory());
+        attributeModelsList.add(attributeModel);
+
+        String relationDescription = diagramConstructor.constructRelationDescription(entity.getName(),
+                fieldType, RelationType.MANY_TO_ONE, dataStoreName);
+        Relation relation = new Relation(dataStoreName, fieldType, relationDescription);
+        putRelation(relationsMap, RelationType.MANY_TO_ONE, relation);
+    }
+
+    protected void addOneToManyAttribute(MetaClass entity, MetaProperty field, String fieldName,
+                                         String dataStoreName, Map<RelationType, List<Relation>> relationsMap,
+                                         List<AttributeModel> attributeModelsList) {
+        String fieldType = field.getRange().asClass().getName();
+
+        AttributeModel attributeModel =
+                constructAttribute(fieldName, fieldType, isAnnotationPresent(field, NotNull.class));
+
+        String relationDescription = diagramConstructor.constructRelationDescription(entity.getName(),
+                fieldType, RelationType.ONE_TO_MANY, dataStoreName);
+        Relation relation = new Relation(dataStoreName, fieldType, relationDescription);
+
+        putRelation(relationsMap, RelationType.ONE_TO_MANY, relation);
+        attributeModelsList.add(attributeModel);
+    }
+
+    protected void addOneToOneAttribute(MetaClass entity, boolean isEmbeddable, MetaProperty field, String fieldName,
+                                        String dataStoreName, Map<RelationType, List<Relation>> relationsMap,
+                                        List<AttributeModel> attributeModelsList) {
+        AttributeModel attributeModel;
+        String fieldType = field.getJavaType().getSimpleName();
+
+        if (isAnnotationPresent(field, JoinColumn.class)) {
+            if (isEmbeddable) {
+                attributeModel = constructAttribute(fieldName, fieldType, isAnnotationPresent(field, NotNull.class));
+            } else {
+                attributeModel = constructAttribute(getAnnotation(field, JoinColumn.class).name(),
+                        fieldName, fieldType, entity, field.isMandatory());
+            }
+        } else {
+            boolean isMandatory = getAnnotation(field, OneToOne.class).optional();
+            attributeModel = constructAttribute(fieldName, fieldType, isMandatory);
+        }
+
+        String relationDescription = diagramConstructor.constructRelationDescription(entity.getName(),
+                fieldType, RelationType.ONE_TO_ONE, dataStoreName);
+        Relation relation = new Relation(dataStoreName, fieldType, relationDescription);
+
+        putRelation(relationsMap, RelationType.ONE_TO_ONE, relation);
+        attributeModelsList.add(attributeModel);
+    }
+
+    protected void addManyToManyAttribute(MetaClass entity, MetaProperty field, String fieldName,
+                                          String dataStoreName, Map<RelationType, List<Relation>> relationsMap,
+                                          List<AttributeModel> attributeModelsList) {
+        String fieldType = field.getRange().asClass().getName();
+
+        AttributeModel attributeModel = constructAttribute(fieldName, fieldType, isAnnotationPresent(field, NotNull.class));
+
+        JoinTable annotation = getAnnotation(field, JoinTable.class);
+        String columnName = annotation.name()
+                + "."
+                + annotation.joinColumns()[0].name();
+        attributeModel.setColumnName(columnName);
+
+        String relationDescription = diagramConstructor.constructRelationDescription(entity.getName(),
+                fieldType, RelationType.MANY_TO_MANY, dataStoreName);
+        Relation relation = new Relation(dataStoreName, fieldType, relationDescription);
+
+        putRelation(relationsMap, RelationType.MANY_TO_MANY, relation);
+        attributeModelsList.add(attributeModel);
     }
 
     protected EntityModel constructEntityModel(MetaClass entity, boolean isSystem) {

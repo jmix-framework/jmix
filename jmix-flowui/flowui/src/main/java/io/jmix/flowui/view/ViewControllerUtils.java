@@ -213,7 +213,7 @@ public final class ViewControllerUtils {
      * @param event the {@link ComponentEvent} to be fired; must not be null
      */
     public static void fireEvent(View<?> view, ComponentEvent<?> event) {
-        view.getUiObservationSupport().createViewEventObservation(view, event.getClass().getSimpleName())
+        view.getUiObservationSupport().createViewLifecycleObservation(view, event)
                 .observe(() -> ComponentUtil.fireEvent(view, event));
     }
 

@@ -14,9 +14,20 @@
  * limitations under the License.
  */
 
-@Experimental
-@NonNullApi
-package io.jmix.core.observation;
+package io.jmix.flowui.observation;
 
-import io.jmix.core.annotation.Experimental;
-import org.springframework.lang.NonNullApi;
+import io.jmix.flowui.fragment.Fragment;
+import org.springframework.lang.Nullable;
+
+/**
+ * POJO class for information about {@link Fragment} that will be used for observation cardinalities.
+ *
+ * @param fragmentId    id of the fragment
+ * @param fragmentClass FQN of the target fragment class
+ */
+public record FragmentLifecycleObservationInfo(@Nullable String fragmentId, String fragmentClass) {
+
+    public FragmentLifecycleObservationInfo(Fragment<?> fragment) {
+        this(fragment.getId().orElse(null), fragment.getClass().getName());
+    }
+}

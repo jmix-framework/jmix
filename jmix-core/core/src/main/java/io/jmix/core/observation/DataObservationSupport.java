@@ -50,8 +50,8 @@ public class DataObservationSupport {
     @Autowired(required = false)
     protected ObservationRegistry observationRegistry;
 
-    @Value("${jmix.core.data-observation-enabled:false}")
-    protected Boolean observationEnabled;
+    @Value("$jmix.core.data-observation-enabled")
+    protected boolean observationEnabled;
 
     private static final String DATA_BASE_LOAD_NAME = "jmix.data.load";
     private static final String DATA_BASE_SAVE_NAME = "jmix.data.save";
@@ -157,8 +157,8 @@ public class DataObservationSupport {
     }
 
     protected void addQueryHighCardinalityIfExist(Observation observation,
-                                                @Nullable DataLoadContextQuery query,
-                                                Supplier<String> queryGetter) {
+                                                  @Nullable DataLoadContextQuery query,
+                                                  Supplier<String> queryGetter) {
         if (query != null && queryGetter.get() != null) {
             observation.highCardinalityKeyValue("jpql.query", queryGetter.get());
 

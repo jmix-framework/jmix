@@ -14,9 +14,19 @@
  * limitations under the License.
  */
 
-@Experimental
-@NonNullApi
-package io.jmix.core.observation;
+package io.jmix.flowui.observation;
 
-import io.jmix.core.annotation.Experimental;
-import org.springframework.lang.NonNullApi;
+import io.jmix.flowui.view.View;
+
+/**
+ * POJO class for information about {@link View} that will be used for observation cardinalities.
+ *
+ * @param viewId    id of the view
+ * @param viewClass FQN of the target view class
+ */
+public record ViewLifecycleObservationInfo(String viewId, String viewClass) {
+
+    public ViewLifecycleObservationInfo(View<?> view) {
+        this(view.getId().orElse(""), view.getClass().getName());
+    }
+}

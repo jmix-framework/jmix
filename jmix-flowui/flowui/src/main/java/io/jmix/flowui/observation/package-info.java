@@ -16,7 +16,7 @@
 
 @Experimental
 @NonNullApi
-package io.jmix.core.observation;
+package io.jmix.flowui.observation;
 
 import io.jmix.core.annotation.Experimental;
 import org.springframework.lang.NonNullApi;

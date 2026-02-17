@@ -21,7 +21,7 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.di.Instantiator;
 import io.jmix.core.annotation.Internal;
-import io.jmix.flowui.UiObservationSupport;
+import io.jmix.flowui.observation.UiObservationSupport;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.action.ActionVariant;
@@ -114,8 +114,6 @@ public class ObservableBaseAction<A extends ObservableBaseAction<A>> extends Bas
     public A withHandler(@Nullable Consumer<ActionPerformedEvent> handler) {
         return (A) super.withHandler(handler);
     }
-
-
 
     @Internal
     protected Optional<UiObservationSupport> getUiObservationSupport() {

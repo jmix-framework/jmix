@@ -21,7 +21,7 @@ import com.vaadin.flow.router.*;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.annotation.Internal;
-import io.jmix.flowui.UiObservationSupport;
+import io.jmix.flowui.observation.UiObservationSupport;
 import io.jmix.flowui.UiViewProperties;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.event.view.ViewClosedEvent;
@@ -30,6 +30,7 @@ import io.jmix.flowui.facet.FacetOwner;
 import io.jmix.flowui.fragment.FragmentOwner;
 import io.jmix.flowui.kit.meta.StudioIgnore;
 import io.jmix.flowui.model.ViewData;
+import io.jmix.flowui.observation.ViewLifecycle;
 import io.jmix.flowui.sys.ViewSupport;
 import io.jmix.flowui.sys.event.UiEventsManager;
 import io.jmix.flowui.util.OperationResult;
@@ -145,7 +146,7 @@ public class View<T extends Component> extends Composite<T>
         afterNavigationProcessed = false;
 
         Sample sample = start(meterRegistry);
-        getUiObservationSupport().createViewEventObservation(this, ReadyEvent.class.getSimpleName())
+        getUiObservationSupport().createViewLifecycleObservation(this, ViewLifecycle.READY)
                 .observe(() -> fireEvent(new ReadyEvent(this)));
         stopViewTimerSample(sample, meterRegistry, READY, getId().orElse(null));
 
@@ -180,7 +181,7 @@ public class View<T extends Component> extends Composite<T>
         fireEvent(new QueryParametersChangeEvent(this, event.getLocation().getQueryParameters()));
 
         Sample sample = startTimerSample(meterRegistry);
-        getUiObservationSupport().createViewEventObservation(this, BeforeShowEvent.class.getSimpleName())
+        getUiObservationSupport().createViewLifecycleObservation(this, ViewLifecycle.BEFORE_SHOW)
                 .observe(() -> fireEvent(new BeforeShowEvent(this)));
         stopViewTimerSample(sample, meterRegistry, BEFORE_SHOW, getId().orElse(null));
     }
@@ -221,7 +222,7 @@ public class View<T extends Component> extends Composite<T>
                 BeforeCloseEvent beforeCloseEvent = new BeforeCloseEvent(this, closeAction);
 
                 Sample beforeCloseSample = startTimerSample(meterRegistry);
-                getUiObservationSupport().createViewEventObservation(this, BeforeCloseEvent.class.getSimpleName())
+                getUiObservationSupport().createViewLifecycleObservation(this, ViewLifecycle.BEFORE_CLOSE)
                         .observe(() -> fireEvent(beforeCloseEvent));
                 stopViewTimerSample(beforeCloseSample, meterRegistry, BEFORE_CLOSE, getId().orElse(null));
 
@@ -233,7 +234,7 @@ public class View<T extends Component> extends Composite<T>
                 AfterCloseEvent afterCloseEvent = new AfterCloseEvent(this, closeAction);
 
                 Sample afterCloseSample = startTimerSample(meterRegistry);
-                getUiObservationSupport().createViewEventObservation(this, AfterCloseEvent.class.getSimpleName())
+                getUiObservationSupport().createViewLifecycleObservation(this, ViewLifecycle.AFTER_CLOSE)
                         .observe(() -> fireEvent(afterCloseEvent));
                 stopViewTimerSample(afterCloseSample, meterRegistry, AFTER_CLOSE, getId().orElse(null));
 

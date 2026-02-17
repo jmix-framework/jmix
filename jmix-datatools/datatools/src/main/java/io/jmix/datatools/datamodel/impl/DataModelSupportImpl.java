@@ -23,16 +23,14 @@ import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.data.persistence.DbmsType;
-import io.jmix.datatools.datamodel.DataModel;
-import io.jmix.datatools.datamodel.DataModelProvider;
-import io.jmix.datatools.datamodel.DataModelSupport;
-import io.jmix.datatools.datamodel.Relation;
-import io.jmix.datatools.datamodel.RelationType;
+import io.jmix.datatools.datamodel.*;
 import io.jmix.datatools.datamodel.engine.DiagramConstructor;
 import io.jmix.datatools.datamodel.entity.AttributeModel;
 import io.jmix.datatools.datamodel.entity.EntityModel;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
@@ -44,32 +42,28 @@ import java.sql.SQLException;
 import java.util.*;
 
 @Component("datatl_DataModelSupport")
-public class DataModelSupportImpl implements DataModelSupport {
+public class DataModelSupportImpl implements DataModelSupport, InitializingBean {
 
-    protected final Metadata metadata;
-    protected final DataModelProvider dataModelProvider;
-    protected final DiagramConstructor diagramConstructor;
+    @Autowired
+    protected Metadata metadata;
+    @Autowired
+    protected DataSource dataSource;
+    @Autowired
+    protected DbmsType dbmsType;
+    @Autowired
+    protected JmixModules jmixModules;
+    @Autowired
+    protected DiagramConstructor diagramConstructor;
 
-    protected final DataSource dataSource;
-    protected final DbmsType dbmsType;
-    protected final JmixModules jmixModules;
-
-    protected final JmixModuleDescriptor mainModuleInfo;
+    protected DataModelProvider dataModelProvider;
+    protected JmixModuleDescriptor mainModuleInfo;
 
     protected List<EntityModel> filteredModels;
     protected Set<String> dataStoreNames;
 
-    public DataModelSupportImpl(Metadata metadata,
-                                DataSource dataSource,
-                                DiagramConstructor diagramConstructor,
-                                DbmsType dbmsType,
-                                JmixModules jmixModules) {
-        this.metadata = metadata;
+    @Override
+    public void afterPropertiesSet() throws Exception {
         this.dataModelProvider = createDataModelProvider();
-        this.dataSource = dataSource;
-        this.diagramConstructor = diagramConstructor;
-        this.dbmsType = dbmsType;
-        this.jmixModules = jmixModules;
         this.mainModuleInfo = jmixModules.getLast();
         this.dataStoreNames = getDataStoreNames();
 
@@ -94,12 +88,11 @@ public class DataModelSupportImpl implements DataModelSupport {
 
         for (MetaProperty field : fields) {
             AttributeModel attributeModel = null;
-            String fieldName = null, fieldType = null;
+            String fieldName = field.getName();
 
             if (field.getType().equals(MetaProperty.Type.DATATYPE)) {
                 if (field.getAnnotatedElement().isAnnotationPresent(Column.class)) {
-                    fieldName = field.getName();
-                    fieldType = field.getJavaType().getSimpleName();
+                    String fieldType = field.getJavaType().getSimpleName();
 
                     if (isEmbeddable) {
                         attributeModel = constructAttribute(fieldName, fieldType, field.isMandatory());
@@ -109,6 +102,7 @@ public class DataModelSupportImpl implements DataModelSupport {
                     }
                 }
             }
+
             if (field.getType().equals(MetaProperty.Type.EMBEDDED)) {
                 MetaClass embeddableClass = metadata.findClass(field.getJavaType());
 
@@ -118,15 +112,14 @@ public class DataModelSupportImpl implements DataModelSupport {
 
                 DataModel embeddableDataModel = createEntityDescription(embeddableClass, true);
 
-                fieldName = field.getName();
-                fieldType = field.getJavaType().getSimpleName();
+                String fieldType = field.getJavaType().getSimpleName();
 
                 String embeddableFieldName, embeddableJavaType;
 
                 if (field.getAnnotatedElement().isAnnotationPresent(AttributeOverrides.class)) {
                     AttributeOverride[] attributeOverrides = field.getAnnotatedElement().getAnnotation(AttributeOverrides.class).value();
 
-                    for (int i = 0; i < attributeOverrides.length; i++ ) {
+                    for (int i = 0; i < attributeOverrides.length; i++) {
                         AttributeModel temp = constructAttribute(field.getAnnotatedElement()
                                         .getAnnotation(AttributeOverrides.class).value()[i].column().name(),
                                 fieldName, fieldType, entity, field.isMandatory());
@@ -144,8 +137,7 @@ public class DataModelSupportImpl implements DataModelSupport {
             }
 
             if (field.getAnnotatedElement().isAnnotationPresent(ManyToOne.class)) {
-                fieldName = field.getName();
-                fieldType = field.getJavaType().getSimpleName();
+                String fieldType = field.getJavaType().getSimpleName();
 
                 if (isEmbeddable) {
                     attributeModel = constructAttribute(fieldName, fieldType, field.getAnnotatedElement().isAnnotationPresent(NotNull.class));
@@ -160,8 +152,7 @@ public class DataModelSupportImpl implements DataModelSupport {
             }
 
             if (field.getAnnotatedElement().isAnnotationPresent(OneToMany.class)) {
-                fieldName = field.getName();
-                fieldType = field.getRange().asClass().getName();
+                String fieldType = field.getRange().asClass().getName();
 
                 attributeModel = constructAttribute(fieldName, fieldType, field.getAnnotatedElement().isAnnotationPresent(NotNull.class));
 
@@ -172,8 +163,7 @@ public class DataModelSupportImpl implements DataModelSupport {
             }
 
             if (field.getAnnotatedElement().isAnnotationPresent(OneToOne.class)) {
-                fieldName = field.getName();
-                fieldType = field.getJavaType().getSimpleName();
+                String fieldType = field.getJavaType().getSimpleName();
 
                 if (field.getAnnotatedElement().isAnnotationPresent(JoinColumn.class)) {
                     if (isEmbeddable) {
@@ -194,8 +184,7 @@ public class DataModelSupportImpl implements DataModelSupport {
             }
 
             if (field.getAnnotatedElement().isAnnotationPresent(ManyToMany.class)) {
-                fieldName = field.getName();
-                fieldType = field.getRange().asClass().getName();
+                String fieldType = field.getRange().asClass().getName();
 
                 attributeModel = constructAttribute(fieldName, fieldType, field.getAnnotatedElement().isAnnotationPresent(NotNull.class));
 
@@ -213,10 +202,6 @@ public class DataModelSupportImpl implements DataModelSupport {
                 putRelation(relationsMap, RelationType.MANY_TO_MANY, relation);
             }
 
-            if (fieldType == null || fieldName == null) {
-                continue;
-            }
-
             if (attributeModel != null) {
                 attributeModelsList.add(attributeModel);
             }
@@ -226,7 +211,8 @@ public class DataModelSupportImpl implements DataModelSupport {
 
         String currentEntityType = entity.getName();
 
-        String entityDescription = diagramConstructor.constructEntityDescription(currentEntityType, dataStoreName, attributeModelsList);
+        String entityDescription = diagramConstructor
+                .constructEntityDescription(currentEntityType, dataStoreName, attributeModelsList);
 
         EntityModel entityModel = constructEntityModel(entity, isSystem);
 
@@ -272,7 +258,8 @@ public class DataModelSupportImpl implements DataModelSupport {
         return dataModelProvider;
     }
 
-    protected void putRelation(Map<RelationType, List<Relation>> relations, RelationType relationType, Relation relation) {
+    protected void putRelation(Map<RelationType, List<Relation>> relations,
+                               RelationType relationType, Relation relation) {
         if (relations.containsKey(relationType)) {
             relations.get(relationType).add(relation);
         } else {
@@ -289,7 +276,8 @@ public class DataModelSupportImpl implements DataModelSupport {
         return attributeModel;
     }
 
-    protected AttributeModel constructAttribute(String fieldName, String fieldType, boolean isMandatory) {
+    protected AttributeModel constructAttribute(String fieldName, String fieldType,
+                                                boolean isMandatory) {
         AttributeModel attributeModel = constructAttribute(fieldName, fieldType);
 
         attributeModel.setIsMandatory(isMandatory);
@@ -297,7 +285,9 @@ public class DataModelSupportImpl implements DataModelSupport {
         return attributeModel;
     }
 
-    protected AttributeModel constructAttribute(String columnName, String fieldName, String fieldType, MetaClass entity, boolean isMandatory) {
+    protected AttributeModel constructAttribute(String columnName, String fieldName,
+                                                String fieldType, MetaClass entity,
+                                                boolean isMandatory) {
         AttributeModel attributeModel = constructAttribute(fieldName, fieldType);
 
         attributeModel.setColumnName(columnName);
@@ -307,7 +297,9 @@ public class DataModelSupportImpl implements DataModelSupport {
         return attributeModel;
     }
 
-    protected AttributeModel constructAttribute(String columnName, String fieldName, String fieldType, String dbType, boolean isMandatory) {
+    protected AttributeModel constructAttribute(String columnName, String fieldName,
+                                                String fieldType, String dbType,
+                                                boolean isMandatory) {
         AttributeModel attributeModel = constructAttribute(fieldName, fieldType);
 
         attributeModel.setColumnName(columnName);
@@ -317,8 +309,11 @@ public class DataModelSupportImpl implements DataModelSupport {
         return attributeModel;
     }
 
-    protected String getDatabaseColumnType(@Nullable String schemaName, @Nullable String catalogName, String tableName,
-                                           String columnName, @Nullable AttributeModel attributeModel) {
+    protected String getDatabaseColumnType(@Nullable String schemaName,
+                                           @Nullable String catalogName,
+                                           String tableName,
+                                           String columnName,
+                                           @Nullable AttributeModel attributeModel) {
         try (Connection conn = dataSource.getConnection()) {
             DatabaseMetaData dbMetaData = conn.getMetaData();
 
@@ -388,25 +383,31 @@ public class DataModelSupportImpl implements DataModelSupport {
         }
     }
 
-    protected List<Relation> crossRelationCheck(String currentEntity, String referencedEntity, String dataStore, RelationType relationType) {
+    protected List<Relation> crossRelationCheck(String currentEntity, String referencedEntity,
+                                                String dataStore, RelationType relationType) {
         if (RelationType.getReverseRelation(relationType).equals(RelationType.ONE_TO_MANY)) {
             // inverse relation emulation for MANY_TO_ONE relation
             return dataModelProvider.getDataModel(dataStore, currentEntity).relations().get(relationType).stream()
-                    .filter(el -> el.referencedClass().equals(referencedEntity))
-                    .map(e -> new Relation(dataStore, currentEntity, e.relationDescription()))
+                    .filter(el ->
+                            el.referencedClass().equals(referencedEntity))
+                    .map(e ->
+                            new Relation(dataStore, currentEntity, e.relationDescription()))
                     .toList();
         }
         return new ArrayList<>();
     }
 
-    protected void constructRelations(String currentEntity, String referencedEntity, String dataStore, StringBuilder relationsDescription) {
+    protected void constructRelations(String currentEntity, String referencedEntity,
+                                      String dataStore, StringBuilder relationsDescription) {
         if (!dataModelProvider.isModelExists(dataStore, currentEntity)
                 || !dataModelProvider.isModelExists(dataStore, referencedEntity)) {
             return;
         }
 
-        Map<RelationType, List<Relation>> directRelations = dataModelProvider.getRelationsByEntity(dataStore, currentEntity);
-        Map<RelationType, List<Relation>> referencedRelations = dataModelProvider.getRelationsByEntity(dataStore, referencedEntity);
+        Map<RelationType, List<Relation>> directRelations =
+                dataModelProvider.getRelationsByEntity(dataStore, currentEntity);
+        Map<RelationType, List<Relation>> referencedRelations =
+                dataModelProvider.getRelationsByEntity(dataStore, referencedEntity);
         Set<RelationType> directRelationTypes = directRelations.keySet();
 
         if (directRelationTypes.isEmpty()) {
@@ -417,8 +418,11 @@ public class DataModelSupportImpl implements DataModelSupport {
         for (RelationType relationType : directRelationTypes) {
             referencedRelations.getOrDefault(RelationType.getReverseRelation(relationType),
                             crossRelationCheck(currentEntity, referencedEntity, dataStore, relationType))
-                    .stream().filter(el -> el.referencedClass().equals(currentEntity))
-                    .forEach(e -> relationsDescription.append(e.relationDescription()));
+                    .stream()
+                    .filter(el ->
+                            el.referencedClass().equals(currentEntity))
+                    .forEach(e ->
+                            relationsDescription.append(e.relationDescription()));
         }
     }
 
@@ -431,14 +435,19 @@ public class DataModelSupportImpl implements DataModelSupport {
 
         for (EntityModel model : filteredModels) {
             for (String dataStore : dataStoreNames) {
-                tempEntitiesDescription.append(dataModelProvider.getDataModel(dataStore, model.getName()).entityDescription());
+                tempEntitiesDescription
+                        .append(dataModelProvider.getDataModel(dataStore, model.getName()).entityDescription());
                 if (!dataModelProvider.hasRelations(dataStore, model.getName())) {
                     continue;
                 }
+
                 for (String referencedEntity : entityModelsNames) {
-                    if (model.getName().equals(referencedEntity) || completedModels.contains(referencedEntity)) continue;
-                    constructRelations(model.getName(), referencedEntity, dataStore, tempRelationsDescription);
+                    if (!model.getName().equals(referencedEntity)
+                            && !completedModels.contains(referencedEntity)) {
+                        constructRelations(model.getName(), referencedEntity, dataStore, tempRelationsDescription);
+                    }
                 }
+
                 completedModels.add(model.getName());
 
             }
@@ -452,7 +461,7 @@ public class DataModelSupportImpl implements DataModelSupport {
 
         for (String dataStore : dataStoreNames) {
             filteredModels.addAll(dataModelProvider.getDataModels(dataStore).values().stream()
-                .map(DataModel::entityModel).toList());
+                    .map(DataModel::entityModel).toList());
         }
 
         return generateFilteredDiagram();

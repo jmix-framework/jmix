@@ -55,7 +55,7 @@ public interface DataModelSupport {
     byte[] generateFilteredDiagram();
 
     /**
-     * Generate a PNG result diagram.
+     * Generate a PNG representation of a diagram as a byte array.
      *
      * @return PNG representation of a diagram as a byte array
      */

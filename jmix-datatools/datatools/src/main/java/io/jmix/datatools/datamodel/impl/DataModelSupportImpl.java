@@ -29,6 +29,8 @@ import io.jmix.datatools.datamodel.entity.AttributeModel;
 import io.jmix.datatools.datamodel.entity.EntityModel;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -43,6 +45,8 @@ import java.util.*;
 
 @Component("datatl_DataModelSupport")
 public class DataModelSupportImpl implements DataModelSupport, InitializingBean {
+
+    private static final Logger log = LoggerFactory.getLogger(DataModelSupportImpl.class);
 
     @Autowired
     protected Metadata metadata;
@@ -84,13 +88,12 @@ public class DataModelSupportImpl implements DataModelSupport, InitializingBean 
         List<MetaProperty> fields = entity.getProperties().stream().toList();
         Map<RelationType, List<Relation>> relationsMap = new HashMap<>();
         String dataStoreName = entity.getStore().getName();
-        String relationDescription;
 
         for (MetaProperty field : fields) {
-            AttributeModel attributeModel = null;
             String fieldName = field.getName();
 
             if (field.getType().equals(MetaProperty.Type.DATATYPE)) {
+                AttributeModel attributeModel = null;
                 if (field.getAnnotatedElement().isAnnotationPresent(Column.class)) {
                     String fieldType = field.getJavaType().getSimpleName();
 
@@ -101,9 +104,8 @@ public class DataModelSupportImpl implements DataModelSupport, InitializingBean 
                                 fieldName, fieldType, entity, field.isMandatory());
                     }
                 }
-            }
-
-            if (field.getType().equals(MetaProperty.Type.EMBEDDED)) {
+                attributeModelsList.add(attributeModel);
+            } else if (field.getType().equals(MetaProperty.Type.EMBEDDED)) {
                 MetaClass embeddableClass = metadata.findClass(field.getJavaType());
 
                 if (embeddableClass == null) {
@@ -134,11 +136,10 @@ public class DataModelSupportImpl implements DataModelSupport, InitializingBean 
                         attributeModelsList.add(embeddableAttribute);
                     }
                 }
-            }
-
-            if (field.getAnnotatedElement().isAnnotationPresent(ManyToOne.class)) {
+            } else if (field.getAnnotatedElement().isAnnotationPresent(ManyToOne.class)) {
                 String fieldType = field.getJavaType().getSimpleName();
 
+                AttributeModel attributeModel = null;
                 if (isEmbeddable) {
                     attributeModel = constructAttribute(fieldName, fieldType, field.getAnnotatedElement().isAnnotationPresent(NotNull.class));
                 } else {
@@ -146,23 +147,22 @@ public class DataModelSupportImpl implements DataModelSupport, InitializingBean 
                             fieldName, fieldType, entity, field.isMandatory());
                 }
 
-                relationDescription = diagramConstructor.constructRelationDescription(entity.getName(), fieldType, RelationType.MANY_TO_ONE, dataStoreName);
+                String relationDescription = diagramConstructor.constructRelationDescription(entity.getName(), fieldType, RelationType.MANY_TO_ONE, dataStoreName);
                 Relation relation = new Relation(dataStoreName, fieldType, relationDescription);
                 putRelation(relationsMap, RelationType.MANY_TO_ONE, relation);
-            }
-
-            if (field.getAnnotatedElement().isAnnotationPresent(OneToMany.class)) {
+                attributeModelsList.add(attributeModel);
+            } else if (field.getAnnotatedElement().isAnnotationPresent(OneToMany.class)) {
                 String fieldType = field.getRange().asClass().getName();
 
-                attributeModel = constructAttribute(fieldName, fieldType, field.getAnnotatedElement().isAnnotationPresent(NotNull.class));
+                AttributeModel attributeModel = constructAttribute(fieldName, fieldType, field.getAnnotatedElement().isAnnotationPresent(NotNull.class));
 
-                relationDescription = diagramConstructor.constructRelationDescription(entity.getName(), fieldType, RelationType.ONE_TO_MANY, dataStoreName);
+                String relationDescription = diagramConstructor.constructRelationDescription(entity.getName(), fieldType, RelationType.ONE_TO_MANY, dataStoreName);
                 Relation relation = new Relation(dataStoreName, fieldType, relationDescription);
 
                 putRelation(relationsMap, RelationType.ONE_TO_MANY, relation);
-            }
-
-            if (field.getAnnotatedElement().isAnnotationPresent(OneToOne.class)) {
+                attributeModelsList.add(attributeModel);
+            } else if (field.getAnnotatedElement().isAnnotationPresent(OneToOne.class)) {
+                AttributeModel attributeModel = null;
                 String fieldType = field.getJavaType().getSimpleName();
 
                 if (field.getAnnotatedElement().isAnnotationPresent(JoinColumn.class)) {
@@ -177,16 +177,15 @@ public class DataModelSupportImpl implements DataModelSupport, InitializingBean 
                     attributeModel = constructAttribute(fieldName, fieldType, isMandatory);
                 }
 
-                relationDescription = diagramConstructor.constructRelationDescription(entity.getName(), fieldType, RelationType.ONE_TO_ONE, dataStoreName);
+                String relationDescription = diagramConstructor.constructRelationDescription(entity.getName(), fieldType, RelationType.ONE_TO_ONE, dataStoreName);
                 Relation relation = new Relation(dataStoreName, fieldType, relationDescription);
 
                 putRelation(relationsMap, RelationType.ONE_TO_ONE, relation);
-            }
-
-            if (field.getAnnotatedElement().isAnnotationPresent(ManyToMany.class)) {
+                attributeModelsList.add(attributeModel);
+            } else if (field.getAnnotatedElement().isAnnotationPresent(ManyToMany.class)) {
                 String fieldType = field.getRange().asClass().getName();
 
-                attributeModel = constructAttribute(fieldName, fieldType, field.getAnnotatedElement().isAnnotationPresent(NotNull.class));
+                AttributeModel attributeModel = constructAttribute(fieldName, fieldType, field.getAnnotatedElement().isAnnotationPresent(NotNull.class));
 
                 JoinTable annotation = field.getAnnotatedElement().getAnnotation(JoinTable.class);
 
@@ -196,26 +195,23 @@ public class DataModelSupportImpl implements DataModelSupport, InitializingBean 
 
                 attributeModel.setColumnName(columnName);
 
-                relationDescription = diagramConstructor.constructRelationDescription(entity.getName(), fieldType, RelationType.MANY_TO_MANY, dataStoreName);
+                String relationDescription = diagramConstructor.constructRelationDescription(entity.getName(), fieldType, RelationType.MANY_TO_MANY, dataStoreName);
                 Relation relation = new Relation(dataStoreName, fieldType, relationDescription);
 
                 putRelation(relationsMap, RelationType.MANY_TO_MANY, relation);
-            }
-
-            if (attributeModel != null) {
                 attributeModelsList.add(attributeModel);
+            } else {
+                log.warn("Cannot generate data model description for '{}'", field);
             }
         }
 
         boolean isSystem = entity.getJavaClass().isAnnotationPresent(SystemLevel.class);
 
         String currentEntityType = entity.getName();
-
         String entityDescription = diagramConstructor
                 .constructEntityDescription(currentEntityType, dataStoreName, attributeModelsList);
 
         EntityModel entityModel = constructEntityModel(entity, isSystem);
-
         DataModel dataModel = new DataModel(
                 currentEntityType,
                 entity.getStore().getName(),

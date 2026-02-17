@@ -153,12 +153,11 @@ public class RowLevelRoleModelDetailView extends StandardDetailView<RowLevelRole
     @Subscribe("childRolesTable.add")
     public void onChildRolesTableAdd(ActionPerformedEvent event) {
         RowLevelRoleModel rowLevelRoleModel = getEditedEntity();
-        RowLevelRole currentRole = roleRepository.findRoleByCode(rowLevelRoleModel.getCode());
 
         DialogWindow<RowLevelRoleModelLookupView> lookupDialog = dialogWindows.lookup(childRolesTable)
                 .withViewClass(RowLevelRoleModelLookupView.class)
                 .withViewConfigurer(configurer -> {
-                    configurer.setCurrentRole(currentRole);
+                    configurer.setCurrentRoleModel(rowLevelRoleModel);
                 })
                 .build();
 

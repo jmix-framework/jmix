@@ -17,11 +17,13 @@
 package io.jmix.securityflowui.view.rowlevelrole;
 
 import com.vaadin.flow.router.Route;
+import io.jmix.core.EntityStates;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.view.*;
-import io.jmix.security.model.BaseRole;
+import io.jmix.security.model.BaseRoleModel;
 import io.jmix.security.model.RoleModelConverter;
+import io.jmix.security.model.RowLevelRole;
 import io.jmix.security.model.RowLevelRoleModel;
 import io.jmix.security.role.RowLevelRoleRepository;
 import io.jmix.securityflowui.component.rolefilter.RoleFilter;
@@ -56,19 +58,21 @@ public class RowLevelRoleModelLookupView extends StandardListView<RowLevelRoleMo
     private RoleModelConverter roleModelConverter;
     @Autowired
     private RowLevelRoleRepository roleRepository;
+    @Autowired
+    private EntityStates entityStates;
 
     @Autowired(required = false)
     protected List<RoleAssignmentCandidatePredicate> roleAssignmentCandidatePredicates = Collections.emptyList();
     @Autowired(required = false)
     protected List<RoleHierarchyCandidatePredicate> roleHierarchyCandidatePredicates = Collections.emptyList();
 
-    protected RoleAssignmentCandidatePredicate compositeRoleAssignmentCandidatePredicate;
-    protected RoleHierarchyCandidatePredicate compositeRoleHierarchyCandidatePredicate;
+    protected RoleAssignmentCandidatePredicate compositeRoleAssignmentCandidatePredicate = (userDetails, baseRole) -> true;
+    protected RoleHierarchyCandidatePredicate compositeRoleHierarchyCandidatePredicate = (baseRole, candidateRole) -> true;
 
     private List<String> excludedRolesCodes = Collections.emptyList();
 
     private UserDetails user;
-    private BaseRole currentRole;
+    private BaseRoleModel currentRoleModel;
 
     @Subscribe
     public void onInit(InitEvent event) {
@@ -101,13 +105,19 @@ public class RowLevelRoleModelLookupView extends StandardListView<RowLevelRoleMo
                 )
                 .filter(role -> {
                     boolean allowed = true;
-                    if (currentRole != null) {
+                    if (currentRoleModel != null) {
                         // apply hierarchy predicates to find available base role candidates
-                        allowed = allowed && compositeRoleHierarchyCandidatePredicate.test(currentRole, role);
+                        boolean isNewRole = entityStates.isNew(currentRoleModel);
+                        if (isNewRole) {
+                            allowed = compositeRoleHierarchyCandidatePredicate.test(null, role);
+                        } else if (currentRoleModel.getCode() != null) {
+                            RowLevelRole currentRole = roleRepository.findRoleByCode(currentRoleModel.getCode());
+                            allowed = compositeRoleHierarchyCandidatePredicate.test(currentRole, role);
+                        }
                     }
                     if (allowed && user != null) {
                         // apply user-based predicates to find roles available for user
-                        allowed = allowed && compositeRoleAssignmentCandidatePredicate.test(user, role);
+                        allowed = compositeRoleAssignmentCandidatePredicate.test(user, role);
                     }
                     return allowed;
                 })
@@ -125,7 +135,7 @@ public class RowLevelRoleModelLookupView extends StandardListView<RowLevelRoleMo
         this.user = user;
     }
 
-    public void setCurrentRole(BaseRole currentRole) {
-        this.currentRole = currentRole;
+    public void setCurrentRoleModel(BaseRoleModel currentRoleModel) {
+        this.currentRoleModel = currentRoleModel;
     }
 }

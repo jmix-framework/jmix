@@ -72,7 +72,7 @@ public class AssignToUsersAction<E extends BaseRoleModel>
     protected RoleAssignmentPersistence roleAssignmentPersistence;
     protected UserRepository userRepository;
 
-    protected RoleAssignmentCandidatePredicate compositeRoleAssignmentCandidatePredicate;
+    protected RoleAssignmentCandidatePredicate compositeRoleAssignmentCandidatePredicate = (userDetails, baseRole) -> true;
 
     protected ResourceRoleRepository resourceRoleRepository;
     protected RowLevelRoleRepository rowLevelRoleRepository;
@@ -189,13 +189,15 @@ public class AssignToUsersAction<E extends BaseRoleModel>
                         return true;
                     }
                     Collection<?> selectedItems = validationContext.getSelectedItems();
-                    for (Object item : selectedItems) {
-                        if (item instanceof UserDetails userDetails) {
-                            boolean applicable = compositeRoleAssignmentCandidatePredicate.test(userDetails, baseRole);
-                            if (!applicable) {
-                                log.warn("Role '{}' can't be assigned to user '{}'", baseRole.getName(), userDetails.getUsername());
-                                showNotificationIncorrectUserSelected(userDetails);
-                                return false;
+                    if (compositeRoleAssignmentCandidatePredicate != null && CollectionUtils.isNotEmpty(selectedItems)) {
+                        for (Object item : selectedItems) {
+                            if (item instanceof UserDetails userDetails) {
+                                boolean applicable = compositeRoleAssignmentCandidatePredicate.test(userDetails, baseRole);
+                                if (!applicable) {
+                                    log.warn("Role '{}' can't be assigned to user '{}'", baseRole.getName(), userDetails.getUsername());
+                                    showNotificationIncorrectUserSelected(userDetails);
+                                    return false;
+                                }
                             }
                         }
                     }

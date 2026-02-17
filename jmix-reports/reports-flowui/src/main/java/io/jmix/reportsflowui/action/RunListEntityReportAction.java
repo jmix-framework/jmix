@@ -171,13 +171,13 @@ public class RunListEntityReportAction<E> extends ListDataComponentAction<RunLis
 
         Set<E> selected = target.getSelectedItems();
         if (selected.size() > 1) {
-            Action printSelectedAction = new ObservableBaseAction("actions.printSelected")
+            Action printSelectedAction = new ObservableBaseAction<>("actions.printSelected")
                     .withVariant(ActionVariant.PRIMARY)
                     .withHandler(event -> printSelected(selected))
                     .withIcon(icons.get(JmixFontIcon.LINES))
                     .withText(messages.getMessage(getClass(), "actions.printSelected"));
 
-            Action printAllAction = new ObservableBaseAction("actions.printAll")
+            Action printAllAction = new ObservableBaseAction<>("actions.printAll")
                     .withText(messages.getMessage(getClass(), "actions.printAll"))
                     .withIcon(icons.get(JmixFontIcon.TABLE))
                     .withHandler(event -> printAll());

@@ -152,7 +152,7 @@ public class ReportRegionWizardDetailView extends StandardDetailView<ReportRegio
         entityTree = entityTreeComposite.getEntityTree();
         entityTree.expand(rootEntity);
 
-        Action doubleClickAction = new ObservableBaseAction("doubleClick")
+        Action doubleClickAction = new ObservableBaseAction<>("doubleClick")
                 .withHandler(event -> addProperty());
         doubleClickAction.setEnabled(isUpdatePermitted());
         entityTree.addAction(doubleClickAction);

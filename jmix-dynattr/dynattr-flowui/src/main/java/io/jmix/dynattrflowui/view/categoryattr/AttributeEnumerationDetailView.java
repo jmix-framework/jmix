@@ -236,7 +236,7 @@ public class AttributeEnumerationDetailView extends StandardView {
     }
 
     protected void gradeRemoveItemColumnUpdater(JmixButton button, AttributeLocalizedEnumValue customer) {
-        Action removeAction = new ObservableBaseAction("remove_item_" + customer.getValue())
+        Action removeAction = new ObservableBaseAction<>("remove_item_" + customer.getValue())
                 .withHandler(actionPerformedEvent -> {
                     localizedEnumValues.remove(customer);
                     localizedEnumValuesDl.load();

@@ -157,7 +157,7 @@ public class AddConditionView extends StandardListView<FilterCondition> {
                 "addConditionView.createDropdownButton.actionItemText",
                 messageTools.getEntityCaption(metaClass));
 
-        return new ObservableBaseAction("genericFilter_create" + detailViewId)
+        return new ObservableBaseAction<>("genericFilter_create" + detailViewId)
                 .withText(actionText)
                 .withHandler(event -> {
                     DialogWindow<View<?>> detailView = dialogWindows.detail(this, modelClass)

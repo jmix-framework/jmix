@@ -23,6 +23,8 @@ import io.jmix.core.Resources;
 import io.jmix.core.security.SystemAuthenticator;
 import io.jmix.reports.ReportImportExport;
 import io.jmix.reports.entity.Report;
+import io.jmix.reports.impl.AnnotatedReportHolder;
+import io.jmix.reports.impl.AnnotatedReportScanner;
 import io.jmix.reportsrest.controller.ReportRestController;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,6 +48,7 @@ public class ReportRestControllerTest {
 
     static final String FIXTURE_PATH = "classpath:test_support/rt-test-1.zip";
     static final String REPORT_CODE = "rt-test-1";
+    static final String DESIGN_TIME_REPORT_CODE = "dt-test-1";
 
     @Autowired
     ReportRestController reportRestController;
@@ -57,9 +60,14 @@ public class ReportRestControllerTest {
     Resources resources;
     @Autowired
     SystemAuthenticator systemAuthenticator;
+    @Autowired
+    AnnotatedReportScanner annotatedReportScanner;
+    @Autowired
+    AnnotatedReportHolder annotatedReportHolder;
 
     ObjectMapper objectMapper = new ObjectMapper();
     UUID reportId;
+    UUID designTimeReportId;
 
     @BeforeEach
     void setUp() throws IOException {
@@ -67,12 +75,18 @@ public class ReportRestControllerTest {
 
         String zipPath = resources.getResource(FIXTURE_PATH).getFile().getAbsolutePath();
         reportImportExport.importReports(zipPath);
+        annotatedReportHolder.clear();
+        annotatedReportScanner.importReportDefinitions();
 
         Report report = dataManager.load(Report.class)
                 .query("select r from report_Report r where r.code = :code")
                 .parameter("code", REPORT_CODE)
                 .one();
         reportId = report.getId();
+
+        Report designTimeReport = annotatedReportHolder.getByCode(DESIGN_TIME_REPORT_CODE);
+        assertNotNull(designTimeReport);
+        designTimeReportId = designTimeReport.getId();
     }
 
     @AfterEach
@@ -82,6 +96,7 @@ public class ReportRestControllerTest {
                 .parameter("code", REPORT_CODE)
                 .list();
         dataManager.remove(importedReports);
+        annotatedReportHolder.clear();
 
         systemAuthenticator.end();
     }
@@ -141,9 +156,54 @@ public class ReportRestControllerTest {
         assertTrue(contentDisposition.startsWith("attachment;"));
     }
 
+    @Test
+    void testLoadReportsListReturnsDesignTimeReport() throws Exception {
+        String body = reportRestController.loadReportsList();
+        JsonNode json = objectMapper.readTree(body);
+        JsonNode reportJson = findReportByCode(json, DESIGN_TIME_REPORT_CODE);
+        assertNotNull(reportJson);
+        assertEquals(designTimeReportId.toString(), reportJson.get("id").asText());
+    }
+
+    @Test
+    void testLoadReportReturnsDesignTimeReportDetails() throws Exception {
+        String body = reportRestController.loadReport(designTimeReportId.toString());
+
+        JsonNode json = objectMapper.readTree(body);
+        assertEquals(designTimeReportId.toString(), json.get("id").asText());
+        assertEquals(DESIGN_TIME_REPORT_CODE, json.get("code").asText());
+        assertEquals("Test Report", json.get("name").asText());
+        JsonNode defaultTemplate = findDefaultTemplate(json.get("templates"));
+        assertNotNull(defaultTemplate);
+        assertEquals("CSV", defaultTemplate.get("outputType").asText());
+    }
+
+    @Test
+    void testRunDesignTimeReportReturnsCsvContentAndHeaders() throws Exception {
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        reportRestController.runReport(designTimeReportId.toString(), "{}", response);
+
+        String contentDisposition = response.getHeader("Content-Disposition");
+        String contentType = response.getHeader("Content-Type");
+
+        assertEquals("no-cache", response.getHeader("Cache-Control"));
+        assertNotNull(contentDisposition);
+        assertNotNull(contentType);
+        assertTrue(contentDisposition.startsWith("inline;"));
+        assertTrue(contentDisposition.contains("filename=\"dt-test-1.csv\""));
+        assertTrue(contentType.contains("application/csv"));
+        assertTrue(response.getContentAsString().contains("value1"));
+        assertTrue(response.getContentAsString().contains("value2"));
+    }
+
     JsonNode findReportByCode(JsonNode reports) {
+        return findReportByCode(reports, REPORT_CODE);
+    }
+
+    JsonNode findReportByCode(JsonNode reports, String reportCode) {
         for (JsonNode report : reports) {
-            if (REPORT_CODE.equals(report.get("code").asText())) {
+            if (reportCode.equals(report.get("code").asText())) {
                 return report;
             }
         }
@@ -159,4 +219,3 @@ public class ReportRestControllerTest {
         return null;
     }
 }
-

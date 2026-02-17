@@ -25,7 +25,10 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.usersubstitution.CurrentUserSubstitution;
 import io.jmix.reports.ParameterClassResolver;
-import io.jmix.reports.impl.repository.ReportSecurityManager;
+import io.jmix.reports.ReportFilter;
+import io.jmix.reports.ReportLoadContext;
+import io.jmix.reports.ReportRepository;
+import io.jmix.reports.impl.AnnotatedReportGroupHolder;
 import io.jmix.reports.entity.*;
 import io.jmix.reports.exception.FailedToConnectToOpenOfficeException;
 import io.jmix.reports.exception.NoOpenOfficeFreePortsException;
@@ -51,6 +54,10 @@ public class ReportRestControllerManager {
     @Autowired
     protected DataManager dataManager;
     @Autowired
+    protected ReportRepository reportRepository;
+    @Autowired
+    protected AnnotatedReportGroupHolder annotatedReportGroupHolder;
+    @Autowired
     protected ReportRunner reportRunner;
     @Autowired
     protected ObjectToStringConverter objectToStringConverter;
@@ -63,32 +70,18 @@ public class ReportRestControllerManager {
     @Autowired
     protected SecureOperations secureOperations;
     @Autowired
-    protected ReportSecurityManager reportSecurityManager;
-    @Autowired
     protected ParameterClassResolver parameterClassResolver;
     @Autowired
     protected PolicyStore policyStore;
     @Autowired
     protected FetchPlans fetchPlans;
     @Autowired
-    protected FetchPlanRepository fetchPlanRepository;
-    @Autowired
     protected CurrentUserSubstitution currentUserSubstitution;
 
     public String loadGroup(String entityId) {
         checkCanReadEntity(metadata.getClass(ReportGroup.class));
-
-        LoadContext<ReportGroup> loadContext = new LoadContext(metadata.getClass(ReportGroup.class));
-
-        FetchPlan fetchPlan = fetchPlans.builder(ReportGroup.class)
-                .add("id")
-                .add("title")
-                .add("code")
-                .build();
-        loadContext.setFetchPlan(fetchPlan)
-                .setId(getIdFromString(entityId, metadata.getClass(ReportGroup.class)));
-
-        ReportGroup group = dataManager.load(loadContext);
+        UUID groupId = getReportGroupIdFromString(entityId);
+        ReportGroup group = findReportGroupById(groupId);
         checkEntityIsNotNull(metadata.getClass(ReportGroup.class).getName(), entityId, group);
 
         GroupInfo info = new GroupInfo();
@@ -102,22 +95,7 @@ public class ReportRestControllerManager {
 
     public String loadReportsList() {
         checkCanReadEntity(metadata.getClass(Report.class));
-
-        LoadContext<Report> loadContext = new LoadContext(metadata.getClass(Report.class));
-        FetchPlan fetchPlan = fetchPlans.builder(Report.class)
-                .add("id")
-                .add("name")
-                .add("code")
-                .add("group")
-                .build();
-
-        loadContext.setFetchPlan(fetchPlan)
-                .setQueryString("select r from report_Report r where r.restAccess = true");
-        reportSecurityManager.applySecurityPolicies(
-                loadContext,
-                null,
-                currentUserSubstitution.getEffectiveUser());
-        List<Report> reports = dataManager.loadList(loadContext);
+        List<Report> reports = loadAccessibleReports();
 
         List<ReportInfo> objects = reports.stream()
                 .map(this::mapToReportInfo)
@@ -182,19 +160,10 @@ public class ReportRestControllerManager {
 
     protected Report loadReportInternal(String entityId) {
         checkCanReadEntity(metadata.getClass(Report.class));
-
-        LoadContext<Report> loadContext = new LoadContext(metadata.getClass(Report.class));
-        FetchPlan fetchPlan = fetchPlanRepository.getFetchPlan(Report.class, "report.edit");
-        loadContext.setFetchPlan(fetchPlan)
-                .setQueryString("select r from report_Report r where r.id = :id and r.restAccess = true")
-                .setParameter("id", getReportIdFromString(entityId));
-
-        reportSecurityManager.applySecurityPolicies(loadContext, null, currentUserSubstitution.getEffectiveUser());
-
-        Report report = dataManager.load(loadContext);
-
+        UUID reportId = getReportIdFromString(entityId);
+        Report report = findAccessibleReportById(reportId);
         checkEntityIsNotNull(metadata.getClass(Report.class).getName(), entityId, report);
-        return report;
+        return reportRepository.reloadForRunning(report);
     }
 
     protected Map<String, Object> prepareValues(Report report, List<ParameterValueInfo> paramValues) {
@@ -274,7 +243,7 @@ public class ReportRestControllerManager {
                 .map(UUID::toString)
                 .orElse(null);
 
-        if (entityStates.isLoaded(report, "templates")) {
+        if (report.getSource() == ReportSource.ANNOTATED_CLASS || entityStates.isLoaded(report, "templates")) {
             if (report.getTemplates() != null) {
                 reportInfo.templates = report.getTemplates().stream()
                         .map(this::mapTemplateInfo)
@@ -282,7 +251,7 @@ public class ReportRestControllerManager {
             }
         }
 
-        if (entityStates.isLoaded(report, "xml")) {
+        if (report.getSource() == ReportSource.ANNOTATED_CLASS || entityStates.isLoaded(report, "xml")) {
             if (report.getInputParameters() != null) {
                 reportInfo.inputParameters = report.getInputParameters().stream()
                         .map(this::mapInputParameterInfo)
@@ -346,6 +315,46 @@ public class ReportRestControllerManager {
 
     protected UUID getReportIdFromString(String entityId) {
         return (UUID) getIdFromString(entityId, metadata.getClass(Report.class));
+    }
+
+    protected UUID getReportGroupIdFromString(String entityId) {
+        return (UUID) getIdFromString(entityId, metadata.getClass(ReportGroup.class));
+    }
+
+    protected List<Report> loadAccessibleReports() {
+        ReportFilter filter = new ReportFilter();
+        filter.setRestAccessible(true);
+        filter.setUser(currentUserSubstitution.getEffectiveUser());
+        return reportRepository.loadList(new ReportLoadContext(filter));
+    }
+
+    @Nullable
+    protected Report findAccessibleReportById(UUID reportId) {
+        return loadAccessibleReports().stream()
+                .filter(report -> Objects.equals(report.getId(), reportId))
+                .findFirst()
+                .orElse(null);
+    }
+
+    @Nullable
+    protected ReportGroup findReportGroupById(UUID groupId) {
+        ReportGroup group = annotatedReportGroupHolder.getAllGroups().stream()
+                .filter(reportGroup -> Objects.equals(reportGroup.getId(), groupId))
+                .findFirst()
+                .orElse(null);
+        if (group != null) {
+            return group;
+        }
+
+        LoadContext<ReportGroup> loadContext = new LoadContext<>(metadata.getClass(ReportGroup.class));
+        FetchPlan fetchPlan = fetchPlans.builder(ReportGroup.class)
+                .add("id")
+                .add("title")
+                .add("code")
+                .build();
+        loadContext.setFetchPlan(fetchPlan)
+                .setId(groupId);
+        return dataManager.load(loadContext);
     }
 
     protected Object getIdFromString(String entityId, MetaClass metaClass) {

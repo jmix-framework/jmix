@@ -53,6 +53,7 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
+import test_support.report.TestReport;
 import test_support.role.FullAccessRole;
 
 import javax.sql.DataSource;
@@ -66,7 +67,8 @@ import java.util.Set;
         EclipselinkConfiguration.class,
         SecurityConfiguration.class,
         ReportsConfiguration.class,
-        ReportsRestConfiguration.class
+        ReportsRestConfiguration.class,
+        TestReport.class
 })
 @PropertySource("classpath:/test_support/test-app.properties")
 public class ReportsRestTestConfiguration {

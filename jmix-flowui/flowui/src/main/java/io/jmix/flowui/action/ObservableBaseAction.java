@@ -40,7 +40,7 @@ import java.util.function.Consumer;
  *
  * @see UiObservationSupport
  */
-public class ObservableBaseAction extends BaseAction {
+public class ObservableBaseAction<A extends ObservableBaseAction<A>> extends BaseAction {
 
     @Autowired
     protected UiObservationSupport uiObservationSupport;
@@ -60,50 +60,62 @@ public class ObservableBaseAction extends BaseAction {
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public ObservableBaseAction withText(@Nullable String text) {
-        return (ObservableBaseAction) super.withText(text);
+    public A withText(@Nullable String text) {
+        return (A) super.withText(text);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public ObservableBaseAction withEnabled(boolean enabled) {
-        return (ObservableBaseAction) super.withEnabled(enabled);
+    public A withEnabled(boolean enabled) {
+        return (A) super.withEnabled(enabled);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public ObservableBaseAction withVisible(boolean visible) {
-        return (ObservableBaseAction) super.withVisible(visible);
+    public A withVisible(boolean visible) {
+        return (A) super.withVisible(visible);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public ObservableBaseAction withIcon(@Nullable Component icon) {
-        return (ObservableBaseAction) super.withIcon(icon);
+    public A withIcon(@Nullable Component icon) {
+        return (A) super.withIcon(icon);
     }
 
+    @SuppressWarnings("unchecked")
     @Deprecated(since = "3.0", forRemoval = true)
-    public ObservableBaseAction withIcon(@Nullable Icon icon) {
-        return (ObservableBaseAction) super.withIcon(icon);
+    @Override
+    public A withIcon(@Nullable Icon icon) {
+        return (A) super.withIcon(icon);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public ObservableBaseAction withDescription(@Nullable String description) {
-        return (ObservableBaseAction) super.withDescription(description);
+    public A withDescription(@Nullable String description) {
+        return (A) super.withDescription(description);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public ObservableBaseAction withVariant(ActionVariant variant) {
-        return (ObservableBaseAction) super.withVariant(variant);
+    public A withVariant(ActionVariant variant) {
+        return (A) super.withVariant(variant);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public ObservableBaseAction withShortcutCombination(@Nullable KeyCombination shortcutCombination) {
-        return (ObservableBaseAction) super.withShortcutCombination(shortcutCombination);
+    public A withShortcutCombination(@Nullable KeyCombination shortcutCombination) {
+        return (A) super.withShortcutCombination(shortcutCombination);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public ObservableBaseAction withHandler(@Nullable Consumer<ActionPerformedEvent> handler) {
-        return (ObservableBaseAction) super.withHandler(handler);
+    public A withHandler(@Nullable Consumer<ActionPerformedEvent> handler) {
+        return (A) super.withHandler(handler);
     }
+
+
 
     @Internal
     protected Optional<UiObservationSupport> getUiObservationSupport() {

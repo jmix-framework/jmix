@@ -61,7 +61,7 @@ import java.util.function.Consumer;
  * </ol>
  */
 @ActionType(SubstituteUserAction.ID)
-public class SubstituteUserAction extends ObservableBaseAction implements ExecutableAction, ApplicationContextAware {
+public class SubstituteUserAction extends ObservableBaseAction<SubstituteUserAction> implements ExecutableAction, ApplicationContextAware {
 
     private static final Logger log = LoggerFactory.getLogger(SubstituteUserAction.class);
 

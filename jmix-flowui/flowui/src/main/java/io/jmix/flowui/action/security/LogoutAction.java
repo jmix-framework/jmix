@@ -32,7 +32,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 @ActionType(LogoutAction.ID)
-public class LogoutAction extends ObservableBaseAction implements ExecutableAction, ApplicationContextAware {
+public class LogoutAction extends ObservableBaseAction<LogoutAction> implements ExecutableAction, ApplicationContextAware {
 
     public static final String ID = "logout";
 

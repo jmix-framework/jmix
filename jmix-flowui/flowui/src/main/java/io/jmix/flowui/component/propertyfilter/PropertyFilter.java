@@ -350,7 +350,7 @@ public class PropertyFilter<V> extends SingleFilterComponentBase<V> {
         }
     }
 
-    protected static class OperationChangeAction extends ObservableBaseAction {
+    protected static class OperationChangeAction extends ObservableBaseAction<OperationChangeAction> {
 
         protected Operation operation;
         protected BiConsumer<Operation, Boolean> handler;

@@ -20,6 +20,7 @@ import io.jmix.core.CoreConfiguration;
 import io.jmix.core.JmixModules;
 import io.jmix.core.Resources;
 import io.jmix.core.Stores;
+import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.cluster.ClusterApplicationEventChannelSupplier;
 import io.jmix.core.cluster.LocalApplicationEventChannelSupplier;
 import io.jmix.core.security.InMemoryUserRepository;
@@ -53,7 +54,6 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
-import test_support.report.TestReport;
 import test_support.role.FullAccessRole;
 
 import javax.sql.DataSource;
@@ -61,16 +61,17 @@ import java.util.List;
 import java.util.Set;
 
 @Configuration
+@ComponentScan
 @Import({
         CoreConfiguration.class,
         DataConfiguration.class,
         EclipselinkConfiguration.class,
         SecurityConfiguration.class,
         ReportsConfiguration.class,
-        ReportsRestConfiguration.class,
-        TestReport.class
+        ReportsRestConfiguration.class
 })
 @PropertySource("classpath:/test_support/test-app.properties")
+@JmixModule(dependsOn = {ReportsRestConfiguration.class, SecurityConfiguration.class})
 public class ReportsRestTestConfiguration {
 
     @Bean
@@ -188,3 +189,4 @@ public class ReportsRestTestConfiguration {
         };
     }
 }
+

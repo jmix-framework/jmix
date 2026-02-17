@@ -50,7 +50,7 @@ public class DataObservationSupport {
     @Autowired(required = false)
     protected ObservationRegistry observationRegistry;
 
-    @Value("$jmix.core.data-observation-enabled")
+    @Value("${jmix.core.data-observation-enabled}")
     protected boolean observationEnabled;
 
     private static final String DATA_BASE_LOAD_NAME = "jmix.data.load";

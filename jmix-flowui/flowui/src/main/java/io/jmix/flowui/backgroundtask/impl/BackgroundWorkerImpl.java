@@ -68,7 +68,7 @@ public class BackgroundWorkerImpl implements BackgroundWorker {
     protected ApplicationEventPublisher applicationEventPublisher;
     @Autowired
     protected TimeSource timeSource;
-
+    @Autowired(required = false)
     protected ObservationRegistry observationRegistry;
 
     protected UiBackgroundTaskProperties properties;
@@ -83,11 +83,6 @@ public class BackgroundWorkerImpl implements BackgroundWorker {
         this.properties = properties;
 
         createThreadPoolExecutor();
-    }
-
-    @Autowired(required = false)
-    public void setObservationRegistry(ObservationRegistry observationRegistry) {
-        this.observationRegistry = observationRegistry;
     }
 
     protected void createThreadPoolExecutor() {
@@ -406,14 +401,14 @@ public class BackgroundWorkerImpl implements BackgroundWorker {
         @ExecutedOnUIThread
         @Override
         public final void startExecution() {
-            Observation parentObservation = observationRegistry == null
-                    ? null
-                    : observationRegistry.getCurrentObservation();
+            Observation parentObservation = observationRegistry != null
+                    ? observationRegistry.getCurrentObservation()
+                    : null;
 
             // Start thread
             executorService.execute(() -> {
                         if (parentObservation != null) {
-                            try (Observation.Scope scope = parentObservation.openScope()) {
+                            try (Observation.Scope ignored = parentObservation.openScope()) {
                                 future.run();
                             }
                         } else {

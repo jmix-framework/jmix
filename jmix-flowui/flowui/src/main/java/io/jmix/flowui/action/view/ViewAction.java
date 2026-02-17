@@ -18,7 +18,6 @@ package io.jmix.flowui.action.view;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.icon.Icon;
-import io.jmix.flowui.UiObservationSupport;
 import io.jmix.flowui.action.ExecutableAction;
 import io.jmix.flowui.action.SecuredBaseAction;
 import io.jmix.flowui.action.TargetAction;
@@ -26,6 +25,7 @@ import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.view.View;
+import io.micrometer.observation.Observation;
 import org.springframework.lang.Nullable;
 
 import java.util.Objects;
@@ -120,7 +120,9 @@ public abstract class ViewAction<A extends ViewAction<A, V>, V extends View> ext
     public void actionPerform(Component component) {
         // if standard behaviour
         if (!hasListener(ActionPerformedEvent.class)) {
-            UiObservationSupport.createActionExeutionObservation(this, getUiObservationSupport())
+            getUiObservationSupport()
+                    .map(support -> support.createActionExeutionObservation(this))
+                    .orElse(Observation.NOOP)
                     .observe(this::execute);
         } else {
             super.actionPerform(component);

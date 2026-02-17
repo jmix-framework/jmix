@@ -27,9 +27,11 @@ import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.action.BaseAction;
 import io.jmix.flowui.kit.component.KeyCombination;
+import io.micrometer.observation.Observation;
 import jakarta.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Optional;
 import java.util.function.Consumer;
 
 
@@ -51,7 +53,9 @@ public class ObservableBaseAction extends BaseAction {
     public void actionPerform(Component component) {
         if (eventBus != null) {
             ActionPerformedEvent event = new ActionPerformedEvent(this, component);
-            UiObservationSupport.createActionExeutionObservation(this, getUiObservationSupport())
+            getUiObservationSupport()
+                    .map(support -> support.createActionExeutionObservation(this))
+                    .orElse(Observation.NOOP)
                     .observe(() -> getEventBus().fireEvent(event));
         }
     }
@@ -102,10 +106,9 @@ public class ObservableBaseAction extends BaseAction {
     }
 
     @Internal
-    @Nullable
-    protected UiObservationSupport getUiObservationSupport() {
+    protected Optional<UiObservationSupport> getUiObservationSupport() {
         if (uiObservationSupport != null) {
-            return uiObservationSupport;
+            return Optional.of(uiObservationSupport);
         }
 
         // try to instantiate bean in case of action created by a constructor
@@ -114,11 +117,12 @@ public class ObservableBaseAction extends BaseAction {
             try {
                 uiObservationSupport = Instantiator.get(ui)
                         .getOrCreate(UiObservationSupport.class);
-            } catch (Exception e) {
+            } catch (Exception ignored) {
                 // expected case, ignore silently
+                return Optional.empty();
             }
         }
 
-        return uiObservationSupport;
+        return Optional.ofNullable(uiObservationSupport);
     }
 }

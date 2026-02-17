@@ -25,7 +25,6 @@ import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 /**
@@ -46,8 +45,8 @@ public class UiObservationSupport {
     @Autowired(required = false)
     protected ObservationRegistry observationRegistry;
 
-    @Value("${jmix.ui.ui-observation-enabled:false}")
-    protected Boolean observationEnabled;
+    @Value("${jmix.ui.ui-observation-enabled}")
+    protected boolean observationEnabled;
 
     public static final String VIEW_OBSERVATION_NAME = "jmix.ui.views";
     public static final String ACTION_OBSERVATION_NAME = "jmix.ui.actions";
@@ -63,14 +62,12 @@ public class UiObservationSupport {
                 .lowCardinalityKeyValue("view.id", view.getId().orElse(""));
     }
 
-    // the method must be static to avoid NPE in the case where the bean object can't be instantiated
-    public static Observation createActionExeutionObservation(Action action,
-                                                              @Nullable UiObservationSupport uiObservationSupport) {
-        if (uiObservationSupport == null || !uiObservationSupport.observationEnabled) {
+    public Observation createActionExeutionObservation(Action action) {
+        if (!observationEnabled) {
             return Observation.NOOP;
         }
 
-        Observation observation = Observation.createNotStarted(ACTION_OBSERVATION_NAME, uiObservationSupport.observationRegistry)
+        Observation observation = Observation.createNotStarted(ACTION_OBSERVATION_NAME, observationRegistry)
                 .contextualName("execute action")
                 .lowCardinalityKeyValue("action.id", action.getId());
 

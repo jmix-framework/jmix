@@ -18,7 +18,6 @@ package io.jmix.flowui.action.security;
 
 import com.vaadin.flow.component.Component;
 import io.jmix.core.Messages;
-import io.jmix.flowui.UiObservationSupport;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.ExecutableAction;
 import io.jmix.flowui.action.ObservableBaseAction;
@@ -26,6 +25,7 @@ import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.sys.LogoutSupport;
+import io.micrometer.observation.Observation;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -71,7 +71,9 @@ public class LogoutAction extends ObservableBaseAction implements ExecutableActi
     public void actionPerform(Component component) {
         // if standard behaviour
         if (!hasListener(ActionPerformedEvent.class)) {
-            UiObservationSupport.createActionExeutionObservation(this, getUiObservationSupport())
+            getUiObservationSupport()
+                    .map(support -> support.createActionExeutionObservation(this))
+                    .orElse(Observation.NOOP)
                     .observe(this::execute);
         } else {
             super.actionPerform(component);

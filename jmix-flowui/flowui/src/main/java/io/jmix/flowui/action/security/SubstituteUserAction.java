@@ -25,7 +25,6 @@ import io.jmix.core.Messages;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.usersubstitution.UserSubstitutionManager;
 import io.jmix.flowui.Dialogs;
-import io.jmix.flowui.UiObservationSupport;
 import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.DialogAction;
@@ -37,6 +36,7 @@ import io.jmix.flowui.util.WebBrowserTools;
 import io.jmix.flowui.view.StandardDetailView;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewRegistry;
+import io.micrometer.observation.Observation;
 import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -127,7 +127,9 @@ public class SubstituteUserAction extends ObservableBaseAction implements Execut
     public void actionPerform(Component component) {
         // if standard behaviour
         if (!hasListener(ActionPerformedEvent.class)) {
-            UiObservationSupport.createActionExeutionObservation(this, getUiObservationSupport())
+            getUiObservationSupport()
+                    .map(support -> support.createActionExeutionObservation(this))
+                    .orElse(Observation.NOOP)
                     .observe(this::execute);
         } else {
             super.actionPerform(component);

@@ -20,7 +20,7 @@ import com.vaadin.flow.component.Component;
 import io.jmix.flowui.component.sidepanellayout.SidePanelLayout;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.kit.component.sidepanellayout.SidePanelMode;
-import io.jmix.flowui.kit.component.sidepanellayout.SidePanelPlacement;
+import io.jmix.flowui.kit.component.sidepanellayout.SidePanelPosition;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import io.jmix.flowui.xml.layout.loader.LayoutLoader;
@@ -50,7 +50,7 @@ public class SidePanelLayoutLoader extends AbstractComponentLoader<SidePanelLayo
         componentLoader().loadSizeAttributes(resultComponent, element);
         componentLoader().loadClassNames(resultComponent, element);
 
-        loadEnum(element, SidePanelPlacement.class, "sidePanelPlacement", resultComponent::setSidePanelPlacement);
+        loadEnum(element, SidePanelPosition.class, "sidePanelPosition", resultComponent::setSidePanelPosition);
         loadEnum(element, SidePanelMode.class, "sidePanelMode", resultComponent::setSidePanelMode);
         loadBoolean(element, "modal", resultComponent::setModal);
         loadBoolean(element, "closeOnOutsideClick", resultComponent::setCloseOnOutsideClick);

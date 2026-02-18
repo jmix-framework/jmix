@@ -26,8 +26,8 @@ import io.jmix.flowui.component.genericfilter.configuration.FilterConfigurationD
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.sidedialog.SideDialog;
 import io.jmix.flowui.component.sidepanellayout.SidePanelLayout;
-import io.jmix.flowui.kit.component.sidedialog.SideDialogPlacement;
-import io.jmix.flowui.kit.component.sidepanellayout.SidePanelPlacement;
+import io.jmix.flowui.kit.component.sidedialog.SideDialogPosition;
+import io.jmix.flowui.kit.component.sidepanellayout.SidePanelPosition;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
@@ -157,12 +157,12 @@ public class UiComponentProperties {
     /**
      * Default placement for {@link SidePanelLayout} components.
      */
-    SidePanelPlacement sidePanelLayoutDefaultPlacement;
+    SidePanelPosition sidePanelLayoutDefaultPlacement;
 
     /**
      * Default placement for {@link SideDialog} dialogs.
      */
-    SideDialogPlacement sideDialogDefaultPlacement;
+    SideDialogPosition sideDialogDefaultPlacement;
 
     public UiComponentProperties(
             String gridCreateShortcut,
@@ -193,8 +193,8 @@ public class UiComponentProperties {
             @DefaultValue("true") boolean defaultTrimEnabled,
             @DefaultValue("true") boolean checkboxRequiredStateInitializationEnabled,
             @DefaultValue("false") boolean gridRefreshAllOnItemReplace,
-            @DefaultValue("RIGHT") SidePanelPlacement sidePanelLayoutDefaultPlacement,
-            @DefaultValue("RIGHT") SideDialogPlacement sideDialogDefaultPlacement) {
+            @DefaultValue("RIGHT") SidePanelPosition sidePanelLayoutDefaultPlacement,
+            @DefaultValue("RIGHT") SideDialogPosition sideDialogDefaultPlacement) {
         this.gridCreateShortcut = gridCreateShortcut;
         this.gridAddShortcut = gridAddShortcut;
         this.gridRemoveShortcut = gridRemoveShortcut;
@@ -406,14 +406,14 @@ public class UiComponentProperties {
     /**
      * @see #sidePanelLayoutDefaultPlacement
      */
-    public SidePanelPlacement getSidePanelLayoutDefaultPlacement() {
+    public SidePanelPosition getSidePanelLayoutDefaultPlacement() {
         return sidePanelLayoutDefaultPlacement;
     }
 
     /**
      * @see #sideDialogDefaultPlacement
      */
-    public SideDialogPlacement getSideDialogDefaultPlacement() {
+    public SideDialogPosition getSideDialogDefaultPlacement() {
         return sideDialogDefaultPlacement;
     }
 }

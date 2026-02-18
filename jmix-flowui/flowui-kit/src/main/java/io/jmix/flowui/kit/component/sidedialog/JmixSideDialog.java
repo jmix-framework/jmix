@@ -47,9 +47,9 @@ public class JmixSideDialog extends Composite<JmixSideDialogOverlay> implements 
     }
 
     /**
-     * Returns the width of the dialog when horizontal placement is configured ({@link SideDialogPlacement#LEFT},
-     * {@link SideDialogPlacement#RIGHT}, {@link SideDialogPlacement#INLINE_START} or
-     * {@link SideDialogPlacement#INLINE_END}).
+     * Returns the width of the dialog when horizontal position is configured ({@link SideDialogPosition#LEFT},
+     * {@link SideDialogPosition#RIGHT}, {@link SideDialogPosition#INLINE_START} or
+     * {@link SideDialogPosition#INLINE_END}).
      * <p>
      * Note that this does not return the actual size of the dialog but the width which has been set using
      * {@link #setHorizontalSize(String)}.
@@ -62,9 +62,9 @@ public class JmixSideDialog extends Composite<JmixSideDialogOverlay> implements 
     }
 
     /**
-     * Sets the width of the dialog when horizontal placement is configured ({@link SideDialogPlacement#LEFT},
-     * {@link SideDialogPlacement#RIGHT}, {@link SideDialogPlacement#INLINE_START} or
-     * {@link SideDialogPlacement#INLINE_END}).
+     * Sets the width of the dialog when horizontal position is configured ({@link SideDialogPosition#LEFT},
+     * {@link SideDialogPosition#RIGHT}, {@link SideDialogPosition#INLINE_START} or
+     * {@link SideDialogPosition#INLINE_END}).
      * <p>
      * The width should be in a format understood by the browser, e.g. "100px" or "2.5em".
      * <p>
@@ -78,9 +78,9 @@ public class JmixSideDialog extends Composite<JmixSideDialogOverlay> implements 
     }
 
     /**
-     * Returns the max-width of the dialog when horizontal placement is configured ({@link SideDialogPlacement#LEFT},
-     * {@link SideDialogPlacement#RIGHT}, {@link SideDialogPlacement#INLINE_START} or
-     * {@link SideDialogPlacement#INLINE_END}).
+     * Returns the max-width of the dialog when horizontal position is configured ({@link SideDialogPosition#LEFT},
+     * {@link SideDialogPosition#RIGHT}, {@link SideDialogPosition#INLINE_START} or
+     * {@link SideDialogPosition#INLINE_END}).
      * <p>
      * Note that this does not return the actual size of the dialog but the max-width which has been set using
      * {@link #setHorizontalMaxSize(String)}.
@@ -93,9 +93,9 @@ public class JmixSideDialog extends Composite<JmixSideDialogOverlay> implements 
     }
 
     /**
-     * Sets the max-width of the dialog when horizontal placement is configured ({@link SideDialogPlacement#LEFT},
-     * {@link SideDialogPlacement#RIGHT}, {@link SideDialogPlacement#INLINE_START} or
-     * {@link SideDialogPlacement#INLINE_END}).
+     * Sets the max-width of the dialog when horizontal position is configured ({@link SideDialogPosition#LEFT},
+     * {@link SideDialogPosition#RIGHT}, {@link SideDialogPosition#INLINE_START} or
+     * {@link SideDialogPosition#INLINE_END}).
      * <p>
      * The width should be in a format understood by the browser, e.g. "100px" or "2.5em".
      * <p>
@@ -109,9 +109,9 @@ public class JmixSideDialog extends Composite<JmixSideDialogOverlay> implements 
     }
 
     /**
-     * Returns the min-width of the dialog when horizontal placement is configured ({@link SideDialogPlacement#LEFT},
-     * {@link SideDialogPlacement#RIGHT}, {@link SideDialogPlacement#INLINE_START} or
-     * {@link SideDialogPlacement#INLINE_END}).
+     * Returns the min-width of the dialog when horizontal position is configured ({@link SideDialogPosition#LEFT},
+     * {@link SideDialogPosition#RIGHT}, {@link SideDialogPosition#INLINE_START} or
+     * {@link SideDialogPosition#INLINE_END}).
      * <p>
      * Note that this does not return the actual size of the dialog but the min-width which has been set using
      * {@link #setHorizontalMinSize(String)}.
@@ -124,9 +124,9 @@ public class JmixSideDialog extends Composite<JmixSideDialogOverlay> implements 
     }
 
     /**
-     * Sets the min-width of the dialog when horizontal placement is configured ({@link SideDialogPlacement#LEFT},
-     * {@link SideDialogPlacement#RIGHT}, {@link SideDialogPlacement#INLINE_START} or
-     * {@link SideDialogPlacement#INLINE_END}).
+     * Sets the min-width of the dialog when horizontal position is configured ({@link SideDialogPosition#LEFT},
+     * {@link SideDialogPosition#RIGHT}, {@link SideDialogPosition#INLINE_START} or
+     * {@link SideDialogPosition#INLINE_END}).
      * <p>
      * The min-width should be in a format understood by the browser, e.g. "100px" or "2.5em".
      * <p>
@@ -140,8 +140,8 @@ public class JmixSideDialog extends Composite<JmixSideDialogOverlay> implements 
     }
 
     /**
-     * Returns the height of the dialog when vertical placement is configured ({@link SideDialogPlacement#TOP},
-     * {@link SideDialogPlacement#BOTTOM}).
+     * Returns the height of the dialog when vertical position is configured ({@link SideDialogPosition#TOP},
+     * {@link SideDialogPosition#BOTTOM}).
      * <p>
      * Note that this does not return the actual size of the dialog but the height which has been set using
      * {@link #setVerticalSize(String)}.
@@ -154,8 +154,8 @@ public class JmixSideDialog extends Composite<JmixSideDialogOverlay> implements 
     }
 
     /**
-     * Sets the height of the dialog when vertical placement is configured ({@link SideDialogPlacement#TOP},
-     * {@link SideDialogPlacement#BOTTOM}).
+     * Sets the height of the dialog when vertical position is configured ({@link SideDialogPosition#TOP},
+     * {@link SideDialogPosition#BOTTOM}).
      * <p>
      * The height should be in a format understood by the browser, e.g. "100px" or "2.5em".
      * <p>
@@ -169,8 +169,8 @@ public class JmixSideDialog extends Composite<JmixSideDialogOverlay> implements 
     }
 
     /**
-     * Returns the max-height of the dialog when vertical placement is configured ({@link SideDialogPlacement#TOP},
-     * {@link SideDialogPlacement#BOTTOM}).
+     * Returns the max-height of the dialog when vertical position is configured ({@link SideDialogPosition#TOP},
+     * {@link SideDialogPosition#BOTTOM}).
      * <p>
      * Note that this does not return the actual size of the side panel but the max-height which has been set using
      * {@link #setVerticalMaxSize(String)}.
@@ -183,8 +183,8 @@ public class JmixSideDialog extends Composite<JmixSideDialogOverlay> implements 
     }
 
     /**
-     * Sets the max-height of the dialog when vertical placement is configured ({@link SideDialogPlacement#TOP},
-     * {@link SideDialogPlacement#BOTTOM}).
+     * Sets the max-height of the dialog when vertical position is configured ({@link SideDialogPosition#TOP},
+     * {@link SideDialogPosition#BOTTOM}).
      * <p>
      * The max-height should be in a format understood by the browser, e.g. "100px" or "2.5em".
      * <p>
@@ -198,8 +198,8 @@ public class JmixSideDialog extends Composite<JmixSideDialogOverlay> implements 
     }
 
     /**
-     * Returns the min-height of the dialog when vertical placement is configured ({@link SideDialogPlacement#TOP},
-     * {@link SideDialogPlacement#BOTTOM}).
+     * Returns the min-height of the dialog when vertical position is configured ({@link SideDialogPosition#TOP},
+     * {@link SideDialogPosition#BOTTOM}).
      * <p>
      * Note that this does not return the actual size of the side panel but the min-height which has been set using
      * {@link #setVerticalMinSize(String)}.
@@ -212,8 +212,8 @@ public class JmixSideDialog extends Composite<JmixSideDialogOverlay> implements 
     }
 
     /**
-     * Sets the min-height of the dialog when vertical placement is configured ({@link SideDialogPlacement#TOP},
-     * {@link SideDialogPlacement#BOTTOM}).
+     * Sets the min-height of the dialog when vertical position is configured ({@link SideDialogPosition#TOP},
+     * {@link SideDialogPosition#BOTTOM}).
      * <p>
      * The min-height should be in a format understood by the browser, e.g. "100px" or "2.5em".
      * <p>
@@ -261,21 +261,21 @@ public class JmixSideDialog extends Composite<JmixSideDialogOverlay> implements 
     }
 
     /**
-     * @return the side dialog placement
+     * @return the side dialog position
      */
-    public SideDialogPlacement getSideDialogPlacement() {
-        return getContent().getSideDialogPlacement();
+    public SideDialogPosition getSideDialogPosition() {
+        return getContent().getSideDialogPosition();
     }
 
     /**
-     * Sets the side dialog placement.
+     * Sets the side dialog position.
      * <p>
-     * The default value is {@link SideDialogPlacement#RIGHT}.
+     * The default value is {@link SideDialogPosition#RIGHT}.
      *
-     * @param placement the side dialog placement
+     * @param position the side dialog position
      */
-    public void setSideDialogPlacement(SideDialogPlacement placement) {
-        getContent().setSideDialogPlacement(placement);
+    public void setSideDialogPosition(SideDialogPosition position) {
+        getContent().setSideDialogPosition(position);
     }
 
     /**

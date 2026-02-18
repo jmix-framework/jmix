@@ -17,9 +17,9 @@
 package io.jmix.flowui.kit.component.sidepanellayout;
 
 /**
- * Represents the placement of the side panel relative to the main content.
+ * Represents the position of the side panel relative to the main content.
  */
-public enum SidePanelPlacement {
+public enum SidePanelPosition {
 
     /**
      * The side panel is placed at the top of the main content.

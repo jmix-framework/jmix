@@ -27,12 +27,12 @@ export const JmixSidePanelLayoutMixin = (superClass) =>
                 observer: '_sidePanelOpenedChanged',
                 sync: true,
             },
-            sidePanelPlacement: {
+            sidePanelPosition: {
                 type: String,
                 reflectToAttribute: true,
                 value: 'right',
                 notify: true,
-                observer: '_sidePanelPlacementChanged',
+                observer: '_sidePanelPositionChanged',
                 sync: true,
             },
             sidePanelMode: {
@@ -214,11 +214,11 @@ export const JmixSidePanelLayoutMixin = (superClass) =>
     }
 
     /**
-     * Observer for {@code sidePanelPlacement} property.
+     * Observer for {@code sidePanelPosition} property.
      *
      * @private
      */
-    _sidePanelPlacementChanged() {
+    _sidePanelPositionChanged() {
         this._updateSidePanelSizes();
     }
 
@@ -254,10 +254,10 @@ export const JmixSidePanelLayoutMixin = (superClass) =>
     }
 
     _updateSidePanelHorizontalSizes(size, minSize, maxSize) {
-        if (this.sidePanelPlacement !== 'right'
-                && this.sidePanelPlacement !== 'left'
-                && this.sidePanelPlacement !== 'inline-start'
-                && this.sidePanelPlacement !== 'inline-end') {
+        if (this.sidePanelPosition !== 'right'
+                && this.sidePanelPosition !== 'left'
+                && this.sidePanelPosition !== 'inline-start'
+                && this.sidePanelPosition !== 'inline-end') {
             this.$.sidePanel.style.removeProperty('width');
             this.$.sidePanel.style.removeProperty('min-width');
             this.$.sidePanel.style.removeProperty('max-width');
@@ -284,7 +284,7 @@ export const JmixSidePanelLayoutMixin = (superClass) =>
     }
 
     _updateSidePanelVerticalSizes(size, minSize, maxSize) {
-        if (this.sidePanelPlacement !== 'top' && this.sidePanelPlacement !== 'bottom') {
+        if (this.sidePanelPosition !== 'top' && this.sidePanelPosition !== 'bottom') {
             this.$.sidePanel.style.removeProperty('height');
             this.$.sidePanel.style.removeProperty('min-height');
             this.$.sidePanel.style.removeProperty('max-height');
@@ -316,16 +316,16 @@ export const JmixSidePanelLayoutMixin = (superClass) =>
             this.$.content.style.maxHeight = '100%';
             return;
         }
-        if (this.sidePanelPlacement === 'left'
-                || this.sidePanelPlacement === 'right'
-                || this.sidePanelPlacement === 'inline-start'
-                || this.sidePanelPlacement === 'inline-end') {
+        if (this.sidePanelPosition === 'left'
+                || this.sidePanelPosition === 'right'
+                || this.sidePanelPosition === 'inline-start'
+                || this.sidePanelPosition === 'inline-end') {
             let realWidth = this.$.sidePanel.getBoundingClientRect().width + 'px';
             if (this.sidePanelOpened) {
                 this.$.content.style.setProperty('--_jmix-side-panel-horizontal-size', realWidth);
                 this.$.content.style.maxWidth = 'calc(100% - var(--_jmix-side-panel-horizontal-size))';
 
-                // Clear height if sidePanelPlacement changed when side panel is opened
+                // Clear height if sidePanelPosition changed when side panel is opened
                 this.$.content.style.maxHeight = '100%';
                 this.$.content.style.setProperty('--_jmix-side-panel-vertical-size', '');
             } else {
@@ -333,13 +333,13 @@ export const JmixSidePanelLayoutMixin = (superClass) =>
                 this.$.content.style.setProperty('--_jmix-side-panel-horizontal-size', '');
             }
         }
-        if (this.sidePanelPlacement === 'top' || this.sidePanelPlacement === 'bottom') {
+        if (this.sidePanelPosition === 'top' || this.sidePanelPosition === 'bottom') {
             let realHeight = this.$.sidePanel.getBoundingClientRect().height + 'px';
             if (this.sidePanelOpened) {
                 this.$.content.style.setProperty('--_jmix-side-panel-vertical-size', realHeight);
                 this.$.content.style.maxHeight = 'calc(100% - var(--_jmix-side-panel-vertical-size))';
 
-                // Clear width if sidePanelPlacement changed when side panel is opened
+                // Clear width if sidePanelPosition changed when side panel is opened
                 this.$.content.style.maxWidth = '100%';
                 this.$.content.style.setProperty('--_jmix-side-panel-horizontal-size', '');
             } else {

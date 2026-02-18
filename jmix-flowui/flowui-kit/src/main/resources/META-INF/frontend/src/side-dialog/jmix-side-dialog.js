@@ -48,14 +48,14 @@ class JmixSideDialog extends ControllerMixin(Dialog) {
                 with-backdrop="[[!modeless]]"
                 restore-focus-on-close
                 focus-trap
-                side-dialog-placement$="[[sideDialogPlacement]]"
+                side-dialog-position$="[[sideDialogPosition]]"
             ></jmix-side-dialog-overlay>
         `;
     }
 
     static get properties() {
         return {
-            sideDialogPlacement: {
+            sideDialogPosition: {
                 type: String,
                 reflectToAttribute: true,
                 value: 'right',
@@ -107,7 +107,7 @@ class JmixSideDialog extends ControllerMixin(Dialog) {
         return [
             '_updateHorizontalSizes(horizontalSize, horizontalMinSize, horizontalMaxSize)',
             '_updateVerticalSizes(verticalSize, verticalMinSize, verticalMaxSize)',
-            '_onSideDialogPlacementChanged(sideDialogPlacement)',
+            '_onSideDialogPositionChanged(sideDialogPosition)',
         ];
     }
 
@@ -128,10 +128,10 @@ class JmixSideDialog extends ControllerMixin(Dialog) {
      * @protected
      */
     _updateHorizontalSizes(size, minSize, maxSize) {
-        if (this.sideDialogPlacement !== 'right'
-                 && this.sideDialogPlacement !== 'left'
-                 && this.sideDialogPlacement !== 'inline-start'
-                 && this.sideDialogPlacement !== 'inline-end') {
+        if (this.sideDialogPosition !== 'right'
+                 && this.sideDialogPosition !== 'left'
+                 && this.sideDialogPosition !== 'inline-start'
+                 && this.sideDialogPosition !== 'inline-end') {
             this.$.overlay.$.overlay.style.removeProperty('width');
             this.$.overlay.$.overlay.style.removeProperty('min-width');
             this.$.overlay.$.overlay.style.removeProperty('max-width');
@@ -163,7 +163,7 @@ class JmixSideDialog extends ControllerMixin(Dialog) {
      * @protected
      */
     _updateVerticalSizes(size, minSize, maxSize) {
-        if (this.sideDialogPlacement !== 'top' && this.sideDialogPlacement !== 'bottom') {
+        if (this.sideDialogPosition !== 'top' && this.sideDialogPosition !== 'bottom') {
             this.$.overlay.$.overlay.style.removeProperty('height');
             this.$.overlay.$.overlay.style.removeProperty('min-height');
             this.$.overlay.$.overlay.style.removeProperty('max-height');
@@ -190,11 +190,11 @@ class JmixSideDialog extends ControllerMixin(Dialog) {
     }
 
     /**
-     * Observer for the `sideDialogPlacement` property.
+     * Observer for the `sideDialogPosition` property.
      *
      * @protected
      */
-    _onSideDialogPlacementChanged(placement) {
+    _onSideDialogPositionChanged(position) {
         this._updateSizes();
     }
 

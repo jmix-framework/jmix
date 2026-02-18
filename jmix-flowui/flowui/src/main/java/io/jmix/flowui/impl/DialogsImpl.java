@@ -50,7 +50,7 @@ import io.jmix.flowui.event.dialog.DialogOpenedEvent;
 import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.KeyCombination;
-import io.jmix.flowui.kit.component.sidedialog.SideDialogPlacement;
+import io.jmix.flowui.kit.component.sidedialog.SideDialogPosition;
 import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.View;
@@ -1547,13 +1547,13 @@ public class DialogsImpl implements Dialogs {
         }
 
         @Override
-        public SideDialogPlacement getSideDialogPlacement() {
-            return sideDialog.getSideDialogPlacement();
+        public SideDialogPosition getSideDialogPosition() {
+            return sideDialog.getSideDialogPosition();
         }
 
         @Override
-        public SideDialogBuilder withSideDialogPlacement(SideDialogPlacement placement) {
-            sideDialog.setSideDialogPlacement(placement);
+        public SideDialogBuilder withSideDialogPosition(SideDialogPosition position) {
+            sideDialog.setSideDialogPosition(position);
             return this;
         }
 

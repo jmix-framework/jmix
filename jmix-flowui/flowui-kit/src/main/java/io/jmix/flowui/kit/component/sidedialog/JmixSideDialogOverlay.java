@@ -24,7 +24,7 @@ import jakarta.annotation.Nullable;
 
 /**
  * The extension of the {@link Dialog} component that functions as a drawer panel. It has a popping-out animation of the
- * dialog and enables configuring the dialog placement.
+ * dialog and enables configuring the dialog position.
  */
 @Tag("jmix-side-dialog")
 @JsModule("./src/side-dialog/jmix-side-dialog.js")
@@ -101,9 +101,9 @@ public class JmixSideDialogOverlay extends Dialog {
     }
 
     /**
-     * Sets the full width of the dialog when horizontal placement is configured ({@link SideDialogPlacement#LEFT},
-     * {@link SideDialogPlacement#RIGHT}, {@link SideDialogPlacement#INLINE_START} or
-     * {@link SideDialogPlacement#INLINE_END}).
+     * Sets the full width of the dialog when horizontal position is configured ({@link SideDialogPosition#LEFT},
+     * {@link SideDialogPosition#RIGHT}, {@link SideDialogPosition#INLINE_START} or
+     * {@link SideDialogPosition#INLINE_END}).
      */
     @Override
     public void setWidthFull() {
@@ -113,8 +113,8 @@ public class JmixSideDialogOverlay extends Dialog {
     }
 
     /**
-     * Sets the height of the dialog when vertical placement is configured ({@link SideDialogPlacement#TOP},
-     * {@link SideDialogPlacement#BOTTOM}).
+     * Sets the height of the dialog when vertical position is configured ({@link SideDialogPosition#TOP},
+     * {@link SideDialogPosition#BOTTOM}).
      */
     @Override
     public void setHeightFull() {
@@ -124,23 +124,23 @@ public class JmixSideDialogOverlay extends Dialog {
     }
 
     /**
-     * @return the dialog placement
+     * @return the dialog position
      */
-    public SideDialogPlacement getSideDialogPlacement() {
-        String placement = getElement().getProperty("sideDialogPlacement");
-        if (Strings.isNullOrEmpty(placement)) {
-            return SideDialogPlacement.RIGHT;
+    public SideDialogPosition getSideDialogPosition() {
+        String position = getElement().getProperty("sideDialogPosition");
+        if (Strings.isNullOrEmpty(position)) {
+            return SideDialogPosition.RIGHT;
         }
-        return SideDialogPlacement.valueOf(placement.toUpperCase().replace("-", "_"));
+        return SideDialogPosition.valueOf(position.toUpperCase().replace("-", "_"));
     }
 
     /**
-     * Sets the dialog placement. The default value is {@link SideDialogPlacement#RIGHT}.
+     * Sets the dialog position. The default value is {@link SideDialogPosition#RIGHT}.
      *
-     * @param placement the dialog placement
+     * @param position the dialog position
      */
-    public void setSideDialogPlacement(SideDialogPlacement placement) {
-        getElement().setProperty("sideDialogPlacement", placement.name().toLowerCase().replace("_", "-"));
+    public void setSideDialogPosition(SideDialogPosition position) {
+        getElement().setProperty("sideDialogPosition", position.name().toLowerCase().replace("_", "-"));
     }
 
     /**

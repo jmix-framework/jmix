@@ -17,8 +17,6 @@
 package io.jmix.flowui.component.sidepanellayout;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.ComponentEventListener;
-import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.UiComponentProperties;
 import io.jmix.flowui.component.ComponentContainer;
 import io.jmix.flowui.component.UiComponentUtils;
@@ -57,10 +55,10 @@ public class SidePanelLayout extends JmixSidePanelLayout implements ComponentCon
     }
 
     protected void initComponent() {
-        SidePanelPlacement defaultPlacement = applicationContext.getBean(UiComponentProperties.class)
+        SidePanelPosition defaultPlacement = applicationContext.getBean(UiComponentProperties.class)
                 .getSidePanelLayoutDefaultPlacement();
 
-        setSidePanelPlacement(defaultPlacement);
+        setSidePanelPosition(defaultPlacement);
     }
 
     @Override

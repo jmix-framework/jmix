@@ -23,7 +23,6 @@ import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.dom.ElementUtil;
 import com.vaadin.flow.dom.PropertyChangeEvent;
 import com.vaadin.flow.shared.Registration;
-import io.jmix.flowui.kit.component.sidedialog.SideDialogPlacement;
 import jakarta.annotation.Nullable;
 
 @Tag("jmix-side-panel-layout")
@@ -146,23 +145,23 @@ public class JmixSidePanelLayout extends Component implements HasSize, HasStyle 
     }
 
     /**
-     * @return the side panel placement
+     * @return the side panel position
      */
-    public SidePanelPlacement getSidePanelPlacement() {
-        String placement = getElement().getProperty("sidePanelPlacement");
-        if (Strings.isNullOrEmpty(placement)) {
-            return SidePanelPlacement.RIGHT;
+    public SidePanelPosition getSidePanelPosition() {
+        String position = getElement().getProperty("sidePanelPosition");
+        if (Strings.isNullOrEmpty(position)) {
+            return SidePanelPosition.RIGHT;
         }
-        return SidePanelPlacement.valueOf(placement.toUpperCase().replace("-", "_"));
+        return SidePanelPosition.valueOf(position.toUpperCase().replace("-", "_"));
     }
 
     /**
-     * Sets the side panel placement.
+     * Sets the side panel position.
      *
-     * @param placement side panel placement to set
+     * @param position side panel position to set
      */
-    public void setSidePanelPlacement(SidePanelPlacement placement) {
-        getElement().setProperty("sidePanelPlacement", placement.name().toLowerCase().replace("_", "-"));
+    public void setSidePanelPosition(SidePanelPosition position) {
+        getElement().setProperty("sidePanelPosition", position.name().toLowerCase().replace("_", "-"));
     }
 
     /**
@@ -223,9 +222,9 @@ public class JmixSidePanelLayout extends Component implements HasSize, HasStyle 
     }
 
     /**
-     * Returns the width of the side panel when horizontal placement is configured ({@link SidePanelPlacement#LEFT},
-     * {@link SidePanelPlacement#RIGHT}, {@link SidePanelPlacement#INLINE_START} or
-     * {@link SidePanelPlacement#INLINE_END}).
+     * Returns the width of the side panel when horizontal position is configured ({@link SidePanelPosition#LEFT},
+     * {@link SidePanelPosition#RIGHT}, {@link SidePanelPosition#INLINE_START} or
+     * {@link SidePanelPosition#INLINE_END}).
      * <p>
      * Note that this does not return the actual size of the side panel but the width which has been set using
      * {@link #setSidePanelHorizontalSize(String)}.
@@ -238,8 +237,8 @@ public class JmixSidePanelLayout extends Component implements HasSize, HasStyle 
     }
 
     /**
-     * Sets the width of the side panel when placement is horizontal ({@link SidePanelPlacement#LEFT},
-     * {@link SidePanelPlacement#RIGHT}, {@link SidePanelPlacement#INLINE_START}, {@link SidePanelPlacement#INLINE_END}).
+     * Sets the width of the side panel when position is horizontal ({@link SidePanelPosition#LEFT},
+     * {@link SidePanelPosition#RIGHT}, {@link SidePanelPosition#INLINE_START}, {@link SidePanelPosition#INLINE_END}).
      * <p>
      * The width should be in a format understood by the browser, e.g. "100px" or "2.5em".
      * <p>
@@ -253,9 +252,9 @@ public class JmixSidePanelLayout extends Component implements HasSize, HasStyle 
     }
 
     /**
-     * Returns the max-width of the side panel when horizontal placement is configured ({@link SidePanelPlacement#LEFT},
-     * {@link SidePanelPlacement#RIGHT}, {@link SideDialogPlacement#INLINE_START} or
-     * {@link SideDialogPlacement#INLINE_END}).
+     * Returns the max-width of the side panel when horizontal position is configured ({@link SidePanelPosition#LEFT},
+     * {@link SidePanelPosition#RIGHT}, {@link SidePanelPosition#INLINE_START} or
+     * {@link SidePanelPosition#INLINE_END}).
      * <p>
      * Note that this does not return the actual size of the side panel but the max-width which has been set using
      * {@link #setSidePanelHorizontalMaxSize(String)}.
@@ -268,8 +267,8 @@ public class JmixSidePanelLayout extends Component implements HasSize, HasStyle 
     }
 
     /**
-     * Sets the max-width of the side panel when placement is horizontal ({@link SidePanelPlacement#LEFT},
-     * {@link SidePanelPlacement#RIGHT}, {@link SidePanelPlacement#INLINE_START}, {@link SidePanelPlacement#INLINE_END}).
+     * Sets the max-width of the side panel when position is horizontal ({@link SidePanelPosition#LEFT},
+     * {@link SidePanelPosition#RIGHT}, {@link SidePanelPosition#INLINE_START}, {@link SidePanelPosition#INLINE_END}).
      * <p>
      * The max-width should be in a format understood by the browser, e.g. "100px" or "2.5em".
      * <p>
@@ -283,9 +282,9 @@ public class JmixSidePanelLayout extends Component implements HasSize, HasStyle 
     }
 
     /**
-     * Returns the min-width of the side panel when horizontal placement is configured ({@link SidePanelPlacement#LEFT},
-     * {@link SidePanelPlacement#RIGHT}, {@link SidePanelPlacement#INLINE_START} or
-     * {@link SidePanelPlacement#INLINE_END}).
+     * Returns the min-width of the side panel when horizontal position is configured ({@link SidePanelPosition#LEFT},
+     * {@link SidePanelPosition#RIGHT}, {@link SidePanelPosition#INLINE_START} or
+     * {@link SidePanelPosition#INLINE_END}).
      * <p>
      * Note that this does not return the actual size of the side panel but the min-width which has been set using
      * {@link #setSidePanelHorizontalMinSize(String)}.
@@ -298,8 +297,8 @@ public class JmixSidePanelLayout extends Component implements HasSize, HasStyle 
     }
 
     /**
-     * Sets the min-width of the side panel when placement is horizontal ({@link SidePanelPlacement#LEFT},
-     * {@link SidePanelPlacement#RIGHT}, {@link SidePanelPlacement#INLINE_START}, {@link SidePanelPlacement#INLINE_END}).
+     * Sets the min-width of the side panel when position is horizontal ({@link SidePanelPosition#LEFT},
+     * {@link SidePanelPosition#RIGHT}, {@link SidePanelPosition#INLINE_START}, {@link SidePanelPosition#INLINE_END}).
      * <p>
      * The min-width should be in a format understood by the browser, e.g. "100px" or "2.5em".
      * <p>
@@ -313,8 +312,8 @@ public class JmixSidePanelLayout extends Component implements HasSize, HasStyle 
     }
 
     /**
-     * Returns the height of the side panel when vertical placement is configured ({@link SidePanelPlacement#TOP},
-     * {@link SidePanelPlacement#BOTTOM}).
+     * Returns the height of the side panel when vertical position is configured ({@link SidePanelPosition#TOP},
+     * {@link SidePanelPosition#BOTTOM}).
      * <p>
      * Note that this does not return the actual size of the side panel but the height which has been set using
      * {@link #setSidePanelVerticalSize(String)}.
@@ -327,8 +326,8 @@ public class JmixSidePanelLayout extends Component implements HasSize, HasStyle 
     }
 
     /**
-     * Sets the height of the side panel when side placement is horizontal ({@link SidePanelPlacement#TOP},
-     * {@link SidePanelPlacement#BOTTOM}).
+     * Sets the height of the side panel when side position is horizontal ({@link SidePanelPosition#TOP},
+     * {@link SidePanelPosition#BOTTOM}).
      * <p>
      * The height should be in a format understood by the browser, e.g. "100px" or "2.5em".
      * <p>
@@ -342,8 +341,8 @@ public class JmixSidePanelLayout extends Component implements HasSize, HasStyle 
     }
 
     /**
-     * Returns the max-height of the dialog when vertical placement is configured ({@link SidePanelPlacement#TOP},
-     * {@link SidePanelPlacement#BOTTOM}).
+     * Returns the max-height of the dialog when vertical position is configured ({@link SidePanelPosition#TOP},
+     * {@link SidePanelPosition#BOTTOM}).
      * <p>
      * Note that this does not return the actual size of the side panel but the max-height which has been set using
      * {@link #setSidePanelVerticalMaxSize(String)}.
@@ -356,8 +355,8 @@ public class JmixSidePanelLayout extends Component implements HasSize, HasStyle 
     }
 
     /**
-     * Sets the max-height of the side panel when side panel placement is horizontal ({@link SidePanelPlacement#TOP},
-     * {@link SidePanelPlacement#BOTTOM}).
+     * Sets the max-height of the side panel when side panel position is horizontal ({@link SidePanelPosition#TOP},
+     * {@link SidePanelPosition#BOTTOM}).
      * <p>
      * The max-height should be in a format understood by the browser, e.g. "100px" or "2.5em".
      * <p>
@@ -371,8 +370,8 @@ public class JmixSidePanelLayout extends Component implements HasSize, HasStyle 
     }
 
     /**
-     * Returns the min-height of the dialog when vertical placement is configured ({@link SidePanelPlacement#TOP},
-     * {@link SidePanelPlacement#BOTTOM}).
+     * Returns the min-height of the dialog when vertical position is configured ({@link SidePanelPosition#TOP},
+     * {@link SidePanelPosition#BOTTOM}).
      * <p>
      * Note that this does not return the actual size of the side panel but the min-height which has been set using
      * {@link #setSidePanelVerticalMinSize(String)}.
@@ -385,8 +384,8 @@ public class JmixSidePanelLayout extends Component implements HasSize, HasStyle 
     }
 
     /**
-     * Sets the min-height of the side panel when placement is horizontal ({@link SidePanelPlacement#TOP},
-     * {@link SidePanelPlacement#BOTTOM}).
+     * Sets the min-height of the side panel when position is horizontal ({@link SidePanelPosition#TOP},
+     * {@link SidePanelPosition#BOTTOM}).
      * <p>
      * The min-height should be in a format understood by the browser, e.g. "100px" or "2.5em".
      * <p>

@@ -17,9 +17,9 @@
 package io.jmix.flowui.kit.component.sidedialog;
 
 /**
- * Represents the placement of the side dialog relative to the application window.
+ * Represents the position of the side dialog relative to the application window.
  */
-public enum SideDialogPlacement {
+public enum SideDialogPosition {
 
     /**
      * The side dialog is placed at the top of the application window.

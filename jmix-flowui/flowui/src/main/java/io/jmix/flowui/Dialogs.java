@@ -32,7 +32,7 @@ import io.jmix.flowui.component.sidedialog.SideDialogCloseActionEvent;
 import io.jmix.flowui.component.sidedialog.SideDialogOpenedChangeEvent;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.kit.action.Action;
-import io.jmix.flowui.kit.component.sidedialog.SideDialogPlacement;
+import io.jmix.flowui.kit.component.sidedialog.SideDialogPosition;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.View;
 import org.springframework.lang.Nullable;
@@ -133,7 +133,7 @@ public interface Dialogs {
      *         .withHeader("User Profile")
      *         .withContentComponents(createContent())
      *         .withFooterProvider(this::createFooter)
-     *         .withSideDialogPlacement(SideDialogPlacement.LEFT)
+     *         .withSideDialogPosition(SideDialogPosition.LEFT)
      *         .open();
      * </pre>
      *
@@ -521,7 +521,7 @@ public interface Dialogs {
          *                 return layout;
          *             })
          *             .withContentComponents(createContent())
-         *             .withSideDialogPlacement(SideDialogPlacement.LEFT)
+         *             .withSideDialogPosition(SideDialogPosition.LEFT)
          *             .open();
          * }
          * </pre>
@@ -612,7 +612,7 @@ public interface Dialogs {
          *                 layout.add(okButton);
          *                 return layout;
          *             })
-         *             .withSideDialogPlacement(SideDialogPlacement.LEFT)
+         *             .withSideDialogPosition(SideDialogPosition.LEFT)
          *             .open();
          * }
          * </pre>
@@ -749,17 +749,17 @@ public interface Dialogs {
         SideDialogBuilder withFullscreenOnSmallDevices(boolean fullscreen);
 
         /**
-         * @return placement of the dialog
+         * @return position of the dialog
          */
-        SideDialogPlacement getSideDialogPlacement();
+        SideDialogPosition getSideDialogPosition();
 
         /**
-         * Sets the placement of the dialog.
+         * Sets the position of the dialog.
          *
-         * @param placement placement of the dialog
+         * @param position position of the dialog
          * @return builder
          */
-        SideDialogBuilder withSideDialogPlacement(SideDialogPlacement placement);
+        SideDialogBuilder withSideDialogPosition(SideDialogPosition position);
 
         /**
          * @return overlay role of the dialog or {@code null} if not set

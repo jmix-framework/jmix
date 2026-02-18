@@ -16,6 +16,7 @@
 
 package io.jmix.flowui;
 
+import io.jmix.core.annotation.Experimental;
 import io.jmix.flowui.exception.ExceptionDialog;
 import io.jmix.flowui.sys.UiTestIdSupport;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -247,6 +248,7 @@ public class UiProperties {
     /**
      * @see #uiObservationEnabled
      */
+    @Experimental
     public boolean isUiObservationEnabled() {
         return uiObservationEnabled;
     }

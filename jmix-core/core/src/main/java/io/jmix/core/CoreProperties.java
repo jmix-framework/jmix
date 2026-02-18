@@ -16,6 +16,8 @@
 
 package io.jmix.core;
 
+import io.jmix.core.annotation.Experimental;
+import io.micrometer.observation.Observation;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.lang.Nullable;
@@ -125,6 +127,12 @@ public class CoreProperties {
      */
     boolean dataObservationEnabled;
 
+    /**
+     * Whether to include user information about username and tenant ID to root {@link Observation}
+     * as high cardinality values.
+     */
+    boolean useUserInfoForObservation;
+
     public CoreProperties(
             String webHostName,
             String webPort,
@@ -147,7 +155,8 @@ public class CoreProperties {
             @DefaultValue("true") boolean roundDecimalValueByFormat,
             @DefaultValue("false") boolean skipNullOrEmptyConditionsByDefault,
             @DefaultValue("true") boolean instanceNameFallbackEnabled,
-            @DefaultValue("false") boolean dataObservationEnabled) {
+            @DefaultValue("false") boolean dataObservationEnabled,
+            @DefaultValue("true") boolean useUserInfoForObservation) {
         this.webHostName = webHostName;
         this.webPort = webPort;
         this.confDir = confDir;
@@ -179,6 +188,7 @@ public class CoreProperties {
         this.skipNullOrEmptyConditionsByDefault = skipNullOrEmptyConditionsByDefault;
         this.instanceNameFallbackEnabled = instanceNameFallbackEnabled;
         this.dataObservationEnabled = dataObservationEnabled;
+        this.useUserInfoForObservation = useUserInfoForObservation;
     }
 
     public String getWebHostName() {
@@ -301,7 +311,16 @@ public class CoreProperties {
     /**
      * @see #dataObservationEnabled
      */
+    @Experimental
     public boolean isDataObservationEnabled() {
         return dataObservationEnabled;
+    }
+
+    /**
+     * @see #useUserInfoForObservation
+     */
+    @Experimental
+    public boolean isUseUserInfoForObservation() {
+        return useUserInfoForObservation;
     }
 }

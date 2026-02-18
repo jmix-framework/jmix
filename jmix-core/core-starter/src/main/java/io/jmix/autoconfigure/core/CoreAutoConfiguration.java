@@ -18,9 +18,12 @@ package io.jmix.autoconfigure.core;
 
 import io.jmix.core.*;
 import io.jmix.core.impl.JmixMessageSource;
+import io.jmix.core.observation.JmixUserContextObservationFilter;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.SearchStrategy;
 import org.springframework.boot.autoconfigure.jmx.JmxAutoConfiguration;
 import org.springframework.boot.autoconfigure.jmx.JmxProperties;
@@ -43,6 +46,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @Import({CoreConfiguration.class})
 @EnableConfigurationProperties(JmxProperties.class)
 @AutoConfigureBefore({ValidationAutoConfiguration.class, JmxAutoConfiguration.class})
+@AutoConfigureAfter(name = "org.springframework.boot.autoconfigure.observation.ObservationAutoConfiguration")
 public class CoreAutoConfiguration {
 
     @Bean
@@ -93,5 +97,13 @@ public class CoreAutoConfiguration {
             source.registerCorsConfiguration(urlPattern, configuration);
         }
         return source;
+    }
+
+    @Bean
+    @ConditionalOnProperty(prefix = "jmix.core", name = "use-user-info-for-observation",
+            havingValue = "true", matchIfMissing = true)
+    @ConditionalOnMissingBean
+    public JmixUserContextObservationFilter userContextObservationFilter() {
+        return new JmixUserContextObservationFilter();
     }
 }

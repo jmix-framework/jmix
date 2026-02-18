@@ -16,44 +16,55 @@
 
 package io.jmix.datatoolsflowui.view.datamodel;
 
+import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.streams.DownloadHandler;
 import com.vaadin.flow.server.streams.DownloadResponse;
-import io.jmix.datatools.datamodel.DataModelSupport;
+import io.jmix.datatoolsflowui.datamodel.DataModelDiagramStorage;
 import io.jmix.flowui.component.image.JmixImage;
 import io.jmix.flowui.view.*;
+import io.jmix.flowui.view.navigation.UrlParamSerializer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.util.UUID;
 
-@Route(value = "datatl/data-model-diagram", layout = DefaultMainViewParent.class)
+@Route(value = "datatl/data-model-diagram/:id?", layout = DefaultMainViewParent.class)
 @ViewController(id = "datatl_dataModelDiagramView")
 @ViewDescriptor(path = "data-model-diagram-view.xml")
 public class DataModelDiagramView extends StandardView {
 
-    @Autowired
-    protected DataModelSupport dataModelSupport;
-
     @ViewComponent
-    private JmixImage<Object> diagramImage;
+    private JmixImage<?> diagramImage;
 
-    @Subscribe
-    public void onBeforeShow(final BeforeShowEvent event) {
-        generateDiagram();
+    @Autowired
+    protected UrlParamSerializer urlParamSerializer;
+    @Autowired
+    protected DataModelDiagramStorage dataModelDiagramStorage;
+
+    @Override
+    public void afterNavigation(AfterNavigationEvent event) {
+        super.afterNavigation(event);
+
+        event.getRouteParameters().get("id")
+                .map(id ->
+                        urlParamSerializer.deserialize(UUID.class, id))
+                .ifPresent(id ->
+                        setDiagramData(dataModelDiagramStorage.get(id))
+                );
     }
 
-    public void generateDiagram() {
-        // hack to passing filtered entities list to this view that open in a browser tab
-        byte[] rawResult = dataModelSupport.filteredModelsCount() == dataModelSupport.getDataModelProvider().getModelsCount()
-                ? dataModelSupport.generateDiagram()
-                : dataModelSupport.generateFilteredDiagram();
-
+    public void setDiagramData(@Nullable byte[] diagramData) {
         DownloadHandler downloadHandler = DownloadHandler.fromInputStream(e ->
                 new DownloadResponse(
-                        new ByteArrayInputStream(rawResult),
+                        diagramData != null
+                                ? new ByteArrayInputStream(diagramData)
+                                : InputStream.nullInputStream(),
                         "data-model-er-diagram.png",
                         null,
-                        rawResult.length));
+                        diagramData != null ? diagramData.length : 0));
 
         diagramImage.setSrc(downloadHandler);
     }

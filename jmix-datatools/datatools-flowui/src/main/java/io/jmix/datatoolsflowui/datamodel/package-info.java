@@ -14,12 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.datatoolsflowui.view.navigation;
+@NonNullApi
+package io.jmix.datatoolsflowui.datamodel;
 
-public interface DataDiagramViewSupport {
-
-    /**
-     * Open a view that displays data model diagram.
-     */
-    void open();
-}
+import org.springframework.lang.NonNullApi;

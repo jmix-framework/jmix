@@ -16,11 +16,14 @@
 
 package io.jmix.autoconfigure.datatoolsflowui;
 
+import com.vaadin.flow.spring.annotation.VaadinSessionScope;
 import io.jmix.core.CoreConfiguration;
 import io.jmix.datatools.DatatoolsConfiguration;
 import io.jmix.datatoolsflowui.DatatoolsFlowuiConfiguration;
-import io.jmix.datatoolsflowui.view.navigation.DataDiagramViewSupport;
-import io.jmix.datatoolsflowui.view.navigation.Impl.DataDiagramViewSupportImpl;
+import io.jmix.datatoolsflowui.datamodel.DataDiagramViewSupport;
+import io.jmix.datatoolsflowui.datamodel.DataModelDiagramStorage;
+import io.jmix.datatoolsflowui.datamodel.impl.DataDiagramViewSupportImpl;
+import io.jmix.datatoolsflowui.datamodel.impl.InMemoryDataModelDiagramStorage;
 import io.jmix.flowui.FlowuiConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -32,9 +35,17 @@ import org.springframework.context.annotation.Import;
         DatatoolsFlowuiConfiguration.class})
 public class DatatoolsFlowuiAutoConfiguration {
 
+    @VaadinSessionScope
     @Bean("flowui_DataDiagramViewSupport")
     @ConditionalOnMissingBean(name = "tabmod_TabbedModeDataDiagramViewSupport")
-    public DataDiagramViewSupport loginViewSupport() {
+    public DataDiagramViewSupport dataDiagramViewSupport() {
         return new DataDiagramViewSupportImpl();
+    }
+
+    @VaadinSessionScope
+    @Bean("datatl_DataModelDiagramStorage")
+    @ConditionalOnMissingBean
+    public DataModelDiagramStorage dataModelDiagramStorage() {
+        return new InMemoryDataModelDiagramStorage();
     }
 }

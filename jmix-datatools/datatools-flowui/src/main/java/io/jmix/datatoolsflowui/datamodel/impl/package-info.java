@@ -15,6 +15,6 @@
  */
 
 @NonNullApi
-package io.jmix.datatoolsflowui.view.navigation;
+package io.jmix.datatoolsflowui.datamodel.impl;
 
 import org.springframework.lang.NonNullApi;

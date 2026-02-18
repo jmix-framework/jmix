@@ -63,7 +63,6 @@ public class DataModelSupportImpl implements DataModelSupport, InitializingBean 
     protected DataModelProvider dataModelProvider;
     protected JmixModuleDescriptor mainModuleInfo;
 
-    protected List<EntityModel> filteredModels;
     protected Set<String> dataStoreNames;
 
     @Override
@@ -276,16 +275,6 @@ public class DataModelSupportImpl implements DataModelSupport, InitializingBean 
     }
 
     @Override
-    public void setFilteredModels(List<EntityModel> filteredModels) {
-        this.filteredModels = filteredModels;
-    }
-
-    @Override
-    public int filteredModelsCount() {
-        return filteredModels.size();
-    }
-
-    @Override
     public DataModelProvider getDataModelProvider() {
         return dataModelProvider;
     }
@@ -458,14 +447,13 @@ public class DataModelSupportImpl implements DataModelSupport, InitializingBean 
         }
     }
 
-    @Override
-    public byte[] generateFilteredDiagram() {
+    public byte[] generateDiagram(List<EntityModel> models) {
         StringBuilder tempEntitiesDescription = new StringBuilder();
         StringBuilder tempRelationsDescription = new StringBuilder();
         Set<String> completedModels = new HashSet<>();
-        List<String> entityModelsNames = filteredModels.stream().map(EntityModel::getName).toList();
+        List<String> entityModelsNames = models.stream().map(EntityModel::getName).toList();
 
-        for (EntityModel model : filteredModels) {
+        for (EntityModel model : models) {
             for (String dataStore : dataStoreNames) {
                 tempEntitiesDescription
                         .append(dataModelProvider.getDataModel(dataStore, model.getName()).entityDescription());
@@ -486,17 +474,6 @@ public class DataModelSupportImpl implements DataModelSupport, InitializingBean 
         }
 
         return diagramConstructor.getDiagram(tempEntitiesDescription.toString(), tempRelationsDescription.toString());
-    }
-
-    public byte[] generateDiagram() {
-        filteredModels = new ArrayList<>();
-
-        for (String dataStore : dataStoreNames) {
-            filteredModels.addAll(dataModelProvider.getDataModels(dataStore).values().stream()
-                    .map(DataModel::entityModel).toList());
-        }
-
-        return generateFilteredDiagram();
     }
 
     protected boolean isAnnotationPresent(MetaProperty field, Class<? extends Annotation> annotationClass) {

@@ -18,12 +18,12 @@ import io.jmix.datatools.datamodel.DataModelSupport;
 import io.jmix.datatools.datamodel.engine.DiagramConstructor;
 import io.jmix.datatools.datamodel.entity.AttributeModel;
 import io.jmix.datatools.datamodel.entity.EntityModel;
-import io.jmix.datatoolsflowui.view.navigation.DataDiagramViewSupport;
+import io.jmix.datatoolsflowui.datamodel.DataDiagramViewSupport;
+import io.jmix.flowui.Notifications;
 import io.jmix.flowui.component.SupportsTypedValue.TypedValueChangeEvent;
 import io.jmix.flowui.component.checkbox.JmixCheckbox;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.textfield.TypedTextField;
-import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.facet.UrlQueryParametersFacet;
 import io.jmix.flowui.facet.urlqueryparameters.AbstractUrlQueryParametersBinder;
 import io.jmix.flowui.icon.Icons;
@@ -81,6 +81,8 @@ public class DataModelListView extends StandardView {
     protected DataDiagramViewSupport dataDiagramViewSupport;
     @Autowired
     protected UrlParamSerializer urlParamSerializer;
+    @Autowired
+    protected Notifications notifications;
 
     protected Set<String> dataStoreNames;
 
@@ -200,22 +202,16 @@ public class DataModelListView extends StandardView {
 
     @Subscribe(id = "diagramButton", subject = "clickListener")
     public void onDiagramButtonClick(final ClickEvent<JmixButton> event) {
-        ValidationErrors errors = new ValidationErrors();
-
         if (!diagramConstructor.pingService()) {
-            errors.add("Remote diagramming service is not available.");
-        }
+            notifications.create("Remote diagramming service is not available.")
+                    .withType(Notifications.Type.ERROR)
+                    .show();
 
-        if (!errors.isEmpty()) {
-            viewValidation.showValidationErrors(errors);
             return;
         }
 
-        // TODO: gg, refactor
-        dataModelSupport.setFilteredModels(entityModelsDc.getItems());
-
-        // navigate to DataDiagramView
-        dataDiagramViewSupport.open();
+        byte[] diagramData = dataModelSupport.generateDiagram(entityModelsDc.getItems());
+        dataDiagramViewSupport.open(diagramData);
     }
 
     @Supply(to = "attributeModelsDataGrid.isMandatory", subject = "renderer")

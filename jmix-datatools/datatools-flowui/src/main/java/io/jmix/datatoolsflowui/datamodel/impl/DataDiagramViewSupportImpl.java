@@ -14,25 +14,39 @@
  * limitations under the License.
  */
 
-package io.jmix.datatoolsflowui.view.navigation.Impl;
+package io.jmix.datatoolsflowui.datamodel.impl;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
-import io.jmix.datatoolsflowui.view.navigation.DataDiagramViewSupport;
+import com.vaadin.flow.router.RouteParameters;
+import io.jmix.core.UuidProvider;
+import io.jmix.datatoolsflowui.datamodel.DataDiagramViewSupport;
+import io.jmix.datatoolsflowui.datamodel.DataModelDiagramStorage;
 import io.jmix.flowui.view.ViewRegistry;
+import io.jmix.flowui.view.navigation.UrlParamSerializer;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.UUID;
 
 public class DataDiagramViewSupportImpl implements DataDiagramViewSupport {
 
     @Autowired
     protected ViewRegistry viewRegistry;
+    @Autowired
+    protected DataModelDiagramStorage dataModelDiagramStorage;
+    @Autowired
+    protected UrlParamSerializer urlParamSerializer;
 
     @Override
-    public void open() {
+    public void open(byte[] diagramData) {
         Class<? extends Component> navigationTarget = viewRegistry.getViewInfo("datatl_dataModelDiagramView")
                 .getControllerClass();
 
-        String url = viewRegistry.getRouteConfiguration().getUrl(navigationTarget);
+        UUID id = UuidProvider.createUuidV7();
+        dataModelDiagramStorage.put(id, diagramData);
+
+        String url = viewRegistry.getRouteConfiguration()
+                .getUrl(navigationTarget, new RouteParameters("id", urlParamSerializer.serialize(id)));
         UI.getCurrent().getPage().open(url);
     }
 }

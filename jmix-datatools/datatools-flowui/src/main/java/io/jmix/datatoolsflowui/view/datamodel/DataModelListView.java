@@ -13,6 +13,7 @@ import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.LoadContext;
 import io.jmix.datatools.datamodel.DataModel;
+import io.jmix.datatools.datamodel.DataModelProvider;
 import io.jmix.datatools.datamodel.DataModelSupport;
 import io.jmix.datatools.datamodel.engine.DiagramConstructor;
 import io.jmix.datatools.datamodel.entity.AttributeModel;
@@ -78,7 +79,7 @@ public class DataModelListView extends StandardView {
     @Autowired
     protected UrlParamSerializer urlParamSerializer;
 
-    private Set<String> dataStoreNames;
+    protected Set<String> dataStoreNames;
 
     @Subscribe
     public void onInit(final InitEvent event) {
@@ -92,69 +93,30 @@ public class DataModelListView extends StandardView {
 
     @Install(to = "entityModelsDl", target = Target.DATA_LOADER)
     protected List<EntityModel> entityModelsDlLoadDelegate(LoadContext<EntityModel> loadContext) {
-        List<String> entityNames = new ArrayList<>();
-
-        String filterValue = entityNameFilter.getTypedValue();
-        if (!Strings.isNullOrEmpty(filterValue)) {
-            if (filterValue.matches(REGEXP_PREFIX)) {
-                Pattern pattern = Pattern.compile(filterValue.substring(REGEXP_PREFIX.length()), Pattern.CASE_INSENSITIVE);
-                for (String dataStore : dataStoreNames) {
-                    entityNames.addAll(dataModelSupport.getDataModelProvider().getDataModels(dataStore).keySet().stream()
-                            .filter(name -> name.matches(pattern.pattern())).toList());
-                }
-            } else {
-                List<String> requestedNames = Stream.of(filterValue.split(","))
-                        .map(String::strip).toList();
-
-                Set<String> allEntityNames = new HashSet<>();
-
-                for (String dataStore : dataStoreNames) {
-                    allEntityNames.addAll(dataModelSupport.getDataModelProvider().getDataModels(dataStore).keySet());
-                }
-
-                // TODO: gg, refactor
-                for (String entityName : allEntityNames) {
-                    for (String reqName : requestedNames) {
-                        if (entityName.matches("(?i)" + ".*" + reqName + ".*")) {
-                            entityNames.add(entityName);
-                        }
-                    }
-                }
-            }
+        List<String> entityNames = collectEntityNamesToFilter();
+        if (entityNames.isEmpty() && !entityNameFilter.isEmpty()) {
+            return Collections.emptyList();
         }
 
-        // TODO: gg, refactor
         List<EntityModel> models;
+        DataModelProvider dataModelProvider = dataModelSupport.getDataModelProvider();
+
         if (entityNames.isEmpty()) {
-            models = dataModelSupport.getDataModelProvider().getDataModels().values().stream()
+            models = dataModelProvider.getDataModels().values().stream()
                     .flatMap(e -> e.values().stream())
                     .map(DataModel::entityModel)
-                    .filter(entityModel -> {
-                        if (showSystemCheckBox.getValue()) {
-                            return true;
-                        } else {
-                            return entityModel.getIsSystem().equals(false);
-                        }
-                    })
+                    .filter(entityModel ->
+                            Boolean.TRUE.equals(showSystemCheckBox.getValue())
+                                    || !Boolean.TRUE.equals(entityModel.getIsSystem()))
                     .toList();
         } else {
             models = entityNames.stream()
-                    .flatMap(entityName -> {
-                        List<EntityModel> result = new ArrayList<>();
-
-                        for (String dataStore : dataStoreNames) {
-                            result.add(dataModelSupport.getDataModelProvider().getEntityModel(dataStore, entityName));
-                        }
-
-                        return result.stream();
-                    })
-                    .filter(entityModel -> {
-                        if (showSystemCheckBox.getValue()) {
-                            return true;
-                        } else {
-                            return entityModel.getIsSystem().equals(false);
-                        }
-                    })
+                    .flatMap(entityName -> dataStoreNames.stream()
+                            .map(dataStore ->
+                                    dataModelProvider.getEntityModel(dataStore, entityName)))
+                    .filter(entityModel ->
+                            Boolean.TRUE.equals(showSystemCheckBox.getValue())
+                                    || !Boolean.TRUE.equals(entityModel.getIsSystem()))
                     .toList();
         }
 
@@ -163,23 +125,53 @@ public class DataModelListView extends StandardView {
         return models;
     }
 
-    protected void changeDataStoreColumnVisibility(List<EntityModel> model) {
-        Set<String> dataStores = new HashSet<>();
-
-        for (EntityModel em : model) {
-            dataStores.add(em.getDataStore());
+    protected List<String> collectEntityNamesToFilter() {
+        String filterValue = entityNameFilter.getTypedValue();
+        if (Strings.isNullOrEmpty(filterValue)) {
+            return Collections.emptyList();
         }
 
-        Grid.Column<EntityModel> dataStoreColumn = entityModelsDataGrid.getColumnByKey("dataStore");
+        List<String> entityNames = new ArrayList<>();
+        if (filterValue.matches(REGEXP_PREFIX)) {
+            Pattern pattern = Pattern.compile(filterValue.substring(REGEXP_PREFIX.length()), Pattern.CASE_INSENSITIVE);
 
-        if (dataStores.size() <= 1) {
-            if (dataStoreColumn != null) {
-                entityModelsDataGrid.removeColumn(dataStoreColumn);
+            for (String dataStore : dataStoreNames) {
+                entityNames.addAll(dataModelSupport.getDataModelProvider().getDataModels(dataStore).keySet().stream()
+                        .filter(name -> name.matches(pattern.pattern())).toList());
             }
+
         } else {
-            if (dataStoreColumn == null) {
-                entityModelsDataGrid.addColumn("dataStore");
+            List<String> requestedNames = Stream.of(filterValue.split(","))
+                    .map(String::strip).toList();
+
+            Set<String> allEntityNames = new HashSet<>();
+
+            for (String dataStore : dataStoreNames) {
+                allEntityNames.addAll(dataModelSupport.getDataModelProvider().getDataModels(dataStore).keySet());
             }
+
+            // TODO: gg, refactor
+            for (String entityName : allEntityNames) {
+                for (String reqName : requestedNames) {
+                    if (entityName.matches("(?i)" + ".*" + reqName + ".*")) {
+                        entityNames.add(entityName);
+                    }
+                }
+            }
+        }
+
+        return entityNames;
+    }
+
+    protected void changeDataStoreColumnVisibility(List<EntityModel> model) {
+        long dataStoreCount = model.stream()
+                .map(EntityModel::getDataStore)
+                .distinct()
+                .count();
+
+        Grid.Column<EntityModel> dataStoreColumn = entityModelsDataGrid.getColumnByKey("dataStore");
+        if (dataStoreColumn != null) {
+            dataStoreColumn.setVisible(dataStoreCount > 1);
         }
     }
 
@@ -247,7 +239,7 @@ public class DataModelListView extends StandardView {
                 : icons.get(JmixFontIcon.THIN_SQUARE);
     }
 
-    private class EntityNameUrlQueryParametersBinder extends AbstractUrlQueryParametersBinder {
+    protected class EntityNameUrlQueryParametersBinder extends AbstractUrlQueryParametersBinder {
 
         public EntityNameUrlQueryParametersBinder() {
             entityNameFilter.addValueChangeListener(this::onFilter);
@@ -270,7 +262,7 @@ public class DataModelListView extends StandardView {
             return null;
         }
 
-        private void onFilter(ComponentValueChangeEvent<?, ?> event) {
+        protected void onFilter(ComponentValueChangeEvent<?, ?> event) {
             QueryParameters qp = QueryParameters.simple(ImmutableMap.of(
                     FILTER_URL_PARAM, Strings.nullToEmpty(entityNameFilter.getTypedValue()),
                     SHOW_SYSTEM_URL_PARAM, urlParamSerializer.serialize(showSystemCheckBox.getValue()))

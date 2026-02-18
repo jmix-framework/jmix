@@ -28,10 +28,12 @@
 
 .data-model-list-view-layout .entities-box {
     flex-grow: 1;
+    width: unset;
 }
 
 .data-model-list-view-layout .attributes-box {
     flex-grow: 2;
+    width: unset;
 }
 
 @container data-model-list-view-layout (min-width: 60em) {

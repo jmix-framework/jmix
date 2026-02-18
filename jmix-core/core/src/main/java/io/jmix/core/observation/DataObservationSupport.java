@@ -21,7 +21,6 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
@@ -45,16 +44,19 @@ import java.util.stream.Collectors;
 @Component("core_DataObservationSupport")
 public class DataObservationSupport {
 
+    private static final String DATA_BASE_LOAD_NAME = "jmix.data.load";
+    private static final String DATA_BASE_SAVE_NAME = "jmix.data.save";
+
     @Autowired
     protected Metadata metadata;
     @Autowired(required = false)
     protected ObservationRegistry observationRegistry;
 
-    @Value("${jmix.core.data-observation-enabled}")
     protected boolean observationEnabled;
 
-    private static final String DATA_BASE_LOAD_NAME = "jmix.data.load";
-    private static final String DATA_BASE_SAVE_NAME = "jmix.data.save";
+    public DataObservationSupport(CoreProperties coreProperties) {
+        this.observationEnabled = coreProperties.isDataObservationEnabled();
+    }
 
     public Observation createEntityLoadObservation(MetaClass metaClass, @Nullable LoadContext.Query query) {
         if (!observationEnabled) {

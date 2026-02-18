@@ -28,7 +28,6 @@ import io.jmix.flowui.view.View;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.Nullable;
 
 /**
@@ -45,15 +44,23 @@ import org.springframework.lang.Nullable;
 @org.springframework.stereotype.Component("flowui_UiObservationSupport")
 public class UiObservationSupport {
 
-    @Autowired(required = false)
-    protected ObservationRegistry observationRegistry;
-
-    @Value("${jmix.ui.ui-observation-enabled}")
-    protected boolean observationEnabled;
-
     public static final String VIEW_OBSERVATION_NAME = "jmix.ui.views";
     public static final String FRAGMENT_OBSERVATION_NAME = "jmix.ui.fragments";
     public static final String ACTION_OBSERVATION_NAME = "jmix.ui.actions";
+
+    @Autowired(required = false)
+    protected ObservationRegistry observationRegistry;
+
+    protected boolean observationEnabled;
+
+    public UiObservationSupport(UiProperties uiProperties) {
+        this.observationEnabled = uiProperties.isUiObservationEnabled();
+    }
+
+    @Autowired
+    public void setUiProperties(UiProperties uiProperties) {
+        this.observationEnabled = uiProperties.isUiObservationEnabled();
+    }
 
     public Observation createViewLifecycleObservation(View<?> view, ComponentEvent<?> viewEvent) {
         ViewLifecycle viewLifecycle = eventToLifecycle(viewEvent);

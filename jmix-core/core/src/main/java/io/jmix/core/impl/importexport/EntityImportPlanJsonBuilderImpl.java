@@ -26,9 +26,9 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Range;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
+import org.springframework.lang.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -39,6 +39,9 @@ import java.util.Map;
  */
 @Component("core_EntityImportPlanJsonBuilder")
 public class EntityImportPlanJsonBuilderImpl implements EntityImportPlanJsonBuilder {
+
+    @Autowired
+    protected MetadataTools metadataTools;
 
     @Autowired
     protected Metadata metadata;

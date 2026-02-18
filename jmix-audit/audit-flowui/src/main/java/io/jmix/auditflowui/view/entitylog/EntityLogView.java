@@ -495,7 +495,7 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
                 enabledAttr = item.getAttributes();
             for (MetaProperty property : metaProperties) {
                 if (allowLogProperty(property)) {
-                    if (property.getType() == MetaProperty.Type.EMBEDDED) {
+                    if (metadataTools.isEmbedded(property)) {
                         MetaClass embeddedMetaClass = property.getRange().asClass();
                         for (MetaProperty embeddedProperty : embeddedMetaClass.getProperties()) {
                             if (allowLogProperty(embeddedProperty)) {

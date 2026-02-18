@@ -140,7 +140,7 @@ public class ComboButton extends AbstractDropdownButton
      * @return the icon to be displayed in the dropdown area of the component
      * @deprecated use {@link #getDropdownIconComponent()} instead
      */
-    @Deprecated(since = "3.0", forRemoval = true)
+    @Deprecated(since = "2.8", forRemoval = true)
     @Nullable
     public Icon getDropdownIcon() {
         return dropdownIcon instanceof Icon icon ? icon : null;
@@ -152,7 +152,7 @@ public class ComboButton extends AbstractDropdownButton
      * @param icon the icon to be set, or {@code null} to remove the dropdown icon
      * @deprecated use {@link #setDropdownIconComponent(Component)} instead
      */
-    @Deprecated(since = "3.0", forRemoval = true)
+    @Deprecated(since = "2.8", forRemoval = true)
     public void setDropdownIcon(@Nullable Icon icon) {
         setDropdownIconComponent(icon);
     }

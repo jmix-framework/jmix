@@ -28,7 +28,7 @@ import org.springframework.stereotype.Component;
 /**
  * @deprecated use {@link FacetRegistrationBuilder} instead
  */
-@Deprecated(since = "3.0", forRemoval = true)
+@Deprecated(since = "2.8", forRemoval = true)
 @Component("flowui_TimerFacetProvider")
 public class TimerFacetProvider implements FacetProvider<Timer> {
 

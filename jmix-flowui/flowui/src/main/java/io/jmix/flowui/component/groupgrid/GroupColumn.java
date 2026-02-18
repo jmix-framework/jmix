@@ -76,7 +76,7 @@ public interface GroupColumn<E> {
      * @return the icon for the Columns Grouper button or {@code null} if the default icon is used
      * @deprecated use {@link #getGroupIconComponent()} instead
      */
-    @Deprecated(since = "3.0", forRemoval = true)
+    @Deprecated(since = "2.8", forRemoval = true)
     @Nullable
     Icon getGroupIcon();
 
@@ -86,7 +86,7 @@ public interface GroupColumn<E> {
      * @param icon the icon to set, or {@code null} to set the default icon
      * @deprecated use {@link #setGroupIconComponent(Component)} instead
      */
-    @Deprecated(since = "3.0", forRemoval = true)
+    @Deprecated(since = "2.8", forRemoval = true)
     void setGroupIcon(@Nullable Icon icon);
 
     /**

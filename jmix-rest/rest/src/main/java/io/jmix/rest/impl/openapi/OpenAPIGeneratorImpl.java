@@ -95,7 +95,6 @@ public class OpenAPIGeneratorImpl implements OpenAPIGenerator {
     protected RestProperties restProperties;
 
     protected OpenAPI openAPI = null;
-    protected Collection<MetaClass> entityMetaClass = null;
 
     private volatile boolean initialized = false;
 
@@ -119,7 +118,7 @@ public class OpenAPIGeneratorImpl implements OpenAPIGenerator {
 
     protected void init() {
         openAPI = new OpenAPI();
-        entityMetaClass = new HashSet<>();
+        SchemaBuildContext schemaBuildContext = new SchemaBuildContext(metadataTools);
 
         buildServer(openAPI);
         buildInfo(openAPI);
@@ -127,19 +126,19 @@ public class OpenAPIGeneratorImpl implements OpenAPIGenerator {
         buildErrorSchema(openAPI);
 
 
-        buildEntitiesPaths(openAPI);
-        buildQueriesPaths(openAPI);
-        buildServicesPaths(openAPI);
-
-        buildEntitySchema(openAPI);
+        buildEntitiesPaths(openAPI, schemaBuildContext);
+        buildQueriesPaths(openAPI, schemaBuildContext);
+        buildServicesPaths(openAPI, schemaBuildContext);
+        buildReferencedEntitySchemas(openAPI, schemaBuildContext);
     }
 
-    protected void buildEntitySchema(OpenAPI openAPI) {
-        for (MetaClass metaClass : entityMetaClass) {
-            if (metadataTools.isSystemLevel(metaClass) || metadataTools.isJpaEntity(metaClass)) {
+    protected void buildReferencedEntitySchemas(OpenAPI openAPI, SchemaBuildContext schemaBuildContext) {
+        while (schemaBuildContext.hasPending()) {
+            MetaClass metaClass = schemaBuildContext.pollPending();
+            if (metaClass == null || !schemaBuildContext.markProcessed(metaClass)) {
                 continue;
             }
-            buildEntitySchema(openAPI, metaClass);
+            buildEntitySchema(openAPI, metaClass, schemaBuildContext);
         }
     }
 
@@ -184,7 +183,6 @@ public class OpenAPIGeneratorImpl implements OpenAPIGenerator {
 
         List<Tag> entityTags = metadataTools.getAllJpaEntityMetaClasses()
                 .stream()
-                .filter(mc -> !metadataTools.isSystemLevel(mc))
                 .sorted(Comparator.comparing(MetadataObject::getName))
                 .map(mc -> new Tag()
                         .name(mc.getName())
@@ -219,20 +217,16 @@ public class OpenAPIGeneratorImpl implements OpenAPIGenerator {
     /*
      * Entities
      */
-    protected void buildEntitiesPaths(OpenAPI openAPI) {
+    protected void buildEntitiesPaths(OpenAPI openAPI, SchemaBuildContext schemaBuildContext) {
         for (MetaClass metaClass : metadataTools.getAllJpaEntityMetaClasses()) {
-            if (metadataTools.isSystemLevel(metaClass)) {
-                continue;
-            }
-
-            buildEntitySchema(openAPI, metaClass);
+            buildEntitySchema(openAPI, metaClass, schemaBuildContext);
             buildEntityPath(openAPI, metaClass);
             buildEntityRUDPaths(openAPI, metaClass);
             buildEntityFilterPaths(openAPI, metaClass);
         }
     }
 
-    protected void buildEntitySchema(OpenAPI openAPI, MetaClass entityClass) {
+    protected void buildEntitySchema(OpenAPI openAPI, MetaClass entityClass, SchemaBuildContext schemaBuildContext) {
         Map<String, Schema<?>> properties = new LinkedHashMap<>();
 
         properties.put(ENTITY_NAME_PROP, new StringSchema()
@@ -244,9 +238,9 @@ public class OpenAPIGeneratorImpl implements OpenAPIGenerator {
             Class<?> propertyType = metaProperty.getJavaType();
             String propertyTypeName = propertyType.getName();
 
-            if (Collection.class.isAssignableFrom(propertyType)) {
+            if (Collection.class.isAssignableFrom(propertyType) && metaProperty.getRange().isClass()) {
                 String collectionItemsType = metaProperty.getRange().asClass().getJavaClass().getName();
-                Schema<?> itemsProperty = getPropertyFromJavaType(collectionItemsType);
+                Schema<?> itemsProperty = getPropertyFromJavaType(collectionItemsType, schemaBuildContext);
 
                 Schema<?> collectionProperty = new ArraySchema()
                         .items(itemsProperty);
@@ -254,7 +248,7 @@ public class OpenAPIGeneratorImpl implements OpenAPIGenerator {
             } else if (Map.class.isAssignableFrom(propertyType)) {
                 properties.put(fieldName, new MapSchema());
             } else {
-                properties.put(fieldName, getPropertyFromJavaType(propertyTypeName));
+                properties.put(fieldName, getPropertyFromJavaType(propertyTypeName, schemaBuildContext));
             }
         }
 
@@ -476,7 +470,7 @@ public class OpenAPIGeneratorImpl implements OpenAPIGenerator {
     /*
      * Services
      */
-    protected void buildServicesPaths(OpenAPI openAPI) {
+    protected void buildServicesPaths(OpenAPI openAPI, SchemaBuildContext schemaBuildContext) {
         for (RestServiceInfo serviceInfo : servicesConfiguration.getServiceInfos()) {
             String serviceName = serviceInfo.getName();
 
@@ -485,12 +479,12 @@ public class OpenAPIGeneratorImpl implements OpenAPIGenerator {
                 PathItem pathItem = openAPI.getPaths().getOrDefault(path, new PathItem());
 
                 if (methodInfo.getHttpMethod() == null) {
-                    pathItem.get(createServiceMethodOp(serviceName, methodInfo, RequestMethod.GET))
-                            .post(createServiceMethodOp(serviceName, methodInfo, RequestMethod.POST));
+                    pathItem.get(createServiceMethodOp(serviceName, methodInfo, RequestMethod.GET, schemaBuildContext))
+                            .post(createServiceMethodOp(serviceName, methodInfo, RequestMethod.POST, schemaBuildContext));
                 } else {
                     switch (RestHttpMethod.valueOf(methodInfo.getHttpMethod())) {
-                        case GET -> pathItem.get(createServiceMethodOp(serviceName, methodInfo, RequestMethod.GET));
-                        case POST -> pathItem.post(createServiceMethodOp(serviceName, methodInfo, RequestMethod.POST));
+                        case GET -> pathItem.get(createServiceMethodOp(serviceName, methodInfo, RequestMethod.GET, schemaBuildContext));
+                        case POST -> pathItem.post(createServiceMethodOp(serviceName, methodInfo, RequestMethod.POST, schemaBuildContext));
                     }
                 }
 
@@ -499,12 +493,15 @@ public class OpenAPIGeneratorImpl implements OpenAPIGenerator {
         }
     }
 
-    protected Operation createServiceMethodOp(String service, RestMethodInfo methodInfo, RequestMethod requestMethod) {
+    protected Operation createServiceMethodOp(String service,
+                                              RestMethodInfo methodInfo,
+                                              RequestMethod requestMethod,
+                                              SchemaBuildContext schemaBuildContext) {
         return new Operation()
                 .addTagsItem(service)
                 .summary(service + "#" + methodInfo.getName())
                 .description("Executes the service method. This request expects query parameters with the names defined " +
-                        "in services configuration on the middleware.")
+                        "in REST service metadata (XML configuration or method annotations).")
                 .responses(new ApiResponses()
                         .addApiResponse("200", new ApiResponse()
                                         .description("Returns the result of the method execution. It can be of simple datatype " +
@@ -512,7 +509,7 @@ public class OpenAPIGeneratorImpl implements OpenAPIGenerator {
                                         .content(
                                                 new Content()
                                                         .addMediaType(APPLICATION_JSON_VALUE, new MediaType()
-                                                                .schema(getPropertyFromJavaType(methodInfo.getReturnType()))
+                                                                .schema(getPropertyFromJavaType(methodInfo.getReturnType(), schemaBuildContext))
                                                         )
                                         )
                                 //.schema(new StringSchema())
@@ -521,7 +518,7 @@ public class OpenAPIGeneratorImpl implements OpenAPIGenerator {
                                 "method was executed successfully but returns null or is of void type."))
                         .addApiResponse("403", createErrorResponse("Forbidden. The user doesn't have permissions to invoke the service method.")))
                 .parameters(createServiceMethodParams(methodInfo, requestMethod))
-                .requestBody(createServiceMethodRequestBody(methodInfo, requestMethod));
+                .requestBody(createServiceMethodRequestBody(methodInfo, requestMethod, schemaBuildContext));
     }
 
     protected List<Parameter> createServiceMethodParams(RestMethodInfo methodInfo, RequestMethod requestMethod) {
@@ -536,11 +533,13 @@ public class OpenAPIGeneratorImpl implements OpenAPIGenerator {
     }
 
     @Nullable
-    protected RequestBody createServiceMethodRequestBody(RestMethodInfo methodInfo, RequestMethod method) {
+    protected RequestBody createServiceMethodRequestBody(RestMethodInfo methodInfo,
+                                                         RequestMethod method,
+                                                         SchemaBuildContext schemaBuildContext) {
         if (method == RequestMethod.POST) {
             ObjectSchema schema = new ObjectSchema();
             for (RestServicesConfiguration.RestMethodParamInfo param : methodInfo.getParams()) {
-                schema.addProperties(param.getName(), getPropertyFromJavaType(param.getType()));
+                schema.addProperties(param.getName(), getPropertyFromJavaType(param.getType(), schemaBuildContext));
             }
             return new RequestBody()
                     .content(new Content()
@@ -554,24 +553,26 @@ public class OpenAPIGeneratorImpl implements OpenAPIGenerator {
     /*
      * Queries
      */
-    protected void buildQueriesPaths(OpenAPI openAPI) {
+    protected void buildQueriesPaths(OpenAPI openAPI, SchemaBuildContext schemaBuildContext) {
         for (QueryInfo queryInfo : queriesConfiguration.getQueries()) {
             String entity = queryInfo.getEntityName();
             String queryName = queryInfo.getName();
 
             openAPI.path(String.format(QUERY_PATH, entity, queryName),
                     new PathItem()
-                            .get(createQueryOperation(queryInfo, RequestMethod.GET))
-                            .post(createQueryOperation(queryInfo, RequestMethod.POST)));
+                            .get(createQueryOperation(queryInfo, RequestMethod.GET, schemaBuildContext))
+                            .post(createQueryOperation(queryInfo, RequestMethod.POST, schemaBuildContext)));
 
             openAPI.path(String.format(QUERY_COUNT_PATH, entity, queryName),
                     new PathItem()
-                            .get(createQueryCountOperation(queryInfo, RequestMethod.GET))
-                            .post(createQueryCountOperation(queryInfo, RequestMethod.POST)));
+                            .get(createQueryCountOperation(queryInfo, RequestMethod.GET, schemaBuildContext))
+                            .post(createQueryCountOperation(queryInfo, RequestMethod.POST, schemaBuildContext)));
         }
     }
 
-    protected Operation createQueryOperation(QueryInfo query, RequestMethod method) {
+    protected Operation createQueryOperation(QueryInfo query,
+                                             RequestMethod method,
+                                             SchemaBuildContext schemaBuildContext) {
         String entityName = query.getEntityName();
         return new Operation()
                 .addTagsItem(query.getEntityName() + " Queries")
@@ -582,10 +583,12 @@ public class OpenAPIGeneratorImpl implements OpenAPIGenerator {
                         .addApiResponse("403", createErrorResponse("Forbidden. A user doesn't have permissions to read the entity."))
                         .addApiResponse("404", createErrorResponse("Not found. MetaClass for the entity with the given name not found.")))
                 .parameters(createQueryOpParams(query, method, true))
-                .requestBody(createQueryRequestBody(query, method));
+                .requestBody(createQueryRequestBody(query, method, schemaBuildContext));
     }
 
-    protected Operation createQueryCountOperation(QueryInfo query, RequestMethod method) {
+    protected Operation createQueryCountOperation(QueryInfo query,
+                                                  RequestMethod method,
+                                                  SchemaBuildContext schemaBuildContext) {
         return new Operation()
                 .addTagsItem(query.getEntityName() + " Queries")
                 .summary("Return a number of entities in query result")
@@ -596,11 +599,11 @@ public class OpenAPIGeneratorImpl implements OpenAPIGenerator {
                                 .description("Success. Entities count is returned")
                                 .content(new Content()
                                         .addMediaType(APPLICATION_JSON_VALUE, new MediaType()
-                                                .schema(new IntegerSchema().description("Entities count")))))
+                                .schema(new IntegerSchema().description("Entities count")))))
                         .addApiResponse("403", createErrorResponse("Forbidden. The user doesn't have permissions to read the entity."))
                         .addApiResponse("404", createErrorResponse("MetaClass not found or query with the given name not found")))
                 .parameters(createQueryOpParams(query, method, false))
-                .requestBody(createQueryRequestBody(query, method));
+                .requestBody(createQueryRequestBody(query, method, schemaBuildContext));
     }
 
     protected List<Parameter> createQueryOpParams(QueryInfo query, RequestMethod method,
@@ -655,11 +658,13 @@ public class OpenAPIGeneratorImpl implements OpenAPIGenerator {
     }
 
     @Nullable
-    protected RequestBody createQueryRequestBody(QueryInfo query, RequestMethod method) {
+    protected RequestBody createQueryRequestBody(QueryInfo query,
+                                                 RequestMethod method,
+                                                 SchemaBuildContext schemaBuildContext) {
         if (method == RequestMethod.POST) {
             ObjectSchema schema = new ObjectSchema();
             for (RestQueriesConfiguration.QueryParamInfo param : query.getParams()) {
-                schema.addProperties(param.getName(), getPropertyFromJavaType(param.getType()));
+                schema.addProperties(param.getName(), getPropertyFromJavaType(param.getType(), schemaBuildContext));
             }
             return new RequestBody()
                     .content(new Content()
@@ -690,7 +695,7 @@ public class OpenAPIGeneratorImpl implements OpenAPIGenerator {
         return parameter;
     }
 
-    protected Schema<?> getPropertyFromJavaType(String type) {
+    protected Schema<?> getPropertyFromJavaType(String type, SchemaBuildContext schemaBuildContext) {
         if (type == null) {
             return new StringSchema();
         }
@@ -698,7 +703,7 @@ public class OpenAPIGeneratorImpl implements OpenAPIGenerator {
         if (type.contains(ARRAY_SIGNATURE)) {
             String itemsType = type.replace(ARRAY_SIGNATURE, "");
             return new ArraySchema()
-                    .items(getPropertyFromJavaType(itemsType));
+                    .items(getPropertyFromJavaType(itemsType, schemaBuildContext));
         }
 
         Schema<?> primitiveProperty = getPrimitiveProperty(type);
@@ -706,7 +711,7 @@ public class OpenAPIGeneratorImpl implements OpenAPIGenerator {
             return primitiveProperty;
         }
 
-        Schema<?> entityProperty = getObjectProperty(type);
+        Schema<?> entityProperty = getObjectProperty(type, schemaBuildContext);
         if (entityProperty != null) {
             return entityProperty;
         }
@@ -715,7 +720,7 @@ public class OpenAPIGeneratorImpl implements OpenAPIGenerator {
     }
 
     @Nullable
-    protected Schema<?> getObjectProperty(String classFqn) {
+    protected Schema<?> getObjectProperty(String classFqn, SchemaBuildContext schemaBuildContext) {
         Class<?> clazz;
         try {
             clazz = ReflectionHelper.loadClass(classFqn);
@@ -725,7 +730,7 @@ public class OpenAPIGeneratorImpl implements OpenAPIGenerator {
 
         MetaClass metaClass = metadata.findClass(clazz);
         if (metaClass != null) {
-            entityMetaClass.add(metaClass);
+            schemaBuildContext.enqueueIfNonJpa(metaClass);
             return new ObjectSchema()
                     .$ref(getEntitySchemaRef(metaClass.getName()))
                     .description(metaClass.getName());
@@ -810,5 +815,46 @@ public class OpenAPIGeneratorImpl implements OpenAPIGenerator {
 
     protected String getErrorSchemaRef() {
         return SCHEMAS_PREFIX + "error";
+    }
+
+    protected static class SchemaBuildContext {
+
+        protected final MetadataTools metadataTools;
+        protected final Deque<MetaClass> pending = new ArrayDeque<>();
+        protected final Set<MetaClass> pendingSet = new HashSet<>();
+        protected final Set<MetaClass> processed = new HashSet<>();
+
+        protected SchemaBuildContext(MetadataTools metadataTools) {
+            this.metadataTools = metadataTools;
+        }
+
+        protected void enqueueIfNonJpa(MetaClass metaClass) {
+            if (metaClass == null || metadataTools.isJpaEntity(metaClass)) {
+                return;
+            }
+            if (processed.contains(metaClass)) {
+                return;
+            }
+            if (pendingSet.add(metaClass)) {
+                pending.add(metaClass);
+            }
+        }
+
+        protected boolean hasPending() {
+            return !pending.isEmpty();
+        }
+
+        @Nullable
+        protected MetaClass pollPending() {
+            MetaClass metaClass = pending.pollFirst();
+            if (metaClass != null) {
+                pendingSet.remove(metaClass);
+            }
+            return metaClass;
+        }
+
+        protected boolean markProcessed(MetaClass metaClass) {
+            return processed.add(metaClass);
+        }
     }
 }

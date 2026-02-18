@@ -101,6 +101,13 @@ public class Report implements io.jmix.reports.yarg.structure.Report, CopyingSys
     @JoinColumn(name = "DEFAULT_TEMPLATE_ID")
     protected ReportTemplate defaultTemplate;
 
+    /**
+     * @deprecated the field is not used. No direct replacement.
+     */
+    @Deprecated(since = "2.7.0", forRemoval = true)
+    @Column(name = "REPORT_TYPE")
+    protected Integer reportType;
+
     @Column(name = "DESCRIPTION", length = 500)
     protected String description;
 
@@ -292,6 +299,24 @@ public class Report implements io.jmix.reports.yarg.structure.Report, CopyingSys
     public void setValuesFormats(List<ReportValueFormat> valuesFormats) {
         if (valuesFormats == null) valuesFormats = Collections.emptyList();
         this.valuesFormats = valuesFormats;
+    }
+
+    /**
+     * @return report type
+     * @deprecated the field is not used. No direct replacement.
+     */
+    @Deprecated(since = "2.7.0", forRemoval = true)
+    public ReportType getReportType() {
+        return reportType != null ? ReportType.fromId(reportType) : null;
+    }
+
+    /**
+     * @param reportType report type to set
+     * @deprecated the field is not used. No direct replacement.
+     */
+    @Deprecated(since = "2.7.0", forRemoval = true)
+    public void setReportType(ReportType reportType) {
+        this.reportType = reportType != null ? reportType.getId() : null;
     }
 
     public Set<ReportRole> getReportRoles() {

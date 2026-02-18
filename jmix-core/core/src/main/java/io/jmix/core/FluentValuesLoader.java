@@ -16,6 +16,7 @@
 
 package io.jmix.core;
 
+import io.jmix.core.constraint.AccessConstraint;
 import io.jmix.core.entity.KeyValueEntity;
 import jakarta.persistence.LockModeType;
 import jakarta.persistence.TemporalType;
@@ -118,6 +119,12 @@ public class FluentValuesLoader extends AbstractFluentValueLoader {
     @Override
     public FluentValuesLoader hints(Map<String, Serializable> hints) {
         super.hints(hints);
+        return this;
+    }
+
+    @Override
+    public FluentValuesLoader accessConstraints(List<AccessConstraint<?>> accessConstraints) {
+        super.accessConstraints(accessConstraints);
         return this;
     }
 

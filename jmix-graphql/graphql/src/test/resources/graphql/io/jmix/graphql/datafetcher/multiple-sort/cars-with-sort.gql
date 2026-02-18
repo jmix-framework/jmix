@@ -1,0 +1,13 @@
+query ($orderBy: [inp_scr_CarOrderBy]){
+  scr_CarList(
+    orderBy: $orderBy
+  ) {
+    id
+    carType
+    manufacturer
+    lastModifiedDate
+    garage {
+      name
+    }
+  }
+}

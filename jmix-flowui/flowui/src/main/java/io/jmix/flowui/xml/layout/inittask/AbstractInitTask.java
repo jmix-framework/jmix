@@ -19,12 +19,17 @@ package io.jmix.flowui.xml.layout.inittask;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.applayout.AppLayout;
 import io.jmix.flowui.component.UiComponentUtils;
-import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.fragment.Fragment;
+import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 
 public abstract class AbstractInitTask implements ComponentLoader.InitTask {
+
+    @Override
+    public void execute(ComponentLoader.ComponentContext context, View<?> view) {
+        execute(context);
+    }
 
     /**
      * Gets a context origin component if it can contain nexted components.

@@ -19,7 +19,6 @@ package metadata
 import io.jmix.core.CoreConfiguration
 import io.jmix.core.Metadata
 import io.jmix.core.MetadataTools
-import io.jmix.core.metamodel.model.MetaProperty
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
@@ -101,8 +100,8 @@ class MetadataToolsTest extends Specification {
 
     def "embedded property"() {
         expect:
-        metadata.getClass(Owner).getProperty('address').getType() == MetaProperty.Type.EMBEDDED
-        metadata.getClass(Owner).getProperty('name').getType() != MetaProperty.Type.EMBEDDED
+        metadataTools.isEmbedded(metadata.getClass(Owner).getProperty('address'))
+        !metadataTools.isEmbedded(metadata.getClass(Owner).getProperty('name'))
     }
 
     def "deepCopy handles entities with same ids correctly #73"() {

@@ -73,7 +73,7 @@ public abstract class OrderBasedEntityIdsLoader implements EntityIdsLoader {
         String primaryKeyPropertyName = primaryKeyProperty.getName();
 
         ResultHolder result;
-        if (orderingProperty.getType() == MetaProperty.Type.EMBEDDED) {
+        if (metadataTools.isEmbedded(orderingProperty)) {
             log.warn("Sorted loading by embedded property is not supported - perform in-memory loading of all ids");
             result = loadAllInMemory(entityClass);
         } else {

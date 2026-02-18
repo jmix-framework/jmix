@@ -33,7 +33,7 @@ public interface ViewSettings extends UiComponentSettings<ViewSettings> {
      * @return a {@link View} id to which settings are corresponded
      * @deprecated use {@link #getOwnerId()} instead
      */
-    @Deprecated(since = "3.0", forRemoval = true)
+    @Deprecated(since = "2.8", forRemoval = true)
     String getViewId();
 
     @Override

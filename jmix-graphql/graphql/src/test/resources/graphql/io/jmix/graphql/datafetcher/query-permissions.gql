@@ -1,0 +1,16 @@
+query{
+    permissions{
+        entities{
+            target
+            value
+        }
+        entityAttributes{
+            target
+            value
+        }
+        specifics{
+            target
+            value
+        }
+    }
+}

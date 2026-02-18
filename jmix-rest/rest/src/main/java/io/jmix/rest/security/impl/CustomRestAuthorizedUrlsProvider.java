@@ -18,15 +18,16 @@ package io.jmix.rest.security.impl;
 
 import com.google.common.base.Splitter;
 import io.jmix.core.JmixModules;
-import io.jmix.securityresourceserver.requestmatcher.urlprovider.AnonymousUrlPatternsProvider;
-import io.jmix.securityresourceserver.requestmatcher.urlprovider.AuthenticatedUrlPatternsProvider;
+import io.jmix.core.security.AuthorizedUrlsProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class CustomRestAuthorizedUrlsProvider
-        implements AuthenticatedUrlPatternsProvider, AnonymousUrlPatternsProvider {
+@Component("rest_CustomRestAuthorizedUrlsProvider")
+public class CustomRestAuthorizedUrlsProvider implements AuthorizedUrlsProvider {
 
     protected static final Splitter urlPatternSplitter = Splitter.on(",")
             .omitEmptyStrings()
@@ -36,7 +37,7 @@ public class CustomRestAuthorizedUrlsProvider
     private JmixModules jmixModules;
 
     @Override
-    public List<String> getAuthenticatedUrlPatterns() {
+    public Collection<String> getAuthenticatedUrlPatterns() {
         List<String> urlPatterns = jmixModules.getPropertyValues("jmix.rest.authenticated-url-patterns");
         return urlPatterns.stream()
                 .flatMap(s -> urlPatternSplitter.splitToList(s).stream())
@@ -44,7 +45,7 @@ public class CustomRestAuthorizedUrlsProvider
     }
 
     @Override
-    public List<String> getAnonymousUrlPatterns() {
+    public Collection<String> getAnonymousUrlPatterns() {
         List<String> urlPatterns = jmixModules.getPropertyValues("jmix.rest.anonymous-url-patterns");
         return urlPatterns.stream()
                 .flatMap(s -> urlPatternSplitter.splitToList(s).stream())

@@ -69,13 +69,13 @@ public class FacetsImpl implements Facets, ApplicationContextAware {
     }
 
     @SuppressWarnings("unchecked")
-    @Deprecated(since = "3.0", forRemoval = true)
+    @Deprecated(since = "2.8", forRemoval = true)
     @Nullable
     public <T extends Facet> FacetProvider<T> getProvider(Class<T> facetClass) {
         return registrations.get(facetClass);
     }
 
-    @Deprecated(since = "3.0", forRemoval = true)
+    @Deprecated(since = "2.8", forRemoval = true)
     @Autowired(required = false)
     protected void setFacetRegistrations(List<FacetProvider<?>> facetProviders) {
         for (FacetProvider<?> facetProvider : facetProviders) {

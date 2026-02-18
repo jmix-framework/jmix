@@ -62,12 +62,12 @@ public class MBeanOperationResultView extends StandardView {
     @ViewComponent
     protected VerticalLayout resultVBox;
 
-    @ViewComponent
-    protected MessageBundle messageBundle;
     @Autowired
     protected JmxControl jmxControl;
     @Autowired
     protected UiProperties uiProperties;
+    @Autowired
+    protected MessageBundle messageBundle;
     @Autowired
     protected BackgroundWorker backgroundWorker;
     @Autowired

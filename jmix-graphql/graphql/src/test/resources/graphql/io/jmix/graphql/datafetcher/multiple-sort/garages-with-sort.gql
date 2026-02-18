@@ -1,0 +1,5 @@
+query ($orderBy: [inp_scr_GarageOrderBy]) {
+  scr_GarageList(orderBy: $orderBy){
+    capacity
+  }
+}

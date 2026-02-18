@@ -215,9 +215,15 @@ public class PropertyFilterSupport {
                 }
                 return enumSet;
             } else {
-                log.warn("Cannot find predefined PropertyFilter operations for {} datatype. " +
-                        "The default set of operations (EQUAL, NOT_EQUAL, IS_SET) will be used", type);
-                return EnumSet.of(EQUAL, NOT_EQUAL, IS_SET);
+                log.debug("Cannot find predefined PropertyFilter operations for {} datatype. " +
+                        "The default set of operations will be used.", type);
+                EnumSet<Operation> enumSet = EnumSet.of(EQUAL, NOT_EQUAL);
+                if (elementCollection) {
+                    enumSet.add(IS_COLLECTION_EMPTY);
+                } else {
+                    enumSet.add(IS_SET);
+                }
+                return enumSet;
             }
         }
 

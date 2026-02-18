@@ -21,6 +21,7 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.action.ActionVariant;
+import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.kit.icon.JmixFontIcon;
 import org.springframework.lang.Nullable;
@@ -58,7 +59,7 @@ public class DialogAction extends SecuredBaseAction {
          * @return an icon
          * @deprecated use {@link #getIcon()} instead
          */
-        @Deprecated(since = "3.0", forRemoval = true)
+        @Deprecated(since = "2.8", forRemoval = true)
         public VaadinIcon getVaadinIcon() {
             // For backward compatibility
             return switch (this) {
@@ -110,10 +111,22 @@ public class DialogAction extends SecuredBaseAction {
         return (DialogAction) super.withIcon(icon);
     }
 
-    @Deprecated(since = "3.0", forRemoval = true)
+    @Deprecated(since = "2.8", forRemoval = true)
     @Override
     public DialogAction withIcon(@Nullable Icon icon) {
         setIcon(icon);
+        return this;
+    }
+
+    @Override
+    public DialogAction withIcon(@Nullable VaadinIcon icon) {
+        setIcon(ComponentUtils.convertToIcon(icon));
+        return this;
+    }
+
+    @Override
+    public DialogAction withTitle(@Nullable String title) {
+        setDescription(title);
         return this;
     }
 
@@ -139,6 +152,18 @@ public class DialogAction extends SecuredBaseAction {
             addActionPerformedListener(handler);
         }
 
+        return this;
+    }
+
+    @Override
+    public DialogAction withEnabledByUiPermissions(boolean enabledByUiPermissions) {
+        setEnabledByUiPermissions(enabledByUiPermissions);
+        return this;
+    }
+
+    @Override
+    public DialogAction withVisibleByUiPermissions(boolean visibleByUiPermissions) {
+        setVisibleByUiPermissions(visibleByUiPermissions);
         return this;
     }
 }

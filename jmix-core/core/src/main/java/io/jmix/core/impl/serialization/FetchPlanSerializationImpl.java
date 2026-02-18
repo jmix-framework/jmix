@@ -48,6 +48,8 @@ public class FetchPlanSerializationImpl implements FetchPlanSerialization {
     protected Metadata metadata;
     @Autowired
     protected FetchPlans fetchPlans;
+    @Autowired
+    protected CoreProperties coreProperties;
 
     protected final Function<MetaClass, String> defaultEntityNameExtractor = MetadataObject::getName;
 
@@ -96,6 +98,9 @@ public class FetchPlanSerializationImpl implements FetchPlanSerialization {
                 if (option == INCLUDE_FETCH_MODE) {
                     includeFetchMode = true;
                 }
+            }
+            if (coreProperties.isLegacyFetchPlanSerializationAttributeName()) {
+                fetchPlanAttributeName = "view";
             }
         }
 
@@ -171,6 +176,9 @@ public class FetchPlanSerializationImpl implements FetchPlanSerialization {
         protected String fetchPlanAttributeName = "fetchPlan";
 
         public FetchPlanDeserializer() {
+            if (coreProperties.isLegacyFetchPlanSerializationAttributeName()) {
+                fetchPlanAttributeName = "view";
+            }
         }
 
         @Override

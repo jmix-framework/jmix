@@ -21,6 +21,7 @@ import com.vaadin.flow.component.grid.Grid;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.facet.UrlQueryParametersFacet;
+import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.inittask.AbstractInitTask;
@@ -92,6 +93,11 @@ public class DataGridFilterUrlQueryParametersBinderProvider extends AbstractUrlQ
             this.parameter = parameter;
             this.urlParamSerializer = urlParamSerializer;
             this.applicationContext = applicationContext;
+        }
+
+        @Override
+        public void execute(ComponentLoader.ComponentContext context, View<?> view) {
+            // Is not invoked, do nothing
         }
 
         @Override

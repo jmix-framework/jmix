@@ -35,7 +35,7 @@ public class FileUploadSucceededEvent<C extends Component, V> extends FileUpload
     protected Receiver receiver;
     protected V data;
 
-    @Deprecated(since = "3.0", forRemoval = true)
+    @Deprecated(since = "2.8", forRemoval = true)
     public FileUploadSucceededEvent(C source, String fileName, String mimeType, long length, Receiver receiver) {
         super(source, fileName, mimeType, length);
 
@@ -58,7 +58,7 @@ public class FileUploadSucceededEvent<C extends Component, V> extends FileUpload
      * @return receiver that contains information about uploaded file
      * @see MemoryBuffer
      */
-    @Deprecated(since = "3.0", forRemoval = true)
+    @Deprecated(since = "2.8", forRemoval = true)
     public <T extends Receiver> T getReceiver() {
         return (T) receiver;
     }

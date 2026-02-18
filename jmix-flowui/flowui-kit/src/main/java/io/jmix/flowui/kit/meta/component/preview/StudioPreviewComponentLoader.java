@@ -26,6 +26,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasEnabled;
 import com.vaadin.flow.component.HasSize;
 import com.vaadin.flow.component.HasStyle;
+import com.vaadin.flow.component.HasTheme;
 import jakarta.annotation.Nullable;
 import org.dom4j.Element;
 
@@ -155,6 +156,11 @@ public interface StudioPreviewComponentLoader {
     default void loadClassNames(HasStyle component, Element element) {
         loadString(element, "classNames")
                 .ifPresent(classNamesString -> split(classNamesString, component::addClassName));
+    }
+
+    default void loadThemeNames(HasTheme component, Element element) {
+        loadString(element, "themeNames")
+                .ifPresent(themesString -> split(themesString, component::addThemeName));
     }
 
     default void split(String names, Consumer<String> setter) {

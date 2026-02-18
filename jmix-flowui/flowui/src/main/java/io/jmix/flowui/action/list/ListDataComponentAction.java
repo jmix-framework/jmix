@@ -18,6 +18,7 @@ package io.jmix.flowui.action.list;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.data.selection.SelectionEvent;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.action.ExecutableAction;
@@ -29,8 +30,8 @@ import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.kit.component.SelectionChangeNotifier;
 import io.micrometer.observation.Observation;
-import org.springframework.lang.Nullable;
 
+import org.springframework.lang.Nullable;
 import java.util.Objects;
 import java.util.function.Consumer;
 
@@ -98,10 +99,22 @@ public abstract class ListDataComponentAction<A extends ListDataComponentAction<
     }
 
     @SuppressWarnings("unchecked")
-    @Deprecated(since = "3.0", forRemoval = true)
+    @Deprecated(since = "2.8", forRemoval = true)
     @Override
     public A withIcon(@Nullable Icon icon) {
         return ((A) super.withIcon(icon));
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public A withIcon(@Nullable VaadinIcon icon) {
+        return ((A) super.withIcon(icon));
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public A withTitle(@Nullable String title) {
+        return ((A) super.withTitle(title));
     }
 
     @SuppressWarnings("unchecked")
@@ -120,6 +133,18 @@ public abstract class ListDataComponentAction<A extends ListDataComponentAction<
     @Override
     public A withHandler(@Nullable Consumer<ActionPerformedEvent> handler) {
         return ((A) super.withHandler(handler));
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public A withEnabledByUiPermissions(boolean enabledByUiPermissions) {
+        return ((A) super.withEnabledByUiPermissions(enabledByUiPermissions));
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public A withVisibleByUiPermissions(boolean visibleByUiPermissions) {
+        return ((A) super.withVisibleByUiPermissions(visibleByUiPermissions));
     }
 
     @SuppressWarnings("unchecked")

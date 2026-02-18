@@ -332,6 +332,10 @@ public class ReportDetailView extends StandardDetailView<Report> {
     protected void onInitEntity(InitEntityEvent<Report> event) {
         Report report = event.getEntity();
 
+        if (report.getReportType() == null) {
+            report.setReportType(ReportType.SIMPLE);
+        }
+
         if (report.getBands().isEmpty()) {
             BandDefinition rootDefinition = createRootBandDefinition(report);
 

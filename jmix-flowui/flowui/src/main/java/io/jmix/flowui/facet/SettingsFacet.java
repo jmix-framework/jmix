@@ -222,7 +222,7 @@ public interface SettingsFacet<S extends UiComponentSettings<S>> extends Facet {
          * @return {@link View} settings
          * @deprecated use {@link #getSettings()} instead
          */
-        @Deprecated(since = "3.0", forRemoval = true)
+        @Deprecated(since = "2.8", forRemoval = true)
         public ViewSettings getViewSettings() {
             if (settings instanceof ViewSettings viewSettings) {
                 return viewSettings;

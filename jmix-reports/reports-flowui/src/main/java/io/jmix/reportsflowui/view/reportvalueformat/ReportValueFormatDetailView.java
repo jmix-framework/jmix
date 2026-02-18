@@ -72,9 +72,9 @@ public class ReportValueFormatDetailView extends StandardDetailView<ReportValueF
     @Autowired
     protected Dialogs dialogs;
     @Autowired
-    protected ReportScriptEditor reportScriptEditor;
-    @ViewComponent
     protected MessageBundle messageBundle;
+    @Autowired
+    protected ReportScriptEditor reportScriptEditor;
 
     @Subscribe
     public void onInit(InitEvent event) {

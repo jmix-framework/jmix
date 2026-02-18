@@ -19,6 +19,7 @@ import io.jmix.core.*;
 import io.jmix.reports.ReportImportExport;
 import io.jmix.reports.ReportsPersistence;
 import io.jmix.reports.ReportsSerialization;
+import io.jmix.reports.converter.XStreamConverter;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportImportOption;
 import io.jmix.reports.entity.ReportImportResult;
@@ -267,7 +268,12 @@ public class ReportImportExportImpl implements ReportImportExport {
                 if (isReportsStructureFile(archiveEntry.getName())) {
                     String xml = new String(readBytesFromEntry(archiveReader), StandardCharsets.UTF_8);
 
-                    report = reportsSerialization.convertToReport(xml);
+                    if (xml.startsWith("<")) {//previous xml structure version
+                        XStreamConverter xStreamConverter = new XStreamConverter();
+                        report = xStreamConverter.convertToReport(xml);
+                    } else {//current json structure
+                        report = reportsSerialization.convertToReport(xml);
+                    }
                     report.setXml(xml);
                 }
             }

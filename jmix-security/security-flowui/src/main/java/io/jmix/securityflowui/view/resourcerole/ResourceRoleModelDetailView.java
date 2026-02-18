@@ -82,12 +82,12 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
     @ViewComponent
     private CollectionPropertyContainer<ResourcePolicyModel> resourcePoliciesDc;
 
-    @ViewComponent
-    private MessageBundle messageBundle;
     @Autowired
     private Messages messages;
     @Autowired
     private MessageTools messageTools;
+    @Autowired
+    private MessageBundle messageBundle;
     @Autowired(required = false)
     private RolePersistence rolePersistence;
     @Autowired
@@ -214,12 +214,11 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
     @Subscribe("childRolesTable.add")
     public void onChildRolesTableAdd(ActionPerformedEvent event) {
         ResourceRoleModel resourceRoleModel = getEditedEntity();
-        ResourceRole currentRole = roleRepository.findRoleByCode(resourceRoleModel.getCode());
 
         DialogWindow<ResourceRoleModelLookupView> lookupDialog = dialogWindows.lookup(childRolesTable)
                 .withViewClass(ResourceRoleModelLookupView.class)
                 .withViewConfigurer(configurer -> {
-                    configurer.setCurrentRole(currentRole);
+                    configurer.setCurrentRoleModel(resourceRoleModel);
                 })
                 .build();
 
@@ -394,6 +393,8 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
                 return EntityResourcePolicyModelDetailView.class;
             case ResourcePolicyType.ENTITY_ATTRIBUTE:
                 return EntityAttributeResourcePolicyModelDetailView.class;
+            case ResourcePolicyType.GRAPHQL:
+                return GraphQLResourcePolicyModelDetailView.class;
             case ResourcePolicyType.SPECIFIC:
                 return SpecificResourcePolicyModelDetailView.class;
         }

@@ -116,12 +116,40 @@ public class ReportTableView extends StandardView {
     protected InputParametersFragment inputParametersFrame;
     protected ReportOutputDocument reportOutputDocument;
 
+    /**
+     * @deprecated use {@link #reportOutputDocument}
+     */
+    @Deprecated(since = "2.2.0", forRemoval = true)
+    protected Report report;
+
+    /**
+     * @deprecated use {@link #reportOutputDocument}
+     */
+    @Deprecated(since = "2.2.0", forRemoval = true)
+    protected byte[] tableData;
+
+    /**
+     * @deprecated use {@link #setReportOutputDocument(ReportOutputDocument)}
+     */
+    @Deprecated(since = "2.2.0", forRemoval = true)
+    public void setReport(Report report) {
+        this.report = report;
+    }
+
     public void setTemplateCode(@Nullable String templateCode) {
         this.templateCode = templateCode;
     }
 
     public void setReportParameters(Map<String, Object> reportParameters) {
         this.reportParameters = reportParameters;
+    }
+
+    /**
+     * @deprecated use {@link #setReportOutputDocument(ReportOutputDocument)}
+     */
+    @Deprecated(since = "2.2.0", forRemoval = true)
+    public void setTableData(byte[] tableData) {
+        this.tableData = tableData;
     }
 
     public void setReportOutputDocument(ReportOutputDocument reportOutputDocument) {
@@ -139,6 +167,15 @@ public class ReportTableView extends StandardView {
 
         if (reportOutputDocument != null) {
             drawTables(reportOutputDocument);
+        } else if (tableData != null) {
+            JmixTableData dto = (JmixTableData) serialization.deserialize(tableData);
+            drawTables(dto);
+        }
+
+        if (report != null) {
+            reportForm.setVisible(false);
+            openReportParameters(report);
+        } else if (reportOutputDocument != null) {
             reportForm.setVisible(false);
             openReportParameters((Report) reportOutputDocument.getReport());
         }
@@ -213,6 +250,42 @@ public class ReportTableView extends StandardView {
                 return reportTemplate.getCode();
         }
         return null;
+    }
+
+    /**
+     * @deprecated use {@link #drawTables(ReportOutputDocument)}
+     */
+    @Deprecated(since = "2.2.0", forRemoval = true)
+    protected void drawTables(JmixTableData dto) {
+        Map<String, List<KeyValueEntity>> data = dto.getData();
+        Map<String, Set<JmixTableData.ColumnInfo>> headerMap = dto.getHeaders();
+        tablesVBoxLayout.removeAll();
+
+        if (data == null || data.isEmpty()) {
+            return;
+        }
+
+        JmixTabSheet jmixTabSheet = uiComponents.create(JmixTabSheet.class);
+        jmixTabSheet.setWidthFull();
+
+        data.forEach((dataSetName, keyValueEntities) -> {
+            if (CollectionUtils.isNotEmpty(keyValueEntities)) {
+                KeyValueCollectionContainer container = createContainer(dataSetName, keyValueEntities, headerMap);
+                DataGrid<KeyValueEntity> dataGrid = createTable(dataSetName, container, headerMap);
+                HorizontalLayout buttonsPanel = createButtonsPanel(reportOutputDocument, dataGrid);
+
+                VerticalLayout verticalLayout = uiComponents.create(VerticalLayout.class);
+                verticalLayout.setPadding(false);
+                verticalLayout.add(buttonsPanel);
+                verticalLayout.add(dataGrid);
+
+                verticalLayout.expand(dataGrid);
+                jmixTabSheet.add(dataSetName, verticalLayout);
+            }
+        });
+
+        tablesVBoxLayout.add(jmixTabSheet);
+        tablesVBoxLayout.expand(jmixTabSheet);
     }
 
     protected void drawTables(ReportOutputDocument document) {

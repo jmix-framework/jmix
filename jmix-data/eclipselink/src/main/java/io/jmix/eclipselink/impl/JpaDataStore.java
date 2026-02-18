@@ -731,7 +731,7 @@ public class JpaDataStore extends AbstractDataStore implements DataSortingOption
             @Override
             public boolean skip(MetaProperty property) {
                 return !property.getRange().isClass()
-                        || property.getType() == MetaProperty.Type.EMBEDDED
+                        || metadataTools.isEmbedded(property)
                         || !metadataTools.isJpa(property)
                         || !metadataTools.isJpaEntity(property.getRange().asClass());
             }

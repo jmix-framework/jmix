@@ -1,0 +1,2996 @@
+"Mutation root"
+type Mutation {
+  delete_scr_AssociationM2MTestEntity(id: String!): Void
+  delete_scr_AssociationM2OTestEntity(id: String!): Void
+  delete_scr_AssociationO2MTestEntity(id: String!): Void
+  delete_scr_AssociationO2OTestEntity(id: String!): Void
+  delete_scr_BoringStringIdTestEntity(id: String!): Void
+  delete_scr_Car(id: String!): Void
+  delete_scr_CarRent(id: String!): Void
+  delete_scr_CompositionO2MTestEntity(id: String!): Void
+  delete_scr_CompositionO2OTestEntity(id: String!): Void
+  delete_scr_Customer(id: String!): Void
+  delete_scr_DatatypesTestEntity(id: String!): Void
+  delete_scr_DatatypesTestEntity2(id: String!): Void
+  delete_scr_DatatypesTestEntity3(id: String!): Void
+  delete_scr_DeeplyNestedTestEntity(id: String!): Void
+  delete_scr_FavoriteCar(id: String!): Void
+  delete_scr_Garage(id: String!): Void
+  delete_scr_IntIdentityIdTestEntity(id: String!): Void
+  delete_scr_IntegerIdTestEntity(id: String!): Void
+  delete_scr_Order(id: String!): Void
+  delete_scr_OrderLine(id: String!): Void
+  delete_scr_Product(id: String!): Void
+  delete_scr_SparePart(id: String!): Void
+  delete_scr_StringIdTestEntity(id: String!): Void
+  delete_scr_TechnicalCertificate(id: String!): Void
+  delete_scr_User(id: String!): Void
+  delete_scr_WeirdStringIdTestEntity(id: String!): Void
+  delete_sec_ResourcePolicyEntity(id: String!): Void
+  delete_sec_ResourceRoleEntity(id: String!): Void
+  delete_sec_RoleAssignmentEntity(id: String!): Void
+  delete_sec_RowLevelPolicyEntity(id: String!): Void
+  delete_sec_RowLevelRoleEntity(id: String!): Void
+  delete_sec_UserSubstitutionEntity(id: String!): Void
+  upsert_scr_AssociationM2MTestEntity(associationM2MTestEntity: inp_scr_AssociationM2MTestEntity!): scr_AssociationM2MTestEntity
+  upsert_scr_AssociationM2OTestEntity(associationM2OTestEntity: inp_scr_AssociationM2OTestEntity!): scr_AssociationM2OTestEntity
+  upsert_scr_AssociationO2MTestEntity(associationO2MTestEntity: inp_scr_AssociationO2MTestEntity!): scr_AssociationO2MTestEntity
+  upsert_scr_AssociationO2OTestEntity(associationO2OTestEntity: inp_scr_AssociationO2OTestEntity!): scr_AssociationO2OTestEntity
+  upsert_scr_BoringStringIdTestEntity(boringStringIdTestEntity: inp_scr_BoringStringIdTestEntity!): scr_BoringStringIdTestEntity
+  upsert_scr_Car(car: inp_scr_Car!): scr_Car
+  upsert_scr_CarRent(carRent: inp_scr_CarRent!): scr_CarRent
+  upsert_scr_CompositionO2MTestEntity(compositionO2MTestEntity: inp_scr_CompositionO2MTestEntity!): scr_CompositionO2MTestEntity
+  upsert_scr_CompositionO2OTestEntity(compositionO2OTestEntity: inp_scr_CompositionO2OTestEntity!): scr_CompositionO2OTestEntity
+  upsert_scr_Customer(customer: inp_scr_Customer!): scr_Customer
+  upsert_scr_DatatypesTestEntity(datatypesTestEntity: inp_scr_DatatypesTestEntity!): scr_DatatypesTestEntity
+  upsert_scr_DatatypesTestEntity2(datatypesTestEntity2: inp_scr_DatatypesTestEntity2!): scr_DatatypesTestEntity2
+  upsert_scr_DatatypesTestEntity3(datatypesTestEntity3: inp_scr_DatatypesTestEntity3!): scr_DatatypesTestEntity3
+  upsert_scr_DeeplyNestedTestEntity(deeplyNestedTestEntity: inp_scr_DeeplyNestedTestEntity!): scr_DeeplyNestedTestEntity
+  upsert_scr_FavoriteCar(favoriteCar: inp_scr_FavoriteCar!): scr_FavoriteCar
+  upsert_scr_Garage(garage: inp_scr_Garage!): scr_Garage
+  upsert_scr_IntIdentityIdTestEntity(intIdentityIdTestEntity: inp_scr_IntIdentityIdTestEntity!): scr_IntIdentityIdTestEntity
+  upsert_scr_IntegerIdTestEntity(integerIdTestEntity: inp_scr_IntegerIdTestEntity!): scr_IntegerIdTestEntity
+  upsert_scr_Order(order: inp_scr_Order!): scr_Order
+  upsert_scr_OrderLine(orderLine: inp_scr_OrderLine!): scr_OrderLine
+  upsert_scr_Product(product: inp_scr_Product!): scr_Product
+  upsert_scr_SparePart(sparePart: inp_scr_SparePart!): scr_SparePart
+  upsert_scr_StringIdTestEntity(stringIdTestEntity: inp_scr_StringIdTestEntity!): scr_StringIdTestEntity
+  upsert_scr_TechnicalCertificate(technicalCertificate: inp_scr_TechnicalCertificate!): scr_TechnicalCertificate
+  upsert_scr_User(user: inp_scr_User!): scr_User
+  upsert_scr_WeirdStringIdTestEntity(weirdStringIdTestEntity: inp_scr_WeirdStringIdTestEntity!): scr_WeirdStringIdTestEntity
+  upsert_sec_ResourcePolicyEntity(resourcePolicyEntity: inp_sec_ResourcePolicyEntity!): sec_ResourcePolicyEntity
+  upsert_sec_ResourceRoleEntity(resourceRoleEntity: inp_sec_ResourceRoleEntity!): sec_ResourceRoleEntity
+  upsert_sec_RoleAssignmentEntity(roleAssignmentEntity: inp_sec_RoleAssignmentEntity!): sec_RoleAssignmentEntity
+  upsert_sec_RowLevelPolicyEntity(rowLevelPolicyEntity: inp_sec_RowLevelPolicyEntity!): sec_RowLevelPolicyEntity
+  upsert_sec_RowLevelRoleEntity(rowLevelRoleEntity: inp_sec_RowLevelRoleEntity!): sec_RowLevelRoleEntity
+  upsert_sec_UserSubstitutionEntity(userSubstitutionEntity: inp_sec_UserSubstitutionEntity!): sec_UserSubstitutionEntity
+}
+
+"Query root"
+type Query {
+  entityMessages(className: String, locale: String): [gql_MessageDetail]
+  enumMessages(className: String, locale: String): [gql_MessageDetail]
+  inaccessibleQuery: String
+  permissions: sec_PermissionConfig
+  scr_AssociationM2MTestEntityById(
+    id: String!, 
+    "set false to load soft-deleted entity"
+    softDeletion: Boolean
+  ): scr_AssociationM2MTestEntity
+  scr_AssociationM2MTestEntityCount(
+    "expressions to compare scr_AssociationM2MTestEntity objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_AssociationM2MTestEntityFilterCondition], 
+    "set false to include soft-deleted entities"
+    softDeletion: Boolean
+  ): Long
+  scr_AssociationM2MTestEntityList(
+    "expressions to compare scr_AssociationM2MTestEntity objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_AssociationM2MTestEntityFilterCondition], 
+    "limit the number of items returned"
+    limit: Int, 
+    "skip the first n items"
+    offset: Int, 
+    "sort the items by one or more fields"
+    orderBy: inp_scr_AssociationM2MTestEntityOrderBy, 
+    "set false to load soft-deleted entities"
+    softDeletion: Boolean
+  ): [scr_AssociationM2MTestEntity]
+  scr_AssociationM2OTestEntityById(
+    id: String!, 
+    "set false to load soft-deleted entity"
+    softDeletion: Boolean
+  ): scr_AssociationM2OTestEntity
+  scr_AssociationM2OTestEntityCount(
+    "expressions to compare scr_AssociationM2OTestEntity objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_AssociationM2OTestEntityFilterCondition], 
+    "set false to include soft-deleted entities"
+    softDeletion: Boolean
+  ): Long
+  scr_AssociationM2OTestEntityList(
+    "expressions to compare scr_AssociationM2OTestEntity objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_AssociationM2OTestEntityFilterCondition], 
+    "limit the number of items returned"
+    limit: Int, 
+    "skip the first n items"
+    offset: Int, 
+    "sort the items by one or more fields"
+    orderBy: inp_scr_AssociationM2OTestEntityOrderBy, 
+    "set false to load soft-deleted entities"
+    softDeletion: Boolean
+  ): [scr_AssociationM2OTestEntity]
+  scr_AssociationO2MTestEntityById(
+    id: String!, 
+    "set false to load soft-deleted entity"
+    softDeletion: Boolean
+  ): scr_AssociationO2MTestEntity
+  scr_AssociationO2MTestEntityCount(
+    "expressions to compare scr_AssociationO2MTestEntity objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_AssociationO2MTestEntityFilterCondition], 
+    "set false to include soft-deleted entities"
+    softDeletion: Boolean
+  ): Long
+  scr_AssociationO2MTestEntityList(
+    "expressions to compare scr_AssociationO2MTestEntity objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_AssociationO2MTestEntityFilterCondition], 
+    "limit the number of items returned"
+    limit: Int, 
+    "skip the first n items"
+    offset: Int, 
+    "sort the items by one or more fields"
+    orderBy: inp_scr_AssociationO2MTestEntityOrderBy, 
+    "set false to load soft-deleted entities"
+    softDeletion: Boolean
+  ): [scr_AssociationO2MTestEntity]
+  scr_AssociationO2OTestEntityById(
+    id: String!, 
+    "set false to load soft-deleted entity"
+    softDeletion: Boolean
+  ): scr_AssociationO2OTestEntity
+  scr_AssociationO2OTestEntityCount(
+    "expressions to compare scr_AssociationO2OTestEntity objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_AssociationO2OTestEntityFilterCondition], 
+    "set false to include soft-deleted entities"
+    softDeletion: Boolean
+  ): Long
+  scr_AssociationO2OTestEntityList(
+    "expressions to compare scr_AssociationO2OTestEntity objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_AssociationO2OTestEntityFilterCondition], 
+    "limit the number of items returned"
+    limit: Int, 
+    "skip the first n items"
+    offset: Int, 
+    "sort the items by one or more fields"
+    orderBy: inp_scr_AssociationO2OTestEntityOrderBy, 
+    "set false to load soft-deleted entities"
+    softDeletion: Boolean
+  ): [scr_AssociationO2OTestEntity]
+  scr_BoringStringIdTestEntityById(
+    id: String!, 
+    "set false to load soft-deleted entity"
+    softDeletion: Boolean
+  ): scr_BoringStringIdTestEntity
+  scr_BoringStringIdTestEntityCount(
+    "expressions to compare scr_BoringStringIdTestEntity objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_BoringStringIdTestEntityFilterCondition], 
+    "set false to include soft-deleted entities"
+    softDeletion: Boolean
+  ): Long
+  scr_BoringStringIdTestEntityList(
+    "expressions to compare scr_BoringStringIdTestEntity objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_BoringStringIdTestEntityFilterCondition], 
+    "limit the number of items returned"
+    limit: Int, 
+    "skip the first n items"
+    offset: Int, 
+    "sort the items by one or more fields"
+    orderBy: inp_scr_BoringStringIdTestEntityOrderBy, 
+    "set false to load soft-deleted entities"
+    softDeletion: Boolean
+  ): [scr_BoringStringIdTestEntity]
+  scr_CarById(
+    id: String!, 
+    "set false to load soft-deleted entity"
+    softDeletion: Boolean
+  ): scr_Car
+  scr_CarCount(
+    "expressions to compare scr_Car objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_CarFilterCondition], 
+    "set false to include soft-deleted entities"
+    softDeletion: Boolean
+  ): Long
+  scr_CarList(
+    "expressions to compare scr_Car objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_CarFilterCondition], 
+    "limit the number of items returned"
+    limit: Int, 
+    "skip the first n items"
+    offset: Int, 
+    "sort the items by one or more fields"
+    orderBy: inp_scr_CarOrderBy, 
+    "set false to load soft-deleted entities"
+    softDeletion: Boolean
+  ): [scr_Car]
+  scr_CarRentById(
+    id: String!, 
+    "set false to load soft-deleted entity"
+    softDeletion: Boolean
+  ): scr_CarRent
+  scr_CarRentCount(
+    "expressions to compare scr_CarRent objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_CarRentFilterCondition], 
+    "set false to include soft-deleted entities"
+    softDeletion: Boolean
+  ): Long
+  scr_CarRentList(
+    "expressions to compare scr_CarRent objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_CarRentFilterCondition], 
+    "limit the number of items returned"
+    limit: Int, 
+    "skip the first n items"
+    offset: Int, 
+    "sort the items by one or more fields"
+    orderBy: inp_scr_CarRentOrderBy, 
+    "set false to load soft-deleted entities"
+    softDeletion: Boolean
+  ): [scr_CarRent]
+  scr_CompositionO2MTestEntityById(
+    id: String!, 
+    "set false to load soft-deleted entity"
+    softDeletion: Boolean
+  ): scr_CompositionO2MTestEntity
+  scr_CompositionO2MTestEntityCount(
+    "expressions to compare scr_CompositionO2MTestEntity objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_CompositionO2MTestEntityFilterCondition], 
+    "set false to include soft-deleted entities"
+    softDeletion: Boolean
+  ): Long
+  scr_CompositionO2MTestEntityList(
+    "expressions to compare scr_CompositionO2MTestEntity objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_CompositionO2MTestEntityFilterCondition], 
+    "limit the number of items returned"
+    limit: Int, 
+    "skip the first n items"
+    offset: Int, 
+    "sort the items by one or more fields"
+    orderBy: inp_scr_CompositionO2MTestEntityOrderBy, 
+    "set false to load soft-deleted entities"
+    softDeletion: Boolean
+  ): [scr_CompositionO2MTestEntity]
+  scr_CompositionO2OTestEntityById(
+    id: String!, 
+    "set false to load soft-deleted entity"
+    softDeletion: Boolean
+  ): scr_CompositionO2OTestEntity
+  scr_CompositionO2OTestEntityCount(
+    "expressions to compare scr_CompositionO2OTestEntity objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_CompositionO2OTestEntityFilterCondition], 
+    "set false to include soft-deleted entities"
+    softDeletion: Boolean
+  ): Long
+  scr_CompositionO2OTestEntityList(
+    "expressions to compare scr_CompositionO2OTestEntity objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_CompositionO2OTestEntityFilterCondition], 
+    "limit the number of items returned"
+    limit: Int, 
+    "skip the first n items"
+    offset: Int, 
+    "sort the items by one or more fields"
+    orderBy: inp_scr_CompositionO2OTestEntityOrderBy, 
+    "set false to load soft-deleted entities"
+    softDeletion: Boolean
+  ): [scr_CompositionO2OTestEntity]
+  scr_CustomerById(
+    id: String!, 
+    "set false to load soft-deleted entity"
+    softDeletion: Boolean
+  ): scr_Customer
+  scr_CustomerCount(
+    "expressions to compare scr_Customer objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_CustomerFilterCondition], 
+    "set false to include soft-deleted entities"
+    softDeletion: Boolean
+  ): Long
+  scr_CustomerList(
+    "expressions to compare scr_Customer objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_CustomerFilterCondition], 
+    "limit the number of items returned"
+    limit: Int, 
+    "skip the first n items"
+    offset: Int, 
+    "sort the items by one or more fields"
+    orderBy: inp_scr_CustomerOrderBy, 
+    "set false to load soft-deleted entities"
+    softDeletion: Boolean
+  ): [scr_Customer]
+  scr_DatatypesTestEntity2ById(
+    id: String!, 
+    "set false to load soft-deleted entity"
+    softDeletion: Boolean
+  ): scr_DatatypesTestEntity2
+  scr_DatatypesTestEntity2Count(
+    "expressions to compare scr_DatatypesTestEntity2 objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_DatatypesTestEntity2FilterCondition], 
+    "set false to include soft-deleted entities"
+    softDeletion: Boolean
+  ): Long
+  scr_DatatypesTestEntity2List(
+    "expressions to compare scr_DatatypesTestEntity2 objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_DatatypesTestEntity2FilterCondition], 
+    "limit the number of items returned"
+    limit: Int, 
+    "skip the first n items"
+    offset: Int, 
+    "sort the items by one or more fields"
+    orderBy: inp_scr_DatatypesTestEntity2OrderBy, 
+    "set false to load soft-deleted entities"
+    softDeletion: Boolean
+  ): [scr_DatatypesTestEntity2]
+  scr_DatatypesTestEntity3ById(
+    id: String!, 
+    "set false to load soft-deleted entity"
+    softDeletion: Boolean
+  ): scr_DatatypesTestEntity3
+  scr_DatatypesTestEntity3Count(
+    "expressions to compare scr_DatatypesTestEntity3 objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_DatatypesTestEntity3FilterCondition], 
+    "set false to include soft-deleted entities"
+    softDeletion: Boolean
+  ): Long
+  scr_DatatypesTestEntity3List(
+    "expressions to compare scr_DatatypesTestEntity3 objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_DatatypesTestEntity3FilterCondition], 
+    "limit the number of items returned"
+    limit: Int, 
+    "skip the first n items"
+    offset: Int, 
+    "sort the items by one or more fields"
+    orderBy: inp_scr_DatatypesTestEntity3OrderBy, 
+    "set false to load soft-deleted entities"
+    softDeletion: Boolean
+  ): [scr_DatatypesTestEntity3]
+  scr_DatatypesTestEntityById(
+    id: String!, 
+    "set false to load soft-deleted entity"
+    softDeletion: Boolean
+  ): scr_DatatypesTestEntity
+  scr_DatatypesTestEntityCount(
+    "expressions to compare scr_DatatypesTestEntity objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_DatatypesTestEntityFilterCondition], 
+    "set false to include soft-deleted entities"
+    softDeletion: Boolean
+  ): Long
+  scr_DatatypesTestEntityList(
+    "expressions to compare scr_DatatypesTestEntity objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_DatatypesTestEntityFilterCondition], 
+    "limit the number of items returned"
+    limit: Int, 
+    "skip the first n items"
+    offset: Int, 
+    "sort the items by one or more fields"
+    orderBy: inp_scr_DatatypesTestEntityOrderBy, 
+    "set false to load soft-deleted entities"
+    softDeletion: Boolean
+  ): [scr_DatatypesTestEntity]
+  scr_DeeplyNestedTestEntityById(
+    id: String!, 
+    "set false to load soft-deleted entity"
+    softDeletion: Boolean
+  ): scr_DeeplyNestedTestEntity
+  scr_DeeplyNestedTestEntityCount(
+    "expressions to compare scr_DeeplyNestedTestEntity objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_DeeplyNestedTestEntityFilterCondition], 
+    "set false to include soft-deleted entities"
+    softDeletion: Boolean
+  ): Long
+  scr_DeeplyNestedTestEntityList(
+    "expressions to compare scr_DeeplyNestedTestEntity objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_DeeplyNestedTestEntityFilterCondition], 
+    "limit the number of items returned"
+    limit: Int, 
+    "skip the first n items"
+    offset: Int, 
+    "sort the items by one or more fields"
+    orderBy: inp_scr_DeeplyNestedTestEntityOrderBy, 
+    "set false to load soft-deleted entities"
+    softDeletion: Boolean
+  ): [scr_DeeplyNestedTestEntity]
+  scr_FavoriteCarById(
+    id: String!, 
+    "set false to load soft-deleted entity"
+    softDeletion: Boolean
+  ): scr_FavoriteCar
+  scr_FavoriteCarCount(
+    "expressions to compare scr_FavoriteCar objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_FavoriteCarFilterCondition], 
+    "set false to include soft-deleted entities"
+    softDeletion: Boolean
+  ): Long
+  scr_FavoriteCarList(
+    "expressions to compare scr_FavoriteCar objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_FavoriteCarFilterCondition], 
+    "limit the number of items returned"
+    limit: Int, 
+    "skip the first n items"
+    offset: Int, 
+    "sort the items by one or more fields"
+    orderBy: inp_scr_FavoriteCarOrderBy, 
+    "set false to load soft-deleted entities"
+    softDeletion: Boolean
+  ): [scr_FavoriteCar]
+  scr_GarageById(
+    id: String!, 
+    "set false to load soft-deleted entity"
+    softDeletion: Boolean
+  ): scr_Garage
+  scr_GarageCount(
+    "expressions to compare scr_Garage objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_GarageFilterCondition], 
+    "set false to include soft-deleted entities"
+    softDeletion: Boolean
+  ): Long
+  scr_GarageList(
+    "expressions to compare scr_Garage objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_GarageFilterCondition], 
+    "limit the number of items returned"
+    limit: Int, 
+    "skip the first n items"
+    offset: Int, 
+    "sort the items by one or more fields"
+    orderBy: inp_scr_GarageOrderBy, 
+    "set false to load soft-deleted entities"
+    softDeletion: Boolean
+  ): [scr_Garage]
+  scr_IntIdentityIdTestEntityById(
+    id: String!, 
+    "set false to load soft-deleted entity"
+    softDeletion: Boolean
+  ): scr_IntIdentityIdTestEntity
+  scr_IntIdentityIdTestEntityCount(
+    "expressions to compare scr_IntIdentityIdTestEntity objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_IntIdentityIdTestEntityFilterCondition], 
+    "set false to include soft-deleted entities"
+    softDeletion: Boolean
+  ): Long
+  scr_IntIdentityIdTestEntityList(
+    "expressions to compare scr_IntIdentityIdTestEntity objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_IntIdentityIdTestEntityFilterCondition], 
+    "limit the number of items returned"
+    limit: Int, 
+    "skip the first n items"
+    offset: Int, 
+    "sort the items by one or more fields"
+    orderBy: inp_scr_IntIdentityIdTestEntityOrderBy, 
+    "set false to load soft-deleted entities"
+    softDeletion: Boolean
+  ): [scr_IntIdentityIdTestEntity]
+  scr_IntegerIdTestEntityById(
+    id: String!, 
+    "set false to load soft-deleted entity"
+    softDeletion: Boolean
+  ): scr_IntegerIdTestEntity
+  scr_IntegerIdTestEntityCount(
+    "expressions to compare scr_IntegerIdTestEntity objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_IntegerIdTestEntityFilterCondition], 
+    "set false to include soft-deleted entities"
+    softDeletion: Boolean
+  ): Long
+  scr_IntegerIdTestEntityList(
+    "expressions to compare scr_IntegerIdTestEntity objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_IntegerIdTestEntityFilterCondition], 
+    "limit the number of items returned"
+    limit: Int, 
+    "skip the first n items"
+    offset: Int, 
+    "sort the items by one or more fields"
+    orderBy: inp_scr_IntegerIdTestEntityOrderBy, 
+    "set false to load soft-deleted entities"
+    softDeletion: Boolean
+  ): [scr_IntegerIdTestEntity]
+  scr_OrderById(
+    id: String!, 
+    "set false to load soft-deleted entity"
+    softDeletion: Boolean
+  ): scr_Order
+  scr_OrderCount(
+    "expressions to compare scr_Order objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_OrderFilterCondition], 
+    "set false to include soft-deleted entities"
+    softDeletion: Boolean
+  ): Long
+  scr_OrderLineById(
+    id: String!, 
+    "set false to load soft-deleted entity"
+    softDeletion: Boolean
+  ): scr_OrderLine
+  scr_OrderLineCount(
+    "expressions to compare scr_OrderLine objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_OrderLineFilterCondition], 
+    "set false to include soft-deleted entities"
+    softDeletion: Boolean
+  ): Long
+  scr_OrderLineList(
+    "expressions to compare scr_OrderLine objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_OrderLineFilterCondition], 
+    "limit the number of items returned"
+    limit: Int, 
+    "skip the first n items"
+    offset: Int, 
+    "sort the items by one or more fields"
+    orderBy: inp_scr_OrderLineOrderBy, 
+    "set false to load soft-deleted entities"
+    softDeletion: Boolean
+  ): [scr_OrderLine]
+  scr_OrderList(
+    "expressions to compare scr_Order objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_OrderFilterCondition], 
+    "limit the number of items returned"
+    limit: Int, 
+    "skip the first n items"
+    offset: Int, 
+    "sort the items by one or more fields"
+    orderBy: inp_scr_OrderOrderBy, 
+    "set false to load soft-deleted entities"
+    softDeletion: Boolean
+  ): [scr_Order]
+  scr_ProductById(
+    id: String!, 
+    "set false to load soft-deleted entity"
+    softDeletion: Boolean
+  ): scr_Product
+  scr_ProductCount(
+    "expressions to compare scr_Product objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_ProductFilterCondition], 
+    "set false to include soft-deleted entities"
+    softDeletion: Boolean
+  ): Long
+  scr_ProductList(
+    "expressions to compare scr_Product objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_ProductFilterCondition], 
+    "limit the number of items returned"
+    limit: Int, 
+    "skip the first n items"
+    offset: Int, 
+    "sort the items by one or more fields"
+    orderBy: inp_scr_ProductOrderBy, 
+    "set false to load soft-deleted entities"
+    softDeletion: Boolean
+  ): [scr_Product]
+  scr_SparePartById(
+    id: String!, 
+    "set false to load soft-deleted entity"
+    softDeletion: Boolean
+  ): scr_SparePart
+  scr_SparePartCount(
+    "expressions to compare scr_SparePart objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_SparePartFilterCondition], 
+    "set false to include soft-deleted entities"
+    softDeletion: Boolean
+  ): Long
+  scr_SparePartList(
+    "expressions to compare scr_SparePart objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_SparePartFilterCondition], 
+    "limit the number of items returned"
+    limit: Int, 
+    "skip the first n items"
+    offset: Int, 
+    "sort the items by one or more fields"
+    orderBy: inp_scr_SparePartOrderBy, 
+    "set false to load soft-deleted entities"
+    softDeletion: Boolean
+  ): [scr_SparePart]
+  scr_StringIdTestEntityById(
+    id: String!, 
+    "set false to load soft-deleted entity"
+    softDeletion: Boolean
+  ): scr_StringIdTestEntity
+  scr_StringIdTestEntityCount(
+    "expressions to compare scr_StringIdTestEntity objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_StringIdTestEntityFilterCondition], 
+    "set false to include soft-deleted entities"
+    softDeletion: Boolean
+  ): Long
+  scr_StringIdTestEntityList(
+    "expressions to compare scr_StringIdTestEntity objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_StringIdTestEntityFilterCondition], 
+    "limit the number of items returned"
+    limit: Int, 
+    "skip the first n items"
+    offset: Int, 
+    "sort the items by one or more fields"
+    orderBy: inp_scr_StringIdTestEntityOrderBy, 
+    "set false to load soft-deleted entities"
+    softDeletion: Boolean
+  ): [scr_StringIdTestEntity]
+  scr_TechnicalCertificateById(
+    id: String!, 
+    "set false to load soft-deleted entity"
+    softDeletion: Boolean
+  ): scr_TechnicalCertificate
+  scr_TechnicalCertificateCount(
+    "expressions to compare scr_TechnicalCertificate objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_TechnicalCertificateFilterCondition], 
+    "set false to include soft-deleted entities"
+    softDeletion: Boolean
+  ): Long
+  scr_TechnicalCertificateList(
+    "expressions to compare scr_TechnicalCertificate objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_TechnicalCertificateFilterCondition], 
+    "limit the number of items returned"
+    limit: Int, 
+    "skip the first n items"
+    offset: Int, 
+    "sort the items by one or more fields"
+    orderBy: inp_scr_TechnicalCertificateOrderBy, 
+    "set false to load soft-deleted entities"
+    softDeletion: Boolean
+  ): [scr_TechnicalCertificate]
+  scr_UserById(
+    id: String!, 
+    "set false to load soft-deleted entity"
+    softDeletion: Boolean
+  ): scr_User
+  scr_UserCount(
+    "expressions to compare scr_User objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_UserFilterCondition], 
+    "set false to include soft-deleted entities"
+    softDeletion: Boolean
+  ): Long
+  scr_UserList(
+    "expressions to compare scr_User objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_UserFilterCondition], 
+    "limit the number of items returned"
+    limit: Int, 
+    "skip the first n items"
+    offset: Int, 
+    "sort the items by one or more fields"
+    orderBy: inp_scr_UserOrderBy, 
+    "set false to load soft-deleted entities"
+    softDeletion: Boolean
+  ): [scr_User]
+  scr_WeirdStringIdTestEntityById(
+    id: String!, 
+    "set false to load soft-deleted entity"
+    softDeletion: Boolean
+  ): scr_WeirdStringIdTestEntity
+  scr_WeirdStringIdTestEntityCount(
+    "expressions to compare scr_WeirdStringIdTestEntity objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_WeirdStringIdTestEntityFilterCondition], 
+    "set false to include soft-deleted entities"
+    softDeletion: Boolean
+  ): Long
+  scr_WeirdStringIdTestEntityList(
+    "expressions to compare scr_WeirdStringIdTestEntity objects, all items are combined with logical 'AND'"
+    filter: [inp_scr_WeirdStringIdTestEntityFilterCondition], 
+    "limit the number of items returned"
+    limit: Int, 
+    "skip the first n items"
+    offset: Int, 
+    "sort the items by one or more fields"
+    orderBy: inp_scr_WeirdStringIdTestEntityOrderBy, 
+    "set false to load soft-deleted entities"
+    softDeletion: Boolean
+  ): [scr_WeirdStringIdTestEntity]
+  sec_ResourcePolicyEntityById(
+    id: String!, 
+    "set false to load soft-deleted entity"
+    softDeletion: Boolean
+  ): sec_ResourcePolicyEntity
+  sec_ResourcePolicyEntityCount(
+    "expressions to compare sec_ResourcePolicyEntity objects, all items are combined with logical 'AND'"
+    filter: [inp_sec_ResourcePolicyEntityFilterCondition], 
+    "set false to include soft-deleted entities"
+    softDeletion: Boolean
+  ): Long
+  sec_ResourcePolicyEntityList(
+    "expressions to compare sec_ResourcePolicyEntity objects, all items are combined with logical 'AND'"
+    filter: [inp_sec_ResourcePolicyEntityFilterCondition], 
+    "limit the number of items returned"
+    limit: Int, 
+    "skip the first n items"
+    offset: Int, 
+    "sort the items by one or more fields"
+    orderBy: inp_sec_ResourcePolicyEntityOrderBy, 
+    "set false to load soft-deleted entities"
+    softDeletion: Boolean
+  ): [sec_ResourcePolicyEntity]
+  sec_ResourceRoleEntityById(
+    id: String!, 
+    "set false to load soft-deleted entity"
+    softDeletion: Boolean
+  ): sec_ResourceRoleEntity
+  sec_ResourceRoleEntityCount(
+    "expressions to compare sec_ResourceRoleEntity objects, all items are combined with logical 'AND'"
+    filter: [inp_sec_ResourceRoleEntityFilterCondition], 
+    "set false to include soft-deleted entities"
+    softDeletion: Boolean
+  ): Long
+  sec_ResourceRoleEntityList(
+    "expressions to compare sec_ResourceRoleEntity objects, all items are combined with logical 'AND'"
+    filter: [inp_sec_ResourceRoleEntityFilterCondition], 
+    "limit the number of items returned"
+    limit: Int, 
+    "skip the first n items"
+    offset: Int, 
+    "sort the items by one or more fields"
+    orderBy: inp_sec_ResourceRoleEntityOrderBy, 
+    "set false to load soft-deleted entities"
+    softDeletion: Boolean
+  ): [sec_ResourceRoleEntity]
+  sec_RoleAssignmentEntityById(
+    id: String!, 
+    "set false to load soft-deleted entity"
+    softDeletion: Boolean
+  ): sec_RoleAssignmentEntity
+  sec_RoleAssignmentEntityCount(
+    "expressions to compare sec_RoleAssignmentEntity objects, all items are combined with logical 'AND'"
+    filter: [inp_sec_RoleAssignmentEntityFilterCondition], 
+    "set false to include soft-deleted entities"
+    softDeletion: Boolean
+  ): Long
+  sec_RoleAssignmentEntityList(
+    "expressions to compare sec_RoleAssignmentEntity objects, all items are combined with logical 'AND'"
+    filter: [inp_sec_RoleAssignmentEntityFilterCondition], 
+    "limit the number of items returned"
+    limit: Int, 
+    "skip the first n items"
+    offset: Int, 
+    "sort the items by one or more fields"
+    orderBy: inp_sec_RoleAssignmentEntityOrderBy, 
+    "set false to load soft-deleted entities"
+    softDeletion: Boolean
+  ): [sec_RoleAssignmentEntity]
+  sec_RowLevelPolicyEntityById(
+    id: String!, 
+    "set false to load soft-deleted entity"
+    softDeletion: Boolean
+  ): sec_RowLevelPolicyEntity
+  sec_RowLevelPolicyEntityCount(
+    "expressions to compare sec_RowLevelPolicyEntity objects, all items are combined with logical 'AND'"
+    filter: [inp_sec_RowLevelPolicyEntityFilterCondition], 
+    "set false to include soft-deleted entities"
+    softDeletion: Boolean
+  ): Long
+  sec_RowLevelPolicyEntityList(
+    "expressions to compare sec_RowLevelPolicyEntity objects, all items are combined with logical 'AND'"
+    filter: [inp_sec_RowLevelPolicyEntityFilterCondition], 
+    "limit the number of items returned"
+    limit: Int, 
+    "skip the first n items"
+    offset: Int, 
+    "sort the items by one or more fields"
+    orderBy: inp_sec_RowLevelPolicyEntityOrderBy, 
+    "set false to load soft-deleted entities"
+    softDeletion: Boolean
+  ): [sec_RowLevelPolicyEntity]
+  sec_RowLevelRoleEntityById(
+    id: String!, 
+    "set false to load soft-deleted entity"
+    softDeletion: Boolean
+  ): sec_RowLevelRoleEntity
+  sec_RowLevelRoleEntityCount(
+    "expressions to compare sec_RowLevelRoleEntity objects, all items are combined with logical 'AND'"
+    filter: [inp_sec_RowLevelRoleEntityFilterCondition], 
+    "set false to include soft-deleted entities"
+    softDeletion: Boolean
+  ): Long
+  sec_RowLevelRoleEntityList(
+    "expressions to compare sec_RowLevelRoleEntity objects, all items are combined with logical 'AND'"
+    filter: [inp_sec_RowLevelRoleEntityFilterCondition], 
+    "limit the number of items returned"
+    limit: Int, 
+    "skip the first n items"
+    offset: Int, 
+    "sort the items by one or more fields"
+    orderBy: inp_sec_RowLevelRoleEntityOrderBy, 
+    "set false to load soft-deleted entities"
+    softDeletion: Boolean
+  ): [sec_RowLevelRoleEntity]
+  sec_UserSubstitutionEntityById(
+    id: String!, 
+    "set false to load soft-deleted entity"
+    softDeletion: Boolean
+  ): sec_UserSubstitutionEntity
+  sec_UserSubstitutionEntityCount(
+    "expressions to compare sec_UserSubstitutionEntity objects, all items are combined with logical 'AND'"
+    filter: [inp_sec_UserSubstitutionEntityFilterCondition], 
+    "set false to include soft-deleted entities"
+    softDeletion: Boolean
+  ): Long
+  sec_UserSubstitutionEntityList(
+    "expressions to compare sec_UserSubstitutionEntity objects, all items are combined with logical 'AND'"
+    filter: [inp_sec_UserSubstitutionEntityFilterCondition], 
+    "limit the number of items returned"
+    limit: Int, 
+    "skip the first n items"
+    offset: Int, 
+    "sort the items by one or more fields"
+    orderBy: inp_sec_UserSubstitutionEntityOrderBy, 
+    "set false to load soft-deleted entities"
+    softDeletion: Boolean
+  ): [sec_UserSubstitutionEntity]
+  userInfo: UserInfo
+}
+
+type UserInfo {
+  locale: String
+  username: String
+}
+
+type gql_MessageDetail {
+  key: String
+  value: String
+}
+
+type scr_AssociationM2MTestEntity {
+  _instanceName: String
+  datatypesTestEntities: [scr_DatatypesTestEntity]
+  id: UUID
+  name: String
+}
+
+type scr_AssociationM2OTestEntity {
+  _instanceName: String
+  id: UUID
+  name: String
+}
+
+type scr_AssociationO2MTestEntity {
+  _instanceName: String
+  datatypesTestEntity: scr_DatatypesTestEntity
+  id: UUID
+  name: String
+}
+
+type scr_AssociationO2OTestEntity {
+  _instanceName: String
+  datatypesTestEntity: scr_DatatypesTestEntity
+  deeplyNestedTestEntity: scr_DeeplyNestedTestEntity
+  id: UUID
+  name: String
+}
+
+type scr_BoringStringIdTestEntity {
+  _instanceName: String
+  createTs: DateTime
+  createdBy: String
+  deleteTs: DateTime
+  deletedBy: String
+  description: String
+  id: String
+  updateTs: DateTime
+  updatedBy: String
+  uuid: UUID
+  version: Int
+}
+
+type scr_Car {
+  _instanceName: String
+  carType: CarType
+  createdBy: String
+  createdDate: Date
+  ecoRank: EcoRank
+  garage: scr_Garage
+  id: UUID
+  lastModifiedBy: String
+  lastModifiedDate: Date
+  manufactureDate: DateTime
+  manufacturer: String
+  maxPassengers: Int
+  mileage: Float
+  model: String
+  price: BigDecimal
+  purchaseDate: Date
+  regNumber: String
+  technicalCertificate: scr_TechnicalCertificate
+  version: Int
+  wheelOnRight: Boolean
+}
+
+type scr_CarRent {
+  _instanceName: String
+  car: scr_Car
+  fromDate: Date
+  fromDateTime: DateTime
+  fromTime: Time
+  id: UUID
+}
+
+type scr_CompositionO2MTestEntity {
+  _instanceName: String
+  datatypesTestEntity: scr_DatatypesTestEntity
+  id: UUID
+  name: String
+  quantity: Int
+}
+
+type scr_CompositionO2OTestEntity {
+  _instanceName: String
+  id: UUID
+  name: String
+  nestedComposition: scr_DeeplyNestedTestEntity
+  quantity: Int
+}
+
+type scr_Customer {
+  _instanceName: String
+  email: String
+  id: UUID
+  name: String
+}
+
+type scr_DatatypesTestEntity {
+  _instanceName: String
+  associationM2Mattr: [scr_AssociationM2MTestEntity]
+  associationM2Oattr: scr_AssociationM2OTestEntity
+  associationO2Mattr: [scr_AssociationO2MTestEntity]
+  associationO2Oattr: scr_AssociationO2OTestEntity
+  bigDecimalAttr: BigDecimal
+  booleanAttr: Boolean
+  charAttr: Char
+  compositionO2Mattr: [scr_CompositionO2MTestEntity]
+  compositionO2Oattr: scr_CompositionO2OTestEntity
+  datatypesTestEntity3: scr_DatatypesTestEntity3
+  dateAttr: Date
+  dateTimeAttr: DateTime
+  doubleAttr: Float
+  enumAttr: TestEnum
+  id: UUID
+  intIdentityIdTestEntityAssociationO2OAttr: scr_IntIdentityIdTestEntity
+  integerAttr: Int
+  integerIdTestEntityAssociationM2MAttr: [scr_IntegerIdTestEntity]
+  localDateAttr: LocalDate
+  localDateTimeAttr: LocalDateTime
+  localTimeAttr: LocalTime
+  longAttr: Long
+  name: String
+  offsetDateTimeAttr: OffsetDateTime
+  offsetTimeAttr: OffsetTime
+  readOnlyStringAttr: String
+  stringAttr: String
+  stringIdTestEntityAssociationM2O: scr_StringIdTestEntity
+  stringIdTestEntityAssociationO2O: scr_StringIdTestEntity
+  timeAttr: Time
+  uuidAttr: UUID
+}
+
+type scr_DatatypesTestEntity2 {
+  _instanceName: String
+  datatypesTestEntityAttr: scr_DatatypesTestEntity
+  id: UUID
+  intIdentityIdTestEntityAttr: scr_IntIdentityIdTestEntity
+  integerIdTestEntityAttr: scr_IntegerIdTestEntity
+  stringIdTestEntityAttr: scr_StringIdTestEntity
+  weirdStringIdTestEntityAttr: scr_WeirdStringIdTestEntity
+}
+
+type scr_DatatypesTestEntity3 {
+  _instanceName: String
+  datatypesTestEntityAttr: [scr_DatatypesTestEntity]
+  id: UUID
+  intIdentityIdTestEntityAttr: [scr_IntIdentityIdTestEntity]
+  integerIdTestEntityAttr: [scr_IntegerIdTestEntity]
+  name: String
+  stringIdTestEntityAttr: [scr_StringIdTestEntity]
+  weirdStringIdTestEntityAttr: [scr_WeirdStringIdTestEntity]
+}
+
+type scr_DeeplyNestedTestEntity {
+  _instanceName: String
+  associationO2Oattr: scr_AssociationO2OTestEntity
+  id: UUID
+  name: String
+  parentO2Ocomposition: scr_CompositionO2OTestEntity
+}
+
+type scr_FavoriteCar {
+  _instanceName: String
+  car: scr_Car
+  id: UUID
+  notes: String
+  user: scr_User
+}
+
+type scr_Garage {
+  _instanceName: String
+  address: String
+  capacity: Int
+  cars: [scr_Car]
+  currentCars: [scr_Car]
+  id: UUID
+  name: String
+  personnel: [scr_User]
+  vanEntry: Boolean
+  workingHoursFrom: LocalTime
+  workingHoursTo: LocalTime
+}
+
+type scr_IntIdentityIdTestEntity {
+  _instanceName: String
+  createTs: DateTime
+  createdBy: String
+  datatypesTestEntity: scr_DatatypesTestEntity
+  datatypesTestEntity3: scr_DatatypesTestEntity3
+  deleteTs: DateTime
+  deletedBy: String
+  description: String
+  id: Int
+  updateTs: DateTime
+  updatedBy: String
+  version: Int
+}
+
+type scr_IntegerIdTestEntity {
+  _instanceName: String
+  createTs: DateTime
+  createdBy: String
+  datatypesTestEntities: [scr_DatatypesTestEntity]
+  datatypesTestEntity3: scr_DatatypesTestEntity3
+  deleteTs: DateTime
+  deletedBy: String
+  description: String
+  id: Int
+  updateTs: DateTime
+  updatedBy: String
+  version: Int
+}
+
+type scr_Order {
+  _instanceName: String
+  amount: BigDecimal
+  customer: scr_Customer
+  date: LocalDateTime
+  id: UUID
+  lines: [scr_OrderLine]
+}
+
+type scr_OrderLine {
+  _instanceName: String
+  id: UUID
+  order: scr_Order
+  product: scr_Product
+  quantity: Int
+}
+
+type scr_Product {
+  _instanceName: String
+  car: scr_Car
+  id: UUID
+  price: BigDecimal
+  special: Boolean
+}
+
+type scr_SparePart {
+  _instanceName: String
+  id: UUID
+  name: String
+  spareParts: scr_SparePart
+}
+
+type scr_StringIdTestEntity {
+  _instanceName: String
+  createTs: DateTime
+  createdBy: String
+  datatypesTestEntity: scr_DatatypesTestEntity
+  datatypesTestEntity3: scr_DatatypesTestEntity3
+  deleteTs: DateTime
+  deletedBy: String
+  description: String
+  identifier: String
+  productCode: String
+  updateTs: DateTime
+  updatedBy: String
+  version: Int
+}
+
+type scr_TechnicalCertificate {
+  _instanceName: String
+  car: scr_Car
+  certNumber: String
+  id: UUID
+}
+
+type scr_User {
+  _instanceName: String
+  email: String
+  enabled: Boolean
+  firstName: String
+  id: UUID
+  lastName: String
+  password: String
+  phone: String
+  username: String
+  version: Int
+}
+
+type scr_WeirdStringIdTestEntity {
+  _instanceName: String
+  createTs: DateTime
+  createdBy: String
+  datatypesTestEntity3: scr_DatatypesTestEntity3
+  deleteTs: DateTime
+  deletedBy: String
+  description: String
+  id: String
+  identifier: String
+  updateTs: DateTime
+  updatedBy: String
+  version: Int
+}
+
+type sec_Permission {
+  target: String
+  value: Int
+}
+
+type sec_PermissionConfig {
+  entities: [sec_Permission]
+  entityAttributes: [sec_Permission]
+  specifics: [sec_Permission]
+}
+
+type sec_ResourcePolicyEntity {
+  _instanceName: String
+  action: String
+  createTs: DateTime
+  createdBy: String
+  deleteTs: DateTime
+  deletedBy: String
+  effect: String
+  id: UUID
+  policyGroup: String
+  resource: String
+  role: sec_ResourceRoleEntity
+  type: String
+  updateTs: DateTime
+  updatedBy: String
+  version: Int
+}
+
+type sec_ResourceRoleEntity {
+  _instanceName: String
+  childRoles: String
+  code: String
+  createTs: DateTime
+  createdBy: String
+  deleteTs: DateTime
+  deletedBy: String
+  description: String
+  id: UUID
+  name: String
+  resourcePolicies: [sec_ResourcePolicyEntity]
+  scopes: String
+  sysTenantId: String
+  updateTs: DateTime
+  updatedBy: String
+  version: Int
+}
+
+type sec_RoleAssignmentEntity {
+  _instanceName: String
+  createTs: DateTime
+  createdBy: String
+  deleteTs: DateTime
+  deletedBy: String
+  id: UUID
+  roleCode: String
+  roleType: String
+  updateTs: DateTime
+  updatedBy: String
+  username: String
+  version: Int
+}
+
+type sec_RowLevelPolicyEntity {
+  _instanceName: String
+  action: RowLevelPolicyAction
+  createTs: DateTime
+  createdBy: String
+  deleteTs: DateTime
+  deletedBy: String
+  entityName: String
+  id: UUID
+  joinClause: String
+  role: sec_RowLevelRoleEntity
+  script: String
+  type: RowLevelPolicyType
+  updateTs: DateTime
+  updatedBy: String
+  version: Int
+  whereClause: String
+}
+
+type sec_RowLevelRoleEntity {
+  _instanceName: String
+  childRoles: String
+  code: String
+  createTs: DateTime
+  createdBy: String
+  deleteTs: DateTime
+  deletedBy: String
+  description: String
+  id: UUID
+  name: String
+  rowLevelPolicies: [sec_RowLevelPolicyEntity]
+  sysTenantId: String
+  updateTs: DateTime
+  updatedBy: String
+  version: Int
+}
+
+type sec_UserSubstitutionEntity {
+  _instanceName: String
+  createTs: DateTime
+  createdBy: String
+  deleteTs: DateTime
+  deletedBy: String
+  endDate: Date
+  id: UUID
+  startDate: Date
+  substitutedUsername: String
+  updateTs: DateTime
+  updatedBy: String
+  username: String
+  version: Int
+}
+
+enum CarType {
+  HATCHBACK
+  SEDAN
+}
+
+enum EcoRank {
+  EURO1
+  EURO2
+  EURO3
+}
+
+enum RowLevelPolicyAction {
+  CREATE
+  DELETE
+  READ
+  UPDATE
+}
+
+enum RowLevelPolicyType {
+  JPQL
+  PREDICATE
+}
+
+enum SortOrder {
+  ASC
+  DESC
+}
+
+enum TestEnum {
+  NEW_VALUE
+  NEW_VALUE1
+  NEW_VALUE2
+}
+
+scalar BigDecimal
+
+"Built-in java.math.BigInteger"
+scalar BigInteger
+
+"Built-in Byte as Int"
+scalar Byte
+
+"Built-in Char as Character"
+scalar Char
+
+"Date type"
+scalar Date
+
+"Date type with time"
+scalar DateTime
+
+"Local date type"
+scalar LocalDate
+
+"Local date type with time"
+scalar LocalDateTime
+
+"Local time type"
+scalar LocalTime
+
+scalar Long
+
+"Date type with offset"
+scalar OffsetDateTime
+
+"Offset time type"
+scalar OffsetTime
+
+"Built-in Short as Int"
+scalar Short
+
+"Time type"
+scalar Time
+
+"Use SPQR's SchemaPrinter to remove this from SDL"
+scalar UNREPRESENTABLE
+
+scalar UUID
+
+"Type for file uploading"
+scalar Upload
+
+scalar Void
+
+"expression to compare columns of type BigDecimal. All fields are combined with logical 'AND'"
+input inp_BigDecimalFilterCondition {
+  "equals"
+  _eq: BigDecimal
+  "greater than"
+  _gt: BigDecimal
+  "greater than or equals"
+  _gte: BigDecimal
+  "in list"
+  _in: [BigDecimal]
+  "is null"
+  _isNull: Boolean
+  "less that"
+  _lt: BigDecimal
+  "less than or equals"
+  _lte: BigDecimal
+  "not equals"
+  _neq: BigDecimal
+  "not in list"
+  _notIn: [BigDecimal]
+}
+
+"expression to compare columns of type BigInteger. All fields are combined with logical 'AND'"
+input inp_BigIntegerFilterCondition {
+  "equals"
+  _eq: BigInteger
+  "greater than"
+  _gt: BigInteger
+  "greater than or equals"
+  _gte: BigInteger
+  "in list"
+  _in: [BigInteger]
+  "is null"
+  _isNull: Boolean
+  "less that"
+  _lt: BigInteger
+  "less than or equals"
+  _lte: BigInteger
+  "not equals"
+  _neq: BigInteger
+  "not in list"
+  _notIn: [BigInteger]
+}
+
+"expression to compare columns of type Boolean. All fields are combined with logical 'AND'"
+input inp_BooleanFilterCondition {
+  "equals"
+  _eq: Boolean
+  "is null"
+  _isNull: Boolean
+  "not equals"
+  _neq: Boolean
+}
+
+input inp_CarTypeFilterCondition {
+  AND: [inp_CarTypeFilterCondition]
+  OR: [inp_CarTypeFilterCondition]
+  "equals"
+  _eq: CarType
+  "in list"
+  _in: [CarType]
+  "is null"
+  _isNull: Boolean
+  "not equals"
+  _neq: CarType
+  "not in list"
+  _notIn: [CarType]
+}
+
+"expression to compare columns of type Char. All fields are combined with logical 'AND'"
+input inp_CharFilterCondition {
+  "equals"
+  _eq: Char
+  "in list"
+  _in: [Char]
+  "is null"
+  _isNull: Boolean
+  "not equals"
+  _neq: Char
+  "not in list"
+  _notIn: [Char]
+}
+
+"expression to compare columns of type Date. All fields are combined with logical 'AND'"
+input inp_DateFilterCondition {
+  "equals"
+  _eq: Date
+  "greater than"
+  _gt: Date
+  "greater than or equals"
+  _gte: Date
+  "in list"
+  _in: [Date]
+  "is null"
+  _isNull: Boolean
+  "less that"
+  _lt: Date
+  "less than or equals"
+  _lte: Date
+  "not equals"
+  _neq: Date
+  "not in list"
+  _notIn: [Date]
+}
+
+"expression to compare columns of type DateTime. All fields are combined with logical 'AND'"
+input inp_DateTimeFilterCondition {
+  "equals"
+  _eq: DateTime
+  "greater than"
+  _gt: DateTime
+  "greater than or equals"
+  _gte: DateTime
+  "in list"
+  _in: [DateTime]
+  "is null"
+  _isNull: Boolean
+  "less that"
+  _lt: DateTime
+  "less than or equals"
+  _lte: DateTime
+  "not equals"
+  _neq: DateTime
+  "not in list"
+  _notIn: [DateTime]
+}
+
+input inp_EcoRankFilterCondition {
+  AND: [inp_EcoRankFilterCondition]
+  OR: [inp_EcoRankFilterCondition]
+  "equals"
+  _eq: EcoRank
+  "in list"
+  _in: [EcoRank]
+  "is null"
+  _isNull: Boolean
+  "not equals"
+  _neq: EcoRank
+  "not in list"
+  _notIn: [EcoRank]
+}
+
+"expression to compare columns of type Float. All fields are combined with logical 'AND'"
+input inp_FloatFilterCondition {
+  "equals"
+  _eq: Float
+  "greater than"
+  _gt: Float
+  "greater than or equals"
+  _gte: Float
+  "in list"
+  _in: [Float]
+  "is null"
+  _isNull: Boolean
+  "less that"
+  _lt: Float
+  "less than or equals"
+  _lte: Float
+  "not equals"
+  _neq: Float
+  "not in list"
+  _notIn: [Float]
+}
+
+"expression to compare columns of type Int. All fields are combined with logical 'AND'"
+input inp_IntFilterCondition {
+  "equals"
+  _eq: Int
+  "greater than"
+  _gt: Int
+  "greater than or equals"
+  _gte: Int
+  "in list"
+  _in: [Int]
+  "is null"
+  _isNull: Boolean
+  "less that"
+  _lt: Int
+  "less than or equals"
+  _lte: Int
+  "not equals"
+  _neq: Int
+  "not in list"
+  _notIn: [Int]
+}
+
+"expression to compare columns of type LocalDate. All fields are combined with logical 'AND'"
+input inp_LocalDateFilterCondition {
+  "equals"
+  _eq: LocalDate
+  "greater than"
+  _gt: LocalDate
+  "greater than or equals"
+  _gte: LocalDate
+  "in list"
+  _in: [LocalDate]
+  "is null"
+  _isNull: Boolean
+  "less that"
+  _lt: LocalDate
+  "less than or equals"
+  _lte: LocalDate
+  "not equals"
+  _neq: LocalDate
+  "not in list"
+  _notIn: [LocalDate]
+}
+
+"expression to compare columns of type LocalDateTime. All fields are combined with logical 'AND'"
+input inp_LocalDateTimeFilterCondition {
+  "equals"
+  _eq: LocalDateTime
+  "greater than"
+  _gt: LocalDateTime
+  "greater than or equals"
+  _gte: LocalDateTime
+  "in list"
+  _in: [LocalDateTime]
+  "is null"
+  _isNull: Boolean
+  "less that"
+  _lt: LocalDateTime
+  "less than or equals"
+  _lte: LocalDateTime
+  "not equals"
+  _neq: LocalDateTime
+  "not in list"
+  _notIn: [LocalDateTime]
+}
+
+"expression to compare columns of type LocalTime. All fields are combined with logical 'AND'"
+input inp_LocalTimeFilterCondition {
+  "equals"
+  _eq: LocalTime
+  "greater than"
+  _gt: LocalTime
+  "greater than or equals"
+  _gte: LocalTime
+  "is null"
+  _isNull: Boolean
+  "less that"
+  _lt: LocalTime
+  "less than or equals"
+  _lte: LocalTime
+  "not equals"
+  _neq: LocalTime
+}
+
+"expression to compare columns of type Long. All fields are combined with logical 'AND'"
+input inp_LongFilterCondition {
+  "equals"
+  _eq: Long
+  "greater than"
+  _gt: Long
+  "greater than or equals"
+  _gte: Long
+  "in list"
+  _in: [Long]
+  "is null"
+  _isNull: Boolean
+  "less that"
+  _lt: Long
+  "less than or equals"
+  _lte: Long
+  "not equals"
+  _neq: Long
+  "not in list"
+  _notIn: [Long]
+}
+
+"expression to compare columns of type OffsetDateTime. All fields are combined with logical 'AND'"
+input inp_OffsetDateTimeFilterCondition {
+  "equals"
+  _eq: OffsetDateTime
+  "greater than"
+  _gt: OffsetDateTime
+  "greater than or equals"
+  _gte: OffsetDateTime
+  "in list"
+  _in: [OffsetDateTime]
+  "is null"
+  _isNull: Boolean
+  "less that"
+  _lt: OffsetDateTime
+  "less than or equals"
+  _lte: OffsetDateTime
+  "not equals"
+  _neq: OffsetDateTime
+  "not in list"
+  _notIn: [OffsetDateTime]
+}
+
+"expression to compare columns of type OffsetTime. All fields are combined with logical 'AND'"
+input inp_OffsetTimeFilterCondition {
+  "equals"
+  _eq: OffsetTime
+  "greater than"
+  _gt: OffsetTime
+  "greater than or equals"
+  _gte: OffsetTime
+  "is null"
+  _isNull: Boolean
+  "less that"
+  _lt: OffsetTime
+  "less than or equals"
+  _lte: OffsetTime
+  "not equals"
+  _neq: OffsetTime
+}
+
+input inp_RowLevelPolicyActionFilterCondition {
+  AND: [inp_RowLevelPolicyActionFilterCondition]
+  OR: [inp_RowLevelPolicyActionFilterCondition]
+  "equals"
+  _eq: RowLevelPolicyAction
+  "in list"
+  _in: [RowLevelPolicyAction]
+  "is null"
+  _isNull: Boolean
+  "not equals"
+  _neq: RowLevelPolicyAction
+  "not in list"
+  _notIn: [RowLevelPolicyAction]
+}
+
+input inp_RowLevelPolicyTypeFilterCondition {
+  AND: [inp_RowLevelPolicyTypeFilterCondition]
+  OR: [inp_RowLevelPolicyTypeFilterCondition]
+  "equals"
+  _eq: RowLevelPolicyType
+  "in list"
+  _in: [RowLevelPolicyType]
+  "is null"
+  _isNull: Boolean
+  "not equals"
+  _neq: RowLevelPolicyType
+  "not in list"
+  _notIn: [RowLevelPolicyType]
+}
+
+"expression to compare columns of type Short. All fields are combined with logical 'AND'"
+input inp_ShortFilterCondition {
+  "equals"
+  _eq: Short
+  "greater than"
+  _gt: Short
+  "greater than or equals"
+  _gte: Short
+  "in list"
+  _in: [Short]
+  "is null"
+  _isNull: Boolean
+  "less that"
+  _lt: Short
+  "less than or equals"
+  _lte: Short
+  "not equals"
+  _neq: Short
+  "not in list"
+  _notIn: [Short]
+}
+
+"expression to compare columns of type String. All fields are combined with logical 'AND'"
+input inp_StringFilterCondition {
+  "contains substring"
+  _contains: String
+  "ends with substring"
+  _endsWith: String
+  "equals"
+  _eq: String
+  "in list"
+  _in: [String]
+  "is null"
+  _isNull: Boolean
+  "not equals"
+  _neq: String
+  "not contains substring"
+  _notContains: String
+  "not in list"
+  _notIn: [String]
+  "starts with substring"
+  _startsWith: String
+}
+
+input inp_TestEnumFilterCondition {
+  AND: [inp_TestEnumFilterCondition]
+  OR: [inp_TestEnumFilterCondition]
+  "equals"
+  _eq: TestEnum
+  "in list"
+  _in: [TestEnum]
+  "is null"
+  _isNull: Boolean
+  "not equals"
+  _neq: TestEnum
+  "not in list"
+  _notIn: [TestEnum]
+}
+
+"expression to compare columns of type Time. All fields are combined with logical 'AND'"
+input inp_TimeFilterCondition {
+  "equals"
+  _eq: Time
+  "greater than"
+  _gt: Time
+  "greater than or equals"
+  _gte: Time
+  "is null"
+  _isNull: Boolean
+  "less that"
+  _lt: Time
+  "less than or equals"
+  _lte: Time
+  "not equals"
+  _neq: Time
+}
+
+"expression to compare columns of type UUID. All fields are combined with logical 'AND'"
+input inp_UUIDFilterCondition {
+  "equals"
+  _eq: UUID
+  "in list"
+  _in: [UUID]
+  "is null"
+  _isNull: Boolean
+  "not equals"
+  _neq: UUID
+  "not in list"
+  _notIn: [UUID]
+}
+
+"expression to compare columns of type Upload. All fields are combined with logical 'AND'"
+input inp_UploadFilterCondition {
+  "equals"
+  _eq: Upload
+  "in list"
+  _in: [Upload]
+  "is null"
+  _isNull: Boolean
+  "not equals"
+  _neq: Upload
+  "not in list"
+  _notIn: [Upload]
+}
+
+input inp_scr_AssociationM2MTestEntity {
+  datatypesTestEntities: [inp_scr_DatatypesTestEntity]
+  id: UUID
+  name: String
+}
+
+input inp_scr_AssociationM2MTestEntityFilterCondition {
+  AND: [inp_scr_AssociationM2MTestEntityFilterCondition]
+  OR: [inp_scr_AssociationM2MTestEntityFilterCondition]
+  "is null"
+  _isNull: Boolean
+  id: [inp_UUIDFilterCondition]
+  name: [inp_StringFilterCondition]
+}
+
+input inp_scr_AssociationM2MTestEntityOrderBy {
+  _instanceName: SortOrder
+  id: SortOrder
+  name: SortOrder
+}
+
+input inp_scr_AssociationM2OTestEntity {
+  id: UUID
+  name: String
+}
+
+input inp_scr_AssociationM2OTestEntityFilterCondition {
+  AND: [inp_scr_AssociationM2OTestEntityFilterCondition]
+  OR: [inp_scr_AssociationM2OTestEntityFilterCondition]
+  "is null"
+  _isNull: Boolean
+  id: [inp_UUIDFilterCondition]
+  name: [inp_StringFilterCondition]
+}
+
+input inp_scr_AssociationM2OTestEntityOrderBy {
+  _instanceName: SortOrder
+  id: SortOrder
+  name: SortOrder
+}
+
+input inp_scr_AssociationO2MTestEntity {
+  datatypesTestEntity: inp_scr_DatatypesTestEntity
+  id: UUID
+  name: String
+}
+
+input inp_scr_AssociationO2MTestEntityFilterCondition {
+  AND: [inp_scr_AssociationO2MTestEntityFilterCondition]
+  OR: [inp_scr_AssociationO2MTestEntityFilterCondition]
+  "is null"
+  _isNull: Boolean
+  datatypesTestEntity: [inp_scr_DatatypesTestEntityFilterCondition]
+  id: [inp_UUIDFilterCondition]
+  name: [inp_StringFilterCondition]
+}
+
+input inp_scr_AssociationO2MTestEntityOrderBy {
+  _instanceName: SortOrder
+  datatypesTestEntity: inp_scr_DatatypesTestEntityOrderBy
+  id: SortOrder
+  name: SortOrder
+}
+
+input inp_scr_AssociationO2OTestEntity {
+  datatypesTestEntity: inp_scr_DatatypesTestEntity
+  deeplyNestedTestEntity: inp_scr_DeeplyNestedTestEntity
+  id: UUID
+  name: String
+}
+
+input inp_scr_AssociationO2OTestEntityFilterCondition {
+  AND: [inp_scr_AssociationO2OTestEntityFilterCondition]
+  OR: [inp_scr_AssociationO2OTestEntityFilterCondition]
+  "is null"
+  _isNull: Boolean
+  datatypesTestEntity: [inp_scr_DatatypesTestEntityFilterCondition]
+  deeplyNestedTestEntity: [inp_scr_DeeplyNestedTestEntityFilterCondition]
+  id: [inp_UUIDFilterCondition]
+  name: [inp_StringFilterCondition]
+}
+
+input inp_scr_AssociationO2OTestEntityOrderBy {
+  _instanceName: SortOrder
+  datatypesTestEntity: inp_scr_DatatypesTestEntityOrderBy
+  deeplyNestedTestEntity: inp_scr_DeeplyNestedTestEntityOrderBy
+  id: SortOrder
+  name: SortOrder
+}
+
+input inp_scr_BoringStringIdTestEntity {
+  createTs: DateTime
+  createdBy: String
+  deleteTs: DateTime
+  deletedBy: String
+  description: String
+  id: String
+  updateTs: DateTime
+  updatedBy: String
+  uuid: UUID
+  version: Int
+}
+
+input inp_scr_BoringStringIdTestEntityFilterCondition {
+  AND: [inp_scr_BoringStringIdTestEntityFilterCondition]
+  OR: [inp_scr_BoringStringIdTestEntityFilterCondition]
+  "is null"
+  _isNull: Boolean
+  createTs: [inp_DateTimeFilterCondition]
+  createdBy: [inp_StringFilterCondition]
+  deleteTs: [inp_DateTimeFilterCondition]
+  deletedBy: [inp_StringFilterCondition]
+  description: [inp_StringFilterCondition]
+  id: [inp_StringFilterCondition]
+  updateTs: [inp_DateTimeFilterCondition]
+  updatedBy: [inp_StringFilterCondition]
+  uuid: [inp_UUIDFilterCondition]
+  version: [inp_IntFilterCondition]
+}
+
+input inp_scr_BoringStringIdTestEntityOrderBy {
+  _instanceName: SortOrder
+  createTs: SortOrder
+  createdBy: SortOrder
+  deleteTs: SortOrder
+  deletedBy: SortOrder
+  description: SortOrder
+  id: SortOrder
+  updateTs: SortOrder
+  updatedBy: SortOrder
+  uuid: SortOrder
+  version: SortOrder
+}
+
+input inp_scr_Car {
+  carType: CarType
+  createdBy: String
+  createdDate: Date
+  ecoRank: EcoRank
+  garage: inp_scr_Garage
+  id: UUID
+  lastModifiedBy: String
+  lastModifiedDate: Date
+  manufactureDate: DateTime
+  manufacturer: String
+  maxPassengers: Int
+  mileage: Float
+  model: String
+  price: BigDecimal
+  purchaseDate: Date
+  regNumber: String
+  technicalCertificate: inp_scr_TechnicalCertificate
+  version: Int
+  wheelOnRight: Boolean
+}
+
+input inp_scr_CarFilterCondition {
+  AND: [inp_scr_CarFilterCondition]
+  OR: [inp_scr_CarFilterCondition]
+  "is null"
+  _isNull: Boolean
+  carType: [inp_CarTypeFilterCondition]
+  createdBy: [inp_StringFilterCondition]
+  createdDate: [inp_DateFilterCondition]
+  ecoRank: [inp_EcoRankFilterCondition]
+  garage: [inp_scr_GarageFilterCondition]
+  id: [inp_UUIDFilterCondition]
+  lastModifiedBy: [inp_StringFilterCondition]
+  lastModifiedDate: [inp_DateFilterCondition]
+  manufactureDate: [inp_DateTimeFilterCondition]
+  manufacturer: [inp_StringFilterCondition]
+  maxPassengers: [inp_IntFilterCondition]
+  mileage: [inp_FloatFilterCondition]
+  model: [inp_StringFilterCondition]
+  price: [inp_BigDecimalFilterCondition]
+  purchaseDate: [inp_DateFilterCondition]
+  regNumber: [inp_StringFilterCondition]
+  technicalCertificate: [inp_scr_TechnicalCertificateFilterCondition]
+  version: [inp_IntFilterCondition]
+  wheelOnRight: [inp_BooleanFilterCondition]
+}
+
+input inp_scr_CarOrderBy {
+  _instanceName: SortOrder
+  carType: SortOrder
+  createdBy: SortOrder
+  createdDate: SortOrder
+  ecoRank: SortOrder
+  garage: inp_scr_GarageOrderBy
+  id: SortOrder
+  lastModifiedBy: SortOrder
+  lastModifiedDate: SortOrder
+  manufactureDate: SortOrder
+  manufacturer: SortOrder
+  maxPassengers: SortOrder
+  mileage: SortOrder
+  model: SortOrder
+  price: SortOrder
+  purchaseDate: SortOrder
+  regNumber: SortOrder
+  technicalCertificate: inp_scr_TechnicalCertificateOrderBy
+  version: SortOrder
+  wheelOnRight: SortOrder
+}
+
+input inp_scr_CarRent {
+  car: inp_scr_Car
+  fromDate: Date
+  fromDateTime: DateTime
+  fromTime: Time
+  id: UUID
+}
+
+input inp_scr_CarRentFilterCondition {
+  AND: [inp_scr_CarRentFilterCondition]
+  OR: [inp_scr_CarRentFilterCondition]
+  "is null"
+  _isNull: Boolean
+  car: [inp_scr_CarFilterCondition]
+  fromDate: [inp_DateFilterCondition]
+  fromDateTime: [inp_DateTimeFilterCondition]
+  fromTime: [inp_TimeFilterCondition]
+  id: [inp_UUIDFilterCondition]
+}
+
+input inp_scr_CarRentOrderBy {
+  _instanceName: SortOrder
+  car: inp_scr_CarOrderBy
+  fromDate: SortOrder
+  fromDateTime: SortOrder
+  fromTime: SortOrder
+  id: SortOrder
+}
+
+input inp_scr_CompositionO2MTestEntity {
+  datatypesTestEntity: inp_scr_DatatypesTestEntity
+  id: UUID
+  name: String
+  quantity: Int
+}
+
+input inp_scr_CompositionO2MTestEntityFilterCondition {
+  AND: [inp_scr_CompositionO2MTestEntityFilterCondition]
+  OR: [inp_scr_CompositionO2MTestEntityFilterCondition]
+  "is null"
+  _isNull: Boolean
+  datatypesTestEntity: [inp_scr_DatatypesTestEntityFilterCondition]
+  id: [inp_UUIDFilterCondition]
+  name: [inp_StringFilterCondition]
+  quantity: [inp_IntFilterCondition]
+}
+
+input inp_scr_CompositionO2MTestEntityOrderBy {
+  _instanceName: SortOrder
+  datatypesTestEntity: inp_scr_DatatypesTestEntityOrderBy
+  id: SortOrder
+  name: SortOrder
+  quantity: SortOrder
+}
+
+input inp_scr_CompositionO2OTestEntity {
+  id: UUID
+  name: String
+  nestedComposition: inp_scr_DeeplyNestedTestEntity
+  quantity: Int
+}
+
+input inp_scr_CompositionO2OTestEntityFilterCondition {
+  AND: [inp_scr_CompositionO2OTestEntityFilterCondition]
+  OR: [inp_scr_CompositionO2OTestEntityFilterCondition]
+  "is null"
+  _isNull: Boolean
+  id: [inp_UUIDFilterCondition]
+  name: [inp_StringFilterCondition]
+  nestedComposition: [inp_scr_DeeplyNestedTestEntityFilterCondition]
+  quantity: [inp_IntFilterCondition]
+}
+
+input inp_scr_CompositionO2OTestEntityOrderBy {
+  _instanceName: SortOrder
+  id: SortOrder
+  name: SortOrder
+  nestedComposition: inp_scr_DeeplyNestedTestEntityOrderBy
+  quantity: SortOrder
+}
+
+input inp_scr_Customer {
+  email: String
+  id: UUID
+  name: String
+}
+
+input inp_scr_CustomerFilterCondition {
+  AND: [inp_scr_CustomerFilterCondition]
+  OR: [inp_scr_CustomerFilterCondition]
+  "is null"
+  _isNull: Boolean
+  email: [inp_StringFilterCondition]
+  id: [inp_UUIDFilterCondition]
+  name: [inp_StringFilterCondition]
+}
+
+input inp_scr_CustomerOrderBy {
+  _instanceName: SortOrder
+  email: SortOrder
+  id: SortOrder
+  name: SortOrder
+}
+
+input inp_scr_DatatypesTestEntity {
+  associationM2Mattr: [inp_scr_AssociationM2MTestEntity]
+  associationM2Oattr: inp_scr_AssociationM2OTestEntity
+  associationO2Mattr: [inp_scr_AssociationO2MTestEntity]
+  associationO2Oattr: inp_scr_AssociationO2OTestEntity
+  bigDecimalAttr: BigDecimal
+  booleanAttr: Boolean
+  charAttr: Char
+  compositionO2Mattr: [inp_scr_CompositionO2MTestEntity]
+  compositionO2Oattr: inp_scr_CompositionO2OTestEntity
+  datatypesTestEntity3: inp_scr_DatatypesTestEntity3
+  dateAttr: Date
+  dateTimeAttr: DateTime
+  doubleAttr: Float
+  enumAttr: TestEnum
+  id: UUID
+  intIdentityIdTestEntityAssociationO2OAttr: inp_scr_IntIdentityIdTestEntity
+  integerAttr: Int
+  integerIdTestEntityAssociationM2MAttr: [inp_scr_IntegerIdTestEntity]
+  localDateAttr: LocalDate
+  localDateTimeAttr: LocalDateTime
+  localTimeAttr: LocalTime
+  longAttr: Long
+  name: String
+  offsetDateTimeAttr: OffsetDateTime
+  offsetTimeAttr: OffsetTime
+  readOnlyStringAttr: String
+  stringAttr: String
+  stringIdTestEntityAssociationM2O: inp_scr_StringIdTestEntity
+  stringIdTestEntityAssociationO2O: inp_scr_StringIdTestEntity
+  timeAttr: Time
+  uuidAttr: UUID
+}
+
+input inp_scr_DatatypesTestEntity2 {
+  datatypesTestEntityAttr: inp_scr_DatatypesTestEntity
+  id: UUID
+  intIdentityIdTestEntityAttr: inp_scr_IntIdentityIdTestEntity
+  integerIdTestEntityAttr: inp_scr_IntegerIdTestEntity
+  stringIdTestEntityAttr: inp_scr_StringIdTestEntity
+  weirdStringIdTestEntityAttr: inp_scr_WeirdStringIdTestEntity
+}
+
+input inp_scr_DatatypesTestEntity2FilterCondition {
+  AND: [inp_scr_DatatypesTestEntity2FilterCondition]
+  OR: [inp_scr_DatatypesTestEntity2FilterCondition]
+  "is null"
+  _isNull: Boolean
+  datatypesTestEntityAttr: [inp_scr_DatatypesTestEntityFilterCondition]
+  id: [inp_UUIDFilterCondition]
+  intIdentityIdTestEntityAttr: [inp_scr_IntIdentityIdTestEntityFilterCondition]
+  integerIdTestEntityAttr: [inp_scr_IntegerIdTestEntityFilterCondition]
+  stringIdTestEntityAttr: [inp_scr_StringIdTestEntityFilterCondition]
+  weirdStringIdTestEntityAttr: [inp_scr_WeirdStringIdTestEntityFilterCondition]
+}
+
+input inp_scr_DatatypesTestEntity2OrderBy {
+  _instanceName: SortOrder
+  datatypesTestEntityAttr: inp_scr_DatatypesTestEntityOrderBy
+  id: SortOrder
+  intIdentityIdTestEntityAttr: inp_scr_IntIdentityIdTestEntityOrderBy
+  integerIdTestEntityAttr: inp_scr_IntegerIdTestEntityOrderBy
+  stringIdTestEntityAttr: inp_scr_StringIdTestEntityOrderBy
+  weirdStringIdTestEntityAttr: inp_scr_WeirdStringIdTestEntityOrderBy
+}
+
+input inp_scr_DatatypesTestEntity3 {
+  datatypesTestEntityAttr: [inp_scr_DatatypesTestEntity]
+  id: UUID
+  intIdentityIdTestEntityAttr: [inp_scr_IntIdentityIdTestEntity]
+  integerIdTestEntityAttr: [inp_scr_IntegerIdTestEntity]
+  name: String
+  stringIdTestEntityAttr: [inp_scr_StringIdTestEntity]
+  weirdStringIdTestEntityAttr: [inp_scr_WeirdStringIdTestEntity]
+}
+
+input inp_scr_DatatypesTestEntity3FilterCondition {
+  AND: [inp_scr_DatatypesTestEntity3FilterCondition]
+  OR: [inp_scr_DatatypesTestEntity3FilterCondition]
+  "is null"
+  _isNull: Boolean
+  id: [inp_UUIDFilterCondition]
+  name: [inp_StringFilterCondition]
+}
+
+input inp_scr_DatatypesTestEntity3OrderBy {
+  _instanceName: SortOrder
+  id: SortOrder
+  name: SortOrder
+}
+
+input inp_scr_DatatypesTestEntityFilterCondition {
+  AND: [inp_scr_DatatypesTestEntityFilterCondition]
+  OR: [inp_scr_DatatypesTestEntityFilterCondition]
+  "is null"
+  _isNull: Boolean
+  associationM2Oattr: [inp_scr_AssociationM2OTestEntityFilterCondition]
+  associationO2Oattr: [inp_scr_AssociationO2OTestEntityFilterCondition]
+  bigDecimalAttr: [inp_BigDecimalFilterCondition]
+  booleanAttr: [inp_BooleanFilterCondition]
+  charAttr: [inp_CharFilterCondition]
+  compositionO2Oattr: [inp_scr_CompositionO2OTestEntityFilterCondition]
+  datatypesTestEntity3: [inp_scr_DatatypesTestEntity3FilterCondition]
+  dateAttr: [inp_DateFilterCondition]
+  dateTimeAttr: [inp_DateTimeFilterCondition]
+  doubleAttr: [inp_FloatFilterCondition]
+  enumAttr: [inp_TestEnumFilterCondition]
+  id: [inp_UUIDFilterCondition]
+  intIdentityIdTestEntityAssociationO2OAttr: [inp_scr_IntIdentityIdTestEntityFilterCondition]
+  integerAttr: [inp_IntFilterCondition]
+  localDateAttr: [inp_LocalDateFilterCondition]
+  localDateTimeAttr: [inp_LocalDateTimeFilterCondition]
+  localTimeAttr: [inp_LocalTimeFilterCondition]
+  longAttr: [inp_LongFilterCondition]
+  name: [inp_StringFilterCondition]
+  offsetDateTimeAttr: [inp_OffsetDateTimeFilterCondition]
+  offsetTimeAttr: [inp_OffsetTimeFilterCondition]
+  readOnlyStringAttr: [inp_StringFilterCondition]
+  stringAttr: [inp_StringFilterCondition]
+  stringIdTestEntityAssociationM2O: [inp_scr_StringIdTestEntityFilterCondition]
+  stringIdTestEntityAssociationO2O: [inp_scr_StringIdTestEntityFilterCondition]
+  timeAttr: [inp_TimeFilterCondition]
+  uuidAttr: [inp_UUIDFilterCondition]
+}
+
+input inp_scr_DatatypesTestEntityOrderBy {
+  _instanceName: SortOrder
+  associationM2Oattr: inp_scr_AssociationM2OTestEntityOrderBy
+  associationO2Oattr: inp_scr_AssociationO2OTestEntityOrderBy
+  bigDecimalAttr: SortOrder
+  booleanAttr: SortOrder
+  charAttr: SortOrder
+  compositionO2Oattr: inp_scr_CompositionO2OTestEntityOrderBy
+  datatypesTestEntity3: inp_scr_DatatypesTestEntity3OrderBy
+  dateAttr: SortOrder
+  dateTimeAttr: SortOrder
+  doubleAttr: SortOrder
+  enumAttr: SortOrder
+  id: SortOrder
+  intIdentityIdTestEntityAssociationO2OAttr: inp_scr_IntIdentityIdTestEntityOrderBy
+  integerAttr: SortOrder
+  localDateAttr: SortOrder
+  localDateTimeAttr: SortOrder
+  localTimeAttr: SortOrder
+  longAttr: SortOrder
+  name: SortOrder
+  offsetDateTimeAttr: SortOrder
+  offsetTimeAttr: SortOrder
+  readOnlyStringAttr: SortOrder
+  stringAttr: SortOrder
+  stringIdTestEntityAssociationM2O: inp_scr_StringIdTestEntityOrderBy
+  stringIdTestEntityAssociationO2O: inp_scr_StringIdTestEntityOrderBy
+  timeAttr: SortOrder
+  uuidAttr: SortOrder
+}
+
+input inp_scr_DeeplyNestedTestEntity {
+  associationO2Oattr: inp_scr_AssociationO2OTestEntity
+  id: UUID
+  name: String
+  parentO2Ocomposition: inp_scr_CompositionO2OTestEntity
+}
+
+input inp_scr_DeeplyNestedTestEntityFilterCondition {
+  AND: [inp_scr_DeeplyNestedTestEntityFilterCondition]
+  OR: [inp_scr_DeeplyNestedTestEntityFilterCondition]
+  "is null"
+  _isNull: Boolean
+  associationO2Oattr: [inp_scr_AssociationO2OTestEntityFilterCondition]
+  id: [inp_UUIDFilterCondition]
+  name: [inp_StringFilterCondition]
+  parentO2Ocomposition: [inp_scr_CompositionO2OTestEntityFilterCondition]
+}
+
+input inp_scr_DeeplyNestedTestEntityOrderBy {
+  _instanceName: SortOrder
+  associationO2Oattr: inp_scr_AssociationO2OTestEntityOrderBy
+  id: SortOrder
+  name: SortOrder
+  parentO2Ocomposition: inp_scr_CompositionO2OTestEntityOrderBy
+}
+
+input inp_scr_FavoriteCar {
+  car: inp_scr_Car
+  id: UUID
+  notes: String
+  user: inp_scr_User
+}
+
+input inp_scr_FavoriteCarFilterCondition {
+  AND: [inp_scr_FavoriteCarFilterCondition]
+  OR: [inp_scr_FavoriteCarFilterCondition]
+  "is null"
+  _isNull: Boolean
+  car: [inp_scr_CarFilterCondition]
+  id: [inp_UUIDFilterCondition]
+  notes: [inp_StringFilterCondition]
+  user: [inp_scr_UserFilterCondition]
+}
+
+input inp_scr_FavoriteCarOrderBy {
+  _instanceName: SortOrder
+  car: inp_scr_CarOrderBy
+  id: SortOrder
+  notes: SortOrder
+  user: inp_scr_UserOrderBy
+}
+
+input inp_scr_Garage {
+  address: String
+  capacity: Int
+  cars: [inp_scr_Car]
+  currentCars: [inp_scr_Car]
+  id: UUID
+  name: String
+  personnel: [inp_scr_User]
+  vanEntry: Boolean
+  workingHoursFrom: LocalTime
+  workingHoursTo: LocalTime
+}
+
+input inp_scr_GarageFilterCondition {
+  AND: [inp_scr_GarageFilterCondition]
+  OR: [inp_scr_GarageFilterCondition]
+  "is null"
+  _isNull: Boolean
+  address: [inp_StringFilterCondition]
+  capacity: [inp_IntFilterCondition]
+  id: [inp_UUIDFilterCondition]
+  name: [inp_StringFilterCondition]
+  vanEntry: [inp_BooleanFilterCondition]
+  workingHoursFrom: [inp_LocalTimeFilterCondition]
+  workingHoursTo: [inp_LocalTimeFilterCondition]
+}
+
+input inp_scr_GarageOrderBy {
+  _instanceName: SortOrder
+  address: SortOrder
+  capacity: SortOrder
+  id: SortOrder
+  name: SortOrder
+  vanEntry: SortOrder
+  workingHoursFrom: SortOrder
+  workingHoursTo: SortOrder
+}
+
+input inp_scr_IntIdentityIdTestEntity {
+  createTs: DateTime
+  createdBy: String
+  datatypesTestEntity: inp_scr_DatatypesTestEntity
+  datatypesTestEntity3: inp_scr_DatatypesTestEntity3
+  deleteTs: DateTime
+  deletedBy: String
+  description: String
+  id: Int
+  updateTs: DateTime
+  updatedBy: String
+  version: Int
+}
+
+input inp_scr_IntIdentityIdTestEntityFilterCondition {
+  AND: [inp_scr_IntIdentityIdTestEntityFilterCondition]
+  OR: [inp_scr_IntIdentityIdTestEntityFilterCondition]
+  "is null"
+  _isNull: Boolean
+  createTs: [inp_DateTimeFilterCondition]
+  createdBy: [inp_StringFilterCondition]
+  datatypesTestEntity: [inp_scr_DatatypesTestEntityFilterCondition]
+  datatypesTestEntity3: [inp_scr_DatatypesTestEntity3FilterCondition]
+  deleteTs: [inp_DateTimeFilterCondition]
+  deletedBy: [inp_StringFilterCondition]
+  description: [inp_StringFilterCondition]
+  id: [inp_IntFilterCondition]
+  updateTs: [inp_DateTimeFilterCondition]
+  updatedBy: [inp_StringFilterCondition]
+  version: [inp_IntFilterCondition]
+}
+
+input inp_scr_IntIdentityIdTestEntityOrderBy {
+  _instanceName: SortOrder
+  createTs: SortOrder
+  createdBy: SortOrder
+  datatypesTestEntity: inp_scr_DatatypesTestEntityOrderBy
+  datatypesTestEntity3: inp_scr_DatatypesTestEntity3OrderBy
+  deleteTs: SortOrder
+  deletedBy: SortOrder
+  description: SortOrder
+  id: SortOrder
+  updateTs: SortOrder
+  updatedBy: SortOrder
+  version: SortOrder
+}
+
+input inp_scr_IntegerIdTestEntity {
+  createTs: DateTime
+  createdBy: String
+  datatypesTestEntities: [inp_scr_DatatypesTestEntity]
+  datatypesTestEntity3: inp_scr_DatatypesTestEntity3
+  deleteTs: DateTime
+  deletedBy: String
+  description: String
+  id: Int
+  updateTs: DateTime
+  updatedBy: String
+  version: Int
+}
+
+input inp_scr_IntegerIdTestEntityFilterCondition {
+  AND: [inp_scr_IntegerIdTestEntityFilterCondition]
+  OR: [inp_scr_IntegerIdTestEntityFilterCondition]
+  "is null"
+  _isNull: Boolean
+  createTs: [inp_DateTimeFilterCondition]
+  createdBy: [inp_StringFilterCondition]
+  datatypesTestEntity3: [inp_scr_DatatypesTestEntity3FilterCondition]
+  deleteTs: [inp_DateTimeFilterCondition]
+  deletedBy: [inp_StringFilterCondition]
+  description: [inp_StringFilterCondition]
+  id: [inp_IntFilterCondition]
+  updateTs: [inp_DateTimeFilterCondition]
+  updatedBy: [inp_StringFilterCondition]
+  version: [inp_IntFilterCondition]
+}
+
+input inp_scr_IntegerIdTestEntityOrderBy {
+  _instanceName: SortOrder
+  createTs: SortOrder
+  createdBy: SortOrder
+  datatypesTestEntity3: inp_scr_DatatypesTestEntity3OrderBy
+  deleteTs: SortOrder
+  deletedBy: SortOrder
+  description: SortOrder
+  id: SortOrder
+  updateTs: SortOrder
+  updatedBy: SortOrder
+  version: SortOrder
+}
+
+input inp_scr_Order {
+  amount: BigDecimal
+  customer: inp_scr_Customer
+  date: LocalDateTime
+  id: UUID
+  lines: [inp_scr_OrderLine]
+}
+
+input inp_scr_OrderFilterCondition {
+  AND: [inp_scr_OrderFilterCondition]
+  OR: [inp_scr_OrderFilterCondition]
+  "is null"
+  _isNull: Boolean
+  amount: [inp_BigDecimalFilterCondition]
+  customer: [inp_scr_CustomerFilterCondition]
+  date: [inp_LocalDateTimeFilterCondition]
+  id: [inp_UUIDFilterCondition]
+}
+
+input inp_scr_OrderLine {
+  id: UUID
+  order: inp_scr_Order
+  product: inp_scr_Product
+  quantity: Int
+}
+
+input inp_scr_OrderLineFilterCondition {
+  AND: [inp_scr_OrderLineFilterCondition]
+  OR: [inp_scr_OrderLineFilterCondition]
+  "is null"
+  _isNull: Boolean
+  id: [inp_UUIDFilterCondition]
+  order: [inp_scr_OrderFilterCondition]
+  product: [inp_scr_ProductFilterCondition]
+  quantity: [inp_IntFilterCondition]
+}
+
+input inp_scr_OrderLineOrderBy {
+  _instanceName: SortOrder
+  id: SortOrder
+  order: inp_scr_OrderOrderBy
+  product: inp_scr_ProductOrderBy
+  quantity: SortOrder
+}
+
+input inp_scr_OrderOrderBy {
+  _instanceName: SortOrder
+  amount: SortOrder
+  customer: inp_scr_CustomerOrderBy
+  date: SortOrder
+  id: SortOrder
+}
+
+input inp_scr_Product {
+  car: inp_scr_Car
+  id: UUID
+  price: BigDecimal
+  special: Boolean
+}
+
+input inp_scr_ProductFilterCondition {
+  AND: [inp_scr_ProductFilterCondition]
+  OR: [inp_scr_ProductFilterCondition]
+  "is null"
+  _isNull: Boolean
+  car: [inp_scr_CarFilterCondition]
+  id: [inp_UUIDFilterCondition]
+  price: [inp_BigDecimalFilterCondition]
+  special: [inp_BooleanFilterCondition]
+}
+
+input inp_scr_ProductOrderBy {
+  _instanceName: SortOrder
+  car: inp_scr_CarOrderBy
+  id: SortOrder
+  price: SortOrder
+  special: SortOrder
+}
+
+input inp_scr_SparePart {
+  id: UUID
+  name: String
+  spareParts: inp_scr_SparePart
+}
+
+input inp_scr_SparePartFilterCondition {
+  AND: [inp_scr_SparePartFilterCondition]
+  OR: [inp_scr_SparePartFilterCondition]
+  "is null"
+  _isNull: Boolean
+  id: [inp_UUIDFilterCondition]
+  name: [inp_StringFilterCondition]
+  spareParts: [inp_scr_SparePartFilterCondition]
+}
+
+input inp_scr_SparePartOrderBy {
+  _instanceName: SortOrder
+  id: SortOrder
+  name: SortOrder
+  spareParts: inp_scr_SparePartOrderBy
+}
+
+input inp_scr_StringIdTestEntity {
+  createTs: DateTime
+  createdBy: String
+  datatypesTestEntity: inp_scr_DatatypesTestEntity
+  datatypesTestEntity3: inp_scr_DatatypesTestEntity3
+  deleteTs: DateTime
+  deletedBy: String
+  description: String
+  identifier: String
+  productCode: String
+  updateTs: DateTime
+  updatedBy: String
+  version: Int
+}
+
+input inp_scr_StringIdTestEntityFilterCondition {
+  AND: [inp_scr_StringIdTestEntityFilterCondition]
+  OR: [inp_scr_StringIdTestEntityFilterCondition]
+  "is null"
+  _isNull: Boolean
+  createTs: [inp_DateTimeFilterCondition]
+  createdBy: [inp_StringFilterCondition]
+  datatypesTestEntity: [inp_scr_DatatypesTestEntityFilterCondition]
+  datatypesTestEntity3: [inp_scr_DatatypesTestEntity3FilterCondition]
+  deleteTs: [inp_DateTimeFilterCondition]
+  deletedBy: [inp_StringFilterCondition]
+  description: [inp_StringFilterCondition]
+  identifier: [inp_StringFilterCondition]
+  productCode: [inp_StringFilterCondition]
+  updateTs: [inp_DateTimeFilterCondition]
+  updatedBy: [inp_StringFilterCondition]
+  version: [inp_IntFilterCondition]
+}
+
+input inp_scr_StringIdTestEntityOrderBy {
+  _instanceName: SortOrder
+  createTs: SortOrder
+  createdBy: SortOrder
+  datatypesTestEntity: inp_scr_DatatypesTestEntityOrderBy
+  datatypesTestEntity3: inp_scr_DatatypesTestEntity3OrderBy
+  deleteTs: SortOrder
+  deletedBy: SortOrder
+  description: SortOrder
+  identifier: SortOrder
+  productCode: SortOrder
+  updateTs: SortOrder
+  updatedBy: SortOrder
+  version: SortOrder
+}
+
+input inp_scr_TechnicalCertificate {
+  car: inp_scr_Car
+  certNumber: String
+  id: UUID
+}
+
+input inp_scr_TechnicalCertificateFilterCondition {
+  AND: [inp_scr_TechnicalCertificateFilterCondition]
+  OR: [inp_scr_TechnicalCertificateFilterCondition]
+  "is null"
+  _isNull: Boolean
+  car: [inp_scr_CarFilterCondition]
+  certNumber: [inp_StringFilterCondition]
+  id: [inp_UUIDFilterCondition]
+}
+
+input inp_scr_TechnicalCertificateOrderBy {
+  _instanceName: SortOrder
+  car: inp_scr_CarOrderBy
+  certNumber: SortOrder
+  id: SortOrder
+}
+
+input inp_scr_User {
+  email: String
+  enabled: Boolean
+  firstName: String
+  id: UUID
+  lastName: String
+  password: String
+  phone: String
+  username: String
+  version: Int
+}
+
+input inp_scr_UserFilterCondition {
+  AND: [inp_scr_UserFilterCondition]
+  OR: [inp_scr_UserFilterCondition]
+  "is null"
+  _isNull: Boolean
+  email: [inp_StringFilterCondition]
+  enabled: [inp_BooleanFilterCondition]
+  firstName: [inp_StringFilterCondition]
+  id: [inp_UUIDFilterCondition]
+  lastName: [inp_StringFilterCondition]
+  password: [inp_StringFilterCondition]
+  phone: [inp_StringFilterCondition]
+  username: [inp_StringFilterCondition]
+  version: [inp_IntFilterCondition]
+}
+
+input inp_scr_UserOrderBy {
+  _instanceName: SortOrder
+  email: SortOrder
+  enabled: SortOrder
+  firstName: SortOrder
+  id: SortOrder
+  lastName: SortOrder
+  password: SortOrder
+  phone: SortOrder
+  username: SortOrder
+  version: SortOrder
+}
+
+input inp_scr_WeirdStringIdTestEntity {
+  createTs: DateTime
+  createdBy: String
+  datatypesTestEntity3: inp_scr_DatatypesTestEntity3
+  deleteTs: DateTime
+  deletedBy: String
+  description: String
+  id: String
+  identifier: String
+  updateTs: DateTime
+  updatedBy: String
+  version: Int
+}
+
+input inp_scr_WeirdStringIdTestEntityFilterCondition {
+  AND: [inp_scr_WeirdStringIdTestEntityFilterCondition]
+  OR: [inp_scr_WeirdStringIdTestEntityFilterCondition]
+  "is null"
+  _isNull: Boolean
+  createTs: [inp_DateTimeFilterCondition]
+  createdBy: [inp_StringFilterCondition]
+  datatypesTestEntity3: [inp_scr_DatatypesTestEntity3FilterCondition]
+  deleteTs: [inp_DateTimeFilterCondition]
+  deletedBy: [inp_StringFilterCondition]
+  description: [inp_StringFilterCondition]
+  id: [inp_StringFilterCondition]
+  identifier: [inp_StringFilterCondition]
+  updateTs: [inp_DateTimeFilterCondition]
+  updatedBy: [inp_StringFilterCondition]
+  version: [inp_IntFilterCondition]
+}
+
+input inp_scr_WeirdStringIdTestEntityOrderBy {
+  _instanceName: SortOrder
+  createTs: SortOrder
+  createdBy: SortOrder
+  datatypesTestEntity3: inp_scr_DatatypesTestEntity3OrderBy
+  deleteTs: SortOrder
+  deletedBy: SortOrder
+  description: SortOrder
+  id: SortOrder
+  identifier: SortOrder
+  updateTs: SortOrder
+  updatedBy: SortOrder
+  version: SortOrder
+}
+
+input inp_sec_ResourcePolicyEntity {
+  action: String
+  createTs: DateTime
+  createdBy: String
+  deleteTs: DateTime
+  deletedBy: String
+  effect: String
+  id: UUID
+  policyGroup: String
+  resource: String
+  role: inp_sec_ResourceRoleEntity
+  type: String
+  updateTs: DateTime
+  updatedBy: String
+  version: Int
+}
+
+input inp_sec_ResourcePolicyEntityFilterCondition {
+  AND: [inp_sec_ResourcePolicyEntityFilterCondition]
+  OR: [inp_sec_ResourcePolicyEntityFilterCondition]
+  "is null"
+  _isNull: Boolean
+  action: [inp_StringFilterCondition]
+  createTs: [inp_DateTimeFilterCondition]
+  createdBy: [inp_StringFilterCondition]
+  deleteTs: [inp_DateTimeFilterCondition]
+  deletedBy: [inp_StringFilterCondition]
+  effect: [inp_StringFilterCondition]
+  id: [inp_UUIDFilterCondition]
+  policyGroup: [inp_StringFilterCondition]
+  resource: [inp_StringFilterCondition]
+  role: [inp_sec_ResourceRoleEntityFilterCondition]
+  type: [inp_StringFilterCondition]
+  updateTs: [inp_DateTimeFilterCondition]
+  updatedBy: [inp_StringFilterCondition]
+  version: [inp_IntFilterCondition]
+}
+
+input inp_sec_ResourcePolicyEntityOrderBy {
+  _instanceName: SortOrder
+  action: SortOrder
+  createTs: SortOrder
+  createdBy: SortOrder
+  deleteTs: SortOrder
+  deletedBy: SortOrder
+  effect: SortOrder
+  id: SortOrder
+  policyGroup: SortOrder
+  resource: SortOrder
+  role: inp_sec_ResourceRoleEntityOrderBy
+  type: SortOrder
+  updateTs: SortOrder
+  updatedBy: SortOrder
+  version: SortOrder
+}
+
+input inp_sec_ResourceRoleEntity {
+  childRoles: String
+  code: String
+  createTs: DateTime
+  createdBy: String
+  deleteTs: DateTime
+  deletedBy: String
+  description: String
+  id: UUID
+  name: String
+  resourcePolicies: [inp_sec_ResourcePolicyEntity]
+  scopes: String
+  sysTenantId: String
+  updateTs: DateTime
+  updatedBy: String
+  version: Int
+}
+
+input inp_sec_ResourceRoleEntityFilterCondition {
+  AND: [inp_sec_ResourceRoleEntityFilterCondition]
+  OR: [inp_sec_ResourceRoleEntityFilterCondition]
+  "is null"
+  _isNull: Boolean
+  childRoles: [inp_StringFilterCondition]
+  code: [inp_StringFilterCondition]
+  createTs: [inp_DateTimeFilterCondition]
+  createdBy: [inp_StringFilterCondition]
+  deleteTs: [inp_DateTimeFilterCondition]
+  deletedBy: [inp_StringFilterCondition]
+  description: [inp_StringFilterCondition]
+  id: [inp_UUIDFilterCondition]
+  name: [inp_StringFilterCondition]
+  scopes: [inp_StringFilterCondition]
+  sysTenantId: [inp_StringFilterCondition]
+  updateTs: [inp_DateTimeFilterCondition]
+  updatedBy: [inp_StringFilterCondition]
+  version: [inp_IntFilterCondition]
+}
+
+input inp_sec_ResourceRoleEntityOrderBy {
+  _instanceName: SortOrder
+  childRoles: SortOrder
+  code: SortOrder
+  createTs: SortOrder
+  createdBy: SortOrder
+  deleteTs: SortOrder
+  deletedBy: SortOrder
+  description: SortOrder
+  id: SortOrder
+  name: SortOrder
+  scopes: SortOrder
+  sysTenantId: SortOrder
+  updateTs: SortOrder
+  updatedBy: SortOrder
+  version: SortOrder
+}
+
+input inp_sec_RoleAssignmentEntity {
+  createTs: DateTime
+  createdBy: String
+  deleteTs: DateTime
+  deletedBy: String
+  id: UUID
+  roleCode: String
+  roleType: String
+  updateTs: DateTime
+  updatedBy: String
+  username: String
+  version: Int
+}
+
+input inp_sec_RoleAssignmentEntityFilterCondition {
+  AND: [inp_sec_RoleAssignmentEntityFilterCondition]
+  OR: [inp_sec_RoleAssignmentEntityFilterCondition]
+  "is null"
+  _isNull: Boolean
+  createTs: [inp_DateTimeFilterCondition]
+  createdBy: [inp_StringFilterCondition]
+  deleteTs: [inp_DateTimeFilterCondition]
+  deletedBy: [inp_StringFilterCondition]
+  id: [inp_UUIDFilterCondition]
+  roleCode: [inp_StringFilterCondition]
+  roleType: [inp_StringFilterCondition]
+  updateTs: [inp_DateTimeFilterCondition]
+  updatedBy: [inp_StringFilterCondition]
+  username: [inp_StringFilterCondition]
+  version: [inp_IntFilterCondition]
+}
+
+input inp_sec_RoleAssignmentEntityOrderBy {
+  _instanceName: SortOrder
+  createTs: SortOrder
+  createdBy: SortOrder
+  deleteTs: SortOrder
+  deletedBy: SortOrder
+  id: SortOrder
+  roleCode: SortOrder
+  roleType: SortOrder
+  updateTs: SortOrder
+  updatedBy: SortOrder
+  username: SortOrder
+  version: SortOrder
+}
+
+input inp_sec_RowLevelPolicyEntity {
+  action: RowLevelPolicyAction
+  createTs: DateTime
+  createdBy: String
+  deleteTs: DateTime
+  deletedBy: String
+  entityName: String
+  id: UUID
+  joinClause: String
+  role: inp_sec_RowLevelRoleEntity
+  script: String
+  type: RowLevelPolicyType
+  updateTs: DateTime
+  updatedBy: String
+  version: Int
+  whereClause: String
+}
+
+input inp_sec_RowLevelPolicyEntityFilterCondition {
+  AND: [inp_sec_RowLevelPolicyEntityFilterCondition]
+  OR: [inp_sec_RowLevelPolicyEntityFilterCondition]
+  "is null"
+  _isNull: Boolean
+  action: [inp_RowLevelPolicyActionFilterCondition]
+  createTs: [inp_DateTimeFilterCondition]
+  createdBy: [inp_StringFilterCondition]
+  deleteTs: [inp_DateTimeFilterCondition]
+  deletedBy: [inp_StringFilterCondition]
+  entityName: [inp_StringFilterCondition]
+  id: [inp_UUIDFilterCondition]
+  joinClause: [inp_StringFilterCondition]
+  role: [inp_sec_RowLevelRoleEntityFilterCondition]
+  script: [inp_StringFilterCondition]
+  type: [inp_RowLevelPolicyTypeFilterCondition]
+  updateTs: [inp_DateTimeFilterCondition]
+  updatedBy: [inp_StringFilterCondition]
+  version: [inp_IntFilterCondition]
+  whereClause: [inp_StringFilterCondition]
+}
+
+input inp_sec_RowLevelPolicyEntityOrderBy {
+  _instanceName: SortOrder
+  action: SortOrder
+  createTs: SortOrder
+  createdBy: SortOrder
+  deleteTs: SortOrder
+  deletedBy: SortOrder
+  entityName: SortOrder
+  id: SortOrder
+  joinClause: SortOrder
+  role: inp_sec_RowLevelRoleEntityOrderBy
+  script: SortOrder
+  type: SortOrder
+  updateTs: SortOrder
+  updatedBy: SortOrder
+  version: SortOrder
+  whereClause: SortOrder
+}
+
+input inp_sec_RowLevelRoleEntity {
+  childRoles: String
+  code: String
+  createTs: DateTime
+  createdBy: String
+  deleteTs: DateTime
+  deletedBy: String
+  description: String
+  id: UUID
+  name: String
+  rowLevelPolicies: [inp_sec_RowLevelPolicyEntity]
+  sysTenantId: String
+  updateTs: DateTime
+  updatedBy: String
+  version: Int
+}
+
+input inp_sec_RowLevelRoleEntityFilterCondition {
+  AND: [inp_sec_RowLevelRoleEntityFilterCondition]
+  OR: [inp_sec_RowLevelRoleEntityFilterCondition]
+  "is null"
+  _isNull: Boolean
+  childRoles: [inp_StringFilterCondition]
+  code: [inp_StringFilterCondition]
+  createTs: [inp_DateTimeFilterCondition]
+  createdBy: [inp_StringFilterCondition]
+  deleteTs: [inp_DateTimeFilterCondition]
+  deletedBy: [inp_StringFilterCondition]
+  description: [inp_StringFilterCondition]
+  id: [inp_UUIDFilterCondition]
+  name: [inp_StringFilterCondition]
+  sysTenantId: [inp_StringFilterCondition]
+  updateTs: [inp_DateTimeFilterCondition]
+  updatedBy: [inp_StringFilterCondition]
+  version: [inp_IntFilterCondition]
+}
+
+input inp_sec_RowLevelRoleEntityOrderBy {
+  _instanceName: SortOrder
+  childRoles: SortOrder
+  code: SortOrder
+  createTs: SortOrder
+  createdBy: SortOrder
+  deleteTs: SortOrder
+  deletedBy: SortOrder
+  description: SortOrder
+  id: SortOrder
+  name: SortOrder
+  sysTenantId: SortOrder
+  updateTs: SortOrder
+  updatedBy: SortOrder
+  version: SortOrder
+}
+
+input inp_sec_UserSubstitutionEntity {
+  createTs: DateTime
+  createdBy: String
+  deleteTs: DateTime
+  deletedBy: String
+  endDate: Date
+  id: UUID
+  startDate: Date
+  substitutedUsername: String
+  updateTs: DateTime
+  updatedBy: String
+  username: String
+  version: Int
+}
+
+input inp_sec_UserSubstitutionEntityFilterCondition {
+  AND: [inp_sec_UserSubstitutionEntityFilterCondition]
+  OR: [inp_sec_UserSubstitutionEntityFilterCondition]
+  "is null"
+  _isNull: Boolean
+  createTs: [inp_DateTimeFilterCondition]
+  createdBy: [inp_StringFilterCondition]
+  deleteTs: [inp_DateTimeFilterCondition]
+  deletedBy: [inp_StringFilterCondition]
+  endDate: [inp_DateFilterCondition]
+  id: [inp_UUIDFilterCondition]
+  startDate: [inp_DateFilterCondition]
+  substitutedUsername: [inp_StringFilterCondition]
+  updateTs: [inp_DateTimeFilterCondition]
+  updatedBy: [inp_StringFilterCondition]
+  username: [inp_StringFilterCondition]
+  version: [inp_IntFilterCondition]
+}
+
+input inp_sec_UserSubstitutionEntityOrderBy {
+  _instanceName: SortOrder
+  createTs: SortOrder
+  createdBy: SortOrder
+  deleteTs: SortOrder
+  deletedBy: SortOrder
+  endDate: SortOrder
+  id: SortOrder
+  startDate: SortOrder
+  substitutedUsername: SortOrder
+  updateTs: SortOrder
+  updatedBy: SortOrder
+  username: SortOrder
+  version: SortOrder
+}

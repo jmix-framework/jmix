@@ -81,9 +81,11 @@ public class PredicateUtils {
                 Using loop instead of 'and()' to work with custom type of predicates
                 and to mitigate possible stack overflow due to undetermined amount of predicates (low probability)
              */
-            for (P p : predicates) {
-                if (!p.test(t, u)) {
-                    return false;
+            if (predicates != null) {
+                for (P p : predicates) {
+                    if (!p.test(t, u)) {
+                        return false;
+                    }
                 }
             }
             return true;

@@ -81,7 +81,7 @@ public class DomainModelBuilder {
         if (loadCaptions) {
             userFriendlyName = messageTools.getPropertyCaption(metaClass, prop.getName());
         }
-        boolean isEmbedded = prop.getType() == MetaProperty.Type.EMBEDDED;
+        boolean isEmbedded = metadataTools.isEmbedded(prop);
         MetaProperty.Type type = prop.getType();
         Class<?> javaType = prop.getJavaType();
         Range range = prop.getRange();

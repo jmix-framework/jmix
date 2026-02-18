@@ -56,10 +56,10 @@ public class ReportRegionWizardDetailView extends StandardDetailView<ReportRegio
     @ViewComponent
     private DataContext dataContext;
 
-    @ViewComponent
-    protected MessageBundle messageBundle;
     @Autowired
     protected UiComponents uiComponents;
+    @Autowired
+    protected MessageBundle messageBundle;
     @Autowired
     protected Notifications notifications;
     @Autowired

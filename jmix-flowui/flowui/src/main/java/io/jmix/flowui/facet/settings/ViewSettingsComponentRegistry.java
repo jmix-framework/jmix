@@ -21,6 +21,6 @@ package io.jmix.flowui.facet.settings;
  *
  * @deprecated use {@link ComponentSettingsRegistry} instead
  */
-@Deprecated(since = "3.0", forRemoval = true)
+@Deprecated(since = "2.8", forRemoval = true)
 public interface ViewSettingsComponentRegistry extends ComponentSettingsRegistry {
 }

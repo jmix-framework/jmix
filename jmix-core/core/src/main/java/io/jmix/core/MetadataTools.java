@@ -42,8 +42,8 @@ import io.jmix.core.metamodel.model.Range;
 import io.jmix.core.security.CurrentAuthentication;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.PostConstruct;
-import jakarta.persistence.*;
 import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
@@ -427,6 +427,20 @@ public class MetadataTools {
     public boolean isMethodBased(MetaProperty metaProperty) {
         Objects.requireNonNull(metaProperty, "metaProperty is null");
         return metaProperty.getAnnotatedElement() instanceof Method;
+    }
+
+    /**
+     * @deprecated Use {@code metaProperty.getType() == MetaProperty.Type.EMBEDDED}
+     *
+     * Determine whether the given property denotes an embedded object.
+     *
+     * @see Embedded
+     * @see EmbeddedId
+     */
+    @Deprecated
+    public boolean isEmbedded(MetaProperty metaProperty) {
+        Objects.requireNonNull(metaProperty, "metaProperty is null");
+        return metaProperty.getType() == MetaProperty.Type.EMBEDDED;
     }
 
     /**
@@ -1282,7 +1296,7 @@ public class MetadataTools {
     }
 
     protected void internalTraverseAttributesByFetchPlan(FetchPlan fetchPlan, Object entity, EntityAttributeVisitor
-                                                                 visitor,
+            visitor,
                                                          Map<Object, Set<FetchPlan>> visited, boolean checkLoaded) {
         Set<FetchPlan> fetchPlans = visited.get(entity);
         if (fetchPlans == null) {

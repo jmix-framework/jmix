@@ -61,10 +61,10 @@ public class MBeanInfoDetailView extends StandardDetailView<ManagedBeanInfo> {
     @ViewComponent
     protected TypedTextField<String> operationsSearchField;
 
-    @ViewComponent
-    protected MessageBundle messageBundle;
     @Autowired
     protected JmxControl jmxControl;
+    @Autowired
+    protected MessageBundle messageBundle;
     @Autowired
     protected UiComponents uiComponents;
     @Autowired

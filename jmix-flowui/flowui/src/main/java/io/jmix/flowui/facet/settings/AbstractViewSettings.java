@@ -24,7 +24,7 @@ import io.jmix.flowui.view.View;
  *
  * @deprecated use {@link AbstractUiComponentSettings} instead
  */
-@Deprecated(since = "3.0", forRemoval = true)
+@Deprecated(since = "2.8", forRemoval = true)
 public abstract class AbstractViewSettings implements ViewSettings {
 
     protected String viewId;

@@ -33,7 +33,7 @@ import io.jmix.flowui.model.impl.CollectionLoaderImpl
 import io.jmix.flowui.model.impl.InstanceLoaderImpl
 import io.jmix.flowui.model.impl.NoopDataContext
 import io.jmix.flowui.model.impl.ViewDataImpl
-import io.jmix.flowui.xml.layout.support.DataComponentsLoaderSupport
+import io.jmix.flowui.model.impl.ViewDataXmlLoader
 import org.dom4j.Document
 import org.springframework.beans.factory.annotation.Autowired
 import test_support.entity.sales.Order
@@ -46,7 +46,7 @@ import test_support.spec.DataContextSpec
 class ViewDataTest extends DataContextSpec {
 
     @Autowired FetchPlanRepository fetchPlanRepository
-    @Autowired DataComponentsLoaderSupport viewDataLoader
+    @Autowired ViewDataXmlLoader viewDataLoader
 
     def "containers without loaders"() {
         def xml = '''

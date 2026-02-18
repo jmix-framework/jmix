@@ -34,7 +34,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-@Deprecated(since = "3.0", forRemoval = true)
+@Deprecated(since = "2.8", forRemoval = true)
 @Component("flowui_MultiFileTemporaryStorageBuffer")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class MultiFileTemporaryStorageBuffer implements MultiFileReceiver {

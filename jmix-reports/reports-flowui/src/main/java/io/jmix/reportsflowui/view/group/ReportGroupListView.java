@@ -44,10 +44,10 @@ public class ReportGroupListView extends StandardListView<ReportGroup> {
     @ViewComponent
     protected CollectionLoader<ReportGroup> groupsDl;
 
-    @ViewComponent
-    protected MessageBundle messageBundle;
     @Autowired
     protected Notifications notifications;
+    @ViewComponent
+    protected MessageBundle messageBundle;
     @Autowired
     protected ReportGroupRepository reportGroupRepository;
     @Autowired

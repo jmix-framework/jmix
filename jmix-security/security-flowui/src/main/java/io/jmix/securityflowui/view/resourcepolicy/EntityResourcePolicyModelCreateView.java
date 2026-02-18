@@ -50,7 +50,7 @@ public class EntityResourcePolicyModelCreateView extends MultipleResourcePolicyM
 
     @Autowired
     private Metadata metadata;
-    @ViewComponent
+    @Autowired
     private MessageBundle messageBundle;
 
     private boolean hasChanges = false;

@@ -104,7 +104,7 @@ public interface Action extends HasShortcutCombination {
      * @return action's icon or {@code null} if not set
      * @deprecated use {@link #getIconComponent()} instead
      */
-    @Deprecated(since = "3.0", forRemoval = true)
+    @Deprecated(since = "2.8", forRemoval = true)
     @Nullable
     Icon getIcon();
 
@@ -115,7 +115,7 @@ public interface Action extends HasShortcutCombination {
      * @param icon icon to set or {@code null} to remove
      * @deprecated use {@link #setIconComponent(Component)} instead
      */
-    @Deprecated(since = "3.0", forRemoval = true)
+    @Deprecated(since = "2.8", forRemoval = true)
     void setIcon(@Nullable Icon icon);
 
     /**

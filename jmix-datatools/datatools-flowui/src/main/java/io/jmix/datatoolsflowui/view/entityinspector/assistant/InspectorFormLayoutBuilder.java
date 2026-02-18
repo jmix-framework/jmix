@@ -213,7 +213,7 @@ public class InspectorFormLayoutBuilder {
             pickerField.setWidthFull();
 
             isReadonly = isReadonly || (disabledProperties != null && disabledProperties.contains(metaProperty.getName()));
-            if (range.isClass() && metaProperty.getType() != MetaProperty.Type.EMBEDDED) {
+            if (range.isClass() && !metadataTools.isEmbedded(metaProperty)) {
                 pickerField.setReadOnly(!metadataTools.isOwningSide(metaProperty) || isReadonly);
             } else {
                 pickerField.setReadOnly(isReadonly);

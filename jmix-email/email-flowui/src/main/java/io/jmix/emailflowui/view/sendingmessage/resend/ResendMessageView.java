@@ -54,10 +54,10 @@ public class ResendMessageView extends StandardView {
     @ViewComponent
     protected JmixCheckbox importanceField;
 
-    @ViewComponent
-    protected MessageBundle messageBundle;
     @Autowired
     protected FileStorageLocator fileStorageLocator;
+    @Autowired
+    protected MessageBundle messageBundle;
     @Autowired
     protected Notifications notifications;
     @Autowired

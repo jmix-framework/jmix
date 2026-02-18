@@ -56,7 +56,7 @@ public class ChangePasswordView extends StandardView {
     @ViewComponent
     protected PasswordField currentPasswordField;
 
-    @ViewComponent
+    @Autowired
     protected MessageBundle messageBundle;
     @Autowired
     protected UserManager userManager;

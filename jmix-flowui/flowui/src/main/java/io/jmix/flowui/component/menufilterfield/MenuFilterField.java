@@ -17,7 +17,17 @@
 package io.jmix.flowui.component.menufilterfield;
 
 import com.google.common.base.Strings;
-import com.vaadin.flow.component.*;
+import com.vaadin.flow.component.Composite;
+import com.vaadin.flow.component.Focusable;
+import com.vaadin.flow.component.HasAriaLabel;
+import com.vaadin.flow.component.HasEnabled;
+import com.vaadin.flow.component.HasHelper;
+import com.vaadin.flow.component.HasLabel;
+import com.vaadin.flow.component.HasSize;
+import com.vaadin.flow.component.HasStyle;
+import com.vaadin.flow.component.HasValue;
+import com.vaadin.flow.component.InputNotifier;
+import com.vaadin.flow.component.KeyNotifier;
 import com.vaadin.flow.component.shared.HasClearButton;
 import com.vaadin.flow.component.shared.HasPrefix;
 import com.vaadin.flow.component.shared.HasSuffix;
@@ -27,12 +37,13 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.HasValueChangeMode;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import io.jmix.flowui.kit.component.HasAutofocus;
+import io.jmix.flowui.kit.component.HasPlaceholder;
 import io.jmix.flowui.kit.component.HasTitle;
 import io.jmix.flowui.kit.component.menu.MenuItem;
 import io.jmix.flowui.kit.component.menu.ParentMenuItem;
 import io.jmix.flowui.menu.provider.MenuItemProvider;
 import org.apache.commons.lang3.StringUtils;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.springframework.lang.Nullable;
 
 import java.util.ArrayList;
 import java.util.Iterator;

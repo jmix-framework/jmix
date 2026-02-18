@@ -281,6 +281,12 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
         ValidationErrors errors = new ValidationErrors();
         if (isCrossFieldValidationEnabled()) {
             ViewValidation viewValidation = getViewValidation();
+
+            // io.jmix.flowui.component.validation.group.UiCrossFieldChecks is deprecated
+            // added for compatibility
+            errors.addAll(viewValidation.validateBeanGroup(
+                    io.jmix.flowui.component.validation.group.UiCrossFieldChecks.class, getEditedEntity()));
+
             errors.addAll(viewValidation.validateBeanGroup(UiCrossFieldChecks.class, getEditedEntity()));
         }
 
@@ -800,7 +806,7 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
                     || inMemoryContext.isUpdatePermitted(getEditedEntity()));
 
             if (isPermittedBySecurity) {
-                ViewSetupLockEvent<StandardDetailView<T>> event = new ViewSetupLockEvent<>(this);
+                SetupLockEvent event = new SetupLockEvent(this);
                 getApplicationContext().publishEvent(event);
 
                 this.entityLockStatus = event.getLockStatus();
@@ -980,6 +986,19 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
     @Override
     public void setReloadSaved(boolean reloadSaved) {
         this.reloadSaved = reloadSaved;
+    }
+
+    /**
+     * Event sent when the view requests an external lock, if one is defined.
+     *
+     * @deprecated use {@link ViewSetupLockEvent} instead.
+     */
+    @Deprecated(since = "2.7", forRemoval = true)
+    public static class SetupLockEvent extends ViewSetupLockEvent<StandardDetailView<?>> {
+
+        public SetupLockEvent(StandardDetailView<?> view) {
+            super(view);
+        }
     }
 
     /**

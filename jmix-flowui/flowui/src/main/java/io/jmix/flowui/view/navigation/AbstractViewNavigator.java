@@ -19,9 +19,10 @@ package io.jmix.flowui.view.navigation;
 import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.RouteParameters;
 import io.jmix.flowui.ViewNavigators;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.view.View;
-import org.springframework.lang.Nullable;
 
+import org.springframework.lang.Nullable;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -30,7 +31,7 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 /**
  * Provides a fluent interface to configure navigation parameters and navigate to a {@link View}.
  * <p>
- * An instance of this class should be obtained through {@link ViewNavigators#view(View, String)}.
+ * An instance of this class should be obtained through {@link ViewNavigators#view(String)}.
  */
 public abstract class AbstractViewNavigator {
 
@@ -43,6 +44,14 @@ public abstract class AbstractViewNavigator {
     protected QueryParameters queryParameters;
 
     protected boolean backwardNavigation;
+
+    @Deprecated(since = "2.3", forRemoval = true)
+    protected AbstractViewNavigator(Consumer<? extends AbstractViewNavigator> handler) {
+        checkNotNullArgument(handler);
+
+        this.origin = UiComponentUtils.getCurrentView();
+        this.handler = handler;
+    }
 
     protected AbstractViewNavigator(View<?> origin,
                                     Consumer<? extends AbstractViewNavigator> handler) {

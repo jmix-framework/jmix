@@ -1,0 +1,17 @@
+mutation Upsert_scr_Car($id: UUID) {
+    upsert_scr_Car (car: {
+        id: $id
+        manufacturer: "TESLA"
+        model: "Z"
+        carType: SEDAN
+        regNumber: "ab000"
+    }) {
+        id
+        price
+        maxPassengers
+        garage {
+            name
+        }
+        _instanceName
+    }
+}

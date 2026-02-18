@@ -222,7 +222,7 @@ public interface DropdownButtonComponent extends HasSubParts {
      * @return the icon of the dropdown button item, or {@code null} if no icon is set
      * @deprecated use {@link #getIconComponent()} instead
      */
-    @Deprecated(since = "3.0", forRemoval = true)
+    @Deprecated(since = "2.8", forRemoval = true)
     @Nullable
     Icon getIcon();
 
@@ -232,7 +232,7 @@ public interface DropdownButtonComponent extends HasSubParts {
      * @param icon the icon to set. Can be {@code null} to clear the current icon.
      * @deprecated use {@link #setIconComponent(Component)} instead
      */
-    @Deprecated(since = "3.0", forRemoval = true)
+    @Deprecated(since = "2.8", forRemoval = true)
     void setIcon(@Nullable Icon icon);
 
     /**

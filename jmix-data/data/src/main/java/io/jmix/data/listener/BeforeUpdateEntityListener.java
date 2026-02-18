@@ -18,7 +18,7 @@ package io.jmix.data.listener;
 /**
  * Defines the contract for handling of entities before they have been updated in DB.
  */
-@Deprecated(since = "3.0")
+@Deprecated(since = "2.8", forRemoval = true)
 public interface BeforeUpdateEntityListener<T> {
 
     /**

@@ -111,7 +111,7 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
      * @return icon of the component
      * @deprecated use {@link #getIconComponent()} instead
      */
-    @Deprecated(since = "3.0", forRemoval = true)
+    @Deprecated(since = "2.8", forRemoval = true)
     @Nullable
     public Icon getIcon() {
         return icon instanceof Icon iconComponent ? iconComponent : null;
@@ -123,7 +123,7 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
      * @param icon icon to set
      * @deprecated use {@link #setIconComponent(Component)} instead
      */
-    @Deprecated(since = "3.0", forRemoval = true)
+    @Deprecated(since = "2.8", forRemoval = true)
     public void setIcon(@Nullable Icon icon) {
         setIconComponent(icon);
     }

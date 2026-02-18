@@ -18,7 +18,7 @@ package io.jmix.data.listener;
 /**
  * Defines the contract for handling of entities after they have been deleted or marked as deleted in DB.
  */
-@Deprecated(since = "3.0")
+@Deprecated(since = "2.8", forRemoval = true)
 public interface AfterDeleteEntityListener<T> {
 
     /**

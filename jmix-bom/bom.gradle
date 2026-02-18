@@ -60,7 +60,7 @@ publishing {
 
 group = 'io.jmix.bom'
 
-def vaadinFlowVersion = '24.9.2'
+def vaadinFlowVersion = '24.9.11'
 
 javaPlatform {
     allowDependencies()
@@ -277,6 +277,7 @@ dependencies {
         api "io.jmix.translations:jmix-translations-pt-br:$freeVersion"
         api "io.jmix.translations:jmix-translations-cs:$freeVersion"
         api "io.jmix.translations:jmix-translations-da:$freeVersion"
+        api "io.jmix.translations:jmix-translations-zh-tw:$freeVersion"
 
         api "io.jmix.tabbedmode:jmix-tabbedmode-flowui:$premiumVersion"
         api "io.jmix.tabbedmode:jmix-tabbedmode-flowui-starter:$premiumVersion"
@@ -284,11 +285,6 @@ dependencies {
 
         api "io.jmix.uiconstraints:jmix-uiconstraints:$premiumVersion"
         api "io.jmix.uiconstraints:jmix-uiconstraints-starter:$premiumVersion"
-
-        api "io.jmix.vcc:vaadin-board:$premiumVersion"
-        api "io.jmix.vcc:vaadin-board-starter:$premiumVersion"
-        api "io.jmix.vcc:vaadin-board-kit:$premiumVersion"
-        api "io.jmix.vcc:vaadin-board-devserver-kit:$premiumVersion"
 
         api "io.jmix.vcc:vaadin-dashboard:$premiumVersion"
         api "io.jmix.vcc:vaadin-dashboard-starter:$premiumVersion"
@@ -337,7 +333,6 @@ dependencies {
         api "com.vaadin:vaadin-spring-boot-starter:$vaadinFlowVersion"
         api "com.vaadin:vaadin-core:$vaadinFlowVersion"
         api "com.vaadin:vaadin-bom:$vaadinFlowVersion"
-        api "com.vaadin:vaadin-board-flow:$vaadinFlowVersion"
         api "com.vaadin:vaadin-spreadsheet-flow:$vaadinFlowVersion"
         api "com.vaadin:vaadin-dashboard-flow:$vaadinFlowVersion"
 

@@ -20,16 +20,21 @@ import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.RouteParameters;
 import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.view.View;
-import org.springframework.lang.Nullable;
 
+import org.springframework.lang.Nullable;
 import java.util.function.Consumer;
 
 /**
  * Provides a fluent interface to configure navigation parameters and navigate to a {@link View}.
  * <p>
- * An instance of this class should be obtained through {@link ViewNavigators#view(View, String)}.
+ * An instance of this class should be obtained through {@link ViewNavigators#view(String)}.
  */
 public class ViewNavigator extends AbstractViewNavigator {
+
+    @Deprecated(since = "2.3", forRemoval = true)
+    public ViewNavigator(Consumer<? extends ViewNavigator> handler) {
+        super(handler);
+    }
 
     public ViewNavigator(View<?> origin,
                          Consumer<? extends ViewNavigator> handler) {

@@ -17,11 +17,9 @@
 package io.jmix.flowui.testassist.dialog;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import io.jmix.flowui.Dialogs.SideDialogBuilder;
-import io.jmix.flowui.component.sidedialog.SideDialog;
 
 import java.util.List;
 
@@ -30,7 +28,7 @@ import java.util.List;
  */
 public class DialogInfo {
 
-    protected final Component dialog;
+    protected final Dialog dialog;
 
     protected Component content;
     protected List<Button> buttons;
@@ -40,12 +38,11 @@ public class DialogInfo {
     protected List<Component> footerComponents;
 
     /**
-     * Creates a {@link DialogInfo} of the passed {@link Component}.
+     * Creates a {@link DialogInfo} of the passed {@link Dialog}.
      *
-     * @param dialog the component should be a {@link Dialog} or {@link Composite}
-     *               that contains a {@link Dialog} as content
+     * @param dialog {@link Dialog} to create {@link DialogInfo}
      */
-    public DialogInfo(Component dialog) {
+    public DialogInfo(Dialog dialog) {
         this.dialog = dialog;
     }
 
@@ -106,26 +103,9 @@ public class DialogInfo {
     }
 
     /**
-     * Returns the {@link Dialog} instance. For dialogs based on {@link Composite} to get an instance of
-     * component use {@link #getDialogComponent()}.
-     *
      * @return {@link Dialog} instance
      */
     public Dialog getDialog() {
-        if (dialog instanceof Composite<?> composite) {
-            return (Dialog) composite.getContent();
-        }
-        return (Dialog) dialog;
-    }
-
-    /**
-     * Returns the dialog component. For message dialog and other simple dialogs it is a {@link Dialog} itself.
-     * For complicated dialogs it can be a {@link Composite} that contains a {@link Dialog} as content
-     * (e.g. {@link SideDialog}).
-     *
-     * @return dialog component
-     */
-    public Component getDialogComponent() {
         return dialog;
     }
 

@@ -46,7 +46,7 @@ public class DialogOpenedEvent extends ApplicationEvent {
                 CollectionUtils.isEmpty(buttons) ? Collections.emptyList() : new ArrayList<>(buttons));
     }
 
-    public DialogOpenedEvent(Component dialog,
+    public DialogOpenedEvent(Dialog dialog,
                              List<Component> headerComponents,
                              List<Component> contentComponents,
                              List<Component> footerComponents) {
@@ -69,8 +69,8 @@ public class DialogOpenedEvent extends ApplicationEvent {
     }
 
     @Override
-    public Component getSource() {
-        return (Component) super.getSource();
+    public Dialog getSource() {
+        return (Dialog) super.getSource();
     }
 
     /**

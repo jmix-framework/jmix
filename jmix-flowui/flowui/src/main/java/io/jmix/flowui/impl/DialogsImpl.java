@@ -1685,11 +1685,11 @@ public class DialogsImpl implements Dialogs {
         protected void fireDialogOpenedChangeEvent(SideDialogOpenedChangeEvent openedChangeEvent) {
             if (openedChangeEvent.isOpened()) {
                 DialogOpenedEvent dialogOpenedEvent =
-                        new DialogOpenedEvent(sideDialog, sideDialog.getHeader().getComponents(),
+                        new DialogOpenedEvent(sideDialog.getContent(), sideDialog.getHeader().getComponents(),
                                 sideDialog.getContentComponents(), sideDialog.getFooter().getComponents());
                 applicationContext.publishEvent(dialogOpenedEvent);
             } else {
-                applicationContext.publishEvent(new DialogClosedEvent(sideDialog));
+                applicationContext.publishEvent(new DialogClosedEvent(sideDialog.getContent()));
             }
         }
     }

@@ -62,7 +62,6 @@ public class SideDialogTest {
         Assertions.assertNotNull(dialogInfo);
         Assertions.assertTrue(dialogInfo.getDialog().isOpened());
         Assertions.assertInstanceOf(JmixSideDialogOverlay.class, dialogInfo.getDialog());
-        Assertions.assertInstanceOf(SideDialog.class, dialogInfo.getDialogComponent());
 
         Assertions.assertEquals(1, dialogInfo.getHeaderComponents().size());
         Assertions.assertEquals(1, dialogInfo.getContentComponents().size());

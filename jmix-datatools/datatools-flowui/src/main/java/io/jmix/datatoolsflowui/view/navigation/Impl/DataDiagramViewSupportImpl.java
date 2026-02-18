@@ -16,13 +16,23 @@
 
 package io.jmix.datatoolsflowui.view.navigation.Impl;
 
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import io.jmix.datatoolsflowui.view.navigation.DataDiagramViewSupport;
+import io.jmix.flowui.view.ViewRegistry;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class DataDiagramViewSupportImpl implements DataDiagramViewSupport {
 
+    @Autowired
+    protected ViewRegistry viewRegistry;
+
     @Override
     public void open() {
-        UI.getCurrent().getPage().open("datatl/data-diagram");
+        Class<? extends Component> navigationTarget = viewRegistry.getViewInfo("datatl_dataModelDiagramView")
+                .getControllerClass();
+
+        String url = viewRegistry.getRouteConfiguration().getUrl(navigationTarget);
+        UI.getCurrent().getPage().open(url);
     }
 }

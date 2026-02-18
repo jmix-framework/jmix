@@ -1,12 +1,14 @@
 package io.jmix.datatools.datamodel;
 
+import io.jmix.core.common.util.Preconditions;
 import io.jmix.datatools.datamodel.entity.AttributeModel;
 import io.jmix.datatools.datamodel.entity.EntityModel;
+import org.springframework.lang.Nullable;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Manages and provides access to entity data models organized by data stores.
@@ -17,11 +19,7 @@ public class DataModelProvider {
     /**
      * A map that represents a general data model, grouped by data stores
      */
-    protected final Map<String, Map<String, DataModel>> dataModels;
-
-    public DataModelProvider() {
-        this.dataModels = new HashMap<>();
-    }
+    protected final Map<String, Map<String, DataModel>> dataModels = new ConcurrentHashMap<>();
 
     /**
      * Adds a {@link DataModel} to the internal data model storage. If a data store already exists,
@@ -32,18 +30,14 @@ public class DataModelProvider {
      *                  and relationships
      */
     public void putDataModel(DataModel dataModel) {
+        Preconditions.checkNotNullArgument(dataModel,
+                "%s cannot be null".formatted(DataModel.class.getSimpleName()));
+
         String dataStore = dataModel.dataStore();
         String entityName = dataModel.entityName();
 
-        if (dataModels.containsKey(dataStore)) {
-            dataModels.get(dataStore).put(entityName, dataModel);
-        } else {
-            dataModels.put(dataStore, new HashMap<>() {
-                {
-                    put(entityName, dataModel);
-                }
-            });
-        }
+        dataModels.computeIfAbsent(dataStore, __ -> new ConcurrentHashMap<>())
+                .put(entityName, dataModel);
     }
 
     /**
@@ -54,16 +48,19 @@ public class DataModelProvider {
      * @return the {@link DataModel} corresponding to the specified data store and entity name,
      * or {@code null} if no such data model exists
      */
+    @Nullable
     public DataModel getDataModel(String dataStore, String entityName) {
-        return dataModels.get(dataStore).get(entityName);
+        Preconditions.checkNotNullArgument(dataStore, "Data store name cannot be null");
+        Preconditions.checkNotNullArgument(entityName, "Entity name cannot be null");
+
+        return getDataModels(dataStore).get(entityName);
     }
 
-    public boolean isModelExists(String dataStore, String entityName) {
-        if (!dataModels.containsKey(dataStore)) {
-            return false;
-        }
+    public boolean containsModel(String dataStore, String entityName) {
+        Preconditions.checkNotNullArgument(dataStore, "Data store name cannot be null");
+        Preconditions.checkNotNullArgument(entityName, "Entity name cannot be null");
 
-        return dataModels.get(dataStore).containsKey(entityName);
+        return getDataModels(dataStore).containsKey(entityName);
     }
 
     /**
@@ -75,12 +72,17 @@ public class DataModelProvider {
      * {@code false} otherwise
      */
     public boolean hasRelations(String dataStore, String entityName) {
-        if (!dataModels.containsKey(dataStore)) {
+        Preconditions.checkNotNullArgument(dataStore, "Data store name cannot be null");
+        Preconditions.checkNotNullArgument(entityName, "Entity name cannot be null");
+
+        Map<String, DataModel> dataModels = getDataModels(dataStore);
+        if (dataModels.isEmpty()) {
             return false;
         }
 
-        if (dataModels.get(dataStore).containsKey(entityName)) {
-            return !dataModels.get(dataStore).get(entityName).relations().isEmpty();
+        if (dataModels.containsKey(entityName)) {
+            DataModel dataModel = dataModels.get(entityName);
+            return dataModel != null && !dataModel.relations().isEmpty();
         }
 
         return false;
@@ -96,7 +98,13 @@ public class DataModelProvider {
      * if the entity or data store has no relationships, an empty map is returned
      */
     public Map<RelationType, List<Relation>> getRelationsByEntity(String dataStore, String entityName) {
-        return dataModels.get(dataStore).get(entityName).relations();
+        Preconditions.checkNotNullArgument(dataStore, "Data store name cannot be null");
+        Preconditions.checkNotNullArgument(entityName, "Entity name cannot be null");
+
+        DataModel dataModel = getDataModels(dataStore).get(entityName);
+        return dataModel != null
+                ? Collections.unmodifiableMap(dataModel.relations())
+                : Collections.emptyMap();
     }
 
     /**
@@ -107,8 +115,15 @@ public class DataModelProvider {
      * @return the {@link EntityModel} corresponding to the specified data store and entity name,
      * or {@code null} if no such entity model exists
      */
+    @Nullable
     public EntityModel getEntityModel(String dataStore, String entityName) {
-        return dataModels.get(dataStore).get(entityName).entityModel();
+        Preconditions.checkNotNullArgument(dataStore, "Data store name cannot be null");
+        Preconditions.checkNotNullArgument(entityName, "Entity name cannot be null");
+
+        DataModel dataModel = getDataModels(dataStore).get(entityName);
+        return dataModel != null
+                ? dataModel.entityModel()
+                : null;
     }
 
     /**
@@ -120,7 +135,13 @@ public class DataModelProvider {
      * an empty list is returned if the entity has no attributes or if the data store or entity does not exist
      */
     public List<AttributeModel> getAttributesByEntity(String dataStore, String entityName) {
-        return dataModels.get(dataStore).get(entityName).attributeModels();
+        Preconditions.checkNotNullArgument(dataStore, "Data store name cannot be null");
+        Preconditions.checkNotNullArgument(entityName, "Entity name cannot be null");
+
+        DataModel dataModel = getDataModels(dataStore).get(entityName);
+        return dataModel != null
+                ? Collections.unmodifiableList(dataModel.attributeModels())
+                : Collections.emptyList();
     }
 
     /**
@@ -141,11 +162,13 @@ public class DataModelProvider {
      * Retrieves the data models associated with a specific data store.
      *
      * @param dataStore the name of the data store whose data models are to be retrieved; must not be null
-     * @return a map where the keys are entity names and the values are the corresponding {@link DataModel} instances;
-     * or {@code null} if no data models exist for the specified data store
+     * @return a map where the keys are entity names and the values are the corresponding {@link DataModel} instances
      */
     public Map<String, DataModel> getDataModels(String dataStore) {
-        return dataModels.get(dataStore);
+        Preconditions.checkNotNullArgument(dataStore, "Data store name cannot be null");
+
+        Map<String, DataModel> dataModelMap = dataModels.get(dataStore);
+        return dataModelMap != null ? Collections.unmodifiableMap(dataModelMap) : Collections.emptyMap();
     }
 
     /**
@@ -155,7 +178,9 @@ public class DataModelProvider {
      * @return the number of data models in the specified data store
      */
     public int getModelsCount(String dataStore) {
-        return dataModels.get(dataStore).size();
+        Preconditions.checkNotNullArgument(dataStore, "Data store name cannot be null");
+
+        return getDataModels(dataStore).size();
     }
 
     /**

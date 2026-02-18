@@ -35,7 +35,10 @@ import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
@@ -47,7 +50,7 @@ public class DataModelListView extends StandardView {
 
     protected static final String FILTER_URL_PARAM = "filter";
     protected static final String SHOW_SYSTEM_URL_PARAM = "show-system";
-    public static final String REGEXP_PREFIX = "^regexp:.*";
+    public static final String REGEXP_PREFIX = "regexp:";
 
     @ViewComponent
     protected DataGrid<EntityModel> entityModelsDataGrid;
@@ -114,6 +117,7 @@ public class DataModelListView extends StandardView {
                     .flatMap(entityName -> dataStoreNames.stream()
                             .map(dataStore ->
                                     dataModelProvider.getEntityModel(dataStore, entityName)))
+                    .filter(Objects::nonNull)
                     .filter(entityModel ->
                             Boolean.TRUE.equals(showSystemCheckBox.getValue())
                                     || !Boolean.TRUE.equals(entityModel.getIsSystem()))
@@ -131,36 +135,31 @@ public class DataModelListView extends StandardView {
             return Collections.emptyList();
         }
 
-        List<String> entityNames = new ArrayList<>();
-        if (filterValue.matches(REGEXP_PREFIX)) {
+        DataModelProvider dataModelProvider = dataModelSupport.getDataModelProvider();
+
+        if (filterValue.matches("^%s.*".formatted(REGEXP_PREFIX))) {
             Pattern pattern = Pattern.compile(filterValue.substring(REGEXP_PREFIX.length()), Pattern.CASE_INSENSITIVE);
 
-            for (String dataStore : dataStoreNames) {
-                entityNames.addAll(dataModelSupport.getDataModelProvider().getDataModels(dataStore).keySet().stream()
-                        .filter(name -> name.matches(pattern.pattern())).toList());
-            }
+            return dataStoreNames.stream()
+                    .flatMap(dataStore ->
+                            dataModelProvider.getDataModels(dataStore).keySet().stream())
+                    .filter(name -> name.matches(pattern.pattern()))
+                    .toList();
 
         } else {
             List<String> requestedNames = Stream.of(filterValue.split(","))
-                    .map(String::strip).toList();
+                    .map(String::strip)
+                    .toList();
 
-            Set<String> allEntityNames = new HashSet<>();
-
-            for (String dataStore : dataStoreNames) {
-                allEntityNames.addAll(dataModelSupport.getDataModelProvider().getDataModels(dataStore).keySet());
-            }
-
-            // TODO: gg, refactor
-            for (String entityName : allEntityNames) {
-                for (String reqName : requestedNames) {
-                    if (entityName.matches("(?i)" + ".*" + reqName + ".*")) {
-                        entityNames.add(entityName);
-                    }
-                }
-            }
+            return dataStoreNames.stream()
+                    .flatMap(dataStore ->
+                            dataModelProvider.getDataModels(dataStore).keySet().stream())
+                    .distinct()
+                    .filter(entityName -> requestedNames.stream()
+                            .anyMatch(reqName ->
+                                    entityName.matches("(?i)" + ".*" + reqName + ".*")))
+                    .toList();
         }
-
-        return entityNames;
     }
 
     protected void changeDataStoreColumnVisibility(List<EntityModel> model) {

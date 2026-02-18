@@ -48,7 +48,7 @@
         </hbox>
 
         <flexLayout id="contentBox" classNames="content-wrapper">
-            <vbox id="entitiesBox" padding="false" classNames="entities-box">
+            <vbox id="entitiesBox" padding="false" classNames="entities-box" width="unset">
                 <h4 text="msg://entityModelListView.entityModelsDataGrid.title"/>
                 <dataGrid id="entityModelsDataGrid"
                           dataContainer="entityModelsDc"
@@ -62,7 +62,7 @@
                     </columns>
                 </dataGrid>
             </vbox>
-            <vbox id="attributesBox" padding="false" classNames="attributes-box">
+            <vbox id="attributesBox" padding="false" classNames="attributes-box" width="unset">
                 <h4 text="msg://entityModelListView.attributeModelsDataGrid.title"/>
                 <dataGrid id="attributeModelsDataGrid"
                           dataContainer="attributeModelsDc"

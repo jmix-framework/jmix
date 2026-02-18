@@ -431,8 +431,8 @@ public class DataModelSupportImpl implements DataModelSupport, InitializingBean 
 
     protected void constructRelations(String currentEntity, String referencedEntity,
                                       String dataStore, StringBuilder relationsDescription) {
-        if (!dataModelProvider.isModelExists(dataStore, currentEntity)
-                || !dataModelProvider.isModelExists(dataStore, referencedEntity)) {
+        if (!dataModelProvider.containsModel(dataStore, currentEntity)
+                || !dataModelProvider.containsModel(dataStore, referencedEntity)) {
             return;
         }
 

@@ -4337,7 +4337,6 @@
 
                 <xs:attribute name="sidePanelLayoutId" type="xs:string"/>
 
-                <xs:attribute name="autofocus" type="xs:boolean"/>
                 <xs:attribute name="themeNames" type="buttonThemeNames"/>
 
                 <xs:attributeGroup ref="hasSize"/>
@@ -4345,7 +4344,6 @@
                 <xs:attributeGroup ref="hasFocusableAttributes"/>
                 <xs:attributeGroup ref="hasAriaLabel"/>
                 <xs:attributeGroup ref="hasClassNames"/>
-                <xs:attributeGroup ref="hasClickNotifierAttributes"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

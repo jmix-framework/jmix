@@ -94,8 +94,6 @@ export const sidePanelLayoutStyles = css`
     :host([side-panel-opened]) [part='sidePanel'] {
         visibility: visible;
         touch-action: manipulation;
-        visibility: visible;
-        touch-action: manipulation;
         transition:
             transform var(--_transition-duration),
             visibility 0s;

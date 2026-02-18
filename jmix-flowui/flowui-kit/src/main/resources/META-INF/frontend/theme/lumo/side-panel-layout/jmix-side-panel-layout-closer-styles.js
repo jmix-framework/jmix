@@ -21,40 +21,12 @@ import '@vaadin/vaadin-lumo-styles/font-icons.js';
 import { button } from '@vaadin/button/theme/lumo/vaadin-button-styles.js';
 import { css, registerStyles } from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
 
-/*
- * CAUTION! Copied from packages/app-layout/theme/lumo/vaadin-drawer-toggle-styles.js
- */
-const sidePanelSidePanelLayoutCloserStyles = css`
+const sidePanelLayoutCloserStyles = css`
     :host {
-        width: var(--lumo-size-l);
-        height: var(--lumo-size-l);
-        min-width: auto;
-        margin: 0 var(--lumo-space-s);
-        padding: 0;
-        background: transparent;
-        color: var(--lumo-secondary-text-color); /* Added in Jmix */
-    }
-
-    [part='icon'],
-    [part='icon']::after,
-    [part='icon']::before {
-        position: inherit;
-        height: auto;
-        width: auto;
-        background: transparent;
-        top: auto;
-    }
-
-    [part='icon']::before {
-        font-family: lumo-icons;
-        font-size: var(--lumo-icon-size-m);
-        /*content: var(--lumo-icons-menu);  Removed in Jmix */
-    }
-
-    :host([slot~='navbar']) {
         color: var(--lumo-secondary-text-color);
+        background: transparent;
     }
 `;
 
 // TODO: pinyazhin, rename to "lumo-side-panel.." after updating Vaadin to 25
-registerStyles('jmix-side-panel-layout-closer', [button, sidePanelSidePanelLayoutCloserStyles], { moduleId: 'jmix-lumo-side-panel-layout-closer' });
+registerStyles('jmix-side-panel-layout-closer', [button, sidePanelLayoutCloserStyles], { moduleId: 'jmix-lumo-side-panel-layout-closer' });

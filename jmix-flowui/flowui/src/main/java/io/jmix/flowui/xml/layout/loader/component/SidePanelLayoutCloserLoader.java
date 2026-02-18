@@ -47,7 +47,6 @@ public class SidePanelLayoutCloserLoader extends AbstractComponentLoader<SidePan
         componentLoader().loadThemeNames(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
         componentLoader().loadAriaLabel(resultComponent, element);
-        componentLoader().loadClickNotifierAttributes(resultComponent, element);
 
         loadString(element, "sidePanelLayoutId")
                 .ifPresentOrElse(

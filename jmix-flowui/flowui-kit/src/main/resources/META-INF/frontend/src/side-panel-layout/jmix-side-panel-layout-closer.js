@@ -21,9 +21,9 @@ import { defineCustomElement } from '@vaadin/component-base/src/define.js';
 import { DirMixin } from '@vaadin/component-base/src/dir-mixin.js';
 import { isEmptyTextNode } from '@vaadin/component-base/src/dom-utils.js';
 import { registerStyles, ThemableMixin } from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
-import { jmixSidePanelCloserLayout } from './jmix-side-panel-layout-closer-styles.js';
+import { jmixSidePanelLayoutCloserStyle } from './jmix-side-panel-layout-closer-styles.js';
 
-registerStyles('jmix-side-panel-layout-closer', [buttonStyles, jmixSidePanelCloserLayout], { moduleId: 'jmix-side-panel-layout-closer-styles' });
+registerStyles('jmix-side-panel-layout-closer', [buttonStyles, jmixSidePanelLayoutCloserStyle], { moduleId: 'jmix-side-panel-layout-closer-styles' });
 
 class JmixSidePanelLayoutCloser extends ButtonMixin(DirMixin(ThemableMixin(PolymerElement))) {
 
@@ -46,6 +46,17 @@ class JmixSidePanelLayoutCloser extends ButtonMixin(DirMixin(ThemableMixin(Polym
                reflectToAttribute: true,
            },
        };
+    }
+
+    ready() {
+        super.ready();
+        this.addEventListener('click', e => this._onClick(e));
+    }
+
+    _onClick(e) {
+        if (this.sidePanelElement && this.sidePanelElement._closeSidePanel) {
+            this.sidePanelElement._closeSidePanel();
+        }
     }
 }
 

@@ -19,7 +19,7 @@ import { css } from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
 /*
  * CAUTION! Copied from packages/app-layout/src/vaadin-drawer-toggle-styles.js
  */
-export const jmixSidePanelCloserLayout = css`
+export const jmixSidePanelLayoutCloserStyle = css`
     :host {
         display: inline-flex;
         align-items: center;

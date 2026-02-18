@@ -22,6 +22,7 @@ import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.dom.ElementUtil;
 import com.vaadin.flow.dom.PropertyChangeEvent;
+import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.component.sidedialog.SideDialogPlacement;
 import jakarta.annotation.Nullable;
 
@@ -435,6 +436,46 @@ public class JmixSidePanelLayout extends Component implements HasSize, HasStyle 
         }
     }
 
+    /**
+     * Adds a listener to handle modality curtain clicks.
+     *
+     * @param listener listener to add
+     * @return a registration for removing the listener
+     */
+    public Registration addModalityCurtainClickListener(ComponentEventListener<ModalityCurtainClickEvent> listener) {
+        return addListener(ModalityCurtainClickEvent.class, listener);
+    }
+
+    /**
+     * Adds a listener to handle side panel open events.
+     *
+     * @param listener listener to add
+     * @return a registration for removing the listener
+     */
+    public Registration addSidePanelBeforeOpenListener(ComponentEventListener<SidePanelBeforeOpenEvent> listener) {
+        return addListener(SidePanelBeforeOpenEvent.class, listener);
+    }
+
+    /**
+     * Adds a listener to handle the side panel after open events.
+     *
+     * @param listener listener to add
+     * @return a registration for removing the listener
+     */
+    public Registration addSidePanelAfterOpenListener(ComponentEventListener<SidePanelAfterOpenEvent> listener) {
+        return addListener(SidePanelAfterOpenEvent.class, listener);
+    }
+
+    /**
+     * Adds a listener to handle side panel close events.
+     *
+     * @param listener listener to add
+     * @return a registration for removing the listener
+     */
+    public Registration addSidePanelCloseListener(ComponentEventListener<SidePanelCloseEvent> listener) {
+        return addListener(SidePanelCloseEvent.class, listener);
+    }
+
     protected void doSetOpened(boolean opened, boolean fromClient) {
         getElement().setProperty("sidePanelOpened", opened);
 
@@ -448,11 +489,11 @@ public class JmixSidePanelLayout extends Component implements HasSize, HasStyle 
     }
 
     protected void fireSidePanelBeforeOpenEvent(boolean fromClient) {
-        // To be used in subclasses
+        fireEvent(new SidePanelBeforeOpenEvent(this, fromClient));
     }
 
     protected void fireSidePanelCloseEvent(boolean fromClient) {
-        // To be used in subclasses
+        fireEvent(new SidePanelCloseEvent(this, fromClient));
     }
 
     protected void addComponent(Component... components) {

@@ -16,54 +16,85 @@
 
 package io.jmix.flowui.kit.component.sidepanellayout;
 
-import com.vaadin.flow.component.ClickEvent;
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.Tag;
-import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.dependency.JsModule;
 import io.jmix.flowui.kit.icon.JmixFontIcon;
 import jakarta.annotation.Nullable;
 
 @Tag("jmix-side-panel-layout-closer")
 @JsModule("./src/side-panel-layout/jmix-side-panel-layout-closer.js")
-public class JmixSidePanelLayoutCloser extends Button {
+public class JmixSidePanelLayoutCloser extends Component implements HasTheme, Focusable<JmixSidePanelLayoutCloser>,
+        HasStyle, HasAriaLabel, HasSize {
 
     protected Component icon;
+    protected Component defaultIcon;
+    protected JmixSidePanelLayout sidePanelLayout;
 
     public JmixSidePanelLayoutCloser() {
-        attachClickListener();
+        setDefaultIcon(JmixFontIcon.SIDE_PANEL_LAYOUT_CLOSER.create());
         setIcon(null);
     }
 
+    public JmixSidePanelLayout getSidePanelLayout() {
+        return sidePanelLayout;
+    }
+
+    public void setSidePanelLayout(JmixSidePanelLayout sidePanelLayout) {
+        this.sidePanelLayout = sidePanelLayout;
+
+        getElement().executeJs("this.sidePanelElement = $0", sidePanelLayout);
+    }
+
     @Nullable
-    @Override
     public Component getIcon() {
         return icon;
     }
 
     public void setIcon(@Nullable Component icon) {
+        if (icon != null && icon.getElement().isTextNode()) {
+            throw new IllegalArgumentException("Text node can't be used as an icon");
+        }
+
+        if (this.icon != null) {
+            remove(this.icon);
+        } else {
+            remove(defaultIcon);
+        }
+
         this.icon = icon;
 
-        setIconInternal(icon);
+        if (icon == null) {
+            add(defaultIcon);
+        } else {
+            add(icon);
+        }
+
+        updateThemeAttribute();
     }
 
-    protected void setIconInternal(@Nullable Component icon) {
-        super.setIcon(icon == null
-                ? JmixFontIcon.SIDE_PANEL_LAYOUT_CLOSER.create()
-                : icon);
+    protected void setDefaultIcon(Component defaultIcon) {
+        this.defaultIcon = defaultIcon;
+    }
 
-        // The slot attribute needs to be removed because jmix-side-panel-layout-closer
-        // template doesn't have prefix and suffix slots
-        if (super.getIcon() != null) {
-            super.getIcon().getElement().removeAttribute("slot");
+    protected void add(Component... components) {
+        for (Component component : components) {
+            getElement().appendChild(component.getElement());
         }
     }
 
-    protected void attachClickListener() {
-        addClickListener(this::onClick);
+    protected void remove(Component... components) {
+        for (Component component : components) {
+            if (getElement().equals(component.getElement().getParent())) {
+                getElement().removeChild(component.getElement());
+            }
+        }
     }
 
-    protected void onClick(ClickEvent<Button> event) {
-        // To be used in subclasses
+    protected void updateThemeAttribute() {
+        if (getChildren().count() == 1) {
+            getThemeNames().add("icon");
+        } else {
+            getThemeNames().remove("icon");
+        }
     }
 }

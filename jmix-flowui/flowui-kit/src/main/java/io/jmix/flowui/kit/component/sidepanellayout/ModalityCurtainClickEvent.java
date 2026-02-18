@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.component.sidepanellayout;
+package io.jmix.flowui.kit.component.sidepanellayout;
 
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.DomEvent;
 import com.vaadin.flow.component.EventData;
-import io.jmix.flowui.kit.component.sidepanellayout.JmixSidePanelLayout;
 
 /**
  * Event fired when the user clicks on the modality curtain.
  */
 @DomEvent("jmix-side-panel-layout-modality-curtain-click-event")
-public class ModalityCurtainClickEvent extends ComponentEvent<SidePanelLayout> {
+public class ModalityCurtainClickEvent extends ComponentEvent<JmixSidePanelLayout> {
 
     protected final int pageX;
 
@@ -39,7 +38,7 @@ public class ModalityCurtainClickEvent extends ComponentEvent<SidePanelLayout> {
 
     protected final boolean shiftKey;
 
-    public ModalityCurtainClickEvent(SidePanelLayout source, boolean fromClient,
+    public ModalityCurtainClickEvent(JmixSidePanelLayout source, boolean fromClient,
                                      @EventData("event.detail.originalEvent.pageX") Integer pageX,
                                      @EventData("event.detail.originalEvent.pageY") Integer pageY,
                                      @EventData("event.detail.originalEvent.altKey") Boolean altKey,

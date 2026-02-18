@@ -364,11 +364,11 @@ export const JmixSidePanelLayoutMixin = (superClass) =>
      * @protected
      */
     _onModalityCurtainClick(e) {
+        this.dispatchEvent(new CustomEvent('jmix-side-panel-layout-modality-curtain-click-event', { detail: { originalEvent: e} }));
+
         if (this.closeOnOutsideClick) {
             this.sidePanelOpened = false;
         }
-
-        this.dispatchEvent(new CustomEvent('jmix-side-panel-layout-modality-curtain-click-event', { detail: { originalEvent: e} }));
     }
 
     /**

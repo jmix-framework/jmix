@@ -80,10 +80,12 @@
   - Menu: `menu.<menuId>.<attribute>`; menu item: `<viewClassName>.<attribute>` or `menu.<menuItemId>.<attribute>`
 
 ## Testing
-- Use JUnit 5 or Spock. Prefer integration tests.
+- Use JUnit 5 (with Jupiter API) or Spock. Prefer integration tests.
 - Tests focus on behavior via public APIs.
-- Test packages: top-level by functionality (e.g. `data_manager`), with subpackages if needed.
-- Test class names end with `*Test`; helper classes start with `Test*`.
+- Test packages: top-level by functionality (e.g. `data_manager`), with subpackages if needed. Don't add intermediate `io.jmix.*` packages.
 - Test infrastructure under `test_support`, entities in `test_support.entity` (or its subpackages).
 - Resources mirror test package paths under `resources`.
+- Test class names end with `*Test`; helper classes start with `Test*`.
+- Test method names start with `test`.
+- Use default (package-private) access level for test methods and other test class members.
 - Slow tests: tag `@Tag("slowTests")` (JUnit) or `@IgnoreIf({env["includeSlowTests"] != 'true'})` (Spock). Run with `-PincludeSlowTests=true`.

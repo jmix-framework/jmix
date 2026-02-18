@@ -17,7 +17,7 @@
 package component_xml_load
 
 import component_xml_load.screen.SidePanelLayoutTestView
-import io.jmix.flowui.kit.component.sidepanellayout.SidePanelMode
+
 import io.jmix.flowui.kit.component.sidepanellayout.SidePanelPosition
 import org.springframework.boot.test.context.SpringBootTest
 import test_support.spec.FlowuiTestSpecification
@@ -44,7 +44,7 @@ class SidePanelLayoutXmlLoadTest extends FlowuiTestSpecification {
             sidePanelHorizontalMaxSize == "10em"
             sidePanelHorizontalMinSize == "8em"
             sidePanelHorizontalSize == "9em"
-            sidePanelMode == SidePanelMode.PUSH
+            !sidePanelOverlay
             sidePanelPosition == SidePanelPosition.TOP
             sidePanelVerticalMaxSize == "10em"
             sidePanelVerticalMinSize == "8em"

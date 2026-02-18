@@ -19,7 +19,6 @@ package io.jmix.flowui.xml.layout.loader.component;
 import com.vaadin.flow.component.Component;
 import io.jmix.flowui.component.sidepanellayout.SidePanelLayout;
 import io.jmix.flowui.exception.GuiDevelopmentException;
-import io.jmix.flowui.kit.component.sidepanellayout.SidePanelMode;
 import io.jmix.flowui.kit.component.sidepanellayout.SidePanelPosition;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
@@ -51,7 +50,7 @@ public class SidePanelLayoutLoader extends AbstractComponentLoader<SidePanelLayo
         componentLoader().loadClassNames(resultComponent, element);
 
         loadEnum(element, SidePanelPosition.class, "sidePanelPosition", resultComponent::setSidePanelPosition);
-        loadEnum(element, SidePanelMode.class, "sidePanelMode", resultComponent::setSidePanelMode);
+        loadBoolean(element, "sidePanelOverlay", resultComponent::setSidePanelOverlay);
         loadBoolean(element, "modal", resultComponent::setModal);
         loadBoolean(element, "closeOnOutsideClick", resultComponent::setCloseOnOutsideClick);
         loadBoolean(element, "displayAsOverlayOnSmallDevices", resultComponent::setDisplayAsOverlayOnSmallDevices);

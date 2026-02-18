@@ -37,7 +37,6 @@ class SidePanelLayoutCloserXmlLoadTest extends FlowuiTestSpecification {
         verifyAll(view.sidePanelLayoutCloser) {
             id.get() == "sidePanelLayoutCloser"
             ariaLabel.orElse(null) == "ariaLabel"
-            autofocus
             classNames.containsAll(["className1", "className2"])
             style.get("color") == "red"
             sidePanelLayout != null

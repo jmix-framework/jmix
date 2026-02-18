@@ -35,12 +35,12 @@ export const JmixSidePanelLayoutMixin = (superClass) =>
                 observer: '_sidePanelPositionChanged',
                 sync: true,
             },
-            sidePanelMode: {
-                type: String,
+            sidePanelOverlay: {
+                type: Boolean,
                 reflectToAttribute: true,
-                value: 'overlay',
+                value: 'true',
                 notify: true,
-                observer: '_sidePanelModeChanged',
+                observer: '_sidePanelOverlayChanged',
                 sync: true,
             },
             modal: {
@@ -182,11 +182,11 @@ export const JmixSidePanelLayoutMixin = (superClass) =>
     }
 
     /**
-     * Observer for {@code sidePanelMode} property.
+     * Observer for {@code sidePanelOverlay} property.
      *
      * @private
      */
-    _sidePanelModeChanged(sidePanelMode) {
+    _sidePanelOverlayChanged(sidePanelOverlay) {
         this._updateContentSize();
     }
 
@@ -311,7 +311,7 @@ export const JmixSidePanelLayoutMixin = (superClass) =>
     }
 
     _updateContentSize() {
-        if (this.sidePanelMode == 'overlay') {
+        if (this.sidePanelOverlay == true) {
             this.$.content.style.maxWidth = '100%';
             this.$.content.style.maxHeight = '100%';
             return;

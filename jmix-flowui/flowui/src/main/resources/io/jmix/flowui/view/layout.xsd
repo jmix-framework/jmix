@@ -4294,7 +4294,7 @@
 
                 <xs:attribute name="closeOnOutsideClick" type="xs:boolean"/>
                 <xs:attribute name="displayAsOverlayOnSmallDevices" type="xs:boolean"/>
-                <xs:attribute name="sidePanelMode" type="sidePanelModeType"/>
+                <xs:attribute name="sidePanelOverlay" type="xs:boolean"/>
                 <xs:attribute name="sidePanelPosition" type="sidePanelPositionType"/>
                 <xs:attribute name="sidePanelHorizontalMaxSize" type="componentSize"/>
                 <xs:attribute name="sidePanelHorizontalMinSize" type="componentSize"/>
@@ -4316,13 +4316,6 @@
             <xs:enumeration value="LEFT"/>
             <xs:enumeration value="INLINE_START"/>
             <xs:enumeration value="INLINE_END"/>
-        </xs:restriction>
-    </xs:simpleType>
-
-    <xs:simpleType name="sidePanelModeType">
-        <xs:restriction>
-            <xs:enumeration value="PUSH"/>
-            <xs:enumeration value="OVERFLOW"/>
         </xs:restriction>
     </xs:simpleType>
 

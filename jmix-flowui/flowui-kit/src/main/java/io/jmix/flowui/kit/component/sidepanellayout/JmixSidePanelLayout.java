@@ -125,23 +125,21 @@ public class JmixSidePanelLayout extends Component implements HasSize, HasStyle 
     }
 
     /**
-     * @return the side panel mode
+     * @return {@code true} if the side panel should overlay layout content when it is opened
      */
-    public SidePanelMode getSidePanelMode() {
-        String mode = getElement().getProperty("sidePanelMode");
-        if (Strings.isNullOrEmpty(mode)) {
-            return SidePanelMode.OVERLAY;
-        }
-        return SidePanelMode.valueOf(mode.toUpperCase());
+    public boolean isSidePanelOverlay() {
+        return getElement().getProperty("sidePanelOverlay", true);
     }
 
     /**
-     * Sets the way how should the side panel be displayed.
+     * Sets whether the side panel should overlay layout content when it is opened.
+     * <p>
+     * The default value is {@code true}.
      *
-     * @param panelMode side panel mode to set
+     * @param overlay overlay option
      */
-    public void setSidePanelMode(SidePanelMode panelMode) {
-        getElement().setProperty("sidePanelMode", panelMode.name().toLowerCase());
+    public void setSidePanelOverlay(boolean overlay) {
+        getElement().setProperty("sidePanelOverlay", overlay);
     }
 
     /**

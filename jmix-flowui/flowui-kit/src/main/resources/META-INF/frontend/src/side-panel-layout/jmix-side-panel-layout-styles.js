@@ -189,26 +189,26 @@ export const sidePanelLayoutStyles = css`
         transform: translateY(0%);
     }
 
-    :host([side-panel-position='left'][side-panel-mode='push']) [part='content'] {
+    :host([side-panel-position='left']:not([side-panel-overlay])) [part='content'] {
         /*
          * Since we change content max-width, the content shrinks itself to start.
-         * When LEFT mode is used, we need to align content to end for smooth animation.
+         * When LEFT position is used, we need to align content to end for smooth animation.
          */
         margin-left: auto;
     }
 
-    :host([side-panel-position='inline-start'][side-panel-mode='push']) [part='content'] {
+    :host([side-panel-position='inline-start']:not([side-panel-overlay])) [part='content'] {
         margin-inline-start: auto;
     }
 
-    :host([side-panel-position='inline-end'][side-panel-mode='push']) [part='content'] {
+    :host([side-panel-position='inline-end']:not([side-panel-overlay])) [part='content'] {
         margin-inline-end: auto;
     }
 
-    :host([side-panel-position='top'][side-panel-mode='push']) [part='content'] {
+    :host([side-panel-position='top']:not([side-panel-overlay])) [part='content'] {
         /*
          * Since we change content max-height, the content shrinks itself to top.
-         * When TOP mode is used, we need to align content to bottom for smooth animation.
+         * When TOP position is used, we need to align content to bottom for smooth animation.
          */
         align-self: end;
     }

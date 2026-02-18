@@ -5,46 +5,56 @@
     <data>
         <collection id="entityModelsDc"
                     class="io.jmix.datatools.datamodel.entity.EntityModel">
-            <loader id="entityModelsDl" readOnly="true"/>
+            <loader id="entityModelsDl" readOnly="true">
+                <query/>
+            </loader>
         </collection>
         <collection id="attributeModelsDc"
                     class="io.jmix.datatools.datamodel.entity.AttributeModel">
-            <loader id="attributeModelsDl" readOnly="true"/>
+            <loader id="attributeModelsDl" readOnly="true">
+                <query/>
+            </loader>
         </collection>
     </data>
     <facets>
         <dataLoadCoordinator auto="true"/>
         <settings auto="true"/>
-        <urlQueryParameters id="entityNameFilterQueryParameters"/>
+        <urlQueryParameters id="urlQueryParametersFacet"/>
     </facets>
-    <actions>
-        <action id="selectAction" type="lookup_select"/>
-        <action id="discardAction" type="lookup_discard"/>
-    </actions>
+
     <layout alignItems="STRETCH"
             expand="contentBox"
-            classNames="jmix-data-model-list-view-layout">
-            <hbox id="buttonsPanel" classNames="buttons-panel">
-                <p text="msg://entityModelListView.buttonsPanel.title"/>
-                <textField id="entityNameFilter" datatype="string" minWidth="35em"
-                           placeholder="msg://entityModelListView.entityNameFilter.placeholder.text"
-                           clearButtonVisible="true">
-                    <tooltip text="msg://entityModelListView.entityNameFilter.tooltip.text"
-                             manual="false" position="END_BOTTOM"/>
-                </textField>
-                <button id="searchButton" icon="vaadin:search" text="msg://entityModelListView.searchButton.text"/>
-                <button id="diagramButton" icon="vaadin:sitemap" text="msg://entityModelListView.diagramButton.text"/>
-                <checkbox id="showSystemCheckBox" label="msg://io.jmix.datatoolsflowui.view.datamodel/entityModelListView.showSystemEntities.text"
-                          alignSelf="CENTER" value="false"/>
-            </hbox>
-        <flexLayout id="contentBox" classNames="jmix-data-model-list-view-content-wrapper">
-            <vbox css="flex-grow: 1;" padding="false" width="unset">
+            classNames="data-model-list-view-layout">
+        <hbox id="buttonsPanel" classNames="buttons-panel">
+            <textField id="entityNameFilter" datatype="string"
+                       width="100%" maxWidth="35em"
+                       placeholder="msg://entityModelListView.entityNameFilter.placeholder.text"
+                       clearButtonVisible="true">
+                <prefix>
+                    <fontIcon iconClassNames="jmix-font-icon jmix-font-icon-search"/>
+                </prefix>
+                <suffix>
+                    <fontIcon id="helpIcon" iconClassNames="jmix-font-icon jmix-font-icon-question-circle">
+                        <tooltip text="msg://entityModelListView.entityNameFilter.tooltip.text"/>
+                    </fontIcon>
+                </suffix>
+            </textField>
+
+            <button id="diagramButton" icon="SITEMAP" text="msg://entityModelListView.diagramButton.text"/>
+
+            <checkbox id="showSystemCheckBox"
+                      label="msg://entityModelListView.showSystemEntities.text"
+                      alignSelf="CENTER" value="false"/>
+        </hbox>
+
+        <flexLayout id="contentBox" classNames="content-wrapper">
+            <vbox id="entitiesBox" padding="false" classNames="entities-box">
                 <h4 text="msg://entityModelListView.entityModelsDataGrid.title"/>
                 <dataGrid id="entityModelsDataGrid"
+                          dataContainer="entityModelsDc"
                           width="100%"
                           minHeight="20em"
-                          dataContainer="entityModelsDc"
-                          columnReorderingAllowed="true" height="100%" alignSelf="START">
+                          columnReorderingAllowed="true">
                     <columns resizable="true">
                         <column property="name"/>
                         <column property="dataStore"/>
@@ -52,13 +62,13 @@
                     </columns>
                 </dataGrid>
             </vbox>
-            <vbox css="flex-grow: 2;" padding="false" width="unset">
+            <vbox id="attributesBox" padding="false" classNames="attributes-box">
                 <h4 text="msg://entityModelListView.attributeModelsDataGrid.title"/>
                 <dataGrid id="attributeModelsDataGrid"
+                          dataContainer="attributeModelsDc"
                           width="100%"
                           minHeight="20em"
-                          dataContainer="attributeModelsDc"
-                          columnReorderingAllowed="true" height="100%" ariaLabel="Entities" alignSelf="START"
+                          columnReorderingAllowed="true"
                           selectionMode="NONE">
                     <columns resizable="true">
                         <column property="attributeName"/>

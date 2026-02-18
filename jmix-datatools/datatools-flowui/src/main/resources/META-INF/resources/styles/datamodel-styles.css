@@ -14,20 +14,28 @@
  * limitations under the License.
  */
 
-.jmix-data-model-list-view-layout {
+.data-model-list-view-layout {
     container-type: inline-size;
-    container-name: jmix-data-model-list-view-layout;
+    container-name: data-model-list-view-layout;
 }
 
-.jmix-data-model-list-view-content-wrapper {
+.data-model-list-view-layout .content-wrapper {
     flex-direction: column;
 
     overflow: auto;
     gap: var(--lumo-space-m);
 }
 
-@container jmix-data-model-list-view-layout (min-width: 60em) {
-    .jmix-data-model-list-view-content-wrapper {
+.data-model-list-view-layout .entities-box {
+    flex-grow: 1;
+}
+
+.data-model-list-view-layout .attributes-box {
+    flex-grow: 2;
+}
+
+@container data-model-list-view-layout (min-width: 60em) {
+    .data-model-list-view-layout .content-wrapper {
         flex-direction: row;
     }
 }

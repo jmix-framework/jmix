@@ -16,19 +16,13 @@
 
 package io.jmix.flowui.action;
 
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import io.jmix.flowui.kit.action.ActionPerformedEvent;
-import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.component.ComponentUtils;
-import io.jmix.flowui.kit.component.KeyCombination;
-
 import org.springframework.lang.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
@@ -135,29 +129,6 @@ public class SecuredBaseAction extends ObservableBaseAction<SecuredBaseAction> i
         boolean isActionEnabled();
     }
 
-    @Override
-    public SecuredBaseAction withText(@Nullable String text) {
-        setText(text);
-        return this;
-    }
-
-    @Override
-    public SecuredBaseAction withEnabled(boolean enabled) {
-        setEnabled(enabled);
-        return this;
-    }
-
-    @Override
-    public SecuredBaseAction withVisible(boolean visible) {
-        setVisible(visible);
-        return this;
-    }
-
-    @Override
-    public SecuredBaseAction withIcon(@Nullable Component icon) {
-        return (SecuredBaseAction) super.withIcon(icon);
-    }
-
     @Deprecated(since = "2.8", forRemoval = true)
     @Override
     public SecuredBaseAction withIcon(@Nullable Icon icon) {
@@ -168,37 +139,6 @@ public class SecuredBaseAction extends ObservableBaseAction<SecuredBaseAction> i
     @Override
     public SecuredBaseAction withIcon(@Nullable VaadinIcon icon) {
         setIcon(ComponentUtils.convertToIcon(icon));
-        return this;
-    }
-
-    @Override
-    public SecuredBaseAction withTitle(@Nullable String title) {
-        setDescription(title);
-        return this;
-    }
-
-    @Override
-    public SecuredBaseAction withVariant(ActionVariant actionVariant) {
-        setVariant(actionVariant);
-        return this;
-    }
-
-    @Override
-    public SecuredBaseAction withShortcutCombination(@Nullable KeyCombination shortcutCombination) {
-        setShortcutCombination(shortcutCombination);
-        return this;
-    }
-
-    @Override
-    public SecuredBaseAction withHandler(@Nullable Consumer<ActionPerformedEvent> handler) {
-        if (handler == null) {
-            if (getEventBus().hasListener(ActionPerformedEvent.class)) {
-                getEventBus().removeListener(ActionPerformedEvent.class);
-            }
-        } else {
-            addActionPerformedListener(handler);
-        }
-
         return this;
     }
 

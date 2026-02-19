@@ -1,6 +1,7 @@
 package io.jmix.datatools.datamodel;
 
 import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -43,6 +44,8 @@ public class DataModelRegistry {
     protected DataSource dataSource;
     @Autowired
     protected DiagramEngine diagramEngine;
+    @Autowired
+    protected MetadataTools metadataTools;
 
     protected final Map<String, Map<String, DataModel>> dataModels = new HashMap<>();
 
@@ -85,9 +88,7 @@ public class DataModelRegistry {
         Collection<MetaClass> metaClasses = metadata.getClasses();
 
         for (MetaClass metaClass : metaClasses) {
-            // TODO: gg, refactor
-            if (metaClass.getJavaClass().isAnnotationPresent(Entity.class)
-                    && metaClass.getJavaClass().isAnnotationPresent(Table.class)) {
+            if (metadataTools.isJpaEntity(metaClass)) {
                 createEntityDescription(metaClass, false);
             }
         }

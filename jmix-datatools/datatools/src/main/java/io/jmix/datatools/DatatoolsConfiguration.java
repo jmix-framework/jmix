@@ -35,10 +35,10 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableTransactionManagement
 public class DatatoolsConfiguration {
 
-    @Bean("datatl_DiagramConstructor")
-    public DiagramEngine diagramConstructor(Metadata metadata,
-                                            DatatoolsProperties datatoolsProperties) {
-        EngineType engineType = datatoolsProperties.getDiagramConstructor().getEngineType();
+    @Bean("datatl_DiagramEngine")
+    public DiagramEngine diagramEngine(Metadata metadata,
+                                       DatatoolsProperties datatoolsProperties) {
+        EngineType engineType = datatoolsProperties.getDataModelDiagram().getEngineType();
 
         switch (engineType) {
             case PLANTUML -> {

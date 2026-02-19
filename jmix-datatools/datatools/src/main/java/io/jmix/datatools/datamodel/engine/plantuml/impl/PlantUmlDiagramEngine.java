@@ -74,9 +74,10 @@ public class PlantUmlDiagramEngine implements DiagramEngine {
     }
 
     protected String createBaseURL() {
-        return datatoolsProperties.getDiagramConstructor().getHost() == null
-                ? "https://www.plantuml.com"
-                : datatoolsProperties.getDiagramConstructor().getHost();
+        String host = datatoolsProperties.getDataModelDiagram().getHost();
+        return host != null
+                ? host
+                : "https://www.plantuml.com";
     }
 
     protected PlantUmlEncoder createEncoder() {

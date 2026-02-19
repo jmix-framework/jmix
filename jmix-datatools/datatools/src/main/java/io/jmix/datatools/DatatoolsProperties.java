@@ -9,7 +9,7 @@ import org.springframework.lang.Nullable;
 public class DatatoolsProperties {
 
     /**
-     * If no configuration options are specified, it defaults to PlantUML with the default options.
+     * Configuration for data model diagram generation.
      */
     protected final DataModelDiagram dataModelDiagram;
 
@@ -47,7 +47,10 @@ public class DatatoolsProperties {
                 : dataModelDiagram;
     }
 
-    public DataModelDiagram getDiagramConstructor() {
+    /**
+     * @see #dataModelDiagram
+     */
+    public DataModelDiagram getDataModelDiagram() {
         return dataModelDiagram;
     }
 }

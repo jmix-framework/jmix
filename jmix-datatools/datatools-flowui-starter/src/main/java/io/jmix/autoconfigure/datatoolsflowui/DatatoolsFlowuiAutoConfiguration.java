@@ -20,9 +20,9 @@ import com.vaadin.flow.spring.annotation.VaadinSessionScope;
 import io.jmix.core.CoreConfiguration;
 import io.jmix.datatools.DatatoolsConfiguration;
 import io.jmix.datatoolsflowui.DatatoolsFlowuiConfiguration;
-import io.jmix.datatoolsflowui.datamodel.DataDiagramViewSupport;
+import io.jmix.datatoolsflowui.datamodel.DataModelDiagramViewSupport;
 import io.jmix.datatoolsflowui.datamodel.DataModelDiagramStorage;
-import io.jmix.datatoolsflowui.datamodel.impl.DataDiagramViewSupportImpl;
+import io.jmix.datatoolsflowui.datamodel.impl.DataModelDiagramViewSupportImpl;
 import io.jmix.datatoolsflowui.datamodel.impl.InMemoryDataModelDiagramStorage;
 import io.jmix.flowui.FlowuiConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -36,10 +36,10 @@ import org.springframework.context.annotation.Import;
 public class DatatoolsFlowuiAutoConfiguration {
 
     @VaadinSessionScope
-    @Bean("flowui_DataDiagramViewSupport")
-    @ConditionalOnMissingBean(name = "tabmod_TabbedModeDataDiagramViewSupport")
-    public DataDiagramViewSupport dataDiagramViewSupport() {
-        return new DataDiagramViewSupportImpl();
+    @Bean("datatl_DataModelDiagramViewSupport")
+    @ConditionalOnMissingBean
+    public DataModelDiagramViewSupport dataModelDiagramViewSupport() {
+        return new DataModelDiagramViewSupportImpl();
     }
 
     @VaadinSessionScope

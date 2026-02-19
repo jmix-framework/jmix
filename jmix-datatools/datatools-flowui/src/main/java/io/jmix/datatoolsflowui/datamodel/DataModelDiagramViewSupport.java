@@ -16,7 +16,10 @@
 
 package io.jmix.datatoolsflowui.datamodel;
 
-public interface DataDiagramViewSupport {
+/**
+ * Provides support for opening a view that visualizes a data model diagram.
+ */
+public interface DataModelDiagramViewSupport {
 
     /**
      * Open a view that displays data model diagram.

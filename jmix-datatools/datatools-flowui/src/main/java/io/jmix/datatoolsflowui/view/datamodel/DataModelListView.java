@@ -12,13 +12,12 @@ import com.vaadin.flow.data.selection.SelectionEvent;
 import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.LoadContext;
-import io.jmix.datatools.datamodel.DataModel;
-import io.jmix.datatools.datamodel.DataModelGenerationSupport;
-import io.jmix.datatools.datamodel.DataModelRegistry;
+import io.jmix.datatools.datamodel.*;
 import io.jmix.datatools.datamodel.engine.DiagramEngine;
 import io.jmix.datatools.datamodel.entity.AttributeModel;
 import io.jmix.datatools.datamodel.entity.EntityModel;
-import io.jmix.datatoolsflowui.datamodel.DataDiagramViewSupport;
+import io.jmix.datatoolsflowui.datamodel.DataModelDiagramViewSupport;
+import io.jmix.datatoolsflowui.datamodel.DataModelProvider;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.component.SupportsTypedValue.TypedValueChangeEvent;
 import io.jmix.flowui.component.checkbox.JmixCheckbox;
@@ -35,10 +34,7 @@ import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
@@ -72,11 +68,9 @@ public class DataModelListView extends StandardView {
     @Autowired
     protected Icons icons;
     @Autowired
-    protected DataModelGenerationSupport dataModelGenerationSupport;
-    @Autowired
     protected DiagramEngine diagramEngine;
     @Autowired
-    protected DataDiagramViewSupport dataDiagramViewSupport;
+    protected DataModelDiagramViewSupport dataModelDiagramViewSupport;
     @Autowired
     protected UrlParamSerializer urlParamSerializer;
     @Autowired
@@ -84,6 +78,7 @@ public class DataModelListView extends StandardView {
     @Autowired
     protected DataModelRegistry dataModelRegistry;
 
+    protected DataModelProvider dataModelProvider;
     protected Set<String> dataStoreNames;
 
     @Subscribe
@@ -96,8 +91,12 @@ public class DataModelListView extends StandardView {
         this.dataStoreNames = getDataModelProvider().getDataModels().keySet();
     }
 
-    private DataModelRegistry getDataModelProvider() {
-        return dataModelRegistry;
+    private DataModelProvider getDataModelProvider() {
+        if (dataModelProvider == null) {
+            dataModelProvider = new DataModelProvider(dataModelRegistry.getDataModels());
+        }
+
+        return dataModelProvider;
     }
 
     @Install(to = "entityModelsDl", target = Target.DATA_LOADER)
@@ -108,10 +107,10 @@ public class DataModelListView extends StandardView {
         }
 
         List<EntityModel> models;
-        DataModelRegistry dataModelRegistry = getDataModelProvider();
+        DataModelProvider dataModelProvider = getDataModelProvider();
 
         if (entityNames.isEmpty()) {
-            models = dataModelRegistry.getDataModels().values().stream()
+            models = dataModelProvider.getDataModels().values().stream()
                     .flatMap(e -> e.values().stream())
                     .map(DataModel::entityModel)
                     .filter(entityModel ->
@@ -122,7 +121,7 @@ public class DataModelListView extends StandardView {
             models = entityNames.stream()
                     .flatMap(entityName -> dataStoreNames.stream()
                             .map(dataStore ->
-                                    dataModelRegistry.getEntityModel(dataStore, entityName)))
+                                    dataModelProvider.getEntityModel(dataStore, entityName)))
                     .filter(Objects::nonNull)
                     .filter(entityModel ->
                             Boolean.TRUE.equals(showSystemCheckBox.getValue())
@@ -141,14 +140,13 @@ public class DataModelListView extends StandardView {
             return Collections.emptyList();
         }
 
-        DataModelRegistry dataModelRegistry = getDataModelProvider();
-
+        DataModelProvider dataModelProvider = getDataModelProvider();
         if (filterValue.matches("^%s.*".formatted(REGEXP_PREFIX))) {
             Pattern pattern = Pattern.compile(filterValue.substring(REGEXP_PREFIX.length()), Pattern.CASE_INSENSITIVE);
 
             return dataStoreNames.stream()
                     .flatMap(dataStore ->
-                            dataModelRegistry.getDataModels(dataStore).keySet().stream())
+                            dataModelProvider.getDataModels(dataStore).keySet().stream())
                     .filter(name -> name.matches(pattern.pattern()))
                     .toList();
 
@@ -159,7 +157,7 @@ public class DataModelListView extends StandardView {
 
             return dataStoreNames.stream()
                     .flatMap(dataStore ->
-                            dataModelRegistry.getDataModels(dataStore).keySet().stream())
+                            dataModelProvider.getDataModels(dataStore).keySet().stream())
                     .distinct()
                     .filter(entityName -> requestedNames.stream()
                             .anyMatch(reqName ->
@@ -214,8 +212,92 @@ public class DataModelListView extends StandardView {
             return;
         }
 
-        byte[] diagramData = dataModelGenerationSupport.generateDiagram(entityModelsDc.getItems());
-        dataDiagramViewSupport.open(diagramData);
+        byte[] diagramData = generateDiagram(entityModelsDc.getItems());
+        dataModelDiagramViewSupport.open(diagramData);
+    }
+
+    protected byte[] generateDiagram(List<EntityModel> models) {
+        StringBuilder tempEntitiesDescription = new StringBuilder();
+        StringBuilder tempRelationsDescription = new StringBuilder();
+        Set<String> completedModels = new HashSet<>();
+        List<String> entityModelsNames = models.stream()
+                .map(EntityModel::getName)
+                .toList();
+
+        for (EntityModel model : models) {
+            for (String dataStore : dataStoreNames) {
+                DataModel dataModel = dataModelProvider.getDataModel(dataStore, model.getName());
+                if (dataModel == null) {
+                    continue;
+                }
+                tempEntitiesDescription.append(dataModel.entityDescription());
+
+                if (!dataModelProvider.hasRelations(dataStore, model.getName())) {
+                    continue;
+                }
+
+                for (String referencedEntity : entityModelsNames) {
+                    if (!model.getName().equals(referencedEntity)
+                            && !completedModels.contains(referencedEntity)) {
+                        constructRelations(model.getName(), referencedEntity, dataStore, tempRelationsDescription);
+                    }
+                }
+
+                completedModels.add(model.getName());
+            }
+        }
+
+        return diagramEngine.generateDiagram(tempEntitiesDescription.toString(), tempRelationsDescription.toString());
+    }
+
+    protected void constructRelations(String currentEntity, String referencedEntity,
+                                      String dataStore, StringBuilder relationsDescription) {
+        if (!(containsModel(dataStore, currentEntity)
+                && containsModel(dataStore, referencedEntity))) {
+            return;
+        }
+
+        Map<RelationType, List<Relation>> directRelations =
+                dataModelProvider.getEntityRelations(dataStore, currentEntity);
+        Map<RelationType, List<Relation>> referencedRelations =
+                dataModelProvider.getEntityRelations(dataStore, referencedEntity);
+        Set<RelationType> directRelationTypes = directRelations.keySet();
+
+        if (directRelationTypes.isEmpty()) {
+            return;
+        }
+
+        for (RelationType relationType : directRelationTypes) {
+            referencedRelations.getOrDefault(RelationType.getReverseRelation(relationType),
+                            crossRelationCheck(currentEntity, referencedEntity, dataStore, relationType))
+                    .stream()
+                    .filter(el ->
+                            el.referencedClass().equals(currentEntity))
+                    .forEach(e ->
+                            relationsDescription.append(e.relationDescription()));
+        }
+    }
+
+    protected boolean containsModel(String dataStore, String entityName) {
+        return dataModelProvider.getDataModels(dataStore).containsKey(entityName);
+    }
+
+    protected List<Relation> crossRelationCheck(String currentEntity, String referencedEntity,
+                                                String dataStore, RelationType relationType) {
+        if (RelationType.getReverseRelation(relationType).equals(RelationType.ONE_TO_MANY)) {
+            // inverse relation emulation for MANY_TO_ONE relation
+            DataModel dataModel = dataModelProvider.getDataModel(dataStore, currentEntity);
+            return dataModel != null
+                    ? dataModel.relations().get(relationType).stream()
+                    .filter(el ->
+                            el.referencedClass().equals(referencedEntity))
+                    .map(e ->
+                            new Relation(dataStore, currentEntity, e.relationDescription()))
+                    .toList()
+                    : Collections.emptyList();
+        }
+
+        return Collections.emptyList();
     }
 
     @Supply(to = "attributeModelsDataGrid.isMandatory", subject = "renderer")

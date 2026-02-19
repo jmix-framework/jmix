@@ -20,7 +20,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.router.RouteParameters;
 import io.jmix.core.UuidProvider;
-import io.jmix.datatoolsflowui.datamodel.DataDiagramViewSupport;
+import io.jmix.datatoolsflowui.datamodel.DataModelDiagramViewSupport;
 import io.jmix.datatoolsflowui.datamodel.DataModelDiagramStorage;
 import io.jmix.flowui.view.ViewRegistry;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
@@ -28,7 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.UUID;
 
-public class DataDiagramViewSupportImpl implements DataDiagramViewSupport {
+public class DataModelDiagramViewSupportImpl implements DataModelDiagramViewSupport {
 
     @Autowired
     protected ViewRegistry viewRegistry;

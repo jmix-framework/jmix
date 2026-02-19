@@ -14,7 +14,6 @@ import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
@@ -26,6 +25,7 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.stream.Collectors;
 
 /**
  * Provides information about entity data models organized by data stores.
@@ -418,103 +418,6 @@ public class DataModelRegistry {
     }
 
     /**
-     * Retrieves the {@link DataModel} associated with the given data store and entity name.
-     *
-     * @param dataStore  the name of the data store from which the data model is to be fetched
-     * @param entityName the name of the entity whose data model is to be fetched
-     * @return the {@link DataModel} corresponding to the specified data store and entity name,
-     * or {@code null} if no such data model exists
-     */
-    @Nullable
-    public DataModel getDataModel(String dataStore, String entityName) {
-        Preconditions.checkNotNullArgument(dataStore, "Data store name cannot be null");
-        Preconditions.checkNotNullArgument(entityName, "Entity name cannot be null");
-
-        return getDataModels(dataStore).get(entityName);
-    }
-
-    /**
-     * Determines whether the given entity in the specified data store has any relationships defined.
-     *
-     * @param dataStore  the name of the data store to which the entity belongs; must not be null
-     * @param entityName the name of the entity to check for relationships; must not be null
-     * @return {@code true} if the entity has at least one relationship defined in the data model,
-     * {@code false} otherwise
-     */
-    public boolean hasRelations(String dataStore, String entityName) {
-        Preconditions.checkNotNullArgument(dataStore, "Data store name cannot be null");
-        Preconditions.checkNotNullArgument(entityName, "Entity name cannot be null");
-
-        Map<String, DataModel> dataModels = getDataModels(dataStore);
-        if (dataModels.isEmpty()) {
-            return false;
-        }
-
-        if (dataModels.containsKey(entityName)) {
-            DataModel dataModel = dataModels.get(entityName);
-            return dataModel != null && !dataModel.relations().isEmpty();
-        }
-
-        return false;
-    }
-
-    /**
-     * Retrieves the relationships defined for a specific entity in the data model of a given data store.
-     *
-     * @param dataStore  the name of the data store containing the desired entity; must not be null
-     * @param entityName the name of the entity for which the relationships are to be retrieved; must not be null
-     * @return a map where the keys specify the type of relationships (e.g., MANY_TO_ONE, ONE_TO_MANY)
-     * and the values are lists of {@link Relation} objects detailing the relationships;
-     * if the entity or data store has no relationships, an empty map is returned
-     */
-    public Map<RelationType, List<Relation>> getEntityRelations(String dataStore, String entityName) {
-        Preconditions.checkNotNullArgument(dataStore, "Data store name cannot be null");
-        Preconditions.checkNotNullArgument(entityName, "Entity name cannot be null");
-
-        DataModel dataModel = getDataModels(dataStore).get(entityName);
-        return dataModel != null
-                ? Collections.unmodifiableMap(dataModel.relations())
-                : Collections.emptyMap();
-    }
-
-    /**
-     * Retrieves a list of attributes for a specific entity within a given data store.
-     *
-     * @param dataStore  the name of the data store containing the entity; must not be null
-     * @param entityName the name of the entity whose attributes are to be retrieved; must not be null
-     * @return a list of {@link AttributeModel} representing the attributes defined for the specified entity;
-     * an empty list is returned if the entity has no attributes or if the data store or entity does not exist
-     */
-    public List<AttributeModel> getEntityAttributes(String dataStore, String entityName) {
-        Preconditions.checkNotNullArgument(dataStore, "Data store name cannot be null");
-        Preconditions.checkNotNullArgument(entityName, "Entity name cannot be null");
-
-        DataModel dataModel = getDataModels(dataStore).get(entityName);
-        return dataModel != null
-                ? Collections.unmodifiableList(dataModel.attributeModels())
-                : Collections.emptyList();
-    }
-
-    /**
-     * Retrieves the {@link EntityModel} associated with the specified data store and entity name.
-     *
-     * @param dataStore  the name of the data store where the entity resides; must not be null
-     * @param entityName the name of the entity whose model is to be retrieved; must not be null
-     * @return the {@link EntityModel} corresponding to the specified data store and entity name,
-     * or {@code null} if no such entity model exists
-     */
-    @Nullable
-    public EntityModel getEntityModel(String dataStore, String entityName) {
-        Preconditions.checkNotNullArgument(dataStore, "Data store name cannot be null");
-        Preconditions.checkNotNullArgument(entityName, "Entity name cannot be null");
-
-        DataModel dataModel = getDataModels(dataStore).get(entityName);
-        return dataModel != null
-                ? dataModel.entityModel()
-                : null;
-    }
-
-    /**
      * Retrieves an unmodifiable view of the internal data model storage.
      * The returned map represents an organizational structure where the first-level keys are
      * data store identifiers and the values are nested maps. The nested maps use
@@ -529,7 +432,11 @@ public class DataModelRegistry {
         try {
             checkInitialized();
 
-            return Collections.unmodifiableMap(dataModels);
+            return dataModels.entrySet().stream()
+                    .collect(Collectors.toUnmodifiableMap(
+                            Map.Entry::getKey,
+                            entry -> Map.copyOf(entry.getValue())
+                    ));
         } finally {
             lock.readLock().unlock();
         }

@@ -1,41 +1,22 @@
-/*
- * Copyright 2025 Haulmont.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+package io.jmix.datatools.datamodel;
 
-package io.jmix.datatools.datamodel.impl;
-
-import io.jmix.core.JmixModuleDescriptor;
-import io.jmix.core.JmixModules;
 import io.jmix.core.Metadata;
+import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.data.persistence.DbmsType;
-import io.jmix.datatools.datamodel.*;
-import io.jmix.datatools.datamodel.engine.DiagramConstructor;
+import io.jmix.datatools.datamodel.engine.DiagramService;
 import io.jmix.datatools.datamodel.entity.AttributeModel;
 import io.jmix.datatools.datamodel.entity.EntityModel;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Nullable;
 import javax.sql.DataSource;
 import java.lang.annotation.Annotation;
 import java.sql.Connection;
@@ -43,47 +24,76 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-@Component("datatl_DataModelSupport")
-public class DataModelSupportImpl implements DataModelSupport, InitializingBean {
+/**
+ * Provides information about entity data models organized by data stores.
+ */
+@Component("datatl_DataModelProvider")
+public class DataModelRegistry {
 
-    private static final Logger log = LoggerFactory.getLogger(DataModelSupportImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(DataModelRegistry.class);
 
+    @Autowired
+    protected DbmsType dbmsType;
     @Autowired
     protected Metadata metadata;
     @Autowired
     protected DataSource dataSource;
     @Autowired
-    protected DbmsType dbmsType;
-    @Autowired
-    protected JmixModules jmixModules;
-    @Autowired
-    protected DiagramConstructor diagramConstructor;
+    protected DiagramService diagramService;
 
-    protected DataModelProvider dataModelProvider;
-    protected JmixModuleDescriptor mainModuleInfo;
+    protected final Map<String, Map<String, DataModel>> dataModels = new HashMap<>();
 
-    protected Set<String> dataStoreNames;
+    protected final ReadWriteLock lock = new ReentrantReadWriteLock();
+    protected volatile boolean initialized;
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        this.dataModelProvider = createDataModelProvider();
-        this.mainModuleInfo = jmixModules.getLast();
-        this.dataStoreNames = getDataStoreNames();
+    /**
+     * Make the registry to reload data models on the next request.
+     */
+    public void reset() {
+        initialized = false;
+    }
 
+    protected void checkInitialized() {
+        if (!initialized) {
+            lock.readLock().unlock();
+            lock.writeLock().lock();
+            try {
+                if (!initialized) {
+                    init();
+                    initialized = true;
+                }
+            } finally {
+                lock.readLock().lock();
+                lock.writeLock().unlock();
+            }
+        }
+    }
+
+    protected void init() {
+        long startTime = System.currentTimeMillis();
+
+        dataModels.clear();
         constructDataModel();
+
+        log.info("{} initialized in {} ms", getClass().getSimpleName(), System.currentTimeMillis() - startTime);
     }
 
-    protected Set<String> getDataStoreNames() {
-        return dataModelProvider.getDataModels().keySet();
+    protected void constructDataModel() {
+        Collection<MetaClass> metaClasses = metadata.getClasses();
+
+        for (MetaClass metaClass : metaClasses) {
+            // TODO: gg, refactor
+            if (metaClass.getJavaClass().isAnnotationPresent(Entity.class)
+                    && metaClass.getJavaClass().isAnnotationPresent(Table.class)) {
+                createEntityDescription(metaClass, false);
+            }
+        }
     }
 
-    protected DataModelProvider createDataModelProvider() {
-        return new DataModelProvider();
-    }
-
-    protected DataModel createEntityDescription(MetaClass entity,
-                                                boolean isEmbeddable) {
+    protected DataModel createEntityDescription(MetaClass entity, boolean isEmbeddable) {
         List<AttributeModel> attributeModelsList = new ArrayList<>();
         List<MetaProperty> fields = entity.getProperties().stream().toList();
         Map<RelationType, List<Relation>> relationsMap = new HashMap<>();
@@ -121,7 +131,7 @@ public class DataModelSupportImpl implements DataModelSupport, InitializingBean 
         boolean isSystem = entity.getJavaClass().isAnnotationPresent(SystemLevel.class);
 
         String currentEntityType = entity.getName();
-        String entityDescription = diagramConstructor
+        String entityDescription = diagramService
                 .constructEntityDescription(currentEntityType, dataStoreName, attributeModelsList);
 
         EntityModel entityModel = constructEntityModel(entity, isSystem);
@@ -134,7 +144,7 @@ public class DataModelSupportImpl implements DataModelSupport, InitializingBean 
                 attributeModelsList
         );
 
-        dataModelProvider.putDataModel(dataModel);
+        putDataModel(dataModel);
 
         return dataModel;
     }
@@ -192,7 +202,7 @@ public class DataModelSupportImpl implements DataModelSupport, InitializingBean 
                 fieldName, fieldType, entity, field.isMandatory());
         attributeModelsList.add(attributeModel);
 
-        String relationDescription = diagramConstructor.constructRelationDescription(entity.getName(),
+        String relationDescription = diagramService.constructRelationDescription(entity.getName(),
                 fieldType, RelationType.MANY_TO_ONE, dataStoreName);
         Relation relation = new Relation(dataStoreName, fieldType, relationDescription);
         putRelation(relationsMap, RelationType.MANY_TO_ONE, relation);
@@ -206,7 +216,7 @@ public class DataModelSupportImpl implements DataModelSupport, InitializingBean 
         AttributeModel attributeModel =
                 constructAttribute(fieldName, fieldType, isAnnotationPresent(field, NotNull.class));
 
-        String relationDescription = diagramConstructor.constructRelationDescription(entity.getName(),
+        String relationDescription = diagramService.constructRelationDescription(entity.getName(),
                 fieldType, RelationType.ONE_TO_MANY, dataStoreName);
         Relation relation = new Relation(dataStoreName, fieldType, relationDescription);
 
@@ -232,7 +242,7 @@ public class DataModelSupportImpl implements DataModelSupport, InitializingBean 
             attributeModel = constructAttribute(fieldName, fieldType, isMandatory);
         }
 
-        String relationDescription = diagramConstructor.constructRelationDescription(entity.getName(),
+        String relationDescription = diagramService.constructRelationDescription(entity.getName(),
                 fieldType, RelationType.ONE_TO_ONE, dataStoreName);
         Relation relation = new Relation(dataStoreName, fieldType, relationDescription);
 
@@ -253,7 +263,7 @@ public class DataModelSupportImpl implements DataModelSupport, InitializingBean 
                 + annotation.joinColumns()[0].name();
         attributeModel.setColumnName(columnName);
 
-        String relationDescription = diagramConstructor.constructRelationDescription(entity.getName(),
+        String relationDescription = diagramService.constructRelationDescription(entity.getName(),
                 fieldType, RelationType.MANY_TO_MANY, dataStoreName);
         Relation relation = new Relation(dataStoreName, fieldType, relationDescription);
 
@@ -272,11 +282,6 @@ public class DataModelSupportImpl implements DataModelSupport, InitializingBean 
                 : "");
 
         return entityModel;
-    }
-
-    @Override
-    public DataModelProvider getDataModelProvider() {
-        return dataModelProvider;
     }
 
     protected void putRelation(Map<RelationType, List<Relation>> relations,
@@ -330,11 +335,11 @@ public class DataModelSupportImpl implements DataModelSupport, InitializingBean 
         return attributeModel;
     }
 
-    protected String getDatabaseColumnType(@Nullable String schemaName,
-                                           @Nullable String catalogName,
+    protected String getDatabaseColumnType(@javax.annotation.Nullable String schemaName,
+                                           @javax.annotation.Nullable String catalogName,
                                            String tableName,
                                            String columnName,
-                                           @Nullable AttributeModel attributeModel) {
+                                           @javax.annotation.Nullable AttributeModel attributeModel) {
         try (Connection conn = dataSource.getConnection()) {
             DatabaseMetaData dbMetaData = conn.getMetaData();
 
@@ -393,87 +398,161 @@ public class DataModelSupportImpl implements DataModelSupport, InitializingBean 
         return getDatabaseColumnType(schemaName, catalogName, tableName, columnName, attributeModel);
     }
 
-    protected void constructDataModel() {
-        Collection<MetaClass> metaClasses = metadata.getClasses();
+    protected void putDataModel(DataModel dataModel) {
+        String dataStore = dataModel.dataStore();
+        String entityName = dataModel.entityName();
 
-        for (MetaClass metaClass : metaClasses) {
-            if (metaClass.getJavaClass().isAnnotationPresent(Entity.class)
-                    && metaClass.getJavaClass().isAnnotationPresent(Table.class)) {
-                createEntityDescription(metaClass, false);
-            }
+        dataModels.computeIfAbsent(dataStore, __ -> new HashMap<>())
+                .put(entityName, dataModel);
+    }
+
+    public Set<String> getDataStoreNames() {
+        lock.readLock().lock();
+        try {
+            checkInitialized();
+
+            return Collections.unmodifiableSet(dataModels.keySet());
+        } finally {
+            lock.readLock().unlock();
         }
     }
 
-    protected List<Relation> crossRelationCheck(String currentEntity, String referencedEntity,
-                                                String dataStore, RelationType relationType) {
-        if (RelationType.getReverseRelation(relationType).equals(RelationType.ONE_TO_MANY)) {
-            // inverse relation emulation for MANY_TO_ONE relation
-            return dataModelProvider.getDataModel(dataStore, currentEntity).relations().get(relationType).stream()
-                    .filter(el ->
-                            el.referencedClass().equals(referencedEntity))
-                    .map(e ->
-                            new Relation(dataStore, currentEntity, e.relationDescription()))
-                    .toList();
-        }
-        return new ArrayList<>();
+    /**
+     * Retrieves the {@link DataModel} associated with the given data store and entity name.
+     *
+     * @param dataStore  the name of the data store from which the data model is to be fetched
+     * @param entityName the name of the entity whose data model is to be fetched
+     * @return the {@link DataModel} corresponding to the specified data store and entity name,
+     * or {@code null} if no such data model exists
+     */
+    @Nullable
+    public DataModel getDataModel(String dataStore, String entityName) {
+        Preconditions.checkNotNullArgument(dataStore, "Data store name cannot be null");
+        Preconditions.checkNotNullArgument(entityName, "Entity name cannot be null");
+
+        return getDataModels(dataStore).get(entityName);
     }
 
-    protected void constructRelations(String currentEntity, String referencedEntity,
-                                      String dataStore, StringBuilder relationsDescription) {
-        if (!dataModelProvider.containsModel(dataStore, currentEntity)
-                || !dataModelProvider.containsModel(dataStore, referencedEntity)) {
-            return;
+    /**
+     * Determines whether the given entity in the specified data store has any relationships defined.
+     *
+     * @param dataStore  the name of the data store to which the entity belongs; must not be null
+     * @param entityName the name of the entity to check for relationships; must not be null
+     * @return {@code true} if the entity has at least one relationship defined in the data model,
+     * {@code false} otherwise
+     */
+    public boolean hasRelations(String dataStore, String entityName) {
+        Preconditions.checkNotNullArgument(dataStore, "Data store name cannot be null");
+        Preconditions.checkNotNullArgument(entityName, "Entity name cannot be null");
+
+        Map<String, DataModel> dataModels = getDataModels(dataStore);
+        if (dataModels.isEmpty()) {
+            return false;
         }
 
-        Map<RelationType, List<Relation>> directRelations =
-                dataModelProvider.getRelationsByEntity(dataStore, currentEntity);
-        Map<RelationType, List<Relation>> referencedRelations =
-                dataModelProvider.getRelationsByEntity(dataStore, referencedEntity);
-        Set<RelationType> directRelationTypes = directRelations.keySet();
-
-        if (directRelationTypes.isEmpty()) {
-            return;
+        if (dataModels.containsKey(entityName)) {
+            DataModel dataModel = dataModels.get(entityName);
+            return dataModel != null && !dataModel.relations().isEmpty();
         }
 
+        return false;
+    }
 
-        for (RelationType relationType : directRelationTypes) {
-            referencedRelations.getOrDefault(RelationType.getReverseRelation(relationType),
-                            crossRelationCheck(currentEntity, referencedEntity, dataStore, relationType))
-                    .stream()
-                    .filter(el ->
-                            el.referencedClass().equals(currentEntity))
-                    .forEach(e ->
-                            relationsDescription.append(e.relationDescription()));
+    /**
+     * Retrieves the relationships defined for a specific entity in the data model of a given data store.
+     *
+     * @param dataStore  the name of the data store containing the desired entity; must not be null
+     * @param entityName the name of the entity for which the relationships are to be retrieved; must not be null
+     * @return a map where the keys specify the type of relationships (e.g., MANY_TO_ONE, ONE_TO_MANY)
+     * and the values are lists of {@link Relation} objects detailing the relationships;
+     * if the entity or data store has no relationships, an empty map is returned
+     */
+    public Map<RelationType, List<Relation>> getEntityRelations(String dataStore, String entityName) {
+        Preconditions.checkNotNullArgument(dataStore, "Data store name cannot be null");
+        Preconditions.checkNotNullArgument(entityName, "Entity name cannot be null");
+
+        DataModel dataModel = getDataModels(dataStore).get(entityName);
+        return dataModel != null
+                ? Collections.unmodifiableMap(dataModel.relations())
+                : Collections.emptyMap();
+    }
+
+    /**
+     * Retrieves a list of attributes for a specific entity within a given data store.
+     *
+     * @param dataStore  the name of the data store containing the entity; must not be null
+     * @param entityName the name of the entity whose attributes are to be retrieved; must not be null
+     * @return a list of {@link AttributeModel} representing the attributes defined for the specified entity;
+     * an empty list is returned if the entity has no attributes or if the data store or entity does not exist
+     */
+    public List<AttributeModel> getEntityAttributes(String dataStore, String entityName) {
+        Preconditions.checkNotNullArgument(dataStore, "Data store name cannot be null");
+        Preconditions.checkNotNullArgument(entityName, "Entity name cannot be null");
+
+        DataModel dataModel = getDataModels(dataStore).get(entityName);
+        return dataModel != null
+                ? Collections.unmodifiableList(dataModel.attributeModels())
+                : Collections.emptyList();
+    }
+
+    /**
+     * Retrieves the {@link EntityModel} associated with the specified data store and entity name.
+     *
+     * @param dataStore  the name of the data store where the entity resides; must not be null
+     * @param entityName the name of the entity whose model is to be retrieved; must not be null
+     * @return the {@link EntityModel} corresponding to the specified data store and entity name,
+     * or {@code null} if no such entity model exists
+     */
+    @Nullable
+    public EntityModel getEntityModel(String dataStore, String entityName) {
+        Preconditions.checkNotNullArgument(dataStore, "Data store name cannot be null");
+        Preconditions.checkNotNullArgument(entityName, "Entity name cannot be null");
+
+        DataModel dataModel = getDataModels(dataStore).get(entityName);
+        return dataModel != null
+                ? dataModel.entityModel()
+                : null;
+    }
+
+    /**
+     * Retrieves an unmodifiable view of the internal data model storage.
+     * The returned map represents an organizational structure where the first-level keys are
+     * data store identifiers and the values are nested maps. The nested maps use
+     * entity names as keys and their corresponding {@link DataModel} objects as values.
+     *
+     * @return a map containing data store identifiers as keys, where each value is another map that
+     * maps entity names to their respective {@link DataModel} instances. The returned map
+     * is unmodifiable.
+     */
+    public Map<String, Map<String, DataModel>> getDataModels() {
+        lock.readLock().lock();
+        try {
+            checkInitialized();
+
+            return Collections.unmodifiableMap(dataModels);
+        } finally {
+            lock.readLock().unlock();
         }
     }
 
-    public byte[] generateDiagram(List<EntityModel> models) {
-        StringBuilder tempEntitiesDescription = new StringBuilder();
-        StringBuilder tempRelationsDescription = new StringBuilder();
-        Set<String> completedModels = new HashSet<>();
-        List<String> entityModelsNames = models.stream().map(EntityModel::getName).toList();
+    /**
+     * Retrieves the data models associated with a specific data store.
+     *
+     * @param dataStore the name of the data store whose data models are to be retrieved; must not be null
+     * @return a map where the keys are entity names and the values are the corresponding {@link DataModel} instances
+     */
+    public Map<String, DataModel> getDataModels(String dataStore) {
+        Preconditions.checkNotNullArgument(dataStore, "Data store name cannot be null");
 
-        for (EntityModel model : models) {
-            for (String dataStore : dataStoreNames) {
-                tempEntitiesDescription
-                        .append(dataModelProvider.getDataModel(dataStore, model.getName()).entityDescription());
-                if (!dataModelProvider.hasRelations(dataStore, model.getName())) {
-                    continue;
-                }
+        lock.readLock().lock();
+        try {
+            checkInitialized();
 
-                for (String referencedEntity : entityModelsNames) {
-                    if (!model.getName().equals(referencedEntity)
-                            && !completedModels.contains(referencedEntity)) {
-                        constructRelations(model.getName(), referencedEntity, dataStore, tempRelationsDescription);
-                    }
-                }
-
-                completedModels.add(model.getName());
-
-            }
+            Map<String, DataModel> dataModelMap = dataModels.get(dataStore);
+            return dataModelMap != null ? Collections.unmodifiableMap(dataModelMap) : Collections.emptyMap();
+        } finally {
+            lock.readLock().unlock();
         }
-
-        return diagramConstructor.getDiagram(tempEntitiesDescription.toString(), tempRelationsDescription.toString());
     }
 
     protected boolean isAnnotationPresent(MetaProperty field, Class<? extends Annotation> annotationClass) {

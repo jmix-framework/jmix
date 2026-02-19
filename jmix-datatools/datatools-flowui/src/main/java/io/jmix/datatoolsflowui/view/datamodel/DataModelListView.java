@@ -13,9 +13,9 @@ import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.LoadContext;
 import io.jmix.datatools.datamodel.DataModel;
-import io.jmix.datatools.datamodel.DataModelProvider;
-import io.jmix.datatools.datamodel.DataModelSupport;
-import io.jmix.datatools.datamodel.engine.DiagramConstructor;
+import io.jmix.datatools.datamodel.DataModelGenerationSupport;
+import io.jmix.datatools.datamodel.DataModelRegistry;
+import io.jmix.datatools.datamodel.engine.DiagramService;
 import io.jmix.datatools.datamodel.entity.AttributeModel;
 import io.jmix.datatools.datamodel.entity.EntityModel;
 import io.jmix.datatoolsflowui.datamodel.DataDiagramViewSupport;
@@ -72,17 +72,17 @@ public class DataModelListView extends StandardView {
     @Autowired
     protected Icons icons;
     @Autowired
-    protected DataModelSupport dataModelSupport;
+    protected DataModelGenerationSupport dataModelGenerationSupport;
     @Autowired
-    protected DiagramConstructor diagramConstructor;
-    @Autowired
-    protected ViewValidation viewValidation;
+    protected DiagramService diagramService;
     @Autowired
     protected DataDiagramViewSupport dataDiagramViewSupport;
     @Autowired
     protected UrlParamSerializer urlParamSerializer;
     @Autowired
     protected Notifications notifications;
+    @Autowired
+    protected DataModelRegistry dataModelRegistry;
 
     protected Set<String> dataStoreNames;
 
@@ -93,7 +93,11 @@ public class DataModelListView extends StandardView {
     }
 
     protected void initDataStoreNames() {
-        this.dataStoreNames = dataModelSupport.getDataModelProvider().getDataModels().keySet();
+        this.dataStoreNames = getDataModelProvider().getDataModels().keySet();
+    }
+
+    private DataModelRegistry getDataModelProvider() {
+        return dataModelRegistry;
     }
 
     @Install(to = "entityModelsDl", target = Target.DATA_LOADER)
@@ -104,10 +108,10 @@ public class DataModelListView extends StandardView {
         }
 
         List<EntityModel> models;
-        DataModelProvider dataModelProvider = dataModelSupport.getDataModelProvider();
+        DataModelRegistry dataModelRegistry = getDataModelProvider();
 
         if (entityNames.isEmpty()) {
-            models = dataModelProvider.getDataModels().values().stream()
+            models = dataModelRegistry.getDataModels().values().stream()
                     .flatMap(e -> e.values().stream())
                     .map(DataModel::entityModel)
                     .filter(entityModel ->
@@ -118,7 +122,7 @@ public class DataModelListView extends StandardView {
             models = entityNames.stream()
                     .flatMap(entityName -> dataStoreNames.stream()
                             .map(dataStore ->
-                                    dataModelProvider.getEntityModel(dataStore, entityName)))
+                                    dataModelRegistry.getEntityModel(dataStore, entityName)))
                     .filter(Objects::nonNull)
                     .filter(entityModel ->
                             Boolean.TRUE.equals(showSystemCheckBox.getValue())
@@ -137,14 +141,14 @@ public class DataModelListView extends StandardView {
             return Collections.emptyList();
         }
 
-        DataModelProvider dataModelProvider = dataModelSupport.getDataModelProvider();
+        DataModelRegistry dataModelRegistry = getDataModelProvider();
 
         if (filterValue.matches("^%s.*".formatted(REGEXP_PREFIX))) {
             Pattern pattern = Pattern.compile(filterValue.substring(REGEXP_PREFIX.length()), Pattern.CASE_INSENSITIVE);
 
             return dataStoreNames.stream()
                     .flatMap(dataStore ->
-                            dataModelProvider.getDataModels(dataStore).keySet().stream())
+                            dataModelRegistry.getDataModels(dataStore).keySet().stream())
                     .filter(name -> name.matches(pattern.pattern()))
                     .toList();
 
@@ -155,7 +159,7 @@ public class DataModelListView extends StandardView {
 
             return dataStoreNames.stream()
                     .flatMap(dataStore ->
-                            dataModelProvider.getDataModels(dataStore).keySet().stream())
+                            dataModelRegistry.getDataModels(dataStore).keySet().stream())
                     .distinct()
                     .filter(entityName -> requestedNames.stream()
                             .anyMatch(reqName ->
@@ -180,8 +184,8 @@ public class DataModelListView extends StandardView {
     protected List<AttributeModel> attributeModelsDlLoadDelegate(LoadContext<AttributeModel> loadContext) {
         EntityModel selectedModel = entityModelsDataGrid.getSingleSelectedItem();
         return selectedModel != null
-                ? dataModelSupport.getDataModelProvider()
-                .getAttributesByEntity(selectedModel.getDataStore(), selectedModel.getName())
+                ? getDataModelProvider()
+                .getEntityAttributes(selectedModel.getDataStore(), selectedModel.getName())
                 : Collections.emptyList();
     }
 
@@ -202,7 +206,7 @@ public class DataModelListView extends StandardView {
 
     @Subscribe(id = "diagramButton", subject = "clickListener")
     public void onDiagramButtonClick(final ClickEvent<JmixButton> event) {
-        if (!diagramConstructor.pingService()) {
+        if (!diagramService.pingService()) {
             notifications.create("Remote diagramming service is not available.")
                     .withType(Notifications.Type.ERROR)
                     .show();
@@ -210,7 +214,7 @@ public class DataModelListView extends StandardView {
             return;
         }
 
-        byte[] diagramData = dataModelSupport.generateDiagram(entityModelsDc.getItems());
+        byte[] diagramData = dataModelGenerationSupport.generateDiagram(entityModelsDc.getItems());
         dataDiagramViewSupport.open(diagramData);
     }
 

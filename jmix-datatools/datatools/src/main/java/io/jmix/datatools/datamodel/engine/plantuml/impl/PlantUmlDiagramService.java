@@ -19,7 +19,7 @@ package io.jmix.datatools.datamodel.engine.plantuml.impl;
 import io.jmix.core.Metadata;
 import io.jmix.datatools.DatatoolsProperties;
 import io.jmix.datatools.datamodel.RelationType;
-import io.jmix.datatools.datamodel.engine.DiagramConstructor;
+import io.jmix.datatools.datamodel.engine.DiagramService;
 import io.jmix.datatools.datamodel.engine.plantuml.PlantUmlEncoder;
 import io.jmix.datatools.datamodel.entity.AttributeModel;
 import jakarta.persistence.Entity;
@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.zip.Deflater;
 
-public class PlantUmlDiagramConstructor implements DiagramConstructor {
+public class PlantUmlDiagramService implements DiagramService {
 
     protected final DatatoolsProperties datatoolsProperties;
     protected final PlantUmlEncoder plantUmlEncoder;
@@ -50,8 +50,8 @@ public class PlantUmlDiagramConstructor implements DiagramConstructor {
     protected final RestClient restClient;
     protected final int dataStoresCount;
 
-    public PlantUmlDiagramConstructor(DatatoolsProperties datatoolsProperties,
-                                      Metadata metadata) {
+    public PlantUmlDiagramService(DatatoolsProperties datatoolsProperties,
+                                  Metadata metadata) {
         this.datatoolsProperties = datatoolsProperties;
         this.dataStoresCount = getDataStoresCount(metadata);
         this.plantUmlEncoder = createEncoder();
@@ -209,7 +209,7 @@ public class PlantUmlDiagramConstructor implements DiagramConstructor {
     }
 
     @Override
-    public byte[] getDiagram(String entitiesDescription, String relationsDescriptions) {
+    public byte[] generateDiagram(String entitiesDescription, String relationsDescriptions) {
         MessageFormat descriptionFormatter = new MessageFormat(template);
 
         String resultDescription = descriptionFormatter.format(new String[]{entitiesDescription, relationsDescriptions});

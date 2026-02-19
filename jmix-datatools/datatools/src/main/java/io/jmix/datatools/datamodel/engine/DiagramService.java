@@ -9,7 +9,7 @@ import java.util.List;
  * Interface for constructing entity and relationship descriptions, as well as generating diagrams,
  * designed to work with a specific diagramming library.
  */
-public interface DiagramConstructor {
+public interface DiagramService {
 
     /**
      * Constructs a description of an entity in the format required by the selected diagramming library.
@@ -40,7 +40,7 @@ public interface DiagramConstructor {
      * @param relationsDescriptions a string containing the descriptions of relationships between entities
      * @return a byte array representing the generated diagram
      */
-    byte[] getDiagram(String entitiesDescription, String relationsDescriptions);
+    byte[] generateDiagram(String entitiesDescription, String relationsDescriptions);
 
     /**
      * Checks the availability of the remote diagramming service.

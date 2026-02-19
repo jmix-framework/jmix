@@ -19,7 +19,7 @@ package io.jmix.datatools.datamodel.engine.plantuml.impl;
 import io.jmix.core.Metadata;
 import io.jmix.datatools.DatatoolsProperties;
 import io.jmix.datatools.datamodel.RelationType;
-import io.jmix.datatools.datamodel.engine.DiagramService;
+import io.jmix.datatools.datamodel.engine.DiagramEngine;
 import io.jmix.datatools.datamodel.engine.plantuml.PlantUmlEncoder;
 import io.jmix.datatools.datamodel.entity.AttributeModel;
 import jakarta.persistence.Entity;
@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.zip.Deflater;
 
-public class PlantUmlDiagramService implements DiagramService {
+public class PlantUmlDiagramEngine implements DiagramEngine {
 
     protected final DatatoolsProperties datatoolsProperties;
     protected final PlantUmlEncoder plantUmlEncoder;
@@ -50,8 +50,8 @@ public class PlantUmlDiagramService implements DiagramService {
     protected final RestClient restClient;
     protected final int dataStoresCount;
 
-    public PlantUmlDiagramService(DatatoolsProperties datatoolsProperties,
-                                  Metadata metadata) {
+    public PlantUmlDiagramEngine(DatatoolsProperties datatoolsProperties,
+                                 Metadata metadata) {
         this.datatoolsProperties = datatoolsProperties;
         this.dataStoresCount = getDataStoresCount(metadata);
         this.plantUmlEncoder = createEncoder();

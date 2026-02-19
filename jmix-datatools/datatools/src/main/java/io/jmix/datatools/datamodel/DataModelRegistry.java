@@ -6,7 +6,7 @@ import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.data.persistence.DbmsType;
-import io.jmix.datatools.datamodel.engine.DiagramService;
+import io.jmix.datatools.datamodel.engine.DiagramEngine;
 import io.jmix.datatools.datamodel.entity.AttributeModel;
 import io.jmix.datatools.datamodel.entity.EntityModel;
 import jakarta.persistence.*;
@@ -42,7 +42,7 @@ public class DataModelRegistry {
     @Autowired
     protected DataSource dataSource;
     @Autowired
-    protected DiagramService diagramService;
+    protected DiagramEngine diagramEngine;
 
     protected final Map<String, Map<String, DataModel>> dataModels = new HashMap<>();
 
@@ -131,7 +131,7 @@ public class DataModelRegistry {
         boolean isSystem = entity.getJavaClass().isAnnotationPresent(SystemLevel.class);
 
         String currentEntityType = entity.getName();
-        String entityDescription = diagramService
+        String entityDescription = diagramEngine
                 .constructEntityDescription(currentEntityType, dataStoreName, attributeModelsList);
 
         EntityModel entityModel = constructEntityModel(entity, isSystem);
@@ -202,7 +202,7 @@ public class DataModelRegistry {
                 fieldName, fieldType, entity, field.isMandatory());
         attributeModelsList.add(attributeModel);
 
-        String relationDescription = diagramService.constructRelationDescription(entity.getName(),
+        String relationDescription = diagramEngine.constructRelationDescription(entity.getName(),
                 fieldType, RelationType.MANY_TO_ONE, dataStoreName);
         Relation relation = new Relation(dataStoreName, fieldType, relationDescription);
         putRelation(relationsMap, RelationType.MANY_TO_ONE, relation);
@@ -216,7 +216,7 @@ public class DataModelRegistry {
         AttributeModel attributeModel =
                 constructAttribute(fieldName, fieldType, isAnnotationPresent(field, NotNull.class));
 
-        String relationDescription = diagramService.constructRelationDescription(entity.getName(),
+        String relationDescription = diagramEngine.constructRelationDescription(entity.getName(),
                 fieldType, RelationType.ONE_TO_MANY, dataStoreName);
         Relation relation = new Relation(dataStoreName, fieldType, relationDescription);
 
@@ -242,7 +242,7 @@ public class DataModelRegistry {
             attributeModel = constructAttribute(fieldName, fieldType, isMandatory);
         }
 
-        String relationDescription = diagramService.constructRelationDescription(entity.getName(),
+        String relationDescription = diagramEngine.constructRelationDescription(entity.getName(),
                 fieldType, RelationType.ONE_TO_ONE, dataStoreName);
         Relation relation = new Relation(dataStoreName, fieldType, relationDescription);
 
@@ -263,7 +263,7 @@ public class DataModelRegistry {
                 + annotation.joinColumns()[0].name();
         attributeModel.setColumnName(columnName);
 
-        String relationDescription = diagramService.constructRelationDescription(entity.getName(),
+        String relationDescription = diagramEngine.constructRelationDescription(entity.getName(),
                 fieldType, RelationType.MANY_TO_MANY, dataStoreName);
         Relation relation = new Relation(dataStoreName, fieldType, relationDescription);
 

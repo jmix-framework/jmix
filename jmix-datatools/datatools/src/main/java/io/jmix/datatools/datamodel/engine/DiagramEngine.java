@@ -9,7 +9,7 @@ import java.util.List;
  * Interface for constructing entity and relationship descriptions, as well as generating diagrams,
  * designed to work with a specific diagramming library.
  */
-public interface DiagramService {
+public interface DiagramEngine {
 
     /**
      * Constructs a description of an entity in the format required by the selected diagramming library.

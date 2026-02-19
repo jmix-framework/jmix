@@ -15,7 +15,7 @@ import io.jmix.core.LoadContext;
 import io.jmix.datatools.datamodel.DataModel;
 import io.jmix.datatools.datamodel.DataModelGenerationSupport;
 import io.jmix.datatools.datamodel.DataModelRegistry;
-import io.jmix.datatools.datamodel.engine.DiagramService;
+import io.jmix.datatools.datamodel.engine.DiagramEngine;
 import io.jmix.datatools.datamodel.entity.AttributeModel;
 import io.jmix.datatools.datamodel.entity.EntityModel;
 import io.jmix.datatoolsflowui.datamodel.DataDiagramViewSupport;
@@ -74,7 +74,7 @@ public class DataModelListView extends StandardView {
     @Autowired
     protected DataModelGenerationSupport dataModelGenerationSupport;
     @Autowired
-    protected DiagramService diagramService;
+    protected DiagramEngine diagramEngine;
     @Autowired
     protected DataDiagramViewSupport dataDiagramViewSupport;
     @Autowired
@@ -206,7 +206,7 @@ public class DataModelListView extends StandardView {
 
     @Subscribe(id = "diagramButton", subject = "clickListener")
     public void onDiagramButtonClick(final ClickEvent<JmixButton> event) {
-        if (!diagramService.pingService()) {
+        if (!diagramEngine.pingService()) {
             notifications.create("Remote diagramming service is not available.")
                     .withType(Notifications.Type.ERROR)
                     .show();

@@ -16,7 +16,7 @@
 
 package io.jmix.datatools.datamodel;
 
-import io.jmix.datatools.datamodel.engine.DiagramService;
+import io.jmix.datatools.datamodel.engine.DiagramEngine;
 import io.jmix.datatools.datamodel.entity.EntityModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -31,7 +31,7 @@ import java.util.*;
 public class DataModelGenerationSupport {
 
     @Autowired
-    protected DiagramService diagramService;
+    protected DiagramEngine diagramEngine;
     @Autowired
     protected DataModelRegistry dataModelRegistry;
 
@@ -49,8 +49,12 @@ public class DataModelGenerationSupport {
 
         for (EntityModel model : models) {
             for (String dataStore : dataStoreNames) {
-                tempEntitiesDescription
-                        .append(dataModelRegistry.getDataModel(dataStore, model.getName()).entityDescription());
+                DataModel dataModel = dataModelRegistry.getDataModel(dataStore, model.getName());
+                if (dataModel == null) {
+                    continue;
+                }
+                tempEntitiesDescription.append(dataModel.entityDescription());
+
                 if (!dataModelRegistry.hasRelations(dataStore, model.getName())) {
                     continue;
                 }
@@ -67,7 +71,7 @@ public class DataModelGenerationSupport {
             }
         }
 
-        return diagramService.generateDiagram(tempEntitiesDescription.toString(), tempRelationsDescription.toString());
+        return diagramEngine.generateDiagram(tempEntitiesDescription.toString(), tempRelationsDescription.toString());
     }
 
     protected void constructRelations(String currentEntity, String referencedEntity,
@@ -106,13 +110,17 @@ public class DataModelGenerationSupport {
                                                 String dataStore, RelationType relationType) {
         if (RelationType.getReverseRelation(relationType).equals(RelationType.ONE_TO_MANY)) {
             // inverse relation emulation for MANY_TO_ONE relation
-            return dataModelRegistry.getDataModel(dataStore, currentEntity).relations().get(relationType).stream()
+            DataModel dataModel = dataModelRegistry.getDataModel(dataStore, currentEntity);
+            return dataModel != null
+                    ? dataModel.relations().get(relationType).stream()
                     .filter(el ->
                             el.referencedClass().equals(referencedEntity))
                     .map(e ->
                             new Relation(dataStore, currentEntity, e.relationDescription()))
-                    .toList();
+                    .toList()
+                    : Collections.emptyList();
         }
-        return new ArrayList<>();
+
+        return Collections.emptyList();
     }
 }

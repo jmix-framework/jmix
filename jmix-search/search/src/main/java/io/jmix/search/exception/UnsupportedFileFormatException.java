@@ -16,13 +16,29 @@
 
 package io.jmix.search.exception;
 
-import org.apache.commons.io.FilenameUtils;
+import java.util.List;
 
+/**
+ * An exception that is thrown when a user added some file of the type that is not supported
+ * and there are no any known parser for.
+ */
 public class UnsupportedFileFormatException extends Exception {
 
-    public static final String MESSAGE = "The file %s with the '%s' extension is not supported.";
+    private static final String MESSAGE = "The file %s can't be parsed. " +
+            "Only the following file parsing criteria are supported:\n  -%s";
 
-    public UnsupportedFileFormatException(String fileName) {
-        super(String.format(MESSAGE, fileName, FilenameUtils.getExtension(fileName)));
+    /**
+     * @param fileName            the name of the file which type is not supported
+     * @param supportedExtensions the list of the criteria that are supported in the application
+     */
+    public UnsupportedFileFormatException(String fileName, List<String> supportedExtensions) {
+        super(String.format(
+                MESSAGE,
+                fileName,
+                getSupportedExtensionsString(supportedExtensions)));
+    }
+
+    protected static String getSupportedExtensionsString(List<String> supportedExtensions) {
+        return String.join("\n  -", supportedExtensions);
     }
 }

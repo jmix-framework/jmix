@@ -21,25 +21,26 @@ import io.jmix.core.FileStorageLocator
 import io.jmix.search.exception.UnsupportedFileFormatException
 import spock.lang.Specification
 
-class FileProcessorTest2 extends Specification {
-    def "ExtractFileContent"() {
+class FileProcessorTest extends Specification {
+
+    def "should throw the UnsupportedFileTypeException that have been thrown by the FileParserResolver"() {
         given:
         FileStorageLocator storageLocatorMock = Mock()
+
+        and:
+        def exception = Mock(UnsupportedFileFormatException)
+
+        and:
+        FileParserProvider fileParserProvider = Mock()
         FileRef fileRefMock = Mock()
-        fileRefMock.getFileName() >> fileName
-        FileProcessor fileProcessor = new FileProcessor(storageLocatorMock)
+        fileParserProvider.getParserKit(fileRefMock) >> { throw exception }
+        FileProcessor fileProcessor = new FileProcessor(storageLocatorMock, fileParserProvider)
 
         when:
         fileProcessor.extractFileContent(fileRefMock)
 
         then:
-        def exception = thrown(UnsupportedFileFormatException)
-        exception.getMessage() == message
-
-        where:
-        fileName                     | message
-        "file-name.sql"              | "The file file-name.sql with the 'sql' extension is not supported."
-        "any-file.abc"               | "The file any-file.abc with the 'abc' extension is not supported."
-        "any-file-without-extension" | "The file any-file-without-extension with the '' extension is not supported."
+        UnsupportedFileFormatException throwable = thrown()
+        throwable == exception
     }
 }

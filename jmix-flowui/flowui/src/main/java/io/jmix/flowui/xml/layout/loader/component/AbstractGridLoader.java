@@ -427,8 +427,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         loadBoolean(element, "autoWidth", column::setAutoWidth);
         loadBoolean(element, "visible", column::setVisible);
         loadEnum(element, ColumnTextAlign.class, "textAlign", column::setTextAlign);
-
-        loadColumnSortable(element, column, sortableColumns);
+        loadColumnSortable(element, sortableColumns, column, metaPropertyPath);
         loadColumnResizable(element, column, resizableColumns);
         loadColumnFilterable(element, column);
         loadColumnEditable(element, column, property);
@@ -468,6 +467,15 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         }
 
         return Optional.empty();
+    }
+
+    protected void loadColumnSortable(Element element, boolean sortableColumns, DataGridColumn<?> column,
+                                      @Nullable MetaPropertyPath metaPropertyPath) {
+        if (metaPropertyPath != null && metaDataTools.isElementCollection(metaPropertyPath.getMetaProperty())) {
+            column.setSortable(false);
+        } else {
+            loadColumnSortable(element, column, sortableColumns);
+        }
     }
 
     protected void loadColumnSortable(Element element, DataGridColumn<?> column, boolean sortableColumns) {

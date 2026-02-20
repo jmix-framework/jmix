@@ -144,6 +144,7 @@ dependencies {
     testImplementation 'org.assertj:assertj-core'
     testImplementation 'org.liquibase:liquibase-core'
     testImplementation project(':security-data')
+    testImplementation project(':framework-test-support')
 
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'

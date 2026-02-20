@@ -37,7 +37,7 @@ import test_support.FlowuiTestConfiguration;
 import test_support.entity.sales.Customer;
 
 @UiTest(viewBasePackages = {"component.standarddetailview.view", "navigation.view"})
-@SpringBootTest(classes = {FlowuiTestAssistConfiguration.class, FlowuiTestConfiguration.class})
+@SpringBootTest(classes = {FlowuiTestConfiguration.class, FlowuiTestAssistConfiguration.class})
 public class BackwardNavigationUiTest {
 
     @Autowired

@@ -28,6 +28,7 @@ dependencies {
     implementation 'com.google.code.gson:gson'
 
     testImplementation project(':flowui-test-assist')
+    testImplementation project(':framework-test-support')
     testImplementation project(':eclipselink-starter')
     testImplementation 'org.apache.commons:commons-dbcp2'
     testRuntimeOnly 'org.hsqldb:hsqldb'

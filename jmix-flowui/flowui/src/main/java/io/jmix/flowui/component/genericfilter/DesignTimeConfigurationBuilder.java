@@ -179,13 +179,13 @@ public class DesignTimeConfigurationBuilder {
 
             root.add(fc);
 
-            // Persist the default value in the configuration so it survives reset
+            // Persist the default value in the configuration so it survives reset.
+            // Skip components without a parameter name (e.g. void JpqlFilter with Void parameterClass).
             if (fc instanceof SingleFilterComponentBase<?> sfc) {
-                Object valueToStore = entry.overrideDefault
-                        ? entry.defaultValue
-                        : sfc.getValue();
-                if (valueToStore != null) {
-                    config.setFilterComponentDefaultValue(sfc.getParameterName(), valueToStore);
+                String paramName = sfc.getParameterName();
+                Object valueToStore = entry.overrideDefault ? entry.defaultValue : sfc.getValue();
+                if (paramName != null && valueToStore != null) {
+                    config.setFilterComponentDefaultValue(paramName, valueToStore);
                 }
             }
         }

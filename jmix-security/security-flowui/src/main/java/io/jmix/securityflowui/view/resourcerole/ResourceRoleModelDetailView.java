@@ -179,7 +179,7 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
             public void actionPerform(Component component) {
 
                 getApplicationContext().getBean(UiObservationSupport.class)
-                        .createActionExeutionObservation(this)
+                        .createActionExecutionObservation(this)
                         .observe(() ->
                                 dialogWindows.view(ResourceRoleModelDetailView.this, resourcePolicyTypeProvider.getCreatePolicyViewClass())
                                         .withAfterCloseListener(ResourceRoleModelDetailView.this::addPoliciesFromMultiplePoliciesView)

@@ -74,7 +74,7 @@ public abstract class PickerAction<A extends PickerAction<A, C, V>, C extends Pi
         // if standard behaviour
         if (!hasListener(ActionPerformedEvent.class)) {
             getUiObservationSupport()
-                    .map(support -> support.createActionExeutionObservation(this))
+                    .map(support -> support.createActionExecutionObservation(this))
                     .orElse(Observation.NOOP)
                     .observe(this::execute);
         } else {

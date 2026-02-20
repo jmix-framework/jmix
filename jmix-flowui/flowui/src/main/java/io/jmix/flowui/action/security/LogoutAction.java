@@ -72,7 +72,7 @@ public class LogoutAction extends ObservableBaseAction<LogoutAction> implements 
         // if standard behaviour
         if (!hasListener(ActionPerformedEvent.class)) {
             getUiObservationSupport()
-                    .map(support -> support.createActionExeutionObservation(this))
+                    .map(support -> support.createActionExecutionObservation(this))
                     .orElse(Observation.NOOP)
                     .observe(this::execute);
         } else {

@@ -108,7 +108,7 @@ public class UiObservationSupport {
         return observation;
     }
 
-    public Observation createActionExeutionObservation(Action action) {
+    public Observation createActionExecutionObservation(Action action) {
         if (!observationEnabled) {
             return Observation.NOOP;
         }

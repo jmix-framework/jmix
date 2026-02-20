@@ -365,7 +365,7 @@ public class PropertyFilter<V> extends SingleFilterComponentBase<V> {
         @Override
         public void actionPerform(Component component) {
             getUiObservationSupport()
-                    .map(support -> support.createActionExeutionObservation(this))
+                    .map(support -> support.createActionExecutionObservation(this))
                     .orElse(Observation.NOOP)
                     .observe(() -> handler.accept(operation, true));
         }

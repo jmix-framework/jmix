@@ -106,7 +106,7 @@ public abstract class UserMenuAction<A extends UserMenuAction<A, C>, C extends J
         // if standard behaviour
         if (!hasListener(ActionPerformedEvent.class)) {
             getUiObservationSupport()
-                    .map(support -> support.createActionExeutionObservation(this))
+                    .map(support -> support.createActionExecutionObservation(this))
                     .orElse(Observation.NOOP)
                     .observe(this::execute);
         } else {

@@ -54,7 +54,7 @@ public class ObservableBaseAction<A extends ObservableBaseAction<A>> extends Bas
         if (eventBus != null) {
             ActionPerformedEvent event = new ActionPerformedEvent(this, component);
             getUiObservationSupport()
-                    .map(support -> support.createActionExeutionObservation(this))
+                    .map(support -> support.createActionExecutionObservation(this))
                     .orElse(Observation.NOOP)
                     .observe(() -> getEventBus().fireEvent(event));
         }

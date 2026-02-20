@@ -285,7 +285,6 @@ public class UnconstrainedDataManagerImpl implements UnconstrainedDataManager {
         DataStore store = dataStoreFactory.get(getStoreName(context.getStoreName()));
         context.setAccessConstraints(mergeConstraints(context.getAccessConstraints()));
 
-
         //noinspection DataFlowIssue
         return observationSupport.createValuesLoadObservation(context)
                 .observe(() -> store.loadValues(context));

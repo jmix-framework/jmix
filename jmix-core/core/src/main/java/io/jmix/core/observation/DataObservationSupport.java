@@ -59,7 +59,7 @@ public class DataObservationSupport {
     }
 
     public Observation createEntityLoadObservation(MetaClass metaClass, @Nullable LoadContext.Query query) {
-        if (!observationEnabled) {
+        if (!isObservationAvailable()) {
             return Observation.NOOP;
         }
 
@@ -74,7 +74,7 @@ public class DataObservationSupport {
     }
 
     public Observation createEntityListLoadObservation(MetaClass metaClass, @Nullable LoadContext.Query query) {
-        if (!observationEnabled) {
+        if (!isObservationAvailable()) {
             return Observation.NOOP;
         }
 
@@ -89,7 +89,7 @@ public class DataObservationSupport {
     }
 
     public Observation createEntityCountObservation(MetaClass metaClass, @Nullable LoadContext.Query query) {
-        if (!observationEnabled) {
+        if (!isObservationAvailable()) {
             return Observation.NOOP;
         }
 
@@ -104,7 +104,7 @@ public class DataObservationSupport {
     }
 
     public Observation createValuesLoadObservation(ValueLoadContext context) {
-        if (!observationEnabled) {
+        if (!isObservationAvailable()) {
             return Observation.NOOP;
         }
 
@@ -119,7 +119,7 @@ public class DataObservationSupport {
     }
 
     public Observation createValuesCountObservation(ValueLoadContext context) {
-        if (!observationEnabled) {
+        if (!isObservationAvailable()) {
             return Observation.NOOP;
         }
 
@@ -134,7 +134,7 @@ public class DataObservationSupport {
     }
 
     public Observation createEntitiesSaveObservation(SaveContext context, String store) {
-        if (!observationEnabled) {
+        if (!isObservationAvailable()) {
             return Observation.NOOP;
         }
 
@@ -168,5 +168,9 @@ public class DataObservationSupport {
                 observation.highCardinalityKeyValue("jpql.parameters", query.getParameters().toString());
             }
         }
+    }
+
+    protected boolean isObservationAvailable() {
+        return observationEnabled && observationRegistry != null;
     }
 }

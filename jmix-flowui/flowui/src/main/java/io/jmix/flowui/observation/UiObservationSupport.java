@@ -57,11 +57,6 @@ public class UiObservationSupport {
         this.observationEnabled = uiProperties.isUiObservationEnabled();
     }
 
-    @Autowired
-    public void setUiProperties(UiProperties uiProperties) {
-        this.observationEnabled = uiProperties.isUiObservationEnabled();
-    }
-
     public Observation createViewLifecycleObservation(View<?> view, ComponentEvent<?> viewEvent) {
         ViewLifecycle viewLifecycle = eventToLifecycle(viewEvent);
         return viewLifecycle != null
@@ -75,7 +70,7 @@ public class UiObservationSupport {
 
     public Observation createViewLifecycleObservation(ViewLifecycleObservationInfo observationInfo,
                                                       ViewLifecycle lifecycle) {
-        if (!observationEnabled) {
+        if (!isObservationAvailable()) {
             return Observation.NOOP;
         }
 
@@ -92,7 +87,7 @@ public class UiObservationSupport {
 
     public Observation createFragmentLifecycleObservation(FragmentLifecycleObservationInfo observationInfo,
                                                           FragmentLifecycle lifecycle) {
-        if (!observationEnabled) {
+        if (!isObservationAvailable()) {
             return Observation.NOOP;
         }
 
@@ -109,7 +104,7 @@ public class UiObservationSupport {
     }
 
     public Observation createActionExecutionObservation(Action action) {
-        if (!observationEnabled) {
+        if (!isObservationAvailable()) {
             return Observation.NOOP;
         }
 
@@ -149,5 +144,9 @@ public class UiObservationSupport {
         }
 
         return null;
+    }
+
+    protected boolean isObservationAvailable() {
+        return observationEnabled && observationRegistry != null;
     }
 }

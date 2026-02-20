@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,16 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.event.dialog;
+package io.jmix.flowui.kit.component.sidepanellayout;
 
-import com.vaadin.flow.component.dialog.Dialog;
-import org.springframework.context.ApplicationEvent;
+import com.vaadin.flow.component.ComponentEvent;
 
 /**
- * Application event that is sent after the dialog is closed.
+ * Event fired when the side panel is closed.
  */
-public class DialogClosedEvent extends ApplicationEvent {
+public class SidePanelCloseEvent extends ComponentEvent<JmixSidePanelLayout> {
 
-    public DialogClosedEvent(Dialog dialog) {
-        super(dialog);
-    }
-
-    @Override
-    public Dialog getSource() {
-        return (Dialog) super.getSource();
+    public SidePanelCloseEvent(JmixSidePanelLayout source, boolean fromClient) {
+        super(source, fromClient);
     }
 }

@@ -24,6 +24,10 @@ import io.jmix.flowui.component.factory.EntityFieldCreationSupport;
 import io.jmix.flowui.component.genericfilter.GenericFilter;
 import io.jmix.flowui.component.genericfilter.configuration.FilterConfigurationDetail;
 import io.jmix.flowui.component.grid.DataGrid;
+import io.jmix.flowui.component.sidedialog.SideDialog;
+import io.jmix.flowui.component.sidepanellayout.SidePanelLayout;
+import io.jmix.flowui.kit.component.sidedialog.SideDialogPosition;
+import io.jmix.flowui.kit.component.sidepanellayout.SidePanelPosition;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
@@ -150,6 +154,16 @@ public class UiComponentProperties {
      */
     boolean gridRefreshAllOnItemReplace;
 
+    /**
+     * Default placement for {@link SidePanelLayout} components.
+     */
+    SidePanelPosition sidePanelLayoutDefaultPlacement;
+
+    /**
+     * Default placement for {@link SideDialog} dialogs.
+     */
+    SideDialogPosition sideDialogDefaultPlacement;
+
     public UiComponentProperties(
             String gridCreateShortcut,
             String gridAddShortcut,
@@ -178,7 +192,9 @@ public class UiComponentProperties {
             @DefaultValue("true") boolean immediateRequiredValidationEnabled,
             @DefaultValue("true") boolean defaultTrimEnabled,
             @DefaultValue("true") boolean checkboxRequiredStateInitializationEnabled,
-            @DefaultValue("false") boolean gridRefreshAllOnItemReplace) {
+            @DefaultValue("false") boolean gridRefreshAllOnItemReplace,
+            @DefaultValue("RIGHT") SidePanelPosition sidePanelLayoutDefaultPlacement,
+            @DefaultValue("RIGHT") SideDialogPosition sideDialogDefaultPlacement) {
         this.gridCreateShortcut = gridCreateShortcut;
         this.gridAddShortcut = gridAddShortcut;
         this.gridRemoveShortcut = gridRemoveShortcut;
@@ -216,6 +232,9 @@ public class UiComponentProperties {
         this.checkboxRequiredStateInitializationEnabled = checkboxRequiredStateInitializationEnabled;
 
         this.gridRefreshAllOnItemReplace = gridRefreshAllOnItemReplace;
+
+        this.sidePanelLayoutDefaultPlacement = sidePanelLayoutDefaultPlacement;
+        this.sideDialogDefaultPlacement = sideDialogDefaultPlacement;
     }
 
     public String getGridCreateShortcut() {
@@ -382,5 +401,19 @@ public class UiComponentProperties {
      */
     public boolean isGridRefreshAllOnItemReplace() {
         return gridRefreshAllOnItemReplace;
+    }
+
+    /**
+     * @see #sidePanelLayoutDefaultPlacement
+     */
+    public SidePanelPosition getSidePanelLayoutDefaultPlacement() {
+        return sidePanelLayoutDefaultPlacement;
+    }
+
+    /**
+     * @see #sideDialogDefaultPlacement
+     */
+    public SideDialogPosition getSideDialogDefaultPlacement() {
+        return sideDialogDefaultPlacement;
     }
 }

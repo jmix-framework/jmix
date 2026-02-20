@@ -4288,6 +4288,66 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <!-- SidePanelLayout -->
+    <xs:complexType name="sidePanelLayoutComponent">
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+                <xs:sequence minOccurs="0">
+                    <xs:group ref="layoutOrComponent"/>
+                </xs:sequence>
+
+                <xs:attributeGroup ref="hasSize"/>
+                <xs:attributeGroup ref="hasClassNames"/>
+
+                <xs:attribute name="closeOnOutsideClick" type="xs:boolean"/>
+                <xs:attribute name="displayAsOverlayOnSmallDevices" type="xs:boolean"/>
+                <xs:attribute name="sidePanelOverlay" type="xs:boolean"/>
+                <xs:attribute name="sidePanelPosition" type="sidePanelPositionType"/>
+                <xs:attribute name="sidePanelHorizontalMaxSize" type="componentSize"/>
+                <xs:attribute name="sidePanelHorizontalMinSize" type="componentSize"/>
+                <xs:attribute name="sidePanelHorizontalSize" type="componentSize"/>
+                <xs:attribute name="sidePanelVerticalMaxSize" type="componentSize"/>
+                <xs:attribute name="sidePanelVerticalMinSize" type="componentSize"/>
+                <xs:attribute name="sidePanelVerticalSize" type="componentSize"/>
+                <xs:attribute name="modal" type="xs:boolean"/>
+                <xs:attribute name="overlayAriaLabel" type="resourceString"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:simpleType name="sidePanelPositionType">
+        <xs:restriction>
+            <xs:enumeration value="TOP"/>
+            <xs:enumeration value="RIGHT"/>
+            <xs:enumeration value="BOTTOM"/>
+            <xs:enumeration value="LEFT"/>
+            <xs:enumeration value="INLINE_START"/>
+            <xs:enumeration value="INLINE_END"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- SidePanelLayoutCloser -->
+
+    <xs:complexType name="sidePanelLayoutCloserComponent">
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+                <xs:sequence>
+                    <xs:element name="icon" type="iconComponentElement" minOccurs="0"/>
+                </xs:sequence>
+
+                <xs:attribute name="sidePanelLayoutId" type="xs:string"/>
+
+                <xs:attribute name="themeNames" type="buttonThemeNames"/>
+
+                <xs:attributeGroup ref="hasSize"/>
+                <xs:attributeGroup ref="hasIcon"/>
+                <xs:attributeGroup ref="hasFocusableAttributes"/>
+                <xs:attributeGroup ref="hasAriaLabel"/>
+                <xs:attributeGroup ref="hasClassNames"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
     <xs:complexType name="responsiveStepsType">
         <xs:sequence maxOccurs="unbounded">
             <xs:element name="responsiveStep">
@@ -5457,6 +5517,8 @@
                 <xs:element name="component" type="genericComponent"/>
                 <xs:element name="fragment" type="fragmentComponent"/>
                 <xs:element name="markdown" type="markdownComponent"/>
+                <xs:element name="sidePanelLayout" type="sidePanelLayoutComponent"/>
+                <xs:element name="sidePanelLayoutCloser" type="sidePanelLayoutCloserComponent"/>
             </xs:choice>
         </xs:sequence>
     </xs:group>

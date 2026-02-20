@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,16 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.event.dialog;
+package io.jmix.flowui.component.sidedialog;
 
-import com.vaadin.flow.component.dialog.Dialog;
-import org.springframework.context.ApplicationEvent;
+import com.vaadin.flow.component.ComponentEvent;
 
 /**
- * Application event that is sent after the dialog is closed.
+ * Event fired when the user clicks outside the overlay or presses the escape key.
  */
-public class DialogClosedEvent extends ApplicationEvent {
+public class SideDialogCloseActionEvent extends ComponentEvent<SideDialog> {
 
-    public DialogClosedEvent(Dialog dialog) {
-        super(dialog);
-    }
-
-    @Override
-    public Dialog getSource() {
-        return (Dialog) super.getSource();
+    public SideDialogCloseActionEvent(SideDialog source, boolean fromClient) {
+        super(source, fromClient);
     }
 }

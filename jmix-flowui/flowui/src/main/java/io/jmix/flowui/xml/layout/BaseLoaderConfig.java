@@ -55,6 +55,7 @@ public abstract class BaseLoaderConfig {
         loaders.put("formRow", FormLayoutLoader.FormRowLoader.class);
         loaders.put("card", CardLoader.class);
         loaders.put("gridLayout", GridLayoutLoader.class);
+        loaders.put("sidePanelLayout", SidePanelLayoutLoader.class);
 
         /* Components */
         loaders.put("button", ButtonLoader.class);
@@ -112,6 +113,7 @@ public abstract class BaseLoaderConfig {
         loaders.put("menuFilterField", MenuFilterFieldLoader.class);
         loaders.put("horizontalMenu", HorizontalMenuLoader.class);
         loaders.put("richTextEditor", RichTextEditorLoader.class);
+        loaders.put("sidePanelLayoutCloser", SidePanelLayoutCloserLoader.class);
         loaders.put("twinColumn", TwinColumnLoader.class);
         loaders.put("markdown", MarkdownLoader.class);
 

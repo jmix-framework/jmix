@@ -90,6 +90,9 @@ public class OpenedDialogs {
     protected DialogInfo mapToDialogInfo(DialogOpenedEvent event) {
         return new DialogInfo(event.getSource())
                 .withContent(event.getContent())
-                .withButtons(event.getButtons());
+                .withButtons(event.getButtons())
+                .withHeaderComponents(event.getHeaderComponents())
+                .withContentComponents(event.getContentComponents())
+                .withFooterComponents(event.getFooterComponents());
     }
 }

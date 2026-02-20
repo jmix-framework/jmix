@@ -765,7 +765,9 @@ public enum JmixFontIcon implements IconFactory<FontIcon> {
     NOTIFICATIONS_INDICATOR_REFRESH,
 
     COLUMNS_GROUPER_ITEM_ADD("jmix-font-icon-lumo"),
-    COLUMNS_GROUPER_ITEM_REMOVE("jmix-font-icon-lumo");
+    COLUMNS_GROUPER_ITEM_REMOVE("jmix-font-icon-lumo"),
+
+    SIDE_PANEL_LAYOUT_CLOSER("jmix-font-icon-lumo");
 
     private static final String BASE_CLASS_NAME = "jmix-font-icon";
 

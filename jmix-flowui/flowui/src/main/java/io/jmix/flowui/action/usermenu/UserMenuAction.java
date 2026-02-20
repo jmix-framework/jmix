@@ -27,6 +27,7 @@ import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.kit.component.usermenu.JmixUserMenu;
 import io.jmix.flowui.kit.component.usermenu.UserMenuItem;
+import io.micrometer.observation.Observation;
 import org.springframework.lang.Nullable;
 
 import java.util.Objects;
@@ -104,7 +105,10 @@ public abstract class UserMenuAction<A extends UserMenuAction<A, C>, C extends J
     public void actionPerform(Component component) {
         // if standard behaviour
         if (!hasListener(ActionPerformedEvent.class)) {
-            execute();
+            getUiObservationSupport()
+                    .map(support -> support.createActionExecutionObservation(this))
+                    .orElse(Observation.NOOP)
+                    .observe(this::execute);
         } else {
             super.actionPerform(component);
         }

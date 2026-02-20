@@ -8,13 +8,14 @@ import io.jmix.core.Metadata;
 import io.jmix.flowui.Actions;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.UiComponents;
+import io.jmix.flowui.action.ObservableBaseAction;
 import io.jmix.flowui.action.list.ItemTrackingAction;
 import io.jmix.flowui.action.list.ListDataComponentAction;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.grid.TreeDataGrid;
 import io.jmix.flowui.icon.Icons;
+import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
-import io.jmix.flowui.kit.action.BaseAction;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.model.CollectionContainer;
@@ -151,7 +152,7 @@ public class ReportRegionWizardDetailView extends StandardDetailView<ReportRegio
         entityTree = entityTreeComposite.getEntityTree();
         entityTree.expand(rootEntity);
 
-        BaseAction doubleClickAction = new BaseAction("doubleClick")
+        Action doubleClickAction = new ObservableBaseAction<>("doubleClick")
                 .withHandler(event -> addProperty());
         doubleClickAction.setEnabled(isUpdatePermitted());
         entityTree.addAction(doubleClickAction);

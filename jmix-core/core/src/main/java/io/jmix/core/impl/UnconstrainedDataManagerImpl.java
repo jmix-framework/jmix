@@ -23,6 +23,7 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.core.observation.DataObservationSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
@@ -85,6 +86,9 @@ public class UnconstrainedDataManagerImpl implements UnconstrainedDataManager {
     @Autowired
     protected TransactionManagerLocator transactionManagerLocator;
 
+    @Autowired
+    protected DataObservationSupport observationSupport;
+
     @Nullable
     @Override
     public <E> E load(LoadContext<E> context) {
@@ -94,7 +98,8 @@ public class UnconstrainedDataManagerImpl implements UnconstrainedDataManager {
         context.setAccessConstraints(mergeConstraints(context.getAccessConstraints()));
 
         @SuppressWarnings("unchecked")
-        E entity = (E) storage.load(context);
+        E entity = (E) observationSupport.createEntityLoadObservation(metaClass, context.getQuery())
+                .observe(() -> storage.load(context));
 
         if (entity != null)
             readCrossDataStoreReferences(Collections.singletonList(entity), context.getFetchPlan(), metaClass, context.isJoinTransaction());
@@ -109,7 +114,8 @@ public class UnconstrainedDataManagerImpl implements UnconstrainedDataManager {
         context.setAccessConstraints(mergeConstraints(context.getAccessConstraints()));
 
         @SuppressWarnings("unchecked")
-        List<E> entities = (List<E>) storage.loadList(context);
+        List<E> entities = (List<E>) observationSupport.createEntityListLoadObservation(metaClass, context.getQuery())
+                .observe(() -> storage.loadList(context));
 
         readCrossDataStoreReferences(entities, context.getFetchPlan(), metaClass, context.isJoinTransaction());
         return entities;
@@ -122,7 +128,9 @@ public class UnconstrainedDataManagerImpl implements UnconstrainedDataManager {
 
         context.setAccessConstraints(mergeConstraints(context.getAccessConstraints()));
 
-        return storage.getCount(context);
+        //noinspection DataFlowIssue
+        return observationSupport.createEntityCountObservation(metaClass, context.getQuery())
+                .observe(() -> storage.getCount(context));
     }
 
     @Override
@@ -267,21 +275,29 @@ public class UnconstrainedDataManagerImpl implements UnconstrainedDataManager {
 
     protected Set saveContextToStore(String store, SaveContext context) {
         DataStore dataStore = dataStoreFactory.get(store);
-        return dataStore.save(context);
+        //noinspection DataFlowIssue
+        return observationSupport.createEntitiesSaveObservation(context, store)
+                .observe(() -> dataStore.save(context));
     }
 
     @Override
     public List<KeyValueEntity> loadValues(ValueLoadContext context) {
         DataStore store = dataStoreFactory.get(getStoreName(context.getStoreName()));
         context.setAccessConstraints(mergeConstraints(context.getAccessConstraints()));
-        return store.loadValues(context);
+
+        //noinspection DataFlowIssue
+        return observationSupport.createValuesLoadObservation(context)
+                .observe(() -> store.loadValues(context));
     }
 
     @Override
     public long getCount(ValueLoadContext context) {
         DataStore store = dataStoreFactory.get(getStoreName(context.getStoreName()));
         context.setAccessConstraints(mergeConstraints(context.getAccessConstraints()));
-        return store.getCount(context);
+
+        //noinspection DataFlowIssue
+        return observationSupport.createValuesCountObservation(context)
+                .observe(() -> store.getCount(context));
     }
 
     @Override

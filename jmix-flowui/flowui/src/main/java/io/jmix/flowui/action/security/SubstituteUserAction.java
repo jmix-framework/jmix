@@ -29,13 +29,14 @@ import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.DialogAction;
 import io.jmix.flowui.action.ExecutableAction;
+import io.jmix.flowui.action.ObservableBaseAction;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.action.ActionVariant;
-import io.jmix.flowui.kit.action.BaseAction;
 import io.jmix.flowui.util.WebBrowserTools;
 import io.jmix.flowui.view.StandardDetailView;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewRegistry;
+import io.micrometer.observation.Observation;
 import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,7 +61,7 @@ import java.util.function.Consumer;
  * </ol>
  */
 @ActionType(SubstituteUserAction.ID)
-public class SubstituteUserAction extends BaseAction implements ExecutableAction, ApplicationContextAware {
+public class SubstituteUserAction extends ObservableBaseAction<SubstituteUserAction> implements ExecutableAction, ApplicationContextAware {
 
     private static final Logger log = LoggerFactory.getLogger(SubstituteUserAction.class);
 
@@ -126,7 +127,10 @@ public class SubstituteUserAction extends BaseAction implements ExecutableAction
     public void actionPerform(Component component) {
         // if standard behaviour
         if (!hasListener(ActionPerformedEvent.class)) {
-            execute();
+            getUiObservationSupport()
+                    .map(support -> support.createActionExecutionObservation(this))
+                    .orElse(Observation.NOOP)
+                    .observe(this::execute);
         } else {
             super.actionPerform(component);
         }

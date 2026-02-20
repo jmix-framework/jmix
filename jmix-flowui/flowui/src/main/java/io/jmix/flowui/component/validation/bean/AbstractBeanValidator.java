@@ -20,6 +20,7 @@ import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.validation.group.UiComponentChecks;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.exception.CompositeValidationException;
@@ -87,7 +88,8 @@ public class AbstractBeanValidator implements Validator {
             groups = new Class[]{Default.class, UiComponentChecks.class};
         }
 
-        if (metadata.getClass(beanClass).findProperty(beanProperty) != null) {
+        MetaProperty metaProperty = metadata.getClass(beanClass).findProperty(beanProperty);
+        if (metaProperty != null && metaProperty.getDeclaringClass() != null) { // TODO dynmod: implement validation for dynamic attributes
             @SuppressWarnings("unchecked")
             Set<ConstraintViolation> violations = validator.validateValue(beanClass, beanProperty, value, groups);
 

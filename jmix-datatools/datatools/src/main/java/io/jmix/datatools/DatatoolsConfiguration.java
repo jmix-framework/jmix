@@ -16,9 +16,14 @@
 
 package io.jmix.datatools;
 
+import io.jmix.core.Metadata;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.data.DataConfiguration;
+import io.jmix.datatools.datamodel.EngineType;
+import io.jmix.datatools.datamodel.engine.DiagramEngine;
+import io.jmix.datatools.datamodel.engine.plantuml.impl.PlantUmlDiagramEngine;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -29,4 +34,21 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @JmixModule(dependsOn = DataConfiguration.class)
 @EnableTransactionManagement
 public class DatatoolsConfiguration {
+
+    @Bean("datatl_DiagramEngine")
+    public DiagramEngine diagramEngine(Metadata metadata,
+                                       DatatoolsProperties datatoolsProperties) {
+        EngineType engineType = datatoolsProperties.getDataModelDiagram().getEngineType();
+
+        switch (engineType) {
+            case PLANTUML -> {
+                return new PlantUmlDiagramEngine(datatoolsProperties, metadata);
+            }
+            case MERMAID -> {
+                throw new IllegalStateException("Failed to create diagram service bean: " +
+                        "Mermaid support is not yet implemented");
+            }
+            default -> throw new IllegalStateException("Failed to create diagram service bean");
+        }
+    }
 }

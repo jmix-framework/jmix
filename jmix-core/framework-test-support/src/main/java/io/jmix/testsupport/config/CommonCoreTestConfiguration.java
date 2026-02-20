@@ -28,7 +28,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class CommonCoreTestBeans {
+public class CommonCoreTestConfiguration {
 
     @Bean
     public MessageSource messageSource(JmixModules modules, Resources resources) {

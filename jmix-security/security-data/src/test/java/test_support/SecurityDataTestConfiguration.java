@@ -23,10 +23,10 @@ import io.jmix.core.security.UserRepository;
 import io.jmix.eclipselink.EclipselinkConfiguration;
 import io.jmix.security.SecurityConfiguration;
 import io.jmix.security.StandardSecurityConfiguration;
-import io.jmix.testsupport.config.CommonCoreTestBeans;
-import io.jmix.testsupport.config.HsqlMemDataSourceTestBeans;
-import io.jmix.testsupport.config.JpaMainStoreTestBeans;
-import io.jmix.testsupport.config.LiquibaseTestBeans;
+import io.jmix.testsupport.config.CommonCoreTestConfiguration;
+import io.jmix.testsupport.config.HsqlMemDataSourceTestConfiguration;
+import io.jmix.testsupport.config.JpaMainStoreTestConfiguration;
+import io.jmix.testsupport.config.LiquibaseTestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -41,8 +41,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @PropertySource("classpath:/test_support/test-app.properties")
 @JmixModule(dependsOn = {SecurityConfiguration.class, EclipselinkConfiguration.class})
 @Import({SecurityDataTestConfiguration.TestStandardSecurityConfiguration.class,
-        CommonCoreTestBeans.class, HsqlMemDataSourceTestBeans.class,
-        JpaMainStoreTestBeans.class, LiquibaseTestBeans.class})
+        CommonCoreTestConfiguration.class, HsqlMemDataSourceTestConfiguration.class,
+        JpaMainStoreTestConfiguration.class, LiquibaseTestConfiguration.class})
 @EnableJmixDataRepositories
 public class SecurityDataTestConfiguration {
 

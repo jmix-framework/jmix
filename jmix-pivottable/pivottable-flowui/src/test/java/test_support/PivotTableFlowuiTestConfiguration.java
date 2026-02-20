@@ -22,11 +22,11 @@ import io.jmix.data.DataConfiguration;
 import io.jmix.eclipselink.EclipselinkConfiguration;
 import io.jmix.flowui.FlowuiConfiguration;
 import io.jmix.pivottableflowui.PivotTableFlowuiConfiguration;
-import io.jmix.testsupport.config.CommonCoreTestBeans;
+import io.jmix.testsupport.config.CommonCoreTestConfiguration;
 import io.jmix.testsupport.config.CoreSecurityTestConfiguration;
-import io.jmix.testsupport.config.HsqlMemDataSourceTestBeans;
-import io.jmix.testsupport.config.JpaMainStoreTestBeans;
-import io.jmix.testsupport.config.LiquibaseTestBeans;
+import io.jmix.testsupport.config.HsqlMemDataSourceTestConfiguration;
+import io.jmix.testsupport.config.JpaMainStoreTestConfiguration;
+import io.jmix.testsupport.config.LiquibaseTestConfiguration;
 import io.jmix.flowui.testassist.FlowuiServletTestBeans;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -36,8 +36,8 @@ import org.springframework.context.annotation.Import;
 @ComponentScan
 @Import({FlowuiConfiguration.class, CoreConfiguration.class, DataConfiguration.class,
         EclipselinkConfiguration.class, PivotTableFlowuiConfiguration.class,
-        CommonCoreTestBeans.class, HsqlMemDataSourceTestBeans.class,
-        JpaMainStoreTestBeans.class, LiquibaseTestBeans.class,
+        CommonCoreTestConfiguration.class, HsqlMemDataSourceTestConfiguration.class,
+        JpaMainStoreTestConfiguration.class, LiquibaseTestConfiguration.class,
         FlowuiServletTestBeans.class, CoreSecurityTestConfiguration.class})
 @JmixModule
 public class PivotTableFlowuiTestConfiguration {

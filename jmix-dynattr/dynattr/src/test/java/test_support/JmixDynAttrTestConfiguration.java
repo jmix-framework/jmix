@@ -18,9 +18,9 @@ package test_support;
 
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.repository.EnableJmixDataRepositories;
-import io.jmix.testsupport.config.CommonCoreTestBeans;
-import io.jmix.testsupport.config.HsqlEmbeddedDataSourceTestBeans;
-import io.jmix.testsupport.config.JpaMainStoreTestBeans;
+import io.jmix.testsupport.config.CommonCoreTestConfiguration;
+import io.jmix.testsupport.config.HsqlEmbeddedDataSourceTestConfiguration;
+import io.jmix.testsupport.config.JpaMainStoreTestConfiguration;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -31,6 +31,6 @@ import org.springframework.context.annotation.PropertySource;
 @PropertySource("classpath:/test_support/test-app.properties")
 @JmixModule
 @EnableJmixDataRepositories
-@Import({CommonCoreTestBeans.class, HsqlEmbeddedDataSourceTestBeans.class, JpaMainStoreTestBeans.class})
+@Import({CommonCoreTestConfiguration.class, HsqlEmbeddedDataSourceTestConfiguration.class, JpaMainStoreTestConfiguration.class})
 public class JmixDynAttrTestConfiguration {
 }

@@ -20,7 +20,7 @@ import io.jmix.core.CoreConfiguration;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.flowui.FlowuiConfiguration;
 import io.jmix.messagetemplatesflowui.MessageTemplatesFlowuiConfiguration;
-import io.jmix.testsupport.config.CommonCoreTestBeans;
+import io.jmix.testsupport.config.CommonCoreTestConfiguration;
 import io.jmix.testsupport.config.CoreSecurityTestConfiguration;
 import io.jmix.flowui.testassist.FlowuiServletTestBeans;
 import org.springframework.context.annotation.Configuration;
@@ -28,7 +28,7 @@ import org.springframework.context.annotation.Import;
 
 @Configuration
 @Import({FlowuiConfiguration.class, CoreConfiguration.class, MessageTemplatesFlowuiConfiguration.class,
-        CommonCoreTestBeans.class, FlowuiServletTestBeans.class, CoreSecurityTestConfiguration.class})
+        CommonCoreTestConfiguration.class, FlowuiServletTestBeans.class, CoreSecurityTestConfiguration.class})
 @JmixModule
 public class MessageTemplatesFlowuiTestConfiguration {
 }

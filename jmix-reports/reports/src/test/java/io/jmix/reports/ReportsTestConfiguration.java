@@ -30,10 +30,10 @@ import io.jmix.reports.test_support.role.TestResourceRole5;
 import io.jmix.security.SecurityConfiguration;
 import io.jmix.security.role.RoleGrantedAuthorityUtils;
 import io.jmix.securitydata.SecurityDataConfiguration;
-import io.jmix.testsupport.config.CommonCoreTestBeans;
-import io.jmix.testsupport.config.HsqlEmbeddedDataSourceTestBeans;
-import io.jmix.testsupport.config.JpaMainStoreTestBeans;
-import io.jmix.testsupport.config.LiquibaseTestBeans;
+import io.jmix.testsupport.config.CommonCoreTestConfiguration;
+import io.jmix.testsupport.config.HsqlEmbeddedDataSourceTestConfiguration;
+import io.jmix.testsupport.config.JpaMainStoreTestConfiguration;
+import io.jmix.testsupport.config.LiquibaseTestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -52,8 +52,8 @@ import java.util.List;
 @Configuration
 @Import({CoreConfiguration.class, DataConfiguration.class, EclipselinkConfiguration.class, SecurityConfiguration.class,
         SecurityDataConfiguration.class, ReportsConfiguration.class,
-        CommonCoreTestBeans.class, HsqlEmbeddedDataSourceTestBeans.class,
-        JpaMainStoreTestBeans.class, LiquibaseTestBeans.class})
+        CommonCoreTestConfiguration.class, HsqlEmbeddedDataSourceTestConfiguration.class,
+        JpaMainStoreTestConfiguration.class, LiquibaseTestConfiguration.class})
 @PropertySource("classpath:/test_support/test-app.properties")
 @MessageSourceBasenames({"test_support/messages"})
 @EnableWebSecurity

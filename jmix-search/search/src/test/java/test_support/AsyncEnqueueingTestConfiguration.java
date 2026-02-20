@@ -19,35 +19,20 @@ package test_support;
 import io.jmix.core.DataManager;
 import io.jmix.core.Metadata;
 import io.jmix.core.annotation.JmixModule;
-import liquibase.integration.spring.SpringLiquibase;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import io.jmix.testsupport.config.LiquibaseTestConfiguration;
 import org.springframework.context.annotation.*;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-
-import javax.sql.DataSource;
 
 @Configuration
 @JmixModule
 @EnableWebSecurity
-@Import({BaseSearchTestConfiguration.class})
+@Import({BaseSearchTestConfiguration.class, LiquibaseTestConfiguration.class})
 @PropertySource("classpath:/test_support/test-async-enqueueing-app.properties")
 public class AsyncEnqueueingTestConfiguration {
-
-    @Autowired
-    protected AutowireCapableBeanFactory beanFactory;
 
     @Bean
     public TestAutoDetectableIndexDefinitionScope testAutoDetectableIndexDefinitionScope() {
         return TestAutoDetectableIndexDefinitionScope.builder().packages("test_support.indexing").build();
-    }
-
-    @Bean
-    public SpringLiquibase liquibase(DataSource dataSource) {
-        SpringLiquibase liquibase = new SpringLiquibase();
-        liquibase.setDataSource(dataSource);
-        liquibase.setChangeLog("test_support/liquibase/changelog.xml");
-        return liquibase;
     }
 
     @Bean

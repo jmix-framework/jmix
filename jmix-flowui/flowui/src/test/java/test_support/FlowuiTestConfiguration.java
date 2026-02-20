@@ -26,10 +26,10 @@ import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.eclipselink.EclipselinkConfiguration;
 import io.jmix.eclipselink.impl.JmixEclipselinkTransactionManager;
 import io.jmix.flowui.FlowuiConfiguration;
-import io.jmix.testsupport.config.CommonCoreTestBeans;
+import io.jmix.testsupport.config.CommonCoreTestConfiguration;
 import io.jmix.testsupport.config.CoreSecurityTestConfiguration;
-import io.jmix.testsupport.config.HsqlMemDataSourceTestBeans;
-import io.jmix.testsupport.config.JpaMainStoreTestBeans;
+import io.jmix.testsupport.config.HsqlMemDataSourceTestConfiguration;
+import io.jmix.testsupport.config.JpaMainStoreTestConfiguration;
 import io.jmix.flowui.testassist.FlowuiServletTestBeans;
 import jakarta.persistence.EntityManagerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -49,8 +49,8 @@ import javax.sql.DataSource;
 
 @Configuration
 @Import({FlowuiConfiguration.class, EclipselinkConfiguration.class, DataConfiguration.class,
-        CoreConfiguration.class, CommonCoreTestBeans.class,
-        HsqlMemDataSourceTestBeans.class, JpaMainStoreTestBeans.class,
+        CoreConfiguration.class, CommonCoreTestConfiguration.class,
+        HsqlMemDataSourceTestConfiguration.class, JpaMainStoreTestConfiguration.class,
         FlowuiServletTestBeans.class, CoreSecurityTestConfiguration.class})
 @PropertySource("classpath:/test_support/test-flowui-app.properties")
 @JmixModule

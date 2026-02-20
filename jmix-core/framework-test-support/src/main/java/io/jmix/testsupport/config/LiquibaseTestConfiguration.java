@@ -23,7 +23,7 @@ import org.springframework.context.annotation.Configuration;
 import javax.sql.DataSource;
 
 @Configuration
-public class LiquibaseTestBeans {
+public class LiquibaseTestConfiguration {
 
     @Bean("liquibase")
     public SpringLiquibase liquibase(DataSource dataSource) {

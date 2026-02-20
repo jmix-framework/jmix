@@ -26,9 +26,9 @@ import io.jmix.flowui.FlowuiConfiguration;
 import io.jmix.multitenancy.MultitenancyConfiguration;
 import io.jmix.multitenancyflowui.MultitenancyFlowuiConfiguration;
 import io.jmix.security.SecurityConfiguration;
-import io.jmix.testsupport.config.CommonCoreTestBeans;
-import io.jmix.testsupport.config.HsqlMemDataSourceTestBeans;
-import io.jmix.testsupport.config.JpaMainStoreTestBeans;
+import io.jmix.testsupport.config.CommonCoreTestConfiguration;
+import io.jmix.testsupport.config.HsqlMemDataSourceTestConfiguration;
+import io.jmix.testsupport.config.JpaMainStoreTestConfiguration;
 import io.jmix.flowui.testassist.FlowuiServletTestBeans;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -46,8 +46,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @PropertySource("classpath:/test_support/test-app.properties")
 @Import({CoreConfiguration.class, DataConfiguration.class, SecurityConfiguration.class,
         FlowuiConfiguration.class, EclipselinkConfiguration.class,
-        CommonCoreTestBeans.class, HsqlMemDataSourceTestBeans.class,
-        JpaMainStoreTestBeans.class, FlowuiServletTestBeans.class})
+        CommonCoreTestConfiguration.class, HsqlMemDataSourceTestConfiguration.class,
+        JpaMainStoreTestConfiguration.class, FlowuiServletTestBeans.class})
 @JmixModule(dependsOn = {MultitenancyConfiguration.class, MultitenancyFlowuiConfiguration.class})
 @EnableWebSecurity
 public class MultitenancyFlowuiTestConfiguration {

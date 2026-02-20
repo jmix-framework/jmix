@@ -23,7 +23,7 @@ import io.jmix.superset.SupersetConfiguration;
 import io.jmix.superset.SupersetTokenManager;
 import io.jmix.superset.client.cookie.SupersetCookieManager;
 import io.jmix.supersetflowui.SupersetFlowuiConfiguration;
-import io.jmix.testsupport.config.CommonCoreTestBeans;
+import io.jmix.testsupport.config.CommonCoreTestConfiguration;
 import io.jmix.testsupport.config.CoreSecurityTestConfiguration;
 import io.jmix.flowui.testassist.FlowuiServletTestBeans;
 import org.springframework.context.annotation.Bean;
@@ -34,7 +34,7 @@ import org.springframework.context.annotation.PropertySource;
 
 @Configuration
 @Import({FlowuiConfiguration.class, CoreConfiguration.class, SupersetFlowuiConfiguration.class,
-        SupersetConfiguration.class, CommonCoreTestBeans.class,
+        SupersetConfiguration.class, CommonCoreTestConfiguration.class,
         FlowuiServletTestBeans.class, CoreSecurityTestConfiguration.class})
 @PropertySource("classpath:/test_support/application-test.properties")
 @JmixModule(dependsOn = SupersetFlowuiConfiguration.class)

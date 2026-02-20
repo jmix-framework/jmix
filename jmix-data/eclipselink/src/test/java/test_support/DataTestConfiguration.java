@@ -25,10 +25,10 @@ import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.data.persistence.JpqlSortExpressionProvider;
 import io.jmix.eclipselink.EclipselinkConfiguration;
 import io.jmix.eclipselink.impl.JmixEclipselinkTransactionManager;
-import io.jmix.testsupport.config.CommonCoreTestBeans;
+import io.jmix.testsupport.config.CommonCoreTestConfiguration;
 import io.jmix.testsupport.config.CoreSecurityTestConfiguration;
-import io.jmix.testsupport.config.HsqlEmbeddedDataSourceTestBeans;
-import io.jmix.testsupport.config.JpaMainStoreTestBeans;
+import io.jmix.testsupport.config.HsqlEmbeddedDataSourceTestConfiguration;
+import io.jmix.testsupport.config.JpaMainStoreTestConfiguration;
 import jakarta.persistence.EntityManagerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -53,8 +53,8 @@ import javax.sql.DataSource;
 @PropertySource("classpath:/test_support/test-app.properties")
 @EnableJmixDataRepositories
 @JmixModule(dependsOn = EclipselinkConfiguration.class)
-@Import({CommonCoreTestBeans.class, HsqlEmbeddedDataSourceTestBeans.class,
-        JpaMainStoreTestBeans.class, CoreSecurityTestConfiguration.class})
+@Import({CommonCoreTestConfiguration.class, HsqlEmbeddedDataSourceTestConfiguration.class,
+        JpaMainStoreTestConfiguration.class, CoreSecurityTestConfiguration.class})
 public class DataTestConfiguration {
 
     @Bean

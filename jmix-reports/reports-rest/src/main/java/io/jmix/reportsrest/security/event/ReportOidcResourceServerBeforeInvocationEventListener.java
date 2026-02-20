@@ -16,53 +16,21 @@
 
 package io.jmix.reportsrest.security.event;
 
-import io.jmix.core.AccessManager;
-import io.jmix.core.security.SecurityContextHelper;
 import io.jmix.oidc.resourceserver.OidcResourceServerBeforeInvocationEvent;
-import io.jmix.reportsrest.security.accesscontext.ReportRestAccessContext;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
-import org.springframework.util.AntPathMatcher;
-
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.http.HttpServletRequest;
 
 /**
- * A copy of {@link ReportAsResourceServerBeforeInvocationEventListener} that works with OIDC add-on events.
- *
- * TODO get rid of code duplication
+ * A listener for {@link OidcResourceServerBeforeInvocationEvent} that checks "reports.rest.enabled" specific policy
+ * for /rest/reports/** requests, managed by resource server of the OIDC add-on. If the current user
+ * doesn't have this policy then the FORBIDDEN error is thrown.
  */
-public class ReportOidcResourceServerBeforeInvocationEventListener {
-
-    private static final String REPORT_AUTHORIZED_URL = "/rest/reports/**";
-
-    @Autowired
-    protected AccessManager accessManager;
+public class ReportOidcResourceServerBeforeInvocationEventListener extends AbstractReportBeforeInvocationEventListener {
 
     @EventListener(OidcResourceServerBeforeInvocationEvent.class)
     public void doListen(OidcResourceServerBeforeInvocationEvent event) {
-        if (shouldCheckRequest(event.getRequest())) {
-            ReportRestAccessContext reportRestAccessContext = new ReportRestAccessContext();
-            Authentication currentAuthentication = SecurityContextHelper.getAuthentication();
-            try {
-                SecurityContextHelper.setAuthentication(event.getAuthentication());
-                accessManager.applyRegisteredConstraints(reportRestAccessContext);
-            } finally {
-                SecurityContextHelper.setAuthentication(currentAuthentication);
-            }
-
-            if (!reportRestAccessContext.isPermitted()) {
-                event.preventInvocation();
-                event.setErrorCode(HttpStatus.FORBIDDEN.value());
-            }
+        if (!checkAccess(event.getRequest(), event.getAuthentication())) {
+            event.preventInvocation();
+            event.setErrorCode(getForbiddenErrorCode());
         }
-    }
-
-    protected boolean shouldCheckRequest(ServletRequest request) {
-        String requestURI = ((HttpServletRequest) request).getRequestURI();
-        AntPathMatcher antPathMatcher = new AntPathMatcher();
-        return antPathMatcher.match(REPORT_AUTHORIZED_URL, requestURI);
     }
 }

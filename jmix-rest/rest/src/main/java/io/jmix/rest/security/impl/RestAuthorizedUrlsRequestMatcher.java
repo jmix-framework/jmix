@@ -28,6 +28,8 @@ import java.util.List;
 @Component("rest_RestAuthorizedUrlsRequestMatcher")
 public class RestAuthorizedUrlsRequestMatcher {
 
+    private static final AntPathMatcher ANT_PATH_MATCHER = new AntPathMatcher();
+
     private final List<String> restAuthorizedUrls;
 
     public RestAuthorizedUrlsRequestMatcher(RestProperties restProperties) {
@@ -48,10 +50,9 @@ public class RestAuthorizedUrlsRequestMatcher {
     public boolean isAuthorizedUrl(ServletRequest request) {
         String requestURI = ((HttpServletRequest) request).getRequestURI();
         String contextPath = ((HttpServletRequest) request).getContextPath();
-        AntPathMatcher antPathMatcher = new AntPathMatcher();
 
         for (String urlPattern : restAuthorizedUrls) {
-            if (antPathMatcher.match(contextPath + urlPattern, requestURI)) {
+            if (ANT_PATH_MATCHER.match(contextPath + urlPattern, requestURI)) {
                 return true;
             }
         }

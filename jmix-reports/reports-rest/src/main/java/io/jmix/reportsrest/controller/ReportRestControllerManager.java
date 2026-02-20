@@ -26,9 +26,9 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.usersubstitution.CurrentUserSubstitution;
 import io.jmix.reports.ParameterClassResolver;
 import io.jmix.reports.ReportFilter;
+import io.jmix.reports.ReportGroupRepository;
 import io.jmix.reports.ReportLoadContext;
 import io.jmix.reports.ReportRepository;
-import io.jmix.reports.impl.AnnotatedReportGroupHolder;
 import io.jmix.reports.entity.*;
 import io.jmix.reports.exception.FailedToConnectToOpenOfficeException;
 import io.jmix.reports.exception.NoOpenOfficeFreePortsException;
@@ -56,7 +56,7 @@ public class ReportRestControllerManager {
     @Autowired
     protected ReportRepository reportRepository;
     @Autowired
-    protected AnnotatedReportGroupHolder annotatedReportGroupHolder;
+    protected ReportGroupRepository reportGroupRepository;
     @Autowired
     protected ReportRunner reportRunner;
     @Autowired
@@ -73,8 +73,6 @@ public class ReportRestControllerManager {
     protected ParameterClassResolver parameterClassResolver;
     @Autowired
     protected PolicyStore policyStore;
-    @Autowired
-    protected FetchPlans fetchPlans;
     @Autowired
     protected CurrentUserSubstitution currentUserSubstitution;
 
@@ -163,6 +161,7 @@ public class ReportRestControllerManager {
         UUID reportId = getReportIdFromString(entityId);
         Report report = findAccessibleReportById(reportId);
         checkEntityIsNotNull(metadata.getClass(Report.class).getName(), entityId, report);
+        assert report != null;
         return reportRepository.reloadForRunning(report);
     }
 
@@ -338,23 +337,7 @@ public class ReportRestControllerManager {
 
     @Nullable
     protected ReportGroup findReportGroupById(UUID groupId) {
-        ReportGroup group = annotatedReportGroupHolder.getAllGroups().stream()
-                .filter(reportGroup -> Objects.equals(reportGroup.getId(), groupId))
-                .findFirst()
-                .orElse(null);
-        if (group != null) {
-            return group;
-        }
-
-        LoadContext<ReportGroup> loadContext = new LoadContext<>(metadata.getClass(ReportGroup.class));
-        FetchPlan fetchPlan = fetchPlans.builder(ReportGroup.class)
-                .add("id")
-                .add("title")
-                .add("code")
-                .build();
-        loadContext.setFetchPlan(fetchPlan)
-                .setId(groupId);
-        return dataManager.load(loadContext);
+        return reportGroupRepository.loadById(groupId).orElse(null);
     }
 
     protected Object getIdFromString(String entityId, MetaClass metaClass) {

@@ -36,8 +36,8 @@ import java.util.Map;
 public class TestReport {
 
     @DataSetDelegate(name = "data")
-            public ReportDataLoader dataLoader() {
-        return (reportQuery, parentBand, params) ->
+        public ReportDataLoader dataLoader() {
+           return (reportQuery, parentBand, params) ->
                 List.of(Map.of("field1", "value1", "field2", "value2"));
     }
 }

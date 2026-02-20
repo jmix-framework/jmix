@@ -57,6 +57,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import test_support.role.FullAccessRole;
 
 import javax.sql.DataSource;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -170,7 +171,7 @@ public class ReportsRestTestConfiguration {
         return new ResourceRoleProvider() {
             @Override
             @NonNull
-            public java.util.Collection<ResourceRole> getAllRoles() {
+            public Collection<ResourceRole> getAllRoles() {
                 return List.of(role);
             }
 

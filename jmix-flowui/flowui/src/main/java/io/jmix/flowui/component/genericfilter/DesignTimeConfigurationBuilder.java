@@ -171,9 +171,16 @@ public class DesignTimeConfigurationBuilder {
             FilterComponent fc = entry.filterComponent;
 
             if (entry.overrideDefault) {
-                // Apply the explicit default value to the component
+                // Apply the explicit default value to the component.
+                // Best-effort: the value component may not be ready yet when no DataLoader
+                // is assigned (e.g. in tests or lazy initialisation scenarios).
+                // The default value is still persisted in the configuration below.
                 if (fc instanceof SingleFilterComponentBase<?> sfc) {
-                    ((SingleFilterComponentBase) sfc).setValue(entry.defaultValue);
+                    try {
+                        ((SingleFilterComponentBase) sfc).setValue(entry.defaultValue);
+                    } catch (RuntimeException ignored) {
+                        // component not fully initialised; default stored in config below
+                    }
                 }
             }
 

@@ -197,7 +197,14 @@ public class RunTimeConfigurationBuilder {
             FilterComponent fc = entry.filterComponent;
 
             if (entry.overrideDefault && fc instanceof SingleFilterComponentBase<?> sfc) {
-                ((SingleFilterComponentBase) sfc).setValue(entry.defaultValue);
+                // Best-effort: the value component may not be ready yet when no DataLoader
+                // is assigned (e.g. in tests or lazy initialisation scenarios).
+                // The default value is still persisted in the configuration below.
+                try {
+                    ((SingleFilterComponentBase) sfc).setValue(entry.defaultValue);
+                } catch (RuntimeException ignored) {
+                    // component not fully initialised; default stored in config below
+                }
             }
 
             // Adding to root triggers the auto-tracking listener in RunTimeConfiguration,

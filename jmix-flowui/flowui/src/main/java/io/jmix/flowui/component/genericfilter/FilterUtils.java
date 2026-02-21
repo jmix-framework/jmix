@@ -30,6 +30,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.text.WordUtils;
 import org.springframework.lang.Nullable;
 
+@Internal
 public class FilterUtils {
 
     public static String generateConfigurationId(@Nullable String configurationName) {

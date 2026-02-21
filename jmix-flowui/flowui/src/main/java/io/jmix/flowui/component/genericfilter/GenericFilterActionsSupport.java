@@ -16,11 +16,13 @@
 
 package io.jmix.flowui.component.genericfilter;
 
+import io.jmix.core.annotation.Internal;
 import io.jmix.flowui.action.genericfilter.GenericFilterAction;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.delegate.AbstractActionsHolderSupport;
 import io.jmix.flowui.kit.component.dropdownbutton.DropdownButton;
 
+@Internal
 public class GenericFilterActionsSupport extends AbstractActionsHolderSupport<GenericFilter> {
 
     protected final DropdownButton settingsButton;

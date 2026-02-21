@@ -39,6 +39,12 @@ import org.springframework.lang.Nullable;
  * config.setModified(true);   // safe — compiler guarantees this is RunTimeConfiguration
  * }</pre>
  *
+ * <p><b>Jmix 3.0 plan:</b> the mutating methods that are currently also declared (and
+ * deprecated) in {@link Configuration} will be <em>moved exclusively here</em>, and
+ * {@link DesignTimeConfiguration} will stop implementing them altogether.
+ * This will fully restore LSP compliance and eliminate all {@link UnsupportedOperationException}
+ * surprises.
+ *
  * @see Configuration
  * @see RunTimeConfiguration
  */

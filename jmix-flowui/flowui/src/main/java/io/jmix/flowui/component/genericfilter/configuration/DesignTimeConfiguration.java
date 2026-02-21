@@ -28,6 +28,11 @@ import org.springframework.lang.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
+// Note: the mutating methods that throw UnsupportedOperationException below are declared
+// as @Deprecated in the Configuration interface (since 2.8, for removal in 3.0).
+// In Jmix 3.0 those methods will be removed from Configuration and kept only in
+// MutableConfiguration, at which point this class will no longer need to provide
+// throwing stub implementations.
 public class DesignTimeConfiguration implements Configuration {
 
     protected final String id;

@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.component.twincolumn;
 
+import com.vaadin.flow.component.shared.HasTooltip;
 import com.vaadin.flow.data.provider.DataChangeEvent;
 import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.provider.InMemoryDataProvider;
@@ -45,9 +46,9 @@ import org.springframework.lang.Nullable;
 import java.util.Collection;
 
 public class TwinColumn<V> extends JmixTwinColumn<V> implements
-        SupportsItemsContainer<V>, SupportsValueSource<Collection<V>>, SupportsItemsEnum<V>,
+        SupportsValueSource<Collection<V>>, SupportsItemsContainer<V>, SupportsItemsEnum<V>,
         SupportsDataProvider<V>, SupportsValidation<Collection<V>>,
-        HasRequired, ApplicationContextAware, InitializingBean {
+        HasRequired, HasTooltip, ApplicationContextAware, InitializingBean {
 
     protected ApplicationContext applicationContext;
     protected Messages messages;

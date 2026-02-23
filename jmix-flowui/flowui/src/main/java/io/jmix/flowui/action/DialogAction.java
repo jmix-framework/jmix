@@ -72,7 +72,7 @@ public class DialogAction extends SecuredBaseAction {
         }
 
         public Component getIcon() {
-            return icon;
+            return ComponentUtils.copyIcon(icon);
         }
     }
 

@@ -3395,8 +3395,14 @@
     <!-- TwinColumn -->
     <xs:complexType name="twinColumnComponent">
         <xs:complexContent>
-            <xs:extension base="validatableBaseFieldComponent">
+            <xs:extension base="baseComponent">
+                <xs:sequence minOccurs="0">
+                    <xs:element name="tooltip" type="tooltipElement"/>
+                </xs:sequence>
+
                 <xs:attribute name="itemsContainer" type="xs:string"/>
+                <xs:attribute name="itemsEnum" type="xs:string"/>
+
                 <xs:attribute name="selectAllButtonsVisible" type="xs:boolean"/>
                 <xs:attribute name="reorderable" type="xs:boolean"/>
                 <xs:attribute name="itemsColumnLabel" type="resourceString"/>
@@ -3412,6 +3418,7 @@
                 <xs:attributeGroup ref="hasRequired"/>
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasValueAndElement"/>
+                <xs:attributeGroup ref="hasValidation"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

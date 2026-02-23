@@ -20,9 +20,11 @@ import com.vaadin.flow.router.Route;
 import io.jmix.core.Messages;
 import io.jmix.core.SaveContext;
 import io.jmix.flowui.DialogWindows;
+import io.jmix.flowui.Notifications;
 import io.jmix.flowui.action.list.ReadAction;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.textfield.TypedTextField;
+import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.exception.ValidationException;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
@@ -63,8 +65,6 @@ public class RowLevelRoleModelDetailView extends StandardDetailView<RowLevelRole
     @ViewComponent
     private CollectionContainer<RowLevelRoleModel> childRolesDc;
 
-    @Autowired
-    private Messages messages;
     @Autowired(required = false)
     private RolePersistence rolePersistence;
     @Autowired
@@ -75,8 +75,12 @@ public class RowLevelRoleModelDetailView extends StandardDetailView<RowLevelRole
     private UrlParamSerializer urlParamSerializer;
     @Autowired
     private DialogWindows dialogWindows;
+    @Autowired
+    private Notifications notifications;
     @ViewComponent
     private DataContext dataContext;
+    @ViewComponent
+    private MessageBundle messageBundle;
 
     @Subscribe
     public void onInitNewEntity(InitEntityEvent<RowLevelRoleModel> event) {
@@ -100,6 +104,14 @@ public class RowLevelRoleModelDetailView extends StandardDetailView<RowLevelRole
     protected void initExistingEntity(String serializedEntityCode) {
         String code = urlParamSerializer.deserialize(String.class, serializedEntityCode);
         RowLevelRole roleByCode = roleRepository.findRoleByCode(code);
+
+        if (roleByCode == null) {
+            notifications.create(messageBundle.getMessage("error.roleNotFound.message")
+                            .formatted(code))
+                    .withType(Notifications.Type.ERROR)
+                    .show();
+            return;
+        }
 
         RowLevelRoleModel rowLevelRoleModel = roleModelConverter.createRowLevelRoleModel(roleByCode);
 
@@ -130,11 +142,11 @@ public class RowLevelRoleModelDetailView extends StandardDetailView<RowLevelRole
 
     @Subscribe
     public void onBeforeShow(BeforeShowEvent event) {
-        setupRoleReadOnlyMode();
+        // may be 'null' if a role not found by a code
+        setupRoleReadOnlyMode(getEditedEntityOrNull() != null && isDatabaseSource());
     }
 
-    private void setupRoleReadOnlyMode() {
-        boolean isDatabaseSource = isDatabaseSource();
+    private void setupRoleReadOnlyMode(boolean isDatabaseSource) {
         setReadOnly(!isDatabaseSource);
 
         Collection<Action> resourcePoliciesActions = rowLevelPoliciesTable.getActions();
@@ -145,6 +157,15 @@ public class RowLevelRoleModelDetailView extends StandardDetailView<RowLevelRole
         Collection<Action> childRolesActions = childRolesTable.getActions();
         for (Action action : childRolesActions) {
             action.setEnabled(isDatabaseSource);
+        }
+    }
+
+    @Override
+    protected ValidationErrors validateView() {
+        if (isReadOnly()) {
+            return ValidationErrors.none();
+        } else {
+            return super.validateView();
         }
     }
 
@@ -191,13 +212,14 @@ public class RowLevelRoleModelDetailView extends StandardDetailView<RowLevelRole
                 })
                 .anyMatch(rowLevelRole -> rowLevelRole.getCode().equals(value));
         if (exist) {
-            throw new ValidationException(messages.getMessage("io.jmix.securityflowui.view.rowlevelrole/uniqueCode"));
+            throw new ValidationException(messageBundle.getMessage("uniqueCode"));
         }
     }
 
     @Install(target = Target.DATA_CONTEXT)
     private Set<Object> saveDelegate(final SaveContext saveContext) {
-        if (isDatabaseSource()) {
+        // may be 'null' if a role not found by a code
+        if (getEditedEntityOrNull() != null && isDatabaseSource()) {
             getRolePersistence().save(getEditedEntity());
             return Set.of(getEditedEntity());
         } else {

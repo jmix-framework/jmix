@@ -25,6 +25,7 @@ import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -59,6 +60,7 @@ public class ResourceRoleRepositoryImpl implements ResourceRoleRepository {
         }
     }
 
+    @Nullable
     @Override
     public ResourceRole findRoleByCode(String roleCode) {
         return cacheOperations.get(rolesCache, roleCode, () ->

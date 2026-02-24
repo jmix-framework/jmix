@@ -43,13 +43,16 @@ public class TestCoreProperties extends CoreProperties {
                               Duration triggerFilesProcessInterval,
                               boolean roundDecimalValueByFormat,
                               boolean skipNullOrEmptyConditionsByDefault,
-                              boolean instanceNameFallbackEnabled) {
+                              boolean instanceNameFallbackEnabled,
+                              boolean dataObservationEnabled,
+                              boolean useUserInfoForObservation) {
         super(webHostName, webPort, confDir, workDir, tempDir, dbDir, availableLocales,
                 crossDataStoreReferenceLoadingBatchSize, idGenerationForEntitiesInAdditionalDataStoresEnabled,
                 dom4jMaxPoolSize, dom4jMaxBorrowWaitMillis, anonymousAuthenticationTokenKey, defaultFileStorage,
                 entitySerializationTokenRequired, entitySerializationTokenEncryptionKey,
                 legacyFetchPlanSerializationAttributeName, triggerFilesEnabled, triggerFilesProcessInterval,
-                roundDecimalValueByFormat, skipNullOrEmptyConditionsByDefault, instanceNameFallbackEnabled);
+                roundDecimalValueByFormat, skipNullOrEmptyConditionsByDefault, instanceNameFallbackEnabled,
+                dataObservationEnabled, useUserInfoForObservation);
     }
 
     public static Builder builder() {
@@ -78,6 +81,8 @@ public class TestCoreProperties extends CoreProperties {
         boolean roundDecimalValueByFormat = true;
         boolean skipNullOrEmptyConditionsByDefault = false;
         boolean instanceNameFallbackEnabled = true;
+        boolean dataObservationEnabled = false;
+        boolean useUserInfoForObservation = false;
 
         public Builder setWebHostName(String webHostName) {
             this.webHostName = webHostName;
@@ -179,6 +184,16 @@ public class TestCoreProperties extends CoreProperties {
             return this;
         }
 
+        public Builder setDataObservationEnabled(boolean dataObservationEnabled) {
+            this.dataObservationEnabled = dataObservationEnabled;
+            return this;
+        }
+
+        public Builder setUseUserInfoForObservation(boolean useUserInfoForObservation) {
+            this.useUserInfoForObservation = useUserInfoForObservation;
+            return this;
+        }
+
         public TestCoreProperties build() {
             return new TestCoreProperties(
                     this.webHostName,
@@ -201,7 +216,9 @@ public class TestCoreProperties extends CoreProperties {
                     this.triggerFilesProcessInterval,
                     this.roundDecimalValueByFormat,
                     this.skipNullOrEmptyConditionsByDefault,
-                    this.instanceNameFallbackEnabled);
+                    this.instanceNameFallbackEnabled,
+                    this.dataObservationEnabled,
+                    this.useUserInfoForObservation);
         }
     }
 }

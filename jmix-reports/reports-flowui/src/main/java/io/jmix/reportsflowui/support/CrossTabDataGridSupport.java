@@ -72,24 +72,27 @@ public class CrossTabDataGridSupport {
                          CollectionContainer<DataSet> dataSetsDc,
                          InstanceContainer<BandDefinition> bandDefinitionDc) {
         dataSetsDataGrid.addComponentColumn(entity -> {
-            TypedTextField<String> field = uiComponents.create(TypedTextField.class);
-            field.setValue(entity.getName() == null ? field.getEmptyValue() : entity.getName());
-            field.setWidthFull();
-            field.addValueChangeListener(valueChanged -> {
-                entity.setName(valueChanged.getValue());
+                    //noinspection unchecked
+                    TypedTextField<String> field = uiComponents.create(TypedTextField.class);
+                    field.setValue(entity.getName() == null ? field.getEmptyValue() : entity.getName());
+                    field.setWidthFull();
+                    field.addValueChangeListener(valueChanged -> {
+                        entity.setName(valueChanged.getValue());
 
-                // Avoiding bug with not selected edited row
-                dataSetsDc.setItem(entity);
-                dataSetsDataGrid.select(entity);
-            });
+                        // Avoiding bug with not selected edited row
+                        dataSetsDc.setItem(entity);
+                        dataSetsDataGrid.select(entity);
+                    });
 
-            InstanceContainer<DataSet> instanceContainer = dataComponents.createInstanceContainer(DataSet.class);
-            instanceContainer.setItem(entity);
+                    InstanceContainer<DataSet> instanceContainer = dataComponents.createInstanceContainer(DataSet.class);
+                    instanceContainer.setItem(entity);
 
-            field.setValueSource(new ContainerValueSource<>(instanceContainer, "name"));
-            field.setReadOnly(isVerticalOrHorizontalCrossField(bandDefinitionDc, entity) || !isUpdatePermitted());
-            return field;
-        }).setHeader(messages.getMessage(ReportDetailView.class, "bandsTab.dataSetsDataGrid.nameColumn.header"));
+                    field.setValueSource(new ContainerValueSource<>(instanceContainer, "name"));
+                    field.setReadOnly(isVerticalOrHorizontalCrossField(bandDefinitionDc, entity) || !isUpdatePermitted());
+                    return field;
+                })
+                .setKey("nameEditor")
+                .setHeader(messages.getMessage(ReportDetailView.class, "bandsTab.dataSetsDataGrid.nameColumn.header"));
 
         bandDefinitionDc.addItemPropertyChangeListener(e ->
                 onBandDefinitionDcItemPropertyChange(e, dataSetsDataGrid, dataSetsDc, bandDefinitionDc));

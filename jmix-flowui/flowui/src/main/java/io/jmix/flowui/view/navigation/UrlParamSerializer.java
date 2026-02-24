@@ -30,6 +30,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.URI;
 import java.sql.Time;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
@@ -123,6 +124,9 @@ public class UrlParamSerializer {
             return serializePrimitive(value);
 
         } else if (String.class == type) {
+            return serializePrimitive(value);
+
+        } else if (URI.class == type) {
             return serializePrimitive(value);
 
         } else if (java.sql.Date.class == type) {
@@ -292,6 +296,9 @@ public class UrlParamSerializer {
 
             } else if (Integer.class == type) {
                 return ((T) parseInteger(serializedValue));
+
+            } else if (URI.class == type) {
+                return ((T) URI.create(serializedValue));
 
             } else if (LocalDate.class == type) {
                 return ((T) parseLocalDate(serializedValue));

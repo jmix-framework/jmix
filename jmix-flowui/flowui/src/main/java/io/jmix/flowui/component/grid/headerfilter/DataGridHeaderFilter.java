@@ -293,8 +293,8 @@ public class DataGridHeaderFilter extends Composite<HorizontalLayout>
 
     @SuppressWarnings({"unchecked"})
     protected void doCancel() {
-        propertyFilter.setValue(appliedValue);
         propertyFilter.setOperation(appliedOperation);
+        propertyFilter.setValue(appliedValue);
 
         overlay.close();
     }

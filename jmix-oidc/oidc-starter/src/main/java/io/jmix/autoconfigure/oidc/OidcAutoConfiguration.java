@@ -93,9 +93,6 @@ public class OidcAutoConfiguration {
     @ConditionalOnProperty(value = "jmix.oidc.use-default-ui-configuration", havingValue = "true", matchIfMissing = true)
     public static class DefaulOidcVaadinWebSecurity extends OidcVaadinWebSecurity {
 
-        /*
-         * TODO: This bean should customize SecurityFilterChain that is responsible for login to UI via OIDC (VaadinSecurityFilterChainBean)
-         */
         @Bean("oidc_OidcVaadinSecurityFilterChainCustomizer")
         public SecurityFilterChainCustomizer oidcVaadinSecurityFilterChainCustomizer(ClientDetailsSourceSupport clientDetailsSourceSupport,
                                                                                      OidcProperties oidcProperties) {
@@ -154,9 +151,6 @@ public class OidcAutoConfiguration {
             return new JmixJwtAuthenticationConverter(oidcUserMapper, oidcProperties);
         }
 
-        /*
-         * TODO: This bean should customize SecurityFilterChain that is responsible for access via REST API (oidc_JwtSecurityFilterChain)
-         */
         @Bean("oidc_OidcResourceServerSecurityFilterChainCustomizer")
         public SecurityFilterChainCustomizer oidcResourceServerSecurityFilterChainCustomizer(ClientDetailsSourceSupport clientDetailsSourceSupport,
                                                                                              OidcProperties oidcProperties) {

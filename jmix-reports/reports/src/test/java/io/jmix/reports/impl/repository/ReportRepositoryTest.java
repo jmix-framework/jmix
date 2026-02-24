@@ -19,13 +19,14 @@ package io.jmix.reports.impl.repository;
 import io.jmix.core.DataManager;
 import io.jmix.core.security.AccessDeniedException;
 import io.jmix.core.security.SystemAuthenticator;
-import io.jmix.outside_reports.*;
+import io.jmix.outside_reports.CorrectReportGroup;
 import io.jmix.reports.ReportFilter;
 import io.jmix.reports.ReportLoadContext;
 import io.jmix.reports.ReportRepository;
 import io.jmix.reports.ReportsTestConfiguration;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportGroup;
+import io.jmix.reports.entity.ReportOutputType;
 import io.jmix.reports.entity.ReportTemplate;
 import io.jmix.reports.impl.AnnotatedReportGroupHolder;
 import io.jmix.reports.impl.AnnotatedReportHolder;
@@ -42,6 +43,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -246,7 +249,7 @@ public class ReportRepositoryTest {
         ReportFilter reportFilter = new ReportFilter();
         annotatedReportScanner.importReportDefinitions();
 
-        assertThat(systemAuthenticator.withUser("with-no-access-user", () ->reportRepository.getTotalCount(reportFilter)))
+        assertThat(systemAuthenticator.withUser("with-no-access-user", () -> reportRepository.getTotalCount(reportFilter)))
                 .isEqualTo(0);
     }
 
@@ -322,7 +325,7 @@ public class ReportRepositoryTest {
                 .hasMessageContaining("entity");
     }
 
-//
+    //
     @Test
     public void testReloadForRunning() {
         Report savedRuntimeReport = runtimeReportUtil.createAndSaveSimpleRuntimeReport();
@@ -363,5 +366,57 @@ public class ReportRepositoryTest {
         ReportTemplate templateFromLoadedReport = loadedReport.getDefaultTemplate();
 
         assertThat(reportRepository.reloadTemplateForRunning(templateFromLoadedReport)).isEqualTo(templateFromLoadedReport);
+    }
+
+    @Test
+    public void testLoadListByOutputType() {
+        Report report = runtimeReportUtil.constructSimpleRuntimeReport();
+        report.setCode("report-output-type-1");
+        reportRepository.save(report);
+
+        ReportFilter filter = new ReportFilter();
+        filter.setOutputType(ReportOutputType.CSV);
+        ReportLoadContext lc = new ReportLoadContext(filter);
+
+        List<Report> reports = reportRepository.loadList(lc);
+        assertThat(reports).hasSize(1);
+        assertThat(reports.get(0).getCode()).isEqualTo("report-output-type-1");
+
+        filter.setOutputType(ReportOutputType.DOCX);
+        reports = reportRepository.loadList(lc);
+        assertThat(reports).isEmpty();
+    }
+
+    @Test
+    public void testLoadListByOutputTypeWithMultipleTemplates() {
+        Report report = runtimeReportUtil.constructSimpleRuntimeReport();
+        report.setCode("report-multiple-templates");
+
+        ReportTemplate template2 = dataManager.create(ReportTemplate.class);
+        template2.setReport(report);
+        template2.setCode("template2");
+        template2.setReportOutputType(ReportOutputType.XLSX);
+        template2.setName("Template2.xlsx");
+        template2.setContent("""
+                Username, Today
+                ${username},${today}
+                """
+                .getBytes(StandardCharsets.UTF_8)
+        );
+
+        List<ReportTemplate> templates = new ArrayList<>(report.getTemplates());
+        templates.add(template2);
+        templates.add(report.getDefaultTemplate());
+        report.setTemplates(templates);
+        reportRepository.save(report);
+
+        ReportFilter filter = new ReportFilter();
+        filter.setOutputType(ReportOutputType.XLSX);
+        ReportLoadContext lc = new ReportLoadContext(filter);
+
+        List<Report> reports = reportRepository.loadList(lc);
+        // Should return only 1 report even if multiple templates match
+        assertThat(reports).hasSize(1);
+        assertThat(reports.get(0).getCode()).isEqualTo("report-multiple-templates");
     }
 }

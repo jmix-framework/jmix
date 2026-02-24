@@ -120,10 +120,8 @@ public class ReportSecurityManager {
         if (outputType != null) {
             QueryTransformer transformer = queryTransformerFactory.transformer(lc.getQuery().getQueryString());
 
-            String join = "join {E}.templates rtmpl";
-            String where = "rtmpl.reportOutputType = :templateOutputType";
-            transformer.addJoinAndWhere(join, where);
-            transformer.addDistinct(); // because we are joining one-to-many relation
+            String where = "exists (select 1 from {E}.templates t where t.reportOutputType = :templateOutputType)";
+            transformer.addWhere(where);
 
             lc.getQuery().setQueryString(transformer.getResult());
             lc.getQuery().setParameter("templateOutputType", outputType);

@@ -26,12 +26,12 @@ import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
 import com.vaadin.flow.component.tabs.TabSheet;
+import io.jmix.flowui.kit.component.sidepanellayout.JmixSidePanelLayout;
 import io.jmix.flowui.kit.component.gridlayout.JmixGridLayout;
 import io.jmix.flowui.kit.meta.*;
 import io.jmix.flowui.kit.meta.StudioAvailableChildrenInfo.ClassInfo;
 import io.jmix.flowui.kit.meta.StudioAvailableChildrenInfo.TagInfo;
 
-import static io.jmix.flowui.kit.meta.StudioAvailableChildrenInfo.ANY_TAG;
 import static io.jmix.flowui.kit.meta.StudioAvailableChildrenInfo.FLOW_COMPONENT_FQN;
 
 @StudioUiKit
@@ -416,6 +416,51 @@ interface StudioLayouts {
             }
     )
     Accordion accordion();
+
+    @StudioComponent(
+            name = "SidePanelLayout",
+            classFqn = "io.jmix.flowui.component.sidepanellayout.SidePanelLayout",
+            category = "Layouts",
+            xmlElement = "sidePanelLayout",
+            icon = "io/jmix/flowui/kit/meta/icon/layout/sidePanelLayout.svg",
+            properties = {
+                    @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
+                            classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
+                            defaultValue = "AUTO",
+                            options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
+                    @StudioProperty(xmlAttribute = "closeOnOutsideClick",type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "justifySelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.flowui.kit.component.Alignment",
+                            defaultValue = "AUTO",
+                            options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
+                    @StudioProperty(xmlAttribute = "colspan", category = StudioProperty.Category.POSITION, type = StudioPropertyType.INTEGER),
+                    @StudioProperty(xmlAttribute = "css", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "displayAsOverlayOnSmallDevices", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "sidePanelHorizontalMaxSize", category = StudioProperty.Category.SIZE, type = StudioPropertyType.STRING, options = {"AUTO", "100%"}),
+                    @StudioProperty(xmlAttribute = "sidePanelHorizontalMinSize", category = StudioProperty.Category.SIZE, type = StudioPropertyType.STRING, options = {"AUTO", "100%"}),
+                    @StudioProperty(xmlAttribute = "sidePanelHorizontalSize", category = StudioProperty.Category.SIZE, type = StudioPropertyType.STRING, options = {"AUTO", "100%"}),
+                    @StudioProperty(xmlAttribute = "sidePanelOverlay", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "sidePanelPosition", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.flowui.kit.component.sidepanellayout.SidePanelPosition",
+                            defaultValue = "RIGHT",
+                            options = {"LEFT", "RIGHT", "INLINE_START", "INLINE_END", "TOP", "BOTTOM"}),
+                    @StudioProperty(xmlAttribute = "sidePanelVerticalMaxSize", category = StudioProperty.Category.SIZE, type = StudioPropertyType.STRING, options = {"AUTO", "100%"}),
+                    @StudioProperty(xmlAttribute = "sidePanelVerticalMinSize", category = StudioProperty.Category.SIZE, type = StudioPropertyType.STRING, options = {"AUTO", "100%"}),
+                    @StudioProperty(xmlAttribute = "sidePanelVerticalSize", category = StudioProperty.Category.SIZE, type = StudioPropertyType.STRING, options = {"AUTO", "100%"}),
+                    @StudioProperty(xmlAttribute = "height", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = "maxHeight", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
+                    @StudioProperty(xmlAttribute = "maxWidth", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
+                    @StudioProperty(xmlAttribute = "minHeight", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
+                    @StudioProperty(xmlAttribute = "minWidth", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
+                    @StudioProperty(xmlAttribute = "modal", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "overlayAriaLabel", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "visible", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"})
+            }
+    )
+    JmixSidePanelLayout sidePanelLayout();
 
     @StudioComponent(
             name = "FormLayout",

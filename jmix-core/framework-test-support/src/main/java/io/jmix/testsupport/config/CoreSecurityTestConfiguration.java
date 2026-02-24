@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,13 @@
  * limitations under the License.
  */
 
-apply plugin: 'io.jmix'
+package io.jmix.testsupport.config;
 
+import io.jmix.core.security.CoreSecurityConfiguration;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
-group = 'io.jmix.fullcalendar'
-archivesBaseName = 'jmix-fullcalendar-flowui'
-
-dependencies {
-    api project(':core')
-    api project(':flowui')
-    api project(':fullcalendar-flowui-kit')
-
-    testImplementation project(':flowui-test-assist')
-    testImplementation project(':framework-test-support')
-    testImplementation project(':eclipselink-starter')
-    testImplementation 'org.apache.commons:commons-dbcp2'
-
-    testRuntimeOnly 'org.hsqldb:hsqldb'
+@Configuration
+@EnableWebSecurity
+public class CoreSecurityTestConfiguration extends CoreSecurityConfiguration {
 }

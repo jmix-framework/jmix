@@ -24,9 +24,8 @@ import io.jmix.core.annotation.MessageSourceBasenames;
 import io.jmix.search.SearchProperties;
 import io.jmix.search.index.EntityIndexer;
 import io.jmix.search.index.impl.IndexStateRegistry;
-import liquibase.integration.spring.SpringLiquibase;
+import io.jmix.testsupport.config.LiquibaseTestConfiguration;
 import org.apache.http.HttpHost;
-import org.apache.http.client.CredentialsProvider;
 import org.mockito.Mockito;
 import org.opensearch.client.RestClient;
 import org.opensearch.client.json.jackson.JacksonJsonpMapper;
@@ -38,15 +37,12 @@ import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.annotation.*;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
-import javax.net.ssl.SSLContext;
-import javax.sql.DataSource;
-
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.mock;
 
 @Configuration
 @JmixModule
-@Import({BaseSearchTestConfiguration.class})
+@Import({BaseSearchTestConfiguration.class, LiquibaseTestConfiguration.class})
 @PropertySource("classpath:/test_support/test-entity-indexing-app.properties")
 @EnableWebSecurity
 @MessageSourceBasenames({"test_support/messages"})
@@ -58,14 +54,6 @@ public class OpenSearchIndexingTestConfiguration {
     @Bean
     public TestAutoDetectableIndexDefinitionScope testAutoDetectableIndexDefinitionScope() {
         return TestAutoDetectableIndexDefinitionScope.builder().packages("test_support.indexing").build();
-    }
-
-    @Bean
-    public SpringLiquibase liquibase(DataSource dataSource) {
-        SpringLiquibase liquibase = new SpringLiquibase();
-        liquibase.setDataSource(dataSource);
-        liquibase.setChangeLog("test_support/liquibase/changelog.xml");
-        return liquibase;
     }
 
     @Bean
@@ -113,4 +101,3 @@ public class OpenSearchIndexingTestConfiguration {
         return new TestNoopDynAttrMetadata();
     }
 }
-

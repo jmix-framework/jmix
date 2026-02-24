@@ -35,6 +35,7 @@ includeProject('charts-flowui-starter', 'jmix-charts/charts-flowui-starter')
 
 includeProject('core', 'jmix-core/core')
 includeProject('core-starter', 'jmix-core/core-starter')
+includeProject('framework-test-support', 'jmix-core/framework-test-support')
 
 includeProject('data', 'jmix-data/data')
 includeProject('data-autoconfigure', 'jmix-data/data-autoconfigure')

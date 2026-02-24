@@ -65,6 +65,7 @@ dependencies {
 
     testImplementation 'org.springframework:spring-test'
     testImplementation 'org.apache.commons:commons-dbcp2'
+    testImplementation project(':framework-test-support')
     testImplementation project(':eclipselink')
     testImplementation project(':dynattr')
     testImplementation 'org.liquibase:liquibase-core'

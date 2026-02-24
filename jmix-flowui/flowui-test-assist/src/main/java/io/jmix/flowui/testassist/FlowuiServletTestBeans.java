@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,23 @@
  * limitations under the License.
  */
 
-apply plugin: 'io.jmix'
+package io.jmix.flowui.testassist;
 
+import io.jmix.flowui.testassist.vaadin.TestServletContext;
+import jakarta.servlet.ServletContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
-group = 'io.jmix.fullcalendar'
-archivesBaseName = 'jmix-fullcalendar-flowui'
+/**
+ * Provides a test servlet context bean for UI tests.
+ */
+@Configuration
+public class FlowuiServletTestBeans {
 
-dependencies {
-    api project(':core')
-    api project(':flowui')
-    api project(':fullcalendar-flowui-kit')
-
-    testImplementation project(':flowui-test-assist')
-    testImplementation project(':framework-test-support')
-    testImplementation project(':eclipselink-starter')
-    testImplementation 'org.apache.commons:commons-dbcp2'
-
-    testRuntimeOnly 'org.hsqldb:hsqldb'
+    @Bean
+    @Primary
+    public ServletContext servletContext() {
+        return new TestServletContext();
+    }
 }

@@ -25,4 +25,5 @@ dependencies {
     api project(":flowui")
 
     testImplementation project(':flowui-test-assist')
+    testImplementation project(':framework-test-support')
 }

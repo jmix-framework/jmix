@@ -21,6 +21,7 @@ import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.sidepanellayout.SidePanelLayout;
 import io.jmix.flowui.component.sidepanellayout.SidePanelLayoutCloser;
 import io.jmix.flowui.exception.GuiDevelopmentException;
+import io.jmix.flowui.view.View;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import io.jmix.flowui.xml.layout.support.IconLoaderSupport;
 
@@ -50,22 +51,8 @@ public class SidePanelLayoutCloserLoader extends AbstractComponentLoader<SidePan
 
         loadString(element, "sidePanelLayoutId")
                 .ifPresentOrElse(
-                        id -> {
-                            if (getContext() instanceof ComponentContext componentContext) {
-                                componentContext.addPreInitTask(new FindSidePanelLayoutTask(id));
-                            } else if (getContext() instanceof FragmentContext fragmentContext) {
-                                // TODO: pinyazhin, fragment's pre-init
-                                fragmentContext.addInitTask(new FindSidePanelLayoutTask(id));
-                            }
-                        },
-                        () -> {
-                            if (getContext() instanceof ComponentContext componentContext) {
-                                componentContext.addPreInitTask(new FindSidePanelLayoutCloserParentTask());
-                            } else if (getContext() instanceof FragmentContext fragmentContext) {
-                                // TODO: pinyazhin, fragment's pre-init
-                                fragmentContext.addInitTask(new FindSidePanelLayoutCloserParentTask());
-                            }
-                        }
+                        id -> getContext().addPreInitTask(new FindSidePanelLayoutTask(id)),
+                        () -> getContext().addPreInitTask(new FindSidePanelLayoutCloserParentTask())
                 );
     }
 
@@ -83,6 +70,11 @@ public class SidePanelLayoutCloserLoader extends AbstractComponentLoader<SidePan
 
         public FindSidePanelLayoutTask(String sidePanelLayoutId) {
             this.sidePanelLayoutId = sidePanelLayoutId;
+        }
+
+        @Override
+        public void execute(ComponentContext context, View<?> view) {
+            // Do nothing
         }
 
         @Override
@@ -114,6 +106,11 @@ public class SidePanelLayoutCloserLoader extends AbstractComponentLoader<SidePan
     }
 
     protected class FindSidePanelLayoutCloserParentTask implements InitTask {
+
+        @Override
+        public void execute(ComponentContext context, View<?> view) {
+            // Do nothing
+        }
 
         @Override
         public void execute(Context context) {

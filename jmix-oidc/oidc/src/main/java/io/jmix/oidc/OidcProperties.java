@@ -1,10 +1,9 @@
 package io.jmix.oidc;
 
-import jakarta.annotation.Nullable;
+import org.apache.commons.collections4.ListUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
-import java.util.Collections;
 import java.util.List;
 
 @ConfigurationProperties(prefix = "jmix.oidc")
@@ -158,9 +157,9 @@ public class OidcProperties {
                            List<String> apiScopeSecurityFilterChainNames,
                            List<String> uiScopeSecurityFilterChainNames) {
             this.forceApiScopeEnabled = forceApiScopeEnabled;
-            this.apiScopeSecurityFilterChainNames = emptyIfNull(apiScopeSecurityFilterChainNames);
+            this.apiScopeSecurityFilterChainNames = ListUtils.emptyIfNull(apiScopeSecurityFilterChainNames);
             this.forceUiScopeEnabled = forceUiScopeEnabled;
-            this.uiScopeSecurityFilterChainNames = emptyIfNull(uiScopeSecurityFilterChainNames);
+            this.uiScopeSecurityFilterChainNames = ListUtils.emptyIfNull(uiScopeSecurityFilterChainNames);
         }
 
         /**
@@ -190,9 +189,5 @@ public class OidcProperties {
         public List<String> getUiScopeSecurityFilterChainNames() {
             return uiScopeSecurityFilterChainNames;
         }
-    }
-
-    private static <T> List<T> emptyIfNull(@Nullable List<T> list) {
-        return list == null ? Collections.emptyList() : list;
     }
 }

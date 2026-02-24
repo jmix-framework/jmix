@@ -16,11 +16,10 @@
 
 package io.jmix.authserver;
 
-import jakarta.annotation.Nullable;
+import org.apache.commons.collections4.ListUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -237,7 +236,7 @@ public class AuthServerProperties {
         public FilterChain(@DefaultValue("true") boolean forceApiScopeEnabled,
                            List<String> apiScopeSecurityFilterChainNames) {
             this.forceApiScopeEnabled = forceApiScopeEnabled;
-            this.apiScopeSecurityFilterChainNames = emptyIfNull(apiScopeSecurityFilterChainNames);
+            this.apiScopeSecurityFilterChainNames = ListUtils.emptyIfNull(apiScopeSecurityFilterChainNames);
         }
 
         /**
@@ -253,9 +252,5 @@ public class AuthServerProperties {
         public List<String> getApiScopeSecurityFilterChainNames() {
             return apiScopeSecurityFilterChainNames;
         }
-    }
-
-    private static <T> List<T> emptyIfNull(@Nullable List<T> list) {
-        return list == null ? Collections.emptyList() : list;
     }
 }

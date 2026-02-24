@@ -29,6 +29,7 @@ import io.jmix.reports.test_support.AuthenticatedAsSystem;
 import io.jmix.reports.test_support.ReportGroupUtil;
 import io.jmix.reports.test_support.report.DemoReportGroup;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +40,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
+import java.util.UUID;
 
 @ExtendWith({SpringExtension.class, AuthenticatedAsSystem.class})
 @ContextConfiguration(classes = {ReportsTestConfiguration.class})
@@ -54,8 +56,9 @@ public class ReportGroupRepositoryTest {
     @Autowired
     protected SystemAuthenticator systemAuthenticator;
 
+    @BeforeEach
     @AfterEach
-    void tearDown() {
+    void cleanup() {
         reportGroupHolder.clear();
         reportGroupUtil.cleanupDatabaseReportGroups();
     }
@@ -121,6 +124,35 @@ public class ReportGroupRepositoryTest {
                 .withUser("with-no-access-user", () -> reportGroupRepository.loadList(reportGroupLoadContext));
 
         assertThat(reportGroups).size().isEqualTo(0);
+    }
+
+    @Test
+    void testLoadById() {
+        annotatedReportScanner.importGroupDefinitions();
+        ReportGroup runtimeReportGroup = reportGroupUtil.createAndSaveSimpleReportGroup();
+        ReportGroup annotatedReportGroup = reportGroupHolder.getAllGroups().stream()
+                .filter(group -> DemoReportGroup.CODE.equals(group.getCode()))
+                .findFirst()
+                .orElseThrow();
+
+        assertThat(reportGroupRepository.loadById(annotatedReportGroup.getId())).isPresent();
+        assertThat(reportGroupRepository.loadById(runtimeReportGroup.getId())).isPresent();
+        assertThat(reportGroupRepository.loadById(UUID.randomUUID())).isEmpty();
+    }
+
+    @Test
+    void testLoadByIdWithoutRights() {
+        annotatedReportScanner.importGroupDefinitions();
+        ReportGroup runtimeReportGroup = reportGroupUtil.createAndSaveSimpleReportGroup();
+        ReportGroup annotatedReportGroup = reportGroupHolder.getAllGroups().stream()
+                .filter(group -> DemoReportGroup.CODE.equals(group.getCode()))
+                .findFirst()
+                .orElseThrow();
+
+        assertThat(systemAuthenticator.withUser("with-no-access-user",
+                () -> reportGroupRepository.loadById(annotatedReportGroup.getId()))).isEmpty();
+        assertThat(systemAuthenticator.withUser("with-no-access-user",
+                () -> reportGroupRepository.loadById(runtimeReportGroup.getId()))).isEmpty();
     }
 
     @Test

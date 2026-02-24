@@ -81,6 +81,26 @@ public class ReportGroupRepositoryImpl implements ReportGroupRepository {
     }
 
     @Override
+    public Optional<ReportGroup> loadById(UUID reportGroupId) {
+        Preconditions.checkNotNullArgument(reportGroupId, "Report group id should not be null");
+
+        if (!isReadPermitted()) {
+            return Optional.empty();
+        }
+
+        for (ReportGroup group : annotatedReportGroupHolder.getAllGroups()) {
+            if (reportGroupId.equals(group.getId())) {
+                return Optional.of(group);
+            }
+        }
+
+        return dataManager.load(ReportGroup.class)
+                .id(reportGroupId)
+                .fetchPlan(FetchPlan.BASE)
+                .optional();
+    }
+
+    @Override
     public int getTotalCount(ReportGroupFilter filter) {
         if (!isReadPermitted()) {
             return 0;

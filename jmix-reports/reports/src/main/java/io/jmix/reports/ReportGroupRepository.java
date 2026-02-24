@@ -17,7 +17,6 @@
 package io.jmix.reports;
 
 import io.jmix.reports.entity.ReportGroup;
-import org.springframework.lang.Nullable;
 
 import java.util.List;
 import java.util.Optional;
@@ -43,6 +42,14 @@ public interface ReportGroupRepository {
      * @return list of groups
      */
     List<ReportGroup> loadList(ReportGroupLoadContext loadContext);
+
+    /**
+     * Load report group by id.
+     *
+     * @param id report group id
+     * @return optional report group
+     */
+    Optional<ReportGroup> loadById(UUID id);
 
     /**
      * Calculate total count of entities that conform to passed filter.

@@ -932,7 +932,7 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
             return;
         }
 
-        if (item != null) {
+        if (item != null && !(getSelectionModel() instanceof GridNoneSelectionModel)) {
             // have to select clicked item to make action work, otherwise
             // consecutive clicks on the same item deselect it
             // selection from client is mandatory due to programmatic selection ignores selectableProvider

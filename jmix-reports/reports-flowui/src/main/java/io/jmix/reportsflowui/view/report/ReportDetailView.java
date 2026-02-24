@@ -1193,6 +1193,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
         dataGridDecorator.decorate(dataSetsDataGrid, dataSetsDc, bandsDc);
         dataSetsDataGrid
                 .addComponentColumn(this::dataSetTypeColumnValueProvider)
+                .setKey("typeEditor")
                 .setHeader(messageBundle.getMessage("bandsTab.dataSetsDataGrid.typeColumn.header"));
 
         dataSetsDataGrid.getActions().forEach(action -> action.setText(""));

@@ -19,12 +19,14 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 /**
  * Sample UI integration test for the User entity.
  */
 @UiTest
 @SpringBootTest(classes = {${project_classPrefix}Application.class, TabbedModeTestAssistConfiguration.class})
+@ActiveProfiles("test")
 public class UserUiTest {
 
     @Autowired

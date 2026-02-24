@@ -27,6 +27,7 @@ import io.jmix.flowui.Notifications;
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.action.AdjustWhenViewReadOnly;
 import io.jmix.flowui.action.DialogAction;
+import io.jmix.flowui.action.ObservableBaseAction;
 import io.jmix.flowui.action.list.ListDataComponentAction;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.data.BindingState;
@@ -34,7 +35,6 @@ import io.jmix.flowui.data.ContainerDataUnit;
 import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionVariant;
-import io.jmix.flowui.kit.action.BaseAction;
 import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.model.*;
 import io.jmix.reports.app.ParameterPrototype;
@@ -171,13 +171,13 @@ public class RunListEntityReportAction<E> extends ListDataComponentAction<RunLis
 
         Set<E> selected = target.getSelectedItems();
         if (selected.size() > 1) {
-            Action printSelectedAction = new BaseAction("actions.printSelected")
+            Action printSelectedAction = new ObservableBaseAction<>("actions.printSelected")
                     .withVariant(ActionVariant.PRIMARY)
                     .withHandler(event -> printSelected(selected))
                     .withIcon(icons.get(JmixFontIcon.LINES))
                     .withText(messages.getMessage(getClass(), "actions.printSelected"));
 
-            Action printAllAction = new BaseAction("actions.printAll")
+            Action printAllAction = new ObservableBaseAction<>("actions.printAll")
                     .withText(messages.getMessage(getClass(), "actions.printAll"))
                     .withIcon(icons.get(JmixFontIcon.TABLE))
                     .withHandler(event -> printAll());

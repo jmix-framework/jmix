@@ -26,13 +26,14 @@ import com.vaadin.flow.shared.Registration;
 import io.jmix.core.metamodel.datatype.EnumClass;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.querycondition.PropertyCondition;
+import io.jmix.flowui.action.ObservableBaseAction;
 import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.component.filter.SingleFilterComponentBase;
 import io.jmix.flowui.component.textfield.TypedTextField;
-import io.jmix.flowui.kit.action.BaseAction;
 import io.jmix.flowui.kit.component.dropdownbutton.DropdownButton;
 import io.jmix.flowui.kit.component.dropdownbutton.DropdownButtonVariant;
 import io.jmix.flowui.model.DataLoader;
+import io.micrometer.observation.Observation;
 import org.springframework.lang.Nullable;
 
 import java.util.Objects;
@@ -349,7 +350,7 @@ public class PropertyFilter<V> extends SingleFilterComponentBase<V> {
         }
     }
 
-    protected static class OperationChangeAction extends BaseAction {
+    protected static class OperationChangeAction extends ObservableBaseAction<OperationChangeAction> {
 
         protected Operation operation;
         protected BiConsumer<Operation, Boolean> handler;
@@ -363,7 +364,10 @@ public class PropertyFilter<V> extends SingleFilterComponentBase<V> {
 
         @Override
         public void actionPerform(Component component) {
-            handler.accept(operation, true);
+            getUiObservationSupport()
+                    .map(support -> support.createActionExecutionObservation(this))
+                    .orElse(Observation.NOOP)
+                    .observe(() -> handler.accept(operation, true));
         }
     }
 

@@ -25,8 +25,8 @@ import io.jmix.flowui.action.TargetAction;
 import io.jmix.flowui.component.PickerComponent;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.action.ActionVariant;
-import io.jmix.flowui.kit.action.BaseAction;
 import io.jmix.flowui.kit.component.KeyCombination;
+import io.micrometer.observation.Observation;
 
 import org.springframework.lang.Nullable;
 import java.util.Objects;
@@ -73,7 +73,10 @@ public abstract class PickerAction<A extends PickerAction<A, C, V>, C extends Pi
     public void actionPerform(Component component) {
         // if standard behaviour
         if (!hasListener(ActionPerformedEvent.class)) {
-            execute();
+            getUiObservationSupport()
+                    .map(support -> support.createActionExecutionObservation(this))
+                    .orElse(Observation.NOOP)
+                    .observe(this::execute);
         } else {
             super.actionPerform(component);
         }

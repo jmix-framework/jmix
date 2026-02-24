@@ -18,7 +18,6 @@ package io.jmix.bulkeditor.action;
 
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.bulkeditor.view.builder.BulkEditorBuilder;
 import io.jmix.bulkeditor.view.builder.BulkEditors;
 import io.jmix.core.AccessManager;
@@ -31,8 +30,6 @@ import io.jmix.flowui.action.list.SecuredListDataComponentAction;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.data.EntityDataUnit;
 import io.jmix.flowui.icon.Icons;
-import io.jmix.flowui.kit.action.ActionPerformedEvent;
-import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.view.View;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -186,15 +183,6 @@ public class BulkEditAction<E> extends SecuredListDataComponentAction<BulkEditAc
         }
 
         return super.isPermitted();
-    }
-
-    @Override
-    public void actionPerform(Component component) {
-        if (!hasListener(ActionPerformedEvent.class)) {
-            execute();
-        } else {
-            super.actionPerform(component);
-        }
     }
 
     /**

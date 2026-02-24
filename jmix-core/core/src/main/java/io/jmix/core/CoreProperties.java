@@ -16,6 +16,8 @@
 
 package io.jmix.core;
 
+import io.jmix.core.annotation.Experimental;
+import io.micrometer.observation.Observation;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.lang.Nullable;
@@ -118,6 +120,19 @@ public class CoreProperties {
      * */
     boolean instanceNameFallbackEnabled;
 
+    /**
+     * Whether to enable data observation for loading and saving data using {@link UnconstrainedDataManager}.
+     * <p>
+     * When observation is enabled, custom spans are created using the {@link io.micrometer.observation.Observation}.
+     */
+    boolean dataObservationEnabled;
+
+    /**
+     * Whether to include user information about username and tenant ID to root {@link Observation}
+     * as high cardinality values.
+     */
+    boolean useUserInfoForObservation;
+
     public CoreProperties(
             String webHostName,
             String webPort,
@@ -139,7 +154,9 @@ public class CoreProperties {
             @DefaultValue("5000") Duration triggerFilesProcessInterval,
             @DefaultValue("true") boolean roundDecimalValueByFormat,
             @DefaultValue("false") boolean skipNullOrEmptyConditionsByDefault,
-            @DefaultValue("true") boolean instanceNameFallbackEnabled) {
+            @DefaultValue("true") boolean instanceNameFallbackEnabled,
+            @DefaultValue("false") boolean dataObservationEnabled,
+            @DefaultValue("true") boolean useUserInfoForObservation) {
         this.webHostName = webHostName;
         this.webPort = webPort;
         this.confDir = confDir;
@@ -170,6 +187,8 @@ public class CoreProperties {
         this.roundDecimalValueByFormat = roundDecimalValueByFormat;
         this.skipNullOrEmptyConditionsByDefault = skipNullOrEmptyConditionsByDefault;
         this.instanceNameFallbackEnabled = instanceNameFallbackEnabled;
+        this.dataObservationEnabled = dataObservationEnabled;
+        this.useUserInfoForObservation = useUserInfoForObservation;
     }
 
     public String getWebHostName() {
@@ -287,5 +306,21 @@ public class CoreProperties {
      */
     public boolean isInstanceNameFallbackEnabled() {
         return instanceNameFallbackEnabled;
+    }
+
+    /**
+     * @see #dataObservationEnabled
+     */
+    @Experimental
+    public boolean isDataObservationEnabled() {
+        return dataObservationEnabled;
+    }
+
+    /**
+     * @see #useUserInfoForObservation
+     */
+    @Experimental
+    public boolean isUseUserInfoForObservation() {
+        return useUserInfoForObservation;
     }
 }

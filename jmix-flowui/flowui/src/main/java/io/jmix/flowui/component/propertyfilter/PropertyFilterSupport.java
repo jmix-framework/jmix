@@ -184,6 +184,8 @@ public class PropertyFilterSupport {
                 return EnumSet.of(EQUAL, NOT_EQUAL, IS_SET);
             } else if (UUID.class.equals(type) || URI.class.equals(type)) {
                 return EnumSet.of(EQUAL, NOT_EQUAL, IS_SET, IN_LIST, NOT_IN_LIST);
+            } else if (FileRef.class.equals(type)) {
+                return EnumSet.of(IS_SET);
             } else {
                 log.warn("Cannot find predefined PropertyFilter operations for {} datatype. " +
                         "The default set of operations (EQUAL, NOT_EQUAL, IS_SET) will be used", type);
@@ -215,6 +217,8 @@ public class PropertyFilterSupport {
             return CONTAINS;
         } else if (isCollectionDatatype(mpp)) {
             return IS_COLLECTION_EMPTY;
+        } else if (isFileRefDatatype(mpp)) {
+            return IS_SET;
         } else {
             return EQUAL;
         }
@@ -228,6 +232,11 @@ public class PropertyFilterSupport {
     protected boolean isCollectionDatatype(MetaPropertyPath mpp) {
         Range range = mpp.getMetaProperty().getRange();
         return range.isClass() && range.getCardinality().isMany();
+    }
+
+    protected boolean isFileRefDatatype(MetaPropertyPath mpp) {
+        Range range = mpp.getMetaProperty().getRange();
+        return range.isDatatype() && FileRef.class.equals(range.asDatatype().getJavaClass());
     }
 
     public String toPropertyConditionOperation(Operation operation) {

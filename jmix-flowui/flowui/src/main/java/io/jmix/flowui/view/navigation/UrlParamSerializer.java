@@ -298,7 +298,7 @@ public class UrlParamSerializer {
                 return ((T) parseInteger(serializedValue));
 
             } else if (URI.class == type) {
-                return ((T) URI.create(serializedValue));
+                return ((T) parseUri(serializedValue));
 
             } else if (LocalDate.class == type) {
                 return ((T) parseLocalDate(serializedValue));
@@ -426,6 +426,10 @@ public class UrlParamSerializer {
 
     protected Integer parseInteger(String stringValue) {
         return Integer.valueOf(stringValue);
+    }
+
+    protected URI parseUri(String stringValue) {
+        return URI.create(stringValue);
     }
 
     protected Long parseLong(String stringValue) {

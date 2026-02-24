@@ -19,7 +19,6 @@ package io.jmix.autoconfigure.securityresourceserver;
 import io.jmix.core.CoreConfiguration;
 import io.jmix.core.JmixModules;
 import io.jmix.core.security.AuthorizedUrlsProvider;
-import io.jmix.securityresourceserver.authentication.ForceApiSecurityScopePropertiesProvider;
 import io.jmix.securityresourceserver.requestmatcher.AnonymousRequestMatcherProvider;
 import io.jmix.securityresourceserver.requestmatcher.AuthenticatedRequestMatcherProvider;
 import io.jmix.securityresourceserver.requestmatcher.CompositeResourceServerRequestMatcherProvider;
@@ -35,7 +34,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-import org.springframework.core.env.Environment;
 
 import java.util.List;
 
@@ -73,10 +71,5 @@ public class SecurityResourceServerAutoConfiguration {
     LegacyAuthorizedUrlsPatternsProvider legacyAuthorizedUrlsPatternsProvider(
             List<AuthorizedUrlsProvider> authorizedUrlsProviders) {
         return new LegacyAuthorizedUrlsPatternsProvider(authorizedUrlsProviders);
-    }
-
-    @Bean("sec_ForceApiSecurityScopePropertiesProvider")
-    ForceApiSecurityScopePropertiesProvider authDetailsCustomizationSettingsProvider(JmixModules jmixModules, Environment environment) {
-        return new ForceApiSecurityScopePropertiesProvider(jmixModules, environment);
     }
 }

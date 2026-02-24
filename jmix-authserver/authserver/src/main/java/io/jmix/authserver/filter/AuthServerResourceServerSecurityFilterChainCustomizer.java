@@ -22,6 +22,9 @@ import io.jmix.securityresourceserver.authentication.BaseResourceServerSecurityF
 
 import java.util.List;
 
+/**
+ * Customizes Spring Security filter chains for the Resource Server in application with the Auth Server.
+ */
 public class AuthServerResourceServerSecurityFilterChainCustomizer extends BaseResourceServerSecurityFilterChainCustomizer {
 
     protected final AuthServerProperties authServerProperties;

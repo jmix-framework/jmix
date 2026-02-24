@@ -37,6 +37,6 @@ public abstract class BaseClientDetailsSource implements AuthenticationDetailsSo
     }
 
     protected TimeZone getTimeZone() {
-        return clientDetailsSourceSupport.getTimeZone();
+        return TimeZone.getDefault();
     }
 }

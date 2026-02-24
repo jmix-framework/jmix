@@ -1,8 +1,10 @@
 package io.jmix.oidc;
 
+import jakarta.annotation.Nullable;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
+import java.util.Collections;
 import java.util.List;
 
 @ConfigurationProperties(prefix = "jmix.oidc")
@@ -28,7 +30,9 @@ public class OidcProperties {
      */
     JwtAuthenticationConverterConfig jwtAuthenticationConverter;
 
-    //todo javadoc
+    /**
+     * Set of properties to configure Security filter chains
+     */
     FilterChain filterChain;
 
     public OidcProperties(
@@ -121,41 +125,74 @@ public class OidcProperties {
         }
     }
 
-    //todo javadoc
     public static class FilterChain {
 
+        /**
+         * Whether the forced API scope is enabled for Security filter chains provided via {@link apiScopeSecurityFilterChainNames}.
+         */
         boolean forceApiScopeEnabled;
 
+        /**
+         * Whether the forced UI scope is enabled for Security filter chains provided via {@link uiScopeSecurityFilterChainNames}.
+         */
         boolean forceUiScopeEnabled;
 
+        /**
+         * Represents a list of security filter chain names which should be customized
+         * by {@link io.jmix.oidc.filter.OidcResourceServerSecurityFilterChainCustomizer}.
+         *
+         * @see #forceApiScopeEnabled
+         */
         List<String> apiScopeSecurityFilterChainNames;
 
+        /**
+         * Represents a list of security filter chain names which should be customized
+         * by {@link io.jmix.oidc.filter.OidcVaadinSecurityFilterChainCustomizer}.
+         *
+         * @see #forceUiScopeEnabled
+         */
         List<String> uiScopeSecurityFilterChainNames;
 
         public FilterChain(@DefaultValue("true") boolean forceApiScopeEnabled,
                            @DefaultValue("true") boolean forceUiScopeEnabled,
-                           @DefaultValue("oidc_JwtSecurityFilterChain") List<String> apiScopeSecurityFilterChainNames,
-                           @DefaultValue("VaadinSecurityFilterChainBean") List<String> uiScopeSecurityFilterChainNames) {
+                           List<String> apiScopeSecurityFilterChainNames,
+                           List<String> uiScopeSecurityFilterChainNames) {
             this.forceApiScopeEnabled = forceApiScopeEnabled;
-            this.apiScopeSecurityFilterChainNames = apiScopeSecurityFilterChainNames;
+            this.apiScopeSecurityFilterChainNames = emptyIfNull(apiScopeSecurityFilterChainNames);
             this.forceUiScopeEnabled = forceUiScopeEnabled;
-            this.uiScopeSecurityFilterChainNames = uiScopeSecurityFilterChainNames;
+            this.uiScopeSecurityFilterChainNames = emptyIfNull(uiScopeSecurityFilterChainNames);
         }
 
+        /**
+         * @see #forceApiScopeEnabled
+         */
         public boolean isForceApiScopeEnabled() {
             return forceApiScopeEnabled;
         }
 
+        /**
+         * @see #forceUiScopeEnabled
+         */
         public boolean isForceUiScopeEnabled() {
             return forceUiScopeEnabled;
         }
 
+        /**
+         * @see #apiScopeSecurityFilterChainNames
+         */
         public List<String> getApiScopeSecurityFilterChainNames() {
             return apiScopeSecurityFilterChainNames;
         }
 
+        /**
+         * @see #uiScopeSecurityFilterChainNames
+         */
         public List<String> getUiScopeSecurityFilterChainNames() {
             return uiScopeSecurityFilterChainNames;
         }
+    }
+
+    private static <T> List<T> emptyIfNull(@Nullable List<T> list) {
+        return list == null ? Collections.emptyList() : list;
     }
 }

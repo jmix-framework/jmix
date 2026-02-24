@@ -29,6 +29,10 @@ import java.util.List;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
+/**
+ * Customizes Spring Security filter chains for OIDC-based authentication in Vaadin applications.
+ * This customizer ensures that the UI scope is enforced for provided chains.
+ */
 public class OidcVaadinSecurityFilterChainCustomizer extends BaseSecurityFilterChainCustomizer {
 
     private static final Logger log = getLogger(OidcVaadinSecurityFilterChainCustomizer.class);

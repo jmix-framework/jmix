@@ -20,13 +20,27 @@ import org.springframework.security.web.SecurityFilterChain;
 
 import java.util.List;
 
-// todo Implementations are provided by specific modules. Javadoc
+/**
+ * Interface to be implemented by beans that customize Spring Security filter chains.
+ */
 public interface SecurityFilterChainCustomizer {
 
+    /**
+     * Returns the names of the security filter chains that this customizer applies to.
+     */
     List<String> getChainBeanNames();
 
+    /**
+     * Performs customizations to the specified filter chain.
+     *
+     * @param chainName name of the security filter chain
+     * @param chain security filter chain instance
+     */
     void customize(String chainName, SecurityFilterChain chain);
 
+    /**
+     * Whether this customizer is enabled.
+     */
     default boolean isEnabled() {
         return true;
     }

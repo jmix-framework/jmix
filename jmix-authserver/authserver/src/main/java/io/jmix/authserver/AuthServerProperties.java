@@ -16,9 +16,11 @@
 
 package io.jmix.authserver;
 
+import jakarta.annotation.Nullable;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -95,7 +97,9 @@ public class AuthServerProperties {
      */
     String logoutAccessTokenBodyFormParameterName;
 
-    //TODO Javadoc
+    /**
+     * Set of properties to configure Security filter chains
+     */
     FilterChain filterChain;
 
     public AuthServerProperties(
@@ -217,22 +221,41 @@ public class AuthServerProperties {
 
     public static class FilterChain {
 
+        /**
+         * Whether the forced API scope is enabled for Security filter chains provided via {@link apiScopeSecurityFilterChainNames}.
+         */
         boolean forceApiScopeEnabled;
 
+        /**
+         * Represents a list of security filter chain names which should be customized
+         * by {@link io.jmix.authserver.filter.AuthServerResourceServerSecurityFilterChainCustomizer}.
+         *
+         * @see #forceApiScopeEnabled
+         */
         List<String> apiScopeSecurityFilterChainNames;
 
         public FilterChain(@DefaultValue("true") boolean forceApiScopeEnabled,
-                           @DefaultValue("authsr_OpaqueTokenIntrospector") List<String> apiScopeSecurityFilterChainNames) {
+                           List<String> apiScopeSecurityFilterChainNames) {
             this.forceApiScopeEnabled = forceApiScopeEnabled;
-            this.apiScopeSecurityFilterChainNames = apiScopeSecurityFilterChainNames;
+            this.apiScopeSecurityFilterChainNames = emptyIfNull(apiScopeSecurityFilterChainNames);
         }
 
+        /**
+         * @see #forceApiScopeEnabled
+         */
         public boolean isForceApiScopeEnabled() {
             return forceApiScopeEnabled;
         }
 
+        /**
+         * @see #apiScopeSecurityFilterChainNames
+         */
         public List<String> getApiScopeSecurityFilterChainNames() {
             return apiScopeSecurityFilterChainNames;
         }
+    }
+
+    private static <T> List<T> emptyIfNull(@Nullable List<T> list) {
+        return list == null ? Collections.emptyList() : list;
     }
 }

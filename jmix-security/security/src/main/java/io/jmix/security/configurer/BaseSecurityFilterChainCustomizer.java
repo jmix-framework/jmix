@@ -20,6 +20,9 @@ import io.jmix.security.util.ClientDetailsSourceSupport;
 import jakarta.servlet.Filter;
 import org.springframework.security.web.SecurityFilterChain;
 
+/**
+ * Base class for security filter chain customizers.
+ */
 public abstract class BaseSecurityFilterChainCustomizer implements SecurityFilterChainCustomizer {
 
     protected final ClientDetailsSourceSupport clientDetailsSourceSupport;

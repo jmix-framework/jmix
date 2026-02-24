@@ -16,6 +16,7 @@
 
 package io.jmix.security.configurer;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.SmartInitializingSingleton;
 import org.springframework.security.web.SecurityFilterChain;
@@ -26,7 +27,10 @@ import java.util.Map;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
-//TODO javadoc, logs
+/**
+ * Collects all {@link SecurityFilterChainCustomizer} beans and applies them to all security filter chains
+ * declared in corresponding customizer.
+ */
 @Component("sec_SecurityFilterChainCustomizersProcessor")
 public class SecurityFilterChainCustomizersProcessor implements SmartInitializingSingleton {
 
@@ -49,14 +53,19 @@ public class SecurityFilterChainCustomizersProcessor implements SmartInitializin
                 continue;
             }
             List<String> chainBeanNames = customizer.getChainBeanNames();
-            log.info("[IVGA] SecurityFilterChainCustomizer '{}' tries to customize SecurityFilterChain: {}", customizer, chainBeanNames);
+            if (CollectionUtils.isEmpty(chainBeanNames)) {
+                log.debug("SecurityFilterChainCustomizer '{}' has no SecurityFilterChain bean names", customizer);
+                continue;
+            }
+
+            log.debug("SecurityFilterChainCustomizer '{}' tries to customize SecurityFilterChain: {}", customizer, chainBeanNames);
             for (String chainBeanName : chainBeanNames) {
                 SecurityFilterChain chain = chains.get(chainBeanName);
                 if (chain != null) {
-                    log.info("[IVGA] SecurityFilterChain with name '{}' is found", chainBeanName);
+                    log.debug("SecurityFilterChain with name '{}' is found", chainBeanName);
                     customizer.customize(chainBeanName, chain);
                 } else {
-                    log.info("[IVGA] SecurityFilterChain with name '{}' is not found", chainBeanName);
+                    log.debug("SecurityFilterChain with name '{}' is not found", chainBeanName);
                 }
             }
         }

@@ -22,6 +22,10 @@ import io.jmix.securityresourceserver.authentication.BaseResourceServerSecurityF
 
 import java.util.List;
 
+/**
+ * Customizes Spring Security filter chains for the Resource Server in application with the OIDC Provider.
+ * This customizer ensures that the API scope is enforced for provided chains.
+ */
 public class OidcResourceServerSecurityFilterChainCustomizer extends BaseResourceServerSecurityFilterChainCustomizer {
 
     protected final OidcProperties oidcProperties;

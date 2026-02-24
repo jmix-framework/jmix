@@ -17,48 +17,38 @@
 package io.jmix.security.util;
 
 import io.jmix.core.CoreProperties;
-import io.jmix.core.security.DeviceTimeZoneProvider;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.lang.Nullable;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.TimeZone;
 
-//todo Javadoc
+/**
+ * Utility class for {@link io.jmix.core.security.ClientDetails} management
+ */
 @Component("sec_ClientDetailsSourceSupport")
 public class ClientDetailsSourceSupport {
 
-    protected final RequestLocaleProvider requestLocaleProvider;
-    protected final DeviceTimeZoneProvider deviceTimeZoneProvider;
-    protected final CoreProperties coreProperties;
+    @Autowired
+    protected RequestLocaleProvider requestLocaleProvider;
+    @Autowired
+    protected CoreProperties coreProperties;
 
-    public ClientDetailsSourceSupport(RequestLocaleProvider requestLocaleProvider,
-                                      DeviceTimeZoneProvider deviceTimeZoneProvider,
-                                      CoreProperties coreProperties) {
-        this.requestLocaleProvider = requestLocaleProvider;
-        this.deviceTimeZoneProvider = deviceTimeZoneProvider;
-        this.coreProperties = coreProperties;
-    }
-
+    /**
+     * Returns the locale associated with the provided HTTP request. If no locale is specified,
+     * the default locale is returned.
+     *
+     * @param request HTTP request
+     * @return locale
+     */
     public Locale getLocale(HttpServletRequest request) {
         Locale locale = requestLocaleProvider.getLocale(request);
         return locale == null ? getDefaultLocale() : locale;
     }
 
-    public Locale getDefaultLocale() {
+    protected Locale getDefaultLocale() {
         List<Locale> locales = coreProperties.getAvailableLocales();
         return locales.get(0);
-    }
-
-    public TimeZone getTimeZone() {
-        TimeZone deviceTimeZone = getDeviceTimeZone();
-        return deviceTimeZone == null ? TimeZone.getDefault() : deviceTimeZone;
-    }
-
-    @Nullable
-    public TimeZone getDeviceTimeZone() {
-        return deviceTimeZoneProvider.getDeviceTimeZone();
     }
 }

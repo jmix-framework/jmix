@@ -26,6 +26,10 @@ import org.springframework.security.web.SecurityFilterChain;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
+/**
+ * Base class for Resource Server Spring Security filter chain customizers.
+ * Customizers based on this class ensure that the API scope is enforced for provided chains.
+ */
 public abstract class BaseResourceServerSecurityFilterChainCustomizer extends BaseSecurityFilterChainCustomizer {
 
     private static final Logger log = getLogger(BaseResourceServerSecurityFilterChainCustomizer.class);

@@ -22,6 +22,7 @@ import com.vaadin.flow.component.html.AnchorTarget;
 import com.vaadin.flow.function.SerializableConsumer;
 import com.vaadin.flow.server.*;
 import com.vaadin.flow.shared.Registration;
+import jakarta.servlet.http.HttpServletResponse;
 import io.jmix.core.annotation.Internal;
 import org.apache.logging.log4j.util.Strings;
 import org.slf4j.Logger;
@@ -145,31 +146,23 @@ public class JmixFileDownloader extends Composite<Anchor> {
         requestHandler = (session, request, response) -> {
             if (request.getPathInfo().endsWith(identifier)) {
 
-                String type = isViewDocumentRequest ? "inline" : "attachment";
-
-                response.setStatus(200);
-                response.setHeader(
-                        "Content-Disposition",
-                        ContentDisposition.builder(type)
-                                .filename(getFileName(session, request), StandardCharsets.UTF_8)
-                                .build()
-                                .toString());
-                response.setHeader("Cache-Control", "private, max-age=%s".formatted(cacheMaxAgeSec));
-
-                if (isViewDocumentRequest && Strings.isNotEmpty(contentType)) {
-                    response.setContentType(contentType);
-                }
-
                 try {
-                    contentWriter.andThen(this::afterWriteHandler)
-                            .accept(response.getOutputStream());
+                    contentWriter.accept(response.getOutputStream());
                     log.debug("response {} has been sent", response);
                 } catch (IOException | RuntimeException e) {
                     if (!isViewDocumentRequest
                             || fileNotFoundExceptionHandler == null
                             || !fileNotFoundExceptionHandler.test(new FileNotFoundContext(e, response))) {
+
+                        applyErrorHeaders(response);
+
                         // send exception further
-                        throw e;
+                        // UI access is required to correct exception handling using UiExceptionHandlers
+                        getUI().ifPresent(currentUi -> currentUi.access(() -> {
+                            throw new RuntimeException(e);
+                        }));
+
+                        return false;
                     } else {
                         // exception is handled in listener
                         return true;
@@ -177,6 +170,9 @@ public class JmixFileDownloader extends Composite<Anchor> {
                 } finally {
                     response.getOutputStream().close();
                 }
+
+                applySuccessHeaders(session, request, response);
+                afterWriteHandler();
 
                 return true;
             }
@@ -188,12 +184,34 @@ public class JmixFileDownloader extends Composite<Anchor> {
         getContent().setHref("./" + identifier);
     }
 
+    protected void applySuccessHeaders(VaadinSession session, VaadinRequest request, VaadinResponse response) {
+        String type = isViewDocumentRequest ? "inline" : "attachment";
+
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.setHeader(
+                "Content-Disposition",
+                ContentDisposition.builder(type)
+                        .filename(getFileName(session, request), StandardCharsets.UTF_8)
+                        .build()
+                        .toString());
+        response.setHeader("Cache-Control", "private, max-age=%s".formatted(cacheMaxAgeSec));
+
+        if (isViewDocumentRequest && Strings.isNotEmpty(contentType)) {
+            response.setContentType(contentType);
+        }
+    }
+
+    protected void applyErrorHeaders(VaadinResponse response) {
+        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        response.setContentType("text/html; charset=utf-8");
+    }
+
     @Override
     protected void onDetach(DetachEvent detachEvent) {
         getUI().ifPresent(ui -> ui.getSession().removeRequestHandler(requestHandler));
     }
 
-    protected void afterWriteHandler(OutputStream outputStream) {
+    protected void afterWriteHandler() {
         getUI().ifPresent(currentUi -> currentUi.access(this::accessCommand));
     }
 

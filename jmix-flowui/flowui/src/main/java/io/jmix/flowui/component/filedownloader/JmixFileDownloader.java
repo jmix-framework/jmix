@@ -159,6 +159,10 @@ public class JmixFileDownloader extends Composite<Anchor> {
                         // send exception further
                         // UI access is required to correct exception handling using UiExceptionHandlers
                         getUI().ifPresent(currentUi -> currentUi.access(() -> {
+                            // should be removed manually because fileDownloaderRemoveHandler will not be executed
+                            // due to DownloadFinishedEvent will not be published
+                            removeFromParent();
+
                             throw new RuntimeException(e);
                         }));
 

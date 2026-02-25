@@ -20,6 +20,7 @@ import com.vaadin.flow.spring.annotation.VaadinSessionScope;
 import io.jmix.core.CoreConfiguration;
 import io.jmix.datatools.DatatoolsConfiguration;
 import io.jmix.datatoolsflowui.DatatoolsFlowuiConfiguration;
+import io.jmix.datatoolsflowui.DatatoolsUiProperties;
 import io.jmix.datatoolsflowui.datamodel.DataModelDiagramViewSupport;
 import io.jmix.datatoolsflowui.datamodel.DataModelDiagramStorage;
 import io.jmix.datatoolsflowui.datamodel.impl.DataModelDiagramViewSupportImpl;
@@ -45,7 +46,7 @@ public class DatatoolsFlowuiAutoConfiguration {
     @VaadinSessionScope
     @Bean("datatl_DataModelDiagramStorage")
     @ConditionalOnMissingBean
-    public DataModelDiagramStorage dataModelDiagramStorage() {
-        return new InMemoryDataModelDiagramStorage();
+    public DataModelDiagramStorage dataModelDiagramStorage(DatatoolsUiProperties properties) {
+        return new InMemoryDataModelDiagramStorage(properties);
     }
 }

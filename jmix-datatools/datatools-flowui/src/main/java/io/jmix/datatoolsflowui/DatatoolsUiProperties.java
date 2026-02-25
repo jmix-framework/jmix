@@ -18,8 +18,8 @@ package io.jmix.datatoolsflowui;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
-
 import org.springframework.lang.Nullable;
+
 import java.util.List;
 
 @ConfigurationProperties(prefix = "jmix.datatools.ui")
@@ -36,10 +36,17 @@ public class DatatoolsUiProperties {
      */
     EntityInspectorListView entityInspectorListView;
 
+    /**
+     * Properties of data model diagram.
+     */
+    DataModelDiagram dataModelDiagram;
+
     public DatatoolsUiProperties(@DefaultValue("true") boolean entityInfoScriptsEnabled,
-                                 @DefaultValue EntityInspectorListView entityInspectorListView) {
+                                 @DefaultValue EntityInspectorListView entityInspectorListView,
+                                 @DefaultValue DataModelDiagram dataModelDiagram) {
         this.entityInfoScriptsEnabled = entityInfoScriptsEnabled;
         this.entityInspectorListView = entityInspectorListView;
+        this.dataModelDiagram = dataModelDiagram;
     }
 
     /**
@@ -54,6 +61,13 @@ public class DatatoolsUiProperties {
      */
     public EntityInspectorListView getEntityInspectorListView() {
         return entityInspectorListView;
+    }
+
+    /**
+     * @see #dataModelDiagram
+     */
+    public DataModelDiagram getDataModelDiagram() {
+        return dataModelDiagram;
     }
 
     public static class EntityInspectorListView {
@@ -100,6 +114,26 @@ public class DatatoolsUiProperties {
          */
         public boolean isItemsPerPageUnlimitedOptionVisible() {
             return itemsPerPageUnlimitedOptionVisible;
+        }
+    }
+
+    public static class DataModelDiagram {
+
+        /**
+         * Defines the size of the in-memory storage allocated for data model diagrams.
+         * This variable determines the number of diagrams that can be retained in memory at a time.
+         */
+        int inMemoryDataModelDiagramStorageSize;
+
+        public DataModelDiagram(@DefaultValue("5") int inMemoryDataModelDiagramStorageSize) {
+            this.inMemoryDataModelDiagramStorageSize = inMemoryDataModelDiagramStorageSize;
+        }
+
+        /**
+         * @see #inMemoryDataModelDiagramStorageSize
+         */
+        public int getInMemoryDataModelDiagramStorageSize() {
+            return inMemoryDataModelDiagramStorageSize;
         }
     }
 }

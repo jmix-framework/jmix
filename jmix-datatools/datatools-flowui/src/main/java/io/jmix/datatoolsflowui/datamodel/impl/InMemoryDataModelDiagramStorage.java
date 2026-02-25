@@ -16,32 +16,54 @@
 
 package io.jmix.datatoolsflowui.datamodel.impl;
 
-import com.vaadin.flow.spring.annotation.VaadinSessionScope;
+import io.jmix.core.common.util.Preconditions;
+import io.jmix.datatoolsflowui.DatatoolsUiProperties;
 import io.jmix.datatoolsflowui.datamodel.DataModelDiagramStorage;
 import org.springframework.lang.Nullable;
-import org.springframework.stereotype.Component;
 
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class InMemoryDataModelDiagramStorage implements DataModelDiagramStorage {
 
-    protected Map<UUID, byte[]> diagrams = new ConcurrentHashMap<>();
+    protected final Map<UUID, byte[]> diagrams;
+
+    public InMemoryDataModelDiagramStorage(DatatoolsUiProperties properties) {
+        int maxDiagrams = Math.max(1, properties.getDataModelDiagram()
+                .getInMemoryDataModelDiagramStorageSize());
+
+        this.diagrams = Collections.synchronizedMap(
+                new LinkedHashMap<>(maxDiagrams) {
+                    @Override
+                    protected boolean removeEldestEntry(Map.Entry<UUID, byte[]> eldest) {
+                        return size() > maxDiagrams;
+                    }
+                }
+        );
+    }
 
     @Override
     @Nullable
     public byte[] get(UUID id) {
+        Preconditions.checkNotNullArgument(id);
+
         return diagrams.get(id);
     }
 
     @Override
     public void put(UUID id, byte[] diagramData) {
+        Preconditions.checkNotNullArgument(id);
+        Preconditions.checkNotNullArgument(diagramData);
+
         diagrams.put(id, diagramData);
     }
 
     @Override
     public boolean remove(UUID id) {
+        Preconditions.checkNotNullArgument(id);
+
         return diagrams.remove(id) != null;
     }
 

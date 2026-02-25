@@ -29,7 +29,16 @@ public interface DataToolsMinimalAccessRole {
 
     String CODE = "datatools-minimal-access";
 
-    @MenuPolicy(menuIds = "datatl_entityInspectorListView")
-    @ViewPolicy(viewIds = {"datatl_entityInspectorListView", "datatl_entityInspectorDetailView"})
+    @MenuPolicy(menuIds = {
+            "datatl_entityInspectorListView",
+            "datatl_dataModelListView",
+    })
+    @ViewPolicy(viewIds = {
+            "datatl_entityInspectorListView",
+            "datatl_entityInspectorDetailView",
+            "datatl_dataModelListView",
+            "datatl_dataModelDiagramView",
+
+    })
     void views();
 }

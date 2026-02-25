@@ -85,10 +85,10 @@ public class LookupWindowBuilderProcessor extends AbstractWindowBuilderProcessor
         //noinspection unchecked
         LookupView<E> lookupView = (LookupView<E>) view;
 
-        if (builder.isLookupComponentMultiSelect() != null
+        if (builder.getLookupComponentMultiSelect() != null
                 && view instanceof MultiSelectLookupView multiSelectLookupView) {
             multiSelectLookupView.setLookupComponentMultiSelect(
-                    Boolean.TRUE.equals(builder.isLookupComponentMultiSelect()));
+                    Boolean.TRUE.equals(builder.getLookupComponentMultiSelect()));
         }
 
         CollectionContainer<E> container = findContainer(builder);

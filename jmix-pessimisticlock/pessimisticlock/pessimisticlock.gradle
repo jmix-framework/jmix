@@ -24,6 +24,7 @@ archivesBaseName = 'jmix-pessimisticlock'
 dependencies {
     api project(':core')
 
+    testImplementation project(':framework-test-support')
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework:spring-test'
     testImplementation "org.spockframework:spock-core"

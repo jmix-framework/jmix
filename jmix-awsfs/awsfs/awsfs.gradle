@@ -25,6 +25,7 @@ dependencies {
 
     implementation 'software.amazon.awssdk:s3'
 
+    testImplementation project(':framework-test-support')
     testImplementation 'org.springframework:spring-test'
     testImplementation "org.spockframework:spock-core"
     testImplementation "org.spockframework:spock-spring"

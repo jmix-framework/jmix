@@ -18,25 +18,14 @@ package test_support;
 
 import io.jmix.awsfs.AwsFileStorageConfiguration;
 import io.jmix.core.annotation.JmixModule;
-import io.jmix.core.cluster.ClusterApplicationEventChannelSupplier;
-import io.jmix.core.cluster.LocalApplicationEventChannelSupplier;
-import org.springframework.cache.CacheManager;
-import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
-import org.springframework.context.annotation.Bean;
+import io.jmix.testsupport.config.CommonCoreTestConfiguration;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
 
 @Configuration
 @PropertySource("classpath:/test_support/test-app.properties")
 @JmixModule(dependsOn = AwsFileStorageConfiguration.class)
+@Import(CommonCoreTestConfiguration.class)
 public class AwsFileStorageTestConfiguration {
-    @Bean
-    public CacheManager cacheManager() {
-        return new ConcurrentMapCacheManager();
-    }
-
-    @Bean
-    public ClusterApplicationEventChannelSupplier clusterApplicationEventChannelSupplier() {
-        return new LocalApplicationEventChannelSupplier();
-    }
 }

@@ -33,6 +33,7 @@ dependencies {
     compileOnly 'com.microsoft.azure:msal4j'
     compileOnly 'com.google.auth:google-auth-library-oauth2-http'
 
+    testImplementation project(':framework-test-support')
     testImplementation 'org.spockframework:spock-core'
     testImplementation 'org.spockframework:spock-spring'
     testImplementation 'org.junit.jupiter:junit-jupiter-engine'

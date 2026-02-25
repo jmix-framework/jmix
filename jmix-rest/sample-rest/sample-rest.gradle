@@ -39,6 +39,7 @@ dependencies {
     implementation 'jakarta.inject:jakarta.inject-api:2.0.1'
     implementation 'org.apache.commons:commons-dbcp2'
 
+    testImplementation project(':framework-test-support')
     testImplementation('org.springframework.boot:spring-boot-starter-test')
 
     testImplementation 'org.spockframework:spock-core'

@@ -26,6 +26,7 @@ dependencies {
 
     api 'org.freemarker:freemarker'
 
+    testImplementation project(':framework-test-support')
     testImplementation 'org.spockframework:spock-core'
     testImplementation 'org.spockframework:spock-spring'
     testImplementation 'org.springframework.boot:spring-boot-test'

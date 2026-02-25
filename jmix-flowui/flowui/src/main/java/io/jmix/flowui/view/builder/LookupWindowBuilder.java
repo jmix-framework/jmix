@@ -57,7 +57,7 @@ public class LookupWindowBuilder<E, V extends View<?>> extends AbstractWindowBui
     protected ListDataComponent<E> listDataComponent;
     protected HasValue field;
 
-    protected boolean lookupComponentMultiSelect;
+    protected Boolean lookupComponentMultiSelect;
 
     protected boolean fieldCollectionValue = false;
 
@@ -203,9 +203,10 @@ public class LookupWindowBuilder<E, V extends View<?>> extends AbstractWindowBui
      * Sets multi selection mode for the lookup component in the lookup view.
      *
      * @param lookupComponentMultiSelect whether to use multi selection for the lookup component
+     *                                   or {@code null} to use the default selection mode
      * @return this instance for chaining
      */
-    public LookupWindowBuilder<E, V> withLookupComponentMultiSelect(boolean lookupComponentMultiSelect) {
+    public LookupWindowBuilder<E, V> withLookupComponentMultiSelect(@Nullable Boolean lookupComponentMultiSelect) {
         this.lookupComponentMultiSelect = lookupComponentMultiSelect;
         return this;
     }
@@ -302,9 +303,11 @@ public class LookupWindowBuilder<E, V extends View<?>> extends AbstractWindowBui
     }
 
     /**
-     * @return whether to use multi selection for the lookup component
+     * @return whether to use multi selection for the lookup component,
+     * or {@code null} to use the default selection mode
      */
-    public boolean isLookupComponentMultiSelect() {
+    @Nullable
+    public Boolean isLookupComponentMultiSelect() {
         return lookupComponentMultiSelect;
     }
 

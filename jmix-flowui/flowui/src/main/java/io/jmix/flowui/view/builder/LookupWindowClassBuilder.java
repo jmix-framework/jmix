@@ -103,7 +103,7 @@ public class LookupWindowClassBuilder<E, V extends View<?> & LookupView<E>> exte
     }
 
     @Override
-    public LookupWindowClassBuilder<E, V> withLookupComponentMultiSelect(boolean lookupComponentMultiSelect) {
+    public LookupWindowClassBuilder<E, V> withLookupComponentMultiSelect(@Nullable Boolean lookupComponentMultiSelect) {
         super.withLookupComponentMultiSelect(lookupComponentMultiSelect);
         return this;
     }

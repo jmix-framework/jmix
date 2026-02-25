@@ -552,14 +552,14 @@ public interface Dialogs {
          * private UiComponents uiComponents;
          *
          * &#064;Subscribe("usersDataGrid")
-         * public void onUsersDataGridItemDoubleClick(final ItemDoubleClickEvent<User> event) {
+         * public void onUsersDataGridItemDoubleClick(final ItemDoubleClickEvent&lt;User&gt; event) {
          *     User user = event.getItem();
          *     dialogs.createSideDialog()
          *             .withHeaderProvider(this::createHeader)
-         *             .withContentProvider(sideDialog -> {
+         *             .withContentProvider(sideDialog -&gt; {
          *                 FormLayout formLayout = uiComponents.create(FormLayout.class);
          *
-         *                 TypedTextField<String> usernameField = uiComponents.create(TypedTextField.class);
+         *                 TypedTextField&lt;String&gt; usernameField = uiComponents.create(TypedTextField.class);
          *                 usernameField.setValue(user.getUsername());
          *                 usernameField.setReadOnly(true);
          *                 formLayout.addFormItem(usernameField, "Username");

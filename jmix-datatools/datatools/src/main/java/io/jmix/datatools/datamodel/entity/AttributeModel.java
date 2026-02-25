@@ -44,8 +44,6 @@ public class AttributeModel {
 
     private String dbType;
 
-    private Boolean isNullable;
-
     private Boolean isMandatory;
 
     public void setIsMandatory(Boolean isMandatory) {
@@ -54,14 +52,6 @@ public class AttributeModel {
 
     public Boolean getIsMandatory() {
         return isMandatory;
-    }
-
-    public void setIsNullable(Boolean isNullable) {
-        this.isNullable = isNullable;
-    }
-
-    public Boolean getIsNullable() {
-        return isNullable;
     }
 
     public String getDbType() {

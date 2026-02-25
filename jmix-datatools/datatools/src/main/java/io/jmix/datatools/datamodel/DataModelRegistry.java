@@ -354,9 +354,6 @@ public class DataModelRegistry {
                     String typeName = columns.getString("TYPE_NAME");
                     int columnSize = columns.getInt("COLUMN_SIZE");
                     int decimalDigits = columns.getInt("DECIMAL_DIGITS");
-                    if (attributeModel != null) {
-                        attributeModel.setIsNullable(columns.getString("IS_NULLABLE").equals("YES"));
-                    }
 
                     StringBuilder type = new StringBuilder(typeName);
 

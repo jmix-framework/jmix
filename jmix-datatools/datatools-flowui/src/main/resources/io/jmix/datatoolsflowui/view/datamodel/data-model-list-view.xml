@@ -75,7 +75,6 @@
                         <column property="javaType"/>
                         <column property="columnName"/>
                         <column property="dbType" flexGrow="2"/>
-                        <column property="isNullable" textAlign="CENTER" flexGrow="0" autoWidth="true"/>
                         <column property="isMandatory" textAlign="CENTER" flexGrow="0" autoWidth="true"/>
                     </columns>
                 </dataGrid>

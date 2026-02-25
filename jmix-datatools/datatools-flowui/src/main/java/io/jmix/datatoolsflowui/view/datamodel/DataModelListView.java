@@ -307,13 +307,6 @@ public class DataModelListView extends StandardView {
         );
     }
 
-    @Supply(to = "attributeModelsDataGrid.isNullable", subject = "renderer")
-    protected Renderer<AttributeModel> loggedEntityTableManualRenderer() {
-        return new ComponentRenderer<>(entity ->
-                createCheckboxIconByAttributeValue(entity.getIsNullable())
-        );
-    }
-
     protected Component createCheckboxIconByAttributeValue(Boolean attributeValue) {
         return Boolean.TRUE.equals(attributeValue)
                 ? icons.get(JmixFontIcon.CHECK_SQUARE_O)

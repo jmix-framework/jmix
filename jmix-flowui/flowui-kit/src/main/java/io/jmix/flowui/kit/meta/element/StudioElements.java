@@ -30,6 +30,7 @@ import com.vaadin.flow.component.shared.Tooltip;
 import com.vaadin.flow.component.tabs.Tab;
 import io.jmix.flowui.kit.component.dropdownbutton.DropdownButtonItem;
 import io.jmix.flowui.kit.component.loginform.JmixLoginI18n;
+import io.jmix.flowui.kit.component.twincolumn.JmixTwinColumn;
 import io.jmix.flowui.kit.component.usermenu.UserMenuItem;
 import io.jmix.flowui.kit.meta.*;
 import io.jmix.flowui.kit.meta.GenericResolvingInfo.ResolvingStrategy;
@@ -728,6 +729,7 @@ interface StudioElements {
                     "com.vaadin.flow.component.icon.FontIcon",
                     "io.jmix.flowui.component.textfield.JmixBigDecimalField",
                     "io.jmix.flowui.kit.component.button.JmixButton",
+                    "io.jmix.flowui.kit.component.twincolumn.JmixTwinColumn",
                     "io.jmix.flowui.component.checkboxgroup.JmixCheckboxGroup",
                     "io.jmix.flowui.component.checkbox.JmixCheckbox",
                     "io.jmix.flowui.component.codeeditor.CodeEditor",

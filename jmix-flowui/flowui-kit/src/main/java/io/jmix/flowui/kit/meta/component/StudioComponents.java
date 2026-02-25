@@ -3563,6 +3563,14 @@ interface StudioComponents {
                     @StudioProperty(xmlAttribute = "visible", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
             },
+            availableChildren = @StudioAvailableChildrenInfo(
+                    availableTags = {
+                            @StudioAvailableChildrenInfo.TagInfo(
+                                    qualifiedName = "tooltip",
+                                    maxCount = 1
+                            )
+                    }
+            ),
             propertiesBindings = {
                     @StudioPropertiesBinding(
                             source = "dataContainer",

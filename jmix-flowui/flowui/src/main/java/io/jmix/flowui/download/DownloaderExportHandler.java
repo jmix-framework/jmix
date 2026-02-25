@@ -17,9 +17,8 @@
 package io.jmix.flowui.download;
 
 import com.google.common.base.Strings;
-import com.vaadin.flow.server.VaadinRequest;
+import com.vaadin.flow.server.HttpStatusCode;
 import com.vaadin.flow.server.VaadinResponse;
-import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.server.streams.AbstractDownloadHandler;
 import com.vaadin.flow.server.streams.DownloadEvent;
 import com.vaadin.flow.server.streams.TransferProgressListener;
@@ -71,25 +70,9 @@ public class DownloaderExportHandler extends AbstractDownloadHandler<DownloaderE
         event.setFileName(fileName);
         event.setContentLength(-1);
 
-        String type = isInline() ? "inline" : "attachment";
-
         VaadinResponse response = event.getResponse();
-        response.setStatus(200);
-        response.setHeader(
-                "Content-Disposition",
-                ContentDisposition.builder(type)
-                        .filename(fileName, StandardCharsets.UTF_8)
-                        .build()
-                        .toString());
-        response.setHeader("Cache-Control", "private, max-age=%s"
-                .formatted(downloadContext.cacheMaxAgeSec()));
-
-        if (isInline() && !Strings.isNullOrEmpty(contentType)) {
-            event.setContentType(contentType);
-        }
-
-        try (OutputStream outputStream = event.getOutputStream();
-             InputStream inputStream = downloadContext.dataProvider().getStream()) {
+        try (InputStream inputStream = downloadContext.dataProvider().getStream();
+             OutputStream outputStream = event.getOutputStream()) {
             // Write data to the output stream
             TransferUtil.transfer(inputStream, outputStream,
                     getTransferContext(event), getListeners());
@@ -97,11 +80,24 @@ public class DownloaderExportHandler extends AbstractDownloadHandler<DownloaderE
             if (!isInline()
                     || fileNotFoundExceptionHandler == null
                     || !fileNotFoundExceptionHandler.test(new FileNotFoundContext(e, response))) {
+                applyErrorHeaders(event);
+
                 // send exception further
-                throw e;
+                // UI access is required to correct exception handling using UiExceptionHandlers
+                event.getUI().access(() -> {
+                    throw new RuntimeException(e);
+                });
+
+                return;
             }
         } finally {
             response.getOutputStream().close();
+        }
+
+        applySuccessHeaders(event, fileName);
+
+        if (isInline() && !Strings.isNullOrEmpty(contentType)) {
+            event.setContentType(contentType);
         }
 
         event.getUI().access(() -> {
@@ -113,6 +109,26 @@ public class DownloaderExportHandler extends AbstractDownloadHandler<DownloaderE
                 ));
             }
         });
+    }
+
+    protected void applyErrorHeaders(DownloadEvent event) {
+        VaadinResponse response = event.getResponse();
+        response.setStatus(HttpStatusCode.NOT_FOUND.getCode());
+    }
+
+    protected void applySuccessHeaders(DownloadEvent event, String fileName) {
+        String type = isInline() ? "inline" : "attachment";
+
+        VaadinResponse response = event.getResponse();
+        response.setStatus(HttpStatusCode.OK.getCode());
+        response.setHeader(
+                "Content-Disposition",
+                ContentDisposition.builder(type)
+                        .filename(fileName, StandardCharsets.UTF_8)
+                        .build()
+                        .toString());
+        response.setHeader("Cache-Control", "private, max-age=%s"
+                .formatted(downloadContext.cacheMaxAgeSec()));
     }
 
     @Override

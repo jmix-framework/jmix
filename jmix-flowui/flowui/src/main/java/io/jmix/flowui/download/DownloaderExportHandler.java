@@ -85,6 +85,7 @@ public class DownloaderExportHandler extends AbstractDownloadHandler<DownloaderE
                 // send exception further
                 // UI access is required to correct exception handling using UiExceptionHandlers
                 event.getUI().access(() -> {
+                    event.getOwningElement().removeFromParent();
                     throw new RuntimeException(e);
                 });
 

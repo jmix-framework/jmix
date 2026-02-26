@@ -319,6 +319,14 @@ public class FileStorageUploadField extends JmixFileStorageUploadField<FileStora
         }
     }
 
+    protected void checkFileExistsInStorage(FileRef value) {
+        checkFileStorageInitialized();
+        if (!fileStorage.fileExists(value)) {
+            // exception will be handled by FileNotExistsExceptionHandler
+            throw new FileStorageException(FileStorageException.Type.FILE_NOT_FOUND, value.toString());
+        }
+    }
+
     protected void onFileNameClick(ClickEvent<?> clickEvent) {
         if (!isEnabled()) {
             return;
@@ -326,6 +334,7 @@ public class FileStorageUploadField extends JmixFileStorageUploadField<FileStora
 
         FileRef value = getValue();
         if (value != null) {
+            checkFileExistsInStorage(value);
             downloader.download(value);
         }
     }

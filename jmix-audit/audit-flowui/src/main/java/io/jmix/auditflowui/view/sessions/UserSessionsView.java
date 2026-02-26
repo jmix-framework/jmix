@@ -18,6 +18,7 @@ package io.jmix.auditflowui.view.sessions;
 
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.data.renderer.TextRenderer;
@@ -27,6 +28,7 @@ import com.vaadin.flow.server.VaadinSession;
 import io.jmix.audit.UserSessions;
 import io.jmix.audit.entity.EntityLogItem;
 import io.jmix.audit.entity.UserSession;
+import io.jmix.core.LoadContext;
 import io.jmix.core.Messages;
 import io.jmix.core.Sort;
 import io.jmix.core.entity.EntityValues;
@@ -35,6 +37,8 @@ import io.jmix.flowui.component.datepicker.TypedDatePicker;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.timepicker.TypedTimePicker;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
+import io.jmix.flowui.model.CollectionContainer;
+import io.jmix.flowui.model.CollectionContainer.CollectionChangeEvent;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.sys.SessionHolder;
 import io.jmix.flowui.view.*;
@@ -71,6 +75,9 @@ public class UserSessionsView extends StandardListView<EntityLogItem> {
     @ViewComponent
     protected TypedTimePicker<LocalTime> lastRequestTimeTo;
     @ViewComponent
+    protected Span sessionCount;
+
+    @ViewComponent
     protected CollectionLoader<UserSession> userSessionsDl;
 
     @Autowired
@@ -82,45 +89,48 @@ public class UserSessionsView extends StandardListView<EntityLogItem> {
     @Autowired
     protected SessionHolder sessionHolder;
 
-    @Subscribe
-    protected void onInit(InitEvent event) {
-        userSessionsDl.setLoadDelegate(loadContext -> {
-            Stream<UserSession> sessions = userSessions.sessions();
-            if (userName.getValue() != null) {
-                sessions = sessions.filter(o -> o.getPrincipalName().toLowerCase().contains(userName.getValue()));
-            }
-            if (lastRequestDateFrom.getTypedValue() != null || lastRequestTimeFrom.getTypedValue() != null) {
+    @Install(to = "userSessionsDl", target = Target.DATA_LOADER)
+    protected List<UserSession> userSessionsDlLoadDelegate(LoadContext<UserSession> loadContext) {
+        Stream<UserSession> sessions = userSessions.sessions();
+        if (userName.getValue() != null) {
+            sessions = sessions.filter(o -> o.getPrincipalName().toLowerCase().contains(userName.getValue()));
+        }
+        if (lastRequestDateFrom.getTypedValue() != null || lastRequestTimeFrom.getTypedValue() != null) {
 
-                LocalDate afterDate = lastRequestDateFrom.getTypedValue() != null ? lastRequestDateFrom.getTypedValue() :
-                        LocalDate.now();
-                LocalTime afterTime = lastRequestTimeFrom.getTypedValue() != null ? lastRequestTimeFrom.getTypedValue() :
-                        LocalTime.MIN;
-                LocalDateTime afterDateTime = LocalDateTime.of(afterDate, afterTime);
+            LocalDate afterDate = lastRequestDateFrom.getTypedValue() != null ? lastRequestDateFrom.getTypedValue() :
+                    LocalDate.now();
+            LocalTime afterTime = lastRequestTimeFrom.getTypedValue() != null ? lastRequestTimeFrom.getTypedValue() :
+                    LocalTime.MIN;
+            LocalDateTime afterDateTime = LocalDateTime.of(afterDate, afterTime);
 
-                sessions = sessions.filter(o -> o.getLastRequest().after(Date
-                        .from(afterDateTime.atZone(ZoneId.systemDefault()).toInstant())));
+            sessions = sessions.filter(o -> o.getLastRequest().after(Date
+                    .from(afterDateTime.atZone(ZoneId.systemDefault()).toInstant())));
+        }
+        if (lastRequestDateTo.getValue() != null || lastRequestTimeTo.getTypedValue() != null) {
+            LocalDate beforeDate = lastRequestDateTo.getTypedValue() != null ? lastRequestDateTo.getTypedValue() :
+                    LocalDate.now();
+            LocalTime beforeTime = lastRequestTimeTo.getTypedValue() != null ? lastRequestTimeTo.getTypedValue() :
+                    LocalTime.MAX;
+            LocalDateTime beforeDateTime = LocalDateTime.of(beforeDate, beforeTime);
+            sessions = sessions.filter(o -> o.getLastRequest().before(Date
+                    .from(beforeDateTime.atZone(ZoneId.systemDefault()).toInstant())));
+        }
+        Sort sort = userSessionsDl.getSort();
+        if (sort != null) {
+            for (Sort.Order order : sort.getOrders()) {
+                Comparator<Object> comparator = Comparator.comparing(userSession ->
+                        Objects.requireNonNull(EntityValues.getValue(userSession, order.getProperty())));
+                if (order.getDirection() == Sort.Direction.DESC)
+                    comparator = comparator.reversed();
+                sessions = sessions.sorted(comparator);
             }
-            if (lastRequestDateTo.getValue() != null || lastRequestTimeTo.getTypedValue() != null) {
-                LocalDate beforeDate = lastRequestDateTo.getTypedValue() != null ? lastRequestDateTo.getTypedValue() :
-                        LocalDate.now();
-                LocalTime beforeTime = lastRequestTimeTo.getTypedValue() != null ? lastRequestTimeTo.getTypedValue() :
-                        LocalTime.MAX;
-                LocalDateTime beforeDateTime = LocalDateTime.of(beforeDate, beforeTime);
-                sessions = sessions.filter(o -> o.getLastRequest().before(Date
-                        .from(beforeDateTime.atZone(ZoneId.systemDefault()).toInstant())));
-            }
-            Sort sort = userSessionsDl.getSort();
-            if (sort != null) {
-                for (Sort.Order order : sort.getOrders()) {
-                    Comparator<Object> comparator = Comparator.comparing(userSession ->
-                            Objects.requireNonNull(EntityValues.getValue(userSession, order.getProperty())));
-                    if (order.getDirection() == Sort.Direction.DESC)
-                        comparator = comparator.reversed();
-                    sessions = sessions.sorted(comparator);
-                }
-            }
-            return sessions.collect(Collectors.toList());
-        });
+        }
+        return sessions.collect(Collectors.toList());
+    }
+
+    @Subscribe(id = "userSessionsDc", target = Target.DATA_CONTAINER)
+    public void onUserSessionsDcCollectionChange(final CollectionChangeEvent<UserSession> event) {
+        sessionCount.setText(event.getSource().getItems().size() + "");
     }
 
     @Subscribe("sessionsTable.expire")

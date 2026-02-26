@@ -38,19 +38,25 @@
                        label="msg://nameField"/>
             <div classNames="datetime-picker-container">
                 <datePicker id="lastRequestDateFrom" datatype="localDate"
-                                label="msg://lastRequestDateFrom"/>
+                            label="msg://lastRequestDateFrom"/>
                 <timePicker id="lastRequestTimeFrom" datatype="localTime"/>
             </div>
             <div classNames="datetime-picker-container">
                 <datePicker id="lastRequestDateTo" datatype="localDate"
-                                label="msg://lastRequestDateTo"/>
+                            label="msg://lastRequestDateTo"/>
                 <timePicker id="lastRequestTimeTo" datatype="localTime"/>
             </div>
             <button id="clearButton" text="msg://clear" icon="ERASER"/>
         </formLayout>
-        <hbox id="buttonsPanel" classNames="buttons-panel">
-            <button id="refreshBtn" action="sessionsTable.refresh"/>
-            <button id="expireBtn" action="sessionsTable.expire"/>
+        <hbox id="buttonsPanel" classNames="buttons-panel" alignItems="CENTER">
+            <startSlot>
+                <button id="refreshBtn" action="sessionsTable.refresh"/>
+                <button id="expireBtn" action="sessionsTable.expire"/>
+            </startSlot>
+            <endSlot>
+                <span id="sessionCountTitle" text="msg://sessionCount.title"/>
+                <span id="sessionCount"/>
+            </endSlot>
         </hbox>
         <dataGrid id="sessionsTable"
                   minHeight="20em"

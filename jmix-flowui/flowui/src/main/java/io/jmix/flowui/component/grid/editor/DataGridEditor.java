@@ -128,9 +128,22 @@ public interface DataGridEditor<T> extends Editor<T> {
      * Sets a callback function that is applied to configure edit components used in the editor.
      * This method can be used to customize the behavior or attributes of the components.
      *
-     * @param editComponentConfigurer a callback function that accepts a {@code Component}
-     *                                instance and applies desired configurations to it.
+     * @param editComponentConfigurer a callback function that accepts a {@link ComponentConfigurerContext}
+     *                                instance and applies desired configurations to a corresponding component.
      *                                Can be {@code null} to remove.
      */
-    void setEditComponentConfigurer(@Nullable Consumer<Component> editComponentConfigurer);
+    void setEditComponentConfigurer(@Nullable Consumer<ComponentConfigurerContext<T>> editComponentConfigurer);
+
+    /**
+     * Represents the context used for configuring an editor component associated with a specific
+     * property of a grid item. This class serves as a container for carrying information needed
+     * during the configuration of an editor component.
+     *
+     * @param <T>           the type of the grid item being edited
+     * @param item          the item being edited in the grid
+     * @param property      the property of the item that the editor component is bound to
+     * @param editComponent the editor component associated with the specified property
+     */
+    record ComponentConfigurerContext<T>(T item, String property, Component editComponent) {
+    }
 }

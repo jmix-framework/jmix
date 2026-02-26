@@ -70,6 +70,7 @@ public class DataGridEditorImpl<T> extends AbstractGridExtension<T>
 
     protected Consumer<StatusContext<?>> defaultComponentStatusHandler;
     protected Consumer<ValidationErrors> validationErrorsHandler;
+    protected Consumer<Component> editComponentConfigurer;
 
     protected T edited;
     protected boolean buffered;
@@ -449,6 +450,10 @@ public class DataGridEditorImpl<T> extends AbstractGridExtension<T>
 
             Component editComponent = generator.apply(generationContext);
 
+            if (editComponentConfigurer != null) {
+                editComponentConfigurer.accept(editComponent);
+            }
+
             if (isBuffered()) {
                 registerEditComponent(column, editComponent);
             }
@@ -482,6 +487,11 @@ public class DataGridEditorImpl<T> extends AbstractGridExtension<T>
     @Override
     public void setValidationErrorsHandler(@Nullable Consumer<ValidationErrors> validationErrorsHandler) {
         this.validationErrorsHandler = validationErrorsHandler;
+    }
+
+    @Override
+    public void setEditComponentConfigurer(@Nullable Consumer<Component> editComponentConfigurer) {
+        this.editComponentConfigurer = editComponentConfigurer;
     }
 
     protected void registerEditComponent(Grid.Column<T> column, Component editComponent) {

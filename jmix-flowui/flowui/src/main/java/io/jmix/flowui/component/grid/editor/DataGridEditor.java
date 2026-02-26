@@ -123,4 +123,14 @@ public interface DataGridEditor<T> extends Editor<T> {
      * @see #setBuffered(boolean)
      */
     void setValidationErrorsHandler(@Nullable Consumer<ValidationErrors> validationErrorsHandler);
+
+    /**
+     * Sets a callback function that is applied to configure edit components used in the editor.
+     * This method can be used to customize the behavior or attributes of the components.
+     *
+     * @param editComponentConfigurer a callback function that accepts a {@code Component}
+     *                                instance and applies desired configurations to it.
+     *                                Can be {@code null} to remove.
+     */
+    void setEditComponentConfigurer(@Nullable Consumer<Component> editComponentConfigurer);
 }

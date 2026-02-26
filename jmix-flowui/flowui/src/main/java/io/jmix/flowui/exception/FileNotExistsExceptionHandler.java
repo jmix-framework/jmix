@@ -20,9 +20,12 @@ import io.jmix.core.FileStorageException;
 import io.jmix.core.JmixOrder;
 import io.jmix.core.Messages;
 import io.jmix.flowui.Notifications;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
+
 
 /**
  * A custom exception handler that handles {@link FileStorageException}.
@@ -32,6 +35,8 @@ import org.springframework.stereotype.Component;
 @Component
 @Order(JmixOrder.LOWEST_PRECEDENCE - 70)
 public class FileNotExistsExceptionHandler extends AbstractUiExceptionHandler {
+
+    private static final Logger log = LoggerFactory.getLogger(FileNotExistsExceptionHandler.class);
 
     private final Notifications notifications;
     private final Messages messages;
@@ -45,17 +50,28 @@ public class FileNotExistsExceptionHandler extends AbstractUiExceptionHandler {
 
     @Override
     protected void doHandle(String className, String message, @Nullable Throwable throwable) {
-        if (!(throwable instanceof FileStorageException)) {
-            return;
-        }
-        if (FileStorageException.Type.FILE_NOT_FOUND != ((FileStorageException) throwable).getType()) {
-            return;
+        String msg = null;
+
+        if (throwable != null) {
+            FileStorageException fileStorageException = (FileStorageException) throwable;
+            String fileName = fileStorageException.getFileName();
+
+            if (FileStorageException.Type.FILE_NOT_FOUND.equals(fileStorageException.getType())) {
+                msg = messages.formatMessage("fileNotFound.message", fileName);
+            } else if (FileStorageException.Type.STORAGE_INACCESSIBLE.equals(fileStorageException.getType())) {
+                msg = messages.getMessage("fileStorageInaccessible.message");
+            }
         }
 
-        String fileNotFoundMessage = messages.getMessage("fileNotFound.message");
-        String formattedMessage = String.format(fileNotFoundMessage, ((FileStorageException) throwable).getFileName());
+        if (msg == null) {
+            msg = messages.getMessage("fileStorageException.defaultMessage");
 
-        notifications.create(formattedMessage)
+            if (throwable != null) {
+                log.error("Unable to handle FileStorageException", throwable);
+            }
+        }
+
+        notifications.create(msg)
                 .withType(Notifications.Type.ERROR)
                 .show();
     }

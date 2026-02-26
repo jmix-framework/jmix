@@ -27,16 +27,19 @@ import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.data.ContainerDataUnit;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.model.CollectionContainer;
-import io.jmix.pivottableflowui.component.PivotTable;
+import io.jmix.flowui.view.OpenMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.lang.Nullable;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /**
- * Jmix action to show {@link PivotTable} component.
- * When the action executes, the pivot table shows data from the component that implements {@link ListDataComponent}.
+ * Shows the pivot table with data from the component that implements {@link ListDataComponent}.
  */
 @ActionType(ShowPivotTableAction.ID)
 public class ShowPivotTableAction<E> extends ListDataComponentAction<ShowPivotTableAction<E>, E>
@@ -50,6 +53,7 @@ public class ShowPivotTableAction<E> extends ListDataComponentAction<ShowPivotTa
 
     protected String includedProperties;
     protected String excludedProperties;
+    protected OpenMode openMode;
 
     protected enum ShowPivotTableMode {
         ALL_ROWS, SELECTED_ROWS
@@ -78,13 +82,32 @@ public class ShowPivotTableAction<E> extends ListDataComponentAction<ShowPivotTa
     }
 
     /**
+     * Retrieves the open mode that specifies how a view should be displayed
+     * when the action is executed.
+     *
+     * @return the open mode for the view, or {@code null} if no open mode is set
+     */
+    @Nullable
+    public OpenMode getOpenMode() {
+        return openMode;
+    }
+
+    /**
+     * Sets the open mode to specify how a view should be displayed when executed.
+     * The default is {@code OpenMode.NAVIGATION}.
+     *
+     * @param openMode the desired open mode for the view, or {@code null} to unset the open mode
+     */
+    public void setOpenMode(@Nullable OpenMode openMode) {
+        this.openMode = openMode;
+    }
+
+    /**
      * Executes the action to show the pivot table.
      */
     @Override
     public void execute() {
-        if (target == null) {
-            throw new IllegalStateException("ShowPivotAction target is not set");
-        }
+        checkTarget();
 
         if (needShowAll()) {
             showPivotTable(ShowPivotTableMode.ALL_ROWS);
@@ -148,16 +171,15 @@ public class ShowPivotTableAction<E> extends ListDataComponentAction<ShowPivotTa
      * @return list with parsed included properties
      */
     public List<String> getIncludedPropertiesList() {
-        if (Strings.isNullOrEmpty(includedProperties)) {
-            return Collections.emptyList();
-        }
-        return parseProperties(includedProperties);
+        return Strings.isNullOrEmpty(includedProperties)
+                ? Collections.emptyList()
+                : parseProperties(includedProperties);
     }
 
     /**
-     *  Specifies whether to show all rows or prompt the user to select rows.
+     * Specifies whether to show all rows or prompt the user to select rows.
      *
-     *  @return true if all rows should be displayed, false otherwise
+     * @return true if all rows should be displayed, false otherwise
      */
     protected boolean needShowAll() {
         if (target.getSelectedItems().isEmpty()
@@ -168,7 +190,7 @@ public class ShowPivotTableAction<E> extends ListDataComponentAction<ShowPivotTa
         return ((ContainerDataUnit<?>) target.getItems()).getContainer().getItems().size() <= 1;
     }
 
-    protected List<String> parseProperties(String properties) {
+    protected List<String> parseProperties(@Nullable String properties) {
         if (Strings.isNullOrEmpty(properties)) {
             return Collections.emptyList();
         }
@@ -199,6 +221,7 @@ public class ShowPivotTableAction<E> extends ListDataComponentAction<ShowPivotTa
         showPivotManager.withItems(items)
                 .withIncludedProperties(parseProperties(includedProperties))
                 .withExcludedProperties(parseProperties(excludedProperties))
+                .withOpenMode(openMode)
                 .show();
     }
 }

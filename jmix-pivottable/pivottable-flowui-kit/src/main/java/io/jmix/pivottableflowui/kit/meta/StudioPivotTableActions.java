@@ -18,7 +18,7 @@ package io.jmix.pivottableflowui.kit.meta;
 
 import io.jmix.flowui.kit.meta.*;
 
-@StudioUiKit(requiredDependencies = "io.jmix.pivottable:jmix-pivottable-flowui-kit")
+@StudioUiKit(requiredDependencies = "io.jmix.pivottable:jmix-pivottable-flowui-starter")
 public interface StudioPivotTableActions {
 
     @StudioAction(
@@ -45,7 +45,10 @@ public interface StudioPivotTableActions {
                     @StudioPropertiesItem(xmlAttribute = "enabledByUiPermissions", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioPropertiesItem(xmlAttribute = "visibleByUiPermissions", type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true")
+                            defaultValue = "true"),
+                    @StudioPropertiesItem(xmlAttribute = "openMode", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.flowui.view.OpenMode", setParameterFqn = "io.jmix.flowui.view.OpenMode",
+                            options = {"DIALOG", "NAVIGATION"})
             }
     )
     void showPivotTableAction();

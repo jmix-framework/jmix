@@ -20,11 +20,13 @@ import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.accesscontext.UiEntityAttributeContext;
 import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.data.ContainerDataUnit;
+import io.jmix.flowui.view.OpenMode;
 import io.jmix.flowui.view.View;
 import io.jmix.pivottableflowui.component.PivotTable;
 import io.jmix.pivottableflowui.kit.component.model.*;
@@ -49,6 +51,7 @@ import java.util.stream.Collectors;
 public class PivotTableViewBuilder {
 
     protected ViewNavigators viewNavigators;
+    protected DialogWindows dialogWindows;
     protected Metadata metadata;
     protected MetadataTools metadataTools;
     protected FetchPlanRepository fetchPlanRepository;
@@ -59,6 +62,7 @@ public class PivotTableViewBuilder {
     protected List<String> includedProperties;
     protected List<String> excludedProperties;
     protected List<String> additionalProperties;
+    protected OpenMode openMode;
 
     protected List<Object> items;
     protected PivotTableOptions options;
@@ -72,6 +76,11 @@ public class PivotTableViewBuilder {
     @Autowired
     public void setViewNavigators(ViewNavigators viewNavigators) {
         this.viewNavigators = viewNavigators;
+    }
+
+    @Autowired
+    public void setDialogWindows(DialogWindows dialogWindows) {
+        this.dialogWindows = dialogWindows;
     }
 
     @Autowired
@@ -148,6 +157,13 @@ public class PivotTableViewBuilder {
     }
 
     /**
+     * @return list of additionally included properties
+     */
+    public List<String> getAdditionalProperties() {
+        return Objects.requireNonNullElse(additionalProperties, Collections.emptyList());
+    }
+
+    /**
      * Set properties which should be additionally included. Additional property doesn't applied if excluded
      * properties list contains it.
      *
@@ -161,10 +177,24 @@ public class PivotTableViewBuilder {
     }
 
     /**
-     * @return list of additionally included properties
+     * Retrieves the current open mode setting.
+     *
+     * @return the current OpenMode value indicating the open mode.
      */
-    public List<String> getAdditionalProperties() {
-        return Objects.requireNonNullElse(additionalProperties, Collections.emptyList());
+    public OpenMode getOpenMode() {
+        return openMode;
+    }
+
+    /**
+     * Sets the open mode for the pivot table view and returns the updated builder.
+     *
+     * @param openMode the desired open mode configuration, can be {@code null} to indicate no specific mode
+     * @return current instance of action
+     */
+    public PivotTableViewBuilder withOpenMode(@Nullable OpenMode openMode) {
+        this.openMode = openMode;
+
+        return this;
     }
 
     /**
@@ -531,6 +561,24 @@ public class PivotTableViewBuilder {
 
         PivotTableOptions pivotTableOptions = getPivotTableOptions();
         pivotTableOptions.setProperties(getPropertiesWithLocale());
+
+        if (openMode == OpenMode.DIALOG) {
+            openDialog(targetView, pivotTableOptions);
+        } else {
+            navigate(targetView, pivotTableOptions);
+        }
+    }
+
+    protected void openDialog(View<?> targetView, PivotTableOptions pivotTableOptions) {
+        dialogWindows.view(targetView, PivotTableView.class)
+                .withViewConfigurer(view -> {
+                    view.setPivotTableOptions(pivotTableOptions);
+                    view.setDataItems(items == null ? Collections.emptyList() : items);
+                })
+                .open();
+    }
+
+    protected void navigate(View<?> targetView, PivotTableOptions pivotTableOptions) {
         viewNavigators.view(targetView, PivotTableView.class)
                 .withAfterNavigationHandler(event -> {
                     PivotTableView pivotTableView = event.getView();

@@ -1764,6 +1764,12 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <xs:complexType name="onlyCustomValidatorType">
+        <xs:all>
+            <xs:element name="custom" minOccurs="0" type="customValidatorType"/>
+        </xs:all>
+    </xs:complexType>
+
     <xs:complexType name="checkboxValidatorType">
         <xs:all>
             <xs:element name="custom" minOccurs="0" type="customValidatorType"/>
@@ -3555,6 +3561,7 @@
         <xs:complexContent>
             <xs:extension base="baseComponent">
                 <xs:sequence minOccurs="0">
+                    <xs:element name="validators" minOccurs="0" type="onlyCustomValidatorType"/>
                     <xs:element name="tooltip" type="tooltipElement"/>
                 </xs:sequence>
 
@@ -3652,12 +3659,14 @@
     <!-- ComboBox-->
     <xs:complexType name="comboBoxComponent">
         <xs:complexContent>
-            <xs:extension base="validatableBaseFieldComponent">
+            <xs:extension base="baseFieldComponent">
                 <xs:sequence minOccurs="0">
                     <xs:element name="tooltip" type="tooltipElement"/>
                     <xs:element name="itemsQuery" type="comboBoxItemsQueryType"/>
 
                     <xs:element name="prefix" type="prefixOrSuffixComponent"/>
+
+                    <xs:element name="validators" minOccurs="0" type="onlyCustomValidatorType"/>
                 </xs:sequence>
 
                 <xs:attribute name="pattern" type="xs:string"/>
@@ -3678,6 +3687,7 @@
                 <xs:attributeGroup ref="hasOverlayClass"/>
                 <xs:attributeGroup ref="hasOverlayWidth"/>
                 <xs:attributeGroup ref="hasAriaLabel"/>
+                <xs:attributeGroup ref="hasValidation"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

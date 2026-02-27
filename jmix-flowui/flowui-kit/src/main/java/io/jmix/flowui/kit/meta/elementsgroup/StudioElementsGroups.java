@@ -117,7 +117,10 @@ public interface StudioElementsGroups {
                     "io.jmix.flowui.component.checkboxgroup.JmixCheckboxGroup",
                     "io.jmix.flowui.component.radiobuttongroup.JmixRadioButtonGroup",
                     "io.jmix.flowui.component.select.JmixSelect",
-                    "io.jmix.flowui.component.twincolumn.TwinColumn"
+                    "io.jmix.flowui.component.combobox.JmixComboBox",
+                    "io.jmix.flowui.component.twincolumn.TwinColumn",
+                    "io.jmix.flowui.component.checkbox.JmixCheckbox",
+                    "io.jmix.flowui.component.checkbox.Switch"
             }
     )
     void validator();

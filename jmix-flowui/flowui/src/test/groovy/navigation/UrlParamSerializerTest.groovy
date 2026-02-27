@@ -253,4 +253,37 @@ class UrlParamSerializerTest extends FlowuiTestSpecification {
         timeValue == timeDeserialized
         uuidValue == uuidDeserialized
     }
+
+    def "DateTime serialization with nanoseconds"() {
+        def localDateTimeValue = LocalDateTime.of(2023, Month.JANUARY, 1, 12, 15, 17, 123456789)
+        def localTimeValue = LocalTime.of(12, 15, 17, 123456789)
+        def offsetDateTimeValue = OffsetDateTime.of(localDateTimeValue, ZoneOffset.ofHours(1))
+        def offsetTimeValue = OffsetTime.of(localTimeValue, ZoneOffset.ofHours(1))
+
+        when: "temporal types with nanoseconds are serialized and deserialized"
+        def localDateTimeSerialized = urlParamSerializer.serialize(localDateTimeValue)
+        def localDateTimeDeserialized = urlParamSerializer.deserialize(LocalDateTime.class, localDateTimeSerialized)
+
+        def localTimeSerialized = urlParamSerializer.serialize(localTimeValue)
+        def localTimeDeserialized = urlParamSerializer.deserialize(LocalTime.class, localTimeSerialized)
+
+        def offsetDateTimeSerialized = urlParamSerializer.serialize(offsetDateTimeValue)
+        def offsetDateTimeDeserialized = urlParamSerializer.deserialize(OffsetDateTime.class, offsetDateTimeSerialized)
+
+        def offsetTimeSerialized = urlParamSerializer.serialize(offsetTimeValue)
+        def offsetTimeDeserialized = urlParamSerializer.deserialize(OffsetTime.class, offsetTimeSerialized)
+
+        then: "values should be valid"
+        localDateTimeSerialized == '2023-01-01T12-15-17.123456789'
+        localDateTimeValue == localDateTimeDeserialized
+
+        localTimeSerialized == '12-15-17.123456789'
+        localTimeValue == localTimeDeserialized
+
+        offsetDateTimeSerialized == '2023-01-01T12-15-17.123456789+0100'
+        offsetDateTimeValue == offsetDateTimeDeserialized
+
+        offsetTimeSerialized == '12-15-17.123456789+0100'
+        offsetTimeValue == offsetTimeDeserialized
+    }
 }

@@ -90,11 +90,11 @@ class UrlParamSerializerTest extends FlowuiTestSpecification {
         floatSerialized == '3.14'
         intSerialized == '42'
         localDateSerialized == '2023-01-01'
-        localDateTimeSerialized == '2023-01-01T12-15-17'
-        localTimeSerialized == '12-15-17'
+        localDateTimeSerialized == '2023-01-01T12-15-17.000000000'
+        localTimeSerialized == '12-15-17.000000000'
         longSerialized == '12041961'
-        offsetDateTimeSerialized == '2023-01-01T12-15-17+0100'
-        offsetTimeSerialized == '12-15-17+0100'
+        offsetDateTimeSerialized == '2023-01-01T12-15-17.000000000+0100'
+        offsetTimeSerialized == '12-15-17.000000000+0100'
         shortSerialized == '42'
         stringSerialized == stringValue
         timeSerialized == '29717000'
@@ -252,5 +252,52 @@ class UrlParamSerializerTest extends FlowuiTestSpecification {
         stringValue == stringDeserialized
         timeValue == timeDeserialized
         uuidValue == uuidDeserialized
+    }
+
+    def "DateTime serialization with nanoseconds"() {
+        def localDateTimeValue = LocalDateTime.of(2023, Month.JANUARY, 1, 12, 15, 17, 123456789)
+        def localTimeValue = LocalTime.of(12, 15, 17, 123456789)
+        def offsetDateTimeValue = OffsetDateTime.of(localDateTimeValue, ZoneOffset.ofHours(1))
+        def offsetTimeValue = OffsetTime.of(localTimeValue, ZoneOffset.ofHours(1))
+
+        when: "temporal types with nanoseconds are serialized and deserialized"
+        def localDateTimeSerialized = urlParamSerializer.serialize(localDateTimeValue)
+        def localDateTimeDeserialized = urlParamSerializer.deserialize(LocalDateTime.class, localDateTimeSerialized)
+
+        def localTimeSerialized = urlParamSerializer.serialize(localTimeValue)
+        def localTimeDeserialized = urlParamSerializer.deserialize(LocalTime.class, localTimeSerialized)
+
+        def offsetDateTimeSerialized = urlParamSerializer.serialize(offsetDateTimeValue)
+        def offsetDateTimeDeserialized = urlParamSerializer.deserialize(OffsetDateTime.class, offsetDateTimeSerialized)
+
+        def offsetTimeSerialized = urlParamSerializer.serialize(offsetTimeValue)
+        def offsetTimeDeserialized = urlParamSerializer.deserialize(OffsetTime.class, offsetTimeSerialized)
+
+        then: "values should be valid"
+        localDateTimeSerialized == '2023-01-01T12-15-17.123456789'
+        localDateTimeValue == localDateTimeDeserialized
+
+        localTimeSerialized == '12-15-17.123456789'
+        localTimeValue == localTimeDeserialized
+
+        offsetDateTimeSerialized == '2023-01-01T12-15-17.123456789+0100'
+        offsetDateTimeValue == offsetDateTimeDeserialized
+
+        offsetTimeSerialized == '12-15-17.123456789+0100'
+        offsetTimeValue == offsetTimeDeserialized
+    }
+
+    def "Deserialize legacy temporal values without nanoseconds"() {
+        when: "legacy values without nanoseconds should be serialized"
+        def legacyLocalDateTime = "2023-01-01T12-15-17"
+        def legacyLocalTime = "12-15-17"
+        def legacyOffsetDateTime = "2023-01-01T12-15-17+0100"
+        def legacyOffsetTime = "12-15-17+0100"
+
+        then: "urlParamSerializer should be able to parse legacy values even if nanos are enabled"
+        urlParamSerializer.deserialize(LocalDateTime.class, legacyLocalDateTime) != null
+        urlParamSerializer.deserialize(LocalTime.class, legacyLocalTime) != null
+        urlParamSerializer.deserialize(OffsetDateTime.class, legacyOffsetDateTime) != null
+        urlParamSerializer.deserialize(OffsetTime.class, legacyOffsetTime) != null
     }
 }

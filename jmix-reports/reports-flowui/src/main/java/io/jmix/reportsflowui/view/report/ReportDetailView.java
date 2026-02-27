@@ -29,9 +29,10 @@ import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.icon.FontIcon;
 import com.vaadin.flow.component.html.NativeLabel;
+import com.vaadin.flow.component.icon.FontIcon;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.data.provider.ListDataProvider;
@@ -163,7 +164,11 @@ public class ReportDetailView extends StandardDetailView<Report> {
     @ViewComponent
     protected JmixComboBox<String> entitiesParamField;
     @ViewComponent
+    protected HorizontalLayout entitiesParamLayout;
+    @ViewComponent
     protected JmixComboBox<String> entityParamField;
+    @ViewComponent
+    protected HorizontalLayout entityParamLayout;
     @ViewComponent
     protected JmixComboBox<String> fetchPlanNameField;
     @ViewComponent
@@ -1413,12 +1418,22 @@ public class ReportDetailView extends StandardDetailView<Report> {
         entityParamFieldBinder.setValueChangeListener(this::onEntityParamFieldComponentValueChange);
     }
 
+    @Subscribe("entitiesParamFieldHelperButton")
+    protected void onEntitiesParamFieldHelperButtonClick(ClickEvent<JmixButton> event) {
+        entitiesParamField.getTooltip().setOpened(!entitiesParamField.getTooltip().isOpened());
+    }
+
     protected void initEntityParamField() {
         entityParamField.addCustomValueSetListener(customValueEvent ->
                 dataSetsDc.getItem().setEntityParamName(customValueEvent.getDetail()));
 
         entitiesParamFieldBinder = new JmixComboBoxBinder(entitiesParamField);
         entitiesParamFieldBinder.setValueChangeListener(this::onEntitiesParamFieldComponentValueChange);
+    }
+
+    @Subscribe("entityParamFieldHelperButton")
+    protected void onEntityParamFieldHelperButtonClick(ClickEvent<JmixButton> event) {
+        entityParamField.getTooltip().setOpened(!entityParamField.getTooltip().isOpened());
     }
 
     protected void initFetchPlanNameField() {
@@ -1518,8 +1533,10 @@ public class ReportDetailView extends StandardDetailView<Report> {
     }
 
     protected void setCommonEntityGridVisibility(boolean visibleEntityGrid, boolean visibleEntitiesGrid) {
-        entityParamField.setVisible(visibleEntityGrid);
-        entitiesParamField.setVisible(visibleEntitiesGrid);
+        entityParamLayout.setVisible(visibleEntityGrid);
+        entityParamField.getTooltip().setOpened(false);
+        entitiesParamLayout.setVisible(visibleEntitiesGrid);
+        entitiesParamField.getTooltip().setOpened(false);
     }
 //todo AN implement value provider
 //    @Install(to = "inputParametersDataGrid.name", subject = "valueProvider")

@@ -164,14 +164,32 @@
                                     </vbox>
                                     <vbox id="commonEntityGrid" padding="false" width="100%">
                                         <formLayout>
-                                            <comboBox id="entitiesParamField"
-                                                      allowCustomValue="true"
-                                                      clearButtonVisible="true"
-                                                      label="msg://bandsTab.dataSetTypeLayout.entitiesParamField.label"/>
-                                            <comboBox id="entityParamField"
-                                                      allowCustomValue="true"
-                                                      clearButtonVisible="true"
-                                                      label="msg://bandsTab.dataSetTypeLayout.entityParamField.label"/>
+                                            <hbox id="entitiesParamLayout" padding="false" alignItems="BASELINE">
+                                                <comboBox id="entitiesParamField"
+                                                          width="100%"
+                                                          allowCustomValue="true"
+                                                          clearButtonVisible="true"
+                                                          label="msg://bandsTab.dataSetTypeLayout.entitiesParamField.label">
+                                                    <tooltip
+                                                            text="msg://bandsTab.dataSetTypeLayout.entitiesParamField.tooltip"
+                                                            manual="true" position="BOTTOM"/>
+                                                </comboBox>
+                                                <button id="entitiesParamFieldHelperButton"
+                                                        themeNames="icon tertiary-inline" icon="QUESTION_CIRCLE"/>
+                                            </hbox>
+                                            <hbox id="entityParamLayout" padding="false" alignItems="BASELINE">
+                                                <comboBox id="entityParamField"
+                                                          width="100%"
+                                                          allowCustomValue="true"
+                                                          clearButtonVisible="true"
+                                                          label="msg://bandsTab.dataSetTypeLayout.entityParamField.label">
+                                                    <tooltip
+                                                            text="msg://bandsTab.dataSetTypeLayout.entityParamField.tooltip"
+                                                            manual="true" position="BOTTOM"/>
+                                                </comboBox>
+                                                <button id="entityParamFieldHelperButton"
+                                                        themeNames="icon tertiary-inline" icon="QUESTION_CIRCLE"/>
+                                            </hbox>
                                             <checkbox id="isUseExistingFetchPlanField" dataContainer="dataSetsDc"
                                                       property="useExistingFetchPLan"
                                                       label="msg://bandsTab.dataSetTypeLayout.useExistingFetchPlan.label"/>

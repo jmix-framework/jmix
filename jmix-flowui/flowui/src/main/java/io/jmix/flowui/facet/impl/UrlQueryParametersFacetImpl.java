@@ -125,21 +125,24 @@ public class UrlQueryParametersFacetImpl extends AbstractFacet implements UrlQue
 
         if (initialQueryParameters != null) {
             QueryParameters queryParametersToAdd = initialQueryParameters;
-            owner.getUI().ifPresent(ui -> {
-                        ui.beforeClientResponse(owner, __ -> {
-                            // must be executed immediately before the client responds,
-                            // otherwise the server-side location will be the previous one
-                            Location location = routeSupport.getActiveViewLocation(ui);
+            owner.getUI().ifPresent(ui ->
+                    ui.beforeClientResponse(owner, __ -> {
+                        if (ui.getCurrentView() != owner) {
+                            return;
+                        }
 
-                            QueryParameters queryParameters = routeSupport.mergeQueryParameters(
-                                    location.getQueryParameters(),
-                                    queryParametersToAdd
-                            );
+                        // must be executed immediately before the client responds,
+                        // otherwise the server-side location will be the previous one
+                        Location location = routeSupport.getActiveViewLocation(ui);
 
-                            Location newLocation = new Location(location.getPath(), queryParameters);
-                            ui.getPage().getHistory().replaceState(null, newLocation);
-                        });
-                    }
+                        QueryParameters queryParameters = routeSupport.mergeQueryParameters(
+                                location.getQueryParameters(),
+                                queryParametersToAdd
+                        );
+
+                        Location newLocation = new Location(location.getPath(), queryParameters);
+                        ui.getPage().getHistory().replaceState(null, newLocation);
+                    })
             );
         }
 
@@ -192,23 +195,33 @@ public class UrlQueryParametersFacetImpl extends AbstractFacet implements UrlQue
             }
 
             owner.getUI().ifPresent(ui ->
-                    pushQueryParametersRegistration = ui.beforeClientResponse(owner, __ ->
-                            routeSupport.fetchCurrentLocation(ui, location -> {
-                                QueryParameters queryParameters = routeSupport.mergeQueryParameters(
-                                        location.getQueryParameters(),
-                                        postponedQueryParameters
-                                );
+                    pushQueryParametersRegistration = ui.beforeClientResponse(owner, __ -> {
+                        if (ui.getCurrentView() != owner) {
+                            postponedQueryParameters = null;
+                            pushQueryParametersRegistration = null;
+                            return;
+                        }
 
-                                log.debug("Mering postponed QueryParameters; added: {}; result: {}",
-                                        queryParametersString(postponedQueryParameters),
-                                        queryParametersString(queryParameters));
+                        routeSupport.fetchCurrentLocation(ui, location -> {
+                            if (ui.getCurrentView() != owner) {
+                                return;
+                            }
 
-                                postponedQueryParameters = null;
-                                pushQueryParametersRegistration = null;
+                            QueryParameters queryParameters = routeSupport.mergeQueryParameters(
+                                    location.getQueryParameters(),
+                                    postponedQueryParameters
+                            );
 
-                                routeSupport.setQueryParameters(ui, queryParameters);
-                            })
-                    )
+                            log.debug("Merging postponed QueryParameters; added: {}; result: {}",
+                                    queryParametersString(postponedQueryParameters),
+                                    queryParametersString(queryParameters));
+
+                            postponedQueryParameters = null;
+                            pushQueryParametersRegistration = null;
+
+                            routeSupport.setQueryParameters(ui, queryParameters);
+                        });
+                    })
             );
         }
     }

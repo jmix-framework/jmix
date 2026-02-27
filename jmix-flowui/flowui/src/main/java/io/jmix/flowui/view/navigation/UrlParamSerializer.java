@@ -91,7 +91,10 @@ public class UrlParamSerializer {
         DateTimeFormatterBuilder dateTimeFormatterBuilder = new DateTimeFormatterBuilder()
                 .appendPattern(DEFAULT_TIME_FORMAT);
         if (navigationProperties.isUseNanosecondsInUrlParams()) {
-            dateTimeFormatterBuilder.appendFraction(ChronoField.NANO_OF_SECOND, 9, 9, true);
+            dateTimeFormatterBuilder
+                    .optionalStart()
+                    .appendFraction(ChronoField.NANO_OF_SECOND, 9, 9, true)
+                    .optionalEnd();
         }
         temporalTimeFormatter = dateTimeFormatterBuilder.toFormatter();
 

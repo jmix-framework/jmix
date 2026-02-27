@@ -90,11 +90,11 @@ class UrlParamSerializerTest extends FlowuiTestSpecification {
         floatSerialized == '3.14'
         intSerialized == '42'
         localDateSerialized == '2023-01-01'
-        localDateTimeSerialized == '2023-01-01T12-15-17'
-        localTimeSerialized == '12-15-17'
+        localDateTimeSerialized == '2023-01-01T12-15-17.000000000'
+        localTimeSerialized == '12-15-17.000000000'
         longSerialized == '12041961'
-        offsetDateTimeSerialized == '2023-01-01T12-15-17+0100'
-        offsetTimeSerialized == '12-15-17+0100'
+        offsetDateTimeSerialized == '2023-01-01T12-15-17.000000000+0100'
+        offsetTimeSerialized == '12-15-17.000000000+0100'
         shortSerialized == '42'
         stringSerialized == stringValue
         timeSerialized == '29717000'
@@ -285,5 +285,19 @@ class UrlParamSerializerTest extends FlowuiTestSpecification {
 
         offsetTimeSerialized == '12-15-17.123456789+0100'
         offsetTimeValue == offsetTimeDeserialized
+    }
+
+    def "Deserialize legacy temporal values without nanoseconds"() {
+        when: "legacy values without nanoseconds should be serialized"
+        def legacyLocalDateTime = "2023-01-01T12-15-17"
+        def legacyLocalTime = "12-15-17"
+        def legacyOffsetDateTime = "2023-01-01T12-15-17+0100"
+        def legacyOffsetTime = "12-15-17+0100"
+
+        then: "urlParamSerializer should be able to parse legacy values even if nanos are enabled"
+        urlParamSerializer.deserialize(LocalDateTime.class, legacyLocalDateTime) != null
+        urlParamSerializer.deserialize(LocalTime.class, legacyLocalTime) != null
+        urlParamSerializer.deserialize(OffsetDateTime.class, legacyOffsetDateTime) != null
+        urlParamSerializer.deserialize(OffsetTime.class, legacyOffsetTime) != null
     }
 }

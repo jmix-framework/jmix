@@ -60,7 +60,7 @@ public class ReportGroupRepositoryTest {
     @AfterEach
     void cleanup() {
         reportGroupHolder.clear();
-        reportGroupUtil.cleanupDatabaseReportGroups();
+        reportGroupUtil.cleanupDatabase();
     }
 
     @Test

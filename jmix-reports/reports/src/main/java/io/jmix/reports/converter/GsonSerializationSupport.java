@@ -99,7 +99,7 @@ public class GsonSerializationSupport {
                                 @Override
                                 public Class read(JsonReader in) throws IOException {
                                     String value = in.nextString();
-                                    MetaClass metaClass = metadata.getClass(value);
+                                    MetaClass metaClass = resolveMetaClass(value);
                                     if (metaClass != null) {
                                         metaClass = extendedEntities.getEffectiveMetaClass(metaClass);
                                         return metaClass.getJavaClass();
@@ -120,7 +120,10 @@ public class GsonSerializationSupport {
         in.beginObject();
         in.nextName();
         String metaClassName = in.nextString();
-        MetaClass metaClass = metadata.getSession().getClass(metaClassName);
+        MetaClass metaClass = resolveMetaClass(metaClassName);
+        if (metaClass == null) {
+            throw new RuntimeException(format("Could not resolve meta-class %s", metaClassName));
+        }
         Entity entity = (Entity) metadata.create(metaClass);
         in.nextName();
         String id = in.nextString();
@@ -188,14 +191,21 @@ public class GsonSerializationSupport {
     @Nullable
     protected Object readSimpleProperty(JsonReader in, Class<?> propertyType) throws IOException {
         String value = in.nextString();
-        Object parsedValue = null;
+        Datatype<?> datatype = datatypeRegistry.find(propertyType);
+        if (datatype == null) {
+            return null;
+        }
         try {
-            Datatype<?> datatype = datatypeRegistry.find(propertyType);
-            if (datatype != null) {
-                parsedValue = datatype.parse(value);
+            return datatype.parse(value);
+        } catch (ParseException | RuntimeException e) {
+            try {
+                String normalizedValue = normalizeDateTimeSeparator(value);
+                if (!Objects.equals(normalizedValue, value)) {
+                    return datatype.parse(normalizedValue);
+                }
+            } catch (ParseException | RuntimeException ignored) {
+                // Throw original parse exception below.
             }
-            return parsedValue;
-        } catch (ParseException e) {
             throw new RuntimeException(
                     format("An error occurred while parsing property. Class [%s]. Value [%s].", propertyType, value), e);
         }
@@ -313,5 +323,24 @@ public class GsonSerializationSupport {
 
     public <T> T convertToReport(String json, Class<T> aClass) {
         return gsonBuilder.create().fromJson(json, aClass);
+    }
+
+    @Nullable
+    protected MetaClass resolveMetaClass(String metaClassName) {
+        MetaClass metaClass = metadata.findClass(metaClassName);
+        if (metaClass == null && metaClassName.contains("$")) {
+            metaClass = metadata.findClass(metaClassName.replace('$', '_'));
+        }
+        return metaClass;
+    }
+
+    protected String normalizeDateTimeSeparator(String value) {
+        if (!value.contains("T")) {
+            int separatorPos = value.indexOf(' ');
+            if (separatorPos > 0) {
+                return value.substring(0, separatorPos) + "T" + value.substring(separatorPos + 1);
+            }
+        }
+        return value;
     }
 }

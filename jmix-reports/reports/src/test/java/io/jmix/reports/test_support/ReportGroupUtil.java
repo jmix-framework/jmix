@@ -50,7 +50,8 @@ public class ReportGroupUtil {
         return unconstrainedDataManager.save(reportGroup);
     }
 
-    public void cleanupDatabaseReportGroups() {
+    public void cleanupDatabase() {
+        jdbcTemplate.update("delete from REPORT_REPORT");
         jdbcTemplate.update("delete from REPORT_GROUP");
     }
 }

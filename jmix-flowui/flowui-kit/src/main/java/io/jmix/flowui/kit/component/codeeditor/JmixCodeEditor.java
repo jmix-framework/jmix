@@ -324,6 +324,28 @@ public class JmixCodeEditor extends AbstractSinglePropertyField<JmixCodeEditor, 
     }
 
     /**
+     * The placeholder text that should be displayed in the input element when
+     * the user has not entered a value
+     *
+     * @return the {@code placeholder} property from the web component. May be
+     * {@code null} if not yet set.
+     */
+    @Nullable
+    public String getPlaceholder() {
+        return getElement().getProperty("placeholder");
+    }
+
+    /**
+     * Sets the placeholder text that should be displayed in the input element
+     * when the user has not entered a value
+     *
+     * @param placeholder the placeholder text, may be {@code null} to remove.
+     */
+    public void setPlaceholder(@Nullable String placeholder) {
+        getElement().setProperty("placeholder", placeholder);
+    }
+
+    /**
      * Determines whether the field is marked as input required.
      *
      * @return {@code true} if the input is required, {@code false} otherwise

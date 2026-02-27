@@ -1065,6 +1065,7 @@
                     minWidth="80px"
                     mode="SQL"
                     printMarginColumn="120"
+                    placeholder="placeholder"
                     readOnly="true"
                     required="true"
                     requiredMessage="requiredMessageString"

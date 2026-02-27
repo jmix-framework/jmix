@@ -3422,6 +3422,7 @@ interface StudioComponents {
                                     "VISUALFORCE", "WOLLOK", "XML", "XQUERY", "YAML", "ZEEK"}),
                     @StudioProperty(xmlAttribute = "printMarginColumn", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.INTEGER,
                             defaultValue = "80"),
+                    @StudioProperty(xmlAttribute = "placeholder", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "property", category = StudioProperty.Category.DATA_BINDING, type = StudioPropertyType.PROPERTY_REF),
                     @StudioProperty(xmlAttribute = "readOnly", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),

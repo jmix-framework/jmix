@@ -140,6 +140,12 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
                 observer: '_onTabSizeChange'
             },
 
+            placeholder: {
+                type: String,
+                value: '',
+                observer: '_onPlaceholderChange'
+            },
+
             defaultSuggestionsEnabled: {
                 type: Boolean,
                 value: false,
@@ -208,6 +214,7 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
             wrap: this.textWrap,
             useSoftTabs: this.useSoftTabs,
             tabSize: this.tabSize,
+            placeholder: this.placeholder,
             enableBasicAutocompletion: true,
             enableLiveAutocompletion: this.liveSuggestionsEnabled,
             useWorker: false
@@ -499,6 +506,17 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
         }
 
         this._editor.session.setTabSize(tabSize);
+    }
+
+    /**
+     * @private
+     */
+    _onPlaceholderChange(placeholder) {
+        if (this._editor === undefined) {
+            return;
+        }
+
+        this._editor.setOption('placeholder', placeholder);
     }
 
     /**

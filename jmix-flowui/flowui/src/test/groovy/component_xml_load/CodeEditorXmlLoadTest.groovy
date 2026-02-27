@@ -77,6 +77,7 @@ class CodeEditorXmlLoadTest extends FlowuiTestSpecification {
             minWidth == "80px"
             mode == CodeEditorMode.SQL
             printMarginColumn == 120
+            placeholder == "placeholder"
             readOnly
             required
             requiredMessage == "requiredMessageString"

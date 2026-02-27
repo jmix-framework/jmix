@@ -44,6 +44,7 @@ public class CodeEditorLoader extends AbstractComponentLoader<CodeEditor> {
         loadString(element, "fontSize", resultComponent::setFontSize);
         loadBoolean(element, "textWrap", resultComponent::setTextWrap);
         loadBoolean(element, "useSoftTabs", resultComponent::setUseSoftTabs);
+        loadInteger(element, "tabSize", resultComponent::setTabSize);
 
         loadBoolean(element, "defaultSuggestionsEnabled", resultComponent::setDefaultSuggestionsEnabled);
         loadBoolean(element, "liveSuggestionsEnabled", resultComponent::setLiveSuggestionsEnabled);

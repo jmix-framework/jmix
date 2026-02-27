@@ -134,6 +134,12 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
                 observer: '_onUseSoftTabsChange'
             },
 
+            tabSize: {
+                type: Number,
+                value: 4,
+                observer: '_onTabSizeChange'
+            },
+
             defaultSuggestionsEnabled: {
                 type: Boolean,
                 value: false,
@@ -201,6 +207,7 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
             fontSize: this.fontSize,
             wrap: this.textWrap,
             useSoftTabs: this.useSoftTabs,
+            tabSize: this.tabSize,
             enableBasicAutocompletion: true,
             enableLiveAutocompletion: this.liveSuggestionsEnabled,
             useWorker: false
@@ -481,6 +488,17 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
         }
 
         this._editor.session.setUseSoftTabs(useSoftTabs);
+    }
+
+    /**
+     * @private
+     */
+    _onTabSizeChange(tabSize) {
+        if (this._editor === undefined) {
+            return;
+        }
+
+        this._editor.session.setTabSize(tabSize);
     }
 
     /**

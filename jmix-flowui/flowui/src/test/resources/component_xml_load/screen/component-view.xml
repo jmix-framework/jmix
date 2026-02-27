@@ -1074,6 +1074,7 @@
                     suggestOn="{E}\."
                     tabIndex="3"
                     textWrap="true"
+                    tabSize="2"
                     useSoftTabs="false"
                     theme="TERMINAL"
                     title="titleString"

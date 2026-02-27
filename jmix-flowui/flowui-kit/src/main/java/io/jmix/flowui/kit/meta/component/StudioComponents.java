@@ -3438,6 +3438,8 @@ interface StudioComponents {
                     @StudioProperty(xmlAttribute = "tabIndex", type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "textWrap", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "tabSize", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.INTEGER,
+                            defaultValue = "4"),
                     @StudioProperty(xmlAttribute = "useSoftTabs", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "focusShortcut", type = StudioPropertyType.SHORTCUT_COMBINATION),

@@ -4680,6 +4680,7 @@
                 <xs:attribute name="fontSize" type="xs:string"/>
                 <xs:attribute name="textWrap" type="xs:boolean"/>
                 <xs:attribute name="useSoftTabs" type="xs:boolean"/>
+                <xs:attribute name="tabSize" type="xs:integer"/>
 
                 <xs:attribute name="defaultSuggestionsEnabled" type="xs:boolean"/>
                 <xs:attribute name="liveSuggestionsEnabled" type="xs:boolean"/>

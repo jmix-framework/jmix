@@ -308,6 +308,22 @@ public class JmixCodeEditor extends AbstractSinglePropertyField<JmixCodeEditor, 
     }
 
     /**
+     * @return tab size in spaces
+     */
+    public int getTabSize() {
+        return getElement().getProperty("tabSize", 4);
+    }
+
+    /**
+     * Sets the tab size in spaces. The tab size is 4 by default.
+     *
+     * @param tabSize tab size in spaces
+     */
+    public void setTabSize(int tabSize) {
+        getElement().setProperty("tabSize", tabSize);
+    }
+
+    /**
      * Determines whether the field is marked as input required.
      *
      * @return {@code true} if the input is required, {@code false} otherwise

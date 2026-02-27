@@ -86,6 +86,7 @@ class CodeEditorXmlLoadTest extends FlowuiTestSpecification {
             suggestOn == "{E}\\."
             tabIndex == 3
             textWrap
+            tabSize == 2
             !useSoftTabs
             theme == CodeEditorTheme.TERMINAL
             title == "titleString"

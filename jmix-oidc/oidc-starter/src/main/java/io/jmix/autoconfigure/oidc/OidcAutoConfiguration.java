@@ -22,6 +22,8 @@ import io.jmix.oidc.OidcProperties;
 import io.jmix.oidc.OidcVaadinWebSecurity;
 import io.jmix.oidc.claimsmapper.ClaimsRolesMapper;
 import io.jmix.oidc.claimsmapper.DefaultClaimsRolesMapper;
+import io.jmix.oidc.filter.OidcResourceServerSecurityFilterChainCustomizer;
+import io.jmix.oidc.filter.OidcVaadinSecurityFilterChainCustomizer;
 import io.jmix.oidc.jwt.JmixJwtAuthenticationConverter;
 import io.jmix.oidc.resourceserver.OidcResourceServerEventSecurityFilter;
 import io.jmix.oidc.userinfo.DefaultJmixOidcUserService;
@@ -29,9 +31,11 @@ import io.jmix.oidc.userinfo.JmixOidcUserService;
 import io.jmix.oidc.usermapper.DefaultOidcUserMapper;
 import io.jmix.oidc.usermapper.OidcUserMapper;
 import io.jmix.security.SecurityConfigurers;
+import io.jmix.security.configurer.SecurityFilterChainCustomizer;
 import io.jmix.security.role.ResourceRoleRepository;
 import io.jmix.security.role.RoleGrantedAuthorityUtils;
 import io.jmix.security.role.RowLevelRoleRepository;
+import io.jmix.security.util.ClientDetailsSourceSupport;
 import io.jmix.security.util.JmixHttpSecurityUtils;
 import io.jmix.securityresourceserver.requestmatcher.CompositeResourceServerRequestMatcherProvider;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -87,7 +91,14 @@ public class OidcAutoConfiguration {
      */
     @EnableWebSecurity
     @ConditionalOnProperty(value = "jmix.oidc.use-default-ui-configuration", havingValue = "true", matchIfMissing = true)
-    public static class DefaulOidcVaadinWebSecurity extends OidcVaadinWebSecurity {}
+    public static class DefaulOidcVaadinWebSecurity extends OidcVaadinWebSecurity {
+
+        @Bean("oidc_OidcVaadinSecurityFilterChainCustomizer")
+        public SecurityFilterChainCustomizer oidcVaadinSecurityFilterChainCustomizer(ClientDetailsSourceSupport clientDetailsSourceSupport,
+                                                                                     OidcProperties oidcProperties) {
+            return new OidcVaadinSecurityFilterChainCustomizer(clientDetailsSourceSupport, oidcProperties);
+        }
+    }
 
     /**
      * Configures API endpoints (e.g. REST API) protection. Invocations to these resources require a bearer token
@@ -138,6 +149,12 @@ public class OidcAutoConfiguration {
         @ConditionalOnMissingBean(JmixJwtAuthenticationConverter.class)
         public JmixJwtAuthenticationConverter jmixJwtAuthenticationConverter(OidcUserMapper oidcUserMapper, OidcProperties oidcProperties) {
             return new JmixJwtAuthenticationConverter(oidcUserMapper, oidcProperties);
+        }
+
+        @Bean("oidc_OidcResourceServerSecurityFilterChainCustomizer")
+        public SecurityFilterChainCustomizer oidcResourceServerSecurityFilterChainCustomizer(ClientDetailsSourceSupport clientDetailsSourceSupport,
+                                                                                             OidcProperties oidcProperties) {
+            return new OidcResourceServerSecurityFilterChainCustomizer(clientDetailsSourceSupport, oidcProperties);
         }
     }
 }

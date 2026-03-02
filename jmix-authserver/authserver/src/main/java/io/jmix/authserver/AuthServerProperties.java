@@ -16,6 +16,7 @@
 
 package io.jmix.authserver;
 
+import org.apache.commons.collections4.ListUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
@@ -95,6 +96,11 @@ public class AuthServerProperties {
      */
     String logoutAccessTokenBodyFormParameterName;
 
+    /**
+     * Set of properties to configure Security filter chains
+     */
+    FilterChain filterChain;
+
     public AuthServerProperties(
             @DefaultValue("true") boolean useDefaultConfiguration,
             @DefaultValue("false") boolean useInMemoryAuthorizationService,
@@ -108,7 +114,8 @@ public class AuthServerProperties {
             @DefaultValue("Authorization") String logoutAccessTokenHeaderName,
             @DefaultValue("token") String logoutAccessTokenUrlParameterName,
             @DefaultValue("token") String logoutAccessTokenBodyFormParameterName,
-            String postLogoutUrlRedirectParameterName
+            String postLogoutUrlRedirectParameterName,
+            @DefaultValue FilterChain filterChain
     ) {
         this.useDefaultConfiguration = useDefaultConfiguration;
         this.useInMemoryAuthorizationService = useInMemoryAuthorizationService;
@@ -123,6 +130,7 @@ public class AuthServerProperties {
         this.logoutAccessTokenHeaderName = logoutAccessTokenHeaderName;
         this.logoutAccessTokenUrlParameterName = logoutAccessTokenUrlParameterName;
         this.logoutAccessTokenBodyFormParameterName = logoutAccessTokenBodyFormParameterName;
+        this.filterChain = filterChain;
     }
 
     public boolean isUseDefaultConfiguration() {
@@ -177,6 +185,10 @@ public class AuthServerProperties {
         return logoutAccessTokenBodyFormParameterName;
     }
 
+    public FilterChain getFilterChain() {
+        return filterChain;
+    }
+
     /**
      * Class stores Jmix-specific settings of Authorization Server client.
      */
@@ -206,4 +218,39 @@ public class AuthServerProperties {
         }
     }
 
+    public static class FilterChain {
+
+        /**
+         * Whether the forced API scope is enabled for Security filter chains provided via {@link apiScopeSecurityFilterChainNames}.
+         */
+        boolean forceApiScopeEnabled;
+
+        /**
+         * Represents a list of security filter chain names which should be customized
+         * by {@link io.jmix.authserver.filter.AuthServerResourceServerSecurityFilterChainCustomizer}.
+         *
+         * @see #forceApiScopeEnabled
+         */
+        List<String> apiScopeSecurityFilterChainNames;
+
+        public FilterChain(@DefaultValue("true") boolean forceApiScopeEnabled,
+                           List<String> apiScopeSecurityFilterChainNames) {
+            this.forceApiScopeEnabled = forceApiScopeEnabled;
+            this.apiScopeSecurityFilterChainNames = ListUtils.emptyIfNull(apiScopeSecurityFilterChainNames);
+        }
+
+        /**
+         * @see #forceApiScopeEnabled
+         */
+        public boolean isForceApiScopeEnabled() {
+            return forceApiScopeEnabled;
+        }
+
+        /**
+         * @see #apiScopeSecurityFilterChainNames
+         */
+        public List<String> getApiScopeSecurityFilterChainNames() {
+            return apiScopeSecurityFilterChainNames;
+        }
+    }
 }

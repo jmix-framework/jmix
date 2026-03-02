@@ -19,9 +19,6 @@ package io.jmix.autoconfigure.securityresourceserver;
 import io.jmix.core.CoreConfiguration;
 import io.jmix.core.JmixModules;
 import io.jmix.core.security.AuthorizedUrlsProvider;
-import io.jmix.securityresourceserver.authentication.ForceApiSecurityScopePropertiesProvider;
-import io.jmix.security.util.RequestLocaleProvider;
-import io.jmix.securityresourceserver.authentication.ResourceServerFilterChainCustomizer;
 import io.jmix.securityresourceserver.requestmatcher.AnonymousRequestMatcherProvider;
 import io.jmix.securityresourceserver.requestmatcher.AuthenticatedRequestMatcherProvider;
 import io.jmix.securityresourceserver.requestmatcher.CompositeResourceServerRequestMatcherProvider;
@@ -37,11 +34,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-import org.springframework.core.env.Environment;
-import org.springframework.security.web.SecurityFilterChain;
 
 import java.util.List;
-import java.util.Map;
 
 @AutoConfiguration
 @ConditionalOnProperty(value = "jmix.resource-server.use-default-configuration", matchIfMissing = true)
@@ -77,17 +71,5 @@ public class SecurityResourceServerAutoConfiguration {
     LegacyAuthorizedUrlsPatternsProvider legacyAuthorizedUrlsPatternsProvider(
             List<AuthorizedUrlsProvider> authorizedUrlsProviders) {
         return new LegacyAuthorizedUrlsPatternsProvider(authorizedUrlsProviders);
-    }
-
-    @Bean("sec_ForceApiSecurityScopePropertiesProvider")
-    ForceApiSecurityScopePropertiesProvider authDetailsCustomizationSettingsProvider(JmixModules jmixModules, Environment environment) {
-        return new ForceApiSecurityScopePropertiesProvider(jmixModules, environment);
-    }
-
-    @Bean("sec_ResourceServerFilterChainCustomizer")
-    ResourceServerFilterChainCustomizer resourceServerFilterChainCustomizer(ForceApiSecurityScopePropertiesProvider forceApiSecurityScopePropertiesProvider,
-                                                                            RequestLocaleProvider requestLocaleProvider,
-                                                                            Map<String, SecurityFilterChain> chains) {
-        return new ResourceServerFilterChainCustomizer(forceApiSecurityScopePropertiesProvider, requestLocaleProvider, chains);
     }
 }

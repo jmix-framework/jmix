@@ -482,7 +482,7 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
     private OperationResult navigateWithSave(ContinueNavigationAction navigationAction) {
         return saveChanges(reloadSaved)
                 .compose(() -> navigate(navigationAction, StandardOutcome.SAVE.getCloseAction()))
-                .otherwise(navigationAction::cancel);
+                .otherwise(() -> cancelNavigation(navigationAction));
     }
 
     private void cancelNavigation(ContinueNavigationAction navigationAction) {

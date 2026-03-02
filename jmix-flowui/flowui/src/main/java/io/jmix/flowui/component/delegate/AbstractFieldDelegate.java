@@ -169,7 +169,7 @@ public abstract class AbstractFieldDelegate<C extends AbstractField<?, V>, T, V>
                 && (component.getElement().getProperty("_inputElementValue", false)
                 // BigDecimalField.getInputElementValue()
                 || component.getElement().getProperty("value", false)
-                // Previously used for BigDecimal and other number field, letf for compatibility
+                // Previously used for BigDecimal and other number field, left for compatibility
                 || component.getElement().getProperty("_hasInputValue", false))) {
             setInvalidInternal(true);
             String validationMessage = messages.getMessage("validation.unparseableValue");

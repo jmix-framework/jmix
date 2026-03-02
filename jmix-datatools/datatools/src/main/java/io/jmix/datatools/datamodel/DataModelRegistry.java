@@ -15,6 +15,7 @@ import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
@@ -88,7 +89,10 @@ public class DataModelRegistry {
         Collection<MetaClass> metaClasses = metadata.getClasses();
 
         for (MetaClass metaClass : metaClasses) {
-            if (metadataTools.isJpaEntity(metaClass)) {
+            if (metadataTools.isJpaEntity(metaClass)
+                    // In rare cases Jpa entity may not have the Table annotation,
+                    // e.g. 'io.jmix.appsettings.entity.dummy.DummyAppSettingsEntity'
+                    && metaClass.getJavaClass().isAnnotationPresent(Table.class)) {
                 createEntityDescription(metaClass, false);
             }
         }
@@ -336,11 +340,11 @@ public class DataModelRegistry {
         return attributeModel;
     }
 
-    protected String getDatabaseColumnType(@javax.annotation.Nullable String schemaName,
-                                           @javax.annotation.Nullable String catalogName,
+    protected String getDatabaseColumnType(@Nullable String schemaName,
+                                           @Nullable String catalogName,
                                            String tableName,
                                            String columnName,
-                                           @javax.annotation.Nullable AttributeModel attributeModel) {
+                                           @Nullable AttributeModel attributeModel) {
         try (Connection conn = dataSource.getConnection()) {
             DatabaseMetaData dbMetaData = conn.getMetaData();
 

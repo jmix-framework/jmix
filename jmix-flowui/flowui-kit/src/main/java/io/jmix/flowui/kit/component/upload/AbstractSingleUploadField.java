@@ -26,22 +26,14 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.NativeButton;
 import com.vaadin.flow.component.shared.HasTooltip;
 import com.vaadin.flow.component.shared.SlotUtils;
-import com.vaadin.flow.component.upload.FileRejectedEvent;
-import com.vaadin.flow.component.upload.Upload;
+import com.vaadin.flow.component.upload.*;
+import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.dom.ElementConstants;
-import com.vaadin.flow.server.streams.TransferContext;
-import com.vaadin.flow.server.streams.TransferProgressListener;
-import com.vaadin.flow.server.streams.UploadHandler;
-import com.vaadin.flow.server.streams.UploadMetadata;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.component.upload.event.*;
-import io.jmix.flowui.kit.component.upload.handler.SupportUploadSuccessHandler.UploadSuccessContext;
-import jakarta.annotation.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
+import jakarta.annotation.Nullable;
 import java.util.List;
 
 /**
@@ -50,17 +42,14 @@ import java.util.List;
  * including file selection display, upload button components, and related
  * events like file upload progress, completion, failure, or rejection.
  *
- * @param <C>           the type of the component implementing this field
- * @param <V>           the value type of the upload field
- * @param <EV> the value type of the {@link FileUploadSucceededEvent}
+ * @param <C> the type of the component implementing this field
+ * @param <V> the value type of the upload field
  */
 @Tag("jmix-upload-field")
 @JsModule("./src/uploadfield/jmix-upload-field.js")
-public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadField<C, V, EV>, V, EV>
+public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadField<C, V>, V>
         extends AbstractField<C, V>
         implements HasLabel, HasHelper, HasSize, HasStyle, HasTooltip, HasTheme {
-
-    private static final Logger log = LoggerFactory.getLogger(AbstractSingleUploadField.class);
 
     protected static final String INPUT_CONTAINER_CLASS_NAME = "jmix-upload-field-input-container";
     protected static final String FILE_NAME_COMPONENT_CLASS_NAME = "jmix-upload-field-file-name";
@@ -159,12 +148,12 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
     }
 
     protected void initUploadComponent(JmixUploadButton upload) {
+        upload.setReceiver(createUploadReceiver());
+
         Component uploadButtonComponent = createUploadButtonComponent();
         initUploadButtonComponent(uploadButtonComponent);
         upload.setUploadButton(uploadButtonComponent);
     }
-
-    protected abstract UploadHandler createUploadHandler();
 
     protected Component createUploadButtonComponent() {
         return new Button();
@@ -175,7 +164,13 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
     }
 
     protected void attachUploadEvents(JmixUploadButton upload) {
+        upload.addStartedListener(this::onStartedEvent);
+        upload.addProgressListener(this::onProgressEvent);
+        upload.addFinishedListener(this::onFinishedEvent);
+        upload.addFailedListener(this::onFailedEvent);
         upload.addFileRejectedListener(this::onFileRejectedEvent);
+        upload.addSucceededListener(this::onSucceededEvent);
+
         upload.addUploadInternalError(this::onJmixUploadInternalError);
     }
 
@@ -189,6 +184,10 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
 
     protected <T extends HasComponents> T getContent() {
         return (T) content;
+    }
+
+    protected Receiver createUploadReceiver() {
+        return new MemoryBuffer();
     }
 
     @Override
@@ -232,8 +231,9 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
         return getEventBus().addListener(FileUploadProgressEvent.class, (ComponentEventListener) listener);
     }
 
-    protected void onProgressUpdate(TransferContext context, long transferredBytes, long totalBytes) {
-        getEventBus().fireEvent(new FileUploadProgressEvent<>(this, transferredBytes, totalBytes));
+    protected void onProgressEvent(ProgressUpdateEvent event) {
+        getEventBus().fireEvent(new FileUploadProgressEvent<>(this, event.getReadBytes(),
+                event.getContentLength()));
     }
 
     /**
@@ -247,9 +247,9 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
         return getEventBus().addListener(FileUploadFinishedEvent.class, (ComponentEventListener) listener);
     }
 
-    protected void onFinished(TransferContext context, long transferredBytes) {
-        getEventBus().fireEvent(new FileUploadFinishedEvent<>(this,
-                context.fileName(), getContentType(context.fileName()), context.contentLength()));
+    protected void onFinishedEvent(FinishedEvent event) {
+        getEventBus().fireEvent(new FileUploadFinishedEvent<>(this, event.getFileName(), event.getMIMEType(),
+                event.getContentLength()));
     }
 
     /**
@@ -263,10 +263,9 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
         return getEventBus().addListener(FileUploadFailedEvent.class, (ComponentEventListener) listener);
     }
 
-    protected void onFailed(TransferContext context, IOException reason) {
-        getEventBus().fireEvent(new FileUploadFailedEvent<>(this,
-                context.fileName(), getContentType(context.fileName()), context.contentLength(),
-                reason));
+    protected void onFailedEvent(FailedEvent event) {
+        getEventBus().fireEvent(new FileUploadFailedEvent<>(this, event.getFileName(), event.getMIMEType(),
+                event.getContentLength(), event.getReason()));
     }
 
     /**
@@ -280,21 +279,15 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
         return getEventBus().addListener(FileUploadStartedEvent.class, (ComponentEventListener) listener);
     }
 
-    protected void onStarted(TransferContext context) {
+    protected void onStartedEvent(StartedEvent event) {
         // Do not upload file if field is read only or disabled
         if (isReadOnly() || !isEnabled()) {
-            if (context.getOwningComponent() instanceof Upload upload) {
-                upload.interruptUpload();
-            } else {
-                log.warn("Data transfer owning component is not an instance of "
-                        + Upload.class.getName());
-            }
-
+            event.getUpload().interruptUpload();
             return;
         }
 
-        getEventBus().fireEvent(new FileUploadStartedEvent<>(this,
-                context.fileName(), getContentType(context.fileName()), context.contentLength()));
+        getEventBus().fireEvent(new FileUploadStartedEvent<>(this, event.getFileName(), event.getMIMEType(),
+                event.getContentLength()));
     }
 
     /**
@@ -323,15 +316,13 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
      * @return registration for removal of listener
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public Registration addFileUploadSucceededListener(ComponentEventListener<FileUploadSucceededEvent<C, EV>> listener) {
+    public Registration addFileUploadSucceededListener(ComponentEventListener<FileUploadSucceededEvent<C>> listener) {
         return getEventBus().addListener(FileUploadSucceededEvent.class, (ComponentEventListener) listener);
     }
 
-    protected void onSucceeded(UploadSuccessContext<EV> context) {
-        UploadMetadata metadata = context.uploadMetadata();
-        getEventBus().fireEvent(new FileUploadSucceededEvent<>(this,
-                metadata.fileName(), metadata.contentType(), metadata.contentLength(),
-                context.data()));
+    protected void onSucceededEvent(SucceededEvent event) {
+        getEventBus().fireEvent(new FileUploadSucceededEvent<>(this, event.getFileName(), event.getMIMEType(),
+                event.getContentLength(), uploadButton.getReceiver()));
     }
 
     /**
@@ -515,7 +506,7 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
     @Nullable
     public String getClearButtonAriaLabel() {
         Element element = uploadButton.getUploadButton().getElement();
-        return element.getAttribute(ElementConstants.ARIA_LABEL_ATTRIBUTE_NAME);
+        return element.getAttribute(ElementConstants.ARIA_LABEL_PROPERTY_NAME);
     }
 
     /**
@@ -553,7 +544,7 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
         // update presentation
         setPresentationValue(value);
 
-        ComponentValueChangeEvent<AbstractSingleUploadField<C, V, EV>, V> event =
+        ComponentValueChangeEvent<AbstractSingleUploadField<C, V>, V> event =
                 new ComponentValueChangeEvent<>(this, this, oldValue, fromClient);
         fireEvent(event);
     }
@@ -633,9 +624,9 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
 
     protected void setComponentAriaLabel(Component component, @Nullable String ariaLabel) {
         if (ariaLabel == null) {
-            component.getElement().removeAttribute(ElementConstants.ARIA_LABEL_ATTRIBUTE_NAME);
+            component.getElement().removeAttribute(ElementConstants.ARIA_LABEL_PROPERTY_NAME);
         } else {
-            component.getElement().setAttribute(ElementConstants.ARIA_LABEL_ATTRIBUTE_NAME, ariaLabel);
+            component.getElement().setAttribute(ElementConstants.ARIA_LABEL_PROPERTY_NAME, ariaLabel);
         }
     }
 
@@ -650,31 +641,5 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
             addThemeName(NO_FILE_NAME_THEME);
             addThemeNames(uploadButton.getUploadButton(), FULL_WIDTH_THEME);
         }
-    }
-
-    protected abstract String getContentType(String fileName);
-
-    protected TransferProgressListener createDefaultTransferProgressListener() {
-        return new TransferProgressListener() {
-            @Override
-            public void onStart(TransferContext context) {
-                onStarted(context);
-            }
-
-            @Override
-            public void onProgress(TransferContext context, long transferredBytes, long totalBytes) {
-                onProgressUpdate(context, transferredBytes, totalBytes);
-            }
-
-            @Override
-            public void onError(TransferContext context, IOException reason) {
-                onFailed(context, reason);
-            }
-
-            @Override
-            public void onComplete(TransferContext context, long transferredBytes) {
-                onFinished(context, transferredBytes);
-            }
-        };
     }
 }

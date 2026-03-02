@@ -164,7 +164,13 @@ public abstract class AbstractFieldDelegate<C extends AbstractField<?, V>, T, V>
 
         //If a component has an input value on the client side and doesn't have the value on the server side
         // then the client value is unparseable
-        if (value == null && component.getElement().getProperty("_hasInputValue", false)) {
+        if (value == null
+                // AbstractNumberField.getInputElementValue(), DatePicker, TimePicker
+                && (component.getElement().getProperty("_inputElementValue", false)
+                // BigDecimalField.getInputElementValue()
+                || component.getElement().getProperty("value", false)
+                // Previously used for BigDecimal and other number field, letf for compatibility
+                || component.getElement().getProperty("_hasInputValue", false))) {
             setInvalidInternal(true);
             String validationMessage = messages.getMessage("validation.unparseableValue");
             setErrorMessage(validationMessage);

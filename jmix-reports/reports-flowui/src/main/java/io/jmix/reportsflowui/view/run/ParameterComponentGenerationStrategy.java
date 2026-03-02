@@ -29,6 +29,7 @@ import io.jmix.flowui.Actions;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.action.entitypicker.EntityClearAction;
 import io.jmix.flowui.action.entitypicker.EntityLookupAction;
+import io.jmix.flowui.action.multivaluepicker.MultiValueSelectAction;
 import io.jmix.flowui.action.valuepicker.ValueClearAction;
 import io.jmix.flowui.component.HasRequired;
 import io.jmix.flowui.component.UiComponentUtils;
@@ -36,22 +37,25 @@ import io.jmix.flowui.component.checkbox.JmixCheckbox;
 import io.jmix.flowui.component.combobox.EntityComboBox;
 import io.jmix.flowui.component.datepicker.TypedDatePicker;
 import io.jmix.flowui.component.datetimepicker.TypedDateTimePicker;
-import io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker;
 import io.jmix.flowui.component.select.JmixSelect;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.component.timepicker.TypedTimePicker;
 import io.jmix.flowui.component.valuepicker.EntityPicker;
+import io.jmix.flowui.component.valuepicker.JmixMultiValuePicker;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.model.DataComponents;
+import io.jmix.flowui.sys.BeanUtil;
 import io.jmix.reports.entity.ParameterType;
 import io.jmix.reports.entity.ReportInputParameter;
 import io.jmix.reports.util.ReportsUtils;
 import io.jmix.reports.yarg.util.converter.ObjectToStringConverter;
+import io.jmix.reportsflowui.action.ReportsMultiValueSelectAction;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -83,6 +87,8 @@ public class ParameterComponentGenerationStrategy {
     protected MetadataTools metadataTools;
     @Autowired
     protected ObjectToStringConverter objectToStringConverter;
+    @Autowired
+    protected ApplicationContext applicationContext;
 
     protected Map<ParameterType, FieldCreator<?>> fieldCreationMapping = new ImmutableMap.Builder<ParameterType, FieldCreator<?>>()
             .put(ParameterType.BOOLEAN, new CheckBoxCreator())
@@ -302,23 +308,24 @@ public class ParameterComponentGenerationStrategy {
         }
     }
 
-    protected class MultiFieldCreator implements FieldCreator<JmixMultiSelectComboBoxPicker<?>> {
+    protected class MultiFieldCreator implements FieldCreator<JmixMultiValuePicker<?>> {
 
         @Override
-        public JmixMultiSelectComboBoxPicker<?> createField(final ReportInputParameter parameter) {
-            JmixMultiSelectComboBoxPicker<?> multiComboBoxPicker = uiComponents.create(JmixMultiSelectComboBoxPicker.class);
-            MetaClass entityMetaClass = metadata.getClass(parameter.getEntityMetaClass());
-            multiComboBoxPicker.setMetaClass(entityMetaClass);
+        public JmixMultiValuePicker<?> createField(final ReportInputParameter parameter) {
+            JmixMultiValuePicker<?> multiComboBoxPicker = uiComponents.create(JmixMultiValuePicker.class);
 
-            CollectionContainer collectionContainer = createCollectionContainer(entityMetaClass);
-            multiComboBoxPicker.setItems(collectionContainer.getItems());
+            MultiValueSelectAction<?> selectAction = new ReportsMultiValueSelectAction<>();
+            BeanUtil.autowireContext(applicationContext, selectAction);
 
-            EntityLookupAction<?> pickerLookupAction = actions.create(EntityLookupAction.ID);
             String screen = parameter.getScreen();
             if (StringUtils.isNotEmpty(screen)) {
-                pickerLookupAction.setViewId(screen);
+                selectAction.setLookupViewId(screen);
             }
-            multiComboBoxPicker.addAction(pickerLookupAction);
+
+            MetaClass entityMetaClass = metadata.getClass(parameter.getEntityMetaClass());
+            selectAction.setEntityName(entityMetaClass.getName());
+
+            multiComboBoxPicker.addAction(selectAction);
 
             ValueClearAction<?> valueClearAction = createValueClearAction();
             multiComboBoxPicker.addAction(valueClearAction);

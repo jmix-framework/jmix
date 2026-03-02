@@ -20,14 +20,10 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.upload.FailedEvent;
 import com.vaadin.flow.component.upload.Upload;
-import com.vaadin.flow.server.streams.TransferContext;
-import com.vaadin.flow.server.streams.TransferProgressListener;
-
-import java.io.IOException;
 
 /**
  * Event is fired when {@link FailedEvent} of {@link Upload} is occurred. See
- * {@link TransferProgressListener#onError(TransferContext, IOException)} for details.
+ * {@link Upload#addFailedListener(ComponentEventListener)} for details.
  *
  * @param <C> type of upload field
  * @see FailedEvent

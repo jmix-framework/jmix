@@ -17,11 +17,16 @@
 package io.jmix.flowui.kit.component.upload;
 
 import com.google.common.base.Strings;
-import com.vaadin.flow.server.streams.UploadHandler;
-import io.jmix.flowui.kit.component.upload.handler.SupportUploadSuccessHandler.UploadSuccessContext;
-import jakarta.annotation.Nullable;
+import com.vaadin.flow.component.upload.Receiver;
+import com.vaadin.flow.component.upload.SucceededEvent;
+import com.vaadin.flow.component.upload.Upload;
+import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 
+import jakarta.annotation.Nullable;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 
 /**
@@ -29,8 +34,8 @@ import java.util.Arrays;
  *
  * @param <C> the type of the inheriting component that extends {@code AbstractSingleUploadField}
  */
-public class JmixFileUploadField<C extends AbstractSingleUploadField<C, byte[], byte[]>>
-        extends AbstractSingleUploadField<C, byte[], byte[]> {
+public class JmixFileUploadField<C extends AbstractSingleUploadField<C, byte[]>>
+        extends AbstractSingleUploadField<C, byte[]> {
 
     private static final String DEFAULT_FILENAME = "attachment";
 
@@ -98,15 +103,33 @@ public class JmixFileUploadField<C extends AbstractSingleUploadField<C, byte[], 
     }
 
     @Override
-    protected void onSucceeded(UploadSuccessContext<byte[]> context) {
-        saveFile(context);
+    protected void onSucceededEvent(SucceededEvent event) {
+        saveFile(event);
 
-        super.onSucceeded(context);
+        super.onSucceededEvent(event);
     }
 
-    protected void saveFile(UploadSuccessContext<byte[]> context) {
-        uploadedFileName = context.uploadMetadata().fileName();
-        setInternalValue(context.data(), true);
+    protected void saveFile(SucceededEvent event) {
+        Upload upload = event.getUpload();
+        Receiver receiver = upload.getReceiver();
+
+        if (receiver instanceof MemoryBuffer) {
+            uploadedFileName = event.getFileName();
+
+            InputStream inputStream = ((MemoryBuffer) receiver).getInputStream();
+            byte[] value;
+            try {
+                value = IOUtils.toByteArray(inputStream);
+            } catch (IOException e) {
+                throw new RuntimeException("Cannot upload file: " + event.getFileName());
+            } finally {
+                IOUtils.closeQuietly(inputStream);
+            }
+
+            setInternalValue(value, true);
+        } else {
+            throw new IllegalStateException("Unsupported receiver: " + receiver.getClass().getName());
+        }
     }
 
     @Override
@@ -121,17 +144,5 @@ public class JmixFileUploadField<C extends AbstractSingleUploadField<C, byte[], 
 
     protected boolean valueEquals(@Nullable byte[] a, @Nullable byte[] b) {
         return Arrays.equals(a, b);
-    }
-
-    @Override
-    protected UploadHandler createUploadHandler() {
-        return UploadHandler.inMemory((metadata, data) ->
-                        onSucceeded(new UploadSuccessContext<>(metadata, data)),
-                createDefaultTransferProgressListener());
-    }
-
-    @Override
-    protected String getContentType(String fileName) {
-        return "unknown";
     }
 }

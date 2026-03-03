@@ -196,7 +196,7 @@ interface StudioDataElements {
             xmlElement = "onContainerItemChanged",
             icon = "io/jmix/flowui/kit/meta/icon/element/onContainerItemChangedLoadTrigger.svg",
             properties = {
-                    @StudioProperty(xmlAttribute = "param", type = StudioPropertyType.PROPERTY_REF),
+                    @StudioProperty(xmlAttribute = "param", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "container", type = StudioPropertyType.COLLECTION_OR_INSTANCE_DATA_CONTAINER_REF, required = true)
             }
     )

@@ -47,6 +47,8 @@ public class EntityCalendarDataRetriever extends AbstractEntityCalendarDataProvi
 
     protected Function<ItemsFetchContext, List<CalendarEvent>> loadDelegate;
 
+    protected List<CalendarEvent> items;
+
     public EntityCalendarDataRetriever() {
     }
 
@@ -145,11 +147,22 @@ public class EntityCalendarDataRetriever extends AbstractEntityCalendarDataProvi
         this.fetchPlan = fetchPlan;
     }
 
-    @Override
-    public List<CalendarEvent> onItemsFetch(ItemsFetchContext context) {
-        return load(context);
+    /**
+     * Returns loaded events for the last fetch request.
+     *
+     * @return loaded events
+     */
+    public List<CalendarEvent> getItems() {
+        return items == null ? Collections.emptyList() : items;
     }
 
+    @Override
+    public List<CalendarEvent> onItemsFetch(ItemsFetchContext context) {
+        items = load(context);
+        return items;
+    }
+
+    @Nullable
     @Override
     public Class<?> getStartPropertyJavaType() {
         if (Strings.isNullOrEmpty(getStartDateTimeProperty())) {
@@ -159,6 +172,7 @@ public class EntityCalendarDataRetriever extends AbstractEntityCalendarDataProvi
         return property.getJavaType();
     }
 
+    @Nullable
     @Override
     public Class<?> getEndPropertyJavaType() {
         if (Strings.isNullOrEmpty(getEndDateTimeProperty())) {

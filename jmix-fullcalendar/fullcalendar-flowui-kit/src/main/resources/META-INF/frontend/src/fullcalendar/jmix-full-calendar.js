@@ -36,6 +36,7 @@ const FC_TIMEGRID_SLOT_LABEL = 'fc-timegrid-slot-label';
 const FC_TIMEGRID_NOW_INDICATOR_ARROW = 'fc-timegrid-now-indicator-arrow';
 const FC_TIMEGRID_NOW_INDICATOR_LINE = 'fc-timegrid-now-indicator-line';
 const FC_POPOVER = 'fc-popover';
+const FC_DAYGRID_DAY_FRAME = 'fc-daygrid-day-frame';
 
 const JMIX_DAY_CELL_BOTTOM_TEXT = 'jmix-day-cell-bottom-text';
 const JMIX_HAS_BOTTOM_TEXT = 'jmix-has-bottom-text';
@@ -216,7 +217,7 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
      * @private
      */
     _updateSyncSourcesData(context) {
-        this.dataHolder.set(context.sourceId, context.data);
+        this.dataHolder.set(context.sourceId, { fetchAfterAdded: true, data: context.data });
 
         this.calendar.getEventSourceById(context.sourceId).refetch();
     }
@@ -244,7 +245,7 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
             if (!sourceData.items) {
                 continue;
             }
-            const items = this.dataHolder.get(sourceData.sourceId);
+            const items = this.dataHolder.get(sourceData.sourceId).data;
             switch (sourceData.operation) {
                 case 'add':
                     items.push(...sourceData.items);
@@ -295,7 +296,9 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
             return;
         }
 
-        this.dataHolder.set(sourceId, lazySource ? {compContext: this} : []);
+        this.dataHolder.set(sourceId, lazySource
+            ? { compContext: this }
+            : { fetchAfterAdded: false, data: [] });
 
         this.calendar.addEventSource(this._createEventSource(sourceId, lazySource));
     }
@@ -317,16 +320,21 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
         return {
             events: (a, b, c) => lazySource
                 ? this._lazyFetchFunction(a, b, c, this.dataHolder, sourceId)
-                : this._fetchFunction(a, b, c, this.dataHolder.get(sourceId)),
+                : this._fetchFunction(a, b, c, this.dataHolder, sourceId),
             id: sourceId
         }
     }
 
-    _fetchFunction(fetchInfo, successCallback, failureCallback, data) {
-        if (!data) {
+    _fetchFunction(fetchInfo, successCallback, failureCallback, dataHolder, sourceId) {
+        const context = dataHolder.get(sourceId);
+        if (!context.fetchAfterAdded) {
+            context.fetchAfterAdded = true;
             return;
         }
-        successCallback(data);
+
+        successCallback(context.data);
+
+        this._postponeUpdatingBottomTextFromFetch();
     }
 
     async _lazyFetchFunction(fetchInfo, successCallback, failureCallback, dataHolder, sourceId) {
@@ -339,6 +347,8 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
         const data = await fetchCalendarItems();
         dataHolder.set(sourceId, {compContext: context.compContext, data: data, lastFetchInfo: fetchInfo});
         successCallback(data);
+
+        this._postponeUpdatingBottomTextFromFetch();
     }
 
     _onDayHeaderClassNames(e) {
@@ -604,9 +614,13 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
             }
         }));
 
-        // The `_generateDayCellBottomText()` function sometime does not set 'JMIX_HAS_BOTTOM_TEXT' class (why?).
-        // We should reassign class name if day cells do not have it.
-        this._reassignHasBottomText();
+        if (this.bottomTextUpdateTimeoutId) {
+            clearTimeout(this.bottomTextUpdateTimeoutId);
+            this.bottomTextUpdateTimeoutId = null;
+        }
+
+        this._clearNotInRangeDayCellContexts();
+        this._updateBottomText();
     }
 
     _onDateClick(e) {
@@ -648,77 +662,34 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
     }
 
     _onDayCellDidMount(e) {
-        this._generateDayCellBottomText(e);
+        this._generateDayCellContext(e);
         this._initContextMenuListener(e);
     }
 
-    _generateDayCellBottomText(e) {
-        const viewType = this.calendar.view.type;
-        if (viewType !== DAY_GRID_MONTH
-            && viewType !== DAY_GRID_YEAR) {
-            return;
+    _generateDayCellContext(e) {
+        if (!this.dayCellContexts) {
+             this.dayCellContexts = [];
         }
-        const dayCellBottomTextOption = this.jmixOptions.getOption(DAY_CELL_BOTTOM_TEXT);
-        if (!dayCellBottomTextOption) {
-            return;
-        }
-        if (e.el.classList.contains(FC_POPOVER)) {
-            return;
-        }
-        if (dayCellBottomTextOption.textGeneratorEnabled) {
-            const context = {
-                date: this.formatDate(e.date, true),
-                dow: e.dow,
-                isDisabled: e.isDisabled,
-                isFuture: e.isFuture,
-                isOther: e.isOther,
-                isPast: e.isPast,
-                isToday: e.isToday,
-                view: utils.createViewInfo(e.view, this.formatDate.bind(this))
-            };
 
-            this.$server.getDayCellBottomTextInfo(context)
-                .then((textInfo) => {
-                    if (!textInfo || !textInfo.text) {
-                        return;
-                    }
-                    e.el.appendChild(this._createDayCellBottomTextDiv(textInfo));
-                    e.el.classList.add(JMIX_HAS_BOTTOM_TEXT);
-                });
-        }
-    }
+        const dayCellContext = {
+            date: this.formatDate(e.date, true),
+            dow: e.dow,
+            isDisabled: e.isDisabled,
+            isFuture: e.isFuture,
+            isOther: e.isOther,
+            isPast: e.isPast,
+            isToday: e.isToday,
+            view: utils.createViewInfo(e.view, this.formatDate.bind(this))
+        };
 
-    _reassignHasBottomText() {
-        const viewType = this.calendar.view.type;
-        if (viewType !== DAY_GRID_MONTH
-            && viewType !== DAY_GRID_YEAR) {
-            return;
-        }
-        const dayCellBottomTextOption = this.jmixOptions.getOption(DAY_CELL_BOTTOM_TEXT);
-        if (!dayCellBottomTextOption || !dayCellBottomTextOption.textGeneratorEnabled) {
-            return;
-        }
-        const days = this.calendarElement.getElementsByClassName(FC_DAYGRID_DAY);
-        for (const dayElement of days) {
-            if (dayElement.nodeName !== 'TD') {
-                return;
-            }
-            if (dayElement.getElementsByClassName(JMIX_DAY_CELL_BOTTOM_TEXT).length > 0) {
-                if (!dayElement.classList.contains(JMIX_HAS_BOTTOM_TEXT)) {
-                    dayElement.classList.add(JMIX_HAS_BOTTOM_TEXT)
-                }
-            }
-        }
-    }
+        const existingContextIndex = this.dayCellContexts
+            .findIndex(cellContext => cellContext.date === dayCellContext.date);
 
-    _createDayCellBottomTextDiv(textInfo) {
-        const div = document.createElement('DIV');
-        div.className = JMIX_DAY_CELL_BOTTOM_TEXT;
-        div.innerText = textInfo.text;
-        if (textInfo.classNames) {
-            div.classList.add(...textInfo.classNames);
+        if (existingContextIndex >= 0) {
+            this.dayCellContexts[existingContextIndex] = dayCellContext;
+        } else {
+            this.dayCellContexts.push(dayCellContext);
         }
-        return div;
     }
 
     _initContextMenuListener(e) {
@@ -916,6 +887,108 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
         }
 
         return moment.format();
+    }
+
+    /**
+     * @private
+     */
+    _postponeUpdatingBottomTextFromFetch() {
+        if (this.bottomTextUpdateTimeoutId) {
+            clearTimeout(this.bottomTextUpdateTimeoutId);
+            this.bottomTextUpdateTimeoutId = null;
+        }
+
+        this.bottomTextUpdateTimeoutId = setTimeout(() => { this._updateBottomText() }, 10);
+    }
+
+    /**
+     * @private
+     */
+    _clearNotInRangeDayCellContexts() {
+        const viewType = this.calendar.view.type;
+
+        this.dayCellContexts = this.dayCellContexts
+                    .filter(item =>
+                         new Date(item.date) >= this.calendar.view.activeStart
+                         || new Date(item.date) < this.calendar.view.activeEnd);
+    }
+
+    /**
+     * @private
+     */
+    _updateBottomText() {
+        const dayCellBottomTextOption = this.jmixOptions.getOption(DAY_CELL_BOTTOM_TEXT);
+        if (!dayCellBottomTextOption || !dayCellBottomTextOption.textGeneratorEnabled) {
+            return;
+        }
+
+        const viewType = this.calendar.view.type;
+        if (viewType !== DAY_GRID_MONTH && viewType !== DAY_GRID_YEAR) {
+            this._removeBottomTextElements();
+            return;
+        }
+
+        const dayContentElements = this.calendarElement.querySelectorAll(`td[class~="${FC_DAY}"]`)
+        for (const dayContentElement of dayContentElements) {
+            let bottomElement = dayContentElement.querySelector(`[class~="${JMIX_DAY_CELL_BOTTOM_TEXT}"]`)
+            if (!bottomElement) {
+                bottomElement = this._createBottomTextElement();
+                dayContentElement.appendChild(bottomElement);
+            }
+
+            if (!dayContentElement.classList.contains(JMIX_HAS_BOTTOM_TEXT)) {
+                dayContentElement.classList.add(JMIX_HAS_BOTTOM_TEXT);
+            }
+
+            if (dayContentElement.classList.contains(FC_POPOVER)) {
+                continue;
+            }
+
+            if (!this.dayCellContexts) {
+                break;
+            }
+
+            const contexts = this.dayCellContexts.filter(cellContext => cellContext.date === this.formatDate(dayContentElement.dataset.date, true));
+            if (!contexts || contexts.length === 0) {
+                throw new Error('No context found for date: ' + this.formatDate(dayContentElement.dataset.date, true));
+            }
+
+            this.$server.getDayCellBottomTextInfo(contexts[0])
+                .then((textInfo) => {
+                    if (!textInfo || !textInfo.text) {
+                        return;
+                    }
+                    bottomElement.innerText = textInfo.text;
+
+                    if (textInfo.classNames) {
+                        bottomElement.classList.add(...textInfo.classNames);
+                    }
+                });
+        }
+    }
+
+    /**
+     * @private
+     */
+    _removeBottomTextElements() {
+        const dayContentElements = this.calendarElement.querySelectorAll(`td[class~="${FC_DAY}"]`)
+
+        for (const dayContentElement of dayContentElements) {
+            let bottomElement = dayContentElement.querySelector(`[class~="${JMIX_DAY_CELL_BOTTOM_TEXT}"]`)
+            if (bottomElement && bottomElement.parentElement) {
+                bottomElement.parentElement.removeChild(bottomElement);
+            }
+            dayContentElement.classList.remove(JMIX_HAS_BOTTOM_TEXT);
+        }
+    }
+
+    /**
+     * @private
+     */
+    _createBottomTextElement() {
+        const bottomElement = document.createElement('DIV');
+        bottomElement.className = JMIX_DAY_CELL_BOTTOM_TEXT;
+        return bottomElement;
     }
 }
 

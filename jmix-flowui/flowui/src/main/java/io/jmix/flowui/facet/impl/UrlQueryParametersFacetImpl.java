@@ -142,7 +142,7 @@ public class UrlQueryParametersFacetImpl extends AbstractFacet implements UrlQue
             QueryParameters queryParametersToAdd = initialQueryParameters;
             owner.getUI().ifPresent(ui ->
                     ui.beforeClientResponse(owner, __ -> {
-                        if (ui.getCurrentView() != owner) {
+                        if (owner instanceof View<?> && ui.getCurrentView() != owner) {
                             return;
                         }
 
@@ -211,14 +211,14 @@ public class UrlQueryParametersFacetImpl extends AbstractFacet implements UrlQue
 
             owner.getUI().ifPresent(ui ->
                     pushQueryParametersRegistration = ui.beforeClientResponse(owner, __ -> {
-                        if (ui.getCurrentView() != owner) {
+                        if (owner instanceof View<?> && ui.getCurrentView() != owner) {
                             postponedQueryParameters = null;
                             pushQueryParametersRegistration = null;
                             return;
                         }
 
                         routeSupport.fetchCurrentLocation(ui, location -> {
-                            if (ui.getCurrentView() != owner) {
+                            if (owner instanceof View<?> && ui.getCurrentView() != owner) {
                                 return;
                             }
 

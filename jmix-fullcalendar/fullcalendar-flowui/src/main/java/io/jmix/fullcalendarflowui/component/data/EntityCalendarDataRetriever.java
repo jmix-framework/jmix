@@ -153,7 +153,7 @@ public class EntityCalendarDataRetriever extends AbstractEntityCalendarDataProvi
      * @return loaded events
      */
     public List<CalendarEvent> getItems() {
-        return items == null ? Collections.emptyList() : items;
+        return items == null ? Collections.emptyList() : Collections.unmodifiableList(items);
     }
 
     @Override

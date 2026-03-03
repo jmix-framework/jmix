@@ -38,7 +38,7 @@ export const JmixSidePanelLayoutMixin = (superClass) =>
             sidePanelOverlay: {
                 type: Boolean,
                 reflectToAttribute: true,
-                value: 'true',
+                value: true,
                 notify: true,
                 observer: '_sidePanelOverlayChanged',
                 sync: true,

@@ -147,7 +147,7 @@ public class MessageTemplateListView extends StandardListView<MessageTemplate> {
     }
 
     @Subscribe("importField")
-    public void onImportFileUploadSucceeded(FileUploadSucceededEvent<FileUploadField, byte[]> event) {
+    public void onImportFileUploadSucceeded(FileUploadSucceededEvent<FileUploadField> event) {
         byte[] fileBytes = event.getSource().getValue();
 
         Preconditions.checkNotNullArgument(fileBytes);

@@ -910,7 +910,7 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
     }
 
     @Subscribe("importField")
-    public void onImportFieldFileUploadSucceed(FileUploadSucceededEvent<FileUploadField, byte[]> event) {
+    public void onImportFieldFileUploadSucceed(FileUploadSucceededEvent<FileUploadField> event) {
         try {
             byte[] bytes = importField.getValue();
             Assert.notNull(bytes, "Uploaded file does not contains data");

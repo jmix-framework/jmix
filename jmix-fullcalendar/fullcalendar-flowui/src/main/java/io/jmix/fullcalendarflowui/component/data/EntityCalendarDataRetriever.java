@@ -159,7 +159,7 @@ public class EntityCalendarDataRetriever extends AbstractEntityCalendarDataProvi
     @Override
     public List<CalendarEvent> onItemsFetch(ItemsFetchContext context) {
         items = load(context);
-        return items;
+        return Collections.unmodifiableList(items);
     }
 
     @Nullable

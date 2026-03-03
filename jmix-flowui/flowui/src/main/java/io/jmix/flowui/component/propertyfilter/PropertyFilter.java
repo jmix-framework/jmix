@@ -315,6 +315,17 @@ public class PropertyFilter<V> extends SingleFilterComponentBase<V> {
     }
 
     @Override
+    public void setLabel(@Nullable String label) {
+        if (!Objects.equals(this.labelText, label)) {
+            this.labelText = operationTextVisible && !operationEditable && operation != null
+                    ? label + " " + propertyFilterSupport.getOperationText(operation)
+                    : label;
+
+            setLabelInternal(label);
+        }
+    }
+
+    @Override
     protected void setLabelInternal(@Nullable String label) {
         String newLabelText;
         // TODO: gg, needs testing

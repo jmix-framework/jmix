@@ -13,7 +13,9 @@ import io.jmix.reports.yarg.structure.CustomValueFormatter;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -37,14 +39,14 @@ import java.util.stream.Collectors;
         name = "Start date",
         type = ParameterType.DATE,
         required = true,
-        defaultValue = "2025-04-01T00:00:00"
+        defaultValue = "2025-04-01"
 )
 @InputParameterDef(
         alias = RevenueByGameReport.PARAM_END_DATE,
         name = "End date",
         type = ParameterType.DATE,
         required = true,
-        defaultValue = "2025-06-01T00:00:00"
+        defaultValue = "2025-06-01"
 )
 @BandDef(
         name = "Root",
@@ -87,11 +89,11 @@ public class RevenueByGameReport {
 
     @DataSetDelegate(name = "Root")
     public ReportDataLoader rootDataLoader() {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM");
         return (reportQuery, parentBand, parameters) -> {
             String dateRange = String.format("%s - %s",
-                    sdf.format(parameters.get(PARAM_START_DATE)),
-                    sdf.format(parameters.get(PARAM_END_DATE))
+                    formatter.format((LocalDate) parameters.get(PARAM_START_DATE)),
+                    formatter.format((LocalDate) parameters.get(PARAM_END_DATE))
             );
 
             return List.of(
@@ -107,12 +109,19 @@ public class RevenueByGameReport {
     @DataSetDelegate(name = "Data")
     public ReportDataLoader dataDataLoader() {
         return (reportQuery, parentBand, parameters) -> {
-            java.util.Date startDate = (java.util.Date) parameters.get(PARAM_START_DATE);
-            java.util.Date endDate = (java.util.Date) parameters.get(PARAM_END_DATE);
+            Object startDate = parameters.get(PARAM_START_DATE);
+            Object endDate = parameters.get(PARAM_END_DATE);
+
+            if (startDate instanceof LocalDate localDate) {
+                startDate = localDate.atStartOfDay();
+            }
+            if (endDate instanceof LocalDate localDate) {
+                endDate = localDate.atTime(LocalTime.MAX);
+            }
 
             List<PurchasedGame> purchases = unconstrainedDataManager.load(PurchasedGame.class)
                     .query("select pg from PurchasedGame pg join fetch pg.game" +
-                           " where pg.purchaseDate >= :startDate and pg.purchaseDate <= :endDate")
+                            " where pg.purchaseDate >= :startDate and pg.purchaseDate <= :endDate")
                     .parameter("startDate", startDate)
                     .parameter("endDate", endDate)
                     .list();

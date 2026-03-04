@@ -322,7 +322,9 @@ public class PropertyFilter<V> extends SingleFilterComponentBase<V> {
                 || operation == null
                 || getProperty() == null
                 || !Strings.isNullOrEmpty(labelText)) {
-            newLabelText = labelText;
+            newLabelText = operationTextVisible && !operationEditable && operation != null
+                    ? labelText + " " + propertyFilterSupport.getOperationText(operation)
+                    : labelText;
         } else {
             MetaClass metaClass = dataLoader.getContainer().getEntityMetaClass();
             newLabelText = propertyFilterSupport.getPropertyFilterCaption(metaClass, getProperty(),

@@ -20,6 +20,10 @@ import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
@@ -107,7 +111,10 @@ public class DataModelRegistry {
         for (MetaProperty field : fields) {
             String fieldName = field.getName();
 
-            if (field.getType().equals(MetaProperty.Type.DATATYPE)
+            if (isAnnotationPresent(field, ElementCollection.class)) {
+                addElementCollectionAttribute(entity, field, fieldName, attributeModelsList);
+
+            } else if (field.getType().equals(MetaProperty.Type.DATATYPE)
                     && isAnnotationPresent(field, Column.class)) {
                 addDatatypeAttribute(entity, isEmbeddable, field, fieldName, attributeModelsList);
 
@@ -220,13 +227,12 @@ public class DataModelRegistry {
 
         AttributeModel attributeModel =
                 constructAttribute(fieldName, fieldType, isAnnotationPresent(field, NotNull.class));
+        attributeModelsList.add(attributeModel);
 
         String relationDescription = diagramEngine.constructRelationDescription(entity.getName(),
                 fieldType, RelationType.ONE_TO_MANY, dataStoreName);
         Relation relation = new Relation(dataStoreName, fieldType, relationDescription);
-
         putRelation(relationsMap, RelationType.ONE_TO_MANY, relation);
-        attributeModelsList.add(attributeModel);
     }
 
     protected void addOneToOneAttribute(MetaClass entity, boolean isEmbeddable, MetaProperty field, String fieldName,
@@ -247,12 +253,12 @@ public class DataModelRegistry {
             attributeModel = constructAttribute(fieldName, fieldType, isMandatory);
         }
 
+        attributeModelsList.add(attributeModel);
+
         String relationDescription = diagramEngine.constructRelationDescription(entity.getName(),
                 fieldType, RelationType.ONE_TO_ONE, dataStoreName);
         Relation relation = new Relation(dataStoreName, fieldType, relationDescription);
-
         putRelation(relationsMap, RelationType.ONE_TO_ONE, relation);
-        attributeModelsList.add(attributeModel);
     }
 
     protected void addManyToManyAttribute(MetaClass entity, MetaProperty field, String fieldName,
@@ -267,12 +273,30 @@ public class DataModelRegistry {
                 + "."
                 + annotation.joinColumns()[0].name();
         attributeModel.setColumnName(columnName);
+        attributeModelsList.add(attributeModel);
 
         String relationDescription = diagramEngine.constructRelationDescription(entity.getName(),
                 fieldType, RelationType.MANY_TO_MANY, dataStoreName);
         Relation relation = new Relation(dataStoreName, fieldType, relationDescription);
-
         putRelation(relationsMap, RelationType.MANY_TO_MANY, relation);
+    }
+
+    protected void addElementCollectionAttribute(MetaClass entity, MetaProperty field, String fieldName,
+                                                 List<AttributeModel> attributeModelsList) {
+        String fieldType = "%s<%s>".formatted(
+                field.getJavaType().getSimpleName(), getElementTypeFromCollection(field));
+        AttributeModel attributeModel = constructAttribute(fieldName, fieldType,
+                isAnnotationPresent(field, NotNull.class));
+
+        String collectionTableName = getAnnotation(field, CollectionTable.class).name();
+        String valueColumnName = getAnnotation(field, Column.class).name();
+        String columnName = "%s.%s".formatted(collectionTableName, valueColumnName);
+        attributeModel.setColumnName(columnName);
+
+        Table tableAnnotation = entity.getJavaClass().getAnnotation(Table.class);
+        attributeModel.setDbType(getDatabaseColumnType(getSchemaName(tableAnnotation),
+                getCatalogName(tableAnnotation), collectionTableName, valueColumnName));
+
         attributeModelsList.add(attributeModel);
     }
 
@@ -310,7 +334,6 @@ public class DataModelRegistry {
     protected AttributeModel constructAttribute(String fieldName, String fieldType,
                                                 boolean isMandatory) {
         AttributeModel attributeModel = constructAttribute(fieldName, fieldType);
-
         attributeModel.setIsMandatory(isMandatory);
 
         return attributeModel;
@@ -320,9 +343,8 @@ public class DataModelRegistry {
                                                 String fieldType, MetaClass entity,
                                                 boolean isMandatory) {
         AttributeModel attributeModel = constructAttribute(fieldName, fieldType);
-
         attributeModel.setColumnName(columnName);
-        attributeModel.setDbType(getDatabaseColumnType(entity, attributeModel, columnName));
+        attributeModel.setDbType(getDatabaseColumnType(entity, columnName));
         attributeModel.setIsMandatory(isMandatory);
 
         return attributeModel;
@@ -332,7 +354,6 @@ public class DataModelRegistry {
                                                 String fieldType, String dbType,
                                                 boolean isMandatory) {
         AttributeModel attributeModel = constructAttribute(fieldName, fieldType);
-
         attributeModel.setColumnName(columnName);
         attributeModel.setDbType(dbType);
         attributeModel.setIsMandatory(isMandatory);
@@ -343,8 +364,7 @@ public class DataModelRegistry {
     protected String getDatabaseColumnType(@Nullable String schemaName,
                                            @Nullable String catalogName,
                                            String tableName,
-                                           String columnName,
-                                           @Nullable AttributeModel attributeModel) {
+                                           String columnName) {
         try (Connection conn = dataSource.getConnection()) {
             DatabaseMetaData dbMetaData = conn.getMetaData();
 
@@ -379,25 +399,35 @@ public class DataModelRegistry {
         }
     }
 
-    protected String getDatabaseColumnType(MetaClass entity, AttributeModel attributeModel, String columnName) {
-        Table annotation = entity.getJavaClass().getAnnotation(Table.class);
+    protected String getDatabaseColumnType(MetaClass entity, String columnName) {
+        Table tableAnnotation = entity.getJavaClass().getAnnotation(Table.class);
         String tableName;
-        String catalogName = annotation.catalog().isEmpty()
-                ? null
-                : annotation.catalog().toUpperCase();
-        String schemaName = annotation.schema().isEmpty()
-                ? null
-                : annotation.schema().toUpperCase();
-
+        String finalColumnName;
         if (dbmsType.getType(entity.getStore().getName()).equals("POSTGRESQL")) {
-            tableName = annotation.name().toLowerCase();
-            columnName = columnName.toLowerCase();
+            tableName = tableAnnotation.name().toLowerCase();
+            finalColumnName = columnName.toLowerCase();
         } else {
-            tableName = annotation.name().toUpperCase();
-            columnName = columnName.toUpperCase();
+            tableName = tableAnnotation.name().toUpperCase();
+            finalColumnName = columnName.toUpperCase();
         }
 
-        return getDatabaseColumnType(schemaName, catalogName, tableName, columnName, attributeModel);
+        String catalogName = getCatalogName(tableAnnotation);
+        String schemaName = getSchemaName(tableAnnotation);
+        return getDatabaseColumnType(schemaName, catalogName, tableName, finalColumnName);
+    }
+
+    @Nullable
+    protected String getCatalogName(Table annotation) {
+        return annotation.catalog().isEmpty()
+                ? null
+                : annotation.catalog().toUpperCase();
+    }
+
+    @Nullable
+    protected String getSchemaName(Table annotation) {
+        return annotation.schema().isEmpty()
+                ? null
+                : annotation.schema().toUpperCase();
     }
 
     protected void putDataModel(DataModel dataModel) {
@@ -469,6 +499,33 @@ public class DataModelRegistry {
     }
 
     protected <T extends Annotation> T getAnnotation(MetaProperty field, Class<T> annotationClass) {
-        return field.getAnnotatedElement().getAnnotation(annotationClass);
+        AnnotatedElement annotatedElement = field.getAnnotatedElement();
+        if (annotatedElement.isAnnotationPresent(annotationClass)) {
+            return annotatedElement.getAnnotation(annotationClass);
+        } else {
+            throw new IllegalStateException("Annotation '%s' is not present on field: '%s'"
+                    .formatted(annotationClass.getSimpleName(), field));
+        }
+    }
+
+    protected String getElementTypeFromCollection(MetaProperty metaProperty) {
+        AnnotatedElement annotatedElement = metaProperty.getAnnotatedElement();
+        if (annotatedElement instanceof Field field) {
+            if (field.getGenericType() instanceof ParameterizedType parameterizedType) {
+                Type[] typeArguments = parameterizedType.getActualTypeArguments();
+
+                if (typeArguments.length > 0) {
+                    Type elementType = typeArguments[0];
+                    if (elementType instanceof Class) {
+                        return ((Class<?>) elementType).getSimpleName();
+                    } else {
+                        return elementType.getTypeName();
+                    }
+                }
+            }
+        }
+
+        // Fallback to Object if we can't determine the type
+        return "Object";
     }
 }

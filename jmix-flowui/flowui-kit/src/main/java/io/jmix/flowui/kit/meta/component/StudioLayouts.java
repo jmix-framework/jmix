@@ -31,6 +31,8 @@ import io.jmix.flowui.kit.component.gridlayout.JmixGridLayout;
 import io.jmix.flowui.kit.meta.*;
 import io.jmix.flowui.kit.meta.StudioAvailableChildrenInfo.ClassInfo;
 import io.jmix.flowui.kit.meta.StudioAvailableChildrenInfo.TagInfo;
+import io.jmix.flowui.kit.meta.StudioXmlElementInitializer.AttributeInitializer;
+import io.jmix.flowui.kit.meta.StudioXmlElementInitializer.ChildXmlElementInitializer;
 
 import static io.jmix.flowui.kit.meta.StudioAvailableChildrenInfo.FLOW_COMPONENT_FQN;
 
@@ -428,7 +430,7 @@ interface StudioLayouts {
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
                             defaultValue = "AUTO",
                             options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
-                    @StudioProperty(xmlAttribute = "closeOnOutsideClick",type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "closeOnOutsideClick", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "justifySelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.flowui.kit.component.Alignment",
                             defaultValue = "AUTO",
@@ -447,7 +449,8 @@ interface StudioLayouts {
                     @StudioProperty(xmlAttribute = "sidePanelVerticalMaxSize", category = StudioProperty.Category.SIZE, type = StudioPropertyType.STRING, options = {"AUTO", "100%"}),
                     @StudioProperty(xmlAttribute = "sidePanelVerticalMinSize", category = StudioProperty.Category.SIZE, type = StudioPropertyType.STRING, options = {"AUTO", "100%"}),
                     @StudioProperty(xmlAttribute = "sidePanelVerticalSize", category = StudioProperty.Category.SIZE, type = StudioPropertyType.STRING, options = {"AUTO", "100%"}),
-                    @StudioProperty(xmlAttribute = "height", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
+                    @StudioProperty(xmlAttribute = "height", category = StudioProperty.Category.SIZE,
+                            type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}, initialValue = "100%"),
                     @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "maxHeight", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
                     @StudioProperty(xmlAttribute = "maxWidth", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
@@ -455,11 +458,54 @@ interface StudioLayouts {
                     @StudioProperty(xmlAttribute = "minWidth", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
                     @StudioProperty(xmlAttribute = "modal", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "overlayAriaLabel", type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = "visible", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"})
-            }
-    )
+                    @StudioProperty(xmlAttribute = "visible", category = StudioProperty.Category.GENERAL,
+                            type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
+                    @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE,
+                            type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}, initialValue = "100%")
+            },
+            xmlElementInitializer = @StudioXmlElementInitializer(
+                    preview = """
+                            <sidePanelLayout height="100%" width="100%">
+                                <vbox id="contentBox"/>
+                                <vbox id="sidePanelBox" height="100%" width="100%">
+                                    <hbox id="headerBox" width="100%">
+                                        <sidePanelLayoutCloser/>
+                                    </hbox>
+                                </vbox>
+                            </sidePanelLayout>
+                            """,
+                    childElementInitializers = {
+                            @ChildXmlElementInitializer(
+                                    qualifiedName = "vbox",
+                                    path = "contentBox",
+                                    attributeInitializers = {
+                                            @AttributeInitializer(qualifiedName = "id", attributeValue = "contentBox")
+                                    }
+                            ),
+                            @ChildXmlElementInitializer(
+                                    qualifiedName = "vbox",
+                                    path = "sidePanelBox",
+                                    attributeInitializers = {
+                                            @AttributeInitializer(qualifiedName = "id", attributeValue = "sidePanelBox"),
+                                            @AttributeInitializer(qualifiedName = "width", attributeValue = "100%"),
+                                            @AttributeInitializer(qualifiedName = "height", attributeValue = "100%")
+                                    }
+                            ),
+                            @ChildXmlElementInitializer(
+                                    qualifiedName = "hbox",
+                                    path = "headerBox",
+                                    parentPath = "sidePanelBox",
+                                    attributeInitializers = {
+                                            @AttributeInitializer(qualifiedName = "id", attributeValue = "headerBox"),
+                                            @AttributeInitializer(qualifiedName = "width", attributeValue = "100%")
+                                    }
+                            ),
+                            @ChildXmlElementInitializer(
+                                    path = "sidePanelLayoutCloser",
+                                    parentPath = "headerBox",
+                                    qualifiedName = "sidePanelLayoutCloser"
+                            )
+                    }))
     JmixSidePanelLayout sidePanelLayout();
 
     @StudioComponent(

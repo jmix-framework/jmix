@@ -29,12 +29,12 @@ import java.lang.annotation.Target;
 public @interface StudioPropertiesItem {
 
     /**
-     * Xml attribute name.
+     * XML attribute name.
      */
     String xmlAttribute();
 
     /**
-     * Xml attribute type.
+     * XML attribute type.
      */
     StudioPropertyType type();
 

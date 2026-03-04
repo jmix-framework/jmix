@@ -93,7 +93,7 @@ public @interface StudioProperty {
 
     /**
      * Use as type for injected field.
-     * Xml attribute value must be a valid class fqn.
+     * XML attribute value must be a valid class fqn.
      */
     boolean useAsInjectionType() default false;
 

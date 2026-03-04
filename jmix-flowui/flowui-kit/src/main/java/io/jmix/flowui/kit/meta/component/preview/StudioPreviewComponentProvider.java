@@ -166,7 +166,7 @@ final class StudioPreviewComponentProvider {
         }
 
         /**
-         * Xml of View descriptor.
+         * XML of View descriptor.
          */
         public String viewXml() {
             return viewXml;

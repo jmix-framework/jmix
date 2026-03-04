@@ -144,6 +144,13 @@ public @interface StudioComponent {
     StudioConvertStrategy convertStrategy() default @StudioConvertStrategy();
 
     /**
+     * Additional XML element initialization.
+     *
+     * @see StudioXmlElementInitializer
+     */
+    StudioXmlElementInitializer xmlElementInitializer() default @StudioXmlElementInitializer();
+
+    /**
      * Link to the component documentation.
      * <p>It can be of the following types:</p>
      * <ol>

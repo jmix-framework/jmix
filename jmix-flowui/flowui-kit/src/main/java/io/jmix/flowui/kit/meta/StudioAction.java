@@ -78,6 +78,11 @@ public @interface StudioAction {
     StudioPropertiesItem[] items() default {};
 
     /**
+     * @see StudioComponent#xmlElementInitializer
+     */
+    StudioXmlElementInitializer xmlElementInitializer() default @StudioXmlElementInitializer();
+
+    /**
      * @see StudioComponent#documentationLink
      */
     String documentationLink() default "";

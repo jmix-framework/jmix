@@ -211,10 +211,10 @@ export const jmixSideDialogOverlayStyles = css`
     }
 
     :host([fullscreen]) [part='overlay'] {
-        width: 100%;
-        height: 100%;
-        max-height: 100%;
-        max-width: 100%;
+        width: 100% !important;
+        height: 100% !important;
+        max-height: 100% !important;
+        max-width: 100% !important;
     }
 
     /* Right animation */

@@ -221,7 +221,7 @@ public class AuthServerProperties {
     public static class FilterChain {
 
         /**
-         * Whether the forced API scope is enabled for Security filter chains provided via {@link apiScopeSecurityFilterChainNames}.
+         * Whether the forced API scope is enabled for Security filter chains provided via {@link #apiScopeSecurityFilterChainNames}.
          */
         boolean forceApiScopeEnabled;
 

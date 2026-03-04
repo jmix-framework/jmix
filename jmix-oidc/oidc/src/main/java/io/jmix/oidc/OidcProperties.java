@@ -127,12 +127,12 @@ public class OidcProperties {
     public static class FilterChain {
 
         /**
-         * Whether the forced API scope is enabled for Security filter chains provided via {@link apiScopeSecurityFilterChainNames}.
+         * Whether the forced API scope is enabled for Security filter chains provided via {@link #apiScopeSecurityFilterChainNames}.
          */
         boolean forceApiScopeEnabled;
 
         /**
-         * Whether the forced UI scope is enabled for Security filter chains provided via {@link uiScopeSecurityFilterChainNames}.
+         * Whether the forced UI scope is enabled for Security filter chains provided via {@link #uiScopeSecurityFilterChainNames}.
          */
         boolean forceUiScopeEnabled;
 

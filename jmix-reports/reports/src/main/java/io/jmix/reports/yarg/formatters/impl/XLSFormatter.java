@@ -51,6 +51,9 @@ import org.apache.poi.ss.util.CellReference;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.*;
 
 import static io.jmix.reports.yarg.formatters.impl.xls.HSSFCellHelper.getCellFromReference;
@@ -665,6 +668,12 @@ public class XLSFormatter extends AbstractFormatter {
             resultCell.setCellValue((Boolean) value);
         } else if (value instanceof Date) {
             resultCell.setCellValue((Date) value);
+        } else if (value instanceof LocalDate) {
+            resultCell.setCellValue((LocalDate) value);
+        } else if (value instanceof LocalDateTime) {
+            resultCell.setCellValue((LocalDateTime) value);
+        } else if (value instanceof LocalTime) {
+            resultCell.setCellValue(LocalDateTime.of(LocalDate.of(1900, 1, 1), (LocalTime) value));
         } else {
             resultCell.setCellValue(new HSSFRichTextString(formatValue(value, parameterName, fullParameterName)));
         }

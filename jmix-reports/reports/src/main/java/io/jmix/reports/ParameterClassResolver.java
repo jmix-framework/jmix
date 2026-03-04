@@ -27,6 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import jakarta.annotation.PostConstruct;
 import org.springframework.lang.Nullable;
 import java.math.BigDecimal;
 import java.time.*;
@@ -37,14 +38,29 @@ import java.util.Map;
 @Component("report_ParameterClassResolver")
 public class ParameterClassResolver {
 
-    protected Map<ParameterType, Class> primitiveParameterTypeMapping = new ImmutableMap.Builder<ParameterType, Class>()
-            .put(ParameterType.BOOLEAN, Boolean.class)
-            .put(ParameterType.DATE, Date.class)
-            .put(ParameterType.DATETIME, Date.class)
-            .put(ParameterType.TEXT, String.class)
-            .put(ParameterType.NUMERIC, Double.class)
-            .put(ParameterType.TIME, Date.class)
-            .build();
+    @Autowired
+    protected ReportsProperties reportsProperties;
+
+    protected Map<ParameterType, Class> primitiveParameterTypeMapping;
+
+    @PostConstruct
+    protected void init() {
+        ImmutableMap.Builder<ParameterType, Class> builder = new ImmutableMap.Builder<ParameterType, Class>()
+                .put(ParameterType.BOOLEAN, Boolean.class)
+                .put(ParameterType.TEXT, String.class)
+                .put(ParameterType.NUMERIC, Double.class);
+
+        if (reportsProperties.isUseLegacyDateTimeTypes()) {
+            builder.put(ParameterType.DATE, Date.class)
+                    .put(ParameterType.DATETIME, Date.class)
+                    .put(ParameterType.TIME, Date.class);
+        } else {
+            builder.put(ParameterType.DATE, LocalDate.class)
+                    .put(ParameterType.DATETIME, LocalDateTime.class)
+                    .put(ParameterType.TIME, LocalTime.class);
+        }
+        primitiveParameterTypeMapping = builder.build();
+    }
 
     protected Map<Class, ParameterType> primitiveParameterClassMapping = new ImmutableMap.Builder<Class, ParameterType>()
             .put(Boolean.class, ParameterType.BOOLEAN)

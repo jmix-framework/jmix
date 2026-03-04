@@ -17,6 +17,7 @@
 package io.jmix.reports.util;
 
 import io.jmix.core.*;
+import io.jmix.reports.ReportsProperties;
 import io.jmix.reports.entity.ParameterType;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.exception.ReportingException;
@@ -27,6 +28,8 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+
+import java.time.*;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -49,25 +52,42 @@ public class ReportsUtils {
     @Autowired
     protected EntityStates entityStates;
 
+    @Autowired
+    protected ReportsProperties reportsProperties;
+
     public String generateReportName(String sourceName) {
         return generateReportName(sourceName, 0);
     }
 
-    public Date currentDateOrTime(ParameterType parameterType) {
-        Date now = timeSource.currentTimestamp();
-        switch (parameterType) {
-            case TIME:
-                now = truncateToTime(now);
-                break;
-            case DATETIME:
-                break;
-            case DATE:
-                now = truncateToDay(now);
-                break;
-            default:
-                throw new ReportingException("Not Date/Time related parameter types are not supported.");
+    public Object currentDateOrTime(ParameterType parameterType) {
+        if (reportsProperties.isUseLegacyDateTimeTypes()) {
+            Date now = timeSource.currentTimestamp();
+            switch (parameterType) {
+                case TIME:
+                    now = truncateToTime(now);
+                    break;
+                case DATETIME:
+                    break;
+                case DATE:
+                    now = truncateToDay(now);
+                    break;
+                default:
+                    throw new ReportingException("Not Date/Time related parameter types are not supported.");
+            }
+            return now;
+        } else {
+            ZonedDateTime now = timeSource.now();
+            switch (parameterType) {
+                case TIME:
+                    return now.toLocalTime();
+                case DATETIME:
+                    return now.toLocalDateTime();
+                case DATE:
+                    return now.toLocalDate();
+                default:
+                    throw new ReportingException("Not Date/Time related parameter types are not supported.");
+            }
         }
-        return now;
     }
 
     protected Date truncateToDay(Date date) {

@@ -28,7 +28,7 @@ import io.jmix.core.metamodel.datatype.EnumClass;
 public enum ParameterType implements EnumClass<Integer> {
     /**
      * Date, without time.
-     * Value class: {@link java.util.Date}
+     * Value class: {@link java.time.LocalDate}
      */
     DATE(10),
     /**
@@ -59,12 +59,12 @@ public enum ParameterType implements EnumClass<Integer> {
     ENUMERATION(70),
     /**
      * Date with time.
-     * Value class: {@link java.util.Date}
+     * Value class: {@link java.time.LocalDateTime}
      */
     DATETIME(80),
     /**
      * Time.
-     * Value class: {@link java.util.Date}
+     * Value class: {@link java.time.LocalTime}
      */
     TIME(90);
 

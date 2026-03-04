@@ -75,6 +75,9 @@ import org.xlsx4j.sml.*;
 import java.awt.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.*;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -1125,6 +1128,15 @@ public class XlsxFormatter extends AbstractFormatter {
             } else if (value instanceof Date) {
                 newCell.setT(STCellType.N);
                 newCell.setV(String.valueOf(DateUtil.getExcelDate((Date) value)));
+            } else if (value instanceof LocalDate) {
+                newCell.setT(STCellType.N);
+                newCell.setV(String.valueOf(DateUtil.getExcelDate((LocalDate) value)));
+            } else if (value instanceof LocalDateTime) {
+                newCell.setT(STCellType.N);
+                newCell.setV(String.valueOf(DateUtil.getExcelDate((LocalDateTime) value)));
+            } else if (value instanceof LocalTime) {
+                newCell.setT(STCellType.N);
+                newCell.setV(String.valueOf(DateUtil.getExcelDate(LocalDateTime.of(LocalDate.of(1900, 1, 1), (LocalTime) value))));
             } else {
                 newCell.setT(STCellType.STR);
                 newCell.setV(formatValue(value, parameterName, fullParameterName));

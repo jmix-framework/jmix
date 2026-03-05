@@ -17,14 +17,17 @@
 package io.jmix.flowui.download;
 
 import com.google.common.base.Strings;
-import com.vaadin.flow.server.HttpStatusCode;
 import com.vaadin.flow.server.VaadinResponse;
+import com.vaadin.flow.server.VaadinServletResponse;
 import com.vaadin.flow.server.streams.AbstractDownloadHandler;
 import com.vaadin.flow.server.streams.DownloadEvent;
 import com.vaadin.flow.server.streams.TransferProgressListener;
 import com.vaadin.flow.server.streams.TransferUtil;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.component.streams.TransferProgressNotifier;
+import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.ContentDisposition;
@@ -44,6 +47,8 @@ import java.util.function.Predicate;
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class DownloaderExportHandler extends AbstractDownloadHandler<DownloaderExportHandler>
         implements TransferProgressNotifier, SupportDownloadSuccessHandler {
+
+    private static final Logger log = LoggerFactory.getLogger(DownloaderExportHandler.class);
 
     protected final DownloadContext downloadContext;
 
@@ -70,7 +75,23 @@ public class DownloaderExportHandler extends AbstractDownloadHandler<DownloaderE
         event.setFileName(fileName);
         event.setContentLength(-1);
 
+        String type = isInline() ? "inline" : "attachment";
+
         VaadinResponse response = event.getResponse();
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.setHeader(
+                "Content-Disposition",
+                ContentDisposition.builder(type)
+                        .filename(fileName, StandardCharsets.UTF_8)
+                        .build()
+                        .toString());
+        response.setHeader("Cache-Control", "private, max-age=%s"
+                .formatted(downloadContext.cacheMaxAgeSec()));
+
+        if (isInline() && !Strings.isNullOrEmpty(contentType)) {
+            event.setContentType(contentType);
+        }
+
         try (InputStream inputStream = downloadContext.dataProvider().getStream();
              OutputStream outputStream = event.getOutputStream()) {
             // Write data to the output stream
@@ -80,7 +101,16 @@ public class DownloaderExportHandler extends AbstractDownloadHandler<DownloaderE
             if (!isInline()
                     || fileNotFoundExceptionHandler == null
                     || !fileNotFoundExceptionHandler.test(new FileNotFoundContext(e, response))) {
-                applyErrorHeaders(event);
+
+                if (response instanceof VaadinServletResponse servletResponse) {
+                    HttpServletResponse httpResponse = servletResponse.getHttpServletResponse();
+
+                    if (httpResponse != null && httpResponse.isCommitted()) {
+                        log.warn("Response is already committed. Status code cannot be changed.");
+                    } else {
+                        applyErrorHeaders(response);
+                    }
+                }
 
                 // send exception further
                 // UI access is required to correct exception handling using UiExceptionHandlers
@@ -95,12 +125,6 @@ public class DownloaderExportHandler extends AbstractDownloadHandler<DownloaderE
             response.getOutputStream().close();
         }
 
-        applySuccessHeaders(event, fileName);
-
-        if (isInline() && !Strings.isNullOrEmpty(contentType)) {
-            event.setContentType(contentType);
-        }
-
         event.getUI().access(() -> {
             if (successHandler != null) {
                 successHandler.complete(new DownloadSuccessContext(
@@ -112,24 +136,9 @@ public class DownloaderExportHandler extends AbstractDownloadHandler<DownloaderE
         });
     }
 
-    protected void applyErrorHeaders(DownloadEvent event) {
-        VaadinResponse response = event.getResponse();
-        response.setStatus(HttpStatusCode.NOT_FOUND.getCode());
-    }
-
-    protected void applySuccessHeaders(DownloadEvent event, String fileName) {
-        String type = isInline() ? "inline" : "attachment";
-
-        VaadinResponse response = event.getResponse();
-        response.setStatus(HttpStatusCode.OK.getCode());
-        response.setHeader(
-                "Content-Disposition",
-                ContentDisposition.builder(type)
-                        .filename(fileName, StandardCharsets.UTF_8)
-                        .build()
-                        .toString());
-        response.setHeader("Cache-Control", "private, max-age=%s"
-                .formatted(downloadContext.cacheMaxAgeSec()));
+    protected void applyErrorHeaders(VaadinResponse response) {
+        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        response.setContentType("text/html; charset=utf-8");
     }
 
     @Override

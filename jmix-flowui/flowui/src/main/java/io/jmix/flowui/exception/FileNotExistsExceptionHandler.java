@@ -57,7 +57,7 @@ public class FileNotExistsExceptionHandler extends AbstractUiExceptionHandler {
             String fileName = fileStorageException.getFileName();
 
             if (FileStorageException.Type.FILE_NOT_FOUND.equals(fileStorageException.getType())) {
-                msg = messages.formatMessage("fileNotFound.message", fileName);
+                msg = messages.formatMessage("", "fileNotFound.message", fileName);
             } else if (FileStorageException.Type.STORAGE_INACCESSIBLE.equals(fileStorageException.getType())) {
                 msg = messages.getMessage("fileStorageInaccessible.message");
             }

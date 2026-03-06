@@ -463,6 +463,7 @@ interface StudioLayouts {
                     @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE,
                             type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}, initialValue = "100%")
             },
+            availableChildren = @StudioAvailableChildrenInfo(totalChildrenCount = 2),
             xmlElementInitializer = @StudioXmlElementInitializer(
                     preview = """
                             <sidePanelLayout height="100%" width="100%">

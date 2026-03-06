@@ -18,6 +18,7 @@ package io.jmix.flowui.component.genericfilter;
 
 import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.flowui.component.filter.FilterComponent;
+import io.jmix.flowui.component.genericfilter.configuration.DesignTimeConfiguration;
 import io.jmix.flowui.component.genericfilter.configuration.RunTimeConfiguration;
 import io.jmix.flowui.component.logicalfilter.LogicalFilterComponent;
 
@@ -25,6 +26,23 @@ import org.springframework.lang.Nullable;
 
 /**
  * A configuration is a set of filter components.
+ *
+ * <p><b>Important:</b> several mutating methods declared in this interface
+ * ({@code set*} / {@code reset*}) throw {@link UnsupportedOperationException}
+ * when called on a {@link DesignTimeConfiguration}.  Those methods are marked
+ * {@link Deprecated} and will be <b>removed from this interface in Jmix 3.0</b>
+ * — they will exist only in {@link MutableConfiguration}, which is implemented
+ * exclusively by {@link RunTimeConfiguration} and guarantees that every
+ * mutating method works without throwing.
+ *
+ * <p>Migration path:
+ * <ul>
+ *   <li>Declare variables / parameters as {@link MutableConfiguration} instead of
+ *       {@code Configuration} when you need to call mutating methods.  This gives a
+ *       compile-time guarantee and removes the deprecation warning.</li>
+ *   <li>Use {@code instanceof MutableConfiguration} checks where the type of the
+ *       configuration is not statically known.</li>
+ * </ul>
  */
 public interface Configuration extends Comparable<Configuration> {
 
@@ -45,12 +63,19 @@ public interface Configuration extends Comparable<Configuration> {
     String getName();
 
     /**
-     * Sets the name of configuration. This method is only available for
-     * the {@link RunTimeConfiguration}.
+     * Sets the name of configuration.
      *
      * @param name a configuration name
+     * @throws UnsupportedOperationException when called on {@link DesignTimeConfiguration}
+     * @deprecated since 2.8, for removal in 3.0.
+     *             This method will be removed from {@link Configuration} and kept only in
+     *             {@link MutableConfiguration}.  Declare the variable as
+     *             {@link MutableConfiguration} to call this method without a warning and
+     *             without risk of {@link UnsupportedOperationException}.
+     * @see MutableConfiguration
      * @see RunTimeConfiguration
      */
+    @Deprecated(since = "2.8", forRemoval = true)
     void setName(@Nullable String name);
 
     /**
@@ -60,13 +85,20 @@ public interface Configuration extends Comparable<Configuration> {
     LogicalFilterComponent<?> getRootLogicalFilterComponent();
 
     /**
-     * Sets the root element of configuration. This method is only available for
-     * the {@link RunTimeConfiguration}.
+     * Sets the root element of configuration.
      *
      * @param rootLogicalFilterComponent a root element of configuration
+     * @throws UnsupportedOperationException when called on {@link DesignTimeConfiguration}
+     * @deprecated since 2.8, for removal in 3.0.
+     *             This method will be removed from {@link Configuration} and kept only in
+     *             {@link MutableConfiguration}.  Declare the variable as
+     *             {@link MutableConfiguration} to call this method without a warning and
+     *             without risk of {@link UnsupportedOperationException}.
+     * @see MutableConfiguration
      * @see LogicalFilterComponent
      * @see RunTimeConfiguration
      */
+    @Deprecated(since = "2.8", forRemoval = true)
     void setRootLogicalFilterComponent(LogicalFilterComponent<?> rootLogicalFilterComponent);
 
     /**
@@ -83,8 +115,16 @@ public interface Configuration extends Comparable<Configuration> {
      * Sets whether configuration is modified. If a filter component is modified,
      * then a remove button appears next to it.
      *
-     * @param modified whether configuration is modified.
+     * @param modified whether configuration is modified
+     * @throws UnsupportedOperationException when called on {@link DesignTimeConfiguration}
+     * @deprecated since 2.8, for removal in 3.0.
+     *             This method will be removed from {@link Configuration} and kept only in
+     *             {@link MutableConfiguration}.  Declare the variable as
+     *             {@link MutableConfiguration} to call this method without a warning and
+     *             without risk of {@link UnsupportedOperationException}.
+     * @see MutableConfiguration
      */
+    @Deprecated(since = "2.8", forRemoval = true)
     void setModified(boolean modified);
 
     /**
@@ -102,7 +142,15 @@ public interface Configuration extends Comparable<Configuration> {
      *
      * @param filterComponent a filter component
      * @param modified        whether the filter component of configuration is modified
+     * @throws UnsupportedOperationException when called on {@link DesignTimeConfiguration}
+     * @deprecated since 2.8, for removal in 3.0.
+     *             This method will be removed from {@link Configuration} and kept only in
+     *             {@link MutableConfiguration}.  Declare the variable as
+     *             {@link MutableConfiguration} to call this method without a warning and
+     *             without risk of {@link UnsupportedOperationException}.
+     * @see MutableConfiguration
      */
+    @Deprecated(since = "2.8", forRemoval = true)
     void setFilterComponentModified(FilterComponent filterComponent, boolean modified);
 
     /**
@@ -119,7 +167,15 @@ public interface Configuration extends Comparable<Configuration> {
      * component becomes null.
      *
      * @param parameterName a parameter name of filter component
+     * @throws UnsupportedOperationException when called on {@link DesignTimeConfiguration}
+     * @deprecated since 2.8, for removal in 3.0.
+     *             This method will be removed from {@link Configuration} and kept only in
+     *             {@link MutableConfiguration}.  Declare the variable as
+     *             {@link MutableConfiguration} to call this method without a warning and
+     *             without risk of {@link UnsupportedOperationException}.
+     * @see MutableConfiguration
      */
+    @Deprecated(since = "2.8", forRemoval = true)
     void resetFilterComponentDefaultValue(String parameterName);
 
     /**
@@ -133,11 +189,21 @@ public interface Configuration extends Comparable<Configuration> {
 
     /**
      * Sets null as the default value for all configuration filter components.
+     *
+     * @throws UnsupportedOperationException when called on {@link DesignTimeConfiguration}
+     * @deprecated since 2.8, for removal in 3.0.
+     *             This method will be removed from {@link Configuration} and kept only in
+     *             {@link MutableConfiguration}.  Declare the variable as
+     *             {@link MutableConfiguration} to call this method without a warning and
+     *             without risk of {@link UnsupportedOperationException}.
+     * @see MutableConfiguration
      */
+    @Deprecated(since = "2.8", forRemoval = true)
     void resetAllDefaultValues();
 
     /**
      * Returns whether the configuration is available for all users
+     *
      * @return true if the configuration is available for all users, otherwise false.
      */
     default boolean isAvailableForAllUsers() {

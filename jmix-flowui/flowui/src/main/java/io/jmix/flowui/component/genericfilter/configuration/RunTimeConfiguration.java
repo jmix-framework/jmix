@@ -22,6 +22,7 @@ import io.jmix.flowui.component.filter.FilterComponent;
 import io.jmix.flowui.component.filter.SingleFilterComponentBase;
 import io.jmix.flowui.component.genericfilter.Configuration;
 import io.jmix.flowui.component.genericfilter.GenericFilter;
+import io.jmix.flowui.component.genericfilter.MutableConfiguration;
 import io.jmix.flowui.component.logicalfilter.LogicalFilterComponent;
 
 import org.springframework.lang.Nullable;
@@ -30,7 +31,22 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class RunTimeConfiguration implements Configuration {
+/**
+ * A runtime (user-created) filter configuration that supports dynamic modification of
+ * its filter components.
+ * <p>
+ * Implements {@link MutableConfiguration} — use that interface as the declared type when
+ * you need compile-time safety against calling mutating methods on a read-only
+ * {@link DesignTimeConfiguration}.
+ * <p>
+ * <b>Auto-tracking of modified state:</b> this implementation subscribes to
+ * {@link LogicalFilterComponent.FilterComponentsChangeEvent} from its root component.
+ * Every filter component added to the root after construction is automatically marked as
+ * modified (so the per-condition remove button appears). Components removed from the root
+ * are automatically unmarked. Explicit calls to {@link #setModified(boolean)} and
+ * {@link #setFilterComponentModified(FilterComponent, boolean)} still work as before.
+ */
+public class RunTimeConfiguration implements MutableConfiguration {
 
     protected final String id;
     protected final GenericFilter owner;
@@ -41,10 +57,23 @@ public class RunTimeConfiguration implements Configuration {
     protected Set<FilterComponent> modifiedFilterComponents = new HashSet<>();
     protected Map<String, Object> defaultValuesMap = new HashMap<>();
 
+    /**
+     * Tracks the set of direct children of the root component as seen at the last
+     * {@link LogicalFilterComponent.FilterComponentsChangeEvent}. Used to detect which
+     * components were added or removed so their modified state can be updated automatically.
+     */
+    protected Set<FilterComponent> trackedComponents = new HashSet<>();
+
     public RunTimeConfiguration(String id, LogicalFilterComponent<?> rootLogicalFilterComponent, GenericFilter owner) {
         this.id = id;
         this.rootLogicalFilterComponent = rootLogicalFilterComponent;
         this.owner = owner;
+        // Snapshot the current direct children so that only components added *after*
+        // construction are auto-marked as modified.
+        this.trackedComponents = new HashSet<>(rootLogicalFilterComponent.getOwnFilterComponents());
+        // Subscribe to changes in the root component's direct children.
+        rootLogicalFilterComponent.addFilterComponentsChangeListener(
+                event -> syncModifiedStateFromRoot());
     }
 
     @Override
@@ -94,6 +123,37 @@ public class RunTimeConfiguration implements Configuration {
         for (FilterComponent filterComponent : rootLogicalFilterComponent.getOwnFilterComponents()) {
             setFilterComponentModified(filterComponent, modified);
         }
+    }
+
+    /**
+     * Synchronises the modified state with the current direct children of the root.
+     * Called automatically when a {@link LogicalFilterComponent.FilterComponentsChangeEvent}
+     * fires on the root component.
+     * <ul>
+     *   <li>Components that appeared since the last snapshot → marked as modified
+     *       (so the remove button becomes visible).</li>
+     *   <li>Components that disappeared → removed from the modified set.</li>
+     * </ul>
+     */
+    protected void syncModifiedStateFromRoot() {
+        Set<FilterComponent> currentComponents =
+                new HashSet<>(rootLogicalFilterComponent.getOwnFilterComponents());
+
+        // Newly added components → mark as modified (recursively for nested groups).
+        for (FilterComponent fc : currentComponents) {
+            if (!trackedComponents.contains(fc)) {
+                setFilterComponentModified(fc, true);
+            }
+        }
+
+        // Removed components → unmark (recursively for nested groups).
+        for (FilterComponent fc : trackedComponents) {
+            if (!currentComponents.contains(fc)) {
+                setFilterComponentModified(fc, false);
+            }
+        }
+
+        trackedComponents = currentComponents;
     }
 
     @Override

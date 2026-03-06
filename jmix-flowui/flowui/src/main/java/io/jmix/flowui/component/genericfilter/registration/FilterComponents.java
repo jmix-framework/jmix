@@ -17,6 +17,7 @@
 package io.jmix.flowui.component.genericfilter.registration;
 
 import io.jmix.core.Metadata;
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.component.filter.FilterComponent;
@@ -92,6 +93,7 @@ import java.util.stream.Collectors;
  * component registration must provide full information: UI filter component class,
  * model class, converter class and detail view id (optional).
  */
+@Internal
 @Component("flowui_FilterComponents")
 public class FilterComponents implements InitializingBean {
 

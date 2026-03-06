@@ -34,6 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.DisabledIf;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.support.TransactionTemplate;
 import test_support.DataTestConfiguration;
@@ -119,6 +120,7 @@ public class ElementCollectionTest {
     }
 
     @Test
+    @DisabledIf(expression = "#{systemEnvironment['JMIX_ECLIPSELINK_DISABLELAZYLOADING'] == 'true'}", reason = "Test disabled by 'jmix.eclipselink.disable-lazy-loading'")
     void testLazyLoading() {
         EcBeta beta = dataManager.create(EcBeta.class);
         beta.setName("beta 1");
@@ -153,6 +155,7 @@ public class ElementCollectionTest {
     }
 
     @Test
+    @DisabledIf(expression = "#{systemEnvironment['JMIX_ECLIPSELINK_DISABLELAZYLOADING'] == 'true'}", reason = "Test disabled by 'jmix.eclipselink.disable-lazy-loading'")
     void testLazyLoadingCollectionAdd() {
         EcAlpha alpha = dataManager.create(EcAlpha.class);
         alpha.setName("foo 1");
@@ -190,6 +193,7 @@ public class ElementCollectionTest {
     }
 
     @Test
+    @DisabledIf(expression = "#{systemEnvironment['JMIX_ECLIPSELINK_DISABLELAZYLOADING'] == 'true'}", reason = "Test disabled by 'jmix.eclipselink.disable-lazy-loading'")
     void testEntityChangedEvents() {
         // create
         setEventConsumer(event -> {

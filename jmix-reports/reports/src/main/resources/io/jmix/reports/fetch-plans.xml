@@ -44,7 +44,9 @@
     </fetchPlan>
 
     <fetchPlan entity="report_Report" name="report.run" extends="_base">
-        <property name="templates" fetchPlan="_base"/>
+        <property name="templates" fetchPlan="_base">
+            <property name="report" fetchPlan="_base"/>
+        </property>
         <property name="defaultTemplate" fetchPlan="_base"/>
     </fetchPlan>
 

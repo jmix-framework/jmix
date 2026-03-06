@@ -27,6 +27,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.DisabledIf;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.IOException;
@@ -38,6 +39,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith({SpringExtension.class, AuthenticatedAsSystem.class})
 @ContextConfiguration(classes = {ReportsTestConfiguration.class})
+@DisabledIf(expression = "#{systemEnvironment['JMIX_ECLIPSELINK_DISABLELAZYLOADING'] == 'true'}", reason = "Test disabled by 'jmix.eclipselink.disable-lazy-loading'")
 public class ReportImportExportTest {
 
     static final String JMIX_FIXTURE_PATH = "classpath:test_support/test-report.zip";

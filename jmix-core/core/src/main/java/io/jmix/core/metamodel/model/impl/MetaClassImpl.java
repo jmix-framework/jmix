@@ -19,11 +19,12 @@ package io.jmix.core.metamodel.model.impl;
 import io.jmix.core.metamodel.model.*;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class MetaClassImpl extends MetadataObjectImpl implements MetaClass {
 
-	private Map<String, MetaProperty> propertyByName = new HashMap<>();
-    private Map<String, MetaProperty> ownPropertyByName = new HashMap<>();
+	private Map<String, MetaProperty> propertyByName = new ConcurrentHashMap<>();
+    private Map<String, MetaProperty> ownPropertyByName = new ConcurrentHashMap<>();
 
 	private final Session session;
     private Class javaClass;
@@ -71,7 +72,7 @@ public class MetaClassImpl extends MetadataObjectImpl implements MetaClass {
 
     @Override
     public Collection<MetaProperty> getProperties() {
-		return propertyByName.values();
+		return new ArrayList<>(propertyByName.values());
 	}
 
     @Override
@@ -127,7 +128,7 @@ public class MetaClassImpl extends MetadataObjectImpl implements MetaClass {
 
     @Override
     public Collection<MetaProperty> getOwnProperties() {
-        return ownPropertyByName.values();
+        return new ArrayList<>(ownPropertyByName.values());
     }
 
     public void setJavaClass(Class javaClass) {
@@ -155,11 +156,22 @@ public class MetaClassImpl extends MetadataObjectImpl implements MetaClass {
 
     public void registerAncestorProperty(MetaProperty metaProperty) {
         MetaProperty prop = propertyByName.get(metaProperty.getName());
-        if (prop == null) {
-            MetaPropertyImpl clone = new MetaPropertyImpl((MetaPropertyImpl) metaProperty);
-            clone.setDomain(this);
+        if (prop == null && metaProperty instanceof CloneableMetaProperty cloneableMetaProperty) {
+            MetaProperty clone = cloneableMetaProperty.makeClone(this);
             propertyByName.put(metaProperty.getName(), clone);
         }
+    }
+
+    public void unregisterProperty(MetaProperty metaProperty) {
+        propertyByName.remove(metaProperty.getName());
+        ownPropertyByName.remove(metaProperty.getName());
+        for (MetaClass descendant : descendants) {
+            ((MetaClassImpl) descendant).unregisterAncestorProperty(metaProperty);
+        }
+    }
+
+    private void unregisterAncestorProperty(MetaProperty metaProperty) {
+        propertyByName.remove(metaProperty.getName());
     }
 
     @Override

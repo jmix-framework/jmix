@@ -20,15 +20,16 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 import io.jmix.core.CoreProperties;
 import io.jmix.core.TimeSource;
+import io.jmix.core.common.util.ReflectionHelper;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
-import org.apache.commons.io.FileUtils;
+import jakarta.annotation.PreDestroy;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
@@ -73,6 +74,7 @@ public class JavaClassLoader extends URLClassLoader {
         for (String dir : this.rootDirs) {
             this.classFilesProviders.put(dir, new ClassFilesProvider(dir));
         }
+        ReflectionHelper.addClassLoader(this);
     }
 
     //Please use this constructor only in tests
@@ -88,10 +90,16 @@ public class JavaClassLoader extends URLClassLoader {
         for (String dir : this.rootDirs) {
             this.classFilesProviders.put(dir, new ClassFilesProvider(dir));
         }
+        ReflectionHelper.addClassLoader(this);
     }
 
     public void clearCache() {
         loaded.clear();
+    }
+
+    @PreDestroy
+    public void destroy() {
+        ReflectionHelper.removeClassLoader(this);
     }
 
     @Override
@@ -107,6 +115,10 @@ public class JavaClassLoader extends URLClassLoader {
             for (ClassFilesProvider classFilesProvider : classFilesProviders.values()) {
                 File classFile = classFilesProvider.getClassFile(containerClassName);
                 if (classFile.exists()) {
+                    TimestampClass timestampClass = loaded.get(containerClassName);
+                    if (timestampClass != null && classFile.lastModified() <= timestampClass.timestamp.getTime()) {
+                        return timestampClass.clazz;
+                    }
                     return loadClassFromClassFile(fullClassName, containerClassName, classFile);
                 }
             }
@@ -121,10 +133,6 @@ public class JavaClassLoader extends URLClassLoader {
     }
 
     protected Class loadClassFromClassFile(String fullClassName, String containerClassName, File classFile) {
-        TimestampClass timestampClass = loaded.get(containerClassName);
-        if (timestampClass != null && !FileUtils.isFileNewer(classFile, timestampClass.timestamp)) {
-            return timestampClass.clazz;
-        }
         Map<String, Class> loadedClasses = new HashMap<>();
         Map<String, String> modifiedClassFiles = new HashMap<>();
         Map<String, FileClassLoader> fileClassLoaders = new HashMap<>();
@@ -144,7 +152,16 @@ public class JavaClassLoader extends URLClassLoader {
                 throw new RuntimeException("Class not found", e);
             }
             loadedClasses.put(fqn, clazz);
-            loaded.put(fqn, new TimestampClass(clazz, getCurrentTimestamp()));
+
+            Date timestamp = getCurrentTimestamp();
+            for (ClassFilesProvider classFilesProvider : classFilesProviders.values()) {
+                File file = classFilesProvider.getClassFile(fqn);
+                if (file.exists()) {
+                    timestamp = new Date(file.lastModified());
+                    break;
+                }
+            }
+            loaded.put(fqn, new TimestampClass(clazz, timestamp));
         }
         springBeanLoader.updateContext(loadedClasses.values());
         return loadedClasses.get(fullClassName);
@@ -165,7 +182,8 @@ public class JavaClassLoader extends URLClassLoader {
                         String fqn = root.relativize(path).toString();
                         fqn = fqn.substring(0, fqn.length() - 6).replace(File.separator, ".");
                         TimestampClass timeStampClass = getTimestampClass(fqn);
-                        if (timeStampClass == null || FileUtils.isFileNewer(path.toFile(), timeStampClass.timestamp)) {
+                        long lastModified = path.toFile().lastModified();
+                        if (timeStampClass == null || lastModified > timeStampClass.timestamp.getTime()) {
                             result.add(fqn);
                         }
                     });

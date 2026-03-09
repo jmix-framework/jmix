@@ -16,30 +16,30 @@
 
 package io.jmix.saml;
 
+import org.apache.commons.collections4.ListUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
+
+import java.util.List;
 
 @ConfigurationProperties(prefix = "jmix.saml")
 public class SamlProperties {
 
     boolean forceRedirectBindingLogout;
     boolean synchronizeRoleAssignments;
-    boolean useDefaultConfiguration;
-    boolean useDefaultUiConfiguration;
 
     DefaultSamlAssertionRolesMapperConfig defaultSamlAssertionRolesMapper;
+    FilterChain filterChain;
 
     public SamlProperties(@DefaultValue("true") boolean forceRedirectBindingLogout,
                           @DefaultValue("true") boolean synchronizeRoleAssignments,
-                          @DefaultValue("true") boolean useDefaultConfiguration,
-                          @DefaultValue("true") boolean useDefaultUiConfiguration,
-                          @DefaultValue DefaultSamlAssertionRolesMapperConfig defaultSamlAssertionRolesMapper) {
+                          @DefaultValue DefaultSamlAssertionRolesMapperConfig defaultSamlAssertionRolesMapper,
+                          @DefaultValue FilterChain filterChain) {
         this.forceRedirectBindingLogout = forceRedirectBindingLogout;
         this.synchronizeRoleAssignments = synchronizeRoleAssignments;
-        this.useDefaultConfiguration = useDefaultConfiguration;
-        this.useDefaultUiConfiguration = useDefaultUiConfiguration;
 
         this.defaultSamlAssertionRolesMapper = defaultSamlAssertionRolesMapper;
+        this.filterChain = filterChain;
     }
 
     public boolean isForceRedirectBindingLogout() {
@@ -50,16 +50,12 @@ public class SamlProperties {
         return synchronizeRoleAssignments;
     }
 
-    public boolean isUseDefaultConfiguration() {
-        return useDefaultConfiguration;
-    }
-
-    public boolean isUseDefaultUiConfiguration() {
-        return useDefaultUiConfiguration;
-    }
-
     public DefaultSamlAssertionRolesMapperConfig getDefaultSamlAssertionRolesMapper() {
         return defaultSamlAssertionRolesMapper;
+    }
+
+    public FilterChain getFilterChain() {
+        return filterChain;
     }
 
     public static class DefaultSamlAssertionRolesMapperConfig {
@@ -72,6 +68,42 @@ public class SamlProperties {
 
         public String getRolesAssertionAttribute() {
             return rolesAssertionAttribute;
+        }
+    }
+
+    public static class FilterChain {
+
+        /**
+         * Whether the forced UI scope is enabled for Security filter chains provided via {@link #uiScopeSecurityFilterChainNames}.
+         */
+        boolean forceUiScopeEnabled;
+
+        /**
+         * Represents a list of security filter chain names which should be customized
+         * by {@link io.jmix.saml.filter.SamlVaadinSecurityFilterChainCustomizer}.
+         *
+         * @see #forceUiScopeEnabled
+         */
+        List<String> uiScopeSecurityFilterChainNames;
+
+        public FilterChain(@DefaultValue("true") boolean forceUiScopeEnabled,
+                           List<String> uiScopeSecurityFilterChainNames) {
+            this.forceUiScopeEnabled = forceUiScopeEnabled;
+            this.uiScopeSecurityFilterChainNames = ListUtils.emptyIfNull(uiScopeSecurityFilterChainNames);
+        }
+
+        /**
+         * @see #forceUiScopeEnabled
+         */
+        public boolean isForceUiScopeEnabled() {
+            return forceUiScopeEnabled;
+        }
+
+        /**
+         * @see #uiScopeSecurityFilterChainNames
+         */
+        public List<String> getUiScopeSecurityFilterChainNames() {
+            return uiScopeSecurityFilterChainNames;
         }
     }
 }

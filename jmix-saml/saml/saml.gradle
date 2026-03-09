@@ -21,7 +21,7 @@ archivesBaseName = 'jmix-saml'
 
 repositories {
     maven {
-        url 'https://build.shibboleth.net/nexus/content/repositories/releases' //todo [IVGA] for org.opensaml
+        url 'https://build.shibboleth.net/nexus/content/repositories/releases' //todo for org.opensaml
     }
 }
 

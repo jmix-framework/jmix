@@ -17,6 +17,12 @@
 group = 'io.jmix.saml'
 archivesBaseName = 'jmix-saml-starter'
 
+repositories {
+    maven {
+        url 'https://build.shibboleth.net/nexus/content/repositories/releases' //todo for org.opensaml
+    }
+}
+
 dependencies {
     api project(':saml')
 

@@ -19,13 +19,16 @@ package io.jmix.autoconfigure.saml;
 import io.jmix.saml.SamlConfiguration;
 import io.jmix.saml.SamlProperties;
 import io.jmix.saml.SamlVaadinWebSecurity;
+import io.jmix.saml.filter.SamlVaadinSecurityFilterChainCustomizer;
 import io.jmix.saml.mapper.role.DefaultSamlAssertionRolesMapper;
 import io.jmix.saml.mapper.role.SamlAssertionRolesMapper;
 import io.jmix.saml.mapper.user.DefaultSamlUserMapper;
 import io.jmix.saml.mapper.user.SamlUserMapper;
+import io.jmix.security.configurer.SecurityFilterChainCustomizer;
 import io.jmix.security.role.ResourceRoleRepository;
 import io.jmix.security.role.RoleGrantedAuthorityUtils;
 import io.jmix.security.role.RowLevelRoleRepository;
+import io.jmix.security.util.ClientDetailsSourceSupport;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -62,5 +65,11 @@ public class SamlAutoConfiguration {
     @EnableWebSecurity
     @ConditionalOnProperty(value = "jmix.saml.use-default-ui-configuration", havingValue = "true", matchIfMissing = true)
     public static class DefaulSamlVaadinWebSecurity extends SamlVaadinWebSecurity {
+
+        @Bean("saml_SamlVaadinSecurityFilterChainCustomizer")
+        public SecurityFilterChainCustomizer samlVaadinSecurityFilterChainCustomizer(ClientDetailsSourceSupport clientDetailsSourceSupport,
+                                                                                     SamlProperties samlProperties) {
+            return new SamlVaadinSecurityFilterChainCustomizer(clientDetailsSourceSupport, samlProperties);
+        }
     }
 }

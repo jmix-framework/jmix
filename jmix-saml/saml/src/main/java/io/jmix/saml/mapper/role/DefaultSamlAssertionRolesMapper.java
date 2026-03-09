@@ -16,18 +16,18 @@
 
 package io.jmix.saml.mapper.role;
 
+import io.jmix.saml.util.SamlAssertionUtils;
 import io.jmix.security.role.ResourceRoleRepository;
 import io.jmix.security.role.RoleGrantedAuthorityUtils;
 import io.jmix.security.role.RowLevelRoleRepository;
 import org.apache.commons.collections4.CollectionUtils;
-import org.opensaml.core.xml.XMLObject;
-import org.opensaml.core.xml.schema.*;
 import org.opensaml.saml.saml2.core.Assertion;
-import org.opensaml.saml.saml2.core.Attribute;
-import org.opensaml.saml.saml2.core.AttributeStatement;
 import org.slf4j.Logger;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.slf4j.LoggerFactory.getLogger;
@@ -36,11 +36,14 @@ public class DefaultSamlAssertionRolesMapper extends BaseSamlAssertionRolesMappe
 
     private static final Logger log = getLogger(DefaultSamlAssertionRolesMapper.class);
 
-    protected String resourceRolePrefix = "";
-    protected String rowLevelRolePrefix = "";
+    protected String rolesAttributeName = "Role";
 
-    public DefaultSamlAssertionRolesMapper(RowLevelRoleRepository rowLevelRoleRepository,
-                                           ResourceRoleRepository resourceRoleRepository,
+    //TODO support prefixes
+    //protected String resourceRolePrefix = "";
+    //protected String rowLevelRolePrefix = "";
+
+    public DefaultSamlAssertionRolesMapper(ResourceRoleRepository resourceRoleRepository,
+                                           RowLevelRoleRepository rowLevelRoleRepository,
                                            RoleGrantedAuthorityUtils roleGrantedAuthorityUtils) {
         super(rowLevelRoleRepository, resourceRoleRepository, roleGrantedAuthorityUtils);
     }
@@ -56,8 +59,8 @@ public class DefaultSamlAssertionRolesMapper extends BaseSamlAssertionRolesMappe
     }
 
     protected Collection<String> getRolesCodes(Assertion assertion) {
-        Map<String, List<Object>> assertionAttributes = getAssertionAttributes(assertion);
-        List<Object> rolesAssertionAttributes = assertionAttributes.get("Role"); //todo parameter
+        Map<String, List<Object>> assertionAttributes = SamlAssertionUtils.getAssertionAttributes(assertion);
+        List<Object> rolesAssertionAttributes = assertionAttributes.get(getRolesAttributeName());
         if (CollectionUtils.isEmpty(rolesAssertionAttributes)) {
             return Collections.emptySet();
         } else {
@@ -67,76 +70,11 @@ public class DefaultSamlAssertionRolesMapper extends BaseSamlAssertionRolesMappe
         }
     }
 
-    //todo: saml utils?
-    protected Map<String, List<Object>> getAssertionAttributes(Assertion assertion) {
-        Map<String, List<Object>> attributeMap = new LinkedHashMap<>();
-        for (AttributeStatement attributeStatement : assertion.getAttributeStatements()) {
-            for (Attribute attribute : attributeStatement.getAttributes()) {
-                String attributeName = attribute.getName();
-                List<Object> attributeValues = attributeMap.computeIfAbsent(attributeName, k -> new ArrayList<>());
-                for (XMLObject xmlObject : attribute.getAttributeValues()) {
-                    Object attributeValue = getXmlObjectValue(xmlObject);
-                    if (attributeValue != null) {
-                        attributeValues.add(attributeValue);
-                    }
-                }
-                attributeMap.put(attributeName, attributeValues);
-            }
-        }
-        return attributeMap;
+    public String getRolesAttributeName() {
+        return rolesAttributeName;
     }
 
-    protected Object getXmlObjectValue(XMLObject xmlObject) {
-        if (xmlObject instanceof XSAny) {
-            return ((XSAny) xmlObject).getTextContent();
-        }
-        if (xmlObject instanceof XSString) {
-            return ((XSString) xmlObject).getValue();
-        }
-        if (xmlObject instanceof XSInteger) {
-            return ((XSInteger) xmlObject).getValue();
-        }
-//        if (xmlObject instanceof XSURI) {
-//            return ((XSURI) xmlObject).getURI();
-//        }
-        if (xmlObject instanceof XSBoolean) {
-            XSBooleanValue xsBooleanValue = ((XSBoolean) xmlObject).getValue();
-            return (xsBooleanValue != null) ? xsBooleanValue.getValue() : null;
-        }
-        if (xmlObject instanceof XSDateTime) {
-            return ((XSDateTime) xmlObject).getValue();
-        }
-        return null;
+    public void setRolesAttributeName(String rolesAttributeName) {
+        this.rolesAttributeName = rolesAttributeName;
     }
-
-    /*public List<String> getAttributeValues(Attribute attribute) {
-        List<String> result = new ArrayList<>();
-
-        for (XMLObject valueObj : attribute.getAttributeValues()) {
-
-            if (valueObj instanceof XSString) {
-                result.add(((XSString) valueObj).getValue());
-
-            } else if (valueObj instanceof XSAny) {
-                result.add(((XSAny) valueObj).getTextContent());
-
-            } else if (valueObj instanceof XSBoolean) {
-                result.add(((XSBoolean) valueObj).getValue().getValue().toString());
-
-            } else if (valueObj instanceof XSInteger) {
-                result.add(((XSInteger) valueObj).getValue().toString());
-
-            } else {
-                // Fallback: raw text
-                try {
-                    Element el = XMLObjectSupport.marshall(valueObj);
-                    result.add(el.getTextContent());
-                } catch (Exception e) {
-                    result.add(valueObj.toString());
-                }
-            }
-        }
-
-        return result;
-    }*/
 }

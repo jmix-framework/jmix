@@ -104,41 +104,7 @@ public abstract class SynchronizingSamlUserMapper<T extends JmixSamlUserDetails>
     }
 
     /**
-     * Backup of original method before Claude Code modifications
-     */
-    protected void saveJmixUserAndRoleAssignmentsBackup(Assertion assertion, T jmixUser) {
-        SaveContext saveContext = new SaveContext();
-
-        if (isSynchronizeRoleAssignmentsEnabled()) {
-            String username = getSamlUsername(assertion);
-            //disable soft-deletion to completely remove role assignment records from the database
-            saveContext.setHint(PersistenceHints.SOFT_DELETION, false);
-            List<RoleAssignmentEntity> existingRoleAssignmentEntities = dataManager.load(RoleAssignmentEntity.class)
-                    .query("select e from sec_RoleAssignmentEntity e where e.username = :username")
-                    .parameter("username", username)
-                    .list();
-            //todo do not remove all assignments but only assignments missing in new user authorities
-            saveContext.removing(existingRoleAssignmentEntities);
-
-            Collection<RoleAssignmentEntity> newRoleAssignmentEntities = buildRoleAssignmentEntities(username, jmixUser.getAuthorities());
-            saveContext.saving(newRoleAssignmentEntities);
-        }
-
-        saveContext.saving(jmixUser);
-
-        //persist user details and roles if needed
-        dataManager.save(saveContext);
-    }
-
-    /**
-     * Saves Jmix user and synchronizes role assignments differentially.
-     * Updated by Claude Code to only remove/add changed assignments instead of removing all.
-     * <p>
-     * Improvements:
-     * - Differential sync: only removes assignments that are no longer present
-     * - Only adds new assignments that don't exist
-     * - Reduces database operations and audit log noise
-     * - Better performance for users with many roles
+     * Saves Jmix user and synchronizes role assignments
      */
     protected void saveJmixUserAndRoleAssignments(Assertion assertion, T jmixUser) {
         SaveContext saveContext = new SaveContext();
@@ -161,16 +127,13 @@ public abstract class SynchronizingSamlUserMapper<T extends JmixSamlUserDetails>
             // Perform differential sync
             updateRoleAssignmentsSaveContext(existingRoleAssignments, newRoleAssignments, saveContext);
         }
-
         saveContext.saving(jmixUser);
 
-        //persist user details and roles if needed
         dataManager.save(saveContext);
     }
 
     /**
-     * Synchronizes role assignments differentially by comparing existing and new assignments.
-     * Added by Claude Code
+     * Fills save context with role assignment operations.
      *
      * @param existingAssignments Current role assignments in database
      * @param actualAssignments   New role assignments from SAML assertion

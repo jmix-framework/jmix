@@ -25,14 +25,21 @@ public class SamlProperties {
     boolean forceRedirectBindingLogout;
     boolean synchronizeRoleAssignments;
     boolean useDefaultConfiguration;
+    boolean useDefaultUiConfiguration;
 
-    String rolesAssertionAttribute;
+    DefaultSamlAssertionRolesMapperConfig defaultSamlAssertionRolesMapper;
 
     public SamlProperties(@DefaultValue("true") boolean forceRedirectBindingLogout,
                           @DefaultValue("true") boolean synchronizeRoleAssignments,
                           @DefaultValue("true") boolean useDefaultConfiguration,
-                          @DefaultValue("Role") boolean rolesAssertionAttribute) {
+                          @DefaultValue("true") boolean useDefaultUiConfiguration,
+                          @DefaultValue DefaultSamlAssertionRolesMapperConfig defaultSamlAssertionRolesMapper) {
         this.forceRedirectBindingLogout = forceRedirectBindingLogout;
+        this.synchronizeRoleAssignments = synchronizeRoleAssignments;
+        this.useDefaultConfiguration = useDefaultConfiguration;
+        this.useDefaultUiConfiguration = useDefaultUiConfiguration;
+
+        this.defaultSamlAssertionRolesMapper = defaultSamlAssertionRolesMapper;
     }
 
     public boolean isForceRedirectBindingLogout() {
@@ -47,7 +54,24 @@ public class SamlProperties {
         return useDefaultConfiguration;
     }
 
-    public String getRolesAssertionAttribute() {
-        return rolesAssertionAttribute;
+    public boolean isUseDefaultUiConfiguration() {
+        return useDefaultUiConfiguration;
+    }
+
+    public DefaultSamlAssertionRolesMapperConfig getDefaultSamlAssertionRolesMapper() {
+        return defaultSamlAssertionRolesMapper;
+    }
+
+    public static class DefaultSamlAssertionRolesMapperConfig {
+
+        String rolesAssertionAttribute;
+
+        public DefaultSamlAssertionRolesMapperConfig(@DefaultValue("Role") String rolesAssertionAttribute) {
+            this.rolesAssertionAttribute = rolesAssertionAttribute;
+        }
+
+        public String getRolesAssertionAttribute() {
+            return rolesAssertionAttribute;
+        }
     }
 }

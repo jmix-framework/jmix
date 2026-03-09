@@ -29,7 +29,6 @@ public abstract class BaseSamlUserMapper<T extends JmixSamlUserDetails> implemen
 
     @Override
     public T toJmixUser(Assertion assertion, OpenSaml4AuthenticationProvider.ResponseToken responseToken) {
-        log.info("[IVGA][SAML] Start toJmixUser");
         synchronized (getSamlUsername(assertion)) {
             T jmixUser = initJmixUser(assertion);
             log.debug("User '{}' is initialized", getSamlUsername(assertion));

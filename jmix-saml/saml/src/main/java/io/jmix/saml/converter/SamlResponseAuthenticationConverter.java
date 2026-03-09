@@ -30,6 +30,7 @@ import org.springframework.security.saml2.provider.service.authentication.Saml2A
 import org.springframework.util.CollectionUtils;
 
 import java.util.Collection;
+import java.util.Optional;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -62,8 +63,11 @@ public class SamlResponseAuthenticationConverter implements Converter<OpenSaml4A
                 throw new IllegalStateException("SAML response doesn't contain assertions");
             }
 
-            log.debug("Processing assertion for subject: {}",
-                    assertion.getSubject() != null ? assertion.getSubject().getNameID().getValue() : "unknown");
+            log.debug("Processing assertion for subject: {}", Optional.ofNullable(assertion.getSubject())
+                    .map(s -> s.getNameID())
+                    .map(name -> name.getValue())
+                    .orElse("unknown")
+            );
 
             JmixSamlUserDetails principal = samlUserMapper.toJmixUser(assertion, responseToken);
             log.info("Successfully converted SAML assertion to Jmix user: {}", principal.getUsername());
@@ -79,7 +83,6 @@ public class SamlResponseAuthenticationConverter implements Converter<OpenSaml4A
 
     /**
      * Extracts assertion from SAML response, handling both plain and encrypted assertions.
-     * Updated by Claude Code to add logging
      */
     protected Assertion getAssertion(OpenSaml4AuthenticationProvider.ResponseToken responseToken) {
         Response response = responseToken.getResponse();

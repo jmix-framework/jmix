@@ -26,17 +26,14 @@ import java.util.List;
 public class SamlProperties {
 
     boolean forceRedirectBindingLogout;
-    boolean synchronizeRoleAssignments;
 
     DefaultSamlAssertionRolesMapperConfig defaultSamlAssertionRolesMapper;
     FilterChain filterChain;
 
     public SamlProperties(@DefaultValue("true") boolean forceRedirectBindingLogout,
-                          @DefaultValue("true") boolean synchronizeRoleAssignments,
                           @DefaultValue DefaultSamlAssertionRolesMapperConfig defaultSamlAssertionRolesMapper,
                           @DefaultValue FilterChain filterChain) {
         this.forceRedirectBindingLogout = forceRedirectBindingLogout;
-        this.synchronizeRoleAssignments = synchronizeRoleAssignments;
 
         this.defaultSamlAssertionRolesMapper = defaultSamlAssertionRolesMapper;
         this.filterChain = filterChain;
@@ -44,10 +41,6 @@ public class SamlProperties {
 
     public boolean isForceRedirectBindingLogout() {
         return forceRedirectBindingLogout;
-    }
-
-    public boolean isSynchronizeRoleAssignments() {
-        return synchronizeRoleAssignments;
     }
 
     public DefaultSamlAssertionRolesMapperConfig getDefaultSamlAssertionRolesMapper() {

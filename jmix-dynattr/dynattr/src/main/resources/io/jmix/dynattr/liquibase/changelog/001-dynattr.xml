@@ -23,6 +23,7 @@
 
     <changeSet author="dynattr" id="1" context="!cuba">
         <validCheckSum>8:9add9d771caf284954327243ab783671</validCheckSum>
+        <validCheckSum>9:ffe7c814b53c5e08eff98970467c833c</validCheckSum>
 
         <createTable tableName="DYNAT_CATEGORY">
             <column name="ID" type="${uuid.type}">

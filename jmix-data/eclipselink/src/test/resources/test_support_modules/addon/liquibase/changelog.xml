@@ -6,7 +6,8 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
     <property name="uuid.type" dbms="oracle" value="varchar2(32)"/>
-    <property name="uuid.type" dbms="!oracle" value="uuid"/>
+    <property name="uuid.type" dbms="mariadb" value="char(36)"/>
+    <property name="uuid.type" dbms="postgresql,mysql,mssql,hsqldb,h2" value="uuid"/>
 
     <changeSet author="addon" id="1.0">
 

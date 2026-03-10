@@ -6,6 +6,7 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
     <changeSet author="audit" id="1" context="!cuba">
+        <validCheckSum>9:cc7be26d7402d6edecaf91693fb8df29</validCheckSum>
 
         <createTable tableName="AUDIT_ENTITY_SNAPSHOT">
             <column name="ID" type="${uuid.type}">

@@ -22,6 +22,8 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
     <changeSet id="1" author="message-templates">
+        <validCheckSum>9:60da0247d602495853d1c83345185ed1</validCheckSum>
+
         <createTable tableName="MSGTMP_MESSAGE_TEMPLATE_GROUP">
             <column name="ID" type="${uuid.type}">
                 <constraints nullable="false"

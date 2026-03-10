@@ -22,6 +22,7 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
     <changeSet author="security-data" id="1">
+        <validCheckSum>9:70d3260b781ef95a05b7e0cbc09c16cb</validCheckSum>
 
         <createTable tableName="SEC_RESOURCE_ROLE">
             <column name="ID" type="${uuid.type}">

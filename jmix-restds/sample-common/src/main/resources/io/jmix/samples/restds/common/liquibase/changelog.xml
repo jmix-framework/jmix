@@ -24,7 +24,8 @@
     <!-- DO NOT REMOVE. This is a master changelog that runs all other changelogs. -->
 
     <property name="uuid.type" dbms="oracle" value="varchar2(32)"/>
-    <property name="uuid.type" dbms="!oracle" value="uuid"/>
+    <property name="uuid.type" dbms="mariadb" value="char(36)"/>
+    <property name="uuid.type" dbms="postgresql,mysql,mssql,hsqldb,h2" value="uuid"/>
     <include file="/io/jmix/data/liquibase/changelog.xml" contextFilter="@jmix-addon"/>
 
     <includeAll path="/changelog" relativeToChangelogFile="true" errorIfMissingOrEmpty="false"/>

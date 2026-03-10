@@ -7,6 +7,8 @@
 
     <changeSet author="email" id="1" context="!cuba">
         <validCheckSum>8:f5d8b1556a4edce419b77d8c0cb5a365</validCheckSum>
+        <validCheckSum>9:66e45b032f254b76f8c7c44846a4ec7f</validCheckSum>
+
         <createTable tableName="EMAIL_SENDING_MESSAGE">
             <column name="ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>

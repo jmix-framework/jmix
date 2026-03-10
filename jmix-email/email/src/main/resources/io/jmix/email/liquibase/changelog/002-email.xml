@@ -6,6 +6,8 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd"
         objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
     <changeSet id="1" author="email">
+        <validCheckSum>9:301e0585ec2f87c50f9958058057dc07</validCheckSum>
+
         <createTable tableName="EMAIL_REFRESH_TOKEN">
             <column name="ID" type="${uuid.type}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="PK_EMAIL_REFRESH_TOKEN"/>

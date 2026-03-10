@@ -24,6 +24,8 @@
     <changeSet author="search" id="1">
         <validCheckSum>8:9775275ddd21e1c7c71eb830ed15c6cf</validCheckSum>
         <validCheckSum>8:2ed28a382a18c6ead38a20ab1d596ff2</validCheckSum>
+        <validCheckSum>9:d30be311cced2b7a75e5112a5d15f7ea</validCheckSum>
+
         <createTable tableName="SEARCH_INDEXING_QUEUE">
             <column name="ID" type="${uuid.type}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="PK_SEARCH_INDEXING_QUEUE"/>
@@ -45,6 +47,8 @@
         </createIndex>
     </changeSet>
     <changeSet author="search" id="3">
+        <validCheckSum>9:d4ca737d5ca6335598d3cee98ae82c12</validCheckSum>
+
         <createTable tableName="SEARCH_ENQUEUEING_SESSION">
             <column name="ID" type="${uuid.type}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="PK_SEARCH_ENQUEUEING_SESSION"/>

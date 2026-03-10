@@ -33,6 +33,7 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.saml2.provider.service.authentication.OpenSaml4AuthenticationProvider;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -57,6 +58,8 @@ public abstract class SynchronizingSamlUserMapper<T extends JmixSamlUserDetails>
     protected RoleGrantedAuthorityUtils roleGrantedAuthorityUtils;
     @Autowired
     protected SamlProperties samlProperties;
+
+    protected boolean synchronizeRoleAssignments;
 
     protected abstract Class<T> getApplicationUserClass();
 
@@ -88,8 +91,8 @@ public abstract class SynchronizingSamlUserMapper<T extends JmixSamlUserDetails>
     }
 
     @Override
-    protected void performAdditionalModifications(Assertion assertion, T jmixUser) {
-        super.performAdditionalModifications(assertion, jmixUser);
+    protected void performAdditionalModifications(Assertion assertion, OpenSaml4AuthenticationProvider.ResponseToken responseToken, T jmixUser) {
+        super.performAdditionalModifications(assertion, responseToken, jmixUser);
         saveJmixUserAndRoleAssignments(assertion, jmixUser);
     }
 
@@ -99,7 +102,7 @@ public abstract class SynchronizingSamlUserMapper<T extends JmixSamlUserDetails>
     protected void saveJmixUserAndRoleAssignments(Assertion assertion, T jmixUser) {
         SaveContext saveContext = new SaveContext();
 
-        if (isSynchronizeRoleAssignmentsEnabled()) {
+        if (isSynchronizeRoleAssignments()) {
             String username = getSamlUsername(assertion);
 
             //disable soft-deletion to completely remove role assignment records from the database
@@ -190,8 +193,12 @@ public abstract class SynchronizingSamlUserMapper<T extends JmixSamlUserDetails>
         return roleAssignmentEntities;
     }
 
-    protected boolean isSynchronizeRoleAssignmentsEnabled() {
-        return samlProperties.isSynchronizeRoleAssignments();
+    public boolean isSynchronizeRoleAssignments() {
+        return synchronizeRoleAssignments;
+    }
+
+    public void setSynchronizeRoleAssignments(boolean synchronizeRoleAssignments) {
+        this.synchronizeRoleAssignments = synchronizeRoleAssignments;
     }
 
     private String assignmentKey(RoleAssignmentEntity assignment) {

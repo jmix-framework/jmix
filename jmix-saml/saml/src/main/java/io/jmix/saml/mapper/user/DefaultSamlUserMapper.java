@@ -55,12 +55,6 @@ public class DefaultSamlUserMapper extends BaseSamlUserMapper<DefaultJmixSamlUse
     protected void populateUserAttributes(Assertion assertion,
                                           OpenSaml4AuthenticationProvider.ResponseToken responseToken,
                                           DefaultJmixSamlUserDetails jmixUser) {
-        String username = getSamlUsername(assertion);
-        Map<String, List<Object>> attributes = SamlAssertionUtils.getAssertionAttributes(assertion);
-        DefaultSaml2AuthenticatedPrincipal delegatePrincipal = new DefaultSaml2AuthenticatedPrincipal(username, attributes);
-        String registrationId = responseToken.getToken().getRelyingPartyRegistration().getRegistrationId();
-        delegatePrincipal.setRelyingPartyRegistrationId(registrationId);
-        jmixUser.setDelegate(delegatePrincipal);
     }
 
     @Override

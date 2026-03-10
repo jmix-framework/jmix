@@ -16,10 +16,16 @@
 
 package io.jmix.saml.mapper.user;
 
+import io.jmix.saml.user.HasSamlPrincipalDelegate;
 import io.jmix.saml.user.JmixSamlUserDetails;
+import io.jmix.saml.util.SamlAssertionUtils;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.slf4j.Logger;
+import org.springframework.security.saml2.provider.service.authentication.DefaultSaml2AuthenticatedPrincipal;
 import org.springframework.security.saml2.provider.service.authentication.OpenSaml4AuthenticationProvider;
+
+import java.util.List;
+import java.util.Map;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -36,7 +42,7 @@ public abstract class BaseSamlUserMapper<T extends JmixSamlUserDetails> implemen
             log.debug("User attributes is populated");
             populateUserAuthorities(assertion, jmixUser);
             log.debug("User authorities is populated");
-            performAdditionalModifications(assertion, jmixUser);
+            performAdditionalModifications(assertion, responseToken, jmixUser);
             log.debug("Additional modifications are performed");
             return jmixUser;
         }
@@ -50,6 +56,14 @@ public abstract class BaseSamlUserMapper<T extends JmixSamlUserDetails> implemen
 
     protected abstract void populateUserAuthorities(Assertion assertion, T jmixUser);
 
-    protected void performAdditionalModifications(Assertion assertion, T jmixUser) {
+    protected void performAdditionalModifications(Assertion assertion, OpenSaml4AuthenticationProvider.ResponseToken responseToken, T jmixUser) {
+        if (jmixUser instanceof HasSamlPrincipalDelegate) {
+            String username = getSamlUsername(assertion);
+            Map<String, List<Object>> attributes = SamlAssertionUtils.getAssertionAttributes(assertion);
+            DefaultSaml2AuthenticatedPrincipal delegatePrincipal = new DefaultSaml2AuthenticatedPrincipal(username, attributes);
+            String registrationId = responseToken.getToken().getRelyingPartyRegistration().getRegistrationId();
+            delegatePrincipal.setRelyingPartyRegistrationId(registrationId);
+            ((HasSamlPrincipalDelegate) jmixUser).setDelegate(delegatePrincipal);
+        }
     }
 }

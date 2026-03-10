@@ -7,7 +7,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-public class DefaultJmixSamlUserDetails implements JmixSamlUserDetails {
+public class DefaultJmixSamlUserDetails implements JmixSamlUserDetails, HasSamlPrincipalDelegate {
 
     private Collection<? extends GrantedAuthority> authorities;
 

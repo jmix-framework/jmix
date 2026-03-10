@@ -58,16 +58,6 @@ public abstract class SynchronizingSamlUserMapper<T extends JmixSamlUserDetails>
     @Autowired
     protected SamlProperties samlProperties;
 
-    /*protected SynchronizingSamlUserMapper(UnconstrainedDataManager dataManager,
-                                          UserRepository userRepository,
-                                          SamlAssertionRolesMapper rolesMapper,
-                                          RoleGrantedAuthorityUtils roleGrantedAuthorityUtils) {
-        this.dataManager = dataManager;
-        this.userRepository = userRepository;
-        this.rolesMapper = rolesMapper;
-        this.roleGrantedAuthorityUtils = roleGrantedAuthorityUtils;
-    }*/
-
     protected abstract Class<T> getApplicationUserClass();
 
     @Override

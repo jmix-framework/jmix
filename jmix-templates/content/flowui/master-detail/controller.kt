@@ -1,5 +1,6 @@
 <%
 def isDataGridTable = tableType.getXmlName().equals("dataGrid")
+def isGroupDataGridTable: def? = tableType.getXmlName().equals("groupg:groupDataGrid")
 def pluralForm = api.pluralForm(entity.uncapitalizedClassName)
 def tableDl = entity.uncapitalizedClassName.equals(pluralForm) ? pluralForm + "CollectionDl" : pluralForm + "Dl"
 
@@ -44,7 +45,9 @@ import io.jmix.flowui.accesscontext.UiEntityAttributeContext
 import io.jmix.flowui.action.SecuredBaseAction
 import io.jmix.flowui.component.UiComponentUtils
 import io.jmix.flowui.component.delegate.AbstractFieldDelegate.PROPERTY_INVALID
-import <%if (isDataGridTable) {%> io.jmix.flowui.component.grid.DataGrid <%} else {%> io.jmix.flowui.component.grid.TreeDataGrid <%}%>
+import <%if (isDataGridTable) {%> io.jmix.flowui.component.grid.DataGrid <%}
+        else if (isGroupDataGridTable) {%>io.jmix.groupgridflowui.component.GroupDataGrid <%}
+        else {%> io.jmix.flowui.component.grid.TreeDataGrid <%}%>
 import io.jmix.flowui.data.EntityValueSource
 import io.jmix.flowui.data.SupportsValueSource
 import io.jmix.flowui.kit.action.Action
@@ -88,7 +91,7 @@ class ${viewControllerName}<%if (useDataRepositories){%>(private val repository:
     private lateinit var listLayout: VerticalLayout
 
     @ViewComponent
-    private lateinit var ${tableId}: <%if (isDataGridTable) {%> DataGrid<%} else {%> TreeDataGrid<%}%><${entity.className}>
+    private lateinit var ${tableId}: <%if (isDataGridTable) {%> DataGrid<%} else if (isGroupDataGridTable) {%> GroupDataGrid<%} else {%> TreeDataGrid<%}%><${entity.className}>
 
     @ViewComponent
     private lateinit var form: FormLayout

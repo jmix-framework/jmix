@@ -18,6 +18,10 @@ private Object getActionSearchSafely() {
     }
 }
 
+def groupDataGridNamespace = tableType.getXmlName().equals("groupg:groupDataGrid")
+        ? ' xmlns:groupg="http://jmix.io/schema/groupgrid/ui"'
+        : ''
+
 def tableXml = api.processSnippet('table.xml',
         ['jmixProjectModule': api.jmixProjectModule,
         'actionSearch': getActionSearchSafely(),
@@ -46,6 +50,7 @@ def optionsDatasourceXml = api.processSnippet('optionsDsSource.xml',
 
 %><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <view xmlns="http://jmix.io/schema/flowui/view"
+      ${groupDataGridNamespace}
       xmlns:c="http://jmix.io/schema/flowui/jpql-condition"
       title="${messageKeys['viewTitle']}"
       focusComponent="${tableId}">

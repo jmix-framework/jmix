@@ -30,6 +30,17 @@ fetchPlan.orderedRootProperties.each { property ->
     }
 }
 
+private String getXmlNamespace() {
+    if (tableType.xmlName.contains(':')) {
+        def index = tableType.xmlName.indexOf(':') + 1
+        return tableType.xmlName.substring(0, index)
+    } else {
+        return ""
+    }
+}
+
+def xmlNs = getXmlNamespace()
+
 %>
 <hbox id="buttonsPanel" classNames="buttons-panel">
 <startSlot>
@@ -48,18 +59,18 @@ fetchPlan.orderedRootProperties.each { property ->
         (tableType.isHierarchical()) ? print("\nhierarchyProperty=\"${hierarchicalProperty}\"") : print("")
         if (columnReorderingAllowed) {%>\n columnReorderingAllowed="true"<%}
         if (multiselect) {%>\n selectionMode="MULTI"<%}%>>
-    <actions><%tableActions.each { actionId ->
+    <${xmlNs}actions><%tableActions.each { actionId ->
     if (actionSearch != null && jmixProjectModule != null) {
     def actionDescription = actionSearch.getActionDescriptionBy(actionId, jmixProjectModule)
     %>
-    <action id="${actionDescription.getId()}Action" type="${actionDescription.getType()}"/>
+    <${xmlNs}action id="${actionDescription.getId()}Action" type="${actionDescription.getType()}"/>
     <%} else {%>
-    <action id="${actionId}Action" type="list_${actionId}"/>
+    <${xmlNs}action id="${actionId}Action" type="list_${actionId}"/>
     <%}%>
     <%}%>
-    </actions>
-    <columns<%if (resizableColumns) {%> resizable="true"<%}%>><%columns.each {column ->%>
-        <column property="${column}"/>
+    </${xmlNs}actions>
+    <${xmlNs}columns<%if (resizableColumns) {%> resizable="true"<%}%>><%columns.each {column ->%>
+        <${xmlNs}column property="${column}"/>
     <%}%>
-    </columns>
+    </${xmlNs}columns>
 </${tableType.xmlName}>

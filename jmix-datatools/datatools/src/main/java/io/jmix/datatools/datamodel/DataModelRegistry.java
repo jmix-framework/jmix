@@ -111,10 +111,15 @@ public class DataModelRegistry {
         for (MetaProperty field : fields) {
             String fieldName = field.getName();
 
+            if (!metadataTools.isJpa(field)) {
+                continue;
+            }
+
             if (isAnnotationPresent(field, ElementCollection.class)) {
                 addElementCollectionAttribute(entity, field, fieldName, attributeModelsList);
 
-            } else if (field.getType().equals(MetaProperty.Type.DATATYPE)
+            } else if ((field.getType().equals(MetaProperty.Type.DATATYPE)
+                    || field.getType().equals(MetaProperty.Type.ENUM))
                     && isAnnotationPresent(field, Column.class)) {
                 addDatatypeAttribute(entity, isEmbeddable, field, fieldName, attributeModelsList);
 

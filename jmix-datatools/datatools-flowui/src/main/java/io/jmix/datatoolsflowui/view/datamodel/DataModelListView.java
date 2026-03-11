@@ -6,13 +6,17 @@ import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.data.selection.SelectionEvent;
 import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.LoadContext;
-import io.jmix.datatools.datamodel.*;
+import io.jmix.datatools.datamodel.DataModel;
+import io.jmix.datatools.datamodel.DataModelRegistry;
+import io.jmix.datatools.datamodel.Relation;
+import io.jmix.datatools.datamodel.RelationType;
 import io.jmix.datatools.datamodel.engine.DiagramEngine;
 import io.jmix.datatools.datamodel.entity.AttributeModel;
 import io.jmix.datatools.datamodel.entity.EntityModel;
@@ -32,6 +36,8 @@ import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
@@ -44,16 +50,22 @@ import java.util.stream.Stream;
 @DialogMode(width = "50em")
 public class DataModelListView extends StandardView {
 
+    private static final Logger log = LoggerFactory.getLogger(DataModelListView.class);
+
+    protected static final String REGEXP_PREFIX = "regexp:";
     protected static final String FILTER_URL_PARAM = "filter";
     protected static final String SHOW_SYSTEM_URL_PARAM = "show-system";
-    public static final String REGEXP_PREFIX = "regexp:";
 
     @ViewComponent
     protected DataGrid<EntityModel> entityModelsDataGrid;
     @ViewComponent
     protected JmixCheckbox showSystemCheckBox;
     @ViewComponent
-    protected TypedTextField<String> entityNameFilter;
+    protected TypedTextField<String> entityFilter;
+    @ViewComponent
+    protected Span entityModelCount;
+    @ViewComponent
+    protected Span attributesCount;
 
     @ViewComponent
     protected CollectionContainer<EntityModel> entityModelsDc;
@@ -64,6 +76,8 @@ public class DataModelListView extends StandardView {
 
     @ViewComponent
     protected UrlQueryParametersFacet urlQueryParametersFacet;
+    @ViewComponent
+    private MessageBundle messageBundle;
 
     @Autowired
     protected Icons icons;
@@ -101,69 +115,49 @@ public class DataModelListView extends StandardView {
 
     @Install(to = "entityModelsDl", target = Target.DATA_LOADER)
     protected List<EntityModel> entityModelsDlLoadDelegate(LoadContext<EntityModel> loadContext) {
-        List<String> entityNames = collectEntityNamesToFilter();
-        if (entityNames.isEmpty() && !entityNameFilter.isEmpty()) {
-            return Collections.emptyList();
-        }
-
-        List<EntityModel> models;
+        String filterValue = entityFilter.getTypedValue();
         DataModelProvider dataModelProvider = getDataModelProvider();
-
-        if (entityNames.isEmpty()) {
-            models = dataModelProvider.getDataModels().values().stream()
-                    .flatMap(e -> e.values().stream())
-                    .map(DataModel::entityModel)
-                    .filter(entityModel ->
-                            Boolean.TRUE.equals(showSystemCheckBox.getValue())
-                                    || !Boolean.TRUE.equals(entityModel.getIsSystem()))
-                    .toList();
-        } else {
-            models = entityNames.stream()
-                    .flatMap(entityName -> dataStoreNames.stream()
-                            .map(dataStore ->
-                                    dataModelProvider.getEntityModel(dataStore, entityName)))
-                    .filter(Objects::nonNull)
-                    .filter(entityModel ->
-                            Boolean.TRUE.equals(showSystemCheckBox.getValue())
-                                    || !Boolean.TRUE.equals(entityModel.getIsSystem()))
-                    .toList();
-        }
+        List<EntityModel> models = dataStoreNames.stream()
+                .flatMap(dataStore ->
+                        dataModelProvider.getDataModels(dataStore).values().stream())
+                .map(DataModel::entityModel)
+                .filter(entityModel -> {
+                    if (Strings.isNullOrEmpty(filterValue)) {
+                        return true;
+                    } else if (filterValue.matches("^%s.*".formatted(REGEXP_PREFIX))) {
+                        return filterByRegexp(entityModel, filterValue);
+                    } else {
+                        return filterByString(entityModel, filterValue);
+                    }
+                })
+                .filter(entityModel ->
+                        Boolean.TRUE.equals(showSystemCheckBox.getValue())
+                                || !Boolean.TRUE.equals(entityModel.getIsSystem()))
+                .toList();
 
         changeDataStoreColumnVisibility(models);
 
+        entityModelCount.setText("%d".formatted(models.size()));
         return models;
     }
 
-    protected List<String> collectEntityNamesToFilter() {
-        String filterValue = entityNameFilter.getTypedValue();
-        if (Strings.isNullOrEmpty(filterValue)) {
-            return Collections.emptyList();
-        }
+    protected boolean filterByRegexp(EntityModel entityModel, String filterValue) {
+        Pattern pattern = Pattern.compile(
+                filterValue.substring(REGEXP_PREFIX.length()), Pattern.CASE_INSENSITIVE);
 
-        DataModelProvider dataModelProvider = getDataModelProvider();
-        if (filterValue.matches("^%s.*".formatted(REGEXP_PREFIX))) {
-            Pattern pattern = Pattern.compile(filterValue.substring(REGEXP_PREFIX.length()), Pattern.CASE_INSENSITIVE);
+        return entityModel.getName().matches(pattern.pattern())
+                || entityModel.getTableName().matches(pattern.pattern());
+    }
 
-            return dataStoreNames.stream()
-                    .flatMap(dataStore ->
-                            dataModelProvider.getDataModels(dataStore).keySet().stream())
-                    .filter(name -> name.matches(pattern.pattern()))
-                    .toList();
+    protected boolean filterByString(EntityModel entityModel, String filterValue) {
+        List<String> requestedNames = Stream.of(filterValue.split(","))
+                .map(String::strip)
+                .toList();
 
-        } else {
-            List<String> requestedNames = Stream.of(filterValue.split(","))
-                    .map(String::strip)
-                    .toList();
-
-            return dataStoreNames.stream()
-                    .flatMap(dataStore ->
-                            dataModelProvider.getDataModels(dataStore).keySet().stream())
-                    .distinct()
-                    .filter(entityName -> requestedNames.stream()
-                            .anyMatch(reqName ->
-                                    entityName.matches("(?i)" + ".*" + reqName + ".*")))
-                    .toList();
-        }
+        return requestedNames.stream()
+                .anyMatch(reqName ->
+                        entityModel.getName().matches("(?i)" + ".*" + reqName + ".*")
+                                || entityModel.getTableName().matches("(?i)" + ".*" + reqName + ".*"));
     }
 
     protected void changeDataStoreColumnVisibility(List<EntityModel> model) {
@@ -181,14 +175,17 @@ public class DataModelListView extends StandardView {
     @Install(to = "attributeModelsDl", target = Target.DATA_LOADER)
     protected List<AttributeModel> attributeModelsDlLoadDelegate(LoadContext<AttributeModel> loadContext) {
         EntityModel selectedModel = entityModelsDataGrid.getSingleSelectedItem();
-        return selectedModel != null
+        List<AttributeModel> attributeModels = selectedModel != null
                 ? getDataModelProvider()
                 .getEntityAttributes(selectedModel.getDataStore(), selectedModel.getName())
                 : Collections.emptyList();
+
+        attributesCount.setText("%d".formatted(attributeModels.size()));
+        return attributeModels;
     }
 
-    @Subscribe("entityNameFilter")
-    public void onEntityNameFilterTypedValueChange(final TypedValueChangeEvent<TypedTextField<String>, String> event) {
+    @Subscribe("entityFilter")
+    public void onEntityFilterTypedValueChange(final TypedValueChangeEvent<TypedTextField<String>, String> event) {
         entityModelsDl.load();
     }
 
@@ -205,15 +202,22 @@ public class DataModelListView extends StandardView {
     @Subscribe(id = "diagramButton", subject = "clickListener")
     public void onDiagramButtonClick(final ClickEvent<JmixButton> event) {
         if (!diagramEngine.pingService()) {
-            notifications.create("Remote diagramming service is not available.")
+            notifications.create(messageBundle.getMessage("diagramGeneration.error.serviceUnavailable.message"))
                     .withType(Notifications.Type.ERROR)
                     .show();
 
             return;
         }
 
-        byte[] diagramData = generateDiagram(entityModelsDc.getItems());
-        dataModelDiagramViewSupport.open(this, diagramData);
+        try {
+            byte[] diagramData = generateDiagram(entityModelsDc.getItems());
+            dataModelDiagramViewSupport.open(this, diagramData);
+        } catch (Exception e) {
+            log.error("Diagram generation failed", e);
+            notifications.create(messageBundle.getMessage("diagramGeneration.error.generationFailed.message"))
+                    .withType(Notifications.Type.ERROR)
+                    .show();
+        }
     }
 
     protected byte[] generateDiagram(List<EntityModel> models) {
@@ -316,14 +320,14 @@ public class DataModelListView extends StandardView {
     protected class EntityNameUrlQueryParametersBinder extends AbstractUrlQueryParametersBinder {
 
         public EntityNameUrlQueryParametersBinder() {
-            entityNameFilter.addValueChangeListener(this::onFilter);
+            entityFilter.addValueChangeListener(this::onFilter);
             showSystemCheckBox.addValueChangeListener(this::onFilter);
         }
 
         @Override
         public void updateState(QueryParameters queryParameters) {
             String filter = queryParameters.getSingleParameter(FILTER_URL_PARAM).orElse(null);
-            entityNameFilter.setTypedValue(filter);
+            entityFilter.setTypedValue(filter);
 
             Boolean showSystem = queryParameters.getSingleParameter(SHOW_SYSTEM_URL_PARAM)
                     .map(Boolean::parseBoolean)
@@ -338,7 +342,7 @@ public class DataModelListView extends StandardView {
 
         protected void onFilter(ComponentValueChangeEvent<?, ?> event) {
             QueryParameters qp = QueryParameters.simple(ImmutableMap.of(
-                    FILTER_URL_PARAM, Strings.nullToEmpty(entityNameFilter.getTypedValue()),
+                    FILTER_URL_PARAM, Strings.nullToEmpty(entityFilter.getTypedValue()),
                     SHOW_SYSTEM_URL_PARAM, urlParamSerializer.serialize(showSystemCheckBox.getValue()))
             );
 

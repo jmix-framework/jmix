@@ -156,6 +156,7 @@ public class PlantUmlDiagramEngine implements DiagramEngine {
         if (resultPngBuf == null || resultPngBuf.length == 0) {
             throw new IllegalStateException("The diagram was not received");
         }
+
         return resultPngBuf;
     }
 

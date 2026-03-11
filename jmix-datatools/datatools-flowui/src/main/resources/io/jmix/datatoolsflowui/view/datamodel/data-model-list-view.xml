@@ -26,16 +26,16 @@
             expand="contentBox"
             classNames="data-model-list-view-layout">
         <hbox id="buttonsPanel" classNames="buttons-panel">
-            <textField id="entityNameFilter" datatype="string"
+            <textField id="entityFilter" datatype="string"
                        width="100%" maxWidth="35em"
-                       placeholder="msg://entityModelListView.entityNameFilter.placeholder.text"
+                       placeholder="msg://entityModelListView.entityFilter.placeholder.text"
                        clearButtonVisible="true">
                 <prefix>
                     <fontIcon iconClassNames="jmix-font-icon jmix-font-icon-search"/>
                 </prefix>
                 <suffix>
                     <fontIcon id="helpIcon" iconClassNames="jmix-font-icon jmix-font-icon-question-circle">
-                        <tooltip text="msg://entityModelListView.entityNameFilter.tooltip.text"/>
+                        <tooltip text="msg://entityModelListView.entityFilter.tooltip.text"/>
                     </fontIcon>
                 </suffix>
             </textField>
@@ -49,7 +49,16 @@
 
         <flexLayout id="contentBox" classNames="content-wrapper">
             <vbox id="entitiesBox" padding="false" classNames="entities-box" width="unset">
-                <h4 text="msg://entityModelListView.entityModelsDataGrid.title"/>
+                <hbox id="entitiesHeaderBox"
+                      justifyContent="BETWEEN" alignItems="CENTER"
+                      width="100%">
+                    <startSlot>
+                        <h4 text="msg://entityModelListView.entityModelsDataGrid.title"/>
+                    </startSlot>
+                    <endSlot>
+                        <span id="entityModelCount"/>
+                    </endSlot>
+                </hbox>
                 <dataGrid id="entityModelsDataGrid"
                           dataContainer="entityModelsDc"
                           width="100%"
@@ -63,7 +72,16 @@
                 </dataGrid>
             </vbox>
             <vbox id="attributesBox" padding="false" classNames="attributes-box" width="unset">
-                <h4 text="msg://entityModelListView.attributeModelsDataGrid.title"/>
+                <hbox id="attributesHeaderBox"
+                      alignItems="CENTER"
+                      width="100%">
+                    <startSlot>
+                        <h4 text="msg://entityModelListView.attributeModelsDataGrid.title"/>
+                    </startSlot>
+                    <endSlot>
+                        <span id="attributesCount"/>
+                    </endSlot>
+                </hbox>
                 <dataGrid id="attributeModelsDataGrid"
                           dataContainer="attributeModelsDc"
                           width="100%"

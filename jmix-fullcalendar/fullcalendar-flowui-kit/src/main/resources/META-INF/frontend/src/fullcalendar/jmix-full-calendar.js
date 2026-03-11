@@ -217,7 +217,7 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
      * @private
      */
     _updateSyncSourcesData(context) {
-        this.dataHolder.set(context.sourceId, { fetchAfterAdded: true, data: context.data });
+        this.dataHolder.set(context.sourceId, { initial: false, data: context.data });
 
         this.calendar.getEventSourceById(context.sourceId).refetch();
     }
@@ -298,7 +298,7 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
 
         this.dataHolder.set(sourceId, lazySource
             ? { compContext: this }
-            : { fetchAfterAdded: false, data: [] });
+            : { initial: true, data: [] });
 
         this.calendar.addEventSource(this._createEventSource(sourceId, lazySource));
     }
@@ -327,14 +327,14 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
 
     _fetchFunction(fetchInfo, successCallback, failureCallback, dataHolder, sourceId) {
         const context = dataHolder.get(sourceId);
-        if (!context.fetchAfterAdded) {
-            context.fetchAfterAdded = true;
-            return;
-        }
 
         successCallback(context.data);
 
-        this._postponeUpdatingBottomTextFromFetch();
+        if (context.initial) {
+            context.initial = false;
+        } else {
+            this._postponeUpdatingBottomTextFromFetch();
+        }
     }
 
     async _lazyFetchFunction(fetchInfo, successCallback, failureCallback, dataHolder, sourceId) {
@@ -620,7 +620,7 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
         }
 
         this._clearNotInRangeDayCellContexts();
-        this._updateBottomText();
+        this._postponeUpdatingBottomTextFromFetch();
     }
 
     _onDateClick(e) {
@@ -898,7 +898,7 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolymerElement)) {
             this.bottomTextUpdateTimeoutId = null;
         }
 
-        this.bottomTextUpdateTimeoutId = setTimeout(() => { this._updateBottomText() }, 10);
+        this.bottomTextUpdateTimeoutId = setTimeout(() => { this._updateBottomText() }, 50);
     }
 
     /**

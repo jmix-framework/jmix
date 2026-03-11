@@ -28,6 +28,7 @@
         <validCheckSum>9:6036f916dad0efc98a8c7f668d5389b8</validCheckSum>
         <validCheckSum>9:7c6fcf3158c06eacd90ae9e2e85177e0</validCheckSum>
         <validCheckSum>9:e9c9464d1995cb257cb5eb2f77b83d0b</validCheckSum>
+        <validCheckSum>9:4b0e4299c105afbc89b9df52e142c690</validCheckSum>
 
         <createTable tableName="REPORT_GROUP">
             <column name="ID" type="${uuid.type}">

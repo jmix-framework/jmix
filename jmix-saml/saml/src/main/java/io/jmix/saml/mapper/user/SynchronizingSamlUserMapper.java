@@ -43,7 +43,6 @@ import java.util.stream.Collectors;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
-//TODO 'populateUserAttributes' must fill registrationId also
 public abstract class SynchronizingSamlUserMapper<T extends JmixSamlUserDetails> extends BaseSamlUserMapper<T> {
 
     private static final Logger log = getLogger(SynchronizingSamlUserMapper.class);

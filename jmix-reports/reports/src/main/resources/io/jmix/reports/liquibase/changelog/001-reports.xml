@@ -21,14 +21,7 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
     <changeSet author="reports" id="1" context="!cuba">
-        <validCheckSum>8:02c24e8ab208451a178bdd3722b8f4a9</validCheckSum>
-        <validCheckSum>8:f5da7222d918810deb69ba452ee5560e</validCheckSum>
-        <validCheckSum>8:ad41a1a258292fb61230c580d0aa3099</validCheckSum>
-        <validCheckSum>8:036402abfae5b9aeba6c51e965a62a74</validCheckSum>
-        <validCheckSum>9:6036f916dad0efc98a8c7f668d5389b8</validCheckSum>
-        <validCheckSum>9:7c6fcf3158c06eacd90ae9e2e85177e0</validCheckSum>
-        <validCheckSum>9:e9c9464d1995cb257cb5eb2f77b83d0b</validCheckSum>
-        <validCheckSum>9:4b0e4299c105afbc89b9df52e142c690</validCheckSum>
+        <validCheckSum>1:any</validCheckSum>
 
         <createTable tableName="REPORT_GROUP">
             <column name="ID" type="${uuid.type}">

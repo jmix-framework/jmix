@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,21 @@
  * limitations under the License.
  */
 
-package io.jmix.core.metamodel.model;
+package io.jmix.flowui.menu;
+
+import java.util.List;
 
 /**
- * Interface stores internal methods for {@link Session} implementations.
+ * Interface to be implemented by beans that want to customize the main menu structure.
+ *
+ * @see MenuConfig
  */
-public interface SessionImplementation extends Session {
+public interface MenuConfigCustomizer {
 
-    void registerClass(MetaClass metaClass);
-
-    void registerClass(String name, Class<?> javaClass, MetaClass metaClass);
-
-    void unregisterClass(MetaClass metaClass);
+    /**
+     * Customizes the main menu structure.
+     *
+     * @param rootItems root menu items
+     */
+    void customize(List<MenuItem> rootItems);
 }

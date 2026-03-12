@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,13 @@
  * limitations under the License.
  */
 
-package io.jmix.core.metamodel.model;
+package io.jmix.core.datastore;
 
-/**
- * Interface stores internal methods for {@link Session} implementations.
- */
-public interface SessionImplementation extends Session {
+import io.jmix.core.metamodel.model.StoreDescriptor;
 
-    void registerClass(MetaClass metaClass);
+public interface AdditionalStoreDescriptorProvider {
 
-    void registerClass(String name, Class<?> javaClass, MetaClass metaClass);
+    String getStoreName();
 
-    void unregisterClass(MetaClass metaClass);
+    StoreDescriptor getStoreDescriptor();
 }

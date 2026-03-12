@@ -191,32 +191,38 @@ public class ViewRegistry implements ApplicationContextAware {
         for (ViewControllersConfiguration provider : configurations) {
             List<ViewControllerDefinition> viewControllers = provider.getViewControllers();
 
-            Map<String, String> projectViews = new HashMap<>(viewControllers.size());
+            Map<String, ViewInfo> configurationViews = new LinkedHashMap<>(viewControllers.size());
 
             for (ViewControllerDefinition definition : viewControllers) {
                 String viewId = definition.getId();
                 String controllerClassName = definition.getControllerClassName();
 
-                String existingViewController = projectViews.get(viewId);
-                if (existingViewController != null
-                        && !Objects.equals(existingViewController, controllerClassName)) {
-                    throw new RuntimeException(
-                            String.format("Project contains views with the same id: '%s'. See '%s' and '%s'",
-                                    viewId,
-                                    controllerClassName,
-                                    existingViewController));
-                } else {
-                    projectViews.put(viewId, controllerClassName);
-                }
-
                 Class<? extends View<?>> controllerClass = loadDefinedViewClass(controllerClassName);
                 String templatePath = ViewDescriptorUtils.resolveTemplatePath(controllerClass);
                 ViewInfo viewInfo = new ViewInfo(viewId, controllerClassName, controllerClass, templatePath);
 
-                registerView(viewId, viewInfo);
+                ViewInfo existingViewInfo = configurationViews.get(viewId);
+                if (existingViewInfo != null
+                        && !Objects.equals(existingViewInfo.getControllerClassName(), controllerClassName)) {
+
+                    Class<? extends View<?>> existingClass = existingViewInfo.getControllerClass();
+                    if (existingClass.isAssignableFrom(controllerClass)) {
+                        configurationViews.put(viewId, viewInfo);
+                    } else if (!controllerClass.isAssignableFrom(existingClass)) {
+                        throw new RuntimeException(
+                                String.format("Project contains views with the same id: '%s'. See '%s' and '%s'",
+                                        viewId,
+                                        controllerClassName,
+                                        existingViewInfo.getControllerClassName()));
+                    }
+                } else {
+                    configurationViews.put(viewId, viewInfo);
+                }
             }
 
-            projectViews.clear();
+            for (ViewInfo viewInfo : configurationViews.values()) {
+                registerView(viewInfo.getId(), viewInfo);
+            }
         }
     }
 

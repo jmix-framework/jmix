@@ -18,6 +18,7 @@ package io.jmix.core.impl;
 
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
+import io.jmix.core.datastore.AdditionalStoreDescriptorProvider;
 import io.jmix.core.metamodel.model.StoreDescriptor;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +26,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static io.jmix.core.Stores.*;
 
@@ -44,20 +43,23 @@ public class StoreDescriptorsRegistry {
     @Autowired
     protected NoopStoreDescriptor noopStoreDescriptor;
     @Autowired
-    protected Map<String, StoreDescriptor> descriptors;
-    @Autowired
     protected Environment environment;
+    @Autowired
+    protected Map<String, StoreDescriptor> storeDescriptorBeans;
+    @Autowired(required = false)
+    protected List<AdditionalStoreDescriptorProvider> additionalStoreDescriptorProviders;
 
     protected static final Splitter SPLITTER = Splitter.on(",").omitEmptyStrings().trimResults();
 
-    protected List<String> additionalDataStoreNames;
+    protected Map<String, StoreDescriptor> descriptors = new HashMap<>();
+    protected List<String> additionalDataStoreNames = new ArrayList<>();
 
     @PostConstruct
     protected void initialize() {
         String property = environment.getProperty("jmix.core.additional-stores");
-        additionalDataStoreNames = !Strings.isNullOrEmpty(property)
+        additionalDataStoreNames.addAll(!Strings.isNullOrEmpty(property)
                 ? SPLITTER.splitToList(property)
-                : Collections.emptyList();
+                : Collections.emptyList());
 
         initUndefinedStoreDescriptor();
         initMainStoreDescriptor();
@@ -65,6 +67,13 @@ public class StoreDescriptorsRegistry {
 
         for (String storeName : additionalDataStoreNames) {
             initAdditionalStoreDescriptor(storeName);
+        }
+
+        if (additionalStoreDescriptorProviders != null) {
+            for (AdditionalStoreDescriptorProvider provider : additionalStoreDescriptorProviders) {
+                descriptors.put(provider.getStoreName(), provider.getStoreDescriptor());
+                additionalDataStoreNames.add(provider.getStoreName());
+            }
         }
     }
 
@@ -101,7 +110,7 @@ public class StoreDescriptorsRegistry {
     protected StoreDescriptor resolveStoreDescriptor(String storeName) {
         String descriptorName = environment.getProperty("jmix.core.store-descriptor-" + storeName);
         if (descriptorName != null) {
-            StoreDescriptor descriptor = descriptors.get(descriptorName);
+            StoreDescriptor descriptor = storeDescriptorBeans.get(descriptorName);
             if (descriptor != null) {
                 return descriptor;
             } else {

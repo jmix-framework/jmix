@@ -46,7 +46,7 @@ public class SamlResponseAuthenticationConverter implements Converter<OpenSaml4A
 
     @Override
     public Saml2Authentication convert(OpenSaml4AuthenticationProvider.ResponseToken responseToken) {
-        log.info("SAML response conversion started");
+        log.debug("SAML response conversion started");
 
         try {
             Saml2AuthenticationToken token = responseToken.getToken();
@@ -70,7 +70,7 @@ public class SamlResponseAuthenticationConverter implements Converter<OpenSaml4A
             );
 
             JmixSamlUserDetails principal = samlUserMapper.toJmixUser(assertion, responseToken);
-            log.info("Successfully converted SAML assertion to Jmix user: {}", principal.getUsername());
+            log.debug("Successfully converted SAML assertion to Jmix user: {}", principal.getUsername());
 
             Collection<? extends GrantedAuthority> authorities = principal.getAuthorities();
             log.debug("User granted {} authorities", authorities.size());

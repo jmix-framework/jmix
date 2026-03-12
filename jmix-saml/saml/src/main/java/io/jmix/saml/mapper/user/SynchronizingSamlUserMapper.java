@@ -77,7 +77,7 @@ public abstract class SynchronizingSamlUserMapper<T extends JmixSamlUserDetails>
         try {
             jmixUserDetails = (T) userRepository.loadUserByUsername(username);
         } catch (UsernameNotFoundException e) {
-            log.info("User with login {} wasn't found in user repository", username);
+            log.debug("User with login {} wasn't found in user repository", username);
             jmixUserDetails = dataManager.create(getApplicationUserClass());
         }
         return jmixUserDetails;
@@ -154,12 +154,12 @@ public abstract class SynchronizingSamlUserMapper<T extends JmixSamlUserDetails>
                 .toList();
 
         if (!assignmentsToRemove.isEmpty()) {
-            log.info("Removing {} obsolete role assignments", assignmentsToRemove.size());
+            log.debug("Removing {} obsolete role assignments", assignmentsToRemove.size());
             saveContext.removing(assignmentsToRemove);
         }
 
         if (!assignmentsToAdd.isEmpty()) {
-            log.info("Adding {} new role assignments", assignmentsToAdd.size());
+            log.debug("Adding {} new role assignments", assignmentsToAdd.size());
             saveContext.saving(assignmentsToAdd);
         }
 

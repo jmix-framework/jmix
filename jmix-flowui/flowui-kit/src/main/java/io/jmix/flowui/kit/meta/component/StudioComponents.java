@@ -1513,7 +1513,6 @@ interface StudioComponents {
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
-                            defaultValue = "AUTO",
                             options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
                     @StudioProperty(xmlAttribute = "justifySelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.flowui.kit.component.Alignment",
@@ -1605,7 +1604,6 @@ interface StudioComponents {
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
-                            defaultValue = "AUTO",
                             options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
                     @StudioProperty(xmlAttribute = "justifySelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.flowui.kit.component.Alignment",

@@ -61,7 +61,7 @@ public class ViewSettingsTest extends AbstractSettingsTest {
         saveSettings(viewSettings);
 
         // Load ViewSettings, values should be the same
-        var loadedSettings = loadSettings(viewSettings.getViewId());
+        var loadedSettings = loadSettings(viewSettings.getOwnerId());
 
         assertEquals("string", loadedSettings.getString(compId, "string").orElse(null));
         assertEquals(1, loadedSettings.getInteger(compId, "int").orElse(null));
@@ -86,7 +86,7 @@ public class ViewSettingsTest extends AbstractSettingsTest {
         saveSettings(viewSettings);
 
         // Load ViewSettings, component settings should be the same
-        ViewSettings loadedSettings = loadSettings(viewSettings.getViewId());
+        ViewSettings loadedSettings = loadSettings(viewSettings.getOwnerId());
 
         JmixDetailsSettings detailsSettings =
                 loadedSettings.getSettings(compId, JmixDetailsSettings.class)
@@ -113,7 +113,7 @@ public class ViewSettingsTest extends AbstractSettingsTest {
         saveSettings(viewSettings);
 
         // Remove settings and save again
-        var loadedSettings = loadSettings(viewSettings.getViewId());
+        var loadedSettings = loadSettings(viewSettings.getOwnerId());
 
         var primitiveVal = loadedSettings.getString(primId, "string").orElse(null);
         assertEquals("string", primitiveVal);
@@ -127,7 +127,7 @@ public class ViewSettingsTest extends AbstractSettingsTest {
         saveSettings(loadedSettings);
 
         // Reload settings, settings of primitiveId should not exist
-        loadedSettings = loadSettings(loadedSettings.getViewId());
+        loadedSettings = loadSettings(loadedSettings.getOwnerId());
 
         assertFalse(loadedSettings.getString(primId, "string").isPresent());
         assertFalse(loadedSettings.getSettings(compId, JmixDetailsSettings.class).isPresent());
@@ -145,14 +145,14 @@ public class ViewSettingsTest extends AbstractSettingsTest {
         saveSettings(viewSettings);
 
         // Reload settings and remove key
-        var loadedSettings = loadSettings(viewSettings.getViewId());
+        var loadedSettings = loadSettings(viewSettings.getOwnerId());
 
         loadedSettings.delete(primId, "string");
 
         saveSettings(loadedSettings);
 
         // Reload settings again, key should not exist
-        loadedSettings = loadSettings(viewSettings.getViewId());
+        loadedSettings = loadSettings(viewSettings.getOwnerId());
 
         assertFalse(loadedSettings.getString(primId, "string").isPresent());
     }

@@ -21,6 +21,7 @@ import io.jmix.flowui.kit.component.KeyCombination
 import io.jmix.flowui.menu.MenuConfig
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import test_support.ComponentTestUtils
 import test_support.spec.FlowuiTestSpecification
 
 @SpringBootTest(["jmix.ui.composite-menu=false", "jmix.ui.menu-config=menu/menuconfig/merge-menu.xml"])
@@ -42,7 +43,7 @@ class MenuConfigMergeTest extends FlowuiTestSpecification {
         applicationMenu.getBeanMethod() == null
         applicationMenu.getClassNames() == null
         applicationMenu.getDescription() == "Application"
-        applicationMenu.getIcon() == VaadinIcon.TABLE.create().getIcon()
+        ComponentTestUtils.isSameIcon(applicationMenu.icon, VaadinIcon.TABLE)
         applicationMenu.getParent() == null
         applicationMenu.getProperties() == []
         applicationMenu.getRouteParameters() == []
@@ -62,7 +63,7 @@ class MenuConfigMergeTest extends FlowuiTestSpecification {
         applicationView.getBeanMethod() == null
         applicationView.getClassNames() == null
         applicationView.getDescription() == "app view"
-        applicationView.getIcon() == VaadinIcon.ABACUS.create().getIcon()
+        ComponentTestUtils.isSameIcon(applicationView.icon, VaadinIcon.ABACUS)
         applicationView.getParent() == applicationMenu
         applicationView.getProperties() == []
         applicationView.getRouteParameters() == []

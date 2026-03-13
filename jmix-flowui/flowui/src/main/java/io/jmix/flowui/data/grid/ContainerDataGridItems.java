@@ -37,7 +37,10 @@ import org.springframework.lang.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
@@ -54,6 +57,8 @@ public class ContainerDataGridItems<T> extends AbstractDataProvider<T, Void>
     public static final String PROPERTY_REPLACE_ITEM = "<replaceItem>";
 
     private static final Logger log = LoggerFactory.getLogger(ContainerDataGridItems.class);
+
+    protected Map<String, Comparator<?>> propertyComparators = Collections.emptyMap();
 
     protected CollectionContainer<T> container;
 
@@ -122,6 +127,10 @@ public class ContainerDataGridItems<T> extends AbstractDataProvider<T, Void>
     @Override
     public void sort(Object[] propertyId, boolean[] ascending) {
         if (container.getSorter() != null) {
+            if (container.getSorter() instanceof CollectionContainerDataGridSorter dataGridSorter) {
+                dataGridSorter.setPropertyComparators(propertyComparators);
+            }
+
             if (suppressSorting
                     && container instanceof HasLoader
                     && ((HasLoader) container).getLoader() instanceof BaseCollectionLoader loader) {
@@ -151,6 +160,11 @@ public class ContainerDataGridItems<T> extends AbstractDataProvider<T, Void>
 
     @Override
     public void resetSortOrder() {
+        propertyComparators = Collections.emptyMap();
+        if (container.getSorter() instanceof CollectionContainerDataGridSorter sorter) {
+            sorter.setPropertyComparators(Collections.emptyMap());
+        }
+
         if (container.getSorter() != null) {
             if (suppressSorting
                     && container instanceof HasLoader
@@ -172,6 +186,18 @@ public class ContainerDataGridItems<T> extends AbstractDataProvider<T, Void>
     @Override
     public void enableSorting() {
         suppressSorting = false;
+    }
+
+    /**
+     * Sets property comparators that should be used for sorting in {@link CollectionContainerDataGridSorter}.
+     * Comparators are used in in-memory sorting.
+     * <p>
+     * The key of the map is a property name and the value is a comparator.
+     *
+     * @param propertyComparators the map of property comparators
+     */
+    public void setPropertyComparators(@Nullable Map<String, Comparator<?>> propertyComparators) {
+        this.propertyComparators = propertyComparators != null ? propertyComparators : Collections.emptyMap();
     }
 
     /**

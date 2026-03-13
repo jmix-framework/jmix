@@ -471,7 +471,10 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
 
     protected void loadColumnSortable(Element element, boolean sortableColumns, DataGridColumn<?> column,
                                       @Nullable MetaPropertyPath metaPropertyPath) {
-        if (metaPropertyPath != null && metaDataTools.isElementCollection(metaPropertyPath.getMetaProperty())) {
+        if (metaPropertyPath == null || isTransientProperty(metaPropertyPath)) {
+            Boolean columnSortable = loadBoolean(element, "sortable").orElse(null);
+            column.setSortable(columnSortable != null ? columnSortable : false);
+        } else if (metaDataTools.isElementCollection(metaPropertyPath.getMetaProperty())) {
             column.setSortable(false);
         } else {
             loadColumnSortable(element, column, sortableColumns);
@@ -867,6 +870,15 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         loadString(element, "action")
                 .ifPresent(actionId -> getContext().addInitTask(
                         new AssignActionInitTask<>(component, actionId)));
+    }
+
+    protected boolean isTransientProperty(@Nullable MetaPropertyPath metaPropertyPath) {
+        if (metaPropertyPath == null) {
+            return false;
+        }
+        MetaClass metaClass = getMetaDataTools().getPropertyEnclosingMetaClass(metaPropertyPath);
+        return getMetaDataTools().isJpaEntity(metaClass)
+                && !getMetaDataTools().isJpa(metaPropertyPath.getMetaProperty());
     }
 
     protected void loadActions() {

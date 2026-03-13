@@ -66,6 +66,10 @@ import io.jmix.flowui.data.provider.StringPresentationValueProvider;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.HasActions;
 import io.jmix.flowui.kit.component.KeyCombination;
+import io.jmix.flowui.model.BaseCollectionLoader;
+import io.jmix.flowui.model.CollectionContainer;
+import io.jmix.flowui.model.HasLoader;
+import io.jmix.flowui.data.grid.CollectionContainerDataGridSorter;
 import io.jmix.flowui.sys.BeanUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
@@ -191,6 +195,8 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
             if (dataGridItems instanceof ContainerDataGridItems<?> containerDataGridItems) {
                 UiComponentProperties properties = applicationContext.getBean(UiComponentProperties.class);
                 containerDataGridItems.setRefreshAllOnItemReplace(properties.isGridRefreshAllOnItemReplace());
+
+                initDataGridSorter(containerDataGridItems);
             }
 
             bind(dataGridItems);
@@ -718,22 +724,82 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
             dataProvider.resetSortOrder();
         } else {
             Map<Object, Boolean> sortedColumnMap = new LinkedHashMap<>();
+            Map<String, Comparator<?>> propertyComparators = new HashMap<>();
 
             for (GridSortOrder<E> sortOrder : sortOrders) {
                 Grid.Column<E> column = sortOrder.getSorted();
+                if (column == null) {
+                    continue;
+                }
 
-                if (column != null) {
-                    MetaPropertyPath mpp = propertyColumns.get(column);
+                boolean ascending = SortDirection.ASCENDING.equals(sortOrder.getDirection());
+                MetaPropertyPath mpp = propertyColumns.get(column);
 
-                    if (mpp != null) {
-                        boolean ascending = SortDirection.ASCENDING.equals(sortOrder.getDirection());
-                        sortedColumnMap.put(mpp, ascending);
+                if (mpp != null && !isTransientProperty(mpp)) {
+                    sortedColumnMap.put(mpp, ascending);
+                }
+
+                if (column instanceof DataGridColumn<E> dataGridColumn) {
+                    Comparator<?> comparator = dataGridColumn.getComparatorOrNull(sortOrder.getDirection());
+                    if (comparator == null) {
+                        continue;
+                    }
+                    if (mpp != null && !isTransientProperty(mpp)) {
+                        propertyComparators.put(mpp.toPathString(), comparator);
+                    } else if (inMemorySorting()) {
+                        String property = mpp != null ? mpp.toPathString() : column.getKey();
+                        sortedColumnMap.put(property, ascending);
+                        propertyComparators.put(property, comparator);
                     }
                 }
             }
 
+            if (dataGridItems instanceof ContainerDataGridItems<?> containerItems) {
+                containerItems.setPropertyComparators(propertyComparators);
+            }
+
             dataProvider.sort(sortedColumnMap.keySet().toArray(), Booleans.toArray(sortedColumnMap.values()));
         }
+    }
+
+    protected void initDataGridSorter(ContainerDataGridItems<?> containerDataGridItems) {
+        CollectionContainer<?> container = containerDataGridItems.getContainer();
+
+        BaseCollectionLoader loader = null;
+        if (container instanceof HasLoader hasLoader
+                && hasLoader.getLoader() instanceof BaseCollectionLoader baseCollectionLoader) {
+            loader = baseCollectionLoader;
+        }
+
+        CollectionContainerDataGridSorter dataGridSorter =
+                new CollectionContainerDataGridSorter(container, loader, applicationContext);
+
+        container.setSorter(dataGridSorter);
+    }
+
+    protected boolean inMemorySorting() {
+        BaseCollectionLoader loader = null;
+        if (dataGridItems instanceof ContainerDataGridItems<?> containerItems) {
+            CollectionContainer<?> container = containerItems.getContainer();
+            if (container instanceof HasLoader hasLoader
+                    && hasLoader.getLoader() instanceof BaseCollectionLoader baseCollectionLoader) {
+                loader = baseCollectionLoader;
+            }
+
+            return loader == null
+                    || loader.getFirstResult() == 0
+                    && container.getItems().size() < loader.getMaxResults();
+        }
+        return true;
+    }
+
+    protected boolean isTransientProperty(@Nullable MetaPropertyPath metaPropertyPath) {
+        if (metaPropertyPath == null) {
+            return false;
+        }
+        MetaClass metaClass = metadataTools.getPropertyEnclosingMetaClass(metaPropertyPath);
+        return metadataTools.isJpaEntity(metaClass)
+                && !metadataTools.isJpa(metaPropertyPath.getMetaProperty());
     }
 
     protected void notifyDataProviderSelectionChanged(SelectionEvent<Grid<E>, E> ignore) {

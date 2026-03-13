@@ -17,8 +17,6 @@
 package io.jmix.flowui.action;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.component.ComponentUtils;
@@ -31,6 +29,7 @@ import java.util.function.Consumer;
 public class DialogAction extends SecuredBaseAction {
 
     public enum Type {
+
         OK("ok", "actions.Ok", JmixFontIcon.DIALOG_OK.create()),
         CANCEL("cancel", "actions.Cancel", JmixFontIcon.DIALOG_CANCEL.create()),
         YES("yes", "actions.Yes", JmixFontIcon.DIALOG_YES.create()),
@@ -53,22 +52,6 @@ public class DialogAction extends SecuredBaseAction {
 
         public String getMsgKey() {
             return msgKey;
-        }
-
-        /**
-         * @return an icon
-         * @deprecated use {@link #getIcon()} instead
-         */
-        @Deprecated(since = "2.8", forRemoval = true)
-        public VaadinIcon getVaadinIcon() {
-            // For backward compatibility
-            return switch (this) {
-                case OK -> VaadinIcon.CHECK;
-                case CANCEL -> VaadinIcon.BAN;
-                case YES -> VaadinIcon.CHECK;
-                case NO -> VaadinIcon.BAN;
-                case CLOSE -> VaadinIcon.CLOSE;
-            };
         }
 
         public Component getIcon() {
@@ -109,13 +92,6 @@ public class DialogAction extends SecuredBaseAction {
     @Override
     public DialogAction withIcon(@Nullable Component icon) {
         return (DialogAction) super.withIcon(icon);
-    }
-
-    @Deprecated(since = "2.8", forRemoval = true)
-    @Override
-    public DialogAction withIcon(@Nullable Icon icon) {
-        setIcon(icon);
-        return this;
     }
 
     @Override

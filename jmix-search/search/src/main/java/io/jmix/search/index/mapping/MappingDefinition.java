@@ -121,17 +121,6 @@ public class MappingDefinition {
         attributesGroupConfigurationMap.put(DynamicAttributesGroupConfiguration.class, builder.dynamicGroups);
     }
 
-    /**
-     * Gets all {@link StaticAttributesGroupConfiguration}
-     * @deprecated use the {@link MappingDefinition#getMappingConfigurations(Class)}}
-     *
-     * @return List of {@link MappingDefinitionElement}
-     */
-    @Deprecated(since = "2.8", forRemoval = true)
-    public List<StaticAttributesGroupConfiguration> getElements() {
-        return (List<StaticAttributesGroupConfiguration>) attributesGroupConfigurationMap.get(StaticAttributesGroupConfiguration.class);
-    }
-
     public <T extends AttributesGroupConfiguration> List<T> getMappingConfigurations(Class<T> configurationType) {
         return (List<T>) attributesGroupConfigurationMap.get(configurationType);
     }
@@ -144,12 +133,6 @@ public class MappingDefinition {
 
         private final List<StaticAttributesGroupConfiguration> staticGroups = new ArrayList<>();
         private final List<DynamicAttributesGroupConfiguration> dynamicGroups = new ArrayList<>();
-
-        @Deprecated(since = "2.8", forRemoval = true)
-        public MappingDefinitionBuilder addElement(StaticAttributesGroupConfiguration element) {
-            staticGroups.add(element);
-            return this;
-        }
 
         public MappingDefinitionBuilder addStaticAttributesGroup(StaticAttributesGroupConfiguration group) {
             staticGroups.add(group);

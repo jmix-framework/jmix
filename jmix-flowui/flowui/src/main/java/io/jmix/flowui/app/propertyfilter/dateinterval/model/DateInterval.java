@@ -62,7 +62,7 @@ public class DateInterval implements BaseDateInterval {
     }
 
     @Override
-    public String apply(String property) {
+    public String get() {
         String moment1 = "";
         String moment2 = "";
 

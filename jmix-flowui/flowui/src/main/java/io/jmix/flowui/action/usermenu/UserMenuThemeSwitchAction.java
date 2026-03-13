@@ -171,7 +171,7 @@ public class UserMenuThemeSwitchAction extends UserMenuAction<UserMenuThemeSwitc
         menuItems.forEach((key, menuItem) ->
                 menuItem.setChecked(key.equals(value)));
 
-        setIconComponent(createIcon(value));
+        setIcon(createIcon(value));
     }
 
     @Override

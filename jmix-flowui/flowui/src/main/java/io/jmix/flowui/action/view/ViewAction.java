@@ -17,7 +17,6 @@
 package io.jmix.flowui.action.view;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.icon.Icon;
 import io.jmix.flowui.action.ExecutableAction;
 import io.jmix.flowui.action.SecuredBaseAction;
 import io.jmix.flowui.action.TargetAction;
@@ -89,13 +88,6 @@ public abstract class ViewAction<A extends ViewAction<A, V>, V extends View> ext
     @Override
     public A withIcon(@Nullable Component icon) {
         return (A) super.withIcon(icon);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Deprecated(since = "2.8", forRemoval = true)
-    @Override
-    public A withIcon(@Nullable Icon icon) {
-        return ((A) super.withIcon(icon));
     }
 
     @SuppressWarnings("unchecked")

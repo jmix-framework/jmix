@@ -48,7 +48,7 @@ class MenuConfigTest extends FlowuiTestSpecification {
         applicationMenu.getClassNames() == null
         applicationMenu.getDescription() == "Application"
         applicationMenu.getIcon() == VaadinIcon.TABLE.create().icon
-        ComponentTestUtils.isSameIcon(applicationMenu.iconComponent, VaadinIcon.TABLE)
+        ComponentTestUtils.isSameIcon(applicationMenu.icon, VaadinIcon.TABLE)
         applicationMenu.getParent() == null
         applicationMenu.getProperties() == []
         applicationMenu.getRouteParameters() == []
@@ -71,7 +71,7 @@ class MenuConfigTest extends FlowuiTestSpecification {
         applicationView.getClassNames() == null
         applicationView.getDescription() == "app view"
         applicationView.getIcon() == VaadinIcon.ABACUS.create().icon
-        ComponentTestUtils.isSameIcon(applicationView.iconComponent, VaadinIcon.ABACUS)
+        ComponentTestUtils.isSameIcon(applicationView.icon, VaadinIcon.ABACUS)
         applicationView.getParent() == applicationMenu
         applicationView.getProperties() == []
         applicationView.getRouteParameters() == []
@@ -92,7 +92,7 @@ class MenuConfigTest extends FlowuiTestSpecification {
         nestedMenu.getClassNames() == null
         nestedMenu.getDescription() == null
         nestedMenu.getIcon() == VaadinIcon.CHECK.create().icon
-        ComponentTestUtils.isSameIcon(nestedMenu.iconComponent, VaadinIcon.CHECK)
+        ComponentTestUtils.isSameIcon(nestedMenu.icon, VaadinIcon.CHECK)
         nestedMenu.getParent() == applicationMenu
         nestedMenu.getProperties() == []
         nestedMenu.getRouteParameters() == []
@@ -114,7 +114,7 @@ class MenuConfigTest extends FlowuiTestSpecification {
         nestedView.getClassNames() == null
         nestedView.getDescription() == null
         nestedView.getIcon() == null
-        (nestedView.iconComponent as SvgIcon).src == "/icons/check-solid-full.svg"
+        (nestedView.icon as SvgIcon).src == "/icons/check-solid-full.svg"
         nestedView.getParent() == nestedMenu
         nestedView.getProperties() == []
         nestedView.getRouteParameters() == []
@@ -135,7 +135,7 @@ class MenuConfigTest extends FlowuiTestSpecification {
         administrationMenu.getClassNames() == null
         administrationMenu.getDescription() == null
         administrationMenu.getIcon() == null
-        ComponentTestUtils.isSameFontIcon(administrationMenu.iconComponent as FontIcon,
+        ComponentTestUtils.isSameFontIcon(administrationMenu.icon as FontIcon,
                 "lumo-icons", "")
         administrationMenu.getParent() == null
         administrationMenu.getProperties() == []
@@ -158,7 +158,7 @@ class MenuConfigTest extends FlowuiTestSpecification {
         administrationView.getClassNames() == null
         administrationView.getDescription() == null
         administrationView.getIcon() == null
-        (administrationView.iconComponent as Image).src == "/icons/icon.png"
+        (administrationView.icon as Image).src == "/icons/icon.png"
         administrationView.getParent() == administrationMenu
         administrationView.getProperties() == []
         administrationView.getRouteParameters() == []

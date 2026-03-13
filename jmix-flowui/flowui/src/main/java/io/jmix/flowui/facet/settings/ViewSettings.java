@@ -28,16 +28,4 @@ import io.jmix.flowui.view.View;
  * @see ComponentSettingsManager
  */
 public interface ViewSettings extends UiComponentSettings<ViewSettings> {
-
-    /**
-     * @return a {@link View} id to which settings are corresponded
-     * @deprecated use {@link #getOwnerId()} instead
-     */
-    @Deprecated(since = "2.8", forRemoval = true)
-    String getViewId();
-
-    @Override
-    default String getOwnerId() {
-        return getViewId();
-    }
 }

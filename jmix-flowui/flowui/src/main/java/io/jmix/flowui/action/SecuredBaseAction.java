@@ -16,9 +16,6 @@
 
 package io.jmix.flowui.action;
 
-import com.vaadin.flow.component.icon.Icon;
-import org.springframework.lang.Nullable;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -100,12 +97,5 @@ public class SecuredBaseAction extends ObservableBaseAction<SecuredBaseAction> {
          * @return {@code true} if the action is enabled, {@code false} otherwise
          */
         boolean isActionEnabled();
-    }
-
-    @Deprecated(since = "2.8", forRemoval = true)
-    @Override
-    public SecuredBaseAction withIcon(@Nullable Icon icon) {
-        setIcon(icon);
-        return this;
     }
 }

@@ -17,7 +17,6 @@
 package io.jmix.flowui.fragment;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.icon.Icon;
 import io.jmix.flowui.action.ExecutableAction;
 import io.jmix.flowui.action.SecuredBaseAction;
 import io.jmix.flowui.action.TargetAction;
@@ -94,13 +93,6 @@ public abstract class FragmentAction<A extends FragmentAction<A, C>, C extends F
     @Override
     public A withIcon(@Nullable Component icon) {
         return (A) super.withIcon(icon);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Deprecated(since = "2.8", forRemoval = true)
-    @Override
-    public A withIcon(@Nullable Icon icon) {
-        return ((A) super.withIcon(icon));
     }
 
     @SuppressWarnings("unchecked")

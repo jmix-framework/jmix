@@ -20,7 +20,6 @@ import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.contextmenu.MenuItem;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Hr;
-import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.shared.HasOverlayClassName;
 import com.vaadin.flow.dom.ClassList;
 import com.vaadin.flow.dom.ThemeList;
@@ -34,7 +33,10 @@ import io.jmix.flowui.kit.event.EventBus;
 import jakarta.annotation.Nullable;
 
 import java.beans.PropertyChangeEvent;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 /**
@@ -257,19 +259,18 @@ public abstract class AbstractDropdownButton extends Composite<JmixMenuBar>
         return getContent().addDetachListener(listener);
     }
 
-    @Deprecated(since = "2.8", forRemoval = true)
     @Nullable
     @Override
-    public Icon getIcon() {
-        return iconComponent instanceof Icon icon ? icon : null;
+    public Component getIcon() {
+        return getIconComponent();
     }
 
-    @Deprecated(since = "2.8", forRemoval = true)
     @Override
-    public void setIcon(@Nullable Icon icon) {
+    public void setIcon(@Nullable Component icon) {
         setIconComponent(icon);
     }
 
+    @Deprecated(since = "3.0", forRemoval = true)
     @Nullable
     @Override
     public Component getIconComponent() {

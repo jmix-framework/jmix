@@ -17,7 +17,6 @@
 package io.jmix.flowui.action.list;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.data.selection.SelectionEvent;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.action.ExecutableAction;
@@ -95,13 +94,6 @@ public abstract class ListDataComponentAction<A extends ListDataComponentAction<
     @Override
     public A withIcon(@Nullable Component icon) {
         return (A) super.withIcon(icon);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Deprecated(since = "2.8", forRemoval = true)
-    @Override
-    public A withIcon(@Nullable Icon icon) {
-        return ((A) super.withIcon(icon));
     }
 
     @SuppressWarnings("unchecked")

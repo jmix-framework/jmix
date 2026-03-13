@@ -17,7 +17,6 @@
 package io.jmix.flowui.action.genericfilter;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.action.ExecutableAction;
 import io.jmix.flowui.action.SecuredBaseAction;
@@ -178,13 +177,6 @@ public abstract class GenericFilterAction<A extends GenericFilterAction<A>> exte
     @Override
     public A withIcon(@Nullable Component icon) {
         return (A) super.withIcon(icon);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Deprecated(since = "2.8", forRemoval = true)
-    @Override
-    public A withIcon(@Nullable Icon icon) {
-        return ((A) super.withIcon(icon));
     }
 
     @SuppressWarnings("unchecked")

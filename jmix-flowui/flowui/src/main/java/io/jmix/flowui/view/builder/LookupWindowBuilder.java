@@ -305,18 +305,6 @@ public class LookupWindowBuilder<E, V extends View<?>> extends AbstractWindowBui
     /**
      * @return whether to use multi selection for the lookup component,
      * or {@code null} to use the default selection mode
-     *
-     * @deprecated Use {@link #getLookupComponentMultiSelect()} instead.
-     */
-    @Deprecated(since = "2.8", forRemoval = true)
-    @Nullable
-    public Boolean isLookupComponentMultiSelect() {
-        return getLookupComponentMultiSelect();
-    }
-
-    /**
-     * @return whether to use multi selection for the lookup component,
-     * or {@code null} to use the default selection mode
      */
     @Nullable
     public Boolean getLookupComponentMultiSelect() {

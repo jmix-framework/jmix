@@ -321,7 +321,7 @@ public class GenericFilter extends Composite<JmixDetails>
     protected void initSettingsButton(DropdownButton settingsButton) {
         settingsButton.addThemeVariants(DropdownButtonVariant.LUMO_ICON);
         settingsButton.setDropdownIndicatorVisible(false);
-        settingsButton.setIconComponent(icons.get(JmixFontIcon.GENERIC_FILTER_SETTINGS));
+        settingsButton.setIcon(icons.get(JmixFontIcon.GENERIC_FILTER_SETTINGS));
 
         List<GenericFilterAction<?>> defaultFilterActions = genericFilterSupport.getDefaultFilterActions(this);
         for (GenericFilterAction<?> filterAction : defaultFilterActions) {

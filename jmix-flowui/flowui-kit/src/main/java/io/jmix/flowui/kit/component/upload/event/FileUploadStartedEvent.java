@@ -45,15 +45,6 @@ public class FileUploadStartedEvent<C extends Component> extends ComponentEvent<
 
     /**
      * @return the file name
-     * @deprecated Use {@link #getFileName()} instead
-     */
-    @Deprecated(since = "2.8", forRemoval = true)
-    public String getFilename() {
-        return filename;
-    }
-
-    /**
-     * @return the file name
      */
     public String getFileName() {
         return filename;

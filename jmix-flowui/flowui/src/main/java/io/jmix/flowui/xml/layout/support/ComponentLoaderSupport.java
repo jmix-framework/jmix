@@ -432,38 +432,6 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
                 .map(ComponentUtils::parseIcon);
     }
 
-    /**
-     * Loads an {@link Icon} from the given {@link Element}.
-     * The method tries to retrieve the "icon" attribute value from the element and,
-     * if present, parses it into an {@link Icon}.
-     *
-     * @param element the XML element from which to load the icon
-     * @return an {@link Optional} containing the parsed {@link Icon} if the "icon" attribute
-     * is present and valid, or an empty {@link Optional} otherwise
-     * @deprecated use {@link ComponentLoaderSupport#loadIconSetIcon(Element)} instead
-     */
-    @Deprecated(since = "2.8", forRemoval = true)
-    public Optional<Icon> loadIcon(Element element) {
-        return loaderSupport.loadString(element, "icon")
-                .map(ComponentUtils::parseIcon);
-    }
-
-    /**
-     * Loads an {@link Icon} from the provided {@link Element} and applies
-     * the result using the specified {@link Consumer}. The method attempts
-     * to retrieve the "icon" attribute value from the given element, parse
-     * it into an {@link Icon}, and pass it to the setter if successfully parsed.
-     *
-     * @param element the XML element from which to load the icon
-     * @param setter  the {@link Consumer} used to apply the loaded {@link Icon}
-     * @deprecated use {@link IconLoaderSupport#loadIcon(Element, Consumer)} instead
-     */
-    @Deprecated(since = "2.8", forRemoval = true)
-    public void loadIcon(Element element, Consumer<Icon> setter) {
-        loadIcon(element)
-                .ifPresent(setter);
-    }
-
     public Optional<String> loadShortcutCombination(Element element) {
         return loadShortcut(element, "shortcutCombination");
     }

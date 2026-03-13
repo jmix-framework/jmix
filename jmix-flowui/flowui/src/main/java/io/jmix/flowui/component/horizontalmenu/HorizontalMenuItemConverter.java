@@ -142,7 +142,7 @@ public class HorizontalMenuItemConverter {
 
     @Nullable
     protected com.vaadin.flow.component.Component getIcon(MenuItem menuItemDescriptor) {
-        return menuItemDescriptor.getIconComponent();
+        return menuItemDescriptor.getIcon();
     }
 
     @Nullable

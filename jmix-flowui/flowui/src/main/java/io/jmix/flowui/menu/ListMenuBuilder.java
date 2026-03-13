@@ -163,8 +163,8 @@ public class ListMenuBuilder {
     }
 
     protected void setIcon(MenuItem menuItem, ListMenu.MenuItem listMenuItem) {
-        if (menuItem.getIconComponent() != null) {
-            listMenuItem.setPrefixComponent(menuItem.getIconComponent());
+        if (menuItem.getIcon() != null) {
+            listMenuItem.setPrefixComponent(menuItem.getIcon());
         }
     }
 

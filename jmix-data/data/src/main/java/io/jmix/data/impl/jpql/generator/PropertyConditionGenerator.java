@@ -108,8 +108,9 @@ public class PropertyConditionGenerator implements ConditionGenerator {
             propertyName = childProperty;
         }
 
-        MetaProperty metaProperty = metaClass.getProperty(propertyName);
-        if (metadataTools.isElementCollection(metaProperty)) {
+        // the property may not exist in the metaClass in case of a dynamic attributes
+        MetaProperty metaProperty = metaClass.findProperty(propertyName);
+        if (metaProperty != null && metadataTools.isElementCollection(metaProperty)) {
             context.setElementCollection(true);
             String operation = propertyCondition.getOperation();
             if (!operation.equals(PropertyCondition.Operation.IS_COLLECTION_EMPTY)

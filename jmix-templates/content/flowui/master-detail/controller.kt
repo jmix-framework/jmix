@@ -1,6 +1,6 @@
 <%
 def isDataGridTable = tableType.getXmlName().equals("dataGrid")
-def isGroupDataGridTable: def? = tableType.getXmlName().equals("groupg:groupDataGrid")
+def isGroupDataGridTable = tableType.getXmlName().equals("groupg:groupDataGrid")
 def pluralForm = api.pluralForm(entity.uncapitalizedClassName)
 def tableDl = entity.uncapitalizedClassName.equals(pluralForm) ? pluralForm + "CollectionDl" : pluralForm + "Dl"
 
@@ -66,6 +66,7 @@ import io.jmix.core.SaveContext
 import io.jmix.core.FetchPlan
 import ${getRepositoryIdFqn()}
 import ${repository.getQualifiedName()}<%}%>
+import java.util.Optional
 <%if (classComment) {%>
 ${classComment}
 <%}%>@Route(value = "${listRoute}", layout = <%if (!api.jmixProjectModule.isApplication() || routeLayout == null) {%> DefaultMainViewParent::class <%} else {%>${routeLayout.getControllerClassName()}::class<%}%>)

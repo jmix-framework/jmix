@@ -21,7 +21,6 @@ import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.sidepanellayout.SidePanelLayout;
 import io.jmix.flowui.component.sidepanellayout.SidePanelLayoutCloser;
 import io.jmix.flowui.exception.GuiDevelopmentException;
-import io.jmix.flowui.view.View;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import io.jmix.flowui.xml.layout.support.IconLoaderSupport;
 
@@ -73,11 +72,6 @@ public class SidePanelLayoutCloserLoader extends AbstractComponentLoader<SidePan
         }
 
         @Override
-        public void execute(ComponentContext context, View<?> view) {
-            // Do nothing
-        }
-
-        @Override
         public void execute(Context context) {
             Component origin = null;
             if (context instanceof ComponentContext componentContext) {
@@ -106,11 +100,6 @@ public class SidePanelLayoutCloserLoader extends AbstractComponentLoader<SidePan
     }
 
     protected class FindSidePanelLayoutCloserParentTask implements InitTask {
-
-        @Override
-        public void execute(ComponentContext context, View<?> view) {
-            // Do nothing
-        }
 
         @Override
         public void execute(Context context) {

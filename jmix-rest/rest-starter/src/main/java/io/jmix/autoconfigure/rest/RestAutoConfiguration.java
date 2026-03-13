@@ -20,6 +20,7 @@ import io.jmix.authserver.AuthServerConfiguration;
 import io.jmix.core.CoreConfiguration;
 import io.jmix.oidc.OidcConfiguration;
 import io.jmix.rest.RestConfiguration;
+import io.jmix.rest.security.impl.CustomRestAuthorizedUrlsProvider;
 import io.jmix.rest.security.impl.RestAsResourceServerBeforeInvocationEventListener;
 import io.jmix.rest.security.impl.RestOidcResourceServerBeforeInvocationEventListener;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -30,6 +31,7 @@ import org.springframework.context.annotation.Import;
 @AutoConfiguration
 @Import({CoreConfiguration.class, RestConfiguration.class})
 public class RestAutoConfiguration {
+
     @Bean("rest_RestAsResourceServerBeforeInvocationEventListener")
     @ConditionalOnClass(AuthServerConfiguration.class)
     protected RestAsResourceServerBeforeInvocationEventListener restAsResourceServerBeforeInvocationEventListener() {
@@ -40,5 +42,10 @@ public class RestAutoConfiguration {
     @ConditionalOnClass(OidcConfiguration.class)
     protected RestOidcResourceServerBeforeInvocationEventListener restOidcResourceServerBeforeInvocationEventListener() {
         return new RestOidcResourceServerBeforeInvocationEventListener();
+    }
+
+    @Bean("rest_CustomRestAuthorizedUrlsProvider")
+    protected CustomRestAuthorizedUrlsProvider customRestAuthorizedUrlsProvider() {
+        return new CustomRestAuthorizedUrlsProvider();
     }
 }

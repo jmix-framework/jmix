@@ -193,7 +193,7 @@ public class DataLoadCoordinatorFacetProvider implements FacetProvider<DataLoadC
         }
 
         @Override
-        public void execute(ComponentContext context, View<?> view) {
+        public void execute(ComponentLoader.Context context) {
             Preconditions.checkNotNullArgument(facet.getOwner());
 
             ViewData viewData = ViewControllerUtils.getViewData(facet.getOwner());
@@ -218,7 +218,7 @@ public class DataLoadCoordinatorFacetProvider implements FacetProvider<DataLoadC
         }
 
         @Override
-        public void execute(ComponentContext context, View<?> view) {
+        public void execute(ComponentLoader.Context context) {
             Preconditions.checkNotNullArgument(facet.getOwner());
 
             ViewData viewData = ViewControllerUtils.getViewData(facet.getOwner());
@@ -248,7 +248,7 @@ public class DataLoadCoordinatorFacetProvider implements FacetProvider<DataLoadC
         }
 
         @Override
-        public void execute(ComponentContext context, View<?> view) {
+        public void execute(ComponentLoader.Context context) {
             Preconditions.checkNotNullArgument(facet.getOwner());
 
             ViewData viewData = ViewControllerUtils.getViewData(facet.getOwner());
@@ -268,7 +268,7 @@ public class DataLoadCoordinatorFacetProvider implements FacetProvider<DataLoadC
         }
 
         @Override
-        public void execute(ComponentContext context, View<?> view) {
+        public void execute(ComponentLoader.Context context) {
             facet.configureAutomatically();
         }
     }

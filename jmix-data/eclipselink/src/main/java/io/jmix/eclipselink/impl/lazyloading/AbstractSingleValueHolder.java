@@ -48,7 +48,7 @@ public abstract class AbstractSingleValueHolder extends AbstractValueHolder {
         @Override
         public void visit(Object entity, MetaProperty property) {
             MetadataTools metadataTools = getMetadataTools();
-            if (metadataTools.isJpa(property) && !metadataTools.isEmbedded(property)) {
+            if (metadataTools.isJpa(property) && property.getType() != MetaProperty.Type.EMBEDDED) {
                 MetaClass propertyClass = property.getRange().asClass();
                 if (propertyClass.getJavaClass().isAssignableFrom(getOwner().getClass())) {
                     replaceToExistingReferences(entity, property, getOwner());

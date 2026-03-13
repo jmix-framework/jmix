@@ -107,7 +107,7 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
     @ViewComponent
     protected InstanceContainer<ReportTemplate> reportTemplateDc;
 
-    @Autowired
+    @ViewComponent
     protected MessageBundle messageBundle;
     @Autowired
     protected Dialogs dialogs;

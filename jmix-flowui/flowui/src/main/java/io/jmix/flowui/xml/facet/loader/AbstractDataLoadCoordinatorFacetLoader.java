@@ -127,11 +127,6 @@ public abstract class AbstractDataLoadCoordinatorFacetLoader<T extends DataLoadC
         }
 
         @Override
-        public void execute(ComponentLoader.ComponentContext context, View<?> view) {
-            // Is not invoked, do nothing, will be removed
-        }
-
-        @Override
         public void execute(ComponentLoader.Context context) {
             Composite<?> owner = facet.getOwner();
             Preconditions.checkNotNullArgument(owner);
@@ -173,11 +168,6 @@ public abstract class AbstractDataLoadCoordinatorFacetLoader<T extends DataLoadC
         }
 
         @Override
-        public void execute(ComponentLoader.ComponentContext context, View<?> view) {
-            // Is not invoked, do nothing, will be removed
-        }
-
-        @Override
         public void execute(ComponentLoader.Context context) {
             Composite<?> owner = facet.getOwner();
             Preconditions.checkNotNullArgument(owner);
@@ -209,11 +199,6 @@ public abstract class AbstractDataLoadCoordinatorFacetLoader<T extends DataLoadC
         }
 
         @Override
-        public void execute(ComponentLoader.ComponentContext context, View<?> view) {
-            // Is not invoked, do nothing, will be removed
-        }
-
-        @Override
         public void execute(ComponentLoader.Context context) {
             facet.configureAutomatically();
         }
@@ -230,11 +215,6 @@ public abstract class AbstractDataLoadCoordinatorFacetLoader<T extends DataLoadC
             this.facet = facet;
             this.loaderId = loaderId;
             this.eventClass = eventClass;
-        }
-
-        @Override
-        public void execute(ComponentLoader.ComponentContext context, View<?> view) {
-            // Is not invoked, do nothing, will be removed
         }
 
         @Override

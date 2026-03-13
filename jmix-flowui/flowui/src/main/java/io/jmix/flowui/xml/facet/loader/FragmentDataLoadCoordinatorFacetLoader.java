@@ -92,11 +92,6 @@ public class FragmentDataLoadCoordinatorFacetLoader
         }
 
         @Override
-        public void execute(ComponentLoader.ComponentContext context, View<?> view) {
-            // Is not invoked, do nothing, will be removed
-        }
-
-        @Override
         public void execute(ComponentLoader.Context context) {
             Preconditions.checkNotNullArgument(facet.getOwner());
 

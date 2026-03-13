@@ -152,7 +152,7 @@ public class FetchGroupManager {
         List<FetchGroupField> refFields = new ArrayList<>();
         for (FetchGroupField field : fetchGroupFields) {
             if (field.metaProperty.getRange().isClass()
-                    && !metadataTools.isEmbedded(field.metaProperty)
+                    && field.metaProperty.getType() != MetaProperty.Type.EMBEDDED
                     && metadataTools.isJpaEntity(field.metaProperty.getRange().asClass())) {
                 refFields.add(field);
             }

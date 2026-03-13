@@ -79,7 +79,6 @@ public class CoreProperties {
      */
     boolean entitySerializationTokenRequired;
     String entitySerializationTokenEncryptionKey;
-    boolean legacyFetchPlanSerializationAttributeName;
 
     /**
      * Whether the processing of bean invocation trigger files is enabled. Default value: true The trigger file is a
@@ -181,7 +180,6 @@ public class CoreProperties {
 
         this.entitySerializationTokenRequired = entitySerializationTokenRequired;
         this.entitySerializationTokenEncryptionKey = entitySerializationTokenEncryptionKey;
-        this.legacyFetchPlanSerializationAttributeName = legacyFetchPlanSerializationAttributeName;
         this.triggerFilesEnabled = triggerFilesEnabled;
         this.triggerFilesProcessInterval = triggerFilesProcessInterval;
         this.roundDecimalValueByFormat = roundDecimalValueByFormat;
@@ -265,10 +263,6 @@ public class CoreProperties {
 
     public String getEntitySerializationTokenEncryptionKey() {
         return entitySerializationTokenEncryptionKey;
-    }
-
-    public boolean isLegacyFetchPlanSerializationAttributeName() {
-        return legacyFetchPlanSerializationAttributeName;
     }
 
     /**

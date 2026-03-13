@@ -64,15 +64,6 @@ public class GuiDevelopmentException extends DevelopmentException {
                 : null;
     }
 
-    /**
-     * @deprecated Use {@link #getOriginId()} instead
-     */
-    @Deprecated(since = "2.3", forRemoval = true)
-    @Nullable
-    public String getFrameId() {
-        return getOriginId();
-    }
-
     @Nullable
     public Context getContext() {
         return context;

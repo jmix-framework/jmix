@@ -86,7 +86,7 @@ public class PropertyFilterConditionDetailView extends FilterConditionDetailView
     protected UiComponents uiComponents;
     @Autowired
     protected MessageTools messageTools;
-    @Autowired
+    @ViewComponent
     protected MessageBundle messageBundle;
 
     protected MetaClass filterMetaClass;

@@ -88,6 +88,8 @@ public class BulkEditView<E> extends StandardView {
     @ViewComponent
     protected FormLayout fieldLayout;
 
+    @ViewComponent
+    protected MessageBundle messageBundle;
     @Autowired
     protected BulkEditViewDataLoadSupport dataLoadSupport;
     @Autowired
@@ -101,11 +103,7 @@ public class BulkEditView<E> extends StandardView {
     @Autowired
     protected Messages messages;
     @Autowired
-    protected MessageBundle messageBundle;
-    @Autowired
     protected Metadata metadata;
-    @Autowired
-    protected MetadataTools metadataTools;
     @Autowired
     protected Notifications notifications;
     @Autowired
@@ -191,7 +189,7 @@ public class BulkEditView<E> extends StandardView {
             case DATATYPE, ENUM -> builder.add(metaProperty.getName());
             case EMBEDDED, ASSOCIATION, COMPOSITION -> {
                 MetaClass propMetaClass = metaProperty.getRange().asClass();
-                FetchPlan propFetchPlan = metadataTools.isEmbedded(metaProperty)
+                FetchPlan propFetchPlan = metaProperty.getType() == MetaProperty.Type.EMBEDDED
                         ? createEmbeddedFetchPlan(propMetaClass, fqn)
                         : fetchPlanRepository.getFetchPlan(propMetaClass, FetchPlan.INSTANCE_NAME);
 
@@ -567,7 +565,7 @@ public class BulkEditView<E> extends StandardView {
         if (path != null) {
             Object currentItem = item;
             for (MetaProperty property : path.getMetaProperties()) {
-                if (metadataTools.isEmbedded(property)) {
+                if (property.getType() == MetaProperty.Type.EMBEDDED) {
                     Object currentItemValue = EntityValues.getValue(currentItem, property.getName());
                     if (currentItemValue == null) {
                         Object newItem = metadata.create(property.getRange().asClass());

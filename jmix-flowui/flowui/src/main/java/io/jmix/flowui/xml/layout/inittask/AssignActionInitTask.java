@@ -19,15 +19,9 @@ package io.jmix.flowui.xml.layout.inittask;
 import com.vaadin.flow.component.Component;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.HasAction;
-import io.jmix.flowui.view.View;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 
 public class AssignActionInitTask<C extends Component & HasAction> extends AbstractAssignActionInitTask<C> {
-
-    @Deprecated(since = "2.3", forRemoval = true)
-    public AssignActionInitTask(C component, String actionId, View view) {
-        super(component, actionId, view);
-    }
 
     public AssignActionInitTask(C component, String actionId) {
         super(component, actionId);

@@ -17,8 +17,6 @@
 package io.jmix.flowui.action;
 
 import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
-import io.jmix.flowui.kit.component.ComponentUtils;
 import org.springframework.lang.Nullable;
 
 import java.util.ArrayList;
@@ -26,10 +24,7 @@ import java.util.List;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
-public class SecuredBaseAction extends ObservableBaseAction<SecuredBaseAction> implements SecuredAction {
-
-    protected boolean enabledByUiPermissions = true;
-    protected boolean visibleByUiPermissions = true;
+public class SecuredBaseAction extends ObservableBaseAction<SecuredBaseAction> {
 
     protected List<EnabledRule> enabledRules;
 
@@ -39,38 +34,10 @@ public class SecuredBaseAction extends ObservableBaseAction<SecuredBaseAction> i
 
     @Override
     public void refreshState() {
-        setVisibleInternal(visibleExplicitly && isVisibleByUiPermissions());
+        setVisibleInternal(visibleExplicitly);
 
-        setEnabledInternal(enabledExplicitly && isEnabledByUiPermissions() && isVisibleByUiPermissions()
+        setEnabledInternal(enabledExplicitly
                 && isPermitted() && isApplicable() && isEnabledByRule());
-    }
-
-    @Override
-    public boolean isEnabledByUiPermissions() {
-        return enabledByUiPermissions;
-    }
-
-    @Override
-    public void setEnabledByUiPermissions(boolean enabledByUiPermissions) {
-        if (this.enabledByUiPermissions != enabledByUiPermissions) {
-            this.enabledByUiPermissions = enabledByUiPermissions;
-
-            refreshState();
-        }
-    }
-
-    @Override
-    public boolean isVisibleByUiPermissions() {
-        return visibleByUiPermissions;
-    }
-
-    @Override
-    public void setVisibleByUiPermissions(boolean visibleByUiPermissions) {
-        if (this.visibleByUiPermissions != visibleByUiPermissions) {
-            this.visibleByUiPermissions = visibleByUiPermissions;
-
-            refreshState();
-        }
     }
 
     protected boolean isPermitted() {
@@ -126,6 +93,12 @@ public class SecuredBaseAction extends ObservableBaseAction<SecuredBaseAction> i
      */
     @FunctionalInterface
     public interface EnabledRule {
+
+        /**
+         * Determines whether the action is currently enabled.
+         *
+         * @return {@code true} if the action is enabled, {@code false} otherwise
+         */
         boolean isActionEnabled();
     }
 
@@ -133,22 +106,6 @@ public class SecuredBaseAction extends ObservableBaseAction<SecuredBaseAction> i
     @Override
     public SecuredBaseAction withIcon(@Nullable Icon icon) {
         setIcon(icon);
-        return this;
-    }
-
-    @Override
-    public SecuredBaseAction withIcon(@Nullable VaadinIcon icon) {
-        setIcon(ComponentUtils.convertToIcon(icon));
-        return this;
-    }
-
-    public SecuredBaseAction withEnabledByUiPermissions(boolean enabledByUiPermissions) {
-        setEnabledByUiPermissions(enabledByUiPermissions);
-        return this;
-    }
-
-    public SecuredBaseAction withVisibleByUiPermissions(boolean visibleByUiPermissions) {
-        setVisibleByUiPermissions(visibleByUiPermissions);
         return this;
     }
 }

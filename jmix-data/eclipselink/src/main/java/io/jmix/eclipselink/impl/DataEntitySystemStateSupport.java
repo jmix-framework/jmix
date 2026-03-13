@@ -75,7 +75,7 @@ public class DataEntitySystemStateSupport extends EntitySystemStateSupport {
     @Override
     public void mergeLazyLoadingState(Entity src, Entity dst, MetaProperty metaProperty,
                                       Function<Collection<Object>, Collection<Object>> collectionWrapFunction) {
-        if (!metadataTools.isEmbedded(metaProperty)) {
+        if (metaProperty.getType() != MetaProperty.Type.EMBEDDED) {
             if (metaProperty.getRange().getCardinality().isMany()) {
                 Object value = getCollectionProperty(src, metaProperty.getName());
 

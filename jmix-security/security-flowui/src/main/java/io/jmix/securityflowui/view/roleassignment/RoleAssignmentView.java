@@ -68,8 +68,6 @@ public class RoleAssignmentView extends StandardView {
     @Autowired
     private EntityStates entityStates;
     @Autowired
-    private MessageBundle messageBundle;
-    @Autowired
     private MetadataTools metadataTools;
     @Autowired
     private UserRepository userRepository;
@@ -77,6 +75,8 @@ public class RoleAssignmentView extends StandardView {
     private Notifications notifications;
     @Autowired
     protected UrlParamSerializer urlParamSerializer;
+    @ViewComponent
+    private MessageBundle messageBundle;
 
     private UserDetails user;
 

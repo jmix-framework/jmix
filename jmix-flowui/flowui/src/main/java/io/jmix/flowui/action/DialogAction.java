@@ -119,18 +119,6 @@ public class DialogAction extends SecuredBaseAction {
     }
 
     @Override
-    public DialogAction withIcon(@Nullable VaadinIcon icon) {
-        setIcon(ComponentUtils.convertToIcon(icon));
-        return this;
-    }
-
-    @Override
-    public DialogAction withTitle(@Nullable String title) {
-        setDescription(title);
-        return this;
-    }
-
-    @Override
     public DialogAction withVariant(ActionVariant actionVariant) {
         setVariant(actionVariant);
         return this;
@@ -152,18 +140,6 @@ public class DialogAction extends SecuredBaseAction {
             addActionPerformedListener(handler);
         }
 
-        return this;
-    }
-
-    @Override
-    public DialogAction withEnabledByUiPermissions(boolean enabledByUiPermissions) {
-        setEnabledByUiPermissions(enabledByUiPermissions);
-        return this;
-    }
-
-    @Override
-    public DialogAction withVisibleByUiPermissions(boolean visibleByUiPermissions) {
-        setVisibleByUiPermissions(visibleByUiPermissions);
         return this;
     }
 }

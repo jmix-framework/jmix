@@ -21,6 +21,7 @@ import io.jmix.dynattrflowui.DynAttrEmbeddingStrategies;
 import io.jmix.dynattrflowui.impl.AttributeDefaultValues;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.sys.registration.FacetRegistrationBuilder;
+import io.jmix.flowui.view.View;
 import io.jmix.flowui.xml.facet.FacetProvider;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import org.dom4j.Element;
@@ -58,9 +59,10 @@ public class DynAttrFacetProvider implements FacetProvider<DynAttrFacet> {
 
     @Override
     public void loadFromXml(DynAttrFacet facet, Element element, ComponentLoader.ComponentContext context) {
-        context.addInitTask((__, view) ->
-                UiComponentUtils.traverseComponents(view, component ->
-                        embeddingStrategies.embedAttributes(component, view))
-        );
+        View<?> view = context.getView();
+        context.addInitTask(__ -> {
+            UiComponentUtils.traverseComponents(view, component ->
+                    embeddingStrategies.embedAttributes(component, view));
+        });
     }
 }

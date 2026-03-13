@@ -152,10 +152,14 @@ public class BulkEditAction<E> extends SecuredListDataComponentAction<BulkEditAc
         visibleBySpecificUiPermission = context.isPermitted();
     }
 
+    protected boolean isVisibleBySpecificUiPermission() {
+        return visibleBySpecificUiPermission;
+    }
+
     @Override
-    public boolean isVisibleByUiPermissions() {
-        return visibleBySpecificUiPermission
-                && super.isVisibleByUiPermissions();
+    protected void setVisibleInternal(boolean visible) {
+        super.setVisibleInternal(visible
+                && isVisibleBySpecificUiPermission());
     }
 
     @Autowired

@@ -127,7 +127,7 @@ public class FacetLoader {
     }
 
     // for backward compatibility
-    @Deprecated(forRemoval = true, since = "2.7")
+    @Deprecated(since = "2.7", forRemoval = true)
     @SuppressWarnings({"unchecked", "rawtypes"})
     protected Facet _load(Element element, ComponentLoader.ComponentContext context) {
         Collection<FacetProvider<?>> facetProviders = registrations.get(element.getName());

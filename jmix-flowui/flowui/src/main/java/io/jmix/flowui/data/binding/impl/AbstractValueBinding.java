@@ -173,7 +173,7 @@ public abstract class AbstractValueBinding<V> implements ValueBinding<V>, Suspen
                     }
                     if (permittedIfEmbedded && metaPropertyPath.length() > 1) {
                         for (MetaProperty property : metaPropertyPath.getMetaProperties()) {
-                            if (!metadataTools.isEmbedded(property)) {
+                            if (property.getType() != MetaProperty.Type.EMBEDDED) {
                                 continue;
                             }
 

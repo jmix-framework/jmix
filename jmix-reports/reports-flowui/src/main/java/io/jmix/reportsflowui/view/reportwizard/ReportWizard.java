@@ -152,7 +152,6 @@ public class ReportWizard {
     protected Report createReport(ReportData reportData, boolean isTmp) {
         Report report = metadata.create(Report.class);
         report.setIsTmp(isTmp);
-        report.setReportType(ReportType.SIMPLE);
         report.setGroup(reportData.getGroup());
         report.setBands(new LinkedHashSet<>(reportData.getReportRegions().size() + 1)); //plus rootBand);
         report.setValuesFormats(new ArrayList<>());

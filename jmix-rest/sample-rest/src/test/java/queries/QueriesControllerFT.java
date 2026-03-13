@@ -202,21 +202,6 @@ public class QueriesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    public void executeQueryWithExplicitView() throws Exception {
-        String url = baseUrl + "/queries/sec$User/userByLogin?view=_local";
-        Map<String, String> params = new HashMap<>();
-        params.put("login", "bob");
-        try (CloseableHttpResponse response = sendGet(url, oauthToken, params)) {
-            assertEquals(HttpStatus.SC_OK, statusCode(response));
-            assertEquals(MediaType.APPLICATION_JSON_UTF8_VALUE, responseContentType(response));
-            ReadContext ctx = parseResponse(response);
-            assertEquals(1, ctx.<Collection>read("$").size());
-
-            assertThrows(PathNotFoundException.class, () -> ctx.read("$.[0].group"));
-        }
-    }
-
-    @Test
     public void executeQueryWithExplicitFetchPlan() throws Exception {
         String url = baseUrl + "/queries/sec$User/userByLogin?fetchPlan=_local";
         Map<String, String> params = new HashMap<>();
@@ -228,20 +213,6 @@ public class QueriesControllerFT extends AbstractRestControllerFT {
             assertEquals(1, ctx.<Collection>read("$").size());
 
             assertThrows(PathNotFoundException.class, () -> ctx.read("$.[0].group"));
-        }
-    }
-
-    @Test
-    public void executeQueryWithExplicitViewThatIsMissing() throws Exception {
-        String missingViewName = "missingView";
-        String url = baseUrl + "/queries/sec$User/userByLogin?view=" + missingViewName;
-        Map<String, String> params = new HashMap<>();
-        params.put("login", "bob");
-        try (CloseableHttpResponse response = sendGet(url, oauthToken, params)) {
-            assertEquals(HttpStatus.SC_BAD_REQUEST, statusCode(response));
-            ReadContext ctx = parseResponse(response);
-            assertEquals("Fetch plan not found", ctx.read("$.error"));
-            assertEquals(String.format("Fetch plan %s for entity sec$User not found", missingViewName), ctx.read("$.details"));
         }
     }
 

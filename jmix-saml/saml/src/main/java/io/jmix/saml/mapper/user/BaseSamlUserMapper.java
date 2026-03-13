@@ -48,7 +48,13 @@ public abstract class BaseSamlUserMapper<T extends JmixSamlUserDetails> implemen
         }
     }
 
-    protected abstract String getSamlUsername(Assertion assertion);
+    protected String getSamlUsername(Assertion assertion) {
+        String username = SamlAssertionUtils.getUsername(assertion);
+        if (username == null) {
+            throw new IllegalStateException("SAML assertion doesn't contain username");
+        }
+        return username;
+    }
 
     protected abstract T initJmixUser(Assertion assertion);
 

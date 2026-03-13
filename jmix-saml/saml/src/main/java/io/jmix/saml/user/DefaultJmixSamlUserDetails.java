@@ -43,7 +43,7 @@ public class DefaultJmixSamlUserDetails implements JmixSamlUserDetails, HasSamlP
 
     @Override
     public String getPassword() {
-        return null;
+        return "";
     }
 
     @Override

@@ -37,6 +37,7 @@ public class SamlAssertionUtils {
         return assertion.getSubject().getNameID().getValue();
     }
 
+    @Nullable
     protected static Object getXmlObjectValue(XMLObject xmlObject) {
         if (xmlObject instanceof XSAny) {
             return ((XSAny) xmlObject).getTextContent();

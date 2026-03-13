@@ -19,10 +19,9 @@ package io.jmix.saml.user;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Transient;
-import org.springframework.security.core.GrantedAuthority;
+import org.springframework.lang.Nullable;
 import org.springframework.security.saml2.provider.service.authentication.Saml2AuthenticatedPrincipal;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -49,11 +48,13 @@ public abstract class JmixSamlUserEntity implements JmixSamlUserDetails, HasSaml
     }
 
     @Override
+    @Nullable
     public <A> A getFirstAttribute(String name) {
         return delegate.getFirstAttribute(name);
     }
 
     @Override
+    @Nullable
     public <A> List<A> getAttribute(String name) {
         return delegate.getAttribute(name);
     }

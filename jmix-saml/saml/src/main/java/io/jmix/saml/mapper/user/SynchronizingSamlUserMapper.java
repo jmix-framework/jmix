@@ -63,16 +63,8 @@ public abstract class SynchronizingSamlUserMapper<T extends JmixSamlUserDetails>
     protected abstract Class<T> getApplicationUserClass();
 
     @Override
-    protected String getSamlUsername(Assertion assertion) {
-        return SamlAssertionUtils.getUsername(assertion);
-    }
-
-    @Override
     protected T initJmixUser(Assertion assertion) {
         String username = getSamlUsername(assertion);
-        if (username == null) {
-            throw new IllegalStateException("SAML assertion doesn't contain username");
-        }
         T jmixUserDetails;
         try {
             jmixUserDetails = (T) userRepository.loadUserByUsername(username);

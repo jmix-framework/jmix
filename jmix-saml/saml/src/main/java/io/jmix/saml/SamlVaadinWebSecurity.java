@@ -25,6 +25,7 @@ import io.jmix.security.util.JmixHttpSecurityUtils;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.lang.Nullable;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -108,6 +109,7 @@ public class SamlVaadinWebSecurity extends VaadinWebSecurity {
     ) {
         return new RelyingPartyRegistrationRepository() {
             @Override
+            @Nullable
             public RelyingPartyRegistration findByRegistrationId(String registrationId) {
                 RelyingPartyRegistration original = originalRepository.findByRegistrationId(registrationId);
                 if (original == null) {

@@ -22,6 +22,7 @@ import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.Response;
 import org.slf4j.Logger;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.lang.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.saml2.Saml2Exception;
 import org.springframework.security.saml2.provider.service.authentication.OpenSaml4AuthenticationProvider;
@@ -84,6 +85,7 @@ public class SamlResponseAuthenticationConverter implements Converter<OpenSaml4A
     /**
      * Extracts assertion from SAML response, handling both plain and encrypted assertions.
      */
+    @Nullable
     protected Assertion getAssertion(OpenSaml4AuthenticationProvider.ResponseToken responseToken) {
         Response response = responseToken.getResponse();
 

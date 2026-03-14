@@ -19,7 +19,7 @@ package test_support.index_definition.common;
 import io.jmix.search.index.annotation.JmixEntitySearchIndex;
 import io.jmix.search.index.annotation.ManualMappingDefinition;
 import io.jmix.search.index.mapping.MappingDefinition;
-import io.jmix.search.index.mapping.MappingDefinitionElement;
+import io.jmix.search.index.mapping.StaticAttributesGroupConfiguration;
 import io.jmix.search.index.mapping.strategy.impl.AutoMappingStrategy;
 import test_support.entity.TestSimpleRootEntity;
 
@@ -29,14 +29,14 @@ public interface TestProgrammaticMappingIndexDefinition {
     @ManualMappingDefinition
     default MappingDefinition mapping() {
         return MappingDefinition.builder()
-                .addElement(
-                        MappingDefinitionElement.builder()
+                .addStaticAttributesGroup(
+                        StaticAttributesGroupConfiguration.builder()
                                 .includeProperties("name")
                                 .withFieldMappingStrategyClass(AutoMappingStrategy.class)
                                 .build()
                 )
-                .addElement(
-                        MappingDefinitionElement.builder()
+                .addStaticAttributesGroup(
+                        StaticAttributesGroupConfiguration.builder()
                                 .includeProperties("*")
                                 .excludeProperties("name")
                                 .withFieldMappingStrategyClass(AutoMappingStrategy.class)

@@ -396,7 +396,7 @@ public class MenuConfig implements ApplicationContextAware {
     }
 
     protected void loadIcon(Element element, MenuItem menuItem) {
-        getIconLoaderSupport().loadIcon(element, menuItem::setIconComponent);
+        getIconLoaderSupport().loadIcon(element, menuItem::setIcon);
     }
 
     protected String loadResourceString(@Nullable String ref) {

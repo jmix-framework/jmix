@@ -16,7 +16,6 @@
 
 package io.jmix.security;
 
-import io.jmix.security.configurer.StandardSecurityConfigurer;
 import org.springframework.beans.factory.annotation.BeanFactoryAnnotationUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -28,41 +27,13 @@ import java.util.Map;
 public class SecurityConfigurers {
 
     /**
-     * @deprecated use {@link io.jmix.security.util.JmixHttpSecurityUtils}
-     */
-    @Deprecated(since = "2.3", forRemoval = true)
-    public static StandardSecurityConfigurer empty() {
-        return new StandardSecurityConfigurer();
-    }
-
-    /**
-     * @deprecated use {@link io.jmix.security.util.JmixHttpSecurityUtils}
-     */
-    @Deprecated(since = "2.3", forRemoval = true)
-    public static StandardSecurityConfigurer uiSecurity() {
-        return new StandardSecurityConfigurer()
-                .anonymous()
-                .sessionManagement()
-                .rememberMe()
-                .allowUiUrls();
-    }
-
-    /**
-     * @deprecated use {@link io.jmix.security.util.JmixHttpSecurityUtils}
-     */
-    @Deprecated(since = "2.3", forRemoval = true)
-    public static StandardSecurityConfigurer apiSecurity() {
-        return new StandardSecurityConfigurer()
-                .anonymous()
-                .allowApiUrls();
-    }
-
-    /**
      * Method finds SecurityConfigurer beans with the given qualifier and applies them to the HttpSecurity
      */
     public static void applySecurityConfigurersWithQualifier(HttpSecurity http, String qualifier) throws Exception {
-        ConfigurableApplicationContext applicationContext = (ConfigurableApplicationContext) http.getSharedObject(ApplicationContext.class);
-        Map<String, SecurityConfigurer> beans = BeanFactoryAnnotationUtils.qualifiedBeansOfType(applicationContext.getBeanFactory(), SecurityConfigurer.class, qualifier);
+        ConfigurableApplicationContext applicationContext =
+                (ConfigurableApplicationContext) http.getSharedObject(ApplicationContext.class);
+        Map<String, SecurityConfigurer> beans = BeanFactoryAnnotationUtils
+                .qualifiedBeansOfType(applicationContext.getBeanFactory(), SecurityConfigurer.class, qualifier);
         for (SecurityConfigurer configurer : beans.values()) {
             http.apply(configurer);
         }

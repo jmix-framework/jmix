@@ -19,8 +19,8 @@ package io.jmix.flowui.view.navigation;
 import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.RouteParameters;
 import io.jmix.flowui.view.View;
-
 import org.springframework.lang.Nullable;
+
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -38,14 +38,6 @@ public class DetailViewClassNavigator<E, V extends View<?>> extends DetailViewNa
     protected Class<V> viewClass;
 
     protected Consumer<AfterViewNavigationEvent<V>> afterNavigationHandler;
-
-    @Deprecated(since = "2.3", forRemoval = true)
-    public DetailViewClassNavigator(Class<E> entityClass, Consumer<? extends DetailViewNavigator<E>> handler,
-                                    Class<V> viewClass) {
-        super(entityClass, handler);
-
-        this.viewClass = viewClass;
-    }
 
     public DetailViewClassNavigator(View<?> origin,
                                     Class<E> entityClass,

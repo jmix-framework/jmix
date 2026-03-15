@@ -50,7 +50,7 @@ public class GridColumnVisibilityLoader extends AbstractComponentLoader<JmixGrid
         componentLoader().loadEnabled(resultComponent, element);
         componentLoader().loadText(resultComponent, element);
         componentLoader().loadWhiteSpace(resultComponent, element);
-        iconLoaderSupport().loadIcon(element, ICON_ELEMENT_NAME, resultComponent::setIconComponent);
+        iconLoaderSupport().loadIcon(element, ICON_ELEMENT_NAME, resultComponent::setIcon);
 
         getLoaderSupport().loadBoolean(element, "showAllEnabled", resultComponent::setShowAllEnabled);
         getLoaderSupport().loadBoolean(element, "hideAllEnabled", resultComponent::setHideAllEnabled);

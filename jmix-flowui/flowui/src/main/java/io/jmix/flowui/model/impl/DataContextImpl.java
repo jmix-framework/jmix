@@ -303,7 +303,7 @@ public class DataContextImpl implements DataContextInternal {
                 }
 
                 if (value == null || !entityStates.isLoaded(dstEntity, propertyName)) {
-                    if (!metadataTools.isEmbedded(property)) {//dstEntity property value will be lazy loaded and replaced by srcEntity property value
+                    if (property.getType() != MetaProperty.Type.EMBEDDED) {//dstEntity property value will be lazy loaded and replaced by srcEntity property value
                         setPropertyValue(dstEntity, property, value);
                     }
                     continue;
@@ -321,7 +321,7 @@ public class DataContextImpl implements DataContextInternal {
                     if (!mergedMap.containsKey(value)) {
                         Object managedRef = internalMerge(value, mergedMap, false, options);
                         setPropertyValue(dstEntity, property, managedRef, false);
-                        if (metadataTools.isEmbedded(property)) {
+                        if (property.getType() == MetaProperty.Type.EMBEDDED) {
                             EmbeddedPropertyChangeListener listener = new EmbeddedPropertyChangeListener(dstEntity);
                             EntitySystemAccess.addPropertyChangeListener(managedRef, listener);
                             embeddedPropertyListeners.computeIfAbsent(dstEntity, e -> new HashMap<>()).put(propertyName, listener);

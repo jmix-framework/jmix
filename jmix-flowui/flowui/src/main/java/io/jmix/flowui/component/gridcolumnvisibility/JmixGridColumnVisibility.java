@@ -20,7 +20,6 @@ import com.google.common.base.Strings;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Hr;
-import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.shared.HasOverlayClassName;
 import com.vaadin.flow.component.shared.HasThemeVariant;
 import com.vaadin.flow.shared.Registration;
@@ -108,23 +107,21 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
     }
 
     /**
-     * @return icon of the component
-     * @deprecated use {@link #getIconComponent()} instead
+     * Returns the icon component associated with this component, if available.
+     *
+     * @return the icon component, or {@code null} if no icon has been set
      */
-    @Deprecated(since = "2.8", forRemoval = true)
     @Nullable
-    public Icon getIcon() {
-        return icon instanceof Icon iconComponent ? iconComponent : null;
+    public Component getIcon() {
+        return getIconComponent();
     }
 
     /**
-     * Sets component icon.
+     * Sets the given component as the icon of this component.
      *
-     * @param icon icon to set
-     * @deprecated use {@link #setIconComponent(Component)} instead
+     * @param icon the component to be set as the icon, or {@code null} to remove the current icon
      */
-    @Deprecated(since = "2.8", forRemoval = true)
-    public void setIcon(@Nullable Icon icon) {
+    public void setIcon(@Nullable Component icon) {
         setIconComponent(icon);
     }
 
@@ -132,7 +129,9 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
      * Returns the icon component associated with this component, if available.
      *
      * @return the icon component, or {@code null} if no icon has been set
+     * @deprecated use {@link #getIcon()} instead
      */
+    @Deprecated(since = "3.0", forRemoval = true)
     @Nullable
     public Component getIconComponent() {
         return icon;
@@ -142,7 +141,9 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
      * Sets the given component as the icon of this component.
      *
      * @param icon the component to be set as the icon, or {@code null} to remove the current icon
+     * @deprecated use {@link #setIcon(Component)} instead
      */
+    @Deprecated(since = "3.0", forRemoval = true)
     public void setIconComponent(@Nullable Component icon) {
         if (icon != null && icon.getElement().isTextNode()) {
             throw new IllegalArgumentException(

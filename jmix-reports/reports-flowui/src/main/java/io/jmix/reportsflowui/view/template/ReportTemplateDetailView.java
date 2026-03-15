@@ -107,7 +107,7 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
     @ViewComponent
     protected InstanceContainer<ReportTemplate> reportTemplateDc;
 
-    @Autowired
+    @ViewComponent
     protected MessageBundle messageBundle;
     @Autowired
     protected Dialogs dialogs;
@@ -217,7 +217,7 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
 
     @Subscribe("templateUploadField")
     public void onTemplateUploadFieldFileUploadStarted(FileUploadStartedEvent<FileUploadField> event) {
-        templateUploadField.setFileName(event.getFilename());
+        templateUploadField.setFileName(event.getFileName());
     }
 
     @Subscribe("templateUploadField")

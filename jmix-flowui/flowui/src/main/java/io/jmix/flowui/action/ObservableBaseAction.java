@@ -18,15 +18,14 @@ package io.jmix.flowui.action;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.di.Instantiator;
 import io.jmix.core.annotation.Internal;
-import io.jmix.flowui.observation.UiObservationSupport;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.action.BaseAction;
 import io.jmix.flowui.kit.component.KeyCombination;
+import io.jmix.flowui.observation.UiObservationSupport;
 import io.micrometer.observation.Observation;
 import jakarta.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,13 +80,6 @@ public class ObservableBaseAction<A extends ObservableBaseAction<A>> extends Bas
     @SuppressWarnings("unchecked")
     @Override
     public A withIcon(@Nullable Component icon) {
-        return (A) super.withIcon(icon);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Deprecated(since = "3.0", forRemoval = true)
-    @Override
-    public A withIcon(@Nullable Icon icon) {
         return (A) super.withIcon(icon);
     }
 

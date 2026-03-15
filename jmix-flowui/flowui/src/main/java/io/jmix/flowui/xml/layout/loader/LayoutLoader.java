@@ -27,7 +27,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Constructor;
@@ -43,7 +42,6 @@ public class LayoutLoader {
     protected LoaderSupport loaderSupport;
 
     protected ApplicationContext applicationContext;
-    protected Environment environment;
 
     public LayoutLoader(Context context) {
         this.context = context;
@@ -52,11 +50,6 @@ public class LayoutLoader {
     @Autowired
     protected void setApplicationContext(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
-    }
-
-    @Autowired
-    public void setEnvironment(Environment environment) {
-        this.environment = environment;
     }
 
     @Autowired
@@ -119,7 +112,6 @@ public class LayoutLoader {
         }
 
         loader.setApplicationContext(applicationContext);
-        loader.setEnvironment(environment);
 
         loader.setContext(context);
         loader.setLoaderResolver(loaderResolver);

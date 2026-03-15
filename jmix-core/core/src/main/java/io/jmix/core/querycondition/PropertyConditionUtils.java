@@ -19,7 +19,7 @@ package io.jmix.core.querycondition;
 import com.google.common.base.Strings;
 import org.apache.commons.lang3.RandomStringUtils;
 
-import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class PropertyConditionUtils {
 
@@ -133,6 +133,6 @@ public class PropertyConditionUtils {
         }
 
         //noinspection unchecked
-        return ((Function<String, String>) parameterValue).apply(condition.getProperty());
+        return ((Supplier<String>) parameterValue).get();
     }
 }

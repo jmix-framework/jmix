@@ -19,11 +19,8 @@ package io.jmix.security;
 import io.jmix.core.JmixSecurityFilterChainOrder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.annotation.Order;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
-
-import static io.jmix.security.SecurityConfigurers.uiSecurity;
 
 //todo MG do we still need this SecurityConfiguration?
 public class StandardSecurityConfiguration {
@@ -34,7 +31,6 @@ public class StandardSecurityConfiguration {
     @Bean("sec_StandardSecurityFilterChain")
     @Order(JmixSecurityFilterChainOrder.STANDARD_SECURITY)
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.with(uiSecurity(), Customizer.withDefaults());
         http.logout(logout -> logout
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/"));

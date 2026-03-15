@@ -131,10 +131,10 @@ public class EntityInspectorListView extends StandardListView<Object> {
     @ViewComponent
     protected JmixButton selectButton;
 
+    @ViewComponent
+    protected MessageBundle messageBundle;
     @Autowired
     protected Messages messages;
-    @Autowired
-    protected MessageBundle messageBundle;
     @Autowired
     protected Metadata metadata;
     @Autowired
@@ -536,13 +536,13 @@ public class EntityInspectorListView extends StandardListView<Object> {
         DropdownButton exportDropdownButton = uiComponents.create(DropdownButton.class);
         exportDropdownButton.setEnabled(importExportAvailableBySpecificUiPermission);
         exportDropdownButton.setText(messages.getMessage(EntityInspectorListView.class, "export"));
-        exportDropdownButton.setIconComponent(icons.get(JmixFontIcon.DOWNLOAD));
+        exportDropdownButton.setIcon(icons.get(JmixFontIcon.DOWNLOAD));
 
         ExportAction exportJsonAction = new ExportAction("exportJSON");
         exportJsonAction.setFormat(JSON);
         exportJsonAction.setDataGrid(dataGrid);
         exportJsonAction.setMetaClass(selectedMeta);
-        exportJsonAction.setIconComponent(icons.get(JmixFontIcon.FILE_CODE));
+        exportJsonAction.setIcon(icons.get(JmixFontIcon.FILE_CODE));
         exportJsonAction.setMetadata(metadata);
         exportDropdownButton.addItem("exportJson", exportJsonAction);
 
@@ -550,7 +550,7 @@ public class EntityInspectorListView extends StandardListView<Object> {
         exportZipAction.setFormat(ZIP);
         exportZipAction.setDataGrid(dataGrid);
         exportZipAction.setMetaClass(selectedMeta);
-        exportZipAction.setIconComponent(icons.get(JmixFontIcon.FILE_ZIP));
+        exportZipAction.setIcon(icons.get(JmixFontIcon.FILE_ZIP));
         exportZipAction.setMetadata(metadata);
         exportDropdownButton.addItem("exportZip", exportZipAction);
 
@@ -731,7 +731,7 @@ public class EntityInspectorListView extends StandardListView<Object> {
         restoreAction.setText(messages.getMessage(EntityInspectorListView.class, "restore"));
         restoreAction.addActionPerformedListener(event -> showRestoreDialog());
         restoreAction.setTarget(dataGrid);
-        restoreAction.setIconComponent(icons.get(JmixFontIcon.UNDO));
+        restoreAction.setIcon(icons.get(JmixFontIcon.UNDO));
 
         restoreButton.setAction(restoreAction);
         dataGrid.addAction(restoreAction);
@@ -746,7 +746,7 @@ public class EntityInspectorListView extends StandardListView<Object> {
         wipeOutAction.addActionPerformedListener(event -> showWipeOutDialog());
         wipeOutAction.setTarget(dataGrid);
         wipeOutAction.setVariant(ActionVariant.DANGER);
-        wipeOutAction.setIconComponent(icons.get(JmixFontIcon.ERASER));
+        wipeOutAction.setIcon(icons.get(JmixFontIcon.ERASER));
 
         wipeOutButton.setAction(wipeOutAction);
         dataGrid.addAction(wipeOutAction);
@@ -1071,10 +1071,14 @@ public class EntityInspectorListView extends StandardListView<Object> {
             this.metadata = metadata;
         }
 
+        protected boolean isEnabledBySpecificUiPermission() {
+            return importExportAvailableBySpecificUiPermission;
+        }
+
         @Override
-        public boolean isEnabledByUiPermissions() {
-            return importExportAvailableBySpecificUiPermission
-                    && super.isEnabledByUiPermissions();
+        protected void setEnabledInternal(boolean enabled) {
+            super.setEnabledInternal(enabled
+                    && isEnabledBySpecificUiPermission());
         }
 
         @Override

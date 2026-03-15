@@ -17,7 +17,6 @@
 package io.jmix.flowui.kit.component.dropdownbutton;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.icon.Icon;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.HasSubParts;
 import jakarta.annotation.Nullable;
@@ -215,31 +214,28 @@ public interface DropdownButtonComponent extends HasSubParts {
      */
     boolean isOpenOnHover();
 
-
     /**
      * Returns the icon associated with the dropdown button item, if present.
      *
      * @return the icon of the dropdown button item, or {@code null} if no icon is set
-     * @deprecated use {@link #getIconComponent()} instead
      */
-    @Deprecated(since = "2.8", forRemoval = true)
     @Nullable
-    Icon getIcon();
+    Component getIcon();
 
     /**
      * Sets the icon for the component.
      *
      * @param icon the icon to set. Can be {@code null} to clear the current icon.
-     * @deprecated use {@link #setIconComponent(Component)} instead
      */
-    @Deprecated(since = "2.8", forRemoval = true)
-    void setIcon(@Nullable Icon icon);
+    void setIcon(@Nullable Component icon);
 
     /**
      * Returns the icon component associated with the dropdown button item, if present.
      *
      * @return the icon of the dropdown button item, or {@code null} if no icon is set
+     * @deprecated use {@link #getIcon()} instead
      */
+    @Deprecated(since = "3.0", forRemoval = true)
     @Nullable
     Component getIconComponent();
 
@@ -247,7 +243,9 @@ public interface DropdownButtonComponent extends HasSubParts {
      * Sets the icon for the component.
      *
      * @param icon the icon to set. Can be {@code null} to clear the current icon.
+     * @deprecated use {@link #setIcon(Component)} instead
      */
+    @Deprecated(since = "3.0", forRemoval = true)
     void setIconComponent(@Nullable Component icon);
 
     @Nullable

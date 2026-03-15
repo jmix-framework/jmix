@@ -15,9 +15,7 @@
  */
 package io.jmix.flowui.menu;
 
-import com.google.common.base.Strings;
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.icon.Icon;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.KeyCombination;
@@ -45,7 +43,6 @@ public class MenuItem {
 
     protected String classNames;
     protected Component icon;
-    protected String iconName;
     protected String title;
     protected String description;
     protected Element descriptor;
@@ -222,31 +219,30 @@ public class MenuItem {
     /**
      * Returns the icon associated with this menu item.
      *
-     * @return the icon as a string, or {@code null} if no icon is associated
-     * @deprecated use {@link #getIconComponent()} instead
+     * @return an icon component, or {@code null} if no icon is associated
      */
-    @Deprecated(since = "2.8", forRemoval = true)
     @Nullable
-    public String getIcon() {
-        return !Strings.isNullOrEmpty(iconName)
-                ? iconName
-                : icon instanceof Icon iconComponent ? iconComponent.getIcon() : null;
+    public Component getIcon() {
+        return getIconComponent();
     }
 
     /**
      * Sets the icon associated with this menu item.
      *
-     * @param iconName the icon to associate with the menu item, or {@code null} if no icon is to be set
-     * @deprecated use {@link #setIconComponent(Component)} instead
+     * @param iconName the icon to associate with the menu item,
+     *                 or {@code null} if no icon is to be set
      */
-    @Deprecated(since = "2.8", forRemoval = true)
-    public void setIcon(@Nullable String iconName) {
-        this.iconName = iconName;
-        setIconComponent(Strings.isNullOrEmpty(iconName)
-                ? null
-                : ComponentUtils.parseIcon(iconName));
+    public void setIcon(@Nullable Component icon) {
+        setIconComponent(icon);
     }
 
+    /**
+     * Returns the icon associated with this menu item.
+     *
+     * @return an icon component, or {@code null} if no icon is associated
+     * @deprecated use {@link #getIcon()} instead
+     */
+    @Deprecated(since = "3.0", forRemoval = true)
     @Nullable
     public Component getIconComponent() {
         // Menu item returns a copy of an icon, because the icon is actually
@@ -257,6 +253,14 @@ public class MenuItem {
                 : null;
     }
 
+    /**
+     * Sets the icon associated with this menu item.
+     *
+     * @param iconName the icon to associate with the menu item,
+     *                 or {@code null} if no icon is to be set
+     * @deprecated use {@link #setIcon(Component)} instead
+     */
+    @Deprecated(since = "3.0", forRemoval = true)
     public void setIconComponent(@Nullable Component icon) {
         this.icon = icon;
     }

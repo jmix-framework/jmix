@@ -582,7 +582,7 @@ public class EntitySerializationImpl implements EntitySerialization {
                                             "Property value must be a JSON object literal");
                                 }
 
-                                if (metadataTools.isEmbedded(metaProperty)) {
+                                if (metaProperty.getType() == MetaProperty.Type.EMBEDDED) {
                                     EntityValues.setValue(entity, propertyName, readEmbeddedEntity(propertyValue.getAsJsonObject(), metaProperty));
                                 } else {
                                     EntityValues.setValue(entity, propertyName, readEntity(propertyValue.getAsJsonObject(), propertyRange.asClass()));

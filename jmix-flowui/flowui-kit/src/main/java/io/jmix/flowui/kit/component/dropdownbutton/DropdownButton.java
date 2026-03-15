@@ -85,6 +85,7 @@ public class DropdownButton extends AbstractDropdownButton implements HasThemeVa
         return getDropdownItem().getWhiteSpace();
     }
 
+    @Deprecated(since = "3.0", forRemoval = true)
     @Override
     public void setIconComponent(@Nullable Component icon) {
         if (icon != null && icon.getElement().isTextNode()) {

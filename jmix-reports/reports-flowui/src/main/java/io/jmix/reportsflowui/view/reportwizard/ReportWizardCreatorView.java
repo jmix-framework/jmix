@@ -139,10 +139,10 @@ public class ReportWizardCreatorView extends StandardView {
     @ViewComponent
     private TypedTextField<String> reportCodeField;
 
+    @ViewComponent
+    protected MessageBundle messageBundle;
     @Autowired
     protected Messages messages;
-    @Autowired
-    protected MessageBundle messageBundle;
     @Autowired
     protected Dialogs dialogs;
     @Autowired

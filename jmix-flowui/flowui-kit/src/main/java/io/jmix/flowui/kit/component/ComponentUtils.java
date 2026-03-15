@@ -30,7 +30,6 @@ import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.shared.SlotUtils;
 import com.vaadin.flow.data.provider.HasListDataView;
-import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.dom.ElementConstants;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.loginform.EnhancedLoginForm;
@@ -204,32 +203,6 @@ public final class ComponentUtils {
         image.getTitle().ifPresent(copy::setTitle);
 
         return copy;
-    }
-
-    /**
-     * @param element    the parent component element to add the components to
-     * @param slot       the name of the slot inside the parent
-     * @param components components to add to the specified slot.
-     * @deprecated {@link com.vaadin.flow.component.shared.SlotUtils#addToSlot(HasElement, String, Component...)} instead
-     */
-    @Deprecated(since = "2.1", forRemoval = true)
-    public static void addComponentsToSlot(Element element, String slot, Component... components) {
-        for (Component component : components) {
-            component.getElement().setAttribute("slot", slot);
-            element.appendChild(component.getElement());
-        }
-    }
-
-    /**
-     * @param element the component element to get children from
-     * @param slot    the name of the slot inside the parent
-     * @deprecated use {@link com.vaadin.flow.component.shared.SlotUtils#clearSlot(HasElement, String)} instead
-     */
-    @Deprecated(since = "2.1", forRemoval = true)
-    public static void clearSlot(Element element, String slot) {
-        element.getChildren()
-                .filter(child -> slot.equals(child.getAttribute("slot")))
-                .forEach(element::removeChild);
     }
 
     /**

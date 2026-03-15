@@ -47,7 +47,7 @@ public abstract class AbstractDropdownButtonLoader<T extends AbstractDropdownBut
         componentLoader().loadEnabled(resultComponent, element);
         componentLoader().loadText(resultComponent, element);
         componentLoader().loadWhiteSpace(resultComponent, element);
-        iconLoaderSupport().loadIcon(element, resultComponent::setIconComponent);
+        iconLoaderSupport().loadIcon(element, resultComponent::setIcon);
 
         loadContent();
     }

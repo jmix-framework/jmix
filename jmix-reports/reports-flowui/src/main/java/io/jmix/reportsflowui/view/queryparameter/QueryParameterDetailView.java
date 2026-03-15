@@ -71,6 +71,8 @@ public class QueryParameterDetailView extends StandardDetailView<QueryParameter>
     @ViewComponent
     protected FormLayout queryParameterFormLayout;
 
+    @ViewComponent
+    protected MessageBundle messageBundle;
     @Autowired
     protected JmixObjectToStringConverter jmixObjectToStringConverter;
     @Autowired
@@ -83,8 +85,6 @@ public class QueryParameterDetailView extends StandardDetailView<QueryParameter>
     protected UiComponents uiComponents;
     @Autowired
     protected Messages messages;
-    @Autowired
-    protected MessageBundle messageBundle;
     @Autowired
     protected DatatypeRegistry datatypeRegistry;
     @Autowired

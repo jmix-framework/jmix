@@ -20,8 +20,8 @@ import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.RouteParameters;
 import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.view.View;
-
 import org.springframework.lang.Nullable;
+
 import java.util.function.Consumer;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
@@ -34,15 +34,6 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 public class ListViewNavigator<E> extends AbstractViewNavigator {
 
     protected final Class<E> entityClass;
-
-    @Deprecated(since = "2.3", forRemoval = true)
-    public ListViewNavigator(Class<E> entityClass,
-                             Consumer<? extends ListViewNavigator<E>> handler) {
-        super(handler);
-        checkNotNullArgument(entityClass);
-
-        this.entityClass = entityClass;
-    }
 
     public ListViewNavigator(View<?> origin,
                              Class<E> entityClass,

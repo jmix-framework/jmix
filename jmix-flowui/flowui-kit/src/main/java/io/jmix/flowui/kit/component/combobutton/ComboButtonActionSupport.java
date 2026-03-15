@@ -157,8 +157,8 @@ public class ComboButtonActionSupport {
     }
 
     protected void updateIcon(boolean overrideComponentProperties) {
-        if (comboButton.getIconComponent() == null || overrideComponentProperties) {
-            comboButton.setIconComponent(action.getIconComponent());
+        if (comboButton.getIcon() == null || overrideComponentProperties) {
+            comboButton.setIcon(action.getIconComponent());
         }
     }
 
@@ -184,7 +184,7 @@ public class ComboButtonActionSupport {
                 comboButton.setVisible((Boolean) event.getNewValue());
                 break;
             case Action.PROP_ICON:
-                comboButton.setIconComponent((Component) event.getNewValue());
+                comboButton.setIcon((Component) event.getNewValue());
                 break;
             case Action.PROP_DESCRIPTION:
                 comboButton.setTitle((String) event.getNewValue());

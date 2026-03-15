@@ -20,19 +20,17 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.di.Instantiator;
 import io.jmix.flowui.Facets;
 import io.jmix.flowui.facet.*;
-import io.jmix.flowui.facet.Timer;
 import io.jmix.flowui.facet.impl.*;
-import io.jmix.flowui.xml.facet.FacetProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -45,7 +43,6 @@ public class FacetsImpl implements Facets, ApplicationContextAware {
 
     protected ApplicationContext applicationContext;
 
-    protected Map<Class<? extends Facet>, FacetProvider> registrations = new HashMap<>();
     protected Set<FacetInfo> facets = ConcurrentHashMap.newKeySet();
 
     {
@@ -69,21 +66,6 @@ public class FacetsImpl implements Facets, ApplicationContextAware {
     }
 
     @SuppressWarnings("unchecked")
-    @Deprecated(since = "2.8", forRemoval = true)
-    @Nullable
-    public <T extends Facet> FacetProvider<T> getProvider(Class<T> facetClass) {
-        return registrations.get(facetClass);
-    }
-
-    @Deprecated(since = "2.8", forRemoval = true)
-    @Autowired(required = false)
-    protected void setFacetRegistrations(List<FacetProvider<?>> facetProviders) {
-        for (FacetProvider<?> facetProvider : facetProviders) {
-            this.registrations.putIfAbsent(facetProvider.getFacetClass(), facetProvider);
-        }
-    }
-
-    @SuppressWarnings("unchecked")
     @Override
     public <T extends Facet> T create(Class<T> facetClass) {
         Class<? extends Facet> facetToCreate = facetClass;
@@ -91,12 +73,6 @@ public class FacetsImpl implements Facets, ApplicationContextAware {
         Optional<FacetInfo> facetInfo = getFacetInfo(facetClass);
         if (facetInfo.isPresent()) {
             facetToCreate = getFacetToCreate(facetInfo.get());
-        } else {
-            // for backward compatibility
-            FacetProvider<T> registration = registrations.get(facetClass);
-            if (registration != null) {
-                return registration.create();
-            }
         }
 
         log.trace("Creating {} facet", facetToCreate.getName());

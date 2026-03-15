@@ -25,15 +25,7 @@ import io.jmix.core.annotation.Internal;
 public class ViewSettingsJson extends AbstractUiComponentSettingsJson<ViewSettings, ViewSettingsJson>
         implements ViewSettings {
 
-    protected String viewId;
-
     public ViewSettingsJson(String ownerId) {
         super(ownerId);
-        this.viewId = ownerId;
-    }
-
-    @Override
-    public String getViewId() {
-        return viewId;
     }
 }

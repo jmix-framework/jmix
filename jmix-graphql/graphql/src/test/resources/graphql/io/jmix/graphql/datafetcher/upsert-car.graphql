@@ -1,9 +1,0 @@
-mutation {
-    upsert_scr_Car (car: {
-        manufacturer: "1"
-        model: "2"
-        carType: SEDAN
-    }) {
-        _instanceName
-    }
-}

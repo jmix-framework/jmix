@@ -29,6 +29,8 @@ dependencies {
     implementation 'org.springframework:spring-tx'
     implementation 'org.eclipse.persistence:org.eclipse.persistence.extension'
 
+    testImplementation 'org.springframework.boot:spring-boot-starter-test' //todo [SB4]
+
     testImplementation 'org.springframework:spring-test'
     testImplementation 'org.spockframework:spock-core'
     testImplementation 'org.spockframework:spock-spring'

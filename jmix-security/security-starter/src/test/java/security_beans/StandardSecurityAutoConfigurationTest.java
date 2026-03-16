@@ -22,7 +22,7 @@ import io.jmix.core.security.InMemoryUserRepository;
 import io.jmix.security.StandardSecurityConfiguration;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
-import org.springframework.boot.autoconfigure.cache.CacheAutoConfiguration;
+import org.springframework.boot.cache.autoconfigure.CacheAutoConfiguration;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.security.web.SecurityFilterChain;
 

@@ -4,8 +4,9 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.oauth2.server.authorization.OAuth2AuthorizationServerConfigurer;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
-import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
+
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenGenerator;
 
 /**
@@ -20,7 +21,7 @@ import org.springframework.security.oauth2.server.authorization.token.OAuth2Toke
 public class OAuth2ResourceOwnerPasswordTokenEndpointConfigurer extends AbstractHttpConfigurer<OAuth2ResourceOwnerPasswordTokenEndpointConfigurer, HttpSecurity> {
 
     @Override
-    public void init(HttpSecurity http) throws Exception {
+    public void init(HttpSecurity http) {
         OAuth2AuthorizationServerConfigurer authorizationServerConfigurer = http.getConfigurer(OAuth2AuthorizationServerConfigurer.class);
         authorizationServerConfigurer.tokenEndpoint(tokenEndpoint ->
                 tokenEndpoint.accessTokenRequestConverter(new OAuth2ResourceOwnerPasswordCredentialsAuthenticationConverter())
@@ -28,7 +29,7 @@ public class OAuth2ResourceOwnerPasswordTokenEndpointConfigurer extends Abstract
     }
 
     @Override
-    public void configure(HttpSecurity http) throws Exception {
+    public void configure(HttpSecurity http) {
         //we create token OAuth2ResourceOwnerPasswordCredentialsAuthenticationProvider here because OAuth2TokenGenerator
         //is placed into shared objects only in {@code OAuth2TokenEndpointConfigurer#init} method.
         OAuth2TokenGenerator<?> tokenGenerator = http.getSharedObject(OAuth2TokenGenerator.class);

@@ -23,7 +23,7 @@ import org.opensaml.saml.saml2.core.Assertion;
 import org.slf4j.Logger;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.saml2.provider.service.authentication.DefaultSaml2AuthenticatedPrincipal;
-import org.springframework.security.saml2.provider.service.authentication.OpenSaml4AuthenticationProvider;
+import org.springframework.security.saml2.provider.service.authentication.OpenSaml5AuthenticationProvider;
 
 import java.util.Collection;
 import java.util.List;
@@ -53,7 +53,7 @@ public class DefaultSamlUserMapper extends BaseSamlUserMapper<DefaultJmixSamlUse
 
     @Override
     protected void populateUserAttributes(Assertion assertion,
-                                          OpenSaml4AuthenticationProvider.ResponseToken responseToken,
+                                          OpenSaml5AuthenticationProvider.ResponseToken responseToken,
                                           DefaultJmixSamlUserDetails jmixUser) {
     }
 

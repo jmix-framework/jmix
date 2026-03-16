@@ -18,6 +18,7 @@ package io.jmix.search.index.impl;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.aggregator.AggregateWith;
 import org.junit.jupiter.params.converter.ConvertWith;
 import org.junit.jupiter.params.provider.CsvFileSource;
 
@@ -32,8 +33,8 @@ import static test_support.TestJsonUtils.readJsonAsMap;
 class IndexMappingComparatorTest {
 
     @ParameterizedTest(name = "{index} - {0}")
-    @CsvFileSource(resources = "/mapping/data.csv", numLinesToSkip = 1)
-    void testWithCsvData(@ConvertWith(IndexMappingComparatorTestCaseConverter.class) IndexMappingComparatorTestCase testCase) {
+    @CsvFileSource(resources = "/mapping/data.csv", numLinesToSkip = 1, delimiter = ';')
+    void testWithCsvData(@AggregateWith(IndexMappingComparatorTestCaseConverter.class) IndexMappingComparatorTestCase testCase) {
 
         IndexMappingComparator<?, ?> comparator = new TestIndexMappingComparator(new MappingFieldComparator());
         String folderName = "mapping/" + testCase.getFolderWithFiles();

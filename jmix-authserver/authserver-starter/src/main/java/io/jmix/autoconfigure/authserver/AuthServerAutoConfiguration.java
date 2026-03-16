@@ -16,7 +16,7 @@
 
 package io.jmix.autoconfigure.authserver;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+
 import io.jmix.authserver.AuthServerConfiguration;
 import io.jmix.authserver.AuthServerProperties;
 import io.jmix.authserver.authentication.OAuth2ResourceOwnerPasswordTokenEndpointConfigurer;
@@ -43,13 +43,14 @@ import io.jmix.security.util.ClientDetailsSourceSupport;
 import io.jmix.security.util.JmixHttpSecurityUtils;
 import io.jmix.securityresourceserver.requestmatcher.CompositeResourceServerRequestMatcherProvider;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -59,13 +60,16 @@ import org.springframework.http.HttpMethod;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.oauth2.server.authorization.OAuth2AuthorizationServerConfigurer;
+import org.springframework.security.jackson.SecurityJacksonModules;
 import org.springframework.security.jackson2.SecurityJackson2Modules;
 import org.springframework.security.oauth2.server.authorization.InMemoryOAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.JdbcOAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
-import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
+import org.springframework.security.oauth2.server.authorization.jackson.OAuth2AuthorizationServerJacksonModule;
 import org.springframework.security.oauth2.server.authorization.jackson2.OAuth2AuthorizationServerJackson2Module;
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
 import org.springframework.security.oauth2.server.resource.introspection.OpaqueTokenIntrospector;
@@ -74,16 +78,16 @@ import org.springframework.security.web.access.intercept.AuthorizationFilter;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuccessHandler;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 import org.springframework.security.web.util.matcher.OrRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatchers;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.util.Collection;
-
-import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
 
 @AutoConfiguration
 @Import({AuthServerConfiguration.class})
@@ -149,7 +153,7 @@ public class AuthServerAutoConfiguration {
         @Order(JmixSecurityFilterChainOrder.AUTHSERVER_AUTHORIZATION_SERVER + 5)
         public SecurityFilterChain authorizationServerCorsSecurityFilterChain(HttpSecurity http)
                 throws Exception {
-            http.securityMatcher(antMatcher(HttpMethod.OPTIONS, "/oauth2/**"));
+            http.securityMatcher(PathPatternRequestMatcher.pathPattern(HttpMethod.OPTIONS, "/oauth2/**"));
             http.cors(Customizer.withDefaults());
             return http.build();
         }
@@ -158,7 +162,7 @@ public class AuthServerAutoConfiguration {
         @Order(JmixSecurityFilterChainOrder.AUTHSERVER_AUTHORIZATION_SERVER)
         public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http)
                 throws Exception {
-            OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
+            http.oauth2AuthorizationServer(Customizer.withDefaults());
             http
                     // Redirect to the login page when not authenticated from the
                     // authorization endpoint
@@ -174,11 +178,11 @@ public class AuthServerAutoConfiguration {
 
         @Bean("authsr_AuthorizationServerLogoutSecurityFilterChain")
         @Order(JmixSecurityFilterChainOrder.AUTHSERVER_AUTHORIZATION_SERVER + 5)
-        public SecurityFilterChain logoutSecurityFilterChain(HttpSecurity http,
-                                                             ServerProperties serverProperties,
-                                                             OAuth2AuthorizationService authorizationService,
-                                                             AuthServerProperties authServerProperties) throws Exception {
-            String sessionCookieName = getSessionCookieName(serverProperties);
+        public SecurityFilterChain logoutSecurityFilterChain(
+                HttpSecurity http,
+                OAuth2AuthorizationService authorizationService,
+                AuthServerProperties authServerProperties,
+                @Value("${server.servlet.session.cookie.name:JSESSIONID}") String sessionCookieName) throws Exception {
 
             http.securityMatcher("/logout")
                     .csrf(AbstractHttpConfigurer::disable)
@@ -206,18 +210,19 @@ public class AuthServerAutoConfiguration {
             return successHandler;
         }
 
-        protected String getSessionCookieName(ServerProperties serverProperties) {
+        // TODO [SB4] ServerProperties is gone - use direct injection or custom @ConfigurationProperties class
+        /*protected String getSessionCookieName(ServerProperties serverProperties) {
             String sessionCookieName = serverProperties.getServlet().getSession().getCookie().getName();
             if (StringUtils.isBlank(sessionCookieName)) {
                 sessionCookieName = "JSESSIONID";
             }
             return sessionCookieName;
-        }
+        }*/
 
         protected RequestMatcher createLogoutRequestMatcher(String logoutUrl) {
             return RequestMatchers.anyOf(
-                    new AntPathRequestMatcher(logoutUrl, "GET"),
-                    new AntPathRequestMatcher(logoutUrl, "POST")
+                    PathPatternRequestMatcher.pathPattern(HttpMethod.GET, logoutUrl),
+                    PathPatternRequestMatcher.pathPattern(HttpMethod.POST, logoutUrl)
             );
         }
 
@@ -236,16 +241,14 @@ public class AuthServerAutoConfiguration {
                 );
                 log.debug("Use {}", authorizationService.getClass());
 
-                ObjectMapper objectMapper = createObjectMapper(objectMapperCustomizers);
+                JsonMapper jsonMapper = createJsonMapper(objectMapperCustomizers);
 
-                JdbcOAuth2AuthorizationService.OAuth2AuthorizationRowMapper rowMapper =
-                        new JdbcOAuth2AuthorizationService.OAuth2AuthorizationRowMapper(registeredClientRepository);
-                rowMapper.setObjectMapper(objectMapper);
+                JdbcOAuth2AuthorizationService.JsonMapperOAuth2AuthorizationRowMapper rowMapper =
+                        new JdbcOAuth2AuthorizationService.JsonMapperOAuth2AuthorizationRowMapper(registeredClientRepository, jsonMapper);
                 authorizationService.setAuthorizationRowMapper(rowMapper);
 
-                JdbcOAuth2AuthorizationService.OAuth2AuthorizationParametersMapper parametersMapper =
-                        new JdbcOAuth2AuthorizationService.OAuth2AuthorizationParametersMapper();
-                parametersMapper.setObjectMapper(objectMapper);
+                JdbcOAuth2AuthorizationService.JsonMapperOAuth2AuthorizationParametersMapper parametersMapper =
+                        new JdbcOAuth2AuthorizationService.JsonMapperOAuth2AuthorizationParametersMapper(jsonMapper);
                 authorizationService.setAuthorizationParametersMapper(parametersMapper);
 
                 return authorizationService;
@@ -291,15 +294,19 @@ public class AuthServerAutoConfiguration {
             }
         }
 
-        protected ObjectMapper createObjectMapper(ObjectProvider<JdbcOAuth2AuthorizationServiceObjectMapperCustomizer> objectMapperCustomizers) {
-            ObjectMapper objectMapper = new ObjectMapper();
+        protected JsonMapper createJsonMapper(ObjectProvider<@NonNull JdbcOAuth2AuthorizationServiceObjectMapperCustomizer> objectMapperCustomizers) {
             ClassLoader classLoader = JdbcOAuth2AuthorizationService.class.getClassLoader();
-            objectMapper.registerModules(SecurityJackson2Modules.getModules(classLoader));
-            objectMapper.registerModule(new OAuth2AuthorizationServerJackson2Module());
 
-            objectMapperCustomizers.orderedStream().forEach(customizer -> customizer.customize(objectMapper));
+            JsonMapper.Builder builder = JsonMapper.builder()
+                    .addModules(SecurityJacksonModules.getModules(classLoader))
+                    .addModule(new OAuth2AuthorizationServerJacksonModule());
 
-            return objectMapper;
+            // TODO [SB4] Customize on builder level due to immutability of JsonMapper
+            objectMapperCustomizers.orderedStream().forEach(
+                    customizer -> customizer.customize(builder)
+            );
+
+            return builder.build();
         }
     }
 

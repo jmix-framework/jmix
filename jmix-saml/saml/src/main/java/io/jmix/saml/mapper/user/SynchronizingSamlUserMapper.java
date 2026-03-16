@@ -33,7 +33,7 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.saml2.provider.service.authentication.OpenSaml4AuthenticationProvider;
+import org.springframework.security.saml2.provider.service.authentication.OpenSaml5AuthenticationProvider;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -90,7 +90,7 @@ public abstract class SynchronizingSamlUserMapper<T extends JmixSamlUserDetails>
     }
 
     @Override
-    protected void performAdditionalModifications(Assertion assertion, OpenSaml4AuthenticationProvider.ResponseToken responseToken, T jmixUser) {
+    protected void performAdditionalModifications(Assertion assertion, OpenSaml5AuthenticationProvider.ResponseToken responseToken, T jmixUser) {
         super.performAdditionalModifications(assertion, responseToken, jmixUser);
         saveJmixUserAndRoleAssignments(assertion, jmixUser);
     }

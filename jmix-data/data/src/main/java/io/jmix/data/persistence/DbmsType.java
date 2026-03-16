@@ -22,21 +22,18 @@ import io.jmix.data.StoreAwareLocator;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.jdbc.DatabaseDriver;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.support.JdbcUtils;
 import org.springframework.jdbc.support.MetaDataAccessException;
+import org.springframework.lang.Nullable;
 import org.springframework.orm.jpa.vendor.Database;
 import org.springframework.stereotype.Component;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
-import org.springframework.lang.Nullable;
 import javax.sql.DataSource;
-import java.sql.DatabaseMetaData;
-import java.util.EnumMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Predicate;
 
 /**
  * INTERNAL.
@@ -59,17 +56,15 @@ public class DbmsType {
 
     protected Map<String, String> types = new ConcurrentHashMap<>(4);
 
-    protected static final Map<DatabaseDriver, Database> driverToDbMap = new EnumMap<>(DatabaseDriver.class);;
-
-    static {
-        driverToDbMap.put(DatabaseDriver.H2, Database.H2);
-        driverToDbMap.put(DatabaseDriver.HSQLDB, Database.HSQL);
-        driverToDbMap.put(DatabaseDriver.MYSQL, Database.MYSQL);
-        driverToDbMap.put(DatabaseDriver.MARIADB, Database.MYSQL);
-        driverToDbMap.put(DatabaseDriver.ORACLE, Database.ORACLE);
-        driverToDbMap.put(DatabaseDriver.POSTGRESQL, Database.POSTGRESQL);
-        driverToDbMap.put(DatabaseDriver.SQLSERVER, Database.SQL_SERVER);
-    }
+    private static final Map<Predicate<String>, Database> PRODUCT_NAME_MAPPING =
+            Map.of(
+                    name -> name.contains("h2"), Database.H2,
+                    name -> name.contains("hsql"), Database.HSQL,
+                    name -> name.contains("postgres"), Database.POSTGRESQL,
+                    name -> name.contains("oracle"), Database.ORACLE,
+                    name -> name.contains("sql server"), Database.SQL_SERVER,
+                    name -> name.contains("mysql") || name.contains("mariadb"), Database.MYSQL
+            );
 
     public String getType() {
         return getType(Stores.MAIN);
@@ -109,12 +104,24 @@ public class DbmsType {
     @Nullable
     protected static Database getDatabase(DataSource dataSource) {
         try {
-            String url = JdbcUtils.extractDatabaseMetaData(dataSource, DatabaseMetaData::getURL);
-            DatabaseDriver driver = DatabaseDriver.fromJdbcUrl(url);
-            return driverToDbMap.get(driver);
+            return JdbcUtils.extractDatabaseMetaData(
+                    dataSource,
+                    meta -> resolveDatabaseByProductName(meta.getDatabaseProductName())
+            );
         } catch (MetaDataAccessException ex) {
             log.warn("Unable to determine JDBC URL from DataSource", ex);
         }
         return null;
+    }
+
+    @Nullable
+    protected static Database resolveDatabaseByProductName(String productName) {
+        String normalized = productName.toLowerCase();
+
+        return PRODUCT_NAME_MAPPING.entrySet().stream()
+                .filter(e -> e.getKey().test(normalized))
+                .map(Map.Entry::getValue)
+                .findFirst()
+                .orElse(null);
     }
 }

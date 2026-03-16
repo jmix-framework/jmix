@@ -30,7 +30,7 @@ import java.util.Map;
  * Controller that returns localized messages
  */
 @RestController("rest_MessagesController")
-@RequestMapping(value = "${jmix.rest.base-path}${jmix.rest.messages-path}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+@RequestMapping(value = "${jmix.rest.base-path}${jmix.rest.messages-path}", produces = MediaType.APPLICATION_JSON_VALUE)
 public class MessagesController {
 
     @Autowired

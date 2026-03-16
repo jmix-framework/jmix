@@ -16,7 +16,8 @@
 
 package io.jmix.authserver.service.mapper;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * Interface to provide ability to customize ObjectMapper that is used by JdbcOAuth2AuthorizationService.
@@ -38,7 +39,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * }
  * </pre>
  */
+// TODO [SB4] Rename? Javadoc
 public interface JdbcOAuth2AuthorizationServiceObjectMapperCustomizer {
 
-    void customize(ObjectMapper objectMapper);
+    void customize(JsonMapper.Builder objectMapperBuilder);
 }

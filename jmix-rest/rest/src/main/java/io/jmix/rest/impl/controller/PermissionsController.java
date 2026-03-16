@@ -29,7 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * Controller that is used for getting current user permissions
  */
 @RestController("rest_PermissionsController")
-@RequestMapping(produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+@RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 public class PermissionsController {
 
     @Autowired

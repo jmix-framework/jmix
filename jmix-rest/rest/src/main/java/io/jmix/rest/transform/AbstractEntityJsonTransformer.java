@@ -16,9 +16,9 @@
 
 package io.jmix.rest.transform;
 
-import com.fasterxml.jackson.databind.JsonNode;
+/*import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;*/
 import io.jmix.rest.impl.config.RestJsonTransformations;
 import io.jmix.rest.exception.RestAPIException;
 import org.slf4j.Logger;
@@ -26,6 +26,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.node.ObjectNode;
+
 import java.io.IOException;
 import java.util.*;
 
@@ -81,11 +85,12 @@ public abstract class AbstractEntityJsonTransformer implements EntityJsonTransfo
         try {
             JsonNode rootNode = objectMapper.readTree(json);
             if (rootNode.isArray()) {
-                Iterator<JsonNode> iterator = rootNode.elements();
-                while (iterator.hasNext()) {
-                    ObjectNode entityJsonNode = (ObjectNode) iterator.next();
-                    transformEntityJson(entityJsonNode, objectMapper);
+                //TODO [SB4]
+                Collection<JsonNode> nestedElements = rootNode.values();
+                for (JsonNode element : nestedElements) {
+                    transformEntityJson((ObjectNode)element, objectMapper);
                 }
+
             } else if (rootNode.isObject()) {
                 transformEntityJson((ObjectNode) rootNode, objectMapper);
             }
@@ -109,9 +114,9 @@ public abstract class AbstractEntityJsonTransformer implements EntityJsonTransfo
     }
 
     protected void transformNestedToOneReferences(ObjectNode rootObjectNode, ObjectMapper objectMapper) throws IOException {
-        Iterator<Map.Entry<String, JsonNode>> iterator = rootObjectNode.fields();
-        while (iterator.hasNext()) {
-            Map.Entry<String, JsonNode> entry = iterator.next();
+        // TODO [SB4]
+        Set<Map.Entry<String, JsonNode>> properties = rootObjectNode.properties();
+        for (Map.Entry<String, JsonNode> entry : properties) {
             String attributeName = entry.getKey();
             JsonNode nestedJsonNode = entry.getValue();
             if (nestedJsonNode.isObject()) {
@@ -131,9 +136,9 @@ public abstract class AbstractEntityJsonTransformer implements EntityJsonTransfo
     }
 
     protected void transformNestedToManyReferences(ObjectNode rootObjectNode, ObjectMapper objectMapper) throws IOException {
-        Iterator<Map.Entry<String, JsonNode>> iterator = rootObjectNode.fields();
-        while (iterator.hasNext()) {
-            Map.Entry<String, JsonNode> entry = iterator.next();
+        // TODO [SB4]
+        Set<Map.Entry<String, JsonNode>> properties = rootObjectNode.properties();
+        for (Map.Entry<String, JsonNode> entry : properties) {
             String attributeName = entry.getKey();
             JsonNode nestedJsonNode = entry.getValue();
             if (nestedJsonNode.isArray()) {

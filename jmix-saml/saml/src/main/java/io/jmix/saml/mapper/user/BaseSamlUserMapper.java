@@ -22,7 +22,7 @@ import io.jmix.saml.util.SamlAssertionUtils;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.slf4j.Logger;
 import org.springframework.security.saml2.provider.service.authentication.DefaultSaml2AuthenticatedPrincipal;
-import org.springframework.security.saml2.provider.service.authentication.OpenSaml4AuthenticationProvider;
+import org.springframework.security.saml2.provider.service.authentication.OpenSaml5AuthenticationProvider;
 
 import java.util.List;
 import java.util.Map;
@@ -34,7 +34,7 @@ public abstract class BaseSamlUserMapper<T extends JmixSamlUserDetails> implemen
     private static final Logger log = getLogger(BaseSamlUserMapper.class);
 
     @Override
-    public T toJmixUser(Assertion assertion, OpenSaml4AuthenticationProvider.ResponseToken responseToken) {
+    public T toJmixUser(Assertion assertion, OpenSaml5AuthenticationProvider.ResponseToken responseToken) {
         synchronized (getSamlUsername(assertion)) {
             T jmixUser = initJmixUser(assertion);
             log.debug("User '{}' is initialized", getSamlUsername(assertion));
@@ -52,11 +52,11 @@ public abstract class BaseSamlUserMapper<T extends JmixSamlUserDetails> implemen
 
     protected abstract T initJmixUser(Assertion assertion);
 
-    protected abstract void populateUserAttributes(Assertion assertion, OpenSaml4AuthenticationProvider.ResponseToken responseToken, T jmixUser);
+    protected abstract void populateUserAttributes(Assertion assertion, OpenSaml5AuthenticationProvider.ResponseToken responseToken, T jmixUser);
 
     protected abstract void populateUserAuthorities(Assertion assertion, T jmixUser);
 
-    protected void performAdditionalModifications(Assertion assertion, OpenSaml4AuthenticationProvider.ResponseToken responseToken, T jmixUser) {
+    protected void performAdditionalModifications(Assertion assertion, OpenSaml5AuthenticationProvider.ResponseToken responseToken, T jmixUser) {
         if (jmixUser instanceof HasSamlPrincipalDelegate) {
             String username = getSamlUsername(assertion);
             Map<String, List<Object>> attributes = SamlAssertionUtils.getAssertionAttributes(assertion);

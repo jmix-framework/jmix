@@ -23,7 +23,7 @@ import java.nio.charset.StandardCharsets;
 
 public class PlantUmlEncoderImpl implements PlantUmlEncoder {
 
-    protected static byte[] encodingAlphabet = {
+    protected static final byte[] ENCODING_ALPHABET = {
             '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
             'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
             'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
@@ -34,7 +34,7 @@ public class PlantUmlEncoderImpl implements PlantUmlEncoder {
             '-', '_',
             '='  // index 64 - is a padding
     };
-    protected static byte padding = encodingAlphabet[64];
+    protected static final byte PADDING = ENCODING_ALPHABET[64];
 
     @Override
     public String encode(@Nullable byte[] compressedData) {
@@ -60,10 +60,10 @@ public class PlantUmlEncoderImpl implements PlantUmlEncoder {
             int three = ((b2 & 0x0F) << 2) | (b3 >> 6);
             int four  = b3 & 0x3F;
 
-            encodedBytes[outputPos++] = encodingAlphabet[one];
-            encodedBytes[outputPos++] = encodingAlphabet[two];
-            encodedBytes[outputPos++] = encodingAlphabet[three];
-            encodedBytes[outputPos++] = encodingAlphabet[four];
+            encodedBytes[outputPos++] = ENCODING_ALPHABET[one];
+            encodedBytes[outputPos++] = ENCODING_ALPHABET[two];
+            encodedBytes[outputPos++] = ENCODING_ALPHABET[three];
+            encodedBytes[outputPos++] = ENCODING_ALPHABET[four];
 
             i += 3;
         }
@@ -77,10 +77,10 @@ public class PlantUmlEncoderImpl implements PlantUmlEncoder {
             int two   = ((b1 & 0x03) << 4) | (b2 >> 4);
             int three = (b2 & 0x0F) << 2;
 
-            encodedBytes[outputPos++] = encodingAlphabet[one];
-            encodedBytes[outputPos++] = encodingAlphabet[two];
-            encodedBytes[outputPos++] = encodingAlphabet[three];
-            encodedBytes[outputPos++] = padding;
+            encodedBytes[outputPos++] = ENCODING_ALPHABET[one];
+            encodedBytes[outputPos++] = ENCODING_ALPHABET[two];
+            encodedBytes[outputPos++] = ENCODING_ALPHABET[three];
+            encodedBytes[outputPos++] = PADDING;
         }
         // Remains: 1 byte -> 2 symbols + 2 paddings
         else if (i + 1 == count) {
@@ -89,10 +89,10 @@ public class PlantUmlEncoderImpl implements PlantUmlEncoder {
             int one = b1 >> 2;
             int two = (b1 & 0x03) << 4;
 
-            encodedBytes[outputPos++] = encodingAlphabet[one];
-            encodedBytes[outputPos++] = encodingAlphabet[two];
-            encodedBytes[outputPos++] = padding;
-            encodedBytes[outputPos++] = padding;
+            encodedBytes[outputPos++] = ENCODING_ALPHABET[one];
+            encodedBytes[outputPos++] = ENCODING_ALPHABET[two];
+            encodedBytes[outputPos++] = PADDING;
+            encodedBytes[outputPos++] = PADDING;
         }
 
         // If equal to 3 - no padding needed

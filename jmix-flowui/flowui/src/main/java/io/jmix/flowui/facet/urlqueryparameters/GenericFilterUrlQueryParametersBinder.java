@@ -478,10 +478,6 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
     }
 
     /**
-     * Returns the current condition parameter name for the URL. If the condition parameter
-     * is null or empty, a default name is returned.
-     *
-     * @return the condition parameter name if set, otherwise the default condition parameter name
      * @deprecated legacy implementation for backward capability,  use {@link #getConditionParam()} instead
      */
     @Deprecated(since = "2.8", forRemoval = true)

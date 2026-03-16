@@ -163,7 +163,7 @@ public class PaginationUrlQueryParametersBinder extends AbstractUrlQueryParamete
     }
 
     /**
-     * @return legacy implementation for backward capability, use {@link #getMaxResultsParam()} instead
+     * @deprecated legacy implementation for backward capability, use {@link #getMaxResultsParam()} instead
      */
     @Deprecated(since = "2.8", forRemoval = true)
     public String getLegacyMaxResultsParam() {

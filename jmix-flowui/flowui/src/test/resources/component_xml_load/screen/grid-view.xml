@@ -102,7 +102,6 @@
             <contextMenu id="contextMenu"
                          classNames="cssClassName1, cssClassName2"
                          css="color:red"
-                         enabled="true"
                          visible="false">
                 <item id="menu1"
                       visible="true"
@@ -219,7 +218,6 @@
             <contextMenu id="contextMenu"
                          classNames="cssClassName1, cssClassName2"
                          css="color:red"
-                         enabled="true"
                          visible="false">
                 <item id="menu1"
                       visible="true"

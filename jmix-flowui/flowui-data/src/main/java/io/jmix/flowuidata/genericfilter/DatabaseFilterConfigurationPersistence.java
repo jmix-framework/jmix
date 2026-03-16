@@ -16,9 +16,6 @@
 
 package io.jmix.flowuidata.genericfilter;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import io.jmix.core.DataManager;
 import io.jmix.core.DevelopmentException;
 import io.jmix.core.EntityStates;
@@ -31,11 +28,14 @@ import io.jmix.flowui.component.genericfilter.FilterConfigurationPersistence;
 import io.jmix.flowui.component.genericfilter.model.FilterConfigurationModel;
 import io.jmix.flowui.entity.filter.LogicalFilterCondition;
 import io.jmix.flowuidata.entity.FilterConfiguration;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.util.List;
 
@@ -48,10 +48,9 @@ public class DatabaseFilterConfigurationPersistence implements FilterConfigurati
 
     protected final CurrentUserSubstitution currentUserSubstitution;
 
-    protected ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json()
-            .build()
-            .configure(SerializationFeature.INDENT_OUTPUT, true);
-
+    protected final ObjectMapper objectMapper = JsonMapper.builder()
+            .enable(SerializationFeature.INDENT_OUTPUT)
+            .build();
 
     public DatabaseFilterConfigurationPersistence(DataManager dataManager, EntityStates entityStates,
                                                   CurrentUserSubstitution currentUserSubstitution) {
@@ -163,7 +162,7 @@ public class DatabaseFilterConfigurationPersistence implements FilterConfigurati
     protected String filterConditionToJson(LogicalFilterCondition filterCondition) {
         try {
             return objectMapper.writeValueAsString(filterCondition);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             throw new DevelopmentException(e.getMessage(), e);
         }
     }
@@ -171,7 +170,7 @@ public class DatabaseFilterConfigurationPersistence implements FilterConfigurati
     protected LogicalFilterCondition filterConditionFromJson(String json) {
         try {
             return objectMapper.readValue(json, LogicalFilterCondition.class);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             throw new DevelopmentException(e.getMessage(), e);
         }
     }

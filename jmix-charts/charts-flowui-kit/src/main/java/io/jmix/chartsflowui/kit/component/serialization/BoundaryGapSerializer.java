@@ -16,11 +16,10 @@
 
 package io.jmix.chartsflowui.kit.component.serialization;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.SerializerProvider;
 import io.jmix.chartsflowui.kit.component.model.axis.AbstractAxis;
-
-import java.io.IOException;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.SerializationContext;
 
 public class BoundaryGapSerializer extends AbstractSerializer<AbstractAxis.BoundaryGap> {
 
@@ -29,8 +28,8 @@ public class BoundaryGapSerializer extends AbstractSerializer<AbstractAxis.Bound
     }
 
     @Override
-    public void serializeNonNullValue(AbstractAxis.BoundaryGap value, JsonGenerator gen, SerializerProvider provider)
-            throws IOException {
+    public void serializeNonNullValue(AbstractAxis.BoundaryGap value, JsonGenerator gen, SerializationContext provider)
+            throws JacksonException {
         if (value.getCategoryGap() != null) {
             gen.writeBoolean(value.getCategoryGap());
         } else {

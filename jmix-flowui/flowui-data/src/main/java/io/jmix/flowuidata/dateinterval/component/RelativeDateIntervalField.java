@@ -19,10 +19,10 @@ package io.jmix.flowuidata.dateinterval.component;
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.customfield.CustomField;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.select.SelectVariant;
 import com.vaadin.flow.shared.Registration;
-import com.vaadin.flow.theme.lumo.LumoUtility;
 import io.jmix.core.Messages;
 import io.jmix.core.annotation.Internal;
 import io.jmix.flowui.UiComponents;
@@ -92,7 +92,7 @@ public class RelativeDateIntervalField extends CustomField<RelativeDateInterval>
         root = uiComponents.create(HorizontalLayout.class);
 
         root.setPadding(false);
-        root.addClassNames(LumoUtility.AlignItems.BASELINE);
+        root.setAlignItems(FlexComponent.Alignment.BASELINE);
         add(root);
     }
 

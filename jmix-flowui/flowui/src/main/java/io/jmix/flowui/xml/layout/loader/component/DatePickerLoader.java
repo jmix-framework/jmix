@@ -69,7 +69,6 @@ public class DatePickerLoader extends AbstractComponentLoader<TypedDatePicker<?>
         componentLoader().loadFocusableAttributes(resultComponent, element);
         componentLoader().loadThemeNames(resultComponent, element);
         componentLoader().loadClassNames(resultComponent, element);
-        componentLoader().loadOverlayClass(resultComponent, element);
         componentLoader().loadHelperText(resultComponent, element);
         componentLoader().loadSizeAttributes(resultComponent, element);
         componentLoader().loadRequired(resultComponent, element, context);

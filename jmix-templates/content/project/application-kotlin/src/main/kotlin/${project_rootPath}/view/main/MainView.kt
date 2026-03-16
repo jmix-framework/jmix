@@ -76,7 +76,7 @@ open class MainView : StandardMainView() {
         content.add(avatar, text)
 
         if (name == user.getUsername()) {
-            text.addClassNames("user-menu-text-subtext")
+            text.addClassName("user-menu-text-subtext")
         } else {
             val subtext = uiComponents.create(Span::class.java)
             subtext.text = user.getUsername()

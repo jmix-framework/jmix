@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-import { html, PolymerElement } from '@polymer/polymer';
+import { css, html, LitElement } from 'lit';
 import { defineCustomElement } from '@vaadin/component-base/src/define.js';
 import { ElementMixin } from '@vaadin/component-base/src/element-mixin.js';
+import { PolylitMixin } from '@vaadin/component-base/src/polylit-mixin.js';
 
 
 /*
@@ -26,20 +27,22 @@ If a page is refreshed or duplicated, chain of component connectCallback-disconn
 So, to prevent faulty stop events during page refresh or duplication,
 "jmix-timer-stop event" is not fired on disconnect but only when stop is triggered by user
 */
-export class JmixTimer extends ElementMixin(PolymerElement) {
+export class JmixTimer extends ElementMixin(PolylitMixin(LitElement)) {
 
     static get is() {
         return 'jmix-timer';
     }
 
-    static get template() {
-        return html`
-            <style>
-                :host {
-                    display: none;
-                }
-            </style>
+    static get styles() {
+        return css`
+            :host {
+                display: none;
+            }
         `;
+    }
+
+    render() {
+        return html``;
     }
 
     static get properties() {

@@ -16,17 +16,16 @@
 
 package io.jmix.fullcalendarflowui.component.serialization;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import com.google.common.base.Splitter;
 import com.vaadin.flow.data.provider.KeyMapper;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.fullcalendarflowui.component.data.CalendarEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.lang.Nullable;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.ser.std.StdSerializer;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
@@ -63,10 +62,10 @@ public class CalendarEventSerializer extends StdSerializer<CalendarEvent> {
     }
 
     @Override
-    public void serialize(CalendarEvent value, JsonGenerator gen, SerializerProvider provider) throws IOException {
+    public void serialize(CalendarEvent value, JsonGenerator gen, SerializationContext provider) {
         gen.writeStartObject();
 
-        gen.writeObjectField("id", idMapper.key(value.getId()));
+        gen.writeStringProperty("id", idMapper.key(value.getId()));
         serializeCrossDataProviderField("groupId", value.getGroupId(), gen, provider);
         serializeCrossDataProviderField("constraint", value.getConstraint(), gen, provider);
 
@@ -103,13 +102,13 @@ public class CalendarEventSerializer extends StdSerializer<CalendarEvent> {
         serializeNullableValue("startTime", value.getRecurringStartTime(), gen, provider);
         serializeNullableValue("endTime", value.getRecurringEndTime(), gen, provider);
 
-        gen.writeObjectField("jmixSourceId", sourceId);
+        gen.writeStringProperty("jmixSourceId", sourceId);
 
         gen.writeEndObject();
     }
 
     protected void serializeCrossDataProviderField(String property, @Nullable Object value, JsonGenerator gen,
-                                                   SerializerProvider provider) throws IOException {
+                                                   SerializationContext provider) {
         if (value == null) {
             return;
         }
@@ -121,11 +120,11 @@ public class CalendarEventSerializer extends StdSerializer<CalendarEvent> {
     }
 
     protected void serializeNullableValue(String property, @Nullable Object value, JsonGenerator gen,
-                                          SerializerProvider provider) throws IOException {
+                                          SerializationContext provider) {
         if (value == null) {
             return;
         }
-        provider.defaultSerializeField(property, value, gen);
+        provider.defaultSerializeProperty(property, value, gen);
     }
 
     @Nullable

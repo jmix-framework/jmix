@@ -1,0 +1,47 @@
+/*
+ * Copyright 2026 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@import '../src/mixins/picker-field-actions.css';
+
+:root::before,
+:host::before {
+    --_lumo-jmix-multi-select-combo-box-picker-inject: 1;
+    --_lumo-jmix-multi-select-combo-box-picker-inject-modules:
+    lumo_mixins_field-label,
+    lumo_mixins_field-required,
+    lumo_mixins_field-error-message,
+    lumo_mixins_field-button,
+    lumo_mixins_field-helper,
+    lumo_mixins_field-base,
+    lumo_components_multi-select-combo-box,
+    lumo_mixins_picker-field-actions;
+}
+
+jmix-multi-select-combo-box-picker[readonly][invalid] {
+    --lumo-required-field-indicator-color: var(--lumo-primary-text-color);
+    --vaadin-input-field-invalid-background: transparent;
+    --vaadin-input-field-invalid-hover-highlight: transparent;
+}
+
+jmix-multi-select-combo-box-picker[disabled][invalid] {
+    --lumo-required-field-indicator-color: var(--lumo-primary-text-color);
+    --vaadin-input-field-invalid-background: var(--lumo-contrast-5pct);
+}
+
+jmix-multi-select-combo-box-picker[disabled][has-error-message]::part(error-message),
+jmix-multi-select-combo-box-picker[readonly][has-error-message]::part(error-message) {
+    display: none;
+}

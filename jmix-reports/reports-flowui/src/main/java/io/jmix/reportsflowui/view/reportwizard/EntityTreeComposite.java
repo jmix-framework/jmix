@@ -129,7 +129,7 @@ public class EntityTreeComposite extends Composite<FormLayout>
         reportPropertyHBox.add(reportPropertyName);
         reportPropertyHBox.add(reportPropertyNameSearchButton);
         reportPropertyHBox.setPadding(false);
-        reportPropertyHBox.setClassName("mb-s");
+        reportPropertyHBox.setClassName("report-property-box");
 
         entityTree = uiComponents.create(TreeDataGrid.class);
         entityTree.setDataProvider(new ContainerTreeDataGridItems<>(reportEntityTreeNodeDc, "parent"));
@@ -145,6 +145,7 @@ public class EntityTreeComposite extends Composite<FormLayout>
         formLayout.setHeightFull();
         formLayout.add(reportPropertyHBox);
         formLayout.add(entityTree);
+        formLayout.setClassName("jmix-entity-tree");
 
         return formLayout;
     }

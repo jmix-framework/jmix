@@ -19,9 +19,9 @@ package io.jmix.pivottableflowui.kit.event;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.DomEvent;
 import com.vaadin.flow.component.EventData;
-import elemental.json.JsonObject;
 import io.jmix.pivottableflowui.kit.component.JmixPivotTable;
 import io.jmix.pivottableflowui.kit.component.serialization.JmixPivotTableSerializer;
+import tools.jackson.databind.node.ObjectNode;
 
 /**
  * Describes the PivotTable refresh event. Fires each time the state of the pivot table changes.
@@ -31,11 +31,11 @@ public class PivotTableRefreshEvent extends ComponentEvent<JmixPivotTable> {
 
     public static final String EVENT_NAME = "jmix-pivottable:refresh";
 
-    protected JsonObject detailJson;
+    protected ObjectNode detailJson;
     protected PivotTableRefreshEventDetail detail;
 
     public PivotTableRefreshEvent(JmixPivotTable pivotTable, boolean fromClient,
-                                  @EventData("event.detail") JsonObject detailJson) {
+                                  @EventData("event.detail") ObjectNode detailJson) {
         super(pivotTable, fromClient);
         this.detailJson = detailJson;
     }

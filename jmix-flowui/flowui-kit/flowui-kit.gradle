@@ -25,4 +25,8 @@ dependencies {
     api 'com.google.guava:guava'
     api 'jakarta.annotation:jakarta.annotation-api'
     api("com.vaadin:vaadin-core")
+
+    api 'org.apache.commons:commons-lang3'
+    api 'commons-io:commons-io'
+
 }

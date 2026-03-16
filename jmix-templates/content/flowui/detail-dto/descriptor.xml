@@ -37,7 +37,7 @@ def formXml = api.processSnippet('dto_form.xml',
         <%if (detailFixedFooter) {%>
         </vbox>
         <hbox id="detailActions"
-              classNames="px-m py-s bg-contrast-5">
+              classNames="footer-panel">
         <%} else {%>
         <hbox id="detailActions">
         <%}%>

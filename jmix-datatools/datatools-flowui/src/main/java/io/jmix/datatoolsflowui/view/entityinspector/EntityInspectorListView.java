@@ -31,7 +31,6 @@ import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.data.selection.SelectionEvent;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.shared.Registration;
-import com.vaadin.flow.theme.lumo.LumoUtility;
 import io.jmix.core.*;
 import io.jmix.core.common.datastruct.Pair;
 import io.jmix.core.entity.EntityValues;
@@ -346,7 +345,6 @@ public class EntityInspectorListView extends StandardListView<Object> {
 
     protected SimplePagination createPagination() {
         SimplePagination pagination = uiComponents.create(SimplePagination.class);
-        pagination.addClassName(LumoUtility.Margin.Start.AUTO);
 
         DatatoolsUiProperties.EntityInspectorListView properties = datatoolsProperties.getEntityInspectorListView();
         pagination.setItemsPerPageVisible(properties.isItemsPerPageVisible());
@@ -605,7 +603,12 @@ public class EntityInspectorListView extends StandardListView<Object> {
         Action showEntityInfoAction = createShowEntityInfoAction(dataGrid);
         dataGrid.addAction(showEntityInfoAction);
 
-        buttonsPanel.add(createButton, editButton, removeButton, refreshButton, exportDropdownButton, importUpload);
+        buttonsPanel.addToStart(createButton,
+                editButton,
+                removeButton,
+                refreshButton,
+                exportDropdownButton,
+                importUpload);
 
         initExcelExportAction(dataGrid, button ->
                 buttonsPanel.addComponentAtIndex(buttonsPanel.indexOf(exportDropdownButton), button));
@@ -613,11 +616,11 @@ public class EntityInspectorListView extends StandardListView<Object> {
         if (metadataTools.isSoftDeletable(selectedMeta.getJavaClass())) {
             JmixButton restoreButton = createRestoreButton(dataGrid);
             JmixButton wipeOutButton = createWipeOutButton(dataGrid);
-            buttonsPanel.add(restoreButton, wipeOutButton);
+            buttonsPanel.addToStart(restoreButton, wipeOutButton);
         }
 
         SimplePagination pagination = createPagination();
-        buttonsPanel.add(pagination);
+        buttonsPanel.addToEnd(pagination);
     }
 
     protected String createMultiRowText(String text, int rowLength) {

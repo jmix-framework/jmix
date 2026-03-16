@@ -14,8 +14,23 @@
  * limitations under the License.
  */
 
-
+/* For removal! Works only with legacy @Theme. vaadin-form-layout doesn't support style injection */
 :host([class~='master-detail-layout']) #layout {
   height: inherit;
   align-items: flex-start;
+}
+
+
+vaadin-form-item[theme~='jmix-group-filter-form-item']:not([label-position='top']) {
+  align-items: center;
+}
+
+vaadin-form-item[theme~='jmix-group-filter-form-item']:not([label-position='top'])::part(label) {
+  margin: 0;
+}
+
+vaadin-form-item[theme~='label-align-end']:not([label-position='top'])::part(label) {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }

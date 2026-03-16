@@ -18,10 +18,10 @@ package io.jmix.chartsflowui.kit.component.event;
 
 import com.vaadin.flow.component.DomEvent;
 import com.vaadin.flow.component.EventData;
-import elemental.json.JsonObject;
 import io.jmix.chartsflowui.kit.component.JmixChart;
 import io.jmix.chartsflowui.kit.component.event.dto.ChartRestoreEventDetail;
 import io.jmix.chartsflowui.kit.component.model.toolbox.RestoreFeature;
+import tools.jackson.databind.node.ObjectNode;
 
 /**
  * Event is fired after chart options resets.
@@ -34,7 +34,7 @@ public class ChartRestoreEvent extends AbstractChartEvent<ChartRestoreEventDetai
     public static final String EVENT_NAME = EVENT_NAME_PREFIX + "restore";
 
     public ChartRestoreEvent(JmixChart source, boolean fromClient,
-                             @EventData("event.detail") JsonObject detail) {
+                             @EventData("event.detail") ObjectNode detail) {
         super(source, fromClient, detail, ChartRestoreEventDetail.class);
     }
 }

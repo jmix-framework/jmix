@@ -45,13 +45,14 @@
         <settings auto="true"/>
         <dataLoadCoordinator auto="true"/>
     </facets>
-    <layout expand="contentBox" alignItems="STRETCH" padding="false" spacing="false">
+    <layout expand="contentBox"
+            alignItems="STRETCH" padding="false" spacing="false"
+            classNames="category-attributes-detail-view">
         <vbox id="contentBox" expand="tabSheet" classNames="overflow-auto" padding="false">
             <tabSheet id="tabSheet" width="100%" height="100%"
-                      classNames="category-attributes-detail-main-tab-sheet">
+                      themeNames="no-padding" classNames="main-tab-sheet">
                 <tab id="mainTab" label="msg://mainTab.title">
-                    <vbox height="100%" padding="false"
-                          css="padding: var(--lumo-space-m) var(--lumo-space-m) 0 var(--lumo-space-m);">
+                    <vbox height="100%" classNames="main-tab-wrapper">
                         <hbox id="attributeBox" width="100%">
                             <formLayout id="attributeForm" dataContainer="categoryAttributeDc" width="100%">
                                 <responsiveSteps>
@@ -95,7 +96,7 @@
                                     </actions>
                                 </valuePicker>
                                 <hbox id="enumerationBox" expand="enumerationField" margin="false"
-                                      classNames="items-end">
+                                      alignItems="END">
                                     <textField id="enumerationField"
                                                label="msg://io.jmix.dynattr.model/CategoryAttribute.enumeration"
                                                dataContainer="categoryAttributeDc"
@@ -124,7 +125,8 @@
                                 <checkbox id="isCollectionField" property="isCollection" visible="false"/>
                             </formLayout>
                         </hbox>
-                        <vbox padding="false" height="100%" css="padding-bottom: var(--lumo-space-m)">
+                        <vbox padding="false" height="100%"
+                              classNames="target-views-box">
                             <h3 text="msg://targetViews"/>
                             <html content="msg://visibilityTab.help"/>
                             <hbox classNames="buttons-panel">
@@ -155,7 +157,7 @@
                     </vbox>
                 </tab>
                 <tab id="advancedTab" label="msg://advancedTab.label">
-                    <vbox height="100%" css="padding-bottom: unset">
+                    <vbox height="100%" classNames="advanced-tab-wrapper">
                         <formLayout id="calculatedValuesAndOptionsForm" dataContainer="categoryAttributeDc"
                                     width="100%">
                             <multiSelectComboBoxPicker id="dependsOnAttributesField"
@@ -171,8 +173,8 @@
                             </checkbox>
                             <comboBox id="optionsLoaderTypeField" property="configuration.optionsLoaderType"/>
                         </formLayout>
-                        <formLayout width="100%" css="padding-bottom: var(--lumo-space-m)">
-                            <div width="100%" classNames="flex items-start">
+                        <formLayout width="100%" classNames="script-box">
+                            <flexLayout width="100%" alignItems="START">
                                 <codeEditor id="validationScriptField"
                                             label="msg://io.jmix.dynattr.model/CategoryAttributeConfiguration.validatorGroovyScript"
                                             dataContainer="categoryAttributeDc"
@@ -184,8 +186,8 @@
                                             showGutter="true"
                                             highlightGutterLine="false"
                                             showPrintMargin="false"/>
-                            </div>
-                            <div width="100%" classNames="flex items-start">
+                            </flexLayout>
+                            <flexLayout width="100%" alignItems="START">
                                 <codeEditor id="recalculationScriptField"
                                             label="msg://io.jmix.dynattr.model/CategoryAttributeConfiguration.recalculationScript"
                                             dataContainer="categoryAttributeDc"
@@ -197,8 +199,8 @@
                                             highlightActiveLine="false"
                                             showGutter="true"
                                             mode="GROOVY"/>
-                            </div>
-                            <div width="100%" classNames="flex items-start">
+                            </flexLayout>
+                            <flexLayout width="100%" alignItems="START">
                                 <codeEditor id="optionsLoaderScriptField"
                                             label="msg://io.jmix.dynattr.model/CategoryAttributeConfiguration.optionsLoaderScript"
                                             dataContainer="categoryAttributeDc"
@@ -210,8 +212,8 @@
                                             highlightActiveLine="false"
                                             mode="GROOVY"
                                             showGutter="true"/>
-                            </div>
-                            <div width="100%" classNames="flex items-start">
+                            </flexLayout>
+                            <flexLayout width="100%" alignItems="START">
                                 <codeEditor id="joinClauseField"
                                             label="msg://io.jmix.dynattr.model/CategoryAttribute.joinClause"
                                             dataContainer="categoryAttributeDc" property="joinClause"
@@ -222,8 +224,8 @@
                                             highlightActiveLine="false"
                                             mode="SQL"
                                             showGutter="true"/>
-                            </div>
-                            <div width="100%" classNames="flex items-start">
+                            </flexLayout>
+                            <flexLayout width="100%" alignItems="START">
                                 <codeEditor id="whereClauseField"
                                             label="msg://io.jmix.dynattr.model/CategoryAttribute.whereClause"
                                             dataContainer="categoryAttributeDc" property="whereClause"
@@ -234,7 +236,7 @@
                                             highlightActiveLine="false"
                                             mode="SQL"
                                             showGutter="true"/>
-                            </div>
+                            </flexLayout>
                         </formLayout>
                     </vbox>
                 </tab>
@@ -249,7 +251,7 @@
                 </tab>
             </tabSheet>
         </vbox>
-        <hbox id="detailButtonsBox" classNames="px-m py-s bg-contrast-5">
+        <hbox id="detailButtonsBox" classNames="footer-panel">
             <button action="windowCommitAndClose"/>
             <button action="windowClose"/>
         </hbox>

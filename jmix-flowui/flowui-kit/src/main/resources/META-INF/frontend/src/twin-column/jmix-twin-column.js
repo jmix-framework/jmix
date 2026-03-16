@@ -15,47 +15,56 @@
  */
 
 import '@vaadin/input-container/src/vaadin-input-container.js';
-import { html, PolymerElement } from '@polymer/polymer';
-import { defineCustomElement } from '@vaadin/component-base/src/define.js';
-import { ElementMixin } from '@vaadin/component-base/src/element-mixin.js';
-import { InputFieldMixin } from '@vaadin/field-base/src/input-field-mixin.js';
-import { TooltipController } from '@vaadin/component-base/src/tooltip-controller.js';
-import { ThemableMixin } from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
-import './jmix-twin-column-styles.js';
+import {html, LitElement} from 'lit';
+import {defineCustomElement} from '@vaadin/component-base/src/define.js';
+import {ElementMixin} from '@vaadin/component-base/src/element-mixin.js';
+import {PolylitMixin} from '@vaadin/component-base/src/polylit-mixin.js';
+import {inputFieldShared} from '@vaadin/field-base/src/styles/input-field-shared-styles.js';
+import {LumoInjectionMixin} from '@vaadin/vaadin-themable-mixin/lumo-injection-mixin.js';
+import {InputFieldMixin} from '@vaadin/field-base/src/input-field-mixin.js';
+import {TooltipController} from '@vaadin/component-base/src/tooltip-controller.js';
+import {ThemableMixin} from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
+import {jmixTwinColumnStyles} from "./styles/jmix-twin-column-base-styles";
 
-export class JmixTwinColumn extends InputFieldMixin(ThemableMixin(ElementMixin(PolymerElement))) {
+export class JmixTwinColumn extends InputFieldMixin(ThemableMixin(ElementMixin(PolylitMixin(LumoInjectionMixin(LitElement))))) {
+
     static get is() {
         return 'jmix-twin-column';
     }
 
-    static get template() {
+    static get styles() {
+        return [inputFieldShared, jmixTwinColumnStyles];
+    }
+
+    /** @protected */
+    render() {
         return html`
-        <vaadin-vertical-layout class="jmix-twin-column-container">
-            <div part="label" on-click="focus">
-              <slot name="label"></slot>
-              <span part="required-indicator" aria-hidden="true"></span>
-            </div>
+            <div class="jmix-twin-column-container">
+                <div part="label">
+                    <slot name="label"></slot>
+                    <span part="required-indicator" aria-hidden="true" @click="${this.focus}"></span>
+                </div>
 
-            <div class="jmix-twin-column-input-container">
-                <slot name="items-label"></slot>
-                <slot name="selected-items-label"></slot>
-                <slot name="items"></slot>
-                <slot name="actions"></slot>
-                <slot name="selected-items"></slot>
-            </div>
+                <div class="jmix-twin-column-input-container">
+                    <slot name="items-label"></slot>
+                    <slot name="selected-items-label"></slot>
+                    <slot name="items"></slot>
+                    <slot name="actions"></slot>
+                    <slot name="selected-items"></slot>
+                </div>
 
-            <div part="helper-text">
-              <slot name="helper"></slot>
-            </div>
+                <div part="helper-text">
+                    <slot name="helper"></slot>
+                </div>
 
-            <div part="error-message">
-              <slot name="error-message"></slot>
-            </div>
-        </vaadin-vertical-layout>
+                <div part="error-message">
+                    <slot name="error-message"></slot>
+                </div>
 
-        <slot name="tooltip"></slot>
+                <slot name="tooltip"></slot>
+            </div>
         `;
-      }
+    }
 
     /** @protected */
     ready() {
@@ -67,13 +76,13 @@ export class JmixTwinColumn extends InputFieldMixin(ThemableMixin(ElementMixin(P
             this.getElementsByClassName("jmix-twin-column-selected-items-column")[0]
         ];
 
-        (function(twinColumn) {
+        (function (twinColumn) {
             for (let component of components) {
                 component.addEventListener("focusin", () => {
-                  twinColumn._setFocused(true);
+                    twinColumn._setFocused(true);
                 });
                 component.addEventListener("focusout", () => {
-                  twinColumn._setFocused(false);
+                    twinColumn._setFocused(false);
                 });
             }
         })(this);

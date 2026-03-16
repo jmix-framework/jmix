@@ -40,6 +40,7 @@ import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.model.InstanceContainer;
+import io.jmix.flowui.theme.StyleUtility;
 import io.jmix.flowui.view.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
@@ -321,7 +322,7 @@ public class JpqlFilterConditionDetailView extends FilterConditionDetailView<Jpq
     protected void createHelperButton(JmixTextArea textArea) {
         JmixButton helperButton = uiComponents.create(JmixButton.class);
         helperButton.setIcon(icons.get(JmixFontIcon.QUESTION_CIRCLE));
-        helperButton.addThemeVariants(ButtonVariant.LUMO_ICON, ButtonVariant.LUMO_TERTIARY_INLINE);
+        helperButton.setClassName(StyleUtility.Button.NESTED_BUTTON);
 
         String message = messageBundle.getMessage(
                 "jpqlFilterConditionDetailView." + textArea.getId().orElseThrow() + ".tooltipMessage");

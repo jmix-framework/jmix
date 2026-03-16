@@ -20,9 +20,10 @@ import '@vaadin/checkbox/src/vaadin-checkbox.js';
 import '@vaadin/select/src/vaadin-select.js';
 import '@vaadin/login/src/vaadin-login-form-wrapper.js';
 
-import {html} from '@polymer/polymer/polymer-element.js';
-import {defineCustomElement} from '@vaadin/component-base/src/define.js';
-import {LoginForm} from '@vaadin/login/src/vaadin-login-form.js';
+import { css, html, render } from 'lit';
+import { ifDefined } from 'lit/directives/if-defined.js';
+import { defineCustomElement } from '@vaadin/component-base/src/define.js';
+import { LoginForm } from '@vaadin/login/src/vaadin-login-form.js';
 
 /**
  * ### Styling
@@ -47,105 +48,38 @@ import {LoginForm} from '@vaadin/login/src/vaadin-login-form.js';
  * @fires {CustomEvent} remember-me-changed - Fired when "rememberMeCheckbox" is checked or unchecked.
  * @fires {CustomEvent} locale-selection-changed - Fired when selection in "localesSelect" is changed
  */
-// CAUTION: copied from @vaadin/login [last update Vaadin 24.9.0]
+// CAUTION: copied from @vaadin/login [last update Vaadin 25.0.0]
 class JmixLoginForm extends LoginForm {
-    static get template() {
-        return html`
-            <style>
-                vaadin-login-form-wrapper > form > * {
-                    width: 100%;
-                }
-            </style>
-            <vaadin-login-form-wrapper
-              id="vaadinLoginFormWrapper"
-              theme$="[[_theme]]"
-              error="[[error]]"
-              i18n="[[__effectiveI18n]]"
-              heading-level="[[headingLevel]]"
-            >
-                <form method="POST" action$="[[action]]" on-formdata="_onFormData" slot="form">
-                    <input id="csrf" type="hidden"/>
-                    <vaadin-text-field
-                            name="username"
-                            label="[[__effectiveI18n.form.username]]"
-                            error-message="[[__effectiveI18n.errorMessage.username]]"
-                            id="vaadinLoginUsername"
-                            required
-                            on-keydown="_handleInputKeydown"
-                            autocapitalize="none"
-                            autocorrect="off"
-                            spellcheck="false"
-                            autocomplete="username"
-                            value="[[username]]"
-                            manual-validation
-                    >
-                        <input type="text" slot="input" on-keyup="_handleInputKeyup"/>
-                    </vaadin-text-field>
-
-                    <vaadin-password-field
-                            name="password"
-                            label="[[__effectiveI18n.form.password]]"
-                            error-message="[[__effectiveI18n.errorMessage.password]]"
-                            id="vaadinLoginPassword"
-                            required
-                            on-keydown="_handleInputKeydown"
-                            spellcheck="false"
-                            autocomplete="current-password"
-                            value="[[password]]"
-                            manual-validation
-                    >
-                        <input type="password" slot="input" on-keyup="_handleInputKeyup"/>
-                    </vaadin-password-field>
-
-                    <div id="additionalFields" class="jmix-login-form-additional-fields-container">
-                        <vaadin-checkbox id="rememberMeCheckbox"
-                                         label="[[__effectiveI18n.form.rememberMe]]"
-                                         class="jmix-login-form-remember-me"></vaadin-checkbox>
-                        <vaadin-select id="localesSelect"
-                                       class="jmix-login-form-locales-select">
-                        </vaadin-select>
-                    </div>
-                </form>
-
-                <vaadin-button slot="submit" theme="primary contained submit" on-click="submit" disabled$="[[disabled]]">
-                    [[__effectiveI18n.form.submit]]
-                </vaadin-button>
-
-                <vaadin-button
-                        slot="forgot-password"
-                        theme="tertiary small"
-                        on-click="_onForgotPasswordClick"
-                        hidden$="[[noForgotPassword]]"
-                >
-                    [[__effectiveI18n.form.forgotPassword]]
-                </vaadin-button>
-            </vaadin-login-form-wrapper>
-        `;
-    }
-
     static get is() {
         return 'jmix-login-form';
+    }
+
+    static get styles() {
+        return css`
+            vaadin-login-form-wrapper > form > * {
+                width: 100%;
+            }
+        `;
     }
 
     static get properties() {
         return {
             username: {
                 type: String,
-                value: null,
-                notify: true
+                notify: true,
             },
             password: {
                 type: String,
-                value: null,
-                notify: true
+                notify: true,
             },
             rememberMeVisibility: {
                 type: Boolean,
-                value: true
+                value: true,
+                notify: true,
             },
             localesVisibility: {
                 type: Boolean,
-                notify: true
+                notify: true,
             },
             locales: {
                 type: Object,
@@ -154,64 +88,244 @@ class JmixLoginForm extends LoginForm {
         }
     }
 
-    static get observers() {
-        return [
-            '_onVisibilityPropertiesChanged(rememberMeVisibility, localesVisibility)',
-            `_onLocalesPropertyChanged(locales)`
-        ]
+    /**
+     * @protected
+     */
+    get _additionalFieldsBox() {
+      return this.querySelector('#additionalFields');
     }
 
-    ready() {
-        super.ready();
-        this.$.localesSelect.addEventListener('value-changed', (e) => this._localeValueChanged(e));
-        this.$.rememberMeCheckbox.addEventListener('checked-changed', (e) => this._onRememberMeValueChange(e));
-
-        this.$.localesSelect.jmixUserOriginated = true;
-        this.$.rememberMeCheckbox.jmixUserOriginated = true;
+    /**
+     * @protected
+     */
+    get _rememberMeCheckbox() {
+      return this.querySelector('#rememberMeCheckbox');
     }
 
-    _onVisibilityPropertiesChanged(rememberMeVisibility, localesVisibility) {
-        this.$.additionalFields.hidden = !rememberMeVisibility && !localesVisibility;
-        this.$.rememberMeCheckbox.hidden = !rememberMeVisibility;
-        this.$.localesSelect.hidden = !localesVisibility;
+    /**
+     * @protected
+     */
+    get _localesSelect() {
+      return this.querySelector('#localesSelect');
     }
 
-    _onLocalesPropertyChanged(items) {
-        this.$.localesSelect.items = items;
+    /**
+     * @protected
+     */
+    updated(props) {
+        super.updated(props);
+
+        if (props.has('username')) {
+            const oldUsername = props.get('username');
+            this._onUsernameChanged(oldUsername, this.username);
+        }
+        if (props.has('password')) {
+            const oldPassword = props.get('password');
+            this._onPasswordChanged(oldPassword, this.password);
+        }
+        if (props.has('locales')) {
+            this._onLocalesChanged(this.locales);
+        }
+        if (props.has('rememberMeVisibility') || props.has('localesVisibility')) {
+            this._onVisibilityPropertiesChanged(this.rememberMeVisibility, this.localesVisibility);
+        }
+        if (props.has('i18n')) {
+            this._onI18nChanged(this.i18n);
+        }
     }
 
+    /**
+     * CAUTION: copied from @vaadin/login/src/vaadin-login-form-mixin.js [last update Vaadin 25.0.0]
+     * @override
+     */
+    __renderSlottedForm() {
+      render(
+        html`
+          <form method="POST" action="${ifDefined(this.action)}" @formdata="${this._onFormData}" slot="form">
+            <input id="csrf" type="hidden" />
+            <vaadin-text-field
+              name="username"
+              .label="${this.__effectiveI18n.form.username}"
+              .errorMessage="${this.__effectiveI18n.errorMessage.username}"
+              id="vaadinLoginUsername"
+              required
+              @keydown="${this._handleInputKeydown}"
+              autocapitalize="none"
+              autocorrect="off"
+              spellcheck="false"
+              autocomplete="username"
+              manual-validation
+            >
+              <input type="text" slot="input" @keyup="${this._handleInputKeyup}" />
+            </vaadin-text-field>
+
+            <vaadin-password-field
+              name="password"
+              .label="${this.__effectiveI18n.form.password}"
+              .errorMessage="${this.__effectiveI18n.errorMessage.password}"
+              id="vaadinLoginPassword"
+              required
+              @keydown="${this._handleInputKeydown}"
+              spellcheck="false"
+              autocomplete="current-password"
+              manual-validation
+            >
+              <input type="password" slot="input" @keyup="${this._handleInputKeyup}" />
+            </vaadin-password-field>
+
+            ${this._renderAdditionalFields()}
+          </form>
+
+          <vaadin-button slot="submit" theme="primary submit" @click="${this.submit}" .disabled="${this.disabled}">
+            ${this.__effectiveI18n.form.submit}
+          </vaadin-button>
+
+          <vaadin-button
+            slot="forgot-password"
+            theme="tertiary small"
+            @click="${this._onForgotPasswordClick}"
+            ?hidden="${this.noForgotPassword}"
+          >
+            ${this.__effectiveI18n.form.forgotPassword}
+          </vaadin-button>
+        `,
+        this,
+        { host: this },
+      );
+    }
+
+    _renderAdditionalFields() {
+        return html`
+            <div id="additionalFields" class="jmix-login-form-additional-fields-container">
+                <vaadin-checkbox
+                    id="rememberMeCheckbox"
+                    class="jmix-login-form-remember-me"
+                    @checked-changed="${this._onRememberMeValueChange}"
+                ></vaadin-checkbox>
+                <vaadin-select
+                    id="localesSelect"
+                    class="jmix-login-form-locales-select"
+                    @value-changed="${this._localeValueChanged}"
+                ></vaadin-select>
+            </div>
+        `;
+    }
+
+    /**
+     * Selects locale in the locales component.
+     * Server callable function.
+     *
+     * @param {string} localeString the locale to select
+     * @public
+     */
     selectLocale(localeString) {
-        const currentValue = this.$.localesSelect.value;
+        if (!this._localesSelect) {
+            return;
+        }
+
+        const currentValue = this._localesSelect.value;
 
         if (localeString && currentValue !== localeString) {
-            this.$.localesSelect.jmixUserOriginated = false;
-            this.$.localesSelect.value = localeString;
+            this._localesSelect.jmixUserOriginated = false;
+            this._localesSelect.value = localeString;
         }
     }
 
+    /**
+     * Sets the rememberMeCheckbox value.
+     * Server callable function.
+     *
+     * @param {boolean} rememberMe whether checkbox should be active or inactive
+     * @public
+     */
     setRememberMe(rememberMe) {
-        if (this.$.rememberMeCheckbox.checked !== rememberMe) {
-            this.$.rememberMeCheckbox.jmixUserOriginated = false;
-            this.$.rememberMeCheckbox.checked = rememberMe;
+        if (!this.rememberMeCheckbox) {
+            return;
+        }
+
+        if (this.rememberMeCheckbox.checked !== rememberMe) {
+            this.rememberMeCheckbox.jmixUserOriginated = false;
+            this.rememberMeCheckbox.checked = rememberMe;
         }
     }
 
-    _onRememberMeValueChange(e) {
-        if (this.$.rememberMeCheckbox.jmixUserOriginated) {
-            const customEvent = new CustomEvent('remember-me-changed', {detail: {checked: e.detail.value}});
-            this.dispatchEvent(customEvent);
+    /**
+     * Observer for 'username' property change.
+     *
+     * @param {string} oldUsername previous username
+     * @param {string} username new username
+     * @protected
+     */
+    _onUsernameChanged(oldUsername, username) {
+        this._userNameField.value = username;
+    }
+
+    /**
+     * Observer for 'password' property change.
+     *
+     * @param {string} oldPassword previous password
+     * @param {string} password new password
+     * @protected
+     */
+    _onPasswordChanged(oldPassword, password) {
+        this._passwordField.value = password;
+    }
+
+    /**
+     * Observer for 'locales' property change.
+     *
+     * @param {string} items new items
+     * @protected
+     */
+    _onLocalesChanged(items) {
+        if (this._localesSelect) {
+            this._localesSelect.items = items;
         }
-        this.$.rememberMeCheckbox.jmixUserOriginated = true;
+    }
+
+    /**
+     * Observer for 'rememberMeVisibility' and 'localesVisibility' properties change.
+     *
+     * @param {boolean} localesVisibility new value for locales visibility
+     * @param {boolean} rememberMeVisibility new value for rememberMe visibility
+     * @protected
+     */
+    _onVisibilityPropertiesChanged(rememberMeVisibility, localesVisibility) {
+        this._additionalFieldsBox.hidden = !rememberMeVisibility && !localesVisibility;
+        this._rememberMeCheckbox.hidden = !rememberMeVisibility;
+        this._localesSelect.hidden = !localesVisibility;
+    }
+
+    /**
+     * Observer for 'i18n' property change.
+     *
+     * @param {object} i18n object contains localized labels
+     * @protected
+     */
+    _onI18nChanged(i18n) {
+        this._rememberMeCheckbox.label = this.i18n.form.rememberMe;
     }
 
     _localeValueChanged(e) {
         const localeString = e.detail.value;
+        // The first event after initialization is fired for empty value.
+        if (!localeString) {
+            return;
+        }
 
-        if (this.$.localesSelect.jmixUserOriginated) {
+        if (this._localesSelect.jmixUserOriginated) {
             const customEvent = new CustomEvent('locale-selection-changed', {detail: {localeString: localeString}});
             this.dispatchEvent(customEvent);
         }
-        this.$.localesSelect.jmixUserOriginated = true;
+        this._localesSelect.jmixUserOriginated = true;
+    }
+
+    _onRememberMeValueChange(e) {
+        if (this._rememberMeCheckbox.jmixUserOriginated) {
+            const customEvent = new CustomEvent('remember-me-changed', {detail: {checked: e.detail.value}});
+            this.dispatchEvent(customEvent);
+        }
+        this._rememberMeCheckbox.jmixUserOriginated = true;
     }
 }
 

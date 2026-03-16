@@ -2203,7 +2203,6 @@
             </xs:simpleType>
             <xs:simpleType>
                 <xs:restriction base="xs:string">
-                    <xs:enumeration value="icon-on-top"/>
                     <xs:enumeration value="centered"/>
                     <xs:enumeration value="small"/>
                     <xs:enumeration value="minimal"/>
@@ -2221,7 +2220,6 @@
             </xs:simpleType>
             <xs:simpleType>
                 <xs:restriction base="xs:string">
-                    <xs:enumeration value="icon-on-top"/>
                     <xs:enumeration value="centered"/>
                     <xs:enumeration value="small"/>
                     <xs:enumeration value="minimal"/>
@@ -2490,10 +2488,6 @@
         <xs:attribute name="clickShortcut" type="xs:string"/>
     </xs:attributeGroup>
 
-    <xs:attributeGroup name="hasOverlayClass">
-        <xs:attribute name="overlayClass" type="xs:string"/>
-    </xs:attributeGroup>
-
     <xs:attributeGroup name="hasOverlayWidth">
         <xs:attribute name="overlayWidth" type="xs:string"/>
     </xs:attributeGroup>
@@ -2739,7 +2733,6 @@
                 <xs:attributeGroup ref="hasEnabled"/>
                 <xs:attributeGroup ref="hasFocusableAttributes"/>
                 <xs:attributeGroup ref="hasClassNames"/>
-                <xs:attributeGroup ref="hasOverlayClass"/>
                 <xs:attributeGroup ref="hasOverlayWidth"/>
                 <xs:attributeGroup ref="hasValidation"/>
                 <xs:attributeGroup ref="hasHelperText"/>
@@ -2776,7 +2769,6 @@
                 <xs:attributeGroup ref="hasFocusableAttributes"/>
                 <xs:attributeGroup ref="hasTitle"/>
                 <xs:attributeGroup ref="hasClassNames"/>
-                <xs:attributeGroup ref="hasOverlayClass"/>
                 <xs:attributeGroup ref="hasEnabled"/>
             </xs:extension>
         </xs:complexContent>
@@ -3021,7 +3013,6 @@
         <xs:attribute name="css" type="xs:string"/>
 
         <xs:attributeGroup ref="hasId"/>
-        <xs:attributeGroup ref="hasEnabled"/>
         <xs:attributeGroup ref="hasClassNames"/>
     </xs:complexType>
 
@@ -3163,7 +3154,6 @@
                 <xs:attributeGroup ref="hasEnabled"/>
                 <xs:attributeGroup ref="hasTitle"/>
                 <xs:attributeGroup ref="hasClassNames"/>
-                <xs:attributeGroup ref="hasOverlayClass"/>
                 <xs:attributeGroup ref="hasFocusableAttributes"/>
 
                 <xs:attribute name="themeNames" type="userMenuThemeNames"/>
@@ -3684,7 +3674,6 @@
                 <xs:attributeGroup ref="hasRequired"/>
                 <xs:attributeGroup ref="hasFocusableAttributes"/>
                 <xs:attributeGroup ref="hasPlaceholder"/>
-                <xs:attributeGroup ref="hasOverlayClass"/>
                 <xs:attributeGroup ref="hasOverlayWidth"/>
                 <xs:attributeGroup ref="hasAriaLabel"/>
                 <xs:attributeGroup ref="hasValidation"/>
@@ -3722,7 +3711,6 @@
                 <xs:attributeGroup ref="hasFocusableAttributes"/>
                 <xs:attributeGroup ref="hasPlaceholder"/>
                 <xs:attributeGroup ref="hasValidation"/>
-                <xs:attributeGroup ref="hasOverlayClass"/>
                 <xs:attributeGroup ref="hasOverlayWidth"/>
                 <xs:attributeGroup ref="hasAriaLabel"/>
             </xs:extension>
@@ -3790,7 +3778,6 @@
                 <xs:attributeGroup ref="hasRequired"/>
                 <xs:attributeGroup ref="hasPlaceholder"/>
                 <xs:attributeGroup ref="hasFocusableAttributes"/>
-                <xs:attributeGroup ref="hasOverlayClass"/>
                 <xs:attributeGroup ref="hasAriaLabel"/>
             </xs:extension>
         </xs:complexContent>
@@ -3821,7 +3808,6 @@
                 <xs:attributeGroup ref="hasRequired"/>
                 <xs:attributeGroup ref="hasFocusableAttributes"/>
                 <xs:attributeGroup ref="hasPlaceholder"/>
-                <xs:attributeGroup ref="hasOverlayClass"/>
                 <xs:attributeGroup ref="hasAriaLabel"/>
             </xs:extension>
         </xs:complexContent>
@@ -3849,7 +3835,6 @@
 
                 <xs:attributeGroup ref="hasRequired"/>
                 <xs:attributeGroup ref="hasFocusableAttributes"/>
-                <xs:attributeGroup ref="hasOverlayClass"/>
                 <xs:attributeGroup ref="hasAriaLabel"/>
             </xs:extension>
         </xs:complexContent>
@@ -4272,7 +4257,6 @@
                 <xs:attributeGroup ref="hasRequired"/>
                 <xs:attributeGroup ref="hasFocusableAttributes"/>
                 <xs:attributeGroup ref="hasClassNames"/>
-                <xs:attributeGroup ref="hasOverlayClass"/>
                 <xs:attributeGroup ref="hasOverlayWidth"/>
                 <xs:attributeGroup ref="hasEnabled"/>
                 <xs:attributeGroup ref="hasHelperText"/>

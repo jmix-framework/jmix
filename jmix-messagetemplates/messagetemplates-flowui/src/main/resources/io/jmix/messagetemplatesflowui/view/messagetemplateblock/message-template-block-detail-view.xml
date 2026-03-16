@@ -32,7 +32,7 @@
     <facets>
         <dataLoadCoordinator auto="true"/>
     </facets>
-    <layout>
+    <layout classNames="message-template-block-detail-view">
         <formLayout id="form" dataContainer="messageTemplateBlockDc">
             <textField id="nameField" property="name"/>
             <textField id="labelField" property="label"/>
@@ -55,7 +55,8 @@
             </tab>
             <tab id="attributesTab" label="msg://tabSheet.attributesTab.label">
                 <codeEditor id="codeEditor" width="100%" height="100%"
-                            mode="JSON" css="padding: unset;"
+                            mode="JSON"
+                            classNames="attributes-editor"
                             showPrintMargin="false"
                             dataContainer="messageTemplateBlockDc" property="attributes"/>
             </tab>

@@ -65,19 +65,19 @@ public class FullCalendarUrlQueryParametersBinder extends AbstractUrlQueryParame
     @Override
     public void updateState(QueryParameters queryParameters) {
         Map<String, List<String>> parameters = queryParameters.getParameters();
-        if (parameters.containsKey(getCalendarDisplayModeParam()) || parameters.containsKey(getCalendarDisplayModeParamInternal())) {
-            String serializedDisplayMode = parameters.containsKey(getCalendarDisplayModeParamInternal())
-                    ? parameters.get(getCalendarDisplayModeParamInternal()).get(0)
+        if (parameters.containsKey(getLegacyCalendarDisplayModeParam()) || parameters.containsKey(getCalendarDisplayModeParam())) {
+            String serializedDisplayMode = parameters.containsKey(getCalendarDisplayModeParam())
+                    ? parameters.get(getCalendarDisplayModeParam()).get(0)
                     // the fallback option should be removed in future versions
-                    : parameters.get(getCalendarDisplayModeParam()).get(0);
+                    : parameters.get(getLegacyCalendarDisplayModeParam()).get(0);
             String displayModeId = urlParamSerializer.deserialize(String.class, serializedDisplayMode);
 
             fullCalendar.setCalendarDisplayMode(FullCalendarUtils.getDisplayMode(fullCalendar, displayModeId));
         }
-        if (parameters.containsKey(getCalendarDateParam()) || parameters.containsKey(getCalendarDateParamInternal())) {
-            String serializedNavigateToDate = parameters.containsKey(getCalendarDateParamInternal())
-                    ? parameters.get(getCalendarDateParamInternal()).get(0)
-                    : parameters.get(getCalendarDateParam()).get(0);
+        if (parameters.containsKey(getLegacyCalendarDateParam()) || parameters.containsKey(getCalendarDateParam())) {
+            String serializedNavigateToDate = parameters.containsKey(getCalendarDateParam())
+                    ? parameters.get(getCalendarDateParam()).get(0)
+                    : parameters.get(getLegacyCalendarDateParam()).get(0);
             LocalDate date = urlParamSerializer.deserialize(LocalDate.class, serializedNavigateToDate);
 
             fullCalendar.navigateToDate(date);
@@ -85,15 +85,15 @@ public class FullCalendarUrlQueryParametersBinder extends AbstractUrlQueryParame
     }
 
     /**
-     * @deprecated use {@link #getCalendarDisplayModeParamInternal()} instead
+     * @deprecated use {@link #getCalendarDisplayModeParam()} instead
      */
     @Deprecated(since = "2.8", forRemoval = true)
-    public String getCalendarDisplayModeParam() {
+    public String getLegacyCalendarDisplayModeParam() {
         return Strings.isNullOrEmpty(calendarDisplayModeParam) ? CALENDAR_DISPLAY_MODE_PARAM : calendarDisplayModeParam;
     }
 
-    protected String getCalendarDisplayModeParamInternal() {
-        return getOwnerId("calendar") + "_" + getCalendarDisplayModeParam();
+    public String getCalendarDisplayModeParam() {
+        return getOwnerId("calendar") + "_" + getLegacyCalendarDisplayModeParam();
     }
 
     public void setCalendarDisplayModeParam(@Nullable String calendarDisplayModeParam) {
@@ -101,15 +101,15 @@ public class FullCalendarUrlQueryParametersBinder extends AbstractUrlQueryParame
     }
 
     /**
-     * @deprecated use {@link #getCalendarDateParamInternal()} instead
+     * @deprecated use {@link #getCalendarDateParam()} instead
      */
     @Deprecated(since = "2.8", forRemoval = true)
-    public String getCalendarDateParam() {
+    public String getLegacyCalendarDateParam() {
         return Strings.isNullOrEmpty(calendarDateParam) ? CALENDAR_DATE_PARAM : calendarDateParam;
     }
 
-    protected String getCalendarDateParamInternal() {
-        return getOwnerId("calendar") + "_" + getCalendarDateParam();
+    public String getCalendarDateParam() {
+        return getOwnerId("calendar") + "_" + getLegacyCalendarDateParam();
     }
 
     public void setCalendarDateParam(@Nullable String calendarDateParam) {
@@ -131,8 +131,8 @@ public class FullCalendarUrlQueryParametersBinder extends AbstractUrlQueryParame
     public ImmutableMap<String, String> serializeQueryParameters(CalendarDisplayMode calendarDisplayMode,
                                                                  LocalDate localDate) {
         return ImmutableMap.of(
-                getCalendarDisplayModeParamInternal(), urlParamSerializer.serialize(calendarDisplayMode.getId()),
-                getCalendarDateParamInternal(), urlParamSerializer.serialize(localDate)
+                getCalendarDisplayModeParam(), urlParamSerializer.serialize(calendarDisplayMode.getId()),
+                getCalendarDateParam(), urlParamSerializer.serialize(localDate)
         );
     }
 }

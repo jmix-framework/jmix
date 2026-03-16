@@ -229,8 +229,8 @@ public class MenuItem {
     /**
      * Sets the icon associated with this menu item.
      *
-     * @param iconName the icon to associate with the menu item,
-     *                 or {@code null} if no icon is to be set
+     * @param icon the icon to associate with the menu item,
+     *             or {@code null} if no icon is to be set
      */
     public void setIcon(@Nullable Component icon) {
         setIconComponent(icon);
@@ -256,8 +256,8 @@ public class MenuItem {
     /**
      * Sets the icon associated with this menu item.
      *
-     * @param iconName the icon to associate with the menu item,
-     *                 or {@code null} if no icon is to be set
+     * @param icon the icon to associate with the menu item,
+     *             or {@code null} if no icon is to be set
      * @deprecated use {@link #setIcon(Component)} instead
      */
     @Deprecated(since = "3.0", forRemoval = true)

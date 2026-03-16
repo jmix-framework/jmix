@@ -26,6 +26,7 @@ import io.jmix.oidc.filter.OidcResourceServerSecurityFilterChainCustomizer;
 import io.jmix.oidc.filter.OidcVaadinSecurityFilterChainCustomizer;
 import io.jmix.oidc.jwt.JmixJwtAuthenticationConverter;
 import io.jmix.oidc.resourceserver.OidcResourceServerEventSecurityFilter;
+import io.jmix.oidc.user.JmixOidcUser;
 import io.jmix.oidc.userinfo.DefaultJmixOidcUserService;
 import io.jmix.oidc.userinfo.JmixOidcUserService;
 import io.jmix.oidc.usermapper.DefaultOidcUserMapper;
@@ -61,7 +62,7 @@ public class OidcAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(JmixOidcUserService.class)
-    public JmixOidcUserService oidcUserService(OidcUserMapper oidcUserMapper) {
+    public JmixOidcUserService oidcUserService(OidcUserMapper<? extends JmixOidcUser> oidcUserMapper) {
         return new DefaultJmixOidcUserService(oidcUserMapper);
     }
 

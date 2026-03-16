@@ -85,7 +85,7 @@ public class JmixEclipseLinkQuery<E> implements JmixQuery<E> {
     protected List<AdditionalCriteriaProvider> additionalCriteriaProviders;
     protected QueryParamValuesManager queryParamValuesManager;
 
-    protected JpaQuery query;
+    protected JpaQuery<E> query;
     protected boolean isNative;
     protected String queryString;
     protected String transformedQueryString;
@@ -274,6 +274,36 @@ public class JmixEclipseLinkQuery<E> implements JmixQuery<E> {
         checkState();
         this.lockMode = lockMode;
         return this;
+    }
+
+    @Override
+    public TypedQuery<E> setCacheRetrieveMode(CacheRetrieveMode cacheRetrieveMode) {
+        return null; //TODO [SB4]
+    }
+
+    @Override
+    public TypedQuery<E> setCacheStoreMode(CacheStoreMode cacheStoreMode) {
+        return null; //TODO [SB4]
+    }
+
+    @Override
+    public CacheRetrieveMode getCacheRetrieveMode() {
+        return null; //TODO [SB4]
+    }
+
+    @Override
+    public CacheStoreMode getCacheStoreMode() {
+        return null; //TODO [SB4]
+    }
+
+    @Override
+    public TypedQuery<E> setTimeout(Integer integer) {
+        return null; //TODO [SB4]
+    }
+
+    @Override
+    public Integer getTimeout() {
+        return 0; //TODO [SB4]
     }
 
     @Override

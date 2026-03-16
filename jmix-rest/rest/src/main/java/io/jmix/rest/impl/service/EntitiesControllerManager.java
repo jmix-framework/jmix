@@ -484,7 +484,7 @@ public class EntitiesControllerManager {
 
         Object entity = createEntityFromJson(metaClass, entityJson);
 
-        UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(request.getRequestURL().toString())
+        UriComponents uriComponents = UriComponentsBuilder.fromUriString(request.getRequestURL().toString())
                 .path("/{id}")
                 .buildAndExpand(EntityValues.getId(entity).toString());
 
@@ -524,7 +524,7 @@ public class EntitiesControllerManager {
             }
         }
 
-        UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(request.getRequestURL().toString()).buildAndExpand();
+        UriComponents uriComponents = UriComponentsBuilder.fromUriString(request.getRequestURL().toString()).buildAndExpand();
         String bodyJson = createEntitiesJson(mainCollectionEntity, metaClass, responseFetchPlan, modelVersion);
 
         return new ResponseInfo(uriComponents.toUri(), bodyJson);

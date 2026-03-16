@@ -155,7 +155,7 @@ public class FileTransferServiceImpl implements FileTransferService {
                                                                           FileRef fileRef, String filename, long size) {
         FileInfoResponse fileInfo = new FileInfoResponse(fileRef.toString(), filename, size);
 
-        UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(request.getRequestURL().toString())
+        UriComponents uriComponents = UriComponentsBuilder.fromUriString(request.getRequestURL().toString())
                 .queryParam("fileRef", URLEncodeUtils.encodeUtf8(fileRef.toString()))
                 .buildAndExpand();
 

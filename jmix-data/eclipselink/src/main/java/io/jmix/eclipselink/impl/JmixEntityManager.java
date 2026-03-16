@@ -30,12 +30,9 @@ import io.jmix.data.impl.EntityListenerManager;
 import io.jmix.data.impl.EntityListenerType;
 import io.jmix.data.impl.converters.AuditConversionService;
 import io.jmix.eclipselink.persistence.AdditionalCriteriaProvider;
+import jakarta.persistence.criteria.*;
 import org.springframework.lang.Nullable;
 import jakarta.persistence.*;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaDelete;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.CriteriaUpdate;
 import jakarta.persistence.metamodel.Metamodel;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
@@ -177,6 +174,16 @@ public class JmixEntityManager implements EntityManager {
     }
 
     @Override
+    public <T> T find(Class<T> aClass, Object o, FindOption... findOptions) {
+        return null; //TODO [SB4]
+    }
+
+    @Override
+    public <T> T find(EntityGraph<T> entityGraph, Object o, FindOption... findOptions) {
+        return null; //TODO [SB4]
+    }
+
+    @Override
     public <T> T getReference(Class<T> entityClass, Object primaryKey) {
         //noinspection unchecked
         Class<T> effectiveClass = (Class<T>) extendedEntities.getEffectiveClass(entityClass);
@@ -184,6 +191,11 @@ public class JmixEntityManager implements EntityManager {
         T reference = delegate.getReference(effectiveClass, primaryKey);
         ((Entity) reference).__getEntityEntry().setNew(false);
         return reference;
+    }
+
+    @Override
+    public <T> T getReference(T t) {
+        return null; //TODO [SB4]
     }
 
     @Override
@@ -214,6 +226,11 @@ public class JmixEntityManager implements EntityManager {
     }
 
     @Override
+    public void lock(Object o, LockModeType lockModeType, LockOption... lockOptions) {
+        //TODO [SB4]
+    }
+
+    @Override
     public void refresh(Object entity) {
         delegate.refresh(entity);
     }
@@ -231,6 +248,11 @@ public class JmixEntityManager implements EntityManager {
     @Override
     public void refresh(Object entity, LockModeType lockMode, Map<String, Object> properties) {
         delegate.refresh(entity, lockMode, properties);
+    }
+
+    @Override
+    public void refresh(Object o, RefreshOption... refreshOptions) {
+        //TODO [SB4]
     }
 
     @Override
@@ -254,6 +276,26 @@ public class JmixEntityManager implements EntityManager {
     @Override
     public LockModeType getLockMode(Object entity) {
         return delegate.getLockMode(entity);
+    }
+
+    @Override
+    public void setCacheRetrieveMode(CacheRetrieveMode cacheRetrieveMode) {
+        //TODO [SB4]
+    }
+
+    @Override
+    public void setCacheStoreMode(CacheStoreMode cacheStoreMode) {
+        //TODO [SB4]
+    }
+
+    @Override
+    public CacheRetrieveMode getCacheRetrieveMode() {
+        return null; //TODO [SB4]
+    }
+
+    @Override
+    public CacheStoreMode getCacheStoreMode() {
+        return null; //TODO [SB4]
     }
 
     @Override
@@ -282,6 +324,11 @@ public class JmixEntityManager implements EntityManager {
     }
 
     @Override
+    public <T> TypedQuery<T> createQuery(CriteriaSelect<T> criteriaSelect) {
+        return null; //TODO [SB4]
+    }
+
+    @Override
     public Query createQuery(CriteriaUpdate updateQuery) {
         return delegate.createQuery(updateQuery);
     }
@@ -304,6 +351,11 @@ public class JmixEntityManager implements EntityManager {
     @Override
     public <T> TypedQuery<T> createNamedQuery(String name, Class<T> resultClass) {
         return delegate.createNamedQuery(name, resultClass);
+    }
+
+    @Override
+    public <T> TypedQuery<T> createQuery(TypedQueryReference<T> typedQueryReference) {
+        return null; //TODO [SB4]
     }
 
     @Override
@@ -409,6 +461,16 @@ public class JmixEntityManager implements EntityManager {
     @Override
     public <T> List<EntityGraph<? super T>> getEntityGraphs(Class<T> entityClass) {
         return delegate.getEntityGraphs(entityClass);
+    }
+
+    @Override
+    public <C> void runWithConnection(ConnectionConsumer<C> connectionConsumer) {
+        //TODO [SB4]
+    }
+
+    @Override
+    public <C, T> T callWithConnection(ConnectionFunction<C, T> connectionFunction) {
+        return null; //TODO [SB4]
     }
 
     private void internalPersist(Object entity) {

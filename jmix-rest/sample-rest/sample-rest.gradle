@@ -41,6 +41,7 @@ dependencies {
 
     testImplementation project(':framework-test-support')
     testImplementation('org.springframework.boot:spring-boot-starter-test')
+    testImplementation('org.springframework.boot:spring-boot-starter-webmvc-test')
 
     testImplementation 'org.spockframework:spock-core'
     testImplementation 'org.spockframework:spock-spring'

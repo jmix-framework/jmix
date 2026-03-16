@@ -23,27 +23,26 @@ import com.vaadin.flow.router.internal.RouteUtil;
 import com.vaadin.flow.server.VaadinServletContext;
 import com.vaadin.flow.spring.security.VaadinDefaultRequestCache;
 import com.vaadin.flow.spring.security.VaadinWebSecurity;
+import io.jmix.core.H2ConsoleProperties;
 import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewRegistry;
 import io.jmix.security.configurer.JmixRequestCacheRequestMatcher;
 import io.jmix.security.util.JmixHttpSecurityUtils;
+import jakarta.servlet.DispatcherType;
 import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.h2.H2ConsoleProperties;
-import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.savedrequest.RequestCache;
-import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
-import org.springframework.security.web.util.matcher.*;
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 import java.util.Collections;
 import java.util.List;
@@ -59,7 +58,6 @@ public class FlowuiVaadinWebSecurity extends VaadinWebSecurity {
     protected UiProperties uiProperties;
     protected ViewRegistry viewRegistry;
     protected ApplicationContext applicationContext;
-    protected ServerProperties serverProperties;
     protected H2ConsoleProperties h2ConsoleProperties;
     protected ServletContext servletContext;
     protected List<JmixRequestCacheRequestMatcher> requestCacheRequestMatchers;
@@ -77,11 +75,6 @@ public class FlowuiVaadinWebSecurity extends VaadinWebSecurity {
     @Autowired
     public void setViewRegistry(ViewRegistry viewRegistry) {
         this.viewRegistry = viewRegistry;
-    }
-
-    @Autowired
-    public void setServerProperties(ServerProperties serverProperties) {
-        this.serverProperties = serverProperties;
     }
 
     @Autowired(required = false)
@@ -121,7 +114,7 @@ public class FlowuiVaadinWebSecurity extends VaadinWebSecurity {
         JmixHttpSecurityUtils.configureRememberMe(http);
         JmixHttpSecurityUtils.configureFrameOptions(http);
 
-        http.authorizeHttpRequests(urlRegistry -> {
+        /*http.authorizeHttpRequests(urlRegistry -> {
             //We need such request matcher here in order to permit access to login page when a query parameter is passed.
             //For example, in case of using the multi-tenancy add-on we need to pass the query parameter: /login?tenantId=mytenant
             //By default, only access to /login is allowed and access to /login?someParam=someVal is blocked. The request
@@ -133,6 +126,15 @@ public class FlowuiVaadinWebSecurity extends VaadinWebSecurity {
             MvcRequestMatcher.Builder mvcRequestMatcherBuilder = new MvcRequestMatcher.Builder(applicationContext.getBean(HandlerMappingIntrospector.class));
             MvcRequestMatcher errorPageRequestMatcher = mvcRequestMatcherBuilder.pattern(serverProperties.getError().getPath());
             urlRegistry.requestMatchers(errorPageRequestMatcher).permitAll();
+        });*/
+
+        http.authorizeHttpRequests(urlRegistry -> {
+            //TODO [IVGA][SB4] SB4 should permit both request with and without params - check login with parameters
+            String loginPath = getLoginPath();
+            urlRegistry.requestMatchers(loginPath).permitAll();
+
+            // Permit default Spring framework error page (/error)
+            urlRegistry.dispatcherTypeMatchers(DispatcherType.ERROR).permitAll(); //TODO [IVGA][SB4] check
         });
 
         initLoginView(http);
@@ -192,10 +194,10 @@ public class FlowuiVaadinWebSecurity extends VaadinWebSecurity {
     @Override
     protected void configure(WebSecurity web) throws Exception {
         super.configure(web);
-        web.ignoring().requestMatchers(new AntPathRequestMatcher("/VAADIN/push/**"));
+        web.ignoring().requestMatchers(PathPatternRequestMatcher.pathPattern("/VAADIN/push/**"));
 
         if (h2ConsoleProperties != null && h2ConsoleProperties.isEnabled()) {
-            web.ignoring().requestMatchers(new AntPathRequestMatcher(h2ConsoleProperties.getPath() + "/**"));
+            web.ignoring().requestMatchers(PathPatternRequestMatcher.pathPattern(h2ConsoleProperties.getPath() + "/**"));
         }
     }
 

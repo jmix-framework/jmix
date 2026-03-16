@@ -36,11 +36,16 @@ import io.jmix.searchopensearch.searching.strategy.OpenSearchSearchStrategy;
 import io.jmix.searchopensearch.searching.strategy.OpenSearchSearchStrategyProvider;
 import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.constraint.SecureOperations;
-import org.apache.http.HttpHost;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.CredentialsProvider;
-import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.hc.client5.http.auth.AuthScope;
+import org.apache.hc.client5.http.auth.CredentialsProvider;
+import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
+import org.apache.hc.client5.http.impl.auth.BasicCredentialsProvider;
+import org.apache.hc.client5.http.impl.nio.PoolingAsyncClientConnectionManager;
+import org.apache.hc.client5.http.impl.nio.PoolingAsyncClientConnectionManagerBuilder;
+import org.apache.hc.client5.http.ssl.ClientTlsStrategyBuilder;
+import org.apache.hc.core5.http.HttpHost;
+import org.apache.hc.core5.http.nio.ssl.TlsStrategy;
 import org.opensearch.client.RestClient;
 import org.opensearch.client.json.jackson.JacksonJsonpMapper;
 import org.opensearch.client.opensearch.OpenSearchClient;
@@ -55,6 +60,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.lang.Nullable;
 
 import javax.net.ssl.SSLContext;
+import java.net.URISyntaxException;
 import java.util.Collection;
 
 @AutoConfiguration
@@ -72,20 +78,37 @@ public class SearchOpenSearchAutoConfiguration {
     @Bean("search_OpenSearchClient")
     @ConditionalOnMissingBean(OpenSearchClient.class)
     public OpenSearchClient openSearchClient() {
-        HttpHost host = HttpHost.create(searchProperties.getServerUrl());
+        String url = searchProperties.getServerUrl();
+        HttpHost httpHost;
+        try {
+            httpHost = HttpHost.create(url);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException("Invalid OpenSearch URL: " + url, e);
+        }
         CredentialsProvider credentialsProvider = createCredentialsProvider();
         SSLContext sslContext = sslConfigurer.createSslContext();
 
-        RestClient restClient = RestClient.builder(host).
+        RestClient restClient = RestClient.builder(httpHost).
                 setHttpClientConfigCallback(httpClientBuilder -> {
                     if (credentialsProvider != null) {
                         httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
                     }
                     if (sslContext != null) {
-                        httpClientBuilder.setSSLContext(sslContext);
+                        TlsStrategy tlsStrategy = ClientTlsStrategyBuilder.create()
+                                .setSslContext(sslContext)
+                                .build();
+
+                        PoolingAsyncClientConnectionManager connectionManager =
+                                PoolingAsyncClientConnectionManagerBuilder.create()
+                                        .setTlsStrategy(tlsStrategy)
+                                        .build();
+
+                        httpClientBuilder.setConnectionManager(connectionManager);
                     }
+
                     return httpClientBuilder;
-                }).build();
+                })
+                .build();
 
         final OpenSearchTransport transport = new RestClientTransport(restClient, new JacksonJsonpMapper());
         return new OpenSearchClient(transport);
@@ -174,16 +197,30 @@ public class SearchOpenSearchAutoConfiguration {
 
     @Nullable
     protected CredentialsProvider createCredentialsProvider() {
-        CredentialsProvider credentialsProvider = null;
-        if (!Strings.isNullOrEmpty(searchProperties.getServerLogin())) {
-            credentialsProvider = new BasicCredentialsProvider();
-            credentialsProvider.setCredentials(AuthScope.ANY,
-                    new UsernamePasswordCredentials(
-                            searchProperties.getServerLogin(),
-                            searchProperties.getServerPassword()
-                    )
-            );
+        if (Strings.isNullOrEmpty(searchProperties.getServerLogin())) {
+            return null;
         }
+
+        BasicCredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+        AuthScope authScope = createAuthScope();
+        UsernamePasswordCredentials credentials = createCredentials();
+        credentialsProvider.setCredentials(authScope, credentials);
+
         return credentialsProvider;
+    }
+
+    protected AuthScope createAuthScope() {
+        // TODO [SB4] Same as AuthScope.ANY from old HttpClient 4
+        return new AuthScope(null, null, -1, null, null);
+    }
+
+    protected UsernamePasswordCredentials createCredentials() {
+        String login = searchProperties.getServerLogin();
+        String passwordString = searchProperties.getServerPassword();
+        char[] password = StringUtils.isNotEmpty(passwordString)
+                ? passwordString.toCharArray()
+                : new char[0];
+
+        return new UsernamePasswordCredentials(login, password);
     }
 }

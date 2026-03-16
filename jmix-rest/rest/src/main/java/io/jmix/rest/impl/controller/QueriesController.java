@@ -34,7 +34,7 @@ import java.util.Map;
  * Controller that is used for operations with predefined JPQL queries
  */
 @RestController("rest_QueriesController")
-@RequestMapping(value = "${jmix.rest.base-path}${jmix.rest.queries-path}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+@RequestMapping(value = "${jmix.rest.base-path}${jmix.rest.queries-path}", produces = MediaType.APPLICATION_JSON_VALUE)
 public class QueriesController {
 
     @Autowired

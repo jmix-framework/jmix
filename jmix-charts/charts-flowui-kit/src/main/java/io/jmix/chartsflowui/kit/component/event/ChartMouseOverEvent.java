@@ -18,10 +18,10 @@ package io.jmix.chartsflowui.kit.component.event;
 
 import com.vaadin.flow.component.DomEvent;
 import com.vaadin.flow.component.EventData;
-import elemental.json.JsonObject;
-import elemental.json.JsonValue;
 import io.jmix.chartsflowui.kit.component.JmixChart;
 import io.jmix.chartsflowui.kit.component.event.dto.ChartMouseOverEventDetail;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.node.ObjectNode;
 
 /**
  * Event is fired after the user hovers the cursor over an element of the chart series.
@@ -32,8 +32,8 @@ public class ChartMouseOverEvent extends AbstractChartMouseEvent<ChartMouseOverE
     public static final String EVENT_NAME = EVENT_NAME_PREFIX + "mouseover";
 
     public ChartMouseOverEvent(JmixChart source, boolean fromClient,
-                               @EventData("event.detail") JsonObject detail,
-                               @EventData("event.detail.value") JsonValue value) {
+                               @EventData("event.detail") ObjectNode detail,
+                               @EventData("event.detail.value") JsonNode value) {
         super(source, fromClient, detail, value, ChartMouseOverEventDetail.class);
     }
 }

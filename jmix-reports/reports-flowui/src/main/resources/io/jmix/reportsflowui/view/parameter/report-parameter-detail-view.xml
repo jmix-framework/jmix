@@ -72,12 +72,12 @@
                                   width="100%"/>
                     </vbox>
                     <div id="transformationEditorBox">
-                        <div classNames="flex, justify-between">
+                        <flexLayout justifyContent="BETWEEN">
                             <nativeLabel text="msg://parameters.groovyScript.title" setFor="transformationScript"/>
                             <button id="fullScreenTransformationBtn" text="msg:///fullScreenBtn.title"
                                     themeNames="tertiary-inline"/>
-                        </div>
-                        <div classNames="flex, items-start">
+                        </flexLayout>
+                        <flexLayout alignItems="START">
                             <codeEditor id="transformationScript"
                                         width="100%"
                                         height="15em"
@@ -87,7 +87,7 @@
                             <button id="transformationScriptHelpBtn"
                                     themeNames="icon, tertiary-inline"
                                     icon="QUESTION_CIRCLE"/>
-                        </div>
+                        </flexLayout>
                     </div>
                 </div>
             </tab>
@@ -96,12 +96,12 @@
                     <checkbox id="includeValidation" dataContainer="parameterDc"
                               label="msg://parameters.validateFields"
                               property="validationOn"/>
-                    <div classNames="flex, justify-between">
+                    <flexLayout justifyContent="BETWEEN">
                         <nativeLabel text="msg://parameters.groovyScript.title" setFor="validationScript"/>
                         <button id="fullScreenValidationBtn" text="msg:///fullScreenBtn.title"
                                 themeNames="tertiary-inline"/>
-                    </div>
-                    <div classNames="flex, items-start">
+                    </flexLayout>
+                    <flexLayout alignItems="START">
                         <codeEditor id="validationScript"
                                     width="100%"
                                     height="15em"
@@ -111,17 +111,17 @@
                         <button id="validationScriptHelpBtn"
                                 themeNames="icon, tertiary-inline"
                                 icon="QUESTION_CIRCLE"/>
-                    </div>
+                    </flexLayout>
                 </div>
             </tab>
             <tab id="lookupSettingsTab" label="msg://parameters.dropdownSettingsTab">
                 <div id="lookupSettingsBox" width="100%">
-                    <div classNames="flex, justify-between">
+                    <flexLayout justifyContent="BETWEEN">
                         <nativeLabel text="msg://lookupJoin" setFor="lookupJoinCodeEditor"/>
                         <button id="lookupJoinFullScreenBtn" text="msg:///fullScreenBtn.title"
                                 themeNames="tertiary-inline"/>
-                    </div>
-                    <div classNames="flex, items-start">
+                    </flexLayout>
+                    <flexLayout alignItems="START">
                         <codeEditor id="lookupJoinCodeEditor"
                                     height="15em"
                                     width="100%"
@@ -130,13 +130,13 @@
                         <button id="lookupJoinHelpBtn"
                                 themeNames="icon, tertiary-inline"
                                 icon="QUESTION_CIRCLE"/>
-                    </div>
-                    <div classNames="flex, justify-between">
+                    </flexLayout>
+                    <flexLayout justifyContent="BETWEEN">
                         <nativeLabel text="msg://lookupWhere" setFor="lookupWhereCodeEditor"/>
                         <button id="lookupWhereFullScreenBtn" text="msg:///fullScreenBtn.title"
                                 themeNames="tertiary-inline"/>
-                    </div>
-                    <div classNames="flex, items-start">
+                    </flexLayout>
+                    <flexLayout alignItems="START">
                         <codeEditor id="lookupWhereCodeEditor"
                                     height="15em"
                                     width="100%"
@@ -145,7 +145,7 @@
                         <button id="lookupWhereHelpBtn"
                                 themeNames="icon, tertiary-inline"
                                 icon="QUESTION_CIRCLE"/>
-                    </div>
+                    </flexLayout>
                 </div>
             </tab>
         </tabSheet>

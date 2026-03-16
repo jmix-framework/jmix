@@ -70,12 +70,6 @@ public class JmixGrid<T> extends Grid<T> implements SelectionChangeNotifier<Grid
         return getColumnByKey(name);
     }
 
-    @Override
-    @StudioIgnore
-    public void setClassNameGenerator(SerializableFunction<T, String> classNameGenerator) {
-        super.setClassNameGenerator(classNameGenerator);
-    }
-
     /**
      * @return a default header row
      */

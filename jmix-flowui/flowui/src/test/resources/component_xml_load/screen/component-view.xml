@@ -246,7 +246,6 @@
                   title="titleString"
                   visible="true"
                   width="100px"
-                  overlayClass="overlayClassName"
                   overlayWidth="300px">
             <tooltip text="tooltipText"
                      focusDelay="1"
@@ -560,7 +559,6 @@
                 themeNames="helper-above-field align-center"
                 emptySelectionCaption="emptySelectionString"
                 emptySelectionAllowed="true"
-                overlayClass="overlayClassName"
                 overlayWidth="300px"
                 noVerticalOverlap="true"
 
@@ -861,7 +859,6 @@
                         title="titleString"
                         visible="true"
                         width="100px"
-                        overlayClass="overlayClassName"
                         overlayWidth="300px"
 
                         dataContainer="orderDc" property="customer">
@@ -885,8 +882,7 @@
                   tabIndex="3"
                   themeNames="small primary"
                   title="dropdownButtonTitle"
-                  visible="true"
-                  overlayClass="overlayClassName">
+                  visible="true">
             <items>
                 <actionItem id="firstActionItem">
                     <action id="action2" icon="vaadin:diploma"/>

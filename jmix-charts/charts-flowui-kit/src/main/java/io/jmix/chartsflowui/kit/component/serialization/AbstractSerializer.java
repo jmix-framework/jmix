@@ -16,12 +16,11 @@
 
 package io.jmix.chartsflowui.kit.component.serialization;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.ser.std.StdSerializer;
-import jakarta.annotation.Nullable;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.ser.std.StdSerializer;
 
-import java.io.IOException;
 import java.util.List;
 
 public abstract class AbstractSerializer<T> extends StdSerializer<T> {
@@ -31,7 +30,7 @@ public abstract class AbstractSerializer<T> extends StdSerializer<T> {
     }
 
     @Override
-    public void serialize(@Nullable T value, JsonGenerator gen, SerializerProvider provider) throws IOException {
+    public void serialize(T value, JsonGenerator gen, SerializationContext provider) throws JacksonException {
         if (value == null) {
             gen.writeNull();
             return;
@@ -40,20 +39,20 @@ public abstract class AbstractSerializer<T> extends StdSerializer<T> {
         serializeNonNullValue(value, gen, provider);
     }
 
-    public abstract void serializeNonNullValue(T value, JsonGenerator gen, SerializerProvider provider)
-            throws IOException;
+    public abstract void serializeNonNullValue(T value, JsonGenerator gen, SerializationContext provider)
+            throws JacksonException;
 
-    protected void writeIfNotNull(String fieldName, Object value, JsonGenerator gen, SerializerProvider provider)
-            throws IOException {
+    protected void writeIfNotNull(String fieldName, Object value, JsonGenerator gen, SerializationContext provider)
+            throws JacksonException {
         if (value != null) {
-            provider.defaultSerializeField(fieldName, value, gen);
+            provider.defaultSerializeProperty(fieldName, value, gen);
         }
     }
 
     protected void writeListIfNotEmpty(String fieldName, List<?> value,
-                                       JsonGenerator gen, SerializerProvider provider) throws IOException {
+                                       JsonGenerator gen, SerializationContext provider) throws JacksonException {
         if (value != null && !value.isEmpty()) {
-            provider.defaultSerializeField(fieldName, value, gen);
+            provider.defaultSerializeProperty(fieldName, value, gen);
         }
     }
 }

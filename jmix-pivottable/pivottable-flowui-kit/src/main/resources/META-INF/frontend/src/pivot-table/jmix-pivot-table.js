@@ -29,31 +29,28 @@ import './pivot/pivot.js';
 import './pivot/c3_renderers.min.js';
 import './pivot/d3_renderers.min.js';
 import './pivot/export_renderers.min.js';
-import './jmix-pivot-table.css';
 
 import {ElementMixin} from '@vaadin/component-base/src/element-mixin.js';
+import {PolylitMixin} from '@vaadin/component-base/src/polylit-mixin.js';
 import {DisabledMixin} from '@vaadin/a11y-base/src/disabled-mixin.js';
 import {defineCustomElement} from '@vaadin/component-base/src/define.js';
-import {html, PolymerElement} from '@polymer/polymer/polymer-element.js';
-
-import {registerStyles, ThemableMixin} from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
-import {jmixPivotTableStyles} from './jmix-pivot-table-styles.js';
+import {html, LitElement} from 'lit';
+import {LumoInjectionMixin} from '@vaadin/vaadin-themable-mixin/lumo-injection-mixin.js';
+import {ThemableMixin} from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
 
 import {PivotTableParser} from './jmix-pivot-table-parser.js';
-
-registerStyles('jmix-pivot-table', [jmixPivotTableStyles], {moduleId: 'jmix-pivot-table-styles'});
 
 /**
  * @class JmixPivotTable is the client part of the PivotTable component that integrates the
  * {@link https://github.com/nicolaskruchten/pivottable}[Pivot]
  */
-export class JmixPivotTable extends ElementMixin(DisabledMixin(ThemableMixin(PolymerElement))) {
+export class JmixPivotTable extends ElementMixin(DisabledMixin(ThemableMixin(PolylitMixin(LumoInjectionMixin(LitElement))))) {
 
     static get is() {
         return 'jmix-pivot-table';
     }
 
-    static get template() {
+    render() {
         return html`
             <div class="jmix-pivot-table-wrapper" style="height: inherit; width: inherit;">
                 <slot name="pivot-table"></slot>

@@ -25,6 +25,7 @@ dependencies {
     api project(':search-flowui-kit')
 
     api project(':flowui')
+    api project(':flowui-themes')
 
     compileOnly project(':security')
     compileOnly project(':security-flowui')

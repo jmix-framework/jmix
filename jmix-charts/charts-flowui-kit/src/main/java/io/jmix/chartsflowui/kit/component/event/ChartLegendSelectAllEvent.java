@@ -18,9 +18,9 @@ package io.jmix.chartsflowui.kit.component.event;
 
 import com.vaadin.flow.component.DomEvent;
 import com.vaadin.flow.component.EventData;
-import elemental.json.JsonObject;
 import io.jmix.chartsflowui.kit.component.JmixChart;
 import io.jmix.chartsflowui.kit.component.event.dto.ChartLegendSelectAllEventDetail;
+import tools.jackson.databind.node.ObjectNode;
 
 /**
  * Event fired after selecting all selectors.
@@ -31,7 +31,7 @@ public class ChartLegendSelectAllEvent extends AbstractChartEvent<ChartLegendSel
     public static final String EVENT_NAME = EVENT_NAME_PREFIX + "legendselectall";
 
     public ChartLegendSelectAllEvent(JmixChart source, boolean fromClient,
-                                     @EventData("event.detail") JsonObject detail) {
+                                     @EventData("event.detail") ObjectNode detail) {
         super(source, fromClient, detail, ChartLegendSelectAllEventDetail.class);
     }
 }

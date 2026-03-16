@@ -18,10 +18,10 @@ package io.jmix.chartsflowui.kit.component.event;
 
 import com.vaadin.flow.component.DomEvent;
 import com.vaadin.flow.component.EventData;
-import elemental.json.JsonObject;
 import io.jmix.chartsflowui.kit.component.JmixChart;
 import io.jmix.chartsflowui.kit.component.event.dto.ChartMagicTypeChangedEventDetail;
 import io.jmix.chartsflowui.kit.component.model.toolbox.MagicTypeFeature;
+import tools.jackson.databind.node.ObjectNode;
 
 /**
  * Event fired when magic type in a toolbox changes.
@@ -34,7 +34,7 @@ public class ChartMagicTypeChangedEvent extends AbstractChartEvent<ChartMagicTyp
     public static final String EVENT_NAME = EVENT_NAME_PREFIX + "magictypechanged";
 
     public ChartMagicTypeChangedEvent(JmixChart source, boolean fromClient,
-                                      @EventData("event.detail") JsonObject detail) {
+                                      @EventData("event.detail") ObjectNode detail) {
         super(source, fromClient, detail, ChartMagicTypeChangedEventDetail.class);
     }
 }

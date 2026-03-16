@@ -1,0 +1,39 @@
+/*
+ * Copyright 2026 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@import '../src/components/jmix-code-editor.css';
+
+:root::before,
+:host::before {
+    --_lumo-jmix-code-editor-inject: 1;
+    --_lumo-jmix-code-editor-inject-modules:
+            lumo_mixins_field-label,
+            lumo_mixins_field-required,
+            lumo_mixins_field-error-message,
+            lumo_mixins_field-helper,
+            lumo_mixins_field-base,
+            lumo_components_jmix-code-editor;
+}
+
+jmix-code-editor[readonly][has-error-message]::part(error-message),
+jmix-code-editor[disabled][has-error-message]::part(error-message) {
+    display:none;
+}
+
+jmix-code-editor[readonly][invalid],
+jmix-code-editor[disabled][invalid] {
+    --lumo-required-field-indicator-color: var(--lumo-primary-text-color);
+}

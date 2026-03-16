@@ -18,7 +18,6 @@ package io.jmix.searchflowui.component;
 
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.customfield.CustomField;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.shared.HasSuffix;
@@ -34,6 +33,7 @@ import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.component.HasAutofocus;
 import io.jmix.flowui.kit.component.HasTitle;
 import io.jmix.flowui.kit.icon.JmixFontIcon;
+import io.jmix.flowui.theme.StyleUtility;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.OpenMode;
 import io.jmix.flowui.view.StandardOutcome;
@@ -175,12 +175,7 @@ public class SearchField extends CustomField<String>
 
     protected Button createSearchButton() {
         Button button = uiComponents.create(Button.class);
-        button.addThemeVariants(
-                ButtonVariant.LUMO_TERTIARY_INLINE,
-                ButtonVariant.LUMO_CONTRAST,
-                ButtonVariant.LUMO_ICON,
-                ButtonVariant.LUMO_SMALL
-        );
+        button.setClassName(StyleUtility.Button.NESTED_BUTTON);
         button.setIcon(icons.get(JmixFontIcon.SEARCH_FIELD_SEARCH));
 
         button.addClickListener(clickEvent -> performSearch());
@@ -189,12 +184,7 @@ public class SearchField extends CustomField<String>
 
     protected Button createSettingsButton() {
         Button settingsButton = uiComponents.create(Button.class);
-        settingsButton.addThemeVariants(
-                ButtonVariant.LUMO_TERTIARY_INLINE,
-                ButtonVariant.LUMO_CONTRAST,
-                ButtonVariant.LUMO_ICON,
-                ButtonVariant.LUMO_SMALL
-        );
+        settingsButton.setClassName(StyleUtility.Button.NESTED_BUTTON);
         settingsButton.setIcon(icons.get(JmixFontIcon.SEARCH_FIELD_SETTINGS));
 
         settingsButton.addClickListener(clickEvent -> {

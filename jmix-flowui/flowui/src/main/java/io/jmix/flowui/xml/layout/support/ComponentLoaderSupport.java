@@ -25,7 +25,6 @@ import com.vaadin.flow.component.orderedlayout.BoxSizing;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.ThemableLayout;
 import com.vaadin.flow.component.shared.HasAllowedCharPattern;
-import com.vaadin.flow.component.shared.HasOverlayClassName;
 import com.vaadin.flow.component.shared.HasTooltip;
 import com.vaadin.flow.component.shared.Tooltip;
 import com.vaadin.flow.component.textfield.*;
@@ -270,11 +269,6 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
     public void loadClassNames(HasStyle component, Element element) {
         loaderSupport.loadString(element, "classNames")
                 .ifPresent(classNamesString -> split(classNamesString, component::addClassName));
-    }
-
-    public void loadOverlayClass(HasOverlayClassName component, Element element) {
-        loaderSupport.loadString(element, "overlayClass")
-                .ifPresent(component::setOverlayClassName);
     }
 
     public void loadThemeList(com.vaadin.flow.component.Component component, Element element) {

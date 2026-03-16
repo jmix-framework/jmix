@@ -93,12 +93,12 @@
             <pagination component="paginationLoggedEntity"/>
         </urlQueryParameters>
     </facets>
-    <layout padding="false" classNames="entity-log-wrapper">
-        <tabSheet id="tabsheet" width="100%" height="100%" classNames="entity-log-main-tab-sheet">
+    <layout padding="false" classNames="entity-log-view">
+        <tabSheet id="tabsheet" width="100%" height="100%" classNames="content-root">
             <tab id="view" label="msg://view">
-                <vbox id="viewWrapper" width="100%" height="100%"
-                      padding="false" themeNames="spacing-s">
-                    <details opened="true" width="100%" summaryText="msg://filterParameters">
+                <vbox id="viewWrapper" width="100%" height="100%" padding="false">
+                    <details opened="true" width="100%" summaryText="msg://filterParameters"
+                             classNames="filter-layout">
                         <vbox padding="false">
                             <formLayout>
                                 <responsiveSteps>
@@ -109,7 +109,7 @@
                                 <comboBox id="userField" label="msg://user" autoOpen="true"/>
                                 <comboBox id="substitutedUserField" label="msg://substitutedUser" autoOpen="true"/>
                                 <select id="changeTypeField" label="msg://changeType"/>
-                                <div classNames="datetime-picker-container">
+                                <div classNames="audit-datetime-picker-container">
                                     <datePicker id="fromDateField" datatype="localDate"
                                                 label="msg://from"/>
                                     <timePicker id="fromTimeField" datatype="localTime"/>
@@ -122,7 +122,7 @@
                                         <action id="valueClearAction" type="value_clear"/>
                                     </actions>
                                 </valuePicker>
-                                <div classNames="datetime-picker-container">
+                                <div classNames="audit-datetime-picker-container">
                                     <datePicker id="tillDateField" datatype="localDate"
                                                 label="msg://till"/>
                                     <timePicker id="tillTimeField" datatype="localTime"/>
@@ -136,7 +136,7 @@
                             </hbox>
                         </vbox>
                     </details>
-                    <div width="100%" height="100%" classNames="entity-log-grid-wrapper">
+                    <div width="100%" height="100%" classNames="data-grid-wrapper">
                         <dataGrid id="entityLogTable" dataContainer="entityLogDc"
                                   width="100%" height="100%"
                                   minHeight="20em"

@@ -145,7 +145,7 @@ class GenerationStrategyTest extends FlowuiTestSpecification {
         def component = uiComponentsGenerator.generate(context)
 
         then: "EntityPicker will be generated"
-        component instanceof EntityPicker<Customer>
+        component instanceof EntityPicker
         (component as EntityPicker<Customer>).value == customer
     }
 
@@ -164,7 +164,7 @@ class GenerationStrategyTest extends FlowuiTestSpecification {
         def component = uiComponentsGenerator.generate(context)
 
         then: "EntityComboBox will be generated"
-        component instanceof EntityComboBox<User>
+        component instanceof EntityComboBox
         (component as EntityComboBox<User>).value == user
     }
 
@@ -179,7 +179,7 @@ class GenerationStrategyTest extends FlowuiTestSpecification {
         def component = uiComponentsGenerator.generate(context)
 
         then: "JmixSelect will be generated"
-        component instanceof JmixSelect<Status>
+        component instanceof JmixSelect
         (component as JmixSelect<Status>).value == customer.status
     }
 
@@ -194,7 +194,7 @@ class GenerationStrategyTest extends FlowuiTestSpecification {
         def component = uiComponentsGenerator.generate(context)
 
         then: "TypedTextField will be generated"
-        component instanceof TypedTextField<String>
+        component instanceof TypedTextField
         (component as TypedTextField<String>).value == order."$propertyName".toString()
 
         where:

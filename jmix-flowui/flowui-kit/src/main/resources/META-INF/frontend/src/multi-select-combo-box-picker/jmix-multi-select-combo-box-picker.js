@@ -16,92 +16,63 @@
 
 import '@vaadin/multi-select-combo-box/src/vaadin-multi-select-combo-box-chip.js';
 import '@vaadin/multi-select-combo-box/src/vaadin-multi-select-combo-box-container.js';
-import './jmix-multi-select-combo-box-internal.js';
-import { html } from '@polymer/polymer';
-import { defineCustomElement } from '@vaadin/component-base/src/define.js';
-import { MultiSelectComboBox } from '@vaadin/multi-select-combo-box/src/vaadin-multi-select-combo-box.js';
-import { registerStyles } from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
+import '@vaadin/multi-select-combo-box/src/vaadin-multi-select-combo-box-item.js';
+import '@vaadin/multi-select-combo-box/src/vaadin-multi-select-combo-box-overlay.js';
+import '@vaadin/multi-select-combo-box/src/vaadin-multi-select-combo-box-scroller.js';
+import {html, LitElement} from 'lit';
+import {ifDefined} from 'lit/directives/if-defined.js';
+import {defineCustomElement} from '@vaadin/component-base/src/define.js';
+import {ElementMixin} from '@vaadin/component-base/src/element-mixin.js';
+import {PolylitMixin} from '@vaadin/component-base/src/polylit-mixin.js';
+import {inputFieldShared} from '@vaadin/field-base/src/styles/input-field-shared-styles.js';
+import {LumoInjectionMixin} from '@vaadin/vaadin-themable-mixin/lumo-injection-mixin.js';
+import {ThemableMixin} from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
+import {
+    multiSelectComboBoxStyles
+} from '@vaadin/multi-select-combo-box/src/styles/vaadin-multi-select-combo-box-base-styles.js';
+import {MultiSelectComboBoxMixin} from '@vaadin/multi-select-combo-box/src/vaadin-multi-select-combo-box-mixin.js';
+import {jmixMultiSelectComboBoxPickerStyles} from "./styles/jmix-multi-select-combo-box-picker-base-styles";
 
-registerStyles('jmix-multi-select-combo-box-picker', [],{
-    moduleId: 'jmix-multi-select-combo-box-picker-styles'
-});
-
-// CAUTION: copied from @vaadin/multi-select-combo-box [last update Vaadin 24.9.0]
-class JmixMultiSelectComboBoxPicker extends MultiSelectComboBox {
+// CAUTION: copied from @vaadin/multi-select-combo-box [last update Vaadin 25.0.4]
+class JmixMultiSelectComboBoxPicker extends MultiSelectComboBoxMixin(
+    ThemableMixin(ElementMixin(PolylitMixin(LumoInjectionMixin(LitElement))))) {
 
     static get is() {
         return 'jmix-multi-select-combo-box-picker';
     }
 
-    static get template() {
-        return html`
-            <style>
-                [part="action-part"] ::slotted(*) {
-                    display: flex;
-                }
+    static get styles() {
+        return [inputFieldShared, multiSelectComboBoxStyles, jmixMultiSelectComboBoxPickerStyles];
+    }
 
-                :host([readonly]) [part="action-part"] {
-                    display: none;
-                }
-            </style>
-            
+    /** @protected */
+    render() {
+        return html`
             <div class="vaadin-multi-select-combo-box-container">
                 <div part="label">
                     <slot name="label"></slot>
-                    <span part="required-indicator" aria-hidden="true" on-click="focus"></span>
+                    <span part="required-indicator" aria-hidden="true" @click="${this.focus}"></span>
                 </div>
 
-                <vaadin-multi-select-combo-box-internal
-                        id="comboBox"
-                        items="[[items]]"
-                        item-id-path="[[itemIdPath]]"
-                        item-label-path="[[itemLabelPath]]"
-                        item-value-path="[[itemValuePath]]"
-                        disabled="[[disabled]]"
-                        readonly="[[readonly]]"
-                        auto-open-disabled="[[autoOpenDisabled]]"
-                        allow-custom-value="[[allowCustomValue]]"
-                        overlay-class="[[overlayClass]]"
-                        data-provider="[[dataProvider]]"
-                        filter="{{filter}}"
-                        last-filter="{{_lastFilter}}"
-                        loading="{{loading}}"
-                        size="{{size}}"
-                        filtered-items="[[filteredItems]]"
-                        selected-items="[[selectedItems]]"
-                        selected-items-on-top="[[selectedItemsOnTop]]"
-                        item-class-name-generator="[[itemClassNameGenerator]]"
-                        top-group="[[_topGroup]]"
-                        opened="{{opened}}"
-                        renderer="[[renderer]]"
-                        keep-filter="[[keepFilter]]"
-                        theme$="[[_theme]]"
-                        on-combo-box-item-selected="_onComboBoxItemSelected"
-                        on-change="_onComboBoxChange"
-                        on-custom-value-set="_onCustomValueSet"
-                        on-filtered-items-changed="_onFilteredItemsChanged"
+                <vaadin-multi-select-combo-box-container
+                        part="input-field"
+                        .autoExpandVertically="${this.autoExpandVertically}"
+                        .readonly="${this.readonly}"
+                        .disabled="${this.disabled}"
+                        .invalid="${this.invalid}"
+                        theme="${ifDefined(this._theme)}"
                 >
-                    <vaadin-multi-select-combo-box-container
-                            part="input-field"
-                            auto-expand-vertically="[[autoExpandVertically]]"
-                            readonly="[[readonly]]"
-                            disabled="[[disabled]]"
-                            invalid="[[invalid]]"
-                            theme$="[[_theme]]"
-                    >
-                        <slot name="overflow" slot="prefix"></slot>
-                        <div id="chips" part="chips" slot="prefix">
-                            <slot name="chip"></slot>
-                        </div>
-                        <slot name="input"></slot>
-                        <div id="toggleButton" class="toggle-button" part="toggle-button" slot="suffix"
-                             aria-hidden="true"></div>
-                        <!-- Jmix API -->
-                        <div id="pickerAction" part="action-part" slot="suffix">
-                            <slot name="actions"></slot>
-                        </div>
-                    </vaadin-multi-select-combo-box-container>
-                </jmix-multi-select-combo-box-internal>
+                    <slot name="overflow" slot="prefix"></slot>
+                    <div id="chips" part="chips" slot="prefix">
+                        <slot name="chip"></slot>
+                    </div>
+                    <slot name="input"></slot>
+                    <div id="toggleButton" part="field-button toggle-button" slot="suffix" aria-hidden="true"></div>
+                    <!-- Jmix API -->
+                    <div id="pickerAction" part="action-part" slot="suffix">
+                        <slot name="actions"></slot>
+                    </div>
+                </vaadin-multi-select-combo-box-container>
 
                 <div part="helper-text">
                     <slot name="helper"></slot>
@@ -110,9 +81,23 @@ class JmixMultiSelectComboBoxPicker extends MultiSelectComboBox {
                 <div part="error-message">
                     <slot name="error-message"></slot>
                 </div>
+
+                <slot name="tooltip"></slot>
             </div>
 
-            <slot name="tooltip"></slot>
+            <vaadin-multi-select-combo-box-overlay
+                    id="overlay"
+                    exportparts="overlay, content, loader"
+                    .owner="${this}"
+                    .dir="${this.dir}"
+                    .opened="${this._overlayOpened}"
+                    ?loading="${this.loading}"
+                    theme="${ifDefined(this._theme)}"
+                    .positionTarget="${this._inputField}"
+                    no-vertical-overlap
+            >
+                <slot name="overlay"></slot>
+            </vaadin-multi-select-combo-box-overlay>
         `;
     }
 
@@ -129,4 +114,4 @@ class JmixMultiSelectComboBoxPicker extends MultiSelectComboBox {
 
 defineCustomElement(JmixMultiSelectComboBoxPicker);
 
-export { JmixMultiSelectComboBoxPicker }
+export {JmixMultiSelectComboBoxPicker}

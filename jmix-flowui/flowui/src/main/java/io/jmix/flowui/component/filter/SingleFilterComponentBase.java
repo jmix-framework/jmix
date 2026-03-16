@@ -119,7 +119,6 @@ public abstract class SingleFilterComponentBase<V> extends CustomField<V>
 
     protected void initRootComponent(HorizontalLayout root) {
         root.setSpacing(false);
-        root.getThemeList().add("spacing-s");
     }
 
     public HorizontalLayout getRoot() {

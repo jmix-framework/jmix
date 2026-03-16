@@ -17,6 +17,10 @@
 package io.jmix.supersetflowui.component;
 
 import com.google.common.base.Strings;
+import com.vaadin.flow.component.AttachEvent;
+import com.vaadin.flow.component.DetachEvent;
+import com.vaadin.flow.server.StreamRegistration;
+import com.vaadin.flow.server.streams.DownloadHandler;
 import io.jmix.core.usersubstitution.CurrentUserSubstitution;
 import io.jmix.flowui.backgroundtask.BackgroundTask;
 import io.jmix.flowui.backgroundtask.BackgroundWorker;
@@ -80,6 +84,8 @@ public class SupersetDashboard extends JmixSupersetDashboard implements Applicat
     protected SupersetUiProperties supersetUiProperties;
 
     protected DatasetConstraintsProvider datasetConstraintsProvider;
+
+    protected StreamRegistration stubImageRegistration;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -167,6 +173,29 @@ public class SupersetDashboard extends JmixSupersetDashboard implements Applicat
     protected FetchGuestTokenTask createFetchGuestTokenTask(long timeout, GuestTokenBody body, String accessToken,
                                                             @Nullable String csrfToken) {
         return new FetchGuestTokenTask(timeout, body, accessToken, csrfToken);
+    }
+
+    @Override
+    protected void onAttach(AttachEvent attachEvent) {
+        super.onAttach(attachEvent);
+
+        DownloadHandler stubImageHandler = DownloadHandler.forClassResource(SupersetDashboard.class,
+                "/META-INF/resources/superset-dashboard/icons/superset.png");
+
+        getUI().ifPresent(ui -> {
+            stubImageRegistration = ui.getSession().getResourceRegistry().registerResource(stubImageHandler);
+            getElement().setProperty("_stubImageUrl", stubImageRegistration.getResourceUri().toString());
+        });
+    }
+
+    @Override
+    protected void onDetach(DetachEvent detachEvent) {
+        super.onDetach(detachEvent);
+
+        if (stubImageRegistration != null) {
+            stubImageRegistration.unregister();
+            stubImageRegistration = null;
+        }
     }
 
     protected class FetchGuestTokenTask extends BackgroundTask<Void, GuestTokenResponse> {

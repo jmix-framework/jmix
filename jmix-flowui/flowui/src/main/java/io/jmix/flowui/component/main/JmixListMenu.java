@@ -65,16 +65,11 @@ public class JmixListMenu extends ListMenu implements ApplicationContextAware, I
     @Override
     public void afterPropertiesSet() throws Exception {
         autowireDependencies();
-        initComponent();
     }
 
     protected void autowireDependencies() {
         uiComponents = applicationContext.getBean(UiComponents.class);
         viewRegistry = applicationContext.getBean(ViewRegistry.class);
-    }
-
-    protected void initComponent() {
-        getContent().addClassNames(JMIX_LIST_MENU_CLASS_NAME, LIST_NONE_CLASS_NAME);
     }
 
     @Override

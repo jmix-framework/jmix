@@ -214,12 +214,7 @@ public class MultiValueSelectDialog<E> extends StandardListView<E> implements Mu
         if (!context.isReadOnly()) {
             JmixButton deleteItemButton = uiComponents.create(JmixButton.class);
             deleteItemButton.setIcon(icons.get(JmixFontIcon.CLOSE_SMALL));
-
-            deleteItemButton.addThemeVariants(
-                    ButtonVariant.LUMO_SMALL,
-                    ButtonVariant.LUMO_TERTIARY_INLINE,
-                    ButtonVariant.LUMO_ICON
-            );
+            deleteItemButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
             deleteItemButton.addClickListener(e -> {
                 values.remove(value);
                 item.getElement().removeFromParent();

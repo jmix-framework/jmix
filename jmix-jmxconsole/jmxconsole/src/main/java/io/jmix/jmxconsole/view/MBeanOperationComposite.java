@@ -103,7 +103,7 @@ public class MBeanOperationComposite extends Composite<JmixDetails>
         attributeDl.setContainer(attributeDc);
 
         verticalLayout = uiComponents.create(VerticalLayout.class);
-        verticalLayout.addClassName("py-0");
+        verticalLayout.setClassName("jmix-mbean-operation-content");
         verticalLayout.setSpacing(false);
 
         operationVbox = uiComponents.create(VerticalLayout.class);
@@ -128,6 +128,7 @@ public class MBeanOperationComposite extends Composite<JmixDetails>
         form.setHeightFull();
         form.add(verticalLayout);
         form.setOpened(false);
+        form.setClassName("jmix-mbean-operation");
 
         initComponents();
 

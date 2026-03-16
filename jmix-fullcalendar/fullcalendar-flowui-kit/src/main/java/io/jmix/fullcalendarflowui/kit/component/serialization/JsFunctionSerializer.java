@@ -16,12 +16,10 @@
 
 package io.jmix.fullcalendarflowui.kit.component.serialization;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import io.jmix.fullcalendarflowui.kit.component.model.JsFunction;
-
-import java.io.IOException;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.ser.std.StdSerializer;
 
 /**
  * INTERNAL.
@@ -33,7 +31,7 @@ public class JsFunctionSerializer extends StdSerializer<JsFunction> {
     }
 
     @Override
-    public void serialize(JsFunction value, JsonGenerator gen, SerializerProvider provider) throws IOException {
+    public void serialize(JsFunction value, JsonGenerator gen, SerializationContext provider) {
         if (value == null || value.getCode().isEmpty()) {
             gen.writeNull();
             return;

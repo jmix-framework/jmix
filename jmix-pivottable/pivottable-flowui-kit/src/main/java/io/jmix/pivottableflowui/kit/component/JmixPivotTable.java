@@ -21,9 +21,6 @@ import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.internal.ExecutionContext;
 import com.vaadin.flow.internal.StateTree;
 import com.vaadin.flow.shared.Registration;
-import elemental.json.JsonObject;
-import elemental.json.JsonValue;
-import elemental.json.impl.JreJsonFactory;
 import io.jmix.pivottableflowui.kit.component.model.*;
 import io.jmix.pivottableflowui.kit.component.serialization.JmixPivotTableSerializer;
 import io.jmix.pivottableflowui.kit.data.JmixEmptyPivotTableItems;
@@ -31,6 +28,9 @@ import io.jmix.pivottableflowui.kit.data.JmixPivotTableItems;
 import io.jmix.pivottableflowui.kit.event.PivotTableCellClickEvent;
 import io.jmix.pivottableflowui.kit.event.PivotTableRefreshEvent;
 import io.jmix.pivottableflowui.kit.event.PivotTableRefreshEventDetail;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.node.ObjectNode;
 
 import java.util.*;
 import java.util.function.Function;
@@ -812,19 +812,19 @@ public class JmixPivotTable<T> extends Component implements HasEnabled, HasSize 
     }
 
     protected void performUpdateOptions(ExecutionContext context) {
-        JsonObject resultJson = new JreJsonFactory().createObject();
-        JsonValue optionsJson = serializer.serializeOptions(options);
-        resultJson.put("options", optionsJson);
+        ObjectNode resultJson = new ObjectMapper().createObjectNode();
+        JsonNode optionsJson = serializer.serializeOptions(options);
+        resultJson.putIfAbsent("options", optionsJson);
         callPendingJsFunction("_updateOptions", resultJson);
 
         synchronizeOptionsExecution = null;
     }
 
     protected void performUpdateItems(ExecutionContext context) {
-        JsonObject resultJson = new JreJsonFactory().createObject();
+        ObjectNode resultJson = new ObjectMapper().createObjectNode();
         Collection<T> items = jmixPivotTableItems.getItems();
         Function<Object, Object> itemOrEmpty = item -> item != null ? item : "";
-        JsonValue dataJson = serializer.serializeItems(items.stream().map(item -> {
+        JsonNode dataJson = serializer.serializeItems(items.stream().map(item -> {
                     Map<String, Object> propertyWithValue = options.getProperties() != null
                             ? options.getProperties()
                                     .entrySet()
@@ -837,7 +837,7 @@ public class JmixPivotTable<T> extends Component implements HasEnabled, HasSize 
                     return propertyWithValue;
                 })
                 .toList());
-        resultJson.put("items", dataJson);
+        resultJson.putIfAbsent("items", dataJson);
         callPendingJsFunction("_updateItems", resultJson);
 
         synchronizeItemsExecution = null;
@@ -873,7 +873,7 @@ public class JmixPivotTable<T> extends Component implements HasEnabled, HasSize 
      * @param function   JavaScript function to execute
      * @param resultJson resultJson
      */
-    protected synchronized void callPendingJsFunction(String function, JsonObject resultJson) {
+    protected synchronized void callPendingJsFunction(String function, ObjectNode resultJson) {
         if (clientReady) {
             callJsFunction(function, resultJson);
         } else {
@@ -887,10 +887,10 @@ public class JmixPivotTable<T> extends Component implements HasEnabled, HasSize 
         }
     }
 
-    protected void callJsFunction(String function, JsonObject resultJson) {
+    protected void callJsFunction(String function, ObjectNode resultJson) {
         getElement().callJsFunction(function, resultJson);
     }
 
-    protected record PendingJsFunction(String function, JsonObject resultJson) {
+    protected record PendingJsFunction(String function, ObjectNode resultJson) {
     }
 }

@@ -19,8 +19,8 @@ package io.jmix.fullcalendarflowui.kit.component.event.dom;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.DomEvent;
 import com.vaadin.flow.component.EventData;
-import elemental.json.JsonObject;
 import io.jmix.fullcalendarflowui.kit.component.JmixFullCalendar;
+import tools.jackson.databind.node.ObjectNode;
 
 /**
  * INTERNAL.
@@ -28,17 +28,17 @@ import io.jmix.fullcalendarflowui.kit.component.JmixFullCalendar;
 @DomEvent("jmix-event-resize")
 public class EventResizeDomEvent extends ComponentEvent<JmixFullCalendar> {
 
-    protected final JsonObject context;
+    protected final ObjectNode context;
 
     public EventResizeDomEvent(JmixFullCalendar source,
                                boolean fromClient,
-                               @EventData("event.detail.context") JsonObject context) {
+                               @EventData("event.detail.context") ObjectNode context) {
         super(source, fromClient);
 
         this.context = context;
     }
 
-    public JsonObject getContext() {
+    public ObjectNode getContext() {
         return context;
     }
 }

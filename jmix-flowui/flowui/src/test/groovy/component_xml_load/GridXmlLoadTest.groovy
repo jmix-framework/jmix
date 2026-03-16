@@ -143,7 +143,6 @@ class GridXmlLoadTest extends FlowuiTestSpecification {
             id.get() == "contextMenu"
             classNames.containsAll(["cssClassName1", "cssClassName2"])
             style.get("color") == "red"
-            enabled
             !visible
         }
         def contextMenuItems = contextMenu.getItems()
@@ -322,7 +321,6 @@ class GridXmlLoadTest extends FlowuiTestSpecification {
             id.get() == "contextMenu"
             classNames.containsAll(["cssClassName1", "cssClassName2"])
             style.get("color") == "red"
-            enabled
             !visible
         }
         def contextMenuItems = contextMenu.getItems()

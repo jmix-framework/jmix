@@ -40,15 +40,7 @@ import java.util.function.Consumer;
  */
 public class ListMenu extends Composite<UnorderedList> implements HasSize, HasStyle, HasThemeVariant<ListMenuVariant> {
 
-    protected static final String TEXT_SMALL_CLASS_NAME = "text-s";
-    protected static final String LIST_NONE_CLASS_NAME = "list-none";
-    protected static final String MARGIN_NONE_CLASS_NAME = "m-0";
-    protected static final String PADDING_NONE_CLASS_NAME = "p-0";
-    protected static final String FLEX_CLASS_NAME = "flex";
-    protected static final String FONT_MEDIUM_CLASS_NAME = "font-medium";
-
     protected static final String JMIX_LIST_MENU_CLASS_NAME = "jmix-list-menu";
-
     protected static final String JMIX_MENUBAR_ITEM_CLASS_NAME = "jmix-menubar-item";
     protected static final String JMIX_MENUBAR_SUMMARY_ICON_CONTAINER_CLASS_NAME = "jmix-menubar-summary-icon-container";
     protected static final String MENUBAR_SUMMARY_CLASS_NAME = "menubar-summary";
@@ -68,7 +60,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
     @Override
     protected UnorderedList initContent() {
         UnorderedList content = super.initContent();
-        content.addClassNames(JMIX_LIST_MENU_CLASS_NAME, LIST_NONE_CLASS_NAME);
+        content.addClassNames(JMIX_LIST_MENU_CLASS_NAME);
         return content;
     }
 
@@ -288,7 +280,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
 
     protected RouterLink createMenuItemComponent(MenuItem menuItem) {
         RouterLink routerLink = createRouterLink();
-        routerLink.addClassNames(JMIX_MENU_ITEM_LINK_CLASS_NAME, FLEX_CLASS_NAME);
+        routerLink.addClassNames(JMIX_MENU_ITEM_LINK_CLASS_NAME);
         routerLink.addClassNames(menuItem.getClassNames().toArray(new String[0]));
         routerLink.setHighlightCondition(HighlightConditions.never());
         routerLink.setVisible(menuItem.isVisible());
@@ -299,7 +291,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
         }
 
         Span text = new Span(getTitle(menuItem));
-        text.addClassNames(LINK_TEXT_CLASS_NAME, FONT_MEDIUM_CLASS_NAME, TEXT_SMALL_CLASS_NAME);
+        text.addClassNames(LINK_TEXT_CLASS_NAME);
         text.setTitle(Strings.nullToEmpty(menuItem.getDescription()));
 
         addMenuItemClickListener(routerLink, menuItem);
@@ -366,7 +358,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
 
         Span summary = new Span();
         summary.setText(getTitle(menuBarItem));
-        summary.addClassNames(MENUBAR_SUMMARY_CLASS_NAME, TEXT_SMALL_CLASS_NAME);
+        summary.addClassNames(MENUBAR_SUMMARY_CLASS_NAME);
         div.add(summary);
 
         setSuffixComponent(div, menuBarItem.getSuffixComponent(), null);
@@ -374,8 +366,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
         menuItemComponent.setSummary(div);
 
         UnorderedList menuList = new UnorderedList();
-        menuList.addClassNames(MENUBAR_LIST_CLASS_NAME, LIST_NONE_CLASS_NAME, MARGIN_NONE_CLASS_NAME,
-                PADDING_NONE_CLASS_NAME);
+        menuList.addClassNames(MENUBAR_LIST_CLASS_NAME);
 
         menuItemComponent.removeAll();
         menuItemComponent.add(menuList);

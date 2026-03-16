@@ -36,6 +36,7 @@ import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.icon.JmixFontIcon;
+import io.jmix.flowui.theme.StyleUtility;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
@@ -170,12 +171,8 @@ public class AbstractDialogWindow<V extends View<?>> implements HasSize, HasThem
     protected Button createHeaderCloseButton() {
         JmixButton closeButton = uiComponents().create(JmixButton.class);
         closeButton.setIcon(icons().get(JmixFontIcon.CLOSE_SMALL));
-        closeButton.addThemeVariants(
-                ButtonVariant.LUMO_TERTIARY_INLINE,
-                ButtonVariant.LUMO_ICON,
-                ButtonVariant.LUMO_CONTRAST
-        );
-        closeButton.setClassName(BASE_CLASS_NAME + "-close-button");
+        closeButton.addClassNames(BASE_CLASS_NAME + "-close-button",
+                StyleUtility.Button.DIALOG_CLOSE_BUTTON);
         closeButton.setTitle(messages().getMessage("dialogWindow.closeButton.description"));
         closeButton.addClickListener(this::onCloseButtonClicked);
 

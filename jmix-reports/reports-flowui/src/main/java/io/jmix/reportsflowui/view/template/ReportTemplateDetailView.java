@@ -228,7 +228,7 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
     }
 
     @Subscribe("templateUploadField")
-    public void onTemplateUploadFieldFileUploadSucceeded(FileUploadSucceededEvent<FileUploadField> event) {
+    public void onTemplateUploadFieldFileUploadSucceeded(FileUploadSucceededEvent<FileUploadField, byte[]> event) {
         ReportTemplate reportTemplate = getEditedEntity();
         reportTemplate.setName(event.getFileName());
         reportTemplate.setContent(templateUploadField.getValue());

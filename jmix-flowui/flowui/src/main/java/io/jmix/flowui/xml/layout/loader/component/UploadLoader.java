@@ -23,8 +23,11 @@ import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.upload.Receiver;
 import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
 import com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer;
+import com.vaadin.flow.server.streams.UploadHandler;
 import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.flowui.component.upload.JmixUpload;
+import io.jmix.flowui.component.upload.handler.FileTemporaryStorageUploadHandler;
+import io.jmix.flowui.component.upload.handler.InMemoryUploadHandler;
 import io.jmix.flowui.component.upload.receiver.FileTemporaryStorageBuffer;
 import io.jmix.flowui.component.upload.receiver.MultiFileTemporaryStorageBuffer;
 import io.jmix.flowui.exception.GuiDevelopmentException;
@@ -61,17 +64,18 @@ public class UploadLoader extends AbstractComponentLoader<JmixUpload> {
         componentLoader().loadSizeAttributes(resultComponent, element);
     }
 
+    @Deprecated(since = "3.0", forRemoval = true)
     protected void loadReceiver(JmixUpload component, Element element) {
-        String receiverFqn = loadString(element, "receiverFqn")
-                .orElse(null);
+        Optional<String> receiverFqn = loadString(element, "receiverFqn");
 
-        if (receiverFqn != null) {
-            loadReceiverFqn(component, receiverFqn);
+        if (receiverFqn.isPresent()) {
+            loadReceiverFqn(component, receiverFqn.get());
         } else {
             loadReceiverType(component, element);
         }
     }
 
+    @Deprecated(since = "3.0", forRemoval = true)
     protected void loadReceiverFqn(JmixUpload component, String receiverFqn) {
         Class<?> clazz;
 
@@ -115,25 +119,94 @@ public class UploadLoader extends AbstractComponentLoader<JmixUpload> {
     }
 
     protected void loadReceiverType(JmixUpload component, Element element) {
-        String receiver = loadString(element, "receiverType")
-                .orElse("MEMORY_BUFFER");
+        Optional<String> type = loadString(element, "receiverType");
+        if (type.isPresent()) {
+            switch (type.get()) {
+                case "MULTI_FILE_TEMPORARY_STORAGE_BUFFER":
+                    component.setReceiver(applicationContext.getBean(MultiFileTemporaryStorageBuffer.class));
+                    break;
 
-        switch (receiver) {
-            case "MULTI_FILE_TEMPORARY_STORAGE_BUFFER":
-                component.setReceiver(applicationContext.getBean(MultiFileTemporaryStorageBuffer.class));
-                break;
+                case "FILE_TEMPORARY_STORAGE_BUFFER":
+                    component.setReceiver(applicationContext.getBean(FileTemporaryStorageBuffer.class));
+                    break;
 
-            case "FILE_TEMPORARY_STORAGE_BUFFER":
-                component.setReceiver(applicationContext.getBean(FileTemporaryStorageBuffer.class));
-                break;
+                case "MULTI_FILE_MEMORY_BUFFER":
+                    component.setReceiver(new MultiFileMemoryBuffer());
+                    break;
 
-            case "MULTI_FILE_MEMORY_BUFFER":
-                component.setReceiver(new MultiFileMemoryBuffer());
-                break;
-
-            default:
-                component.setReceiver(new MemoryBuffer());
+                default:
+                    component.setReceiver(new MemoryBuffer());
+            }
+        } else {
+            loadUploadHandler(resultComponent, element);
         }
+    }
+
+    protected void loadUploadHandler(JmixUpload component, Element element) {
+        Optional<String> receiverFqn = loadString(element, "uploadHandlerFqn");
+        if (receiverFqn.isPresent()) {
+            loadUploadHandlerFqn(component, receiverFqn.get());
+        } else {
+            loadUploadHandlerType(component, element);
+        }
+    }
+
+    protected void loadUploadHandlerFqn(JmixUpload component, String uploadHandlerFqn) {
+        Class<?> clazz;
+
+        try {
+            clazz = ReflectionHelper.loadClass(uploadHandlerFqn);
+        } catch (ClassNotFoundException e) {
+            String message = String.format("Class not found for 'uploadHandlerFqn' attribute of '%s'",
+                    component.getClass().getSimpleName());
+            throw new GuiDevelopmentException(message, context);
+        }
+
+        if (!UploadHandler.class.isAssignableFrom(clazz)) {
+            String message = String.format(
+                    "UploadHandler for '%s' with id '%s' should implement the '%s' interface",
+                    component.getClass().getSimpleName(),
+                    component.getId().orElse("null"),
+                    UploadHandler.class.getName()
+            );
+
+            throw new GuiDevelopmentException(message, context);
+        }
+
+        UploadHandler uploadHandler;
+
+        try {
+            uploadHandler = (UploadHandler) applicationContext.getBean(clazz);
+        } catch (BeansException e) {
+            uploadHandler = null;
+        }
+
+        if (uploadHandler == null) {
+            try {
+                uploadHandler = (UploadHandler) ReflectionHelper.newInstance(clazz);
+            } catch (NoSuchMethodException e) {
+                String message = String.format("Can't find constructor for '%s' class", clazz.getSimpleName());
+                throw new GuiDevelopmentException(message, context);
+            }
+        }
+
+        component.setUploadHandler(uploadHandler);
+    }
+
+    protected void loadUploadHandlerType(JmixUpload component, Element element) {
+        String type = loadString(element, "uploadHandlerType")
+                .orElse("IN_MEMORY");
+
+        UploadHandler uploadHandler = switch (type) {
+            case "FILE_TEMPORARY_STORAGE" -> {
+                yield applicationContext.getBean(FileTemporaryStorageUploadHandler.class);
+            }
+            default -> {
+                yield applicationContext.getBean(InMemoryUploadHandler.class);
+            }
+        };
+
+        component.setUploadHandler(uploadHandler);
     }
 
     protected void loadAcceptedFileTypes(JmixUpload component, Element element) {

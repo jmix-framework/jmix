@@ -24,26 +24,41 @@ import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
 
 /**
- * Event is fired when {@link SucceededEvent} of {@link Upload} is occurred. See
- * {@link Upload#addSucceededListener(ComponentEventListener)} for details.
+ * Event is fired when {@link SucceededEvent} of {@link Upload} is occurred.
  *
  * @param <C> type of upload field
+ * @param <V> type of data in an upload field
  * @see SucceededEvent
  */
-public class FileUploadSucceededEvent<C extends Component> extends FileUploadFinishedEvent<C> {
+public class FileUploadSucceededEvent<C extends Component, V> extends FileUploadFinishedEvent<C> {
 
     protected Receiver receiver;
+    protected V data;
 
+    @Deprecated(since = "3.0", forRemoval = true)
     public FileUploadSucceededEvent(C source, String fileName, String mimeType, long length, Receiver receiver) {
         super(source, fileName, mimeType, length);
 
         this.receiver = receiver;
     }
 
+    public FileUploadSucceededEvent(C source,
+                                    String fileName, String mimeType, long length,
+                                    V data) {
+        super(source, fileName, mimeType, length);
+
+        this.data = data;
+    }
+
+    public V getData() {
+        return data;
+    }
+
     /**
      * @return receiver that contains information about uploaded file
      * @see MemoryBuffer
      */
+    @Deprecated(since = "3.0", forRemoval = true)
     public <T extends Receiver> T getReceiver() {
         return (T) receiver;
     }

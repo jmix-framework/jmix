@@ -114,32 +114,14 @@ public class PaginationUrlQueryParametersBinder extends AbstractUrlQueryParamete
                 String serializedFirstResult = parameters.get(getFirstResultParam()).get(0);
                 int firstResult = urlParamSerializer.deserialize(Integer.class, serializedFirstResult);
                 paginationLoader.setFirstResult(firstResult);
-            } else if (parameters.containsKey(getLegacyFirstResultParam())) {
-                // the fallback option should be removed in future versions
-                String serializedFirstResult = parameters.get(getLegacyFirstResultParam()).get(0);
-                int firstResult = urlParamSerializer.deserialize(Integer.class, serializedFirstResult);
-                paginationLoader.setFirstResult(firstResult);
             }
 
             if (parameters.containsKey(getMaxResultsParam())) {
                 String serializedMaxResults = parameters.get(getMaxResultsParam()).get(0);
                 int maxResults = urlParamSerializer.deserialize(Integer.class, serializedMaxResults);
                 paginationLoader.setMaxResults(maxResults);
-            } else if (parameters.containsKey(getLegacyMaxResultsParam())) {
-                // the fallback option should be removed in future versions
-                String serializedMaxResults = parameters.get(getLegacyMaxResultsParam()).get(0);
-                int maxResults = urlParamSerializer.deserialize(Integer.class, serializedMaxResults);
-                paginationLoader.setMaxResults(maxResults);
             }
         });
-    }
-
-    /**
-     * @deprecated legacy implementation for backward capability, use {@link #getFirstResultParam()} instead
-     */
-    @Deprecated(since = "2.8", forRemoval = true)
-    public String getLegacyFirstResultParam() {
-        return Strings.isNullOrEmpty(firstResultParam) ? FIRST_RESULT_PARAM : firstResultParam;
     }
 
     /**
@@ -149,7 +131,8 @@ public class PaginationUrlQueryParametersBinder extends AbstractUrlQueryParamete
      * @return the parameter name for the "first result" value, either a custom or default value
      */
     public String getFirstResultParam() {
-        return getOwnerId("pagination") + "_" + getLegacyFirstResultParam();
+        return getOwnerId("pagination") + "_" +
+                (Strings.isNullOrEmpty(firstResultParam) ? FIRST_RESULT_PARAM : firstResultParam);
     }
 
     /**
@@ -163,21 +146,14 @@ public class PaginationUrlQueryParametersBinder extends AbstractUrlQueryParamete
     }
 
     /**
-     * @deprecated legacy implementation for backward capability, use {@link #getMaxResultsParam()} instead
-     */
-    @Deprecated(since = "2.8", forRemoval = true)
-    public String getLegacyMaxResultsParam() {
-        return Strings.isNullOrEmpty(maxResultsParam) ? MAX_RESULTS_PARAM : maxResultsParam;
-    }
-
-    /**
      * Returns the parameter name used for the "max results" value in pagination.
      * If the custom parameter name is not specified, a default parameter name is returned.
      *
      * @return the parameter name for the "max results" value, either a custom or default value
      */
     public String getMaxResultsParam() {
-        return getOwnerId("pagination") + "_" + getLegacyMaxResultsParam();
+        return getOwnerId("pagination") + "_" +
+                (Strings.isNullOrEmpty(maxResultsParam) ? MAX_RESULTS_PARAM : maxResultsParam);
     }
 
     /**

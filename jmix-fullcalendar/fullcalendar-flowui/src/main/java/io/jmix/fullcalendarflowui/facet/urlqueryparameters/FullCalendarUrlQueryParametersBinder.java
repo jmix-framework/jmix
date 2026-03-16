@@ -65,51 +65,32 @@ public class FullCalendarUrlQueryParametersBinder extends AbstractUrlQueryParame
     @Override
     public void updateState(QueryParameters queryParameters) {
         Map<String, List<String>> parameters = queryParameters.getParameters();
-        if (parameters.containsKey(getLegacyCalendarDisplayModeParam()) || parameters.containsKey(getCalendarDisplayModeParam())) {
-            String serializedDisplayMode = parameters.containsKey(getCalendarDisplayModeParam())
-                    ? parameters.get(getCalendarDisplayModeParam()).get(0)
-                    // the fallback option should be removed in future versions
-                    : parameters.get(getLegacyCalendarDisplayModeParam()).get(0);
+        if (parameters.containsKey(getCalendarDisplayModeParam())) {
+            String serializedDisplayMode = parameters.get(getCalendarDisplayModeParam()).get(0);
             String displayModeId = urlParamSerializer.deserialize(String.class, serializedDisplayMode);
 
             fullCalendar.setCalendarDisplayMode(FullCalendarUtils.getDisplayMode(fullCalendar, displayModeId));
         }
-        if (parameters.containsKey(getLegacyCalendarDateParam()) || parameters.containsKey(getCalendarDateParam())) {
-            String serializedNavigateToDate = parameters.containsKey(getCalendarDateParam())
-                    ? parameters.get(getCalendarDateParam()).get(0)
-                    : parameters.get(getLegacyCalendarDateParam()).get(0);
+        if (parameters.containsKey(getCalendarDateParam())) {
+            String serializedNavigateToDate = parameters.get(getCalendarDateParam()).get(0);
             LocalDate date = urlParamSerializer.deserialize(LocalDate.class, serializedNavigateToDate);
 
             fullCalendar.navigateToDate(date);
         }
     }
 
-    /**
-     * @deprecated use {@link #getCalendarDisplayModeParam()} instead
-     */
-    @Deprecated(since = "2.8", forRemoval = true)
-    public String getLegacyCalendarDisplayModeParam() {
-        return Strings.isNullOrEmpty(calendarDisplayModeParam) ? CALENDAR_DISPLAY_MODE_PARAM : calendarDisplayModeParam;
-    }
-
     public String getCalendarDisplayModeParam() {
-        return getOwnerId("calendar") + "_" + getLegacyCalendarDisplayModeParam();
+        return getOwnerId("calendar") + "_" +
+                (Strings.isNullOrEmpty(calendarDisplayModeParam) ? CALENDAR_DISPLAY_MODE_PARAM : calendarDisplayModeParam);
     }
 
     public void setCalendarDisplayModeParam(@Nullable String calendarDisplayModeParam) {
         this.calendarDisplayModeParam = calendarDisplayModeParam;
     }
 
-    /**
-     * @deprecated use {@link #getCalendarDateParam()} instead
-     */
-    @Deprecated(since = "2.8", forRemoval = true)
-    public String getLegacyCalendarDateParam() {
-        return Strings.isNullOrEmpty(calendarDateParam) ? CALENDAR_DATE_PARAM : calendarDateParam;
-    }
-
     public String getCalendarDateParam() {
-        return getOwnerId("calendar") + "_" + getLegacyCalendarDateParam();
+        return getOwnerId("calendar") + "_" +
+                (Strings.isNullOrEmpty(calendarDateParam) ? CALENDAR_DATE_PARAM : calendarDateParam);
     }
 
     public void setCalendarDateParam(@Nullable String calendarDateParam) {

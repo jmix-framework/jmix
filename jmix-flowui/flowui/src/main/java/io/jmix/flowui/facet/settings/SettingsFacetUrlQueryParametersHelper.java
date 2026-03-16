@@ -77,8 +77,7 @@ public class SettingsFacetUrlQueryParametersHelper {
      */
     protected boolean containsParametersForPagination(Map<String, List<String>> parameters,
                                                       PaginationUrlQueryParametersBinder paginationBinder) {
-        return parameters.containsKey(paginationBinder.getLegacyMaxResultsParam()) ||
-                parameters.containsKey(paginationBinder.getMaxResultsParam());
+        return parameters.containsKey(paginationBinder.getMaxResultsParam());
     }
 
     /**
@@ -91,7 +90,6 @@ public class SettingsFacetUrlQueryParametersHelper {
      */
     protected boolean containsParametersForGenericFilter(Map<String, List<String>> parameters,
                                                          GenericFilterUrlQueryParametersBinder filterBinder) {
-        return parameters.containsKey(filterBinder.getLegacyConfigurationParam())
-                || parameters.containsKey(filterBinder.getConfigurationParam());
+        return parameters.containsKey(filterBinder.getConfigurationParam());
     }
 }

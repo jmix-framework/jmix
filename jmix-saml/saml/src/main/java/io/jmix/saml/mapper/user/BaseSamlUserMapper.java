@@ -16,16 +16,21 @@
 
 package io.jmix.saml.mapper.user;
 
+import com.google.common.util.concurrent.Striped;
+import io.jmix.saml.SamlProperties;
 import io.jmix.saml.user.HasSamlPrincipalDelegate;
 import io.jmix.saml.user.JmixSamlUserDetails;
 import io.jmix.saml.util.SamlAssertionUtils;
+import jakarta.annotation.PostConstruct;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.saml2.provider.service.authentication.DefaultSaml2AuthenticatedPrincipal;
 import org.springframework.security.saml2.provider.service.authentication.OpenSaml4AuthenticationProvider;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -33,11 +38,24 @@ public abstract class BaseSamlUserMapper<T extends JmixSamlUserDetails> implemen
 
     private static final Logger log = getLogger(BaseSamlUserMapper.class);
 
+    @Autowired
+    protected SamlProperties samlProperties;
+
+    protected Striped<Lock> locks;
+
+    @PostConstruct
+    protected void initLocks() {
+        this.locks = Striped.lock(samlProperties.getMaxConcurrentUserMapping());
+    }
+
     @Override
     public T toJmixUser(Assertion assertion, OpenSaml4AuthenticationProvider.ResponseToken responseToken) {
-        synchronized (getSamlUsername(assertion)) {
+        String username = getSamlUsername(assertion);
+        Lock lock = locks.get(username);
+        lock.lock();
+        try {
             T jmixUser = initJmixUser(assertion);
-            log.debug("User '{}' is initialized", getSamlUsername(assertion));
+            log.debug("User '{}' is initialized", username);
             populateUserAttributes(assertion, responseToken, jmixUser);
             log.debug("User attributes is populated");
             populateUserAuthorities(assertion, jmixUser);
@@ -45,6 +63,8 @@ public abstract class BaseSamlUserMapper<T extends JmixSamlUserDetails> implemen
             performAdditionalModifications(assertion, responseToken, jmixUser);
             log.debug("Additional modifications are performed");
             return jmixUser;
+        } finally {
+            lock.unlock();
         }
     }
 

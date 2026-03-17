@@ -26,14 +26,17 @@ import java.util.List;
 public class SamlProperties {
 
     boolean forceRedirectBindingLogout;
+    int maxConcurrentUserMapping;
 
     DefaultSamlAssertionRolesMapperConfig defaultSamlAssertionRolesMapper;
     FilterChain filterChain;
 
     public SamlProperties(@DefaultValue("true") boolean forceRedirectBindingLogout,
+                          @DefaultValue("128") int maxConcurrentUserMapping,
                           @DefaultValue DefaultSamlAssertionRolesMapperConfig defaultSamlAssertionRolesMapper,
                           @DefaultValue FilterChain filterChain) {
         this.forceRedirectBindingLogout = forceRedirectBindingLogout;
+        this.maxConcurrentUserMapping = maxConcurrentUserMapping;
 
         this.defaultSamlAssertionRolesMapper = defaultSamlAssertionRolesMapper;
         this.filterChain = filterChain;
@@ -41,6 +44,10 @@ public class SamlProperties {
 
     public boolean isForceRedirectBindingLogout() {
         return forceRedirectBindingLogout;
+    }
+
+    public int getMaxConcurrentUserMapping() {
+        return maxConcurrentUserMapping;
     }
 
     public DefaultSamlAssertionRolesMapperConfig getDefaultSamlAssertionRolesMapper() {

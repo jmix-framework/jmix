@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-@NonNullApi
+@NullMarked
 @Experimental
 package io.jmix.multitenancy.observation;
 
 import io.jmix.core.annotation.Experimental;
-import org.springframework.lang.NonNullApi;
+import org.jspecify.annotations.NullMarked;

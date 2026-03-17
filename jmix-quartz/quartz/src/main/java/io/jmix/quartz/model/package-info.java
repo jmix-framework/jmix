@@ -15,9 +15,9 @@
  */
 
 @Internal
-@NonNullApi
+@NullMarked
 package io.jmix.quartz.model;
 
 import io.jmix.core.annotation.Internal;
-import org.springframework.lang.NonNullApi;
+import org.jspecify.annotations.NullMarked;
 

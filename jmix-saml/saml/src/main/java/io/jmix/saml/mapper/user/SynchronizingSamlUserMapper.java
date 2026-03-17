@@ -55,8 +55,6 @@ public abstract class SynchronizingSamlUserMapper<T extends JmixSamlUserDetails>
     protected SamlAssertionRolesMapper rolesMapper;
     @Autowired
     protected RoleGrantedAuthorityUtils roleGrantedAuthorityUtils;
-    @Autowired
-    protected SamlProperties samlProperties;
 
     protected boolean synchronizeRoleAssignments;
 

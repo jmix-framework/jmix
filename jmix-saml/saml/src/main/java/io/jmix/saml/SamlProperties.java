@@ -62,12 +62,34 @@ public class SamlProperties {
 
         String rolesAssertionAttribute;
 
-        public DefaultSamlAssertionRolesMapperConfig(@DefaultValue("Role") String rolesAssertionAttribute) {
+        /**
+         * Prefix that can be used to recognize a resource role from the authorization server
+         */
+        String resourceRolePrefix;
+
+        /**
+         * Prefix that can be used to recognize a row-level role from the authorization server
+         */
+        String rowLevelRolePrefix;
+
+        public DefaultSamlAssertionRolesMapperConfig(@DefaultValue("Role") String rolesAssertionAttribute,
+                                                     @DefaultValue("") String resourceRolePrefix,
+                                                     @DefaultValue("") String rowLevelRolePrefix) {
             this.rolesAssertionAttribute = rolesAssertionAttribute;
+            this.resourceRolePrefix = resourceRolePrefix;
+            this.rowLevelRolePrefix = rowLevelRolePrefix;
         }
 
         public String getRolesAssertionAttribute() {
             return rolesAssertionAttribute;
+        }
+
+        public String getResourceRolePrefix() {
+            return resourceRolePrefix;
+        }
+
+        public String getRowLevelRolePrefix() {
+            return rowLevelRolePrefix;
         }
     }
 

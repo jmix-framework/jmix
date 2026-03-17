@@ -53,6 +53,8 @@ public class SamlAutoConfiguration {
                 resourceRoleRepository, rowLevelRoleRepository, roleGrantedAuthorityUtils
         );
         mapper.setRolesAttributeName(samlProperties.getDefaultSamlAssertionRolesMapper().getRolesAssertionAttribute());
+        mapper.setResourceRolePrefix(samlProperties.getDefaultSamlAssertionRolesMapper().getResourceRolePrefix());
+        mapper.setRowLevelRolePrefix(samlProperties.getDefaultSamlAssertionRolesMapper().getRowLevelRolePrefix());
         return mapper;
     }
 

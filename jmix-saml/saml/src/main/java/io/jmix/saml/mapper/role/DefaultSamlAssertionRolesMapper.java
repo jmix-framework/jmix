@@ -38,9 +38,8 @@ public class DefaultSamlAssertionRolesMapper extends BaseSamlAssertionRolesMappe
 
     protected String rolesAttributeName = "Role";
 
-    //TODO support prefixes
-    //protected String resourceRolePrefix = "";
-    //protected String rowLevelRolePrefix = "";
+    protected String resourceRolePrefix = "";
+    protected String rowLevelRolePrefix = "";
 
     public DefaultSamlAssertionRolesMapper(ResourceRoleRepository resourceRoleRepository,
                                            RowLevelRoleRepository rowLevelRoleRepository,
@@ -50,15 +49,15 @@ public class DefaultSamlAssertionRolesMapper extends BaseSamlAssertionRolesMappe
 
     @Override
     protected Collection<String> getResourceRolesCodes(Assertion assertion) {
-        return getRolesCodes(assertion); //todo prefix for resource/row-level roles like in OIDC?
+        return getRolesCodes(assertion, resourceRolePrefix);
     }
 
     @Override
     protected Collection<String> getRowLevelRoleCodes(Assertion assertion) {
-        return getRolesCodes(assertion);
+        return getRolesCodes(assertion, rowLevelRolePrefix);
     }
 
-    protected Collection<String> getRolesCodes(Assertion assertion) {
+    protected Collection<String> getRolesCodes(Assertion assertion, String roleNamePrefix) {
         Map<String, List<Object>> assertionAttributes = SamlAssertionUtils.getAssertionAttributes(assertion);
         List<Object> rolesAssertionAttributes = assertionAttributes.get(getRolesAttributeName());
         if (CollectionUtils.isEmpty(rolesAssertionAttributes)) {
@@ -66,6 +65,8 @@ public class DefaultSamlAssertionRolesMapper extends BaseSamlAssertionRolesMappe
         } else {
             return rolesAssertionAttributes.stream()
                     .map(Object::toString)
+                    .filter(roleName -> roleName.startsWith(roleNamePrefix))
+                    .map(roleName -> roleName.substring(roleNamePrefix.length()))
                     .collect(Collectors.toUnmodifiableSet());
         }
     }
@@ -76,5 +77,21 @@ public class DefaultSamlAssertionRolesMapper extends BaseSamlAssertionRolesMappe
 
     public void setRolesAttributeName(String rolesAttributeName) {
         this.rolesAttributeName = rolesAttributeName;
+    }
+
+    public String getResourceRolePrefix() {
+        return resourceRolePrefix;
+    }
+
+    public void setResourceRolePrefix(String resourceRolePrefix) {
+        this.resourceRolePrefix = resourceRolePrefix;
+    }
+
+    public String getRowLevelRolePrefix() {
+        return rowLevelRolePrefix;
+    }
+
+    public void setRowLevelRolePrefix(String rowLevelRolePrefix) {
+        this.rowLevelRolePrefix = rowLevelRolePrefix;
     }
 }

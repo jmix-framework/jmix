@@ -36,7 +36,7 @@ import io.jmix.flowui.data.items.EnumDataProvider;
 import io.jmix.flowui.data.items.InMemoryDataProviderWrapper;
 import io.jmix.flowui.kit.event.EventBus;
 import io.jmix.flowui.model.CollectionContainer;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.function.Consumer;
 

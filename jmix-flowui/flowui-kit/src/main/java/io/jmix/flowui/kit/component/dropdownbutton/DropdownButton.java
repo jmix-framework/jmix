@@ -22,7 +22,7 @@ import com.vaadin.flow.component.shared.HasThemeVariant;
 import com.vaadin.flow.theme.lumo.LumoIcon;
 import io.jmix.flowui.kit.component.menubar.JmixMenuBar;
 import io.jmix.flowui.kit.component.menubar.JmixMenuItem;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Represents a dropdown button component. This class is used as a customizable

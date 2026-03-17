@@ -19,7 +19,7 @@ package io.jmix.flowui.xml.layout.support;
 import com.google.common.base.Strings;
 import io.jmix.core.MessageTools;
 import org.dom4j.Element;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;

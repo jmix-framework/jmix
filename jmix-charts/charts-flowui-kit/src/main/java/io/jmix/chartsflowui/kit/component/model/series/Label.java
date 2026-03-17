@@ -19,7 +19,7 @@ package io.jmix.chartsflowui.kit.component.model.series;
 import io.jmix.chartsflowui.kit.component.model.HasEnumId;
 import io.jmix.chartsflowui.kit.component.model.shared.AbstractEnhancedLabel;
 import io.jmix.chartsflowui.kit.component.model.shared.JsFunction;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A text label to explain some information about a graphic element, such as value, name etc.

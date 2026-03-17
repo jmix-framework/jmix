@@ -17,7 +17,7 @@
 package io.jmix.chartsflowui.kit.component.model.axis;
 
 import io.jmix.chartsflowui.kit.component.model.HasEnumId;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The base class for Cartesian axes.

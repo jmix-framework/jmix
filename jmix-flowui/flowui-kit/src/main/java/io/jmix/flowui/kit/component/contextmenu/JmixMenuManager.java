@@ -26,7 +26,7 @@ import com.vaadin.flow.component.contextmenu.SubMenuBase;
 import com.vaadin.flow.function.SerializableBiFunction;
 import com.vaadin.flow.function.SerializableRunnable;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Common management logic for context menus and sub menus. Maintains the list

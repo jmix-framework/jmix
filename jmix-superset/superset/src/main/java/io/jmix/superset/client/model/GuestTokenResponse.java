@@ -17,7 +17,7 @@
 package io.jmix.superset.client.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.io.Serializable;
 import java.util.Collections;

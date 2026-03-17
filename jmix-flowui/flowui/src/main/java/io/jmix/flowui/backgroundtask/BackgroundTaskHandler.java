@@ -16,7 +16,7 @@
 
 package io.jmix.flowui.backgroundtask;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Task handler for {@link BackgroundTask}.

@@ -18,7 +18,7 @@ package io.jmix.audit;
 
 import io.jmix.core.event.AttributeChanges;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Logs lifecycle events (create, modify, delete) of JPA entities.

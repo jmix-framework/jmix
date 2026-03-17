@@ -30,7 +30,7 @@ import io.jmix.fullcalendarflowui.kit.component.model.AbstractCalendarDisplayMod
 import io.jmix.fullcalendarflowui.kit.component.model.option.JmixFullCalendarOptions;
 import io.jmix.fullcalendarflowui.kit.component.serialization.JmixFullCalendarDeserializer;
 import io.jmix.fullcalendarflowui.kit.component.serialization.JmixFullCalendarSerializer;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import tools.jackson.databind.node.ArrayNode;
 import tools.jackson.databind.node.ObjectNode;
 

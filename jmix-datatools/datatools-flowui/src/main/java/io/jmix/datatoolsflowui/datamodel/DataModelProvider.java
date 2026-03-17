@@ -22,7 +22,7 @@ import io.jmix.datatools.datamodel.Relation;
 import io.jmix.datatools.datamodel.RelationType;
 import io.jmix.datatools.datamodel.entity.AttributeModel;
 import io.jmix.datatools.datamodel.entity.EntityModel;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;

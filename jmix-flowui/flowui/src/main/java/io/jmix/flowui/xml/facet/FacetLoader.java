@@ -26,7 +26,7 @@ import io.jmix.flowui.xml.layout.ComponentLoader;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Constructor;
@@ -76,8 +76,7 @@ public class FacetLoader {
         return facetLoader.getResultFacet();
     }
 
-    @Nullable
-    protected io.jmix.flowui.xml.facet.loader.FacetLoader<?> getLoader(Element element,
+    protected io.jmix.flowui.xml.facet.loader.@Nullable FacetLoader<?> getLoader(Element element,
                                                                        ComponentLoader.Context context) {
         Class<? extends io.jmix.flowui.xml.facet.loader.FacetLoader<?>> loaderClass =
                 facetLoaderResolver.getLoader(element);

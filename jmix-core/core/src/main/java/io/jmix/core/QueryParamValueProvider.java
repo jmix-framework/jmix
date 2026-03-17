@@ -16,7 +16,7 @@
 
 package io.jmix.core;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Interface to be implemented by beans that provide values for query parameters if they are not set explicitly.

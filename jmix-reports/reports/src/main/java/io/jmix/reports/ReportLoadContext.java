@@ -18,7 +18,7 @@ package io.jmix.reports;
 
 import io.jmix.core.Sort;
 import io.jmix.reports.entity.Report;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Filtering, pagination and sorting options when loading reports from {@link ReportRepository}.

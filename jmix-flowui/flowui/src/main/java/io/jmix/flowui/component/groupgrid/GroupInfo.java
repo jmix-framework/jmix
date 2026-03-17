@@ -16,7 +16,7 @@
 
 package io.jmix.flowui.component.groupgrid;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Represents a group of items in the {@link GroupListDataComponent}.

@@ -20,7 +20,7 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.jmx.export.annotation.AnnotationJmxAttributeSource;
 import org.springframework.jmx.export.metadata.InvalidMetadataException;
 import org.springframework.jmx.export.metadata.ManagedResource;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.util.StringUtils;
 
 public class JmixAnnotationJmxAttributeSource extends AnnotationJmxAttributeSource {

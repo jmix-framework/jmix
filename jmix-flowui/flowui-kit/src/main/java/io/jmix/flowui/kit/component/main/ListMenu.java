@@ -26,7 +26,7 @@ import com.vaadin.flow.router.HighlightConditions;
 import com.vaadin.flow.router.RouterLink;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.kit.component.menu.ParentMenuItem;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.beans.PropertyChangeEvent;

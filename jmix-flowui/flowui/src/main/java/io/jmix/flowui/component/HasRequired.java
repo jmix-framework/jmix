@@ -17,7 +17,7 @@
 package io.jmix.flowui.component;
 
 import com.vaadin.flow.component.HasElement;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Interface that defines behavior for components that can be marked as required.

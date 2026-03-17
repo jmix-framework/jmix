@@ -17,7 +17,7 @@
 package io.jmix.chartsflowui.kit.component.model;
 
 import io.jmix.chartsflowui.kit.component.model.shared.*;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Title component, including main title and subtitle. More detailed information is provided in the documentation.

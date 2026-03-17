@@ -19,7 +19,7 @@ package io.jmix.flowui.kit.component.sidepanellayout;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.dependency.JsModule;
 import io.jmix.flowui.kit.icon.JmixFontIcon;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 @Tag("jmix-side-panel-layout-closer")
 @JsModule("./src/side-panel-layout/jmix-side-panel-layout-closer.js")

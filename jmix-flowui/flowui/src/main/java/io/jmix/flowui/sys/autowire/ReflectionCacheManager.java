@@ -36,7 +36,7 @@ import io.jmix.flowui.view.Supply;
 import io.jmix.flowui.view.ViewComponent;
 import org.apache.commons.lang3.ClassUtils;
 import org.springframework.context.event.EventListener;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ReflectionUtils;
 

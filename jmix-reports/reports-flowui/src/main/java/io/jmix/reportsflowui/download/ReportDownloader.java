@@ -19,7 +19,7 @@ package io.jmix.reportsflowui.download;
 import io.jmix.core.FileRef;
 import io.jmix.flowui.download.DownloadDataProvider;
 import io.jmix.flowui.download.DownloadFormat;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Generic interface to download report data from the system.

@@ -17,7 +17,7 @@
 package io.jmix.core;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This exception can occur while uploading/downloading files using {@link FileTransferService}.

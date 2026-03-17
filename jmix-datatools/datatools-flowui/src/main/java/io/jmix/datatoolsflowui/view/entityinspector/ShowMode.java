@@ -18,7 +18,7 @@ package io.jmix.datatoolsflowui.view.entityinspector;
 
 import io.jmix.core.metamodel.datatype.EnumClass;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public enum ShowMode implements EnumClass<String> {
 

@@ -16,7 +16,7 @@
 
 package io.jmix.flowui.component;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.time.ZoneId;
 

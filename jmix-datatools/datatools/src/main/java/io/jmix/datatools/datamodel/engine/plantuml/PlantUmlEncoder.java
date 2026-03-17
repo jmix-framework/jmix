@@ -16,7 +16,7 @@
 
 package io.jmix.datatools.datamodel.engine.plantuml;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * PlantUML encoder that adds support for encoding diagram description, compressed by deflate algorithm,

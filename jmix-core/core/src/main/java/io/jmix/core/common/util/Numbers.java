@@ -16,7 +16,7 @@
 
 package io.jmix.core.common.util;
 
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  *

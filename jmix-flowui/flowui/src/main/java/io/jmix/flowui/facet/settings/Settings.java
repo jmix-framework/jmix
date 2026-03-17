@@ -17,7 +17,7 @@
 package io.jmix.flowui.facet.settings;
 
 import io.jmix.flowui.facet.settings.component.DataGridSettings;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Base interface for POJO classes that describe component settings.

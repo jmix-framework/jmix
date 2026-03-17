@@ -19,7 +19,7 @@ package io.jmix.reports;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.reports.entity.ReportGroup;
 import io.jmix.reports.entity.ReportOutputType;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Date;

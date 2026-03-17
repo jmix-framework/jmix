@@ -17,7 +17,7 @@
 package io.jmix.messagetemplatesflowui;
 
 import io.jmix.messagetemplatesflowui.kit.component.GrapesJsPlugin;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Registry for {@link GrapesJsPlugin GrapesJsPlugins}.
@@ -51,6 +51,5 @@ public interface GrapesJsPluginRegistry {
      * @param name   unique registration name
      * @param <T>    type of the plugin
      */
-    @Nullable
     <T extends GrapesJsPlugin> void register(T plugin, String name);
 }

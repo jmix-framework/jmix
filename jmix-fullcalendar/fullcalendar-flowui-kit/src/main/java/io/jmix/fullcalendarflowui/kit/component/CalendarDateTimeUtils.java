@@ -17,7 +17,7 @@
 package io.jmix.fullcalendarflowui.kit.component;
 
 import com.google.common.base.Preconditions;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.time.*;
 import java.time.format.DateTimeParseException;

@@ -27,7 +27,7 @@ import io.jmix.fullcalendarflowui.component.FullCalendar;
 import io.jmix.fullcalendarflowui.component.FullCalendarUtils;
 import io.jmix.fullcalendarflowui.component.event.DatesSetEvent;
 import io.jmix.fullcalendarflowui.kit.component.model.CalendarDisplayMode;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.time.LocalDate;
 import java.util.List;

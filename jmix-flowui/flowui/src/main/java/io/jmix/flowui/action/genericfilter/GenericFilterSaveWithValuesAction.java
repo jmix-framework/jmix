@@ -23,7 +23,7 @@ import io.jmix.flowui.component.genericfilter.Configuration;
 import io.jmix.flowui.component.genericfilter.configuration.DesignTimeConfiguration;
 import io.jmix.flowui.accesscontext.UiGenericFilterModifyGlobalConfigurationContext;
 import io.jmix.flowui.component.genericfilter.model.FilterConfigurationModel;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**

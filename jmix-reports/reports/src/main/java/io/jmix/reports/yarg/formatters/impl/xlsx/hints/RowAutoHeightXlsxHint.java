@@ -25,7 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.docx4j.openpackaging.parts.SpreadsheetML.WorksheetPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.xlsx4j.sml.CTMergeCell;
 import org.xlsx4j.sml.Cell;
 import org.xlsx4j.sml.Row;

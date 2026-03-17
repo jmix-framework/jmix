@@ -17,7 +17,7 @@
 package io.jmix.datatools.datamodel.engine.plantuml.impl;
 
 import io.jmix.datatools.datamodel.engine.plantuml.PlantUmlEncoder;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.nio.charset.StandardCharsets;
 

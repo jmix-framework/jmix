@@ -28,7 +28,7 @@ import io.jmix.flowui.kit.component.codeeditor.autocomplete.Suggester;
 import io.jmix.flowui.kit.component.codeeditor.autocomplete.Suggestion;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.util.Strings;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 

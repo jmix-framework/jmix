@@ -22,7 +22,7 @@ import com.vaadin.flow.data.renderer.Renderer;
 import io.jmix.core.annotation.Internal;
 import io.jmix.flowui.component.grid.DataGridColumn;
 import io.jmix.flowui.component.groupgrid.GroupListDataComponent;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Abstract adapter for columns from {@link GroupListDataComponent} that delegates all calls to the adaptee. Is used in

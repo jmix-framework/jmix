@@ -19,7 +19,7 @@ package io.jmix.quartz.model;
 import io.jmix.core.metamodel.datatype.EnumClass;
 import org.quartz.CronScheduleBuilder;
 import org.quartz.CronTrigger;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.function.Consumer;
 

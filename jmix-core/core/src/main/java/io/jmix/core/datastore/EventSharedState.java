@@ -16,7 +16,7 @@
 
 package io.jmix.core.datastore;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 

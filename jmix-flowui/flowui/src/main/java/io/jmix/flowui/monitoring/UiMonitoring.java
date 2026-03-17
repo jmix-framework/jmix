@@ -22,7 +22,7 @@ import io.jmix.flowui.xml.layout.support.DataComponentsLoaderSupport;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Provides utility methods and constants to facilitate UI monitoring, including measuring and recording the

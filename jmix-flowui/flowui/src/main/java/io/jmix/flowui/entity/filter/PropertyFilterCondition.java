@@ -20,7 +20,7 @@ import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter.Operation;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.Objects;
 
 @JmixEntity(name = "flowui_PropertyFilterCondition")

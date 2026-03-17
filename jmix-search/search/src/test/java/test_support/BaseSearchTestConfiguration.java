@@ -45,7 +45,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 @Configuration
 @Import({

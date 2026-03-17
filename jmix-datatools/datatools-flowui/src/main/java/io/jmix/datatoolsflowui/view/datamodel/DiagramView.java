@@ -16,7 +16,7 @@
 
 package io.jmix.datatoolsflowui.view.datamodel;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Provides an interface for managing and displaying diagram data,

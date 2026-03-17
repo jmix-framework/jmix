@@ -1,7 +1,7 @@
 package io.jmix.flowui.kit.icon;
 
 import com.vaadin.flow.component.icon.FontIcon;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;

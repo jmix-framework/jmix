@@ -38,8 +38,8 @@
 
 ## Nullability
 - Only return/accept `null` when annotated `@Nullable`. Otherwise non-null is implied.
-- Prefer package-level `@NonNullApi` (except entity packages).
-- Use `org.springframework.lang.Nullable` when `spring-core` is available, else `jakarta.annotation.Nullable`.
+- Prefer package-level `@NullMarked` (except entity packages).
+- Use `org.jspecify.annotations.Nullable` when `jspecify` is available, else `jakarta.annotation.Nullable`.
 - For public API, validate non-null params with:
   - `io.jmix.core.common.util.Preconditions#checkNotNullArgument()` (if `jmix-core` is available),
   - `com.google.common.base.Preconditions` (if `guava` is available),

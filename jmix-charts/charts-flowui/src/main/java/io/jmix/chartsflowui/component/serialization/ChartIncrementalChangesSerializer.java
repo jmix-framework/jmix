@@ -21,7 +21,7 @@ import io.jmix.chartsflowui.kit.component.serialization.ChartIncrementalChanges;
 import io.jmix.chartsflowui.kit.data.chart.DataItem;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 import tools.jackson.core.JacksonException;
 import tools.jackson.core.JsonGenerator;

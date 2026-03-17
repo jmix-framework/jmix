@@ -28,7 +28,7 @@ import io.jmix.flowui.view.View;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Support class for observing UI events such as view lifecycle events and action executions.

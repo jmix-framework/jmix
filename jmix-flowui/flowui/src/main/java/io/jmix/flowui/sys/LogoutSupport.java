@@ -23,7 +23,7 @@ import io.jmix.core.annotation.Internal;
 import io.jmix.flowui.util.WebBrowserTools;
 import jakarta.servlet.ServletContext;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 @Internal

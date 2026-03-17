@@ -17,6 +17,7 @@
 package io.jmix.gridexportflowui.exporter.excel;
 
 import com.google.common.base.Strings;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasText;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.HeaderRow;
@@ -62,8 +63,7 @@ import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
-import org.springframework.lang.Nullable;
-import org.springframework.stereotype.Component;
+import org.jspecify.annotations.Nullable;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -82,7 +82,7 @@ import static io.jmix.flowui.download.DownloadFormat.XLSX;
  * Use this class to export {@link DataGrid} into Excel format.
  * <br>Just create an instance of {@link ExportAction} with <code>withExporter</code> method.
  */
-@Component("grdexp_ExcelExporter")
+@org.springframework.stereotype.Component("grdexp_ExcelExporter")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
 
@@ -372,7 +372,7 @@ public class ExcelExporter extends AbstractDataGridExporter<ExcelExporter> {
     }
 
     @Nullable
-    protected com.vaadin.flow.component.Component getDefaultHeaderComponent(DataGrid.Column<?> column) {
+    protected Component getDefaultHeaderComponent(DataGrid.Column<?> column) {
         HeaderRow defaultHeaderRow = null;
 
         if (column.getGrid() instanceof JmixGrid<?> jmixGrid) {

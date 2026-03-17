@@ -20,7 +20,7 @@ import io.jmix.core.DataLoadContext;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.model.CollectionChangeType;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.function.Consumer;
 import java.util.function.Function;

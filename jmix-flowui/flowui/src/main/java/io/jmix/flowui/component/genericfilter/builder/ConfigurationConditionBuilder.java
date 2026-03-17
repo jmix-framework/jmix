@@ -29,7 +29,7 @@ import io.jmix.flowui.entity.filter.HeaderFilterCondition;
 import io.jmix.flowui.entity.filter.LogicalFilterCondition;
 import org.springframework.stereotype.Component;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

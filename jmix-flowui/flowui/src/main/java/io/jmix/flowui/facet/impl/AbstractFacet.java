@@ -19,7 +19,7 @@ package io.jmix.flowui.facet.impl;
 import com.vaadin.flow.component.Composite;
 import io.jmix.flowui.facet.Facet;
 import io.jmix.flowui.facet.FacetOwner;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * An abstract implementation of the {@link Facet} interface, providing

@@ -19,7 +19,7 @@ package io.jmix.supersetflowui.kit.meta;
 import com.vaadin.flow.component.Component;
 import io.jmix.flowui.kit.meta.component.preview.StudioPreviewComponentLoader;
 import io.jmix.supersetflowui.kit.component.JmixSupersetDashboard;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.dom4j.Element;
 
 public class StudioSupersetDashboardPreviewLoader implements StudioPreviewComponentLoader {

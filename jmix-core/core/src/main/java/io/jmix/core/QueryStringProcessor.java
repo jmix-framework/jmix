@@ -16,7 +16,7 @@
 
 package io.jmix.core;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Interface to be implemented by beans that pre-process query text before setting it to {@code LoadContext.Query}.

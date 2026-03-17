@@ -31,7 +31,7 @@ import io.jmix.data.impl.EntityListenerType;
 import io.jmix.data.impl.converters.AuditConversionService;
 import io.jmix.eclipselink.persistence.AdditionalCriteriaProvider;
 import jakarta.persistence.criteria.*;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import jakarta.persistence.*;
 import jakarta.persistence.metamodel.Metamodel;
 import org.apache.commons.collections4.CollectionUtils;

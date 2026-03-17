@@ -28,7 +28,7 @@ import io.jmix.flowui.data.EntityItems;
 import io.jmix.flowui.data.binding.DataViewBinding;
 import io.jmix.flowui.data.binding.SuspendableBinding;
 import io.jmix.flowui.data.binding.SuspendableBindingAware;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.List;

@@ -21,7 +21,7 @@ import com.vaadin.flow.component.shared.HasValidationProperties;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.exception.ValidationException;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * An interface that provides validation capabilities for components. It defines methods

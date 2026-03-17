@@ -26,7 +26,7 @@ import io.jmix.flowui.kit.event.EventBus;
 import io.jmix.flowui.model.CollectionChangeType;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.pivottableflowui.component.PivotTable;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Collections;

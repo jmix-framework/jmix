@@ -33,7 +33,7 @@ import io.jmix.flowui.kit.component.menubar.JmixMenuBarRootItem;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Support class for calculating and setting a special static ID attribute for testing.

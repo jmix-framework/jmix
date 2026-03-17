@@ -16,7 +16,7 @@
 
 package io.jmix.core.impl.importexport;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Collections;

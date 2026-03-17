@@ -24,7 +24,7 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.reports.yarg.util.converter.AbstractObjectToStringConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.text.ParseException;
 
 public class JmixObjectToStringConverter extends AbstractObjectToStringConverter {

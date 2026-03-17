@@ -18,7 +18,7 @@ package io.jmix.flowui.app.propertyfilter.dateinterval.converter;
 
 import io.jmix.core.annotation.Internal;
 import io.jmix.flowui.app.propertyfilter.dateinterval.model.BaseDateInterval;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Interface provides methods for parsing/formatting date interval values.

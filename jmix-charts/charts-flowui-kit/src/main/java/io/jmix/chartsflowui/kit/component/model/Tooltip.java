@@ -18,7 +18,7 @@ package io.jmix.chartsflowui.kit.component.model;
 
 import io.jmix.chartsflowui.kit.component.model.shared.AbstractTooltip;
 import io.jmix.chartsflowui.kit.component.model.shared.TriggerOnMode;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Tooltip component. Used to display some contextual information.

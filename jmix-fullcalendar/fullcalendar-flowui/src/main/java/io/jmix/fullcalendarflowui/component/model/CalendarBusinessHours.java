@@ -2,7 +2,7 @@ package io.jmix.fullcalendarflowui.component.model;
 
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.fullcalendarflowui.component.FullCalendar;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.io.Serializable;
 import java.time.LocalTime;

@@ -25,7 +25,7 @@ import io.jmix.flowui.view.View;
 import io.jmix.flowui.xml.layout.support.LoaderSupport;
 import org.dom4j.Element;
 import org.springframework.context.ApplicationContext;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Defines the contract for loading and initializing UI components from XML descriptors.

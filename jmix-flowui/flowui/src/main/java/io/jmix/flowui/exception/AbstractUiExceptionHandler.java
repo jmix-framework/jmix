@@ -18,7 +18,7 @@ package io.jmix.flowui.exception;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.Arrays;
 import java.util.List;
 

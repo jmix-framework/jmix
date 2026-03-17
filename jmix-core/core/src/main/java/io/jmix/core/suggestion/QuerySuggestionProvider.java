@@ -16,7 +16,7 @@
 
 package io.jmix.core.suggestion;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public interface QuerySuggestionProvider {
     @Nullable

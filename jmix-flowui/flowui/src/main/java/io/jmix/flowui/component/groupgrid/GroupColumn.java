@@ -18,7 +18,7 @@ package io.jmix.flowui.component.groupgrid;
 
 import com.vaadin.flow.component.Component;
 import io.jmix.core.annotation.Experimental;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Interface to be implemented by group columns. The group column is a special column used to display a hierarchy of

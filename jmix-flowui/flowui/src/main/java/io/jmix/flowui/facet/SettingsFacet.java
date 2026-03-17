@@ -25,7 +25,7 @@ import io.jmix.flowui.facet.settings.component.binder.ComponentSettingsBinder;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.View.BeforeShowEvent;
 import io.jmix.flowui.view.View.ReadyEvent;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Set;

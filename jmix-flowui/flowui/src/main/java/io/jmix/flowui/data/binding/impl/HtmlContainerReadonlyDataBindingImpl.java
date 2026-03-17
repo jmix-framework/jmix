@@ -31,7 +31,7 @@ import io.jmix.flowui.data.binding.HtmlContainerReadonlyDataBinding;
 import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.InstanceContainer;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 import static io.jmix.core.common.util.Preconditions.checkNotEmptyString;

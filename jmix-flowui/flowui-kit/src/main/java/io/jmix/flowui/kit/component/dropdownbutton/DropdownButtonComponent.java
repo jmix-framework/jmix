@@ -19,7 +19,7 @@ package io.jmix.flowui.kit.component.dropdownbutton;
 import com.vaadin.flow.component.Component;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.HasSubParts;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 import java.util.function.Consumer;

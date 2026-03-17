@@ -18,7 +18,7 @@ package io.jmix.fullcalendarflowui.component.model.option;
 
 import io.jmix.fullcalendarflowui.component.model.CalendarBusinessHours;
 import io.jmix.fullcalendarflowui.kit.component.model.option.CalendarOption;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;

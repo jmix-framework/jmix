@@ -16,7 +16,7 @@
 
 package io.jmix.eclipselink.persistence;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.Map;
 
 /**

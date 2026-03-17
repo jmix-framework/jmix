@@ -27,7 +27,7 @@ import io.jmix.flowui.kit.action.BaseAction;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.observation.UiObservationSupport;
 import io.micrometer.observation.Observation;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Optional;

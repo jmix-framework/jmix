@@ -24,7 +24,7 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.data.BindingState;
 import io.jmix.flowui.data.EmptyDataUnit;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Collections;

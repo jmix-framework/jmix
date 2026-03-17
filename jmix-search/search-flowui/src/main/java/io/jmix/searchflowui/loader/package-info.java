@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@NonNullApi
+@NullMarked
 package io.jmix.searchflowui.loader;
 
-import org.springframework.lang.NonNullApi;
+import org.jspecify.annotations.NullMarked;

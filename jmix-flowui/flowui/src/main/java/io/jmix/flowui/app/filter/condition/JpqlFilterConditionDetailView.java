@@ -43,7 +43,7 @@ import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.theme.StyleUtility;
 import io.jmix.flowui.view.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.math.BigDecimal;
 import java.sql.Time;

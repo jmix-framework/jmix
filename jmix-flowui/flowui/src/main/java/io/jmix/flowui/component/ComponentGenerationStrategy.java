@@ -18,7 +18,7 @@ package io.jmix.flowui.component;
 
 import com.vaadin.flow.component.Component;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A strategy for creating FlowUi components by {@link UiComponentsGenerator}.

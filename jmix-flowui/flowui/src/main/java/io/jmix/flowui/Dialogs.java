@@ -35,7 +35,7 @@ import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.sidedialog.SideDialogPosition;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.View;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 import java.util.function.Consumer;

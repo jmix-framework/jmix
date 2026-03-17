@@ -32,6 +32,7 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.NativeLabel;
 import com.vaadin.flow.component.icon.FontIcon;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
@@ -134,9 +135,9 @@ public class ReportDetailView extends StandardDetailView<Report> {
     @ViewComponent
     protected JmixCheckbox multiDataSetField;
     @ViewComponent
-    protected Div multiDataSetLayout;
+    protected FlexLayout multiDataSetLayout;
     @ViewComponent
-    protected Div singleDataSetLayout;
+    protected FlexLayout singleDataSetLayout;
     @ViewComponent
     protected Div dataSetDetailsLayout;
     @ViewComponent

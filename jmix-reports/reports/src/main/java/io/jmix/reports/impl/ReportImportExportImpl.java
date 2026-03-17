@@ -17,6 +17,7 @@ package io.jmix.reports.impl;
 
 import io.jmix.core.*;
 import io.jmix.reports.ReportImportExport;
+import io.jmix.reports.ReportRepository;
 import io.jmix.reports.ReportsPersistence;
 import io.jmix.reports.ReportsSerialization;
 import io.jmix.reports.entity.Report;
@@ -50,6 +51,8 @@ public class ReportImportExportImpl implements ReportImportExport {
 
     private static final Logger log = LoggerFactory.getLogger(ReportImportExportImpl.class);
 
+    protected static final int MAX_CODE_LENGTH = 255;
+
     @Autowired
     protected ReportsPersistence reportsPersistence;
 
@@ -61,6 +64,9 @@ public class ReportImportExportImpl implements ReportImportExport {
 
     @Autowired
     protected Metadata metadata;
+
+    @Autowired
+    protected ReportRepository reportRepository;
 
     @Override
     public byte[] exportReports(Collection<Report> reports) {
@@ -245,6 +251,12 @@ public class ReportImportExportImpl implements ReportImportExport {
                 .fetchPlan(FetchPlan.INSTANCE_NAME)
                 .optional();
 
+        if (existingReport.isEmpty() && reportRepository.existsReportByCode(report.getCode())) {
+            String previousCode = report.getCode();
+            report.setCode(generateReportCode(previousCode));
+            log.info("Report with code {} already exists. New code {} is assigned", previousCode, report.getCode());
+        }
+
         report = reportsPersistence.save(report);
         importResult.addImportedReport(report);
         if (existingReport.isPresent()) {
@@ -389,6 +401,25 @@ public class ReportImportExportImpl implements ReportImportExport {
 
     protected byte[] readBytesFromEntry(ZipArchiveInputStream archiveReader) throws IOException {
         return IOUtils.toByteArray(archiveReader);
+    }
+
+    protected String generateReportCode(String existedCode) {
+        int iteration = 1;
+        String templateCode = existedCode;
+
+        while (reportRepository.existsReportByCode(templateCode)) {
+            templateCode = StringUtils.stripEnd(existedCode, null);
+            String suffix = "-%s".formatted(iteration++);
+            String newTemplateCode = templateCode;
+
+            while (newTemplateCode.length() + suffix.length() > MAX_CODE_LENGTH) {
+                newTemplateCode = StringUtils.chop(newTemplateCode);
+            }
+
+            templateCode = newTemplateCode + suffix;
+        }
+
+        return templateCode;
     }
 
     @Nullable

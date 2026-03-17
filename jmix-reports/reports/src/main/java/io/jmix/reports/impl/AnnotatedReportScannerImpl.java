@@ -17,6 +17,7 @@
 package io.jmix.reports.impl;
 
 import io.jmix.core.ClassManager;
+import io.jmix.core.UnconstrainedDataManager;
 import io.jmix.reports.annotation.ReportDef;
 import io.jmix.reports.annotation.ReportGroupDef;
 import io.jmix.reports.entity.Report;
@@ -52,15 +53,20 @@ public class AnnotatedReportScannerImpl implements AnnotatedReportScanner, Appli
     protected final AnnotatedGroupBuilder groupBuilder;
     protected final AnnotatedReportGroupHolder reportGroupHolder;
     protected final ClassManager classManager;
+    protected final UnconstrainedDataManager dataManager;
 
-    public AnnotatedReportScannerImpl(AnnotatedReportBuilder reportBuilder, AnnotatedReportHolder reportHolder,
-                                      AnnotatedGroupBuilder groupBuilder, AnnotatedReportGroupHolder reportGroupHolder,
-                                      ClassManager classManager) {
+    public AnnotatedReportScannerImpl(AnnotatedReportBuilder reportBuilder,
+                                      AnnotatedReportHolder reportHolder,
+                                      AnnotatedGroupBuilder groupBuilder,
+                                      AnnotatedReportGroupHolder reportGroupHolder,
+                                      ClassManager classManager,
+                                      UnconstrainedDataManager dataManager) {
         this.reportBuilder = reportBuilder;
         this.reportHolder = reportHolder;
         this.groupBuilder = groupBuilder;
         this.reportGroupHolder = reportGroupHolder;
         this.classManager = classManager;
+        this.dataManager = dataManager;
     }
 
     @Override
@@ -81,7 +87,11 @@ public class AnnotatedReportScannerImpl implements AnnotatedReportScanner, Appli
                     String.format("Failed to import annotated group definition: bean=%s, class=%s",
                             beanName, bean.getClass().getName()), e);
         }
-        if (reportGroupHolder.getGroupByCode(group.getCode()) != null) {
+        if (reportGroupHolder.getGroupByCode(group.getCode()) != null
+                || dataManager
+                .loadValue("select case when count (rg) > 0 then true else false end from report_ReportGroup rg where rg.code = :reportGroupCode", Boolean.class)
+                .parameter("reportGroupCode", group.getCode())
+                .one()) {
             throw new IllegalStateException(
                     String.format("Duplicate group code: %s, bean name: %s", group.getCode(), beanName)
             );
@@ -109,7 +119,11 @@ public class AnnotatedReportScannerImpl implements AnnotatedReportScanner, Appli
                             beanName, bean.getClass().getName()), e);
         }
 
-        if (reportHolder.getByCode(report.getCode()) != null) {
+        if (reportHolder.getByCode(report.getCode()) != null
+                || dataManager
+                .loadValue("select case when count (r) > 0 then true else false end from report_Report r where r.code = :reportCode", Boolean.class)
+                .parameter("reportCode", report.getCode())
+                .one()) {
             throw new IllegalStateException(
                     String.format("Duplicate report code: %s, bean name: %s", report.getCode(), beanName)
             );

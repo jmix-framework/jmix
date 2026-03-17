@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Locale;
 
-@Component("demo_RememberMeAuthenticationLocaleResolver")
+@Component("flowui_RememberMeAuthenticationLocaleResolver")
 public class RememberMeAuthenticationLocaleResolver implements AuthenticationLocaleResolver {
 
     @Override

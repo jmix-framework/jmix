@@ -1,7 +1,7 @@
 package io.jmix.reportsflowui.view.region;
 
-import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
 import io.jmix.core.Metadata;
@@ -37,6 +37,7 @@ import java.util.*;
 @ViewController("report_WizardReportRegion.detail")
 @ViewDescriptor("report-region-wizard-detail-view.xml")
 @EditedEntityContainer("reportRegionDc")
+@DialogMode(width = "40em", resizable = true)
 public class ReportRegionWizardDetailView extends StandardDetailView<ReportRegion> {
 
     @ViewComponent
@@ -50,7 +51,7 @@ public class ReportRegionWizardDetailView extends StandardDetailView<ReportRegio
     @ViewComponent
     protected CollectionPropertyContainer<RegionProperty> reportRegionPropertiesDataGridDc;
     @ViewComponent
-    protected FormLayout treePanel;
+    protected HorizontalLayout mainContent;
     @ViewComponent
     protected DataGrid<RegionProperty> propertiesDataGrid;
     @ViewComponent
@@ -169,7 +170,7 @@ public class ReportRegionWizardDetailView extends StandardDetailView<ReportRegio
         entityTree.addAction(addPropertyAction);
         addItem.setAction(addPropertyAction);
         addItem.setIcon(icons.get(JmixFontIcon.ARROW_RIGHT));
-        treePanel.add(entityTreeComposite);
+        mainContent.addComponentAsFirst(entityTreeComposite);
     }
 
     protected void addProperty() {

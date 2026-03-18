@@ -45,6 +45,7 @@
             </vbox>
             <dataGrid id="propertiesDataGrid"
                       dataContainer="reportRegionPropertiesDataGridDc"
+                      dropMode="ON_GRID"
                       width="100%"
                       height="100%">
                 <actions>

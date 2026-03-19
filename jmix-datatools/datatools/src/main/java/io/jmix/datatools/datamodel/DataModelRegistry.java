@@ -301,8 +301,13 @@ public class DataModelRegistry {
         attributeModel.setColumnName(columnName);
 
         Table tableAnnotation = entity.getJavaClass().getAnnotation(Table.class);
-        attributeModel.setDbType(getDatabaseColumnType(getSchemaName(tableAnnotation),
-                getCatalogName(tableAnnotation), collectionTableName, valueColumnName));
+        String storeName = entity.getStore().getName();
+        attributeModel.setDbType(getDatabaseColumnType(
+                getSchemaName(tableAnnotation),
+                getCatalogName(tableAnnotation),
+                applyRegister(collectionTableName, storeName),
+                applyRegister(valueColumnName, storeName)
+        ));
 
         attributeModelsList.add(attributeModel);
     }
@@ -408,19 +413,19 @@ public class DataModelRegistry {
 
     protected String getDatabaseColumnType(MetaClass entity, String columnName) {
         Table tableAnnotation = entity.getJavaClass().getAnnotation(Table.class);
-        String tableName;
-        String finalColumnName;
-        if (dbmsType.getType(entity.getStore().getName()).equals("POSTGRESQL")) {
-            tableName = tableAnnotation.name().toLowerCase();
-            finalColumnName = columnName.toLowerCase();
-        } else {
-            tableName = tableAnnotation.name().toUpperCase();
-            finalColumnName = columnName.toUpperCase();
-        }
 
         String catalogName = getCatalogName(tableAnnotation);
         String schemaName = getSchemaName(tableAnnotation);
+        String tableName = applyRegister(tableAnnotation.name(), entity.getStore().getName());
+        String finalColumnName = applyRegister(columnName, entity.getStore().getName());
+
         return getDatabaseColumnType(schemaName, catalogName, tableName, finalColumnName);
+    }
+
+    protected String applyRegister(String name, String storeName) {
+        return dbmsType.getType(storeName).equals("POSTGRESQL")
+                ? name.toLowerCase()
+                : name.toUpperCase();
     }
 
     @Nullable

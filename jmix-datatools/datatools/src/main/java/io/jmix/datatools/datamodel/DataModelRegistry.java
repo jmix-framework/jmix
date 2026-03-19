@@ -228,7 +228,8 @@ public class DataModelRegistry {
     protected void addOneToManyAttribute(MetaClass entity, MetaProperty field, String fieldName,
                                          String dataStoreName, Map<RelationType, List<Relation>> relationsMap,
                                          List<AttributeModel> attributeModelsList) {
-        String fieldType = field.getRange().asClass().getName();
+        String fieldType = "%s<%s>".formatted(
+                field.getJavaType().getSimpleName(), getElementTypeFromCollection(field));
 
         AttributeModel attributeModel =
                 constructAttribute(fieldName, fieldType, isAnnotationPresent(field, NotNull.class));
@@ -269,7 +270,8 @@ public class DataModelRegistry {
     protected void addManyToManyAttribute(MetaClass entity, MetaProperty field, String fieldName,
                                           String dataStoreName, Map<RelationType, List<Relation>> relationsMap,
                                           List<AttributeModel> attributeModelsList) {
-        String fieldType = field.getRange().asClass().getName();
+        String fieldType = "%s<%s>".formatted(
+                field.getJavaType().getSimpleName(), getElementTypeFromCollection(field));
 
         AttributeModel attributeModel = constructAttribute(fieldName, fieldType, isAnnotationPresent(field, NotNull.class));
 

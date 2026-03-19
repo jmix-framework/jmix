@@ -23,6 +23,7 @@ import io.jmix.security.role.RoleGrantedAuthorityUtils;
 import io.jmix.security.role.RowLevelRoleRepository;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.ArrayList;
@@ -41,18 +42,12 @@ public abstract class BaseSamlAssertionRolesMapper implements SamlAssertionRoles
 
     private static final Logger log = getLogger(BaseSamlAssertionRolesMapper.class);
 
-    //todo [IVGA] field injection
-    protected final RowLevelRoleRepository rowLevelRoleRepository;
-    protected final ResourceRoleRepository resourceRoleRepository;
-    protected final RoleGrantedAuthorityUtils roleGrantedAuthorityUtils;
-
-    public BaseSamlAssertionRolesMapper(RowLevelRoleRepository rowLevelRoleRepository,
-                                        ResourceRoleRepository resourceRoleRepository,
-                                        RoleGrantedAuthorityUtils roleGrantedAuthorityUtils) {
-        this.rowLevelRoleRepository = rowLevelRoleRepository;
-        this.resourceRoleRepository = resourceRoleRepository;
-        this.roleGrantedAuthorityUtils = roleGrantedAuthorityUtils;
-    }
+    @Autowired
+    protected RowLevelRoleRepository rowLevelRoleRepository;
+    @Autowired
+    protected ResourceRoleRepository resourceRoleRepository;
+    @Autowired
+    protected RoleGrantedAuthorityUtils roleGrantedAuthorityUtils;
 
     @Override
     public Collection<ResourceRole> toResourceRoles(Assertion assertion) {

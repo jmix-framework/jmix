@@ -18,9 +18,6 @@ package io.jmix.saml.mapper.role;
 
 import io.jmix.saml.SamlProperties;
 import io.jmix.saml.util.SamlAssertionUtils;
-import io.jmix.security.role.ResourceRoleRepository;
-import io.jmix.security.role.RoleGrantedAuthorityUtils;
-import io.jmix.security.role.RowLevelRoleRepository;
 import org.apache.commons.collections4.CollectionUtils;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.slf4j.Logger;
@@ -53,12 +50,6 @@ public class DefaultSamlAssertionRolesMapper extends BaseSamlAssertionRolesMappe
 
     protected String resourceRolePrefix = "";
     protected String rowLevelRolePrefix = "";
-
-    public DefaultSamlAssertionRolesMapper(ResourceRoleRepository resourceRoleRepository,
-                                           RowLevelRoleRepository rowLevelRoleRepository,
-                                           RoleGrantedAuthorityUtils roleGrantedAuthorityUtils) {
-        super(rowLevelRoleRepository, resourceRoleRepository, roleGrantedAuthorityUtils);
-    }
 
     @Override
     protected Collection<String> getResourceRolesCodes(Assertion assertion) {

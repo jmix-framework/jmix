@@ -20,6 +20,7 @@ import io.jmix.saml.mapper.role.SamlAssertionRolesMapper;
 import io.jmix.saml.user.DefaultJmixSamlUserDetails;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.saml2.provider.service.authentication.OpenSaml4AuthenticationProvider;
 
@@ -34,11 +35,8 @@ public class DefaultSamlUserMapper extends BaseSamlUserMapper<DefaultJmixSamlUse
 
     private static final Logger log = getLogger(DefaultSamlUserMapper.class);
 
-    protected final SamlAssertionRolesMapper rolesMapper;
-
-    public DefaultSamlUserMapper(SamlAssertionRolesMapper rolesMapper) {
-        this.rolesMapper = rolesMapper;
-    }
+    @Autowired
+    protected SamlAssertionRolesMapper rolesMapper;
 
     @Override
     protected DefaultJmixSamlUserDetails initJmixUser(Assertion assertion) {

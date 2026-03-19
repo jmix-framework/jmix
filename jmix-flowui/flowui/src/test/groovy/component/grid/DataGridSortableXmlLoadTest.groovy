@@ -87,8 +87,15 @@ class DataGridSortableXmlLoadTest extends FlowuiTestSpecification {
         when: "Sort by transient property"
         dataGrid.sort(GridSortOrder.asc(dataGrid.getColumnByKey("mem1DtoEntity")).build())
 
-        then: "Sort should not be applied"
-        view.mainDsEntitiesDl1.sort == null
+        then: """
+              Sort should be applied, because the value of transient property can be sorted
+              by default comparator from a Sorter.
+              """
+        def sort1 = view.mainDsEntitiesDl1.sort
+        sort1 != null
+        sort1.orders*.property == ["mem1DtoEntity"]
+        sort1.orders*.direction == [Sort.Direction.ASC]
+        dataGrid.sort([])
 
         when: "Sort by column without property"
         dataGrid.sort(GridSortOrder.asc(dataGrid.getColumnByKey("noPropertyColumn")).build())
@@ -103,30 +110,30 @@ class DataGridSortableXmlLoadTest extends FlowuiTestSpecification {
         dataGrid.sort(GridSortOrder.asc(dataGrid.getColumnByKey("name")).build())
 
         then: "JPA column can still be sorted"
-        def sort1 = view.mainDsEntitiesDl1.sort
-        sort1 != null
-        sort1.orders*.property == ["name"]
-        sort1.orders*.direction == [Sort.Direction.ASC]
+        def sort2 = view.mainDsEntitiesDl1.sort
+        sort2 != null
+        sort2.orders*.property == ["name"]
+        sort2.orders*.direction == [Sort.Direction.ASC]
         dataGrid.sort([])
 
         when: "Sort by transient property with Column comparator"
         dataGrid.sort(GridSortOrder.asc(dataGrid.getColumnByKey("mem1DtoEntity")).build())
 
         then: "Transient property should be included to in-memory sorting"
-        def sort2 = view.mainDsEntitiesDl1.sort
-        sort2 != null
-        sort2.orders*.property == ["mem1DtoEntity"]
-        sort2.orders*.direction == [Sort.Direction.ASC]
+        def sort3 = view.mainDsEntitiesDl1.sort
+        sort3 != null
+        sort3.orders*.property == ["mem1DtoEntity"]
+        sort3.orders*.direction == [Sort.Direction.ASC]
         dataGrid.sort([])
 
         when: "Sort by column without property with column comparator (in-memory sorting)"
         dataGrid.sort(GridSortOrder.asc(dataGrid.getColumnByKey("noPropertyColumn")).build())
 
         then: "Column without property should be included to sorting"
-        def sort3 = view.mainDsEntitiesDl1.sort
-        sort3 != null
-        sort3.orders*.property == ["noPropertyColumn"]
-        sort3.orders*.direction == [Sort.Direction.ASC]
+        def sort4 = view.mainDsEntitiesDl1.sort
+        sort4 != null
+        sort4.orders*.property == ["noPropertyColumn"]
+        sort4.orders*.direction == [Sort.Direction.ASC]
     }
 
     def "Non JPA columns are not included to persistent sorting"() {
@@ -153,8 +160,11 @@ class DataGridSortableXmlLoadTest extends FlowuiTestSpecification {
         when: "Sort by transient property with comparator"
         dataGrid.sort(GridSortOrder.asc(dataGrid.getColumnByKey("mem1DtoEntity")).build())
 
-        then: "Non-JPA property is not included into DB sorting"
-        view.mainDsEntitiesDl2.sort == null
+        then: """
+              Transient property must be included to persistent sorting, because there can be
+              custom JpqlSortExpressionProvider.
+              """
+        view.mainDsEntitiesDl2.sort != null
         dataGrid.sort([])
 
         when: "Sort by column without property with comparator"

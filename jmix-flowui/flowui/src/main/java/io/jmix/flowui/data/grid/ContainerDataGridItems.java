@@ -26,21 +26,18 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.component.grid.DataGrid;
+import io.jmix.flowui.component.grid.sort.DataGridSort;
 import io.jmix.flowui.data.BindingState;
 import io.jmix.flowui.data.ContainerDataUnit;
 import io.jmix.flowui.kit.event.EventBus;
 import io.jmix.flowui.model.*;
 import io.jmix.flowui.model.CollectionContainer.CollectionChangeEvent;
+import io.jmix.flowui.model.impl.BaseContainerSorter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
@@ -57,8 +54,6 @@ public class ContainerDataGridItems<T> extends AbstractDataProvider<T, Void>
     public static final String PROPERTY_REPLACE_ITEM = "<replaceItem>";
 
     private static final Logger log = LoggerFactory.getLogger(ContainerDataGridItems.class);
-
-    protected Map<String, Comparator<?>> propertyComparators = Collections.emptyMap();
 
     protected CollectionContainer<T> container;
 
@@ -126,21 +121,63 @@ public class ContainerDataGridItems<T> extends AbstractDataProvider<T, Void>
 
     @Override
     public void sort(Object[] propertyId, boolean[] ascending) {
-        if (container.getSorter() != null) {
-            if (container.getSorter() instanceof CollectionContainerDataGridSorter dataGridSorter) {
-                dataGridSorter.setPropertyComparators(propertyComparators);
-            }
+        sortInternal(createSort(propertyId, ascending));
+    }
 
+    @Override
+    public void sort(DataGridSort sort) {
+        if (container.getSorter() instanceof BaseContainerSorter sorter) {
+            List<DataGridSort.InMemorySortInfo> memorySorts = sort.getInMemorySorts();
+            Map<String, Comparator<?>> comparators = new HashMap<>(memorySorts.size());
+            for (DataGridSort.InMemorySortInfo sortInfo : memorySorts) {
+                if (sortInfo.getComparator() == null) {
+                    continue;
+                }
+                String property = sortInfo.getMetaPropertyPath() != null
+                        ? sortInfo.getMetaPropertyPath().toPathString()
+                        : sortInfo.getProperty();
+
+                comparators.put(property, sortInfo.getComparator());
+            }
+            sorter.setPropertyComparators(comparators);
+        }
+        sortInternal(createSort(sort));
+    }
+
+    protected void sortInternal(Sort sort) {
+        if (container.getSorter() != null) {
             if (suppressSorting
                     && container instanceof HasLoader
                     && ((HasLoader) container).getLoader() instanceof BaseCollectionLoader loader) {
-                loader.setSort(createSort(propertyId, ascending));
+                loader.setSort(sort);
             } else {
-                container.getSorter().sort(createSort(propertyId, ascending));
+                container.getSorter().sort(sort);
             }
         } else {
             log.debug("Container {} sorter is null", container);
         }
+    }
+
+    protected Sort createSort(DataGridSort sort) {
+        if (container.getItems().isEmpty()) {
+            return sort.convertToSort();
+        }
+
+        DataLoader dataLoader = container instanceof HasLoader hasLoader
+                ? hasLoader.getLoader()
+                : null;
+
+        if (dataLoader == null) {
+            return sort.convertInMemoryToSort();
+        }
+
+        if (dataLoader instanceof BaseCollectionLoader loader
+                && loader.getFirstResult() == 0
+                && container.getItems().size() < loader.getMaxResults()) {
+            return sort.convertInMemoryToSort();
+        }
+
+        return sort.convertToSort();
     }
 
     protected Sort createSort(Object[] propertyId, boolean[] ascending) {
@@ -160,8 +197,7 @@ public class ContainerDataGridItems<T> extends AbstractDataProvider<T, Void>
 
     @Override
     public void resetSortOrder() {
-        propertyComparators = Collections.emptyMap();
-        if (container.getSorter() instanceof CollectionContainerDataGridSorter sorter) {
+        if (container.getSorter() instanceof BaseContainerSorter sorter) {
             sorter.setPropertyComparators(Collections.emptyMap());
         }
 
@@ -186,18 +222,6 @@ public class ContainerDataGridItems<T> extends AbstractDataProvider<T, Void>
     @Override
     public void enableSorting() {
         suppressSorting = false;
-    }
-
-    /**
-     * Sets property comparators that should be used for sorting in {@link CollectionContainerDataGridSorter}.
-     * Comparators are used in in-memory sorting.
-     * <p>
-     * The key of the map is a property name and the value is a comparator.
-     *
-     * @param propertyComparators the map of property comparators
-     */
-    public void setPropertyComparators(@Nullable Map<String, Comparator<?>> propertyComparators) {
-        this.propertyComparators = propertyComparators != null ? propertyComparators : Collections.emptyMap();
     }
 
     /**

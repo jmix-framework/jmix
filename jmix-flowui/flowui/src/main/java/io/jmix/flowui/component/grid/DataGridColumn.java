@@ -21,7 +21,6 @@ import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.data.provider.SortDirection;
-import com.vaadin.flow.function.ValueProvider;
 import com.vaadin.flow.function.SerializableFunction;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.common.util.Preconditions;
@@ -40,7 +39,7 @@ public class DataGridColumn<E> extends Grid.Column<E> implements ApplicationCont
     protected DataGridHeaderFilter dataGridFilter;
     protected ApplicationContext applicationContext;
 
-    protected boolean comparatorExplicitlySet;
+    protected Comparator<E> explicitlySetComparator;
 
     /**
      * Constructs a new DataGridColumn for use inside a {@link DataGrid}.
@@ -67,14 +66,8 @@ public class DataGridColumn<E> extends Grid.Column<E> implements ApplicationCont
 
     @Override
     public Grid.Column<E> setComparator(Comparator<E> comparator) {
-        comparatorExplicitlySet = true;
+        this.explicitlySetComparator = comparator;
         return super.setComparator(comparator);
-    }
-
-    @Override
-    public <V extends Comparable<? super V>> Grid.Column<E> setComparator(ValueProvider<E, V> keyExtractor) {
-        comparatorExplicitlySet = true;
-        return super.setComparator(keyExtractor);
     }
 
     /**
@@ -83,12 +76,11 @@ public class DataGridColumn<E> extends Grid.Column<E> implements ApplicationCont
      * <p>
      * To get non-null value use {@link #getComparator(SortDirection)}.
      *
-     * @param sortDirection the direction this column is sorted by
      * @return comparator or {@code null}
      */
     @Nullable
-    public Comparator<E> getComparatorOrNull(SortDirection sortDirection) {
-        return comparatorExplicitlySet ? getComparator(sortDirection) : null;
+    public Comparator<E> getComparatorOrNull() {
+        return explicitlySetComparator != null ? explicitlySetComparator : null;
     }
 
     /**

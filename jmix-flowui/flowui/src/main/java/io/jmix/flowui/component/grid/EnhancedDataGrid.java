@@ -19,10 +19,12 @@ package io.jmix.flowui.component.grid;
 import com.vaadin.flow.component.grid.Grid;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.component.AggregationInfo;
+import io.jmix.flowui.component.grid.sort.DataGridSort;
 import io.jmix.flowui.kit.component.grid.JmixGridContextMenu;
 import org.springframework.lang.Nullable;
 
-import java.util.Map;
+import java.util.*;
+import java.util.function.Function;
 
 public interface EnhancedDataGrid<T> {
 
@@ -85,11 +87,59 @@ public interface EnhancedDataGrid<T> {
      */
     JmixGridContextMenu<T> getContextMenu();
 
+    // TODO: pinyazhin, javadoc
+    @Nullable
+    Function<DataGridSortContext, DataGridSort> getSortBuilderDelegate();
+
+    // TODO: pinyazhin, javadoc
+    void setSortBuilderDelegate(@Nullable Function<DataGridSortContext, DataGridSort> delegate);
+
     /**
      * Defines the position of aggregation row.
      */
     enum AggregationPosition {
         TOP,
         BOTTOM
+    }
+
+    // TODO: pinyazhin, javadoc
+    class DataGridSortContext {
+
+        protected List<ColumnSortInfo> columnSortInfos;
+
+        public DataGridSortContext(List<ColumnSortInfo> columnSortInfos) {
+            this.columnSortInfos = new ArrayList<>(columnSortInfos);
+        }
+
+        public List<ColumnSortInfo> getSortInfos() {
+            return Collections.unmodifiableList(columnSortInfos);
+        }
+
+        public static class ColumnSortInfo {
+
+            protected MetaPropertyPath metaPropertyPath;
+            protected DataGridColumn<?> column;
+
+            protected boolean ascending;
+
+            public ColumnSortInfo(@Nullable MetaPropertyPath metaPropertyPath, DataGridColumn<?> column, boolean ascending) {
+                this.metaPropertyPath = metaPropertyPath;
+                this.ascending = ascending;
+                this.column = column;
+            }
+
+            @Nullable
+            public MetaPropertyPath getMetaPropertyPath() {
+                return metaPropertyPath;
+            }
+
+            public DataGridColumn<?> getColumn() {
+                return column;
+            }
+
+            public boolean isAscending() {
+                return ascending;
+            }
+        }
     }
 }

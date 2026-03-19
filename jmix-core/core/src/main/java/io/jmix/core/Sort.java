@@ -138,6 +138,45 @@ public class Sort implements Serializable {
     }
 
     /**
+     * Sort order that uses an expression instead of a property.
+     */
+    public static class ExpressionOrder extends Order {
+
+        protected String expression;
+
+        protected ExpressionOrder(Direction direction, String expression) {
+            super(direction, expression);
+
+            this.expression = expression;
+        }
+
+        /**
+         * Creates a new order for the given expression with ASC direction.
+         */
+        public static Order asc(String expression) {
+            return new ExpressionOrder(Direction.ASC, expression);
+        }
+
+        /**
+         * Creates a new order for the given expression with DESC direction.
+         */
+        public static Order desc(String expression) {
+            return new ExpressionOrder(Direction.DESC, expression);
+        }
+
+        /**
+         * Returns the expression that should be added to the sorting.
+         * <p>
+         * For instance, for the JPQL it can be {@code "function('calc_total_sum', {E}.id)"}.
+         *
+         * @return the expression
+         */
+        public String getExpression() {
+            return expression;
+        }
+    }
+
+    /**
      * Sort direction.
      */
     public enum Direction {

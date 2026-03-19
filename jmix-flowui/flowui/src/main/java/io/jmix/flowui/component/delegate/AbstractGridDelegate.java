@@ -17,7 +17,6 @@
 package io.jmix.flowui.component.delegate;
 
 import com.google.common.base.Strings;
-import com.google.common.primitives.Booleans;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.grid.*;
 import com.vaadin.flow.component.grid.editor.Editor;
@@ -32,9 +31,7 @@ import com.vaadin.flow.data.selection.SelectionListener;
 import com.vaadin.flow.data.selection.SelectionModel;
 import com.vaadin.flow.function.ValueProvider;
 import com.vaadin.flow.shared.Registration;
-import io.jmix.core.AccessManager;
-import io.jmix.core.MessageTools;
-import io.jmix.core.MetadataTools;
+import io.jmix.core.*;
 import io.jmix.core.accesscontext.EntityAttributeContext;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
@@ -55,21 +52,17 @@ import io.jmix.flowui.component.grid.DataGridDataProviderChangeObserver;
 import io.jmix.flowui.component.grid.EnhancedDataGrid;
 import io.jmix.flowui.component.grid.editor.DataGridEditor;
 import io.jmix.flowui.component.grid.editor.DataGridEditorImpl;
+import io.jmix.flowui.component.grid.sort.DataGridSort;
 import io.jmix.flowui.data.BindingState;
 import io.jmix.flowui.data.EntityDataUnit;
 import io.jmix.flowui.data.aggregation.Aggregation;
 import io.jmix.flowui.data.aggregation.Aggregations;
 import io.jmix.flowui.data.aggregation.impl.AggregatableDelegate;
-import io.jmix.flowui.data.grid.ContainerDataGridItems;
-import io.jmix.flowui.data.grid.DataGridItems;
+import io.jmix.flowui.data.grid.*;
 import io.jmix.flowui.data.provider.StringPresentationValueProvider;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.HasActions;
 import io.jmix.flowui.kit.component.KeyCombination;
-import io.jmix.flowui.model.BaseCollectionLoader;
-import io.jmix.flowui.model.CollectionContainer;
-import io.jmix.flowui.model.HasLoader;
-import io.jmix.flowui.data.grid.CollectionContainerDataGridSorter;
 import io.jmix.flowui.sys.BeanUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
@@ -82,6 +75,7 @@ import org.springframework.lang.Nullable;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent<E> & EnhancedDataGrid<E> & HasActions,
@@ -125,6 +119,8 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
 
     protected HeaderRow aggregationHeader;
     protected FooterRow aggregationFooter;
+
+    protected Function<EnhancedDataGrid.DataGridSortContext, DataGridSort> sortBuilderDelegate;
 
     /**
      * Columns that are bounded with data container (loaded from descriptor or
@@ -195,8 +191,6 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
             if (dataGridItems instanceof ContainerDataGridItems<?> containerDataGridItems) {
                 UiComponentProperties properties = applicationContext.getBean(UiComponentProperties.class);
                 containerDataGridItems.setRefreshAllOnItemReplace(properties.isGridRefreshAllOnItemReplace());
-
-                initDataGridSorter(containerDataGridItems);
             }
 
             bind(dataGridItems);
@@ -723,83 +717,12 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
         if (sortOrders.isEmpty()) {
             dataProvider.resetSortOrder();
         } else {
-            Map<Object, Boolean> sortedColumnMap = new LinkedHashMap<>();
-            Map<String, Comparator<?>> propertyComparators = new HashMap<>();
-
-            for (GridSortOrder<E> sortOrder : sortOrders) {
-                Grid.Column<E> column = sortOrder.getSorted();
-                if (column == null) {
-                    continue;
-                }
-
-                boolean ascending = SortDirection.ASCENDING.equals(sortOrder.getDirection());
-                MetaPropertyPath mpp = propertyColumns.get(column);
-
-                if (mpp != null && !isTransientProperty(mpp)) {
-                    sortedColumnMap.put(mpp, ascending);
-                }
-
-                if (column instanceof DataGridColumn<E> dataGridColumn) {
-                    Comparator<?> comparator = dataGridColumn.getComparatorOrNull(sortOrder.getDirection());
-                    if (comparator == null) {
-                        continue;
-                    }
-                    if (mpp != null && !isTransientProperty(mpp)) {
-                        propertyComparators.put(mpp.toPathString(), comparator);
-                    } else if (inMemorySorting()) {
-                        String property = mpp != null ? mpp.toPathString() : column.getKey();
-                        sortedColumnMap.put(property, ascending);
-                        propertyComparators.put(property, comparator);
-                    }
-                }
+            if (sortBuilderDelegate != null) {
+                dataProvider.sort(sortBuilderDelegate.apply(createDataGridSortContext(sortOrders)));
+                return;
             }
-
-            if (dataGridItems instanceof ContainerDataGridItems<?> containerItems) {
-                containerItems.setPropertyComparators(propertyComparators);
-            }
-
-            dataProvider.sort(sortedColumnMap.keySet().toArray(), Booleans.toArray(sortedColumnMap.values()));
+            dataProvider.sort(DataGridSort.by(collectSortInfo(sortOrders), collectMemorySortInfo(sortOrders)));
         }
-    }
-
-    protected void initDataGridSorter(ContainerDataGridItems<?> containerDataGridItems) {
-        CollectionContainer<?> container = containerDataGridItems.getContainer();
-
-        BaseCollectionLoader loader = null;
-        if (container instanceof HasLoader hasLoader
-                && hasLoader.getLoader() instanceof BaseCollectionLoader baseCollectionLoader) {
-            loader = baseCollectionLoader;
-        }
-
-        CollectionContainerDataGridSorter dataGridSorter =
-                new CollectionContainerDataGridSorter(container, loader, applicationContext);
-
-        container.setSorter(dataGridSorter);
-    }
-
-    protected boolean inMemorySorting() {
-        BaseCollectionLoader loader = null;
-        if (dataGridItems instanceof ContainerDataGridItems<?> containerItems) {
-            CollectionContainer<?> container = containerItems.getContainer();
-            if (container instanceof HasLoader hasLoader
-                    && hasLoader.getLoader() instanceof BaseCollectionLoader baseCollectionLoader) {
-                loader = baseCollectionLoader;
-            }
-
-            return loader == null
-                    || loader.getFirstResult() == 0
-                    && container.getItems().size() < loader.getMaxResults();
-        }
-        return true;
-    }
-
-    protected boolean isTransientProperty(@Nullable MetaPropertyPath metaPropertyPath) {
-        if (metaPropertyPath == null) {
-            return false;
-        }
-        MetaClass metaClass = metadataTools.getPropertyEnclosingMetaClass(metaPropertyPath);
-        return metadataTools.isJpaEntity(metaClass)
-                && !metadataTools.isJpa(metaPropertyPath.getMetaProperty());
     }
 
     protected void notifyDataProviderSelectionChanged(SelectionEvent<Grid<E>, E> ignore) {
@@ -1038,6 +961,15 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
         return null;
     }
 
+    @Nullable
+    public Function<EnhancedDataGrid.DataGridSortContext, DataGridSort> getSortBuilderDelegate() {
+        return sortBuilderDelegate;
+    }
+
+    public void setSortBuilderDelegate(@Nullable Function<EnhancedDataGrid.DataGridSortContext, DataGridSort> sortBuilderDelegate) {
+        this.sortBuilderDelegate = sortBuilderDelegate;
+    }
+
     public DataGridEditorImpl<E> createEditor() {
         DataGridEditorImpl<E> editor = new DataGridEditorImpl<>(component, applicationContext);
         editor.addCloseListener(this::onGridEditorClose);
@@ -1046,6 +978,74 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
 
     protected void onGridEditorClose(EditorCloseEvent<E> eEditorCloseEvent) {
         updateAggregationRow();
+    }
+
+    protected EnhancedDataGrid.DataGridSortContext createDataGridSortContext(List<GridSortOrder<E>> sortOrders) {
+        List<EnhancedDataGrid.DataGridSortContext.ColumnSortInfo> columnSortInfo = new ArrayList<>();
+        for (GridSortOrder<E> sortOrder : sortOrders) {
+            Grid.Column<E> column = sortOrder.getSorted();
+            if (column == null) {
+                continue;
+            }
+
+            boolean ascending = SortDirection.ASCENDING.equals(sortOrder.getDirection());
+            MetaPropertyPath mpp = propertyColumns.get(column);
+
+            columnSortInfo.add(new EnhancedDataGrid.DataGridSortContext.ColumnSortInfo(mpp,
+                    (DataGridColumn<?>) column, ascending));
+        }
+        return new EnhancedDataGrid.DataGridSortContext(columnSortInfo);
+    }
+
+    protected List<DataGridSort.InMemorySortInfo> collectMemorySortInfo(List<GridSortOrder<E>> sortOrders) {
+        List<DataGridSort.InMemorySortInfo> inMemorySortInfoList = new ArrayList<>();
+        for (GridSortOrder<E> sortOrder : sortOrders) {
+            Grid.Column<E> column = sortOrder.getSorted();
+            if (column == null) {
+                continue;
+            }
+
+            boolean ascending = SortDirection.ASCENDING.equals(sortOrder.getDirection());
+            MetaPropertyPath mpp = propertyColumns.get(column);
+
+            DataGridSort.InMemorySortInfo inMemorySortInfo = null;
+            if (mpp != null) {
+                inMemorySortInfo = new DataGridSort.InMemorySortInfo(mpp, ascending);
+                inMemorySortInfoList.add(inMemorySortInfo);
+            }
+
+            if (column instanceof DataGridColumn<E> dataGridColumn) {
+                Comparator<?> comparator = dataGridColumn.getComparatorOrNull();
+                if (comparator == null) {
+                    continue;
+                }
+
+                if (inMemorySortInfo != null) {
+                    inMemorySortInfo.withComparator(comparator);
+                } else {
+                    inMemorySortInfoList.add(
+                            new DataGridSort.InMemorySortInfo(column.getKey(), ascending)
+                                    .withComparator(comparator));
+                }
+            }
+        }
+        return inMemorySortInfoList;
+    }
+
+    protected List<DataGridSort.SortInfo> collectSortInfo(List<GridSortOrder<E>> sortOrders) {
+        List<DataGridSort.SortInfo> sortInfo = new ArrayList<>();
+        for (GridSortOrder<E> sortOrder : sortOrders) {
+            Grid.Column<E> column = sortOrder.getSorted();
+            if (column == null) {
+                continue;
+            }
+            boolean ascending = SortDirection.ASCENDING.equals(sortOrder.getDirection());
+            MetaPropertyPath mpp = propertyColumns.get(column);
+            if (mpp != null) {
+                sortInfo.add(new DataGridSort.SortInfo(mpp, ascending));
+            }
+        }
+        return sortInfo;
     }
 
     public static class ColumnSecurityContext<E> {

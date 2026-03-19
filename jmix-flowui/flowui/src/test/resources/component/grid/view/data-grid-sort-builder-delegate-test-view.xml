@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2026 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<view xmlns="http://jmix.io/schema/flowui/view">
+    <data>
+        <collection id="mainDsEntitiesDc1"
+                    class="test_support.entity.datastores.MainDsEntity">
+            <fetchPlan extends="_base"/>
+            <loader id="mainDsEntitiesDl1">
+                <query>
+                    <![CDATA[select e from test_MainDsEntity e]]>
+                </query>
+            </loader>
+        </collection>
+
+        <collection id="mainDsEntitiesDc2"
+                    class="test_support.entity.datastores.MainDsEntity">
+            <fetchPlan extends="_base"/>
+            <loader id="mainDsEntitiesDl2">
+                <query>
+                    <![CDATA[select e from test_MainDsEntity e]]>
+                </query>
+            </loader>
+        </collection>
+
+        <keyValueCollection id="keyValueEntitiesDc1">
+            <properties>
+                <property name="id" datatype="uuid"/>
+                <property name="name" datatype="string"/>
+            </properties>
+            <loader id="keyValueEntitiesDl1">
+                <query>
+                    <![CDATA[select e.id, e.name from test_MainDsEntity e]]>
+                </query>
+            </loader>
+        </keyValueCollection>
+
+        <keyValueCollection id="keyValueEntitiesDc2">
+            <properties>
+                <property name="id" datatype="uuid"/>
+                <property name="name" datatype="string"/>
+            </properties>
+            <loader id="keyValueEntitiesDl2">
+                <query>
+                    <![CDATA[select e.id, e.name from test_MainDsEntity e]]>
+                </query>
+            </loader>
+        </keyValueCollection>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <layout>
+        <dataGrid id="jpaDataGridInMemory"
+                  dataContainer="mainDsEntitiesDc1">
+            <columns>
+                <column property="name"/>
+                <column property="mem1DtoEntity" sortable="true"/>
+            </columns>
+        </dataGrid>
+
+        <simplePagination id="simplePaginationJpaPersistent"
+                          itemsPerPageDefaultValue="1"
+                          dataLoader="mainDsEntitiesDl2"/>
+        <dataGrid id="jpaDataGridPersistent"
+                  dataContainer="mainDsEntitiesDc2">
+            <columns>
+                <column property="name"/>
+                <column property="mem1DtoEntity" sortable="true"/>
+            </columns>
+        </dataGrid>
+
+        <dataGrid id="keyValueDataGridInMemory"
+                  dataContainer="keyValueEntitiesDc1">
+            <columns>
+                <column property="name" sortable="true"/>
+            </columns>
+        </dataGrid>
+
+        <simplePagination id="simplePaginationKeyValuePersistent"
+                          itemsPerPageDefaultValue="1"
+                          dataLoader="keyValueEntitiesDl2"/>
+        <dataGrid id="keyValueDataGridPersistent"
+                  dataContainer="keyValueEntitiesDc2">
+            <columns>
+                <column property="name" sortable="true"/>
+            </columns>
+        </dataGrid>
+    </layout>
+</view>

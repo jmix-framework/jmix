@@ -38,6 +38,7 @@ import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.delegate.AbstractGridDelegate;
 import io.jmix.flowui.component.delegate.TreeGridDelegate;
 import io.jmix.flowui.component.grid.editor.DataGridEditor;
+import io.jmix.flowui.component.grid.sort.DataGridSort;
 import io.jmix.flowui.data.grid.TreeDataGridItems;
 import io.jmix.flowui.fragment.FragmentUtils;
 import io.jmix.flowui.kit.component.KeyCombination;
@@ -52,6 +53,7 @@ import org.springframework.lang.Nullable;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class TreeDataGrid<E> extends JmixTreeGrid<E> implements ListDataComponent<E>, MultiSelectLookupComponent<E>,
         EnhancedTreeDataGrid<E>, SupportsEnterPress<TreeDataGrid<E>>, ApplicationContextAware, InitializingBean {
@@ -468,6 +470,17 @@ public class TreeDataGrid<E> extends JmixTreeGrid<E> implements ListDataComponen
     @Override
     public void setEmptyStateComponent(Component emptyStateComponent) {
         gridDelegate.setEmptyStateComponent(emptyStateComponent);
+    }
+
+    @Nullable
+    @Override
+    public Function<DataGridSortContext, DataGridSort> getSortBuilderDelegate() {
+        return gridDelegate.getSortBuilderDelegate();
+    }
+
+    @Override
+    public void setSortBuilderDelegate(@Nullable Function<DataGridSortContext, DataGridSort> delegate) {
+        gridDelegate.setSortBuilderDelegate(delegate);
     }
 
     @Nullable

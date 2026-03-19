@@ -16,14 +16,15 @@
 
 package io.jmix.flowui.data.grid;
 
+import com.google.common.primitives.Booleans;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.flowui.component.grid.sort.DataGridSort;
 import io.jmix.flowui.data.DataUnit;
 import io.jmix.flowui.data.HasType;
 import org.springframework.lang.Nullable;
 
-import java.util.Collection;
-import java.util.EventObject;
+import java.util.*;
 import java.util.function.Consumer;
 
 /**
@@ -113,6 +114,30 @@ public interface DataGridItems<T> extends DataUnit, HasType<T> {
          *                   where true represents ascending order and false represents descending order
          */
         void sort(Object[] propertyId, boolean[] ascending);
+
+        /**
+         * Sorts the items based on the specified {@link DataGridSort}.
+         *
+         * @param dataGridSort an object that contains sorting information
+         */
+        default void sort(DataGridSort dataGridSort) {
+            List<DataGridSort.SortInfo> sortInfos = dataGridSort.getSortInfos();
+
+            List<Object> propertyIds = new ArrayList<>(sortInfos.size());
+            List<Boolean> ascendingOrders = new ArrayList<>(sortInfos.size());
+
+            for (DataGridSort.SortInfo sortInfo : sortInfos) {
+                MetaPropertyPath propertyPath = sortInfo.getMetaPropertyPath();
+                if (propertyPath == null) {
+                    continue;
+                }
+
+                propertyIds.add(propertyPath);
+                ascendingOrders.add(sortInfo.isAscending());
+            }
+
+            sort(propertyIds.toArray(new Object[0]), Booleans.toArray(ascendingOrders));
+        }
 
         /**
          * Resets the sort order of the items to the default state or removes any applied sorting.

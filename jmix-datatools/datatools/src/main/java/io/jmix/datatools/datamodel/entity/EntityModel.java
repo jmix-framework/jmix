@@ -29,7 +29,7 @@ import java.util.UUID;
 /**
  * A DTO class that represents a data model for an entity
  */
-@JmixEntity
+@JmixEntity(name = "datatl_EntityModel")
 @SystemLevel
 public class EntityModel {
 

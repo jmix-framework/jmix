@@ -16,7 +16,13 @@
 
 package io.jmix.datatoolsflowui.role;
 
+import io.jmix.datatools.datamodel.entity.AttributeModel;
+import io.jmix.datatools.datamodel.entity.EntityModel;
+import io.jmix.security.model.EntityAttributePolicyAction;
+import io.jmix.security.model.EntityPolicyAction;
 import io.jmix.security.model.SecurityScope;
+import io.jmix.security.role.annotation.EntityAttributePolicy;
+import io.jmix.security.role.annotation.EntityPolicy;
 import io.jmix.security.role.annotation.ResourceRole;
 import io.jmix.securityflowui.role.annotation.MenuPolicy;
 import io.jmix.securityflowui.role.annotation.ViewPolicy;
@@ -41,4 +47,12 @@ public interface DataToolsMinimalAccessRole {
 
     })
     void views();
+
+    @EntityPolicy(entityClass = EntityModel.class, actions = EntityPolicyAction.READ)
+    @EntityAttributePolicy(entityClass = EntityModel.class,
+            attributes = "*", action = EntityAttributePolicyAction.VIEW)
+    @EntityPolicy(entityClass = AttributeModel.class, actions = EntityPolicyAction.READ)
+    @EntityAttributePolicy(entityClass = AttributeModel.class,
+            attributes = "*", action = EntityAttributePolicyAction.VIEW)
+    void entities();
 }

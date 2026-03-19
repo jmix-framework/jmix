@@ -16,7 +16,13 @@
 
 package io.jmix.datatoolsflowui.role;
 
+import io.jmix.datatools.datamodel.entity.AttributeModel;
+import io.jmix.datatools.datamodel.entity.EntityModel;
+import io.jmix.security.model.EntityAttributePolicyAction;
+import io.jmix.security.model.EntityPolicyAction;
 import io.jmix.security.model.SecurityScope;
+import io.jmix.security.role.annotation.EntityAttributePolicy;
+import io.jmix.security.role.annotation.EntityPolicy;
 import io.jmix.security.role.annotation.ResourceRole;
 import io.jmix.security.role.annotation.SpecificPolicy;
 import io.jmix.securityflowui.role.annotation.MenuPolicy;
@@ -42,6 +48,14 @@ public interface DataToolsFullAccessRole extends ShowEntityInfoRole {
 
     })
     void views();
+
+    @EntityPolicy(entityClass = EntityModel.class, actions = EntityPolicyAction.ALL)
+    @EntityAttributePolicy(entityClass = EntityModel.class,
+            attributes = "*", action = EntityAttributePolicyAction.MODIFY)
+    @EntityPolicy(entityClass = AttributeModel.class, actions = EntityPolicyAction.ALL)
+    @EntityAttributePolicy(entityClass = AttributeModel.class,
+            attributes = "*", action = EntityAttributePolicyAction.MODIFY)
+    void entities();
 
     @SpecificPolicy(resources = "datatools.importExportEntity")
     void specific();

@@ -219,9 +219,10 @@ public class DataModelRegistry {
                 fieldName, fieldType, entity, field.isMandatory());
         attributeModelsList.add(attributeModel);
 
+        String referencedClassName = field.getRange().asClass().getName();
         String relationDescription = diagramEngine.constructRelationDescription(entity.getName(),
-                fieldType, RelationType.MANY_TO_ONE, dataStoreName);
-        Relation relation = new Relation(dataStoreName, fieldType, relationDescription);
+                referencedClassName, RelationType.MANY_TO_ONE, dataStoreName);
+        Relation relation = new Relation(dataStoreName, referencedClassName, relationDescription);
         putRelation(relationsMap, RelationType.MANY_TO_ONE, relation);
     }
 
@@ -235,9 +236,10 @@ public class DataModelRegistry {
                 constructAttribute(fieldName, fieldType, isAnnotationPresent(field, NotNull.class));
         attributeModelsList.add(attributeModel);
 
+        String referencedClassName = field.getRange().asClass().getName();
         String relationDescription = diagramEngine.constructRelationDescription(entity.getName(),
-                fieldType, RelationType.ONE_TO_MANY, dataStoreName);
-        Relation relation = new Relation(dataStoreName, fieldType, relationDescription);
+                referencedClassName, RelationType.ONE_TO_MANY, dataStoreName);
+        Relation relation = new Relation(dataStoreName, referencedClassName, relationDescription);
         putRelation(relationsMap, RelationType.ONE_TO_MANY, relation);
     }
 
@@ -261,9 +263,10 @@ public class DataModelRegistry {
 
         attributeModelsList.add(attributeModel);
 
+        String referencedClassName = field.getRange().asClass().getName();
         String relationDescription = diagramEngine.constructRelationDescription(entity.getName(),
-                fieldType, RelationType.ONE_TO_ONE, dataStoreName);
-        Relation relation = new Relation(dataStoreName, fieldType, relationDescription);
+                referencedClassName, RelationType.ONE_TO_ONE, dataStoreName);
+        Relation relation = new Relation(dataStoreName, referencedClassName, relationDescription);
         putRelation(relationsMap, RelationType.ONE_TO_ONE, relation);
     }
 
@@ -282,9 +285,10 @@ public class DataModelRegistry {
         attributeModel.setColumnName(columnName);
         attributeModelsList.add(attributeModel);
 
+        String referencedClassName = field.getRange().asClass().getName();
         String relationDescription = diagramEngine.constructRelationDescription(entity.getName(),
-                fieldType, RelationType.MANY_TO_MANY, dataStoreName);
-        Relation relation = new Relation(dataStoreName, fieldType, relationDescription);
+                referencedClassName, RelationType.MANY_TO_MANY, dataStoreName);
+        Relation relation = new Relation(dataStoreName, referencedClassName, relationDescription);
         putRelation(relationsMap, RelationType.MANY_TO_MANY, relation);
     }
 

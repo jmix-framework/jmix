@@ -223,86 +223,52 @@ public class DataModelListView extends StandardView {
     protected byte[] generateDiagram(List<EntityModel> models) {
         StringBuilder tempEntitiesDescription = new StringBuilder();
         StringBuilder tempRelationsDescription = new StringBuilder();
-        Set<String> completedModels = new HashSet<>();
+        Set<String> completedEntities = new HashSet<>();
+        Set<NormalizedRelation> relationsSet = new LinkedHashSet<>();
         List<String> entityModelsNames = models.stream()
                 .map(EntityModel::getName)
                 .toList();
 
         for (EntityModel model : models) {
+            if (completedEntities.contains(model.getName())) {
+                continue;
+            }
+
             for (String dataStore : dataStoreNames) {
                 DataModel dataModel = dataModelProvider.getDataModel(dataStore, model.getName());
                 if (dataModel == null) {
                     continue;
                 }
+
                 tempEntitiesDescription.append(dataModel.entityDescription());
 
-                if (!dataModelProvider.hasRelations(dataStore, model.getName())) {
-                    continue;
-                }
-
-                for (String referencedEntity : entityModelsNames) {
-                    if (!model.getName().equals(referencedEntity)
-                            && !completedModels.contains(referencedEntity)) {
-                        constructRelations(model.getName(), referencedEntity, dataStore, tempRelationsDescription);
+                for (Map.Entry<RelationType, List<Relation>> entry : dataModel.relations().entrySet()) {
+                    RelationType type = entry.getKey();
+                    for (Relation relation : entry.getValue()) {
+                        if (entityModelsNames.contains(relation.referencedClass())) {
+                            relationsSet.add(NormalizedRelation.of(
+                                    model.getName(),
+                                    relation.referencedClass(),
+                                    type,
+                                    relation.dataStore()
+                            ));
+                        }
                     }
                 }
-
-                completedModels.add(model.getName());
             }
+
+            completedEntities.add(model.getName());
+        }
+
+        for (NormalizedRelation nr : relationsSet) {
+            tempRelationsDescription.append(diagramEngine.constructRelationDescription(
+                    nr.entity1(), nr.entity2(), nr.type(), nr.dataStore()
+            ));
         }
 
         return diagramEngine.generateDiagram(tempEntitiesDescription.toString(), tempRelationsDescription.toString());
     }
 
-    protected void constructRelations(String currentEntity, String referencedEntity,
-                                      String dataStore, StringBuilder relationsDescription) {
-        if (!(containsModel(dataStore, currentEntity)
-                && containsModel(dataStore, referencedEntity))) {
-            return;
-        }
-
-        Map<RelationType, List<Relation>> directRelations =
-                dataModelProvider.getEntityRelations(dataStore, currentEntity);
-        Map<RelationType, List<Relation>> referencedRelations =
-                dataModelProvider.getEntityRelations(dataStore, referencedEntity);
-        Set<RelationType> directRelationTypes = directRelations.keySet();
-
-        if (directRelationTypes.isEmpty()) {
-            return;
-        }
-
-        for (RelationType relationType : directRelationTypes) {
-            referencedRelations.getOrDefault(RelationType.getReverseRelation(relationType),
-                            crossRelationCheck(currentEntity, referencedEntity, dataStore, relationType))
-                    .stream()
-                    .filter(el ->
-                            el.referencedClass().equals(currentEntity))
-                    .forEach(e ->
-                            relationsDescription.append(e.relationDescription()));
-        }
-    }
-
-    protected boolean containsModel(String dataStore, String entityName) {
-        return dataModelProvider.getDataModels(dataStore).containsKey(entityName);
-    }
-
-    protected List<Relation> crossRelationCheck(String currentEntity, String referencedEntity,
-                                                String dataStore, RelationType relationType) {
-        if (RelationType.getReverseRelation(relationType).equals(RelationType.ONE_TO_MANY)) {
-            // inverse relation emulation for MANY_TO_ONE relation
-            DataModel dataModel = dataModelProvider.getDataModel(dataStore, currentEntity);
-            return dataModel != null
-                    ? dataModel.relations().get(relationType).stream()
-                    .filter(el ->
-                            el.referencedClass().equals(referencedEntity))
-                    .map(e ->
-                            new Relation(dataStore, currentEntity, e.relationDescription()))
-                    .toList()
-                    : Collections.emptyList();
-        }
-
-        return Collections.emptyList();
-    }
 
     @Supply(to = "attributeModelsDataGrid.isMandatory", subject = "renderer")
     protected Renderer<AttributeModel> loggedEntityTableAutoRenderer() {
@@ -315,6 +281,16 @@ public class DataModelListView extends StandardView {
         return Boolean.TRUE.equals(attributeValue)
                 ? icons.get(JmixFontIcon.CHECK_SQUARE_O)
                 : icons.get(JmixFontIcon.THIN_SQUARE);
+    }
+
+    protected record NormalizedRelation(String entity1, String entity2, RelationType type, String dataStore) {
+        public static NormalizedRelation of(String source, String target, RelationType type, String dataStore) {
+            if (source.compareTo(target) <= 0) {
+                return new NormalizedRelation(source, target, type, dataStore);
+            } else {
+                return new NormalizedRelation(target, source, RelationType.getReverseRelation(type), dataStore);
+            }
+        }
     }
 
     protected class EntityNameUrlQueryParametersBinder extends AbstractUrlQueryParametersBinder {

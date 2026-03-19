@@ -16,6 +16,7 @@
 
 package io.jmix.saml.mapper.role;
 
+import io.jmix.saml.SamlProperties;
 import io.jmix.saml.util.SamlAssertionUtils;
 import io.jmix.security.role.ResourceRoleRepository;
 import io.jmix.security.role.RoleGrantedAuthorityUtils;
@@ -32,6 +33,18 @@ import java.util.stream.Collectors;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
+/**
+ * Default implementation of {@link SamlAssertionRolesMapper} that takes role names from SAML assertion attribute and
+ * transforms them to resource and row-level roles using role name prefixes.
+ * <p>
+ * Roles names are taken from a special assertion attribute. Attribute name is taken from the {@link #rolesAttributeName} property.
+ * The default value is taken from the {@link SamlProperties.DefaultSamlAssertionRolesMapperConfig#getRolesAssertionAttribute()}
+ * <p>
+ * Role names from the assertion attribute are mapped to the resource and row-level roles using {@link #resourceRolePrefix}
+ * and {@link #rowLevelRolePrefix} prefixes, e.g., if the {@code resourceRolePrefix} is "resource$" then SAML role with
+ * the name "resource$system-full-access" will be mapped to Jmix role with the "system-full-access" code.
+ * By default the prefixes are empty.
+ */
 public class DefaultSamlAssertionRolesMapper extends BaseSamlAssertionRolesMapper {
 
     private static final Logger log = getLogger(DefaultSamlAssertionRolesMapper.class);

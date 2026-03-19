@@ -27,6 +27,9 @@ import java.util.Collection;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
+/**
+ * Default implementation of {@link SamlUserMapper} that converts SAML assertion into {@link DefaultJmixSamlUserDetails}.
+ */
 public class DefaultSamlUserMapper extends BaseSamlUserMapper<DefaultJmixSamlUserDetails> {
 
     private static final Logger log = getLogger(DefaultSamlUserMapper.class);

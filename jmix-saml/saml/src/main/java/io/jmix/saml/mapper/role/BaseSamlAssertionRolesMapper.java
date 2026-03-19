@@ -31,10 +31,17 @@ import java.util.stream.Stream;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
+/**
+ * {@link SamlAssertionRolesMapper} that can be used as super-class for your own {@link SamlAssertionRolesMapper}.
+ * The child classes must override the {@link #getResourceRolesCodes(Assertion)} and {@link #getRowLevelRoleCodes(Assertion)} methods.
+ * The behavior for finding roles with given codes and transforming them into a collection of {@link GrantedAuthority}
+ * is already implemented in the current class.
+ */
 public abstract class BaseSamlAssertionRolesMapper implements SamlAssertionRolesMapper {
 
     private static final Logger log = getLogger(BaseSamlAssertionRolesMapper.class);
 
+    //todo [IVGA] field injection
     protected final RowLevelRoleRepository rowLevelRoleRepository;
     protected final ResourceRoleRepository resourceRoleRepository;
     protected final RoleGrantedAuthorityUtils roleGrantedAuthorityUtils;
@@ -56,7 +63,7 @@ public abstract class BaseSamlAssertionRolesMapper implements SamlAssertionRoles
             if (jmixRole != null) {
                 roles.add(jmixRole);
             } else {
-                log.warn("Resource role {} not found", jmixRoleCode);
+                log.debug("Resource role {} not found", jmixRoleCode);
             }
         }
         return roles;
@@ -71,7 +78,7 @@ public abstract class BaseSamlAssertionRolesMapper implements SamlAssertionRoles
             if (jmixRole != null) {
                 roles.add(jmixRole);
             } else {
-                log.warn("Row-level role {} not found", jmixRoleCode);
+                log.debug("Row-level role {} not found", jmixRoleCode);
             }
         }
         return roles;

@@ -23,11 +23,32 @@ import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Collection;
 
+/**
+ * Interface for mapper of SAML assertion into Jmix resource and row-level roles.
+ */
 public interface SamlAssertionRolesMapper {
 
+    /**
+     * Creates Jmix resource roles based on SAML assertion data.
+     *
+     * @param assertion SAML assertion
+     * @return collection of resource roles
+     */
     Collection<ResourceRole> toResourceRoles(Assertion assertion);
 
+    /**
+     * Creates Jmix row-level roles based on SAML assertion data.
+     *
+     * @param assertion SAML assertion
+     * @return collection of row-level roles
+     */
     Collection<RowLevelRole> toRowLevelRoles(Assertion assertion);
 
+    /**
+     * Creates Spring Security granted authorities based on SAML assertion data.
+     *
+     * @param assertion SAML assertion
+     * @return collection of granted authorities
+     */
     Collection<? extends GrantedAuthority> toGrantedAuthorities(Assertion assertion);
 }

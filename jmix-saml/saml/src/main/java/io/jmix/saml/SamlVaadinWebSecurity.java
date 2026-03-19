@@ -44,6 +44,9 @@ import java.util.List;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.springframework.security.config.Customizer.withDefaults;
 
+/**
+ * Provides Vaadin security to the project. Configures authentication using the SAML 2.0 provider.
+ */
 public class SamlVaadinWebSecurity extends VaadinWebSecurity {
 
     private static final Logger log = getLogger(SamlVaadinWebSecurity.class);

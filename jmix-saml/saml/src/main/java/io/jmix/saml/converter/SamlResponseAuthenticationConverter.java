@@ -35,6 +35,10 @@ import java.util.Optional;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
+/**
+ * Converter that converts SAML response token to {@link Saml2Authentication} object.
+ * It constructs {@link JmixSamlUserDetails} from SAML assertion and sets it as authentication principal.
+ */
 public class SamlResponseAuthenticationConverter implements Converter<OpenSaml4AuthenticationProvider.ResponseToken, Saml2Authentication> {
 
     private static final Logger log = getLogger(SamlResponseAuthenticationConverter.class);

@@ -25,10 +25,25 @@ import java.util.List;
 @ConfigurationProperties(prefix = "jmix.saml")
 public class SamlProperties {
 
+    /**
+     * Whether to force 'redirect' binding for logout requests.
+     * If true, logout requests will always use the 'redirect' binding. Otherwise, the binding will be determined
+     * based on the RelyingPartyRegistration
+     */
     boolean forceRedirectBindingLogout;
+    /**
+     * Maximum number of concurrent user mapping processes within {@link io.jmix.saml.mapper.user.BaseSamlUserMapper}.
+     */
     int maxConcurrentUserMapping;
 
+    /**
+     * DefaultSamlAssertionRolesMapper configuration.
+     */
     DefaultSamlAssertionRolesMapperConfig defaultSamlAssertionRolesMapper;
+
+    /**
+     * Set of properties to configure Security filter chains.
+     */
     FilterChain filterChain;
 
     public SamlProperties(@DefaultValue("true") boolean forceRedirectBindingLogout,
@@ -42,24 +57,39 @@ public class SamlProperties {
         this.filterChain = filterChain;
     }
 
+    /**
+     * @see #forceRedirectBindingLogout
+     */
     public boolean isForceRedirectBindingLogout() {
         return forceRedirectBindingLogout;
     }
 
+    /**
+     * @see #maxConcurrentUserMapping
+     */
     public int getMaxConcurrentUserMapping() {
         return maxConcurrentUserMapping;
     }
 
+    /**
+     * @see #defaultSamlAssertionRolesMapper
+     */
     public DefaultSamlAssertionRolesMapperConfig getDefaultSamlAssertionRolesMapper() {
         return defaultSamlAssertionRolesMapper;
     }
 
+    /**
+     * @see #filterChain
+     */
     public FilterChain getFilterChain() {
         return filterChain;
     }
 
     public static class DefaultSamlAssertionRolesMapperConfig {
 
+        /**
+         * Name of SAML assertion attribute that contains roles.
+         */
         String rolesAssertionAttribute;
 
         /**
@@ -80,14 +110,23 @@ public class SamlProperties {
             this.rowLevelRolePrefix = rowLevelRolePrefix;
         }
 
+        /**
+         * @see #rolesAssertionAttribute
+         */
         public String getRolesAssertionAttribute() {
             return rolesAssertionAttribute;
         }
 
+        /**
+         * @see #resourceRolePrefix
+         */
         public String getResourceRolePrefix() {
             return resourceRolePrefix;
         }
 
+        /**
+         * @see #rowLevelRolePrefix
+         */
         public String getRowLevelRolePrefix() {
             return rowLevelRolePrefix;
         }

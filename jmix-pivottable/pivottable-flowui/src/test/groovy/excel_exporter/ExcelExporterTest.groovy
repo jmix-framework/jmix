@@ -16,7 +16,6 @@
 
 package excel_exporter
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.jmix.core.Messages
 import io.jmix.flowui.download.Downloader
 import io.jmix.pivottableflowui.component.PivotTable
@@ -30,6 +29,7 @@ import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.usermodel.CellType
 import org.apache.poi.ss.usermodel.Row
 import spock.lang.Specification
+import tools.jackson.databind.ObjectMapper
 
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files

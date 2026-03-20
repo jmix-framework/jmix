@@ -27,7 +27,7 @@ import org.jspecify.annotations.Nullable;
  * dialog and enables configuring the dialog position.
  */
 @Tag("jmix-side-dialog")
-@JsModule("./src/side-dialog/jmix-side-dialog.js")
+//@JsModule("./src/side-dialog/jmix-side-dialog.js")
 public class JmixSideDialogOverlay extends Dialog {
 
     public JmixSideDialogOverlay() {

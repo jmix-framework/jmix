@@ -31,23 +31,21 @@ vaadin-menu-bar[jmix-role='jmix-user-menu'] vaadin-menu-bar-item.jmix-user-menu-
     height: 100%;
 }
 
-/* Overlay */
-
-vaadin-menu-bar-overlay.jmix-user-menu-overlay vaadin-menu-bar-item::part(content) {
+vaadin-menu-bar[jmix-role='jmix-user-menu'] vaadin-menu-bar-item::part(content) {
     display: flex;
     align-items: center;
     gap: var(--lumo-space-s);
 }
 
-vaadin-menu-bar-overlay.jmix-user-menu-overlay vaadin-menu-bar-item::part(checkmark):before {
+vaadin-menu-bar[jmix-role='jmix-user-menu'] vaadin-menu-bar-item::part(checkmark):before {
     color: inherit;
 }
 
-vaadin-menu-bar-overlay.jmix-user-menu-overlay vaadin-menu-bar-item[theme~='non-checkable'] {
+vaadin-menu-bar[jmix-role='jmix-user-menu'] vaadin-menu-bar-item[theme~='non-checkable'] {
     padding-inline-start: var(--lumo-space-s);
 }
 
-vaadin-menu-bar-overlay.jmix-user-menu-overlay vaadin-menu-bar-item[theme~='non-checkable']::part(checkmark) {
+vaadin-menu-bar[jmix-role='jmix-user-menu'] vaadin-menu-bar-item[theme~='non-checkable']::part(checkmark) {
     display: none;
 }
 

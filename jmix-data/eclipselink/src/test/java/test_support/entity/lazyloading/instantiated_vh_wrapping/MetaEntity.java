@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,25 @@
  * limitations under the License.
  */
 
-package io.jmix.core;
+package test_support.entity.lazyloading.instantiated_vh_wrapping;
 
-import io.jmix.core.EntityStates.PropertyLoadedState;
-import io.jmix.core.annotation.Internal;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import jakarta.persistence.*;
 
-@Internal
-public interface PersistentAttributesLoadChecker {
+import java.util.List;
 
-    boolean isLoaded(Object entity, String property);
+@JmixEntity(name = "tst_vh_MetaEntity")
+@Embeddable
+public class MetaEntity {
+    @JoinColumn(name = "LASTENTITY_ID")
+    @OneToOne(fetch = FetchType.LAZY)
+    private LastEntity lastentity;
 
-    PropertyLoadedState isLoadedSafe(Object entity, String property);
+    public LastEntity getLastentity() {
+        return lastentity;
+    }
+
+    public void setLastentity(LastEntity lastentity) {
+        this.lastentity = lastentity;
+    }
 }

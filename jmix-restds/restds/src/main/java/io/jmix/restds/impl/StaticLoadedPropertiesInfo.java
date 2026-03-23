@@ -16,7 +16,9 @@
 
 package io.jmix.restds.impl;
 
+import io.jmix.core.EntityStates;
 import io.jmix.core.PersistentAttributesLoadChecker;
+import io.jmix.core.EntityStates.PropertyLoadedState;
 import io.jmix.core.entity.LoadedPropertiesInfo;
 
 import java.util.HashSet;
@@ -34,6 +36,11 @@ public class StaticLoadedPropertiesInfo implements LoadedPropertiesInfo {
     @Override
     public boolean isLoaded(Object entity, String property, PersistentAttributesLoadChecker checker) {
         return loadedProperties.contains(property);
+    }
+
+    @Override
+    public PropertyLoadedState isLoadedSafe(Object entity, String property, PersistentAttributesLoadChecker checker) {
+        return loadedProperties.contains(property)? EntityStates.PropertyLoadedState.YES : EntityStates.PropertyLoadedState.NO;
     }
 
     @Override

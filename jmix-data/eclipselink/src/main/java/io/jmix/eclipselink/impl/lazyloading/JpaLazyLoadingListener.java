@@ -17,12 +17,14 @@
 package io.jmix.eclipselink.impl.lazyloading;
 
 import io.jmix.core.*;
+import io.jmix.core.EntityStates.PropertyLoadedState;
 import io.jmix.core.constraint.InMemoryConstraint;
 import io.jmix.core.datastore.DataStoreAfterEntityLoadEvent;
 import io.jmix.core.datastore.DataStoreEventListener;
 import io.jmix.core.entity.EntitySystemAccess;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.LoadedPropertiesInfo;
+import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Range;
@@ -37,11 +39,13 @@ import org.eclipse.persistence.internal.expressions.FieldExpression;
 import org.eclipse.persistence.internal.expressions.ParameterExpression;
 import org.eclipse.persistence.internal.expressions.RelationExpression;
 import org.eclipse.persistence.internal.indirection.QueryBasedValueHolder;
+import org.eclipse.persistence.internal.indirection.UnitOfWorkValueHolder;
 import org.eclipse.persistence.internal.indirection.WrappingValueHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
@@ -75,6 +79,9 @@ public class JpaLazyLoadingListener implements DataStoreEventListener {
     protected ExtendedEntities extendedEntities;
     @Autowired
     protected FetchPlans fetchPlans;
+
+    @Value("${jmix.eclipselink.wrap-excessively-loaded-properties:true}")
+    protected boolean wrapExcessivelyLoadedPropertiesEnabled;
 
     @Autowired
     protected EclipselinkProperties eclipselinkProperties;
@@ -118,12 +125,16 @@ public class JpaLazyLoadingListener implements DataStoreEventListener {
                         .collect(Collectors.toList()))
                 .setHints(serializableHints);
 
+        Set<Object> processedEntities = new HashSet<>();
+        Map<Object, List<MetaProperty>> excessiveLoadedProperties = new HashMap<>();
+
         for (Map.Entry<Object, Set<FetchPlan>> entry : collectedFetchPlans.entrySet()) {
             MetaClass metaClass = metadata.getClass(entry.getKey());
+            processedEntities.add(entry.getKey());
             for (MetaProperty property : metaClass.getProperties()) {
                 if ((property.getRange().isClass()
-                            && property.getType() != MetaProperty.Type.EMBEDDED
-                            || metadataTools.isElementCollection(property))
+                        && property.getType() != MetaProperty.Type.EMBEDDED
+                        || metadataTools.isElementCollection(property))
                         && !isPropertyContainedInFetchPlans(property, entry.getValue()) &&
                         metadataTools.getCrossDataStoreReferenceIdProperty(property.getStore().getName(), property) == null) {
                     if (!entityStates.isLoaded(entry.getKey(), property.getName())) {
@@ -134,6 +145,79 @@ public class JpaLazyLoadingListener implements DataStoreEventListener {
                         } else if (property.getRange().getCardinality() == Range.Cardinality.MANY_TO_ONE) {
                             processManyToOneValueHolder(entry.getKey(), property, loadOptions);
                         }
+                    } else if (wrapExcessivelyLoadedPropertiesEnabled
+                            && !eclipselinkProperties.isDisableLazyLoading()
+                            && metadataTools.isJpa(property)) {
+                        excessiveLoadedProperties.computeIfAbsent(entry.getKey(), k -> new ArrayList<>())
+                                .add(property);
+                    }
+
+                }
+            }
+        }
+
+        for (Map.Entry<Object, List<MetaProperty>> excessivelyLoadedProperty : excessiveLoadedProperties.entrySet()) {
+            for (MetaProperty property : excessivelyLoadedProperty.getValue()) {
+                wrapExcessivelyLoadedPropertyValueHolders(excessivelyLoadedProperty.getKey(), property, loadOptions, processedEntities);
+            }
+        }
+    }
+
+    /**
+     * Organizes value holder wrapping for excessively loaded properties according to the property's cardinality.
+     * Skips processing of system entities according to the {@code isSkipExcessiveLoadedProcessing} method.
+     */
+    private void wrapExcessivelyLoadedPropertyValueHolders(Object entity, MetaProperty property, LoadOptions loadOptions, Set<Object> processedEntities) {
+        if (isSkipExcessiveLoadedProcessing(entity)) {
+            return;
+        }
+
+        if (property.getRange().getCardinality().isMany()) {
+            Collection<?> propertyCollection = EntityValues.getValue(entity, property.getName());
+            if (propertyCollection != null) {
+                for (Object item : propertyCollection) {
+                    wrapExcessivelyLoadedEntityValueHolders(item, property.getRange().asClass(), loadOptions, processedEntities);
+                }
+            }
+        } else {
+            wrapExcessivelyLoadedEntityValueHolders(EntityValues.getValue(entity, property.getName()), property.getRange().asClass(), loadOptions, processedEntities);
+        }
+    }
+
+    private boolean isSkipExcessiveLoadedProcessing(Object entity) {
+        return entity == null || entity.getClass().isAnnotationPresent(SystemLevel.class);
+    }
+
+    /**
+     * Checks whether the excessively loaded entity contains unwrapped {@link UnitOfWorkValueHolder}s and wraps them.
+     */
+    private void wrapExcessivelyLoadedEntityValueHolders(Object entity, MetaClass entityMetaclass, LoadOptions loadOptions, Set<Object> processedEntities) {
+        if (entity == null || processedEntities.contains(entity)) {
+            return;
+        }
+
+        processedEntities.add(entity);
+
+        for (MetaProperty property : entityMetaclass.getProperties()) {
+            if ((property.getRange().isClass()
+                    && property.getType() != MetaProperty.Type.EMBEDDED
+                    || metadataTools.isElementCollection(property))
+                    && metadataTools.isJpa(property)
+                    && metadataTools.getCrossDataStoreReferenceIdProperty(property.getStore().getName(), property) == null) {
+
+                PropertyLoadedState propertyLoadedState = entityStates.isLoadedSafe(entity, property.getName());
+                switch (propertyLoadedState) {
+                    case NO -> {
+                        if (property.getRange().getCardinality().isMany()) {
+                            processCollectionValueHolder(entity, property, loadOptions);
+                        } else if (property.getRange().getCardinality() == Range.Cardinality.ONE_TO_ONE) {
+                            processOneToOneValueHolder(entity, property, loadOptions);
+                        } else if (property.getRange().getCardinality() == Range.Cardinality.MANY_TO_ONE) {
+                            processManyToOneValueHolder(entity, property, loadOptions);
+                        }
+                    }
+                    case YES -> {
+                        wrapExcessivelyLoadedPropertyValueHolders(entity, property, loadOptions, processedEntities);
                     }
                 }
             }

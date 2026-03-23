@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-package io.jmix.core;
+package test_support.entity.lazyloading.instantiated_vh_wrapping;
 
-import io.jmix.core.EntityStates.PropertyLoadedState;
-import io.jmix.core.annotation.Internal;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 
-@Internal
-public interface PersistentAttributesLoadChecker {
-
-    boolean isLoaded(Object entity, String property);
-
-    PropertyLoadedState isLoadedSafe(Object entity, String property);
+@JmixEntity
+@Table(name = "TST_VH_INFO_ENTITY")
+@Entity
+public class InfoEntity extends BaseUuidEntity {
 }

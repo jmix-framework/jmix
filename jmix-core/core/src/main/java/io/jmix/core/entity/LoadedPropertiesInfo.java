@@ -17,6 +17,7 @@
 package io.jmix.core.entity;
 
 import io.jmix.core.PersistentAttributesLoadChecker;
+import io.jmix.core.EntityStates.PropertyLoadedState;
 import io.jmix.core.annotation.Internal;
 
 import java.io.Serializable;
@@ -30,6 +31,8 @@ import java.io.Serializable;
 public interface LoadedPropertiesInfo extends Serializable {
 
     boolean isLoaded(Object entity, String property, PersistentAttributesLoadChecker checker);
+
+    PropertyLoadedState isLoadedSafe(Object entity, String property, PersistentAttributesLoadChecker checker);
 
     void registerProperty(String name, boolean loaded);
 

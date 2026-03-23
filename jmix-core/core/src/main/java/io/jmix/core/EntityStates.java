@@ -146,6 +146,27 @@ public class EntityStates {
     }
 
     /**
+     * Checks whether the property is loaded from the data store without risking fetching it.
+     * <p>Non-stored attributes are considered loaded if they do not have related properties, or if all related
+     * properties are loaded.
+     *
+     * @param entity   entity
+     * @param property name of the property. Only immediate attributes of the entity are supported.
+     * @return {@link PropertyLoadedState#YES} if loaded, {@link PropertyLoadedState#NO} if not loaded,
+     * {@link PropertyLoadedState#UNKNOWN} if the loaded state cannot be determined without fetching the property
+     */
+    public PropertyLoadedState isLoadedSafe(Object entity, String property) {
+        log.trace("Checking is loaded {}.{}", entity, property);
+
+        LoadedPropertiesInfo loadedPropertiesInfo = EntitySystemAccess.getEntityEntry(entity).getLoadedPropertiesInfo();
+        if (loadedPropertiesInfo != null) {
+            return loadedPropertiesInfo.isLoadedSafe(entity, property, checker);
+        } else {
+            return checker.isLoadedSafe(entity, property);
+        }
+    }
+
+    /**
      * Check that entity has all specified properties loaded from the data store.
      * Throw exception if property is not loaded.
      *
@@ -437,5 +458,19 @@ public class EntityStates {
 
         getUncheckedEntityEntry(entity).setNew(false);
         getUncheckedEntityEntry(entity).setDetached(false);
+    }
+
+    /**
+     * Describes whether the property is loaded from the data store.
+     * {@link #UNKNOWN} may be returned if the loaded state cannot be determined without fetching the property.
+     */
+    public enum PropertyLoadedState {
+        YES,
+        NO,
+        UNKNOWN;
+
+        public static PropertyLoadedState fromBoolean(boolean loaded) {
+            return loaded ? YES : NO;
+        }
     }
 }

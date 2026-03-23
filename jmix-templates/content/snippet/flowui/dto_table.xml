@@ -60,6 +60,6 @@ def actionDescription = actionSearch.getActionDescriptionBy(actionId, jmixProjec
 <${xmlNs}columns<%if (resizableColumns) {%> resizable="true"<%}%>><%columns.each {column ->%>
 <${xmlNs}column property="${column}"/>
 <%}%>
-<%if (isGroupDataGridTable) {%><${xmlNs}groupColumn key="groupColumn"/><%}%>>
+<%if (isGroupDataGridTable) {%><${xmlNs}groupColumn key="groupColumn"/><%}%>
 </${xmlNs}columns>
 </${tableType.xmlName}>

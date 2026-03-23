@@ -23,6 +23,7 @@ import io.jmix.saml.user.JmixSamlUserDetails;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.lang.Nullable;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.saml2.Saml2Exception;
 import org.springframework.security.saml2.provider.service.authentication.OpenSaml5AuthenticationProvider;
@@ -38,6 +39,9 @@ import java.util.List;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
+/**
+ * Provides Vaadin security to the project. Configures authentication using the SAML 2.0 provider.
+ */
 public class SamlVaadinWebSecurity {
 
     private static final Logger log = getLogger(SamlVaadinWebSecurity.class);
@@ -103,6 +107,7 @@ public class SamlVaadinWebSecurity {
     ) {
         return new RelyingPartyRegistrationRepository() {
             @Override
+            @Nullable
             public RelyingPartyRegistration findByRegistrationId(String registrationId) {
                 RelyingPartyRegistration original = originalRepository.findByRegistrationId(registrationId);
                 if (original == null) {

@@ -29,6 +29,10 @@ import java.util.List;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
+/**
+ * Customizes Spring Security filter chains for SAML-based authentication in Vaadin applications.
+ * This customizer ensures that the UI scope is enforced for provided chains.
+ */
 public class SamlVaadinSecurityFilterChainCustomizer extends BaseSecurityFilterChainCustomizer {
 
     private static final Logger log = getLogger(SamlVaadinSecurityFilterChainCustomizer.class);

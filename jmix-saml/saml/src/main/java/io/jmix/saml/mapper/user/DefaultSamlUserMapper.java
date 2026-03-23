@@ -18,33 +18,26 @@ package io.jmix.saml.mapper.user;
 
 import io.jmix.saml.mapper.role.SamlAssertionRolesMapper;
 import io.jmix.saml.user.DefaultJmixSamlUserDetails;
-import io.jmix.saml.util.SamlAssertionUtils;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.saml2.provider.service.authentication.DefaultSaml2AuthenticatedPrincipal;
 import org.springframework.security.saml2.provider.service.authentication.OpenSaml5AuthenticationProvider;
 
 import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
+/**
+ * Default implementation of {@link SamlUserMapper} that converts SAML assertion into {@link DefaultJmixSamlUserDetails}.
+ */
 public class DefaultSamlUserMapper extends BaseSamlUserMapper<DefaultJmixSamlUserDetails> {
 
     private static final Logger log = getLogger(DefaultSamlUserMapper.class);
 
-    protected final SamlAssertionRolesMapper rolesMapper;
-
-    public DefaultSamlUserMapper(SamlAssertionRolesMapper rolesMapper) {
-        this.rolesMapper = rolesMapper;
-    }
-
-    @Override
-    protected String getSamlUsername(Assertion assertion) {
-        return assertion.getSubject().getNameID().getValue();
-    }
+    @Autowired
+    protected SamlAssertionRolesMapper rolesMapper;
 
     @Override
     protected DefaultJmixSamlUserDetails initJmixUser(Assertion assertion) {

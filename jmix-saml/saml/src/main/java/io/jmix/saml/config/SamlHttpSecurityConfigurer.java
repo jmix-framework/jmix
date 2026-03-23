@@ -20,7 +20,7 @@ import io.jmix.saml.SamlVaadinWebSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 
 /**
- * Interface that allows to perform additional Spring Security configuration within SAML configuration.
+ * Interface that allows you to perform additional Spring Security configuration within SAML configuration.
  * All beans that implement this interface will be automatically applied
  * during SAML configuration within {@link SamlVaadinWebSecurity}.
  */

@@ -18,7 +18,9 @@ package io.jmix.chartsflowui.kit.component.serialization;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.jmix.chartsflowui.kit.component.model.*;
+import io.jmix.chartsflowui.kit.component.model.axis.AbstractAxis;
 import io.jmix.chartsflowui.kit.component.model.axis.AxisLine;
+import io.jmix.chartsflowui.kit.component.model.axis.Polar;
 import io.jmix.chartsflowui.kit.component.model.axis.Radar;
 import io.jmix.chartsflowui.kit.component.model.datazoom.AbstractDataZoom;
 import io.jmix.chartsflowui.kit.component.model.legend.AbstractLegend;
@@ -109,8 +111,10 @@ public class JmixChartSerializer {
         builder.addMixIn(AbstractLegend.class, JmixChartMixins.AbstractLegend.class);
         builder.addMixIn(Brush.class, JmixChartMixins.Brush.class);
         builder.addMixIn(Grid.class, JmixChartMixins.Grid.class);
+        builder.addMixIn(AbstractAxis.class, JmixChartMixins.AbstractAxis.class);
         builder.addMixIn(AxisLine.class, JmixChartMixins.AbstractAxis.AxisLine.class);
         builder.addMixIn(AreaStyle.class, JmixChartMixins.AreaStyle.class);
+        builder.addMixIn(Polar.class, JmixChartMixins.Polar.class);
         builder.addMixIn(Radar.class, JmixChartMixins.Radar.class);
         builder.addMixIn(AbstractDataZoom.class, JmixChartMixins.AbstractDataZoom.class);
         builder.addMixIn(AbstractVisualMap.class, JmixChartMixins.AbstractVisualMap.class);
@@ -126,12 +130,15 @@ public class JmixChartSerializer {
         builder.addMixIn(MarkLine.Point.class, JmixChartMixins.MarkLine.Point.class);
         builder.addMixIn(MarkArea.PointPair.class, JmixChartMixins.MarkArea.PointPair.class);
         builder.addMixIn(MarkArea.Point.class, JmixChartMixins.MarkArea.Point.class);
-        builder.addMixIn(LineSeries.class, JmixChartMixins.Series.class);
-        builder.addMixIn(BarSeries.class, JmixChartMixins.Series.class);
-        builder.addMixIn(ScatterSeries.class, JmixChartMixins.Series.class);
-        builder.addMixIn(EffectScatterSeries.class, JmixChartMixins.Series.class);
-        builder.addMixIn(BoxplotSeries.class, JmixChartMixins.Series.class);
-        builder.addMixIn(CandlestickSeries.class, JmixChartMixins.Series.class);
+        builder.addMixIn(LineSeries.class, JmixChartMixins.SeriesWithAxisIndex.class);
+        builder.addMixIn(BarSeries.class, JmixChartMixins.SeriesWithAxisIndex.class);
+        builder.addMixIn(RadarSeries.class, JmixChartMixins.AbstractSeries.class);
+        builder.addMixIn(PieSeries.class, JmixChartMixins.AbstractSeries.class);
+        builder.addMixIn(GaugeSeries.class, JmixChartMixins.AbstractSeries.class);
+        builder.addMixIn(ScatterSeries.class, JmixChartMixins.SeriesWithAxisIndex.class);
+        builder.addMixIn(EffectScatterSeries.class, JmixChartMixins.SeriesWithAxisIndex.class);
+        builder.addMixIn(BoxplotSeries.class, JmixChartMixins.SeriesWithAxisIndex.class);
+        builder.addMixIn(CandlestickSeries.class, JmixChartMixins.SeriesWithAxisIndex.class);
         builder.addMixIn(CandlestickSeries.ItemStyle.class, JmixChartMixins.CandlestickSeries.ItemStyle.class);
         builder.addMixIn(FunnelSeries.class, JmixChartMixins.FunnelSeries.class);
     }

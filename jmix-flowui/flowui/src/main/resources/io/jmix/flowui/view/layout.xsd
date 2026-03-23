@@ -575,7 +575,7 @@
                     <xs:enumeration value="LEVEL_RIGHT_BOLD"/>
                     <xs:enumeration value="LEVEL_RIGHT"/>
                     <xs:enumeration value="LEVEL_UP_BOLD"/>
-                    <xs:enumeration value="LEVEL_LEVEL_UPUP_BOLD"/>
+                    <xs:enumeration value="LEVEL_UP"/>
                     <xs:enumeration value="LIFEBUOY"/>
                     <xs:enumeration value="LIGHTBULB"/>
                     <xs:enumeration value="LINE_BAR_CHART"/>

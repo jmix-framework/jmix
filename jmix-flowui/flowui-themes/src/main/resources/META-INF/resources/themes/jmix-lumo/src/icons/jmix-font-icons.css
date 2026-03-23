@@ -772,12 +772,16 @@ html {
 
 /* Fixes Safari browser bug which incorrectly handle '100cqh' */
 .jmix-font-icon:not(.jmix-font-icon-lumo):before,
-.jmix-font-icon:not(.jmix-font-icon-lumo):after {
+.jmix-font-icon:not(.jmix-font-icon-lumo):after,
+vaadin-icon[style*="font-family: Vaadin-Icons"]:before,
+vaadin-icon[style*="font-family: Vaadin-Icons"]:after {
     font-size: 1rem;
 }
 
 .jmix-font-icon.jmix-font-icon-lumo:before,
-.jmix-font-icon.jmix-font-icon-lumo:after {
+.jmix-font-icon.jmix-font-icon-lumo:after,
+vaadin-icon[style*="font-family: lumo-icons"]:before,
+vaadin-icon[style*="font-family: lumo-icons"]:after {
     /* Lumo icon size */
     font-size: 24px;
 }

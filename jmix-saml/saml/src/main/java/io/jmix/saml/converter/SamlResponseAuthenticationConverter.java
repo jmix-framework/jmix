@@ -22,6 +22,7 @@ import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.Response;
 import org.slf4j.Logger;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.lang.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.saml2.Saml2Exception;
 import org.springframework.security.saml2.provider.service.authentication.OpenSaml4AuthenticationProvider;
@@ -34,6 +35,10 @@ import java.util.Optional;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
+/**
+ * Converter that converts SAML response token to {@link Saml2Authentication} object.
+ * It constructs {@link JmixSamlUserDetails} from SAML assertion and sets it as authentication principal.
+ */
 public class SamlResponseAuthenticationConverter implements Converter<OpenSaml4AuthenticationProvider.ResponseToken, Saml2Authentication> {
 
     private static final Logger log = getLogger(SamlResponseAuthenticationConverter.class);
@@ -84,6 +89,7 @@ public class SamlResponseAuthenticationConverter implements Converter<OpenSaml4A
     /**
      * Extracts assertion from SAML response, handling both plain and encrypted assertions.
      */
+    @Nullable
     protected Assertion getAssertion(OpenSaml4AuthenticationProvider.ResponseToken responseToken) {
         Response response = responseToken.getResponse();
 

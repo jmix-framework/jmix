@@ -23,6 +23,7 @@ import io.jmix.security.role.RoleGrantedAuthorityUtils;
 import io.jmix.security.role.RowLevelRoleRepository;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.ArrayList;
@@ -31,21 +32,22 @@ import java.util.stream.Stream;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
+/**
+ * {@link SamlAssertionRolesMapper} that can be used as super-class for your own {@link SamlAssertionRolesMapper}.
+ * The child classes must override the {@link #getResourceRolesCodes(Assertion)} and {@link #getRowLevelRoleCodes(Assertion)} methods.
+ * The behavior for finding roles with given codes and transforming them into a collection of {@link GrantedAuthority}
+ * is already implemented in the current class.
+ */
 public abstract class BaseSamlAssertionRolesMapper implements SamlAssertionRolesMapper {
 
     private static final Logger log = getLogger(BaseSamlAssertionRolesMapper.class);
 
-    protected final RowLevelRoleRepository rowLevelRoleRepository;
-    protected final ResourceRoleRepository resourceRoleRepository;
-    protected final RoleGrantedAuthorityUtils roleGrantedAuthorityUtils;
-
-    public BaseSamlAssertionRolesMapper(RowLevelRoleRepository rowLevelRoleRepository,
-                                        ResourceRoleRepository resourceRoleRepository,
-                                        RoleGrantedAuthorityUtils roleGrantedAuthorityUtils) {
-        this.rowLevelRoleRepository = rowLevelRoleRepository;
-        this.resourceRoleRepository = resourceRoleRepository;
-        this.roleGrantedAuthorityUtils = roleGrantedAuthorityUtils;
-    }
+    @Autowired
+    protected RowLevelRoleRepository rowLevelRoleRepository;
+    @Autowired
+    protected ResourceRoleRepository resourceRoleRepository;
+    @Autowired
+    protected RoleGrantedAuthorityUtils roleGrantedAuthorityUtils;
 
     @Override
     public Collection<ResourceRole> toResourceRoles(Assertion assertion) {
@@ -56,7 +58,7 @@ public abstract class BaseSamlAssertionRolesMapper implements SamlAssertionRoles
             if (jmixRole != null) {
                 roles.add(jmixRole);
             } else {
-                log.warn("Resource role {} not found", jmixRoleCode);
+                log.debug("Resource role {} not found", jmixRoleCode);
             }
         }
         return roles;
@@ -71,7 +73,7 @@ public abstract class BaseSamlAssertionRolesMapper implements SamlAssertionRoles
             if (jmixRole != null) {
                 roles.add(jmixRole);
             } else {
-                log.warn("Row-level role {} not found", jmixRoleCode);
+                log.debug("Row-level role {} not found", jmixRoleCode);
             }
         }
         return roles;

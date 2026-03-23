@@ -49,17 +49,17 @@ public class SamlAutoConfiguration {
                                                      RowLevelRoleRepository rowLevelRoleRepository,
                                                      SamlProperties samlProperties,
                                                      RoleGrantedAuthorityUtils roleGrantedAuthorityUtils) {
-        DefaultSamlAssertionRolesMapper mapper = new DefaultSamlAssertionRolesMapper(
-                resourceRoleRepository, rowLevelRoleRepository, roleGrantedAuthorityUtils
-        );
+        DefaultSamlAssertionRolesMapper mapper = new DefaultSamlAssertionRolesMapper();
         mapper.setRolesAttributeName(samlProperties.getDefaultSamlAssertionRolesMapper().getRolesAssertionAttribute());
+        mapper.setResourceRolePrefix(samlProperties.getDefaultSamlAssertionRolesMapper().getResourceRolePrefix());
+        mapper.setRowLevelRolePrefix(samlProperties.getDefaultSamlAssertionRolesMapper().getRowLevelRolePrefix());
         return mapper;
     }
 
     @Bean
     @ConditionalOnMissingBean(SamlUserMapper.class)
     public SamlUserMapper userMapper(SamlAssertionRolesMapper assertionRolesMapper) {
-        return new DefaultSamlUserMapper(assertionRolesMapper);
+        return new DefaultSamlUserMapper();
     }
 
     @EnableWebSecurity

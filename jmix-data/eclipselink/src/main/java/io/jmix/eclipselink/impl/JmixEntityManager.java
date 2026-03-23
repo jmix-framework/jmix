@@ -174,13 +174,16 @@ public class JmixEntityManager implements EntityManager {
     }
 
     @Override
-    public <T> T find(Class<T> aClass, Object o, FindOption... findOptions) {
-        return null; //TODO [SB4]
+    @Nullable
+    public <T> T find(Class<T> entityClass, Object primaryKey,
+                      FindOption... options) {
+        return internalFind(entityClass, primaryKey, options);
     }
 
     @Override
-    public <T> T find(EntityGraph<T> entityGraph, Object o, FindOption... findOptions) {
-        return null; //TODO [SB4]
+    public <T> T find(EntityGraph<T> entityGraph, Object primaryKey,
+                      FindOption... options) {
+        return delegate.find(entityGraph, primaryKey, options);
     }
 
     @Override
@@ -194,8 +197,8 @@ public class JmixEntityManager implements EntityManager {
     }
 
     @Override
-    public <T> T getReference(T t) {
-        return null; //TODO [SB4]
+    public <T> T getReference(T entity) {
+        return delegate.getReference(entity);
     }
 
     @Override
@@ -226,8 +229,8 @@ public class JmixEntityManager implements EntityManager {
     }
 
     @Override
-    public void lock(Object o, LockModeType lockModeType, LockOption... lockOptions) {
-        //TODO [SB4]
+    public void lock(Object entity, LockModeType lockMode, LockOption... options) {
+        delegate.lock(entity, lockMode, options);
     }
 
     @Override
@@ -251,8 +254,8 @@ public class JmixEntityManager implements EntityManager {
     }
 
     @Override
-    public void refresh(Object o, RefreshOption... refreshOptions) {
-        //TODO [SB4]
+    public void refresh(Object entity, RefreshOption... options) {
+        delegate.refresh(entity, options);
     }
 
     @Override
@@ -280,22 +283,22 @@ public class JmixEntityManager implements EntityManager {
 
     @Override
     public void setCacheRetrieveMode(CacheRetrieveMode cacheRetrieveMode) {
-        //TODO [SB4]
+        delegate.setCacheRetrieveMode(cacheRetrieveMode);
     }
 
     @Override
     public void setCacheStoreMode(CacheStoreMode cacheStoreMode) {
-        //TODO [SB4]
+        delegate.setCacheStoreMode(cacheStoreMode);
     }
 
     @Override
     public CacheRetrieveMode getCacheRetrieveMode() {
-        return null; //TODO [SB4]
+        return delegate.getCacheRetrieveMode();
     }
 
     @Override
     public CacheStoreMode getCacheStoreMode() {
-        return null; //TODO [SB4]
+        return delegate.getCacheStoreMode();
     }
 
     @Override
@@ -324,8 +327,8 @@ public class JmixEntityManager implements EntityManager {
     }
 
     @Override
-    public <T> TypedQuery<T> createQuery(CriteriaSelect<T> criteriaSelect) {
-        return null; //TODO [SB4]
+    public <T> TypedQuery<T> createQuery(CriteriaSelect<T> selectQuery) {
+        return delegate.createQuery(selectQuery);
     }
 
     @Override
@@ -354,8 +357,8 @@ public class JmixEntityManager implements EntityManager {
     }
 
     @Override
-    public <T> TypedQuery<T> createQuery(TypedQueryReference<T> typedQueryReference) {
-        return null; //TODO [SB4]
+    public <T> TypedQuery<T> createQuery(TypedQueryReference<T> reference) {
+        return delegate.createQuery(reference);
     }
 
     @Override
@@ -464,13 +467,13 @@ public class JmixEntityManager implements EntityManager {
     }
 
     @Override
-    public <C> void runWithConnection(ConnectionConsumer<C> connectionConsumer) {
-        //TODO [SB4]
+    public <C> void runWithConnection(ConnectionConsumer<C> action) {
+        delegate.runWithConnection(action);
     }
 
     @Override
-    public <C, T> T callWithConnection(ConnectionFunction<C, T> connectionFunction) {
-        return null; //TODO [SB4]
+    public <C, T> T callWithConnection(ConnectionFunction<C, T> function) {
+        return delegate.callWithConnection(function);
     }
 
     private void internalPersist(Object entity) {
@@ -486,9 +489,24 @@ public class JmixEntityManager implements EntityManager {
         JmixUtil.setOriginalSoftDeletion(softDeletion);
     }
 
-    private boolean isSoftDeletion(Map<String, Object> properties) {
+    private boolean isSoftDeletion(@Nullable Map<String, Object> properties) {
         Boolean softDeletionInProps = properties == null ? null : (Boolean) properties.get(PersistenceHints.SOFT_DELETION);
         return (softDeletionInProps == null || softDeletionInProps) && PersistenceHints.isSoftDeletion(delegate);
+    }
+
+    @Nullable
+    private <T> T internalFind(Class<T> entityClass, Object primaryKey, FindOption... findOptions) {
+        Preconditions.checkNotNullArgument(entityClass, "entityClass is null");
+        Preconditions.checkNotNullArgument(primaryKey, "primaryKey is null");
+
+        MetaClass metaClass = extendedEntities.getEffectiveMetaClass(entityClass);
+
+        log.debug("find {} by id={}", entityClass.getSimpleName(), primaryKey);
+        Class<T> javaClass = metaClass.getJavaClass();
+
+        T entity = delegate.find(javaClass, primaryKey, findOptions);
+
+        return considerSoftDelete(entity, null);
     }
 
     @Nullable
@@ -503,12 +521,17 @@ public class JmixEntityManager implements EntityManager {
             return findPartial(metaClass, primaryKey, fetchPlans);
         }
 
-        Object realId = primaryKey;
-        log.debug("find {} by id={}", entityClass.getSimpleName(), realId);
+        log.debug("find {} by id={}", entityClass.getSimpleName(), primaryKey);
         Class<T> javaClass = metaClass.getJavaClass();
 
-        T entity = delegate.find(javaClass, realId, lockMode, properties);
+        T entity = delegate.find(javaClass, primaryKey, lockMode, properties);
 
+        return considerSoftDelete(entity, properties);
+
+    }
+
+    @Nullable
+    private <T> T considerSoftDelete(@Nullable T entity, @Nullable Map<String, Object> properties) {
         if (entity != null && EntityValues.isSoftDeleted((Entity) entity)
                 && isSoftDeletion(properties))
             return null; // in case of entity cache

@@ -47,7 +47,9 @@ public class MultiSelectComboBoxPicker<V> extends MultiSelectComboBox<V>
 
     @Override
     public void setValueFromClient(@Nullable Collection<V> value) {
-        setModelValue(value == null ? null : Set.copyOf(value), true);
+        Set<V> convertedValue = value == null ? null : Set.copyOf(value);
+        setPresentationValue(convertedValue);
+        setModelValue(convertedValue, true);
     }
 
     @Override

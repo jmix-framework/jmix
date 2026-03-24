@@ -116,8 +116,8 @@ public abstract class ValuePickerBase<C extends ValuePickerBase<C, V>, V>
 
     @Override
     public void setValueFromClient(@Nullable V value) {
-        setModelValue(value, true);
         setPresentationValue(value);
+        setModelValue(value, true);
     }
 
     protected void validate() {

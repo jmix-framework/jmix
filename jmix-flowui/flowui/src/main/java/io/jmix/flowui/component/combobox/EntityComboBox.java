@@ -97,6 +97,7 @@ public class EntityComboBox<V> extends ComboBoxPicker<V>
             getDataProvider().refreshItem(value);
         }
 
+        setPresentationValue(value);
         setModelValue(value, true);
 
         refreshValue();

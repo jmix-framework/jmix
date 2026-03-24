@@ -157,6 +157,28 @@ public class EntityComboBoxTest {
         orderLineDetailView.closeWithSave();
     }
 
+    @Test
+    @DisplayName("Set empty value from client should not cause unparseable validation error")
+    public void setEmptyValueFromClientShouldNotCauseUnparseableValidationError() {
+        var origin = navigateTo(BlankTestView.class);
+
+        viewNavigators.view(origin, EntityComboBoxOrderLineListTestView.class)
+                .navigate();
+
+        // Edit OrderLine
+        EntityComboBoxOrderLineListTestView orderLineListView = UiTestUtils.getCurrentView();
+        orderLineListView.editFirstItem();
+
+        EntityComboBoxOrderLineDetailTestView orderLineDetailView = UiTestUtils.getCurrentView();
+
+        // Simulate user action that sets an empty value
+        orderLineDetailView.productField.setValueFromClient(null);
+
+        // This should not have unparseable validation error
+        Assertions.assertFalse(orderLineDetailView.productField.isInvalid());
+        Assertions.assertNull(orderLineDetailView.productField.getErrorMessage());
+    }
+
     private void setupData() {
         List<Product> products = new ArrayList<>(2);
         IntStream.of(1, 2).forEach(i -> {

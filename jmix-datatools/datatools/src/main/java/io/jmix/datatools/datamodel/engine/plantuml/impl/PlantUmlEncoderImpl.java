@@ -23,7 +23,7 @@ import java.nio.charset.StandardCharsets;
 
 public class PlantUmlEncoderImpl implements PlantUmlEncoder {
 
-    protected static final byte[] ENCODING_ALPHABET = {
+    private static final byte[] ENCODING_ALPHABET = {
             '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
             'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
             'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
@@ -34,7 +34,7 @@ public class PlantUmlEncoderImpl implements PlantUmlEncoder {
             '-', '_',
             '='  // index 64 - is a padding
     };
-    protected static final byte PADDING = ENCODING_ALPHABET[64];
+    private static final byte PADDING = ENCODING_ALPHABET[64];
 
     @Override
     public String encode(@Nullable byte[] compressedData) {

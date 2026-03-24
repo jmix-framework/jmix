@@ -99,10 +99,18 @@ public class DataModelListView extends StandardView {
     public void onInit(final InitEvent event) {
         urlQueryParametersFacet.registerBinder(new EntityNameUrlQueryParametersBinder());
         initDataStoreNames();
+        initDataStoreColumnVisibility();
     }
 
     protected void initDataStoreNames() {
         this.dataStoreNames = getDataModelProvider().getDataModels().keySet();
+    }
+
+    protected void initDataStoreColumnVisibility() {
+        Grid.Column<EntityModel> dataStoreColumn = entityModelsDataGrid.getColumnByKey("dataStore");
+        if (dataStoreColumn != null) {
+            dataStoreColumn.setVisible(dataStoreNames.size() > 1);
+        }
     }
 
     private DataModelProvider getDataModelProvider() {
@@ -135,8 +143,6 @@ public class DataModelListView extends StandardView {
                                 || !Boolean.TRUE.equals(entityModel.getIsSystem()))
                 .toList();
 
-        changeDataStoreColumnVisibility(models);
-
         entityModelCount.setText("%d".formatted(models.size()));
         return models;
     }
@@ -158,18 +164,6 @@ public class DataModelListView extends StandardView {
                 .anyMatch(reqName ->
                         entityModel.getName().matches("(?i)" + ".*" + reqName + ".*")
                                 || entityModel.getTableName().matches("(?i)" + ".*" + reqName + ".*"));
-    }
-
-    protected void changeDataStoreColumnVisibility(List<EntityModel> model) {
-        long dataStoreCount = model.stream()
-                .map(EntityModel::getDataStore)
-                .distinct()
-                .count();
-
-        Grid.Column<EntityModel> dataStoreColumn = entityModelsDataGrid.getColumnByKey("dataStore");
-        if (dataStoreColumn != null) {
-            dataStoreColumn.setVisible(dataStoreCount > 1);
-        }
     }
 
     @Install(to = "attributeModelsDl", target = Target.DATA_LOADER)
@@ -234,25 +228,23 @@ public class DataModelListView extends StandardView {
                 continue;
             }
 
-            for (String dataStore : dataStoreNames) {
-                DataModel dataModel = dataModelProvider.getDataModel(dataStore, model.getName());
-                if (dataModel == null) {
-                    continue;
-                }
+            DataModel dataModel = dataModelProvider.getDataModel(model.getDataStore(), model.getName());
+            if (dataModel == null) {
+                continue;
+            }
 
-                tempEntitiesDescription.append(dataModel.entityDescription());
+            tempEntitiesDescription.append(dataModel.entityDescription());
 
-                for (Map.Entry<RelationType, List<Relation>> entry : dataModel.relations().entrySet()) {
-                    RelationType type = entry.getKey();
-                    for (Relation relation : entry.getValue()) {
-                        if (entityModelsNames.contains(relation.referencedClass())) {
-                            relationsSet.add(NormalizedRelation.of(
-                                    model.getName(),
-                                    relation.referencedClass(),
-                                    type,
-                                    relation.dataStore()
-                            ));
-                        }
+            for (Map.Entry<RelationType, List<Relation>> entry : dataModel.relations().entrySet()) {
+                RelationType type = entry.getKey();
+                for (Relation relation : entry.getValue()) {
+                    if (entityModelsNames.contains(relation.referencedClass())) {
+                        relationsSet.add(NormalizedRelation.of(
+                                model.getName(),
+                                relation.referencedClass(),
+                                type,
+                                relation.dataStore()
+                        ));
                     }
                 }
             }

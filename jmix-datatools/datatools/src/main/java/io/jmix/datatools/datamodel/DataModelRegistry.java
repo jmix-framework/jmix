@@ -6,6 +6,7 @@ import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.data.StoreAwareLocator;
 import io.jmix.data.persistence.DbmsType;
 import io.jmix.datatools.datamodel.engine.DiagramEngine;
 import io.jmix.datatools.datamodel.entity.AttributeModel;
@@ -46,11 +47,11 @@ public class DataModelRegistry {
     @Autowired
     protected Metadata metadata;
     @Autowired
-    protected DataSource dataSource;
-    @Autowired
     protected DiagramEngine diagramEngine;
     @Autowired
     protected MetadataTools metadataTools;
+    @Autowired
+    protected StoreAwareLocator storeAwareLocator;
 
     protected final Map<String, Map<String, DataModel>> dataModels = new HashMap<>();
 
@@ -307,6 +308,7 @@ public class DataModelRegistry {
         Table tableAnnotation = entity.getJavaClass().getAnnotation(Table.class);
         String storeName = entity.getStore().getName();
         attributeModel.setDbType(getDatabaseColumnType(
+                storeName,
                 getSchemaName(tableAnnotation),
                 getCatalogName(tableAnnotation),
                 applyRegister(collectionTableName, storeName),
@@ -377,10 +379,12 @@ public class DataModelRegistry {
         return attributeModel;
     }
 
-    protected String getDatabaseColumnType(@Nullable String schemaName,
+    protected String getDatabaseColumnType(String storeName,
+                                           @Nullable String schemaName,
                                            @Nullable String catalogName,
                                            String tableName,
                                            String columnName) {
+        DataSource dataSource = storeAwareLocator.getDataSource(storeName);
         try (Connection conn = dataSource.getConnection()) {
             DatabaseMetaData dbMetaData = conn.getMetaData();
 
@@ -420,10 +424,11 @@ public class DataModelRegistry {
 
         String catalogName = getCatalogName(tableAnnotation);
         String schemaName = getSchemaName(tableAnnotation);
-        String tableName = applyRegister(tableAnnotation.name(), entity.getStore().getName());
-        String finalColumnName = applyRegister(columnName, entity.getStore().getName());
+        String storeName = entity.getStore().getName();
+        String tableName = applyRegister(tableAnnotation.name(), storeName);
+        String finalColumnName = applyRegister(columnName, storeName);
 
-        return getDatabaseColumnType(schemaName, catalogName, tableName, finalColumnName);
+        return getDatabaseColumnType(storeName, schemaName, catalogName, tableName, finalColumnName);
     }
 
     protected String applyRegister(String name, String storeName) {

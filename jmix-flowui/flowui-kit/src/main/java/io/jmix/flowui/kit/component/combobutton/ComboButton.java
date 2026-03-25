@@ -51,8 +51,16 @@ public class ComboButton extends AbstractDropdownButton
     protected KeyCombination shortcutCombination;
 
     public ComboButton() {
-        buttonItem = getContent().addItem("");
-        dropdownItem = getContent().addItem(dropdownIcon);
+        buttonItem = createButtonItem();
+        dropdownItem = createDropdownItem();
+    }
+
+    protected JmixMenuItem createButtonItem() {
+        return getContent().addItem("");
+    }
+
+    protected JmixMenuItem createDropdownItem() {
+        return getContent().addItem(dropdownIcon);
     }
 
     @Override

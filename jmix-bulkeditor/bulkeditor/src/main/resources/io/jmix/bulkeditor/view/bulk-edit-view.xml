@@ -45,7 +45,7 @@
             </formLayout>
         </vbox>
 
-        <hbox id="buttonsBox" classNames="px-m py-s bg-contrast-5">
+        <hbox id="buttonsBox" classNames="footer-panel">
             <button id="applyBtn"
                     action="applyChanges"/>
             <button id="cancelBtn"

@@ -2074,8 +2074,8 @@
                     <xs:enumeration value="success"/>
                     <xs:enumeration value="contrast"/>
                     <xs:enumeration value="icon"/>
-                    <xs:enumeration value="contained"/>
-                    <xs:enumeration value="outlined"/>
+                    <xs:enumeration value="dropdown-indicators"/>
+                    <xs:enumeration value="no-dropdown-indicators"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:union>

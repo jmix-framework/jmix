@@ -13,14 +13,14 @@
     </actions>
 
     <layout expand="codeEditorBox">
-        <div id="codeEditorBox" classNames="flex, items-start" width="100%">
+        <flexLayout id="codeEditorBox" alignItems="START" width="100%">
             <codeEditor id="editor"
                         width="100%"
                         height="100%"/>
             <button id="codeEditorHelpBtn"
                     themeNames="icon, tertiary-inline"
                     icon="QUESTION_CIRCLE"/>
-        </div>
+        </flexLayout>
         <hbox width="100%" id="lookupActions" justifyContent="END">
             <button action="okAction"/>
             <button action="cancelAction"/>

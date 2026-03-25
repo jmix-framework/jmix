@@ -768,39 +768,23 @@ html {
 
 .jmix-font-icon {
     font-family: var(--jmix-font-icon-font-family);
-}
-
-/* Fixes Safari browser bug which incorrectly handle '100cqh' */
-.jmix-font-icon:not(.jmix-font-icon-lumo):before,
-.jmix-font-icon:not(.jmix-font-icon-lumo):after,
-vaadin-icon[style*="font-family: Vaadin-Icons"]:before,
-vaadin-icon[style*="font-family: Vaadin-Icons"]:after {
-    font-size: 1rem;
-}
-
-.jmix-font-icon.jmix-font-icon-lumo:before,
-.jmix-font-icon.jmix-font-icon-lumo:after,
-vaadin-icon[style*="font-family: lumo-icons"]:before,
-vaadin-icon[style*="font-family: lumo-icons"]:after {
-    /* Lumo icon size */
-    font-size: 24px;
+    /* Fixes Safari browser bug which incorrectly handle '100cqh' */
+    --vaadin-icon-visual-size: 24px;
 }
 
 .jmix-font-icon.jmix-font-icon-lumo {
     font-family: lumo-icons;
 }
 
-/* Same as for ::slotted(vaadin-icon[icon^='vaadin:']) */
 /* Vaadin icons are based on a 16x16 grid (unlike Lumo icons with 24x24), so they look too big by default */
 vaadin-menu-bar-item > vaadin-icon[icon-class~="jmix-font-icon"]:not([icon-class~="jmix-font-icon-lumo"]),
 vaadin-button > vaadin-icon[icon-class~="jmix-font-icon"]:not([icon-class~="jmix-font-icon-lumo"]),
 vaadin-icon[slot][icon-class~="jmix-font-icon"]:not([icon-class~="jmix-font-icon-lumo"]) {
-    padding: 0.25em;
-    box-sizing: border-box !important;
+    --vaadin-icon-visual-size: 1rem;
 }
 
 jmix-notifications-indicator > vaadin-icon[icon-class~="jmix-font-icon"][slot="icon"]:not([icon-class~="jmix-font-icon-lumo"]) {
-    padding: 0;
+    --vaadin-icon-visual-size: 24px;
 }
 
 /* Jmix specific icons */

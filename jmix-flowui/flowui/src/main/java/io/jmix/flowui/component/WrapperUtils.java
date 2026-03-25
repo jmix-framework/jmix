@@ -16,10 +16,12 @@
 
 package io.jmix.flowui.component;
 
+import com.vaadin.flow.component.ModalityMode;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.flowui.component.logicalfilter.LogicalFilterComponent;
+import io.jmix.flowui.view.DialogModalityMode;
 import org.apache.commons.collections4.CollectionUtils;
 import org.jspecify.annotations.Nullable;
 
@@ -103,6 +105,33 @@ public class WrapperUtils {
                 return LogicalCondition.Type.OR;
             default:
                 throw new IllegalArgumentException("Unknown operation " + operation);
+        }
+    }
+
+    public static ModalityMode toModalityMode(DialogModalityMode mode) {
+        switch (mode) {
+            case STRICT:
+                return ModalityMode.STRICT;
+            case VISUAL:
+                return ModalityMode.VISUAL;
+            case MODELESS:
+                return ModalityMode.MODELESS;
+            default:
+                // As per Vaadin JavaDoc 'Dialog.getModality'
+                return ModalityMode.VISUAL;
+        }
+    }
+
+    public static DialogModalityMode toDialogModalityMode(ModalityMode mode) {
+        switch (mode) {
+            case STRICT:
+                return DialogModalityMode.STRICT;
+            case VISUAL:
+                return DialogModalityMode.VISUAL;
+            case MODELESS:
+                return DialogModalityMode.MODELESS;
+            default:
+                    throw new IllegalArgumentException("Unknown modality mode: " + mode);
         }
     }
 }

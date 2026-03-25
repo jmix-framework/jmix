@@ -102,8 +102,18 @@ public @interface DialogMode {
      * will disable interaction with elements outside of the dialog while it is open.
      *
      * @return {@code true} if the dialog is modal, otherwise {@code false}
+     * @deprecated Use {@link #modality()} instead.
      */
+    @Deprecated(since = "3.0", forRemoval = true)
     boolean modal() default true;
+
+    /**
+     * Specifies the modality mode for the dialog window. Determines how the dialog interacts with
+     * other windows in the application.
+     *
+     * @return the modality mode for the dialog
+     */
+    DialogModalityMode modality() default DialogModalityMode.DEFAULT;
 
     /**
      * Specifies whether the dialog window can be dragged by the user.

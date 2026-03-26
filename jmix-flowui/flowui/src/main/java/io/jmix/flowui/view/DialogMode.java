@@ -142,4 +142,12 @@ public @interface DialogMode {
      * @return {@code true} if the dialog should close on pressing the "Escape" key, otherwise {@code false}
      */
     boolean closeOnEsc() default false;
+
+    /**
+     * Specifies whether the dialog should be prevented from moving outside the viewport bounds.
+     *
+     * @return {@code true} if the dialog should be prevented from moving outside the viewport bounds,
+     * {@code false} otherwise
+     */
+    boolean keepInViewport() default false;
 }

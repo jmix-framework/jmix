@@ -45,7 +45,7 @@ public class DropdownButton extends AbstractDropdownButton implements HasThemeVa
         JmixMenuBar content = super.initContent();
         content.getElement().setAttribute(ATTRIBUTE_JMIX_ROLE_NAME, ATTRIBUTE_JMIX_ROLE_VALUE);
 
-        updateDropdownIndicator();
+        updateDropdownIndicator(content);
 
         return content;
     }
@@ -55,13 +55,13 @@ public class DropdownButton extends AbstractDropdownButton implements HasThemeVa
         return dropdownItem;
     }
 
-    protected void updateDropdownIndicator() {
+    protected void updateDropdownIndicator(JmixMenuBar content) {
         if (dropdownIndicatorVisible) {
-            removeThemeVariants(DropdownButtonVariant.AURA_NO_DROPDOWN_INDICATORS);
-            addThemeVariants(DropdownButtonVariant.LUMO_DROPDOWN_INDICATORS);
+            content.removeThemeName(DropdownButtonVariant.AURA_NO_DROPDOWN_INDICATORS.getVariantName());
+            content.addThemeName(DropdownButtonVariant.LUMO_DROPDOWN_INDICATORS.getVariantName());
         } else {
-            addThemeVariants(DropdownButtonVariant.AURA_NO_DROPDOWN_INDICATORS);
-            removeThemeVariants(DropdownButtonVariant.LUMO_DROPDOWN_INDICATORS);
+            content.addThemeName(DropdownButtonVariant.AURA_NO_DROPDOWN_INDICATORS.getVariantName());
+            content.removeThemeName(DropdownButtonVariant.LUMO_DROPDOWN_INDICATORS.getVariantName());
         }
     }
 
@@ -127,7 +127,7 @@ public class DropdownButton extends AbstractDropdownButton implements HasThemeVa
         if (this.dropdownIndicatorVisible != dropdownIndicatorVisible) {
             this.dropdownIndicatorVisible = dropdownIndicatorVisible;
 
-            updateDropdownIndicator();
+            updateDropdownIndicator(getContent());
         }
     }
 

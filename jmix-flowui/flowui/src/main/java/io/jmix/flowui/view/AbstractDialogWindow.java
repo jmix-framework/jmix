@@ -146,6 +146,7 @@ public class AbstractDialogWindow<V extends View<?>> implements HasSize, HasThem
             setResizable(dialogMode.resizable());
             setCloseOnOutsideClick(dialogMode.closeOnOutsideClick());
             setCloseOnEsc(dialogMode.closeOnEsc());
+            setKeepInViewport(dialogMode.keepInViewport());
 
             setValueIfPresent(dialogMode.width(), this::setWidth);
             setValueIfPresent(dialogMode.maxWidth(), this::setMaxWidth);
@@ -326,6 +327,31 @@ public class AbstractDialogWindow<V extends View<?>> implements HasSize, HasThem
      */
     public void setCloseOnOutsideClick(boolean closeOnOutsideClick) {
         dialog.setCloseOnOutsideClick(closeOnOutsideClick);
+    }
+
+    /**
+     * Returns whether the dialog is prevented from moving outside the viewport
+     * bounds or not.
+     *
+     * @return {@code true} if the dialog is prevented from moving outside the
+     * viewport bounds, {@code false} otherwise
+     */
+    public boolean isKeepInViewport() {
+        return dialog.isKeepInViewport();
+    }
+
+    /**
+     * Set to true to prevent the dialog from moving outside the viewport
+     * bounds. When enabled, all four edges of the dialog will remain visible,
+     * for example when dragging the dialog or when the viewport is resized.
+     * Note that the dialog will also adjust any programmatically configured
+     * size and position so that it stays within the viewport.
+     *
+     * @param keepInViewport {@code true} to prevent the dialog from moving
+     *                       outside the viewport bounds, {@code false} otherwise
+     */
+    public void setKeepInViewport(boolean keepInViewport) {
+        dialog.setKeepInViewport(keepInViewport);
     }
 
     /**

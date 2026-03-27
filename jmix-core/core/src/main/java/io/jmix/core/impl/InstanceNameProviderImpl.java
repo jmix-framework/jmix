@@ -249,6 +249,11 @@ public class InstanceNameProviderImpl implements InstanceNameProvider {
         return optional.map(instanceNameRec -> Arrays.asList(instanceNameRec.nameProperties)).orElse(Collections.emptyList());
     }
 
+    @Override
+    public void evictInstanceNameCache() {
+        instanceNameRecCache.invalidateAll();
+    }
+
     protected Collection<MetaProperty> getInstanceNameProperties(MetaClass metaClass, @Nullable Method nameMethod, @Nullable MetaProperty nameProperty) {
         final Collection<MetaProperty> properties = new HashSet<>();
         if (nameMethod != null) {
@@ -278,7 +283,7 @@ public class InstanceNameProviderImpl implements InstanceNameProvider {
                 .filter(m -> AnnotatedElementUtils.findMergedAnnotation(m, InstanceName.class) != null)
                 .collect(Collectors.toList());
         List<MetaProperty> nameProperties = metaClass.getProperties().stream()
-                .filter(p -> p.getAnnotatedElement().getAnnotation(InstanceName.class) != null)
+                .filter(this::isInstanceNameProperty)
                 .filter(p -> !metadataTools.isMethodBased(p))
                 .collect(Collectors.toList());
         if (!instanceNameMethods.isEmpty()) {
@@ -315,6 +320,13 @@ public class InstanceNameProviderImpl implements InstanceNameProvider {
         return new InstanceNameRec("%s", method,
                 getInstanceNameProperties(metaClass, method, selectedNameProperty).stream()
                         .toArray(MetaProperty[]::new));
+    }
+
+    protected boolean isInstanceNameProperty(MetaProperty metaProperty) {
+        if (metaProperty.getAnnotatedElement().getAnnotation(InstanceName.class) != null) {
+            return true;
+        }
+        return Boolean.TRUE.equals(metadataTools.getMetaAnnotationValue(metaProperty, InstanceName.class));
     }
 
     private void validateInstanceNameAnnotation(MetaClass metaClass,

@@ -59,6 +59,9 @@ public class JmixTableFormatter extends AbstractFormatter {
     @Autowired
     protected StandardSerialization standardSerialization;
 
+    @Autowired
+    protected ReportValueConverter reportValueConverter;
+
     protected JmixTableFormatter(FormatterFactoryInput formatterFactoryInput) {
         super(formatterFactoryInput);
     }
@@ -133,7 +136,7 @@ public class JmixTableFormatter extends AbstractFormatter {
                             String formattedValue = getFormattedValue(bandData.getName(), name, value);
                             entityRow.setValue(transformationKey, formattedValue);
                         } else {
-                            entityRow.setValue(transformationKey, value);
+                            entityRow.setValue(transformationKey, reportValueConverter.convertValue(value));
                         }
                     }
                 });
@@ -228,7 +231,7 @@ public class JmixTableFormatter extends AbstractFormatter {
                             String formattedValue = getFormattedValue(bandName, key, value);
                             entityRow.setValue(transformationKey, formattedValue);
                         } else {
-                            entityRow.setValue(transformationKey, value);
+                            entityRow.setValue(transformationKey, reportValueConverter.convertValue(value));
                         }
                     }
                 }
@@ -271,7 +274,11 @@ public class JmixTableFormatter extends AbstractFormatter {
     }
 
     private Class getColumnClass(String bandName, String parameterName, Object value) {
-        return isFormat(bandName, parameterName) ? String.class : value.getClass();
+        if (isFormat(bandName, parameterName)) {
+            return String.class;
+        }
+        Object convertedValue = reportValueConverter.convertValue(value);
+        return convertedValue != null ? convertedValue.getClass() : value.getClass();
     }
 
     private boolean isFormat(String bandName, String parameterName) {

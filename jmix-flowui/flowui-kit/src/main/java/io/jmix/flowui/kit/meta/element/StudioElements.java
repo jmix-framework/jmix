@@ -152,7 +152,7 @@ interface StudioElements {
                     @StudioProperty(xmlAttribute = "autoWidth", category = StudioProperty.Category.SIZE, type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "filterable", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false"),
+                            defaultValueRef = "parent:filterable"),
                     @StudioProperty(xmlAttribute = "flexGrow", category = StudioProperty.Category.POSITION, type = StudioPropertyType.INTEGER),
                     @StudioProperty(xmlAttribute = "footer", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "frozen", category = StudioProperty.Category.POSITION, type = StudioPropertyType.BOOLEAN,

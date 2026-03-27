@@ -51,6 +51,8 @@ public class ReportImportExportImpl implements ReportImportExport {
 
     private static final Logger log = LoggerFactory.getLogger(ReportImportExportImpl.class);
 
+    protected static final int MAX_CODE_LENGTH = 255;
+
     @Autowired
     protected ReportsPersistence reportsPersistence;
 
@@ -246,6 +248,12 @@ public class ReportImportExportImpl implements ReportImportExport {
                 .fetchPlan(FetchPlan.INSTANCE_NAME)
                 .optional();
 
+        if (report.getCode() == null) {
+            // in case of importing a report from a CUBA, the code may be missing
+            // try to generate the report code from its name
+            report.setCode(generateReportCodeByName(report.getName()));
+        }
+
         report = reportsPersistence.save(report);
         importResult.addImportedReport(report);
         if (existingReport.isPresent()) {
@@ -395,6 +403,22 @@ public class ReportImportExportImpl implements ReportImportExport {
 
     protected byte[] readBytesFromEntry(ZipArchiveInputStream archiveReader) throws IOException {
         return IOUtils.toByteArray(archiveReader);
+    }
+
+    protected String generateReportCodeByName(String reportName) {
+        String code = reportName
+                .trim()
+                .replaceAll("[^a-zA-Z0-9]+", "-")
+                .replaceAll("^-|-$", "")
+                .toLowerCase(Locale.ROOT);
+
+        if (code.isEmpty()) {
+            code = "imported-report";
+        } else if (code.length() > MAX_CODE_LENGTH) {
+            code = code.substring(0, MAX_CODE_LENGTH).replaceAll("-$", "");
+        }
+
+        return code;
     }
 
     @Nullable

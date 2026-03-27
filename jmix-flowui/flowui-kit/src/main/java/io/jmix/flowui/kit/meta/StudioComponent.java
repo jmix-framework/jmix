@@ -109,6 +109,15 @@ public @interface StudioComponent {
     StudioProperty[] properties() default {};
 
     /**
+     * Reusable groups of XML attributes.
+     * <p>
+     * Studio will merge group properties with {@link #properties()}.
+     * @see StudioPropertyGroup
+     * @see StudioPropertyGroups
+     */
+    Class<?>[] propertyGroups() default {};
+
+    /**
      * Descriptions of the XML attributes relationship.
      * For example <code>property</code> and <code>dataContainer</code>
      */

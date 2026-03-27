@@ -107,6 +107,11 @@ public @interface StudioElement {
     StudioProperty[] properties() default {};
 
     /**
+     * @see StudioComponent#propertyGroups()
+     */
+    Class<?>[] propertyGroups() default {};
+
+    /**
      * @see StudioComponent#propertiesBindings
      */
     StudioPropertiesBinding[] propertiesBindings() default {};

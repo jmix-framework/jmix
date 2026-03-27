@@ -69,6 +69,11 @@ public @interface StudioDataComponent {
     StudioProperty[] properties() default {};
 
     /**
+     * @see StudioComponent#propertyGroups()
+     */
+    Class<?>[] propertyGroups() default {};
+
+    /**
      * @see StudioComponent#xmlElementInitializer
      */
     StudioXmlElementInitializer xmlElementInitializer() default @StudioXmlElementInitializer();

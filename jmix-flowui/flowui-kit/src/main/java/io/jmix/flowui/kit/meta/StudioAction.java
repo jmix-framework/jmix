@@ -72,6 +72,11 @@ public @interface StudioAction {
     StudioProperty[] properties() default {};
 
     /**
+     * @see StudioComponent#propertyGroups()
+     */
+    Class<?>[] propertyGroups() default {};
+
+    /**
      * Properties that should be wrapped into <code>property</code> tag
      * and added to the <code>properties</code> tag.
      */

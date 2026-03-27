@@ -46,7 +46,7 @@ class GridXmlLoadTest extends FlowuiTestSpecification {
 
     @Override
     void setup() {
-        registerViewBasePackages("component_xml_load.screen")
+        registerViewBasePackages("component_xml_load.screen", "io.jmix.flowui.app")
 
         def order = dataManager.create(Order)
         order.number = "number"

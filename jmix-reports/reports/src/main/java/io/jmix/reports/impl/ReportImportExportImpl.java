@@ -31,10 +31,10 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayInputStream;
@@ -251,6 +251,12 @@ public class ReportImportExportImpl implements ReportImportExport {
                 .fetchPlan(FetchPlan.INSTANCE_NAME)
                 .optional();
 
+        if (report.getCode() == null) {
+            // in case of importing a report from a CUBA, the code may be missing
+            // try to generate the report code from its name
+            report.setCode(generateReportCodeByName(report.getName()));
+        }
+
         if (existingReport.isEmpty() && reportRepository.existsReportByCode(report.getCode())) {
             String previousCode = report.getCode();
             report.setCode(generateReportCode(previousCode));
@@ -401,6 +407,22 @@ public class ReportImportExportImpl implements ReportImportExport {
 
     protected byte[] readBytesFromEntry(ZipArchiveInputStream archiveReader) throws IOException {
         return IOUtils.toByteArray(archiveReader);
+    }
+
+    protected String generateReportCodeByName(String reportName) {
+        String code = reportName
+                .trim()
+                .replaceAll("[^a-zA-Z0-9]+", "-")
+                .replaceAll("^-|-$", "")
+                .toLowerCase(Locale.ROOT);
+
+        if (code.isEmpty()) {
+            code = "imported-report";
+        } else if (code.length() > MAX_CODE_LENGTH) {
+            code = code.substring(0, MAX_CODE_LENGTH).replaceAll("-$", "");
+        }
+
+        return code;
     }
 
     protected String generateReportCode(String existedCode) {

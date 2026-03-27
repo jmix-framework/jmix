@@ -25,15 +25,19 @@ import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportOutputType;
 import io.jmix.security.model.BaseRole;
 import io.jmix.security.role.ResourceRoleRepository;
+import io.jmix.security.role.RoleGrantedAuthorityUtils;
 import io.jmix.security.role.assignment.RoleAssignmentRepository;
 import io.jmix.security.role.assignment.RoleAssignmentRoleType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -49,6 +53,9 @@ public class ReportSecurityManager {
 
     @Autowired
     protected RoleAssignmentRepository roleAssignmentRepository;
+
+    @Autowired
+    protected RoleGrantedAuthorityUtils roleGrantedAuthorityUtils;
 
     @Autowired
     protected FetchPlanRepository fetchPlanRepository;
@@ -73,15 +80,28 @@ public class ReportSecurityManager {
             lc.getQuery().setParameter("screen", wrapCodeParameterForSearch(screen));
         }
         if (userDetails != null) {
-            List<BaseRole> roles = roleAssignmentRepository.getAssignmentsByUsername(userDetails.getUsername()).stream()
+            Set<BaseRole> roles = roleAssignmentRepository.getAssignmentsByUsername(userDetails.getUsername()).stream()
                     .filter(roleAssignment -> roleAssignment.getRoleType().equals(RoleAssignmentRoleType.RESOURCE))
                     .map(roleAssignment -> resourceRoleRepository.findRoleByCode(roleAssignment.getRoleCode()))
                     .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toSet());
 
+            String defaultRolePrefix = roleGrantedAuthorityUtils.getDefaultRolePrefix();
+            for (GrantedAuthority authority : userDetails.getAuthorities()) {
+                String authorityString = authority.getAuthority();
+                if (authorityString != null && authorityString.startsWith(defaultRolePrefix)) {
+                    String roleCode = authorityString.substring(defaultRolePrefix.length());
+                    BaseRole role = resourceRoleRepository.findRoleByCode(roleCode);
+                    if (role != null) {
+                        roles.add(role);
+                    }
+                }
+            }
+
+            List<BaseRole> rolesList = new ArrayList<>(roles);
             StringBuilder roleCondition = new StringBuilder("r.rolesIdx is null");
-            for (int i = 0; i < roles.size(); i++) {
-                BaseRole role = roles.get(i);
+            for (int i = 0; i < rolesList.size(); i++) {
+                BaseRole role = rolesList.get(i);
                 String paramName = "role" + (i + 1);
                 roleCondition.append(" or r.rolesIdx like :").append(paramName).append(" escape '\\'");
                 lc.getQuery().setParameter(paramName, wrapCodeParameterForSearch(role.getCode()));

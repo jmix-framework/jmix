@@ -133,6 +133,14 @@
             </emptyStateComponent>
         </dataGrid>
 
+        <dataGrid id="columnsAttributesDataGrid" dataContainer="ordersDc">
+            <columns filterable="true" sortable="false" resizable="true">
+                <column property="number" sortable="true"/>
+                <column property="amount" resizable="false"/>
+                <column property="date" filterable="false"/>
+            </columns>
+        </dataGrid>
+
         <treeDataGrid id="treeDataGrid"
                       aggregatable="true"
                       aggregationPosition="BOTTOM"

@@ -17,6 +17,7 @@
 package io.jmix.chartsflowui.kit.component.model.shared;
 
 import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Component for defining visual channels that will be displayed based on data values that are in the selected range.
@@ -39,6 +40,7 @@ public class VisualEffect extends ChartObservableObject {
 
     protected Double[] colorHue;
 
+    @Nullable
     public String[] getSymbol() {
         return symbol;
     }
@@ -48,6 +50,7 @@ public class VisualEffect extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public Integer[] getSymbolSize() {
         return symbolSize;
     }
@@ -57,6 +60,7 @@ public class VisualEffect extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public Color[] getColor() {
         return color;
     }
@@ -66,6 +70,7 @@ public class VisualEffect extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public Double[] getColorAlpha() {
         return colorAlpha;
     }
@@ -75,6 +80,7 @@ public class VisualEffect extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public Double[] getOpacity() {
         return opacity;
     }
@@ -84,6 +90,7 @@ public class VisualEffect extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public Double[] getColorLightness() {
         return colorLightness;
     }
@@ -93,6 +100,7 @@ public class VisualEffect extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public Double[] getColorSaturation() {
         return colorSaturation;
     }
@@ -102,6 +110,7 @@ public class VisualEffect extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public Double[] getColorHue() {
         return colorHue;
     }

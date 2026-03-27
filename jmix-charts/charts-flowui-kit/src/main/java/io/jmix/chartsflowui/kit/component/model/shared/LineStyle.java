@@ -19,6 +19,7 @@ package io.jmix.chartsflowui.kit.component.model.shared;
 import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
 import io.jmix.chartsflowui.kit.component.model.HasLineStyle;
 import io.jmix.chartsflowui.kit.component.model.HasShadow;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Common style for the line.
@@ -50,6 +51,7 @@ public class LineStyle extends ChartObservableObject
 
     protected Double opacity;
 
+    @Nullable
     public Color getColor() {
         return color;
     }
@@ -59,6 +61,7 @@ public class LineStyle extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     public Integer getWidth() {
         return width;
     }
@@ -68,6 +71,7 @@ public class LineStyle extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     public String getType() {
         return type;
     }
@@ -77,6 +81,7 @@ public class LineStyle extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     public Integer getDashOffset() {
         return dashOffset;
     }
@@ -86,6 +91,7 @@ public class LineStyle extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Cap getCap() {
         return cap;
@@ -97,6 +103,7 @@ public class LineStyle extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Join getJoin() {
         return join;
@@ -108,6 +115,7 @@ public class LineStyle extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getMiterLimit() {
         return miterLimit;
@@ -119,6 +127,7 @@ public class LineStyle extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getShadowBlur() {
         return shadowBlur;
@@ -130,6 +139,7 @@ public class LineStyle extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Color getShadowColor() {
         return shadowColor;
@@ -141,6 +151,7 @@ public class LineStyle extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getShadowOffsetX() {
         return shadowOffsetX;
@@ -152,6 +163,7 @@ public class LineStyle extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getShadowOffsetY() {
         return shadowOffsetY;
@@ -163,6 +175,7 @@ public class LineStyle extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     public Double getOpacity() {
         return opacity;
     }

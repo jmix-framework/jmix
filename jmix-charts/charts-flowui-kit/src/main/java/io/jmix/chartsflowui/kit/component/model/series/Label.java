@@ -94,15 +94,18 @@ public class Label extends AbstractEnhancedLabel<Label> {
             }
         }
 
+        @Nullable
         public String[] getCoordinates() {
             return coordinates;
         }
 
+        @Nullable
         public PositionType getPositionType() {
             return positionType;
         }
     }
 
+    @Nullable
     public Position getPosition() {
         return position;
     }
@@ -117,6 +120,7 @@ public class Label extends AbstractEnhancedLabel<Label> {
         markAsDirty();
     }
 
+    @Nullable
     public String getFormatter() {
         return formatter;
     }
@@ -126,6 +130,7 @@ public class Label extends AbstractEnhancedLabel<Label> {
         markAsDirty();
     }
 
+    @Nullable
     public JsFunction getFormatterFunction() {
         return formatterFunction;
     }

@@ -25,8 +25,8 @@ import io.jmix.chartsflowui.kit.component.model.shared.Color;
 import io.jmix.chartsflowui.kit.component.model.shared.TextStyle;
 import io.jmix.chartsflowui.kit.component.model.toolbox.Toolbox;
 import io.jmix.chartsflowui.kit.component.model.visualMap.AbstractVisualMap;
-import org.jspecify.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import tools.jackson.core.JacksonException;
 import tools.jackson.core.json.JsonReadFeature;
 import tools.jackson.databind.JsonNode;
@@ -104,7 +104,7 @@ public class ChartOptions extends ChartObservableObject {
         return this.nativeJson == null ? null : this.nativeJson.toString();
     }
 
-    public void setNativeJson(@Nullable String nativeJson) {
+    public void setNativeJson(String nativeJson) {
         if (StringUtils.equals(getNativeJsonString(), nativeJson)) {
             return;
         }
@@ -194,7 +194,7 @@ public class ChartOptions extends ChartObservableObject {
         return yAxes == null ? null : Collections.unmodifiableList(yAxes);
     }
 
-    public void setRadiusAxis(@Nullable RadiusAxis axis) {
+    public void setRadiusAxis(RadiusAxis axis) {
         if (this.radiusAxis != null) {
             removeChild(this.radiusAxis);
         }
@@ -208,7 +208,7 @@ public class ChartOptions extends ChartObservableObject {
         return radiusAxis;
     }
 
-    public void setAngleAxis(@Nullable AngleAxis axis) {
+    public void setAngleAxis(AngleAxis axis) {
         if (this.angleAxis != null) {
             removeChild(this.angleAxis);
         }
@@ -275,7 +275,7 @@ public class ChartOptions extends ChartObservableObject {
         return title;
     }
 
-    public void setTitle(@Nullable Title title) {
+    public void setTitle(Title title) {
         if (this.title != null) {
             removeChild(this.title);
         }
@@ -289,7 +289,7 @@ public class ChartOptions extends ChartObservableObject {
         return legend;
     }
 
-    public void setLegend(@Nullable AbstractLegend<?> legend) {
+    public void setLegend(AbstractLegend<?> legend) {
         if (this.legend != null) {
             removeChild(this.legend);
         }
@@ -303,7 +303,7 @@ public class ChartOptions extends ChartObservableObject {
         return tooltip;
     }
 
-    public void setTooltip(@Nullable Tooltip tooltip) {
+    public void setTooltip(Tooltip tooltip) {
         if (this.tooltip != null) {
             removeChild(this.tooltip);
         }
@@ -317,7 +317,7 @@ public class ChartOptions extends ChartObservableObject {
         return toolbox;
     }
 
-    public void setToolbox(@Nullable Toolbox toolbox) {
+    public void setToolbox(Toolbox toolbox) {
         if (this.toolbox != null) {
             removeChild(this.toolbox);
         }
@@ -331,7 +331,7 @@ public class ChartOptions extends ChartObservableObject {
         return axisPointer;
     }
 
-    public void setAxisPointer(@Nullable AxisPointer axisPointer) {
+    public void setAxisPointer(AxisPointer axisPointer) {
         if (this.axisPointer != null) {
             removeChild(this.axisPointer);
         }
@@ -345,7 +345,7 @@ public class ChartOptions extends ChartObservableObject {
         return polar;
     }
 
-    public void setPolar(@Nullable Polar polar) {
+    public void setPolar(Polar polar) {
         if (this.polar != null) {
             removeChild(this.polar);
         }
@@ -359,7 +359,7 @@ public class ChartOptions extends ChartObservableObject {
         return radar;
     }
 
-    public void setRadar(@Nullable Radar radar) {
+    public void setRadar(Radar radar) {
         if (this.radar != null) {
             removeChild(this.radar);
         }
@@ -373,7 +373,7 @@ public class ChartOptions extends ChartObservableObject {
         return dataSet;
     }
 
-    public void setDataSet(@Nullable DataSet dataSet) {
+    public void setDataSet(DataSet dataSet) {
         if (this.dataSet == dataSet) {
             return;
         }
@@ -395,7 +395,7 @@ public class ChartOptions extends ChartObservableObject {
         return aria;
     }
 
-    public void setAria(@Nullable Aria aria) {
+    public void setAria(Aria aria) {
         if (this.aria != null) {
             removeChild(this.aria);
         }
@@ -409,7 +409,7 @@ public class ChartOptions extends ChartObservableObject {
         return brush;
     }
 
-    public void setBrush(@Nullable Brush brush) {
+    public void setBrush(Brush brush) {
         if (this.brush != null) {
             removeChild(this.brush);
         }
@@ -458,7 +458,7 @@ public class ChartOptions extends ChartObservableObject {
         return backgroundColor;
     }
 
-    public void setBackgroundColor(@Nullable Color backgroundColor) {
+    public void setBackgroundColor(Color backgroundColor) {
         this.backgroundColor = backgroundColor;
         markAsDirty();
     }
@@ -482,7 +482,7 @@ public class ChartOptions extends ChartObservableObject {
         return textStyle;
     }
 
-    public void setTextStyle(@Nullable TextStyle textStyle) {
+    public void setTextStyle(TextStyle textStyle) {
         if (this.textStyle != null) {
             removeChild(this.textStyle);
         }
@@ -496,7 +496,7 @@ public class ChartOptions extends ChartObservableObject {
         return animation;
     }
 
-    public void setAnimation(@Nullable Boolean animation) {
+    public void setAnimation(Boolean animation) {
         this.animation = animation;
         markAsDirty();
     }
@@ -506,7 +506,7 @@ public class ChartOptions extends ChartObservableObject {
         return animationThreshold;
     }
 
-    public void setAnimationThreshold(@Nullable Integer animationThreshold) {
+    public void setAnimationThreshold(Integer animationThreshold) {
         this.animationThreshold = animationThreshold;
         markAsDirty();
     }
@@ -516,7 +516,7 @@ public class ChartOptions extends ChartObservableObject {
         return animationDuration;
     }
 
-    public void setAnimationDuration(@Nullable Integer animationDuration) {
+    public void setAnimationDuration(Integer animationDuration) {
         this.animationDuration = animationDuration;
         markAsDirty();
     }
@@ -526,7 +526,7 @@ public class ChartOptions extends ChartObservableObject {
         return animationEasing;
     }
 
-    public void setAnimationEasing(@Nullable String animationEasing) {
+    public void setAnimationEasing(String animationEasing) {
         this.animationEasing = animationEasing;
         markAsDirty();
     }
@@ -536,7 +536,7 @@ public class ChartOptions extends ChartObservableObject {
         return animationDelay;
     }
 
-    public void setAnimationDelay(@Nullable Integer animationDelay) {
+    public void setAnimationDelay(Integer animationDelay) {
         this.animationDelay = animationDelay;
         markAsDirty();
     }
@@ -546,7 +546,7 @@ public class ChartOptions extends ChartObservableObject {
         return animationDurationUpdate;
     }
 
-    public void setAnimationDurationUpdate(@Nullable Integer animationDurationUpdate) {
+    public void setAnimationDurationUpdate(Integer animationDurationUpdate) {
         this.animationDurationUpdate = animationDurationUpdate;
         markAsDirty();
     }
@@ -556,7 +556,7 @@ public class ChartOptions extends ChartObservableObject {
         return animationEasingUpdate;
     }
 
-    public void setAnimationEasingUpdate(@Nullable String animationEasingUpdate) {
+    public void setAnimationEasingUpdate(String animationEasingUpdate) {
         this.animationEasingUpdate = animationEasingUpdate;
         markAsDirty();
     }
@@ -566,7 +566,7 @@ public class ChartOptions extends ChartObservableObject {
         return animationDelayUpdate;
     }
 
-    public void setAnimationDelayUpdate(@Nullable Integer animationDelayUpdate) {
+    public void setAnimationDelayUpdate(Integer animationDelayUpdate) {
         this.animationDelayUpdate = animationDelayUpdate;
         markAsDirty();
     }
@@ -576,7 +576,7 @@ public class ChartOptions extends ChartObservableObject {
         return stateAnimation;
     }
 
-    public void setStateAnimation(@Nullable StateAnimation stateAnimation) {
+    public void setStateAnimation(StateAnimation stateAnimation) {
         this.stateAnimation = stateAnimation;
         markAsDirty();
     }
@@ -586,7 +586,7 @@ public class ChartOptions extends ChartObservableObject {
         return blendMode;
     }
 
-    public void setBlendMode(@Nullable BlendMode blendMode) {
+    public void setBlendMode(BlendMode blendMode) {
         this.blendMode = blendMode;
         markAsDirty();
     }
@@ -596,7 +596,7 @@ public class ChartOptions extends ChartObservableObject {
         return hoverLayerThreshold;
     }
 
-    public void setHoverLayerThreshold(@Nullable Integer hoverLayerThreshold) {
+    public void setHoverLayerThreshold(Integer hoverLayerThreshold) {
         this.hoverLayerThreshold = hoverLayerThreshold;
         markAsDirty();
     }
@@ -606,7 +606,7 @@ public class ChartOptions extends ChartObservableObject {
         return useUtc;
     }
 
-    public void setUseUtc(@Nullable Boolean useUtc) {
+    public void setUseUtc(Boolean useUtc) {
         this.useUtc = useUtc;
         markAsDirty();
     }
@@ -622,7 +622,7 @@ public class ChartOptions extends ChartObservableObject {
     }
 
     @Override
-    public void setChartObjectChangeListener(Consumer<ObjectChangeEvent> listener) {
+    public void setChartObjectChangeListener(@Nullable Consumer<ObjectChangeEvent> listener) {
         super.setChartObjectChangeListener(listener);
     }
 
@@ -640,6 +640,7 @@ public class ChartOptions extends ChartObservableObject {
 
         protected String easing;
 
+        @Nullable
         public Integer getDuration() {
             return duration;
         }
@@ -649,6 +650,7 @@ public class ChartOptions extends ChartObservableObject {
             markAsDirty();
         }
 
+        @Nullable
         public String getEasing() {
             return easing;
         }

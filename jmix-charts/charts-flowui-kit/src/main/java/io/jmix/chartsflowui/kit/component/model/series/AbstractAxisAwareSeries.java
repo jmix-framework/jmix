@@ -78,6 +78,7 @@ public abstract class AbstractAxisAwareSeries<T extends AbstractAxisAwareSeries<
         }
     }
 
+    @Nullable
     public Encode getEncode() {
         return encode;
     }
@@ -87,6 +88,7 @@ public abstract class AbstractAxisAwareSeries<T extends AbstractAxisAwareSeries<
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getLegendHoverLink() {
         return legendHoverLink;
     }
@@ -96,6 +98,7 @@ public abstract class AbstractAxisAwareSeries<T extends AbstractAxisAwareSeries<
         markAsDirty();
     }
 
+    @Nullable
     public SeriesLayoutType getSeriesLayoutBy() {
         return seriesLayoutBy;
     }
@@ -105,6 +108,7 @@ public abstract class AbstractAxisAwareSeries<T extends AbstractAxisAwareSeries<
         markAsDirty();
     }
 
+    @Nullable
     public Integer getDatasetIndex() {
         return datasetIndex;
     }
@@ -114,6 +118,7 @@ public abstract class AbstractAxisAwareSeries<T extends AbstractAxisAwareSeries<
         markAsDirty();
     }
 
+    @Nullable
     public MarkPoint getMarkPoint() {
         return markPoint;
     }
@@ -123,6 +128,7 @@ public abstract class AbstractAxisAwareSeries<T extends AbstractAxisAwareSeries<
         markAsDirty();
     }
 
+    @Nullable
     public MarkLine getMarkLine() {
         return markLine;
     }
@@ -132,6 +138,7 @@ public abstract class AbstractAxisAwareSeries<T extends AbstractAxisAwareSeries<
         markAsDirty();
     }
 
+    @Nullable
     public MarkArea getMarkArea() {
         return markArea;
     }

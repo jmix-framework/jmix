@@ -22,6 +22,7 @@ import io.jmix.core.Messages;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.EntityValues;
 import org.apache.commons.lang3.time.FastDateFormat;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import tools.jackson.core.JacksonException;
 import tools.jackson.core.JsonGenerator;
@@ -86,7 +87,8 @@ public abstract class AbstractDataSerializer<T> extends AbstractSerializer<T> {
         gen.writeEndObject();
     }
 
-    protected Object formatValue(Object valueToFormat) {
+    @Nullable
+    protected Object formatValue(@Nullable Object valueToFormat) {
         Object formattedValue;
         if (EntityValues.isEntity(valueToFormat)) {
             formattedValue = metadataTools.getInstanceName(valueToFormat);

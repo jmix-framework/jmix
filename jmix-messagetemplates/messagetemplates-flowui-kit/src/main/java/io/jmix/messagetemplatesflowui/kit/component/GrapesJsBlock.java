@@ -16,6 +16,8 @@
 
 package io.jmix.messagetemplatesflowui.kit.component;
 
+import org.jspecify.annotations.Nullable;
+
 import java.io.Serializable;
 
 /**
@@ -188,6 +190,7 @@ public class GrapesJsBlock implements Serializable {
         /**
          * @return category of the block in the blocks section
          */
+        @Nullable
         public String getCategory() {
             return block.getCategory();
         }
@@ -206,6 +209,7 @@ public class GrapesJsBlock implements Serializable {
         /**
          * @return HTML content of the block
          */
+        @Nullable
         public String getContent() {
             return block.getContent();
         }
@@ -225,6 +229,7 @@ public class GrapesJsBlock implements Serializable {
         /**
          * @return additional attributes of the block
          */
+        @Nullable
         public String getAttributes() {
             return block.getAttributes();
         }

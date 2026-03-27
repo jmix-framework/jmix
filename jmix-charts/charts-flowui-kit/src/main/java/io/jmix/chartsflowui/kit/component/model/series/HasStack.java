@@ -32,6 +32,7 @@ public interface HasStack<T> {
     /**
      * @return stack name for the series
      */
+    @Nullable
     String getStack();
 
     /**
@@ -55,6 +56,7 @@ public interface HasStack<T> {
     /**
      * @return type of strategy for stacking values
      */
+    @Nullable
     StackStrategy getStackStrategy();
 
     /**

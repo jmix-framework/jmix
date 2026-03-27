@@ -17,6 +17,7 @@
 package io.jmix.chartsflowui.kit.component.serialization;
 
 import io.jmix.chartsflowui.kit.component.model.series.GaugeSeries;
+import org.jspecify.annotations.Nullable;
 import tools.jackson.core.JacksonException;
 import tools.jackson.core.JsonGenerator;
 import tools.jackson.databind.SerializationContext;
@@ -61,7 +62,7 @@ public class GaugeSeriesAxisLineStyleSerializer extends AbstractSerializer<Gauge
         gen.writeEndObject();
     }
 
-    protected void writeNumberField(String fieldName, Integer number, JsonGenerator gen) throws JacksonException {
+    protected void writeNumberField(String fieldName, @Nullable Integer number, JsonGenerator gen) throws JacksonException {
         if (number != null) {
             gen.writeNumberProperty(fieldName, number);
         }

@@ -19,6 +19,7 @@ package io.jmix.supersetflowui.kit.component;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.dependency.NpmPackage;
+import org.jspecify.annotations.Nullable;
 
 @Tag("jmix-superset-dashboard")
 @NpmPackage(value = "@superset-ui/embedded-sdk", version = "0.1.2")
@@ -35,6 +36,7 @@ public class JmixSupersetDashboard extends Component implements HasSize, HasStyl
     /**
      * @return dashboard embedded ID or {@code null} if not set
      */
+    @Nullable
     public String getEmbeddedId() {
         return getElement().getProperty(PROPERTY_EMBEDDED_ID);
     }

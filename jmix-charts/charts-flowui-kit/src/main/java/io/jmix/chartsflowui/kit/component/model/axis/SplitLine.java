@@ -20,6 +20,7 @@ import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
 import io.jmix.chartsflowui.kit.component.model.Grid;
 import io.jmix.chartsflowui.kit.component.model.shared.JsFunction;
 import io.jmix.chartsflowui.kit.component.model.shared.LineStyle;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Split line of axis in {@link Grid} area.
@@ -34,6 +35,7 @@ public class SplitLine extends ChartObservableObject {
 
     protected LineStyle lineStyle;
 
+    @Nullable
     public Boolean getShow() {
         return show;
     }
@@ -43,6 +45,7 @@ public class SplitLine extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public Integer getInterval() {
         return interval;
     }
@@ -52,6 +55,7 @@ public class SplitLine extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public JsFunction getIntervalFunction() {
         return intervalFunction;
     }
@@ -66,6 +70,7 @@ public class SplitLine extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public LineStyle getLineStyle() {
         return lineStyle;
     }

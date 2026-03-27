@@ -33,6 +33,7 @@ public interface HasAxisName<T> {
     /**
      * @return axis name
      */
+    @Nullable
     String getName();
 
     /**
@@ -45,6 +46,7 @@ public interface HasAxisName<T> {
     /**
      * @return location of axis name
      */
+    @Nullable
     NameLocation getNameLocation();
 
     /**
@@ -57,6 +59,7 @@ public interface HasAxisName<T> {
     /**
      * @return font text style of axis name
      */
+    @Nullable
     NameTextStyle getNameTextStyle();
 
     /**
@@ -69,6 +72,7 @@ public interface HasAxisName<T> {
     /**
      * @return gap between axis name and axis line. The unit is pixels.
      */
+    @Nullable
     Integer getNameGap();
 
     /**
@@ -81,6 +85,7 @@ public interface HasAxisName<T> {
     /**
      * @return rotate degree of axis name
      */
+    @Nullable
     Integer getNameRotate();
 
     /**
@@ -93,6 +98,7 @@ public interface HasAxisName<T> {
     /**
      * @return {@code true} if the axis is inverted, {@code false} otherwise
      */
+    @Nullable
     Boolean getInverse();
 
     /**
@@ -231,6 +237,7 @@ public interface HasAxisName<T> {
 
         protected Integer shadowOffsetY;
 
+        @Nullable
         @Override
         public Align getAlign() {
             return align;
@@ -242,6 +249,7 @@ public interface HasAxisName<T> {
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public VerticalAlign getVerticalAlign() {
             return verticalAlign;
@@ -253,6 +261,7 @@ public interface HasAxisName<T> {
             markAsDirty();
         }
 
+        @Nullable
         public Color getBackgroundColor() {
             return backgroundColor;
         }
@@ -262,6 +271,7 @@ public interface HasAxisName<T> {
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public Color getBorderColor() {
             return borderColor;
@@ -273,6 +283,7 @@ public interface HasAxisName<T> {
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public Integer getBorderWidth() {
             return borderWidth;
@@ -284,6 +295,7 @@ public interface HasAxisName<T> {
             markAsDirty();
         }
 
+        @Nullable
         public String getBorderType() {
             return borderType;
         }
@@ -293,6 +305,7 @@ public interface HasAxisName<T> {
             markAsDirty();
         }
 
+        @Nullable
         public Integer getBorderDashOffset() {
             return borderDashOffset;
         }
@@ -302,6 +315,7 @@ public interface HasAxisName<T> {
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public Integer getBorderRadius() {
             return borderRadius;
@@ -313,6 +327,7 @@ public interface HasAxisName<T> {
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public Padding getPadding() {
             return padding;
@@ -336,6 +351,7 @@ public interface HasAxisName<T> {
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public Integer getShadowBlur() {
             return shadowBlur;
@@ -347,6 +363,7 @@ public interface HasAxisName<T> {
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public Color getShadowColor() {
             return shadowColor;
@@ -358,6 +375,7 @@ public interface HasAxisName<T> {
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public Integer getShadowOffsetX() {
             return shadowOffsetX;
@@ -369,6 +387,7 @@ public interface HasAxisName<T> {
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public Integer getShadowOffsetY() {
             return shadowOffsetY;

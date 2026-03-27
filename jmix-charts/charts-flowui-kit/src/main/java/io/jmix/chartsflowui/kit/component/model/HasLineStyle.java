@@ -28,6 +28,7 @@ public interface HasLineStyle<T> {
     /**
      * @return Style for drawing line endpoints
      */
+    @Nullable
     Cap getCap();
 
     /**
@@ -53,6 +54,7 @@ public interface HasLineStyle<T> {
     /**
      * @return style that used to join two line segments where they intersect
      */
+    @Nullable
     Join getJoin();
 
     /**
@@ -78,6 +80,7 @@ public interface HasLineStyle<T> {
     /**
      * @return miter limit ratio
      */
+    @Nullable
     Integer getMiterLimit();
 
     /**

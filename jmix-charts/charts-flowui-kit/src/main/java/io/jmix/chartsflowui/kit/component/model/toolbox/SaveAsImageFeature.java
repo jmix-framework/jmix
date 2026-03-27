@@ -74,6 +74,7 @@ public class SaveAsImageFeature extends AbstractFeature<SaveAsImageFeature> {
         }
     }
 
+    @Nullable
     public SaveType getType() {
         return type;
     }
@@ -83,6 +84,7 @@ public class SaveAsImageFeature extends AbstractFeature<SaveAsImageFeature> {
         markAsDirty();
     }
 
+    @Nullable
     public String getName() {
         return name;
     }
@@ -92,6 +94,7 @@ public class SaveAsImageFeature extends AbstractFeature<SaveAsImageFeature> {
         markAsDirty();
     }
 
+    @Nullable
     public Color getBackgroundColor() {
         return backgroundColor;
     }
@@ -101,6 +104,7 @@ public class SaveAsImageFeature extends AbstractFeature<SaveAsImageFeature> {
         markAsDirty();
     }
 
+    @Nullable
     public Color getConnectedBackgroundColor() {
         return connectedBackgroundColor;
     }
@@ -110,6 +114,7 @@ public class SaveAsImageFeature extends AbstractFeature<SaveAsImageFeature> {
         markAsDirty();
     }
 
+    @Nullable
     public String[] getExcludeComponents() {
         return excludeComponents;
     }
@@ -119,6 +124,7 @@ public class SaveAsImageFeature extends AbstractFeature<SaveAsImageFeature> {
         markAsDirty();
     }
 
+    @Nullable
     public String getTitle() {
         return title;
     }
@@ -128,6 +134,7 @@ public class SaveAsImageFeature extends AbstractFeature<SaveAsImageFeature> {
         markAsDirty();
     }
 
+    @Nullable
     public String getIcon() {
         return icon;
     }
@@ -137,6 +144,7 @@ public class SaveAsImageFeature extends AbstractFeature<SaveAsImageFeature> {
         markAsDirty();
     }
 
+    @Nullable
     public Integer getPixelRatio() {
         return pixelRatio;
     }

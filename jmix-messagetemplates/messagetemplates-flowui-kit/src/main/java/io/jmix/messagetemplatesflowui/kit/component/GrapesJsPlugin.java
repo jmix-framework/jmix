@@ -16,6 +16,8 @@
 
 package io.jmix.messagetemplatesflowui.kit.component;
 
+import org.jspecify.annotations.Nullable;
+
 import java.io.Serializable;
 
 /**
@@ -41,6 +43,7 @@ public abstract class GrapesJsPlugin implements Serializable {
     /**
      * @return additional options for configuring the plugin as a JSON string
      */
+    @Nullable
     public String getOptions() {
         return options;
     }

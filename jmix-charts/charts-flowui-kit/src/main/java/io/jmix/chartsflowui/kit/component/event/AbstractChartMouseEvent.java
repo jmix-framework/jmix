@@ -18,6 +18,7 @@ package io.jmix.chartsflowui.kit.component.event;
 
 import io.jmix.chartsflowui.kit.component.JmixChart;
 import io.jmix.chartsflowui.kit.component.event.dto.BaseChartEventDetail;
+import org.jspecify.annotations.Nullable;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.node.ObjectNode;
 
@@ -31,7 +32,7 @@ public abstract class AbstractChartMouseEvent<T extends BaseChartEventDetail> ex
     protected String value;
 
     protected AbstractChartMouseEvent(JmixChart source, boolean fromClient,
-                                      ObjectNode detail, JsonNode value, Class<T> detailClass) {
+                                      ObjectNode detail, @Nullable JsonNode value, Class<T> detailClass) {
         super(source, fromClient, detail, detailClass);
 
         if (value != null) {
@@ -39,6 +40,7 @@ public abstract class AbstractChartMouseEvent<T extends BaseChartEventDetail> ex
         }
     }
 
+    @Nullable
     public String getValue() {
         return value;
     }

@@ -29,6 +29,7 @@ public interface HasSymbols<T> {
     /**
      * @return symbol
      */
+    @Nullable
     Symbol getSymbol();
 
     /**
@@ -82,6 +83,7 @@ public interface HasSymbols<T> {
     /**
      * @return symbol size
      */
+    @Nullable
     Integer getSymbolSize();
 
     /**
@@ -94,6 +96,7 @@ public interface HasSymbols<T> {
     /**
      * @return callback function for symbol size
      */
+    @Nullable
     JsFunction getSymbolSizeFunction();
 
     /**
@@ -146,6 +149,7 @@ public interface HasSymbols<T> {
     /**
      * @return rotate degree of symbol
      */
+    @Nullable
     Integer getSymbolRotate();
 
     /**
@@ -169,6 +173,7 @@ public interface HasSymbols<T> {
     /**
      * @return {@code true} if the aspect for symbols must be kept, {@code false} otherwise
      */
+    @Nullable
     Boolean getSymbolKeepAspect();
 
     /**
@@ -192,7 +197,7 @@ public interface HasSymbols<T> {
     /**
      * @return offset of symbol relative to original position
      */
-    String[] getSymbolOffset();
+    String @Nullable [] getSymbolOffset();
 
     /**
      * Sets an offset of symbol relative to original position or replaces an existing one.<br/>
@@ -278,10 +283,12 @@ public interface HasSymbols<T> {
             this.type = type;
         }
 
+        @Nullable
         public String getIcon() {
             return icon;
         }
 
+        @Nullable
         public SymbolType getType() {
             return type;
         }

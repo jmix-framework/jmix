@@ -66,8 +66,7 @@ public enum Alignment {
         return flexValue;
     }
 
-    @Nullable
-    public static Alignment toAlignment(@Nullable String flexValue, @Nullable Alignment defaultValue) {
+    public static Alignment toAlignment(@Nullable String flexValue, Alignment defaultValue) {
         return Arrays.stream(values()).filter(
                         alignment -> alignment.getFlexValue().equals(flexValue))
                 .findFirst().orElse(defaultValue);

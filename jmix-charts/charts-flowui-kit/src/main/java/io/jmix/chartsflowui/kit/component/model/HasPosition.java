@@ -16,6 +16,8 @@
 
 package io.jmix.chartsflowui.kit.component.model;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * A component that has position.
  *
@@ -26,6 +28,7 @@ public interface HasPosition<T> {
     /**
      * @return distance between component and the left side of the container
      */
+    @Nullable
     String getLeft();
 
     /**
@@ -61,6 +64,7 @@ public interface HasPosition<T> {
     /**
      * @return distance between component and the top side of the container
      */
+    @Nullable
     String getTop();
 
     /**
@@ -96,6 +100,7 @@ public interface HasPosition<T> {
     /**
      * @return distance between component and the right side of the container
      */
+    @Nullable
     String getRight();
 
     /**
@@ -128,6 +133,7 @@ public interface HasPosition<T> {
     /**
      * @return distance between component and the bottom side of the container
      */
+    @Nullable
     String getBottom();
 
     /**

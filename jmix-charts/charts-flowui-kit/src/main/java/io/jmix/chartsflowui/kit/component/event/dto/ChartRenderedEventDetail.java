@@ -17,6 +17,7 @@
 package io.jmix.chartsflowui.kit.component.event.dto;
 
 import io.jmix.chartsflowui.kit.component.event.ChartRenderedEvent;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @see ChartRenderedEvent
@@ -25,6 +26,7 @@ public class ChartRenderedEventDetail extends BaseChartEventDetail {
 
     protected Double elapsedTime;
 
+    @Nullable
     public Double getElapsedTime() {
         return elapsedTime;
     }

@@ -43,14 +43,14 @@ public abstract class AbstractSerializer<T> extends StdSerializer<T> {
     public abstract void serializeNonNullValue(T value, JsonGenerator gen, SerializationContext provider)
             throws JacksonException;
 
-    protected void writeIfNotNull(String fieldName,@Nullable  Object value, JsonGenerator gen, SerializationContext provider)
+    protected void writeIfNotNull(String fieldName, @Nullable Object value, JsonGenerator gen, SerializationContext provider)
             throws JacksonException {
         if (value != null) {
             provider.defaultSerializeProperty(fieldName, value, gen);
         }
     }
 
-    protected void writeListIfNotEmpty(String fieldName,@Nullable  List<?> value,
+    protected void writeListIfNotEmpty(String fieldName, @Nullable List<?> value,
                                        JsonGenerator gen, SerializationContext provider) throws JacksonException {
         if (value != null && !value.isEmpty()) {
             provider.defaultSerializeProperty(fieldName, value, gen);

@@ -104,6 +104,7 @@ public class Title extends ChartObservableObject
 
         protected VerticalAlign verticalAlign;
 
+        @Nullable
         @Override
         public Align getAlign() {
             return align;
@@ -115,6 +116,7 @@ public class Title extends ChartObservableObject
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public VerticalAlign getVerticalAlign() {
             return verticalAlign;
@@ -218,6 +220,7 @@ public class Title extends ChartObservableObject
         }
     }
 
+    @Nullable
     public String getId() {
         return id;
     }
@@ -236,6 +239,7 @@ public class Title extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     public String getText() {
         return text;
     }
@@ -245,6 +249,7 @@ public class Title extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     public String getLink() {
         return link;
     }
@@ -254,6 +259,7 @@ public class Title extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     public Target getTarget() {
         return target;
     }
@@ -263,6 +269,7 @@ public class Title extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     public TextStyle getTextStyle() {
         return textStyle;
     }
@@ -276,6 +283,7 @@ public class Title extends ChartObservableObject
         addChild(textStyle);
     }
 
+    @Nullable
     public String getSubtext() {
         return subtext;
     }
@@ -285,6 +293,7 @@ public class Title extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     public String getSublink() {
         return sublink;
     }
@@ -294,6 +303,7 @@ public class Title extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     public Target getSubtarget() {
         return subtarget;
     }
@@ -303,6 +313,7 @@ public class Title extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     public SubtextStyle getSubtextStyle() {
         return subtextStyle;
     }
@@ -316,6 +327,7 @@ public class Title extends ChartObservableObject
         addChild(subtextStyle);
     }
 
+    @Nullable
     public TextAlign getTextAlign() {
         return textAlign;
     }
@@ -325,6 +337,7 @@ public class Title extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     public TextVerticalAlign getTextVerticalAlign() {
         return textVerticalAlign;
     }
@@ -343,6 +356,7 @@ public class Title extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Padding getPadding() {
         return padding;
@@ -366,6 +380,7 @@ public class Title extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     public Integer getItemGap() {
         return itemGap;
     }
@@ -375,6 +390,7 @@ public class Title extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     public Integer getZLevel() {
         return zLevel;
     }
@@ -384,6 +400,7 @@ public class Title extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     public Integer getZ() {
         return z;
     }
@@ -393,6 +410,7 @@ public class Title extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public String getLeft() {
         return left;
@@ -404,6 +422,7 @@ public class Title extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public String getTop() {
         return top;
@@ -415,6 +434,7 @@ public class Title extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public String getRight() {
         return right;
@@ -426,6 +446,7 @@ public class Title extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public String getBottom() {
         return bottom;
@@ -437,6 +458,7 @@ public class Title extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     public Color getBackgroundColor() {
         return backgroundColor;
     }
@@ -446,6 +468,7 @@ public class Title extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Color getBorderColor() {
         return borderColor;
@@ -457,6 +480,7 @@ public class Title extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getBorderWidth() {
         return borderWidth;
@@ -468,6 +492,7 @@ public class Title extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getBorderRadius() {
         return borderRadius;
@@ -479,6 +504,7 @@ public class Title extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getShadowBlur() {
         return shadowBlur;
@@ -490,6 +516,7 @@ public class Title extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Color getShadowColor() {
         return shadowColor;
@@ -501,6 +528,7 @@ public class Title extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getShadowOffsetX() {
         return shadowOffsetX;
@@ -512,6 +540,7 @@ public class Title extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getShadowOffsetY() {
         return shadowOffsetY;

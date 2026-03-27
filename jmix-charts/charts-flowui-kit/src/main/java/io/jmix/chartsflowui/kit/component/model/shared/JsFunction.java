@@ -16,6 +16,8 @@
 
 package io.jmix.chartsflowui.kit.component.model.shared;
 
+import org.jspecify.annotations.Nullable;
+
 import java.io.Serializable;
 
 /**
@@ -33,6 +35,7 @@ public class JsFunction implements Serializable {
         this.code = code;
     }
 
+    @Nullable
     public String getCode() {
         return code;
     }

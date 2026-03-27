@@ -14,5 +14,4 @@
  * limitations under the License.
  */
 
-@import './jmix-font-icons.css';
-@import './vaadin-icons/vaadin-icons.css';
+@import '../../../base/icons.css';

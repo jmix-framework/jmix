@@ -21,6 +21,7 @@ import {PolylitMixin} from '@vaadin/component-base/src/polylit-mixin.js';
 import {LumoInjectionMixin} from '@vaadin/vaadin-themable-mixin/lumo-injection-mixin.js';
 import {ThemableMixin} from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
 import {ButtonMixin} from '@vaadin/button/src/vaadin-button-mixin.js';
+import {jmixValuePickerButtonStyles} from "./styles/jmix-value-picker-button-base-styles";
 
 class JmixValuePickerButton extends ButtonMixin(ElementMixin(ThemableMixin(PolylitMixin(LumoInjectionMixin(LitElement))))) {
 
@@ -28,9 +29,9 @@ class JmixValuePickerButton extends ButtonMixin(ElementMixin(ThemableMixin(Polyl
         return 'jmix-value-picker-button';
     }
 
-    /*static get styles() {
+    static get styles() {
         return jmixValuePickerButtonStyles;
-    }*/
+    }
 
     render() {
         return html`

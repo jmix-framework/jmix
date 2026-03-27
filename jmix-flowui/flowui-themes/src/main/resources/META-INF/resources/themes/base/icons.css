@@ -14,5 +14,5 @@
  * limitations under the License.
  */
 
-@import './button.css';
-@import './jmix-twin-column.css';
+@import './src/icons/vaadin-icons/vaadin-icons.css';
+@import './src/icons/jmix-font-icons.css';

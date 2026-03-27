@@ -32,6 +32,7 @@ export const jmixTwinColumnStyles = css`
         overflow-y: auto;
         overflow-x: auto;
         display: grid;
+        column-gap: var(--vaadin-gap-s);
         grid-template-columns: 1fr 0fr 1fr;
         grid-template-rows: 0fr 1fr;
     }
@@ -71,22 +72,19 @@ export const jmixTwinColumnStyles = css`
         display: none;
     }
 
-    :host(:not([has-width])) ::slotted([slot="items"]),
-    :host(:not([has-width])) ::slotted([slot="selected-items"]) {
+    :host(:not([has-width])) ::slotted([slot$="items"]) {
         min-width: var(--jmix-twin-column-column-min-width, 15em);
         width: var(--jmix-twin-column-column-width, 15em);
         max-width: var(--jmix-twin-column-column-max-width, 15em);
     }
 
-    :host(:not([has-height])) ::slotted([slot="items"]),
-    :host(:not([has-height])) ::slotted([slot="selected-items"]) {
+    :host(:not([has-height])) ::slotted([slot$="items"]) {
         min-height: var(--jmix-twin-column-column-min-height, 20em);
         height: var(--jmix-twin-column-column-height, 20em);
         max-height: var(--jmix-twin-column-column-max-height, 20em);
     }
 
-    :host(:not([has-width])) ::slotted([slot="items-label"]),
-    :host(:not([has-width])) ::slotted([slot="selected-items-label"]) {
+    :host(:not([has-width])) ::slotted([slot$='items-label']) {
         min-width: var(--jmix-twin-column-column-min-width, 15em);
         width: var(--jmix-twin-column-column-width, 15em);
         max-width: var(--jmix-twin-column-column-max-width, 15em);
@@ -96,5 +94,37 @@ export const jmixTwinColumnStyles = css`
         min-height: var(--jmix-twin-column-column-min-height, 20em);
         height: var(--jmix-twin-column-column-height, 20em);
         max-height: var(--jmix-twin-column-column-max-height, 20em);
+    }
+
+    ::slotted([slot$='items-label']) {
+        color: var(--vaadin-text-color-secondary);
+        font-weight: 500;
+        line-height: 1;
+        font-size: 0.875rem;
+        padding-bottom: var(--vaadin-gap-xs);
+    }
+
+    :host([disabled]) ::slotted([slot$='items-label']) {
+        color: var(--vaadin-text-color-disabled);
+    }
+
+    :host([invalid]) {
+        --vaadin-input-field-border-color: var(--vaadin-input-field-error-color, var(--vaadin-text-color));
+    }
+
+    ::slotted(vaadin-list-box) {
+        border: var(--vaadin-input-field-border-width, 1px) solid var(--vaadin-input-field-border-color, var(--vaadin-border-color));
+        border-radius: 0;
+    }
+
+    :host([theme~="no-border"]) ::slotted(vaadin-list-box) {
+        border-width: 0;
+        background: transparent;
+    }
+
+    ::slotted([slot="actions"]) {
+        display: flex;
+        flex-direction: column;
+        gap: var(--vaadin-gap-s);
     }
 `;

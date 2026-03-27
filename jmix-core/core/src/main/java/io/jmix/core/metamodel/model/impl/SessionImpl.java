@@ -85,4 +85,10 @@ public class SessionImpl implements SessionImplementation {
         classByName.put(name, metaClass);
         classByClass.put(javaClass, metaClass);
     }
+
+    @Override
+    public void unregisterClass(MetaClass metaClass) {
+        classByName.remove(metaClass.getName());
+        classByClass.remove(metaClass.getJavaClass());
+    }
 }

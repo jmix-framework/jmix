@@ -182,6 +182,12 @@ public class MenuConfig {
         }
 
         loadTemplateMenuItems();
+
+        Map<String, MenuConfigCustomizer> customizerBeans = applicationContext.getBeansOfType(MenuConfigCustomizer.class);
+        List<MenuConfigCustomizer> customizers = new ArrayList<>(customizerBeans.values());
+        for (MenuConfigCustomizer customizer : customizers) {
+            customizer.customize(rootItems);
+        }
     }
 
     /**

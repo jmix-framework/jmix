@@ -628,18 +628,22 @@ public class ReportDetailView extends StandardDetailView<Report> {
 
     @Subscribe(id = "parametersDc", target = Target.DATA_CONTAINER)
     protected void onParametersDcCollectionChange(CollectionContainer.CollectionChangeEvent<ReportInputParameter> event) {
-        Map<String, String> paramAliases = new HashMap<>();
+        Map<String, String> entityParamAliases = new LinkedHashMap<>();
+        Map<String, String> entitiesParamAliases = new LinkedHashMap<>();
 
         for (ReportInputParameter item : event.getSource().getItems()) {
-            paramAliases.put(item.getName(), item.getAlias());
+            if (ParameterType.ENTITY.equals(item.getType())) {
+                entityParamAliases.put(item.getAlias(), item.getName());
+            } else if (ParameterType.ENTITY_LIST.equals(item.getType())) {
+                entitiesParamAliases.put(item.getAlias(), item.getName());
+            }
         }
-        BiMap<String, String> biMap = ImmutableBiMap.copyOf(paramAliases);
 
-        entitiesParamFieldBinder.setItemsSilently(biMap.values(), true);
-        entitiesParamField.setItemLabelGenerator(o -> biMap.inverse().getOrDefault(o, o));
+        entityParamFieldBinder.setItemsSilently(entityParamAliases.keySet(), true);
+        entityParamField.setItemLabelGenerator(alias -> "%s (%s)".formatted(entityParamAliases.get(alias), alias));
 
-        entityParamFieldBinder.setItemsSilently(biMap.values(), true);
-        entityParamField.setItemLabelGenerator(o -> biMap.inverse().getOrDefault(o, o));
+        entitiesParamFieldBinder.setItemsSilently(entitiesParamAliases.keySet(), true);
+        entitiesParamField.setItemLabelGenerator(alias -> "%s (%s)".formatted(entitiesParamAliases.get(alias), alias));
     }
 
     @Subscribe

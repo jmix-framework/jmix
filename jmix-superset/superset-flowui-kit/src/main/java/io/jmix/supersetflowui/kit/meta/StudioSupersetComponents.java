@@ -21,6 +21,7 @@ import io.jmix.flowui.kit.meta.StudioProperty;
 import io.jmix.flowui.kit.meta.StudioPropertyType;
 import io.jmix.flowui.kit.meta.StudioUiKit;
 
+import io.jmix.flowui.kit.meta.StudioPropertyGroups;
 @StudioUiKit
 public interface StudioSupersetComponents {
 
@@ -32,6 +33,11 @@ public interface StudioSupersetComponents {
             xmlns = "http://jmix.io/schema/superset/ui",
             xmlnsAlias = "superset",
             icon = "io/jmix/supersetflowui/kit/meta/icon/supersetDashboard.svg",
+            propertyGroups = {
+                    StudioPropertyGroups.ClassNamesAndCss.class,
+                    StudioPropertyGroups.IdAndVisible.class,
+                    StudioPropertyGroups.Size.class,
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",

@@ -22,6 +22,7 @@ import io.jmix.flowui.kit.meta.StudioPropertyType;
 import io.jmix.flowui.kit.meta.StudioUiKit;
 import io.jmix.messagetemplatesflowui.kit.component.GrapesJs;
 
+import io.jmix.flowui.kit.meta.StudioPropertyGroups;
 @StudioUiKit(studioClassloaderDependencies = "io.jmix.messagetemplates:jmix-messagetemplates-flowui-kit")
 public interface StudioGrapesJsComponents {
 
@@ -33,6 +34,11 @@ public interface StudioGrapesJsComponents {
             xmlns = "http://jmix.io/schema/messagetemplates/ui",
             xmlnsAlias = "msgtmp",
             icon = "io/jmix/messagetemplatesflowui/kit/meta/icon/unknownComponent.svg",
+            propertyGroups = {
+                    StudioPropertyGroups.ClassNamesAndCss.class,
+                    StudioPropertyGroups.IdAndVisible.class,
+                    StudioPropertyGroups.SizeWithoutOptions.class,
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             category = StudioProperty.Category.POSITION,

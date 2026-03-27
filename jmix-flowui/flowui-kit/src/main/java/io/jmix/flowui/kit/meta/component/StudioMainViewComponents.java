@@ -22,6 +22,7 @@ import io.jmix.flowui.kit.component.main.UserIndicator;
 import io.jmix.flowui.kit.meta.StudioAvailableChildrenInfo;
 import io.jmix.flowui.kit.meta.StudioComponent;
 import io.jmix.flowui.kit.meta.StudioProperty;
+import io.jmix.flowui.kit.meta.StudioPropertyGroups;
 import io.jmix.flowui.kit.meta.StudioPropertyType;
 import io.jmix.flowui.kit.meta.StudioUiKit;
 
@@ -34,6 +35,7 @@ interface StudioMainViewComponents {
             xmlElement = "appLayout",
             icon = "io/jmix/flowui/kit/meta/icon/mainview/appLayout.svg",
             availablePlaceRegExp = "^mainView$",
+            propertyGroups = StudioPropertyGroups.ClassNamesAndCss.class,
             properties = {
                     @StudioProperty(xmlAttribute = "classNames", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "css", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.STRING),
@@ -55,6 +57,13 @@ interface StudioMainViewComponents {
             icon = "io/jmix/flowui/kit/meta/icon/mainview/userIndicator.svg",
             availablePlaceRegExp = "(^(mainView/appLayout)?((/drawerLayout)|(/navigationBar))$)" +
                     "|(^((mainView/appLayout)?((/drawerLayout)|(/navigationBar)))?(/hasComponents)*$)",
+                        propertyGroups = {
+                    StudioPropertyGroups.Size.class,
+                    StudioPropertyGroups.ClassNamesAndCss.class,
+                    StudioPropertyGroups.IdAndVisible.class,
+                    StudioPropertyGroups.Enabled.class,
+            },
+
             properties = {
                     @StudioProperty(xmlAttribute = "classNames", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "css", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.STRING),

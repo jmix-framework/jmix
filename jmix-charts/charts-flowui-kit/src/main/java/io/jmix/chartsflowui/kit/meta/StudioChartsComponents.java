@@ -29,6 +29,11 @@ public interface StudioChartsComponents {
             xmlns = "http://jmix.io/schema/charts/ui",
             xmlnsAlias = "charts",
             icon = "io/jmix/chartsflowui/kit/meta/icon/component/chart.svg",
+            propertyGroups = {
+                    StudioPropertyGroups.ClassNamesAndCss.class,
+                    StudioPropertyGroups.IdAndVisible.class,
+                    StudioPropertyGroups.Size.class,
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",

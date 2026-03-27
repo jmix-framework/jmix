@@ -29,6 +29,14 @@ interface StudioHTMLComponents {
             xmlElement = "anchor",
             icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
             documentationLink = "%VERSION%/flow-ui/vc/html.html",
+            propertyGroups = {
+                    StudioPropertyGroups.AlignSelfAndJustifySelfAndColspan.class,
+                    StudioPropertyGroups.ClassNamesAndCss.class,
+                    StudioPropertyGroups.IdAndVisible.class,
+                    StudioPropertyGroups.Enabled.class,
+                    StudioPropertyGroups.Size.class,
+                    StudioPropertyGroups.AriaLabelAndTabIndexAndFocusShortcut.class,
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -87,6 +95,13 @@ interface StudioHTMLComponents {
             xmlElement = "article",
             icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
             documentationLink = "%VERSION%/flow-ui/vc/html.html",
+            propertyGroups = {
+                    StudioPropertyGroups.AlignSelfAndJustifySelfAndColspan.class,
+                    StudioPropertyGroups.ClassNamesAndCss.class,
+                    StudioPropertyGroups.IdAndVisible.class,
+                    StudioPropertyGroups.Enabled.class,
+                    StudioPropertyGroups.Size.class,
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -138,6 +153,13 @@ interface StudioHTMLComponents {
             xmlElement = "aside",
             icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
             documentationLink = "%VERSION%/flow-ui/vc/html.html",
+            propertyGroups = {
+                    StudioPropertyGroups.AlignSelfAndJustifySelfAndColspan.class,
+                    StudioPropertyGroups.ClassNamesAndCss.class,
+                    StudioPropertyGroups.IdAndVisible.class,
+                    StudioPropertyGroups.Enabled.class,
+                    StudioPropertyGroups.Size.class,
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -189,6 +211,13 @@ interface StudioHTMLComponents {
             xmlElement = "descriptionList",
             icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
             documentationLink = "%VERSION%/flow-ui/vc/html.html",
+            propertyGroups = {
+                    StudioPropertyGroups.AlignSelfAndJustifySelfAndColspan.class,
+                    StudioPropertyGroups.ClassNamesAndCss.class,
+                    StudioPropertyGroups.IdAndVisible.class,
+                    StudioPropertyGroups.Enabled.class,
+                    StudioPropertyGroups.Size.class,
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -247,6 +276,13 @@ interface StudioHTMLComponents {
                     @StudioConvertStrategy.TagInfo(qualifiedName = "formLayout"),
                     @StudioConvertStrategy.TagInfo(qualifiedName = "details"),
             }),
+            propertyGroups = {
+                    StudioPropertyGroups.AlignSelfAndJustifySelfAndColspan.class,
+                    StudioPropertyGroups.ClassNamesAndCss.class,
+                    StudioPropertyGroups.IdAndVisible.class,
+                    StudioPropertyGroups.Enabled.class,
+                    StudioPropertyGroups.Size.class,
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -298,6 +334,13 @@ interface StudioHTMLComponents {
             xmlElement = "emphasis",
             icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
             documentationLink = "%VERSION%/flow-ui/vc/html.html",
+            propertyGroups = {
+                    StudioPropertyGroups.AlignSelfAndJustifySelfAndColspan.class,
+                    StudioPropertyGroups.ClassNamesAndCss.class,
+                    StudioPropertyGroups.IdAndVisible.class,
+                    StudioPropertyGroups.Enabled.class,
+                    StudioPropertyGroups.Size.class,
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -349,6 +392,13 @@ interface StudioHTMLComponents {
             xmlElement = "footer",
             icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
             documentationLink = "%VERSION%/flow-ui/vc/html.html",
+            propertyGroups = {
+                    StudioPropertyGroups.AlignSelfAndJustifySelfAndColspan.class,
+                    StudioPropertyGroups.ClassNamesAndCss.class,
+                    StudioPropertyGroups.IdAndVisible.class,
+                    StudioPropertyGroups.Enabled.class,
+                    StudioPropertyGroups.Size.class,
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -409,6 +459,13 @@ interface StudioHTMLComponents {
                     @StudioConvertStrategy.TagInfo(qualifiedName = "span"),
                     @StudioConvertStrategy.TagInfo(qualifiedName = "nativeLabel"),
             }),
+            propertyGroups = {
+                    StudioPropertyGroups.AlignSelfAndJustifySelfAndColspan.class,
+                    StudioPropertyGroups.ClassNamesAndCss.class,
+                    StudioPropertyGroups.IdAndVisible.class,
+                    StudioPropertyGroups.Enabled.class,
+                    StudioPropertyGroups.Size.class,
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -476,6 +533,13 @@ interface StudioHTMLComponents {
                     @StudioConvertStrategy.TagInfo(qualifiedName = "span"),
                     @StudioConvertStrategy.TagInfo(qualifiedName = "nativeLabel"),
             }),
+            propertyGroups = {
+                    StudioPropertyGroups.AlignSelfAndJustifySelfAndColspan.class,
+                    StudioPropertyGroups.ClassNamesAndCss.class,
+                    StudioPropertyGroups.IdAndVisible.class,
+                    StudioPropertyGroups.Enabled.class,
+                    StudioPropertyGroups.Size.class,
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -543,6 +607,13 @@ interface StudioHTMLComponents {
                     @StudioConvertStrategy.TagInfo(qualifiedName = "span"),
                     @StudioConvertStrategy.TagInfo(qualifiedName = "nativeLabel"),
             }),
+            propertyGroups = {
+                    StudioPropertyGroups.AlignSelfAndJustifySelfAndColspan.class,
+                    StudioPropertyGroups.ClassNamesAndCss.class,
+                    StudioPropertyGroups.IdAndVisible.class,
+                    StudioPropertyGroups.Enabled.class,
+                    StudioPropertyGroups.Size.class,
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -610,6 +681,13 @@ interface StudioHTMLComponents {
                     @StudioConvertStrategy.TagInfo(qualifiedName = "span"),
                     @StudioConvertStrategy.TagInfo(qualifiedName = "nativeLabel"),
             }),
+            propertyGroups = {
+                    StudioPropertyGroups.AlignSelfAndJustifySelfAndColspan.class,
+                    StudioPropertyGroups.ClassNamesAndCss.class,
+                    StudioPropertyGroups.IdAndVisible.class,
+                    StudioPropertyGroups.Enabled.class,
+                    StudioPropertyGroups.Size.class,
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -677,6 +755,13 @@ interface StudioHTMLComponents {
                     @StudioConvertStrategy.TagInfo(qualifiedName = "span"),
                     @StudioConvertStrategy.TagInfo(qualifiedName = "nativeLabel"),
             }),
+            propertyGroups = {
+                    StudioPropertyGroups.AlignSelfAndJustifySelfAndColspan.class,
+                    StudioPropertyGroups.ClassNamesAndCss.class,
+                    StudioPropertyGroups.IdAndVisible.class,
+                    StudioPropertyGroups.Enabled.class,
+                    StudioPropertyGroups.Size.class,
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -744,6 +829,13 @@ interface StudioHTMLComponents {
                     @StudioConvertStrategy.TagInfo(qualifiedName = "span"),
                     @StudioConvertStrategy.TagInfo(qualifiedName = "nativeLabel"),
             }),
+            propertyGroups = {
+                    StudioPropertyGroups.AlignSelfAndJustifySelfAndColspan.class,
+                    StudioPropertyGroups.ClassNamesAndCss.class,
+                    StudioPropertyGroups.IdAndVisible.class,
+                    StudioPropertyGroups.Enabled.class,
+                    StudioPropertyGroups.Size.class,
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -802,6 +894,13 @@ interface StudioHTMLComponents {
             xmlElement = "header",
             icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
             documentationLink = "%VERSION%/flow-ui/vc/html.html",
+            propertyGroups = {
+                    StudioPropertyGroups.AlignSelfAndJustifySelfAndColspan.class,
+                    StudioPropertyGroups.ClassNamesAndCss.class,
+                    StudioPropertyGroups.IdAndVisible.class,
+                    StudioPropertyGroups.Enabled.class,
+                    StudioPropertyGroups.Size.class,
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -853,6 +952,12 @@ interface StudioHTMLComponents {
             xmlElement = "hr",
             icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
             documentationLink = "%VERSION%/flow-ui/vc/html.html",
+            propertyGroups = {
+                    StudioPropertyGroups.AlignSelfAndJustifySelfAndColspan.class,
+                    StudioPropertyGroups.ClassNamesAndCss.class,
+                    StudioPropertyGroups.IdAndVisible.class,
+                    StudioPropertyGroups.Size.class,
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -886,6 +991,13 @@ interface StudioHTMLComponents {
             xmlElement = "htmlObject",
             icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
             documentationLink = "%VERSION%/flow-ui/vc/html.html",
+            propertyGroups = {
+                    StudioPropertyGroups.AlignSelfAndJustifySelfAndColspan.class,
+                    StudioPropertyGroups.ClassNamesAndCss.class,
+                    StudioPropertyGroups.IdAndVisible.class,
+                    StudioPropertyGroups.Enabled.class,
+                    StudioPropertyGroups.Size.class,
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -941,6 +1053,12 @@ interface StudioHTMLComponents {
             icon = "io/jmix/flowui/kit/meta/icon/html/iFrame.svg",
             xmlElement = "iframe",
             documentationLink = "%VERSION%/flow-ui/vc/html.html",
+            propertyGroups = {
+                    StudioPropertyGroups.AlignSelfAndJustifySelfAndColspan.class,
+                    StudioPropertyGroups.ClassNamesAndCss.class,
+                    StudioPropertyGroups.IdAndVisible.class,
+                    StudioPropertyGroups.Size.class,
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -989,6 +1107,13 @@ interface StudioHTMLComponents {
             xmlElement = "image",
             icon = "io/jmix/flowui/kit/meta/icon/html/image.svg",
             documentationLink = "%VERSION%/flow-ui/vc/html-components/image.html",
+            propertyGroups = {
+                    StudioPropertyGroups.AlignSelfAndJustifySelfAndColspan.class,
+                    StudioPropertyGroups.ClassNamesAndCss.class,
+                    StudioPropertyGroups.IdAndVisible.class,
+                    StudioPropertyGroups.Enabled.class,
+                    StudioPropertyGroups.Size.class,
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -1046,6 +1171,14 @@ interface StudioHTMLComponents {
             xmlElement = "input",
             icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
             documentationLink = "%VERSION%/flow-ui/vc/html.html",
+            propertyGroups = {
+                    StudioPropertyGroups.AlignSelfAndJustifySelfAndColspan.class,
+                    StudioPropertyGroups.ClassNamesAndCss.class,
+                    StudioPropertyGroups.IdAndVisible.class,
+                    StudioPropertyGroups.Enabled.class,
+                    StudioPropertyGroups.Size.class,
+                    StudioPropertyGroups.AriaLabelAndTabIndexAndFocusShortcut.class,
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -1094,6 +1227,13 @@ interface StudioHTMLComponents {
             xmlElement = "listItem",
             icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
             documentationLink = "%VERSION%/flow-ui/vc/html.html",
+            propertyGroups = {
+                    StudioPropertyGroups.AlignSelfAndJustifySelfAndColspan.class,
+                    StudioPropertyGroups.ClassNamesAndCss.class,
+                    StudioPropertyGroups.IdAndVisible.class,
+                    StudioPropertyGroups.Enabled.class,
+                    StudioPropertyGroups.Size.class,
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -1145,6 +1285,13 @@ interface StudioHTMLComponents {
             xmlElement = "main",
             icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
             documentationLink = "%VERSION%/flow-ui/vc/html.html",
+            propertyGroups = {
+                    StudioPropertyGroups.AlignSelfAndJustifySelfAndColspan.class,
+                    StudioPropertyGroups.ClassNamesAndCss.class,
+                    StudioPropertyGroups.IdAndVisible.class,
+                    StudioPropertyGroups.Enabled.class,
+                    StudioPropertyGroups.Size.class,
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -1198,6 +1345,13 @@ interface StudioHTMLComponents {
             xmlElement = "nav",
             icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
             documentationLink = "%VERSION%/flow-ui/vc/html.html",
+            propertyGroups = {
+                    StudioPropertyGroups.AlignSelfAndJustifySelfAndColspan.class,
+                    StudioPropertyGroups.ClassNamesAndCss.class,
+                    StudioPropertyGroups.IdAndVisible.class,
+                    StudioPropertyGroups.Enabled.class,
+                    StudioPropertyGroups.Size.class,
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -1251,6 +1405,13 @@ interface StudioHTMLComponents {
             xmlElement = "orderedList",
             icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
             documentationLink = "%VERSION%/flow-ui/vc/html.html",
+            propertyGroups = {
+                    StudioPropertyGroups.AlignSelfAndJustifySelfAndColspan.class,
+                    StudioPropertyGroups.ClassNamesAndCss.class,
+                    StudioPropertyGroups.IdAndVisible.class,
+                    StudioPropertyGroups.Enabled.class,
+                    StudioPropertyGroups.Size.class,
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -1306,6 +1467,13 @@ interface StudioHTMLComponents {
             xmlElement = "p",
             icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
             documentationLink = "%VERSION%/flow-ui/vc/html.html",
+            propertyGroups = {
+                    StudioPropertyGroups.AlignSelfAndJustifySelfAndColspan.class,
+                    StudioPropertyGroups.ClassNamesAndCss.class,
+                    StudioPropertyGroups.IdAndVisible.class,
+                    StudioPropertyGroups.Enabled.class,
+                    StudioPropertyGroups.Size.class,
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -1357,6 +1525,12 @@ interface StudioHTMLComponents {
             xmlElement = "param",
             icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
             documentationLink = "%VERSION%/flow-ui/vc/html.html",
+            propertyGroups = {
+                    StudioPropertyGroups.AlignSelfAndJustifySelfAndColspan.class,
+                    StudioPropertyGroups.ClassNamesAndCss.class,
+                    StudioPropertyGroups.IdAndVisible.class,
+                    StudioPropertyGroups.Size.class,
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -1392,6 +1566,13 @@ interface StudioHTMLComponents {
             xmlElement = "pre",
             icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
             documentationLink = "%VERSION%/flow-ui/vc/html.html",
+            propertyGroups = {
+                    StudioPropertyGroups.AlignSelfAndJustifySelfAndColspan.class,
+                    StudioPropertyGroups.ClassNamesAndCss.class,
+                    StudioPropertyGroups.IdAndVisible.class,
+                    StudioPropertyGroups.Enabled.class,
+                    StudioPropertyGroups.Size.class,
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -1443,6 +1624,13 @@ interface StudioHTMLComponents {
             xmlElement = "code",
             icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
             documentationLink = "%VERSION%/flow-ui/vc/html.html",
+            propertyGroups = {
+                    StudioPropertyGroups.AlignSelfAndJustifySelfAndColspan.class,
+                    StudioPropertyGroups.ClassNamesAndCss.class,
+                    StudioPropertyGroups.IdAndVisible.class,
+                    StudioPropertyGroups.Enabled.class,
+                    StudioPropertyGroups.Size.class,
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -1492,6 +1680,14 @@ interface StudioHTMLComponents {
             category = "HTML",
             xmlElement = "rangeInput",
             icon = "io/jmix/flowui/kit/meta/icon/html/rangeInput.svg",
+            propertyGroups = {
+                    StudioPropertyGroups.AlignSelfAndJustifySelfAndColspan.class,
+                    StudioPropertyGroups.ClassNamesAndCss.class,
+                    StudioPropertyGroups.IdAndVisible.class,
+                    StudioPropertyGroups.Enabled.class,
+                    StudioPropertyGroups.Size.class,
+                    StudioPropertyGroups.AriaLabelAndTabIndexAndFocusShortcut.class,
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -1541,6 +1737,13 @@ interface StudioHTMLComponents {
             xmlElement = "section",
             icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
             documentationLink = "%VERSION%/flow-ui/vc/html.html",
+            propertyGroups = {
+                    StudioPropertyGroups.AlignSelfAndJustifySelfAndColspan.class,
+                    StudioPropertyGroups.ClassNamesAndCss.class,
+                    StudioPropertyGroups.IdAndVisible.class,
+                    StudioPropertyGroups.Enabled.class,
+                    StudioPropertyGroups.Size.class,
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -1600,6 +1803,13 @@ interface StudioHTMLComponents {
                     @StudioConvertStrategy.TagInfo(qualifiedName = "h5"),
                     @StudioConvertStrategy.TagInfo(qualifiedName = "nativeLabel"),
             }),
+            propertyGroups = {
+                    StudioPropertyGroups.AlignSelfAndJustifySelfAndColspan.class,
+                    StudioPropertyGroups.ClassNamesAndCss.class,
+                    StudioPropertyGroups.IdAndVisible.class,
+                    StudioPropertyGroups.Enabled.class,
+                    StudioPropertyGroups.Size.class,
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -1658,6 +1868,13 @@ interface StudioHTMLComponents {
             xmlElement = "unorderedList",
             icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
             documentationLink = "%VERSION%/flow-ui/vc/html.html",
+            propertyGroups = {
+                    StudioPropertyGroups.AlignSelfAndJustifySelfAndColspan.class,
+                    StudioPropertyGroups.ClassNamesAndCss.class,
+                    StudioPropertyGroups.IdAndVisible.class,
+                    StudioPropertyGroups.Enabled.class,
+                    StudioPropertyGroups.Size.class,
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -1717,6 +1934,13 @@ interface StudioHTMLComponents {
                     @StudioConvertStrategy.TagInfo(qualifiedName = "h5"),
                     @StudioConvertStrategy.TagInfo(qualifiedName = "span"),
             }),
+            propertyGroups = {
+                    StudioPropertyGroups.AlignSelfAndJustifySelfAndColspan.class,
+                    StudioPropertyGroups.ClassNamesAndCss.class,
+                    StudioPropertyGroups.IdAndVisible.class,
+                    StudioPropertyGroups.Enabled.class,
+                    StudioPropertyGroups.Size.class,
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -1775,6 +1999,14 @@ interface StudioHTMLComponents {
             xmlElement = "nativeButton",
             icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
             documentationLink = "%VERSION%/flow-ui/vc/html.html",
+            propertyGroups = {
+                    StudioPropertyGroups.AlignSelfAndJustifySelfAndColspan.class,
+                    StudioPropertyGroups.ClassNamesAndCss.class,
+                    StudioPropertyGroups.IdAndVisible.class,
+                    StudioPropertyGroups.Enabled.class,
+                    StudioPropertyGroups.Size.class,
+                    StudioPropertyGroups.AriaLabelAndTabIndexAndFocusShortcut.class,
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -1829,6 +2061,13 @@ interface StudioHTMLComponents {
             category = "HTML",
             xmlElement = "term",
             icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
+            propertyGroups = {
+                    StudioPropertyGroups.AlignSelfAndJustifySelfAndColspan.class,
+                    StudioPropertyGroups.ClassNamesAndCss.class,
+                    StudioPropertyGroups.IdAndVisible.class,
+                    StudioPropertyGroups.Enabled.class,
+                    StudioPropertyGroups.Size.class,
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -1879,6 +2118,13 @@ interface StudioHTMLComponents {
             category = "HTML",
             xmlElement = "description",
             icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
+            propertyGroups = {
+                    StudioPropertyGroups.AlignSelfAndJustifySelfAndColspan.class,
+                    StudioPropertyGroups.ClassNamesAndCss.class,
+                    StudioPropertyGroups.IdAndVisible.class,
+                    StudioPropertyGroups.Enabled.class,
+                    StudioPropertyGroups.Size.class,
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -1930,6 +2176,12 @@ interface StudioHTMLComponents {
             xmlElement = "nativeDetails",
             icon = "io/jmix/flowui/kit/meta/icon/html/htmlComponent.svg",
             documentationLink = "%VERSION%/flow-ui/vc/html.html",
+            propertyGroups = {
+                    StudioPropertyGroups.AlignSelfAndJustifySelfAndColspan.class,
+                    StudioPropertyGroups.ClassNamesAndCss.class,
+                    StudioPropertyGroups.IdAndVisible.class,
+                    StudioPropertyGroups.Size.class,
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -1974,6 +2226,13 @@ interface StudioHTMLComponents {
                     @StudioConvertStrategy.TagInfo(qualifiedName = "formLayout"),
                     @StudioConvertStrategy.TagInfo(qualifiedName = "details"),
             }),
+            propertyGroups = {
+                    StudioPropertyGroups.AlignSelfAndJustifySelfAndColspan.class,
+                    StudioPropertyGroups.ClassNamesAndCss.class,
+                    StudioPropertyGroups.IdAndVisible.class,
+                    StudioPropertyGroups.Enabled.class,
+                    StudioPropertyGroups.Size.class,
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",

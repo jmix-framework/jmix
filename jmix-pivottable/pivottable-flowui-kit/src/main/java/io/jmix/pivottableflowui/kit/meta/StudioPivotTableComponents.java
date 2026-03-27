@@ -30,6 +30,11 @@ public interface StudioPivotTableComponents {
             icon = "io/jmix/pivottableflowui/kit/meta/icon/component/pivotTable.svg",
             xmlns = "http://jmix.io/schema/pvttbl/ui",
             xmlnsAlias = "pvttbl",
+            propertyGroups = {
+                    StudioPropertyGroups.ClassNamesAndCss.class,
+                    StudioPropertyGroups.Enabled.class,
+                    StudioPropertyGroups.SizeWithoutOptions.class,
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",

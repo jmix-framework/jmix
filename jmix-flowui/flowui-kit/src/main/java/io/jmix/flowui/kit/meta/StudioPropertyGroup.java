@@ -37,5 +37,5 @@ public @interface StudioPropertyGroup {
     /**
      * Properties included in the group.
      */
-    StudioProperty[] properties();
+    StudioProperty[] properties() default {};
 }

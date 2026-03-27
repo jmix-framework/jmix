@@ -20,6 +20,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import io.jmix.flowui.kit.meta.StudioComponent;
 import io.jmix.flowui.kit.meta.StudioProperty;
+import io.jmix.flowui.kit.meta.StudioPropertyGroups;
 import io.jmix.flowui.kit.meta.StudioPropertyType;
 import io.jmix.flowui.kit.meta.StudioUiKit;
 
@@ -34,6 +35,15 @@ public interface StudioSearchComponents {
             xmlns = "http://jmix.io/schema/search/ui",
             xmlnsAlias = "search",
             icon = "io/jmix/searchflowui/kit/meta/icon/component/searchField.svg",
+                        propertyGroups = {
+                    StudioPropertyGroups.Size.class,
+                    StudioPropertyGroups.AlignSelfAndJustifySelfAndColspan.class,
+                    StudioPropertyGroups.ClassNamesAndCss.class,
+                    StudioPropertyGroups.IdAndVisible.class,
+                    StudioPropertyGroups.Enabled.class,
+                    StudioPropertyGroups.AriaLabelAndTabIndexAndFocusShortcut.class,
+            },
+
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
@@ -99,6 +109,16 @@ public interface StudioSearchComponents {
             xmlns = "http://jmix.io/schema/search/ui",
             xmlnsAlias = "search",
             icon = "io/jmix/searchflowui/kit/meta/icon/component/searchField.svg",
+                        propertyGroups = {
+                    StudioPropertyGroups.Size.class,
+                    StudioPropertyGroups.AlignSelfAndJustifySelfAndColspan.class,
+                    StudioPropertyGroups.ClassNamesAndCss.class,
+                    StudioPropertyGroups.IdAndVisible.class,
+                    StudioPropertyGroups.Enabled.class,
+                    StudioPropertyGroups.AriaLabelAndTabIndexAndFocusShortcut.class,
+                    StudioPropertyGroups.RequiredAndRequiredMessageAndErrorMessage.class,
+            },
+
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",

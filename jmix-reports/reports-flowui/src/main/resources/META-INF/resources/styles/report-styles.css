@@ -58,6 +58,7 @@
 
 .report-multi-data-set-layout.report-flex-layout {
     gap: var(--lumo-space-m);
+    flex-direction: column;
 }
 
 .report-field-icon {

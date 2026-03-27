@@ -48,10 +48,7 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.Optional;
-import java.util.TreeMap;
+import java.util.*;
 
 @RouteAlias(value = "reports/parameters/:id", layout = DefaultMainViewParent.class)
 @Route(value = "report/parameters/:id", layout = DefaultMainViewParent.class)
@@ -342,7 +339,13 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
             Class clazz = parameterClassResolver.resolveClass(parameter);
             if (clazz != null) {
                 String availableListViewId = viewRegistry.getAvailableListViewId(metadata.getClass(clazz));
-                screenField.setItems(availableListViewId);
+                String availableLookupViewId = viewRegistry.getAvailableLookupViewId(metadata.getClass(clazz));
+
+                if (!Objects.equals(availableListViewId, availableLookupViewId)) {
+                    screenField.setItems(availableListViewId, availableLookupViewId);
+                } else {
+                    screenField.setItems(availableLookupViewId);
+                }
             }
         }
     }

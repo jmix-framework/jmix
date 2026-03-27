@@ -17,6 +17,7 @@
 package io.jmix.fullcalendarflowui.kit.component.serialization;
 
 import io.jmix.fullcalendarflowui.kit.component.model.HasEnumId;
+import org.jspecify.annotations.Nullable;
 import tools.jackson.core.JsonGenerator;
 import tools.jackson.databind.SerializationContext;
 import tools.jackson.databind.ser.std.StdSerializer;
@@ -31,7 +32,7 @@ public class EnumIdSerializer extends StdSerializer<HasEnumId> {
     }
 
     @Override
-    public void serialize(HasEnumId value, JsonGenerator gen, SerializationContext provider) {
+    public void serialize(@Nullable HasEnumId value, JsonGenerator gen, SerializationContext provider) {
         if (value == null) {
             gen.writeNull();
             return;

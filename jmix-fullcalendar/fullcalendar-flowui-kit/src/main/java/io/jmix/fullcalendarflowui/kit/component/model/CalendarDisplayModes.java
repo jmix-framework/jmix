@@ -16,6 +16,8 @@
 
 package io.jmix.fullcalendarflowui.kit.component.model;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * Supported component's display modes.
  */
@@ -47,6 +49,7 @@ public enum CalendarDisplayModes implements CalendarDisplayMode {
         return id;
     }
 
+    @Nullable
     public static CalendarDisplayModes fromId(String id) {
         for (CalendarDisplayModes mode : CalendarDisplayModes.values()) {
             if (mode.getId().equals(id)) {

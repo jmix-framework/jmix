@@ -16,6 +16,7 @@
 
 package io.jmix.chartsflowui.kit.component.serialization;
 
+import org.jspecify.annotations.Nullable;
 import tools.jackson.core.JacksonException;
 import tools.jackson.core.JsonGenerator;
 import tools.jackson.databind.SerializationContext;
@@ -30,7 +31,7 @@ public abstract class AbstractSerializer<T> extends StdSerializer<T> {
     }
 
     @Override
-    public void serialize(T value, JsonGenerator gen, SerializationContext provider) throws JacksonException {
+    public void serialize(@Nullable T value, JsonGenerator gen, SerializationContext provider) throws JacksonException {
         if (value == null) {
             gen.writeNull();
             return;
@@ -42,14 +43,14 @@ public abstract class AbstractSerializer<T> extends StdSerializer<T> {
     public abstract void serializeNonNullValue(T value, JsonGenerator gen, SerializationContext provider)
             throws JacksonException;
 
-    protected void writeIfNotNull(String fieldName, Object value, JsonGenerator gen, SerializationContext provider)
+    protected void writeIfNotNull(String fieldName,@Nullable  Object value, JsonGenerator gen, SerializationContext provider)
             throws JacksonException {
         if (value != null) {
             provider.defaultSerializeProperty(fieldName, value, gen);
         }
     }
 
-    protected void writeListIfNotEmpty(String fieldName, List<?> value,
+    protected void writeListIfNotEmpty(String fieldName,@Nullable  List<?> value,
                                        JsonGenerator gen, SerializationContext provider) throws JacksonException {
         if (value != null && !value.isEmpty()) {
             provider.defaultSerializeProperty(fieldName, value, gen);

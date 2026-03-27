@@ -18,6 +18,8 @@ package io.jmix.flowui.kit.component;
 
 import io.jmix.flowui.kit.action.Action;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * Interface to be implemented by UI components or their sub-parts that have an action.
  */
@@ -28,5 +30,6 @@ public interface ActionHolder {
      *
      * @return the associated action
      */
+    @Nullable
     Action getAction();
 }

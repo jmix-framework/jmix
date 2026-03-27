@@ -26,6 +26,7 @@ import com.vaadin.flow.component.shared.ValidationUtil;
 import com.vaadin.flow.component.shared.internal.ValidationController;
 import com.vaadin.flow.data.binder.HasValidator;
 import com.vaadin.flow.data.binder.Validator;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Optional;
 
@@ -102,6 +103,7 @@ public class JmixSwitch extends AbstractSinglePropertyField<JmixSwitch, Boolean>
      *
      * @return the current label text
      */
+    @Nullable
     @Override
     public String getLabel() {
         return getElement().getProperty("label");
@@ -113,7 +115,7 @@ public class JmixSwitch extends AbstractSinglePropertyField<JmixSwitch, Boolean>
      * @param label the label text to set
      */
     @Override
-    public void setLabel(String label) {
+    public void setLabel(@Nullable String label) {
         if (getElement().equals(labelElement.getElement().getParent())) {
             getElement().removeChild(labelElement.getElement());
         }

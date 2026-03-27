@@ -31,7 +31,7 @@ public final class ChartUpdateUtil {
         }
     }
 
-    public static <T extends DataItem> void requestIncrementalUpdateChartDataSet(JmixChart chart,
+    public static <T extends DataItem> void requestIncrementalUpdateChartDataSet(@Nullable JmixChart chart,
                                                                                  ChartItems.ItemSetChangeEvent<T> event) {
         if (chart != null) {
             chart.requestIncrementalUpdateChartDataSet(event);

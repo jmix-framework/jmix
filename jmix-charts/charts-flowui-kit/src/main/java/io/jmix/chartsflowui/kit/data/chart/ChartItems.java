@@ -36,6 +36,7 @@ public interface ChartItems<T extends DataItem> {
      * @param itemId the item id
      * @return the item by the given id
      */
+    @Nullable
     DataItem getItem(Object itemId);
 
     /**

@@ -19,6 +19,7 @@ package io.jmix.chartsflowui.data.item;
 import io.jmix.chartsflowui.kit.data.chart.DataItem;
 import io.jmix.core.metamodel.model.utils.MethodsCache;
 import io.jmix.core.metamodel.model.utils.ObjectPathUtils;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -59,6 +60,7 @@ public class SimpleDataItem implements DataItem {
      *     <li>Otherwise, method returns getter value.</li>
      * </ul>
      */
+    @Nullable
     @Override
     public Object getValue(String path) {
 
@@ -99,6 +101,7 @@ public class SimpleDataItem implements DataItem {
         return methodCacheMap.computeIfAbsent(cls, k -> MethodsCache.getOrCreate(cls));
     }
 
+    @Nullable
     @Override
     public Object getId() {
         return item;

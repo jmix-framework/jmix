@@ -33,7 +33,7 @@ public interface ActionItem extends DropdownButtonItem, ActionHolder {
     /**
      * Returns the {@link Action} associated with this item.
      *
-     * @return the associated action, or null if no action is set
+     * @return the associated action
      */
     @Override
     Action getAction();

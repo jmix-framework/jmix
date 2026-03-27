@@ -102,7 +102,7 @@
                             </columns>
                         </treeDataGrid>
                     </vbox>
-                    <vbox id="bandsDetailsLayout" classNames="bands-details-layout">
+                    <vbox id="bandsDetailsLayout" classNames="bands-details-layout" padding="false">
                         <formLayout id="bandForm" dataContainer="bandsDc">
                             <textField id="bandNameField" property="name"/>
                             <select id="orientationField" property="orientation" emptySelectionAllowed="true"/>
@@ -208,6 +208,7 @@
                                     </vbox>
                                     <vbox id="jsonDataSetTypeVBox" padding="false" width="100%" height="100%">
                                         <textArea id="jsonPathQueryTextAreaField"
+                                                  minHeight="10em"
                                                   dataContainer="dataSetsDc"
                                                   label="msg://bandsTab.dataSetTypeLayout.jsonPathQueryTextAreaField.label"
                                                   property="jsonPathQuery"
@@ -256,7 +257,7 @@
                                     </vbox>
                                 </div>
                             </flexLayout>
-                            <flexLayout id="multiDataSetLayout" classNames="multi-data-set-layout"
+                            <flexLayout id="multiDataSetLayout" classNames="multi-data-set-layout" flexDirection="COLUMN"
                                  width="100%" height="100%" flexWrap="WRAP"
                                  visible="false">
                                 <vbox id="dataSetsDataGridLayout" padding="false" minHeight="15em" maxHeight="100%"
@@ -265,14 +266,15 @@
                                         <button id="createDataSetBtn" action="dataSetsDataGrid.create"/>
                                         <button id="removeDataSetBtn" action="dataSetsDataGrid.remove"/>
                                     </hbox>
-                                    <dataGrid id="dataSetsDataGrid" dataContainer="dataSetsDc" height="100%">
+                                    <dataGrid id="dataSetsDataGrid" dataContainer="dataSetsDc" height="100%"
+                                              minHeight="15em">
                                         <actions>
                                             <action id="create" type="list_create" actionVariant="PRIMARY"
                                                     description="msg://bandsTab.dataSetsDataGrid.action.create.description"/>
                                             <action id="remove" type="list_remove"
                                                     description="msg://bandsTab.dataSetsDataGrid.action.remove.description"/>
                                         </actions>
-                                        <columns>
+                                        <columns resizable="true">
                                             <column property="name"/>
                                             <column property="type"/>
                                         </columns>

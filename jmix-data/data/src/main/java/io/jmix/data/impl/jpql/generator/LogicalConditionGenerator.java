@@ -96,7 +96,7 @@ public class LogicalConditionGenerator implements ConditionGenerator {
 
         for (Condition nestedCondition : logicalCondition.getConditions()) {
             ConditionGenerator generator = resolver.getConditionGenerator(new ConditionGenerationContext(nestedCondition));
-            parameters = generator.processParameters(parameters, queryParameters, condition, entityName);
+            parameters = generator.processParameters(parameters, queryParameters, nestedCondition, entityName);
         }
 
         return parameters;

@@ -21,6 +21,7 @@ import io.jmix.core.JmixOrder;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.QueryUtils;
+import io.jmix.core.common.datastruct.Pair;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -29,12 +30,14 @@ import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.core.querycondition.PropertyConditionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import org.jspecify.annotations.Nullable;
+import java.util.List;
+import java.util.Map;
 
 import static io.jmix.core.metamodel.model.MetaProperty.Type.ASSOCIATION;
 import static io.jmix.core.metamodel.model.MetaProperty.Type.COMPOSITION;
@@ -46,6 +49,9 @@ public class PropertyConditionGenerator implements ConditionGenerator {
     protected MetadataTools metadataTools;
     protected Metadata metadata;
 
+    @Nullable
+    protected InIntervalParametersResolver inIntervalResolver;
+
     @Value("${jmix.eclipselink.use-inner-join-in-condition:false}")
     protected boolean useInnerJoinInCondition;
 
@@ -56,6 +62,11 @@ public class PropertyConditionGenerator implements ConditionGenerator {
     public PropertyConditionGenerator(MetadataTools metadataTools, Metadata metadata) {
         this.metadataTools = metadataTools;
         this.metadata = metadata;
+    }
+
+    @Autowired(required = false)
+    public void setInIntervalResolver(InIntervalParametersResolver inIntervalResolver) {
+        this.inIntervalResolver = inIntervalResolver;
     }
 
     @Override
@@ -146,7 +157,45 @@ public class PropertyConditionGenerator implements ConditionGenerator {
             String property = getProperty(propertyCondition.getProperty(), context.getEntityName());
             return generateWhere(propertyCondition, entityAlias, property, context.isElementCollection());
         }
+    }
 
+    @Override
+    public Map<String, Object> processParameters(Map<String, Object> parameters,
+                                                 Map<String, Object> queryParameters,
+                                                 Condition condition,
+                                                 @Nullable String entityName) {
+        PropertyCondition propertyCondition = (PropertyCondition) condition;
+
+        String parameterName = propertyCondition.getParameterName();
+        if (PropertyConditionUtils.isUnaryOperation(propertyCondition)) {
+            //remove query parameter for unary operations (e.g. IS_NULL)
+            parameters.remove(parameterName);
+        } else if (PropertyConditionUtils.isInIntervalOperation(propertyCondition)) {
+            //remove query parameter for "in interval" operations
+            parameters.remove(parameterName);
+
+            if (inIntervalResolver != null) {
+                // trying to resolve parameters for "in interval date between" operation
+                List<Pair<String, Object>> inIntervalParameters = inIntervalResolver.resolveParameters(propertyCondition);
+                if (!inIntervalParameters.isEmpty()) {
+                    inIntervalParameters.forEach(p -> parameters.put(p.getFirst(), p.getSecond()));
+                }
+            }
+        } else {
+            //PropertyCondition may take a value from queryParameters collection or from the
+            //PropertyCondition.parameterValue attribute. queryParameters has higher priority.
+            Object parameterValue;
+            if (!queryParameters.containsKey(parameterName) || queryParameters.get(parameterName) == null) {
+                parameterValue = generateParameterValue(propertyCondition, propertyCondition.getParameterValue(), entityName);
+            } else {
+                //modify the query parameter value (e.g. wrap value for "contains" jpql operation)
+                Object queryParameterValue = queryParameters.get(parameterName);
+                parameterValue = generateParameterValue(propertyCondition, queryParameterValue, entityName);
+            }
+            parameters.put(parameterName, parameterValue);
+        }
+
+        return parameters;
     }
 
     @Nullable

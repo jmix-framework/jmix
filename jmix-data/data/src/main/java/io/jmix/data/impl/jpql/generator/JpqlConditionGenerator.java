@@ -21,10 +21,11 @@ import io.jmix.core.JmixOrder;
 import io.jmix.core.QueryUtils;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.JpqlCondition;
+import org.jspecify.annotations.Nullable;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import org.jspecify.annotations.Nullable;
+import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -58,6 +59,34 @@ public class JpqlConditionGenerator implements ConditionGenerator {
         return jpqlCondition != null
                 ? jpqlCondition.getWhere()
                 : "";
+    }
+
+    @Override
+    public Map<String, Object> processParameters(Map<String, Object> parameters,
+                                                 Map<String, Object> queryParameters,
+                                                 Condition condition,
+                                                 @Nullable String entityName) {
+        JpqlCondition jpqlCondition = (JpqlCondition) condition;
+
+        for (Map.Entry<String, Object> parameter : jpqlCondition.getParameterValuesMap().entrySet()) {
+            // JpqlCondition may take a value from queryParameters collection or from the
+            // JpqlCondition.parameterValuesMap attribute. queryParameters value has higher priority.
+            Object parameterValue;
+            String parameterName = parameter.getKey();
+            if (!queryParameters.containsKey(parameterName) || queryParameters.get(parameterName) == null) {
+                // Modify the query parameter value (e.g. wrap value from JpqlFilter for "contains"
+                // jpql operation)
+                parameterValue = generateParameterValue(jpqlCondition, parameter.getValue(), entityName);
+            } else {
+                // In other cases, it is assumed that the value has already been modified
+                // (e.g. wrapped value from DataLoadCoordinator)
+                parameterValue = queryParameters.get(parameter.getKey());
+            }
+
+            parameters.put(parameter.getKey(), parameterValue);
+        }
+
+        return parameters;
     }
 
     @Nullable

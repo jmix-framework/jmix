@@ -17,8 +17,9 @@
 package io.jmix.data.impl.jpql.generator;
 
 import io.jmix.core.querycondition.Condition;
-
 import org.jspecify.annotations.Nullable;
+
+import java.util.Map;
 
 /**
  * Modifies parts of JPQL query
@@ -48,6 +49,19 @@ public interface ConditionGenerator {
      * @return a JPQL 'where' clause modified according to the given context
      */
     String generateWhere(ConditionGenerationContext context);
+
+    /**
+     * Returns parameters modified according to the given condition.
+     *
+     * @param parameters      result parameters
+     * @param queryParameters query parameters
+     * @param condition       the condition
+     * @return modified parameters
+     */
+    Map<String, Object> processParameters(Map<String, Object> parameters,
+                                          Map<String, Object> queryParameters,
+                                          Condition condition,
+                                          @Nullable String entityName);
 
     /**
      * Returns a parameter value modified according to the given condition.

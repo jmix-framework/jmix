@@ -20,12 +20,13 @@ import com.google.common.base.Strings;
 import io.jmix.core.JmixOrder;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.LogicalCondition;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import org.jspecify.annotations.Nullable;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component("data_LogicalConditionGenerator")
@@ -84,6 +85,21 @@ public class LogicalConditionGenerator implements ConditionGenerator {
         }
 
         return sb.toString();
+    }
+
+    @Override
+    public Map<String, Object> processParameters(Map<String, Object> parameters,
+                                                 Map<String, Object> queryParameters,
+                                                 Condition condition,
+                                                 @Nullable String entityName) {
+        LogicalCondition logicalCondition = (LogicalCondition) condition;
+
+        for (Condition nestedCondition : logicalCondition.getConditions()) {
+            ConditionGenerator generator = resolver.getConditionGenerator(new ConditionGenerationContext(nestedCondition));
+            parameters = generator.processParameters(parameters, queryParameters, condition, entityName);
+        }
+
+        return parameters;
     }
 
     @Nullable

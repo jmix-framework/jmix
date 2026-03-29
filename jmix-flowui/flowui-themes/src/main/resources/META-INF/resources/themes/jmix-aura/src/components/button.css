@@ -53,7 +53,7 @@
 
 @media (min-resolution: 2x) {
   /* prettier-ignore */
-  :is(vaadin-button, vaadin-upload-button, vaadin-menu-bar-button[first-visible][last-visible], vaadin-drawer-toggle)[active]:not([disabled], [aria-disabled='true']) {
+  :is(jmix-value-picker-button)[active]:not([disabled], [aria-disabled='true']) {
     scale: 0.98;
     transition-duration: 50ms;
   }

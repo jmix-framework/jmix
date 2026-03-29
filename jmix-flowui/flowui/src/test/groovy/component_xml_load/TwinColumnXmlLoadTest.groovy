@@ -18,6 +18,7 @@ package component_xml_load
 
 import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.button.Button
+import com.vaadin.flow.component.html.Div
 import com.vaadin.flow.component.listbox.MultiSelectListBox
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import component_xml_load.screen.TwinColumnView
@@ -158,7 +159,7 @@ class TwinColumnXmlLoadTest extends FlowuiTestSpecification {
         def selectAllItems = (Button) customTwinColumn.getSubPart("selectAllItems")
         def deselectItems = (Button) customTwinColumn.getSubPart("deselectItems")
         def deselectAllItems = (Button) customTwinColumn.getSubPart("deselectAllItems")
-        def actionsPanel = (VerticalLayout) customTwinColumn.getSubPart("actionsPanel")
+        def actionsPanel = (Div) customTwinColumn.getSubPart("actionsPanel")
 
         twinColumnView.loadData()
 

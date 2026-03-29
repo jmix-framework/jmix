@@ -16,4 +16,5 @@
 
 @import './src/app/index.css';
 @import './src/components/index.css';
-@import './src/utility/index.css';
+@import './src/icons/index.css';
+@import 'src/utilities/index.css';

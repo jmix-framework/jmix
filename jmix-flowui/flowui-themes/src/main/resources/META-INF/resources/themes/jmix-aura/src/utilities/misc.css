@@ -1,5 +1,5 @@
 /*
- * Copyright 2026 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import '@vaadin/component-base/src/styles/style-props.js';
-import {css} from 'lit';
-import {jmixValuePickerActionsShared} from "../../styles/value-picker-actions-shared-styles";
+.bordered-panel {
+  border: 1px solid;
+  border-color: var(--vaadin-border-color-secondary);
+  border-radius: var(--vaadin-radius-l);
+}
 
-const jmixComboBoxPicker = css`
-    :host([opened]) {
-        pointer-events: auto;
-    }
-`;
-
-export const jmixComboBoxPickerStyles = [jmixValuePickerActionsShared, jmixComboBoxPicker];
+.footer-panel {
+  /*todo*/
+  /*background-color: var(--lumo-contrast-5pct);*/
+  padding: var(--vaadin-gap-s) var(--vaadin-gap-m);
+}

@@ -98,3 +98,13 @@ jmix-twin-column[theme~="no-space-between-actions"] vaadin-button:last-child {
 jmix-twin-column vaadin-button vaadin-icon[dir="rtl"] {
     rotate: 180deg;
 }
+
+@media (forced-colors: active) {
+    jmix-twin-column vaadin-item::part(checkmark)  {
+        display: block;
+    }
+
+    jmix-twin-column vaadin-item {
+        padding: var(--lumo-space-xs) var(--lumo-space-m) var(--lumo-space-xs) var(--lumo-space-xs);
+    }
+}

@@ -43,6 +43,7 @@
 @import './jmix-login-form.css';
 @import './jmix-tabsheet.css';
 @import './jmix-jpql-filter.css';
+@import './jmix-grid-layout.css';
 
 /* Vaadin components */
 @import './vaadin-text-field.css';

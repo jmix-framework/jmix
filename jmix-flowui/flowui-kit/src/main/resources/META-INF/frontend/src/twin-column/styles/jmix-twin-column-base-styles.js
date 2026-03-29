@@ -127,4 +127,8 @@ export const jmixTwinColumnStyles = css`
         flex-direction: column;
         gap: var(--vaadin-gap-s);
     }
+    
+    :host:before {
+        content: none;
+    }
 `;

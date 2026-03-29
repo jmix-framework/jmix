@@ -30,6 +30,10 @@
     lumo_mixins_picker-field-actions;
 }
 
+jmix-combo-box-picker[opened] {
+    pointer-events: auto;
+}
+
 jmix-combo-box-picker[readonly][invalid] {
     --lumo-required-field-indicator-color: var(--lumo-primary-text-color);
     --vaadin-input-field-invalid-background: transparent;

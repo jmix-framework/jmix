@@ -14,4 +14,22 @@
  * limitations under the License.
  */
 
-@import './misc.css';
+.jmix-login-form-additional-fields-container {
+    display: flex;
+    gap: var(--vaadin-gap-s);
+    justify-content: end;
+    padding-top: var(--vaadin-gap-s);
+}
+
+.jmix-login-form-remember-me {
+    align-self: center;
+    flex-grow: 1;
+}
+
+.jmix-login-form-locales-select {
+    width: var(--jmix-login-form-locales-select-width, 8em);
+}
+
+vaadin-select.jmix-login-form-locales-select vaadin-select-value-button {
+    width: 0;
+}

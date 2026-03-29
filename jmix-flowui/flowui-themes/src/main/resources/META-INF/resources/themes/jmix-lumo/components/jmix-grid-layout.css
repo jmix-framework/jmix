@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-.bordered-panel {
-  border: 1px solid;
-  border-color: var(--vaadin-border-color-secondary);
-  border-radius: var(--vaadin-radius-l);
+jmix-grid-layout::part(items) {
+    grid-gap: var(--_grid-layout-grid-gap, var(--lumo-space-s));
 }

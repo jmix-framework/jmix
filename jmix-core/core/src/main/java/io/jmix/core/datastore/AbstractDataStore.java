@@ -229,6 +229,9 @@ public abstract class AbstractDataStore implements DataStore {
             fireEvent(deletingEvent);
 
             beforeSaveTransactionCommit(context, savedEntities, deletedEntities);
+            DataStoreBeforeSaveCommitEvent beforeSaveCommitEvent =
+                    new DataStoreBeforeSaveCommitEvent(context, savedEntities, deletedEntities, saveState);
+            fireEvent(beforeSaveCommitEvent);
             commitTransaction(transaction);
         } finally {
             beforeSaveTransactionRollback(context);

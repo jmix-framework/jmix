@@ -15,18 +15,11 @@
  */
 
 import '@vaadin/component-base/src/styles/style-props.js';
+import {field} from '@vaadin/field-base/src/styles/field-base-styles.js';
+import {addGlobalStyles} from '@vaadin/component-base/src/styles/add-global-styles.js';
 import {css} from 'lit';
 
-export const jmixUploadFieldStyles = css`
-    vaadin-input-container {
-        background-color: transparent;
-        padding: 0;
-        cursor: auto;
-    }
-
-    vaadin-input-container:after {
-        border: 0;
-    }
+const jmixUploadField = css`
     
     :host::before {
         display: inline-flex;
@@ -42,6 +35,7 @@ export const jmixUploadFieldStyles = css`
 
     [part='input-field'] {
         --vaadin-input-field-hover-highlight-opacity: 0;
+        --vaadin-field-default-width: auto;
     }
     
     :host(:hover:not([readonly]):not([focused])) [part='input-field']::after {
@@ -50,8 +44,99 @@ export const jmixUploadFieldStyles = css`
 
     ::slotted(:not([slot$='fix'])) {
         padding: 0;
-        --_lumo-text-field-overflow-mask-image: 0;
         -webkit-mask-image: 0;
         mask-image: 0;
     }
+
+    ::slotted([slot='input']) {
+        align-items: center;
+        display: flex;
+        gap: var(--vaadin-gap-s);
+    }
 `;
+
+addGlobalStyles(
+    'jmix-upload-field',
+    css`
+        jmix-upload-field[theme~="no-file-name"] .jmix-upload-button {
+            flex-grow: 1;
+        }
+
+        .jmix-upload-field-file-name {
+            cursor: pointer;
+            margin: 0;
+        }
+
+        .jmix-upload-field-file-name:hover {
+            text-decoration: underline;
+        }
+
+        .jmix-upload-field-file-name.empty {
+            color: var(--vaadin-text-color);
+            cursor: default;
+        }
+
+        .jmix-upload-field-clear {
+            color: var(--vaadin-input-field-button-text-color, var(--vaadin-text-color-secondary));
+            cursor: var(--vaadin-clickable-cursor);
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-user-select: none;
+            user-select: none;
+            /* Ensure minimum click target (WCAG) */
+            padding: max(0px, (24px - 1lh) / 2);
+
+            background: transparent;
+            border: none;
+
+            border-radius: var(--vaadin-button-border-radius, var(--vaadin-radius-m));
+        }
+
+        /* Icon */
+
+        .jmix-upload-field-clear:before {
+            background: currentColor;
+            content: '';
+            display: block;
+            height: var(--vaadin-icon-size, 1lh);
+            width: var(--vaadin-icon-size, 1lh);
+            mask-size: var(--vaadin-icon-visual-size, 100%);
+            mask-position: 50%;
+            mask-repeat: no-repeat;
+            mask-image: var(--_vaadin-icon-cross);
+        }
+
+        jmix-upload-field[readonly] .jmix-upload-field-clear {
+            display: none;
+        }
+
+        jmix-upload-field[disabled] .jmix-upload-field-clear {
+            color: var(--vaadin-text-color-disabled);
+            cursor: var(--vaadin-disabled-cursor);
+        }
+
+        .jmix-upload-field-clear:focus-visible {
+            outline: var(--vaadin-focus-ring-width) solid var(--vaadin-focus-ring-color);
+            outline-offset: 1px;
+        }
+
+        @media (forced-colors: active) {
+            .jmix-upload-field-clear {
+                background: var(--vaadin-background-container);
+                border: 1px solid var(--vaadin-border-color-secondary);
+            }
+        }
+
+        .jmix-upload-dialog-content {
+            display: flex;
+            flex-direction: column;
+            min-width: 20em;
+        }
+
+        .jmix-upload-dialog-cancel-button {
+            align-self: end;
+        }
+    `,
+);
+
+export const jmixUploadFieldStyles = [field, jmixUploadField];

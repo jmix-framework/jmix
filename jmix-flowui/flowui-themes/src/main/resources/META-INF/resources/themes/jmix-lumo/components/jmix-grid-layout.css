@@ -14,14 +14,6 @@
  * limitations under the License.
  */
 
-import '@vaadin/component-base/src/styles/style-props.js';
-import {css} from 'lit';
-import {jmixValuePickerActionsShared} from "../../styles/value-picker-actions-shared-styles";
-
-const jmixComboBoxPicker = css`
-    :host([opened]) {
-        pointer-events: auto;
-    }
-`;
-
-export const jmixComboBoxPickerStyles = [jmixValuePickerActionsShared, jmixComboBoxPicker];
+jmix-grid-layout::part(items) {
+    grid-gap: var(--_grid-layout-grid-gap, var(--lumo-space-s));
+}

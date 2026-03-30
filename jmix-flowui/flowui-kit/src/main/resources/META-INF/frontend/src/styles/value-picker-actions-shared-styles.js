@@ -16,12 +16,15 @@
 
 import '@vaadin/component-base/src/styles/style-props.js';
 import {css} from 'lit';
-import {jmixValuePickerActionsShared} from "../../styles/value-picker-actions-shared-styles";
 
-const jmixComboBoxPicker = css`
-    :host([opened]) {
-        pointer-events: auto;
+export const jmixValuePickerActionsShared = css`
+
+    [part="action-part"] ::slotted(*) {
+        display: flex;  
+        gap: var(--vaadin-gap-xs);
+    }
+
+    :host([readonly]) [part="action-part"] {
+        display: none;
     }
 `;
-
-export const jmixComboBoxPickerStyles = [jmixValuePickerActionsShared, jmixComboBoxPicker];

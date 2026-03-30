@@ -13,3 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+@import './button.css';
+@import './jmix-login-form.css';
+@import './jmix-twin-column.css';

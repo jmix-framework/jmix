@@ -30,13 +30,28 @@ public enum TwinColumnVariant implements ThemeVariant {
 
     /**
      * Theme variant with hidden row borders between column items.
+     *
+     * @deprecated use {@link #LUMO_NO_ROW_BORDER}
      */
+    @Deprecated
     NO_ROW_BORDER("no-row-border"),
+
+    /**
+     * Theme variant with hidden row borders between column items.
+     */
+    LUMO_NO_ROW_BORDER("no-row-border"),
 
     /**
      * Theme variant with checkmarks to select items in columns.
      */
     CHECKMARKS("checkmarks"),
+
+    /**
+     * Theme variant with checkmarks to select items in columns.
+     *
+     * @deprecated use {@link #LUMO_CHECKMARKS} instead
+     */
+    LUMO_CHECKMARKS("checkmarks"),
 
     /**
      * Theme variant with no space between buttons and rounded top and bottom borders.

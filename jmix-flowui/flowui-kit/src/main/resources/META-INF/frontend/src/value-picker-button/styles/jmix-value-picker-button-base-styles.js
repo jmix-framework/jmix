@@ -19,44 +19,68 @@ import {css} from 'lit';
 
 export const jmixValuePickerButtonStyles = css`
     :host {
-        display: inline-block;
-        position: relative;
-        outline: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
         white-space: nowrap;
+        -webkit-tap-highlight-color: transparent;
         -webkit-user-select: none;
-        -moz-user-select: none;
         user-select: none;
+        cursor: var(--vaadin-clickable-cursor);
+        box-sizing: border-box;
+        flex-shrink: 0;
+        height: var(--vaadin-button-height, fit-content);
+        margin: var(--vaadin-button-margin, 0);
+        padding: 1px;
+        font-family: var(--vaadin-button-font-family, inherit);
+        font-size: var(--vaadin-button-font-size, inherit);
+        line-height: var(--vaadin-button-line-height, inherit);
+        font-weight: var(--vaadin-button-font-weight, 500);
+        color: var(--vaadin-button-text-color, var(--vaadin-text-color));
+        background: var(--vaadin-button-background, var(--vaadin-background-container));
+        background-origin: border-box;
+        border: var(--vaadin-button-border-width, 1px) solid
+        var(--vaadin-button-border-color, var(--vaadin-border-color-secondary));
+        border-radius: var(--vaadin-button-border-radius, var(--vaadin-radius-m));
+        touch-action: manipulation;
     }
 
     :host([hidden]) {
         display: none !important;
     }
 
-    /* Aligns the button with form fields when placed on the same line.
-    Note, to make it work, the form fields should have the same "::before" pseudo-element. */
-
-    .value-picker-button-container::before {
-        content: '\\2003';
-        display: inline-block;
-        width: 0;
+    :host(:is([focus-ring], :focus-visible)) {
+        outline: var(--vaadin-focus-ring-width) solid var(--vaadin-focus-ring-color);
+        outline-offset: 1px;
     }
 
-    .value-picker-button-container {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        width: 100%;
-        height: 100%;
-        min-height: inherit;
-        text-shadow: inherit;
-        background: transparent;
-        padding: 0;
-        border: none;
-        box-shadow: none;
+    :host([disabled]) {
+        pointer-events: var(--_vaadin-button-disabled-pointer-events, none);
+        cursor: var(--vaadin-disabled-cursor);
+        opacity: 0.5;
     }
 
     [part='icon'] {
         flex: none;
+    }
+
+    @media (forced-colors: active) {
+        :host {
+            --vaadin-button-border-width: 1px;
+            --vaadin-button-background: ButtonFace;
+            --vaadin-button-text-color: ButtonText;
+        }
+
+        ::slotted(*) {
+            forced-color-adjust: auto;
+        }
+
+        :host([disabled]) {
+            --vaadin-button-background: transparent !important;
+            --vaadin-button-border-color: GrayText !important;
+            --vaadin-button-text-color: GrayText !important;
+            opacity: 1;
+        }
     }
 `;

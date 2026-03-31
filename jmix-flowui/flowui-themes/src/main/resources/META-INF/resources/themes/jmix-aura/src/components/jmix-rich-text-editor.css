@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-@import '../src/components/jmix-upload-button.css';
+jmix-rich-text-editor .jmix-rich-text-editor-container {
+    background: var(--aura-surface-color) padding-box;
+    box-shadow: var(--aura-shadow-xs);
+}
 
-:root::before,
-:host::before {
-    --_lumo-jmix-upload-button-inject: 1;
-    --_lumo-jmix-upload-button-inject-modules:
-            lumo_components_jmix-upload-button;
+jmix-rich-text-editor .jmix-rich-text-editor-toolbar [class*='toolbar-button']:active {
+    scale: 0.95;
+    transition-duration: 80ms, 80ms, 50ms;
 }

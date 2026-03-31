@@ -14,22 +14,10 @@
  * limitations under the License.
  */
 
-@media lumo_components_jmix-upload-button {
-    :host(:not([nodrop])) {
-        border: 0;
-        overflow: initial;
-        padding: 0;
-        transition: background-color 0.6s;
-    }
-    [part='drop-label'] {
-        display: none;
-    }
+jmix-upload-field {
+    --vaadin-input-field-background: transparent;
+}
 
-    ::slotted(vaadin-button) {
-        margin: 0;
-    }
-
-    ::slotted(vaadin-button[theme~="full-width"]) {
-        width: 100%;
-    }
+jmix-upload-field:not([readonly],[disabled])::part(input-field) {
+    box-shadow: none;
 }

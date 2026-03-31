@@ -18,8 +18,10 @@ package io.jmix.flowui.data.grid;
 
 import com.google.common.primitives.Booleans;
 import com.vaadin.flow.shared.Registration;
+import io.jmix.core.annotation.Experimental;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.component.grid.sort.DataGridSort;
+import io.jmix.flowui.component.grid.sort.PersistentSortInfo;
 import io.jmix.flowui.data.DataUnit;
 import io.jmix.flowui.data.HasType;
 import org.springframework.lang.Nullable;
@@ -117,16 +119,20 @@ public interface DataGridItems<T> extends DataUnit, HasType<T> {
 
         /**
          * Sorts the items based on the specified {@link DataGridSort}.
+         * <p>
+         * The default implementation delegates to {@link #sort(Object[], boolean[])} and filters out properties
+         * without a {@link MetaPropertyPath}.
          *
          * @param dataGridSort an object that contains sorting information
          */
+        @Experimental
         default void sort(DataGridSort dataGridSort) {
-            List<DataGridSort.SortInfo> sortInfos = dataGridSort.getSortInfos();
+            List<PersistentSortInfo> sortInfos = dataGridSort.getPersistentSortInfos();
 
             List<Object> propertyIds = new ArrayList<>(sortInfos.size());
             List<Boolean> ascendingOrders = new ArrayList<>(sortInfos.size());
 
-            for (DataGridSort.SortInfo sortInfo : sortInfos) {
+            for (PersistentSortInfo sortInfo : sortInfos) {
                 MetaPropertyPath propertyPath = sortInfo.getMetaPropertyPath();
                 if (propertyPath == null) {
                     continue;

@@ -19,7 +19,8 @@ package component.grid.view;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.flowui.component.grid.DataGrid;
-import io.jmix.flowui.component.grid.sort.DataGridSort;
+import io.jmix.flowui.component.grid.sort.DataGridSortBuilder;
+import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.model.KeyValueCollectionLoader;
 import io.jmix.flowui.view.StandardView;
@@ -27,8 +28,11 @@ import io.jmix.flowui.view.ViewComponent;
 import io.jmix.flowui.view.ViewController;
 import io.jmix.flowui.view.ViewDescriptor;
 import test_support.entity.datastores.MainDsEntity;
+import test_support.entity.datastores.Mem1DtoEntity;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.UUID;
 
 @Route("DataGridSortBuilderDelegateTestView")
 @ViewController("DataGridSortBuilderDelegateTestView")
@@ -51,6 +55,10 @@ public class DataGridSortBuilderDelegateTestView extends StandardView {
     public CollectionLoader<MainDsEntity> mainDsEntitiesDl1;
     @ViewComponent
     public CollectionLoader<MainDsEntity> mainDsEntitiesDl2;
+    @ViewComponent
+    public CollectionContainer<MainDsEntity> mainDsEntitiesDc1;
+    @ViewComponent
+    public CollectionContainer<MainDsEntity> mainDsEntitiesDc2;
 
     @ViewComponent
     public KeyValueCollectionLoader keyValueEntitiesDl1;
@@ -61,65 +69,61 @@ public class DataGridSortBuilderDelegateTestView extends StandardView {
     protected int keyValueComparatorCallCount;
 
     public void setupJpaSortBuilderDelegate() {
-        jpaDataGridPersistent.setSortBuilderDelegate(sortContext -> {
-            List<DataGridSort.SortInfo> sortInfos = DataGridSort.SortInfo.of(sortContext.getSortInfos())
-                    .stream()
-                    .map(sortInfo -> {
-                        if ("mem1DtoEntity".equals(sortInfo.getProperty())) {
-                            sortInfo.withExpression("e.mem1DtoEntityId");
-                        }
-                        return sortInfo;
-                    })
-                    .toList();
-
-            return DataGridSort.by(sortInfos, DataGridSort.InMemorySortInfo.of(sortContext.getSortInfos()));
-        });
+        jpaDataGridPersistent.setSortBuilderDelegate(sortContext ->
+                DataGridSortBuilder.create(sortContext)
+                        .replaceSort("mem1DtoEntity", "e.mem1DtoEntityId")
+                        .build());
     }
 
     public void setupJpaTransientInMemorySortBuilderDelegate() {
         jpaTransientComparatorCallCount = 0;
 
-        jpaDataGridInMemory.setSortBuilderDelegate(sortContext -> {
-            List<DataGridSort.InMemorySortInfo> inMemorySortInfos = DataGridSort.InMemorySortInfo.of(sortContext.getSortInfos())
-                    .stream()
-                    .map(sortInfo -> {
-                        if ("mem1DtoEntity".equals(sortInfo.getProperty())) {
-                            sortInfo.withComparator((o1, o2) -> {
-                                jpaTransientComparatorCallCount++;
-                                return 0;
-                            });
-                        }
-                        return sortInfo;
-                    })
-                    .toList();
-
-            return DataGridSort.by(DataGridSort.SortInfo.of(sortContext.getSortInfos()), inMemorySortInfos);
-        });
+        jpaDataGridInMemory.setSortBuilderDelegate(sortContext ->
+                DataGridSortBuilder.create(sortContext)
+                        .replaceSort("mem1DtoEntity", (o1, o2) -> {
+                            jpaTransientComparatorCallCount++;
+                            return 0;
+                        }).build());
     }
 
     public int getJpaTransientComparatorCallCount() {
         return jpaTransientComparatorCallCount;
     }
 
+    public void setupColumnComparator(DataGrid<MainDsEntity> dataGrid, String columnKey) {
+        dataGrid.getColumnByKey(columnKey).setComparator(createNameDescComparator());
+    }
+
+    public void setupJpaSortBuilderDelegate(DataGrid<MainDsEntity> dataGrid,
+                                            String columnKey,
+                                            boolean replaceComparator,
+                                            boolean replaceExpression) {
+        dataGrid.setSortBuilderDelegate(sortContext -> {
+            DataGridSortBuilder<MainDsEntity> sortBuilder = DataGridSortBuilder.create(sortContext);
+            if (replaceComparator) {
+                sortBuilder.replaceSort(columnKey, createNameDescComparator());
+            }
+            if (replaceExpression) {
+                sortBuilder.replaceSort(columnKey, "e.name");
+            }
+            return sortBuilder.build();
+        });
+    }
+
+    public void setupTransientValues() {
+        setupTransientValues(mainDsEntitiesDc1);
+        setupTransientValues(mainDsEntitiesDc2);
+    }
+
     public void setupKeyValueInMemorySortBuilderDelegate() {
         keyValueComparatorCallCount = 0;
 
-        keyValueDataGridInMemory.setSortBuilderDelegate(sortContext -> {
-            List<DataGridSort.InMemorySortInfo> inMemorySortInfos = DataGridSort.InMemorySortInfo.of(sortContext.getSortInfos())
-                    .stream()
-                    .map(sortInfo -> {
-                        if ("name".equals(sortInfo.getProperty())) {
-                            sortInfo.withComparator((o1, o2) -> {
-                                keyValueComparatorCallCount++;
-                                return 0;
-                            });
-                        }
-                        return sortInfo;
-                    })
-                    .toList();
-
-            return DataGridSort.by(DataGridSort.SortInfo.of(sortContext.getSortInfos()), inMemorySortInfos);
-        });
+        keyValueDataGridInMemory.setSortBuilderDelegate(sortContext ->
+                DataGridSortBuilder.create(sortContext)
+                        .replaceSort("name", (o1, o2) -> {
+                            keyValueComparatorCallCount++;
+                            return 0;
+                        }).build());
     }
 
     public int getKeyValueComparatorCallCount() {
@@ -127,18 +131,32 @@ public class DataGridSortBuilderDelegateTestView extends StandardView {
     }
 
     public void setupKeyValuePersistentSortBuilderDelegate() {
-        keyValueDataGridPersistent.setSortBuilderDelegate(sortContext -> {
-            List<DataGridSort.SortInfo> sortInfos = DataGridSort.SortInfo.of(sortContext.getSortInfos())
-                    .stream()
-                    .map(sortInfo -> {
-                        if ("name".equals(sortInfo.getProperty())) {
-                            sortInfo.withExpression("e.mem1DtoEntityId");
-                        }
-                        return sortInfo;
-                    })
-                    .toList();
+        keyValueDataGridPersistent.setSortBuilderDelegate(sortContext ->
+                DataGridSortBuilder.create(sortContext)
+                        .replaceSort("name", "e.mem1DtoEntityId")
+                        .build());
+    }
 
-            return DataGridSort.by(sortInfos, DataGridSort.InMemorySortInfo.of(sortContext.getSortInfos()));
+    private void setupTransientValues(CollectionContainer<MainDsEntity> container) {
+        for (MainDsEntity entity : container.getMutableItems()) {
+            entity.setMem1DtoEntity(createTransientEntity(entity.getName()));
+        }
+    }
+
+    private Mem1DtoEntity createTransientEntity(String name) {
+        Mem1DtoEntity entity = new Mem1DtoEntity();
+        entity.setName(name);
+        entity.setId(switch (name) {
+            case "a" -> UUID.fromString("00000000-0000-0000-0000-000000000001");
+            case "b" -> UUID.fromString("00000000-0000-0000-0000-000000000002");
+            default -> UUID.fromString("00000000-0000-0000-0000-000000000003");
         });
+        return entity;
+    }
+
+    private Comparator<MainDsEntity> createNameDescComparator() {
+        return Comparator.comparing(MainDsEntity::getName, Comparator.nullsFirst(String::compareTo))
+                .reversed()
+                .thenComparing(MainDsEntity::getId, Comparator.nullsFirst(UUID::compareTo));
     }
 }

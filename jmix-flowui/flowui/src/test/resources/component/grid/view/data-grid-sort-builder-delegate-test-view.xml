@@ -22,7 +22,7 @@
             <fetchPlan extends="_base"/>
             <loader id="mainDsEntitiesDl1">
                 <query>
-                    <![CDATA[select e from test_MainDsEntity e]]>
+                    <![CDATA[select e from test_MainDsEntity e order by e.id]]>
                 </query>
             </loader>
         </collection>
@@ -32,7 +32,7 @@
             <fetchPlan extends="_base"/>
             <loader id="mainDsEntitiesDl2">
                 <query>
-                    <![CDATA[select e from test_MainDsEntity e]]>
+                    <![CDATA[select e from test_MainDsEntity e order by e.id]]>
                 </query>
             </loader>
         </collection>
@@ -70,6 +70,7 @@
             <columns>
                 <column property="name"/>
                 <column property="mem1DtoEntity" sortable="true"/>
+                <column key="noPropertyColumn" sortable="true"/>
             </columns>
         </dataGrid>
 
@@ -81,6 +82,7 @@
             <columns>
                 <column property="name"/>
                 <column property="mem1DtoEntity" sortable="true"/>
+                <column key="noPropertyColumn" sortable="true"/>
             </columns>
         </dataGrid>
 

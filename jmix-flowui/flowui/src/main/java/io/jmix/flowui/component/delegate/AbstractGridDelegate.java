@@ -47,12 +47,10 @@ import io.jmix.flowui.component.AggregationInfo;
 import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.component.SupportsEnterPress.EnterPressEvent;
 import io.jmix.flowui.component.UiComponentUtils;
-import io.jmix.flowui.component.grid.DataGridColumn;
-import io.jmix.flowui.component.grid.DataGridDataProviderChangeObserver;
-import io.jmix.flowui.component.grid.EnhancedDataGrid;
+import io.jmix.flowui.component.grid.*;
 import io.jmix.flowui.component.grid.editor.DataGridEditor;
 import io.jmix.flowui.component.grid.editor.DataGridEditorImpl;
-import io.jmix.flowui.component.grid.sort.DataGridSort;
+import io.jmix.flowui.component.grid.sort.*;
 import io.jmix.flowui.data.BindingState;
 import io.jmix.flowui.data.EntityDataUnit;
 import io.jmix.flowui.data.aggregation.Aggregation;
@@ -120,7 +118,7 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
     protected HeaderRow aggregationHeader;
     protected FooterRow aggregationFooter;
 
-    protected Function<EnhancedDataGrid.DataGridSortContext, DataGridSort> sortBuilderDelegate;
+    protected Function<DataGridSortContext<E>, DataGridSort> sortBuilderDelegate;
 
     /**
      * Columns that are bounded with data container (loaded from descriptor or
@@ -716,12 +714,10 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
         List<GridSortOrder<E>> sortOrders = event.getSortOrder();
         if (sortOrders.isEmpty()) {
             dataProvider.resetSortOrder();
+        } else if (sortBuilderDelegate != null) {
+            dataProvider.sort(sortBuilderDelegate.apply(createDataGridSortContext(sortOrders)));
         } else {
-            if (sortBuilderDelegate != null) {
-                dataProvider.sort(sortBuilderDelegate.apply(createDataGridSortContext(sortOrders)));
-                return;
-            }
-            dataProvider.sort(DataGridSort.by(collectSortInfo(sortOrders), collectMemorySortInfo(sortOrders)));
+            dataProvider.sort(DataGridSortBuilder.create(createDataGridSortContext(sortOrders)).build());
         }
     }
 
@@ -962,11 +958,11 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
     }
 
     @Nullable
-    public Function<EnhancedDataGrid.DataGridSortContext, DataGridSort> getSortBuilderDelegate() {
+    public Function<DataGridSortContext<E>, DataGridSort> getSortBuilderDelegate() {
         return sortBuilderDelegate;
     }
 
-    public void setSortBuilderDelegate(@Nullable Function<EnhancedDataGrid.DataGridSortContext, DataGridSort> sortBuilderDelegate) {
+    public void setSortBuilderDelegate(@Nullable Function<DataGridSortContext<E>, DataGridSort> sortBuilderDelegate) {
         this.sortBuilderDelegate = sortBuilderDelegate;
     }
 
@@ -980,8 +976,8 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
         updateAggregationRow();
     }
 
-    protected EnhancedDataGrid.DataGridSortContext createDataGridSortContext(List<GridSortOrder<E>> sortOrders) {
-        List<EnhancedDataGrid.DataGridSortContext.ColumnSortInfo> columnSortInfo = new ArrayList<>();
+    protected DataGridSortContext<E> createDataGridSortContext(List<GridSortOrder<E>> sortOrders) {
+        List<ColumnSortInfo<E>> columnSortInfo = new ArrayList<>();
         for (GridSortOrder<E> sortOrder : sortOrders) {
             Grid.Column<E> column = sortOrder.getSorted();
             if (column == null) {
@@ -991,61 +987,9 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
             boolean ascending = SortDirection.ASCENDING.equals(sortOrder.getDirection());
             MetaPropertyPath mpp = propertyColumns.get(column);
 
-            columnSortInfo.add(new EnhancedDataGrid.DataGridSortContext.ColumnSortInfo(mpp,
-                    (DataGridColumn<?>) column, ascending));
+            columnSortInfo.add(new ColumnSortInfoImpl<>((DataGridColumn<E>) column, mpp, ascending));
         }
-        return new EnhancedDataGrid.DataGridSortContext(columnSortInfo);
-    }
-
-    protected List<DataGridSort.InMemorySortInfo> collectMemorySortInfo(List<GridSortOrder<E>> sortOrders) {
-        List<DataGridSort.InMemorySortInfo> inMemorySortInfoList = new ArrayList<>();
-        for (GridSortOrder<E> sortOrder : sortOrders) {
-            Grid.Column<E> column = sortOrder.getSorted();
-            if (column == null) {
-                continue;
-            }
-
-            boolean ascending = SortDirection.ASCENDING.equals(sortOrder.getDirection());
-            MetaPropertyPath mpp = propertyColumns.get(column);
-
-            DataGridSort.InMemorySortInfo inMemorySortInfo = null;
-            if (mpp != null) {
-                inMemorySortInfo = new DataGridSort.InMemorySortInfo(mpp, ascending);
-                inMemorySortInfoList.add(inMemorySortInfo);
-            }
-
-            if (column instanceof DataGridColumn<E> dataGridColumn) {
-                Comparator<?> comparator = dataGridColumn.getComparatorOrNull();
-                if (comparator == null) {
-                    continue;
-                }
-
-                if (inMemorySortInfo != null) {
-                    inMemorySortInfo.withComparator(comparator);
-                } else {
-                    inMemorySortInfoList.add(
-                            new DataGridSort.InMemorySortInfo(column.getKey(), ascending)
-                                    .withComparator(comparator));
-                }
-            }
-        }
-        return inMemorySortInfoList;
-    }
-
-    protected List<DataGridSort.SortInfo> collectSortInfo(List<GridSortOrder<E>> sortOrders) {
-        List<DataGridSort.SortInfo> sortInfo = new ArrayList<>();
-        for (GridSortOrder<E> sortOrder : sortOrders) {
-            Grid.Column<E> column = sortOrder.getSorted();
-            if (column == null) {
-                continue;
-            }
-            boolean ascending = SortDirection.ASCENDING.equals(sortOrder.getDirection());
-            MetaPropertyPath mpp = propertyColumns.get(column);
-            if (mpp != null) {
-                sortInfo.add(new DataGridSort.SortInfo(mpp, ascending));
-            }
-        }
-        return sortInfo;
+        return new DataGridSortContext<>(component, columnSortInfo);
     }
 
     public static class ColumnSecurityContext<E> {

@@ -72,7 +72,7 @@ public class DataGridColumn<E> extends Grid.Column<E> implements ApplicationCont
 
     /**
      * Returns comparator for the column if it is set, otherwise returns {@code null}.
-     * The comparator is used in in-memory sorting.
+     * The comparator is used in-memory sorting.
      * <p>
      * To get non-null value use {@link #getComparator(SortDirection)}.
      *

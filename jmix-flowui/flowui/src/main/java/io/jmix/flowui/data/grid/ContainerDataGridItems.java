@@ -27,6 +27,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.grid.sort.DataGridSort;
+import io.jmix.flowui.component.grid.sort.InMemorySortInfo;
 import io.jmix.flowui.data.BindingState;
 import io.jmix.flowui.data.ContainerDataUnit;
 import io.jmix.flowui.kit.event.EventBus;
@@ -127,9 +128,9 @@ public class ContainerDataGridItems<T> extends AbstractDataProvider<T, Void>
     @Override
     public void sort(DataGridSort sort) {
         if (container.getSorter() instanceof BaseContainerSorter sorter) {
-            List<DataGridSort.InMemorySortInfo> memorySorts = sort.getInMemorySorts();
+            List<InMemorySortInfo> memorySorts = sort.getInMemorySortInfos();
             Map<String, Comparator<?>> comparators = new HashMap<>(memorySorts.size());
-            for (DataGridSort.InMemorySortInfo sortInfo : memorySorts) {
+            for (InMemorySortInfo sortInfo : memorySorts) {
                 if (sortInfo.getComparator() == null) {
                     continue;
                 }
@@ -160,7 +161,7 @@ public class ContainerDataGridItems<T> extends AbstractDataProvider<T, Void>
 
     protected Sort createSort(DataGridSort sort) {
         if (container.getItems().isEmpty()) {
-            return sort.convertToSort();
+            return sort.toPersistentSort();
         }
 
         DataLoader dataLoader = container instanceof HasLoader hasLoader
@@ -168,16 +169,16 @@ public class ContainerDataGridItems<T> extends AbstractDataProvider<T, Void>
                 : null;
 
         if (dataLoader == null) {
-            return sort.convertInMemoryToSort();
+            return sort.toInMemorySort();
         }
 
         if (dataLoader instanceof BaseCollectionLoader loader
                 && loader.getFirstResult() == 0
                 && container.getItems().size() < loader.getMaxResults()) {
-            return sort.convertInMemoryToSort();
+            return sort.toInMemorySort();
         }
 
-        return sort.convertToSort();
+        return sort.toPersistentSort();
     }
 
     protected Sort createSort(Object[] propertyId, boolean[] ascending) {

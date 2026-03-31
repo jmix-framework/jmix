@@ -31,6 +31,9 @@ interface StudioMainViewElements {
             icon = "io/jmix/flowui/kit/meta/icon/element/navigationBar.svg",
             unlimitedCount = false,
             visible = true,
+            propertyGroups = {
+                    StudioPropertyGroups.Css.class
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "css", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "touchOptimized", type = StudioPropertyType.BOOLEAN,
@@ -47,6 +50,9 @@ interface StudioMainViewElements {
             unlimitedCount = false,
             visible = true,
             target = {"com.vaadin.flow.component.applayout.AppLayout"},
+            propertyGroups = {
+                    StudioPropertyGroups.Css.class
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "css", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.STRING)
             }
@@ -61,6 +67,26 @@ interface StudioMainViewElements {
             target = {"com.vaadin.flow.component.applayout.AppLayout", "io.jmix.tabbedmode.component.workarea.WorkArea"},
             unlimitedCount = false,
             visible = true,
+            propertyGroups = {
+                    StudioPropertyGroups.Id.class,
+                    StudioPropertyGroups.AlignItems.class,
+                    StudioPropertyGroups.BoxSizing.class,
+                    StudioPropertyGroups.ClassNames.class,
+                    StudioPropertyGroups.Css.class,
+                    StudioPropertyGroups.EnabledWithTrueDefaultValue.class,
+                    StudioPropertyGroups.Expand.class,
+                    StudioPropertyGroups.Height.class,
+                    StudioPropertyGroups.JustifyContent.class,
+                    StudioPropertyGroups.Margin.class,
+                    StudioPropertyGroups.MaxHeight.class,
+                    StudioPropertyGroups.MaxWidth.class,
+                    StudioPropertyGroups.MinHeight.class,
+                    StudioPropertyGroups.MinWidth.class,
+                    StudioPropertyGroups.Padding.class,
+                    StudioPropertyGroups.Spacing.class,
+                    StudioPropertyGroups.LayoutThemeNames.class,
+                    StudioPropertyGroups.WidthWithDefaultValue100.class
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "alignItems", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,

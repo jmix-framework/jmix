@@ -20,6 +20,8 @@ import io.jmix.flowui.kit.meta.StudioElement;
 import io.jmix.flowui.kit.meta.StudioProperty;
 import io.jmix.flowui.kit.meta.StudioPropertyType;
 import io.jmix.flowui.kit.meta.StudioUiKit;
+import io.jmix.flowui.kit.meta.StudioPropertyGroups;
+import io.jmix.flowui.kit.meta.datacomponent.StudioDataComponentPropertyGroups;
 
 @StudioUiKit
 interface StudioDataElements {
@@ -33,6 +35,7 @@ interface StudioDataElements {
             unsupportedTarget = {"io.jmix.flowui.model.KeyValueContainer",
                     "io.jmix.flowui.model.KeyValueCollectionContainer"},
             documentationLink = "%VERSION%/flow-ui/data/property-containers.html",
+            propertyGroups = StudioDataComponentPropertyGroups.NestedDataContainerDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true),
                     @StudioProperty(xmlAttribute = "property", type = StudioPropertyType.STRING, required = true),
@@ -49,6 +52,7 @@ interface StudioDataElements {
             documentationLink = "%VERSION%/flow-ui/data/property-containers.html",
             unsupportedTarget = {"io.jmix.flowui.model.KeyValueContainer",
                     "io.jmix.flowui.model.KeyValueCollectionContainer"},
+            propertyGroups = StudioDataComponentPropertyGroups.NestedDataContainerDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true),
                     @StudioProperty(xmlAttribute = "property", type = StudioPropertyType.STRING, required = true),
@@ -66,6 +70,12 @@ interface StudioDataElements {
                     "io.jmix.flowui.model.KeyValueCollectionContainer",
                     "io.jmix.flowui.model.CollectionContainer"},
             documentationLink = "%VERSION%/flow-ui/data/data-loaders.html",
+            propertyGroups = {
+                    StudioPropertyGroups.FirstResult.class,
+                    StudioPropertyGroups.MaxResults.class,
+                    StudioPropertyGroups.ReadOnlyWithoutCategory.class,
+                    StudioPropertyGroups.Query.class
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "firstResult", type = StudioPropertyType.INTEGER,
@@ -88,6 +98,12 @@ interface StudioDataElements {
             unsupportedTarget = {"io.jmix.flowui.model.KeyValueContainer",
                     "io.jmix.flowui.model.KeyValueCollectionContainer"},
             documentationLink = "%VERSION%/flow-ui/data/data-loaders.html",
+            propertyGroups = {
+                    StudioPropertyGroups.FirstResult.class,
+                    StudioPropertyGroups.MaxResults.class,
+                    StudioPropertyGroups.ReadOnlyWithoutCategory.class,
+                    StudioPropertyGroups.Query.class
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "firstResult", type = StudioPropertyType.INTEGER,
@@ -112,6 +128,10 @@ interface StudioDataElements {
             unsupportedTarget = {"io.jmix.flowui.model.CollectionContainer",
                     "io.jmix.flowui.model.KeyValueCollectionContainer"},
             documentationLink = "%VERSION%/flow-ui/data/data-loaders.html",
+            propertyGroups = {
+                    StudioPropertyGroups.Store.class,
+                    StudioPropertyGroups.Query.class
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "store", type = StudioPropertyType.STORE),
@@ -127,6 +147,12 @@ interface StudioDataElements {
             icon = "io/jmix/flowui/kit/meta/icon/datacomponent/keyValueLoader.svg",
             target = "io.jmix.flowui.model.KeyValueCollectionContainer",
             documentationLink = "%VERSION%/flow-ui/data/data-loaders.html",
+            propertyGroups = {
+                    StudioPropertyGroups.FirstResult.class,
+                    StudioPropertyGroups.MaxResults.class,
+                    StudioPropertyGroups.Store.class,
+                    StudioPropertyGroups.Query.class
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "firstResult", type = StudioPropertyType.INTEGER,
@@ -144,6 +170,9 @@ interface StudioDataElements {
             classFqn = "io.jmix.core.impl.keyvalue.KeyValueMetaProperty",
             xmlElement = "property",
             icon = "io/jmix/flowui/kit/meta/icon/element/property.svg",
+            propertyGroups = {
+                    StudioPropertyGroups.EntityClass.class
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.STRING, required = true),
                     @StudioProperty(xmlAttribute = "datatype", type = StudioPropertyType.DATATYPE_ID),
@@ -181,6 +210,9 @@ interface StudioDataElements {
             classFqn = "io.jmix.flowui.facet.dataloadcoordinator.OnComponentValueChangedLoadTrigger",
             xmlElement = "onComponentValueChanged",
             icon = "io/jmix/flowui/kit/meta/icon/element/onComponentValueChangedLoadTrigger.svg",
+            propertyGroups = {
+                    StudioPropertyGroups.Param.class
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "param", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "likeClause", type = StudioPropertyType.ENUMERATION,
@@ -195,6 +227,9 @@ interface StudioDataElements {
             classFqn = "io.jmix.flowui.facet.dataloadcoordinator.OnContainerItemChangedLoadTrigger",
             xmlElement = "onContainerItemChanged",
             icon = "io/jmix/flowui/kit/meta/icon/element/onContainerItemChangedLoadTrigger.svg",
+            propertyGroups = {
+                    StudioPropertyGroups.Param.class
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "param", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "container", type = StudioPropertyType.COLLECTION_OR_INSTANCE_DATA_CONTAINER_REF, required = true)

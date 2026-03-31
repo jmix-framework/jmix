@@ -57,13 +57,13 @@ interface StudioMainViewComponents {
             icon = "io/jmix/flowui/kit/meta/icon/mainview/userIndicator.svg",
             availablePlaceRegExp = "(^(mainView/appLayout)?((/drawerLayout)|(/navigationBar))$)" +
                     "|(^((mainView/appLayout)?((/drawerLayout)|(/navigationBar)))?(/hasComponents)*$)",
-                        propertyGroups = {
+            propertyGroups = {
                     StudioPropertyGroups.Size.class,
                     StudioPropertyGroups.ClassNamesAndCss.class,
                     StudioPropertyGroups.IdAndVisible.class,
-                    StudioPropertyGroups.Enabled.class,
+                    StudioPropertyGroups.EnabledWithTrueDefaultValue.class,
+                    StudioPropertyGroups.Title.class
             },
-
             properties = {
                     @StudioProperty(xmlAttribute = "classNames", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "css", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.STRING),
@@ -97,6 +97,10 @@ interface StudioMainViewComponents {
                             @StudioAvailableChildrenInfo.TagInfo(qualifiedName = "appLayout", maxCount = 1)
                     }
             ),
+            propertyGroups = {
+                    StudioPropertyGroups.MessagesGroup.class,
+                    StudioPropertyGroups.Title.class
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "messagesGroup", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "title",  type = StudioPropertyType.LOCALIZED_STRING)

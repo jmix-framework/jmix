@@ -21,6 +21,7 @@ import io.jmix.flowui.kit.meta.StudioElement;
 import io.jmix.flowui.kit.meta.StudioProperty;
 import io.jmix.flowui.kit.meta.StudioPropertyType;
 import io.jmix.flowui.kit.meta.StudioUiKit;
+import io.jmix.flowui.kit.meta.StudioPropertyGroups;
 
 @StudioUiKit
 interface StudioHTMLElements {
@@ -31,6 +32,24 @@ interface StudioHTMLElements {
             xmlElement = "description",
             target = {"com.vaadin.flow.component.html.DescriptionList"},
             visible = true,
+            propertyGroups = {
+                    StudioPropertyGroups.ClassNames.class,
+                    StudioPropertyGroups.ClickShortcut.class,
+                    StudioPropertyGroups.Css.class,
+                    StudioPropertyGroups.EnabledWithTrueDefaultValue.class,
+                    StudioPropertyGroups.Height.class,
+                    StudioPropertyGroups.Id.class,
+                    StudioPropertyGroups.MaxHeight.class,
+                    StudioPropertyGroups.MaxWidth.class,
+                    StudioPropertyGroups.MinHeight.class,
+                    StudioPropertyGroups.MinWidth.class,
+                    StudioPropertyGroups.Text.class,
+                    StudioPropertyGroups.NativeLabelThemeNames.class,
+                    StudioPropertyGroups.Title.class,
+                    StudioPropertyGroups.Visible.class,
+                    StudioPropertyGroups.WhiteSpace.class,
+                    StudioPropertyGroups.Width.class
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "classNames", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "clickShortcut", type = StudioPropertyType.SHORTCUT_COMBINATION),
@@ -64,6 +83,24 @@ interface StudioHTMLElements {
             xmlElement = "term",
             target = "com.vaadin.flow.component.html.DescriptionList",
             visible = true,
+            propertyGroups = {
+                    StudioPropertyGroups.ClassNames.class,
+                    StudioPropertyGroups.ClickShortcut.class,
+                    StudioPropertyGroups.Css.class,
+                    StudioPropertyGroups.EnabledWithTrueDefaultValue.class,
+                    StudioPropertyGroups.Height.class,
+                    StudioPropertyGroups.Id.class,
+                    StudioPropertyGroups.MaxHeight.class,
+                    StudioPropertyGroups.MaxWidth.class,
+                    StudioPropertyGroups.MinHeight.class,
+                    StudioPropertyGroups.MinWidth.class,
+                    StudioPropertyGroups.Text.class,
+                    StudioPropertyGroups.NativeLabelThemeNames.class,
+                    StudioPropertyGroups.Title.class,
+                    StudioPropertyGroups.Visible.class,
+                    StudioPropertyGroups.WhiteSpace.class,
+                    StudioPropertyGroups.Width.class
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "classNames", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "clickShortcut", type = StudioPropertyType.SHORTCUT_COMBINATION),

@@ -21,6 +21,7 @@ import io.jmix.flowui.kit.meta.StudioPropertiesItem;
 import io.jmix.flowui.kit.meta.StudioProperty;
 import io.jmix.flowui.kit.meta.StudioPropertyType;
 import io.jmix.flowui.kit.meta.StudioUiKit;
+import io.jmix.flowui.kit.meta.StudioPropertyGroups;
 
 @StudioUiKit
 interface StudioListDataComponentActions {
@@ -31,6 +32,13 @@ interface StudioListDataComponentActions {
             classFqn = "io.jmix.flowui.action.list.CreateAction",
             documentationLink = "%VERSION%/flow-ui/actions/list-actions.html#list_create",
             availableInViewWizard = true,
+            propertyGroups = {
+                    StudioPropertyGroups.ActionVariantWithPrimaryDefaultValue.class,
+                    StudioPropertyGroups.Description.class,
+                    StudioPropertyGroups.EnabledWithTrueDefaultValue.class,
+                    StudioPropertyGroups.ShortcutCombination.class,
+                    StudioPropertyGroups.Visible.class
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
                             setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
@@ -62,6 +70,12 @@ interface StudioListDataComponentActions {
             classFqn = "io.jmix.flowui.action.list.EditAction",
             documentationLink = "%VERSION%/flow-ui/actions/list-actions.html#list_edit",
             availableInViewWizard = true,
+            propertyGroups = {
+                    StudioPropertyGroups.ActionVariantWithDefaultDefaultValue.class,
+                    StudioPropertyGroups.Description.class,
+                    StudioPropertyGroups.EnabledWithTrueDefaultValue.class,
+                    StudioPropertyGroups.Visible.class
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
                             setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
@@ -94,6 +108,13 @@ interface StudioListDataComponentActions {
             classFqn = "io.jmix.flowui.action.list.RemoveAction",
             documentationLink = "%VERSION%/flow-ui/actions/list-actions.html#list_remove",
             availableInViewWizard = true,
+            propertyGroups = {
+                    StudioPropertyGroups.ActionVariantWithDangerDefaultValue.class,
+                    StudioPropertyGroups.Description.class,
+                    StudioPropertyGroups.EnabledWithTrueDefaultValue.class,
+                    StudioPropertyGroups.ShortcutCombination.class,
+                    StudioPropertyGroups.Visible.class
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
                             setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
@@ -124,6 +145,13 @@ interface StudioListDataComponentActions {
             classFqn = "io.jmix.flowui.action.list.AddAction",
             documentationLink = "%VERSION%/flow-ui/actions/list-actions.html#list_add",
             availableInViewWizard = true,
+            propertyGroups = {
+                    StudioPropertyGroups.ActionVariantWithPrimaryDefaultValue.class,
+                    StudioPropertyGroups.Description.class,
+                    StudioPropertyGroups.EnabledWithTrueDefaultValue.class,
+                    StudioPropertyGroups.ShortcutCombination.class,
+                    StudioPropertyGroups.Visible.class
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
                             setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
@@ -152,6 +180,13 @@ interface StudioListDataComponentActions {
             classFqn = "io.jmix.flowui.action.list.ExcludeAction",
             documentationLink = "%VERSION%/flow-ui/actions/list-actions.html#list_exclude",
             availableInViewWizard = true,
+            propertyGroups = {
+                    StudioPropertyGroups.ActionVariantWithDangerDefaultValue.class,
+                    StudioPropertyGroups.Description.class,
+                    StudioPropertyGroups.EnabledWithTrueDefaultValue.class,
+                    StudioPropertyGroups.ShortcutCombination.class,
+                    StudioPropertyGroups.Visible.class
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
                             setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
@@ -182,6 +217,12 @@ interface StudioListDataComponentActions {
             classFqn = "io.jmix.flowui.action.list.ReadAction",
             documentationLink = "%VERSION%/flow-ui/actions/list-actions.html#list_read",
             availableInViewWizard = true,
+            propertyGroups = {
+                    StudioPropertyGroups.ActionVariantWithDefaultDefaultValue.class,
+                    StudioPropertyGroups.Description.class,
+                    StudioPropertyGroups.EnabledWithTrueDefaultValue.class,
+                    StudioPropertyGroups.Visible.class
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
                             setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
@@ -214,6 +255,13 @@ interface StudioListDataComponentActions {
             classFqn = "io.jmix.flowui.action.list.RefreshAction",
             documentationLink = "%VERSION%/flow-ui/actions/list-actions.html#list_refresh",
             availableInViewWizard = true,
+            propertyGroups = {
+                    StudioPropertyGroups.ActionVariantWithDefaultDefaultValue.class,
+                    StudioPropertyGroups.Description.class,
+                    StudioPropertyGroups.EnabledWithTrueDefaultValue.class,
+                    StudioPropertyGroups.ShortcutCombination.class,
+                    StudioPropertyGroups.Visible.class
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
                             setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
@@ -236,6 +284,15 @@ interface StudioListDataComponentActions {
             type = "list_itemTracking",
             description = "Tracks the selected item from the bound ListDataComponent",
             classFqn = "io.jmix.flowui.action.list.ItemTrackingAction",
+            propertyGroups = {
+                    StudioPropertyGroups.ActionVariantWithDefaultDefaultValue.class,
+                    StudioPropertyGroups.Description.class,
+                    StudioPropertyGroups.EnabledWithTrueDefaultValue.class,
+                    StudioPropertyGroups.LookAndFeelIcon.class,
+                    StudioPropertyGroups.ShortcutCombination.class,
+                    StudioPropertyGroups.Text.class,
+                    StudioPropertyGroups.Visible.class
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
                             setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",

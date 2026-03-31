@@ -17,12 +17,12 @@
 package io.jmix.flowui.kit.meta.elementsgroup;
 
 import io.jmix.flowui.kit.meta.StudioElementsGroup;
-import io.jmix.flowui.kit.meta.StudioMetaConstants;
 import io.jmix.flowui.kit.meta.StudioProperty;
 import io.jmix.flowui.kit.meta.StudioPropertyType;
 import io.jmix.flowui.kit.meta.StudioUiKit;
 
 import static io.jmix.flowui.kit.meta.StudioMetaConstants.TAG_PREFIX;
+import io.jmix.flowui.kit.meta.StudioPropertyGroups;
 
 @StudioUiKit
 interface StudioElementsGroups {
@@ -34,6 +34,11 @@ interface StudioElementsGroups {
             icon = "io/jmix/flowui/kit/meta/icon/elementsgroup/columns.svg",
             target = {"com.vaadin.flow.component.grid.Grid"},
             documentationLink = "%VERSION%/flow-ui/vc/components/dataGrid.html#columns",
+            propertyGroups = {
+                    StudioPropertyGroups.Exclude.class,
+                    StudioPropertyGroups.Sortable.class,
+                    StudioPropertyGroups.IncludeAll.class
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "exclude", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "sortable", type = StudioPropertyType.BOOLEAN,

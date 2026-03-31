@@ -20,6 +20,7 @@ import io.jmix.flowui.kit.meta.StudioFacet;
 import io.jmix.flowui.kit.meta.StudioProperty;
 import io.jmix.flowui.kit.meta.StudioPropertyType;
 import io.jmix.flowui.kit.meta.StudioUiKit;
+import io.jmix.flowui.kit.meta.StudioPropertyGroups;
 
 @StudioUiKit
 interface StudioFacets {
@@ -31,6 +32,12 @@ interface StudioFacets {
             xmlElement = "dataLoadCoordinator",
             icon = "io/jmix/flowui/kit/meta/icon/facet/dataLoadCoordinator.svg",
             documentationLink = "%VERSION%/flow-ui/facets/dataLoadCoordinator.html",
+            propertyGroups = {
+                    StudioPropertyGroups.IdWithoutCategory.class,
+                    StudioPropertyGroups.Auto.class,
+                    StudioPropertyGroups.ComponentPrefix.class,
+                    StudioPropertyGroups.ContainerPrefix.class
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "auto", type = StudioPropertyType.BOOLEAN,
@@ -50,6 +57,12 @@ interface StudioFacets {
             xmlElement = "fragmentDataLoadCoordinator",
             icon = "io/jmix/flowui/kit/meta/icon/facet/dataLoadCoordinator.svg",
             documentationLink = "%VERSION%/flow-ui/facets/dataLoadCoordinator.html",
+            propertyGroups = {
+                    StudioPropertyGroups.IdWithoutCategory.class,
+                    StudioPropertyGroups.Auto.class,
+                    StudioPropertyGroups.ComponentPrefix.class,
+                    StudioPropertyGroups.ContainerPrefix.class
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "auto", type = StudioPropertyType.BOOLEAN,
@@ -69,9 +82,8 @@ interface StudioFacets {
             xmlElement = "urlQueryParameters",
             icon = "io/jmix/flowui/kit/meta/icon/facet/urlQueryParameters.svg",
             documentationLink = "%VERSION%/flow-ui/facets/urlQueryParameters.html",
-            properties = {
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
-            }
+            propertyGroups = StudioPropertyGroups.IdWithoutCategory.class,
+            properties = @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID)
     )
     void queryParameters();
 
@@ -97,6 +109,10 @@ interface StudioFacets {
             category = "Facets",
             xmlElement = "settings",
             icon = "io/jmix/flowui/kit/meta/icon/facet/settings.svg",
+            propertyGroups = {
+                    StudioPropertyGroups.IdWithoutCategory.class,
+                    StudioPropertyGroups.Auto.class
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "auto", type = StudioPropertyType.BOOLEAN,
@@ -111,6 +127,10 @@ interface StudioFacets {
             category = "Facets",
             xmlElement = "fragmentSettings",
             icon = "io/jmix/flowui/kit/meta/icon/facet/settings.svg",
+            propertyGroups = {
+                    StudioPropertyGroups.IdWithoutCategory.class,
+                    StudioPropertyGroups.Auto.class
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "auto", type = StudioPropertyType.BOOLEAN,

@@ -33,6 +33,16 @@ public interface StudioChartsComponents {
                     StudioPropertyGroups.ClassNamesAndCss.class,
                     StudioPropertyGroups.IdAndVisible.class,
                     StudioPropertyGroups.Size.class,
+                    StudioPropertyGroups.AlignSelf.class,
+                    StudioChartsPropertyGroups.Animation.class,
+                    StudioChartsPropertyGroups.AnimationThreshold.class,
+                    StudioChartsPropertyGroups.AnimationDuration.class,
+                    StudioChartsPropertyGroups.AnimationEasing.class,
+                    StudioChartsPropertyGroups.AnimationDelay.class,
+                    StudioChartsPropertyGroups.AnimationDurationUpdate.class,
+                    StudioChartsPropertyGroups.AnimationEasingUpdate.class,
+                    StudioChartsPropertyGroups.AnimationDelayUpdate.class,
+                    StudioPropertyGroups.Colspan.class
             },
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,

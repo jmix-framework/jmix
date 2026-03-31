@@ -21,6 +21,7 @@ import io.jmix.flowui.kit.meta.StudioPropertiesItem;
 import io.jmix.flowui.kit.meta.StudioProperty;
 import io.jmix.flowui.kit.meta.StudioPropertyType;
 import io.jmix.flowui.kit.meta.StudioUiKit;
+import io.jmix.flowui.kit.meta.StudioPropertyGroups;
 
 @StudioUiKit(requiredDependencies = "io.jmix.bulkeditor:jmix-bulkeditor-starter")
 interface StudioBulkEditorActions {
@@ -31,6 +32,13 @@ interface StudioBulkEditorActions {
             classFqn = "io.jmix.bulkeditor.action.BulkEditAction",
             documentationLink = "%VERSION%/bulk-edit/index.html#usage",
             availableInViewWizard = true,
+            propertyGroups = {
+                    StudioPropertyGroups.ActionVariantWithDefaultDefaultValue.class,
+                    StudioPropertyGroups.Description.class,
+                    StudioPropertyGroups.EnabledWithTrueDefaultValue.class,
+                    StudioPropertyGroups.ShortcutCombination.class,
+                    StudioPropertyGroups.Visible.class
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
                             setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",

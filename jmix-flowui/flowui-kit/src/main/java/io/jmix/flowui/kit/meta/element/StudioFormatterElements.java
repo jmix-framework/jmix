@@ -20,6 +20,7 @@ import io.jmix.flowui.kit.meta.StudioElement;
 import io.jmix.flowui.kit.meta.StudioProperty;
 import io.jmix.flowui.kit.meta.StudioPropertyType;
 import io.jmix.flowui.kit.meta.StudioUiKit;
+import io.jmix.flowui.kit.meta.StudioPropertyGroups;
 
 @StudioUiKit
 interface StudioFormatterElements {
@@ -39,6 +40,9 @@ interface StudioFormatterElements {
             xmlElement = "custom",
             icon = "io/jmix/flowui/kit/meta/icon/element/formatter.svg",
             documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/formatter.html#custom-formatter",
+            propertyGroups = {
+                    StudioPropertyGroups.Bean.class
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "bean", type = StudioPropertyType.STRING, required = true)
             }

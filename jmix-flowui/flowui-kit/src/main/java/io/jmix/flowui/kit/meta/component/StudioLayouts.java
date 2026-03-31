@@ -57,7 +57,16 @@ interface StudioLayouts {
                     StudioPropertyGroups.AlignSelfAndJustifySelfAndColspan.class,
                     StudioPropertyGroups.ClassNamesAndCss.class,
                     StudioPropertyGroups.IdAndVisible.class,
-                    StudioPropertyGroups.Enabled.class,
+                    StudioPropertyGroups.EnabledWithTrueDefaultValue.class,
+                    StudioPropertyGroups.Height.class,
+                    StudioPropertyGroups.MaxHeight.class,
+                    StudioPropertyGroups.MaxWidth.class,
+                    StudioPropertyGroups.MinHeight.class,
+                    StudioPropertyGroups.MinWidth.class,
+                    StudioPropertyGroups.Opened.class,
+                    StudioPropertyGroups.DetailsSummaryText.class,
+                    StudioPropertyGroups.DetailsThemeNames.class,
+                    StudioPropertyGroups.WidthWithDefaultValueAuto.class
             },
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
@@ -110,7 +119,22 @@ interface StudioLayouts {
                     StudioPropertyGroups.AlignSelfAndJustifySelfAndColspan.class,
                     StudioPropertyGroups.ClassNamesAndCss.class,
                     StudioPropertyGroups.IdAndVisible.class,
-                    StudioPropertyGroups.Enabled.class,
+                    StudioPropertyGroups.EnabledWithTrueDefaultValue.class,
+                    StudioPropertyGroups.AlignItems.class,
+                    StudioPropertyGroups.BoxSizing.class,
+                    StudioPropertyGroups.ClickShortcut.class,
+                    StudioPropertyGroups.Expand.class,
+                    StudioPropertyGroups.Height.class,
+                    StudioPropertyGroups.JustifyContent.class,
+                    StudioPropertyGroups.Margin.class,
+                    StudioPropertyGroups.MaxHeight.class,
+                    StudioPropertyGroups.MaxWidth.class,
+                    StudioPropertyGroups.MinHeight.class,
+                    StudioPropertyGroups.MinWidth.class,
+                    StudioPropertyGroups.Spacing.class,
+                    StudioPropertyGroups.LayoutThemeNames.class,
+                    StudioPropertyGroups.WidthWithDefaultValueAuto.class,
+                    StudioPropertyGroups.Wrap.class
             },
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
@@ -185,7 +209,23 @@ interface StudioLayouts {
                     StudioPropertyGroups.AlignSelfAndJustifySelfAndColspan.class,
                     StudioPropertyGroups.ClassNamesAndCss.class,
                     StudioPropertyGroups.IdAndVisible.class,
-                    StudioPropertyGroups.Enabled.class,
+                    StudioPropertyGroups.EnabledWithTrueDefaultValue.class,
+                    StudioPropertyGroups.AlignItems.class,
+                    StudioPropertyGroups.BoxSizing.class,
+                    StudioPropertyGroups.ClickShortcut.class,
+                    StudioPropertyGroups.Expand.class,
+                    StudioPropertyGroups.Height.class,
+                    StudioPropertyGroups.JustifyContent.class,
+                    StudioPropertyGroups.Margin.class,
+                    StudioPropertyGroups.MaxHeight.class,
+                    StudioPropertyGroups.MaxWidth.class,
+                    StudioPropertyGroups.MinHeight.class,
+                    StudioPropertyGroups.MinWidth.class,
+                    StudioPropertyGroups.Padding.class,
+                    StudioPropertyGroups.Spacing.class,
+                    StudioPropertyGroups.LayoutThemeNames.class,
+                    StudioPropertyGroups.WidthWithDefaultValue100.class,
+                    StudioPropertyGroups.Wrap.class
             },
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
@@ -258,7 +298,17 @@ interface StudioLayouts {
                     StudioPropertyGroups.AlignSelfAndJustifySelfAndColspan.class,
                     StudioPropertyGroups.ClassNamesAndCss.class,
                     StudioPropertyGroups.IdAndVisible.class,
-                    StudioPropertyGroups.Enabled.class,
+                    StudioPropertyGroups.EnabledWithTrueDefaultValue.class,
+                    StudioPropertyGroups.ClickShortcut.class,
+                    StudioPropertyGroups.Height.class,
+                    StudioPropertyGroups.MaxHeight.class,
+                    StudioPropertyGroups.MinHeight.class,
+                    StudioPropertyGroups.WidthWithDefaultValueAuto.class,
+                    StudioPropertyGroups.MaxWidth.class,
+                    StudioPropertyGroups.MinWidth.class,
+                    StudioPropertyGroups.Expand.class,
+                    StudioPropertyGroups.AlignItems.class,
+                    StudioPropertyGroups.JustifyContent.class
             },
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
@@ -336,7 +386,13 @@ interface StudioLayouts {
                     StudioPropertyGroups.AlignSelfAndJustifySelfAndColspan.class,
                     StudioPropertyGroups.ClassNamesAndCss.class,
                     StudioPropertyGroups.IdAndVisible.class,
-                    StudioPropertyGroups.Enabled.class,
+                    StudioPropertyGroups.EnabledWithTrueDefaultValue.class,
+                    StudioPropertyGroups.Height.class,
+                    StudioPropertyGroups.MaxHeight.class,
+                    StudioPropertyGroups.MaxWidth.class,
+                    StudioPropertyGroups.MinHeight.class,
+                    StudioPropertyGroups.MinWidth.class,
+                    StudioPropertyGroups.WidthWithDefaultValueAuto.class
             },
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
@@ -388,6 +444,13 @@ interface StudioLayouts {
                     StudioPropertyGroups.AlignSelfAndJustifySelfAndColspan.class,
                     StudioPropertyGroups.ClassNamesAndCss.class,
                     StudioPropertyGroups.IdAndVisible.class,
+                    StudioPropertyGroups.ClickShortcut.class,
+                    StudioPropertyGroups.Height.class,
+                    StudioPropertyGroups.MaxHeight.class,
+                    StudioPropertyGroups.MaxWidth.class,
+                    StudioPropertyGroups.MinHeight.class,
+                    StudioPropertyGroups.MinWidth.class,
+                    StudioPropertyGroups.WidthWithDefaultValueAuto.class
             },
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
@@ -433,6 +496,12 @@ interface StudioLayouts {
                     StudioPropertyGroups.AlignSelfAndJustifySelfAndColspan.class,
                     StudioPropertyGroups.ClassNamesAndCss.class,
                     StudioPropertyGroups.IdAndVisible.class,
+                    StudioPropertyGroups.Height.class,
+                    StudioPropertyGroups.MaxHeight.class,
+                    StudioPropertyGroups.MaxWidth.class,
+                    StudioPropertyGroups.MinHeight.class,
+                    StudioPropertyGroups.MinWidth.class,
+                    StudioPropertyGroups.WidthWithDefaultValueAuto.class
             },
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
@@ -468,6 +537,12 @@ interface StudioLayouts {
             propertyGroups = {
                     StudioPropertyGroups.AlignSelfAndJustifySelfAndColspan.class,
                     StudioPropertyGroups.IdAndVisible.class,
+                    StudioPropertyGroups.Css.class,
+                    StudioPropertyGroups.MaxHeight.class,
+                    StudioPropertyGroups.MaxWidth.class,
+                    StudioPropertyGroups.MinHeight.class,
+                    StudioPropertyGroups.MinWidth.class,
+                    StudioPropertyGroups.WidthWithInitialValue100.class
             },
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
@@ -550,7 +625,8 @@ interface StudioLayouts {
                                     parentPath = "headerBox",
                                     qualifiedName = "sidePanelLayoutCloser"
                             )
-                    }))
+                    })
+                    )
     JmixSidePanelLayout sidePanelLayout();
 
     @StudioComponent(
@@ -564,7 +640,13 @@ interface StudioLayouts {
                     StudioPropertyGroups.AlignSelfAndJustifySelfAndColspan.class,
                     StudioPropertyGroups.ClassNamesAndCss.class,
                     StudioPropertyGroups.IdAndVisible.class,
-                    StudioPropertyGroups.Enabled.class,
+                    StudioPropertyGroups.EnabledWithTrueDefaultValue.class,
+                    StudioPropertyGroups.Height.class,
+                    StudioPropertyGroups.MaxHeight.class,
+                    StudioPropertyGroups.MaxWidth.class,
+                    StudioPropertyGroups.MinHeight.class,
+                    StudioPropertyGroups.MinWidth.class,
+                    StudioPropertyGroups.WidthWithDefaultValueAuto.class
             },
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
@@ -623,6 +705,12 @@ interface StudioLayouts {
                     StudioPropertyGroups.AlignSelfAndJustifySelfAndColspan.class,
                     StudioPropertyGroups.ClassNamesAndCss.class,
                     StudioPropertyGroups.IdAndVisible.class,
+                    StudioPropertyGroups.Height.class,
+                    StudioPropertyGroups.MaxHeight.class,
+                    StudioPropertyGroups.MaxWidth.class,
+                    StudioPropertyGroups.MinHeight.class,
+                    StudioPropertyGroups.MinWidth.class,
+                    StudioPropertyGroups.WidthWithDefaultValueAuto.class
             },
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
@@ -661,8 +749,11 @@ interface StudioLayouts {
                     StudioPropertyGroups.AlignSelfAndJustifySelfAndColspan.class,
                     StudioPropertyGroups.ClassNamesAndCss.class,
                     StudioPropertyGroups.IdAndVisible.class,
-                    StudioPropertyGroups.Enabled.class,
+                    StudioPropertyGroups.EnabledWithTrueDefaultValue.class,
                     StudioPropertyGroups.Size.class,
+                    StudioPropertyGroups.AriaLabel.class,
+                    StudioPropertyGroups.AriaLabelledBy.class,
+                    StudioPropertyGroups.Title.class
             },
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION,
@@ -736,8 +827,9 @@ interface StudioLayouts {
                     StudioPropertyGroups.AlignSelfAndJustifySelfAndColspan.class,
                     StudioPropertyGroups.ClassNamesAndCss.class,
                     StudioPropertyGroups.IdAndVisible.class,
-                    StudioPropertyGroups.Enabled.class,
+                    StudioPropertyGroups.EnabledWithTrueDefaultValue.class,
                     StudioPropertyGroups.Size.class,
+                    StudioPropertyGroups.Gap.class
             },
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,

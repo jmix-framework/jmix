@@ -165,6 +165,9 @@ public interface StudioPivotTableElements {
             xmlns = "http://jmix.io/schema/pvttbl/ui",
             xmlnsAlias = "pvttbl",
             icon = "io/jmix/pivottableflowui/kit/meta/icon/element/property.svg",
+            propertyGroups = {
+                    StudioPropertyGroups.Value4.class
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "value", type = StudioPropertyType.STRING, required = true)
             }

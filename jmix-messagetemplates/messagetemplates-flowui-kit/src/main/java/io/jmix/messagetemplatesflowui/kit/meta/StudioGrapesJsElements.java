@@ -20,6 +20,7 @@ import io.jmix.flowui.kit.meta.StudioElement;
 import io.jmix.flowui.kit.meta.StudioProperty;
 import io.jmix.flowui.kit.meta.StudioPropertyType;
 import io.jmix.flowui.kit.meta.StudioUiKit;
+import io.jmix.flowui.kit.meta.StudioPropertyGroups;
 
 @StudioUiKit
 public interface StudioGrapesJsElements {
@@ -48,6 +49,10 @@ public interface StudioGrapesJsElements {
             xmlns = "http://jmix.io/schema/messagetemplates/ui",
             xmlnsAlias = "msgtmp",
             icon = "io/jmix/messagetemplatesflowui/kit/meta/icon/element/block.svg",
+            propertyGroups = {
+                    StudioPropertyGroups.RequiredId.class,
+                    StudioPropertyGroups.Label2.class
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "attributes", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "category", type = StudioPropertyType.LOCALIZED_STRING),
@@ -66,6 +71,9 @@ public interface StudioGrapesJsElements {
             target = {"io.jmix.messagetemplatesflowui.kit.meta.stub.StudioGrapesJsBlockElement"},
             unlimitedCount = false,
             icon = "io/jmix/messagetemplatesflowui/kit/meta/icon/element/content.svg",
+            propertyGroups = {
+                    StudioPropertyGroups.Value2.class
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "value", type = StudioPropertyType.CDATA)
             }
@@ -80,6 +88,9 @@ public interface StudioGrapesJsElements {
             target = {"io.jmix.messagetemplatesflowui.kit.meta.stub.StudioGrapesJsBlockElement"},
             unlimitedCount = false,
             icon = "io/jmix/messagetemplatesflowui/kit/meta/icon/element/attributes.svg",
+            propertyGroups = {
+                    StudioPropertyGroups.Value2.class
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "value", type = StudioPropertyType.CDATA)
             }

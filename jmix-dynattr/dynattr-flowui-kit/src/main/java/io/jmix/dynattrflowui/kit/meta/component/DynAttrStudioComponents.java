@@ -19,6 +19,7 @@ import io.jmix.flowui.kit.meta.StudioComponent;
 import io.jmix.flowui.kit.meta.StudioProperty;
 import io.jmix.flowui.kit.meta.StudioPropertyType;
 import io.jmix.flowui.kit.meta.StudioUiKit;
+import io.jmix.flowui.kit.meta.StudioPropertyGroups;
 
 @StudioUiKit
 public interface DynAttrStudioComponents {
@@ -31,11 +32,15 @@ public interface DynAttrStudioComponents {
             xmlns = "http://jmix.io/schema/dynattr/flowui",
             xmlnsAlias = "dynattr",
             icon = "io/jmix/dynattrflowui/icon/component/dynamicAttributesPanel.svg",
+            propertyGroups = {
+                    StudioPropertyGroups.Id.class
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL,  type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "dataContainer", category = StudioProperty.Category.DATA_BINDING, type = StudioPropertyType.DATA_CONTAINER_REF, required = true),
                     @StudioProperty(xmlAttribute = "fieldWidth", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "categoryFieldVisible", type = StudioPropertyType.BOOLEAN),
-            })
+            }
+            )
     void dynamicAttributesPanel();
 }

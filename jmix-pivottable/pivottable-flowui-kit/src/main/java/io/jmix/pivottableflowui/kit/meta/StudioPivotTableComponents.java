@@ -32,8 +32,11 @@ public interface StudioPivotTableComponents {
             xmlnsAlias = "pvttbl",
             propertyGroups = {
                     StudioPropertyGroups.ClassNamesAndCss.class,
-                    StudioPropertyGroups.Enabled.class,
+                    StudioPropertyGroups.EnabledWithTrueDefaultValue.class,
                     StudioPropertyGroups.SizeWithoutOptions.class,
+                    StudioPropertyGroups.AlignSelf.class,
+                    StudioPropertyGroups.Colspan.class,
+                    StudioPropertyGroups.Id.class
             },
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,

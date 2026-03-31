@@ -25,7 +25,12 @@ public interface StudioPivotTableActions {
             type = "pvttbl_showPivotTableAction",
             description = "Shows the Pivot Table component",
             classFqn = "io.jmix.pivottableflowui.action.ShowPivotTableAction",
-
+            propertyGroups = {
+                    StudioPropertyGroups.Description2.class,
+                    StudioPropertyGroups.Enabled3.class,
+                    StudioPropertyGroups.ShortcutCombination.class,
+                    StudioPropertyGroups.VisibleWithDefaultValueTrue.class
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", type = StudioPropertyType.ENUMERATION,
                             setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",

@@ -20,6 +20,7 @@ import io.jmix.flowui.kit.meta.StudioElement;
 import io.jmix.flowui.kit.meta.StudioProperty;
 import io.jmix.flowui.kit.meta.StudioPropertyType;
 import io.jmix.flowui.kit.meta.StudioUiKit;
+import io.jmix.flowui.kit.meta.StudioPropertyGroups;
 
 @StudioUiKit
 interface StudioValidatorsElements {
@@ -30,6 +31,10 @@ interface StudioValidatorsElements {
             xmlElement = "custom",
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
             documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/validator.html#custom-validator",
+            propertyGroups = {
+                    StudioPropertyGroups.Bean.class,
+                    StudioPropertyGroups.Message.class
+            },
             properties = {
                     @StudioProperty(
                             xmlAttribute = "bean",
@@ -65,6 +70,7 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.valuepicker.EntityPicker",
                     "io.jmix.flowui.component.codeeditor.CodeEditor"
             },
+            propertyGroups = StudioPropertyGroups.MessageAndInclusiveRequiredStringValue.class,
             properties = {
                     @StudioProperty(
                             xmlAttribute = "message",
@@ -104,6 +110,7 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.valuepicker.EntityPicker",
                     "io.jmix.flowui.component.codeeditor.CodeEditor"
             },
+            propertyGroups = StudioPropertyGroups.MessageAndInclusiveRequiredStringValue.class,
             properties = {
                     @StudioProperty(
                             xmlAttribute = "message",
@@ -142,6 +149,10 @@ interface StudioValidatorsElements {
             xmlElement = "digits",
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
             documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/validator.html#DigitsValidator",
+            propertyGroups = {
+                    StudioPropertyGroups.Message.class,
+                    StudioPropertyGroups.RequiredInteger.class,
+            },
             properties = {
                     @StudioProperty(
                             xmlAttribute = "message",
@@ -181,6 +192,7 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.valuepicker.EntityPicker",
                     "io.jmix.flowui.component.codeeditor.CodeEditor"
             },
+            propertyGroups = StudioPropertyGroups.MessageAndInclusiveRequiredStringValue.class,
             properties = {
                     @StudioProperty(
                             xmlAttribute = "message",
@@ -220,6 +232,7 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.valuepicker.EntityPicker",
                     "io.jmix.flowui.component.codeeditor.CodeEditor"
             },
+            propertyGroups = StudioPropertyGroups.MessageAndInclusiveRequiredStringValue.class,
             properties = {
                     @StudioProperty(
                             xmlAttribute = "message",
@@ -256,6 +269,9 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.valuepicker.EntityPicker",
                     "io.jmix.flowui.component.textfield.JmixBigDecimalField"
             },
+            propertyGroups = {
+                    StudioPropertyGroups.Message.class
+            },
             properties = {
                     @StudioProperty(
                             xmlAttribute = "message",
@@ -285,6 +301,10 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
                     "io.jmix.flowui.component.PickerComponent",
                     "io.jmix.flowui.component.codeeditor.CodeEditor"
+            },
+            propertyGroups = {
+                    StudioPropertyGroups.Message.class,
+                    StudioPropertyGroups.CheckSeconds.class
             },
             properties = {
                     @StudioProperty(
@@ -321,6 +341,10 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.PickerComponent",
                     "io.jmix.flowui.component.codeeditor.CodeEditor"
             },
+            propertyGroups = {
+                    StudioPropertyGroups.Message.class,
+                    StudioPropertyGroups.CheckSeconds.class
+            },
             properties = {
                     @StudioProperty(
                             xmlAttribute = "message",
@@ -355,6 +379,7 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.valuepicker.EntityPicker",
                     "io.jmix.flowui.component.codeeditor.CodeEditor"
             },
+            propertyGroups = StudioPropertyGroups.MessageAndRequiredStringValue.class,
             properties = {
                     @StudioProperty(
                             xmlAttribute = "message",
@@ -389,6 +414,7 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.valuepicker.EntityPicker",
                     "io.jmix.flowui.component.codeeditor.CodeEditor"
             },
+            propertyGroups = StudioPropertyGroups.MessageAndRequiredStringValue.class,
             properties = {
                     @StudioProperty(
                             xmlAttribute = "message",
@@ -422,6 +448,9 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.valuepicker.EntityPicker",
                     "io.jmix.flowui.component.codeeditor.CodeEditor"
             },
+            propertyGroups = {
+                    StudioPropertyGroups.Message.class
+            },
             properties = {
                     @StudioProperty(
                             xmlAttribute = "message",
@@ -450,6 +479,9 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.valuepicker.EntityPicker",
                     "io.jmix.flowui.component.codeeditor.CodeEditor"
             },
+            propertyGroups = {
+                    StudioPropertyGroups.Message.class
+            },
             properties = {
                     @StudioProperty(
                             xmlAttribute = "message",
@@ -477,6 +509,9 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.valuepicker.EntityPicker",
                     "io.jmix.flowui.component.textfield.JmixBigDecimalField"
             },
+            propertyGroups = {
+                    StudioPropertyGroups.Message.class
+            },
             properties = {
                     @StudioProperty(
                             xmlAttribute = "message",
@@ -502,6 +537,9 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.valuepicker.EntityPicker",
                     "io.jmix.flowui.component.textfield.JmixBigDecimalField"
             },
+            propertyGroups = {
+                    StudioPropertyGroups.Message.class
+            },
             properties = {
                     @StudioProperty(
                             xmlAttribute = "message",
@@ -517,6 +555,9 @@ interface StudioValidatorsElements {
             xmlElement = "notNull",
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
             documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/validator.html#NotNullValidator",
+            propertyGroups = {
+                    StudioPropertyGroups.Message.class
+            },
             properties = {
                     @StudioProperty(
                             xmlAttribute = "message",
@@ -546,6 +587,10 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
                     "io.jmix.flowui.component.PickerComponent",
                     "io.jmix.flowui.component.codeeditor.CodeEditor"
+            },
+            propertyGroups = {
+                    StudioPropertyGroups.Message.class,
+                    StudioPropertyGroups.CheckSeconds.class
             },
             properties = {
                     @StudioProperty(
@@ -582,6 +627,10 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.PickerComponent",
                     "io.jmix.flowui.component.codeeditor.CodeEditor"
             },
+            propertyGroups = {
+                    StudioPropertyGroups.Message.class,
+                    StudioPropertyGroups.CheckSeconds.class
+            },
             properties = {
                     @StudioProperty(
                             xmlAttribute = "message",
@@ -615,6 +664,9 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.valuepicker.EntityPicker",
                     "io.jmix.flowui.component.codeeditor.CodeEditor"
             },
+            propertyGroups = {
+                    StudioPropertyGroups.Message.class
+            },
             properties = {
                     @StudioProperty(
                             xmlAttribute = "message",
@@ -643,6 +695,9 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.valuepicker.EntityPicker",
                     "io.jmix.flowui.component.codeeditor.CodeEditor"
             },
+            propertyGroups = {
+                    StudioPropertyGroups.Message.class
+            },
             properties = {
                     @StudioProperty(
                             xmlAttribute = "message",
@@ -669,6 +724,9 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.combobox.EntityComboBox",
                     "io.jmix.flowui.component.valuepicker.EntityPicker",
                     "io.jmix.flowui.component.textfield.JmixBigDecimalField"
+            },
+            propertyGroups = {
+                    StudioPropertyGroups.Message.class
             },
             properties = {
                     @StudioProperty(
@@ -699,6 +757,11 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.combobox.EntityComboBox",
                     "io.jmix.flowui.component.valuepicker.EntityPicker",
                     "io.jmix.flowui.component.textfield.JmixBigDecimalField"
+            },
+            propertyGroups = {
+                    StudioPropertyGroups.Message.class,
+                    StudioPropertyGroups.IntegerMin.class,
+                    StudioPropertyGroups.IntegerMax.class
             },
             properties = {
                     @StudioProperty(

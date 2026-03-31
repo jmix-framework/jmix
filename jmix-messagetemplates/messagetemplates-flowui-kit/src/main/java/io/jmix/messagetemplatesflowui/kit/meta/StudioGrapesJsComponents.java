@@ -38,6 +38,9 @@ public interface StudioGrapesJsComponents {
                     StudioPropertyGroups.ClassNamesAndCss.class,
                     StudioPropertyGroups.IdAndVisible.class,
                     StudioPropertyGroups.SizeWithoutOptions.class,
+                    StudioPropertyGroups.AlignSelf.class,
+                    StudioPropertyGroups.Colspan.class,
+                    StudioPropertyGroups.ReadOnly.class
             },
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
@@ -72,7 +75,6 @@ public interface StudioGrapesJsComponents {
                     @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE,
                             category = StudioProperty.Category.SIZE)
             }
-
     )
     GrapesJs grapesJs();
 }

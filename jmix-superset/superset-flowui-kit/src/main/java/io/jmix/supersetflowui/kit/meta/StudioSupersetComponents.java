@@ -37,6 +37,8 @@ public interface StudioSupersetComponents {
                     StudioPropertyGroups.ClassNamesAndCss.class,
                     StudioPropertyGroups.IdAndVisible.class,
                     StudioPropertyGroups.Size.class,
+                    StudioPropertyGroups.AlignSelf.class,
+                    StudioPropertyGroups.Colspan.class
             },
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,

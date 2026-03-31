@@ -25,8 +25,17 @@ interface StudioReportsActions {
                 type = "report_runReport",
                 description = "A standard action that displays the list of all available reports.",
                 classFqn = "io.jmix.reportsflowui.action.RunReportAction",
-
                 target = {"io.jmix.flowui.action.list.ListDataComponentAction"},
+                propertyGroups = {
+                        StudioPropertyGroups.ActionVariantWithDefaultDefaultValue.class,
+                        StudioPropertyGroups.Description.class,
+                        StudioPropertyGroups.EnabledWithTrueDefaultValue.class,
+                        StudioPropertyGroups.LookAndFeelIcon.class,
+                        StudioPropertyGroups.RequiredId.class,
+                        StudioPropertyGroups.ShortcutCombination.class,
+                        StudioPropertyGroups.Text.class,
+                        StudioPropertyGroups.Visible.class
+                },
                 properties = {
                         @StudioProperty(xmlAttribute = "actionVariant", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
                                 setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
@@ -49,8 +58,17 @@ interface StudioReportsActions {
             type = "report_runSingleEntityReport",
             description = "A standard action for printing reports for entity instance.",
             classFqn = "io.jmix.reportsflowui.action.RunSingleEntityReportAction",
-
             target = {"io.jmix.flowui.action.view.OperationResultViewAction"},
+            propertyGroups = {
+                    StudioPropertyGroups.ActionVariantWithDefaultDefaultValue.class,
+                    StudioPropertyGroups.Description.class,
+                    StudioPropertyGroups.EnabledWithTrueDefaultValue.class,
+                    StudioPropertyGroups.LookAndFeelIcon.class,
+                    StudioPropertyGroups.RequiredId.class,
+                    StudioPropertyGroups.ShortcutCombination.class,
+                    StudioPropertyGroups.Text.class,
+                    StudioPropertyGroups.Visible.class
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
                             setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
@@ -73,8 +91,17 @@ interface StudioReportsActions {
             type = "report_runListEntityReport",
             description = "A standard action for printing reports for entity instances associated with a list component (Table, DataGrid, etc.).",
             classFqn = "io.jmix.reportsflowui.action.RunListEntityReportAction",
-
             target = {"io.jmix.flowui.action.list.ListDataComponentAction"},
+            propertyGroups = {
+                    StudioPropertyGroups.ActionVariantWithDefaultDefaultValue.class,
+                    StudioPropertyGroups.Description.class,
+                    StudioPropertyGroups.EnabledWithTrueDefaultValue.class,
+                    StudioPropertyGroups.LookAndFeelIcon.class,
+                    StudioPropertyGroups.RequiredId.class,
+                    StudioPropertyGroups.ShortcutCombination.class,
+                    StudioPropertyGroups.Text.class,
+                    StudioPropertyGroups.Visible.class
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
                             setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
@@ -96,8 +123,17 @@ interface StudioReportsActions {
             type = "report_showExecutionReportHistory",
             description = "A standard action for displaying the report execution history.",
             classFqn = "io.jmix.reportsflowui.action.ShowExecutionReportHistoryAction",
-
             target = {"io.jmix.flowui.action.list.ListDataComponentAction"},
+            propertyGroups = {
+                    StudioPropertyGroups.ActionVariantWithDefaultDefaultValue.class,
+                    StudioPropertyGroups.Description.class,
+                    StudioPropertyGroups.EnabledWithTrueDefaultValue.class,
+                    StudioPropertyGroups.LookAndFeelIcon.class,
+                    StudioPropertyGroups.RequiredId.class,
+                    StudioPropertyGroups.ShortcutCombination.class,
+                    StudioPropertyGroups.Text.class,
+                    StudioPropertyGroups.Visible.class
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
                             setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",

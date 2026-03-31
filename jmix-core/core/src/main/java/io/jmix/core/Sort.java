@@ -17,6 +17,7 @@
 package io.jmix.core;
 
 import io.jmix.core.common.util.Preconditions;
+import io.jmix.core.entity.KeyValueEntity;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -168,6 +169,9 @@ public class Sort implements Serializable {
          * Returns the expression that should be added to the sorting.
          * <p>
          * For instance, for the JPQL it can be {@code "function('calc_total_sum', {E}.id)"}.
+         * <p>
+         * <strong>Note that for {@link KeyValueEntity}, the {@code {E}} alias is not supported.</strong> Use the concrete
+         * alias from the query, e.g. {@code "e.id"}.
          *
          * @return the expression
          */

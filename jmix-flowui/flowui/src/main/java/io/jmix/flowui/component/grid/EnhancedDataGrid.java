@@ -102,7 +102,9 @@ public interface EnhancedDataGrid<T> {
      * The {@link DataGridSortContext} contains sorting instructions from the grid.
      * The {@link DataGridSort} object represents the in-memory and persistent sorting to be applied.
      * <p>
-     * Use {@link DataGridSortBuilder} to easily build and replace the sorting configuration. For instance:
+     * Use {@link DataGridSortBuilder} to easily build and replace the sorting configuration.
+     * <p>
+     * For instance:
      * <pre>
      * &#064;Install(to = "customersGrid", subject = "sortBuilderDelegate")
      * private DataGridSort sortBuilderDelegate(final DataGridSortContext&lt;Customer&gt; context) {

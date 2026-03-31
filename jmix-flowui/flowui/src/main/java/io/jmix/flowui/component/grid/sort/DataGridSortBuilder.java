@@ -18,6 +18,7 @@ package io.jmix.flowui.component.grid.sort;
 
 import io.jmix.core.annotation.Experimental;
 import io.jmix.core.common.util.Preconditions;
+import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.component.grid.ColumnSortInfo;
 import io.jmix.flowui.component.grid.DataGridSortContext;
@@ -68,13 +69,19 @@ public class DataGridSortBuilder<E> {
 
     /**
      * Replaces existing sort information for the specified column key in both in-memory and persistent sort information.
+     * <p>
+     * In expression parameter, in case of JPQL, the {@code {E}} alias can be used for JPA entities.
+     * For instance, {@code "function('calc_total_sum', {E}.id)"}.
+     * <p>
+     * <strong>Note that for {@link KeyValueEntity}, the {@code {E}} alias is not supported.</strong> Use the concrete
+     * alias from the query, e.g. {@code "function('calc_total_sum', e.id)"}.
      *
      * @param key        column key
      * @param comparator comparator to be used for in-memory sorting
      * @param expression expression to be used for persistent sorting
      * @return current instance
      */
-    public DataGridSortBuilder<E> replaceSort(String key, @Nullable Comparator<E> comparator, @Nullable String expression) {
+    public DataGridSortBuilder<E> replaceSort(String key, @Nullable String expression, @Nullable Comparator<E> comparator) {
         Preconditions.checkNotNullArgument(key);
 
         replaceSort(key, comparator);
@@ -102,6 +109,12 @@ public class DataGridSortBuilder<E> {
 
     /**
      * Replaces existing sort information for the specified column key in the persistent sort information.
+     * <p>
+     * In expression parameter, in case of JPQL, the {@code {E}} alias can be used for JPA entities.
+     * For instance, {@code "function('calc_total_sum', {E}.id)"}.
+     * <p>
+     * <strong>Note that for {@link KeyValueEntity}, the {@code {E}} alias is not supported.</strong> Use the concrete
+     * alias from the query, e.g. {@code "e.id"}.
      *
      * @param key        column key
      * @param expression expression to be used for persistent sorting

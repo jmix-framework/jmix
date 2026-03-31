@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.component.grid.sort;
 
+import io.jmix.core.entity.KeyValueEntity;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -30,6 +31,14 @@ public interface PersistentSortInfo extends SortInfo {
     String getExpression();
 
     /**
+     * Sets the expression to be used for persistent sorting.
+     * <p>
+     * In case of JPQL, the {@code {E}} alias can be used for JPA entities.
+     * For instance, {@code "function('calc_total_sum', {E}.id)"}.
+     * <p>
+     * <strong>Note that for {@link KeyValueEntity}, the {@code {E}} alias is not supported.</strong> Use the concrete
+     * alias from the query, e.g. {@code "function('calc_total_sum', e.id)"}.
+     *
      * @param expression the expression to set, or {@code null} to clear the expression
      */
     void setExpression(@Nullable String expression);

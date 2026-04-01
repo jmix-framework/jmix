@@ -32,13 +32,7 @@ interface StudioListDataComponentActions {
             classFqn = "io.jmix.flowui.action.list.CreateAction",
             documentationLink = "%VERSION%/flow-ui/actions/list-actions.html#list_create",
             availableInViewWizard = true,
-            propertyGroups = {
-                    StudioPropertyGroups.ActionVariantWithPrimaryDefaultValue.class,
-                    StudioPropertyGroups.Description.class,
-                    StudioPropertyGroups.EnabledWithTrueDefaultValue.class,
-                    StudioPropertyGroups.ShortcutCombination.class,
-                    StudioPropertyGroups.Visible.class
-            },
+            propertyGroups = StudioActionPropertyGroups.PrimaryActionDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
                             setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
@@ -145,13 +139,7 @@ interface StudioListDataComponentActions {
             classFqn = "io.jmix.flowui.action.list.AddAction",
             documentationLink = "%VERSION%/flow-ui/actions/list-actions.html#list_add",
             availableInViewWizard = true,
-            propertyGroups = {
-                    StudioPropertyGroups.ActionVariantWithPrimaryDefaultValue.class,
-                    StudioPropertyGroups.Description.class,
-                    StudioPropertyGroups.EnabledWithTrueDefaultValue.class,
-                    StudioPropertyGroups.ShortcutCombination.class,
-                    StudioPropertyGroups.Visible.class
-            },
+            propertyGroups = StudioActionPropertyGroups.PrimaryActionDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
                             setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
@@ -255,13 +243,7 @@ interface StudioListDataComponentActions {
             classFqn = "io.jmix.flowui.action.list.RefreshAction",
             documentationLink = "%VERSION%/flow-ui/actions/list-actions.html#list_refresh",
             availableInViewWizard = true,
-            propertyGroups = {
-                    StudioPropertyGroups.ActionVariantWithDefaultDefaultValue.class,
-                    StudioPropertyGroups.Description.class,
-                    StudioPropertyGroups.EnabledWithTrueDefaultValue.class,
-                    StudioPropertyGroups.ShortcutCombination.class,
-                    StudioPropertyGroups.Visible.class
-            },
+            propertyGroups = StudioActionPropertyGroups.ActionDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
                             setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
@@ -284,15 +266,7 @@ interface StudioListDataComponentActions {
             type = "list_itemTracking",
             description = "Tracks the selected item from the bound ListDataComponent",
             classFqn = "io.jmix.flowui.action.list.ItemTrackingAction",
-            propertyGroups = {
-                    StudioPropertyGroups.ActionVariantWithDefaultDefaultValue.class,
-                    StudioPropertyGroups.Description.class,
-                    StudioPropertyGroups.EnabledWithTrueDefaultValue.class,
-                    StudioPropertyGroups.LookAndFeelIcon.class,
-                    StudioPropertyGroups.ShortcutCombination.class,
-                    StudioPropertyGroups.Text.class,
-                    StudioPropertyGroups.Visible.class
-            },
+            propertyGroups = StudioActionPropertyGroups.IconTextActionDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
                             setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",

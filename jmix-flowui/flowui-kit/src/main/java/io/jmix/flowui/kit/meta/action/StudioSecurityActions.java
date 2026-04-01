@@ -29,13 +29,7 @@ interface StudioSecurityActions {
             type = "sec_showRoleAssignments",
             description = "Shows the role assignments for the UserDetails instance",
             classFqn = "io.jmix.securityflowui.action.ShowRoleAssignmentsAction",
-            propertyGroups = {
-                    StudioPropertyGroups.ActionVariantWithDefaultDefaultValue.class,
-                    StudioPropertyGroups.Description.class,
-                    StudioPropertyGroups.EnabledWithTrueDefaultValue.class,
-                    StudioPropertyGroups.ShortcutCombination.class,
-                    StudioPropertyGroups.Visible.class
-            },
+            propertyGroups = StudioActionPropertyGroups.ActionDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
                             setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
@@ -60,13 +54,7 @@ interface StudioSecurityActions {
             type = "sec_showUserSubstitutions",
             description = "Shows the user substitutions",
             classFqn = "io.jmix.securityflowui.action.ShowUserSubstitutionsAction",
-            propertyGroups = {
-                    StudioPropertyGroups.ActionVariantWithDefaultDefaultValue.class,
-                    StudioPropertyGroups.Description.class,
-                    StudioPropertyGroups.EnabledWithTrueDefaultValue.class,
-                    StudioPropertyGroups.ShortcutCombination.class,
-                    StudioPropertyGroups.Visible.class
-            },
+            propertyGroups = StudioActionPropertyGroups.ActionDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
                             setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
@@ -90,13 +78,7 @@ interface StudioSecurityActions {
             type = "sec_assignToUsers",
             description = "Assign the role to selected users",
             classFqn = "io.jmix.securityflowui.action.AssignToUsersAction",
-            propertyGroups = {
-                    StudioPropertyGroups.ActionVariantWithDefaultDefaultValue.class,
-                    StudioPropertyGroups.Description.class,
-                    StudioPropertyGroups.EnabledWithTrueDefaultValue.class,
-                    StudioPropertyGroups.ShortcutCombination.class,
-                    StudioPropertyGroups.Visible.class
-            },
+            propertyGroups = StudioActionPropertyGroups.ActionDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
                             setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
@@ -120,14 +102,7 @@ interface StudioSecurityActions {
             type = "sec_changePassword",
             description = "Changes the password of the UserDetails instance",
             classFqn = "io.jmix.securityflowui.action.ChangePasswordAction",
-            propertyGroups = {
-                    StudioPropertyGroups.ActionVariantWithDefaultDefaultValue.class,
-                    StudioPropertyGroups.Description.class,
-                    StudioPropertyGroups.EnabledWithTrueDefaultValue.class,
-                    StudioPropertyGroups.LookAndFeelIcon.class,
-                    StudioPropertyGroups.ShortcutCombination.class,
-                    StudioPropertyGroups.Visible.class
-            },
+            propertyGroups = StudioActionPropertyGroups.IconActionDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
                             setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
@@ -151,14 +126,7 @@ interface StudioSecurityActions {
             type = "sec_resetPassword",
             description = "Resets the password of the UserDetails instance",
             classFqn = "io.jmix.securityflowui.action.ResetPasswordAction",
-            propertyGroups = {
-                    StudioPropertyGroups.ActionVariantWithDefaultDefaultValue.class,
-                    StudioPropertyGroups.Description.class,
-                    StudioPropertyGroups.EnabledWithTrueDefaultValue.class,
-                    StudioPropertyGroups.LookAndFeelIcon.class,
-                    StudioPropertyGroups.ShortcutCombination.class,
-                    StudioPropertyGroups.Visible.class
-            },
+            propertyGroups = StudioActionPropertyGroups.IconActionDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
                             setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",

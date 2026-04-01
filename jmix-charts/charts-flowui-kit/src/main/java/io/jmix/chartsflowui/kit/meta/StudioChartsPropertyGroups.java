@@ -2167,4 +2167,31 @@ public final class StudioChartsPropertyGroups {
     )
     public interface ChartColor {
     }
+
+    @StudioPropertyGroup
+    public interface VisualEffectDefaultProperties extends Symbol, SymbolSize2, Color, ColorAlpha, Opacity2,
+            ColorLightness, ColorSaturation, ColorHue {
+    }
+
+    @StudioPropertyGroup
+    public interface PageIconsDefaultProperties extends PrevPageIcon, NextPageIcon {
+    }
+
+    @StudioPropertyGroup
+    public interface ItemStyleDefaultProperties extends ChartColor, BorderColor, BorderWidth2, BorderType,
+            BorderDashOffset, Cap, Join, MiterLimit, ShadowBlur, ShadowColor, ShadowOffsetX, ShadowOffsetY,
+            Opacity {
+    }
+
+    @StudioPropertyGroup
+    public interface LabelLineDefaultProperties extends Show, ShowAbove, Length, Smooth, MinTurnAngle {
+    }
+
+    @StudioPropertyGroup
+    public interface ScaleEmphasisDefaultProperties extends Disabled, Scale, Focus, BlurScope {
+    }
+
+    @StudioPropertyGroup
+    public interface EmphasisDefaultProperties extends Disabled, Focus, BlurScope {
+    }
 }

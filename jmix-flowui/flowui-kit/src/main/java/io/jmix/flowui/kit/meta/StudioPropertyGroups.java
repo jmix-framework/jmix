@@ -1060,6 +1060,10 @@ public final class StudioPropertyGroups {
     public interface Message {
     }
 
+    @StudioPropertyGroup
+    public interface MessageAndCheckSeconds extends Message, CheckSeconds {
+    }
+
     @StudioPropertyGroup(properties = @StudioProperty(xmlAttribute = "messagesGroup",
             type = StudioPropertyType.STRING))
     public interface MessagesGroup {
@@ -1132,6 +1136,10 @@ public final class StudioPropertyGroups {
     @StudioPropertyGroup(properties = @StudioProperty(xmlAttribute = "nullRepresentation",
             type = StudioPropertyType.LOCALIZED_STRING))
     public interface NullRepresentation {
+    }
+
+    @StudioPropertyGroup
+    public interface FormatAndNullRepresentation extends Format, NullRepresentation {
     }
 
     @StudioPropertyGroup(properties = @StudioProperty(xmlAttribute = "openOnHover",
@@ -1745,6 +1753,150 @@ public final class StudioPropertyGroups {
             }
     )
     public interface Wrap {
+    }
+
+    @StudioPropertyGroup(
+            properties = {
+                    @StudioProperty(xmlAttribute = "description", type = StudioPropertyType.LOCALIZED_STRING)
+            }
+    )
+    public interface DescriptionWithoutCategory {
+    }
+
+    @StudioPropertyGroup(
+            properties = {
+                    @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN, defaultValue = "true")
+            }
+    )
+    public interface EnabledWithTrueDefaultValueWithoutCategory {
+    }
+
+    @StudioPropertyGroup(
+            properties = {
+                    @StudioProperty(xmlAttribute = "icon", category = StudioProperty.Category.LOOK_AND_FEEL,
+                            type = StudioPropertyType.ICON, initialValue = "CHECK",
+                            setParameterFqn = "com.vaadin.flow.component.icon.Icon")
+            }
+    )
+    public interface IconWithCheckInitialValue {
+    }
+
+    @StudioPropertyGroup(
+            properties = {
+                    @StudioProperty(xmlAttribute = "icon", category = StudioProperty.Category.LOOK_AND_FEEL,
+                            type = StudioPropertyType.ICON, initialValue = "BAN",
+                            setParameterFqn = "com.vaadin.flow.component.icon.Icon")
+            }
+    )
+    public interface IconWithBanInitialValue {
+    }
+
+    @StudioPropertyGroup(
+            properties = {
+                    @StudioProperty(xmlAttribute = "icon", category = StudioProperty.Category.LOOK_AND_FEEL,
+                            type = StudioPropertyType.ICON, initialValue = "PENCIL",
+                            setParameterFqn = "com.vaadin.flow.component.icon.Icon")
+            }
+    )
+    public interface IconWithPencilInitialValue {
+    }
+
+    @StudioPropertyGroup(
+            properties = {
+                    @StudioProperty(xmlAttribute = "icon", type = StudioPropertyType.ICON)
+            }
+    )
+    public interface IconWithoutCategory {
+    }
+
+    @StudioPropertyGroup(
+            properties = {
+                    @StudioProperty(xmlAttribute = "key", type = StudioPropertyType.STRING,
+                            initialValue = "editorActionsColumn")
+            }
+    )
+    public interface KeyWithEditorActionsColumnInitialValue {
+    }
+
+    @StudioPropertyGroup(
+            properties = {
+                    @StudioProperty(xmlAttribute = "minWidth", category = StudioProperty.Category.SIZE,
+                            type = StudioPropertyType.SIZE, options = {"AUTO", "100%"},
+                            initialValue = "100px")
+            }
+    )
+    public interface MinWidthWithInitialValue100px {
+    }
+
+    @StudioPropertyGroup(
+            properties = {
+                    @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.LOCALIZED_STRING)
+            }
+    )
+    public interface LocalizedNameWithoutCategory {
+    }
+
+    @StudioPropertyGroup(
+            properties = {
+                    @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.STRING, required = true)
+            }
+    )
+    public interface RequiredStringName {
+    }
+
+    @StudioPropertyGroup(
+            properties = {
+                    @StudioProperty(xmlAttribute = "resizable", type = StudioPropertyType.BOOLEAN,
+                            defaultValueRef = "parent:resizable")
+            }
+    )
+    public interface ResizableWithoutCategoryWithParentDefaultValueRef {
+    }
+
+    @StudioPropertyGroup(
+            properties = {
+                    @StudioProperty(xmlAttribute = "resizable", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false")
+            }
+    )
+    public interface ResizableWithFalseDefaultValue {
+    }
+
+    @StudioPropertyGroup(
+            properties = {
+                    @StudioProperty(xmlAttribute = "resizable", category = StudioProperty.Category.SIZE,
+                            type = StudioPropertyType.BOOLEAN, defaultValueRef = "parent:resizable")
+            }
+    )
+    public interface ResizableWithParentDefaultValueRef {
+    }
+
+    @StudioPropertyGroup(
+            properties = {
+                    @StudioProperty(xmlAttribute = "text", category = StudioProperty.Category.GENERAL,
+                            type = StudioPropertyType.LOCALIZED_STRING, initialValue = "msg:///actions.Cancel")
+            }
+    )
+    public interface TextWithCancelInitialValue {
+    }
+
+    @StudioPropertyGroup(
+            properties = {
+                    @StudioProperty(xmlAttribute = "text", category = StudioProperty.Category.GENERAL,
+                            type = StudioPropertyType.LOCALIZED_STRING, initialValue = "msg:///actions.Edit")
+            }
+    )
+    public interface TextWithEditInitialValue {
+    }
+
+    @StudioPropertyGroup(
+            properties = {
+                    @StudioProperty(xmlAttribute = "type", type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.flowui.component.AggregationInfo$Type",
+                            options = {"SUM", "COUNT", "AVG", "MIN", "MAX"})
+            }
+    )
+    public interface AggregationType {
     }
 
     @StudioPropertyGroup

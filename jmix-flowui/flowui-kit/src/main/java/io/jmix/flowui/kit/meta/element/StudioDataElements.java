@@ -70,12 +70,7 @@ interface StudioDataElements {
                     "io.jmix.flowui.model.KeyValueCollectionContainer",
                     "io.jmix.flowui.model.CollectionContainer"},
             documentationLink = "%VERSION%/flow-ui/data/data-loaders.html",
-            propertyGroups = {
-                    StudioPropertyGroups.FirstResult.class,
-                    StudioPropertyGroups.MaxResults.class,
-                    StudioPropertyGroups.ReadOnlyWithoutCategory.class,
-                    StudioPropertyGroups.Query.class
-            },
+            propertyGroups = StudioDataComponentPropertyGroups.QueryLoaderDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "firstResult", type = StudioPropertyType.INTEGER,
@@ -98,12 +93,7 @@ interface StudioDataElements {
             unsupportedTarget = {"io.jmix.flowui.model.KeyValueContainer",
                     "io.jmix.flowui.model.KeyValueCollectionContainer"},
             documentationLink = "%VERSION%/flow-ui/data/data-loaders.html",
-            propertyGroups = {
-                    StudioPropertyGroups.FirstResult.class,
-                    StudioPropertyGroups.MaxResults.class,
-                    StudioPropertyGroups.ReadOnlyWithoutCategory.class,
-                    StudioPropertyGroups.Query.class
-            },
+            propertyGroups = StudioDataComponentPropertyGroups.QueryLoaderDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "firstResult", type = StudioPropertyType.INTEGER,

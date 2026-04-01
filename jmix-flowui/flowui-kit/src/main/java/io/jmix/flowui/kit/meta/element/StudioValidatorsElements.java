@@ -302,10 +302,7 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.PickerComponent",
                     "io.jmix.flowui.component.codeeditor.CodeEditor"
             },
-            propertyGroups = {
-                    StudioPropertyGroups.Message.class,
-                    StudioPropertyGroups.CheckSeconds.class
-            },
+            propertyGroups = StudioPropertyGroups.MessageAndCheckSeconds.class,
             properties = {
                     @StudioProperty(
                             xmlAttribute = "message",
@@ -341,10 +338,7 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.PickerComponent",
                     "io.jmix.flowui.component.codeeditor.CodeEditor"
             },
-            propertyGroups = {
-                    StudioPropertyGroups.Message.class,
-                    StudioPropertyGroups.CheckSeconds.class
-            },
+            propertyGroups = StudioPropertyGroups.MessageAndCheckSeconds.class,
             properties = {
                     @StudioProperty(
                             xmlAttribute = "message",
@@ -588,10 +582,7 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.PickerComponent",
                     "io.jmix.flowui.component.codeeditor.CodeEditor"
             },
-            propertyGroups = {
-                    StudioPropertyGroups.Message.class,
-                    StudioPropertyGroups.CheckSeconds.class
-            },
+            propertyGroups = StudioPropertyGroups.MessageAndCheckSeconds.class,
             properties = {
                     @StudioProperty(
                             xmlAttribute = "message",
@@ -627,10 +618,7 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.PickerComponent",
                     "io.jmix.flowui.component.codeeditor.CodeEditor"
             },
-            propertyGroups = {
-                    StudioPropertyGroups.Message.class,
-                    StudioPropertyGroups.CheckSeconds.class
-            },
+            propertyGroups = StudioPropertyGroups.MessageAndCheckSeconds.class,
             properties = {
                     @StudioProperty(
                             xmlAttribute = "message",

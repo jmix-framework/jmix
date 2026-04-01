@@ -61,13 +61,7 @@ interface StudioPickerActions {
             description = "Clears the value of picker component",
             classFqn = "io.jmix.flowui.action.valuepicker.ValueClearAction",
             documentationLink = "%VERSION%/flow-ui/actions/value-picker-actions.html#value_clear",
-            propertyGroups = {
-                    StudioPropertyGroups.ActionVariantWithDefaultDefaultValue.class,
-                    StudioPropertyGroups.Description.class,
-                    StudioPropertyGroups.EnabledWithTrueDefaultValue.class,
-                    StudioPropertyGroups.ShortcutCombination.class,
-                    StudioPropertyGroups.Visible.class
-            },
+            propertyGroups = StudioActionPropertyGroups.ActionDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
                             setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
@@ -97,13 +91,7 @@ interface StudioPickerActions {
                     "io.jmix.flowui.component.valuepicker.JmixMultiValuePicker"
             },
             documentationLink = "%VERSION%/flow-ui/actions/entity-picker-actions.html#entity_clear",
-            propertyGroups = {
-                    StudioPropertyGroups.ActionVariantWithDefaultDefaultValue.class,
-                    StudioPropertyGroups.Description.class,
-                    StudioPropertyGroups.EnabledWithTrueDefaultValue.class,
-                    StudioPropertyGroups.ShortcutCombination.class,
-                    StudioPropertyGroups.Visible.class
-            },
+            propertyGroups = StudioActionPropertyGroups.ActionDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
                             setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
@@ -133,13 +121,7 @@ interface StudioPickerActions {
                     "io.jmix.flowui.component.valuepicker.JmixMultiValuePicker"
             },
             documentationLink = "%VERSION%/flow-ui/actions/entity-picker-actions.html#entity_lookup",
-            propertyGroups = {
-                    StudioPropertyGroups.ActionVariantWithDefaultDefaultValue.class,
-                    StudioPropertyGroups.Description.class,
-                    StudioPropertyGroups.EnabledWithTrueDefaultValue.class,
-                    StudioPropertyGroups.ShortcutCombination.class,
-                    StudioPropertyGroups.Visible.class
-            },
+            propertyGroups = StudioActionPropertyGroups.ActionDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
                             setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
@@ -173,13 +155,7 @@ interface StudioPickerActions {
                     "io.jmix.flowui.component.valuepicker.JmixMultiValuePicker"
             },
             documentationLink = "%VERSION%/flow-ui/actions/entity-picker-actions.html#entity_open",
-            propertyGroups = {
-                    StudioPropertyGroups.ActionVariantWithDefaultDefaultValue.class,
-                    StudioPropertyGroups.Description.class,
-                    StudioPropertyGroups.EnabledWithTrueDefaultValue.class,
-                    StudioPropertyGroups.ShortcutCombination.class,
-                    StudioPropertyGroups.Visible.class
-            },
+            propertyGroups = StudioActionPropertyGroups.ActionDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
                             setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
@@ -213,13 +189,7 @@ interface StudioPickerActions {
                     "io.jmix.flowui.component.valuepicker.JmixMultiValuePicker"
             },
             documentationLink = "%VERSION%/flow-ui/actions/entity-picker-actions.html#entity_openComposition",
-            propertyGroups = {
-                    StudioPropertyGroups.ActionVariantWithDefaultDefaultValue.class,
-                    StudioPropertyGroups.Description.class,
-                    StudioPropertyGroups.EnabledWithTrueDefaultValue.class,
-                    StudioPropertyGroups.ShortcutCombination.class,
-                    StudioPropertyGroups.Visible.class
-            },
+            propertyGroups = StudioActionPropertyGroups.ActionDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
                             setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
@@ -248,13 +218,7 @@ interface StudioPickerActions {
             classFqn = "io.jmix.flowui.action.multivaluepicker.MultiValueSelectAction",
             target = {"io.jmix.flowui.component.valuepicker.JmixMultiValuePicker"},
             documentationLink = "%VERSION%/flow-ui/actions/value-picker-actions.html#multi_value_select",
-            propertyGroups = {
-                    StudioPropertyGroups.ActionVariantWithDefaultDefaultValue.class,
-                    StudioPropertyGroups.Description.class,
-                    StudioPropertyGroups.EnabledWithTrueDefaultValue.class,
-                    StudioPropertyGroups.ShortcutCombination.class,
-                    StudioPropertyGroups.Visible.class
-            },
+            propertyGroups = StudioActionPropertyGroups.ActionDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
                             setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",

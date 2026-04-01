@@ -25,14 +25,7 @@ interface StudioGenericFilterDataActions {
             type = "genericFilter_remove",
             description = "Removes current run-time filter configuration",
             classFqn = "io.jmix.flowuidata.action.genericfilter.GenericFilterRemoveAction",
-            propertyGroups = {
-                    StudioPropertyGroups.ActionVariantWithDefaultDefaultValue.class,
-                    StudioPropertyGroups.Description.class,
-                    StudioPropertyGroups.EnabledWithTrueDefaultValue.class,
-                    StudioPropertyGroups.ShortcutCombination.class,
-                    StudioPropertyGroups.Text.class,
-                    StudioPropertyGroups.Visible.class
-            },
+            propertyGroups = StudioActionPropertyGroups.TextActionDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
                             setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
@@ -54,14 +47,7 @@ interface StudioGenericFilterDataActions {
             type = "genericFilter_makeDefault",
             description = "Makes the filter configuration default for this view",
             classFqn = "io.jmix.flowuidata.action.genericfilter.GenericFilterMakeDefaultAction",
-            propertyGroups = {
-                    StudioPropertyGroups.ActionVariantWithDefaultDefaultValue.class,
-                    StudioPropertyGroups.Description.class,
-                    StudioPropertyGroups.EnabledWithTrueDefaultValue.class,
-                    StudioPropertyGroups.ShortcutCombination.class,
-                    StudioPropertyGroups.Text.class,
-                    StudioPropertyGroups.Visible.class
-            },
+            propertyGroups = StudioActionPropertyGroups.TextActionDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
                             setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
@@ -83,14 +69,7 @@ interface StudioGenericFilterDataActions {
             type = "genericFilter_save",
             description = "Saves changes to current filter configuration",
             classFqn = "io.jmix.flowuidata.action.genericfilter.GenericFilterSaveAction",
-            propertyGroups = {
-                    StudioPropertyGroups.ActionVariantWithDefaultDefaultValue.class,
-                    StudioPropertyGroups.Description.class,
-                    StudioPropertyGroups.EnabledWithTrueDefaultValue.class,
-                    StudioPropertyGroups.ShortcutCombination.class,
-                    StudioPropertyGroups.Text.class,
-                    StudioPropertyGroups.Visible.class
-            },
+            propertyGroups = StudioActionPropertyGroups.TextActionDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
                             setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
@@ -112,14 +91,7 @@ interface StudioGenericFilterDataActions {
             type = "genericFilter_saveAs",
             description = "Saves current filter configuration under a new id and name",
             classFqn = "io.jmix.flowuidata.action.genericfilter.GenericFilterSaveAsAction",
-            propertyGroups = {
-                    StudioPropertyGroups.ActionVariantWithDefaultDefaultValue.class,
-                    StudioPropertyGroups.Description.class,
-                    StudioPropertyGroups.EnabledWithTrueDefaultValue.class,
-                    StudioPropertyGroups.ShortcutCombination.class,
-                    StudioPropertyGroups.Text.class,
-                    StudioPropertyGroups.Visible.class
-            },
+            propertyGroups = StudioActionPropertyGroups.TextActionDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
                             setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
@@ -141,14 +113,7 @@ interface StudioGenericFilterDataActions {
             type = "genericFilter_saveWithValues",
             description = "Saves changes to current filter configuration using the values in filter components as default values",
             classFqn = "io.jmix.flowuidata.action.genericfilter.GenericFilterSaveWithValuesAction",
-            propertyGroups = {
-                    StudioPropertyGroups.ActionVariantWithDefaultDefaultValue.class,
-                    StudioPropertyGroups.Description.class,
-                    StudioPropertyGroups.EnabledWithTrueDefaultValue.class,
-                    StudioPropertyGroups.ShortcutCombination.class,
-                    StudioPropertyGroups.Text.class,
-                    StudioPropertyGroups.Visible.class
-            },
+            propertyGroups = StudioActionPropertyGroups.TextActionDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
                             setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",

@@ -598,7 +598,7 @@ public interface StudioChartsElements {
             xmlnsAlias = "charts",
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             propertyGroups = {
-                    StudioPropertyGroups.Name3.class,
+                    StudioPropertyGroups.RequiredStringName.class,
                     StudioChartsPropertyGroups.Align.class,
                     StudioChartsPropertyGroups.BackgroundColor.class,
                     StudioChartsPropertyGroups.BorderColor.class,
@@ -954,16 +954,7 @@ public interface StudioChartsElements {
             xmlnsAlias = "charts",
             unlimitedCount = false,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
-            propertyGroups = {
-                    StudioChartsPropertyGroups.Symbol.class,
-                    StudioChartsPropertyGroups.SymbolSize2.class,
-                    StudioChartsPropertyGroups.Color.class,
-                    StudioChartsPropertyGroups.ColorAlpha.class,
-                    StudioChartsPropertyGroups.Opacity2.class,
-                    StudioChartsPropertyGroups.ColorLightness.class,
-                    StudioChartsPropertyGroups.ColorSaturation.class,
-                    StudioChartsPropertyGroups.ColorHue.class
-            },
+            propertyGroups = StudioChartsPropertyGroups.VisualEffectDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "symbol", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "symbolSize", type = StudioPropertyType.VALUES_LIST),
@@ -1010,16 +1001,7 @@ public interface StudioChartsElements {
             xmlnsAlias = "charts",
             unlimitedCount = false,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
-            propertyGroups = {
-                    StudioChartsPropertyGroups.Symbol.class,
-                    StudioChartsPropertyGroups.SymbolSize2.class,
-                    StudioChartsPropertyGroups.Color.class,
-                    StudioChartsPropertyGroups.ColorAlpha.class,
-                    StudioChartsPropertyGroups.Opacity2.class,
-                    StudioChartsPropertyGroups.ColorLightness.class,
-                    StudioChartsPropertyGroups.ColorSaturation.class,
-                    StudioChartsPropertyGroups.ColorHue.class
-            },
+            propertyGroups = StudioChartsPropertyGroups.VisualEffectDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "symbol", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "symbolSize", type = StudioPropertyType.VALUES_LIST),
@@ -1069,16 +1051,7 @@ public interface StudioChartsElements {
             xmlnsAlias = "charts",
             unlimitedCount = false,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
-            propertyGroups = {
-                    StudioChartsPropertyGroups.Symbol.class,
-                    StudioChartsPropertyGroups.SymbolSize2.class,
-                    StudioChartsPropertyGroups.Color.class,
-                    StudioChartsPropertyGroups.ColorAlpha.class,
-                    StudioChartsPropertyGroups.Opacity2.class,
-                    StudioChartsPropertyGroups.ColorLightness.class,
-                    StudioChartsPropertyGroups.ColorSaturation.class,
-                    StudioChartsPropertyGroups.ColorHue.class
-            },
+            propertyGroups = StudioChartsPropertyGroups.VisualEffectDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "symbol", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "symbolSize", type = StudioPropertyType.VALUES_LIST),
@@ -1128,16 +1101,7 @@ public interface StudioChartsElements {
             xmlnsAlias = "charts",
             unlimitedCount = false,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
-            propertyGroups = {
-                    StudioChartsPropertyGroups.Symbol.class,
-                    StudioChartsPropertyGroups.SymbolSize2.class,
-                    StudioChartsPropertyGroups.Color.class,
-                    StudioChartsPropertyGroups.ColorAlpha.class,
-                    StudioChartsPropertyGroups.Opacity2.class,
-                    StudioChartsPropertyGroups.ColorLightness.class,
-                    StudioChartsPropertyGroups.ColorSaturation.class,
-                    StudioChartsPropertyGroups.ColorHue.class
-            },
+            propertyGroups = StudioChartsPropertyGroups.VisualEffectDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "symbol", type = StudioPropertyType.VALUES_LIST),
                     @StudioProperty(xmlAttribute = "symbolSize", type = StudioPropertyType.VALUES_LIST),
@@ -2158,10 +2122,7 @@ public interface StudioChartsElements {
             xmlnsAlias = "charts",
             unlimitedCount = false,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
-            propertyGroups = {
-                    StudioChartsPropertyGroups.PrevPageIcon.class,
-                    StudioChartsPropertyGroups.NextPageIcon.class
-            },
+            propertyGroups = StudioChartsPropertyGroups.PageIconsDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "prevPageIcon", type = StudioPropertyType.STRING, required = true),
                     @StudioProperty(xmlAttribute = "nextPageIcon", type = StudioPropertyType.STRING, required = true)
@@ -2177,10 +2138,7 @@ public interface StudioChartsElements {
             xmlnsAlias = "charts",
             unlimitedCount = false,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
-            propertyGroups = {
-                    StudioChartsPropertyGroups.PrevPageIcon.class,
-                    StudioChartsPropertyGroups.NextPageIcon.class
-            },
+            propertyGroups = StudioChartsPropertyGroups.PageIconsDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "prevPageIcon", type = StudioPropertyType.STRING, required = true),
                     @StudioProperty(xmlAttribute = "nextPageIcon", type = StudioPropertyType.STRING, required = true)
@@ -2601,21 +2559,7 @@ public interface StudioChartsElements {
             xmlnsAlias = "charts",
             unlimitedCount = false,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
-            propertyGroups = {
-                    StudioChartsPropertyGroups.ChartColor.class,
-                    StudioChartsPropertyGroups.BorderColor.class,
-                    StudioChartsPropertyGroups.BorderWidth2.class,
-                    StudioChartsPropertyGroups.BorderType.class,
-                    StudioChartsPropertyGroups.BorderDashOffset.class,
-                    StudioChartsPropertyGroups.Cap.class,
-                    StudioChartsPropertyGroups.Join.class,
-                    StudioChartsPropertyGroups.MiterLimit.class,
-                    StudioChartsPropertyGroups.ShadowBlur.class,
-                    StudioChartsPropertyGroups.ShadowColor.class,
-                    StudioChartsPropertyGroups.ShadowOffsetX.class,
-                    StudioChartsPropertyGroups.ShadowOffsetY.class,
-                    StudioChartsPropertyGroups.Opacity.class
-            },
+            propertyGroups = StudioChartsPropertyGroups.ItemStyleDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "color", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
@@ -2723,21 +2667,7 @@ public interface StudioChartsElements {
             xmlnsAlias = "charts",
             unlimitedCount = false,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
-            propertyGroups = {
-                    StudioChartsPropertyGroups.ChartColor.class,
-                    StudioChartsPropertyGroups.BorderColor.class,
-                    StudioChartsPropertyGroups.BorderWidth2.class,
-                    StudioChartsPropertyGroups.BorderType.class,
-                    StudioChartsPropertyGroups.BorderDashOffset.class,
-                    StudioChartsPropertyGroups.Cap.class,
-                    StudioChartsPropertyGroups.Join.class,
-                    StudioChartsPropertyGroups.MiterLimit.class,
-                    StudioChartsPropertyGroups.ShadowBlur.class,
-                    StudioChartsPropertyGroups.ShadowColor.class,
-                    StudioChartsPropertyGroups.ShadowOffsetX.class,
-                    StudioChartsPropertyGroups.ShadowOffsetY.class,
-                    StudioChartsPropertyGroups.Opacity.class
-            },
+            propertyGroups = StudioChartsPropertyGroups.ItemStyleDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "color", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
@@ -2841,21 +2771,7 @@ public interface StudioChartsElements {
             xmlnsAlias = "charts",
             unlimitedCount = false,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
-            propertyGroups = {
-                    StudioChartsPropertyGroups.ChartColor.class,
-                    StudioChartsPropertyGroups.BorderColor.class,
-                    StudioChartsPropertyGroups.BorderWidth2.class,
-                    StudioChartsPropertyGroups.BorderType.class,
-                    StudioChartsPropertyGroups.BorderDashOffset.class,
-                    StudioChartsPropertyGroups.Cap.class,
-                    StudioChartsPropertyGroups.Join.class,
-                    StudioChartsPropertyGroups.MiterLimit.class,
-                    StudioChartsPropertyGroups.ShadowBlur.class,
-                    StudioChartsPropertyGroups.ShadowColor.class,
-                    StudioChartsPropertyGroups.ShadowOffsetX.class,
-                    StudioChartsPropertyGroups.ShadowOffsetY.class,
-                    StudioChartsPropertyGroups.Opacity.class
-            },
+            propertyGroups = StudioChartsPropertyGroups.ItemStyleDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "color", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
@@ -2962,21 +2878,7 @@ public interface StudioChartsElements {
             xmlnsAlias = "charts",
             unlimitedCount = false,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
-            propertyGroups = {
-                    StudioChartsPropertyGroups.ChartColor.class,
-                    StudioChartsPropertyGroups.BorderColor.class,
-                    StudioChartsPropertyGroups.BorderWidth2.class,
-                    StudioChartsPropertyGroups.BorderType.class,
-                    StudioChartsPropertyGroups.BorderDashOffset.class,
-                    StudioChartsPropertyGroups.Cap.class,
-                    StudioChartsPropertyGroups.Join.class,
-                    StudioChartsPropertyGroups.MiterLimit.class,
-                    StudioChartsPropertyGroups.ShadowBlur.class,
-                    StudioChartsPropertyGroups.ShadowColor.class,
-                    StudioChartsPropertyGroups.ShadowOffsetX.class,
-                    StudioChartsPropertyGroups.ShadowOffsetY.class,
-                    StudioChartsPropertyGroups.Opacity.class
-            },
+            propertyGroups = StudioChartsPropertyGroups.ItemStyleDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "color", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
@@ -3083,21 +2985,7 @@ public interface StudioChartsElements {
             xmlnsAlias = "charts",
             unlimitedCount = false,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
-            propertyGroups = {
-                    StudioChartsPropertyGroups.ChartColor.class,
-                    StudioChartsPropertyGroups.BorderColor.class,
-                    StudioChartsPropertyGroups.BorderWidth2.class,
-                    StudioChartsPropertyGroups.BorderType.class,
-                    StudioChartsPropertyGroups.BorderDashOffset.class,
-                    StudioChartsPropertyGroups.Cap.class,
-                    StudioChartsPropertyGroups.Join.class,
-                    StudioChartsPropertyGroups.MiterLimit.class,
-                    StudioChartsPropertyGroups.ShadowBlur.class,
-                    StudioChartsPropertyGroups.ShadowColor.class,
-                    StudioChartsPropertyGroups.ShadowOffsetX.class,
-                    StudioChartsPropertyGroups.ShadowOffsetY.class,
-                    StudioChartsPropertyGroups.Opacity.class
-            },
+            propertyGroups = StudioChartsPropertyGroups.ItemStyleDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "color", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
@@ -3204,21 +3092,7 @@ public interface StudioChartsElements {
             xmlnsAlias = "charts",
             unlimitedCount = false,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
-            propertyGroups = {
-                    StudioChartsPropertyGroups.ChartColor.class,
-                    StudioChartsPropertyGroups.BorderColor.class,
-                    StudioChartsPropertyGroups.BorderWidth2.class,
-                    StudioChartsPropertyGroups.BorderType.class,
-                    StudioChartsPropertyGroups.BorderDashOffset.class,
-                    StudioChartsPropertyGroups.Cap.class,
-                    StudioChartsPropertyGroups.Join.class,
-                    StudioChartsPropertyGroups.MiterLimit.class,
-                    StudioChartsPropertyGroups.ShadowBlur.class,
-                    StudioChartsPropertyGroups.ShadowColor.class,
-                    StudioChartsPropertyGroups.ShadowOffsetX.class,
-                    StudioChartsPropertyGroups.ShadowOffsetY.class,
-                    StudioChartsPropertyGroups.Opacity.class
-            },
+            propertyGroups = StudioChartsPropertyGroups.ItemStyleDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "color", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
@@ -3921,7 +3795,7 @@ public interface StudioChartsElements {
             xmlnsAlias = "charts",
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             propertyGroups = {
-                    StudioPropertyGroups.Name2.class,
+                    StudioPropertyGroups.LocalizedNameWithoutCategory.class,
                     StudioPropertyGroups.IntegerMax.class,
                     StudioPropertyGroups.IntegerMin.class,
                     StudioChartsPropertyGroups.ChartColor.class
@@ -6329,7 +6203,7 @@ public interface StudioChartsElements {
                     StudioChartsPropertyGroups.SeriesLayoutBy.class,
                     StudioChartsPropertyGroups.DatasetIndex.class,
                     StudioPropertyGroups.Id.class,
-                    StudioPropertyGroups.Name2.class,
+                    StudioPropertyGroups.LocalizedNameWithoutCategory.class,
                     StudioChartsPropertyGroups.ColorBy.class,
                     StudioChartsPropertyGroups.SelectedMode.class,
                     StudioChartsPropertyGroups.DataGroupId.class,
@@ -6661,21 +6535,7 @@ public interface StudioChartsElements {
             xmlnsAlias = "charts",
             unlimitedCount = false,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
-            propertyGroups = {
-                    StudioChartsPropertyGroups.ChartColor.class,
-                    StudioChartsPropertyGroups.BorderColor.class,
-                    StudioChartsPropertyGroups.BorderWidth2.class,
-                    StudioChartsPropertyGroups.BorderType.class,
-                    StudioChartsPropertyGroups.BorderDashOffset.class,
-                    StudioChartsPropertyGroups.Cap.class,
-                    StudioChartsPropertyGroups.Join.class,
-                    StudioChartsPropertyGroups.MiterLimit.class,
-                    StudioChartsPropertyGroups.ShadowBlur.class,
-                    StudioChartsPropertyGroups.ShadowColor.class,
-                    StudioChartsPropertyGroups.ShadowOffsetX.class,
-                    StudioChartsPropertyGroups.ShadowOffsetY.class,
-                    StudioChartsPropertyGroups.Opacity.class
-            },
+            propertyGroups = StudioChartsPropertyGroups.ItemStyleDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "color", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
@@ -6779,21 +6639,7 @@ public interface StudioChartsElements {
             xmlnsAlias = "charts",
             unlimitedCount = false,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
-            propertyGroups = {
-                    StudioChartsPropertyGroups.ChartColor.class,
-                    StudioChartsPropertyGroups.BorderColor.class,
-                    StudioChartsPropertyGroups.BorderWidth2.class,
-                    StudioChartsPropertyGroups.BorderType.class,
-                    StudioChartsPropertyGroups.BorderDashOffset.class,
-                    StudioChartsPropertyGroups.Cap.class,
-                    StudioChartsPropertyGroups.Join.class,
-                    StudioChartsPropertyGroups.MiterLimit.class,
-                    StudioChartsPropertyGroups.ShadowBlur.class,
-                    StudioChartsPropertyGroups.ShadowColor.class,
-                    StudioChartsPropertyGroups.ShadowOffsetX.class,
-                    StudioChartsPropertyGroups.ShadowOffsetY.class,
-                    StudioChartsPropertyGroups.Opacity.class
-            },
+            propertyGroups = StudioChartsPropertyGroups.ItemStyleDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "color", type = StudioPropertyType.OPTIONS,
                             options = {"ALICEBLUE", "ANTIQUEWHITE", "AQUA", "AQUAMARINE", "AZURE", "BEIGE", "BISQUE",
@@ -6897,13 +6743,7 @@ public interface StudioChartsElements {
             xmlnsAlias = "charts",
             unlimitedCount = false,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
-            propertyGroups = {
-                    StudioChartsPropertyGroups.Show.class,
-                    StudioChartsPropertyGroups.ShowAbove.class,
-                    StudioChartsPropertyGroups.Length.class,
-                    StudioChartsPropertyGroups.Smooth.class,
-                    StudioChartsPropertyGroups.MinTurnAngle.class
-            },
+            propertyGroups = StudioChartsPropertyGroups.LabelLineDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "showAbove", type = StudioPropertyType.BOOLEAN),
@@ -7270,11 +7110,7 @@ public interface StudioChartsElements {
             xmlnsAlias = "charts",
             unlimitedCount = false,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
-            propertyGroups = {
-                    StudioChartsPropertyGroups.Disabled.class,
-                    StudioChartsPropertyGroups.Focus.class,
-                    StudioChartsPropertyGroups.BlurScope.class
-            },
+            propertyGroups = StudioChartsPropertyGroups.EmphasisDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "disabled", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "focus", type = StudioPropertyType.ENUMERATION,
@@ -9089,13 +8925,7 @@ public interface StudioChartsElements {
             xmlnsAlias = "charts",
             unlimitedCount = false,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
-            propertyGroups = {
-                    StudioChartsPropertyGroups.Show.class,
-                    StudioChartsPropertyGroups.ShowAbove.class,
-                    StudioChartsPropertyGroups.Length.class,
-                    StudioChartsPropertyGroups.Smooth.class,
-                    StudioChartsPropertyGroups.MinTurnAngle.class
-            },
+            propertyGroups = StudioChartsPropertyGroups.LabelLineDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "showAbove", type = StudioPropertyType.BOOLEAN),
@@ -9117,12 +8947,7 @@ public interface StudioChartsElements {
             xmlnsAlias = "charts",
             unlimitedCount = false,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
-            propertyGroups = {
-                    StudioChartsPropertyGroups.Disabled.class,
-                    StudioChartsPropertyGroups.Scale.class,
-                    StudioChartsPropertyGroups.Focus.class,
-                    StudioChartsPropertyGroups.BlurScope.class
-            },
+            propertyGroups = StudioChartsPropertyGroups.ScaleEmphasisDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "disabled", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "scale", type = StudioPropertyType.BOOLEAN),
@@ -9278,13 +9103,7 @@ public interface StudioChartsElements {
             xmlnsAlias = "charts",
             unlimitedCount = false,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
-            propertyGroups = {
-                    StudioChartsPropertyGroups.Show.class,
-                    StudioChartsPropertyGroups.ShowAbove.class,
-                    StudioChartsPropertyGroups.Length.class,
-                    StudioChartsPropertyGroups.Smooth.class,
-                    StudioChartsPropertyGroups.MinTurnAngle.class
-            },
+            propertyGroups = StudioChartsPropertyGroups.LabelLineDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "showAbove", type = StudioPropertyType.BOOLEAN),
@@ -9304,12 +9123,7 @@ public interface StudioChartsElements {
             xmlnsAlias = "charts",
             unlimitedCount = false,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
-            propertyGroups = {
-                    StudioChartsPropertyGroups.Disabled.class,
-                    StudioChartsPropertyGroups.Scale.class,
-                    StudioChartsPropertyGroups.Focus.class,
-                    StudioChartsPropertyGroups.BlurScope.class
-            },
+            propertyGroups = StudioChartsPropertyGroups.ScaleEmphasisDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "disabled", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "scale", type = StudioPropertyType.BOOLEAN),
@@ -9509,13 +9323,7 @@ public interface StudioChartsElements {
             xmlnsAlias = "charts",
             unlimitedCount = false,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
-            propertyGroups = {
-                    StudioChartsPropertyGroups.Show.class,
-                    StudioChartsPropertyGroups.ShowAbove.class,
-                    StudioChartsPropertyGroups.Length.class,
-                    StudioChartsPropertyGroups.Smooth.class,
-                    StudioChartsPropertyGroups.MinTurnAngle.class
-            },
+            propertyGroups = StudioChartsPropertyGroups.LabelLineDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "showAbove", type = StudioPropertyType.BOOLEAN),
@@ -9535,12 +9343,7 @@ public interface StudioChartsElements {
             xmlnsAlias = "charts",
             unlimitedCount = false,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
-            propertyGroups = {
-                    StudioChartsPropertyGroups.Disabled.class,
-                    StudioChartsPropertyGroups.Scale.class,
-                    StudioChartsPropertyGroups.Focus.class,
-                    StudioChartsPropertyGroups.BlurScope.class
-            },
+            propertyGroups = StudioChartsPropertyGroups.ScaleEmphasisDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "disabled", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "scale", type = StudioPropertyType.BOOLEAN),
@@ -9740,11 +9543,7 @@ public interface StudioChartsElements {
             xmlnsAlias = "charts",
             unlimitedCount = false,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
-            propertyGroups = {
-                    StudioChartsPropertyGroups.Disabled.class,
-                    StudioChartsPropertyGroups.Focus.class,
-                    StudioChartsPropertyGroups.BlurScope.class
-            },
+            propertyGroups = StudioChartsPropertyGroups.EmphasisDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "disabled", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "focus", type = StudioPropertyType.ENUMERATION,
@@ -9860,11 +9659,7 @@ public interface StudioChartsElements {
             xmlnsAlias = "charts",
             unlimitedCount = false,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
-            propertyGroups = {
-                    StudioChartsPropertyGroups.Disabled.class,
-                    StudioChartsPropertyGroups.Focus.class,
-                    StudioChartsPropertyGroups.BlurScope.class
-            },
+            propertyGroups = StudioChartsPropertyGroups.EmphasisDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "disabled", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "focus", type = StudioPropertyType.ENUMERATION,
@@ -9999,11 +9794,7 @@ public interface StudioChartsElements {
             xmlnsAlias = "charts",
             unlimitedCount = false,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
-            propertyGroups = {
-                    StudioChartsPropertyGroups.Disabled.class,
-                    StudioChartsPropertyGroups.Focus.class,
-                    StudioChartsPropertyGroups.BlurScope.class
-            },
+            propertyGroups = StudioChartsPropertyGroups.EmphasisDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "disabled", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "focus", type = StudioPropertyType.ENUMERATION,
@@ -10344,11 +10135,7 @@ public interface StudioChartsElements {
             xmlnsAlias = "charts",
             unlimitedCount = false,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
-            propertyGroups = {
-                    StudioChartsPropertyGroups.Disabled.class,
-                    StudioChartsPropertyGroups.Focus.class,
-                    StudioChartsPropertyGroups.BlurScope.class
-            },
+            propertyGroups = StudioChartsPropertyGroups.EmphasisDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "disabled", type = StudioPropertyType.BOOLEAN),
                     @StudioProperty(xmlAttribute = "focus", type = StudioPropertyType.ENUMERATION,
@@ -10467,7 +10254,7 @@ public interface StudioChartsElements {
             xmlnsAlias = "charts",
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             propertyGroups = {
-                    StudioPropertyGroups.Name2.class,
+                    StudioPropertyGroups.LocalizedNameWithoutCategory.class,
                     StudioChartsPropertyGroups.Value.class
             },
             properties = {
@@ -11444,21 +11231,7 @@ public interface StudioChartsElements {
             xmlnsAlias = "charts",
             unlimitedCount = false,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
-            propertyGroups = {
-                    StudioChartsPropertyGroups.ChartColor.class,
-                    StudioChartsPropertyGroups.BorderColor.class,
-                    StudioChartsPropertyGroups.BorderWidth2.class,
-                    StudioChartsPropertyGroups.BorderType.class,
-                    StudioChartsPropertyGroups.BorderDashOffset.class,
-                    StudioChartsPropertyGroups.Cap.class,
-                    StudioChartsPropertyGroups.Join.class,
-                    StudioChartsPropertyGroups.MiterLimit.class,
-                    StudioChartsPropertyGroups.ShadowBlur.class,
-                    StudioChartsPropertyGroups.ShadowColor.class,
-                    StudioChartsPropertyGroups.ShadowOffsetX.class,
-                    StudioChartsPropertyGroups.ShadowOffsetY.class,
-                    StudioChartsPropertyGroups.Opacity.class
-            },
+            propertyGroups = StudioChartsPropertyGroups.ItemStyleDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "textPosition", type = StudioPropertyType.ENUMERATION,
                             classFqn = "io.jmix.chartsflowui.kit.component.model.toolbox.Emphasis.IconStyle.TextPosition",
@@ -11885,7 +11658,7 @@ public interface StudioChartsElements {
             isInjectable = false,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             propertyGroups = {
-                    StudioPropertyGroups.Id4.class
+                    StudioPropertyGroups.IdWithoutCategory.class
             },
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID)

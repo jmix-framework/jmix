@@ -32,13 +32,7 @@ interface StudioBulkEditorActions {
             classFqn = "io.jmix.bulkeditor.action.BulkEditAction",
             documentationLink = "%VERSION%/bulk-edit/index.html#usage",
             availableInViewWizard = true,
-            propertyGroups = {
-                    StudioPropertyGroups.ActionVariantWithDefaultDefaultValue.class,
-                    StudioPropertyGroups.Description.class,
-                    StudioPropertyGroups.EnabledWithTrueDefaultValue.class,
-                    StudioPropertyGroups.ShortcutCombination.class,
-                    StudioPropertyGroups.Visible.class
-            },
+            propertyGroups = StudioActionPropertyGroups.ActionDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
                             setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",

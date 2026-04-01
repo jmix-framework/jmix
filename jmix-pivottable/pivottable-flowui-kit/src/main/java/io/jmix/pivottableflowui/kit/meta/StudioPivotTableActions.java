@@ -26,8 +26,8 @@ public interface StudioPivotTableActions {
             description = "Shows the Pivot Table component",
             classFqn = "io.jmix.pivottableflowui.action.ShowPivotTableAction",
             propertyGroups = {
-                    StudioPropertyGroups.Description2.class,
-                    StudioPropertyGroups.Enabled3.class,
+                    StudioPropertyGroups.DescriptionWithoutCategory.class,
+                    StudioPropertyGroups.EnabledWithTrueDefaultValueWithoutCategory.class,
                     StudioPropertyGroups.ShortcutCombination.class,
                     StudioPropertyGroups.VisibleWithDefaultValueTrue.class
             },

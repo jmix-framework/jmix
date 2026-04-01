@@ -32,7 +32,7 @@ public interface DynAttrStudioFacets {
             xmlnsAlias = "dynattr",
             icon = "io/jmix/dynattrflowui/icon/facet/dynamicAttributes.svg",
             propertyGroups = {
-                    StudioPropertyGroups.Id4.class
+                    StudioPropertyGroups.IdWithoutCategory.class
             },
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),

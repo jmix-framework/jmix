@@ -454,10 +454,7 @@ interface StudioElements {
             target = {"com.vaadin.flow.component.grid.Grid.Column"},
             unsupportedTarget = {"io.jmix.flowui.kit.component.grid.EditorActionsColumn"},
             documentationLink = "%VERSION%/flow-ui/vc/components/dataGrid.html#renderers",
-            propertyGroups = {
-                    StudioPropertyGroups.Format.class,
-                    StudioPropertyGroups.NullRepresentation.class
-            },
+            propertyGroups = StudioPropertyGroups.FormatAndNullRepresentation.class,
             properties = {
                     @StudioProperty(xmlAttribute = "format",
                             type = StudioPropertyType.LOCALIZED_STRING, required = true),
@@ -475,10 +472,7 @@ interface StudioElements {
             target = {"com.vaadin.flow.component.grid.Grid.Column"},
             unsupportedTarget = {"io.jmix.flowui.kit.component.grid.EditorActionsColumn"},
             documentationLink = "%VERSION%/flow-ui/vc/components/dataGrid.html#renderers",
-            propertyGroups = {
-                    StudioPropertyGroups.Format.class,
-                    StudioPropertyGroups.NullRepresentation.class
-            },
+            propertyGroups = StudioPropertyGroups.FormatAndNullRepresentation.class,
             properties = {
                     @StudioProperty(xmlAttribute = "format",
                             type = StudioPropertyType.LOCALIZED_STRING, required = true),
@@ -496,10 +490,7 @@ interface StudioElements {
             target = {"com.vaadin.flow.component.grid.Grid.Column"},
             unsupportedTarget = {"io.jmix.flowui.kit.component.grid.EditorActionsColumn"},
             documentationLink = "%VERSION%/flow-ui/vc/components/dataGrid.html#renderers",
-            propertyGroups = {
-                    StudioPropertyGroups.Format.class,
-                    StudioPropertyGroups.NullRepresentation.class
-            },
+            propertyGroups = StudioPropertyGroups.FormatAndNullRepresentation.class,
             properties = {
                     @StudioProperty(xmlAttribute = "format",
                             type = StudioPropertyType.LOCALIZED_STRING, required = true),

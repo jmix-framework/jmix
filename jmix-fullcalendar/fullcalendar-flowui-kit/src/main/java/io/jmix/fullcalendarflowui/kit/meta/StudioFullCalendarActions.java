@@ -28,8 +28,8 @@ public interface StudioFullCalendarActions {
             icon = "io/jmix/fullcalendarflowui/kit/meta/icon/action/action.svg",
             documentationLink = "%VERSION%/calendar/full-calendar-component.html#days-of-week-datatype",
             propertyGroups = {
-                    StudioPropertyGroups.Description2.class,
-                    StudioPropertyGroups.Enabled3.class,
+                    StudioPropertyGroups.DescriptionWithoutCategory.class,
+                    StudioPropertyGroups.EnabledWithTrueDefaultValueWithoutCategory.class,
                     StudioPropertyGroups.ShortcutCombination.class,
                     StudioPropertyGroups.VisibleWithDefaultValueTrue.class
             },

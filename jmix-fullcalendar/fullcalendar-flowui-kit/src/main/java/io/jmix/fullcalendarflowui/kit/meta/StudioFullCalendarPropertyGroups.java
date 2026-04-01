@@ -117,7 +117,7 @@ public final class StudioFullCalendarPropertyGroups {
                     @StudioProperty(xmlAttribute = "displayEventEnd", type = StudioPropertyType.BOOLEAN, defaultValue = "false")
             }
     )
-    public interface DisplayEventEnd2 {
+    public interface DisplayEventEndWithFalseDefaultValue {
     }
 
     @StudioPropertyGroup(
@@ -334,5 +334,23 @@ public final class StudioFullCalendarPropertyGroups {
             }
     )
     public interface WeekNumberFormat {
+    }
+
+    @StudioPropertyGroup
+    public interface DataProviderProperties extends StudioPropertyGroups.Id, AdditionalProperties, AllDay,
+            BackgroundColor, BorderColor, DataProviderClassNames, Constraint, Description, Display,
+            DurationEditable, EndDateTime, GroupId, Interactive, Overlap, RecurringDaysOfWeek, RecurringEndDate,
+            RecurringEndTime, RecurringStartDate, RecurringStartTime, StartDateTime, StartEditable, TextColor,
+            Title {
+    }
+
+    @StudioPropertyGroup
+    public interface ListProperties extends ListDayFormat, ListDaySideFormat, ListDaySideVisible, ListDayVisible {
+    }
+
+    @StudioPropertyGroup
+    public interface TimeGridProperties extends DayPopoverFormat, DayHeaderFormat, WeekNumberFormat,
+            EventTimeFormat, SlotLabelFormat, EventMinHeight, EventShortHeight, SlotEventOverlap,
+            AllDaySlotVisible, DisplayEventEnd {
     }
 }

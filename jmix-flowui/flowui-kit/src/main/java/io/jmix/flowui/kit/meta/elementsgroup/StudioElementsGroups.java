@@ -76,8 +76,8 @@ interface StudioElementsGroups {
             name = "Items",
             elementClassFqn = "io.jmix.flowui.kit.component.usermenu.UserMenuItem",
             xmlElement = "items",
-            target = {"io.jmix.flowui.component.usermenu.UserMenu"}
-//            documentationLink = "%VERSION%/flow-ui/vc/components/dropdownButton.html#_elements"
+            target = {"io.jmix.flowui.component.usermenu.UserMenu"},
+            documentationLink = "%VERSION%/flow-ui/vc/components/dropdownButton.html#_elements"
     )
     void userMenuItems();
 
@@ -90,8 +90,8 @@ interface StudioElementsGroups {
                     "io.jmix.flowui.kit.component.stub.UserMenuStubSeparatorItem",
                     "io.jmix.flowui.kit.component.usermenu.ActionUserMenuItem",
                     "io.jmix.flowui.component.usermenu.ViewUserMenuItem"
-            }
-//            documentationLink = "%VERSION%/flow-ui/vc/components/dropdownButton.html#_elements"
+            },
+            documentationLink = "%VERSION%/flow-ui/vc/components/dropdownButton.html#_elements"
     )
     void userMenuItemItems();
 

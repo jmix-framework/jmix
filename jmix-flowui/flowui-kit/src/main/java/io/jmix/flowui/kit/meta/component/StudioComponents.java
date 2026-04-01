@@ -68,6 +68,7 @@ import io.jmix.flowui.kit.meta.*;
 import io.jmix.flowui.kit.meta.component.preview.StudioGenericComponentPreview;
 
 @StudioUiKit
+@SuppressWarnings("rawtypes")
 interface StudioComponents {
 
     @StudioComponent(
@@ -1023,8 +1024,7 @@ interface StudioComponents {
             category = "Components",
             xmlElement = "userMenu",
             icon = "io/jmix/flowui/kit/meta/icon/mainview/userIndicator.svg",
-            // TODO: gg, add link when available
-//            documentationLink = "%VERSION%/flow-ui/vc/components/userMenu.html",
+            documentationLink = "%VERSION%/flow-ui/vc/components/userMenu.html",
             propertyGroups = {
                     StudioPropertyGroups.Id.class,
                     StudioPropertyGroups.EnabledWithTrueDefaultValue.class,

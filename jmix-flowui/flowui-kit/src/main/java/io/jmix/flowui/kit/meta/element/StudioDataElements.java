@@ -161,7 +161,8 @@ interface StudioDataElements {
             xmlElement = "property",
             icon = "io/jmix/flowui/kit/meta/icon/element/property.svg",
             propertyGroups = {
-                    StudioPropertyGroups.EntityClass.class
+                    StudioPropertyGroups.EntityClass.class,
+                    StudioPropertyGroups.RequiredStringName.class
             },
             properties = {
                     @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.STRING, required = true),
@@ -200,9 +201,6 @@ interface StudioDataElements {
             classFqn = "io.jmix.flowui.facet.dataloadcoordinator.OnComponentValueChangedLoadTrigger",
             xmlElement = "onComponentValueChanged",
             icon = "io/jmix/flowui/kit/meta/icon/element/onComponentValueChangedLoadTrigger.svg",
-            propertyGroups = {
-                    StudioPropertyGroups.Param.class
-            },
             properties = {
                     @StudioProperty(xmlAttribute = "param", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "likeClause", type = StudioPropertyType.ENUMERATION,
@@ -217,9 +215,6 @@ interface StudioDataElements {
             classFqn = "io.jmix.flowui.facet.dataloadcoordinator.OnContainerItemChangedLoadTrigger",
             xmlElement = "onContainerItemChanged",
             icon = "io/jmix/flowui/kit/meta/icon/element/onContainerItemChangedLoadTrigger.svg",
-            propertyGroups = {
-                    StudioPropertyGroups.Param.class
-            },
             properties = {
                     @StudioProperty(xmlAttribute = "param", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "container", type = StudioPropertyType.COLLECTION_OR_INSTANCE_DATA_CONTAINER_REF, required = true)

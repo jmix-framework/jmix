@@ -16,6 +16,11 @@
 
 package io.jmix.flowui.kit.meta.generator
 
+import io.jmix.flowui.kit.meta.StudioAction
+import io.jmix.flowui.kit.meta.StudioComponent
+import io.jmix.flowui.kit.meta.StudioDataComponent
+import io.jmix.flowui.kit.meta.StudioElement
+import io.jmix.flowui.kit.meta.StudioFacet
 import io.jmix.flowui.kit.meta.StudioPropertyGroups
 import spock.lang.Shared
 import spock.lang.Specification
@@ -28,40 +33,14 @@ import java.util.regex.Pattern
 
 class StudioMetaDescriptionGeneratorTest extends Specification {
 
-    private static final String LAYOUT_XSD =
-            'jmix/jmix-flowui/flowui/src/main/resources/io/jmix/flowui/view/layout.xsd'
-    private static final String DATA_XSD =
-            'jmix/jmix-flowui/flowui/src/main/resources/io/jmix/flowui/view/data.xsd'
-
-    private static final String STUDIO_COMPONENTS_SOURCE =
-            'jmix/jmix-flowui/flowui-kit/src/main/java/io/jmix/flowui/kit/meta/component/StudioComponents.java'
-    private static final String STUDIO_ELEMENTS_SOURCE =
-            'jmix/jmix-flowui/flowui-kit/src/main/java/io/jmix/flowui/kit/meta/element/StudioElements.java'
-    private static final String STUDIO_ACTIONS_SOURCE =
-            'jmix/jmix-flowui/flowui-kit/src/main/java/io/jmix/flowui/kit/meta/action/StudioActions.java'
-    private static final String STUDIO_DATA_COMPONENTS_SOURCE =
-            'jmix/jmix-flowui/flowui-kit/src/main/java/io/jmix/flowui/kit/meta/datacomponent/StudioDataComponents.java'
-    private static final String STUDIO_FACETS_SOURCE =
-            'jmix/jmix-flowui/flowui-kit/src/main/java/io/jmix/flowui/kit/meta/facet/StudioFacets.java'
-    private static final String TEST_META_DESCRIPTIONS_SOURCE =
-            'jmix/jmix-flowui/flowui/src/test/java/io/jmix/flowui/kit/meta/generator/TestStudioMetaDescriptions.java'
-
-    private static final List<String> SUPPORTED_META_ANNOTATIONS = [
-            'StudioFacet',
-            'StudioComponent',
-            'StudioElement',
-            'StudioAction',
-            'StudioDataComponent'
-    ].asImmutable()
-
     @Shared
     Path workspaceRoot = StudioMetaDescriptionGenerator.detectWorkspaceRoot(Path.of('').toAbsolutePath())
 
     @Shared
-    Path layoutXsd = workspaceRoot.resolve(LAYOUT_XSD).normalize()
+    Path layoutXsd = requiredClasspathResource(LAYOUT_SCHEMA_RESOURCE)
 
     @Shared
-    Path dataXsd = workspaceRoot.resolve(DATA_XSD).normalize()
+    Path dataXsd = requiredClasspathResource(DATA_SCHEMA_RESOURCE)
 
     @Shared
     StudioMetaDescriptionGenerator generator = new StudioMetaDescriptionGenerator(workspaceRoot)
@@ -71,24 +50,20 @@ class StudioMetaDescriptionGeneratorTest extends Specification {
 
     def "test generated dataLoadCoordinator meta matches exact fixture property group"() {
         when:
-        def generatedMeta = generateMeta(layoutXsd, 'dataLoadCoordinator') { candidate ->
-            candidate.contextNames().contains('facets')
-        }
+        def generatedMeta = generateFacetMeta('dataLoadCoordinator')
 
         then:
-        generatedMeta.toComparableMap() == expectedMeta(TEST_META_DESCRIPTIONS_SOURCE, 'dataLoadCoordinator').toComparableMap()
+        generatedMeta.toComparableMap() == expectedMeta(TestStudioMetaDescriptions, 'dataLoadCoordinator').toComparableMap()
         generatedMeta.propertyGroups == [TestStudioMetaPropertyGroups.DataLoadCoordinatorGeneratedProperties.canonicalName]
-        !generatedMeta.propertyGroups.contains(StudioPropertyGroups.Auto.canonicalName)
+        !containsPropertyGroup(generatedMeta.propertyGroups, StudioPropertyGroups.Auto)
     }
 
     def "test generated timer meta uses only exact property groups"() {
         when:
-        def generatedMeta = generateMeta(layoutXsd, 'timer') { candidate ->
-            candidate.contextNames().contains('facets')
-        }
+        def generatedMeta = generateFacetMeta('timer')
 
         then:
-        propertyShape(generatedMeta.properties) == propertyShape(expectedMeta(STUDIO_FACETS_SOURCE, 'timer').properties)
+        propertyShape(generatedMeta.properties) == propertyShape(expectedMeta(STUDIO_FACETS_CLASS_NAME, 'timer').properties)
         generatedMeta.propertyGroups == [StudioPropertyGroups.RequiredId.canonicalName]
         !generatedMeta.propertyGroups.contains(TestStudioMetaPropertyGroups.TimerPropertiesWithDifferentRepeatingDefaultValue.canonicalName)
     }
@@ -96,60 +71,72 @@ class StudioMetaDescriptionGeneratorTest extends Specification {
     def "test generated avatar meta matches existing StudioComponents description"() {
         when:
         def generatedMeta = generateMeta(layoutXsd, 'avatar') { true }
-        def expectedMeta = expectedMeta(STUDIO_COMPONENTS_SOURCE, 'avatar')
+        def expectedMeta = expectedMeta(STUDIO_COMPONENTS_CLASS_NAME, 'avatar')
 
         then:
         generatedMeta.kind == expectedMeta.kind
         generatedMeta.xmlElement == expectedMeta.xmlElement
         propertyAttributes(generatedMeta.properties) == propertyAttributes(expectedMeta.properties)
-        generatedMeta.propertyGroups.contains(StudioPropertyGroups.ClassNamesAndCss.canonicalName)
-        generatedMeta.propertyGroups.contains(StudioPropertyGroups.ThemeNames.canonicalName)
+        containsPropertyGroup(generatedMeta.propertyGroups, StudioPropertyGroups.ClassNamesAndCss)
+        containsPropertyGroup(generatedMeta.propertyGroups, StudioPropertyGroups.ThemeNames)
     }
 
     def "test generated accordionPanel meta matches existing StudioElements description"() {
         when:
         def generatedMeta = generateMeta(layoutXsd, 'accordionPanel') { true }
-        def expectedMeta = expectedMeta(STUDIO_ELEMENTS_SOURCE, 'accordionPanel')
+        def expectedMeta = expectedMeta(STUDIO_ELEMENTS_CLASS_NAME, 'accordionPanel')
 
         then:
         generatedMeta.kind == expectedMeta.kind
         generatedMeta.xmlElement == expectedMeta.xmlElement
         propertyAttributes(generatedMeta.properties).containsAll(propertyAttributes(expectedMeta.properties))
-        generatedMeta.propertyGroups.contains(StudioPropertyGroups.Colspan.canonicalName)
-        generatedMeta.propertyGroups.contains(StudioPropertyGroups.Enabled.canonicalName)
+        containsPropertyGroup(generatedMeta.propertyGroups, StudioPropertyGroups.Colspan)
+        containsPropertyGroup(generatedMeta.propertyGroups, StudioPropertyGroups.Enabled)
     }
 
     def "test generated view action reuses common StudioActions defaults"() {
         given:
-        def expectedBaseAction = expectedMeta(STUDIO_ACTIONS_SOURCE, 'baseAction')
+        def expectedBaseAction = expectedMeta(STUDIO_ACTIONS_CLASS_NAME, "baseAction")
 
         when:
-        def generatedMeta = generateMeta(layoutXsd, 'action') { candidate ->
-            candidate.contextNames().contains('viewActions')
-        }
+        def generatedMeta = generateViewActionMeta(VIEW_ACTION_XML_ELEMENT)
 
         then:
         generatedMeta.kind == StudioMetaKind.ACTION
-        generatedMeta.xmlElement == 'action'
-        propertyAttributes(generatedMeta.properties).containsAll(propertyAttributes(expectedBaseAction.properties) + ['type'])
-        generatedMeta.propertyGroups.contains(StudioPropertyGroups.RequiredId.canonicalName)
-        generatedMeta.propertyGroups.contains(StudioPropertyGroups.Text.canonicalName)
-        generatedMeta.propertyGroups.any { it.endsWith('.Description') || it.endsWith('.DescriptionWithoutCategory') }
+        generatedMeta.xmlElement == VIEW_ACTION_XML_ELEMENT
+        propertyAttributes(generatedMeta.properties).containsAll(
+                propertyAttributes(expectedBaseAction.properties) + [ACTION_TYPE_XML_ATTRIBUTE]
+        )
+        containsPropertyGroup(generatedMeta.propertyGroups, StudioPropertyGroups.RequiredId)
+        containsPropertyGroup(generatedMeta.propertyGroups, StudioPropertyGroups.Text)
+        containsAnyPropertyGroup(generatedMeta.propertyGroups,
+                StudioPropertyGroups.Description,
+                StudioPropertyGroups.DescriptionWithoutCategory)
     }
 
     def "test generated collection data component matches existing StudioDataComponents description"() {
         when:
-        def generatedMeta = generateMeta(dataXsd, 'collection') { candidate ->
-            candidate.contextNames().contains('viewData')
-        }
-        def expectedMeta = expectedMeta(STUDIO_DATA_COMPONENTS_SOURCE, 'collection')
+        def generatedMeta = generateViewDataMeta('collection')
+        def expectedMeta = expectedMeta(STUDIO_DATA_COMPONENTS_CLASS_NAME, 'collection')
 
         then:
         generatedMeta.kind == expectedMeta.kind
         generatedMeta.xmlElement == expectedMeta.xmlElement
         propertyAttributes(generatedMeta.properties) == propertyAttributes(expectedMeta.properties)
-        generatedMeta.propertyGroups.contains(StudioPropertyGroups.RequiredId.canonicalName)
-        generatedMeta.propertyGroups.contains(StudioPropertyGroups.EntityClass.canonicalName)
+        containsPropertyGroup(generatedMeta.propertyGroups, StudioPropertyGroups.RequiredId)
+        containsPropertyGroup(generatedMeta.propertyGroups, StudioPropertyGroups.EntityClass)
+    }
+
+    private MetaProjection generateFacetMeta(String elementName) {
+        generateMeta(layoutXsd, elementName, candidateInContext(FACETS_CONTEXT))
+    }
+
+    private MetaProjection generateViewActionMeta(String elementName) {
+        generateMeta(layoutXsd, elementName, candidateInContext(VIEW_ACTIONS_CONTEXT))
+    }
+
+    private MetaProjection generateViewDataMeta(String elementName) {
+        generateMeta(dataXsd, elementName, candidateInContext(VIEW_DATA_CONTEXT))
     }
 
     private MetaProjection generateMeta(Path schemaPath,
@@ -170,8 +157,19 @@ class StudioMetaDescriptionGeneratorTest extends Specification {
         candidates.first()
     }
 
-    private MetaProjection expectedMeta(String relativeSourcePath, String methodName) {
-        Path sourcePath = workspaceRoot.resolve(relativeSourcePath).normalize()
+    private static Closure<Boolean> candidateInContext(String contextName) {
+        return { StudioXsdElementCandidate candidate -> candidate.contextNames().contains(contextName) }
+    }
+
+    private MetaProjection expectedMeta(Class<?> sourceClass, String methodName) {
+        expectedMeta(sourcePathOf(sourceClass), methodName)
+    }
+
+    private MetaProjection expectedMeta(String sourceClassName, String methodName) {
+        expectedMeta(sourcePathOf(sourceClassName), methodName)
+    }
+
+    private MetaProjection expectedMeta(Path sourcePath, String methodName) {
         String source = Files.readString(sourcePath, StandardCharsets.UTF_8)
         parseMetaSource(source, methodName, sourcePath.fileName.toString().replaceFirst(/\.java$/, ''))
     }
@@ -494,7 +492,7 @@ class StudioMetaDescriptionGeneratorTest extends Specification {
 
     private Map<String, List<String>> buildJavaClassIndex() {
         Map<String, List<String>> index = [:].withDefault { [] }
-        [workspaceRoot.resolve('jmix'), workspaceRoot.resolve('jmix-premium')].findAll { Files.isDirectory(it) }.each { root ->
+        repositoryRoots().findAll { Files.isDirectory(it) }.each { root ->
             Files.walk(root)
                     .filter { path -> path.toString().endsWith('.java') }
                     .forEach { Path path ->
@@ -510,6 +508,67 @@ class StudioMetaDescriptionGeneratorTest extends Specification {
                     }
         }
         index
+    }
+
+    private List<Path> repositoryRoots() {
+        [
+                workspaceRoot.resolve(OPEN_SOURCE_REPOSITORY_DIRECTORY),
+                workspaceRoot.resolve(PREMIUM_REPOSITORY_DIRECTORY)
+        ].collect { it.normalize() }
+    }
+
+    private static Path requiredClasspathResource(String resourcePath) {
+        URL resource = StudioMetaDescriptionGeneratorTest.classLoader.getResource(resourcePath)
+        assert resource != null: "Classpath resource ${resourcePath} not found"
+        Path.of(resource.toURI())
+    }
+
+    private static Path sourcePathOf(String className) {
+        sourcePathOf(loadSourceClass(className))
+    }
+
+    private static Path sourcePathOf(Class<?> sourceClass) {
+        Path compiledClassRoot = Path.of(sourceClass.protectionDomain.codeSource.location.toURI())
+        Path buildDirectory = findAncestor(compiledClassRoot, BUILD_DIRECTORY)
+        assert buildDirectory != null: "Cannot resolve build directory for ${sourceClass.name}"
+
+        Path moduleRoot = buildDirectory.parent
+        String relativeSourcePath = sourceClass.name.replace('.', '/') + '.java'
+        List<String> preferredSourceSets = compiledClassRoot.fileName?.toString() == 'test'
+                ? TEST_SOURCE_SETS + MAIN_SOURCE_SETS
+                : MAIN_SOURCE_SETS + TEST_SOURCE_SETS
+
+        Path sourcePath = preferredSourceSets.stream()
+                .map { sourceSet -> moduleRoot.resolve(sourceSet).resolve(relativeSourcePath).normalize() }
+                .filter { Files.exists(it) }
+                .findFirst()
+                .orElse(null)
+
+        assert sourcePath != null: "Cannot resolve source path for ${sourceClass.name}"
+        sourcePath
+    }
+
+    private static Class<?> loadSourceClass(String className) {
+        Class.forName(className, false, StudioMetaDescriptionGeneratorTest.classLoader)
+    }
+
+    private static Path findAncestor(Path path, String directoryName) {
+        Path current = path
+        while (current != null) {
+            if (current.fileName?.toString() == directoryName) {
+                return current
+            }
+            current = current.parent
+        }
+        null
+    }
+
+    private static boolean containsPropertyGroup(List<String> propertyGroups, Class<?> propertyGroup) {
+        propertyGroups.contains(propertyGroup.canonicalName)
+    }
+
+    private static boolean containsAnyPropertyGroup(List<String> propertyGroups, Class<?>... propertyGroupsToCheck) {
+        propertyGroupsToCheck.any { containsPropertyGroup(propertyGroups, it) }
     }
 
     private static String stripComments(String source) {
@@ -605,20 +664,11 @@ class StudioMetaDescriptionGeneratorTest extends Specification {
     }
 
     private static StudioMetaKind metaKind(String annotationName) {
-        switch (annotationName) {
-            case 'StudioFacet':
-                return StudioMetaKind.FACET
-            case 'StudioComponent':
-                return StudioMetaKind.COMPONENT
-            case 'StudioElement':
-                return StudioMetaKind.ELEMENT
-            case 'StudioAction':
-                return StudioMetaKind.ACTION
-            case 'StudioDataComponent':
-                return StudioMetaKind.DATA_COMPONENT
-            default:
-                throw new IllegalArgumentException("Unsupported meta annotation: ${annotationName}")
+        StudioMetaKind metaKind = META_KIND_BY_ANNOTATION[annotationName]
+        if (metaKind == null) {
+            throw new IllegalArgumentException("Unsupported meta annotation: ${annotationName}")
         }
+        metaKind
     }
 
     private static final class AnnotationParseResult {
@@ -668,4 +718,58 @@ class StudioMetaDescriptionGeneratorTest extends Specification {
             ]
         }
     }
+
+    private static final String BUILD_DIRECTORY = 'build'
+
+    private static final String OPEN_SOURCE_REPOSITORY_DIRECTORY = 'jmix'
+    private static final String PREMIUM_REPOSITORY_DIRECTORY = 'jmix-premium'
+
+    private static final String MAIN_JAVA_SOURCE_SET = 'src/main/java'
+    private static final String MAIN_GROOVY_SOURCE_SET = 'src/main/groovy'
+    private static final String TEST_JAVA_SOURCE_SET = 'src/test/java'
+    private static final String TEST_GROOVY_SOURCE_SET = 'src/test/groovy'
+
+    private static final String FLOW_RESOURCES__BASE_DIR = 'io/jmix/flowui/view/'
+    private static final String LAYOUT_SCHEMA_RESOURCE = FLOW_RESOURCES__BASE_DIR + 'layout.xsd'
+    private static final String DATA_SCHEMA_RESOURCE = FLOW_RESOURCES__BASE_DIR + 'data.xsd'
+
+    private static final String FACETS_CONTEXT = 'facets'
+    private static final String VIEW_ACTIONS_CONTEXT = 'viewActions'
+    private static final String VIEW_DATA_CONTEXT = 'viewData'
+
+    private static final String ACTION_TYPE_XML_ATTRIBUTE = 'type'
+    private static final String VIEW_ACTION_XML_ELEMENT = 'action'
+
+    // use string fqn because interfaces are package-private
+    private static final String STUDIO_COMPONENTS_CLASS_NAME =
+            'io.jmix.flowui.kit.meta.component.StudioComponents'
+    private static final String STUDIO_ELEMENTS_CLASS_NAME =
+            'io.jmix.flowui.kit.meta.element.StudioElements'
+    private static final String STUDIO_ACTIONS_CLASS_NAME =
+            'io.jmix.flowui.kit.meta.action.StudioActions'
+    private static final String STUDIO_DATA_COMPONENTS_CLASS_NAME =
+            'io.jmix.flowui.kit.meta.datacomponent.StudioDataComponents'
+    private static final String STUDIO_FACETS_CLASS_NAME =
+            'io.jmix.flowui.kit.meta.facet.StudioFacets'
+
+    private static final Map<String, StudioMetaKind> META_KIND_BY_ANNOTATION = [
+            (StudioFacet.simpleName)        : StudioMetaKind.FACET,
+            (StudioComponent.simpleName)    : StudioMetaKind.COMPONENT,
+            (StudioElement.simpleName)      : StudioMetaKind.ELEMENT,
+            (StudioAction.simpleName)       : StudioMetaKind.ACTION,
+            (StudioDataComponent.simpleName): StudioMetaKind.DATA_COMPONENT
+    ].asImmutable()
+
+    private static final List<String> SUPPORTED_META_ANNOTATIONS =
+            META_KIND_BY_ANNOTATION.keySet().asList().asImmutable()
+
+    private static final List<String> TEST_SOURCE_SETS = [
+            TEST_JAVA_SOURCE_SET,
+            TEST_GROOVY_SOURCE_SET
+    ].asImmutable()
+
+    private static final List<String> MAIN_SOURCE_SETS = [
+            MAIN_JAVA_SOURCE_SET,
+            MAIN_GROOVY_SOURCE_SET
+    ].asImmutable()
 }

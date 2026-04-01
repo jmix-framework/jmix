@@ -201,6 +201,10 @@ public final class StudioPropertyGroups {
     public interface AriaLabelledBy {
     }
 
+    @StudioPropertyGroup
+    public interface AriaLabelAndLabelledBy extends AriaLabel, AriaLabelledBy {
+    }
+
     @StudioPropertyGroup(
             properties = {
                     @StudioProperty(xmlAttribute = "tabIndex", type = StudioPropertyType.INTEGER)
@@ -1047,6 +1051,11 @@ public final class StudioPropertyGroups {
     @StudioPropertyGroup(properties = @StudioProperty(xmlAttribute = "value",
             type = StudioPropertyType.STRING, required = true))
     public interface RequiredStringValue {
+    }
+
+    @StudioPropertyGroup(properties = @StudioProperty(xmlAttribute = "value",
+            category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING))
+    public interface StringValue {
     }
 
     @StudioPropertyGroup(properties = @StudioProperty(xmlAttribute = "integer",
@@ -1961,6 +1970,42 @@ public final class StudioPropertyGroups {
     @StudioPropertyGroup
     public interface AddonComponentDefaultProperties extends ClassNamesAndCss, IdAndVisible, Size, AlignSelf,
             Colspan {
+    }
+
+    @StudioPropertyGroup
+    public interface SizedComponentDefaultProperties extends AlignSelfAndJustifySelfAndColspan, ClassNamesAndCss,
+            IdAndVisible, EnabledWithTrueDefaultValue, Size {
+    }
+
+    @StudioPropertyGroup
+    public interface FieldThemeTitleAndValueChangeDefaultProperties extends FieldThemeNames, Title,
+            ValueChangeMode, ValueChangeTimeout {
+    }
+
+    @StudioPropertyGroup
+    public interface IconDefaultProperties extends AlignSelfAndJustifySelfAndColspan, ClassNamesAndCss,
+            IdAndVisible, ClickShortcut, Color, RequiredIcon {
+    }
+
+    @StudioPropertyGroup
+    public interface SvgIconDefaultProperties extends AlignSelfAndJustifySelfAndColspan, ClassNamesAndCss,
+            IdAndVisible, ClickShortcut, Color, Resource, Symbol {
+    }
+
+    @StudioPropertyGroup
+    public interface FontIconDefaultProperties extends AlignSelfAndJustifySelfAndColspan, ClassNamesAndCss,
+            IdAndVisible, CharCode, ClickShortcut, Color, FontFamily, IconClassNames, Ligature {
+    }
+
+    @StudioPropertyGroup
+    public interface FieldDefaultProperties extends SizedComponentDefaultProperties,
+            AriaLabelAndTabIndexAndFocusShortcut, RequiredAndRequiredMessageAndErrorMessage,
+            CollectionOrInstanceDataContainer, HelperText, Label, ReadOnly {
+    }
+
+    @StudioPropertyGroup
+    public interface TextInputFieldDefaultProperties extends FieldDefaultProperties, Autocapitalize, Autocomplete,
+            Autocorrect, Autofocus, Autoselect, ClearButtonVisible, Placeholder {
     }
 
     @StudioPropertyGroup

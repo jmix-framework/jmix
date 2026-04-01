@@ -3283,18 +3283,8 @@ public interface StudioChartsElements {
             propertyGroups = {
                     StudioChartsPropertyGroups.Snap.class,
                     StudioChartsPropertyGroups.IntegerZ.class,
-                    StudioChartsPropertyGroups.Animation.class,
-                    StudioChartsPropertyGroups.AnimationThreshold.class,
-                    StudioChartsPropertyGroups.AnimationDuration.class,
-                    StudioChartsPropertyGroups.AnimationDurationFunction.class,
-                    StudioChartsPropertyGroups.AnimationEasing.class,
-                    StudioChartsPropertyGroups.AnimationDelay.class,
-                    StudioChartsPropertyGroups.AnimationDelayFunction.class,
-                    StudioChartsPropertyGroups.AnimationDurationUpdate.class,
-                    StudioChartsPropertyGroups.AnimationDurationUpdateFunction.class,
-                    StudioChartsPropertyGroups.AnimationEasingUpdate.class,
-                    StudioChartsPropertyGroups.AnimationDelayUpdate.class,
-                    StudioChartsPropertyGroups.AnimationDelayUpdateFunction.class
+                    StudioChartsPropertyGroups.AnimationDefaultProperties.class,
+                    StudioChartsPropertyGroups.AnimationFunctionDefaultProperties.class
             },
             properties = {
                     @StudioProperty(xmlAttribute = "type", type = StudioPropertyType.ENUMERATION,
@@ -4036,9 +4026,7 @@ public interface StudioChartsElements {
             unlimitedCount = false,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             propertyGroups = {
-                    StudioChartsPropertyGroups.Interval.class,
-                    StudioChartsPropertyGroups.IntervalFunction.class,
-                    StudioChartsPropertyGroups.Show.class
+                    StudioChartsPropertyGroups.SplitDefaultProperties.class
             },
             properties = {
                     @StudioProperty(xmlAttribute = "interval", type = StudioPropertyType.INTEGER),
@@ -4167,9 +4155,7 @@ public interface StudioChartsElements {
             unlimitedCount = false,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             propertyGroups = {
-                    StudioChartsPropertyGroups.Show.class,
-                    StudioChartsPropertyGroups.Interval.class,
-                    StudioChartsPropertyGroups.IntervalFunction.class
+                    StudioChartsPropertyGroups.SplitDefaultProperties.class
             },
             properties = {
                     @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
@@ -4210,9 +4196,7 @@ public interface StudioChartsElements {
             unlimitedCount = false,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             propertyGroups = {
-                    StudioChartsPropertyGroups.Show.class,
-                    StudioChartsPropertyGroups.Interval.class,
-                    StudioChartsPropertyGroups.IntervalFunction.class,
+                    StudioChartsPropertyGroups.SplitDefaultProperties.class,
                     StudioChartsPropertyGroups.Inside.class,
                     StudioChartsPropertyGroups.Rotate.class,
                     StudioChartsPropertyGroups.Margin.class,
@@ -4464,9 +4448,7 @@ public interface StudioChartsElements {
             unlimitedCount = false,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             propertyGroups = {
-                    StudioChartsPropertyGroups.Show.class,
-                    StudioChartsPropertyGroups.Interval.class,
-                    StudioChartsPropertyGroups.IntervalFunction.class,
+                    StudioChartsPropertyGroups.SplitDefaultProperties.class,
                     StudioChartsPropertyGroups.Inside.class,
                     StudioChartsPropertyGroups.Length.class
             },
@@ -4695,46 +4677,7 @@ public interface StudioChartsElements {
             isInjectable = false,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             propertyGroups = {
-                    StudioChartsPropertyGroups.Show.class,
-                    StudioChartsPropertyGroups.GridIndex.class,
-                    StudioChartsPropertyGroups.AlignTicks.class,
-                    StudioChartsPropertyGroups.AxisPosition.class,
-                    StudioChartsPropertyGroups.IntegerOffset.class,
-                    StudioChartsPropertyGroups.Name.class,
-                    StudioChartsPropertyGroups.NameLocation.class,
-                    StudioChartsPropertyGroups.NameGap.class,
-                    StudioChartsPropertyGroups.NameRotate.class,
-                    StudioChartsPropertyGroups.Inverse.class,
-                    StudioChartsPropertyGroups.MinFunction.class,
-                    StudioChartsPropertyGroups.MaxFunction.class,
-                    StudioChartsPropertyGroups.AnimationDurationFunction.class,
-                    StudioChartsPropertyGroups.AnimationDelayFunction.class,
-                    StudioChartsPropertyGroups.AnimationDurationUpdateFunction.class,
-                    StudioChartsPropertyGroups.AnimationDelayUpdateFunction.class,
-                    StudioPropertyGroups.Id.class,
-                    StudioChartsPropertyGroups.AxisType.class,
-                    StudioChartsPropertyGroups.CategoryBoundaryGap.class,
-                    StudioChartsPropertyGroups.NonCategoryBoundaryGap.class,
-                    StudioChartsPropertyGroups.StringMin.class,
-                    StudioChartsPropertyGroups.StringMax.class,
-                    StudioChartsPropertyGroups.BooleanScale.class,
-                    StudioChartsPropertyGroups.SplitNumber.class,
-                    StudioChartsPropertyGroups.MinInterval.class,
-                    StudioChartsPropertyGroups.MaxInterval.class,
-                    StudioChartsPropertyGroups.Interval.class,
-                    StudioChartsPropertyGroups.LogBase.class,
-                    StudioChartsPropertyGroups.Silent.class,
-                    StudioChartsPropertyGroups.TriggerEvent.class,
-                    StudioChartsPropertyGroups.Animation.class,
-                    StudioChartsPropertyGroups.AnimationThreshold.class,
-                    StudioChartsPropertyGroups.AnimationDuration.class,
-                    StudioChartsPropertyGroups.AnimationEasing.class,
-                    StudioChartsPropertyGroups.AnimationDelay.class,
-                    StudioChartsPropertyGroups.AnimationDurationUpdate.class,
-                    StudioChartsPropertyGroups.AnimationEasingUpdate.class,
-                    StudioChartsPropertyGroups.AnimationDelayUpdate.class,
-                    StudioChartsPropertyGroups.IntegerZLevel.class,
-                    StudioChartsPropertyGroups.IntegerZ.class
+                    StudioChartsPropertyGroups.CartesianAxisDefaultProperties.class
             },
             properties = {
                     @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
@@ -4796,46 +4739,7 @@ public interface StudioChartsElements {
             isInjectable = false,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             propertyGroups = {
-                    StudioChartsPropertyGroups.Show.class,
-                    StudioChartsPropertyGroups.GridIndex.class,
-                    StudioChartsPropertyGroups.AlignTicks.class,
-                    StudioChartsPropertyGroups.AxisPosition.class,
-                    StudioChartsPropertyGroups.IntegerOffset.class,
-                    StudioChartsPropertyGroups.NameGap.class,
-                    StudioChartsPropertyGroups.Name.class,
-                    StudioChartsPropertyGroups.NameLocation.class,
-                    StudioChartsPropertyGroups.BooleanScale.class,
-                    StudioChartsPropertyGroups.Silent.class,
-                    StudioChartsPropertyGroups.TriggerEvent.class,
-                    StudioChartsPropertyGroups.NameRotate.class,
-                    StudioChartsPropertyGroups.Inverse.class,
-                    StudioChartsPropertyGroups.MinFunction.class,
-                    StudioChartsPropertyGroups.MaxFunction.class,
-                    StudioChartsPropertyGroups.AnimationDurationFunction.class,
-                    StudioChartsPropertyGroups.AnimationDelayFunction.class,
-                    StudioChartsPropertyGroups.AnimationDurationUpdateFunction.class,
-                    StudioChartsPropertyGroups.AnimationDelayUpdateFunction.class,
-                    StudioPropertyGroups.Id.class,
-                    StudioChartsPropertyGroups.AxisType.class,
-                    StudioChartsPropertyGroups.CategoryBoundaryGap.class,
-                    StudioChartsPropertyGroups.NonCategoryBoundaryGap.class,
-                    StudioChartsPropertyGroups.StringMin.class,
-                    StudioChartsPropertyGroups.StringMax.class,
-                    StudioChartsPropertyGroups.SplitNumber.class,
-                    StudioChartsPropertyGroups.MinInterval.class,
-                    StudioChartsPropertyGroups.MaxInterval.class,
-                    StudioChartsPropertyGroups.Interval.class,
-                    StudioChartsPropertyGroups.LogBase.class,
-                    StudioChartsPropertyGroups.Animation.class,
-                    StudioChartsPropertyGroups.AnimationThreshold.class,
-                    StudioChartsPropertyGroups.AnimationDuration.class,
-                    StudioChartsPropertyGroups.AnimationEasing.class,
-                    StudioChartsPropertyGroups.AnimationDelay.class,
-                    StudioChartsPropertyGroups.AnimationDurationUpdate.class,
-                    StudioChartsPropertyGroups.AnimationEasingUpdate.class,
-                    StudioChartsPropertyGroups.AnimationDelayUpdate.class,
-                    StudioChartsPropertyGroups.IntegerZLevel.class,
-                    StudioChartsPropertyGroups.IntegerZ.class
+                    StudioChartsPropertyGroups.CartesianAxisDefaultProperties.class
             },
             properties = {
                     @StudioProperty(xmlAttribute = "show", type = StudioPropertyType.BOOLEAN),
@@ -4908,10 +4812,7 @@ public interface StudioChartsElements {
                     StudioChartsPropertyGroups.PolarIndex.class,
                     StudioChartsPropertyGroups.MinFunction.class,
                     StudioChartsPropertyGroups.MaxFunction.class,
-                    StudioChartsPropertyGroups.AnimationDurationFunction.class,
-                    StudioChartsPropertyGroups.AnimationDelayFunction.class,
-                    StudioChartsPropertyGroups.AnimationDurationUpdateFunction.class,
-                    StudioChartsPropertyGroups.AnimationDelayUpdateFunction.class,
+                    StudioChartsPropertyGroups.AnimationFunctionDefaultProperties.class,
                     StudioPropertyGroups.Id.class,
                     StudioChartsPropertyGroups.AxisType.class,
                     StudioChartsPropertyGroups.CategoryBoundaryGap.class,
@@ -4926,14 +4827,7 @@ public interface StudioChartsElements {
                     StudioChartsPropertyGroups.LogBase.class,
                     StudioChartsPropertyGroups.Silent.class,
                     StudioChartsPropertyGroups.TriggerEvent.class,
-                    StudioChartsPropertyGroups.Animation.class,
-                    StudioChartsPropertyGroups.AnimationThreshold.class,
-                    StudioChartsPropertyGroups.AnimationDuration.class,
-                    StudioChartsPropertyGroups.AnimationEasing.class,
-                    StudioChartsPropertyGroups.AnimationDelay.class,
-                    StudioChartsPropertyGroups.AnimationDurationUpdate.class,
-                    StudioChartsPropertyGroups.AnimationEasingUpdate.class,
-                    StudioChartsPropertyGroups.AnimationDelayUpdate.class,
+                    StudioChartsPropertyGroups.AnimationDefaultProperties.class,
                     StudioChartsPropertyGroups.IntegerZLevel.class,
                     StudioChartsPropertyGroups.IntegerZ.class
             },
@@ -4995,10 +4889,7 @@ public interface StudioChartsElements {
                     StudioChartsPropertyGroups.PolarIndex.class,
                     StudioChartsPropertyGroups.MinFunction.class,
                     StudioChartsPropertyGroups.MaxFunction.class,
-                    StudioChartsPropertyGroups.AnimationDurationFunction.class,
-                    StudioChartsPropertyGroups.AnimationDelayFunction.class,
-                    StudioChartsPropertyGroups.AnimationDurationUpdateFunction.class,
-                    StudioChartsPropertyGroups.AnimationDelayUpdateFunction.class,
+                    StudioChartsPropertyGroups.AnimationFunctionDefaultProperties.class,
                     StudioPropertyGroups.Id.class,
                     StudioChartsPropertyGroups.AxisType.class,
                     StudioChartsPropertyGroups.CategoryBoundaryGap.class,
@@ -5013,14 +4904,7 @@ public interface StudioChartsElements {
                     StudioChartsPropertyGroups.LogBase.class,
                     StudioChartsPropertyGroups.Silent.class,
                     StudioChartsPropertyGroups.TriggerEvent.class,
-                    StudioChartsPropertyGroups.Animation.class,
-                    StudioChartsPropertyGroups.AnimationThreshold.class,
-                    StudioChartsPropertyGroups.AnimationDuration.class,
-                    StudioChartsPropertyGroups.AnimationEasing.class,
-                    StudioChartsPropertyGroups.AnimationDelay.class,
-                    StudioChartsPropertyGroups.AnimationDurationUpdate.class,
-                    StudioChartsPropertyGroups.AnimationEasingUpdate.class,
-                    StudioChartsPropertyGroups.AnimationDelayUpdate.class,
+                    StudioChartsPropertyGroups.AnimationDefaultProperties.class,
                     StudioChartsPropertyGroups.IntegerZLevel.class,
                     StudioChartsPropertyGroups.IntegerZ.class
             },
@@ -5313,12 +5197,7 @@ public interface StudioChartsElements {
             unlimitedCount = false,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             propertyGroups = {
-                    StudioChartsPropertyGroups.ShadowBlur.class,
-                    StudioChartsPropertyGroups.ShadowOffsetX.class,
-                    StudioChartsPropertyGroups.ShadowOffsetY.class,
-                    StudioChartsPropertyGroups.Opacity.class,
-                    StudioChartsPropertyGroups.ChartColor.class,
-                    StudioChartsPropertyGroups.ShadowColor.class
+                    StudioChartsPropertyGroups.AreaStyleDefaultProperties.class
             },
             properties = {
                     @StudioProperty(xmlAttribute = "shadowBlur", type = StudioPropertyType.INTEGER),
@@ -6102,11 +5981,7 @@ public interface StudioChartsElements {
                     StudioChartsPropertyGroups.Clip.class,
                     StudioChartsPropertyGroups.Sampling.class,
                     StudioChartsPropertyGroups.Cursor.class,
-                    StudioChartsPropertyGroups.Animation.class,
-                    StudioChartsPropertyGroups.AnimationThreshold.class,
-                    StudioChartsPropertyGroups.AnimationDurationUpdate.class,
-                    StudioChartsPropertyGroups.AnimationEasingUpdate.class,
-                    StudioChartsPropertyGroups.AnimationDelayUpdate.class,
+                    StudioChartsPropertyGroups.AnimationDefaultProperties.class,
                     StudioPropertyGroups.Symbol.class,
                     StudioChartsPropertyGroups.IntegerSymbolSize.class,
                     StudioChartsPropertyGroups.SymbolSizeFunction.class,
@@ -6126,10 +6001,7 @@ public interface StudioChartsElements {
                     StudioChartsPropertyGroups.DataGroupId.class,
                     StudioChartsPropertyGroups.IntegerZLevel.class,
                     StudioChartsPropertyGroups.IntegerZ.class,
-                    StudioChartsPropertyGroups.Silent.class,
-                    StudioChartsPropertyGroups.AnimationDuration.class,
-                    StudioChartsPropertyGroups.AnimationEasing.class,
-                    StudioChartsPropertyGroups.AnimationDelay.class
+                    StudioChartsPropertyGroups.Silent.class
             },
             properties = {
                     @StudioProperty(xmlAttribute = "coordinateSystem", type = StudioPropertyType.ENUMERATION,
@@ -6681,12 +6553,7 @@ public interface StudioChartsElements {
             unlimitedCount = false,
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             propertyGroups = {
-                    StudioChartsPropertyGroups.Opacity.class,
-                    StudioChartsPropertyGroups.ChartColor.class,
-                    StudioChartsPropertyGroups.ShadowColor.class,
-                    StudioChartsPropertyGroups.ShadowBlur.class,
-                    StudioChartsPropertyGroups.ShadowOffsetX.class,
-                    StudioChartsPropertyGroups.ShadowOffsetY.class
+                    StudioChartsPropertyGroups.AreaStyleDefaultProperties.class
             },
             properties = {
                     @StudioProperty(xmlAttribute = "originType", type = StudioPropertyType.ENUMERATION,
@@ -6928,11 +6795,7 @@ public interface StudioChartsElements {
                     StudioChartsPropertyGroups.LargeThreshold.class,
                     StudioChartsPropertyGroups.Progressive.class,
                     StudioChartsPropertyGroups.ProgressiveThreshold.class,
-                    StudioChartsPropertyGroups.Animation.class,
-                    StudioChartsPropertyGroups.AnimationThreshold.class,
-                    StudioChartsPropertyGroups.AnimationDurationUpdate.class,
-                    StudioChartsPropertyGroups.AnimationDelayUpdate.class,
-                    StudioChartsPropertyGroups.AnimationEasingUpdate.class,
+                    StudioChartsPropertyGroups.AnimationDefaultProperties.class,
                     StudioChartsPropertyGroups.ProgressiveChunkMode.class,
                     StudioChartsPropertyGroups.LegendHoverLink.class,
                     StudioChartsPropertyGroups.SeriesLayoutBy.class,
@@ -6944,10 +6807,7 @@ public interface StudioChartsElements {
                     StudioChartsPropertyGroups.DataGroupId.class,
                     StudioChartsPropertyGroups.IntegerZLevel.class,
                     StudioChartsPropertyGroups.IntegerZ.class,
-                    StudioChartsPropertyGroups.Silent.class,
-                    StudioChartsPropertyGroups.AnimationDuration.class,
-                    StudioChartsPropertyGroups.AnimationEasing.class,
-                    StudioChartsPropertyGroups.AnimationDelay.class
+                    StudioChartsPropertyGroups.Silent.class
             },
             properties = {
                     @StudioProperty(xmlAttribute = "coordinateSystem", type = StudioPropertyType.ENUMERATION,
@@ -7216,14 +7076,7 @@ public interface StudioChartsElements {
                     StudioChartsPropertyGroups.SymbolOffset.class,
                     StudioChartsPropertyGroups.SymbolType.class,
                     StudioChartsPropertyGroups.Silent.class,
-                    StudioChartsPropertyGroups.Animation.class,
-                    StudioChartsPropertyGroups.AnimationThreshold.class,
-                    StudioChartsPropertyGroups.AnimationDuration.class,
-                    StudioChartsPropertyGroups.AnimationEasing.class,
-                    StudioChartsPropertyGroups.AnimationDelay.class,
-                    StudioChartsPropertyGroups.AnimationDurationUpdate.class,
-                    StudioChartsPropertyGroups.AnimationEasingUpdate.class,
-                    StudioChartsPropertyGroups.AnimationDelayUpdate.class
+                    StudioChartsPropertyGroups.AnimationDefaultProperties.class
             },
             properties = {
                     @StudioProperty(xmlAttribute = "symbol", type = StudioPropertyType.STRING),
@@ -7265,14 +7118,7 @@ public interface StudioChartsElements {
                     StudioChartsPropertyGroups.IntegerSymbolSize.class,
                     StudioChartsPropertyGroups.IntegerPrecision.class,
                     StudioChartsPropertyGroups.Silent.class,
-                    StudioChartsPropertyGroups.Animation.class,
-                    StudioChartsPropertyGroups.AnimationThreshold.class,
-                    StudioChartsPropertyGroups.AnimationDuration.class,
-                    StudioChartsPropertyGroups.AnimationEasing.class,
-                    StudioChartsPropertyGroups.AnimationDelay.class,
-                    StudioChartsPropertyGroups.AnimationDurationUpdate.class,
-                    StudioChartsPropertyGroups.AnimationEasingUpdate.class,
-                    StudioChartsPropertyGroups.AnimationDelayUpdate.class
+                    StudioChartsPropertyGroups.AnimationDefaultProperties.class
             },
             properties = {
                     @StudioProperty(xmlAttribute = "symbolSize", type = StudioPropertyType.INTEGER),
@@ -7308,14 +7154,7 @@ public interface StudioChartsElements {
             icon = "io/jmix/chartsflowui/kit/meta/icon/unknownComponent.svg",
             propertyGroups = {
                     StudioChartsPropertyGroups.Silent.class,
-                    StudioChartsPropertyGroups.Animation.class,
-                    StudioChartsPropertyGroups.AnimationThreshold.class,
-                    StudioChartsPropertyGroups.AnimationDuration.class,
-                    StudioChartsPropertyGroups.AnimationEasing.class,
-                    StudioChartsPropertyGroups.AnimationDelay.class,
-                    StudioChartsPropertyGroups.AnimationDurationUpdate.class,
-                    StudioChartsPropertyGroups.AnimationEasingUpdate.class,
-                    StudioChartsPropertyGroups.AnimationDelayUpdate.class
+                    StudioChartsPropertyGroups.AnimationDefaultProperties.class
             },
             properties = {
                     @StudioProperty(xmlAttribute = "silent", type = StudioPropertyType.BOOLEAN),
@@ -8149,13 +7988,8 @@ public interface StudioChartsElements {
                     StudioChartsPropertyGroups.IntegerBorderWidth.class,
                     StudioChartsPropertyGroups.BorderType.class,
                     StudioChartsPropertyGroups.BorderRadius.class,
-                    StudioChartsPropertyGroups.ShadowBlur.class,
-                    StudioChartsPropertyGroups.ShadowOffsetX.class,
-                    StudioChartsPropertyGroups.ShadowOffsetY.class,
-                    StudioChartsPropertyGroups.Opacity.class,
-                    StudioChartsPropertyGroups.ChartColor.class,
-                    StudioChartsPropertyGroups.BorderColor.class,
-                    StudioChartsPropertyGroups.ShadowColor.class
+                    StudioChartsPropertyGroups.AreaStyleDefaultProperties.class,
+                    StudioChartsPropertyGroups.BorderColor.class
             },
             properties = {
                     @StudioProperty(xmlAttribute = "borderWidth", type = StudioPropertyType.INTEGER),
@@ -8564,11 +8398,7 @@ public interface StudioChartsElements {
                     StudioChartsPropertyGroups.Cursor.class,
                     StudioChartsPropertyGroups.Center.class,
                     StudioChartsPropertyGroups.Radius.class,
-                    StudioChartsPropertyGroups.Animation.class,
-                    StudioChartsPropertyGroups.AnimationThreshold.class,
-                    StudioChartsPropertyGroups.AnimationDurationUpdate.class,
-                    StudioChartsPropertyGroups.AnimationEasingUpdate.class,
-                    StudioChartsPropertyGroups.AnimationDelayUpdate.class,
+                    StudioChartsPropertyGroups.AnimationDefaultProperties.class,
                     StudioChartsPropertyGroups.Left.class,
                     StudioChartsPropertyGroups.Bottom.class,
                     StudioChartsPropertyGroups.StringRight.class,
@@ -8583,10 +8413,7 @@ public interface StudioChartsElements {
                     StudioChartsPropertyGroups.DataGroupId.class,
                     StudioChartsPropertyGroups.IntegerZLevel.class,
                     StudioChartsPropertyGroups.IntegerZ.class,
-                    StudioChartsPropertyGroups.Silent.class,
-                    StudioChartsPropertyGroups.AnimationDuration.class,
-                    StudioChartsPropertyGroups.AnimationEasing.class,
-                    StudioChartsPropertyGroups.AnimationDelay.class
+                    StudioChartsPropertyGroups.Silent.class
             },
             properties = {
                     @StudioProperty(xmlAttribute = "geoIndex", type = StudioPropertyType.INTEGER),
@@ -8744,11 +8571,7 @@ public interface StudioChartsElements {
                     StudioChartsPropertyGroups.LargeThreshold.class,
                     StudioChartsPropertyGroups.Progressive.class,
                     StudioChartsPropertyGroups.ProgressiveThreshold.class,
-                    StudioChartsPropertyGroups.Animation.class,
-                    StudioChartsPropertyGroups.AnimationThreshold.class,
-                    StudioChartsPropertyGroups.AnimationDurationUpdate.class,
-                    StudioChartsPropertyGroups.AnimationEasingUpdate.class,
-                    StudioChartsPropertyGroups.AnimationDelayUpdate.class,
+                    StudioChartsPropertyGroups.AnimationDefaultProperties.class,
                     StudioPropertyGroups.Symbol.class,
                     StudioChartsPropertyGroups.IntegerSymbolSize.class,
                     StudioChartsPropertyGroups.SymbolSizeFunction.class,
@@ -8766,10 +8589,7 @@ public interface StudioChartsElements {
                     StudioChartsPropertyGroups.DataGroupId.class,
                     StudioChartsPropertyGroups.IntegerZLevel.class,
                     StudioChartsPropertyGroups.IntegerZ.class,
-                    StudioChartsPropertyGroups.Silent.class,
-                    StudioChartsPropertyGroups.AnimationDuration.class,
-                    StudioChartsPropertyGroups.AnimationEasing.class,
-                    StudioChartsPropertyGroups.AnimationDelay.class
+                    StudioChartsPropertyGroups.Silent.class
             },
             properties = {
                     @StudioProperty(xmlAttribute = "coordinateSystem", type = StudioPropertyType.ENUMERATION,
@@ -8915,11 +8735,7 @@ public interface StudioChartsElements {
                     StudioChartsPropertyGroups.CalendarIndex.class,
                     StudioChartsPropertyGroups.Clip.class,
                     StudioChartsPropertyGroups.Cursor.class,
-                    StudioChartsPropertyGroups.Animation.class,
-                    StudioChartsPropertyGroups.AnimationThreshold.class,
-                    StudioChartsPropertyGroups.AnimationDurationUpdate.class,
-                    StudioChartsPropertyGroups.AnimationEasingUpdate.class,
-                    StudioChartsPropertyGroups.AnimationDelayUpdate.class,
+                    StudioChartsPropertyGroups.AnimationDefaultProperties.class,
                     StudioPropertyGroups.Symbol.class,
                     StudioChartsPropertyGroups.IntegerSymbolSize.class,
                     StudioChartsPropertyGroups.SymbolSizeFunction.class,
@@ -8937,10 +8753,7 @@ public interface StudioChartsElements {
                     StudioChartsPropertyGroups.DataGroupId.class,
                     StudioChartsPropertyGroups.IntegerZLevel.class,
                     StudioChartsPropertyGroups.IntegerZ.class,
-                    StudioChartsPropertyGroups.Silent.class,
-                    StudioChartsPropertyGroups.AnimationDuration.class,
-                    StudioChartsPropertyGroups.AnimationEasing.class,
-                    StudioChartsPropertyGroups.AnimationDelay.class
+                    StudioChartsPropertyGroups.Silent.class
             },
             properties = {
                     @StudioProperty(xmlAttribute = "coordinateSystem", type = StudioPropertyType.ENUMERATION,
@@ -9126,11 +8939,7 @@ public interface StudioChartsElements {
             isInjectable = false,
             icon = "io/jmix/chartsflowui/kit/meta/icon/element/radarSeries.svg",
             propertyGroups = {
-                    StudioChartsPropertyGroups.Animation.class,
-                    StudioChartsPropertyGroups.AnimationThreshold.class,
-                    StudioChartsPropertyGroups.AnimationDurationUpdate.class,
-                    StudioChartsPropertyGroups.AnimationEasingUpdate.class,
-                    StudioChartsPropertyGroups.AnimationDelayUpdate.class,
+                    StudioChartsPropertyGroups.AnimationDefaultProperties.class,
                     StudioPropertyGroups.Symbol.class,
                     StudioChartsPropertyGroups.IntegerSymbolSize.class,
                     StudioChartsPropertyGroups.SymbolSizeFunction.class,
@@ -9145,10 +8954,7 @@ public interface StudioChartsElements {
                     StudioChartsPropertyGroups.DataGroupId.class,
                     StudioChartsPropertyGroups.IntegerZLevel.class,
                     StudioChartsPropertyGroups.IntegerZ.class,
-                    StudioChartsPropertyGroups.Silent.class,
-                    StudioChartsPropertyGroups.AnimationDuration.class,
-                    StudioChartsPropertyGroups.AnimationEasing.class,
-                    StudioChartsPropertyGroups.AnimationDelay.class
+                    StudioChartsPropertyGroups.Silent.class
             },
             properties = {
                     @StudioProperty(xmlAttribute = "radarIndex", type = StudioPropertyType.INTEGER),
@@ -9755,11 +9561,7 @@ public interface StudioChartsElements {
                     StudioChartsPropertyGroups.Orientation.class,
                     StudioChartsPropertyGroups.Width.class,
                     StudioChartsPropertyGroups.StringHeight.class,
-                    StudioChartsPropertyGroups.Animation.class,
-                    StudioChartsPropertyGroups.AnimationThreshold.class,
-                    StudioChartsPropertyGroups.AnimationDurationUpdate.class,
-                    StudioChartsPropertyGroups.AnimationEasingUpdate.class,
-                    StudioChartsPropertyGroups.AnimationDelayUpdate.class,
+                    StudioChartsPropertyGroups.AnimationDefaultProperties.class,
                     StudioChartsPropertyGroups.Left.class,
                     StudioChartsPropertyGroups.StringTop.class,
                     StudioChartsPropertyGroups.StringRight.class,
@@ -9774,10 +9576,7 @@ public interface StudioChartsElements {
                     StudioChartsPropertyGroups.DataGroupId.class,
                     StudioChartsPropertyGroups.IntegerZLevel.class,
                     StudioChartsPropertyGroups.IntegerZ.class,
-                    StudioChartsPropertyGroups.Silent.class,
-                    StudioChartsPropertyGroups.AnimationDuration.class,
-                    StudioChartsPropertyGroups.AnimationEasing.class,
-                    StudioChartsPropertyGroups.AnimationDelay.class
+                    StudioChartsPropertyGroups.Silent.class
             },
             properties = {
                     @StudioProperty(xmlAttribute = "max", type = StudioPropertyType.INTEGER),
@@ -9919,11 +9718,7 @@ public interface StudioChartsElements {
                     StudioPropertyGroups.IntegerMin.class,
                     StudioPropertyGroups.IntegerMax.class,
                     StudioChartsPropertyGroups.SplitNumber.class,
-                    StudioChartsPropertyGroups.Animation.class,
-                    StudioChartsPropertyGroups.AnimationThreshold.class,
-                    StudioChartsPropertyGroups.AnimationDurationUpdate.class,
-                    StudioChartsPropertyGroups.AnimationEasingUpdate.class,
-                    StudioChartsPropertyGroups.AnimationDelayUpdate.class,
+                    StudioChartsPropertyGroups.AnimationDefaultProperties.class,
                     StudioPropertyGroups.Id.class,
                     StudioChartsPropertyGroups.Name.class,
                     StudioChartsPropertyGroups.ColorBy.class,
@@ -9931,10 +9726,7 @@ public interface StudioChartsElements {
                     StudioChartsPropertyGroups.DataGroupId.class,
                     StudioChartsPropertyGroups.IntegerZLevel.class,
                     StudioChartsPropertyGroups.IntegerZ.class,
-                    StudioChartsPropertyGroups.Silent.class,
-                    StudioChartsPropertyGroups.AnimationDuration.class,
-                    StudioChartsPropertyGroups.AnimationEasing.class,
-                    StudioChartsPropertyGroups.AnimationDelay.class
+                    StudioChartsPropertyGroups.Silent.class
             },
             properties = {
                     @StudioProperty(xmlAttribute = "center", type = StudioPropertyType.VALUES_LIST),

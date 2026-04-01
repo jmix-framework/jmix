@@ -56,6 +56,12 @@ public final class StudioActionPropertyGroups {
     }
 
     @StudioPropertyGroup
+    public interface RequiredIconTextActionDefaultPropertiesWithoutShortcutCombination extends
+            ActionDefaultPropertiesWithoutShortcutCombination, StudioPropertyGroups.LookAndFeelIcon,
+            StudioPropertyGroups.RequiredId, StudioPropertyGroups.Text {
+    }
+
+    @StudioPropertyGroup
     public interface DangerActionDefaultProperties extends StudioPropertyGroups.ActionVariantWithDangerDefaultValue,
             StudioPropertyGroups.Description, StudioPropertyGroups.EnabledWithTrueDefaultValue,
             StudioPropertyGroups.ShortcutCombination, StudioPropertyGroups.Visible {

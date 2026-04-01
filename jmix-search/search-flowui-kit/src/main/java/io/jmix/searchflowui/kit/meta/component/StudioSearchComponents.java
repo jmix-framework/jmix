@@ -36,21 +36,14 @@ public interface StudioSearchComponents {
             xmlnsAlias = "search",
             icon = "io/jmix/searchflowui/kit/meta/icon/component/searchField.svg",
             propertyGroups = {
-                    StudioPropertyGroups.Size.class,
-                    StudioPropertyGroups.AlignSelfAndJustifySelfAndColspan.class,
-                    StudioPropertyGroups.ClassNamesAndCss.class,
-                    StudioPropertyGroups.IdAndVisible.class,
-                    StudioPropertyGroups.EnabledWithTrueDefaultValue.class,
+                    StudioPropertyGroups.SizedComponentDefaultProperties.class,
                     StudioPropertyGroups.AriaLabelAndTabIndexAndFocusShortcut.class,
                     StudioPropertyGroups.Autofocus.class,
                     StudioPropertyGroups.HelperText.class,
                     StudioPropertyGroups.Label.class,
                     StudioPropertyGroups.Placeholder.class,
-                    StudioPropertyGroups.FieldThemeNames.class,
-                    StudioPropertyGroups.Title.class,
-                    StudioPropertyGroups.Value3.class,
-                    StudioPropertyGroups.ValueChangeMode.class,
-                    StudioPropertyGroups.ValueChangeTimeout.class
+                    StudioPropertyGroups.FieldThemeTitleAndValueChangeDefaultProperties.class,
+                    StudioPropertyGroups.StringValue.class
             },
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
@@ -118,11 +111,7 @@ public interface StudioSearchComponents {
             xmlnsAlias = "search",
             icon = "io/jmix/searchflowui/kit/meta/icon/component/searchField.svg",
             propertyGroups = {
-                    StudioPropertyGroups.Size.class,
-                    StudioPropertyGroups.AlignSelfAndJustifySelfAndColspan.class,
-                    StudioPropertyGroups.ClassNamesAndCss.class,
-                    StudioPropertyGroups.IdAndVisible.class,
-                    StudioPropertyGroups.EnabledWithTrueDefaultValue.class,
+                    StudioPropertyGroups.SizedComponentDefaultProperties.class,
                     StudioPropertyGroups.AriaLabelAndTabIndexAndFocusShortcut.class,
                     StudioPropertyGroups.RequiredAndRequiredMessageAndErrorMessage.class,
                     StudioPropertyGroups.AutoApply.class,

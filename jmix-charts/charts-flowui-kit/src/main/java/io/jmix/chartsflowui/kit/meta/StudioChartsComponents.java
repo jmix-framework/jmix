@@ -34,14 +34,7 @@ public interface StudioChartsComponents {
                     StudioPropertyGroups.IdAndVisible.class,
                     StudioPropertyGroups.Size.class,
                     StudioPropertyGroups.AlignSelf.class,
-                    StudioChartsPropertyGroups.Animation.class,
-                    StudioChartsPropertyGroups.AnimationThreshold.class,
-                    StudioChartsPropertyGroups.AnimationDuration.class,
-                    StudioChartsPropertyGroups.AnimationEasing.class,
-                    StudioChartsPropertyGroups.AnimationDelay.class,
-                    StudioChartsPropertyGroups.AnimationDurationUpdate.class,
-                    StudioChartsPropertyGroups.AnimationEasingUpdate.class,
-                    StudioChartsPropertyGroups.AnimationDelayUpdate.class,
+                    StudioChartsPropertyGroups.AnimationDefaultProperties.class,
                     StudioPropertyGroups.Colspan.class
             },
             properties = {

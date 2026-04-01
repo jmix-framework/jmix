@@ -2129,6 +2129,17 @@ public final class StudioChartsPropertyGroups {
     }
 
     @StudioPropertyGroup
+    public interface AnimationDefaultProperties extends Animation, AnimationThreshold, AnimationDuration,
+            AnimationEasing, AnimationDelay, AnimationDurationUpdate, AnimationEasingUpdate,
+            AnimationDelayUpdate {
+    }
+
+    @StudioPropertyGroup
+    public interface AnimationFunctionDefaultProperties extends AnimationDelayFunction,
+            AnimationDurationFunction, AnimationDelayUpdateFunction, AnimationDurationUpdateFunction {
+    }
+
+    @StudioPropertyGroup
     public interface VisualEffectDefaultProperties extends Symbol, StringSymbolSize, Color, ColorAlpha, StringOpacity,
             ColorLightness, ColorSaturation, ColorHue {
     }
@@ -2197,5 +2208,17 @@ public final class StudioChartsPropertyGroups {
 
     @StudioPropertyGroup
     public interface SeriesAriaLabelDefaultProperties extends Prefix, WithName, WithoutName {
+    }
+
+    @StudioPropertyGroup
+    public interface SplitDefaultProperties extends Show, Interval, IntervalFunction {
+    }
+
+    @StudioPropertyGroup
+    public interface CartesianAxisDefaultProperties extends StudioPropertyGroups.Id, Show, GridIndex, AlignTicks,
+            AxisPosition, IntegerOffset, Name, NameLocation, NameGap, NameRotate, Inverse, AxisType,
+            CategoryBoundaryGap, NonCategoryBoundaryGap, StringMin, StringMax, BooleanScale, SplitNumber,
+            MinInterval, MaxInterval, Interval, LogBase, Silent, TriggerEvent, AnimationDefaultProperties,
+            AnimationFunctionDefaultProperties, MinFunction, MaxFunction, IntegerZLevel, IntegerZ {
     }
 }

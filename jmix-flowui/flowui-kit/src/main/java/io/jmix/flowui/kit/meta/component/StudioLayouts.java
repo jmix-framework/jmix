@@ -704,13 +704,8 @@ interface StudioLayouts {
             category = "Layouts",
             xmlElement = "card",
             propertyGroups = {
-                    StudioPropertyGroups.AlignSelfAndJustifySelfAndColspan.class,
-                    StudioPropertyGroups.ClassNamesAndCss.class,
-                    StudioPropertyGroups.IdAndVisible.class,
-                    StudioPropertyGroups.EnabledWithTrueDefaultValue.class,
-                    StudioPropertyGroups.Size.class,
-                    StudioPropertyGroups.AriaLabel.class,
-                    StudioPropertyGroups.AriaLabelledBy.class,
+                    StudioPropertyGroups.SizedComponentDefaultProperties.class,
+                    StudioPropertyGroups.AriaLabelAndLabelledBy.class,
                     StudioPropertyGroups.Title.class
             },
             properties = {
@@ -782,11 +777,7 @@ interface StudioLayouts {
             xmlElement = "gridLayout",
             icon = "io/jmix/flowui/kit/meta/icon/layout/gridLayout.svg",
             propertyGroups = {
-                    StudioPropertyGroups.AlignSelfAndJustifySelfAndColspan.class,
-                    StudioPropertyGroups.ClassNamesAndCss.class,
-                    StudioPropertyGroups.IdAndVisible.class,
-                    StudioPropertyGroups.EnabledWithTrueDefaultValue.class,
-                    StudioPropertyGroups.Size.class,
+                    StudioPropertyGroups.SizedComponentDefaultProperties.class,
                     StudioPropertyGroups.Gap.class
             },
             properties = {

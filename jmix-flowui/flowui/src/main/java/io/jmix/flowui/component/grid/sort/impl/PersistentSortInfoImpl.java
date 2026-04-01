@@ -27,10 +27,11 @@ import java.util.List;
 
 public class PersistentSortInfoImpl implements PersistentSortInfo {
 
-    protected MetaPropertyPath metaPropertyPath;
-    protected String property;
+    protected final @Nullable MetaPropertyPath metaPropertyPath;
+    protected final String property;
+    protected final boolean ascending;
+
     protected List<String> expressions;
-    protected boolean ascending;
 
     public PersistentSortInfoImpl(@Nullable MetaPropertyPath metaPropertyPath,
                                   String property,
@@ -45,9 +46,8 @@ public class PersistentSortInfoImpl implements PersistentSortInfo {
         this.ascending = ascending;
     }
 
-    @Nullable
     @Override
-    public MetaPropertyPath getMetaPropertyPath() {
+    public @Nullable MetaPropertyPath getMetaPropertyPath() {
         return metaPropertyPath;
     }
 

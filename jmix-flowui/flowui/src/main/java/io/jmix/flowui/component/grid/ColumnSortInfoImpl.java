@@ -27,7 +27,7 @@ import org.jspecify.annotations.Nullable;
 public class ColumnSortInfoImpl<T> implements ColumnSortInfo<T> {
 
     protected final DataGridColumn<T> column;
-    protected final MetaPropertyPath metaPropertyPath;
+    protected final @Nullable MetaPropertyPath metaPropertyPath;
     protected final boolean ascending;
 
     public ColumnSortInfoImpl(DataGridColumn<T> column, @Nullable MetaPropertyPath metaPropertyPath, boolean ascending) {

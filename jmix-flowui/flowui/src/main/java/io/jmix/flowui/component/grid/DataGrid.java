@@ -481,9 +481,8 @@ public class DataGrid<E> extends JmixGrid<E> implements ListDataComponent<E>, Mu
         return null;
     }
 
-    @Nullable
     @Override
-    public Function<DataGridSortContext<E>, DataGridSort> getSortBuilderDelegate() {
+    public @Nullable Function<DataGridSortContext<E>, DataGridSort> getSortBuilderDelegate() {
         return gridDelegate.getSortBuilderDelegate();
     }
 

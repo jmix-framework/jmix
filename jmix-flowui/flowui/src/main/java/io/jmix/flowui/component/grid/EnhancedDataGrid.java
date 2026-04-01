@@ -93,8 +93,7 @@ public interface EnhancedDataGrid<T> {
      * @return the delegate for building the sorting configuration of the {@link Grid} or {@code null} if not set
      */
     @Experimental
-    @Nullable
-    Function<DataGridSortContext<T>, DataGridSort> getSortBuilderDelegate();
+    @Nullable Function<DataGridSortContext<T>, DataGridSort> getSortBuilderDelegate();
 
     /**
      * Sets the delegate for building the sorting configuration of the {@link Grid}.

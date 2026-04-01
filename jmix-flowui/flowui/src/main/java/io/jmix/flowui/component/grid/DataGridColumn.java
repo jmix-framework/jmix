@@ -21,16 +21,14 @@ import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.data.provider.SortDirection;
-import com.vaadin.flow.function.SerializableFunction;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.component.grid.headerfilter.DataGridHeaderFilter;
-import io.jmix.flowui.kit.meta.StudioIgnore;
 import io.jmix.flowui.sys.BeanUtil;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.lang.Nullable;
 
 import java.util.Comparator;
 
@@ -39,7 +37,7 @@ public class DataGridColumn<E> extends Grid.Column<E> implements ApplicationCont
     protected DataGridHeaderFilter dataGridFilter;
     protected ApplicationContext applicationContext;
 
-    protected Comparator<E> explicitlySetComparator;
+    protected @Nullable Comparator<E> explicitlySetComparator;
 
     /**
      * Constructs a new DataGridColumn for use inside a {@link DataGrid}.
@@ -72,8 +70,7 @@ public class DataGridColumn<E> extends Grid.Column<E> implements ApplicationCont
      *
      * @return comparator or {@code null}
      */
-    @Nullable
-    public Comparator<E> getComparatorOrNull() {
+    public @Nullable Comparator<E> getComparatorOrNull() {
         return explicitlySetComparator != null ? explicitlySetComparator : null;
     }
 

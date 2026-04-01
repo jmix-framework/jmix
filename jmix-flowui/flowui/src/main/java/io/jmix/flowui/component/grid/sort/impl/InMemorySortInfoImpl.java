@@ -24,10 +24,11 @@ import java.util.Comparator;
 
 public class InMemorySortInfoImpl implements InMemorySortInfo {
 
-    protected MetaPropertyPath metaPropertyPath;
-    protected String property;
-    protected Comparator<?> comparator;
-    protected boolean ascending;
+    protected final @Nullable MetaPropertyPath metaPropertyPath;
+    protected final String property;
+    protected final boolean ascending;
+
+    protected @Nullable Comparator<?> comparator;
 
     public InMemorySortInfoImpl(@Nullable MetaPropertyPath metaPropertyPath,
                                 String property,
@@ -50,7 +51,7 @@ public class InMemorySortInfoImpl implements InMemorySortInfo {
     }
 
     @Override
-    public Comparator<?> getComparator() {
+    public @Nullable Comparator<?> getComparator() {
         return comparator;
     }
 

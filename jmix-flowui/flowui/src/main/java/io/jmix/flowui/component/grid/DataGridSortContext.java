@@ -18,6 +18,7 @@ package io.jmix.flowui.component.grid;
 
 import com.vaadin.flow.component.grid.Grid;
 import io.jmix.core.annotation.Experimental;
+import io.jmix.core.common.util.Preconditions;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,6 +36,9 @@ public class DataGridSortContext<E> {
     protected final List<ColumnSortInfo<E>> columnSortInfos;
 
     public DataGridSortContext(Grid<E> grid, List<ColumnSortInfo<E>> columnSortInfos) {
+        Preconditions.checkNotNullArgument(grid);
+        Preconditions.checkNotNullArgument(columnSortInfos);
+
         this.grid = grid;
         this.columnSortInfos = new ArrayList<>(columnSortInfos);
     }

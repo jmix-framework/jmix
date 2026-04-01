@@ -16,7 +16,6 @@
 
 package io.jmix.flowui.component.grid.sort;
 
-import io.jmix.core.annotation.Experimental;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
@@ -45,7 +44,6 @@ import java.util.*;
  * @see DataGridSortContext
  * @see EnhancedDataGrid
  */
-@Experimental
 public class DataGridSortBuilder<E> {
 
     protected final Map<String, InMemorySortInfo> inMemorySortInfos;

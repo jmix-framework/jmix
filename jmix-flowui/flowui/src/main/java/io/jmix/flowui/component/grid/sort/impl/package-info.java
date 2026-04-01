@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-@NonNullApi
+@NullMarked
 @Experimental
 @Internal
 package io.jmix.flowui.component.grid.sort.impl;
 
 import io.jmix.core.annotation.Experimental;
 import io.jmix.core.annotation.Internal;
-import org.springframework.lang.NonNullApi;
+import org.jspecify.annotations.NullMarked;

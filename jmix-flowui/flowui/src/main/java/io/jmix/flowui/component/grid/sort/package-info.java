@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
+@NullMarked
 @Experimental
 package io.jmix.flowui.component.grid.sort;
 
 import io.jmix.core.annotation.Experimental;
+import org.jspecify.annotations.NullMarked;

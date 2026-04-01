@@ -472,9 +472,8 @@ public class TreeDataGrid<E> extends JmixTreeGrid<E> implements ListDataComponen
         gridDelegate.setEmptyStateComponent(emptyStateComponent);
     }
 
-    @Nullable
     @Override
-    public Function<DataGridSortContext<E>, DataGridSort> getSortBuilderDelegate() {
+    public @Nullable Function<DataGridSortContext<E>, DataGridSort> getSortBuilderDelegate() {
         return gridDelegate.getSortBuilderDelegate();
     }
 

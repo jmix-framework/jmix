@@ -27,8 +27,7 @@ public interface SortInfo {
     /**
      * @return the MetaPropertyPath object representing the property path, or {@code null} if not set
      */
-    @Nullable
-    MetaPropertyPath getMetaPropertyPath();
+    @Nullable MetaPropertyPath getMetaPropertyPath();
 
     /**
      * @return the property name to sort by

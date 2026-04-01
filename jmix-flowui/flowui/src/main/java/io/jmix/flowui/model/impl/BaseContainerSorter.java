@@ -23,8 +23,8 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.Sorter;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.BeanFactory;
-import org.springframework.lang.Nullable;
 
 import java.util.*;
 

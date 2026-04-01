@@ -69,71 +69,21 @@ import static java.util.Objects.requireNonNullElseGet;
  */
 final class StudioMetaDescriptionGenerator {
 
-    static final String XS_NS = "http://www.w3.org/2001/XMLSchema";
-    static final String FLOWUI_LAYOUT_NS = "http://jmix.io/schema/flowui/layout";
-    static final String FLOWUI_DATA_NS = "http://jmix.io/schema/flowui/data";
-
-    private static final Set<String> IGNORED_DIRS = Set.of(".git", ".gradle", ".idea", "build", "out");
-    private static final Set<String> GENERIC_METHOD_NAMES = Set.of("action", "column", "item", "loader", "property");
-    private static final Set<String> LOOK_AND_FEEL_NAMES = Set.of("classNames", "css", "icon", "themeNames");
-    private static final Set<String> SIZE_NAMES = Set.of("height", "maxHeight", "maxWidth", "minHeight", "minWidth", "width");
-    private static final Set<String> POSITION_NAMES = Set.of("alignSelf", "colspan", "justifySelf", "rowspan");
-    private static final Set<String> VALIDATION_NAMES = Set.of(
-            "allowedCharPattern", "pattern", "errorMessage", "max", "maxLength",
-            "min", "minLength", "preventInvalidInput", "required", "requiredMessage"
-    );
-    private static final Set<String> AMBIGUOUS_SPECIAL_NAMES = Set.of(
-            "class", "component", "metaClass", "property",
-            "container", "dataContainer", "itemsContainer"
-    );
-    private static final Map<String, String> BUILTIN_TYPE_MAP = Map.ofEntries(
-            Map.entry("boolean", "BOOLEAN"),
-            Map.entry("byte", "INTEGER"),
-            Map.entry("date", "STRING"),
-            Map.entry("dateTime", "STRING"),
-            Map.entry("decimal", "BIG_DECIMAL"),
-            Map.entry("double", "DOUBLE"),
-            Map.entry("duration", "STRING"),
-            Map.entry("float", "FLOAT"),
-            Map.entry("int", "INTEGER"),
-            Map.entry("integer", "INTEGER"),
-            Map.entry("language", "STRING"),
-            Map.entry("long", "LONG"),
-            Map.entry("NCName", "STRING"),
-            Map.entry("negativeInteger", "INTEGER"),
-            Map.entry("nonNegativeInteger", "INTEGER"),
-            Map.entry("nonPositiveInteger", "INTEGER"),
-            Map.entry("normalizedString", "STRING"),
-            Map.entry("positiveInteger", "INTEGER"),
-            Map.entry("short", "INTEGER"),
-            Map.entry("string", "STRING"),
-            Map.entry("time", "STRING"),
-            Map.entry("token", "STRING"),
-            Map.entry("unsignedInt", "LONG"),
-            Map.entry("unsignedLong", "LONG"),
-            Map.entry("unsignedShort", "INTEGER")
-    );
-    private static final Set<String> DATA_COMPONENT_ELEMENT_NAMES = Set.of(
-            "instance", "collection", "keyValueInstance", "keyValueCollection"
-    );
-    private static final Pattern JAVA_PACKAGE_PATTERN =
-            Pattern.compile("^package\\s+([^;]+);$");
-    private static final Pattern XMLNS_ALIAS_PATTERN_TEMPLATE =
-            Pattern.compile("xmlns:([A-Za-z_][A-Za-z0-9_.-]*)=\"%s\"");
-    private static final Pattern XMLNS_DEFAULT_PATTERN_TEMPLATE =
-            Pattern.compile("xmlns=\"%s\"");
+    public static void main(String[] args) throws Exception {
+        CLI.run(args);
+    }
 
     private final Path schemaSearchRoot;
     private final XsdRegistry registry;
     private final StudioPropertyGroupsMatcher propertyGroupsMatcher;
 
-    public StudioMetaDescriptionGenerator(Path schemaSearchRoot) {
+    StudioMetaDescriptionGenerator(Path schemaSearchRoot) {
         this.schemaSearchRoot = schemaSearchRoot.toAbsolutePath().normalize();
         this.registry = new XsdRegistry(this.schemaSearchRoot);
         this.propertyGroupsMatcher = new StudioPropertyGroupsMatcher(this.schemaSearchRoot);
     }
 
-    public static Path detectWorkspaceRoot(Path workingDirectory) {
+    static Path detectWorkspaceRoot(Path workingDirectory) {
         Path current = workingDirectory.toAbsolutePath().normalize();
         while (current != null) {
             if (Files.isDirectory(current.resolve("jmix"))
@@ -163,16 +113,16 @@ final class StudioMetaDescriptionGenerator {
         return workingDirectory.toAbsolutePath().normalize();
     }
 
-    public List<Path> findKnownSchemas() {
+    List<Path> findKnownSchemas() {
         return registry.discoverSchemas();
     }
 
-    public List<StudioXsdElementCandidate> findElementCandidates(Path schemaPath, String elementIdentifier) {
+    List<StudioXsdElementCandidate> findElementCandidates(Path schemaPath, String elementIdentifier) {
         Objects.requireNonNull(elementIdentifier, "elementIdentifier");
         return registry.findCandidates(resolveAbsolutePath(schemaPath), elementIdentifier);
     }
 
-    public Path getDefaultOutputPath(StudioXsdElementCandidate candidate) {
+    Path getDefaultOutputPath(StudioXsdElementCandidate candidate) {
         Path moduleRoot = findModuleRoot(candidate.schemaPath());
         if (moduleRoot == null) {
             throw new IllegalArgumentException("Cannot detect module root for " + candidate.schemaPath());
@@ -194,7 +144,7 @@ final class StudioMetaDescriptionGenerator {
         return moduleRoot.resolve("src/main/java").resolve(packagePath).resolve(fileName).normalize();
     }
 
-    public StudioMetaGenerationResult generate(StudioXsdElementCandidate candidate,
+    StudioMetaGenerationResult generate(StudioXsdElementCandidate candidate,
                                                StudioMetaKind forcedKind,
                                                @Nullable Path outputPath) {
         GeneratedMeta meta = createGeneratedMeta(candidate, forcedKind);
@@ -212,7 +162,7 @@ final class StudioMetaDescriptionGenerator {
         return new StudioMetaGenerationResult(resolvedOutputPath, source, metaWithUniqueMethod.kind(), metaWithUniqueMethod.headerTodos());
     }
 
-    public StudioMetaGenerationResult write(StudioXsdElementCandidate candidate,
+    StudioMetaGenerationResult write(StudioXsdElementCandidate candidate,
                                             StudioMetaKind forcedKind,
                                             @Nullable Path outputPath) throws IOException {
         GeneratedMeta meta = createGeneratedMeta(candidate, forcedKind);
@@ -1832,10 +1782,10 @@ final class StudioMetaDescriptionGenerator {
         }
     }
 
-    static final class Cli {
+    static final class CLI {
 
-        public static void main(String[] args) throws Exception {
-            CliArguments cliArguments = CliArguments.parse(args);
+        static void run(String[] args) throws IOException {
+            CLI.CliArguments cliArguments = CLI.CliArguments.parse(args);
             Path workspaceRoot = resolvePath(cliArguments.root());
             StudioMetaDescriptionGenerator generator = new StudioMetaDescriptionGenerator(workspaceRoot);
 
@@ -1909,10 +1859,6 @@ final class StudioMetaDescriptionGenerator {
             }
         }
 
-        private static Path resolveOutputPath(String outputValue) {
-            return resolvePath(outputValue);
-        }
-
         private static Path resolvePath(String pathValue) {
             Path path = Path.of(pathValue);
             if (!path.isAbsolute()) {
@@ -1979,4 +1925,58 @@ final class StudioMetaDescriptionGenerator {
             }
         }
     }
+
+    static final String XS_NS = "http://www.w3.org/2001/XMLSchema";
+    static final String FLOWUI_LAYOUT_NS = "http://jmix.io/schema/flowui/layout";
+    static final String FLOWUI_DATA_NS = "http://jmix.io/schema/flowui/data";
+
+    private static final Set<String> IGNORED_DIRS = Set.of(".git", ".gradle", ".idea", "build", "out");
+    private static final Set<String> GENERIC_METHOD_NAMES = Set.of("action", "column", "item", "loader", "property");
+    private static final Set<String> LOOK_AND_FEEL_NAMES = Set.of("classNames", "css", "icon", "themeNames");
+    private static final Set<String> SIZE_NAMES = Set.of("height", "maxHeight", "maxWidth", "minHeight", "minWidth", "width");
+    private static final Set<String> POSITION_NAMES = Set.of("alignSelf", "colspan", "justifySelf", "rowspan");
+    private static final Set<String> VALIDATION_NAMES = Set.of(
+            "allowedCharPattern", "pattern", "errorMessage", "max", "maxLength",
+            "min", "minLength", "preventInvalidInput", "required", "requiredMessage"
+    );
+    private static final Set<String> AMBIGUOUS_SPECIAL_NAMES = Set.of(
+            "class", "component", "metaClass", "property",
+            "container", "dataContainer", "itemsContainer"
+    );
+    private static final Map<String, String> BUILTIN_TYPE_MAP = Map.ofEntries(
+            Map.entry("boolean", "BOOLEAN"),
+            Map.entry("byte", "INTEGER"),
+            Map.entry("date", "STRING"),
+            Map.entry("dateTime", "STRING"),
+            Map.entry("decimal", "BIG_DECIMAL"),
+            Map.entry("double", "DOUBLE"),
+            Map.entry("duration", "STRING"),
+            Map.entry("float", "FLOAT"),
+            Map.entry("int", "INTEGER"),
+            Map.entry("integer", "INTEGER"),
+            Map.entry("language", "STRING"),
+            Map.entry("long", "LONG"),
+            Map.entry("NCName", "STRING"),
+            Map.entry("negativeInteger", "INTEGER"),
+            Map.entry("nonNegativeInteger", "INTEGER"),
+            Map.entry("nonPositiveInteger", "INTEGER"),
+            Map.entry("normalizedString", "STRING"),
+            Map.entry("positiveInteger", "INTEGER"),
+            Map.entry("short", "INTEGER"),
+            Map.entry("string", "STRING"),
+            Map.entry("time", "STRING"),
+            Map.entry("token", "STRING"),
+            Map.entry("unsignedInt", "LONG"),
+            Map.entry("unsignedLong", "LONG"),
+            Map.entry("unsignedShort", "INTEGER")
+    );
+    private static final Set<String> DATA_COMPONENT_ELEMENT_NAMES = Set.of(
+            "instance", "collection", "keyValueInstance", "keyValueCollection"
+    );
+    private static final Pattern JAVA_PACKAGE_PATTERN =
+            Pattern.compile("^package\\s+([^;]+);$");
+    private static final Pattern XMLNS_ALIAS_PATTERN_TEMPLATE =
+            Pattern.compile("xmlns:([A-Za-z_][A-Za-z0-9_.-]*)=\"%s\"");
+    private static final Pattern XMLNS_DEFAULT_PATTERN_TEMPLATE =
+            Pattern.compile("xmlns=\"%s\"");
 }

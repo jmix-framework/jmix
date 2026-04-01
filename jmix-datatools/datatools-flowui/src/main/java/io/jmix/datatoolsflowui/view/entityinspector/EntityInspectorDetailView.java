@@ -192,7 +192,6 @@ public class EntityInspectorDetailView extends StandardDetailView<Object> {
     protected void setupEntityToEdit(Object entityToEdit) {
         container = initMainContainer(entityToEdit);
         isNew = entityStates.isNew(entityToEdit);
-        super.setupEntityToEdit(entityToEdit);
     }
 
     protected InstanceContainer initMainContainer(Object entity) {

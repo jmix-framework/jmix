@@ -1,6 +1,9 @@
 package io.jmix.reportsflowui.view.parameter;
 
-import com.vaadin.flow.component.*;
+import com.vaadin.flow.component.AbstractField;
+import com.vaadin.flow.component.AbstractSinglePropertyField;
+import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.html.Div;
@@ -137,7 +140,6 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
             editedParam.setParameterClass(parameterClassResolver.resolveClass(editedParam));
         }
         enableControlsByParamType(editedParam.getType());
-        initScreensLookup();
         initTransformations();
     }
 
@@ -147,20 +149,8 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
 
     @Override
     public void setEntityToEdit(ReportInputParameter entity) {
+        initScreensLookup(entity);
         super.setEntityToEdit(entity);
-
-        if (getEditedEntity().getScreen() != null) {
-            initScreensLookup();
-            screenField.setValue(getEditedEntity().getScreen());
-        }
-    }
-
-    @Subscribe("screenField")
-    public void onScreenFieldAttach(final AttachEvent event) {
-        if (getEditedEntity().getScreen() != null) {
-            initScreensLookup();
-            screenField.setValue(getEditedEntity().getScreen());
-        }
     }
 
     @Install(to = "alias", subject = "validator")
@@ -318,7 +308,7 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
             parameter.setDefaultValue(null);
             parameter.setScreen(null);
 
-            initScreensLookup();
+            initScreensLookup(parameter);
             initDefaultValueField();
         }
 
@@ -333,10 +323,9 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
         tabsheet.getTabAt((int) tabsheet.getChildren().count() - 1).setVisible(Boolean.TRUE.equals(event.getValue()));
     }
 
-    protected void initScreensLookup() {
-        ReportInputParameter parameter = getEditedEntity();
-        if (parameter.getType() == ParameterType.ENTITY || parameter.getType() == ParameterType.ENTITY_LIST) {
-            Class clazz = parameterClassResolver.resolveClass(parameter);
+    protected void initScreensLookup(ReportInputParameter entity) {
+        if (entity.getType() == ParameterType.ENTITY || entity.getType() == ParameterType.ENTITY_LIST) {
+            Class clazz = parameterClassResolver.resolveClass(entity);
             if (clazz != null) {
                 String availableListViewId = viewRegistry.getAvailableListViewId(metadata.getClass(clazz));
                 String availableLookupViewId = viewRegistry.getAvailableLookupViewId(metadata.getClass(clazz));

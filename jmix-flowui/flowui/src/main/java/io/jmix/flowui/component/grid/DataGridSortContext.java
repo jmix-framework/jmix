@@ -53,7 +53,7 @@ public class DataGridSortContext<E> {
     /**
      * @return an unmodifiable list of {@link ColumnSortInfo<E>}
      */
-    public List<ColumnSortInfo<E>> getColumnSortInfos() {
+    public List<ColumnSortInfo<E>> getSortInfos() {
         return Collections.unmodifiableList(columnSortInfos);
     }
 }

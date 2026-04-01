@@ -50,8 +50,8 @@ public class DataGridSortBuilder<E> {
     protected final Map<String, PersistentSortInfo> persistentSortInfos;
 
     protected DataGridSortBuilder(DataGridSortContext<E> context) {
-        inMemorySortInfos = collectInMemorySortInfos(context.getColumnSortInfos());
-        persistentSortInfos = collectPersistentSortInfos(context.getColumnSortInfos());
+        inMemorySortInfos = collectInMemorySortInfos(context.getSortInfos());
+        persistentSortInfos = collectPersistentSortInfos(context.getSortInfos());
     }
 
     /**

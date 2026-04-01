@@ -36,7 +36,8 @@ import java.util.*;
  * The builder provides methods for replacing existing sort information. For instance:
  * <pre>
  * DataGridSortBuilder.create(context)
- *         .replaceSort("fullName", "{E}.firstName", Comparator.comparing(Customer::getFirstName))
+ *         .replaceSort("fullName", List.of("{E}.firstName", "{E}.lastName"),
+ *                 Comparator.comparing(Customer::getFirstName).thenComparing(Customer::getLastName))
  *         .build();
  * </pre>
  *
@@ -86,6 +87,30 @@ public class DataGridSortBuilder<E> {
 
         replaceSort(key, comparator);
         replaceSort(key, expression);
+
+        return this;
+    }
+
+    /**
+     * Replaces existing sort information for the specified column key in both in-memory and persistent sort information.
+     * <p>
+     * In expression parameter, in case of JPQL, the {@code {E}} alias can be used for JPA entities.
+     * For instance, {@code "function('calc_total_sum', {E}.id)"}.
+     * <p>
+     * <strong>Note that for {@link KeyValueEntity}, the {@code {E}} alias is not supported.</strong> Use the concrete
+     * alias from the query, e.g. {@code "function('calc_total_sum', e.id)"}.
+     *
+     * @param key         column key
+     * @param comparator  comparator to be used for in-memory sorting
+     * @param expressions list of expressions to be used for persistent sorting
+     * @return current instance
+     */
+    public DataGridSortBuilder<E> replaceSort(String key, List<String> expressions, @Nullable Comparator<E> comparator) {
+        Preconditions.checkNotNullArgument(key);
+
+        replaceSort(key, comparator);
+        replaceSort(key, expressions);
+
         return this;
     }
 
@@ -125,7 +150,32 @@ public class DataGridSortBuilder<E> {
 
         PersistentSortInfo persistentSortInfo = persistentSortInfos.get(key);
         if (persistentSortInfo != null) {
-            persistentSortInfo.setExpression(expression);
+            persistentSortInfo.setExpressions(expression == null ? Collections.emptyList() : List.of(expression));
+        }
+
+        return this;
+    }
+
+    /**
+     * Replaces existing sort information for the specified column key in the persistent sort information.
+     * <p>
+     * In expression parameter, in case of JPQL, the {@code {E}} alias can be used for JPA entities.
+     * For instance, {@code "function('calc_total_sum', {E}.id)"}.
+     * <p>
+     * <strong>Note that for {@link KeyValueEntity}, the {@code {E}} alias is not supported.</strong> Use the concrete
+     * alias from the query, e.g. {@code "e.id"}.
+     *
+     * @param key         column key
+     * @param expressions list of expressions to be used for persistent sorting
+     * @return current instance
+     */
+    public DataGridSortBuilder<E> replaceSort(String key, List<String> expressions) {
+        Preconditions.checkNotNullArgument(key);
+        Preconditions.checkNotNullArgument(expressions);
+
+        PersistentSortInfo persistentSortInfo = persistentSortInfos.get(key);
+        if (persistentSortInfo != null) {
+            persistentSortInfo.setExpressions(expressions);
         }
 
         return this;
@@ -177,10 +227,10 @@ public class DataGridSortBuilder<E> {
             String columnKey = sortInfo.getColumn().getKey();
             if (mpp != null) {
                 persistentSortInfos.put(columnKey,
-                        createPersistentSortInfo(mpp, mpp.toPathString(), null, sortInfo.isAscending()));
+                        createPersistentSortInfo(mpp, mpp.toPathString(), List.of(), sortInfo.isAscending()));
             } else {
                 persistentSortInfos.put(columnKey,
-                        createPersistentSortInfo(null, columnKey, null, sortInfo.isAscending()));
+                        createPersistentSortInfo(null, columnKey, List.of(), sortInfo.isAscending()));
             }
         }
         return persistentSortInfos;
@@ -195,8 +245,8 @@ public class DataGridSortBuilder<E> {
 
     protected PersistentSortInfo createPersistentSortInfo(@Nullable MetaPropertyPath mpp,
                                                           String property,
-                                                          @Nullable String expression,
+                                                          List<String> expressions,
                                                           boolean ascending) {
-        return new PersistentSortInfoImpl(mpp, property, expression, ascending);
+        return new PersistentSortInfoImpl(mpp, property, expressions, ascending);
     }
 }

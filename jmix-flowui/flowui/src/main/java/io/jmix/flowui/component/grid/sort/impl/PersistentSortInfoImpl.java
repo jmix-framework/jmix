@@ -16,24 +16,32 @@
 
 package io.jmix.flowui.component.grid.sort.impl;
 
+import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.component.grid.sort.PersistentSortInfo;
 import org.jspecify.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class PersistentSortInfoImpl implements PersistentSortInfo {
 
     protected MetaPropertyPath metaPropertyPath;
     protected String property;
-    protected String expression;
+    protected List<String> expressions;
     protected boolean ascending;
 
     public PersistentSortInfoImpl(@Nullable MetaPropertyPath metaPropertyPath,
                                   String property,
-                                  @Nullable String expression,
+                                  List<String> expressions,
                                   boolean ascending) {
+        Preconditions.checkNotNullArgument(property);
+        Preconditions.checkNotNullArgument(expressions);
+
         this.metaPropertyPath = metaPropertyPath;
         this.property = property;
-        this.expression = expression;
+        this.expressions = new ArrayList<>(expressions);
         this.ascending = ascending;
     }
 
@@ -48,16 +56,15 @@ public class PersistentSortInfoImpl implements PersistentSortInfo {
         return property;
     }
 
-    @Nullable
     @Override
-    public String getExpression() {
-        return expression;
+    public List<String> getExpressions() {
+        return Collections.unmodifiableList(expressions);
     }
 
-
     @Override
-    public void setExpression(@Nullable String expression) {
-        this.expression = expression;
+    public void setExpressions(List<String> expressions) {
+        Preconditions.checkNotNullArgument(expressions);
+        this.expressions = new ArrayList<>(expressions);
     }
 
     @Override

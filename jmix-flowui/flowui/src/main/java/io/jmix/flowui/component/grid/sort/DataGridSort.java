@@ -20,6 +20,7 @@ import com.google.common.base.Strings;
 import io.jmix.core.Sort;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,8 +81,14 @@ public class DataGridSort {
                     ? sortInfo.getMetaPropertyPath().toPathString()
                     : Objects.requireNonNull(sortInfo.getProperty());
 
-            if (!Strings.isNullOrEmpty(sortInfo.getExpression())) {
-                orders.add(sortInfo.isAscending() ? Sort.ExpressionOrder.asc(sortInfo.getExpression()) : Sort.ExpressionOrder.desc(sortInfo.getExpression()));
+            if (CollectionUtils.isNotEmpty(sortInfo.getExpressions())) {
+                for (String expression : sortInfo.getExpressions()) {
+                    if (!Strings.isNullOrEmpty(expression)) {
+                        orders.add(sortInfo.isAscending()
+                                ? Sort.ExpressionOrder.asc(expression)
+                                : Sort.ExpressionOrder.desc(expression));
+                    }
+                }
             } else if (sortInfo.getMetaPropertyPath() != null) {
                 orders.add(sortInfo.isAscending() ? Sort.Order.asc(property) : Sort.Order.desc(property));
             } else {

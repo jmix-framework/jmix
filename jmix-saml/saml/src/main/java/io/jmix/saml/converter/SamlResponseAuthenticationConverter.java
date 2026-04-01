@@ -22,9 +22,10 @@ import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.Response;
 import org.slf4j.Logger;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.lang.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.saml2.Saml2Exception;
-import org.springframework.security.saml2.provider.service.authentication.OpenSaml4AuthenticationProvider;
+import org.springframework.security.saml2.provider.service.authentication.OpenSaml5AuthenticationProvider;
 import org.springframework.security.saml2.provider.service.authentication.Saml2Authentication;
 import org.springframework.security.saml2.provider.service.authentication.Saml2AuthenticationToken;
 import org.springframework.util.CollectionUtils;
@@ -34,7 +35,11 @@ import java.util.Optional;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
-public class SamlResponseAuthenticationConverter implements Converter<OpenSaml4AuthenticationProvider.ResponseToken, Saml2Authentication> {
+/**
+ * Converter that converts SAML response token to {@link Saml2Authentication} object.
+ * It constructs {@link JmixSamlUserDetails} from SAML assertion and sets it as authentication principal.
+ */
+public class SamlResponseAuthenticationConverter implements Converter<OpenSaml5AuthenticationProvider.ResponseToken, Saml2Authentication> {
 
     private static final Logger log = getLogger(SamlResponseAuthenticationConverter.class);
 
@@ -45,7 +50,7 @@ public class SamlResponseAuthenticationConverter implements Converter<OpenSaml4A
     }
 
     @Override
-    public Saml2Authentication convert(OpenSaml4AuthenticationProvider.ResponseToken responseToken) {
+    public Saml2Authentication convert(OpenSaml5AuthenticationProvider.ResponseToken responseToken) {
         log.debug("SAML response conversion started");
 
         try {
@@ -84,7 +89,8 @@ public class SamlResponseAuthenticationConverter implements Converter<OpenSaml4A
     /**
      * Extracts assertion from SAML response, handling both plain and encrypted assertions.
      */
-    protected Assertion getAssertion(OpenSaml4AuthenticationProvider.ResponseToken responseToken) {
+    @Nullable
+    protected Assertion getAssertion(OpenSaml5AuthenticationProvider.ResponseToken responseToken) {
         Response response = responseToken.getResponse();
 
         // First try to get plain assertions

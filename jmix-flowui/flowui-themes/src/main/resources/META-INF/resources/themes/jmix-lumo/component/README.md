@@ -1,1 +1,0 @@
-This directory contains component styles for **Global Style Scope**.

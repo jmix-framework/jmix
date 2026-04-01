@@ -19,7 +19,7 @@ package io.jmix.securityresourceserver.requestmatcher.impl;
 import io.jmix.securityresourceserver.requestmatcher.AnonymousRequestMatcherProvider;
 import io.jmix.securityresourceserver.requestmatcher.urlprovider.AnonymousUrlPatternsProvider;
 import io.jmix.securityresourceserver.requestmatcher.util.RequestMatcherUtils;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
 import java.util.List;
@@ -43,7 +43,7 @@ public class AnonymousUrlPatternsRequestMatcherProvider implements AnonymousRequ
     public RequestMatcher getAnonymousRequestMatcher() {
         List<RequestMatcher> requestMatchers = anonymousUrlPatternsProviders.stream()
                 .flatMap(urlPatternProvider -> urlPatternProvider.getAnonymousUrlPatterns().stream())
-                .map(AntPathRequestMatcher::new)
+                .map(PathPatternRequestMatcher::pathPattern)
                 .collect(Collectors.toList());
         return RequestMatcherUtils.createCombinedRequestMatcher(requestMatchers);
     }

@@ -52,16 +52,6 @@ public class UrlParamSerializer {
     public static final String DEFAULT_TIME_FORMAT = "HH-mm-ss";
     public static final String DEFAULT_OFFSET_FORMAT = "Z";
 
-    @Deprecated(since = "2.8", forRemoval = true)
-    public static final String DEFAULT_DATE_TIME_FORMAT =
-            DEFAULT_DATE_FORMAT + "'T'" + DEFAULT_TIME_FORMAT;
-    @Deprecated(since = "2.8", forRemoval = true)
-    public static final String DEFAULT_OFFSET_DATE_TIME_FORMAT =
-            DEFAULT_DATE_FORMAT + "'T'" + DEFAULT_TIME_FORMAT + DEFAULT_OFFSET_FORMAT;
-    @Deprecated(since = "2.8", forRemoval = true)
-    public static final String DEFAULT_OFFSET_TIME_FORMAT =
-            DEFAULT_TIME_FORMAT + DEFAULT_OFFSET_FORMAT;
-
     protected DateTimeFormatter temporalDateFormatter;
     protected DateTimeFormatter temporalTimeFormatter;
     protected DateTimeFormatter temporalDateTimeFormatter;

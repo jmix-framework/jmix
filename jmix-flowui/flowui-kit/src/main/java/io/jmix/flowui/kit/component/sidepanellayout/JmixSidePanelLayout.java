@@ -23,10 +23,10 @@ import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.dom.ElementUtil;
 import com.vaadin.flow.dom.PropertyChangeEvent;
 import com.vaadin.flow.shared.Registration;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 @Tag("jmix-side-panel-layout")
-@JsModule("./src/side-panel-layout/jmix-side-panel-layout.js")
+//@JsModule("./src/side-panel-layout/jmix-side-panel-layout.js")
 public class JmixSidePanelLayout extends Component implements HasSize, HasStyle {
 
     protected Component content;

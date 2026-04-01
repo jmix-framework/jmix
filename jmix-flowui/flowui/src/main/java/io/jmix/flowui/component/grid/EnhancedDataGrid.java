@@ -23,7 +23,7 @@ import io.jmix.flowui.component.AggregationInfo;
 import io.jmix.flowui.component.grid.sort.DataGridSort;
 import io.jmix.flowui.component.grid.sort.DataGridSortBuilder;
 import io.jmix.flowui.kit.component.grid.JmixGridContextMenu;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Function;

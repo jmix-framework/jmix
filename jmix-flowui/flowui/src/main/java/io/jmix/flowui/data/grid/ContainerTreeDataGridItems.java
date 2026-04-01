@@ -22,7 +22,7 @@ import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.flowui.data.BindingState;
 import io.jmix.flowui.model.CollectionContainer;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.stream.Stream;
 
@@ -130,7 +130,8 @@ public class ContainerTreeDataGridItems<E> extends ContainerDataGridItems<E>
     }
 
     @Nullable
-    protected E getParent(E item) {
+    @Override
+    public E getParent(E item) {
         Preconditions.checkNotNullArgument(item);
         return EntityValues.getValue(item, hierarchyProperty);
     }

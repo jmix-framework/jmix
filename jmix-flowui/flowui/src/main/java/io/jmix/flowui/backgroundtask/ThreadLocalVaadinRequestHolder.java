@@ -20,7 +20,7 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.server.Command;
 import com.vaadin.flow.server.VaadinRequest;
 import io.jmix.core.annotation.Internal;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Provides thread-local storage for Vaadin request. This utility class facilitates the transfer of Vaadin

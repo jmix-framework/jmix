@@ -24,7 +24,7 @@ import io.jmix.flowui.component.grid.sort.DataGridSort;
 import io.jmix.flowui.component.grid.sort.PersistentSortInfo;
 import io.jmix.flowui.data.DataUnit;
 import io.jmix.flowui.data.HasType;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Consumer;

@@ -37,7 +37,8 @@ import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.util.RemoveOperation;
 import io.jmix.flowui.view.MessageBundle;
 import io.jmix.flowui.view.Subscribe;
-import org.springframework.lang.Nullable;
+import io.jmix.flowui.view.ViewComponent;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collection;
@@ -48,7 +49,7 @@ import java.util.Objects;
 public abstract class LogicalFilterConditionDetailView<E extends LogicalFilterCondition>
         extends FilterConditionDetailView<E> {
 
-    @Autowired
+    @ViewComponent
     protected MessageBundle messageBundle;
     @Autowired
     protected FilterComponents filterComponents;

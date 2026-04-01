@@ -22,11 +22,9 @@ import com.vaadin.flow.function.ValueProvider;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
 import io.jmix.core.MessageTools;
-import io.jmix.core.Messages;
 import io.jmix.core.SaveContext;
 import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.Notifications;
-import io.jmix.flowui.observation.UiObservationSupport;
 import io.jmix.flowui.action.list.ReadAction;
 import io.jmix.flowui.component.checkboxgroup.JmixCheckboxGroup;
 import io.jmix.flowui.component.grid.DataGrid;
@@ -38,13 +36,14 @@ import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.action.BaseAction;
 import io.jmix.flowui.kit.component.dropdownbutton.DropdownButton;
 import io.jmix.flowui.model.*;
+import io.jmix.flowui.observation.UiObservationSupport;
 import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
 import io.jmix.security.model.*;
 import io.jmix.security.role.ResourceRoleRepository;
 import io.jmix.security.role.RolePersistence;
 import io.jmix.securityflowui.view.resourcepolicy.*;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -413,8 +412,6 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
                 return EntityResourcePolicyModelDetailView.class;
             case ResourcePolicyType.ENTITY_ATTRIBUTE:
                 return EntityAttributeResourcePolicyModelDetailView.class;
-            case ResourcePolicyType.GRAPHQL:
-                return GraphQLResourcePolicyModelDetailView.class;
             case ResourcePolicyType.SPECIFIC:
                 return SpecificResourcePolicyModelDetailView.class;
         }

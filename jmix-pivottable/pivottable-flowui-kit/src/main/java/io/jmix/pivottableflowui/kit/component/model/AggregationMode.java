@@ -17,7 +17,7 @@
 package io.jmix.pivottableflowui.kit.component.model;
 
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * An enum with predefined aggregations.

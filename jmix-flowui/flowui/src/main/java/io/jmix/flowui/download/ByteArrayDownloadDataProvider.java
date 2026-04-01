@@ -22,7 +22,7 @@ import io.jmix.flowui.UiProperties;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.io.*;
 import java.util.UUID;

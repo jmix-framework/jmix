@@ -58,7 +58,7 @@ import io.jmix.security.constraint.SecureOperations;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -107,7 +107,7 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
     @ViewComponent
     protected InstanceContainer<ReportTemplate> reportTemplateDc;
 
-    @Autowired
+    @ViewComponent
     protected MessageBundle messageBundle;
     @Autowired
     protected Dialogs dialogs;
@@ -217,7 +217,7 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
 
     @Subscribe("templateUploadField")
     public void onTemplateUploadFieldFileUploadStarted(FileUploadStartedEvent<FileUploadField> event) {
-        templateUploadField.setFileName(event.getFilename());
+        templateUploadField.setFileName(event.getFileName());
     }
 
     @Subscribe("templateUploadField")
@@ -228,7 +228,7 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
     }
 
     @Subscribe("templateUploadField")
-    public void onTemplateUploadFieldFileUploadSucceeded(FileUploadSucceededEvent<FileUploadField> event) {
+    public void onTemplateUploadFieldFileUploadSucceeded(FileUploadSucceededEvent<FileUploadField, byte[]> event) {
         ReportTemplate reportTemplate = getEditedEntity();
         reportTemplate.setName(event.getFileName());
         reportTemplate.setContent(templateUploadField.getValue());

@@ -21,6 +21,7 @@ import io.jmix.core.annotation.JmixModule;
 import io.jmix.data.DataConfiguration;
 import io.jmix.eclipselink.EclipselinkConfiguration;
 import io.jmix.flowui.FlowuiConfiguration;
+import io.jmix.flowui.testassist.FlowuiTestAssistConfiguration;
 import io.jmix.pivottableflowui.PivotTableFlowuiConfiguration;
 import io.jmix.testsupport.config.CommonCoreTestConfiguration;
 import io.jmix.testsupport.config.CoreSecurityTestConfiguration;
@@ -38,7 +39,8 @@ import org.springframework.context.annotation.Import;
         EclipselinkConfiguration.class, PivotTableFlowuiConfiguration.class,
         CommonCoreTestConfiguration.class, HsqlMemDataSourceTestConfiguration.class,
         JpaMainStoreTestConfiguration.class, LiquibaseTestConfiguration.class,
-        FlowuiServletTestBeans.class, CoreSecurityTestConfiguration.class})
+        FlowuiServletTestBeans.class, CoreSecurityTestConfiguration.class,
+        FlowuiTestAssistConfiguration.class})
 @JmixModule
 public class PivotTableFlowuiTestConfiguration {
 }

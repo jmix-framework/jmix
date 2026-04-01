@@ -52,7 +52,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.core.env.Environment;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.time.ZoneId;
 import java.util.*;
@@ -85,7 +85,7 @@ public class JmixEclipseLinkQuery<E> implements JmixQuery<E> {
     protected List<AdditionalCriteriaProvider> additionalCriteriaProviders;
     protected QueryParamValuesManager queryParamValuesManager;
 
-    protected JpaQuery query;
+    protected JpaQuery<E> query;
     protected boolean isNative;
     protected String queryString;
     protected String transformedQueryString;
@@ -274,6 +274,42 @@ public class JmixEclipseLinkQuery<E> implements JmixQuery<E> {
         checkState();
         this.lockMode = lockMode;
         return this;
+    }
+
+    @Override
+    public TypedQuery<E> setCacheRetrieveMode(CacheRetrieveMode cacheRetrieveMode) {
+        checkState();
+        return setHint(QueryHints.CACHE_RETRIEVE_MODE, cacheRetrieveMode);
+    }
+
+    @Override
+    public CacheRetrieveMode getCacheRetrieveMode() {
+        CacheRetrieveMode mode = (CacheRetrieveMode) getHints().get(QueryHints.CACHE_RETRIEVE_MODE);
+        return mode != null ? mode : CacheRetrieveMode.USE;
+    }
+
+    @Override
+    public TypedQuery<E> setCacheStoreMode(CacheStoreMode cacheStoreMode) {
+        checkState();
+        return setHint(QueryHints.CACHE_STORE_MODE, cacheStoreMode);
+    }
+
+    @Override
+    public CacheStoreMode getCacheStoreMode() {
+        CacheStoreMode mode = (CacheStoreMode) getHints().get(QueryHints.CACHE_STORE_MODE);
+        return mode != null ? mode : CacheStoreMode.USE;
+    }
+
+    @Override
+    public TypedQuery<E> setTimeout(@Nullable Integer timeout) {
+        checkState();
+        return setHint(QueryHints.QUERY_TIMEOUT, timeout);
+    }
+
+    @Override
+    @Nullable
+    public Integer getTimeout() {
+        return (Integer)getHints().get(QueryHints.QUERY_TIMEOUT);
     }
 
     @Override

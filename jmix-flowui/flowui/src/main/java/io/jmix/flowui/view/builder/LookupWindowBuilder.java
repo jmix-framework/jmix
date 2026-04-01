@@ -30,7 +30,7 @@ import io.jmix.flowui.view.LookupView;
 import io.jmix.flowui.view.LookupView.ValidationContext;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewController;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -300,18 +300,6 @@ public class LookupWindowBuilder<E, V extends View<?>> extends AbstractWindowBui
      */
     public Optional<HasValue> getField() {
         return Optional.ofNullable(field);
-    }
-
-    /**
-     * @return whether to use multi selection for the lookup component,
-     * or {@code null} to use the default selection mode
-     *
-     * @deprecated Use {@link #getLookupComponentMultiSelect()} instead.
-     */
-    @Deprecated(since = "2.8", forRemoval = true)
-    @Nullable
-    public Boolean isLookupComponentMultiSelect() {
-        return getLookupComponentMultiSelect();
     }
 
     /**

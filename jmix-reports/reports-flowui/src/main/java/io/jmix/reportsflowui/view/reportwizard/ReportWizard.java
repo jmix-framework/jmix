@@ -22,7 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.AnnotatedElement;
 import java.util.*;
@@ -152,7 +152,6 @@ public class ReportWizard {
     protected Report createReport(ReportData reportData, boolean isTmp) {
         Report report = metadata.create(Report.class);
         report.setIsTmp(isTmp);
-        report.setReportType(ReportType.SIMPLE);
         report.setGroup(reportData.getGroup());
         report.setBands(new LinkedHashSet<>(reportData.getReportRegions().size() + 1)); //plus rootBand);
         report.setValuesFormats(new ArrayList<>());

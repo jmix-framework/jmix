@@ -20,14 +20,14 @@ import com.google.common.base.Strings;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.dialog.Dialog;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The extension of the {@link Dialog} component that functions as a drawer panel. It has a popping-out animation of the
  * dialog and enables configuring the dialog position.
  */
 @Tag("jmix-side-dialog")
-@JsModule("./src/side-dialog/jmix-side-dialog.js")
+//@JsModule("./src/side-dialog/jmix-side-dialog.js")
 public class JmixSideDialogOverlay extends Dialog {
 
     public JmixSideDialogOverlay() {

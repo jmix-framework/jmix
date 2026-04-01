@@ -16,9 +16,10 @@
 
 package test_support;
 
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.json.jackson.JacksonJsonpMapper;
-import co.elastic.clients.transport.ElasticsearchTransport;
-import co.elastic.clients.transport.rest_client.RestClientTransport;
+import co.elastic.clients.transport.rest5_client.Rest5ClientTransport;
+import co.elastic.clients.transport.rest5_client.low_level.Rest5Client;
 import io.jmix.core.CoreConfiguration;
 import io.jmix.core.security.InMemoryUserRepository;
 import io.jmix.core.security.UserRepository;
@@ -36,18 +37,17 @@ import io.jmix.security.SecurityConfiguration;
 import io.jmix.testsupport.config.CommonCoreTestConfiguration;
 import io.jmix.testsupport.config.HsqlMemDataSourceTestConfiguration;
 import io.jmix.testsupport.config.JpaMainStoreTestConfiguration;
-import org.apache.http.HttpHost;
-import co.elastic.clients.elasticsearch.ElasticsearchClient;
-import org.elasticsearch.client.RestClient;
-
+import org.apache.hc.core5.http.HttpHost;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.net.URISyntaxException;
 
 @Configuration
 @Import({
@@ -93,12 +93,16 @@ public class ElasticsearchTestConfiguration {
     @Bean
     public ElasticsearchClient baseOpenSearchClient() {
         String url = searchProperties.getServerUrl();
+        HttpHost httpHost;
+        try {
+            httpHost = HttpHost.create(url);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException("Invalid Elasticsearch URL: " + url, e);
+        }
 
-        RestClient restClient = RestClient
-                .builder(HttpHost.create(url))
-                .build();
+        Rest5Client restClient = Rest5Client.builder(httpHost).build();
 
-        ElasticsearchTransport transport = new RestClientTransport(restClient, new JacksonJsonpMapper());
+        Rest5ClientTransport transport = new Rest5ClientTransport(restClient, new JacksonJsonpMapper());
         return new ElasticsearchClient(transport);
     }
 

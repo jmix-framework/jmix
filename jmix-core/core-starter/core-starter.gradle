@@ -19,9 +19,11 @@ archivesBaseName = 'jmix-core-starter'
 
 dependencies {
     api project(':core')
+    api  'org.springframework.boot:spring-boot-cache'
 
     implementation 'org.springframework.boot:spring-boot-autoconfigure'
     implementation 'org.springframework:spring-messaging'
+    implementation 'org.springframework:spring-context'
 
     compileOnly 'com.hazelcast:hazelcast'
 }

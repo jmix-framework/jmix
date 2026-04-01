@@ -27,7 +27,7 @@ import io.jmix.flowui.accesscontext.UiEntityContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -81,7 +81,7 @@ public class BulkEditViewManagedFieldProvider {
             String fqn = generateFqn(metaProperty, fqnPrefix);
             String propertyCaption = generatePropertyCaption(metaClass, metaProperty, localePrefix);
 
-            if (!metadataTools.isEmbedded(metaProperty)) {
+            if (metaProperty.getType() != MetaProperty.Type.EMBEDDED) {
                 if (isManagedAttribute(metaClass, metaProperty, fqn)) {
                     managedFields.add(new BulkEditViewManagedField(fqn, metaProperty, propertyCaption, fqnPrefix));
                 }

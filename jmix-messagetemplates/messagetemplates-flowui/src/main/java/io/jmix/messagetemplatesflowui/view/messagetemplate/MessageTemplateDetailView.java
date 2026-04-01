@@ -157,7 +157,7 @@ public class MessageTemplateDetailView extends StandardDetailView<MessageTemplat
     }
 
     @Subscribe("importTemplateField")
-    public void onImportTemplateFieldUpload(FileUploadSucceededEvent<FileUploadField> event) {
+    public void onImportTemplateFieldUpload(FileUploadSucceededEvent<FileUploadField, byte[]> event) {
         if (event.getContentLength() > 0 && event.getSource().getValue() != null) {
             String templateValue = new String(event.getSource().getValue(), UTF_8);
             grapesJsEditor.setValue(templateValue);

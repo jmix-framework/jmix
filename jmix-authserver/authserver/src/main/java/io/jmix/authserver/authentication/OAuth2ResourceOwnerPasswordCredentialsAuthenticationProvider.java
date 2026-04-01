@@ -64,7 +64,7 @@ public class OAuth2ResourceOwnerPasswordCredentialsAuthenticationProvider implem
             logger.trace("Retrieved registered client");
         }
 
-        if (!registeredClient.getAuthorizationGrantTypes().contains(AuthorizationGrantType.PASSWORD)) {
+        if (!registeredClient.getAuthorizationGrantTypes().contains(PasswordAuthorizationGrantTypeHelper.PASSWORD_GRANT_TYPE)) {
             throw new OAuth2AuthenticationException(OAuth2ErrorCodes.UNAUTHORIZED_CLIENT);
         }
 
@@ -93,14 +93,14 @@ public class OAuth2ResourceOwnerPasswordCredentialsAuthenticationProvider implem
                 .authorizationServerContext(AuthorizationServerContextHolder.getContext())
                 .authorizedScopes(authorizedScopes)
                 .tokenType(OAuth2TokenType.ACCESS_TOKEN)
-                .authorizationGrantType(AuthorizationGrantType.PASSWORD)
+                .authorizationGrantType(PasswordAuthorizationGrantTypeHelper.PASSWORD_GRANT_TYPE)
                 .authorizationGrant(resourceOwnerPasswordAuthentication);
         // @formatter:on
 
         // @formatter:off
         OAuth2Authorization.Builder authorizationBuilder = OAuth2Authorization.withRegisteredClient(registeredClient)
                 .principalName(usernamePasswordAuthentication.getName())
-                .authorizationGrantType(AuthorizationGrantType.PASSWORD)
+                .authorizationGrantType(PasswordAuthorizationGrantTypeHelper.PASSWORD_GRANT_TYPE)
                 .authorizedScopes(authorizedScopes)
                 .attribute(Principal.class.getName(), usernamePasswordAuthentication);
         // @formatter:on

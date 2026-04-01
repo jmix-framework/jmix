@@ -26,7 +26,7 @@ import io.jmix.flowui.view.StandardDetailView;
 import io.jmix.flowui.view.StandardOutcome;
 import io.jmix.flowui.view.ViewControllerUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 @ActionType(DetailCloseAction.ID)
 public class DetailCloseAction<E> extends OperationResultViewAction<DetailCloseAction<E>, StandardDetailView<E>> {

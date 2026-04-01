@@ -34,7 +34,7 @@ import io.jmix.core.querycondition.PropertyConditionUtils;
 import io.jmix.rest.exception.RestAPIException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.text.ParseException;

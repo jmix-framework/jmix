@@ -132,7 +132,8 @@ public class CollectionValuePropertyHolder extends AbstractValueHolder {
         @Override
         public void visit(Object entity, MetaProperty property) {
             MetadataTools metadataTools = getMetadataTools();
-            if (metadataTools.isJpa(property) && !metadataTools.isEmbedded(property)) {
+            if (metadataTools.isJpa(property)
+                    && property.getType() != MetaProperty.Type.EMBEDDED) {
                 if (property.getRange().asClass().getJavaClass().isAssignableFrom(getOwner().getClass())) {
                     if (!Objects.equals(getRootEntity(), entity)) {
                         replaceToExistingReferences(entity, property, getOwner());

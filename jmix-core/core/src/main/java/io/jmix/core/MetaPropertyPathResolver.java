@@ -19,7 +19,7 @@ package io.jmix.core;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public interface MetaPropertyPathResolver {
     @Nullable

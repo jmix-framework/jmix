@@ -17,7 +17,7 @@
 package io.jmix.flowui.component.groupgrid.adapter;
 
 import io.jmix.flowui.component.groupgrid.GroupListDataComponent;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Factory for creating {@link AbstractGroupDataGridAdapter} instances.

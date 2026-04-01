@@ -19,7 +19,7 @@ package io.jmix.flowui.sys;
 import io.jmix.core.JmixModuleDescriptor;
 import io.jmix.core.JmixModules;
 import io.jmix.core.annotation.Internal;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;

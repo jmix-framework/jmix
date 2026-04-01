@@ -19,7 +19,7 @@ package io.jmix.core.accesscontext;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Defines an authorization point for entity attributes.

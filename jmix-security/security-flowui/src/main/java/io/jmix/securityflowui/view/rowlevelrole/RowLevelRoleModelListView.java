@@ -43,7 +43,7 @@ import io.jmix.securityflowui.component.rolefilter.RoleFilterChangeEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.util.Assert;
 
 import java.util.*;
@@ -217,7 +217,7 @@ public class RowLevelRoleModelListView extends StandardListView<RowLevelRoleMode
     }
 
     @Subscribe("importField")
-    public void onImportFieldFileUploadSucceed(FileUploadSucceededEvent<FileUploadField> event) {
+    public void onImportFieldFileUploadSucceed(FileUploadSucceededEvent<FileUploadField, byte[]> event) {
         try {
             byte[] bytes = importField.getValue();
             Assert.notNull(bytes, "Uploaded file does not contains data");

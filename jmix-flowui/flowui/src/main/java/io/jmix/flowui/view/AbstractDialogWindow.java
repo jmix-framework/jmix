@@ -19,7 +19,6 @@ package io.jmix.flowui.view;
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.dialog.DialogVariant;
 import com.vaadin.flow.component.html.Div;
@@ -33,14 +32,16 @@ import com.vaadin.flow.shared.Registration;
 import io.jmix.core.Messages;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.flowui.UiComponents;
+import io.jmix.flowui.component.WrapperUtils;
 import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.icon.JmixFontIcon;
+import io.jmix.flowui.theme.StyleUtility;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.lang.Nullable;
 
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -136,11 +137,16 @@ public class AbstractDialogWindow<V extends View<?>> implements HasSize, HasThem
     protected void applyDialogModeSettings(V view) {
         DialogMode dialogMode = view.getClass().getAnnotation(DialogMode.class);
         if (dialogMode != null) {
-            setModal(dialogMode.modal());
+            if (DialogModalityMode.DEFAULT.equals(dialogMode.modality())) {
+                setModal(dialogMode.modal());
+            } else {
+                setModality(dialogMode.modality());
+            }
             setDraggable(dialogMode.draggable());
             setResizable(dialogMode.resizable());
             setCloseOnOutsideClick(dialogMode.closeOnOutsideClick());
             setCloseOnEsc(dialogMode.closeOnEsc());
+            setKeepInViewport(dialogMode.keepInViewport());
 
             setValueIfPresent(dialogMode.width(), this::setWidth);
             setValueIfPresent(dialogMode.maxWidth(), this::setMaxWidth);
@@ -170,12 +176,8 @@ public class AbstractDialogWindow<V extends View<?>> implements HasSize, HasThem
     protected Button createHeaderCloseButton() {
         JmixButton closeButton = uiComponents().create(JmixButton.class);
         closeButton.setIcon(icons().get(JmixFontIcon.CLOSE_SMALL));
-        closeButton.addThemeVariants(
-                ButtonVariant.LUMO_TERTIARY_INLINE,
-                ButtonVariant.LUMO_ICON,
-                ButtonVariant.LUMO_CONTRAST
-        );
-        closeButton.setClassName(BASE_CLASS_NAME + "-close-button");
+        closeButton.addClassNames(BASE_CLASS_NAME + "-close-button",
+                StyleUtility.Button.DIALOG_CLOSE_BUTTON);
         closeButton.setTitle(messages().getMessage("dialogWindow.closeButton.description"));
         closeButton.addClickListener(this::onCloseButtonClicked);
 
@@ -328,8 +330,35 @@ public class AbstractDialogWindow<V extends View<?>> implements HasSize, HasThem
     }
 
     /**
-     * @return whether component is set as modal or modeless dialog.
+     * Returns whether the dialog is prevented from moving outside the viewport
+     * bounds or not.
+     *
+     * @return {@code true} if the dialog is prevented from moving outside the
+     * viewport bounds, {@code false} otherwise
      */
+    public boolean isKeepInViewport() {
+        return dialog.isKeepInViewport();
+    }
+
+    /**
+     * Set to true to prevent the dialog from moving outside the viewport
+     * bounds. When enabled, all four edges of the dialog will remain visible,
+     * for example when dragging the dialog or when the viewport is resized.
+     * Note that the dialog will also adjust any programmatically configured
+     * size and position so that it stays within the viewport.
+     *
+     * @param keepInViewport {@code true} to prevent the dialog from moving
+     *                       outside the viewport bounds, {@code false} otherwise
+     */
+    public void setKeepInViewport(boolean keepInViewport) {
+        dialog.setKeepInViewport(keepInViewport);
+    }
+
+    /**
+     * @return whether component is set as modal or modeless dialog.
+     * @deprecated use {@link #getModality()} instead
+     */
+    @Deprecated(since = "3.0", forRemoval = true)
     public boolean isModal() {
         return dialog.isModal();
     }
@@ -338,9 +367,42 @@ public class AbstractDialogWindow<V extends View<?>> implements HasSize, HasThem
      * Sets whether component will open modal or modeless dialog.
      *
      * @param modal {@code false} to enable dialog to open as modeless modal, {@code true} otherwise
+     * @deprecated use {@link #setModality(DialogModalityMode)} instead
      */
+    @Deprecated(since = "3.0", forRemoval = true)
     public void setModal(boolean modal) {
         dialog.setModal(modal);
+    }
+
+    /**
+     * Returns the modality of the dialog
+     *
+     * @return the modality mode
+     */
+    public DialogModalityMode getModality() {
+        return WrapperUtils.toDialogModalityMode(dialog.getModality());
+    }
+
+    /**
+     * Sets the modality of the dialog. The following modes are available:
+     * <ul>
+     * <li>{@link DialogModalityMode#STRICT}: The dialog shows a modality curtain and
+     * users can not interact with components outside the dialog. Client-side
+     * events and RPC calls from components outside the dialog are blocked.
+     * <li>{@link DialogModalityMode#VISUAL}: The dialog shows a modality curtain and
+     * users can not interact with components outside the dialog. However,
+     * client-side events and RPC calls from components outside the dialog are
+     * allowed.
+     * <li>{@link DialogModalityMode#MODELESS}: The dialog does not show a modality
+     * curtain and users can interact with components outside the dialog.
+     * Client-side events and RPC calls from components outside the dialog are
+     * allowed.
+     * </ul>
+     *
+     * @param mode the modality mode
+     */
+    public void setModality(DialogModalityMode mode) {
+        dialog.setModality(WrapperUtils.toModalityMode(mode));
     }
 
     /**

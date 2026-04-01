@@ -95,13 +95,13 @@ public class TriggerModelDetailView extends StandardDetailView<TriggerModel> {
     @Autowired
     private QuartzService quartzService;
     @Autowired
-    private MessageBundle messageBundle;
-    @Autowired
     private Dialogs dialogs;
     @Autowired
     private Messages messages;
     @Autowired
     private Icons icons;
+    @ViewComponent
+    private MessageBundle messageBundle;
 
     private List<String> triggerGroupNames;
 
@@ -145,7 +145,7 @@ public class TriggerModelDetailView extends StandardDetailView<TriggerModel> {
 
     private void initCronExpressionHelperButton() {
         cronExpressionHelpButton.setIcon(icons.get(JmixFontIcon.QUESTION_CIRCLE));
-        cronExpressionHelpButton.addThemeVariants(ButtonVariant.LUMO_ICON, ButtonVariant.LUMO_TERTIARY_INLINE);
+        cronExpressionHelpButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
         cronExpressionHelpButton.addClickListener(this::onCronHelperButtonClick);
     }
 
@@ -160,7 +160,7 @@ public class TriggerModelDetailView extends StandardDetailView<TriggerModel> {
 
     private void initRepeatModeHelperButton() {
         repeatModeSelectorHelpButton.setIcon(icons.get(JmixFontIcon.QUESTION_CIRCLE));
-        repeatModeSelectorHelpButton.addThemeVariants(ButtonVariant.LUMO_ICON, ButtonVariant.LUMO_TERTIARY_INLINE);
+        repeatModeSelectorHelpButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
         repeatModeSelectorHelpButton.addClickListener(this::onRepeatModeHelperButtonClick);
     }
 

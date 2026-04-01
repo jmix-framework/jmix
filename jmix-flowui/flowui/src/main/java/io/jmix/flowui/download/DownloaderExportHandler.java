@@ -19,10 +19,10 @@ package io.jmix.flowui.download;
 import com.google.common.base.Strings;
 import com.vaadin.flow.server.VaadinResponse;
 import com.vaadin.flow.server.VaadinServletResponse;
+import com.vaadin.flow.server.communication.TransferUtil;
 import com.vaadin.flow.server.streams.AbstractDownloadHandler;
 import com.vaadin.flow.server.streams.DownloadEvent;
 import com.vaadin.flow.server.streams.TransferProgressListener;
-import com.vaadin.flow.server.streams.TransferUtil;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.component.streams.TransferProgressNotifier;
 import jakarta.servlet.http.HttpServletResponse;
@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.ContentDisposition;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -60,7 +60,7 @@ public class DownloaderExportHandler extends AbstractDownloadHandler<DownloaderE
     }
 
     @Override
-    public void setDownloadSuccessHandler(@Nullable SupportDownloadSuccessHandler.DownloadSuccessHandler handler) {
+    public void setDownloadSuccessHandler(@Nullable DownloadSuccessHandler handler) {
         this.successHandler = handler;
     }
 

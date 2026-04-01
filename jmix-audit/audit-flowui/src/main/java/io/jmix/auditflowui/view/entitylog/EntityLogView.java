@@ -80,7 +80,7 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.Assert;
 
@@ -495,7 +495,7 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
                 enabledAttr = item.getAttributes();
             for (MetaProperty property : metaProperties) {
                 if (allowLogProperty(property)) {
-                    if (metadataTools.isEmbedded(property)) {
+                    if (property.getType() == MetaProperty.Type.EMBEDDED) {
                         MetaClass embeddedMetaClass = property.getRange().asClass();
                         for (MetaProperty embeddedProperty : embeddedMetaClass.getProperties()) {
                             if (allowLogProperty(embeddedProperty)) {
@@ -910,7 +910,7 @@ public class EntityLogView extends StandardListView<EntityLogItem> {
     }
 
     @Subscribe("importField")
-    public void onImportFieldFileUploadSucceed(FileUploadSucceededEvent<FileUploadField> event) {
+    public void onImportFieldFileUploadSucceed(FileUploadSucceededEvent<FileUploadField, byte[]> event) {
         try {
             byte[] bytes = importField.getValue();
             Assert.notNull(bytes, "Uploaded file does not contains data");

@@ -42,7 +42,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.Objects;
 
 @ViewController("changePasswordView")
@@ -56,7 +56,7 @@ public class ChangePasswordView extends StandardView {
     @ViewComponent
     protected PasswordField currentPasswordField;
 
-    @Autowired
+    @ViewComponent
     protected MessageBundle messageBundle;
     @Autowired
     protected UserManager userManager;

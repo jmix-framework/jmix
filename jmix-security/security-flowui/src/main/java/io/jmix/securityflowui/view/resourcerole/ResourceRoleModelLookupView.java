@@ -32,7 +32,7 @@ import io.jmix.securityflowui.component.rolefilter.RoleFilterChangeEvent;
 import io.jmix.securityflowui.util.RoleAssignmentCandidatePredicate;
 import io.jmix.securityflowui.util.RoleHierarchyCandidatePredicate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collections;

@@ -1,7 +1,8 @@
 package io.jmix.reportsflowui.view.region;
 
-import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.grid.dnd.GridDropEvent;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
 import io.jmix.core.Metadata;
@@ -28,6 +29,7 @@ import io.jmix.reports.entity.wizard.RegionProperty;
 import io.jmix.reports.entity.wizard.ReportRegion;
 import io.jmix.reportsflowui.view.reportwizard.EntityTreeComposite;
 import org.apache.commons.collections4.IterableUtils;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
@@ -37,6 +39,7 @@ import java.util.*;
 @ViewController("report_WizardReportRegion.detail")
 @ViewDescriptor("report-region-wizard-detail-view.xml")
 @EditedEntityContainer("reportRegionDc")
+@DialogMode(width = "40em", resizable = true)
 public class ReportRegionWizardDetailView extends StandardDetailView<ReportRegion> {
 
     @ViewComponent
@@ -50,16 +53,16 @@ public class ReportRegionWizardDetailView extends StandardDetailView<ReportRegio
     @ViewComponent
     protected CollectionPropertyContainer<RegionProperty> reportRegionPropertiesDataGridDc;
     @ViewComponent
-    protected FormLayout treePanel;
+    protected HorizontalLayout mainContent;
     @ViewComponent
     protected DataGrid<RegionProperty> propertiesDataGrid;
     @ViewComponent
     private DataContext dataContext;
 
+    @ViewComponent
+    protected MessageBundle messageBundle;
     @Autowired
     protected UiComponents uiComponents;
-    @Autowired
-    protected MessageBundle messageBundle;
     @Autowired
     protected Notifications notifications;
     @Autowired
@@ -76,6 +79,8 @@ public class ReportRegionWizardDetailView extends StandardDetailView<ReportRegio
     protected boolean persistentOnly = false;
     protected boolean isTabulated;//if true then user perform add tabulated region action
     protected boolean updatePermission = true;
+
+    protected @Nullable EntityTreeNode draggedNode;
 
     public void setParameters(EntityTreeNode rootEntity, boolean scalarOnly, boolean collectionsOnly, boolean persistentOnly) {
         this.rootEntity = rootEntity;
@@ -111,6 +116,13 @@ public class ReportRegionWizardDetailView extends StandardDetailView<ReportRegio
     @Subscribe("propertiesDataGrid.downItemAction")
     protected void onPropertiesDataGridDown(ActionPerformedEvent event) {
         swapItems(false);
+    }
+
+    @Subscribe("propertiesDataGrid")
+    protected void onPropertiedDataGridDrop(GridDropEvent<EntityTreeNode> event) {
+        if (draggedNode != null) {
+            addProperty(Set.of(draggedNode));
+        }
     }
 
     protected void swapItems(boolean up) {
@@ -153,33 +165,36 @@ public class ReportRegionWizardDetailView extends StandardDetailView<ReportRegio
         entityTree.expand(rootEntity);
 
         Action doubleClickAction = new ObservableBaseAction<>("doubleClick")
-                .withHandler(event -> addProperty());
+                .withHandler(event -> addProperty(entityTree.getSelectedItems()));
         doubleClickAction.setEnabled(isUpdatePermitted());
         entityTree.addAction(doubleClickAction);
         entityTree.addItemClickListener(event -> {
             if (event.getClickCount() > 1) {
                 entityTree.select(event.getItem());
-                addProperty();
+                addProperty(entityTree.getSelectedItems());
             }
         });
 
+        entityTree.setRowsDraggable(true);
+        entityTree.addDragStartListener(e -> draggedNode = e.getDraggedItems().getFirst());
+        entityTree.addDragEndListener(e -> draggedNode = null);
+
         ListDataComponentAction<?, ?> addPropertyAction = actions.create(ItemTrackingAction.ID, "addItemAction");
-        addPropertyAction.addActionPerformedListener(event -> addProperty());
+        addPropertyAction.addActionPerformedListener(event -> addProperty(entityTree.getSelectedItems()));
         addPropertyAction.addEnabledRule(this::isUpdatePermitted);
         entityTree.addAction(addPropertyAction);
         addItem.setAction(addPropertyAction);
         addItem.setIcon(icons.get(JmixFontIcon.ARROW_RIGHT));
-        treePanel.add(entityTreeComposite);
+        mainContent.addComponentAsFirst(entityTreeComposite);
     }
 
-    protected void addProperty() {
+    protected void addProperty(Set<EntityTreeNode> selectedItems) {
         List<EntityTreeNode> nodesList = reportRegionPropertiesDataGridDc.getItems()
                 .stream()
                 .map(RegionProperty::getEntityTreeNode).toList();
 
         Set<EntityTreeNode> alreadyAddedNodes = new HashSet<>(nodesList);
 
-        Set<EntityTreeNode> selectedItems = entityTree.getSelectedItems();
         List<RegionProperty> addedItems = new ArrayList<>();
         boolean alreadyAdded = false;
         for (EntityTreeNode entityTreeNode : selectedItems) {

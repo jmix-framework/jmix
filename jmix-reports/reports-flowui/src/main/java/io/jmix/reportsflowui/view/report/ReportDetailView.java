@@ -32,6 +32,7 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.NativeLabel;
 import com.vaadin.flow.component.icon.FontIcon;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
@@ -92,7 +93,7 @@ import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -134,9 +135,9 @@ public class ReportDetailView extends StandardDetailView<Report> {
     @ViewComponent
     protected JmixCheckbox multiDataSetField;
     @ViewComponent
-    protected Div multiDataSetLayout;
+    protected FlexLayout multiDataSetLayout;
     @ViewComponent
-    protected Div singleDataSetLayout;
+    protected FlexLayout singleDataSetLayout;
     @ViewComponent
     protected Div dataSetDetailsLayout;
     @ViewComponent
@@ -336,10 +337,6 @@ public class ReportDetailView extends StandardDetailView<Report> {
     @Subscribe
     protected void onInitEntity(InitEntityEvent<Report> event) {
         Report report = event.getEntity();
-
-        if (report.getReportType() == null) {
-            report.setReportType(ReportType.SIMPLE);
-        }
 
         if (report.getBands().isEmpty()) {
             BandDefinition rootDefinition = createRootBandDefinition(report);
@@ -1486,7 +1483,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
     protected void onJsonPathQueryTextAreaFieldHelpIconClick(ClickEvent<?> event) {
         Html content = new Html(messageBundle.getMessage(
                 "bandsTab.dataSetTypeLayout.jsonPathQueryTextAreaField.helpIcon.dialog.content"));
-        content.addClassName(ReportStyleConstants.TRANSPARENT_CODE_CLASS_NAME);
+        content.addClassName("help-dialog-json");
 
         dialogs.createMessageDialog()
                 .withHeader(messageBundle.getMessage(

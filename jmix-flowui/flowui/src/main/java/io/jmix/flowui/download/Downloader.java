@@ -19,7 +19,7 @@ package io.jmix.flowui.download;
 import io.jmix.core.FileRef;
 import io.jmix.core.FileStorage;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.function.Predicate;
 
@@ -27,14 +27,6 @@ import java.util.function.Predicate;
  * Generic interface to download data from the system.
  */
 public interface Downloader {
-
-    /**
-     * Sets a file storage where the files will be downloaded from.
-     *
-     * @param fileStorage file storage
-     */
-    @Deprecated(since = "2.3", forRemoval = true)
-    void setFileStorage(FileStorage fileStorage);
 
     /**
      * @return {@code true} if downloader should open a new window with the file content

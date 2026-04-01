@@ -33,7 +33,7 @@ import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.view.View;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
@@ -152,10 +152,14 @@ public class BulkEditAction<E> extends SecuredListDataComponentAction<BulkEditAc
         visibleBySpecificUiPermission = context.isPermitted();
     }
 
+    protected boolean isVisibleBySpecificUiPermission() {
+        return visibleBySpecificUiPermission;
+    }
+
     @Override
-    public boolean isVisibleByUiPermissions() {
-        return visibleBySpecificUiPermission
-                && super.isVisibleByUiPermissions();
+    protected void setVisibleInternal(boolean visible) {
+        super.setVisibleInternal(visible
+                && isVisibleBySpecificUiPermission());
     }
 
     @Autowired

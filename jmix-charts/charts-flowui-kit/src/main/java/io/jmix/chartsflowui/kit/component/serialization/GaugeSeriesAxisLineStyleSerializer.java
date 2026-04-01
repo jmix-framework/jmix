@@ -16,11 +16,11 @@
 
 package io.jmix.chartsflowui.kit.component.serialization;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.SerializerProvider;
 import io.jmix.chartsflowui.kit.component.model.series.GaugeSeries;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.SerializationContext;
 
-import java.io.IOException;
 import java.util.Comparator;
 import java.util.Map;
 
@@ -32,7 +32,7 @@ public class GaugeSeriesAxisLineStyleSerializer extends AbstractSerializer<Gauge
 
     @Override
     public void serializeNonNullValue(GaugeSeries.AxisLine.LineStyle value, JsonGenerator gen,
-                                      SerializerProvider provider) throws IOException {
+                                      SerializationContext provider) throws JacksonException {
         gen.writeStartObject();
 
         if (value.getColorPalette() != null) {
@@ -41,29 +41,29 @@ public class GaugeSeriesAxisLineStyleSerializer extends AbstractSerializer<Gauge
                     .map(entry -> new Object[]{entry.getKey(), entry.getValue()})
                     .toArray();
 
-            gen.writeObjectField("color", mappedColorPalette);
+            gen.writePOJOProperty("color", mappedColorPalette);
         }
 
         writeNumberField("width", value.getWidth(), gen);
         writeNumberField("shadowBlur", value.getShadowBlur(), gen);
 
         if (value.getShadowColor() != null) {
-            gen.writeStringField("shadowColor", value.getShadowColor().getValue());
+            gen.writeStringProperty("shadowColor", value.getShadowColor().getValue());
         }
 
         writeNumberField("shadowOffsetX", value.getShadowOffsetX(), gen);
         writeNumberField("shadowOffsetY", value.getShadowOffsetY(), gen);
 
         if (value.getOpacity() != null) {
-            gen.writeNumberField("opacity", value.getOpacity());
+            gen.writeNumberProperty("opacity", value.getOpacity());
         }
 
         gen.writeEndObject();
     }
 
-    protected void writeNumberField(String fieldName, Integer number, JsonGenerator gen) throws IOException {
+    protected void writeNumberField(String fieldName, Integer number, JsonGenerator gen) throws JacksonException {
         if (number != null) {
-            gen.writeNumberField(fieldName, number);
+            gen.writeNumberProperty(fieldName, number);
         }
     }
 }

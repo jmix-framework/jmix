@@ -17,7 +17,7 @@
         <action id="next" icon="ARROW_RIGHT" text="msg://forward"/>
         <action id="save" icon="CHECK" text="msg://save"/>
     </actions>
-    <layout spacing="false">
+    <layout spacing="false" classNames="report-wizard-creator-view">
         <vbox id="contentVBox" padding="false" spacing="true">
             <span id="wizardDescriptionSpan" classNames="report-wizard-tip-label"
                   themeNames="badge normal" width="100%"/>
@@ -106,14 +106,17 @@
                 </formLayout>
             </vbox>
             <vbox id="queryVBox" padding="false">
-                <div classNames="flex, justify-between, buttons-panel">
-                    <button id="queryRunBtn" text="msg://runReport" icon="ANGLE_DOUBLE_RIGHT"/>
-                    <button id="fullScreenTransformationBtn"
-                            text="msg://fullScreen.title"
-                            classNames="link"
-                            themeNames="icon, tertiary-inline"/>
-                </div>
-                <div width="100%" classNames="flex, items-start">
+                <hbox width="100%">
+                    <startSlot>
+                        <button id="queryRunBtn" text="msg://runReport" icon="ANGLE_DOUBLE_RIGHT"/>
+                    </startSlot>
+                    <endSlot>
+                        <button id="fullScreenTransformationBtn"
+                                text="msg://fullScreen.title"
+                                themeNames="icon, tertiary-inline"/>
+                    </endSlot>
+                </hbox>
+                <flexLayout width="100%" alignItems="START">
                     <codeEditor id="reportQueryCodeEditor"
                                 title="msg://reportQuery"
                                 width="100%"
@@ -127,7 +130,7 @@
                     <button id="queryCodeEditorHelpIcon"
                             themeNames="icon, tertiary-inline"
                             icon="QUESTION_CIRCLE"/>
-                </div>
+                </flexLayout>
                 <hbox classNames="buttons-panel">
                     <button id="createParameterBtn" action="reportParameterDataGrid.create"/>
                     <button id="generateParameters" action="reportParameterDataGrid.generate"/>
@@ -151,12 +154,16 @@
                 </dataGrid>
             </vbox>
         </vbox>
-        <hbox id="buttonPanel" classNames="mt-m" padding="false" width="100%">
-            <button id="backBtn" visible="false" action="back"/>
-            <button id="nextBtn" action="next"/>
-            <button id="saveBtn" visible="false" themeNames="primary" action="save"/>
-            <button id="downloadTemplateFileBtn" classNames="ml-auto" iconAfterText="true"
-                    text="msg://downloadTemplateFile" visible="false" icon="DOWNLOAD"/>
+        <hbox id="buttonPanel" classNames="footer-buttons-panel" padding="false" width="100%">
+            <startSlot>
+                <button id="backBtn" visible="false" action="back"/>
+                <button id="nextBtn" action="next"/>
+                <button id="saveBtn" visible="false" themeNames="primary" action="save"/>
+            </startSlot>
+            <endSlot>
+                <button id="downloadTemplateFileBtn" iconAfterText="true"
+                        text="msg://downloadTemplateFile" visible="false" icon="DOWNLOAD"/>
+            </endSlot>
         </hbox>
     </layout>
 </view>

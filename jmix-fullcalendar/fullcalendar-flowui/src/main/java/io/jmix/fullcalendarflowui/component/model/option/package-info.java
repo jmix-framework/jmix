@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-@NonNullApi
+@NullMarked
 @Internal
 package io.jmix.fullcalendarflowui.component.model.option;
 
 import io.jmix.core.annotation.Internal;
-import org.springframework.lang.NonNullApi;
+import org.jspecify.annotations.NullMarked;

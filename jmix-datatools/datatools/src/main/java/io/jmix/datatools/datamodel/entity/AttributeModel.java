@@ -27,7 +27,7 @@ import java.util.UUID;
 /**
  * Represents an attribute of an entity.
  */
-@JmixEntity
+@JmixEntity(name = "datatl_AttributeModel")
 @SystemLevel
 public class AttributeModel {
 

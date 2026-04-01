@@ -18,7 +18,7 @@ package test_support.app.entity.model_objects;
 
 import io.jmix.core.metamodel.datatype.EnumClass;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public enum OrderState implements EnumClass<String> {
     CONFIRMED("CONFIRMED"),

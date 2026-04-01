@@ -19,7 +19,7 @@ package io.jmix.datatoolsflowui.datamodel.impl;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.datatoolsflowui.DatatoolsUiProperties;
 import io.jmix.datatoolsflowui.datamodel.DataModelDiagramStorage;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;

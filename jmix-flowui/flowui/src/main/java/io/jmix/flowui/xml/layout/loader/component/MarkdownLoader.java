@@ -21,7 +21,7 @@ import com.vaadin.flow.component.markdown.Markdown;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import org.dom4j.Element;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public class MarkdownLoader extends AbstractComponentLoader<Markdown> {
 

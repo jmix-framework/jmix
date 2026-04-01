@@ -18,7 +18,7 @@ package io.jmix.chartsflowui.kit.component.model.toolbox;
 
 import io.jmix.chartsflowui.kit.component.model.HasEnumId;
 import io.jmix.chartsflowui.kit.component.model.shared.Color;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A tool feature for exporting a chart to an image.

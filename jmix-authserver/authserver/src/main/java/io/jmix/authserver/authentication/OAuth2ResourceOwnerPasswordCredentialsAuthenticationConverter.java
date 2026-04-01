@@ -3,7 +3,6 @@ package io.jmix.authserver.authentication;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.OAuth2Error;
 import org.springframework.security.oauth2.core.OAuth2ErrorCodes;
@@ -26,33 +25,37 @@ public class OAuth2ResourceOwnerPasswordCredentialsAuthenticationConverter imple
 
     private static final String ACCESS_TOKEN_REQUEST_ERROR_URI = "https://datatracker.ietf.org/doc/html/rfc6749#section-5.2";
 
+    //TODO [SB4] Temp custom implementation of Password Grant Type:
+    // AuthorizationGrantType.PASSWORD -> PasswordAuthorizationGrantTypeHelper.PASSWORD_GRANT_TYPE
+    // OAuth2ParameterNames.USERNAME/PASSWORD -> PasswordAuthorizationGrantTypeHelper.USERNAME/PASSWORD
+
     @Override
     public Authentication convert(HttpServletRequest request) {
         MultiValueMap<String, String> parameters = getFormParameters(request);
 
         // grant_type (REQUIRED)
         String grantType = parameters.getFirst(OAuth2ParameterNames.GRANT_TYPE);
-        if (!AuthorizationGrantType.PASSWORD.getValue().equals(grantType)) {
+        if (!PasswordAuthorizationGrantTypeHelper.PASSWORD_GRANT_TYPE.getValue().equals(grantType)) {
             return null;
         }
 
         // username (REQUIRED)
-        String username = parameters.getFirst(OAuth2ParameterNames.USERNAME);
+        String username = parameters.getFirst(PasswordAuthorizationGrantTypeHelper.USERNAME_PARAMETER_NAME);
         if (!StringUtils.hasText(username) ||
-                parameters.get(OAuth2ParameterNames.USERNAME).size() != 1) {
+                parameters.get(PasswordAuthorizationGrantTypeHelper.USERNAME_PARAMETER_NAME).size() != 1) {
             throwError(
                     OAuth2ErrorCodes.INVALID_REQUEST,
-                    OAuth2ParameterNames.USERNAME,
+                    PasswordAuthorizationGrantTypeHelper.USERNAME_PARAMETER_NAME,
                     ACCESS_TOKEN_REQUEST_ERROR_URI);
         }
 
         // password (REQUIRED)
-        String password = parameters.getFirst(OAuth2ParameterNames.PASSWORD);
+        String password = parameters.getFirst(PasswordAuthorizationGrantTypeHelper.PASSWORD_PARAMETER_NAME);
         if (!StringUtils.hasText(password) ||
-                parameters.get(OAuth2ParameterNames.PASSWORD).size() != 1) {
+                parameters.get(PasswordAuthorizationGrantTypeHelper.PASSWORD_PARAMETER_NAME).size() != 1) {
             throwError(
                     OAuth2ErrorCodes.INVALID_REQUEST,
-                    OAuth2ParameterNames.PASSWORD,
+                    PasswordAuthorizationGrantTypeHelper.PASSWORD_PARAMETER_NAME,
                     ACCESS_TOKEN_REQUEST_ERROR_URI);
         }
 
@@ -77,8 +80,8 @@ public class OAuth2ResourceOwnerPasswordCredentialsAuthenticationConverter imple
         request.getParameterMap().forEach((key, value) -> {
                     if (!key.equals(OAuth2ParameterNames.GRANT_TYPE) &&
                             !key.equals(OAuth2ParameterNames.SCOPE) &&
-                            !key.equals(OAuth2ParameterNames.USERNAME) &&
-                            !key.equals(OAuth2ParameterNames.PASSWORD)) {
+                            !key.equals(PasswordAuthorizationGrantTypeHelper.USERNAME_PARAMETER_NAME) &&
+                            !key.equals(PasswordAuthorizationGrantTypeHelper.PASSWORD_PARAMETER_NAME)) {
                         if (value.length > 0) {
                             additionalParameters.put(key, value[0]);
                         }

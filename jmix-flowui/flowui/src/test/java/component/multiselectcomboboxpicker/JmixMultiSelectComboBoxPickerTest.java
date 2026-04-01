@@ -35,6 +35,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -128,6 +129,29 @@ public class JmixMultiSelectComboBoxPickerTest {
         // JmixMultiSelectComboBoxPicker value should have saved previously 'selected' OrderLine
 
         Assertions.assertTrue(orderDetailView.orderLinesField.getValue().contains(orderLineValue));
+    }
+
+    @Test
+    @DisplayName("Set empty value from client should not cause unparseable validation error")
+    public void setEmptyValueFromClientShouldNotCauseUnparseableValidationError() {
+        var origin = navigateTo(BlankTestView.class);
+        viewNavigators.view(origin, JmixMultiSelectComboBoxPickerOrderListTestView.class)
+                .navigate();
+
+        var orderListView = UiTestUtils.getCurrentView();
+
+        // Create new order in detail view
+        JmixButton createButton = UiTestUtils.getComponent(orderListView, "createButton");
+        createButton.click();
+
+        JmixMultiSelectComboBoxPickerOrderDetailTestView orderDetailView = UiTestUtils.getCurrentView();
+
+        // Simulate user action that sets an empty value
+        orderDetailView.orderLinesField.setValueFromClient(null);
+
+        // This should not have unparseable validation error
+        Assertions.assertFalse(orderDetailView.orderLinesField.isInvalid());
+        Assertions.assertNull(orderDetailView.orderLinesField.getErrorMessage());
     }
 
     private static void findOrderAndEdit(JmixMultiSelectComboBoxPickerOrderListTestView orderListView, String number) {

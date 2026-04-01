@@ -33,7 +33,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletRequest;
@@ -155,7 +155,7 @@ public class FileTransferServiceImpl implements FileTransferService {
                                                                           FileRef fileRef, String filename, long size) {
         FileInfoResponse fileInfo = new FileInfoResponse(fileRef.toString(), filename, size);
 
-        UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(request.getRequestURL().toString())
+        UriComponents uriComponents = UriComponentsBuilder.fromUriString(request.getRequestURL().toString())
                 .queryParam("fileRef", URLEncodeUtils.encodeUtf8(fileRef.toString()))
                 .buildAndExpand();
 

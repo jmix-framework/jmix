@@ -24,7 +24,6 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.shared.Registration;
-import com.vaadin.flow.theme.lumo.LumoUtility;
 import io.jmix.core.Messages;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -45,7 +44,7 @@ import io.jmix.flowui.model.HasLoader;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A UI component used for displaying the filter in the column header. Modifies the standard header by
@@ -114,11 +113,7 @@ public class DataGridHeaderFilter extends Composite<HorizontalLayout>
 
         root.setPadding(false);
         root.setSpacing(false);
-        root.addClassName(LumoUtility.Display.INLINE_FLEX);
-        root.getThemeList().add("spacing-xs");
-        // Padding for filterButton's focus-ring
-        root.getStyle().set("padding-inline-end", "2px");
-        root.getStyle().set("padding-block", "2px");
+        root.setClassName("jmix-grid-header-filter");
 
         return root;
     }
@@ -177,9 +172,8 @@ public class DataGridHeaderFilter extends Composite<HorizontalLayout>
 
     protected void initFunnelButton() {
         filterButton = uiComponents.create(JmixButton.class);
-        filterButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE, ButtonVariant.LUMO_ICON);
         filterButton.setIcon(icons.get(JmixFontIcon.DATA_GRID_HEADER_FILTER));
-        filterButton.setClassName(LumoUtility.TextColor.TERTIARY);
+        filterButton.setClassName("jmix-grid-header-filter-filter-button");
         filterButton.getElement().setAttribute(ATTRIBUTE_JMIX_ROLE_NAME, COLUMN_FILTER_BUTTON_ROLE);
         filterButton.addClickListener(this::onFilterButtonClick);
 
@@ -275,7 +269,7 @@ public class DataGridHeaderFilter extends Composite<HorizontalLayout>
 
     protected void setupButtonFlexGrowStyle(JmixButton button) {
         if (isSmallDevice()) {
-            button.getStyle().set("flex-grow", "1");
+            button.addClassName("small-device");
         }
     }
 
@@ -302,7 +296,6 @@ public class DataGridHeaderFilter extends Composite<HorizontalLayout>
     protected JmixButton createClearFilterButton() {
         JmixButton clearButton = uiComponents.create(JmixButton.class);
 
-        clearButton.addThemeVariants(ButtonVariant.LUMO_ICON);
         clearButton.setIcon(icons.get(JmixFontIcon.DATA_GRID_HEADER_FILTER_CLEAR));
         clearButton.addClickListener(this::onClearButtonClick);
 

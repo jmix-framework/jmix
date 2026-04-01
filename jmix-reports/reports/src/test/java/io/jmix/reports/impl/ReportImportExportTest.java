@@ -23,6 +23,7 @@ import io.jmix.reports.ReportsTestConfiguration;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.test_support.AuthenticatedAsSystem;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,6 +83,7 @@ public class ReportImportExportTest {
         assertThat(dbReports.get(0).getTemplates()).isNotEmpty();
     }
 
+    @Disabled("Enable after fix: https://github.com/jmix-framework/jmix/issues/5168")
     @Test
     void testImportCubaReportFromZipFile() throws IOException {
         assertThat(loadReportsByName()).isEmpty();

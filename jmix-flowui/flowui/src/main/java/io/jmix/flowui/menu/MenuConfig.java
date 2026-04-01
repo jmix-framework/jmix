@@ -37,7 +37,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -396,7 +396,7 @@ public class MenuConfig implements ApplicationContextAware {
     }
 
     protected void loadIcon(Element element, MenuItem menuItem) {
-        getIconLoaderSupport().loadIcon(element, menuItem::setIconComponent);
+        getIconLoaderSupport().loadIcon(element, menuItem::setIcon);
     }
 
     protected String loadResourceString(@Nullable String ref) {

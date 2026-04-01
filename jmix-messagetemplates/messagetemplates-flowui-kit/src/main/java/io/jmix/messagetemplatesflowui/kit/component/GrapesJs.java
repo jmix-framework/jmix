@@ -24,17 +24,16 @@ import com.vaadin.flow.component.dependency.NpmPackage;
 import com.vaadin.flow.internal.ExecutionContext;
 import com.vaadin.flow.internal.StateTree;
 import com.vaadin.flow.shared.Registration;
-import elemental.json.JsonValue;
 import io.jmix.messagetemplatesflowui.kit.component.event.dom.GrapesJsValueChangedDomEvent;
 import io.jmix.messagetemplatesflowui.kit.component.serialization.GrapesJsSerializer;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.safety.Safelist;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.JsonNode;
 
-import java.io.Serializable;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -328,7 +327,7 @@ public class GrapesJs extends Component implements HasSize, HasStyle {
     }
 
     @ClientCallable
-    protected JsonValue requestPlugins() {
+    protected JsonNode requestPlugins() {
         return serializer.serialize(plugins);
     }
 
@@ -387,7 +386,7 @@ public class GrapesJs extends Component implements HasSize, HasStyle {
         synchronizeValueUpdateExecution = null;
     }
 
-    protected void callJsFunction(String functionName, Serializable... arguments) {
+    protected void callJsFunction(String functionName, Object... arguments) {
         getElement().getNode().runWhenAttached(ui ->
                 ui.beforeClientResponse(this, __ ->
                         getElement().callJsFunction(functionName, arguments)

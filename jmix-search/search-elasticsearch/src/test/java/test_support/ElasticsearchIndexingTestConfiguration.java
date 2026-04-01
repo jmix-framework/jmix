@@ -19,7 +19,8 @@ package test_support;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.json.jackson.JacksonJsonpMapper;
-import co.elastic.clients.transport.rest_client.RestClientTransport;
+import co.elastic.clients.transport.rest5_client.Rest5ClientTransport;
+import co.elastic.clients.transport.rest5_client.low_level.Rest5Client;
 import io.jmix.core.DataManager;
 import io.jmix.core.Metadata;
 import io.jmix.core.annotation.JmixModule;
@@ -28,13 +29,14 @@ import io.jmix.search.SearchProperties;
 import io.jmix.search.index.EntityIndexer;
 import io.jmix.search.index.impl.IndexStateRegistry;
 import io.jmix.testsupport.config.LiquibaseTestConfiguration;
-import org.apache.http.HttpHost;
-import org.elasticsearch.client.RestClient;
+import org.apache.hc.core5.http.HttpHost;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.annotation.*;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+
+import java.net.URISyntaxException;
 
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.mock;
@@ -82,9 +84,16 @@ public class ElasticsearchIndexingTestConfiguration {
     @Bean
     public ElasticsearchClient testElasticsearchClient(SearchProperties searchProperties) {
         String url = searchProperties.getServerUrl();
-        RestClient restClient = RestClient.builder(HttpHost.create(url)).build();
+        HttpHost httpHost;
+        try {
+            httpHost = HttpHost.create(url);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException("Invalid Elasticsearch URL: " + url, e);
+        }
 
-        RestClientTransport transport = new RestClientTransport(restClient, new JacksonJsonpMapper());
+        Rest5Client restClient = Rest5Client.builder(httpHost).build();
+
+        Rest5ClientTransport transport = new Rest5ClientTransport(restClient, new JacksonJsonpMapper());
         return new ElasticsearchClient(transport);
     }
 

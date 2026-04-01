@@ -18,7 +18,6 @@
     </data>
     <facets>
         <dataLoadCoordinator auto="true"/>
-        <settings auto="true"/>
         <urlQueryParameters id="urlQueryParametersFacet"/>
     </facets>
 

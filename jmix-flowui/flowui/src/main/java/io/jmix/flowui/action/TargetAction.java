@@ -18,7 +18,7 @@ package io.jmix.flowui.action;
 
 import io.jmix.flowui.kit.action.Action;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public interface TargetAction<C> extends Action {
 

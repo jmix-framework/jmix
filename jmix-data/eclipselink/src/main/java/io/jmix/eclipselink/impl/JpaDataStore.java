@@ -48,7 +48,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
@@ -731,7 +731,7 @@ public class JpaDataStore extends AbstractDataStore implements DataSortingOption
             @Override
             public boolean skip(MetaProperty property) {
                 return !property.getRange().isClass()
-                        || metadataTools.isEmbedded(property)
+                        || property.getType() == MetaProperty.Type.EMBEDDED
                         || !metadataTools.isJpa(property)
                         || !metadataTools.isJpaEntity(property.getRange().asClass());
             }

@@ -27,7 +27,7 @@ import io.jmix.flowui.facet.Facet;
 import io.jmix.flowui.view.View;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationListener;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;

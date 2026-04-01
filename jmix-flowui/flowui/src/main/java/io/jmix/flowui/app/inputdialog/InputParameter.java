@@ -24,7 +24,7 @@ import io.jmix.core.metamodel.datatype.impl.DateTimeDatatype;
 import io.jmix.core.metamodel.datatype.EnumClass;
 import io.jmix.core.metamodel.datatype.impl.OffsetDateTimeDatatype;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.math.BigDecimal;
 import java.sql.Time;

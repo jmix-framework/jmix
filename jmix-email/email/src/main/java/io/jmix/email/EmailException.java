@@ -15,51 +15,17 @@
  */
 package io.jmix.email;
 
-import java.util.List;
-
 /**
- * Email sending error.<br>
+ * Email sending error.
+ * <p>
  * Contains failed addresses and corresponding error messages.
  */
 
 public class EmailException extends Exception {
 
     private static final long serialVersionUID = -9129158384759856382L;
-    private List<String> failedAddresses;
-    /**
-     * List of error messages which prevented email to be sent.
-     */
-    private List<String> messages;
-
-    /**
-     * @deprecated as unused, use {@link #EmailException(String)} instead
-     */
-    @Deprecated(forRemoval = true, since = "2.5")
-    public EmailException(List<String> failedAddresses, List<String> messages) {
-        if (failedAddresses == null || messages == null || failedAddresses.size() != messages.size())
-            throw new IllegalArgumentException();
-
-        this.failedAddresses = failedAddresses;
-        this.messages = messages;
-    }
 
     public EmailException(String message) {
         super(message);
-    }
-
-    /**
-     * @deprecated as unused
-     */
-    @Deprecated(forRemoval = true, since = "2.5")
-    public List<String> getFailedAddresses() {
-        return failedAddresses;
-    }
-
-    /**
-     * @deprecated as unused
-     */
-    @Deprecated(forRemoval = true, since = "2.5")
-    public List<String> getMessages() {
-        return messages;
     }
 }

@@ -17,7 +17,7 @@
 package io.jmix.flowui.monitoring;
 
 import io.jmix.flowui.model.DataLoader;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Static info about {@link DataLoader} that will be used as monitoring tags.

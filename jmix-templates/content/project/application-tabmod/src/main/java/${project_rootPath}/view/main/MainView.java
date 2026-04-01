@@ -81,7 +81,7 @@ public class MainView extends StandardTabbedModeMainView {
         content.add(avatar, text);
 
         if (name.equals(user.getUsername())) {
-            text.addClassNames("user-menu-text-subtext");
+            text.addClassName("user-menu-text-subtext");
         } else {
             Span subtext = uiComponents.create(Span.class);
             subtext.setText(user.getUsername());

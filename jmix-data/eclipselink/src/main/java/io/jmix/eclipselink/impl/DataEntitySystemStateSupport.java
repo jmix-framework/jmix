@@ -27,7 +27,7 @@ import org.eclipse.persistence.internal.queries.EntityFetchGroup;
 import org.eclipse.persistence.queries.FetchGroup;
 import org.eclipse.persistence.queries.FetchGroupTracker;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -75,7 +75,7 @@ public class DataEntitySystemStateSupport extends EntitySystemStateSupport {
     @Override
     public void mergeLazyLoadingState(Entity src, Entity dst, MetaProperty metaProperty,
                                       Function<Collection<Object>, Collection<Object>> collectionWrapFunction) {
-        if (!metadataTools.isEmbedded(metaProperty)) {
+        if (metaProperty.getType() != MetaProperty.Type.EMBEDDED) {
             if (metaProperty.getRange().getCardinality().isMany()) {
                 Object value = getCollectionProperty(src, metaProperty.getName());
 

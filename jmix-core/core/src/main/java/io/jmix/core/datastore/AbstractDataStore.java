@@ -25,7 +25,7 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -107,9 +107,9 @@ public abstract class AbstractDataStore implements DataStore {
     @Override
     public List<Object> loadList(LoadContext<?> context) {
         if (log.isDebugEnabled()) {
-            log.debug("loadList: store={}, metaClass={}, fetchPlan={}, from selected={}, query={}",
+            log.debug("loadList: store={}, metaClass={}, fetchPlan={}, query={}",
                     getName(), context.getEntityMetaClass(), context.getFetchPlan(),
-                    context.getPreviousQueries().isEmpty(), context.getQuery());
+                    context.getQuery());
         }
 
         EventSharedState loadState = new EventSharedState();
@@ -163,9 +163,8 @@ public abstract class AbstractDataStore implements DataStore {
     @Override
     public long getCount(LoadContext<?> context) {
         if (log.isDebugEnabled()) {
-            log.debug("getCount: store={}, metaClass={}, from selected={}, query={}",
-                    getName(), context.getEntityMetaClass(),
-                    context.getPreviousQueries().isEmpty(), context.getQuery());
+            log.debug("getCount: store={}, metaClass={}, query={}",
+                    getName(), context.getEntityMetaClass(), context.getQuery());
         }
 
         EventSharedState eventState = new EventSharedState();

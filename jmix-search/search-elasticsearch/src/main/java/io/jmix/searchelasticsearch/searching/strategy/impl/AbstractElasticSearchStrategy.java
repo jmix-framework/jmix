@@ -17,8 +17,6 @@
 package io.jmix.searchelasticsearch.searching.strategy.impl;
 
 import co.elastic.clients.elasticsearch.core.SearchRequest;
-import io.jmix.search.searching.SearchContext;
-import io.jmix.search.searching.SearchRequestContext;
 import io.jmix.search.searching.impl.AbstractSearchStrategy;
 import io.jmix.searchelasticsearch.searching.strategy.ElasticSearchQueryConfigurer;
 import io.jmix.searchelasticsearch.searching.strategy.ElasticsearchSearchStrategy;
@@ -34,14 +32,5 @@ public abstract class AbstractElasticSearchStrategy
 
     protected AbstractElasticSearchStrategy(ElasticSearchQueryConfigurer queryConfigurator) {
         super(queryConfigurator);
-    }
-
-    /**
-     * @deprecated Use {@link ElasticsearchSearchStrategy#configureRequest(SearchRequestContext)}
-     */
-    @Override
-    @Deprecated(since = "2.7", forRemoval = true)
-    public void configureRequest(SearchRequest.Builder requestBuilder, SearchContext searchContext) {
-        throw new UnsupportedOperationException();
     }
 }

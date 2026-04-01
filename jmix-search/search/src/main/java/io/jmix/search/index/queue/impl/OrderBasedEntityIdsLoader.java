@@ -32,7 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 import java.util.ArrayList;
@@ -73,7 +73,7 @@ public abstract class OrderBasedEntityIdsLoader implements EntityIdsLoader {
         String primaryKeyPropertyName = primaryKeyProperty.getName();
 
         ResultHolder result;
-        if (metadataTools.isEmbedded(orderingProperty)) {
+        if (orderingProperty.getType() == MetaProperty.Type.EMBEDDED) {
             log.warn("Sorted loading by embedded property is not supported - perform in-memory loading of all ids");
             result = loadAllInMemory(entityClass);
         } else {

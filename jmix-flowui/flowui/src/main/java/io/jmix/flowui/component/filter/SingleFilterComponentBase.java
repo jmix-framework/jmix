@@ -38,7 +38,7 @@ import io.jmix.flowui.model.DataLoader;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -119,7 +119,6 @@ public abstract class SingleFilterComponentBase<V> extends CustomField<V>
 
     protected void initRootComponent(HorizontalLayout root) {
         root.setSpacing(false);
-        root.getThemeList().add("spacing-s");
     }
 
     public HorizontalLayout getRoot() {

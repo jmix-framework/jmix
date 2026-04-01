@@ -21,7 +21,7 @@ import io.jmix.chartsflowui.kit.component.model.HasEnumId;
 import io.jmix.chartsflowui.kit.component.model.HasShadow;
 import io.jmix.chartsflowui.kit.component.model.shared.*;
 import io.jmix.chartsflowui.kit.component.model.visualMap.PiecewiseVisualMap;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Line chart relates all the data points {@link LineSeries#symbol} by broken lines, which is used to show

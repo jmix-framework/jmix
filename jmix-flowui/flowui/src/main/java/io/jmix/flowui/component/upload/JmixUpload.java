@@ -17,17 +17,27 @@
 package io.jmix.flowui.component.upload;
 
 import com.google.common.base.Strings;
-import com.vaadin.flow.component.upload.Upload;
-import com.vaadin.flow.component.upload.UploadI18N;
+import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.upload.*;
+import com.vaadin.flow.server.streams.TransferContext;
+import com.vaadin.flow.server.streams.TransferProgressListener;
+import com.vaadin.flow.server.streams.UploadHandler;
+import com.vaadin.flow.server.streams.UploadMetadata;
+import com.vaadin.flow.shared.Registration;
+import io.jmix.core.FileTypesHelper;
 import io.jmix.core.Messages;
+import io.jmix.flowui.kit.component.streams.TransferProgressNotifier;
+import io.jmix.flowui.kit.component.upload.handler.SupportUploadSuccessHandler;
+import io.jmix.flowui.kit.component.upload.handler.SupportUploadSuccessHandler.UploadSuccessContext;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
-public class JmixUpload extends Upload implements ApplicationContextAware, InitializingBean {
+public class JmixUpload<V> extends Upload implements ApplicationContextAware, InitializingBean {
 
     protected Messages messages;
     protected ApplicationContext applicationContext;
@@ -103,5 +113,120 @@ public class JmixUpload extends Upload implements ApplicationContextAware, Initi
         uploadI18N.setUnits(unitsList);
 
         setI18n(uploadI18N);
+    }
+
+    /**
+     * Registers a listener that will be notified when a file upload progress changes.
+     *
+     * @param listener the listener to add
+     * @return a {@link Registration} object that allows the listener to be removed if no longer needed
+     */
+    public Registration addUploadProgressListener(ComponentEventListener<ProgressUpdateEvent> listener) {
+        return addListener(ProgressUpdateEvent.class, listener);
+    }
+
+    /**
+     * Registers a listener that will be notified when a file upload failed.
+     *
+     * @param listener the listener to add
+     * @return a {@link Registration} object that allows the listener to be removed if no longer needed
+     */
+    public Registration addUploadFailedListener(ComponentEventListener<FailedEvent> listener) {
+        return addListener(FailedEvent.class, listener);
+    }
+
+    /**
+     * Registers a listener that will be notified when a file upload finished.
+     *
+     * @param listener the listener to add
+     * @return a {@link Registration} object that allows the listener to be removed if no longer needed
+     */
+    public Registration addUploadFinishedListener(ComponentEventListener<FinishedEvent> listener) {
+        return addListener(FinishedEvent.class, listener);
+    }
+
+    /**
+     * Registers a listener that will be notified when a file upload started.
+     *
+     * @param listener the listener to add
+     * @return a {@link Registration} object that allows the listener to be removed if no longer needed
+     */
+    public Registration addUploadStartedListener(ComponentEventListener<StartedEvent> listener) {
+        return addListener(StartedEvent.class, listener);
+    }
+
+    /**
+     * Registers a listener that will be notified when a file upload succeeds.
+     *
+     * @param listener the listener to add
+     * @return a {@link Registration} object that allows the listener to be removed if no longer needed
+     */
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public Registration addUploadSucceededListener(ComponentEventListener<UploadSucceededEvent<V>> listener) {
+        return addListener(UploadSucceededEvent.class, ((ComponentEventListener) listener));
+    }
+
+    @Override
+    public void setUploadHandler(UploadHandler handler, String targetName) {
+        if (handler instanceof TransferProgressNotifier transferProgressNotifier) {
+            transferProgressNotifier.addTransferProgressListener(createDefaultTransferProgressListener());
+        }
+
+        if (handler instanceof SupportUploadSuccessHandler<?> supportUploadSuccessHandler) {
+            supportUploadSuccessHandler.setUploadSuccessHandler(this::onUploadSuccess);
+        }
+
+        super.setUploadHandler(handler, targetName);
+    }
+
+    protected void onUploadSuccess(UploadSuccessContext<?> context) {
+        UploadMetadata uploadMetadata = context.uploadMetadata();
+        fireEvent(new UploadSucceededEvent<>(this,
+                context.data(),
+                uploadMetadata.fileName(), uploadMetadata.contentType(), uploadMetadata.contentLength()));
+    }
+
+    protected void onUploadStart(TransferContext context) {
+        fireEvent(new StartedEvent(this,
+                context.fileName(), FileTypesHelper.getMIMEType(context.fileName()), context.contentLength()));
+    }
+
+    protected void onUploadProgress(TransferContext context, long transferredBytes, long totalBytes) {
+        fireEvent(new ProgressUpdateEvent(this,
+                transferredBytes, totalBytes, context.fileName()));
+    }
+
+    protected void onUploadError(TransferContext context, IOException reason) {
+        fireEvent(new FailedEvent(this, context.fileName(),
+                FileTypesHelper.getMIMEType(context.fileName()), context.contentLength(), reason));
+    }
+
+    protected void onUploadComplete(TransferContext context, long transferredBytes) {
+        fireEvent(new FinishedEvent(this,
+                context.fileName(), FileTypesHelper.getMIMEType(context.fileName()), context.contentLength()));
+    }
+
+    protected TransferProgressListener createDefaultTransferProgressListener() {
+        return new TransferProgressListener() {
+            @Override
+            public void onStart(TransferContext context) {
+                onUploadStart(context);
+            }
+
+            @Override
+            public void onProgress(TransferContext context, long transferredBytes, long totalBytes) {
+                onUploadProgress(context, transferredBytes, totalBytes);
+            }
+
+            @Override
+            public void onError(TransferContext context, IOException reason) {
+                onUploadError(context, reason);
+            }
+
+            @Override
+            public void onComplete(TransferContext context, long transferredBytes) {
+                onUploadComplete(context, transferredBytes);
+            }
+        };
     }
 }

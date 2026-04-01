@@ -20,7 +20,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.component.HasShortcutCombination;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.beans.PropertyChangeEvent;
 import java.util.function.Consumer;
@@ -102,28 +102,26 @@ public interface Action extends HasShortcutCombination {
      * to initialize their appearance.
      *
      * @return action's icon or {@code null} if not set
-     * @deprecated use {@link #getIconComponent()} instead
      */
-    @Deprecated(since = "2.8", forRemoval = true)
     @Nullable
-    Icon getIcon();
+    Component getIcon();
 
     /**
      * Sets the icon property value of an action. May be used by components
      * to initialize their appearance.
      *
      * @param icon icon to set or {@code null} to remove
-     * @deprecated use {@link #setIconComponent(Component)} instead
      */
-    @Deprecated(since = "2.8", forRemoval = true)
-    void setIcon(@Nullable Icon icon);
+    void setIcon(@Nullable Component icon);
 
     /**
      * Returns the component that represents an icon associated with this action.
      * May be used by components to initialize their appearance.
      *
      * @return action's icon or {@code null} if not set
+     * @deprecated use {@link #getIcon()} instead
      */
+    @Deprecated(since = "3.0", forRemoval = true)
     @Nullable
     Component getIconComponent();
 
@@ -132,7 +130,9 @@ public interface Action extends HasShortcutCombination {
      * May be used by components to initialize their appearance.
      *
      * @param icon the icon component to set or {@code null} to remove
+     * @deprecated use {@link #setIcon(Component)} instead
      */
+    @Deprecated(since = "3.0", forRemoval = true)
     void setIconComponent(@Nullable Component icon);
 
     /**

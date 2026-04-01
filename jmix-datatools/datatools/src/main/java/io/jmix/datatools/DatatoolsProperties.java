@@ -3,7 +3,7 @@ package io.jmix.datatools;
 import io.jmix.datatools.datamodel.EngineType;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 @ConfigurationProperties(prefix = "jmix.datatools")
 public class DatatoolsProperties {

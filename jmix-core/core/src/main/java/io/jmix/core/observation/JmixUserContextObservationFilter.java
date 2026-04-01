@@ -34,7 +34,8 @@ public class JmixUserContextObservationFilter implements ObservationFilter {
 
     @Override
     public Observation.Context map(Observation.Context context) {
-        if (currentAuthentication.isSet()) {
+        if (currentAuthentication.isSet()
+                && currentAuthentication.getAuthentication().getPrincipal() instanceof UserDetails) {
             UserDetails user = currentAuthentication.getUser();
             context.addHighCardinalityKeyValue(KeyValue.of("jmix.user.username", user.getUsername()));
         }

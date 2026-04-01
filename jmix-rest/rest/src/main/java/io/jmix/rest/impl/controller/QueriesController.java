@@ -34,7 +34,7 @@ import java.util.Map;
  * Controller that is used for operations with predefined JPQL queries
  */
 @RestController("rest_QueriesController")
-@RequestMapping(value = "${jmix.rest.base-path}${jmix.rest.queries-path}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+@RequestMapping(value = "${jmix.rest.base-path}${jmix.rest.queries-path}", produces = MediaType.APPLICATION_JSON_VALUE)
 public class QueriesController {
 
     @Autowired
@@ -45,7 +45,6 @@ public class QueriesController {
                                                   @PathVariable String queryName,
                                                   @RequestParam(required = false) Integer limit,
                                                   @RequestParam(required = false) Integer offset,
-                                                  @Deprecated(forRemoval = true) @RequestParam(required = false) String view,
                                                   @RequestParam(required = false) String fetchPlan,
                                                   @RequestParam(required = false) Boolean returnNulls,
                                                   @RequestParam(required = false) Boolean dynamicAttributes,
@@ -53,8 +52,7 @@ public class QueriesController {
                                                   @RequestParam(required = false) String modelVersion,
                                                   @RequestParam Map<String, String> params) {
         String resultJson = queriesControllerManager.executeQueryGet(entityName, queryName, limit, offset,
-                StringUtils.defaultString(fetchPlan, view), returnNulls,
-                dynamicAttributes, modelVersion, params);
+                fetchPlan, returnNulls, dynamicAttributes, modelVersion, params);
         ResponseEntity.BodyBuilder responseBuilder = ResponseEntity.status(HttpStatus.OK);
         if (BooleanUtils.isTrue(returnCount)) {
             String count = queriesControllerManager.getCountGet(entityName, queryName, modelVersion, params);
@@ -68,7 +66,6 @@ public class QueriesController {
                                                    @PathVariable String queryName,
                                                    @RequestParam(required = false) Integer limit,
                                                    @RequestParam(required = false) Integer offset,
-                                                   @Deprecated(forRemoval = true) @RequestParam(required = false) String view,
                                                    @RequestParam(required = false) String fetchPlan,
                                                    @RequestParam(required = false) Boolean returnNulls,
                                                    @RequestParam(required = false) Boolean dynamicAttributes,
@@ -77,7 +74,7 @@ public class QueriesController {
                                                    @RequestBody String paramsJson) {
 
         String resultJson = queriesControllerManager.executeQueryPost(entityName, queryName, limit, offset,
-                StringUtils.defaultString(fetchPlan, view), returnNulls, dynamicAttributes, modelVersion, paramsJson);
+                fetchPlan, returnNulls, dynamicAttributes, modelVersion, paramsJson);
         ResponseEntity.BodyBuilder responseBuilder = ResponseEntity.status(HttpStatus.OK);
         if (BooleanUtils.isTrue(returnCount)) {
             String count = queriesControllerManager.getCountPost(entityName, queryName, modelVersion, paramsJson);

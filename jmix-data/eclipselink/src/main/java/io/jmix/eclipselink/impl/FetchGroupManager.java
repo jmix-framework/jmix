@@ -36,7 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ClassUtils;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -152,7 +152,7 @@ public class FetchGroupManager {
         List<FetchGroupField> refFields = new ArrayList<>();
         for (FetchGroupField field : fetchGroupFields) {
             if (field.metaProperty.getRange().isClass()
-                    && !metadataTools.isEmbedded(field.metaProperty)
+                    && field.metaProperty.getType() != MetaProperty.Type.EMBEDDED
                     && metadataTools.isJpaEntity(field.metaProperty.getRange().asClass())) {
                 refFields.add(field);
             }

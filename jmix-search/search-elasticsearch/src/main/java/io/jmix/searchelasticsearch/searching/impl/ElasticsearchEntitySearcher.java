@@ -3,15 +3,19 @@ package io.jmix.searchelasticsearch.searching.impl;
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
+import co.elastic.clients.elasticsearch.core.search.HighlightField;
 import co.elastic.clients.elasticsearch.core.search.Hit;
 import co.elastic.clients.elasticsearch.core.search.HitsMetadata;
+import co.elastic.clients.util.NamedValue;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.search.SearchProperties;
-import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
-import io.jmix.search.searching.*;
+import io.jmix.search.searching.EntitySearcher;
+import io.jmix.search.searching.SearchContext;
+import io.jmix.search.searching.SearchRequestContext;
+import io.jmix.search.searching.SearchResult;
 import io.jmix.search.searching.impl.AbstractEntitySearcher;
 import io.jmix.search.searching.impl.SearchResultImpl;
 import io.jmix.search.utils.Constants;
@@ -115,23 +119,6 @@ public class ElasticsearchEntitySearcher extends AbstractEntitySearcher implemen
         return new SearchResultImpl(searchContext, searchStrategy.getName());
     }
 
-    @Deprecated(since = "2.7", forRemoval = true)
-    protected List<String> resolveTargetIndexes(SearchContext searchContext) {
-        Collection<String> requestedEntities = searchContext.getEntities();
-        if (requestedEntities.isEmpty()) {
-            requestedEntities = indexConfigurationManager.getAllIndexedEntities();
-        }
-
-        return requestedEntities.stream()
-                .map(metadata::getClass)
-                .filter(metaClass -> secureOperations.isEntityReadPermitted(metaClass, policyStore))
-                .map(metaClass -> indexConfigurationManager.getIndexConfigurationByEntityNameOpt(metaClass.getName()))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .map(IndexConfiguration::getIndexName)
-                .collect(Collectors.toList());
-    }
-
     protected ElasticsearchSearchStrategy resolveSearchStrategy(String searchStrategyName) {
         return searchStrategyManager.getSearchStrategyByName(searchStrategyName);
     }
@@ -160,11 +147,17 @@ public class ElasticsearchEntitySearcher extends AbstractEntitySearcher implemen
     }
 
     protected void configureHighlight(SearchRequest.Builder requestBuilder) {
+        // TODO [SB4] ES Rest Client 9 changed approach of configuration. Now differs from OpenSearch which keep using ola approach
+        HighlightField highlightField = HighlightField.of(fieldBuilder ->
+                fieldBuilder
+                        .preTags("<b>")
+                        .postTags("</b>")
+        );
+
         requestBuilder.highlight(highlightBuilder ->
-                highlightBuilder.requireFieldMatch(true)
-                        .fields("*", highlightFieldBuilder ->
-                                highlightFieldBuilder.preTags("<b>").postTags("</b>")
-                        )
+                highlightBuilder
+                        .requireFieldMatch(true)
+                        .fields(new NamedValue<>("*", highlightField))
         );
     }
 

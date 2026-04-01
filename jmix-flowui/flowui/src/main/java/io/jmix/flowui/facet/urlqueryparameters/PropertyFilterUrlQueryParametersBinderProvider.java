@@ -20,7 +20,6 @@ import com.google.common.base.Preconditions;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter;
 import io.jmix.flowui.facet.UrlQueryParametersFacet;
-import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.inittask.AbstractInitTask;
@@ -29,7 +28,7 @@ import org.dom4j.Element;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 /**
@@ -101,11 +100,6 @@ public class PropertyFilterUrlQueryParametersBinderProvider extends AbstractUrlQ
             this.parameter = parameter;
             this.urlParamSerializer = urlParamSerializer;
             this.applicationContext = applicationContext;
-        }
-
-        @Override
-        public void execute(ComponentLoader.ComponentContext context, View<?> view) {
-            // Is not invoked, do nothing
         }
 
         @Override

@@ -217,16 +217,15 @@ public class ExceptionDialog implements InitializingBean {
     protected HorizontalLayout createButtonsPanel() {
         HorizontalLayout layout = new HorizontalLayout();
         layout.setWidthFull();
-        layout.add(createCloseButton());
+        layout.addToStart(createCloseButton());
 
         if (isExceptionDetailsPermitted()) {
             detailsButton = createDetailsButton();
-            layout.add(detailsButton);
+            layout.addToStart(detailsButton);
         }
 
         copyButton = createCopyButton();
-        copyButton.getStyle().set("margin-inline-start", "auto");
-        layout.add(copyButton);
+        layout.addToEnd(copyButton);
         return layout;
     }
 
@@ -347,15 +346,15 @@ public class ExceptionDialog implements InitializingBean {
                     if (template != null) {
                         params.put("XML descriptor", template.value());
                     }
-                } else if (guiDevException.getFrameId() != null) {
-                    String frameId = guiDevException.getFrameId();
-                    params.put("Frame ID", frameId);
+                } else if (guiDevException.getOriginId() != null) {
+                    String originId = guiDevException.getOriginId();
+                    params.put("Origin ID", originId);
                     try {
                         params.put("XML descriptor",
-                                viewRegistry.getViewInfo(frameId).
+                                viewRegistry.getViewInfo(originId).
                                         getTemplatePath().orElse(null));
                     } catch (Exception e) {
-                        params.put("XML descriptor", "not found for " + frameId);
+                        params.put("XML descriptor", "not found for " + originId);
                     }
                 }
             }

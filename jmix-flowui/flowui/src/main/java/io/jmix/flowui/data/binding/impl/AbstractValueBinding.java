@@ -52,7 +52,7 @@ import jakarta.validation.metadata.BeanDescriptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -173,7 +173,7 @@ public abstract class AbstractValueBinding<V> implements ValueBinding<V>, Suspen
                     }
                     if (permittedIfEmbedded && metaPropertyPath.length() > 1) {
                         for (MetaProperty property : metaPropertyPath.getMetaProperties()) {
-                            if (!metadataTools.isEmbedded(property)) {
+                            if (property.getType() != MetaProperty.Type.EMBEDDED) {
                                 continue;
                             }
 

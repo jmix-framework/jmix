@@ -16,12 +16,11 @@
 
 package serialization.series;
 
-import elemental.json.JsonValue;
 import io.jmix.chartsflowui.kit.component.JmixChart;
 import io.jmix.chartsflowui.kit.component.model.ChartOptions;
 import io.jmix.chartsflowui.kit.component.model.HasLineStyle;
-import io.jmix.chartsflowui.kit.component.model.series.Label;
 import io.jmix.chartsflowui.kit.component.model.series.*;
+import io.jmix.chartsflowui.kit.component.model.series.Label;
 import io.jmix.chartsflowui.kit.component.model.series.mark.*;
 import io.jmix.chartsflowui.kit.component.model.shared.*;
 import io.jmix.chartsflowui.kit.component.serialization.JmixChartSerializer;
@@ -30,6 +29,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import serialization.AbstractSerializationTest;
+import tools.jackson.databind.JsonNode;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -2293,10 +2293,10 @@ public class LineSeriesSerializationTest extends AbstractSerializationTest {
                 );
 
         chartOptions.addSeries(lineSeries);
-        JsonValue serializedJson = chartSerializer.serialize(chartOptions);
+        JsonNode serializedJson = chartSerializer.serialize(chartOptions);
 
         String expectedJson = readFile("series/line-series-result.json");
 
-        JSONAssert.assertEquals(expectedJson, serializedJson.toJson(), true);
+        JSONAssert.assertEquals(expectedJson, serializedJson.toString(), true);
     }
 }

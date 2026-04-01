@@ -24,38 +24,26 @@ public interface Sequences {
     /**
      * Returns the next sequence value.
      * For example:
-     * {@code
-     *      sequences.createNextValue(Sequence.withName("seq_name").setStartValue(10).setIncrement(1))
-     * }
-     * @param sequence  sequence object
-     * @return          next value
+     * {@code sequences.createNextValue(Sequence.withName("seq_name").setStartValue(10).setIncrement(1))}
+     *
+     * @param sequence sequence object
+     * @return next value
      */
     long createNextValue(Sequence sequence);
 
     /**
-     * @deprecated as unused
-     *
-     * Returns the current value of the sequence. For some implementations
-     * {@link #createNextValue(Sequence)} must be called at least once beforehand.
-     *
-     * @param sequence object {@link Sequence}
-     * @return          current value
-     */
-    @Deprecated(forRemoval = true, since = "2.7")
-    long getCurrentValue(Sequence sequence);
-
-    /**
      * Set current value for the sequence.
-     * Next {@link #getCurrentValue(Sequence)} invocation will return {@code value}
+     * <p>
      * Next {@link #createNextValue(Sequence)} invocation will return {@code value + increment}
      *
      * @param sequence sequence object {@link Sequence}
-     * @param value     value
+     * @param value    value
      */
     void setCurrentValue(Sequence sequence, long value);
 
     /**
      * Removes sequence with specified identifier
+     *
      * @param sequence sequence object {@link Sequence}
      * @throws java.lang.IllegalStateException if sequence does not exist
      */

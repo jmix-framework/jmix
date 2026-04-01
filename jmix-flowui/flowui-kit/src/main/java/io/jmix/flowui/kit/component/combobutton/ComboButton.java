@@ -30,7 +30,7 @@ import io.jmix.flowui.kit.component.dropdownbutton.AbstractDropdownButton;
 import io.jmix.flowui.kit.component.menubar.JmixMenuBar;
 import io.jmix.flowui.kit.component.menubar.JmixMenuItem;
 import io.jmix.flowui.kit.icon.JmixFontIcon;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -51,8 +51,16 @@ public class ComboButton extends AbstractDropdownButton
     protected KeyCombination shortcutCombination;
 
     public ComboButton() {
-        buttonItem = getContent().addItem("");
-        dropdownItem = getContent().addItem(dropdownIcon);
+        buttonItem = createButtonItem();
+        dropdownItem = createDropdownItem();
+    }
+
+    protected JmixMenuItem createButtonItem() {
+        return getContent().addItem("");
+    }
+
+    protected JmixMenuItem createDropdownItem() {
+        return getContent().addItem(dropdownIcon);
     }
 
     @Override
@@ -93,6 +101,7 @@ public class ComboButton extends AbstractDropdownButton
         return getButtonItem().getWhiteSpace();
     }
 
+    @Deprecated(since = "3.0", forRemoval = true)
     @Override
     public void setIconComponent(@Nullable Component icon) {
         if (icon != null && icon.getElement().isTextNode()) {
@@ -138,30 +147,40 @@ public class ComboButton extends AbstractDropdownButton
      * Returns the icon to be displayed in the dropdown area of the component.
      *
      * @return the icon to be displayed in the dropdown area of the component
-     * @deprecated use {@link #getDropdownIconComponent()} instead
      */
-    @Deprecated(since = "2.8", forRemoval = true)
     @Nullable
-    public Icon getDropdownIcon() {
-        return dropdownIcon instanceof Icon icon ? icon : null;
+    public Component getDropdownIcon() {
+        return getDropdownIconComponent();
     }
 
     /**
      * Sets the icon to be displayed in the dropdown area of the component.
      *
      * @param icon the icon to be set, or {@code null} to remove the dropdown icon
-     * @deprecated use {@link #setDropdownIconComponent(Component)} instead
      */
-    @Deprecated(since = "2.8", forRemoval = true)
-    public void setDropdownIcon(@Nullable Icon icon) {
+    public void setDropdownIcon(@Nullable Component icon) {
         setDropdownIconComponent(icon);
     }
 
+    /**
+     * Returns the component representing the icon displayed in the dropdown area.
+     *
+     * @return the component representing the dropdown icon, or {@code null} if no icon is set
+     * @deprecated use {@link #getDropdownIcon()} instead
+     */
+    @Deprecated(since = "3.0", forRemoval = true)
     @Nullable
     public Component getDropdownIconComponent() {
         return dropdownIcon;
     }
 
+    /**
+     * Sets the icon to be displayed in the dropdown area of the component.
+     *
+     * @param icon the icon to be set, or {@code null} to remove the dropdown icon
+     * @deprecated use {@link #setDropdownIcon(Component)} instead
+     */
+    @Deprecated(since = "3.0", forRemoval = true)
     public void setDropdownIconComponent(@Nullable Component icon) {
         if (dropdownIcon != null) {
             dropdownIcon.getParent()

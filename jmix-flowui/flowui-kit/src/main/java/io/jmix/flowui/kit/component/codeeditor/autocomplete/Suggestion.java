@@ -17,7 +17,7 @@
 package io.jmix.flowui.kit.component.codeeditor.autocomplete;
 
 import io.jmix.flowui.kit.component.codeeditor.JmixCodeEditor;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.io.Serializable;
 

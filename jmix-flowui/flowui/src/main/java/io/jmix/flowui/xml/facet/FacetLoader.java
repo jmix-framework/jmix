@@ -26,7 +26,7 @@ import io.jmix.flowui.xml.layout.ComponentLoader;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Constructor;
@@ -37,7 +37,6 @@ import java.util.List;
 @Component("flowui_FacetLoader")
 public class FacetLoader {
 
-    protected Multimap<String, FacetProvider<?>> registrations = HashMultimap.create();
     protected FacetLoaderResolver facetLoaderResolver;
 
     protected ApplicationContext applicationContext;
@@ -47,13 +46,6 @@ public class FacetLoader {
     public FacetLoader(JmixModulesAwareBeanSelector beanSelector, Facets facets) {
         this.beanSelector = beanSelector;
         this.facets = facets;
-    }
-
-    @Autowired(required = false)
-    protected void setFacetRegistrations(List<FacetProvider<?>> facetProviders) {
-        for (FacetProvider<?> facetProvider : facetProviders) {
-            registrations.put(facetProvider.getFacetTag(), facetProvider);
-        }
     }
 
     @Autowired
@@ -76,9 +68,7 @@ public class FacetLoader {
     public Facet load(Element element, ComponentLoader.Context context) {
         io.jmix.flowui.xml.facet.loader.FacetLoader<?> facetLoader = getLoader(element, context);
         if (facetLoader == null) {
-            // fallback
-            // we can cast safety because loaders exist for the fragment facets
-            return _load(element, (ComponentLoader.ComponentContext) context);
+            throw new GuiDevelopmentException("Unable to find loader for facet: " + element, context);
         }
 
         facetLoader.initFacet();
@@ -86,8 +76,7 @@ public class FacetLoader {
         return facetLoader.getResultFacet();
     }
 
-    @Nullable
-    protected io.jmix.flowui.xml.facet.loader.FacetLoader<?> getLoader(Element element,
+    protected io.jmix.flowui.xml.facet.loader.@Nullable FacetLoader<?> getLoader(Element element,
                                                                        ComponentLoader.Context context) {
         Class<? extends io.jmix.flowui.xml.facet.loader.FacetLoader<?>> loaderClass =
                 facetLoaderResolver.getLoader(element);
@@ -124,21 +113,5 @@ public class FacetLoader {
         loader.setElement(element);
 
         return loader;
-    }
-
-    // for backward compatibility
-    @Deprecated(forRemoval = true, since = "2.7")
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    protected Facet _load(Element element, ComponentLoader.ComponentContext context) {
-        Collection<FacetProvider<?>> facetProviders = registrations.get(element.getName());
-        FacetProvider facetProvider = beanSelector.selectFrom(facetProviders);
-        if (facetProvider == null) {
-            throw new IllegalArgumentException("There is no facet for XML tag " + element.getName());
-        }
-
-        Facet facet = facets.create(facetProvider.getFacetClass());
-        facetProvider.loadFromXml(facet, element, context);
-
-        return facet;
     }
 }

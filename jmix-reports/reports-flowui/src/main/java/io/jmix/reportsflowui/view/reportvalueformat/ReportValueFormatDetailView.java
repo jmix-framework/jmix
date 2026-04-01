@@ -21,7 +21,7 @@ import io.jmix.reportsflowui.helper.ReportScriptEditor;
 import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.constraint.SecureOperations;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -72,9 +72,9 @@ public class ReportValueFormatDetailView extends StandardDetailView<ReportValueF
     @Autowired
     protected Dialogs dialogs;
     @Autowired
-    protected MessageBundle messageBundle;
-    @Autowired
     protected ReportScriptEditor reportScriptEditor;
+    @ViewComponent
+    protected MessageBundle messageBundle;
 
     @Subscribe
     public void onInit(InitEvent event) {

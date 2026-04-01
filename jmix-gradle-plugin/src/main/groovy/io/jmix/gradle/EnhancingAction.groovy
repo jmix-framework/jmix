@@ -260,9 +260,11 @@ class EnhancingAction implements Action<Task> {
                         createClassPool(project, sourceSet))
 
                 //store all generated persistence/orm xml files in temporary resources dir, because output resources dir is not prepared yet
+                String tmpPath = "$project.buildDir/tmp/entitiesEnhancing/resources/$sourceSetName/$modulePath"
+                project.logger.info "Copying files $persistenceFileName and $ormFileName to $tmpPath"
                 project.copy {
                     from persistenceFileName, ormFileName
-                    into "$project.buildDir/tmp/entitiesEnhancing/resources/$sourceSetName/$modulePath"
+                    into tmpPath
                     rename "persistence.xml", "${storePrefix}persistence.xml"
                 }
             }
@@ -270,9 +272,12 @@ class EnhancingAction implements Action<Task> {
     }
 
     static void copyGeneratedFiles(Project project, String sourceSetName) {
+        String sourcePath = "$project.buildDir/tmp/entitiesEnhancing/resources/$sourceSetName/"
+        String destPath = "$project.buildDir/resources/$sourceSetName/"
+        project.logger.info "Copying files from $sourcePath to $destPath"
         project.copy {
-            from "$project.buildDir/tmp/entitiesEnhancing/resources/$sourceSetName/"
-            into "$project.buildDir/resources/$sourceSetName/"
+            from sourcePath
+            into destPath
         }
     }
 

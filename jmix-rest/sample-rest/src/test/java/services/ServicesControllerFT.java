@@ -212,7 +212,7 @@ public class ServicesControllerFT extends AbstractRestControllerFT {
         String requestBody = getFileContent("serviceThatReturnsEntity.json", replacements);
         try (CloseableHttpResponse response = sendPost(baseUrl + "/services/" + RestTestService.NAME + "/findCar", oauthToken, requestBody, null)) {
             assertEquals(HttpStatus.SC_OK, statusCode(response));
-            assertEquals("application/json;charset=UTF-8", responseContentType(response));
+            assertEquals("application/json", responseContentType(response));
             ReadContext readContext = parseResponse(response);
             assertEquals(carUuidString, readContext.read("$.id"));
             assertEquals("ref_Car", readContext.read("$._entityName"));
@@ -226,7 +226,7 @@ public class ServicesControllerFT extends AbstractRestControllerFT {
         params.put("viewName", "carEdit");
         try (CloseableHttpResponse response = sendGet(baseUrl + "/services/" + RestTestService.NAME + "/findCar", oauthToken, params)) {
             assertEquals(HttpStatus.SC_OK, statusCode(response));
-            assertEquals("application/json;charset=UTF-8", responseContentType(response));
+            assertEquals("application/json", responseContentType(response));
             ReadContext readContext = parseResponse(response);
             assertEquals(carUuidString, readContext.read("$.id"));
             assertEquals("ref_Car", readContext.read("$._entityName"));
@@ -240,7 +240,7 @@ public class ServicesControllerFT extends AbstractRestControllerFT {
         params.put("carId", carUuidString);
         try (CloseableHttpResponse response = sendGet(baseUrl + "/services/" + RestTestService.NAME + "/findCar", oauthToken, params)) {
             assertEquals(HttpStatus.SC_OK, statusCode(response));
-            assertEquals("application/json;charset=UTF-8", responseContentType(response));
+            assertEquals("application/json", responseContentType(response));
             ReadContext readContext = parseResponse(response);
             assertEquals(carUuidString, readContext.read("$.id"));
             assertEquals("ref_Car", readContext.read("$._entityName"));
@@ -254,7 +254,7 @@ public class ServicesControllerFT extends AbstractRestControllerFT {
         String requestBody = getFileContent("serviceThatReturnsEntityWithInverseParametersOrder.json", replacements);
         try (CloseableHttpResponse response = sendPost(baseUrl + "/services/" + RestTestService.NAME + "/findCar", oauthToken, requestBody, null)) {
             assertEquals(HttpStatus.SC_OK, statusCode(response));
-            assertEquals("application/json;charset=UTF-8", responseContentType(response));
+            assertEquals("application/json", responseContentType(response));
             ReadContext readContext = parseResponse(response);
             assertEquals(carUuidString, readContext.read("$.id"));
             assertEquals("ref_Car", readContext.read("$._entityName"));
@@ -269,7 +269,7 @@ public class ServicesControllerFT extends AbstractRestControllerFT {
         params.put("modelVersion", "1.0");
         try (CloseableHttpResponse response = sendGet(baseUrl + "/services/" + RestTestService.NAME + "/findCar", oauthToken, params)) {
             assertEquals(HttpStatus.SC_OK, statusCode(response));
-            assertEquals("application/json;charset=UTF-8", responseContentType(response));
+            assertEquals("application/json", responseContentType(response));
             ReadContext readContext = parseResponse(response);
             assertEquals(carUuidString, readContext.read("$.id"));
             assertEquals("ref$OldCar", readContext.read("$._entityName"));
@@ -737,7 +737,7 @@ public class ServicesControllerFT extends AbstractRestControllerFT {
         Map<String, String> params = new LinkedHashMap<>();
         try (CloseableHttpResponse response = sendGet(baseUrl + "/services/" + RestTestService.NAME + "/notPersistedEntity", oauthToken, params)) {
             assertEquals(HttpStatus.SC_OK, statusCode(response));
-            assertEquals("application/json;charset=UTF-8", responseContentType(response));
+            assertEquals("application/json", responseContentType(response));
             ReadContext readContext = parseResponse(response);
             assertEquals("model 1", readContext.read("$.title"));
             assertEquals("rest_ModelEntity", readContext.read("$._entityName"));
@@ -751,7 +751,7 @@ public class ServicesControllerFT extends AbstractRestControllerFT {
         Map<String, String> params = new LinkedHashMap<>();
         try (CloseableHttpResponse response = sendGet(baseUrl + "/services/" + RestTestService.NAME + "/getNotPersistentStringIdEntity", oauthToken, params)) {
             assertEquals(HttpStatus.SC_OK, statusCode(response));
-            assertEquals("application/json;charset=UTF-8", responseContentType(response));
+            assertEquals("application/json", responseContentType(response));
             ReadContext readContext = parseResponse(response);
             assertEquals("jmix$NotPersistentStringIdEntity", readContext.read("$._entityName"));
             assertEquals("1", readContext.read("$.id"));
@@ -784,7 +784,7 @@ public class ServicesControllerFT extends AbstractRestControllerFT {
         Map<String, String> params = new LinkedHashMap<>();
         try (CloseableHttpResponse response = sendGet(baseUrl + "/services/" + RestTestService.NAME + "/methodReturnsListOfMap", oauthToken, params)) {
             assertEquals(HttpStatus.SC_OK, statusCode(response));
-            assertEquals("application/json;charset=UTF-8", responseContentType(response));
+            assertEquals("application/json", responseContentType(response));
             ReadContext readContext = parseResponse(response);
             assertEquals(2, readContext.<Collection>read("$").size());
             assertEquals((Integer) 1, readContext.read("$.[0].key1", Integer.class));

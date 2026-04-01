@@ -25,7 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Type;
@@ -48,8 +48,6 @@ public class FetchPlanSerializationImpl implements FetchPlanSerialization {
     protected Metadata metadata;
     @Autowired
     protected FetchPlans fetchPlans;
-    @Autowired
-    protected CoreProperties coreProperties;
 
     protected final Function<MetaClass, String> defaultEntityNameExtractor = MetadataObject::getName;
 
@@ -98,9 +96,6 @@ public class FetchPlanSerializationImpl implements FetchPlanSerialization {
                 if (option == INCLUDE_FETCH_MODE) {
                     includeFetchMode = true;
                 }
-            }
-            if (coreProperties.isLegacyFetchPlanSerializationAttributeName()) {
-                fetchPlanAttributeName = "view";
             }
         }
 
@@ -176,9 +171,6 @@ public class FetchPlanSerializationImpl implements FetchPlanSerialization {
         protected String fetchPlanAttributeName = "fetchPlan";
 
         public FetchPlanDeserializer() {
-            if (coreProperties.isLegacyFetchPlanSerializationAttributeName()) {
-                fetchPlanAttributeName = "view";
-            }
         }
 
         @Override

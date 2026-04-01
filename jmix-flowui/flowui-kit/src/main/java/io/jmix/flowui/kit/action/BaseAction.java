@@ -18,12 +18,10 @@ package io.jmix.flowui.kit.action;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.shared.Registration;
-import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.KeyCombination;
+import org.jspecify.annotations.Nullable;
 
-import jakarta.annotation.Nullable;
 import java.util.function.Consumer;
 
 /**
@@ -126,35 +124,7 @@ public class BaseAction extends AbstractAction {
      * @return this object
      */
     public BaseAction withIcon(@Nullable Component icon) {
-        setIconComponent(icon);
-        return this;
-    }
-
-    /**
-     * Sets the icon property value of an action. May be used by components
-     * to initialize their appearance.
-     *
-     * @param icon icon to set or {@code null} to remove
-     * @return this object
-     * @deprecated use {@link #withIcon(Component)} or {@link #setIconComponent(Component)} instead
-     */
-    @Deprecated(since = "2.8", forRemoval = true)
-    public BaseAction withIcon(@Nullable Icon icon) {
         setIcon(icon);
-        return this;
-    }
-
-    /**
-     * Sets the icon property value of an action. May be used by components
-     * to initialize their appearance.
-     *
-     * @param icon icon to set or {@code null} to remove
-     * @return this object
-     * @deprecated use {@link #withIcon(Component)} or {@link #setIconComponent(Component)} instead
-     */
-    @Deprecated(since = "2.4", forRemoval = true)
-    public BaseAction withIcon(@Nullable VaadinIcon icon) {
-        setIcon(ComponentUtils.convertToIcon(icon));
         return this;
     }
 
@@ -167,20 +137,6 @@ public class BaseAction extends AbstractAction {
      */
     public BaseAction withDescription(@Nullable String description) {
         setDescription(description);
-        return this;
-    }
-
-    /**
-     * Sets the description property value of an action. May be used by components
-     * to initialize their appearance.
-     *
-     * @param title description to set or {@code null} to remove
-     * @return this object
-     * @deprecated use {@link #withDescription(String)} or {@link #setDescription(String)} instead
-     */
-    @Deprecated(since = "2.5", forRemoval = true)
-    public BaseAction withTitle(@Nullable String title) {
-        setDescription(title);
         return this;
     }
 

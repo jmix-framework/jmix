@@ -122,7 +122,7 @@ public class JmixEclipseLinkRemoteConnection extends BroadcastRemoteConnection {
 
     @Override
     protected void createDisplayString() {
-        this.displayString = Helper.getShortClassName(this) + "[" + serviceId.toString() + "]";
+        this.displayString = Helper.getShortClassName(this.getClass().getSimpleName()) + "[" + serviceId.toString() + "]";
     }
 
     @Override

@@ -16,6 +16,8 @@
 
 package io.jmix.reportsflowui;
 
+import io.jmix.flowui.kit.component.multiselectcomboboxpicker.MultiSelectComboBoxPicker;
+import io.jmix.reports.entity.ParameterType;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
@@ -37,12 +39,20 @@ public class ReportsClientProperties {
      */
     boolean enableTabSymbolInDataSetEditor;
 
+    /**
+     * Whether to use {@link MultiSelectComboBoxPicker} for a generated parameter component
+     * of type {@link ParameterType#ENTITY_LIST}.
+     */
+    boolean useMultiSelectComboBoxPickerForListOfEntitiesParameterComponent;
+
     public ReportsClientProperties(@DefaultValue("false") boolean useBackgroundReportProcessing,
                                    @DefaultValue("10000") long backgroundReportProcessingTimeoutMs,
-                                   @DefaultValue("false") boolean enableTabSymbolInDataSetEditor) {
+                                   @DefaultValue("false") boolean enableTabSymbolInDataSetEditor,
+                                   @DefaultValue("false") boolean useMultiSelectComboBoxPickerForListOfEntitiesParameterComponent) {
         this.useBackgroundReportProcessing = useBackgroundReportProcessing;
         this.backgroundReportProcessingTimeoutMs = backgroundReportProcessingTimeoutMs;
         this.enableTabSymbolInDataSetEditor = enableTabSymbolInDataSetEditor;
+        this.useMultiSelectComboBoxPickerForListOfEntitiesParameterComponent = useMultiSelectComboBoxPickerForListOfEntitiesParameterComponent;
     }
 
     /**
@@ -64,5 +74,12 @@ public class ReportsClientProperties {
      */
     public boolean getEnableTabSymbolInDataSetEditor() {
         return enableTabSymbolInDataSetEditor;
+    }
+
+    /**
+     * @see #useMultiSelectComboBoxPickerForListOfEntitiesParameterComponent
+     */
+    public boolean isUseMultiSelectComboBoxPickerForListOfEntitiesParameterComponent() {
+        return useMultiSelectComboBoxPickerForListOfEntitiesParameterComponent;
     }
 }

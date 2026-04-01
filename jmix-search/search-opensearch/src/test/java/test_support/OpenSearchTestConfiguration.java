@@ -33,7 +33,7 @@ import io.jmix.security.SecurityConfiguration;
 import io.jmix.testsupport.config.CommonCoreTestConfiguration;
 import io.jmix.testsupport.config.HsqlMemDataSourceTestConfiguration;
 import io.jmix.testsupport.config.JpaMainStoreTestConfiguration;
-import org.apache.http.HttpHost;
+import org.apache.hc.core5.http.HttpHost;
 import org.opensearch.client.RestClient;
 import org.opensearch.client.json.jackson.JacksonJsonpMapper;
 import org.opensearch.client.opensearch.OpenSearchClient;
@@ -44,9 +44,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.net.URISyntaxException;
 
 @Configuration
 @Import({
@@ -92,12 +94,16 @@ public class OpenSearchTestConfiguration {
     @Bean
     public OpenSearchClient baseOpenSearchClient() {
         String url = searchProperties.getServerUrl();
+        HttpHost httpHost;
+        try {
+            httpHost = HttpHost.create(url);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException("Invalid OpenSearch URL: " + url, e);
+        }
 
-        RestClient restClient = RestClient
-                .builder(HttpHost.create(url))
-                .build();
+        RestClient restClient = RestClient.builder(httpHost).build();
 
-        OpenSearchTransport transport = new RestClientTransport(restClient, new JacksonJsonpMapper());
+        final OpenSearchTransport transport = new RestClientTransport(restClient, new JacksonJsonpMapper());
         return new OpenSearchClient(transport);
     }
 

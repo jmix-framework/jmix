@@ -15,7 +15,7 @@
  */
 package io.jmix.reports.yarg.structure;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.io.Serializable;
 

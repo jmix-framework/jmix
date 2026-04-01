@@ -19,7 +19,6 @@ package io.jmix.flowui.xml.layout.inittask;
 import com.vaadin.flow.component.Component;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.dropdownbutton.DropdownButtonComponent;
-import io.jmix.flowui.view.View;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 
 public class AssignDropdownButtonActionInitTask<C extends Component & DropdownButtonComponent>
@@ -27,17 +26,6 @@ public class AssignDropdownButtonActionInitTask<C extends Component & DropdownBu
 
     protected String id;
     protected int index;
-
-    @Deprecated(since = "2.3", forRemoval = true)
-    public AssignDropdownButtonActionInitTask(C component,
-                                              String actionId,
-                                              String actionItemId,
-                                              int index,
-                                              View<?> view) {
-        this(component, actionId, actionItemId, index);
-        this.index = index;
-        this.id = actionItemId;
-    }
 
     public AssignDropdownButtonActionInitTask(C component,
                                               String actionId,

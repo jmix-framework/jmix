@@ -18,7 +18,7 @@ package io.jmix.flowui.exception;
 
 import io.jmix.core.DevelopmentException;
 import io.jmix.flowui.xml.layout.ComponentLoader.Context;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Map;
 
@@ -62,15 +62,6 @@ public class GuiDevelopmentException extends DevelopmentException {
                 : context != null
                 ? context.getFullOriginId()
                 : null;
-    }
-
-    /**
-     * @deprecated Use {@link #getOriginId()} instead
-     */
-    @Deprecated(since = "2.3", forRemoval = true)
-    @Nullable
-    public String getFrameId() {
-        return getOriginId();
     }
 
     @Nullable

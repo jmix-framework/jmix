@@ -28,6 +28,7 @@ private String getXmlNamespace() {
 }
 
 def xmlNs = getXmlNamespace()
+def isGroupDataGridTable = tableType.getXmlName().equals("groupg:groupDataGrid")
 
 %>
 <hbox id="buttonsPanel" classNames="buttons-panel">
@@ -56,7 +57,9 @@ def actionDescription = actionSearch.getActionDescriptionBy(actionId, jmixProjec
 <%}%>
 <%}%>
 </${xmlNs}actions>
-<${xmlNs}columns<%if (resizableColumns) {%> resizable="true"<%}%>><%columns.each {column ->%>
+<${xmlNs}columns<%if (resizableColumns) {%> resizable="true"<%}%>>
+<%if (isGroupDataGridTable) {%><${xmlNs}groupColumn key="groupColumn"/><%}%>
+<%columns.each {column ->%>
 <${xmlNs}column property="${column}"/>
 <%}%>
 </${xmlNs}columns>

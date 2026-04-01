@@ -59,12 +59,6 @@ public class DataGridColumn<E> extends Grid.Column<E> implements ApplicationCont
     }
 
     @Override
-    @StudioIgnore
-    public Grid.Column<E> setClassNameGenerator(SerializableFunction<E, String> classNameGenerator) {
-        return super.setClassNameGenerator(classNameGenerator);
-    }
-
-    @Override
     public Grid.Column<E> setComparator(Comparator<E> comparator) {
         this.explicitlySetComparator = comparator;
         return super.setComparator(comparator);

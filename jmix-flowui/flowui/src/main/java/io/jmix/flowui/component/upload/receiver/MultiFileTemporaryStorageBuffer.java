@@ -24,7 +24,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -34,6 +34,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+@Deprecated(since = "3.0", forRemoval = true)
 @Component("flowui_MultiFileTemporaryStorageBuffer")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class MultiFileTemporaryStorageBuffer implements MultiFileReceiver {

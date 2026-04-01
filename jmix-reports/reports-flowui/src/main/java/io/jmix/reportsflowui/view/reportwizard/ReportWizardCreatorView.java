@@ -67,7 +67,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -139,10 +139,10 @@ public class ReportWizardCreatorView extends StandardView {
     @ViewComponent
     private TypedTextField<String> reportCodeField;
 
+    @ViewComponent
+    protected MessageBundle messageBundle;
     @Autowired
     protected Messages messages;
-    @Autowired
-    protected MessageBundle messageBundle;
     @Autowired
     protected Dialogs dialogs;
     @Autowired

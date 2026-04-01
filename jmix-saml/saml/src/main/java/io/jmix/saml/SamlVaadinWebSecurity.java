@@ -16,24 +16,21 @@
 
 package io.jmix.saml;
 
-import com.vaadin.flow.spring.security.VaadinWebSecurity;
 import io.jmix.saml.config.SamlHttpSecurityConfigurer;
 import io.jmix.saml.converter.SamlResponseAuthenticationConverter;
 import io.jmix.saml.mapper.user.SamlUserMapper;
 import io.jmix.saml.user.JmixSamlUserDetails;
-import io.jmix.security.util.JmixHttpSecurityUtils;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.lang.Nullable;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
-import org.springframework.security.authentication.ProviderManager;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.saml2.Saml2Exception;
-import org.springframework.security.saml2.provider.service.authentication.OpenSaml4AuthenticationProvider;
+import org.springframework.security.saml2.provider.service.authentication.OpenSaml5AuthenticationProvider;
 import org.springframework.security.saml2.provider.service.registration.RelyingPartyRegistration;
 import org.springframework.security.saml2.provider.service.registration.RelyingPartyRegistrationRepository;
 import org.springframework.security.saml2.provider.service.registration.Saml2MessageBinding;
-import org.springframework.security.saml2.provider.service.web.authentication.logout.OpenSaml4LogoutRequestResolver;
+import org.springframework.security.saml2.provider.service.web.authentication.logout.OpenSaml5LogoutRequestResolver;
 import org.springframework.security.saml2.provider.service.web.authentication.logout.Saml2RelyingPartyInitiatedLogoutSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 
@@ -41,9 +38,11 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.slf4j.LoggerFactory.getLogger;
-import static org.springframework.security.config.Customizer.withDefaults;
 
-public class SamlVaadinWebSecurity extends VaadinWebSecurity {
+/**
+ * Provides Vaadin security to the project. Configures authentication using the SAML 2.0 provider.
+ */
+public class SamlVaadinWebSecurity {
 
     private static final Logger log = getLogger(SamlVaadinWebSecurity.class);
 
@@ -56,9 +55,9 @@ public class SamlVaadinWebSecurity extends VaadinWebSecurity {
     @Autowired(required = false)
     protected List<SamlHttpSecurityConfigurer> additionalConfigurers = Collections.emptyList();
 
-    @Override
+    /*@Override
     protected void configure(HttpSecurity http) throws Exception {
-        OpenSaml4AuthenticationProvider authenticationProvider = createAuthenticationProvider(samlUserMapper);
+        OpenSaml5AuthenticationProvider authenticationProvider = createAuthenticationProvider(samlUserMapper);
 
         JmixHttpSecurityUtils.configureAnonymous(http);
         JmixHttpSecurityUtils.configureSessionManagement(http);
@@ -78,10 +77,10 @@ public class SamlVaadinWebSecurity extends VaadinWebSecurity {
         }
 
         super.configure(http);
-    }
+    }*/
 
-    protected OpenSaml4AuthenticationProvider createAuthenticationProvider(SamlUserMapper samlUserMapper) {
-        OpenSaml4AuthenticationProvider authenticationProvider = new OpenSaml4AuthenticationProvider();
+    protected OpenSaml5AuthenticationProvider createAuthenticationProvider(SamlUserMapper samlUserMapper) {
+        OpenSaml5AuthenticationProvider authenticationProvider = new OpenSaml5AuthenticationProvider();
         authenticationProvider.setResponseAuthenticationConverter(createSamlAuthConverter(samlUserMapper));
         return authenticationProvider;
     }
@@ -99,7 +98,7 @@ public class SamlVaadinWebSecurity extends VaadinWebSecurity {
             effectiveRepository = relyingPartyRegistrationRepository;
         }
 
-        OpenSaml4LogoutRequestResolver resolver = new OpenSaml4LogoutRequestResolver(effectiveRepository);
+        OpenSaml5LogoutRequestResolver resolver = new OpenSaml5LogoutRequestResolver(effectiveRepository);
         return new Saml2RelyingPartyInitiatedLogoutSuccessHandler(resolver);
     }
 
@@ -108,6 +107,7 @@ public class SamlVaadinWebSecurity extends VaadinWebSecurity {
     ) {
         return new RelyingPartyRegistrationRepository() {
             @Override
+            @Nullable
             public RelyingPartyRegistration findByRegistrationId(String registrationId) {
                 RelyingPartyRegistration original = originalRepository.findByRegistrationId(registrationId);
                 if (original == null) {
@@ -135,7 +135,7 @@ public class SamlVaadinWebSecurity extends VaadinWebSecurity {
         return samlProperties.isForceRedirectBindingLogout();
     }
 
-    protected Converter<OpenSaml4AuthenticationProvider.ResponseToken, ? extends AbstractAuthenticationToken> createSamlAuthConverter(SamlUserMapper samlUserMapper) {
+    protected Converter<OpenSaml5AuthenticationProvider.ResponseToken, ? extends AbstractAuthenticationToken> createSamlAuthConverter(SamlUserMapper samlUserMapper) {
         return new SamlResponseAuthenticationConverter(samlUserMapper);
     }
 }

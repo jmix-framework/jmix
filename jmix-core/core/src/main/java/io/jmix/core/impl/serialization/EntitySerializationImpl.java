@@ -37,7 +37,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
@@ -582,7 +582,7 @@ public class EntitySerializationImpl implements EntitySerialization {
                                             "Property value must be a JSON object literal");
                                 }
 
-                                if (metadataTools.isEmbedded(metaProperty)) {
+                                if (metaProperty.getType() == MetaProperty.Type.EMBEDDED) {
                                     EntityValues.setValue(entity, propertyName, readEmbeddedEntity(propertyValue.getAsJsonObject(), metaProperty));
                                 } else {
                                     EntityValues.setValue(entity, propertyName, readEntity(propertyValue.getAsJsonObject(), propertyRange.asClass()));

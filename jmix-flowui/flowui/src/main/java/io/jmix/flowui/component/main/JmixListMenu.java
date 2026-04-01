@@ -17,7 +17,6 @@
 package io.jmix.flowui.component.main;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.router.HighlightConditions;
 import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.RouteParameters;
@@ -40,7 +39,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
@@ -66,16 +65,11 @@ public class JmixListMenu extends ListMenu implements ApplicationContextAware, I
     @Override
     public void afterPropertiesSet() throws Exception {
         autowireDependencies();
-        initComponent();
     }
 
     protected void autowireDependencies() {
         uiComponents = applicationContext.getBean(UiComponents.class);
         viewRegistry = applicationContext.getBean(ViewRegistry.class);
-    }
-
-    protected void initComponent() {
-        getContent().addClassNames(JMIX_LIST_MENU_CLASS_NAME, LIST_NONE_CLASS_NAME);
     }
 
     @Override
@@ -208,13 +202,6 @@ public class JmixListMenu extends ListMenu implements ApplicationContextAware, I
         }
 
         @Override
-        @Deprecated(since="2.2", forRemoval=true)
-        public ViewMenuItem withIcon(@Nullable VaadinIcon icon) {
-            super.withIcon(icon);
-            return this;
-        }
-
-        @Override
         public ViewMenuItem withClassNames(List<String> classNames) {
             super.withClassNames(classNames);
             return this;
@@ -320,20 +307,13 @@ public class JmixListMenu extends ListMenu implements ApplicationContextAware, I
         }
 
         @Override
-        @Deprecated(since="2.2", forRemoval=true)
-        public BeanMenuItem withIcon(@Nullable VaadinIcon icon) {
-            super.withIcon(icon);
-            return this;
-        }
-
-        @Override
         public BeanMenuItem withClassNames(List<String> classNames) {
             super.withClassNames(classNames);
             return this;
         }
 
         @Override
-        public BeanMenuItem withSuffixComponent(Component suffixComponent) {
+        public BeanMenuItem withSuffixComponent(@Nullable Component suffixComponent) {
             return (BeanMenuItem) super.withSuffixComponent(suffixComponent);
         }
 

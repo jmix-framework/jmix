@@ -20,7 +20,7 @@ import io.jmix.search.SearchProperties;
 import io.jmix.search.index.annotation.JmixEntitySearchIndex;
 import io.jmix.search.index.annotation.ManualMappingDefinition;
 import io.jmix.search.index.mapping.MappingDefinition;
-import io.jmix.search.index.mapping.MappingDefinitionElement;
+import io.jmix.search.index.mapping.StaticAttributesGroupConfiguration;
 import io.jmix.search.index.mapping.strategy.impl.AutoMappingStrategy;
 import test_support.entity.TestSimpleRootEntity;
 
@@ -33,8 +33,8 @@ public interface TestProgrammaticMappingWithArgumentsIndexDefinition {
             throw new IllegalStateException("SearchProperties bean should be provided");
         }
         return MappingDefinition.builder()
-                .addElement(
-                        MappingDefinitionElement.builder()
+                .addStaticAttributesGroup(
+                        StaticAttributesGroupConfiguration.builder()
                                 .includeProperties("name")
                                 .withFieldMappingStrategyClass(AutoMappingStrategy.class)
                                 .build()

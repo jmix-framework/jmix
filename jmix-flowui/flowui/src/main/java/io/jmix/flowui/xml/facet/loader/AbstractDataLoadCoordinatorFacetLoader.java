@@ -25,31 +25,19 @@ import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.facet.DataLoadCoordinator;
 import io.jmix.flowui.fragment.Fragment;
 import io.jmix.flowui.fragment.FragmentUtils;
-import io.jmix.flowui.impl.FacetsImpl;
 import io.jmix.flowui.model.DataLoader;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewControllerUtils;
-import io.jmix.flowui.xml.facet.FacetProvider;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import org.dom4j.Element;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public abstract class AbstractDataLoadCoordinatorFacetLoader<T extends DataLoadCoordinator>
         extends AbstractFacetLoader<T> {
 
     @Override
     public void loadFacet() {
-        // for backward compatibility, should be removed in future releases
-        if (facets instanceof FacetsImpl facetsImpl) {
-            FacetProvider<DataLoadCoordinator> provider = facetsImpl.getProvider(DataLoadCoordinator.class);
-
-            if (provider != null && context instanceof ComponentLoader.ComponentContext componentContext) {
-                provider.loadFromXml(resultFacet, element, componentContext);
-                return;
-            }
-        }
-
         loaderSupport.loadString(element, "id", resultFacet::setId);
         loaderSupport.loadString(element, "containerPrefix", resultFacet::setContainerPrefix);
         loaderSupport.loadString(element, "componentPrefix", resultFacet::setComponentPrefix);
@@ -127,11 +115,6 @@ public abstract class AbstractDataLoadCoordinatorFacetLoader<T extends DataLoadC
         }
 
         @Override
-        public void execute(ComponentLoader.ComponentContext context, View<?> view) {
-            // Is not invoked, do nothing, will be removed
-        }
-
-        @Override
         public void execute(ComponentLoader.Context context) {
             Composite<?> owner = facet.getOwner();
             Preconditions.checkNotNullArgument(owner);
@@ -139,7 +122,7 @@ public abstract class AbstractDataLoadCoordinatorFacetLoader<T extends DataLoadC
             HasDataComponents data;
             if (owner instanceof Fragment<?> fragment) {
                 data = FragmentUtils.getFragmentData(fragment);
-            } else if (owner instanceof View<?> view){
+            } else if (owner instanceof View<?> view) {
                 data = ViewControllerUtils.getViewData(view);
             } else {
                 throw new IllegalStateException("Unsupported owner of the %s"
@@ -173,11 +156,6 @@ public abstract class AbstractDataLoadCoordinatorFacetLoader<T extends DataLoadC
         }
 
         @Override
-        public void execute(ComponentLoader.ComponentContext context, View<?> view) {
-            // Is not invoked, do nothing, will be removed
-        }
-
-        @Override
         public void execute(ComponentLoader.Context context) {
             Composite<?> owner = facet.getOwner();
             Preconditions.checkNotNullArgument(owner);
@@ -185,7 +163,7 @@ public abstract class AbstractDataLoadCoordinatorFacetLoader<T extends DataLoadC
             HasDataComponents data;
             if (owner instanceof Fragment<?> fragment) {
                 data = FragmentUtils.getFragmentData(fragment);
-            } else if (owner instanceof View<?> view){
+            } else if (owner instanceof View<?> view) {
                 data = ViewControllerUtils.getViewData(view);
             } else {
                 throw new IllegalStateException("Unsupported owner of the %s"
@@ -209,11 +187,6 @@ public abstract class AbstractDataLoadCoordinatorFacetLoader<T extends DataLoadC
         }
 
         @Override
-        public void execute(ComponentLoader.ComponentContext context, View<?> view) {
-            // Is not invoked, do nothing, will be removed
-        }
-
-        @Override
         public void execute(ComponentLoader.Context context) {
             facet.configureAutomatically();
         }
@@ -233,11 +206,6 @@ public abstract class AbstractDataLoadCoordinatorFacetLoader<T extends DataLoadC
         }
 
         @Override
-        public void execute(ComponentLoader.ComponentContext context, View<?> view) {
-            // Is not invoked, do nothing, will be removed
-        }
-
-        @Override
         public void execute(ComponentLoader.Context context) {
             Composite<?> owner = facet.getOwner();
             Preconditions.checkNotNullArgument(owner);
@@ -245,7 +213,7 @@ public abstract class AbstractDataLoadCoordinatorFacetLoader<T extends DataLoadC
             HasDataComponents data;
             if (owner instanceof Fragment<?> fragment) {
                 data = FragmentUtils.getFragmentData(fragment);
-            } else if (owner instanceof View<?> view){
+            } else if (owner instanceof View<?> view) {
                 data = ViewControllerUtils.getViewData(view);
             } else {
                 throw new IllegalStateException("Unsupported owner of the %s"

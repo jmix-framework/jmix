@@ -30,7 +30,7 @@ import io.jmix.flowui.view.StandardDetailView.ValidationEvent;
 import io.jmix.flowui.view.View.QueryParametersChangeEvent;
 import io.jmix.flowui.view.View.RestoreComponentsStateEvent;
 import org.springframework.context.ApplicationListener;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.annotation.Annotation;
 import java.util.List;
@@ -334,24 +334,6 @@ public final class ViewControllerUtils {
     public static Registration addPostReadyListener(View<?> view,
                                                     ComponentEventListener<View.PostReadyEvent> listener) {
         return view.getEventBus().addListener(View.PostReadyEvent.class, listener);
-    }
-
-    /**
-     * @deprecated use {@link ViewControllerUtils#addInitEntityEventListener(StandardDetailView, ComponentEventListener)} instead
-     */
-    @Deprecated(since = "2.2", forRemoval = true)
-    public static <T> Registration addInitEntityEvent(StandardDetailView<T> view,
-                                                      ComponentEventListener<InitEntityEvent<T>> listener) {
-        return view.addInitEntityListener(listener);
-    }
-
-    /**
-     * @deprecated use {@link ViewControllerUtils#addBeforeShowEventListener(View, ComponentEventListener)} instead
-     */
-    @Deprecated(since = "2.2", forRemoval = true)
-    public static Registration addBeforeShowEvent(View<?> view,
-                                                  ComponentEventListener<View.BeforeShowEvent> listener) {
-        return view.addBeforeShowListener(listener);
     }
 
     /**

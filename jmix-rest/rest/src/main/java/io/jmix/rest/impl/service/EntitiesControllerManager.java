@@ -53,7 +53,7 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -484,7 +484,7 @@ public class EntitiesControllerManager {
 
         Object entity = createEntityFromJson(metaClass, entityJson);
 
-        UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(request.getRequestURL().toString())
+        UriComponents uriComponents = UriComponentsBuilder.fromUriString(request.getRequestURL().toString())
                 .path("/{id}")
                 .buildAndExpand(EntityValues.getId(entity).toString());
 
@@ -524,7 +524,7 @@ public class EntitiesControllerManager {
             }
         }
 
-        UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(request.getRequestURL().toString()).buildAndExpand();
+        UriComponents uriComponents = UriComponentsBuilder.fromUriString(request.getRequestURL().toString()).buildAndExpand();
         String bodyJson = createEntitiesJson(mainCollectionEntity, metaClass, responseFetchPlan, modelVersion);
 
         return new ResponseInfo(uriComponents.toUri(), bodyJson);

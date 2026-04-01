@@ -25,7 +25,7 @@ import io.jmix.flowui.kit.component.HasTitle;
 import io.jmix.flowui.kit.component.SupportsUserAction;
 import io.jmix.flowui.kit.component.valuepicker.ValuePickerActionSupport;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 
@@ -46,6 +46,7 @@ public class ComboBoxPicker<V> extends ComboBox<V>
 
     @Override
     public void setValueFromClient(@Nullable V value) {
+        setPresentationValue(value);
         setModelValue(value, true);
     }
 

@@ -17,7 +17,7 @@
 package io.jmix.flowui.observation;
 
 import io.jmix.flowui.fragment.Fragment;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * POJO class for information about {@link Fragment} that will be used for observation cardinalities.

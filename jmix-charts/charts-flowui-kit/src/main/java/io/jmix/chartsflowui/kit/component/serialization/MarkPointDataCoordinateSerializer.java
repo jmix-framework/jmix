@@ -16,11 +16,11 @@
 
 package io.jmix.chartsflowui.kit.component.serialization;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.SerializerProvider;
 import io.jmix.chartsflowui.kit.component.model.series.mark.Coordinate;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.SerializationContext;
 
-import java.io.IOException;
 import java.util.Arrays;
 
 public class MarkPointDataCoordinateSerializer extends AbstractSerializer<Coordinate> {
@@ -30,8 +30,8 @@ public class MarkPointDataCoordinateSerializer extends AbstractSerializer<Coordi
     }
 
     @Override
-    public void serializeNonNullValue(Coordinate value, JsonGenerator gen, SerializerProvider provider)
-            throws IOException {
+    public void serializeNonNullValue(Coordinate value, JsonGenerator gen, SerializationContext provider)
+            throws JacksonException {
         if (value.getStringCoordinates() != null) {
             gen.writeArray(value.getStringCoordinates(), 0, value.getStringCoordinates().length);
         } else if (value.getNumberCoordinates() != null) {

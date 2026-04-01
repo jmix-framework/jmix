@@ -11,7 +11,7 @@ import io.jmix.flowui.data.EntityDataUnit;
 import io.jmix.flowui.kit.event.EventBus;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.InstanceContainer;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Consumer;

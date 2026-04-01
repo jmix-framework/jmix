@@ -22,6 +22,7 @@ import io.micrometer.common.KeyValue;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 
 /**
  * An {@link ObservationFilter} that enriches all spans with Jmix tenant-specific context:
@@ -36,7 +37,8 @@ public class JmixTenantContextObservationFilter implements ObservationFilter {
 
     @Override
     public Observation.Context map(Observation.Context context) {
-        if (currentAuthentication.isSet()) {
+        if (currentAuthentication.isSet()
+                && currentAuthentication.getAuthentication().getPrincipal() instanceof UserDetails) {
             String currentUserTenantId = tenantProvider.getCurrentUserTenantId();
             context.addLowCardinalityKeyValue(KeyValue.of("jmix.user.tenantId", currentUserTenantId));
         }

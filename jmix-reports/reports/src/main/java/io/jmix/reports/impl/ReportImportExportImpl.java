@@ -17,9 +17,9 @@ package io.jmix.reports.impl;
 
 import io.jmix.core.*;
 import io.jmix.reports.ReportImportExport;
+import io.jmix.reports.ReportRepository;
 import io.jmix.reports.ReportsPersistence;
 import io.jmix.reports.ReportsSerialization;
-import io.jmix.reports.converter.XStreamConverter;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportImportOption;
 import io.jmix.reports.entity.ReportImportResult;
@@ -34,7 +34,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayInputStream;
@@ -51,6 +51,8 @@ public class ReportImportExportImpl implements ReportImportExport {
 
     private static final Logger log = LoggerFactory.getLogger(ReportImportExportImpl.class);
 
+    protected static final int MAX_CODE_LENGTH = 255;
+
     @Autowired
     protected ReportsPersistence reportsPersistence;
 
@@ -62,6 +64,9 @@ public class ReportImportExportImpl implements ReportImportExport {
 
     @Autowired
     protected Metadata metadata;
+
+    @Autowired
+    protected ReportRepository reportRepository;
 
     @Override
     public byte[] exportReports(Collection<Report> reports) {
@@ -246,6 +251,12 @@ public class ReportImportExportImpl implements ReportImportExport {
                 .fetchPlan(FetchPlan.INSTANCE_NAME)
                 .optional();
 
+        if (existingReport.isEmpty() && reportRepository.existsReportByCode(report.getCode())) {
+            String previousCode = report.getCode();
+            report.setCode(generateReportCode(previousCode));
+            log.info("Report with code {} already exists. New code {} is assigned", previousCode, report.getCode());
+        }
+
         report = reportsPersistence.save(report);
         importResult.addImportedReport(report);
         if (existingReport.isPresent()) {
@@ -268,12 +279,7 @@ public class ReportImportExportImpl implements ReportImportExport {
                 if (isReportsStructureFile(archiveEntry.getName())) {
                     String xml = new String(readBytesFromEntry(archiveReader), StandardCharsets.UTF_8);
 
-                    if (xml.startsWith("<")) {//previous xml structure version
-                        XStreamConverter xStreamConverter = new XStreamConverter();
-                        report = xStreamConverter.convertToReport(xml);
-                    } else {//current json structure
-                        report = reportsSerialization.convertToReport(xml);
-                    }
+                    report = reportsSerialization.convertToReport(xml);
                     report.setXml(xml);
                 }
             }
@@ -395,6 +401,25 @@ public class ReportImportExportImpl implements ReportImportExport {
 
     protected byte[] readBytesFromEntry(ZipArchiveInputStream archiveReader) throws IOException {
         return IOUtils.toByteArray(archiveReader);
+    }
+
+    protected String generateReportCode(String existedCode) {
+        int iteration = 1;
+        String templateCode = existedCode;
+
+        while (reportRepository.existsReportByCode(templateCode)) {
+            templateCode = StringUtils.stripEnd(existedCode, null);
+            String suffix = "-%s".formatted(iteration++);
+            String newTemplateCode = templateCode;
+
+            while (newTemplateCode.length() + suffix.length() > MAX_CODE_LENGTH) {
+                newTemplateCode = StringUtils.chop(newTemplateCode);
+            }
+
+            templateCode = newTemplateCode + suffix;
+        }
+
+        return templateCode;
     }
 
     @Nullable

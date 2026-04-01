@@ -16,7 +16,7 @@
 
 package io.jmix.jmxconsole;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;

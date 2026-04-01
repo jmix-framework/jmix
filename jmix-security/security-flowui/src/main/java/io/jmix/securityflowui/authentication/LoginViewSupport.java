@@ -37,7 +37,6 @@ import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.sys.AppCookies;
-import io.jmix.flowui.sys.ExtendedClientDetailsProvider;
 import io.jmix.flowui.view.*;
 import io.jmix.security.model.SecurityScope;
 import io.jmix.securityflowui.accesscontext.UiLoginToUiContext;
@@ -47,7 +46,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -96,7 +95,6 @@ public class LoginViewSupport {
     protected ViewNavigators viewNavigators;
     protected AccessManager accessManager;
     protected Messages messages;
-    protected ExtendedClientDetailsProvider clientDetailsProvider;
     protected DeviceTimeZoneProvider deviceTimeZoneProvider;
     protected RememberMeServices rememberMeServices;
     protected ApplicationEventPublisher applicationEventPublisher;
@@ -158,15 +156,6 @@ public class LoginViewSupport {
     @Autowired
     public void setRequestCache(VaadinDefaultRequestCache requestCache) {
         this.requestCache = requestCache;
-    }
-
-    /**
-     * @deprecated use {@link DeviceTimeZoneProvider} instead
-     */
-    @Deprecated(since = "2.4", forRemoval = true)
-    @Autowired
-    public void setClientDetailsProvider(ExtendedClientDetailsProvider clientDetailsProvider) {
-        this.clientDetailsProvider = clientDetailsProvider;
     }
 
     @Autowired

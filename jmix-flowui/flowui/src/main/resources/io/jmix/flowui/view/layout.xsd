@@ -575,7 +575,7 @@
                     <xs:enumeration value="LEVEL_RIGHT_BOLD"/>
                     <xs:enumeration value="LEVEL_RIGHT"/>
                     <xs:enumeration value="LEVEL_UP_BOLD"/>
-                    <xs:enumeration value="LEVEL_LEVEL_UPUP_BOLD"/>
+                    <xs:enumeration value="LEVEL_UP"/>
                     <xs:enumeration value="LIFEBUOY"/>
                     <xs:enumeration value="LIGHTBULB"/>
                     <xs:enumeration value="LINE_BAR_CHART"/>
@@ -1449,6 +1449,13 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <xs:simpleType name="uploadUploadHandlerEnum">
+        <xs:restriction>
+            <xs:enumeration value="IN_MEMORY"/>
+            <xs:enumeration value="FILE_TEMPORARY_STORAGE"/>
+        </xs:restriction>
+    </xs:simpleType>
+
     <xs:simpleType name="labelPositionType">
         <xs:restriction>
             <xs:enumeration value="ASIDE"/>
@@ -2067,8 +2074,8 @@
                     <xs:enumeration value="success"/>
                     <xs:enumeration value="contrast"/>
                     <xs:enumeration value="icon"/>
-                    <xs:enumeration value="contained"/>
-                    <xs:enumeration value="outlined"/>
+                    <xs:enumeration value="dropdown-indicators"/>
+                    <xs:enumeration value="no-dropdown-indicators"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:union>
@@ -2196,7 +2203,6 @@
             </xs:simpleType>
             <xs:simpleType>
                 <xs:restriction base="xs:string">
-                    <xs:enumeration value="icon-on-top"/>
                     <xs:enumeration value="centered"/>
                     <xs:enumeration value="small"/>
                     <xs:enumeration value="minimal"/>
@@ -2214,7 +2220,6 @@
             </xs:simpleType>
             <xs:simpleType>
                 <xs:restriction base="xs:string">
-                    <xs:enumeration value="icon-on-top"/>
                     <xs:enumeration value="centered"/>
                     <xs:enumeration value="small"/>
                     <xs:enumeration value="minimal"/>
@@ -2483,10 +2488,6 @@
         <xs:attribute name="clickShortcut" type="xs:string"/>
     </xs:attributeGroup>
 
-    <xs:attributeGroup name="hasOverlayClass">
-        <xs:attribute name="overlayClass" type="xs:string"/>
-    </xs:attributeGroup>
-
     <xs:attributeGroup name="hasOverlayWidth">
         <xs:attribute name="overlayWidth" type="xs:string"/>
     </xs:attributeGroup>
@@ -2732,7 +2733,6 @@
                 <xs:attributeGroup ref="hasEnabled"/>
                 <xs:attributeGroup ref="hasFocusableAttributes"/>
                 <xs:attributeGroup ref="hasClassNames"/>
-                <xs:attributeGroup ref="hasOverlayClass"/>
                 <xs:attributeGroup ref="hasOverlayWidth"/>
                 <xs:attributeGroup ref="hasValidation"/>
                 <xs:attributeGroup ref="hasHelperText"/>
@@ -2769,7 +2769,6 @@
                 <xs:attributeGroup ref="hasFocusableAttributes"/>
                 <xs:attributeGroup ref="hasTitle"/>
                 <xs:attributeGroup ref="hasClassNames"/>
-                <xs:attributeGroup ref="hasOverlayClass"/>
                 <xs:attributeGroup ref="hasEnabled"/>
             </xs:extension>
         </xs:complexContent>
@@ -3014,7 +3013,6 @@
         <xs:attribute name="css" type="xs:string"/>
 
         <xs:attributeGroup ref="hasId"/>
-        <xs:attributeGroup ref="hasEnabled"/>
         <xs:attributeGroup ref="hasClassNames"/>
     </xs:complexType>
 
@@ -3156,7 +3154,6 @@
                 <xs:attributeGroup ref="hasEnabled"/>
                 <xs:attributeGroup ref="hasTitle"/>
                 <xs:attributeGroup ref="hasClassNames"/>
-                <xs:attributeGroup ref="hasOverlayClass"/>
                 <xs:attributeGroup ref="hasFocusableAttributes"/>
 
                 <xs:attribute name="themeNames" type="userMenuThemeNames"/>
@@ -3677,7 +3674,6 @@
                 <xs:attributeGroup ref="hasRequired"/>
                 <xs:attributeGroup ref="hasFocusableAttributes"/>
                 <xs:attributeGroup ref="hasPlaceholder"/>
-                <xs:attributeGroup ref="hasOverlayClass"/>
                 <xs:attributeGroup ref="hasOverlayWidth"/>
                 <xs:attributeGroup ref="hasAriaLabel"/>
                 <xs:attributeGroup ref="hasValidation"/>
@@ -3715,7 +3711,6 @@
                 <xs:attributeGroup ref="hasFocusableAttributes"/>
                 <xs:attributeGroup ref="hasPlaceholder"/>
                 <xs:attributeGroup ref="hasValidation"/>
-                <xs:attributeGroup ref="hasOverlayClass"/>
                 <xs:attributeGroup ref="hasOverlayWidth"/>
                 <xs:attributeGroup ref="hasAriaLabel"/>
             </xs:extension>
@@ -3783,7 +3778,6 @@
                 <xs:attributeGroup ref="hasRequired"/>
                 <xs:attributeGroup ref="hasPlaceholder"/>
                 <xs:attributeGroup ref="hasFocusableAttributes"/>
-                <xs:attributeGroup ref="hasOverlayClass"/>
                 <xs:attributeGroup ref="hasAriaLabel"/>
             </xs:extension>
         </xs:complexContent>
@@ -3814,7 +3808,6 @@
                 <xs:attributeGroup ref="hasRequired"/>
                 <xs:attributeGroup ref="hasFocusableAttributes"/>
                 <xs:attributeGroup ref="hasPlaceholder"/>
-                <xs:attributeGroup ref="hasOverlayClass"/>
                 <xs:attributeGroup ref="hasAriaLabel"/>
             </xs:extension>
         </xs:complexContent>
@@ -3842,7 +3835,6 @@
 
                 <xs:attributeGroup ref="hasRequired"/>
                 <xs:attributeGroup ref="hasFocusableAttributes"/>
-                <xs:attributeGroup ref="hasOverlayClass"/>
                 <xs:attributeGroup ref="hasAriaLabel"/>
             </xs:extension>
         </xs:complexContent>
@@ -4265,7 +4257,6 @@
                 <xs:attributeGroup ref="hasRequired"/>
                 <xs:attributeGroup ref="hasFocusableAttributes"/>
                 <xs:attributeGroup ref="hasClassNames"/>
-                <xs:attributeGroup ref="hasOverlayClass"/>
                 <xs:attributeGroup ref="hasOverlayWidth"/>
                 <xs:attributeGroup ref="hasEnabled"/>
                 <xs:attributeGroup ref="hasHelperText"/>
@@ -4559,6 +4550,9 @@
 
                 <xs:attribute name="receiverType" type="uploadReceiverEnum"/>
                 <xs:attribute name="receiverFqn" type="xs:string"/>
+
+                <xs:attribute name="uploadHandlerType" type="uploadUploadHandlerEnum"/>
+                <xs:attribute name="uploadHandlerFqn" type="xs:string"/>
 
                 <xs:attributeGroup ref="hasClassNames"/>
                 <xs:attributeGroup ref="hasEnabled"/>

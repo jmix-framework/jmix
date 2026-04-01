@@ -18,6 +18,10 @@ package io.jmix.saml.user;
 
 import org.springframework.security.saml2.provider.service.authentication.Saml2AuthenticatedPrincipal;
 
+/**
+ * Interface to be implemented by classes that represent application user and that wrap the {@link Saml2AuthenticatedPrincipal}.
+ * Such classes delegate some method invocations to the wrapped {@code Saml2AuthenticatedPrincipal}.
+ */
 public interface HasSamlPrincipalDelegate {
 
     Saml2AuthenticatedPrincipal getDelegate();

@@ -20,7 +20,7 @@ import io.jmix.core.MetadataTools;
 import io.jmix.eclipselink.impl.JmixPersistenceProvider;
 import jakarta.persistence.spi.PersistenceProvider;
 import jakarta.validation.ValidatorFactory;
-import org.eclipse.persistence.config.SessionCustomizer;
+import org.eclipse.persistence.sessions.SessionCustomizer;
 import org.eclipse.persistence.internal.sessions.AbstractSession;
 import org.eclipse.persistence.sessions.Session;
 import org.eclipse.persistence.sessions.coordination.CommandProcessor;

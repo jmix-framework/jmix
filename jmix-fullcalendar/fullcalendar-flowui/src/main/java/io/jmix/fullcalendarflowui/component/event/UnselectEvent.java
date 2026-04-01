@@ -3,7 +3,7 @@ package io.jmix.fullcalendarflowui.component.event;
 import com.vaadin.flow.component.ComponentEvent;
 import io.jmix.fullcalendarflowui.component.FullCalendar;
 import io.jmix.fullcalendarflowui.kit.component.event.MouseEventDetails;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The event is fired when the current selection is cleared. A selection might be cleared for a number of reasons:

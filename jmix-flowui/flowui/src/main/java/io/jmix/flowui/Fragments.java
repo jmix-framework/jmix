@@ -20,7 +20,7 @@ import io.jmix.flowui.fragment.Fragment;
 import io.jmix.flowui.fragment.FragmentDescriptor;
 import io.jmix.flowui.fragment.FragmentOwner;
 import io.jmix.flowui.xml.layout.ComponentLoader;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 
 /**

@@ -19,9 +19,9 @@ package io.jmix.flowui.kit.component.loginform;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.login.LoginForm;
-import com.vaadin.flow.internal.JsonSerializer;
+import com.vaadin.flow.internal.JacksonUtils;
 import com.vaadin.flow.shared.Registration;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -108,9 +108,9 @@ public class EnhancedLoginForm extends LoginForm {
     }
 
     /**
-     * Sets visibility of "Remember Me" component.
+     * Sets visibility of the "Remember Me" component.
      *
-     * @param visible whether component should be visible
+     * @param visible whether a component should be visible
      */
     public void setRememberMeVisible(boolean visible) {
         getElement().setProperty(REMEMBER_ME_VISIBILITY_PROPERTY, visible);
@@ -125,9 +125,9 @@ public class EnhancedLoginForm extends LoginForm {
     }
 
     /**
-     * Sets visibility of component with locales
+     * Sets visibility of a component with locales
      *
-     * @param visible whether component should be visible
+     * @param visible whether a component should be visible
      */
     public void setLocalesVisible(boolean visible) {
         visibilitySetExplicitly = true;
@@ -147,8 +147,8 @@ public class EnhancedLoginForm extends LoginForm {
                 .map(locale -> new LocaleItem(generateItemLabel(locale), localeToString(locale)))
                 .collect(Collectors.toList());
 
-        getElement().setPropertyJson("locales", JsonSerializer.toJson(localeItems));
-        //From 2.3 the locales combo box shows if there is at least one locale.
+        getElement().setPropertyJson("locales", JacksonUtils.listToJson(localeItems));
+        // Since 2.3 the locales select is displayed if there is at least one locale.
         // To hide locales - set visibility explicitly.
         if (!visibilitySetExplicitly && !localeItems.isEmpty()) {
             setLocalesVisibleInternal(true);
@@ -163,7 +163,7 @@ public class EnhancedLoginForm extends LoginForm {
     }
 
     /**
-     * Selects provided locale if locale options contain it.
+     * Selects the provided locale if locale options contain it.
      *
      * @param locale locale to select
      */
@@ -187,7 +187,7 @@ public class EnhancedLoginForm extends LoginForm {
     }
 
     /**
-     * Sets whether "Remember Me" option should be checked or not.
+     * Sets whether the "Remember Me" option should be checked or not.
      *
      * @param rememberMe rememberMe option
      */
@@ -207,7 +207,7 @@ public class EnhancedLoginForm extends LoginForm {
     }
 
     /**
-     * Adds listener to handle changes in "Remember Me" option.
+     * Adds a listener to handle changes in the "Remember Me" option.
      *
      * @param listener listener to add
      * @return a registration object for removing an event listener
@@ -217,7 +217,7 @@ public class EnhancedLoginForm extends LoginForm {
     }
 
     /**
-     * Adds listener to handle locale selection changes.
+     * Adds a listener to handle locale selection changes.
      *
      * @param listener listener to add
      * @return a registration object for removing an event listener

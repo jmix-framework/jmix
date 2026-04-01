@@ -17,7 +17,7 @@
 package io.jmix.securityflowui.authentication;
 
 import io.jmix.core.common.util.Preconditions;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Class that contains result of {@link AuthDetails} validation.

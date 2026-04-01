@@ -23,7 +23,7 @@ import io.jmix.security.model.ResourcePolicyType;
 import io.jmix.securityflowui.model.DefaultResourcePolicyGroupResolver;
 import io.jmix.security.model.ResourcePolicyModel;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,9 +52,7 @@ public class EntityAttributeResourcePolicyModelCreateView extends MultipleResour
 
     @Autowired
     private Metadata metadata;
-    @Autowired
-    private MessageTools messageTools;
-    @Autowired
+    @ViewComponent
     private MessageBundle messageBundle;
 
     private boolean hasChanges = false;

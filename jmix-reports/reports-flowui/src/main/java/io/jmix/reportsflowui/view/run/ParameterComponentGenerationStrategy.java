@@ -32,11 +32,13 @@ import io.jmix.flowui.action.entitypicker.EntityLookupAction;
 import io.jmix.flowui.action.multivaluepicker.MultiValueSelectAction;
 import io.jmix.flowui.action.valuepicker.ValueClearAction;
 import io.jmix.flowui.component.HasRequired;
+import io.jmix.flowui.component.PickerComponent;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.checkbox.JmixCheckbox;
 import io.jmix.flowui.component.combobox.EntityComboBox;
 import io.jmix.flowui.component.datepicker.TypedDatePicker;
 import io.jmix.flowui.component.datetimepicker.TypedDateTimePicker;
+import io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker;
 import io.jmix.flowui.component.select.JmixSelect;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.component.timepicker.TypedTimePicker;
@@ -51,6 +53,7 @@ import io.jmix.reports.entity.ParameterType;
 import io.jmix.reports.entity.ReportInputParameter;
 import io.jmix.reports.util.ReportsUtils;
 import io.jmix.reports.yarg.util.converter.ObjectToStringConverter;
+import io.jmix.reportsflowui.ReportsClientProperties;
 import io.jmix.reportsflowui.action.ReportsMultiValueSelectAction;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -89,6 +92,8 @@ public class ParameterComponentGenerationStrategy {
     protected ObjectToStringConverter objectToStringConverter;
     @Autowired
     protected ApplicationContext applicationContext;
+    @Autowired
+    protected ReportsClientProperties reportsClientProperties;
 
     protected Map<ParameterType, FieldCreator<?>> fieldCreationMapping = new ImmutableMap.Builder<ParameterType, FieldCreator<?>>()
             .put(ParameterType.BOOLEAN, new CheckBoxCreator())
@@ -97,7 +102,7 @@ public class ParameterComponentGenerationStrategy {
             .put(ParameterType.ENUMERATION, new EnumFieldCreator())
             .put(ParameterType.TEXT, new TextFieldCreator())
             .put(ParameterType.NUMERIC, new NumericFieldCreator())
-            .put(ParameterType.ENTITY_LIST, new MultiFieldCreator())
+            .put(ParameterType.ENTITY_LIST, new MultiFieldCreator<>())
             .put(ParameterType.DATETIME, new DateTimeFieldCreator())
             .put(ParameterType.TIME, new TimeFieldCreator())
             .build();
@@ -308,11 +313,26 @@ public class ParameterComponentGenerationStrategy {
         }
     }
 
-    protected class MultiFieldCreator implements FieldCreator<JmixMultiValuePicker<?>> {
+    protected class MultiFieldCreator<T extends AbstractField & PickerComponent<?>> implements FieldCreator<T> {
 
         @Override
-        public JmixMultiValuePicker<?> createField(final ReportInputParameter parameter) {
-            JmixMultiValuePicker<?> multiComboBoxPicker = uiComponents.create(JmixMultiValuePicker.class);
+        public T createField(final ReportInputParameter parameter) {
+            T pickerComponent;
+
+            if (reportsClientProperties.isUseMultiSelectComboBoxPickerForListOfEntitiesParameterComponent()) {
+                pickerComponent = createMultiSelectComboBoxPicker(parameter);
+            } else {
+                pickerComponent = createMultiValuePicker(parameter);
+            }
+
+            ValueClearAction<?> valueClearAction = createValueClearAction();
+            pickerComponent.addAction(valueClearAction);
+
+            return pickerComponent;
+        }
+
+        protected T createMultiValuePicker(ReportInputParameter parameter) {
+            JmixMultiValuePicker<?> multiValuePicker = uiComponents.create(JmixMultiValuePicker.class);
 
             MultiValueSelectAction<?> selectAction = new ReportsMultiValueSelectAction<>();
             BeanUtil.autowireContext(applicationContext, selectAction);
@@ -324,13 +344,29 @@ public class ParameterComponentGenerationStrategy {
 
             MetaClass entityMetaClass = metadata.getClass(parameter.getEntityMetaClass());
             selectAction.setEntityName(entityMetaClass.getName());
+            multiValuePicker.addAction(selectAction);
 
-            multiComboBoxPicker.addAction(selectAction);
+            //noinspection unchecked
+            return (T) multiValuePicker;
+        }
 
-            ValueClearAction<?> valueClearAction = createValueClearAction();
-            multiComboBoxPicker.addAction(valueClearAction);
+        public T createMultiSelectComboBoxPicker(final ReportInputParameter parameter) {
+            JmixMultiSelectComboBoxPicker<?> multiComboBoxPicker = uiComponents.create(JmixMultiSelectComboBoxPicker.class);
+            MetaClass entityMetaClass = metadata.getClass(parameter.getEntityMetaClass());
+            multiComboBoxPicker.setMetaClass(entityMetaClass);
 
-            return multiComboBoxPicker;
+            CollectionContainer collectionContainer = createCollectionContainer(entityMetaClass);
+            multiComboBoxPicker.setItems(collectionContainer.getItems());
+
+            EntityLookupAction<?> pickerLookupAction = actions.create(EntityLookupAction.ID);
+            String screen = parameter.getScreen();
+            if (StringUtils.isNotEmpty(screen)) {
+                pickerLookupAction.setViewId(screen);
+            }
+            multiComboBoxPicker.addAction(pickerLookupAction);
+
+            //noinspection unchecked
+            return (T) multiComboBoxPicker;
         }
 
         protected ValueClearAction<?> createValueClearAction() {

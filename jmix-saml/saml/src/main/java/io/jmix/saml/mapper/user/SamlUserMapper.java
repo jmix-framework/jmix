@@ -18,9 +18,23 @@ package io.jmix.saml.mapper.user;
 
 import io.jmix.saml.user.JmixSamlUserDetails;
 import org.opensaml.saml.saml2.core.Assertion;
-import org.springframework.security.saml2.provider.service.authentication.OpenSaml4AuthenticationProvider;
+import org.springframework.security.saml2.provider.service.authentication.OpenSaml5AuthenticationProvider;
 
+/**
+ * Interface is responsible for mapping SAML assertion into {@link JmixSamlUserDetails}.
+ * Authorities mapping is often delegated to the {@link io.jmix.saml.mapper.role.SamlAssertionRolesMapper}.
+ *
+ * @param <T> type of user object used by Jmix application
+ */
 public interface SamlUserMapper<T extends JmixSamlUserDetails> {
 
-    T toJmixUser(Assertion assertion, OpenSaml4AuthenticationProvider.ResponseToken responseToken);
+    /**
+     * Transforms an assertion into the instance of the user used by Jmix. Method implementations may also perform users
+     * synchronization, e.g., to store users in the database.
+     *
+     * @param assertion SAML assertion
+     * @param responseToken the object that stores information about the authentication response from SAML provider
+     * @return an instance of Jmix user that may be set into security context
+     */
+    T toJmixUser(Assertion assertion, OpenSaml5AuthenticationProvider.ResponseToken responseToken);
 }

@@ -19,7 +19,7 @@ package io.jmix.security.role;
 import io.jmix.security.model.BaseRoleModel;
 import io.jmix.security.model.ResourceRoleModel;
 import io.jmix.security.model.RowLevelRoleModel;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.List;

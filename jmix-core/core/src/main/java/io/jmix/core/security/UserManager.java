@@ -16,7 +16,7 @@
 
 package io.jmix.core.security;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;

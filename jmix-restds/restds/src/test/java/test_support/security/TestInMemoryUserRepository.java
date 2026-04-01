@@ -1,7 +1,7 @@
 package test_support.security;
 
 import io.jmix.core.security.InMemoryUserRepository;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;

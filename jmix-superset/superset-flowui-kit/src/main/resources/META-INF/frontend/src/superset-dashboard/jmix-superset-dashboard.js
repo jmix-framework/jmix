@@ -14,50 +14,37 @@
  * limitations under the License.
  */
 
-import {html, PolymerElement} from '@polymer/polymer/polymer-element';
-import {ElementMixin} from '@vaadin/component-base/src/element-mixin';
-import {ThemableMixin} from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin';
-import {embedDashboard} from "@superset-ui/embedded-sdk";
-import {getGuestTokenRefreshTiming} from "@superset-ui/embedded-sdk/lib/guestTokenRefresh";
+import { html, LitElement } from 'lit';
+import { defineCustomElement } from '@vaadin/component-base/src/define.js';
 
-class JmixSupersetDashboard extends ThemableMixin(ElementMixin(PolymerElement)) {
+import { ElementMixin } from '@vaadin/component-base/src/element-mixin';
+import { ThemableMixin } from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin';
+import { PolylitMixin } from '@vaadin/component-base/src/polylit-mixin.js';
+import { LumoInjectionMixin } from '@vaadin/vaadin-themable-mixin/lumo-injection-mixin.js';
 
-    static get template() {
-        return html`
-            <style>
-                #dashboard {
-                    width: 100%;
-                    height: 100%;
-                    background-color: #f7f7f7;
-                }
+import { embedDashboard } from "@superset-ui/embedded-sdk";
+import { getGuestTokenRefreshTiming } from "@superset-ui/embedded-sdk/lib/guestTokenRefresh";
 
-                #dashboard iframe {
-                    border: none;
-                    width: 100%;
-                    height: 100%;
-                }
+import { jmixSupersetDashboardStyles } from './styles/jmix-superset-dashboard-base-styles.js';
 
-                #stub-image-container {
-                    align-items: center;
-                    display: flex;
-                    justify-content: center;
-                    height: 100%;
-                }
-
-                #stub-image-container img {
-                    width: 50px;
-                }
-            </style>
-            <div id="dashboard">
-                <div id="stub-image-container">
-                    <img src="superset-dashboard/icons/superset.png"/>
-                </div>
-            </div>
-        `;
-    }
+class JmixSupersetDashboard extends ThemableMixin(ElementMixin(PolylitMixin(LumoInjectionMixin(LitElement)))) {
 
     static get is() {
         return 'jmix-superset-dashboard';
+    }
+
+    static get styles() {
+        return jmixSupersetDashboardStyles;
+    }
+
+    render() {
+        return html`
+            <div id="dashboard">
+                <div id="stub-image-container">
+                    <img src="${this._stubImageUrl}"/>
+                </div>
+            </div>
+        `;
     }
 
     static get properties() {
@@ -87,6 +74,10 @@ class JmixSupersetDashboard extends ThemableMixin(ElementMixin(PolymerElement)) 
             guestToken: {
                 type: String,
                 observer: '_onGuestTokenChanged'
+            },
+            _stubImageUrl: {
+                type: String,
+                value: '',
             },
         }
     }
@@ -166,7 +157,7 @@ class JmixSupersetDashboard extends ThemableMixin(ElementMixin(PolymerElement)) 
 
     _createStubImageContainer() {
         const img = document.createElement('img');
-        img.src = 'superset-dashboard/icons/superset.png';
+        img.src = this._stubImageUrl;
 
         const container = document.createElement('div');
         container.id = 'stub-image-container'

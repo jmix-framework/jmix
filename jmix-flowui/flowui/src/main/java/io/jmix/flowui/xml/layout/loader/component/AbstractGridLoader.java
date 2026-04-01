@@ -71,7 +71,7 @@ import org.dom4j.Element;
 import org.dom4j.datatype.DatatypeElementFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
 import java.util.*;
@@ -790,7 +790,6 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
 
         componentLoader().loadCss(contextMenu, contextMenuElement);
         componentLoader().loadClassNames(contextMenu, contextMenuElement);
-        componentLoader().loadEnabled(contextMenu, contextMenuElement);
 
         for (Element childItemElement : contextMenuElement.elements()) {
             addContextMenuItem(contextMenu::addItem, contextMenu::addComponent, childItemElement);

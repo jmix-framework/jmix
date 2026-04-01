@@ -30,7 +30,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
@@ -303,7 +303,7 @@ public class DataContextImpl implements DataContextInternal {
                 }
 
                 if (value == null || !entityStates.isLoaded(dstEntity, propertyName)) {
-                    if (!metadataTools.isEmbedded(property)) {//dstEntity property value will be lazy loaded and replaced by srcEntity property value
+                    if (property.getType() != MetaProperty.Type.EMBEDDED) {//dstEntity property value will be lazy loaded and replaced by srcEntity property value
                         setPropertyValue(dstEntity, property, value);
                     }
                     continue;
@@ -321,7 +321,7 @@ public class DataContextImpl implements DataContextInternal {
                     if (!mergedMap.containsKey(value)) {
                         Object managedRef = internalMerge(value, mergedMap, false, options);
                         setPropertyValue(dstEntity, property, managedRef, false);
-                        if (metadataTools.isEmbedded(property)) {
+                        if (property.getType() == MetaProperty.Type.EMBEDDED) {
                             EmbeddedPropertyChangeListener listener = new EmbeddedPropertyChangeListener(dstEntity);
                             EntitySystemAccess.addPropertyChangeListener(managedRef, listener);
                             embeddedPropertyListeners.computeIfAbsent(dstEntity, e -> new HashMap<>()).put(propertyName, listener);

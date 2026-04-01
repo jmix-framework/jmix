@@ -19,7 +19,7 @@ package io.jmix.chartsflowui.kit.component.model.toolbox;
 import io.jmix.chartsflowui.kit.component.model.Brush;
 import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
 import io.jmix.chartsflowui.kit.component.model.HasEnumId;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A tool feature for brush-selecting. It can also be configured at {@link Brush#setToolboxes(Brush.Toolbox...)}.

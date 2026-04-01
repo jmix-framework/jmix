@@ -27,9 +27,8 @@ import com.vaadin.flow.dom.PropertyChangeEvent;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.*;
-import io.jmix.flowui.kit.component.HasPlaceholder;
 import io.jmix.flowui.kit.component.formatter.Formatter;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -116,8 +115,8 @@ public abstract class ValuePickerBase<C extends ValuePickerBase<C, V>, V>
 
     @Override
     public void setValueFromClient(@Nullable V value) {
-        setModelValue(value, true);
         setPresentationValue(value);
+        setModelValue(value, true);
     }
 
     protected void validate() {

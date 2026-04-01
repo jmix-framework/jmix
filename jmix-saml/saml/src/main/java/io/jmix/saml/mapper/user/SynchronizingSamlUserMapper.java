@@ -33,7 +33,7 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.saml2.provider.service.authentication.OpenSaml4AuthenticationProvider;
+import org.springframework.security.saml2.provider.service.authentication.OpenSaml5AuthenticationProvider;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -43,6 +43,12 @@ import java.util.stream.Collectors;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
+/**
+ * Implementation of the {@link SamlUserMapper} that maps the external user object to the persistent user
+ * and also stores the user and optionally their role assignment to the database.
+ *
+ * @param <T> class of Jmix user
+ */
 public abstract class SynchronizingSamlUserMapper<T extends JmixSamlUserDetails> extends BaseSamlUserMapper<T> {
 
     private static final Logger log = getLogger(SynchronizingSamlUserMapper.class);
@@ -55,24 +61,17 @@ public abstract class SynchronizingSamlUserMapper<T extends JmixSamlUserDetails>
     protected SamlAssertionRolesMapper rolesMapper;
     @Autowired
     protected RoleGrantedAuthorityUtils roleGrantedAuthorityUtils;
-    @Autowired
-    protected SamlProperties samlProperties;
 
     protected boolean synchronizeRoleAssignments;
 
+    /**
+     * Returns a class of the user used by the application. This user is set to the security context.
+     */
     protected abstract Class<T> getApplicationUserClass();
-
-    @Override
-    protected String getSamlUsername(Assertion assertion) {
-        return SamlAssertionUtils.getUsername(assertion);
-    }
 
     @Override
     protected T initJmixUser(Assertion assertion) {
         String username = getSamlUsername(assertion);
-        if (username == null) {
-            throw new IllegalStateException("SAML assertion doesn't contain username");
-        }
         T jmixUserDetails;
         try {
             jmixUserDetails = (T) userRepository.loadUserByUsername(username);
@@ -90,7 +89,7 @@ public abstract class SynchronizingSamlUserMapper<T extends JmixSamlUserDetails>
     }
 
     @Override
-    protected void performAdditionalModifications(Assertion assertion, OpenSaml4AuthenticationProvider.ResponseToken responseToken, T jmixUser) {
+    protected void performAdditionalModifications(Assertion assertion, OpenSaml5AuthenticationProvider.ResponseToken responseToken, T jmixUser) {
         super.performAdditionalModifications(assertion, responseToken, jmixUser);
         saveJmixUserAndRoleAssignments(assertion, jmixUser);
     }
@@ -192,10 +191,16 @@ public abstract class SynchronizingSamlUserMapper<T extends JmixSamlUserDetails>
         return roleAssignmentEntities;
     }
 
+    /**
+     * Whether role assignment synchronization is enabled.
+     */
     public boolean isSynchronizeRoleAssignments() {
         return synchronizeRoleAssignments;
     }
 
+    /**
+     * Enables role assignment synchronization. If true then role assignment entities will be stored to the database.
+     */
     public void setSynchronizeRoleAssignments(boolean synchronizeRoleAssignments) {
         this.synchronizeRoleAssignments = synchronizeRoleAssignments;
     }

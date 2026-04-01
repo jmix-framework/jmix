@@ -28,7 +28,7 @@ import io.jmix.security.role.RowLevelRoleRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
@@ -73,8 +73,8 @@ public class AuthenticationPolicyStore implements PolicyStore {
 
         return extractRowLevelPoliciesFromAuthentication(rowLevelRole ->
                 suitableMetaClassNames.stream()
-                                .flatMap(metaClassName ->
-                                        rowLevelRole.getAllRowLevelPoliciesIndex().getRowLevelPoliciesByEntityName(metaClassName).stream())
+                        .flatMap(metaClassName ->
+                                rowLevelRole.getAllRowLevelPoliciesIndex().getRowLevelPoliciesByEntityName(metaClassName).stream())
         );
     }
 
@@ -94,9 +94,9 @@ public class AuthenticationPolicyStore implements PolicyStore {
     @Override
     public Stream<ResourcePolicy> getEntityResourcePoliciesByWildcard(String wildcard) {
         return extractResourcePoliciesFromAuthenticationByScope(resourceRole ->
-            getPoliciesStreamByTypeAndResources(resourceRole,
-                    ResourcePolicyType.ENTITY,
-                    Set.of(wildcard))
+                getPoliciesStreamByTypeAndResources(resourceRole,
+                        ResourcePolicyType.ENTITY,
+                        Set.of(wildcard))
         );
     }
 
@@ -126,14 +126,6 @@ public class AuthenticationPolicyStore implements PolicyStore {
         return extractResourcePoliciesFromAuthenticationByScope(resourceRole ->
                 getPoliciesStreamByTypeAndResources(resourceRole,
                         ResourcePolicyType.SPECIFIC,
-                        Set.of(resourceName)));
-    }
-
-    @Override
-    public Stream<ResourcePolicy> getGraphQLResourcePolicies(String resourceName) {
-        return extractResourcePoliciesFromAuthenticationByScope(resourceRole ->
-                getPoliciesStreamByTypeAndResources(resourceRole,
-                        ResourcePolicyType.GRAPHQL,
                         Set.of(resourceName)));
     }
 

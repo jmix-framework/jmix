@@ -31,7 +31,6 @@ import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.data.selection.SelectionEvent;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.shared.Registration;
-import com.vaadin.flow.theme.lumo.LumoUtility;
 import io.jmix.core.*;
 import io.jmix.core.common.datastruct.Pair;
 import io.jmix.core.entity.EntityValues;
@@ -84,7 +83,7 @@ import io.jmix.flowui.view.navigation.UrlParamSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
@@ -131,10 +130,10 @@ public class EntityInspectorListView extends StandardListView<Object> {
     @ViewComponent
     protected JmixButton selectButton;
 
+    @ViewComponent
+    protected MessageBundle messageBundle;
     @Autowired
     protected Messages messages;
-    @Autowired
-    protected MessageBundle messageBundle;
     @Autowired
     protected Metadata metadata;
     @Autowired
@@ -346,7 +345,6 @@ public class EntityInspectorListView extends StandardListView<Object> {
 
     protected SimplePagination createPagination() {
         SimplePagination pagination = uiComponents.create(SimplePagination.class);
-        pagination.addClassName(LumoUtility.Margin.Start.AUTO);
 
         DatatoolsUiProperties.EntityInspectorListView properties = datatoolsProperties.getEntityInspectorListView();
         pagination.setItemsPerPageVisible(properties.isItemsPerPageVisible());
@@ -536,13 +534,13 @@ public class EntityInspectorListView extends StandardListView<Object> {
         DropdownButton exportDropdownButton = uiComponents.create(DropdownButton.class);
         exportDropdownButton.setEnabled(importExportAvailableBySpecificUiPermission);
         exportDropdownButton.setText(messages.getMessage(EntityInspectorListView.class, "export"));
-        exportDropdownButton.setIconComponent(icons.get(JmixFontIcon.DOWNLOAD));
+        exportDropdownButton.setIcon(icons.get(JmixFontIcon.DOWNLOAD));
 
         ExportAction exportJsonAction = new ExportAction("exportJSON");
         exportJsonAction.setFormat(JSON);
         exportJsonAction.setDataGrid(dataGrid);
         exportJsonAction.setMetaClass(selectedMeta);
-        exportJsonAction.setIconComponent(icons.get(JmixFontIcon.FILE_CODE));
+        exportJsonAction.setIcon(icons.get(JmixFontIcon.FILE_CODE));
         exportJsonAction.setMetadata(metadata);
         exportDropdownButton.addItem("exportJson", exportJsonAction);
 
@@ -550,7 +548,7 @@ public class EntityInspectorListView extends StandardListView<Object> {
         exportZipAction.setFormat(ZIP);
         exportZipAction.setDataGrid(dataGrid);
         exportZipAction.setMetaClass(selectedMeta);
-        exportZipAction.setIconComponent(icons.get(JmixFontIcon.FILE_ZIP));
+        exportZipAction.setIcon(icons.get(JmixFontIcon.FILE_ZIP));
         exportZipAction.setMetadata(metadata);
         exportDropdownButton.addItem("exportZip", exportZipAction);
 
@@ -605,7 +603,12 @@ public class EntityInspectorListView extends StandardListView<Object> {
         Action showEntityInfoAction = createShowEntityInfoAction(dataGrid);
         dataGrid.addAction(showEntityInfoAction);
 
-        buttonsPanel.add(createButton, editButton, removeButton, refreshButton, exportDropdownButton, importUpload);
+        buttonsPanel.addToStart(createButton,
+                editButton,
+                removeButton,
+                refreshButton,
+                exportDropdownButton,
+                importUpload);
 
         initExcelExportAction(dataGrid, button ->
                 buttonsPanel.addComponentAtIndex(buttonsPanel.indexOf(exportDropdownButton), button));
@@ -613,11 +616,11 @@ public class EntityInspectorListView extends StandardListView<Object> {
         if (metadataTools.isSoftDeletable(selectedMeta.getJavaClass())) {
             JmixButton restoreButton = createRestoreButton(dataGrid);
             JmixButton wipeOutButton = createWipeOutButton(dataGrid);
-            buttonsPanel.add(restoreButton, wipeOutButton);
+            buttonsPanel.addToStart(restoreButton, wipeOutButton);
         }
 
         SimplePagination pagination = createPagination();
-        buttonsPanel.add(pagination);
+        buttonsPanel.addToEnd(pagination);
     }
 
     protected String createMultiRowText(String text, int rowLength) {
@@ -731,7 +734,7 @@ public class EntityInspectorListView extends StandardListView<Object> {
         restoreAction.setText(messages.getMessage(EntityInspectorListView.class, "restore"));
         restoreAction.addActionPerformedListener(event -> showRestoreDialog());
         restoreAction.setTarget(dataGrid);
-        restoreAction.setIconComponent(icons.get(JmixFontIcon.UNDO));
+        restoreAction.setIcon(icons.get(JmixFontIcon.UNDO));
 
         restoreButton.setAction(restoreAction);
         dataGrid.addAction(restoreAction);
@@ -746,7 +749,7 @@ public class EntityInspectorListView extends StandardListView<Object> {
         wipeOutAction.addActionPerformedListener(event -> showWipeOutDialog());
         wipeOutAction.setTarget(dataGrid);
         wipeOutAction.setVariant(ActionVariant.DANGER);
-        wipeOutAction.setIconComponent(icons.get(JmixFontIcon.ERASER));
+        wipeOutAction.setIcon(icons.get(JmixFontIcon.ERASER));
 
         wipeOutButton.setAction(wipeOutAction);
         dataGrid.addAction(wipeOutAction);
@@ -1071,10 +1074,14 @@ public class EntityInspectorListView extends StandardListView<Object> {
             this.metadata = metadata;
         }
 
+        protected boolean isEnabledBySpecificUiPermission() {
+            return importExportAvailableBySpecificUiPermission;
+        }
+
         @Override
-        public boolean isEnabledByUiPermissions() {
-            return importExportAvailableBySpecificUiPermission
-                    && super.isEnabledByUiPermissions();
+        protected void setEnabledInternal(boolean enabled) {
+            super.setEnabledInternal(enabled
+                    && isEnabledBySpecificUiPermission());
         }
 
         @Override

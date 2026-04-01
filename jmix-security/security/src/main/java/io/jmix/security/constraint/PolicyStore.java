@@ -38,7 +38,4 @@ public interface PolicyStore {
     Stream<ResourcePolicy> getEntityAttributesResourcePoliciesByWildcard(String entityWildcard, String attributeWildcard);
 
     Stream<ResourcePolicy> getSpecificResourcePolicies(String resourceName);
-
-    @Deprecated(forRemoval = true)
-    Stream<ResourcePolicy> getGraphQLResourcePolicies(String resourceName);
 }

@@ -19,7 +19,7 @@ package io.jmix.flowui.xml.facet;
 import io.jmix.flowui.xml.facet.loader.FacetLoader;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;

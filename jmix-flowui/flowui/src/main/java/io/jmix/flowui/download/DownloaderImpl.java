@@ -39,7 +39,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Scope;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -126,13 +126,6 @@ public class DownloaderImpl implements Downloader, ApplicationContextAware {
     @Autowired
     public void setUiComponents(UiComponents uiComponents) {
         this.uiComponents = uiComponents;
-    }
-
-    @Override
-    public void setFileStorage(FileStorage fileStorage) {
-        this.fileStorage = fileStorage;
-
-        log.warn("The passed value is ignored. Actual file storage is obtained from " + FileRef.class.getSimpleName());
     }
 
     protected boolean defaultViewFilePredicate(String fileExtension) {

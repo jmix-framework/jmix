@@ -25,6 +25,7 @@ import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.model.CollectionContainer;
+import io.jmix.flowui.theme.StyleUtility;
 import org.springframework.stereotype.Component;
 
 import java.text.MessageFormat;
@@ -84,7 +85,7 @@ public class DynAttrUiHelper {
     public JmixButton createHelperButton(String message) {
         JmixButton helperButton = uiComponents.create(JmixButton.class);
         helperButton.setIcon(icons.get(JmixFontIcon.QUESTION_CIRCLE));
-        helperButton.addThemeVariants(ButtonVariant.LUMO_ICON, ButtonVariant.LUMO_TERTIARY_INLINE);
+        helperButton.setClassName(StyleUtility.Button.NESTED_BUTTON);
         helperButton.addClickListener(event ->
                 dialogs.createMessageDialog()
                         .withMinWidth("10em")

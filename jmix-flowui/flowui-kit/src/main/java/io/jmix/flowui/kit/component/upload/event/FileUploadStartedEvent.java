@@ -21,10 +21,12 @@ import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.upload.StartedEvent;
 import com.vaadin.flow.component.upload.Upload;
+import com.vaadin.flow.server.streams.TransferContext;
+import com.vaadin.flow.server.streams.TransferProgressListener;
 
 /**
  * Event is fired when {@link StartedEvent} of {@link Upload} is occurred. See
- * {@link Upload#addStartedListener(ComponentEventListener)} for details.
+ * {@link TransferProgressListener#onStart(TransferContext)} for details.
  *
  * @param <C> type of upload field
  * @see StartedEvent
@@ -41,15 +43,6 @@ public class FileUploadStartedEvent<C extends Component> extends ComponentEvent<
         this.filename = fileName;
         this.mimeType = mimeType;
         this.contentLength = contentLength;
-    }
-
-    /**
-     * @return the file name
-     * @deprecated Use {@link #getFileName()} instead
-     */
-    @Deprecated(since = "2.8", forRemoval = true)
-    public String getFilename() {
-        return filename;
     }
 
     /**

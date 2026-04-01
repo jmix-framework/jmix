@@ -50,8 +50,32 @@ public final class StudioActionPropertyGroups {
     }
 
     @StudioPropertyGroup
+    public interface ActionDefaultPropertiesWithoutShortcutCombination extends
+            StudioPropertyGroups.ActionVariantWithDefaultDefaultValue, StudioPropertyGroups.Description,
+            StudioPropertyGroups.EnabledWithTrueDefaultValue, StudioPropertyGroups.Visible {
+    }
+
+    @StudioPropertyGroup
+    public interface DangerActionDefaultProperties extends StudioPropertyGroups.ActionVariantWithDangerDefaultValue,
+            StudioPropertyGroups.Description, StudioPropertyGroups.EnabledWithTrueDefaultValue,
+            StudioPropertyGroups.ShortcutCombination, StudioPropertyGroups.Visible {
+    }
+
+    @StudioPropertyGroup
     public interface PrimaryActionDefaultProperties extends StudioPropertyGroups.ActionVariantWithPrimaryDefaultValue,
             StudioPropertyGroups.Description, StudioPropertyGroups.EnabledWithTrueDefaultValue,
             StudioPropertyGroups.ShortcutCombination, StudioPropertyGroups.Visible {
+    }
+
+    @StudioPropertyGroup
+    public interface ActionCommonPropertiesWithoutCategory extends StudioPropertyGroups.DescriptionWithoutCategory,
+            StudioPropertyGroups.EnabledWithTrueDefaultValueWithoutCategory,
+            StudioPropertyGroups.ShortcutCombination, StudioPropertyGroups.VisibleWithDefaultValueTrue {
+    }
+
+    @StudioPropertyGroup
+    public interface PrimaryActionDefaultPropertiesWithCreateIdAndPlusIcon extends
+            PrimaryActionDefaultProperties, StudioPropertyGroups.RequiredIdWithCreateInitialValue,
+            StudioPropertyGroups.LookAndFeelIconWithPlusDefaultValue {
     }
 }

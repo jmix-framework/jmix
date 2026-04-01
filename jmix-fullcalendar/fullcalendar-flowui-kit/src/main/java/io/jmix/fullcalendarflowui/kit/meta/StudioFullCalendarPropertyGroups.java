@@ -353,4 +353,9 @@ public final class StudioFullCalendarPropertyGroups {
             EventTimeFormat, SlotLabelFormat, EventMinHeight, EventShortHeight, SlotEventOverlap,
             AllDaySlotVisible, DisplayEventEnd {
     }
+
+    @StudioPropertyGroup
+    public interface DayGridProperties extends DayHeaderFormat, DayPopoverFormat, EventTimeFormat,
+            WeekNumberFormat, DisplayEventEndWithFalseDefaultValue {
+    }
 }

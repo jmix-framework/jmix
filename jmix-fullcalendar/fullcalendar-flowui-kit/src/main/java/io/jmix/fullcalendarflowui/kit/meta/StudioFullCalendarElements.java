@@ -198,13 +198,7 @@ public interface StudioFullCalendarElements {
             classFqn = "io.jmix.fullcalendarflowui.kit.component.model.DayGridWeekProperties",
             target = "io.jmix.fullcalendarflowui.kit.meta.element.StudioFullCalendarDisplayModeProperties",
             icon = "io/jmix/fullcalendarflowui/kit/meta/icon/unknownComponent.svg",
-            propertyGroups = {
-                    StudioFullCalendarPropertyGroups.DayHeaderFormat.class,
-                    StudioFullCalendarPropertyGroups.DayPopoverFormat.class,
-                    StudioFullCalendarPropertyGroups.EventTimeFormat.class,
-                    StudioFullCalendarPropertyGroups.WeekNumberFormat.class,
-                    StudioFullCalendarPropertyGroups.DisplayEventEndWithFalseDefaultValue.class
-            },
+            propertyGroups = StudioFullCalendarPropertyGroups.DayGridProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "dayHeaderFormat", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "dayPopoverFormat", type = StudioPropertyType.LOCALIZED_STRING),
@@ -225,13 +219,9 @@ public interface StudioFullCalendarElements {
             target = "io.jmix.fullcalendarflowui.kit.meta.element.StudioFullCalendarDisplayModeProperties",
             icon = "io/jmix/fullcalendarflowui/kit/meta/icon/unknownComponent.svg",
             propertyGroups = {
-                    StudioFullCalendarPropertyGroups.DayHeaderFormat.class,
-                    StudioFullCalendarPropertyGroups.DayPopoverFormat.class,
-                    StudioFullCalendarPropertyGroups.EventTimeFormat.class,
-                    StudioFullCalendarPropertyGroups.WeekNumberFormat.class,
+                    StudioFullCalendarPropertyGroups.DayGridProperties.class,
                     StudioFullCalendarPropertyGroups.FixedWeekCount.class,
-                    StudioFullCalendarPropertyGroups.ShowNonCurrentDates.class,
-                    StudioFullCalendarPropertyGroups.DisplayEventEndWithFalseDefaultValue.class
+                    StudioFullCalendarPropertyGroups.ShowNonCurrentDates.class
             },
             properties = {
                     @StudioProperty(xmlAttribute = "dayHeaderFormat", type = StudioPropertyType.LOCALIZED_STRING),
@@ -254,13 +244,7 @@ public interface StudioFullCalendarElements {
             classFqn = "io.jmix.fullcalendarflowui.kit.component.model.DayGridYearProperties",
             target = "io.jmix.fullcalendarflowui.kit.meta.element.StudioFullCalendarDisplayModeProperties",
             icon = "io/jmix/fullcalendarflowui/kit/meta/icon/unknownComponent.svg",
-            propertyGroups = {
-                    StudioFullCalendarPropertyGroups.DayHeaderFormat.class,
-                    StudioFullCalendarPropertyGroups.DayPopoverFormat.class,
-                    StudioFullCalendarPropertyGroups.EventTimeFormat.class,
-                    StudioFullCalendarPropertyGroups.WeekNumberFormat.class,
-                    StudioFullCalendarPropertyGroups.DisplayEventEndWithFalseDefaultValue.class
-            },
+            propertyGroups = StudioFullCalendarPropertyGroups.DayGridProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "dayHeaderFormat", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "dayPopoverFormat", type = StudioPropertyType.LOCALIZED_STRING),
@@ -451,10 +435,7 @@ public interface StudioFullCalendarElements {
             documentationLink = "%VERSION%/calendar/full-calendar-component.html#properties",
             classFqn = "io.jmix.fullcalendarflowui.kit.meta.group.StudioFullCalendarProperties",
             icon = "io/jmix/fullcalendarflowui/kit/meta/icon/unknownComponent.svg",
-            propertyGroups = {
-                    StudioPropertyGroups.RequiredStringName.class,
-                    StudioPropertyGroups.RequiredStringValue.class
-            },
+            propertyGroups = StudioPropertyGroups.RequiredStringNameAndValue.class,
             properties = {
                     @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.STRING, required = true),
                     @StudioProperty(xmlAttribute = "value", type = StudioPropertyType.STRING, required = true),

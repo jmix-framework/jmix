@@ -64,12 +64,7 @@ interface StudioListDataComponentActions {
             classFqn = "io.jmix.flowui.action.list.EditAction",
             documentationLink = "%VERSION%/flow-ui/actions/list-actions.html#list_edit",
             availableInViewWizard = true,
-            propertyGroups = {
-                    StudioPropertyGroups.ActionVariantWithDefaultDefaultValue.class,
-                    StudioPropertyGroups.Description.class,
-                    StudioPropertyGroups.EnabledWithTrueDefaultValue.class,
-                    StudioPropertyGroups.Visible.class
-            },
+            propertyGroups = StudioActionPropertyGroups.ActionDefaultPropertiesWithoutShortcutCombination.class,
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
                             setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
@@ -102,13 +97,7 @@ interface StudioListDataComponentActions {
             classFqn = "io.jmix.flowui.action.list.RemoveAction",
             documentationLink = "%VERSION%/flow-ui/actions/list-actions.html#list_remove",
             availableInViewWizard = true,
-            propertyGroups = {
-                    StudioPropertyGroups.ActionVariantWithDangerDefaultValue.class,
-                    StudioPropertyGroups.Description.class,
-                    StudioPropertyGroups.EnabledWithTrueDefaultValue.class,
-                    StudioPropertyGroups.ShortcutCombination.class,
-                    StudioPropertyGroups.Visible.class
-            },
+            propertyGroups = StudioActionPropertyGroups.DangerActionDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
                             setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
@@ -168,13 +157,7 @@ interface StudioListDataComponentActions {
             classFqn = "io.jmix.flowui.action.list.ExcludeAction",
             documentationLink = "%VERSION%/flow-ui/actions/list-actions.html#list_exclude",
             availableInViewWizard = true,
-            propertyGroups = {
-                    StudioPropertyGroups.ActionVariantWithDangerDefaultValue.class,
-                    StudioPropertyGroups.Description.class,
-                    StudioPropertyGroups.EnabledWithTrueDefaultValue.class,
-                    StudioPropertyGroups.ShortcutCombination.class,
-                    StudioPropertyGroups.Visible.class
-            },
+            propertyGroups = StudioActionPropertyGroups.DangerActionDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
                             setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
@@ -205,12 +188,7 @@ interface StudioListDataComponentActions {
             classFqn = "io.jmix.flowui.action.list.ReadAction",
             documentationLink = "%VERSION%/flow-ui/actions/list-actions.html#list_read",
             availableInViewWizard = true,
-            propertyGroups = {
-                    StudioPropertyGroups.ActionVariantWithDefaultDefaultValue.class,
-                    StudioPropertyGroups.Description.class,
-                    StudioPropertyGroups.EnabledWithTrueDefaultValue.class,
-                    StudioPropertyGroups.Visible.class
-            },
+            propertyGroups = StudioActionPropertyGroups.ActionDefaultPropertiesWithoutShortcutCombination.class,
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
                             setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",

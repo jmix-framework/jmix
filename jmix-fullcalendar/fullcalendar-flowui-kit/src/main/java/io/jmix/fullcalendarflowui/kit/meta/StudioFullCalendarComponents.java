@@ -35,13 +35,7 @@ public interface StudioFullCalendarComponents {
             classFqn = "io.jmix.fullcalendarflowui.component.FullCalendar",
             documentationLink = "%VERSION%/calendar/full-calendar-component.html",
             icon = "io/jmix/fullcalendarflowui/kit/meta/icon/component/calendar.svg",
-            propertyGroups = {
-                    StudioPropertyGroups.ClassNamesAndCss.class,
-                    StudioPropertyGroups.IdAndVisible.class,
-                    StudioPropertyGroups.Size.class,
-                    StudioPropertyGroups.AlignSelf.class,
-                    StudioPropertyGroups.Colspan.class
-            },
+            propertyGroups = StudioPropertyGroups.AddonComponentDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
                             classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",

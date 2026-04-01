@@ -1899,11 +1899,126 @@ public final class StudioPropertyGroups {
     public interface AggregationType {
     }
 
+    @StudioPropertyGroup(
+            properties = {
+                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL,
+                            type = StudioPropertyType.COMPONENT_ID, required = true,
+                            initialValue = "create")
+            }
+    )
+    public interface RequiredIdWithCreateInitialValue {
+    }
+
+    @StudioPropertyGroup(
+            properties = {
+                    @StudioProperty(xmlAttribute = "icon", category = StudioProperty.Category.LOOK_AND_FEEL,
+                            type = StudioPropertyType.ICON, defaultValue = "PLUS",
+                            setParameterFqn = "com.vaadin.flow.component.icon.Icon")
+            }
+    )
+    public interface LookAndFeelIconWithPlusDefaultValue {
+    }
+
+    @StudioPropertyGroup
+    public interface HtmlTextElementDefaultProperties extends ClassNames, ClickShortcut, Css,
+            EnabledWithTrueDefaultValue, Size, Id, Text, NativeLabelThemeNames, Title, Visible, WhiteSpace {
+    }
+
+    @StudioPropertyGroup
+    public interface EditorActionButtonDefaultProperties extends Title, ShortcutCombination, WhiteSpace,
+            ButtonThemeNames, ClassNames, IconAfterText {
+    }
+
+    @StudioPropertyGroup
+    public interface EditorActionTextButtonDefaultProperties extends EditorActionButtonDefaultProperties, Text {
+    }
+
+    @StudioPropertyGroup
+    public interface LoginFormDefaultProperties extends ForgotPassword, Password, Submit, Title, Username {
+    }
+
+    @StudioPropertyGroup
+    public interface UserMenuItemDefaultProperties extends RequiredId, Visible, Enabled, Checkable, Checked,
+            UserMenuItemThemeNames {
+    }
+
+    @StudioPropertyGroup
+    public interface TextUserMenuItemDefaultProperties extends UserMenuItemDefaultProperties, RequiredText, Icon {
+    }
+
+    @StudioPropertyGroup
+    public interface IdAndParam extends Id, Param {
+    }
+
+    @StudioPropertyGroup
+    public interface ResponsiveStepDefaultProperties extends RequiredMinWidthWithOptions, Columns {
+    }
+
+    @StudioPropertyGroup
+    public interface BasicComponentDefaultProperties extends AlignSelfAndJustifySelfAndColspan, IdAndVisible, Css {
+    }
+
+    @StudioPropertyGroup
+    public interface AddonComponentDefaultProperties extends ClassNamesAndCss, IdAndVisible, Size, AlignSelf,
+            Colspan {
+    }
+
+    @StudioPropertyGroup
+    public interface MultiSelectComboBoxDefaultProperties extends AlignSelfAndJustifySelfAndColspan,
+            ClassNamesAndCss, IdAndVisible, EnabledWithTrueDefaultValue, Size,
+            AriaLabelAndTabIndexAndFocusShortcut, AllowCustomValue, AllowedCharPattern, Autofocus, AutoOpen,
+            OverlayWidth, ClearButtonVisible, CollectionOrInstanceDataContainer, ErrorMessage, HelperText,
+            ItemsContainerTypeParameterV, ItemsEnum, Label, MetaClassTypeParameterV, Opened, PageSize,
+            Placeholder, PropertyTypeParameterV, ReadOnly, Required, ComboBoxThemeNames, Title {
+    }
+
+    @StudioPropertyGroup
+    public interface ListBoxDefaultProperties extends AlignSelfAndJustifySelfAndColspan, ClassNamesAndCss,
+            IdAndVisible, EnabledWithTrueDefaultValue, Size, AriaLabel, AriaLabelledBy,
+            ItemsContainerTypeParameterV, ItemsEnum, ReadOnly {
+    }
+
+    @StudioPropertyGroup
+    public interface ValuePickerDefaultProperties extends AlignSelfAndJustifySelfAndColspan, ClassNamesAndCss,
+            IdAndVisible, EnabledWithTrueDefaultValue, Size, AriaLabelAndTabIndexAndFocusShortcut,
+            RequiredAndRequiredMessageAndErrorMessage, AllowCustomValue, Autofocus,
+            CollectionOrInstanceDataContainer, HelperText, Label, Placeholder, PropertyTypeParameterV,
+            ReadOnly, ThemeNames, Title {
+    }
+
+    @StudioPropertyGroup
+    public interface AutoWidthLayoutDefaultProperties extends AlignSelfAndJustifySelfAndColspan,
+            ClassNamesAndCss, IdAndVisible, Height, MaxHeight, MaxWidth, MinHeight, MinWidth,
+            WidthWithDefaultValueAuto {
+    }
+
+    @StudioPropertyGroup
+    public interface EnabledAutoWidthLayoutDefaultProperties extends AutoWidthLayoutDefaultProperties,
+            EnabledWithTrueDefaultValue {
+    }
+
+    @StudioPropertyGroup
+    public interface DataLoadCoordinatorDefaultProperties extends IdWithoutCategory, Auto, ComponentPrefix,
+            ContainerPrefix {
+    }
+
+    @StudioPropertyGroup
+    public interface SettingsDefaultProperties extends IdWithoutCategory, Auto {
+    }
+
+    @StudioPropertyGroup
+    public interface RequiredStringNameAndValue extends RequiredStringName, RequiredStringValue {
+    }
+
     @StudioPropertyGroup
     public interface MessageAndRequiredStringValue extends Message, RequiredStringValue {
     }
 
     @StudioPropertyGroup
     public interface MessageAndInclusiveRequiredStringValue extends Message, Inclusive, RequiredStringValue {
+    }
+
+    @StudioPropertyGroup
+    public interface MessagesGroupAndTitle extends MessagesGroup, Title {
     }
 }

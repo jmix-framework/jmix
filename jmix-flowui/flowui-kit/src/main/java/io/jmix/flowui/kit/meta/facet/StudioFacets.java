@@ -32,12 +32,7 @@ interface StudioFacets {
             xmlElement = "dataLoadCoordinator",
             icon = "io/jmix/flowui/kit/meta/icon/facet/dataLoadCoordinator.svg",
             documentationLink = "%VERSION%/flow-ui/facets/dataLoadCoordinator.html",
-            propertyGroups = {
-                    StudioPropertyGroups.IdWithoutCategory.class,
-                    StudioPropertyGroups.Auto.class,
-                    StudioPropertyGroups.ComponentPrefix.class,
-                    StudioPropertyGroups.ContainerPrefix.class
-            },
+            propertyGroups = StudioPropertyGroups.DataLoadCoordinatorDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "auto", type = StudioPropertyType.BOOLEAN,
@@ -57,12 +52,7 @@ interface StudioFacets {
             xmlElement = "fragmentDataLoadCoordinator",
             icon = "io/jmix/flowui/kit/meta/icon/facet/dataLoadCoordinator.svg",
             documentationLink = "%VERSION%/flow-ui/facets/dataLoadCoordinator.html",
-            propertyGroups = {
-                    StudioPropertyGroups.IdWithoutCategory.class,
-                    StudioPropertyGroups.Auto.class,
-                    StudioPropertyGroups.ComponentPrefix.class,
-                    StudioPropertyGroups.ContainerPrefix.class
-            },
+            propertyGroups = StudioPropertyGroups.DataLoadCoordinatorDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "auto", type = StudioPropertyType.BOOLEAN,
@@ -109,10 +99,7 @@ interface StudioFacets {
             category = "Facets",
             xmlElement = "settings",
             icon = "io/jmix/flowui/kit/meta/icon/facet/settings.svg",
-            propertyGroups = {
-                    StudioPropertyGroups.IdWithoutCategory.class,
-                    StudioPropertyGroups.Auto.class
-            },
+            propertyGroups = StudioPropertyGroups.SettingsDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "auto", type = StudioPropertyType.BOOLEAN,
@@ -127,10 +114,7 @@ interface StudioFacets {
             category = "Facets",
             xmlElement = "fragmentSettings",
             icon = "io/jmix/flowui/kit/meta/icon/facet/settings.svg",
-            propertyGroups = {
-                    StudioPropertyGroups.IdWithoutCategory.class,
-                    StudioPropertyGroups.Auto.class
-            },
+            propertyGroups = StudioPropertyGroups.SettingsDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "auto", type = StudioPropertyType.BOOLEAN,

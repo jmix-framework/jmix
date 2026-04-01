@@ -292,14 +292,7 @@ interface StudioElements {
             xmlElement = "editButton",
             target = "io.jmix.flowui.kit.component.grid.EditorActionsColumn",
             unlimitedCount = false,
-            propertyGroups = {
-                    StudioPropertyGroups.Title.class,
-                    StudioPropertyGroups.ShortcutCombination.class,
-                    StudioPropertyGroups.WhiteSpace.class,
-                    StudioPropertyGroups.ButtonThemeNames.class,
-                    StudioPropertyGroups.ClassNames.class,
-                    StudioPropertyGroups.IconAfterText.class
-            },
+            propertyGroups = StudioPropertyGroups.EditorActionButtonDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "title", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "icon", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ICON,
@@ -327,15 +320,7 @@ interface StudioElements {
             xmlElement = "saveButton",
             target = "io.jmix.flowui.kit.component.grid.EditorActionsColumn",
             unlimitedCount = false,
-            propertyGroups = {
-                    StudioPropertyGroups.Title.class,
-                    StudioPropertyGroups.Text.class,
-                    StudioPropertyGroups.ShortcutCombination.class,
-                    StudioPropertyGroups.WhiteSpace.class,
-                    StudioPropertyGroups.ButtonThemeNames.class,
-                    StudioPropertyGroups.ClassNames.class,
-                    StudioPropertyGroups.IconAfterText.class
-            },
+            propertyGroups = StudioPropertyGroups.EditorActionTextButtonDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "title", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "icon", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ICON,
@@ -362,15 +347,7 @@ interface StudioElements {
             xmlElement = "closeButton",
             target = "io.jmix.flowui.kit.component.grid.EditorActionsColumn",
             unlimitedCount = false,
-            propertyGroups = {
-                    StudioPropertyGroups.Title.class,
-                    StudioPropertyGroups.Text.class,
-                    StudioPropertyGroups.ShortcutCombination.class,
-                    StudioPropertyGroups.WhiteSpace.class,
-                    StudioPropertyGroups.ButtonThemeNames.class,
-                    StudioPropertyGroups.ClassNames.class,
-                    StudioPropertyGroups.IconAfterText.class
-            },
+            propertyGroups = StudioPropertyGroups.EditorActionTextButtonDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "title", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "icon", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ICON,
@@ -397,14 +374,7 @@ interface StudioElements {
             xmlElement = "cancelButton",
             target = "io.jmix.flowui.kit.component.grid.EditorActionsColumn",
             unlimitedCount = false,
-            propertyGroups = {
-                    StudioPropertyGroups.Title.class,
-                    StudioPropertyGroups.ShortcutCombination.class,
-                    StudioPropertyGroups.WhiteSpace.class,
-                    StudioPropertyGroups.ButtonThemeNames.class,
-                    StudioPropertyGroups.ClassNames.class,
-                    StudioPropertyGroups.IconAfterText.class
-            },
+            propertyGroups = StudioPropertyGroups.EditorActionButtonDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "title", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "icon", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ICON,
@@ -549,13 +519,7 @@ interface StudioElements {
             xmlElement = "form",
             unlimitedCount = false,
             target = {"io.jmix.flowui.kit.component.loginform.EnhancedLoginForm"},
-            propertyGroups = {
-                    StudioPropertyGroups.ForgotPassword.class,
-                    StudioPropertyGroups.Password.class,
-                    StudioPropertyGroups.Submit.class,
-                    StudioPropertyGroups.Title.class,
-                    StudioPropertyGroups.Username.class
-            },
+            propertyGroups = StudioPropertyGroups.LoginFormDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "forgotPassword", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "password", type = StudioPropertyType.LOCALIZED_STRING),
@@ -573,13 +537,7 @@ interface StudioElements {
             xmlElement = "form",
             target = {"com.vaadin.flow.component.login.LoginOverlay"},
             unlimitedCount = false,
-            propertyGroups = {
-                    StudioPropertyGroups.ForgotPassword.class,
-                    StudioPropertyGroups.Password.class,
-                    StudioPropertyGroups.Submit.class,
-                    StudioPropertyGroups.Title.class,
-                    StudioPropertyGroups.Username.class
-            },
+            propertyGroups = StudioPropertyGroups.LoginFormDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "forgotPassword", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "password", type = StudioPropertyType.LOCALIZED_STRING),
@@ -723,16 +681,7 @@ interface StudioElements {
             xmlElement = "textItem",
             isInjectable = false,
             documentationLink = "%VERSION%/flow-ui/vc/components/userMenu.html#textItem",
-            propertyGroups = {
-                    StudioPropertyGroups.RequiredId.class,
-                    StudioPropertyGroups.RequiredText.class,
-                    StudioPropertyGroups.Icon.class,
-                    StudioPropertyGroups.Visible.class,
-                    StudioPropertyGroups.Enabled.class,
-                    StudioPropertyGroups.Checkable.class,
-                    StudioPropertyGroups.Checked.class,
-                    StudioPropertyGroups.UserMenuItemThemeNames.class
-            },
+            propertyGroups = StudioPropertyGroups.TextUserMenuItemDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID, required = true),
                     @StudioProperty(xmlAttribute = "text", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING, required = true),
@@ -756,14 +705,7 @@ interface StudioElements {
             xmlElement = "actionItem",
             documentationLink = "%VERSION%/flow-ui/vc/components/userMenu.html#actionItem",
             isInjectable = false,
-            propertyGroups = {
-                    StudioPropertyGroups.RequiredId.class,
-                    StudioPropertyGroups.Visible.class,
-                    StudioPropertyGroups.Enabled.class,
-                    StudioPropertyGroups.Checkable.class,
-                    StudioPropertyGroups.Checked.class,
-                    StudioPropertyGroups.UserMenuItemThemeNames.class
-            },
+            propertyGroups = StudioPropertyGroups.UserMenuItemDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID, required = true),
                     @StudioProperty(xmlAttribute = "ref", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.ACTION_REF),
@@ -827,14 +769,7 @@ interface StudioElements {
                             maxCount = 1
                     )
             ),
-            propertyGroups = {
-                    StudioPropertyGroups.RequiredId.class,
-                    StudioPropertyGroups.Visible.class,
-                    StudioPropertyGroups.Enabled.class,
-                    StudioPropertyGroups.Checkable.class,
-                    StudioPropertyGroups.Checked.class,
-                    StudioPropertyGroups.UserMenuItemThemeNames.class
-            },
+            propertyGroups = StudioPropertyGroups.UserMenuItemDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID, required = true),
                     @StudioProperty(xmlAttribute = "visible", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
@@ -856,16 +791,7 @@ interface StudioElements {
             xmlElement = "viewItem",
             isInjectable = false,
             documentationLink = "%VERSION%/flow-ui/vc/components/userMenu.html#viewItem",
-            propertyGroups = {
-                    StudioPropertyGroups.RequiredId.class,
-                    StudioPropertyGroups.RequiredText.class,
-                    StudioPropertyGroups.Icon.class,
-                    StudioPropertyGroups.Visible.class,
-                    StudioPropertyGroups.Enabled.class,
-                    StudioPropertyGroups.Checkable.class,
-                    StudioPropertyGroups.Checked.class,
-                    StudioPropertyGroups.UserMenuItemThemeNames.class
-            },
+            propertyGroups = StudioPropertyGroups.TextUserMenuItemDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID, required = true),
                     @StudioProperty(xmlAttribute = "text", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING, required = true),
@@ -988,10 +914,7 @@ interface StudioElements {
             xmlElement = "propertyFilter",
             target = {"io.jmix.flowui.facet.UrlQueryParametersFacet"},
             icon = "io/jmix/flowui/kit/meta/icon/element/filter.svg",
-            propertyGroups = {
-                    StudioPropertyGroups.Id.class,
-                    StudioPropertyGroups.Param.class
-            },
+            propertyGroups = StudioPropertyGroups.IdAndParam.class,
             properties = {
                     @StudioProperty(xmlAttribute = "component", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_REF,
                             componentRefTags = "propertyFilter", required = true),
@@ -1006,10 +929,7 @@ interface StudioElements {
             classFqn = "io.jmix.flowui.facet.urlqueryparameters.DataGridFilterUrlQueryParametersBinder",
             xmlElement = "dataGridFilter",
             target = {"io.jmix.flowui.facet.UrlQueryParametersFacet"},
-            propertyGroups = {
-                    StudioPropertyGroups.Id.class,
-                    StudioPropertyGroups.Param.class
-            },
+            propertyGroups = StudioPropertyGroups.IdAndParam.class,
             properties = {
                     @StudioProperty(xmlAttribute = "component", category = StudioProperty.Category.GENERAL,
                             type = StudioPropertyType.COMPONENT_REF, componentRefTags = "dataGridFilter", required = true),
@@ -1024,10 +944,7 @@ interface StudioElements {
             classFqn = "com.vaadin.flow.component.formlayout.FormLayout.ResponsiveStep",
             xmlElement = "responsiveStep",
             documentationLink = "%VERSION%/flow-ui/vc/layouts/formLayout.html#responsive-steps",
-            propertyGroups = {
-                    StudioPropertyGroups.RequiredMinWidthWithOptions.class,
-                    StudioPropertyGroups.Columns.class
-            },
+            propertyGroups = StudioPropertyGroups.ResponsiveStepDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "minWidth", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}, required = true),
                     @StudioProperty(xmlAttribute = "columns", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.INTEGER, required = true),
@@ -1086,10 +1003,7 @@ interface StudioElements {
             name = "ResponsiveStep",
             classFqn = "io.jmix.flowui.component.SupportsResponsiveSteps.ResponsiveStep",
             xmlElement = "responsiveStep",
-            propertyGroups = {
-                    StudioPropertyGroups.RequiredMinWidthWithOptions.class,
-                    StudioPropertyGroups.Columns.class
-            },
+            propertyGroups = StudioPropertyGroups.ResponsiveStepDefaultProperties.class,
             properties = {
                     @StudioProperty(xmlAttribute = "minWidth", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}, required = true),
                     @StudioProperty(xmlAttribute = "columns", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.INTEGER, required = true),

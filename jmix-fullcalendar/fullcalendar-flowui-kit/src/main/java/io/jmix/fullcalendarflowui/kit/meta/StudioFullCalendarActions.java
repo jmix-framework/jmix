@@ -17,6 +17,7 @@
 package io.jmix.fullcalendarflowui.kit.meta;
 
 import io.jmix.flowui.kit.meta.*;
+import io.jmix.flowui.kit.meta.action.StudioActionPropertyGroups;
 
 @StudioUiKit
 public interface StudioFullCalendarActions {
@@ -27,12 +28,7 @@ public interface StudioFullCalendarActions {
             classFqn = "io.jmix.fullcalendarflowui.action.DaysOfWeekEditAction",
             icon = "io/jmix/fullcalendarflowui/kit/meta/icon/action/action.svg",
             documentationLink = "%VERSION%/calendar/full-calendar-component.html#days-of-week-datatype",
-            propertyGroups = {
-                    StudioPropertyGroups.DescriptionWithoutCategory.class,
-                    StudioPropertyGroups.EnabledWithTrueDefaultValueWithoutCategory.class,
-                    StudioPropertyGroups.ShortcutCombination.class,
-                    StudioPropertyGroups.VisibleWithDefaultValueTrue.class
-            },
+            propertyGroups = StudioActionPropertyGroups.ActionCommonPropertiesWithoutCategory.class,
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", type = StudioPropertyType.ENUMERATION,
                             setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",

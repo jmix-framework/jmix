@@ -17,6 +17,7 @@
 package io.jmix.pivottableflowui.kit.meta;
 
 import io.jmix.flowui.kit.meta.*;
+import io.jmix.flowui.kit.meta.action.StudioActionPropertyGroups;
 
 @StudioUiKit(requiredDependencies = "io.jmix.pivottable:jmix-pivottable-flowui-starter")
 public interface StudioPivotTableActions {
@@ -25,12 +26,7 @@ public interface StudioPivotTableActions {
             type = "pvttbl_showPivotTableAction",
             description = "Shows the Pivot Table component",
             classFqn = "io.jmix.pivottableflowui.action.ShowPivotTableAction",
-            propertyGroups = {
-                    StudioPropertyGroups.DescriptionWithoutCategory.class,
-                    StudioPropertyGroups.EnabledWithTrueDefaultValueWithoutCategory.class,
-                    StudioPropertyGroups.ShortcutCombination.class,
-                    StudioPropertyGroups.VisibleWithDefaultValueTrue.class
-            },
+            propertyGroups = StudioActionPropertyGroups.ActionCommonPropertiesWithoutCategory.class,
             properties = {
                     @StudioProperty(xmlAttribute = "actionVariant", type = StudioPropertyType.ENUMERATION,
                             setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
@@ -58,4 +54,3 @@ public interface StudioPivotTableActions {
     )
     void showPivotTableAction();
 }
-

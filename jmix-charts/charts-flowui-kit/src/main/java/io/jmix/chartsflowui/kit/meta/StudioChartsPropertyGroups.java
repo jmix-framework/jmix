@@ -2154,4 +2154,48 @@ public final class StudioChartsPropertyGroups {
     @StudioPropertyGroup
     public interface EmphasisDefaultProperties extends Disabled, Focus, BlurScope {
     }
+
+    @StudioPropertyGroup
+    public interface TextStyleDefaultProperties extends ChartColor, FontStyle, FontWeight, FontFamily, FontSize,
+            LineHeight, StudioPropertyGroups.WidthWithIntegerType, IntegerHeight, TextBorderColor,
+            TextBorderWidth, TextBorderType, TextBorderDashOffset, TextShadowColor, TextShadowBlur,
+            TextShadowOffsetX, TextShadowOffsetY, Overflow, Ellipsis {
+    }
+
+    @StudioPropertyGroup
+    public interface LineStyleDefaultProperties extends AreaStyleDefaultProperties,
+            StudioPropertyGroups.WidthWithIntegerType, Type, DashOffset, Cap, Join, MiterLimit {
+    }
+
+    @StudioPropertyGroup
+    public interface AreaStyleDefaultProperties extends ChartColor, ShadowColor, ShadowBlur, ShadowOffsetX,
+            ShadowOffsetY, Opacity {
+    }
+
+    @StudioPropertyGroup
+    public interface LinePointDefaultProperties extends Name, LineDataType, ValueIndex, ValueDim,
+            StringCoordinate, NumberCoordinate, X, Y, XAxis, YAxis, DoubleValue, StudioPropertyGroups.Symbol,
+            IntegerSymbolSize, SymbolSizeFunction, SymbolRotate, SymbolKeepAspect, SymbolOffset, SymbolType {
+    }
+
+    @StudioPropertyGroup
+    public interface PointDefaultProperties extends Name, PintDataType, ValueIndex, ValueDim, StringCoordinate,
+            NumberCoordinate, X, Y, DoubleValue {
+    }
+
+    @StudioPropertyGroup
+    public interface LabelDefaultProperties extends Formatter, FormatterFunction, Show, Distance, Rotate,
+            StringOffset, SharedAlign, VerticalAlign, BackgroundColor, BorderColor, IntegerBorderWidth,
+            BorderType, BorderDashOffset, BorderRadius, Padding, ShadowColor, ShadowBlur, ShadowOffsetX,
+            ShadowOffsetY, TooltipPosition, PositionCoordinates, TextStyleDefaultProperties {
+    }
+
+    @StudioPropertyGroup
+    public interface RoundedItemStyleDefaultProperties extends AreaStyleDefaultProperties, BorderColor,
+            IntegerBorderWidth, BorderType, BorderRadius {
+    }
+
+    @StudioPropertyGroup
+    public interface SeriesAriaLabelDefaultProperties extends Prefix, WithName, WithoutName {
+    }
 }

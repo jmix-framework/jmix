@@ -97,10 +97,7 @@ interface StudioMainViewComponents {
                             @StudioAvailableChildrenInfo.TagInfo(qualifiedName = "appLayout", maxCount = 1)
                     }
             ),
-            propertyGroups = {
-                    StudioPropertyGroups.MessagesGroup.class,
-                    StudioPropertyGroups.Title.class
-            },
+            propertyGroups = StudioPropertyGroups.MessagesGroupAndTitle.class,
             properties = {
                     @StudioProperty(xmlAttribute = "messagesGroup", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "title",  type = StudioPropertyType.LOCALIZED_STRING)

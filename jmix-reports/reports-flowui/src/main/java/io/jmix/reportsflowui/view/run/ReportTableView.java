@@ -58,10 +58,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.jspecify.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @RouteAlias(value = "reports/tables", layout = DefaultMainViewParent.class)
 @Route(value = "report/tables", layout = DefaultMainViewParent.class)
@@ -265,6 +262,7 @@ public class ReportTableView extends StandardView {
         collectionContainer.setItems(keyValueEntities);
 
         Set<JmixTableData.ColumnInfo> columnInfos = headerMap.get(dataSetName);
+        columnInfos = normalizeColumnInfos(columnInfos);
         columnInfos.forEach(columnInfo -> {
             Class javaClass = columnInfo.getColumnClass();
             if (Entity.class.isAssignableFrom(javaClass) ||
@@ -276,11 +274,31 @@ public class ReportTableView extends StandardView {
         return collectionContainer;
     }
 
+    protected Set<JmixTableData.ColumnInfo> normalizeColumnInfos(Set<JmixTableData.ColumnInfo> columnInfos) {
+        if (CollectionUtils.isEmpty(columnInfos)) {
+            return columnInfos;
+        }
+
+        Set<JmixTableData.ColumnInfo> result = new LinkedHashSet<>(columnInfos);
+        for (JmixTableData.ColumnInfo columnInfo : columnInfos) {
+            if (String.class.equals(columnInfo.getColumnClass())) {
+                boolean anotherExists = result.stream()
+                        .anyMatch(other -> other != columnInfo && Objects.equals(columnInfo.getKey(), other.getKey()));
+                if (anotherExists) {
+                    result.remove(columnInfo);
+                }
+            }
+        }
+
+        return result;
+    }
+
     protected DataGrid<KeyValueEntity> createTable(String dataSetName, KeyValueCollectionContainer container, Map<String, Set<JmixTableData.ColumnInfo>> headerMap) {
         DataGrid<KeyValueEntity> dataGrid = uiComponents.create(DataGrid.class);
         dataGrid.setId(dataSetName + "Table");
 
         Set<JmixTableData.ColumnInfo> headers = headerMap.get(dataSetName);
+        headers = normalizeColumnInfos(headers);
 
         createColumns(container, dataGrid, headers);
         dataGrid.setItems(new ContainerDataGridItems<>(container));

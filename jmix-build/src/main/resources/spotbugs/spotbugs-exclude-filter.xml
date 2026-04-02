@@ -228,6 +228,13 @@
         <Class name="io.jmix.data.impl.JmixTransactionManager"/>
     </Match>
 
+    <!--  Suppress for test service with intentional NULL return value within Nonnull method  -->
+    <Match>
+        <Class name="io.jmix.samples.rest.service.RestTestServiceBean" />
+        <Method name="validatedMethodResult" />
+        <Bug pattern="NP_NONNULL_RETURN_VIOLATION" />
+    </Match>
+
     <!--  Do not analyze equals() method in all jmix entities  -->
     <Match>
         <Bug pattern="NP_EQUALS_SHOULD_HANDLE_NULL_ARGUMENT"/>

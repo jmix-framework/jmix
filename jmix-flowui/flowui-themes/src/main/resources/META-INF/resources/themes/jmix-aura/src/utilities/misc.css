@@ -21,7 +21,19 @@
 }
 
 .footer-panel {
-  /*todo*/
-  /*background-color: var(--lumo-contrast-5pct);*/
   padding: var(--vaadin-gap-s) var(--vaadin-gap-m);
+}
+
+vaadin-button.nested-button,
+vaadin-button.dialog-close-button {
+  --vaadin-button-background: transparent;
+
+  padding: 0;
+
+  font-size: inherit;
+  line-height: inherit;
+}
+
+vaadin-button.dialog-close-button {
+  color: var(--vaadin-text-color);
 }

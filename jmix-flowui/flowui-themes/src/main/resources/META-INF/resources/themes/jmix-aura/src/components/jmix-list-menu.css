@@ -15,61 +15,48 @@
  */
 
 .jmix-list-menu {
-  color: var(--lumo-secondary-text-color);
+  color: var(--vaadin-text-color-secondary);
   margin: 0;
   overflow: auto;
-  padding: 0 var(--lumo-space-s);
+  padding: 0 var(--vaadin-padding-s);
   list-style-type: none;
 }
 
 .jmix-list-menu .jmix-menubar-item .menubar-list {
   margin: 0;
-  margin-inline-start: var(--lumo-space-l);
+  margin-inline-start: var(--vaadin-padding-l);
   list-style-type: none;
   padding: 0;
 }
 
+.jmix-list-menu .jmix-menubar-item .menubar-list li {
+  padding: calc(var(--vaadin-padding-xs) / 2) 0;
+}
+
 .jmix-list-menu .jmix-menubar-item {
-  padding: var(--lumo-space-s) 0;
+  padding: var(--vaadin-padding-s) 0;
   margin: 0;
 }
 
 .jmix-list-menu .jmix-menubar-item vaadin-details-summary {
-  padding: var(--lumo-space-s);
+  padding: var(--vaadin-padding-s);
 }
 
 .jmix-list-menu .jmix-menubar-item .jmix-menubar-summary-icon-container {
   display: flex;
-  gap: var(--lumo-space-s);
+  gap: var(--vaadin-gap-s);
   align-items: center;
 }
 
 .jmix-list-menu .jmix-menu-item-link .link-icon,
-.jmix-list-menu .jmix-menubar-item .jmix-menubar-summary-icon-container .menubar-icon {
-  width: var(--lumo-icon-size-s);
-  height: var(--lumo-icon-size-s);
-  flex-shrink: 0;
-}
-
-.jmix-list-menu .jmix-menu-item-link .prefix-component,
-.jmix-list-menu .jmix-menubar-item .jmix-menubar-summary-icon-container .prefix-component {
-  flex-shrink: 0;
-}
-
-.jmix-list-menu .jmix-menu-item-link vaadin-icon.prefix-component,
-.jmix-list-menu .jmix-menubar-item .jmix-menubar-summary-icon-container vaadin-icon.prefix-component {
-  width: var(--lumo-icon-size-s);
-  height: var(--lumo-icon-size-s);
-}
-
-.jmix-list-menu .jmix-menu-item-link vaadin-icon.prefix-component[icon^='vaadin:'],
-.jmix-list-menu .jmix-menubar-item .jmix-menubar-summary-icon-container vaadin-icon.prefix-component[icon^='vaadin:'] {
-  padding: 0.125em;
-  box-sizing: border-box;
+.jmix-list-menu .jmix-menubar-item .jmix-menubar-summary-icon-container .menubar-icon,
+.jmix-list-menu .jmix-menu-item-link vaadin-icon.prefix-component:not([icon^='lumo:']),
+.jmix-list-menu .jmix-menubar-item .jmix-menubar-summary-icon-container vaadin-icon.prefix-component:not([icon^='lumo:']) {
+  --vaadin-icon-visual-size: var(--aura-font-size-l);
 }
 
 .jmix-list-menu .jmix-menubar-item .menubar-summary {
-  font-size: var(--lumo-font-size-s);
+  font-size: var(--aura-font-size-s);
   white-space: nowrap;
   font-weight: bold;
   text-overflow: ellipsis;
@@ -84,8 +71,8 @@
 
 .jmix-list-menu .jmix-menu-item-link {
   display: flex;
-  gap: var(--lumo-space-s);
-  padding: var(--lumo-space-s);
+  gap: var(--vaadin-gap-s);
+  padding: var(--vaadin-padding-s);
   text-decoration: none;
   color: inherit;
   cursor: pointer;
@@ -93,21 +80,24 @@
 }
 
 .jmix-list-menu .jmix-menu-item-link .link-text {
-  font-size: var(--lumo-font-size-s);
+  font-size: var(--aura-font-size-s);
   font-weight: 500;
-  line-height: var(--lumo-line-height-s);
+  line-height: var(--aura-line-height-s);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .jmix-list-menu a[highlight][class*='jmix-menu-item-link'] {
-  color: var(--lumo-primary-text-color);
+  color: var(--aura-accent-text-color);
+  background-color: color-mix(in srgb, currentColor 8%, transparent);
+  border-radius: var(--vaadin-radius-m);
+
+  outline-offset: 2px;
 }
 
-.jmix-list-menu a[highlight][class*='jmix-menu-item-link'] {
-  background-color: var(--lumo-primary-color-10pct);
-  border-radius: var(--lumo-border-radius-m);
+.jmix-list-menu a[highlight][class*='jmix-menu-item-link'] .link-text {
+  font-weight: var(--aura-font-weight-semibold);
 }
 
 .jmix-list-menu .jmix-menubar-item vaadin-details-summary::part(content) {
@@ -128,9 +118,9 @@
 
 @supports selector(:focus-visible) {
   .jmix-list-menu .jmix-menu-item-link:focus-visible {
-    border-radius: var(--lumo-border-radius-m);
-    box-shadow: 0 0 0 var(--vaadin-focus-ring-width, 2px) var(--vaadin-focus-ring-color, var(--lumo-primary-color-50pct));
-    outline: 0;
+    border-radius: var(--vaadin-radius-m);
+    outline: var(--vaadin-focus-ring-width) solid var(--vaadin-focus-ring-color);
+    outline-offset: 1px;
   }
 }
 

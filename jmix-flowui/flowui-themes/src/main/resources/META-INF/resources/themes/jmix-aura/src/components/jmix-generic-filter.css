@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+vaadin-details.jmix-generic-filter::part(content) {
+    margin-inline-start: 0;
+}
+
 .jmix-generic-filter-configuration-detail {
-    padding: var(--lumo-space-s);
+    padding: var(--vaadin-padding-s);
 }

@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
-.jmix-generic-filter-configuration-detail {
-    padding: var(--lumo-space-s);
+vaadin-menu-bar[jmix-role='jmix-grid-column-visibility'][theme~='icon'] > vaadin-menu-bar-button {
+    --vaadin-button-padding: var(--vaadin-padding-block-container) var(--vaadin-padding-s);
 }
+
+vaadin-menu-bar[jmix-role='jmix-grid-column-visibility'][theme~='icon'] > vaadin-menu-bar-button::part(suffix) {
+    display: none;
+}
+

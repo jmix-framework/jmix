@@ -240,6 +240,7 @@ public class GenericFilter extends Composite<JmixDetails>
 
     protected void initControlsLayout(HorizontalLayout controlsLayout) {
         controlsLayout.setWidthFull();
+        controlsLayout.setWrap(true);
         controlsLayout.setClassName(FILTER_CONTROLS_LAYOUT_CLASS_NAME);
 
         applyButton = createApplyButton();

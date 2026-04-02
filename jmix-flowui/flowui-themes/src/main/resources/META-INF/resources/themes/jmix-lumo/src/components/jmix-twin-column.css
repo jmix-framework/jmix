@@ -123,8 +123,4 @@
         flex-direction: column;
         gap: var(--lumo-space-s);
     }
-
-    @media (forced-colors: active) {
-
-    }
 }

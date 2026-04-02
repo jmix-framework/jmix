@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
-.jmix-generic-filter-configuration-detail {
-    padding: var(--lumo-space-s);
+vaadin-form-item[theme~='label-align-end']:not([label-position='top'])::part(label) {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }

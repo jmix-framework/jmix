@@ -335,7 +335,6 @@ public class ReportTableView extends StandardView {
         collectionContainer.setItems(keyValueEntities);
 
         Set<JmixTableData.ColumnInfo> columnInfos = headerMap.get(dataSetName);
-        columnInfos = normalizeColumnInfos(columnInfos);
         columnInfos.forEach(columnInfo -> {
             Class javaClass = columnInfo.getColumnClass();
             if (Entity.class.isAssignableFrom(javaClass) ||
@@ -347,32 +346,12 @@ public class ReportTableView extends StandardView {
         return collectionContainer;
     }
 
-    protected Set<JmixTableData.ColumnInfo> normalizeColumnInfos(Set<JmixTableData.ColumnInfo> columnInfos) {
-        if (CollectionUtils.isEmpty(columnInfos)) {
-            return columnInfos;
-        }
-
-        Set<JmixTableData.ColumnInfo> result = new LinkedHashSet<>(columnInfos);
-        for (JmixTableData.ColumnInfo columnInfo : columnInfos) {
-            if (String.class.equals(columnInfo.getColumnClass())) {
-                boolean anotherExists = result.stream()
-                        .anyMatch(other -> other != columnInfo && Objects.equals(columnInfo.getKey(), other.getKey()));
-                if (anotherExists) {
-                    result.remove(columnInfo);
-                }
-            }
-        }
-
-        return result;
-    }
 
     protected DataGrid<KeyValueEntity> createTable(String dataSetName, KeyValueCollectionContainer container, Map<String, Set<JmixTableData.ColumnInfo>> headerMap) {
         DataGrid<KeyValueEntity> dataGrid = uiComponents.create(DataGrid.class);
         dataGrid.setId(dataSetName + "Table");
 
         Set<JmixTableData.ColumnInfo> headers = headerMap.get(dataSetName);
-        headers = normalizeColumnInfos(headers);
-
         createColumns(container, dataGrid, headers);
         dataGrid.setItems(new ContainerDataGridItems<>(container));
         dataGrid.setWidth("100%");
@@ -382,28 +361,36 @@ public class ReportTableView extends StandardView {
 
     protected void createColumns(KeyValueCollectionContainer collectionContainer, DataGrid<KeyValueEntity> table, Set<JmixTableData.ColumnInfo> headers) {
         Collection<MetaPropertyPath> paths = metadataTools.getPropertyPaths(collectionContainer.getEntityMetaClass());
-        for (MetaPropertyPath metaPropertyPath : paths) {
-            MetaProperty property = metaPropertyPath.getMetaProperty();
-            if (!property.getRange().getCardinality().isMany() && !metadataTools.isSystem(property)) {
-                String propertyName = property.getName();
 
-                JmixTableData.ColumnInfo columnInfo = getColumnInfo(propertyName, headers);
+        Map<String, JmixTableData.ColumnInfo> columnInfoMap = new HashMap<>();
+        for (JmixTableData.ColumnInfo ci : headers) {
+            columnInfoMap.put(ci.getKey(), ci);
+        }
+
+        List<MetaPropertyPath> columnPaths = new ArrayList<>();
+        for (MetaPropertyPath path : paths) {
+            MetaProperty property = path.getMetaProperty();
+            if (!property.getRange().getCardinality().isMany() && !metadataTools.isSystem(property)) {
+                columnPaths.add(path);
+            }
+        }
+
+        columnPaths.sort(Comparator.comparing(path -> {
+            JmixTableData.ColumnInfo ci = columnInfoMap.get(path.getMetaProperty().getName());
+            return ci != null ? ci.getPosition() : null;
+        }, Comparator.nullsLast(Comparator.naturalOrder())));
+
+        for (MetaPropertyPath metaPropertyPath : columnPaths) {
+            String propertyName = metaPropertyPath.getMetaProperty().getName();
+            JmixTableData.ColumnInfo columnInfo = columnInfoMap.get(propertyName);
+
+            if (columnInfo != null) {
                 Grid.Column<KeyValueEntity> column = table.addColumn(metaPropertyPath);
-                if (columnInfo.getPosition() != null) {
-                    table.setColumnPosition(column, columnInfo.getPosition());
-                }
                 column.setHeader(columnInfo.getCaptionMessageKey() != null
                         ? messages.getMessage(columnInfo.getCaptionMessageKey())
                         : columnInfo.getCaption()
                 );
             }
         }
-    }
-
-    private JmixTableData.ColumnInfo getColumnInfo(String headerKey, Set<JmixTableData.ColumnInfo> headers) {
-        return headers.stream()
-                .filter(header -> headerKey.equals(header.getKey()))
-                .findFirst()
-                .orElse(null);
     }
 }

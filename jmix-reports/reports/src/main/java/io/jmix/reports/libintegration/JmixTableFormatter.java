@@ -37,6 +37,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import org.springframework.lang.Nullable;
+
 import java.io.IOException;
 import java.util.*;
 
@@ -197,6 +198,7 @@ public class JmixTableFormatter extends AbstractFormatter {
 
             List<KeyValueEntity> entities = new ArrayList<>();
             Set<JmixTableData.ColumnInfo> headers = new LinkedHashSet<>();
+            Map<String, TemplateTableColumn> emptyHeaders = new LinkedHashMap<>();
 
             bandDataList.forEach(bandData -> {
                 Map<String, Object> data = bandData.getData();
@@ -248,18 +250,28 @@ public class JmixTableFormatter extends AbstractFormatter {
 
                             String transformationKey = transformationKey(key);
                             if (value != null) {
-                                Class valueClass = getColumnClass(bandName, key, value);
-                                headers.add(new JmixTableData.ColumnInfo(transformationKey, valueClass, column.getCaption(),
-                                        column.getCaptionMessageKey(), column.getPosition()));
-                            } else {
-                                headers.add(new JmixTableData.ColumnInfo(transformationKey, String.class, column.getCaption(),
-                                        column.getCaptionMessageKey(), column.getPosition()));
+                                if (!containsHeader(headers, transformationKey)) {
+                                    Class valueClass = getColumnClass(bandName, key, value);
+                                    headers.add(new JmixTableData.ColumnInfo(transformationKey, valueClass, column.getCaption(),
+                                            column.getCaptionMessageKey(), column.getPosition()));
+                                }
+                            } else if (!containsHeader(headers, transformationKey)) {
+                                emptyHeaders.put(transformationKey, column);
                             }
                         }
                     }
                 }
                 entities.add(entityRow);
             });
+
+            for (Map.Entry<String, TemplateTableColumn> entry : emptyHeaders.entrySet()) {
+                String transformationKey = entry.getKey();
+                TemplateTableColumn column = entry.getValue();
+                if (!containsHeader(headers, transformationKey)) {
+                    headers.add(new JmixTableData.ColumnInfo(transformationKey, String.class, column.getCaption(),
+                            column.getCaptionMessageKey(), column.getPosition()));
+                }
+            }
 
             headers.removeIf(header -> containsLowerCaseDuplicate(header, headers));
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-vaadin-details.jmix-generic-filter::part(content) {
-    margin-inline-start: 0;
-    padding-inline: 0;
+.search-results-view .search-result-renderer {
+    margin-top: var(--vaadin-space-l);
+    gap: var(--vaadin-gap-s);
 }
 
-.jmix-generic-filter-configuration-detail {
-    padding: var(--vaadin-padding-s);
+.search-results-view .search-result-renderer-hit-layout {
+    gap: var(--vaadin-gap-xs);
 }

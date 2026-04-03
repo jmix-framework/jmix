@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,19 @@
  * limitations under the License.
  */
 
-vaadin-details.jmix-generic-filter::part(content) {
-    margin-inline-start: 0;
-    padding-inline: 0;
+.category-attributes-detail-view .main-tab-sheet {
+    box-sizing: border-box;
 }
 
-.jmix-generic-filter-configuration-detail {
-    padding: var(--vaadin-padding-s);
+.category-attributes-detail-view :is(.main-tab-wrapper, .advanced-tab-wrapper) {
+    padding-bottom: 0;
+}
+
+.category-attributes-detail-view :is(.target-views-box, .script-box) {
+    padding-bottom: var(--vaadin-padding-m);
+}
+
+.category-attributes-detail-view .suffix-helper-button {
+    /* Same value as lable's line-height */
+    margin-top: var(--aura-line-height-m);
 }

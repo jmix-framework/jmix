@@ -166,6 +166,7 @@ public class SearchField extends CustomField<String>
         this.settingsButton = createSettingsButton();
 
         HorizontalLayout hbox = uiComponents.create(HorizontalLayout.class);
+        hbox.setClassName("jmix-search-field-actions-container");
         hbox.setSpacing(false);
         hbox.add(searchButton);
         hbox.add(settingsButton);

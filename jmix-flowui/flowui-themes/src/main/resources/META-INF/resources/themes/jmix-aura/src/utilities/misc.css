@@ -26,8 +26,6 @@
 
 vaadin-button.nested-button,
 vaadin-button.dialog-close-button {
-  --vaadin-button-background: transparent;
-
   padding: 0;
 
   font-size: inherit;
@@ -36,4 +34,10 @@ vaadin-button.dialog-close-button {
 
 vaadin-button.dialog-close-button {
   color: var(--vaadin-text-color);
+  --vaadin-button-background: transparent;
+}
+
+vaadin-button.suffix-helper-button {
+  --vaadin-button-border-color: transparent;
+  --vaadin-button-shadow: none;
 }

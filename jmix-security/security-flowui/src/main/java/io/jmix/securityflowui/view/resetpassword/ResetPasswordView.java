@@ -21,6 +21,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.progressbar.ProgressBar;
@@ -258,6 +259,7 @@ public class ResetPasswordView extends StandardView {
 
     protected HorizontalLayout passwordLayoutFactory() {
         HorizontalLayout layout = uiComponents.create(HorizontalLayout.class);
+        layout.setAlignItems(FlexComponent.Alignment.CENTER);
         layout.setWidthFull();
         layout.setPadding(false);
         layout.setSpacing(false);

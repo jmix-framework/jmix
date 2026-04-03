@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 
-vaadin-details.jmix-generic-filter::part(content) {
-    margin-inline-start: 0;
-    padding-inline: 0;
-}
-
-.jmix-generic-filter-configuration-detail {
-    padding: var(--vaadin-padding-s);
+:root {
+    --gjs-primary-color: var(--aura-surface-color);
+    --gjs-secondary-color: var(--vaadin-text-color);
+    --gjs-tertiary-color: var(--aura-accent-text-color);
+    --gjs-quaternary-color: var(--aura-accent-text-color);
 }

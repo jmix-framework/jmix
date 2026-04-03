@@ -41,7 +41,7 @@ class JmixUploadButton extends Upload {
                             title: "Uploading",
                             cancel: "Cancel",
                         },
-                    }
+                    };
                 },
                 notify: true,
             }
@@ -171,6 +171,17 @@ class JmixUploadButton extends Upload {
         if (!file) {
             return;
         }
+
+        const effectiveI18n = {
+            file: {
+                start: 'Start',
+                retry: 'Retry',
+                remove: 'Remove',
+                ...(i18n ? i18n.file : {})
+            },
+            ...i18n
+        };
+
         return render(html`
             <vaadin-upload-file
                     .file="${file}"
@@ -182,7 +193,7 @@ class JmixUploadButton extends Upload {
                     .progress="${file.progress}"
                     .status="${file.status}"
                     .uploading="${file.uploading}"
-                    .i18n="${i18n}"
+                    .i18n="${effectiveI18n}"
             ></vaadin-upload-file>
         `, content);
     }

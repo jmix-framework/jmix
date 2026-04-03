@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Haulmont.
+ * Copyright 2024 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,21 @@
  * limitations under the License.
  */
 
-vaadin-details.jmix-generic-filter::part(content) {
-    margin-inline-start: 0;
-    padding-inline: 0;
+.role-assignment-view {
+    container-type: inline-size;
+    container-name: role-assignment-view;
 }
 
-.jmix-generic-filter-configuration-detail {
-    padding: var(--vaadin-padding-s);
+.role-assignment-view .content-wrapper {
+    flex-direction: column;
+
+    overflow: auto;
+    gap: var(--vaadin-gap-m);
+    padding: var(--vaadin-padding-m);
+}
+
+@container role-assignment-view (min-width: 60em) {
+    .role-assignment-view .content-wrapper {
+        flex-direction: row;
+    }
 }

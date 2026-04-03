@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,18 @@
  * limitations under the License.
  */
 
-vaadin-details.jmix-generic-filter::part(content) {
-    margin-inline-start: 0;
-    padding-inline: 0;
+.audit-datetime-picker-container {
+    display: flex;
+    align-items: baseline;
+    gap: calc(var(--vaadin-gap-xs) / 2);
 }
 
-.jmix-generic-filter-configuration-detail {
-    padding: var(--vaadin-padding-s);
+.audit-datetime-picker-container vaadin-date-picker {
+    min-width: 0;
+    flex: 1 1 auto;
+}
+
+.audit-datetime-picker-container vaadin-time-picker {
+    min-width: 0;
+    flex: 1 1.65 auto;
 }

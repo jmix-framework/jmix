@@ -133,3 +133,9 @@
     outline: 0;
   }
 }
+
+@media (forced-colors: active) {
+  .jmix-list-menu a[highlight][class*='jmix-menu-item-link'] {
+    border: 1px solid CanvasText;
+  }
+}

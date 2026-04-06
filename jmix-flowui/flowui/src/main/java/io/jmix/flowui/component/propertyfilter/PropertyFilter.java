@@ -183,7 +183,9 @@ public class PropertyFilter<V> extends SingleFilterComponentBase<V> {
         }
 
         if (this.valueComponent != null) {
-            if (this.operation == null || this.operation.getType() != operation.getType()) {
+            if (this.operation == null
+                    || this.operation.getType() != operation.getType()
+                    || isValueComponentRecreationRequired(this.operation, operation)) {
                 this.valueComponent.clear();
             }
 
@@ -193,7 +195,8 @@ public class PropertyFilter<V> extends SingleFilterComponentBase<V> {
         }
 
         if (this.operation == null
-                || this.operation.getType() != operation.getType()) {
+                || this.operation.getType() != operation.getType()
+                || isValueComponentRecreationRequired(this.operation, operation)) {
             if (dataLoader != null && getProperty() != null) {
                 MetaClass metaClass = dataLoader.getContainer().getEntityMetaClass();
                 //noinspection unchecked
@@ -215,6 +218,25 @@ public class PropertyFilter<V> extends SingleFilterComponentBase<V> {
         OperationChangeEvent<?> operationChangeEvent =
                 new OperationChangeEvent<>(this, operation, prevOperation, fromClient);
         getEventBus().fireEvent(operationChangeEvent);
+    }
+
+    protected boolean isValueComponentRecreationRequired(@Nullable Operation prevOperation, Operation nextOperation) {
+        if (prevOperation == null) {
+            return true;
+        }
+
+        if (prevOperation.getType() == Operation.Type.VALUE && nextOperation.getType() == Operation.Type.VALUE) {
+            return isStringBasedOperation(prevOperation) != isStringBasedOperation(nextOperation);
+        }
+
+        return false;
+    }
+
+    protected boolean isStringBasedOperation(Operation operation) {
+        return operation == Operation.CONTAINS
+                || operation == Operation.NOT_CONTAINS
+                || operation == Operation.STARTS_WITH
+                || operation == Operation.ENDS_WITH;
     }
 
     @Override

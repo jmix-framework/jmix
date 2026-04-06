@@ -206,7 +206,9 @@ public class MultiValueSelectDialogGenerationStrategy<E> extends AbstractCompone
     @Nullable
     protected Component createDatatypeField(MultiValueSelectContext<E> context) {
         Class<?> type = context.getJavaClass();
-        Datatype<E> datatype = (Datatype<E>) datatypeRegistry.get(Objects.requireNonNull(type));
+        Datatype<E> datatype = context.getDatatype() == null
+                ? (Datatype<E>) datatypeRegistry.get(Objects.requireNonNull(type))
+                : context.getDatatype();
 
         if (type.equals(java.sql.Date.class)
                 || type.equals(Date.class)

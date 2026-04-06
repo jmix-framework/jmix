@@ -288,6 +288,7 @@ public abstract class AbstractComponentGenerationStrategy implements ComponentGe
             selectAction.setEntityName(range.asClass().getName());
         } else if (range.isDatatype()) {
             selectAction.setJavaClass(range.asDatatype().getJavaClass());
+            selectAction.setDatatype(range.asDatatype());
         } else if (range.isEnum()) {
             //noinspection unchecked
             selectAction.setEnumClass(range.asEnumeration().getJavaClass());

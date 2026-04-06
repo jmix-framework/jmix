@@ -130,6 +130,7 @@ public class GenericFilter extends Composite<JmixDetails>
     protected List<FilterComponent> conditions;
 
     protected boolean configurationModifyPermitted;
+    protected String summaryText;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) {
@@ -180,8 +181,8 @@ public class GenericFilter extends Composite<JmixDetails>
         emptyConfiguration =
                 new RunTimeConfiguration("empty_configuration", configurationLogicalComponent, this);
 
-        String emptyConfigurationName = StringUtils.isNotEmpty(getSummaryText())
-                ? getSummaryText()
+        String emptyConfigurationName = StringUtils.isNotEmpty(summaryText)
+                ? summaryText
                 : messages.getMessage("genericFilter.emptyConfiguration.name");
         emptyConfiguration.setName(emptyConfigurationName);
 
@@ -461,7 +462,7 @@ public class GenericFilter extends Composite<JmixDetails>
      * @return this component summary text
      */
     public String getSummaryText() {
-        return getContent().getSummaryText();
+        return summaryText != null ? summaryText : getContent().getSummaryText();
     }
 
     /**
@@ -470,6 +471,14 @@ public class GenericFilter extends Composite<JmixDetails>
      * @param summary text to set
      */
     public void setSummaryText(String summary) {
+        setSummaryTextInternal(summary, true);
+    }
+
+    protected void setSummaryTextInternal(String summary, boolean fromUser) {
+        if (fromUser) {
+            this.summaryText = summary;
+        }
+
         getContent().setSummaryText(summary);
     }
 
@@ -738,13 +747,17 @@ public class GenericFilter extends Composite<JmixDetails>
     }
 
     protected void updateRootLayoutSummaryText() {
+        if (summaryText != null) {
+            return;
+        }
+
         StringBuilder stringBuilder = new StringBuilder(getConfigurationName(getEmptyConfiguration()));
         if (!getEmptyConfiguration().equals(getCurrentConfiguration())) {
             stringBuilder.append(" : ")
                     .append(getConfigurationName(getCurrentConfiguration()));
         }
 
-        setSummaryText(stringBuilder.toString());
+        setSummaryTextInternal(stringBuilder.toString(), false);
     }
 
     protected String getConfigurationName(Configuration configuration) {

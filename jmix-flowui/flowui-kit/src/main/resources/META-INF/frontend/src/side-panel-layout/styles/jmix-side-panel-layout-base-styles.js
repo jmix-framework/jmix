@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import '@vaadin/component-base/src/styles/style-props.js';
 import { css } from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
 
 export const sidePanelLayoutStyles = css`
@@ -65,7 +66,13 @@ export const sidePanelLayoutStyles = css`
         display: none;
     }
 
+    :host([side-panel-opened][modal]) [part='modalityCurtain'],
+    :host(:not([side-panel-opened])[modal]) [part='modalityCurtain']:not([hidden]) {
+        background-color: rgba(0, 0, 0, 0.2);
+    }
+
     [part='sidePanel'] {
+        background-color: var(--vaadin-background-color);
         display: flex;
         flex-direction: column;
         height: 100%;
@@ -229,6 +236,13 @@ export const sidePanelLayoutStyles = css`
 
         :host {
             --_transition-duration: none !important;
+        }
+    }
+
+    @media (forced-colors: active) {
+
+        [part='sidePanel'] {
+            border: 1px solid;
         }
     }
 `;

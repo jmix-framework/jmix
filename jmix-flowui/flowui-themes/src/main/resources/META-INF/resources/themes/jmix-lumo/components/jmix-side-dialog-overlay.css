@@ -14,17 +14,14 @@
  * limitations under the License.
  */
 
-import { css, registerStyles } from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
+@import "../src/components/jmix-side-dialog-overlay.css";
 
-const jmixSideDialogOverlayStyles = css`
-
-    :host([opening]),
-    :host([closing]) {
-        animation: var(--_transition-duration) lumo-overlay-dummy-animation;
-    }
-`;
-
-// todo: pinyazhin, rename to 'lumo-side...' after upgrading to Vaadin 25
-// https://github.com/vaadin/web-components/issues/2176
-registerStyles('jmix-side-dialog-overlay', [jmixSideDialogOverlayStyles],
- { moduleId: 'jmix-lumo-side-dialog-overlay' });
+:root,
+:host {
+    --_lumo-jmix-side-dialog-overlay-inject: 1;
+    --_lumo-jmix-side-dialog-overlay-inject-modules:
+            lumo_mixins_overlay,
+            lumo_mixins_resizable-overlay,
+            lumo_components_dialog-overlay,
+            lumo_components_jmix-side-dialog-overlay;
+}

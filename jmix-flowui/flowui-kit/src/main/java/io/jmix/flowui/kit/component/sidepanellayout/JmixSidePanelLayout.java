@@ -26,7 +26,7 @@ import com.vaadin.flow.shared.Registration;
 import org.jspecify.annotations.Nullable;
 
 @Tag("jmix-side-panel-layout")
-//@JsModule("./src/side-panel-layout/jmix-side-panel-layout.js")
+@JsModule("./src/side-panel-layout/jmix-side-panel-layout.js")
 public class JmixSidePanelLayout extends Component implements HasSize, HasStyle {
 
     protected Component content;

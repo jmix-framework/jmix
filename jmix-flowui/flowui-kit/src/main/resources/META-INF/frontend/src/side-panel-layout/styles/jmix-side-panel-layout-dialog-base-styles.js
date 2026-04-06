@@ -14,5 +14,23 @@
  * limitations under the License.
  */
 
-import '../../../src/side-panel-layout/jmix-side-panel-layout-closer.js';
-import './jmix-side-panel-layout-closer-styles.js';
+import '@vaadin/component-base/src/styles/style-props.js';
+import { css } from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
+
+export const sidePanelLayoutDialog = css`
+    :host([opened]),
+    :host([opening]),
+    :host([closing]) {
+      display: block !important;
+      position: fixed;
+    }
+
+    :host,
+    :host([hidden]) {
+      display: none !important;
+    }
+
+    :host(:focus-visible) ::part(overlay) {
+      outline: var(--vaadin-focus-ring-width) solid var(--vaadin-focus-ring-color);
+    }
+`;

@@ -14,5 +14,11 @@
  * limitations under the License.
  */
 
-import '../../../src/side-panel-layout/jmix-side-panel-layout.js';
-import './jmix-side-panel-layout-styles.js';
+@import "../src/components/jmix-side-panel-layout.css";
+
+:root,
+:host {
+    --_lumo-jmix-side-panel-layout-inject: 1;
+    --_lumo-jmix-side-panel-layout-inject-modules:
+            lumo_components_jmix-side-panel-layout;
+}

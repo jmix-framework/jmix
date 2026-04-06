@@ -22,24 +22,25 @@ import io.jmix.flowui.kit.icon.JmixFontIcon;
 import org.jspecify.annotations.Nullable;
 
 @Tag("jmix-side-panel-layout-closer")
-//@JsModule("./src/side-panel-layout/jmix-side-panel-layout-closer.js")
+@JsModule("./src/side-panel-layout/jmix-side-panel-layout-closer.js")
 public class JmixSidePanelLayoutCloser extends Component implements HasTheme, Focusable<JmixSidePanelLayoutCloser>,
         HasStyle, HasAriaLabel, HasSize {
 
-    protected Component icon;
+    protected @Nullable Component icon;
     protected Component defaultIcon;
-    protected JmixSidePanelLayout sidePanelLayout;
+    protected @Nullable JmixSidePanelLayout sidePanelLayout;
 
     public JmixSidePanelLayoutCloser() {
         setDefaultIcon(JmixFontIcon.SIDE_PANEL_LAYOUT_CLOSER.create());
         setIcon(null);
     }
 
+    @Nullable
     public JmixSidePanelLayout getSidePanelLayout() {
         return sidePanelLayout;
     }
 
-    public void setSidePanelLayout(JmixSidePanelLayout sidePanelLayout) {
+    public void setSidePanelLayout(@Nullable JmixSidePanelLayout sidePanelLayout) {
         this.sidePanelLayout = sidePanelLayout;
 
         getElement().executeJs("this.sidePanelElement = $0", sidePanelLayout);

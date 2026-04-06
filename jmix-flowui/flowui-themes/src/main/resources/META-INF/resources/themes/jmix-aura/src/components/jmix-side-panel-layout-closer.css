@@ -14,20 +14,8 @@
  * limitations under the License.
  */
 
-import { defineCustomElement } from '@vaadin/component-base/src/define.js';
-import { DialogOverlay } from '@vaadin/dialog/src/vaadin-dialog-overlay.js';
-
-import { jmixSideDialogOverlayStyles } from './styles/jmix-side-dialog-overlay-base-styles.js';
-
-class JmixSideDialogOverlay extends DialogOverlay {
-
-    static get styles() {
-      return [...super.styles, jmixSideDialogOverlayStyles];
-    }
-
-    static get is() {
-      return 'jmix-side-dialog-overlay';
-    }
+jmix-side-panel-layout-closer {
+    border: 0;
+    background: var(--aura-background-color);
+    color: var(--aura-neutral);
 }
-
-defineCustomElement(JmixSideDialogOverlay);

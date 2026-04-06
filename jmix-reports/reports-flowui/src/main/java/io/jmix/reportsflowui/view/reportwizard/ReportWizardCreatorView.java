@@ -588,7 +588,8 @@ public class ReportWizardCreatorView extends StandardView {
 
                 if (!oldName.equals(messageBundle.formatMessage("reportData.reportNamePattern", prevEntityCaption))
                         && !oldName.equals(prevEntityCaption)
-                        && !oldName.equals(oldListName)) {
+                        && !oldName.equals(oldListName)
+                        && !oldName.equals(newName)) {
                     //if user changed auto generated report name and we have changed it, we show message to him
                     notifications.create(messageBundle.getMessage("reportData.reportNameChanged.message"))
                             .withType(Notifications.Type.DEFAULT)

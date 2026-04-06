@@ -430,9 +430,9 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         loadBoolean(element, "autoWidth", column::setAutoWidth);
         loadBoolean(element, "visible", column::setVisible);
         loadEnum(element, ColumnTextAlign.class, "textAlign", column::setTextAlign);
-        loadColumnSortable(element, columnDefaultValues.sortable, column, metaPropertyPath);
-        loadColumnResizable(element, column, columnDefaultValues.resizable);
-        loadColumnFilterable(element, column, columnDefaultValues.filterable);
+        loadColumnSortable(element, columnDefaultValues.sortable(), column, metaPropertyPath);
+        loadColumnResizable(element, column, columnDefaultValues.resizable());
+        loadColumnFilterable(element, column, columnDefaultValues.filterable());
         loadColumnEditable(element, column, property);
         loadAggregationInfo(element, column);
 
@@ -626,8 +626,8 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         masterDataLoaderPostLoadListener = masterDataLoader instanceof InstanceLoader
                 ? ((InstanceLoader<?>) masterDataLoader).addPostLoadListener(this::onMasterDataLoaderPostLoad)
                 : masterDataLoader instanceof CollectionLoader
-                ? ((CollectionLoader<?>) masterDataLoader).addPostLoadListener(this::onMasterDataLoaderPostLoad)
-                : null;
+                  ? ((CollectionLoader<?>) masterDataLoader).addPostLoadListener(this::onMasterDataLoaderPostLoad)
+                  : null;
     }
 
     protected GridDataHolder initDataGridDataHolder() {

@@ -45,10 +45,18 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
 import org.jspecify.annotations.Nullable;
 
+import java.util.EnumSet;
+import java.util.Set;
+
 @org.springframework.stereotype.Component("flowui_PropertyFilterComponentGenerationStrategy")
 public class PropertyFilterComponentGenerationStrategy extends AbstractComponentGenerationStrategy implements Ordered {
 
     public static final String UNARY_FIELD_CLASS_NAME = "unary-field";
+
+    protected static final Set<Operation> STRING_BASED_OPERATIONS = EnumSet.of(
+            Operation.CONTAINS, Operation.NOT_CONTAINS,
+            Operation.STARTS_WITH, Operation.ENDS_WITH
+    );
 
 //    protected DataAwareComponentsTools dataAwareComponentsTools;
 
@@ -123,18 +131,27 @@ public class PropertyFilterComponentGenerationStrategy extends AbstractComponent
         return entityComponent;
     }
 
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings({"rawtypes", "unchecked"})
     @Nullable
     @Override
     protected Component createDatatypeField(ComponentGenerationContext context, MetaPropertyPath mpp) {
-        Datatype datatype = mpp.getRange().asDatatype();
+        if (isStringBasedOperation(context)) {
+            return createStringField(context, mpp);
+        }
 
         Component field = super.createDatatypeField(context, mpp);
-        if (field instanceof SupportsDatatype) {
-            ((SupportsDatatype<?>) field).setDatatype(datatype);
+
+        if (field instanceof SupportsDatatype datatypeField) {
+            Datatype datatype = mpp.getRange().asDatatype();
+            datatypeField.setDatatype(datatype);
         }
 
         return field;
+    }
+
+    protected boolean isStringBasedOperation(ComponentGenerationContext context) {
+        return context instanceof PropertyFilterComponentGenerationContext pfContext
+                && STRING_BASED_OPERATIONS.contains(pfContext.getOperation());
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})

@@ -69,9 +69,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.dom4j.DocumentFactory;
 import org.dom4j.Element;
 import org.dom4j.datatype.DatatypeElementFactory;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
 import java.util.*;
@@ -430,9 +430,9 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         loadBoolean(element, "autoWidth", column::setAutoWidth);
         loadBoolean(element, "visible", column::setVisible);
         loadEnum(element, ColumnTextAlign.class, "textAlign", column::setTextAlign);
-        loadColumnSortable(element, columnDefaultValues.sortable, column, metaPropertyPath);
-        loadColumnResizable(element, column, columnDefaultValues.resizable);
-        loadColumnFilterable(element, column, columnDefaultValues.filterable);
+        loadColumnSortable(element, columnDefaultValues.sortable(), column, metaPropertyPath);
+        loadColumnResizable(element, column, columnDefaultValues.resizable());
+        loadColumnFilterable(element, column, columnDefaultValues.filterable());
         loadColumnEditable(element, column, property);
         loadAggregationInfo(element, column);
 
@@ -626,8 +626,8 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         masterDataLoaderPostLoadListener = masterDataLoader instanceof InstanceLoader
                 ? ((InstanceLoader<?>) masterDataLoader).addPostLoadListener(this::onMasterDataLoaderPostLoad)
                 : masterDataLoader instanceof CollectionLoader
-                ? ((CollectionLoader<?>) masterDataLoader).addPostLoadListener(this::onMasterDataLoaderPostLoad)
-                : null;
+                  ? ((CollectionLoader<?>) masterDataLoader).addPostLoadListener(this::onMasterDataLoaderPostLoad)
+                  : null;
     }
 
     protected GridDataHolder initDataGridDataHolder() {

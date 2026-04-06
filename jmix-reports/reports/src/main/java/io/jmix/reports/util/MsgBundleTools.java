@@ -25,7 +25,7 @@ import io.jmix.core.security.CurrentAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.Collections;

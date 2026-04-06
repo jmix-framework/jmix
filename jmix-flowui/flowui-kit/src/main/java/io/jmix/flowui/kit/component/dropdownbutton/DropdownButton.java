@@ -17,12 +17,10 @@
 package io.jmix.flowui.kit.component.dropdownbutton;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.shared.HasThemeVariant;
-import com.vaadin.flow.theme.lumo.LumoIcon;
 import io.jmix.flowui.kit.component.menubar.JmixMenuBar;
 import io.jmix.flowui.kit.component.menubar.JmixMenuItem;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Represents a dropdown button component. This class is used as a customizable
@@ -32,19 +30,22 @@ public class DropdownButton extends AbstractDropdownButton implements HasThemeVa
 
     protected static final String ATTRIBUTE_JMIX_ROLE_VALUE = "jmix-dropdown-button";
 
-    protected Icon dropdownIcon = LumoIcon.DROPDOWN.create();
-
     protected boolean dropdownIndicatorVisible = true;
 
     public DropdownButton() {
-        dropdownItem = getContent().addItem("");
-        dropdownItem.add(dropdownIcon);
+        dropdownItem = createDropdownItem();
+    }
+
+    protected JmixMenuItem createDropdownItem() {
+        return getContent().addItem("");
     }
 
     @Override
     protected JmixMenuBar initContent() {
         JmixMenuBar content = super.initContent();
         content.getElement().setAttribute(ATTRIBUTE_JMIX_ROLE_NAME, ATTRIBUTE_JMIX_ROLE_VALUE);
+
+        updateDropdownIndicator(content);
 
         return content;
     }
@@ -54,12 +55,13 @@ public class DropdownButton extends AbstractDropdownButton implements HasThemeVa
         return dropdownItem;
     }
 
-    protected void updateDropdownIconSlot() {
-        dropdownIcon.getParent()
-                .ifPresent(component -> dropdownIcon.getElement().removeFromParent());
-
+    protected void updateDropdownIndicator(JmixMenuBar content) {
         if (dropdownIndicatorVisible) {
-            getDropdownItem().add(dropdownIcon);
+            content.removeThemeName(DropdownButtonVariant.AURA_NO_DROPDOWN_INDICATORS.getVariantName());
+            content.addThemeName(DropdownButtonVariant.LUMO_DROPDOWN_INDICATORS.getVariantName());
+        } else {
+            content.addThemeName(DropdownButtonVariant.AURA_NO_DROPDOWN_INDICATORS.getVariantName());
+            content.removeThemeName(DropdownButtonVariant.LUMO_DROPDOWN_INDICATORS.getVariantName());
         }
     }
 
@@ -67,7 +69,6 @@ public class DropdownButton extends AbstractDropdownButton implements HasThemeVa
     public void setText(String text) {
         getDropdownItem().setText(text);
 
-        updateDropdownIconSlot();
         updateIconSlot();
     }
 
@@ -105,7 +106,10 @@ public class DropdownButton extends AbstractDropdownButton implements HasThemeVa
      * Returns whether if the dropdown indicator is currently visible.
      *
      * @return {@code true} if the dropdown indicator is visible, {@code false} otherwise
+     * @deprecated use {@link DropdownButtonVariant#LUMO_DROPDOWN_INDICATORS}
+     * and {@link DropdownButtonVariant#AURA_NO_DROPDOWN_INDICATORS} instead
      */
+    @Deprecated(since = "3.0", forRemoval = true)
     public boolean isDropdownIndicatorVisible() {
         return dropdownIndicatorVisible;
     }
@@ -115,12 +119,15 @@ public class DropdownButton extends AbstractDropdownButton implements HasThemeVa
      *
      * @param dropdownIndicatorVisible {@code true} to display the indicator,
      *                                 or {@code false} to hide it.
+     * @deprecated use {@link DropdownButtonVariant#LUMO_DROPDOWN_INDICATORS}
+     * and {@link DropdownButtonVariant#AURA_NO_DROPDOWN_INDICATORS} instead
      */
+    @Deprecated(since = "3.0", forRemoval = true)
     public void setDropdownIndicatorVisible(boolean dropdownIndicatorVisible) {
         if (this.dropdownIndicatorVisible != dropdownIndicatorVisible) {
             this.dropdownIndicatorVisible = dropdownIndicatorVisible;
 
-            updateDropdownIconSlot();
+            updateDropdownIndicator(getContent());
         }
     }
 

@@ -19,7 +19,7 @@ package io.jmix.flowui.kit.component.upload;
 import com.google.common.base.Strings;
 import com.vaadin.flow.server.streams.UploadHandler;
 import io.jmix.flowui.kit.component.upload.handler.SupportUploadSuccessHandler.UploadSuccessContext;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.apache.commons.io.FileUtils;
 
 import java.util.Arrays;

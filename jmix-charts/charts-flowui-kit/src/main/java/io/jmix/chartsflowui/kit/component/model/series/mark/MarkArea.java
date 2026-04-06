@@ -17,6 +17,7 @@
 package io.jmix.chartsflowui.kit.component.model.series.mark;
 
 import io.jmix.chartsflowui.kit.component.model.shared.ItemStyle;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +45,7 @@ public class MarkArea extends AbstractMark<MarkArea> {
 
         protected Boolean disabled;
 
+        @Nullable
         public Boolean getDisabled() {
             return disabled;
         }
@@ -79,10 +81,12 @@ public class MarkArea extends AbstractMark<MarkArea> {
             this.rightBottomPoint = rightBottomPoint;
         }
 
+        @Nullable
         public Point getLeftTopPoint() {
             return leftTopPoint;
         }
 
+        @Nullable
         public Point getRightBottomPoint() {
             return rightBottomPoint;
         }
@@ -113,6 +117,7 @@ public class MarkArea extends AbstractMark<MarkArea> {
 
         protected Blur blur;
 
+        @Nullable
         public PointDataType getType() {
             return type;
         }
@@ -122,6 +127,7 @@ public class MarkArea extends AbstractMark<MarkArea> {
             markAsDirty();
         }
 
+        @Nullable
         public Integer getValueIndex() {
             return valueIndex;
         }
@@ -131,6 +137,7 @@ public class MarkArea extends AbstractMark<MarkArea> {
             markAsDirty();
         }
 
+        @Nullable
         public String getValueDim() {
             return valueDim;
         }
@@ -140,6 +147,7 @@ public class MarkArea extends AbstractMark<MarkArea> {
             markAsDirty();
         }
 
+        @Nullable
         public Coordinate getCoordinate() {
             return coordinate;
         }
@@ -154,6 +162,7 @@ public class MarkArea extends AbstractMark<MarkArea> {
             markAsDirty();
         }
 
+        @Nullable
         public String getName() {
             return name;
         }
@@ -163,6 +172,7 @@ public class MarkArea extends AbstractMark<MarkArea> {
             markAsDirty();
         }
 
+        @Nullable
         public String getX() {
             return x;
         }
@@ -172,6 +182,7 @@ public class MarkArea extends AbstractMark<MarkArea> {
             markAsDirty();
         }
 
+        @Nullable
         public String getY() {
             return y;
         }
@@ -181,6 +192,7 @@ public class MarkArea extends AbstractMark<MarkArea> {
             markAsDirty();
         }
 
+        @Nullable
         public Double getValue() {
             return value;
         }
@@ -190,6 +202,7 @@ public class MarkArea extends AbstractMark<MarkArea> {
             markAsDirty();
         }
 
+        @Nullable
         public Emphasis getEmphasis() {
             return emphasis;
         }
@@ -203,6 +216,7 @@ public class MarkArea extends AbstractMark<MarkArea> {
             addChild(emphasis);
         }
 
+        @Nullable
         public Blur getBlur() {
             return blur;
         }
@@ -272,6 +286,7 @@ public class MarkArea extends AbstractMark<MarkArea> {
         }
     }
 
+    @Nullable
     public ItemStyle getItemStyle() {
         return itemStyle;
     }
@@ -285,6 +300,7 @@ public class MarkArea extends AbstractMark<MarkArea> {
         addChild(itemStyle);
     }
 
+    @Nullable
     public Emphasis getEmphasis() {
         return emphasis;
     }
@@ -298,6 +314,7 @@ public class MarkArea extends AbstractMark<MarkArea> {
         addChild(emphasis);
     }
 
+    @Nullable
     public Blur getBlur() {
         return blur;
     }
@@ -311,6 +328,7 @@ public class MarkArea extends AbstractMark<MarkArea> {
         addChild(blur);
     }
 
+    @Nullable
     public List<PointPair> getData() {
         return data;
     }

@@ -16,7 +16,6 @@
 
 package serialization.series;
 
-import elemental.json.JsonValue;
 import io.jmix.chartsflowui.kit.component.JmixChart;
 import io.jmix.chartsflowui.kit.component.model.ChartOptions;
 import io.jmix.chartsflowui.kit.component.model.series.*;
@@ -29,6 +28,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import serialization.AbstractSerializationTest;
+import tools.jackson.databind.JsonNode;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -139,10 +139,10 @@ public class CandlestickSeriesSerializationTest extends AbstractSerializationTes
                 .withAnimationDelay(4);
 
         chartOptions.addSeries(candlestickSeries);
-        JsonValue serializedJson = chartSerializer.serialize(chartOptions);
+        JsonNode serializedJson = chartSerializer.serialize(chartOptions);
 
         String expectedJson = readFile("series/candlestick-series-result.json");
 
-        JSONAssert.assertEquals(expectedJson, serializedJson.toJson(), true);
+        JSONAssert.assertEquals(expectedJson, serializedJson.toString(), true);
     }
 }

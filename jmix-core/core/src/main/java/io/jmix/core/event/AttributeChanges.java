@@ -19,7 +19,7 @@ package io.jmix.core.event;
 import io.jmix.core.Id;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.metamodel.model.utils.ObjectPathUtils;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Consumer;

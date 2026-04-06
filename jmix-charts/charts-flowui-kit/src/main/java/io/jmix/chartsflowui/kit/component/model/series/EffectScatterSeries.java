@@ -19,7 +19,7 @@ package io.jmix.chartsflowui.kit.component.model.series;
 import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
 import io.jmix.chartsflowui.kit.component.model.HasEnumId;
 import io.jmix.chartsflowui.kit.component.model.shared.*;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The scatter (bubble) graph with ripple animation. The special animation effect can visually highlight some data.
@@ -162,6 +162,7 @@ public class EffectScatterSeries extends AbstractAxisAwareSeries<EffectScatterSe
             }
         }
 
+        @Nullable
         public Color getColor() {
             return color;
         }
@@ -171,6 +172,7 @@ public class EffectScatterSeries extends AbstractAxisAwareSeries<EffectScatterSe
             markAsDirty();
         }
 
+        @Nullable
         public Integer getNumber() {
             return number;
         }
@@ -180,6 +182,7 @@ public class EffectScatterSeries extends AbstractAxisAwareSeries<EffectScatterSe
             markAsDirty();
         }
 
+        @Nullable
         public Integer getPeriod() {
             return period;
         }
@@ -189,6 +192,7 @@ public class EffectScatterSeries extends AbstractAxisAwareSeries<EffectScatterSe
             markAsDirty();
         }
 
+        @Nullable
         public Double getScale() {
             return scale;
         }
@@ -198,6 +202,7 @@ public class EffectScatterSeries extends AbstractAxisAwareSeries<EffectScatterSe
             markAsDirty();
         }
 
+        @Nullable
         public BrushType getBrushType() {
             return brushType;
         }
@@ -252,6 +257,7 @@ public class EffectScatterSeries extends AbstractAxisAwareSeries<EffectScatterSe
 
         protected LineStyle lineStyle;
 
+        @Nullable
         public Boolean getShow() {
             return show;
         }
@@ -261,6 +267,7 @@ public class EffectScatterSeries extends AbstractAxisAwareSeries<EffectScatterSe
             markAsDirty();
         }
 
+        @Nullable
         public Boolean getShowAbove() {
             return showAbove;
         }
@@ -270,6 +277,7 @@ public class EffectScatterSeries extends AbstractAxisAwareSeries<EffectScatterSe
             markAsDirty();
         }
 
+        @Nullable
         public Integer getLength() {
             return length;
         }
@@ -279,6 +287,7 @@ public class EffectScatterSeries extends AbstractAxisAwareSeries<EffectScatterSe
             markAsDirty();
         }
 
+        @Nullable
         public Boolean getSmooth() {
             return smooth;
         }
@@ -288,6 +297,7 @@ public class EffectScatterSeries extends AbstractAxisAwareSeries<EffectScatterSe
             markAsDirty();
         }
 
+        @Nullable
         public Integer getMinTurnAngle() {
             return minTurnAngle;
         }
@@ -297,6 +307,7 @@ public class EffectScatterSeries extends AbstractAxisAwareSeries<EffectScatterSe
             markAsDirty();
         }
 
+        @Nullable
         public LineStyle getLineStyle() {
             return lineStyle;
         }
@@ -354,6 +365,7 @@ public class EffectScatterSeries extends AbstractAxisAwareSeries<EffectScatterSe
 
         protected BlurScopeType blurScope;
 
+        @Nullable
         public Boolean getDisabled() {
             return disabled;
         }
@@ -363,6 +375,7 @@ public class EffectScatterSeries extends AbstractAxisAwareSeries<EffectScatterSe
             markAsDirty();
         }
 
+        @Nullable
         public Double getScale() {
             return scale;
         }
@@ -372,6 +385,7 @@ public class EffectScatterSeries extends AbstractAxisAwareSeries<EffectScatterSe
             markAsDirty();
         }
 
+        @Nullable
         public FocusType getFocus() {
             return focus;
         }
@@ -381,6 +395,7 @@ public class EffectScatterSeries extends AbstractAxisAwareSeries<EffectScatterSe
             markAsDirty();
         }
 
+        @Nullable
         public BlurScopeType getBlurScope() {
             return blurScope;
         }
@@ -424,6 +439,7 @@ public class EffectScatterSeries extends AbstractAxisAwareSeries<EffectScatterSe
 
         protected Boolean disabled;
 
+        @Nullable
         public Boolean getDisabled() {
             return disabled;
         }
@@ -453,6 +469,7 @@ public class EffectScatterSeries extends AbstractAxisAwareSeries<EffectScatterSe
 
         protected ItemStyle itemStyle;
 
+        @Nullable
         public Label getLabel() {
             return label;
         }
@@ -466,6 +483,7 @@ public class EffectScatterSeries extends AbstractAxisAwareSeries<EffectScatterSe
             addChild(label);
         }
 
+        @Nullable
         public ElementLabelLine getLabelLine() {
             return labelLine;
         }
@@ -479,6 +497,7 @@ public class EffectScatterSeries extends AbstractAxisAwareSeries<EffectScatterSe
             addChild(labelLine);
         }
 
+        @Nullable
         public ItemStyle getItemStyle() {
             return itemStyle;
         }
@@ -511,6 +530,7 @@ public class EffectScatterSeries extends AbstractAxisAwareSeries<EffectScatterSe
         }
     }
 
+    @Nullable
     public CoordinateSystem getCoordinateSystem() {
         return coordinateSystem;
     }
@@ -520,6 +540,7 @@ public class EffectScatterSeries extends AbstractAxisAwareSeries<EffectScatterSe
         markAsDirty();
     }
 
+    @Nullable
     public String getEffectType() {
         return effectType;
     }
@@ -529,6 +550,7 @@ public class EffectScatterSeries extends AbstractAxisAwareSeries<EffectScatterSe
         markAsDirty();
     }
 
+    @Nullable
     public EffectOn getShowEffectOn() {
         return showEffectOn;
     }
@@ -538,6 +560,7 @@ public class EffectScatterSeries extends AbstractAxisAwareSeries<EffectScatterSe
         markAsDirty();
     }
 
+    @Nullable
     public RippleEffect getRippleEffect() {
         return rippleEffect;
     }
@@ -551,6 +574,7 @@ public class EffectScatterSeries extends AbstractAxisAwareSeries<EffectScatterSe
         addChild(rippleEffect);
     }
 
+    @Nullable
     public Integer getXAxisIndex() {
         return xAxisIndex;
     }
@@ -560,6 +584,7 @@ public class EffectScatterSeries extends AbstractAxisAwareSeries<EffectScatterSe
         markAsDirty();
     }
 
+    @Nullable
     public Integer getYAxisIndex() {
         return yAxisIndex;
     }
@@ -569,6 +594,7 @@ public class EffectScatterSeries extends AbstractAxisAwareSeries<EffectScatterSe
         markAsDirty();
     }
 
+    @Nullable
     public Integer getPolarIndex() {
         return polarIndex;
     }
@@ -578,6 +604,7 @@ public class EffectScatterSeries extends AbstractAxisAwareSeries<EffectScatterSe
         markAsDirty();
     }
 
+    @Nullable
     public Integer getGeoIndex() {
         return geoIndex;
     }
@@ -587,6 +614,7 @@ public class EffectScatterSeries extends AbstractAxisAwareSeries<EffectScatterSe
         markAsDirty();
     }
 
+    @Nullable
     public Integer getCalendarIndex() {
         return calendarIndex;
     }
@@ -596,6 +624,7 @@ public class EffectScatterSeries extends AbstractAxisAwareSeries<EffectScatterSe
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getClip() {
         return clip;
     }
@@ -605,6 +634,7 @@ public class EffectScatterSeries extends AbstractAxisAwareSeries<EffectScatterSe
         markAsDirty();
     }
 
+    @Nullable
     public String getCursor() {
         return cursor;
     }
@@ -614,6 +644,7 @@ public class EffectScatterSeries extends AbstractAxisAwareSeries<EffectScatterSe
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Symbol getSymbol() {
         return symbol;
@@ -631,6 +662,7 @@ public class EffectScatterSeries extends AbstractAxisAwareSeries<EffectScatterSe
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getSymbolSize() {
         return symbolSize;
@@ -642,6 +674,7 @@ public class EffectScatterSeries extends AbstractAxisAwareSeries<EffectScatterSe
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public JsFunction getSymbolSizeFunction() {
         return symbolSizeFunction;
@@ -659,6 +692,7 @@ public class EffectScatterSeries extends AbstractAxisAwareSeries<EffectScatterSe
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getSymbolRotate() {
         return symbolRotate;
@@ -670,6 +704,7 @@ public class EffectScatterSeries extends AbstractAxisAwareSeries<EffectScatterSe
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Boolean getSymbolKeepAspect() {
         return symbolKeepAspect;
@@ -681,6 +716,7 @@ public class EffectScatterSeries extends AbstractAxisAwareSeries<EffectScatterSe
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public String[] getSymbolOffset() {
         return symbolOffset;
@@ -692,6 +728,7 @@ public class EffectScatterSeries extends AbstractAxisAwareSeries<EffectScatterSe
         markAsDirty();
     }
 
+    @Nullable
     public LabelLine getLabelLine() {
         return labelLine;
     }
@@ -705,6 +742,7 @@ public class EffectScatterSeries extends AbstractAxisAwareSeries<EffectScatterSe
         addChild(labelLine);
     }
 
+    @Nullable
     public ItemStyle getItemStyle() {
         return itemStyle;
     }
@@ -718,6 +756,7 @@ public class EffectScatterSeries extends AbstractAxisAwareSeries<EffectScatterSe
         addChild(itemStyle);
     }
 
+    @Nullable
     public Emphasis getEmphasis() {
         return emphasis;
     }
@@ -731,6 +770,7 @@ public class EffectScatterSeries extends AbstractAxisAwareSeries<EffectScatterSe
         addChild(emphasis);
     }
 
+    @Nullable
     public Blur getBlur() {
         return blur;
     }
@@ -744,6 +784,7 @@ public class EffectScatterSeries extends AbstractAxisAwareSeries<EffectScatterSe
         addChild(blur);
     }
 
+    @Nullable
     public Select getSelect() {
         return select;
     }
@@ -757,6 +798,7 @@ public class EffectScatterSeries extends AbstractAxisAwareSeries<EffectScatterSe
         addChild(select);
     }
 
+    @Nullable
     public Boolean getAnimation() {
         return animation;
     }
@@ -766,6 +808,7 @@ public class EffectScatterSeries extends AbstractAxisAwareSeries<EffectScatterSe
         markAsDirty();
     }
 
+    @Nullable
     public Integer getAnimationThreshold() {
         return animationThreshold;
     }
@@ -775,6 +818,7 @@ public class EffectScatterSeries extends AbstractAxisAwareSeries<EffectScatterSe
         markAsDirty();
     }
 
+    @Nullable
     public Integer getAnimationDurationUpdate() {
         return animationDurationUpdate;
     }
@@ -784,6 +828,7 @@ public class EffectScatterSeries extends AbstractAxisAwareSeries<EffectScatterSe
         markAsDirty();
     }
 
+    @Nullable
     public String getAnimationEasingUpdate() {
         return animationEasingUpdate;
     }
@@ -793,6 +838,7 @@ public class EffectScatterSeries extends AbstractAxisAwareSeries<EffectScatterSe
         markAsDirty();
     }
 
+    @Nullable
     public Integer getAnimationDelayUpdate() {
         return animationDelayUpdate;
     }

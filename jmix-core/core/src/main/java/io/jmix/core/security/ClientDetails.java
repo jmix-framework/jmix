@@ -16,7 +16,7 @@
 
 package io.jmix.core.security;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.io.Serializable;
 import java.util.Locale;
 import java.util.TimeZone;

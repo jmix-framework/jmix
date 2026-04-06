@@ -20,7 +20,7 @@ import io.jmix.core.accesscontext.AccessContext;
 import io.jmix.flowui.menu.MenuItem;
 
 import io.jmix.flowui.view.View;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Defines authorization point for UI menu items.

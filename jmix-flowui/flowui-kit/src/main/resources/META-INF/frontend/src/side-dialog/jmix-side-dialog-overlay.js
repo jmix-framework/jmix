@@ -15,17 +15,15 @@
  */
 
 import { defineCustomElement } from '@vaadin/component-base/src/define.js';
-import { registerStyles } from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
 import { DialogOverlay } from '@vaadin/dialog/src/vaadin-dialog-overlay.js';
 
-import { jmixSideDialogOverlayStyles } from './jmix-side-dialog-overlay-styles.js';
-
-registerStyles('jmix-side-dialog-overlay',
-    [jmixSideDialogOverlayStyles],
-    { moduleId: 'jmix-side-dialog-overlay-styles', },
-);
+import { jmixSideDialogOverlayStyles } from './styles/jmix-side-dialog-overlay-base-styles.js';
 
 class JmixSideDialogOverlay extends DialogOverlay {
+
+    static get styles() {
+      return [...super.styles, jmixSideDialogOverlayStyles];
+    }
 
     static get is() {
       return 'jmix-side-dialog-overlay';

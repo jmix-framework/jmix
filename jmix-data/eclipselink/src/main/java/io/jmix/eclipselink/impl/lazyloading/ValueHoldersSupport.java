@@ -17,7 +17,7 @@
 package io.jmix.eclipselink.impl.lazyloading;
 
 import io.jmix.core.entity.NoValueCollection;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.eclipse.persistence.expressions.Expression;
 import org.eclipse.persistence.indirection.IndirectCollection;
 import org.eclipse.persistence.indirection.ValueHolderInterface;

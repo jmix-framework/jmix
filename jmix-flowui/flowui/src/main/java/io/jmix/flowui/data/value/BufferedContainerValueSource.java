@@ -20,7 +20,7 @@ import io.jmix.flowui.data.BindingState;
 import io.jmix.flowui.data.BufferedDataUnit;
 import io.jmix.flowui.model.InstanceContainer;
 import org.springframework.context.ApplicationContext;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Objects;
 

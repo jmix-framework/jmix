@@ -98,7 +98,7 @@ public class JmixEntityManagerFactory implements EntityManagerFactory {
 
     @Override
     public String getName() {
-        return ""; //TODO [SB4]
+        return delegate.getName();
     }
 
     @Override
@@ -118,12 +118,12 @@ public class JmixEntityManagerFactory implements EntityManagerFactory {
 
     @Override
     public PersistenceUnitTransactionType getTransactionType() {
-        return null; //TODO [SB4]
+        return delegate.getTransactionType();
     }
 
     @Override
     public SchemaManager getSchemaManager() {
-        return null; //TODO [SB4]
+        return delegate.getSchemaManager();
     }
 
     @Override
@@ -142,22 +142,22 @@ public class JmixEntityManagerFactory implements EntityManagerFactory {
     }
 
     @Override
-    public <R> Map<String, TypedQueryReference<R>> getNamedQueries(Class<R> aClass) {
-        return Map.of(); //TODO [SB4]
+    public <R> Map<String, TypedQueryReference<R>> getNamedQueries(Class<R> resultType) {
+        return delegate.getNamedQueries(resultType);
     }
 
     @Override
-    public <E> Map<String, EntityGraph<? extends E>> getNamedEntityGraphs(Class<E> aClass) {
-        return Map.of(); //TODO [SB4]
+    public <E> Map<String, EntityGraph<? extends E>> getNamedEntityGraphs(Class<E> entityType) {
+        return delegate.getNamedEntityGraphs(entityType);
     }
 
     @Override
-    public void runInTransaction(Consumer<EntityManager> consumer) {
-        //TODO [SB4]
+    public void runInTransaction(Consumer<EntityManager> work) {
+        delegate.runInTransaction(work);
     }
 
     @Override
-    public <R> R callInTransaction(Function<EntityManager, R> function) {
-        return null; //TODO [SB4]
+    public <R> R callInTransaction(Function<EntityManager, R> work) {
+        return delegate.callInTransaction(work);
     }
 }

@@ -33,12 +33,14 @@ import io.jmix.reports.impl.AnnotatedReportScanner;
 import io.jmix.reports.util.MsgBundleTools;
 import io.jmix.security.model.BaseRole;
 import io.jmix.security.role.ResourceRoleRepository;
+import io.jmix.security.role.RoleGrantedAuthorityUtils;
 import io.jmix.security.role.assignment.RoleAssignmentRepository;
 import io.jmix.security.role.assignment.RoleAssignmentRoleType;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.event.EventListener;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -62,6 +64,7 @@ public class ReportRepositoryImpl implements ReportRepository {
     protected final ReportSecurityManager reportSecurityManager;
     protected final ResourceRoleRepository resourceRoleRepository;
     protected final RoleAssignmentRepository roleAssignmentRepository;
+    protected final RoleGrantedAuthorityUtils roleGrantedAuthorityUtils;
     protected final EntityStates entityStates;
     protected final Metadata metadata;
     protected final AccessManager accessManager;
@@ -69,7 +72,8 @@ public class ReportRepositoryImpl implements ReportRepository {
     public ReportRepositoryImpl(AnnotatedReportHolder annotatedReportHolder, AnnotatedReportScanner reportScanner, DataManager dataManager,
                                 ReportsPersistence reportsPersistence, RepositoryUtil repositoryUtil, MsgBundleTools msgBundleTools,
                                 ReportSecurityManager reportSecurityManager, ResourceRoleRepository resourceRoleRepository,
-                                RoleAssignmentRepository roleAssignmentRepository, EntityStates entityStates, Metadata metadata,
+                                RoleAssignmentRepository roleAssignmentRepository, RoleGrantedAuthorityUtils roleGrantedAuthorityUtils,
+                                EntityStates entityStates, Metadata metadata,
                                 AccessManager accessManager) {
         this.annotatedReportHolder = annotatedReportHolder;
         this.reportScanner = reportScanner;
@@ -80,6 +84,7 @@ public class ReportRepositoryImpl implements ReportRepository {
         this.reportSecurityManager = reportSecurityManager;
         this.resourceRoleRepository = resourceRoleRepository;
         this.roleAssignmentRepository = roleAssignmentRepository;
+        this.roleGrantedAuthorityUtils = roleGrantedAuthorityUtils;
         this.entityStates = entityStates;
         this.metadata = metadata;
         this.accessManager = accessManager;
@@ -157,6 +162,18 @@ public class ReportRepositoryImpl implements ReportRepository {
                     .map(BaseRole::getCode)
                     .collect(Collectors.toSet());
 
+            String defaultRolePrefix = roleGrantedAuthorityUtils.getDefaultRolePrefix();
+            for (GrantedAuthority authority : filter.getUser().getAuthorities()) {
+                String authorityString = authority.getAuthority();
+                if (authorityString != null && authorityString.startsWith(defaultRolePrefix)) {
+                    String roleCode = authorityString.substring(defaultRolePrefix.length());
+                    BaseRole role = resourceRoleRepository.findRoleByCode(roleCode);
+                    if (role != null) {
+                        codes.add(role.getCode());
+                    }
+                }
+            }
+
             filteringContext.resourceRoleCodes = codes;
         }
         return filteringContext;
@@ -164,15 +181,15 @@ public class ReportRepositoryImpl implements ReportRepository {
 
     private boolean satisfies(Report report, ReportFilter filter, FilteringContext filteringContext) {
         return repositoryUtil.containsIgnoreCase(report.getCode(), filter.getCodeContains())
-               && repositoryUtil.containsIgnoreCase(report.getInstanceName(msgBundleTools), filter.getNameContains())
-               && repositoryUtil.entityEquals(report.getGroup(), filter.getGroup())
-               && repositoryUtil.dateAfterOrEquals(report.getUpdateTs(), filter.getUpdatedAfter())
-               && repositoryUtil.equalsTo(report.getRestAccess(), filter.getRestAccessible())
-               && repositoryUtil.equalsTo(report.getSystem(), filter.getSystem())
-               && viewIdSatisfies(report, filter.getViewId())
-               && roleSatisfies(report, filter.getUser(), filteringContext)
-               && inputValueMetaClassSatisfies(report, filter.getInputValueMetaClass(), filteringContext)
-               && outputTypeSatisfies(report, filter.getOutputType());
+                && repositoryUtil.containsIgnoreCase(report.getInstanceName(msgBundleTools), filter.getNameContains())
+                && repositoryUtil.entityEquals(report.getGroup(), filter.getGroup())
+                && repositoryUtil.dateAfterOrEquals(report.getUpdateTs(), filter.getUpdatedAfter())
+                && repositoryUtil.equalsTo(report.getRestAccess(), filter.getRestAccessible())
+                && repositoryUtil.equalsTo(report.getSystem(), filter.getSystem())
+                && viewIdSatisfies(report, filter.getViewId())
+                && roleSatisfies(report, filter.getUser(), filteringContext)
+                && inputValueMetaClassSatisfies(report, filter.getInputValueMetaClass(), filteringContext)
+                && outputTypeSatisfies(report, filter.getOutputType());
     }
 
     protected boolean viewIdSatisfies(Report report, @Nullable String viewId) {
@@ -220,7 +237,7 @@ public class ReportRepositoryImpl implements ReportRepository {
                     ? report.getInputParameters() : Collections.emptyList();
             return parameterList.stream()
                     .anyMatch(ip -> ip.getEntityMetaClass() != null
-                                    && filteringContext.inputValueMetaClassNames.contains(ip.getEntityMetaClass()));
+                            && filteringContext.inputValueMetaClassNames.contains(ip.getEntityMetaClass()));
         }
         return true;
     }
@@ -293,7 +310,7 @@ public class ReportRepositoryImpl implements ReportRepository {
             throw new AccessDeniedException("entity", metadata.getClass(Report.class).getName(), EntityOp.READ.getId());
         }
 
-        Preconditions.checkNotEmptyString(reportCode,"Report code should not be empty");
+        Preconditions.checkNotEmptyString(reportCode, "Report code should not be empty");
 
         for (Report report : annotatedReportHolder.getAllReports()) {
             if (report.getCode().equals(reportCode)) {
@@ -313,7 +330,7 @@ public class ReportRepositoryImpl implements ReportRepository {
             throw new AccessDeniedException("entity", metadata.getClass(Report.class).getName(), EntityOp.READ.getId());
         }
 
-        Preconditions.checkNotEmptyString(reportCode,"Report code should not be empty");
+        Preconditions.checkNotEmptyString(reportCode, "Report code should not be empty");
 
         for (Report report : annotatedReportHolder.getAllReports()) {
             if (report.getCode().equals(reportCode)) {

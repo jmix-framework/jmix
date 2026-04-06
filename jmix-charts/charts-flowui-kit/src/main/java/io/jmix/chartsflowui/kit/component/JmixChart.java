@@ -45,7 +45,7 @@ import io.jmix.chartsflowui.kit.component.serialization.ChartIncrementalChanges;
 import io.jmix.chartsflowui.kit.component.serialization.JmixChartSerializer;
 import io.jmix.chartsflowui.kit.data.chart.ChartItems;
 import io.jmix.chartsflowui.kit.data.chart.DataItem;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.node.ObjectNode;
@@ -341,7 +341,7 @@ public class JmixChart extends Component implements HasSize {
      *
      * @param title title to add
      */
-    public void setTitle(Title title) {
+    public void setTitle(@Nullable Title title) {
         options.setTitle(title);
     }
 
@@ -362,7 +362,7 @@ public class JmixChart extends Component implements HasSize {
      * @see Legend
      * @see ScrollableLegend
      */
-    public void setLegend(AbstractLegend<?> legend) {
+    public void setLegend(@Nullable AbstractLegend<?> legend) {
         options.setLegend(legend);
     }
 
@@ -756,8 +756,7 @@ public class JmixChart extends Component implements HasSize {
     /**
      * @return state switching animation configurations
      */
-    @Nullable
-    public ChartOptions.StateAnimation getStateAnimation() {
+    public ChartOptions.@Nullable StateAnimation getStateAnimation() {
         return options.getStateAnimation();
     }
 
@@ -773,8 +772,7 @@ public class JmixChart extends Component implements HasSize {
     /**
      * @return the type of compositing operation to apply when drawing a new shape
      */
-    @Nullable
-    public ChartOptions.BlendMode getBlendMode() {
+    public ChartOptions.@Nullable BlendMode getBlendMode() {
         return options.getBlendMode();
     }
 
@@ -1009,11 +1007,11 @@ public class JmixChart extends Component implements HasSize {
                                                             Collection<T> items) {
         //noinspection unchecked
         ChartIncrementalChanges<T> dataSetChanges =
-                (ChartIncrementalChanges<T>) changedItems.computeIfAbsent(getDataSet(),
+                (ChartIncrementalChanges<T>) changedItems.computeIfAbsent(Objects.requireNonNull(getDataSet()),
                         k -> new ChartIncrementalChanges<>());
 
         // dataset can't be null
-        dataSetChanges.setSource(Objects.requireNonNull(getDataSet()).getSource());
+        dataSetChanges.setSource(Objects.requireNonNull(Objects.requireNonNull(getDataSet()).getSource()));
 
         switch (operation) {
             case ADD -> dataSetChanges.addAddedItems(items);

@@ -29,7 +29,7 @@ import io.jmix.flowui.kit.component.usermenu.UserMenuItem.HasSubMenu;
 import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.kit.theme.ThemeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;

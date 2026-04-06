@@ -16,6 +16,8 @@
 
 package io.jmix.chartsflowui.kit.component.model.axis;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * The angle axis in Polar Coordinate. More detailed information is provided in the documentation.
  *
@@ -31,6 +33,7 @@ public class AngleAxis extends AbstractPolarAxis<AngleAxis> {
         super(AxisType.CATEGORY);
     }
 
+    @Nullable
     public Integer getStartAngle() {
         return startAngle;
     }
@@ -40,6 +43,7 @@ public class AngleAxis extends AbstractPolarAxis<AngleAxis> {
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getClockwise() {
         return clockwise;
     }

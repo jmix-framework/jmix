@@ -1,0 +1,90 @@
+/*
+ * Copyright 2026 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@media lumo_components_jmix-side-panel-layout-closer {
+
+    /*
+     * Ex Base styles
+     */
+
+    [part='icon'] {
+      background: currentColor;
+      display: block;
+      height: var(--vaadin-icon-size, 1lh);
+      mask: var(--_vaadin-icon-cross) 50% / var(--vaadin-icon-visual-size, 100%) no-repeat;
+      width: var(--vaadin-icon-size, 1lh);
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    @media (forced-colors: active) {
+
+        [part='icon'] {
+          background: CanvasText;
+        }
+    }
+
+    /*
+     * Lumo styles
+     */
+
+    /* Copied from packages/vaadin-lumo-styles/src/components/drawer-toggle.css */
+    :host {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: default;
+      position: relative;
+      /*outline: none;*/ /* Jmix  */
+      width: var(--lumo-size-l);
+      height: var(--lumo-size-l);
+      min-width: auto;
+      margin: 0 var(--lumo-space-s);
+      padding: 0;
+      background: transparent;
+      color: var(--lumo-secondary-text-color); /* Jmix */
+    }
+
+    [part='icon'],
+    [part='icon']::after,
+    [part='icon']::before {
+      height: auto;
+      width: auto;
+      background: transparent;
+    }
+
+    [part='icon']::after,
+    [part='icon']::before {
+      content: '';
+    }
+
+    [part='icon']::after {
+      top: 6px;
+    }
+
+    [part='icon']::before {
+      top: 12px;
+      font-family: lumo-icons;
+      font-size: var(--lumo-icon-size-m);
+      content: var(--lumo-icons-cross);
+    }
+
+    :host { /* Jmix */
+      color: var(--lumo-contrast);
+    }
+}

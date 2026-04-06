@@ -16,6 +16,8 @@
 
 package io.jmix.chartsflowui.kit.component.model.series;
 
+import org.jspecify.annotations.Nullable;
+
 import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
 
 /**
@@ -61,6 +63,7 @@ public class Encode extends ChartObservableObject {
 
     protected String[] tooltip;
 
+    @Nullable
     public String[] getX() {
         return x;
     }
@@ -70,6 +73,7 @@ public class Encode extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public String[] getY() {
         return y;
     }
@@ -79,6 +83,7 @@ public class Encode extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public String[] getRadius() {
         return radius;
     }
@@ -88,6 +93,7 @@ public class Encode extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public String[] getAngle() {
         return angle;
     }
@@ -98,6 +104,7 @@ public class Encode extends ChartObservableObject {
     }
 
 
+    @Nullable
     public String[] getValue() {
         return value;
     }
@@ -107,6 +114,7 @@ public class Encode extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public String[] getTooltip() {
         return tooltip;
     }

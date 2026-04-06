@@ -19,7 +19,7 @@ package io.jmix.reportsflowui.view.history;
 import io.jmix.core.Messages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;

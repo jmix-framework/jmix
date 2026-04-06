@@ -19,6 +19,7 @@ package io.jmix.chartsflowui.kit.component.model.legend;
 import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
 import io.jmix.chartsflowui.kit.component.model.shared.Color;
 import io.jmix.chartsflowui.kit.component.model.shared.JsFunction;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Scrollable legend. It helps when too many legend items needed to be shown.
@@ -68,6 +69,7 @@ public class ScrollableLegend extends AbstractLegend<ScrollableLegend> {
 
         protected String[] vertical;
 
+        @Nullable
         public String[] getHorizontal() {
             return horizontal;
         }
@@ -77,6 +79,7 @@ public class ScrollableLegend extends AbstractLegend<ScrollableLegend> {
             markAsDirty();
         }
 
+        @Nullable
         public String[] getVertical() {
             return vertical;
         }
@@ -97,6 +100,7 @@ public class ScrollableLegend extends AbstractLegend<ScrollableLegend> {
         }
     }
 
+    @Nullable
     public Integer getScrollDataIndex() {
         return scrollDataIndex;
     }
@@ -106,6 +110,7 @@ public class ScrollableLegend extends AbstractLegend<ScrollableLegend> {
         markAsDirty();
     }
 
+    @Nullable
     public Integer getPageButtonItemGap() {
         return pageButtonItemGap;
     }
@@ -115,6 +120,7 @@ public class ScrollableLegend extends AbstractLegend<ScrollableLegend> {
         markAsDirty();
     }
 
+    @Nullable
     public Integer getPageButtonGap() {
         return pageButtonGap;
     }
@@ -124,6 +130,7 @@ public class ScrollableLegend extends AbstractLegend<ScrollableLegend> {
         markAsDirty();
     }
 
+    @Nullable
     public Position getPageButtonPosition() {
         return pageButtonPosition;
     }
@@ -133,6 +140,7 @@ public class ScrollableLegend extends AbstractLegend<ScrollableLegend> {
         markAsDirty();
     }
 
+    @Nullable
     public String getPageFormatter() {
         return pageFormatter;
     }
@@ -142,6 +150,7 @@ public class ScrollableLegend extends AbstractLegend<ScrollableLegend> {
         markAsDirty();
     }
 
+    @Nullable
     public JsFunction getPageFormatterFunction() {
         return pageFormatterFunction;
     }
@@ -156,6 +165,7 @@ public class ScrollableLegend extends AbstractLegend<ScrollableLegend> {
         markAsDirty();
     }
 
+    @Nullable
     public PageIcons getPageIcons() {
         return pageIcons;
     }
@@ -169,6 +179,7 @@ public class ScrollableLegend extends AbstractLegend<ScrollableLegend> {
         addChild(pageIcons);
     }
 
+    @Nullable
     public Color getPageIconColor() {
         return pageIconColor;
     }
@@ -178,6 +189,7 @@ public class ScrollableLegend extends AbstractLegend<ScrollableLegend> {
         markAsDirty();
     }
 
+    @Nullable
     public Color getPageIconInactiveColor() {
         return pageIconInactiveColor;
     }
@@ -187,6 +199,7 @@ public class ScrollableLegend extends AbstractLegend<ScrollableLegend> {
         markAsDirty();
     }
 
+    @Nullable
     public Integer getPageIconSize() {
         return pageIconSize;
     }
@@ -196,7 +209,7 @@ public class ScrollableLegend extends AbstractLegend<ScrollableLegend> {
         markAsDirty();
     }
 
-    public io.jmix.chartsflowui.kit.component.model.shared.TextStyle getPageTextStyle() {
+    public io.jmix.chartsflowui.kit.component.model.shared.@Nullable TextStyle getPageTextStyle() {
         return pageTextStyle;
     }
 
@@ -209,6 +222,7 @@ public class ScrollableLegend extends AbstractLegend<ScrollableLegend> {
         addChild(pageTextStyle);
     }
 
+    @Nullable
     public Boolean getAnimation() {
         return animation;
     }
@@ -218,6 +232,7 @@ public class ScrollableLegend extends AbstractLegend<ScrollableLegend> {
         markAsDirty();
     }
 
+    @Nullable
     public Integer getAnimationDurationUpdate() {
         return animationDurationUpdate;
     }

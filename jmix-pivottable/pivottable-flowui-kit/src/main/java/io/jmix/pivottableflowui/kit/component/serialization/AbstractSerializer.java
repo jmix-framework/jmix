@@ -16,7 +16,7 @@
 
 package io.jmix.pivottableflowui.kit.component.serialization;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import tools.jackson.core.JacksonException;
 import tools.jackson.core.JsonGenerator;
 import tools.jackson.databind.SerializationContext;

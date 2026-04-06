@@ -19,7 +19,7 @@ package io.jmix.flowui.kit.component.upload;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.vaadin.flow.component.upload.UploadI18N;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Contains i18n properties for {@link JmixUploadButton}, {@link JmixFileStorageUploadField}

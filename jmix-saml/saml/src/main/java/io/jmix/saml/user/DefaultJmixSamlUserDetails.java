@@ -7,6 +7,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Default implementation of {@link JmixSamlUserDetails} that delegates some method invocations to the
+ * wrapped {@code Saml2AuthenticatedPrincipal}.
+ */
 public class DefaultJmixSamlUserDetails implements JmixSamlUserDetails, HasSamlPrincipalDelegate {
 
     private Collection<? extends GrantedAuthority> authorities;
@@ -43,7 +47,7 @@ public class DefaultJmixSamlUserDetails implements JmixSamlUserDetails, HasSamlP
 
     @Override
     public String getPassword() {
-        return null;
+        return "";
     }
 
     @Override

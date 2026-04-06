@@ -20,7 +20,6 @@ import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.contextmenu.MenuItem;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Hr;
-import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.dom.ClassList;
 import com.vaadin.flow.dom.ThemeList;
 import com.vaadin.flow.shared.Registration;
@@ -30,7 +29,7 @@ import io.jmix.flowui.kit.component.menubar.JmixMenuBar;
 import io.jmix.flowui.kit.component.menubar.JmixMenuItem;
 import io.jmix.flowui.kit.component.menubar.JmixSubMenu;
 import io.jmix.flowui.kit.event.EventBus;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
@@ -653,7 +652,7 @@ public abstract class AbstractDropdownButton extends Composite<JmixMenuBar>
         protected String text;
 
         public TextItemImpl(String id,
-                            @Nullable String text,
+                            String text,
                             DropdownButtonComponent parent,
                             MenuItemProvider<String> textMenuItemProvider) {
             super(id, textMenuItemProvider.createMenuItem(text), parent);

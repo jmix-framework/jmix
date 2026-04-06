@@ -31,7 +31,7 @@ import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewControllerUtils;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import org.dom4j.Element;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public abstract class AbstractDataLoadCoordinatorFacetLoader<T extends DataLoadCoordinator>
         extends AbstractFacetLoader<T> {

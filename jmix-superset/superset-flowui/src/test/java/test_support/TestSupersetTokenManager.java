@@ -17,7 +17,7 @@
 package test_support;
 
 import io.jmix.superset.SupersetTokenManager;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public class TestSupersetTokenManager implements SupersetTokenManager {
 

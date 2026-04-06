@@ -16,17 +16,26 @@
 
 import '@vaadin/component-base/src/styles/style-props.js';
 import {css} from 'lit';
+import {jmixValuePickerActionsShared} from "../../styles/value-picker-actions-shared-styles";
 
-export const jmixValuePickerStyles = css`
-    :host::before {
-        display: inline-flex;
+const jmixValuePicker = css`
+
+    [part="input-field"] {
+        padding: 0;
     }
 
-    [part="action-part"] ::slotted(*) {
-        display: flex;
+    :host([has-actions]) [part="input-field"] {
+        padding-right: var(--vaadin-padding-xs);
     }
 
-    :host([readonly]) [part="action-part"] {
-        display: none;
+    [part='input-field'] ::slotted(:is(input, textarea)) {
+        padding: var(--vaadin-input-field-padding, var(--vaadin-padding-block-container) var(--vaadin-padding-inline-container));
+    }
+
+    :host([focused]) [part='input-field'] ::slotted(:is(input, textarea)) {
+        padding-inline-end: 0;
     }
 `;
+
+
+export const jmixValuePickerStyles = [jmixValuePickerActionsShared, jmixValuePicker];

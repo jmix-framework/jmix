@@ -40,7 +40,7 @@ import io.jmix.flowui.model.CollectionPropertyContainer;
 import io.jmix.reports.entity.table.TemplateTableBand;
 import io.jmix.reports.entity.table.TemplateTableColumn;
 import io.jmix.reportsflowui.constant.ReportStyleConstants;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -207,6 +207,7 @@ public class TableEditFragmentContent extends VerticalLayout {
         field.setRequired(true);
         field.setValue(item.getBandName() == null ? field.getEmptyValue() : item.getBandName());
         field.setWidthFull();
+        field.addFocusListener(__ -> getBandsDataGrid().select(item));
         field.addValueChangeListener(event -> item.setBandName(event.getValue()));
         field.setStatusChangeHandler(__ -> {/* do nothing */});
         return field;
@@ -249,6 +250,7 @@ public class TableEditFragmentContent extends VerticalLayout {
         field.setRequired(true);
         field.setValue(item.getKey() == null ? field.getEmptyValue() : item.getKey());
         field.setWidthFull();
+        field.addFocusListener(__ -> getColumnsDataGrid().select(item));
         field.addValueChangeListener(event -> item.setKey(event.getValue()));
         field.setStatusChangeHandler(__ -> {/* do nothing */});
         return field;
@@ -260,6 +262,7 @@ public class TableEditFragmentContent extends VerticalLayout {
         field.setRequired(true);
         field.setValue(item.getCaption() == null ? field.getEmptyValue() : item.getCaption());
         field.setWidthFull();
+        field.addFocusListener(__ -> getColumnsDataGrid().select(item));
         field.addValueChangeListener(event -> item.setCaption(event.getValue()));
         field.setStatusChangeHandler(__ -> {/* do nothing */});
         return field;

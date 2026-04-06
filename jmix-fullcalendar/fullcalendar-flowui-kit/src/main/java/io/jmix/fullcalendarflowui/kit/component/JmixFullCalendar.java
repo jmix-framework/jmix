@@ -30,7 +30,7 @@ import io.jmix.fullcalendarflowui.kit.component.model.AbstractCalendarDisplayMod
 import io.jmix.fullcalendarflowui.kit.component.model.option.JmixFullCalendarOptions;
 import io.jmix.fullcalendarflowui.kit.component.serialization.JmixFullCalendarDeserializer;
 import io.jmix.fullcalendarflowui.kit.component.serialization.JmixFullCalendarSerializer;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import tools.jackson.databind.node.ArrayNode;
 import tools.jackson.databind.node.ObjectNode;
 
@@ -344,6 +344,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
      *
      * @return the current date of the calendar
      */
+    @Nullable
     public LocalDate getDate() {
         return options.getCurrentDate().getValue();
     }
@@ -1614,7 +1615,7 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
      *
      * @param dateIncrement the step duration
      */
-    public void setDateIncrement(CalendarDuration dateIncrement) {
+    public void setDateIncrement(@Nullable CalendarDuration dateIncrement) {
         options.getDateIncrement().setValue(dateIncrement);
     }
 

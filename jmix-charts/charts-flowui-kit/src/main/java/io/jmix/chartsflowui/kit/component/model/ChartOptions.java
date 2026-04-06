@@ -25,8 +25,8 @@ import io.jmix.chartsflowui.kit.component.model.shared.Color;
 import io.jmix.chartsflowui.kit.component.model.shared.TextStyle;
 import io.jmix.chartsflowui.kit.component.model.toolbox.Toolbox;
 import io.jmix.chartsflowui.kit.component.model.visualMap.AbstractVisualMap;
-import jakarta.annotation.Nullable;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import tools.jackson.core.JacksonException;
 import tools.jackson.core.json.JsonReadFeature;
 import tools.jackson.databind.JsonNode;
@@ -622,7 +622,7 @@ public class ChartOptions extends ChartObservableObject {
     }
 
     @Override
-    public void setChartObjectChangeListener(Consumer<ObjectChangeEvent> listener) {
+    public void setChartObjectChangeListener(@Nullable Consumer<ObjectChangeEvent> listener) {
         super.setChartObjectChangeListener(listener);
     }
 
@@ -640,6 +640,7 @@ public class ChartOptions extends ChartObservableObject {
 
         protected String easing;
 
+        @Nullable
         public Integer getDuration() {
             return duration;
         }
@@ -649,6 +650,7 @@ public class ChartOptions extends ChartObservableObject {
             markAsDirty();
         }
 
+        @Nullable
         public String getEasing() {
             return easing;
         }

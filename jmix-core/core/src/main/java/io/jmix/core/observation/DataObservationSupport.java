@@ -21,7 +21,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -58,7 +58,7 @@ public class DataObservationSupport {
         this.observationEnabled = coreProperties.isDataObservationEnabled();
     }
 
-    public Observation createEntityLoadObservation(MetaClass metaClass, @Nullable LoadContext.Query query) {
+    public Observation createEntityLoadObservation(MetaClass metaClass, LoadContext.@Nullable Query query) {
         if (!isObservationAvailable()) {
             return Observation.NOOP;
         }
@@ -73,7 +73,7 @@ public class DataObservationSupport {
         return observation;
     }
 
-    public Observation createEntityListLoadObservation(MetaClass metaClass, @Nullable LoadContext.Query query) {
+    public Observation createEntityListLoadObservation(MetaClass metaClass, LoadContext.@Nullable Query query) {
         if (!isObservationAvailable()) {
             return Observation.NOOP;
         }
@@ -88,7 +88,7 @@ public class DataObservationSupport {
         return observation;
     }
 
-    public Observation createEntityCountObservation(MetaClass metaClass, @Nullable LoadContext.Query query) {
+    public Observation createEntityCountObservation(MetaClass metaClass, LoadContext.@Nullable Query query) {
         if (!isObservationAvailable()) {
             return Observation.NOOP;
         }

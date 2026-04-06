@@ -24,6 +24,7 @@ import com.vaadin.flow.component.html.Hr
 import com.vaadin.flow.component.icon.VaadinIcon
 import component_xml_load.screen.GridView
 import io.jmix.core.DataManager
+import io.jmix.flowui.component.grid.DataGridColumn
 import io.jmix.flowui.component.grid.EnhancedDataGrid
 import io.jmix.flowui.kit.component.grid.GridMenuItemActionWrapper
 import org.springframework.beans.factory.annotation.Autowired
@@ -45,7 +46,7 @@ class GridXmlLoadTest extends FlowuiTestSpecification {
 
     @Override
     void setup() {
-        registerViewBasePackages("component_xml_load.screen")
+        registerViewBasePackages("component_xml_load.screen", "io.jmix.flowui.app")
 
         def order = dataManager.create(Order)
         order.number = "number"
@@ -377,5 +378,32 @@ class GridXmlLoadTest extends FlowuiTestSpecification {
 
         //separator
         contextMenu.getChildren().toList().get(1) instanceof Hr
+    }
+
+    def "Load dataGrid columns' filterable, sortable and resizable attributes from XML"() {
+        given: "Screen with a dataGrid"
+        def gridView = navigateToView(GridView.class)
+
+        when: "dataGrid is loaded"
+        def columnsAttributesDataGrid = gridView.columnsAttributesDataGrid
+
+        then: "dataGrid columns' attributes are loaded"
+        verifyAll(columnsAttributesDataGrid.getColumnByKey("number") as DataGridColumn) {
+            sortable
+            resizable
+            filterable
+        }
+
+        verifyAll(columnsAttributesDataGrid.getColumnByKey("amount") as DataGridColumn) {
+            !sortable
+            !resizable
+            filterable
+        }
+
+        verifyAll(columnsAttributesDataGrid.getColumnByKey("date") as DataGridColumn) {
+            !sortable
+            resizable
+            !filterable
+        }
     }
 }

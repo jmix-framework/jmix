@@ -21,7 +21,7 @@ import io.jmix.flowui.component.pagination.PaginationSettingsUtils;
 import io.jmix.flowui.component.pagination.SimplePagination;
 import io.jmix.flowui.facet.settings.Settings;
 import io.jmix.flowui.facet.settings.component.SimplePaginationSettings;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Objects;
 

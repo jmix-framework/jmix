@@ -7,7 +7,7 @@ import io.jmix.core.metamodel.annotation.JmixProperty;
 import org.apache.commons.collections4.CollectionUtils;
 
 import org.hibernate.validator.constraints.Length;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
 import java.util.ArrayList;

@@ -201,7 +201,7 @@ class EntitiesControllerSecurityFT extends AbstractRestControllerFT {
         params.put("viewName", "carEdit");
         try (CloseableHttpResponse response = sendGet(baseUrl + "/services/" + RestTestService.NAME + "/findCar", carReadUserToken, params)) {
             assertEquals(HttpStatus.SC_OK, statusCode(response));
-            assertEquals("application/json;charset=UTF-8", responseContentType(response));
+            assertEquals("application/json", responseContentType(response));
             ReadContext ctx = parseResponse(response);
             assertEquals(carUuidString, ctx.read("$.id"));
             assertEquals("ref_Car", ctx.read("$._entityName"));

@@ -39,7 +39,6 @@ import io.jmix.flowui.kit.component.upload.JmixFileUploadField;
 import io.jmix.flowui.kit.component.upload.JmixUploadI18N;
 import io.jmix.flowui.kit.component.upload.event.FileUploadFileRejectedEvent;
 import org.apache.commons.io.FileUtils;
-import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -48,7 +47,7 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.servlet.autoconfigure.MultipartProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.function.Consumer;
 
@@ -61,7 +60,7 @@ public class FileUploadField extends JmixFileUploadField<FileUploadField> implem
     protected Messages messages;
     protected Downloader downloader;
     protected Notifications notifications;
-    protected ObjectProvider<@NonNull MultipartProperties> multipartPropertiesProvider;
+    protected ObjectProvider<MultipartProperties> multipartPropertiesProvider;
 
     protected FileFieldDelegate<FileUploadField, byte[], byte[]> fieldDelegate;
 

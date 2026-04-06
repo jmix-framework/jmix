@@ -16,8 +16,10 @@
 
 package io.jmix.chartsflowui.kit.component.model.datazoom;
 
-import io.jmix.chartsflowui.kit.component.model.*;
+import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
+import io.jmix.chartsflowui.kit.component.model.HasPosition;
 import io.jmix.chartsflowui.kit.component.model.shared.*;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Slider type data zoom component provides functions like
@@ -106,6 +108,7 @@ public class SliderDataZoom extends AbstractDataZoom<SliderDataZoom>
 
         protected AreaStyle areaStyle;
 
+        @Nullable
         public LineStyle getLineStyle() {
             return lineStyle;
         }
@@ -119,6 +122,7 @@ public class SliderDataZoom extends AbstractDataZoom<SliderDataZoom>
             addChild(lineStyle);
         }
 
+        @Nullable
         public AreaStyle getAreaStyle() {
             return areaStyle;
         }
@@ -154,6 +158,7 @@ public class SliderDataZoom extends AbstractDataZoom<SliderDataZoom>
 
         protected ItemStyle moveHandleStyle;
 
+        @Nullable
         public ItemStyle getHandleStyle() {
             return handleStyle;
         }
@@ -167,6 +172,7 @@ public class SliderDataZoom extends AbstractDataZoom<SliderDataZoom>
             addChild(handleStyle);
         }
 
+        @Nullable
         public ItemStyle getMoveHandleStyle() {
             return moveHandleStyle;
         }
@@ -191,6 +197,7 @@ public class SliderDataZoom extends AbstractDataZoom<SliderDataZoom>
         }
     }
 
+    @Nullable
     public Boolean getShow() {
         return show;
     }
@@ -200,6 +207,7 @@ public class SliderDataZoom extends AbstractDataZoom<SliderDataZoom>
         markAsDirty();
     }
 
+    @Nullable
     public Color getBackgroundColor() {
         return backgroundColor;
     }
@@ -209,6 +217,7 @@ public class SliderDataZoom extends AbstractDataZoom<SliderDataZoom>
         markAsDirty();
     }
 
+    @Nullable
     public DataBackground getDataBackground() {
         return dataBackground;
     }
@@ -222,6 +231,7 @@ public class SliderDataZoom extends AbstractDataZoom<SliderDataZoom>
         addChild(dataBackground);
     }
 
+    @Nullable
     public DataBackground getSelectedDataBackground() {
         return selectedDataBackground;
     }
@@ -235,6 +245,7 @@ public class SliderDataZoom extends AbstractDataZoom<SliderDataZoom>
         addChild(selectedDataBackground);
     }
 
+    @Nullable
     public Color getFillerColor() {
         return fillerColor;
     }
@@ -244,6 +255,7 @@ public class SliderDataZoom extends AbstractDataZoom<SliderDataZoom>
         markAsDirty();
     }
 
+    @Nullable
     public Color getBorderColor() {
         return borderColor;
     }
@@ -253,6 +265,7 @@ public class SliderDataZoom extends AbstractDataZoom<SliderDataZoom>
         markAsDirty();
     }
 
+    @Nullable
     public Integer getBorderRadius() {
         return borderRadius;
     }
@@ -262,6 +275,7 @@ public class SliderDataZoom extends AbstractDataZoom<SliderDataZoom>
         markAsDirty();
     }
 
+    @Nullable
     public String getHandleIcon() {
         return handleIcon;
     }
@@ -271,6 +285,7 @@ public class SliderDataZoom extends AbstractDataZoom<SliderDataZoom>
         markAsDirty();
     }
 
+    @Nullable
     public String getHandleSize() {
         return handleSize;
     }
@@ -280,6 +295,7 @@ public class SliderDataZoom extends AbstractDataZoom<SliderDataZoom>
         markAsDirty();
     }
 
+    @Nullable
     public ItemStyle getHandleStyle() {
         return handleStyle;
     }
@@ -293,6 +309,7 @@ public class SliderDataZoom extends AbstractDataZoom<SliderDataZoom>
         addChild(handleStyle);
     }
 
+    @Nullable
     public String getMoveHandleIcon() {
         return moveHandleIcon;
     }
@@ -302,6 +319,7 @@ public class SliderDataZoom extends AbstractDataZoom<SliderDataZoom>
         markAsDirty();
     }
 
+    @Nullable
     public Integer getMoveHandleSize() {
         return moveHandleSize;
     }
@@ -311,6 +329,7 @@ public class SliderDataZoom extends AbstractDataZoom<SliderDataZoom>
         markAsDirty();
     }
 
+    @Nullable
     public ItemStyle getMoveHandleStyle() {
         return moveHandleStyle;
     }
@@ -324,6 +343,7 @@ public class SliderDataZoom extends AbstractDataZoom<SliderDataZoom>
         addChild(moveHandleStyle);
     }
 
+    @Nullable
     public Integer getLabelPrecision() {
         return labelPrecision;
     }
@@ -333,6 +353,7 @@ public class SliderDataZoom extends AbstractDataZoom<SliderDataZoom>
         markAsDirty();
     }
 
+    @Nullable
     public String getLabelFormatter() {
         return labelFormatter;
     }
@@ -342,6 +363,7 @@ public class SliderDataZoom extends AbstractDataZoom<SliderDataZoom>
         markAsDirty();
     }
 
+    @Nullable
     public JsFunction getLabelFormatterFunction() {
         return labelFormatterFunction;
     }
@@ -356,6 +378,7 @@ public class SliderDataZoom extends AbstractDataZoom<SliderDataZoom>
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getShowDetail() {
         return showDetail;
     }
@@ -365,6 +388,7 @@ public class SliderDataZoom extends AbstractDataZoom<SliderDataZoom>
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getShowDataShadow() {
         return showDataShadow;
     }
@@ -374,6 +398,7 @@ public class SliderDataZoom extends AbstractDataZoom<SliderDataZoom>
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getRealtime() {
         return realtime;
     }
@@ -383,6 +408,7 @@ public class SliderDataZoom extends AbstractDataZoom<SliderDataZoom>
         markAsDirty();
     }
 
+    @Nullable
     public TextStyle getTextStyle() {
         return textStyle;
     }
@@ -396,6 +422,7 @@ public class SliderDataZoom extends AbstractDataZoom<SliderDataZoom>
         addChild(textStyle);
     }
 
+    @Nullable
     public Integer getZLevel() {
         return zLevel;
     }
@@ -405,6 +432,7 @@ public class SliderDataZoom extends AbstractDataZoom<SliderDataZoom>
         markAsDirty();
     }
 
+    @Nullable
     public Integer getZ() {
         return z;
     }
@@ -414,6 +442,7 @@ public class SliderDataZoom extends AbstractDataZoom<SliderDataZoom>
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public String getLeft() {
         return left;
@@ -425,6 +454,7 @@ public class SliderDataZoom extends AbstractDataZoom<SliderDataZoom>
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public String getTop() {
         return top;
@@ -436,6 +466,7 @@ public class SliderDataZoom extends AbstractDataZoom<SliderDataZoom>
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public String getRight() {
         return right;
@@ -447,6 +478,7 @@ public class SliderDataZoom extends AbstractDataZoom<SliderDataZoom>
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public String getBottom() {
         return bottom;
@@ -458,6 +490,7 @@ public class SliderDataZoom extends AbstractDataZoom<SliderDataZoom>
         markAsDirty();
     }
 
+    @Nullable
     public String getWidth() {
         return width;
     }
@@ -467,6 +500,7 @@ public class SliderDataZoom extends AbstractDataZoom<SliderDataZoom>
         markAsDirty();
     }
 
+    @Nullable
     public String getHeight() {
         return height;
     }
@@ -476,6 +510,7 @@ public class SliderDataZoom extends AbstractDataZoom<SliderDataZoom>
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getBrushSelect() {
         return brushSelect;
     }
@@ -485,6 +520,7 @@ public class SliderDataZoom extends AbstractDataZoom<SliderDataZoom>
         markAsDirty();
     }
 
+    @Nullable
     public ItemStyle getBrushStyle() {
         return brushStyle;
     }
@@ -498,6 +534,7 @@ public class SliderDataZoom extends AbstractDataZoom<SliderDataZoom>
         addChild(brushStyle);
     }
 
+    @Nullable
     public Emphasis getEmphasis() {
         return emphasis;
     }

@@ -24,7 +24,7 @@ import io.jmix.flowui.kit.component.HasActions;
 import io.jmix.flowui.kit.component.HasTitle;
 import io.jmix.flowui.kit.component.SupportsUserAction;
 import io.jmix.flowui.kit.component.valuepicker.ValuePickerActionSupport;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Set;
@@ -47,7 +47,9 @@ public class MultiSelectComboBoxPicker<V> extends MultiSelectComboBox<V>
 
     @Override
     public void setValueFromClient(@Nullable Collection<V> value) {
-        setModelValue(value == null ? null : Set.copyOf(value), true);
+        Set<V> convertedValue = value == null ? null : Set.copyOf(value);
+        setPresentationValue(convertedValue);
+        setModelValue(convertedValue, true);
     }
 
     @Override

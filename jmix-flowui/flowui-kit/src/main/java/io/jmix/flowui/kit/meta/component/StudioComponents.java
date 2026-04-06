@@ -938,7 +938,7 @@ interface StudioComponents {
                     @StudioProperty(xmlAttribute = "text", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "themeNames", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST,
                             options = {"small", "large", "tertiary-inline", "primary", "success", "warning", "error", "contrast",
-                                    "icon", "contained", "outlined"}),
+                                    "icon", "dropdown-indicators", "no-dropdown-indicators"}),
                     @StudioProperty(xmlAttribute = "title", type = StudioPropertyType.LOCALIZED_STRING),
                     @StudioProperty(xmlAttribute = "visible", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),

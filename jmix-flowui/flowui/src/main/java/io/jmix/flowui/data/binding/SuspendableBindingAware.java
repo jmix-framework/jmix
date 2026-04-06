@@ -16,7 +16,7 @@
 
 package io.jmix.flowui.data.binding;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Interface defining a contract for objects that support suspendable bindings.

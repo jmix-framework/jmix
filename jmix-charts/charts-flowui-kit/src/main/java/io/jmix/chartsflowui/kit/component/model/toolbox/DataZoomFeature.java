@@ -19,6 +19,7 @@ package io.jmix.chartsflowui.kit.component.model.toolbox;
 import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
 import io.jmix.chartsflowui.kit.component.model.datazoom.AbstractDataZoom;
 import io.jmix.chartsflowui.kit.component.model.shared.ItemStyle;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A tool feature for zooming, which only supports rectangular coordinate by now.
@@ -49,6 +50,7 @@ public class DataZoomFeature extends AbstractFeature<DataZoomFeature> {
 
         protected String back;
 
+        @Nullable
         public String getZoom() {
             return zoom;
         }
@@ -58,6 +60,7 @@ public class DataZoomFeature extends AbstractFeature<DataZoomFeature> {
             markAsDirty();
         }
 
+        @Nullable
         public String getBack() {
             return back;
         }
@@ -87,6 +90,7 @@ public class DataZoomFeature extends AbstractFeature<DataZoomFeature> {
 
         protected String back;
 
+        @Nullable
         public String getZoom() {
             return zoom;
         }
@@ -96,6 +100,7 @@ public class DataZoomFeature extends AbstractFeature<DataZoomFeature> {
             markAsDirty();
         }
 
+        @Nullable
         public String getBack() {
             return back;
         }
@@ -116,6 +121,7 @@ public class DataZoomFeature extends AbstractFeature<DataZoomFeature> {
         }
     }
 
+    @Nullable
     public Title getTitle() {
         return title;
     }
@@ -129,6 +135,7 @@ public class DataZoomFeature extends AbstractFeature<DataZoomFeature> {
         addChild(title);
     }
 
+    @Nullable
     public Icon getIcon() {
         return icon;
     }
@@ -142,7 +149,7 @@ public class DataZoomFeature extends AbstractFeature<DataZoomFeature> {
         addChild(icon);
     }
 
-    public AbstractDataZoom.FilterMode getFilterMode() {
+    public AbstractDataZoom.@Nullable FilterMode getFilterMode() {
         return filterMode;
     }
 
@@ -151,6 +158,7 @@ public class DataZoomFeature extends AbstractFeature<DataZoomFeature> {
         markAsDirty();
     }
 
+    @Nullable
     public Integer[] getXAxisIndexes() {
         return xAxisIndexes;
     }
@@ -160,6 +168,7 @@ public class DataZoomFeature extends AbstractFeature<DataZoomFeature> {
         markAsDirty();
     }
 
+    @Nullable
     public Integer[] getYAxisIndexes() {
         return yAxisIndexes;
     }
@@ -169,6 +178,7 @@ public class DataZoomFeature extends AbstractFeature<DataZoomFeature> {
         markAsDirty();
     }
 
+    @Nullable
     public ItemStyle getBrushStyle() {
         return brushStyle;
     }

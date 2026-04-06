@@ -40,6 +40,8 @@ interface StudioElementsGroups {
                             defaultValue = "true"),
                     @StudioProperty(xmlAttribute = "resizable", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "filterable", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "includeAll", type = StudioPropertyType.BOOLEAN, defaultValue = "false")
             }
     )

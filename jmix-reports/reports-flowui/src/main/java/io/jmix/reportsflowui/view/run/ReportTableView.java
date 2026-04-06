@@ -56,12 +56,9 @@ import io.jmix.reports.runner.ReportRunner;
 import io.jmix.reports.yarg.reporting.ReportOutputDocument;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @RouteAlias(value = "reports/tables", layout = DefaultMainViewParent.class)
 @Route(value = "report/tables", layout = DefaultMainViewParent.class)
@@ -276,12 +273,12 @@ public class ReportTableView extends StandardView {
         return collectionContainer;
     }
 
+
     protected DataGrid<KeyValueEntity> createTable(String dataSetName, KeyValueCollectionContainer container, Map<String, Set<JmixTableData.ColumnInfo>> headerMap) {
         DataGrid<KeyValueEntity> dataGrid = uiComponents.create(DataGrid.class);
         dataGrid.setId(dataSetName + "Table");
 
         Set<JmixTableData.ColumnInfo> headers = headerMap.get(dataSetName);
-
         createColumns(container, dataGrid, headers);
         dataGrid.setItems(new ContainerDataGridItems<>(container));
         dataGrid.setWidth("100%");
@@ -291,28 +288,36 @@ public class ReportTableView extends StandardView {
 
     protected void createColumns(KeyValueCollectionContainer collectionContainer, DataGrid<KeyValueEntity> table, Set<JmixTableData.ColumnInfo> headers) {
         Collection<MetaPropertyPath> paths = metadataTools.getPropertyPaths(collectionContainer.getEntityMetaClass());
-        for (MetaPropertyPath metaPropertyPath : paths) {
-            MetaProperty property = metaPropertyPath.getMetaProperty();
-            if (!property.getRange().getCardinality().isMany() && !metadataTools.isSystem(property)) {
-                String propertyName = property.getName();
 
-                JmixTableData.ColumnInfo columnInfo = getColumnInfo(propertyName, headers);
+        Map<String, JmixTableData.ColumnInfo> columnInfoMap = new HashMap<>();
+        for (JmixTableData.ColumnInfo ci : headers) {
+            columnInfoMap.put(ci.getKey(), ci);
+        }
+
+        List<MetaPropertyPath> columnPaths = new ArrayList<>();
+        for (MetaPropertyPath path : paths) {
+            MetaProperty property = path.getMetaProperty();
+            if (!property.getRange().getCardinality().isMany() && !metadataTools.isSystem(property)) {
+                columnPaths.add(path);
+            }
+        }
+
+        columnPaths.sort(Comparator.comparing(path -> {
+            JmixTableData.ColumnInfo ci = columnInfoMap.get(path.getMetaProperty().getName());
+            return ci != null ? ci.getPosition() : null;
+        }, Comparator.nullsLast(Comparator.naturalOrder())));
+
+        for (MetaPropertyPath metaPropertyPath : columnPaths) {
+            String propertyName = metaPropertyPath.getMetaProperty().getName();
+            JmixTableData.ColumnInfo columnInfo = columnInfoMap.get(propertyName);
+
+            if (columnInfo != null) {
                 Grid.Column<KeyValueEntity> column = table.addColumn(metaPropertyPath);
-                if (columnInfo.getPosition() != null) {
-                    table.setColumnPosition(column, columnInfo.getPosition());
-                }
                 column.setHeader(columnInfo.getCaptionMessageKey() != null
                         ? messages.getMessage(columnInfo.getCaptionMessageKey())
                         : columnInfo.getCaption()
                 );
             }
         }
-    }
-
-    private JmixTableData.ColumnInfo getColumnInfo(String headerKey, Set<JmixTableData.ColumnInfo> headers) {
-        return headers.stream()
-                .filter(header -> headerKey.equals(header.getKey()))
-                .findFirst()
-                .orElse(null);
     }
 }

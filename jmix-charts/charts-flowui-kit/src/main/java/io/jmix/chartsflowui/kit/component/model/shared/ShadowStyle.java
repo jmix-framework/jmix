@@ -18,6 +18,7 @@ package io.jmix.chartsflowui.kit.component.model.shared;
 
 import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
 import io.jmix.chartsflowui.kit.component.model.HasShadow;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Common style for shadow.
@@ -37,6 +38,7 @@ public class ShadowStyle extends ChartObservableObject
 
     protected Double opacity;
 
+    @Nullable
     public Color getColor() {
         return color;
     }
@@ -46,6 +48,7 @@ public class ShadowStyle extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getShadowBlur() {
         return shadowBlur;
@@ -57,6 +60,7 @@ public class ShadowStyle extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Color getShadowColor() {
         return shadowColor;
@@ -68,6 +72,7 @@ public class ShadowStyle extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getShadowOffsetX() {
         return shadowOffsetX;
@@ -79,6 +84,7 @@ public class ShadowStyle extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getShadowOffsetY() {
         return shadowOffsetY;
@@ -90,6 +96,7 @@ public class ShadowStyle extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     public Double getOpacity() {
         return opacity;
     }

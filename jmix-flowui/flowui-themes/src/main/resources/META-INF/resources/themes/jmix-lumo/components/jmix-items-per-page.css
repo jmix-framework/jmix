@@ -14,12 +14,4 @@
  * limitations under the License.
  */
 
-.jmix-items-per-page {
-    align-items: center;
-    display: flex;
-    gap: var(--jmix-items-per-page-gap, 0.5em);
-}
-
-.jmix-items-per-page-select {
-    width: var(--jmix-items-per-page-select-width, 6em);
-}
+@import '../../shared/src/components/jmix-items-per-page.css';

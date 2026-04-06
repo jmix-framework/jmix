@@ -30,7 +30,7 @@ import io.jmix.flowui.kit.component.dropdownbutton.AbstractDropdownButton;
 import io.jmix.flowui.kit.component.menubar.JmixMenuBar;
 import io.jmix.flowui.kit.component.menubar.JmixMenuItem;
 import io.jmix.flowui.kit.icon.JmixFontIcon;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -51,8 +51,16 @@ public class ComboButton extends AbstractDropdownButton
     protected KeyCombination shortcutCombination;
 
     public ComboButton() {
-        buttonItem = getContent().addItem("");
-        dropdownItem = getContent().addItem(dropdownIcon);
+        buttonItem = createButtonItem();
+        dropdownItem = createDropdownItem();
+    }
+
+    protected JmixMenuItem createButtonItem() {
+        return getContent().addItem("");
+    }
+
+    protected JmixMenuItem createDropdownItem() {
+        return getContent().addItem(dropdownIcon);
     }
 
     @Override

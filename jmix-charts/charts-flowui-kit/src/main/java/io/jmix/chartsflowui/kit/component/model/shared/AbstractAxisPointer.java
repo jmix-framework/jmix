@@ -19,7 +19,7 @@ package io.jmix.chartsflowui.kit.component.model.shared;
 import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
 import io.jmix.chartsflowui.kit.component.model.HasEnumId;
 import io.jmix.chartsflowui.kit.component.model.HasShadow;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The base class for axis pointer.
@@ -102,6 +102,7 @@ public class AbstractAxisPointer<T extends AbstractAxisPointer<T>> extends Chart
 
         protected Integer shadowOffsetY;
 
+        @Nullable
         public Boolean getShow() {
             return show;
         }
@@ -111,6 +112,7 @@ public class AbstractAxisPointer<T extends AbstractAxisPointer<T>> extends Chart
             markAsDirty();
         }
 
+        @Nullable
         public String getIcon() {
             return icon;
         }
@@ -120,6 +122,7 @@ public class AbstractAxisPointer<T extends AbstractAxisPointer<T>> extends Chart
             markAsDirty();
         }
 
+        @Nullable
         public Integer[] getSize() {
             return size;
         }
@@ -129,6 +132,7 @@ public class AbstractAxisPointer<T extends AbstractAxisPointer<T>> extends Chart
             markAsDirty();
         }
 
+        @Nullable
         public Integer getMargin() {
             return margin;
         }
@@ -138,6 +142,7 @@ public class AbstractAxisPointer<T extends AbstractAxisPointer<T>> extends Chart
             markAsDirty();
         }
 
+        @Nullable
         public Color getColor() {
             return color;
         }
@@ -147,6 +152,7 @@ public class AbstractAxisPointer<T extends AbstractAxisPointer<T>> extends Chart
             markAsDirty();
         }
 
+        @Nullable
         public Integer getThrottle() {
             return throttle;
         }
@@ -156,6 +162,7 @@ public class AbstractAxisPointer<T extends AbstractAxisPointer<T>> extends Chart
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public Integer getShadowBlur() {
             return shadowBlur;
@@ -167,6 +174,7 @@ public class AbstractAxisPointer<T extends AbstractAxisPointer<T>> extends Chart
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public Color getShadowColor() {
             return shadowColor;
@@ -178,6 +186,7 @@ public class AbstractAxisPointer<T extends AbstractAxisPointer<T>> extends Chart
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public Integer getShadowOffsetX() {
             return shadowOffsetX;
@@ -189,6 +198,7 @@ public class AbstractAxisPointer<T extends AbstractAxisPointer<T>> extends Chart
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public Integer getShadowOffsetY() {
             return shadowOffsetY;
@@ -231,6 +241,7 @@ public class AbstractAxisPointer<T extends AbstractAxisPointer<T>> extends Chart
         }
     }
 
+    @Nullable
     public Boolean getShow() {
         return show;
     }
@@ -240,6 +251,7 @@ public class AbstractAxisPointer<T extends AbstractAxisPointer<T>> extends Chart
         markAsDirty();
     }
 
+    @Nullable
     public IndicatorType getType() {
         return type;
     }
@@ -249,6 +261,7 @@ public class AbstractAxisPointer<T extends AbstractAxisPointer<T>> extends Chart
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getSnap() {
         return snap;
     }
@@ -258,6 +271,7 @@ public class AbstractAxisPointer<T extends AbstractAxisPointer<T>> extends Chart
         markAsDirty();
     }
 
+    @Nullable
     public Integer getZ() {
         return z;
     }
@@ -267,6 +281,7 @@ public class AbstractAxisPointer<T extends AbstractAxisPointer<T>> extends Chart
         markAsDirty();
     }
 
+    @Nullable
     public Label getLabel() {
         return label;
     }
@@ -280,6 +295,7 @@ public class AbstractAxisPointer<T extends AbstractAxisPointer<T>> extends Chart
         addChild(label);
     }
 
+    @Nullable
     public LineStyle getLineStyle() {
         return lineStyle;
     }
@@ -293,6 +309,7 @@ public class AbstractAxisPointer<T extends AbstractAxisPointer<T>> extends Chart
         addChild(lineStyle);
     }
 
+    @Nullable
     public ShadowStyle getShadowStyle() {
         return shadowStyle;
     }
@@ -306,6 +323,7 @@ public class AbstractAxisPointer<T extends AbstractAxisPointer<T>> extends Chart
         addChild(this.shadowStyle);
     }
 
+    @Nullable
     public Boolean getTriggerEmphasis() {
         return triggerEmphasis;
     }
@@ -315,6 +333,7 @@ public class AbstractAxisPointer<T extends AbstractAxisPointer<T>> extends Chart
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getTriggerTooltip() {
         return triggerTooltip;
     }
@@ -324,6 +343,7 @@ public class AbstractAxisPointer<T extends AbstractAxisPointer<T>> extends Chart
         markAsDirty();
     }
 
+    @Nullable
     public Integer getValue() {
         return value;
     }
@@ -333,6 +353,7 @@ public class AbstractAxisPointer<T extends AbstractAxisPointer<T>> extends Chart
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getStatus() {
         return status;
     }
@@ -342,6 +363,7 @@ public class AbstractAxisPointer<T extends AbstractAxisPointer<T>> extends Chart
         markAsDirty();
     }
 
+    @Nullable
     public Handle getHandle() {
         return handle;
     }

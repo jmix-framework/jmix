@@ -22,6 +22,7 @@ import com.vaadin.flow.component.ItemLabelGenerator;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.data.provider.DataProvider;
 import io.jmix.core.Messages;
+import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.model.Range;
 import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.UiComponentProperties;
@@ -47,7 +48,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.List;
@@ -317,6 +318,23 @@ public class MultiValueSelectAction<E>
     }
 
     /**
+     * @return the value type datatype used in this action
+     */
+    @Nullable
+    public Datatype<E> getDatatype() {
+        return multiValueSelectContext.getDatatype();
+    }
+
+    /**
+     * Sets the value type datatype for this action.
+     *
+     * @param datatype the datatype to set
+     */
+    public void setDatatype(@Nullable Datatype<E> datatype) {
+        multiValueSelectContext.setDatatype(datatype);
+    }
+
+    /**
      * Returns the enumeration class associated with the current {@link MultiValueSelectContext}.
      * This class defines the type of enums that can be selected or processed by the component.
      *
@@ -528,6 +546,11 @@ public class MultiValueSelectAction<E>
 
     public MultiValueSelectAction<E> withJavaClass(@Nullable Class<?> javaClass) {
         setJavaClass(javaClass);
+        return this;
+    }
+
+    public MultiValueSelectAction<E> withDatatype(@Nullable Datatype<E> datatype) {
+        setDatatype(datatype);
         return this;
     }
 

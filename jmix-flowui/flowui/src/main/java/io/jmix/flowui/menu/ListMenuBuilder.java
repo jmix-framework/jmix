@@ -31,7 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -185,8 +185,7 @@ public class ListMenuBuilder {
         }
     }
 
-    @Nullable
-    protected JmixListMenu.MenuItem createMenuItem(MenuItem menuItem) {
+    protected JmixListMenu.@Nullable MenuItem createMenuItem(MenuItem menuItem) {
         if (!isPermitted(menuItem)) {
             log.debug("Menu item '{}' is not permitted by access constraint", menuItem.getId());
             return null;
@@ -201,8 +200,7 @@ public class ListMenuBuilder {
         throw new IllegalStateException("Unknown time of menu item");
     }
 
-    @Nullable
-    protected ListMenu.MenuItem createViewMenuItem(MenuItem menuItem) {
+    protected ListMenu.@Nullable MenuItem createViewMenuItem(MenuItem menuItem) {
         JmixListMenu.ViewMenuItem listMenuItem = new JmixListMenu.ViewMenuItem(menuItem.getId())
                 .withControllerClass(getControllerClass(menuItem))
                 .withTitle(menuConfig.getItemTitle(menuItem))

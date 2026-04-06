@@ -43,7 +43,7 @@ import io.jmix.flowui.util.FetchCallbackAdapter;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.Set;
@@ -97,6 +97,7 @@ public class EntityComboBox<V> extends ComboBoxPicker<V>
             getDataProvider().refreshItem(value);
         }
 
+        setPresentationValue(value);
         setModelValue(value, true);
 
         refreshValue();

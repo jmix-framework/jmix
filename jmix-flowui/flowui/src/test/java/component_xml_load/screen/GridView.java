@@ -44,6 +44,9 @@ public class GridView extends StandardView {
     public DataGrid<?> dataGridWithCustomEmptyStateComponent;
 
     @ViewComponent
+    public DataGrid<?> columnsAttributesDataGrid;
+
+    @ViewComponent
     public TreeDataGrid<?> treeDataGrid;
 
     @ViewComponent

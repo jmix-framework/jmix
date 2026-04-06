@@ -16,10 +16,13 @@
 
 package io.jmix.chartsflowui.kit.component.model.axis;
 
-import io.jmix.chartsflowui.kit.component.model.*;
+import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
+import io.jmix.chartsflowui.kit.component.model.HasBorder;
+import io.jmix.chartsflowui.kit.component.model.HasEnumId;
+import io.jmix.chartsflowui.kit.component.model.HasShadow;
 import io.jmix.chartsflowui.kit.component.model.series.RadarSeries;
 import io.jmix.chartsflowui.kit.component.model.shared.*;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -136,6 +139,7 @@ public class Radar extends ChartObservableObject {
 
         protected Integer shadowOffsetY;
 
+        @Nullable
         public Boolean getShow() {
             return show;
         }
@@ -145,6 +149,7 @@ public class Radar extends ChartObservableObject {
             markAsDirty();
         }
 
+        @Nullable
         public String getFormatter() {
             return formatter;
         }
@@ -154,6 +159,7 @@ public class Radar extends ChartObservableObject {
             markAsDirty();
         }
 
+        @Nullable
         public JsFunction getFormatterFunction() {
             return formatterFunction;
         }
@@ -168,6 +174,7 @@ public class Radar extends ChartObservableObject {
             markAsDirty();
         }
 
+        @Nullable
         public Color getBackgroundColor() {
             return backgroundColor;
         }
@@ -177,6 +184,7 @@ public class Radar extends ChartObservableObject {
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public Color getBorderColor() {
             return borderColor;
@@ -188,6 +196,7 @@ public class Radar extends ChartObservableObject {
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public Integer getBorderWidth() {
             return borderWidth;
@@ -199,6 +208,7 @@ public class Radar extends ChartObservableObject {
             markAsDirty();
         }
 
+        @Nullable
         public String getBorderType() {
             return borderType;
         }
@@ -208,6 +218,7 @@ public class Radar extends ChartObservableObject {
             markAsDirty();
         }
 
+        @Nullable
         public Integer getBorderDashOffset() {
             return borderDashOffset;
         }
@@ -217,6 +228,7 @@ public class Radar extends ChartObservableObject {
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public Integer getBorderRadius() {
             return borderRadius;
@@ -228,6 +240,7 @@ public class Radar extends ChartObservableObject {
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public Padding getPadding() {
             return padding;
@@ -251,6 +264,7 @@ public class Radar extends ChartObservableObject {
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public Color getShadowColor() {
             return shadowColor;
@@ -262,6 +276,7 @@ public class Radar extends ChartObservableObject {
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public Integer getShadowBlur() {
             return shadowBlur;
@@ -273,6 +288,7 @@ public class Radar extends ChartObservableObject {
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public Integer getShadowOffsetX() {
             return shadowOffsetX;
@@ -284,6 +300,7 @@ public class Radar extends ChartObservableObject {
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public Integer getShadowOffsetY() {
             return shadowOffsetY;
@@ -347,6 +364,7 @@ public class Radar extends ChartObservableObject {
 
         protected Color color;
 
+        @Nullable
         public String getName() {
             return name;
         }
@@ -356,6 +374,7 @@ public class Radar extends ChartObservableObject {
             markAsDirty();
         }
 
+        @Nullable
         public Integer getMax() {
             return max;
         }
@@ -365,6 +384,7 @@ public class Radar extends ChartObservableObject {
             markAsDirty();
         }
 
+        @Nullable
         public Integer getMin() {
             return min;
         }
@@ -374,6 +394,7 @@ public class Radar extends ChartObservableObject {
             markAsDirty();
         }
 
+        @Nullable
         public Color getColor() {
             return color;
         }
@@ -404,6 +425,7 @@ public class Radar extends ChartObservableObject {
         }
     }
 
+    @Nullable
     public String getId() {
         return id;
     }
@@ -413,6 +435,7 @@ public class Radar extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public Integer getZLevel() {
         return zLevel;
     }
@@ -422,6 +445,7 @@ public class Radar extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public Integer getZ() {
         return z;
     }
@@ -431,6 +455,7 @@ public class Radar extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public String[] getCenter() {
         return center;
     }
@@ -440,6 +465,7 @@ public class Radar extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public String[] getRadius() {
         return radius;
     }
@@ -449,6 +475,7 @@ public class Radar extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public Integer getStartAngle() {
         return startAngle;
     }
@@ -458,6 +485,7 @@ public class Radar extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public AxisName getAxisName() {
         return axisName;
     }
@@ -471,6 +499,7 @@ public class Radar extends ChartObservableObject {
         addChild(axisName);
     }
 
+    @Nullable
     public Integer getNameGap() {
         return nameGap;
     }
@@ -480,6 +509,7 @@ public class Radar extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public Integer getSplitNumber() {
         return splitNumber;
     }
@@ -489,6 +519,7 @@ public class Radar extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public Shape getShape() {
         return shape;
     }
@@ -498,6 +529,7 @@ public class Radar extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getScale() {
         return scale;
     }
@@ -507,6 +539,7 @@ public class Radar extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getSilent() {
         return silent;
     }
@@ -516,6 +549,7 @@ public class Radar extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getTriggerEvent() {
         return triggerEvent;
     }
@@ -525,6 +559,7 @@ public class Radar extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public AxisLine getAxisLine() {
         return axisLine;
     }
@@ -538,6 +573,7 @@ public class Radar extends ChartObservableObject {
         addChild(axisLine);
     }
 
+    @Nullable
     public AxisTick getAxisTick() {
         return axisTick;
     }
@@ -551,6 +587,7 @@ public class Radar extends ChartObservableObject {
         addChild(axisTick);
     }
 
+    @Nullable
     public AxisLabel getAxisLabel() {
         return axisLabel;
     }
@@ -563,6 +600,7 @@ public class Radar extends ChartObservableObject {
         addChild(axisLabel);
     }
 
+    @Nullable
     public SplitLine getSplitLine() {
         return splitLine;
     }
@@ -576,6 +614,7 @@ public class Radar extends ChartObservableObject {
         addChild(splitLine);
     }
 
+    @Nullable
     public SplitArea getSplitArea() {
         return splitArea;
     }
@@ -589,6 +628,7 @@ public class Radar extends ChartObservableObject {
         addChild(splitArea);
     }
 
+    @Nullable
     public List<Indicator> getIndicators() {
         return indicators;
     }

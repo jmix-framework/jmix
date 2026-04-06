@@ -17,7 +17,7 @@
 package io.jmix.flowui.kit.component.usermenu;
 
 import com.vaadin.flow.component.Component;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Represents a user menu item that contains text and an optional icon.

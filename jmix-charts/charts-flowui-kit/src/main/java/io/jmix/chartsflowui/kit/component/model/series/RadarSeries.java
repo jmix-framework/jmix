@@ -18,6 +18,7 @@ package io.jmix.chartsflowui.kit.component.model.series;
 
 import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
 import io.jmix.chartsflowui.kit.component.model.shared.*;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Radar chart is mainly used to show multi-variable data, such as the analysis
@@ -75,6 +76,7 @@ public class RadarSeries extends AbstractSeries<RadarSeries>
 
         protected Color color;
 
+        @Nullable
         public Color getColor() {
             return color;
         }
@@ -101,6 +103,7 @@ public class RadarSeries extends AbstractSeries<RadarSeries>
 
         protected BlurScopeType blurScope;
 
+        @Nullable
         public Boolean getDisabled() {
             return disabled;
         }
@@ -110,6 +113,7 @@ public class RadarSeries extends AbstractSeries<RadarSeries>
             markAsDirty();
         }
 
+        @Nullable
         public FocusType getFocus() {
             return focus;
         }
@@ -119,6 +123,7 @@ public class RadarSeries extends AbstractSeries<RadarSeries>
             markAsDirty();
         }
 
+        @Nullable
         public BlurScopeType getBlurScope() {
             return blurScope;
         }
@@ -157,6 +162,7 @@ public class RadarSeries extends AbstractSeries<RadarSeries>
 
         protected Boolean disabled;
 
+        @Nullable
         public Boolean getDisabled() {
             return disabled;
         }
@@ -188,6 +194,7 @@ public class RadarSeries extends AbstractSeries<RadarSeries>
 
         protected RadarSeries.AreaStyle areaStyle;
 
+        @Nullable
         public ItemStyle getItemStyle() {
             return itemStyle;
         }
@@ -201,6 +208,7 @@ public class RadarSeries extends AbstractSeries<RadarSeries>
             addChild(itemStyle);
         }
 
+        @Nullable
         public Label getLabel() {
             return label;
         }
@@ -214,6 +222,7 @@ public class RadarSeries extends AbstractSeries<RadarSeries>
             addChild(label);
         }
 
+        @Nullable
         public LineStyle getLineStyle() {
             return lineStyle;
         }
@@ -227,7 +236,7 @@ public class RadarSeries extends AbstractSeries<RadarSeries>
             addChild(lineStyle);
         }
 
-        public RadarSeries.AreaStyle getAreaStyle() {
+        public RadarSeries.@Nullable AreaStyle getAreaStyle() {
             return areaStyle;
         }
 
@@ -265,6 +274,7 @@ public class RadarSeries extends AbstractSeries<RadarSeries>
         }
     }
 
+    @Nullable
     public Integer getRadarIndex() {
         return radarIndex;
     }
@@ -274,6 +284,7 @@ public class RadarSeries extends AbstractSeries<RadarSeries>
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Symbol getSymbol() {
         return symbol;
@@ -291,6 +302,7 @@ public class RadarSeries extends AbstractSeries<RadarSeries>
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getSymbolSize() {
         return symbolSize;
@@ -302,6 +314,7 @@ public class RadarSeries extends AbstractSeries<RadarSeries>
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public JsFunction getSymbolSizeFunction() {
         return symbolSizeFunction;
@@ -319,6 +332,7 @@ public class RadarSeries extends AbstractSeries<RadarSeries>
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getSymbolRotate() {
         return symbolRotate;
@@ -330,6 +344,7 @@ public class RadarSeries extends AbstractSeries<RadarSeries>
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Boolean getSymbolKeepAspect() {
         return symbolKeepAspect;
@@ -341,6 +356,7 @@ public class RadarSeries extends AbstractSeries<RadarSeries>
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public String[] getSymbolOffset() {
         return symbolOffset;
@@ -352,6 +368,7 @@ public class RadarSeries extends AbstractSeries<RadarSeries>
         markAsDirty();
     }
 
+    @Nullable
     public ItemStyleWithDecal getItemStyle() {
         return itemStyle;
     }
@@ -365,6 +382,7 @@ public class RadarSeries extends AbstractSeries<RadarSeries>
         addChild(itemStyle);
     }
 
+    @Nullable
     public LineStyle getLineStyle() {
         return lineStyle;
     }
@@ -378,6 +396,7 @@ public class RadarSeries extends AbstractSeries<RadarSeries>
         addChild(lineStyle);
     }
 
+    @Nullable
     public AreaStyle getAreaStyle() {
         return areaStyle;
     }
@@ -391,6 +410,7 @@ public class RadarSeries extends AbstractSeries<RadarSeries>
         addChild(this.areaStyle);
     }
 
+    @Nullable
     public Emphasis getEmphasis() {
         return emphasis;
     }
@@ -404,6 +424,7 @@ public class RadarSeries extends AbstractSeries<RadarSeries>
         addChild(emphasis);
     }
 
+    @Nullable
     public Blur getBlur() {
         return blur;
     }
@@ -417,6 +438,7 @@ public class RadarSeries extends AbstractSeries<RadarSeries>
         addChild(blur);
     }
 
+    @Nullable
     public Select getSelect() {
         return select;
     }
@@ -430,6 +452,7 @@ public class RadarSeries extends AbstractSeries<RadarSeries>
         addChild(select);
     }
 
+    @Nullable
     public Boolean getAnimation() {
         return animation;
     }
@@ -439,6 +462,7 @@ public class RadarSeries extends AbstractSeries<RadarSeries>
         markAsDirty();
     }
 
+    @Nullable
     public Integer getAnimationThreshold() {
         return animationThreshold;
     }
@@ -448,6 +472,7 @@ public class RadarSeries extends AbstractSeries<RadarSeries>
         markAsDirty();
     }
 
+    @Nullable
     public Integer getAnimationDurationUpdate() {
         return animationDurationUpdate;
     }
@@ -457,6 +482,7 @@ public class RadarSeries extends AbstractSeries<RadarSeries>
         markAsDirty();
     }
 
+    @Nullable
     public String getAnimationEasingUpdate() {
         return animationEasingUpdate;
     }
@@ -466,6 +492,7 @@ public class RadarSeries extends AbstractSeries<RadarSeries>
         markAsDirty();
     }
 
+    @Nullable
     public Integer getAnimationDelayUpdate() {
         return animationDelayUpdate;
     }

@@ -30,8 +30,12 @@ public enum DropdownButtonVariant implements ThemeVariant {
     LUMO_WARNING("warning"),
     LUMO_CONTRAST("contrast"),
     LUMO_ICON("icon"),
-    MATERIAL_CONTAINED("contained"),
-    MATERIAL_OUTLINED("outlined");
+    LUMO_DROPDOWN_INDICATORS("dropdown-indicators"),
+
+    AURA_NO_DROPDOWN_INDICATORS("no-dropdown-indicators"),
+    AURA_END_ALIGNED("end-aligned"),
+    AURA_PRIMARY("primary"),
+    AURA_TERTIARY("tertiary");
 
     private final String variant;
 

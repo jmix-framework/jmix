@@ -16,10 +16,11 @@
 
 package io.jmix.fullcalendarflowui.component;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.vaadin.flow.component.UI;
 import io.jmix.fullcalendarflowui.component.model.DayOfWeek;
 import io.jmix.fullcalendarflowui.kit.component.model.CalendarDisplayModes;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.io.Serializable;
 
@@ -28,6 +29,7 @@ import static java.util.Objects.requireNonNullElseGet;
 /**
  * The internationalization properties for {@link FullCalendar} component.
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class FullCalendarI18n implements Serializable {
 
     public enum Direction {

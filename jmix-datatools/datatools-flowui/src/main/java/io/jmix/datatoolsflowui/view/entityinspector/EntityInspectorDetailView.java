@@ -50,7 +50,7 @@ import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -192,7 +192,6 @@ public class EntityInspectorDetailView extends StandardDetailView<Object> {
     protected void setupEntityToEdit(Object entityToEdit) {
         container = initMainContainer(entityToEdit);
         isNew = entityStates.isNew(entityToEdit);
-        super.setupEntityToEdit(entityToEdit);
     }
 
     protected InstanceContainer initMainContainer(Object entity) {

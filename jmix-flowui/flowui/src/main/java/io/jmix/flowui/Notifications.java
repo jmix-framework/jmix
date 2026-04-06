@@ -37,7 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Configures and displays popup notifications.
@@ -485,13 +485,13 @@ public class Notifications {
                 case DEFAULT:
                     return "";
                 case SUCCESS:
-                    return NotificationVariant.LUMO_SUCCESS.getVariantName();
+                    return NotificationVariant.SUCCESS.getVariantName();
                 case ERROR:
-                    return NotificationVariant.LUMO_ERROR.getVariantName();
+                    return NotificationVariant.ERROR.getVariantName();
                 case SYSTEM:
-                    return NotificationVariant.LUMO_CONTRAST.getVariantName();
+                    return NotificationVariant.INFO.getVariantName();
                 case WARNING:
-                    return NotificationVariant.LUMO_WARNING.getVariantName();
+                    return NotificationVariant.WARNING.getVariantName();
                 default:
                     throw new IllegalStateException("Unsupported type " + type);
             }

@@ -6,6 +6,7 @@ import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.data.StoreAwareLocator;
 import io.jmix.data.persistence.DbmsType;
 import io.jmix.datatools.datamodel.engine.DiagramEngine;
 import io.jmix.datatools.datamodel.entity.AttributeModel;
@@ -15,7 +16,7 @@ import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
@@ -46,11 +47,11 @@ public class DataModelRegistry {
     @Autowired
     protected Metadata metadata;
     @Autowired
-    protected DataSource dataSource;
-    @Autowired
     protected DiagramEngine diagramEngine;
     @Autowired
     protected MetadataTools metadataTools;
+    @Autowired
+    protected StoreAwareLocator storeAwareLocator;
 
     protected final Map<String, Map<String, DataModel>> dataModels = new HashMap<>();
 
@@ -219,24 +220,27 @@ public class DataModelRegistry {
                 fieldName, fieldType, entity, field.isMandatory());
         attributeModelsList.add(attributeModel);
 
+        String referencedClassName = field.getRange().asClass().getName();
         String relationDescription = diagramEngine.constructRelationDescription(entity.getName(),
-                fieldType, RelationType.MANY_TO_ONE, dataStoreName);
-        Relation relation = new Relation(dataStoreName, fieldType, relationDescription);
+                referencedClassName, RelationType.MANY_TO_ONE, dataStoreName);
+        Relation relation = new Relation(dataStoreName, referencedClassName, relationDescription);
         putRelation(relationsMap, RelationType.MANY_TO_ONE, relation);
     }
 
     protected void addOneToManyAttribute(MetaClass entity, MetaProperty field, String fieldName,
                                          String dataStoreName, Map<RelationType, List<Relation>> relationsMap,
                                          List<AttributeModel> attributeModelsList) {
-        String fieldType = field.getRange().asClass().getName();
+        String fieldType = "%s<%s>".formatted(
+                field.getJavaType().getSimpleName(), getElementTypeFromCollection(field));
 
         AttributeModel attributeModel =
                 constructAttribute(fieldName, fieldType, isAnnotationPresent(field, NotNull.class));
         attributeModelsList.add(attributeModel);
 
+        String referencedClassName = field.getRange().asClass().getName();
         String relationDescription = diagramEngine.constructRelationDescription(entity.getName(),
-                fieldType, RelationType.ONE_TO_MANY, dataStoreName);
-        Relation relation = new Relation(dataStoreName, fieldType, relationDescription);
+                referencedClassName, RelationType.ONE_TO_MANY, dataStoreName);
+        Relation relation = new Relation(dataStoreName, referencedClassName, relationDescription);
         putRelation(relationsMap, RelationType.ONE_TO_MANY, relation);
     }
 
@@ -260,16 +264,18 @@ public class DataModelRegistry {
 
         attributeModelsList.add(attributeModel);
 
+        String referencedClassName = field.getRange().asClass().getName();
         String relationDescription = diagramEngine.constructRelationDescription(entity.getName(),
-                fieldType, RelationType.ONE_TO_ONE, dataStoreName);
-        Relation relation = new Relation(dataStoreName, fieldType, relationDescription);
+                referencedClassName, RelationType.ONE_TO_ONE, dataStoreName);
+        Relation relation = new Relation(dataStoreName, referencedClassName, relationDescription);
         putRelation(relationsMap, RelationType.ONE_TO_ONE, relation);
     }
 
     protected void addManyToManyAttribute(MetaClass entity, MetaProperty field, String fieldName,
                                           String dataStoreName, Map<RelationType, List<Relation>> relationsMap,
                                           List<AttributeModel> attributeModelsList) {
-        String fieldType = field.getRange().asClass().getName();
+        String fieldType = "%s<%s>".formatted(
+                field.getJavaType().getSimpleName(), getElementTypeFromCollection(field));
 
         AttributeModel attributeModel = constructAttribute(fieldName, fieldType, isAnnotationPresent(field, NotNull.class));
 
@@ -280,9 +286,10 @@ public class DataModelRegistry {
         attributeModel.setColumnName(columnName);
         attributeModelsList.add(attributeModel);
 
+        String referencedClassName = field.getRange().asClass().getName();
         String relationDescription = diagramEngine.constructRelationDescription(entity.getName(),
-                fieldType, RelationType.MANY_TO_MANY, dataStoreName);
-        Relation relation = new Relation(dataStoreName, fieldType, relationDescription);
+                referencedClassName, RelationType.MANY_TO_MANY, dataStoreName);
+        Relation relation = new Relation(dataStoreName, referencedClassName, relationDescription);
         putRelation(relationsMap, RelationType.MANY_TO_MANY, relation);
     }
 
@@ -299,8 +306,14 @@ public class DataModelRegistry {
         attributeModel.setColumnName(columnName);
 
         Table tableAnnotation = entity.getJavaClass().getAnnotation(Table.class);
-        attributeModel.setDbType(getDatabaseColumnType(getSchemaName(tableAnnotation),
-                getCatalogName(tableAnnotation), collectionTableName, valueColumnName));
+        String storeName = entity.getStore().getName();
+        attributeModel.setDbType(getDatabaseColumnType(
+                storeName,
+                getSchemaName(tableAnnotation),
+                getCatalogName(tableAnnotation),
+                applyRegister(collectionTableName, storeName),
+                applyRegister(valueColumnName, storeName)
+        ));
 
         attributeModelsList.add(attributeModel);
     }
@@ -366,10 +379,12 @@ public class DataModelRegistry {
         return attributeModel;
     }
 
-    protected String getDatabaseColumnType(@Nullable String schemaName,
+    protected String getDatabaseColumnType(String storeName,
+                                           @Nullable String schemaName,
                                            @Nullable String catalogName,
                                            String tableName,
                                            String columnName) {
+        DataSource dataSource = storeAwareLocator.getDataSource(storeName);
         try (Connection conn = dataSource.getConnection()) {
             DatabaseMetaData dbMetaData = conn.getMetaData();
 
@@ -406,19 +421,20 @@ public class DataModelRegistry {
 
     protected String getDatabaseColumnType(MetaClass entity, String columnName) {
         Table tableAnnotation = entity.getJavaClass().getAnnotation(Table.class);
-        String tableName;
-        String finalColumnName;
-        if (dbmsType.getType(entity.getStore().getName()).equals("POSTGRESQL")) {
-            tableName = tableAnnotation.name().toLowerCase();
-            finalColumnName = columnName.toLowerCase();
-        } else {
-            tableName = tableAnnotation.name().toUpperCase();
-            finalColumnName = columnName.toUpperCase();
-        }
 
         String catalogName = getCatalogName(tableAnnotation);
         String schemaName = getSchemaName(tableAnnotation);
-        return getDatabaseColumnType(schemaName, catalogName, tableName, finalColumnName);
+        String storeName = entity.getStore().getName();
+        String tableName = applyRegister(tableAnnotation.name(), storeName);
+        String finalColumnName = applyRegister(columnName, storeName);
+
+        return getDatabaseColumnType(storeName, schemaName, catalogName, tableName, finalColumnName);
+    }
+
+    protected String applyRegister(String name, String storeName) {
+        return dbmsType.getType(storeName).equals("POSTGRESQL")
+                ? name.toLowerCase()
+                : name.toUpperCase();
     }
 
     @Nullable

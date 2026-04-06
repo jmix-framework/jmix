@@ -26,7 +26,7 @@ import com.vaadin.flow.internal.StateTree;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.messagetemplatesflowui.kit.component.event.dom.GrapesJsValueChangedDomEvent;
 import io.jmix.messagetemplatesflowui.kit.component.serialization.GrapesJsSerializer;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.safety.Safelist;

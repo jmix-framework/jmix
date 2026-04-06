@@ -27,7 +27,7 @@ import com.vaadin.flow.data.binder.Validator;
 import io.jmix.flowui.kit.component.HasTitle;
 import io.jmix.flowui.kit.component.codeeditor.autocomplete.Suggester;
 import io.jmix.flowui.kit.component.codeeditor.autocomplete.Suggestion;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tools.jackson.core.JacksonException;
@@ -37,6 +37,7 @@ import tools.jackson.databind.json.JsonMapper;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Code Editor is a multi-line text area to display and enter source code featured
@@ -215,7 +216,9 @@ public class JmixCodeEditor extends AbstractSinglePropertyField<JmixCodeEditor, 
      */
     @Synchronize(property = PROPERTY_THEME, value = PROPERTY_THEME_CHANGED_EVENT)
     public CodeEditorTheme getTheme() {
-        return CodeEditorTheme.fromId(getElement().getProperty(PROPERTY_THEME, CodeEditorTheme.TEXTMATE.getId()));
+        return Optional.ofNullable(getElement().getProperty(PROPERTY_THEME))
+                .map(CodeEditorTheme::fromId)
+                .orElse(CodeEditorTheme.TEXTMATE);
     }
 
     /**
@@ -237,7 +240,9 @@ public class JmixCodeEditor extends AbstractSinglePropertyField<JmixCodeEditor, 
      */
     @Synchronize(PROPERTY_MODE)
     public CodeEditorMode getMode() {
-        return CodeEditorMode.fromId(getElement().getProperty(PROPERTY_MODE, CodeEditorMode.PLAIN_TEXT.getId()));
+        return Optional.ofNullable(getElement().getProperty(PROPERTY_MODE))
+                .map(CodeEditorMode::fromId)
+                .orElse(CodeEditorMode.PLAIN_TEXT);
     }
 
     /**

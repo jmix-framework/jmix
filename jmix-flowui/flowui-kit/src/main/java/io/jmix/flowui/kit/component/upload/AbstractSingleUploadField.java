@@ -37,7 +37,7 @@ import com.vaadin.flow.server.streams.UploadMetadata;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.component.upload.event.*;
 import io.jmix.flowui.kit.component.upload.handler.SupportUploadSuccessHandler.UploadSuccessContext;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -202,6 +202,7 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
         return internalValue;
     }
 
+    @Nullable
     @Override
     public V getEmptyValue() {
         return null;
@@ -527,9 +528,9 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
         setComponentAriaLabel(uploadButton.getUploadButton(), ariaLabel);
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     public Registration addValueChangeListener(ValueChangeListener<? super ComponentValueChangeEvent<C, V>> listener) {
-        @SuppressWarnings("rawtypes")
         ComponentEventListener componentListener = event -> {
             ComponentValueChangeEvent<C, V> valueChangeEvent = (ComponentValueChangeEvent<C, V>) event;
             listener.valueChanged(valueChangeEvent);
@@ -625,6 +626,7 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
         }
     }
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
     protected void setComponentClickListener(Component component, ComponentEventListener<ClickEvent<?>> listener) {
         if (component instanceof ClickNotifier) {
             ((ClickNotifier<?>) component).addClickListener((ComponentEventListener) listener);

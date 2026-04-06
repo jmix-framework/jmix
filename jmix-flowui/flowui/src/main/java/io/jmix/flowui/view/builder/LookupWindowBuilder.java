@@ -30,7 +30,7 @@ import io.jmix.flowui.view.LookupView;
 import io.jmix.flowui.view.LookupView.ValidationContext;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewController;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Optional;

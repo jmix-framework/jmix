@@ -50,7 +50,7 @@ import io.jmix.flowui.data.value.ContainerValueSource;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.ComponentUtils;
 import org.springframework.core.Ordered;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 @org.springframework.stereotype.Component("appsettings_AppSettingsComponentGenerationStrategy")
 public class AppSettingsComponentGenerationStrategy

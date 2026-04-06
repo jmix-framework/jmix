@@ -34,7 +34,7 @@ import com.vaadin.flow.dom.ElementConstants;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.loginform.EnhancedLoginForm;
 import io.jmix.flowui.kit.component.twincolumn.JmixTwinColumn;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 import java.util.Locale;
@@ -92,7 +92,6 @@ public final class ComponentUtils {
     public static Icon convertToIcon(@Nullable VaadinIcon icon) {
         return icon != null ? icon.create() : null;
     }
-
 
     /**
      * Creates a copy of icon component. For the moment only Icon, SvgIcon and FontIcon types are supported.

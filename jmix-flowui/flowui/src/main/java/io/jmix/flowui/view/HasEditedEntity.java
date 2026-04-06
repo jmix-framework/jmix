@@ -16,7 +16,7 @@
 
 package io.jmix.flowui.view;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The interface of views that display and may change the instance of an entity.

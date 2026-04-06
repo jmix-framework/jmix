@@ -253,7 +253,7 @@ public class QueriesControllerFT extends AbstractRestControllerFT {
         params.put("login", "bob");
         try (CloseableHttpResponse response = sendGet(url, oauthToken, params)) {
             assertEquals(HttpStatus.SC_OK, statusCode(response));
-            assertEquals("application/json;charset=UTF-8", responseContentType(response));
+            assertEquals("application/json", responseContentType(response));
             assertEquals("1", responseToString(response));
         }
     }
@@ -278,7 +278,7 @@ public class QueriesControllerFT extends AbstractRestControllerFT {
         String url = baseUrl + "/queries/sec$User/all/count";
         try (CloseableHttpResponse response = sendGet(url, oauthToken, null)) {
             assertEquals(HttpStatus.SC_OK, statusCode(response));
-            assertEquals("application/json;charset=UTF-8", responseContentType(response));
+            assertEquals("application/json", responseContentType(response));
             assertEquals("3", responseToString(response));
         }
     }
@@ -392,7 +392,7 @@ public class QueriesControllerFT extends AbstractRestControllerFT {
         params.put("modelVersion", "1.0");
         try (CloseableHttpResponse response = sendGet(url, oauthToken, params)) {
             assertEquals(HttpStatus.SC_OK, statusCode(response));
-            assertEquals("application/json;charset=UTF-8", responseContentType(response));
+            assertEquals("application/json", responseContentType(response));
             assertEquals("1", responseToString(response));
         }
     }

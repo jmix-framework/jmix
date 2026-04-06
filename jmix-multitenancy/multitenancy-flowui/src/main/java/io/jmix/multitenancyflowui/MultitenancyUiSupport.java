@@ -17,7 +17,7 @@
 package io.jmix.multitenancyflowui;
 
 import com.vaadin.flow.router.Location;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 

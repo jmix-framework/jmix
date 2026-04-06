@@ -51,7 +51,7 @@ import jakarta.persistence.Lob;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.annotation.Annotation;
 import java.sql.Time;
@@ -288,6 +288,7 @@ public abstract class AbstractComponentGenerationStrategy implements ComponentGe
             selectAction.setEntityName(range.asClass().getName());
         } else if (range.isDatatype()) {
             selectAction.setJavaClass(range.asDatatype().getJavaClass());
+            selectAction.setDatatype(range.asDatatype());
         } else if (range.isEnum()) {
             //noinspection unchecked
             selectAction.setEnumClass(range.asEnumeration().getJavaClass());

@@ -21,6 +21,7 @@ import io.jmix.chartsflowui.kit.component.model.series.Label;
 import io.jmix.chartsflowui.kit.component.model.shared.HasSymbols;
 import io.jmix.chartsflowui.kit.component.model.shared.JsFunction;
 import io.jmix.chartsflowui.kit.component.model.shared.LineStyle;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,6 +55,7 @@ public class MarkLine extends AbstractMark<MarkLine> {
 
         protected Boolean disabled;
 
+        @Nullable
         public Boolean getDisabled() {
             return disabled;
         }
@@ -111,6 +113,7 @@ public class MarkLine extends AbstractMark<MarkLine> {
 
         protected List<PointPair> pairPointLines;
 
+        @Nullable
         public List<Point> getSinglePointLines() {
             return singlePointLines;
         }
@@ -151,6 +154,7 @@ public class MarkLine extends AbstractMark<MarkLine> {
             }
         }
 
+        @Nullable
         public List<PointPair> getPairPointLines() {
             return pairPointLines;
         }
@@ -222,6 +226,7 @@ public class MarkLine extends AbstractMark<MarkLine> {
 
         protected LineStyle lineStyle;
 
+        @Nullable
         public Label getLabel() {
             return label;
         }
@@ -235,6 +240,7 @@ public class MarkLine extends AbstractMark<MarkLine> {
             addChild(label);
         }
 
+        @Nullable
         public LineStyle getLineStyle() {
             return lineStyle;
         }
@@ -275,10 +281,12 @@ public class MarkLine extends AbstractMark<MarkLine> {
             this.endPoint = endPoint;
         }
 
+        @Nullable
         public Point getStartPoint() {
             return startPoint;
         }
 
+        @Nullable
         public Point getEndPoint() {
             return endPoint;
         }
@@ -326,6 +334,7 @@ public class MarkLine extends AbstractMark<MarkLine> {
 
         protected Blur blur;
 
+        @Nullable
         public LineDataType getType() {
             return type;
         }
@@ -335,6 +344,7 @@ public class MarkLine extends AbstractMark<MarkLine> {
             markAsDirty();
         }
 
+        @Nullable
         public Integer getValueIndex() {
             return valueIndex;
         }
@@ -344,6 +354,7 @@ public class MarkLine extends AbstractMark<MarkLine> {
             markAsDirty();
         }
 
+        @Nullable
         public String getValueDim() {
             return valueDim;
         }
@@ -353,6 +364,7 @@ public class MarkLine extends AbstractMark<MarkLine> {
             markAsDirty();
         }
 
+        @Nullable
         public Coordinate getCoordinate() {
             return coordinate;
         }
@@ -367,6 +379,7 @@ public class MarkLine extends AbstractMark<MarkLine> {
             markAsDirty();
         }
 
+        @Nullable
         public String getName() {
             return name;
         }
@@ -376,6 +389,7 @@ public class MarkLine extends AbstractMark<MarkLine> {
             markAsDirty();
         }
 
+        @Nullable
         public String getX() {
             return x;
         }
@@ -385,6 +399,7 @@ public class MarkLine extends AbstractMark<MarkLine> {
             markAsDirty();
         }
 
+        @Nullable
         public String getY() {
             return y;
         }
@@ -394,6 +409,7 @@ public class MarkLine extends AbstractMark<MarkLine> {
             markAsDirty();
         }
 
+        @Nullable
         public String getXAxis() {
             return xAxis;
         }
@@ -403,6 +419,7 @@ public class MarkLine extends AbstractMark<MarkLine> {
             markAsDirty();
         }
 
+        @Nullable
         public String getYAxis() {
             return yAxis;
         }
@@ -412,6 +429,7 @@ public class MarkLine extends AbstractMark<MarkLine> {
             markAsDirty();
         }
 
+        @Nullable
         public Double getValue() {
             return value;
         }
@@ -422,7 +440,7 @@ public class MarkLine extends AbstractMark<MarkLine> {
         }
 
         @Override
-        public HasSymbols.Symbol getSymbol() {
+        public HasSymbols.@Nullable Symbol getSymbol() {
             return symbol;
         }
 
@@ -438,6 +456,7 @@ public class MarkLine extends AbstractMark<MarkLine> {
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public Integer getSymbolSize() {
             return symbolSize;
@@ -449,6 +468,7 @@ public class MarkLine extends AbstractMark<MarkLine> {
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public JsFunction getSymbolSizeFunction() {
             return symbolSizeFunction;
@@ -466,6 +486,7 @@ public class MarkLine extends AbstractMark<MarkLine> {
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public Integer getSymbolRotate() {
             return symbolRotate;
@@ -477,6 +498,7 @@ public class MarkLine extends AbstractMark<MarkLine> {
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public Boolean getSymbolKeepAspect() {
             return symbolKeepAspect;
@@ -488,6 +510,7 @@ public class MarkLine extends AbstractMark<MarkLine> {
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public String[] getSymbolOffset() {
             return symbolOffset;
@@ -499,6 +522,7 @@ public class MarkLine extends AbstractMark<MarkLine> {
             markAsDirty();
         }
 
+        @Nullable
         public Emphasis getEmphasis() {
             return emphasis;
         }
@@ -512,6 +536,7 @@ public class MarkLine extends AbstractMark<MarkLine> {
             addChild(emphasis);
         }
 
+        @Nullable
         public Blur getBlur() {
             return blur;
         }
@@ -591,7 +616,7 @@ public class MarkLine extends AbstractMark<MarkLine> {
         }
     }
 
-    public HasSymbols.Symbol[] getSymbol() {
+    public HasSymbols.Symbol @Nullable [] getSymbol() {
         return symbol;
     }
 
@@ -611,6 +636,7 @@ public class MarkLine extends AbstractMark<MarkLine> {
         markAsDirty();
     }
 
+    @Nullable
     public Integer[] getSymbolSize() {
         return symbolSize;
     }
@@ -620,6 +646,7 @@ public class MarkLine extends AbstractMark<MarkLine> {
         markAsDirty();
     }
 
+    @Nullable
     public Integer getPrecision() {
         return precision;
     }
@@ -629,6 +656,7 @@ public class MarkLine extends AbstractMark<MarkLine> {
         markAsDirty();
     }
 
+    @Nullable
     public LineStyle getLineStyle() {
         return lineStyle;
     }
@@ -642,6 +670,7 @@ public class MarkLine extends AbstractMark<MarkLine> {
         addChild(lineStyle);
     }
 
+    @Nullable
     public Emphasis getEmphasis() {
         return emphasis;
     }
@@ -655,6 +684,7 @@ public class MarkLine extends AbstractMark<MarkLine> {
         addChild(emphasis);
     }
 
+    @Nullable
     public Blur getBlur() {
         return blur;
     }
@@ -668,6 +698,7 @@ public class MarkLine extends AbstractMark<MarkLine> {
         addChild(this.blur);
     }
 
+    @Nullable
     public Data getData() {
         return data;
     }

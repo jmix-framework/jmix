@@ -18,7 +18,7 @@ package io.jmix.chartsflowui.kit.component;
 
 import io.jmix.chartsflowui.kit.data.chart.ChartItems;
 import io.jmix.chartsflowui.kit.data.chart.DataItem;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * For internal use only
@@ -31,7 +31,7 @@ public final class ChartUpdateUtil {
         }
     }
 
-    public static <T extends DataItem> void requestIncrementalUpdateChartDataSet(JmixChart chart,
+    public static <T extends DataItem> void requestIncrementalUpdateChartDataSet(@Nullable JmixChart chart,
                                                                                  ChartItems.ItemSetChangeEvent<T> event) {
         if (chart != null) {
             chart.requestIncrementalUpdateChartDataSet(event);

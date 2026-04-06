@@ -19,7 +19,7 @@ package io.jmix.chartsflowui.kit.component.model.toolbox;
 import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
 import io.jmix.chartsflowui.kit.component.model.HasEnumId;
 import io.jmix.chartsflowui.kit.component.model.shared.*;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The label configuration component.
@@ -79,6 +79,7 @@ public class Emphasis extends ChartObservableObject {
             }
         }
 
+        @Nullable
         public TextPosition getTextPosition() {
             return textPosition;
         }
@@ -88,6 +89,7 @@ public class Emphasis extends ChartObservableObject {
             markAsDirty();
         }
 
+        @Nullable
         public Color getTextFill() {
             return textFill;
         }
@@ -97,6 +99,7 @@ public class Emphasis extends ChartObservableObject {
             markAsDirty();
         }
 
+        @Nullable
         public Align getTextAlign() {
             return textAlign;
         }
@@ -106,6 +109,7 @@ public class Emphasis extends ChartObservableObject {
             markAsDirty();
         }
 
+        @Nullable
         public Color getTextBackgroundColor() {
             return textBackgroundColor;
         }
@@ -115,6 +119,7 @@ public class Emphasis extends ChartObservableObject {
             markAsDirty();
         }
 
+        @Nullable
         public Integer getTextBorderRadius() {
             return textBorderRadius;
         }
@@ -124,6 +129,7 @@ public class Emphasis extends ChartObservableObject {
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public Padding getPadding() {
             return padding;
@@ -173,6 +179,7 @@ public class Emphasis extends ChartObservableObject {
         }
     }
 
+    @Nullable
     public IconStyle getIconStyle() {
         return iconStyle;
     }

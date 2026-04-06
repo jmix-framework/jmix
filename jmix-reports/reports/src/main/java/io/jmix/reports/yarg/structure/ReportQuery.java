@@ -16,7 +16,7 @@
 package io.jmix.reports.yarg.structure;
 
 import io.jmix.reports.yarg.loaders.ReportDataLoader;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.io.Serializable;
 import java.util.Map;

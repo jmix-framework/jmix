@@ -18,7 +18,7 @@ package io.jmix.chartsflowui.kit.data.chart;
 
 import com.vaadin.flow.shared.Registration;
 import io.jmix.chartsflowui.kit.component.model.HasEnumId;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.EventObject;
@@ -36,6 +36,7 @@ public interface ChartItems<T extends DataItem> {
      * @param itemId the item id
      * @return the item by the given id
      */
+    @Nullable
     DataItem getItem(Object itemId);
 
     /**

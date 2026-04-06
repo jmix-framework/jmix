@@ -1,0 +1,73 @@
+/*
+ * Copyright 2026 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+.jmix-grid-header-filter {
+    display: inline-flex;
+    gap: var(--vaadin-gap-xs);
+}
+
+vaadin-button[jmix-role='column-filter-button'] {
+    color: var(--vaadin-text-color);
+
+    --vaadin-button-background: transparent;
+    --vaadin-button-border-color: transparent;
+    --vaadin-button-shadow: none;
+
+    padding: 0;
+
+    font-size: inherit;
+    line-height: inherit;
+}
+
+.jmix-grid-header-filter .small-device {
+    flex-grow: 1;
+}
+
+/* Styles for the column-filter button */
+vaadin-button[jmix-role='column-filter-button']:not([activated]):hover {
+    color: var(--vaadin-text-color);
+}
+
+vaadin-button[jmix-role='column-filter-button']:not([activated]) {
+    color: var(--vaadin-text-color-secondary);
+}
+
+vaadin-button[jmix-role='column-filter-button']:is([activated]) {
+    color: var(--aura-accent-text-color);
+}
+
+/* Dialog overlay style like a popup */
+vaadin-dialog[class~='column-filter-popup']::part(backdrop) {
+    background: unset;
+}
+
+vaadin-dialog[class~='column-filter-dialog']::part(content) {
+    display: flex;
+    flex-direction: row;
+    gap: var(--vaadin-gap-s);
+    padding: var(--vaadin-padding-block-container) var(--vaadin-padding-inline-container);
+}
+
+vaadin-dialog[class~='column-filter-popup']::part(overlay) {
+    align-self: flex-start;
+    position: absolute;
+}
+
+vaadin-dialog[class~='column-filter-footer-small']::slotted([slot='footer']) {
+    display: flex;
+    gap: var(--vaadin-gap-s);
+    width: 100%;
+}

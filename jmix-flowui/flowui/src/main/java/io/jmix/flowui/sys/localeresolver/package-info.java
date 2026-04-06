@@ -15,8 +15,8 @@
  */
 
 @Internal
-@NonNullApi
+@NullMarked
 package io.jmix.flowui.sys.localeresolver;
 
 import io.jmix.core.annotation.Internal;
-import org.springframework.lang.NonNullApi;
+import org.jspecify.annotations.NullMarked;

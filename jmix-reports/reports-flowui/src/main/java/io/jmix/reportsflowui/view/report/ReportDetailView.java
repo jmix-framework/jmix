@@ -32,6 +32,7 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.NativeLabel;
 import com.vaadin.flow.component.icon.FontIcon;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
@@ -92,7 +93,7 @@ import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -134,9 +135,9 @@ public class ReportDetailView extends StandardDetailView<Report> {
     @ViewComponent
     protected JmixCheckbox multiDataSetField;
     @ViewComponent
-    protected Div multiDataSetLayout;
+    protected FlexLayout multiDataSetLayout;
     @ViewComponent
-    protected Div singleDataSetLayout;
+    protected FlexLayout singleDataSetLayout;
     @ViewComponent
     protected Div dataSetDetailsLayout;
     @ViewComponent
@@ -624,18 +625,22 @@ public class ReportDetailView extends StandardDetailView<Report> {
 
     @Subscribe(id = "parametersDc", target = Target.DATA_CONTAINER)
     protected void onParametersDcCollectionChange(CollectionContainer.CollectionChangeEvent<ReportInputParameter> event) {
-        Map<String, String> paramAliases = new HashMap<>();
+        Map<String, String> entityParamAliases = new LinkedHashMap<>();
+        Map<String, String> entitiesParamAliases = new LinkedHashMap<>();
 
         for (ReportInputParameter item : event.getSource().getItems()) {
-            paramAliases.put(item.getName(), item.getAlias());
+            if (ParameterType.ENTITY.equals(item.getType())) {
+                entityParamAliases.put(item.getAlias(), item.getName());
+            } else if (ParameterType.ENTITY_LIST.equals(item.getType())) {
+                entitiesParamAliases.put(item.getAlias(), item.getName());
+            }
         }
-        BiMap<String, String> biMap = ImmutableBiMap.copyOf(paramAliases);
 
-        entitiesParamFieldBinder.setItemsSilently(biMap.values(), true);
-        entitiesParamField.setItemLabelGenerator(o -> biMap.inverse().getOrDefault(o, o));
+        entityParamFieldBinder.setItemsSilently(entityParamAliases.keySet(), true);
+        entityParamField.setItemLabelGenerator(alias -> "%s (%s)".formatted(entityParamAliases.get(alias), alias));
 
-        entityParamFieldBinder.setItemsSilently(biMap.values(), true);
-        entityParamField.setItemLabelGenerator(o -> biMap.inverse().getOrDefault(o, o));
+        entitiesParamFieldBinder.setItemsSilently(entitiesParamAliases.keySet(), true);
+        entitiesParamField.setItemLabelGenerator(alias -> "%s (%s)".formatted(entitiesParamAliases.get(alias), alias));
     }
 
     @Subscribe

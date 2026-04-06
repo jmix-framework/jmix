@@ -575,7 +575,7 @@
                     <xs:enumeration value="LEVEL_RIGHT_BOLD"/>
                     <xs:enumeration value="LEVEL_RIGHT"/>
                     <xs:enumeration value="LEVEL_UP_BOLD"/>
-                    <xs:enumeration value="LEVEL_LEVEL_UPUP_BOLD"/>
+                    <xs:enumeration value="LEVEL_UP"/>
                     <xs:enumeration value="LIFEBUOY"/>
                     <xs:enumeration value="LIGHTBULB"/>
                     <xs:enumeration value="LINE_BAR_CHART"/>
@@ -2074,8 +2074,8 @@
                     <xs:enumeration value="success"/>
                     <xs:enumeration value="contrast"/>
                     <xs:enumeration value="icon"/>
-                    <xs:enumeration value="contained"/>
-                    <xs:enumeration value="outlined"/>
+                    <xs:enumeration value="dropdown-indicators"/>
+                    <xs:enumeration value="no-dropdown-indicators"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:union>
@@ -3338,6 +3338,7 @@
                             <xs:attributeGroup ref="columnsLoadType"/>
                             <xs:attribute name="sortable" type="xs:boolean"/>
                             <xs:attribute name="resizable" type="xs:boolean"/>
+                            <xs:attribute name="filterable" type="xs:boolean"/>
                         </xs:complexType>
                     </xs:element>
                     <xs:element name="contextMenu" minOccurs="0" type="contextMenuType"/>

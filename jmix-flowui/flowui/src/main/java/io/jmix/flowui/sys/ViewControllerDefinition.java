@@ -19,7 +19,7 @@ package io.jmix.flowui.sys;
 import io.jmix.core.annotation.Internal;
 import org.springframework.core.io.Resource;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 @Internal
 public final class ViewControllerDefinition {

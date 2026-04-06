@@ -17,7 +17,7 @@
 package io.jmix.core.metamodel.datatype.impl;
 
 import io.jmix.core.metamodel.datatype.EnumClass;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A helper class to be used in {@link EnumClass} implementations to convert identifiers to enum values.

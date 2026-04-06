@@ -17,10 +17,11 @@
 package io.jmix.flowui.kit.component.sidedialog;
 
 import com.vaadin.flow.component.*;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.dom.ClassList;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.dom.Style;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
@@ -301,7 +302,9 @@ public class JmixSideDialog extends Composite<JmixSideDialogOverlay> implements 
 
     /**
      * @return {@code true} if the dialog is a modal dialog, {@code false} otherwise
+     * @deprecated Use {@link #getModality()} to check if the dialog is modal
      */
+    @Deprecated(since = "3.0", forRemoval = true)
     public boolean isModal() {
         return getContent().isModal();
     }
@@ -310,9 +313,48 @@ public class JmixSideDialog extends Composite<JmixSideDialogOverlay> implements 
      * Sets whether a component will open a modal or modeless dialog.
      *
      * @param modal modal option
+     * @deprecated Use {@link #setModality(ModalityMode)} instead
      */
+    @Deprecated(since = "3.0", forRemoval = true)
     public void setModal(boolean modal) {
         getContent().setModal(modal);
+    }
+
+    /**
+     * Returns the modality mode of the dialog. The default value is {@link ModalityMode#VISUAL}.
+     *
+     * @return the modality mode
+     */
+    public ModalityMode getModality() {
+        return getContent().getModality();
+    }
+
+    /**
+     * Sets the modality of the dialog. The following modes are available:
+     * <ul>
+     * <li>{@link ModalityMode#STRICT}: The dialog shows a modality curtain and
+     * users can not interact with components outside the dialog. Client-side
+     * events and RPC calls from components outside the dialog are blocked.
+     * <li>{@link ModalityMode#VISUAL}: The dialog shows a modality curtain and
+     * users can not interact with components outside the dialog. However,
+     * client-side events and RPC calls from components outside the dialog are
+     * allowed.
+     * <li>{@link ModalityMode#MODELESS}: The dialog does not show a modality
+     * curtain and users can interact with components outside the dialog.
+     * Client-side events and RPC calls from components outside the dialog are
+     * allowed.
+     * </ul>
+     * <p>
+     * Note: When dialog is set to be {@link ModalityMode#MODELESS}, then it's
+     * up to you to provide means for it to be closed (e.g. a button that calls
+     * {@link Dialog#close()}). The reason being that a modeless dialog allows
+     * user to interact with the interface under it and won't be closed by
+     * clicking outside or the ESC key.
+     *
+     * @param mode the modality mode, not null
+     */
+    public void setModality(ModalityMode mode) {
+        getContent().setModality(mode);
     }
 
     /**
@@ -369,7 +411,9 @@ public class JmixSideDialog extends Composite<JmixSideDialogOverlay> implements 
 
     /**
      * @return the ARIA role for the overlay element or {@code null} if not set
+     * @deprecated Use {@link #getRole()} instead
      */
+    @Deprecated(since = "3.0", forRemoval = true)
     @Nullable
     public String getOverlayRole() {
         return getContent().getOverlayRole();
@@ -379,9 +423,27 @@ public class JmixSideDialog extends Composite<JmixSideDialogOverlay> implements 
      * Sets the ARIA role for the overlay element, used by screen readers.
      *
      * @param role the ARIA role to set
+     * @deprecated Use {@link #setRole(String)} instead
      */
+    @Deprecated(since = "3.0", forRemoval = true)
     public void setOverlayRole(String role) {
         getContent().setOverlayRole(role);
+    }
+
+    /**
+     * @return the ARIA role for the dialog element or {@code null} if not set
+     */
+    public @Nullable String getRole() {
+        return getContent().getRole();
+    }
+
+    /**
+     * Sets the ARIA role for the dialog element, used by screen readers.
+     *
+     * @param role the ARIA role to set
+     */
+    public void setRole(String role) {
+        getContent().setRole(role);
     }
 
     @Override

@@ -24,6 +24,7 @@ import io.jmix.chartsflowui.kit.component.model.series.mark.MarkArea;
 import io.jmix.chartsflowui.kit.component.model.series.mark.MarkLine;
 import io.jmix.chartsflowui.kit.component.model.series.mark.MarkPoint;
 import io.jmix.chartsflowui.kit.component.model.shared.*;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -117,6 +118,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
 
         protected ItemStyle itemStyle;
 
+        @Nullable
         public Title getTitle() {
             return title;
         }
@@ -130,6 +132,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
             addChild(title);
         }
 
+        @Nullable
         public Detail getDetail() {
             return detail;
         }
@@ -143,6 +146,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
             addChild(detail);
         }
 
+        @Nullable
         public String getName() {
             return name;
         }
@@ -152,6 +156,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
             markAsDirty();
         }
 
+        @Nullable
         public Double getValue() {
             return value;
         }
@@ -161,6 +166,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
             markAsDirty();
         }
 
+        @Nullable
         public ItemStyle getItemStyle() {
             return itemStyle;
         }
@@ -259,6 +265,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
                 }
             }
 
+            @Nullable
             public Integer getWidth() {
                 return width;
             }
@@ -268,6 +275,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
                 markAsDirty();
             }
 
+            @Nullable
             @Override
             public Integer getShadowBlur() {
                 return shadowBlur;
@@ -279,6 +287,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
                 markAsDirty();
             }
 
+            @Nullable
             @Override
             public Color getShadowColor() {
                 return shadowColor;
@@ -290,6 +299,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
                 markAsDirty();
             }
 
+            @Nullable
             @Override
             public Integer getShadowOffsetX() {
                 return shadowOffsetX;
@@ -301,6 +311,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
                 markAsDirty();
             }
 
+            @Nullable
             @Override
             public Integer getShadowOffsetY() {
                 return shadowOffsetY;
@@ -312,6 +323,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
                 markAsDirty();
             }
 
+            @Nullable
             public Double getOpacity() {
                 return opacity;
             }
@@ -342,6 +354,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
             }
         }
 
+        @Nullable
         public Boolean getShow() {
             return show;
         }
@@ -351,6 +364,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
             markAsDirty();
         }
 
+        @Nullable
         public Boolean getRoundCap() {
             return roundCap;
         }
@@ -360,6 +374,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
             markAsDirty();
         }
 
+        @Nullable
         public LineStyle getLineStyle() {
             return lineStyle;
         }
@@ -408,6 +423,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
 
         protected ItemStyle itemStyle;
 
+        @Nullable
         public Boolean getShow() {
             return show;
         }
@@ -417,6 +433,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
             markAsDirty();
         }
 
+        @Nullable
         public Boolean getOverlap() {
             return overlap;
         }
@@ -426,6 +443,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
             markAsDirty();
         }
 
+        @Nullable
         public Integer getWidth() {
             return width;
         }
@@ -435,6 +453,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
             markAsDirty();
         }
 
+        @Nullable
         public Boolean getRoundCap() {
             return roundCap;
         }
@@ -444,6 +463,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
             markAsDirty();
         }
 
+        @Nullable
         public Boolean getClip() {
             return clip;
         }
@@ -453,6 +473,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
             markAsDirty();
         }
 
+        @Nullable
         public ItemStyle getItemStyle() {
             return itemStyle;
         }
@@ -512,6 +533,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
 
         protected LineStyle lineStyle;
 
+        @Nullable
         public Boolean getShow() {
             return show;
         }
@@ -521,6 +543,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
             markAsDirty();
         }
 
+        @Nullable
         public Integer getLength() {
             return length;
         }
@@ -530,6 +553,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
             markAsDirty();
         }
 
+        @Nullable
         public Integer getDistance() {
             return distance;
         }
@@ -539,6 +563,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
             markAsDirty();
         }
 
+        @Nullable
         public LineStyle getLineStyle() {
             return lineStyle;
         }
@@ -590,6 +615,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
 
         protected LineStyle lineStyle;
 
+        @Nullable
         public Boolean getShow() {
             return show;
         }
@@ -599,6 +625,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
             markAsDirty();
         }
 
+        @Nullable
         public Integer getSplitNumber() {
             return splitNumber;
         }
@@ -608,6 +635,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
             markAsDirty();
         }
 
+        @Nullable
         public Integer getLength() {
             return length;
         }
@@ -617,6 +645,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
             markAsDirty();
         }
 
+        @Nullable
         public Integer getDistance() {
             return distance;
         }
@@ -626,6 +655,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
             markAsDirty();
         }
 
+        @Nullable
         public LineStyle getLineStyle() {
             return lineStyle;
         }
@@ -688,6 +718,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
 
         protected ItemStyle itemStyle;
 
+        @Nullable
         public Boolean getShow() {
             return show;
         }
@@ -697,6 +728,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
             markAsDirty();
         }
 
+        @Nullable
         public Boolean getShowAbove() {
             return showAbove;
         }
@@ -706,6 +738,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
             markAsDirty();
         }
 
+        @Nullable
         public String getIcon() {
             return icon;
         }
@@ -715,6 +748,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
             markAsDirty();
         }
 
+        @Nullable
         public String[] getOffsetCenter() {
             return offsetCenter;
         }
@@ -724,6 +758,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
             markAsDirty();
         }
 
+        @Nullable
         public String getLength() {
             return length;
         }
@@ -733,6 +768,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
             markAsDirty();
         }
 
+        @Nullable
         public Integer getWidth() {
             return width;
         }
@@ -742,6 +778,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
             markAsDirty();
         }
 
+        @Nullable
         public Boolean getKeepAspect() {
             return keepAspect;
         }
@@ -751,6 +788,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
             markAsDirty();
         }
 
+        @Nullable
         public ItemStyle getItemStyle() {
             return itemStyle;
         }
@@ -826,6 +864,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
 
         protected ItemStyle itemStyle;
 
+        @Nullable
         public Boolean getShow() {
             return show;
         }
@@ -835,6 +874,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
             markAsDirty();
         }
 
+        @Nullable
         public Boolean getShowAbove() {
             return showAbove;
         }
@@ -844,6 +884,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
             markAsDirty();
         }
 
+        @Nullable
         public Integer getSize() {
             return size;
         }
@@ -853,6 +894,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
             markAsDirty();
         }
 
+        @Nullable
         public String getIcon() {
             return icon;
         }
@@ -862,6 +904,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
             markAsDirty();
         }
 
+        @Nullable
         public String[] getOffsetCenter() {
             return offsetCenter;
         }
@@ -871,6 +914,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
             markAsDirty();
         }
 
+        @Nullable
         public Boolean getKeepAspect() {
             return keepAspect;
         }
@@ -880,6 +924,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
             markAsDirty();
         }
 
+        @Nullable
         public ItemStyle getItemStyle() {
             return itemStyle;
         }
@@ -938,6 +983,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
 
         protected ItemStyle itemStyle;
 
+        @Nullable
         public Boolean getDisabled() {
             return disabled;
         }
@@ -947,6 +993,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
             markAsDirty();
         }
 
+        @Nullable
         public ItemStyle getItemStyle() {
             return itemStyle;
         }
@@ -986,6 +1033,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
 
         protected JsFunction formatterFunction;
 
+        @Nullable
         public String getFormatter() {
             return formatter;
         }
@@ -995,6 +1043,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
             markAsDirty();
         }
 
+        @Nullable
         public JsFunction getFormatterFunction() {
             return formatterFunction;
         }
@@ -1061,6 +1110,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
 
         protected Integer shadowOffsetY;
 
+        @Nullable
         public Boolean getShow() {
             return show;
         }
@@ -1070,6 +1120,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
             markAsDirty();
         }
 
+        @Nullable
         public String[] getOffsetCenter() {
             return offsetCenter;
         }
@@ -1079,6 +1130,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
             markAsDirty();
         }
 
+        @Nullable
         public Boolean getValueAnimation() {
             return valueAnimation;
         }
@@ -1088,6 +1140,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
             markAsDirty();
         }
 
+        @Nullable
         public Color getBackgroundColor() {
             return backgroundColor;
         }
@@ -1097,6 +1150,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public Color getBorderColor() {
             return borderColor;
@@ -1108,6 +1162,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public Integer getBorderWidth() {
             return borderWidth;
@@ -1119,6 +1174,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
             markAsDirty();
         }
 
+        @Nullable
         public String getBorderType() {
             return borderType;
         }
@@ -1128,6 +1184,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
             markAsDirty();
         }
 
+        @Nullable
         public Integer getBorderDashOffset() {
             return borderDashOffset;
         }
@@ -1137,6 +1194,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public Integer getBorderRadius() {
             return borderRadius;
@@ -1148,6 +1206,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public Padding getPadding() {
             return padding;
@@ -1171,6 +1230,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public Color getShadowColor() {
             return shadowColor;
@@ -1182,6 +1242,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public Integer getShadowBlur() {
             return shadowBlur;
@@ -1193,6 +1254,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public Integer getShadowOffsetX() {
             return shadowOffsetX;
@@ -1204,6 +1266,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public Integer getShadowOffsetY() {
             return shadowOffsetY;
@@ -1252,6 +1315,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
         }
     }
 
+    @Nullable
     public String[] getCenter() {
         return center;
     }
@@ -1261,6 +1325,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
         markAsDirty();
     }
 
+    @Nullable
     public String getRadius() {
         return radius;
     }
@@ -1270,6 +1335,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getLegendHoverLink() {
         return legendHoverLink;
     }
@@ -1279,6 +1345,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
         markAsDirty();
     }
 
+    @Nullable
     public Integer getStartAngle() {
         return startAngle;
     }
@@ -1288,6 +1355,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
         markAsDirty();
     }
 
+    @Nullable
     public Integer getEndAngle() {
         return endAngle;
     }
@@ -1297,10 +1365,12 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getClockwise() {
         return clockwise;
     }
 
+    @Nullable
     public List<DataItem> getData() {
         return data;
     }
@@ -1346,6 +1416,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
         markAsDirty();
     }
 
+    @Nullable
     public Integer getMin() {
         return min;
     }
@@ -1355,6 +1426,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
         markAsDirty();
     }
 
+    @Nullable
     public Integer getMax() {
         return max;
     }
@@ -1364,6 +1436,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
         markAsDirty();
     }
 
+    @Nullable
     public Integer getSplitNumber() {
         return splitNumber;
     }
@@ -1373,6 +1446,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
         markAsDirty();
     }
 
+    @Nullable
     public AxisLine getAxisLine() {
         return axisLine;
     }
@@ -1386,6 +1460,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
         addChild(axisLine);
     }
 
+    @Nullable
     public Progress getProgress() {
         return progress;
     }
@@ -1399,6 +1474,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
         addChild(progress);
     }
 
+    @Nullable
     public SplitLine getSplitLine() {
         return splitLine;
     }
@@ -1412,6 +1488,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
         addChild(splitLine);
     }
 
+    @Nullable
     public AxisTick getAxisTick() {
         return axisTick;
     }
@@ -1425,6 +1502,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
         addChild(axisTick);
     }
 
+    @Nullable
     public Label getAxisLabel() {
         return axisLabel;
     }
@@ -1438,6 +1516,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
         addChild(axisLabel);
     }
 
+    @Nullable
     public ItemStyle getItemStyle() {
         return itemStyle;
     }
@@ -1451,6 +1530,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
         addChild(itemStyle);
     }
 
+    @Nullable
     public Pointer getPointer() {
         return pointer;
     }
@@ -1464,6 +1544,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
         addChild(pointer);
     }
 
+    @Nullable
     public Anchor getAnchor() {
         return anchor;
     }
@@ -1477,6 +1558,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
         addChild(anchor);
     }
 
+    @Nullable
     public Emphasis getEmphasis() {
         return emphasis;
     }
@@ -1490,6 +1572,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
         addChild(emphasis);
     }
 
+    @Nullable
     public Title getTitle() {
         return title;
     }
@@ -1503,6 +1586,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
         addChild(title);
     }
 
+    @Nullable
     public Detail getDetail() {
         return detail;
     }
@@ -1516,6 +1600,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
         addChild(detail);
     }
 
+    @Nullable
     public MarkPoint getMarkPoint() {
         return markPoint;
     }
@@ -1529,6 +1614,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
         addChild(markPoint);
     }
 
+    @Nullable
     public MarkLine getMarkLine() {
         return markLine;
     }
@@ -1542,6 +1628,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
         addChild(markLine);
     }
 
+    @Nullable
     public MarkArea getMarkArea() {
         return markArea;
     }
@@ -1555,6 +1642,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
         addChild(markArea);
     }
 
+    @Nullable
     public Boolean getAnimation() {
         return animation;
     }
@@ -1564,6 +1652,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
         markAsDirty();
     }
 
+    @Nullable
     public Integer getAnimationThreshold() {
         return animationThreshold;
     }
@@ -1573,6 +1662,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
         markAsDirty();
     }
 
+    @Nullable
     public Integer getAnimationDurationUpdate() {
         return animationDurationUpdate;
     }
@@ -1582,6 +1672,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
         markAsDirty();
     }
 
+    @Nullable
     public String getAnimationEasingUpdate() {
         return animationEasingUpdate;
     }
@@ -1591,6 +1682,7 @@ public class GaugeSeries extends AbstractSeries<GaugeSeries> {
         markAsDirty();
     }
 
+    @Nullable
     public Integer getAnimationDelayUpdate() {
         return animationDelayUpdate;
     }

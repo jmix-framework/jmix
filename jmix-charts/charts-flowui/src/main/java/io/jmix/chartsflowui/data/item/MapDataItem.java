@@ -17,6 +17,7 @@
 package io.jmix.chartsflowui.data.item;
 
 import io.jmix.chartsflowui.kit.data.chart.DataItem;
+import org.jspecify.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -68,6 +69,7 @@ public class MapDataItem implements DataItem {
         properties.remove(key);
     }
 
+    @Nullable
     @Override
     public Object getId() {
         return id;

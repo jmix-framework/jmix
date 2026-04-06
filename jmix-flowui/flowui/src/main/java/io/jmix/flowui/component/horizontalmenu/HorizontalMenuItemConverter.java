@@ -18,6 +18,7 @@ package io.jmix.flowui.component.horizontalmenu;
 
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.RouteParameters;
@@ -37,8 +38,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
-import org.springframework.stereotype.Component;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +47,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-@Component("flowui_HorizontalMenuItemConverter")
+@org.springframework.stereotype.Component("flowui_HorizontalMenuItemConverter")
 public class HorizontalMenuItemConverter {
 
     private static final Logger log = LoggerFactory.getLogger(HorizontalMenuItemConverter.class);
@@ -141,7 +141,7 @@ public class HorizontalMenuItemConverter {
     }
 
     @Nullable
-    protected com.vaadin.flow.component.Component getIcon(MenuItem menuItemDescriptor) {
+    protected Component getIcon(MenuItem menuItemDescriptor) {
         return menuItemDescriptor.getIcon();
     }
 
@@ -172,8 +172,7 @@ public class HorizontalMenuItemConverter {
         return GENERATED_SEPARATOR_ID_PREFIX + RandomStringUtils.randomAlphanumeric(8);
     }
 
-    @Nullable
-    protected HorizontalMenu.MenuItem createMenuItem(MenuItem menuItemDescriptor) {
+    protected HorizontalMenu.@Nullable MenuItem createMenuItem(MenuItem menuItemDescriptor) {
         if (!isPermitted(menuItemDescriptor)) {
             log.debug("Menu item '{}' is not permitted by access constraint", menuItemDescriptor.getId());
             return null;

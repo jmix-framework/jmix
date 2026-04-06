@@ -19,6 +19,7 @@ package io.jmix.chartsflowui.kit.component.model.series.mark;
 import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
 import io.jmix.chartsflowui.kit.component.model.series.Label;
 import io.jmix.chartsflowui.kit.component.model.shared.ItemStyle;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Base class for mark elements.
@@ -32,6 +33,7 @@ public abstract class AbstractMarkElement<T extends AbstractMarkElement<T>>
 
     protected Label label;
 
+    @Nullable
     public ItemStyle getItemStyle() {
         return itemStyle;
     }
@@ -45,6 +47,7 @@ public abstract class AbstractMarkElement<T extends AbstractMarkElement<T>>
         addChild(itemStyle);
     }
 
+    @Nullable
     public Label getLabel() {
         return label;
     }

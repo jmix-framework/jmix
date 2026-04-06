@@ -17,7 +17,7 @@
 package io.jmix.flowui.kit.component.upload.handler;
 
 import com.vaadin.flow.server.streams.UploadMetadata;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.Serializable;

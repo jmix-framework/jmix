@@ -19,3 +19,10 @@ jmix-side-panel-layout-closer {
     background: var(--aura-background-color);
     color: var(--aura-neutral);
 }
+
+@media (forced-colors: active) {
+
+    jmix-side-panel-layout-closer {
+        border: 1px solid;
+    }
+}

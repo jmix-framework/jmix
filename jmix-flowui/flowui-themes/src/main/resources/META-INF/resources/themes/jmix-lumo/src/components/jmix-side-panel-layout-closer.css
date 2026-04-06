@@ -50,7 +50,7 @@
       justify-content: center;
       cursor: default;
       position: relative;
-      outline: none;
+      /*outline: none;*/ /* Jmix  */
       width: var(--lumo-size-l);
       height: var(--lumo-size-l);
       min-width: auto;

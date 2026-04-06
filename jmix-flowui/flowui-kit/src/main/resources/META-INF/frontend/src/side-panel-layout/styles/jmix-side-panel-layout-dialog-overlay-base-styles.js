@@ -14,9 +14,18 @@
  * limitations under the License.
  */
 
+import '@vaadin/component-base/src/styles/style-props.js';
 import { css } from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
+import { dialogOverlayStyles } from '@vaadin/dialog/src/styles/vaadin-dialog-overlay-base-styles.js';
 
-export const sidePanelLayoutDialogOverlayStyles = css`
+const sidePanelLayoutDialogOverlay = css`
+    :host([fullscreen]) {
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+    }
+
     :host([fullscreen]) [part='overlay'] {
         height: 100%;
         width: 100%;
@@ -24,6 +33,8 @@ export const sidePanelLayoutDialogOverlayStyles = css`
     }
 
     [part='content'] {
-      padding: var(--lumo-space-s);
+      padding: var(--vaadin-padding-s);
     }
 `;
+
+export const sidePanelLayoutDialogOverlayStyles = [...dialogOverlayStyles, sidePanelLayoutDialogOverlay];

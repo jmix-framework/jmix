@@ -66,8 +66,8 @@ import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.util.Strings;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.jspecify.annotations.Nullable;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -296,8 +296,10 @@ public class ReportWizardCreatorView extends StandardView {
                 stepFragments.add(2, queryVBox);
             }
             fragmentsList = stepFragments;
-            if (StringUtils.isNotBlank(reportData.getEntityName()))
-                updateReportOutputName(reportData, metadata.getClass(reportData.getEntityName()));
+            if (StringUtils.isNotBlank(reportData.getEntityName())) {
+                MetaClass entityMetaClass = metadata.getClass(reportData.getEntityName());
+                setReportName(reportData, entityMetaClass, entityMetaClass);
+            }
         }
         if ("entityName".equals(event.getProperty())) {
             updateDownloadTemplateFile();
@@ -323,7 +325,7 @@ public class ReportWizardCreatorView extends StandardView {
 
         try {
             if (newReportCode == null) {
-                markFieldAsInvalid(reportCodeField,"codeFieldIsEmptyMsg");
+                markFieldAsInvalid(reportCodeField, "codeFieldIsEmptyMsg");
                 return false;
             }
             if (reportRepository.existsReportByCode(newReportCode)) {
@@ -435,7 +437,6 @@ public class ReportWizardCreatorView extends StandardView {
         }
         return validationErrors.isEmpty();
     }
-
 
 
     @Subscribe("saveBtn")
@@ -560,30 +561,40 @@ public class ReportWizardCreatorView extends StandardView {
 
     protected void setReportName(ReportData reportData, @Nullable MetaClass prevValue, MetaClass value) {
         String oldName = reportData.getName();
-        if (StringUtils.isBlank(oldName)) {
+        if (StringUtils.isBlank(oldName) || prevValue == null) {
             updateReportOutputName(reportData, value);
         } else {
-            if (prevValue != null) {
-                //if old text contains MetaClass name substring, just replace it
-                String prevEntityCaption = messageTools.getEntityCaption(prevValue);
-                if (StringUtils.contains(oldName, prevEntityCaption)) {
+            //if old text contains MetaClass name substring, just replace it
+            String prevEntityCaption = messageTools.getEntityCaption(prevValue);
+            String oldListName = messageBundle.formatMessage("downloadEntityListNamePattern", prevEntityCaption);
 
-                    String newName = oldName;
-                    int index = oldName.lastIndexOf(prevEntityCaption);
-                    if (index > -1) {
-                        newName = StringUtils.substring(oldName, 0, index)
-                                + messageTools.getEntityCaption(value)
-                                + StringUtils.substring(oldName, index + prevEntityCaption.length(), oldName.length());
-                    }
+            if (org.apache.commons.lang3.Strings.CS.contains(oldName, prevEntityCaption)
+                    || org.apache.commons.lang3.Strings.CS.contains(oldName, oldListName)) {
 
-                    reportData.setName(newName);
-                    if (!oldName.equals(messageBundle.formatMessage("reportData.reportNamePattern", prevEntityCaption))) {
-                        //if user changed auto generated report name and we have changed it, we show message to him
-                        notifications.create(messageBundle.getMessage("reportData.reportNameChanged.message"))
-                                .withType(Notifications.Type.DEFAULT)
-                                .withPosition(Notification.Position.BOTTOM_END)
-                                .show();
-                    }
+                String newName;
+                if (ReportTypeGenerate.SINGLE_ENTITY == getReportTypeGenerate()) {
+                    newName = messageTools.getEntityCaption(value);
+                } else {
+                    newName = messageBundle.formatMessage("downloadEntityListNamePattern", messageTools.getEntityCaption(value));
+                }
+
+                if (org.apache.commons.lang3.Strings.CS.contains(oldName, oldListName)) {
+                    newName = org.apache.commons.lang3.Strings.CS.replace(oldName, oldListName, newName);
+                } else {
+                    newName = org.apache.commons.lang3.Strings.CS.replace(oldName, prevEntityCaption, newName);
+                }
+
+                reportData.setName(newName);
+
+                if (!oldName.equals(messageBundle.formatMessage("reportData.reportNamePattern", prevEntityCaption))
+                        && !oldName.equals(prevEntityCaption)
+                        && !oldName.equals(oldListName)
+                        && !oldName.equals(newName)) {
+                    //if user changed auto generated report name and we have changed it, we show message to him
+                    notifications.create(messageBundle.getMessage("reportData.reportNameChanged.message"))
+                            .withType(Notifications.Type.DEFAULT)
+                            .withPosition(Notification.Position.BOTTOM_END)
+                            .show();
                 }
             }
         }

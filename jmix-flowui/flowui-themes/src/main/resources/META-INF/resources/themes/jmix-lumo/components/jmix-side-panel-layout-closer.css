@@ -14,5 +14,12 @@
  * limitations under the License.
  */
 
-import '../../../src/side-dialog/jmix-side-dialog-overlay.js';
-import './jmix-side-dialog-overlay-styles.js';
+@import "../src/components/jmix-side-panel-layout-closer.css";
+
+:root,
+:host {
+    --_lumo-jmix-side-panel-layout-closer-inject: 1;
+    --_lumo-jmix-side-panel-layout-closer-inject-modules:
+            lumo_components_button,
+            lumo_components_jmix-side-panel-layout-closer;
+}

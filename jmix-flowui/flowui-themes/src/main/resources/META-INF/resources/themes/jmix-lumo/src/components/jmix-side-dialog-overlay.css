@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-import { css } from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
-
-export const jmixSideDialogOverlayStyles = css`
+@media lumo_components_jmix-side-dialog-overlay {
     :host {
         top: 0;
         bottom: 0;
@@ -36,6 +34,21 @@ export const jmixSideDialogOverlayStyles = css`
 
     :host [part='overlay'] {
         border-radius: 0;
+    }
+
+    :host([opening]),
+    :host([closing]) {
+        animation: var(--_transition-duration) jmix-side-dialog-dummy-animation;
+    }
+
+    :host([opening]) [part='backdrop'] {
+        animation: jmix-side-dialog-backdrop-enter var(--_transition-duration) ease-in-out both;
+        will-change: opacity;
+    }
+
+    :host([closing]) [part='backdrop'] {
+        animation: jmix-side-dialog-backdrop-exit var(--_transition-duration) ease-in-out both;
+        will-change: opacity;
     }
 
     /* Right - default */
@@ -337,9 +350,44 @@ export const jmixSideDialogOverlayStyles = css`
         }
     }
 
+
+    @keyframes jmix-side-dialog-backdrop-enter {
+        0% {
+            opacity: 0;
+        }
+        100% {
+            opacity: 1;
+        }
+    }
+    @keyframes jmix-side-dialog-backdrop-exit {
+        0% {
+            opacity: 1;
+        }
+        100% {
+            opacity: 0;
+        }
+    }
+
+    @keyframes jmix-side-dialog-dummy-animation {
+        0% {
+            opacity: 1;
+        }
+        100% {
+            opacity: 1;
+        }
+    }
+
     @media (prefers-reduced-motion: reduce) {
         :host {
             --_transition-duration: none !important;
         }
     }
-`;
+
+    /*
+     * Lumo styles
+     */
+
+     :host [part='backdrop'] {
+         animation: none;
+     }
+}

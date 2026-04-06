@@ -14,32 +14,40 @@
  * limitations under the License.
  */
 
-import { html, PolymerElement } from '@polymer/polymer/polymer-element.js';
+import { html, LitElement } from 'lit';
+import { ifDefined } from 'lit/directives/if-defined.js';
 import { defineCustomElement } from '@vaadin/component-base/src/define.js';
 import { DirMixin } from '@vaadin/component-base/src/dir-mixin.js';
 import { OverlayMixin } from '@vaadin/overlay/src/vaadin-overlay-mixin.js';
-import { DialogOverlayMixin } from '@vaadin/dialog/src/vaadin-dialog-overlay-mixin.js';
+import { LumoInjectionMixin } from '@vaadin/vaadin-themable-mixin/lumo-injection-mixin.js';
+import { PolylitMixin } from '@vaadin/component-base/src/polylit-mixin.js';
 import { registerStyles, ThemableMixin } from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
 
-import { dialogOverlay, resizableOverlay } from '@vaadin/dialog/src/vaadin-dialog-styles.js';
-import { overlayStyles } from '@vaadin/overlay/src/vaadin-overlay-styles.js';
-import { sidePanelLayoutDialogOverlayStyles } from './jmix-side-panel-layout-dialog-overlay-styles.js';
+import { sidePanelLayoutDialogOverlayStyles } from './styles/jmix-side-panel-layout-dialog-overlay-base-styles.js';
 
-registerStyles('jmix-side-panel-layout-dialog-overlay',
-    [overlayStyles, dialogOverlay, resizableOverlay, sidePanelLayoutDialogOverlayStyles],
-    { moduleId: 'jmix-side-panel-layout-dialog-overlay-styles', },
-);
-
-class JmixSidePanelLayoutDialogOverlay extends OverlayMixin(DirMixin(ThemableMixin(PolymerElement))) {
+class JmixSidePanelLayoutDialogOverlay extends OverlayMixin(DirMixin(ThemableMixin(PolylitMixin(LumoInjectionMixin(LitElement))))) {
 
     static get is() {
       return 'jmix-side-panel-layout-dialog-overlay';
     }
 
-    static get template() {
+    static get styles() {
+      return sidePanelLayoutDialogOverlayStyles;
+    }
+
+    /**
+     * Override method from OverlayFocusMixin to use dialog as focus trap root.
+     * @protected
+     * @override
+     */
+    get _focusTrapRoot() {
+      return this.getRootNode().host;
+    }
+
+    render() {
         return html`
-            <div part="backdrop" id="backdrop" hidden$="[[!withBackdrop]]"></div>
-            <div part="overlay" id="overlay" tabindex="0">
+            <div part="backdrop" id="backdrop" ?hidden="${!this.withBackdrop}"></div>
+            <div part="overlay" id="overlay">
                 <section id="resizerContainer" class="resizer-container">
                     <div part="content" id="content">
                         <slot name="sidePanelContentSlot"></slot>
@@ -47,10 +55,6 @@ class JmixSidePanelLayoutDialogOverlay extends OverlayMixin(DirMixin(ThemableMix
                 </section>
             </div>
         `;
-    }
-
-    ready() {
-        super.ready();
     }
 }
 

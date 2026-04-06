@@ -14,42 +14,47 @@
  * limitations under the License.
  */
 
-import { html } from '@polymer/polymer/polymer-element.js';
+import { html } from 'lit';
+import { ifDefined } from 'lit/directives/if-defined.js';
 import { MediaQueryController } from '@vaadin/component-base/src/media-query-controller.js';
 import { defineCustomElement } from '@vaadin/component-base/src/define.js';
-import { ControllerMixin } from '@vaadin/component-base/src/controller-mixin.js';
 import { Dialog } from '@vaadin/dialog/src/vaadin-dialog.js';
 
 import './jmix-side-dialog-overlay.js';
 
-class JmixSideDialog extends ControllerMixin(Dialog) {
+class JmixSideDialog extends Dialog {
 
     static get is() {
         return 'jmix-side-dialog';
     }
 
-    static get template() {
+    render() {
         return html`
-            <style>
-                :host {
-                  display: none !important;
-                }
-            </style>
-
             <jmix-side-dialog-overlay
                 id="overlay"
-                role$="[[overlayRole]]"
-                header-title="[[headerTitle]]"
-                on-opened-changed="_onOverlayOpened"
-                on-mousedown="_bringOverlayToFront"
-                on-touchstart="_bringOverlayToFront"
-                theme$="[[_theme]]"
-                modeless="[[modeless]]"
-                with-backdrop="[[!modeless]]"
+                .owner="${this}"
+                .opened="${this.opened}"
+                .headerTitle="${this.headerTitle}"
+                .renderer="${this.renderer}"
+                .headerRenderer="${this.headerRenderer}"
+                .footerRenderer="${this.footerRenderer}"
+                .keepInViewport="${this.keepInViewport}"
+                @opened-changed="${this._onOverlayOpened}"
+                @mousedown="${this._bringOverlayToFront}"
+                @touchstart="${this._bringOverlayToFront}"
+                theme="${ifDefined(this._theme)}"
+                .modeless="${this.modeless}"
+                .withBackdrop="${!this.modeless}"
                 restore-focus-on-close
-                focus-trap
-                side-dialog-position$="[[sideDialogPosition]]"
-            ></jmix-side-dialog-overlay>
+                ?focus-trap="${!this.noFocusTrap}"
+                exportparts="backdrop, overlay, header, title, header-content, content, footer"
+                side-dialog-position="${this.sideDialogPosition}"
+            >
+                    <slot name="title" slot="title"></slot>
+                    <slot name="header-content" slot="header-content"></slot>
+                    <slot name="footer" slot="footer"></slot>
+                    <slot></slot>
+            </jmix-side-dialog-overlay>
         `;
     }
 

@@ -27,7 +27,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
@@ -48,10 +47,15 @@ public class MethodsCache {
             .put(boolean.class, Boolean.class)
             .build();
 
-    private static final Map<Class, MethodsCache> methodCacheMap = new ConcurrentHashMap<>();
+    private static final ClassValue<MethodsCache> methodCacheMap = new ClassValue<>() {
+        @Override
+        protected MethodsCache computeValue(Class<?> type) {
+            return new MethodsCache(type);
+        }
+    };
 
     public static MethodsCache getOrCreate(Class clazz) {
-        return methodCacheMap.computeIfAbsent(clazz, MethodsCache::new);
+        return methodCacheMap.get(clazz);
     }
 
     private MethodsCache(Class clazz) {
@@ -153,42 +157,70 @@ public class MethodsCache {
     }
 
     private Function createGetter(Class clazz, Method method) {
-        Function getter;
-        try {
-            MethodHandles.Lookup caller = MethodHandles.lookup();
-            CallSite site = LambdaMetafactory.metafactory(caller,
-                    "apply",
-                    MethodType.methodType(Function.class),
-                    MethodType.methodType(Object.class, Object.class),
-                    caller.findVirtual(clazz, method.getName(), MethodType.methodType(method.getReturnType())),
-                    MethodType.methodType(method.getReturnType(), clazz));
-            MethodHandle factory = site.getTarget();
-            getter = (Function) factory.invoke();
-        } catch (Throwable t) {
-            throw new RuntimeException("Can not create getter", t);
+        // If a class was hot-deployed, then it will be loaded
+        // by a different class loader. This will make it impossible to create a lambda
+        // using LambdaMetaFactory for producing the method in Java 17+
+        if (getClass().getClassLoader() == clazz.getClassLoader()) {
+            try {
+                MethodHandles.Lookup lookup = MethodHandles.privateLookupIn(clazz, MethodHandles.lookup());
+                CallSite site = LambdaMetafactory.metafactory(lookup,
+                        "apply",
+                        MethodType.methodType(Function.class),
+                        MethodType.methodType(Object.class, Object.class),
+                        lookup.unreflect(method),
+                        MethodType.methodType(method.getReturnType(), clazz));
+                return (Function) site.getTarget().invoke();
+            } catch (Throwable t) {
+                throw new RuntimeException("Can not create getter", t);
+            }
+        } else {
+            try {
+                MethodHandle methodHandle = MethodHandles.lookup().unreflect(method);
+                return obj -> {
+                    try {
+                        return methodHandle.invoke(obj);
+                    } catch (Throwable throwable) {
+                        throw new RuntimeException("Error calling getter", throwable);
+                    }
+                };
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException("Can not create getter", e);
+            }
         }
-
-        return getter;
     }
 
     private BiConsumer createSetter(Class clazz, Method method) {
-        Class valueType = method.getParameterTypes()[0];
-        BiConsumer setter;
-        try {
-            MethodHandles.Lookup caller = MethodHandles.lookup();
-            CallSite site = LambdaMetafactory.metafactory(caller,
-                    "accept",
-                    MethodType.methodType(BiConsumer.class),
-                    MethodType.methodType(void.class, Object.class, Object.class),
-                    caller.findVirtual(clazz, method.getName(), MethodType.methodType(method.getReturnType(), method.getParameterTypes()[0])),
-                    MethodType.methodType(void.class, clazz, valueType.isPrimitive() ? primitivesToObjects.get(valueType) : valueType));
-            MethodHandle factory = site.getTarget();
-            setter = (BiConsumer) factory.invoke();
-        } catch (Throwable t) {
-            throw new RuntimeException("Can not create setter", t);
+        // If a class was hot-deployed, then it will be loaded
+        // by a different class loader. This will make it impossible to create a lambda
+        // using LambdaMetaFactory for producing the method in Java 17+
+        if (getClass().getClassLoader() == clazz.getClassLoader()) {
+            try {
+                Class valueType = method.getParameterTypes()[0];
+                MethodHandles.Lookup lookup = MethodHandles.privateLookupIn(clazz, MethodHandles.lookup());
+                CallSite site = LambdaMetafactory.metafactory(lookup,
+                        "accept",
+                        MethodType.methodType(BiConsumer.class),
+                        MethodType.methodType(void.class, Object.class, Object.class),
+                        lookup.unreflect(method),
+                        MethodType.methodType(void.class, clazz, valueType.isPrimitive() ? primitivesToObjects.get(valueType) : valueType));
+                return (BiConsumer) site.getTarget().invoke();
+            } catch (Throwable t) {
+                throw new RuntimeException("Can not create setter", t);
+            }
+        } else {
+            try {
+                MethodHandle methodHandle = MethodHandles.lookup().unreflect(method);
+                return (obj, value) -> {
+                    try {
+                        methodHandle.invoke(obj, value);
+                    } catch (Throwable throwable) {
+                        throw new RuntimeException("Error calling setter", throwable);
+                    }
+                };
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException("Can not create setter", e);
+            }
         }
-
-        return setter;
     }
 
     /**

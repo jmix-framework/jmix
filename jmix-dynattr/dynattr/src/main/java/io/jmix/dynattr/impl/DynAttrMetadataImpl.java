@@ -18,6 +18,9 @@ package io.jmix.dynattr.impl;
 
 import io.jmix.core.*;
 import io.jmix.core.common.util.ReflectionHelper;
+import io.jmix.core.impl.metadata.GenerationStateStore;
+import io.jmix.core.impl.metadata.MetadataGenerationManager;
+import io.jmix.core.impl.metadata.MetadataGenerationRetiredEvent;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -33,6 +36,7 @@ import io.jmix.dynattr.model.CategoryAttribute;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -46,6 +50,10 @@ import java.util.stream.Collectors;
 
 @Component("dynat_DynAttrMetadata")
 public class DynAttrMetadataImpl implements DynAttrMetadata {
+
+    protected static class State {
+        protected final Set<String> cacheKeys = Collections.synchronizedSet(new LinkedHashSet<>());
+    }
 
     @Autowired
     protected StoreAwareLocator storeAwareLocator;
@@ -62,8 +70,12 @@ public class DynAttrMetadataImpl implements DynAttrMetadata {
     @Autowired
     protected CacheOperations cacheOperations;
 
+    @Autowired
+    protected MetadataGenerationManager metadataGenerationManager;
+
     protected Cache cache;
     protected String dynamicAttributesStore = Stores.MAIN;
+    protected final GenerationStateStore<State> stateStore = new GenerationStateStore<>();
 
     @PostConstruct
     protected void init() {
@@ -75,14 +87,15 @@ public class DynAttrMetadataImpl implements DynAttrMetadata {
 
     @Override
     public Collection<AttributeDefinition> getAttributes(MetaClass metaClass) {
-        String key = extendedEntities.getOriginalOrThisMetaClass(metaClass).getName();
-        CacheItem value = getItemFromCacheOrLoad(key);
+        String key = toCacheKey(metaClass);
+        CacheItem value = getItemFromCacheOrLoad(key, toEntityName(metaClass));
         return Collections.unmodifiableCollection(value.getAttributes());
     }
 
-    private CacheItem getItemFromCacheOrLoad(String metaClassName) {
+    private CacheItem getItemFromCacheOrLoad(String cacheKey, String entityName) {
+        getState().cacheKeys.add(cacheKey);
         CacheItem value = Objects.requireNonNull(
-                cacheOperations.get(cache, metaClassName, () -> loadCacheItem(metaClassName)));
+                cacheOperations.get(cache, cacheKey, () -> loadCacheItem(entityName)));
         completeDeserializedItem(value);
         return value;
     }
@@ -108,21 +121,50 @@ public class DynAttrMetadataImpl implements DynAttrMetadata {
 
     @Override
     public Optional<AttributeDefinition> getAttributeByCode(MetaClass metaClass, String code) {
-        String key = extendedEntities.getOriginalOrThisMetaClass(metaClass).getName();
-        CacheItem value = getItemFromCacheOrLoad(key);
+        String key = toCacheKey(metaClass);
+        CacheItem value = getItemFromCacheOrLoad(key, toEntityName(metaClass));
         return value.getAttributeByCode(code);
     }
 
     @Override
     public Collection<CategoryDefinition> getCategories(MetaClass metaClass) {
-        String key = extendedEntities.getOriginalOrThisMetaClass(metaClass).getName();
-        CacheItem value = getItemFromCacheOrLoad(key);
+        String key = toCacheKey(metaClass);
+        CacheItem value = getItemFromCacheOrLoad(key, toEntityName(metaClass));
         return value.getCategories();
     }
 
     @Override
     public void reload() {
         cache.invalidate();
+        stateStore.clear();
+    }
+
+    /**
+     * Removes dynamic-attribute metadata cached for a retired metadata generation.
+     *
+     * @param event retired-generation event
+     */
+    @EventListener
+    public void onMetadataGenerationRetired(MetadataGenerationRetiredEvent event) {
+        State state = stateStore.get(event.getGenerationId());
+        if (state != null) {
+            for (String cacheKey : state.cacheKeys) {
+                cache.evict(cacheKey);
+            }
+            stateStore.remove(event.getGenerationId());
+        }
+    }
+
+    protected State getState() {
+        return stateStore.getOrCreate(metadataGenerationManager.getPinnedOrCurrentGenerationId(), State::new);
+    }
+
+    protected String toCacheKey(MetaClass metaClass) {
+        return metadataGenerationManager.getPinnedOrCurrentGenerationId() + ":" + toEntityName(metaClass);
+    }
+
+    protected String toEntityName(MetaClass metaClass) {
+        return extendedEntities.getOriginalOrThisMetaClass(metaClass).getName();
     }
 
     protected CacheItem loadCacheItem(String entityName) {

@@ -18,6 +18,7 @@ package io.jmix.core;
 
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.impl.logging.LogMdcFilter;
+import io.jmix.core.impl.metadata.MetadataGenerationFilter;
 import io.jmix.core.impl.validation.JmixLocalValidatorFactoryBean;
 import io.jmix.core.impl.validation.ValidationTraversableResolver;
 import io.jmix.core.security.CurrentAuthentication;
@@ -29,12 +30,7 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.boot.validation.autoconfigure.ValidationConfigurationCustomizer;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.cache.annotation.EnableCaching;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.*;
 import org.springframework.core.annotation.Order;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
@@ -93,6 +89,20 @@ public class CoreConfiguration {
     public FilterRegistrationBean<LogMdcFilter> logMdcFilterFilterRegistrationBean(CurrentAuthentication currentAuthentication) {
         LogMdcFilter logMdcFilter = new LogMdcFilter(currentAuthentication);
         FilterRegistrationBean<LogMdcFilter> filterRegistration = new FilterRegistrationBean<>(logMdcFilter);
+        filterRegistration.setUrlPatterns(Set.of("/*"));
+        return filterRegistration;
+    }
+
+    /**
+     * Registers the servlet filter that pins a single metadata generation to each HTTP request.
+     *
+     * @return filter registration bean for metadata generation pinning
+     */
+    @Bean("core_MetadataGenerationFilterRegistrationBean")
+    @Order(JmixOrder.HIGHEST_PRECEDENCE + 310)
+    public FilterRegistrationBean<MetadataGenerationFilter> metadataGenerationFilterRegistrationBean() {
+        FilterRegistrationBean<MetadataGenerationFilter> filterRegistration =
+                new FilterRegistrationBean<>(new MetadataGenerationFilter());
         filterRegistration.setUrlPatterns(Set.of("/*"));
         return filterRegistration;
     }

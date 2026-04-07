@@ -22,6 +22,7 @@ import io.jmix.core.metamodel.model.SessionImplementation;
 import org.jspecify.annotations.Nullable;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -90,5 +91,36 @@ public class SessionImpl implements SessionImplementation {
     public void unregisterClass(MetaClass metaClass) {
         classByName.remove(metaClass.getName());
         classByClass.remove(metaClass.getJavaClass());
+    }
+
+    /**
+     * Returns a copy of meta classes indexed by entity name.
+     *
+     * <p>Intended for metadata snapshot cloning.</p>
+     */
+    public Map<String, MetaClass> getClassByNameSnapshot() {
+        return new LinkedHashMap<>(classByName);
+    }
+
+    /**
+     * Returns a copy of meta classes indexed by Java type.
+     *
+     * <p>Intended for metadata snapshot cloning.</p>
+     */
+    public Map<Class, MetaClass> getClassByClassSnapshot() {
+        return new LinkedHashMap<>(classByClass);
+    }
+
+    /**
+     * Replaces internal meta-class indexes with the provided mappings.
+     *
+     * <p>Intended for publishing a fully rebuilt session snapshot.</p>
+     *
+     * @param classByName meta classes indexed by entity name
+     * @param classByClass meta classes indexed by Java type
+     */
+    public void replaceMappings(Map<String, MetaClass> classByName, Map<Class, MetaClass> classByClass) {
+        this.classByName = new HashMap<>(classByName);
+        this.classByClass = new HashMap<>(classByClass);
     }
 }

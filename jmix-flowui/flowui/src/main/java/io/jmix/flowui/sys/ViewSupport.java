@@ -242,6 +242,15 @@ public class ViewSupport {
     }
 
     /**
+     * Clears cached localized view titles.
+     *
+     * <p>Intended for metadata publication listeners that must refresh title resolution after runtime model changes.</p>
+     */
+    public void clearTitleCache() {
+        titleCache.clear();
+    }
+
+    /**
      * Gets localized title for the view.
      *
      * @param view   view to get localized title for

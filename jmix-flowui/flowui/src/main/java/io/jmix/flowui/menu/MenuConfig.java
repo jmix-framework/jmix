@@ -92,6 +92,9 @@ public class MenuConfig {
     protected ViewTemplateDefinitions viewTemplateDefinitions;
 
     @Autowired
+    protected ObjectProvider<MenuConfigCustomizer> menuConfigCustomizerProvider;
+
+    @Autowired
     protected ObjectProvider<IconLoaderSupport> iconLoaderSupportProvider;
 
     protected IconLoaderSupport iconLoaderSupport;
@@ -183,8 +186,7 @@ public class MenuConfig {
 
         loadTemplateMenuItems();
 
-        Map<String, MenuConfigCustomizer> customizerBeans = applicationContext.getBeansOfType(MenuConfigCustomizer.class);
-        List<MenuConfigCustomizer> customizers = new ArrayList<>(customizerBeans.values());
+        List<MenuConfigCustomizer> customizers = new ArrayList<>(menuConfigCustomizerProvider.orderedStream().toList());
         for (MenuConfigCustomizer customizer : customizers) {
             customizer.customize(rootItems);
         }

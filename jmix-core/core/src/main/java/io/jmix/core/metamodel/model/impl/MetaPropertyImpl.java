@@ -41,11 +41,26 @@ public class MetaPropertyImpl extends MetadataObjectImpl implements MetaProperty
     private Class<?> declaringClass;
 
     public MetaPropertyImpl(MetaClass domain, String name) {
+        this(domain, name, true);
+    }
+
+    /**
+     * Creates a meta property and optionally registers it in the owning meta class immediately.
+     *
+     * <p>Intended for metadata cloning where property instances must be assembled first and registered later.</p>
+     *
+     * @param domain owning meta class
+     * @param name property name
+     * @param register whether the property should be registered in {@code domain} during construction
+     */
+    public MetaPropertyImpl(MetaClass domain, String name, boolean register) {
         this.domain = domain;
         this.session = domain.getSession();
         this.name = name;
 
-        ((MetaClassImpl) domain).registerProperty(this);
+        if (register) {
+            ((MetaClassImpl) domain).registerProperty(this);
+        }
     }
 
     public MetaPropertyImpl(MetaPropertyImpl prototype) {

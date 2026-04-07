@@ -3,6 +3,9 @@ package io.jmix.datatools.datamodel;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.common.util.Preconditions;
+import io.jmix.core.impl.metadata.GenerationStateStore;
+import io.jmix.core.impl.metadata.MetadataGenerationManager;
+import io.jmix.core.impl.metadata.MetadataGenerationRetiredEvent;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -16,6 +19,7 @@ import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.EventListener;
 import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
@@ -42,6 +46,12 @@ public class DataModelRegistry {
 
     private static final Logger log = LoggerFactory.getLogger(DataModelRegistry.class);
 
+    protected static class State {
+        protected final Map<String, Map<String, DataModel>> dataModels = new HashMap<>();
+        protected final ReadWriteLock lock = new ReentrantReadWriteLock();
+        protected volatile boolean initialized;
+    }
+
     @Autowired
     protected DbmsType dbmsType;
     @Autowired
@@ -53,44 +63,58 @@ public class DataModelRegistry {
     @Autowired
     protected StoreAwareLocator storeAwareLocator;
 
-    protected final Map<String, Map<String, DataModel>> dataModels = new HashMap<>();
+    @Autowired
+    protected MetadataGenerationManager metadataGenerationManager;
 
-    protected final ReadWriteLock lock = new ReentrantReadWriteLock();
-    protected volatile boolean initialized;
+    protected final GenerationStateStore<State> stateStore = new GenerationStateStore<>();
+
+    protected State getState() {
+        return stateStore.getOrCreate(metadataGenerationManager.getPinnedOrCurrentGenerationId(), State::new);
+    }
 
     /**
      * Make the registry to reload data models on the next request.
      */
     public void reset() {
-        initialized = false;
+        stateStore.clear();
     }
 
-    protected void checkInitialized() {
-        if (!initialized) {
-            lock.readLock().unlock();
-            lock.writeLock().lock();
+    /**
+     * Removes registry state cached for a retired metadata generation.
+     *
+     * @param event retired-generation event
+     */
+    @EventListener
+    public void onMetadataGenerationRetired(MetadataGenerationRetiredEvent event) {
+        stateStore.remove(event.getGenerationId());
+    }
+
+    protected void checkInitialized(State state) {
+        if (!state.initialized) {
+            state.lock.readLock().unlock();
+            state.lock.writeLock().lock();
             try {
-                if (!initialized) {
-                    init();
-                    initialized = true;
+                if (!state.initialized) {
+                    init(state);
+                    state.initialized = true;
                 }
             } finally {
-                lock.readLock().lock();
-                lock.writeLock().unlock();
+                state.lock.readLock().lock();
+                state.lock.writeLock().unlock();
             }
         }
     }
 
-    protected void init() {
+    protected void init(State state) {
         long startTime = System.currentTimeMillis();
 
-        dataModels.clear();
-        constructDataModel();
+        state.dataModels.clear();
+        constructDataModel(state);
 
         log.info("{} initialized in {} ms", getClass().getSimpleName(), System.currentTimeMillis() - startTime);
     }
 
-    protected void constructDataModel() {
+    protected void constructDataModel(State state) {
         Collection<MetaClass> metaClasses = metadata.getClasses();
 
         for (MetaClass metaClass : metaClasses) {
@@ -98,12 +122,12 @@ public class DataModelRegistry {
                     // In rare cases Jpa entity may not have the Table annotation,
                     // e.g. 'io.jmix.appsettings.entity.dummy.DummyAppSettingsEntity'
                     && metaClass.getJavaClass().isAnnotationPresent(Table.class)) {
-                createEntityDescription(metaClass, false);
+                createEntityDescription(state, metaClass, false);
             }
         }
     }
 
-    protected DataModel createEntityDescription(MetaClass entity, boolean isEmbeddable) {
+    protected DataModel createEntityDescription(State state, MetaClass entity, boolean isEmbeddable) {
         List<AttributeModel> attributeModelsList = new ArrayList<>();
         List<MetaProperty> fields = entity.getProperties().stream().toList();
         Map<RelationType, List<Relation>> relationsMap = new HashMap<>();
@@ -125,7 +149,7 @@ public class DataModelRegistry {
                 addDatatypeAttribute(entity, isEmbeddable, field, fieldName, attributeModelsList);
 
             } else if (field.getType().equals(MetaProperty.Type.EMBEDDED)) {
-                addEmbeddedAttribute(entity, field, fieldName, attributeModelsList);
+                addEmbeddedAttribute(state, entity, field, fieldName, attributeModelsList);
 
             } else if (isAnnotationPresent(field, ManyToOne.class)) {
                 addManyToOneAttribute(entity, isEmbeddable, field, fieldName,
@@ -162,7 +186,7 @@ public class DataModelRegistry {
                 attributeModelsList
         );
 
-        putDataModel(dataModel);
+        putDataModel(state, dataModel);
 
         return dataModel;
     }
@@ -211,7 +235,7 @@ public class DataModelRegistry {
         return entity;
     }
 
-    protected void addEmbeddedAttribute(MetaClass entity, MetaProperty field, String fieldName,
+    protected void addEmbeddedAttribute(State state, MetaClass entity, MetaProperty field, String fieldName,
                                         List<AttributeModel> attributeModelsList) {
         MetaClass embeddableClass = metadata.findClass(field.getJavaType());
 
@@ -219,7 +243,7 @@ public class DataModelRegistry {
             throw new IllegalStateException("Embeddable class not found");
         }
 
-        DataModel embeddableDataModel = createEntityDescription(embeddableClass, true);
+        DataModel embeddableDataModel = createEntityDescription(state, embeddableClass, true);
         String fieldType = field.getJavaType().getSimpleName();
 
         if (isAnnotationPresent(field, AttributeOverrides.class)) {
@@ -484,22 +508,23 @@ public class DataModelRegistry {
                 : annotation.schema().toUpperCase();
     }
 
-    protected void putDataModel(DataModel dataModel) {
+    protected void putDataModel(State state, DataModel dataModel) {
         String dataStore = dataModel.dataStore();
         String entityName = dataModel.entityName();
 
-        dataModels.computeIfAbsent(dataStore, __ -> new HashMap<>())
+        state.dataModels.computeIfAbsent(dataStore, __ -> new HashMap<>())
                 .put(entityName, dataModel);
     }
 
     public Set<String> getDataStoreNames() {
-        lock.readLock().lock();
+        State state = getState();
+        state.lock.readLock().lock();
         try {
-            checkInitialized();
+            checkInitialized(state);
 
-            return Collections.unmodifiableSet(dataModels.keySet());
+            return Collections.unmodifiableSet(state.dataModels.keySet());
         } finally {
-            lock.readLock().unlock();
+            state.lock.readLock().unlock();
         }
     }
 
@@ -514,17 +539,18 @@ public class DataModelRegistry {
      * is unmodifiable.
      */
     public Map<String, Map<String, DataModel>> getDataModels() {
-        lock.readLock().lock();
+        State state = getState();
+        state.lock.readLock().lock();
         try {
-            checkInitialized();
+            checkInitialized(state);
 
-            return dataModels.entrySet().stream()
+            return state.dataModels.entrySet().stream()
                     .collect(Collectors.toUnmodifiableMap(
                             Map.Entry::getKey,
                             entry -> Map.copyOf(entry.getValue())
                     ));
         } finally {
-            lock.readLock().unlock();
+            state.lock.readLock().unlock();
         }
     }
 
@@ -537,14 +563,15 @@ public class DataModelRegistry {
     public Map<String, DataModel> getDataModels(String dataStore) {
         Preconditions.checkNotNullArgument(dataStore, "Data store name cannot be null");
 
-        lock.readLock().lock();
+        State state = getState();
+        state.lock.readLock().lock();
         try {
-            checkInitialized();
+            checkInitialized(state);
 
-            Map<String, DataModel> dataModelMap = dataModels.get(dataStore);
+            Map<String, DataModel> dataModelMap = state.dataModels.get(dataStore);
             return dataModelMap != null ? Collections.unmodifiableMap(dataModelMap) : Collections.emptyMap();
         } finally {
-            lock.readLock().unlock();
+            state.lock.readLock().unlock();
         }
     }
 

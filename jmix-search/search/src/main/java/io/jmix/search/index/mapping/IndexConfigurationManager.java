@@ -18,6 +18,9 @@ package io.jmix.search.index.mapping;
 
 import io.jmix.core.InstanceNameProvider;
 import io.jmix.core.MetadataTools;
+import io.jmix.core.impl.metadata.GenerationStateStore;
+import io.jmix.core.impl.metadata.MetadataGenerationManager;
+import io.jmix.core.impl.metadata.MetadataGenerationRetiredEvent;
 import io.jmix.core.impl.scanning.JmixModulesClasspathScanner;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -30,6 +33,7 @@ import org.apache.commons.collections4.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.EventListener;
 import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
@@ -61,21 +65,32 @@ public class IndexConfigurationManager {
 
     private static final Logger log = LoggerFactory.getLogger(IndexConfigurationManager.class);
 
-    protected final Registry registry;
+    protected static class State {
+        protected final Registry registry;
+        protected final StampedLock lock = new StampedLock();
+        protected volatile boolean initialized;
+
+        protected State(Registry registry) {
+            this.registry = registry;
+        }
+    }
+
     protected final AnnotatedIndexDefinitionProcessor indexDefinitionProcessor;
     protected final Set<String> classNames;
-    protected final StampedLock lock = new StampedLock();
+    protected final InstanceNameProvider instanceNameProvider;
+    protected final GenerationStateStore<State> stateStore = new GenerationStateStore<>();
+
+    @Autowired
+    protected MetadataGenerationManager metadataGenerationManager;
 
     public IndexConfigurationManager(JmixModulesClasspathScanner classpathScanner,
                                      AnnotatedIndexDefinitionProcessor indexDefinitionProcessor,
                                      InstanceNameProvider instanceNameProvider,
                                      IndexDefinitionDetector indexDefinitionDetector) {
         this.indexDefinitionProcessor = indexDefinitionProcessor;
+        this.instanceNameProvider = instanceNameProvider;
         Class<? extends IndexDefinitionDetector> detectorClass = indexDefinitionDetector.getClass();
         classNames = Collections.unmodifiableSet(classpathScanner.getClassNames(detectorClass));
-        log.debug("Create Index Configurations");
-        this.registry = new Registry(instanceNameProvider);
-        initializeIndexDefinitions();
     }
 
     /**
@@ -88,7 +103,17 @@ public class IndexConfigurationManager {
      * if the Dynamic attributes add-on is used in the project.
      */
     public void refreshIndexDefinitions() {
-        initializeIndexDefinitions();
+        initializeIndexDefinitions(getState());
+    }
+
+    /**
+     * Removes index-configuration state cached for a retired metadata generation.
+     *
+     * @param event retired-generation event
+     */
+    @EventListener
+    public void onMetadataGenerationRetired(MetadataGenerationRetiredEvent event) {
+        stateStore.remove(event.getGenerationId());
     }
 
     /**
@@ -98,7 +123,9 @@ public class IndexConfigurationManager {
      */
     @SuppressWarnings("ConstantConditions")
     public Collection<IndexConfiguration> getAllIndexConfigurations() {
-        return optimisticRead(registry::getIndexConfigurations);
+        State state = getState();
+        ensureInitialized(state);
+        return optimisticRead(state, state.registry::getIndexConfigurations);
     }
 
     /**
@@ -109,7 +136,9 @@ public class IndexConfigurationManager {
      * @return {@link IndexConfiguration}
      */
     public IndexConfiguration getIndexConfigurationByEntityName(String entityName) {
-        IndexConfiguration indexConfiguration = optimisticRead(() -> registry.getIndexConfigurationByEntityName(entityName));
+        State state = getState();
+        ensureInitialized(state);
+        IndexConfiguration indexConfiguration = optimisticRead(state, () -> state.registry.getIndexConfigurationByEntityName(entityName));
         if (indexConfiguration == null) {
             throw new IllegalArgumentException("Entity '" + entityName + "' is not configured for indexing");
         }
@@ -123,7 +152,9 @@ public class IndexConfigurationManager {
      * @return optional {@link IndexConfiguration}
      */
     public Optional<IndexConfiguration> getIndexConfigurationByEntityNameOpt(String entityName) {
-        return optimisticReadOpt(() -> registry.getIndexConfigurationByEntityName(entityName));
+        State state = getState();
+        ensureInitialized(state);
+        return optimisticReadOpt(state, () -> state.registry.getIndexConfigurationByEntityName(entityName));
     }
 
     /**
@@ -134,7 +165,9 @@ public class IndexConfigurationManager {
      * @return {@link IndexConfiguration}
      */
     public IndexConfiguration getIndexConfigurationByIndexName(String indexName) {
-        IndexConfiguration indexConfiguration = optimisticRead(() -> registry.getIndexConfigurationByIndexName(indexName));
+        State state = getState();
+        ensureInitialized(state);
+        IndexConfiguration indexConfiguration = optimisticRead(state, () -> state.registry.getIndexConfigurationByIndexName(indexName));
         if (indexConfiguration == null) {
             throw new IllegalArgumentException("There is no configuration for index name '" + indexName + "'");
         }
@@ -148,12 +181,16 @@ public class IndexConfigurationManager {
      * @return optional {@link IndexConfiguration}
      */
     public Optional<IndexConfiguration> getIndexConfigurationByIndexNameOpt(String indexName) {
-        return optimisticReadOpt(() -> registry.getIndexConfigurationByIndexName(indexName));
+        State state = getState();
+        ensureInitialized(state);
+        return optimisticReadOpt(state, () -> state.registry.getIndexConfigurationByIndexName(indexName));
     }
 
     @SuppressWarnings("ConstantConditions")
     public Collection<String> getAllIndexedEntities() {
-        return optimisticRead(registry::getAllIndexedEntities);
+        State state = getState();
+        ensureInitialized(state);
+        return optimisticRead(state, state.registry::getAllIndexedEntities);
     }
 
     /**
@@ -164,7 +201,9 @@ public class IndexConfigurationManager {
      */
     @SuppressWarnings("ConstantConditions")
     public boolean isDirectlyIndexed(String entityName) {
-        return optimisticRead(() -> registry.hasDefinitionForEntity(entityName));
+        State state = getState();
+        ensureInitialized(state);
+        return optimisticRead(state, () -> state.registry.hasDefinitionForEntity(entityName));
     }
 
     /**
@@ -175,7 +214,9 @@ public class IndexConfigurationManager {
      */
     @SuppressWarnings("ConstantConditions")
     public boolean isAffectedEntityClass(Class<?> entityClass) {
-        return optimisticRead(() -> registry.isEntityClassRegistered(entityClass));
+        State state = getState();
+        ensureInitialized(state);
+        return optimisticRead(state, () -> state.registry.isEntityClassRegistered(entityClass));
     }
 
     /**
@@ -186,7 +227,9 @@ public class IndexConfigurationManager {
      */
     @SuppressWarnings("ConstantConditions")
     public Set<String> getLocalPropertyNamesAffectedByUpdate(Class<?> entityClass) {
-        return optimisticRead(() -> registry.getLocalPropertyNamesAffectedByUpdate(entityClass));
+        State state = getState();
+        ensureInitialized(state);
+        return optimisticRead(state, () -> state.registry.getLocalPropertyNamesAffectedByUpdate(entityClass));
     }
 
     /**
@@ -199,7 +242,10 @@ public class IndexConfigurationManager {
      */
     public Map<MetaClass, Set<MetaPropertyPath>> getDependenciesMetaDataForUpdate(Class<?> entityClass, Set<String> changedProperties) {
         log.debug("Get dependencies metadata for class {} with changed properties: {}", entityClass, changedProperties);
-        Map<String, Set<MetaPropertyPath>> backRefProperties = optimisticRead(() -> registry.getBackRefPropertiesForUpdate(entityClass));
+        State state = getState();
+        ensureInitialized(state);
+        Map<String, Set<MetaPropertyPath>> backRefProperties = optimisticRead(state,
+                () -> state.registry.getBackRefPropertiesForUpdate(entityClass));
         if (MapUtils.isEmpty(backRefProperties)) {
             return Collections.emptyMap();
         }
@@ -228,7 +274,9 @@ public class IndexConfigurationManager {
      */
     public Map<MetaClass, Set<MetaPropertyPath>> getDependenciesMetaDataForDelete(Class<?> deletedEntityClass) {
         log.debug("Get dependencies metadata for class {} deletion", deletedEntityClass);
-        Set<MetaPropertyPath> backRefPropertiesDelete = registry.getBackRefPropertiesForDelete(deletedEntityClass);
+        State state = getState();
+        ensureInitialized(state);
+        Set<MetaPropertyPath> backRefPropertiesDelete = state.registry.getBackRefPropertiesForDelete(deletedEntityClass);
         if (CollectionUtils.isEmpty(backRefPropertiesDelete)) {
             return Collections.emptyMap();
         }
@@ -250,12 +298,12 @@ public class IndexConfigurationManager {
      * The method ensures that the current index configurations are updated to match
      * the definitions specified by the provided class names.
      */
-    protected void initializeIndexDefinitions() {
+    protected void initializeIndexDefinitions(State state) {
         List<IndexConfiguration> configurations = new ArrayList<>();
         classNames.forEach(className ->
                 configurations.add(indexDefinitionProcessor.createIndexConfiguration(className)));
 
-        replaceConfigurations(configurations);
+        replaceConfigurations(state, configurations);
     }
 
     /**
@@ -263,13 +311,13 @@ public class IndexConfigurationManager {
      *
      * @param configurations the list of {@link IndexConfiguration} objects to be set in the registry
      */
-    protected void replaceConfigurations(List<IndexConfiguration> configurations) {
-        long stamp = lock.writeLock();
+    protected void replaceConfigurations(State state, List<IndexConfiguration> configurations) {
+        long stamp = state.lock.writeLock();
         try {
-            registry.clean();
-            configurations.forEach(registry::registerIndexConfiguration);
+            state.registry.clean();
+            configurations.forEach(state.registry::registerIndexConfiguration);
         } finally {
-            lock.unlockWrite(stamp);
+            state.lock.unlockWrite(stamp);
         }
     }
 
@@ -280,8 +328,8 @@ public class IndexConfigurationManager {
      * @param supplier the supplier function to execute within the optimistic read lock
      * @return an {@link Optional} containing the result of the supplier's execution, or an empty {@link Optional} if the result is {@code null}
      */
-    protected <T> Optional<T> optimisticReadOpt(Supplier<T> supplier) {
-        return Optional.ofNullable(optimisticRead(supplier));
+    protected <T> Optional<T> optimisticReadOpt(State state, Supplier<T> supplier) {
+        return Optional.ofNullable(optimisticRead(state, supplier));
     }
 
     /**
@@ -294,19 +342,36 @@ public class IndexConfigurationManager {
      * @return the result of the supplier's execution
      */
     @Nullable
-    protected <T> T optimisticRead(Supplier<T> supplier) {
+    protected <T> T optimisticRead(State state, Supplier<T> supplier) {
         T result;
-        long stamp = lock.tryOptimisticRead();
+        long stamp = state.lock.tryOptimisticRead();
         result = supplier.get();
-        if (!lock.validate(stamp)) {
-            stamp = lock.readLock();
+        if (!state.lock.validate(stamp)) {
+            stamp = state.lock.readLock();
             try {
                 result = supplier.get();
             } finally {
-                lock.unlockRead(stamp);
+                state.lock.unlockRead(stamp);
             }
         }
         return result;
+    }
+
+    protected State getState() {
+        return stateStore.getOrCreate(metadataGenerationManager.getPinnedOrCurrentGenerationId(),
+                () -> new State(new Registry(instanceNameProvider)));
+    }
+
+    protected void ensureInitialized(State state) {
+        if (!state.initialized) {
+            synchronized (state) {
+                if (!state.initialized) {
+                    log.debug("Create Index Configurations");
+                    initializeIndexDefinitions(state);
+                    state.initialized = true;
+                }
+            }
+        }
     }
 
     protected static class PropertyTrackingInfo {

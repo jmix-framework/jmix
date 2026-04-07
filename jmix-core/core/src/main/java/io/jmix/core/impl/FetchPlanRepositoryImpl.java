@@ -16,6 +16,9 @@
 package io.jmix.core.impl;
 
 import io.jmix.core.*;
+import io.jmix.core.impl.metadata.GenerationStateStore;
+import io.jmix.core.impl.metadata.MetadataGenerationManager;
+import io.jmix.core.impl.metadata.MetadataGenerationRetiredEvent;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.impl.keyvalue.KeyValueMetaClass;
@@ -57,9 +60,12 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
 
     private final Logger log = LoggerFactory.getLogger(FetchPlanRepositoryImpl.class);
 
-    protected List<String> readFileNames = new LinkedList<>();
-
-    protected Map<MetaClass, Map<String, FetchPlan>> storage = new ConcurrentHashMap<>();
+    protected static class State {
+        protected final List<String> readFileNames = new LinkedList<>();
+        protected final Map<MetaClass, Map<String, FetchPlan>> storage = new ConcurrentHashMap<>();
+        protected volatile boolean initialized;
+        protected final ReadWriteLock lock = new ReentrantReadWriteLock();
+    }
 
     @Autowired
     protected Environment environment;
@@ -85,50 +91,55 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
     @Autowired
     protected FetchPlanLoader fetchPlanLoader;
 
-    protected volatile boolean initialized;
+    @Autowired
+    protected MetadataGenerationManager metadataGenerationManager;
 
-    protected ReadWriteLock lock = new ReentrantReadWriteLock();
+    protected final GenerationStateStore<State> stateStore = new GenerationStateStore<>();
 
-    protected void checkInitialized() {
-        if (!initialized) {
-            lock.readLock().unlock();
-            lock.writeLock().lock();
+    protected State getState() {
+        return stateStore.getOrCreate(metadataGenerationManager.getPinnedOrCurrentGenerationId(), State::new);
+    }
+
+    protected void checkInitialized(State state) {
+        if (!state.initialized) {
+            state.lock.readLock().unlock();
+            state.lock.writeLock().lock();
             try {
-                if (!initialized) {
+                if (!state.initialized) {
                     log.info("Initializing fetch plans");
-                    init();
-                    initialized = true;
+                    init(state);
+                    state.initialized = true;
                 }
             } finally {
-                lock.readLock().lock();
-                lock.writeLock().unlock();
+                state.lock.readLock().lock();
+                state.lock.writeLock().unlock();
             }
         }
     }
 
-    protected void init() {
-        storage.clear();
-        readFileNames.clear();
+    protected void init(State state) {
+        state.storage.clear();
+        state.readFileNames.clear();
 
         Element rootElem = DocumentHelper.createDocument().addElement("fetchPlans");
 
         for (String location : modules.getPropertyValues("jmix.core.fetch-plans-config")) {
-            addFile(rootElem, location);
+            addFile(state, rootElem, location);
         }
 
         fetchPlanLoader.checkDuplicates(rootElem);
 
         for (Element fetchPlanElement : fetchPlanLoader.getFetchPlanElements(rootElem)) {
-            deployFetchPlan(rootElem, fetchPlanElement, new HashSet<>());
+            deployFetchPlan(state, rootElem, fetchPlanElement, new HashSet<>());
         }
     }
 
-    protected void addFile(Element commonRootElem, String fileName) {
-        if (readFileNames.contains(fileName))
+    protected void addFile(State state, Element commonRootElem, String fileName) {
+        if (state.readFileNames.contains(fileName))
             return;
 
         log.debug("Deploying fetch plans config: " + fileName);
-        readFileNames.add(fileName);
+        state.readFileNames.add(fileName);
 
         InputStream stream = null;
         try {
@@ -149,7 +160,7 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
             for (Element includeElem : rootElem.elements("include")) {
                 String incFile = includeElem.attributeValue("file");
                 if (!StringUtils.isBlank(incFile))
-                    addFile(commonRootElem, incFile);
+                    addFile(state, commonRootElem, incFile);
             }
 
             for (Element fetchPlanElement : fetchPlanLoader.getFetchPlanElements(rootElem)) {
@@ -163,7 +174,17 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
     @EventListener(ContextRefreshedEvent.class)
     @Order(JmixOrder.HIGHEST_PRECEDENCE + 40)
     public void reset() {
-        initialized = false;
+        stateStore.clear();
+    }
+
+    /**
+     * Drops fetch-plan state cached for a retired metadata generation.
+     *
+     * @param event retired-generation event
+     */
+    @EventListener
+    public void onMetadataGenerationRetired(MetadataGenerationRetiredEvent event) {
+        stateStore.remove(event.getGenerationId());
     }
 
     /**
@@ -210,23 +231,25 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
         Preconditions.checkNotNullArgument(metaClass, "metaClass is null");
         Preconditions.checkNotNullArgument(metaClass, "name is null");
 
-        lock.readLock().lock();
+        State state = getState();
+        state.lock.readLock().lock();
         try {
-            checkInitialized();
+            checkInitialized(state);
 
-            return retrieveFetchPlan(metaClass, name, new HashSet<>());
+            return retrieveFetchPlan(state, metaClass, name, new HashSet<>());
         } finally {
-            lock.readLock().unlock();
+            state.lock.readLock().unlock();
         }
     }
 
     @Override
     public Collection<String> getFetchPlanNames(MetaClass metaClass) {
         Preconditions.checkNotNullArgument(metaClass, "MetaClass is null");
-        lock.readLock().lock();
+        State state = getState();
+        state.lock.readLock().lock();
         try {
-            checkInitialized();
-            Map<String, FetchPlan> fetchPlanMap = storage.get(metaClass);
+            checkInitialized(state);
+            Map<String, FetchPlan> fetchPlanMap = state.storage.get(metaClass);
             if (fetchPlanMap != null && !fetchPlanMap.isEmpty()) {
                 Set<String> keySet = new HashSet<>(fetchPlanMap.keySet());
                 keySet.remove(FetchPlan.LOCAL);
@@ -237,7 +260,7 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
                 return Collections.emptyList();
             }
         } finally {
-            lock.readLock().unlock();
+            state.lock.readLock().unlock();
         }
     }
 
@@ -248,7 +271,8 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
         return getFetchPlanNames(metaClass);
     }
 
-    protected FetchPlan deployDefaultFetchPlan(MetaClass metaClass, String name, Set<FetchPlanLoader.FetchPlanInfo> visited) {
+    protected FetchPlan deployDefaultFetchPlan(State state, MetaClass metaClass, String name,
+                                               Set<FetchPlanLoader.FetchPlanInfo> visited) {
         if (metaClass instanceof KeyValueMetaClass keyValueMetaClass) {
             return createKeyValueFetchPlan(keyValueMetaClass, name);
         }
@@ -274,7 +298,7 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
 
         FetchPlan fetchPlan = fetchPlanBuilder.build();
 
-        storeFetchPlan(metaClass, fetchPlan);
+        storeFetchPlan(state, metaClass, fetchPlan);
 
         return fetchPlan;
     }
@@ -334,14 +358,15 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
                                                   FetchPlanLoader.FetchPlanInfo info,
                                                   Set<FetchPlanLoader.FetchPlanInfo> visited) {
         if (metaProperty.getRange().isClass()) {
-            Map<String, FetchPlan> fetchPlans = storage.get(metaProperty.getRange().asClass());
+            State state = getState();
+            Map<String, FetchPlan> fetchPlans = state.storage.get(metaProperty.getRange().asClass());
             FetchPlan refInstanceNameFetchPlan = fetchPlans == null ? null : fetchPlans.get(fetchPlanName);
 
             if (refInstanceNameFetchPlan != null) {
                 fetchPlanBuilder.add(metaProperty.getName(), b -> b.addFetchPlan(refInstanceNameFetchPlan));
             } else {
                 visited.add(info);
-                FetchPlan referenceInstanceNameFetchPlan = deployDefaultFetchPlan(metaProperty.getRange().asClass(),
+                FetchPlan referenceInstanceNameFetchPlan = deployDefaultFetchPlan(state, metaProperty.getRange().asClass(),
                         fetchPlanName, visited);
                 visited.remove(info);
 
@@ -373,24 +398,25 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
     }
 
     public void deployFetchPlans(String resourceUrl) {
-        lock.readLock().lock();
+        State state = getState();
+        state.lock.readLock().lock();
         try {
-            checkInitialized();
+            checkInitialized(state);
         } finally {
-            lock.readLock().unlock();
+            state.lock.readLock().unlock();
         }
 
         Element rootElem = DocumentHelper.createDocument().addElement("fetchPlans");
 
-        lock.writeLock().lock();
+        state.lock.writeLock().lock();
         try {
-            addFile(rootElem, resourceUrl);
+            addFile(state, rootElem, resourceUrl);
 
             for (Element fetchPlanElem : fetchPlanLoader.getFetchPlanElements(rootElem)) {
-                deployFetchPlan(rootElem, fetchPlanElem, new HashSet<>());
+                deployFetchPlan(state, rootElem, fetchPlanElem, new HashSet<>());
             }
         } finally {
-            lock.writeLock().unlock();
+            state.lock.writeLock().unlock();
         }
     }
 
@@ -399,11 +425,12 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
     }
 
     public void deployFetchPlans(Reader xml) {
-        lock.readLock().lock();
+        State state = getState();
+        state.lock.readLock().lock();
         try {
-            checkInitialized();
+            checkInitialized(state);
         } finally {
-            lock.readLock().unlock();
+            state.lock.readLock().unlock();
         }
 
         SAXReader reader = new SAXReader();
@@ -422,16 +449,17 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
         }
 
         for (Element fetchPlanElem : fetchPlanLoader.getFetchPlanElements(rootElem)) {
-            deployFetchPlan(rootElem, fetchPlanElem);
+            deployFetchPlan(state, rootElem, fetchPlanElem);
         }
     }
 
     @Nullable
-    protected FetchPlan retrieveFetchPlan(MetaClass metaClass, String name, Set<FetchPlanLoader.FetchPlanInfo> visited) {
-        Map<String, FetchPlan> fetchPlans = storage.get(metaClass);
+    protected FetchPlan retrieveFetchPlan(State state, MetaClass metaClass, String name,
+                                          Set<FetchPlanLoader.FetchPlanInfo> visited) {
+        Map<String, FetchPlan> fetchPlans = state.storage.get(metaClass);
         FetchPlan fetchPlan = (fetchPlans == null ? null : fetchPlans.get(name));
         if (fetchPlan == null && isDefaultFetchPlan(name)) {
-            fetchPlan = deployDefaultFetchPlan(metaClass, name, visited);
+            fetchPlan = deployDefaultFetchPlan(state, metaClass, name, visited);
         }
         return fetchPlan;
     }
@@ -440,16 +468,17 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
         return fetchPlanName.equals(FetchPlan.LOCAL) || fetchPlanName.equals(FetchPlan.INSTANCE_NAME) || fetchPlanName.equals(FetchPlan.BASE);
     }
 
-    public FetchPlan deployFetchPlan(Element rootElem, Element fetchPlanElem) {
-        lock.writeLock().lock();
+    public FetchPlan deployFetchPlan(State state, Element rootElem, Element fetchPlanElem) {
+        state.lock.writeLock().lock();
         try {
-            return deployFetchPlan(rootElem, fetchPlanElem, new HashSet<>());
+            return deployFetchPlan(state, rootElem, fetchPlanElem, new HashSet<>());
         } finally {
-            lock.writeLock().unlock();
+            state.lock.writeLock().unlock();
         }
     }
 
-    protected FetchPlan deployFetchPlan(Element rootElem, Element fetchPlanElem, Set<FetchPlanLoader.FetchPlanInfo> visited) {
+    protected FetchPlan deployFetchPlan(State state, Element rootElem, Element fetchPlanElem,
+                                        Set<FetchPlanLoader.FetchPlanInfo> visited) {
         FetchPlanLoader.FetchPlanInfo fetchPlanInfo = fetchPlanLoader.getFetchPlanInfo(fetchPlanElem);
         MetaClass metaClass = fetchPlanInfo.getMetaClass();
         String fetchPlanName = fetchPlanInfo.getName();
@@ -463,7 +492,7 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
                     fetchPlanName, metaClass.getName()));
         }
 
-        FetchPlan defaultFetchPlan = retrieveFetchPlan(metaClass, fetchPlanName, visited);
+        FetchPlan defaultFetchPlan = retrieveFetchPlan(state, metaClass, fetchPlanName, visited);
 
         if (defaultFetchPlan != null && !fetchPlanInfo.isOverwrite()) {
             return defaultFetchPlan;
@@ -480,12 +509,12 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
                     if (refFetchPlanName == null) {
                         return null;
                     }
-                    FetchPlan refFetchPlan = retrieveFetchPlan(refMetaClass, refFetchPlanName, visited);
+                    FetchPlan refFetchPlan = retrieveFetchPlan(state, refMetaClass, refFetchPlanName, visited);
                     if (refFetchPlan == null) {
                         for (Element e : fetchPlanLoader.getFetchPlanElements(rootElem)) {
                             if (refMetaClass.equals(fetchPlanLoader.getMetaClass(e.attributeValue("entity"), e.attributeValue("class")))
                                     && refFetchPlanName.equals(e.attributeValue("name"))) {
-                                refFetchPlan = deployFetchPlan(rootElem, e, visited);
+                                refFetchPlan = deployFetchPlan(state, rootElem, e, visited);
                                 break;
                             }
                         }
@@ -493,7 +522,7 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
                         if (refFetchPlan == null) {
                             MetaClass originalMetaClass = extendedEntities.getOriginalMetaClass(refMetaClass);
                             if (originalMetaClass != null) {
-                                refFetchPlan = retrieveFetchPlan(originalMetaClass, refFetchPlanName, visited);
+                                refFetchPlan = retrieveFetchPlan(state, originalMetaClass, refFetchPlanName, visited);
                             }
                         }
 
@@ -509,19 +538,19 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
 
         FetchPlan fetchPlan = fetchPlanBuilder.build();
 
-        storeFetchPlan(metaClass, fetchPlan);
+        storeFetchPlan(state, metaClass, fetchPlan);
 
         if (fetchPlanInfo.isOverwrite()) {
-            replaceOverridden(fetchPlan);
+            replaceOverridden(state, fetchPlan);
         }
 
         return fetchPlan;
     }
 
-    protected void replaceOverridden(FetchPlan replacementFetchPlan) {
+    protected void replaceOverridden(State state, FetchPlan replacementFetchPlan) {
         HashSet<FetchPlan> checked = new HashSet<>();
 
-        for (Map<String, FetchPlan> fetchPlanMap : storage.values()) {
+        for (Map<String, FetchPlan> fetchPlanMap : state.storage.values()) {
 
             for (Map.Entry<String, FetchPlan> entry : fetchPlanMap.entrySet()) {
                 if (!checked.contains(entry.getValue())) {
@@ -573,16 +602,17 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
     }
 
     protected FetchPlan getAncestorFetchPlan(MetaClass metaClass, String ancestor, Set<FetchPlanLoader.FetchPlanInfo> visited) {
-        FetchPlan ancestorFetchPlan = retrieveFetchPlan(metaClass, ancestor, visited);
+        State state = getState();
+        FetchPlan ancestorFetchPlan = retrieveFetchPlan(state, metaClass, ancestor, visited);
         if (ancestorFetchPlan == null) {
             MetaClass originalMetaClass = extendedEntities.getOriginalMetaClass(metaClass);
             if (originalMetaClass != null) {
-                ancestorFetchPlan = retrieveFetchPlan(originalMetaClass, ancestor, visited);
+                ancestorFetchPlan = retrieveFetchPlan(state, originalMetaClass, ancestor, visited);
             }
             if (ancestorFetchPlan == null) {
                 // Last resort - search for all ancestors
                 for (MetaClass ancestorMetaClass : metaClass.getAncestors()) {
-                    ancestorFetchPlan = retrieveFetchPlan(ancestorMetaClass, ancestor, visited);
+                    ancestorFetchPlan = retrieveFetchPlan(state, ancestorMetaClass, ancestor, visited);
                     if (ancestorFetchPlan != null)
                         break;
                 }
@@ -594,35 +624,36 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
         return ancestorFetchPlan;
     }
 
-    protected void storeFetchPlan(MetaClass metaClass, FetchPlan fetchPlan) {
-        Map<String, FetchPlan> fetchPlans = storage.get(metaClass);
+    protected void storeFetchPlan(State state, MetaClass metaClass, FetchPlan fetchPlan) {
+        Map<String, FetchPlan> fetchPlans = state.storage.get(metaClass);
         if (fetchPlans == null) {
             fetchPlans = new ConcurrentHashMap<>();
         }
 
         fetchPlans.put(fetchPlan.getName(), fetchPlan);
-        storage.put(metaClass, fetchPlans);
+        state.storage.put(metaClass, fetchPlans);
     }
 
-    protected List<FetchPlan> getAllInitialized() {
+    protected List<FetchPlan> getAllInitialized(State state) {
         List<FetchPlan> list = new ArrayList<>();
-        for (Map<String, FetchPlan> fetchPlanMap : storage.values()) {
+        for (Map<String, FetchPlan> fetchPlanMap : state.storage.values()) {
             list.addAll(fetchPlanMap.values());
         }
         return list;
     }
 
     public List<FetchPlan> getAll() {
-        lock.readLock().lock();
+        State state = getState();
+        state.lock.readLock().lock();
         try {
-            checkInitialized();
+            checkInitialized(state);
             List<FetchPlan> list = new ArrayList<>();
-            for (Map<String, FetchPlan> fetchPlanMap : storage.values()) {
+            for (Map<String, FetchPlan> fetchPlanMap : state.storage.values()) {
                 list.addAll(fetchPlanMap.values());
             }
             return list;
         } finally {
-            lock.readLock().unlock();
+            state.lock.readLock().unlock();
         }
     }
 }

@@ -23,7 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class MetaClassImpl extends MetadataObjectImpl implements MetaClass {
 
-	private Map<String, MetaProperty> propertyByName = new ConcurrentHashMap<>();
+    private Map<String, MetaProperty> propertyByName = new ConcurrentHashMap<>();
     private Map<String, MetaProperty> ownPropertyByName = new ConcurrentHashMap<>();
 
 	private final Session session;
@@ -177,5 +177,41 @@ public class MetaClassImpl extends MetadataObjectImpl implements MetaClass {
     @Override
     public String toString() {
         return name;
+    }
+
+    /**
+     * Replaces all resolved and own properties of the meta class.
+     *
+     * <p>Intended for rebuilding cloned metadata snapshots without mutating published property maps in place.</p>
+     *
+     * @param properties all properties visible on the meta class
+     * @param ownProperties properties declared directly on the meta class
+     */
+    public void replaceProperties(Collection<MetaProperty> properties, Collection<MetaProperty> ownProperties) {
+        Map<String, MetaProperty> propertyByName = new ConcurrentHashMap<>();
+        for (MetaProperty property : properties) {
+            propertyByName.put(property.getName(), property);
+        }
+
+        Map<String, MetaProperty> ownPropertyByName = new ConcurrentHashMap<>();
+        for (MetaProperty property : ownProperties) {
+            ownPropertyByName.put(property.getName(), property);
+        }
+
+        this.propertyByName = propertyByName;
+        this.ownPropertyByName = ownPropertyByName;
+    }
+
+    /**
+     * Replaces ancestor and descendant relations of the meta class.
+     *
+     * <p>Intended for rebuilding a cloned metadata hierarchy before the new snapshot is published.</p>
+     *
+     * @param ancestors ancestor chain of the meta class
+     * @param descendants descendant meta classes
+     */
+    public void replaceHierarchy(List<MetaClass> ancestors, Collection<MetaClass> descendants) {
+        this.ancestors = new ArrayList<>(ancestors);
+        this.descendants = new HashSet<>(descendants);
     }
 }

@@ -27,6 +27,12 @@
                 <query><![CDATA[select e from test_Customer e]]></query>
             </loader>
         </collection>
+        <collection id="customersItemsPerPageDc"
+                    class="test_support.entity.sales.Customer">
+            <loader id="customersItemsPerPageDl">
+                <query><![CDATA[select e from test_Customer e]]></query>
+            </loader>
+        </collection>
 
         <collection id="customersEntityPageSizeDc" class="test_support.entity.sales.Customer">
             <loader id="customersEntityPageSizeDl">
@@ -77,5 +83,10 @@
                           dataLoader="customersDlCustomItems"
                           itemsPerPageItems="12, 9, 23, 41, 1, -10, 99999"
                           itemsPerPageVisible="true"/>
+        <simplePagination id="simplePaginationItemsPerPage"
+                          dataLoader="customersItemsPerPageDl"
+                          itemsPerPageVisible="true"
+                          itemsPerPageItems="20, 50"
+                          itemsPerPageDefaultValue="50"/>
     </layout>
 </view>

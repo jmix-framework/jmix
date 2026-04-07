@@ -60,20 +60,23 @@ public class JmixJdbcOAuth2AuthorizationService extends JdbcOAuth2AuthorizationS
     }
 
     protected boolean isRevoked(OAuth2Authorization authorization) {
-        // Check Refresh Token first (if it exists)
         OAuth2Authorization.Token<OAuth2RefreshToken> refreshToken = authorization.getRefreshToken();
-        if (refreshToken != null) {
-            // Only delete the record if the Refresh Token is explicitly invalidated.
-            // If only the Access Token is invalidated, we keep the record.
-            return refreshToken.isInvalidated();
-        }
-
-        // If no Refresh Token exists (e.g., Client Credentials grant), check the Access Token.
         OAuth2Authorization.Token<OAuth2AccessToken> accessToken = authorization.getAccessToken();
-        if (accessToken != null) {
-            return accessToken.isInvalidated();
+
+        // Refresh Token was explicitly revoked - remove the record
+        if (refreshToken != null && refreshToken.isInvalidated()) {
+            return true;
         }
 
+        // Access Token was explicitly revoked.
+        if (accessToken != null && accessToken.isInvalidated()) {
+            // Only remove the record if the Refresh Token is also "inactive" (invalidated, expired, or never existed)
+            if (refreshToken == null || !refreshToken.isActive()) {
+                return true;
+            }
+        }
+
+        // Nothing was revoked, Refresh Token is active or both tokens are missing (Authorization Code case)
         return false;
     }
 }

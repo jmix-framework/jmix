@@ -171,12 +171,41 @@ public class EntityComboBoxTest {
 
         EntityComboBoxOrderLineDetailTestView orderLineDetailView = UiTestUtils.getCurrentView();
 
+        // Pre-fill value to check clearing
+        Product product = dataManager.load(Product.class).all().list().get(0);
+        orderLineDetailView.productField.setValue(product);
+
         // Simulate user action that sets an empty value
         orderLineDetailView.productField.setValueFromClient(null);
 
         // This should not have unparseable validation error
         Assertions.assertFalse(orderLineDetailView.productField.isInvalid());
         Assertions.assertNull(orderLineDetailView.productField.getErrorMessage());
+    }
+
+    @Test
+    @DisplayName("Value change event should be fired when value is changed via setValueFromClient")
+    public void setValueFromClientShouldFireValueChangeEvent() {
+        var origin = navigateTo(BlankTestView.class);
+        viewNavigators.view(origin, EntityComboBoxOrderLineListTestView.class)
+                .navigate();
+
+        EntityComboBoxOrderLineListTestView orderLineListView = UiTestUtils.getCurrentView();
+        orderLineListView.createButton.click();
+
+        EntityComboBoxOrderLineDetailTestView orderLineDetailView = UiTestUtils.getCurrentView();
+
+        // Pre-fill value to check clearing
+        Product product = dataManager.load(Product.class).all().list().get(0);
+        orderLineDetailView.productField.setValue(product);
+
+        final boolean[] eventFired = {false};
+        orderLineDetailView.productField.addValueChangeListener(event -> eventFired[0] = true);
+
+        // Simulate user action that sets an empty value (e.g., from EntityClearAction)
+        orderLineDetailView.productField.setValueFromClient(null);
+
+        Assertions.assertTrue(eventFired[0], "Value change event should be fired");
     }
 
     private void setupData() {

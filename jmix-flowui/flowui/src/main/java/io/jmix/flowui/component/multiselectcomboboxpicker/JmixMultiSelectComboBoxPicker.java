@@ -215,9 +215,7 @@ public class JmixMultiSelectComboBoxPicker<V> extends MultiSelectComboBoxPicker<
 
     @Override
     public void setValueFromClient(@Nullable Collection<V> value) {
-        Set<V> convertedValue = fieldDelegate.convertToPresentation(value);
-        setPresentationValue(convertedValue);
-        setModelValue(convertedValue, true);
+        setValueInternal(fieldDelegate.convertToPresentation(value), true);
     }
 
     @Nullable

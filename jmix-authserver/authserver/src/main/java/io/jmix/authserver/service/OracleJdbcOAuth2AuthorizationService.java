@@ -38,7 +38,7 @@ import java.util.Map;
 /**
  * Class that provides JdbcOAuth2AuthorizationService for Oracle database.
  */
-public class OracleJdbcOAuth2AuthorizationService extends JdbcOAuth2AuthorizationService {
+public class OracleJdbcOAuth2AuthorizationService extends JmixJdbcOAuth2AuthorizationService {
 
     private static final String COLUMN_NAMES = "id, "
             + "registered_client_id, "

@@ -23,8 +23,10 @@ import java.util.Map;
 
 /**
  * Modifies parts of JPQL query
+ *
+ * @param <T> condition type
  */
-public interface ConditionGenerator {
+public interface ConditionGenerator<T extends Condition> {
 
     /**
      * Checks whether the condition generator supports the given {@code context}.
@@ -60,7 +62,7 @@ public interface ConditionGenerator {
      */
     Map<String, Object> processParameters(Map<String, Object> parameters,
                                           Map<String, Object> queryParameters,
-                                          Condition condition,
+                                          T condition,
                                           @Nullable String entityName);
 
     /**

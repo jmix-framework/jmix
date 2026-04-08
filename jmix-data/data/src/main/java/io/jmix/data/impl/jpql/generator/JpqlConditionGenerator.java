@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
 
 @Component("data_JpqlConditionGenerator")
 @Order(JmixOrder.LOWEST_PRECEDENCE)
-public class JpqlConditionGenerator implements ConditionGenerator {
+public class JpqlConditionGenerator implements ConditionGenerator<JpqlCondition> {
 
     public static final Pattern LIKE_PATTERN = Pattern.compile(QueryUtils.LIKE_REGEXP, Pattern.CASE_INSENSITIVE);
 
@@ -64,11 +64,9 @@ public class JpqlConditionGenerator implements ConditionGenerator {
     @Override
     public Map<String, Object> processParameters(Map<String, Object> parameters,
                                                  Map<String, Object> queryParameters,
-                                                 Condition condition,
+                                                 JpqlCondition condition,
                                                  @Nullable String entityName) {
-        JpqlCondition jpqlCondition = (JpqlCondition) condition;
-
-        for (Map.Entry<String, Object> parameter : jpqlCondition.getParameterValuesMap().entrySet()) {
+        for (Map.Entry<String, Object> parameter : condition.getParameterValuesMap().entrySet()) {
             // JpqlCondition may take a value from queryParameters collection or from the
             // JpqlCondition.parameterValuesMap attribute. queryParameters value has higher priority.
             Object parameterValue;
@@ -76,7 +74,7 @@ public class JpqlConditionGenerator implements ConditionGenerator {
             if (!queryParameters.containsKey(parameterName) || queryParameters.get(parameterName) == null) {
                 // Modify the query parameter value (e.g. wrap value from JpqlFilter for "contains"
                 // jpql operation)
-                parameterValue = generateParameterValue(jpqlCondition, parameter.getValue(), entityName);
+                parameterValue = generateParameterValue(condition, parameter.getValue(), entityName);
             } else {
                 // In other cases, it is assumed that the value has already been modified
                 // (e.g. wrapped value from DataLoadCoordinator)

@@ -44,7 +44,7 @@ import static io.jmix.core.metamodel.model.MetaProperty.Type.COMPOSITION;
 
 @Component("data_PropertyConditionGenerator")
 @Order(JmixOrder.LOWEST_PRECEDENCE)
-public class PropertyConditionGenerator implements ConditionGenerator {
+public class PropertyConditionGenerator implements ConditionGenerator<PropertyCondition> {
 
     protected MetadataTools metadataTools;
     protected Metadata metadata;
@@ -162,21 +162,19 @@ public class PropertyConditionGenerator implements ConditionGenerator {
     @Override
     public Map<String, Object> processParameters(Map<String, Object> parameters,
                                                  Map<String, Object> queryParameters,
-                                                 Condition condition,
+                                                 PropertyCondition condition,
                                                  @Nullable String entityName) {
-        PropertyCondition propertyCondition = (PropertyCondition) condition;
-
-        String parameterName = propertyCondition.getParameterName();
-        if (PropertyConditionUtils.isUnaryOperation(propertyCondition)) {
+        String parameterName = condition.getParameterName();
+        if (PropertyConditionUtils.isUnaryOperation(condition)) {
             //remove query parameter for unary operations (e.g. IS_NULL)
             parameters.remove(parameterName);
-        } else if (PropertyConditionUtils.isInIntervalOperation(propertyCondition)) {
+        } else if (PropertyConditionUtils.isInIntervalOperation(condition)) {
             //remove query parameter for "in interval" operations
             parameters.remove(parameterName);
 
             if (inIntervalResolver != null) {
                 // trying to resolve parameters for "in interval date between" operation
-                List<Pair<String, Object>> inIntervalParameters = inIntervalResolver.resolveParameters(propertyCondition);
+                List<Pair<String, Object>> inIntervalParameters = inIntervalResolver.resolveParameters(condition);
                 if (!inIntervalParameters.isEmpty()) {
                     inIntervalParameters.forEach(p -> parameters.put(p.getFirst(), p.getSecond()));
                 }
@@ -186,11 +184,11 @@ public class PropertyConditionGenerator implements ConditionGenerator {
             //PropertyCondition.parameterValue attribute. queryParameters has higher priority.
             Object parameterValue;
             if (!queryParameters.containsKey(parameterName) || queryParameters.get(parameterName) == null) {
-                parameterValue = generateParameterValue(propertyCondition, propertyCondition.getParameterValue(), entityName);
+                parameterValue = generateParameterValue(condition, condition.getParameterValue(), entityName);
             } else {
                 //modify the query parameter value (e.g. wrap value for "contains" jpql operation)
                 Object queryParameterValue = queryParameters.get(parameterName);
-                parameterValue = generateParameterValue(propertyCondition, queryParameterValue, entityName);
+                parameterValue = generateParameterValue(condition, queryParameterValue, entityName);
             }
             parameters.put(parameterName, parameterValue);
         }

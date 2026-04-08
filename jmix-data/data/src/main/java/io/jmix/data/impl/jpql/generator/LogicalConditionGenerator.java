@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 
 @Component("data_LogicalConditionGenerator")
 @Order(JmixOrder.LOWEST_PRECEDENCE)
-public class LogicalConditionGenerator implements ConditionGenerator {
+public class LogicalConditionGenerator implements ConditionGenerator<LogicalCondition> {
 
     @Autowired
     protected ConditionGeneratorResolver resolver;
@@ -51,7 +51,7 @@ public class LogicalConditionGenerator implements ConditionGenerator {
         return logical.getConditions().stream()
                 .map(childCondition -> {
                     ConditionGenerationContext childContext = context.getChildContexts().get(childCondition);
-                    ConditionGenerator generator = resolver.getConditionGenerator(childContext);
+                    ConditionGenerator<?> generator = resolver.getConditionGenerator(childContext);
                     return generator.generateJoin(childContext);
                 })
                 .collect(Collectors.joining(" "));
@@ -72,7 +72,7 @@ public class LogicalConditionGenerator implements ConditionGenerator {
         String where = conditions.stream()
                 .map(childCondition -> {
                     ConditionGenerationContext childContext = context.getChildContexts().get(childCondition);
-                    ConditionGenerator generator = resolver.getConditionGenerator(childContext);
+                    ConditionGenerator<?> generator = resolver.getConditionGenerator(childContext);
                     return generator.generateWhere(childContext);
                 })
                 .filter(whereClause -> !Strings.isNullOrEmpty(whereClause))
@@ -90,11 +90,9 @@ public class LogicalConditionGenerator implements ConditionGenerator {
     @Override
     public Map<String, Object> processParameters(Map<String, Object> parameters,
                                                  Map<String, Object> queryParameters,
-                                                 Condition condition,
+                                                 LogicalCondition condition,
                                                  @Nullable String entityName) {
-        LogicalCondition logicalCondition = (LogicalCondition) condition;
-
-        for (Condition nestedCondition : logicalCondition.getConditions()) {
+        for (Condition nestedCondition : condition.getConditions()) {
             ConditionGenerator generator = resolver.getConditionGenerator(new ConditionGenerationContext(nestedCondition));
             parameters = generator.processParameters(parameters, queryParameters, nestedCondition, entityName);
         }

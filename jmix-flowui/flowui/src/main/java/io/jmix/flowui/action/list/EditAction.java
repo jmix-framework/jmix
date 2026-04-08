@@ -231,7 +231,7 @@ public class EditAction<E> extends SecuredListDataComponentAction<EditAction<E>,
 
     @Autowired
     protected void setUiComponentProperties(UiComponentProperties uiComponentProperties) {
-        this.shortcutCombination = KeyCombination.create(uiComponentProperties.getGridEditShortcut());
+        setShortcutCombination(KeyCombination.create(uiComponentProperties.getGridEditShortcut()));
     }
 
     @Autowired

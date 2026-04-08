@@ -54,7 +54,7 @@ public class LookupDiscardAction<E> extends OperationResultViewAction<LookupDisc
 
     @Autowired
     protected void setUiViewProperties(UiViewProperties viewProperties) {
-        this.shortcutCombination = KeyCombination.create(viewProperties.getCloseShortcut());
+        setShortcutCombination(KeyCombination.create(viewProperties.getCloseShortcut()));
     }
 
     @Override

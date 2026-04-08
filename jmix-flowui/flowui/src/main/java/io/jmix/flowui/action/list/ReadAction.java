@@ -225,7 +225,7 @@ public class ReadAction<E> extends SecuredListDataComponentAction<ReadAction<E>,
 
     @Autowired
     protected void setUiComponentProperties(UiComponentProperties uiComponentProperties) {
-        this.shortcutCombination = KeyCombination.create(uiComponentProperties.getGridReadShortcut());
+        setShortcutCombination(KeyCombination.create(uiComponentProperties.getGridReadShortcut()));
     }
 
     @Autowired

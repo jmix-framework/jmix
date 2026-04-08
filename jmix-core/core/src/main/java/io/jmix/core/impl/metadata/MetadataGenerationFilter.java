@@ -20,7 +20,6 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -33,8 +32,11 @@ import java.io.IOException;
  */
 public class MetadataGenerationFilter extends OncePerRequestFilter {
 
-    @Autowired
-    protected MetadataGenerationManager metadataGenerationManager;
+    protected final MetadataGenerationManager metadataGenerationManager;
+
+    public MetadataGenerationFilter(MetadataGenerationManager metadataGenerationManager) {
+        this.metadataGenerationManager = metadataGenerationManager;
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)

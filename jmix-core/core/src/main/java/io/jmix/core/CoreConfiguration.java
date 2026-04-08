@@ -19,6 +19,7 @@ package io.jmix.core;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.impl.logging.LogMdcFilter;
 import io.jmix.core.impl.metadata.MetadataGenerationFilter;
+import io.jmix.core.impl.metadata.MetadataGenerationManager;
 import io.jmix.core.impl.validation.JmixLocalValidatorFactoryBean;
 import io.jmix.core.impl.validation.ValidationTraversableResolver;
 import io.jmix.core.security.CurrentAuthentication;
@@ -100,9 +101,10 @@ public class CoreConfiguration {
      */
     @Bean("core_MetadataGenerationFilterRegistrationBean")
     @Order(JmixOrder.HIGHEST_PRECEDENCE + 310)
-    public FilterRegistrationBean<MetadataGenerationFilter> metadataGenerationFilterRegistrationBean() {
+    public FilterRegistrationBean<MetadataGenerationFilter> metadataGenerationFilterRegistrationBean(
+            MetadataGenerationManager metadataGenerationManager) {
         FilterRegistrationBean<MetadataGenerationFilter> filterRegistration =
-                new FilterRegistrationBean<>(new MetadataGenerationFilter());
+                new FilterRegistrationBean<>(new MetadataGenerationFilter(metadataGenerationManager));
         filterRegistration.setUrlPatterns(Set.of("/*"));
         return filterRegistration;
     }

@@ -88,7 +88,7 @@ public class ExcludeAction<E> extends SecuredListDataComponentAction<ExcludeActi
 
     @Autowired
     protected void setUiComponentProperties(UiComponentProperties uiComponentProperties) {
-        this.shortcutCombination = KeyCombination.create(uiComponentProperties.getGridRemoveShortcut());
+        setShortcutCombination(KeyCombination.create(uiComponentProperties.getGridRemoveShortcut()));
     }
 
     /**

@@ -94,7 +94,7 @@ public class EntityLookupAction<E> extends PickerAction<EntityLookupAction<E>, E
 
     @Autowired
     protected void setUiComponentProperties(UiComponentProperties uiComponentProperties) {
-        this.shortcutCombination = KeyCombination.create(uiComponentProperties.getPickerLookupShortcut());
+        setShortcutCombination(KeyCombination.create(uiComponentProperties.getPickerLookupShortcut()));
     }
 
     /**

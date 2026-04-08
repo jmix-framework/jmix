@@ -65,7 +65,7 @@ public class DetailSaveCloseAction<E>
 
     @Autowired
     protected void setUiViewProperties(UiViewProperties uiViewProperties) {
-        this.shortcutCombination = KeyCombination.create(uiViewProperties.getSaveShortcut());
+        setShortcutCombination(KeyCombination.create(uiViewProperties.getSaveShortcut()));
     }
 
     @Override

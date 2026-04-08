@@ -71,7 +71,7 @@ public class EntityClearAction<E> extends PickerAction<EntityClearAction<E>, Ent
 
     @Autowired
     protected void setUiComponentProperties(UiComponentProperties uiComponentProperties) {
-        this.shortcutCombination = KeyCombination.create(uiComponentProperties.getPickerClearShortcut());
+        setShortcutCombination(KeyCombination.create(uiComponentProperties.getPickerClearShortcut()));
     }
 
     @Override

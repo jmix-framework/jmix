@@ -57,7 +57,7 @@ public class DetailCloseAction<E> extends OperationResultViewAction<DetailCloseA
 
     @Autowired
     protected void setUiViewProperties(UiViewProperties viewProperties) {
-        this.shortcutCombination = KeyCombination.create(viewProperties.getCloseShortcut());
+        setShortcutCombination(KeyCombination.create(viewProperties.getCloseShortcut()));
     }
 
     @Override

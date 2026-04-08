@@ -278,7 +278,7 @@ public class CreateAction<E> extends ListDataComponentAction<CreateAction<E>, E>
 
     @Autowired
     protected void setUiComponentProperties(UiComponentProperties uiComponentProperties) {
-        this.shortcutCombination = KeyCombination.create(uiComponentProperties.getGridCreateShortcut());
+        setShortcutCombination(KeyCombination.create(uiComponentProperties.getGridCreateShortcut()));
     }
 
     @Autowired

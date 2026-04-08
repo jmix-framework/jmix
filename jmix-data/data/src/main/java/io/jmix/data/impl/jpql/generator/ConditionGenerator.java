@@ -70,7 +70,9 @@ public interface ConditionGenerator {
      * @param parameterValue parameter value
      * @param entityName     entity name
      * @return a modified parameter value
+     * @deprecated method is used only in internal implementations of {@link ConditionGenerator} interface
      */
+    @Deprecated(since = "2.8", forRemoval = true)
     @Nullable
     Object generateParameterValue(@Nullable Condition condition, @Nullable Object parameterValue, @Nullable String entityName);
 }

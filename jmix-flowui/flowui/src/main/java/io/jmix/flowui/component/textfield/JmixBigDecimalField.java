@@ -21,7 +21,7 @@ import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.component.HasRequired;
 import io.jmix.flowui.component.SupportsStatusChangeHandler;
 import io.jmix.flowui.component.SupportsValidation;
-import io.jmix.flowui.component.delegate.FieldDelegate;
+import io.jmix.flowui.component.delegate.BigDecimalFieldDelegate;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.data.SupportsValueSource;
 import io.jmix.flowui.data.ValueSource;
@@ -41,7 +41,7 @@ public class JmixBigDecimalField extends BigDecimalField implements SupportsValu
 
     protected ApplicationContext applicationContext;
 
-    protected FieldDelegate<JmixBigDecimalField, BigDecimal, BigDecimal> fieldDelegate;
+    protected BigDecimalFieldDelegate fieldDelegate;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) {
@@ -57,9 +57,8 @@ public class JmixBigDecimalField extends BigDecimalField implements SupportsValu
         fieldDelegate = createFieldDelegate();
     }
 
-    @SuppressWarnings("unchecked")
-    protected FieldDelegate<JmixBigDecimalField, BigDecimal, BigDecimal> createFieldDelegate() {
-        return applicationContext.getBean(FieldDelegate.class, this);
+    protected BigDecimalFieldDelegate createFieldDelegate() {
+        return applicationContext.getBean(BigDecimalFieldDelegate.class, this);
     }
 
     @Nullable

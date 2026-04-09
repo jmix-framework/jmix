@@ -21,6 +21,7 @@ import io.jmix.core.JmixOrder;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.QueryUtils;
+import io.jmix.core.common.datastruct.Pair;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -35,16 +36,21 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import org.springframework.lang.Nullable;
+import java.util.List;
+import java.util.Map;
 
 import static io.jmix.core.metamodel.model.MetaProperty.Type.ASSOCIATION;
 import static io.jmix.core.metamodel.model.MetaProperty.Type.COMPOSITION;
 
 @Component("data_PropertyConditionGenerator")
 @Order(JmixOrder.LOWEST_PRECEDENCE)
-public class PropertyConditionGenerator implements ConditionGenerator {
+public class PropertyConditionGenerator implements ConditionGenerator<PropertyCondition> {
 
     protected MetadataTools metadataTools;
     protected Metadata metadata;
+
+    @Nullable
+    protected InIntervalParametersResolver inIntervalResolver;
 
     @Value("${jmix.eclipselink.use-inner-join-in-condition:false}")
     protected boolean useInnerJoinInCondition;
@@ -56,6 +62,11 @@ public class PropertyConditionGenerator implements ConditionGenerator {
     public PropertyConditionGenerator(MetadataTools metadataTools, Metadata metadata) {
         this.metadataTools = metadataTools;
         this.metadata = metadata;
+    }
+
+    @Autowired(required = false)
+    public void setInIntervalResolver(InIntervalParametersResolver inIntervalResolver) {
+        this.inIntervalResolver = inIntervalResolver;
     }
 
     @Override
@@ -146,7 +157,43 @@ public class PropertyConditionGenerator implements ConditionGenerator {
             String property = getProperty(propertyCondition.getProperty(), context.getEntityName());
             return generateWhere(propertyCondition, entityAlias, property, context.isElementCollection());
         }
+    }
 
+    @Override
+    public Map<String, Object> processParameters(Map<String, Object> parameters,
+                                                 Map<String, Object> queryParameters,
+                                                 PropertyCondition condition,
+                                                 @Nullable String entityName) {
+        String parameterName = condition.getParameterName();
+        if (PropertyConditionUtils.isUnaryOperation(condition)) {
+            //remove query parameter for unary operations (e.g. IS_NULL)
+            parameters.remove(parameterName);
+        } else if (PropertyConditionUtils.isInIntervalOperation(condition)) {
+            //remove query parameter for "in interval" operations
+            parameters.remove(parameterName);
+
+            if (inIntervalResolver != null) {
+                // trying to resolve parameters for "in interval date between" operation
+                List<Pair<String, Object>> inIntervalParameters = inIntervalResolver.resolveParameters(condition);
+                if (!inIntervalParameters.isEmpty()) {
+                    inIntervalParameters.forEach(p -> parameters.put(p.getFirst(), p.getSecond()));
+                }
+            }
+        } else {
+            //PropertyCondition may take a value from queryParameters collection or from the
+            //PropertyCondition.parameterValue attribute. queryParameters has higher priority.
+            Object parameterValue;
+            if (!queryParameters.containsKey(parameterName) || queryParameters.get(parameterName) == null) {
+                parameterValue = generateParameterValue(condition, condition.getParameterValue(), entityName);
+            } else {
+                //modify the query parameter value (e.g. wrap value for "contains" jpql operation)
+                Object queryParameterValue = queryParameters.get(parameterName);
+                parameterValue = generateParameterValue(condition, queryParameterValue, entityName);
+            }
+            parameters.put(parameterName, parameterValue);
+        }
+
+        return parameters;
     }
 
     @Nullable

@@ -25,13 +25,14 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import org.springframework.lang.Nullable;
+import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Component("data_JpqlConditionGenerator")
 @Order(JmixOrder.LOWEST_PRECEDENCE)
-public class JpqlConditionGenerator implements ConditionGenerator {
+public class JpqlConditionGenerator implements ConditionGenerator<JpqlCondition> {
 
     public static final Pattern LIKE_PATTERN = Pattern.compile(QueryUtils.LIKE_REGEXP, Pattern.CASE_INSENSITIVE);
 
@@ -58,6 +59,32 @@ public class JpqlConditionGenerator implements ConditionGenerator {
         return jpqlCondition != null
                 ? jpqlCondition.getWhere()
                 : "";
+    }
+
+    @Override
+    public Map<String, Object> processParameters(Map<String, Object> parameters,
+                                                 Map<String, Object> queryParameters,
+                                                 JpqlCondition condition,
+                                                 @Nullable String entityName) {
+        for (Map.Entry<String, Object> parameter : condition.getParameterValuesMap().entrySet()) {
+            // JpqlCondition may take a value from queryParameters collection or from the
+            // JpqlCondition.parameterValuesMap attribute. queryParameters value has higher priority.
+            Object parameterValue;
+            String parameterName = parameter.getKey();
+            if (!queryParameters.containsKey(parameterName) || queryParameters.get(parameterName) == null) {
+                // Modify the query parameter value (e.g. wrap value from JpqlFilter for "contains"
+                // jpql operation)
+                parameterValue = generateParameterValue(condition, parameter.getValue(), entityName);
+            } else {
+                // In other cases, it is assumed that the value has already been modified
+                // (e.g. wrapped value from DataLoadCoordinator)
+                parameterValue = queryParameters.get(parameter.getKey());
+            }
+
+            parameters.put(parameter.getKey(), parameterValue);
+        }
+
+        return parameters;
     }
 
     @Nullable

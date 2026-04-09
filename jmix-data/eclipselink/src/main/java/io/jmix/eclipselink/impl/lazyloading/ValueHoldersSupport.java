@@ -37,7 +37,7 @@ public class ValueHoldersSupport {
     public static Object getSingleValueHolder(Object entity, String propertyName) {
         Object valueHolder;
         try {
-            Field valueHolderField = ReflectionHelper.findField(entity.getClass(), String.format("_persistence_%s_vh", propertyName));
+            Field valueHolderField = getValueHolderField(entity, propertyName);
             if (valueHolderField == null) {
                 throw new RuntimeException(String.format("Unable to access value holder for property: %s on entity %s",
                         propertyName, entity.getClass().getName()));
@@ -53,9 +53,27 @@ public class ValueHoldersSupport {
         return valueHolder;
     }
 
+    @Nullable
+    public static Object getSingleValueHolderOrNull(Object entity, String propertyName) {
+        Object valueHolder;
+        try {
+            Field valueHolderField = getValueHolderField(entity, propertyName);
+            if (valueHolderField == null) {
+                return null;
+            }
+            ReflectionUtils.makeAccessible(valueHolderField);
+            valueHolder = valueHolderField.get(entity);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(String.format("Unable to access value holder for property: %s on entity %s",
+                    propertyName, entity.getClass().getName()), e);
+        }
+
+        return valueHolder;
+    }
+
     public static void setSingleValueHolder(Object entity, String propertyName, Object valueHolder) {
         try {
-            Field valueHolderField = ReflectionHelper.findField(entity.getClass(), String.format("_persistence_%s_vh", propertyName));
+            Field valueHolderField = getValueHolderField(entity, propertyName);
             if (valueHolderField == null) {
                 throw new RuntimeException(String.format("Unable to access value holder for property: %s on entity %s",
                         propertyName, entity.getClass().getName()));
@@ -68,7 +86,7 @@ public class ValueHoldersSupport {
         }
     }
 
-        public static void setSingleValue(Object entity, String propertyName, Object valueHolder) {
+    public static void setSingleValue(Object entity, String propertyName, Object valueHolder) {
         try {
             Field field = ReflectionHelper.findField(entity.getClass(), propertyName);
             if (field == null) {
@@ -90,6 +108,24 @@ public class ValueHoldersSupport {
             if (valueField == null) {
                 throw new RuntimeException(String.format("Unable to access value for property: %s on entity %s",
                         propertyName, entity.getClass().getName()));
+            }
+            ReflectionUtils.makeAccessible(valueField);
+            value = valueField.get(entity);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(String.format("Unable to access value for property: %s on entity %s",
+                    propertyName, entity.getClass().getName()), e);
+        }
+
+        return value;
+    }
+
+    @Nullable
+    public static Object getCollectionPropertyOrNull(Object entity, String propertyName) {
+        Object value;
+        try {
+            Field valueField = ReflectionHelper.findField(entity.getClass(), propertyName);
+            if (valueField == null) {
+                return null;
             }
             ReflectionUtils.makeAccessible(valueField);
             value = valueField.get(entity);
@@ -168,5 +204,10 @@ public class ValueHoldersSupport {
         };
         iterator.iterateOn(queryBasedValueHolder.getQuery().getSelectionCriteria());
         return queryBasedValueHolder.getRow().get(fieldName.get());
+    }
+
+    @Nullable
+    private static Field getValueHolderField(Object entity, String propertyName) {
+        return ReflectionHelper.findField(entity.getClass(), String.format("_persistence_%s_vh", propertyName));
     }
 }

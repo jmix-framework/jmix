@@ -376,7 +376,9 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
     }
 
     protected boolean isPersistent(MetaClass metaClass, MetaProperty metaProperty) {
-        return !metadataTools.isJpaEntity(metaClass) || metadataTools.isJpa(metaProperty);
+        return !metadataTools.isJpaEntity(metaClass)
+                || metadataTools.isJpa(metaProperty)
+                || Boolean.TRUE.equals(metaProperty.getAnnotations().get(MetadataTools.INCLUDE_IN_FETCH_PLAN_ANN_NAME));
     }
 
     protected Collection<MetaProperty> getInstanceNamePersistentProperties(MetaClass metaClass) {

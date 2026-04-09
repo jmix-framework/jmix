@@ -77,7 +77,7 @@ public class DataEntitySystemStateSupport extends EntitySystemStateSupport {
                                       Function<Collection<Object>, Collection<Object>> collectionWrapFunction) {
         if (metaProperty.getType() != MetaProperty.Type.EMBEDDED) {
             if (metaProperty.getRange().getCardinality().isMany()) {
-                Object value = getCollectionProperty(src, metaProperty.getName());
+                Object value = getCollectionPropertyOrNull(src, metaProperty.getName());
 
                 if (value instanceof IndirectList) {
                     //noinspection unchecked
@@ -109,7 +109,7 @@ public class DataEntitySystemStateSupport extends EntitySystemStateSupport {
                     setCollectionProperty(dst, metaProperty.getName(), wrappedCollection);
                 }
             } else {
-                Object valueHolder = getSingleValueHolder(src, metaProperty.getName());
+                Object valueHolder = getSingleValueHolderOrNull(src, metaProperty.getName());
                 if (valueHolder instanceof AbstractValueHolder) {
                     setSingleValueHolder(dst, metaProperty.getName(), valueHolder);
                 }

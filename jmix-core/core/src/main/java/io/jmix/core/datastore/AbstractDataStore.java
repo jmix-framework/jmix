@@ -160,6 +160,12 @@ public abstract class AbstractDataStore implements DataStore {
         return afterLoadEvent.getResultEntities();
     }
 
+    /**
+     * Returns the number of entities matching the given load context.
+     *
+     * <p>If a {@link DataStoreBeforeEntityCountEvent} requests item-based counting, the count is calculated from loaded
+     * items after datastore listeners are applied, optionally in batches.</p>
+     */
     @Override
     public long getCount(LoadContext<?> context) {
         if (log.isDebugEnabled()) {
@@ -181,19 +187,24 @@ public abstract class AbstractDataStore implements DataStore {
         try {
             TransactionContextState txContextState = getTransactionContextState(context.isJoinTransaction());
             if (beforeCountEvent.countByItems()) {
-                LoadContext<?> countContext = context.copy();
-                if (countContext.getQuery() != null) {
-                    countContext.getQuery().setFirstResult(0);
-                    countContext.getQuery().setMaxResults(0);
+                Integer batchSize = beforeCountEvent.getCountByItemsBatchSize();
+                if (batchSize != null && batchSize > 0 && context.getQuery() != null) {
+                    count = countByItemsInBatches(context, eventState, batchSize);
+                } else {
+                    LoadContext<?> countContext = context.copy();
+                    if (countContext.getQuery() != null) {
+                        countContext.getQuery().setFirstResult(0);
+                        countContext.getQuery().setMaxResults(0);
+                    }
+
+                    List<Object> entities = loadAll(countContext);
+
+                    DataStoreEntityLoadingEvent loadEvent = new DataStoreEntityLoadingEvent(context, entities, eventState);
+                    fireEvent(loadEvent);
+
+                    List<?> resultList = loadEvent.getResultEntities();
+                    count = resultList.size();
                 }
-
-                List<Object> entities = loadAll(countContext);
-
-                DataStoreEntityLoadingEvent loadEvent = new DataStoreEntityLoadingEvent(context, entities, eventState);
-                fireEvent(loadEvent);
-
-                List<?> resultList = loadEvent.getResultEntities();
-                count = resultList.size();
             } else {
                 count = countAll(context);
             }
@@ -407,6 +418,38 @@ public abstract class AbstractDataStore implements DataStore {
         }
 
         return resultList;
+    }
+
+    protected long countByItemsInBatches(LoadContext<?> context, EventSharedState eventState, int batchSize) {
+        assert context.getQuery() != null;
+
+        long count = 0;
+        int firstResult = 0;
+
+        while (true) {
+            LoadContext<?> batchContext = context.copy();
+            assert batchContext.getQuery() != null;
+
+            batchContext.getQuery().setFirstResult(firstResult);
+            batchContext.getQuery().setMaxResults(batchSize);
+
+            List<Object> entities = loadAll(batchContext);
+            if (entities.isEmpty()) {
+                break;
+            }
+
+            DataStoreEntityLoadingEvent loadEvent = new DataStoreEntityLoadingEvent(context, entities, eventState);
+            fireEvent(loadEvent);
+
+            count += loadEvent.getResultEntities().size();
+            if (entities.size() < batchSize) {
+                break;
+            }
+
+            firstResult += batchSize;
+        }
+
+        return count;
     }
 
     protected List<Object> checkAndReorderLoadedEntities(LoadContext<?> context, List<Object> entities) {

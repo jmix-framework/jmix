@@ -16,12 +16,12 @@
 
 package io.jmix.gradle
 
-
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.UnknownTaskException
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.tasks.Delete
+import org.yaml.snakeyaml.Yaml
 
 import java.util.jar.Manifest
 
@@ -217,14 +217,7 @@ class JmixPlugin implements Plugin<Project> {
                 if (project.jmix.confDirCleanupEnabled) {
                     def resources = project.file("src/main/resources/")
                     if (resources.exists() && resources.isDirectory()) {
-                        def mainProperties = new Properties()
-                        def appPropsFile = project.file("src/main/resources/application.properties")
-                        if (appPropsFile.exists()) {
-                            appPropsFile.withInputStream { mainProperties.load(it) }
-                        } else {
-                            project.logger.lifecycle("File src/main/resources/application.properties not found")
-                        }
-
+                        def mainProperties = loadProperties(project)
                         def confDir = resolveConfDir(project, mainProperties)
 
                         project.logger.lifecycle("Delete directory: {}", confDir)
@@ -245,6 +238,71 @@ class JmixPlugin implements Plugin<Project> {
         }
     }
 
+    private static Properties loadProperties(Project project, String profileName = null) {
+        project.logger.lifecycle("Load properties (profile = $profileName)")
+
+        def appPropertiesFile = getAppPropertiesFile(project, profileName)
+        def yamlPropertiesFile = getYamlPropertiesFile(project, profileName)
+
+        if (appPropertiesFile.exists()) {
+            project.logger.lifecycle("Found file: {}", appPropertiesFile.getName())
+            return loadPropertiesFromAppPropertiesFile(appPropertiesFile)
+        } else if (yamlPropertiesFile.exists()) {
+            project.logger.lifecycle("Found file: {}", yamlPropertiesFile.getName())
+            return loadPropertiesFromYamlPropertiesFile(yamlPropertiesFile)
+        } else {
+            project.logger.lifecycle("File with properties is not found")
+            return new Properties()
+        }
+    }
+
+    private static File getAppPropertiesFile(Project project, String profileName = null) {
+        def preparedProfileName = (profileName?.trim() ?: "").with { name -> name ? "-$name" : "" }
+        def fileName = "src/main/resources/application%s.properties".formatted(preparedProfileName)
+        return project.file(fileName)
+    }
+
+    private static File getYamlPropertiesFile(Project project, String profileName = null) {
+        def basePath = "src/main/resources"
+        def templates = ["application%s.yaml", "application%s.yml"]
+                .collect { template ->
+                    def preparedProfileName = (profileName?.trim() ?: "").with { name -> name ? "-$name" : "" }
+                    def fileName = "$template".formatted(preparedProfileName)
+                    project.file("$basePath/$fileName")
+                }
+
+        return templates.find { it.exists() } ?: templates.first()
+    }
+
+    private static Properties loadPropertiesFromAppPropertiesFile(File appPropsFile) {
+        Properties properties = new Properties()
+        appPropsFile.withInputStream { properties.load(it) }
+        return properties;
+    }
+
+    private static Properties loadPropertiesFromYamlPropertiesFile(File yamlPropsFile) {
+        Yaml yaml = new Yaml()
+        Map<String, Object> yamlMap
+        yamlPropsFile.withInputStream { yamlMap = yaml.load(it) }
+
+        Properties properties = new Properties()
+        flattenPropertiesMap("", yamlMap, properties)
+        return properties;
+    }
+
+    private static void flattenPropertiesMap(String prefix, Map<String, Object> map, Properties props) {
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            String key = prefix.isEmpty() ? entry.getKey() : prefix + "." + entry.getKey();
+            Object value = entry.getValue();
+
+            if (value instanceof Map) {
+                flattenPropertiesMap(key, (Map<String, Object>) value, props);
+            } else {
+                props.put(key, value.toString());
+            }
+        }
+    }
+
     private static String resolveConfDir(Project project, Properties mainProperties) {
         def profilesList = resolveActiveProfiles(project, mainProperties)
 
@@ -252,15 +310,10 @@ class JmixPlugin implements Plugin<Project> {
         if (!profilesList.isEmpty()) {
             for (def profileName : profilesList) {
                 project.logger.lifecycle("Check profile: {}", profileName)
-                def profilePropertyFilePath = "src/main/resources/application-%s.properties".formatted(profileName)
-                def profilePropertiesFile = project.file(profilePropertyFilePath)
-                if (profilePropertiesFile.exists()) {
-                    def profileProps = new Properties()
-                    project.file(profilePropertyFilePath).withInputStream { profileProps.load(it) }
-                    confDir = profileProps.getProperty("jmix.core.conf-dir") ?: profileProps.getProperty("jmix.core.confDir") ?: null
-                    if (confDir != null) {
-                        break
-                    }
+                def profileProperties = loadProperties(project, profileName)
+                confDir = profileProperties.getProperty("jmix.core.conf-dir") ?: profileProperties.getProperty("jmix.core.confDir") ?: null
+                if (confDir != null) {
+                    break
                 }
             }
         }

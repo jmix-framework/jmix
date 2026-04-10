@@ -23,8 +23,10 @@ import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.HasValueAndElement;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.shared.Registration;
+import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.datatype.EnumClass;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.flowui.action.ObservableBaseAction;
 import io.jmix.flowui.component.combobox.JmixComboBox;
@@ -57,6 +59,7 @@ public class PropertyFilter<V> extends SingleFilterComponentBase<V> {
 
     protected SingleFilterSupport singleFilterSupport;
     protected PropertyFilterSupport propertyFilterSupport;
+    protected DatatypeRegistry datatypeRegistry;
 
     protected DropdownButton operationSelector;
 
@@ -70,6 +73,7 @@ public class PropertyFilter<V> extends SingleFilterComponentBase<V> {
 
         singleFilterSupport = applicationContext.getBean(SingleFilterSupport.class);
         propertyFilterSupport = applicationContext.getBean(PropertyFilterSupport.class);
+        datatypeRegistry = applicationContext.getBean(DatatypeRegistry.class);
     }
 
     @Override
@@ -185,7 +189,7 @@ public class PropertyFilter<V> extends SingleFilterComponentBase<V> {
         if (this.valueComponent != null) {
             if (this.operation == null
                     || this.operation.getType() != operation.getType()
-                    || isValueComponentRecreationRequired(this.operation, operation)) {
+                    || isStringValueComponentRecreationRequired(this.operation, operation)) {
                 this.valueComponent.clear();
             }
 
@@ -196,7 +200,7 @@ public class PropertyFilter<V> extends SingleFilterComponentBase<V> {
 
         if (this.operation == null
                 || this.operation.getType() != operation.getType()
-                || isValueComponentRecreationRequired(this.operation, operation)) {
+                || isStringValueComponentRecreationRequired(this.operation, operation)) {
             if (dataLoader != null && getProperty() != null) {
                 MetaClass metaClass = dataLoader.getContainer().getEntityMetaClass();
                 //noinspection unchecked
@@ -220,16 +224,31 @@ public class PropertyFilter<V> extends SingleFilterComponentBase<V> {
         getEventBus().fireEvent(operationChangeEvent);
     }
 
-    protected boolean isValueComponentRecreationRequired(@Nullable Operation prevOperation, Operation nextOperation) {
+    protected boolean isStringValueComponentRecreationRequired(@Nullable Operation prevOperation, Operation nextOperation) {
         if (prevOperation == null) {
             return true;
         }
 
         if (prevOperation.getType() == Operation.Type.VALUE && nextOperation.getType() == Operation.Type.VALUE) {
-            return isStringBasedOperation(prevOperation) != isStringBasedOperation(nextOperation);
+            return isStringBasedOperation(prevOperation) != isStringBasedOperation(nextOperation)
+                    && !isStringDatatype();
         }
 
         return false;
+    }
+
+    protected boolean isStringDatatype() {
+        if (getProperty() == null) {
+            return false;
+        }
+
+        MetaClass metaClass = dataLoader.getContainer().getEntityMetaClass();
+        MetaPropertyPath propertyPath = metaClass.getPropertyPath(getProperty());
+        if (propertyPath == null) {
+            return false;
+        }
+
+        return datatypeRegistry.get(String.class).equals(propertyPath.getRange().asDatatype());
     }
 
     protected boolean isStringBasedOperation(Operation operation) {

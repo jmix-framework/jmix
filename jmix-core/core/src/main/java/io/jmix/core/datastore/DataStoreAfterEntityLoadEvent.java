@@ -26,19 +26,18 @@ import java.util.List;
 public class DataStoreAfterEntityLoadEvent extends BaseDataStoreEvent {
     private static final long serialVersionUID = -6243582872039288321L;
 
-    protected final List<Object> entities;
-    protected List<Object> excludedEntities;
+    protected List<Object> resultEntities;
     protected final EventSharedState eventState;
 
     public DataStoreAfterEntityLoadEvent(LoadContext<?> loadContext, List<Object> entities, EventSharedState eventState) {
         super(loadContext);
-        this.entities = entities;
+        this.resultEntities = new ArrayList<>(entities);
         this.eventState = eventState;
     }
 
     public DataStoreAfterEntityLoadEvent(LoadContext<?> loadContext, @Nullable Object entity, EventSharedState eventState) {
         super(loadContext);
-        this.entities = entity == null ? Collections.emptyList() : Collections.singletonList(entity);
+        this.resultEntities = entity == null ? new ArrayList<>() : new ArrayList<>(Collections.singletonList(entity));
         this.eventState = eventState;
     }
 
@@ -51,10 +50,11 @@ public class DataStoreAfterEntityLoadEvent extends BaseDataStoreEvent {
     }
 
     public void excludeEntity(Object entity) {
-        if (excludedEntities == null) {
-            excludedEntities = new ArrayList<>();
-        }
-        excludedEntities.add(entity);
+        resultEntities.remove(entity);
+    }
+
+    public void setResultEntities(List<Object> resultEntities) {
+        this.resultEntities = new ArrayList<>(resultEntities);
     }
 
     @Nullable
@@ -64,13 +64,7 @@ public class DataStoreAfterEntityLoadEvent extends BaseDataStoreEvent {
     }
 
     public List<Object> getResultEntities() {
-        if (excludedEntities == null) {
-            return entities;
-        } else {
-            List<Object> resultEntities = new ArrayList<>(entities);
-            resultEntities.removeAll(excludedEntities);
-            return resultEntities;
-        }
+        return resultEntities;
     }
 
     @Override

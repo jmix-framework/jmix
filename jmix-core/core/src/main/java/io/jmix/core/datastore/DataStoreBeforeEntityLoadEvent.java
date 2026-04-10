@@ -17,11 +17,14 @@
 package io.jmix.core.datastore;
 
 import io.jmix.core.LoadContext;
+import org.jspecify.annotations.Nullable;
 
 public class DataStoreBeforeEntityLoadEvent extends BaseDataStoreEvent {
     private static final long serialVersionUID = -6243582872039288321L;
 
     protected boolean loadPrevented;
+    protected boolean loadByItems;
+    protected @Nullable Integer loadByItemsBatchSize;
     protected final EventSharedState eventState;
 
     public DataStoreBeforeEntityLoadEvent(LoadContext<?> loadContext, EventSharedState eventState) {
@@ -43,6 +46,24 @@ public class DataStoreBeforeEntityLoadEvent extends BaseDataStoreEvent {
 
     public boolean loadPrevented() {
         return loadPrevented;
+    }
+
+    public void setLoadByItems() {
+        this.loadByItems = true;
+        this.loadByItemsBatchSize = null;
+    }
+
+    public void setLoadByItems(int batchSize) {
+        this.loadByItems = true;
+        this.loadByItemsBatchSize = batchSize;
+    }
+
+    public boolean loadByItems() {
+        return loadByItems;
+    }
+
+    public @Nullable Integer getLoadByItemsBatchSize() {
+        return loadByItemsBatchSize;
     }
 
     @Override

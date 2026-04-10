@@ -122,10 +122,14 @@ public abstract class AbstractDataStore implements DataStore {
         }
 
         List<Object> resultList;
+        boolean pagingAfterLoad = false;
         Object transaction = beginLoadTransaction(context.isJoinTransaction());
         try {
             TransactionContextState txContextState = getTransactionContextState(context.isJoinTransaction());
-            if (context.getIds().isEmpty()) {
+            if (beforeLoadEvent.loadByItems() && context.getIds().isEmpty()) {
+                resultList = loadByItems(context, loadState, beforeLoadEvent.getLoadByItemsBatchSize());
+                pagingAfterLoad = true;
+            } else if (context.getIds().isEmpty()) {
                 List<Object> entities = loadAll(context);
 
                 DataStoreEntityLoadingEvent loadEvent = new DataStoreEntityLoadingEvent(context, entities, loadState);
@@ -157,7 +161,12 @@ public abstract class AbstractDataStore implements DataStore {
         DataStoreAfterEntityLoadEvent afterLoadEvent = new DataStoreAfterEntityLoadEvent(context, resultList, loadState);
         fireEvent(afterLoadEvent);
 
-        return afterLoadEvent.getResultEntities();
+        resultList = afterLoadEvent.getResultEntities();
+        if (pagingAfterLoad) {
+            resultList = applyPagingAfterLoad(context, resultList);
+        }
+
+        return resultList;
     }
 
     /**
@@ -418,6 +427,80 @@ public abstract class AbstractDataStore implements DataStore {
         }
 
         return resultList;
+    }
+
+    protected List<Object> loadByItems(LoadContext<?> context, EventSharedState eventState, @Nullable Integer batchSize) {
+        if (context.getQuery() == null || batchSize == null || batchSize <= 0) {
+            LoadContext<?> loadContext = context.copy();
+            if (loadContext.getQuery() != null) {
+                loadContext.getQuery().setFirstResult(0);
+                loadContext.getQuery().setMaxResults(0);
+            }
+
+            List<Object> entities = loadAll(loadContext);
+            DataStoreEntityLoadingEvent loadEvent = new DataStoreEntityLoadingEvent(context, entities, eventState);
+            fireEvent(loadEvent);
+            return new ArrayList<>(loadEvent.getResultEntities());
+        }
+
+        return loadByItemsInBatches(context, eventState, batchSize);
+    }
+
+    protected List<Object> loadByItemsInBatches(LoadContext<?> context, EventSharedState eventState, int batchSize) {
+        assert context.getQuery() != null;
+
+        List<Object> result = new ArrayList<>();
+        int firstResult = 0;
+
+        while (true) {
+            LoadContext<?> batchContext = context.copy();
+            assert batchContext.getQuery() != null;
+
+            batchContext.getQuery().setFirstResult(firstResult);
+            batchContext.getQuery().setMaxResults(batchSize);
+
+            List<Object> entities = loadAll(batchContext);
+            if (entities.isEmpty()) {
+                break;
+            }
+
+            DataStoreEntityLoadingEvent loadEvent = new DataStoreEntityLoadingEvent(context, entities, eventState);
+            fireEvent(loadEvent);
+
+            result.addAll(loadEvent.getResultEntities());
+            if (entities.size() < batchSize) {
+                break;
+            }
+
+            firstResult += batchSize;
+        }
+
+        return result;
+    }
+
+    protected List<Object> applyPagingAfterLoad(LoadContext<?> context, List<Object> entities) {
+        if (context.getQuery() == null) {
+            return entities;
+        }
+
+        int requestedFirst = context.getQuery().getFirstResult();
+        int requestedMax = context.getQuery().getMaxResults();
+        if (requestedFirst == 0 && requestedMax == 0) {
+            return entities;
+        }
+
+        int max = requestedMax == 0
+                ? entities.size()
+                : Math.min(requestedFirst + requestedMax, entities.size());
+        if (requestedFirst >= max) {
+            return Collections.emptyList();
+        }
+
+        List<Object> result = new ArrayList<>(max - requestedFirst);
+        for (int i = requestedFirst; i < max; i++) {
+            result.add(entities.get(i));
+        }
+        return result;
     }
 
     protected long countByItemsInBatches(LoadContext<?> context, EventSharedState eventState, int batchSize) {

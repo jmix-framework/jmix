@@ -414,7 +414,7 @@ public class LoadContext<E> implements DataLoadContext, Serializable {
          * @param sort query sort
          * @return this query instance for chaining
          */
-        public Query setSort(Sort sort) {
+        public Query setSort(@Nullable Sort sort) {
             this.sort = sort;
             return this;
         }

@@ -71,7 +71,7 @@ public class ElasticsearchEntitySearcher extends AbstractEntitySearcher implemen
 
     @Override
     public SearchResult search(SearchContext searchContext, String searchStrategyName) {
-        log.debug("Perform search by context '{}'", searchContext);
+        log.debug("Perform search by context '{}' and strategy '{}'", searchContext, searchStrategyName);
 
         ElasticsearchSearchStrategy searchStrategy = resolveSearchStrategy(searchStrategyName);
         SearchResultImpl searchResult = initSearchResult(searchContext, searchStrategy);

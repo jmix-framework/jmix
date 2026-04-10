@@ -335,8 +335,8 @@ class JmixPlugin implements Plugin<Project> {
 
         def profilesList = []
         if (profiles != null) {
-            def split = profiles.split(",")
-            profilesList = Arrays.stream(split).map { s -> s.trim().toLowerCase() }.toList().reverse()
+            def split = profiles.trim().replaceAll(/^\[(.*)\]$/, '$1').split(",")
+            profilesList = Arrays.stream(split).map { s -> s.trim().toLowerCase() }.toList()
         }
         return profilesList
     }

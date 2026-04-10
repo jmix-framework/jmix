@@ -220,7 +220,7 @@ class JmixPlugin implements Plugin<Project> {
                         def mainProperties = loadProperties(project)
                         def confDir = resolveConfDir(project, mainProperties)
 
-                        project.logger.lifecycle("Delete directory: ${confDir}")
+                        project.logger.lifecycle("Delete directory: {}", confDir)
                         delete "${confDir}"
                     } else {
                         project.logger.lifecycle("Resource directory not found")
@@ -245,10 +245,10 @@ class JmixPlugin implements Plugin<Project> {
         def yamlPropertiesFile = getYamlPropertiesFile(project, profileName)
 
         if (appPropertiesFile.exists()) {
-            project.logger.lifecycle("Found file: ${appPropertiesFile.getName()}")
+            project.logger.lifecycle("Found file: {}", appPropertiesFile.getName())
             return loadPropertiesFromAppPropertiesFile(appPropertiesFile)
         } else if (yamlPropertiesFile.exists()) {
-            project.logger.lifecycle("Found file: ${yamlPropertiesFile.getName()}")
+            project.logger.lifecycle("Found file: {}", yamlPropertiesFile.getName())
             return loadPropertiesFromYamlPropertiesFile(yamlPropertiesFile)
         } else {
             project.logger.lifecycle("File with properties is not found")
@@ -309,7 +309,7 @@ class JmixPlugin implements Plugin<Project> {
         def confDir = null
         if (!profilesList.isEmpty()) {
             for (def profileName : profilesList) {
-                project.logger.lifecycle("Check profile: $profileName")
+                project.logger.lifecycle("Check profile: {}", profileName)
                 def profileProperties = loadProperties(project, profileName)
                 confDir = profileProperties.getProperty("jmix.core.conf-dir") ?: profileProperties.getProperty("jmix.core.confDir") ?: null
                 if (confDir != null) {

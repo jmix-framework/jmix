@@ -133,7 +133,12 @@ public class ElasticsearchEntitySearcher extends AbstractEntitySearcher implemen
     }
 
     protected ElasticsearchSearchStrategy resolveSearchStrategy(String searchStrategyName) {
-        return searchStrategyManager.getSearchStrategyByName(searchStrategyName);
+        ElasticsearchSearchStrategy strategy = searchStrategyManager.findSearchStrategyByName(searchStrategyName);
+        if (strategy == null) {
+            strategy = searchStrategyManager.getDefaultSearchStrategy();
+            log.warn("Search strategy with name '{}' not found - using default strategy '{}'", searchStrategyName, strategy.getName());
+        }
+        return strategy;
     }
 
     protected SearchRequestContext<SearchRequest.Builder> createRequest(SearchContext searchContext,

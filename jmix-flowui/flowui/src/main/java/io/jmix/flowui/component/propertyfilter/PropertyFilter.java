@@ -38,9 +38,13 @@ import io.jmix.flowui.model.DataLoader;
 import io.micrometer.observation.Observation;
 import org.springframework.lang.Nullable;
 
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
@@ -64,6 +68,7 @@ public class PropertyFilter<V> extends SingleFilterComponentBase<V> {
     protected DropdownButton operationSelector;
 
     protected Operation operation;
+    protected List<Operation> operationsList;
     protected boolean operationEditable = false;
     protected boolean operationTextVisible = true;
 
@@ -107,6 +112,10 @@ public class PropertyFilter<V> extends SingleFilterComponentBase<V> {
             MetaClass metaClass = dataLoader.getContainer().getEntityMetaClass();
 
             for (Operation operation : propertyFilterSupport.getAvailableOperations(metaClass, getProperty())) {
+                if (operationsList != null && !operationsList.contains(operation)) {
+                    continue;
+                }
+
                 OperationChangeAction action = new OperationChangeAction(operation, this::setOperationInternal);
                 action.setText(getOperationText(operation));
                 operationSelector.addItem(operation.name(), action);
@@ -165,6 +174,27 @@ public class PropertyFilter<V> extends SingleFilterComponentBase<V> {
     }
 
     /**
+     * @return a list of available operations
+     */
+    public List<Operation> getOperationsList() {
+        return operationsList == null ? Collections.emptyList() : Collections.unmodifiableList(operationsList);
+    }
+
+    /**
+     * Sets a list of available operations.
+     *
+     * @param operationsList a list of available operations
+     */
+    public void setOperationsList(@Nullable List<Operation> operationsList) {
+        this.operationsList = operationsList == null ? null : List.copyOf(operationsList);
+
+        if (operationSelector != null) {
+            operationSelector.removeAll();
+            initOperationSelectorActions(operationSelector);
+        }
+    }
+
+    /**
      * Sets a filtering operation.
      *
      * @param operation a filtering operation
@@ -178,6 +208,18 @@ public class PropertyFilter<V> extends SingleFilterComponentBase<V> {
 
         if (this.operation == operation) {
             return;
+        }
+
+        if (dataLoader != null && getProperty() != null) {
+            MetaClass metaClass = dataLoader.getContainer().getEntityMetaClass();
+            EnumSet<Operation> availableOperations = propertyFilterSupport.getAvailableOperations(metaClass, getProperty());
+            checkArgument(availableOperations.contains(operation),
+                    "Operation '%s' is not available for property '%s'", operation.name(), getProperty());
+        }
+
+        if (operationsList != null) {
+            checkArgument(operationsList.contains(operation),
+                    "Operation '%s' is not in operations list", operation.name());
         }
 
         getQueryCondition().setOperation(propertyFilterSupport.toPropertyConditionOperation(operation));

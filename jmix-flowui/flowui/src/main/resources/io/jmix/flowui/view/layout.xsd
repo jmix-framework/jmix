@@ -1859,6 +1859,36 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <xs:simpleType name="propertyFilterOperationsList">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="EQUAL"/>
+                    <xs:enumeration value="NOT_EQUAL"/>
+                    <xs:enumeration value="GREATER"/>
+                    <xs:enumeration value="GREATER_OR_EQUAL"/>
+                    <xs:enumeration value="LESS"/>
+                    <xs:enumeration value="LESS_OR_EQUAL"/>
+                    <xs:enumeration value="CONTAINS"/>
+                    <xs:enumeration value="NOT_CONTAINS"/>
+                    <xs:enumeration value="STARTS_WITH"/>
+                    <xs:enumeration value="ENDS_WITH"/>
+                    <xs:enumeration value="IS_SET"/>
+                    <xs:enumeration value="IN_LIST"/>
+                    <xs:enumeration value="NOT_IN_LIST"/>
+                    <xs:enumeration value="IN_INTERVAL"/>
+                    <xs:enumeration value="DATE_EQUALS"/>
+                    <xs:enumeration value="IS_COLLECTION_EMPTY"/>
+                    <xs:enumeration value="MEMBER_OF_COLLECTION"/>
+                    <xs:enumeration value="NOT_MEMBER_OF_COLLECTION"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+
     <!-- ThemeNames-->
     <xs:simpleType name="progressBarThemeNames">
         <xs:union>
@@ -5236,6 +5266,7 @@
                 <xs:attribute name="property" type="xs:string" use="required"/>
 
                 <xs:attribute name="operation" type="propertyFilterOperation" use="required"/>
+                <xs:attribute name="operationsList" type="propertyFilterOperationsList"/>
                 <xs:attribute name="operationEditable" type="xs:boolean"/>
                 <xs:attribute name="operationTextVisible" type="xs:boolean"/>
             </xs:extension>

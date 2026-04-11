@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.xml.layout.loader.component;
 
+import com.google.common.base.Strings;
 import com.vaadin.flow.component.Component;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -26,6 +27,7 @@ import io.jmix.flowui.component.propertyfilter.PropertyFilterSupport;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import org.dom4j.Element;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static io.jmix.core.querycondition.PropertyConditionUtils.generateParameterName;
@@ -49,6 +51,7 @@ public class PropertyFilterLoader extends AbstractSingleFilterComponentLoader<Pr
         super.loadAttributesBeforeValueComponent();
 
         loadString(element, "property", resultComponent::setProperty);
+        loadOperationsList(resultComponent, element);
         loadEnum(element, Operation.class, "operation", resultComponent::setOperation);
         loadBoolean(element, "operationEditable", resultComponent::setOperationEditable);
         loadBoolean(element, "operationTextVisible", resultComponent::setOperationTextVisible);
@@ -71,6 +74,17 @@ public class PropertyFilterLoader extends AbstractSingleFilterComponentLoader<Pr
 
         return ((Component) getSingleFilterSupport().generateValueComponent(metaClass,
                 resultComponent.getProperty(), resultComponent.getOperation()));
+    }
+
+    protected void loadOperationsList(PropertyFilter<?> resultComponent, Element element) {
+        loadString(element, "operationsList")
+                .map(list ->
+                        split(list)
+                                .stream()
+                                .map(Operation::valueOf)
+                                .toList()
+                )
+                .ifPresent(resultComponent::setOperationsList);
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -118,5 +132,11 @@ public class PropertyFilterLoader extends AbstractSingleFilterComponentLoader<Pr
     @Override
     protected boolean isValueComponent(Element subElement) {
         return !"tooltip".equals(subElement.getName());
+    }
+
+    protected List<String> split(String names) {
+        return Arrays.stream(names.split("[\\s,]+"))
+                .filter(split -> !Strings.isNullOrEmpty(split))
+                .toList();
     }
 }

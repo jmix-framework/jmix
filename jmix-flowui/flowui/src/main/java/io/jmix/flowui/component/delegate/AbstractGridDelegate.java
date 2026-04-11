@@ -115,6 +115,8 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
     protected Consumer<Component> componentEmptyStateComponentDelegate;
     protected Registration emptyStateByPermissionRegistration;
 
+    protected String headerFilterApplyShortcut;
+
     protected boolean aggregatable;
     protected EnhancedDataGrid.AggregationPosition aggregationPosition = EnhancedDataGrid.AggregationPosition.BOTTOM;
     protected Map<Grid.Column<E>, AggregationInfo> aggregationMap = new LinkedHashMap<>();
@@ -980,6 +982,15 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
 
     protected void onGridEditorClose(EditorCloseEvent<E> eEditorCloseEvent) {
         updateAggregationRow();
+    }
+
+    public void setHeaderFilterApplyShortcut(@Nullable String headerFilterApplyShortcut) {
+        this.headerFilterApplyShortcut = headerFilterApplyShortcut;
+    }
+
+    @Nullable
+    public String getHeaderFilterApplyShortcut() {
+        return headerFilterApplyShortcut;
     }
 
     public static class ColumnSecurityContext<E> {

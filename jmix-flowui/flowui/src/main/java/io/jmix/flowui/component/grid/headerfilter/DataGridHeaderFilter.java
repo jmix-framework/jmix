@@ -30,6 +30,7 @@ import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.querycondition.PropertyConditionUtils;
+import io.jmix.flowui.UiComponentProperties;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.app.datagrid.HeaderPropertyFilterLayout;
 import io.jmix.flowui.component.grid.DataGridColumn;
@@ -38,6 +39,7 @@ import io.jmix.flowui.component.propertyfilter.PropertyFilter;
 import io.jmix.flowui.component.propertyfilter.PropertyFilterSupport;
 import io.jmix.flowui.data.grid.ContainerDataGridItems;
 import io.jmix.flowui.icon.Icons;
+import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.model.DataLoader;
@@ -66,6 +68,7 @@ public class DataGridHeaderFilter extends Composite<HorizontalLayout>
     protected Messages messages;
     protected PropertyFilterSupport propertyFilterSupport;
     protected Icons icons;
+    protected UiComponentProperties uiComponentProperties;
 
     protected HeaderFilterContext context;
 
@@ -98,6 +101,7 @@ public class DataGridHeaderFilter extends Composite<HorizontalLayout>
         messages = applicationContext.getBean(Messages.class);
         propertyFilterSupport = applicationContext.getBean(PropertyFilterSupport.class);
         icons = applicationContext.getBean(Icons.class);
+        uiComponentProperties = applicationContext.getBean(UiComponentProperties.class);
     }
 
     protected void initComponent() {
@@ -246,9 +250,24 @@ public class DataGridHeaderFilter extends Composite<HorizontalLayout>
 
         applyButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         applyButton.addClickListener(this::onApplyButtonClick);
+        applyShortcutCombination(applyButton);
         setupButtonFlexGrowStyle(applyButton);
 
         return applyButton;
+    }
+
+    protected void applyShortcutCombination(JmixButton applyButton) {
+        String shortcut = context.getHeaderFilterApplyShortcut();
+
+        if (shortcut == null) {
+            shortcut = uiComponentProperties.getDataGridHeaderFilterApplyShortcut();
+        }
+
+        KeyCombination shortcutCombination = KeyCombination.create(shortcut);
+        if (shortcutCombination != null) {
+            shortcutCombination.setResetFocusOnActiveElement(true);
+            applyButton.setShortcutCombination(shortcutCombination);
+        }
     }
 
     protected void onApplyButtonClick(ClickEvent<Button> event) {
@@ -358,6 +377,7 @@ public class DataGridHeaderFilter extends Composite<HorizontalLayout>
         protected DataLoader dataLoader;
         protected MetaClass metaClass;
         protected String property;
+        protected String headerFilterApplyShortcut;
 
         protected Component headerComponent;
 
@@ -379,6 +399,7 @@ public class DataGridHeaderFilter extends Composite<HorizontalLayout>
 
                 metaClass = propertyPath.getMetaClass();
                 property = propertyPath.toPathString();
+                headerFilterApplyShortcut = enhancedDataGrid.getHeaderFilterApplyShortcut();
             }
 
             if (column.getHeaderText() != null) {
@@ -398,6 +419,11 @@ public class DataGridHeaderFilter extends Composite<HorizontalLayout>
 
         public String getProperty() {
             return property;
+        }
+
+        @Nullable
+        public String getHeaderFilterApplyShortcut() {
+            return headerFilterApplyShortcut;
         }
 
         public Component getHeaderComponent() {

@@ -24,6 +24,7 @@ import io.jmix.flowui.component.factory.EntityFieldCreationSupport;
 import io.jmix.flowui.component.genericfilter.GenericFilter;
 import io.jmix.flowui.component.genericfilter.configuration.FilterConfigurationDetail;
 import io.jmix.flowui.component.grid.DataGrid;
+import io.jmix.flowui.component.grid.headerfilter.DataGridHeaderFilter;
 import io.jmix.flowui.component.sidedialog.SideDialog;
 import io.jmix.flowui.component.sidepanellayout.SidePanelLayout;
 import io.jmix.flowui.kit.component.sidedialog.SideDialogPosition;
@@ -108,6 +109,11 @@ public class UiComponentProperties {
     String filterApplyShortcut;
 
     /**
+     * Shortcut for applying {@link DataGridHeaderFilter}
+     */
+    String dataGridHeaderFilterApplyShortcut;
+
+    /**
      * Number of nested properties in the {@link AddConditionView}. I.e. if the depth is 2, then you'll be able to
      * select a property "contractor.city.country", if the value is 3, then "contractor.city.country.name", etc.
      */
@@ -184,6 +190,7 @@ public class UiComponentProperties {
             @Nullable Map<String, List<String>> entityFieldActions,
             @DefaultValue("true") boolean filterAutoApply,
             String filterApplyShortcut,
+            String dataGridHeaderFilterApplyShortcut,
             @DefaultValue("2") int filterPropertiesHierarchyDepth,
             @DefaultValue("false") boolean filterShowConfigurationIdField,
             @DefaultValue("true") boolean filterShowNonJpaProperties,
@@ -219,6 +226,7 @@ public class UiComponentProperties {
 
         this.filterAutoApply = filterAutoApply;
         this.filterApplyShortcut = filterApplyShortcut;
+        this.dataGridHeaderFilterApplyShortcut = dataGridHeaderFilterApplyShortcut;
         this.filterPropertiesHierarchyDepth = filterPropertiesHierarchyDepth;
         this.filterShowConfigurationIdField = filterShowConfigurationIdField;
         this.filterShowNonJpaProperties = filterShowNonJpaProperties;
@@ -338,6 +346,13 @@ public class UiComponentProperties {
      */
     public String getFilterApplyShortcut() {
         return filterApplyShortcut;
+    }
+
+    /**
+     * @see #dataGridHeaderFilterApplyShortcut
+     */
+    public String getDataGridHeaderFilterApplyShortcut() {
+        return dataGridHeaderFilterApplyShortcut;
     }
 
     /**

@@ -36,6 +36,7 @@ import io.jmix.flowui.model.DataLoader;
 import io.micrometer.observation.Observation;
 import org.springframework.lang.Nullable;
 
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
@@ -171,9 +172,8 @@ public class PropertyFilter<V> extends SingleFilterComponentBase<V> {
     /**
      * @return a list of available operations
      */
-    @Nullable
     public List<Operation> getOperationsList() {
-        return operationsList;
+        return operationsList == null ? Collections.emptyList() : Collections.unmodifiableList(operationsList);
     }
 
     /**
@@ -182,7 +182,7 @@ public class PropertyFilter<V> extends SingleFilterComponentBase<V> {
      * @param operationsList a list of available operations
      */
     public void setOperationsList(@Nullable List<Operation> operationsList) {
-        this.operationsList = operationsList;
+        this.operationsList = operationsList == null ? null : List.copyOf(operationsList);
 
         if (operationSelector != null) {
             operationSelector.removeAll();
@@ -211,11 +211,11 @@ public class PropertyFilter<V> extends SingleFilterComponentBase<V> {
             EnumSet<Operation> availableOperations = propertyFilterSupport.getAvailableOperations(metaClass, getProperty());
             checkArgument(availableOperations.contains(operation),
                     "Operation '%s' is not available for property '%s'", operation.name(), getProperty());
+        }
 
-            if (operationsList != null) {
-                checkArgument(operationsList.contains(operation),
-                        "Operation '%s' is not in operationsList", operation.name());
-            }
+        if (operationsList != null) {
+            checkArgument(operationsList.contains(operation),
+                    "Operation '%s' is not in operations list", operation.name());
         }
 
         getQueryCondition().setOperation(propertyFilterSupport.toPropertyConditionOperation(operation));

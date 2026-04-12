@@ -18,16 +18,22 @@ package jpql_sort
 
 import io.jmix.core.Metadata
 import io.jmix.core.Sort
+import io.jmix.core.metamodel.model.MetaPropertyPath
 import io.jmix.data.impl.JpqlQueryBuilder
 import io.jmix.data.persistence.JpqlSortExpressionProvider
+import io.jmix.data.persistence.SortPathExpressionProvider
 import org.springframework.beans.factory.BeanFactory
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
+import org.springframework.test.context.ContextConfiguration
 import org.springframework.beans.factory.annotation.Qualifier
 import spock.lang.Ignore
 import test_support.DataSpec
 import test_support.TestJpqlSortExpressionProvider
 import test_support.TestJpqlSortExpressionSupplier
 
+@ContextConfiguration(classes = [QuerySortTest.TestConfiguration], inheritLocations = true)
 class QuerySortTest extends DataSpec {
 
     @Autowired
@@ -289,5 +295,40 @@ class QuerySortTest extends DataSpec {
         then:
 
         queryBuilder.getResultQueryString() == 'select e from test_TestCompositeKeyEntity e order by e.id.tenant desc, e.id.entityId asc'
+    }
+
+    def "custom sort provider takes precedence over default sort logic"() {
+        JpqlQueryBuilder queryBuilder
+
+        when:
+
+        queryBuilder = beanFactory.getBean(JpqlQueryBuilder)
+        queryBuilder.setQueryString('select e from sales_Order e')
+                .setSort(Sort.by('amount'))
+                .setEntityName('sales_Order')
+
+        then:
+
+        queryBuilder.getResultQueryString() == 'select e from sales_Order e order by abs( e.amount) asc, e.id asc'
+    }
+
+    @Configuration
+    static class TestConfiguration {
+
+        @Bean
+        SortPathExpressionProvider test_SortPathExpressionProvider() {
+            return new SortPathExpressionProvider() {
+                @Override
+                boolean supports(MetaPropertyPath metaPropertyPath) {
+                    metaPropertyPath.toPathString() == 'amount'
+                }
+
+                @Override
+                Map<String, Sort.Direction> getSortExpressions(MetaPropertyPath metaPropertyPath,
+                                                               Sort.Direction sortDirection) {
+                    ['abs({E}.amount)': sortDirection]
+                }
+            }
+        }
     }
 }

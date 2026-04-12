@@ -26,7 +26,9 @@ import io.jmix.data.QueryParser.QueryPath;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -417,6 +419,59 @@ public class QueryParserAstBasedTest {
                 "select c.int1 + c.int2 * c.int1 from sec_User u"
         );
         transformer.getParamNames();
+    }
+
+    @Test
+    public void testSqlFunctionInWhereCondition() {
+        DomainModel model = prepareDomainModel();
+        QueryTransformerAstBased transformer = new QueryTransformerAstBased(model,
+                "select c from sec_Constraint c");
+
+        transformer.addWhere("sql('exists (select 1 from DYN_CONSTRAINT dc where dc.DYNMOD_ID = ? and dc.NAME = ?)', " +
+                "{E}.group.createdBy, :name)");
+
+        String query = transformer.getResult();
+        assertTrue(query.toLowerCase().contains("sql("));
+
+        QueryParserAstBased parser = new QueryParserAstBased(model, query);
+        assertTrue(parser.getParamNames().contains("name"));
+    }
+
+    @Test
+    public void testSqlFunctionInOrderByExpression() {
+        DomainModel model = prepareDomainModel();
+        QueryTransformerAstBased transformer = new QueryTransformerAstBased(model,
+                "select c from sec_Constraint c");
+
+        Map<String, io.jmix.core.Sort.Direction> sortExpressions = new LinkedHashMap<>();
+        sortExpressions.put("sql('(select min(dc.NAME) from DYN_CONSTRAINT dc where dc.DYNMOD_ID = ?)', {E}.group.createdBy)",
+                io.jmix.core.Sort.Direction.ASC);
+        transformer.replaceOrderByExpressions(sortExpressions);
+
+        String query = transformer.getResult();
+        assertTrue(query.toLowerCase().contains("order by"));
+        assertTrue(query.toLowerCase().contains("sql("));
+
+        QueryParserAstBased parser = new QueryParserAstBased(model, query);
+        assertEquals("sec_Constraint", parser.getEntityName());
+    }
+
+    @Test
+    public void testSqlFunctionSurvivesCountTransformation() {
+        DomainModel model = prepareDomainModel();
+        QueryTransformerAstBased transformer = new QueryTransformerAstBased(model,
+                "select c from sec_Constraint c " +
+                        "where sql('exists (select 1 from DYN_CONSTRAINT dc where dc.DYNMOD_ID = ?)', c.group.createdBy) " +
+                        "order by sql('(select min(dc.NAME) from DYN_CONSTRAINT dc where dc.DYNMOD_ID = ?)', c.group.createdBy)");
+
+        transformer.replaceWithCount();
+        transformer.removeOrderBy();
+
+        String countQuery = transformer.getResult();
+        assertTrue(countQuery.toLowerCase().contains("sql("));
+
+        QueryParserAstBased parser = new QueryParserAstBased(model, countQuery);
+        assertEquals("sec_Constraint", parser.getEntityName());
     }
 
     @Test

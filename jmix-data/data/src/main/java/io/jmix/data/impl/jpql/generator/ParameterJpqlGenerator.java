@@ -139,7 +139,11 @@ public class ParameterJpqlGenerator {
 
     @Nullable
     protected Object generateParameterValue(Condition condition, @Nullable Object parameterValue, @Nullable String entityName) {
-        ConditionGenerator conditionGenerator = resolver.getConditionGenerator(new ConditionGenerationContext(condition));
+        ConditionGenerationContext context = new ConditionGenerationContext(condition);
+        if (entityName != null) {
+            context.setEntityName(entityName);
+        }
+        ConditionGenerator conditionGenerator = resolver.getConditionGenerator(context);
         return conditionGenerator.generateParameterValue(condition, parameterValue, entityName);
     }
 }

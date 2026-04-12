@@ -21,6 +21,7 @@ import io.jmix.data.QueryTransformer;
 import io.jmix.data.QueryTransformerFactory;
 import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.data.persistence.JpqlSortExpressionProvider;
+import io.jmix.data.persistence.SortPathExpressionProvider;
 import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -49,6 +50,8 @@ public class SortJpqlGenerator {
     protected JpqlSortExpressionProvider jpqlSortExpressionProvider;
     @Autowired
     protected DbmsSpecifics dbmsSpecifics;
+    @Autowired(required = false)
+    protected List<SortPathExpressionProvider> sortPathExpressionProviders = Collections.emptyList();
 
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(SortJpqlGenerator.class);
 
@@ -65,7 +68,7 @@ public class SortJpqlGenerator {
         if (entityName != null) {
             MetaClass metaClass = metadata.getClass(entityName);
             for (Sort.Order order : sort.getOrders()) {
-                MetaPropertyPath metaPropertyPath = metaClass.getPropertyPath(order.getProperty());
+                MetaPropertyPath metaPropertyPath = metadataTools.resolveMetaPropertyPathOrNull(metaClass, order.getProperty());
                 checkNotNullArgument(metaPropertyPath, "Could not resolve property path '%s' in '%s'", order.getProperty(), metaClass);
 
                 sortExpressions.putAll(getPropertySortExpressions(metaPropertyPath, order.getDirection()));
@@ -122,6 +125,11 @@ public class SortJpqlGenerator {
     }
 
     protected Map<String, Sort.Direction> getPropertySortExpressions(MetaPropertyPath metaPropertyPath, Sort.Direction sortDirection) {
+        Map<String, Sort.Direction> customExpressions = getCustomSortExpressions(metaPropertyPath, sortDirection);
+        if (!customExpressions.isEmpty()) {
+            return customExpressions;
+        }
+
         MetaProperty metaProperty = metaPropertyPath.getMetaProperty();
 
         if (metadataTools.isJpa(metaPropertyPath)) {
@@ -139,6 +147,16 @@ public class SortJpqlGenerator {
             return getNotPersistentPropertySortExpression(metaPropertyPath, sortDirection);
         }
 
+        return Collections.emptyMap();
+    }
+
+    protected Map<String, Sort.Direction> getCustomSortExpressions(MetaPropertyPath metaPropertyPath,
+                                                                   Sort.Direction sortDirection) {
+        for (SortPathExpressionProvider provider : sortPathExpressionProviders) {
+            if (provider.supports(metaPropertyPath)) {
+                return provider.getSortExpressions(metaPropertyPath, sortDirection);
+            }
+        }
         return Collections.emptyMap();
     }
 

@@ -3372,6 +3372,7 @@
                             <xs:attribute name="sortable" type="xs:boolean"/>
                             <xs:attribute name="resizable" type="xs:boolean"/>
                             <xs:attribute name="filterable" type="xs:boolean"/>
+                            <xs:attribute name="headerFilterApplyShortcut" type="shortcutCombination"/>
                         </xs:complexType>
                     </xs:element>
                     <xs:element name="contextMenu" minOccurs="0" type="contextMenuType"/>

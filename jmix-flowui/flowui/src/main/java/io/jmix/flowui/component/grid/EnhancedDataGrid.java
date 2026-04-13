@@ -19,6 +19,7 @@ package io.jmix.flowui.component.grid;
 import com.vaadin.flow.component.grid.Grid;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.component.AggregationInfo;
+import io.jmix.flowui.component.grid.headerfilter.DataGridHeaderFilter;
 import io.jmix.flowui.kit.component.grid.JmixGridContextMenu;
 import org.springframework.lang.Nullable;
 
@@ -84,6 +85,19 @@ public interface EnhancedDataGrid<T> {
      * @return context menu instance attached to the grid
      */
     JmixGridContextMenu<T> getContextMenu();
+
+    /**
+     * @return a shortcut combination for applying {@link DataGridHeaderFilter}
+     */
+    @Nullable
+    String getHeaderFilterApplyShortcut();
+
+    /**
+     * Sets a shortcut combination for applying {@link DataGridHeaderFilter}.
+     *
+     * @param shortcut shortcut combination (e.g. {@code "CONTROL-ENTER"})
+     */
+    void setHeaderFilterApplyShortcut(@Nullable String shortcut);
 
     /**
      * Defines the position of aggregation row.

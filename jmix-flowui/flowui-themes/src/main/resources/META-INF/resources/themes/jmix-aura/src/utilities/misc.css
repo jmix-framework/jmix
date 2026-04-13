@@ -24,7 +24,7 @@
   padding: var(--vaadin-gap-s) var(--vaadin-gap-m);
 }
 
-vaadin-button.nested-button,
+vaadin-button.link-button,
 vaadin-button.dialog-close-button {
   padding: 0;
 
@@ -34,10 +34,14 @@ vaadin-button.dialog-close-button {
 
 vaadin-button.dialog-close-button {
   color: var(--vaadin-text-color);
-  --vaadin-button-background: transparent;
 }
 
-vaadin-button.suffix-helper-button {
+vaadin-button.link-button {
+  --vaadin-button-background: transparent;
   --vaadin-button-border-color: transparent;
   --vaadin-button-shadow: none;
+}
+
+vaadin-button.link-button:not([theme~='icon']) {
+  padding-inline: var(--vaadin-padding-xs);
 }

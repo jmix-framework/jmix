@@ -14,6 +14,16 @@
  * limitations under the License.
  */
 
-@import './src/icons/lumo-icons/lumo-icons.css';
-@import './src/icons/vaadin-icons/vaadin-icons.css';
-@import './src/icons/jmix-font-icons.css';
+.ui-component-resource-policy-model-create-view .component-ids-editor-layout {
+    border: 1px solid var(--vaadin-border-color);
+    border-radius: var(--vaadin-radius-m);
+    flex-shrink: 0;
+}
+
+.ui-component-resource-policy-model-create-view .selected-component-ids-layout {
+    gap: var(--vaadin-gap-xs);
+}
+
+.ui-component-resource-policy-model-create-view .component-id-combo-box-renderer-tag {
+    color: var(--vaadin-text-color-secondary);
+}

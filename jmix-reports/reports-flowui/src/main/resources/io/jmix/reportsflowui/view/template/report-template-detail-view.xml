@@ -32,7 +32,7 @@
                         <flexLayout width="100%" justifyContent="END">
                             <button id="templateFileEditorFullScreenBtn"
                                     text="msg:///fullScreenBtn.title"
-                                    themeNames="tertiary-inline"/>
+                                    classNames="link-button"/>
                         </flexLayout>
                         <flexLayout width="100%" alignItems="START">
                             <codeEditor id="templateFileEditor"
@@ -63,7 +63,7 @@
                         <flexLayout width="100%" justifyContent="END">
                             <button id="customDefinitionFullScreenBtn"
                                     text="msg:///fullScreenBtn.title"
-                                    themeNames="tertiary-inline"/>
+                                    classNames="link-button"/>
                         </flexLayout>
                         <vbox width="100%" padding="false">
                             <flexLayout width="100%" alignItems="START">

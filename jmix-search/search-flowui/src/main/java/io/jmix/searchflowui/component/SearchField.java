@@ -65,6 +65,7 @@ public class SearchField extends CustomField<String>
         InputNotifier, KeyNotifier, HasAriaLabel, HasAutofocus, HasPlaceholder {
 
     public static final String SEARCH_FIELD_STYLENAME = "jmix-search-field";
+    public static final String SEARCH_FIELD_ACTIONS_CONTAINER_CLASS_NAME = SEARCH_FIELD_STYLENAME + "-actions-container";
 
     protected ApplicationContext applicationContext;
     protected UiComponents uiComponents;
@@ -166,7 +167,7 @@ public class SearchField extends CustomField<String>
         this.settingsButton = createSettingsButton();
 
         HorizontalLayout hbox = uiComponents.create(HorizontalLayout.class);
-        hbox.setClassName("jmix-search-field-actions-container");
+        hbox.setClassName(SEARCH_FIELD_ACTIONS_CONTAINER_CLASS_NAME);
         hbox.setSpacing(false);
         hbox.add(searchButton);
         hbox.add(settingsButton);
@@ -176,7 +177,7 @@ public class SearchField extends CustomField<String>
 
     protected Button createSearchButton() {
         Button button = uiComponents.create(Button.class);
-        button.setClassName(StyleUtility.Button.NESTED_BUTTON);
+        button.setClassName(StyleUtility.Button.LINK_BUTTON);
         button.setIcon(icons.get(JmixFontIcon.SEARCH_FIELD_SEARCH));
 
         button.addClickListener(clickEvent -> performSearch());
@@ -185,7 +186,7 @@ public class SearchField extends CustomField<String>
 
     protected Button createSettingsButton() {
         Button settingsButton = uiComponents.create(Button.class);
-        settingsButton.setClassName(StyleUtility.Button.NESTED_BUTTON);
+        settingsButton.setClassName(StyleUtility.Button.LINK_BUTTON);
         settingsButton.setIcon(icons.get(JmixFontIcon.SEARCH_FIELD_SETTINGS));
 
         settingsButton.addClickListener(clickEvent -> {

@@ -322,7 +322,7 @@ public class JpqlFilterConditionDetailView extends FilterConditionDetailView<Jpq
     protected void createHelperButton(JmixTextArea textArea) {
         JmixButton helperButton = uiComponents.create(JmixButton.class);
         helperButton.setIcon(icons.get(JmixFontIcon.QUESTION_CIRCLE));
-        helperButton.setClassName(StyleUtility.Button.NESTED_BUTTON);
+        helperButton.setClassName(StyleUtility.Button.LINK_BUTTON);
 
         String message = messageBundle.getMessage(
                 "jpqlFilterConditionDetailView." + textArea.getId().orElseThrow() + ".tooltipMessage");

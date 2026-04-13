@@ -20,7 +20,6 @@ import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.customfield.CustomField;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -45,6 +44,7 @@ import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.icon.JmixFontIcon;
+import io.jmix.flowui.theme.StyleUtility;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
@@ -184,7 +184,7 @@ public abstract class AbstractIntervalField extends CustomField<DateInterval>
     protected void initIncludingCurrentHelperBtn(HorizontalLayout includingCurrentBox) {
         includingCurrentHelperBtn = uiComponents.create(JmixButton.class);
         includingCurrentHelperBtn.setIcon(icons.get(JmixFontIcon.INTERVAL_FIELD_HELP));
-        includingCurrentHelperBtn.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
+        includingCurrentHelperBtn.setClassName(StyleUtility.Button.LINK_BUTTON);
 
         includingCurrentHelperBtn.addClickListener(this::onIncludingCurrentHelperBtnClick);
 

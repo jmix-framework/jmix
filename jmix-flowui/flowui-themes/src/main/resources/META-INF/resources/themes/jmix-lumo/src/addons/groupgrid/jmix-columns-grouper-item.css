@@ -44,7 +44,7 @@
   }
 
   :host(:hover) {
-    background-color: var(--lumo-primary-color-10pct);
+    --_highlight-color: var(--lumo-primary-color-10pct);
   }
 
   :host vaadin-button {

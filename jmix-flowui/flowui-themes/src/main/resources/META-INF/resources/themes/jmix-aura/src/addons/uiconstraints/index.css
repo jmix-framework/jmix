@@ -14,6 +14,4 @@
  * limitations under the License.
  */
 
-@import './src/icons/lumo-icons/lumo-icons.css';
-@import './src/icons/vaadin-icons/vaadin-icons.css';
-@import './src/icons/jmix-font-icons.css';
+@import './ui-component-resource-policy-model-create-view.css';

@@ -14,6 +14,20 @@
  * limitations under the License.
  */
 
-@import './src/icons/lumo-icons/lumo-icons.css';
-@import './src/icons/vaadin-icons/vaadin-icons.css';
-@import './src/icons/jmix-font-icons.css';
+vaadin-grid-tree-toggle.jmix-group-toggle {
+  &::part(toggle) {
+    align-items: center;
+    color: var(--vaadin-text-color);
+    display: flex;
+    justify-content: center;
+  }
+
+  &::part(toggle)::before {
+    --_icon: var(--_vaadin-icon-plus);
+    mask: var(--_icon) 50% / var(--vaadin-icon-visual-size, 100%) no-repeat;
+  }
+
+  &[expanded]::part(toggle)::before {
+    --_icon: var(--_vaadin-icon-minus);
+  }
+}

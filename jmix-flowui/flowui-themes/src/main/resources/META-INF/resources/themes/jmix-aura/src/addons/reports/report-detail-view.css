@@ -19,7 +19,7 @@
 }
 
 .report-detail-view :is(.flex-layout, .multi-data-set-layout) {
-    gap: var(--lumo-space-m);
+    gap: var(--vaadin-gap-m);
 }
 
 .report-detail-view .bands-layout {

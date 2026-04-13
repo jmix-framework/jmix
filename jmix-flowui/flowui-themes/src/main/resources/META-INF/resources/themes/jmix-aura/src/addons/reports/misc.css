@@ -14,6 +14,14 @@
  * limitations under the License.
  */
 
-@import './src/icons/lumo-icons/lumo-icons.css';
-@import './src/icons/vaadin-icons/vaadin-icons.css';
-@import './src/icons/jmix-font-icons.css';
+.report-field-icon {
+    cursor: var(--vaadin-clickable-cursor);
+}
+
+.report-wizard-tip-label {
+    font-size: medium;
+    display: block;
+    padding: calc(0.5em + var(--vaadin-radius-l));
+    line-height: normal;
+    box-sizing: border-box;
+}

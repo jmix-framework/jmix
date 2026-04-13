@@ -26,8 +26,8 @@ public final class StyleUtility {
 
     public static final class Button {
 
-        public static final String NESTED_BUTTON = "nested-button";
         public static final String DIALOG_CLOSE_BUTTON = "dialog-close-button";
+        public static final String LINK_BUTTON = "link-button";
 
         private Button() {
         }

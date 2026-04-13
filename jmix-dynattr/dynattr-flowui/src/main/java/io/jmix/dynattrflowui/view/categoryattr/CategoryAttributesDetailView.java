@@ -618,7 +618,6 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
 
     protected void attachHelperForSuffix(CodeEditor codeEditor, Component componentSuffix) {
         Element parent = codeEditor.getElement().getParent();
-        componentSuffix.addClassName("suffix-helper-button");
         if (parent.getChildCount() > 0) {
             parent.getComponent().ifPresent(e -> {
                 if (e instanceof HasComponents hasComponents) {

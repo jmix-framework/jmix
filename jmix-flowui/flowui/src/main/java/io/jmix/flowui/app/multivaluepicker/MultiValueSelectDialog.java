@@ -40,6 +40,7 @@ import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.action.BaseAction;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.icon.JmixFontIcon;
+import io.jmix.flowui.theme.StyleUtility;
 import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.builder.LookupWindowBuilder;
 import org.apache.commons.collections4.CollectionUtils;
@@ -214,7 +215,7 @@ public class MultiValueSelectDialog<E> extends StandardListView<E> implements Mu
         if (!context.isReadOnly()) {
             JmixButton deleteItemButton = uiComponents.create(JmixButton.class);
             deleteItemButton.setIcon(icons.get(JmixFontIcon.CLOSE_SMALL));
-            deleteItemButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
+            deleteItemButton.setClassName(StyleUtility.Button.LINK_BUTTON);
             deleteItemButton.addClickListener(e -> {
                 values.remove(value);
                 item.getElement().removeFromParent();

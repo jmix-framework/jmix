@@ -85,7 +85,7 @@ public class DynAttrUiHelper {
     public JmixButton createHelperButton(String message) {
         JmixButton helperButton = uiComponents.create(JmixButton.class);
         helperButton.setIcon(icons.get(JmixFontIcon.QUESTION_CIRCLE));
-        helperButton.setClassName(StyleUtility.Button.NESTED_BUTTON);
+        helperButton.setClassName(StyleUtility.Button.LINK_BUTTON);
         helperButton.addClickListener(event ->
                 dialogs.createMessageDialog()
                         .withMinWidth("10em")

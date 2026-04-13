@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
-@import './src/icons/lumo-icons/lumo-icons.css';
-@import './src/icons/vaadin-icons/vaadin-icons.css';
-@import './src/icons/jmix-font-icons.css';
+@media (any-hover: hover) {
+  jmix-columns-grouper-item:hover {
+    /* Same as menu-bar-item hover color */
+    --_highlight-color: light-dark(oklch(from var(--aura-accent-color-light) min(0.9, l) c h / max(0.05, l / 4)), oklch(from var(--aura-accent-color-dark) max(0.6, l) c h / max(0.2, l / 4)));
+  }
+}

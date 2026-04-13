@@ -21,7 +21,6 @@ import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.combobox.ComboBoxBase;
 import com.vaadin.flow.component.datetimepicker.DateTimePicker;
@@ -38,6 +37,7 @@ import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.icon.JmixFontIcon;
+import io.jmix.flowui.theme.StyleUtility;
 import io.jmix.flowui.view.*;
 import io.jmix.quartz.model.*;
 import io.jmix.quartz.service.QuartzService;
@@ -145,7 +145,7 @@ public class TriggerModelDetailView extends StandardDetailView<TriggerModel> {
 
     private void initCronExpressionHelperButton() {
         cronExpressionHelpButton.setIcon(icons.get(JmixFontIcon.QUESTION_CIRCLE));
-        cronExpressionHelpButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
+        cronExpressionHelpButton.setClassName(StyleUtility.Button.LINK_BUTTON);
         cronExpressionHelpButton.addClickListener(this::onCronHelperButtonClick);
     }
 
@@ -160,7 +160,7 @@ public class TriggerModelDetailView extends StandardDetailView<TriggerModel> {
 
     private void initRepeatModeHelperButton() {
         repeatModeSelectorHelpButton.setIcon(icons.get(JmixFontIcon.QUESTION_CIRCLE));
-        repeatModeSelectorHelpButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
+        repeatModeSelectorHelpButton.setClassName(StyleUtility.Button.LINK_BUTTON);
         repeatModeSelectorHelpButton.addClickListener(this::onRepeatModeHelperButtonClick);
     }
 
@@ -175,7 +175,7 @@ public class TriggerModelDetailView extends StandardDetailView<TriggerModel> {
 
     private void initRepeatCountHelperButton() {
         repeatCountHelpButton.setIcon(icons.get(JmixFontIcon.QUESTION_CIRCLE));
-        repeatCountHelpButton.addThemeVariants(ButtonVariant.LUMO_ICON, ButtonVariant.LUMO_TERTIARY_INLINE);
+        repeatCountHelpButton.setClassName(StyleUtility.Button.LINK_BUTTON);
         repeatCountHelpButton.addClickListener(this::onRepeatCountHelperButtonClick);
     }
 
@@ -202,7 +202,7 @@ public class TriggerModelDetailView extends StandardDetailView<TriggerModel> {
 
     private void initMisfireInstructionHelperButton() {
         misfireInstructionHelpButton.setIcon(icons.get(JmixFontIcon.QUESTION_CIRCLE));
-        misfireInstructionHelpButton.addThemeVariants(ButtonVariant.LUMO_ICON, ButtonVariant.LUMO_TERTIARY_INLINE);
+        misfireInstructionHelpButton.setClassName(StyleUtility.Button.LINK_BUTTON);
         misfireInstructionHelpButton.addClickListener(this::onMisfireInstructionHelperButtonClick);
     }
 

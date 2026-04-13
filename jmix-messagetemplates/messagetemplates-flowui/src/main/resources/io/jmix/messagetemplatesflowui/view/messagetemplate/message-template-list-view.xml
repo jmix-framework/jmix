@@ -58,6 +58,7 @@
             <button id="editButton" action="messageTemplatesDataGrid.edit"/>
             <button id="removeButton" action="messageTemplatesDataGrid.remove"/>
             <button id="copyButton" action="messageTemplatesDataGrid.copy"/>
+            <button id="previewButton" action="messageTemplatesDataGrid.preview"/>
             <dropdownButton id="exportButton" text="msg://exportButton.text" icon="DOWNLOAD">
                 <items>
                     <actionItem id="exportJsonAction" ref="messageTemplatesDataGrid.exportJson"/>
@@ -81,6 +82,8 @@
                     <action id="remove" type="list_remove"/>
                     <action id="copy" type="list_itemTracking" icon="COPY"
                             text="msg://messageTemplatesDataGrid.copyAction.text"/>
+                    <action id="preview" type="list_itemTracking" icon="EYE"
+                            text="msg://messageTemplatesDataGrid.previewAction.text"/>
                     <action id="exportJson" icon="FILE_CODE"
                             text="msg://messageTemplatesDataGrid.exportJsonAction.text"/>
                     <action id="exportZip" icon="FILE_ZIP"

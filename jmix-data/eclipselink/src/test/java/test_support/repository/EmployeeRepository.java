@@ -90,6 +90,9 @@ public interface EmployeeRepository extends JmixDataRepository<Employee, UUID> {
     @Query(value = "select e.secondName from repository$Employee e", properties = "secondNameReturnColumn")
     List<String> queryEmployeeSecondNamesByContext(JmixDataRepositoryContext context);
 
+    @Query(value = "select e from repository$Employee e")
+    List<Employee> queryEmployeeByContext(JmixDataRepositoryContext context);
+
     @Query("select e.secondName from repository$Employee e where e.name = :name")
     Optional<String> queryEmployeeSecondNameByFirstName(@Param("name") String name);
 

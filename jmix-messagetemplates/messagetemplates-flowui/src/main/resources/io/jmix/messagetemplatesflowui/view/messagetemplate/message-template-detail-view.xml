@@ -77,8 +77,8 @@
                             <hbox id="htmlTemplateControlsPanel" classNames="buttons-panel">
                                 <fileUploadField id="importTemplateField" uploadIcon="UPLOAD"
                                                  acceptedFileTypes=".html"/>
+                                <button id="viewBtn" icon="DOWNLOAD" title="msg://viewBtn.title"/>
                                 <button id="editCodeBtn" icon="CODE" title="msg://editCodeBtn.title"/>
-                                <button id="viewBtn" icon="EYE" title="msg://viewBtn.title"/>
                             </hbox>
                             <msgtmp:grapesJs id="grapesJsEditor" width="100%"
                                              minHeight="20em">
@@ -132,6 +132,8 @@
         </tabSheet>
         <hbox id="detailActions">
             <button id="saveAndCloseButton" action="saveAction"/>
+            <button id="previewButton" icon="EYE"
+                    text="msg://previewButton.text"/>
             <button id="closeButton" action="closeAction"/>
         </hbox>
     </layout>

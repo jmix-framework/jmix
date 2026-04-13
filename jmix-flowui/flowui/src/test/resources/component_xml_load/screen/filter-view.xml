@@ -79,6 +79,12 @@
             />
         </propertyFilter>
 
+        <propertyFilter id="propertyFilterOperationsListId"
+                        property="number"
+                        operation="EQUAL"
+                        dataLoader="ordersDl"
+                        operationsList="EQUAL, CONTAINS, STARTS_WITH"/>
+
         <jpqlFilter id="jpqlFilterId"
                     parameterClass="java.lang.Void" dataLoader="ordersDl"
                     autoApply="true"

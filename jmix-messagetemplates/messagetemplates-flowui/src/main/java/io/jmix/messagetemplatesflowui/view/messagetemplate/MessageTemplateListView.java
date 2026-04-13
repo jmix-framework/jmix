@@ -45,6 +45,7 @@ import io.jmix.messagetemplates.entity.MessageTemplate;
 import io.jmix.messagetemplates.entity.MessageTemplateParameter;
 import io.jmix.messagetemplates.entity.TemplateType;
 import io.jmix.messagetemplatesflowui.accesscontext.UiImportExportMessageTemplateContext;
+import io.jmix.messagetemplatesflowui.view.messagetemplatepreview.MessageTemplatesPreviewer;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -112,6 +113,8 @@ public class MessageTemplateListView extends StandardListView<MessageTemplate> {
     protected Downloader downloader;
     @Autowired
     protected Notifications notifications;
+    @Autowired
+    protected MessageTemplatesPreviewer messageTemplatesPreviewer;
 
     protected boolean isCreatePermitted;
     protected boolean isImportExportPermitted;
@@ -154,6 +157,14 @@ public class MessageTemplateListView extends StandardListView<MessageTemplate> {
         if (selectedItem != null) {
             copyTemplate(selectedItem);
             messageTemplatesDl.load();
+        }
+    }
+
+    @Subscribe("messageTemplatesDataGrid.preview")
+    public void onMessageTemplatesDataGridPreview(ActionPerformedEvent event) {
+        MessageTemplate selectedItem = messageTemplatesDataGrid.getSingleSelectedItem();
+        if (selectedItem != null) {
+            messageTemplatesPreviewer.showPreview(this, selectedItem);
         }
     }
 

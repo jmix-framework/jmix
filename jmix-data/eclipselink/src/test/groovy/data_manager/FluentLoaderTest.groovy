@@ -23,6 +23,7 @@ import io.jmix.data.PersistenceHints
 import org.springframework.beans.factory.annotation.Autowired
 import test_support.DataSpec
 import test_support.entity.sales.Customer
+import test_support.entity.sales.Order
 import test_support.entity.sales.Status
 
 import jakarta.persistence.TemporalType
@@ -37,6 +38,7 @@ class FluentLoaderTest extends DataSpec {
 
     private FetchPlan baseFP
     private Customer customer, customer2
+    private Order order1, order2
     private UUID customerId, customer2Id
 
     void setup() {
@@ -51,7 +53,17 @@ class FluentLoaderTest extends DataSpec {
         customer2.name = 'Johns'
         customer2Id = customer2.id
 
-        dataManager.save(customer, customer2)
+        order1 = metadata.create(Order)
+        order1.customer = customer
+        order1.number = "001"
+        order1.amount = BigDecimal.TEN
+
+        order2 = metadata.create(Order)
+        order2.customer = customer2
+        order2.number = "002"
+        order2.amount = BigDecimal.valueOf(20)
+
+        dataManager.save(customer, customer2, order1, order2)
     }
 
     def "usage examples"() {
@@ -455,4 +467,38 @@ class FluentLoaderTest extends DataSpec {
         loadContext.query.parameters['_p10'] == 'v10'
         loadContext.query.parameters['_p11'] == 'v11'
     }
+
+        def "test ValueLoadContext when loading by condition"() {
+
+        when:
+        def query = ValueLoadContext.createQuery("select someStrangeEntityAlias.number from sales_Order someStrangeEntityAlias");
+        query.condition = PropertyCondition.equal("amount", BigDecimal.TEN)
+
+        ValueLoadContext context = new ValueLoadContext();
+        context.setQuery(query);
+        context.addProperty("number");
+
+        def result = dataManager.loadValues(context)
+
+        then:
+        result.size() == 1
+        result[0].getValue("number") == "001"
+
+
+        when:
+        def query2 = ValueLoadContext.createQuery("select o.number from sales_Order o");
+        query2.condition = PropertyCondition.equal("customer.name", "Smith")
+
+        ValueLoadContext context2 = new ValueLoadContext()
+        context2.setQuery(query2)
+        context2.addProperty("number")
+
+        def result2 = dataManager.loadValues(context2)
+
+        then:
+        result2.size() == 1
+        result2[0].getValue("number") == "001"
+
+    }
+
 }

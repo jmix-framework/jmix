@@ -243,6 +243,6 @@ public class MessageTemplateDetailView extends StandardDetailView<MessageTemplat
 
     @Subscribe("previewButton")
     public void onPreviewButtonClick(ClickEvent<JmixButton> event) {
-        messageTemplatesPreviewer.showPreview(getEditedEntity(), this);
+        messageTemplatesPreviewer.showPreview(this, getEditedEntity());
     }
 }

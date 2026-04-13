@@ -152,7 +152,9 @@ public class MessageTemplateListView extends StandardListView<MessageTemplate> {
     @Subscribe("messageTemplatesDataGrid.preview")
     public void onMessageTemplatesDataGridPreview(ActionPerformedEvent event) {
         MessageTemplate selectedItem = messageTemplatesDataGrid.getSingleSelectedItem();
-        messageTemplatesPreviewer.showPreview(selectedItem, this);
+        if (selectedItem != null) {
+            messageTemplatesPreviewer.showPreview(this, selectedItem);
+        }
     }
 
     @Subscribe("importField")

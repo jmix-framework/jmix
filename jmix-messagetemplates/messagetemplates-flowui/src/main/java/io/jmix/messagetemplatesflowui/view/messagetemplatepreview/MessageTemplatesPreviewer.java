@@ -23,7 +23,6 @@ import io.jmix.flowui.view.View;
 import io.jmix.messagetemplates.MessageTemplatesGenerator;
 import io.jmix.messagetemplates.entity.MessageTemplate;
 import io.jmix.messagetemplatesflowui.view.parametersinputdialog.MessageTemplateParametersInputDialog;
-import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -53,10 +52,10 @@ public class MessageTemplatesPreviewer {
      * If the template contains parameters, a dialog for parameter input is shown first.
      * After confirmation, the template is generated and the result is displayed.
      *
-     * @param messageTemplate the message template (can be {@code null})
      * @param origin          the originating view used to open dialogs
+     * @param messageTemplate the message template
      */
-    public void showPreview(@Nullable MessageTemplate messageTemplate, View<?> origin) {
+    public void showPreview(View<?> origin, MessageTemplate messageTemplate) {
         if (messageTemplate == null) {
             return;
         }

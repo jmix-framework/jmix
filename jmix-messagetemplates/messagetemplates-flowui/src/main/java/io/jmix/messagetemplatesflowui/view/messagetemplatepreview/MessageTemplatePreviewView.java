@@ -32,7 +32,7 @@ import java.nio.charset.StandardCharsets;
 
 @ViewController("msgtmp_MessageTemplatePreviewView")
 @ViewDescriptor("message-template-preview-view.xml")
-@DialogMode(width = "40em", resizable = true)
+@DialogMode(minWidth = "40em", resizable = true)
 public class MessageTemplatePreviewView extends StandardView {
 
     @Autowired

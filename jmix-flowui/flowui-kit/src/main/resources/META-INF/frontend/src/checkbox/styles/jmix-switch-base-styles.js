@@ -21,15 +21,9 @@ import { field } from '@vaadin/field-base/src/styles/field-base-styles.js';
 
 const jmixSwitch = css`
 
-    .jmix-switch-container {
-        display: grid;
-        grid-template-columns: auto 1fr;
-        align-items: baseline;
-    }
-
     [part='switch'] {
-        width: calc(var(--jmix-switch-size, calc(2.75em / 2)) * 2);
-        height: var(--jmix-switch-size, calc(2.75em / 2));
+        width: calc(var(--jmix-switch-size, 1lh) * 2);
+        height: var(--jmix-switch-size, 1lh);
     }
     
     [part='switch'] .indicator {

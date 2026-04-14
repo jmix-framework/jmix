@@ -48,6 +48,7 @@ const jmixSwitch = css`
         border-radius: 50%;
 
         box-sizing: border-box;
+        background-color: var(--jmix-switch-indicator-color, var(--vaadin-text-color));
         
         margin-inline-start: var(--_switch-indicator-offset);
         transform: none;
@@ -56,9 +57,28 @@ const jmixSwitch = css`
         transition: margin-inline-start 0.2s ease;
     }
 
+    :host([readonly]:not([checked])) [part='switch'] .indicator {
+        background-color: transparent;
+        border-color: var(--vaadin-switch-indicator-border-color, var(--vaadin-input-field-border-color, var(--vaadin-border-color)));
+        border-style: var(--_border-style, solid);
+        border-width: var(--vaadin-switch-indicator-border-width, var(--vaadin-input-field-border-width, 1px));
+    }
+
     :host([checked]) [part='switch'] .indicator {
         margin-inline-start: calc(100% - var(--_switch-indicator-size) - var(--_switch-indicator-offset));
-        background-color: var(--switch-checked-indicator-background-color, var(--_color));
+        background-color: var(--jmix-switch-checked-indicator-color, var(--vaadin-background-color));
+    }
+
+    :host([readonly][checked]) [part='switch'] .indicator {
+        background-color: var(--jmix-switch-indicator-color, var(--vaadin-text-color));
+    }
+
+    :host([disabled][checked]) [part='switch'] .indicator {
+        background-color: var(--jmix-switch-disabled-indicator-color, var(--vaadin-text-color-disabled));
+    }
+    
+    :host([disabled]) [part='switch'] .indicator {
+        background-color: var(--jmix-switch-checked-indicator-color, var(--vaadin-background-color));
     }
 
     :host([readonly]) {
@@ -66,6 +86,13 @@ const jmixSwitch = css`
         --vaadin-switch-border-color: var(--vaadin-border-color);
         --vaadin-switch-marker-color: var(--vaadin-text-color);
         --_border-style: dashed;
+    }
+    
+    @media (forced-colors: active) {
+        :host(:not([readonly]):not([disabled])) [part='switch'] .indicator,
+        :host([disabled]:not([readonly]):not([checked])) [part='switch'] .indicator {
+            background-color: ButtonText;
+        }
     }
 `;
 

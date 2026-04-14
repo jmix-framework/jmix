@@ -20,17 +20,45 @@ import { checkable } from '@vaadin/field-base/src/styles/checkable-base-styles.j
 import { field } from '@vaadin/field-base/src/styles/field-base-styles.js';
 
 const jmixSwitch = css`
+    
+    :host {
+        --_switch-size: var(--jmix-switch-size, 1lh);
+        --_switch-indicator-offset: calc(var(--vaadin-padding-xs) / 2);
+        --_switch-indicator-size: var(--jmix-switch-indicator-size, calc(var(--_switch-size) - var(--_switch-indicator-offset) * 2));
+    }
 
     [part='switch'] {
         align-self: center;
-        width: calc(var(--jmix-switch-size, 1lh) * 2);
-        height: var(--jmix-switch-size, 1lh);
+        /* to remove inheritance from checkable styles */
+        justify-content: unset;
+        width: calc(var(--_switch-size) * 2);
+        height: var(--_switch-size);
+
+        border-radius: var(--jmix-switch-border-radius, calc(var(--_switch-size) / 2));
+    }
+    
+    /* to remove default checkbox checkmark inherited from checkable styles */
+    [part='switch']::after {
+        content: none;
     }
     
     [part='switch'] .indicator {
-        --_input-border-width: var(--vaadin-input-field-border-width, 0);
-        --_input-border-color: var(--vaadin-input-field-border-color, transparent);
-        box-shadow: inset 0 0 0 var(--_input-border-width, 0) var(--_input-border-color);
+        width: var(--_switch-indicator-size);
+        height: var(--_switch-indicator-size);
+        border-radius: 50%;
+
+        box-sizing: border-box;
+        
+        margin-inline-start: var(--_switch-indicator-offset);
+        transform: none;
+        
+        opacity: 1;
+        transition: margin-inline-start 0.2s ease;
+    }
+
+    :host([checked]) [part='switch'] .indicator {
+        margin-inline-start: calc(100% - var(--_switch-indicator-size) - var(--_switch-indicator-offset));
+        background-color: var(--switch-checked-indicator-background-color, var(--_color));
     }
 
     :host([readonly]) {

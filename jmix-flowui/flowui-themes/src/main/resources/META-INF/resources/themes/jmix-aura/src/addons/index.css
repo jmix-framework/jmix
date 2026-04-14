@@ -21,7 +21,7 @@
 @import './fullcalendar/index.css';
 @import './jmxconsole/index.css';
 @import './messagetemplates/index.css';
-/*@import './pivottable/index.css';*/
+@import './pivottable/index.css';
 @import './quartz/index.css';
 @import './reports/index.css';
 @import './search/index.css';

@@ -18,7 +18,7 @@
 
 @import './audit/index.css';
 @import './dynattr/index.css';
-@import './fullcalendar/index.css';
+/*@import './fullcalendar/index.css';*/
 @import './jmxconsole/index.css';
 @import './messagetemplates/index.css';
 /*@import './pivottable/index.css';*/
@@ -31,7 +31,7 @@
 
 /*@import './bpm/index.css';*/
 @import './groupgrid/index.css';
-/*@import './kanban/index.css';*/
+@import './kanban/index.css';
 /*@import './maps/index.css';*/
 @import './notifications/index.css';
 @import './tabbedmode/index.css';

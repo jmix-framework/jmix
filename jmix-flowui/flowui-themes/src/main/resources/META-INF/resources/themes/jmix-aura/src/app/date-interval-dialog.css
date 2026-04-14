@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
-@import './data-grid-empty-state-by-permissions-fragment.css';
-@import './date-interval-dialog.css';
-@import './exception-dialog-window.css';
+.date-interval-dialog .type-selector {
+    flex-shrink: 0;
+}
+
+.date-interval-dialog .content-box {
+    flex-grow: 1;
+}

@@ -15,20 +15,35 @@
  */
 
 .jmix-exception-dialog-window-content textarea {
-  background-color: var(--lumo-contrast-20pct);
-  border: 0;
-  border-radius: var(--lumo-border-radius-m);
+  background: var(--vaadin-input-field-background, var(--vaadin-background-color));
+  color: var(--vaadin-input-field-value-color, var(--vaadin-text-color));
+
+  --_radius: var(--vaadin-input-field-border-radius, var(--vaadin-radius-m));
+  border-radius:
+    /* See https://developer.mozilla.org/en-US/docs/Web/CSS/border-radius */
+          var(--vaadin-input-field-top-start-radius, var(--_radius))
+          var(--vaadin-input-field-top-end-radius, var(--_radius))
+          var(--vaadin-input-field-bottom-end-radius, var(--_radius))
+          var(--vaadin-input-field-bottom-start-radius, var(--_radius));
+  border: var(--vaadin-input-field-border-width, 1px) solid var(--vaadin-input-field-border-color, var(--vaadin-border-color));
+
   box-sizing: border-box;
-  font-family: var(--lumo-font-family);
-  font-size: var(--lumo-font-size-m);
-  line-height: var(--lumo-line-height-s);
+
+  font-size: var(--vaadin-input-field-value-font-size, inherit);
+  line-height: var(--vaadin-input-field-value-line-height, inherit);
+  font-weight: var(--vaadin-input-field-value-font-weight, 400);
+
   outline: none;
-  padding: calc(var(--lumo-size-s) - 1em * var(--lumo-line-height-s));
+  padding: var(
+          --vaadin-input-field-padding,
+          var(--vaadin-padding-block-container) var(--vaadin-padding-inline-container)
+  );
   resize: none;
 }
 
-.jmix-exception-dialog-window-content textarea:focus {
-  box-shadow: 0 0 0 2px var(--lumo-primary-color-50pct);
+.jmix-exception-dialog-window-content textarea:focus-within {
+  outline: var(--vaadin-focus-ring-width) solid var(--vaadin-focus-ring-color);
+  outline-offset: calc(var(--vaadin-input-field-border-width, 1px) * -1);
 }
 
 .jmix-exception-dialog-window-content .jmix-exception-dialog-window-message-textarea {

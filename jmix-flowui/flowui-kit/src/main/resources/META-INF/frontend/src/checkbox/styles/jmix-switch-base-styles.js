@@ -22,6 +22,7 @@ import { field } from '@vaadin/field-base/src/styles/field-base-styles.js';
 const jmixSwitch = css`
 
     [part='switch'] {
+        align-self: center;
         width: calc(var(--jmix-switch-size, 1lh) * 2);
         height: var(--jmix-switch-size, 1lh);
     }
@@ -33,9 +34,9 @@ const jmixSwitch = css`
     }
 
     :host([readonly]) {
-        --vaadin-checkbox-background: transparent;
-        --vaadin-checkbox-border-color: var(--vaadin-border-color);
-        --vaadin-checkbox-marker-color: var(--vaadin-text-color);
+        --vaadin-switch-background: transparent;
+        --vaadin-switch-border-color: var(--vaadin-border-color);
+        --vaadin-switch-marker-color: var(--vaadin-text-color);
         --_border-style: dashed;
     }
 `;

@@ -31,13 +31,14 @@
         <action id="saveAction" type="detail_saveClose"/>
         <action id="closeAction" type="detail_close"/>
     </actions>
-    <layout expand="mainContent">
+    <layout expand="mainContent" classNames="report-region-wizard-detail-view">
         <div id="tipLabel"
              themeNames="badge normal"
              classNames="report-wizard-tip-label"
              width="100%"/>
         <hbox id="mainContent" width="100%" minWidth="30em">
-            <vbox id="btnsControlPanel" margin="false" spacing="false" padding="false" width="AUTO">
+            <vbox id="btnsControlPanel" margin="false" spacing="false" padding="false" width="AUTO"
+                  classNames="actions-panel">
                 <button id="addItem" icon="ARROW_RIGHT"/>
                 <button id="removeItem" action="propertiesDataGrid.removeItemAction" icon="CLOSE"/>
                 <button id="upItem" action="propertiesDataGrid.upItemAction" icon="CARET_UP"/>

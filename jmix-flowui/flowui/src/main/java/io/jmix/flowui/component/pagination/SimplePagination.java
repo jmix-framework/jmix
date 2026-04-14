@@ -493,8 +493,15 @@ public class SimplePagination extends JmixSimplePagination implements Pagination
             lastState = state;
         }
 
+        boolean previousTotalCountVisible = getTotalCountLabel().isVisible();
+
         updateNavigationButtonsAvailability();
         updateItemsPerPageAvailability();
+
+        if (!updateTotalCountValue) {
+            // During refresh, we only force update when the count label has just become visible.
+            updateTotalCountValue = !previousTotalCountVisible && getTotalCountLabel().isVisible();
+        }
 
         getRowsStatusLabel().setText(
                 messages.formatMessage("", getLabelMessageKey(), calculateRowsStatusLabelValue()));

@@ -17,6 +17,7 @@
 package io.jmix.messagetemplatesflowui.view.messagetemplate;
 
 import com.google.common.io.Files;
+import com.vaadin.flow.component.Html;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
 import io.jmix.core.*;
@@ -27,6 +28,8 @@ import io.jmix.flowui.Notifications;
 import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.accesscontext.UiEntityContext;
 import io.jmix.flowui.component.grid.DataGrid;
+import io.jmix.flowui.component.sidepanellayout.SidePanelLayout;
+import io.jmix.flowui.component.textarea.JmixTextArea;
 import io.jmix.flowui.component.upload.FileUploadField;
 import io.jmix.flowui.download.ByteArrayDownloadDataProvider;
 import io.jmix.flowui.download.DownloadFormat;
@@ -36,11 +39,13 @@ import io.jmix.flowui.kit.component.dropdownbutton.DropdownButton;
 import io.jmix.flowui.kit.component.upload.event.FileUploadSucceededEvent;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.CollectionLoader;
+import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.view.*;
 import io.jmix.messagetemplates.entity.MessageTemplate;
 import io.jmix.messagetemplates.entity.MessageTemplateParameter;
 import io.jmix.messagetemplates.entity.TemplateType;
 import io.jmix.messagetemplatesflowui.accesscontext.UiImportExportMessageTemplateContext;
+import io.jmix.messagetemplatesflowui.view.messagetemplatepreview.MessageTemplatesPreviewer;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,6 +82,13 @@ public class MessageTemplateListView extends StandardListView<MessageTemplate> {
     protected CollectionLoader<MessageTemplate> messageTemplatesDl;
 
     @ViewComponent
+    protected SidePanelLayout sidePanelLayout;
+    @ViewComponent
+    protected JmixTextArea plainTextAreaPreview;
+    @ViewComponent
+    protected Html htmlPreview;
+
+    @ViewComponent
     protected FileUploadField importField;
     @ViewComponent
     protected DropdownButton exportButton;
@@ -101,6 +113,8 @@ public class MessageTemplateListView extends StandardListView<MessageTemplate> {
     protected Downloader downloader;
     @Autowired
     protected Notifications notifications;
+    @Autowired
+    protected MessageTemplatesPreviewer messageTemplatesPreviewer;
 
     protected boolean isCreatePermitted;
     protected boolean isImportExportPermitted;
@@ -143,6 +157,35 @@ public class MessageTemplateListView extends StandardListView<MessageTemplate> {
         if (selectedItem != null) {
             copyTemplate(selectedItem);
             messageTemplatesDl.load();
+        }
+    }
+
+    @Subscribe("messageTemplatesDataGrid.preview")
+    public void onMessageTemplatesDataGridPreview(ActionPerformedEvent event) {
+        MessageTemplate selectedItem = messageTemplatesDataGrid.getSingleSelectedItem();
+        if (selectedItem != null) {
+            messageTemplatesPreviewer.showPreview(this, selectedItem);
+        }
+    }
+
+    @Subscribe(id = "messageTemplatesDc", target = Target.DATA_CONTAINER)
+    public void onMessageTemplatesDcItemChange(InstanceContainer.ItemChangeEvent<MessageTemplate> event) {
+        if (event.getItem() == null) {
+            sidePanelLayout.closeSidePanel();
+        } else {
+            MessageTemplate messageTemplate = event.getItem();
+            boolean htmlTemplate = TemplateType.HTML.equals(event.getItem().getType());
+
+            htmlPreview.setVisible(htmlTemplate);
+            plainTextAreaPreview.setVisible(!htmlTemplate);
+
+            if (htmlTemplate) {
+                // <div> wrapping required to avoid 'HTML must contain exactly one top-level element' exception
+                htmlPreview.setHtmlContent("<div>%s</div>".formatted(messageTemplate.getContent()));
+            } else {
+                plainTextAreaPreview.setValue(messageTemplate.getContent());
+            }
+            sidePanelLayout.openSidePanel();
         }
     }
 

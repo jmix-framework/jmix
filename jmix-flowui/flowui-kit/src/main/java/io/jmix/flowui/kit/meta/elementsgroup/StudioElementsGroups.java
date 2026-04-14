@@ -47,6 +47,7 @@ interface StudioElementsGroups {
                             defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "filterable", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
+                    @StudioProperty(xmlAttribute = "headerFilterApplyShortcut", type = StudioPropertyType.SHORTCUT_COMBINATION),
                     @StudioProperty(xmlAttribute = "includeAll", type = StudioPropertyType.BOOLEAN, defaultValue = "false")
             }
     )

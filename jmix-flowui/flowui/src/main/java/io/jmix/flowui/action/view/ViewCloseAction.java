@@ -59,7 +59,7 @@ public class ViewCloseAction extends OperationResultViewAction<ViewCloseAction, 
 
     @Autowired
     protected void setUiViewProperties(UiViewProperties viewProperties) {
-        this.shortcutCombination = KeyCombination.create(viewProperties.getCloseShortcut());
+        setShortcutCombination(KeyCombination.create(viewProperties.getCloseShortcut()));
     }
 
     @Override

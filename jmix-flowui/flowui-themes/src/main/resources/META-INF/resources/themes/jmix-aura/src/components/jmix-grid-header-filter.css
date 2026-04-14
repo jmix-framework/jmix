@@ -42,7 +42,7 @@ vaadin-button[jmix-role='column-filter-button']:not([activated]):hover {
 }
 
 vaadin-button[jmix-role='column-filter-button']:not([activated]) {
-    color: var(--vaadin-text-color-secondary);
+    color: var(--vaadin-text-color-disabled);
 }
 
 vaadin-button[jmix-role='column-filter-button']:is([activated]) {

@@ -14,14 +14,20 @@
  * limitations under the License.
  */
 
-:is(jmix-value-picker-button, jmix-side-panel-layout-closer) {
+:is(jmix-value-picker-button, jmix-side-panel-layout-closer, jmix-notifications-indicator) {
   transition: scale 180ms;
   position: relative;
   --_background: var(--aura-accent-surface) padding-box;
   color: var(--vaadin-button-text-color, var(--aura-accent-text-color));
 }
 
-:is(jmix-value-picker-button, jmix-side-panel-layout-closer):not(
+:is(jmix-value-picker-button, jmix-side-panel-layout-closer, jmix-notifications-indicator):where(
+  :not([theme~='primary'])
+) {
+  outline-offset: calc(var(--vaadin-button-border-width, 1px) * -1);
+}
+
+:is(jmix-value-picker-button, jmix-side-panel-layout-closer, jmix-notifications-indicator):not(
     [disabled]
   )::before {
   content: '';
@@ -37,7 +43,7 @@
 }
 
 @supports (color: hsl(0 0 0)) {
-  :is(jmix-value-picker-button, jmix-side-panel-layout-closer):not(
+  :is(jmix-value-picker-button, jmix-side-panel-layout-closer, jmix-notifications-indicator):not(
       [disabled]
     )::before {
     background-color: oklch(from currentColor calc(l + 0.4 - c) c h / calc(1 - l / 2));
@@ -46,26 +52,26 @@
 
 @media (any-hover: hover) {
   /* prettier-ignore */
-  :is(jmix-value-picker-button, jmix-side-panel-layout-closer):hover:not([disabled], [active])::before {
+  :is(jmix-value-picker-button, jmix-side-panel-layout-closer, jmix-notifications-indicator):hover:not([disabled], [active])::before {
     opacity: 0.03;
   }
 }
 
 @media (min-resolution: 2x) {
   /* prettier-ignore */
-  :is(jmix-value-picker-button, jmix-side-panel-layout-closer)[active]:not([disabled], [aria-disabled='true']) {
+  :is(jmix-value-picker-button, jmix-side-panel-layout-closer, jmix-notifications-indicator)[active]:not([disabled], [aria-disabled='true']) {
     scale: 0.98;
     transition-duration: 50ms;
   }
 }
 
-:is(jmix-value-picker-button, jmix-side-panel-layout-closer)[active]:not(
+:is(jmix-value-picker-button, jmix-side-panel-layout-closer, jmix-notifications-indicator)[active]:not(
     [disabled]
   ) {
   box-shadow: none;
 }
 
-:is(jmix-value-picker-button, jmix-side-panel-layout-closer)[active]:not(
+:is(jmix-value-picker-button, jmix-side-panel-layout-closer, jmix-notifications-indicator)[active]:not(
     [disabled]
   )::before {
   transition-duration: 0s;

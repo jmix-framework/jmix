@@ -72,6 +72,20 @@ public class PropertyConditionUtils {
     }
 
     /**
+     * Checks if the property condition's operation is case-insensitive.
+     * @param condition property condition
+     * @return true if the operation is case-insensitive, otherwise - false
+     */
+    public static boolean isCaseInsensitiveOperation(PropertyCondition condition) {
+        String operation = condition.getOperation();
+
+        return PropertyCondition.Operation.CONTAINS.equals(operation)
+               || PropertyCondition.Operation.NOT_CONTAINS.equals(operation)
+               || PropertyCondition.Operation.STARTS_WITH.equals(operation)
+               || PropertyCondition.Operation.ENDS_WITH.equals(operation);
+    }
+
+    /**
      * @param property an entity property
      * @return a parameter name
      */

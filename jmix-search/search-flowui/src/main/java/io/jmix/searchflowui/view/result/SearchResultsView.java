@@ -20,11 +20,9 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Html;
-import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.orderedlayout.VerticalLayoutVariant;
 import com.vaadin.flow.component.virtuallist.VirtualList;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.BeforeEnterEvent;
@@ -40,6 +38,7 @@ import io.jmix.flowui.Notifications;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.kit.component.button.JmixButton;
+import io.jmix.flowui.theme.StyleUtility;
 import io.jmix.flowui.view.*;
 import io.jmix.search.SearchProperties;
 import io.jmix.search.searching.*;
@@ -246,7 +245,7 @@ public class SearchResultsView extends StandardView {
 
     protected JmixButton createInstanceButton(String entityName, SearchResultEntry entry) {
         JmixButton instanceBtn = uiComponents.create(JmixButton.class);
-        instanceBtn.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
+        instanceBtn.setClassName(StyleUtility.Button.LINK_BUTTON);
         instanceBtn.setText(messageTools.getEntityCaption(metadata.getClass(entry.getEntityName())) + " - "
                 + entry.getInstanceName());
         instanceBtn.addClickListener(event -> openEntityView(entry, entityName));

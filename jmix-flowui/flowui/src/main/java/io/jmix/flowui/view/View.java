@@ -21,6 +21,7 @@ import com.vaadin.flow.router.*;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.annotation.Internal;
+import io.jmix.flowui.model.DataContext;
 import io.jmix.flowui.observation.UiObservationSupport;
 import io.jmix.flowui.UiViewProperties;
 import io.jmix.flowui.component.UiComponentUtils;
@@ -295,6 +296,11 @@ public class View<T extends Component> extends Composite<T>
         if (isContextActive()) {
             removeViewAttributes();
             unregisterBackNavigation();
+        }
+
+        DataContext dataContext = viewData.getDataContextOrNull();
+        if (dataContext != null) {
+            dataContext.clear();
         }
     }
 

@@ -17,13 +17,16 @@
 package io.jmix.data.impl.jpql.generator;
 
 import io.jmix.core.querycondition.Condition;
-
 import org.jspecify.annotations.Nullable;
+
+import java.util.Map;
 
 /**
  * Modifies parts of JPQL query
+ *
+ * @param <T> condition type
  */
-public interface ConditionGenerator {
+public interface ConditionGenerator<T extends Condition> {
 
     /**
      * Checks whether the condition generator supports the given {@code context}.
@@ -50,13 +53,28 @@ public interface ConditionGenerator {
     String generateWhere(ConditionGenerationContext context);
 
     /**
+     * Returns parameters modified according to the given condition.
+     *
+     * @param parameters      result parameters
+     * @param queryParameters query parameters
+     * @param condition       the condition
+     * @return modified parameters
+     */
+    Map<String, Object> processParameters(Map<String, Object> parameters,
+                                          Map<String, Object> queryParameters,
+                                          T condition,
+                                          @Nullable String entityName);
+
+    /**
      * Returns a parameter value modified according to the given condition.
      *
      * @param condition      a condition
      * @param parameterValue parameter value
      * @param entityName     entity name
      * @return a modified parameter value
+     * @deprecated method is used only in internal implementations of {@link ConditionGenerator} interface
      */
+    @Deprecated(since = "2.8", forRemoval = true)
     @Nullable
     Object generateParameterValue(@Nullable Condition condition, @Nullable Object parameterValue, @Nullable String entityName);
 }

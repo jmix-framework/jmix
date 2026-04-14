@@ -125,7 +125,7 @@
                                         width="100%" height="100%" flexWrap="WRAP">
                                 <!--Movable layout-->
                                 <div id="dataSetTypeLayout" width="100%" height="100%">
-                                    <vbox id="dataSetScriptBox" padding="false" expand="dataSetScriptCodeEditor"
+                                    <vbox id="dataSetScriptBox" padding="false" expand="dataSetScriptCodeEditorBox"
                                           spacing="false"
                                           height="100%">
                                         <flexLayout width="100%" justifyContent="BETWEEN">
@@ -133,16 +133,17 @@
                                                          text="msg://report.groovyScript.title"
                                                          setFor="jsonGroovyCodeEditor"/>
                                             <button id="dataSetScriptFullScreenBtn" text="msg:///fullScreenBtn.title"
-                                                    themeNames="tertiary-inline"/>
+                                                    classNames="link-button"/>
                                         </flexLayout>
-                                        <flexLayout width="100%" alignItems="START">
+                                        <flexLayout id="dataSetScriptCodeEditorBox" width="100%" alignItems="START">
                                             <codeEditor id="dataSetScriptCodeEditor"
                                                         width="100%"
-                                                        height="13em"
+                                                        height="100%"
+                                                        minHeight="13em"
                                                         dataContainer="dataSetsDc"
                                                         property="text"/>
                                             <button id="dataSetScriptCodeEditorHelpBtn"
-                                                    themeNames="icon, tertiary-inline"
+                                                    classNames="link-button"
                                                     icon="QUESTION_CIRCLE"/>
                                         </flexLayout>
                                         <formLayout id="textParamsForm" dataContainer="dataSetsDc" width="100%">
@@ -177,7 +178,7 @@
                                                             manual="true" position="BOTTOM"/>
                                                 </comboBox>
                                                 <button id="entitiesParamFieldHelperButton"
-                                                        themeNames="icon tertiary-inline" icon="QUESTION_CIRCLE"/>
+                                                        classNames="link-button" icon="QUESTION_CIRCLE"/>
                                             </hbox>
                                             <hbox id="entityParamLayout" padding="false" alignItems="BASELINE">
                                                 <comboBox id="entityParamField"
@@ -190,7 +191,7 @@
                                                             manual="true" position="BOTTOM"/>
                                                 </comboBox>
                                                 <button id="entityParamFieldHelperButton"
-                                                        themeNames="icon tertiary-inline" icon="QUESTION_CIRCLE"/>
+                                                        classNames="link-button" icon="QUESTION_CIRCLE"/>
                                             </hbox>
                                             <checkbox id="isUseExistingFetchPlanField" dataContainer="dataSetsDc"
                                                       property="useExistingFetchPLan"
@@ -236,7 +237,7 @@
                                                              setFor="jsonGroovyCodeEditor"/>
                                                 <button id="jsonGroovyCodeEditorFullScreenBtn"
                                                         text="msg:///fullScreenBtn.title"
-                                                        themeNames="tertiary-inline"/>
+                                                        classNames="link-button"/>
                                             </flexLayout>
                                             <flexLayout width="100%" alignItems="START">
                                                 <codeEditor id="jsonGroovyCodeEditor"
@@ -245,7 +246,7 @@
                                                             mode="GROOVY"
                                                             property="jsonSourceText"/>
                                                 <button id="jsonGroovyCodeEditorHelpBtn"
-                                                        themeNames="icon, tertiary-inline"
+                                                        classNames="link-button"
                                                         icon="QUESTION_CIRCLE"/>
                                             </flexLayout>
                                         </div>
@@ -335,7 +336,7 @@
                                       property="validationOn"/>
                             <button id="validationScriptFullScreenBtn"
                                     text="msg:///fullScreenBtn.title"
-                                    themeNames="tertiary-inline"/>
+                                    classNames="link-button"/>
                         </flexLayout>
                         <flexLayout width="100%" alignItems="START">
                             <codeEditor id="validationScriptCodeEditor"
@@ -347,7 +348,7 @@
                                         dataContainer="reportDc"
                                         property="validationScript"/>
                             <button id="validationScriptCodeEditorHelpBtn"
-                                    themeNames="icon, tertiary-inline"
+                                    classNames="link-button"
                                     icon="QUESTION_CIRCLE"/>
                         </flexLayout>
                     </vbox>

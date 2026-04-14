@@ -38,6 +38,7 @@ import io.jmix.flowui.fragment.FragmentDescriptor;
 import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.icon.JmixFontIcon;
+import io.jmix.flowui.theme.StyleUtility;
 import io.jmix.flowui.view.ViewRegistry;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.ComponentLoader.FragmentContext;
@@ -173,12 +174,7 @@ public class ExceptionDialog implements InitializingBean {
     protected Button createHeaderCloseButton() {
         JmixButton closeButton = uiComponents.create(JmixButton.class);
         closeButton.setIcon(icons.get(JmixFontIcon.CLOSE_SMALL));
-        closeButton.addThemeVariants(
-                ButtonVariant.LUMO_TERTIARY_INLINE,
-                ButtonVariant.LUMO_ICON,
-                ButtonVariant.LUMO_CONTRAST
-        );
-        closeButton.setClassName(HEADER_CLOSE_BUTTON_CLASS_NAME);
+        closeButton.addClassNames(HEADER_CLOSE_BUTTON_CLASS_NAME, StyleUtility.Button.DIALOG_CLOSE_BUTTON);
         closeButton.setTitle(messages.getMessage("exceptionDialog.header.closeButton.description"));
         closeButton.addClickListener(this::onHeaderCloseButtonClick);
         return closeButton;

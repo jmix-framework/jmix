@@ -66,6 +66,7 @@ import io.jmix.flowui.kit.component.dropdownbutton.DropdownButtonVariant;
 import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.model.BaseCollectionLoader;
 import io.jmix.flowui.model.DataLoader;
+import io.jmix.flowui.theme.StyleUtility;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.InitializingBean;
@@ -726,7 +727,7 @@ public class GenericFilter extends Composite<JmixDetails>
         JmixButton conditionRemoveButton = uiComponents.create(JmixButton.class);
         conditionRemoveButton.setId(removeButtonId);
         conditionRemoveButton.setIcon(icons.get(JmixFontIcon.GENERIC_FILTER_CONDITION_REMOVE));
-        conditionRemoveButton.addThemeVariants(ButtonVariant.LUMO_ICON, ButtonVariant.LUMO_TERTIARY_INLINE);
+        conditionRemoveButton.setClassName(StyleUtility.Button.LINK_BUTTON);
 
         conditionRemoveButton.addClickListener(clickEvent -> {
             removeFilterComponent(filterComponent);

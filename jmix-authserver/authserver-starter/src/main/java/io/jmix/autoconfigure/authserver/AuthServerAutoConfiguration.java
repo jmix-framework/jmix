@@ -30,6 +30,7 @@ import io.jmix.authserver.roleassignment.InMemoryRegisteredClientRoleAssignmentR
 import io.jmix.authserver.roleassignment.RegisteredClientRoleAssignment;
 import io.jmix.authserver.roleassignment.RegisteredClientRoleAssignmentPropertiesMapper;
 import io.jmix.authserver.roleassignment.RegisteredClientRoleAssignmentRepository;
+import io.jmix.authserver.service.JmixJdbcOAuth2AuthorizationService;
 import io.jmix.authserver.service.OracleJdbcOAuth2AuthorizationService;
 import io.jmix.authserver.service.cleanup.OAuth2ExpiredTokenCleaner;
 import io.jmix.authserver.service.cleanup.impl.InMemoryOAuth2ExpiredTokenCleaner;
@@ -297,7 +298,7 @@ public class AuthServerAutoConfiguration {
             if ("ORACLE".equals(dbmsType.getType())) {
                 return new OracleJdbcOAuth2AuthorizationService(jdbcOperations, registeredClientRepository);
             } else {
-                return new JdbcOAuth2AuthorizationService(jdbcOperations, registeredClientRepository);
+                return new JmixJdbcOAuth2AuthorizationService(jdbcOperations, registeredClientRepository);
             }
         }
 

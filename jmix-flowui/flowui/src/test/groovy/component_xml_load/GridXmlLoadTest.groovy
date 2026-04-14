@@ -388,6 +388,7 @@ class GridXmlLoadTest extends FlowuiTestSpecification {
         def columnsAttributesDataGrid = gridView.columnsAttributesDataGrid
 
         then: "dataGrid columns' attributes are loaded"
+        columnsAttributesDataGrid.headerFilterApplyShortcut == "CONTROL-ENTER"
         verifyAll(columnsAttributesDataGrid.getColumnByKey("number") as DataGridColumn) {
             sortable
             resizable

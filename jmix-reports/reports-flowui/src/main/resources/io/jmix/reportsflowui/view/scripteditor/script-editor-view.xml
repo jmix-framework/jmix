@@ -18,7 +18,7 @@
                         width="100%"
                         height="100%"/>
             <button id="codeEditorHelpBtn"
-                    themeNames="icon, tertiary-inline"
+                    classNames="link-button"
                     icon="QUESTION_CIRCLE"/>
         </flexLayout>
         <hbox width="100%" id="lookupActions" justifyContent="END">

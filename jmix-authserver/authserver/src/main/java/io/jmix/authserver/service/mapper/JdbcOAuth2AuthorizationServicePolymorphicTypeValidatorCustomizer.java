@@ -22,7 +22,7 @@ import tools.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
 
 /**
  * Interface to provide ability to customize {@link BasicPolymorphicTypeValidator}
- * that is used by {@link JsonMapper within {@link JdbcOAuth2AuthorizationService}.
+ * that is used by {@link JsonMapper} within {@link JdbcOAuth2AuthorizationService}.
  */
 public interface JdbcOAuth2AuthorizationServicePolymorphicTypeValidatorCustomizer {
 

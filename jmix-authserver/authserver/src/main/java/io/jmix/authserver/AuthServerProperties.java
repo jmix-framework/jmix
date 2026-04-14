@@ -37,6 +37,16 @@ public class AuthServerProperties {
     boolean useInMemoryAuthorizationService;
 
     /**
+     * Whether token should be removed from the database after revocation.
+     * <ul>
+     *     <li>If access token is revoked and there is no refresh token - the record will be removed from database.</li>
+     *     <li>If access token is revoked but refresh token exists and valid - no removal will be performed.</li>
+     *     <li>If refresh token is revoked - the record will be removed from database.</li>
+     * </ul>
+     */
+    boolean removeTokenOnRevoke;
+
+    /**
      * A list of jmix-specific client configurations
      */
     Map<String, JmixClient> client;
@@ -104,6 +114,7 @@ public class AuthServerProperties {
     public AuthServerProperties(
             @DefaultValue("true") boolean useDefaultConfiguration,
             @DefaultValue("false") boolean useInMemoryAuthorizationService,
+            @DefaultValue("false") boolean removeTokenOnRevoke,
             @DefaultValue Map<String, JmixClient> client,
             @DefaultValue("/as-login") String loginPageUrl,
             @DefaultValue("as-login.html") String loginPageViewName,
@@ -119,6 +130,7 @@ public class AuthServerProperties {
     ) {
         this.useDefaultConfiguration = useDefaultConfiguration;
         this.useInMemoryAuthorizationService = useInMemoryAuthorizationService;
+        this.removeTokenOnRevoke = removeTokenOnRevoke;
         this.client = client;
         this.loginPageUrl = loginPageUrl;
         this.loginPageViewName = loginPageViewName;
@@ -139,6 +151,10 @@ public class AuthServerProperties {
 
     public boolean isUseInMemoryAuthorizationService() {
         return useInMemoryAuthorizationService;
+    }
+
+    public boolean isRemoveTokenOnRevoke() {
+        return removeTokenOnRevoke;
     }
 
     public Map<String, JmixClient> getClient() {

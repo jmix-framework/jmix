@@ -85,9 +85,15 @@ class ZipProject extends DefaultTask {
                 return isFileMatched(file, excludeFromZip)
             }
         }
+
         project.copy {
             from '.jmix/hsqldb'
             into "$tmpRootDir/.jmix/hsqldb"
+        }
+
+        project.copy {
+            from '.jmix/h2'
+            into "$tmpRootDir/.jmix/h2"
         }
 
         ant.zip(destfile: zipFilePath, basedir: tmpDir)

@@ -47,6 +47,13 @@ public class CorePersistentAttributesLoadChecker implements PersistentAttributes
         return YES.equals(isLoadedInternal(entity, property, false));
     }
 
+    /**
+     * Checks whether the {@code property} of the {@code entity} is loaded.
+     *
+     * @param safe determines the behavior when the loaded state cannot be determined using standard JPA mechanisms:
+     *             if {@code true}, {@code UNKNOWN} is returned;
+     *             if {@code false}, the getter is invoked, which may trigger lazy loading
+     */
     public PropertyLoadedState isLoadedInternal(Object entity, String property, boolean safe) {
         if (entity instanceof KeyValueEntity) {
             KeyValueEntity keyValue = (KeyValueEntity) entity;
@@ -110,6 +117,13 @@ public class CorePersistentAttributesLoadChecker implements PersistentAttributes
         return UNKNOWN;
     }
 
+    /**
+     * Checks whether the {@code property} of the {@code entity} is loaded using store-specific mechanisms.
+     *
+     * @param safe determines the behavior when the loaded state cannot be determined using standard mechanisms:
+     *             if {@code true}, {@code UNKNOWN} is returned;
+     *             if {@code false}, the getter is invoked, which may trigger lazy loading
+     */
     protected PropertyLoadedState isLoadedSpecificCheck(Object entity, String property, MetaClass metaClass, MetaProperty metaProperty, boolean safe) {
         return safe ? UNKNOWN : checkIsLoadedWithGetter(entity, property);
     }

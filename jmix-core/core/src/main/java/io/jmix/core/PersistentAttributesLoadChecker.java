@@ -22,7 +22,18 @@ import io.jmix.core.annotation.Internal;
 @Internal
 public interface PersistentAttributesLoadChecker {
 
+    /**
+     * Checks whether the property is loaded from the data store. This may trigger fetching of the property if its state
+     * cannot be determined using standard JPA mechanisms.
+     *
+     * @see io.jmix.core.EntityStates#isLoaded(Object, String)
+     */
     boolean isLoaded(Object entity, String property);
 
+    /**
+     * Checks whether the property is loaded from the data store without risking fetching it.
+     *
+     * @see io.jmix.core.EntityStates#isLoaded(Object, String)
+     */
     PropertyLoadedState isLoadedSafe(Object entity, String property);
 }

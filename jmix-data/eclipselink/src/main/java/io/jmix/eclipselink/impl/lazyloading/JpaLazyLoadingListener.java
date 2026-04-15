@@ -167,7 +167,7 @@ public class JpaLazyLoadingListener implements DataStoreEventListener {
      * Organizes value holder wrapping for excessively loaded properties according to the property's cardinality.
      * Skips processing of system entities according to the {@code isSkipExcessiveLoadedProcessing} method.
      */
-    private void wrapExcessivelyLoadedPropertyValueHolders(Object entity, MetaProperty property, LoadOptions loadOptions, Set<Object> processedEntities) {
+    protected void wrapExcessivelyLoadedPropertyValueHolders(Object entity, MetaProperty property, LoadOptions loadOptions, Set<Object> processedEntities) {
         if (isSkipExcessiveLoadedProcessing(entity)) {
             return;
         }

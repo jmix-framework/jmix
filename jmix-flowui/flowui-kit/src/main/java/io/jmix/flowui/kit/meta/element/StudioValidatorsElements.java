@@ -63,7 +63,8 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
                     "io.jmix.flowui.component.combobox.EntityComboBox",
                     "io.jmix.flowui.component.valuepicker.EntityPicker",
-                    "io.jmix.flowui.component.codeeditor.CodeEditor"
+                    "io.jmix.flowui.component.codeeditor.CodeEditor",
+                    "io.jmix.flowui.component.twincolumn.TwinColumn"
             },
             properties = {
                     @StudioProperty(
@@ -72,7 +73,7 @@ interface StudioValidatorsElements {
                     ),
                     @StudioProperty(
                             xmlAttribute = "value",
-                            type = StudioPropertyType.STRING,
+                            type = StudioPropertyType.BIG_DECIMAL,
                             required = true
                     ),
                     @StudioProperty(
@@ -102,7 +103,8 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
                     "io.jmix.flowui.component.combobox.EntityComboBox",
                     "io.jmix.flowui.component.valuepicker.EntityPicker",
-                    "io.jmix.flowui.component.codeeditor.CodeEditor"
+                    "io.jmix.flowui.component.codeeditor.CodeEditor",
+                    "io.jmix.flowui.component.twincolumn.TwinColumn"
             },
             properties = {
                     @StudioProperty(
@@ -111,7 +113,7 @@ interface StudioValidatorsElements {
                     ),
                     @StudioProperty(
                             xmlAttribute = "value",
-                            type = StudioPropertyType.STRING,
+                            type = StudioPropertyType.BIG_DECIMAL,
                             required = true
                     ),
                     @StudioProperty(
@@ -137,7 +139,8 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
                     "io.jmix.flowui.component.combobox.EntityComboBox",
                     "io.jmix.flowui.component.valuepicker.EntityPicker",
-                    "io.jmix.flowui.component.codeeditor.CodeEditor"
+                    "io.jmix.flowui.component.codeeditor.CodeEditor",
+                    "io.jmix.flowui.component.twincolumn.TwinColumn"
             },
             xmlElement = "digits",
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
@@ -154,7 +157,8 @@ interface StudioValidatorsElements {
                     ),
                     @StudioProperty(
                             xmlAttribute = "fraction",
-                            type = StudioPropertyType.INTEGER
+                            type = StudioPropertyType.INTEGER,
+                            required = true
                     )
             }
     )
@@ -179,7 +183,8 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
                     "io.jmix.flowui.component.combobox.EntityComboBox",
                     "io.jmix.flowui.component.valuepicker.EntityPicker",
-                    "io.jmix.flowui.component.codeeditor.CodeEditor"
+                    "io.jmix.flowui.component.codeeditor.CodeEditor",
+                    "io.jmix.flowui.component.twincolumn.TwinColumn"
             },
             properties = {
                     @StudioProperty(
@@ -188,7 +193,7 @@ interface StudioValidatorsElements {
                     ),
                     @StudioProperty(
                             xmlAttribute = "value",
-                            type = StudioPropertyType.STRING,
+                            type = StudioPropertyType.DOUBLE,
                             required = true
                     ),
                     @StudioProperty(
@@ -218,7 +223,8 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
                     "io.jmix.flowui.component.combobox.EntityComboBox",
                     "io.jmix.flowui.component.valuepicker.EntityPicker",
-                    "io.jmix.flowui.component.codeeditor.CodeEditor"
+                    "io.jmix.flowui.component.codeeditor.CodeEditor",
+                    "io.jmix.flowui.component.twincolumn.TwinColumn"
             },
             properties = {
                     @StudioProperty(
@@ -227,7 +233,7 @@ interface StudioValidatorsElements {
                     ),
                     @StudioProperty(
                             xmlAttribute = "value",
-                            type = StudioPropertyType.STRING,
+                            type = StudioPropertyType.DOUBLE,
                             required = true
                     ),
                     @StudioProperty(
@@ -254,7 +260,8 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
                     "io.jmix.flowui.component.combobox.EntityComboBox",
                     "io.jmix.flowui.component.valuepicker.EntityPicker",
-                    "io.jmix.flowui.component.textfield.JmixBigDecimalField"
+                    "io.jmix.flowui.component.textfield.JmixBigDecimalField",
+                    "io.jmix.flowui.component.twincolumn.TwinColumn"
             },
             properties = {
                     @StudioProperty(
@@ -284,7 +291,8 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
                     "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
                     "io.jmix.flowui.component.PickerComponent",
-                    "io.jmix.flowui.component.codeeditor.CodeEditor"
+                    "io.jmix.flowui.component.codeeditor.CodeEditor",
+                    "io.jmix.flowui.component.twincolumn.TwinColumn"
             },
             properties = {
                     @StudioProperty(
@@ -319,7 +327,8 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
                     "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
                     "io.jmix.flowui.component.PickerComponent",
-                    "io.jmix.flowui.component.codeeditor.CodeEditor"
+                    "io.jmix.flowui.component.codeeditor.CodeEditor",
+                    "io.jmix.flowui.component.twincolumn.TwinColumn"
             },
             properties = {
                     @StudioProperty(
@@ -353,7 +362,8 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
                     "io.jmix.flowui.component.combobox.EntityComboBox",
                     "io.jmix.flowui.component.valuepicker.EntityPicker",
-                    "io.jmix.flowui.component.codeeditor.CodeEditor"
+                    "io.jmix.flowui.component.codeeditor.CodeEditor",
+                    "io.jmix.flowui.component.twincolumn.TwinColumn"
             },
             properties = {
                     @StudioProperty(
@@ -362,7 +372,7 @@ interface StudioValidatorsElements {
                     ),
                     @StudioProperty(
                             xmlAttribute = "value",
-                            type = StudioPropertyType.STRING,
+                            type = StudioPropertyType.INTEGER,
                             required = true
                     )
             }
@@ -387,7 +397,8 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
                     "io.jmix.flowui.component.combobox.EntityComboBox",
                     "io.jmix.flowui.component.valuepicker.EntityPicker",
-                    "io.jmix.flowui.component.codeeditor.CodeEditor"
+                    "io.jmix.flowui.component.codeeditor.CodeEditor",
+                    "io.jmix.flowui.component.twincolumn.TwinColumn"
             },
             properties = {
                     @StudioProperty(
@@ -396,7 +407,7 @@ interface StudioValidatorsElements {
                     ),
                     @StudioProperty(
                             xmlAttribute = "value",
-                            type = StudioPropertyType.STRING,
+                            type = StudioPropertyType.INTEGER,
                             required = true
                     )
             }
@@ -420,7 +431,8 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
                     "io.jmix.flowui.component.combobox.EntityComboBox",
                     "io.jmix.flowui.component.valuepicker.EntityPicker",
-                    "io.jmix.flowui.component.codeeditor.CodeEditor"
+                    "io.jmix.flowui.component.codeeditor.CodeEditor",
+                    "io.jmix.flowui.component.twincolumn.TwinColumn"
             },
             properties = {
                     @StudioProperty(
@@ -448,7 +460,8 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
                     "io.jmix.flowui.component.combobox.EntityComboBox",
                     "io.jmix.flowui.component.valuepicker.EntityPicker",
-                    "io.jmix.flowui.component.codeeditor.CodeEditor"
+                    "io.jmix.flowui.component.codeeditor.CodeEditor",
+                    "io.jmix.flowui.component.twincolumn.TwinColumn"
             },
             properties = {
                     @StudioProperty(
@@ -475,7 +488,8 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
                     "io.jmix.flowui.component.combobox.EntityComboBox",
                     "io.jmix.flowui.component.valuepicker.EntityPicker",
-                    "io.jmix.flowui.component.textfield.JmixBigDecimalField"
+                    "io.jmix.flowui.component.textfield.JmixBigDecimalField",
+                    "io.jmix.flowui.component.twincolumn.TwinColumn"
             },
             properties = {
                     @StudioProperty(
@@ -500,7 +514,8 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.textfield.JmixIntegerField",
                     "io.jmix.flowui.component.combobox.EntityComboBox",
                     "io.jmix.flowui.component.valuepicker.EntityPicker",
-                    "io.jmix.flowui.component.textfield.JmixBigDecimalField"
+                    "io.jmix.flowui.component.textfield.JmixBigDecimalField",
+                    "io.jmix.flowui.component.twincolumn.TwinColumn"
             },
             properties = {
                     @StudioProperty(
@@ -517,6 +532,7 @@ interface StudioValidatorsElements {
             xmlElement = "notNull",
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
             documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/validator.html#NotNullValidator",
+            unsupportedTarget = "io.jmix.flowui.component.twincolumn.TwinColumn",
             properties = {
                     @StudioProperty(
                             xmlAttribute = "message",
@@ -545,7 +561,8 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
                     "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
                     "io.jmix.flowui.component.PickerComponent",
-                    "io.jmix.flowui.component.codeeditor.CodeEditor"
+                    "io.jmix.flowui.component.codeeditor.CodeEditor",
+                    "io.jmix.flowui.component.twincolumn.TwinColumn"
             },
             properties = {
                     @StudioProperty(
@@ -580,7 +597,8 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
                     "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
                     "io.jmix.flowui.component.PickerComponent",
-                    "io.jmix.flowui.component.codeeditor.CodeEditor"
+                    "io.jmix.flowui.component.codeeditor.CodeEditor",
+                    "io.jmix.flowui.component.twincolumn.TwinColumn"
             },
             properties = {
                     @StudioProperty(
@@ -613,7 +631,8 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
                     "io.jmix.flowui.component.combobox.EntityComboBox",
                     "io.jmix.flowui.component.valuepicker.EntityPicker",
-                    "io.jmix.flowui.component.codeeditor.CodeEditor"
+                    "io.jmix.flowui.component.codeeditor.CodeEditor",
+                    "io.jmix.flowui.component.twincolumn.TwinColumn"
             },
             properties = {
                     @StudioProperty(
@@ -641,7 +660,8 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
                     "io.jmix.flowui.component.combobox.EntityComboBox",
                     "io.jmix.flowui.component.valuepicker.EntityPicker",
-                    "io.jmix.flowui.component.codeeditor.CodeEditor"
+                    "io.jmix.flowui.component.codeeditor.CodeEditor",
+                    "io.jmix.flowui.component.twincolumn.TwinColumn"
             },
             properties = {
                     @StudioProperty(
@@ -668,7 +688,8 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
                     "io.jmix.flowui.component.combobox.EntityComboBox",
                     "io.jmix.flowui.component.valuepicker.EntityPicker",
-                    "io.jmix.flowui.component.textfield.JmixBigDecimalField"
+                    "io.jmix.flowui.component.textfield.JmixBigDecimalField",
+                    "io.jmix.flowui.component.twincolumn.TwinColumn"
             },
             properties = {
                     @StudioProperty(
@@ -698,7 +719,8 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.textfield.JmixIntegerField",
                     "io.jmix.flowui.component.combobox.EntityComboBox",
                     "io.jmix.flowui.component.valuepicker.EntityPicker",
-                    "io.jmix.flowui.component.textfield.JmixBigDecimalField"
+                    "io.jmix.flowui.component.textfield.JmixBigDecimalField",
+                    "io.jmix.flowui.component.twincolumn.TwinColumn"
             },
             properties = {
                     @StudioProperty(

@@ -1,0 +1,57 @@
+/* Predefined styles for the MainView with a HorizontalMenu */
+
+.jmix-main-view-top-menu-app-layout {
+    --vaadin-app-layout-navbar-padding-bottom: 0px;
+}
+
+vaadin-app-layout.jmix-main-view-top-menu-app-layout::part(navbar) {
+    min-height: 0;
+    border-bottom: 0;
+}
+
+.jmix-main-view-top-menu-navigation-bar-box {
+    padding: 0;
+    width: 100%;
+}
+
+.jmix-main-view-top-menu-view-header-box {
+    width: 100%;
+    border-top: 1px solid var(--vaadin-border-color-secondary)
+}
+
+.jmix-main-view-top-menu-navigation {
+    display: flex;
+    flex-grow: 1;
+    overflow: auto;
+}
+
+.jmix-main-view-top-menu-header {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    box-sizing: border-box;
+    gap: var(--vaadin-gap-m);
+}
+
+.jmix-main-view-top-menu-logo-container {
+    display: flex;
+    margin: 0 var(--vaadin-padding-m);
+}
+
+.jmix-main-view-top-menu-logo {
+    --logo-size: round(var(--aura-base-size) * 2.5 * 1px, 1px);
+    width: var(--logo-size);
+    height: var(--logo-size);
+}
+
+.jmix-main-view-top-menu-user-box {
+    align-self: flex-end;
+    align-items: center;
+    margin: 0 var(--vaadin-padding-m);
+    max-width: 20em;
+}
+
+.jmix-main-view-top-menu-view-title {
+    font-size: var(--aura-font-size-xl);
+    margin: var(--vaadin-padding-s) var(--vaadin-padding-m);
+}

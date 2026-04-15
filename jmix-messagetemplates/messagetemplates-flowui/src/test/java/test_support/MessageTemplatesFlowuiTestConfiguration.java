@@ -19,16 +19,31 @@ package test_support;
 import io.jmix.core.CoreConfiguration;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.flowui.FlowuiConfiguration;
+import io.jmix.messagetemplates.MessageTemplatesConfiguration;
+import io.jmix.messagetemplates.MessageTemplateProperties;
 import io.jmix.messagetemplatesflowui.MessageTemplatesFlowuiConfiguration;
 import io.jmix.testsupport.config.CommonCoreTestConfiguration;
 import io.jmix.testsupport.config.CoreSecurityTestConfiguration;
 import io.jmix.flowui.testassist.FlowuiServletTestBeans;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
+import java.util.Locale;
+
 @Configuration
-@Import({FlowuiConfiguration.class, CoreConfiguration.class, MessageTemplatesFlowuiConfiguration.class,
+@Import({FlowuiConfiguration.class, CoreConfiguration.class, MessageTemplatesConfiguration.class,
+        MessageTemplatesFlowuiConfiguration.class,
         CommonCoreTestConfiguration.class, FlowuiServletTestBeans.class, CoreSecurityTestConfiguration.class})
 @JmixModule
 public class MessageTemplatesFlowuiTestConfiguration {
+
+    @Bean
+    freemarker.template.Configuration configuration(MessageTemplateProperties messageTemplateProperties) {
+        freemarker.template.Configuration configuration =
+                new freemarker.template.Configuration(messageTemplateProperties.getFreemarkerVersion());
+        configuration.setDefaultEncoding("UTF-8");
+        configuration.setLocale(Locale.US);
+        return configuration;
+    }
 }

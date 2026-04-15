@@ -16,39 +16,39 @@
 
 jmix-full-calendar {
    --fc-small-font-size: var(--aura-font-size-s);
-   --fc-page-bg-color: var(--lumo-base-color);
-   --fc-neutral-bg-color: var(--lumo-contrast-10pct);
-   --fc-neutral-text-color: var(--lumo-secondary-text-color);
-   --fc-border-color: var(--lumo-contrast-20pct);
-   --fc-event-bg-color: var(--lumo-primary-color-50pct);
-   --fc-event-border-color: var(--lumo-primary-color-50pct);
-   --fc-event-text-color: var(--lumo-primary-contrast-color);
-   --fc-event-selected-overlay-color: var(--lumo-primary-color-10pct);
-   --fc-list-event-hover-bg-color: var(--lumo-contrast-5pct);
+   --fc-page-bg-color: var(--vaadin-background-color);
+   --fc-neutral-bg-color: var(--vaadin-background-container);
+   --fc-neutral-text-color: var(--vaadin-text-color-secondary);
+   --fc-border-color: var(--vaadin-border-color);
+   --fc-event-bg-color: var(--aura-accent-color);
+   --fc-event-border-color: var(--aura-accent-color);
+   --fc-event-text-color: var(--aura-accent-contrast-color);
+   --fc-event-selected-overlay-color: var(--aura-accent-surface);
+   --fc-list-event-hover-bg-color: var(--vaadin-background-container);
 
    /* TimeGrid events stack "show more" background-color */
-   --fc-more-link-bg-color: #a6a6a6;
+   --fc-more-link-bg-color: var(--vaadin-text-color);
    --fc-more-link-text-color: inherit;                     /* default */
    --fc-event-resizer-thickness: 8px;                      /* default */
    --fc-event-resizer-dot-total-width: 8px;                /* default */
    --fc-event-resizer-dot-border-width: 1px;               /* default */
-   --fc-non-business-color: var(--lumo-contrast-5pct);
-   --fc-bg-event-color: rgb(143, 223, 130);                /* default */
+   --fc-non-business-color: var(--vaadin-background-container);
+   --fc-bg-event-color: color-mix(var(--aura-green) 50%, transparent);
    --fc-bg-event-opacity: 0.3;                             /* default */
-   --fc-highlight-color: var(--lumo-primary-color-10pct);
-   --fc-today-bg-color: rgba(255, 220, 40, 0.15);          /* default */
-   --fc-now-indicator-color: red;                          /* default */
+   --fc-highlight-color: var(--aura-accent-surface);
+   --fc-today-bg-color: color-mix(var(--aura-yellow) 10%, transparent);
+   --fc-now-indicator-color: var(--aura-red);
 }
 
 jmix-full-calendar .fc-event {
-    border-radius: var(--lumo-border-radius-m);
-    padding-left: var(--lumo-space-xs);
-    padding-right: var(--lumo-space-xs);
+    border-radius: var(--vaadin-radius-m);
+    padding-left: var(--vaadin-padding-xs);
+    padding-right: var(--vaadin-padding-xs);
 }
 
 jmix-full-calendar .fc-event:focus-visible {
-    border-radius: var(--lumo-border-radius-m);
-    box-shadow: 0 0 0 var(--vaadin-focus-ring-width, 2px) var(--vaadin-focus-ring-color, var(--lumo-primary-color-50pct));
+    border-radius: var(--vaadin-radius-m);
+    box-shadow: 0 0 0 var(--vaadin-focus-ring-width, 2px) var(--vaadin-focus-ring-color);
     outline: 0;
 }
 
@@ -59,26 +59,26 @@ jmix-full-calendar .fc .fc-highlight {
 }
 
 jmix-full-calendar .fc-more-link:hover {
-    background-color: var(--lumo-contrast-10pct);
+    background-color: var(--vaadin-text-color-disabled);
 }
 
 jmix-full-calendar .fc-daygrid-day-number:focus-visible,
 jmix-full-calendar .fc-daygrid-week-number:focus-visible {
-    border-radius: var(--lumo-border-radius-m);
-    box-shadow: 0 0 0 var(--vaadin-focus-ring-width, 2px) var(--vaadin-focus-ring-color, var(--lumo-primary-color-50pct));
+    border-radius: var(--vaadin-radius-m);
+    box-shadow: 0 0 0 var(--vaadin-focus-ring-width, 2px) var(--vaadin-focus-ring-color);
     outline: 0;
 }
 
 jmix-full-calendar .fc-timegrid-event:hover,
 jmix-full-calendar .fc-daygrid-block-event:hover {
-    cursor: var(--lumo-clickable-cursor);
+    cursor: var(--vaadin-clickable-cursor);
     filter: brightness(0.9) contrast(1.2);
 }
 
 jmix-full-calendar .fc-daygrid-dot-event.fc-event-mirror,
 jmix-full-calendar .fc-daygrid-dot-event:hover {
     cursor: var(--vaadin-clickable-cursor);
-    background-color: var(--lumo-contrast-5pct);
+    background-color: var(--vaadin-background-container);
 }
 
 /* More link in events stack in time slots */

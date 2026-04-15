@@ -917,7 +917,7 @@ interface StudioElements {
             propertyGroups = StudioPropertyGroups.IdAndParam.class,
             properties = {
                     @StudioProperty(xmlAttribute = "component", category = StudioProperty.Category.GENERAL,
-                            type = StudioPropertyType.COMPONENT_REF, componentRefTags = "dataGridFilter", required = true),
+                            type = StudioPropertyType.COMPONENT_REF, componentRefTags = {"dataGrid", "treeDataGrid", "groupDataGrid"}, required = true),
                     @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
                     @StudioProperty(xmlAttribute = "param", type = StudioPropertyType.STRING),
             }

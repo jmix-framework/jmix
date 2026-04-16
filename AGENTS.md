@@ -18,6 +18,7 @@
 - Add imports instead of using fully qualified class names.
 - Do not add comments or Javadocs to the files that you didn't change.
 - Use current year in copyright headers for new files, e.g. `Copyright 2026 Haulmont`.
+- Don't read the whole content of files JPA2Lexer.java and JPA2Parser.java to save context space and tokens. They are auto-generated from JPA2.g and JPA2.tokens as described in `jmix-data/data/src/main/java/io/jmix/data/impl/jpql/antlr2/README.md`.
 
 ## Coding Style (Java)
 - Use IntelliJ default formatting. Max line length 120 (soft), method ~50 lines, class ~500 lines.

@@ -13,7 +13,6 @@
             <header id="header" classNames="jmix-main-view-header">
                 <drawerToggle id="drawerToggle"
                               classNames="jmix-main-view-drawer-toggle"
-                              themeNames="contrast"
                               ariaLabel="${messageKeys['drawerToggleAriaLabel']}"/>
                 <h2 id="applicationTitle"
                     text="${messageKeys['applicationTitleText']}"

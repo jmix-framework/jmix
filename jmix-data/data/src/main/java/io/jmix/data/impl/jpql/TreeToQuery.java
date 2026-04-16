@@ -210,6 +210,12 @@ public class TreeToQuery implements TreeVisitorAction {
         return false;
     }
 
+    private boolean isConstructorNewNode(CommonTree node) {
+        return node.parent != null
+                && node.parent.getType() == JPA2Lexer.T_SELECTED_ITEM
+                && "new".equalsIgnoreCase(node.getText());
+    }
+
     @Override
     public Object post(Object t) {
         if (!(t instanceof CommonTree))
@@ -226,6 +232,7 @@ public class TreeToQuery implements TreeVisitorAction {
 
         if (node.getType() == JPA2Lexer.DISTINCT ||
                 node.getType() == JPA2Lexer.FETCH ||
+                isConstructorNewNode(node) ||
                 node.getType() == JPA2Lexer.THEN ||
                 node.getType() == JPA2Lexer.ELSE ||
                 node.parent != null && (node.parent.getType() == JPA2Lexer.T_SELECTED_ITEM || node.parent.getType() == JPA2Lexer.T_SOURCE) && node.getType() == JPA2Lexer.AS ||

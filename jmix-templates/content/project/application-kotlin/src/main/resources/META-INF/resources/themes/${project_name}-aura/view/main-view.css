@@ -1,5 +1,10 @@
 /* Predefined styles for the MainView */
 
+:where(:root),
+:where(:host) {
+    --vaadin-app-layout-drawer-width: 256px;
+}
+
 .jmix-main-view-header {
     display: flex;
     align-items: center;

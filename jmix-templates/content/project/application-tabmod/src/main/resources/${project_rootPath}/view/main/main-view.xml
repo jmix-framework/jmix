@@ -9,7 +9,6 @@
             <header id="header" classNames="jmix-main-view-header">
                 <drawerToggle id="drawerToggle"
                               classNames="jmix-main-view-drawer-toggle"
-                              themeNames="contrast"
                               ariaLabel="msg://drawerToggle.ariaLabel"/>
                 <h2 id="applicationTitle"
                     text="msg://applicationTitle.text"

@@ -119,4 +119,18 @@ class JpqlQueryTransformationTest extends Specification {
         then:
         result == 'select c from sec$GroupHierarchy h join h.parent.constraints c where 2 = 2'
     }
+
+    def "transform constructor expression"() {
+
+        when:
+
+        def transformer = new QueryTransformerAstBased(domainModel, "select new com.company.sample.UserDto(u.name) from sec_User u")
+        transformer.addWhere("u.name = :name");
+
+        def result = transformer.getResult()
+
+        then:
+
+        result == "select new com.company.sample.UserDto(u.name) from sec_User u where u.name = :name"
+    }
 }

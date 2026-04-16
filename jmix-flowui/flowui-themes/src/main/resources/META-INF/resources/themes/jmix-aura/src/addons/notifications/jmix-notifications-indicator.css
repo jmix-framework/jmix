@@ -20,5 +20,8 @@ jmix-notifications-indicator {
 }
 
 jmix-notifications-indicator[empty]::part(counter) {
-    --jmix-notification-indicator-counter-background-color: color-mix(in oklab, var(--vaadin-text-color) 20%, var(--aura-background-color-light));
+    --jmix-notification-indicator-counter-background-color: light-dark(
+            color-mix(in oklab, var(--vaadin-text-color) 20%, var(--aura-background-color)),
+            color-mix(in oklab, var(--vaadin-text-color) 60%, var(--aura-background-color))
+    );
 }

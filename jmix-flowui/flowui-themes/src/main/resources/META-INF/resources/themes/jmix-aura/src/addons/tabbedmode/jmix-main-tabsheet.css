@@ -14,9 +14,17 @@
  * limitations under the License.
  */
 
-@import './jmix-breadcrumb.css';
-@import './jmix-breadcrumbs.css';
-@import './jmix-main-tabsheet.css';
-@import './jmix-view-container.css';
-@import './jmix-view-tab.css';
-@import './misc.css';
+jmix-main-tabsheet > vaadin-tabs[slot="tabs"] {
+    align-items: center;
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    max-height: unset;
+    max-width: unset;
+}
+
+jmix-main-tabsheet > vaadin-tabs[slot="tabs"]::part(tabs) {
+    padding: 0;
+    margin: 0 0.75rem;
+}

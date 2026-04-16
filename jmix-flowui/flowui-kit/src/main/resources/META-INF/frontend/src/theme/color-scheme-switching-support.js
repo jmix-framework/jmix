@@ -6,6 +6,7 @@ window.applyTheme = () => {
             ? "dark"
             : "light";
     document.documentElement.setAttribute("theme", theme);
+    document.documentElement.style.colorScheme = theme;
 };
 
 window.matchMedia("(prefers-color-scheme: dark)")

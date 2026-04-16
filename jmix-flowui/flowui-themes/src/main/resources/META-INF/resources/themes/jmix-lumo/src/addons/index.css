@@ -17,6 +17,7 @@
 /* Free */
 
 @import './audit/index.css';
+@import './datatools/index.css';
 @import './dynattr/index.css';
 @import './fullcalendar/index.css';
 @import './jmxconsole/index.css';

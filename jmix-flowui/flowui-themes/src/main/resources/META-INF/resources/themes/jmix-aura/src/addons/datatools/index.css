@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,28 +14,4 @@
  * limitations under the License.
  */
 
-.data-model-list-view-layout {
-    container-type: inline-size;
-    container-name: data-model-list-view-layout;
-}
-
-.data-model-list-view-layout .content-wrapper {
-    flex-direction: column;
-
-    overflow: auto;
-    gap: var(--lumo-space-m);
-}
-
-.data-model-list-view-layout .entities-box {
-    flex-grow: 1;
-}
-
-.data-model-list-view-layout .attributes-box {
-    flex-grow: 2;
-}
-
-@container data-model-list-view-layout (min-width: 60em) {
-    .data-model-list-view-layout .content-wrapper {
-        flex-direction: row;
-    }
-}
+@import './data-model-list-view.css';

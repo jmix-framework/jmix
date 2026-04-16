@@ -22,72 +22,77 @@ import { field } from '@vaadin/field-base/src/styles/field-base-styles.js';
 const jmixSwitch = css`
     
     :host {
-        display: inline-block;
-    }
-    
-    :host([hidden]) {
-        display: none !important;
-    }
-    
-    :host([disabled]) {
-        -webkit-tap-highlight-color: transparent;
-    }
-    
-    .jmix-switch-container {
-        display: grid;
-        grid-template-columns: auto 1fr;
-        align-items: baseline;
-    }
-    
-    [part='switch'],
-    ::slotted(input),
-    [part='label'] {
-        grid-row: 1;
-    }
-    
-    [part='switch'],
-    ::slotted(input) {
-        grid-column: 1;
-    }
-
-    [part='helper-text'],
-    [part='error-message'] {
-        grid-column: 2;
-    }
-
-    :host(:not([has-helper])) [part='helper-text'],
-    :host(:not([has-error-message])) [part='error-message'] {
-        display: none;
+        --_switch-size: var(--jmix-switch-size, 1lh);
+        --_switch-indicator-offset: calc(var(--vaadin-padding-xs) / 2);
+        --_switch-indicator-size: var(--jmix-switch-indicator-size, calc(var(--_switch-size) - var(--_switch-indicator-offset) * 2));
     }
 
     [part='switch'] {
-        display: inline-flex;
-        align-items: center;
-        align-self: anchor-center;
+        align-self: center;
+        /* to remove inheritance from checkable styles */
+        justify-content: unset;
+        width: calc(var(--_switch-size) * 2);
+        height: var(--_switch-size);
 
-        width: calc(var(--jmix-switch-size, calc(2.75em / 2)) * 2);
-        height: var(--jmix-switch-size, calc(2.75em / 2));
-        
-        --_input-border-width: var(--vaadin-input-field-border-width, 0);
-        --_input-border-color: var(--vaadin-input-field-border-color, transparent);
-        box-shadow: inset 0 0 0 var(--_input-border-width, 0) var(--_input-border-color);
+        border-radius: var(--jmix-switch-border-radius, calc(var(--_switch-size) / 2));
+    }
+    
+    /* to remove default checkbox checkmark inherited from checkable styles */
+    [part='switch']::after {
+        content: none;
     }
     
     [part='switch'] .indicator {
-        --_input-border-width: var(--vaadin-input-field-border-width, 0);
-        --_input-border-color: var(--vaadin-input-field-border-color, transparent);
-        box-shadow: inset 0 0 0 var(--_input-border-width, 0) var(--_input-border-color);
+        width: var(--_switch-indicator-size);
+        height: var(--_switch-indicator-size);
+        border-radius: 50%;
+
+        box-sizing: border-box;
+        background-color: var(--jmix-switch-indicator-color, var(--vaadin-text-color));
+        
+        margin-inline-start: var(--_switch-indicator-offset);
+        transform: none;
+        
+        opacity: 1;
+        transition: margin-inline-start 0.2s ease;
     }
 
-    /* visually hidden */
-    ::slotted(input) {
-        opacity: 0;
-        cursor: inherit;
-        margin: 0;
-        align-self: stretch;
-        -webkit-appearance: none;
-        width: initial;
-        height: initial;
+    :host([readonly]:not([checked])) [part='switch'] .indicator {
+        background-color: transparent;
+        border-color: var(--vaadin-switch-indicator-border-color, var(--vaadin-input-field-border-color, var(--vaadin-border-color)));
+        border-style: var(--_border-style, solid);
+        border-width: var(--vaadin-switch-indicator-border-width, var(--vaadin-input-field-border-width, 1px));
+    }
+
+    :host([checked]) [part='switch'] .indicator {
+        margin-inline-start: calc(100% - var(--_switch-indicator-size) - var(--_switch-indicator-offset));
+        background-color: var(--jmix-switch-checked-indicator-color, var(--vaadin-background-color));
+    }
+
+    :host([readonly][checked]) [part='switch'] .indicator {
+        background-color: var(--jmix-switch-indicator-color, var(--vaadin-text-color));
+    }
+
+    :host([disabled][checked]) [part='switch'] .indicator {
+        background-color: var(--jmix-switch-disabled-indicator-color, var(--vaadin-text-color-disabled));
+    }
+    
+    :host([disabled]) [part='switch'] .indicator {
+        background-color: var(--jmix-switch-checked-indicator-color, var(--vaadin-background-color));
+    }
+
+    :host([readonly]) {
+        --vaadin-switch-background: transparent;
+        --vaadin-switch-border-color: var(--vaadin-border-color);
+        --vaadin-switch-marker-color: var(--vaadin-text-color);
+        --_border-style: dashed;
+    }
+    
+    @media (forced-colors: active) {
+        :host(:not([readonly]):not([disabled])) [part='switch'] .indicator,
+        :host([disabled]:not([readonly]):not([checked])) [part='switch'] .indicator {
+            background-color: var(--jmix-switch-forced-colors-indicator-color, ButtonText);
+        }
     }
 `;
 

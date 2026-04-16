@@ -14,9 +14,14 @@
  * limitations under the License.
  */
 
-@import './jmix-breadcrumb.css';
-@import './jmix-breadcrumbs.css';
-@import './jmix-main-tabsheet.css';
-@import './jmix-view-container.css';
-@import './jmix-view-tab.css';
-@import './misc.css';
+:root::before,
+:host::before {
+    --_lumo-jmix-view-container-inject: 1;
+    --_lumo-jmix-view-container-inject-modules: lumo_components_jmix-view-container;
+}
+
+@media lumo_components_jmix-view-container {
+    [part='breadcrumbs'] ::slotted(*:not([hidded])) {
+        padding: var(--lumo-space-m) var(--lumo-space-m) 0;
+    }
+}

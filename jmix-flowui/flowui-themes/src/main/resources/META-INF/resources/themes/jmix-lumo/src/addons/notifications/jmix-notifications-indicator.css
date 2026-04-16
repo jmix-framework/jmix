@@ -211,4 +211,27 @@
         margin-left: 0;
         margin-right: var(--lumo-icon-size-m);
     }
+
+    @media (forced-colors: active) {
+        :host {
+            --vaadin-button-border-width: 1px;
+            --vaadin-button-background: ButtonFace;
+            --vaadin-button-text-color: ButtonText;
+        }
+
+        [part='counter'] {
+            border: var(--vaadin-button-border-width, 1px) solid;
+        }
+
+        ::slotted(*) {
+            forced-color-adjust: auto;
+        }
+
+        :host([disabled]) {
+            --vaadin-button-background: transparent !important;
+            --vaadin-button-border-color: GrayText !important;
+            --vaadin-button-text-color: GrayText !important;
+            opacity: 1;
+        }
+    }
 }

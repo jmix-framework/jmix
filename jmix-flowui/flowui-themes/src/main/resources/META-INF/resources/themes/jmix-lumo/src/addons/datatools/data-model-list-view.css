@@ -1,5 +1,5 @@
 /*
- * Copyright 2026 Haulmont.
+ * Copyright 2025 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,28 @@
  * limitations under the License.
  */
 
-@import './jmix-breadcrumb.css';
-@import './jmix-breadcrumbs.css';
-@import './jmix-main-tabsheet.css';
-@import './jmix-view-container.css';
-@import './jmix-view-tab.css';
-@import './misc.css';
+.data-model-list-view {
+    container-type: inline-size;
+    container-name: data-model-list-view;
+}
+
+.data-model-list-view .content-wrapper {
+    flex-direction: column;
+
+    overflow: auto;
+    gap: var(--lumo-space-m);
+}
+
+.data-model-list-view .entities-box {
+    flex-grow: 1;
+}
+
+.data-model-list-view .attributes-box {
+    flex-grow: 2;
+}
+
+@container data-model-list-view (min-width: 60em) {
+    .data-model-list-view .content-wrapper {
+        flex-direction: row;
+    }
+}

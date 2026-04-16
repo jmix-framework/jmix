@@ -1,0 +1,80 @@
+/*
+ * Copyright (c) Haulmont 2025. All Rights Reserved.
+ * Use is subject to license terms.
+ */
+
+jmix-view-tab {
+    font-size: var(--aura-font-size-l);
+
+    min-width: calc(var(--aura-base-size) * 2px);
+
+    --_selection-color: var(--aura-accent-color);
+    --_selection-color-text: var(--aura-accent-text-color);
+}
+
+.jmix-view-tab-text {
+    max-width: var(--jmix-tabmod-main-tab-text-max-width, 16rem);
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.jmix-view-tab-close-button {
+    --vaadin-button-background: transparent;
+    --vaadin-button-border-color: transparent;
+    --vaadin-button-shadow: none;
+
+    padding: 0;
+
+    color: inherit;
+    font-size: inherit;
+    line-height: inherit;
+}
+
+.jmix-view-tab-close-button::part(prefix) {
+    margin: 0;
+}
+
+vaadin-tabs[theme~='small'] > jmix-view-tab {
+    font-size: var(--aura-font-size-s);
+}
+
+vaadin-tabs[theme~='centered'][orientation='horizontal'] > jmix-view-tab:first-of-type {
+    margin-inline-start: auto;
+}
+
+vaadin-tabs[theme~='centered'][orientation='horizontal'] > jmix-view-tab:last-of-type {
+    margin-inline-end: auto;
+}
+
+vaadin-tabs > jmix-view-tab {
+    margin-left: 0;
+}
+
+vaadin-tabs[dir='rtl'] > jmix-view-tab {
+    margin-right: 0;
+}
+
+/* Drag & Drop specific styles */
+
+jmix-view-tab {
+    --_dragover-indicator-color: var(--jmix-view-tab-dragover-indicator-color, var(--aura-accent-color));
+    --_dragover-indicator-width: var(--jmix-view-tab-dragover-indicator-width, 2px);
+}
+
+jmix-view-tab.v-dragged {
+    background: linear-gradient(var(--vaadin-background-container), var(--vaadin-background-container)) var(--vaadin-background-color);
+}
+
+jmix-view-tab.v-dragged::before,
+jmix-view-tab.v-dragged::after {
+    display: none;
+}
+
+jmix-view-tab[dragover='before'] {
+    border-inline-start: var(--_dragover-indicator-width) solid var(--_dragover-indicator-color);
+}
+
+jmix-view-tab[dragover='after'] {
+    border-inline-end: var(--_dragover-indicator-width) solid var(--_dragover-indicator-color);
+}

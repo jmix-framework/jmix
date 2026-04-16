@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <view xmlns="http://jmix.io/schema/flowui/view"
       title="msg://entityModelListView.title"
-      focusComponent="entityModelsDataGrid">
+      focusComponent="entityFilter">
     <data>
         <collection id="entityModelsDc"
                     class="io.jmix.datatools.datamodel.entity.EntityModel">
@@ -23,7 +23,7 @@
 
     <layout alignItems="STRETCH"
             expand="contentBox"
-            classNames="data-model-list-view-layout">
+            classNames="data-model-list-view">
         <hbox id="buttonsPanel" classNames="buttons-panel">
             <textField id="entityFilter" datatype="string"
                        width="100%" maxWidth="35em"

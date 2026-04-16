@@ -91,7 +91,7 @@ const jmixSwitch = css`
     @media (forced-colors: active) {
         :host(:not([readonly]):not([disabled])) [part='switch'] .indicator,
         :host([disabled]:not([readonly]):not([checked])) [part='switch'] .indicator {
-            background-color: ButtonText;
+            background-color: var(--jmix-switch-forced-colors-indicator-color, ButtonText);
         }
     }
 `;

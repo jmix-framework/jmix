@@ -174,8 +174,41 @@ public class DataModelRegistry {
         AttributeModel attributeModel = isEmbeddable
                 ? constructAttribute(fieldName, fieldType, field.isMandatory())
                 : constructAttribute(getAnnotation(field, Column.class).name(),
-                fieldName, fieldType, entity, field.isMandatory());
+                fieldName, fieldType, findEntityForField(entity, field), field.isMandatory());
         attributeModelsList.add(attributeModel);
+    }
+
+    /**
+     * Finds the most appropriate {@link MetaClass} representation of the entity to which a given field belongs.
+     * It checks the declaring class of the field and navigates through the entity's inheritance hierarchy to locate
+     * the last JPA entity associated with the given field.
+     * <p>
+     * NOTE: needed for inheritance strategy 'JOINED'.
+     *
+     * @param entity the initial {@link MetaClass} representing the starting point for the search in the hierarchy
+     * @param field  the {@link MetaProperty} representing the field whose associated entity is to be determined
+     * @return the {@link MetaClass} representing the most specific JPA entity associated with the field or the
+     * initial entity if no more specific JPA entity could be found
+     */
+    protected MetaClass findEntityForField(MetaClass entity, MetaProperty field) {
+        if (field.getDeclaringClass() == null) {
+            return entity;
+        }
+
+        MetaClass current = entity;
+        MetaClass lastJpaEntity = null;
+        while (current != null) {
+            if (metadataTools.isJpaEntity(current)
+                    && current.getJavaClass().isAnnotationPresent(Table.class)) {
+                lastJpaEntity = current;
+            }
+            if (current.getJavaClass().equals(field.getDeclaringClass())) {
+                return lastJpaEntity != null ? lastJpaEntity : entity;
+            }
+            current = current.getAncestor();
+        }
+
+        return entity;
     }
 
     protected void addEmbeddedAttribute(MetaClass entity, MetaProperty field, String fieldName,
@@ -195,7 +228,7 @@ public class DataModelRegistry {
             for (int i = 0; i < attributeOverrides.length; i++) {
                 AttributeModel temp = constructAttribute(field.getAnnotatedElement()
                                 .getAnnotation(AttributeOverrides.class).value()[i].column().name(),
-                        fieldName, fieldType, entity, field.isMandatory());
+                        fieldName, fieldType, findEntityForField(entity, field), field.isMandatory());
                 AttributeModel dataModelEntityAttributes = embeddableDataModel.attributeModels().get(i);
                 String embeddableFieldName = fieldName + "." + dataModelEntityAttributes.getAttributeName();
                 String embeddableJavaType = dataModelEntityAttributes.getJavaType();
@@ -217,7 +250,7 @@ public class DataModelRegistry {
         AttributeModel attributeModel = isEmbeddable
                 ? constructAttribute(fieldName, fieldType, isAnnotationPresent(field, NotNull.class))
                 : constructAttribute(getAnnotation(field, JoinColumn.class).name(),
-                fieldName, fieldType, entity, field.isMandatory());
+                fieldName, fieldType, findEntityForField(entity, field), field.isMandatory());
         attributeModelsList.add(attributeModel);
 
         String referencedClassName = field.getRange().asClass().getName();
@@ -255,7 +288,7 @@ public class DataModelRegistry {
                 attributeModel = constructAttribute(fieldName, fieldType, isAnnotationPresent(field, NotNull.class));
             } else {
                 attributeModel = constructAttribute(getAnnotation(field, JoinColumn.class).name(),
-                        fieldName, fieldType, entity, field.isMandatory());
+                        fieldName, fieldType, findEntityForField(entity, field), field.isMandatory());
             }
         } else {
             boolean isMandatory = getAnnotation(field, OneToOne.class).optional();

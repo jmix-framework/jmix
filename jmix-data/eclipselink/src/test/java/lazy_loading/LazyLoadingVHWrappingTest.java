@@ -27,6 +27,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.DisabledIf;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import test_support.DataTestConfiguration;
 import test_support.TestContextInititalizer;
@@ -41,6 +42,7 @@ import java.util.List;
         classes = {CoreConfiguration.class, DataConfiguration.class, EclipselinkConfiguration.class, DataTestConfiguration.class},
         initializers = {TestContextInititalizer.class}
 )
+@DisabledIf(expression = "#{systemEnvironment['JMIX_ECLIPSELINK_DISABLELAZYLOADING'] == 'true'}")
 public class LazyLoadingVHWrappingTest {
 
     @Autowired

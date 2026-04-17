@@ -218,15 +218,15 @@ public class JpqlQueryBuilder<Q extends JmixQuery> {
         resultParameters = queryParameters;
         if (entityName != null) {
             if (Strings.isNullOrEmpty(queryString)) {
+                resultParameters = new HashMap<>();
                 if (id != null) {
                     resultQuery = String.format("select e from %s e where e.%s = :entityId", entityName, getPrimaryKeyProperty().getName());
-                    resultParameters = Maps.newHashMap(ImmutableMap.of("entityId", id));
+                    resultParameters.put("entityId", id);
                 } else if (ids != null && !ids.isEmpty()) {
                     resultQuery = String.format("select e from %s e where e.%s in :entityIds", entityName, getPrimaryKeyProperty().getName());
-                    resultParameters = Maps.newHashMap(ImmutableMap.of("entityIds", ids));
+                    resultParameters.put("entityIds", ids);
                 } else {
                     resultQuery = String.format("select e from %s e", entityName);
-                    resultParameters = Collections.emptyMap();
                 }
             }
         }

@@ -92,6 +92,8 @@ dependencies {
         api "gr.netmechanics.jmix:jmix-google-place-starter:1.4.0"
         api 'de.bytestore:plugin-starter:2.8.0'
         api 'de.bytestore:swagger-ui-starter:2.8.0'
+        api 'com.glebfox.jmix.locstr:jmix-localized-string-datatype:1.1.0'
+        api 'com.glebfox.jmix.locstr:jmix-localized-string-datatype-starter:1.1.0'
         // end community add-ons
 
         api "io.jmix.appsettings:jmix-appsettings:$freeVersion"

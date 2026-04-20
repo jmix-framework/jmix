@@ -48,13 +48,6 @@
   align-items: center;
 }
 
-.jmix-list-menu .jmix-menu-item-link .link-icon,
-.jmix-list-menu .jmix-menubar-item .jmix-menubar-summary-icon-container .menubar-icon,
-.jmix-list-menu .jmix-menu-item-link vaadin-icon.prefix-component:not([icon^='lumo:']),
-.jmix-list-menu .jmix-menubar-item .jmix-menubar-summary-icon-container vaadin-icon.prefix-component:not([icon^='lumo:']) {
-  --vaadin-icon-visual-size: var(--aura-font-size-l);
-}
-
 .jmix-list-menu .jmix-menubar-item .menubar-summary {
   font-size: var(--aura-font-size-s);
   white-space: nowrap;

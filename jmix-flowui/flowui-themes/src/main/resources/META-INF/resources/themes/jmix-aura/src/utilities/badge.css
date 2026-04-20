@@ -1,0 +1,142 @@
+/*
+ * Copyright 2026 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/* WARNING: will be removed after vaadin-badge is released */
+
+[theme~='badge'] {
+    --aura-accent-contrast-color-light: oklch(
+            from var(--aura-accent-color-light) clamp(0, (0.62 - l) * 1000, 1) 0 0 / clamp(0.8, (0.62 - l) * 1000, 1)
+    );
+    --aura-accent-contrast-color-dark: oklch(
+            from var(--aura-accent-color-dark) clamp(0, (0.62 - l) * 1000, 1) 0 0 / clamp(0.8, (0.62 - l) * 1000, 1)
+    );
+    --aura-accent-text-color-light: oklch(
+            from var(--aura-accent-color-light) min(0.55, 0.35 - 0.05 * var(--aura-contrast-level) + c) calc(c * 0.9) h
+    );
+    --aura-accent-text-color-dark: oklch(
+            from var(--aura-accent-color-dark) max(0.8, 0.9 + 0.1 * var(--aura-contrast-level) - c * 2) calc(c * 0.9) h
+    );
+    --aura-accent-color: light-dark(var(--aura-accent-color-light), var(--aura-accent-color-dark));
+    --aura-accent-contrast-color: light-dark(
+            var(--aura-accent-contrast-color-light),
+            var(--aura-accent-contrast-color-dark)
+    );
+    --aura-accent-text-color: light-dark(var(--aura-accent-text-color-light), var(--aura-accent-text-color-dark));
+    --_accent-surface-light: color-mix(
+            in srgb,
+            color-mix(
+                    in srgb,
+                    oklch(from var(--aura-accent-color-light) l c h / min(max(c / 0.4, 0), 1)) calc(23% - 4% * var(--aura-surface-level)),
+                    var(--aura-surface-color-solid)
+            ) calc(100% * var(--aura-surface-opacity)),
+            transparent
+    );
+    --_accent-surface-dark: color-mix(
+            in srgb,
+            color-mix(
+                    in srgb,
+                    oklch(from var(--aura-accent-color-dark) l c h / min(max(c / 0.4, 0), 1)) calc(23% - 3% * var(--aura-surface-level)),
+                    var(--aura-surface-color-solid)
+            ) calc(100% * var(--aura-surface-opacity)),
+            transparent
+    );
+    /* This color is very slightly semi-transparent, depending on the saturation/chroma of the accent color (only an issue in Safari 17). */
+    --aura-accent-surface: light-dark(var(--_accent-surface-light), var(--_accent-surface-dark));
+    @supports (color: hsl(0 0 0)) {
+        /* This removes the semi-transparency */
+        --aura-accent-surface: oklch(
+                from light-dark(var(--_accent-surface-light), var(--_accent-surface-dark)) l c h / var(--aura-surface-opacity)
+        );
+    }
+    --_accent-border: light-dark(
+            oklch(from var(--aura-accent-color-light) 0.8 calc(c * 1.1) h / min(1, c + (1 - l) / 10)),
+            oklch(from var(--aura-accent-color-dark) 0.8 calc(c * 1.1) h / min(1, c + (1 - l) / 10))
+    );
+    --aura-accent-border-color: color-mix(
+            in srgb,
+            var(--_accent-border) calc(30% - 1% * var(--aura-surface-level) + 1% * var(--aura-contrast-level)),
+            var(--vaadin-border-color) 60%
+    );
+}
+
+[theme~='badge'] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    vertical-align: baseline;
+    box-sizing: border-box;
+    gap: var(--vaadin-badge-gap, 0.25em);
+    padding: var(--vaadin-badge-padding, 0 calc(0.5lh - 0.25em));
+    font-family: var(--vaadin-badge-font-family, inherit);
+    font-size: var(--vaadin-badge-font-size, --aura-font-size-s);
+    font-weight: var(--vaadin-badge-font-weight, 500);
+    line-height: var(--vaadin-badge-line-height, round(1em * 1.5, 0.125rem));
+    color: var(--vaadin-badge-text-color, var(--aura-accent-text-color));
+    background: var(--vaadin-badge-background, var(--aura-accent-surface) padding-box);
+    border: var(--vaadin-badge-border-width, 1px) solid var(--vaadin-badge-border-color, var(--aura-accent-border-color));
+    border-radius: var(--vaadin-badge-border-radius, var(--vaadin-radius-s));
+    min-width: calc(1lh + var(--vaadin-badge-border-width, 1px) * 2);
+    --vaadin-icon-size: 1em;
+    /* prevent from stretching */
+    flex: none;
+
+    --aura-surface-level: 1;
+}
+
+[theme~='badge'][theme~='small'] {
+    font-size: var(--aura-font-size-s);
+}
+
+/* Colors */
+
+[theme~='badge'][theme~='contrast'] {
+    --aura-accent-color-light: var(--vaadin-text-color);
+    --aura-accent-color-dark: var(--vaadin-text-color);
+    --aura-accent-color: light-dark(var(--aura-accent-color-light), var(--aura-accent-color-dark));
+
+    --aura-accent-text-color-light: var(--vaadin-text-color);
+    --aura-accent-text-color-dark: var(--vaadin-text-color);
+    --aura-accent-text-color: light-dark(var(--aura-accent-color-light), var(--aura-accent-color-dark));
+}
+
+/* Primary */
+
+[theme~='badge'][theme~='primary'] {
+    background: var(--aura-accent-color);
+    color: var(--aura-accent-contrast-color);
+}
+
+/* Pill */
+
+[theme~='badge'][theme~='pill'] {
+    --vaadin-radius-s: 100vh;
+}
+
+/* Links */
+
+[theme~='badge'][href]:hover {
+    text-decoration: none;
+}
+
+/* Icons */
+
+[theme~='badge'] > .jmix-font-icon {
+    --vaadin-icon-visual-size: var(--vaadin-icon-size, 1lh);
+}
+
+[theme~='badge'] > .jmix-font-icon:not([icon-class~="jmix-font-icon-lumo"]) {
+    --vaadin-icon-visual-size: round(var(--vaadin-icon-size, 1lh) * .8, 1px);
+}

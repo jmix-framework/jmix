@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-@import './src/addons/index.css';
-@import './src/app/index.css';
 @import './src/components/index.css';
+@import './src/utilities/index.css';
 @import './src/icons/index.css';
-@import 'src/utilities/index.css';
+@import './src/app/index.css';
+@import './src/addons/index.css';

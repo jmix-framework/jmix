@@ -40,10 +40,6 @@ vaadin-menu-bar-list-box vaadin-menu-bar-item[class~='jmix-horizontal-menu-item-
   align-items: center;
 }
 
-.jmix-horizontal-menu-content-item vaadin-icon.prefix-component:not([icon^='lumo:']) {
-  --vaadin-icon-visual-size: var(--aura-font-size-l);
-}
-
 .jmix-horizontal-menu-content-item .suffix-component {
   margin-inline-start: auto;
 }

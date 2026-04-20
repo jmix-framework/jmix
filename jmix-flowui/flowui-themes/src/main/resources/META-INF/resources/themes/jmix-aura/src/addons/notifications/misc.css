@@ -28,10 +28,6 @@ vaadin-multi-select-combo-box.ntf-notification-recipients-field::part(toggle-but
     gap: var(--vaadin-gap-s);
 }
 
-vaadin-icon.ntf-notification-type-renderer-icon {
-    --vaadin-icon-visual-size: 1rem;
-}
-
 .ntf-notification-type-renderer-text {
     font-size: var(--aura-font-size-m);
 }

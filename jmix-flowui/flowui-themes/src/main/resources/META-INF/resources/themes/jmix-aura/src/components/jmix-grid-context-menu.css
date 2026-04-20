@@ -21,10 +21,6 @@
   display: flex;
 }
 
-.jmix-grid-context-menu-item-component vaadin-icon.prefix-component:not([icon^='lumo:']) {
-  --vaadin-icon-visual-size: var(--aura-font-size-l);
-}
-
 .jmix-grid-context-menu-item-component .suffix-component {
   margin-inline-start: auto;
 }

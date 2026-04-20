@@ -15,4 +15,5 @@
  */
 
 @import '../../../shared/utility.css';
+@import './badge.css';
 @import './misc.css';

@@ -22,6 +22,7 @@
         <details id="filterDetails"
                  summaryText="msg://filter"
                  opened="true"
+                 themeNames="no-padding"
                  width="100%">
             <formLayout>
                 <responsiveSteps>

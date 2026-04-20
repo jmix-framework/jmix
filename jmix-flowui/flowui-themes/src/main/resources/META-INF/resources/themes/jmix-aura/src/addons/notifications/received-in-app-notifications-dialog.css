@@ -17,7 +17,3 @@
 .received-in-app-notifications-dialog .pagination {
     align-self: center;
 }
-
-.received-in-app-notifications-dialog .notification-datagrid-icon-xs {
-    --vaadin-icon-visual-size: 1rem;
-}

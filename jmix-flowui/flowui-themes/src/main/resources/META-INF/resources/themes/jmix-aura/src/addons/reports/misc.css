@@ -19,9 +19,7 @@
 }
 
 .report-wizard-tip-label {
-    font-size: medium;
-    display: block;
+    font-size: var(--aura-font-size-l);
+    justify-content: start;
     padding: calc(0.5em + var(--vaadin-radius-l));
-    line-height: normal;
-    box-sizing: border-box;
 }

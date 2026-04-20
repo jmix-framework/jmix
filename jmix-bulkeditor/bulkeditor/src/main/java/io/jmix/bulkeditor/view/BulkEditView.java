@@ -243,6 +243,10 @@ public class BulkEditView<E> extends StandardView {
 
     @SuppressWarnings("unchecked")
     protected List<E> reloadItems(List<E> items) {
+        if (items.isEmpty()) {
+            return Collections.emptyList();
+        }
+
         MetaClass metaClass = context.getMetaClass();
 
         LoadDescriptor<E> ld = new LoadDescriptor<>(items, metaClass, fetchPlan);

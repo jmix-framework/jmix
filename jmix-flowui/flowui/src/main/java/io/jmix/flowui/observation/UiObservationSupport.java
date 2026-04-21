@@ -104,6 +104,10 @@ public class UiObservationSupport {
     }
 
     public Observation createActionExecutionObservation(Action action) {
+        return createActionExecutionObservation(action, null);
+    }
+
+    public Observation createActionExecutionObservation(Action action, @Nullable Component triggerComponent) {
         if (!isObservationAvailable()) {
             return Observation.NOOP;
         }
@@ -112,10 +116,19 @@ public class UiObservationSupport {
                 .contextualName("execute action")
                 .lowCardinalityKeyValue("action.id", action.getId());
 
+        Component viewSource = triggerComponent;
         if (action instanceof TargetAction<?> targetAction
                 && targetAction.getTarget() instanceof Component component) {
             UiComponentUtils.getComponentId(component)
                     .ifPresent(componentId -> observation.lowCardinalityKeyValue("target.id", componentId));
+            viewSource = component;
+        }
+
+        if (viewSource != null) {
+            View<?> view = UiComponentUtils.findView(viewSource);
+            if (view != null) {
+                view.getId().ifPresent(viewId -> observation.lowCardinalityKeyValue("view.id", viewId));
+            }
         }
 
         return observation;

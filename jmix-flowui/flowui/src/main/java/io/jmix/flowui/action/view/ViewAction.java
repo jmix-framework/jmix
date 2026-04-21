@@ -67,7 +67,7 @@ public abstract class ViewAction<A extends ViewAction<A, V>, V extends View<?>> 
         // if standard behaviour
         if (!hasListener(ActionPerformedEvent.class)) {
             getUiObservationSupport()
-                    .map(support -> support.createActionExecutionObservation(this))
+                    .map(support -> support.createActionExecutionObservation(this, component))
                     .orElse(Observation.NOOP)
                     .observe(this::execute);
         } else {

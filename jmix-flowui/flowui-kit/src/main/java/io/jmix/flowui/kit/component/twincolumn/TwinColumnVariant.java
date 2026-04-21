@@ -24,19 +24,6 @@ import com.vaadin.flow.component.shared.ThemeVariant;
 public enum TwinColumnVariant implements ThemeVariant {
 
     /**
-     * Theme variant with hidden border of component columns.
-     */
-    NO_BORDER("no-border"),
-
-    /**
-     * Theme variant with hidden row borders between column items.
-     *
-     * @deprecated use {@link #LUMO_NO_ROW_BORDER}
-     */
-    @Deprecated
-    NO_ROW_BORDER("no-row-border"),
-
-    /**
      * Theme variant with hidden row borders between column items.
      */
     LUMO_NO_ROW_BORDER("no-row-border"),
@@ -44,19 +31,33 @@ public enum TwinColumnVariant implements ThemeVariant {
     /**
      * Theme variant with checkmarks to select items in columns.
      */
-    CHECKMARKS("checkmarks"),
+    LUMO_CHECKMARKS("checkmarks"),
+
+    /**
+     * Theme variant with hidden border of component columns.
+     */
+    NO_BORDER("no-border"),
+
+    /**
+     * Theme variant with no space between buttons and rounded top and bottom borders.
+     */
+    NO_SPACE_BETWEEN_ACTIONS("no-space-between-actions"),
+
+    /**
+     * Theme variant with hidden row borders between column items.
+     *
+     * @deprecated use {@link #LUMO_NO_ROW_BORDER} instead
+     */
+    @Deprecated(since = "3.0", forRemoval = true)
+    NO_ROW_BORDER("no-row-border"),
 
     /**
      * Theme variant with checkmarks to select items in columns.
      *
      * @deprecated use {@link #LUMO_CHECKMARKS} instead
      */
-    LUMO_CHECKMARKS("checkmarks"),
-
-    /**
-     * Theme variant with no space between buttons and rounded top and bottom borders.
-     */
-    NO_SPACE_BETWEEN_ACTIONS("no-space-between-actions");
+    @Deprecated(since = "3.0", forRemoval = true)
+    CHECKMARKS("checkmarks");
 
     private final String name;
 

@@ -30,8 +30,14 @@ public enum ComboButtonVariant implements ThemeVariant {
     LUMO_WARNING("warning"),
     LUMO_CONTRAST("contrast"),
     LUMO_ICON("icon"),
-    MATERIAL_CONTAINED("contained"),
-    MATERIAL_OUTLINED("outlined");
+
+    PRIMARY("primary"),
+    TERTIARY("tertiary"),
+    SUCCESS("success"),
+    WARNING("warning"),
+    ERROR("error"),
+    SMALL("small"),
+    LARGE("large");
 
     private final String variant;
 

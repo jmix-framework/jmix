@@ -19,6 +19,7 @@ package io.jmix.flowui.theme;
 /**
  * Contains the definition for all CSS utility classes suitable for any theme.
  */
+@ThemeUtilityClasses(name = "Jmix Utility")
 public final class StyleUtility {
 
     private StyleUtility() {

@@ -14,5 +14,13 @@
  * limitations under the License.
  */
 
-@import '../../../shared/icons.css';
-@import './jmix-font-icons.css';
+.jmix-font-icon {
+    /* Fixes Safari browser bug which incorrectly handle '100cqh' */
+    --vaadin-icon-visual-size: 1em;
+}
+
+.jmix-font-icon.jmix-font-icon-lumo,
+jmix-notifications-indicator > vaadin-icon[icon-class~="jmix-font-icon"][slot="icon"]:not([icon-class~="jmix-font-icon-lumo"]) {
+    /* Fixes Safari browser bug which incorrectly handle '100cqh' */
+    --vaadin-icon-visual-size: 1.5em; /* 24px, Lumo icons are based on a 24x24 grid with 16x16 icon inside) */
+}

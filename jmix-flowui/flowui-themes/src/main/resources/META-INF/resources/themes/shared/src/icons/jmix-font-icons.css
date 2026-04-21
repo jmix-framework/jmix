@@ -768,18 +768,10 @@ html {
 
 .jmix-font-icon {
     font-family: var(--jmix-font-icon-font-family);
-    /* Fixes Safari browser bug which incorrectly handle '100cqh' */
-    --vaadin-icon-visual-size: round(var(--aura-line-height-m) * .8, 1px);
 }
 
 .jmix-font-icon.jmix-font-icon-lumo {
     font-family: lumo-icons;
-    /* Fixes Safari browser bug which incorrectly handle '100cqh' */
-    --vaadin-icon-visual-size: var(--aura-line-height-m);
-}
-
-jmix-notifications-indicator > vaadin-icon[icon-class~="jmix-font-icon"][slot="icon"]:not([icon-class~="jmix-font-icon-lumo"]) {
-    --vaadin-icon-visual-size: var(--aura-line-height-m);
 }
 
 /* Jmix specific icons */

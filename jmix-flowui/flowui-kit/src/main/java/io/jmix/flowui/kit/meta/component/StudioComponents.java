@@ -297,7 +297,8 @@ interface StudioComponents {
             propertyGroups = {
                     StudioPropertyGroups.TextInputFieldDefaultProperties.class,
                     StudioPropertyGroups.Property.class,
-                    StudioPropertyGroups.FieldThemeTitleAndValueChangeDefaultProperties.class
+                    StudioPropertyGroups.FieldThemeTitleAndValueChangeDefaultProperties.class,
+                    StudioPropertyGroups.StringValue.class
             },
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
@@ -542,6 +543,7 @@ interface StudioComponents {
                     StudioPropertyGroups.RequiredAndRequiredMessageAndErrorMessage.class,
                     StudioPropertyGroups.Autofocus.class,
                     StudioPropertyGroups.ClickShortcut.class,
+                    StudioPropertyGroups.BooleanValue.class,
                     StudioPropertyGroups.CollectionOrInstanceDataContainer.class,
                     StudioPropertyGroups.Indeterminate.class,
                     StudioPropertyGroups.Label.class,
@@ -614,6 +616,7 @@ interface StudioComponents {
                     StudioPropertyGroups.RequiredAndRequiredMessageAndErrorMessage.class,
                     StudioPropertyGroups.Autofocus.class,
                     StudioPropertyGroups.ClickShortcut.class,
+                    StudioPropertyGroups.BooleanValue.class,
                     StudioPropertyGroups.CollectionOrInstanceDataContainer.class,
                     StudioPropertyGroups.Label.class,
                     StudioPropertyGroups.PropertyTypeParameterV.class,
@@ -693,7 +696,7 @@ interface StudioComponents {
                     StudioPropertyGroups.Pattern.class,
                     StudioPropertyGroups.Placeholder.class,
                     StudioPropertyGroups.PropertyTypeParameterV.class,
-                    StudioPropertyGroups.ComboBoxThemeNames.class,
+                    StudioPropertyGroups.TextInputFieldThemeNames.class,
                     StudioPropertyGroups.Title.class
             },
             properties = {
@@ -1136,7 +1139,7 @@ interface StudioComponents {
                     StudioPropertyGroups.Opened.class,
                     StudioPropertyGroups.Placeholder.class,
                     StudioPropertyGroups.PropertyTypeParameterV.class,
-                    StudioPropertyGroups.ComboBoxThemeNames.class,
+                    StudioPropertyGroups.TextInputFieldThemeNames.class,
                     StudioPropertyGroups.WeekNumbersVisible.class
             },
             properties = {
@@ -1224,7 +1227,7 @@ interface StudioComponents {
                     StudioPropertyGroups.ValidationStringMin.class,
                     StudioPropertyGroups.PropertyTypeParameterV.class,
                     StudioPropertyGroups.TimeStep.class,
-                    StudioPropertyGroups.ThemeNames.class,
+                    StudioPropertyGroups.TextInputFieldThemeNames.class,
                     StudioPropertyGroups.WeekNumbersVisible.class
             },
             properties = {
@@ -1402,7 +1405,8 @@ interface StudioComponents {
                     StudioPropertyGroups.MinLength.class,
                     StudioPropertyGroups.Pattern.class,
                     StudioPropertyGroups.Property.class,
-                    StudioPropertyGroups.FieldThemeTitleAndValueChangeDefaultProperties.class
+                    StudioPropertyGroups.FieldThemeTitleAndValueChangeDefaultProperties.class,
+                    StudioPropertyGroups.StringValue.class
             },
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
@@ -1513,7 +1517,7 @@ interface StudioComponents {
                     StudioPropertyGroups.Pattern.class,
                     StudioPropertyGroups.Placeholder.class,
                     StudioPropertyGroups.PropertyTypeParameterV.class,
-                    StudioPropertyGroups.ComboBoxThemeNames.class,
+                    StudioPropertyGroups.TextInputFieldThemeNames.class,
                     StudioPropertyGroups.Title.class
             },
             properties = {
@@ -1948,7 +1952,8 @@ interface StudioComponents {
                     StudioPropertyGroups.TextInputFieldDefaultProperties.class,
                     StudioPropertyGroups.Property.class,
                     StudioPropertyGroups.StepButtonsVisible.class,
-                    StudioPropertyGroups.FieldThemeTitleAndValueChangeDefaultProperties.class
+                    StudioPropertyGroups.FieldThemeTitleAndValueChangeDefaultProperties.class,
+                    StudioPropertyGroups.StringValue.class
             },
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
@@ -2049,13 +2054,14 @@ interface StudioComponents {
             }),
             propertyGroups = {
                     StudioPropertyGroups.TextInputFieldDefaultProperties.class,
-                    StudioPropertyGroups.AllowedCharPattern.class,
+                    StudioPropertyGroups.AllowedCharPatternWithoutCategory.class,
                     StudioPropertyGroups.ValidationDoubleMax.class,
                     StudioPropertyGroups.ValidationDoubleMin.class,
                     StudioPropertyGroups.Property.class,
                     StudioPropertyGroups.Step.class,
                     StudioPropertyGroups.StepButtonsVisible.class,
-                    StudioPropertyGroups.FieldThemeTitleAndValueChangeDefaultProperties.class
+                    StudioPropertyGroups.FieldThemeTitleAndValueChangeDefaultProperties.class,
+                    StudioPropertyGroups.StringValue.class
             },
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
@@ -2155,10 +2161,11 @@ interface StudioComponents {
             }),
             propertyGroups = {
                     StudioPropertyGroups.TextInputFieldDefaultProperties.class,
-                    StudioPropertyGroups.AllowedCharPattern.class,
+                    StudioPropertyGroups.AllowedCharPatternWithoutCategory.class,
                     StudioPropertyGroups.Pattern.class,
                     StudioPropertyGroups.Property.class,
-                    StudioPropertyGroups.FieldThemeTitleAndValueChangeDefaultProperties.class
+                    StudioPropertyGroups.FieldThemeTitleAndValueChangeDefaultProperties.class,
+                    StudioPropertyGroups.StringValue.class
             },
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
@@ -2259,6 +2266,8 @@ interface StudioComponents {
                     StudioPropertyGroups.Indeterminate.class,
                     StudioPropertyGroups.ValidationDoubleMax.class,
                     StudioPropertyGroups.ValidationDoubleMin.class,
+                    StudioPropertyGroups.ProgressBarThemeNames.class,
+                    StudioPropertyGroups.StringValue.class,
             },
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
@@ -2668,7 +2677,7 @@ interface StudioComponents {
             propertyGroups = {
                     StudioPropertyGroups.SizedComponentDefaultProperties.class,
                     StudioPropertyGroups.AriaLabelAndTabIndexAndFocusShortcut.class,
-                    StudioPropertyGroups.AllowedCharPattern.class,
+                    StudioPropertyGroups.AllowedCharPatternWithoutCategory.class,
                     StudioPropertyGroups.Autocapitalize.class,
                     StudioPropertyGroups.Autocomplete.class,
                     StudioPropertyGroups.Autocorrect.class,
@@ -2687,7 +2696,8 @@ interface StudioComponents {
                     StudioPropertyGroups.ReadOnly.class,
                     StudioPropertyGroups.Required.class,
                     StudioPropertyGroups.TrimEnabled.class,
-                    StudioPropertyGroups.FieldThemeNames.class,
+                    StudioPropertyGroups.TextAreaThemeNames.class,
+                    StudioPropertyGroups.StringValue.class,
                     StudioPropertyGroups.ValueChangeMode.class,
                     StudioPropertyGroups.ValueChangeTimeout.class
             },
@@ -2806,6 +2816,7 @@ interface StudioComponents {
                     StudioPropertyGroups.Pattern.class,
                     StudioPropertyGroups.PropertyTypeParameterV.class,
                     StudioPropertyGroups.FieldThemeTitleAndValueChangeDefaultProperties.class,
+                    StudioPropertyGroups.StringValue.class,
                     StudioPropertyGroups.TrimEnabled.class
             },
             properties = {
@@ -2910,7 +2921,7 @@ interface StudioComponents {
             }),
             propertyGroups = {
                     StudioPropertyGroups.FieldDefaultProperties.class,
-                    StudioPropertyGroups.AllowedCharPattern.class,
+                    StudioPropertyGroups.AllowedCharPatternWithoutCategory.class,
                     StudioPropertyGroups.AutoOpen.class,
                     StudioPropertyGroups.ClearButtonVisible.class,
                     StudioPropertyGroups.ValidationStringMax.class,
@@ -3559,10 +3570,15 @@ interface StudioComponents {
                     StudioPropertyGroups.DefaultValue.class,
                     StudioPropertyGroups.HelperText.class,
                     StudioPropertyGroups.Label.class,
+                    StudioPropertyGroups.LabelPosition.class,
                     StudioPropertyGroups.LabelVisible.class,
                     StudioPropertyGroups.LabelWidth.class,
+                    StudioPropertyGroups.RequiredPropertyFilterOperation.class,
+                    StudioPropertyGroups.PropertyFilterOperationsList.class,
+                    StudioPropertyGroups.OperationEditable.class,
                     StudioPropertyGroups.OperationTextVisible.class,
                     StudioPropertyGroups.ParameterName.class,
+                    StudioPropertyGroups.RequiredPropertyTypeParameterV.class,
                     StudioPropertyGroups.ReadOnly.class,
                     StudioPropertyGroups.ThemeNames.class
             },
@@ -3653,8 +3669,10 @@ interface StudioComponents {
                     StudioPropertyGroups.HasInExpression.class,
                     StudioPropertyGroups.HelperText.class,
                     StudioPropertyGroups.Label.class,
+                    StudioPropertyGroups.LabelPosition.class,
                     StudioPropertyGroups.LabelVisible.class,
                     StudioPropertyGroups.LabelWidth.class,
+                    StudioPropertyGroups.RequiredParameterClassTypeParameterVWithGeneralCategory.class,
                     StudioPropertyGroups.ParameterName.class,
                     StudioPropertyGroups.ReadOnly.class,
                     StudioPropertyGroups.ThemeNames.class
@@ -3829,7 +3847,7 @@ interface StudioComponents {
                     }
             ),
             propertyGroups = {
-                    StudioPropertyGroups.Title.class
+                    StudioPropertyGroups.TitleWithGeneralCategory.class
             },
             properties = {
                     @StudioProperty(xmlAttribute = "focusComponent", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_REF),
@@ -4181,7 +4199,8 @@ interface StudioComponents {
                     StudioPropertyGroups.Label.class,
                     StudioPropertyGroups.Placeholder.class,
                     StudioPropertyGroups.ReadOnly.class,
-                    StudioPropertyGroups.FieldThemeTitleAndValueChangeDefaultProperties.class
+                    StudioPropertyGroups.FieldThemeTitleAndValueChangeDefaultProperties.class,
+                    StudioPropertyGroups.StringValue.class
             },
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,

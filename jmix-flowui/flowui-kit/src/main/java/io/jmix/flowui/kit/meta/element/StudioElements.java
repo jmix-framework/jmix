@@ -132,7 +132,8 @@ interface StudioElements {
             target = {"io.jmix.flowui.kit.component.dropdownbutton.ActionItem"},
             unlimitedCount = false,
             propertyGroups = {
-                    StudioActionPropertyGroups.RequiredIconTextActionDefaultPropertiesWithoutShortcutCombination.class
+                    StudioActionPropertyGroups.RequiredIconTextActionDefaultPropertiesWithoutShortcutCombination.class,
+                    StudioPropertyGroups.StringType.class
             },
             properties = {
                     @StudioProperty(xmlAttribute = "type", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING),
@@ -724,7 +725,8 @@ interface StudioElements {
             target = {"io.jmix.flowui.kit.component.usermenu.ActionUserMenuItem"},
             unlimitedCount = false,
             propertyGroups = {
-                    StudioActionPropertyGroups.RequiredIconTextActionDefaultPropertiesWithoutShortcutCombination.class
+                    StudioActionPropertyGroups.RequiredIconTextActionDefaultPropertiesWithoutShortcutCombination.class,
+                    StudioPropertyGroups.StringType.class
             },
             properties = {
                     @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID, required = true),
@@ -1008,15 +1010,19 @@ interface StudioElements {
             propertyGroups = {
                     StudioPropertyGroups.ClassNamesAndCss.class,
                     StudioPropertyGroups.Colspan.class,
-                    StudioPropertyGroups.DefaultValue.class,
+                    StudioPropertyGroups.DefaultValueWithoutCategory.class,
                     StudioPropertyGroups.EnabledWithTrueDefaultValue.class,
                     StudioPropertyGroups.RequiredAndRequiredMessageAndErrorMessage.class,
                     StudioPropertyGroups.HelperText.class,
                     StudioPropertyGroups.IdAndVisible.class,
                     StudioPropertyGroups.Label.class,
                     StudioPropertyGroups.LabelVisible.class,
+                    StudioPropertyGroups.RequiredPropertyFilterOperation.class,
+                    StudioPropertyGroups.PropertyFilterOperationsList.class,
+                    StudioPropertyGroups.OperationEditable.class,
                     StudioPropertyGroups.OperationTextVisible.class,
-                    StudioPropertyGroups.ParameterName.class,
+                    StudioPropertyGroups.ParameterNameWithoutCategory.class,
+                    StudioPropertyGroups.RequiredPropertyTypeParameterV.class,
                     StudioPropertyGroups.ReadOnly.class,
                     StudioPropertyGroups.TabIndex.class,
                     StudioPropertyGroups.FocusShortcut.class,
@@ -1080,7 +1086,7 @@ interface StudioElements {
             propertyGroups = {
                     StudioPropertyGroups.ClassNamesAndCss.class,
                     StudioPropertyGroups.Colspan.class,
-                    StudioPropertyGroups.DefaultValue.class,
+                    StudioPropertyGroups.DefaultValueWithoutCategory.class,
                     StudioPropertyGroups.EnabledWithTrueDefaultValue.class,
                     StudioPropertyGroups.RequiredAndRequiredMessageAndErrorMessage.class,
                     StudioPropertyGroups.HasInExpression.class,
@@ -1088,7 +1094,8 @@ interface StudioElements {
                     StudioPropertyGroups.IdAndVisible.class,
                     StudioPropertyGroups.Label.class,
                     StudioPropertyGroups.LabelVisible.class,
-                    StudioPropertyGroups.ParameterName.class,
+                    StudioPropertyGroups.RequiredParameterClassTypeParameterVWithoutCategory.class,
+                    StudioPropertyGroups.ParameterNameWithoutCategory.class,
                     StudioPropertyGroups.ReadOnly.class,
                     StudioPropertyGroups.TabIndex.class,
                     StudioPropertyGroups.FocusShortcut.class,
@@ -1778,6 +1785,7 @@ interface StudioElements {
             classFqn = "io.jmix.flowui.kit.stub.StudioFragmentPropertyElement",
             xmlElement = "property",
             icon = "io/jmix/flowui/kit/meta/icon/element/property.svg",
+            propertyGroups = StudioPropertyGroups.RequiredStringNameAndValueAndType.class,
             properties = {
                     @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.STRING, required = true),
                     @StudioProperty(xmlAttribute = "value", type = StudioPropertyType.STRING, required = true),
@@ -1792,6 +1800,7 @@ interface StudioElements {
             classFqn = "io.jmix.flowui.kit.stub.StudioGenericComponentPropertyElement",
             icon = "io/jmix/flowui/kit/meta/icon/element/property.svg",
             xmlElement = "property",
+            propertyGroups = StudioPropertyGroups.RequiredStringNameAndValueAndType.class,
             properties = {
                     @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.STRING, required = true),
                     @StudioProperty(xmlAttribute = "value", type = StudioPropertyType.STRING, required = true),

@@ -55,6 +55,11 @@ interface StudioFormatterElements {
             xmlElement = "date",
             icon = "io/jmix/flowui/kit/meta/icon/element/formatter.svg",
             documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/formatter.html#date-time-formatter",
+            propertyGroups = {
+                    StudioPropertyGroups.StringFormat.class,
+                    StudioPropertyGroups.DateFormatterType.class,
+                    StudioPropertyGroups.UseUserTimezone.class
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "format", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "type", type = StudioPropertyType.ENUMERATION,
@@ -71,6 +76,9 @@ interface StudioFormatterElements {
             xmlElement = "number",
             icon = "io/jmix/flowui/kit/meta/icon/element/formatter.svg",
             documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/formatter.html#number-formatter",
+            propertyGroups = {
+                    StudioPropertyGroups.StringFormat.class
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "format", type = StudioPropertyType.STRING)
             }

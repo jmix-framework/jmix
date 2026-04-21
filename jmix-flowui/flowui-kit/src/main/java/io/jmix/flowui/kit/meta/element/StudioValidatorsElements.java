@@ -71,7 +71,7 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.codeeditor.CodeEditor",
                     "io.jmix.flowui.component.twincolumn.TwinColumn"
             },
-            propertyGroups = StudioPropertyGroups.MessageAndInclusiveRequiredStringValue.class,
+            propertyGroups = StudioPropertyGroups.MessageAndInclusiveRequiredBigDecimalValue.class,
             properties = {
                     @StudioProperty(
                             xmlAttribute = "message",
@@ -112,7 +112,7 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.codeeditor.CodeEditor",
                     "io.jmix.flowui.component.twincolumn.TwinColumn"
             },
-            propertyGroups = StudioPropertyGroups.MessageAndInclusiveRequiredStringValue.class,
+            propertyGroups = StudioPropertyGroups.MessageAndInclusiveRequiredBigDecimalValue.class,
             properties = {
                     @StudioProperty(
                             xmlAttribute = "message",
@@ -197,7 +197,7 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.codeeditor.CodeEditor",
                     "io.jmix.flowui.component.twincolumn.TwinColumn"
             },
-            propertyGroups = StudioPropertyGroups.MessageAndInclusiveRequiredStringValue.class,
+            propertyGroups = StudioPropertyGroups.MessageAndInclusiveRequiredDoubleValue.class,
             properties = {
                     @StudioProperty(
                             xmlAttribute = "message",
@@ -238,7 +238,7 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.codeeditor.CodeEditor",
                     "io.jmix.flowui.component.twincolumn.TwinColumn"
             },
-            propertyGroups = StudioPropertyGroups.MessageAndInclusiveRequiredStringValue.class,
+            propertyGroups = StudioPropertyGroups.MessageAndInclusiveRequiredDoubleValue.class,
             properties = {
                     @StudioProperty(
                             xmlAttribute = "message",
@@ -383,7 +383,7 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.codeeditor.CodeEditor",
                     "io.jmix.flowui.component.twincolumn.TwinColumn"
             },
-            propertyGroups = StudioPropertyGroups.MessageAndRequiredStringValue.class,
+            propertyGroups = StudioPropertyGroups.MessageAndRequiredIntegerValue.class,
             properties = {
                     @StudioProperty(
                             xmlAttribute = "message",
@@ -419,7 +419,7 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.codeeditor.CodeEditor",
                     "io.jmix.flowui.component.twincolumn.TwinColumn"
             },
-            propertyGroups = StudioPropertyGroups.MessageAndRequiredStringValue.class,
+            propertyGroups = StudioPropertyGroups.MessageAndRequiredIntegerValue.class,
             properties = {
                     @StudioProperty(
                             xmlAttribute = "message",

@@ -706,7 +706,7 @@ interface StudioLayouts {
             propertyGroups = {
                     StudioPropertyGroups.SizedComponentDefaultProperties.class,
                     StudioPropertyGroups.AriaLabelAndLabelledBy.class,
-                    StudioPropertyGroups.Title.class
+                    StudioPropertyGroups.TitleWithGeneralCategory.class
             },
             properties = {
                     @StudioProperty(xmlAttribute = "alignSelf", category = StudioProperty.Category.POSITION,

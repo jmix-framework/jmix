@@ -19,7 +19,7 @@ package io.jmix.flowui.kit.meta.datacomponent;
 import io.jmix.flowui.kit.meta.StudioAPI;
 import io.jmix.flowui.kit.meta.StudioProperty;
 import io.jmix.flowui.kit.meta.StudioPropertyGroup;
-import io.jmix.flowui.kit.meta.StudioPropertyGroups;
+import io.jmix.flowui.kit.meta.StudioPropertyGroups.*;
 import io.jmix.flowui.kit.meta.StudioPropertyType;
 
 @StudioAPI
@@ -44,8 +44,7 @@ public class StudioDataComponentPropertyGroups {
     }
 
     @StudioPropertyGroup
-    public interface QueryLoaderDefaultProperties extends StudioPropertyGroups.FirstResult,
-            StudioPropertyGroups.MaxResults, StudioPropertyGroups.ReadOnlyWithoutCategory,
-            StudioPropertyGroups.Query {
+    public interface QueryLoaderDefaultProperties extends IdWithoutCategory,
+            FirstResult, MaxResults, ReadOnlyWithoutCategory, Query {
     }
 }

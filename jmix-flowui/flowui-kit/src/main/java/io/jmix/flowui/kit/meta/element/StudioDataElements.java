@@ -119,6 +119,7 @@ interface StudioDataElements {
                     "io.jmix.flowui.model.KeyValueCollectionContainer"},
             documentationLink = "%VERSION%/flow-ui/data/data-loaders.html",
             propertyGroups = {
+                    StudioPropertyGroups.IdWithoutCategory.class,
                     StudioPropertyGroups.Store.class,
                     StudioPropertyGroups.Query.class
             },
@@ -138,6 +139,7 @@ interface StudioDataElements {
             target = "io.jmix.flowui.model.KeyValueCollectionContainer",
             documentationLink = "%VERSION%/flow-ui/data/data-loaders.html",
             propertyGroups = {
+                    StudioPropertyGroups.IdWithoutCategory.class,
                     StudioPropertyGroups.FirstResult.class,
                     StudioPropertyGroups.MaxResults.class,
                     StudioPropertyGroups.Store.class,
@@ -201,6 +203,9 @@ interface StudioDataElements {
             classFqn = "io.jmix.flowui.facet.dataloadcoordinator.OnComponentValueChangedLoadTrigger",
             xmlElement = "onComponentValueChanged",
             icon = "io/jmix/flowui/kit/meta/icon/element/onComponentValueChangedLoadTrigger.svg",
+            propertyGroups = {
+                    StudioPropertyGroups.Param.class
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "param", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "likeClause", type = StudioPropertyType.ENUMERATION,
@@ -215,6 +220,9 @@ interface StudioDataElements {
             classFqn = "io.jmix.flowui.facet.dataloadcoordinator.OnContainerItemChangedLoadTrigger",
             xmlElement = "onContainerItemChanged",
             icon = "io/jmix/flowui/kit/meta/icon/element/onContainerItemChangedLoadTrigger.svg",
+            propertyGroups = {
+                    StudioPropertyGroups.Param.class
+            },
             properties = {
                     @StudioProperty(xmlAttribute = "param", type = StudioPropertyType.STRING),
                     @StudioProperty(xmlAttribute = "container", type = StudioPropertyType.COLLECTION_OR_INSTANCE_DATA_CONTAINER_REF, required = true)

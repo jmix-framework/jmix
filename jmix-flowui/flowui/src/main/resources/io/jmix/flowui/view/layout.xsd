@@ -1913,6 +1913,7 @@
             <xs:simpleType>
                 <xs:restriction base="xs:string">
                     <xs:enumeration value="vertical"/>
+                    <xs:enumeration value="horizontal"/>
                     <xs:enumeration value="helper-above-field"/>
                 </xs:restriction>
             </xs:simpleType>
@@ -1927,6 +1928,7 @@
             <xs:simpleType>
                 <xs:restriction base="xs:string">
                     <xs:enumeration value="vertical"/>
+                    <xs:enumeration value="horizontal"/>
                     <xs:enumeration value="helper-above-field"/>
                 </xs:restriction>
             </xs:simpleType>
@@ -1941,10 +1943,12 @@
             <xs:simpleType>
                 <xs:restriction base="xs:string">
                     <xs:enumeration value="small"/>
+                    <xs:enumeration value="align-left"/>
+                    <xs:enumeration value="align-start"/>
+                    <xs:enumeration value="align-end"/>
                     <xs:enumeration value="align-center"/>
                     <xs:enumeration value="align-right"/>
                     <xs:enumeration value="helper-above-field"/>
-                    <xs:enumeration value="always-float-label"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:union>
@@ -1979,10 +1983,12 @@
             <xs:simpleType>
                 <xs:restriction base="xs:string">
                     <xs:enumeration value="small"/>
+                    <xs:enumeration value="align-left"/>
                     <xs:enumeration value="align-center"/>
                     <xs:enumeration value="align-right"/>
+                    <xs:enumeration value="align-start"/>
+                    <xs:enumeration value="align-end"/>
                     <xs:enumeration value="helper-above-field"/>
-                    <xs:enumeration value="always-float-label"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:union>
@@ -2012,6 +2018,7 @@
                     <xs:enumeration value="filled"/>
                     <xs:enumeration value="reverse"/>
                     <xs:enumeration value="small"/>
+                    <xs:enumeration value="no-padding"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:union>
@@ -2043,10 +2050,11 @@
                 <xs:restriction base="xs:string">
                     <xs:enumeration value="small"/>
                     <xs:enumeration value="align-left"/>
+                    <xs:enumeration value="align-start"/>
                     <xs:enumeration value="align-center"/>
+                    <xs:enumeration value="align-end"/>
                     <xs:enumeration value="align-right"/>
                     <xs:enumeration value="helper-above-field"/>
-                    <xs:enumeration value="always-float-label"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:union>
@@ -2061,10 +2069,11 @@
                 <xs:restriction base="xs:string">
                     <xs:enumeration value="small"/>
                     <xs:enumeration value="align-left"/>
+                    <xs:enumeration value="align-start"/>
                     <xs:enumeration value="align-center"/>
+                    <xs:enumeration value="align-end"/>
                     <xs:enumeration value="align-right"/>
                     <xs:enumeration value="helper-above-field"/>
-                    <xs:enumeration value="always-float-label"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:union>
@@ -2079,10 +2088,11 @@
                 <xs:restriction base="xs:string">
                     <xs:enumeration value="small"/>
                     <xs:enumeration value="align-left"/>
+                    <xs:enumeration value="align-start"/>
                     <xs:enumeration value="align-center"/>
+                    <xs:enumeration value="align-end"/>
                     <xs:enumeration value="align-right"/>
                     <xs:enumeration value="helper-above-field"/>
-                    <xs:enumeration value="always-float-label"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:union>
@@ -2120,10 +2130,11 @@
                 <xs:restriction base="xs:string">
                     <xs:enumeration value="small"/>
                     <xs:enumeration value="align-left"/>
+                    <xs:enumeration value="align-start"/>
                     <xs:enumeration value="align-center"/>
+                    <xs:enumeration value="align-end"/>
                     <xs:enumeration value="align-right"/>
                     <xs:enumeration value="helper-above-field"/>
-                    <xs:enumeration value="always-float-label"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:union>
@@ -2138,7 +2149,9 @@
                 <xs:restriction base="xs:string">
                     <xs:enumeration value="small"/>
                     <xs:enumeration value="align-left"/>
+                    <xs:enumeration value="align-start"/>
                     <xs:enumeration value="align-center"/>
+                    <xs:enumeration value="align-end"/>
                     <xs:enumeration value="align-right"/>
                     <xs:enumeration value="helper-above-field"/>
                 </xs:restriction>
@@ -2237,6 +2250,8 @@
                     <xs:enumeration value="small"/>
                     <xs:enumeration value="minimal"/>
                     <xs:enumeration value="hide-scroll-buttons"/>
+                    <xs:enumeration value="show-scroll-buttons"/>
+                    <xs:enumeration value="filled"/>
                     <xs:enumeration value="equal-width-tabs"/>
                 </xs:restriction>
             </xs:simpleType>
@@ -2254,7 +2269,10 @@
                     <xs:enumeration value="small"/>
                     <xs:enumeration value="minimal"/>
                     <xs:enumeration value="hide-scroll-buttons"/>
+                    <xs:enumeration value="show-scroll-buttons"/>
+                    <xs:enumeration value="filled"/>
                     <xs:enumeration value="equal-width-tabs"/>
+                    <xs:enumeration value="no-border"/>
                     <xs:enumeration value="bordered"/>
                     <xs:enumeration value="no-padding"/>
                 </xs:restriction>
@@ -2279,8 +2297,6 @@
                     <xs:enumeration value="error"/>
                     <xs:enumeration value="contrast"/>
                     <xs:enumeration value="icon"/>
-                    <xs:enumeration value="contained"/>
-                    <xs:enumeration value="outlined"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:union>
@@ -2319,8 +2335,6 @@
                     <xs:enumeration value="error"/>
                     <xs:enumeration value="contrast"/>
                     <xs:enumeration value="icon"/>
-                    <xs:enumeration value="contained"/>
-                    <xs:enumeration value="outlined"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:union>
@@ -2334,10 +2348,12 @@
             <xs:simpleType>
                 <xs:restriction base="xs:string">
                     <xs:enumeration value="small"/>
+                    <xs:enumeration value="align-left"/>
+                    <xs:enumeration value="align-start"/>
+                    <xs:enumeration value="align-end"/>
                     <xs:enumeration value="align-center"/>
                     <xs:enumeration value="align-right"/>
                     <xs:enumeration value="helper-above-field"/>
-                    <xs:enumeration value="always-float-label"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:union>

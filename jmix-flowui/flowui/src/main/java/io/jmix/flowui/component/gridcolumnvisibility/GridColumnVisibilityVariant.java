@@ -17,20 +17,26 @@
 package io.jmix.flowui.component.gridcolumnvisibility;
 
 import com.vaadin.flow.component.shared.ThemeVariant;
+import io.jmix.flowui.theme.StyleUtility;
 
 public enum GridColumnVisibilityVariant implements ThemeVariant {
+
+    LUMO_TERTIARY_INLINE("tertiary-inline"),
 
     SMALL("small"),
     LARGE("large"),
     TERTIARY("tertiary"),
-    TERTIARY_INLINE("tertiary-inline"),
     PRIMARY("primary"),
     ERROR("error"),
     SUCCESS("success"),
     CONTRAST("contrast"),
     ICON("icon"),
-    CONTAINED("contained"),
-    OUTLINED("outlined");
+
+    /**
+     * @deprecated Use {@link #LUMO_TERTIARY_INLINE} instead or {@link StyleUtility.Button#LINK_BUTTON}.
+     */
+    @Deprecated(since = "3.0", forRemoval = true)
+    TERTIARY_INLINE("tertiary-inline");
 
     private final String variant;
 

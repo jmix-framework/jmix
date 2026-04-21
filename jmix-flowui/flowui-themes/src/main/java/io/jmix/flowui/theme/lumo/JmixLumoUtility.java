@@ -24,7 +24,7 @@ import io.jmix.flowui.theme.ThemeUtilityClasses;
  *
  * @deprecated Use {@link StyleUtility} instead.
  */
-@Deprecated
+@Deprecated(since = "3.0", forRemoval = true)
 @ThemeUtilityClasses(name = "Jmix Lumo")
 public final class JmixLumoUtility {
 
@@ -39,13 +39,13 @@ public final class JmixLumoUtility {
         /**
          * @deprecated Use {@link StyleUtility.Container#BUTTONS_PANEL} instead.
          */
-        @Deprecated
+        @Deprecated(since = "3.0", forRemoval = true)
         public static final String BUTTONS_PANEL = "buttons-panel";
 
         /**
          * @deprecated Use {@link StyleUtility.Container#BORDERED_PANEL} instead.
          */
-        @Deprecated
+        @Deprecated(since = "3.0", forRemoval = true)
         public static final String BORDERED_PANEL = "bordered-panel";
 
         private Container() {

@@ -39,16 +39,15 @@ import io.jmix.flowui.xml.layout.loader.LayoutLoader;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 import org.dom4j.Element;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
-import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.net.URL;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Consumer;
 
 import static io.jmix.flowui.monitoring.UiMonitoring.startTimerSample;
 import static io.jmix.flowui.monitoring.UiMonitoring.stopViewTimerSample;
@@ -156,9 +155,8 @@ public class ViewSupport {
     }
 
     public void registerBackwardNavigation(UI ui, Class<? extends View> viewClass, URL url) {
-        retrieveExtendedClientDetails(ui, details ->
-                registerBackwardNavigation(ui.getSession(), details.getWindowName(),
-                        viewClass, url));
+        ExtendedClientDetails details = getExtendedClientDetails(ui);
+        registerBackwardNavigation(ui.getSession(), details.getWindowName(), viewClass, url);
     }
 
     protected void registerBackwardNavigation(VaadinSession session, String windowName,
@@ -190,8 +188,8 @@ public class ViewSupport {
             return;
         }
 
-        retrieveExtendedClientDetails(ui, details ->
-                unregisterBackwardNavigation(ui.getSession(), details.getWindowName()));
+        ExtendedClientDetails details = getExtendedClientDetails(ui);
+        unregisterBackwardNavigation(ui.getSession(), details.getWindowName());
     }
 
     protected void unregisterBackwardNavigation(VaadinSession session, String windowName) {
@@ -366,8 +364,8 @@ public class ViewSupport {
     }
 
     protected void doBackwardNavigation(UI ui, View<?> view, QueryParameters returnParams) {
-        retrieveExtendedClientDetails(ui, details ->
-                doBackwardNavigation(ui, details.getWindowName(), view, returnParams));
+        ExtendedClientDetails details = getExtendedClientDetails(ui);
+        doBackwardNavigation(ui, details.getWindowName(), view, returnParams);
     }
 
     protected void doBackwardNavigation(UI ui, String windowName, View<?> view, QueryParameters returnParams) {
@@ -408,9 +406,8 @@ public class ViewSupport {
                 .findFirst();
     }
 
-    protected void retrieveExtendedClientDetails(UI ui,
-                                                 Consumer<ExtendedClientDetails> details) {
-        ui.getPage().retrieveExtendedClientDetails(details::accept);
+    protected ExtendedClientDetails getExtendedClientDetails(UI ui) {
+        return ui.getPage().getExtendedClientDetails();
     }
 
     protected String getInferredViewId(View<?> view) {

@@ -17,7 +17,6 @@
 package io.jmix.flowui.sys;
 
 import com.google.common.base.Strings;
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.internal.LocaleUtil;
 import com.vaadin.flow.router.InternalServerError;
 import com.vaadin.flow.router.RouteConfiguration;
@@ -38,12 +37,12 @@ import io.jmix.flowui.view.ViewRegistry;
 import org.jsoup.nodes.DataNode;
 import org.jsoup.nodes.Element;
 import org.jsoup.parser.Tag;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
@@ -110,10 +109,7 @@ public class JmixServiceInitListener implements VaadinServiceInitListener, Appli
     }
 
     protected void onUIInitEvent(UIInitEvent uiInitEvent) {
-        UI ui = uiInitEvent.getUI();
-        // retrieve ExtendedClientDetails to be cached
-        ui.getPage().retrieveExtendedClientDetails(extendedClientDetails -> {
-        });
+        // hook to implement
     }
 
     protected void onSessionDestroyEvent(SessionDestroyEvent event) {

@@ -523,7 +523,7 @@ public class JmixSidePanelLayout extends Component implements HasSize, HasStyle 
         // When fullscreen enabled and the side panel is opened, removed components are not deleted from
         // the client side. We need to explicitly send existing children to the client to delete the
         // difference.
-        getElement().callJsFunction("_updateControllers", existingChildren);
+        getElement().callJsFunction("_updateControllers", (Object[]) existingChildren);
     }
 
     protected void updateContentInert(boolean modal) {

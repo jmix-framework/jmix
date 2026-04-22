@@ -31,7 +31,7 @@ def xmlNs = getXmlNamespace()
 def isGroupDataGridTable = tableType.getXmlName().equals("groupg:groupDataGrid")
 
 %>
-<hbox id="buttonsPanel" classNames="buttons-panel">
+<hbox id="buttonsPanel" wrap="true" width="100%">
 <startSlot>
 <%tableActions.each { actionId ->%>
 <button id="${actionId}Button" action="${tableId}.${actionId}Action"/>

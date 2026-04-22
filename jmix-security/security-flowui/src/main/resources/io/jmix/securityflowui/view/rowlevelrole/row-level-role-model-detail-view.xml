@@ -48,7 +48,7 @@
                 <tab id="rowLevelPoliciesTab"
                      label="msg://io.jmix.security.model/RowLevelRoleModel.rowLevelPolicies">
                     <vbox id="rowLevelPoliciesWrapper" padding="false" height="100%">
-                        <hbox id="rowLevelPoliciesButtonsPanel" classNames="buttons-panel">
+                        <hbox id="rowLevelPoliciesButtonsPanel" wrap="true" width="100%">
                             <button action="rowLevelPoliciesTable.create"/>
                             <button action="rowLevelPoliciesTable.edit"/>
                             <button action="rowLevelPoliciesTable.read"/>
@@ -90,7 +90,7 @@
                 <tab id="childRolesTab"
                      label="msg://io.jmix.security.model/RowLevelRoleModel.childRoles">
                     <vbox id="childRolesWrapper" padding="false" height="100%">
-                        <hbox id="childRolesButtonsPanel" classNames="buttons-panel">
+                        <hbox id="childRolesButtonsPanel" wrap="true" width="100%">
                             <button action="childRolesTable.add"/>
                             <button action="childRolesTable.remove"/>
                         </hbox>

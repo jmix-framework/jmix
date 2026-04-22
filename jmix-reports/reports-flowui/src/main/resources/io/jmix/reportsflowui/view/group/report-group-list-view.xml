@@ -54,11 +54,15 @@
             </formLayout>
         </details>
 
-        <hbox id="buttonsPanel" classNames="buttons-panel">
-            <button action="reportGroupsDataGrid.create"/>
-            <button action="reportGroupsDataGrid.edit"/>
-            <button action="reportGroupsDataGrid.remove"/>
-            <simplePagination id="pagination" dataLoader="groupsDl"/>
+        <hbox id="buttonsPanel" wrap="true" width="100%">
+            <startSlot>
+                <button action="reportGroupsDataGrid.create"/>
+                <button action="reportGroupsDataGrid.edit"/>
+                <button action="reportGroupsDataGrid.remove"/>
+            </startSlot>
+            <endSlot>
+                <simplePagination id="pagination" dataLoader="groupsDl"/>
+            </endSlot>
         </hbox>
         <dataGrid id="reportGroupsDataGrid" dataContainer="groupsDc"
                   columnReorderingAllowed="true"

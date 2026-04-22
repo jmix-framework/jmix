@@ -79,7 +79,7 @@
             <tab id="bandsTab" label="msg://mainTabSheet.bandsTab.label">
                 <flexLayout id="bandsTabContent" width="100%" height="100%" classNames="flex-layout" flexWrap="WRAP">
                     <vbox id="bandsLayout" classNames="bands-layout" padding="false">
-                        <hbox id="bandsButtonsLayout" classNames="buttons-panel">
+                        <hbox id="bandsButtonsLayout" wrap="true" width="100%">
                             <button id="createBandBtn" action="bandsTreeDataGrid.create"/>
                             <button id="removeBandBtn" action="bandsTreeDataGrid.remove"/>
                             <button id="upBandBtn" action="bandsTreeDataGrid.upBand"/>

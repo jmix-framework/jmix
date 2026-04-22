@@ -53,21 +53,25 @@
                        dataLoader="messageTemplatesDl">
             <properties include=".*"/>
         </genericFilter>
-        <hbox id="buttonsPanel" classNames="buttons-panel">
-            <button id="createButton" action="messageTemplatesDataGrid.create"/>
-            <button id="editButton" action="messageTemplatesDataGrid.edit"/>
-            <button id="removeButton" action="messageTemplatesDataGrid.remove"/>
-            <button id="copyButton" action="messageTemplatesDataGrid.copy"/>
-            <button id="previewButton" action="messageTemplatesDataGrid.preview"/>
-            <dropdownButton id="exportButton" text="msg://exportButton.text" icon="DOWNLOAD">
-                <items>
-                    <actionItem id="exportJsonAction" ref="messageTemplatesDataGrid.exportJson"/>
-                    <actionItem id="exportZipAction" ref="messageTemplatesDataGrid.exportZip"/>
-                </items>
-            </dropdownButton>
-            <fileUploadField id="importField" uploadIcon="UPLOAD" acceptedFileTypes=".json,.zip"
-                             uploadText="msg://importField.uploadText"/>
-            <simplePagination id="pagination" dataLoader="messageTemplatesDl"/>
+        <hbox id="buttonsPanel" wrap="true" width="100%">
+            <startSlot>
+                <button id="createButton" action="messageTemplatesDataGrid.create"/>
+                <button id="editButton" action="messageTemplatesDataGrid.edit"/>
+                <button id="removeButton" action="messageTemplatesDataGrid.remove"/>
+                <button id="copyButton" action="messageTemplatesDataGrid.copy"/>
+                <button id="previewButton" action="messageTemplatesDataGrid.preview"/>
+                <dropdownButton id="exportButton" text="msg://exportButton.text" icon="DOWNLOAD">
+                    <items>
+                        <actionItem id="exportJsonAction" ref="messageTemplatesDataGrid.exportJson"/>
+                        <actionItem id="exportZipAction" ref="messageTemplatesDataGrid.exportZip"/>
+                    </items>
+                </dropdownButton>
+                <fileUploadField id="importField" uploadIcon="UPLOAD" acceptedFileTypes=".json,.zip"
+                                 uploadText="msg://importField.uploadText"/>
+            </startSlot>
+            <endSlot>
+                <simplePagination id="pagination" dataLoader="messageTemplatesDl"/>
+            </endSlot>
         </hbox>
         <sidePanelLayout id="sidePanelLayout" width="100%" height="100%" minHeight="20em"
                          modal="false" sidePanelOverlay="false" sidePanelHorizontalSize="43em">

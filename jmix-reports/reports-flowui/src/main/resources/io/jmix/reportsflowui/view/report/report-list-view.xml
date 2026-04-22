@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <view xmlns="http://jmix.io/schema/flowui/view"
-      xmlns:c="http://jmix.io/schema/flowui/jpql-condition"
       title="msg://reportListView.title"
       focusComponent="reportsDataGrid">
     <data>
@@ -45,21 +44,26 @@
                         label="msg://filter.outputType" emptySelectionAllowed="true"/>
             </formLayout>
         </details>
-        <hbox id="buttonsPanel" classNames="buttons-panel">
-            <dropdownButton id="dropdownCreateBtn" icon="PLUS" text="msg://dropdownCreateBtn.text" themeNames="primary">
-                <items>
-                    <actionItem id="create" ref="reportsDataGrid.create"/>
-                    <actionItem id="wizard" ref="reportsDataGrid.wizard"/>
-                </items>
-            </dropdownButton>
-            <button id="editBtn" action="reportsDataGrid.edit"/>
-            <button id="removeBtn" action="reportsDataGrid.remove"/>
-            <button id="copyBtn" action="reportsDataGrid.copy"/>
-            <button id="importBtn" action="reportsDataGrid.importAction"/>
-            <button id="exportBtn" action="reportsDataGrid.export"/>
-            <button id="runReportBtn" action="reportsDataGrid.runReport"/>
-            <button id="executionsBtn" action="reportsDataGrid.executions"/>
-            <simplePagination id="pagination" dataLoader="reportsDl"/>
+        <hbox id="buttonsPanel" wrap="true" width="100%">
+            <startSlot>
+                <dropdownButton id="dropdownCreateBtn" icon="PLUS" text="msg://dropdownCreateBtn.text"
+                                themeNames="primary">
+                    <items>
+                        <actionItem id="create" ref="reportsDataGrid.create"/>
+                        <actionItem id="wizard" ref="reportsDataGrid.wizard"/>
+                    </items>
+                </dropdownButton>
+                <button id="editBtn" action="reportsDataGrid.edit"/>
+                <button id="removeBtn" action="reportsDataGrid.remove"/>
+                <button id="copyBtn" action="reportsDataGrid.copy"/>
+                <button id="importBtn" action="reportsDataGrid.importAction"/>
+                <button id="exportBtn" action="reportsDataGrid.export"/>
+                <button id="runReportBtn" action="reportsDataGrid.runReport"/>
+                <button id="executionsBtn" action="reportsDataGrid.executions"/>
+            </startSlot>
+            <endSlot>
+                <simplePagination id="pagination" dataLoader="reportsDl"/>
+            </endSlot>
         </hbox>
         <dataGrid id="reportsDataGrid"
                   width="100%"
@@ -73,7 +77,8 @@
                 <action id="remove" type="list_remove"/>
                 <action id="copy" type="list_itemTracking" icon="COPY" text="msg://action.copy.text"/>
                 <action id="importAction" icon="UPLOAD" description="msg://action.import.description"/>
-                <action id="export" type="list_itemTracking" icon="DOWNLOAD" description="msg://action.export.description"/>
+                <action id="export" type="list_itemTracking" icon="DOWNLOAD"
+                        description="msg://action.export.description"/>
                 <action id="runReport" type="list_itemTracking" icon="ANGLE_DOUBLE_RIGHT"
                         text="msg://action.runReport.text"/>
                 <action id="executions" type="list_itemTracking" icon="FILE"

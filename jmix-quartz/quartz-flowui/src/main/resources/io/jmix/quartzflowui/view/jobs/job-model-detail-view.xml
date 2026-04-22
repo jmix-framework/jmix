@@ -30,7 +30,7 @@
                 <vbox id="triggersTabContent"
                       padding="false"
                       width="100%">
-                    <hbox classNames="buttons-panel">
+                    <hbox wrap="true" width="100%">
                         <button action="triggerModelTable.create"/>
                         <button action="triggerModelTable.edit"/>
                         <button action="triggerModelTable.read"/>
@@ -63,7 +63,7 @@
                 <vbox id="jobsTabContent"
                       padding="false"
                       width="100%">
-                    <hbox classNames="buttons-panel">
+                    <hbox wrap="true" width="100%">
                         <button id="addDataParamButton" themeNames="primary"
                                 action="jobDataParamsTable.addNewDataParam"/>
                         <button action="jobDataParamsTable.remove"/>

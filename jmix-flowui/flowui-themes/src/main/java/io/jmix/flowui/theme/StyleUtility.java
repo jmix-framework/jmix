@@ -39,8 +39,6 @@ public final class StyleUtility {
      */
     public static final class Container {
 
-        public static final String BUTTONS_PANEL = "buttons-panel";
-
         public static final String BORDERED_PANEL = "bordered-panel";
         public static final String FOOTER_PANEL = "footer-panel";
 

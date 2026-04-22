@@ -49,7 +49,7 @@
             </vbox>
             <vbox classNames="bordered-panel">
                 <h4 id="conditionsTitle" text="msg://groupFilterConditionDetailView.conditionsTitle"/>
-                <hbox id="buttonsPanel" classNames="buttons-panel">
+                <hbox id="buttonsPanel" wrap="true" width="100%">
                     <button id="addCondition" action="conditionsTreeDataGrid.addCondition"/>
                     <button id="editBtn" action="conditionsTreeDataGrid.edit"/>
                     <button id="removeBtn" action="conditionsTreeDataGrid.remove"/>

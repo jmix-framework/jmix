@@ -24,7 +24,7 @@
     <layout alignItems="STRETCH"
             expand="contentBox"
             classNames="data-model-list-view">
-        <hbox id="buttonsPanel" classNames="buttons-panel">
+        <hbox id="buttonsPanel" wrap="true" width="100%">
             <textField id="entityFilter" datatype="string"
                        width="100%" maxWidth="35em"
                        placeholder="msg://entityModelListView.entityFilter.placeholder.text"

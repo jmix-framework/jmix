@@ -74,7 +74,7 @@
                         <vbox id="grapesJsEditorLayout" expand="grapesJsEditor"
                               width="100%" height="100%"
                               padding="false">
-                            <hbox id="htmlTemplateControlsPanel" classNames="buttons-panel">
+                            <hbox id="htmlTemplateControlsPanel" wrap="true" width="100%">
                                 <fileUploadField id="importTemplateField" uploadIcon="UPLOAD"
                                                  acceptedFileTypes=".html"/>
                                 <button id="viewBtn" icon="DOWNLOAD" title="msg://viewBtn.title"/>

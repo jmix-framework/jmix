@@ -50,7 +50,7 @@
                 <tab id="resourcePoliciesTab"
                      label="msg://io.jmix.security.model/ResourceRoleModel.resourcePolicies">
                     <vbox id="resourcePoliciesWrapper" padding="false" height="100%">
-                        <hbox id="resourcePoliciesButtonsPanel" classNames="buttons-panel">
+                        <hbox id="resourcePoliciesButtonsPanel" wrap="true" width="100%">
                             <dropdownButton id="createDropdownButton" text="msg:///actions.Create" themeNames="primary"
                                             icon="PLUS">
                                 <items>
@@ -97,7 +97,7 @@
                 <tab id="childRolesTab"
                      label="msg://io.jmix.security.model/ResourceRoleModel.childRoles">
                     <vbox id="childRolesWrapper" padding="false" height="100%">
-                        <hbox id="childRolesButtonsPanel" classNames="buttons-panel">
+                        <hbox id="childRolesButtonsPanel" wrap="true" width="100%">
                             <button action="childRolesTable.add"/>
                             <button action="childRolesTable.remove"/>
                         </hbox>

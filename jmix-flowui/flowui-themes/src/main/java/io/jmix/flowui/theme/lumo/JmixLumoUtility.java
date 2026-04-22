@@ -37,7 +37,7 @@ public final class JmixLumoUtility {
     public static final class Container {
 
         /**
-         * @deprecated Use {@link StyleUtility.Container#BUTTONS_PANEL} instead.
+         * @deprecated no direct replacement. Use hbox's slots and wrap attribute instead.
          */
         @Deprecated(since = "3.0", forRemoval = true)
         public static final String BUTTONS_PANEL = "buttons-panel";

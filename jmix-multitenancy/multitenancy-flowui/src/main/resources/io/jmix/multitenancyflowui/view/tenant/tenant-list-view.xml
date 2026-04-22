@@ -43,11 +43,15 @@
         </urlQueryParameters>
     </facets>
     <layout expand="tenantsTable">
-        <hbox id="buttonsPanel" classNames="buttons-panel">
-            <button id="createBtn" action="tenantsTable.create"/>
-            <button id="editBtn" action="tenantsTable.edit"/>
-            <button id="removeBtn" action="tenantsTable.remove"/>
-            <simplePagination id="pagination" dataLoader="tenantsDl" itemsPerPageUnlimitedItemVisible="false"/>
+        <hbox id="buttonsPanel" wrap="true" width="100%">
+            <startSlot>
+                <button id="createBtn" action="tenantsTable.create"/>
+                <button id="editBtn" action="tenantsTable.edit"/>
+                <button id="removeBtn" action="tenantsTable.remove"/>
+            </startSlot>
+            <endSlot>
+                <simplePagination id="pagination" dataLoader="tenantsDl" itemsPerPageUnlimitedItemVisible="false"/>
+            </endSlot>
         </hbox>
         <dataGrid id="tenantsTable"
                   width="100%"

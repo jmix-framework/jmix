@@ -130,10 +130,14 @@
                                 </div>
                             </formLayout>
 
-                            <hbox id="buttonsPanel" classNames="buttons-panel">
-                                <button id="searchBtn" icon="SEARCH" themeNames="primary" text="msg://search"/>
-                                <button id="clearEntityLogTableBtn" icon="ERASER" text="msg://clear"/>
-                                <simplePagination id="paginationEntityLog" dataLoader="entityLogDl"/>
+                            <hbox id="buttonsPanel" wrap="true" width="100%">
+                                <startSlot>
+                                    <button id="searchBtn" icon="SEARCH" themeNames="primary" text="msg://search"/>
+                                    <button id="clearEntityLogTableBtn" icon="ERASER" text="msg://clear"/>
+                                </startSlot>
+                                <endSlot>
+                                    <simplePagination id="paginationEntityLog" dataLoader="entityLogDl"/>
+                                </endSlot>
                             </hbox>
                         </vbox>
                     </details>
@@ -171,21 +175,25 @@
                 <hbox width="100%" height="100%" classNames="setup-logged-entity-wrapper">
                     <vbox id="loggedEntityTableBox" width="100%"
                           expand="loggedEntityTable" padding="false">
-                        <hbox id="loggedEntityButtonPanel" classNames="buttons-panel">
-                            <button id="createBtn" action="loggedEntityTable.create"/>
-                            <button id="editBtn" action="loggedEntityTable.edit"/>
-                            <button id="removeBtn" action="loggedEntityTable.remove"/>
-                            <dropdownButton id="exportBtn" text="msg://exportMenu.text" icon="DOWNLOAD">
-                                <items>
-                                    <actionItem id="exportJSONItem" ref="loggedEntityTable.exportJSON"/>
-                                    <actionItem id="exportZIPItem" ref="loggedEntityTable.exportZIP"/>
-                                </items>
-                            </dropdownButton>
-                            <fileUploadField id="importField"
-                                             uploadIcon="UPLOAD"
-                                             uploadText="msg://importMenu.text"
-                                             acceptedFileTypes=".json,.zip"/>
-                            <simplePagination id="paginationLoggedEntity" dataLoader="loggedEntityDl"/>
+                        <hbox id="loggedEntityButtonPanel" wrap="true" width="100%">
+                            <startSlot>
+                                <button id="createBtn" action="loggedEntityTable.create"/>
+                                <button id="editBtn" action="loggedEntityTable.edit"/>
+                                <button id="removeBtn" action="loggedEntityTable.remove"/>
+                                <dropdownButton id="exportBtn" text="msg://exportMenu.text" icon="DOWNLOAD">
+                                    <items>
+                                        <actionItem id="exportJSONItem" ref="loggedEntityTable.exportJSON"/>
+                                        <actionItem id="exportZIPItem" ref="loggedEntityTable.exportZIP"/>
+                                    </items>
+                                </dropdownButton>
+                                <fileUploadField id="importField"
+                                                 uploadIcon="UPLOAD"
+                                                 uploadText="msg://importMenu.text"
+                                                 acceptedFileTypes=".json,.zip"/>
+                            </startSlot>
+                            <endSlot>
+                                <simplePagination id="paginationLoggedEntity" dataLoader="loggedEntityDl"/>
+                            </endSlot>
                         </hbox>
                         <dataGrid id="loggedEntityTable" minHeight="20em" dataContainer="loggedEntityDc"
                                   columnReorderingAllowed="true">

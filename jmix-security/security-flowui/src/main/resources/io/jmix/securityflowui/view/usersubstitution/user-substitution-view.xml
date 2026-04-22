@@ -45,11 +45,15 @@
     <layout>
         <genericFilter id="genericFilter"
                        dataLoader="userSubstitutionsDl"/>
-        <hbox id="buttonsPanel" classNames="buttons-panel">
-            <button id="createButton" action="substitutionDataGrid.create"/>
-            <button id="editButton" action="substitutionDataGrid.edit"/>
-            <button id="removeButton" action="substitutionDataGrid.remove"/>
-            <simplePagination id="pagination" dataLoader="userSubstitutionsDl"/>
+        <hbox id="buttonsPanel" wrap="true" width="100%">
+            <startSlot>
+                <button id="createButton" action="substitutionDataGrid.create"/>
+                <button id="editButton" action="substitutionDataGrid.edit"/>
+                <button id="removeButton" action="substitutionDataGrid.remove"/>
+            </startSlot>
+            <endSlot>
+                <simplePagination id="pagination" dataLoader="userSubstitutionsDl"/>
+            </endSlot>
         </hbox>
         <dataGrid id="substitutionDataGrid" width="100%" height="100%"
                   columnReorderingAllowed="true"

@@ -55,7 +55,7 @@
             </tab>
             <tab id="localizationTab" label="msg://mainTabSheet.localizationTab.label">
                 <vbox padding="false" height="100%">
-                    <hbox classNames="buttons-panel">
+                    <hbox wrap="true" width="100%">
                         <button id="createBtn" action="localizationDataGrid.create"/>
                         <button id="editBtn" action="localizationDataGrid.edit"/>
                         <button id="removeBtn" action="localizationDataGrid.remove"/>

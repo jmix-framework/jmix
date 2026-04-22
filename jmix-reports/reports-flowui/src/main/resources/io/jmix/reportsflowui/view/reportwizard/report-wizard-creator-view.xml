@@ -56,7 +56,7 @@
                 </formLayout>
             </vbox>
             <vbox id="regionsVBox" padding="false">
-                <hbox width="100%" classNames="buttons-panel">
+                <hbox wrap="true" width="100%">
                     <hbox id="buttonsBox">
                         <button id="addRegionDisabledBtn" text="msg://addRegion" enabled="false"/>
                         <button id="addSimpleRegionBtn"
@@ -131,7 +131,7 @@
                             classNames="link-button"
                             icon="QUESTION_CIRCLE"/>
                 </flexLayout>
-                <hbox classNames="buttons-panel">
+                <hbox wrap="true" width="100%">
                     <button id="createParameterBtn" action="reportParameterDataGrid.create"/>
                     <button id="generateParameters" action="reportParameterDataGrid.generate"/>
                     <button id="editParameterBtn" action="reportParameterDataGrid.edit"/>

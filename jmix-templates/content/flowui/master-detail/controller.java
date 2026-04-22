@@ -126,7 +126,7 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
     @Subscribe
     public void onInit(final InitEvent event) {
         ${tableId}.getActions().forEach(action -> {
-            if (action instanceof SecuredBaseAction secured) {
+            if (action instanceof SecuredBaseAction<?> secured) {
                 secured.addEnabledRule(() -> listLayout.isEnabled());
             }
         });

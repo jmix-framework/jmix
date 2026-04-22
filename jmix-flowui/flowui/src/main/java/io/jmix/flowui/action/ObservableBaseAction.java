@@ -22,16 +22,12 @@ import com.vaadin.flow.di.Instantiator;
 import io.jmix.core.annotation.Internal;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
-import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.action.BaseAction;
-import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.observation.UiObservationSupport;
 import io.micrometer.observation.Observation;
-import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Optional;
-import java.util.function.Consumer;
 
 
 /**
@@ -39,7 +35,7 @@ import java.util.function.Consumer;
  *
  * @see UiObservationSupport
  */
-public class ObservableBaseAction<A extends ObservableBaseAction<A>> extends BaseAction {
+public class ObservableBaseAction<A extends ObservableBaseAction<A>> extends BaseAction<A> {
 
     @Autowired
     protected UiObservationSupport uiObservationSupport;
@@ -57,54 +53,6 @@ public class ObservableBaseAction<A extends ObservableBaseAction<A>> extends Bas
                     .orElse(Observation.NOOP)
                     .observe(() -> getEventBus().fireEvent(event));
         }
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public A withText(@Nullable String text) {
-        return (A) super.withText(text);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public A withEnabled(boolean enabled) {
-        return (A) super.withEnabled(enabled);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public A withVisible(boolean visible) {
-        return (A) super.withVisible(visible);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public A withIcon(@Nullable Component icon) {
-        return (A) super.withIcon(icon);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public A withDescription(@Nullable String description) {
-        return (A) super.withDescription(description);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public A withVariant(ActionVariant variant) {
-        return (A) super.withVariant(variant);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public A withShortcutCombination(@Nullable KeyCombination shortcutCombination) {
-        return (A) super.withShortcutCombination(shortcutCombination);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public A withHandler(@Nullable Consumer<ActionPerformedEvent> handler) {
-        return (A) super.withHandler(handler);
     }
 
     @Internal

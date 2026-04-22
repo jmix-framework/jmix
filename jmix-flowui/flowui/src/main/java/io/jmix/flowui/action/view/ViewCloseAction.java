@@ -29,7 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.jspecify.annotations.Nullable;
 
 @ActionType(ViewCloseAction.ID)
-public class ViewCloseAction extends OperationResultViewAction<ViewCloseAction, View> {
+public class ViewCloseAction extends OperationResultViewAction<ViewCloseAction, View<?>> {
 
     public static final String ID = "view_close";
 

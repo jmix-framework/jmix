@@ -17,7 +17,6 @@
 package io.jmix.flowui.kit.action;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.component.KeyCombination;
 import org.jspecify.annotations.Nullable;
@@ -27,7 +26,7 @@ import java.util.function.Consumer;
 /**
  * Base implementation of {@link Action}.
  */
-public class BaseAction extends AbstractAction {
+public class BaseAction<A extends BaseAction<A>> extends AbstractAction {
 
     protected boolean enabledExplicitly = true;
     protected boolean visibleExplicitly = true;
@@ -87,9 +86,9 @@ public class BaseAction extends AbstractAction {
      * @param text text to set or {@code null} to remove
      * @return this object
      */
-    public BaseAction withText(@Nullable String text) {
+    public A withText(@Nullable String text) {
         setText(text);
-        return this;
+        return self();
     }
 
     /**
@@ -99,9 +98,9 @@ public class BaseAction extends AbstractAction {
      * @param enabled whether the action is currently enabled
      * @return this object
      */
-    public BaseAction withEnabled(boolean enabled) {
+    public A withEnabled(boolean enabled) {
         setEnabled(enabled);
-        return this;
+        return self();
     }
 
     /**
@@ -111,9 +110,9 @@ public class BaseAction extends AbstractAction {
      * @param visible whether the action is currently visible
      * @return this object
      */
-    public BaseAction withVisible(boolean visible) {
+    public A withVisible(boolean visible) {
         setVisible(visible);
-        return this;
+        return self();
     }
 
     /**
@@ -123,9 +122,9 @@ public class BaseAction extends AbstractAction {
      * @param icon icon to set or {@code null} to remove
      * @return this object
      */
-    public BaseAction withIcon(@Nullable Component icon) {
+    public A withIcon(@Nullable Component icon) {
         setIcon(icon);
-        return this;
+        return self();
     }
 
     /**
@@ -135,9 +134,9 @@ public class BaseAction extends AbstractAction {
      * @param description description to set or {@code null} to remove
      * @return this object
      */
-    public BaseAction withDescription(@Nullable String description) {
+    public A withDescription(@Nullable String description) {
         setDescription(description);
-        return this;
+        return self();
     }
 
     /**
@@ -147,9 +146,9 @@ public class BaseAction extends AbstractAction {
      * @param variant variant to set
      * @return this object
      */
-    public BaseAction withVariant(ActionVariant variant) {
+    public A withVariant(ActionVariant variant) {
         setVariant(variant);
-        return this;
+        return self();
     }
 
     /**
@@ -159,9 +158,9 @@ public class BaseAction extends AbstractAction {
      * @param shortcutCombination key combination to set or {@code null} to remove
      * @return this object
      */
-    public BaseAction withShortcutCombination(@Nullable KeyCombination shortcutCombination) {
+    public A withShortcutCombination(@Nullable KeyCombination shortcutCombination) {
         setShortcutCombination(shortcutCombination);
-        return this;
+        return self();
     }
 
     /**
@@ -170,7 +169,7 @@ public class BaseAction extends AbstractAction {
      * @param handler listener to add or {@code null} to remove all
      * @return this object
      */
-    public BaseAction withHandler(@Nullable Consumer<ActionPerformedEvent> handler) {
+    public A withHandler(@Nullable Consumer<ActionPerformedEvent> handler) {
         if (handler == null) {
             if (getEventBus().hasListener(ActionPerformedEvent.class)) {
                 getEventBus().removeListener(ActionPerformedEvent.class);
@@ -179,7 +178,12 @@ public class BaseAction extends AbstractAction {
             addActionPerformedListener(handler);
         }
 
-        return this;
+        return self();
+    }
+
+    @SuppressWarnings("unchecked")
+    protected A self() {
+        return (A) this;
     }
 
     protected void setVisibleInternal(boolean visible) {

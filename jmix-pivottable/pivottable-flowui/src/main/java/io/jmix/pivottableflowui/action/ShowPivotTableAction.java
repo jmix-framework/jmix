@@ -113,10 +113,10 @@ public class ShowPivotTableAction<E> extends ListDataComponentAction<ShowPivotTa
             showPivotTable(ShowPivotTableMode.ALL_ROWS);
         } else {
             Action[] actions = new Action[]{
-                    new SecuredBaseAction("ShowPivotTableMode.SELECTED_ROWS")
+                    new SecuredBaseAction<>("ShowPivotTableMode.SELECTED_ROWS")
                             .withText(messages.getMessage("io.jmix.pivottableflowui.action/showPivotTable.SELECTED_ROWS"))
                             .withHandler(event -> showPivotTable(ShowPivotTableMode.SELECTED_ROWS)),
-                    new SecuredBaseAction("ShowPivotTableMode.ALL_ROWS")
+                    new SecuredBaseAction<>("ShowPivotTableMode.ALL_ROWS")
                             .withText(messages.getMessage("io.jmix.pivottableflowui.action/showPivotTable.ALL_ROWS"))
                             .withHandler(event -> showPivotTable(ShowPivotTableMode.ALL_ROWS)),
                     new DialogAction(DialogAction.Type.CANCEL)

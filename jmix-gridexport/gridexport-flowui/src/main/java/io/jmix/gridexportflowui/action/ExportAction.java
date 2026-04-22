@@ -345,19 +345,19 @@ public class ExportAction extends ListDataComponentAction<ExportAction, Object> 
     }
 
     protected Action createExportSelectedAction(Predicate<Grid.Column<Object>> primaryFilterPredicate) {
-        return new SecuredBaseAction("ExportMode.SELECTED_ROWS")
+        return new SecuredBaseAction<>("ExportMode.SELECTED_ROWS")
                 .withText(messages.getMessage(ExportMode.SELECTED_ROWS))
                 .withHandler(event -> doExport(ExportMode.SELECTED_ROWS, primaryFilterPredicate));
     }
 
     protected Action createExportAllAction(Predicate<Grid.Column<Object>> primaryFilterPredicate) {
-        return new SecuredBaseAction("ExportMode.CURRENT_PAGE")
+        return new SecuredBaseAction<>("ExportMode.CURRENT_PAGE")
                 .withText(messages.getMessage(ExportMode.ALL_ROWS))
                 .withHandler(event -> doExport(ExportMode.ALL_ROWS, primaryFilterPredicate));
     }
 
     protected Action createCurrentPageAction(Predicate<Grid.Column<Object>> primaryFilterPredicate) {
-        return new SecuredBaseAction("ExportMode.CURRENT_PAGE")
+        return new SecuredBaseAction<>("ExportMode.CURRENT_PAGE")
                 .withText(messages.getMessage(ExportMode.CURRENT_PAGE))
                 .withHandler(event -> doExport(ExportMode.CURRENT_PAGE, primaryFilterPredicate));
     }

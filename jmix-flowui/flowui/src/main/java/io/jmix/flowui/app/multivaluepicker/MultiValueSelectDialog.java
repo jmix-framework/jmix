@@ -64,7 +64,7 @@ public class MultiValueSelectDialog<E> extends StandardListView<E> implements Mu
     @ViewComponent
     protected VerticalLayout multiValueLayout;
     @ViewComponent
-    private BaseAction select;
+    private BaseAction<?> select;
 
     @Autowired
     protected Messages messages;

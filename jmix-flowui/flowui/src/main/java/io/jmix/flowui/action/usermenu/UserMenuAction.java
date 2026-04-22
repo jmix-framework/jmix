@@ -21,15 +21,12 @@ import io.jmix.flowui.action.ExecutableAction;
 import io.jmix.flowui.action.SecuredBaseAction;
 import io.jmix.flowui.action.TargetAction;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
-import io.jmix.flowui.kit.action.ActionVariant;
-import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.kit.component.usermenu.JmixUserMenu;
 import io.jmix.flowui.kit.component.usermenu.UserMenuItem;
 import io.micrometer.observation.Observation;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Objects;
-import java.util.function.Consumer;
 
 /**
  * An abstract base class for actions that can be associated with a specific {@link JmixUserMenu}.
@@ -37,7 +34,7 @@ import java.util.function.Consumer;
  * @param <A> the type of the concrete action class extending {@code UserMenuAction}
  * @param <C> the type of the {@link JmixUserMenu} that the action can be associated with
  */
-public abstract class UserMenuAction<A extends UserMenuAction<A, C>, C extends JmixUserMenu<?>> extends SecuredBaseAction
+public abstract class UserMenuAction<A extends UserMenuAction<A, C>, C extends JmixUserMenu<?>> extends SecuredBaseAction<A>
         implements TargetAction<C>, ExecutableAction {
 
     protected C target;
@@ -112,52 +109,9 @@ public abstract class UserMenuAction<A extends UserMenuAction<A, C>, C extends J
         }
     }
 
-    @SuppressWarnings("unchecked")
     public A withTarget(@Nullable C target) {
         setTarget(target);
-        return ((A) this);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public A withText(@Nullable String text) {
-        return ((A) super.withText(text));
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public A withEnabled(boolean enabled) {
-        return ((A) super.withEnabled(enabled));
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public A withVisible(boolean visible) {
-        return ((A) super.withVisible(visible));
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public A withIcon(@Nullable Component icon) {
-        return (A) super.withIcon(icon);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public A withVariant(ActionVariant actionVariant) {
-        return ((A) super.withVariant(actionVariant));
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public A withShortcutCombination(@Nullable KeyCombination shortcutCombination) {
-        return ((A) super.withShortcutCombination(shortcutCombination));
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public A withHandler(@Nullable Consumer<ActionPerformedEvent> handler) {
-        return ((A) super.withHandler(handler));
+        return self();
     }
 
     protected void checkTarget() {

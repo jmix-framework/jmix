@@ -177,14 +177,14 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
     private void initAdditionalResourcePolicyTypes() {
         if (resourcePolicyTypeProviders != null) {
             for (ResourcePolicyTypeProvider resourcePolicyTypeProvider : resourcePolicyTypeProviders) {
-                BaseAction action = getCreatePolicyAction(resourcePolicyTypeProvider);
+                BaseAction<?> action = getCreatePolicyAction(resourcePolicyTypeProvider);
                 createDropdownButton.addItem(action.getId(), action);
             }
         }
     }
 
-    private BaseAction getCreatePolicyAction(ResourcePolicyTypeProvider resourcePolicyTypeProvider) {
-        BaseAction action = new BaseAction(RandomStringUtils.randomAlphabetic(5)) {
+    private BaseAction<?> getCreatePolicyAction(ResourcePolicyTypeProvider resourcePolicyTypeProvider) {
+        BaseAction<?> action = new BaseAction(RandomStringUtils.randomAlphabetic(5)) {
             @Override
             public void actionPerform(Component component) {
 

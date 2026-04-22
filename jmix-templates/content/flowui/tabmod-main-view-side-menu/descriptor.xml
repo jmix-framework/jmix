@@ -20,7 +20,7 @@
                 </h2>
                 <%if (createUserMenu) {%>
                 <userMenu id="userMenu"
-                          themeNames="tertiary" classNames="ms-auto me-m">
+                          themeNames="tertiary" classNames="jmix-main-view-user-menu">
                     <items>
                         <separator/>
                         <actionItem id="substituteUserMenuItem"

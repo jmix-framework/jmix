@@ -21,7 +21,7 @@
 }
 
 .footer-panel {
-  padding: var(--vaadin-gap-s) var(--vaadin-gap-m);
+  padding: var(--vaadin-gap-s) var(--vaadin-gap-m) var(--vaadin-gap-m);
 }
 
 vaadin-button.link-button,

@@ -46,7 +46,7 @@
                 <textArea id="descriptionField" property="description" height="9.5em"/>
             </formLayout>
 
-            <tabSheet id="tabSheet" width="100%" minHeight="30em">
+            <tabSheet id="tabSheet" minHeight="30em" alignSelf="STRETCH">
                 <tab id="resourcePoliciesTab"
                      label="msg://io.jmix.security.model/ResourceRoleModel.resourcePolicies">
                     <vbox id="resourcePoliciesWrapper" padding="false" height="100%">

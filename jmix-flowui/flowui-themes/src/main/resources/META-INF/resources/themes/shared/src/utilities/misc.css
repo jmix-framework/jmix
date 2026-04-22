@@ -18,3 +18,7 @@
     width: 100%;
     flex-wrap: wrap;
 }
+
+.overflow-auto {
+    overflow: auto;
+}

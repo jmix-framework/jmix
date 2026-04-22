@@ -44,7 +44,7 @@
                 <textField id="sourceField" property="source" readOnly="true"/>
             </formLayout>
 
-            <tabSheet id="tabSheet" width="100%" minHeight="30em">
+            <tabSheet id="tabSheet" minHeight="30em" alignSelf="STRETCH">
                 <tab id="rowLevelPoliciesTab"
                      label="msg://io.jmix.security.model/RowLevelRoleModel.rowLevelPolicies">
                     <vbox id="rowLevelPoliciesWrapper" padding="false" height="100%">

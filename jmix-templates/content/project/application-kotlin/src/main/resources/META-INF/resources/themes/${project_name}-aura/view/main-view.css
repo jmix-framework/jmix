@@ -64,6 +64,10 @@ vaadin-drawer-toggle.jmix-main-view-drawer-toggle:not([theme]) {
 
 /* User Menu */
 
+.jmix-main-view-user-menu {
+    margin-inline-start: auto;
+}
+
 .user-menu-button-content,
 .user-menu-header-content {
     display: grid;
@@ -94,7 +98,7 @@ vaadin-drawer-toggle.jmix-main-view-drawer-toggle:not([theme]) {
     grid-row: text / subtext;
 }
 
-vaadin-menu-bar[jmix-role='jmix-user-menu'][theme~='substituted'] .user-menu-button-content > .user-menu-text {
+.jmix-main-view-user-menu[theme~='substituted'] .user-menu-button-content > .user-menu-text {
     grid-row: text;
 }
 
@@ -134,7 +138,7 @@ vaadin-menu-bar[jmix-role='jmix-user-menu'][theme~='substituted'] .user-menu-but
     text-overflow: ellipsis;
 }
 
-vaadin-menu-bar[jmix-role='jmix-user-menu']:not([theme~='substituted']) .user-menu-button-content > .user-menu-subtext {
+.jmix-main-view-user-menu:not([theme~='substituted']) .user-menu-button-content > .user-menu-subtext {
     display: none;
 }
 

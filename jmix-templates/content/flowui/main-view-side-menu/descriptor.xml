@@ -17,7 +17,7 @@
                 <h1 id="viewTitle" classNames="jmix-main-view-title"/>
                 <%if (createUserMenu) {%>
                 <userMenu id="userMenu"
-                          themeNames="tertiary" classNames="ms-auto me-m">
+                          themeNames="tertiary" classNames="jmix-main-view-user-menu">
                     <items>
                         <separator/>
                         <actionItem id="substituteUserMenuItem"

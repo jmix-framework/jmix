@@ -35,6 +35,7 @@ dependencies {
     implementation 'io.jmix.datatools:jmix-datatools-flowui-starter'
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'com.vaadin:vaadin-dev'
 
     runtimeOnly 'org.hsqldb:hsqldb'
 
@@ -62,4 +63,5 @@ idea {
 
 vaadin {
     optimizeBundle = false
+    productionMode = false
 }

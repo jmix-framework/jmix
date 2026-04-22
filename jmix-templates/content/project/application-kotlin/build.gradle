@@ -39,6 +39,7 @@ dependencies {
     implementation 'org.jetbrains.kotlin:kotlin-reflect'
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'com.vaadin:vaadin-dev'
 
     runtimeOnly 'org.hsqldb:hsqldb'
 
@@ -66,4 +67,5 @@ idea {
 
 vaadin {
     optimizeBundle = false
+    productionMode = false
 }

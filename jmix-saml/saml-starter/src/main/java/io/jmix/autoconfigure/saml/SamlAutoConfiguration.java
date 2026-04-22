@@ -37,7 +37,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
-@AutoConfiguration
+@AutoConfiguration(beforeName = "io.jmix.autoconfigure.securityflowui.SecurityFlowuiAutoConfiguration")
 @Import({SamlConfiguration.class})
 @ConditionalOnProperty(name = "jmix.saml.use-default-configuration", matchIfMissing = true)
 public class SamlAutoConfiguration {

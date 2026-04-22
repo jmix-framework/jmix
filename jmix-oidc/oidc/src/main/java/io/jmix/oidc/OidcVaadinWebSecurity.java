@@ -16,19 +16,24 @@
 
 package io.jmix.oidc;
 
+import com.vaadin.flow.spring.security.UidlRedirectStrategy;
+import com.vaadin.flow.spring.security.VaadinSecurityConfigurer;
+import io.jmix.securityflowui.security.AbstractFlowuiWebSecurity;
 import io.jmix.oidc.userinfo.JmixOidcUserService;
-import io.jmix.security.util.JmixHttpSecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInitiatedLogoutSuccessHandler;
+import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
-import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
+import org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter;
 
 /**
  * Provides Vaadin security to the project. Configures authentication using the OAuth 2.0 or OpenID Connect provider.
  */
-public class OidcVaadinWebSecurity {
+public class OidcVaadinWebSecurity extends AbstractFlowuiWebSecurity {
+
+    private static final String DEFAULT_LOGIN_PAGE_URL = DefaultLoginPageGeneratingFilter.DEFAULT_LOGIN_PAGE_URL;
 
     protected JmixOidcUserService jmixOidcUserService;
     protected OidcProperties oidcProperties;
@@ -49,43 +54,57 @@ public class OidcVaadinWebSecurity {
         this.clientRegistrationRepository = clientRegistrationRepository;
     }
 
-    /*@Override
-    protected void configure(HttpSecurity http) throws Exception {
-        //apply Jmix configuration
-        configureJmixSpecifics(http);
-
-        //apply Vaadin configuration
-        super.configure(http);
-    }*/
-
+    @Override
     protected void configureJmixSpecifics(HttpSecurity http) throws Exception {
-        JmixHttpSecurityUtils.configureAnonymous(http);
-        JmixHttpSecurityUtils.configureSessionManagement(http);
-        JmixHttpSecurityUtils.configureFrameOptions(http);
+        super.configureJmixSpecifics(http);
+        http.oauth2Login(oauth2Login ->
+                oauth2Login.userInfoEndpoint(userInfoEndpoint ->
+                        userInfoEndpoint.oidcUserService(jmixOidcUserService)))
+                .logout(logout -> logout.logoutSuccessHandler(oidcLogoutSuccessHandler()));
+    }
 
-        http.oauth2Login(oauth2Login -> {
-                    oauth2Login.userInfoEndpoint(userInfoEndpoint -> {
-                        userInfoEndpoint.oidcUserService(jmixOidcUserService);
-                    });
-                })
-                .logout(logout -> {
-                    logout.logoutSuccessHandler(oidcLogoutSuccessHandler());
-                });
+    @Override
+    protected void configureVaadinSpecifics(HttpSecurity http) {
+        // Keep Flow navigation aligned with Spring Security: one client goes directly to
+        // the provider authorization endpoint, several clients use the generated /login page.
+        http.with(VaadinSecurityConfigurer.vaadin(),
+                configurer -> configurer.oauth2LoginPage(getOidcLoginUrl(), oidcProperties.getPostLogoutRedirectUri()));
+    }
+
+    /**
+     * Mirrors the default Spring Security OAuth2 login behavior so that Vaadin navigation
+     * access control points unauthenticated users to the same login URL.
+     */
+    protected String getOidcLoginUrl() {
+        if (clientRegistrationRepository instanceof Iterable<?> clientRegistrations) {
+            String loginUrl = null;
+
+            for (Object candidate : clientRegistrations) {
+                if (!(candidate instanceof ClientRegistration clientRegistration)
+                        || !AuthorizationGrantType.AUTHORIZATION_CODE.equals(clientRegistration.getAuthorizationGrantType())) {
+                    continue;
+                }
+
+                if (loginUrl != null) {
+                    return DEFAULT_LOGIN_PAGE_URL;
+                }
+
+                loginUrl = "/oauth2/authorization/" + clientRegistration.getRegistrationId();
+            }
+
+            if (loginUrl != null) {
+                return loginUrl;
+            }
+        }
+
+        return DEFAULT_LOGIN_PAGE_URL;
     }
 
     protected OidcClientInitiatedLogoutSuccessHandler oidcLogoutSuccessHandler() {
         OidcClientInitiatedLogoutSuccessHandler successHandler =
                 new OidcClientInitiatedLogoutSuccessHandler(clientRegistrationRepository);
+        successHandler.setRedirectStrategy(new UidlRedirectStrategy());
         successHandler.setPostLogoutRedirectUri(oidcProperties.getPostLogoutRedirectUri());
         return successHandler;
     }
-
-    /**
-     * Temporary workaround until https://github.com/vaadin/flow/issues/19075 is fixed
-     */
-    /*@Override
-    protected void configure(WebSecurity web) throws Exception {
-        super.configure(web);
-        web.ignoring().requestMatchers(PathPatternRequestMatcher.pathPattern("/VAADIN/push/**"));
-    }*/
 }

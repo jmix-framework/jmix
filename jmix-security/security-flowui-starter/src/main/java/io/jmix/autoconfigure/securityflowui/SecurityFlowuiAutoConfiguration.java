@@ -18,6 +18,7 @@ package io.jmix.autoconfigure.securityflowui;
 
 import io.jmix.core.CoreConfiguration;
 import io.jmix.security.SecurityConfiguration;
+import io.jmix.securityflowui.security.AbstractFlowuiWebSecurity;
 import io.jmix.securityflowui.SecurityFlowuiConfiguration;
 import io.jmix.securityflowui.authentication.LoginViewSupport;
 import io.jmix.securityflowui.security.FlowuiVaadinWebSecurity;
@@ -40,8 +41,9 @@ public class SecurityFlowuiAutoConfiguration {
     @EnableWebSecurity
     @Configuration
     @ConditionalOnProperty(name = "jmix.flowui.use-default-security-configuration", matchIfMissing = true)
-//    @ConditionalOnMissingBean(VaadinWebSecurity.class)
-    public static class DefaultFlowuiVaadinWebSecurity extends FlowuiVaadinWebSecurity {}
+    @ConditionalOnMissingBean(AbstractFlowuiWebSecurity.class)
+    public static class DefaultFlowuiVaadinWebSecurity extends FlowuiVaadinWebSecurity {
+    }
 
     @Bean("flowui_SecurityContextRepository")
     SecurityContextRepository securityContextRepository() {

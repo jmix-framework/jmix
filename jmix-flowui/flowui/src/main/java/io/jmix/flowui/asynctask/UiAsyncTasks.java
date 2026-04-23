@@ -1,18 +1,21 @@
 package io.jmix.flowui.asynctask;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.server.Command;
+import com.vaadin.flow.shared.Registration;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 import java.util.concurrent.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
+
+import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 /**
  * The class provides methods for executing asynchronous tasks from UI views. The class may be used when, in the UI
@@ -41,6 +44,7 @@ import java.util.function.Supplier;
  *      .withExceptionHandler(ex -> {
  *          errorTextField.setValue(ex.getMessage());
  *      })
+ *      .withOwner(this)
  *      .supplyAsync();}</pre>
  * <p>
  * By default, asynchronous tasks are executed with the default timeout configured by the
@@ -53,7 +57,7 @@ import java.util.function.Supplier;
  * @see #supplierConfigurer(Supplier)
  * @see #runnableConfigurer(Runnable)
  */
-@Component("flowui_UiAsyncTasks")
+@org.springframework.stereotype.Component("flowui_UiAsyncTasks")
 public class UiAsyncTasks {
 
     private static final Logger log = LoggerFactory.getLogger(UiAsyncTasks.class);
@@ -113,6 +117,8 @@ public class UiAsyncTasks {
     protected abstract class AbstractAsyncTaskConfigurer {
         protected Consumer<Throwable> exceptionHandler;
         protected UI ui;
+        protected Component owner;
+        protected Registration ownerDetachRegistration;
         protected int timeout;
         protected TimeUnit timeoutUnit;
 
@@ -140,6 +146,33 @@ public class UiAsyncTasks {
             } else {
                 completableFuture.exceptionally(defaultExceptionHandler);
             }
+        }
+
+        protected void configureOwner(CompletableFuture<Void> resultCompletableFuture,
+                                      CompletableFuture<?>... taskCompletableFutures) {
+            if (owner == null) {
+                return;
+            }
+
+            ownerDetachRegistration = owner.addDetachListener(event -> {
+                resultCompletableFuture.cancel(true);
+                for (CompletableFuture<?> taskCompletableFuture : taskCompletableFutures) {
+                    taskCompletableFuture.cancel(true);
+                }
+            });
+            resultCompletableFuture.whenComplete((result, throwable) -> removeOwnerDetachListener());
+        }
+
+        protected void removeOwnerDetachListener() {
+            if (ownerDetachRegistration != null) {
+                ownerDetachRegistration.remove();
+                ownerDetachRegistration = null;
+            }
+        }
+
+        protected void setOwner(Component owner) {
+            checkNotNullArgument(owner, "Owner component cannot be null");
+            this.owner = owner;
         }
     }
 
@@ -176,6 +209,15 @@ public class UiAsyncTasks {
         }
 
         /**
+         * Sets a UI component that owns this asynchronous task. When the owner component is detached, the returned
+         * {@link CompletableFuture} is cancelled.
+         */
+        public SupplierConfigurer<T> withOwner(Component owner) {
+            setOwner(owner);
+            return this;
+        }
+
+        /**
          * Sets the timeout for the asynchronous task. If the task is not completed within the specified timeout, a
          * {@link TimeoutException} is thrown.
          */
@@ -202,6 +244,7 @@ public class UiAsyncTasks {
 
             configureExceptionHandler(resultCompletableFuture);
             configureTimeout(resultCompletableFuture);
+            configureOwner(resultCompletableFuture, future);
 
             return resultCompletableFuture;
         }
@@ -239,6 +282,15 @@ public class UiAsyncTasks {
         }
 
         /**
+         * Sets a UI component that owns this asynchronous task. When the owner component is detached, the returned
+         * {@link CompletableFuture} is cancelled.
+         */
+        public RunnableConfigurer withOwner(Component owner) {
+            setOwner(owner);
+            return this;
+        }
+
+        /**
          * Sets the timeout for the asynchronous task. If the task is not completed within the specified timeout, a
          * {@link TimeoutException} is thrown.
          */
@@ -253,13 +305,21 @@ public class UiAsyncTasks {
          */
         public CompletableFuture<Void> runAsync() {
             DelegatingSecurityRunnable wrappedRunnable = new DelegatingSecurityRunnable(asyncTask);
-            CompletableFuture<Void> completableFuture = CompletableFuture.runAsync(wrappedRunnable, executorService);
+            CompletableFuture<Void> future = CompletableFuture.runAsync(wrappedRunnable, executorService);
+            CompletableFuture<Void> resultCompletableFuture;
+
             if (resultHandler != null) {
-                completableFuture = completableFuture.thenRun(() -> ui.access(resultHandler::run));
+                resultCompletableFuture = future.thenRun(() -> ui.access(resultHandler::run));
+            } else {
+                resultCompletableFuture = future.thenRun(() -> {
+                });
             }
-            configureExceptionHandler(completableFuture);
-            configureTimeout(completableFuture);
-            return completableFuture;
+
+            configureExceptionHandler(resultCompletableFuture);
+            configureTimeout(resultCompletableFuture);
+            configureOwner(resultCompletableFuture, future);
+
+            return resultCompletableFuture;
         }
     }
 

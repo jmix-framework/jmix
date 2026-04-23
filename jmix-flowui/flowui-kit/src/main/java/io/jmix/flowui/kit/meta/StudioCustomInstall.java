@@ -19,6 +19,7 @@ package io.jmix.flowui.kit.meta;
 /**
  * Describes non-standard {@code @io.jmix.flowui.view.Install} handler
  */
+@StudioAPI
 public @interface StudioCustomInstall {
     String methodName();
 

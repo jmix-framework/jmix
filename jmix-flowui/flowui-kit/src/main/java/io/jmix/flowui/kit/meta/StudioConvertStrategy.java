@@ -19,6 +19,7 @@ package io.jmix.flowui.kit.meta;
 /**
  * Meta description that describes available component conversions.
  */
+@StudioAPI
 public @interface StudioConvertStrategy {
 
     /**

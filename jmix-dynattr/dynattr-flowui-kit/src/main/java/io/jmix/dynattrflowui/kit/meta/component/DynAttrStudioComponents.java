@@ -19,6 +19,9 @@ import io.jmix.flowui.kit.meta.StudioComponent;
 import io.jmix.flowui.kit.meta.StudioProperty;
 import io.jmix.flowui.kit.meta.StudioPropertyType;
 import io.jmix.flowui.kit.meta.StudioUiKit;
+import io.jmix.flowui.kit.meta.StudioPropertyGroups;
+import io.jmix.flowui.kit.meta.StudioXmlAttributes;
+import io.jmix.flowui.kit.meta.StudioXmlElements;
 
 @StudioUiKit
 public interface DynAttrStudioComponents {
@@ -27,15 +30,17 @@ public interface DynAttrStudioComponents {
             name = "DynamicAttributesPanel",
             classFqn = "io.jmix.dynattrflowui.panel.DynamicAttributesPanel",
             category = "Components",
-            xmlElement = "dynamicAttributesPanel",
+            xmlElement = StudioXmlElements.DYNAMIC_ATTRIBUTES_PANEL,
             xmlns = "http://jmix.io/schema/dynattr/flowui",
             xmlnsAlias = "dynattr",
             icon = "io/jmix/dynattrflowui/icon/component/dynamicAttributesPanel.svg",
+            propertyGroups = DynAttrStudioPropertyGroups.DynamicAttributesPanelComponent.class,
             properties = {
-                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL,  type = StudioPropertyType.COMPONENT_ID),
-                    @StudioProperty(xmlAttribute = "dataContainer", category = StudioProperty.Category.DATA_BINDING, type = StudioPropertyType.DATA_CONTAINER_REF, required = true),
-                    @StudioProperty(xmlAttribute = "fieldWidth", type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = "categoryFieldVisible", type = StudioPropertyType.BOOLEAN),
-            })
+                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ID, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
+                    @StudioProperty(xmlAttribute = StudioXmlAttributes.DATA_CONTAINER, category = StudioProperty.Category.DATA_BINDING, type = StudioPropertyType.DATA_CONTAINER_REF, required = true),
+                    @StudioProperty(xmlAttribute = StudioXmlAttributes.FIELD_WIDTH, type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = StudioXmlAttributes.CATEGORY_FIELD_VISIBLE, type = StudioPropertyType.BOOLEAN),
+            }
+    )
     void dynamicAttributesPanel();
 }

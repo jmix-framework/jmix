@@ -22,6 +22,7 @@ import java.lang.annotation.Target;
 
 @Inherited
 @Target(ElementType.TYPE)
+@StudioAPI
 public @interface StudioPropertiesBinding {
 
     /**

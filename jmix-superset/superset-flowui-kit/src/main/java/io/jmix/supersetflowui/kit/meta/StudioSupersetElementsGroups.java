@@ -18,6 +18,7 @@ package io.jmix.supersetflowui.kit.meta;
 
 import io.jmix.flowui.kit.meta.StudioElementsGroup;
 import io.jmix.flowui.kit.meta.StudioUiKit;
+import io.jmix.flowui.kit.meta.StudioXmlElements;
 
 @StudioUiKit
 public interface StudioSupersetElementsGroups {
@@ -28,7 +29,7 @@ public interface StudioSupersetElementsGroups {
             target = {
                     "io.jmix.supersetflowui.component.SupersetDashboard"
             },
-            xmlElement = "datasetConstraints",
+            xmlElement = StudioXmlElements.DATASET_CONSTRAINTS,
             xmlns = "http://jmix.io/schema/superset/ui",
             xmlnsAlias = "superset",
             icon = "io/jmix/supersetflowui/kit/meta/icon/unknownComponent.svg"

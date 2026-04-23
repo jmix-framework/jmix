@@ -19,6 +19,7 @@ package io.jmix.flowui.kit.meta;
 /**
  * Meta description that describes additional element initialization.
  */
+@StudioAPI
 public @interface StudioXmlElementInitializer {
 
     /**

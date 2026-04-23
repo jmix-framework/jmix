@@ -27,6 +27,7 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.METHOD)
 @Inherited
+@StudioAPI
 public @interface StudioComponent {
 
     /**
@@ -107,6 +108,15 @@ public @interface StudioComponent {
      * Descriptions of the XML attributes.
      */
     StudioProperty[] properties() default {};
+
+    /**
+     * Reusable groups of XML attributes.
+     * <p>
+     * Studio will merge group properties with {@link #properties()}.
+     * @see StudioPropertyGroup
+     * @see StudioPropertyGroups
+     */
+    Class<?>[] propertyGroups() default {};
 
     /**
      * Descriptions of the XML attributes relationship.

@@ -1,0 +1,40 @@
+---
+name: studio-meta-generator
+description: Generate or update Studio meta descriptions from XSD schemas.
+Use when needs a starting point for @StudioComponent, @StudioElement, @StudioAction, @StudioFacet, or @StudioDataComponent after XSD or Studio meta changes.
+---
+
+# Studio Meta Generator
+
+Use `io.jmix.flowui.kit.meta.generator.StudioMetaDescriptionGenerator` as the entry point.
+
+## Workflow
+
+1. Resolve the workspace root with `StudioMetaDescriptionGenerator.detectWorkspaceRoot(...)` or pass `--root` to the CLI.
+2. Find candidate elements with `findElementCandidates(...)` and choose the exact `StudioXsdElementCandidate` when the XML element name is ambiguous.
+3. Prefer `StudioMetaKind.AUTO` unless the XSD context is known to require a specific Studio meta annotation type.
+4. Reuse compatible existing `propertyGroups` first and keep inline `properties` only for uncovered attributes.
+5. Review generated TODO comments before treating the output as production-ready metadata.
+
+## CLI
+
+Run `StudioMetaDescriptionGenerator.CLI` on the `flowui-kit` runtime classpath.
+
+- Launch without arguments to use interactive prompts.
+- Use `--list-schemas` to print known schemas.
+- Use `--kind auto|component|element|action|facet|data-component` only when automatic detection is not enough.
+
+## Key Files
+
+- `README.md` in this directory for full package notes
+- `StudioMetaDescriptionGenerator.java`
+- `StudioPropertyGroupsMatcher.java`
+- `StudioMetaDescriptionGeneratorTest.groovy`
+
+## Verification
+
+Run:
+
+```bash
+./gradlew :flowui:test --tests io.jmix.flowui.kit.meta.generator.StudioMetaDescriptionGeneratorTest
+```

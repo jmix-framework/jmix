@@ -21,9 +21,9 @@ import com.google.common.base.Strings;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.html.*;
+import com.vaadin.flow.component.shared.HasPrefix;
+import com.vaadin.flow.component.shared.HasSuffix;
 import com.vaadin.flow.component.shared.HasThemeVariant;
-import com.vaadin.flow.router.HighlightConditions;
-import com.vaadin.flow.router.RouterLink;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.kit.component.menu.ParentMenuItem;
 import org.jspecify.annotations.Nullable;
@@ -46,7 +46,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
     protected static final String MENUBAR_SUMMARY_CLASS_NAME = "menubar-summary";
     protected static final String MENUBAR_LIST_CLASS_NAME = "menubar-list";
 
-    protected static final String JMIX_MENU_ITEM_LINK_CLASS_NAME = "jmix-menu-item-link";
+    protected static final String JMIX_MENU_ITEM_CLASS_NAME = "jmix-menu-item";
     protected static final String LINK_TEXT_CLASS_NAME = "link-text";
     protected static final String PREFIX_COMPONENT_CLASS_NAME = "prefix-component";
     protected static final String SUFFIX_COMPONENT_CLASS_NAME = "suffix-component";
@@ -232,8 +232,8 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
 
             return menuItemComponent;
         } else {
-            Component link = createMenuItemComponent(menuItem);
-            ListItem menuItemComponent = new ListItem(link);
+            Component itemContent = createMenuItemComponent(menuItem);
+            ListItem menuItemComponent = new ListItem(itemContent);
 
             registerMenuItem(menuItem, menuItemComponent);
 
@@ -278,33 +278,55 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
         menuItem.addPropertyChangeListener(menuItemPropertyChangeListener);
     }
 
-    protected RouterLink createMenuItemComponent(MenuItem menuItem) {
-        RouterLink routerLink = createRouterLink();
-        routerLink.addClassNames(JMIX_MENU_ITEM_LINK_CLASS_NAME);
-        routerLink.addClassNames(menuItem.getClassNames().toArray(new String[0]));
-        routerLink.setHighlightCondition(HighlightConditions.never());
-        routerLink.setVisible(menuItem.isVisible());
+    protected Component createMenuItemComponent(MenuItem menuItem) {
+        Component menuItemComponent = createMenuItemContentComponent();
+        initMenuItemComponent(menuItemComponent, menuItem);
 
-        Component prefixComponent = menuItem.getPrefixComponent();
-        if (prefixComponent != null) {
-            setPrefixComponent(routerLink, prefixComponent, null);
-        }
+        addMenuItemText(menuItemComponent, createMenuItemText(menuItem));
+        setSuffixComponent(menuItemComponent, menuItem.getSuffixComponent(), null);
 
+        return menuItemComponent;
+    }
+
+    protected void initMenuItemComponent(Component menuItemComponent, MenuItem menuItem) {
+        updateMenuItemComponentClassNames(menuItemComponent, menuItem);
+        menuItemComponent.setVisible(menuItem.isVisible());
+
+        setPrefixComponent(menuItemComponent, menuItem.getPrefixComponent(), null);
+
+        addMenuItemClickListener(menuItemComponent, menuItem);
+        addMenuItemClickShortcutCombination(menuItemComponent, menuItem);
+    }
+
+    protected Span createMenuItemText(MenuItem menuItem) {
         Span text = new Span(getTitle(menuItem));
         text.addClassNames(LINK_TEXT_CLASS_NAME);
         text.setTitle(Strings.nullToEmpty(menuItem.getDescription()));
 
-        addMenuItemClickListener(routerLink, menuItem);
-        addMenuItemClickShortcutCombination(routerLink, menuItem);
-
-        routerLink.add(text);
-        setSuffixComponent(routerLink, menuItem.getSuffixComponent(), null);
-
-        return routerLink;
+        return text;
     }
 
-    protected RouterLink createRouterLink() {
-        return new RouterLink();
+    protected void addMenuItemText(Component componentContainer, Span text) {
+        if (componentContainer instanceof HasComponents) {
+            ((HasComponents) componentContainer).add(text);
+        } else {
+            componentContainer.getElement().appendChild(text.getElement());
+        }
+    }
+
+    protected void updateMenuItemComponentClassNames(Component menuItemComponent, MenuItem menuItem) {
+        List<String> classNames = new ArrayList<>(getMenuItemComponentClassNames(menuItem));
+        classNames.addAll(menuItem.getClassNames());
+
+        menuItemComponent.setClassName(String.join(" ", classNames));
+    }
+
+    protected List<String> getMenuItemComponentClassNames(MenuItem menuItem) {
+        return List.of(JMIX_MENU_ITEM_CLASS_NAME);
+    }
+
+    protected Component createMenuItemContentComponent() {
+        return new Div();
     }
 
     protected void addMenuOpenedChangeListener(Details details, MenuItem menuItem) {
@@ -315,15 +337,15 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
         });
     }
 
-    protected void addMenuItemClickListener(RouterLink routerLink, MenuItem menuItem) {
-        routerLink.getElement().addEventListener("click", event -> {
+    protected void addMenuItemClickListener(Component menuItemComponent, MenuItem menuItem) {
+        menuItemComponent.getElement().addEventListener("click", event -> {
             if (menuItem.getClickHandler() != null) {
                 menuItem.getClickHandler().accept(menuItem);
             }
         });
     }
 
-    protected void addMenuItemClickShortcutCombination(RouterLink routerLink, MenuItem menuItem) {
+    protected void addMenuItemClickShortcutCombination(Component menuItemComponent, MenuItem menuItem) {
         KeyCombination shortcutCombination = menuItem.getShortcutCombination();
 
         if (shortcutCombination != null) {
@@ -331,8 +353,8 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
             KeyModifier[] keyModifiers = shortcutCombination.getKeyModifiers();
 
             Shortcuts.addShortcutListener(
-                    routerLink,
-                    event -> routerLink.getElement()
+                    menuItemComponent,
+                    event -> menuItemComponent.getElement()
                             .executeJs("this.click()"),
                     key,
                     keyModifiers);
@@ -351,10 +373,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
         div.addClassName(JMIX_MENUBAR_SUMMARY_ICON_CONTAINER_CLASS_NAME);
         div.setTitle(Strings.nullToEmpty(menuBarItem.getDescription()));
 
-        Component prefixComponent = menuBarItem.getPrefixComponent();
-        if (prefixComponent != null) {
-            setPrefixComponent(div, prefixComponent, null);
-        }
+        setPrefixComponent(div, menuBarItem.getPrefixComponent(), null);
 
         Span summary = new Span();
         summary.setText(getTitle(menuBarItem));
@@ -401,12 +420,11 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
                 .orElseThrow(() -> new IllegalStateException(ListItem.class.getSimpleName() + "cannot be empty"));
     }
 
-    protected RouterLink getMenuItemComponent(MenuItem menuItem) {
+    protected Component getMenuItemComponent(MenuItem menuItem) {
         Pair<MenuItem, ListItem> item = registrations.get(menuItem.getId());
 
         return item.getValue().getChildren()
                 .findFirst()
-                .map(routerLink -> (RouterLink) routerLink)
                 .orElseThrow(() -> new IllegalStateException(ListItem.class.getSimpleName() + "cannot be empty"));
     }
 
@@ -422,31 +440,55 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
         }
     }
 
-    protected void setPrefixComponent(HasComponents componentContainer,
+    protected void setPrefixComponent(Component componentContainer,
                                       @Nullable Component prefixComponent,
                                       @Nullable Component oldPrefixComponent) {
         if (oldPrefixComponent != null) {
             oldPrefixComponent.removeClassName(PREFIX_COMPONENT_CLASS_NAME);
-            componentContainer.remove(oldPrefixComponent);
         }
 
         if (prefixComponent != null) {
             prefixComponent.addClassName(PREFIX_COMPONENT_CLASS_NAME);
-            componentContainer.addComponentAsFirst(prefixComponent);
+        }
+
+        if (componentContainer instanceof HasPrefix) {
+            ((HasPrefix) componentContainer).setPrefixComponent(prefixComponent);
+        } else if (componentContainer instanceof HasComponents) {
+            if (oldPrefixComponent != null) {
+                ((HasComponents) componentContainer).remove(oldPrefixComponent);
+            }
+            if (prefixComponent != null) {
+                ((HasComponents) componentContainer).addComponentAsFirst(prefixComponent);
+            }
+        } else if (prefixComponent != null || oldPrefixComponent != null) {
+            throw new IllegalArgumentException("Component does not support prefix components: "
+                    + componentContainer.getClass().getName());
         }
     }
 
-    protected void setSuffixComponent(HasComponents componentContainer,
+    protected void setSuffixComponent(Component componentContainer,
                                       @Nullable Component suffixComponent,
                                       @Nullable Component oldSuffixComponent) {
         if (oldSuffixComponent != null) {
             oldSuffixComponent.removeClassName(SUFFIX_COMPONENT_CLASS_NAME);
-            componentContainer.remove(oldSuffixComponent);
         }
 
         if (suffixComponent != null) {
             suffixComponent.addClassName(SUFFIX_COMPONENT_CLASS_NAME);
-            componentContainer.add(suffixComponent);
+        }
+
+        if (componentContainer instanceof HasSuffix) {
+            ((HasSuffix) componentContainer).setSuffixComponent(suffixComponent);
+        } else if (componentContainer instanceof HasComponents) {
+            if (oldSuffixComponent != null) {
+                ((HasComponents) componentContainer).remove(oldSuffixComponent);
+            }
+            if (suffixComponent != null) {
+                ((HasComponents) componentContainer).add(suffixComponent);
+            }
+        } else if (suffixComponent != null || oldSuffixComponent != null) {
+            throw new IllegalArgumentException("Component does not support suffix components: "
+                    + componentContainer.getClass().getName());
         }
     }
 
@@ -462,9 +504,8 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
                 menuBarComponent.setClassName(JMIX_MENUBAR_ITEM_CLASS_NAME);
                 menuBarComponent.addClassNames(menuItem.getClassNames().toArray(new String[0]));
             } else if (!menuItem.isSeparator()) {
-                RouterLink menuItemComponent = getMenuItemComponent(menuItem);
-                menuItemComponent.setClassName(JMIX_MENUBAR_ITEM_CLASS_NAME);
-                menuItemComponent.addClassNames(menuItem.getClassNames().toArray(new String[0]));
+                Component menuItemComponent = getMenuItemComponent(menuItem);
+                updateMenuItemComponentClassNames(menuItemComponent, menuItem);
             }
         }
         if (MenuItem.MENU_ITEM_SUFFIX_COMPONENT.equals(event.getPropertyName())) {
@@ -477,7 +518,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
                 Div summary = (Div) menuBarComponent.getSummary();
                 setSuffixComponent(summary, suffixComponent, oldSuffixComponent);
             } else if (!menuItem.isSeparator()) {
-                RouterLink menuItemComponent = getMenuItemComponent(menuItem);
+                Component menuItemComponent = getMenuItemComponent(menuItem);
                 setSuffixComponent(menuItemComponent, suffixComponent, oldSuffixComponent);
             }
         }
@@ -491,7 +532,7 @@ public class ListMenu extends Composite<UnorderedList> implements HasSize, HasSt
                 Div summary = (Div) menuBarComponent.getSummary();
                 setPrefixComponent(summary, prefixComponent, oldPrefixComponent);
             } else if (!menuItem.isSeparator()) {
-                RouterLink menuItemComponent = getMenuItemComponent(menuItem);
+                Component menuItemComponent = getMenuItemComponent(menuItem);
                 setPrefixComponent(menuItemComponent, prefixComponent, oldPrefixComponent);
             }
         }

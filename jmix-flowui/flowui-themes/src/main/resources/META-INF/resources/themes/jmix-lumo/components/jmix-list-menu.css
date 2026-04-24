@@ -44,25 +44,25 @@
   align-items: center;
 }
 
-.jmix-list-menu .jmix-menu-item-link .link-icon,
+.jmix-list-menu .jmix-menu-item .link-icon,
 .jmix-list-menu .jmix-menubar-item .jmix-menubar-summary-icon-container .menubar-icon {
   width: var(--lumo-icon-size-s);
   height: var(--lumo-icon-size-s);
   flex-shrink: 0;
 }
 
-.jmix-list-menu .jmix-menu-item-link .prefix-component,
+.jmix-list-menu .jmix-menu-item .prefix-component,
 .jmix-list-menu .jmix-menubar-item .jmix-menubar-summary-icon-container .prefix-component {
   flex-shrink: 0;
 }
 
-.jmix-list-menu .jmix-menu-item-link vaadin-icon.prefix-component,
+.jmix-list-menu .jmix-menu-item vaadin-icon.prefix-component,
 .jmix-list-menu .jmix-menubar-item .jmix-menubar-summary-icon-container vaadin-icon.prefix-component {
   width: var(--lumo-icon-size-s);
   height: var(--lumo-icon-size-s);
 }
 
-.jmix-list-menu .jmix-menu-item-link vaadin-icon.prefix-component[icon^='vaadin:'],
+.jmix-list-menu .jmix-menu-item vaadin-icon.prefix-component[icon^='vaadin:'],
 .jmix-list-menu .jmix-menubar-item .jmix-menubar-summary-icon-container vaadin-icon.prefix-component[icon^='vaadin:'] {
   padding: 0.125em;
   box-sizing: border-box;
@@ -76,13 +76,13 @@
   overflow: hidden;
 }
 
-.jmix-list-menu .jmix-menu-item-link .suffix-component,
+.jmix-list-menu a.jmix-menu-item .suffix-component,
 .jmix-list-menu .jmix-menubar-item .jmix-menubar-summary-icon-container .suffix-component {
   margin-inline-start: auto;
   flex-shrink: 0;
 }
 
-.jmix-list-menu .jmix-menu-item-link {
+.jmix-list-menu a.jmix-menu-item {
   display: flex;
   gap: var(--lumo-space-s);
   padding: var(--lumo-space-s);
@@ -92,7 +92,46 @@
   align-items: center;
 }
 
-.jmix-list-menu .jmix-menu-item-link .link-text {
+.jmix-list-menu vaadin-button.jmix-menu-item {
+  --vaadin-button-background: transparent;
+
+  display: flex;
+
+  min-width: 0;
+  height: auto;
+
+  color: inherit;
+  font-size: inherit;
+  line-height: inherit;
+
+  padding: var(--vaadin-padding-s);
+  margin: 0;
+}
+
+.jmix-list-menu vaadin-button.jmix-menu-item::part(label) {
+  display: inline-flex;
+
+  line-height: inherit;
+  overflow: visible;
+  padding: 0;
+
+  flex-grow: 1;
+}
+
+.jmix-list-menu vaadin-button.jmix-menu-item::part(prefix),
+.jmix-list-menu vaadin-button.jmix-menu-item::part(suffix) {
+  margin: 0;
+}
+
+.jmix-list-menu vaadin-button.jmix-menu-item .prefix-component {
+  margin-inline-end: var(--lumo-space-s);
+}
+
+.jmix-list-menu vaadin-button.jmix-menu-item .suffix-component {
+  margin-inline-start: var(--lumo-space-s);
+}
+
+.jmix-list-menu a.jmix-menu-item .link-text {
   font-size: var(--lumo-font-size-s);
   font-weight: 500;
   line-height: var(--lumo-line-height-s);
@@ -101,11 +140,11 @@
   white-space: nowrap;
 }
 
-.jmix-list-menu a[highlight][class*='jmix-menu-item-link'] {
+.jmix-list-menu a.jmix-menu-item[highlight] {
   color: var(--lumo-primary-text-color);
 }
 
-.jmix-list-menu a[highlight][class*='jmix-menu-item-link'] {
+.jmix-list-menu a.jmix-menu-item[highlight] {
   background-color: var(--lumo-primary-color-10pct);
   border-radius: var(--lumo-border-radius-m);
 }
@@ -127,7 +166,7 @@
 }
 
 @supports selector(:focus-visible) {
-  .jmix-list-menu .jmix-menu-item-link:focus-visible {
+  .jmix-list-menu a.jmix-menu-item:focus-visible {
     border-radius: var(--lumo-border-radius-m);
     box-shadow: 0 0 0 var(--vaadin-focus-ring-width, 2px) var(--vaadin-focus-ring-color, var(--lumo-primary-color-50pct));
     outline: 0;
@@ -135,7 +174,7 @@
 }
 
 @media (forced-colors: active) {
-  .jmix-list-menu a[highlight][class*='jmix-menu-item-link'] {
+  .jmix-list-menu a.jmix-menu-item[highlight] {
     border: 1px solid CanvasText;
   }
 }

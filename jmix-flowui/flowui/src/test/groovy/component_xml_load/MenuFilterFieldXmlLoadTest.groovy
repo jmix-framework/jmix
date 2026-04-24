@@ -20,10 +20,13 @@ import com.vaadin.flow.component.shared.Tooltip
 import com.vaadin.flow.data.value.ValueChangeMode
 import component_xml_load.screen.MenuFilterFieldView
 import io.jmix.flowui.component.menufilterfield.MenuFilterField
+import test_support.MenuConfigIsolationTestConfiguration
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.ContextConfiguration
 import test_support.spec.FlowuiTestSpecification
 
 @SpringBootTest(["jmix.ui.composite-menu=false", "jmix.ui.menu-config=menu/menufilterfield/menu.xml"])
+@ContextConfiguration(classes = [MenuConfigIsolationTestConfiguration])
 class MenuFilterFieldXmlLoadTest extends FlowuiTestSpecification {
 
     @Override

@@ -26,18 +26,21 @@ import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.menu.MenuItem.MenuItemParameter;
 import io.jmix.flowui.menu.MenuItem.MenuItemProperty;
+import io.jmix.flowui.view.StandardDetailView;
+import io.jmix.flowui.view.template.impl.ViewTemplateDefinition;
+import io.jmix.flowui.view.template.impl.ViewTemplateDefinitions;
+import io.jmix.flowui.view.template.impl.ViewTemplateType;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.support.IconLoaderSupport;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
-import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -50,7 +53,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * Holds information about the main menu structure.
  */
 @Component("flowui_MenuConfig")
-public class MenuConfig implements ApplicationContextAware {
+public class MenuConfig {
 
     private final Logger log = LoggerFactory.getLogger(MenuConfig.class);
 
@@ -58,41 +61,44 @@ public class MenuConfig implements ApplicationContextAware {
 
     protected List<MenuItem> rootItems = new ArrayList<>();
 
-    protected ApplicationContext applicationContext;
+    @Autowired
     protected Resources resources;
+
+    @Autowired
     protected Messages messages;
+
+    @Autowired
     protected MessageTools messageTools;
+
+    @Autowired
     protected Dom4jTools dom4JTools;
+
+    @Autowired
     protected Environment environment;
+
+    @Autowired
     protected UiProperties uiProperties;
+
+    @Autowired
     protected JmixModules modules;
+
+    @Autowired
     protected Metadata metadata;
+
+    @Autowired
     protected MetadataTools metadataTools;
+
+    @Autowired
+    protected ViewTemplateDefinitions viewTemplateDefinitions;
+
+    @Autowired
+    protected ObjectProvider<IconLoaderSupport> iconLoaderSupportProvider;
 
     protected IconLoaderSupport iconLoaderSupport;
 
     protected volatile boolean initialized;
 
     protected ReadWriteLock lock = new ReentrantReadWriteLock();
-
-    public MenuConfig(Resources resources, Messages messages, MessageTools messageTools, Dom4jTools dom4JTools,
-                      Environment environment, UiProperties uiProperties, JmixModules modules,
-                      Metadata metadata, MetadataTools metadataTools) {
-        this.resources = resources;
-        this.messages = messages;
-        this.messageTools = messageTools;
-        this.dom4JTools = dom4JTools;
-        this.environment = environment;
-        this.uiProperties = uiProperties;
-        this.modules = modules;
-        this.metadata = metadata;
-        this.metadataTools = metadataTools;
-    }
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
-    }
 
     /**
      * Returns the title of a menu item based on its identifier.
@@ -174,6 +180,8 @@ public class MenuConfig implements ApplicationContextAware {
         for (Element rootElement : rootElements) {
             loadMenuItems(rootElement, null, menusByIdPaths);
         }
+
+        loadTemplateMenuItems();
     }
 
     /**
@@ -265,6 +273,49 @@ public class MenuConfig implements ApplicationContextAware {
         LinkedList<String> path = new LinkedList<>();
         getItemIdPathRecursive(id, parentItem, path);
         return path;
+    }
+
+    protected void loadTemplateMenuItems() {
+        for (ViewTemplateDefinition definition : viewTemplateDefinitions.getDefinitions()) {
+            if (StringUtils.isBlank(definition.getParentMenu())) {
+                continue;
+            }
+
+            MenuItem parentItem = findItem(definition.getParentMenu());
+            if (parentItem == null) {
+                parentItem = new MenuItem(definition.getParentMenu());
+                parentItem.setMenu(true);
+                parentItem.setTitle(definition.getParentMenu());
+                rootItems.add(parentItem);
+            }
+
+            parentItem.getChildren().add(createTemplateMenuItem(parentItem, definition));
+        }
+    }
+
+    protected MenuItem createTemplateMenuItem(MenuItem parentItem, ViewTemplateDefinition definition) {
+        MenuItem viewItem = new MenuItem(parentItem, definition.getId());
+        viewItem.setView(definition.getId());
+        viewItem.setTitle(definition.getTitle());
+
+        if (definition.getType() == ViewTemplateType.DETAIL) {
+            viewItem.setRouteParameters(List.of(new MenuItemParameter(
+                    StandardDetailView.DEFAULT_ROUTE_PARAM, StandardDetailView.NEW_ENTITY_ID)));
+        }
+
+        return viewItem;
+    }
+
+    @Nullable
+    protected MenuItem findItem(String id) {
+        for (MenuItem rootItem : rootItems) {
+            MenuItem item = findItem(id, rootItem);
+            if (item != null) {
+                return item;
+            }
+        }
+
+        return null;
     }
 
     protected void getItemIdPathRecursive(String id, @Nullable MenuItem parentItem, LinkedList<String> resultPath) {
@@ -616,7 +667,7 @@ public class MenuConfig implements ApplicationContextAware {
 
     protected IconLoaderSupport getIconLoaderSupport() {
         if (iconLoaderSupport == null) {
-            iconLoaderSupport = applicationContext.getBean(IconLoaderSupport.class, createLoaderContext());
+            iconLoaderSupport = iconLoaderSupportProvider.getObject(createLoaderContext());
         }
 
         return iconLoaderSupport;

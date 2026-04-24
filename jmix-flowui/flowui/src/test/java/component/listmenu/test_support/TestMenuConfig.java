@@ -16,32 +16,36 @@
 
 package component.listmenu.test_support;
 
-import io.jmix.core.*;
 import io.jmix.core.common.util.Dom4j;
-import io.jmix.core.common.xmlparsing.Dom4jTools;
-import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.menu.MenuConfig;
 import io.jmix.flowui.menu.MenuItem;
-import org.springframework.core.env.Environment;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * {@link MenuConfig} variant used by list menu tests.
+ */
+@NullMarked
 public class TestMenuConfig extends MenuConfig {
 
-    public TestMenuConfig(Resources resources, Messages messages, MessageTools messageTools, Dom4jTools dom4JTools,
-                          Environment environment, UiProperties uiProperties, JmixModules modules,
-                          Metadata metadata, MetadataTools metadataTools) {
-        super(resources, messages, messageTools, dom4JTools, environment, uiProperties, modules, metadata,
-                metadataTools);
-    }
-
+    /**
+     * Replaces current menu items with the content of the supplied XML snippet.
+     *
+     * @param menuConfig menu XML
+     */
     public void loadTestMenu(String menuConfig) {
         rootItems.clear();
         loadMenuItems(Dom4j.readDocument(menuConfig).getRootElement(), null, new HashMap<>());
         initialized = true;
     }
 
+    /**
+     * Returns loaded root items without additional initialization logic.
+     *
+     * @return root menu items
+     */
     @Override
     public List<MenuItem> getRootItems() {
         return rootItems;

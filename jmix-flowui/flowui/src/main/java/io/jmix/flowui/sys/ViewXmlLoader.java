@@ -20,6 +20,7 @@ import io.jmix.core.DevelopmentException;
 import io.jmix.core.Resources;
 import io.jmix.core.annotation.Internal;
 import io.jmix.flowui.view.View;
+import io.jmix.flowui.view.template.impl.ViewTemplateDescriptorRegistry;
 import org.apache.commons.io.IOUtils;
 import org.dom4j.Document;
 import org.dom4j.Element;
@@ -42,6 +43,7 @@ public class ViewXmlLoader {
     protected ViewXmlDocumentCache viewXmlDocumentCache;
     protected ViewXmlParser viewXmlParser;
     protected ApplicationContext applicationContext;
+    protected ViewTemplateDescriptorRegistry viewTemplateDescriptorRegistry;
 
     @Autowired
     public void setResources(Resources resources) {
@@ -63,6 +65,11 @@ public class ViewXmlLoader {
         this.applicationContext = applicationContext;
     }
 
+    @Autowired
+    public void setViewTemplateDescriptorRegistry(ViewTemplateDescriptorRegistry viewTemplateDescriptorRegistry) {
+        this.viewTemplateDescriptorRegistry = viewTemplateDescriptorRegistry;
+    }
+
     /**
      * Loads a descriptor.
      *
@@ -77,6 +84,12 @@ public class ViewXmlLoader {
     }
 
     private String loadTemplate(String resourcePath) {
+        if (viewTemplateDescriptorRegistry.isTemplatePath(resourcePath)) {
+            return viewTemplateDescriptorRegistry.getDescriptor(resourcePath)
+                    .orElseThrow(() -> new DevelopmentException(
+                            "Template is not found " + resourcePath, "Path", resourcePath));
+        }
+
         try (InputStream stream = resources.getResourceAsStream(resourcePath)) {
             if (stream == null) {
                 throw new DevelopmentException("Template is not found " + resourcePath, "Path", resourcePath);

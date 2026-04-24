@@ -22,11 +22,14 @@ import com.vaadin.flow.component.icon.SvgIcon
 import com.vaadin.flow.component.icon.VaadinIcon
 import io.jmix.flowui.kit.component.KeyCombination
 import io.jmix.flowui.menu.MenuConfig
+import test_support.MenuConfigIsolationTestConfiguration
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.ContextConfiguration
 import test_support.ComponentTestUtils
 import test_support.spec.FlowuiTestSpecification
 
+@ContextConfiguration(classes = [MenuConfigIsolationTestConfiguration])
 @SpringBootTest(["jmix.ui.composite-menu=false", "jmix.ui.menu-config=menu/menuconfig/menu.xml"])
 class MenuConfigTest extends FlowuiTestSpecification {
 

@@ -602,17 +602,21 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
      * @param serializedEntityId serialized id of the edited entity or {@link #NEW_ENTITY_ID} when creating new entity
      */
     protected void setupEntityToEdit(String serializedEntityId) {
-        //noinspection unchecked
-        Class<T> entityClass = (Class<T>) DetailViewTypeExtractor.extractEntityClass(getClass())
-                .orElseThrow(() ->
-                        new IllegalStateException("Failed to determine entity type. " +
-                                "Detail class: " + getClass().getName()));
+        Class<T> entityClass = resolveEntityClass();
 
         if (NEW_ENTITY_ID.equals(serializedEntityId)) {
             initNewEntity(entityClass);
         } else {
             initExistingEntity(serializedEntityId);
         }
+    }
+
+    protected Class<T> resolveEntityClass() {
+        //noinspection unchecked
+        return (Class<T>) DetailViewTypeExtractor.extractEntityClass(getClass())
+                .orElseThrow(() ->
+                        new IllegalStateException("Failed to determine entity type. " +
+                                "Detail class: " + getClass().getName()));
     }
 
     protected void initNewEntity(Class<T> entityClass) {

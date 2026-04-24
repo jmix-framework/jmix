@@ -56,7 +56,11 @@
               code="useDataRepositories"
               propertyType="BOOLEAN"
               defaultValue="false"
-              advanced="true"/>
+              advanced="true">
+        <dynamicAttribute name="enabled" source="${!useUpdateService}">
+            <dependency code = "useUpdateService"/>
+        </dynamicAttribute>
+    </property>
     <property caption="Repository"
               code="repository"
               propertyType="DATA_REPOSITORY"
@@ -69,6 +73,30 @@
         </dynamicAttribute>
         <dynamicAttribute name="required" source="${useDataRepositories}">
             <dependency code = "useDataRepositories"/>
+        </dynamicAttribute>
+    </property>
+
+    <property caption="Use Update Service"
+              code="useUpdateService"
+              propertyType="BOOLEAN"
+              defaultValue="false"
+              advanced="true">
+        <dynamicAttribute name="enabled" source="${!useDataRepositories}">
+            <dependency code = "useDataRepositories"/>
+        </dynamicAttribute>
+    </property>
+    <property caption="Update Service"
+              code="updateService"
+              propertyType="ENTITY_UPDATE_SERVICE"
+              advanced="true">
+        <dynamicAttribute name="enabled" source="${useUpdateService}">
+            <dependency code = "useUpdateService"/>
+        </dynamicAttribute>
+        <dynamicAttribute name="visible" source="${useUpdateService}">
+            <dependency code = "useUpdateService"/>
+        </dynamicAttribute>
+        <dynamicAttribute name="required" source="${useUpdateService}">
+            <dependency code = "useUpdateService"/>
         </dynamicAttribute>
     </property>
 

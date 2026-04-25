@@ -3,14 +3,13 @@
       xmlns:c="http://jmix.io/schema/flowui/jpql-condition"
       title="${viewTitle}"
       focusComponent="dataGrid">
+    <#assign properties = templateHelper.getProperties(entityMetaClass, includeProperties![], excludeProperties![])>
     <data>
         <collection id="entityDc"
                     class="${entityMetaClass.javaClass.name}">
             <fetchPlan extends="_base">
-                <#list entityMetaClass.properties as property>
-                <#if !property.range.cardinality.isMany()>
+                <#list properties as property>
                 <property name="${property.name}"<#if property.range.isClass()> fetchPlan="_base"</#if>/>
-                </#if>
                 </#list>
             </fetchPlan>
             <loader id="entityDl" readOnly="true">
@@ -56,10 +55,8 @@
                 <action id="removeAction" type="list_remove"/>
             </actions>
             <columns resizable="true">
-                <#list entityMetaClass.properties as property>
-                <#if !property.range.cardinality.isMany()>
+                <#list properties as property>
                 <column property="${property.name}"/>
-                </#if>
                 </#list>
             </columns>
         </dataGrid>

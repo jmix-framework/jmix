@@ -2,14 +2,13 @@
 <view xmlns="http://jmix.io/schema/flowui/view"
       title="${viewTitle}"
       focusComponent="form">
+    <#assign properties = templateHelper.getProperties(entityMetaClass, includeProperties![], excludeProperties![])>
     <data>
         <instance id="entityDc"
                   class="${entityMetaClass.javaClass.name}">
                 <fetchPlan extends="_base">
-                    <#list entityMetaClass.properties as property>
-                    <#if !property.range.cardinality.isMany()>
+                    <#list properties as property>
                     <property name="${property.name}"<#if property.range.isClass()> fetchPlan="_base"</#if>/>
-                    </#if>
                     </#list>
                 </fetchPlan>
             <loader/>
@@ -24,10 +23,8 @@
     </actions>
     <layout>
         <formLayout id="form" dataContainer="entityDc">
-            <#list entityMetaClass.properties as property>
-            <#if !property.range.cardinality.isMany()>
+            <#list properties as property>
             ${componentXmlFactory.createComponentXml(property, null)}
-            </#if>
             </#list>
         </formLayout>
         <hbox id="detailActions">

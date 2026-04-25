@@ -32,6 +32,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.view.StandardDetailView;
 import io.jmix.flowui.view.template.DetailViewTemplate;
 import io.jmix.flowui.view.template.ListViewTemplate;
+import io.jmix.flowui.view.template.ViewTemplateHelper;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -52,6 +53,7 @@ public class ViewTemplateDefinitions {
     protected Metadata metadata;
     protected Resources resources;
     protected ComponentXmlFactory componentXmlFactory;
+    protected ViewTemplateHelper templateHelper;
     protected ViewTemplateDescriptorRegistry descriptorRegistry;
     protected ViewTemplateControllerClassFactory controllerClassFactory;
 
@@ -72,11 +74,13 @@ public class ViewTemplateDefinitions {
     public ViewTemplateDefinitions(Metadata metadata,
                                    Resources resources,
                                    ComponentXmlFactory componentXmlFactory,
+                                   ViewTemplateHelper templateHelper,
                                    ViewTemplateDescriptorRegistry descriptorRegistry,
                                    ViewTemplateControllerClassFactory controllerClassFactory) {
         this.metadata = metadata;
         this.resources = resources;
         this.componentXmlFactory = componentXmlFactory;
+        this.templateHelper = templateHelper;
         this.descriptorRegistry = descriptorRegistry;
         this.controllerClassFactory = controllerClassFactory;
         this.freemarkerConfiguration = createFreemarkerConfiguration();
@@ -214,6 +218,7 @@ public class ViewTemplateDefinitions {
         model.put("entityMetaClass", metaClass);
         model.put("viewTitle", title);
         model.put("componentXmlFactory", componentXmlFactory);
+        model.put("templateHelper", templateHelper);
 
         try (StringWriter writer = new StringWriter()) {
             new Template(templatePath, new StringReader(template), freemarkerConfiguration)

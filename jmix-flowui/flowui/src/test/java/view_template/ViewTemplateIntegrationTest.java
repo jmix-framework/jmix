@@ -46,6 +46,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import test_support.FlowuiTestConfiguration;
+import test_support.entity.viewtemplate.ViewTemplateFilteringEntity;
 import test_support.entity.viewtemplate.ViewTemplateParamsEntity;
 import test_support.entity.viewtemplate.ViewTemplateTestEntity;
 
@@ -63,6 +64,8 @@ public class ViewTemplateIntegrationTest {
     protected static final String LIST_VIEW_ID = "test_ViewTemplateEntity.list";
     protected static final String DETAIL_VIEW_ID = "test_ViewTemplateEntity.edit";
     protected static final String PARAMS_VIEW_ID = "test_ViewTemplateParamsEntity.browse";
+    protected static final String FILTERED_LIST_VIEW_ID = "test_ViewTemplateFilteringEntity.list";
+    protected static final String FILTERED_DETAIL_VIEW_ID = "test_ViewTemplateFilteringEntity.edit";
     protected static final String LIST_VIEW_ROUTE = "templates/view-template/list";
     protected static final String DETAIL_VIEW_BASE_ROUTE = "templates/view-template/detail";
     protected static final String DETAIL_VIEW_ROUTE = DETAIL_VIEW_BASE_ROUTE + "/:id";
@@ -73,6 +76,9 @@ public class ViewTemplateIntegrationTest {
 
     @Autowired
     ViewRegistry viewRegistry;
+
+    @Autowired
+    ViewTemplateDescriptorRegistry descriptorRegistry;
 
     @Autowired
     MenuConfig menuConfig;
@@ -100,6 +106,8 @@ public class ViewTemplateIntegrationTest {
         MetaClass metaClass = metadata.getClass(ViewTemplateTestEntity.class);
         assertEquals(LIST_VIEW_ID, viewRegistry.getListViewInfo(metaClass).getId());
         assertEquals(DETAIL_VIEW_ID, viewRegistry.getDetailViewInfo(metaClass).getId());
+        assertEquals(FILTERED_LIST_VIEW_ID, viewRegistry.getListViewInfo(ViewTemplateFilteringEntity.class).getId());
+        assertEquals(FILTERED_DETAIL_VIEW_ID, viewRegistry.getDetailViewInfo(ViewTemplateFilteringEntity.class).getId());
     }
 
     @Test
@@ -169,6 +177,55 @@ public class ViewTemplateIntegrationTest {
         assertEquals("params marker", ((Span) marker).getText());
 
         assertEquals(PARAMS_VIEW_ID, viewRegistry.getListViewInfo(ViewTemplateParamsEntity.class).getId());
+    }
+
+    @Test
+    void testDefaultTemplatesExcludeTechnicalProperties() {
+        String listDescriptor = getDescriptor(LIST_VIEW_ID);
+        String detailDescriptor = getDescriptor(DETAIL_VIEW_ID);
+
+        assertTrue(listDescriptor.contains("<property name=\"name\""));
+        assertTrue(listDescriptor.contains("<property name=\"active\""));
+        assertTrue(listDescriptor.contains("<column property=\"name\"/>"));
+        assertTrue(listDescriptor.contains("<column property=\"active\"/>"));
+        assertTrue(listDescriptor.contains("<properties include=\".*\"/>"));
+        assertFalse(listDescriptor.contains("name=\"id\""));
+        assertFalse(listDescriptor.contains("name=\"version\""));
+        assertFalse(listDescriptor.contains("name=\"createdBy\""));
+        assertFalse(listDescriptor.contains("name=\"createTs\""));
+        assertFalse(listDescriptor.contains("name=\"updatedBy\""));
+        assertFalse(listDescriptor.contains("name=\"deleteTs\""));
+
+        assertTrue(detailDescriptor.contains("id=\"nameField\""));
+        assertTrue(detailDescriptor.contains("id=\"activeField\""));
+        assertFalse(detailDescriptor.contains("id=\"idField\""));
+        assertFalse(detailDescriptor.contains("id=\"createdByField\""));
+        assertFalse(detailDescriptor.contains("id=\"deleteTsField\""));
+    }
+
+    @Test
+    void testDefaultTemplatesApplyIncludeAndExcludeParameters() {
+        String listDescriptor = getDescriptor(FILTERED_LIST_VIEW_ID);
+        String detailDescriptor = getDescriptor(FILTERED_DETAIL_VIEW_ID);
+
+        assertTrue(listDescriptor.contains("<property name=\"createdBy\""));
+        assertTrue(listDescriptor.contains("<column property=\"createdBy\"/>"));
+        assertTrue(listDescriptor.contains("<property name=\"customer\" fetchPlan=\"_base\"/>"));
+        assertTrue(listDescriptor.contains("<properties include=\".*\"/>"));
+        assertFalse(listDescriptor.contains("<property name=\"active\""));
+        assertFalse(listDescriptor.contains("<column property=\"active\"/>"));
+        assertFalse(listDescriptor.contains("name=\"secretToken\""));
+        assertFalse(listDescriptor.contains("name=\"systemValue\""));
+        assertFalse(listDescriptor.contains("name=\"address\""));
+        assertFalse(listDescriptor.contains("name=\"tags\""));
+
+        assertTrue(detailDescriptor.contains("id=\"createdByField\""));
+        assertTrue(detailDescriptor.contains("property=\"customer\""));
+        assertFalse(detailDescriptor.contains("id=\"activeField\""));
+        assertFalse(detailDescriptor.contains("id=\"secretTokenField\""));
+        assertFalse(detailDescriptor.contains("id=\"systemValueField\""));
+        assertFalse(detailDescriptor.contains("id=\"addressField\""));
+        assertFalse(detailDescriptor.contains("id=\"tagsField\""));
     }
 
     @Test
@@ -244,5 +301,10 @@ public class ViewTemplateIntegrationTest {
         assertTrue(viewInfo.getTemplatePath().orElseThrow()
                 .startsWith(ViewTemplateDescriptorRegistry.PATH_PREFIX));
         assertEquals(viewInfo.getTemplatePath().orElseThrow(), controllerClass.getAnnotation(ViewDescriptor.class).path());
+    }
+
+    protected String getDescriptor(String viewId) {
+        String descriptorPath = viewRegistry.getViewInfo(viewId).getTemplatePath().orElseThrow();
+        return descriptorRegistry.getDescriptor(descriptorPath).orElseThrow();
     }
 }

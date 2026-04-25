@@ -33,7 +33,10 @@ import io.jmix.flowui.view.StandardDetailView;
 import io.jmix.flowui.view.template.DetailViewTemplate;
 import io.jmix.flowui.view.template.ListViewTemplate;
 import io.jmix.flowui.view.template.ViewTemplateHelper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import jakarta.annotation.PostConstruct;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -50,11 +53,17 @@ public class ViewTemplateDefinitions {
     protected static final Type TEMPLATE_PARAMS_TYPE = new TypeToken<Map<String, Object>>() {
     }.getType();
 
+    @Autowired
     protected Metadata metadata;
+    @Autowired
     protected Resources resources;
+    @Autowired
     protected ComponentXmlFactory componentXmlFactory;
+    @Autowired
     protected ViewTemplateHelper templateHelper;
+    @Autowired
     protected ViewTemplateDescriptorRegistry descriptorRegistry;
+    @Autowired
     protected ViewTemplateControllerClassFactory controllerClassFactory;
 
     protected Gson gson = new Gson();
@@ -62,28 +71,11 @@ public class ViewTemplateDefinitions {
 
     protected volatile List<ViewTemplateDefinition> definitions;
 
-    /**
-     * Creates the template definition registry bean.
-     *
-     * @param metadata               metadata used to scan entities
-     * @param resources              resource access facade
-     * @param componentXmlFactory    helper exposed to Freemarker templates
-     * @param descriptorRegistry     in-memory descriptor registry
-     * @param controllerClassFactory generated controller class factory
-     */
-    public ViewTemplateDefinitions(Metadata metadata,
-                                   Resources resources,
-                                   ComponentXmlFactory componentXmlFactory,
-                                   ViewTemplateHelper templateHelper,
-                                   ViewTemplateDescriptorRegistry descriptorRegistry,
-                                   ViewTemplateControllerClassFactory controllerClassFactory) {
-        this.metadata = metadata;
-        this.resources = resources;
-        this.componentXmlFactory = componentXmlFactory;
-        this.templateHelper = templateHelper;
-        this.descriptorRegistry = descriptorRegistry;
-        this.controllerClassFactory = controllerClassFactory;
-        this.freemarkerConfiguration = createFreemarkerConfiguration();
+    @PostConstruct
+    protected void init() {
+        Configuration configuration = new Configuration(Configuration.VERSION_2_3_31);
+        configuration.setDefaultEncoding("UTF-8");
+        this.freemarkerConfiguration = configuration;
     }
 
     /**
@@ -248,11 +240,5 @@ public class ViewTemplateDefinitions {
     protected String getStringAttribute(Map<String, Object> attributes, String name) {
         Object value = attributes.get(name);
         return value instanceof String ? (String) value : "";
-    }
-
-    protected Configuration createFreemarkerConfiguration() {
-        Configuration configuration = new Configuration(Configuration.VERSION_2_3_31);
-        configuration.setDefaultEncoding("UTF-8");
-        return configuration;
     }
 }

@@ -41,7 +41,7 @@ import java.util.Set;
 
 /**
  * Default {@link ViewTemplateHelper} implementation used by built-in view templates.
- * <p>
+ *
  * @see #getProperties(MetaClass, List, List)
  */
 @Component("flowui_DefaultViewTemplateHelper")

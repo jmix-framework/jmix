@@ -175,7 +175,7 @@ class ComponentXmlFactoryTest extends FlowuiTestSpecification {
         componentXmlFactory.createComponentXml(property, null)
 
         then:
-        thrown(IllegalArgumentException)
+        thrown(UnsupportedOperationException)
     }
 
     Element createElement(String propertyName, String dataContainerId = null) {

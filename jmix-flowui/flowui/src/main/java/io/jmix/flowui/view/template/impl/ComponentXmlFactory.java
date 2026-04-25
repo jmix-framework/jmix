@@ -37,14 +37,30 @@ import java.time.OffsetTime;
 import java.util.Date;
 import java.util.UUID;
 
+/**
+ * Factory for creating XML representations of UI components based on entity metadata properties.
+ *
+ * @see #createComponentXml(MetaProperty, String)
+ */
 @Component("flowui_ComponentXmlFactory")
 public class ComponentXmlFactory {
 
+    /**
+     * Creates an XML representation of a UI component for the given entity property.
+     * <p>
+     * The component type is determined based on the property's range and type. For entity properties,
+     * appropriate actions are added to the entity picker component.
+     *
+     * @param metaProperty    the entity property for which to create a component
+     * @param dataContainerId optional data container identifier for data binding, may be null
+     * @return XML string representation of the component
+     * @throws UnsupportedOperationException if the property is collection-valued
+     */
     public String createComponentXml(MetaProperty metaProperty, @Nullable String dataContainerId) {
         Range range = metaProperty.getRange();
 
         if (range.getCardinality().isMany()) {
-            throw new IllegalArgumentException(
+            throw new UnsupportedOperationException(
                     "Collection-valued property '%s' is not supported".formatted(metaProperty.getName()));
         }
 

@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.view.template;
 
+import io.jmix.core.annotation.Experimental;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 
@@ -24,6 +25,7 @@ import java.util.List;
 /**
  * Provides helper methods for view templates.
  */
+@Experimental
 public interface ViewTemplateHelper {
 
     /**

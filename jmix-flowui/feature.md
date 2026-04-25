@@ -60,17 +60,48 @@ When rendering the descriptor template, the framework provides:
 - `entityMetaClass`: entity `MetaClass`
 - `viewTitle`: resolved title from annotation or default
 - `componentXmlFactory`: `io.jmix.flowui.view.template.impl.ComponentXmlFactory`
+- `templateHelper`: `io.jmix.flowui.view.template.ViewTemplateHelper`
 
 The framework also parses `templateParams` as a JSON object and merges its entries into the template model.
+
+Built-in templates additionally recognize these top-level `templateParams` entries and pass them to the helper:
+
+- `includeProperties`: JSON array of direct property names to include explicitly
+- `excludeProperties`: JSON array of direct property names to exclude explicitly
 
 ### Descriptor generation
 
 - Default descriptor templates are:
   - `flowui/src/main/resources/io/jmix/flowui/view/template/list-view.ftl`
   - `flowui/src/main/resources/io/jmix/flowui/view/template/detail-template.ftl`
+- The built-in templates delegate property selection to `templateHelper.getProperties(entityMetaClass, includeProperties![], excludeProperties![])`.
 - `ViewTemplateDefinitions` renders the descriptor first and stores it in `ViewTemplateDescriptorRegistry`.
 - Descriptors are stored under synthetic paths with prefix `view-template:`.
 - `ViewXmlLoader` recognizes these synthetic paths and loads the descriptor from the in-memory registry instead of the classpath.
+
+#### Template helper property filtering
+
+- `ViewTemplateHelper` is an experimental public API intended for Freemarker view templates.
+- The default implementation is `io.jmix.flowui.view.template.impl.DefaultViewTemplateHelper`.
+- `getProperties(MetaClass, List<String>, List<String>)` returns direct single-value properties in metadata order.
+- Supported property kinds:
+  - datatype properties
+  - enum properties
+  - single-value associations
+  - single-value compositions
+- Unsupported property kinds:
+  - collection-valued properties
+  - embedded properties
+- Default exclusions:
+  - `@SystemLevel` properties
+  - `@Secret` properties
+  - properties annotated with `@Id`, `@Version`, `@JmixGeneratedValue`
+  - properties annotated with `@CreatedBy`, `@CreatedDate`, `@LastModifiedBy`, `@LastModifiedDate`
+  - properties annotated with `@DeletedBy`, `@DeletedDate`
+- `includeProperties` can restore excluded direct supported properties.
+- `excludeProperties` is applied last and wins over inclusion.
+- Property paths are not supported. If `includeProperties` or `excludeProperties` contain a dotted name like
+  `customer.name`, template rendering fails with `IllegalArgumentException`.
 
 ### Controller generation
 
@@ -118,6 +149,10 @@ The framework also parses `templateParams` as a JSON object and merges its entri
 Main coverage added in this session:
 
 - `flowui/src/test/java/view_template/ViewTemplateIntegrationTest.java`
-  - verifies generated controller subclasses, view ids, descriptor paths, routes, menu items, and navigation
+  - verifies generated controller subclasses, view ids, descriptor paths, routes, menu items, navigation, and
+    built-in template property filtering
 - `flowui/src/test/groovy/view_template/ComponentXmlFactoryTest.groovy`
   - verifies XML generation rules
+- `flowui/src/test/groovy/view_template/DefaultViewTemplateHelperTest.groovy`
+  - verifies direct-property filtering, default exclusions, include/exclude overrides, metadata order preservation,
+    and property-path rejection

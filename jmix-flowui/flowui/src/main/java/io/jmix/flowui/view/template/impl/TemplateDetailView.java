@@ -16,14 +16,24 @@
 
 package io.jmix.flowui.view.template.impl;
 
-import io.jmix.flowui.view.EditedEntityContainer;
+import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.view.StandardDetailView;
 
 /**
  * Generic base controller for template-generated detail views.
  */
-@EditedEntityContainer("entityDc")
 public class TemplateDetailView extends StandardDetailView<Object> {
+
+    protected static final String DEFAULT_EDITED_ENTITY_CONTAINER_ID = "entityDc";
+
+    protected String getEditedEntityContainerId() {
+        return DEFAULT_EDITED_ENTITY_CONTAINER_ID;
+    }
+
+    @Override
+    protected InstanceContainer<Object> getEditedEntityContainer() {
+        return getViewData().getContainer(getEditedEntityContainerId());
+    }
 
     /**
      * Resolves the entity type from the edited entity container metadata.

@@ -39,6 +39,11 @@ Supported attributes on both annotations:
 - `viewRoute`: generated route path.
 - `viewTitle`: generated view title.
 
+Additional annotation attributes:
+
+- `ListViewTemplate.lookupComponentId`: lookup component id used by the template and the generated controller. `dataGrid` by default.
+- `DetailViewTemplate.editedEntityContainerId`: edited entity container id used by the template and the generated controller. `entityDc` by default.
+
 Resolved defaults:
 
 - List view id: `<entityName>.list`
@@ -74,6 +79,8 @@ Built-in templates additionally recognize these top-level `templateParams` entri
 - Default descriptor templates are:
   - `flowui/src/main/resources/io/jmix/flowui/view/template/list-view.ftl`
   - `flowui/src/main/resources/io/jmix/flowui/view/template/detail-template.ftl`
+- The stock templates use literal ids `dataGrid` and `entityDc`.
+- Custom templates may use any ids, but the template author must keep them consistent with `lookupComponentId` or `editedEntityContainerId` configured in the annotation because runtime controller behavior depends on them.
 - The built-in templates delegate property selection to `templateHelper.getProperties(entityMetaClass, includeProperties![], excludeProperties![])`.
 - `ViewTemplateDefinitions` renders the descriptor first and stores it in `ViewTemplateDescriptorRegistry`.
 - Descriptors are stored under synthetic paths with prefix `view-template:`.
@@ -111,6 +118,7 @@ Built-in templates additionally recognize these top-level `templateParams` entri
   - `TemplateDetailView extends StandardDetailView<Object>`
 - For each template definition, the framework generates a dedicated subclass in a package derived from the entity class package: `<entity-package>.generated_view`.
 - Example: `com.company.foo.entity.Alpha` produces controllers under `com.company.foo.entity.generated_view`, such as `AlphaListView` and `AlphaDetailView`.
+- Generated subclasses override the generic base-class accessors using `lookupComponentId` or `editedEntityContainerId` from the annotation.
 - Each generated controller class is annotated at runtime with:
   - `@ViewController(id = ...)`
   - `@ViewDescriptor(path = ...)`

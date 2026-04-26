@@ -27,11 +27,15 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.Views;
 import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.component.UiComponentUtils;
+import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.menu.MenuConfig;
 import io.jmix.flowui.menu.MenuItem;
+import io.jmix.flowui.model.CollectionContainer;
+import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.testassist.FlowuiTestAssistConfiguration;
 import io.jmix.flowui.testassist.UiTest;
 import io.jmix.flowui.testassist.UiTestUtils;
+import io.jmix.flowui.view.ViewControllerUtils;
 import io.jmix.flowui.view.StandardDetailView;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewInfo;
@@ -45,12 +49,17 @@ import io.jmix.flowui.view.template.impl.ViewTemplateDescriptorRegistry;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.util.ReflectionTestUtils;
 import test_support.FlowuiTestConfiguration;
+import test_support.entity.viewtemplate.ViewTemplateBindingsEntity;
 import test_support.entity.viewtemplate.ViewTemplateFilteringEntity;
 import test_support.entity.viewtemplate.ViewTemplateParamsEntity;
 import test_support.entity.viewtemplate.ViewTemplateTestEntity;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -66,10 +75,14 @@ public class ViewTemplateIntegrationTest {
     protected static final String PARAMS_VIEW_ID = "test_ViewTemplateParamsEntity.browse";
     protected static final String FILTERED_LIST_VIEW_ID = "test_ViewTemplateFilteringEntity.list";
     protected static final String FILTERED_DETAIL_VIEW_ID = "test_ViewTemplateFilteringEntity.edit";
+    protected static final String BINDINGS_LIST_VIEW_ID = "test_ViewTemplateBindingsEntity.list";
+    protected static final String BINDINGS_DETAIL_VIEW_ID = "test_ViewTemplateBindingsEntity.detail";
     protected static final String LIST_VIEW_ROUTE = "templates/view-template/list";
     protected static final String DETAIL_VIEW_BASE_ROUTE = "templates/view-template/detail";
     protected static final String DETAIL_VIEW_ROUTE = DETAIL_VIEW_BASE_ROUTE + "/:id";
     protected static final String GENERATED_VIEW_PACKAGE = "test_support.entity.viewtemplate.generated_view";
+    protected static final String CUSTOM_LOOKUP_COMPONENT_ID = "customersGrid";
+    protected static final String CUSTOM_EDITED_ENTITY_DC_ID = "customerDc";
 
     @Autowired
     Metadata metadata;
@@ -226,6 +239,91 @@ public class ViewTemplateIntegrationTest {
         assertFalse(detailDescriptor.contains("id=\"systemValueField\""));
         assertFalse(detailDescriptor.contains("id=\"addressField\""));
         assertFalse(detailDescriptor.contains("id=\"tagsField\""));
+    }
+
+    @Test
+    void testStockTemplatesUseLiteralBuiltInTemplateIds() {
+        String listDescriptor = getDescriptor(LIST_VIEW_ID);
+        String detailDescriptor = getDescriptor(DETAIL_VIEW_ID);
+
+        assertTrue(listDescriptor.contains("focusComponent=\"dataGrid\""));
+        assertTrue(listDescriptor.contains("<dataGrid id=\"dataGrid\""));
+        assertTrue(listDescriptor.contains("action=\"dataGrid.createAction\""));
+        assertTrue(listDescriptor.contains("action=\"dataGrid.editAction\""));
+        assertTrue(listDescriptor.contains("action=\"dataGrid.removeAction\""));
+
+        assertTrue(detailDescriptor.contains("<instance id=\"entityDc\""));
+        assertTrue(detailDescriptor.contains("<formLayout id=\"form\" dataContainer=\"entityDc\""));
+    }
+
+    @Test
+    void testCustomTemplatesCanUseExplicitTemplateIds() {
+        String listDescriptor = getDescriptor(BINDINGS_LIST_VIEW_ID);
+        String detailDescriptor = getDescriptor(BINDINGS_DETAIL_VIEW_ID);
+
+        assertTrue(listDescriptor.contains("focusComponent=\"" + CUSTOM_LOOKUP_COMPONENT_ID + "\""));
+        assertTrue(listDescriptor.contains("<collection id=\"entityDc\""));
+        assertTrue(listDescriptor.contains("<loader id=\"entityDl\""));
+        assertTrue(listDescriptor.contains("<genericFilter id=\"genericFilter\""));
+        assertTrue(listDescriptor.contains("<simplePagination id=\"pagination\""));
+        assertTrue(listDescriptor.contains("<dataGrid id=\"" + CUSTOM_LOOKUP_COMPONENT_ID + "\""));
+        assertTrue(listDescriptor.contains("<hbox id=\"lookupActions\""));
+        assertTrue(listDescriptor.contains("<action id=\"selectAction\" type=\"lookup_select\"/>"));
+        assertTrue(listDescriptor.contains("<action id=\"discardAction\" type=\"lookup_discard\"/>"));
+        assertFalse(listDescriptor.contains("<dataGrid id=\"dataGrid\""));
+
+        assertTrue(detailDescriptor.contains("<instance id=\"" + CUSTOM_EDITED_ENTITY_DC_ID + "\""));
+        assertTrue(detailDescriptor.contains("<formLayout id=\"form\" dataContainer=\"" + CUSTOM_EDITED_ENTITY_DC_ID + "\""));
+        assertFalse(detailDescriptor.contains("<instance id=\"entityDc\""));
+    }
+
+    @Test
+    void testTemplateListViewUsesAnnotationLookupComponentId() {
+        View<?> view = views.create(BINDINGS_LIST_VIEW_ID);
+        TemplateListView listView = (TemplateListView) view;
+
+        assertComponentPresent(view, CUSTOM_LOOKUP_COMPONENT_ID);
+        assertComponentPresent(view, "genericFilter");
+        assertComponentPresent(view, "lookupActions");
+        assertTrue(UiComponentUtils.findComponent(view, "dataGrid").isEmpty());
+
+        assertEquals(CUSTOM_LOOKUP_COMPONENT_ID,
+                ((Component) listView.getLookupComponent()).getId().orElseThrow());
+
+        CollectionContainer<ViewTemplateBindingsEntity> container =
+                ViewControllerUtils.getViewData(view).getContainer("entityDc");
+        ViewTemplateBindingsEntity entity = dataManager.create(ViewTemplateBindingsEntity.class);
+        entity.setName("Customer");
+        container.setItems(List.of(entity));
+
+        @SuppressWarnings("unchecked")
+        DataGrid<ViewTemplateBindingsEntity> dataGrid =
+                (DataGrid<ViewTemplateBindingsEntity>) UiComponentUtils.getComponent(view, CUSTOM_LOOKUP_COMPONENT_ID);
+        dataGrid.select(entity);
+
+        AtomicReference<Collection<Object>> selectedItems = new AtomicReference<>();
+        listView.setSelectionHandler(selectedItems::set);
+
+        Component lookupActionsComponent = UiComponentUtils.getComponent(view, "lookupActions");
+        assertTrue(lookupActionsComponent.isVisible());
+
+        assertTrue(listView.getLookupComponent().getSelectedItems().contains(entity));
+        ReflectionTestUtils.invokeMethod(listView, "doSelect", List.of(entity));
+
+        assertNotNull(selectedItems.get());
+        assertEquals(1, selectedItems.get().size());
+        assertTrue(selectedItems.get().contains(entity));
+    }
+
+    @Test
+    void testTemplateDetailViewUsesAnnotationEditedEntityContainerId() {
+        View<?> view = views.create(BINDINGS_DETAIL_VIEW_ID);
+        TemplateDetailView detailView = (TemplateDetailView) view;
+        var viewData = ViewControllerUtils.getViewData(view);
+
+        InstanceContainer<ViewTemplateBindingsEntity> editedEntityContainer =
+                ReflectionTestUtils.invokeMethod(detailView, "getEditedEntityContainer");
+        assertSame(viewData.getContainer(CUSTOM_EDITED_ENTITY_DC_ID), editedEntityContainer);
     }
 
     @Test

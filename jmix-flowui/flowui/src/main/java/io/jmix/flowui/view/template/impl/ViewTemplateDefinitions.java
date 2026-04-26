@@ -30,6 +30,7 @@ import io.jmix.core.Metadata;
 import io.jmix.core.Resources;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.view.StandardDetailView;
+import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.template.DetailViewTemplate;
 import io.jmix.flowui.view.template.ListViewTemplate;
 import io.jmix.flowui.view.template.ViewTemplateHelper;
@@ -52,6 +53,8 @@ public class ViewTemplateDefinitions {
 
     protected static final Type TEMPLATE_PARAMS_TYPE = new TypeToken<Map<String, Object>>() {
     }.getType();
+    protected static final String LOOKUP_COMPONENT_ID = "lookupComponentId";
+    protected static final String EDITED_ENTITY_CONTAINER_ID = "editedEntityContainerId";
 
     @Autowired
     protected Metadata metadata;
@@ -92,7 +95,7 @@ public class ViewTemplateDefinitions {
             }
         }
 
-        return definitions;
+        return Objects.requireNonNull(definitions);
     }
 
     protected List<ViewTemplateDefinition> loadDefinitions() {
@@ -165,9 +168,30 @@ public class ViewTemplateDefinitions {
                                                      Map<String, Object> attributes,
                                                      String title) {
         String routePath = resolveRoutePath(viewId, type, attributes);
-        String descriptor = renderTemplate(metaClass, attributes, title);
+        String templatePath = getStringAttribute(attributes, "path");
+        Map<String, Object> templateParams = parseTemplateParams(getStringAttribute(attributes, "templateParams"));
+        String descriptor = renderTemplate(metaClass, templatePath, title, templateParams);
         String descriptorPath = descriptorRegistry.createPath(viewId);
         descriptorRegistry.put(descriptorPath, descriptor);
+
+        Class<? extends View<?>> controllerClass;
+        if (type == ViewTemplateType.LIST) {
+            controllerClass = controllerClassFactory.createListViewControllerClass(
+                    metaClass,
+                    viewId,
+                    descriptorPath,
+                    routePath,
+                    resolveLookupComponentId(attributes)
+            );
+        } else {
+            controllerClass = controllerClassFactory.createDetailViewControllerClass(
+                    metaClass,
+                    viewId,
+                    descriptorPath,
+                    routePath,
+                    resolveEditedEntityContainerId(attributes)
+            );
+        }
 
         return new ViewTemplateDefinition(
                 viewId,
@@ -175,7 +199,7 @@ public class ViewTemplateDefinitions {
                 metaClass,
                 descriptorPath,
                 routePath,
-                controllerClassFactory.createControllerClass(metaClass, viewId, type, descriptorPath, routePath),
+                controllerClass,
                 title,
                 getStringAttribute(attributes, "parentMenu")
         );
@@ -199,14 +223,18 @@ public class ViewTemplateDefinitions {
         return configuredRoute;
     }
 
-    protected String renderTemplate(MetaClass metaClass, Map<String, Object> attributes, String title) {
-        String templatePath = getStringAttribute(attributes, "path");
+    protected String renderTemplate(MetaClass metaClass,
+                                    String templatePath,
+                                    String title,
+                                    Map<String, Object> templateParams) {
         String template = resources.getResourceAsString(templatePath);
         if (template == null) {
             throw new DevelopmentException("View template is not found", "Path", templatePath);
         }
 
-        Map<String, Object> model = new HashMap<>(parseTemplateParams(getStringAttribute(attributes, "templateParams")));
+        Map<String, Object> model = new HashMap<>(templateParams);
+        model.remove(LOOKUP_COMPONENT_ID);
+        model.remove(EDITED_ENTITY_CONTAINER_ID);
         model.put("entityMetaClass", metaClass);
         model.put("viewTitle", title);
         model.put("componentXmlFactory", componentXmlFactory);
@@ -235,6 +263,25 @@ public class ViewTemplateDefinitions {
 
         JsonObject jsonObject = jsonElement.getAsJsonObject();
         return gson.fromJson(jsonObject, TEMPLATE_PARAMS_TYPE);
+    }
+
+    protected String resolveLookupComponentId(Map<String, Object> attributes) {
+        return resolveControllerIdAttribute(attributes, LOOKUP_COMPONENT_ID, TemplateListView.DEFAULT_LOOKUP_COMPONENT_ID);
+    }
+
+    protected String resolveEditedEntityContainerId(Map<String, Object> attributes) {
+        return resolveControllerIdAttribute(attributes, EDITED_ENTITY_CONTAINER_ID,
+                TemplateDetailView.DEFAULT_EDITED_ENTITY_CONTAINER_ID);
+    }
+
+    protected String resolveControllerIdAttribute(Map<String, Object> attributes,
+                                                  String attributeName,
+                                                  String defaultValue) {
+        String value = getStringAttribute(attributes, attributeName);
+        if (Strings.isNullOrEmpty(value)) {
+            return defaultValue;
+        }
+        return value;
     }
 
     protected String getStringAttribute(Map<String, Object> attributes, String name) {

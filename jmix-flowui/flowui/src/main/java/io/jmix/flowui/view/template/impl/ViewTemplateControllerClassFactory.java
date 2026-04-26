@@ -23,12 +23,16 @@ import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.description.annotation.AnnotationDescription;
 import net.bytebuddy.dynamic.DynamicType;
 import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
+import net.bytebuddy.implementation.FixedValue;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
+
+import static net.bytebuddy.matcher.ElementMatchers.named;
 
 /**
  * Generates dedicated controller classes for template-based views.
@@ -43,40 +47,111 @@ public class ViewTemplateControllerClassFactory {
     protected Map<String, Class<? extends View<?>>> controllerClasses = new ConcurrentHashMap<>();
 
     /**
-     * Returns a generated controller class for the specified template view.
+     * Returns a generated controller class for the specified list template view.
      *
      * @param entityMetaClass entity meta-class that owns the generated view
-     * @param viewId         view id to expose through {@link ViewController}
-     * @param type           template view type
-     * @param descriptorPath descriptor path exposed through {@link ViewDescriptor}
-     * @param routePath      route path exposed through {@link Route}
+     * @param viewId          view id to expose through {@link ViewController}
+     * @param descriptorPath  descriptor path exposed through {@link ViewDescriptor}
+     * @param routePath       route path exposed through {@link Route}
+     * @param lookupComponentId lookup component id used by the generated controller
      * @return generated controller class
      */
-    public Class<? extends View<?>> createControllerClass(MetaClass entityMetaClass,
-                                                         String viewId,
-                                                         ViewTemplateType type,
-                                                         String descriptorPath,
-                                                         String routePath) {
-        String key = type.name() + ":" + viewId + ":" + routePath;
+    public Class<? extends View<?>> createListViewControllerClass(MetaClass entityMetaClass,
+                                                                  String viewId,
+                                                                  String descriptorPath,
+                                                                  String routePath,
+                                                                  String lookupComponentId) {
+        String key = ViewTemplateType.LIST.name() + ":" + viewId + ":" + routePath + ":" + lookupComponentId;
         return controllerClasses.computeIfAbsent(key, __ ->
-                createControllerClassInternal(entityMetaClass, viewId, type, descriptorPath, routePath));
+                createListViewControllerClassInternal(entityMetaClass, viewId, descriptorPath, routePath,
+                        lookupComponentId));
+    }
+
+    /**
+     * Returns a generated controller class for the specified detail template view.
+     *
+     * @param entityMetaClass entity meta-class that owns the generated view
+     * @param viewId          view id to expose through {@link ViewController}
+     * @param descriptorPath  descriptor path exposed through {@link ViewDescriptor}
+     * @param routePath       route path exposed through {@link Route}
+     * @param editedEntityContainerId edited entity container id used by the generated controller
+     * @return generated controller class
+     */
+    public Class<? extends View<?>> createDetailViewControllerClass(MetaClass entityMetaClass,
+                                                                    String viewId,
+                                                                    String descriptorPath,
+                                                                    String routePath,
+                                                                    String editedEntityContainerId) {
+        String key = ViewTemplateType.DETAIL.name() + ":" + viewId + ":" + routePath + ":"
+                + editedEntityContainerId;
+        return controllerClasses.computeIfAbsent(key, __ ->
+                createDetailViewControllerClassInternal(entityMetaClass, viewId, descriptorPath, routePath,
+                        editedEntityContainerId));
     }
 
     @SuppressWarnings("unchecked")
-    protected Class<? extends View<?>> createControllerClassInternal(MetaClass entityMetaClass,
-                                                                    String viewId,
-                                                                    ViewTemplateType type,
-                                                                    String descriptorPath,
-                                                                    String routePath) {
-        Class<? extends View<?>> superclass = type == ViewTemplateType.LIST
-                ? TemplateListView.class
-                : TemplateDetailView.class;
-        String className = createClassName(entityMetaClass, type);
-        Class<?> loadedClass = findLoadedClass(className, superclass.getClassLoader());
+    protected Class<? extends View<?>> createListViewControllerClassInternal(MetaClass entityMetaClass,
+                                                                             String viewId,
+                                                                             String descriptorPath,
+                                                                             String routePath,
+                                                                             String lookupComponentId) {
+        String className = createClassName(entityMetaClass, ViewTemplateType.LIST);
+        Class<?> loadedClass = findLoadedClass(className, TemplateListView.class.getClassLoader());
         if (loadedClass != null) {
             return (Class<? extends View<?>>) loadedClass;
         }
 
+        DynamicType.Builder<? extends View<?>> builder = createControllerClassBuilder(
+                entityMetaClass,
+                ViewTemplateType.LIST,
+                TemplateListView.class,
+                viewId,
+                descriptorPath,
+                routePath
+        ).method(named("getLookupComponentId"))
+                .intercept(FixedValue.value(lookupComponentId));
+
+        try (DynamicType.Unloaded<? extends View<?>> unloaded = builder.make()) {
+            return unloaded.load(TemplateListView.class.getClassLoader(), ClassLoadingStrategy.Default.INJECTION)
+                    .getLoaded();
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    protected Class<? extends View<?>> createDetailViewControllerClassInternal(MetaClass entityMetaClass,
+                                                                               String viewId,
+                                                                               String descriptorPath,
+                                                                               String routePath,
+                                                                               String editedEntityContainerId) {
+        String className = createClassName(entityMetaClass, ViewTemplateType.DETAIL);
+        Class<?> loadedClass = findLoadedClass(className, TemplateDetailView.class.getClassLoader());
+        if (loadedClass != null) {
+            return (Class<? extends View<?>>) loadedClass;
+        }
+
+        DynamicType.Builder<? extends View<?>> builder = createControllerClassBuilder(
+                entityMetaClass,
+                ViewTemplateType.DETAIL,
+                TemplateDetailView.class,
+                viewId,
+                descriptorPath,
+                routePath
+        ).method(named("getEditedEntityContainerId"))
+                .intercept(FixedValue.value(editedEntityContainerId));
+
+        try (DynamicType.Unloaded<? extends View<?>> unloaded = builder.make()) {
+            return unloaded.load(TemplateDetailView.class.getClassLoader(), ClassLoadingStrategy.Default.INJECTION)
+                    .getLoaded();
+        }
+    }
+
+    protected DynamicType.Builder<? extends View<?>> createControllerClassBuilder(MetaClass entityMetaClass,
+                                                                                  ViewTemplateType type,
+                                                                                  Class<? extends View<?>> superclass,
+                                                                                  String viewId,
+                                                                                  String descriptorPath,
+                                                                                  String routePath) {
+        String className = createClassName(entityMetaClass, type);
         AnnotationDescription viewController = AnnotationDescription.Builder.ofType(ViewController.class)
                 .define(ViewController.ID_ATTRIBUTE, viewId)
                 .build();
@@ -88,14 +163,10 @@ public class ViewTemplateControllerClassFactory {
                 .define("layout", DefaultMainViewParent.class)
                 .build();
 
-        try (DynamicType.Unloaded<? extends View<?>> unloaded = new ByteBuddy()
+        return new ByteBuddy()
                 .subclass(superclass)
                 .name(className)
-                .annotateType(viewController, viewDescriptor, route)
-                .make()) {
-            return unloaded.load(superclass.getClassLoader(), ClassLoadingStrategy.Default.INJECTION)
-                    .getLoaded();
-        }
+                .annotateType(viewController, viewDescriptor, route);
     }
 
     /**
@@ -133,6 +204,7 @@ public class ViewTemplateControllerClassFactory {
         return slug;
     }
 
+    @Nullable
     protected Class<?> findLoadedClass(String className, ClassLoader classLoader) {
         try {
             return Class.forName(className, false, classLoader);

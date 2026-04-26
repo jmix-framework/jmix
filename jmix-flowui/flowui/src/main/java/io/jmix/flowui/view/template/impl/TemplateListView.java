@@ -16,12 +16,27 @@
 
 package io.jmix.flowui.view.template.impl;
 
-import io.jmix.flowui.view.LookupComponent;
+import io.jmix.flowui.component.LookupComponent;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.view.StandardListView;
+
+import java.util.Optional;
 
 /**
  * Generic base controller for template-generated list views.
  */
-@LookupComponent("dataGrid")
 public class TemplateListView extends StandardListView<Object> {
+
+    protected static final String DEFAULT_LOOKUP_COMPONENT_ID = "dataGrid";
+
+    protected String getLookupComponentId() {
+        return DEFAULT_LOOKUP_COMPONENT_ID;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public Optional<LookupComponent<Object>> findLookupComponent() {
+        return UiComponentUtils.findComponent(this, getLookupComponentId())
+                .map(component -> (LookupComponent<Object>) component);
+    }
 }

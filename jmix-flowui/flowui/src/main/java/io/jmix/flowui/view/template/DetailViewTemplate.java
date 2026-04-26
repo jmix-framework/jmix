@@ -62,4 +62,9 @@ public @interface DetailViewTemplate {
      * View title. If empty, the framework uses {@code <entityName>}.
      */
     String viewTitle() default "";
+
+    /**
+     * Edited entity container id used by the template and the generated controller.
+     */
+    String editedEntityContainerId() default "entityDc";
 }

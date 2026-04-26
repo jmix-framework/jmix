@@ -61,4 +61,9 @@ public @interface ListViewTemplate {
      * View title. If empty, the framework uses {@code <entityName> list}.
      */
     String viewTitle() default "";
+
+    /**
+     * Lookup component id used by the template and the generated controller.
+     */
+    String lookupComponentId() default "dataGrid";
 }

@@ -73,7 +73,7 @@ public class LookupSelectAction<E> extends OperationResultViewAction<LookupSelec
 
     @Autowired
     protected void setUiViewProperties(UiViewProperties viewProperties) {
-        this.shortcutCombination = KeyCombination.create(viewProperties.getSaveShortcut());
+        setShortcutCombination(KeyCombination.create(viewProperties.getSaveShortcut()));
     }
 
     @Override

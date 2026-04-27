@@ -17,7 +17,6 @@
 package io.jmix.flowui.kit.action;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.component.HasShortcutCombination;
 import org.jspecify.annotations.Nullable;

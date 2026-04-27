@@ -23,8 +23,10 @@ import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.HasValueAndElement;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.shared.Registration;
+import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.datatype.EnumClass;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.flowui.action.ObservableBaseAction;
 import io.jmix.flowui.component.combobox.JmixComboBox;
@@ -36,9 +38,13 @@ import io.jmix.flowui.model.DataLoader;
 import io.micrometer.observation.Observation;
 import org.jspecify.annotations.Nullable;
 
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
@@ -57,10 +63,12 @@ public class PropertyFilter<V> extends SingleFilterComponentBase<V> {
 
     protected SingleFilterSupport singleFilterSupport;
     protected PropertyFilterSupport propertyFilterSupport;
+    protected DatatypeRegistry datatypeRegistry;
 
     protected DropdownButton operationSelector;
 
     protected Operation operation;
+    protected List<Operation> operationsList;
     protected boolean operationEditable = false;
     protected boolean operationTextVisible = true;
 
@@ -70,6 +78,7 @@ public class PropertyFilter<V> extends SingleFilterComponentBase<V> {
 
         singleFilterSupport = applicationContext.getBean(SingleFilterSupport.class);
         propertyFilterSupport = applicationContext.getBean(PropertyFilterSupport.class);
+        datatypeRegistry = applicationContext.getBean(DatatypeRegistry.class);
     }
 
     @Override
@@ -103,6 +112,10 @@ public class PropertyFilter<V> extends SingleFilterComponentBase<V> {
             MetaClass metaClass = dataLoader.getContainer().getEntityMetaClass();
 
             for (Operation operation : propertyFilterSupport.getAvailableOperations(metaClass, getProperty())) {
+                if (operationsList != null && !operationsList.contains(operation)) {
+                    continue;
+                }
+
                 OperationChangeAction action = new OperationChangeAction(operation, this::setOperationInternal);
                 action.setText(getOperationText(operation));
                 operationSelector.addItem(operation.name(), action);
@@ -161,6 +174,27 @@ public class PropertyFilter<V> extends SingleFilterComponentBase<V> {
     }
 
     /**
+     * @return a list of available operations
+     */
+    public List<Operation> getOperationsList() {
+        return operationsList == null ? Collections.emptyList() : Collections.unmodifiableList(operationsList);
+    }
+
+    /**
+     * Sets a list of available operations.
+     *
+     * @param operationsList a list of available operations
+     */
+    public void setOperationsList(@Nullable List<Operation> operationsList) {
+        this.operationsList = operationsList == null ? null : List.copyOf(operationsList);
+
+        if (operationSelector != null) {
+            operationSelector.removeAll();
+            initOperationSelectorActions(operationSelector);
+        }
+    }
+
+    /**
      * Sets a filtering operation.
      *
      * @param operation a filtering operation
@@ -176,6 +210,18 @@ public class PropertyFilter<V> extends SingleFilterComponentBase<V> {
             return;
         }
 
+        if (dataLoader != null && getProperty() != null) {
+            MetaClass metaClass = dataLoader.getContainer().getEntityMetaClass();
+            EnumSet<Operation> availableOperations = propertyFilterSupport.getAvailableOperations(metaClass, getProperty());
+            checkArgument(availableOperations.contains(operation),
+                    "Operation '%s' is not available for property '%s'", operation.name(), getProperty());
+        }
+
+        if (operationsList != null) {
+            checkArgument(operationsList.contains(operation),
+                    "Operation '%s' is not in operations list", operation.name());
+        }
+
         getQueryCondition().setOperation(propertyFilterSupport.toPropertyConditionOperation(operation));
 
         if (operationSelector != null) {
@@ -183,7 +229,9 @@ public class PropertyFilter<V> extends SingleFilterComponentBase<V> {
         }
 
         if (this.valueComponent != null) {
-            if (this.operation == null || this.operation.getType() != operation.getType()) {
+            if (this.operation == null
+                    || this.operation.getType() != operation.getType()
+                    || isStringValueComponentRecreationRequired(this.operation, operation)) {
                 this.valueComponent.clear();
             }
 
@@ -193,7 +241,8 @@ public class PropertyFilter<V> extends SingleFilterComponentBase<V> {
         }
 
         if (this.operation == null
-                || this.operation.getType() != operation.getType()) {
+                || this.operation.getType() != operation.getType()
+                || isStringValueComponentRecreationRequired(this.operation, operation)) {
             if (dataLoader != null && getProperty() != null) {
                 MetaClass metaClass = dataLoader.getContainer().getEntityMetaClass();
                 //noinspection unchecked
@@ -215,6 +264,40 @@ public class PropertyFilter<V> extends SingleFilterComponentBase<V> {
         OperationChangeEvent<?> operationChangeEvent =
                 new OperationChangeEvent<>(this, operation, prevOperation, fromClient);
         getEventBus().fireEvent(operationChangeEvent);
+    }
+
+    protected boolean isStringValueComponentRecreationRequired(@Nullable Operation prevOperation, Operation nextOperation) {
+        if (prevOperation == null) {
+            return true;
+        }
+
+        if (prevOperation.getType() == Operation.Type.VALUE && nextOperation.getType() == Operation.Type.VALUE) {
+            return isStringBasedOperation(prevOperation) != isStringBasedOperation(nextOperation)
+                    && !isStringDatatype();
+        }
+
+        return false;
+    }
+
+    protected boolean isStringDatatype() {
+        if (getProperty() == null) {
+            return false;
+        }
+
+        MetaClass metaClass = dataLoader.getContainer().getEntityMetaClass();
+        MetaPropertyPath propertyPath = metaClass.getPropertyPath(getProperty());
+        if (propertyPath == null) {
+            return false;
+        }
+
+        return datatypeRegistry.get(String.class).equals(propertyPath.getRange().asDatatype());
+    }
+
+    protected boolean isStringBasedOperation(Operation operation) {
+        return operation == Operation.CONTAINS
+                || operation == Operation.NOT_CONTAINS
+                || operation == Operation.STARTS_WITH
+                || operation == Operation.ENDS_WITH;
     }
 
     @Override

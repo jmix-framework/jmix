@@ -17,16 +17,10 @@
 package io.jmix.flowui.action;
 
 import com.vaadin.flow.component.Component;
-import io.jmix.flowui.kit.action.ActionPerformedEvent;
-import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.component.ComponentUtils;
-import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.kit.icon.JmixFontIcon;
-import org.jspecify.annotations.Nullable;
 
-import java.util.function.Consumer;
-
-public class DialogAction extends SecuredBaseAction {
+public class DialogAction extends SecuredBaseAction<DialogAction> {
 
     public enum Type {
 
@@ -69,53 +63,5 @@ public class DialogAction extends SecuredBaseAction {
 
     public Type getType() {
         return type;
-    }
-
-    @Override
-    public DialogAction withText(@Nullable String text) {
-        setText(text);
-        return this;
-    }
-
-    @Override
-    public DialogAction withEnabled(boolean enabled) {
-        setEnabled(enabled);
-        return this;
-    }
-
-    @Override
-    public DialogAction withVisible(boolean visible) {
-        setVisible(visible);
-        return this;
-    }
-
-    @Override
-    public DialogAction withIcon(@Nullable Component icon) {
-        return (DialogAction) super.withIcon(icon);
-    }
-
-    @Override
-    public DialogAction withVariant(ActionVariant actionVariant) {
-        setVariant(actionVariant);
-        return this;
-    }
-
-    @Override
-    public DialogAction withShortcutCombination(@Nullable KeyCombination shortcutCombination) {
-        setShortcutCombination(shortcutCombination);
-        return this;
-    }
-
-    @Override
-    public DialogAction withHandler(@Nullable Consumer<ActionPerformedEvent> handler) {
-        if (handler == null) {
-            if (getEventBus().hasListener(ActionPerformedEvent.class)) {
-                getEventBus().removeListener(ActionPerformedEvent.class);
-            }
-        } else {
-            addActionPerformedListener(handler);
-        }
-
-        return this;
     }
 }

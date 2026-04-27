@@ -88,7 +88,7 @@ public class AddAction<E> extends ListDataComponentAction<AddAction<E>, E>
 
     @Autowired
     protected void setUiComponentProperties(UiComponentProperties uiComponentProperties) {
-        this.shortcutCombination = KeyCombination.create(uiComponentProperties.getGridAddShortcut());
+        setShortcutCombination(KeyCombination.create(uiComponentProperties.getGridAddShortcut()));
     }
 
     @Autowired

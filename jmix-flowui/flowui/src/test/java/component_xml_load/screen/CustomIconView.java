@@ -30,17 +30,17 @@ import io.jmix.flowui.view.ViewDescriptor;
 public class CustomIconView extends StandardView {
 
     @ViewComponent
-    public BaseAction iconAttributeAction;
+    public BaseAction<?> iconAttributeAction;
     @ViewComponent
-    public BaseAction vaadinIconAttributeAction;
+    public BaseAction<?> vaadinIconAttributeAction;
     @ViewComponent
-    public BaseAction iconAction;
+    public BaseAction<?> iconAction;
     @ViewComponent
-    public BaseAction svgIconAction;
+    public BaseAction<?> svgIconAction;
     @ViewComponent
-    public BaseAction fontIconAction;
+    public BaseAction<?> fontIconAction;
     @ViewComponent
-    public BaseAction imageAction;
+    public BaseAction<?> imageAction;
 
     @ViewComponent
     public JmixButton iconAttributeButton;

@@ -20,7 +20,6 @@ import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.contextmenu.MenuItem;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Hr;
-import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.dom.ClassList;
 import com.vaadin.flow.dom.ThemeList;
 import com.vaadin.flow.shared.Registration;
@@ -653,7 +652,7 @@ public abstract class AbstractDropdownButton extends Composite<JmixMenuBar>
         protected String text;
 
         public TextItemImpl(String id,
-                            @Nullable String text,
+                            String text,
                             DropdownButtonComponent parent,
                             MenuItemProvider<String> textMenuItemProvider) {
             super(id, textMenuItemProvider.createMenuItem(text), parent);

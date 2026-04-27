@@ -118,7 +118,7 @@ public class ActionLoaderSupport implements ApplicationContextAware {
     protected Action loadDeclarativeActionDefault(Element element) {
         String id = loadActionId(element);
 
-        Action targetAction = new SecuredBaseAction(id);
+        Action targetAction = new SecuredBaseAction<>(id);
 
         initAction(element, targetAction);
 

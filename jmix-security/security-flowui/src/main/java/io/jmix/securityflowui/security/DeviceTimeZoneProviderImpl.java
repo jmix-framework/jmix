@@ -21,6 +21,7 @@ import com.vaadin.flow.component.page.ExtendedClientDetails;
 import io.jmix.core.security.DeviceTimeZoneProvider;
 import io.jmix.flowui.sys.ExtendedClientDetailsProvider;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.util.TimeZone;
@@ -34,10 +35,11 @@ public class DeviceTimeZoneProviderImpl implements DeviceTimeZoneProvider {
         this.clientDetailsProvider = clientDetailsProvider;
     }
 
+    @Nullable
     @Override
     public TimeZone getDeviceTimeZone() {
         ExtendedClientDetails clientDetails = clientDetailsProvider.getExtendedClientDetails();
-        return clientDetails != null ? detectTimeZone(clientDetails) : null;
+        return detectTimeZone(clientDetails);
     }
 
     protected TimeZone detectTimeZone(ExtendedClientDetails details) {

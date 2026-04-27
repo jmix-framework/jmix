@@ -21,7 +21,7 @@ import java.util.List;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
-public class SecuredBaseAction extends ObservableBaseAction<SecuredBaseAction> {
+public class SecuredBaseAction<A extends SecuredBaseAction<A>> extends ObservableBaseAction<A> {
 
     protected List<EnabledRule> enabledRules;
 

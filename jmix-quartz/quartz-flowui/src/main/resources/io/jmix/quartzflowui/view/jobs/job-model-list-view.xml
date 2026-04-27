@@ -22,6 +22,7 @@
         <details id="filterDetails"
                  summaryText="msg://filter"
                  opened="true"
+                 themeNames="no-padding"
                  width="100%">
             <formLayout>
                 <responsiveSteps>
@@ -39,7 +40,7 @@
             </formLayout>
         </details>
 
-        <hbox id="loggedEntityButtonPanel" classNames="buttons-panel">
+        <hbox id="loggedEntityButtonPanel" wrap="true" width="100%">
             <button id="refreshBtn" action="jobModelsTable.refresh"/>
             <button id="createBtn" action="jobModelsTable.create"/>
             <button id="editBtn" action="jobModelsTable.edit"/>

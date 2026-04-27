@@ -19,6 +19,7 @@ package io.jmix.flowui.kit.meta;
 /**
  * Describes {@code @io.jmix.flowui.view.Supply} handler
  */
+@StudioAPI
 public @interface StudioSupplyHandler {
     String methodName();
 

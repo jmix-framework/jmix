@@ -1,0 +1,3 @@
+vaadin-grid[theme~='no-header']::part(header-cell) {
+  display: none;
+}

@@ -17,6 +17,7 @@
 package io.jmix.chartsflowui.kit.component.model.series;
 
 import io.jmix.chartsflowui.kit.component.model.shared.Decal;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Same as {@link AbstractItemStyle} but with a decal pattern style.
@@ -25,6 +26,7 @@ public class ItemStyleWithDecal extends AbstractItemStyle<ItemStyleWithDecal> {
 
     protected Decal decal;
 
+    @Nullable
     public Decal getDecal() {
         return decal;
     }

@@ -205,6 +205,7 @@ class JmixLoginForm extends LoginForm {
                 <vaadin-select
                     id="localesSelect"
                     class="jmix-login-form-locales-select"
+                    no-vertical-overlap
                     @value-changed="${this._localeValueChanged}"
                 ></vaadin-select>
             </div>

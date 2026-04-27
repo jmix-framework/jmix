@@ -48,7 +48,7 @@
             </div>
             <button id="clearButton" text="msg://clear" icon="ERASER"/>
         </formLayout>
-        <hbox id="buttonsPanel" classNames="buttons-panel" alignItems="CENTER">
+        <hbox id="buttonsPanel" wrap="true" width="100%" alignItems="CENTER">
             <startSlot>
                 <button id="refreshBtn" action="sessionsTable.refresh"/>
                 <button id="expireBtn" action="sessionsTable.expire"/>

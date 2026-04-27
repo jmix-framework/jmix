@@ -24,7 +24,6 @@ import {DelegateFocusMixin} from '@vaadin/a11y-base/src/delegate-focus-mixin.js'
 import {FieldMixin} from '@vaadin/field-base/src/field-mixin.js';
 import {InputConstraintsMixin} from '@vaadin/field-base/src/input-constraints-mixin.js';
 import {SlotStylesMixin} from '@vaadin/component-base/src/slot-styles-mixin.js';
-import {inputFieldShared} from '@vaadin/field-base/src/styles/input-field-shared-styles.js';
 import {ThemableMixin} from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
 import {PolylitMixin} from '@vaadin/component-base/src/polylit-mixin.js';
 import {LumoInjectionMixin} from '@vaadin/vaadin-themable-mixin/lumo-injection-mixin.js';
@@ -38,7 +37,7 @@ export class JmixUploadField extends SlotStylesMixin(DelegateFocusMixin(InputCon
     }
 
     static get styles() {
-        return [inputFieldShared, jmixUploadFieldStyles];
+        return jmixUploadFieldStyles;
     }
 
     render() {
@@ -49,15 +48,10 @@ export class JmixUploadField extends SlotStylesMixin(DelegateFocusMixin(InputCon
                     <span part="required-indicator" aria-hidden="true" @click="${this.focus}"></span>
                 </div>
 
-                <vaadin-input-container
-                        part="input-field"
-                        .readonly="${this.readonly}"
-                        .disabled="${this.disabled}"
-                        .invalid="${this.invalid}"
-                        theme="${ifDefined(this._theme)}"
-                >
+                <div part="input-field"
+                     theme="${ifDefined(this._theme)}">
                     <slot name="input"></slot>
-                </vaadin-input-container>
+                </div>
 
                 <div part="helper-text">
                     <slot name="helper"></slot>

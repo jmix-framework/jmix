@@ -202,6 +202,7 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
         return internalValue;
     }
 
+    @Nullable
     @Override
     public V getEmptyValue() {
         return null;

@@ -39,6 +39,7 @@ jmix-value-picker[disabled][invalid] {
     --vaadin-input-field-invalid-background: var(--lumo-contrast-5pct);
 }
 
+/* todo: create a mixin */
 jmix-value-picker[disabled][has-error-message]::part(error-message),
 jmix-value-picker[readonly][has-error-message]::part(error-message) {
     display: none;

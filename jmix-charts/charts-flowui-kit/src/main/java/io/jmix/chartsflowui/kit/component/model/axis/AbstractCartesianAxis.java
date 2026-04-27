@@ -84,6 +84,7 @@ public abstract class AbstractCartesianAxis<T extends AbstractCartesianAxis<T>> 
         }
     }
 
+    @Nullable
     public Boolean getShow() {
         return show;
     }
@@ -93,6 +94,7 @@ public abstract class AbstractCartesianAxis<T extends AbstractCartesianAxis<T>> 
         markAsDirty();
     }
 
+    @Nullable
     public Integer getGridIndex() {
         return gridIndex;
     }
@@ -102,6 +104,7 @@ public abstract class AbstractCartesianAxis<T extends AbstractCartesianAxis<T>> 
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getAlignTicks() {
         return alignTicks;
     }
@@ -111,6 +114,7 @@ public abstract class AbstractCartesianAxis<T extends AbstractCartesianAxis<T>> 
         markAsDirty();
     }
 
+    @Nullable
     public Position getPosition() {
         return position;
     }
@@ -120,6 +124,7 @@ public abstract class AbstractCartesianAxis<T extends AbstractCartesianAxis<T>> 
         markAsDirty();
     }
 
+    @Nullable
     public Integer getOffset() {
         return offset;
     }
@@ -129,6 +134,7 @@ public abstract class AbstractCartesianAxis<T extends AbstractCartesianAxis<T>> 
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public String getName() {
         return name;
@@ -140,6 +146,7 @@ public abstract class AbstractCartesianAxis<T extends AbstractCartesianAxis<T>> 
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public NameLocation getNameLocation() {
         return nameLocation;
@@ -151,6 +158,7 @@ public abstract class AbstractCartesianAxis<T extends AbstractCartesianAxis<T>> 
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public NameTextStyle getNameTextStyle() {
         return nameTextStyle;
@@ -166,6 +174,7 @@ public abstract class AbstractCartesianAxis<T extends AbstractCartesianAxis<T>> 
         addChild(nameTextStyle);
     }
 
+    @Nullable
     @Override
     public Integer getNameGap() {
         return nameGap;
@@ -177,6 +186,7 @@ public abstract class AbstractCartesianAxis<T extends AbstractCartesianAxis<T>> 
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getNameRotate() {
         return nameRotate;
@@ -188,6 +198,7 @@ public abstract class AbstractCartesianAxis<T extends AbstractCartesianAxis<T>> 
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Boolean getInverse() {
         return inverse;

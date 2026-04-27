@@ -23,7 +23,6 @@
 @import './jmix-value-picker-button.css';
 @import './jmix-multi-select-combo-box-picker.css';
 @import './jmix-twin-column.css';
-@import './jmix-upload-button.css';
 @import './jmix-upload-field.css';
 @import './jmix-rich-text-editor.css';
 @import './jmix-simple-pagination.css';
@@ -43,6 +42,10 @@
 @import './jmix-login-form.css';
 @import './jmix-tabsheet.css';
 @import './jmix-jpql-filter.css';
+@import './jmix-grid-layout.css';
+@import './jmix-side-panel-layout.css';
+@import './jmix-side-panel-layout-closer.css';
+@import './jmix-side-dialog-overlay.css';
 
 /* Vaadin components */
 @import './vaadin-text-field.css';

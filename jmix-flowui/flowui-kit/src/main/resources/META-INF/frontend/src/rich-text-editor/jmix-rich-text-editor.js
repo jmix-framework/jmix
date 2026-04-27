@@ -28,7 +28,6 @@ import {FocusMixin} from '@vaadin/a11y-base/src/focus-mixin.js';
 import {HelperController} from "@vaadin/field-base/src/helper-controller.js";
 import {LumoInjectionMixin} from '@vaadin/vaadin-themable-mixin/lumo-injection-mixin.js';
 import {PolylitMixin} from '@vaadin/component-base/src/polylit-mixin.js';
-import {helper} from '@vaadin/vaadin-lumo-styles/mixins/helper.js';
 import {jmixRichTextEditorStyles} from './styles/jmix-rich-text-editor-base-styles.js';
 
 const Quill = window.Quill;
@@ -98,7 +97,7 @@ class RichTextEditor extends ElementMixin(FocusMixin(LabelMixin(ThemableMixin(Po
     }
 
     static get styles() {
-        return [jmixRichTextEditorStyles, helper];
+        return jmixRichTextEditorStyles;
     }
 
     /** @protected */

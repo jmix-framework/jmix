@@ -70,7 +70,7 @@ public class ChartIncrementalChanges<T extends DataItem> {
         updatedItems.addAll(items);
     }
 
-    public DataSet.Source<?> getSource() {
+    public DataSet.@Nullable Source<?> getSource() {
         return source;
     }
 

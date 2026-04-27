@@ -4,7 +4,7 @@ This is a web application based on the [Jmix](https://www.jmix.io) framework.
 
 ## Getting Started
 
-The newly created project requires Java 17 or 21 and uses the embedded HSQL database.
+The newly created project requires Java 21 and uses the embedded HSQL database.
 
 Use the following resources to learn more about Jmix:
 * [Jmix Documentation](https://docs.jmix.io)

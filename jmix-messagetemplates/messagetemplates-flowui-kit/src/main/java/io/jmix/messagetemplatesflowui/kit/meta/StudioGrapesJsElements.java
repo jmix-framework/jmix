@@ -20,6 +20,9 @@ import io.jmix.flowui.kit.meta.StudioElement;
 import io.jmix.flowui.kit.meta.StudioProperty;
 import io.jmix.flowui.kit.meta.StudioPropertyType;
 import io.jmix.flowui.kit.meta.StudioUiKit;
+import io.jmix.flowui.kit.meta.StudioPropertyGroups;
+import io.jmix.flowui.kit.meta.StudioXmlAttributes;
+import io.jmix.flowui.kit.meta.StudioXmlElements;
 
 @StudioUiKit
 public interface StudioGrapesJsElements {
@@ -27,12 +30,13 @@ public interface StudioGrapesJsElements {
     @StudioElement(
             name = "Plugin",
             classFqn = "io.jmix.messagetemplatesflowui.kit.meta.stub.StudioGrapesJsPluginElement",
-            xmlElement = "plugin",
+            xmlElement = StudioXmlElements.PLUGIN,
             xmlns = "http://jmix.io/schema/messagetemplates/ui",
             xmlnsAlias = "msgtmp",
             icon = "io/jmix/messagetemplatesflowui/kit/meta/icon/elementsgroup/plugins.svg",
+            propertyGroups = StudioMessageTemplatesPropertyGroups.PluginComponent.class,
             properties = {
-                    @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.STRING, required = true,
+                    @StudioProperty(xmlAttribute = StudioXmlAttributes.NAME, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING, required = true,
                             options = {"grapesjs-blocks-basic", "grapesjs-blocks-flexbox", "grapesjs-custom-code",
                                     "grapesjs-plugin-forms", "grapesjs-preset-newsletter", "grapesjs-parser-postcss",
                                     "grapesjs-style-filter", "grapesjs-tabs", "grapesjs-tooltip",
@@ -44,44 +48,47 @@ public interface StudioGrapesJsElements {
     @StudioElement(
             name = "Block",
             classFqn = "io.jmix.messagetemplatesflowui.kit.meta.stub.StudioGrapesJsBlockElement",
-            xmlElement = "block",
+            xmlElement = StudioXmlElements.BLOCK,
             xmlns = "http://jmix.io/schema/messagetemplates/ui",
             xmlnsAlias = "msgtmp",
             icon = "io/jmix/messagetemplatesflowui/kit/meta/icon/element/block.svg",
+            propertyGroups = StudioMessageTemplatesPropertyGroups.BlockComponent.class,
             properties = {
-                    @StudioProperty(xmlAttribute = "attributes", type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = "category", type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = "content", type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.STRING, required = true),
-                    @StudioProperty(xmlAttribute = "label", type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ATTRIBUTES, type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = StudioXmlAttributes.CATEGORY, type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = StudioXmlAttributes.CONTENT, type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ID, type = StudioPropertyType.COMPONENT_ID, category = StudioProperty.Category.GENERAL, required = true),
+                    @StudioProperty(xmlAttribute = StudioXmlAttributes.LABEL, type = StudioPropertyType.LOCALIZED_STRING, category = StudioProperty.Category.GENERAL),
             }
     )
     void block();
 
     @StudioElement(
             name = "Content",
-            xmlElement = "content",
+            xmlElement = StudioXmlElements.CONTENT,
             xmlns = "http://jmix.io/schema/messagetemplates/ui",
             xmlnsAlias = "msgtmp",
             target = {"io.jmix.messagetemplatesflowui.kit.meta.stub.StudioGrapesJsBlockElement"},
             unlimitedCount = false,
             icon = "io/jmix/messagetemplatesflowui/kit/meta/icon/element/content.svg",
+            propertyGroups = StudioMessageTemplatesPropertyGroups.ContentComponent.class,
             properties = {
-                    @StudioProperty(xmlAttribute = "value", type = StudioPropertyType.CDATA)
+                    @StudioProperty(xmlAttribute = StudioXmlAttributes.VALUE, type = StudioPropertyType.CDATA)
             }
     )
     void content();
 
     @StudioElement(
             name = "Attributes",
-            xmlElement = "attributes",
+            xmlElement = StudioXmlElements.ATTRIBUTES,
             xmlns = "http://jmix.io/schema/messagetemplates/ui",
             xmlnsAlias = "msgtmp",
             target = {"io.jmix.messagetemplatesflowui.kit.meta.stub.StudioGrapesJsBlockElement"},
             unlimitedCount = false,
             icon = "io/jmix/messagetemplatesflowui/kit/meta/icon/element/attributes.svg",
+            propertyGroups = StudioMessageTemplatesPropertyGroups.AttributesComponent.class,
             properties = {
-                    @StudioProperty(xmlAttribute = "value", type = StudioPropertyType.CDATA)
+                    @StudioProperty(xmlAttribute = StudioXmlAttributes.VALUE, type = StudioPropertyType.CDATA)
             }
     )
     void attributes();

@@ -341,7 +341,7 @@ public class JmixChart extends Component implements HasSize {
      *
      * @param title title to add
      */
-    public void setTitle(Title title) {
+    public void setTitle(@Nullable Title title) {
         options.setTitle(title);
     }
 
@@ -362,7 +362,7 @@ public class JmixChart extends Component implements HasSize {
      * @see Legend
      * @see ScrollableLegend
      */
-    public void setLegend(AbstractLegend<?> legend) {
+    public void setLegend(@Nullable AbstractLegend<?> legend) {
         options.setLegend(legend);
     }
 
@@ -1007,11 +1007,11 @@ public class JmixChart extends Component implements HasSize {
                                                             Collection<T> items) {
         //noinspection unchecked
         ChartIncrementalChanges<T> dataSetChanges =
-                (ChartIncrementalChanges<T>) changedItems.computeIfAbsent(getDataSet(),
+                (ChartIncrementalChanges<T>) changedItems.computeIfAbsent(Objects.requireNonNull(getDataSet()),
                         k -> new ChartIncrementalChanges<>());
 
         // dataset can't be null
-        dataSetChanges.setSource(Objects.requireNonNull(getDataSet()).getSource());
+        dataSetChanges.setSource(Objects.requireNonNull(Objects.requireNonNull(getDataSet()).getSource()));
 
         switch (operation) {
             case ADD -> dataSetChanges.addAddedItems(items);

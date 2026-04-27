@@ -51,7 +51,7 @@
         <flexLayout id="contentBox" classNames="content-wrapper">
             <vbox id="resourceRolesWrapper" padding="false">
                 <h4 text="msg://resourceRoles.text"/>
-                <hbox id="resourceRoleButtonsPanel" classNames="buttons-panel">
+                <hbox id="resourceRoleButtonsPanel" wrap="true" width="100%">
                     <button id="addResourceRoleBtn"
                             action="resourceRoleAssignmentsTable.addResourceRole"/>
                     <button id="removeResourceRoleBtn"
@@ -81,7 +81,7 @@
 
             <vbox id="rowLevelRolesWrapper" padding="false">
                 <h4 text="msg://rowLevelRoles.text"/>
-                <hbox id="rowLevelRoleButtonsPanel" classNames="buttons-panel">
+                <hbox id="rowLevelRoleButtonsPanel" wrap="true" width="100%">
                     <button id="addRowLevelRoleBtn"
                             action="rowLevelRoleAssignmentsTable.addRowLevelRole"/>
                     <button id="removeRowLevelRoleBtn"

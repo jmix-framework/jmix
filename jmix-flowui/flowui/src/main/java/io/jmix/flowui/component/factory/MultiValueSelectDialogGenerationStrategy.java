@@ -44,9 +44,9 @@ import io.jmix.flowui.data.items.EnumDataProvider;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.model.DataComponents;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
-import org.jspecify.annotations.Nullable;
 
 import java.sql.Time;
 import java.time.*;
@@ -206,7 +206,9 @@ public class MultiValueSelectDialogGenerationStrategy<E> extends AbstractCompone
     @Nullable
     protected Component createDatatypeField(MultiValueSelectContext<E> context) {
         Class<?> type = context.getJavaClass();
-        Datatype<E> datatype = (Datatype<E>) datatypeRegistry.get(Objects.requireNonNull(type));
+        Datatype<E> datatype = context.getDatatype() == null
+                ? (Datatype<E>) datatypeRegistry.get(Objects.requireNonNull(type))
+                : context.getDatatype();
 
         if (type.equals(java.sql.Date.class)
                 || type.equals(Date.class)

@@ -18,6 +18,7 @@ package io.jmix.chartsflowui.kit.component.model;
 
 import io.jmix.chartsflowui.kit.component.model.shared.Align;
 import io.jmix.chartsflowui.kit.component.model.shared.VerticalAlign;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A component that has alignment.
@@ -29,6 +30,7 @@ public interface HasAlign<T> {
     /**
      * @return horizontal alignment of component
      */
+    @Nullable
     Align getAlign();
 
     /**
@@ -52,6 +54,7 @@ public interface HasAlign<T> {
     /**
      * @return vertical alignment of component
      */
+    @Nullable
     VerticalAlign getVerticalAlign();
 
     /**

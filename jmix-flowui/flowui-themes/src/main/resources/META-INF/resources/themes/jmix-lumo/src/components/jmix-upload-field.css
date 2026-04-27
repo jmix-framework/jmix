@@ -15,13 +15,13 @@
  */
 
 @media lumo_components_jmix-upload-field {
-    vaadin-input-container {
+    [part='input-field'] {
         background-color: transparent;
         padding: 0;
         cursor: auto;
     }
 
-    vaadin-input-container:after {
+    [part='input-field']:after {
         border: 0;
     }
 
@@ -50,5 +50,11 @@
         --_lumo-text-field-overflow-mask-image: 0;
         -webkit-mask-image: 0;
         mask-image: 0;
+    }
+
+    ::slotted([slot='input']) {
+        align-items: center;
+        display: flex;
+        gap: var(--lumo-space-s);
     }
 }

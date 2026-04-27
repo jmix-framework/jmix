@@ -102,7 +102,7 @@ public class EntityOpenAction<E> extends PickerAction<EntityOpenAction<E>, Entit
 
     @Autowired
     protected void setUiComponentProperties(UiComponentProperties uiComponentProperties) {
-        this.shortcutCombination = KeyCombination.create(uiComponentProperties.getPickerOpenShortcut());
+        setShortcutCombination(KeyCombination.create(uiComponentProperties.getPickerOpenShortcut()));
     }
 
     @Override

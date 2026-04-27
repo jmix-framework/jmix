@@ -485,13 +485,13 @@ public class Notifications {
                 case DEFAULT:
                     return "";
                 case SUCCESS:
-                    return NotificationVariant.LUMO_SUCCESS.getVariantName();
+                    return NotificationVariant.SUCCESS.getVariantName();
                 case ERROR:
-                    return NotificationVariant.LUMO_ERROR.getVariantName();
+                    return NotificationVariant.ERROR.getVariantName();
                 case SYSTEM:
-                    return NotificationVariant.LUMO_CONTRAST.getVariantName();
+                    return NotificationVariant.INFO.getVariantName();
                 case WARNING:
-                    return NotificationVariant.LUMO_WARNING.getVariantName();
+                    return NotificationVariant.WARNING.getVariantName();
                 default:
                     throw new IllegalStateException("Unsupported type " + type);
             }

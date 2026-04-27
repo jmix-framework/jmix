@@ -16,8 +16,8 @@
 
 package io.jmix.chartsflowui.kit.component.model.shared;
 
-import org.jspecify.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -195,6 +195,7 @@ public final class Color implements Serializable {
         namedColors.put(name, this);
     }
 
+    @Nullable
     public String getValue() {
         return value;
     }

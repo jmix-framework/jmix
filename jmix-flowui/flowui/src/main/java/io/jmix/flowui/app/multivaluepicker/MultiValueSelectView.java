@@ -18,6 +18,7 @@ package io.jmix.flowui.app.multivaluepicker;
 
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.ItemLabelGenerator;
+import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.flowui.component.ComponentGenerationContext;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
@@ -64,6 +65,7 @@ public interface MultiValueSelectView<E> {
         protected String entityName;
         protected Class<? extends Enum<?>> enumClass;
         protected Class<?> javaClass;
+        protected Datatype<E> datatype;
 
         protected boolean readOnly = false;
 
@@ -142,6 +144,25 @@ public interface MultiValueSelectView<E> {
          */
         public void setJavaClass(@Nullable Class<?> javaClass) {
             this.javaClass = javaClass;
+        }
+
+        /**
+         * Returns the datatype used in this context.
+         *
+         * @return the datatype or null if not set
+         */
+        @Nullable
+        public Datatype<E> getDatatype() {
+            return datatype;
+        }
+
+        /**
+         * Sets the datatype for this context.
+         *
+         * @param datatype the datatype to set
+         */
+        public void setDatatype(@Nullable Datatype<E> datatype) {
+            this.datatype = datatype;
         }
 
         /**

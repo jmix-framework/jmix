@@ -16,6 +16,8 @@
 
 package io.jmix.chartsflowui.kit.component.model.datazoom;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * Inside data zoom functionalities is embedded inside coordinate systems,
  * enable user to zoom or roam coordinate system by mouse dragging,
@@ -40,6 +42,7 @@ public class InsideDataZoom extends AbstractDataZoom<InsideDataZoom> {
         super(DataZoomType.INSIDE);
     }
 
+    @Nullable
     public Boolean getDisabled() {
         return disabled;
     }
@@ -49,6 +52,7 @@ public class InsideDataZoom extends AbstractDataZoom<InsideDataZoom> {
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getZoomOnMouseWheel() {
         return zoomOnMouseWheel;
     }
@@ -58,6 +62,7 @@ public class InsideDataZoom extends AbstractDataZoom<InsideDataZoom> {
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getMoveOnMouseMove() {
         return moveOnMouseMove;
     }
@@ -67,6 +72,7 @@ public class InsideDataZoom extends AbstractDataZoom<InsideDataZoom> {
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getMoveOnMouseWheel() {
         return moveOnMouseWheel;
     }
@@ -76,6 +82,7 @@ public class InsideDataZoom extends AbstractDataZoom<InsideDataZoom> {
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getPreventDefaultMouseMove() {
         return preventDefaultMouseMove;
     }

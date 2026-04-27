@@ -55,7 +55,7 @@ import org.springframework.security.web.access.intercept.AuthorizationFilter;
 import org.springframework.security.web.util.matcher.OrRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
-@AutoConfiguration
+@AutoConfiguration(beforeName = "io.jmix.autoconfigure.securityflowui.SecurityFlowuiAutoConfiguration")
 @Import({OidcConfiguration.class})
 @ConditionalOnProperty(name = "jmix.oidc.use-default-configuration", matchIfMissing = true)
 public class OidcAutoConfiguration {

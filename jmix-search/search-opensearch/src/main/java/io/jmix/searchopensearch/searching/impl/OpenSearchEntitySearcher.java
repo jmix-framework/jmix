@@ -70,7 +70,7 @@ public class OpenSearchEntitySearcher extends AbstractEntitySearcher implements 
 
     @Override
     public SearchResult search(SearchContext searchContext, String searchStrategyName) {
-        log.debug("Perform search by context '{}'", searchContext);
+        log.debug("Perform search by context '{}' and strategy '{}'", searchContext, searchStrategyName);
 
         OpenSearchSearchStrategy searchStrategy = resolveSearchStrategy(searchStrategyName);
         SearchResultImpl searchResult = initSearchResult(searchContext, searchStrategy);
@@ -116,7 +116,13 @@ public class OpenSearchEntitySearcher extends AbstractEntitySearcher implements 
     }
 
     protected OpenSearchSearchStrategy resolveSearchStrategy(String searchStrategyName) {
-        return searchStrategyManager.getSearchStrategyByName(searchStrategyName);
+        OpenSearchSearchStrategy strategy = searchStrategyManager.findSearchStrategyByName(searchStrategyName);
+        if (strategy == null) {
+            strategy = searchStrategyManager.getDefaultSearchStrategy();
+            log.warn("Search strategy with name '{}' not found - using default strategy '{}'", searchStrategyName, strategy.getName());
+        }
+
+        return strategy;
     }
 
     protected SearchRequestContext<SearchRequest.Builder> createRequest(SearchContext searchContext,

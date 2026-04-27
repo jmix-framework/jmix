@@ -25,6 +25,7 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.METHOD)
 @Inherited
+@StudioAPI
 public @interface StudioElement {
 
     /**
@@ -54,7 +55,7 @@ public @interface StudioElement {
     /**
      * @see StudioComponent#injectionIdentifier
      */
-    String injectionIdentifier() default "id";
+    String injectionIdentifier() default StudioXmlAttributes.ID;
 
     /**
      * @see StudioComponent#isInjectable
@@ -105,6 +106,11 @@ public @interface StudioElement {
      * @see StudioComponent#properties
      */
     StudioProperty[] properties() default {};
+
+    /**
+     * @see StudioComponent#propertyGroups()
+     */
+    Class<?>[] propertyGroups() default {};
 
     /**
      * @see StudioComponent#propertiesBindings

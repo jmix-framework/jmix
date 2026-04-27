@@ -52,9 +52,13 @@
 
     <layout>
         <genericFilter id="genericFilter" dataLoader="executionsDl" opened="false"/>
-        <hbox id="buttonsPanel" classNames="buttons-panel">
-            <button id="downloadBtn" action="executionsDataGrid.download"/>
-            <simplePagination id="pagination" dataLoader="executionsDl"/>
+        <hbox id="buttonsPanel" wrap="true" width="100%">
+            <startSlot>
+                <button id="downloadBtn" action="executionsDataGrid.download"/>
+            </startSlot>
+            <endSlot>
+                <simplePagination id="pagination" dataLoader="executionsDl"/>
+            </endSlot>
         </hbox>
         <dataGrid id="executionsDataGrid" dataContainer="executionsDc" width="100%" selectionMode="MULTI"
                   columnReorderingAllowed="true">

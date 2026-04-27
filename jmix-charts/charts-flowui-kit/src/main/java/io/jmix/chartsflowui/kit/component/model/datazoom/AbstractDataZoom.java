@@ -142,6 +142,7 @@ public class AbstractDataZoom<T extends AbstractDataZoom<T>> extends ChartObserv
         return type;
     }
 
+    @Nullable
     public String getId() {
         return id;
     }
@@ -151,6 +152,7 @@ public class AbstractDataZoom<T extends AbstractDataZoom<T>> extends ChartObserv
         markAsDirty();
     }
 
+    @Nullable
     public Integer[] getXAxisIndexes() {
         return xAxisIndexes;
     }
@@ -160,6 +162,7 @@ public class AbstractDataZoom<T extends AbstractDataZoom<T>> extends ChartObserv
         markAsDirty();
     }
 
+    @Nullable
     public Integer[] getYAxisIndexes() {
         return yAxisIndexes;
     }
@@ -169,6 +172,7 @@ public class AbstractDataZoom<T extends AbstractDataZoom<T>> extends ChartObserv
         markAsDirty();
     }
 
+    @Nullable
     public Integer[] getRadiusAxisIndexes() {
         return radiusAxisIndexes;
     }
@@ -178,6 +182,7 @@ public class AbstractDataZoom<T extends AbstractDataZoom<T>> extends ChartObserv
         markAsDirty();
     }
 
+    @Nullable
     public Integer[] getAngleAxisIndexes() {
         return angleAxisIndexes;
     }
@@ -187,6 +192,7 @@ public class AbstractDataZoom<T extends AbstractDataZoom<T>> extends ChartObserv
         markAsDirty();
     }
 
+    @Nullable
     public FilterMode getFilterMode() {
         return filterMode;
     }
@@ -196,6 +202,7 @@ public class AbstractDataZoom<T extends AbstractDataZoom<T>> extends ChartObserv
         markAsDirty();
     }
 
+    @Nullable
     public Double getStart() {
         return start;
     }
@@ -205,6 +212,7 @@ public class AbstractDataZoom<T extends AbstractDataZoom<T>> extends ChartObserv
         markAsDirty();
     }
 
+    @Nullable
     public Double getEnd() {
         return end;
     }
@@ -214,6 +222,7 @@ public class AbstractDataZoom<T extends AbstractDataZoom<T>> extends ChartObserv
         markAsDirty();
     }
 
+    @Nullable
     public String getStartValue() {
         return startValue;
     }
@@ -223,6 +232,7 @@ public class AbstractDataZoom<T extends AbstractDataZoom<T>> extends ChartObserv
         markAsDirty();
     }
 
+    @Nullable
     public String getEndValue() {
         return endValue;
     }
@@ -232,6 +242,7 @@ public class AbstractDataZoom<T extends AbstractDataZoom<T>> extends ChartObserv
         markAsDirty();
     }
 
+    @Nullable
     public Double getMinSpan() {
         return minSpan;
     }
@@ -241,6 +252,7 @@ public class AbstractDataZoom<T extends AbstractDataZoom<T>> extends ChartObserv
         markAsDirty();
     }
 
+    @Nullable
     public Double getMaxSpan() {
         return maxSpan;
     }
@@ -250,6 +262,7 @@ public class AbstractDataZoom<T extends AbstractDataZoom<T>> extends ChartObserv
         markAsDirty();
     }
 
+    @Nullable
     public String getMinValueSpan() {
         return minValueSpan;
     }
@@ -259,6 +272,7 @@ public class AbstractDataZoom<T extends AbstractDataZoom<T>> extends ChartObserv
         markAsDirty();
     }
 
+    @Nullable
     public String getMaxValueSpan() {
         return maxValueSpan;
     }
@@ -268,6 +282,7 @@ public class AbstractDataZoom<T extends AbstractDataZoom<T>> extends ChartObserv
         markAsDirty();
     }
 
+    @Nullable
     public Orientation getOrientation() {
         return orientation;
     }
@@ -277,6 +292,7 @@ public class AbstractDataZoom<T extends AbstractDataZoom<T>> extends ChartObserv
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getZoomLock() {
         return zoomLock;
     }
@@ -286,6 +302,7 @@ public class AbstractDataZoom<T extends AbstractDataZoom<T>> extends ChartObserv
         markAsDirty();
     }
 
+    @Nullable
     public Integer getThrottle() {
         return throttle;
     }
@@ -295,6 +312,7 @@ public class AbstractDataZoom<T extends AbstractDataZoom<T>> extends ChartObserv
         markAsDirty();
     }
 
+    @Nullable
     public RangeMode[] getRangeMode() {
         return rangeMode;
     }

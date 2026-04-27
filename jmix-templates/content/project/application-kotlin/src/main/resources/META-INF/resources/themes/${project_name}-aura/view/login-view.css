@@ -1,0 +1,9 @@
+/* Predefined styles for the LoginView */
+
+.jmix-login-main-layout jmix-login-form::part(form) {
+    --vaadin-login-form-border-radius: var(--vaadin-radius-l);
+    --vaadin-login-form-background: var(--aura-surface-color);
+
+    box-shadow: var(--aura-shadow-s);
+    border: 1px solid var(--vaadin-border-color);
+}

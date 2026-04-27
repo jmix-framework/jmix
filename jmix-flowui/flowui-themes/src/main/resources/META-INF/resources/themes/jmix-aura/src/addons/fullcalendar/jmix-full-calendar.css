@@ -1,0 +1,113 @@
+/*
+ * Copyright 2026 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+jmix-full-calendar {
+   --fc-small-font-size: var(--aura-font-size-s);
+   --fc-page-bg-color: var(--vaadin-background-color);
+   --fc-neutral-bg-color: var(--vaadin-background-container);
+   --fc-neutral-text-color: var(--vaadin-text-color-secondary);
+   --fc-border-color: var(--vaadin-border-color);
+   --fc-event-bg-color: var(--aura-accent-color);
+   --fc-event-border-color: var(--aura-accent-color);
+   --fc-event-text-color: var(--aura-accent-contrast-color);
+   --fc-event-selected-overlay-color: var(--aura-accent-surface);
+   --fc-list-event-hover-bg-color: var(--vaadin-background-container);
+
+   /* TimeGrid events stack "show more" background-color */
+   --fc-more-link-bg-color: var(--vaadin-text-color);
+   --fc-more-link-text-color: inherit;                     /* default */
+   --fc-event-resizer-thickness: 8px;                      /* default */
+   --fc-event-resizer-dot-total-width: 8px;                /* default */
+   --fc-event-resizer-dot-border-width: 1px;               /* default */
+   --fc-non-business-color: var(--vaadin-background-container);
+   --fc-bg-event-color: color-mix(var(--aura-green) 50%, transparent);
+   --fc-bg-event-opacity: 0.3;                             /* default */
+   --fc-highlight-color: var(--aura-accent-surface);
+   --fc-today-bg-color: color-mix(var(--aura-yellow) 10%, transparent);
+   --fc-now-indicator-color: var(--aura-red);
+}
+
+jmix-full-calendar .fc-event {
+    border-radius: var(--vaadin-radius-m);
+    padding-left: var(--vaadin-padding-xs);
+    padding-right: var(--vaadin-padding-xs);
+}
+
+jmix-full-calendar .fc-event:focus-visible {
+    border-radius: var(--vaadin-radius-m);
+    box-shadow: 0 0 0 var(--vaadin-focus-ring-width, 2px) var(--vaadin-focus-ring-color);
+    outline: 0;
+}
+
+jmix-full-calendar .fc .fc-highlight {
+    background-image: linear-gradient(var(--fc-highlight-color), var(--fc-highlight-color));
+    background-repeat: repeat;
+    box-shadow: 0 1px 0 0 var(--fc-highlight-color);
+}
+
+jmix-full-calendar .fc-more-link:hover {
+    background-color: var(--vaadin-text-color-disabled);
+}
+
+jmix-full-calendar .fc-daygrid-day-number:focus-visible,
+jmix-full-calendar .fc-daygrid-week-number:focus-visible {
+    border-radius: var(--vaadin-radius-m);
+    box-shadow: 0 0 0 var(--vaadin-focus-ring-width, 2px) var(--vaadin-focus-ring-color);
+    outline: 0;
+}
+
+jmix-full-calendar .fc-timegrid-event:hover,
+jmix-full-calendar .fc-daygrid-block-event:hover {
+    cursor: var(--vaadin-clickable-cursor);
+    filter: brightness(0.9) contrast(1.2);
+}
+
+jmix-full-calendar .fc-daygrid-dot-event.fc-event-mirror,
+jmix-full-calendar .fc-daygrid-dot-event:hover {
+    cursor: var(--vaadin-clickable-cursor);
+    background-color: var(--vaadin-background-container);
+}
+
+/* More link in events stack in time slots */
+jmix-full-calendar .fc-timegrid-col-events .fc-more-link:hover {
+    filter: brightness(0.9) contrast(1.2);
+    background-color: var(--fc-more-link-bg-color);
+}
+
+jmix-full-calendar .jmix-day-cell-bottom-text {
+    padding: var(--vaadin-padding-xs);
+}
+
+jmix-full-calendar .fc-daygrid-day.jmix-has-bottom-text {
+    position: relative;
+}
+
+/* Workaround cause the fixed issue is not really fixed?
+   https://github.com/fullcalendar/fullcalendar/issues/5532 */
+.fc-more-popover {
+    max-height: 95%;
+    overflow-y: auto;
+}
+
+jmix-full-calendar a:not(:any-link) {
+    color: var(--vaadin-text-color);
+}
+
+jmix-full-calendar .jmix-day-cell-bottom-text {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}

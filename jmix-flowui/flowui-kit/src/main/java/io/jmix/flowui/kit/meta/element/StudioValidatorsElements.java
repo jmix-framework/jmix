@@ -20,6 +20,9 @@ import io.jmix.flowui.kit.meta.StudioElement;
 import io.jmix.flowui.kit.meta.StudioProperty;
 import io.jmix.flowui.kit.meta.StudioPropertyType;
 import io.jmix.flowui.kit.meta.StudioUiKit;
+import io.jmix.flowui.kit.meta.StudioPropertyGroups;
+import io.jmix.flowui.kit.meta.StudioXmlAttributes;
+import io.jmix.flowui.kit.meta.StudioXmlElements;
 
 @StudioUiKit
 interface StudioValidatorsElements {
@@ -27,17 +30,23 @@ interface StudioValidatorsElements {
     @StudioElement(
             name = "Custom",
             classFqn = "io.jmix.flowui.component.validation.Validator",
-            xmlElement = "custom",
+            xmlElement = StudioXmlElements.CUSTOM,
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
             documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/validator.html#custom-validator",
+            propertyGroups = {
+                    StudioPropertyGroups.Bean.class,
+                    StudioPropertyGroups.Message.class
+            },
             properties = {
                     @StudioProperty(
-                            xmlAttribute = "bean",
+                            xmlAttribute = StudioXmlAttributes.BEAN,
+                            category = StudioProperty.Category.GENERAL,
                             type = StudioPropertyType.STRING,
                             required = true
                     ),
                     @StudioProperty(
-                            xmlAttribute = "message",
+                            xmlAttribute = StudioXmlAttributes.MESSAGE,
+                            category = StudioProperty.Category.GENERAL,
                             type = StudioPropertyType.LOCALIZED_STRING
                     )
             }
@@ -47,7 +56,7 @@ interface StudioValidatorsElements {
     @StudioElement(
             name = "DecimalMax",
             classFqn = "io.jmix.flowui.component.validation.DecimalMaxValidator",
-            xmlElement = "decimalMax",
+            xmlElement = StudioXmlElements.DECIMAL_MAX,
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
             documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/validator.html#DecimalMaxValidator",
             unsupportedTarget = {
@@ -63,20 +72,25 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
                     "io.jmix.flowui.component.combobox.EntityComboBox",
                     "io.jmix.flowui.component.valuepicker.EntityPicker",
-                    "io.jmix.flowui.component.codeeditor.CodeEditor"
+                    "io.jmix.flowui.component.codeeditor.CodeEditor",
+                    "io.jmix.flowui.component.twincolumn.TwinColumn"
             },
+            propertyGroups = StudioPropertyGroups.MessageAndInclusiveRequiredBigDecimalValue.class,
             properties = {
                     @StudioProperty(
-                            xmlAttribute = "message",
+                            xmlAttribute = StudioXmlAttributes.MESSAGE,
+                            category = StudioProperty.Category.GENERAL,
                             type = StudioPropertyType.LOCALIZED_STRING
                     ),
                     @StudioProperty(
-                            xmlAttribute = "value",
-                            type = StudioPropertyType.STRING,
+                            xmlAttribute = StudioXmlAttributes.VALUE,
+                            category = StudioProperty.Category.GENERAL,
+                            type = StudioPropertyType.BIG_DECIMAL,
                             required = true
                     ),
                     @StudioProperty(
-                            xmlAttribute = "inclusive",
+                            xmlAttribute = StudioXmlAttributes.INCLUSIVE,
+                            category = StudioProperty.Category.GENERAL,
                             type = StudioPropertyType.BOOLEAN
                     )
             }
@@ -86,7 +100,7 @@ interface StudioValidatorsElements {
     @StudioElement(
             name = "DecimalMin",
             classFqn = "io.jmix.flowui.component.validation.DecimalMinValidator",
-            xmlElement = "decimalMin",
+            xmlElement = StudioXmlElements.DECIMAL_MIN,
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
             documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/validator.html#DecimalMinValidator",
             unsupportedTarget = {
@@ -102,20 +116,25 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
                     "io.jmix.flowui.component.combobox.EntityComboBox",
                     "io.jmix.flowui.component.valuepicker.EntityPicker",
-                    "io.jmix.flowui.component.codeeditor.CodeEditor"
+                    "io.jmix.flowui.component.codeeditor.CodeEditor",
+                    "io.jmix.flowui.component.twincolumn.TwinColumn"
             },
+            propertyGroups = StudioPropertyGroups.MessageAndInclusiveRequiredBigDecimalValue.class,
             properties = {
                     @StudioProperty(
-                            xmlAttribute = "message",
+                            xmlAttribute = StudioXmlAttributes.MESSAGE,
+                            category = StudioProperty.Category.GENERAL,
                             type = StudioPropertyType.LOCALIZED_STRING
                     ),
                     @StudioProperty(
-                            xmlAttribute = "value",
-                            type = StudioPropertyType.STRING,
+                            xmlAttribute = StudioXmlAttributes.VALUE,
+                            category = StudioProperty.Category.GENERAL,
+                            type = StudioPropertyType.BIG_DECIMAL,
                             required = true
                     ),
                     @StudioProperty(
-                            xmlAttribute = "inclusive",
+                            xmlAttribute = StudioXmlAttributes.INCLUSIVE,
+                            category = StudioProperty.Category.GENERAL,
                             type = StudioPropertyType.BOOLEAN
                     )
             }
@@ -137,24 +156,30 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
                     "io.jmix.flowui.component.combobox.EntityComboBox",
                     "io.jmix.flowui.component.valuepicker.EntityPicker",
-                    "io.jmix.flowui.component.codeeditor.CodeEditor"
+                    "io.jmix.flowui.component.codeeditor.CodeEditor",
+                    "io.jmix.flowui.component.twincolumn.TwinColumn"
             },
-            xmlElement = "digits",
+            xmlElement = StudioXmlElements.DIGITS,
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
             documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/validator.html#DigitsValidator",
+            propertyGroups = StudioPropertyGroups.DigitsComponent.class,
             properties = {
                     @StudioProperty(
-                            xmlAttribute = "message",
+                            xmlAttribute = StudioXmlAttributes.MESSAGE,
+                            category = StudioProperty.Category.GENERAL,
                             type = StudioPropertyType.LOCALIZED_STRING
                     ),
                     @StudioProperty(
-                            xmlAttribute = "integer",
+                            xmlAttribute = StudioXmlAttributes.INTEGER,
+                            category = StudioProperty.Category.GENERAL,
                             type = StudioPropertyType.INTEGER,
                             required = true
                     ),
                     @StudioProperty(
-                            xmlAttribute = "fraction",
-                            type = StudioPropertyType.INTEGER
+                            xmlAttribute = StudioXmlAttributes.FRACTION,
+                            category = StudioProperty.Category.GENERAL,
+                            type = StudioPropertyType.INTEGER,
+                            required = true
                     )
             }
     )
@@ -163,7 +188,7 @@ interface StudioValidatorsElements {
     @StudioElement(
             name = "DoubleMax",
             classFqn = "io.jmix.flowui.component.validation.DoubleMaxValidator",
-            xmlElement = "doubleMax",
+            xmlElement = StudioXmlElements.DOUBLE_MAX,
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
             documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/validator.html#DoubleMaxValidator",
             unsupportedTarget = {
@@ -179,20 +204,25 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
                     "io.jmix.flowui.component.combobox.EntityComboBox",
                     "io.jmix.flowui.component.valuepicker.EntityPicker",
-                    "io.jmix.flowui.component.codeeditor.CodeEditor"
+                    "io.jmix.flowui.component.codeeditor.CodeEditor",
+                    "io.jmix.flowui.component.twincolumn.TwinColumn"
             },
+            propertyGroups = StudioPropertyGroups.MessageAndInclusiveRequiredDoubleValue.class,
             properties = {
                     @StudioProperty(
-                            xmlAttribute = "message",
+                            xmlAttribute = StudioXmlAttributes.MESSAGE,
+                            category = StudioProperty.Category.GENERAL,
                             type = StudioPropertyType.LOCALIZED_STRING
                     ),
                     @StudioProperty(
-                            xmlAttribute = "value",
-                            type = StudioPropertyType.STRING,
+                            xmlAttribute = StudioXmlAttributes.VALUE,
+                            category = StudioProperty.Category.GENERAL,
+                            type = StudioPropertyType.DOUBLE,
                             required = true
                     ),
                     @StudioProperty(
-                            xmlAttribute = "inclusive",
+                            xmlAttribute = StudioXmlAttributes.INCLUSIVE,
+                            category = StudioProperty.Category.GENERAL,
                             type = StudioPropertyType.BOOLEAN
                     )
             }
@@ -202,7 +232,7 @@ interface StudioValidatorsElements {
     @StudioElement(
             name = "DoubleMin",
             classFqn = "io.jmix.flowui.component.validation.DoubleMinValidator",
-            xmlElement = "doubleMin",
+            xmlElement = StudioXmlElements.DOUBLE_MIN,
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
             documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/validator.html#DoubleMinValidator",
             unsupportedTarget = {
@@ -218,20 +248,25 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
                     "io.jmix.flowui.component.combobox.EntityComboBox",
                     "io.jmix.flowui.component.valuepicker.EntityPicker",
-                    "io.jmix.flowui.component.codeeditor.CodeEditor"
+                    "io.jmix.flowui.component.codeeditor.CodeEditor",
+                    "io.jmix.flowui.component.twincolumn.TwinColumn"
             },
+            propertyGroups = StudioPropertyGroups.MessageAndInclusiveRequiredDoubleValue.class,
             properties = {
                     @StudioProperty(
-                            xmlAttribute = "message",
+                            xmlAttribute = StudioXmlAttributes.MESSAGE,
+                            category = StudioProperty.Category.GENERAL,
                             type = StudioPropertyType.LOCALIZED_STRING
                     ),
                     @StudioProperty(
-                            xmlAttribute = "value",
-                            type = StudioPropertyType.STRING,
+                            xmlAttribute = StudioXmlAttributes.VALUE,
+                            category = StudioProperty.Category.GENERAL,
+                            type = StudioPropertyType.DOUBLE,
                             required = true
                     ),
                     @StudioProperty(
-                            xmlAttribute = "inclusive",
+                            xmlAttribute = StudioXmlAttributes.INCLUSIVE,
+                            category = StudioProperty.Category.GENERAL,
                             type = StudioPropertyType.BOOLEAN
                     )
             }
@@ -241,7 +276,7 @@ interface StudioValidatorsElements {
     @StudioElement(
             name = "Email",
             classFqn = "io.jmix.flowui.component.validation.EmailValidator",
-            xmlElement = "email",
+            xmlElement = StudioXmlElements.EMAIL,
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
             documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/validator.html#EmailValidator",
             unsupportedTarget = {
@@ -254,11 +289,16 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
                     "io.jmix.flowui.component.combobox.EntityComboBox",
                     "io.jmix.flowui.component.valuepicker.EntityPicker",
-                    "io.jmix.flowui.component.textfield.JmixBigDecimalField"
+                    "io.jmix.flowui.component.textfield.JmixBigDecimalField",
+                    "io.jmix.flowui.component.twincolumn.TwinColumn"
+            },
+            propertyGroups = {
+                    StudioPropertyGroups.Message.class
             },
             properties = {
                     @StudioProperty(
-                            xmlAttribute = "message",
+                            xmlAttribute = StudioXmlAttributes.MESSAGE,
+                            category = StudioProperty.Category.GENERAL,
                             type = StudioPropertyType.LOCALIZED_STRING
                     )
             }
@@ -268,7 +308,7 @@ interface StudioValidatorsElements {
     @StudioElement(
             name = "Future",
             classFqn = "io.jmix.flowui.component.validation.FutureValidator",
-            xmlElement = "future",
+            xmlElement = StudioXmlElements.FUTURE,
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
             documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/validator.html#FutureValidator",
             unsupportedTarget = {
@@ -284,15 +324,19 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
                     "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
                     "io.jmix.flowui.component.PickerComponent",
-                    "io.jmix.flowui.component.codeeditor.CodeEditor"
+                    "io.jmix.flowui.component.codeeditor.CodeEditor",
+                    "io.jmix.flowui.component.twincolumn.TwinColumn"
             },
+            propertyGroups = StudioPropertyGroups.MessageAndCheckSeconds.class,
             properties = {
                     @StudioProperty(
-                            xmlAttribute = "message",
+                            xmlAttribute = StudioXmlAttributes.MESSAGE,
+                            category = StudioProperty.Category.GENERAL,
                             type = StudioPropertyType.LOCALIZED_STRING
                     ),
                     @StudioProperty(
-                            xmlAttribute = "checkSeconds",
+                            xmlAttribute = StudioXmlAttributes.CHECK_SECONDS,
+                            category = StudioProperty.Category.GENERAL,
                             type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"
                     )
@@ -303,7 +347,7 @@ interface StudioValidatorsElements {
     @StudioElement(
             name = "FutureOrPresent",
             classFqn = "io.jmix.flowui.component.validation.FutureOrPresentValidator",
-            xmlElement = "futureOrPresent",
+            xmlElement = StudioXmlElements.FUTURE_OR_PRESENT,
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
             documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/validator.html#FutureOrPresentValidator",
             unsupportedTarget = {
@@ -319,15 +363,19 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
                     "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
                     "io.jmix.flowui.component.PickerComponent",
-                    "io.jmix.flowui.component.codeeditor.CodeEditor"
+                    "io.jmix.flowui.component.codeeditor.CodeEditor",
+                    "io.jmix.flowui.component.twincolumn.TwinColumn"
             },
+            propertyGroups = StudioPropertyGroups.MessageAndCheckSeconds.class,
             properties = {
                     @StudioProperty(
-                            xmlAttribute = "message",
+                            xmlAttribute = StudioXmlAttributes.MESSAGE,
+                            category = StudioProperty.Category.GENERAL,
                             type = StudioPropertyType.LOCALIZED_STRING
                     ),
                     @StudioProperty(
-                            xmlAttribute = "checkSeconds",
+                            xmlAttribute = StudioXmlAttributes.CHECK_SECONDS,
+                            category = StudioProperty.Category.GENERAL,
                             type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"
                     )
@@ -338,7 +386,7 @@ interface StudioValidatorsElements {
     @StudioElement(
             name = "Max",
             classFqn = "io.jmix.flowui.component.validation.MaxValidator",
-            xmlElement = "max",
+            xmlElement = StudioXmlElements.MAX,
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
             documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/validator.html#MaxValidator",
             unsupportedTarget = {
@@ -353,16 +401,20 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
                     "io.jmix.flowui.component.combobox.EntityComboBox",
                     "io.jmix.flowui.component.valuepicker.EntityPicker",
-                    "io.jmix.flowui.component.codeeditor.CodeEditor"
+                    "io.jmix.flowui.component.codeeditor.CodeEditor",
+                    "io.jmix.flowui.component.twincolumn.TwinColumn"
             },
+            propertyGroups = StudioPropertyGroups.MessageAndRequiredIntegerValue.class,
             properties = {
                     @StudioProperty(
-                            xmlAttribute = "message",
+                            xmlAttribute = StudioXmlAttributes.MESSAGE,
+                            category = StudioProperty.Category.GENERAL,
                             type = StudioPropertyType.LOCALIZED_STRING
                     ),
                     @StudioProperty(
-                            xmlAttribute = "value",
-                            type = StudioPropertyType.STRING,
+                            xmlAttribute = StudioXmlAttributes.VALUE,
+                            category = StudioProperty.Category.GENERAL,
+                            type = StudioPropertyType.INTEGER,
                             required = true
                     )
             }
@@ -372,7 +424,7 @@ interface StudioValidatorsElements {
     @StudioElement(
             name = "Min",
             classFqn = "io.jmix.flowui.component.validation.MinValidator",
-            xmlElement = "min",
+            xmlElement = StudioXmlElements.MIN,
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
             documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/validator.html#MinValidator",
             unsupportedTarget = {
@@ -387,16 +439,20 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
                     "io.jmix.flowui.component.combobox.EntityComboBox",
                     "io.jmix.flowui.component.valuepicker.EntityPicker",
-                    "io.jmix.flowui.component.codeeditor.CodeEditor"
+                    "io.jmix.flowui.component.codeeditor.CodeEditor",
+                    "io.jmix.flowui.component.twincolumn.TwinColumn"
             },
+            propertyGroups = StudioPropertyGroups.MessageAndRequiredIntegerValue.class,
             properties = {
                     @StudioProperty(
-                            xmlAttribute = "message",
+                            xmlAttribute = StudioXmlAttributes.MESSAGE,
+                            category = StudioProperty.Category.GENERAL,
                             type = StudioPropertyType.LOCALIZED_STRING
                     ),
                     @StudioProperty(
-                            xmlAttribute = "value",
-                            type = StudioPropertyType.STRING,
+                            xmlAttribute = StudioXmlAttributes.VALUE,
+                            category = StudioProperty.Category.GENERAL,
+                            type = StudioPropertyType.INTEGER,
                             required = true
                     )
             }
@@ -406,7 +462,7 @@ interface StudioValidatorsElements {
     @StudioElement(
             name = "NegativeOrZero",
             classFqn = "io.jmix.flowui.component.validation.NegativeOrZeroValidator",
-            xmlElement = "negativeOrZero",
+            xmlElement = StudioXmlElements.NEGATIVE_OR_ZERO,
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
             documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/validator.html#NegativeOrZeroValidator",
             unsupportedTarget = {
@@ -420,11 +476,16 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
                     "io.jmix.flowui.component.combobox.EntityComboBox",
                     "io.jmix.flowui.component.valuepicker.EntityPicker",
-                    "io.jmix.flowui.component.codeeditor.CodeEditor"
+                    "io.jmix.flowui.component.codeeditor.CodeEditor",
+                    "io.jmix.flowui.component.twincolumn.TwinColumn"
+            },
+            propertyGroups = {
+                    StudioPropertyGroups.Message.class
             },
             properties = {
                     @StudioProperty(
-                            xmlAttribute = "message",
+                            xmlAttribute = StudioXmlAttributes.MESSAGE,
+                            category = StudioProperty.Category.GENERAL,
                             type = StudioPropertyType.LOCALIZED_STRING
                     )
             }
@@ -434,7 +495,7 @@ interface StudioValidatorsElements {
     @StudioElement(
             name = "Negative",
             classFqn = "io.jmix.flowui.component.validation.NegativeValidator",
-            xmlElement = "negative",
+            xmlElement = StudioXmlElements.NEGATIVE,
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
             documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/validator.html#NegativeValidator",
             unsupportedTarget = {
@@ -448,11 +509,16 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
                     "io.jmix.flowui.component.combobox.EntityComboBox",
                     "io.jmix.flowui.component.valuepicker.EntityPicker",
-                    "io.jmix.flowui.component.codeeditor.CodeEditor"
+                    "io.jmix.flowui.component.codeeditor.CodeEditor",
+                    "io.jmix.flowui.component.twincolumn.TwinColumn"
+            },
+            propertyGroups = {
+                    StudioPropertyGroups.Message.class
             },
             properties = {
                     @StudioProperty(
-                            xmlAttribute = "message",
+                            xmlAttribute = StudioXmlAttributes.MESSAGE,
+                            category = StudioProperty.Category.GENERAL,
                             type = StudioPropertyType.LOCALIZED_STRING
                     )
             }
@@ -462,7 +528,7 @@ interface StudioValidatorsElements {
     @StudioElement(
             name = "NotBlank",
             classFqn = "io.jmix.flowui.component.validation.NotBlankValidator",
-            xmlElement = "notBlank",
+            xmlElement = StudioXmlElements.NOT_BLANK,
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
             documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/validator.html#NotBlankValidator",
             unsupportedTarget = {
@@ -475,11 +541,16 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
                     "io.jmix.flowui.component.combobox.EntityComboBox",
                     "io.jmix.flowui.component.valuepicker.EntityPicker",
-                    "io.jmix.flowui.component.textfield.JmixBigDecimalField"
+                    "io.jmix.flowui.component.textfield.JmixBigDecimalField",
+                    "io.jmix.flowui.component.twincolumn.TwinColumn"
+            },
+            propertyGroups = {
+                    StudioPropertyGroups.Message.class
             },
             properties = {
                     @StudioProperty(
-                            xmlAttribute = "message",
+                            xmlAttribute = StudioXmlAttributes.MESSAGE,
+                            category = StudioProperty.Category.GENERAL,
                             type = StudioPropertyType.LOCALIZED_STRING
                     )
             }
@@ -489,7 +560,7 @@ interface StudioValidatorsElements {
     @StudioElement(
             name = "NotEmpty",
             classFqn = "io.jmix.flowui.component.validation.NotEmptyValidator",
-            xmlElement = "notEmpty",
+            xmlElement = StudioXmlElements.NOT_EMPTY,
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
             documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/validator.html#NotEmptyValidator",
             unsupportedTarget = {
@@ -500,11 +571,16 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.textfield.JmixIntegerField",
                     "io.jmix.flowui.component.combobox.EntityComboBox",
                     "io.jmix.flowui.component.valuepicker.EntityPicker",
-                    "io.jmix.flowui.component.textfield.JmixBigDecimalField"
+                    "io.jmix.flowui.component.textfield.JmixBigDecimalField",
+                    "io.jmix.flowui.component.twincolumn.TwinColumn"
+            },
+            propertyGroups = {
+                    StudioPropertyGroups.Message.class
             },
             properties = {
                     @StudioProperty(
-                            xmlAttribute = "message",
+                            xmlAttribute = StudioXmlAttributes.MESSAGE,
+                            category = StudioProperty.Category.GENERAL,
                             type = StudioPropertyType.LOCALIZED_STRING
                     )
             }
@@ -514,12 +590,17 @@ interface StudioValidatorsElements {
     @StudioElement(
             name = "NotNull",
             classFqn = "io.jmix.flowui.component.validation.NotNullValidator",
-            xmlElement = "notNull",
+            xmlElement = StudioXmlElements.NOT_NULL,
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
             documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/validator.html#NotNullValidator",
+            unsupportedTarget = "io.jmix.flowui.component.twincolumn.TwinColumn",
+            propertyGroups = {
+                    StudioPropertyGroups.Message.class
+            },
             properties = {
                     @StudioProperty(
-                            xmlAttribute = "message",
+                            xmlAttribute = StudioXmlAttributes.MESSAGE,
+                            category = StudioProperty.Category.GENERAL,
                             type = StudioPropertyType.LOCALIZED_STRING
                     )
             }
@@ -529,7 +610,7 @@ interface StudioValidatorsElements {
     @StudioElement(
             name = "PastOrPresent",
             classFqn = "io.jmix.flowui.component.validation.PastOrPresentValidator",
-            xmlElement = "pastOrPresent",
+            xmlElement = StudioXmlElements.PAST_OR_PRESENT,
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
             documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/validator.html#PastOrPresentValidator",
             unsupportedTarget = {
@@ -545,15 +626,19 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
                     "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
                     "io.jmix.flowui.component.PickerComponent",
-                    "io.jmix.flowui.component.codeeditor.CodeEditor"
+                    "io.jmix.flowui.component.codeeditor.CodeEditor",
+                    "io.jmix.flowui.component.twincolumn.TwinColumn"
             },
+            propertyGroups = StudioPropertyGroups.MessageAndCheckSeconds.class,
             properties = {
                     @StudioProperty(
-                            xmlAttribute = "message",
+                            xmlAttribute = StudioXmlAttributes.MESSAGE,
+                            category = StudioProperty.Category.GENERAL,
                             type = StudioPropertyType.LOCALIZED_STRING
                     ),
                     @StudioProperty(
-                            xmlAttribute = "checkSeconds",
+                            xmlAttribute = StudioXmlAttributes.CHECK_SECONDS,
+                            category = StudioProperty.Category.GENERAL,
                             type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"
                     )
@@ -564,7 +649,7 @@ interface StudioValidatorsElements {
     @StudioElement(
             name = "Past",
             classFqn = "io.jmix.flowui.component.validation.PastValidator",
-            xmlElement = "past",
+            xmlElement = StudioXmlElements.PAST,
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
             documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/validator.html#PastValidator",
             unsupportedTarget = {
@@ -580,15 +665,19 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox",
                     "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
                     "io.jmix.flowui.component.PickerComponent",
-                    "io.jmix.flowui.component.codeeditor.CodeEditor"
+                    "io.jmix.flowui.component.codeeditor.CodeEditor",
+                    "io.jmix.flowui.component.twincolumn.TwinColumn"
             },
+            propertyGroups = StudioPropertyGroups.MessageAndCheckSeconds.class,
             properties = {
                     @StudioProperty(
-                            xmlAttribute = "message",
+                            xmlAttribute = StudioXmlAttributes.MESSAGE,
+                            category = StudioProperty.Category.GENERAL,
                             type = StudioPropertyType.LOCALIZED_STRING
                     ),
                     @StudioProperty(
-                            xmlAttribute = "checkSeconds",
+                            xmlAttribute = StudioXmlAttributes.CHECK_SECONDS,
+                            category = StudioProperty.Category.GENERAL,
                             type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"
                     )
@@ -599,7 +688,7 @@ interface StudioValidatorsElements {
     @StudioElement(
             name = "PositiveOrZero",
             classFqn = "io.jmix.flowui.component.validation.PositiveOrZeroValidator",
-            xmlElement = "positiveOrZero",
+            xmlElement = StudioXmlElements.POSITIVE_OR_ZERO,
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
             documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/validator.html#PositiveOrZeroValidator",
             unsupportedTarget = {
@@ -613,11 +702,16 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
                     "io.jmix.flowui.component.combobox.EntityComboBox",
                     "io.jmix.flowui.component.valuepicker.EntityPicker",
-                    "io.jmix.flowui.component.codeeditor.CodeEditor"
+                    "io.jmix.flowui.component.codeeditor.CodeEditor",
+                    "io.jmix.flowui.component.twincolumn.TwinColumn"
+            },
+            propertyGroups = {
+                    StudioPropertyGroups.Message.class
             },
             properties = {
                     @StudioProperty(
-                            xmlAttribute = "message",
+                            xmlAttribute = StudioXmlAttributes.MESSAGE,
+                            category = StudioProperty.Category.GENERAL,
                             type = StudioPropertyType.LOCALIZED_STRING
                     )
             }
@@ -627,7 +721,7 @@ interface StudioValidatorsElements {
     @StudioElement(
             name = "Positive",
             classFqn = "io.jmix.flowui.component.validation.PositiveValidator",
-            xmlElement = "positive",
+            xmlElement = StudioXmlElements.POSITIVE,
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
             documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/validator.html#PositiveValidator",
             unsupportedTarget = {
@@ -641,11 +735,16 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
                     "io.jmix.flowui.component.combobox.EntityComboBox",
                     "io.jmix.flowui.component.valuepicker.EntityPicker",
-                    "io.jmix.flowui.component.codeeditor.CodeEditor"
+                    "io.jmix.flowui.component.codeeditor.CodeEditor",
+                    "io.jmix.flowui.component.twincolumn.TwinColumn"
+            },
+            propertyGroups = {
+                    StudioPropertyGroups.Message.class
             },
             properties = {
                     @StudioProperty(
-                            xmlAttribute = "message",
+                            xmlAttribute = StudioXmlAttributes.MESSAGE,
+                            category = StudioProperty.Category.GENERAL,
                             type = StudioPropertyType.LOCALIZED_STRING
                     )
             }
@@ -655,7 +754,7 @@ interface StudioValidatorsElements {
     @StudioElement(
             name = "Regexp",
             classFqn = "io.jmix.flowui.component.validation.RegexpValidator",
-            xmlElement = "regexp",
+            xmlElement = StudioXmlElements.REGEXP,
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
             documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/validator.html#RegexpValidator",
             unsupportedTarget = {
@@ -668,15 +767,18 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.multiselectcomboboxpicker.JmixMultiSelectComboBoxPicker",
                     "io.jmix.flowui.component.combobox.EntityComboBox",
                     "io.jmix.flowui.component.valuepicker.EntityPicker",
-                    "io.jmix.flowui.component.textfield.JmixBigDecimalField"
+                    "io.jmix.flowui.component.textfield.JmixBigDecimalField",
+                    "io.jmix.flowui.component.twincolumn.TwinColumn"
             },
+            propertyGroups = StudioPropertyGroups.RegexpComponent.class,
             properties = {
                     @StudioProperty(
-                            xmlAttribute = "message",
+                            xmlAttribute = StudioXmlAttributes.MESSAGE,
+                            category = StudioProperty.Category.GENERAL,
                             type = StudioPropertyType.LOCALIZED_STRING
                     ),
                     @StudioProperty(
-                            xmlAttribute = "regexp",
+                            xmlAttribute = StudioXmlAttributes.REGEXP,
                             type = StudioPropertyType.STRING,
                             required = true
                     )
@@ -687,7 +789,7 @@ interface StudioValidatorsElements {
     @StudioElement(
             name = "Size",
             classFqn = "io.jmix.flowui.component.validation.SizeValidator",
-            xmlElement = "size",
+            xmlElement = StudioXmlElements.SIZE,
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
             documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/validator.html#SizeValidator",
             unsupportedTarget = {
@@ -698,19 +800,28 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.textfield.JmixIntegerField",
                     "io.jmix.flowui.component.combobox.EntityComboBox",
                     "io.jmix.flowui.component.valuepicker.EntityPicker",
-                    "io.jmix.flowui.component.textfield.JmixBigDecimalField"
+                    "io.jmix.flowui.component.textfield.JmixBigDecimalField",
+                    "io.jmix.flowui.component.twincolumn.TwinColumn"
+            },
+            propertyGroups = {
+                    StudioPropertyGroups.Message.class,
+                    StudioPropertyGroups.IntegerMin.class,
+                    StudioPropertyGroups.IntegerMax.class
             },
             properties = {
                     @StudioProperty(
-                            xmlAttribute = "message",
+                            xmlAttribute = StudioXmlAttributes.MESSAGE,
+                            category = StudioProperty.Category.GENERAL,
                             type = StudioPropertyType.LOCALIZED_STRING
                     ),
                     @StudioProperty(
-                            xmlAttribute = "min",
+                            xmlAttribute = StudioXmlAttributes.MIN,
+                            category = StudioProperty.Category.GENERAL,
                             type = StudioPropertyType.INTEGER
                     ),
                     @StudioProperty(
-                            xmlAttribute = "max",
+                            xmlAttribute = StudioXmlAttributes.MAX,
+                            category = StudioProperty.Category.GENERAL,
                             type = StudioPropertyType.INTEGER
                     )
             }

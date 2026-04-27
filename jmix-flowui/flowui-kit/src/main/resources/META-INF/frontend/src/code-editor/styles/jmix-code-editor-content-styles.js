@@ -154,9 +154,8 @@ export const contentStyles = css `
     direction: ltr;
     text-align: left;
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-    border: 1px solid;
-    border-radius: var(--lumo-border-radius-l);
-    border-color: var(--lumo-contrast-20pct);
+    border: var(--vaadin-input-field-border-width, 1px) solid var(--vaadin-input-field-border-color, var(--vaadin-border-color));
+    border-radius: var(--vaadin-radius-m);
   }
 
   .ace_scroller {

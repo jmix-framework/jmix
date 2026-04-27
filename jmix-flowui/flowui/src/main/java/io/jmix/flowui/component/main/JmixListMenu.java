@@ -16,7 +16,9 @@
 
 package io.jmix.flowui.component.main;
 
+import com.google.common.base.Strings;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.router.HighlightConditions;
 import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.RouteParameters;
@@ -41,6 +43,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.jspecify.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -48,6 +51,9 @@ import java.util.stream.Collectors;
 
 public class JmixListMenu extends ListMenu implements ApplicationContextAware, InitializingBean,
         HasMenuItemProvider<ListMenu.MenuItem> {
+
+    protected static final String JMIX_MENU_ITEM_VIEW_CLASS_NAME = "jmix-menu-item-view";
+    protected static final String JMIX_MENU_ITEM_BEAN_CLASS_NAME = "jmix-menu-item-bean";
 
     protected ApplicationContext applicationContext;
 
@@ -72,9 +78,12 @@ public class JmixListMenu extends ListMenu implements ApplicationContextAware, I
         viewRegistry = applicationContext.getBean(ViewRegistry.class);
     }
 
-    @Override
     protected RouterLink createRouterLink() {
         return uiComponents.create(RouterLink.class);
+    }
+
+    protected Button createButton() {
+        return uiComponents.create(Button.class);
     }
 
     /**
@@ -85,32 +94,68 @@ public class JmixListMenu extends ListMenu implements ApplicationContextAware, I
                 .build(this);
     }
 
-    protected RouterLink createMenuItemComponent(MenuItem menuItem) {
-        RouterLink menuItemComponent = super.createMenuItemComponent(menuItem);
+    @Override
+    protected Component createMenuItemComponent(MenuItem menuItem) {
         if (menuItem instanceof ViewMenuItem) {
-            QueryParameters queryParameters = ((ViewMenuItem) menuItem).getUrlQueryParameters();
-            RouteParameters routeParameters = ((ViewMenuItem) menuItem).getRouteParameters();
-
-            if (queryParameters != null) {
-                menuItemComponent.setQueryParameters(queryParameters);
-            }
-
-            if (routeParameters != null) {
-                menuItemComponent.setRoute(getControllerClass((ViewMenuItem) menuItem), routeParameters);
-            } else {
-                menuItemComponent.setRoute(getControllerClass((ViewMenuItem) menuItem));
-            }
-
-            menuItemComponent.setHighlightCondition(HighlightConditions.sameLocation());
+            return createViewMenuItemComponent((ViewMenuItem) menuItem);
+        } else if (menuItem instanceof BeanMenuItem) {
+            return createBeanMenuItemComponent((BeanMenuItem) menuItem);
         }
 
-        return menuItemComponent;
+        return super.createMenuItemComponent(menuItem);
+    }
+
+    protected RouterLink createViewMenuItemComponent(ViewMenuItem menuItem) {
+        RouterLink routerLink = createRouterLink();
+        initMenuItemComponent(routerLink, menuItem);
+
+        QueryParameters queryParameters = menuItem.getUrlQueryParameters();
+        RouteParameters routeParameters = menuItem.getRouteParameters();
+
+        if (queryParameters != null) {
+            routerLink.setQueryParameters(queryParameters);
+        }
+        if (routeParameters != null) {
+            routerLink.setRoute(getControllerClass(menuItem), routeParameters);
+        } else {
+            routerLink.setRoute(getControllerClass(menuItem));
+        }
+
+        routerLink.setHighlightCondition(HighlightConditions.sameLocation());
+        addMenuItemText(routerLink, createMenuItemText(menuItem));
+        setSuffixComponent(routerLink, menuItem.getSuffixComponent(), null);
+
+        return routerLink;
     }
 
     @Override
-    protected void addMenuItemClickListener(RouterLink routerLink, MenuItem menuItem) {
+    protected List<String> getMenuItemComponentClassNames(MenuItem menuItem) {
+        List<String> classNames = new ArrayList<>(super.getMenuItemComponentClassNames(menuItem));
+
+        if (menuItem instanceof ViewMenuItem) {
+            classNames.add(JMIX_MENU_ITEM_VIEW_CLASS_NAME);
+        } else if (menuItem instanceof BeanMenuItem) {
+            classNames.add(JMIX_MENU_ITEM_BEAN_CLASS_NAME);
+        }
+
+        return classNames;
+    }
+
+    protected Button createBeanMenuItemComponent(BeanMenuItem menuItem) {
+        Button button = createButton();
+        button.setText(getTitle(menuItem));
+        button.setTooltipText(Strings.nullToEmpty(menuItem.getDescription()));
+
+        initMenuItemComponent(button, menuItem);
+        setSuffixComponent(button, menuItem.getSuffixComponent(), null);
+
+        return button;
+    }
+
+    @Override
+    protected void addMenuItemClickListener(Component menuItemComponent, MenuItem menuItem) {
         if (!(menuItem instanceof ViewMenuItem)) {
-            super.addMenuItemClickListener(routerLink, menuItem);
+            super.addMenuItemClickListener(menuItemComponent, menuItem);
         }
     }
 

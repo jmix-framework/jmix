@@ -24,7 +24,7 @@
         <settings auto="true"/>
     </facets>
     <layout>
-        <hbox id="buttonsPanel" classNames="buttons-panel">
+        <hbox id="buttonsPanel" wrap="true" width="100%">
             <button action="locksTable.refresh"/>
             <button action="locksTable.unlock"/>
         </hbox>

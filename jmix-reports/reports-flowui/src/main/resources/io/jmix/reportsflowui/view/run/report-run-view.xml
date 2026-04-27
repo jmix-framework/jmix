@@ -44,6 +44,7 @@
         <details id="filterDetails"
                  summaryText="msg://io.jmix.reportsflowui.view/filter"
                  opened="true"
+                 themeNames="no-padding"
                  width="100%">
             <formLayout id="filterPanel">
                 <responsiveSteps>
@@ -59,7 +60,7 @@
             </formLayout>
         </details>
 
-        <hbox id="buttonsPanel" classNames="buttons-panel">
+        <hbox id="buttonsPanel" wrap="true" width="100%">
             <button id="runReport" action="reportDataGrid.runReport"/>
         </hbox>
         <dataGrid id="reportDataGrid"

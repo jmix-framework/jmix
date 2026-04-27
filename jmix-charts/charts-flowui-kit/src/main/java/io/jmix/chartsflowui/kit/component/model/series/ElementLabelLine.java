@@ -16,6 +16,8 @@
 
 package io.jmix.chartsflowui.kit.component.model.series;
 
+import org.jspecify.annotations.Nullable;
+
 import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
 import io.jmix.chartsflowui.kit.component.model.shared.LineStyle;
 
@@ -28,6 +30,7 @@ public class ElementLabelLine extends ChartObservableObject {
 
     protected LineStyle lineStyle;
 
+    @Nullable
     public Boolean getShow() {
         return show;
     }
@@ -37,6 +40,7 @@ public class ElementLabelLine extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public LineStyle getLineStyle() {
         return lineStyle;
     }

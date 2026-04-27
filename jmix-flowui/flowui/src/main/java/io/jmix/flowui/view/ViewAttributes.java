@@ -154,9 +154,6 @@ public class ViewAttributes {
 
     protected String getWindowName() {
         ExtendedClientDetails clientDetails = extendedClientDetailsProvider.getExtendedClientDetails();
-        if (clientDetails == null) {
-            throw new IllegalStateException("Cannot retrieve a window name");
-        }
         return clientDetails.getWindowName();
     }
 

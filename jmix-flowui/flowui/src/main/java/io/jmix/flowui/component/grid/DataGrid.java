@@ -449,6 +449,16 @@ public class DataGrid<E> extends JmixGrid<E> implements ListDataComponent<E>, Mu
 
     @Nullable
     @Override
+    public String getHeaderFilterApplyShortcut() {
+        return gridDelegate.getHeaderFilterApplyShortcut();
+    }
+
+    @Override
+    public void setHeaderFilterApplyShortcut(@Nullable String headerFilterApplyShortcut) {
+        gridDelegate.setHeaderFilterApplyShortcut(headerFilterApplyShortcut);
+    }
+
+    @Override
     public Object getSubPart(String name) {
         Object column = super.getSubPart(name);
         if (column != null) {

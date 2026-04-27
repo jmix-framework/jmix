@@ -14,4 +14,9 @@
  * limitations under the License.
  */
 
+@import './jmix-breadcrumb.css';
+@import './jmix-breadcrumbs.css';
+@import './jmix-main-tabsheet.css';
+@import './jmix-view-container.css';
+@import './jmix-view-tab.css';
 @import './misc.css';

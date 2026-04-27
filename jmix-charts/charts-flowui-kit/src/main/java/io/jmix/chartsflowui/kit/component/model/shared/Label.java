@@ -17,6 +17,7 @@
 package io.jmix.chartsflowui.kit.component.model.shared;
 
 import io.jmix.chartsflowui.kit.component.model.HasShadow;
+import org.jspecify.annotations.Nullable;
 
 /**
  * General label for components.
@@ -50,6 +51,7 @@ public class Label extends AbstractText<Label>
 
     protected Integer shadowOffsetY;
 
+    @Nullable
     public Boolean getShow() {
         return show;
     }
@@ -59,6 +61,7 @@ public class Label extends AbstractText<Label>
         markAsDirty();
     }
 
+    @Nullable
     public Integer getPrecision() {
         return precision;
     }
@@ -68,6 +71,7 @@ public class Label extends AbstractText<Label>
         markAsDirty();
     }
 
+    @Nullable
     public String getFormatter() {
         return formatter;
     }
@@ -77,6 +81,7 @@ public class Label extends AbstractText<Label>
         markAsDirty();
     }
 
+    @Nullable
     public JsFunction getFormatterFunction() {
         return formatterFunction;
     }
@@ -91,6 +96,7 @@ public class Label extends AbstractText<Label>
         markAsDirty();
     }
 
+    @Nullable
     public Integer getMargin() {
         return margin;
     }
@@ -100,6 +106,7 @@ public class Label extends AbstractText<Label>
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Padding getPadding() {
         return padding;
@@ -123,6 +130,7 @@ public class Label extends AbstractText<Label>
         markAsDirty();
     }
 
+    @Nullable
     public Color getBackgroundColor() {
         return backgroundColor;
     }
@@ -132,6 +140,7 @@ public class Label extends AbstractText<Label>
         markAsDirty();
     }
 
+    @Nullable
     public Color getBorderColor() {
         return borderColor;
     }
@@ -141,6 +150,7 @@ public class Label extends AbstractText<Label>
         markAsDirty();
     }
 
+    @Nullable
     public Integer getBorderWidth() {
         return borderWidth;
     }
@@ -150,6 +160,7 @@ public class Label extends AbstractText<Label>
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getShadowBlur() {
         return shadowBlur;
@@ -161,6 +172,7 @@ public class Label extends AbstractText<Label>
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Color getShadowColor() {
         return shadowColor;
@@ -172,6 +184,7 @@ public class Label extends AbstractText<Label>
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getShadowOffsetX() {
         return shadowOffsetX;
@@ -183,6 +196,7 @@ public class Label extends AbstractText<Label>
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getShadowOffsetY() {
         return shadowOffsetY;

@@ -28,6 +28,7 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.CLASS)
 @Target(ElementType.TYPE)
+@StudioAPI
 public @interface StudioUiKit {
 
     /**

@@ -93,7 +93,6 @@ public final class ComponentUtils {
         return icon != null ? icon.create() : null;
     }
 
-
     /**
      * Creates a copy of icon component. For the moment only Icon, SvgIcon and FontIcon types are supported.
      *

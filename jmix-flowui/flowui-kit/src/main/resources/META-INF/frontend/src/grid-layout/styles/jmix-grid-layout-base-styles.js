@@ -28,7 +28,7 @@ export const gridLayoutStyles = css`
 
     [part='items'] {
         display: grid;
-        grid-gap: var(--_grid-layout-grid-gap, var(--lumo-space-s));
+        grid-gap: var(--_grid-layout-grid-gap, var(--vaadin-gap-s));
         grid-template-columns: repeat(auto-fit, minmax(var(--_grid-layout-column-min-width, 19rem), 1fr));
 
         height: 100%;

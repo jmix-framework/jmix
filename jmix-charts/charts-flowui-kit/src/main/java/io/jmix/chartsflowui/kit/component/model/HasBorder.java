@@ -17,6 +17,7 @@
 package io.jmix.chartsflowui.kit.component.model;
 
 import io.jmix.chartsflowui.kit.component.model.shared.Color;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A component that has border.
@@ -28,6 +29,7 @@ public interface HasBorder<T> {
     /**
      * @return border color
      */
+    @Nullable
     Color getBorderColor();
 
     /**
@@ -51,6 +53,7 @@ public interface HasBorder<T> {
     /**
      * @return border width in pixels
      */
+    @Nullable
     Integer getBorderWidth();
 
     /**
@@ -74,6 +77,7 @@ public interface HasBorder<T> {
     /**
      * @return border radius of the text fragment
      */
+    @Nullable
     Integer getBorderRadius();
 
     /**

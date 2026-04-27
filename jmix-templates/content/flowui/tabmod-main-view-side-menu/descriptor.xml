@@ -13,7 +13,6 @@
             <header id="header" classNames="jmix-main-view-header">
                 <drawerToggle id="drawerToggle"
                               classNames="jmix-main-view-drawer-toggle"
-                              themeNames="contrast"
                               ariaLabel="${messageKeys['drawerToggleAriaLabel']}"/>
                 <h2 id="applicationTitle"
                     text="${messageKeys['applicationTitleText']}"
@@ -21,7 +20,7 @@
                 </h2>
                 <%if (createUserMenu) {%>
                 <userMenu id="userMenu"
-                          themeNames="tertiary" classNames="ms-auto me-m">
+                          themeNames="tertiary" classNames="jmix-main-view-user-menu">
                     <items>
                         <separator/>
                         <actionItem id="substituteUserMenuItem"

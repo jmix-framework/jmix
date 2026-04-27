@@ -17,7 +17,7 @@
             <vbox id="multiValueLayout" justifyContent="START" padding="false"/>
         </scroller>
 
-        <hbox id="buttonsPanel" classNames="buttons-panel">
+        <hbox id="buttonsPanel" wrap="true" width="100%">
             <button id="selectBtn" action="select"/>
             <button id="cancelBtn" action="cancel"/>
         </hbox>

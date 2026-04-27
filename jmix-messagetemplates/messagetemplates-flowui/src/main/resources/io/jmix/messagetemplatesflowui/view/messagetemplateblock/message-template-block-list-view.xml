@@ -45,11 +45,15 @@
                        dataLoader="messageTemplateBlocksDl">
             <properties include=".*"/>
         </genericFilter>
-        <hbox id="buttonsPanel" classNames="buttons-panel">
-            <button id="createButton" action="messageTemplateBlocksDataGrid.create"/>
-            <button id="editButton" action="messageTemplateBlocksDataGrid.edit"/>
-            <button id="removeButton" action="messageTemplateBlocksDataGrid.remove"/>
-            <simplePagination id="pagination" dataLoader="messageTemplateBlocksDl"/>
+        <hbox id="buttonsPanel" wrap="true" width="100%">
+            <startSlot>
+                <button id="createButton" action="messageTemplateBlocksDataGrid.create"/>
+                <button id="editButton" action="messageTemplateBlocksDataGrid.edit"/>
+                <button id="removeButton" action="messageTemplateBlocksDataGrid.remove"/>
+            </startSlot>
+            <endSlot>
+                <simplePagination id="pagination" dataLoader="messageTemplateBlocksDl"/>
+            </endSlot>
         </hbox>
         <dataGrid id="messageTemplateBlocksDataGrid"
                   width="100%"

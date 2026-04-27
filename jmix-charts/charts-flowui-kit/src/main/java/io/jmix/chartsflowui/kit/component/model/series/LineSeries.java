@@ -182,6 +182,7 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
 
         protected Boolean valueAnimation;
 
+        @Nullable
         public String getFormatter() {
             return formatter;
         }
@@ -191,6 +192,7 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
             markAsDirty();
         }
 
+        @Nullable
         public JsFunction getFormatterFunction() {
             return formatterFunction;
         }
@@ -205,6 +207,7 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
             markAsDirty();
         }
 
+        @Nullable
         public Boolean getValueAnimation() {
             return valueAnimation;
         }
@@ -296,15 +299,18 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
                 }
             }
 
+            @Nullable
             public OriginType getType() {
                 return type;
             }
 
+            @Nullable
             public Double getValue() {
                 return value;
             }
         }
 
+        @Nullable
         public Color getColor() {
             return color;
         }
@@ -314,6 +320,7 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
             markAsDirty();
         }
 
+        @Nullable
         public Origin getOrigin() {
             return origin;
         }
@@ -328,6 +335,7 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public Integer getShadowBlur() {
             return shadowBlur;
@@ -339,6 +347,7 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public Color getShadowColor() {
             return shadowColor;
@@ -350,6 +359,7 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public Integer getShadowOffsetX() {
             return shadowOffsetX;
@@ -361,6 +371,7 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public Integer getShadowOffsetY() {
             return shadowOffsetY;
@@ -372,6 +383,7 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
             markAsDirty();
         }
 
+        @Nullable
         public Double getOpacity() {
             return opacity;
         }
@@ -419,6 +431,7 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
 
         protected LineStyle lineStyle;
 
+        @Nullable
         public Boolean getShow() {
             return show;
         }
@@ -428,6 +441,7 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
             markAsDirty();
         }
 
+        @Nullable
         public Boolean getShowAbove() {
             return showAbove;
         }
@@ -437,6 +451,7 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
             markAsDirty();
         }
 
+        @Nullable
         public Integer getLength() {
             return length;
         }
@@ -446,6 +461,7 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
             markAsDirty();
         }
 
+        @Nullable
         public Boolean getSmooth() {
             return smooth;
         }
@@ -455,6 +471,7 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
             markAsDirty();
         }
 
+        @Nullable
         public Integer getMinTurnAngle() {
             return minTurnAngle;
         }
@@ -464,6 +481,7 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
             markAsDirty();
         }
 
+        @Nullable
         public LineStyle getLineStyle() {
             return lineStyle;
         }
@@ -521,6 +539,7 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
 
         protected BlurScopeType blurScope;
 
+        @Nullable
         public Boolean getDisabled() {
             return disabled;
         }
@@ -530,6 +549,7 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
             markAsDirty();
         }
 
+        @Nullable
         public Double getScale() {
             return scale;
         }
@@ -539,6 +559,7 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
             markAsDirty();
         }
 
+        @Nullable
         public FocusType getFocus() {
             return focus;
         }
@@ -548,6 +569,7 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
             markAsDirty();
         }
 
+        @Nullable
         public BlurScopeType getBlurScope() {
             return blurScope;
         }
@@ -592,6 +614,7 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
 
         protected Boolean disabled;
 
+        @Nullable
         public Boolean getDisabled() {
             return disabled;
         }
@@ -630,6 +653,7 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
 
             protected Color color;
 
+            @Nullable
             public Color getColor() {
                 return color;
             }
@@ -645,6 +669,7 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
             }
         }
 
+        @Nullable
         public Label getLabel() {
             return label;
         }
@@ -658,6 +683,7 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
             addChild(label);
         }
 
+        @Nullable
         public ElementLabelLine getLabelLine() {
             return labelLine;
         }
@@ -671,7 +697,7 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
             addChild(labelLine);
         }
 
-        public io.jmix.chartsflowui.kit.component.model.shared.ItemStyle getItemStyle() {
+        public io.jmix.chartsflowui.kit.component.model.shared.@Nullable ItemStyle getItemStyle() {
             return itemStyle;
         }
 
@@ -684,6 +710,7 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
             addChild(itemStyle);
         }
 
+        @Nullable
         public LineStyle getLineStyle() {
             return lineStyle;
         }
@@ -697,6 +724,7 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
             addChild(lineStyle);
         }
 
+        @Nullable
         public AreaStyle getAreaStyle() {
             return areaStyle;
         }
@@ -710,6 +738,7 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
             addChild(areaStyle);
         }
 
+        @Nullable
         public EndLabel getEndLabel() {
             return endLabel;
         }
@@ -764,6 +793,7 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
 
         protected Decal decal;
 
+        @Nullable
         public Decal getDecal() {
             return decal;
         }
@@ -779,6 +809,7 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
         }
     }
 
+    @Nullable
     public CoordinateSystem getCoordinateSystem() {
         return coordinateSystem;
     }
@@ -788,6 +819,7 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
         markAsDirty();
     }
 
+    @Nullable
     public Integer getXAxisIndex() {
         return xAxisIndex;
     }
@@ -797,6 +829,7 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
         markAsDirty();
     }
 
+    @Nullable
     public Integer getYAxisIndex() {
         return yAxisIndex;
     }
@@ -806,6 +839,7 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
         markAsDirty();
     }
 
+    @Nullable
     public Integer getPolarIndex() {
         return polarIndex;
     }
@@ -815,6 +849,7 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getClip() {
         return clip;
     }
@@ -824,6 +859,7 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
         markAsDirty();
     }
 
+    @Nullable
     public SamplingType getSampling() {
         return sampling;
     }
@@ -833,6 +869,7 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public String getStack() {
         return stack;
@@ -844,6 +881,7 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public StackStrategy getStackStrategy() {
         return stackStrategy;
@@ -855,6 +893,7 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Symbol getSymbol() {
         return symbol;
@@ -872,6 +911,7 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getSymbolSize() {
         return symbolSize;
@@ -883,6 +923,7 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public JsFunction getSymbolSizeFunction() {
         return symbolSizeFunction;
@@ -900,6 +941,7 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getSymbolRotate() {
         return symbolRotate;
@@ -911,6 +953,7 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Boolean getSymbolKeepAspect() {
         return symbolKeepAspect;
@@ -922,6 +965,7 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public String[] getSymbolOffset() {
         return symbolOffset;
@@ -933,6 +977,7 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getShowSymbol() {
         return showSymbol;
     }
@@ -942,6 +987,7 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getShowAllSymbol() {
         return showAllSymbol;
     }
@@ -951,6 +997,7 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
         markAsDirty();
     }
 
+    @Nullable
     public EndLabel getEndLabel() {
         return endLabel;
     }
@@ -964,6 +1011,7 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
         addChild(endLabel);
     }
 
+    @Nullable
     public LineStyle getLineStyle() {
         return lineStyle;
     }
@@ -977,6 +1025,7 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
         addChild(lineStyle);
     }
 
+    @Nullable
     public ItemStyle getItemStyle() {
         return itemStyle;
     }
@@ -990,6 +1039,7 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
         addChild(itemStyle);
     }
 
+    @Nullable
     public LabelLine getLabelLine() {
         return labelLine;
     }
@@ -1003,6 +1053,7 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
         addChild(labelLine);
     }
 
+    @Nullable
     public AreaStyle getAreaStyle() {
         return areaStyle;
     }
@@ -1016,6 +1067,7 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
         addChild(areaStyle);
     }
 
+    @Nullable
     public Step getStep() {
         return step;
     }
@@ -1025,6 +1077,7 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getConnectNulls() {
         return connectNulls;
     }
@@ -1034,6 +1087,7 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getTriggerLineEvent() {
         return triggerLineEvent;
     }
@@ -1043,6 +1097,7 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
         markAsDirty();
     }
 
+    @Nullable
     public String getCursor() {
         return cursor;
     }
@@ -1052,6 +1107,7 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
         markAsDirty();
     }
 
+    @Nullable
     public Emphasis getEmphasis() {
         return emphasis;
     }
@@ -1065,6 +1121,7 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
         addChild(emphasis);
     }
 
+    @Nullable
     public Blur getBlur() {
         return blur;
     }
@@ -1078,6 +1135,7 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
         addChild(blur);
     }
 
+    @Nullable
     public Select getSelect() {
         return select;
     }
@@ -1091,6 +1149,7 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
         addChild(select);
     }
 
+    @Nullable
     public Double getSmooth() {
         return smooth;
     }
@@ -1100,6 +1159,7 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
         markAsDirty();
     }
 
+    @Nullable
     public SmoothMonotoneType getSmoothMonotone() {
         return smoothMonotone;
     }
@@ -1109,6 +1169,7 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getAnimation() {
         return animation;
     }
@@ -1118,6 +1179,7 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
         markAsDirty();
     }
 
+    @Nullable
     public Integer getAnimationThreshold() {
         return animationThreshold;
     }
@@ -1127,6 +1189,7 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
         markAsDirty();
     }
 
+    @Nullable
     public Integer getAnimationDurationUpdate() {
         return animationDurationUpdate;
     }
@@ -1136,6 +1199,7 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
         markAsDirty();
     }
 
+    @Nullable
     public String getAnimationEasingUpdate() {
         return animationEasingUpdate;
     }
@@ -1145,6 +1209,7 @@ public class LineSeries extends AbstractAxisAwareSeries<LineSeries>
         markAsDirty();
     }
 
+    @Nullable
     public Integer getAnimationDelayUpdate() {
         return animationDelayUpdate;
     }

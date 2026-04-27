@@ -20,6 +20,7 @@ package io.jmix.flowui.kit.meta;
  * Meta description that describes data component
  * (like <code>collection</code> or <code>instance</code>).
  */
+@StudioAPI
 public @interface StudioDataComponent {
 
     /**
@@ -67,6 +68,11 @@ public @interface StudioDataComponent {
      * @see StudioComponent#properties
      */
     StudioProperty[] properties() default {};
+
+    /**
+     * @see StudioComponent#propertyGroups()
+     */
+    Class<?>[] propertyGroups() default {};
 
     /**
      * @see StudioComponent#xmlElementInitializer

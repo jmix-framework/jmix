@@ -121,14 +121,12 @@ export const JmixSidePanelLayoutMixin = (superClass) =>
         ];
     }
 
-    ready() {
-        super.ready();
+    firstUpdated() {
+        super.firstUpdated();
 
         this.modalityCurtain = this.$.modalityCurtain;
         this.modalityCurtain.addEventListener('click', (e) => this._onModalityCurtainClick(e));
 
-        this.$.dialog.$.overlay.addEventListener('vaadin-overlay-outside-click', (e) => this._closeSidePanel());
-        this.$.dialog.$.overlay.addEventListener('vaadin-overlay-escape-press', (e) => this._closeSidePanel());
 
         this.$.sidePanel.addEventListener('transitionstart', (e) => this._onSidePanelTransitionStart(e));
         this.$.sidePanel.addEventListener('transitionend', (e) => this._onSidePanelTransitionEnd(e));

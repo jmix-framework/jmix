@@ -25,7 +25,7 @@ import io.jmix.flowui.util.UnknownOperationResult;
 import org.jspecify.annotations.Nullable;
 import java.util.function.Supplier;
 
-public abstract class OperationResultViewAction<A extends OperationResultViewAction<A, V>, V extends View>
+public abstract class OperationResultViewAction<A extends OperationResultViewAction<A, V>, V extends View<?>>
         extends ViewAction<A, V>
         implements OperationResultAction {
 
@@ -48,10 +48,9 @@ public abstract class OperationResultViewAction<A extends OperationResultViewAct
         this.nextStepSupplier = nextStepSupplier;
     }
 
-    @SuppressWarnings("unchecked")
     public A withNextStepSupplier(@Nullable Supplier<OperationResult> nextStepSupplier) {
         setNextStepSupplier(nextStepSupplier);
-        return ((A) this);
+        return self();
     }
 
     @Override
@@ -59,10 +58,9 @@ public abstract class OperationResultViewAction<A extends OperationResultViewAct
         this.successHandler = successHandler;
     }
 
-    @SuppressWarnings("unchecked")
     public A withSuccessHandler(@Nullable Runnable successHandler) {
         setSuccessHandler(successHandler);
-        return ((A) this);
+        return self();
     }
 
     @Override
@@ -70,10 +68,9 @@ public abstract class OperationResultViewAction<A extends OperationResultViewAct
         this.failHandler = failHandler;
     }
 
-    @SuppressWarnings("unchecked")
     public A withFailHandler(@Nullable Runnable failHandler) {
         setFailHandler(failHandler);
-        return ((A) this);
+        return self();
     }
 
     @Override

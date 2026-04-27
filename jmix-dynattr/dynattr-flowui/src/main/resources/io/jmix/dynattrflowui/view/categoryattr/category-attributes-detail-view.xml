@@ -45,12 +45,12 @@
         <settings auto="true"/>
         <dataLoadCoordinator auto="true"/>
     </facets>
-    <layout expand="contentBox"
+    <layout expand="tabSheet"
             alignItems="STRETCH" padding="false" spacing="false"
             classNames="category-attributes-detail-view">
-        <vbox id="contentBox" expand="tabSheet" classNames="overflow-auto" padding="false">
-            <tabSheet id="tabSheet" width="100%" height="100%"
-                      themeNames="no-padding" classNames="main-tab-sheet">
+<!--        <vbox id="contentBox" expand="tabSheet" classNames="overflow-auto" padding="false">-->
+        <tabSheet id="tabSheet" width="100%" height="100%"
+                      themeNames="no-padding no-border" classNames="main-tab-sheet">
                 <tab id="mainTab" label="msg://mainTab.title">
                     <vbox height="100%" classNames="main-tab-wrapper">
                         <hbox id="attributeBox" width="100%">
@@ -129,16 +129,15 @@
                               classNames="target-views-box">
                             <h3 text="msg://targetViews"/>
                             <html content="msg://visibilityTab.help"/>
-                            <hbox classNames="buttons-panel">
+                            <hbox wrap="true" width="100%">
                                 <button id="createBtn" action="targetScreensTable.create"/>
                                 <button id="removeBtn" action="targetScreensTable.remove"/>
                                 <button id="addAllViewsBtn" action="targetScreensTable.addAllViews"/>
                             </hbox>
                             <dataGrid id="targetScreensTable" dataContainer="targetScreensDc"
                                       width="100%"
-                                      height="100%"
+                                      minHeight="20em"
                                       columnReorderingAllowed="true"
-                                      allRowsVisible="true"
                                       editorBuffered="true">
                                 <actions>
                                     <action id="create" type="list_create"/>
@@ -250,7 +249,7 @@
                     </vbox>
                 </tab>
             </tabSheet>
-        </vbox>
+<!--        </vbox>-->
         <hbox id="detailButtonsBox" classNames="footer-panel">
             <button action="windowCommitAndClose"/>
             <button action="windowClose"/>

@@ -119,6 +119,7 @@ public abstract class SingleFilterComponentBase<V> extends CustomField<V>
 
     protected void initRootComponent(HorizontalLayout root) {
         root.setSpacing(false);
+        root.setAlignItems(FlexComponent.Alignment.CENTER);
     }
 
     public HorizontalLayout getRoot() {

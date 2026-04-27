@@ -25,6 +25,7 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.METHOD)
 @Inherited
+@StudioAPI
 public @interface StudioAction {
 
     /**
@@ -70,6 +71,11 @@ public @interface StudioAction {
      * @see StudioComponent#properties
      */
     StudioProperty[] properties() default {};
+
+    /**
+     * @see StudioComponent#propertyGroups()
+     */
+    Class<?>[] propertyGroups() default {};
 
     /**
      * Properties that should be wrapped into <code>property</code> tag

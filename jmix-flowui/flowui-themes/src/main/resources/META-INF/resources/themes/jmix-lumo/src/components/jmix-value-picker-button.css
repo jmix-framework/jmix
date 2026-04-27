@@ -16,68 +16,60 @@
 
 @media lumo_components_jmix-value-picker-button {
 
-    /* Ex Base styles */
     :host {
         display: inline-block;
         position: relative;
         outline: none;
         white-space: nowrap;
         -webkit-user-select: none;
-        -moz-user-select: none;
         user-select: none;
+        /* Sizing */
+        --lumo-button-size: var(--lumo-size-s);
+        min-width: var(--lumo-button-size);
+        height: var(--lumo-button-size);
+        box-sizing: border-box;
+        /* Style */
+        font-family: var(--lumo-font-family);
+        font-size: var(--vaadin-button-font-size, var(--lumo-font-size-m));
+        font-weight: var(--vaadin-button-font-weight, 500);
+        color: var(--_lumo-button-text-color);
+        background: var(--_lumo-button-background);
+        border: var(--vaadin-button-border, none);
+        border-radius: var(--vaadin-button-border-radius, var(--lumo-border-radius-m));
+        cursor: var(--lumo-clickable-cursor);
+        -webkit-tap-highlight-color: transparent;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        flex-shrink: 0;
+        --_button-size: var(--vaadin-button-height, var(--lumo-button-size));
+        --_focus-ring-color: var(--vaadin-focus-ring-color, var(--lumo-primary-color-50pct));
+        --_focus-ring-width: var(--vaadin-focus-ring-width, 2px);
+        /* Used by notification */
+        --_lumo-button-background: var(--vaadin-button-background, var(--lumo-contrast-5pct));
+        --_lumo-button-text-color: var(--vaadin-button-text-color, var(--lumo-primary-text-color));
+        /* Allow controlling these from the host (inherited by the inner container */
+        align-items: center;
+        justify-content: center;
+        text-align: center;
     }
 
     :host([hidden]) {
         display: none !important;
     }
 
-    /* Aligns the button with form fields when placed on the same line.
-    Note, to make it work, the form fields should have the same "::before" pseudo-element. */
-
-    .value-picker-button-container::before {
-        content: '\2003';
-        display: inline-block;
-        width: 0;
-    }
-
     .value-picker-button-container {
         display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
+        align-items: inherit;
+        justify-content: inherit;
+        text-align: inherit;
         width: 100%;
         height: 100%;
         min-height: inherit;
         text-shadow: inherit;
-        background: transparent;
-        padding: 0;
-        border: none;
-        box-shadow: none;
     }
 
     [part='icon'] {
         flex: none;
-    }
-
-    /* Lumo styles */
-    :host {
-        /* Sizing */
-        --lumo-button-size: var(--lumo-size-s);
-        min-width: var(--lumo-button-size);
-        height: var(--lumo-button-size);
-        box-sizing: border-box;
-
-        /* Style */
-        font-family: var(--lumo-font-family);
-        font-size: var(--lumo-font-size-m);
-        font-weight: 500;
-        color: var(--_lumo-button-color, var(--lumo-primary-text-color));
-        background-color: var(--_lumo-button-background-color, var(--lumo-contrast-5pct));
-        border-radius: var(--lumo-border-radius-m);
-        cursor: var(--lumo-clickable-cursor);
-        -webkit-tap-highlight-color: transparent;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
     }
 
     /* Set only for the internal parts so we don’t affect the host vertical alignment */
@@ -92,14 +84,10 @@
         /* We rely on the host always being relative */
         position: absolute;
         z-index: 1;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
+        inset: 0;
         background-color: currentColor;
         border-radius: inherit;
         opacity: 0;
-        transition: opacity 0.2s;
         pointer-events: none;
     }
 
@@ -129,27 +117,40 @@
 
     /* Keyboard focus */
     :host([focus-ring]) {
-        box-shadow: 0 0 0 2px var(--lumo-primary-color-50pct);
+        box-shadow: 0 0 0 calc(1px * var(--_focus-ring-gap-on, 0)) var(--_focus-ring-gap-color, var(--lumo-base-color)),
+        0 0 0 calc(var(--_focus-ring-width) + 1px * var(--_focus-ring-gap-on, 0)) var(--_focus-ring-color);
     }
 
     /* Disabled state. Keep selectors after other color variants. */
     :host([disabled]) {
-        pointer-events: none;
         color: var(--lumo-disabled-text-color);
+        pointer-events: var(--_vaadin-button-disabled-pointer-events, none);
+        cursor: not-allowed;
     }
 
     /* Icons */
-    [part] ::slotted(vaadin-icon),
-    [part] ::slotted(iron-icon) {
-        display: inline-block;
+    [part] ::slotted(vaadin-icon) {
         width: var(--lumo-icon-size-m);
         height: var(--lumo-icon-size-m);
     }
 
-    /* Vaadin icons are based on a 16x16 grid (unlike Lumo and Material icons with 24x24), so they look too big by default */
-    [part] ::slotted(vaadin-icon[icon^='vaadin:']),
-    [part] ::slotted(iron-icon[icon^='vaadin:']) {
+    [part] ::slotted(vaadin-icon[icon^='vaadin:']) {
         padding: 0.25em;
         box-sizing: border-box !important;
+    }
+
+    @media (forced-colors: active) {
+        :host {
+            outline: 1px solid;
+            outline-offset: -1px;
+        }
+
+        :host([focused]) {
+            outline-width: 2px;
+        }
+
+        :host([disabled]) {
+            outline-color: GrayText;
+        }
     }
 }

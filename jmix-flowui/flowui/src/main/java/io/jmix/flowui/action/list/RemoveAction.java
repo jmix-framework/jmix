@@ -97,7 +97,7 @@ public class RemoveAction<E> extends SecuredListDataComponentAction<RemoveAction
 
     @Autowired
     protected void setUiComponentProperties(UiComponentProperties uiComponentProperties) {
-        this.shortcutCombination = KeyCombination.create(uiComponentProperties.getGridRemoveShortcut());
+        setShortcutCombination(KeyCombination.create(uiComponentProperties.getGridRemoveShortcut()));
     }
 
     /**

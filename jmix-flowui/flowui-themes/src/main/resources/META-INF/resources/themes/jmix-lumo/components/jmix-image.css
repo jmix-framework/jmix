@@ -14,18 +14,4 @@
  * limitations under the License.
  */
 
-img[theme~="fill"] {
-    object-fit: fill;
-}
-
-img[theme~="contain"] {
-    object-fit: contain;
-}
-
-img[theme~="cover"] {
-    object-fit: cover;
-}
-
-img[theme~="scale-down"] {
-    object-fit: scale-down;
-}
+@import '../../shared/src/components/jmix-image.css';

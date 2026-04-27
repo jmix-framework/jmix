@@ -26,6 +26,7 @@ import java.lang.annotation.Target;
  */
 @Documented
 @Target(ElementType.TYPE_PARAMETER)
+@StudioAPI
 public @interface StudioPropertiesItem {
 
     /**

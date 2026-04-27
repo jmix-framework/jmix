@@ -501,4 +501,14 @@
      stroke: var(--jmix-control-active-hover-color, var(--lumo-primary-contrast-color));
      fill: var(--jmix-control-active-hover-color, var(--lumo-primary-contrast-color));
   }
+
+    @media (forced-colors: active) {
+        :root,
+        :host {
+            --ol-brand-color: CanvasText;
+            --jmix-control-active-background-color: CanvasText;
+            --jmix-control-active-color: Canvas;
+            --jmix-control-active-hover-color: Canvas;
+        }
+    }
 }

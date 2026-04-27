@@ -68,6 +68,7 @@ public class Suggestion implements Serializable {
      * @return the hint text that appears next to the {@link #displayText} in the popup window
      * for suggestions
      */
+    @Nullable
     public String getDescriptionText() {
         return descriptionText;
     }

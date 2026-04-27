@@ -83,7 +83,6 @@ public class ReportImportExportTest {
         assertThat(dbReports.get(0).getTemplates()).isNotEmpty();
     }
 
-    @Disabled("Enable after fix: https://github.com/jmix-framework/jmix/issues/5168")
     @Test
     void testImportCubaReportFromZipFile() throws IOException {
         assertThat(loadReportsByName()).isEmpty();

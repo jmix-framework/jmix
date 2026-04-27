@@ -16,6 +16,8 @@
 
 package io.jmix.chartsflowui.kit.component.model.axis;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * The base class for polar axes.
  *
@@ -29,6 +31,7 @@ public abstract class AbstractPolarAxis<T extends AbstractPolarAxis<T>> extends 
         super(type);
     }
 
+    @Nullable
     public Integer getPolarIndex() {
         return polarIndex;
     }

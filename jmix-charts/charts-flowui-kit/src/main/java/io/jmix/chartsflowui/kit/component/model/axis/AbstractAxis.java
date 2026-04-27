@@ -19,6 +19,7 @@ package io.jmix.chartsflowui.kit.component.model.axis;
 import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
 import io.jmix.chartsflowui.kit.component.model.shared.AbstractAxisPointer;
 import io.jmix.chartsflowui.kit.component.model.shared.JsFunction;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The base class for axis.
@@ -135,10 +136,12 @@ public abstract class AbstractAxis<T extends AbstractAxis<T>> extends ChartObser
             nonCategoryGap = new String[]{min, max};
         }
 
+        @Nullable
         public Boolean getCategoryGap() {
             return categoryGap;
         }
 
+        @Nullable
         public String[] getNonCategoryGap() {
             return nonCategoryGap;
         }
@@ -159,6 +162,7 @@ public abstract class AbstractAxis<T extends AbstractAxis<T>> extends ChartObser
         markAsDirty();
     }
 
+    @Nullable
     public String getId() {
         return id;
     }
@@ -168,6 +172,7 @@ public abstract class AbstractAxis<T extends AbstractAxis<T>> extends ChartObser
         markAsDirty();
     }
 
+    @Nullable
     public BoundaryGap getBoundaryGap() {
         return boundaryGap;
     }
@@ -182,6 +187,7 @@ public abstract class AbstractAxis<T extends AbstractAxis<T>> extends ChartObser
         markAsDirty();
     }
 
+    @Nullable
     public String getMin() {
         return min;
     }
@@ -191,6 +197,7 @@ public abstract class AbstractAxis<T extends AbstractAxis<T>> extends ChartObser
         markAsDirty();
     }
 
+    @Nullable
     public JsFunction getMinFunction() {
         return minFunction;
     }
@@ -205,6 +212,7 @@ public abstract class AbstractAxis<T extends AbstractAxis<T>> extends ChartObser
         markAsDirty();
     }
 
+    @Nullable
     public String getMax() {
         return max;
     }
@@ -214,6 +222,7 @@ public abstract class AbstractAxis<T extends AbstractAxis<T>> extends ChartObser
         markAsDirty();
     }
 
+    @Nullable
     public JsFunction getMaxFunction() {
         return maxFunction;
     }
@@ -228,6 +237,7 @@ public abstract class AbstractAxis<T extends AbstractAxis<T>> extends ChartObser
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getScale() {
         return scale;
     }
@@ -237,6 +247,7 @@ public abstract class AbstractAxis<T extends AbstractAxis<T>> extends ChartObser
         markAsDirty();
     }
 
+    @Nullable
     public Integer getSplitNumber() {
         return splitNumber;
     }
@@ -246,6 +257,7 @@ public abstract class AbstractAxis<T extends AbstractAxis<T>> extends ChartObser
         markAsDirty();
     }
 
+    @Nullable
     public Integer getMinInterval() {
         return minInterval;
     }
@@ -255,6 +267,7 @@ public abstract class AbstractAxis<T extends AbstractAxis<T>> extends ChartObser
         markAsDirty();
     }
 
+    @Nullable
     public Integer getMaxInterval() {
         return maxInterval;
     }
@@ -264,6 +277,7 @@ public abstract class AbstractAxis<T extends AbstractAxis<T>> extends ChartObser
         markAsDirty();
     }
 
+    @Nullable
     public Integer getInterval() {
         return interval;
     }
@@ -273,6 +287,7 @@ public abstract class AbstractAxis<T extends AbstractAxis<T>> extends ChartObser
         markAsDirty();
     }
 
+    @Nullable
     public Integer getLogBase() {
         return logBase;
     }
@@ -282,6 +297,7 @@ public abstract class AbstractAxis<T extends AbstractAxis<T>> extends ChartObser
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getSilent() {
         return silent;
     }
@@ -291,6 +307,7 @@ public abstract class AbstractAxis<T extends AbstractAxis<T>> extends ChartObser
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getTriggerEvent() {
         return triggerEvent;
     }
@@ -300,6 +317,7 @@ public abstract class AbstractAxis<T extends AbstractAxis<T>> extends ChartObser
         markAsDirty();
     }
 
+    @Nullable
     public AxisLine getAxisLine() {
         return axisLine;
     }
@@ -313,6 +331,7 @@ public abstract class AbstractAxis<T extends AbstractAxis<T>> extends ChartObser
         addChild(axisLine);
     }
 
+    @Nullable
     public AxisTick getAxisTick() {
         return axisTick;
     }
@@ -326,6 +345,7 @@ public abstract class AbstractAxis<T extends AbstractAxis<T>> extends ChartObser
         addChild(axisTick);
     }
 
+    @Nullable
     public MinorTick getMinorTick() {
         return minorTick;
     }
@@ -339,6 +359,7 @@ public abstract class AbstractAxis<T extends AbstractAxis<T>> extends ChartObser
         addChild(minorTick);
     }
 
+    @Nullable
     public AxisLabel getAxisLabel() {
         return axisLabel;
     }
@@ -352,6 +373,7 @@ public abstract class AbstractAxis<T extends AbstractAxis<T>> extends ChartObser
         addChild(axisLabel);
     }
 
+    @Nullable
     public SplitLine getSplitLine() {
         return splitLine;
     }
@@ -365,6 +387,7 @@ public abstract class AbstractAxis<T extends AbstractAxis<T>> extends ChartObser
         addChild(splitLine);
     }
 
+    @Nullable
     public MinorSplitLine getMinorSplitLine() {
         return minorSplitLine;
     }
@@ -378,6 +401,7 @@ public abstract class AbstractAxis<T extends AbstractAxis<T>> extends ChartObser
         addChild(minorSplitLine);
     }
 
+    @Nullable
     public SplitArea getSplitArea() {
         return splitArea;
     }
@@ -391,6 +415,7 @@ public abstract class AbstractAxis<T extends AbstractAxis<T>> extends ChartObser
         addChild(splitArea);
     }
 
+    @Nullable
     public AxisPointer getAxisPointer() {
         return axisPointer;
     }
@@ -404,6 +429,7 @@ public abstract class AbstractAxis<T extends AbstractAxis<T>> extends ChartObser
         addChild(axisPointer);
     }
 
+    @Nullable
     public Boolean getAnimation() {
         return animation;
     }
@@ -413,6 +439,7 @@ public abstract class AbstractAxis<T extends AbstractAxis<T>> extends ChartObser
         markAsDirty();
     }
 
+    @Nullable
     public Integer getAnimationThreshold() {
         return animationThreshold;
     }
@@ -422,6 +449,7 @@ public abstract class AbstractAxis<T extends AbstractAxis<T>> extends ChartObser
         markAsDirty();
     }
 
+    @Nullable
     public Integer getAnimationDuration() {
         return animationDuration;
     }
@@ -431,6 +459,7 @@ public abstract class AbstractAxis<T extends AbstractAxis<T>> extends ChartObser
         markAsDirty();
     }
 
+    @Nullable
     public JsFunction getAnimationDurationFunction() {
         return animationDurationFunction;
     }
@@ -445,6 +474,7 @@ public abstract class AbstractAxis<T extends AbstractAxis<T>> extends ChartObser
         markAsDirty();
     }
 
+    @Nullable
     public String getAnimationEasing() {
         return animationEasing;
     }
@@ -454,6 +484,7 @@ public abstract class AbstractAxis<T extends AbstractAxis<T>> extends ChartObser
         markAsDirty();
     }
 
+    @Nullable
     public Integer getAnimationDelay() {
         return animationDelay;
     }
@@ -463,6 +494,7 @@ public abstract class AbstractAxis<T extends AbstractAxis<T>> extends ChartObser
         markAsDirty();
     }
 
+    @Nullable
     public JsFunction getAnimationDelayFunction() {
         return animationDelayFunction;
     }
@@ -476,6 +508,7 @@ public abstract class AbstractAxis<T extends AbstractAxis<T>> extends ChartObser
         this.animationDelayFunction = new JsFunction(animationDelayFunction);
     }
 
+    @Nullable
     public Integer getAnimationDurationUpdate() {
         return animationDurationUpdate;
     }
@@ -485,6 +518,7 @@ public abstract class AbstractAxis<T extends AbstractAxis<T>> extends ChartObser
         markAsDirty();
     }
 
+    @Nullable
     public JsFunction getAnimationDurationUpdateFunction() {
         return animationDurationUpdateFunction;
     }
@@ -499,6 +533,7 @@ public abstract class AbstractAxis<T extends AbstractAxis<T>> extends ChartObser
         markAsDirty();
     }
 
+    @Nullable
     public String getAnimationEasingUpdate() {
         return animationEasingUpdate;
     }
@@ -508,6 +543,7 @@ public abstract class AbstractAxis<T extends AbstractAxis<T>> extends ChartObser
         markAsDirty();
     }
 
+    @Nullable
     public Integer getAnimationDelayUpdate() {
         return animationDelayUpdate;
     }
@@ -517,6 +553,7 @@ public abstract class AbstractAxis<T extends AbstractAxis<T>> extends ChartObser
         markAsDirty();
     }
 
+    @Nullable
     public JsFunction getAnimationDelayUpdateFunction() {
         return animationDelayUpdateFunction;
     }
@@ -531,6 +568,7 @@ public abstract class AbstractAxis<T extends AbstractAxis<T>> extends ChartObser
         markAsDirty();
     }
 
+    @Nullable
     public Integer getZLevel() {
         return zLevel;
     }
@@ -540,6 +578,7 @@ public abstract class AbstractAxis<T extends AbstractAxis<T>> extends ChartObser
         markAsDirty();
     }
 
+    @Nullable
     public Integer getZ() {
         return z;
     }

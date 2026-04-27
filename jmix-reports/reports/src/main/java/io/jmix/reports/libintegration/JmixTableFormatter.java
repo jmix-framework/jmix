@@ -59,6 +59,9 @@ public class JmixTableFormatter extends AbstractFormatter {
     @Autowired
     protected StandardSerialization standardSerialization;
 
+    @Autowired
+    protected ReportValueConverter reportValueConverter;
+
     protected JmixTableFormatter(FormatterFactoryInput formatterFactoryInput) {
         super(formatterFactoryInput);
     }
@@ -133,7 +136,7 @@ public class JmixTableFormatter extends AbstractFormatter {
                             String formattedValue = getFormattedValue(bandData.getName(), name, value);
                             entityRow.setValue(transformationKey, formattedValue);
                         } else {
-                            entityRow.setValue(transformationKey, value);
+                            entityRow.setValue(transformationKey, reportValueConverter.convertValue(value));
                         }
                     }
                 });
@@ -194,6 +197,7 @@ public class JmixTableFormatter extends AbstractFormatter {
 
             List<KeyValueEntity> entities = new ArrayList<>();
             Set<JmixTableData.ColumnInfo> headers = new LinkedHashSet<>();
+            Map<String, TemplateTableColumn> emptyHeaders = new LinkedHashMap<>();
 
             bandDataList.forEach(bandData -> {
                 Map<String, Object> data = bandData.getData();
@@ -228,7 +232,7 @@ public class JmixTableFormatter extends AbstractFormatter {
                             String formattedValue = getFormattedValue(bandName, key, value);
                             entityRow.setValue(transformationKey, formattedValue);
                         } else {
-                            entityRow.setValue(transformationKey, value);
+                            entityRow.setValue(transformationKey, reportValueConverter.convertValue(value));
                         }
                     }
                 }
@@ -245,18 +249,28 @@ public class JmixTableFormatter extends AbstractFormatter {
 
                             String transformationKey = transformationKey(key);
                             if (value != null) {
-                                Class valueClass = getColumnClass(bandName, key, value);
-                                headers.add(new JmixTableData.ColumnInfo(transformationKey, valueClass, column.getCaption(),
-                                        column.getCaptionMessageKey(), column.getPosition()));
-                            } else {
-                                headers.add(new JmixTableData.ColumnInfo(transformationKey, String.class, column.getCaption(),
-                                        column.getCaptionMessageKey(), column.getPosition()));
+                                if (!containsHeader(headers, transformationKey)) {
+                                    Class valueClass = getColumnClass(bandName, key, value);
+                                    headers.add(new JmixTableData.ColumnInfo(transformationKey, valueClass, column.getCaption(),
+                                            column.getCaptionMessageKey(), column.getPosition()));
+                                }
+                            } else if (!containsHeader(headers, transformationKey)) {
+                                emptyHeaders.put(transformationKey, column);
                             }
                         }
                     }
                 }
                 entities.add(entityRow);
             });
+
+            for (Map.Entry<String, TemplateTableColumn> entry : emptyHeaders.entrySet()) {
+                String transformationKey = entry.getKey();
+                TemplateTableColumn column = entry.getValue();
+                if (!containsHeader(headers, transformationKey)) {
+                    headers.add(new JmixTableData.ColumnInfo(transformationKey, String.class, column.getCaption(),
+                            column.getCaptionMessageKey(), column.getPosition()));
+                }
+            }
 
             headers.removeIf(header -> containsLowerCaseDuplicate(header, headers));
 
@@ -271,7 +285,11 @@ public class JmixTableFormatter extends AbstractFormatter {
     }
 
     private Class getColumnClass(String bandName, String parameterName, Object value) {
-        return isFormat(bandName, parameterName) ? String.class : value.getClass();
+        if (isFormat(bandName, parameterName)) {
+            return String.class;
+        }
+        Object convertedValue = reportValueConverter.convertValue(value);
+        return convertedValue != null ? convertedValue.getClass() : value.getClass();
     }
 
     private boolean isFormat(String bandName, String parameterName) {

@@ -485,6 +485,16 @@ public class TreeDataGrid<E> extends JmixTreeGrid<E> implements ListDataComponen
 
     @Nullable
     @Override
+    public String getHeaderFilterApplyShortcut() {
+        return gridDelegate.getHeaderFilterApplyShortcut();
+    }
+
+    @Override
+    public void setHeaderFilterApplyShortcut(@Nullable String headerFilterApplyShortcut) {
+        gridDelegate.setHeaderFilterApplyShortcut(headerFilterApplyShortcut);
+    }
+
+    @Override
     public Object getSubPart(String name) {
         Object column = super.getSubPart(name);
         if (column != null) {

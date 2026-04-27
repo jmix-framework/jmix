@@ -14,15 +14,20 @@
  * limitations under the License.
  */
 
+import { css, html, LitElement } from 'lit';
+
 import { DialogBaseMixin } from '@vaadin/dialog/src/vaadin-dialog-base-mixin.js';
-import { OverlayClassMixin } from '@vaadin/component-base/src/overlay-class-mixin.js';
 import { ThemePropertyMixin } from '@vaadin/vaadin-themable-mixin/vaadin-theme-property-mixin.js';
-import { html, PolymerElement } from '@polymer/polymer/polymer-element.js';
+import { LumoInjectionMixin } from '@vaadin/vaadin-themable-mixin/lumo-injection-mixin.js';
+import { PolylitMixin } from '@vaadin/component-base/src/polylit-mixin.js';
+
+import { ifDefined } from 'lit/directives/if-defined.js';
 import { defineCustomElement } from '@vaadin/component-base/src/define.js';
 
+import { sidePanelLayoutDialog } from './styles/jmix-side-panel-layout-dialog-base-styles.js';
 import './jmix-side-panel-layout-dialog-overlay.js';
 
-class JmixSidePanelLayoutDialog extends DialogBaseMixin(OverlayClassMixin(ThemePropertyMixin(PolymerElement))) {
+class JmixSidePanelLayoutDialog extends DialogBaseMixin(ThemePropertyMixin(LumoInjectionMixin(PolylitMixin(LitElement)))) {
 
     static get is() {
         return 'jmix-side-panel-layout-dialog';
@@ -30,17 +35,17 @@ class JmixSidePanelLayoutDialog extends DialogBaseMixin(OverlayClassMixin(ThemeP
 
     static get properties() {
         return {
-            ariaLabel: {
-                type: String,
-            },
-
             fullscreen: {
                 type: Boolean,
             },
         };
     }
 
-    static get template() {
+    static get styles() {
+      return [sidePanelLayoutDialog];
+    }
+
+    render() {
         return html`
             <style>
                 :host {
@@ -50,20 +55,28 @@ class JmixSidePanelLayoutDialog extends DialogBaseMixin(OverlayClassMixin(ThemeP
 
             <jmix-side-panel-layout-dialog-overlay
                 id="overlay"
-                opened="[[opened]]"
-                aria-label$="[[ariaLabel]]"
-                on-opened-changed="_onOverlayOpened"
-                on-mousedown="_bringOverlayToFront"
-                on-touchstart="_bringOverlayToFront"
-                theme$="[[_theme]]"
-                modeless="[[modeless]]"
-                with-backdrop="[[!modeless]]"
-                resizable$="[[resizable]]"
-                fullscreen$="[[fullscreen]]"
+                .opened="${this.opened}"
+                @opened-changed="${this._onOverlayOpened}"
+                @mousedown="${this._bringOverlayToFront}"
+                @touchstart="${this._bringOverlayToFront}"
+                @vaadin-overlay-outside-click="${this._close}"
+                @vaadin-overlay-escape-press="${this._close}"
+                theme="${ifDefined(this._theme)}"
+                .modeless="${this.modeless}"
+                .withBackdrop="${!this.modeless}"
+                ?fullscreen="${this.fullscreen}"
                 role="dialog"
                 focus-trap
+                exportparts="backdrop, overlay, content"
             ></jmix-side-panel-layout-dialog-overlay>
         `;
+    }
+
+    /**
+     * @private
+     */
+    _close() {
+      this.dispatchEvent(new CustomEvent('close'));
     }
 }
 

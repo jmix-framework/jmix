@@ -122,7 +122,11 @@ class ScalarQueriesTest extends DataSpec {
     void "check conditions"() {
         when:
         def filteredByEntityProperty = employeeRepository.queryEmployeeSecondNamesByContext(
-                of(PropertyCondition.createWithValue("e.name", PropertyCondition.Operation.CONTAINS, "ir")))
+                of(PropertyCondition.createWithValue("name", PropertyCondition.Operation.CONTAINS, "ir")))
+
+        //make sure condition is parsed coherently for value and entity load queries
+        def entitiesFilteredByEntityProperty = employeeRepository.queryEmployeeByContext(
+                of(PropertyCondition.createWithValue("name", PropertyCondition.Operation.CONTAINS, "ir")))
 
         def filteredByReturnColumn = employeeRepository.queryEmployeeSecondNamesByContext(
                 of(PropertyCondition.createWithValue("secondNameReturnColumn",
@@ -132,12 +136,13 @@ class ScalarQueriesTest extends DataSpec {
         def filteredByComplexCondition = employeeRepository.queryEmployeeSecondNamesByContext(
                 of(LogicalCondition.and(
                         JpqlCondition.createWithParameters("e.registrationAddress.city=:city", null, Map.of("city", "City1")),
-                        PropertyCondition.createWithValue("e.name", PropertyCondition.Operation.CONTAINS, "ir"))
+                        PropertyCondition.createWithValue("name", PropertyCondition.Operation.CONTAINS, "ir"))
                 )
         )
 
         then:
         filteredByEntityProperty == ["SN2", "SN3"]
+        entitiesFilteredByEntityProperty.stream().map { it.secondName }.toList() == ["SN2", "SN3"]
         filteredByReturnColumn == ["SN1"]
         filteredByComplexCondition == ["SN3"]
     }

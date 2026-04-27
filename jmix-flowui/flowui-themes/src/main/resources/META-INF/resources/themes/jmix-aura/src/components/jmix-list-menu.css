@@ -1,0 +1,144 @@
+/*
+ * Copyright 2022 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+.jmix-list-menu {
+  color: var(--vaadin-text-color-secondary);
+  margin: 0;
+  overflow: auto;
+  padding: 0 var(--vaadin-padding-s);
+  list-style-type: none;
+}
+
+.jmix-list-menu .jmix-menubar-item .menubar-list {
+  margin: 0;
+  margin-inline-start: var(--vaadin-padding-l);
+  list-style-type: none;
+  padding: 0;
+}
+
+.jmix-list-menu .jmix-menubar-item .menubar-list li {
+  padding: calc(var(--vaadin-padding-xs) / 2) 0;
+}
+
+.jmix-list-menu .jmix-menubar-item {
+  padding: var(--vaadin-padding-s) 0;
+  margin: 0;
+}
+
+.jmix-list-menu .jmix-menubar-item vaadin-details-summary {
+  padding: var(--vaadin-padding-s);
+}
+
+.jmix-list-menu .jmix-menubar-item .jmix-menubar-summary-icon-container {
+  display: flex;
+  gap: var(--vaadin-gap-s);
+  align-items: center;
+}
+
+.jmix-list-menu .jmix-menubar-item .menubar-summary {
+  font-size: var(--aura-font-size-s);
+  white-space: nowrap;
+  font-weight: bold;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.jmix-list-menu a.jmix-menu-item .suffix-component,
+.jmix-list-menu .jmix-menubar-item .jmix-menubar-summary-icon-container .suffix-component {
+  margin-inline-start: auto;
+  flex-shrink: 0;
+}
+
+.jmix-list-menu a.jmix-menu-item {
+  display: flex;
+  gap: var(--vaadin-gap-s);
+  padding: var(--vaadin-padding-s);
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  align-items: center;
+}
+
+.jmix-list-menu vaadin-button.jmix-menu-item {
+  --vaadin-button-background: transparent;
+  --vaadin-button-border-color: transparent;
+  --vaadin-button-border-width: 0;
+  --vaadin-button-shadow: none;
+  --vaadin-button-gap: var(--vaadin-gap-s);
+
+  display: flex;
+
+  color: inherit;
+  font-size: inherit;
+  line-height: inherit;
+
+  padding: var(--vaadin-padding-s);
+}
+
+.jmix-list-menu vaadin-button.jmix-menu-item::part(label) {
+  flex-grow: 1;
+}
+
+.jmix-list-menu a.jmix-menu-item .link-text {
+  font-size: var(--aura-font-size-s);
+  font-weight: 500;
+  line-height: var(--aura-line-height-s);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.jmix-list-menu a.jmix-menu-item[highlight] {
+  color: var(--aura-accent-text-color);
+  background-color: color-mix(in srgb, currentColor 8%, transparent);
+  border-radius: var(--vaadin-radius-m);
+
+  outline-offset: 2px;
+}
+
+.jmix-list-menu a.jmix-menu-item[highlight] .link-text {
+  font-weight: var(--aura-font-weight-semibold);
+}
+
+.jmix-list-menu .jmix-menubar-item vaadin-details-summary::part(content) {
+  display: flex;
+  overflow: hidden;
+  width: 100%;
+  align-items: center;
+}
+
+.jmix-list-menu[theme~='toggle-reverse'] vaadin-details-summary {
+  justify-content: space-between;
+}
+
+.jmix-list-menu[theme~='toggle-reverse'] vaadin-details-summary::part(toggle) {
+  order: 1;
+  margin-inline-end: 0;
+}
+
+@supports selector(:focus-visible) {
+  .jmix-list-menu a.jmix-menu-item:focus-visible {
+    border-radius: var(--vaadin-radius-m);
+    outline: var(--vaadin-focus-ring-width) solid var(--vaadin-focus-ring-color);
+    outline-offset: 1px;
+  }
+}
+
+@media (forced-colors: active) {
+  .jmix-list-menu a.jmix-menu-item[highlight] {
+    border: 1px solid CanvasText;
+  }
+}

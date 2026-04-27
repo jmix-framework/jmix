@@ -263,10 +263,12 @@ public class Brush extends ChartObservableObject {
             this.brushSelectMode = brushSelectMode;
         }
 
+        @Nullable
         public Integer[] getBrushLinkIndexes() {
             return brushLinkIndexes;
         }
 
+        @Nullable
         public BrushSelectMode getBrushSelectMode() {
             return brushSelectMode;
         }
@@ -295,14 +297,17 @@ public class Brush extends ChartObservableObject {
             this.brushSelectMode = brushSelectMode;
         }
 
+        @Nullable
         public Integer getSingleIndex() {
             return singleIndex;
         }
 
+        @Nullable
         public Integer[] getIndexes() {
             return indexes;
         }
 
+        @Nullable
         public BrushSelectMode getBrushSelectMode() {
             return brushSelectMode;
         }
@@ -321,6 +326,7 @@ public class Brush extends ChartObservableObject {
 
         protected Color borderColor;
 
+        @Nullable
         public Integer getBorderWidth() {
             return borderWidth;
         }
@@ -330,6 +336,7 @@ public class Brush extends ChartObservableObject {
             markAsDirty();
         }
 
+        @Nullable
         public Color getColor() {
             return color;
         }
@@ -339,6 +346,7 @@ public class Brush extends ChartObservableObject {
             markAsDirty();
         }
 
+        @Nullable
         public Color getBorderColor() {
             return borderColor;
         }
@@ -364,6 +372,7 @@ public class Brush extends ChartObservableObject {
         }
     }
 
+    @Nullable
     public String getId() {
         return id;
     }
@@ -373,6 +382,7 @@ public class Brush extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public Toolbox[] getToolboxes() {
         return toolboxes;
     }
@@ -382,6 +392,7 @@ public class Brush extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public BrushLink getBrushLink() {
         return brushLink;
     }
@@ -396,6 +407,7 @@ public class Brush extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public SeriesIndex getSeriesIndex() {
         return seriesIndex;
     }
@@ -405,6 +417,7 @@ public class Brush extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public IndexItem getGeoIndex() {
         return geoIndex;
     }
@@ -424,6 +437,7 @@ public class Brush extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public IndexItem getXAxisIndex() {
         return xAxisIndex;
     }
@@ -443,6 +457,7 @@ public class Brush extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public IndexItem getYAxisIndex() {
         return yAxisIndex;
     }
@@ -462,6 +477,7 @@ public class Brush extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public BrushType getBrushType() {
         return brushType;
     }
@@ -471,6 +487,7 @@ public class Brush extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public BrushMode getBrushMode() {
         return brushMode;
     }
@@ -480,6 +497,7 @@ public class Brush extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getTransformable() {
         return transformable;
     }
@@ -489,6 +507,7 @@ public class Brush extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public BrushStyle getBrushStyle() {
         return brushStyle;
     }
@@ -502,6 +521,7 @@ public class Brush extends ChartObservableObject {
         addChild(brushStyle);
     }
 
+    @Nullable
     public ThrottleType getThrottleType() {
         return throttleType;
     }
@@ -511,6 +531,7 @@ public class Brush extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public Double getThrottleDelay() {
         return throttleDelay;
     }
@@ -520,6 +541,7 @@ public class Brush extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getRemoveOnClick() {
         return removeOnClick;
     }
@@ -529,6 +551,7 @@ public class Brush extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public VisualEffect getInBrush() {
         return inBrush;
     }
@@ -542,6 +565,7 @@ public class Brush extends ChartObservableObject {
         addChild(inBrush);
     }
 
+    @Nullable
     public VisualEffect getOutOfBrush() {
         return outOfBrush;
     }
@@ -555,6 +579,7 @@ public class Brush extends ChartObservableObject {
         addChild(outOfBrush);
     }
 
+    @Nullable
     public Integer getZ() {
         return z;
     }

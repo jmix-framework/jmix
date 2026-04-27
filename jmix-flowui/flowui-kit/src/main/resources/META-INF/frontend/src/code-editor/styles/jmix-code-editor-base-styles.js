@@ -20,14 +20,49 @@ import { contentStyles } from "./jmix-code-editor-content-styles";
 
 export const statesStyles = css`
 
-  :host {
-    width: 50em;
-    height: 20em;
-  }
+    :host {
+        width: 50em;
+        height: 20em;
+    }
 
-  .jmix-code-editor-container {
-    height: 100%;
-  }
+    .jmix-code-editor-container {
+        height: 100%;
+    }
+
+    [part='input-field'] {
+        height: auto;
+        box-sizing: border-box;
+    }
+
+    [part='input-field']:focus-within {
+        outline: var(--vaadin-focus-ring-width) solid var(--vaadin-focus-ring-color);
+        outline-offset: calc(var(--vaadin-input-field-border-width, 1px) * -1);
+    }
+
+    :host([readonly]) [part='input-field']:focus-within {
+        outline-style: dashed;
+        --vaadin-input-field-border-color: transparent;
+    }
+
+    :host([invalid]) {
+        --vaadin-input-field-border-color: var(--vaadin-input-field-error-color, var(--vaadin-text-color));
+    }
+
+    [part='input-field'] {
+        transition: background-color 0.1s;
+    }
+
+    :host(:not([readonly])) [part='input-field']::after {
+        display: none;
+    }
+
+    :host([readonly]) [part='input-field'] {
+        border-style: dashed;
+    }
+
+    :host([readonly]) [part='input-field']::after {
+        border: none;
+    }
 `;
 
 export const jmixCodeEditorStyles = [contentStyles, statesStyles];

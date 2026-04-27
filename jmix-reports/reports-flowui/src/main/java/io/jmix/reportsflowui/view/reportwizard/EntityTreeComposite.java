@@ -36,6 +36,7 @@ import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.model.DataComponents;
+import io.jmix.flowui.theme.StyleUtility;
 import io.jmix.reports.entity.wizard.EntityTreeNode;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -113,7 +114,7 @@ public class EntityTreeComposite extends Composite<VerticalLayout>
         JmixButton reportPropertyNameSearchButton = uiComponents.create(JmixButton.class);
         reportPropertyNameSearchButton.setIcon(icons.get(JmixFontIcon.SEARCH));
         reportPropertyNameSearchButton.addClickListener(__ -> filterProperties());
-        reportPropertyNameSearchButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
+        reportPropertyNameSearchButton.setClassName(StyleUtility.Button.LINK_BUTTON);
 
         reportPropertyName.setPrefixComponent(reportPropertyNameSearchButton);
 

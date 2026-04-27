@@ -16,22 +16,30 @@
 
 package io.jmix.saml;
 
+import com.google.common.base.Strings;
+import com.vaadin.flow.server.auth.NavigationAccessControl;
+import com.vaadin.flow.spring.security.VaadinSecurityConfigurer;
+import io.jmix.securityflowui.security.AbstractFlowuiWebSecurity;
 import io.jmix.saml.config.SamlHttpSecurityConfigurer;
 import io.jmix.saml.converter.SamlResponseAuthenticationConverter;
 import io.jmix.saml.mapper.user.SamlUserMapper;
 import io.jmix.saml.user.JmixSamlUserDetails;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.lang.Nullable;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
-import org.springframework.security.saml2.Saml2Exception;
+import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.saml2.provider.service.authentication.OpenSaml5AuthenticationProvider;
 import org.springframework.security.saml2.provider.service.registration.RelyingPartyRegistration;
 import org.springframework.security.saml2.provider.service.registration.RelyingPartyRegistrationRepository;
 import org.springframework.security.saml2.provider.service.registration.Saml2MessageBinding;
 import org.springframework.security.saml2.provider.service.web.authentication.logout.OpenSaml5LogoutRequestResolver;
 import org.springframework.security.saml2.provider.service.web.authentication.logout.Saml2RelyingPartyInitiatedLogoutSuccessHandler;
+import org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 
 import java.util.Collections;
@@ -42,9 +50,11 @@ import static org.slf4j.LoggerFactory.getLogger;
 /**
  * Provides Vaadin security to the project. Configures authentication using the SAML 2.0 provider.
  */
-public class SamlVaadinWebSecurity {
+public class SamlVaadinWebSecurity extends AbstractFlowuiWebSecurity {
 
     private static final Logger log = getLogger(SamlVaadinWebSecurity.class);
+    private static final String DEFAULT_LOGIN_PAGE_URL = DefaultLoginPageGeneratingFilter.DEFAULT_LOGIN_PAGE_URL;
+    private static final String SAML_AUTHENTICATION_REQUEST_URI = "/saml2/authenticate";
 
     @Autowired
     protected SamlUserMapper<? extends JmixSamlUserDetails> samlUserMapper;
@@ -55,17 +65,14 @@ public class SamlVaadinWebSecurity {
     @Autowired(required = false)
     protected List<SamlHttpSecurityConfigurer> additionalConfigurers = Collections.emptyList();
 
-    /*@Override
-    protected void configure(HttpSecurity http) throws Exception {
+    @Override
+    protected void configureJmixSpecifics(HttpSecurity http) throws Exception {
         OpenSaml5AuthenticationProvider authenticationProvider = createAuthenticationProvider(samlUserMapper);
 
-        JmixHttpSecurityUtils.configureAnonymous(http);
-        JmixHttpSecurityUtils.configureSessionManagement(http);
-        JmixHttpSecurityUtils.configureFrameOptions(http);
-
+        super.configureJmixSpecifics(http);
         http
-                .saml2Login(withDefaults())
-                .saml2Logout(withDefaults())
+                .saml2Login(Customizer.withDefaults())
+                .saml2Logout(Customizer.withDefaults())
                 .logout(logout -> logout
                         .logoutSuccessHandler(createSamlLogoutSuccessHandler())
                 )
@@ -75,21 +82,50 @@ public class SamlVaadinWebSecurity {
             log.debug("Applying additional security configurer: {}", configurer);
             configurer.configure(http);
         }
+    }
 
-        super.configure(http);
-    }*/
+    @Override
+    protected void configureVaadinSpecifics(HttpSecurity http) {
+        http.with(VaadinSecurityConfigurer.vaadin(), configurer -> {
+        });
+        initNavigationAccessControlLoginView(http, getSamlLoginUrl());
+    }
 
-    protected OpenSaml5AuthenticationProvider createAuthenticationProvider(SamlUserMapper samlUserMapper) {
+    /**
+     * Mirrors the default Spring Security SAML login behavior so that Vaadin navigation
+     * access control points unauthenticated users to the same login URL.
+     */
+    protected String getSamlLoginUrl() {
+        if (relyingPartyRegistrationRepository instanceof Iterable<?> registrations) {
+            String loginUrl = null;
+
+            for (Object candidate : registrations) {
+                if (!(candidate instanceof RelyingPartyRegistration registration)) {
+                    continue;
+                }
+
+                if (loginUrl != null) {
+                    return DEFAULT_LOGIN_PAGE_URL;
+                }
+
+                loginUrl = SAML_AUTHENTICATION_REQUEST_URI + "?registrationId=" + registration.getRegistrationId();
+            }
+
+            if (loginUrl != null) {
+                return loginUrl;
+            }
+        }
+
+        return DEFAULT_LOGIN_PAGE_URL;
+    }
+
+    protected OpenSaml5AuthenticationProvider createAuthenticationProvider(SamlUserMapper<?> samlUserMapper) {
         OpenSaml5AuthenticationProvider authenticationProvider = new OpenSaml5AuthenticationProvider();
         authenticationProvider.setResponseAuthenticationConverter(createSamlAuthConverter(samlUserMapper));
         return authenticationProvider;
     }
 
     protected LogoutSuccessHandler createSamlLogoutSuccessHandler() {
-        if (relyingPartyRegistrationRepository == null) {
-            throw new Saml2Exception("RelyingPartyRegistrationRepository is not available");
-        }
-
         RelyingPartyRegistrationRepository effectiveRepository;
         if (isForceRedirectBindingLogout()) {
             // Wrap repository to override binding to REDIRECT for Vaadin compatibility
@@ -118,10 +154,9 @@ public class SamlVaadinWebSecurity {
                 log.debug("Overriding SAML logout binding to REDIRECT for registration: {}", registrationId);
 
                 RelyingPartyRegistration.Builder builder = original.mutate();
-                RelyingPartyRegistration result = builder.assertingPartyMetadata(party -> party
+                return builder.assertingPartyMetadata(party -> party
                         .singleLogoutServiceBinding(Saml2MessageBinding.REDIRECT)
                 ).build();
-                return result;
             }
 
             @Override
@@ -135,7 +170,18 @@ public class SamlVaadinWebSecurity {
         return samlProperties.isForceRedirectBindingLogout();
     }
 
-    protected Converter<OpenSaml5AuthenticationProvider.ResponseToken, ? extends AbstractAuthenticationToken> createSamlAuthConverter(SamlUserMapper samlUserMapper) {
+    protected void initNavigationAccessControlLoginView(HttpSecurity http, String loginView) {
+        if (Strings.isNullOrEmpty(loginView)) {
+            return;
+        }
+
+        ApplicationContext applicationContext = http.getSharedObject(ApplicationContext.class);
+        applicationContext.getBeanProvider(NavigationAccessControl.class)
+                .ifAvailable(accessControl -> accessControl.setLoginView(loginView));
+    }
+
+    protected Converter<OpenSaml5AuthenticationProvider.ResponseToken, ? extends AbstractAuthenticationToken> createSamlAuthConverter(
+            SamlUserMapper<?> samlUserMapper) {
         return new SamlResponseAuthenticationConverter(samlUserMapper);
     }
 }

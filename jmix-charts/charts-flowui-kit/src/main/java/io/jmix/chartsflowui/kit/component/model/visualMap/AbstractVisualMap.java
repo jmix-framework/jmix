@@ -147,6 +147,7 @@ public abstract class AbstractVisualMap<T extends AbstractVisualMap<T>> extends 
 
         protected VisualEffect outOfRange;
 
+        @Nullable
         public VisualEffect getInRange() {
             return inRange;
         }
@@ -160,6 +161,7 @@ public abstract class AbstractVisualMap<T extends AbstractVisualMap<T>> extends 
             addChild(inRange);
         }
 
+        @Nullable
         public VisualEffect getOutOfRange() {
             return outOfRange;
         }
@@ -197,6 +199,7 @@ public abstract class AbstractVisualMap<T extends AbstractVisualMap<T>> extends 
         return type;
     }
 
+    @Nullable
     public Double getMin() {
         return min;
     }
@@ -206,6 +209,7 @@ public abstract class AbstractVisualMap<T extends AbstractVisualMap<T>> extends 
         markAsDirty();
     }
 
+    @Nullable
     public Double getMax() {
         return max;
     }
@@ -215,6 +219,7 @@ public abstract class AbstractVisualMap<T extends AbstractVisualMap<T>> extends 
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getInverse() {
         return inverse;
     }
@@ -224,6 +229,7 @@ public abstract class AbstractVisualMap<T extends AbstractVisualMap<T>> extends 
         markAsDirty();
     }
 
+    @Nullable
     public Double getPrecision() {
         return precision;
     }
@@ -233,6 +239,7 @@ public abstract class AbstractVisualMap<T extends AbstractVisualMap<T>> extends 
         markAsDirty();
     }
 
+    @Nullable
     public Double getItemWidth() {
         return itemWidth;
     }
@@ -242,6 +249,7 @@ public abstract class AbstractVisualMap<T extends AbstractVisualMap<T>> extends 
         markAsDirty();
     }
 
+    @Nullable
     public Double getItemHeight() {
         return itemHeight;
     }
@@ -251,6 +259,7 @@ public abstract class AbstractVisualMap<T extends AbstractVisualMap<T>> extends 
         markAsDirty();
     }
 
+    @Nullable
     public MapAlign getAlign() {
         return align;
     }
@@ -260,6 +269,7 @@ public abstract class AbstractVisualMap<T extends AbstractVisualMap<T>> extends 
         markAsDirty();
     }
 
+    @Nullable
     public String[] getText() {
         return text;
     }
@@ -269,6 +279,7 @@ public abstract class AbstractVisualMap<T extends AbstractVisualMap<T>> extends 
         markAsDirty();
     }
 
+    @Nullable
     public Double getTextGap() {
         return textGap;
     }
@@ -278,6 +289,7 @@ public abstract class AbstractVisualMap<T extends AbstractVisualMap<T>> extends 
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getShow() {
         return show;
     }
@@ -287,6 +299,7 @@ public abstract class AbstractVisualMap<T extends AbstractVisualMap<T>> extends 
         markAsDirty();
     }
 
+    @Nullable
     public String getDimension() {
         return dimension;
     }
@@ -296,6 +309,7 @@ public abstract class AbstractVisualMap<T extends AbstractVisualMap<T>> extends 
         markAsDirty();
     }
 
+    @Nullable
     public Integer[] getSeriesIndex() {
         return seriesIndex;
     }
@@ -305,6 +319,7 @@ public abstract class AbstractVisualMap<T extends AbstractVisualMap<T>> extends 
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getHoverLink() {
         return hoverLink;
     }
@@ -314,6 +329,7 @@ public abstract class AbstractVisualMap<T extends AbstractVisualMap<T>> extends 
         markAsDirty();
     }
 
+    @Nullable
     public VisualEffect getInRange() {
         return inRange;
     }
@@ -327,6 +343,7 @@ public abstract class AbstractVisualMap<T extends AbstractVisualMap<T>> extends 
         addChild(inRange);
     }
 
+    @Nullable
     public VisualEffect getOutOfRange() {
         return outOfRange;
     }
@@ -340,6 +357,7 @@ public abstract class AbstractVisualMap<T extends AbstractVisualMap<T>> extends 
         addChild(outOfRange);
     }
 
+    @Nullable
     public VisualMapController getController() {
         return controller;
     }
@@ -353,6 +371,7 @@ public abstract class AbstractVisualMap<T extends AbstractVisualMap<T>> extends 
         addChild(controller);
     }
 
+    @Nullable
     public Double getZLevel() {
         return zLevel;
     }
@@ -362,6 +381,7 @@ public abstract class AbstractVisualMap<T extends AbstractVisualMap<T>> extends 
         markAsDirty();
     }
 
+    @Nullable
     public Double getZ() {
         return z;
     }
@@ -371,6 +391,7 @@ public abstract class AbstractVisualMap<T extends AbstractVisualMap<T>> extends 
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public String getLeft() {
         return left;
@@ -382,6 +403,7 @@ public abstract class AbstractVisualMap<T extends AbstractVisualMap<T>> extends 
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public String getTop() {
         return top;
@@ -393,6 +415,7 @@ public abstract class AbstractVisualMap<T extends AbstractVisualMap<T>> extends 
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public String getRight() {
         return right;
@@ -404,6 +427,7 @@ public abstract class AbstractVisualMap<T extends AbstractVisualMap<T>> extends 
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public String getBottom() {
         return bottom;
@@ -415,6 +439,7 @@ public abstract class AbstractVisualMap<T extends AbstractVisualMap<T>> extends 
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Padding getPadding() {
         return padding;
@@ -438,6 +463,7 @@ public abstract class AbstractVisualMap<T extends AbstractVisualMap<T>> extends 
         markAsDirty();
     }
 
+    @Nullable
     public Color getBackgroundColor() {
         return backgroundColor;
     }
@@ -447,6 +473,7 @@ public abstract class AbstractVisualMap<T extends AbstractVisualMap<T>> extends 
         markAsDirty();
     }
 
+    @Nullable
     public Color getBorderColor() {
         return borderColor;
     }
@@ -456,6 +483,7 @@ public abstract class AbstractVisualMap<T extends AbstractVisualMap<T>> extends 
         markAsDirty();
     }
 
+    @Nullable
     public Double getBorderWidth() {
         return borderWidth;
     }
@@ -465,6 +493,7 @@ public abstract class AbstractVisualMap<T extends AbstractVisualMap<T>> extends 
         markAsDirty();
     }
 
+    @Nullable
     public TextStyle getTextStyle() {
         return textStyle;
     }
@@ -478,6 +507,7 @@ public abstract class AbstractVisualMap<T extends AbstractVisualMap<T>> extends 
         addChild(textStyle);
     }
 
+    @Nullable
     public String getFormatter() {
         return formatter;
     }
@@ -487,6 +517,7 @@ public abstract class AbstractVisualMap<T extends AbstractVisualMap<T>> extends 
         markAsDirty();
     }
 
+    @Nullable
     public JsFunction getFormatterFunction() {
         return formatterFunction;
     }
@@ -501,6 +532,7 @@ public abstract class AbstractVisualMap<T extends AbstractVisualMap<T>> extends 
         markAsDirty();
     }
 
+    @Nullable
     public Orientation getOrientation() {
         return orientation;
     }

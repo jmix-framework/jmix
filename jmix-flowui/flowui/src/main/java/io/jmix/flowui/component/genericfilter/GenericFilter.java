@@ -66,11 +66,12 @@ import io.jmix.flowui.kit.component.dropdownbutton.DropdownButtonVariant;
 import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.model.BaseCollectionLoader;
 import io.jmix.flowui.model.DataLoader;
+import io.jmix.flowui.theme.StyleUtility;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -130,6 +131,7 @@ public class GenericFilter extends Composite<JmixDetails>
     protected List<FilterComponent> conditions;
 
     protected boolean configurationModifyPermitted;
+    protected String summaryText;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) {
@@ -180,8 +182,8 @@ public class GenericFilter extends Composite<JmixDetails>
         emptyConfiguration =
                 new RunTimeConfiguration("empty_configuration", configurationLogicalComponent, this);
 
-        String emptyConfigurationName = StringUtils.isNotEmpty(getSummaryText())
-                ? getSummaryText()
+        String emptyConfigurationName = StringUtils.isNotEmpty(summaryText)
+                ? summaryText
                 : messages.getMessage("genericFilter.emptyConfiguration.name");
         emptyConfiguration.setName(emptyConfigurationName);
 
@@ -240,6 +242,7 @@ public class GenericFilter extends Composite<JmixDetails>
 
     protected void initControlsLayout(HorizontalLayout controlsLayout) {
         controlsLayout.setWidthFull();
+        controlsLayout.setWrap(true);
         controlsLayout.setClassName(FILTER_CONTROLS_LAYOUT_CLASS_NAME);
 
         applyButton = createApplyButton();
@@ -461,7 +464,7 @@ public class GenericFilter extends Composite<JmixDetails>
      * @return this component summary text
      */
     public String getSummaryText() {
-        return getContent().getSummaryText();
+        return summaryText != null ? summaryText : getContent().getSummaryText();
     }
 
     /**
@@ -470,6 +473,14 @@ public class GenericFilter extends Composite<JmixDetails>
      * @param summary text to set
      */
     public void setSummaryText(String summary) {
+        setSummaryTextInternal(summary, true);
+    }
+
+    protected void setSummaryTextInternal(String summary, boolean fromUser) {
+        if (fromUser) {
+            this.summaryText = summary;
+        }
+
         getContent().setSummaryText(summary);
     }
 
@@ -716,7 +727,7 @@ public class GenericFilter extends Composite<JmixDetails>
         JmixButton conditionRemoveButton = uiComponents.create(JmixButton.class);
         conditionRemoveButton.setId(removeButtonId);
         conditionRemoveButton.setIcon(icons.get(JmixFontIcon.GENERIC_FILTER_CONDITION_REMOVE));
-        conditionRemoveButton.addThemeVariants(ButtonVariant.LUMO_ICON, ButtonVariant.LUMO_TERTIARY_INLINE);
+        conditionRemoveButton.setClassName(StyleUtility.Button.LINK_BUTTON);
 
         conditionRemoveButton.addClickListener(clickEvent -> {
             removeFilterComponent(filterComponent);
@@ -738,13 +749,17 @@ public class GenericFilter extends Composite<JmixDetails>
     }
 
     protected void updateRootLayoutSummaryText() {
+        if (summaryText != null) {
+            return;
+        }
+
         StringBuilder stringBuilder = new StringBuilder(getConfigurationName(getEmptyConfiguration()));
         if (!getEmptyConfiguration().equals(getCurrentConfiguration())) {
             stringBuilder.append(" : ")
                     .append(getConfigurationName(getCurrentConfiguration()));
         }
 
-        setSummaryText(stringBuilder.toString());
+        setSummaryTextInternal(stringBuilder.toString(), false);
     }
 
     protected String getConfigurationName(Configuration configuration) {

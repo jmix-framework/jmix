@@ -14,5 +14,5 @@
  * limitations under the License.
  */
 
-@import '../../../base/utility.css';
+@import '../../../shared/utility.css';
 @import './misc.css';

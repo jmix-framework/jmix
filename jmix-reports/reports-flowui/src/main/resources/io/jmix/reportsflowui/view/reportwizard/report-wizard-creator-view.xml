@@ -56,7 +56,7 @@
                 </formLayout>
             </vbox>
             <vbox id="regionsVBox" padding="false">
-                <hbox width="100%" classNames="buttons-panel">
+                <hbox wrap="true" width="100%">
                     <hbox id="buttonsBox">
                         <button id="addRegionDisabledBtn" text="msg://addRegion" enabled="false"/>
                         <button id="addSimpleRegionBtn"
@@ -106,14 +106,14 @@
                 </formLayout>
             </vbox>
             <vbox id="queryVBox" padding="false">
-                <hbox width="100%">
+                <hbox width="100%" alignItems="CENTER">
                     <startSlot>
                         <button id="queryRunBtn" text="msg://runReport" icon="ANGLE_DOUBLE_RIGHT"/>
                     </startSlot>
                     <endSlot>
                         <button id="fullScreenTransformationBtn"
                                 text="msg://fullScreen.title"
-                                themeNames="icon, tertiary-inline"/>
+                                classNames="link-button"/>
                     </endSlot>
                 </hbox>
                 <flexLayout width="100%" alignItems="START">
@@ -128,10 +128,10 @@
                                 dataContainer="reportDataDc"
                                 property="query"/>
                     <button id="queryCodeEditorHelpIcon"
-                            themeNames="icon, tertiary-inline"
+                            classNames="link-button"
                             icon="QUESTION_CIRCLE"/>
                 </flexLayout>
-                <hbox classNames="buttons-panel">
+                <hbox wrap="true" width="100%">
                     <button id="createParameterBtn" action="reportParameterDataGrid.create"/>
                     <button id="generateParameters" action="reportParameterDataGrid.generate"/>
                     <button id="editParameterBtn" action="reportParameterDataGrid.edit"/>

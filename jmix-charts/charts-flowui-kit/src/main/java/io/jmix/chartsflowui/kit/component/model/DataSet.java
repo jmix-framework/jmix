@@ -44,6 +44,7 @@ public class DataSet extends ChartDataObservableObject {
 
     protected Source<?> source;
 
+    @Nullable
     public String getId() {
         return id;
     }
@@ -149,6 +150,7 @@ public class DataSet extends ChartDataObservableObject {
             requestIncrementalUpdateChartDataSet(chart, event);
         }
 
+        @Nullable
         public String getCategoryField() {
             return categoryField;
         }
@@ -158,6 +160,7 @@ public class DataSet extends ChartDataObservableObject {
             markAsDirty();
         }
 
+        @Nullable
         public List<String> getValueFields() {
             return valueFields;
         }

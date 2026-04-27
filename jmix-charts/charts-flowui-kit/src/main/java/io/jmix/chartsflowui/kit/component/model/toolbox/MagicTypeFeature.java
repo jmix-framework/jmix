@@ -79,6 +79,7 @@ public class MagicTypeFeature extends AbstractFeature<MagicTypeFeature> {
 
         protected String tiled;
 
+        @Nullable
         public String getBar() {
             return bar;
         }
@@ -88,6 +89,7 @@ public class MagicTypeFeature extends AbstractFeature<MagicTypeFeature> {
             markAsDirty();
         }
 
+        @Nullable
         public String getLine() {
             return line;
         }
@@ -97,6 +99,7 @@ public class MagicTypeFeature extends AbstractFeature<MagicTypeFeature> {
             markAsDirty();
         }
 
+        @Nullable
         public String getStack() {
             return stack;
         }
@@ -106,6 +109,7 @@ public class MagicTypeFeature extends AbstractFeature<MagicTypeFeature> {
             markAsDirty();
         }
 
+        @Nullable
         public String getTiled() {
             return tiled;
         }
@@ -149,6 +153,7 @@ public class MagicTypeFeature extends AbstractFeature<MagicTypeFeature> {
 
         protected String stack;
 
+        @Nullable
         public String getLine() {
             return line;
         }
@@ -158,6 +163,7 @@ public class MagicTypeFeature extends AbstractFeature<MagicTypeFeature> {
             markAsDirty();
         }
 
+        @Nullable
         public String getBar() {
             return bar;
         }
@@ -167,6 +173,7 @@ public class MagicTypeFeature extends AbstractFeature<MagicTypeFeature> {
             markAsDirty();
         }
 
+        @Nullable
         public String getStack() {
             return stack;
         }
@@ -192,6 +199,7 @@ public class MagicTypeFeature extends AbstractFeature<MagicTypeFeature> {
         }
     }
 
+    @Nullable
     public MagicType[] getTypes() {
         return types;
     }
@@ -201,6 +209,7 @@ public class MagicTypeFeature extends AbstractFeature<MagicTypeFeature> {
         markAsDirty();
     }
 
+    @Nullable
     public Title getTitle() {
         return title;
     }
@@ -214,6 +223,7 @@ public class MagicTypeFeature extends AbstractFeature<MagicTypeFeature> {
         addChild(title);
     }
 
+    @Nullable
     public Icon getIcon() {
         return icon;
     }

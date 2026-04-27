@@ -42,7 +42,8 @@
                     <comboBox id="enumerationField" width="100%" label="msg://parameters.enum"
                               property="enumerationClass"
                               requiredMessage="msg://parameters.requiredEnumClass" required="true"/>
-                    <comboBox id="screenField" width="100%" label="msg://parameters.screen"/>
+                    <comboBox id="screenField" width="100%" label="msg://parameters.screen"
+                              property="screen"/>
                     <hbox id="defaultValueBox" width="100%"/>
                     <checkbox id="isDefaultDateIsCurrentField" label="msg://parameters.defaultDateIsCurrent"
                               property="defaultDateIsCurrent"/>
@@ -75,7 +76,7 @@
                         <flexLayout justifyContent="BETWEEN">
                             <nativeLabel text="msg://parameters.groovyScript.title" setFor="transformationScript"/>
                             <button id="fullScreenTransformationBtn" text="msg:///fullScreenBtn.title"
-                                    themeNames="tertiary-inline"/>
+                                    classNames="link-button"/>
                         </flexLayout>
                         <flexLayout alignItems="START">
                             <codeEditor id="transformationScript"
@@ -85,7 +86,7 @@
                                         property="transformationScript"
                                         dataContainer="parameterDc"/>
                             <button id="transformationScriptHelpBtn"
-                                    themeNames="icon, tertiary-inline"
+                                    classNames="link-button"
                                     icon="QUESTION_CIRCLE"/>
                         </flexLayout>
                     </div>
@@ -99,7 +100,7 @@
                     <flexLayout justifyContent="BETWEEN">
                         <nativeLabel text="msg://parameters.groovyScript.title" setFor="validationScript"/>
                         <button id="fullScreenValidationBtn" text="msg:///fullScreenBtn.title"
-                                themeNames="tertiary-inline"/>
+                                classNames="link-button"/>
                     </flexLayout>
                     <flexLayout alignItems="START">
                         <codeEditor id="validationScript"
@@ -109,7 +110,7 @@
                                     property="validationScript"
                                     dataContainer="parameterDc"/>
                         <button id="validationScriptHelpBtn"
-                                themeNames="icon, tertiary-inline"
+                                classNames="link-button"
                                 icon="QUESTION_CIRCLE"/>
                     </flexLayout>
                 </div>
@@ -119,7 +120,7 @@
                     <flexLayout justifyContent="BETWEEN">
                         <nativeLabel text="msg://lookupJoin" setFor="lookupJoinCodeEditor"/>
                         <button id="lookupJoinFullScreenBtn" text="msg:///fullScreenBtn.title"
-                                themeNames="tertiary-inline"/>
+                                classNames="link-button"/>
                     </flexLayout>
                     <flexLayout alignItems="START">
                         <codeEditor id="lookupJoinCodeEditor"
@@ -128,13 +129,13 @@
                                     property="lookupJoin"
                                     dataContainer="parameterDc"/>
                         <button id="lookupJoinHelpBtn"
-                                themeNames="icon, tertiary-inline"
+                                classNames="link-button"
                                 icon="QUESTION_CIRCLE"/>
                     </flexLayout>
                     <flexLayout justifyContent="BETWEEN">
                         <nativeLabel text="msg://lookupWhere" setFor="lookupWhereCodeEditor"/>
                         <button id="lookupWhereFullScreenBtn" text="msg:///fullScreenBtn.title"
-                                themeNames="tertiary-inline"/>
+                                classNames="link-button"/>
                     </flexLayout>
                     <flexLayout alignItems="START">
                         <codeEditor id="lookupWhereCodeEditor"
@@ -143,7 +144,7 @@
                                     property="lookupWhere"
                                     dataContainer="parameterDc"/>
                         <button id="lookupWhereHelpBtn"
-                                themeNames="icon, tertiary-inline"
+                                classNames="link-button"
                                 icon="QUESTION_CIRCLE"/>
                     </flexLayout>
                 </div>

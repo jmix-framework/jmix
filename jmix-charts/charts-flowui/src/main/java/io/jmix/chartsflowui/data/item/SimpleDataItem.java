@@ -19,19 +19,16 @@ package io.jmix.chartsflowui.data.item;
 import io.jmix.chartsflowui.kit.data.chart.DataItem;
 import io.jmix.core.metamodel.model.utils.MethodsCache;
 import io.jmix.core.metamodel.model.utils.ObjectPathUtils;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Data item, which contains an instance of any class.
  */
 public class SimpleDataItem implements DataItem {
-
-    private static final Map<Class<?>, MethodsCache> methodCacheMap = new ConcurrentHashMap<>();
 
     protected Object item;
 
@@ -59,6 +56,7 @@ public class SimpleDataItem implements DataItem {
      *     <li>Otherwise, method returns getter value.</li>
      * </ul>
      */
+    @Nullable
     @Override
     public Object getValue(String path) {
 
@@ -95,10 +93,10 @@ public class SimpleDataItem implements DataItem {
     }
 
     protected MethodsCache getMethodsCache(Object object) {
-        Class<?> cls = object.getClass();
-        return methodCacheMap.computeIfAbsent(cls, k -> MethodsCache.getOrCreate(cls));
+        return MethodsCache.getOrCreate(object.getClass());
     }
 
+    @Nullable
     @Override
     public Object getId() {
         return item;

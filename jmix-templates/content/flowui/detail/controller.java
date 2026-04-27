@@ -55,7 +55,6 @@ public class ${detailControllerName} extends StandardDetailView<${entity.classNa
     @Autowired
     private ${repository.getQualifiedName()} repository;
 <%}%><%if (useUpdateServiceSaveDelegate){%>
-
     @Autowired
     private ${updateService.getQualifiedName()} updateService;
 <%}%><%if (useDataRepositories){%>

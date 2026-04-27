@@ -37,7 +37,6 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
     @Autowired
     private ${repository.getQualifiedName()} repository;
 <%}%><%if (useUpdateServiceRemoveDelegate){%>
-
     @Autowired
     private ${updateService.getQualifiedName()} updateService;
 <%}%><%if (useDataRepositories){%>

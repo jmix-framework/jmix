@@ -37,7 +37,8 @@ public class DataGridColumn<E> extends Grid.Column<E> implements ApplicationCont
     protected DataGridHeaderFilter dataGridFilter;
     protected ApplicationContext applicationContext;
 
-    protected @Nullable Comparator<E> explicitlySetComparator;
+    @Nullable
+    protected Comparator<E> explicitlySetComparator;
 
     /**
      * Constructs a new DataGridColumn for use inside a {@link DataGrid}.
@@ -70,7 +71,8 @@ public class DataGridColumn<E> extends Grid.Column<E> implements ApplicationCont
      *
      * @return comparator or {@code null}
      */
-    public @Nullable Comparator<E> getComparatorOrNull() {
+    @Nullable
+    public Comparator<E> getComparatorOrNull() {
         return explicitlySetComparator != null ? explicitlySetComparator : null;
     }
 

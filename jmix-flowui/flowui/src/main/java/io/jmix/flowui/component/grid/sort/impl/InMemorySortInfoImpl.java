@@ -22,36 +22,47 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.Comparator;
 
+/**
+ * Implementation of the {@link InMemorySortInfo} interface that encapsulates
+ * sorting details for in-memory operations.
+ * <p>
+ * This class is used to define sorting behaviors that can be applied to data
+ * when sorting is performed in memory.
+ */
 public class InMemorySortInfoImpl implements InMemorySortInfo {
 
-    protected final @Nullable MetaPropertyPath metaPropertyPath;
+    @Nullable
+    protected final MetaPropertyPath metaPropertyPath;
     protected final String property;
     protected final boolean ascending;
 
-    protected @Nullable Comparator<?> comparator;
+    @Nullable
+    protected Comparator<?> comparator;
 
-    public InMemorySortInfoImpl(@Nullable MetaPropertyPath metaPropertyPath,
-                                String property,
-                                @Nullable Comparator<?> comparator,
-                                boolean ascending) {
-        this.metaPropertyPath = metaPropertyPath;
+    public InMemorySortInfoImpl(String property,
+                                boolean ascending,
+                                @Nullable MetaPropertyPath metaPropertyPath,
+                                @Nullable Comparator<?> comparator) {
         this.property = property;
-        this.comparator = comparator;
         this.ascending = ascending;
+        this.metaPropertyPath = metaPropertyPath;
+        this.comparator = comparator;
     }
 
+    @Nullable
     @Override
-    public @Nullable MetaPropertyPath getMetaPropertyPath() {
+    public MetaPropertyPath getMetaPropertyPath() {
         return metaPropertyPath;
     }
 
     @Override
-    public String getProperty() {
+    public String getSortKey() {
         return property;
     }
 
+    @Nullable
     @Override
-    public @Nullable Comparator<?> getComparator() {
+    public Comparator<?> getComparator() {
         return comparator;
     }
 

@@ -37,7 +37,8 @@ public abstract class BaseContainerSorter implements Sorter {
 
     private final CollectionContainer<?> container;
 
-    private Map<String, Comparator<?>> propertyComparators = Collections.emptyMap();
+    @Nullable
+    private Map<String, Comparator<?>> propertyComparators;
 
     public BaseContainerSorter(CollectionContainer<?> container, BeanFactory beanFactory) {
         this.container = container;
@@ -61,7 +62,9 @@ public abstract class BaseContainerSorter implements Sorter {
      * @param propertyComparators the map of property comparators
      */
     public void setPropertyComparators(@Nullable Map<String, Comparator<?>> propertyComparators) {
-        this.propertyComparators = propertyComparators != null ? propertyComparators : Collections.emptyMap();
+        this.propertyComparators = propertyComparators != null
+                ? new HashMap<>(propertyComparators)
+                : null;
     }
 
     @Override
@@ -92,7 +95,10 @@ public abstract class BaseContainerSorter implements Sorter {
     protected abstract void setItemsToContainer(List<?> list);
 
     protected Comparator<?> createComparator(Sort.Order sortOrder, MetaClass metaClass) {
-        Comparator<?> customComparator = propertyComparators.get(sortOrder.getProperty());
+        Comparator<?> customComparator = propertyComparators != null
+                ? propertyComparators.get(sortOrder.getProperty())
+                : null;
+
         if (customComparator != null) {
             return sortOrder.getDirection() == Sort.Direction.ASC ? customComparator : customComparator.reversed();
         }

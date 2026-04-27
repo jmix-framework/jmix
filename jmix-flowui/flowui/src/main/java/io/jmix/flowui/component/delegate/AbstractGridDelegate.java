@@ -987,7 +987,7 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
             boolean ascending = SortDirection.ASCENDING.equals(sortOrder.getDirection());
             MetaPropertyPath mpp = propertyColumns.get(column);
 
-            columnSortInfo.add(new ColumnSortInfoImpl<>((DataGridColumn<E>) column, mpp, ascending));
+            columnSortInfo.add(new ColumnSortInfoImpl<>((DataGridColumn<E>) column, ascending, mpp));
         }
         return new DataGridSortContext<>(component, columnSortInfo);
     }

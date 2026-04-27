@@ -22,13 +22,16 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Represents sorting information for a specific column.
+ *
  * @param <E> entity type
  */
 @Experimental
 public interface ColumnSortInfo<E> {
 
     /**
-     * @return the column associated with this sort info
+     * Retrieves the column associated with this sorting information.
+     *
+     * @return the {@link DataGridColumn} instance
      */
     DataGridColumn<E> getColumn();
 
@@ -36,7 +39,8 @@ public interface ColumnSortInfo<E> {
      * @return the meta property path associated with this sort info, or {@code null} if the column is not bound to
      * a meta property path
      */
-    @Nullable MetaPropertyPath getMetaPropertyPath();
+    @Nullable
+    MetaPropertyPath getMetaPropertyPath();
 
     /**
      * @return {@code true} if the sort is ascending, {@code false} otherwise

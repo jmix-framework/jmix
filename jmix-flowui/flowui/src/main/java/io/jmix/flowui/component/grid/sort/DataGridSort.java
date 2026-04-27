@@ -38,8 +38,8 @@ public class DataGridSort {
 
     protected DataGridSort(List<PersistentSortInfo> persistentSortInfos,
                            List<InMemorySortInfo> inMemorySortInfos) {
-        this.persistentSortInfos = new ArrayList<>(persistentSortInfos);
-        this.inMemorySortInfos = new ArrayList<>(inMemorySortInfos);
+        this.persistentSortInfos = Collections.unmodifiableList(persistentSortInfos);
+        this.inMemorySortInfos = Collections.unmodifiableList(inMemorySortInfos);
     }
 
     public static DataGridSort by(List<PersistentSortInfo> persistentSortInfos,
@@ -59,7 +59,7 @@ public class DataGridSort {
      * @return a list of {@link InMemorySortInfo}
      */
     public List<InMemorySortInfo> getInMemorySortInfos() {
-        return Collections.unmodifiableList(inMemorySortInfos);
+        return inMemorySortInfos;
     }
 
     /**
@@ -71,7 +71,7 @@ public class DataGridSort {
      * @return a list of {@link PersistentSortInfo}
      */
     public List<PersistentSortInfo> getPersistentSortInfos() {
-        return Collections.unmodifiableList(persistentSortInfos);
+        return persistentSortInfos;
     }
 
     public Sort toPersistentSort() {
@@ -79,7 +79,7 @@ public class DataGridSort {
         for (PersistentSortInfo sortInfo : persistentSortInfos) {
             String property = sortInfo.getMetaPropertyPath() != null
                     ? sortInfo.getMetaPropertyPath().toPathString()
-                    : Objects.requireNonNull(sortInfo.getProperty());
+                    : Objects.requireNonNull(sortInfo.getSortKey());
 
             if (CollectionUtils.isNotEmpty(sortInfo.getExpressions())) {
                 for (String expression : sortInfo.getExpressions()) {
@@ -104,7 +104,7 @@ public class DataGridSort {
         for (InMemorySortInfo sortInfo : inMemorySortInfos) {
             String property = sortInfo.getMetaPropertyPath() != null
                     ? sortInfo.getMetaPropertyPath().toPathString()
-                    : Objects.requireNonNull(sortInfo.getProperty());
+                    : Objects.requireNonNull(sortInfo.getSortKey());
             if (sortInfo.getMetaPropertyPath() != null || sortInfo.getComparator() != null) {
                 orders.add(sortInfo.isAscending() ? Sort.Order.asc(property) : Sort.Order.desc(property));
             } else {

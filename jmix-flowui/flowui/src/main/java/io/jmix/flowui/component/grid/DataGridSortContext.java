@@ -44,14 +44,18 @@ public class DataGridSortContext<E> {
     }
 
     /**
-     * @return the grid
+     * Retrieves the grid associated with the current sorting context.
+     *
+     * @return the {@link Grid} instance
      */
     public Grid<E> getGrid() {
         return grid;
     }
 
     /**
-     * @return an unmodifiable list of {@link ColumnSortInfo<E>}
+     * Retrieves an unmodifiable list of column sorting information associated with the data grid context.
+     *
+     * @return a list of {@link ColumnSortInfo} instances
      */
     public List<ColumnSortInfo<E>> getSortInfos() {
         return Collections.unmodifiableList(columnSortInfos);

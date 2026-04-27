@@ -209,10 +209,10 @@ public class DataGridSortBuilder<E> {
 
             if (mpp != null) {
                 inMemorySortInfos.put(columnKey,
-                        createInMemorySortInfo(mpp, mpp.toPathString(), comparator, sortInfo.isAscending()));
+                        createInMemorySortInfo(mpp.toPathString(), sortInfo.isAscending(), mpp, comparator));
             } else {
                 inMemorySortInfos.put(columnKey,
-                        createInMemorySortInfo(null, columnKey, comparator, true));
+                        createInMemorySortInfo(columnKey, true, null, comparator));
             }
         }
         return inMemorySortInfos;
@@ -225,26 +225,26 @@ public class DataGridSortBuilder<E> {
             String columnKey = sortInfo.getColumn().getKey();
             if (mpp != null) {
                 persistentSortInfos.put(columnKey,
-                        createPersistentSortInfo(mpp, mpp.toPathString(), List.of(), sortInfo.isAscending()));
+                        createPersistentSortInfo(mpp.toPathString(), sortInfo.isAscending(), mpp, List.of()));
             } else {
                 persistentSortInfos.put(columnKey,
-                        createPersistentSortInfo(null, columnKey, List.of(), sortInfo.isAscending()));
+                        createPersistentSortInfo(columnKey, sortInfo.isAscending(), null, List.of()));
             }
         }
         return persistentSortInfos;
     }
 
-    protected InMemorySortInfo createInMemorySortInfo(@Nullable MetaPropertyPath mpp,
-                                                      String property,
-                                                      @Nullable Comparator<?> comparator,
-                                                      boolean ascending) {
-        return new InMemorySortInfoImpl(mpp, property, comparator, ascending);
+    protected InMemorySortInfo createInMemorySortInfo(String property,
+                                                      boolean ascending,
+                                                      @Nullable MetaPropertyPath mpp,
+                                                      @Nullable Comparator<?> comparator) {
+        return new InMemorySortInfoImpl(property, ascending, mpp, comparator);
     }
 
-    protected PersistentSortInfo createPersistentSortInfo(@Nullable MetaPropertyPath mpp,
-                                                          String property,
-                                                          List<String> expressions,
-                                                          boolean ascending) {
-        return new PersistentSortInfoImpl(mpp, property, expressions, ascending);
+    protected PersistentSortInfo createPersistentSortInfo(String property,
+                                                          boolean ascending,
+                                                          @Nullable MetaPropertyPath mpp,
+                                                          List<String> expressions) {
+        return new PersistentSortInfoImpl(property, ascending, mpp,  expressions);
     }
 }

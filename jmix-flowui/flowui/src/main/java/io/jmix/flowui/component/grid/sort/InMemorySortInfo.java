@@ -28,7 +28,8 @@ public interface InMemorySortInfo extends SortInfo {
     /**
      * @return comparator to be used for in-memory sorting, or {@code null} if not set
      */
-    @Nullable Comparator<?> getComparator();
+    @Nullable
+    Comparator<?> getComparator();
 
     /**
      * Sets the comparator to be used for in-memory sorting.

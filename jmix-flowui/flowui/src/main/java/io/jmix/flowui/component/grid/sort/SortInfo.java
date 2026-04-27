@@ -27,12 +27,15 @@ public interface SortInfo {
     /**
      * @return the MetaPropertyPath object representing the property path, or {@code null} if not set
      */
-    @Nullable MetaPropertyPath getMetaPropertyPath();
+    @Nullable
+    MetaPropertyPath getMetaPropertyPath();
 
     /**
-     * @return the property name to sort by
+     * Returns the sorting key that can be a column key or a property path.
+     *
+     * @return the sorting key
      */
-    String getProperty();
+    String getSortKey();
 
     /**
      * @return {@code true} if the sort is ascending, {@code false} otherwise

@@ -127,21 +127,7 @@ public class ContainerDataGridItems<T> extends AbstractDataProvider<T, Void>
 
     @Override
     public void sort(DataGridSort sort) {
-        if (container.getSorter() instanceof BaseContainerSorter sorter) {
-            List<InMemorySortInfo> memorySorts = sort.getInMemorySortInfos();
-            Map<String, Comparator<?>> comparators = new HashMap<>(memorySorts.size());
-            for (InMemorySortInfo sortInfo : memorySorts) {
-                if (sortInfo.getComparator() == null) {
-                    continue;
-                }
-                String property = sortInfo.getMetaPropertyPath() != null
-                        ? sortInfo.getMetaPropertyPath().toPathString()
-                        : sortInfo.getProperty();
-
-                comparators.put(property, sortInfo.getComparator());
-            }
-            sorter.setPropertyComparators(comparators);
-        }
+        setPropertyComparators(sort);
         sortInternal(createSort(sort));
     }
 
@@ -325,6 +311,24 @@ public class ContainerDataGridItems<T> extends AbstractDataProvider<T, Void>
     @Override
     public Class<T> getType() {
         return getEntityMetaClass().getJavaClass();
+    }
+
+    protected void setPropertyComparators(DataGridSort sort) {
+        if (container.getSorter() instanceof BaseContainerSorter sorter) {
+            List<InMemorySortInfo> memorySorts = sort.getInMemorySortInfos();
+            Map<String, Comparator<?>> comparators = new HashMap<>(memorySorts.size());
+            for (InMemorySortInfo sortInfo : memorySorts) {
+                if (sortInfo.getComparator() == null) {
+                    continue;
+                }
+                String property = sortInfo.getMetaPropertyPath() != null
+                        ? sortInfo.getMetaPropertyPath().toPathString()
+                        : sortInfo.getSortKey();
+
+                comparators.put(property, sortInfo.getComparator());
+            }
+            sorter.setPropertyComparators(comparators);
+        }
     }
 
     protected EventBus getEventBus() {

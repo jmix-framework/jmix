@@ -25,34 +25,43 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Implementation of the {@link PersistentSortInfo} interface that represents
+ * detailed information for persistent sorting operations.
+ * <p>
+ * This class is used to define sorting behaviors that can be applied to data
+ * when interacting with persistent storage.
+ */
 public class PersistentSortInfoImpl implements PersistentSortInfo {
 
-    protected final @Nullable MetaPropertyPath metaPropertyPath;
+    @Nullable
+    protected final MetaPropertyPath metaPropertyPath;
     protected final String property;
     protected final boolean ascending;
 
     protected List<String> expressions;
 
-    public PersistentSortInfoImpl(@Nullable MetaPropertyPath metaPropertyPath,
-                                  String property,
-                                  List<String> expressions,
-                                  boolean ascending) {
+    public PersistentSortInfoImpl(String property,
+                                  boolean ascending,
+                                  @Nullable MetaPropertyPath metaPropertyPath,
+                                  List<String> expressions) {
         Preconditions.checkNotNullArgument(property);
         Preconditions.checkNotNullArgument(expressions);
 
-        this.metaPropertyPath = metaPropertyPath;
         this.property = property;
-        this.expressions = new ArrayList<>(expressions);
         this.ascending = ascending;
+        this.metaPropertyPath = metaPropertyPath;
+        this.expressions = new ArrayList<>(expressions);
     }
 
+    @Nullable
     @Override
-    public @Nullable MetaPropertyPath getMetaPropertyPath() {
+    public MetaPropertyPath getMetaPropertyPath() {
         return metaPropertyPath;
     }
 
     @Override
-    public String getProperty() {
+    public String getSortKey() {
         return property;
     }
 

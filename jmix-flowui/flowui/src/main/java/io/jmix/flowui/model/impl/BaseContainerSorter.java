@@ -23,11 +23,10 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.Sorter;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.BeanFactory;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Base implementation of sorting collection containers.
@@ -37,6 +36,9 @@ public abstract class BaseContainerSorter implements Sorter {
     protected BeanFactory beanFactory;
 
     private final CollectionContainer<?> container;
+
+    @Nullable
+    private Map<String, Comparator<?>> propertyComparators;
 
     public BaseContainerSorter(CollectionContainer<?> container, BeanFactory beanFactory) {
         this.container = container;
@@ -50,6 +52,19 @@ public abstract class BaseContainerSorter implements Sorter {
      */
     public CollectionContainer<?> getContainer() {
         return container;
+    }
+
+    /**
+     * Sets property comparators. Comparators are used in in-memory sorting.
+     * <p>
+     * The key of the map is a property name and value is comparator.
+     *
+     * @param propertyComparators the map of property comparators
+     */
+    public void setPropertyComparators(@Nullable Map<String, Comparator<?>> propertyComparators) {
+        this.propertyComparators = propertyComparators != null
+                ? new HashMap<>(propertyComparators)
+                : null;
     }
 
     @Override
@@ -80,6 +95,14 @@ public abstract class BaseContainerSorter implements Sorter {
     protected abstract void setItemsToContainer(List<?> list);
 
     protected Comparator<?> createComparator(Sort.Order sortOrder, MetaClass metaClass) {
+        Comparator<?> customComparator = propertyComparators != null
+                ? propertyComparators.get(sortOrder.getProperty())
+                : null;
+
+        if (customComparator != null) {
+            return sortOrder.getDirection() == Sort.Direction.ASC ? customComparator : customComparator.reversed();
+        }
+
         MetaPropertyPath propertyPath = metaClass.getPropertyPath(sortOrder.getProperty());
         if (propertyPath == null) {
             throw new IllegalArgumentException("Property " + sortOrder.getProperty() + " is invalid");

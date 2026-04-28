@@ -20,22 +20,25 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.data.renderer.Renderer;
-import com.vaadin.flow.function.SerializableFunction;
+import com.vaadin.flow.data.provider.SortDirection;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.component.grid.headerfilter.DataGridHeaderFilter;
-import io.jmix.flowui.kit.meta.StudioIgnore;
 import io.jmix.flowui.sys.BeanUtil;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import java.util.Objects;
+import java.util.Comparator;
 
 public class DataGridColumn<E> extends Grid.Column<E> implements ApplicationContextAware {
 
     protected DataGridHeaderFilter dataGridFilter;
     protected ApplicationContext applicationContext;
+
+    @Nullable
+    protected Comparator<E> explicitlySetComparator;
 
     /**
      * Constructs a new DataGridColumn for use inside a {@link DataGrid}.
@@ -52,6 +55,25 @@ public class DataGridColumn<E> extends Grid.Column<E> implements ApplicationCont
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
+    }
+
+    @Override
+    public Grid.Column<E> setComparator(Comparator<E> comparator) {
+        this.explicitlySetComparator = comparator;
+        return super.setComparator(comparator);
+    }
+
+    /**
+     * Returns comparator for the column if it is set, otherwise returns {@code null}.
+     * The comparator is used in-memory sorting.
+     * <p>
+     * To get non-null value use {@link #getComparator(SortDirection)}.
+     *
+     * @return comparator or {@code null}
+     */
+    @Nullable
+    public Comparator<E> getComparatorOrNull() {
+        return explicitlySetComparator != null ? explicitlySetComparator : null;
     }
 
     /**
@@ -116,6 +138,7 @@ public class DataGridColumn<E> extends Grid.Column<E> implements ApplicationCont
 
     /**
      * Add listener for event of column visibility change
+     *
      * @param listener the listener to add
      * @return a registration handle to remove the listener
      */

@@ -17,13 +17,17 @@
 package io.jmix.flowui.component.grid;
 
 import com.vaadin.flow.component.grid.Grid;
+import io.jmix.core.annotation.Experimental;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.component.AggregationInfo;
 import io.jmix.flowui.component.grid.headerfilter.DataGridHeaderFilter;
+import io.jmix.flowui.component.grid.sort.DataGridSort;
+import io.jmix.flowui.component.grid.sort.DataGridSortBuilder;
 import io.jmix.flowui.kit.component.grid.JmixGridContextMenu;
 import org.jspecify.annotations.Nullable;
 
-import java.util.Map;
+import java.util.*;
+import java.util.function.Function;
 
 public interface EnhancedDataGrid<T> {
 
@@ -98,6 +102,42 @@ public interface EnhancedDataGrid<T> {
      * @param shortcut shortcut combination (e.g. {@code "CONTROL-ENTER"})
      */
     void setHeaderFilterApplyShortcut(@Nullable String shortcut);
+
+    /**
+     * Retrieves the delegate function responsible for building the sorting configuration of the {@link Grid}.
+     *
+     * @return a delegate function for sorting operations or {@code null} if no delegate is set
+     */
+    @Nullable
+    @Experimental
+    Function<DataGridSortContext<T>, DataGridSort> getSortBuilderDelegate();
+
+    /**
+     * Sets the delegate for building the sorting configuration of the {@link Grid}.
+     * <p>
+     * The {@link DataGridSortContext} contains sorting instructions from the grid. The {@link DataGridSort} object
+     * represents the in-memory and persistent sorting to be applied.
+     * <p>
+     * Use {@link DataGridSortBuilder} to easily build and replace the sorting configuration.
+     * <p>
+     * For instance:
+     * <pre>
+     * &#064;Install(to = "customersGrid", subject = "sortBuilderDelegate")
+     * private DataGridSort sortBuilderDelegate(final DataGridSortContext&lt;Customer&gt; context) {
+     *     return DataGridSortBuilder.create(context)
+     *             .replaceSort("loyaltyPointsCalc", "{E}.loyaltyPoints", ((o1, o2) -&gt; {
+     *                 int calc1 = Integer.parseInt(o1.getLoyaltyPointsCalc());
+     *                 int calc2 = Integer.parseInt(o2.getLoyaltyPointsCalc());
+     *                 return Integer.compare(calc1, calc2);
+     *             }))
+     *             .build();
+     * }
+     * </pre>
+     *
+     * @param delegate a function to set
+     */
+    @Experimental
+    void setSortBuilderDelegate(@Nullable Function<DataGridSortContext<T>, DataGridSort> delegate);
 
     /**
      * Defines the position of aggregation row.

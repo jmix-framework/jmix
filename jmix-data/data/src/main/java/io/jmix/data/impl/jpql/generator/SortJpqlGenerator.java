@@ -65,10 +65,14 @@ public class SortJpqlGenerator {
         if (entityName != null) {
             MetaClass metaClass = metadata.getClass(entityName);
             for (Sort.Order order : sort.getOrders()) {
-                MetaPropertyPath metaPropertyPath = metaClass.getPropertyPath(order.getProperty());
-                checkNotNullArgument(metaPropertyPath, "Could not resolve property path '%s' in '%s'", order.getProperty(), metaClass);
+                if (order instanceof Sort.ExpressionOrder expressionOrder) {
+                    sortExpressions.put(expressionOrder.getExpression(), order.getDirection());
+                } else {
+                    MetaPropertyPath metaPropertyPath = metaClass.getPropertyPath(order.getProperty());
+                    checkNotNullArgument(metaPropertyPath, "Could not resolve property path '%s' in '%s'", order.getProperty(), metaClass);
 
-                sortExpressions.putAll(getPropertySortExpressions(metaPropertyPath, order.getDirection()));
+                    sortExpressions.putAll(getPropertySortExpressions(metaPropertyPath, order.getDirection()));
+                }
             }
             if (!sortExpressions.isEmpty()) {
                 sortExpressions.putAll(getUniqueSortExpression(sortExpressions, metaClass, defaultSort));
@@ -76,7 +80,11 @@ public class SortJpqlGenerator {
         } else if (valueProperties != null) {
             List<String> selectedExpressions = queryTransformerFactory.parser(queryString).getSelectedExpressionsList();
             for (Sort.Order order : sort.getOrders()) {
-                sortExpressions.putAll(getValuePropertySortExpression(order.getProperty(), valueProperties, selectedExpressions, order.getDirection()));
+                if (order instanceof Sort.ExpressionOrder expressionOrder) {
+                    sortExpressions.put(expressionOrder.getExpression(), order.getDirection());
+                } else {
+                    sortExpressions.putAll(getValuePropertySortExpression(order.getProperty(), valueProperties, selectedExpressions, order.getDirection()));
+                }
             }
         }
 

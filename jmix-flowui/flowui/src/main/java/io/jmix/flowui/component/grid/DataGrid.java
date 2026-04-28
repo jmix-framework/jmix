@@ -39,6 +39,7 @@ import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.delegate.AbstractGridDelegate;
 import io.jmix.flowui.component.delegate.GridDelegate;
 import io.jmix.flowui.component.grid.editor.DataGridEditor;
+import io.jmix.flowui.component.grid.sort.DataGridSort;
 import io.jmix.flowui.data.grid.DataGridItems;
 import io.jmix.flowui.fragment.FragmentUtils;
 import io.jmix.flowui.kit.component.KeyCombination;
@@ -53,6 +54,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class DataGrid<E> extends JmixGrid<E> implements ListDataComponent<E>, MultiSelectLookupComponent<E>,
         EnhancedDataGrid<E>, SupportsEnterPress<DataGrid<E>>, ApplicationContextAware, InitializingBean {
@@ -487,5 +489,16 @@ public class DataGrid<E> extends JmixGrid<E> implements ListDataComponent<E>, Mu
         }
 
         return null;
+    }
+
+    @Nullable
+    @Override
+    public Function<DataGridSortContext<E>, DataGridSort> getSortBuilderDelegate() {
+        return gridDelegate.getSortBuilderDelegate();
+    }
+
+    @Override
+    public void setSortBuilderDelegate(@Nullable Function<DataGridSortContext<E>, DataGridSort> delegate) {
+        gridDelegate.setSortBuilderDelegate(delegate);
     }
 }

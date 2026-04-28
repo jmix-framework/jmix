@@ -26,18 +26,19 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.component.grid.DataGrid;
+import io.jmix.flowui.component.grid.sort.DataGridSort;
+import io.jmix.flowui.component.grid.sort.InMemorySortInfo;
 import io.jmix.flowui.data.BindingState;
 import io.jmix.flowui.data.ContainerDataUnit;
 import io.jmix.flowui.kit.event.EventBus;
 import io.jmix.flowui.model.*;
 import io.jmix.flowui.model.CollectionContainer.CollectionChangeEvent;
+import io.jmix.flowui.model.impl.BaseContainerSorter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.jspecify.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
@@ -121,17 +122,49 @@ public class ContainerDataGridItems<T> extends AbstractDataProvider<T, Void>
 
     @Override
     public void sort(Object[] propertyId, boolean[] ascending) {
+        sortInternal(createSort(propertyId, ascending));
+    }
+
+    @Override
+    public void sort(DataGridSort sort) {
+        setPropertyComparators(sort);
+        sortInternal(createSort(sort));
+    }
+
+    protected void sortInternal(Sort sort) {
         if (container.getSorter() != null) {
             if (suppressSorting
                     && container instanceof HasLoader
                     && ((HasLoader) container).getLoader() instanceof BaseCollectionLoader loader) {
-                loader.setSort(createSort(propertyId, ascending));
+                loader.setSort(sort);
             } else {
-                container.getSorter().sort(createSort(propertyId, ascending));
+                container.getSorter().sort(sort);
             }
         } else {
             log.debug("Container {} sorter is null", container);
         }
+    }
+
+    protected Sort createSort(DataGridSort sort) {
+        if (container.getItems().isEmpty()) {
+            return sort.toPersistentSort();
+        }
+
+        DataLoader dataLoader = container instanceof HasLoader hasLoader
+                ? hasLoader.getLoader()
+                : null;
+
+        if (dataLoader == null) {
+            return sort.toInMemorySort();
+        }
+
+        if (dataLoader instanceof BaseCollectionLoader loader
+                && loader.getFirstResult() == 0
+                && container.getItems().size() < loader.getMaxResults()) {
+            return sort.toInMemorySort();
+        }
+
+        return sort.toPersistentSort();
     }
 
     protected Sort createSort(Object[] propertyId, boolean[] ascending) {
@@ -151,6 +184,10 @@ public class ContainerDataGridItems<T> extends AbstractDataProvider<T, Void>
 
     @Override
     public void resetSortOrder() {
+        if (container.getSorter() instanceof BaseContainerSorter sorter) {
+            sorter.setPropertyComparators(Collections.emptyMap());
+        }
+
         if (container.getSorter() != null) {
             if (suppressSorting
                     && container instanceof HasLoader
@@ -274,6 +311,24 @@ public class ContainerDataGridItems<T> extends AbstractDataProvider<T, Void>
     @Override
     public Class<T> getType() {
         return getEntityMetaClass().getJavaClass();
+    }
+
+    protected void setPropertyComparators(DataGridSort sort) {
+        if (container.getSorter() instanceof BaseContainerSorter sorter) {
+            List<InMemorySortInfo> memorySorts = sort.getInMemorySortInfos();
+            Map<String, Comparator<?>> comparators = new HashMap<>(memorySorts.size());
+            for (InMemorySortInfo sortInfo : memorySorts) {
+                if (sortInfo.getComparator() == null) {
+                    continue;
+                }
+                String property = sortInfo.getMetaPropertyPath() != null
+                        ? sortInfo.getMetaPropertyPath().toPathString()
+                        : sortInfo.getSortKey();
+
+                comparators.put(property, sortInfo.getComparator());
+            }
+            sorter.setPropertyComparators(comparators);
+        }
     }
 
     protected EventBus getEventBus() {

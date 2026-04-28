@@ -19,6 +19,8 @@ package io.jmix.flowui.component.main;
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.router.AfterNavigationEvent;
+import com.vaadin.flow.router.AfterNavigationObserver;
 import com.vaadin.flow.router.HighlightConditions;
 import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.RouteParameters;
@@ -50,7 +52,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class JmixListMenu extends ListMenu implements ApplicationContextAware, InitializingBean,
-        HasMenuItemProvider<ListMenu.MenuItem> {
+        HasMenuItemProvider<ListMenu.MenuItem>, AfterNavigationObserver {
 
     protected static final String JMIX_MENU_ITEM_VIEW_CLASS_NAME = "jmix-menu-item-view";
     protected static final String JMIX_MENU_ITEM_BEAN_CLASS_NAME = "jmix-menu-item-bean";
@@ -199,6 +201,44 @@ public class JmixListMenu extends ListMenu implements ApplicationContextAware, I
     @Nullable
     public MenuItemProvider<MenuItem> getMenuItemProvider() {
         return this.itemProvider;
+    }
+
+    @Override
+    public void afterNavigation(AfterNavigationEvent event) {
+        expandActiveMenuItemParents(event);
+    }
+
+    protected void expandActiveMenuItemParents(AfterNavigationEvent event) {
+        for (MenuItem menuItem : rootMenuItems) {
+            expandActiveMenuItemParents(menuItem, List.of(), event);
+        }
+    }
+
+    protected void expandActiveMenuItemParents(MenuItem menuItem, List<MenuBarItem> parentMenuItems,
+                                               AfterNavigationEvent event) {
+        if (menuItem instanceof ViewMenuItem && shouldHighlightMenuItem(menuItem, event)) {
+            for (MenuBarItem parentMenuItem : parentMenuItems) {
+                if (!parentMenuItem.isOpened()) {
+                    parentMenuItem.setOpened(true);
+                }
+            }
+            return;
+        }
+
+        if (menuItem instanceof MenuBarItem menuBarItem) {
+            List<MenuBarItem> childParentMenuItems = new ArrayList<>(parentMenuItems);
+            childParentMenuItems.add(menuBarItem);
+
+            for (MenuItem childItem : menuBarItem.getChildItems()) {
+                expandActiveMenuItemParents(childItem, childParentMenuItems, event);
+            }
+        }
+    }
+
+    protected boolean shouldHighlightMenuItem(MenuItem menuItem, AfterNavigationEvent event) {
+        Component menuItemComponent = getMenuItemComponent(menuItem);
+        return menuItemComponent instanceof RouterLink routerLink
+                && routerLink.getHighlightCondition().shouldHighlight(routerLink, event);
     }
 
     /**

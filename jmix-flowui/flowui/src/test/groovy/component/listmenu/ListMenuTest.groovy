@@ -23,15 +23,21 @@ import com.vaadin.flow.component.icon.Icon
 import com.vaadin.flow.component.icon.VaadinIcon
 import com.vaadin.flow.component.html.Span
 import com.vaadin.flow.dom.Element
+import com.vaadin.flow.router.AfterNavigationEvent
+import com.vaadin.flow.router.Location
+import com.vaadin.flow.router.LocationChangeEvent
+import com.vaadin.flow.router.NavigationTrigger
 import com.vaadin.flow.router.RouterLink
+import component.listmenu.test_support.ListMenuTestConfiguration
+import component.listmenu.test_support.TestMenuConfig
+import component.listmenu.view.ListMenuTestView
 import io.jmix.flowui.UiComponents
 import io.jmix.flowui.component.main.JmixListMenu
 import io.jmix.flowui.kit.component.main.ListMenu
 import io.jmix.flowui.menu.ListMenuBuilder
-import component.listmenu.test_support.ListMenuTestConfiguration
+import io.jmix.flowui.menu.MenuItem.MenuItemParameter
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import component.listmenu.test_support.TestMenuConfig
 import test_support.ComponentTestUtils
 import test_support.spec.FlowuiTestSpecification
 
@@ -239,6 +245,121 @@ class ListMenuTest extends FlowuiTestSpecification {
         ])
         !beanMenuItemComponent.classNames.contains(className1)
         !beanMenuItemComponent.classNames.contains(className2)
+    }
+
+    def "Open parent menu of highlighted RouterLink after navigation event"() {
+        given:
+        def listMenu = uiComponents.create(JmixListMenu)
+
+        def applicationMenuBar = ListMenu.MenuItem.createMenuBar("application")
+        applicationMenuBar.addChildItem(JmixListMenu.ViewMenuItem.create("ListMenuTestView"))
+
+        listMenu.addMenuItem(applicationMenuBar)
+        ui.add(listMenu)
+
+        and:
+        !applicationMenuBar.opened
+
+        when:
+        fireAfterNavigation(listMenu, "ListMenuTestView")
+
+        then:
+        applicationMenuBar.opened
+        getRenderedMenuItemComponent(listMenu, "ListMenuTestView").element.hasAttribute("highlight")
+    }
+
+    def "Open only parent menu of highlighted RouterLink when same view has several menu items"() {
+        given:
+        def listMenu = uiComponents.create(JmixListMenu)
+
+        def matchingMenuBar = ListMenu.MenuItem.createMenuBar("matching")
+        matchingMenuBar.addChildItem(new JmixListMenu.ViewMenuItem("matchingView")
+                .withControllerClass(ListMenuTestView)
+                .withTitle("Matching view"))
+
+        def queryMenuBar = ListMenu.MenuItem.createMenuBar("query")
+        queryMenuBar.addChildItem(new JmixListMenu.ViewMenuItem("queryView")
+                .withControllerClass(ListMenuTestView)
+                .withUrlQueryParameters([new MenuItemParameter("mode", "query")])
+                .withTitle("Query view"))
+
+        listMenu.addMenuItem(matchingMenuBar)
+        listMenu.addMenuItem(queryMenuBar)
+        ui.add(listMenu)
+
+        and:
+        !matchingMenuBar.opened
+        !queryMenuBar.opened
+
+        when:
+        fireAfterNavigation(listMenu, "ListMenuTestView")
+
+        then:
+        matchingMenuBar.opened
+        !queryMenuBar.opened
+        getRenderedMenuItemComponent(listMenu, "matchingView").element.hasAttribute("highlight")
+        !getRenderedMenuItemComponent(listMenu, "queryView").element.hasAttribute("highlight")
+    }
+
+    def "Open parent menus of all RouterLinks matching navigation event"() {
+        given:
+        def listMenu = uiComponents.create(JmixListMenu)
+
+        def firstMenuBar = ListMenu.MenuItem.createMenuBar("first")
+        firstMenuBar.addChildItem(new JmixListMenu.ViewMenuItem("firstView")
+                .withControllerClass(ListMenuTestView)
+                .withTitle("First view"))
+
+        def secondMenuBar = ListMenu.MenuItem.createMenuBar("second")
+        secondMenuBar.addChildItem(new JmixListMenu.ViewMenuItem("secondView")
+                .withControllerClass(ListMenuTestView)
+                .withTitle("Second view"))
+
+        listMenu.addMenuItem(firstMenuBar)
+        listMenu.addMenuItem(secondMenuBar)
+        ui.add(listMenu)
+
+        and:
+        !firstMenuBar.opened
+        !secondMenuBar.opened
+
+        when:
+        fireAfterNavigation(listMenu, "ListMenuTestView")
+
+        then:
+        firstMenuBar.opened
+        secondMenuBar.opened
+        getRenderedMenuItemComponent(listMenu, "firstView").element.hasAttribute("highlight")
+        getRenderedMenuItemComponent(listMenu, "secondView").element.hasAttribute("highlight")
+    }
+
+    protected void fireAfterNavigation(JmixListMenu listMenu, String path) {
+        def event = new AfterNavigationEvent(new LocationChangeEvent(
+                ui.getInternals().getRouter(),
+                ui,
+                NavigationTrigger.PROGRAMMATIC,
+                new Location(path),
+                Collections.emptyList()
+        ))
+
+        listMenu.afterNavigation(event)
+        getRenderedRouterLinks(listMenu).forEach { routerLink -> routerLink.afterNavigation(event) }
+    }
+
+    protected static List<RouterLink> getRenderedRouterLinks(JmixListMenu listMenu) {
+        List<RouterLink> routerLinks = []
+        collectRenderedRouterLinks(listMenu.element, routerLinks)
+        return routerLinks
+    }
+
+    protected static void collectRenderedRouterLinks(Element element, List<RouterLink> routerLinks) {
+        element.component.ifPresent { component ->
+            if (component instanceof RouterLink) {
+                routerLinks.add((RouterLink) component)
+            }
+        }
+
+        element.children.forEach { child -> collectRenderedRouterLinks(child, routerLinks) }
     }
 
     protected static Component getRenderedMenuItemComponent(JmixListMenu listMenu, String itemId) {

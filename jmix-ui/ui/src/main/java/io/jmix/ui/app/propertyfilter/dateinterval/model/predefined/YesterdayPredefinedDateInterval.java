@@ -34,6 +34,6 @@ public class YesterdayPredefinedDateInterval extends PredefinedDateInterval {
 
     @Override
     public String apply(String property) {
-        return String.format("@between({E}.%s, now - 1, now, day)", property);
+        return "@between(%s.%s, now - 1, now, day)";
     }
 }

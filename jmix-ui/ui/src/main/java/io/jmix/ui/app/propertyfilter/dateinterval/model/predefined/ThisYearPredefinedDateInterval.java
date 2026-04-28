@@ -34,6 +34,6 @@ public class ThisYearPredefinedDateInterval extends PredefinedDateInterval {
 
     @Override
     public String apply(String property) {
-        return String.format("@between({E}.%s, now, now+1, year)", property);
+        return "@between(%s.%s, now, now+1, year)";
     }
 }

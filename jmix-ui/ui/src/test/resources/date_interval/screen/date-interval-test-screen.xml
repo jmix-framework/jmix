@@ -17,8 +17,10 @@
 <window xmlns="http://jmix.io/schema/ui/window">
     <data>
         <collection id="dateTimesDc"
-                    class="test_support.entity.sales.Order"
-                    fetchPlan="_local">
+                    class="test_support.entity.sales.Order">
+            <fetchPlan extends="_local">
+                <property name="orderLines" fetchPlan="_local"/>
+            </fetchPlan>
             <loader id="dateTimesLd">
                 <query>
                     <![CDATA[select e from test_Order e]]>
@@ -32,6 +34,10 @@
     <layout>
         <propertyFilter id="dateFilter"
                         property="date"
+                        operation="DATE_INTERVAL"
+                        dataLoader="dateTimesLd"/>
+        <propertyFilter id="nestedOrderLineFilter"
+                        property="orderLines.createTs"
                         operation="DATE_INTERVAL"
                         dataLoader="dateTimesLd"/>
     </layout>

@@ -33,6 +33,7 @@ import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.ContextConfiguration
 import test_support.UiTestConfiguration
 import test_support.entity.sales.Order
+import test_support.entity.sales.OrderLine
 
 import static io.jmix.ui.app.propertyfilter.dateinterval.model.BaseDateInterval.Type.LAST
 import static io.jmix.ui.app.propertyfilter.dateinterval.model.BaseDateInterval.Type.NEXT
@@ -65,17 +66,25 @@ class DateIntervalTest extends ScreenSpecification {
         def item1 = dataManager.create(Order)
         item1.setDate(currentDate)
 
+        def line1 = dataManager.create(OrderLine)
+        line1.setOrder(item1)
+        def line2 = dataManager.create(OrderLine)
+        line2.setOrder(item1)
+        def line3 = dataManager.create(OrderLine)
+        line3.setOrder(item1)
+
         def item2 = dataManager.create(Order)
         item2.setDate(lastDate)
 
         def item3 = dataManager.create(Order)
         item3.setDate(nextDate)
 
-        dataManager.save(item1, item2, item3)
+        dataManager.save(item1, item2, item3, line1, line2, line3)
     }
 
     @Override
     void cleanup() {
+        jdbcTemplate.update("delete from TEST_ORDER_LINE")
         jdbcTemplate.update("delete from TEST_ORDER")
     }
 
@@ -120,6 +129,31 @@ class DateIntervalTest extends ScreenSpecification {
 
         then: "Should be loaded only one item"
         screen.items.size() == 1
+    }
+
+    def "DateInterval applied to 'to-Many' association inner property"() {
+        showTestMainScreen()
+
+        when: "Open screen and load data"
+        def screen = (DateIntervalTestScreen) screens.create(DateIntervalTestScreen)
+        screen.show()
+
+        then:
+        screen.items.size() == 3
+
+        when: "Apply filter with 'LAST 1 HOUR INCLUDING CURRENT' interval"
+        screen.nestedOrderLineFilter.setValue(new DateInterval(LAST, 1, DateInterval.TimeUnit.HOUR, true))
+        screen.nestedOrderLineFilter.apply()
+
+        then: "Should be loaded only one item"
+        screen.items.size() == 1
+
+        when: "Apply filter with 'NEXT 1 HOUR' interval"
+        screen.nestedOrderLineFilter.setValue(new DateInterval(NEXT, 1, DateInterval.TimeUnit.HOUR, false))
+        screen.nestedOrderLineFilter.apply()
+
+        then: "Zero items should be loaded"
+        screen.items.size() == 0
     }
 
     def "DateInterval NEXT, LAST with KeyValueCollection"() {

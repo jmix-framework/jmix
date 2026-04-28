@@ -34,6 +34,9 @@ public class DateIntervalTestScreen extends Screen {
     @Autowired
     public PropertyFilter dateFilter;
 
+    @Autowired
+    public PropertyFilter nestedOrderLineFilter;
+
     public Collection<Order> getItems() {
         return dateTimesDc.getItems();
     }

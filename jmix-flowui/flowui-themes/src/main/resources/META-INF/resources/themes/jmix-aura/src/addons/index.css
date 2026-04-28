@@ -30,7 +30,7 @@
 
 /* Premium */
 
-/*@import './bpm/index.css';*/
+@import './bpm/index.css';
 @import './groupgrid/index.css';
 @import './kanban/index.css';
 @import './maps/index.css';

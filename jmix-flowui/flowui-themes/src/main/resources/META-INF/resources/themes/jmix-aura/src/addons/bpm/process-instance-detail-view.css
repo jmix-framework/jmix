@@ -3,12 +3,17 @@
  * Use is subject to license terms.
  */
 
-.process-instance-detail-view vaadin-grid.tree-toggle-events-only vaadin-grid-tree-toggle {
+/* TODO: pinyazhin, does nor work, try to use custom renderer */
+/*.process-instance-detail-view vaadin-grid.tree-toggle-events-only vaadin-grid-tree-toggle {
     pointer-events: none;
 
     &::part(toggle) {
         pointer-events: auto;
     }
+}*/
+
+.process-instance-detail-view .top-panel {
+    gap: var(--vaadin-gap-s);
 }
 
 html {

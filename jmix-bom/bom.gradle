@@ -433,7 +433,7 @@ dependencies {
         api "org.apache.tika:tika-core:$tikaVersion"
         api "org.apache.tika:tika-parsers-standard-package:$tikaVersion"
 
-        def flowableVersion = '7.0.1'
+        def flowableVersion = '8.0.0'
         api "org.flowable:flowable-spring-configurator:$flowableVersion"
         api "org.flowable:flowable-spring-boot-starter-process:$flowableVersion"
         api "org.flowable:flowable-spring-boot-starter-dmn:$flowableVersion"

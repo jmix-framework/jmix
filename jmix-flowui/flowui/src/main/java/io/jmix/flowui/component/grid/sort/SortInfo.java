@@ -25,7 +25,9 @@ import org.jspecify.annotations.Nullable;
 public interface SortInfo {
 
     /**
-     * @return the MetaPropertyPath object representing the property path, or {@code null} if not set
+     * Returns the {@link MetaPropertyPath} object representing the property path.
+     *
+     * @return the property path object or {@code null} if not set
      */
     @Nullable
     MetaPropertyPath getMetaPropertyPath();
@@ -38,7 +40,9 @@ public interface SortInfo {
     String getSortKey();
 
     /**
-     * @return {@code true} if the sort is ascending, {@code false} otherwise
+     * Indicates whether the sorting order is ascending.
+     *
+     * @return {@code true} if the sorting order is ascending, {@code false} otherwise
      */
     boolean isAscending();
 }

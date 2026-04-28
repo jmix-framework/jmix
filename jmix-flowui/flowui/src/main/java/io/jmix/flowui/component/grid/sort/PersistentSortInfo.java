@@ -26,7 +26,9 @@ import java.util.List;
 public interface PersistentSortInfo extends SortInfo {
 
     /**
-     * @return the expression to be used for persistent sorting
+     * Retrieves a list of expressions used for persistent sorting.
+     *
+     * @return a list of expressions
      */
     List<String> getExpressions();
 

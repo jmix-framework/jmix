@@ -22,6 +22,12 @@ import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import org.jspecify.annotations.Nullable;
 
+/**
+ * Implementation of the {@link ColumnSortInfo} interface representing sorting information for a {@link DataGridColumn}.
+ * Provides details about the sorting direction and the meta property path associated with the column.
+ *
+ * @param <T> the type of the objects represented in the column
+ */
 @Experimental
 @Internal
 public class ColumnSortInfoImpl<T> implements ColumnSortInfo<T> {

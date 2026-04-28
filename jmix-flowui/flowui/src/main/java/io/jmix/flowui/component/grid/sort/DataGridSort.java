@@ -27,7 +27,8 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 
 /**
- * Represents sorting information for a data grid, including both in-memory and persistent sorting.
+ * Represents the sorting logic for a data grid, supporting both persistent and in-memory sorting operations.
+ * This class aggregates sorting information and provides utilities to convert those into sorting configurations.
  */
 public class DataGridSort {
 
@@ -42,6 +43,13 @@ public class DataGridSort {
         this.inMemorySortInfos = Collections.unmodifiableList(inMemorySortInfos);
     }
 
+    /**
+     * Creates a new instance of {@link DataGridSort} with the specified sorting information.
+     *
+     * @param persistentSortInfos sort information for persistent sorting
+     * @param inMemorySortInfos   sort information for in-memory sorting
+     * @return a new instance of {@link DataGridSort}
+     */
     public static DataGridSort by(List<PersistentSortInfo> persistentSortInfos,
                                   List<InMemorySortInfo> inMemorySortInfos) {
         Preconditions.checkNotNullArgument(persistentSortInfos);
@@ -74,6 +82,16 @@ public class DataGridSort {
         return persistentSortInfos;
     }
 
+    /**
+     * Converts the current persistent sorting information into a {@link Sort} object.
+     * <p>
+     * This method iterates through a list of {@link PersistentSortInfo} objects and constructs a
+     * {@link Sort} object based on the defined sorting attributes. It handles both regular property-based
+     * sorting and expression-based sorting. If an expression is missing for a property not bound
+     * to an entity, the method skips sorting for that property.
+     *
+     * @return a {@link Sort} object representing the current persistent sorting criteria
+     */
     public Sort toPersistentSort() {
         List<Sort.Order> orders = new ArrayList<>();
         for (PersistentSortInfo sortInfo : persistentSortInfos) {
@@ -99,6 +117,16 @@ public class DataGridSort {
         return Sort.by(orders);
     }
 
+    /**
+     * Converts the current in-memory sorting information into a {@link Sort} object.
+     * <p>
+     * This method iterates through a list of {@link InMemorySortInfo} objects and constructs a
+     * {@link Sort} object based on the defined sorting attributes. It handles both regular
+     * property-based sorting and comparator-based sorting. If a comparator is not set or the
+     * property does not have a meta property path, the corresponding sort is skipped.
+     *
+     * @return a {@link Sort} object representing the current in-memory sorting criteria
+     */
     public Sort toInMemorySort() {
         List<Sort.Order> orders = new ArrayList<>();
         for (InMemorySortInfo sortInfo : inMemorySortInfos) {

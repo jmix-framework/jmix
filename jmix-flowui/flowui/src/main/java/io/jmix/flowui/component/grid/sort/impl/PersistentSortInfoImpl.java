@@ -34,10 +34,11 @@ import java.util.List;
  */
 public class PersistentSortInfoImpl implements PersistentSortInfo {
 
-    @Nullable
-    protected final MetaPropertyPath metaPropertyPath;
     protected final String property;
     protected final boolean ascending;
+
+    @Nullable
+    protected final MetaPropertyPath metaPropertyPath;
 
     protected List<String> expressions;
 

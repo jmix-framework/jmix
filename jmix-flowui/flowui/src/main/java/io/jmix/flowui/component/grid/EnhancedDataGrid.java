@@ -104,7 +104,9 @@ public interface EnhancedDataGrid<T> {
     void setHeaderFilterApplyShortcut(@Nullable String shortcut);
 
     /**
-     * @return the delegate for building the sorting configuration of the {@link Grid} or {@code null} if not set
+     * Retrieves the delegate function responsible for building the sorting configuration of the {@link Grid}.
+     *
+     * @return a delegate function for sorting operations or {@code null} if no delegate is set
      */
     @Nullable
     @Experimental
@@ -113,8 +115,8 @@ public interface EnhancedDataGrid<T> {
     /**
      * Sets the delegate for building the sorting configuration of the {@link Grid}.
      * <p>
-     * The {@link DataGridSortContext} contains sorting instructions from the grid.
-     * The {@link DataGridSort} object represents the in-memory and persistent sorting to be applied.
+     * The {@link DataGridSortContext} contains sorting instructions from the grid. The {@link DataGridSort} object
+     * represents the in-memory and persistent sorting to be applied.
      * <p>
      * Use {@link DataGridSortBuilder} to easily build and replace the sorting configuration.
      * <p>

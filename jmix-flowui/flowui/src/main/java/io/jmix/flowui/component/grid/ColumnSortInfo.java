@@ -36,14 +36,18 @@ public interface ColumnSortInfo<E> {
     DataGridColumn<E> getColumn();
 
     /**
-     * @return the meta property path associated with this sort info, or {@code null} if the column is not bound to
-     * a meta property path
+     * Retrieves the {@link MetaPropertyPath} associated with this sort info, or {@code null} if the column
+     * is not bound to a meta property path.
+     *
+     * @return the meta property path associated with this sort info
      */
     @Nullable
     MetaPropertyPath getMetaPropertyPath();
 
     /**
-     * @return {@code true} if the sort is ascending, {@code false} otherwise
+     * Indicates whether the sorting order for the column is ascending.
+     *
+     * @return {@code true} if the column is sorted in ascending order, {@code false} otherwise
      */
     boolean isAscending();
 }

@@ -26,7 +26,9 @@ import java.util.Comparator;
 public interface InMemorySortInfo extends SortInfo {
 
     /**
-     * @return comparator to be used for in-memory sorting, or {@code null} if not set
+     * Retrieves the comparator used for in-memory sorting.
+     *
+     * @return comparator or {@code null} if not set
      */
     @Nullable
     Comparator<?> getComparator();

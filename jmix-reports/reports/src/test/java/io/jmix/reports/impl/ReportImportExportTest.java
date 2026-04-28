@@ -19,11 +19,11 @@ package io.jmix.reports.impl;
 import io.jmix.core.DataManager;
 import io.jmix.core.Resources;
 import io.jmix.reports.ReportImportExport;
+import io.jmix.reports.ReportsPersistence;
 import io.jmix.reports.ReportsTestConfiguration;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.test_support.AuthenticatedAsSystem;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,17 +52,25 @@ public class ReportImportExportTest {
     static final String CUBA_FIXTURE_PATH_2 = "classpath:test_support/test-cuba-report-2.zip";
     static final String CUBA_REPORT_CODE_2 = "test";
 
+    static final String CONFLICTING_CODE_REPORT_NAME = "Report with conflicting code";
+    static final String EXISTING_REPORT_CODE = "code_1";
+    static final String GENERATED_JMIX_REPORT_CODE = "rt-test-1-1";
+
     @Autowired
     ReportImportExport reportImportExport;
     @Autowired
     DataManager dataManager;
     @Autowired
     Resources resources;
+    @Autowired
+    ReportsPersistence reportsPersistence;
 
     @AfterEach
     void tearDown() {
         dataManager.remove(loadReportsByCode());
         dataManager.remove(loadReportsByCode(CUBA_REPORT_CODE_2));
+        dataManager.remove(loadReportsByCode(EXISTING_REPORT_CODE));
+        dataManager.remove(loadReportsByCode(GENERATED_JMIX_REPORT_CODE));
         dataManager.remove(loadReportsByName());
     }
 
@@ -132,6 +140,32 @@ public class ReportImportExportTest {
         assertThat(importedReport.getGroup().getCreateTs()).isNotNull();
     }
 
+    @Test
+    void testImportExistingReportWithCodeUsedByAnotherReport() throws IOException {
+        String zipPath = resources.getResource(JMIX_FIXTURE_PATH).getFile().getAbsolutePath();
+        Report existingReport = importSingleReport(zipPath);
+        existingReport.setCode(EXISTING_REPORT_CODE);
+        reportsPersistence.save(existingReport);
+        Report conflictingReport = dataManager.create(Report.class);
+        conflictingReport.setName(CONFLICTING_CODE_REPORT_NAME);
+        conflictingReport.setCode(JMIX_REPORT_CODE);
+        reportsPersistence.save(conflictingReport);
+
+        Collection<Report> importedReports = reportImportExport.importReports(zipPath);
+
+        assertThat(importedReports)
+                .singleElement()
+                .extracting(Report::getCode)
+                .isEqualTo(GENERATED_JMIX_REPORT_CODE);
+
+        Report updatedReport = dataManager.load(Report.class)
+                .id(existingReport.getId())
+                .one();
+        assertThat(updatedReport.getCode()).isEqualTo(GENERATED_JMIX_REPORT_CODE);
+        assertThat(loadReportsByCode(JMIX_REPORT_CODE)).hasSize(1);
+        assertThat(loadReportsByCode(GENERATED_JMIX_REPORT_CODE)).hasSize(1);
+    }
+
     List<Report> loadReportsByCode() {
         return loadReportsByCode(JMIX_REPORT_CODE);
     }
@@ -148,5 +182,11 @@ public class ReportImportExportTest {
                 .query("select r from report_Report r where r.name = :name")
                 .parameter("name", CUBA_REPORT_NAME)
                 .list();
+    }
+
+    Report importSingleReport(String zipPath) {
+        Collection<Report> importedReports = reportImportExport.importReports(zipPath);
+        assertThat(importedReports).hasSize(1);
+        return importedReports.iterator().next();
     }
 }

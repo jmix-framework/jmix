@@ -248,7 +248,7 @@ public class ReportImportExportImpl implements ReportImportExport {
         Optional<Report> existingReport = dataManager
                 .load(Report.class)
                 .id(report.getId())
-                .fetchPlan(FetchPlan.INSTANCE_NAME)
+                .fetchPlanProperties("code")
                 .optional();
 
         if (report.getCode() == null) {
@@ -257,7 +257,8 @@ public class ReportImportExportImpl implements ReportImportExport {
             report.setCode(generateReportCodeByName(report.getName()));
         }
 
-        if (existingReport.isEmpty() && reportRepository.existsReportByCode(report.getCode())) {
+        if ((existingReport.isEmpty() || !Objects.equals(existingReport.get().getCode(), report.getCode()))
+                && reportRepository.existsReportByCode(report.getCode())) {
             String previousCode = report.getCode();
             report.setCode(generateReportCode(previousCode));
             log.info("Report with code {} already exists. New code {} is assigned", previousCode, report.getCode());

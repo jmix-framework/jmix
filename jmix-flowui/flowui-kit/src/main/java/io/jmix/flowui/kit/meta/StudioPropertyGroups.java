@@ -2598,6 +2598,20 @@ public final class StudioPropertyGroups {
     public interface ColumnComponent extends BoundGridColumnDefaultProperties {
     }
 
+    @StudioPropertyGroup(
+            properties = {
+                    @StudioProperty(
+                            xmlAttribute = StudioXmlAttributes.FILTERABLE,
+                            type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(
+                            xmlAttribute = StudioXmlAttributes.HEADER_FILTER_APPLY_SHORTCUT,
+                            type = StudioPropertyType.SHORTCUT_COMBINATION)
+            }
+    )
+    public interface ColumnsElementGroupComponent extends Exclude, Sortable, IncludeAll, ResizableWithFalseDefaultValue {
+    }
+
     @StudioPropertyGroup
     public interface EditButtonComponent extends EditorActionButtonDefaultProperties, TextWithEditInitialValue,
             IconWithPencilInitialValue {

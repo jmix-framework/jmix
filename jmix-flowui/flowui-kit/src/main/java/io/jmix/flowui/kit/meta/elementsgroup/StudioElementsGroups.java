@@ -17,13 +17,10 @@
 package io.jmix.flowui.kit.meta.elementsgroup;
 
 import io.jmix.flowui.kit.meta.StudioElementsGroup;
-import io.jmix.flowui.kit.meta.StudioProperty;
-import io.jmix.flowui.kit.meta.StudioPropertyType;
 import io.jmix.flowui.kit.meta.StudioUiKit;
 
 import static io.jmix.flowui.kit.meta.StudioMetaConstants.TAG_PREFIX;
 import io.jmix.flowui.kit.meta.StudioPropertyGroups;
-import io.jmix.flowui.kit.meta.StudioXmlAttributes;
 import io.jmix.flowui.kit.meta.StudioXmlElements;
 
 @StudioUiKit
@@ -36,23 +33,7 @@ interface StudioElementsGroups {
             icon = "io/jmix/flowui/kit/meta/icon/elementsgroup/columns.svg",
             target = {"com.vaadin.flow.component.grid.Grid"},
             documentationLink = "%VERSION%/flow-ui/vc/components/dataGrid.html#columns",
-            propertyGroups = {
-                    StudioPropertyGroups.Exclude.class,
-                    StudioPropertyGroups.Sortable.class,
-                    StudioPropertyGroups.IncludeAll.class
-            },
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.EXCLUDE, type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.SORTABLE, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.RESIZABLE, category = StudioProperty.Category.SIZE, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.FILTERABLE, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.HEADER_FILTER_APPLY_SHORTCUT, type = StudioPropertyType.SHORTCUT_COMBINATION),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.INCLUDE_ALL, type = StudioPropertyType.BOOLEAN, defaultValue = "false")
-            }
-    )
+            propertyGroups = StudioPropertyGroups.ColumnsElementGroupComponent.class)
     void columns();
 
     @StudioElementsGroup(

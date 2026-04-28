@@ -17,11 +17,8 @@
 package io.jmix.flowui.kit.meta.element;
 
 import io.jmix.flowui.kit.meta.StudioElement;
-import io.jmix.flowui.kit.meta.StudioProperty;
-import io.jmix.flowui.kit.meta.StudioPropertyType;
 import io.jmix.flowui.kit.meta.StudioUiKit;
 import io.jmix.flowui.kit.meta.StudioPropertyGroups;
-import io.jmix.flowui.kit.meta.StudioXmlAttributes;
 import io.jmix.flowui.kit.meta.StudioXmlElements;
 
 @StudioUiKit
@@ -36,21 +33,7 @@ interface StudioValidatorsElements {
             propertyGroups = {
                     StudioPropertyGroups.Bean.class,
                     StudioPropertyGroups.Message.class
-            },
-            properties = {
-                    @StudioProperty(
-                            xmlAttribute = StudioXmlAttributes.BEAN,
-                            category = StudioProperty.Category.GENERAL,
-                            type = StudioPropertyType.STRING,
-                            required = true
-                    ),
-                    @StudioProperty(
-                            xmlAttribute = StudioXmlAttributes.MESSAGE,
-                            category = StudioProperty.Category.GENERAL,
-                            type = StudioPropertyType.LOCALIZED_STRING
-                    )
-            }
-    )
+            })
     void custom();
 
     @StudioElement(
@@ -75,26 +58,7 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.codeeditor.CodeEditor",
                     "io.jmix.flowui.component.twincolumn.TwinColumn"
             },
-            propertyGroups = StudioPropertyGroups.MessageAndInclusiveRequiredBigDecimalValue.class,
-            properties = {
-                    @StudioProperty(
-                            xmlAttribute = StudioXmlAttributes.MESSAGE,
-                            category = StudioProperty.Category.GENERAL,
-                            type = StudioPropertyType.LOCALIZED_STRING
-                    ),
-                    @StudioProperty(
-                            xmlAttribute = StudioXmlAttributes.VALUE,
-                            category = StudioProperty.Category.GENERAL,
-                            type = StudioPropertyType.BIG_DECIMAL,
-                            required = true
-                    ),
-                    @StudioProperty(
-                            xmlAttribute = StudioXmlAttributes.INCLUSIVE,
-                            category = StudioProperty.Category.GENERAL,
-                            type = StudioPropertyType.BOOLEAN
-                    )
-            }
-    )
+            propertyGroups = StudioPropertyGroups.MessageAndInclusiveRequiredBigDecimalValue.class)
     void decimalMax();
 
     @StudioElement(
@@ -119,26 +83,7 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.codeeditor.CodeEditor",
                     "io.jmix.flowui.component.twincolumn.TwinColumn"
             },
-            propertyGroups = StudioPropertyGroups.MessageAndInclusiveRequiredBigDecimalValue.class,
-            properties = {
-                    @StudioProperty(
-                            xmlAttribute = StudioXmlAttributes.MESSAGE,
-                            category = StudioProperty.Category.GENERAL,
-                            type = StudioPropertyType.LOCALIZED_STRING
-                    ),
-                    @StudioProperty(
-                            xmlAttribute = StudioXmlAttributes.VALUE,
-                            category = StudioProperty.Category.GENERAL,
-                            type = StudioPropertyType.BIG_DECIMAL,
-                            required = true
-                    ),
-                    @StudioProperty(
-                            xmlAttribute = StudioXmlAttributes.INCLUSIVE,
-                            category = StudioProperty.Category.GENERAL,
-                            type = StudioPropertyType.BOOLEAN
-                    )
-            }
-    )
+            propertyGroups = StudioPropertyGroups.MessageAndInclusiveRequiredBigDecimalValue.class)
     void decimalMin();
 
     @StudioElement(
@@ -162,27 +107,7 @@ interface StudioValidatorsElements {
             xmlElement = StudioXmlElements.DIGITS,
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
             documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/validator.html#DigitsValidator",
-            propertyGroups = StudioPropertyGroups.DigitsComponent.class,
-            properties = {
-                    @StudioProperty(
-                            xmlAttribute = StudioXmlAttributes.MESSAGE,
-                            category = StudioProperty.Category.GENERAL,
-                            type = StudioPropertyType.LOCALIZED_STRING
-                    ),
-                    @StudioProperty(
-                            xmlAttribute = StudioXmlAttributes.INTEGER,
-                            category = StudioProperty.Category.GENERAL,
-                            type = StudioPropertyType.INTEGER,
-                            required = true
-                    ),
-                    @StudioProperty(
-                            xmlAttribute = StudioXmlAttributes.FRACTION,
-                            category = StudioProperty.Category.GENERAL,
-                            type = StudioPropertyType.INTEGER,
-                            required = true
-                    )
-            }
-    )
+            propertyGroups = StudioPropertyGroups.DigitsComponent.class)
     void digits();
 
     @StudioElement(
@@ -207,26 +132,7 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.codeeditor.CodeEditor",
                     "io.jmix.flowui.component.twincolumn.TwinColumn"
             },
-            propertyGroups = StudioPropertyGroups.MessageAndInclusiveRequiredDoubleValue.class,
-            properties = {
-                    @StudioProperty(
-                            xmlAttribute = StudioXmlAttributes.MESSAGE,
-                            category = StudioProperty.Category.GENERAL,
-                            type = StudioPropertyType.LOCALIZED_STRING
-                    ),
-                    @StudioProperty(
-                            xmlAttribute = StudioXmlAttributes.VALUE,
-                            category = StudioProperty.Category.GENERAL,
-                            type = StudioPropertyType.DOUBLE,
-                            required = true
-                    ),
-                    @StudioProperty(
-                            xmlAttribute = StudioXmlAttributes.INCLUSIVE,
-                            category = StudioProperty.Category.GENERAL,
-                            type = StudioPropertyType.BOOLEAN
-                    )
-            }
-    )
+            propertyGroups = StudioPropertyGroups.MessageAndInclusiveRequiredDoubleValue.class)
     void doubleMax();
 
     @StudioElement(
@@ -251,26 +157,7 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.codeeditor.CodeEditor",
                     "io.jmix.flowui.component.twincolumn.TwinColumn"
             },
-            propertyGroups = StudioPropertyGroups.MessageAndInclusiveRequiredDoubleValue.class,
-            properties = {
-                    @StudioProperty(
-                            xmlAttribute = StudioXmlAttributes.MESSAGE,
-                            category = StudioProperty.Category.GENERAL,
-                            type = StudioPropertyType.LOCALIZED_STRING
-                    ),
-                    @StudioProperty(
-                            xmlAttribute = StudioXmlAttributes.VALUE,
-                            category = StudioProperty.Category.GENERAL,
-                            type = StudioPropertyType.DOUBLE,
-                            required = true
-                    ),
-                    @StudioProperty(
-                            xmlAttribute = StudioXmlAttributes.INCLUSIVE,
-                            category = StudioProperty.Category.GENERAL,
-                            type = StudioPropertyType.BOOLEAN
-                    )
-            }
-    )
+            propertyGroups = StudioPropertyGroups.MessageAndInclusiveRequiredDoubleValue.class)
     void doubleMin();
 
     @StudioElement(
@@ -294,15 +181,7 @@ interface StudioValidatorsElements {
             },
             propertyGroups = {
                     StudioPropertyGroups.Message.class
-            },
-            properties = {
-                    @StudioProperty(
-                            xmlAttribute = StudioXmlAttributes.MESSAGE,
-                            category = StudioProperty.Category.GENERAL,
-                            type = StudioPropertyType.LOCALIZED_STRING
-                    )
-            }
-    )
+            })
     void email();
 
     @StudioElement(
@@ -327,21 +206,7 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.codeeditor.CodeEditor",
                     "io.jmix.flowui.component.twincolumn.TwinColumn"
             },
-            propertyGroups = StudioPropertyGroups.MessageAndCheckSeconds.class,
-            properties = {
-                    @StudioProperty(
-                            xmlAttribute = StudioXmlAttributes.MESSAGE,
-                            category = StudioProperty.Category.GENERAL,
-                            type = StudioPropertyType.LOCALIZED_STRING
-                    ),
-                    @StudioProperty(
-                            xmlAttribute = StudioXmlAttributes.CHECK_SECONDS,
-                            category = StudioProperty.Category.GENERAL,
-                            type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false"
-                    )
-            }
-    )
+            propertyGroups = StudioPropertyGroups.MessageAndCheckSeconds.class)
     void future();
 
     @StudioElement(
@@ -366,21 +231,7 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.codeeditor.CodeEditor",
                     "io.jmix.flowui.component.twincolumn.TwinColumn"
             },
-            propertyGroups = StudioPropertyGroups.MessageAndCheckSeconds.class,
-            properties = {
-                    @StudioProperty(
-                            xmlAttribute = StudioXmlAttributes.MESSAGE,
-                            category = StudioProperty.Category.GENERAL,
-                            type = StudioPropertyType.LOCALIZED_STRING
-                    ),
-                    @StudioProperty(
-                            xmlAttribute = StudioXmlAttributes.CHECK_SECONDS,
-                            category = StudioProperty.Category.GENERAL,
-                            type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false"
-                    )
-            }
-    )
+            propertyGroups = StudioPropertyGroups.MessageAndCheckSeconds.class)
     void futureOrPresent();
 
     @StudioElement(
@@ -404,21 +255,7 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.codeeditor.CodeEditor",
                     "io.jmix.flowui.component.twincolumn.TwinColumn"
             },
-            propertyGroups = StudioPropertyGroups.MessageAndRequiredIntegerValue.class,
-            properties = {
-                    @StudioProperty(
-                            xmlAttribute = StudioXmlAttributes.MESSAGE,
-                            category = StudioProperty.Category.GENERAL,
-                            type = StudioPropertyType.LOCALIZED_STRING
-                    ),
-                    @StudioProperty(
-                            xmlAttribute = StudioXmlAttributes.VALUE,
-                            category = StudioProperty.Category.GENERAL,
-                            type = StudioPropertyType.INTEGER,
-                            required = true
-                    )
-            }
-    )
+            propertyGroups = StudioPropertyGroups.MessageAndRequiredIntegerValue.class)
     void max();
 
     @StudioElement(
@@ -442,21 +279,7 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.codeeditor.CodeEditor",
                     "io.jmix.flowui.component.twincolumn.TwinColumn"
             },
-            propertyGroups = StudioPropertyGroups.MessageAndRequiredIntegerValue.class,
-            properties = {
-                    @StudioProperty(
-                            xmlAttribute = StudioXmlAttributes.MESSAGE,
-                            category = StudioProperty.Category.GENERAL,
-                            type = StudioPropertyType.LOCALIZED_STRING
-                    ),
-                    @StudioProperty(
-                            xmlAttribute = StudioXmlAttributes.VALUE,
-                            category = StudioProperty.Category.GENERAL,
-                            type = StudioPropertyType.INTEGER,
-                            required = true
-                    )
-            }
-    )
+            propertyGroups = StudioPropertyGroups.MessageAndRequiredIntegerValue.class)
     void min();
 
     @StudioElement(
@@ -481,15 +304,7 @@ interface StudioValidatorsElements {
             },
             propertyGroups = {
                     StudioPropertyGroups.Message.class
-            },
-            properties = {
-                    @StudioProperty(
-                            xmlAttribute = StudioXmlAttributes.MESSAGE,
-                            category = StudioProperty.Category.GENERAL,
-                            type = StudioPropertyType.LOCALIZED_STRING
-                    )
-            }
-    )
+            })
     void negativeOrZero();
 
     @StudioElement(
@@ -514,15 +329,7 @@ interface StudioValidatorsElements {
             },
             propertyGroups = {
                     StudioPropertyGroups.Message.class
-            },
-            properties = {
-                    @StudioProperty(
-                            xmlAttribute = StudioXmlAttributes.MESSAGE,
-                            category = StudioProperty.Category.GENERAL,
-                            type = StudioPropertyType.LOCALIZED_STRING
-                    )
-            }
-    )
+            })
     void negative();
 
     @StudioElement(
@@ -546,15 +353,7 @@ interface StudioValidatorsElements {
             },
             propertyGroups = {
                     StudioPropertyGroups.Message.class
-            },
-            properties = {
-                    @StudioProperty(
-                            xmlAttribute = StudioXmlAttributes.MESSAGE,
-                            category = StudioProperty.Category.GENERAL,
-                            type = StudioPropertyType.LOCALIZED_STRING
-                    )
-            }
-    )
+            })
     void notBlank();
 
     @StudioElement(
@@ -576,15 +375,7 @@ interface StudioValidatorsElements {
             },
             propertyGroups = {
                     StudioPropertyGroups.Message.class
-            },
-            properties = {
-                    @StudioProperty(
-                            xmlAttribute = StudioXmlAttributes.MESSAGE,
-                            category = StudioProperty.Category.GENERAL,
-                            type = StudioPropertyType.LOCALIZED_STRING
-                    )
-            }
-    )
+            })
     void notEmpty();
 
     @StudioElement(
@@ -596,15 +387,7 @@ interface StudioValidatorsElements {
             unsupportedTarget = "io.jmix.flowui.component.twincolumn.TwinColumn",
             propertyGroups = {
                     StudioPropertyGroups.Message.class
-            },
-            properties = {
-                    @StudioProperty(
-                            xmlAttribute = StudioXmlAttributes.MESSAGE,
-                            category = StudioProperty.Category.GENERAL,
-                            type = StudioPropertyType.LOCALIZED_STRING
-                    )
-            }
-    )
+            })
     void notNull();
 
     @StudioElement(
@@ -629,21 +412,7 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.codeeditor.CodeEditor",
                     "io.jmix.flowui.component.twincolumn.TwinColumn"
             },
-            propertyGroups = StudioPropertyGroups.MessageAndCheckSeconds.class,
-            properties = {
-                    @StudioProperty(
-                            xmlAttribute = StudioXmlAttributes.MESSAGE,
-                            category = StudioProperty.Category.GENERAL,
-                            type = StudioPropertyType.LOCALIZED_STRING
-                    ),
-                    @StudioProperty(
-                            xmlAttribute = StudioXmlAttributes.CHECK_SECONDS,
-                            category = StudioProperty.Category.GENERAL,
-                            type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false"
-                    )
-            }
-    )
+            propertyGroups = StudioPropertyGroups.MessageAndCheckSeconds.class)
     void pastOrPresent();
 
     @StudioElement(
@@ -668,21 +437,7 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.codeeditor.CodeEditor",
                     "io.jmix.flowui.component.twincolumn.TwinColumn"
             },
-            propertyGroups = StudioPropertyGroups.MessageAndCheckSeconds.class,
-            properties = {
-                    @StudioProperty(
-                            xmlAttribute = StudioXmlAttributes.MESSAGE,
-                            category = StudioProperty.Category.GENERAL,
-                            type = StudioPropertyType.LOCALIZED_STRING
-                    ),
-                    @StudioProperty(
-                            xmlAttribute = StudioXmlAttributes.CHECK_SECONDS,
-                            category = StudioProperty.Category.GENERAL,
-                            type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false"
-                    )
-            }
-    )
+            propertyGroups = StudioPropertyGroups.MessageAndCheckSeconds.class)
     void past();
 
     @StudioElement(
@@ -707,15 +462,7 @@ interface StudioValidatorsElements {
             },
             propertyGroups = {
                     StudioPropertyGroups.Message.class
-            },
-            properties = {
-                    @StudioProperty(
-                            xmlAttribute = StudioXmlAttributes.MESSAGE,
-                            category = StudioProperty.Category.GENERAL,
-                            type = StudioPropertyType.LOCALIZED_STRING
-                    )
-            }
-    )
+            })
     void positiveOrZero();
 
     @StudioElement(
@@ -740,15 +487,7 @@ interface StudioValidatorsElements {
             },
             propertyGroups = {
                     StudioPropertyGroups.Message.class
-            },
-            properties = {
-                    @StudioProperty(
-                            xmlAttribute = StudioXmlAttributes.MESSAGE,
-                            category = StudioProperty.Category.GENERAL,
-                            type = StudioPropertyType.LOCALIZED_STRING
-                    )
-            }
-    )
+            })
     void positive();
 
     @StudioElement(
@@ -770,20 +509,7 @@ interface StudioValidatorsElements {
                     "io.jmix.flowui.component.textfield.JmixBigDecimalField",
                     "io.jmix.flowui.component.twincolumn.TwinColumn"
             },
-            propertyGroups = StudioPropertyGroups.RegexpComponent.class,
-            properties = {
-                    @StudioProperty(
-                            xmlAttribute = StudioXmlAttributes.MESSAGE,
-                            category = StudioProperty.Category.GENERAL,
-                            type = StudioPropertyType.LOCALIZED_STRING
-                    ),
-                    @StudioProperty(
-                            xmlAttribute = StudioXmlAttributes.REGEXP,
-                            type = StudioPropertyType.STRING,
-                            required = true
-                    )
-            }
-    )
+            propertyGroups = StudioPropertyGroups.RegexpComponent.class)
     void regexp();
 
     @StudioElement(
@@ -807,24 +533,6 @@ interface StudioValidatorsElements {
                     StudioPropertyGroups.Message.class,
                     StudioPropertyGroups.IntegerMin.class,
                     StudioPropertyGroups.IntegerMax.class
-            },
-            properties = {
-                    @StudioProperty(
-                            xmlAttribute = StudioXmlAttributes.MESSAGE,
-                            category = StudioProperty.Category.GENERAL,
-                            type = StudioPropertyType.LOCALIZED_STRING
-                    ),
-                    @StudioProperty(
-                            xmlAttribute = StudioXmlAttributes.MIN,
-                            category = StudioProperty.Category.GENERAL,
-                            type = StudioPropertyType.INTEGER
-                    ),
-                    @StudioProperty(
-                            xmlAttribute = StudioXmlAttributes.MAX,
-                            category = StudioProperty.Category.GENERAL,
-                            type = StudioPropertyType.INTEGER
-                    )
-            }
-    )
+            })
     void size();
 }

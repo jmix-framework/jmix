@@ -539,7 +539,10 @@ class StudioMetaDescriptionGeneratorTest extends Specification {
 
     def "test generated button meta prefers grouped properties over inline properties"() {
         when:
-        def generatedMeta = generateMeta(layoutXsd, 'button') { true }
+        StudioXsdElementCandidate candidate = findCandidate(layoutXsd, 'button') { true }
+        Path outputPath = Files.createTempDirectory('generated-meta-test').resolve('TestGeneratedMeta.java')
+        String generatedSource = generator.generate(candidate, StudioMetaKind.AUTO, outputPath).source()
+        def generatedMeta = parseMetaSource(generatedSource)
         def expectedMeta = expectedMeta(STUDIO_COMPONENTS_CLASS_NAME, 'button')
 
         then:
@@ -547,6 +550,7 @@ class StudioMetaDescriptionGeneratorTest extends Specification {
         generatedMeta.xmlElement == expectedMeta.xmlElement
         generatedMeta.propertyGroups == [StudioPropertyGroups.ButtonComponent.canonicalName]
         generatedMeta.properties.empty
+        !generatedSource.contains('properties =')
         effectivePropertyAttributes(generatedMeta) == effectivePropertyAttributes(expectedMeta)
     }
 
@@ -621,51 +625,14 @@ class StudioMetaDescriptionGeneratorTest extends Specification {
         facetSource.contains("xmlElement = ${StudioXmlElements.name}.DATA_LOAD_COORDINATOR")
     }
 
-    def "production meta descriptions with more than three inline properties declare property groups"() {
+    def "production meta descriptions do not combine property groups with inline properties"() {
         when:
         def violations = scanProductionStudioUiKitMetaProjections()
-                .findAll { it.projection.properties.size() > 3 && it.projection.propertyGroups.empty }
-                .collect { "${it.sourceClassName}#${it.methodName} (${it.projection.properties.size()})" }
+                .findAll { it.projection.propertyGroupsDeclared && !it.projection.properties.empty }
+                .collect { "${it.sourceClassName}#${it.methodName}" }
 
         then:
         violations.empty
-    }
-
-    // FIXME: remove after complete migration to property groups
-    def "generate comparison reports"() {
-        when:
-        Path reportPath = generateInlineVsGroupedPropertyReport()
-
-        then:
-        Files.exists(reportPath)
-        Files.size(reportPath) > 0
-        Files.readString(reportPath).contains('- Different: 0')
-    }
-
-    def "inline vs grouped comparison treats missing propertyGroups as valid"() {
-        given:
-        def sourceProjection = new MetaSourceProjection(
-                name: 'InlineOnly',
-                sourceClassName: 'test.StudioTestComponents',
-                methodName: 'inlineOnly',
-                projection: new MetaProjection(
-                        kind: StudioMetaKind.COMPONENT,
-                        xmlElement: 'inlineOnly',
-                        propertyGroupsDeclared: false,
-                        propertyGroups: [],
-                        properties: [
-                                StudioPropertySignature.of(StudioXmlAttributes.ID, 'COMPONENT_ID', 'GENERAL', false, '', [])
-                        ]
-                )
-        )
-
-        when:
-        def comparison = compareInlineAndGroupedProperties(sourceProjection, null)
-
-        then:
-        comparison.identical
-        comparison.identicalProperties == 1
-        comparison.differentProperties == 0
     }
 
     private MetaProjection generateFacetMeta(String elementName) {
@@ -700,28 +667,6 @@ class StudioMetaDescriptionGeneratorTest extends Specification {
 
     private static Closure<Boolean> candidateInContext(String contextName) {
         return { StudioXsdElementCandidate candidate -> candidate.contextNames().contains(contextName) }
-    }
-
-    private Path generateInlineVsGroupedPropertyReport() {
-        StudioPropertyGroupsMatcher matcher = new StudioPropertyGroupsMatcher(workspaceRoot)
-        List<MetaComparison> comparisons = scanProductionStudioUiKitMetaProjections()
-                .collect { compareInlineAndGroupedProperties(it, matcher) }
-                .sort { MetaComparison left, MetaComparison right ->
-                    left.identical == right.identical
-                            ? left.sortKey <=> right.sortKey
-                            : left.identical ? 1 : -1
-                }
-
-        Path reportPath = currentModuleRoot()
-                .resolve(BUILD_DIRECTORY)
-                .resolve('reports/studio-meta/inline-vs-grouped-properties.md')
-                .normalize()
-        Files.createDirectories(reportPath.parent)
-        Files.writeString(reportPath, renderInlineVsGroupedPropertyReport(comparisons), StandardCharsets.UTF_8)
-
-        println "Generated Studio meta inline/group property report: ${reportPath}"
-
-        reportPath
     }
 
     private List<MetaSourceProjection> scanProductionStudioUiKitMetaProjections() {
@@ -817,101 +762,6 @@ class StudioMetaDescriptionGeneratorTest extends Specification {
         }
 
         projections
-    }
-
-    private static MetaComparison compareInlineAndGroupedProperties(MetaSourceProjection sourceProjection,
-                                                                    StudioPropertyGroupsMatcher matcher) {
-        Set<StudioPropertySignature> inlineProperties = new LinkedHashSet<>(sourceProjection.projection.properties)
-        if (!sourceProjection.projection.propertyGroupsDeclared) {
-            return new MetaComparison(
-                    name: sourceProjection.name,
-                    kind: sourceProjection.projection.kind,
-                    xmlElement: sourceProjection.projection.xmlElement,
-                    sourceClassName: sourceProjection.sourceClassName,
-                    methodName: sourceProjection.methodName,
-                    identical: true,
-                    rows: buildComparisonRows(inlineProperties, inlineProperties),
-                    sortKey: "${sourceProjection.name}|${sourceProjection.projection.xmlElement}|${sourceProjection.sourceClassName}"
-            )
-        }
-
-        Set<StudioPropertySignature> groupedProperties = new LinkedHashSet<>(
-                matcher.flattenProperties(sourceProjection.projection.propertyGroups)
-        )
-        List<ComparisonRow> rows = buildComparisonRows(inlineProperties, groupedProperties)
-        boolean identical = inlineProperties == groupedProperties
-
-        new MetaComparison(
-                name: sourceProjection.name,
-                kind: sourceProjection.projection.kind,
-                xmlElement: sourceProjection.projection.xmlElement,
-                sourceClassName: sourceProjection.sourceClassName,
-                methodName: sourceProjection.methodName,
-                identical: identical,
-                rows: rows,
-                sortKey: "${sourceProjection.name}|${sourceProjection.projection.xmlElement}|${sourceProjection.sourceClassName}"
-        )
-    }
-
-    private static List<ComparisonRow> buildComparisonRows(Set<StudioPropertySignature> inlineProperties,
-                                                           Set<StudioPropertySignature> groupedProperties) {
-        Set<StudioPropertySignature> commonProperties = new LinkedHashSet<>(inlineProperties)
-        commonProperties.retainAll(groupedProperties)
-
-        Set<StudioPropertySignature> inlineOnlyProperties = new LinkedHashSet<>(inlineProperties)
-        inlineOnlyProperties.removeAll(groupedProperties)
-
-        Set<StudioPropertySignature> groupedOnlyProperties = new LinkedHashSet<>(groupedProperties)
-        groupedOnlyProperties.removeAll(inlineProperties)
-
-        List<ComparisonRow> rows = []
-        commonProperties.each { rows.add(new ComparisonRow(status: '✅', inlineProperty: it, groupedProperty: it)) }
-
-        inlineOnlyProperties.each { rows.add(new ComparisonRow(status: '🚫', inlineProperty: it, groupedProperty: null)) }
-        groupedOnlyProperties.each { rows.add(new ComparisonRow(status: '🚫', inlineProperty: null, groupedProperty: it)) }
-
-        if (rows.empty) {
-            rows.add(new ComparisonRow(status: '✅', inlineProperty: null, groupedProperty: null))
-        }
-
-        rows.sort { ComparisonRow left, ComparisonRow right ->
-            left.status == right.status
-                    ? rowSortKey(left) <=> rowSortKey(right)
-                    : left.status == '🚫' ? -1 : 1
-        }
-    }
-
-    private static String renderInlineVsGroupedPropertyReport(List<MetaComparison> comparisons) {
-        int identicalCount = (comparisons.count { it.identical } ?: 0) as int
-        int differentCount = comparisons.size() - identicalCount
-        List<MetaComparison> differentComparisons = comparisons.findAll { !it.identical }
-
-        StringBuilder builder = new StringBuilder()
-        builder << "# Studio Meta Inline vs Grouped Properties Report\n\n"
-        builder << "Generated from production `@StudioUiKit` sources.\n\n"
-        builder << "- Total entries: ${comparisons.size()}\n"
-        builder << "- Identical: ${identicalCount}\n"
-        builder << "- Different: ${differentCount}\n\n"
-
-        differentComparisons.eachWithIndex { MetaComparison comparison, int index ->
-            builder << "## ${index + 1}. ${escapeMarkdownText(comparison.name)} (`${escapeMarkdownText(comparison.xmlElement)}`)\n\n"
-            builder << "- Kind: `${comparison.kind}`\n"
-            builder << "- Source: `${comparison.sourceClassName}#${comparison.methodName}`\n"
-            builder << "- Properties total: ${comparison.totalProperties}\n"
-            builder << "- Properties identical: ${comparison.identicalProperties}\n"
-            builder << "- Properties different: ${comparison.differentProperties}\n"
-            builder << "- Result: ${comparison.identical ? '✅ identical' : '🚫 differs'}\n\n"
-            if (comparison.differentRows) {
-                builder << "| Result | Inline properties | Group properties |\n"
-                builder << "| --- | --- | --- |\n"
-                comparison.differentRows.each { ComparisonRow row ->
-                    builder << "| ${row.status} | ${renderPropertyCell(row.inlineProperty)} | ${renderPropertyCell(row.groupedProperty)} |\n"
-                }
-                builder << "\n"
-            }
-        }
-
-        builder.toString()
     }
 
     private MetaProjection expectedMeta(Class<?> sourceClass, String methodName) {
@@ -1488,30 +1338,8 @@ class StudioMetaDescriptionGeneratorTest extends Specification {
         effectivePropertyAttributes(projection).toSet().toList().sort()
     }
 
-    private static String rowSortKey(ComparisonRow row) {
-        StudioPropertySignature signature = row.inlineProperty ?: row.groupedProperty
-        signature == null ? '' : signatureSortKey(signature)
-    }
-
-    private static String snapshotRowSortKey(SnapshotComparisonRow row) {
-        StudioPropertySignature signature = row.referenceProperty ?: row.currentProperty
-        signature == null ? '' : comparableSignatureSortKey(signature)
-    }
-
     private static String signatureSortKey(StudioPropertySignature signature) {
         "${signature.xmlAttribute()}|${formatPropertySignature(signature)}"
-    }
-
-    private static String comparableSignatureSortKey(StudioPropertySignature signature) {
-        "${signature.xmlAttribute()}|${formatComparablePropertySignature(signature)}"
-    }
-
-    private static String renderPropertyCell(StudioPropertySignature propertySignature) {
-        propertySignature == null ? '—' : "`" + escapeMarkdownText(formatPropertySignature(propertySignature)) + "`"
-    }
-
-    private static String renderComparablePropertyCell(StudioPropertySignature propertySignature) {
-        propertySignature == null ? '—' : "`" + escapeMarkdownText(formatComparablePropertySignature(propertySignature)) + "`"
     }
 
     private static String formatPropertySignature(StudioPropertySignature propertySignature) {
@@ -1575,42 +1403,6 @@ class StudioMetaDescriptionGeneratorTest extends Specification {
         parts.join('; ')
     }
 
-    private static String formatComparablePropertySignature(StudioPropertySignature propertySignature) {
-        formatPropertySignature(normalizeComparableSignature(propertySignature))
-    }
-
-    private static Set<StudioPropertySignature> normalizeComparableProperties(List<StudioPropertySignature> properties) {
-        properties.collect { normalizeComparableSignature(it) } as LinkedHashSet<StudioPropertySignature>
-    }
-
-    private static StudioPropertySignature normalizeComparableSignature(StudioPropertySignature propertySignature) {
-        new StudioPropertySignature(
-                propertySignature.xmlAttribute(),
-                propertySignature.type(),
-                propertySignature.classFqn(),
-                null,
-                propertySignature.required(),
-                propertySignature.defaultValue(),
-                propertySignature.defaultValueRef(),
-                propertySignature.initialValue(),
-                propertySignature.options(),
-                propertySignature.setMethod(),
-                propertySignature.setParameterFqn(),
-                propertySignature.addMethod(),
-                propertySignature.addParameterFqn(),
-                propertySignature.removeMethod(),
-                propertySignature.removeParameterFqn(),
-                propertySignature.typeParameter(),
-                propertySignature.useAsInjectionType(),
-                propertySignature.componentRefTags(),
-                propertySignature.cdataWrapperTag()
-        )
-    }
-
-    private static String escapeMarkdownText(String value) {
-        value.replace('|', '\\|')
-    }
-
     private static StudioMetaKind metaKind(String annotationName) {
         StudioMetaKind metaKind = META_KIND_BY_ANNOTATION[annotationName]
         if (metaKind == null) {
@@ -1664,94 +1456,6 @@ class StudioMetaDescriptionGeneratorTest extends Specification {
         String sourceClassName
         String methodName
         MetaProjection projection
-    }
-
-    private static final class MetaComparison {
-        String name
-        StudioMetaKind kind
-        String xmlElement
-        String sourceClassName
-        String methodName
-        boolean identical
-        List<ComparisonRow> rows
-        String sortKey
-
-        int getTotalProperties() {
-            rows.size()
-        }
-
-        int getIdenticalProperties() {
-            rows.count { it.status == '✅' } ?: 0
-        }
-
-        int getDifferentProperties() {
-            rows.count { it.status == '🚫' } ?: 0
-        }
-
-        List<ComparisonRow> getDifferentRows() {
-            rows.findAll { it.status == '🚫' }
-        }
-    }
-
-    private static final class ComparisonRow {
-        String status
-        StudioPropertySignature inlineProperty
-        StudioPropertySignature groupedProperty
-    }
-
-    private static final class MetaPropertySnapshot {
-        String sourceLabel
-        MetaPropertyCollectionMode propertyCollectionMode
-        List<MetaPropertySnapshotEntry> entries
-    }
-
-    private static final class MetaPropertySnapshotEntry {
-        String name
-        String sourceClassName
-        String methodName
-        StudioMetaKind kind
-        String xmlElement
-        List<StudioPropertySignature> properties
-
-        String getKey() {
-            "${sourceClassName}#${methodName}"
-        }
-
-        String getSortKey() {
-            "${sourceClassName}|${methodName}|${xmlElement}"
-        }
-    }
-
-    private static final class MetaSnapshotComparison {
-        String key
-        String name
-        StudioMetaKind referenceKind
-        StudioMetaKind currentKind
-        String referenceXmlElement
-        String currentXmlElement
-        boolean referencePresent
-        boolean currentPresent
-        boolean identical
-        List<SnapshotComparisonRow> rows
-        String sortKey
-
-        int getIdenticalProperties() {
-            rows.count { it.status == 'OK' } ?: 0
-        }
-
-        int getDifferentProperties() {
-            rows.count { it.status == 'DIFF' } ?: 0
-        }
-
-        List<SnapshotComparisonRow> getDifferentRows() {
-            rows.findAll { it.status == 'DIFF' }
-        }
-    }
-
-    private static final class SnapshotComparisonRow {
-        String status
-        StudioPropertySignature referenceProperty
-        StudioPropertySignature currentProperty
     }
 
     private static enum MetaPropertyCollectionMode {

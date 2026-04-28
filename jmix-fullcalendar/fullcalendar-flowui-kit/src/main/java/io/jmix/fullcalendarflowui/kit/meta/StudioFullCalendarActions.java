@@ -28,21 +28,6 @@ public interface StudioFullCalendarActions {
             icon = "io/jmix/fullcalendarflowui/kit/meta/icon/action/action.svg",
             documentationLink = "%VERSION%/calendar/full-calendar-component.html#days-of-week-datatype",
             propertyGroups = StudioFullCalendarPropertyGroups.DaysOfWeekEditActionComponent.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ACTION_VARIANT, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
-                            setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
-                            defaultValue = "DEFAULT", options = {"DEFAULT", "PRIMARY", "DANGER", "SUCCESS"}),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.DESCRIPTION, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ENABLED, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ICON, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ICON,
-                            setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ID, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID, required = true,
-                            initialValue = "daysOfWeekEdit"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.SHORTCUT_COMBINATION, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.SHORTCUT_COMBINATION),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.TEXT, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING,
-                            defaultValue = "msg://io.jmix.datatoolsflowui.action/showEntityInfoAction.title"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.VISIBLE, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN, defaultValue = "true")
-            },
             items = {
                     @StudioPropertiesItem(xmlAttribute = StudioXmlAttributes.ENABLED_BY_UI_PERMISSIONS, type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),

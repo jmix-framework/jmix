@@ -26,21 +26,6 @@ public interface StudioPivotTableActions {
             description = "Shows the Pivot Table component",
             classFqn = "io.jmix.pivottableflowui.action.ShowPivotTableAction",
             propertyGroups = StudioPivotTablePropertyGroups.ShowPivotTableActionComponent.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ACTION_VARIANT, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
-                            setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
-                            defaultValue = "DEFAULT", options = {"DEFAULT", "PRIMARY", "DANGER", "SUCCESS"}),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.DESCRIPTION, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ENABLED, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ICON, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ICON, defaultValue = "SHIELD",
-                            setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ID, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID, required = true,
-                            initialValue = "showPivotTable"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.SHORTCUT_COMBINATION, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.SHORTCUT_COMBINATION),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.TEXT, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING,
-                            defaultValue = "msg:///actions.showPivotAction.caption"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.VISIBLE, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN, defaultValue = "true")
-            },
             items = {
                     @StudioPropertiesItem(xmlAttribute = StudioXmlAttributes.ENABLED_BY_UI_PERMISSIONS, type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),

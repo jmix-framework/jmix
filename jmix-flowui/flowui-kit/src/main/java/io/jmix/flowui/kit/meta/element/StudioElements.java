@@ -48,28 +48,7 @@ interface StudioElements {
             icon = "io/jmix/flowui/kit/meta/icon/element/tab.svg",
             documentationLink = "%VERSION%/flow-ui/vc/layouts/accordion.html#_accordionpanel",
             visible = true,
-            propertyGroups = StudioPropertyGroups.AccordionPanelDefaultProperties.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.CLASS_NAMES, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.CSS, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.COLSPAN, category = StudioProperty.Category.POSITION, type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ENABLED, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.HEIGHT, category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ID, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.MAX_HEIGHT, category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.MAX_WIDTH, category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.MIN_HEIGHT, category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.MIN_WIDTH, category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.SUMMARY_TEXT, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.OPENED, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.THEME_NAMES, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST,
-                            options = {"filled", "reverse", "small"}),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.VISIBLE, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.WIDTH, category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}, defaultValue = "100%")
-            }
-    )
+            propertyGroups = StudioPropertyGroups.AccordionPanelDefaultProperties.class)
     AccordionPanel accordionPanel();
 
     @StudioElement(
@@ -82,13 +61,7 @@ interface StudioElements {
                     IDENTIFIER_PREFIX + USER_MENU_ACTION_ITEM_ACTION_IDENTIFIER,
             },
             unlimitedCount = false,
-            propertyGroups = StudioPropertyGroups.ShortcutCombinationComponent.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.KEY_COMBINATION, type = StudioPropertyType.STRING, required = true),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.RESET_FOCUS_ON_ACTIVE_ELEMENT, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false")
-            }
-    )
+            propertyGroups = StudioPropertyGroups.ShortcutCombinationComponent.class)
     void shortcutCombination();
 
     @StudioElement(
@@ -97,12 +70,7 @@ interface StudioElements {
             xmlElement = StudioXmlElements.ACTION_ITEM,
             documentationLink = "%VERSION%/flow-ui/vc/components/dropdownButton.html#actionItem",
             isInjectable = false,
-            propertyGroups = StudioPropertyGroups.ActionItemComponent.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ID, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID, required = true),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.REF, type = StudioPropertyType.ACTION_REF)
-            }
-    )
+            propertyGroups = StudioPropertyGroups.ActionItemComponent.class)
     DropdownButtonItem actionItem();
 
     String DROPDOWN_ACTION_ITEM_ACTION_IDENTIFIER = "jmix_dropdown_action_item_action";
@@ -118,21 +86,7 @@ interface StudioElements {
             propertyGroups = {
                     StudioPropertyGroups.DropdownActionItem.class,
                     StudioPropertyGroups.StringType.class
-            },
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.TYPE, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ACTION_VARIANT, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
-                            setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
-                            defaultValue = "DEFAULT", options = {"DEFAULT", "PRIMARY", "DANGER", "SUCCESS"}),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.DESCRIPTION, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ENABLED, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ICON, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ICON,
-                            setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ID, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID, required = true),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.TEXT, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.VISIBLE, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN, defaultValue = "true")
-            }
-    )
+            })
     void dropdownButtonAction();
 
     @StudioElement(
@@ -142,11 +96,7 @@ interface StudioElements {
             unlimitedCount = false,
             propertyGroups = {
                     StudioPropertyGroups.Message.class
-            },
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.MESSAGE, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING)
-            }
-    )
+            })
     void additionalInformation();
 
     @StudioElement(
@@ -158,32 +108,6 @@ interface StudioElements {
             visible = true,
             isInjectable = false,
             propertyGroups = StudioPropertyGroups.ColumnComponent.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.AUTO_WIDTH, category = StudioProperty.Category.SIZE, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.FILTERABLE, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValueRef = "parent:filterable"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.FLEX_GROW, category = StudioProperty.Category.POSITION, type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.FOOTER, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.FROZEN, category = StudioProperty.Category.POSITION, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.HEADER, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.KEY, type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.PROPERTY, category = StudioProperty.Category.DATA_BINDING, type = StudioPropertyType.PROPERTY_REF,
-                            typeParameter = "T", required = true),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.RESIZABLE, category = StudioProperty.Category.SIZE, type = StudioPropertyType.BOOLEAN,
-                            defaultValueRef = "parent:resizable"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.SORTABLE, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValueRef = "parent:sortable"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.TEXT_ALIGN, type = StudioPropertyType.ENUMERATION,
-                            classFqn = "com.vaadin.flow.component.grid.ColumnTextAlign", defaultValue = "START",
-                            options = {"CENTER", "END", "START"}),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.VISIBLE, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.WIDTH, category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}, defaultValue = "UNDEFINED"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.EDITABLE, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false")
-            },
             supplyHandlers = {
                     @StudioSupplyHandler(
                             methodName = "setRenderer",
@@ -227,22 +151,7 @@ interface StudioElements {
             icon = "io/jmix/flowui/kit/meta/icon/element/column.svg",
             documentationLink = "%VERSION%/flow-ui/vc/components/dataGrid.html#editorActionsColumn",
             unlimitedCount = false,
-            propertyGroups = StudioPropertyGroups.EditorActionsColumnDefaultProperties.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.AUTO_WIDTH, category = StudioProperty.Category.SIZE, type = StudioPropertyType.BOOLEAN, defaultValue = "false"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.FLEX_GROW, category = StudioProperty.Category.POSITION, type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.FOOTER, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.HEADER, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.KEY, type = StudioPropertyType.STRING,
-                            initialValue = "editorActionsColumn"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.RESIZABLE, category = StudioProperty.Category.SIZE, type = StudioPropertyType.BOOLEAN,
-                            defaultValueRef = "parent:resizable"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.VISIBLE, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.WIDTH, category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"},
-                            defaultValue = "UNDEFINED"),
-            }
-    )
+            propertyGroups = StudioPropertyGroups.EditorActionsColumnDefaultProperties.class)
     void editorActionsColumn();
 
     @StudioElement(
@@ -250,27 +159,7 @@ interface StudioElements {
             xmlElement = StudioXmlElements.EDIT_BUTTON,
             target = "io.jmix.flowui.kit.component.grid.EditorActionsColumn",
             unlimitedCount = false,
-            propertyGroups = StudioPropertyGroups.EditButtonComponent.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.TITLE, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ICON, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ICON,
-                            initialValue = "PENCIL",
-                            setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.TEXT, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING,
-                            initialValue = "msg:///actions.Edit"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.SHORTCUT_COMBINATION, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.SHORTCUT_COMBINATION),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.WHITE_SPACE, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
-                            classFqn = "com.vaadin.flow.component.HasText$WhiteSpace", defaultValue = "NORMAL",
-                            options = {"NORMAL", "NOWRAP", "PRE", "PRE_WRAP", "PRE_LINE", "BREAK_SPACES", "INHERIT",
-                                    "INITIAL"}),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.THEME_NAMES, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST,
-                            options = {"small", "large", "tertiary", "tertiary-inline",
-                                    "primary", "success", "warning", "error", "contrast", "icon", "contained", "outlined"}),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.CLASS_NAMES, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ICON_AFTER_TEXT, type = StudioPropertyType.BOOLEAN, category = StudioProperty.Category.LOOK_AND_FEEL,
-                            defaultValue = "false"),
-            }
-    )
+            propertyGroups = StudioPropertyGroups.EditButtonComponent.class)
     void editButton();
 
     @StudioElement(
@@ -278,26 +167,7 @@ interface StudioElements {
             xmlElement = StudioXmlElements.SAVE_BUTTON,
             target = "io.jmix.flowui.kit.component.grid.EditorActionsColumn",
             unlimitedCount = false,
-            propertyGroups = StudioPropertyGroups.SaveButtonComponent.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.TITLE, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ICON, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ICON,
-                            initialValue = "CHECK",
-                            setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.TEXT, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.SHORTCUT_COMBINATION, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.SHORTCUT_COMBINATION),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.WHITE_SPACE, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
-                            classFqn = "com.vaadin.flow.component.HasText$WhiteSpace", defaultValue = "NORMAL",
-                            options = {"NORMAL", "NOWRAP", "PRE", "PRE_WRAP", "PRE_LINE", "BREAK_SPACES", "INHERIT",
-                                    "INITIAL"}),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.THEME_NAMES, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST,
-                            options = {"small", "large", "tertiary", "tertiary-inline",
-                                    "primary", "success", "warning", "error", "contrast", "icon", "contained", "outlined"}),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.CLASS_NAMES, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ICON_AFTER_TEXT, type = StudioPropertyType.BOOLEAN, category = StudioProperty.Category.LOOK_AND_FEEL,
-                            defaultValue = "false"),
-            }
-    )
+            propertyGroups = StudioPropertyGroups.SaveButtonComponent.class)
     void saveButton();
 
     @StudioElement(
@@ -305,26 +175,7 @@ interface StudioElements {
             xmlElement = StudioXmlElements.CLOSE_BUTTON,
             target = "io.jmix.flowui.kit.component.grid.EditorActionsColumn",
             unlimitedCount = false,
-            propertyGroups = StudioPropertyGroups.CloseButtonComponent.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.TITLE, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ICON, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ICON,
-                            initialValue = "BAN",
-                            setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.TEXT, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.SHORTCUT_COMBINATION, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.SHORTCUT_COMBINATION),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.WHITE_SPACE, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
-                            classFqn = "com.vaadin.flow.component.HasText$WhiteSpace", defaultValue = "NORMAL",
-                            options = {"NORMAL", "NOWRAP", "PRE", "PRE_WRAP", "PRE_LINE", "BREAK_SPACES", "INHERIT",
-                                    "INITIAL"}),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.THEME_NAMES, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST,
-                            options = {"small", "large", "tertiary", "tertiary-inline",
-                                    "primary", "success", "warning", "error", "contrast", "icon", "contained", "outlined"}),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.CLASS_NAMES, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ICON_AFTER_TEXT, type = StudioPropertyType.BOOLEAN, category = StudioProperty.Category.LOOK_AND_FEEL,
-                            defaultValue = "false"),
-            }
-    )
+            propertyGroups = StudioPropertyGroups.CloseButtonComponent.class)
     void closeButton();
 
     @StudioElement(
@@ -332,27 +183,7 @@ interface StudioElements {
             xmlElement = StudioXmlElements.CANCEL_BUTTON,
             target = "io.jmix.flowui.kit.component.grid.EditorActionsColumn",
             unlimitedCount = false,
-            propertyGroups = StudioPropertyGroups.CancelButtonComponent.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.TITLE, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ICON, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ICON,
-                            initialValue = "BAN",
-                            setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.TEXT, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING,
-                            initialValue = "msg:///actions.Cancel"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.SHORTCUT_COMBINATION, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.SHORTCUT_COMBINATION),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.WHITE_SPACE, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
-                            classFqn = "com.vaadin.flow.component.HasText$WhiteSpace", defaultValue = "NORMAL",
-                            options = {"NORMAL", "NOWRAP", "PRE", "PRE_WRAP", "PRE_LINE", "BREAK_SPACES", "INHERIT",
-                                    "INITIAL"}),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.THEME_NAMES, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST,
-                            options = {"small", "large", "tertiary", "tertiary-inline",
-                                    "primary", "success", "warning", "error", "contrast", "icon", "contained", "outlined"}),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.CLASS_NAMES, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ICON_AFTER_TEXT, type = StudioPropertyType.BOOLEAN, category = StudioProperty.Category.LOOK_AND_FEEL,
-                            defaultValue = "false"),
-            }
-    )
+            propertyGroups = StudioPropertyGroups.CancelButtonComponent.class)
     void cancelButton();
 
     @StudioElement(
@@ -361,15 +192,7 @@ interface StudioElements {
             xmlElement = StudioXmlElements.AGGREGATION,
             target = {"com.vaadin.flow.component.grid.Grid.Column"},
             unsupportedTarget = {"io.jmix.flowui.kit.component.grid.EditorActionsColumn"},
-            propertyGroups = StudioPropertyGroups.AggregationInfoComponent.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.CELL_TITLE, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.STRATEGY_CLASS, type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.TYPE, type = StudioPropertyType.ENUMERATION,
-                            classFqn = "io.jmix.flowui.component.AggregationInfo$Type",
-                            options = {"SUM", "COUNT", "AVG", "MIN", "MAX"})
-            }
-    )
+            propertyGroups = StudioPropertyGroups.AggregationInfoComponent.class)
     void aggregationInfo();
 
     @StudioElement(
@@ -379,15 +202,7 @@ interface StudioElements {
             target = {"com.vaadin.flow.component.grid.Grid.Column"},
             unsupportedTarget = {"io.jmix.flowui.kit.component.grid.EditorActionsColumn"},
             documentationLink = "%VERSION%/flow-ui/vc/components/dataGrid.html#renderers",
-            propertyGroups = StudioPropertyGroups.FormatAndNullRepresentation.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.FORMAT,
-                            type = StudioPropertyType.LOCALIZED_STRING, required = true),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.NULL_REPRESENTATION,
-                            type = StudioPropertyType.LOCALIZED_STRING)
-
-            }
-    )
+            propertyGroups = StudioPropertyGroups.FormatAndNullRepresentation.class)
     void localDateRenderer();
 
     @StudioElement(
@@ -397,15 +212,7 @@ interface StudioElements {
             target = {"com.vaadin.flow.component.grid.Grid.Column"},
             unsupportedTarget = {"io.jmix.flowui.kit.component.grid.EditorActionsColumn"},
             documentationLink = "%VERSION%/flow-ui/vc/components/dataGrid.html#renderers",
-            propertyGroups = StudioPropertyGroups.FormatAndNullRepresentation.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.FORMAT,
-                            type = StudioPropertyType.LOCALIZED_STRING, required = true),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.NULL_REPRESENTATION,
-                            type = StudioPropertyType.LOCALIZED_STRING)
-
-            }
-    )
+            propertyGroups = StudioPropertyGroups.FormatAndNullRepresentation.class)
     void localDateTimeRenderer();
 
     @StudioElement(
@@ -415,15 +222,7 @@ interface StudioElements {
             target = {"com.vaadin.flow.component.grid.Grid.Column"},
             unsupportedTarget = {"io.jmix.flowui.kit.component.grid.EditorActionsColumn"},
             documentationLink = "%VERSION%/flow-ui/vc/components/dataGrid.html#renderers",
-            propertyGroups = StudioPropertyGroups.FormatAndNullRepresentation.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.FORMAT,
-                            type = StudioPropertyType.LOCALIZED_STRING, required = true),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.NULL_REPRESENTATION,
-                            type = StudioPropertyType.LOCALIZED_STRING)
-
-            }
-    )
+            propertyGroups = StudioPropertyGroups.FormatAndNullRepresentation.class)
     void numberRenderer();
 
     @StudioElement(
@@ -440,11 +239,7 @@ interface StudioElements {
             ),
             propertyGroups = {
                     StudioPropertyGroups.RequiredId.class
-            },
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ID, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID, required = true)
-            }
-    )
+            })
     DropdownButtonItem componentItem();
 
     @StudioElement(
@@ -453,14 +248,7 @@ interface StudioElements {
             xmlElement = StudioXmlElements.ERROR_MESSAGE,
             unlimitedCount = false,
             target = {"com.vaadin.flow.component.login.AbstractLogin"},
-            propertyGroups = StudioPropertyGroups.LoginErrorMessageDefaultProperties.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.TITLE, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.MESSAGE, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.USERNAME, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.PASSWORD, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING)
-            }
-    )
+            propertyGroups = StudioPropertyGroups.LoginErrorMessageDefaultProperties.class)
     LoginI18n.ErrorMessage loginErrorMessage();
 
     @StudioElement(
@@ -469,16 +257,7 @@ interface StudioElements {
             xmlElement = StudioXmlElements.FORM,
             unlimitedCount = false,
             target = {"io.jmix.flowui.kit.component.loginform.EnhancedLoginForm"},
-            propertyGroups = StudioPropertyGroups.JmixLoginFormComponent.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.FORGOT_PASSWORD, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.PASSWORD, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.REMEMBER_ME, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.SUBMIT, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.TITLE, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.USERNAME, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING)
-            }
-    )
+            propertyGroups = StudioPropertyGroups.JmixLoginFormComponent.class)
     JmixLoginI18n.JmixForm jmixLoginForm();
 
     @StudioElement(
@@ -487,15 +266,7 @@ interface StudioElements {
             xmlElement = StudioXmlElements.FORM,
             target = {"com.vaadin.flow.component.login.LoginOverlay"},
             unlimitedCount = false,
-            propertyGroups = StudioPropertyGroups.LoginFormDefaultProperties.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.FORGOT_PASSWORD, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.PASSWORD, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.SUBMIT, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.TITLE, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.USERNAME, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING)
-            }
-    )
+            propertyGroups = StudioPropertyGroups.LoginFormDefaultProperties.class)
     LoginI18n.Form loginForm();
 
     @StudioElement(
@@ -506,12 +277,7 @@ interface StudioElements {
             propertyGroups = {
                     StudioPropertyGroups.Title.class,
                     StudioPropertyGroups.Description.class
-            },
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.TITLE, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.DESCRIPTION, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING)
-            }
-    )
+            })
     void loginHeader();
 
     @StudioElement(
@@ -548,15 +314,7 @@ interface StudioElements {
             xmlElement = StudioXmlElements.GENERIC_FILTER,
             target = {"io.jmix.flowui.facet.UrlQueryParametersFacet"},
             icon = "io/jmix/flowui/kit/meta/icon/element/filter.svg",
-            propertyGroups = StudioPropertyGroups.GenericFilterElementComponent.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.COMPONENT, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_REF,
-                            componentRefTags = "genericFilter", required = true),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ID, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.CONFIGURATION_PARAM, type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.CONDITION_PARAM, type = StudioPropertyType.STRING)
-            }
-    )
+            propertyGroups = StudioPropertyGroups.GenericFilterElementComponent.class)
     void genericFilter();
 
     @StudioElement(
@@ -567,24 +325,7 @@ interface StudioElements {
             icon = "io/jmix/flowui/kit/meta/icon/element/tab.svg",
             documentationLink = "%VERSION%/flow-ui/vc/components/tabs.html#tab",
             visible = true,
-            propertyGroups = StudioPropertyGroups.TabComponent.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ARIA_LABEL, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ARIA_LABELLED_BY, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.CLASS_NAMES, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.CSS, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ENABLED, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.FLEX_GROW, category = StudioProperty.Category.POSITION, type = StudioPropertyType.DOUBLE),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ID, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID, required = true),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.LABEL, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.LAZY, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.THEME_NAMES, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST,
-                            options = {"icon-on-top"}),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.VISIBLE, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
-            }
-    )
+            propertyGroups = StudioPropertyGroups.TabComponent.class)
     Tab tab();
 
     @StudioElement(
@@ -596,12 +337,7 @@ interface StudioElements {
             propertyGroups = {
                     StudioPropertyGroups.RequiredId.class,
                     StudioPropertyGroups.Text.class
-            },
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ID, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID, required = true),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.TEXT, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING)
-            }
-    )
+            })
     DropdownButtonItem textItem();
 
     @StudioElement(
@@ -621,22 +357,7 @@ interface StudioElements {
             xmlElement = StudioXmlElements.TEXT_ITEM,
             isInjectable = false,
             documentationLink = "%VERSION%/flow-ui/vc/components/userMenu.html#textItem",
-            propertyGroups = StudioPropertyGroups.TextUserItemUserMenuItemComponent.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ID, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID, required = true),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.TEXT, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING, required = true),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ICON, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ICON),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.VISIBLE, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ENABLED, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.CHECKABLE, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.CHECKED, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.THEME_NAMES, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST,
-                            options = {"non-checkable"})
-            }
-    )
+            propertyGroups = StudioPropertyGroups.TextUserItemUserMenuItemComponent.class)
     UserMenuItem textUserItemUserMenuItem();
 
     @StudioElement(
@@ -645,21 +366,7 @@ interface StudioElements {
             xmlElement = StudioXmlElements.ACTION_ITEM,
             documentationLink = "%VERSION%/flow-ui/vc/components/userMenu.html#actionItem",
             isInjectable = false,
-            propertyGroups = StudioPropertyGroups.ActionUserMenuItemComponent.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ID, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID, required = true),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.REF, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.ACTION_REF),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.VISIBLE, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ENABLED, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.CHECKABLE, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.CHECKED, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.THEME_NAMES, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST,
-                            options = {"non-checkable"})
-            }
-    )
+            propertyGroups = StudioPropertyGroups.ActionUserMenuItemComponent.class)
     UserMenuItem actionUserMenuItem();
 
     String USER_MENU_ACTION_ITEM_ACTION_IDENTIFIER = "jmix_user_menu_action_item_action";
@@ -675,21 +382,7 @@ interface StudioElements {
             propertyGroups = {
                     StudioPropertyGroups.DropdownActionItem.class,
                     StudioPropertyGroups.StringType.class
-            },
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ID, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID, required = true),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.TEXT, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.TYPE, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.VISIBLE, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.DESCRIPTION, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ENABLED, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ACTION_VARIANT, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
-                            setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
-                            defaultValue = "DEFAULT", options = {"DEFAULT", "PRIMARY", "DANGER", "SUCCESS"}),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ICON, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ICON,
-                            setParameterFqn = "com.vaadin.flow.component.icon.Icon")
-            }
-    )
+            })
     void actionUserMenuItemAction();
 
     @StudioElement(
@@ -704,20 +397,7 @@ interface StudioElements {
                             maxCount = 1
                     )
             ),
-            propertyGroups = StudioPropertyGroups.ComponentUserMenuItemComponent.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ID, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID, required = true),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.VISIBLE, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ENABLED, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.CHECKABLE, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.CHECKED, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.THEME_NAMES, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST,
-                            options = {"non-checkable"})
-            }
-    )
+            propertyGroups = StudioPropertyGroups.ComponentUserMenuItemComponent.class)
     UserMenuItem componentUserMenuItem();
 
     @StudioElement(
@@ -726,27 +406,7 @@ interface StudioElements {
             xmlElement = StudioXmlElements.VIEW_ITEM,
             isInjectable = false,
             documentationLink = "%VERSION%/flow-ui/vc/components/userMenu.html#viewItem",
-            propertyGroups = StudioPropertyGroups.ViewUserItemUserMenuItemComponent.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ID, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID, required = true),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.TEXT, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING, required = true),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ICON, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ICON),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.VIEW_ID, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.VIEW_CLASS, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.OPEN_MODE, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.ENUMERATION,
-                            setMethod = "setOpenMode", classFqn = "io.jmix.flowui.view.OpenMode",
-                            defaultValue = "NAVIGATION", options = {"NAVIGATION", "DIALOG"}),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.VISIBLE, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ENABLED, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.CHECKABLE, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.CHECKED, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.THEME_NAMES, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST,
-                            options = {"non-checkable"})
-            }
-    )
+            propertyGroups = StudioPropertyGroups.ViewUserItemUserMenuItemComponent.class)
     UserMenuItem viewUserItemUserMenuItem();
 
     @StudioElement(
@@ -804,21 +464,7 @@ interface StudioElements {
                     "io.jmix.flowui.component.propertyfilter.PropertyFilter",
                     "io.jmix.flowui.component.jpqlfilter.JpqlFilter",
                     "io.jmix.flowui.component.menufilterfield.MenuFilterField"},
-            propertyGroups = StudioPropertyGroups.TooltipComponent.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.TEXT, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING, required = true),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.FOCUS_DELAY, type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.HIDE_DELAY, type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.HOVER_DELAY, type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.MANUAL, type = StudioPropertyType.BOOLEAN),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.OPENED, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN, defaultValue = "false"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.POSITION, type = StudioPropertyType.ENUMERATION,
-                            classFqn = "com.vaadin.flow.component.shared.Tooltip$TooltipPosition",
-                            setParameterFqn = "com.vaadin.flow.component.shared.Tooltip$TooltipPosition",
-                            options = {"TOP_START", "TOP", "TOP_END", "BOTTOM_START", "BOTTOM", "BOTTOM_END",
-                                    "START_TOP", "START", "START_BOTTOM", "END_TOP", "END", "END_BOTTOM"})
-            }
-    )
+            propertyGroups = StudioPropertyGroups.TooltipComponent.class)
     Tooltip tooltip();
 
     @StudioElement(
@@ -827,15 +473,7 @@ interface StudioElements {
             xmlElement = StudioXmlElements.PAGINATION,
             target = {"io.jmix.flowui.facet.UrlQueryParametersFacet"},
             icon = "io/jmix/flowui/kit/meta/icon/element/pagination.svg",
-            propertyGroups = StudioPropertyGroups.PaginationComponent.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.COMPONENT, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_REF,
-                            componentRefTags = {"simplePagination"}, required = true),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.FIRST_RESULT_PARAM, type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ID, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.MAX_RESULTS_PARAM, type = StudioPropertyType.STRING)
-            }
-    )
+            propertyGroups = StudioPropertyGroups.PaginationComponent.class)
     void pagination();
 
     @StudioElement(
@@ -844,14 +482,7 @@ interface StudioElements {
             xmlElement = StudioXmlElements.PROPERTY_FILTER,
             target = {"io.jmix.flowui.facet.UrlQueryParametersFacet"},
             icon = "io/jmix/flowui/kit/meta/icon/element/filter.svg",
-            propertyGroups = StudioPropertyGroups.FacetPropertyFilterComponent.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.COMPONENT, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_REF,
-                            componentRefTags = "propertyFilter", required = true),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ID, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.PARAM, type = StudioPropertyType.STRING),
-            }
-    )
+            propertyGroups = StudioPropertyGroups.FacetPropertyFilterComponent.class)
     void facetPropertyFilter();
 
     @StudioElement(
@@ -859,14 +490,7 @@ interface StudioElements {
             classFqn = "io.jmix.flowui.facet.urlqueryparameters.DataGridFilterUrlQueryParametersBinder",
             xmlElement = StudioXmlElements.DATA_GRID_FILTER,
             target = {"io.jmix.flowui.facet.UrlQueryParametersFacet"},
-            propertyGroups = StudioPropertyGroups.DataGridFilterComponent.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.COMPONENT, category = StudioProperty.Category.GENERAL,
-                            type = StudioPropertyType.COMPONENT_REF, componentRefTags = {"dataGrid", "treeDataGrid", "groupDataGrid"}, required = true),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ID, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.PARAM, type = StudioPropertyType.STRING),
-            }
-    )
+            propertyGroups = StudioPropertyGroups.DataGridFilterComponent.class)
     void dataGridFilter();
 
     @StudioElement(
@@ -874,15 +498,7 @@ interface StudioElements {
             classFqn = "com.vaadin.flow.component.formlayout.FormLayout.ResponsiveStep",
             xmlElement = StudioXmlElements.RESPONSIVE_STEP,
             documentationLink = "%VERSION%/flow-ui/vc/layouts/formLayout.html#responsive-steps",
-            propertyGroups = StudioPropertyGroups.FormLayoutResponsiveStepComponent.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.MIN_WIDTH, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}, required = true),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.COLUMNS, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.INTEGER, required = true),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.LABELS_POSITION, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
-                            classFqn = "com.vaadin.flow.component.formlayout.FormLayout$ResponsiveStep$LabelsPosition",
-                            options = {"ASIDE", "TOP"}, defaultValue = "TOP")
-            }
-    )
+            propertyGroups = StudioPropertyGroups.FormLayoutResponsiveStepComponent.class)
     FormLayout.ResponsiveStep formLayoutResponsiveStep();
 
     @StudioElement(
@@ -897,19 +513,7 @@ interface StudioElements {
                             maxCount = 1
                     )
             ),
-            propertyGroups = StudioPropertyGroups.FormItemDefaultProperties.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.CLASS_NAMES, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.CLICK_SHORTCUT, type = StudioPropertyType.SHORTCUT_COMBINATION),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.COLSPAN, category = StudioProperty.Category.POSITION, type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.LABEL, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ENABLED, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ID, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.VISIBLE, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true")
-            }
-    )
+            propertyGroups = StudioPropertyGroups.FormItemDefaultProperties.class)
     FormLayout.FormItem formItem();
 
     @StudioElement(
@@ -925,15 +529,7 @@ interface StudioElements {
             name = "ResponsiveStep",
             classFqn = "io.jmix.flowui.component.SupportsResponsiveSteps.ResponsiveStep",
             xmlElement = StudioXmlElements.RESPONSIVE_STEP,
-            propertyGroups = StudioPropertyGroups.ResponsiveStepComponent.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.MIN_WIDTH, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}, required = true),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.COLUMNS, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.INTEGER, required = true),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.LABELS_POSITION, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
-                            classFqn = "io.jmix.flowui.component.SupportsResponsiveSteps$ResponsiveStep$LabelsPosition",
-                            options = {"ASIDE", "TOP"}, defaultValue = "TOP")
-            }
-    )
+            propertyGroups = StudioPropertyGroups.ResponsiveStepComponent.class)
     void responsiveStep();
 
     @StudioElement(
@@ -943,52 +539,7 @@ interface StudioElements {
                     "io.jmix.flowui.component.logicalfilter.GroupFilter",
                     "io.jmix.flowui.component.genericfilter.configuration.DesignTimeConfiguration"
             },
-            propertyGroups = StudioPropertyGroups.PropertyFilterDefaultProperties.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.CLASS_NAMES, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.CSS, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.COLSPAN, category = StudioProperty.Category.POSITION, type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.DEFAULT_VALUE, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ENABLED, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ERROR_MESSAGE, category = StudioProperty.Category.VALIDATION, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.HELPER_TEXT, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ID, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.LABEL, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.LABEL_VISIBLE, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.OPERATION, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.ENUMERATION,
-                            classFqn = "io.jmix.flowui.component.propertyfilter.PropertyFilter$Operation",
-                            options = {"EQUAL", "NOT_EQUAL", "GREATER",
-                                    "GREATER_OR_EQUAL", "LESS", "LESS_OR_EQUAL", "CONTAINS", "NOT_CONTAINS",
-                                    "STARTS_WITH", "ENDS_WITH", "IS_SET", "IN_LIST", "NOT_IN_LIST", "IN_INTERVAL",
-                                    "DATE_EQUALS", "IS_COLLECTION_EMPTY", "MEMBER_OF_COLLECTION",
-                                    "NOT_MEMBER_OF_COLLECTION"}, required = true),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.OPERATIONS_LIST, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.VALUES_LIST,
-                            options = {"EQUAL", "NOT_EQUAL", "GREATER",
-                                    "GREATER_OR_EQUAL", "LESS", "LESS_OR_EQUAL", "CONTAINS", "NOT_CONTAINS",
-                                    "STARTS_WITH", "ENDS_WITH", "IS_SET", "IN_LIST", "NOT_IN_LIST", "IN_INTERVAL",
-                                    "DATE_EQUALS", "IS_COLLECTION_EMPTY", "MEMBER_OF_COLLECTION",
-                                    "NOT_MEMBER_OF_COLLECTION"}),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.OPERATION_EDITABLE, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.OPERATION_TEXT_VISIBLE, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.PARAMETER_NAME, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.PROPERTY, category = StudioProperty.Category.DATA_BINDING, type = StudioPropertyType.PROPERTY_REF,
-                            typeParameter = "V", required = true),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.READ_ONLY, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.REQUIRED, category = StudioProperty.Category.VALIDATION, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.REQUIRED_MESSAGE, category = StudioProperty.Category.VALIDATION, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.TAB_INDEX, type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.FOCUS_SHORTCUT, type = StudioPropertyType.SHORTCUT_COMBINATION),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.THEME_NAMES, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.VISIBLE, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true")
-            }
-    )
+            propertyGroups = StudioPropertyGroups.PropertyFilterDefaultProperties.class)
     void propertyFilter();
 
     @StudioElement(
@@ -999,38 +550,7 @@ interface StudioElements {
                     "io.jmix.flowui.component.logicalfilter.GroupFilter",
                     "io.jmix.flowui.component.genericfilter.configuration.DesignTimeConfiguration"
             },
-            propertyGroups = StudioPropertyGroups.JpqlFilterDefaultProperties.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.CLASS_NAMES, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.CSS, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.COLSPAN, category = StudioProperty.Category.POSITION, type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.DEFAULT_VALUE, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ENABLED, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ERROR_MESSAGE, category = StudioProperty.Category.VALIDATION, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.HAS_IN_EXPRESSION, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.HELPER_TEXT, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ID, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.LABEL, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.LABEL_VISIBLE, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.PARAMETER_CLASS, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING,
-                            typeParameter = "V", required = true),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.PARAMETER_NAME, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.READ_ONLY, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.REQUIRED, category = StudioProperty.Category.VALIDATION, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.REQUIRED_MESSAGE, category = StudioProperty.Category.VALIDATION, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.TAB_INDEX, type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.FOCUS_SHORTCUT, type = StudioPropertyType.SHORTCUT_COMBINATION),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.THEME_NAMES, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.VISIBLE, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.WIDTH, category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"})
-            }
-    )
+            propertyGroups = StudioPropertyGroups.JpqlFilterDefaultProperties.class)
     void jpqlFilter();
 
     @StudioElement(
@@ -1050,12 +570,7 @@ interface StudioElements {
             xmlnsAlias = "c",
             target = {"io.jmix.flowui.kit.component.stub.JpqlFilterCondition"},
             unlimitedCount = false,
-            propertyGroups = StudioPropertyGroups.JpqlFilterConditionJpqlComponent.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.JOIN, type = StudioPropertyType.JPQL_FILTER_JOIN),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.WHERE, type = StudioPropertyType.JPQL_FILTER_WHERE),
-            }
-    )
+            propertyGroups = StudioPropertyGroups.JpqlFilterConditionJpqlComponent.class)
     void jpqlFilterConditionJpql();
 
     @StudioElement(
@@ -1066,24 +581,7 @@ interface StudioElements {
                     "io.jmix.flowui.component.logicalfilter.GroupFilter",
                     "io.jmix.flowui.component.genericfilter.configuration.DesignTimeConfiguration"
             },
-            propertyGroups = StudioPropertyGroups.GroupFilterElementComponent.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.CLASS_NAMES, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.CSS, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.COLSPAN, category = StudioProperty.Category.POSITION, type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ENABLED, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ID, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.OPERATION, type = StudioPropertyType.ENUMERATION,
-                            classFqn = "io.jmix.flowui.component.logicalfilter.LogicalFilterComponent$Operation",
-                            options = {"AND", "OR"}, required = true),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.OPERATION_TEXT_VISIBLE, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.SUMMARY_TEXT, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.VISIBLE, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
-            }
-    )
+            propertyGroups = StudioPropertyGroups.GroupFilterElementComponent.class)
     void groupFilter();
 
     @StudioElement(
@@ -1091,16 +589,7 @@ interface StudioElements {
             classFqn = "io.jmix.flowui.component.genericfilter.configuration.DesignTimeConfiguration",
             xmlElement = StudioXmlElements.CONFIGURATION,
             icon = "io/jmix/flowui/kit/meta/icon/element/configuration.svg",
-            propertyGroups = StudioPropertyGroups.ConfigurationComponent.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.DEFAULT, type = StudioPropertyType.BOOLEAN),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ID, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID, required = true),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.NAME, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.OPERATION, type = StudioPropertyType.ENUMERATION,
-                            classFqn = "io.jmix.flowui.component.logicalfilter.LogicalFilterComponent$Operation",
-                            options = {"AND", "OR"}, defaultValue = "AND"),
-            }
-    )
+            propertyGroups = StudioPropertyGroups.ConfigurationComponent.class)
     void configuration();
 
     @StudioElement(
@@ -1109,15 +598,7 @@ interface StudioElements {
             xmlElement = StudioXmlElements.PROPERTIES,
             icon = "io/jmix/flowui/kit/meta/icon/element/property.svg",
             target = {"io.jmix.flowui.component.genericfilter.GenericFilter"},
-            propertyGroups = StudioPropertyGroups.PropertiesComponent.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.INCLUDE, type = StudioPropertyType.STRING, required = true),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.EXCLUDE, type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.EXCLUDE_PROPERTIES, type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.EXCLUDE_RECURSIVELY, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false")
-            }
-    )
+            propertyGroups = StudioPropertyGroups.PropertiesComponent.class)
     void properties();
 
     @StudioElement(
@@ -1134,13 +615,7 @@ interface StudioElements {
             },
             propertyGroups = {
                     StudioPropertyGroups.BaseComboBoxItemsQuery.class
-            },
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.SEARCH_STRING_FORMAT, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ESCAPE_VALUE_FOR_LIKE, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN, defaultValue = "false"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.QUERY, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.JPA_QUERY)
-            }
-    )
+            })
     void valueItemsQuery();
 
     @StudioElement(
@@ -1159,15 +634,7 @@ interface StudioElements {
                     StudioPropertyGroups.RequiredEntityClass.class,
                     StudioPropertyGroups.BaseComboBoxItemsQuery.class,
                     StudioPropertyGroups.FetchPlan.class
-            },
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.CLASS, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.ENTITY_CLASS, required = true),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.SEARCH_STRING_FORMAT, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ESCAPE_VALUE_FOR_LIKE, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN, defaultValue = "false"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.QUERY, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.JPA_QUERY),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.FETCH_PLAN, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.FETCH_PLAN)
-            }
-    )
+            })
     void entityItemsQuery();
 
     @StudioElement(
@@ -1188,16 +655,7 @@ interface StudioElements {
                     StudioPropertyGroups.EntityClass.class,
                     StudioPropertyGroups.BaseComboBoxItemsQuery.class,
                     StudioPropertyGroups.FetchPlan.class
-            },
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.CLASS, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.ENTITY_CLASS),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.SEARCH_STRING_FORMAT, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ESCAPE_VALUE_FOR_LIKE, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.QUERY, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.JPA_QUERY),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.FETCH_PLAN, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.FETCH_PLAN)
-            }
-    )
+            })
     void itemsQuery();
 
     @StudioElement(
@@ -1323,28 +781,7 @@ interface StudioElements {
             isInjectable = false,
             propertyGroups = {
                     StudioPropertyGroups.IconDefaultProperties.class
-            },
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ALIGN_SELF, category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
-                            classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
-                            defaultValue = "AUTO",
-                            options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.JUSTIFY_SELF, category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
-                            classFqn = "io.jmix.flowui.kit.component.Alignment",
-                            defaultValue = "AUTO",
-                            options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.CLASS_NAMES, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.CLICK_SHORTCUT, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.SHORTCUT_COMBINATION),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.CSS, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.COLOR, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.COLSPAN, category = StudioProperty.Category.POSITION, type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ICON, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ICON, required = true),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ID, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.SIZE, category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.VISIBLE, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true")
-            }
-    )
+            })
     Icon nestedIcon();
 
     @StudioElement(
@@ -1362,29 +799,7 @@ interface StudioElements {
             isInjectable = false,
             propertyGroups = {
                     StudioPropertyGroups.SvgIconDefaultProperties.class
-            },
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ALIGN_SELF, category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
-                            classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
-                            defaultValue = "AUTO",
-                            options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.JUSTIFY_SELF, category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
-                            classFqn = "io.jmix.flowui.kit.component.Alignment",
-                            defaultValue = "AUTO",
-                            options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.CLASS_NAMES, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.CLICK_SHORTCUT, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.SHORTCUT_COMBINATION),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.CSS, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.COLOR, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.RESOURCE, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.COLSPAN, category = StudioProperty.Category.POSITION, type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ID, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.SIZE, category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.SYMBOL, type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.VISIBLE, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true")
-            }
-    )
+            })
     SvgIcon svgIcon();
 
     @StudioElement(
@@ -1402,31 +817,7 @@ interface StudioElements {
             isInjectable = false,
             propertyGroups = {
                     StudioPropertyGroups.FontIconDefaultProperties.class
-            },
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ALIGN_SELF, category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
-                            classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
-                            defaultValue = "AUTO",
-                            options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.JUSTIFY_SELF, category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
-                            classFqn = "io.jmix.flowui.kit.component.Alignment",
-                            defaultValue = "AUTO",
-                            options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.CHAR_CODE, type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.CLASS_NAMES, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.CLICK_SHORTCUT, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.SHORTCUT_COMBINATION),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.CSS, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.COLOR, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.COLSPAN, category = StudioProperty.Category.POSITION, type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.FONT_FAMILY, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ICON_CLASS_NAMES, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ID, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.LIGATURE, type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.SIZE, category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.VISIBLE, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true")
-            }
-    )
+            })
     FontIcon fontIcon();
 
     @StudioElement(
@@ -1444,47 +835,6 @@ interface StudioElements {
             documentationLink = "%VERSION%/flow-ui/vc/html-components/image.html",
             isInjectable = false,
             propertyGroups = StudioPropertyGroups.ImageHtmlComponent.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ALIGN_SELF, category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
-                            classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
-                            defaultValue = "AUTO",
-                            options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.JUSTIFY_SELF, category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
-                            classFqn = "io.jmix.flowui.kit.component.Alignment",
-                            defaultValue = "AUTO",
-                            options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ALTERNATE_TEXT, type = StudioPropertyType.LOCALIZED_STRING,
-                            setMethod = "setAlt"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ARIA_LABEL, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ARIA_LABELLED_BY, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.CLASS_NAMES, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.CLICK_SHORTCUT, type = StudioPropertyType.SHORTCUT_COMBINATION),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.CSS, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.COLSPAN, category = StudioProperty.Category.POSITION, type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.DATA_CONTAINER, category = StudioProperty.Category.DATA_BINDING, type = StudioPropertyType.COLLECTION_OR_INSTANCE_DATA_CONTAINER_REF),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ENABLED, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.HEIGHT, category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ID, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.MAX_HEIGHT, category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.MAX_WIDTH, category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.MIN_HEIGHT, category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.MIN_WIDTH, category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.PROPERTY, category = StudioProperty.Category.DATA_BINDING, type = StudioPropertyType.PROPERTY_REF),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.RESOURCE, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING,
-                            setMethod = "setSrc"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.TEXT, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.THEME_NAMES, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST,
-                            options = {"fill", "contain", "cover", "scale-down"}),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.TITLE, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.VISIBLE, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.WHITE_SPACE, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
-                            classFqn = "com.vaadin.flow.component.HasText$WhiteSpace", defaultValue = "NORMAL",
-                            options = {"NORMAL", "NOWRAP", "PRE", "PRE_WRAP", "PRE_LINE", "BREAK_SPACES", "INHERIT",
-                                    "INITIAL"}),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.WIDTH, category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"})
-            },
             propertiesBindings = {
                     @StudioPropertiesBinding(
                             source = "dataContainer",
@@ -1516,10 +866,6 @@ interface StudioElements {
             xmlElement = StudioXmlElements.COMPONENT,
             target = "io.jmix.flowui.facet.SettingsFacet",
             propertyGroups = StudioPropertyGroups.SettingsFacetComponentComponent.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.COMPONENT_ID, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING, required = true),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ENABLED, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN)
-            },
             isInjectable = false,
             injectionIdentifier = StudioComponent.EMPTY_INJECTION_IDENTIFIER
     )
@@ -1529,13 +875,7 @@ interface StudioElements {
             name = "MenuItem",
             xmlElement = StudioXmlElements.MENU_ITEM,
             target = {"io.jmix.flowui.component.gridcolumnvisibility.JmixGridColumnVisibility"},
-            propertyGroups = StudioPropertyGroups.GridColumnVisibilityMenuItemComponent.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.REF_COLUMN, type = StudioPropertyType.COMPONENT_REF,
-                            componentRefTags = {"column"}, required = true),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.TEXT, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING)
-            }
-    )
+            propertyGroups = StudioPropertyGroups.GridColumnVisibilityMenuItemComponent.class)
     void gridColumnVisibilityMenuItem();
 
     @StudioElement(
@@ -1548,15 +888,7 @@ interface StudioElements {
             propertyGroups = {
                     StudioPropertyGroups.ClassNamesAndCss.class,
                     StudioPropertyGroups.IdAndVisible.class
-            },
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.CLASS_NAMES, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.CSS, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ID, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.VISIBLE, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true")
-            }
-    )
+            })
     void gridContextMenu();
 
     @StudioElement(
@@ -1581,25 +913,7 @@ interface StudioElements {
             classFqn = "com.vaadin.flow.component.grid.contextmenu.GridMenuItem",
             target = {"io.jmix.flowui.kit.component.grid.JmixGridContextMenu",
                     "com.vaadin.flow.component.grid.contextmenu.GridMenuItem"},
-            propertyGroups = StudioPropertyGroups.GridContextMenuItemComponent.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ACTION, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.ACTION_REF,
-                            classFqn = "io.jmix.flowui.kit.action.Action"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.CLASS_NAMES, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.CSS, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ENABLED, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ICON, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ICON),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ID, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.TEXT, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.VISIBLE, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.WHITE_SPACE, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
-                            classFqn = "com.vaadin.flow.component.HasText$WhiteSpace", defaultValue = "NORMAL",
-                            options = {"NORMAL", "NOWRAP", "PRE", "PRE_WRAP", "PRE_LINE", "BREAK_SPACES", "INHERIT",
-                                    "INITIAL"})
-            }
-    )
+            propertyGroups = StudioPropertyGroups.GridContextMenuItemComponent.class)
     void gridContextMenuItem();
 
     @StudioElement(
@@ -1634,14 +948,7 @@ interface StudioElements {
             classFqn = "io.jmix.flowui.kit.stub.StudioFragmentPropertyElement",
             xmlElement = StudioXmlElements.PROPERTY,
             icon = "io/jmix/flowui/kit/meta/icon/element/property.svg",
-            propertyGroups = StudioPropertyGroups.RequiredStringNameAndValueAndType.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.NAME, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING, required = true),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.VALUE, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING, required = true),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.TYPE, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.ENUMERATION,
-                            options = {"CONTAINER_REF", "LOADER_REF", "ICON"})
-            }
-    )
+            propertyGroups = StudioPropertyGroups.RequiredStringNameAndValueAndType.class)
     void fragmentProperty();
 
     @StudioElement(
@@ -1649,14 +956,7 @@ interface StudioElements {
             classFqn = "io.jmix.flowui.kit.stub.StudioGenericComponentPropertyElement",
             icon = "io/jmix/flowui/kit/meta/icon/element/property.svg",
             xmlElement = StudioXmlElements.PROPERTY,
-            propertyGroups = StudioPropertyGroups.RequiredStringNameAndValueAndType.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.NAME, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING, required = true),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.VALUE, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING, required = true),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.TYPE, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.ENUMERATION,
-                            options = {"CONTAINER_REF", "LOADER_REF", "ICON"})
-            }
-    )
+            propertyGroups = StudioPropertyGroups.RequiredStringNameAndValueAndType.class)
     void genericComponentProperty();
 
     @StudioElement(
@@ -1681,12 +981,7 @@ interface StudioElements {
             isInjectable = false,
             propertyGroups = {
                     StudioPropertyGroups.RequiredFragmentClass.class
-            },
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.CLASS, category = StudioProperty.Category.GENERAL,
-                            type = StudioPropertyType.FRAGMENT_CLASS, required = true)
-            }
-    )
+            })
     void fragmentRenderer();
 
     @StudioElement(

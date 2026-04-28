@@ -17,11 +17,8 @@
 package io.jmix.flowui.kit.meta.element;
 
 import io.jmix.flowui.kit.meta.StudioElement;
-import io.jmix.flowui.kit.meta.StudioProperty;
-import io.jmix.flowui.kit.meta.StudioPropertyType;
 import io.jmix.flowui.kit.meta.StudioUiKit;
 import io.jmix.flowui.kit.meta.StudioPropertyGroups;
-import io.jmix.flowui.kit.meta.StudioXmlAttributes;
 import io.jmix.flowui.kit.meta.StudioXmlElements;
 
 @StudioUiKit
@@ -44,11 +41,7 @@ interface StudioFormatterElements {
             documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/formatter.html#custom-formatter",
             propertyGroups = {
                     StudioPropertyGroups.Bean.class
-            },
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.BEAN, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING, required = true)
-            }
-    )
+            })
     void customFormatter();
 
     @StudioElement(
@@ -61,15 +54,7 @@ interface StudioFormatterElements {
                     StudioPropertyGroups.StringFormat.class,
                     StudioPropertyGroups.DateFormatterType.class,
                     StudioPropertyGroups.UseUserTimezone.class
-            },
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.FORMAT, type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.TYPE, type = StudioPropertyType.ENUMERATION,
-                            options = {"DATE", "DATETIME"}),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.USE_USER_TIMEZONE, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false"),
-            }
-    )
+            })
     void dateFormatter();
 
     @StudioElement(
@@ -80,10 +65,6 @@ interface StudioFormatterElements {
             documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/formatter.html#number-formatter",
             propertyGroups = {
                     StudioPropertyGroups.StringFormat.class
-            },
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.FORMAT, type = StudioPropertyType.STRING)
-            }
-    )
+            })
     void numberFormatter();
 }

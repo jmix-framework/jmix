@@ -25,109 +25,34 @@ interface StudioGenericFilterActions {
             type = "genericFilter_addCondition",
             description = "Adds condition to current filter configuration",
             classFqn = "io.jmix.flowui.action.genericfilter.GenericFilterAddConditionAction",
-            propertyGroups = StudioActionPropertyGroups.AddConditionActionComponent.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ACTION_VARIANT, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
-                            setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
-                            defaultValue = "DEFAULT", options = {"DEFAULT", "PRIMARY", "DANGER", "SUCCESS"}),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.DESCRIPTION, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ENABLED, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ICON, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ICON,
-                            setParameterFqn = "com.vaadin.flow.component.icon.Icon", defaultValue = "PLUS"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ID, category = StudioProperty.Category.GENERAL,
-                            type = StudioPropertyType.COMPONENT_ID, required = true, initialValue = "genericFilter_addCondition"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.SHORTCUT_COMBINATION, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.SHORTCUT_COMBINATION),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.TEXT, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.VISIBLE, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN, defaultValue = "true")
-            }
-    )
+            propertyGroups = StudioActionPropertyGroups.AddConditionActionComponent.class)
     void addConditionAction();
 
     @StudioAction(
             type = "genericFilter_clearValues",
             description = "Clears the filter condition values",
             classFqn = "io.jmix.flowui.action.genericfilter.GenericFilterClearValuesAction",
-            propertyGroups = StudioActionPropertyGroups.ClearValuesActionComponent.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ACTION_VARIANT, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
-                            setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
-                            defaultValue = "DEFAULT", options = {"DEFAULT", "PRIMARY", "DANGER", "SUCCESS"}),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.DESCRIPTION, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ENABLED, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ICON, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ICON,
-                            setParameterFqn = "com.vaadin.flow.component.icon.Icon", defaultValue = "ERASER"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ID, category = StudioProperty.Category.GENERAL,
-                            type = StudioPropertyType.COMPONENT_ID, required = true, initialValue = "genericFilter_clearValues"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.SHORTCUT_COMBINATION, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.SHORTCUT_COMBINATION),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.TEXT, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.VISIBLE, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN, defaultValue = "true")
-            }
-    )
+            propertyGroups = StudioActionPropertyGroups.ClearValuesActionComponent.class)
     void clearValuesAction();
 
     @StudioAction(
             type = "genericFilter_copy",
             description = "Copies all conditions from design-time configuration to run-time configuration",
             classFqn = "io.jmix.flowui.action.genericfilter.GenericFilterCopyAction",
-            propertyGroups = StudioActionPropertyGroups.CopyActionComponent.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ACTION_VARIANT, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
-                            setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
-                            defaultValue = "DEFAULT", options = {"DEFAULT", "PRIMARY", "DANGER", "SUCCESS"}),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.DESCRIPTION, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ENABLED, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ICON, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ICON,
-                            setParameterFqn = "com.vaadin.flow.component.icon.Icon", defaultValue = "COPY"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ID, category = StudioProperty.Category.GENERAL,
-                            type = StudioPropertyType.COMPONENT_ID, required = true, initialValue = "genericFilter_copy"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.SHORTCUT_COMBINATION, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.SHORTCUT_COMBINATION),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.TEXT, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.VISIBLE, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN, defaultValue = "true")
-            }
-    )
+            propertyGroups = StudioActionPropertyGroups.CopyActionComponent.class)
     void copyAction();
 
     @StudioAction(
             type = "genericFilter_edit",
             description = "Edits current configuration",
             classFqn = "io.jmix.flowui.action.genericfilter.GenericFilterEditAction",
-            propertyGroups = StudioActionPropertyGroups.GenericFilterEditActionComponent.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ACTION_VARIANT, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
-                            setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
-                            defaultValue = "DEFAULT", options = {"DEFAULT", "PRIMARY", "DANGER", "SUCCESS"}),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.DESCRIPTION, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ENABLED, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ICON, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ICON,
-                            setParameterFqn = "com.vaadin.flow.component.icon.Icon", defaultValue = "PENCIL"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ID, category = StudioProperty.Category.GENERAL,
-                            type = StudioPropertyType.COMPONENT_ID, required = true, initialValue = "genericFilter_edit"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.SHORTCUT_COMBINATION, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.SHORTCUT_COMBINATION),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.TEXT, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.VISIBLE, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN, defaultValue = "true")
-            }
-    )
+            propertyGroups = StudioActionPropertyGroups.GenericFilterEditActionComponent.class)
     void editAction();
 
     @StudioAction(
             type = "genericFilter_reset",
             description = "Resets current configuration",
             classFqn = "io.jmix.flowui.action.genericfilter.GenericFilterResetAction",
-            propertyGroups = StudioActionPropertyGroups.ResetActionComponent.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ACTION_VARIANT, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
-                            setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
-                            defaultValue = "DEFAULT", options = {"DEFAULT", "PRIMARY", "DANGER", "SUCCESS"}),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.DESCRIPTION, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ENABLED, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ICON, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ICON,
-                            setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ID, category = StudioProperty.Category.GENERAL,
-                            type = StudioPropertyType.COMPONENT_ID, required = true, initialValue = "genericFilter_reset"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.SHORTCUT_COMBINATION, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.SHORTCUT_COMBINATION),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.TEXT, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.VISIBLE, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN, defaultValue = "true")
-            }
-    )
+            propertyGroups = StudioActionPropertyGroups.ResetActionComponent.class)
     void resetAction();
 }

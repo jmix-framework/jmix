@@ -31,40 +31,7 @@ public interface StudioFullCalendarElements {
             icon = "io/jmix/fullcalendarflowui/kit/meta/icon/unknownComponent.svg",
             documentationLink = "%VERSION%/calendar/full-calendar-component.html#container-data-provider",
             isInjectable = false,
-            propertyGroups = StudioFullCalendarPropertyGroups.ContainerDataProviderComponent.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ID,
-                            category = StudioProperty.Category.GENERAL,
-                            type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.DATA_CONTAINER,
-                            category = StudioProperty.Category.GENERAL,
-                            type = StudioPropertyType.COLLECTION_OR_INSTANCE_DATA_CONTAINER_REF,
-                            required = true,
-                            typeParameter = "E"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ADDITIONAL_PROPERTIES, type = StudioPropertyType.VALUES_LIST),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ALL_DAY, type = StudioPropertyType.PROPERTY_REF),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.BACKGROUND_COLOR, type = StudioPropertyType.PROPERTY_REF),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.BORDER_COLOR, type = StudioPropertyType.PROPERTY_REF),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.CLASS_NAMES, type = StudioPropertyType.PROPERTY_REF),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.CONSTRAINT, type = StudioPropertyType.PROPERTY_REF),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.DESCRIPTION, type = StudioPropertyType.PROPERTY_REF),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.DISPLAY, type = StudioPropertyType.PROPERTY_REF),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.DURATION_EDITABLE, type = StudioPropertyType.PROPERTY_REF),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.END_DATE_TIME, type = StudioPropertyType.PROPERTY_REF),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.GROUP_ID, type = StudioPropertyType.PROPERTY_REF),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.INTERACTIVE, type = StudioPropertyType.PROPERTY_REF),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.OVERLAP, type = StudioPropertyType.PROPERTY_REF),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.RECURRING_DAYS_OF_WEEK, type = StudioPropertyType.PROPERTY_REF),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.RECURRING_END_DATE, type = StudioPropertyType.PROPERTY_REF),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.RECURRING_END_TIME, type = StudioPropertyType.PROPERTY_REF),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.RECURRING_START_DATE, type = StudioPropertyType.PROPERTY_REF),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.RECURRING_START_TIME, type = StudioPropertyType.PROPERTY_REF),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.START_DATE_TIME, type = StudioPropertyType.PROPERTY_REF),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.START_EDITABLE, type = StudioPropertyType.PROPERTY_REF),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.TEXT_COLOR, type = StudioPropertyType.PROPERTY_REF),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.TITLE, type = StudioPropertyType.PROPERTY_REF),
-            }
-    )
+            propertyGroups = StudioFullCalendarPropertyGroups.ContainerDataProviderComponent.class)
     void containerDataProvider();
 
     @StudioElement(
@@ -75,35 +42,7 @@ public interface StudioFullCalendarElements {
             icon = "io/jmix/fullcalendarflowui/kit/meta/icon/unknownComponent.svg",
             documentationLink = "%VERSION%/calendar/full-calendar-component.html#callback-calendar-data-provider",
             isInjectable = false,
-            propertyGroups = StudioFullCalendarPropertyGroups.CallbackDataProviderComponent.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ID,
-                            category = StudioProperty.Category.GENERAL,
-                            type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ADDITIONAL_PROPERTIES, type = StudioPropertyType.VALUES_LIST),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ALL_DAY, type = StudioPropertyType.PROPERTY_REF),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.BACKGROUND_COLOR, type = StudioPropertyType.PROPERTY_REF),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.BORDER_COLOR, type = StudioPropertyType.PROPERTY_REF),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.CLASS_NAMES, type = StudioPropertyType.PROPERTY_REF),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.CONSTRAINT, type = StudioPropertyType.PROPERTY_REF),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.DESCRIPTION, type = StudioPropertyType.PROPERTY_REF),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.DISPLAY, type = StudioPropertyType.PROPERTY_REF),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.DURATION_EDITABLE, type = StudioPropertyType.PROPERTY_REF),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.END_DATE_TIME, type = StudioPropertyType.PROPERTY_REF),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.GROUP_ID, type = StudioPropertyType.PROPERTY_REF),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.INTERACTIVE, type = StudioPropertyType.PROPERTY_REF),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.OVERLAP, type = StudioPropertyType.PROPERTY_REF),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.RECURRING_DAYS_OF_WEEK, type = StudioPropertyType.PROPERTY_REF),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.RECURRING_END_DATE, type = StudioPropertyType.PROPERTY_REF),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.RECURRING_END_TIME, type = StudioPropertyType.PROPERTY_REF),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.RECURRING_START_DATE, type = StudioPropertyType.PROPERTY_REF),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.RECURRING_START_TIME, type = StudioPropertyType.PROPERTY_REF),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.START_DATE_TIME, type = StudioPropertyType.PROPERTY_REF),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.START_EDITABLE, type = StudioPropertyType.PROPERTY_REF),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.TEXT_COLOR, type = StudioPropertyType.PROPERTY_REF),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.TITLE, type = StudioPropertyType.PROPERTY_REF),
-            }
-    )
+            propertyGroups = StudioFullCalendarPropertyGroups.CallbackDataProviderComponent.class)
     void callbackDataProvider();
 
     @StudioElement(
@@ -118,13 +57,7 @@ public interface StudioFullCalendarElements {
                     StudioPropertyGroups.RequiredEntityClass.class,
                     StudioPropertyGroups.Query.class,
                     StudioPropertyGroups.FetchPlan.class
-            },
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.CLASS, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.ENTITY_CLASS, required = true),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.QUERY, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.JPA_QUERY),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.FETCH_PLAN, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.FETCH_PLAN)
-            }
-    )
+            })
     void entityItemsQuery();
 
     @StudioElement(
@@ -136,14 +69,6 @@ public interface StudioFullCalendarElements {
             documentationLink = "%VERSION%/calendar/full-calendar-component.html#calendar-display-modes",
             isInjectable = false,
             propertyGroups = StudioFullCalendarPropertyGroups.CustomDisplayModeComponent.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ID, type = StudioPropertyType.STRING, required = true),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.TYPE, type = StudioPropertyType.STRING,
-                            classFqn = "io.jmix.fullcalendarflowui.kit.component.model.GenericCalendarDisplayModes",
-                            options = {"DAY_GRID", "TIME_GRID", "LIST", "MULTI_MONTH"},
-                            defaultValue = "DAY_GRID"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.DAY_COUNT, type = StudioPropertyType.INTEGER)
-            },
             unsupportedTarget = TAG_PREFIX + "displayModeProperties"
     )
     void customDisplayMode();
@@ -170,15 +95,7 @@ public interface StudioFullCalendarElements {
             classFqn = "io.jmix.fullcalendarflowui.kit.component.model.DayGridDayProperties",
             target = "io.jmix.fullcalendarflowui.kit.meta.element.StudioFullCalendarDisplayModeProperties",
             icon = "io/jmix/fullcalendarflowui/kit/meta/icon/unknownComponent.svg",
-            propertyGroups = StudioFullCalendarPropertyGroups.DayGridDayDefaultProperties.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.DAY_HEADER_FORMAT, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.DAY_POPOVER_FORMAT, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.EVENT_TIME_FORMAT, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.WEEK_NUMBER_FORMAT, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.DISPLAY_EVENT_END, type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
-            }
-    )
+            propertyGroups = StudioFullCalendarPropertyGroups.DayGridDayDefaultProperties.class)
     void dayGridDay();
 
     @StudioElement(
@@ -190,15 +107,7 @@ public interface StudioFullCalendarElements {
             classFqn = "io.jmix.fullcalendarflowui.kit.component.model.DayGridWeekProperties",
             target = "io.jmix.fullcalendarflowui.kit.meta.element.StudioFullCalendarDisplayModeProperties",
             icon = "io/jmix/fullcalendarflowui/kit/meta/icon/unknownComponent.svg",
-            propertyGroups = StudioFullCalendarPropertyGroups.DayGridProperties.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.DAY_HEADER_FORMAT, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.DAY_POPOVER_FORMAT, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.EVENT_TIME_FORMAT, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.WEEK_NUMBER_FORMAT, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.DISPLAY_EVENT_END, type = StudioPropertyType.BOOLEAN, defaultValue = "false"),
-            }
-    )
+            propertyGroups = StudioFullCalendarPropertyGroups.DayGridProperties.class)
     void dayGridWeek();
 
     @StudioElement(
@@ -214,17 +123,7 @@ public interface StudioFullCalendarElements {
                     StudioFullCalendarPropertyGroups.DayGridProperties.class,
                     StudioFullCalendarPropertyGroups.FixedWeekCount.class,
                     StudioFullCalendarPropertyGroups.ShowNonCurrentDates.class
-            },
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.DAY_HEADER_FORMAT, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.DAY_POPOVER_FORMAT, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.EVENT_TIME_FORMAT, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.WEEK_NUMBER_FORMAT, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.FIXED_WEEK_COUNT, type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.SHOW_NON_CURRENT_DATES, type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.DISPLAY_EVENT_END, type = StudioPropertyType.BOOLEAN, defaultValue = "false"),
-            }
-    )
+            })
     void dayGridMonth();
 
     @StudioElement(
@@ -236,16 +135,7 @@ public interface StudioFullCalendarElements {
             classFqn = "io.jmix.fullcalendarflowui.kit.component.model.DayGridYearProperties",
             target = "io.jmix.fullcalendarflowui.kit.meta.element.StudioFullCalendarDisplayModeProperties",
             icon = "io/jmix/fullcalendarflowui/kit/meta/icon/unknownComponent.svg",
-            propertyGroups = StudioFullCalendarPropertyGroups.DayGridYearComponent.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.DAY_HEADER_FORMAT, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.DAY_POPOVER_FORMAT, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.EVENT_TIME_FORMAT, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.WEEK_NUMBER_FORMAT, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.MONTH_START_FORMAT, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.DISPLAY_EVENT_END, type = StudioPropertyType.BOOLEAN, defaultValue = "false"),
-            }
-    )
+            propertyGroups = StudioFullCalendarPropertyGroups.DayGridYearComponent.class)
     void dayGridYear();
 
     @StudioElement(
@@ -257,15 +147,7 @@ public interface StudioFullCalendarElements {
             classFqn = "io.jmix.fullcalendarflowui.kit.component.model.ListDayProperties",
             target = "io.jmix.fullcalendarflowui.kit.meta.element.StudioFullCalendarDisplayModeProperties",
             icon = "io/jmix/fullcalendarflowui/kit/meta/icon/unknownComponent.svg",
-            propertyGroups = StudioFullCalendarPropertyGroups.ListProperties.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.LIST_DAY_FORMAT, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.LIST_DAY_SIDE_FORMAT, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.LIST_DAY_SIDE_VISIBLE, type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.LIST_DAY_VISIBLE, type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
-
-            }
-    )
+            propertyGroups = StudioFullCalendarPropertyGroups.ListProperties.class)
     void listDay();
 
     @StudioElement(
@@ -277,14 +159,7 @@ public interface StudioFullCalendarElements {
             classFqn = "io.jmix.fullcalendarflowui.kit.component.model.ListWeekProperties",
             target = "io.jmix.fullcalendarflowui.kit.meta.element.StudioFullCalendarDisplayModeProperties",
             icon = "io/jmix/fullcalendarflowui/kit/meta/icon/unknownComponent.svg",
-            propertyGroups = StudioFullCalendarPropertyGroups.ListProperties.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.LIST_DAY_FORMAT, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.LIST_DAY_SIDE_FORMAT, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.LIST_DAY_SIDE_VISIBLE, type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.LIST_DAY_VISIBLE, type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
-            }
-    )
+            propertyGroups = StudioFullCalendarPropertyGroups.ListProperties.class)
     void listWeek();
 
     @StudioElement(
@@ -296,14 +171,7 @@ public interface StudioFullCalendarElements {
             classFqn = "io.jmix.fullcalendarflowui.kit.component.model.ListMonthProperties",
             target = "io.jmix.fullcalendarflowui.kit.meta.element.StudioFullCalendarDisplayModeProperties",
             icon = "io/jmix/fullcalendarflowui/kit/meta/icon/unknownComponent.svg",
-            propertyGroups = StudioFullCalendarPropertyGroups.ListProperties.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.LIST_DAY_FORMAT, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.LIST_DAY_SIDE_FORMAT, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.LIST_DAY_SIDE_VISIBLE, type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.LIST_DAY_VISIBLE, type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
-            }
-    )
+            propertyGroups = StudioFullCalendarPropertyGroups.ListProperties.class)
     void listMonth();
 
     @StudioElement(
@@ -315,14 +183,7 @@ public interface StudioFullCalendarElements {
             classFqn = "io.jmix.fullcalendarflowui.kit.component.model.ListYearProperties",
             target = "io.jmix.fullcalendarflowui.kit.meta.element.StudioFullCalendarDisplayModeProperties",
             icon = "io/jmix/fullcalendarflowui/kit/meta/icon/unknownComponent.svg",
-            propertyGroups = StudioFullCalendarPropertyGroups.ListProperties.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.LIST_DAY_FORMAT, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.LIST_DAY_SIDE_FORMAT, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.LIST_DAY_SIDE_VISIBLE, type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.LIST_DAY_VISIBLE, type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
-            }
-    )
+            propertyGroups = StudioFullCalendarPropertyGroups.ListProperties.class)
     void listYear();
 
     @StudioElement(
@@ -334,20 +195,7 @@ public interface StudioFullCalendarElements {
             classFqn = "io.jmix.fullcalendarflowui.kit.component.model.TimeGridDayProperties",
             target = "io.jmix.fullcalendarflowui.kit.meta.element.StudioFullCalendarDisplayModeProperties",
             icon = "io/jmix/fullcalendarflowui/kit/meta/icon/unknownComponent.svg",
-            propertyGroups = StudioFullCalendarPropertyGroups.TimeGridProperties.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.DAY_POPOVER_FORMAT, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.DAY_HEADER_FORMAT, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.WEEK_NUMBER_FORMAT, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.EVENT_TIME_FORMAT, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.SLOT_LABEL_FORMAT, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.EVENT_MIN_HEIGHT, type = StudioPropertyType.INTEGER, defaultValue = "15"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.EVENT_SHORT_HEIGHT, type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.SLOT_EVENT_OVERLAP, type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ALL_DAY_SLOT_VISIBLE, type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.DISPLAY_EVENT_END, type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
-            }
-    )
+            propertyGroups = StudioFullCalendarPropertyGroups.TimeGridProperties.class)
     void timeGridDay();
 
     @StudioElement(
@@ -359,20 +207,7 @@ public interface StudioFullCalendarElements {
             classFqn = "io.jmix.fullcalendarflowui.kit.component.model.TimeGridWeekProperties",
             target = "io.jmix.fullcalendarflowui.kit.meta.element.StudioFullCalendarDisplayModeProperties",
             icon = "io/jmix/fullcalendarflowui/kit/meta/icon/unknownComponent.svg",
-            propertyGroups = StudioFullCalendarPropertyGroups.TimeGridProperties.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.DAY_POPOVER_FORMAT, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.DAY_HEADER_FORMAT, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.WEEK_NUMBER_FORMAT, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.EVENT_TIME_FORMAT, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.SLOT_LABEL_FORMAT, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.EVENT_MIN_HEIGHT, type = StudioPropertyType.INTEGER, defaultValue = "15"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.EVENT_SHORT_HEIGHT, type = StudioPropertyType.INTEGER),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.SLOT_EVENT_OVERLAP, type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ALL_DAY_SLOT_VISIBLE, type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.DISPLAY_EVENT_END, type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
-            }
-    )
+            propertyGroups = StudioFullCalendarPropertyGroups.TimeGridProperties.class)
     void timeGridWeek();
 
     @StudioElement(
@@ -384,15 +219,7 @@ public interface StudioFullCalendarElements {
             classFqn = "io.jmix.fullcalendarflowui.kit.component.model.MultiMonthYearProperties",
             target = "io.jmix.fullcalendarflowui.kit.meta.element.StudioFullCalendarDisplayModeProperties",
             icon = "io/jmix/fullcalendarflowui/kit/meta/icon/unknownComponent.svg",
-            propertyGroups = StudioFullCalendarPropertyGroups.MultiMonthYearComponent.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.MULTI_MONTH_MAX_COLUMNS, type = StudioPropertyType.INTEGER, defaultValue = "3"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.MULTI_MONTH_MIN_WIDTH, type = StudioPropertyType.INTEGER, defaultValue = "350"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.MULTI_MONTH_TITLE_FORMAT, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.FIXED_WEEK_COUNT, type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.SHOW_NON_CURRENT_DATES, type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
-            }
-    )
+            propertyGroups = StudioFullCalendarPropertyGroups.MultiMonthYearComponent.class)
     void multiMonthYear();
 
     @StudioElement(
@@ -404,18 +231,7 @@ public interface StudioFullCalendarElements {
             classFqn = "io.jmix.fullcalendarflowui.kit.component.model.CalendarDuration",
             target = "io.jmix.fullcalendarflowui.kit.component.model.CustomCalendarDisplayMode",
             icon = "io/jmix/fullcalendarflowui/kit/meta/icon/unknownComponent.svg",
-            propertyGroups = StudioFullCalendarPropertyGroups.CalendarDurationComponent.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.YEARS, type = StudioPropertyType.INTEGER, defaultValue = "0"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.MONTHS, type = StudioPropertyType.INTEGER, defaultValue = "0"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.WEEKS, type = StudioPropertyType.INTEGER, defaultValue = "0"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.DAYS, type = StudioPropertyType.INTEGER, defaultValue = "0"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.HOURS, type = StudioPropertyType.INTEGER, defaultValue = "0"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.MINUTES, type = StudioPropertyType.INTEGER, defaultValue = "0"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.SECONDS, type = StudioPropertyType.INTEGER, defaultValue = "0"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.MILLISECONDS, type = StudioPropertyType.INTEGER, defaultValue = "0"),
-            }
-    )
+            propertyGroups = StudioFullCalendarPropertyGroups.CalendarDurationComponent.class)
     void calendarDuration();
 
     @StudioElement(
@@ -425,12 +241,7 @@ public interface StudioFullCalendarElements {
             documentationLink = "%VERSION%/calendar/full-calendar-component.html#properties",
             classFqn = "io.jmix.fullcalendarflowui.kit.meta.group.StudioFullCalendarProperties",
             icon = "io/jmix/fullcalendarflowui/kit/meta/icon/unknownComponent.svg",
-            propertyGroups = StudioPropertyGroups.RequiredStringNameAndValue.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.NAME, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING, required = true),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.VALUE, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING, required = true),
-            }
-    )
+            propertyGroups = StudioPropertyGroups.RequiredStringNameAndValue.class)
     void property();
 
     @StudioElement(
@@ -440,12 +251,7 @@ public interface StudioFullCalendarElements {
             documentationLink = "%VERSION%/calendar/full-calendar-component.html#business-hours",
             classFqn = "io.jmix.fullcalendarflowui.component.model.CalendarBusinessHours",
             icon = "io/jmix/fullcalendarflowui/kit/meta/icon/unknownComponent.svg",
-            propertyGroups = StudioFullCalendarPropertyGroups.BusinessHoursEntryComponent.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.END_TIME, type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.START_TIME, type = StudioPropertyType.STRING),
-            }
-    )
+            propertyGroups = StudioFullCalendarPropertyGroups.BusinessHoursEntryComponent.class)
     void businessHoursEntry();
 
     @StudioElement(
@@ -456,11 +262,6 @@ public interface StudioFullCalendarElements {
             classFqn = "io.jmix.fullcalendarflowui.kit.meta.group.StudioFullCalendarHiddenDays",
             icon = "io/jmix/fullcalendarflowui/kit/meta/icon/unknownComponent.svg",
             propertyGroups = StudioFullCalendarPropertyGroups.DayComponent.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.NAME, type = StudioPropertyType.ENUMERATION, required = true,
-                            classFqn = "io.jmix.fullcalendar.DayOfWeek",
-                            options = {"MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"}),
-            },
             target = {
                     "io.jmix.fullcalendarflowui.component.model.CalendarBusinessHours",
             }
@@ -474,14 +275,6 @@ public interface StudioFullCalendarElements {
             classFqn = "io.jmix.fullcalendarflowui.facet.urlqueryparameters.FullCalendarUrlQueryParametersBinder",
             target = {"io.jmix.flowui.facet.UrlQueryParametersFacet"},
             documentationLink = "%VERSION%/calendar/url-query-parameters.html",
-            propertyGroups = StudioFullCalendarPropertyGroups.CalendarParametersComponent.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.COMPONENT, category = StudioProperty.Category.GENERAL,
-                            type = StudioPropertyType.COMPONENT_REF, componentRefTags = "calendar", required = true),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ID, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.CALENDAR_DISPLAY_MODE, type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.CALENDAR_DATE, type = StudioPropertyType.STRING),
-            }
-    )
+            propertyGroups = StudioFullCalendarPropertyGroups.CalendarParametersComponent.class)
     void calendarParameters();
 }

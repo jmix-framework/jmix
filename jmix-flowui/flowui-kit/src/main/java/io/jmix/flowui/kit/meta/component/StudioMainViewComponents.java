@@ -21,11 +21,8 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import io.jmix.flowui.kit.component.main.UserIndicator;
 import io.jmix.flowui.kit.meta.StudioAvailableChildrenInfo;
 import io.jmix.flowui.kit.meta.StudioComponent;
-import io.jmix.flowui.kit.meta.StudioProperty;
 import io.jmix.flowui.kit.meta.StudioPropertyGroups;
-import io.jmix.flowui.kit.meta.StudioPropertyType;
 import io.jmix.flowui.kit.meta.StudioUiKit;
-import io.jmix.flowui.kit.meta.StudioXmlAttributes;
 import io.jmix.flowui.kit.meta.StudioXmlElements;
 
 @StudioUiKit
@@ -38,18 +35,7 @@ interface StudioMainViewComponents {
             xmlElement = StudioXmlElements.APP_LAYOUT,
             icon = "io/jmix/flowui/kit/meta/icon/mainview/appLayout.svg",
             availablePlaceRegExp = "^mainView$",
-            propertyGroups = StudioPropertyGroups.AppLayoutComponent.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.CLASS_NAMES, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.CSS, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.DRAWER_OPENED, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.PRIMARY_SECTION, type = StudioPropertyType.ENUMERATION,
-                            classFqn = "com.vaadin.flow.component.applayout.AppLayout$Section",
-                            setParameterFqn = "com.vaadin.flow.component.applayout.AppLayout$Section",
-                            options = {"DRAWER", "NAVBAR"}),
-            }
-    )
+            propertyGroups = StudioPropertyGroups.AppLayoutComponent.class)
     AppLayout appLayout();
 
     @StudioComponent(
@@ -60,24 +46,7 @@ interface StudioMainViewComponents {
             icon = "io/jmix/flowui/kit/meta/icon/mainview/userIndicator.svg",
             availablePlaceRegExp = "(^(mainView/appLayout)?((/drawerLayout)|(/navigationBar))$)" +
                     "|(^((mainView/appLayout)?((/drawerLayout)|(/navigationBar)))?(/hasComponents)*$)",
-            propertyGroups = StudioPropertyGroups.UserIndicatorDefaultProperties.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.CLASS_NAMES, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.CSS, category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ENABLED, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.HEIGHT, category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ID, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.MAX_HEIGHT, category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.MAX_WIDTH, category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.MIN_HEIGHT, category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.MIN_WIDTH, category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.TITLE, category = StudioProperty.Category.GENERAL,  type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.VISIBLE, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.WIDTH, category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"})
-            }
-    )
+            propertyGroups = StudioPropertyGroups.UserIndicatorDefaultProperties.class)
     UserIndicator userIndicator();
 
     @StudioComponent(
@@ -94,11 +63,6 @@ interface StudioMainViewComponents {
                             @StudioAvailableChildrenInfo.TagInfo(qualifiedName = "appLayout", maxCount = 1)
                     }
             ),
-            propertyGroups = StudioPropertyGroups.MessagesGroupAndTitle.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.MESSAGES_GROUP, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.TITLE, category = StudioProperty.Category.GENERAL,  type = StudioPropertyType.LOCALIZED_STRING)
-            }
-    )
+            propertyGroups = StudioPropertyGroups.MessagesGroupAndTitle.class)
     VerticalLayout mainView();
 }

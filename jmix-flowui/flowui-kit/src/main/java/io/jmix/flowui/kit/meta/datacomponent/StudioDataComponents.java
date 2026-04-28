@@ -17,11 +17,8 @@
 package io.jmix.flowui.kit.meta.datacomponent;
 
 import io.jmix.flowui.kit.meta.StudioDataComponent;
-import io.jmix.flowui.kit.meta.StudioProperty;
-import io.jmix.flowui.kit.meta.StudioPropertyType;
 import io.jmix.flowui.kit.meta.StudioUiKit;
 import io.jmix.flowui.kit.meta.StudioPropertyGroups;
-import io.jmix.flowui.kit.meta.StudioXmlAttributes;
 import io.jmix.flowui.kit.meta.StudioXmlElements;
 
 @StudioUiKit
@@ -34,13 +31,7 @@ interface StudioDataComponents {
             xmlElement = StudioXmlElements.COLLECTION,
             icon = "io/jmix/flowui/kit/meta/icon/datacomponent/collection.svg",
             documentationLink = "%VERSION%/flow-ui/data/collection-container.html",
-            propertyGroups = StudioDataComponentPropertyGroups.DataContainerDefaultProperties.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ID, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID, required = true),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.CLASS, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.ENTITY_CLASS, required = true),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.FETCH_PLAN, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.FETCH_PLAN)
-            }
-    )
+            propertyGroups = StudioDataComponentPropertyGroups.DataContainerDefaultProperties.class)
     void collection();
 
     @StudioDataComponent(
@@ -50,13 +41,7 @@ interface StudioDataComponents {
             xmlElement = StudioXmlElements.INSTANCE,
             icon = "io/jmix/flowui/kit/meta/icon/datacomponent/instance.svg",
             documentationLink = "%VERSION%/flow-ui/data/instance-container.html",
-            propertyGroups = StudioDataComponentPropertyGroups.DataContainerDefaultProperties.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ID, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID, required = true),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.CLASS, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.ENTITY_CLASS, required = true),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.FETCH_PLAN, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.FETCH_PLAN)
-            }
-    )
+            propertyGroups = StudioDataComponentPropertyGroups.DataContainerDefaultProperties.class)
     void instance();
 
     @StudioDataComponent(
@@ -66,9 +51,7 @@ interface StudioDataComponents {
             xmlElement = StudioXmlElements.KEY_VALUE_INSTANCE,
             icon = "io/jmix/flowui/kit/meta/icon/datacomponent/keyValueInstance.svg",
             documentationLink = "%VERSION%/flow-ui/data/key-value-containers.html",
-            propertyGroups = StudioPropertyGroups.RequiredId.class,
-            properties = @StudioProperty(xmlAttribute = StudioXmlAttributes.ID, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID, required = true)
-    )
+            propertyGroups = StudioPropertyGroups.RequiredId.class)
     void keyValueInstance();
 
     @StudioDataComponent(
@@ -78,8 +61,6 @@ interface StudioDataComponents {
             xmlElement = StudioXmlElements.KEY_VALUE_COLLECTION,
             icon = "io/jmix/flowui/kit/meta/icon/datacomponent/keyValueCollection.svg",
             documentationLink = "%VERSION%/flow-ui/data/key-value-containers.html",
-            propertyGroups = StudioPropertyGroups.RequiredId.class,
-            properties = @StudioProperty(xmlAttribute = StudioXmlAttributes.ID, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID, required = true)
-    )
+            propertyGroups = StudioPropertyGroups.RequiredId.class)
     void keyValueCollection();
 }

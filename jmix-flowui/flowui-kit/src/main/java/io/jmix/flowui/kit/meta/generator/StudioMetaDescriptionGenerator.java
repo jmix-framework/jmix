@@ -1235,24 +1235,26 @@ final class StudioMetaDescriptionGenerator {
             argumentBlocks.add(getPropertyGroupsBlock(meta));
         }
 
-        List<String> propertiesBlock = new ArrayList<>();
-        propertiesBlock.add("            properties = {");
-        if (!meta.properties().isEmpty()) {
-            for (PropertyInfo property : meta.properties()) {
-                List<String> renderedProperty = renderProperty(property);
-                for (int i = renderedProperty.size() - 1; i >= 0; i--) {
-                    if (renderedProperty.get(i).stripLeading().startsWith("@StudioProperty")) {
-                        renderedProperty.set(i, renderedProperty.get(i) + ",");
-                        break;
+        if (!meta.properties().isEmpty() || meta.propertyGroups().isEmpty()) {
+            List<String> propertiesBlock = new ArrayList<>();
+            propertiesBlock.add("            properties = {");
+            if (!meta.properties().isEmpty()) {
+                for (PropertyInfo property : meta.properties()) {
+                    List<String> renderedProperty = renderProperty(property);
+                    for (int i = renderedProperty.size() - 1; i >= 0; i--) {
+                        if (renderedProperty.get(i).stripLeading().startsWith("@StudioProperty")) {
+                            renderedProperty.set(i, renderedProperty.get(i) + ",");
+                            break;
+                        }
                     }
+                    propertiesBlock.addAll(renderedProperty);
                 }
-                propertiesBlock.addAll(renderedProperty);
+            } else {
+                propertiesBlock.add("                    // TODO No XML attributes were discovered for this element.");
             }
-        } else {
-            propertiesBlock.add("                    // TODO No XML attributes were discovered for this element.");
+            propertiesBlock.add("            }");
+            argumentBlocks.add(propertiesBlock);
         }
-        propertiesBlock.add("            }");
-        argumentBlocks.add(propertiesBlock);
 
         for (int index = 0; index < argumentBlocks.size(); index++) {
             List<String> block = argumentBlocks.get(index);

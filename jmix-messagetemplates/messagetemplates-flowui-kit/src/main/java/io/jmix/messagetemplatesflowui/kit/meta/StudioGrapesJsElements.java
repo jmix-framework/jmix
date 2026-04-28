@@ -17,11 +17,8 @@
 package io.jmix.messagetemplatesflowui.kit.meta;
 
 import io.jmix.flowui.kit.meta.StudioElement;
-import io.jmix.flowui.kit.meta.StudioProperty;
-import io.jmix.flowui.kit.meta.StudioPropertyType;
 import io.jmix.flowui.kit.meta.StudioUiKit;
 import io.jmix.flowui.kit.meta.StudioPropertyGroups;
-import io.jmix.flowui.kit.meta.StudioXmlAttributes;
 import io.jmix.flowui.kit.meta.StudioXmlElements;
 
 @StudioUiKit
@@ -34,15 +31,7 @@ public interface StudioGrapesJsElements {
             xmlns = "http://jmix.io/schema/messagetemplates/ui",
             xmlnsAlias = "msgtmp",
             icon = "io/jmix/messagetemplatesflowui/kit/meta/icon/elementsgroup/plugins.svg",
-            propertyGroups = StudioMessageTemplatesPropertyGroups.PluginComponent.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.NAME, category = StudioProperty.Category.GENERAL, type = StudioPropertyType.STRING, required = true,
-                            options = {"grapesjs-blocks-basic", "grapesjs-blocks-flexbox", "grapesjs-custom-code",
-                                    "grapesjs-plugin-forms", "grapesjs-preset-newsletter", "grapesjs-parser-postcss",
-                                    "grapesjs-style-filter", "grapesjs-tabs", "grapesjs-tooltip",
-                                    "grapesjs-tui-image-editor"})
-            }
-    )
+            propertyGroups = StudioMessageTemplatesPropertyGroups.PluginComponent.class)
     void plugin();
 
     @StudioElement(
@@ -52,15 +41,7 @@ public interface StudioGrapesJsElements {
             xmlns = "http://jmix.io/schema/messagetemplates/ui",
             xmlnsAlias = "msgtmp",
             icon = "io/jmix/messagetemplatesflowui/kit/meta/icon/element/block.svg",
-            propertyGroups = StudioMessageTemplatesPropertyGroups.BlockComponent.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ATTRIBUTES, type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.CATEGORY, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.CONTENT, type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ID, type = StudioPropertyType.COMPONENT_ID, category = StudioProperty.Category.GENERAL, required = true),
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.LABEL, type = StudioPropertyType.LOCALIZED_STRING, category = StudioProperty.Category.GENERAL),
-            }
-    )
+            propertyGroups = StudioMessageTemplatesPropertyGroups.BlockComponent.class)
     void block();
 
     @StudioElement(
@@ -71,11 +52,7 @@ public interface StudioGrapesJsElements {
             target = {"io.jmix.messagetemplatesflowui.kit.meta.stub.StudioGrapesJsBlockElement"},
             unlimitedCount = false,
             icon = "io/jmix/messagetemplatesflowui/kit/meta/icon/element/content.svg",
-            propertyGroups = StudioMessageTemplatesPropertyGroups.ContentComponent.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.VALUE, type = StudioPropertyType.CDATA)
-            }
-    )
+            propertyGroups = StudioMessageTemplatesPropertyGroups.ContentComponent.class)
     void content();
 
     @StudioElement(
@@ -86,10 +63,6 @@ public interface StudioGrapesJsElements {
             target = {"io.jmix.messagetemplatesflowui.kit.meta.stub.StudioGrapesJsBlockElement"},
             unlimitedCount = false,
             icon = "io/jmix/messagetemplatesflowui/kit/meta/icon/element/attributes.svg",
-            propertyGroups = StudioMessageTemplatesPropertyGroups.AttributesComponent.class,
-            properties = {
-                    @StudioProperty(xmlAttribute = StudioXmlAttributes.VALUE, type = StudioPropertyType.CDATA)
-            }
-    )
+            propertyGroups = StudioMessageTemplatesPropertyGroups.AttributesComponent.class)
     void attributes();
 }

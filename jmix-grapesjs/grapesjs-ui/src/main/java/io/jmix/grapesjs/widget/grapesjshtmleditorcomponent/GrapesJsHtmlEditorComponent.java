@@ -55,7 +55,7 @@ public class GrapesJsHtmlEditorComponent extends AbstractJavaScriptComponent {
     public GrapesJsHtmlEditorComponent() {
         addFunction("valueChanged", arguments -> {
             JreJsonString data = arguments.get(0);
-            String value = data.getString();
+            String value = GrapesJsHtmlSanitizer.sanitize(data.getString());
             getState(false).html = value;
             if (listener != null) {
                 listener.valueChanged(value);
@@ -115,7 +115,7 @@ public class GrapesJsHtmlEditorComponent extends AbstractJavaScriptComponent {
     private FileUploadListener fileUploadListener;
 
     public void setValue(String value) {
-        getState().html = value;
+        getState().html = GrapesJsHtmlSanitizer.sanitize(value);
     }
 
     public String getValue() {

@@ -23,6 +23,7 @@ archivesBaseName = 'jmix-grapesjs-ui'
 dependencies {
     api project(':ui')
 
+    api 'org.jsoup:jsoup'
     api 'org.webjars.npm:grapesjs'
     api 'org.webjars.npm:grapesjs-plugin-ckeditor'
     api 'org.webjars.npm:grapesjs-custom-code'
@@ -36,6 +37,9 @@ dependencies {
     api 'org.webjars.npm:grapesjs-plugin-forms'
     api 'org.webjars.npm:grapesjs-style-filter'
     api 'org.webjars.npm:grapesjs-tooltip'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 }
 
 jar.manifest {

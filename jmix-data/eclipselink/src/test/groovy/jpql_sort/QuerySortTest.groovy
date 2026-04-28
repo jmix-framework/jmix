@@ -22,9 +22,11 @@ import io.jmix.data.impl.JpqlQueryBuilder
 import io.jmix.data.persistence.JpqlSortExpressionProvider
 import org.springframework.beans.factory.BeanFactory
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Qualifier
 import spock.lang.Ignore
 import test_support.DataSpec
 import test_support.TestJpqlSortExpressionProvider
+import test_support.TestJpqlSortExpressionSupplier
 
 class QuerySortTest extends DataSpec {
 
@@ -33,6 +35,14 @@ class QuerySortTest extends DataSpec {
 
     @Autowired
     JpqlSortExpressionProvider sortExpressionProvider
+
+    @Autowired
+    @Qualifier("test_FirstJpqlSortExpressionSupplier")
+    TestJpqlSortExpressionSupplier firstSortExpressionSupplier
+
+    @Autowired
+    @Qualifier("test_SecondJpqlSortExpressionSupplier")
+    TestJpqlSortExpressionSupplier secondSortExpressionSupplier
 
     @Autowired
     BeanFactory beanFactory
@@ -133,6 +143,30 @@ class QuerySortTest extends DataSpec {
 
         cleanup:
         ((TestJpqlSortExpressionProvider) sortExpressionProvider).resetToUpperPaths()
+    }
+
+    def "sort expression suppliers are composable"() {
+
+        JpqlQueryBuilder queryBuilder
+
+        setup:
+        firstSortExpressionSupplier.addPropertyPath(metadata.getClass('sec$User').getPropertyPath('login'))
+        secondSortExpressionSupplier.addPropertyPath(metadata.getClass('sec$User').getPropertyPath('name'))
+
+        when:
+
+        queryBuilder = beanFactory.getBean(JpqlQueryBuilder)
+        queryBuilder.setQueryString('select u from sec$User u')
+                .setSort(Sort.by(Sort.Order.asc('login'), Sort.Order.desc('name')))
+                .setEntityName('sec$User')
+
+        then:
+
+        queryBuilder.getResultQueryString() == 'select u from sec$User u order by upper( u.login) asc nulls first, lower ( u.name) desc nulls last, u.id asc'
+
+        cleanup:
+        firstSortExpressionSupplier.resetPropertyPaths()
+        secondSortExpressionSupplier.resetPropertyPaths()
     }
 
     def "sort by multiple properties in different directions"() {

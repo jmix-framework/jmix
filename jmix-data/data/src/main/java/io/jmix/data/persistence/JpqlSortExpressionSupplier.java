@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,18 +16,19 @@
 
 package io.jmix.data.persistence;
 
-import io.jmix.core.metamodel.model.MetaPropertyPath;
+import org.jspecify.annotations.Nullable;
 
 /**
- * Interface to be implemented by a Spring bean to generate sort expression for datatype and LOB properties.
+ * Interface to be implemented by Spring beans to supply JPQL sort expressions for datatype and LOB properties.
  * <p>
- * You can provide your own implementation bean and use custom sort logic, e.g. use functions.
- * Use {@link JpqlSortExpressionSupplier} beans to supply independent sort expression rules.
+ * Suppliers are applied in order defined by {@link org.springframework.core.Ordered} or
+ * {@link org.springframework.core.annotation.Order}. Return {@code null} if the supplier does not support the
+ * specified property.
  */
-public interface JpqlSortExpressionProvider {
+public interface JpqlSortExpressionSupplier {
 
     /**
-     * Returns JPQL order expression for specified property,
+     * Returns JPQL order expression for the specified property,
      * e.g. <code>{E}.property</code>, where <code>{E}</code> is a selected entity alias.
      * It's possible to:
      * <ul>
@@ -35,11 +36,21 @@ public interface JpqlSortExpressionProvider {
      *     <li>Use <code>asc/desc</code> or <code>nulls last/nulls first</code>,
      *     e.g. <code>{E}.property asc nulls first</code></li>
      * </ul>
+     *
+     * @return JPQL order expression for the specified property.
      */
-    String getDatatypeSortExpression(MetaPropertyPath metaPropertyPath, boolean sortDirectionAsc);
+    @Nullable
+    default String getDatatypeSortExpression(SortExpressionContext context) {
+        return null;
+    }
 
     /**
-     * Returns JPQL order expression for specified lob property.
+     * Returns JPQL order expression for the specified LOB property.
+     *
+     * @return JPQL order expression for the specified LOB property.
      */
-    String getLobSortExpression(MetaPropertyPath metaPropertyPath, boolean sortDirectionAsc);
+    @Nullable
+    default String getLobSortExpression(SortExpressionContext context) {
+        return null;
+    }
 }

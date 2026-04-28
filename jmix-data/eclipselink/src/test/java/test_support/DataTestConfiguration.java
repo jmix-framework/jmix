@@ -23,6 +23,7 @@ import io.jmix.core.repository.EnableJmixDataRepositories;
 import io.jmix.data.impl.JmixEntityManagerFactoryBean;
 import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.data.persistence.JpqlSortExpressionProvider;
+import io.jmix.data.persistence.JpqlSortExpressionSupplier;
 import io.jmix.eclipselink.EclipselinkConfiguration;
 import io.jmix.eclipselink.impl.JmixEclipselinkTransactionManager;
 import io.jmix.testsupport.config.CommonCoreTestConfiguration;
@@ -96,5 +97,15 @@ public class DataTestConfiguration {
     @Primary
     JpqlSortExpressionProvider jpqlSortExpressionProvider() {
         return new TestJpqlSortExpressionProvider();
+    }
+
+    @Bean("test_FirstJpqlSortExpressionSupplier")
+    JpqlSortExpressionSupplier firstJpqlSortExpressionSupplier() {
+        return new TestJpqlSortExpressionSupplier("upper", "nulls first");
+    }
+
+    @Bean("test_SecondJpqlSortExpressionSupplier")
+    JpqlSortExpressionSupplier secondJpqlSortExpressionSupplier() {
+        return new TestJpqlSortExpressionSupplier("lower", "nulls last");
     }
 }

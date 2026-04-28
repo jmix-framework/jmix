@@ -21,10 +21,13 @@ import io.jmix.data.QueryTransformer;
 import io.jmix.data.QueryTransformerFactory;
 import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.data.persistence.JpqlSortExpressionProvider;
+import io.jmix.data.persistence.JpqlSortExpressionSupplier;
+import io.jmix.data.persistence.SortExpressionContext;
 import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import org.springframework.beans.factory.ObjectProvider;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Component;
 
@@ -47,6 +50,8 @@ public class SortJpqlGenerator {
     protected QueryTransformerFactory queryTransformerFactory;
     @Autowired
     protected JpqlSortExpressionProvider jpqlSortExpressionProvider;
+    @Autowired
+    protected ObjectProvider<JpqlSortExpressionSupplier> jpqlSortExpressionSuppliers;
     @Autowired
     protected DbmsSpecifics dbmsSpecifics;
 
@@ -151,12 +156,28 @@ public class SortJpqlGenerator {
     }
 
     protected String getDatatypePropertySortExpression(MetaPropertyPath metaPropertyPath, Sort.Direction sortDirection) {
-        return jpqlSortExpressionProvider.getDatatypeSortExpression(metaPropertyPath, sortDirection == Sort.Direction.ASC);
+        SortExpressionContext context = new SortExpressionContext(metaPropertyPath, sortDirection);
+        return jpqlSortExpressionSuppliers.orderedStream()
+                .map(supplier -> supplier.getDatatypeSortExpression(context))
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElseGet(() -> jpqlSortExpressionProvider.getDatatypeSortExpression(metaPropertyPath,
+                        context.isSortDirectionAsc()));
     }
 
     @Nullable
     protected String getLobPropertySortExpression(MetaPropertyPath metaPropertyPath, Sort.Direction sortDirection) {
-        return supportsLobSorting(metaPropertyPath) ? jpqlSortExpressionProvider.getLobSortExpression(metaPropertyPath, sortDirection == Sort.Direction.ASC) : null;
+        if (!supportsLobSorting(metaPropertyPath)) {
+            return null;
+        }
+
+        SortExpressionContext context = new SortExpressionContext(metaPropertyPath, sortDirection);
+        return jpqlSortExpressionSuppliers.orderedStream()
+                .map(supplier -> supplier.getLobSortExpression(context))
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElseGet(() -> jpqlSortExpressionProvider.getLobSortExpression(metaPropertyPath,
+                        context.isSortDirectionAsc()));
     }
 
     protected Map<String, Sort.Direction> getEntityPropertySortExpression(MetaPropertyPath metaPropertyPath, Sort.Direction sortDirection) {

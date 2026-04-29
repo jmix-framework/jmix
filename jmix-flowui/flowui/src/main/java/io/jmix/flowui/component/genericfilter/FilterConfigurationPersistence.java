@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.component.genericfilter;
 
+import io.jmix.core.annotation.Internal;
 import io.jmix.flowui.component.genericfilter.model.FilterConfigurationModel;
 import org.jspecify.annotations.Nullable;
 
@@ -24,6 +25,7 @@ import java.util.List;
 /**
  * Interface to be implemented by beans that store {@code FilterConfigurationModel} in a persistent storage.
  */
+@Internal
 public interface FilterConfigurationPersistence {
 
     void remove(FilterConfigurationModel configurationModel);

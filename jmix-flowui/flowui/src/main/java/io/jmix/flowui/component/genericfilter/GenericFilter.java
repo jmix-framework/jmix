@@ -603,6 +603,68 @@ public class GenericFilter extends Composite<JmixDetails>
         setCurrentConfigurationInternal(currentConfiguration, false);
     }
 
+    /**
+     * Registers the given configuration with this filter and immediately sets it as the current
+     * configuration, in the correct order and in a single call.
+     * <p>
+     * This is a convenience alternative to calling {@link #addConfiguration(Configuration)}
+     * followed by {@link #setCurrentConfiguration(Configuration)}, which fails silently when
+     * the configuration is not yet registered at the time {@code setCurrentConfiguration} is
+     * invoked.
+     *
+     * @param configuration the configuration to register and activate
+     */
+    public void addAndSetCurrentConfiguration(Configuration configuration) {
+        addConfiguration(configuration);
+        setCurrentConfiguration(configuration);
+    }
+
+    /**
+     * Refreshes the layout of the current configuration.
+     * <p>
+     * Call this method after programmatically modifying the current configuration's filter
+     * components (e.g. adding a component to the root {@link LogicalFilterComponent}) to force
+     * the filter UI to re-render remove buttons and update the data-loader condition.
+     * <p>
+     * This is a stable public equivalent of the internal {@code refreshCurrentConfigurationLayout()}.
+     */
+    public void refreshCurrentConfiguration() {
+        refreshCurrentConfigurationLayout();
+    }
+
+    /**
+     * Creates a new {@link FilterComponentBuilder} bound to this filter.
+     * <p>
+     * The builder handles all mandatory initialisation steps that the XML loader performs
+     * automatically: {@code setConditionModificationDelegated(true)}, {@code setDataLoader(...)},
+     * and the correct ordering of property / operation / value assignments.
+     *
+     * @return a new {@code FilterComponentBuilder} instance
+     */
+    public FilterComponentBuilder componentBuilder() {
+        return new FilterComponentBuilder(this, uiComponents);
+    }
+
+    /**
+     * Creates a new {@link DesignTimeConfigurationBuilder} for building and registering
+     * a {@link io.jmix.flowui.component.genericfilter.configuration.DesignTimeConfiguration}.
+     *
+     * @return a new {@code DesignTimeConfigurationBuilder} instance
+     */
+    public DesignTimeConfigurationBuilder configurationBuilder() {
+        return new DesignTimeConfigurationBuilder(this, uiComponents);
+    }
+
+    /**
+     * Creates a new {@link RunTimeConfigurationBuilder} for building and registering
+     * a {@link io.jmix.flowui.component.genericfilter.configuration.RunTimeConfiguration}.
+     *
+     * @return a new {@code RunTimeConfigurationBuilder} instance
+     */
+    public RunTimeConfigurationBuilder runtimeConfigurationBuilder() {
+        return new RunTimeConfigurationBuilder(this, uiComponents);
+    }
+
     protected void setCurrentConfigurationInternal(Configuration currentConfiguration, boolean fromClient) {
         if (configurations.contains(currentConfiguration)
                 || getEmptyConfiguration().equals(currentConfiguration)) {

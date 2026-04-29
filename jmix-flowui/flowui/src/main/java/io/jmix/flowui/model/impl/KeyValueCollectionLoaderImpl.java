@@ -50,7 +50,7 @@ public class KeyValueCollectionLoaderImpl implements KeyValueCollectionLoader {
     protected DataManager dataManager;
 
     @Autowired
-    protected SorterFactory sorterFactory;
+    protected CollectionContainerSortManager collectionContainerSortManager;
     @Autowired
     protected MeterRegistry meterRegistry;
 
@@ -191,7 +191,7 @@ public class KeyValueCollectionLoaderImpl implements KeyValueCollectionLoader {
         if (container instanceof HasLoader) {
             ((HasLoader) container).setLoader(this);
         }
-        container.setSorter(sorterFactory.createCollectionContainerSorter(container, this));
+        container.setSorter(collectionContainerSortManager.createCollectionContainerSorter(container, this));
     }
 
     @Override

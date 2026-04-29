@@ -59,7 +59,7 @@ public class CollectionLoaderImpl<E> implements CollectionLoader<E> {
     @Autowired
     protected FetchPlanRepository fetchPlanRepository;
     @Autowired
-    protected SorterFactory sorterFactory;
+    protected CollectionContainerSortManager collectionContainerSortManager;
     @Autowired
     protected List<QueryStringProcessor> queryStringProcessors;
     @Autowired
@@ -270,7 +270,7 @@ public class CollectionLoaderImpl<E> implements CollectionLoader<E> {
         if (container instanceof HasLoader) {
             ((HasLoader) container).setLoader(this);
         }
-        container.setSorter(sorterFactory.createCollectionContainerSorter(container, this));
+        container.setSorter(collectionContainerSortManager.createCollectionContainerSorter(container, this));
     }
 
     @Override

@@ -38,18 +38,18 @@ public class DataComponents {
 
     protected AutowireCapableBeanFactory beanFactory;
     protected Metadata metadata;
-    protected SorterFactory sorterFactory;
+    protected CollectionContainerSortManager collectionContainerSortManager;
     protected AccessManager accessManager;
     protected Stores stores;
 
     public DataComponents(AutowireCapableBeanFactory beanFactory,
                           Metadata metadata,
-                          SorterFactory sorterFactory,
+                          CollectionContainerSortManager collectionContainerSortManager,
                           AccessManager accessManager,
                           Stores stores) {
         this.beanFactory = beanFactory;
         this.metadata = metadata;
-        this.sorterFactory = sorterFactory;
+        this.collectionContainerSortManager = collectionContainerSortManager;
         this.accessManager = accessManager;
         this.stores = stores;
     }
@@ -127,7 +127,7 @@ public class DataComponents {
     public <E> CollectionContainer<E> createCollectionContainer(Class<E> entityClass) {
         CollectionContainerImpl<E> container = new CollectionContainerImpl<>(metadata.getClass(entityClass));
         autowire(container);
-        container.setSorter(sorterFactory.createCollectionContainerSorter(container, null));
+        container.setSorter(collectionContainerSortManager.createCollectionContainerSorter(container));
         return container;
     }
 
@@ -141,7 +141,7 @@ public class DataComponents {
         CollectionPropertyContainerImpl<E> container = new CollectionPropertyContainerImpl<>(
                 metadata.getClass(entityClass), masterContainer, property);
         autowire(container);
-        container.setSorter(sorterFactory.createCollectionPropertyContainerSorter(container));
+        container.setSorter(collectionContainerSortManager.createCollectionContainerSorter(container));
 
         UiEntityContext entityContext = new UiEntityContext(masterContainer.getEntityMetaClass());
         accessManager.applyRegisteredConstraints(entityContext);
@@ -195,7 +195,7 @@ public class DataComponents {
         KeyValueCollectionContainerImpl container = new KeyValueCollectionContainerImpl();
         autowire(container);
         container.getEntityMetaClass().setStore(stores.get(Stores.NOOP));
-        container.setSorter(sorterFactory.createCollectionContainerSorter(container, null));
+        container.setSorter(collectionContainerSortManager.createCollectionContainerSorter(container));
         return container;
     }
 

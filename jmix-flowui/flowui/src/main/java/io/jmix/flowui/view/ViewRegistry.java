@@ -33,6 +33,9 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.exception.NoSuchViewException;
 import io.jmix.flowui.sys.*;
+import io.jmix.flowui.view.template.impl.ViewTemplateDefinition;
+import io.jmix.flowui.view.template.impl.ViewTemplateDefinitions;
+import io.jmix.flowui.view.template.impl.ViewTemplateType;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
@@ -96,6 +99,8 @@ public class ViewRegistry implements ApplicationContextAware {
 
     protected ViewControllersConfigurationSorter viewControllersConfigurationSorter;
 
+    protected ViewTemplateDefinitions viewTemplateDefinitions;
+
     protected ReadWriteLock lock = new ReentrantReadWriteLock();
 
     @Autowired
@@ -131,6 +136,16 @@ public class ViewRegistry implements ApplicationContextAware {
     @Autowired
     public void setViewControllersConfigurationSorter(ViewControllersConfigurationSorter viewControllersConfigurationSorter) {
         this.viewControllersConfigurationSorter = viewControllersConfigurationSorter;
+    }
+
+    /**
+     * Sets template-generated view definitions that should be exposed by the registry.
+     *
+     * @param viewTemplateDefinitions template view definitions
+     */
+    @Autowired
+    public void setViewTemplateDefinitions(ViewTemplateDefinitions viewTemplateDefinitions) {
+        this.viewTemplateDefinitions = viewTemplateDefinitions;
     }
 
     @Autowired(required = false)
@@ -183,6 +198,7 @@ public class ViewRegistry implements ApplicationContextAware {
         primaryLookupViews.clear();
 
         loadViewConfigurations();
+        loadViewTemplateConfigurations();
 
         log.info("{} initialized in {} ms", getClass().getSimpleName(), System.currentTimeMillis() - startTime);
     }
@@ -217,6 +233,31 @@ public class ViewRegistry implements ApplicationContextAware {
             }
 
             projectViews.clear();
+        }
+    }
+
+    protected void loadViewTemplateConfigurations() {
+        for (ViewTemplateDefinition definition : viewTemplateDefinitions.getDefinitions()) {
+            ViewInfo viewInfo = new ViewInfo(
+                    definition.getId(),
+                    definition.getControllerClass().getName(),
+                    definition.getControllerClass(),
+                    definition.getDescriptorPath()
+            );
+
+            views.put(definition.getId(), viewInfo);
+            registerTemplatePrimaryView(definition, viewInfo);
+        }
+    }
+
+    protected void registerTemplatePrimaryView(ViewTemplateDefinition definition, ViewInfo viewInfo) {
+        MetaClass originalMetaClass = extendedEntities.getOriginalOrThisMetaClass(definition.getEntityMetaClass());
+        Class<?> entityClass = originalMetaClass.getJavaClass();
+
+        if (definition.getType() == ViewTemplateType.LIST) {
+            primaryListViews.put(entityClass, viewInfo);
+        } else if (definition.getType() == ViewTemplateType.DETAIL) {
+            primaryDetailViews.put(entityClass, viewInfo);
         }
     }
 

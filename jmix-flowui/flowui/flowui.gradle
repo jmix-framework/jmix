@@ -31,6 +31,8 @@ dependencies {
     api 'org.springframework.boot:spring-boot-autoconfigure'
 
     implementation 'com.google.code.gson:gson'
+    implementation 'org.freemarker:freemarker'
+    implementation 'net.bytebuddy:byte-buddy'
 
     testImplementation 'org.spockframework:spock-core'
     testImplementation 'org.spockframework:spock-spring'

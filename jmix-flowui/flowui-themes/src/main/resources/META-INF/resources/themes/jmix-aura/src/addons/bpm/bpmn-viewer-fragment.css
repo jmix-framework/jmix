@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-.process-instance-detail-view .tree-toggle-container {
-    display:flex;
-    align-items:center;
+.bpmn-viewer-fragment {
+    padding: var(--vaadin-padding-s);
+    border: 1px solid var(--vaadin-border-color-secondary);
+    border-radius: var(--vaadin-radius-m);
 }
 
-html {
-  --_jmix-bpm-running-activity-color: var(--jmix-bpm-running-activity-color, rgba(194, 213, 237, 0.9));
-  --_jmix-bpm-history-activity-color: var(--jmix-bpm-history-activity-color, rgba(162, 224, 172, 0.45));
+.bpmn-viewer-fragment .fit-schema-button vaadin-icon {
+    transform: rotate(45deg);
 }

@@ -19,6 +19,10 @@
     align-items:center;
 }
 
+.process-instance-detail-view .top-panel {
+    gap: var(--vaadin-gap-s);
+}
+
 html {
   --_jmix-bpm-running-activity-color: var(--jmix-bpm-running-activity-color, rgba(194, 213, 237, 0.9));
   --_jmix-bpm-history-activity-color: var(--jmix-bpm-history-activity-color, rgba(162, 224, 172, 0.45));

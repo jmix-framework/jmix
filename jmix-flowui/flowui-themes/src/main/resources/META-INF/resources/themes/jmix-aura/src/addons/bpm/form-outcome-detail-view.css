@@ -14,12 +14,6 @@
  * limitations under the License.
  */
 
-.process-instance-detail-view .tree-toggle-container {
-    display:flex;
-    align-items:center;
-}
-
-html {
-  --_jmix-bpm-running-activity-color: var(--jmix-bpm-running-activity-color, rgba(194, 213, 237, 0.9));
-  --_jmix-bpm-history-activity-color: var(--jmix-bpm-history-activity-color, rgba(162, 224, 172, 0.45));
+.form-outcome-detail-view .icon-renderer-icon {
+    padding: var(--vaadin-padding-xs);
 }

@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-.process-instance-detail-view .tree-toggle-container {
-    display:flex;
-    align-items:center;
-}
-
-html {
-  --_jmix-bpm-running-activity-color: var(--jmix-bpm-running-activity-color, rgba(194, 213, 237, 0.9));
-  --_jmix-bpm-history-activity-color: var(--jmix-bpm-history-activity-color, rgba(162, 224, 172, 0.45));
-}
+@import './bpmn-modeler-view.css';
+@import './bpmn-viewer-fragment.css';
+@import './entity-data-task-properties-fragment.css';
+@import './form-outcome-detail-view.css';
+@import './misc.css';
+@import './process-draft-list-view.css';
+@import './process-instance-detail-view.css';
+@import './send-email-task-properties-fragment.css';
+@import './service-task-properties-fragment.css';

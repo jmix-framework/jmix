@@ -14,12 +14,25 @@
  * limitations under the License.
  */
 
-.process-instance-detail-view .tree-toggle-container {
-    display:flex;
-    align-items:center;
+.bpmn-modeler-view .schema-source-type {
+    font-weight: 700;
+    font-size: var(--aura-font-size-m);
+    margin-inline-end: var(--vaadin-gap-s);
 }
 
-html {
-  --_jmix-bpm-running-activity-color: var(--jmix-bpm-running-activity-color, rgba(194, 213, 237, 0.9));
-  --_jmix-bpm-history-activity-color: var(--jmix-bpm-history-activity-color, rgba(162, 224, 172, 0.45));
+.bpmn-modeler-view .schema-source-name {
+    font-size: var(--aura-font-size-m);
+}
+
+.bpmn-modeler-view .properties-container {
+    overflow: auto;
+}
+
+.bpmn-modeler-view vaadin-details[theme~="no-padding"] vaadin-details-summary {
+    padding-left: 0;
+}
+
+.bpm-modeler-properties-panel {
+    --aura-base-size: 12;
+    --aura-base-font-size: 13;
 }

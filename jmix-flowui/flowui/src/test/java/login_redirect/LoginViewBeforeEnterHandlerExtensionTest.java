@@ -16,79 +16,84 @@
 
 package login_redirect;
 
-import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.router.BeforeEnterEvent;
-import com.vaadin.flow.server.VaadinService;
+import io.jmix.core.CoreProperties;
+import io.jmix.core.JmixModules;
+import io.jmix.core.Resources;
+import io.jmix.core.security.CurrentAuthentication;
+import io.jmix.flowui.UiProperties;
+import io.jmix.flowui.exception.UiExceptionHandlers;
+import io.jmix.flowui.sys.JmixServiceInitListener;
 import io.jmix.flowui.sys.LoginViewBeforeEnterHandler;
 import io.jmix.flowui.sys.LoginViewRedirectSupport;
-import io.jmix.flowui.testassist.FlowuiTestAssistConfiguration;
-import io.jmix.flowui.testassist.UiTest;
-import io.jmix.flowui.testassist.UiTestUtils;
-import io.jmix.flowui.view.navigation.ViewNavigationSupport;
+import io.jmix.flowui.view.ViewRegistry;
 import jakarta.annotation.Nonnull;
-import login_redirect.view.LoginRedirectLoginView;
-import login_redirect.view.LoginRedirectMainView;
-import login_redirect.view.LoginRedirectOtherView;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Primary;
-import test_support.FlowuiTestConfiguration;
 
-@UiTest(viewBasePackages = "login_redirect.view", initialView = LoginRedirectMainView.class)
-@SpringBootTest(
-        classes = {
-                FlowuiTestConfiguration.class,
-                FlowuiTestAssistConfiguration.class,
-                LoginViewBeforeEnterHandlerExtensionTest.TestLoginViewBeforeEnterHandlerConfiguration.class
-        },
-        properties = {
-                "jmix.ui.login-view-id=loginRedirect_LoginView",
-                "jmix.ui.main-view-id=loginRedirect_MainView"
-        }
-)
-public class LoginViewBeforeEnterHandlerExtensionTest {
+import static org.mockito.Mockito.mock;
 
-    @Autowired
-    ViewNavigationSupport navigationSupport;
-
-    @BeforeEach
-    void setUp() {
-        VaadinService.getCurrent().fireUIInitListeners(UI.getCurrent());
-    }
+class LoginViewBeforeEnterHandlerExtensionTest {
 
     @Test
     @DisplayName("Extended login view before enter handler is used")
     void testExtendedLoginViewBeforeEnterHandlerIsUsed() {
-        navigationSupport.navigate(LoginRedirectLoginView.class);
+        TestLoginViewBeforeEnterHandler loginViewBeforeEnterHandler =
+                new TestLoginViewBeforeEnterHandler(new TestLoginViewRedirectSupport());
+        TestJmixServiceInitListener serviceInitListener = new TestJmixServiceInitListener(loginViewBeforeEnterHandler);
+        BeforeEnterEvent event = mock(BeforeEnterEvent.class);
 
-        Assertions.assertEquals(LoginRedirectOtherView.class, UiTestUtils.getCurrentView().getClass());
+        serviceInitListener.loginViewBeforeEnter(event);
+
+        Assertions.assertSame(event, loginViewBeforeEnterHandler.handledEvent);
     }
 
-    @TestConfiguration
-    static class TestLoginViewBeforeEnterHandlerConfiguration {
+    static class TestJmixServiceInitListener extends JmixServiceInitListener {
 
-        @Bean("test_LoginViewBeforeEnterHandler")
-        @Primary
-        LoginViewBeforeEnterHandler loginViewBeforeEnterHandler(LoginViewRedirectSupport loginViewRedirectSupport) {
-            return new TestLoginViewBeforeEnterHandler(loginViewRedirectSupport);
+        TestJmixServiceInitListener(LoginViewBeforeEnterHandler loginViewBeforeEnterHandler) {
+            super(mock(ViewRegistry.class),
+                    mock(UiExceptionHandlers.class),
+                    mock(CoreProperties.class),
+                    loginViewBeforeEnterHandler,
+                    mock(JmixModules.class),
+                    mock(Resources.class));
+        }
+
+        void loginViewBeforeEnter(BeforeEnterEvent event) {
+            onLoginViewBeforeEnter(event);
         }
     }
 
     static class TestLoginViewBeforeEnterHandler extends LoginViewBeforeEnterHandler {
 
-        public TestLoginViewBeforeEnterHandler(LoginViewRedirectSupport loginViewRedirectSupport) {
+        BeforeEnterEvent handledEvent;
+
+        TestLoginViewBeforeEnterHandler(LoginViewRedirectSupport loginViewRedirectSupport) {
             super(loginViewRedirectSupport);
         }
 
         @Override
         protected void handleAuthenticatedUser(@Nonnull BeforeEnterEvent event) {
-            event.rerouteTo(LoginRedirectOtherView.class);
+            handledEvent = event;
+        }
+    }
+
+    static class TestLoginViewRedirectSupport extends LoginViewRedirectSupport {
+
+        TestLoginViewRedirectSupport() {
+            super(mock(UiProperties.class), mock(CurrentAuthentication.class), mock(ViewRegistry.class));
+        }
+
+        @Override
+        public boolean isLoginView(Class<? extends Component> navigationTarget) {
+            return true;
+        }
+
+        @Override
+        public boolean isUserAuthenticated() {
+            return true;
         }
     }
 }

@@ -26,4 +26,5 @@ dependencies {
     implementation project(':security-resource-server-starter')
 
     implementation 'org.springframework.boot:spring-boot-autoconfigure'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 }

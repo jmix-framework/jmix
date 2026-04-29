@@ -21,4 +21,5 @@ dependencies {
     api project(':security-resource-server')
 
     api 'org.springframework.boot:spring-boot-autoconfigure'
+    api 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
 }

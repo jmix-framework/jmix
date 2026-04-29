@@ -3,12 +3,9 @@
  * Use is subject to license terms.
  */
 
-.process-instance-detail-view vaadin-grid.tree-toggle-events-only vaadin-grid-tree-toggle {
-    pointer-events: none;
-
-    &::part(toggle) {
-        pointer-events: auto;
-    }
+.process-instance-detail-view .tree-toggle-container {
+    display:flex;
+    align-items:center;
 }
 
 html {

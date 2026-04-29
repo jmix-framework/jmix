@@ -18,6 +18,7 @@ package io.jmix.flowui.sys;
 
 import com.google.common.base.Strings;
 import com.vaadin.flow.internal.LocaleUtil;
+import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.InternalServerError;
 import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.flow.router.internal.ErrorTargetEntry;
@@ -67,6 +68,7 @@ public class JmixServiceInitListener implements VaadinServiceInitListener, Appli
     protected ViewRegistry viewRegistry;
     protected UiExceptionHandlers uiExceptionHandlers;
     protected CoreProperties coreProperties;
+    protected LoginViewBeforeEnterHandler loginViewBeforeEnterHandler;
     protected JmixModules modules;
     protected Resources resources;
 
@@ -75,11 +77,13 @@ public class JmixServiceInitListener implements VaadinServiceInitListener, Appli
     public JmixServiceInitListener(ViewRegistry viewRegistry,
                                    UiExceptionHandlers uiExceptionHandlers,
                                    CoreProperties coreProperties,
+                                   LoginViewBeforeEnterHandler loginViewBeforeEnterHandler,
                                    JmixModules modules,
                                    Resources resources) {
         this.viewRegistry = viewRegistry;
         this.uiExceptionHandlers = uiExceptionHandlers;
         this.coreProperties = coreProperties;
+        this.loginViewBeforeEnterHandler = loginViewBeforeEnterHandler;
         this.modules = modules;
         this.resources = resources;
     }
@@ -109,7 +113,11 @@ public class JmixServiceInitListener implements VaadinServiceInitListener, Appli
     }
 
     protected void onUIInitEvent(UIInitEvent uiInitEvent) {
-        // hook to implement
+        uiInitEvent.getUI().addBeforeEnterListener(this::onLoginViewBeforeEnter);
+    }
+
+    protected void onLoginViewBeforeEnter(BeforeEnterEvent event) {
+        loginViewBeforeEnterHandler.handle(event);
     }
 
     protected void onSessionDestroyEvent(SessionDestroyEvent event) {

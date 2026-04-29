@@ -19,13 +19,11 @@ package login_redirect;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.server.VaadinService;
-import io.jmix.core.security.CurrentAuthentication;
-import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.sys.LoginViewBeforeEnterHandler;
+import io.jmix.flowui.sys.LoginViewRedirectSupport;
 import io.jmix.flowui.testassist.FlowuiTestAssistConfiguration;
 import io.jmix.flowui.testassist.UiTest;
 import io.jmix.flowui.testassist.UiTestUtils;
-import io.jmix.flowui.view.ViewRegistry;
 import io.jmix.flowui.view.navigation.ViewNavigationSupport;
 import jakarta.annotation.Nonnull;
 import login_redirect.view.LoginRedirectLoginView;
@@ -77,19 +75,15 @@ public class LoginViewBeforeEnterHandlerExtensionTest {
 
         @Bean("test_LoginViewBeforeEnterHandler")
         @Primary
-        LoginViewBeforeEnterHandler loginViewBeforeEnterHandler(UiProperties uiProperties,
-                                                                CurrentAuthentication currentAuthentication,
-                                                                ViewRegistry viewRegistry) {
-            return new TestLoginViewBeforeEnterHandler(uiProperties, currentAuthentication, viewRegistry);
+        LoginViewBeforeEnterHandler loginViewBeforeEnterHandler(LoginViewRedirectSupport loginViewRedirectSupport) {
+            return new TestLoginViewBeforeEnterHandler(loginViewRedirectSupport);
         }
     }
 
     static class TestLoginViewBeforeEnterHandler extends LoginViewBeforeEnterHandler {
 
-        public TestLoginViewBeforeEnterHandler(UiProperties uiProperties,
-                                               CurrentAuthentication currentAuthentication,
-                                               ViewRegistry viewRegistry) {
-            super(uiProperties, currentAuthentication, viewRegistry);
+        public TestLoginViewBeforeEnterHandler(LoginViewRedirectSupport loginViewRedirectSupport) {
+            super(loginViewRedirectSupport);
         }
 
         @Override

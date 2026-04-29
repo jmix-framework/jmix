@@ -16,21 +16,11 @@
 
 package io.jmix.flowui.sys;
 
-import com.google.common.base.Strings;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import io.jmix.core.annotation.Internal;
-import io.jmix.core.security.CurrentAuthentication;
-import io.jmix.flowui.UiProperties;
-import io.jmix.flowui.view.ViewInfo;
-import io.jmix.flowui.view.ViewRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
-
-import java.util.Optional;
-
 
 /**
  * Handles {@link BeforeEnterEvent} for the configured login view.
@@ -44,16 +34,10 @@ public class LoginViewBeforeEnterHandler {
 
     private static final Logger log = LoggerFactory.getLogger(LoginViewBeforeEnterHandler.class);
 
-    protected UiProperties uiProperties;
-    protected CurrentAuthentication currentAuthentication;
-    protected ViewRegistry viewRegistry;
+    protected LoginViewRedirectSupport loginViewRedirectSupport;
 
-    public LoginViewBeforeEnterHandler(UiProperties uiProperties,
-                                       CurrentAuthentication currentAuthentication,
-                                       ViewRegistry viewRegistry) {
-        this.uiProperties = uiProperties;
-        this.currentAuthentication = currentAuthentication;
-        this.viewRegistry = viewRegistry;
+    public LoginViewBeforeEnterHandler(LoginViewRedirectSupport loginViewRedirectSupport) {
+        this.loginViewRedirectSupport = loginViewRedirectSupport;
     }
 
     /**
@@ -62,40 +46,21 @@ public class LoginViewBeforeEnterHandler {
      * @param event navigation event to handle
      */
     public void handle(BeforeEnterEvent event) {
-        if (!isLoginView(event) || !isUserAuthenticated()) {
-            return;
+        if (isLoginView(event) && isUserAuthenticated()) {
+            handleAuthenticatedUser(event);
         }
-
-        handleAuthenticatedUser(event);
     }
 
     protected boolean isLoginView(BeforeEnterEvent event) {
-        String loginViewId = uiProperties.getLoginViewId();
-        if (Strings.isNullOrEmpty(loginViewId)) {
-            return false;
-        }
-
-        Optional<ViewInfo> loginViewInfo = viewRegistry.findViewInfo(loginViewId);
-        return loginViewInfo.isPresent()
-                && event.getNavigationTarget().equals(loginViewInfo.get().getControllerClass());
+        return loginViewRedirectSupport.isLoginView(event.getNavigationTarget());
     }
 
     protected boolean isUserAuthenticated() {
-        if (!currentAuthentication.isSet()) {
-            return false;
-        }
-
-        Authentication authentication = currentAuthentication.getAuthentication();
-        return !(authentication instanceof AnonymousAuthenticationToken);
+        return loginViewRedirectSupport.isUserAuthenticated();
     }
 
     protected void handleAuthenticatedUser(BeforeEnterEvent event) {
-        String mainViewId = uiProperties.getMainViewId();
-        if (Strings.isNullOrEmpty(mainViewId)) {
-            return;
-        }
-
-        viewRegistry.findViewInfo(mainViewId)
+        loginViewRedirectSupport.findMainViewInfo()
                 .ifPresent(mainViewInfo -> {
                     log.debug("Forwarding already logged-in user to the main view");
                     event.forwardTo(mainViewInfo.getControllerClass());

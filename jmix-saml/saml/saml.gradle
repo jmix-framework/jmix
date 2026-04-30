@@ -30,8 +30,7 @@ dependencies {
     api project(':security')
     api project(':security-flowui')
 
-    api 'org.springframework.security:spring-security-saml2-service-provider'
-    api 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    api 'org.springframework.boot:spring-boot-security-saml2'
     api 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
 
     compileOnly project(':security-data')

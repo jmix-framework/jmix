@@ -303,8 +303,8 @@ public class ViewRegistry implements ApplicationContextAware {
                 annotationMetadata.getAnnotationAttributes(annotationClass.getName());
 
         if (annotation != null) {
-            Class<?> entityClass = (Class<?>) annotation.get("value");
-            if (entityClass != null) {
+            Object value = annotation.get("value");
+            if (value instanceof Class<?> entityClass) {
                 MetaClass metaClass = metadata.getClass(entityClass);
                 MetaClass originalMetaClass = extendedEntities.getOriginalOrThisMetaClass(metaClass);
                 return Optional.of(originalMetaClass.getJavaClass());

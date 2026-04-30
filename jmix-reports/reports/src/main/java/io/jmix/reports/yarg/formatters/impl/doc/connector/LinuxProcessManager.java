@@ -62,7 +62,7 @@ public class LinuxProcessManager extends JavaProcessManager implements ProcessMa
     }
 
     public void kill(Process process, List<Long> pids) {
-        log.info("Linux office process manager is going to kill following processes " + pids);
+        log.info("Linux office process manager is going to kill following processes {}", pids);
         for (Long pid : pids) {
             try {
                 if (PID_UNKNOWN != pid) {
@@ -72,7 +72,7 @@ public class LinuxProcessManager extends JavaProcessManager implements ProcessMa
                     super.kill(process, Collections.singletonList(pid));
                 }
             } catch (Exception e) {
-                log.error(String.format("An error occurred while killing process %d in linux system. Process.destroy() will be called.", pid), e);
+                log.error("An error occurred while killing process {} in linux system. Process.destroy() will be called.", pid, e);
                 super.kill(process, Collections.singletonList(pid));
             }
         }

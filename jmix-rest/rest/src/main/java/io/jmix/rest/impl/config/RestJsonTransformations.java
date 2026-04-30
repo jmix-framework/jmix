@@ -149,7 +149,7 @@ public class RestJsonTransformations {
                     IOUtils.closeQuietly(stream);
                 }
             } else {
-                log.warn("Resource " + location + " not found, ignore it");
+                log.warn("Resource {} not found, ignore it", location);
             }
         }
     }

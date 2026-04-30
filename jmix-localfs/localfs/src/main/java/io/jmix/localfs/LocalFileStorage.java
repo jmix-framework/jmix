@@ -238,7 +238,7 @@ public class LocalFileStorage implements FileStorage {
             Path path = root.resolve(relativePath);
 
             if (!path.toFile().exists()) {
-                log.error("File " + path + " not found");
+                log.error("File {} not found", path);
                 continue;
             }
 
@@ -250,7 +250,7 @@ public class LocalFileStorage implements FileStorage {
 
                 inputStream = Files.newInputStream(path);
             } catch (IOException e) {
-                log.error("Error opening input stream for " + path, e);
+                log.error("Error opening input stream for {}", path, e);
             }
         }
 

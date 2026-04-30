@@ -95,7 +95,9 @@ def optionsDatasourceXml = api.processSnippet('optionsDsSource.xml',
         <action id="discardAction" type="lookup_discard"/>
     </actions>
     <layout padding="false">
-        <formLayout id="layoutWrapper" classNames="master-detail-layout" height="100%">
+        <gridLayout id="layoutWrapper" classNames="master-detail-layout"
+                    columnMinWidth="40rem"
+                    height="100%" width="100%">
             <vbox id="listLayout" height="100%"><%if (createGenericFilter) {%>
                 <genericFilter id="genericFilter"
                                dataLoader="${tableDl}">
@@ -114,6 +116,6 @@ def optionsDatasourceXml = api.processSnippet('optionsDsSource.xml',
                     <button id="cancelButton" text="msg:///actions.Cancel" icon="CANCEL"/>
                 </hbox>
             </vbox>
-        </formLayout>
+        </gridLayout>
     </layout>
 </view>

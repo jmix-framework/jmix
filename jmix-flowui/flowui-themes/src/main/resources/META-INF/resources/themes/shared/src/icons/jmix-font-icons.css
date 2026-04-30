@@ -766,11 +766,11 @@ html {
     --jmix-font-icon-side-panel-layout-closer: var(--lumo-icons-cross);
 }
 
-.jmix-font-icon {
+.jmix-font-icon:before {
     font-family: var(--jmix-font-icon-font-family);
 }
 
-.jmix-font-icon.jmix-font-icon-lumo {
+.jmix-font-icon.jmix-font-icon-lumo:before {
     font-family: lumo-icons;
 }
 

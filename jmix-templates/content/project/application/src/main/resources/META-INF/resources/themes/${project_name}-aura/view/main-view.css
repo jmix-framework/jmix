@@ -5,6 +5,10 @@
     --vaadin-app-layout-drawer-width: 256px;
 }
 
+vaadin-app-layout.jmix-main-view-app-layout[drawer-opened] {
+    --vaadin-app-layout-navbar-padding-inline-start: 0px;
+}
+
 .jmix-main-view-header {
     display: flex;
     align-items: center;

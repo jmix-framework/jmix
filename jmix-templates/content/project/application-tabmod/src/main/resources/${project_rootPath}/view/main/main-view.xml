@@ -4,7 +4,7 @@
     <actions>
         <action id="logoutAction" text="msg:///actions.logout.text" type="logout"/>
     </actions>
-    <appLayout primarySection="NAVBAR">
+    <appLayout classNames="jmix-main-view-app-layout" primarySection="NAVBAR">
         <navigationBar>
             <header id="header" classNames="jmix-main-view-header">
                 <drawerToggle id="drawerToggle"

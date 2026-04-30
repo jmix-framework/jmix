@@ -8,7 +8,7 @@
         <action id="logoutAction" type="logout"/>
         <%}%>
     </actions>
-    <appLayout>
+    <appLayout classNames="jmix-main-view-app-layout">
         <navigationBar>
             <header id="header" classNames="jmix-main-view-header">
                 <drawerToggle id="drawerToggle"

@@ -18,7 +18,7 @@ package io.jmix.fullcalendarflowui.kit.meta;
 
 import io.jmix.flowui.kit.meta.*;
 import io.jmix.flowui.kit.meta.StudioPropertyGroups.BaseActionDefaultProperties;
-import io.jmix.flowui.kit.meta.StudioPropertyGroups.IconWithSetParameter;
+import io.jmix.flowui.kit.meta.StudioPropertyGroups.Icon;
 
 @StudioAPI
 final class StudioFullCalendarPropertyGroups {
@@ -312,7 +312,7 @@ final class StudioFullCalendarPropertyGroups {
                             defaultValue = "msg://io.jmix.datatoolsflowui.action/showEntityInfoAction.title")
             }
     )
-    public interface DaysOfWeekEditActionComponent extends BaseActionDefaultProperties, IconWithSetParameter {
+    public interface DaysOfWeekEditActionComponent extends BaseActionDefaultProperties, Icon {
     }
 
     @StudioPropertyGroup(

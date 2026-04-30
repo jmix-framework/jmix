@@ -31,6 +31,8 @@ dependencies {
         exclude group: 'com.vaadin', module: 'copilot'
     }
 
+    api 'com.vaadin:vaadin-dev'
+
     api("org.eclipse.jetty.ee11:jetty-ee11-webapp")
     api("org.eclipse.jetty.ee11.websocket:jetty-ee11-websocket-jakarta-server")
     api('jakarta.servlet:jakarta.servlet-api')

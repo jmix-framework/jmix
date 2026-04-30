@@ -957,14 +957,7 @@ public final class StudioPropertyGroups {
             xmlAttribute = StudioXmlAttributes.ICON,
             type = StudioPropertyType.ICON,
             category = StudioProperty.Category.LOOK_AND_FEEL,
-            setParameterFqn = "com.vaadin.flow.component.icon.Icon"))
-    public interface IconWithSetParameter {
-    }
-
-    @StudioPropertyGroup(properties = @StudioProperty(
-            xmlAttribute = StudioXmlAttributes.ICON,
-            type = StudioPropertyType.ICON,
-            category = StudioProperty.Category.LOOK_AND_FEEL))
+            setParameterFqn = "com.vaadin.flow.component.Component"))
     public interface Icon {
     }
 
@@ -1990,7 +1983,7 @@ public final class StudioPropertyGroups {
             type = StudioPropertyType.ICON,
             category = StudioProperty.Category.LOOK_AND_FEEL,
             initialValue = "CHECK",
-            setParameterFqn = "com.vaadin.flow.component.icon.Icon"))
+            setParameterFqn = "com.vaadin.flow.component.Component"))
     public interface IconWithCheckInitialValue {
     }
 
@@ -1999,7 +1992,7 @@ public final class StudioPropertyGroups {
             type = StudioPropertyType.ICON,
             category = StudioProperty.Category.LOOK_AND_FEEL,
             initialValue = "BAN",
-            setParameterFqn = "com.vaadin.flow.component.icon.Icon"))
+            setParameterFqn = "com.vaadin.flow.component.Component"))
     public interface IconWithBanInitialValue {
     }
 
@@ -2008,7 +2001,7 @@ public final class StudioPropertyGroups {
             type = StudioPropertyType.ICON,
             category = StudioProperty.Category.LOOK_AND_FEEL,
             initialValue = "PENCIL",
-            setParameterFqn = "com.vaadin.flow.component.icon.Icon"))
+            setParameterFqn = "com.vaadin.flow.component.Component"))
     public interface IconWithPencilInitialValue {
     }
 
@@ -2121,7 +2114,7 @@ public final class StudioPropertyGroups {
             type = StudioPropertyType.ICON,
             category = StudioProperty.Category.LOOK_AND_FEEL,
             defaultValue = "PLUS",
-            setParameterFqn = "com.vaadin.flow.component.icon.Icon"))
+            setParameterFqn = "com.vaadin.flow.component.Component"))
     public interface IconWithPlusDefaultValue {
     }
 
@@ -2130,7 +2123,7 @@ public final class StudioPropertyGroups {
             type = StudioPropertyType.ICON,
             category = StudioProperty.Category.LOOK_AND_FEEL,
             defaultValue = "CLOSE",
-            setParameterFqn = "com.vaadin.flow.component.icon.Icon"))
+            setParameterFqn = "com.vaadin.flow.component.Component"))
     public interface IconWithCloseDefaultValue {
     }
 
@@ -2150,16 +2143,6 @@ public final class StudioPropertyGroups {
 
     @StudioPropertyGroup
     public interface LoginFormDefaultProperties extends ForgotPassword, Password, Submit, Title, Username {
-    }
-
-    @StudioPropertyGroup
-    public interface UserMenuItemDefaultProperties extends RequiredId, Visible, Enabled, Checkable, Checked,
-            UserMenuItemThemeNames {
-    }
-
-    @StudioPropertyGroup
-    public interface TextUserMenuItemDefaultProperties extends UserMenuItemDefaultProperties, RequiredText,
-            IconWithSetParameter {
     }
 
     @StudioPropertyGroup
@@ -3989,7 +3972,7 @@ public final class StudioPropertyGroups {
 
     @StudioPropertyGroup
     public interface DropdownActionItem extends ActionVariantWithDefaultDefaultValue, Description, Enabled, Visible,
-            IconWithSetParameter, RequiredId, Text {
+            Icon, RequiredId, Text {
     }
 
     @StudioPropertyGroup

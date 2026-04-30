@@ -162,7 +162,7 @@ final class StudioPivotTablePropertyGroups {
                             type = StudioPropertyType.ICON,
                             category = StudioProperty.Category.LOOK_AND_FEEL,
                             defaultValue = "SHIELD",
-                            setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
+                            setParameterFqn = "com.vaadin.flow.component.Component"),
                     @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.ID,
                             type = StudioPropertyType.COMPONENT_ID,

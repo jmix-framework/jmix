@@ -44,7 +44,7 @@ final class StudioActionPropertyGroups {
     }
 
     @StudioPropertyGroup
-    public interface IconActionDefaultProperties extends BaseAction, StudioPropertyGroups.IconWithSetParameter {
+    public interface IconActionDefaultProperties extends BaseAction, StudioPropertyGroups.Icon {
     }
 
     @StudioPropertyGroup
@@ -75,12 +75,6 @@ final class StudioActionPropertyGroups {
     }
 
     @StudioPropertyGroup
-    public interface RequiredIconTextActionDefaultPropertiesWithoutShortcutCombination extends
-            NoShortcutBaseAction, StudioPropertyGroups.IconWithSetParameter,
-            StudioPropertyGroups.RequiredId, StudioPropertyGroups.Text {
-    }
-
-    @StudioPropertyGroup
     public interface DangerActionDefaultProperties extends StudioPropertyGroups.ActionVariantWithDangerDefaultValue,
             StudioPropertyGroups.Description, StudioPropertyGroups.Enabled,
             StudioPropertyGroups.ShortcutCombination, StudioPropertyGroups.Visible {
@@ -105,7 +99,7 @@ final class StudioActionPropertyGroups {
                             type = StudioPropertyType.ICON,
                             category = StudioProperty.Category.LOOK_AND_FEEL,
                             defaultValue = "SIGN_OUT",
-                            setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
+                            setParameterFqn = "com.vaadin.flow.component.Component"),
                     @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.ID,
                             type = StudioPropertyType.COMPONENT_ID,
@@ -147,7 +141,7 @@ final class StudioActionPropertyGroups {
                             type = StudioPropertyType.ICON,
                             category = StudioProperty.Category.LOOK_AND_FEEL,
                             defaultValue = "TRASH",
-                            setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
+                            setParameterFqn = "com.vaadin.flow.component.Component"),
                     @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.ID,
                             type = StudioPropertyType.COMPONENT_ID,
@@ -166,7 +160,7 @@ final class StudioActionPropertyGroups {
                             type = StudioPropertyType.ICON,
                             category = StudioProperty.Category.LOOK_AND_FEEL,
                             defaultValue = "STAR",
-                            setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
+                            setParameterFqn = "com.vaadin.flow.component.Component"),
                     @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.ID,
                             type = StudioPropertyType.COMPONENT_ID,
@@ -185,7 +179,7 @@ final class StudioActionPropertyGroups {
                             type = StudioPropertyType.ICON,
                             category = StudioProperty.Category.LOOK_AND_FEEL,
                             defaultValue = "ARCHIVE",
-                            setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
+                            setParameterFqn = "com.vaadin.flow.component.Component"),
                     @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.ID,
                             type = StudioPropertyType.COMPONENT_ID,
@@ -204,7 +198,7 @@ final class StudioActionPropertyGroups {
                             type = StudioPropertyType.ICON,
                             category = StudioProperty.Category.LOOK_AND_FEEL,
                             defaultValue = "ARCHIVE",
-                            setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
+                            setParameterFqn = "com.vaadin.flow.component.Component"),
                     @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.ID,
                             type = StudioPropertyType.COMPONENT_ID,
@@ -223,7 +217,7 @@ final class StudioActionPropertyGroups {
                             type = StudioPropertyType.ICON,
                             category = StudioProperty.Category.LOOK_AND_FEEL,
                             defaultValue = "ARCHIVE",
-                            setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
+                            setParameterFqn = "com.vaadin.flow.component.Component"),
                     @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.ID,
                             type = StudioPropertyType.COMPONENT_ID,
@@ -242,7 +236,7 @@ final class StudioActionPropertyGroups {
                             type = StudioPropertyType.ICON,
                             category = StudioProperty.Category.LOOK_AND_FEEL,
                             defaultValue = "FILE_TABLE",
-                            setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
+                            setParameterFqn = "com.vaadin.flow.component.Component"),
                     @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.ID,
                             type = StudioPropertyType.COMPONENT_ID,
@@ -266,7 +260,7 @@ final class StudioActionPropertyGroups {
                             type = StudioPropertyType.ICON,
                             category = StudioProperty.Category.LOOK_AND_FEEL,
                             defaultValue = "FILE_CODE",
-                            setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
+                            setParameterFqn = "com.vaadin.flow.component.Component"),
                     @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.ID,
                             type = StudioPropertyType.COMPONENT_ID,
@@ -290,7 +284,7 @@ final class StudioActionPropertyGroups {
                             type = StudioPropertyType.ICON,
                             category = StudioProperty.Category.LOOK_AND_FEEL,
                             defaultValue = "TABLE",
-                            setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
+                            setParameterFqn = "com.vaadin.flow.component.Component"),
                     @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.ID,
                             type = StudioPropertyType.COMPONENT_ID,
@@ -332,7 +326,7 @@ final class StudioActionPropertyGroups {
                             type = StudioPropertyType.ICON,
                             category = StudioProperty.Category.LOOK_AND_FEEL,
                             defaultValue = "SHIELD",
-                            setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
+                            setParameterFqn = "com.vaadin.flow.component.Component"),
                     @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.ID,
                             type = StudioPropertyType.COMPONENT_ID,
@@ -356,7 +350,7 @@ final class StudioActionPropertyGroups {
                             type = StudioPropertyType.ICON,
                             category = StudioProperty.Category.LOOK_AND_FEEL,
                             defaultValue = "SHIELD",
-                            setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
+                            setParameterFqn = "com.vaadin.flow.component.Component"),
                     @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.ID,
                             type = StudioPropertyType.COMPONENT_ID,
@@ -380,7 +374,7 @@ final class StudioActionPropertyGroups {
                             type = StudioPropertyType.ICON,
                             category = StudioProperty.Category.LOOK_AND_FEEL,
                             defaultValue = "USERS",
-                            setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
+                            setParameterFqn = "com.vaadin.flow.component.Component"),
                     @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.ID,
                             type = StudioPropertyType.COMPONENT_ID,
@@ -451,7 +445,7 @@ final class StudioActionPropertyGroups {
                             type = StudioPropertyType.ICON,
                             category = StudioProperty.Category.LOOK_AND_FEEL,
                             defaultValue = "EXCHANGE",
-                            setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
+                            setParameterFqn = "com.vaadin.flow.component.Component"),
                     @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.MAX_SUBSTITUTIONS,
                             type = StudioPropertyType.INTEGER,
@@ -467,7 +461,7 @@ final class StudioActionPropertyGroups {
             category = StudioProperty.Category.LOOK_AND_FEEL,
             required = true,
             initialValue = "ABACUS",
-            setParameterFqn = "com.vaadin.flow.component.icon.Icon"))
+            setParameterFqn = "com.vaadin.flow.component.Component"))
     public interface BaseActionComponent extends TextActionDefaultProperties, StudioPropertyGroups.RequiredId {
     }
 
@@ -478,7 +472,7 @@ final class StudioActionPropertyGroups {
                             type = StudioPropertyType.ICON,
                             category = StudioProperty.Category.LOOK_AND_FEEL,
                             defaultValue = "CLOSE",
-                            setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
+                            setParameterFqn = "com.vaadin.flow.component.Component"),
                     @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.ID,
                             type = StudioPropertyType.COMPONENT_ID,
@@ -502,7 +496,7 @@ final class StudioActionPropertyGroups {
                             type = StudioPropertyType.ICON,
                             category = StudioProperty.Category.LOOK_AND_FEEL,
                             defaultValue = "CLOSE",
-                            setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
+                            setParameterFqn = "com.vaadin.flow.component.Component"),
                     @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.ID,
                             type = StudioPropertyType.COMPONENT_ID,
@@ -526,7 +520,7 @@ final class StudioActionPropertyGroups {
                             type = StudioPropertyType.ICON,
                             category = StudioProperty.Category.LOOK_AND_FEEL,
                             defaultValue = "ELLIPSIS_DOTS_H",
-                            setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
+                            setParameterFqn = "com.vaadin.flow.component.Component"),
                     @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.ID,
                             type = StudioPropertyType.COMPONENT_ID,
@@ -550,7 +544,7 @@ final class StudioActionPropertyGroups {
                             type = StudioPropertyType.ICON,
                             category = StudioProperty.Category.LOOK_AND_FEEL,
                             defaultValue = "SEARCH",
-                            setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
+                            setParameterFqn = "com.vaadin.flow.component.Component"),
                     @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.ID,
                             type = StudioPropertyType.COMPONENT_ID,
@@ -574,7 +568,7 @@ final class StudioActionPropertyGroups {
                             type = StudioPropertyType.ICON,
                             category = StudioProperty.Category.LOOK_AND_FEEL,
                             defaultValue = "SEARCH",
-                            setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
+                            setParameterFqn = "com.vaadin.flow.component.Component"),
                     @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.ID,
                             type = StudioPropertyType.COMPONENT_ID,
@@ -598,7 +592,7 @@ final class StudioActionPropertyGroups {
                             type = StudioPropertyType.ICON,
                             category = StudioProperty.Category.LOOK_AND_FEEL,
                             defaultValue = "ELLIPSIS_DOTS_H",
-                            setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
+                            setParameterFqn = "com.vaadin.flow.component.Component"),
                     @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.ID,
                             type = StudioPropertyType.COMPONENT_ID,
@@ -622,7 +616,7 @@ final class StudioActionPropertyGroups {
                             type = StudioPropertyType.ICON,
                             category = StudioProperty.Category.LOOK_AND_FEEL,
                             defaultValue = "BAN",
-                            setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
+                            setParameterFqn = "com.vaadin.flow.component.Component"),
                     @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.ID,
                             type = StudioPropertyType.COMPONENT_ID,
@@ -646,7 +640,7 @@ final class StudioActionPropertyGroups {
                             type = StudioPropertyType.ICON,
                             category = StudioProperty.Category.LOOK_AND_FEEL,
                             defaultValue = "CHECK",
-                            setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
+                            setParameterFqn = "com.vaadin.flow.component.Component"),
                     @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.ID,
                             type = StudioPropertyType.COMPONENT_ID,
@@ -670,7 +664,7 @@ final class StudioActionPropertyGroups {
                             type = StudioPropertyType.ICON,
                             category = StudioProperty.Category.LOOK_AND_FEEL,
                             defaultValue = "BAN",
-                            setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
+                            setParameterFqn = "com.vaadin.flow.component.Component"),
                     @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.ID,
                             type = StudioPropertyType.COMPONENT_ID,
@@ -694,7 +688,7 @@ final class StudioActionPropertyGroups {
                             type = StudioPropertyType.ICON,
                             category = StudioProperty.Category.LOOK_AND_FEEL,
                             defaultValue = "BAN",
-                            setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
+                            setParameterFqn = "com.vaadin.flow.component.Component"),
                     @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.ID,
                             type = StudioPropertyType.COMPONENT_ID,
@@ -718,7 +712,7 @@ final class StudioActionPropertyGroups {
                             type = StudioPropertyType.ICON,
                             category = StudioProperty.Category.LOOK_AND_FEEL,
                             defaultValue = "ARCHIVE",
-                            setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
+                            setParameterFqn = "com.vaadin.flow.component.Component"),
                     @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.ID,
                             type = StudioPropertyType.COMPONENT_ID,
@@ -742,7 +736,7 @@ final class StudioActionPropertyGroups {
                             type = StudioPropertyType.ICON,
                             category = StudioProperty.Category.LOOK_AND_FEEL,
                             defaultValue = "CHECK",
-                            setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
+                            setParameterFqn = "com.vaadin.flow.component.Component"),
                     @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.ID,
                             type = StudioPropertyType.COMPONENT_ID,
@@ -766,7 +760,7 @@ final class StudioActionPropertyGroups {
                             type = StudioPropertyType.ICON,
                             category = StudioProperty.Category.LOOK_AND_FEEL,
                             defaultValue = "BAN",
-                            setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
+                            setParameterFqn = "com.vaadin.flow.component.Component"),
                     @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.ID,
                             type = StudioPropertyType.COMPONENT_ID,
@@ -790,7 +784,7 @@ final class StudioActionPropertyGroups {
                             type = StudioPropertyType.ICON,
                             category = StudioProperty.Category.LOOK_AND_FEEL,
                             defaultValue = "PENCIL",
-                            setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
+                            setParameterFqn = "com.vaadin.flow.component.Component"),
                     @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.ID,
                             type = StudioPropertyType.COMPONENT_ID,
@@ -824,7 +818,7 @@ final class StudioActionPropertyGroups {
                             type = StudioPropertyType.ICON,
                             category = StudioProperty.Category.LOOK_AND_FEEL,
                             defaultValue = "ERASER",
-                            setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
+                            setParameterFqn = "com.vaadin.flow.component.Component"),
                     @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.ID,
                             type = StudioPropertyType.COMPONENT_ID,
@@ -843,7 +837,7 @@ final class StudioActionPropertyGroups {
                             type = StudioPropertyType.ICON,
                             category = StudioProperty.Category.LOOK_AND_FEEL,
                             defaultValue = "COPY",
-                            setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
+                            setParameterFqn = "com.vaadin.flow.component.Component"),
                     @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.ID,
                             type = StudioPropertyType.COMPONENT_ID,
@@ -862,7 +856,7 @@ final class StudioActionPropertyGroups {
                             type = StudioPropertyType.ICON,
                             category = StudioProperty.Category.LOOK_AND_FEEL,
                             defaultValue = "PENCIL",
-                            setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
+                            setParameterFqn = "com.vaadin.flow.component.Component"),
                     @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.ID,
                             type = StudioPropertyType.COMPONENT_ID,
@@ -898,7 +892,7 @@ final class StudioActionPropertyGroups {
                             type = StudioPropertyType.ICON,
                             category = StudioProperty.Category.LOOK_AND_FEEL,
                             defaultValue = "PENCIL",
-                            setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
+                            setParameterFqn = "com.vaadin.flow.component.Component"),
                     @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.ID,
                             type = StudioPropertyType.COMPONENT_ID,
@@ -923,7 +917,7 @@ final class StudioActionPropertyGroups {
                             type = StudioPropertyType.ICON,
                             category = StudioProperty.Category.LOOK_AND_FEEL,
                             defaultValue = "CLOSE",
-                            setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
+                            setParameterFqn = "com.vaadin.flow.component.Component"),
                     @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.ID,
                             type = StudioPropertyType.COMPONENT_ID,
@@ -966,7 +960,7 @@ final class StudioActionPropertyGroups {
                             type = StudioPropertyType.ICON,
                             category = StudioProperty.Category.LOOK_AND_FEEL,
                             defaultValue = "CLOSE",
-                            setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
+                            setParameterFqn = "com.vaadin.flow.component.Component"),
                     @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.ID,
                             type = StudioPropertyType.COMPONENT_ID,
@@ -990,7 +984,7 @@ final class StudioActionPropertyGroups {
                             type = StudioPropertyType.ICON,
                             category = StudioProperty.Category.LOOK_AND_FEEL,
                             defaultValue = "EYE",
-                            setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
+                            setParameterFqn = "com.vaadin.flow.component.Component"),
                     @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.ID,
                             type = StudioPropertyType.COMPONENT_ID,
@@ -1014,7 +1008,7 @@ final class StudioActionPropertyGroups {
                             type = StudioPropertyType.ICON,
                             category = StudioProperty.Category.LOOK_AND_FEEL,
                             defaultValue = "REFRESH",
-                            setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
+                            setParameterFqn = "com.vaadin.flow.component.Component"),
                     @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.ID,
                             type = StudioPropertyType.COMPONENT_ID,

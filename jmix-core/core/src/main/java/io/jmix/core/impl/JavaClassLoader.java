@@ -52,6 +52,7 @@ public class JavaClassLoader extends URLClassLoader {
     protected final Set<String> rootDirs;
 
     protected final Map<String, TimestampClass> loaded = new ConcurrentHashMap<>();
+    protected final Map<String, byte[]> generatedClassBytes = new ConcurrentHashMap<>();
     protected final ConcurrentHashMap<String, Lock> locks = new ConcurrentHashMap<>();
 
     protected final ProxyClassLoader proxyClassLoader;
@@ -95,6 +96,7 @@ public class JavaClassLoader extends URLClassLoader {
 
     public void clearCache() {
         loaded.clear();
+        generatedClassBytes.clear();
     }
 
     @PreDestroy
@@ -110,6 +112,11 @@ public class JavaClassLoader extends URLClassLoader {
         try {
             lock(containerClassName);
             Class clazz;
+
+            TimestampClass loadedClass = loaded.get(fullClassName);
+            if (loadedClass != null) {
+                return loadedClass.clazz;
+            }
 
             //first check if there is a ".class" file in the root directories
             for (ClassFilesProvider classFilesProvider : classFilesProviders.values()) {
@@ -129,6 +136,51 @@ public class JavaClassLoader extends URLClassLoader {
         } finally {
             unlock(containerClassName);
             sample.stop(meterRegistry.timer("jmix.JavaClassLoader.loadClass"));
+        }
+    }
+
+    public Class<?> loadGeneratedClass(String className, byte[] bytes) {
+        return loadGeneratedClasses(Map.of(className, bytes)).get(className);
+    }
+
+    public Map<String, Class<?>> loadGeneratedClasses(Map<String, byte[]> generatedClasses) {
+        if (generatedClasses.isEmpty()) {
+            return Collections.emptyMap();
+        }
+
+        List<String> lockNames = generatedClasses.keySet().stream()
+                .map(className -> StringUtils.substringBefore(className, "$"))
+                .distinct()
+                .sorted()
+                .toList();
+        lockNames.forEach(this::lock);
+
+        try {
+            generatedClasses.keySet().forEach(this::removeClass);
+
+            GeneratedClassLoader generatedClassLoader = new GeneratedClassLoader(proxyClassLoader, generatedClasses);
+            Map<String, Class<?>> loadedClasses = new LinkedHashMap<>();
+            Collection<Class> contextClasses = new ArrayList<>();
+            for (String className : generatedClasses.keySet()) {
+                try {
+                    Class<?> clazz = generatedClassLoader.loadClass(className);
+                    loadedClasses.put(className, clazz);
+                    contextClasses.add(clazz);
+                } catch (ClassNotFoundException e) {
+                    throw new RuntimeException("Class not found", e);
+                }
+            }
+
+            Date timestamp = getCurrentTimestamp();
+            loadedClasses.forEach((className, clazz) -> loaded.put(className, new TimestampClass(clazz, timestamp)));
+            generatedClasses.forEach(generatedClassBytes::put);
+            springBeanLoader.updateContext(contextClasses);
+            return loadedClasses;
+        } finally {
+            ListIterator<String> iterator = lockNames.listIterator(lockNames.size());
+            while (iterator.hasPrevious()) {
+                unlock(iterator.previous());
+            }
         }
     }
 
@@ -241,7 +293,19 @@ public class JavaClassLoader extends URLClassLoader {
         }
     }
 
+    public byte [] getGeneratedClassResource(String resourceName) {
+        if (resourceName.startsWith("/")) {
+            resourceName = resourceName.substring(1);
+        }
+        if (!resourceName.endsWith(".class")) {
+            return null;
+        }
+        String className = resourceName.substring(0, resourceName.length() - 6).replace('/', '.');
+        return generatedClassBytes.get(className);
+    }
+
     public boolean removeClass(String className) {
+        generatedClassBytes.remove(className);
         TimestampClass removed = loaded.remove(className);
         if (removed != null) {
             for (String dependent : removed.dependent) {
@@ -338,5 +402,34 @@ public class JavaClassLoader extends URLClassLoader {
     private void lock(String name) {//not sure it's right, but we can not use synchronization here
         locks.putIfAbsent(name, new ReentrantLock());
         locks.get(name).lock();
+    }
+
+    protected static class GeneratedClassLoader extends ClassLoader {
+
+        private final Map<String, byte[]> generatedClasses;
+        private final Map<String, Class<?>> loadedClasses = new HashMap<>();
+
+        GeneratedClassLoader(ClassLoader parent, Map<String, byte[]> generatedClasses) {
+            super(parent);
+            this.generatedClasses = generatedClasses;
+        }
+
+        @Override
+        protected Class<?> loadClass(String fqn, boolean resolve) throws ClassNotFoundException {
+            Class<?> clazz = loadedClasses.get(fqn);
+            if (clazz != null) {
+                return clazz;
+            }
+
+            byte[] bytes = generatedClasses.get(fqn);
+            if (bytes != null) {
+                clazz = defineClass(fqn, bytes, 0, bytes.length);
+                loadedClasses.put(fqn, clazz);
+                log.debug("Class {} loaded from generated bytecode", fqn);
+                return clazz;
+            }
+
+            return super.loadClass(fqn, resolve);
+        }
     }
 }

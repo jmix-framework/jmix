@@ -20,6 +20,7 @@ import io.jmix.core.Resources;
 import org.apache.commons.io.IOUtils;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.env.Environment;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
@@ -38,6 +39,8 @@ public class ResourcesImpl implements Resources, ResourceLoaderAware {
     private final Environment environment;
 
     private ResourceLoader delegate;
+    @Autowired
+    protected JavaClassLoader javaClassLoader;
 
     @Autowired
     public ResourcesImpl(Environment environment) {
@@ -92,6 +95,16 @@ public class ResourcesImpl implements Resources, ResourceLoaderAware {
         } else {
             if (location.startsWith("/"))
                 location = location.substring(1);
+            byte[] generatedClassBytes = javaClassLoader.getGeneratedClassResource(location);
+            if (generatedClassBytes != null) {
+                String resourceLocation = location;
+                return new ByteArrayResource(generatedClassBytes) {
+                    @Override
+                    public String getDescription() {
+                        return "generated class resource [" + resourceLocation + "]";
+                    }
+                };
+            }
             File file = new File(environment.getProperty("jmix.core.conf-dir"), location);
             if (file.exists()) {
                 location = file.toURI().toString();

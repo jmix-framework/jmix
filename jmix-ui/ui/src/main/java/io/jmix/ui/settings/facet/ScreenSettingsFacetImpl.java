@@ -21,6 +21,7 @@ import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Frame;
+import io.jmix.ui.component.HasComponents;
 import io.jmix.ui.component.HasInnerComponents;
 import io.jmix.ui.component.impl.AbstractFacet;
 import io.jmix.ui.screen.Screen;
@@ -172,11 +173,12 @@ public class ScreenSettingsFacetImpl extends AbstractFacet implements ScreenSett
         assert getOwner() != null;
 
         Collection<Component> components = Collections.emptyList();
+        Collection<Component> ownerComponents = fillComponents(getOwner().getComponents());
 
         if (auto) {
-            components = fillComponents(getOwner().getComponents());
+            components = ownerComponents;
         } else if (CollectionUtils.isNotEmpty(componentIds)) {
-            components = getOwner().getComponents().stream()
+            components = ownerComponents.stream()
                     .filter(component -> containsComponentId(componentIds, component))
                     .collect(Collectors.toList());
         }
@@ -365,24 +367,37 @@ public class ScreenSettingsFacetImpl extends AbstractFacet implements ScreenSett
     protected Collection<Component> fillComponents(Collection<Component> components) {
         Collection<Component> result = new ArrayList<>(components);
         for (Component component : components) {
-            if (component instanceof HasInnerComponents) {
-                fillWithInnerComponents(result, (HasInnerComponents) component);
-            }
+            fillInnerComponents(result, component);
         }
         return result;
     }
 
-    protected Collection<Component> fillWithInnerComponents(Collection<Component> components, HasInnerComponents hasInnerComponents) {
-        Collection<Component> innerComponents = hasInnerComponents.getInnerComponents();
-        components.addAll(innerComponents);
+    protected void fillInnerComponents(Collection<Component> components, Component component) {
+        if (component instanceof HasInnerComponents) {
+            Collection<Component> innerComponents = ((HasInnerComponents) component).getInnerComponents();
+            addComponents(components, innerComponents);
 
-        for (Component component : innerComponents) {
-            if (component instanceof HasInnerComponents) {
-                fillWithInnerComponents(components, (HasInnerComponents) component);
+            for (Component innerComponent : innerComponents) {
+                fillInnerComponents(components, innerComponent);
             }
         }
 
-        return components;
+        if (component instanceof HasComponents) {
+            Collection<Component> ownComponents = ((HasComponents) component).getOwnComponents();
+            addComponents(components, ownComponents);
+
+            for (Component ownComponent : ownComponents) {
+                fillInnerComponents(components, ownComponent);
+            }
+        }
+    }
+
+    protected void addComponents(Collection<Component> result, Collection<Component> components) {
+        for (Component component : components) {
+            if (!result.contains(component)) {
+                result.add(component);
+            }
+        }
     }
 
     /**

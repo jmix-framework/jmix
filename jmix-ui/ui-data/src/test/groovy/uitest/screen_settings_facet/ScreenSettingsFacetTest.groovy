@@ -26,6 +26,7 @@ import uitest.screen_settings_facet.screen.FacetAutoTestScreen
 import uitest.screen_settings_facet.screen.FacetDelegateTestScreen
 import uitest.screen_settings_facet.screen.FacetFragmentTableSettingsHostScreen
 import uitest.screen_settings_facet.screen.FacetManualTestScreen
+import uitest.screen_settings_facet.screen.FacetTableButtonsPanelSettingsTestScreen
 
 import static io.jmix.ui.component.Table.SortDirection.ASCENDING
 import static io.jmix.ui.component.Table.SortDirection.DESCENDING
@@ -116,6 +117,26 @@ class ScreenSettingsFacetTest extends UiDataTestSpecification {
 
         then: "Save settings delegate should be fired"
         screen.calls == 3
+    }
+
+    def "ScreenSettingsFacet saves and applies component settings inside table buttons panel"() {
+        showTestMainScreen()
+
+        when: "Open screen and change state of component inside table buttons panel"
+        def screen = createAndShow(FacetTableButtonsPanelSettingsTestScreen)
+        screen.buttonsPanelGroupBox.expanded = false
+        screen.closeWithDefaultAction()
+
+        then: "Settings of component inside table buttons panel should be saved"
+        screen.facet.settings
+                .getSettings(screen.buttonsPanelGroupBox.id, GroupBoxSettings)
+                .isPresent()
+
+        when: "Reopen screen"
+        screen = createAndShow(FacetTableButtonsPanelSettingsTestScreen)
+
+        then: "Component inside table buttons panel should apply saved settings"
+        !screen.buttonsPanelGroupBox.expanded
     }
 
     def "Table sort settings from first same type fragment are not overwritten by last fragment"() {

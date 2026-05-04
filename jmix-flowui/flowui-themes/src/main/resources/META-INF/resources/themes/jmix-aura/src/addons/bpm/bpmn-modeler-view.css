@@ -29,7 +29,7 @@
 }
 
 .bpmn-modeler-view vaadin-details[theme~="no-padding"] vaadin-details-summary {
-    padding-left: 0;
+    padding-inline-start: 0;
 }
 
 .bpm-modeler-properties-panel {

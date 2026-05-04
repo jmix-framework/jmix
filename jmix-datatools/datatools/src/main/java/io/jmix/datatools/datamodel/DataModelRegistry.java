@@ -216,7 +216,8 @@ public class DataModelRegistry {
         MetaClass embeddableClass = metadata.findClass(field.getJavaType());
 
         if (embeddableClass == null) {
-            throw new IllegalStateException("Embeddable class not found");
+            log.warn("Embeddable class not found");
+            return;
         }
 
         DataModel embeddableDataModel = createEntityDescription(embeddableClass, true);
@@ -444,7 +445,8 @@ public class DataModelRegistry {
 
                     return type.toString();
                 } else {
-                    throw new IllegalStateException("Column: " + columnName + " is not found in table: " + tableName);
+                    log.warn("Column: '{}' is not found in table: '{}'", columnName, tableName);
+                    return "";
                 }
             }
         } catch (SQLException e) {

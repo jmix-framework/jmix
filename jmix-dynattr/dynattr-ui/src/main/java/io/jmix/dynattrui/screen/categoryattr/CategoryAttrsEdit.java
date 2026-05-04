@@ -34,6 +34,7 @@ import io.jmix.dynattr.OptionsLoaderType;
 import io.jmix.dynattr.model.Category;
 import io.jmix.dynattr.model.CategoryAttribute;
 import io.jmix.dynattr.model.CategoryAttributeConfiguration;
+import io.jmix.dynattr.utils.DynAttrStringUtils;
 import io.jmix.dynattrui.facet.DynAttrFacet;
 import io.jmix.dynattrui.impl.model.TargetScreenComponent;
 import io.jmix.dynattrui.screen.localization.AttributeLocalizationFragment;
@@ -721,7 +722,16 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
             if (attribute.getCategory() != null) {
                 categoryName = StringUtils.defaultString(attribute.getCategory().getName());
             }
-            codeField.setValue(StringUtils.deleteWhitespace(categoryName + attribute.getName()));
+            char[] delimiters = {' ', '.', '_', '-', '\t'};
+
+            String categoryNameInCamelCase = DynAttrStringUtils.toCamelCase(categoryName, delimiters);
+            String attributeNameInCamelCase = DynAttrStringUtils.toCamelCase(attribute.getName(), delimiters);
+
+            String resultCodeName = !Strings.isNullOrEmpty(categoryNameInCamelCase) ?
+                    categoryNameInCamelCase + StringUtils.capitalize(attributeNameInCamelCase) :
+                    attributeNameInCamelCase;
+
+            codeField.setValue(resultCodeName);
         }
     }
 

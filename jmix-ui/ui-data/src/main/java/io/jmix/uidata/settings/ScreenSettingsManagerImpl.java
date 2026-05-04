@@ -32,8 +32,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collection;
+import java.util.Optional;
 
 import static io.jmix.ui.component.ComponentsHelper.getComponentPath;
+import static io.jmix.ui.settings.SettingsHelper.getSettingsId;
 
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class ScreenSettingsManagerImpl implements ScreenSettingsManager {
@@ -59,7 +61,7 @@ public class ScreenSettingsManagerImpl implements ScreenSettingsManager {
             ComponentSettingsBinder binder = settingsRegistry.getSettingsBinder(component.getClass());
 
             Class<? extends ComponentSettings> settingsClass = settingsRegistry.getSettingsClass(component.getClass());
-            ComponentSettings settings = screenSettings.getSettingsOrCreate(component.getId(), settingsClass);
+            ComponentSettings settings = getSettingsOrCreate(component, screenSettings, settingsClass);
 
             binder.applySettings(component, new SettingsWrapperImpl(settings));
         }
@@ -83,7 +85,7 @@ public class ScreenSettingsManagerImpl implements ScreenSettingsManager {
             ComponentSettingsBinder binder = settingsRegistry.getSettingsBinder(component.getClass());
 
             if (binder instanceof DataLoadingSettingsBinder) {
-                ComponentSettings settings = screenSettings.getSettingsOrCreate(component.getId(), settingsClass);
+                ComponentSettings settings = getSettingsOrCreate(component, screenSettings, settingsClass);
                 ((DataLoadingSettingsBinder) binder).applyDataLoadingSettings(component, new SettingsWrapperImpl(settings));
             }
         }
@@ -106,7 +108,7 @@ public class ScreenSettingsManagerImpl implements ScreenSettingsManager {
 
             Class<? extends ComponentSettings> settingsClass = settingsRegistry.getSettingsClass(component.getClass());
 
-            ComponentSettings settings = screenSettings.getSettingsOrCreate(component.getId(), settingsClass);
+            ComponentSettings settings = getSettingsOrCreate(component, screenSettings, settingsClass);
 
             ComponentSettingsBinder binder = settingsRegistry.getSettingsBinder(component.getClass());
 
@@ -123,5 +125,40 @@ public class ScreenSettingsManagerImpl implements ScreenSettingsManager {
                 ((AbstractScreenSettings) screenSettings).commit();
             }
         }
+    }
+
+    /**
+     * Returns settings for the component using its current settings id.
+     * <p>
+     * For components inside fragments this method first looks up the fragment-qualified id and then falls back to the
+     * legacy plain component id. The returned settings id is always normalized to the current id, so subsequent saves
+     * persist settings under the non-conflicting key.
+     *
+     * @param component      component to get settings for
+     * @param screenSettings screen settings storage
+     * @param settingsClass  settings class registered for the component
+     * @return existing or newly created component settings with normalized id
+     */
+    protected ComponentSettings getSettingsOrCreate(Component component,
+                                                    ScreenSettings screenSettings,
+                                                    Class<? extends ComponentSettings> settingsClass) {
+        String componentId = component.getId();
+        if (componentId == null) {
+            throw new IllegalArgumentException("Cannot get or create settings for a component with null id");
+        }
+
+        String settingsId = getSettingsId(component);
+
+        Optional<? extends ComponentSettings> settings = screenSettings.getSettings(settingsId, settingsClass);
+        if (settings.isEmpty() && !settingsId.equals(componentId)) {
+            settings = screenSettings.getSettings(componentId, settingsClass);
+        }
+
+        ComponentSettings componentSettings = settings.isPresent()
+                ? settings.get()
+                : screenSettings.getSettingsOrCreate(settingsId, settingsClass);
+        componentSettings.setId(settingsId);
+
+        return componentSettings;
     }
 }

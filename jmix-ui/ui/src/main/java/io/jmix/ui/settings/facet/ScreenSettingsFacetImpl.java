@@ -43,6 +43,8 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import static io.jmix.ui.settings.SettingsHelper.getSettingsId;
+
 @Internal
 public class ScreenSettingsFacetImpl extends AbstractFacet implements ScreenSettingsFacet, AfterShowEventHandler {
 
@@ -175,13 +177,13 @@ public class ScreenSettingsFacetImpl extends AbstractFacet implements ScreenSett
             components = fillComponents(getOwner().getComponents());
         } else if (CollectionUtils.isNotEmpty(componentIds)) {
             components = getOwner().getComponents().stream()
-                    .filter(component -> componentIds.contains(component.getId()))
+                    .filter(component -> containsComponentId(componentIds, component))
                     .collect(Collectors.toList());
         }
 
         if (CollectionUtils.isNotEmpty(excludedComponentIds)) {
             components = components.stream()
-                    .filter(component -> !excludedComponentIds.contains(component.getId()))
+                    .filter(component -> !containsComponentId(excludedComponentIds, component))
                     .collect(Collectors.toList());
         }
         return components;
@@ -381,6 +383,24 @@ public class ScreenSettingsFacetImpl extends AbstractFacet implements ScreenSett
         }
 
         return components;
+    }
+
+    /**
+     * Checks whether a component matches ids configured for this facet.
+     * <p>
+     * The facet accepts both plain component ids and fragment-qualified settings ids, so existing declarations like
+     * {@code projectsTable} keep working while fragment components can be addressed as
+     * {@code firstFragment.projectsTable}.
+     *
+     * @param ids       configured component ids
+     * @param component component to check
+     * @return {@code true} if the component matches by plain or fragment-qualified id
+     */
+    protected boolean containsComponentId(Collection<String> ids, Component component) {
+        String componentId = component.getId();
+        return componentId != null
+                && (ids.contains(componentId)
+                || ids.contains(getSettingsId(component)));
     }
 
 }

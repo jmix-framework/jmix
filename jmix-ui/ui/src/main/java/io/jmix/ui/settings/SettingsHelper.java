@@ -20,11 +20,18 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.common.util.ReflectionHelper;
+import io.jmix.ui.component.Component;
+import io.jmix.ui.component.Frame;
+import io.jmix.ui.component.Window;
 import io.jmix.ui.settings.component.ComponentSettings;
+import io.jmix.ui.sys.ValuePathHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Utility class for working with component settings.
@@ -33,7 +40,7 @@ public final class SettingsHelper {
 
     private static final Logger log = LoggerFactory.getLogger(SettingsHelper.class);
 
-    protected final static Gson gson = new Gson();
+    private static final Gson gson = new Gson();
 
     private SettingsHelper() {
     }
@@ -100,5 +107,60 @@ public final class SettingsHelper {
         Preconditions.checkNotNullArgument(settings);
 
         return gson.toJson(settings);
+    }
+
+    /**
+     * Builds an id used by {@link ScreenSettings} to store settings of the component.
+     * <p>
+     * Components that belong directly to a screen keep their own id, preserving existing settings keys. Components
+     * inside fragments get a frame-relative path, for example {@code firstFragment.projectsTable}, so same-id
+     * components from different fragment instances do not share one settings entry. If a containing frame has no id,
+     * the method skips it and logs a warning because the resulting id may still conflict with same-id components from
+     * other unnamed fragment instances.
+     *
+     * @param component component to build settings id for, must have a non-null id
+     * @return simple component id or fragment-qualified component id
+     */
+    public static String getSettingsId(Component component) {
+        Preconditions.checkNotNullArgument(component);
+
+        String componentId = component.getId();
+        if (componentId == null) {
+            throw new IllegalArgumentException("Cannot build settings id for a component with null id");
+        }
+
+        if (!(component instanceof Component.BelongToFrame)) {
+            return componentId;
+        }
+
+        Frame frame = ((Component.BelongToFrame) component).getFrame();
+        if (frame == null || frame instanceof Window) {
+            return componentId;
+        }
+
+        List<String> path = new ArrayList<>();
+        path.add(componentId);
+
+        boolean hasFrameWithoutId = false;
+        while (frame != null && !(frame instanceof Window)) {
+            if (frame.getId() != null && !frame.getId().isEmpty()) {
+                path.add(frame.getId());
+            } else {
+                // if at least one frame in nested chain without an id
+                hasFrameWithoutId = true;
+            }
+            frame = frame.getFrame();
+        }
+
+        Collections.reverse(path);
+        String settingsId = ValuePathHelper.format(path.toArray(new String[0]));
+
+        if (hasFrameWithoutId) {
+            log.warn("Cannot build unique settings id for component '{}' because it belongs to a frame without id. "
+                    + "The resulting settings id '{}' can conflict with same-id components in other fragments. "
+                    + "Set an id for the fragment to avoid settings collisions.", componentId, settingsId);
+        }
+
+        return settingsId;
     }
 }

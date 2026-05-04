@@ -312,7 +312,9 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
         for (MetaProperty property : metaClass.getProperties()) {
             if (isPersistent(metaClass, property)
                     && !property.getRange().isClass()
-                    && !property.getRange().getCardinality().isMany()) {
+                    && !property.getRange().getCardinality().isMany()
+                    && !(property.isReadOnly()
+                    && Boolean.TRUE.equals(property.getAnnotations().get(MetadataTools.INCLUDE_IN_FETCH_PLAN_ANN_NAME)))) {
                 fetchPlanBuilder.add(property.getName());
             }
         }
@@ -376,9 +378,14 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
     }
 
     protected boolean isPersistent(MetaClass metaClass, MetaProperty metaProperty) {
-        return !metadataTools.isJpaEntity(metaClass)
-                || metadataTools.isJpa(metaProperty)
-                || Boolean.TRUE.equals(metaProperty.getAnnotations().get(MetadataTools.INCLUDE_IN_FETCH_PLAN_ANN_NAME));
+        boolean includeInFetchPlan = Boolean.TRUE.equals(metaProperty.getAnnotations().get(MetadataTools.INCLUDE_IN_FETCH_PLAN_ANN_NAME));
+        boolean isJpaEntity = metadataTools.isJpaEntity(metaClass);
+
+        if (!isJpaEntity && metaProperty.isReadOnly() && !includeInFetchPlan) {
+            return false;
+        }
+
+        return !isJpaEntity || metadataTools.isJpa(metaProperty) || includeInFetchPlan;
     }
 
     protected Collection<MetaProperty> getInstanceNamePersistentProperties(MetaClass metaClass) {

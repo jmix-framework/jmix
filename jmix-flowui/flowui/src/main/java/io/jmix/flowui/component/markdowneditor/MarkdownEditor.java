@@ -17,6 +17,7 @@
 package io.jmix.flowui.component.markdowneditor;
 
 import com.vaadin.flow.shared.Registration;
+import io.jmix.core.Messages;
 import io.jmix.flowui.component.HasRequired;
 import io.jmix.flowui.component.SupportsStatusChangeHandler;
 import io.jmix.flowui.component.SupportsValidation;
@@ -55,7 +56,37 @@ public class MarkdownEditor extends JmixMarkdownEditor
 
     @Override
     public void afterPropertiesSet() {
+        initComponent();
+    }
+
+    protected void initComponent() {
         fieldDelegate = createFieldDelegate();
+        initI18n();
+    }
+
+    protected void initI18n() {
+        Messages messages = applicationContext.getBean(Messages.class);
+
+        JmixMarkdownEditorI18n.Tabs tabs = new JmixMarkdownEditorI18n.Tabs()
+                .setEdit(messages.getMessage("markdownEditor.i18n.tabs.edit"))
+                .setPreview(messages.getMessage("markdownEditor.i18n.tabs.preview"));
+
+        JmixMarkdownEditorI18n.Toolbar toolbar = new JmixMarkdownEditorI18n.Toolbar()
+                .setAccessibleLabel(messages.getMessage("markdownEditor.i18n.toolbar.accessibleLabel"))
+                .setHeading(messages.getMessage("markdownEditor.i18n.toolbar.heading"))
+                .setBold(messages.getMessage("markdownEditor.i18n.toolbar.bold"))
+                .setItalic(messages.getMessage("markdownEditor.i18n.toolbar.italic"))
+                .setQuote(messages.getMessage("markdownEditor.i18n.toolbar.quote"))
+                .setCode(messages.getMessage("markdownEditor.i18n.toolbar.code"))
+                .setLink(messages.getMessage("markdownEditor.i18n.toolbar.link"))
+                .setUnorderedList(messages.getMessage("markdownEditor.i18n.toolbar.unorderedList"))
+                .setOrderedList(messages.getMessage("markdownEditor.i18n.toolbar.orderedList"))
+                .setTaskList(messages.getMessage("markdownEditor.i18n.toolbar.taskList"))
+                .setOverflow(messages.getMessage("markdownEditor.i18n.toolbar.overflow"));
+
+        setI18n(new JmixMarkdownEditorI18n()
+                .setTabs(tabs)
+                .setToolbar(toolbar));
     }
 
     @Override

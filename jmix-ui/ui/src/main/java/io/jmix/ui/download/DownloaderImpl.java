@@ -175,11 +175,9 @@ public class DownloaderImpl implements Downloader {
 
     @Override
     public void download(FileRef fileReference, @Nullable DownloadFormat format) {
-        if (fileStorage == null) {
-            fileStorage = fileStorageLocator.getDefault();
-        }
+        FileStorage fileReferenceStorage = fileStorageLocator.getByName(fileReference.getStorageName());
         String fileName = fileReference.getFileName();
-        download(new FileDataProvider(fileReference, fileStorage), fileName, format);
+        download(new FileDataProvider(fileReference, fileReferenceStorage), fileName, format);
     }
 
     @Override
@@ -201,6 +199,8 @@ public class DownloaderImpl implements Downloader {
     @Override
     public void setFileStorage(FileStorage fileStorage) {
         this.fileStorage = fileStorage;
+
+        log.warn("The passed value is ignored. Actual file storage is obtained from {}", FileRef.class.getSimpleName());
     }
 
     @Override

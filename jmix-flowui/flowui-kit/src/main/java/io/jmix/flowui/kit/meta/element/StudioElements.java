@@ -463,6 +463,7 @@ interface StudioElements {
                     "io.jmix.flowui.component.genericfilter.GenericFilter",
                     "io.jmix.flowui.component.propertyfilter.PropertyFilter",
                     "io.jmix.flowui.component.jpqlfilter.JpqlFilter",
+                    "io.jmix.flowui.component.markdowneditor.MarkdownEditor",
                     "io.jmix.flowui.component.menufilterfield.MenuFilterField"},
             propertyGroups = StudioPropertyGroups.TooltipComponent.class)
     Tooltip tooltip();

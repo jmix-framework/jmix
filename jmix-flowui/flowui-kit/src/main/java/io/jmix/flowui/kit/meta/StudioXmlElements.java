@@ -288,6 +288,7 @@ public final class StudioXmlElements {
     public static final String MAIN_VIEW = "mainView";
     public static final String MAP_VIEW = "mapView";
     public static final String MARKDOWN = "markdown";
+    public static final String MARKDOWN_EDITOR = "markdownEditor";
     public static final String MARK_AREA = "markArea";
     public static final String MARK_LINE = "markLine";
     public static final String MARK_POINT = "markPoint";

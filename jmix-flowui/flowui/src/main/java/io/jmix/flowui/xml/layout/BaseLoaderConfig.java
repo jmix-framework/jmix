@@ -116,6 +116,7 @@ public abstract class BaseLoaderConfig {
         loaders.put("sidePanelLayoutCloser", SidePanelLayoutCloserLoader.class);
         loaders.put("twinColumn", TwinColumnLoader.class);
         loaders.put("markdown", MarkdownLoader.class);
+        loaders.put("markdownEditor", MarkdownEditorLoader.class);
 
         /* HTML components */
         loaders.put("param", ParamLoader.class);

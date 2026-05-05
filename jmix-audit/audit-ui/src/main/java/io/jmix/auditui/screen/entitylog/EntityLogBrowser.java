@@ -593,7 +593,7 @@ public class EntityLogBrowser extends StandardLookup<EntityLogItem> {
             return false;
         }
         if (range.isClass() && range.getCardinality().isMany()) {
-            return false;
+            return metadataTools.isOwningSide(metaProperty);
         }
         //todo DynamicAttributes (until Haulmont/jmix-ui#272 & others will be finished and it can be tested)
 //        if (categoryAttribute != null &&

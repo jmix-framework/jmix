@@ -326,6 +326,7 @@ export class JmixPivotTable extends ElementMixin(DisabledMixin(ThemableMixin(Pol
             autoSortUnusedAttrs: options.autoSortUnusedProperties,
             menuLimit: options.menuLimit,
             rendererOptions: {
+                localeStrings: options.localizedStrings,
                 table: {
                     clickCallback: (function(pivotTable){
                         return function(event, value, filters, pivotData) {

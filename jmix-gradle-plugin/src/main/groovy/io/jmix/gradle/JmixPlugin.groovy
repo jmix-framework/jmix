@@ -104,10 +104,12 @@ class JmixPlugin implements Plugin<Project> {
 
                 enhanceMainTask.configure {
                     dependsOn(mainCompileTasks)
+                    dependsOnClasspathArtifacts(project, it, 'main')
                     onlyIf { shouldRunEnhancing(mainCompileTasks) }
                 }
                 enhanceTestTask.configure {
                     dependsOn(testCompileTasks)
+                    dependsOnClasspathArtifacts(project, it, 'test')
                     onlyIf { shouldRunEnhancing(testCompileTasks) }
                 }
 
@@ -183,6 +185,17 @@ class JmixPlugin implements Plugin<Project> {
             })
         } catch (UnknownTaskException ignored) {
             project.logger.debug("Unable to setup output directory for Kotlin. " + ignored.message)
+        }
+    }
+
+    private static void dependsOnClasspathArtifacts(Project project, task, String sourceSetName) {
+        def sourceSet = project.sourceSets.getByName(sourceSetName)
+
+        [
+                sourceSet.compileClasspathConfigurationName,
+                sourceSet.runtimeClasspathConfigurationName
+        ].each { configurationName ->
+            task.dependsOn(project.configurations.getByName(configurationName))
         }
     }
 

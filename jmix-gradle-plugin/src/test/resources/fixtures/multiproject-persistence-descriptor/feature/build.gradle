@@ -1,0 +1,20 @@
+archivesBaseName = 'sample-feature'
+
+dependencies {
+    api project(':base')
+}
+
+tasks.register('assertPersistenceContainsBaseEntity') {
+    dependsOn classes
+
+    doLast {
+        def persistenceXml = file("$buildDir/resources/main/sample/feature/persistence.xml")
+        assert persistenceXml.exists(): "Expected generated persistence.xml at ${persistenceXml}"
+
+        def xml = persistenceXml.text
+        assert xml.contains('<class>sample.base.BaseEntity</class>'):
+                "Expected feature persistence.xml to contain sample.base.BaseEntity, but it was:\n${xml}"
+        assert xml.contains('<class>sample.feature.FeatureEntity</class>'):
+                "Expected feature persistence.xml to contain sample.feature.FeatureEntity, but it was:\n${xml}"
+    }
+}

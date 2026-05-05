@@ -78,7 +78,7 @@ public class JmixMarkdownEditor extends AbstractSinglePropertyField<JmixMarkdown
      * Constructs an empty {@code JmixMarkdownEditor}.
      */
     public JmixMarkdownEditor() {
-        super("value", "", false);
+        super("value", null, true);
 
         // Tells the web component that validation is controlled server-side.
         getElement().setProperty("manualValidation", true);
@@ -102,11 +102,6 @@ public class JmixMarkdownEditor extends AbstractSinglePropertyField<JmixMarkdown
     public JmixMarkdownEditor(String label) {
         this();
         setLabel(label);
-    }
-
-    @Override
-    public String getEmptyValue() {
-        return "";
     }
 
     @Override

@@ -60,7 +60,7 @@ public class TextWrapper {
             String fullParameterName = band.getName() + "." + bandAndParameter.getParameterName();
             Object parameterValue = band.getParameterValue(bandAndParameter.getParameterName());
 
-            if (docxFormatter.tryToApplyInliners(fullParameterName, parameterValue, text)) return;
+            if (docxFormatter.tryToApplyInliners(fullParameterName, parameterValue, text, alias)) return;
 
             text.setValue(docxFormatter.inlineParameterValue(text.getValue(), alias,
                     docxFormatter.formatValue(parameterValue, bandAndParameter.getParameterName(), fullParameterName, stringFunction)));

@@ -19,13 +19,17 @@ package io.jmix.reports.yarg.formatters.impl;
 import io.jmix.reports.yarg.formatters.factory.FormatterFactoryInput;
 import io.jmix.reports.yarg.formatters.impl.docx.*;
 import io.jmix.reports.yarg.formatters.impl.inline.ContentInliner;
+import io.jmix.reports.yarg.formatters.impl.inline.HtmlContentInliner;
 import io.jmix.reports.yarg.formatters.impl.xls.DocumentConverter;
 import io.jmix.reports.yarg.structure.BandData;
 import io.jmix.reports.yarg.structure.ReportFieldFormat;
 import io.jmix.reports.yarg.structure.ReportOutputType;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.docx4j.Docx4J;
+import org.docx4j.TextUtils;
 import org.docx4j.TraversalUtil;
+import org.docx4j.XmlUtils;
 import org.docx4j.convert.in.xhtml.XHTMLImporter;
 import org.docx4j.convert.in.xhtml.XHTMLImporterImpl;
 import org.docx4j.convert.out.HTMLSettings;
@@ -41,17 +45,24 @@ import org.docx4j.toc.TocFinder;
 import org.docx4j.toc.TocGenerator;
 import org.docx4j.utils.AltChunkFinder;
 import org.docx4j.wml.*;
+import org.jsoup.nodes.Entities;
+import org.jvnet.jaxb2_commons.ppp.Child;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
+import java.util.Collections;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * * Document formatter for '.docx' file types
@@ -63,6 +74,8 @@ public class DocxFormatter extends AbstractFormatter {
     protected DocumentWrapper documentWrapper;
     protected DocumentConverter documentConverter;
     protected HtmlImportProcessor htmlImportProcessor;
+    protected Map<P, String> originalParagraphTexts = new IdentityHashMap<>();
+    protected Set<P> htmlInlinedParagraphs = Collections.newSetFromMap(new IdentityHashMap<>());
 
     public DocxFormatter(FormatterFactoryInput formatterFactoryInput) {
         super(formatterFactoryInput);
@@ -80,6 +93,8 @@ public class DocxFormatter extends AbstractFormatter {
 
     @Override
     public void renderDocument() {
+        originalParagraphTexts.clear();
+        htmlInlinedParagraphs.clear();
         loadDocument();
 
         fillTables();
@@ -209,13 +224,37 @@ public class DocxFormatter extends AbstractFormatter {
     }
 
     protected boolean tryToApplyInliners(String fullParameterName, Object paramValue, Text text) {
+        return tryToApplyInliners(fullParameterName, paramValue, text, null);
+    }
+
+    protected boolean tryToApplyInliners(String fullParameterName, Object paramValue, Text text, String alias) {
+        return tryToApplyInliners(fullParameterName, paramValue, text, alias, null);
+    }
+
+    protected boolean tryToApplyInliners(String fullParameterName, Object paramValue, Text text, String alias, BandData tableBand) {
         Map<String, ReportFieldFormat> valueFormats = rootBand.getReportFieldFormats();
         if (paramValue != null && valueFormats != null && valueFormats.containsKey(fullParameterName)) {
             String format = valueFormats.get(fullParameterName).getFormat();
             for (ContentInliner contentInliner : DocxFormatter.this.contentInliners) {
                 Matcher contentMatcher = contentInliner.getTagPattern().matcher(format);
                 if (contentMatcher.find()) {
-                    contentInliner.inlineToDocx(wordprocessingMLPackage, text, paramValue, contentMatcher);
+                    P paragraph = findParentParagraph(text);
+                    String paragraphText = paragraph != null ? getOriginalParagraphText(paragraph) : null;
+                    Object valueToInline = paramValue;
+                    if (alias != null && contentInliner instanceof HtmlContentInliner
+                            && paragraph != null
+                            && !htmlInlinedParagraphs.contains(paragraph)
+                            && !hasOtherInlinerAlias(paragraphText, alias, tableBand)) {
+                        String textValue = tableBand == null
+                                ? inlineBandAliasesExcept(paragraphText, alias)
+                                : inlineTableBandAliasesExcept(tableBand, paragraphText, alias);
+                        valueToInline = inlineHtmlParameterValue(textValue, alias, paramValue);
+                    }
+
+                    contentInliner.inlineToDocx(wordprocessingMLPackage, text, valueToInline, contentMatcher);
+                    if (contentInliner instanceof HtmlContentInliner && paragraph != null) {
+                        htmlInlinedParagraphs.add(paragraph);
+                    }
                     return true;
                 }
             }
@@ -256,7 +295,7 @@ public class DocxFormatter extends AbstractFormatter {
                     if (paragraphParent instanceof ArrayListWml) {
                         ArrayListWml parent = (ArrayListWml) paragraph.getParent();
                         parent.addAll(parent.indexOf(paragraph), results);
-                        if (results.get(0) instanceof P) {
+                        if (!results.isEmpty() && results.get(0) instanceof P) {
                             P resultParagraph = (P) results.get(0);
                             resultParagraph.setPPr(paragraph.getPPr());
                         }
@@ -277,6 +316,192 @@ public class DocxFormatter extends AbstractFormatter {
                 }
             }
         }
+    }
+
+    protected String inlineHtmlParameterValue(String textValue, String alias, Object htmlValue) {
+        Pattern aliasPattern = Pattern.compile("\\$\\{" + Pattern.quote(alias) + " *" + STRING_FUNCTION_GROUP + "?\\}");
+        Matcher aliasMatcher = aliasPattern.matcher(textValue);
+        if (!aliasMatcher.find()) {
+            return inlineParameterValue(Entities.escape(textValue), alias, String.valueOf(htmlValue));
+        }
+
+        return Entities.escape(textValue.substring(0, aliasMatcher.start()))
+                + htmlValue
+                + Entities.escape(textValue.substring(aliasMatcher.end()));
+    }
+
+    protected String getOriginalParagraphText(P paragraph) {
+        if (!originalParagraphTexts.containsKey(paragraph)) {
+            originalParagraphTexts.put(paragraph, getElementText(paragraph));
+        }
+
+        return originalParagraphTexts.get(paragraph);
+    }
+
+    protected String getElementText(Object element) {
+        StringWriter writer = new StringWriter();
+        try {
+            TextUtils.extractText(element, writer);
+        } catch (Exception e) {
+            throw wrapWithReportingException("An error occurred while rendering docx template.", e);
+        }
+
+        return writer.toString();
+    }
+
+    protected P findParentParagraph(Text text) {
+        Object current = text;
+        while (current instanceof Child) {
+            Object parent = XmlUtils.unwrap(((Child) current).getParent());
+            if (parent instanceof P) {
+                return (P) parent;
+            }
+
+            current = parent;
+        }
+
+        return null;
+    }
+
+    protected boolean hasOtherInlinerAlias(String textValue, String excludedAlias, BandData tableBand) {
+        Matcher matcher = UNIVERSAL_ALIAS_PATTERN.matcher(textValue);
+        boolean skippedExcludedAlias = false;
+        while (matcher.find()) {
+            String alias = matcher.group(1);
+            if (alias.equals(excludedAlias)) {
+                if (skippedExcludedAlias) {
+                    return true;
+                }
+
+                skippedExcludedAlias = true;
+                continue;
+            }
+
+            AliasReference aliasReference = getAliasReference(alias, tableBand);
+            if (aliasReference != null && hasInlinerFormat(aliasReference.parameterName, aliasReference.fullParameterName)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    protected AliasReference getAliasReference(String alias, BandData tableBand) {
+        if (tableBand != null) {
+            if (!alias.contains(".")) {
+                return new AliasReference(alias, tableBand.getName() + "." + alias);
+            }
+
+            BandPathAndParameterName bandAndParameter = separateBandNameAndParameterName(alias);
+            if (getTableBandPath(tableBand).equals(bandAndParameter.getBandPath())
+                    && !StringUtils.isBlank(bandAndParameter.getParameterName())) {
+                String parameterName = bandAndParameter.getParameterName();
+                return new AliasReference(parameterName, tableBand.getName() + "." + parameterName);
+            }
+        }
+
+        BandPathAndParameterName bandAndParameter = separateBandNameAndParameterName(alias);
+        if (StringUtils.isBlank(bandAndParameter.getBandPath())
+                || StringUtils.isBlank(bandAndParameter.getParameterName())) {
+            return null;
+        }
+        BandData band = findBandByPath(bandAndParameter.getBandPath());
+        return band != null
+                ? new AliasReference(bandAndParameter.getParameterName(),
+                band.getName() + "." + bandAndParameter.getParameterName())
+                : null;
+    }
+
+    protected boolean hasInlinerFormat(String parameterName, String fullParameterName) {
+        String format = getFormatString(parameterName, fullParameterName);
+        if (format == null) {
+            return false;
+        }
+
+        for (ContentInliner contentInliner : DocxFormatter.this.contentInliners) {
+            if (contentInliner.getTagPattern().matcher(format).find()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    protected static class AliasReference {
+        protected final String parameterName;
+        protected final String fullParameterName;
+
+        protected AliasReference(String parameterName, String fullParameterName) {
+            this.parameterName = parameterName;
+            this.fullParameterName = fullParameterName;
+        }
+    }
+
+    protected String inlineBandAliasesExcept(String template, String excludedAlias) {
+        return inlineAliasesExcept(template, excludedAlias, null);
+    }
+
+    protected String inlineTableBandAliasesExcept(BandData tableBand, String template, String excludedAlias) {
+        return inlineAliasesExcept(template, excludedAlias, tableBand);
+    }
+
+    protected String inlineAliasesExcept(String template, String excludedAlias, BandData tableBand) {
+        StringBuilder result = new StringBuilder();
+        Matcher matcher = ALIAS_WITH_BAND_NAME_PATTERN.matcher(template);
+        while (matcher.find()) {
+            String alias = matcher.group(1);
+            if (alias.equals(excludedAlias)) {
+                matcher.appendReplacement(result, Matcher.quoteReplacement(matcher.group()));
+                continue;
+            }
+
+            String value = formatAliasValue(alias, matcher.group(2), tableBand);
+            if (value == null) {
+                matcher.appendReplacement(result, Matcher.quoteReplacement(matcher.group()));
+                continue;
+            }
+
+            matcher.appendReplacement(result, Matcher.quoteReplacement(value));
+        }
+        matcher.appendTail(result);
+
+        return result.toString();
+    }
+
+    protected String formatAliasValue(String alias, String stringFunction, BandData tableBand) {
+        if (tableBand != null) {
+            String tableBandPath = getTableBandPath(tableBand);
+            if (!alias.contains(".")) {
+                return formatValue(tableBand.getParameterValue(alias), alias, tableBand.getName() + "." + alias, stringFunction);
+            }
+
+            BandPathAndParameterName bandAndParameter = separateBandNameAndParameterName(alias);
+            if (tableBandPath.equals(bandAndParameter.getBandPath())
+                    && !StringUtils.isBlank(bandAndParameter.getParameterName())) {
+                String parameterName = bandAndParameter.getParameterName();
+                return formatValue(tableBand.getParameterValue(parameterName), parameterName,
+                        tableBand.getName() + "." + parameterName, stringFunction);
+            }
+        }
+
+        BandPathAndParameterName bandAndParameter = separateBandNameAndParameterName(alias);
+        if (StringUtils.isBlank(bandAndParameter.getBandPath())
+                || StringUtils.isBlank(bandAndParameter.getParameterName())) {
+            return null;
+        }
+
+        BandData band = findBandByPath(bandAndParameter.getBandPath());
+        if (band == null) {
+            throw wrapWithReportingException(String.format("No band for alias [%s] found", alias));
+        }
+
+        String fullParameterName = band.getName() + "." + bandAndParameter.getParameterName();
+        Object parameterValue = band.getParameterValue(bandAndParameter.getParameterName());
+        return formatValue(parameterValue, bandAndParameter.getParameterName(), fullParameterName, stringFunction);
+    }
+
+    protected String getTableBandPath(BandData tableBand) {
+        return tableBand.getFullName();
     }
 
     private String toString(ByteBuffer bb) throws UnsupportedEncodingException {

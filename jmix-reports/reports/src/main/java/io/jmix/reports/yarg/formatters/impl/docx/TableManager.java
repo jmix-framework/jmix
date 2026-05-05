@@ -67,14 +67,14 @@ public class TableManager {
                     String fullParameterName = bandName + "." + parameterName;
                     Object parameterValue = band.getParameterValue(parameterName);
 
-                    if (docxFormatter.tryToApplyInliners(fullParameterName, parameterValue, text)) return;
+                    if (docxFormatter.tryToApplyInliners(fullParameterName, parameterValue, text, parameterName, band)) return;
                 } else {
                     for (String alias : docxFormatter.getAllAliases(textValue)) { //todo order in result string? In case like '${1} abc ${2}'
                         String parameterName = docxFormatter.unwrapParameterName(alias);
                         String fullParameterName = bandName + "." + parameterName;
                         Object parameterValue = band.getParameterValue(parameterName);
 
-                        if (docxFormatter.tryToApplyInliners(fullParameterName, parameterValue, text)) {
+                        if (docxFormatter.tryToApplyInliners(fullParameterName, parameterValue, text, parameterName, band)) {
                             textValue = textValue.replace(alias, "");
                         }
                     }

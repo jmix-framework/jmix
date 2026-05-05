@@ -214,10 +214,17 @@ public abstract class AbstractFormatter implements ReportFormatter {
     }
 
     protected String insertBandDataToString(BandData bandData, String resultStr) {
+        return insertBandDataToString(bandData, resultStr, null);
+    }
+
+    protected String insertBandDataToString(BandData bandData, String resultStr, String parameterToSkip) {
         List<String> parametersToInsert = new ArrayList<>();
         Matcher matcher = UNIVERSAL_ALIAS_PATTERN.matcher(resultStr);
         while (matcher.find()) {
-            parametersToInsert.add(unwrapParameterName(matcher.group()));
+            String parameterName = unwrapParameterName(matcher.group());
+            if (!Objects.equals(parameterName, parameterToSkip)) {
+                parametersToInsert.add(parameterName);
+            }
         }
         for (String parameterName : parametersToInsert) {
             Object value = bandData.getData().get(parameterName);

@@ -67,6 +67,10 @@ public class DocxFormatterDelegate {
         return docxFormatter.insertBandDataToString(bandData, resultStr);
     }
 
+    public String insertBandDataToString(BandData bandData, String resultStr, String parameterToSkip) {
+        return docxFormatter.insertBandDataToString(bandData, resultStr, parameterToSkip);
+    }
+
     public ReportFormattingException wrapWithReportingException(String message) {
         return docxFormatter.wrapWithReportingException(message);
     }
@@ -89,6 +93,18 @@ public class DocxFormatterDelegate {
 
     public boolean tryToApplyInliners(String fullParameterName, Object paramValue, Text text) {
         return docxFormatter.tryToApplyInliners(fullParameterName, paramValue, text);
+    }
+
+    public boolean tryToApplyInliners(String fullParameterName, Object paramValue, Text text, String alias) {
+        return docxFormatter.tryToApplyInliners(fullParameterName, paramValue, text, alias);
+    }
+
+    public boolean tryToApplyInliners(String fullParameterName, Object paramValue, Text text, String alias, BandData tableBand) {
+        return docxFormatter.tryToApplyInliners(fullParameterName, paramValue, text, alias, tableBand);
+    }
+
+    public String inlineBandAliasesExcept(String template, String excludedAlias) {
+        return docxFormatter.inlineBandAliasesExcept(template, excludedAlias);
     }
 
     public String handleStringWithAliases(String template) {

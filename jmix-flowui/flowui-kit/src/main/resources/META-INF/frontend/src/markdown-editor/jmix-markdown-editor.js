@@ -258,7 +258,14 @@ export class JmixMarkdownEditor extends I18nMixin(
           </div>
         `}
 
-        <div class="content-area" part="content-area" tabindex="${this._contentAreaTabIndex}" @mousedown="${this._onContentAreaMouseDown}">
+        <div
+          class="content-area"
+          part="content-area"
+          tabindex="${this._contentAreaTabIndex}"
+          @blur="${this._onContentBlur}"
+          @focus="${this._onContentFocus}"
+          @mousedown="${this._onContentAreaMouseDown}"
+        >
           <div class="editor-area" part="editor" @click="${this._onFieldClick}">
             <slot name="textarea"></slot>
           </div>
@@ -355,7 +362,6 @@ export class JmixMarkdownEditor extends I18nMixin(
       this.ariaTarget = ta;
       this.stateTarget = ta;
       this._setFocusElement(ta);
-      this._syncDisabledFocusState();
       ta.addEventListener('input', (e) => this._onInput(e));
       ta.addEventListener('keydown', (e) => this._onKeydown(e));
       ta.addEventListener('keyup', this._boundUpdateActiveFormats);
@@ -395,12 +401,6 @@ export class JmixMarkdownEditor extends I18nMixin(
   disconnectedCallback() {
     super.disconnectedCallback();
     this._resizeObserver?.disconnect();
-  }
-
-  /** @protected */
-  _disabledChanged(disabled, oldDisabled) {
-    super._disabledChanged(disabled, oldDisabled);
-    this._syncDisabledFocusState();
   }
 
   /** @protected */
@@ -487,32 +487,24 @@ export class JmixMarkdownEditor extends I18nMixin(
     if (this.disabled) {
       return '-1';
     }
-    return this.readonly || this.mode === 'preview' ? '0' : '-1';
-  }
-
-  /** @private */
-  _syncDisabledFocusState() {
-    if (!this._textareaEl) return;
-
-    if (this.disabled) {
-      if (this._textareaTabIndexBeforeDisabled === undefined) {
-        this._textareaTabIndexBeforeDisabled = this._textareaEl.getAttribute('tabindex');
-      }
-      this._textareaEl.tabIndex = -1;
-    } else if (this._textareaTabIndexBeforeDisabled !== undefined) {
-      const tabIndex = this._textareaTabIndexBeforeDisabled;
-      this._textareaTabIndexBeforeDisabled = undefined;
-      if (tabIndex === null) {
-        this._textareaEl.removeAttribute('tabindex');
-      } else {
-        this._textareaEl.setAttribute('tabindex', tabIndex);
-      }
-    }
+    return this.readonly || this.mode === 'preview' ? String(this.focusElement?.tabIndex ?? 0) : '-1';
   }
 
   /** @private */
   get _contentFocusTarget() {
     return this.shadowRoot.querySelector('.content-area');
+  }
+
+  /** @private */
+  _onContentFocus(e) {
+    e.stopPropagation();
+    this.dispatchEvent(new Event('focus'));
+  }
+
+  /** @private */
+  _onContentBlur(e) {
+    e.stopPropagation();
+    this.dispatchEvent(new Event('blur'));
   }
 
   /** @private */

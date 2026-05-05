@@ -51,7 +51,8 @@ import java.util.function.Function;
 @JsModule("./src/markdown-editor/jmix-markdown-editor.js")
 public class JmixMarkdownEditor extends AbstractSinglePropertyField<JmixMarkdownEditor, String>
         implements HasLabel, HasHelper, HasPlaceholder, HasValidationProperties, HasValidator<String>,
-        HasSize, HasEnabled, HasTooltip, HasValueChangeMode, HasAriaLabel, HasThemeVariant<MarkdownEditorVariant> {
+        HasSize, HasEnabled, HasTooltip, HasValueChangeMode, HasAriaLabel, Focusable<JmixMarkdownEditor>,
+        HasThemeVariant<MarkdownEditorVariant> {
 
     protected ValueChangeMode currentMode;
     protected int valueChangeTimeout = DEFAULT_CHANGE_TIMEOUT;

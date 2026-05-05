@@ -51,12 +51,12 @@ Perform each action with the editor in Edit mode.
 
 ### Wrap formats (bold, italic, code, link)
 
-| Button | No selection | With selection | Toggle off (cursor inside) |
-|--------|-------------|---------------|---------------------------|
-| Bold | Inserts `**\|**`, cursor between markers | Wraps selection as `**sel**` | Removes markers, restores selection |
-| Italic | Inserts `_\|_` | Wraps as `_sel_` | Removes markers |
-| Code | Inserts `` `\|` `` | Wraps as `` `sel` `` | Removes markers |
-| Link | Inserts `[](url)`, cursor inside `[]` | Wraps as `[sel](url)`, selects `url` | Removes `[](url)` construct |
+| Button | No selection                                  | With selection                         | Toggle off (cursor inside)             |
+|--------|-----------------------------------------------|----------------------------------------|----------------------------------------|
+| Bold   | Inserts `**\|**`, cursor between markers      | Wraps selection as `**sel**`           | Removes markers, restores selection    |
+| Italic | Inserts `_\|_`                                | Wraps as `_sel_`                       | Removes markers                        |
+| Code   | Inserts `` `\|` ``                            | Wraps as `` `sel` ``                   | Removes markers                        |
+| Link   | Inserts `[](url)`, cursor inside `[]`         | Wraps as `[sel](url)`, selects `url`   | Removes `[](url)` construct            |
 
 - [ ] Bold: `⌘B` / `Ctrl+B` keyboard shortcut works.
 - [ ] Italic: `⌘I` / `Ctrl+I` keyboard shortcut works.
@@ -68,13 +68,13 @@ Perform each action with the editor in Edit mode.
 
 ### Line formats (heading, quote, unordered list, ordered list, task list)
 
-| Button | Apply | Remove |
-|--------|-------|--------|
-| Heading | Inserts `## ` at line start | Removes `## ` from line start |
-| Quote | Inserts `> ` at line start | Removes `> ` from line start |
-| Unordered list | Inserts `- ` at line start | Removes `- ` from line start |
-| Ordered list | Inserts `1. ` at line start | Removes `1. ` from line start |
-| Task list | Inserts `- [ ] ` at line start | Removes `- [ ] ` from line start |
+| Button         | Apply                           | Remove                            |
+|----------------|---------------------------------|-----------------------------------|
+| Heading        | Inserts `## ` at line start     | Removes `## ` from line start     |
+| Quote          | Inserts `> ` at line start      | Removes `> ` from line start      |
+| Unordered list | Inserts `- ` at line start      | Removes `- ` from line start      |
+| Ordered list   | Inserts `1. ` at line start     | Removes `1. ` from line start     |
+| Task list      | Inserts `- [ ] ` at line start  | Removes `- [ ] ` from line start  |
 
 - [ ] Line formats always insert/remove at the **line start**, not at the cursor position.
 - [ ] Cursor / selection offset is preserved correctly after apply and remove.
@@ -206,3 +206,84 @@ Test each theme mode on a page that also contains at least one standard Vaadin t
 - [ ] Toolbar button icons appear slightly smaller than their button bounds, consistent with other Aura toolbar components on the same page.
 - [ ] The invalid state border color matches the error color used by other Aura fields on the same page.
 - [ ] No structural styles are missing: the field border, header row, tabs, toolbar buttons, and content area all appear correctly.
+
+---
+
+## 12. Declarative XML attributes
+
+Load a view descriptor that configures the editor declaratively, then verify both the server-side component API and
+client-side behaviour.
+
+### 12.1 General attributes
+
+- [ ] `id` is applied and the component can be injected into the view controller.
+- [ ] `visible="false"` hides the component and `setVisible(true)` shows it again without breaking layout.
+- [ ] `enabled="false"` loads the editor in the disabled state described in section 2.
+- [ ] `readOnly="true"` loads the editor in the read-only state described in section 3.
+- [ ] `css` applies inline styles to the host element.
+- [ ] `classNames` applies every listed class name to the host element.
+
+### 12.2 Size attributes
+
+- [ ] `width`, `minWidth`, `maxWidth`, `height`, `minHeight`, and `maxHeight` are applied to the host element.
+- [ ] Fixed `height` still keeps Edit and Preview scrolling inside the component border.
+- [ ] `minHeight` and `maxHeight` constrain auto-height growth without clipping toolbar, tabs, or content.
+- [ ] Width constraints trigger toolbar overflow recalculation immediately after the component is attached.
+
+### 12.3 Field attributes
+
+- [ ] `label`, `helperText`, `placeholder`, `required`, `requiredMessage`, and `errorMessage` are loaded.
+- [ ] `mode="PREVIEW"` opens the component in Preview mode, and `mode="EDIT"` opens it in Edit mode.
+- [ ] `themeNames` supports all values advertised for the component: `toolbar-align-start`, `toolbar-align-center`,
+  `toolbar-align-end`, and `helper-above-field`.
+- [ ] `valueChangeMode` and `valueChangeTimeout` are loaded and affect when server-side value change events are fired.
+
+### 12.4 Accessibility and focus attributes
+
+- [ ] `ariaLabel` is applied to the internal editing control and exposed to screen readers.
+- [ ] `ariaLabelledBy` is applied and references an existing label element correctly.
+- [ ] `tabIndex` changes the host focus order relative to neighbouring fields.
+- [ ] `tabIndex` is respected in Edit, Preview, read-only, and disabled states; disabled state must still be skipped.
+- [ ] `focusShortcut` focuses the editor and then follows the expected internal focus target for the current mode.
+- [ ] `tabIndex` and `focusShortcut` do not create ghost focus targets for hidden toolbar buttons or hidden tabs.
+
+### 12.5 Tooltip and validators elements
+
+- [ ] Nested `<tooltip>` loads text, position, delays, `manual`, and `opened` properties.
+- [ ] Tooltip is shown on hover/focus according to configured delays and is hidden when the editor is disabled.
+- [ ] Nested string validators are created and participate in `executeValidators()` and view validation.
+- [ ] Validator error messages are shown below the editor and clear after the value becomes valid.
+
+---
+
+## 13. Jmix data binding
+
+- [ ] The initial entity property value is shown in Edit and Preview modes.
+- [ ] Changing the entity property programmatically updates the editor value without user interaction.
+- [ ] Typing in the editor updates the bound entity property according to the configured value change mode.
+- [ ] Setting the bound entity property to `null` clears the editor and leaves it in the empty state without exceptions.
+- [ ] Setting the editor value to `null` writes `null` back to the bound entity property without exceptions.
+- [ ] Required state and required message are resolved through the Jmix field delegate when validation is executed.
+- [ ] Custom Jmix validators registered on the component run against the bound value and report errors through the field.
+- [ ] The component can be used inside `formLayout dataContainer="..."` with only `property="..."` configured.
+- [ ] Unsaved-change tracking detects edits made through the bound editor in a detail view.
+- [ ] Data binding works after switching between Edit and Preview and after toggling read-only mode.
+
+---
+
+## 14. Studio support
+
+- [ ] MarkdownEditor is available in the Studio component palette under Components.
+- [ ] Dragging the component to a view creates a `<markdownEditor>` element with a valid `id`.
+- [ ] Studio offers conversion from `textField`, `textArea`, `codeEditor`, and `richTextEditor` to `markdownEditor`.
+- [ ] The Properties panel lists all supported XML attributes from section 12, including `tabIndex` and `focusShortcut`.
+- [ ] Property categories are correct: data binding properties under Data Binding, validation properties under Validation,
+  size properties under Size, and theme/style properties under Look and Feel.
+- [ ] `mode` is shown as an enum with `EDIT` and `PREVIEW` options and default value `EDIT`.
+- [ ] `themeNames` is shown as a values-list with the four MarkdownEditor theme names.
+- [ ] `dataContainer` suggestions include compatible instance containers from the current view.
+- [ ] `property` suggestions are filtered by the selected `dataContainer` and include compatible `String` properties.
+- [ ] Selecting `dataContainer` and `property` in Studio writes valid XML and the view loads successfully.
+- [ ] Changing `dataContainer` refreshes the `property` suggestions and does not leave stale invalid bindings unnoticed.
+- [ ] Studio allows adding a `<tooltip>` child and string `<validators>` child where they are valid.
+- [ ] XML validation and completion accept all supported MarkdownEditor attributes and reject unsupported attributes.

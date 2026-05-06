@@ -4904,6 +4904,7 @@
 
                 <xs:attribute name="mode" type="markdownEditorMode"/>
                 <xs:attribute name="themeNames" type="markdownEditorThemeNames"/>
+                <xs:attribute name="autofocus" type="xs:boolean"/>
 
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasLabel"/>

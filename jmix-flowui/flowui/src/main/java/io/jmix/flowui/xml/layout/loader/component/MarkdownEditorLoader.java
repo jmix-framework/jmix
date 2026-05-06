@@ -53,6 +53,7 @@ public class MarkdownEditorLoader extends AbstractComponentLoader<MarkdownEditor
         componentLoader().loadTooltip(resultComponent, element);
         componentLoader().loadThemeNames(resultComponent, element);
         componentLoader().loadFocusableAttributes(resultComponent, element);
+        componentLoader().loadAutofocus(resultComponent, element);
     }
 
     protected DataLoaderSupport getDataLoaderSupport() {

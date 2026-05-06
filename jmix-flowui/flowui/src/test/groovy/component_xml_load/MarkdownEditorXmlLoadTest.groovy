@@ -69,6 +69,7 @@ class MarkdownEditorXmlLoadTest extends FlowuiTestSpecification {
             required
             requiredMessage == "requiredMessageString"
             tabIndex == 3
+            autofocus
             themeNames.containsAll(["toolbar-align-center", "helper-above-field"])
             valueChangeMode == ValueChangeMode.TIMEOUT
             valueChangeTimeout == 50

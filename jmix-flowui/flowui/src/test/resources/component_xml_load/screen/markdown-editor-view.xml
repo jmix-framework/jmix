@@ -44,6 +44,7 @@
                         required="true"
                         requiredMessage="requiredMessageString"
                         tabIndex="3"
+                        autofocus="true"
                         themeNames="toolbar-align-center helper-above-field"
                         valueChangeMode="TIMEOUT"
                         valueChangeTimeout="50"

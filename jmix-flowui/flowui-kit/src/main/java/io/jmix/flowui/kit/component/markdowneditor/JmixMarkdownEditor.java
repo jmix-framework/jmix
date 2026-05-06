@@ -18,6 +18,7 @@ package io.jmix.flowui.kit.component.markdowneditor;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.google.common.base.Strings;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.shared.HasThemeVariant;
@@ -33,6 +34,7 @@ import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.function.SerializableConsumer;
 import com.vaadin.flow.internal.JacksonUtils;
 import com.vaadin.flow.shared.Registration;
+import io.jmix.flowui.kit.component.HasAutofocus;
 import tools.jackson.databind.node.ObjectNode;
 
 import java.io.Serializable;
@@ -52,7 +54,7 @@ import java.util.function.Function;
 public class JmixMarkdownEditor extends AbstractSinglePropertyField<JmixMarkdownEditor, String>
         implements HasLabel, HasHelper, HasPlaceholder, HasValidationProperties, HasValidator<String>,
         HasSize, HasEnabled, HasTooltip, HasValueChangeMode, HasAriaLabel, Focusable<JmixMarkdownEditor>,
-        HasThemeVariant<MarkdownEditorVariant> {
+        HasThemeVariant<MarkdownEditorVariant>, HasAutofocus {
 
     protected ValueChangeMode currentMode;
     protected int valueChangeTimeout = DEFAULT_CHANGE_TIMEOUT;
@@ -112,6 +114,11 @@ public class JmixMarkdownEditor extends AbstractSinglePropertyField<JmixMarkdown
     @Override
     public void setManualValidation(boolean enabled) {
         validationController.setManualValidation(enabled);
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return Strings.isNullOrEmpty(getValue());
     }
 
     /**

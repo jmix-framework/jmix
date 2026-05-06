@@ -439,7 +439,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         loadColumnEditable(element, column, property);
         loadAggregationInfo(element, column);
 
-        loadRenderer(element, metaPropertyPath)
+        loadRenderer(element, metaClass, metaPropertyPath)
                 .ifPresent(column::setRenderer);
     }
 
@@ -451,6 +451,7 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
 
     @SuppressWarnings("rawtypes")
     protected Optional<? extends Renderer> loadRenderer(Element columnElement,
+                                                        MetaClass metaClass,
                                                         @Nullable MetaPropertyPath metaPropertyPath) {
         if (columnElement.elements().isEmpty()) {
             return Optional.empty();
@@ -460,23 +461,36 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         if (fragmentRenderer.isPresent()) {
             return fragmentRenderer;
 
-        } else if (metaPropertyPath != null) {
-            Map<String, RendererProvider> providers = applicationContext.getBeansOfType(RendererProvider.class);
+        }
+        Map<String, RendererProvider> providers = applicationContext.getBeansOfType(RendererProvider.class);
 
-            for (RendererProvider<?> provider : providers.values()) {
-                for (Element element : columnElement.elements()) {
-                    RendererProvider.RendererCreationContext rendererCreationContext =
-                            new RendererProvider.RendererCreationContext(
-                                    element, resultComponent, metaPropertyPath, context
-                            );
-                    if (provider.supports(rendererCreationContext)) {
-                        return Optional.of(provider.createRenderer(rendererCreationContext));
-                    }
+        for (RendererProvider<?> provider : providers.values()) {
+            for (Element element : columnElement.elements()) {
+                RendererProvider.RendererCreationContext rendererCreationContext = getRendererCreationContext(metaClass, metaPropertyPath, element);
+                if (provider.supports(rendererCreationContext)) {
+                    return Optional.of(provider.createRenderer(rendererCreationContext));
                 }
             }
         }
 
         return Optional.empty();
+    }
+
+    protected RendererProvider.RendererCreationContext getRendererCreationContext(MetaClass metaClass,
+                                                                                  @Nullable MetaPropertyPath metaPropertyPath,
+                                                                                  Element element) {
+        RendererProvider.RendererCreationContext rendererCreationContext;
+        if (metaPropertyPath != null) {
+            rendererCreationContext = new RendererProvider.MetaPropertyPathRendererCreationContext(
+                    element, resultComponent, metaPropertyPath, context
+            );
+        } else {
+            rendererCreationContext = new RendererProvider.MetaClassRendererCreationContext(
+                    element, resultComponent, metaClass, context
+            );
+        }
+
+        return rendererCreationContext;
     }
 
     protected void loadColumnSortable(Element element, boolean sortableColumns, DataGridColumn<?> column,

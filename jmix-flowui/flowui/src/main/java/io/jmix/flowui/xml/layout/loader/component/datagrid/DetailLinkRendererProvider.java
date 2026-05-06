@@ -17,6 +17,7 @@
 package io.jmix.flowui.xml.layout.loader.component.datagrid;
 
 import com.vaadin.flow.component.html.AnchorTarget;
+import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.grid.renderer.DetailLinkRenderer;
@@ -27,6 +28,9 @@ import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+/**
+ * Loads {@link DetailLinkRenderer} instances from {@code detailLinkRenderer} XML elements.
+ */
 @Component("flowui_DetailLinkRendererProvider")
 public class DetailLinkRendererProvider extends AbstractDetailRendererProvider<DetailLinkRenderer<?>> {
 
@@ -46,16 +50,21 @@ public class DetailLinkRendererProvider extends AbstractDetailRendererProvider<D
 
     @Override
     public DetailLinkRenderer<?> createRenderer(Element element,
-                                                       MetaPropertyPath metaPropertyPath,
-                                                       ComponentLoader.Context context) {
-        return createRenderer(new RendererCreationContext(element, null, metaPropertyPath, context));
+                                                MetaPropertyPath metaPropertyPath,
+                                                ComponentLoader.Context context) {
+        return createRenderer(new MetaPropertyPathRendererCreationContext(element, null, metaPropertyPath, context));
+    }
+
+    @Override
+    public boolean supports(RendererCreationContext context) {
+        return NAME.equals(context.getElement().getName());
     }
 
     @Override
     protected DetailLinkRenderer<?> createRendererInternal(RendererCreationContext detailRendererContext) {
-        MetaPropertyPath metaPropertyPath = detailRendererContext.getMetaPropertyPath();
+        MetaClass metaClass = getMetaClass(detailRendererContext);
         DetailLinkRenderer<?> renderer = new DetailLinkRenderer<>(uiComponents, routeSupport, viewRegistry,
-                metaPropertyPath.getMetaClass(), createTextProvider(metaPropertyPath));
+                metaClass, createTextProvider(detailRendererContext));
 
         loaderSupport.loadEnum(detailRendererContext.getElement(), AnchorTarget.class, "target")
                 .ifPresent(renderer::withTarget);
@@ -63,8 +72,17 @@ public class DetailLinkRendererProvider extends AbstractDetailRendererProvider<D
         return renderer;
     }
 
-    @Override
-    public boolean supports(RendererCreationContext context) {
-        return NAME.equals(context.getElement().getName());
+    protected MetaClass getMetaClass(RendererCreationContext detailRendererContext) {
+        MetaClass metaClass;
+        if (detailRendererContext instanceof MetaPropertyPathRendererCreationContext mppContext) {
+            metaClass = mppContext.getMetaPropertyPath().getMetaClass();
+        } else if (detailRendererContext instanceof MetaClassRendererCreationContext mcContext) {
+            metaClass = mcContext.getMetaClass();
+        } else {
+            throw new IllegalArgumentException("Unsupported renderer creation context type: %s"
+                    .formatted(detailRendererContext.getClass().getSimpleName()));
+        }
+
+        return metaClass;
     }
 }

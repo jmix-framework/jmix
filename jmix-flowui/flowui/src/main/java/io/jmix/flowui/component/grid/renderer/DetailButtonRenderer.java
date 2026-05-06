@@ -32,6 +32,13 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.function.Consumer;
 
+/**
+ * A renderer that creates a server-side {@link JmixButton} opening an entity detail view.
+ * <p>
+ * The detail view can be opened either by navigation or in a dialog depending on the configured {@link OpenMode}.
+ *
+ * @param <E> entity item type
+ */
 public class DetailButtonRenderer<E> extends AbstractDetailRenderer<JmixButton, E, DetailButtonRenderer<E>> {
 
     protected UiComponents uiComponents;
@@ -47,12 +54,31 @@ public class DetailButtonRenderer<E> extends AbstractDetailRenderer<JmixButton, 
     protected String themeNames;
     protected OpenMode openMode = OpenMode.NAVIGATION;
 
+    /**
+     * Creates a detail button renderer.
+     *
+     * @param uiComponents      factory for creating UI components
+     * @param viewNavigators    view navigation entry point
+     * @param dialogWindows     dialog windows entry point
+     * @param ownerComponent    list data component that owns the rendered column
+     * @param textValueProvider value provider for button text when explicit text is not configured
+     */
     public DetailButtonRenderer(UiComponents uiComponents, ViewNavigators viewNavigators, DialogWindows dialogWindows,
                                 ListDataComponent<E> ownerComponent,
                                 ValueProvider<E, String> textValueProvider) {
         this(uiComponents, viewNavigators, dialogWindows, ownerComponent, textValueProvider, null);
     }
 
+    /**
+     * Creates a detail button renderer.
+     *
+     * @param uiComponents      factory for creating UI components
+     * @param viewNavigators    view navigation entry point
+     * @param dialogWindows     dialog windows entry point
+     * @param ownerComponent    list data component that owns the rendered column
+     * @param textValueProvider value provider for button text when explicit text is not configured
+     * @param iconProvider      provider for button icons, or {@code null} if no icon should be set
+     */
     public DetailButtonRenderer(UiComponents uiComponents, ViewNavigators viewNavigators, DialogWindows dialogWindows,
                                 ListDataComponent<E> ownerComponent,
                                 ValueProvider<E, String> textValueProvider,
@@ -129,21 +155,45 @@ public class DetailButtonRenderer<E> extends AbstractDetailRenderer<JmixButton, 
         builder.open();
     }
 
+    /**
+     * Sets how the detail view is opened.
+     *
+     * @param openMode open mode
+     * @return this renderer
+     */
     public DetailButtonRenderer<E> withOpenMode(OpenMode openMode) {
         this.openMode = openMode;
         return this;
     }
 
+    /**
+     * Sets a provider used to create button icons.
+     *
+     * @param iconProvider icon provider, or {@code null} to render buttons without icons
+     * @return this renderer
+     */
     public DetailButtonRenderer<E> withIconProvider(@Nullable SerializableFunction<E, Component> iconProvider) {
         this.iconProvider = iconProvider;
         return this;
     }
 
+    /**
+     * Sets theme names for the rendered button.
+     *
+     * @param themeNames space- or comma-separated theme names, or {@code null} to clear them
+     * @return this renderer
+     */
     public DetailButtonRenderer<E> withThemeNames(@Nullable String themeNames) {
         this.themeNames = themeNames;
         return this;
     }
 
+    /**
+     * Sets a custom click handler.
+     *
+     * @param clickHandler click handler invoked with the current grid item
+     * @return this renderer
+     */
     public DetailButtonRenderer<E> withClickHandler(Consumer<E> clickHandler) {
         this.clickHandler = clickHandler;
         return this;

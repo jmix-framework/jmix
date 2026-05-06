@@ -34,6 +34,9 @@ import org.springframework.context.ApplicationContext;
 import java.util.Objects;
 import java.util.Optional;
 
+/**
+ * Loads {@link DetailButtonRenderer} instances from {@code detailButtonRenderer} XML elements.
+ */
 @org.springframework.stereotype.Component("flowui_DetailButtonRendererProvider")
 public class DetailButtonRendererProvider extends AbstractDetailRendererProvider<DetailButtonRenderer<Object>> {
 
@@ -57,14 +60,14 @@ public class DetailButtonRendererProvider extends AbstractDetailRendererProvider
     public DetailButtonRenderer<Object> createRenderer(Element element,
                                                        MetaPropertyPath metaPropertyPath,
                                                        ComponentLoader.Context context) {
-        return createRenderer(new RendererCreationContext(element, null, metaPropertyPath, context));
+        return createRenderer(new MetaPropertyPathRendererCreationContext(element, null, metaPropertyPath, context));
     }
 
     @Override
     protected DetailButtonRenderer<Object> createRendererInternal(RendererCreationContext detailRendererContext) {
         DetailButtonRenderer<Object> renderer = new DetailButtonRenderer<>(uiComponents, viewNavigators, dialogWindows,
                 getOwnerComponent(detailRendererContext),
-                createTextProvider(detailRendererContext.getMetaPropertyPath()));
+                createTextProvider(detailRendererContext));
 
         loaderSupport.loadEnum(detailRendererContext.getElement(), OpenMode.class, "openMode")
                 .ifPresent(renderer::withOpenMode);

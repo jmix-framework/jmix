@@ -20,7 +20,6 @@ import com.vaadin.flow.function.ValueProvider;
 import io.jmix.core.ClassManager;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.EntityValues;
-import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.component.grid.renderer.AbstractDetailRenderer;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.xml.layout.ComponentLoader;
@@ -30,6 +29,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Optional;
 
+/**
+ * Base provider for loading detail view renderers from data grid XML declarations.
+ *
+ * @param <R> detail renderer type
+ */
 public abstract class AbstractDetailRendererProvider<R extends AbstractDetailRenderer<?, ?, ?>>
         implements RendererProvider<R> {
 
@@ -40,6 +44,12 @@ public abstract class AbstractDetailRendererProvider<R extends AbstractDetailRen
     @Autowired
     protected ClassManager classManager;
 
+    /**
+     * Creates and configures a detail renderer.
+     *
+     * @param context renderer creation context
+     * @return configured detail renderer
+     */
     @Override
     public R createRenderer(RendererCreationContext context) {
         R renderer = createRendererInternal(context);
@@ -49,8 +59,6 @@ public abstract class AbstractDetailRendererProvider<R extends AbstractDetailRen
                 .ifPresent(renderer::withViewId);
         loadViewClass(element)
                 .ifPresent(renderer::withViewClass);
-        loadText(element, context.getLoaderContext())
-                .ifPresent(renderer::withText);
 
         loaderSupport.loadString(element, "classNames")
                 .ifPresent(renderer::withClassNames);
@@ -60,11 +68,20 @@ public abstract class AbstractDetailRendererProvider<R extends AbstractDetailRen
         return renderer;
     }
 
-    protected ValueProvider<Object, String> createTextProvider(MetaPropertyPath propertyPath) {
-        return item -> {
-            Object value = EntityValues.getValueEx(item, propertyPath);
-            return metadataTools.format(value);
-        };
+    protected ValueProvider<Object, String> createTextProvider(RendererCreationContext context) {
+        Optional<String> text = loadText(context.getElement(), context.getLoaderContext());
+        if (text.isPresent()) {
+            return item -> text.get();
+        }
+
+        if (context instanceof MetaPropertyPathRendererCreationContext mppContext) {
+            return item -> {
+                Object value = EntityValues.getValueEx(item, mppContext.getMetaPropertyPath());
+                return metadataTools.format(value);
+            };
+        }
+
+        throw new IllegalArgumentException("No text provider found for element: " + context.getElement());
     }
 
     abstract protected R createRendererInternal(RendererCreationContext context);

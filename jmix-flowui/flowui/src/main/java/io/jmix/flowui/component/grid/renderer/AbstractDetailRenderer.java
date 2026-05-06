@@ -31,6 +31,13 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 
+/**
+ * Base class for component renderers that create controls for opening an entity detail view.
+ *
+ * @param <C> component type rendered in a grid cell
+ * @param <E> entity item type
+ * @param <R> renderer type used for fluent configuration methods
+ */
 public abstract class AbstractDetailRenderer<
         C extends Component & HasText & HasStyle,
         E,
@@ -46,6 +53,11 @@ public abstract class AbstractDetailRenderer<
     protected String viewId;
     protected Class<? extends View<?>> viewClass;
 
+    /**
+     * Creates a renderer with a value provider used as a fallback text source.
+     *
+     * @param textValueProvider value provider for cell text when explicit text is not configured
+     */
     protected AbstractDetailRenderer(ValueProvider<E, String> textValueProvider) {
         // cause we are overriding createComponent method
         super((SerializableSupplier<C>) null);
@@ -114,51 +126,56 @@ public abstract class AbstractDetailRenderer<
                 });
     }
 
-    @Nullable
-    public String getText() {
-        return text;
-    }
-
+    /**
+     * Sets explicit text for the rendered component.
+     *
+     * @param text text to show, or {@code null} to use the fallback item value
+     * @return this renderer
+     */
     public R withText(@Nullable String text) {
         this.text = text;
         return getThis();
     }
 
-    @Nullable
-    public String getClassNames() {
-        return classNames;
-    }
-
+    /**
+     * Sets class names for the rendered component.
+     *
+     * @param classNames space- or comma-separated class names, or {@code null} to clear them
+     * @return this renderer
+     */
     public R withClassNames(@Nullable String classNames) {
         this.classNames = classNames;
         return getThis();
     }
 
-    @Nullable
-    public String getCss() {
-        return css;
-    }
-
+    /**
+     * Sets inline CSS declarations for the rendered component.
+     *
+     * @param css CSS declarations separated by semicolons, or {@code null} to clear them
+     * @return this renderer
+     */
     public R withCss(@Nullable String css) {
         this.css = css;
         return getThis();
     }
 
-    @Nullable
-    public String getViewId() {
-        return viewId;
-    }
-
+    /**
+     * Sets detail view id.
+     *
+     * @param viewId detail view id
+     * @return this renderer
+     */
     public R withViewId(@Nullable String viewId) {
         this.viewId = viewId;
         return getThis();
     }
 
-    @Nullable
-    public Class<? extends View<?>> getViewClass() {
-        return viewClass;
-    }
-
+    /**
+     * Sets detail view class.
+     *
+     * @param viewClass detail view class
+     * @return this renderer
+     */
     public R withViewClass(@Nullable Class<? extends View<?>> viewClass) {
         this.viewClass = viewClass;
         return getThis();

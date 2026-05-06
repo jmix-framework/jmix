@@ -36,6 +36,11 @@ import org.jspecify.annotations.Nullable;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * A renderer that creates a server-side {@link Anchor} opening an entity detail view route.
+ *
+ * @param <E> entity item type
+ */
 public class DetailLinkRenderer<E> extends AbstractDetailRenderer<Anchor, E, DetailLinkRenderer<E>> {
 
     protected UiComponents uiComponents;
@@ -47,6 +52,15 @@ public class DetailLinkRenderer<E> extends AbstractDetailRenderer<Anchor, E, Det
     protected AnchorTarget target;
     protected MetaClass metaClass;
 
+    /**
+     * Creates a detail link renderer.
+     *
+     * @param uiComponents      factory for creating UI components
+     * @param routeSupport      support bean for serializing route parameters
+     * @param viewRegistry      registry used to resolve detail views
+     * @param metaClass         entity meta-class used to resolve the default detail view
+     * @param textValueProvider value provider for link text when explicit text is not configured
+     */
     public DetailLinkRenderer(UiComponents uiComponents, RouteSupport routeSupport, ViewRegistry viewRegistry,
                               MetaClass metaClass, ValueProvider<E, String> textValueProvider) {
         super(textValueProvider);
@@ -127,20 +141,23 @@ public class DetailLinkRenderer<E> extends AbstractDetailRenderer<Anchor, E, Det
         return viewInfo.getControllerClass();
     }
 
-    @Nullable
-    public AnchorTarget getTarget() {
-        return target;
-    }
-
+    /**
+     * Sets anchor target.
+     *
+     * @param target anchor target, or {@code null} to use the default browser behavior
+     * @return this renderer
+     */
     public DetailLinkRenderer<E> withTarget(@Nullable AnchorTarget target) {
         this.target = target;
         return this;
     }
 
-    public SerializableFunction<E, String> getHrefProvider() {
-        return hrefProvider;
-    }
-
+    /**
+     * Sets a provider used to create link href values.
+     *
+     * @param hrefProvider href provider
+     * @return this renderer
+     */
     public DetailLinkRenderer<E> withHrefProvider(SerializableFunction<E, String> hrefProvider) {
         this.hrefProvider = hrefProvider;
         return this;

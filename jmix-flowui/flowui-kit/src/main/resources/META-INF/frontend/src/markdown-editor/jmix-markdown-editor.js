@@ -1,7 +1,19 @@
-/**
- * @license
- * Copyright (c) 2025 GlebFox
+/*
+ * Copyright 2026 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
 import '@vaadin/context-menu';
 import '@vaadin/markdown';
 import { html, LitElement, nothing } from 'lit';
@@ -74,8 +86,8 @@ const DEFAULT_I18N = Object.freeze({
  * Attribute           | Description
  * --------------------|-------------------------------------------
  * `disabled`          | Set when the element is disabled
- * `focused`           | Set when the textarea has focus
- * `focus-ring`        | Set when the textarea was focused via keyboard
+ * `focused`           | Set when the element has focus
+ * `focus-ring`        | Set when the element was focused via keyboard
  * `readonly`          | Set when the element is read-only
  * `has-label`         | Set when the element has a label
  * `has-helper`        | Set when the element has helper text or slot
@@ -106,8 +118,12 @@ export class JmixMarkdownEditor extends I18nMixin(
     return 'jmix-markdown-editor';
   }
 
+  static get styles() {
+    return [inputFieldShared, jmixMarkdownEditorBaseStyles];
+  }
+
   static get lumoInjector() {
-    return { ...super.lumoInjector, includeBaseStyles: true };
+    return {...super.lumoInjector, includeBaseStyles: true};
   }
 
   static get properties() {
@@ -174,10 +190,6 @@ export class JmixMarkdownEditor extends I18nMixin(
     };
   }
 
-  static get styles() {
-    return [inputFieldShared, jmixMarkdownEditorBaseStyles];
-  }
-
   static get delegateAttrs() {
     return ['required', 'readonly', 'invalid', 'name', 'placeholder', 'disabled'];
   }
@@ -212,7 +224,7 @@ export class JmixMarkdownEditor extends I18nMixin(
         <span part="required-indicator" aria-hidden="true" @click="${this.focus}"></span>
       </div>
 
-      <div class="field-wrapper" part="input-field">
+      <div class="jmix-markdown-editor-container" part="input-field">
         ${this.readonly ? nothing : html`
           <div class="header-row" part="header">
             <div class="tabs" part="tabs" role="tablist" @keydown="${this._onTabsKeydown}">

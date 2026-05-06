@@ -1163,8 +1163,8 @@ interface StudioComponents {
             classFqn = "io.jmix.flowui.component.markdowneditor.MarkdownEditor",
             category = "Components",
             xmlElement = StudioXmlElements.MARKDOWN_EDITOR,
-            icon = "io/jmix/flowui/kit/meta/icon/component/markdown-editor.svg", // TODO icon
-//            documentationLink = "%VERSION%/flow-ui/vc/components/markdownEditor.html", // uncomment when documentation is ready
+            icon = "io/jmix/flowui/kit/meta/icon/component/markdownEditor.svg", // TODO icon
+            documentationLink = "%VERSION%/flow-ui/vc/components/markdownEditor.html",
             convertStrategy = @StudioConvertStrategy(tagsToConvertInto = {
                     @StudioConvertStrategy.TagInfo(qualifiedName = "textField"),
                     @StudioConvertStrategy.TagInfo(qualifiedName = "textArea"),

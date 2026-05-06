@@ -45,3 +45,17 @@ sonarqube {
 configure(subprojects.findAll { it.name != 'bom' }) {
     apply(plugin: 'io.jmix.build')
 }
+
+tasks.register('jmixGradlePluginTest') {
+    group = 'verification'
+    description = 'Runs tests for the included Jmix Gradle plugin build.'
+
+    dependsOn gradle.includedBuild('jmix-gradle-plugin').task(':test')
+}
+
+tasks.register('test') {
+    group = 'verification'
+    description = 'Runs root-level tests and verification tasks.'
+
+    dependsOn tasks.named('jmixGradlePluginTest')
+}

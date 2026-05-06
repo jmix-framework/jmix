@@ -148,6 +148,11 @@ const markdownEditorBaseStyles = css`
         justify-content: flex-end;
     }
 
+    :host([theme~='toolbar-align-center']) [part='divider'],
+    :host([theme~='toolbar-align-end']) [part='divider'] {
+        display: none;
+    }
+
     [part~='toolbar-button'],
     .toolbar-overflow {
         display: flex;

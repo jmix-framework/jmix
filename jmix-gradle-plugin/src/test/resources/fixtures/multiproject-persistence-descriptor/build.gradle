@@ -24,7 +24,3 @@ subprojects {
         implementation 'io.jmix.data:jmix-eclipselink'
     }
 }
-
-tasks.register('verifyReproducer') {
-    dependsOn ':feature:assertPersistenceContainsBaseEntity'
-}

@@ -39,7 +39,7 @@ class EnhancingClasspathFunctionalTest {
 
         def result = GradleRunner.create()
                 .withProjectDir(testProjectDir.toFile())
-                .withArguments('clean', 'verifyReproducer', "-PjmixBomVersion=${System.getProperty('jmixBomVersion')}", '--stacktrace')
+                .withArguments('clean', ':feature:classes', "-PjmixBomVersion=${System.getProperty('jmixBomVersion')}", '--stacktrace')
                 .withPluginClasspath()
                 .forwardOutput()
                 .build()

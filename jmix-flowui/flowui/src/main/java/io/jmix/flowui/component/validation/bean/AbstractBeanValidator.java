@@ -89,7 +89,7 @@ public class AbstractBeanValidator implements Validator {
         }
 
         MetaProperty metaProperty = metadata.getClass(beanClass).findProperty(beanProperty);
-        if (metaProperty != null && metaProperty.getDeclaringClass() != null) { // TODO dynmod: implement validation for dynamic attributes
+        if (metaProperty != null && metaProperty.getDeclaringClass() != null) {
             @SuppressWarnings("unchecked")
             Set<ConstraintViolation> violations = validator.validateValue(beanClass, beanProperty, value, groups);
 

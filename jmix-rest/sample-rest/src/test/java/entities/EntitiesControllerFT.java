@@ -976,6 +976,26 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
+    void createNewEntitiesWithMethodBasedReferenceProperty() throws Exception {
+        String currencyId = "RBS";
+        String json = "[{\"code\":\"" + currencyId + "\",\"name\":\"Bulk Ruble\"}]";
+
+        String url = baseUrl + "/entities/ref$Currency";
+        dirtyData.addCurrencyId(currencyId);
+
+        try (CloseableHttpResponse response = sendPost(url, oauthToken, json, null)) {
+            assertEquals(HttpStatus.SC_CREATED, statusCode(response));
+        }
+
+        try (PreparedStatement stmt = conn.prepareStatement("select NAME from REF_CURRENCY where CODE = ?")) {
+            stmt.setString(1, currencyId);
+            ResultSet rs = stmt.executeQuery();
+            assertTrue(rs.next());
+            assertEquals("Bulk Ruble", rs.getString("NAME"));
+        }
+    }
+
+    @Test
     void createNewEntityWithoutResponseView() throws Exception {
         Map<String, String> replacements = new HashMap<>();
         replacements.put("$MODEL_ID$", model3UuidString);

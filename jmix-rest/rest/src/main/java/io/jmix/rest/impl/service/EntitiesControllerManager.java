@@ -512,13 +512,15 @@ public class EntitiesControllerManager {
         Collection<Pair<Object, Object>> referencesToExclude = new ArrayList<>();
         for (Object entity : entities) {
             for (MetaProperty metaProperty : metadata.getClass(entity).getProperties()) {
-                if (metaProperty.getRange().isClass()) {
+                if (metaProperty.getRange().isClass()
+                        && !metadataTools.isMethodBased(metaProperty)
+                        && metadataTools.isAnnotationPresent(entity, metaProperty.getName(), Valid.class)) {
                     Object reference = EntityValues.getValue(entity, metaProperty.getName());
                     if (reference != null && !(reference instanceof Collection)) {
                         reference = Collections.singletonList(reference);
                     }
                     //to handle composition references marked as @Valid
-                    if (reference != null && metadataTools.isAnnotationPresent(entity, metaProperty.getName(), Valid.class)) {
+                    if (reference != null) {
                         ((Collection<Object>) reference).stream()
                                 //to handle one-to-many composition. when the composition collection objects has a reference to the root entity
                                 .filter(x -> !referencesToExclude.contains(new Pair<>(x, entity)))

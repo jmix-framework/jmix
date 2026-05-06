@@ -19,15 +19,15 @@ package io.jmix.core;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
-//TODO [SB4] Javadoc
+/**
+ * Manages H2 console properties.
+ */
 @ConfigurationProperties(prefix = "spring.h2.console")
 public class H2ConsoleProperties {
 
     boolean enabled;
 
     String path;
-
-    // TODO [IVGA][SB4] handle 'settings' properties?
 
     public H2ConsoleProperties(boolean enabled,
                                @DefaultValue("/h2-console") String path) {

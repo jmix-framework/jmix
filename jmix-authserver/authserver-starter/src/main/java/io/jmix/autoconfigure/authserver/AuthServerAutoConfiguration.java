@@ -216,15 +216,6 @@ public class AuthServerAutoConfiguration {
             return successHandler;
         }
 
-        // TODO [SB4] ServerProperties is gone - use direct injection or custom @ConfigurationProperties class
-        /*protected String getSessionCookieName(ServerProperties serverProperties) {
-            String sessionCookieName = serverProperties.getServlet().getSession().getCookie().getName();
-            if (StringUtils.isBlank(sessionCookieName)) {
-                sessionCookieName = "JSESSIONID";
-            }
-            return sessionCookieName;
-        }*/
-
         protected RequestMatcher createLogoutRequestMatcher(String logoutUrl) {
             return RequestMatchers.anyOf(
                     PathPatternRequestMatcher.pathPattern(HttpMethod.GET, logoutUrl),

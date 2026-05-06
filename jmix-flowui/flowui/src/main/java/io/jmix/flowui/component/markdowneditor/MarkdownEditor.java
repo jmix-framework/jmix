@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.component.markdowneditor;
 
+import com.google.common.base.Strings;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.Messages;
 import io.jmix.flowui.component.HasRequired;
@@ -90,10 +91,25 @@ public class MarkdownEditor extends JmixMarkdownEditor
     }
 
     @Override
+    protected void setModelValue(String newModelValue, boolean fromClient) {
+        super.setModelValue(Strings.emptyToNull(newModelValue), fromClient);
+    }
+
+    @Override
+    protected void setPresentationValue(String newPresentationValue) {
+        super.setPresentationValue(Strings.nullToEmpty(newPresentationValue));
+    }
+
+    @Override
     public void setRequiredIndicatorVisible(boolean requiredIndicatorVisible) {
         super.setRequiredIndicatorVisible(requiredIndicatorVisible);
 
         fieldDelegate.updateRequiredState();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return Strings.isNullOrEmpty(getValue());
     }
 
     @Nullable

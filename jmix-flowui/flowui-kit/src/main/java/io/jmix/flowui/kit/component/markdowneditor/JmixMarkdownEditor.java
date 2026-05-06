@@ -18,7 +18,6 @@ package io.jmix.flowui.kit.component.markdowneditor;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.google.common.base.Strings;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.shared.HasThemeVariant;
@@ -80,7 +79,7 @@ public class JmixMarkdownEditor extends AbstractSinglePropertyField<JmixMarkdown
      * Constructs an empty {@code JmixMarkdownEditor}.
      */
     public JmixMarkdownEditor() {
-        super("value", null, true);
+        super("value", "", false);
 
         // Tells the web component that validation is controlled server-side.
         getElement().setProperty("manualValidation", true);
@@ -114,11 +113,6 @@ public class JmixMarkdownEditor extends AbstractSinglePropertyField<JmixMarkdown
     @Override
     public void setManualValidation(boolean enabled) {
         validationController.setManualValidation(enabled);
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return Strings.isNullOrEmpty(getValue());
     }
 
     /**

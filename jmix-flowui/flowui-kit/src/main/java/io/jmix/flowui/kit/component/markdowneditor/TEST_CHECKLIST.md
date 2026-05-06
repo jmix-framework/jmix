@@ -1,9 +1,5 @@
 # Markdown Editor — Manual Test Checklist
 
-Open a page that contains a `MarkdownEditor` component.
-
----
-
 ## 1. Height behaviour
 
 ### 1.1 Auto height (no explicit height set)
@@ -163,7 +159,7 @@ Perform each action with the editor in Edit mode.
 - [ ] Binder validation: submitting with an empty value shows the required error message below the field.
 - [ ] Binder validation: a value that fails a custom validator shows that validator's error message.
 - [ ] Valid submission completes without validation errors.
-- [ ] `value-changed` event fires according to the value change mode.
+- [ ] `value-changed` event fires according to the _value change mode_.
 - [ ] Switching to Preview and back to Edit preserves the cursor position and selection.
 - [ ] Clicking into the textarea adds `focused` attribute on the host element; clicking outside removes it.
 - [ ] Tabbing into the textarea adds both `focused` and `focus-ring` on the host; tabbing away removes both.
@@ -190,6 +186,11 @@ Test each theme mode on a page that also contains at least one standard Vaadin t
 - [ ] The component renders with a visible border, label area, header row, and content area.
 - [ ] No layout is broken: the header row, toolbar, tabs, and content area are all visible and correctly positioned.
 - [ ] The invalid state shows a visible error border and error message below the field.
+- [ ] All theme variants work correctly: 
+  - [ ] `toolbar-align-start`
+  - [ ] `toolbar-align-center`
+  - [ ] `toolbar-align-end`
+  - [ ] `helper-above-field`
 
 ### 11.2 Lumo theme
 
@@ -197,6 +198,11 @@ Test each theme mode on a page that also contains at least one standard Vaadin t
 - [ ] Text appears sharp and smooth, consistent with other Lumo fields on the same page.
 - [ ] The invalid state border color matches the error color used by other Lumo fields on the same page.
 - [ ] No structural styles are missing: the field border, header row, tabs, toolbar buttons, and content area all appear correctly.
+- [ ] All theme variants work correctly: 
+  - [ ] `toolbar-align-start`
+  - [ ] `toolbar-align-center`
+  - [ ] `toolbar-align-end`
+  - [ ] `helper-above-field`
 
 ### 11.3 Aura theme
 
@@ -206,6 +212,11 @@ Test each theme mode on a page that also contains at least one standard Vaadin t
 - [ ] Toolbar button icons appear slightly smaller than their button bounds, consistent with other Aura toolbar components on the same page.
 - [ ] The invalid state border color matches the error color used by other Aura fields on the same page.
 - [ ] No structural styles are missing: the field border, header row, tabs, toolbar buttons, and content area all appear correctly.
+- [ ] All theme variants work correctly:
+  - [ ] `toolbar-align-start`
+  - [ ] `toolbar-align-center`
+  - [ ] `toolbar-align-end`
+  - [ ] `helper-above-field`
 
 ---
 
@@ -214,45 +225,8 @@ Test each theme mode on a page that also contains at least one standard Vaadin t
 Load a view descriptor that configures the editor declaratively, then verify both the server-side component API and
 client-side behaviour.
 
-### 12.1 General attributes
-
-- [ ] `id` is applied and the component can be injected into the view controller.
-- [ ] `visible="false"` hides the component and `setVisible(true)` shows it again without breaking layout.
-- [ ] `enabled="false"` loads the editor in the disabled state described in section 2.
-- [ ] `readOnly="true"` loads the editor in the read-only state described in section 3.
-- [ ] `css` applies inline styles to the host element.
-- [ ] `classNames` applies every listed class name to the host element.
-
-### 12.2 Size attributes
-
-- [ ] `width`, `minWidth`, `maxWidth`, `height`, `minHeight`, and `maxHeight` are applied to the host element.
-- [ ] Fixed `height` still keeps Edit and Preview scrolling inside the component border.
-- [ ] `minHeight` and `maxHeight` constrain auto-height growth without clipping toolbar, tabs, or content.
-- [ ] Width constraints trigger toolbar overflow recalculation immediately after the component is attached.
-
-### 12.3 Field attributes
-
-- [ ] `label`, `helperText`, `placeholder`, `required`, `requiredMessage`, and `errorMessage` are loaded.
-- [ ] `mode="PREVIEW"` opens the component in Preview mode, and `mode="EDIT"` opens it in Edit mode.
-- [ ] `themeNames` supports all values advertised for the component: `toolbar-align-start`, `toolbar-align-center`,
-  `toolbar-align-end`, and `helper-above-field`.
-- [ ] `valueChangeMode` and `valueChangeTimeout` are loaded and affect when server-side value change events are fired.
-
-### 12.4 Accessibility and focus attributes
-
-- [ ] `ariaLabel` is applied to the internal editing control and exposed to screen readers.
-- [ ] `ariaLabelledBy` is applied and references an existing label element correctly.
-- [ ] `tabIndex` changes the host focus order relative to neighbouring fields.
-- [ ] `tabIndex` is respected in Edit, Preview, read-only, and disabled states; disabled state must still be skipped.
-- [ ] `focusShortcut` focuses the editor and then follows the expected internal focus target for the current mode.
-- [ ] `tabIndex` and `focusShortcut` do not create ghost focus targets for hidden toolbar buttons or hidden tabs.
-
-### 12.5 Tooltip and validators elements
-
-- [ ] Nested `<tooltip>` loads text, position, delays, `manual`, and `opened` properties.
-- [ ] Tooltip is shown on hover/focus according to configured delays and is hidden when the editor is disabled.
-- [ ] Nested string validators are created and participate in `executeValidators()` and view validation.
-- [ ] Validator error messages are shown below the editor and clear after the value becomes valid.
+- [ ] Java API has corresponding XML attributes.
+- [ ] XML attributes are applied to the component.
 
 ---
 
@@ -276,7 +250,7 @@ client-side behaviour.
 - [ ] MarkdownEditor is available in the Studio component palette under Components.
 - [ ] Dragging the component to a view creates a `<markdownEditor>` element with a valid `id`.
 - [ ] Studio offers conversion from `textField`, `textArea`, `codeEditor`, and `richTextEditor` to `markdownEditor`.
-- [ ] The Properties panel lists all supported XML attributes from section 12, including `tabIndex` and `focusShortcut`.
+- [ ] The Properties panel lists all supported XML attributes.
 - [ ] Property categories are correct: data binding properties under Data Binding, validation properties under Validation,
   size properties under Size, and theme/style properties under Look and Feel.
 - [ ] `mode` is shown as an enum with `EDIT` and `PREVIEW` options and default value `EDIT`.

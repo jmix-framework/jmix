@@ -43,6 +43,7 @@ interface StudioValidatorsElements {
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
             documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/validator.html#DecimalMaxValidator",
             unsupportedTarget = {
+                    "io.jmix.flowui.component.markdowneditor.MarkdownEditor",
                     "io.jmix.flowui.component.datetimepicker.TypedDateTimePicker",
                     "io.jmix.flowui.component.datepicker.TypedDatePicker",
                     "io.jmix.flowui.component.timepicker.TypedTimePicker",
@@ -68,6 +69,7 @@ interface StudioValidatorsElements {
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
             documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/validator.html#DecimalMinValidator",
             unsupportedTarget = {
+                    "io.jmix.flowui.component.markdowneditor.MarkdownEditor",
                     "io.jmix.flowui.component.datetimepicker.TypedDateTimePicker",
                     "io.jmix.flowui.component.datepicker.TypedDatePicker",
                     "io.jmix.flowui.component.timepicker.TypedTimePicker",
@@ -90,6 +92,7 @@ interface StudioValidatorsElements {
             name = "Digits",
             classFqn = "io.jmix.flowui.component.validation.DigitsValidator",
             unsupportedTarget = {
+                    "io.jmix.flowui.component.markdowneditor.MarkdownEditor",
                     "io.jmix.flowui.component.datetimepicker.TypedDateTimePicker",
                     "io.jmix.flowui.component.datepicker.TypedDatePicker",
                     "io.jmix.flowui.component.timepicker.TypedTimePicker",
@@ -117,6 +120,7 @@ interface StudioValidatorsElements {
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
             documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/validator.html#DoubleMaxValidator",
             unsupportedTarget = {
+                    "io.jmix.flowui.component.markdowneditor.MarkdownEditor",
                     "io.jmix.flowui.component.datetimepicker.TypedDateTimePicker",
                     "io.jmix.flowui.component.datepicker.TypedDatePicker",
                     "io.jmix.flowui.component.timepicker.TypedTimePicker",
@@ -142,6 +146,7 @@ interface StudioValidatorsElements {
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
             documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/validator.html#DoubleMinValidator",
             unsupportedTarget = {
+                    "io.jmix.flowui.component.markdowneditor.MarkdownEditor",
                     "io.jmix.flowui.component.datetimepicker.TypedDateTimePicker",
                     "io.jmix.flowui.component.datepicker.TypedDatePicker",
                     "io.jmix.flowui.component.timepicker.TypedTimePicker",
@@ -167,6 +172,7 @@ interface StudioValidatorsElements {
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
             documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/validator.html#EmailValidator",
             unsupportedTarget = {
+                    "io.jmix.flowui.component.markdowneditor.MarkdownEditor",
                     "io.jmix.flowui.component.datetimepicker.TypedDateTimePicker",
                     "io.jmix.flowui.component.datepicker.TypedDatePicker",
                     "io.jmix.flowui.component.timepicker.TypedTimePicker",
@@ -191,6 +197,7 @@ interface StudioValidatorsElements {
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
             documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/validator.html#FutureValidator",
             unsupportedTarget = {
+                    "io.jmix.flowui.component.markdowneditor.MarkdownEditor",
                     "io.jmix.flowui.component.textfield.TypedTextField",
                     "io.jmix.flowui.component.textfield.JmixEmailField",
                     "io.jmix.flowui.component.textarea.JmixTextArea",
@@ -216,6 +223,7 @@ interface StudioValidatorsElements {
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
             documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/validator.html#FutureOrPresentValidator",
             unsupportedTarget = {
+                    "io.jmix.flowui.component.markdowneditor.MarkdownEditor",
                     "io.jmix.flowui.component.textfield.TypedTextField",
                     "io.jmix.flowui.component.textfield.JmixEmailField",
                     "io.jmix.flowui.component.textarea.JmixTextArea",
@@ -241,6 +249,7 @@ interface StudioValidatorsElements {
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
             documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/validator.html#MaxValidator",
             unsupportedTarget = {
+                    "io.jmix.flowui.component.markdowneditor.MarkdownEditor",
                     "io.jmix.flowui.component.datetimepicker.TypedDateTimePicker",
                     "io.jmix.flowui.component.datepicker.TypedDatePicker",
                     "io.jmix.flowui.component.timepicker.TypedTimePicker",
@@ -265,6 +274,7 @@ interface StudioValidatorsElements {
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
             documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/validator.html#MinValidator",
             unsupportedTarget = {
+                    "io.jmix.flowui.component.markdowneditor.MarkdownEditor",
                     "io.jmix.flowui.component.datetimepicker.TypedDateTimePicker",
                     "io.jmix.flowui.component.datepicker.TypedDatePicker",
                     "io.jmix.flowui.component.timepicker.TypedTimePicker",
@@ -289,6 +299,7 @@ interface StudioValidatorsElements {
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
             documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/validator.html#NegativeOrZeroValidator",
             unsupportedTarget = {
+                    "io.jmix.flowui.component.markdowneditor.MarkdownEditor",
                     "io.jmix.flowui.component.datetimepicker.TypedDateTimePicker",
                     "io.jmix.flowui.component.datepicker.TypedDatePicker",
                     "io.jmix.flowui.component.timepicker.TypedTimePicker",
@@ -314,6 +325,7 @@ interface StudioValidatorsElements {
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
             documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/validator.html#NegativeValidator",
             unsupportedTarget = {
+                    "io.jmix.flowui.component.markdowneditor.MarkdownEditor",
                     "io.jmix.flowui.component.datetimepicker.TypedDateTimePicker",
                     "io.jmix.flowui.component.datepicker.TypedDatePicker",
                     "io.jmix.flowui.component.timepicker.TypedTimePicker",
@@ -397,6 +409,7 @@ interface StudioValidatorsElements {
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
             documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/validator.html#PastOrPresentValidator",
             unsupportedTarget = {
+                    "io.jmix.flowui.component.markdowneditor.MarkdownEditor",
                     "io.jmix.flowui.component.textfield.TypedTextField",
                     "io.jmix.flowui.component.textfield.JmixEmailField",
                     "io.jmix.flowui.component.textarea.JmixTextArea",
@@ -422,6 +435,7 @@ interface StudioValidatorsElements {
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
             documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/validator.html#PastValidator",
             unsupportedTarget = {
+                    "io.jmix.flowui.component.markdowneditor.MarkdownEditor",
                     "io.jmix.flowui.component.textfield.TypedTextField",
                     "io.jmix.flowui.component.textfield.JmixEmailField",
                     "io.jmix.flowui.component.textarea.JmixTextArea",
@@ -447,6 +461,7 @@ interface StudioValidatorsElements {
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
             documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/validator.html#PositiveOrZeroValidator",
             unsupportedTarget = {
+                    "io.jmix.flowui.component.markdowneditor.MarkdownEditor",
                     "io.jmix.flowui.component.datetimepicker.TypedDateTimePicker",
                     "io.jmix.flowui.component.datepicker.TypedDatePicker",
                     "io.jmix.flowui.component.timepicker.TypedTimePicker",
@@ -472,6 +487,7 @@ interface StudioValidatorsElements {
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
             documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/validator.html#PositiveValidator",
             unsupportedTarget = {
+                    "io.jmix.flowui.component.markdowneditor.MarkdownEditor",
                     "io.jmix.flowui.component.datetimepicker.TypedDateTimePicker",
                     "io.jmix.flowui.component.datepicker.TypedDatePicker",
                     "io.jmix.flowui.component.timepicker.TypedTimePicker",
@@ -497,6 +513,7 @@ interface StudioValidatorsElements {
             icon = "io/jmix/flowui/kit/meta/icon/element/validator.svg",
             documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/validator.html#RegexpValidator",
             unsupportedTarget = {
+                    "io.jmix.flowui.component.markdowneditor.MarkdownEditor",
                     "io.jmix.flowui.component.datetimepicker.TypedDateTimePicker",
                     "io.jmix.flowui.component.datepicker.TypedDatePicker",
                     "io.jmix.flowui.component.timepicker.TypedTimePicker",

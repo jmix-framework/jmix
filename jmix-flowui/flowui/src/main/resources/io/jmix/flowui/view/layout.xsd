@@ -1169,6 +1169,13 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <xs:simpleType name="markdownEditorMode">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="EDIT"/>
+            <xs:enumeration value="PREVIEW"/>
+        </xs:restriction>
+    </xs:simpleType>
+
     <xs:simpleType name="fieldDatatypeEnum">
         <xs:union>
             <xs:simpleType>
@@ -1948,6 +1955,22 @@
                     <xs:enumeration value="align-end"/>
                     <xs:enumeration value="align-center"/>
                     <xs:enumeration value="align-right"/>
+                    <xs:enumeration value="helper-above-field"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+
+    <xs:simpleType name="markdownEditorThemeNames">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="toolbar-align-start"/>
+                    <xs:enumeration value="toolbar-align-center"/>
+                    <xs:enumeration value="toolbar-align-end"/>
                     <xs:enumeration value="helper-above-field"/>
                 </xs:restriction>
             </xs:simpleType>
@@ -4871,6 +4894,35 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <xs:complexType name="markdownEditorComponent">
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+                <xs:choice minOccurs="0">
+                    <xs:element name="tooltip" type="tooltipElement"/>
+                    <xs:element name="validators" minOccurs="0" type="stringValidatorType"/>
+                </xs:choice>
+
+                <xs:attribute name="mode" type="markdownEditorMode"/>
+                <xs:attribute name="themeNames" type="markdownEditorThemeNames"/>
+                <xs:attribute name="autofocus" type="xs:boolean"/>
+
+                <xs:attributeGroup ref="hasSize"/>
+                <xs:attributeGroup ref="hasLabel"/>
+                <xs:attributeGroup ref="hasEnabled"/>
+                <xs:attributeGroup ref="hasRequired"/>
+                <xs:attributeGroup ref="hasClassNames"/>
+                <xs:attributeGroup ref="hasValidation"/>
+                <xs:attributeGroup ref="hasHelperText"/>
+                <xs:attributeGroup ref="hasPlaceholder"/>
+                <xs:attributeGroup ref="hasValueChangeMode"/>
+                <xs:attributeGroup ref="hasValueAndElement"/>
+                <xs:attributeGroup ref="hasDataContainer"/>
+                <xs:attributeGroup ref="hasAriaLabel"/>
+                <xs:attributeGroup ref="hasFocusableAttributes"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
     <!-- Generic Component -->
     <xs:complexType name="genericComponent">
         <xs:complexContent>
@@ -5569,6 +5621,7 @@
                 <xs:element name="component" type="genericComponent"/>
                 <xs:element name="fragment" type="fragmentComponent"/>
                 <xs:element name="markdown" type="markdownComponent"/>
+                <xs:element name="markdownEditor" type="markdownEditorComponent"/>
                 <xs:element name="sidePanelLayout" type="sidePanelLayoutComponent"/>
                 <xs:element name="sidePanelLayoutCloser" type="sidePanelLayoutCloserComponent"/>
             </xs:choice>

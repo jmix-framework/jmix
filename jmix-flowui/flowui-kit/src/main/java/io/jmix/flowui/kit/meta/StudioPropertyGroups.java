@@ -1724,6 +1724,14 @@ public final class StudioPropertyGroups {
             xmlAttribute = StudioXmlAttributes.THEME_NAMES,
             type = StudioPropertyType.VALUES_LIST,
             category = StudioProperty.Category.LOOK_AND_FEEL,
+            options = {"toolbar-align-start", "toolbar-align-center", "toolbar-align-end", "helper-above-field"}))
+    public interface MarkdownEditorThemeNames {
+    }
+
+    @StudioPropertyGroup(properties = @StudioProperty(
+            xmlAttribute = StudioXmlAttributes.THEME_NAMES,
+            type = StudioPropertyType.VALUES_LIST,
+            category = StudioProperty.Category.LOOK_AND_FEEL,
             options = {"filled", "reverse", "small"}))
     public interface DetailsThemeNames {
     }
@@ -3203,6 +3211,23 @@ public final class StudioPropertyGroups {
             ValueChangeModeAttributes, Pattern, Required, Property, MinLength, MaxLength, Autofocus, Autoselect,
             TrimEnabled, StringValue, Placeholder, Autocorrect, Autocomplete, Autocapitalize, TextAreaThemeNames,
             ClearButtonVisible, AllowedCharPattern {
+    }
+
+    @StudioPropertyGroup(
+            properties = {
+                    @StudioProperty(
+                            xmlAttribute = StudioXmlAttributes.MODE,
+                            type = StudioPropertyType.ENUMERATION,
+                            category = StudioProperty.Category.GENERAL,
+                            classFqn = "io.jmix.flowui.kit.component.markdowneditor.MarkdownEditorMode",
+                            options = {"EDIT", "PREVIEW"},
+                            defaultValue = "EDIT"
+                    )
+            }
+    )
+    public interface MarkdownEditorComponent extends ValidatableBaseFieldComponent, HasAriaLabelAndFocusableAttributes,
+            ValueChangeModeAttributes, Pattern, Required, Property, MinLength, MaxLength, Autofocus, Placeholder,
+            MarkdownEditorThemeNames {
     }
 
     @StudioPropertyGroup(properties = @StudioProperty(

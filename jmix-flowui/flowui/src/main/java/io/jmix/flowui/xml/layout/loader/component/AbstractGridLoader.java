@@ -465,8 +465,12 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
 
             for (RendererProvider<?> provider : providers.values()) {
                 for (Element element : columnElement.elements()) {
-                    if (provider.supports(element.getName())) {
-                        return Optional.of(provider.createRenderer(element, metaPropertyPath, context));
+                    RendererProvider.RendererCreationContext rendererCreationContext =
+                            new RendererProvider.RendererCreationContext(
+                                    element, resultComponent, metaPropertyPath, context
+                            );
+                    if (provider.supports(rendererCreationContext)) {
+                        return Optional.of(provider.createRenderer(rendererCreationContext));
                     }
                 }
             }

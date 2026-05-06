@@ -47,6 +47,9 @@ public class GridView extends StandardView {
     public DataGrid<?> columnsAttributesDataGrid;
 
     @ViewComponent
+    public DataGrid<?> detailRenderersDataGrid;
+
+    @ViewComponent
     public TreeDataGrid<?> treeDataGrid;
 
     @ViewComponent

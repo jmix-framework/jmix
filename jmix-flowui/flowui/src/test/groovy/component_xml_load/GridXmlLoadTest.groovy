@@ -20,13 +20,20 @@ import com.vaadin.flow.component.HasText
 import com.vaadin.flow.component.grid.ColumnTextAlign
 import com.vaadin.flow.component.grid.Grid
 import com.vaadin.flow.component.grid.dnd.GridDropMode
+import com.vaadin.flow.component.html.Anchor
+import com.vaadin.flow.component.html.AnchorTarget
 import com.vaadin.flow.component.html.Hr
 import com.vaadin.flow.component.icon.VaadinIcon
+import component.standarddetailview.view.OrderDetailTestView
 import component_xml_load.screen.GridView
 import io.jmix.core.DataManager
 import io.jmix.flowui.component.grid.DataGridColumn
 import io.jmix.flowui.component.grid.EnhancedDataGrid
+import io.jmix.flowui.component.grid.renderer.DetailButtonRenderer
+import io.jmix.flowui.component.grid.renderer.DetailLinkRenderer
 import io.jmix.flowui.kit.component.grid.GridMenuItemActionWrapper
+import io.jmix.flowui.testassist.UiTestUtils
+import io.jmix.flowui.view.OpenMode
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.jdbc.core.JdbcTemplate
@@ -46,7 +53,7 @@ class GridXmlLoadTest extends FlowuiTestSpecification {
 
     @Override
     void setup() {
-        registerViewBasePackages("component_xml_load.screen", "io.jmix.flowui.app")
+        registerViewBasePackages("component_xml_load.screen", "component.standarddetailview.view", "io.jmix.flowui.app")
 
         def order = dataManager.create(Order)
         order.number = "number"
@@ -219,6 +226,65 @@ class GridXmlLoadTest extends FlowuiTestSpecification {
 
         then: "dataGrid items will be loaded"
         dataGrid.items.items
+    }
+
+    def "Load dataGrid detail renderers from XML"() {
+        given: "Screen with a dataGrid"
+        def gridView = navigateToView(GridView.class)
+        gridView.loadData()
+
+        when: "detail renderers dataGrid is loaded"
+        def order = gridView.detailRenderersDataGrid.items.items[0] as Order
+        def linkRenderer = gridView.detailRenderersDataGrid.getColumnByKey("number").renderer as DetailLinkRenderer
+        def buttonRenderer = gridView.detailRenderersDataGrid.getColumnByKey("date").renderer as DetailButtonRenderer
+
+        then: "detailLinkRenderer attributes are loaded"
+        verifyAll(linkRenderer) {
+            target == AnchorTarget.BLANK
+            classNames == "detail-link, test-link"
+            css == "color: blue; font-weight: 600;"
+        }
+
+        when: "detail link component is created"
+        Anchor anchor = linkRenderer.createComponent(order) as Anchor
+
+        then: "detail link component is configured"
+        verifyAll(anchor) {
+            text == "Link"
+            href.contains("OrderDetailCustomRouteParamTestView")
+            href.contains(order.id.toString())
+            target.get() == AnchorTarget.BLANK.value
+            classNames.containsAll(["detail-link", "test-link"])
+            style.get("color") == "blue"
+            style.get("font-weight") == "600"
+        }
+
+        and: "detailButtonRenderer attributes are loaded"
+        verifyAll(buttonRenderer) {
+            openMode == OpenMode.NAVIGATION
+            iconProvider != null
+            themeNames == "tertiary-inline, small"
+            classNames == "detail-button, test-button"
+            css == "color: green;"
+        }
+
+        when: "detail button component is created"
+        def button = buttonRenderer.createComponent(order)
+
+        then: "detail button component is configured"
+        verifyAll(button) {
+            text == "Open order"
+            icon != null
+            themeNames.containsAll(["tertiary-inline", "small"])
+            classNames.containsAll(["detail-button", "test-button"])
+            style.get("color") == "green"
+        }
+
+        when: "detail button is clicked"
+        button.click()
+
+        then: "detail view is opened"
+        UiTestUtils.getCurrentView() instanceof OrderDetailTestView
     }
 
     def "Load treeDataGrid component from XML"() {

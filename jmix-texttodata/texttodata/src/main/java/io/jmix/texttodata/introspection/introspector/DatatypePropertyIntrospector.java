@@ -1,0 +1,31 @@
+package io.jmix.texttodata.introspection.introspector;
+
+import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.texttodata.introspection.model.DatatypePropertyDescriptor;
+import io.jmix.texttodata.introspection.model.EntityPropertyDescriptor;
+import org.jspecify.annotations.Nullable;
+import org.springframework.stereotype.Component;
+
+@Component("textdt_DatatypePropertyIntrospector")
+public class DatatypePropertyIntrospector extends AbstractPropertyIntrospector {
+
+    @Override
+    public boolean supports(MetaProperty property) {
+        return property.getRange().isDatatype();
+    }
+
+    @Nullable
+    @Override
+    public EntityPropertyDescriptor introspect(MetaProperty property) {
+        if (!supports(property)) {
+            return null;
+        }
+
+        return new DatatypePropertyDescriptor(property.getName(),
+                getPropertyLocalizedNames(property),
+                property.getJavaType().getSimpleName(),
+                property.getType().name().toLowerCase(),
+                getIdentifier(property),
+                getComment(property));
+    }
+}

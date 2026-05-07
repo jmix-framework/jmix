@@ -154,6 +154,12 @@ public class ReportsProperties {
      */
     boolean multilineStringsProcessingEnabled;
 
+    /**
+     * If true, date, datetime and time parameters will use {@link java.util.Date} instead of
+     * {@link java.time.LocalDate}, {@link java.time.LocalDateTime} and {@link java.time.LocalTime}.
+     */
+    boolean useLegacyDateTimeTypes;
+
     public ReportsProperties(@DefaultValue("/") String officePath,
                              @DefaultValue({"8100", "8101", "8102", "8103"}) List<Integer> officePorts,
                              @DefaultValue("20") int docFormatterTimeout,
@@ -178,6 +184,7 @@ public class ReportsProperties {
                              @DefaultValue("false") boolean useOfficeForDocumentConversion,
                              @DefaultValue("false") boolean formulasPostProcessingEvaluationEnabled,
                              @DefaultValue("false") boolean multilineStringsProcessingEnabled,
+                             @DefaultValue("false") boolean useLegacyDateTimeTypes,
                              @DefaultValue({"htm", "html", "jpg", "png", "jpeg", "pdf"}) List<String> viewFileExtensions) {
         this.officePath = officePath;
         this.officePorts = officePorts;
@@ -203,6 +210,7 @@ public class ReportsProperties {
         this.useOfficeForDocumentConversion = useOfficeForDocumentConversion;
         this.formulasPostProcessingEvaluationEnabled = formulasPostProcessingEvaluationEnabled;
         this.multilineStringsProcessingEnabled = multilineStringsProcessingEnabled;
+        this.useLegacyDateTimeTypes = useLegacyDateTimeTypes;
         this.viewFileExtensions = viewFileExtensions;
     }
 
@@ -368,5 +376,12 @@ public class ReportsProperties {
      */
     public boolean isMultilineStringsProcessingEnabled() {
         return multilineStringsProcessingEnabled;
+    }
+
+    /**
+     * @see #useLegacyDateTimeTypes
+     */
+    public boolean isUseLegacyDateTimeTypes() {
+        return useLegacyDateTimeTypes;
     }
 }

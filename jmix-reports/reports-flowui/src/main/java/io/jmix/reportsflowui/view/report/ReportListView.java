@@ -52,6 +52,7 @@ import io.jmix.reportsflowui.runner.UiReportRunner;
 import io.jmix.reportsflowui.view.history.ReportExecutionListView;
 import io.jmix.reportsflowui.view.importdialog.ReportImportDialogView;
 import io.jmix.reportsflowui.view.reportwizard.ReportWizardCreatorView;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
@@ -297,7 +298,9 @@ public class ReportListView extends StandardListView<Report> {
         Report copiedReport = metadataTools.deepCopy(source);
         copiedReport.setId(entityUuidGenerator.generate());
         copiedReport.setName(reportsUtils.generateReportName(source.getName()));
-        copiedReport.setCode(null);
+        copiedReport.setCode(StringUtils.isBlank(source.getCode())
+                ? reportsUtils.generateReportCodeByName(copiedReport.getName())
+                : reportsUtils.generateReportCode(source.getCode()));
         for (ReportTemplate copiedTemplate : copiedReport.getTemplates()) {
             copiedTemplate.setId(entityUuidGenerator.generate());
         }

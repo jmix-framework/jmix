@@ -25,6 +25,7 @@ import io.jmix.reports.entity.ReportImportOption;
 import io.jmix.reports.entity.ReportImportResult;
 import io.jmix.reports.entity.ReportTemplate;
 import io.jmix.reports.exception.ReportingException;
+import io.jmix.reports.util.ReportsUtils;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
@@ -51,8 +52,6 @@ public class ReportImportExportImpl implements ReportImportExport {
 
     private static final Logger log = LoggerFactory.getLogger(ReportImportExportImpl.class);
 
-    protected static final int MAX_CODE_LENGTH = 255;
-
     @Autowired
     protected ReportsPersistence reportsPersistence;
 
@@ -67,6 +66,9 @@ public class ReportImportExportImpl implements ReportImportExport {
 
     @Autowired
     protected ReportRepository reportRepository;
+
+    @Autowired
+    protected ReportsUtils reportsUtils;
 
     @Override
     public byte[] exportReports(Collection<Report> reports) {
@@ -254,13 +256,13 @@ public class ReportImportExportImpl implements ReportImportExport {
         if (report.getCode() == null) {
             // in case of importing a report from a CUBA, the code may be missing
             // try to generate the report code from its name
-            report.setCode(generateReportCodeByName(report.getName()));
+            report.setCode(reportsUtils.generateReportCodeByName(report.getName(), "imported-report"));
         }
 
         if ((existingReport.isEmpty() || !Objects.equals(existingReport.get().getCode(), report.getCode()))
                 && reportRepository.existsReportByCode(report.getCode())) {
             String previousCode = report.getCode();
-            report.setCode(generateReportCode(previousCode));
+            report.setCode(reportsUtils.generateReportCode(previousCode));
             log.info("Report with code {} already exists. New code {} is assigned", previousCode, report.getCode());
         }
 
@@ -408,41 +410,6 @@ public class ReportImportExportImpl implements ReportImportExport {
 
     protected byte[] readBytesFromEntry(ZipArchiveInputStream archiveReader) throws IOException {
         return IOUtils.toByteArray(archiveReader);
-    }
-
-    protected String generateReportCodeByName(String reportName) {
-        String code = reportName
-                .trim()
-                .replaceAll("[^a-zA-Z0-9]+", "-")
-                .replaceAll("^-|-$", "")
-                .toLowerCase(Locale.ROOT);
-
-        if (code.isEmpty()) {
-            code = "imported-report";
-        } else if (code.length() > MAX_CODE_LENGTH) {
-            code = code.substring(0, MAX_CODE_LENGTH).replaceAll("-$", "");
-        }
-
-        return code;
-    }
-
-    protected String generateReportCode(String existedCode) {
-        int iteration = 1;
-        String templateCode = existedCode;
-
-        while (reportRepository.existsReportByCode(templateCode)) {
-            templateCode = StringUtils.stripEnd(existedCode, null);
-            String suffix = "-%s".formatted(iteration++);
-            String newTemplateCode = templateCode;
-
-            while (newTemplateCode.length() + suffix.length() > MAX_CODE_LENGTH) {
-                newTemplateCode = StringUtils.chop(newTemplateCode);
-            }
-
-            templateCode = newTemplateCode + suffix;
-        }
-
-        return templateCode;
     }
 
     @Nullable

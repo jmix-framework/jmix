@@ -19,6 +19,7 @@ package io.jmix.reports.util;
 import io.jmix.core.DataManager;
 import io.jmix.core.EntityStates;
 import io.jmix.core.TimeSource;
+import io.jmix.reports.ReportRepository;
 import io.jmix.reports.ReportsProperties;
 import io.jmix.reports.entity.ParameterType;
 import io.jmix.reports.exception.ReportingException;
@@ -32,10 +33,12 @@ import org.springframework.transaction.support.TransactionTemplate;
 import java.time.ZonedDateTime;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 @Component("report_ReportsUtils")
 public class ReportsUtils {
     protected static final int MAX_REPORT_NAME_LENGTH = 255;
+    protected static final int MAX_REPORT_CODE_LENGTH = 255;
 
     @Autowired
     protected TimeSource timeSource;
@@ -55,8 +58,50 @@ public class ReportsUtils {
     @Autowired
     protected ReportsProperties reportsProperties;
 
+    @Autowired
+    protected ReportRepository reportRepository;
+
     public String generateReportName(String sourceName) {
         return generateReportName(sourceName, 0);
+    }
+
+    public String generateReportCodeByName(String reportName) {
+        return generateReportCodeByName(reportName, "report");
+    }
+
+    public String generateReportCodeByName(String reportName, String defaultCode) {
+        String code = reportName
+                .trim()
+                .replaceAll("[^a-zA-Z0-9]+", "-")
+                .replaceAll("^-|-$", "")
+                .toLowerCase(Locale.ROOT);
+
+        if (code.isEmpty()) {
+            code = defaultCode;
+        } else if (code.length() > MAX_REPORT_CODE_LENGTH) {
+            code = code.substring(0, MAX_REPORT_CODE_LENGTH).replaceAll("-$", "");
+        }
+
+        return code;
+    }
+
+    public String generateReportCode(String existedCode) {
+        int iteration = 1;
+        String reportCode = existedCode;
+
+        while (reportRepository.existsReportByCode(reportCode)) {
+            reportCode = StringUtils.stripEnd(existedCode, null);
+            String suffix = "-%s".formatted(iteration++);
+            String newReportCode = reportCode;
+
+            while (newReportCode.length() + suffix.length() > MAX_REPORT_CODE_LENGTH) {
+                newReportCode = StringUtils.chop(newReportCode);
+            }
+
+            reportCode = newReportCode + suffix;
+        }
+
+        return reportCode;
     }
 
     public Object currentDateOrTime(ParameterType parameterType) {

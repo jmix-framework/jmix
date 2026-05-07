@@ -28,7 +28,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
@@ -318,15 +320,32 @@ public class EntityStates {
         return fetchPlanBuilder.build();
     }
 
+    /**
+     * @deprecated use {@link #constructCurrentFetchPlan(Entity, Class, Map)} instead.
+     */
+    @Deprecated(since = "1.7", forRemoval = true)
     protected void recursivelyConstructCurrentFetchPlan(Entity entity, FetchPlanBuilder builder, HashSet<Object> visited) {
-        if (visited.contains(entity))
-            return;
-        visited.add(entity);
+        builder.merge(constructCurrentFetchPlan(entity, builder.getEntityClass(), new HashMap<>()));
+    }
 
+    protected FetchPlan constructCurrentFetchPlan(Entity entity, Class<?> declaredEntityClass,
+                                                 Map<FetchPlanVisitKey, FetchPlanVisit> fetchPlanVisits) {
+        FetchPlanVisitKey key = new FetchPlanVisitKey(entity, declaredEntityClass);
+        FetchPlanVisit visit = fetchPlanVisits.get(key);
+        if (visit != null) {
+            return visit.getState() == VisitState.VISITED
+                    ? visit.getFetchPlan()
+                    : visit.getOrCreateEmptyFetchPlan(fetchPlans, declaredEntityClass);
+        }
+
+        visit = new FetchPlanVisit(VisitState.VISITING);
+        fetchPlanVisits.put(key, visit);
+
+        FetchPlanBuilder currentFetchPlanBuilder = fetchPlans.builder(declaredEntityClass);
         // Using MetaClass of the fetchPlan helps in the case when the entity is an item of a collection, and the collection
         // can contain instances of different subclasses. So we don't want to add specific properties of subclasses
         // to the resulting fetch plan.
-        MetaClass metaClass = metadata.getClass(builder.getEntityClass());
+        MetaClass metaClass = metadata.getClass(declaredEntityClass);
 
         for (MetaProperty property : metaClass.getProperties()) {
             if (!isLoaded(entity, property.getName()))
@@ -334,21 +353,115 @@ public class EntityStates {
             if (property.getRange().isClass()) {
                 Object value = EntityValues.getValue(entity, property.getName());
                 if (value != null) {
-                    FetchPlanBuilder propertyBuilder = fetchPlans.builder(property.getRange().asClass().getJavaClass());
-                    // The input object graph can be large, so we use FetchMode.UNDEFINED to avoid huge SQLs with
-                    // unpredictably high number of joins
-                    builder.add(property.getName(), propertyBuilder, FetchMode.UNDEFINED);
+                    Class<?> declaredPropertyClass = property.getRange().asClass().getJavaClass();
+                    FetchPlanBuilder propertyBuilder = fetchPlans.builder(declaredPropertyClass);
                     if (value instanceof Collection) {
                         for (Object item : ((Collection<?>) value)) {
-                            recursivelyConstructCurrentFetchPlan((Entity) item, propertyBuilder, visited);
+                            if (item != null) {
+                                propertyBuilder.merge(constructCurrentFetchPlan((Entity) item, declaredPropertyClass, fetchPlanVisits));
+                            }
                         }
                     } else {
-                        recursivelyConstructCurrentFetchPlan((Entity) value, propertyBuilder, visited);
+                        propertyBuilder.merge(constructCurrentFetchPlan((Entity) value, declaredPropertyClass, fetchPlanVisits));
                     }
+                    // The input object graph can be large, so we use FetchMode.UNDEFINED to avoid huge SQLs with
+                    // unpredictably high number of joins
+                    currentFetchPlanBuilder.add(property.getName(), propertyBuilder, FetchMode.UNDEFINED);
                 }
             } else {
-                builder.add(property.getName());
+                currentFetchPlanBuilder.add(property.getName());
             }
+        }
+
+        FetchPlan fetchPlan = currentFetchPlanBuilder.build();
+        visit.setState(VisitState.VISITED);
+        visit.setFetchPlan(fetchPlan);
+        return fetchPlan;
+    }
+
+    /**
+     * State of an entity graph node while constructing a current fetch plan.
+     */
+    protected enum VisitState {
+        VISITING,
+        VISITED
+    }
+
+    /**
+     * Visit record for an entity graph node while the current fetch plan is being built.
+     * <p>
+     * {@link VisitState#VISITING} cuts active cycles with an empty fetch plan. {@link VisitState#VISITED} reuses the
+     * final fetch plan when the same entity instance is reached again through another graph branch.
+     */
+    protected static class FetchPlanVisit {
+        private VisitState state;
+        private FetchPlan fetchPlan;
+
+        public FetchPlanVisit(VisitState state) {
+            this.state = state;
+        }
+
+        public VisitState getState() {
+            return state;
+        }
+
+        public void setState(VisitState state) {
+            this.state = state;
+        }
+
+        public FetchPlan getFetchPlan() {
+            return fetchPlan;
+        }
+
+        public FetchPlan getOrCreateEmptyFetchPlan(FetchPlans fetchPlans, Class<?> declaredEntityClass) {
+            if (fetchPlan == null) {
+                fetchPlan = fetchPlans.builder(declaredEntityClass).build();
+            }
+            return fetchPlan;
+        }
+
+        public void setFetchPlan(FetchPlan fetchPlan) {
+            this.fetchPlan = fetchPlan;
+        }
+    }
+
+    /**
+     * Key for a visited entity graph node.
+     * <p>
+     * Entity is compared by Java object identity to avoid merging different instances with the same entity id.
+     * Declared entity class is part of the key because the same runtime instance can be reached through properties
+     * declared with different entity classes, and each path must get a fetch plan compatible with its declaration.
+     */
+    protected static class FetchPlanVisitKey {
+        private final Entity entity;
+        private final Class<?> declaredEntityClass;
+
+        public FetchPlanVisitKey(Entity entity, Class<?> declaredEntityClass) {
+            this.entity = entity;
+            this.declaredEntityClass = declaredEntityClass;
+        }
+
+        public Entity getEntity() {
+            return entity;
+        }
+
+        public Class<?> getDeclaredEntityClass() {
+            return declaredEntityClass;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o)
+                return true;
+            if (!(o instanceof FetchPlanVisitKey))
+                return false;
+            FetchPlanVisitKey that = (FetchPlanVisitKey) o;
+            return entity == that.entity && declaredEntityClass.equals(that.declaredEntityClass);
+        }
+
+        @Override
+        public int hashCode() {
+            return 31 * System.identityHashCode(entity) + declaredEntityClass.hashCode();
         }
     }
 

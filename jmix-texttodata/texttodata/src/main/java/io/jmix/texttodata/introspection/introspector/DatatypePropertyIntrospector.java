@@ -26,6 +26,8 @@ public class DatatypePropertyIntrospector extends AbstractPropertyIntrospector {
                 property.getJavaType().getSimpleName(),
                 property.getType().name().toLowerCase(),
                 getIdentifier(property),
+                getPersistent(property),
+                getMandatory(property),
                 getComment(property));
     }
 }

@@ -16,6 +16,10 @@ public abstract class AbstractEntityPropertyDescriptor implements EntityProperty
 
     protected Boolean identifier;
 
+    protected Boolean persistent;
+
+    protected Boolean mandatory;
+
     protected String comment;
 
     public AbstractEntityPropertyDescriptor(String name,
@@ -23,12 +27,16 @@ public abstract class AbstractEntityPropertyDescriptor implements EntityProperty
                                             String javaType,
                                             String propertyType,
                                             @Nullable Boolean identifier,
+                                            Boolean persistent,
+                                            Boolean mandatory,
                                             @Nullable String comment) {
         this.name = name;
         this.localizedNames = localizedNames;
         this.javaType = javaType;
         this.propertyType = propertyType;
         this.identifier = identifier;
+        this.persistent = persistent;
+        this.mandatory = mandatory;
         this.comment = comment;
     }
 
@@ -58,6 +66,16 @@ public abstract class AbstractEntityPropertyDescriptor implements EntityProperty
         return identifier;
     }
 
+    @Override
+    public Boolean getPersistent() {
+        return persistent;
+    }
+
+    @Override
+    public Boolean getMandatory() {
+        return mandatory;
+    }
+
     @Nullable
     @Override
     public String getComment() {
@@ -75,6 +93,8 @@ public abstract class AbstractEntityPropertyDescriptor implements EntityProperty
                 ", javaType='" + javaType + '\'' +
                 ", propertyType='" + propertyType + '\'' +
                 ", identifier=" + identifier +
+                ", persistent=" + persistent +
+                ", mandatory=" + mandatory +
                 ", comment='" + comment + '\'';
     }
 }

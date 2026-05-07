@@ -21,13 +21,15 @@ public class RelationPropertyDescriptor extends AbstractEntityPropertyDescriptor
                                       String javaType,
                                       String propertyType,
                                       @Nullable Boolean identifier,
+                                      Boolean persistent,
+                                      Boolean mandatory,
                                       @Nullable String comment,
                                       String mappedBy,
                                       String targetEntityName,
                                       List<String> targetEntityLocalizedNames,
                                       @Nullable Boolean optionalRelation,
                                       String cardinality) {
-        super(name, localizedNames, javaType, propertyType, identifier, comment);
+        super(name, localizedNames, javaType, propertyType, identifier, persistent, mandatory, comment);
         this.mappedBy = mappedBy;
         this.targetEntityName = targetEntityName;
         this.targetEntityLocalizedNames = targetEntityLocalizedNames;

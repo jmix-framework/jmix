@@ -11,8 +11,10 @@ public class EmbeddedPropertyDescriptor extends AbstractEntityPropertyDescriptor
                                       String javaType,
                                       String propertyType,
                                       @Nullable Boolean identifier,
+                                      Boolean persistent,
+                                      Boolean mandatory,
                                       @Nullable String comment) {
-        super(name, localizedNames, javaType, propertyType, identifier, comment);
+        super(name, localizedNames, javaType, propertyType, identifier, persistent, mandatory, comment);
     }
 
     public Boolean getEmbedded() {

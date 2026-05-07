@@ -64,11 +64,15 @@ class JpaDomainModelIntrospectorTest {
         assertEquals("UUID", id.getJavaType());
         assertEquals("datatype", id.getPropertyType());
         assertEquals(Boolean.TRUE, id.getIdentifier());
+        assertEquals(Boolean.TRUE, id.getPersistent());
+        assertEquals(Boolean.FALSE, id.getMandatory());
 
         DatatypePropertyDescriptor number = datatype(properties, "number");
         assertEquals("String", number.getJavaType());
         assertEquals("datatype", number.getPropertyType());
         assertNull(number.getIdentifier());
+        assertEquals(Boolean.TRUE, number.getPersistent());
+        assertEquals(Boolean.TRUE, number.getMandatory());
         assertEquals("Business order number", number.getComment());
         assertTrue(number.getLocalizedNames().contains("Number"), number.getLocalizedNames().toString());
 
@@ -76,6 +80,10 @@ class JpaDomainModelIntrospectorTest {
         assertEquals("LocalDate", datatype(properties, "orderDate").getJavaType());
         assertEquals("Boolean", datatype(properties, "active").getJavaType());
         assertEquals("Integer", datatype(properties, "version").getJavaType());
+
+        DatatypePropertyDescriptor transientNote = datatype(properties, "transientNote");
+        assertEquals(Boolean.FALSE, transientNote.getPersistent());
+        assertEquals(Boolean.FALSE, transientNote.getMandatory());
     }
 
     @Test
@@ -91,12 +99,19 @@ class JpaDomainModelIntrospectorTest {
         assertTrue(status.getEnumType().getConstants().get("OPEN").getLocalizedName().contains("Open"),
                 status.getEnumType().getConstants().get("OPEN").getLocalizedName().toString());
         assertEquals("C", status.getEnumType().getConstants().get("CLOSED").getId());
+        assertNull(status.getEnumStorageMode());
 
         EnumPropertyDescriptor plainStatus = enumProperty(properties, "plainStatus");
         assertEquals("TestPlainStatus", plainStatus.getJavaType());
-        assertEquals(0, plainStatus.getEnumType().getConstants().get("NEW").getId());
-        assertEquals(1, plainStatus.getEnumType().getConstants().get("DONE").getId());
+        assertEquals("NEW", plainStatus.getEnumType().getConstants().get("NEW").getId());
+        assertEquals("DONE", plainStatus.getEnumType().getConstants().get("DONE").getId());
         assertTrue(plainStatus.getEnumType().getConstants().get("NEW").getLocalizedName().isEmpty());
+        assertEquals("string", plainStatus.getEnumStorageMode());
+
+        EnumPropertyDescriptor plainStatusDefault = enumProperty(properties, "plainStatusDefault");
+        assertEquals("ordinal", plainStatusDefault.getEnumStorageMode());
+        assertEquals(0, plainStatusDefault.getEnumType().getConstants().get("NEW").getId());
+        assertEquals(1, plainStatusDefault.getEnumType().getConstants().get("DONE").getId());
     }
 
     @Test
@@ -107,11 +122,15 @@ class JpaDomainModelIntrospectorTest {
         assertEquals("embedded", address.getPropertyType());
         assertTrue(address.getEmbedded());
         assertNull(address.getIdentifier());
+        assertEquals(Boolean.TRUE, address.getPersistent());
+        assertEquals(Boolean.FALSE, address.getMandatory());
 
         EmbeddedPropertyDescriptor embeddedId = embedded(properties("textdt_CompositeKeyEntity"), "id");
         assertEquals("textdt_CompositeKey", embeddedId.getJavaType());
         assertEquals("embedded", embeddedId.getPropertyType());
         assertEquals(Boolean.TRUE, embeddedId.getIdentifier());
+        assertEquals(Boolean.TRUE, embeddedId.getPersistent());
+        assertEquals(Boolean.FALSE, embeddedId.getMandatory());
 
         DatatypePropertyDescriptor description = datatype(properties("textdt_CompositeKeyEntity"), "description");
         assertEquals("String", description.getJavaType());
@@ -130,6 +149,8 @@ class JpaDomainModelIntrospectorTest {
         assertEquals("textdt_Customer", customer.getJavaType());
         assertEquals("textdt_Customer", customer.getTargetEntityName());
         assertEquals(Boolean.FALSE, customer.getOptionalRelation());
+        assertEquals(Boolean.TRUE, customer.getPersistent());
+        assertEquals(Boolean.TRUE, customer.getMandatory());
         assertEquals("MANY_TO_ONE", customer.getCardinality());
         assertNull(customer.getMappedBy());
 
@@ -218,11 +239,16 @@ class JpaDomainModelIntrospectorTest {
         String enumString = enumProperty(properties("textdt_Order"), "status").toString();
         assertTrue(enumString.contains("EnumPropertyDescriptor{name='status'"));
         assertTrue(enumString.contains("enumType=EnumClassDescriptor{name='Status'"));
+        assertTrue(enumString.contains("enumStorageMode='null'"));
         assertTrue(enumString.contains("OPEN=EnumValueDescriptor{id=O, name='OPEN', localizedName=[Open]}"));
 
         String embeddedString = embedded(properties("textdt_Order"), "address").toString();
         assertTrue(embeddedString.contains("EmbeddedPropertyDescriptor{name='address'"));
         assertTrue(embeddedString.contains("embedded=true"));
+
+        String datatypeString = datatype(properties("textdt_Order"), "transientNote").toString();
+        assertTrue(datatypeString.contains("persistent=false"));
+        assertTrue(datatypeString.contains("mandatory=false"));
     }
 
     protected Map<String, EntityPropertyDescriptor> properties(String entityName) {

@@ -20,6 +20,7 @@ import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.Comment;
 import io.jmix.core.metamodel.annotation.Composition;
 import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 import jakarta.persistence.*;
 import test_support.entity.TestPlainStatus;
 
@@ -62,8 +63,15 @@ public class Order {
     @Column(name = "PLAIN_STATUS")
     private TestPlainStatus plainStatus;
 
+    @Column(name = "PLAIN_STATUS_DEFAULT")
+    private TestPlainStatus plainStatusDefault;
+
     @Embedded
     private Address address;
+
+    @Transient
+    @JmixProperty
+    private String transientNote;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "CUSTOMER_ID", nullable = false)
@@ -154,12 +162,28 @@ public class Order {
         this.plainStatus = plainStatus;
     }
 
+    public TestPlainStatus getPlainStatusDefault() {
+        return plainStatusDefault;
+    }
+
+    public void setPlainStatusDefault(TestPlainStatus plainStatusDefault) {
+        this.plainStatusDefault = plainStatusDefault;
+    }
+
     public Address getAddress() {
         return address;
     }
 
     public void setAddress(Address address) {
         this.address = address;
+    }
+
+    public String getTransientNote() {
+        return transientNote;
+    }
+
+    public void setTransientNote(String transientNote) {
+        this.transientNote = transientNote;
     }
 
     public Customer getCustomer() {

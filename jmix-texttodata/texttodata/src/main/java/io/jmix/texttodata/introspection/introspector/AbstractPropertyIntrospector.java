@@ -53,6 +53,14 @@ public abstract class AbstractPropertyIntrospector implements MetaPropertyIntros
         return property.equals(metadataTools.getPrimaryKeyProperty(property.getDomain())) ? true : null;
     }
 
+    public Boolean getPersistent(MetaProperty property) {
+        return metadataTools.isJpa(property);
+    }
+
+    public Boolean getMandatory(MetaProperty property) {
+        return property.isMandatory();
+    }
+
     protected boolean isEntityCaptionFallback(MetaClass metaClass, String localizedName) {
         return metaClass.getName().equals(localizedName)
                 || metaClass.getJavaClass().getSimpleName().equals(localizedName);

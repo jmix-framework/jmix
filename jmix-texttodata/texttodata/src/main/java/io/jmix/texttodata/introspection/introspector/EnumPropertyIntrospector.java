@@ -4,6 +4,8 @@ import io.jmix.core.Messages;
 import io.jmix.core.metamodel.datatype.EnumClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.texttodata.introspection.model.*;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -41,11 +43,15 @@ public class EnumPropertyIntrospector extends AbstractPropertyIntrospector {
                                     getLocalizedEnumValueNames(enumConstant)));
                 }
             } else {
+                // For plain enums
+                String storageMode = getEnumStorageMode(property);
                 for (Object enumConstant : enumClass.getEnumConstants()) {
                     String enumName = enumConstant.toString();
-                    enums.put(enumName,
-                            // TODO: pinyazhin, check storage type: ordinal or constant name
-                            new EnumValueDescriptor(((Enum<?>) enumConstant).ordinal(), enumName, Collections.emptyList()));
+                    Object id = Objects.requireNonNull(storageMode).equals(EnumType.ORDINAL.name().toLowerCase())
+                            ? ((Enum<?>) enumConstant).ordinal()
+                            : ((Enum<?>) enumConstant).name();
+
+                    enums.put(enumName, new EnumValueDescriptor(id, enumName, Collections.emptyList()));
                 }
             }
             return new EnumPropertyDescriptor(property.getName(),
@@ -53,10 +59,12 @@ public class EnumPropertyIntrospector extends AbstractPropertyIntrospector {
                     property.getJavaType().getSimpleName(),
                     getPropertyType(property),
                     null,
+                    getPersistent(property),
+                    getMandatory(property),
                     getComment(property),
                     // TODO: pinyazhin, how to get localized enum class name?
-                    new EnumClassDescriptor(enumClass.getSimpleName(), Collections.emptyList(), enums)
-                    );
+                    new EnumClassDescriptor(enumClass.getSimpleName(), Collections.emptyList(), enums),
+                    getEnumStorageMode(property));
         }
         return null;
     }
@@ -76,5 +84,16 @@ public class EnumPropertyIntrospector extends AbstractPropertyIntrospector {
     protected String getEnumCaptionFallbackKey(Object enumConstant) {
         Enum<?> enumValue = (Enum<?>) enumConstant;
         return enumValue.getDeclaringClass().getSimpleName() + "." + enumValue.name();
+    }
+
+    @Nullable
+    protected String getEnumStorageMode(MetaProperty property) {
+        if (EnumClass.class.isAssignableFrom(property.getJavaType())) {
+            return null;
+        }
+
+        Enumerated enumerated = property.getAnnotatedElement().getAnnotation(Enumerated.class);
+        EnumType enumType = enumerated != null ? enumerated.value() : EnumType.ORDINAL;
+        return enumType.name().toLowerCase();
     }
 }

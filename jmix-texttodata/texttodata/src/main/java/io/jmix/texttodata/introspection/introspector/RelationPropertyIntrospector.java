@@ -39,6 +39,8 @@ public class RelationPropertyIntrospector extends AbstractPropertyIntrospector {
                 range.asClass().getName(),
                 getPropertyType(property),
                 null,
+                getPersistent(property),
+                getMandatory(property),
                 getComment(property),
                 getMappedByValue(property),
                 targetEntityName,

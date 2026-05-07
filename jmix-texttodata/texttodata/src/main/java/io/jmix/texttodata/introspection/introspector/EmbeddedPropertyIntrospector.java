@@ -26,6 +26,8 @@ public class EmbeddedPropertyIntrospector extends AbstractPropertyIntrospector {
                 property.getRange().asClass().getName(),
                 getPropertyType(property),
                 getIdentifier(property),
+                getPersistent(property),
+                getMandatory(property),
                 getComment(property));
     }
 }

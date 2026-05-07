@@ -17,6 +17,10 @@ public interface EntityPropertyDescriptor {
     @Nullable
     Boolean getIdentifier();
 
+    Boolean getPersistent();
+
+    Boolean getMandatory();
+
     @Nullable
     String getComment();
 }

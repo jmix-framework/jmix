@@ -82,21 +82,14 @@ public class AppSettingsImpl implements AppSettings {
 
     /**
      * Update all non-system properties of {@code dstSettingsEntity} based on provided {@code srcSettingsEntity}.
-     * Note, that if value of some property in {@code srcSettingsEntity} are equal to default value it will be overridden
-     * with null value in {@code dstSettingsEntity}.
      *
      * @param srcSettingsEntity provided entity to save
      * @param dstSettingsEntity entity to be updated and actually saved
      * @param propertyNames     all non-system properties of {@code T}
      */
     protected <T extends AppSettingsEntity> void updatePropertyValues(T srcSettingsEntity, T dstSettingsEntity, List<String> propertyNames) {
-        Class<? extends AppSettingsEntity> clazz = srcSettingsEntity.getClass();
         for (String propertyName : propertyNames) {
             Object propertyValue = EntityValues.getValue(srcSettingsEntity, propertyName);
-            Object defaultValue = appSettingsTools.getDefaultPropertyValue(clazz, propertyName);
-            if (propertyValue != null && propertyValue.equals(defaultValue)) {
-                propertyValue = null;
-            }
             EntityValues.setValue(dstSettingsEntity, propertyName, propertyValue);
         }
     }

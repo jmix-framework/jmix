@@ -37,6 +37,11 @@ class AppSettingsTest {
         testAppSettingsEntity.setTestIntegerValue(410);
         testAppSettingsEntity.setTestStringValue("defValChanged");
         appSettings.save(testAppSettingsEntity);
+        TestAppSettingsEntity storedTestAppSettingsEntity = loadStoredTestAppSettingsEntity();
+        Assertions.assertTrue(storedTestAppSettingsEntity.getTestBooleanValue());
+        Assertions.assertEquals(100500L, storedTestAppSettingsEntity.getTestLongValue());
+        Assertions.assertEquals(3.1415926535, storedTestAppSettingsEntity.getTestDoubleValue());
+
         testAppSettingsEntity = appSettings.load(TestAppSettingsEntity.class);
         Assertions.assertEquals(1, testAppSettingsEntity.getId());
         Assertions.assertTrue(testAppSettingsEntity.getTestBooleanValue());
@@ -66,6 +71,13 @@ class AppSettingsTest {
         testAppSettingsEntity.setTestDoubleValue(null);
         testAppSettingsEntity.setTestStringValue(null);
         appSettings.save(testAppSettingsEntity);
+        storedTestAppSettingsEntity = loadStoredTestAppSettingsEntity();
+        Assertions.assertNull(storedTestAppSettingsEntity.getTestBooleanValue());
+        Assertions.assertNull(storedTestAppSettingsEntity.getTestIntegerValue());
+        Assertions.assertNull(storedTestAppSettingsEntity.getTestLongValue());
+        Assertions.assertNull(storedTestAppSettingsEntity.getTestDoubleValue());
+        Assertions.assertNull(storedTestAppSettingsEntity.getTestStringValue());
+
         testAppSettingsEntity = appSettings.load(TestAppSettingsEntity.class);
         Assertions.assertEquals(1, testAppSettingsEntity.getId());
         Assertions.assertTrue(testAppSettingsEntity.getTestBooleanValue());
@@ -88,6 +100,12 @@ class AppSettingsTest {
         Assertions.assertEquals(333L, loadedTestAppSettingsEntity.getTestLongValue());
         Assertions.assertEquals(6.626, loadedTestAppSettingsEntity.getTestDoubleValue());
         Assertions.assertEquals("access granted", loadedTestAppSettingsEntity.getTestStringValue());
+    }
+
+    private TestAppSettingsEntity loadStoredTestAppSettingsEntity() {
+        return dataManager.load(TestAppSettingsEntity.class)
+                .query("select e from testAppSettingsEntity e where e.id = 1")
+                .one();
     }
 
 }

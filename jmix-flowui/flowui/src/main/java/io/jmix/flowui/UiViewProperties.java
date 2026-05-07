@@ -32,6 +32,16 @@ public class UiViewProperties {
     boolean useSaveConfirmation;
 
     /**
+     * Standard detail view save confirmation type.
+     */
+    Notifications.Type saveConfirmationType;
+
+    /**
+     * Standard detail view save confirmation position.
+     */
+    Position saveConfirmationPosition;
+
+    /**
      * Standard view validation error notification variant. Should contain the name of enum value
      * {@link Notifications.Type}.
      */
@@ -64,6 +74,8 @@ public class UiViewProperties {
             String saveShortcut,
             @DefaultValue("true") boolean createActionAddsFirst,
             @DefaultValue("true") boolean useSaveConfirmation,
+            @DefaultValue("SUCCESS") Notifications.Type saveConfirmationType,
+            @DefaultValue("TOP_END") Position saveConfirmationPosition,
             @DefaultValue("DEFAULT") String validationNotificationType,
             @DefaultValue("BOTTOM_END") String validationNotificationPosition,
             @DefaultValue("3000") Integer validationNotificationDuration,
@@ -74,6 +86,8 @@ public class UiViewProperties {
         this.saveShortcut = saveShortcut;
         this.createActionAddsFirst = createActionAddsFirst;
         this.useSaveConfirmation = useSaveConfirmation;
+        this.saveConfirmationType = saveConfirmationType;
+        this.saveConfirmationPosition = saveConfirmationPosition;
         this.validationNotificationType = validationNotificationType;
         this.validationNotificationPosition = validationNotificationPosition;
         this.validationNotificationDuration = validationNotificationDuration;
@@ -95,6 +109,20 @@ public class UiViewProperties {
 
     public boolean isUseSaveConfirmation() {
         return useSaveConfirmation;
+    }
+
+    /**
+     * @see #saveConfirmationType
+     */
+    public Notifications.Type getSaveConfirmationType() {
+        return saveConfirmationType;
+    }
+
+    /**
+     * @see #saveConfirmationPosition
+     */
+    public Position getSaveConfirmationPosition() {
+        return saveConfirmationPosition;
     }
 
     /**

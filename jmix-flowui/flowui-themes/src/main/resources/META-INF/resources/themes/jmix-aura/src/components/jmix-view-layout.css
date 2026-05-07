@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,8 @@
  * limitations under the License.
  */
 
-package io.jmix.flowui.view;
+@import '../../../shared/src/components/jmix-view-layout.css';
 
-import com.vaadin.flow.component.applayout.AppLayout;
-import io.jmix.flowui.component.layout.ViewLayout;
-
-/**
- * Base class of regular views opened either inside {@link AppLayout} or in a {@link DialogWindow}.
- */
-public class StandardView extends View<ViewLayout> {
+vaadin-vertical-layout[jmix-role='jmix-view-layout'] {
+    overflow: auto;
 }

@@ -47,6 +47,7 @@
 @import './jmix-side-panel-layout.css';
 @import './jmix-side-panel-layout-closer.css';
 @import './jmix-side-dialog-overlay.css';
+@import './jmix-view-layout.css';
 
 /* Vaadin components */
 @import './vaadin-text-field.css';

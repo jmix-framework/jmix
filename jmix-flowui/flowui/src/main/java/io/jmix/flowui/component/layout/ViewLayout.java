@@ -29,6 +29,17 @@ import static io.jmix.flowui.component.UiComponentUtils.sameId;
 
 public class ViewLayout extends VerticalLayout implements ComponentContainer {
 
+    protected static final String ATTRIBUTE_JMIX_ROLE_NAME = "jmix-role";
+    protected static final String ATTRIBUTE_JMIX_ROLE_VALUE = "jmix-view-layout";
+
+    public ViewLayout() {
+        initComponent();
+    }
+
+    protected void initComponent() {
+        getElement().setAttribute(ATTRIBUTE_JMIX_ROLE_NAME, ATTRIBUTE_JMIX_ROLE_VALUE);
+    }
+
     @Override
     public Optional<Component> findOwnComponent(String id) {
         return getChildren()

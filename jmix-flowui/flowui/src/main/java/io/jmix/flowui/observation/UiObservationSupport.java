@@ -28,6 +28,7 @@ import io.jmix.flowui.model.DataLoader;
 import io.jmix.flowui.monitoring.DataLoaderLifeCycle;
 import io.jmix.flowui.monitoring.DataLoaderMonitoringInfo;
 import io.jmix.flowui.monitoring.UiMonitoring;
+import io.jmix.flowui.monitoring.ViewLifeCycle;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.xml.layout.support.DataComponentsLoaderSupport;
 import io.micrometer.core.instrument.MeterRegistry;
@@ -68,11 +69,11 @@ public class UiObservationSupport {
     protected MeterRegistry meterRegistry;
 
     protected boolean observationEnabled;
-    protected boolean dataLoaderLegacyTimerEnabled;
+    protected boolean legacyTimerEnabled;
 
     public UiObservationSupport(UiProperties uiProperties) {
         this.observationEnabled = uiProperties.isUiObservationEnabled();
-        this.dataLoaderLegacyTimerEnabled = uiProperties.isDataLoaderLegacyTimerEnabled();
+        this.legacyTimerEnabled = uiProperties.isLegacyTimerEnabled();
     }
 
     public Observation createViewLifecycleObservation(View<?> view, ComponentEvent<?> viewEvent) {
@@ -129,7 +130,7 @@ public class UiObservationSupport {
     /**
      * Records monitoring data for a void {@link DataLoader} lifecycle phase. Always invokes the modern Observation
      * path; additionally writes the legacy {@code jmix.ui.data} {@link Timer} when
-     * {@link UiProperties#isDataLoaderLegacyTimerEnabled()} is on (default).
+     * {@link UiProperties#isLegacyTimerEnabled()} is on (default).
      */
     public void observeDataLoader(DataLoader loader, DataLoaderLifeCycle phase, Runnable action) {
         observeDataLoader(loader, phase, () -> {
@@ -147,7 +148,7 @@ public class UiObservationSupport {
         DataLoaderMonitoringInfo info = loader.getMonitoringInfoProvider().apply(loader);
         Observation observation = createDataLoaderObservation(info, phase);
 
-        if (!dataLoaderLegacyTimerEnabled) {
+        if (!legacyTimerEnabled) {
             return observation.observe(action);
         }
         Timer.Sample sample = UiMonitoring.startTimerSample(meterRegistry);
@@ -156,6 +157,68 @@ public class UiObservationSupport {
         } finally {
             UiMonitoring.stopDataLoaderTimerSample(sample, meterRegistry, phase, info);
         }
+    }
+
+    /**
+     * Records monitoring data for a void {@link View} lifecycle phase. Always invokes the modern Observation path;
+     * additionally writes the legacy {@code jmix.ui.views} {@link Timer} when
+     * {@link UiProperties#isLegacyTimerEnabled()} is on (default).
+     */
+    public void observeViewLifecycle(View<?> view, ViewLifecycle phase, Runnable action) {
+        observeViewLifecycle(view, phase, () -> {
+            action.run();
+            return null;
+        });
+    }
+
+    /**
+     * Records monitoring data for a value-returning {@link View} lifecycle phase.
+     *
+     * @see #observeViewLifecycle(View, ViewLifecycle, Runnable)
+     */
+    public <T> T observeViewLifecycle(View<?> view, ViewLifecycle phase, Supplier<T> action) {
+        Observation observation = createViewLifecycleObservation(view, phase);
+
+        if (!legacyTimerEnabled) {
+            return observation.observe(action);
+        }
+        Timer.Sample sample = UiMonitoring.startTimerSample(meterRegistry);
+        try {
+            return observation.observe(action);
+        } finally {
+            UiMonitoring.stopViewTimerSample(sample, meterRegistry,
+                    ViewLifeCycle.valueOf(phase.name()), view.getId().orElse(null));
+        }
+    }
+
+    /**
+     * Records monitoring data for a void {@link Fragment} lifecycle phase via the modern Observation path.
+     * <p>
+     * Note: unlike data loaders and views, fragments never had a legacy {@link Timer}-based metric, so
+     * {@link UiProperties#isLegacyTimerEnabled()} has no effect here. No new legacy metric is introduced.
+     */
+    public void observeFragmentLifecycle(Fragment<?> fragment, FragmentLifecycle phase, Runnable action) {
+        observeFragmentLifecycle(fragment, phase, () -> {
+            action.run();
+            return null;
+        });
+    }
+
+    /**
+     * Records monitoring data for a value-returning {@link Fragment} lifecycle phase.
+     *
+     * @see #observeFragmentLifecycle(Fragment, FragmentLifecycle, Runnable)
+     */
+    public <T> T observeFragmentLifecycle(Fragment<?> fragment, FragmentLifecycle phase, Supplier<T> action) {
+        return createFragmentLifecycleObservation(fragment, phase).observe(action);
+    }
+
+    /**
+     * @see #observeFragmentLifecycle(Fragment, FragmentLifecycle, Runnable)
+     */
+    public <T> T observeFragmentLifecycle(FragmentLifecycleObservationInfo info, FragmentLifecycle phase,
+                                          Supplier<T> action) {
+        return createFragmentLifecycleObservation(info, phase).observe(action);
     }
 
     public Observation createDataLoaderObservation(DataLoaderMonitoringInfo info, DataLoaderLifeCycle lifecycle) {

@@ -42,6 +42,7 @@ import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.event.view.ViewSetupLockEvent;
 import io.jmix.flowui.model.*;
+import io.jmix.flowui.observation.ViewLifecycle;
 import io.jmix.flowui.sys.event.UiEventsManager;
 import io.jmix.flowui.util.OperationResult;
 import io.jmix.flowui.util.UnknownOperationResult;
@@ -491,7 +492,8 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
         navigationAction.proceed();
 
         AfterCloseEvent afterCloseEvent = new AfterCloseEvent(this, closeAction);
-        fireEvent(afterCloseEvent);
+        getUiObservationSupport().observeViewLifecycle(this, ViewLifecycle.AFTER_CLOSE,
+                () -> fireEvent(afterCloseEvent));
 
         return OperationResult.success();
     }

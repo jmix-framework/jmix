@@ -26,12 +26,12 @@ import io.jmix.flowui.kit.action.BaseAction
 import io.jmix.flowui.model.DataLoader
 import io.jmix.flowui.monitoring.DataLoaderLifeCycle
 import io.jmix.flowui.monitoring.DataLoaderMonitoringInfo
+import io.jmix.flowui.monitoring.LegacyUiTimerSupport
 import io.jmix.flowui.observation.FragmentLifecycle
 import io.jmix.flowui.observation.FragmentLifecycleObservationInfo
 import io.jmix.flowui.observation.UiObservationSupport
 import io.jmix.flowui.observation.ViewLifecycle
 import io.jmix.flowui.view.View
-import io.micrometer.core.instrument.simple.SimpleMeterRegistry
 import io.micrometer.observation.Observation
 import io.micrometer.observation.tck.TestObservationRegistry
 import io.micrometer.observation.tck.TestObservationRegistryAssert
@@ -40,15 +40,24 @@ import spock.lang.Specification
 import java.util.function.Function
 import java.util.function.Supplier
 
+@SuppressWarnings("deprecation")
 class UiObservationSupportTest extends Specification {
 
     UiObservationSupport support
-    SimpleMeterRegistry meterRegistry
+    LegacyUiTimerSupport legacyUiTimerSupport
 
     def setup() {
-        meterRegistry = new SimpleMeterRegistry()
+        legacyUiTimerSupport = Mock(LegacyUiTimerSupport)
+        // Mock just delegates to the supplied action — Timer behaviour is covered by LegacyUiTimerSupportTest.
+        legacyUiTimerSupport.recordDataLoaderTimer(_, _, _ as Supplier) >> { args -> ((Supplier) args[2]).get() }
+        legacyUiTimerSupport.recordDataLoaderTimer(_, _, _ as Runnable) >> { args -> ((Runnable) args[2]).run() }
+        legacyUiTimerSupport.recordViewTimer(_, _, _ as Supplier) >> { args -> ((Supplier) args[2]).get() }
+        legacyUiTimerSupport.recordViewTimer(_, _, _ as Runnable) >> { args -> ((Runnable) args[2]).run() }
+
         support = createSupport(true)
     }
+
+    // -------- action observation --------
 
     def "standalone action without trigger has only action.id"() {
         given:
@@ -209,6 +218,8 @@ class UiObservationSupportTest extends Specification {
         obs == Observation.NOOP
     }
 
+    // -------- data loader observation factory --------
+
     def "data loader observation has lifecycle.name, loader.id and view.id tags"() {
         given:
         def info = new DataLoaderMonitoringInfo("orders-view", "ordersDl")
@@ -298,6 +309,8 @@ class UiObservationSupportTest extends Specification {
         lowCardinalityValue(obs, "view.id") == "orders-view"
     }
 
+    // -------- observeDataLoader / observeViewLifecycle / observeFragmentLifecycle --------
+
     def "observeDataLoader returns supplier value"() {
         given:
         def loader = mockLoader("v", "dl")
@@ -318,72 +331,29 @@ class UiObservationSupportTest extends Specification {
         executed
     }
 
-    def "legacy Timer recorded with old tags when legacy flag is on"() {
+    def "observeDataLoader rethrows the exact exception object from supplier"() {
         given:
-        def loader = mockLoader("orders-view", "ordersDl")
+        def loader = mockLoader("v", "dl")
+        def boom = new IllegalStateException("boom")
+
+        when:
+        support.observeDataLoader(loader, DataLoaderLifeCycle.LOAD, { -> throw boom } as Supplier)
+
+        then: "the exact same exception instance bubbles up — no swallowing, no wrapping"
+        def caught = thrown(IllegalStateException)
+        caught.is(boom)
+    }
+
+    def "observeDataLoader delegates the work to LegacyUiTimerSupport"() {
+        given:
+        def loader = mockLoader("v", "dl")
 
         when:
         support.observeDataLoader(loader, DataLoaderLifeCycle.LOAD, { -> "x" } as Supplier)
 
         then:
-        def timer = meterRegistry.find("jmix.ui.data")
-                .tag("view", "orders-view")
-                .tag("dataLoader", "ordersDl")
-                .tag("lifeCycle", "load")
-                .timer()
-        timer != null
-        timer.count() == 1
-    }
-
-    def "legacy Timer is not recorded when legacy flag is off"() {
-        given:
-        def s = createSupport(true, false)
-        def loader = mockLoader("v", "dl")
-
-        when:
-        s.observeDataLoader(loader, DataLoaderLifeCycle.LOAD, { -> "x" } as Supplier)
-
-        then:
-        meterRegistry.find("jmix.ui.data").timer() == null
-    }
-
-    def "legacy Timer recorded even when supplier throws"() {
-        given:
-        def loader = mockLoader("v", "dl")
-
-        when:
-        support.observeDataLoader(loader, DataLoaderLifeCycle.LOAD, { -> throw new RuntimeException("boom") } as Supplier)
-
-        then:
-        thrown(RuntimeException)
-        meterRegistry.find("jmix.ui.data").timer()?.count() == 1
-    }
-
-    def "observeDataLoader rethrows the exact exception object from supplier (legacyTimer=#legacyTimer)"() {
-        given:
-        def s = createSupport(true, legacyTimer)
-        def loader = mockLoader("v", "dl")
-        def boom = new IllegalStateException("boom")
-
-        when:
-        s.observeDataLoader(loader, DataLoaderLifeCycle.LOAD, { -> throw boom } as Supplier)
-
-        then: "the exact same exception instance bubbles up — no swallowing, no wrapping"
-        def caught = thrown(IllegalStateException)
-        caught.is(boom)
-
-        where:
-        legacyTimer << [true, false]
-    }
-
-    def "observeDataLoader runs supplier even when both observation and legacy timer are off"() {
-        given:
-        def s = createSupport(false, false)
-        def loader = mockLoader("v", "dl")
-
-        expect:
-        s.observeDataLoader(loader, DataLoaderLifeCycle.LOAD, { -> "result" } as Supplier) == "result"
-        meterRegistry.find("jmix.ui.data").timer() == null
+        1 * legacyUiTimerSupport.recordDataLoaderTimer(loader, DataLoaderLifeCycle.LOAD, _ as Supplier) >>
+                { args -> ((Supplier) args[2]).get() }
     }
 
     def "observeViewLifecycle returns supplier value"() {
@@ -408,124 +378,6 @@ class UiObservationSupportTest extends Specification {
         executed
     }
 
-    def "view legacy Timer recorded with old tags when legacy flag is on"() {
-        given:
-        def view = new TestView()
-        view.setId("orders-view")
-
-        when:
-        support.observeViewLifecycle(view, ViewLifecycle.READY, { -> "x" } as Supplier)
-
-        then:
-        def timer = meterRegistry.find("jmix.ui.views")
-                .tag("view", "orders-view")
-                .tag("lifeCycle", "ready")
-                .timer()
-        timer != null
-        timer.count() == 1
-    }
-
-    def "view legacy Timer not recorded when legacy flag is off"() {
-        given:
-        def s = createSupport(true, false)
-        def view = new TestView()
-        view.setId("orders-view")
-
-        when:
-        s.observeViewLifecycle(view, ViewLifecycle.READY, { -> "x" } as Supplier)
-
-        then:
-        meterRegistry.find("jmix.ui.views").timer() == null
-    }
-
-    def "view legacy Timer recorded even when supplier throws"() {
-        given:
-        def view = new TestView()
-        view.setId("orders-view")
-
-        when:
-        support.observeViewLifecycle(view, ViewLifecycle.READY,
-                { -> throw new RuntimeException("boom") } as Supplier)
-
-        then:
-        thrown(RuntimeException)
-        meterRegistry.find("jmix.ui.views").timer()?.count() == 1
-    }
-
-    def "observeFragmentLifecycle returns supplier value"() {
-        given:
-        def info = new FragmentLifecycleObservationInfo("frag-id", "com.example.MyFragment")
-
-        expect:
-        support.observeFragmentLifecycle(info, FragmentLifecycle.CREATE,
-                { -> "fragment-result" } as Supplier) == "fragment-result"
-    }
-
-    def "fragment legacy Timer is NEVER recorded regardless of legacy flag"() {
-        given:
-        def s = createSupport(true, legacyTimerEnabled)
-        def info = new FragmentLifecycleObservationInfo("frag-id", "com.example.MyFragment")
-
-        when:
-        s.observeFragmentLifecycle(info, FragmentLifecycle.CREATE, { -> "x" } as Supplier)
-
-        then: "no legacy fragment Timer is created — fragments never had legacy Timer historically"
-        meterRegistry.find("jmix.ui.fragments").timer() == null
-
-        where:
-        legacyTimerEnabled << [true, false]
-    }
-
-    def "observeFragmentLifecycle propagates supplier exception"() {
-        given:
-        def info = new FragmentLifecycleObservationInfo("frag-id", "com.example.MyFragment")
-
-        when:
-        support.observeFragmentLifecycle(info, FragmentLifecycle.CREATE,
-                { -> throw new RuntimeException("boom") } as Supplier)
-
-        then:
-        thrown(RuntimeException)
-        meterRegistry.find("jmix.ui.fragments").timer() == null
-    }
-
-    def "view legacy Timer tag lifeCycle reflects the phase #phase"() {
-        given:
-        def view = new TestView()
-        view.setId("orders-view")
-
-        when:
-        support.observeViewLifecycle(view, phase, { -> "x" } as Supplier)
-
-        then:
-        meterRegistry.find("jmix.ui.views")
-                .tag("view", "orders-view")
-                .tag("lifeCycle", expectedTag)
-                .timer() != null
-
-        where:
-        phase                      | expectedTag
-        ViewLifecycle.CREATE       | "create"
-        ViewLifecycle.LOAD         | "load"
-        ViewLifecycle.INIT         | "init"
-        ViewLifecycle.INJECT       | "inject"
-        ViewLifecycle.BEFORE_SHOW  | "beforeShow"
-        ViewLifecycle.READY        | "ready"
-        ViewLifecycle.BEFORE_CLOSE | "beforeClose"
-        ViewLifecycle.AFTER_CLOSE  | "afterClose"
-    }
-
-    def "view legacy Timer is skipped when view has no id"() {
-        given: "a view without explicit id"
-        def view = new TestView()
-
-        when:
-        support.observeViewLifecycle(view, ViewLifecycle.READY, { -> "x" } as Supplier)
-
-        then: "UiMonitoring.canViewBeMonitored skips recording for blank viewId — no Timer is created"
-        meterRegistry.find("jmix.ui.views").timer() == null
-    }
-
     def "observeViewLifecycle records modern Observation with view.id and lifecycle.name tags"() {
         given:
         def view = new TestView()
@@ -541,6 +393,51 @@ class UiObservationSupportTest extends Specification {
                 .that()
                 .hasLowCardinalityKeyValue("lifecycle.name", "ready")
                 .hasLowCardinalityKeyValue("view.id", "orders-view")
+    }
+
+    def "observeViewLifecycle delegates the work to LegacyUiTimerSupport"() {
+        given:
+        def view = new TestView()
+        view.setId("orders-view")
+
+        when:
+        support.observeViewLifecycle(view, ViewLifecycle.READY, { -> "x" } as Supplier)
+
+        then:
+        1 * legacyUiTimerSupport.recordViewTimer(view, ViewLifecycle.READY, _ as Supplier) >>
+                { args -> ((Supplier) args[2]).get() }
+    }
+
+    def "observeFragmentLifecycle returns supplier value"() {
+        given:
+        def info = new FragmentLifecycleObservationInfo("frag-id", "com.example.MyFragment")
+
+        expect:
+        support.observeFragmentLifecycle(info, FragmentLifecycle.CREATE,
+                { -> "fragment-result" } as Supplier) == "fragment-result"
+    }
+
+    def "observeFragmentLifecycle does not invoke LegacyUiTimerSupport"() {
+        given:
+        def info = new FragmentLifecycleObservationInfo("frag-id", "com.example.MyFragment")
+
+        when:
+        support.observeFragmentLifecycle(info, FragmentLifecycle.CREATE, { -> "x" } as Supplier)
+
+        then: "fragments never had a legacy Timer historically — must not delegate to the legacy bridge"
+        0 * legacyUiTimerSupport._
+    }
+
+    def "observeFragmentLifecycle propagates supplier exception"() {
+        given:
+        def info = new FragmentLifecycleObservationInfo("frag-id", "com.example.MyFragment")
+
+        when:
+        support.observeFragmentLifecycle(info, FragmentLifecycle.CREATE,
+                { -> throw new RuntimeException("boom") } as Supplier)
+
+        then:
+        thrown(RuntimeException)
     }
 
     def "observeFragmentLifecycle Fragment-based overload records modern Observation"() {
@@ -561,14 +458,15 @@ class UiObservationSupportTest extends Specification {
                 .hasLowCardinalityKeyValue("fragment.id", "my-frag")
     }
 
-    private UiObservationSupport createSupport(boolean observationEnabled, boolean legacyTimerEnabled = true) {
+    // -------- helpers --------
+
+    private UiObservationSupport createSupport(boolean observationEnabled) {
         def props = Mock(UiProperties) {
             isUiObservationEnabled() >> observationEnabled
-            isLegacyTimerEnabled() >> legacyTimerEnabled
         }
         def support = new UiObservationSupport(props)
         support.observationRegistry = TestObservationRegistry.create()
-        support.meterRegistry = meterRegistry
+        support.legacyUiTimerSupport = legacyUiTimerSupport
         return support
     }
 

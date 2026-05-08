@@ -326,7 +326,8 @@ public class View<T extends Component> extends Composite<T>
      */
     public OperationResult close(CloseAction closeAction) {
         BeforeCloseEvent beforeCloseEvent = new BeforeCloseEvent(this, closeAction);
-        fireEvent(beforeCloseEvent);
+        getUiObservationSupport().observeViewLifecycle(this, ViewLifecycle.BEFORE_CLOSE,
+                () -> fireEvent(beforeCloseEvent));
         if (beforeCloseEvent.isClosePrevented()) {
             return beforeCloseEvent.getCloseResult()
                     .orElse(OperationResult.fail());
@@ -337,7 +338,8 @@ public class View<T extends Component> extends Composite<T>
         closeDelegate.accept(this);
 
         AfterCloseEvent afterCloseEvent = new AfterCloseEvent(this, closeAction);
-        fireEvent(afterCloseEvent);
+        getUiObservationSupport().observeViewLifecycle(this, ViewLifecycle.AFTER_CLOSE,
+                () -> fireEvent(afterCloseEvent));
 
         ViewClosedEvent viewClosedEvent = new ViewClosedEvent(this);
         applicationContext.publishEvent(viewClosedEvent);

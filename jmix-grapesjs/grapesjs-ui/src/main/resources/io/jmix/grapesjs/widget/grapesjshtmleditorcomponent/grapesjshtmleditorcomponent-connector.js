@@ -183,7 +183,6 @@ io_jmix_grapesjs_widget_grapesjshtmleditorcomponent_GrapesJsHtmlEditorComponent 
         setTimeout(() => {
             if (CKEDITOR) {
                 CKEDITOR.dtd.$editable.span = 1
-                CKEDITOR.dtd.$editable.a = 1
                 CKEDITOR.dtd.$editable.strong = 1
                 CKEDITOR.dtd.$editable.b = 1
                 CKEDITOR.dtd.$editable.i = 1

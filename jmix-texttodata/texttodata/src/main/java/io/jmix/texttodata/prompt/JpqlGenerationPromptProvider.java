@@ -14,17 +14,9 @@
  * limitations under the License.
  */
 
-package io.jmix.texttodata;
+package io.jmix.texttodata.prompt;
 
-import io.jmix.core.CoreConfiguration;
-import io.jmix.core.annotation.JmixModule;
-import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
+public interface JpqlGenerationPromptProvider {
 
-@Configuration
-@ComponentScan
-@JmixModule(dependsOn = CoreConfiguration.class)
-@ConfigurationPropertiesScan
-public class TextToDataConfiguration {
+    String get();
 }

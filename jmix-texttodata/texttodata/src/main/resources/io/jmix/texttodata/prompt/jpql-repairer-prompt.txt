@@ -1,0 +1,14 @@
+Original user request:
+%s
+
+Available schema:
+%s
+
+Previous generated result:
+%s
+
+Validation errors:
+%s
+
+Repair the result so that it uses only valid metadata from the provided schema.
+Preserve the original intent as much as possible.

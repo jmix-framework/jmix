@@ -14,17 +14,13 @@
  * limitations under the License.
  */
 
-package io.jmix.texttodata;
+package io.jmix.texttodata.repair;
 
-import io.jmix.core.CoreConfiguration;
-import io.jmix.core.annotation.JmixModule;
-import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
+import io.jmix.texttodata.generation.GeneratedJpqlResult;
+import org.jspecify.annotations.Nullable;
 
-@Configuration
-@ComponentScan
-@JmixModule(dependsOn = CoreConfiguration.class)
-@ConfigurationPropertiesScan
-public class TextToDataConfiguration {
+public interface JpqlRepairer {
+
+    @Nullable
+    GeneratedJpqlResult repair(JpqlRepairRequest request);
 }

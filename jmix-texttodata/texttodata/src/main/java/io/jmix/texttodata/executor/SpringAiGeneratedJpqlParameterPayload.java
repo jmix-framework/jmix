@@ -14,17 +14,35 @@
  * limitations under the License.
  */
 
-package io.jmix.texttodata;
+package io.jmix.texttodata.executor;
 
-import io.jmix.core.CoreConfiguration;
-import io.jmix.core.annotation.JmixModule;
-import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
+public class SpringAiGeneratedJpqlParameterPayload {
 
-@Configuration
-@ComponentScan
-@JmixModule(dependsOn = CoreConfiguration.class)
-@ConfigurationPropertiesScan
-public class TextToDataConfiguration {
+    protected String name;
+    protected String type;
+    protected Object value;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public Object getValue() {
+        return value;
+    }
+
+    public void setValue(Object value) {
+        this.value = value;
+    }
 }

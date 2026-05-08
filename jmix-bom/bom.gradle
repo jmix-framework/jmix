@@ -292,6 +292,9 @@ dependencies {
         api "io.jmix.translations:jmix-translations-da:$freeVersion"
         api "io.jmix.translations:jmix-translations-zh-tw:$freeVersion"
 
+        api "io.jmix.texttodata:jmix-texttodata:$freeVersion"
+        api "io.jmix.texttodata:jmix-texttodata-starter:$freeVersion"
+
         api "io.jmix.tabbedmode:jmix-tabbedmode-flowui:$premiumVersion"
         api "io.jmix.tabbedmode:jmix-tabbedmode-flowui-starter:$premiumVersion"
         api "io.jmix.tabbedmode:jmix-tabbedmode-test-assist:$premiumVersion"

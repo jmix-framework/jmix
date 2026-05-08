@@ -14,17 +14,31 @@
  * limitations under the License.
  */
 
-package io.jmix.texttodata;
+package io.jmix.texttodata.validation;
 
-import io.jmix.core.CoreConfiguration;
-import io.jmix.core.annotation.JmixModule;
-import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
+public class JpqlValidationIssue {
 
-@Configuration
-@ComponentScan
-@JmixModule(dependsOn = CoreConfiguration.class)
-@ConfigurationPropertiesScan
-public class TextToDataConfiguration {
+    protected String code;
+    protected String message;
+
+    public JpqlValidationIssue(String code, String message) {
+        this.code = code;
+        this.message = message;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    @Override
+    public String toString() {
+        return "JpqlValidationIssue{" +
+                "code='" + code + '\'' +
+                ", message='" + message + '\'' +
+                '}';
+    }
 }

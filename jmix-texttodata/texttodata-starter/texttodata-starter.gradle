@@ -23,4 +23,10 @@ dependencies {
     api project(":texttodata")
 
     api 'org.springframework.boot:spring-boot-autoconfigure'
+
+    implementation platform('org.springframework.ai:spring-ai-bom:1.1.5')
+    implementation 'org.springframework.ai:spring-ai-client-chat'
+    implementation 'org.springframework.ai:spring-ai-model'
+
+    implementation 'com.fasterxml.jackson.core:jackson-databind'
 }

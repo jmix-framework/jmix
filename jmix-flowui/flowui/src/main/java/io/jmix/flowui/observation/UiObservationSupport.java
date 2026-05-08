@@ -27,12 +27,9 @@ import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.model.DataLoader;
 import io.jmix.flowui.monitoring.DataLoaderLifeCycle;
 import io.jmix.flowui.monitoring.DataLoaderMonitoringInfo;
-import io.jmix.flowui.monitoring.UiMonitoring;
-import io.jmix.flowui.monitoring.ViewLifeCycle;
+import io.jmix.flowui.monitoring.LegacyUiTimerSupport;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.xml.layout.support.DataComponentsLoaderSupport;
-import io.micrometer.core.instrument.MeterRegistry;
-import io.micrometer.core.instrument.Timer;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
 import org.apache.commons.lang3.StringUtils;
@@ -60,20 +57,23 @@ public class UiObservationSupport {
     public static final String ACTION_OBSERVATION_NAME = "jmix.ui.actions";
     public static final String DATA_LOADER_OBSERVATION_NAME = "jmix.ui.data";
 
-    protected static final String NOT_AVAILABLE_TAG_VALUE = "N/A";
+    /**
+     * Fallback for the {@code view.id} tag when a data loader is registered without a known view id —
+     * e.g. inside a fragment created via {@code Fragments.create(parent, fragmentClass)} without an explicit id,
+     * or via a custom {@code monitoringInfoProvider}. Keeps the metric tag schema uniform.
+     */
+    protected static final String DATA_LOADER_EMPTY_VIEW_ID = "N/A";
 
     @Autowired(required = false)
     protected ObservationRegistry observationRegistry;
 
     @Autowired
-    protected MeterRegistry meterRegistry;
+    protected LegacyUiTimerSupport legacyUiTimerSupport;
 
     protected boolean observationEnabled;
-    protected boolean legacyTimerEnabled;
 
     public UiObservationSupport(UiProperties uiProperties) {
         this.observationEnabled = uiProperties.isUiObservationEnabled();
-        this.legacyTimerEnabled = uiProperties.isLegacyTimerEnabled();
     }
 
     public Observation createViewLifecycleObservation(View<?> view, ComponentEvent<?> viewEvent) {
@@ -129,8 +129,7 @@ public class UiObservationSupport {
 
     /**
      * Records monitoring data for a void {@link DataLoader} lifecycle phase. Always invokes the modern Observation
-     * path; additionally writes the legacy {@code jmix.ui.data} {@link Timer} when
-     * {@link UiProperties#isLegacyTimerEnabled()} is on (default).
+     * path; legacy {@code jmix.ui.data} Timer recording is delegated to {@link LegacyUiTimerSupport}.
      */
     public void observeDataLoader(DataLoader loader, DataLoaderLifeCycle phase, Runnable action) {
         observeDataLoader(loader, phase, () -> {
@@ -145,24 +144,14 @@ public class UiObservationSupport {
      * @see #observeDataLoader(DataLoader, DataLoaderLifeCycle, Runnable)
      */
     public <T> T observeDataLoader(DataLoader loader, DataLoaderLifeCycle phase, Supplier<T> action) {
-        DataLoaderMonitoringInfo info = loader.getMonitoringInfoProvider().apply(loader);
-        Observation observation = createDataLoaderObservation(info, phase);
-
-        if (!legacyTimerEnabled) {
-            return observation.observe(action);
-        }
-        Timer.Sample sample = UiMonitoring.startTimerSample(meterRegistry);
-        try {
-            return observation.observe(action);
-        } finally {
-            UiMonitoring.stopDataLoaderTimerSample(sample, meterRegistry, phase, info);
-        }
+        Observation observation = createDataLoaderObservation(loader, phase);
+        return legacyUiTimerSupport.recordDataLoaderTimer(loader, phase,
+                () -> observation.observe(action));
     }
 
     /**
      * Records monitoring data for a void {@link View} lifecycle phase. Always invokes the modern Observation path;
-     * additionally writes the legacy {@code jmix.ui.views} {@link Timer} when
-     * {@link UiProperties#isLegacyTimerEnabled()} is on (default).
+     * legacy {@code jmix.ui.views} Timer recording is delegated to {@link LegacyUiTimerSupport}.
      */
     public void observeViewLifecycle(View<?> view, ViewLifecycle phase, Runnable action) {
         observeViewLifecycle(view, phase, () -> {
@@ -178,17 +167,8 @@ public class UiObservationSupport {
      */
     public <T> T observeViewLifecycle(View<?> view, ViewLifecycle phase, Supplier<T> action) {
         Observation observation = createViewLifecycleObservation(view, phase);
-
-        if (!legacyTimerEnabled) {
-            return observation.observe(action);
-        }
-        Timer.Sample sample = UiMonitoring.startTimerSample(meterRegistry);
-        try {
-            return observation.observe(action);
-        } finally {
-            UiMonitoring.stopViewTimerSample(sample, meterRegistry,
-                    ViewLifeCycle.valueOf(phase.name()), view.getId().orElse(null));
-        }
+        return legacyUiTimerSupport.recordViewTimer(view, phase,
+                () -> observation.observe(action));
     }
 
     /**
@@ -237,7 +217,7 @@ public class UiObservationSupport {
                 .contextualName("data loader lifecycle")
                 .lowCardinalityKeyValue("lifecycle.name", lifecycle.getName())
                 .lowCardinalityKeyValue("loader.id", loaderId)
-                .lowCardinalityKeyValue("view.id", Strings.isNullOrEmpty(viewId) ? NOT_AVAILABLE_TAG_VALUE : viewId);
+                .lowCardinalityKeyValue("view.id", Strings.isNullOrEmpty(viewId) ? DATA_LOADER_EMPTY_VIEW_ID : viewId);
     }
 
     public Observation createActionExecutionObservation(Action action) {

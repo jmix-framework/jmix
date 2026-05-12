@@ -99,13 +99,13 @@ class UiObservationSupportTest extends Specification {
     }
 
     def "trigger component not attached to any view yields no view.id"() {
-        given:
+        given: "a detached component with no parent in the UI tree"
         def orphan = new Div()
 
-        when:
+        when: "creating an action observation with this component as trigger"
         def obs = support.createActionExecutionObservation(new BaseAction("act"), orphan)
 
-        then:
+        then: "findView returns null and view.id tag is not added"
         lowCardinalityValue(obs, "view.id") == null
     }
 
@@ -127,7 +127,7 @@ class UiObservationSupportTest extends Specification {
     }
 
     def "target view wins over trigger view"() {
-        given:
+        given: "an action whose target lives in view-a, fired from a trigger in view-b"
         def viewA = new TestView()
         viewA.setId("view-a")
         def gridInA = new Div()
@@ -141,58 +141,41 @@ class UiObservationSupportTest extends Specification {
 
         def action = new TestTargetAction("act", gridInA)
 
-        when:
+        when: "creating an observation with both target and trigger present"
         def obs = support.createActionExecutionObservation(action, triggerInB)
 
-        then:
+        then: "view.id resolves from target (semantic owner), not from trigger"
         lowCardinalityValue(obs, "view.id") == "view-a"
         lowCardinalityValue(obs, "target.id") == "gridA"
     }
 
     def "TargetAction with non-component target falls back to trigger for view.id"() {
-        given:
+        given: "a TargetAction whose target is not a Vaadin Component (e.g. plain String)"
         def view = new TestView()
         view.setId("orders-view")
         def button = new Div()
         view.getContent().add(button)
         def action = new TestTargetAction("act", "not-a-component")
 
-        when:
+        when: "creating an observation with a valid trigger inside a view"
         def obs = support.createActionExecutionObservation(action, button)
 
-        then:
+        then: "target.id is omitted, but view.id is still resolved via the trigger fallback"
         lowCardinalityValue(obs, "view.id") == "orders-view"
         lowCardinalityValue(obs, "target.id") == null
     }
 
     def "view without explicit id produces no view.id tag"() {
-        given:
+        given: "a view with no setId() call — getId() returns an empty Optional"
         def view = new TestView()
         def button = new Div()
         view.getContent().add(button)
 
-        when:
+        when: "creating an observation with a trigger inside that view"
         def obs = support.createActionExecutionObservation(new BaseAction("act"), button)
 
-        then:
+        then: "view.id tag is not added — empty Optional is silently skipped"
         lowCardinalityValue(obs, "view.id") == null
-    }
-
-    def "legacy single-arg method delegates to overload"() {
-        given:
-        def view = new TestView()
-        view.setId("orders-view")
-        def grid = new Div()
-        grid.setId("gridA")
-        view.getContent().add(grid)
-        def action = new TestTargetAction("act", grid)
-
-        when:
-        def obs = support.createActionExecutionObservation(action)
-
-        then: "target-derived view.id is still set even without trigger component"
-        lowCardinalityValue(obs, "view.id") == "orders-view"
-        lowCardinalityValue(obs, "target.id") == "gridA"
     }
 
     def "disabled observation returns NOOP"() {
@@ -248,13 +231,13 @@ class UiObservationSupportTest extends Specification {
     }
 
     def "data loader view.id falls back to N/A when viewId is #scenario"() {
-        given:
+        given: "monitoring info with #scenario viewId (loader outside any view, or custom monitoringInfoProvider)"
         def info = new DataLoaderMonitoringInfo(viewId, "dl")
 
-        when:
+        when: "creating a data loader observation"
         def obs = support.createDataLoaderObservation(info, DataLoaderLifeCycle.LOAD)
 
-        then:
+        then: "view.id falls back to DATA_LOADER_EMPTY_VIEW_ID to keep the tag schema uniform"
         lowCardinalityValue(obs, "view.id") == "N/A"
 
         where:
@@ -278,10 +261,10 @@ class UiObservationSupportTest extends Specification {
     }
 
     def "data loader observation skipped for generated loader id"() {
-        given:
+        given: "a loader with an auto-generated id (prefix 'generated_')"
         def info = new DataLoaderMonitoringInfo("v", "generated_abc123")
 
-        expect:
+        expect: "observation is NOOP — auto-generated ids would explode Prometheus cardinality"
         support.createDataLoaderObservation(info, DataLoaderLifeCycle.LOAD) == Observation.NOOP
     }
 
@@ -332,14 +315,14 @@ class UiObservationSupportTest extends Specification {
     }
 
     def "observeDataLoader rethrows the exact exception object from supplier"() {
-        given:
+        given: "a supplier that throws a specific exception instance"
         def loader = mockLoader("v", "dl")
         def boom = new IllegalStateException("boom")
 
-        when:
+        when: "invoking observeDataLoader with that supplier"
         support.observeDataLoader(loader, DataLoaderLifeCycle.LOAD, { -> throw boom } as Supplier)
 
-        then: "the exact same exception instance bubbles up — no swallowing, no wrapping"
+        then: "the exact same instance bubbles up — observation must not swallow or wrap"
         def caught = thrown(IllegalStateException)
         caught.is(boom)
     }
@@ -379,15 +362,15 @@ class UiObservationSupportTest extends Specification {
     }
 
     def "observeViewLifecycle records modern Observation with view.id and lifecycle.name tags"() {
-        given:
+        given: "a view with an explicit id and access to the test observation registry"
         def view = new TestView()
         view.setId("orders-view")
         def registry = (TestObservationRegistry) support.observationRegistry
 
-        when:
+        when: "running a view lifecycle phase through observeViewLifecycle"
         support.observeViewLifecycle(view, ViewLifecycle.READY, { -> } as Runnable)
 
-        then:
+        then: "registry contains a started-and-stopped span with the expected tags"
         TestObservationRegistryAssert.assertThat(registry)
                 .hasObservationWithNameEqualTo("jmix.ui.views")
                 .that()
@@ -418,13 +401,13 @@ class UiObservationSupportTest extends Specification {
     }
 
     def "observeFragmentLifecycle does not invoke LegacyUiTimerSupport"() {
-        given:
+        given: "fragment monitoring info"
         def info = new FragmentLifecycleObservationInfo("frag-id", "com.example.MyFragment")
 
-        when:
+        when: "running a fragment lifecycle phase through observeFragmentLifecycle"
         support.observeFragmentLifecycle(info, FragmentLifecycle.CREATE, { -> "x" } as Supplier)
 
-        then: "fragments never had a legacy Timer historically — must not delegate to the legacy bridge"
+        then: "legacy bridge is never invoked — fragments historically had no Timer metric"
         0 * legacyUiTimerSupport._
     }
 

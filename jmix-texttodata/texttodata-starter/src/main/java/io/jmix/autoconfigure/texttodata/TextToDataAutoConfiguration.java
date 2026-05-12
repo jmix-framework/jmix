@@ -31,7 +31,6 @@ import io.jmix.texttodata.repair.JpqlRepairer;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBooleanProperty;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
@@ -48,17 +47,15 @@ public class TextToDataAutoConfiguration {
         return new JpaDomainModelIntrospector();
     }
 
-    @Bean("textdt_SpringAiTextToJpqlGenerator")
+    @Bean("textdt_SpringAiJpqlGenerator")
     @ConditionalOnClass(ChatClient.class)
-    @ConditionalOnBean(ChatClient.Builder.class)
     @ConditionalOnMissingBean(JpqlGenerator.class)
     public JpqlGenerator textToJpqlGenerator() {
         return new SpringAiJpqlGenerator();
     }
 
-    @Bean("textdt_SpringAiTextToJpqlRepairer")
+    @Bean("textdt_SpringAiJpqlRepairer")
     @ConditionalOnClass(ChatClient.class)
-    @ConditionalOnBean(ChatClient.Builder.class)
     @ConditionalOnMissingBean(JpqlRepairer.class)
     public JpqlRepairer textToJpqlRepairer() {
         return new SpringAiJpqlRepairer();

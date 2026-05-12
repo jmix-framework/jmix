@@ -26,6 +26,8 @@ import io.jmix.texttodata.introspection.model.EnumValueDescriptor;
 import io.jmix.texttodata.introspection.model.RelationPropertyDescriptor;
 import io.jmix.texttodata.introspection.registry.DomainModelRegistry;
 import io.jmix.texttodata.introspection.search.DomainModelSearchCandidate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -39,6 +41,8 @@ import java.util.StringJoiner;
 
 @Component("textdt_PromptContextBuilder")
 public class PromptContextBuilder {
+
+    private static final Logger log = LoggerFactory.getLogger(PromptContextBuilder.class);
 
     @Autowired
     protected TextToDataProperties textToDataProperties;
@@ -59,6 +63,8 @@ public class PromptContextBuilder {
         for (DomainModelSearchCandidate candidate : candidates) {
             addEntityWithRelations(selectedEntities, candidate.getEntity(), relationDepth);
         }
+
+        log.debug("Selected entities: {}", selectedEntities.keySet());
 
         StringBuilder builder = new StringBuilder();
         boolean first = true;

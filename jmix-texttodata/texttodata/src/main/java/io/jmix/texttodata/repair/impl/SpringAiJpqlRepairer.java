@@ -25,8 +25,9 @@ import io.jmix.texttodata.prompt.SystemPromptProvider;
 import io.jmix.texttodata.repair.JpqlRepairRequest;
 import io.jmix.texttodata.repair.JpqlRepairer;
 import io.jmix.texttodata.validation.JpqlValidationIssue;
-import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class SpringAiJpqlRepairer implements JpqlRepairer, InitializingBean {
@@ -36,7 +37,7 @@ public class SpringAiJpqlRepairer implements JpqlRepairer, InitializingBean {
     @Autowired
     protected SystemPromptProvider systemPromptProvider;
     @Autowired
-    protected ChatClient.Builder chatClientBuilder;
+    protected ObjectProvider<ChatModel> chatModelProvider;
 
     protected SpringAiPromptExecutor promptExecutor;
     protected ObjectMapper objectMapper;
@@ -74,7 +75,7 @@ public class SpringAiJpqlRepairer implements JpqlRepairer, InitializingBean {
     }
 
     protected SpringAiPromptExecutor createPromptExecutor() {
-        return new SpringAiPromptExecutor(chatClientBuilder, objectMapper, systemPromptProvider.get());
+        return new SpringAiPromptExecutor(chatModelProvider, objectMapper, systemPromptProvider.get());
     }
 
     protected ObjectMapper createObjectMapper() {

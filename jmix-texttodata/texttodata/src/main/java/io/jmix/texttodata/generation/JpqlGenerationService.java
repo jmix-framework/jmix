@@ -39,7 +39,7 @@ public class JpqlGenerationService {
     protected PromptContextBuilder promptContextBuilder;
 
     @Autowired
-    protected ObjectProvider<JpqlGenerator> textToJpqlGeneratorProvider;
+    protected ObjectProvider<JpqlGenerator> jpqlGeneratorProvider;
 
     public JpqlGenerationRequest prepareRequest(String userText) {
         return prepareRequest(userText, textToDataProperties.getMaxEntityCandidates());
@@ -56,9 +56,9 @@ public class JpqlGenerationService {
     }
 
     public GeneratedJpqlResult generate(JpqlGenerationRequest request) {
-        JpqlGenerator jpqlGenerator = textToJpqlGeneratorProvider.getIfAvailable();
+        JpqlGenerator jpqlGenerator = jpqlGeneratorProvider.getIfAvailable();
         if (jpqlGenerator == null) {
-            throw new IllegalStateException("No TextToJpqlGenerator bean is configured");
+            throw new IllegalStateException("No "+ JpqlGenerator.class.getSimpleName() + " bean is configured");
         }
         return jpqlGenerator.generate(request);
     }

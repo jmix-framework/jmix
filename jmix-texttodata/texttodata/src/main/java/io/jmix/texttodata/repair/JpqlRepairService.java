@@ -35,7 +35,7 @@ public class JpqlRepairService {
     protected JpqlValidationService jpqlValidationService;
 
     @Autowired
-    protected ObjectProvider<JpqlRepairer> textToJpqlRepairerProvider;
+    protected ObjectProvider<JpqlRepairer> jpqlRepairerProvider;
 
     public JpqlRepairResult repairIfNeeded(JpqlGenerationRequest generationRequest,
                                            GeneratedJpqlResult generatedJpqlResult,
@@ -51,7 +51,7 @@ public class JpqlRepairService {
             return new JpqlRepairResult(generatedJpqlResult, validationResult, 0, false);
         }
 
-        JpqlRepairer repairer = textToJpqlRepairerProvider.getIfAvailable();
+        JpqlRepairer repairer = jpqlRepairerProvider.getIfAvailable();
         if (repairer == null) {
             return new JpqlRepairResult(generatedJpqlResult, validationResult, 0, false);
         }

@@ -20,37 +20,51 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jmix.texttodata.generation.GeneratedJpqlParameter;
 import io.jmix.texttodata.generation.GeneratedJpqlResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.model.ChatModel;
+import org.springframework.beans.factory.ObjectProvider;
 
 import java.util.Collections;
 import java.util.List;
 
 public class SpringAiPromptExecutor {
+    private static final Logger log = LoggerFactory.getLogger(SpringAiPromptExecutor.class);
 
     protected ChatClient chatClient;
     protected ObjectMapper objectMapper;
 
     protected String systemPrompt;
 
-    public SpringAiPromptExecutor(ChatClient.Builder chatClientBuilder,
+    public SpringAiPromptExecutor(ObjectProvider<ChatModel> chatModelProvider,
                                   ObjectMapper objectMapper,
                                   String systemPrompt) {
-        this.chatClient = chatClientBuilder.build();
+        ChatModel chatModel = chatModelProvider.getIfAvailable();
+        if (chatModel == null) {
+            throw new IllegalStateException("No " + ChatModel.class.getSimpleName() + " available");
+        }
+
+        this.chatClient = ChatClient.create(chatModel);
         this.objectMapper = objectMapper;
 
         this.systemPrompt = systemPrompt;
     }
 
-    public GeneratedJpqlResult executePrompt(String userPrompt) {
+    public GeneratedJpqlResult executePrompt(String generatedPrompt) {
+        log.debug("Prompt: {}", generatedPrompt);
+
         String content = chatClient.prompt()
                 .system(systemPrompt)
-                .user(userPrompt)
+                .user(generatedPrompt)
                 .call()
                 .content();
 
         if (content == null || content.isBlank()) {
             throw new IllegalStateException("LLM returned an empty response");
         }
+
+        log.debug("Returned content: {}", content);
 
         SpringAiGeneratedJpqlPayload payload;
         try {

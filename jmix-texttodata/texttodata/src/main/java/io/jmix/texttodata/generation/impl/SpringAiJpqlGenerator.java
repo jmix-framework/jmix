@@ -23,18 +23,19 @@ import io.jmix.texttodata.generation.JpqlGenerationRequest;
 import io.jmix.texttodata.generation.JpqlGenerator;
 import io.jmix.texttodata.prompt.JpqlGenerationPromptProvider;
 import io.jmix.texttodata.prompt.SystemPromptProvider;
-import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class SpringAiJpqlGenerator implements JpqlGenerator, InitializingBean {
 
     @Autowired
-    protected JpqlGenerationPromptProvider promptProvider;
+    protected JpqlGenerationPromptProvider jpqlPromptProvider;
     @Autowired
     protected SystemPromptProvider systemPromptProvider;
     @Autowired
-    protected ChatClient.Builder chatClientBuilder;
+    protected ObjectProvider<ChatModel> chatModelProvider;
 
     protected SpringAiPromptExecutor promptExecutor;
 
@@ -45,14 +46,14 @@ public class SpringAiJpqlGenerator implements JpqlGenerator, InitializingBean {
 
     @Override
     public GeneratedJpqlResult generate(JpqlGenerationRequest request) {
-        String prompt = promptProvider.get();
-        String formattedPrompt = prompt.formatted(request.getUserText(), request.getPromptContext());
+        String jpqlPrompt = jpqlPromptProvider.get();
+        String formattedPrompt = jpqlPrompt.formatted(request.getUserText(), request.getPromptContext());
 
         return promptExecutor.executePrompt(formattedPrompt);
     }
 
     protected SpringAiPromptExecutor createPromptExecutor() {
-        return new SpringAiPromptExecutor(chatClientBuilder, createObjectMapper(), systemPromptProvider.get());
+        return new SpringAiPromptExecutor(chatModelProvider, createObjectMapper(), systemPromptProvider.get());
     }
 
     protected ObjectMapper createObjectMapper() {

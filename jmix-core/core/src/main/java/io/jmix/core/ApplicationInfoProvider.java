@@ -67,7 +67,9 @@ public class ApplicationInfoProvider {
     @EventListener
     public void onApplicationReady(ApplicationReadyEvent event) {
         initValues(event.getApplicationContext());
-        createAppInfoFile();
+        if (coreProperties.isApplicationInfoFileEnabled()) {
+            createAppInfoFile();
+        }
         log.debug("ApplicationInfoProvider initialization is completed");
     }
 

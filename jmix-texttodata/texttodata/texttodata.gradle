@@ -27,6 +27,7 @@ dependencies {
     implementation 'org.springframework.ai:spring-ai-model'
 
     implementation 'com.fasterxml.jackson.core:jackson-databind'
+    implementation 'org.apache.lucene:lucene-queryparser'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api'
     testImplementation 'org.springframework:spring-test'

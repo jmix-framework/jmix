@@ -16,6 +16,7 @@
 
 package prompt;
 
+import io.jmix.texttodata.introspection.registry.DomainModelRegistry;
 import io.jmix.texttodata.introspection.search.DomainModelSearchCandidate;
 import io.jmix.texttodata.introspection.search.DomainModelSearchService;
 import io.jmix.texttodata.prompt.PromptContextBuilder;
@@ -41,6 +42,9 @@ class PromptContextBuilderTest {
     @Autowired
     DomainModelSearchService domainModelSearchService;
 
+    @Autowired
+    DomainModelRegistry domainModelRegistry;
+
     @Test
     @DisplayName("Builds compact prompt context from search candidates")
     void testBuildsCompactPromptContext() {
@@ -63,7 +67,7 @@ class PromptContextBuilderTest {
     @Test
     @DisplayName("Expands relation targets by default")
     void testExpandsRelationTargetsByDefault() {
-        List<DomainModelSearchCandidate> candidates = domainModelSearchService.search("order", 1);
+        List<DomainModelSearchCandidate> candidates = List.of(orderCandidate());
 
         String context = promptContextBuilder.build(candidates);
 
@@ -75,7 +79,7 @@ class PromptContextBuilderTest {
     @Test
     @DisplayName("Can disable relation expansion")
     void testCanDisableRelationExpansion() {
-        List<DomainModelSearchCandidate> candidates = domainModelSearchService.search("order", 1);
+        List<DomainModelSearchCandidate> candidates = List.of(orderCandidate());
 
         String context = promptContextBuilder.build(candidates, 0);
 
@@ -88,5 +92,13 @@ class PromptContextBuilderTest {
     @DisplayName("Returns empty context for empty candidates")
     void testReturnsEmptyContextForEmptyCandidates() {
         assertEquals("", promptContextBuilder.build(List.of()));
+    }
+
+    protected DomainModelSearchCandidate orderCandidate() {
+        return new DomainModelSearchCandidate(
+                domainModelRegistry.getEntityDescriptor("textdt_Order"),
+                1000,
+                List.of("entityName")
+        );
     }
 }

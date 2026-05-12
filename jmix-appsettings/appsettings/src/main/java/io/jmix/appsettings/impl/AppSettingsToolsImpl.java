@@ -1,6 +1,8 @@
 package io.jmix.appsettings.impl;
 
+import io.jmix.appsettings.AppSettingsEntityLoadMode;
 import io.jmix.appsettings.AppSettingsProperties;
+import io.jmix.appsettings.AppSettingsTenantProvider;
 import io.jmix.appsettings.AppSettingsTools;
 import io.jmix.appsettings.defaults.*;
 import io.jmix.appsettings.entity.AppSettingsEntity;
@@ -12,12 +14,19 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetadataObject;
 import io.jmix.core.metamodel.model.Range;
+import io.jmix.core.querycondition.PropertyCondition;
+import io.jmix.data.PersistenceHints;
+import io.jmix.data.Sequence;
+import io.jmix.data.Sequences;
+import io.jmix.data.StoreAwareLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.support.TransactionTemplate;
 
+import jakarta.persistence.EntityManager;
 import java.lang.reflect.Field;
 import java.text.ParseException;
 import java.util.List;
@@ -27,6 +36,12 @@ import java.util.stream.Collectors;
 public class AppSettingsToolsImpl implements AppSettingsTools {
 
     private static final Logger log = LoggerFactory.getLogger(AppSettingsToolsImpl.class);
+
+    protected static final int LEGACY_GLOBAL_ENTITY_ID = 1;
+    protected static final int TENANT_ENTITY_ID_SEQUENCE_START = 1001;
+
+    protected static final String TENANT_SETTINGS_SEQUENCE_NAME_PREFIX = "appsettings_";
+    protected static final String TENANT_ID_PROPERTY = "tenantId";
 
     @Autowired
     protected Metadata metadata;
@@ -49,18 +64,47 @@ public class AppSettingsToolsImpl implements AppSettingsTools {
     @Autowired
     protected FetchPlans fetchPlans;
 
-    @Override
-    public <T extends AppSettingsEntity> T loadAppSettingsEntityFromDataStore(Class<T> clazz) {
-        //only one record for T can exist at the same time in database with default identifier
-        return getDataManagerForAppSettingsEntity().load(clazz)
-                .id(Id.of(1, clazz))
-                .fetchPlan(createFetchPlan(clazz))
-                .optional().orElse(metadata.create(clazz, 1));
-    }
+    @Autowired
+    protected StoreAwareLocator storeAwareLocator;
+
+    @Autowired
+    protected Sequences sequences;
+
+    @Autowired
+    protected AppSettingsTenantSupport tenantSupport;
 
     @Override
+    public <T extends AppSettingsEntity> T loadAppSettingsEntityFromDataStore(Class<T> clazz,
+                                                                              AppSettingsEntityLoadMode mode,
+                                                                              boolean softDeletion) {
+        boolean effectiveSoftDeletion = mode != AppSettingsEntityLoadMode.FOR_SAVE && softDeletion;
+        String currentTenantId = tenantSupport.getCurrentTenantId();
+        if (currentTenantId != null) {
+            T tenantEntity = loadCurrentTenantAppSettingsEntity(clazz, currentTenantId, effectiveSoftDeletion);
+            if (tenantEntity != null) {
+                return mode == AppSettingsEntityLoadMode.FOR_SAVE
+                        ? restoreSoftDeletedEntity(tenantEntity)
+                        : tenantEntity;
+            }
+            if (mode == AppSettingsEntityLoadMode.FOR_SAVE) {
+                return createTenantAppSettingsEntity(clazz, currentTenantId);
+            }
+        }
+
+        T globalEntity = loadGlobalAppSettingsEntity(clazz, effectiveSoftDeletion);
+        if (globalEntity != null) {
+            return mode == AppSettingsEntityLoadMode.FOR_SAVE
+                    ? restoreSoftDeletedEntity(globalEntity)
+                    : globalEntity;
+        }
+        return createGlobalAppSettingsEntity(clazz);
+    }
+
+    @Nullable
+    @Override
     public Object getPropertyValue(Class<? extends AppSettingsEntity> clazz, String propertyName) {
-        return EntityValues.getValue(loadAppSettingsEntityFromDataStore(clazz), propertyName);
+        return EntityValues.getValue(loadAppSettingsEntityFromDataStore(clazz, AppSettingsEntityLoadMode.FOR_READ),
+                propertyName);
     }
 
     @Nullable
@@ -135,6 +179,85 @@ public class AppSettingsToolsImpl implements AppSettingsTools {
         return metadata.getClass(clazz).getProperties().stream()
                 .filter(metaProperty -> !metadataTools.isSystem(metaProperty))
                 .map(MetadataObject::getName)
+                .filter(name -> !TENANT_ID_PROPERTY.equals(name))
                 .collect(Collectors.toList());
     }
+
+    @Nullable
+    protected <T extends AppSettingsEntity> T loadCurrentTenantAppSettingsEntity(Class<T> clazz,
+                                                                                 String tenantId,
+                                                                                 boolean softDeletion) {
+        List<T> entities = getDataManagerForAppSettingsEntity().load(clazz)
+                .condition(PropertyCondition.equal(TENANT_ID_PROPERTY, tenantId))
+                .hint(PersistenceHints.SOFT_DELETION, softDeletion)
+                .fetchPlan(createFetchPlan(clazz))
+                .list();
+
+        if (entities.size() > 1) {
+            throw new IllegalStateException(String.format(
+                    "More than one tenant settings record exists for entity %s",
+                    metadata.getClass(clazz).getName()));
+        }
+        return entities.isEmpty() ? null : entities.get(0);
+    }
+
+    @Nullable
+    protected <T extends AppSettingsEntity> T loadGlobalAppSettingsEntity(Class<T> clazz, boolean softDeletion) {
+        MetaClass metaClass = metadata.getClass(clazz);
+        String storeName = metaClass.getStore().getName();
+
+        TransactionTemplate transactionTemplate = storeAwareLocator.getTransactionTemplate(storeName);
+        return transactionTemplate.execute(status -> {
+            EntityManager entityManager = storeAwareLocator.getEntityManager(storeName);
+            boolean softDeletionBefore = PersistenceHints.isSoftDeletion(entityManager);
+            Object previousTenantId = entityManager.getProperties().get("tenantId");
+            try {
+                entityManager.setProperty(PersistenceHints.SOFT_DELETION, softDeletion);
+                entityManager.setProperty("tenantId", AppSettingsTenantProvider.NO_TENANT);
+                return getDataManagerForAppSettingsEntity().load(clazz)
+                        .id(LEGACY_GLOBAL_ENTITY_ID)
+                        .fetchPlan(createFetchPlan(clazz))
+                        .hint(PersistenceHints.SOFT_DELETION, softDeletion)
+                        .optional()
+                        .orElse(null);
+            } finally {
+                entityManager.setProperty(PersistenceHints.SOFT_DELETION, softDeletionBefore);
+                entityManager.setProperty("tenantId", previousTenantId);
+            }
+        });
+    }
+
+    protected <T extends AppSettingsEntity> T createGlobalAppSettingsEntity(Class<T> clazz) {
+        return metadata.create(clazz, LEGACY_GLOBAL_ENTITY_ID);
+    }
+
+    protected <T extends AppSettingsEntity> T createTenantAppSettingsEntity(Class<T> clazz, String tenantId) {
+        T entity = metadata.create(clazz, Math.toIntExact(generateTenantEntityId(clazz)));
+        entity.setTenantId(tenantId);
+        return entity;
+    }
+
+    protected <T extends AppSettingsEntity> long generateTenantEntityId(Class<T> clazz) {
+        MetaClass metaClass = metadata.getClass(clazz);
+        Sequence sequence = Sequence.withName(getTenantSettingsSequenceName(metaClass))
+                .setStore(metaClass.getStore().getName())
+                .setStartValue(TENANT_ENTITY_ID_SEQUENCE_START);
+        return sequences.createNextValue(sequence);
+    }
+
+    protected <T extends AppSettingsEntity> T restoreSoftDeletedEntity(T entity) {
+        if (EntityValues.isSoftDeleted(entity)) {
+            EntityValues.setDeletedDate(entity, null);
+            EntityValues.setDeletedBy(entity, null);
+        }
+        return entity;
+    }
+
+    protected String getTenantSettingsSequenceName(MetaClass metaClass) {
+        String sanitizedName = metaClass.getName().chars()
+                .mapToObj(ch -> Character.isLetterOrDigit(ch) ? String.valueOf((char) ch) : "_")
+                .collect(Collectors.joining());
+        return TENANT_SETTINGS_SEQUENCE_NAME_PREFIX + sanitizedName;
+    }
+
 }

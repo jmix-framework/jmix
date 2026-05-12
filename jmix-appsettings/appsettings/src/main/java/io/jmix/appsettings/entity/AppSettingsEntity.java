@@ -1,6 +1,9 @@
 package io.jmix.appsettings.entity;
 
+import io.jmix.core.annotation.TenantId;
+import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.JmixEntity;
+import org.jspecify.annotations.Nullable;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Id;
@@ -22,8 +25,13 @@ public class AppSettingsEntity {
     @Column(name = "VERSION", nullable = false)
     private Integer version;
 
+    @TenantId
+    @SystemLevel
+    @Column(name = "TENANT_ID", unique = true)
+    private String tenantId;
+
     /**
-     * Only one record of each application settings can exist
+     * The legacy global record uses the default identifier.
      */
     public AppSettingsEntity() {
         this.id = 1;
@@ -45,4 +53,12 @@ public class AppSettingsEntity {
         this.version = version;
     }
 
+    @Nullable
+    public String getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(@Nullable String tenantId) {
+        this.tenantId = tenantId;
+    }
 }

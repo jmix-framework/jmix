@@ -1,6 +1,7 @@
 package io.jmix.appsettings.impl;
 
 import io.jmix.appsettings.AppSettings;
+import io.jmix.appsettings.AppSettingsEntityLoadMode;
 import io.jmix.appsettings.AppSettingsTools;
 import io.jmix.appsettings.entity.AppSettingsEntity;
 import io.jmix.core.UnconstrainedDataManager;
@@ -45,7 +46,8 @@ public class AppSettingsImpl implements AppSettings {
         log.debug("save application settings entity [{}]", settingsEntityToSave);
         Class<T> clazz = (Class<T>) settingsEntityToSave.getClass();
 
-        T settingsEntity = getAppSettingsEntity(clazz);
+        T settingsEntity = appSettingsTools.loadAppSettingsEntityFromDataStore(clazz,
+                AppSettingsEntityLoadMode.FOR_SAVE);
 
         updatePropertyValues(settingsEntityToSave, settingsEntity, getPropertyNames(clazz));
 
@@ -53,7 +55,7 @@ public class AppSettingsImpl implements AppSettings {
     }
 
     protected <T extends AppSettingsEntity> T getAppSettingsEntity(Class<T> clazz) {
-        return appSettingsTools.loadAppSettingsEntityFromDataStore(clazz);
+        return appSettingsTools.loadAppSettingsEntityFromDataStore(clazz, AppSettingsEntityLoadMode.FOR_READ);
     }
 
     protected <T extends AppSettingsEntity> void saveAppSettingsEntity(T settingsEntity) {

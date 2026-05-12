@@ -28,6 +28,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.router.*;
 import io.jmix.appsettings.AppSettings;
+import io.jmix.appsettings.AppSettingsEntityLoadMode;
 import io.jmix.appsettings.AppSettingsTools;
 import io.jmix.appsettings.entity.AppSettingsEntity;
 import io.jmix.appsettingsflowui.AppSettingsUiProperties;
@@ -36,7 +37,6 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetadataObject;
 import io.jmix.core.metamodel.model.Range;
-import io.jmix.data.PersistenceHints;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.accesscontext.UiEntityAttributeContext;
@@ -55,7 +55,6 @@ import io.jmix.flowui.util.OperationResult;
 import io.jmix.flowui.util.UnknownOperationResult;
 import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.navigation.RouteSupport;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import jakarta.persistence.Convert;
@@ -71,7 +70,6 @@ import java.util.stream.Collectors;
 public class AppSettingsEntityView extends StandardView {
 
     protected static final int MAX_CAPTION_LENGTH = 50;
-    protected static final String SELECT_APP_SETTINGS_ENTITY_QUERY = "select e from %s e where e.id = 1";
     protected static final String QUERY_PARAM_SETTINGS_CLASS = "settings";
     protected static final int FORM_COLUMNS = 3;
 
@@ -91,8 +89,6 @@ public class AppSettingsEntityView extends StandardView {
     @Autowired
     protected EntityStates entityStates;
     @Autowired
-    protected UnconstrainedDataManager dataManager;
-    @Autowired
     protected MetadataTools metadataTools;
     @Autowired
     protected AccessManager accessManager;
@@ -110,8 +106,6 @@ public class AppSettingsEntityView extends StandardView {
     protected UiComponentsGenerator uiComponentsGenerator;
     @Autowired
     protected UiComponents uiComponents;
-    @Autowired
-    protected FetchPlans fetchPlans;
     @Autowired
     protected RouteSupport routeSupport;
 
@@ -306,7 +300,7 @@ public class AppSettingsEntityView extends StandardView {
                 case DATATYPE:
                 case ENUM:
                     //skip system properties
-                    if (metadataTools.isSystem(metaProperty)) {
+                    if (metadataTools.isSystem(metaProperty) || metadataTools.isSystemLevel(metaProperty)) {
                         continue;
                     }
                     if (metaProperty.getType() != MetaProperty.Type.ENUM
@@ -411,28 +405,10 @@ public class AppSettingsEntityView extends StandardView {
     @SuppressWarnings({"rawtypes"})
     protected InstanceContainer initInstanceContainerWithDbEntity() {
         InstanceContainer container = dataComponents.createInstanceContainer(currentMetaClass.getJavaClass());
-        entityToEdit = dataManager.load(currentMetaClass.getJavaClass())
-                .query(String.format(SELECT_APP_SETTINGS_ENTITY_QUERY, currentMetaClass.getName()))
-                .fetchPlan(createFetchPlan())
-                .hint(PersistenceHints.SOFT_DELETION, false)
-                .optional()
-                .orElse(null);
-        if (entityToEdit == null) {
-            entityToEdit = dataContext.create(currentMetaClass.getJavaClass());
-        } else {
-            entityToEdit = dataContext.merge(entityToEdit);
-        }
+        entityToEdit = appSettingsTools.loadAppSettingsEntityFromDataStore(currentMetaClass.getJavaClass(),
+                AppSettingsEntityLoadMode.FOR_READ, false);
+        entityToEdit = dataContext.merge(entityToEdit);
         return container;
-    }
-
-    protected FetchPlan createFetchPlan() {
-        FetchPlanBuilder builder = fetchPlans.builder(currentMetaClass.getJavaClass()).addFetchPlan(FetchPlan.LOCAL);
-        for (MetaProperty property : currentMetaClass.getProperties()) {
-            if (metadataTools.isElementCollection(property)) {
-                builder.add(property.getName());
-            }
-        }
-        return builder.build();
     }
 
     protected boolean isApplicationSettingsEntity(MetaClass metaClass) {

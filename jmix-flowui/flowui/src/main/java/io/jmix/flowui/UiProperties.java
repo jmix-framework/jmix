@@ -110,6 +110,16 @@ public class UiProperties {
      */
     boolean uiObservationEnabled;
 
+    /**
+     * Whether to keep recording the legacy {@link io.micrometer.core.instrument.Timer}-based
+     * {@code jmix.ui.data} metric (with tags {@code dataLoader}, {@code view}, {@code lifeCycle}) for data loaders.
+     * <p>
+     * The same metric name is also produced by the modern Observation path with a different tag schema; this flag is
+     * intended for back-compat with dashboards built on the legacy tag set and is expected to be turned off as
+     * dashboards migrate.
+     */
+    boolean dataLoaderLegacyTimerEnabled;
+
     public UiProperties(@DefaultValue("false") boolean uiTestMode,
                         @DefaultValue("login") String loginViewId,
                         @DefaultValue("main") String mainViewId,
@@ -125,7 +135,8 @@ public class UiProperties {
                         @DefaultValue("true") boolean useSessionFixationProtection,
                         @DefaultValue("false") boolean websocketRequestSecurityContextProvided,
                         @DefaultValue("true") boolean exceptionDialogModal,
-                        @DefaultValue("false") boolean uiObservationEnabled
+                        @DefaultValue("false") boolean uiObservationEnabled,
+                        @DefaultValue("true") boolean dataLoaderLegacyTimerEnabled
     ) {
         this.uiTestMode = uiTestMode;
         this.loginViewId = loginViewId;
@@ -143,6 +154,7 @@ public class UiProperties {
         this.websocketRequestSecurityContextProvided = websocketRequestSecurityContextProvided;
         this.exceptionDialogModal = exceptionDialogModal;
         this.uiObservationEnabled = uiObservationEnabled;
+        this.dataLoaderLegacyTimerEnabled = dataLoaderLegacyTimerEnabled;
     }
 
     /**
@@ -251,5 +263,13 @@ public class UiProperties {
     @Experimental
     public boolean isUiObservationEnabled() {
         return uiObservationEnabled;
+    }
+
+    /**
+     * @see #dataLoaderLegacyTimerEnabled
+     */
+    @Experimental
+    public boolean isDataLoaderLegacyTimerEnabled() {
+        return dataLoaderLegacyTimerEnabled;
     }
 }

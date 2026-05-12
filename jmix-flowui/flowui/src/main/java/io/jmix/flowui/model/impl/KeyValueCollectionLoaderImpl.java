@@ -29,9 +29,7 @@ import io.jmix.core.querycondition.Condition;
 import io.jmix.flowui.model.*;
 import io.jmix.flowui.monitoring.DataLoaderLifeCycle;
 import io.jmix.flowui.monitoring.DataLoaderMonitoringInfo;
-import io.jmix.flowui.monitoring.UiMonitoring;
-import io.micrometer.core.instrument.MeterRegistry;
-import io.micrometer.core.instrument.Timer;
+import io.jmix.flowui.observation.UiObservationSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.jspecify.annotations.Nullable;
 
@@ -52,7 +50,7 @@ public class KeyValueCollectionLoaderImpl implements KeyValueCollectionLoader {
     @Autowired
     protected CollectionContainerSortManager collectionContainerSortManager;
     @Autowired
-    protected MeterRegistry meterRegistry;
+    protected UiObservationSupport uiObservationSupport;
 
     protected DataContext dataContext;
     protected KeyValueCollectionContainer container;
@@ -103,20 +101,16 @@ public class KeyValueCollectionLoaderImpl implements KeyValueCollectionLoader {
             return;
         }
 
-        List<KeyValueEntity> list;
-
-        Timer.Sample sample = UiMonitoring.startTimerSample(meterRegistry);
-        if (delegate == null) {
-            list = dataManager.loadValues(loadContext);
-        } else {
-            list = delegate.apply(loadContext);
-            if (list == null) {
-                return;
+        List<KeyValueEntity> list = uiObservationSupport.observeDataLoader(this, DataLoaderLifeCycle.LOAD, () -> {
+            if (delegate == null) {
+                return dataManager.loadValues(loadContext);
             }
-        }
+            return delegate.apply(loadContext);
+        });
 
-        DataLoaderMonitoringInfo info = monitoringInfoProvider.apply(this);
-        UiMonitoring.stopDataLoaderTimerSample(sample, meterRegistry, DataLoaderLifeCycle.LOAD, info);
+        if (list == null) {
+            return;
+        }
 
         if (dataContext != null) {
             List<KeyValueEntity> mergedList = new ArrayList<>(list.size());
@@ -158,26 +152,15 @@ public class KeyValueCollectionLoaderImpl implements KeyValueCollectionLoader {
 
     protected boolean sendPreLoadEvent(ValueLoadContext loadContext) {
         PreLoadEvent preLoadEvent = new PreLoadEvent(this, loadContext);
-
-        Timer.Sample sample = UiMonitoring.startTimerSample(meterRegistry);
-
-        events.publish(PreLoadEvent.class, preLoadEvent);
-
-        DataLoaderMonitoringInfo info = monitoringInfoProvider.apply(this);
-        UiMonitoring.stopDataLoaderTimerSample(sample, meterRegistry, DataLoaderLifeCycle.PRE_LOAD, info);
-
+        uiObservationSupport.observeDataLoader(this, DataLoaderLifeCycle.PRE_LOAD,
+                () -> events.publish(PreLoadEvent.class, preLoadEvent));
         return !preLoadEvent.isLoadPrevented();
     }
 
     protected void sendPostLoadEvent(List<KeyValueEntity> entities) {
         PostLoadEvent postLoadEvent = new PostLoadEvent(this, entities);
-
-        Timer.Sample sample = UiMonitoring.startTimerSample(meterRegistry);
-
-        events.publish(PostLoadEvent.class, postLoadEvent);
-
-        DataLoaderMonitoringInfo info = monitoringInfoProvider.apply(this);
-        UiMonitoring.stopDataLoaderTimerSample(sample, meterRegistry, DataLoaderLifeCycle.POST_LOAD, info);
+        uiObservationSupport.observeDataLoader(this, DataLoaderLifeCycle.POST_LOAD,
+                () -> events.publish(PostLoadEvent.class, postLoadEvent));
     }
 
     @Override

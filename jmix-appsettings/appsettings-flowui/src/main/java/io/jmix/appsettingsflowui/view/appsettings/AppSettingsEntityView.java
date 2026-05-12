@@ -406,7 +406,7 @@ public class AppSettingsEntityView extends StandardView {
     protected InstanceContainer initInstanceContainerWithDbEntity() {
         InstanceContainer container = dataComponents.createInstanceContainer(currentMetaClass.getJavaClass());
         entityToEdit = appSettingsTools.loadAppSettingsEntityFromDataStore(currentMetaClass.getJavaClass(),
-                AppSettingsEntityLoadMode.FOR_READ, false);
+                AppSettingsEntityLoadMode.FOR_READ);
         entityToEdit = dataContext.merge(entityToEdit);
         return container;
     }

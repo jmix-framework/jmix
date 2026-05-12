@@ -30,8 +30,7 @@ import io.jmix.core.repository.JmixDataRepositoryUtils;
 import io.jmix.flowui.model.*;
 import io.jmix.flowui.monitoring.DataLoaderLifeCycle;
 import io.jmix.flowui.monitoring.DataLoaderMonitoringInfo;
-import io.micrometer.core.instrument.MeterRegistry;
-import io.micrometer.core.instrument.Timer;
+import io.jmix.flowui.observation.UiObservationSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.jspecify.annotations.Nullable;
@@ -41,9 +40,6 @@ import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
-
-import static io.jmix.flowui.monitoring.UiMonitoring.startTimerSample;
-import static io.jmix.flowui.monitoring.UiMonitoring.stopDataLoaderTimerSample;
 
 /**
  * Implementation of the {@link CollectionLoader} interface used for loading entities into a {@link CollectionContainer}.
@@ -63,7 +59,7 @@ public class CollectionLoaderImpl<E> implements CollectionLoader<E> {
     @Autowired
     protected List<QueryStringProcessor> queryStringProcessors;
     @Autowired
-    protected MeterRegistry meterRegistry;
+    protected UiObservationSupport uiObservationSupport;
 
     protected DataContext dataContext;
     protected CollectionContainer<E> container;
@@ -119,28 +115,22 @@ public class CollectionLoaderImpl<E> implements CollectionLoader<E> {
             return false;
         }
 
-        List<E> list;
-
-        Timer.Sample sample = startTimerSample(meterRegistry);
-
-        if (loadFromRepositoryDelegate == null && delegate == null) {
-            list = dataManager.loadList(loadContext);
-        } else {
+        List<E> list = uiObservationSupport.observeDataLoader(this, DataLoaderLifeCycle.LOAD, () -> {
+            if (loadFromRepositoryDelegate == null && delegate == null) {
+                return dataManager.loadList(loadContext);
+            }
             if (loadFromRepositoryDelegate != null) {
-                list = loadFromRepositoryDelegate.apply(
+                return loadFromRepositoryDelegate.apply(
                         JmixDataRepositoryUtils.buildPageRequest(loadContext),
                         JmixDataRepositoryUtils.buildRepositoryContext(loadContext)
                 );
-            } else {
-                list = delegate.apply(loadContext);
             }
-            if (list == null) {
-                return false;
-            }
-        }
+            return delegate.apply(loadContext);
+        });
 
-        DataLoaderMonitoringInfo info = monitoringInfoProvider.apply(this);
-        stopDataLoaderTimerSample(sample, meterRegistry, DataLoaderLifeCycle.LOAD, info);
+        if (list == null) {
+            return false;
+        }
 
         if (dataContext != null) {
             List<E> mergedList = new ArrayList<>(list.size());
@@ -237,26 +227,15 @@ public class CollectionLoaderImpl<E> implements CollectionLoader<E> {
 
     protected boolean sendPreLoadEvent(LoadContext<E> loadContext) {
         PreLoadEvent<E> preLoadEvent = new PreLoadEvent<>(this, loadContext);
-
-        Timer.Sample sample = startTimerSample(meterRegistry);
-
-        events.publish(PreLoadEvent.class, preLoadEvent);
-
-        DataLoaderMonitoringInfo info = monitoringInfoProvider.apply(this);
-        stopDataLoaderTimerSample(sample, meterRegistry, DataLoaderLifeCycle.PRE_LOAD, info);
-
+        uiObservationSupport.observeDataLoader(this, DataLoaderLifeCycle.PRE_LOAD,
+                () -> events.publish(PreLoadEvent.class, preLoadEvent));
         return !preLoadEvent.isLoadPrevented();
     }
 
     protected void sendPostLoadEvent(List<E> entities) {
         PostLoadEvent<E> postLoadEvent = new PostLoadEvent<>(this, entities);
-
-        Timer.Sample sample = startTimerSample(meterRegistry);
-
-        events.publish(PostLoadEvent.class, postLoadEvent);
-
-        DataLoaderMonitoringInfo info = monitoringInfoProvider.apply(this);
-        stopDataLoaderTimerSample(sample, meterRegistry, DataLoaderLifeCycle.POST_LOAD, info);
+        uiObservationSupport.observeDataLoader(this, DataLoaderLifeCycle.POST_LOAD,
+                () -> events.publish(PostLoadEvent.class, postLoadEvent));
     }
 
     @Override

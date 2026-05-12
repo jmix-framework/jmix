@@ -22,17 +22,26 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import io.jmix.flowui.UiProperties
 import io.jmix.flowui.action.TargetAction
 import io.jmix.flowui.kit.action.BaseAction
+import io.jmix.flowui.model.DataLoader
+import io.jmix.flowui.monitoring.DataLoaderLifeCycle
+import io.jmix.flowui.monitoring.DataLoaderMonitoringInfo
 import io.jmix.flowui.observation.UiObservationSupport
 import io.jmix.flowui.view.View
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry
 import io.micrometer.observation.Observation
 import io.micrometer.observation.tck.TestObservationRegistry
 import spock.lang.Specification
 
+import java.util.function.Function
+import java.util.function.Supplier
+
 class UiObservationSupportTest extends Specification {
 
     UiObservationSupport support
+    SimpleMeterRegistry meterRegistry
 
     def setup() {
+        meterRegistry = new SimpleMeterRegistry()
         support = createSupport(true)
     }
 
@@ -195,11 +204,199 @@ class UiObservationSupportTest extends Specification {
         obs == Observation.NOOP
     }
 
-    private UiObservationSupport createSupport(boolean enabled) {
-        def props = Mock(UiProperties) { isUiObservationEnabled() >> enabled }
+    def "data loader observation has lifecycle.name, loader.id and view.id tags"() {
+        given:
+        def info = new DataLoaderMonitoringInfo("orders-view", "ordersDl")
+
+        when:
+        def obs = support.createDataLoaderObservation(info, DataLoaderLifeCycle.LOAD)
+
+        then:
+        lowCardinalityValue(obs, "lifecycle.name") == "load"
+        lowCardinalityValue(obs, "loader.id") == "ordersDl"
+        lowCardinalityValue(obs, "view.id") == "orders-view"
+    }
+
+    def "data loader lifecycle.name reflects the phase"() {
+        given:
+        def info = new DataLoaderMonitoringInfo("v", "dl")
+
+        expect:
+        lowCardinalityValue(support.createDataLoaderObservation(info, phase), "lifecycle.name") == name
+
+        where:
+        phase                         | name
+        DataLoaderLifeCycle.PRE_LOAD  | "preLoad"
+        DataLoaderLifeCycle.LOAD      | "load"
+        DataLoaderLifeCycle.POST_LOAD | "postLoad"
+    }
+
+    def "data loader view.id falls back to N/A when viewId is #scenario"() {
+        given:
+        def info = new DataLoaderMonitoringInfo(viewId, "dl")
+
+        when:
+        def obs = support.createDataLoaderObservation(info, DataLoaderLifeCycle.LOAD)
+
+        then:
+        lowCardinalityValue(obs, "view.id") == "N/A"
+
+        where:
+        scenario | viewId
+        "null"   | null
+        "empty"  | ""
+    }
+
+    def "data loader observation skipped when loaderId is #scenario"() {
+        given:
+        def info = new DataLoaderMonitoringInfo("v", loaderId)
+
+        expect:
+        support.createDataLoaderObservation(info, DataLoaderLifeCycle.LOAD) == Observation.NOOP
+
+        where:
+        scenario     | loaderId
+        "null"       | null
+        "empty"      | ""
+        "whitespace" | "  "
+    }
+
+    def "data loader observation skipped for generated loader id"() {
+        given:
+        def info = new DataLoaderMonitoringInfo("v", "generated_abc123")
+
+        expect:
+        support.createDataLoaderObservation(info, DataLoaderLifeCycle.LOAD) == Observation.NOOP
+    }
+
+    def "data loader observation NOOP when disabled"() {
+        given:
+        def disabled = createSupport(false)
+        def info = new DataLoaderMonitoringInfo("v", "dl")
+
+        expect:
+        disabled.createDataLoaderObservation(info, DataLoaderLifeCycle.LOAD) == Observation.NOOP
+    }
+
+    def "loader-based overload extracts info via monitoringInfoProvider"() {
+        given:
+        def info = new DataLoaderMonitoringInfo("orders-view", "ordersDl")
+        def loader = Mock(DataLoader) {
+            getMonitoringInfoProvider() >> ({ DataLoader dl -> info } as Function)
+        }
+
+        when:
+        def obs = support.createDataLoaderObservation(loader, DataLoaderLifeCycle.LOAD)
+
+        then:
+        lowCardinalityValue(obs, "loader.id") == "ordersDl"
+        lowCardinalityValue(obs, "view.id") == "orders-view"
+    }
+
+    def "observeDataLoader returns supplier value"() {
+        given:
+        def loader = mockLoader("v", "dl")
+
+        expect:
+        support.observeDataLoader(loader, DataLoaderLifeCycle.LOAD, { -> "hello" } as Supplier) == "hello"
+    }
+
+    def "observeDataLoader runs runnable"() {
+        given:
+        def loader = mockLoader("v", "dl")
+        def executed = false
+
+        when:
+        support.observeDataLoader(loader, DataLoaderLifeCycle.LOAD, { -> executed = true } as Runnable)
+
+        then:
+        executed
+    }
+
+    def "legacy Timer recorded with old tags when legacy flag is on"() {
+        given:
+        def loader = mockLoader("orders-view", "ordersDl")
+
+        when:
+        support.observeDataLoader(loader, DataLoaderLifeCycle.LOAD, { -> "x" } as Supplier)
+
+        then:
+        def timer = meterRegistry.find("jmix.ui.data")
+                .tag("view", "orders-view")
+                .tag("dataLoader", "ordersDl")
+                .tag("lifeCycle", "load")
+                .timer()
+        timer != null
+        timer.count() == 1
+    }
+
+    def "legacy Timer is not recorded when legacy flag is off"() {
+        given:
+        def s = createSupport(true, false)
+        def loader = mockLoader("v", "dl")
+
+        when:
+        s.observeDataLoader(loader, DataLoaderLifeCycle.LOAD, { -> "x" } as Supplier)
+
+        then:
+        meterRegistry.find("jmix.ui.data").timer() == null
+    }
+
+    def "legacy Timer recorded even when supplier throws"() {
+        given:
+        def loader = mockLoader("v", "dl")
+
+        when:
+        support.observeDataLoader(loader, DataLoaderLifeCycle.LOAD, { -> throw new RuntimeException("boom") } as Supplier)
+
+        then:
+        thrown(RuntimeException)
+        meterRegistry.find("jmix.ui.data").timer()?.count() == 1
+    }
+
+    def "observeDataLoader rethrows the exact exception object from supplier (legacyTimer=#legacyTimer)"() {
+        given:
+        def s = createSupport(true, legacyTimer)
+        def loader = mockLoader("v", "dl")
+        def boom = new IllegalStateException("boom")
+
+        when:
+        s.observeDataLoader(loader, DataLoaderLifeCycle.LOAD, { -> throw boom } as Supplier)
+
+        then: "the exact same exception instance bubbles up — no swallowing, no wrapping"
+        def caught = thrown(IllegalStateException)
+        caught.is(boom)
+
+        where:
+        legacyTimer << [true, false]
+    }
+
+    def "observeDataLoader runs supplier even when both observation and legacy timer are off"() {
+        given:
+        def s = createSupport(false, false)
+        def loader = mockLoader("v", "dl")
+
+        expect:
+        s.observeDataLoader(loader, DataLoaderLifeCycle.LOAD, { -> "result" } as Supplier) == "result"
+        meterRegistry.find("jmix.ui.data").timer() == null
+    }
+
+    private UiObservationSupport createSupport(boolean observationEnabled, boolean legacyTimerEnabled = true) {
+        def props = Mock(UiProperties) {
+            isUiObservationEnabled() >> observationEnabled
+            isDataLoaderLegacyTimerEnabled() >> legacyTimerEnabled
+        }
         def support = new UiObservationSupport(props)
         support.observationRegistry = TestObservationRegistry.create()
+        support.meterRegistry = meterRegistry
         return support
+    }
+
+    private static DataLoader mockLoader(String viewId, String loaderId) {
+        def info = new DataLoaderMonitoringInfo(viewId, loaderId)
+        return Mock(DataLoader) {
+            getMonitoringInfoProvider() >> ({ DataLoader dl -> info } as Function)
+        }
     }
 
     private static String lowCardinalityValue(Observation observation, String key) {

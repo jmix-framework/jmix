@@ -24,11 +24,21 @@ import io.jmix.flowui.action.TargetAction;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.fragment.Fragment;
 import io.jmix.flowui.kit.action.Action;
+import io.jmix.flowui.model.DataLoader;
+import io.jmix.flowui.monitoring.DataLoaderLifeCycle;
+import io.jmix.flowui.monitoring.DataLoaderMonitoringInfo;
+import io.jmix.flowui.monitoring.UiMonitoring;
 import io.jmix.flowui.view.View;
+import io.jmix.flowui.xml.layout.support.DataComponentsLoaderSupport;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.jspecify.annotations.Nullable;
+
+import java.util.function.Supplier;
 
 /**
  * Support class for observing UI events such as view lifecycle events and action executions.
@@ -47,14 +57,22 @@ public class UiObservationSupport {
     public static final String VIEW_OBSERVATION_NAME = "jmix.ui.views";
     public static final String FRAGMENT_OBSERVATION_NAME = "jmix.ui.fragments";
     public static final String ACTION_OBSERVATION_NAME = "jmix.ui.actions";
+    public static final String DATA_LOADER_OBSERVATION_NAME = "jmix.ui.data";
+
+    protected static final String NOT_AVAILABLE_TAG_VALUE = "N/A";
 
     @Autowired(required = false)
     protected ObservationRegistry observationRegistry;
 
+    @Autowired
+    protected MeterRegistry meterRegistry;
+
     protected boolean observationEnabled;
+    protected boolean dataLoaderLegacyTimerEnabled;
 
     public UiObservationSupport(UiProperties uiProperties) {
         this.observationEnabled = uiProperties.isUiObservationEnabled();
+        this.dataLoaderLegacyTimerEnabled = uiProperties.isDataLoaderLegacyTimerEnabled();
     }
 
     public Observation createViewLifecycleObservation(View<?> view, ComponentEvent<?> viewEvent) {
@@ -101,6 +119,62 @@ public class UiObservationSupport {
         }
 
         return observation;
+    }
+
+    public Observation createDataLoaderObservation(DataLoader loader, DataLoaderLifeCycle lifecycle) {
+        DataLoaderMonitoringInfo info = loader.getMonitoringInfoProvider().apply(loader);
+        return createDataLoaderObservation(info, lifecycle);
+    }
+
+    /**
+     * Records monitoring data for a void {@link DataLoader} lifecycle phase. Always invokes the modern Observation
+     * path; additionally writes the legacy {@code jmix.ui.data} {@link Timer} when
+     * {@link UiProperties#isDataLoaderLegacyTimerEnabled()} is on (default).
+     */
+    public void observeDataLoader(DataLoader loader, DataLoaderLifeCycle phase, Runnable action) {
+        observeDataLoader(loader, phase, () -> {
+            action.run();
+            return null;
+        });
+    }
+
+    /**
+     * Records monitoring data for a value-returning {@link DataLoader} lifecycle phase.
+     *
+     * @see #observeDataLoader(DataLoader, DataLoaderLifeCycle, Runnable)
+     */
+    public <T> T observeDataLoader(DataLoader loader, DataLoaderLifeCycle phase, Supplier<T> action) {
+        DataLoaderMonitoringInfo info = loader.getMonitoringInfoProvider().apply(loader);
+        Observation observation = createDataLoaderObservation(info, phase);
+
+        if (!dataLoaderLegacyTimerEnabled) {
+            return observation.observe(action);
+        }
+        Timer.Sample sample = UiMonitoring.startTimerSample(meterRegistry);
+        try {
+            return observation.observe(action);
+        } finally {
+            UiMonitoring.stopDataLoaderTimerSample(sample, meterRegistry, phase, info);
+        }
+    }
+
+    public Observation createDataLoaderObservation(DataLoaderMonitoringInfo info, DataLoaderLifeCycle lifecycle) {
+        if (!isObservationAvailable()) {
+            return Observation.NOOP;
+        }
+
+        String loaderId = info.loaderId();
+        if (StringUtils.isBlank(loaderId)
+                || loaderId.startsWith(DataComponentsLoaderSupport.GENERATED_PREFIX)) {
+            return Observation.NOOP;
+        }
+
+        String viewId = info.viewId();
+        return Observation.createNotStarted(DATA_LOADER_OBSERVATION_NAME, observationRegistry)
+                .contextualName("data loader lifecycle")
+                .lowCardinalityKeyValue("lifecycle.name", lifecycle.getName())
+                .lowCardinalityKeyValue("loader.id", loaderId)
+                .lowCardinalityKeyValue("view.id", Strings.isNullOrEmpty(viewId) ? NOT_AVAILABLE_TAG_VALUE : viewId);
     }
 
     public Observation createActionExecutionObservation(Action action) {

@@ -26,9 +26,7 @@ import io.jmix.core.repository.JmixDataRepositoryContext;
 import io.jmix.flowui.model.*;
 import io.jmix.flowui.monitoring.DataLoaderLifeCycle;
 import io.jmix.flowui.monitoring.DataLoaderMonitoringInfo;
-import io.jmix.flowui.monitoring.UiMonitoring;
-import io.micrometer.core.instrument.MeterRegistry;
-import io.micrometer.core.instrument.Timer;
+import io.jmix.flowui.observation.UiObservationSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.jspecify.annotations.Nullable;
 
@@ -56,7 +54,7 @@ public class InstanceLoaderImpl<E> implements InstanceLoader<E> {
     @Autowired
     protected Metadata metadata;
     @Autowired
-    protected MeterRegistry meterRegistry;
+    protected UiObservationSupport uiObservationSupport;
 
     protected DataContext dataContext;
     protected InstanceContainer<E> container;
@@ -99,55 +97,37 @@ public class InstanceLoaderImpl<E> implements InstanceLoader<E> {
         if (container == null)
             throw new IllegalStateException("container is null");
 
-        E entity;
-
         LoadContext<E> loadContext = createLoadContext();
 
         if (!needLoad())
             return;
 
-        if (loadFromRepositoryDelegate == null && delegate == null) {
-            if (!sendPreLoadEvent(loadContext)) {
-                return;
+        if (!sendPreLoadEvent(loadContext)) {
+            return;
+        }
+
+        E entity = uiObservationSupport.observeDataLoader(this, DataLoaderLifeCycle.LOAD, () -> {
+            if (loadFromRepositoryDelegate == null && delegate == null) {
+                return dataManager.load(loadContext);
             }
-
-            Timer.Sample sample = UiMonitoring.startTimerSample(meterRegistry);
-
-            entity = dataManager.load(loadContext);
-
-            DataLoaderMonitoringInfo info = monitoringInfoProvider.apply(this);
-            UiMonitoring.stopDataLoaderTimerSample(sample, meterRegistry, DataLoaderLifeCycle.LOAD, info);
-
-            if (entity == null) {
-                throw new EntityAccessException(container.getEntityMetaClass(), entityId);
-            }
-        } else {
-            if (!sendPreLoadEvent(loadContext)) {
-                return;
-            }
-
-            Timer.Sample sample = UiMonitoring.startTimerSample(meterRegistry);
-
             if (loadFromRepositoryDelegate != null) {
-                entity = loadFromRepositoryDelegate.apply(
+                return loadFromRepositoryDelegate.apply(
                                 entityId,
                                 JmixDataRepositoryContext.builder()
                                         .plan(resolveFetchPlan())
                                         .hints(hints)
                                         .build())
                         .orElse(null);
-            } else {
-                entity = delegate.apply(createLoadContext());
             }
+            return delegate.apply(createLoadContext());
+        });
 
-            DataLoaderMonitoringInfo info = monitoringInfoProvider.apply(this);
-            UiMonitoring.stopDataLoaderTimerSample(sample, meterRegistry, DataLoaderLifeCycle.LOAD, info);
-
-            if (entity == null) {
-                return;
+        if (entity == null) {
+            if (loadFromRepositoryDelegate == null && delegate == null) {
+                throw new EntityAccessException(container.getEntityMetaClass(), entityId);
             }
+            return;
         }
-
 
         if (dataContext != null) {
             entity = dataContext.merge(entity, new MergeOptions().setFresh(true));
@@ -199,26 +179,15 @@ public class InstanceLoaderImpl<E> implements InstanceLoader<E> {
 
     protected boolean sendPreLoadEvent(LoadContext<E> loadContext) {
         PreLoadEvent<E> preLoadEvent = new PreLoadEvent<>(this, loadContext);
-
-        Timer.Sample sample = UiMonitoring.startTimerSample(meterRegistry);
-
-        events.publish(PreLoadEvent.class, preLoadEvent);
-
-        DataLoaderMonitoringInfo info = monitoringInfoProvider.apply(this);
-        UiMonitoring.stopDataLoaderTimerSample(sample, meterRegistry, DataLoaderLifeCycle.PRE_LOAD, info);
-
+        uiObservationSupport.observeDataLoader(this, DataLoaderLifeCycle.PRE_LOAD,
+                () -> events.publish(PreLoadEvent.class, preLoadEvent));
         return !preLoadEvent.isLoadPrevented();
     }
 
     protected void sendPostLoadEvent(E entity) {
         PostLoadEvent<E> postLoadEvent = new PostLoadEvent<>(this, entity);
-
-        Timer.Sample sample = UiMonitoring.startTimerSample(meterRegistry);
-
-        events.publish(PostLoadEvent.class, postLoadEvent);
-
-        DataLoaderMonitoringInfo info = monitoringInfoProvider.apply(this);
-        UiMonitoring.stopDataLoaderTimerSample(sample, meterRegistry, DataLoaderLifeCycle.POST_LOAD, info);
+        uiObservationSupport.observeDataLoader(this, DataLoaderLifeCycle.POST_LOAD,
+                () -> events.publish(PostLoadEvent.class, postLoadEvent));
     }
 
     @Override

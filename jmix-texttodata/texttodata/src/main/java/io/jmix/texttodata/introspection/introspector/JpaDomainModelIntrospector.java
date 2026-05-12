@@ -2,8 +2,10 @@ package io.jmix.texttodata.introspection.introspector;
 
 import io.jmix.core.MessageTools;
 import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.texttodata.TextToDataProperties;
 import io.jmix.texttodata.introspection.model.EntityDescriptor;
 import io.jmix.texttodata.introspection.model.EntityPropertyDescriptor;
 import jakarta.annotation.PostConstruct;
@@ -19,6 +21,10 @@ public class JpaDomainModelIntrospector {
     @Autowired
     protected MessageTools messageTools;
     @Autowired
+    protected MetadataTools metadataTools;
+    @Autowired
+    protected TextToDataProperties textToDataProperties;
+    @Autowired
     protected List<MetaPropertyIntrospector> propertyIntrospectors;
 
     protected final Map<String, EntityDescriptor> entityDescriptors = new HashMap<>();
@@ -33,7 +39,9 @@ public class JpaDomainModelIntrospector {
 
         Collection<MetaClass> classes = metadata.getClasses();
         for (MetaClass metaClass : classes) {
-            entityDescriptors.put(metaClass.getName(), introspect(metaClass));
+            if (shouldInclude(metaClass)) {
+                entityDescriptors.put(metaClass.getName(), introspect(metaClass));
+            }
         }
     }
 
@@ -94,5 +102,65 @@ public class JpaDomainModelIntrospector {
     protected boolean isEntityCaptionFallback(MetaClass metaClass, String localizedName) {
         return metaClass.getName().equals(localizedName)
                 || metaClass.getJavaClass().getSimpleName().equals(localizedName);
+    }
+
+    protected boolean shouldInclude(MetaClass metaClass) {
+        if (isExplicitlyExcluded(metaClass)) {
+            return false;
+        }
+
+        if (isExplicitlyIncluded(metaClass)) {
+            return true;
+        }
+
+        if (Boolean.TRUE.equals(textToDataProperties.getExcludeSystemLevelEntities())
+                && metadataTools.isSystemLevel(metaClass)) {
+            return false;
+        }
+
+        if (isDtoEntity(metaClass)) {
+            return false;
+        }
+
+        if (matchesAnyPackagePrefix(metaClass.getJavaClass().getPackageName(), textToDataProperties.getExcludePackages())) {
+            return false;
+        }
+
+        if (!textToDataProperties.getIncludeEntities().isEmpty()
+                || !textToDataProperties.getIncludePackages().isEmpty()) {
+            return matchesEntityName(metaClass, textToDataProperties.getIncludeEntities())
+                    || matchesAnyPackagePrefix(metaClass.getJavaClass().getPackageName(), textToDataProperties.getIncludePackages());
+        }
+
+        return true;
+    }
+
+    protected boolean isExplicitlyIncluded(MetaClass metaClass) {
+        return matchesEntityName(metaClass, textToDataProperties.getIncludeEntities())
+                || matchesAnyPackagePrefix(metaClass.getJavaClass().getPackageName(), textToDataProperties.getIncludePackages());
+    }
+
+    protected boolean isExplicitlyExcluded(MetaClass metaClass) {
+        return matchesEntityName(metaClass, textToDataProperties.getExcludeEntities());
+    }
+
+    protected boolean matchesEntityName(MetaClass metaClass, List<String> entityNames) {
+        return entityNames.stream()
+                .filter(Objects::nonNull)
+                .map(String::trim)
+                .filter(name -> !name.isEmpty())
+                .anyMatch(metaClass.getName()::equals);
+    }
+
+    protected boolean matchesAnyPackagePrefix(String packageName, List<String> packagePrefixes) {
+        return packagePrefixes.stream()
+                .filter(Objects::nonNull)
+                .map(String::trim)
+                .filter(prefix -> !prefix.isEmpty())
+                .anyMatch(prefix -> packageName.equals(prefix) || packageName.startsWith(prefix + "."));
+    }
+
+    protected boolean isDtoEntity(MetaClass metaClass) {
+        return !metadataTools.isJpaEntity(metaClass) && !metadataTools.isJpaEmbeddable(metaClass);
     }
 }

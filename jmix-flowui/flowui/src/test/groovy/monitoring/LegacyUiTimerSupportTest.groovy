@@ -241,7 +241,7 @@ class LegacyUiTimerSupportTest extends Specification {
     }
 
     private DataLoader mockLoader(String viewId, String loaderId) {
-        def info = new DataLoaderMonitoringInfo(viewId, loaderId)
+        def info = new DataLoaderMonitoringInfo(viewId, loaderId, null)
         return Mock(DataLoader) {
             getMonitoringInfoProvider() >> ({ DataLoader dl -> info } as Function)
         }

@@ -97,12 +97,36 @@ public abstract class AbstractDataComponentsHolder implements HasDataComponents 
     public void registerLoader(String id, DataLoader loader) {
         getLoaders().put(id, loader);
 
-        DataLoaderMonitoringInfo monitoringInfo = new DataLoaderMonitoringInfo(getOwnerId(), id);
-        loader.setMonitoringInfoProvider(dl -> monitoringInfo);
+        // Lazy provider: viewId and fragmentId are resolved on each monitoring event, not at
+        // registration time. This is required for fragment-owned loaders — at the moment of
+        // registration the fragment is not yet attached to its host, so the enclosing view is
+        // not yet reachable via the parent chain.
+        loader.setMonitoringInfoProvider(dl ->
+                new DataLoaderMonitoringInfo(resolveViewId(), id, resolveFragmentId()));
     }
 
     @Nullable
     protected abstract String getOwnerId();
+
+    /**
+     * @return id of the enclosing view, or {@code null} if not resolvable. Default delegates to
+     * {@link #getOwnerId()} so that subclasses overriding {@code getOwnerId()} keep populating
+     * {@code view.id} with no migration. Override this in new code when the enclosing view id
+     * cannot be derived from {@code getOwnerId()}.
+     */
+    @Nullable
+    protected String resolveViewId() {
+        return getOwnerId();
+    }
+
+    /**
+     * @return id of the enclosing fragment when the loader is owned by a fragment, {@code null}
+     * otherwise. Default is {@code null}; override when the holder is fragment-scoped.
+     */
+    @Nullable
+    protected String resolveFragmentId() {
+        return null;
+    }
 
     @Override
     public void loadAll() {

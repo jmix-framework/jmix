@@ -16,18 +16,24 @@
 
 package io.jmix.flowui.monitoring;
 
+import io.jmix.flowui.fragment.Fragment;
 import io.jmix.flowui.model.DataLoader;
+import io.jmix.flowui.view.View;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Static info about {@link DataLoader} that will be used as monitoring tags.
+ * Info about {@link DataLoader} that will be used as monitoring tags.
  *
- * @param viewId   id of the view containing target data loader
- * @param loaderId id of the target data loader
+ * @param viewId     id of the enclosing {@link View}, or {@code null} if not resolvable
+ * @param loaderId   id of the target data loader
+ * @param fragmentId id of the enclosing {@link Fragment} when the loader lives inside a fragment,
+ *                   {@code null} for loaders attached directly to a view
  */
-public record DataLoaderMonitoringInfo(@Nullable String viewId, @Nullable String loaderId) {
+public record DataLoaderMonitoringInfo(@Nullable String viewId,
+                                       @Nullable String loaderId,
+                                       @Nullable String fragmentId) {
 
-    private static final DataLoaderMonitoringInfo EMPTY = new DataLoaderMonitoringInfo(null, null);
+    private static final DataLoaderMonitoringInfo EMPTY = new DataLoaderMonitoringInfo(null, null, null);
 
     /**
      * Returns stub objects with null values. Monitoring records will not be created based on this info.

@@ -16,11 +16,14 @@
 
 package io.jmix.flowui.fragment.impl;
 
+import io.jmix.flowui.component.UiComponentUtils;
+import io.jmix.flowui.fragment.Fragment;
 import io.jmix.flowui.fragment.FragmentData;
 import io.jmix.flowui.model.impl.AbstractDataComponentsHolder;
+import io.jmix.flowui.view.View;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
-import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 /**
@@ -32,6 +35,7 @@ import org.springframework.stereotype.Component;
 public class FragmentDataImpl extends AbstractDataComponentsHolder implements FragmentData {
 
     protected String fragmentId;
+    protected Fragment<?> hostFragment;
 
     @Nullable
     @Override
@@ -44,9 +48,30 @@ public class FragmentDataImpl extends AbstractDataComponentsHolder implements Fr
         this.fragmentId = fragmentId;
     }
 
+    @Override
+    public void setHostFragment(Fragment<?> hostFragment) {
+        this.hostFragment = hostFragment;
+    }
+
     @Nullable
     @Override
     protected String getOwnerId() {
+        return getFragmentId();
+    }
+
+    @Nullable
+    @Override
+    protected String resolveViewId() {
+        if (hostFragment == null) {
+            return null;
+        }
+        View<?> view = UiComponentUtils.findView(hostFragment);
+        return view != null ? view.getId().orElse(null) : null;
+    }
+
+    @Nullable
+    @Override
+    protected String resolveFragmentId() {
         return getFragmentId();
     }
 }

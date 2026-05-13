@@ -119,6 +119,10 @@ public class UiObservationSupport {
             observation.lowCardinalityKeyValue("fragment.id", observationInfo.fragmentId());
         }
 
+        if (!Strings.isNullOrEmpty(observationInfo.viewId())) {
+            observation.lowCardinalityKeyValue("view.id", observationInfo.viewId());
+        }
+
         return observation;
     }
 

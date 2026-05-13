@@ -94,7 +94,7 @@ public class FragmentsImpl implements Fragments {
         ComponentLoader.Context hostContext = createHostLoaderContext(parent);
 
         FragmentLifecycleObservationInfo observationInfo =
-                new FragmentLifecycleObservationInfo(fragmentId, fragmentClass.getName());
+                new FragmentLifecycleObservationInfo(parent, fragmentId, fragmentClass.getName());
         F fragment = uiObservationSupport.observeFragmentLifecycle(
                 observationInfo, FragmentLifecycle.CREATE, () -> uiComponents.create(fragmentClass));
 

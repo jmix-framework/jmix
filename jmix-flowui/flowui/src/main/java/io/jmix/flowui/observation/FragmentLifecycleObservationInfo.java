@@ -16,7 +16,11 @@
 
 package io.jmix.flowui.observation;
 
+import com.vaadin.flow.component.Component;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.fragment.Fragment;
+import io.jmix.flowui.fragment.FragmentOwner;
+import io.jmix.flowui.view.View;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -24,10 +28,27 @@ import org.jspecify.annotations.Nullable;
  *
  * @param fragmentId    id of the fragment
  * @param fragmentClass FQN of the target fragment class
+ * @param viewId        id of the enclosing {@link View}, or {@code null} if the fragment is not attached
+ *                      to any view (e.g. created standalone)
  */
-public record FragmentLifecycleObservationInfo(@Nullable String fragmentId, String fragmentClass) {
+public record FragmentLifecycleObservationInfo(@Nullable String fragmentId,
+                                               String fragmentClass,
+                                               @Nullable String viewId) {
 
     public FragmentLifecycleObservationInfo(Fragment<?> fragment) {
-        this(fragment.getId().orElse(null), fragment.getClass().getName());
+        this(fragment.getId().orElse(null), fragment.getClass().getName(), resolveViewId(fragment));
+    }
+
+    public FragmentLifecycleObservationInfo(FragmentOwner parent,
+                                            @Nullable String fragmentId,
+                                            String fragmentClass) {
+        this(fragmentId, fragmentClass,
+                parent instanceof Component component ? resolveViewId(component) : null);
+    }
+
+    @Nullable
+    private static String resolveViewId(Component component) {
+        View<?> view = UiComponentUtils.findView(component);
+        return view != null ? view.getId().orElse(null) : null;
     }
 }

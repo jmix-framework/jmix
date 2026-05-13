@@ -1,3 +1,6 @@
+Repair attempt:
+%s
+
 Original user request:
 %s
 
@@ -10,5 +13,9 @@ Previous generated result:
 Validation errors:
 %s
 
-Repair the result so that it uses only valid metadata from the provided schema.
+Additional repair guidance:
+%s
+
+Repair the result so that it uses only valid metadata from the provided schema and fixes the listed validation errors.
 Preserve the original intent as much as possible.
+Return exactly one JSON object and no markdown.

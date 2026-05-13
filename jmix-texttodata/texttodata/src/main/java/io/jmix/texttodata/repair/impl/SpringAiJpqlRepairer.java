@@ -30,6 +30,9 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 public class SpringAiJpqlRepairer implements JpqlRepairer, InitializingBean {
 
     @Autowired
@@ -52,10 +55,12 @@ public class SpringAiJpqlRepairer implements JpqlRepairer, InitializingBean {
     public GeneratedJpqlResult repair(JpqlRepairRequest request) {
         String repairPrompt = jpqlRepairerPromptProvider.get();
         String formattedPrompt = repairPrompt.formatted(
+                request.getAttempt(),
                 request.getGenerationRequest().getUserText(),
                 request.getGenerationRequest().getPromptContext(),
                 toJson(request.getGeneratedJpqlResult()),
-                formatValidationIssues(request.getValidationResult().getIssues()));
+                formatValidationIssues(request.getValidationResult().getIssues()),
+                formatRepairGuidance(request.getValidationResult().getIssues()));
 
         return promptExecutor.executePrompt(formattedPrompt);
     }
@@ -70,6 +75,45 @@ public class SpringAiJpqlRepairer implements JpqlRepairer, InitializingBean {
                     .append(issue.getCode())
                     .append(": ")
                     .append(issue.getMessage());
+        }
+        return builder.toString();
+    }
+
+    protected String formatRepairGuidance(java.util.List<JpqlValidationIssue> issues) {
+        Set<String> guidance = new LinkedHashSet<>();
+        guidance.add("Keep the same JSON contract as the previous result.");
+
+        for (JpqlValidationIssue issue : issues) {
+            switch (issue.getCode()) {
+                case "jpql.sqlPagination" ->
+                        guidance.add("Remove LIMIT and OFFSET from JPQL. If the user asked for a row limit, mention in warnings that pagination or max results must be applied by the caller.");
+                case "jpql.sqlDateFunction" ->
+                        guidance.add("Remove SQL-specific date arithmetic and vendor functions. Use JPQL-compatible constructs only, or named parameters if the date range cannot be expressed directly in JPQL.");
+                case "jpql.currentFunctionParentheses" ->
+                        guidance.add("Use CURRENT_DATE, CURRENT_TIME, and CURRENT_TIMESTAMP without parentheses.");
+                case "jpql.syntax.invalid" ->
+                        guidance.add("Rewrite the JPQL into valid JPQL syntax only. Do not keep SQL keywords or malformed JPQL fragments.");
+                case "propertyPath.invalid" ->
+                        guidance.add("Replace invalid property paths with valid paths from the provided schema only.");
+                case "rootEntity.unknown", "usedEntity.unknown" ->
+                        guidance.add("Use only entity names that are present in the provided schema.");
+                case "parameter.missingInDto" ->
+                        guidance.add("Ensure every named JPQL parameter is declared in the parameters array.");
+                case "parameter.unusedInJpql" ->
+                        guidance.add("Remove parameters that are not used in the JPQL text.");
+                case "jpql.notSelect", "jpql.writeOperation" ->
+                        guidance.add("Return a read-only select JPQL query only.");
+                default -> {
+                }
+            }
+        }
+
+        StringBuilder builder = new StringBuilder();
+        for (String line : guidance) {
+            if (!builder.isEmpty()) {
+                builder.append('\n');
+            }
+            builder.append("- ").append(line);
         }
         return builder.toString();
     }

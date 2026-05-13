@@ -21,6 +21,7 @@ archivesBaseName = 'jmix-texttodata'
 
 dependencies {
     api project(":core")
+    compileOnly project(":data")
 
     implementation platform('org.springframework.ai:spring-ai-bom:2.0.0-M6')
     implementation 'org.springframework.ai:spring-ai-client-chat'
@@ -32,6 +33,7 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api'
     testImplementation 'org.springframework:spring-test'
     testImplementation project(':framework-test-support')
+    testImplementation project(':data')
 
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'

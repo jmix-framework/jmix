@@ -33,7 +33,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = TextToDataTestConfiguration.class)
+@ContextConfiguration(classes = {TextToDataTestConfiguration.class})
 class JpqlValidationServiceTest {
 
     @Autowired
@@ -138,5 +138,64 @@ class JpqlValidationServiceTest {
         assertFalse(validationResult.isValid());
         assertTrue(validationResult.getIssues().stream().anyMatch(issue -> issue.getCode().equals("parameter.missingInDto")));
         assertTrue(validationResult.getIssues().stream().anyMatch(issue -> issue.getCode().equals("parameter.unusedInJpql")));
+    }
+
+    @Test
+    @DisplayName("Rejects SQL-style pagination and date functions")
+    void testRejectsCommonNonJpqlConstructs() {
+        GeneratedJpqlResult result = new GeneratedJpqlResult(
+                "select e from textdt_Order e where e.date >= DATE_SUB(CURRENT_DATE(), 1, 'month') limit :limit",
+                "textdt_Order",
+                List.of(new GeneratedJpqlParameter("limit", "Integer", 10)),
+                List.of("textdt_Order"),
+                List.of("date"),
+                "Invalid SQL constructs in JPQL",
+                List.of()
+        );
+
+        JpqlValidationResult validationResult = jpqlValidationService.validate(result);
+
+        assertFalse(validationResult.isValid());
+        assertTrue(validationResult.getIssues().stream().anyMatch(issue -> issue.getCode().equals("jpql.sqlPagination")));
+        assertTrue(validationResult.getIssues().stream().anyMatch(issue -> issue.getCode().equals("jpql.sqlDateFunction")));
+    }
+
+    @Test
+    @DisplayName("Rejects current JPQL functions with parentheses")
+    void testRejectsCurrentFunctionsWithParentheses() {
+        GeneratedJpqlResult result = new GeneratedJpqlResult(
+                "select e from textdt_Order e where e.date >= CURRENT_DATE()",
+                "textdt_Order",
+                List.of(),
+                List.of("textdt_Order"),
+                List.of("date"),
+                "Uses CURRENT_DATE with parentheses",
+                List.of()
+        );
+
+        JpqlValidationResult validationResult = jpqlValidationService.validate(result);
+
+        assertFalse(validationResult.isValid());
+        assertTrue(validationResult.getIssues().stream()
+                .anyMatch(issue -> issue.getCode().equals("jpql.currentFunctionParentheses")));
+    }
+
+    @Test
+    @DisplayName("Rejects invalid JPQL syntax when QueryParser integration is available")
+    void testRejectsInvalidJpqlSyntax() {
+        GeneratedJpqlResult result = new GeneratedJpqlResult(
+                "select e from textdt_Order e limit 10",
+                "textdt_Order",
+                List.of(),
+                List.of("textdt_Order"),
+                List.of(),
+                "Invalid JPQL syntax",
+                List.of()
+        );
+
+        JpqlValidationResult validationResult = jpqlValidationService.validate(result);
+
+        assertFalse(validationResult.isValid());
+        assertTrue(validationResult.getIssues().stream().anyMatch(issue -> issue.getCode().equals("jpql.syntax.invalid")));
     }
 }

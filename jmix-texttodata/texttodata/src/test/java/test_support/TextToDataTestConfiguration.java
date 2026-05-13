@@ -19,6 +19,7 @@ package test_support;
 import io.jmix.core.CoreConfiguration;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.annotation.MessageSourceBasenames;
+import io.jmix.data.DataConfiguration;
 import io.jmix.testsupport.config.CommonCoreTestConfiguration;
 import io.jmix.texttodata.TextToDataConfiguration;
 import io.jmix.texttodata.introspection.introspector.JpaDomainModelIntrospector;
@@ -27,7 +28,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 @Configuration
-@Import({CoreConfiguration.class, TextToDataConfiguration.class, CommonCoreTestConfiguration.class})
+@Import({CoreConfiguration.class, TextToDataConfiguration.class, CommonCoreTestConfiguration.class, DataConfiguration.class})
 @JmixModule
 @MessageSourceBasenames("test_support/messages")
 public class TextToDataTestConfiguration {

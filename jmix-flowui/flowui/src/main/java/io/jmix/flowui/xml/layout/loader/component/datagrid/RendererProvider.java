@@ -24,7 +24,7 @@ import io.jmix.flowui.xml.layout.ComponentLoader;
 import org.dom4j.Element;
 
 /**
- * Provides Vaadin renderers for data grid columns loaded from XML.
+ * Provides renderers for data grid columns loaded from XML.
  *
  * @param <R> renderer type
  */

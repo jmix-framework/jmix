@@ -141,7 +141,14 @@ class UserSubstitutionsTest extends SecurityDataSpecification {
         substitutedToken instanceof SubstitutedUserAuthenticationToken
         ((UserDetails) substitutedToken.principal) == user1
         ((UserDetails) substitutedToken.substitutedPrincipal) == user2
-        substitutedToken.authorities.size() == 1 // TODO [SB4] FactorGrantedAuthority is missed after substitution
+        substitutedToken.authorities.size() == 3
+        substitutedToken.authorities.stream()
+                .map { it.authority }
+                .allMatch { authority ->
+                    authority == "ROLE_" + TestDataManagerEntityOperationsRole.NAME
+                            || authority == FactorGrantedAuthority.PASSWORD_AUTHORITY
+                            || authority == "FACTOR_SUBSTITUTION"
+                }
         substitutedToken.authorities[0].authority == "ROLE_" + TestDataManagerEntityOperationsRole.NAME
         substitutedToken.getDetails() == USER_DETAILS
 

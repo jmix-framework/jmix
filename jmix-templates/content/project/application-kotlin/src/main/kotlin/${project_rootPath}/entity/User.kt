@@ -57,16 +57,15 @@ open class User : JmixUserDetails, HasTimeZone {
     var timeZoneId: String? = null
 
     @Transient
-    private var userAuthorities: Collection<GrantedAuthority?>? = null
+    private var userAuthorities: Collection<GrantedAuthority> = emptyList()
 
     override fun getPassword(): String? = password
 
-    override fun getUsername(): String? = username
+    override fun getUsername(): String = username ?: ""
 
-    override fun getAuthorities(): Collection<GrantedAuthority?> =
-            userAuthorities ?: emptyList()
+    override fun getAuthorities(): Collection<GrantedAuthority> = userAuthorities
 
-    override fun setAuthorities(authorities: Collection<GrantedAuthority?>) {
+    override fun setAuthorities(authorities: Collection<GrantedAuthority>) {
         this.userAuthorities = authorities
     }
 

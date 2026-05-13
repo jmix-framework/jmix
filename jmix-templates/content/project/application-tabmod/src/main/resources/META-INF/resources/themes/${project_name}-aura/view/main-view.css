@@ -3,6 +3,60 @@
 :where(:root),
 :where(:host) {
     --vaadin-app-layout-drawer-width: 256px;
+    --aura-app-layout-inset: 0px;
+}
+
+vaadin-app-layout.jmix-main-view-app-layout:not([primary-section='navbar']) {
+    --vaadin-app-layout-navbar-padding-top: var(--aura-app-layout-inset);
+    --vaadin-app-layout-navbar-padding-inline-start: var(--aura-app-layout-inset);
+    --vaadin-app-layout-navbar-padding-inline-end: var(--aura-app-layout-inset);
+    --vaadin-app-layout-navbar-padding-bottom: 0px;
+
+    transition: padding-bottom var(--vaadin-app-layout-transition-duration),
+    padding-inline-start var(--vaadin-app-layout-transition-duration),
+    padding-inline-end var(--vaadin-app-layout-transition-duration);
+}
+
+vaadin-app-layout.jmix-main-view-app-layout[drawer-opened]:not([primary-section='navbar']) {
+    --vaadin-app-layout-navbar-padding-inline-start: 0px;
+}
+
+vaadin-app-layout.jmix-main-view-app-layout:not([primary-section='navbar'])::part(navbar) {
+    transition: inset-inline-start var(--vaadin-app-layout-transition-duration),
+    padding var(--vaadin-app-layout-transition-duration);
+}
+
+vaadin-app-layout.jmix-main-view-app-layout[has-navbar]:not([primary-section='navbar']) > :nth-child(1 of :not([slot])):nth-last-child(1 of :not([slot])) {
+    border-top-width: 0;
+    border-start-start-radius: 0;
+    border-start-end-radius: 0;
+}
+
+vaadin-app-layout.jmix-main-view-app-layout[has-navbar][has-drawer][drawer-opened]:not([overlay]):not([primary-section='navbar']) > :nth-child(1 of :not([slot])):nth-last-child(1 of :not([slot])) {
+    border-start-start-radius: 0;
+}
+
+vaadin-app-layout.jmix-main-view-app-layout:not([primary-section='navbar']) .jmix-main-view-header {
+    background: linear-gradient(var(--aura-surface-color), var(--aura-surface-color)), var(--aura-app-background);
+    background-clip: padding-box;
+    background-origin: border-box;
+
+    border: var(--aura-app-layout-border-width) solid var(--vaadin-border-color-secondary);
+    border-top-width: min(var(--aura-app-layout-inset), var(--aura-app-layout-border-width));
+    border-inline-width: min(var(--aura-app-layout-inset), var(--aura-app-layout-border-width));
+    border-bottom-width: 1px;
+    border-start-start-radius: var(--_app-layout-radius);
+    border-start-end-radius: var(--_app-layout-radius);
+
+    padding: var(--vaadin-padding-s) var(--vaadin-padding-m);
+}
+
+vaadin-app-layout.jmix-main-view-app-layout:not([primary-section='navbar'])::part(navbar-bottom) {
+    border-top: 1px solid var(--vaadin-border-color-secondary);
+}
+
+vaadin-app-layout.jmix-main-view-app-layout[has-drawer][drawer-opened]:not([overlay]):not([primary-section='navbar']) > .jmix-main-view-header {
+    border-inline-start-width: var(--aura-app-layout-border-width);
 }
 
 .jmix-main-view-header {
@@ -11,10 +65,6 @@
     width: 100%;
     box-sizing: border-box;
     gap: var(--vaadin-gap-m);
-}
-
-vaadin-drawer-toggle.jmix-main-view-drawer-toggle:not([theme]) {
-    color: var(--vaadin-text-color-secondary);
 }
 
 .jmix-main-view-title {

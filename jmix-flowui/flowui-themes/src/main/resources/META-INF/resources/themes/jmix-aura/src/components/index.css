@@ -42,6 +42,7 @@
 @import './jmix-side-panel-layout-closer.css';
 @import './jmix-view-layout.css';
 
+@import './vaadin-details.css';
 @import './vaadin-form-layout.css';
 @import './vaadin-grid.css';
 @import './vaadin-notification-card.css';

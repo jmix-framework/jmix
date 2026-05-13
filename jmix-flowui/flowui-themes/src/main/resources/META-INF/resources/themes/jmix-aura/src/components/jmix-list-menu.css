@@ -34,8 +34,13 @@
 }
 
 .jmix-list-menu .jmix-menubar-item {
-  padding: var(--vaadin-padding-s) 0;
+  padding: var(--vaadin-padding-xs) 0;
   margin: 0;
+}
+
+.jmix-list-menu .jmix-menubar-item::part(content) {
+  margin-inline-start: 0;
+  padding: 0;
 }
 
 .jmix-list-menu .jmix-menubar-item vaadin-details-summary {

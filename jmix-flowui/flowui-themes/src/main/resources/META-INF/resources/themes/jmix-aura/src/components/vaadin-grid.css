@@ -1,3 +1,46 @@
+:where(:root),
+:where(:host) {
+  --_grid-border-radius: var(--vaadin-grid-border-radius, var(--vaadin-radius-m));
+}
+
+/* Header */
+
+vaadin-grid::part(first-header-row):after {
+  border-start-start-radius: var(--_grid-border-radius);
+}
+
+vaadin-grid:not([overflow~='bottom']):not([overflow~='top'])::part(first-header-row):after {
+  border-start-end-radius: var(--_grid-border-radius);
+}
+
+vaadin-grid::part(first-header-row-cell first-column-cell):after {
+  border-start-start-radius: var(--_grid-border-radius);
+}
+
+vaadin-grid:not([overflow~='bottom']):not([overflow~='top'])::part(first-header-row-cell last-column-cell):after {
+  border-start-end-radius: var(--_grid-border-radius);
+}
+
+/* Footer */
+
+vaadin-grid:not([overflow~='start']):not([overflow~='end'])::part(last-footer-row):after {
+  border-end-start-radius: var(--_grid-border-radius);
+}
+
+vaadin-grid:not([overflow])::part(last-footer-row):after {
+  border-end-end-radius: var(--_grid-border-radius);
+}
+
+vaadin-grid:not([overflow~='start']):not([overflow~='end'])::part(last-footer-row-cell first-column-cell):after {
+  border-end-start-radius: var(--_grid-border-radius);
+}
+
+vaadin-grid:not([overflow])::part(last-footer-row-cell last-column-cell):after {
+  border-end-end-radius: var(--_grid-border-radius);
+}
+
+/* Theme Variants */
+
 vaadin-grid[theme~='no-header']::part(header-cell) {
   display: none;
 }

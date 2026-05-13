@@ -4,6 +4,7 @@ import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.details.Details;
+import com.vaadin.flow.component.details.DetailsVariant;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.shared.Registration;
@@ -80,6 +81,7 @@ public class RoleFilter extends Composite<Details> implements InitializingBean {
     protected void initRootComponent() {
         getContent().setSummaryText(messages.getMessage(RoleFilter.class, "summaryText"));
         getContent().setWidthFull();
+        getContent().addThemeVariants(DetailsVariant.AURA_NO_PADDING);
         getContent().add(layout);
     }
 

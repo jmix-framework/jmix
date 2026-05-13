@@ -83,10 +83,11 @@ public class SpringAiJpqlRepairer implements JpqlRepairer, InitializingBean {
         Set<String> guidance = new LinkedHashSet<>();
         guidance.add("Keep the same JSON contract as the previous result.");
 
+        // TODO: pinyazhin, make extendable?
         for (JpqlValidationIssue issue : issues) {
             switch (issue.getCode()) {
                 case "jpql.sqlPagination" ->
-                        guidance.add("Remove LIMIT and OFFSET from JPQL. If the user asked for a row limit, mention in warnings that pagination or max results must be applied by the caller.");
+                        guidance.add("Remove LIMIT and OFFSET from JPQL and move them into maxResults and firstResult when the intent requires pagination.");
                 case "jpql.sqlDateFunction" ->
                         guidance.add("Remove SQL-specific date arithmetic and vendor functions. Use JPQL-compatible constructs only, or named parameters if the date range cannot be expressed directly in JPQL.");
                 case "jpql.currentFunctionParentheses" ->

@@ -57,7 +57,9 @@ class SpringAiJpqlGeneratorTest {
                   "usedEntities": ["textdt_Order", "textdt_Customer"],
                   "usedPropertyPaths": ["customer.name"],
                   "explanation": "Find orders by customer name",
-                  "warnings": ["Customer and counterparty may both match"]
+                  "warnings": ["Customer and counterparty may both match"],
+                  "maxResults": 10,
+                  "firstResult": 5
                 }
                 """;
 
@@ -74,6 +76,8 @@ class SpringAiJpqlGeneratorTest {
         assertEquals(1, result.getParameters().size());
         assertEquals("customer.name", result.getUsedPropertyPaths().get(0));
         assertTrue(result.getWarnings().contains("Customer and counterparty may both match"));
+        assertEquals(10, result.getMaxResults());
+        assertEquals(5, result.getFirstResult());
     }
 
     @Test

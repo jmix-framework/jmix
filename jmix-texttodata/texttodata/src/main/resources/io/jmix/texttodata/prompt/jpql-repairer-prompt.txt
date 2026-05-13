@@ -17,5 +17,6 @@ Additional repair guidance:
 %s
 
 Repair the result so that it uses only valid metadata from the provided schema and fixes the listed validation errors.
+Preserve execution options such as maxResults and firstResult when they are relevant.
 Preserve the original intent as much as possible.
 Return exactly one JSON object and no markdown.

@@ -52,7 +52,8 @@ public class SpringAiPromptExecutor {
     }
 
     public GeneratedJpqlResult executePrompt(String generatedPrompt) {
-        log.debug("Prompt: {}", generatedPrompt);
+        log.debug("'-------------'\nPrompt: {}", generatedPrompt);
+        log.debug("\n\nSystem prompt: {}", systemPrompt);
 
         String content = chatClient.prompt()
                 .system(systemPrompt)
@@ -64,7 +65,7 @@ public class SpringAiPromptExecutor {
             throw new IllegalStateException("LLM returned an empty response");
         }
 
-        log.debug("Returned content: {}", content);
+        log.debug("\n\nReturned content: {}", content);
 
         SpringAiGeneratedJpqlPayload payload;
         try {
@@ -93,7 +94,9 @@ public class SpringAiPromptExecutor {
                 payload.getUsedEntities() == null ? Collections.emptyList() : payload.getUsedEntities(),
                 payload.getUsedPropertyPaths() == null ? Collections.emptyList() : payload.getUsedPropertyPaths(),
                 payload.getExplanation(),
-                payload.getWarnings() == null ? Collections.emptyList() : payload.getWarnings()
+                payload.getWarnings() == null ? Collections.emptyList() : payload.getWarnings(),
+                payload.getMaxResults(),
+                payload.getFirstResult()
         );
     }
 

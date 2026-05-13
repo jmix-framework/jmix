@@ -59,6 +59,7 @@ public class JpqlValidationService {
         validateJpqlPresence(generatedJpqlResult, issues);
         validateReadOnlyQuery(generatedJpqlResult, issues);
         validateCommonNonJpqlConstructs(generatedJpqlResult, issues);
+        validateExecutionOptions(generatedJpqlResult, issues);
         validateJpqlSyntax(generatedJpqlResult, issues);
         validateRootEntity(generatedJpqlResult, issues);
         validateUsedEntities(generatedJpqlResult, issues);
@@ -136,6 +137,20 @@ public class JpqlValidationService {
             Throwable cause = e.getCause() != null ? e.getCause() : e;
             issues.add(new JpqlValidationIssue("jpql.syntax.invalid",
                     "Invalid JPQL syntax: " + cause.getMessage()));
+        }
+    }
+
+    protected void validateExecutionOptions(GeneratedJpqlResult generatedJpqlResult, List<JpqlValidationIssue> issues) {
+        Integer maxResults = generatedJpqlResult.getMaxResults();
+        if (maxResults != null && maxResults <= 0) {
+            issues.add(new JpqlValidationIssue("maxResults.invalid",
+                    "maxResults must be greater than zero"));
+        }
+
+        Integer firstResult = generatedJpqlResult.getFirstResult();
+        if (firstResult != null && firstResult < 0) {
+            issues.add(new JpqlValidationIssue("firstResult.invalid",
+                    "firstResult must be zero or greater"));
         }
     }
 

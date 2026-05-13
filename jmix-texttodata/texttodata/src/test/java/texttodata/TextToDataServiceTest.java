@@ -32,13 +32,14 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import test_support.TextToDataTestConfiguration;
+import texttodata.test_support.TextToDataServiceTestConfiguration;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {TextToDataTestConfiguration.class, TextToDataServiceTest.TestConfiguration.class})
+@ContextConfiguration(classes = {TextToDataTestConfiguration.class, TextToDataServiceTestConfiguration.class})
 class TextToDataServiceTest {
 
     @Autowired
@@ -85,49 +86,14 @@ class TextToDataServiceTest {
                 .anyMatch(issue -> issue.getCode().equals("propertyPath.invalid")));
     }
 
-    @Configuration
-    static class TestConfiguration {
+    @Test
+    @DisplayName("Normalizes pagination into execution options")
+    void testNormalizesPaginationIntoExecutionOptions() {
+        TextToDataResult result = textToDataService.generateJpql("orders with limit");
 
-        @Bean
-        JpqlGenerator testTextToJpqlGenerator() {
-            return request -> isInvalidRequest(request)
-                    ? invalidResult()
-                    : validResult();
-        }
-
-        @Bean
-        JpqlRepairer testTextToJpqlRepairer() {
-            return request -> request.getGenerationRequest().getUserText().contains("forever")
-                    ? invalidResult()
-                    : validResult();
-        }
-
-        protected boolean isInvalidRequest(JpqlGenerationRequest request) {
-            return request.getUserText().contains("invalid");
-        }
-
-        protected GeneratedJpqlResult validResult() {
-            return new GeneratedJpqlResult(
-                    "select e from textdt_Order e where e.customer.name like :customerName",
-                    "textdt_Order",
-                    List.of(new GeneratedJpqlParameter("customerName", "String", "%Acme%")),
-                    List.of("textdt_Order", "textdt_Customer"),
-                    List.of("customer.name"),
-                    "Valid test result",
-                    List.of()
-            );
-        }
-
-        protected GeneratedJpqlResult invalidResult() {
-            return new GeneratedJpqlResult(
-                    "select e from textdt_Order e where e.customer.fullTitle like :customerName",
-                    "textdt_Order",
-                    List.of(new GeneratedJpqlParameter("customerName", "String", "%Acme%")),
-                    List.of("textdt_Order", "textdt_Customer"),
-                    List.of("customer.fullTitle"),
-                    "Invalid test result",
-                    List.of()
-            );
-        }
+        assertTrue(result.isValid());
+        assertEquals("select e from textdt_Order e", result.getGeneratedJpqlResult().getJpql());
+        assertEquals(10, result.getMaxResults());
+        assertEquals(5, result.getFirstResult());
     }
 }

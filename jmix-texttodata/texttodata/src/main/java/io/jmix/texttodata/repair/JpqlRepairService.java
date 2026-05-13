@@ -19,6 +19,7 @@ package io.jmix.texttodata.repair;
 import io.jmix.texttodata.TextToDataProperties;
 import io.jmix.texttodata.generation.GeneratedJpqlResult;
 import io.jmix.texttodata.generation.JpqlGenerationRequest;
+import io.jmix.texttodata.postprocess.JpqlPostProcessingService;
 import io.jmix.texttodata.validation.JpqlValidationResult;
 import io.jmix.texttodata.validation.JpqlValidationService;
 import org.springframework.beans.factory.ObjectProvider;
@@ -33,6 +34,9 @@ public class JpqlRepairService {
 
     @Autowired
     protected JpqlValidationService jpqlValidationService;
+
+    @Autowired
+    protected JpqlPostProcessingService jpqlPostProcessingService;
 
     @Autowired
     protected ObjectProvider<JpqlRepairer> jpqlRepairerProvider;
@@ -66,7 +70,7 @@ public class JpqlRepairService {
                 return new JpqlRepairResult(currentResult, currentValidation, attempt, true);
             }
 
-            currentResult = repairedResult;
+            currentResult = jpqlPostProcessingService.process(repairedResult).getGeneratedJpqlResult();
             currentValidation = jpqlValidationService.validate(currentResult);
 
             if (currentValidation.isValid()) {

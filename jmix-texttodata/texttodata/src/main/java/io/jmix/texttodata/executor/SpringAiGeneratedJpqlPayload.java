@@ -27,6 +27,8 @@ public class SpringAiGeneratedJpqlPayload {
     protected List<String> usedPropertyPaths;
     protected String explanation;
     protected List<String> warnings;
+    protected Integer maxResults;
+    protected Integer firstResult;
 
     public String getJpql() {
         return jpql;
@@ -82,5 +84,21 @@ public class SpringAiGeneratedJpqlPayload {
 
     public void setWarnings(List<String> warnings) {
         this.warnings = warnings;
+    }
+
+    public Integer getMaxResults() {
+        return maxResults;
+    }
+
+    public void setMaxResults(Integer maxResults) {
+        this.maxResults = maxResults;
+    }
+
+    public Integer getFirstResult() {
+        return firstResult;
+    }
+
+    public void setFirstResult(Integer firstResult) {
+        this.firstResult = firstResult;
     }
 }

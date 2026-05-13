@@ -19,6 +19,8 @@ package io.jmix.texttodata;
 import io.jmix.texttodata.generation.GeneratedJpqlResult;
 import io.jmix.texttodata.generation.JpqlGenerationRequest;
 import io.jmix.texttodata.generation.JpqlGenerationService;
+import io.jmix.texttodata.postprocess.JpqlPostProcessingService;
+import io.jmix.texttodata.postprocess.PostProcessedResult;
 import io.jmix.texttodata.repair.JpqlRepairResult;
 import io.jmix.texttodata.repair.JpqlRepairService;
 import io.jmix.texttodata.validation.JpqlValidationResult;
@@ -36,21 +38,33 @@ public class TextToDataService {
     protected JpqlValidationService jpqlValidationService;
 
     @Autowired
+    protected JpqlPostProcessingService jpqlPostProcessingService;
+
+    @Autowired
     protected JpqlRepairService jpqlRepairService;
 
     public TextToDataResult generateJpql(String userText) {
+        // Generate request and call LLM
         JpqlGenerationRequest generationRequest = jpqlGenerationService.prepareRequest(userText);
-
         GeneratedJpqlResult generatedJpqlResult = jpqlGenerationService.generate(generationRequest);
 
-        JpqlValidationResult validationResult = jpqlValidationService.validate(generatedJpqlResult);
+        // Postprocess generated JPQL (parameters, pagination, etc.)
+        PostProcessedResult postProcessedResult = jpqlPostProcessingService.process(generatedJpqlResult);
 
+        // Validate result
+        JpqlValidationResult validationResult = jpqlValidationService.validate(postProcessedResult.getGeneratedJpqlResult());
+
+        // Try to "repair" JPQL if needed (requires LLM call)
         JpqlRepairResult repairResult = jpqlRepairService.repairIfNeeded(
-                generationRequest, generatedJpqlResult, validationResult);
+                generationRequest, postProcessedResult.getGeneratedJpqlResult(), validationResult);
+
+        // Postprocess generated JPQL (parameters, pagination, etc.)
+        PostProcessedResult repairedPostProcessedResult = jpqlPostProcessingService.process(repairResult.getGeneratedJpqlResult());
 
         return new TextToDataResult(
                 generationRequest,
-                repairResult.getGeneratedJpqlResult(),
+                repairedPostProcessedResult.getGeneratedJpqlResult(),
+                repairedPostProcessedResult,
                 repairResult.getValidationResult(),
                 repairResult.getRepairAttempts(),
                 repairResult.isRepaired()

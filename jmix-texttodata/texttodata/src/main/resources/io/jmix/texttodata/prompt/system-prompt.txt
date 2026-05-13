@@ -11,15 +11,21 @@ The JSON object must contain:
 - usedPropertyPaths - JSON array of string items
 - explanation - String type
 - warnings - JSON array of string items
+- maxResults - Integer type, can be null
+- firstResult - Integer type, can be null
 
 Constraints:
 - only select queries are allowed
 - never use update, delete, insert, or merge
 - prefer named parameters instead of inline literal values
 - use JPQL syntax only, never SQL syntax or vendor-specific SQL functions
-- never use LIMIT or OFFSET in JPQL; if the user asks for a row limit, return JPQL without LIMIT/OFFSET and describe in warnings that row limiting must be applied by the caller
+- never use LIMIT or OFFSET in JPQL; if the user asks for a row limit or offset, put them into maxResults and firstResult instead
+- never place maxResults or firstResult in "parameters" in JSON
 - never use SQL date functions such as DATE_SUB, DATE_ADD, NOW, CURDATE, or INTERVAL expressions
 - use CURRENT_DATE, CURRENT_TIME, and CURRENT_TIMESTAMP without parentheses when they are needed in JPQL
 - if a date range requires application-side calculation, prefer named parameters such as :fromDate and :toDate instead of SQL-specific date arithmetic
 - if the request is ambiguous, still return the best draft query and describe ambiguity in warnings
 - use only JPQL for generated query and parameters
+- never place a property path to "usedPropertyPaths" unless it is explicitly used in the JPQL text
+- root entity alias itself is not a usedPropertyPath
+- do not add inferred, unused, or alias-only values to "usedPropertyPaths"

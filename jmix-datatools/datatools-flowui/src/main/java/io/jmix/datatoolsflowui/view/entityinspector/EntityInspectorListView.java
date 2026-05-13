@@ -24,14 +24,13 @@ import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.formlayout.FormLayout;
-import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.select.Select;
-import com.vaadin.flow.data.selection.SelectionEvent;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.*;
+import io.jmix.core.accesscontext.InMemoryCrudEntityContext;
 import io.jmix.core.common.datastruct.Pair;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.impl.importexport.EntityImportPlanJsonBuilder;
@@ -39,6 +38,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Range;
 import io.jmix.core.metamodel.model.Session;
+import io.jmix.core.security.EntityOp;
 import io.jmix.data.PersistenceHints;
 import io.jmix.datatools.EntityRestore;
 import io.jmix.datatoolsflowui.DatatoolsUiProperties;
@@ -324,7 +324,6 @@ public class EntityInspectorListView extends StandardListView<Object> {
                 entitiesGenericFilter
         );
 
-        entitiesDataGrid.addSelectionListener(this::entitiesDataGridSelectionListener);
         initialParameters = null;
     }
 
@@ -426,37 +425,6 @@ public class EntityInspectorListView extends StandardListView<Object> {
         if (selectedMeta != null) {
             createEntitiesDataGrid(selectedMeta);
             entitiesDl.load();
-        }
-    }
-
-    protected void entitiesDataGridSelectionListener(SelectionEvent<Grid<Object>, Object> event) {
-        boolean removeEnabled = true;
-        boolean restoreEnabled = true;
-
-        if (!event.getAllSelectedItems().isEmpty()) {
-            for (Object o : event.getAllSelectedItems()) {
-                if (o instanceof Entity) {
-                    if (EntityValues.isSoftDeleted(o)) {
-                        removeEnabled = false;
-                    } else {
-                        restoreEnabled = false;
-                    }
-
-                    if (!removeEnabled && !restoreEnabled) {
-                        break;
-                    }
-                }
-            }
-        }
-
-        Action removeAction = entitiesDataGrid.getAction(RemoveAction.ID);
-        if (removeAction != null) {
-            removeAction.setEnabled(removeEnabled);
-        }
-
-        Action restoreAction = entitiesDataGrid.getAction(RESTORE_ACTION_ID);
-        if (restoreAction != null) {
-            restoreAction.setEnabled(restoreEnabled);
         }
     }
 
@@ -678,6 +646,7 @@ public class EntityInspectorListView extends StandardListView<Object> {
         removeAction.setTarget(dataGrid);
         removeAction.setDelegate(collection ->
                 entityUpdateDispatcher.remove(dataManager, (Collection<?>) collection));
+        removeAction.addEnabledRule(() -> hasSelectionWithSoftDeletionState(dataGrid.getSelectedItems(), false));
         return removeAction;
     }
 
@@ -735,6 +704,11 @@ public class EntityInspectorListView extends StandardListView<Object> {
         restoreAction.addActionPerformedListener(event -> showRestoreDialog());
         restoreAction.setTarget(dataGrid);
         restoreAction.setIcon(icons.get(JmixFontIcon.UNDO));
+        restoreAction.addEnabledRule(() -> {
+            Collection<?> selectedItems = dataGrid.getSelectedItems();
+            return hasSelectionWithSoftDeletionState(selectedItems, true)
+                    && isEntityOpPermitted(selectedItems, EntityOp.UPDATE);
+        });
 
         restoreButton.setAction(restoreAction);
         dataGrid.addAction(restoreAction);
@@ -750,6 +724,11 @@ public class EntityInspectorListView extends StandardListView<Object> {
         wipeOutAction.setTarget(dataGrid);
         wipeOutAction.setVariant(ActionVariant.DANGER);
         wipeOutAction.setIcon(icons.get(JmixFontIcon.ERASER));
+        wipeOutAction.addEnabledRule(() -> {
+            Collection<?> selectedItems = dataGrid.getSelectedItems();
+            return !selectedItems.isEmpty()
+                    && isEntityOpPermitted(selectedItems, EntityOp.DELETE);
+        });
 
         wipeOutButton.setAction(wipeOutAction);
         dataGrid.addAction(wipeOutAction);
@@ -928,6 +907,73 @@ public class EntityInspectorListView extends StandardListView<Object> {
         accessManager.applyRegisteredConstraints(entityContext);
         return entityContext.isViewPermitted()
                 && !EXCLUDED_META_CLASS_NAMES.contains(metaClass.getName());
+    }
+
+    protected boolean hasSelectionWithSoftDeletionState(Collection<?> selectedItems, boolean softDeleted) {
+        if (selectedItems.isEmpty()) {
+            return false;
+        }
+
+        for (Object item : selectedItems) {
+            if (!(item instanceof Entity) || EntityValues.isSoftDeleted(item) != softDeleted) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    protected boolean isEntityOpPermitted(Collection<?> selectedItems, EntityOp entityOp) {
+        Map<MetaClass, UiEntityContext> uiAccessCache = new HashMap<>();
+        Map<MetaClass, InMemoryCrudEntityContext> inMemoryAccessCache = new HashMap<>();
+
+        for (Object item : selectedItems) {
+            if (!(item instanceof Entity)) {
+                return false;
+            }
+
+            MetaClass metaClass = metadata.getClass(item);
+            UiEntityContext uiEntityContext = uiAccessCache.computeIfAbsent(metaClass, key -> {
+                UiEntityContext context = new UiEntityContext(key);
+                accessManager.applyRegisteredConstraints(context);
+                return context;
+            });
+            if (!isUiEntityOpPermitted(uiEntityContext, entityOp)) {
+                return false;
+            }
+
+            InMemoryCrudEntityContext inMemoryEntityContext = inMemoryAccessCache.computeIfAbsent(metaClass, key -> {
+                InMemoryCrudEntityContext context = new InMemoryCrudEntityContext(key, getApplicationContext());
+                accessManager.applyRegisteredConstraints(context);
+                return context;
+            });
+            if (!isInMemoryEntityOpPermitted(inMemoryEntityContext, item, entityOp)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    protected boolean isUiEntityOpPermitted(UiEntityContext entityContext, EntityOp entityOp) {
+        if (entityOp == EntityOp.UPDATE) {
+            return entityContext.isEditPermitted();
+        } else if (entityOp == EntityOp.DELETE) {
+            return entityContext.isDeletePermitted();
+        } else {
+            throw new IllegalArgumentException("Unsupported entity operation: " + entityOp);
+        }
+    }
+
+    protected boolean isInMemoryEntityOpPermitted(InMemoryCrudEntityContext entityContext, Object item,
+                                                  EntityOp entityOp) {
+        if (entityOp == EntityOp.UPDATE) {
+            return entityContext.updatePredicate() == null || entityContext.isUpdatePermitted(item);
+        } else if (entityOp == EntityOp.DELETE) {
+            return entityContext.deletePredicate() == null || entityContext.isDeletePermitted(item);
+        } else {
+            throw new IllegalArgumentException("Unsupported entity operation: " + entityOp);
+        }
     }
 
     protected void setShowMode(String showModeParameter) {

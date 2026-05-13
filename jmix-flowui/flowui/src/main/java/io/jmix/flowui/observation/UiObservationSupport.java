@@ -250,6 +250,12 @@ public class UiObservationSupport {
             if (view != null) {
                 view.getId().ifPresent(viewId -> observation.lowCardinalityKeyValue("view.id", viewId));
             }
+
+            Fragment<?> fragment = UiComponentUtils.findFragment(viewSource);
+            if (fragment != null) {
+                fragment.getId().ifPresent(fragmentId ->
+                        observation.lowCardinalityKeyValue("fragment.id", fragmentId));
+            }
         }
 
         return observation;

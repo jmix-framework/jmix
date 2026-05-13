@@ -178,6 +178,41 @@ class UiObservationSupportTest extends Specification {
         lowCardinalityValue(obs, "view.id") == null
     }
 
+    def "action inside a fragment yields fragment.id and view.id"() {
+        given: "a button inside a fragment which is inside a view"
+        def view = new TestView()
+        view.setId("orderDetail")
+        def fragment = Mock(Fragment) {
+            getId() >> Optional.of("billing")
+            getParent() >> Optional.of(view)
+        }
+        def button = Mock(Component) {
+            getParent() >> Optional.of(fragment)
+        }
+
+        when:
+        def obs = support.createActionExecutionObservation(new BaseAction("save"), button)
+
+        then: "both fragment.id and view.id are resolved via parent-chain walk"
+        lowCardinalityValue(obs, "fragment.id") == "billing"
+        lowCardinalityValue(obs, "view.id") == "orderDetail"
+    }
+
+    def "action outside any fragment omits fragment.id"() {
+        given: "a button directly inside a view (no fragment in between)"
+        def view = new TestView()
+        view.setId("orderDetail")
+        def button = new Div()
+        view.getContent().add(button)
+
+        when:
+        def obs = support.createActionExecutionObservation(new BaseAction("save"), button)
+
+        then: "view.id is present but fragment.id is silently omitted"
+        lowCardinalityValue(obs, "view.id") == "orderDetail"
+        lowCardinalityValue(obs, "fragment.id") == null
+    }
+
     def "disabled observation returns NOOP"() {
         given:
         def disabled = createSupport(false)

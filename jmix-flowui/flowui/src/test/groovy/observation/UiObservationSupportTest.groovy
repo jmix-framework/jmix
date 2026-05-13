@@ -190,7 +190,7 @@ class UiObservationSupportTest extends Specification {
     }
 
     def "null registry returns NOOP even when enabled"() {
-        given:
+        given: "observationRegistry is left unset to simulate @Autowired(required = false) with no bean in the context"
         def props = Mock(UiProperties) { isUiObservationEnabled() >> true }
         def supportNoRegistry = new UiObservationSupport(props)
 
@@ -393,7 +393,7 @@ class UiObservationSupportTest extends Specification {
 
     def "observeFragmentLifecycle returns supplier value"() {
         given:
-        def info = new FragmentLifecycleObservationInfo("frag-id", "com.example.MyFragment")
+        def info = new FragmentLifecycleObservationInfo("frag-id", "com.example.MyFragment", null)
 
         expect:
         support.observeFragmentLifecycle(info, FragmentLifecycle.CREATE,
@@ -402,7 +402,7 @@ class UiObservationSupportTest extends Specification {
 
     def "observeFragmentLifecycle does not invoke LegacyUiTimerSupport"() {
         given: "fragment monitoring info"
-        def info = new FragmentLifecycleObservationInfo("frag-id", "com.example.MyFragment")
+        def info = new FragmentLifecycleObservationInfo("frag-id", "com.example.MyFragment", null)
 
         when: "running a fragment lifecycle phase through observeFragmentLifecycle"
         support.observeFragmentLifecycle(info, FragmentLifecycle.CREATE, { -> "x" } as Supplier)
@@ -413,7 +413,7 @@ class UiObservationSupportTest extends Specification {
 
     def "observeFragmentLifecycle propagates supplier exception"() {
         given:
-        def info = new FragmentLifecycleObservationInfo("frag-id", "com.example.MyFragment")
+        def info = new FragmentLifecycleObservationInfo("frag-id", "com.example.MyFragment", null)
 
         when:
         support.observeFragmentLifecycle(info, FragmentLifecycle.CREATE,
@@ -427,6 +427,7 @@ class UiObservationSupportTest extends Specification {
         given:
         def fragment = Mock(Fragment) {
             getId() >> Optional.of("my-frag")
+            getParent() >> Optional.empty()
         }
         def registry = (TestObservationRegistry) support.observationRegistry
 
@@ -439,6 +440,40 @@ class UiObservationSupportTest extends Specification {
                 .that()
                 .hasLowCardinalityKeyValue("lifecycle.name", "ready")
                 .hasLowCardinalityKeyValue("fragment.id", "my-frag")
+    }
+
+    def "fragment observation includes view.id of the enclosing View"() {
+        given: "a fragment attached to a view with an explicit id"
+        def view = new TestView()
+        view.setId("order-view")
+        def fragment = Mock(Fragment) {
+            getId() >> Optional.of("orderSummary")
+            getParent() >> Optional.of(view)
+        }
+        def registry = (TestObservationRegistry) support.observationRegistry
+
+        when: "running a fragment lifecycle phase"
+        support.observeFragmentLifecycle(fragment, FragmentLifecycle.READY, { -> } as Runnable)
+
+        then: "view.id is added so the same fragment class can be attributed per host view"
+        TestObservationRegistryAssert.assertThat(registry)
+                .hasObservationWithNameEqualTo("jmix.ui.fragments")
+                .that()
+                .hasLowCardinalityKeyValue("view.id", "order-view")
+    }
+
+    def "fragment observation omits view.id when the fragment is not attached to a view"() {
+        given: "a fragment with no parent in the UI tree"
+        def fragment = Mock(Fragment) {
+            getId() >> Optional.of("orphan")
+            getParent() >> Optional.empty()
+        }
+
+        when: "creating a fragment lifecycle observation directly"
+        def obs = support.createFragmentLifecycleObservation(fragment, FragmentLifecycle.CREATE)
+
+        then: "view.id tag is silently omitted — same conditional behaviour as fragment.id"
+        lowCardinalityValue(obs, "view.id") == null
     }
 
     // -------- helpers --------

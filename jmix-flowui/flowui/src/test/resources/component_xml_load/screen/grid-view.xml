@@ -141,6 +141,27 @@
             </columns>
         </dataGrid>
 
+        <dataGrid id="detailRenderersDataGrid" dataContainer="ordersDc">
+            <columns>
+                <column property="number">
+                    <detailLinkRenderer viewClass="component.standarddetailview.view.OrderDetailCustomRouteParamTestView"
+                                        target="BLANK"
+                                        text="Link"
+                                        classNames="detail-link, test-link"
+                                        css="color: blue; font-weight: 600;"/>
+                </column>
+                <column property="date">
+                    <detailButtonRenderer viewClass="component.standarddetailview.view.OrderDetailTestView"
+                                          openMode="NAVIGATION"
+                                          text="Open order"
+                                          icon="vaadin:edit"
+                                          themeNames="tertiary-inline, small"
+                                          classNames="detail-button, test-button"
+                                          css="color: green;"/>
+                </column>
+            </columns>
+        </dataGrid>
+
         <treeDataGrid id="treeDataGrid"
                       aggregatable="true"
                       aggregationPosition="BOTTOM"

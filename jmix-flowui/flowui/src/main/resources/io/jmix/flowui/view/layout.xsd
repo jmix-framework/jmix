@@ -2445,6 +2445,13 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <xs:simpleType name="detailButtonRendererOpenModeType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="NAVIGATION"/>
+            <xs:enumeration value="DIALOG"/>
+        </xs:restriction>
+    </xs:simpleType>
+
     <!-- Interfaces -->
     <xs:attributeGroup name="hasId">
         <xs:attribute name="id" type="xs:string"/>
@@ -2989,12 +2996,46 @@
         <xs:attribute name="nullRepresentation" type="resourceString"/>
     </xs:complexType>
 
+    <xs:complexType name="detailRendererType">
+        <xs:attribute name="viewId" type="xs:string"/>
+        <xs:attribute name="viewClass" type="xs:string"/>
+
+        <xs:attribute name="text" type="resourceString"/>
+        <xs:attribute name="css" type="xs:string"/>
+
+        <xs:attributeGroup ref="hasClassNames"/>
+    </xs:complexType>
+
+    <xs:complexType name="detailLinkRendererType">
+        <xs:complexContent>
+            <xs:extension base="detailRendererType">
+                <xs:attribute name="target" type="anchorTarget"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="detailButtonRendererType">
+        <xs:complexContent>
+            <xs:extension base="detailRendererType">
+                <xs:sequence>
+                    <xs:element name="icon" type="iconComponentElement" minOccurs="0"/>
+                </xs:sequence>
+
+                <xs:attribute name="openMode" type="detailButtonRendererOpenModeType"/>
+                <xs:attribute name="themeNames" type="buttonThemeNames"/>
+                <xs:attributeGroup ref="hasIcon"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
     <xs:group name="renderers">
         <xs:sequence>
             <xs:choice>
                 <xs:element name="numberRenderer" minOccurs="0" type="numberRendererType"/>
                 <xs:element name="localDateRenderer" minOccurs="0" type="formattableRendererType"/>
                 <xs:element name="localDateTimeRenderer" minOccurs="0" type="formattableRendererType"/>
+                <xs:element name="detailLinkRenderer" minOccurs="0" type="detailLinkRendererType"/>
+                <xs:element name="detailButtonRenderer" minOccurs="0" type="detailButtonRendererType"/>
             </xs:choice>
         </xs:sequence>
     </xs:group>

@@ -67,6 +67,22 @@ class LegacyUiTimerSupportTest extends Specification {
         timer.count() == 1
     }
 
+    def "fragment-owned loader keeps fragmentId in the legacy `view` tag for back-compat"() {
+        given: "monitoring info with both viewId and fragmentId — i.e. a loader living inside a fragment"
+        def info = new DataLoaderMonitoringInfo("orderDetail", "addressDl", "billing")
+        def loader = Mock(DataLoader) {
+            getMonitoringInfoProvider() >> ({ DataLoader dl -> info } as Function)
+        }
+        def support = createSupport(true)
+
+        when:
+        support.recordDataLoaderTimer(loader, DataLoaderLifeCycle.LOAD, { -> "x" } as Supplier)
+
+        then: "legacy `view` tag carries fragmentId (pre-2.9 behaviour), not the enclosing view id"
+        meterRegistry.find("jmix.ui.data").tag("view", "billing").timer() != null
+        meterRegistry.find("jmix.ui.data").tag("view", "orderDetail").timer() == null
+    }
+
     def "recordDataLoaderTimer records lifeCycle tag for each phase"() {
         given:
         def support = createSupport(true)

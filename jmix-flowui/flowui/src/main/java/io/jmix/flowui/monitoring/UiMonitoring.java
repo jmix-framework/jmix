@@ -74,8 +74,12 @@ public class UiMonitoring {
         if (!canDataLoaderBeMonitored(lifeCycle, info)) {
             return;
         }
+        // Preserve legacy `view` tag semantics: when the loader is fragment-owned, route fragmentId
+        // into the `view` tag so pre-existing dashboards filtering by `view=<fragment-id>` keep
+        // matching. Modern Observation uses the dedicated view.id / fragment.id tags instead.
+        String legacyOwner = info.fragmentId() != null ? info.fragmentId() : info.viewId();
         sample.stop(createDataLoaderTimer(
-                        meterRegistry, lifeCycle, handleNullTag(info.viewId()), handleNullTag(info.loaderId())
+                        meterRegistry, lifeCycle, handleNullTag(legacyOwner), handleNullTag(info.loaderId())
                 )
         );
     }

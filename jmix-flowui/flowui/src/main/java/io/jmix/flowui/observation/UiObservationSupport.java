@@ -217,11 +217,17 @@ public class UiObservationSupport {
         }
 
         String viewId = info.viewId();
-        return Observation.createNotStarted(DATA_LOADER_OBSERVATION_NAME, observationRegistry)
+        Observation observation = Observation.createNotStarted(DATA_LOADER_OBSERVATION_NAME, observationRegistry)
                 .contextualName("data loader lifecycle")
                 .lowCardinalityKeyValue("lifecycle.name", lifecycle.getName())
                 .lowCardinalityKeyValue("loader.id", loaderId)
                 .lowCardinalityKeyValue("view.id", Strings.isNullOrEmpty(viewId) ? DATA_LOADER_EMPTY_VIEW_ID : viewId);
+
+        if (!Strings.isNullOrEmpty(info.fragmentId())) {
+            observation.lowCardinalityKeyValue("fragment.id", info.fragmentId());
+        }
+
+        return observation;
     }
 
     public Observation createActionExecutionObservation(Action action) {

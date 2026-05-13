@@ -240,7 +240,7 @@ class UiObservationSupportTest extends Specification {
 
     def "data loader observation has lifecycle.name, loader.id and view.id tags"() {
         given:
-        def info = new DataLoaderMonitoringInfo("orders-view", "ordersDl")
+        def info = new DataLoaderMonitoringInfo("orders-view", "ordersDl", null)
 
         when:
         def obs = support.createDataLoaderObservation(info, DataLoaderLifeCycle.LOAD)
@@ -253,7 +253,7 @@ class UiObservationSupportTest extends Specification {
 
     def "data loader lifecycle.name reflects the phase"() {
         given:
-        def info = new DataLoaderMonitoringInfo("v", "dl")
+        def info = new DataLoaderMonitoringInfo("v", "dl", null)
 
         expect:
         lowCardinalityValue(support.createDataLoaderObservation(info, phase), "lifecycle.name") == name
@@ -267,7 +267,7 @@ class UiObservationSupportTest extends Specification {
 
     def "data loader view.id falls back to N/A when viewId is #scenario"() {
         given: "monitoring info with #scenario viewId (loader outside any view, or custom monitoringInfoProvider)"
-        def info = new DataLoaderMonitoringInfo(viewId, "dl")
+        def info = new DataLoaderMonitoringInfo(viewId, "dl", null)
 
         when: "creating a data loader observation"
         def obs = support.createDataLoaderObservation(info, DataLoaderLifeCycle.LOAD)
@@ -283,7 +283,7 @@ class UiObservationSupportTest extends Specification {
 
     def "data loader observation skipped when loaderId is #scenario"() {
         given:
-        def info = new DataLoaderMonitoringInfo("v", loaderId)
+        def info = new DataLoaderMonitoringInfo("v", loaderId, null)
 
         expect:
         support.createDataLoaderObservation(info, DataLoaderLifeCycle.LOAD) == Observation.NOOP
@@ -297,7 +297,7 @@ class UiObservationSupportTest extends Specification {
 
     def "data loader observation skipped for generated loader id"() {
         given: "a loader with an auto-generated id (prefix 'generated_')"
-        def info = new DataLoaderMonitoringInfo("v", "generated_abc123")
+        def info = new DataLoaderMonitoringInfo("v", "generated_abc123", null)
 
         expect: "observation is NOOP — auto-generated ids would explode Prometheus cardinality"
         support.createDataLoaderObservation(info, DataLoaderLifeCycle.LOAD) == Observation.NOOP
@@ -306,15 +306,38 @@ class UiObservationSupportTest extends Specification {
     def "data loader observation NOOP when disabled"() {
         given:
         def disabled = createSupport(false)
-        def info = new DataLoaderMonitoringInfo("v", "dl")
+        def info = new DataLoaderMonitoringInfo("v", "dl", null)
 
         expect:
         disabled.createDataLoaderObservation(info, DataLoaderLifeCycle.LOAD) == Observation.NOOP
     }
 
+    def "data loader observation includes fragment.id when set"() {
+        given: "monitoring info with both view and fragment ids (loader lives inside a fragment)"
+        def info = new DataLoaderMonitoringInfo("orderDetail", "addressDl", "billing")
+
+        when:
+        def obs = support.createDataLoaderObservation(info, DataLoaderLifeCycle.LOAD)
+
+        then: "fragment.id is added alongside view.id, so the same loader.id can be attributed per fragment"
+        lowCardinalityValue(obs, "view.id") == "orderDetail"
+        lowCardinalityValue(obs, "fragment.id") == "billing"
+    }
+
+    def "data loader observation omits fragment.id when null"() {
+        given: "monitoring info with no fragment context (loader belongs directly to a view)"
+        def info = new DataLoaderMonitoringInfo("orderDetail", "ordersDl", null)
+
+        when:
+        def obs = support.createDataLoaderObservation(info, DataLoaderLifeCycle.LOAD)
+
+        then: "fragment.id tag is silently omitted"
+        lowCardinalityValue(obs, "fragment.id") == null
+    }
+
     def "loader-based overload extracts info via monitoringInfoProvider"() {
         given:
-        def info = new DataLoaderMonitoringInfo("orders-view", "ordersDl")
+        def info = new DataLoaderMonitoringInfo("orders-view", "ordersDl", null)
         def loader = Mock(DataLoader) {
             getMonitoringInfoProvider() >> ({ DataLoader dl -> info } as Function)
         }
@@ -524,7 +547,7 @@ class UiObservationSupportTest extends Specification {
     }
 
     private DataLoader mockLoader(String viewId, String loaderId) {
-        def info = new DataLoaderMonitoringInfo(viewId, loaderId)
+        def info = new DataLoaderMonitoringInfo(viewId, loaderId, null)
         return Mock(DataLoader) {
             getMonitoringInfoProvider() >> ({ DataLoader dl -> info } as Function)
         }

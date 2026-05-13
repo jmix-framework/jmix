@@ -22,6 +22,7 @@ import io.jmix.texttodata.introspection.model.EnumPropertyDescriptor;
 import io.jmix.texttodata.introspection.model.EnumValueDescriptor;
 import io.jmix.texttodata.introspection.model.RelationPropertyDescriptor;
 import io.jmix.texttodata.introspection.registry.DomainModelRegistry;
+import io.jmix.texttodata.prompt.PromptContextBuilder;
 import jakarta.annotation.PostConstruct;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -52,6 +53,30 @@ import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+/**
+ * Builds and queries an in-memory Lucene index over the introspected Jmix domain model.
+ * <p>
+ * This service is the deterministic retrieval layer of the text-to-JPQL pipeline. It takes
+ * free-form user text, searches through collected entity metadata and returns a ranked
+ * shortlist of candidate entities that are likely relevant for the future JPQL query.
+ * <p>
+ * The index is built from {@link EntityDescriptor} metadata and includes entity names,
+ * localized captions, property names, property captions, comments, relation targets and
+ * enum values. During search the service combines boosted lexical queries with a lighter
+ * n-gram fallback query so that we keep strong exact matches while still tolerating some
+ * wording and inflection differences.
+ * <p>
+ * Typical usage:
+ * <ul>
+ *     <li>call {@link #search(String)} to get the default-size ranked shortlist</li>
+ *     <li>call {@link #search(String, int)} when the caller needs a custom number of candidates</li>
+ *     <li>pass the resulting candidates to prompt-context building before LLM generation</li>
+ * </ul>
+ * The service does not call an LLM and does not mutate the source metadata. Its role is to
+ * narrow the domain model search space before the generation and validation stages.
+ *
+ * @see PromptContextBuilder
+ */
 @Component("textdt_DomainModelSearchService")
 public class DomainModelSearchService {
 
@@ -97,13 +122,30 @@ public class DomainModelSearchService {
     public void init() {
         analyzer = new StandardAnalyzer();
         directory = new ByteBuffersDirectory();
+        // Build an in-memory Lucene index once from the current metadata snapshot.
+        // The snapshot itself is already filtered by the introspector, so only
+        // application-relevant entities end up in the index.
         rebuildIndex();
     }
 
+    /**
+     * Runs the user text through Lucene and then map the matched documents back to {@link EntityDescriptor} objects.
+     * It uses default limitation for the number of candidates ({@link #DEFAULT_LIMIT}).
+     *
+     * @param text user text
+     * @return list of most relevant candidates
+     */
     public List<DomainModelSearchCandidate> search(String text) {
         return search(text, DEFAULT_LIMIT);
     }
 
+    /**
+     * Runs the user text through Lucene and then map the matched documents back to {@link EntityDescriptor} objects.
+     *
+     * @param text  user text
+     * @param limit number of candidates to return
+     * @return list of most relevant candidates
+     */
     public List<DomainModelSearchCandidate> search(String text, int limit) {
         List<String> tokens = tokenize(text);
         if (tokens.isEmpty() || limit <= 0) {
@@ -130,6 +172,13 @@ public class DomainModelSearchService {
         }
     }
 
+    /**
+     * Rebuilds the whole in-memory Lucene index from the current registry snapshot.
+     * <p>
+     * The current implementation recreates the index from scratch because this keeps
+     * the retrieval layer simple and deterministic, which is enough for the present
+     * in-memory MVP.
+     */
     protected void rebuildIndex() {
         try (IndexWriter indexWriter = new IndexWriter(directory, new IndexWriterConfig(analyzer))) {
             indexWriter.deleteAll();
@@ -149,6 +198,19 @@ public class DomainModelSearchService {
         }
     }
 
+    /**
+     * Executes the prepared Lucene query against the in-memory index.
+     * <p>
+     * The search combines a regular boosted full-text query with a lower-weight
+     * character n-gram query. The full-text part gives better precision, while
+     * n-grams make retrieval less brittle for word forms, inflections and slightly
+     * different naming.
+     *
+     * @param tokens list of tokens retrieved from user text
+     * @param limit number of candidates to return
+     * @return matched Lucene documents with their scores
+     * @throws IOException if index search fails with an error
+     */
     protected ScoreDoc[] searchIndex(List<String> tokens, int limit) throws IOException {
         BooleanQuery.Builder queryBuilder = new BooleanQuery.Builder();
 
@@ -170,15 +232,46 @@ public class DomainModelSearchService {
         return indexSearcher.search(query, limit).scoreDocs;
     }
 
+    /**
+     * Creates the main boosted lexical Lucene query for the provided user tokens.
+     * <p>
+     * This is the primary ranking query in the retrieval pipeline. Different metadata
+     * fields receive different boost coefficients so that canonical entity identifiers
+     * and business-facing captions rank above weaker or noisier signals such as free-form
+     * comments. The resulting weighting keeps the search explainable while still allowing
+     * fields like enum values and relation targets to influence ranking when they are
+     * explicitly mentioned in the prompt.
+     *
+     * @param tokens normalized tokens extracted from user text
+     * @return boosted lexical query spanning the indexed metadata fields
+     */
     protected Query createTextQuery(List<String> tokens) {
         Map<String, Float> boosts = new HashMap<>();
+
+        // Entity name is the strongest lexical signal because it is the canonical
+        // identifier used in JPQL and usually the least ambiguous field.
         boosts.put(ENTITY_NAME_FIELD, 10.0f);
+
+        // Localized entity captions are nearly as important as the technical name,
+        // because real users search by business labels, not by Java naming.
         boosts.put(ENTITY_CAPTION_FIELD, 8.5f);
+
+        // Property names and captions are weaker than entity-level matches but still
+        // strong enough to pull an entity up when the user mentions a known field.
         boosts.put(PROPERTY_NAME_FIELD, 5.5f);
         boosts.put(PROPERTY_CAPTION_FIELD, 5.0f);
+
+        // Comments are useful hints, but they are free-form text and therefore much
+        // noisier than names and captions.
         boosts.put(PROPERTY_COMMENT_FIELD, 2.5f);
+
+        // Relation target names/captions help queries like "orders by customer", but
+        // they should not outrank direct matches on the entity itself.
         boosts.put(RELATION_TARGET_FIELD, 3.5f);
         boosts.put(RELATION_TARGET_CAPTION_FIELD, 3.0f);
+
+        // Enum metadata matters for queries like "open orders", yet enum type names
+        // are usually weaker than enum values or main entity/property names.
         boosts.put(ENUM_TYPE_FIELD, 2.0f);
         boosts.put(ENUM_VALUE_FIELD, 4.0f);
         boosts.put(ENUM_VALUE_CAPTION_FIELD, 3.5f);
@@ -193,6 +286,15 @@ public class DomainModelSearchService {
         }
     }
 
+    /**
+     * Creates a softer n-gram-based fallback query for the provided user tokens.
+     * <p>
+     * Character n-grams improve recall for different word forms and partially
+     * overlapping tokens without introducing a full stemming or morphology layer.
+     *
+     * @param tokens normalized tokens extracted from user text
+     * @return n-gram fallback query or {@code null} if there are no usable n-grams
+     */
     protected Query createNgramQuery(List<String> tokens) {
         Set<String> ngrams = new LinkedHashSet<>();
         for (String token : tokens) {
@@ -209,6 +311,16 @@ public class DomainModelSearchService {
         return queryBuilder.build();
     }
 
+    /**
+     * Converts one entity descriptor into a single Lucene document.
+     * <p>
+     * Each document stores multiple views of the same entity metadata, so Lucene can
+     * match user text against names, localized captions, comments, relation targets,
+     * and enum values while still returning one entity-level hit.
+     *
+     * @param entityDescriptor source entity metadata
+     * @return Lucene document representing the entity
+     */
     protected Document toDocument(EntityDescriptor entityDescriptor) {
         Document document = new Document();
         document.add(new StoredField(STORED_ENTITY_NAME_FIELD, entityDescriptor.getName()));
@@ -269,6 +381,17 @@ public class DomainModelSearchService {
         }
     }
 
+    // TODO: pinyazhin, leave for debug? Enable it using app property?
+    /**
+     * Collects lightweight match labels for diagnostics and tests.
+     * <p>
+     * Real ranking comes from Lucene scores, but the returned {@code matchedBy} labels
+     * make the search result easier to inspect during debugging and in unit tests.
+     *
+     * @param entityDescriptor candidate entity
+     * @param tokens normalized user tokens
+     * @return explanation labels describing which metadata fragments matched
+     */
     protected List<String> collectMatchedBy(EntityDescriptor entityDescriptor, List<String> tokens) {
         Set<String> matchedBy = new LinkedHashSet<>();
 
@@ -306,12 +429,31 @@ public class DomainModelSearchService {
         return List.copyOf(matchedBy);
     }
 
+    /**
+     * Applies the same lightweight explanation matching rule to a collection of values.
+     *
+     * @param token normalized search token
+     * @param values candidate values to inspect
+     * @param matchLabel label to record when a match is found
+     * @param matchedBy mutable set of collected explanation labels
+     */
     protected void collectMatches(String token, Collection<String> values, String matchLabel, Set<String> matchedBy) {
         for (String value : values) {
             collectMatches(token, value, matchLabel, matchedBy);
         }
     }
 
+    /**
+     * Applies a simple explanation-only matching rule to one value.
+     * <p>
+     * This logic is intentionally simpler than the real Lucene ranking because
+     * {@code matchedBy} is only an explanation layer, not the ranking engine itself.
+     *
+     * @param token normalized search token
+     * @param value candidate value to inspect
+     * @param matchLabel label to record when a match is found
+     * @param matchedBy mutable set of collected explanation labels
+     */
     protected void collectMatches(String token, String value, String matchLabel, Set<String> matchedBy) {
         if (value == null || value.isBlank()) {
             return;
@@ -327,6 +469,15 @@ public class DomainModelSearchService {
         }
     }
 
+    /**
+     * Generates character n-grams for the provided text value.
+     * <p>
+     * The produced n-grams are indexed in a dedicated Lucene field and used only as
+     * a soft recall booster.
+     *
+     * @param value source text
+     * @return generated character n-grams
+     */
     protected Set<String> generateNgrams(String value) {
         List<String> tokens = tokenize(value);
         Set<String> ngrams = new LinkedHashSet<>();
@@ -348,6 +499,15 @@ public class DomainModelSearchService {
         return ngrams;
     }
 
+    /**
+     * Splits text into normalized lexical tokens.
+     * <p>
+     * Tokenization is shared by both index-building support code and query preparation
+     * so that both sides use the same basic normalization rules.
+     *
+     * @param text source text
+     * @return normalized nonblank tokens
+     */
     protected List<String> tokenize(String text) {
         if (text == null || text.isBlank()) {
             return List.of();
@@ -362,6 +522,15 @@ public class DomainModelSearchService {
         return tokens;
     }
 
+    /**
+     * Normalizes text for lightweight explanation matching.
+     * <p>
+     * Lowercase normalization is enough for the current Lucene-based MVP. More
+     * advanced normalization can be added later if retrieval needs it.
+     *
+     * @param value source text
+     * @return normalized value
+     */
     protected String normalize(String value) {
         return value.toLowerCase(Locale.ROOT);
     }

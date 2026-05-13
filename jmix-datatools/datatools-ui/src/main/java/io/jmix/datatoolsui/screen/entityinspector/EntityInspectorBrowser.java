@@ -21,12 +21,14 @@ import com.google.common.io.Files;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import io.jmix.core.*;
+import io.jmix.core.accesscontext.InMemoryCrudEntityContext;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.impl.importexport.EntityImportPlanJsonBuilder;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Range;
 import io.jmix.core.metamodel.model.Session;
+import io.jmix.core.security.EntityOp;
 import io.jmix.data.PersistenceHints;
 import io.jmix.datatools.EntityRestore;
 import io.jmix.datatoolsui.action.ShowEntityInfoAction;
@@ -225,40 +227,74 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
         tableBox.add(entitiesTable);
         tableBox.expand(entitiesTable);
 
-        addSelectionListener();
         createFilter();
     }
 
-    private void addSelectionListener() {
-        entitiesTable.addSelectionListener(event -> {
-            Table.SelectionEvent selectionEvent = (Table.SelectionEvent) event;
-            boolean removeEnabled = true;
-            boolean restoreEnabled = true;
-            if (!selectionEvent.getSelected().isEmpty()) {
-                for (Object o : selectionEvent.getSelected()) {
-                    if (o instanceof Entity) {
-                        if (EntityValues.isSoftDeleted(o)) {
-                            removeEnabled = false;
-                        } else {
-                            restoreEnabled = false;
-                        }
+    protected boolean hasSelectionWithSoftDeletionState(Collection<?> selectedItems, boolean softDeleted) {
+        if (selectedItems.isEmpty()) {
+            return false;
+        }
 
-                        if (!removeEnabled && !restoreEnabled) {
-                            break;
-                        }
-                    }
-                }
+        for (Object item : selectedItems) {
+            if (!(item instanceof Entity) || EntityValues.isSoftDeleted(item) != softDeleted) {
+                return false;
             }
-            Action removeAction = entitiesTable.getAction(RemoveAction.ID);
-            if (removeAction != null) {
-                removeAction.setEnabled(removeEnabled);
+        }
+
+        return true;
+    }
+
+    protected boolean isEntityOpPermitted(Collection<?> selectedItems, EntityOp entityOp) {
+        Map<MetaClass, UiEntityContext> uiAccessCache = new HashMap<>();
+        Map<MetaClass, InMemoryCrudEntityContext> inMemoryAccessCache = new HashMap<>();
+
+        for (Object item : selectedItems) {
+            if (!(item instanceof Entity)) {
+                return false;
             }
 
-            Action restoreAction = entitiesTable.getAction(RESTORE_ACTION_ID);
-            if (restoreAction != null) {
-                restoreAction.setEnabled(restoreEnabled);
+            MetaClass metaClass = metadata.getClass(item);
+            UiEntityContext uiEntityContext = uiAccessCache.computeIfAbsent(metaClass, key -> {
+                UiEntityContext context = new UiEntityContext(key);
+                accessManager.applyRegisteredConstraints(context);
+                return context;
+            });
+            if (!isUiEntityOpPermitted(uiEntityContext, entityOp)) {
+                return false;
             }
-        });
+
+            InMemoryCrudEntityContext inMemoryEntityContext = inMemoryAccessCache.computeIfAbsent(metaClass, key -> {
+                InMemoryCrudEntityContext context = new InMemoryCrudEntityContext(key, getApplicationContext());
+                accessManager.applyRegisteredConstraints(context);
+                return context;
+            });
+
+            if (!isInMemoryEntityOpPermitted(inMemoryEntityContext, item, entityOp)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    protected boolean isUiEntityOpPermitted(UiEntityContext entityContext, EntityOp entityOp) {
+        if (entityOp == EntityOp.UPDATE) {
+            return entityContext.isEditPermitted();
+        } else if (entityOp == EntityOp.DELETE) {
+            return entityContext.isDeletePermitted();
+        } else {
+            throw new IllegalArgumentException("Unsupported entity operation: " + entityOp);
+        }
+    }
+
+    protected boolean isInMemoryEntityOpPermitted(InMemoryCrudEntityContext entityContext, Object item, EntityOp entityOp) {
+        if (entityOp == EntityOp.UPDATE) {
+            return entityContext.updatePredicate() == null || entityContext.isUpdatePermitted(item);
+        } else if (entityOp == EntityOp.DELETE) {
+            return entityContext.deletePredicate() == null || entityContext.isDeletePermitted(item);
+        } else {
+            throw new IllegalArgumentException("Unsupported entity operation: " + entityOp);
+        }
     }
 
     private CollectionContainer createContainer(MetaClass meta) {
@@ -455,6 +491,7 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
     private RemoveAction createRemoveAction(Table table) {
         RemoveAction removeAction = actions.create(RemoveAction.ID);
         removeAction.setTarget(table);
+        removeAction.addEnabledRule(() -> hasSelectionWithSoftDeletionState(table.getSelected(), false));
         return removeAction;
     }
 
@@ -499,6 +536,11 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
                         showRestoreDialog()
                 );
         action.setTarget(table);
+        action.addEnabledRule(() -> {
+            Collection<?> selectedItems = table.getSelected();
+            return hasSelectionWithSoftDeletionState(selectedItems, true)
+                    && isEntityOpPermitted(selectedItems, EntityOp.UPDATE);
+        });
         return action;
     }
 
@@ -509,6 +551,11 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
                         showWipeOutDialog()
                 );
         action.setTarget(table);
+        action.addEnabledRule(() -> {
+            Collection<?> selectedItems = table.getSelected();
+            return !selectedItems.isEmpty()
+                    && isEntityOpPermitted(selectedItems, EntityOp.DELETE);
+        });
         return action;
     }
 

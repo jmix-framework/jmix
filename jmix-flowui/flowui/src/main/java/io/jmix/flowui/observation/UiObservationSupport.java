@@ -187,7 +187,7 @@ public class UiObservationSupport {
     /**
      * Records monitoring data for a void {@link Fragment} lifecycle phase via the modern Observation path.
      * <p>
-     * Note: unlike data loaders and views, fragments never had a legacy {@link Timer}-based metric, so
+     * Note: unlike data loaders and views, fragments never had a legacy {@link io.micrometer.core.instrument.Timer}-based metric, so
      * {@link UiProperties#isLegacyTimerEnabled()} has no effect here. No new legacy metric is introduced.
      */
     public void observeFragmentLifecycle(Fragment<?> fragment, FragmentLifecycle phase, Runnable action) {

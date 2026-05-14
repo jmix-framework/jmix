@@ -46,6 +46,7 @@ import io.jmix.flowui.data.value.ContainerValueSource;
 import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.model.Nested;
+import io.jmix.flowui.validation.ValueBindingValidationProvider;
 import jakarta.validation.Validator;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.metadata.BeanDescriptor;
@@ -56,6 +57,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -72,6 +74,7 @@ public abstract class AbstractValueBinding<V> implements ValueBinding<V>, Suspen
     protected MetadataTools metadataTools;
     protected Validator validator;
     protected AccessManager accessManager;
+    protected List<ValueBindingValidationProvider> validationProviders = List.of();
 
     protected ValueSource<V> valueSource;
     protected HasValue<?, V> component;
@@ -117,6 +120,11 @@ public abstract class AbstractValueBinding<V> implements ValueBinding<V>, Suspen
         this.accessManager = accessManager;
     }
 
+    @Autowired(required = false)
+    public void setValidationProviders(List<ValueBindingValidationProvider> validationProviders) {
+        this.validationProviders = validationProviders;
+    }
+
     @Override
     public ValueSource<V> getValueSource() {
         return valueSource;
@@ -151,6 +159,7 @@ public abstract class AbstractValueBinding<V> implements ValueBinding<V>, Suspen
 
             if (component instanceof SupportsValidation) {
                 initBeanValidator((SupportsValidation<V>) component, metaPropertyPath);
+                initCustomValidators((SupportsValidation<V>) component, metaPropertyPath);
             }
 
             if (((EntityValueSource<?, V>) valueSource).isDataModelSecurityEnabled()) {
@@ -370,6 +379,12 @@ public abstract class AbstractValueBinding<V> implements ValueBinding<V>, Suspen
                 //noinspection unchecked
                 component.addValidator(applicationContext.getBean(BeanPropertyValidator.class, enclosingJavaClass, metaProperty.getName()));
             }
+        }
+    }
+
+    protected void initCustomValidators(SupportsValidation<V> component, MetaPropertyPath mpp) {
+        for (ValueBindingValidationProvider validationProvider : validationProviders) {
+            validationProvider.addValidators(component, mpp);
         }
     }
 

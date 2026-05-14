@@ -20,15 +20,16 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 import io.jmix.core.CoreProperties;
 import io.jmix.core.TimeSource;
+import io.jmix.core.common.util.ReflectionHelper;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
-import org.apache.commons.io.FileUtils;
+import jakarta.annotation.PreDestroy;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
@@ -51,6 +52,7 @@ public class JavaClassLoader extends URLClassLoader {
     protected final Set<String> rootDirs;
 
     protected final Map<String, TimestampClass> loaded = new ConcurrentHashMap<>();
+    protected final Map<String, byte[]> generatedClassBytes = new ConcurrentHashMap<>();
     protected final ConcurrentHashMap<String, Lock> locks = new ConcurrentHashMap<>();
 
     protected final ProxyClassLoader proxyClassLoader;
@@ -73,6 +75,7 @@ public class JavaClassLoader extends URLClassLoader {
         for (String dir : this.rootDirs) {
             this.classFilesProviders.put(dir, new ClassFilesProvider(dir));
         }
+        ReflectionHelper.addClassLoader(this);
     }
 
     //Please use this constructor only in tests
@@ -88,10 +91,17 @@ public class JavaClassLoader extends URLClassLoader {
         for (String dir : this.rootDirs) {
             this.classFilesProviders.put(dir, new ClassFilesProvider(dir));
         }
+        ReflectionHelper.addClassLoader(this);
     }
 
     public void clearCache() {
         loaded.clear();
+        generatedClassBytes.clear();
+    }
+
+    @PreDestroy
+    public void destroy() {
+        ReflectionHelper.removeClassLoader(this);
     }
 
     @Override
@@ -103,10 +113,19 @@ public class JavaClassLoader extends URLClassLoader {
             lock(containerClassName);
             Class clazz;
 
+            TimestampClass loadedClass = loaded.get(fullClassName);
+            if (loadedClass != null) {
+                return loadedClass.clazz;
+            }
+
             //first check if there is a ".class" file in the root directories
             for (ClassFilesProvider classFilesProvider : classFilesProviders.values()) {
                 File classFile = classFilesProvider.getClassFile(containerClassName);
                 if (classFile.exists()) {
+                    TimestampClass timestampClass = loaded.get(containerClassName);
+                    if (timestampClass != null && classFile.lastModified() <= timestampClass.timestamp.getTime()) {
+                        return timestampClass.clazz;
+                    }
                     return loadClassFromClassFile(fullClassName, containerClassName, classFile);
                 }
             }
@@ -120,11 +139,52 @@ public class JavaClassLoader extends URLClassLoader {
         }
     }
 
-    protected Class loadClassFromClassFile(String fullClassName, String containerClassName, File classFile) {
-        TimestampClass timestampClass = loaded.get(containerClassName);
-        if (timestampClass != null && !FileUtils.isFileNewer(classFile, timestampClass.timestamp)) {
-            return timestampClass.clazz;
+    public Class<?> loadGeneratedClass(String className, byte[] bytes) {
+        return loadGeneratedClasses(Map.of(className, bytes)).get(className);
+    }
+
+    public Map<String, Class<?>> loadGeneratedClasses(Map<String, byte[]> generatedClasses) {
+        if (generatedClasses.isEmpty()) {
+            return Collections.emptyMap();
         }
+
+        List<String> lockNames = generatedClasses.keySet().stream()
+                .map(className -> StringUtils.substringBefore(className, "$"))
+                .distinct()
+                .sorted()
+                .toList();
+        lockNames.forEach(this::lock);
+
+        try {
+            generatedClasses.keySet().forEach(this::removeClass);
+
+            GeneratedClassLoader generatedClassLoader = new GeneratedClassLoader(proxyClassLoader, generatedClasses);
+            Map<String, Class<?>> loadedClasses = new LinkedHashMap<>();
+            Collection<Class> contextClasses = new ArrayList<>();
+            for (String className : generatedClasses.keySet()) {
+                try {
+                    Class<?> clazz = generatedClassLoader.loadClass(className);
+                    loadedClasses.put(className, clazz);
+                    contextClasses.add(clazz);
+                } catch (ClassNotFoundException e) {
+                    throw new RuntimeException("Class not found", e);
+                }
+            }
+
+            Date timestamp = getCurrentTimestamp();
+            loadedClasses.forEach((className, clazz) -> loaded.put(className, new TimestampClass(clazz, timestamp)));
+            generatedClasses.forEach(generatedClassBytes::put);
+            springBeanLoader.updateContext(contextClasses);
+            return loadedClasses;
+        } finally {
+            ListIterator<String> iterator = lockNames.listIterator(lockNames.size());
+            while (iterator.hasPrevious()) {
+                unlock(iterator.previous());
+            }
+        }
+    }
+
+    protected Class loadClassFromClassFile(String fullClassName, String containerClassName, File classFile) {
         Map<String, Class> loadedClasses = new HashMap<>();
         Map<String, String> modifiedClassFiles = new HashMap<>();
         Map<String, FileClassLoader> fileClassLoaders = new HashMap<>();
@@ -144,7 +204,16 @@ public class JavaClassLoader extends URLClassLoader {
                 throw new RuntimeException("Class not found", e);
             }
             loadedClasses.put(fqn, clazz);
-            loaded.put(fqn, new TimestampClass(clazz, getCurrentTimestamp()));
+
+            Date timestamp = getCurrentTimestamp();
+            for (ClassFilesProvider classFilesProvider : classFilesProviders.values()) {
+                File file = classFilesProvider.getClassFile(fqn);
+                if (file.exists()) {
+                    timestamp = new Date(file.lastModified());
+                    break;
+                }
+            }
+            loaded.put(fqn, new TimestampClass(clazz, timestamp));
         }
         springBeanLoader.updateContext(loadedClasses.values());
         return loadedClasses.get(fullClassName);
@@ -165,7 +234,8 @@ public class JavaClassLoader extends URLClassLoader {
                         String fqn = root.relativize(path).toString();
                         fqn = fqn.substring(0, fqn.length() - 6).replace(File.separator, ".");
                         TimestampClass timeStampClass = getTimestampClass(fqn);
-                        if (timeStampClass == null || FileUtils.isFileNewer(path.toFile(), timeStampClass.timestamp)) {
+                        long lastModified = path.toFile().lastModified();
+                        if (timeStampClass == null || lastModified > timeStampClass.timestamp.getTime()) {
                             result.add(fqn);
                         }
                     });
@@ -223,7 +293,19 @@ public class JavaClassLoader extends URLClassLoader {
         }
     }
 
+    public byte [] getGeneratedClassResource(String resourceName) {
+        if (resourceName.startsWith("/")) {
+            resourceName = resourceName.substring(1);
+        }
+        if (!resourceName.endsWith(".class")) {
+            return null;
+        }
+        String className = resourceName.substring(0, resourceName.length() - 6).replace('/', '.');
+        return generatedClassBytes.get(className);
+    }
+
     public boolean removeClass(String className) {
+        generatedClassBytes.remove(className);
         TimestampClass removed = loaded.remove(className);
         if (removed != null) {
             for (String dependent : removed.dependent) {
@@ -320,5 +402,34 @@ public class JavaClassLoader extends URLClassLoader {
     private void lock(String name) {//not sure it's right, but we can not use synchronization here
         locks.putIfAbsent(name, new ReentrantLock());
         locks.get(name).lock();
+    }
+
+    protected static class GeneratedClassLoader extends ClassLoader {
+
+        private final Map<String, byte[]> generatedClasses;
+        private final Map<String, Class<?>> loadedClasses = new HashMap<>();
+
+        GeneratedClassLoader(ClassLoader parent, Map<String, byte[]> generatedClasses) {
+            super(parent);
+            this.generatedClasses = generatedClasses;
+        }
+
+        @Override
+        protected Class<?> loadClass(String fqn, boolean resolve) throws ClassNotFoundException {
+            Class<?> clazz = loadedClasses.get(fqn);
+            if (clazz != null) {
+                return clazz;
+            }
+
+            byte[] bytes = generatedClasses.get(fqn);
+            if (bytes != null) {
+                clazz = defineClass(fqn, bytes, 0, bytes.length);
+                loadedClasses.put(fqn, clazz);
+                log.debug("Class {} loaded from generated bytecode", fqn);
+                return clazz;
+            }
+
+            return super.loadClass(fqn, resolve);
+        }
     }
 }

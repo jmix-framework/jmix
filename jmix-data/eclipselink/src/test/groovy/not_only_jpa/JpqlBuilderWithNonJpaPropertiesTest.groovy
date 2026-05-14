@@ -20,11 +20,16 @@ import io.jmix.core.querycondition.Condition
 import io.jmix.core.querycondition.LogicalCondition
 import io.jmix.core.querycondition.PropertyCondition
 import io.jmix.data.impl.JpqlQueryBuilder
+import io.jmix.data.persistence.NonJpaPropertyConditionSupport
 import org.springframework.beans.factory.BeanFactory
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
+import org.springframework.test.context.ContextConfiguration
 import test_support.DataSpec
 import test_support.entity.sales.Customer
 
+@ContextConfiguration(classes = [JpqlBuilderWithNonJpaPropertiesTest.TestConfiguration], inheritLocations = true)
 class JpqlBuilderWithNonJpaPropertiesTest extends DataSpec {
 
     @Autowired
@@ -84,5 +89,32 @@ class JpqlBuilderWithNonJpaPropertiesTest extends DataSpec {
         then:
         queryBuilder.getResultQueryString() == 'select e from data_TestEntityWithNonPersistentRef e where (e.name = :name)'
         queryBuilder.getResultParameters().size() == 1
+    }
+
+    def "test extension-backed non-jpa property is kept"() {
+        JpqlQueryBuilder queryBuilder
+
+        when:
+        def condition = LogicalCondition.and()
+                .add(PropertyCondition.createWithParameterName('virtualNonJpa', PropertyCondition.Operation.EQUAL, 'virtualNonJpa'))
+
+        queryBuilder = beanFactory.getBean(JpqlQueryBuilder)
+                .setEntityName('data_TestEntityWithNonPersistentRef')
+                .setQueryString('select e from data_TestEntityWithNonPersistentRef e')
+                .setCondition(condition)
+                .setQueryParameters(['virtualNonJpa': 'abc'])
+
+        then:
+        queryBuilder.getResultQueryString() == 'select e from data_TestEntityWithNonPersistentRef e where e.virtualNonJpa = :virtualNonJpa'
+        queryBuilder.getResultParameters() == [virtualNonJpa: 'abc']
+    }
+
+    @Configuration
+    static class TestConfiguration {
+
+        @Bean
+        NonJpaPropertyConditionSupport test_NonJpaPropertyConditionSupport() {
+            return (metaClass, propertyCondition) -> propertyCondition.property == 'virtualNonJpa'
+        }
     }
 }

@@ -22,6 +22,9 @@ import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.Resources;
 import io.jmix.core.common.util.ReflectionHelper;
+import io.jmix.core.impl.metadata.GenerationStateStore;
+import io.jmix.core.impl.metadata.MetadataGenerationManager;
+import io.jmix.core.impl.metadata.MetadataGenerationRetiredEvent;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetadataObject;
@@ -48,6 +51,7 @@ import io.swagger.v3.oas.models.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -77,6 +81,11 @@ public class OpenAPIGeneratorImpl implements OpenAPIGenerator {
     protected static final String SCHEMAS_PREFIX = "#/components/schemas/";
     protected static final String ARRAY_SIGNATURE = "[]";
 
+    protected static class State {
+        protected OpenAPI openAPI;
+        protected volatile boolean initialized;
+    }
+
     @Autowired
     protected CoreProperties coreProperties;
     @Autowired(required = false)
@@ -94,42 +103,58 @@ public class OpenAPIGeneratorImpl implements OpenAPIGenerator {
     @Autowired
     protected RestProperties restProperties;
 
-    protected OpenAPI openAPI = null;
+    @Autowired
+    protected MetadataGenerationManager metadataGenerationManager;
 
-    private volatile boolean initialized = false;
+    protected final GenerationStateStore<State> stateStore = new GenerationStateStore<>();
+
+    protected State getState() {
+        return stateStore.getOrCreate(metadataGenerationManager.getPinnedOrCurrentGenerationId(), State::new);
+    }
+
+    /**
+     * Drops generated OpenAPI state cached for a retired metadata generation.
+     *
+     * @param event retired-generation event
+     */
+    @EventListener
+    public void onMetadataGenerationRetired(MetadataGenerationRetiredEvent event) {
+        stateStore.remove(event.getGenerationId());
+    }
 
     @Override
     public OpenAPI generateOpenAPI() {
-        checkInitialized();
-        return openAPI;
+        State state = getState();
+        checkInitialized(state);
+        return state.openAPI;
     }
 
-    protected void checkInitialized() {
-        if (!initialized) {
+    protected void checkInitialized(State state) {
+        if (!state.initialized) {
             synchronized (this) {
-                if (!initialized) {
+                if (!state.initialized) {
                     log.info("Generating OpenAPI documentation");
-                    init();
-                    initialized = true;
+                    init(state);
+                    state.initialized = true;
                 }
             }
         }
     }
 
-    protected void init() {
-        openAPI = new OpenAPI();
+    protected void init(State state) {
+        state.openAPI = new OpenAPI();
         SchemaBuildContext schemaBuildContext = new SchemaBuildContext(metadataTools);
 
-        buildServer(openAPI);
-        buildInfo(openAPI);
-        buildTags(openAPI);
-        buildErrorSchema(openAPI);
+        buildServer(state.openAPI);
+        buildInfo(state.openAPI);
+        buildTags(state.openAPI);
+        buildErrorSchema(state.openAPI);
 
 
-        buildEntitiesPaths(openAPI, schemaBuildContext);
-        buildQueriesPaths(openAPI, schemaBuildContext);
-        buildServicesPaths(openAPI, schemaBuildContext);
-        buildReferencedEntitySchemas(openAPI, schemaBuildContext);
+        buildEntitiesPaths(state.openAPI, schemaBuildContext);
+        buildQueriesPaths(state.openAPI, schemaBuildContext);
+        buildServicesPaths(state.openAPI, schemaBuildContext);
+        buildReferencedEntitySchemas(state.openAPI, schemaBuildContext);
     }
 
     protected void buildReferencedEntitySchemas(OpenAPI openAPI, SchemaBuildContext schemaBuildContext) {

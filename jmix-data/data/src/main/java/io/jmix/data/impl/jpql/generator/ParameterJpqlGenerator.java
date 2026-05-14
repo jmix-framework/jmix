@@ -48,7 +48,11 @@ public class ParameterJpqlGenerator {
                                                  Map<String, Object> queryParameters,
                                                  Condition actualized,
                                                  @Nullable String entityName) {
-        ConditionGenerator conditionGenerator = resolver.getConditionGenerator(new ConditionGenerationContext(actualized));
+        ConditionGenerationContext context = new ConditionGenerationContext(actualized);
+        if (entityName != null) {
+            context.setEntityName(entityName);
+        }
+        ConditionGenerator conditionGenerator = resolver.getConditionGenerator(context);
         return conditionGenerator.processParameters(parameters, queryParameters, actualized, entityName);
     }
 }

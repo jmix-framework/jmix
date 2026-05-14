@@ -33,6 +33,7 @@ import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.exception.CompositeValidationException;
 import io.jmix.flowui.exception.ValidationException;
 import io.jmix.flowui.kit.action.ActionVariant;
+import io.jmix.flowui.validation.BeanGroupValidationProvider;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ElementKind;
 import jakarta.validation.Path;
@@ -55,6 +56,7 @@ public class ViewValidation {
     protected Dialogs dialogs;
     protected Notifications notifications;
     protected UiViewProperties viewProperties;
+    protected List<BeanGroupValidationProvider> beanGroupValidationProviders = List.of();
 
     @Autowired
     public ViewValidation(Messages messages,
@@ -67,6 +69,16 @@ public class ViewValidation {
         this.dialogs = dialogs;
         this.viewProperties = viewProperties;
         this.notifications = notifications;
+    }
+
+    /**
+     * Sets custom bean-group validation providers.
+     *
+     * @param beanGroupValidationProviders bean-group validation providers
+     */
+    @Autowired(required = false)
+    public void setBeanGroupValidationProviders(List<BeanGroupValidationProvider> beanGroupValidationProviders) {
+        this.beanGroupValidationProviders = beanGroupValidationProviders;
     }
 
     /**
@@ -138,6 +150,10 @@ public class ViewValidation {
                     return lastNode.getKind() == ElementKind.BEAN;
                 })
                 .forEach(violation -> errors.add(violation.getMessage()));
+
+        for (BeanGroupValidationProvider validationProvider : beanGroupValidationProviders) {
+            errors.addAll(validationProvider.validateBeanGroup(groupClass, item));
+        }
 
         return errors;
     }

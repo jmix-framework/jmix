@@ -1132,7 +1132,7 @@ class StudioMetaDescriptionGeneratorTest extends Specification {
         Map<String, List<String>> index = [:].withDefault { [] }
         repositoryRoots(scanWorkspaceRoot).findAll { Files.isDirectory(it) }.each { root ->
             Files.walk(root)
-                    .filter { path -> path.toString().endsWith('.java') }
+                    .filter { path -> path.toString().endsWith('.java') && !Files.isDirectory(path) }
                     .forEach { Path path ->
                         String source = Files.readString(path, StandardCharsets.UTF_8)
                         String strippedSource = stripComments(source)

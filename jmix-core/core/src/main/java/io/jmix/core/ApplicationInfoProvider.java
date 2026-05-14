@@ -20,6 +20,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import io.jmix.core.annotation.Internal;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,7 @@ import java.util.List;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
+@Internal
 @Component("core_ApplicationInfoProvider")
 @ConditionalOnClass(WebServerApplicationContext.class)
 public class ApplicationInfoProvider {

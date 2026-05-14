@@ -89,7 +89,9 @@ public class SpringAiJpqlRepairer implements JpqlRepairer, InitializingBean {
                 case "jpql.sqlPagination" ->
                         guidance.add("Remove LIMIT and OFFSET from JPQL and move them into maxResults and firstResult when the intent requires pagination.");
                 case "jpql.sqlDateFunction" ->
-                        guidance.add("Remove SQL-specific date arithmetic and vendor functions. Use JPQL-compatible constructs only, or named parameters if the date range cannot be expressed directly in JPQL.");
+                        guidance.add("Remove SQL-specific date arithmetic and vendor functions. Prefer supported Jmix date macros or relative date time constants, and use named parameters only when the date range cannot be expressed through supported constructs.");
+                case "jpql.unsupportedMacro" ->
+                        guidance.add("Use only supported Jmix date macros: @between, @today, @dateEquals, @dateBefore, @dateAfter.");
                 case "jpql.currentFunctionParentheses" ->
                         guidance.add("Use CURRENT_DATE, CURRENT_TIME, and CURRENT_TIMESTAMP without parentheses.");
                 case "jpql.syntax.invalid" ->

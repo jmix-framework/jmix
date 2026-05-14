@@ -52,7 +52,7 @@ public class SpringAiPromptExecutor {
     }
 
     public GeneratedJpqlResult executePrompt(String generatedPrompt) {
-        log.debug("'-------------'\nPrompt: {}", generatedPrompt);
+        log.debug("\n\nPrompt: {}", generatedPrompt);
         log.debug("\n\nSystem prompt: {}", systemPrompt);
 
         String content = chatClient.prompt()

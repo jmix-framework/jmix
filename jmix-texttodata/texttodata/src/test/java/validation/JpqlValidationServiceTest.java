@@ -181,6 +181,100 @@ class JpqlValidationServiceTest {
     }
 
     @Test
+    @DisplayName("Accepts supported Jmix date macros")
+    void testAcceptsSupportedJmixDateMacros() {
+        GeneratedJpqlResult result = new GeneratedJpqlResult(
+                "select e from textdt_Order e where @between(e.orderDate, now-1, now, month)",
+                "textdt_Order",
+                List.of(),
+                List.of("textdt_Order"),
+                List.of("orderDate"),
+                "Orders for last month",
+                List.of()
+        );
+
+        JpqlValidationResult validationResult = jpqlValidationService.validate(result);
+
+        assertTrue(validationResult.isValid());
+    }
+
+    @Test
+    @DisplayName("Accepts supported relative date time constants")
+    void testAcceptsSupportedRelativeDateTimeConstants() {
+        GeneratedJpqlResult result = new GeneratedJpqlResult(
+                "select e from textdt_Order e where e.orderDate >= FIRST_DAY_OF_CURRENT_MONTH and e.orderDate <= LAST_DAY_OF_CURRENT_MONTH",
+                "textdt_Order",
+                List.of(),
+                List.of("textdt_Order"),
+                List.of("orderDate"),
+                "Orders for current month",
+                List.of()
+        );
+
+        JpqlValidationResult validationResult = jpqlValidationService.validate(result);
+
+        assertTrue(validationResult.isValid());
+    }
+
+    @Test
+    @DisplayName("Rejects unsupported Jmix query macros")
+    void testRejectsUnsupportedJmixQueryMacros() {
+        GeneratedJpqlResult result = new GeneratedJpqlResult(
+                "select e from textdt_Order e where @unknownMacro(e.orderDate)",
+                "textdt_Order",
+                List.of(),
+                List.of("textdt_Order"),
+                List.of("orderDate"),
+                "Unsupported macro",
+                List.of()
+        );
+
+        JpqlValidationResult validationResult = jpqlValidationService.validate(result);
+
+        assertFalse(validationResult.isValid());
+        assertTrue(validationResult.getIssues().stream()
+                .anyMatch(issue -> issue.getCode().equals("jpql.unsupportedMacro")));
+    }
+
+    @Test
+    @DisplayName("Rejects unsupported relative date time constants")
+    void testRejectsUnsupportedRelativeDateTimeConstants() {
+        GeneratedJpqlResult result = new GeneratedJpqlResult(
+                "select e from textdt_Order e where e.orderDate >= START_OF_LAST_MONTH",
+                "textdt_Order",
+                List.of(),
+                List.of("textdt_Order"),
+                List.of("orderDate"),
+                "Unsupported relative constant",
+                List.of()
+        );
+
+        JpqlValidationResult validationResult = jpqlValidationService.validate(result);
+
+        assertFalse(validationResult.isValid());
+        assertTrue(validationResult.getIssues().stream()
+                .anyMatch(issue -> issue.getCode().equals("jpql.unsupportedRelativeDateTimeConstant")));
+    }
+
+    @Test
+    @DisplayName("Does not treat string literal value as relative date time constant")
+    void testIgnoresRelativeDateTimeLikeStringLiteral() {
+        GeneratedJpqlResult result = new GeneratedJpqlResult(
+                "select e from textdt_Order e where e.number = 'START_OF_LAST_MONTH'",
+                "textdt_Order",
+                List.of(),
+                List.of("textdt_Order"),
+                List.of("number"),
+                "String literal that looks like a relative constant",
+                List.of()
+        );
+
+        JpqlValidationResult validationResult = jpqlValidationService.validate(result);
+
+        assertTrue(validationResult.isValid());
+    }
+
+    @Test
     @DisplayName("Rejects invalid JPQL syntax when QueryParser integration is available")
     void testRejectsInvalidJpqlSyntax() {
         GeneratedJpqlResult result = new GeneratedJpqlResult(

@@ -59,7 +59,7 @@ class UiObservationSupportTest extends Specification {
 
     // -------- action observation --------
 
-    def "standalone action without trigger has only action.id"() {
+    def "standalone action without trigger falls back to N/A view.id"() {
         given:
         def action = new BaseAction("create-order")
 
@@ -69,7 +69,7 @@ class UiObservationSupportTest extends Specification {
         then:
         lowCardinalityValue(obs, "action.id") == "create-order"
         lowCardinalityValue(obs, "target.id") == null
-        lowCardinalityValue(obs, "view.id") == null
+        lowCardinalityValue(obs, "view.id") == "N/A"
     }
 
     def "trigger component attached to a view yields view.id"() {
@@ -98,15 +98,15 @@ class UiObservationSupportTest extends Specification {
         lowCardinalityValue(obs, "view.id") == "main"
     }
 
-    def "trigger component not attached to any view yields no view.id"() {
+    def "trigger component not attached to any view falls back to N/A view.id"() {
         given: "a detached component with no parent in the UI tree"
         def orphan = new Div()
 
         when: "creating an action observation with this component as trigger"
         def obs = support.createActionExecutionObservation(new BaseAction("act"), orphan)
 
-        then: "findView returns null and view.id tag is not added"
-        lowCardinalityValue(obs, "view.id") == null
+        then: "findView returns null and view.id is filled with the sentinel"
+        lowCardinalityValue(obs, "view.id") == "N/A"
     }
 
     def "TargetAction with component target attached to view yields target.id and view.id"() {
@@ -165,7 +165,7 @@ class UiObservationSupportTest extends Specification {
         lowCardinalityValue(obs, "target.id") == null
     }
 
-    def "view without explicit id produces no view.id tag"() {
+    def "view without explicit id falls back to N/A view.id"() {
         given: "a view with no setId() call — getId() returns an empty Optional"
         def view = new TestView()
         def button = new Div()
@@ -174,8 +174,8 @@ class UiObservationSupportTest extends Specification {
         when: "creating an observation with a trigger inside that view"
         def obs = support.createActionExecutionObservation(new BaseAction("act"), button)
 
-        then: "view.id tag is not added — empty Optional is silently skipped"
-        lowCardinalityValue(obs, "view.id") == null
+        then: "view.id falls back to the sentinel rather than being omitted"
+        lowCardinalityValue(obs, "view.id") == "N/A"
     }
 
     def "action inside a fragment yields fragment.id and view.id"() {
@@ -540,7 +540,7 @@ class UiObservationSupportTest extends Specification {
                 .hasLowCardinalityKeyValue("view.id", "order-view")
     }
 
-    def "fragment observation omits view.id when the fragment is not attached to a view"() {
+    def "fragment observation falls back to N/A view.id when the fragment is not attached to a view"() {
         given: "a fragment with no parent in the UI tree"
         def fragment = Mock(Fragment) {
             getId() >> Optional.of("orphan")
@@ -550,8 +550,8 @@ class UiObservationSupportTest extends Specification {
         when: "creating a fragment lifecycle observation directly"
         def obs = support.createFragmentLifecycleObservation(fragment, FragmentLifecycle.CREATE)
 
-        then: "view.id tag is silently omitted — same conditional behaviour as fragment.id"
-        lowCardinalityValue(obs, "view.id") == null
+        then: "view.id falls back to the sentinel — uniform tag schema across all observations"
+        lowCardinalityValue(obs, "view.id") == "N/A"
     }
 
     // -------- helpers --------

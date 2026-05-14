@@ -58,11 +58,13 @@ public class UiObservationSupport {
     public static final String DATA_LOADER_OBSERVATION_NAME = "jmix.ui.data";
 
     /**
-     * Fallback for the {@code view.id} tag when a data loader is registered without a known view id —
-     * e.g. inside a fragment created via {@code Fragments.create(parent, fragmentClass)} without an explicit id,
-     * or via a custom {@code monitoringInfoProvider}. Keeps the metric tag schema uniform.
+     * Sentinel for the low-cardinality {@code view.id} tag when the enclosing view cannot be resolved or
+     * has no explicit id. Applied uniformly to all observation types so dashboards filtering by
+     * {@code view.id} have a consistent value to query, and so Grafana variable dropdowns surface the
+     * anonymous bucket alongside named views (use {@code view.class} / {@code fragment.class} to drill
+     * down into which classes lack ids).
      */
-    protected static final String DATA_LOADER_EMPTY_VIEW_ID = "N/A";
+    protected static final String MISSING_VIEW_ID = "N/A";
 
     /**
      * Sentinel for the low-cardinality {@code loader.id} tag when the loader carries an auto-generated id
@@ -104,7 +106,8 @@ public class UiObservationSupport {
         return Observation.createNotStarted(VIEW_OBSERVATION_NAME, observationRegistry)
                 .contextualName("view lifecycle")
                 .lowCardinalityKeyValue("lifecycle.name", lifecycle.getName())
-                .lowCardinalityKeyValue("view.id", observationInfo.viewId())
+                .lowCardinalityKeyValue("view.id",
+                        Strings.isNullOrEmpty(observationInfo.viewId()) ? MISSING_VIEW_ID : observationInfo.viewId())
                 .lowCardinalityKeyValue("view.class", observationInfo.viewClass());
     }
 
@@ -121,14 +124,12 @@ public class UiObservationSupport {
         Observation observation = Observation.createNotStarted(FRAGMENT_OBSERVATION_NAME, observationRegistry)
                 .contextualName("fragment lifecycle")
                 .lowCardinalityKeyValue("lifecycle.name", lifecycle.getName())
-                .lowCardinalityKeyValue("fragment.class", observationInfo.fragmentClass());
+                .lowCardinalityKeyValue("fragment.class", observationInfo.fragmentClass())
+                .lowCardinalityKeyValue("view.id",
+                        Strings.isNullOrEmpty(observationInfo.viewId()) ? MISSING_VIEW_ID : observationInfo.viewId());
 
         if (!Strings.isNullOrEmpty(observationInfo.fragmentId())) {
             observation.lowCardinalityKeyValue("fragment.id", observationInfo.fragmentId());
-        }
-
-        if (!Strings.isNullOrEmpty(observationInfo.viewId())) {
-            observation.lowCardinalityKeyValue("view.id", observationInfo.viewId());
         }
 
         return observation;
@@ -235,7 +236,7 @@ public class UiObservationSupport {
                 .lowCardinalityKeyValue("lifecycle.name", lifecycle.getName())
                 .lowCardinalityKeyValue("loader.id", aggregatedLoaderId)
                 .highCardinalityKeyValue("full_loader_id", loaderId)
-                .lowCardinalityKeyValue("view.id", Strings.isNullOrEmpty(viewId) ? DATA_LOADER_EMPTY_VIEW_ID : viewId);
+                .lowCardinalityKeyValue("view.id", Strings.isNullOrEmpty(viewId) ? MISSING_VIEW_ID : viewId);
 
         if (!Strings.isNullOrEmpty(info.fragmentId())) {
             observation.lowCardinalityKeyValue("fragment.id", info.fragmentId());
@@ -265,10 +266,11 @@ public class UiObservationSupport {
             viewSource = component;
         }
 
+        String resolvedViewId = null;
         if (viewSource != null) {
             View<?> view = UiComponentUtils.findView(viewSource);
             if (view != null) {
-                view.getId().ifPresent(viewId -> observation.lowCardinalityKeyValue("view.id", viewId));
+                resolvedViewId = view.getId().orElse(null);
             }
 
             Fragment<?> fragment = UiComponentUtils.findFragment(viewSource);
@@ -277,6 +279,8 @@ public class UiObservationSupport {
                         observation.lowCardinalityKeyValue("fragment.id", fragmentId));
             }
         }
+        observation.lowCardinalityKeyValue("view.id",
+                Strings.isNullOrEmpty(resolvedViewId) ? MISSING_VIEW_ID : resolvedViewId);
 
         return observation;
     }

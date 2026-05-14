@@ -17,15 +17,17 @@
 package io.jmix.flowui.devserver.startup;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
 
 import com.vaadin.flow.server.Constants;
+import org.apache.commons.io.FileUtils;
 
 public record StartupContext(
         String themeName,
         File projectFolder,
         File designerFolder
 ) {
-
     public File findFileInProjectFolder(String fileName) {
         return new File(projectFolder, fileName);
     }
@@ -35,26 +37,30 @@ public record StartupContext(
     }
 
     public File getProjectFrontendFolder() {
-        return getFrontendFolder(projectFolder);
+        return getFrontendFolder(projectFolder, false);
     }
 
     public File getDesignerFrontendFolder() {
-        return getFrontendFolder(designerFolder);
+        return getFrontendFolder(designerFolder, true);
     }
 
-    public File getProjectThemesFolder() {
-        return getThemesFolder(projectFolder);
+    public File getProjectLegacyThemesFolder() {
+        return getLegacyThemesFolder(projectFolder);
     }
 
-    public File getDesignerThemesFolder() {
-        return getThemesFolder(designerFolder);
+    public File getDesignerLegacyThemesFolder() {
+        return getLegacyThemesFolder(designerFolder);
     }
 
-    private File getThemesFolder(File baseFolder) {
-        return getFrontendFolder(baseFolder).toPath().resolve(Constants.APPLICATION_THEME_ROOT).toFile();
+    public File getProjectMetaInfResourcesFolder() {
+        return getMetaInfResourcesFolder(projectFolder);
     }
 
-    private File getFrontendFolder(File baseFolder) {
+    private File getLegacyThemesFolder(File baseFolder) {
+        return getFrontendFolder(baseFolder, false).toPath().resolve(Constants.APPLICATION_THEME_ROOT).toFile();
+    }
+
+    private File getFrontendFolder(File baseFolder, boolean createIfNotExist) {
         File frontendFolder = baseFolder.toPath()
                 .resolve("src")
                 .resolve("main")
@@ -63,6 +69,24 @@ public record StartupContext(
 
         File legacyFrontendFolder = baseFolder.toPath().resolve("frontend").toFile();
 
+        if (createIfNotExist && !frontendFolder.exists()) {
+            try {
+                FileUtils.forceMkdir(frontendFolder);
+                return frontendFolder;
+            } catch (IOException ignored) {
+            }
+        }
+
         return frontendFolder.exists() ? frontendFolder : legacyFrontendFolder;
+    }
+
+    private File getMetaInfResourcesFolder(File baseFolder) {
+        Path classpathResources = baseFolder.toPath()
+                .resolve("src")
+                .resolve("main")
+                .resolve("resources")
+                .resolve("META-INF")
+                .resolve("resources");
+        return classpathResources.toFile();
     }
 }

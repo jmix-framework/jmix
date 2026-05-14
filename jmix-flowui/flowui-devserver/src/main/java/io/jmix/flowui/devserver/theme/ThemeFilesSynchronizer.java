@@ -29,7 +29,6 @@ import org.apache.commons.io.monitor.FileAlterationListener;
 import org.apache.commons.io.monitor.FileAlterationListenerAdaptor;
 import org.apache.commons.io.monitor.FileAlterationMonitor;
 import org.apache.commons.io.monitor.FileAlterationObserver;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -179,36 +178,36 @@ public class ThemeFilesSynchronizer implements Serializable {
     }
 
     private static void startThemesFolderWatcher(StartupContext context) throws Exception {
-        String themeName = context.themeName();
-        if (StringUtils.isBlank(themeName)) {
-            log.info("Project theme name not set. Skipping watching the theme files");
+        File projectFrontend = context.getProjectFrontendFolder();
+        File projectClasspathFrontend = context.getProjectMetaInfResourcesFolder();
+
+        File[] watchDirs = Arrays.stream(new File[]{projectFrontend, projectClasspathFrontend})
+                .filter(File::exists)
+                .toArray(File[]::new);
+
+        if (watchDirs.length == 0) {
+            log.info("No frontend folders found for project. Skipping watching the frontend files");
             return;
         }
-
-        File projectThemesFolder = context.getProjectThemesFolder();
-        if (!projectThemesFolder.exists()) {
-            log.info("Project theme folder not set. Skipping watching the theme files");
-            return;
-        }
-
-        File designerThemesFolder = context.getDesignerThemesFolder();
 
         if (INSTANCE != null) {
             INSTANCE.doStop();
         }
 
-        INSTANCE = new ThemeFilesSynchronizer(projectThemesFolder,
-                projectThemeFile -> synchronizeThemesFolders(context));
+        INSTANCE = new ThemeFilesSynchronizer(
+                changedFile -> synchronizeProjectResources(context),
+                watchDirs
+        );
 
-        log.info("Scheduling synchronization between project themes folder {} and designer themes folder {}",
-                projectThemesFolder, designerThemesFolder);
+        log.info("Scheduling synchronization of project frontend folders: {}",
+                Arrays.toString(watchDirs));
 
         INSTANCE.doStart();
     }
 
-    private static void synchronizeThemesFolders(StartupContext context) {
-        log.info("Synchronizing themes folders...");
-        CopyFilesStartupTask.copyThemes(context);
+    private static void synchronizeProjectResources(StartupContext context) {
+        log.info("Synchronizing project frontend resources...");
+        CopyFilesStartupTask.copyProjectResources(context);
     }
 
     /**

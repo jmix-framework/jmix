@@ -31,6 +31,7 @@ import com.vaadin.flow.router.*;
 import com.vaadin.flow.shared.Registration;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 import io.jmix.core.*;
+import io.jmix.core.accesscontext.ExportImportEntityContext;
 import io.jmix.core.accesscontext.InMemoryCrudEntityContext;
 import io.jmix.core.common.datastruct.Pair;
 import io.jmix.core.entity.EntityValues;
@@ -86,12 +87,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import static com.google.common.base.Strings.nullToEmpty;
 import static io.jmix.flowui.download.DownloadFormat.JSON;
@@ -157,6 +162,8 @@ public class EntityInspectorListView extends StandardListView<Object> {
     protected CoreProperties coreProperties;
     @Autowired
     protected EntityImportExport entityImportExport;
+    @Autowired
+    protected EntitySerialization entitySerialization;
     @Autowired
     protected EntityImportPlanJsonBuilder importPlanJsonBuilder;
     @Autowired
@@ -992,8 +999,14 @@ public class EntityInspectorListView extends StandardListView<Object> {
 
     protected FetchPlan createEntityExportPlan(MetaClass metaClass) {
         FetchPlanBuilder fetchPlanBuilder = fetchPlans.builder(metaClass.getJavaClass());
+        ExportImportEntityContext exportContext = new ExportImportEntityContext(metaClass);
+        accessManager.applyRegisteredConstraints(exportContext);
 
         for (MetaProperty metaProperty : metaClass.getProperties()) {
+            if (!exportContext.canExported(metaProperty.getName())) {
+                continue;
+            }
+
             switch (metaProperty.getType()) {
                 case DATATYPE:
                 case ENUM:
@@ -1002,13 +1015,29 @@ public class EntityInspectorListView extends StandardListView<Object> {
                 case ASSOCIATION:
                 case COMPOSITION:
                 case EMBEDDED:
-                    FetchPlan local = fetchPlanRepository.getFetchPlan(metaProperty.getRange().asClass(),
-                            FetchPlan.LOCAL);
-                    fetchPlanBuilder.add(metaProperty.getName(), local.getName());
+                    fetchPlanBuilder.add(metaProperty.getName(),
+                            builder -> builder.addFetchPlan(createNestedEntityExportPlan(metaProperty.getRange().asClass())));
                     break;
                 default:
                     throw new IllegalStateException("unknown property type");
             }
+        }
+
+        return fetchPlanBuilder.build();
+    }
+
+    protected FetchPlan createNestedEntityExportPlan(MetaClass metaClass) {
+        FetchPlan localFetchPlan = fetchPlanRepository.getFetchPlan(metaClass, FetchPlan.LOCAL);
+        FetchPlanBuilder fetchPlanBuilder = fetchPlans.builder(metaClass.getJavaClass());
+        ExportImportEntityContext exportContext = new ExportImportEntityContext(metaClass);
+        accessManager.applyRegisteredConstraints(exportContext);
+
+        for (FetchPlanProperty fetchPlanProperty : localFetchPlan.getProperties()) {
+            if (!exportContext.canExported(fetchPlanProperty.getName())) {
+                continue;
+            }
+
+            fetchPlanBuilder.add(fetchPlanProperty.getName());
         }
 
         return fetchPlanBuilder.build();
@@ -1044,9 +1073,11 @@ public class EntityInspectorListView extends StandardListView<Object> {
 
     protected EntityImportPlan createEntityImportPlan(MetaClass metaClass) {
         EntityImportPlanBuilder planBuilder = entityImportPlans.builder(metaClass.getJavaClass());
+        ExportImportEntityContext importContext = new ExportImportEntityContext(metaClass);
+        accessManager.applyRegisteredConstraints(importContext);
 
         for (MetaProperty metaProperty : metaClass.getProperties()) {
-            if (!metadataTools.isJpa(metaProperty)) {
+            if (!metadataTools.isJpa(metaProperty) || !importContext.canImported(metaProperty.getName())) {
                 continue;
             }
 
@@ -1077,6 +1108,68 @@ public class EntityInspectorListView extends StandardListView<Object> {
         }
 
         return planBuilder.build();
+    }
+
+    protected String exportEntitiesToJson(Collection<Object> entities, FetchPlan fetchPlan) {
+        Collection<?> reloadedEntities = reloadEntitiesForExport(entities, fetchPlan);
+        return entitySerialization.toJson(reloadedEntities, null,
+                EntitySerializationOption.COMPACT_REPEATED_ENTITIES,
+                EntitySerializationOption.PRETTY_PRINT,
+                EntitySerializationOption.DO_NOT_SERIALIZE_DENIED_PROPERTY);
+    }
+
+    protected byte[] exportEntitiesToZip(Collection<Object> entities, FetchPlan fetchPlan) {
+        Collection<?> reloadedEntities = reloadEntitiesForExport(entities, fetchPlan);
+        String json = entitySerialization.toJson(reloadedEntities, null,
+                EntitySerializationOption.COMPACT_REPEATED_ENTITIES,
+                EntitySerializationOption.DO_NOT_SERIALIZE_DENIED_PROPERTY);
+        byte[] jsonBytes = json.getBytes(StandardCharsets.UTF_8);
+
+        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+             ZipOutputStream zipOutputStream = new ZipOutputStream(byteArrayOutputStream, StandardCharsets.UTF_8)) {
+            zipOutputStream.putNextEntry(new ZipEntry("entities.json"));
+            zipOutputStream.write(jsonBytes);
+            zipOutputStream.closeEntry();
+            zipOutputStream.finish();
+            return byteArrayOutputStream.toByteArray();
+        } catch (IOException e) {
+            throw new RuntimeException("Error on creating zip archive during entities export", e);
+        }
+    }
+
+    protected Collection<?> reloadEntitiesForExport(Collection<Object> entities, FetchPlan fetchPlan) {
+        List<Object> ids = new ArrayList<>(entities.size());
+        for (Object entity : entities) {
+            ids.add(EntityValues.getId(entity));
+        }
+        if (ids.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        MetaClass metaClass = metadata.getClass(fetchPlan.getEntityClass());
+        String primaryKeyName = metadataTools.getPrimaryKeyName(metaClass);
+        LoadContext<?> ctx = new LoadContext<>(metaClass)
+                // setIds() expects every requested entity to be returned and fails on row-level filtered entries.
+                .setQuery(new LoadContext.Query(String.format("select e from %s e where e.%s in :entityIds",
+                        metaClass.getName(), primaryKeyName))
+                        .setParameter("entityIds", ids))
+                .setFetchPlan(fetchPlan)
+                .setHint("jmix.softDeletion", false);
+
+        List<?> loadedEntities = dataManager.loadList(ctx);
+        Map<Object, Object> loadedById = new HashMap<>(loadedEntities.size());
+        for (Object loadedEntity : loadedEntities) {
+            loadedById.put(EntityValues.getId(loadedEntity), loadedEntity);
+        }
+
+        List<Object> orderedEntities = new ArrayList<>(loadedEntities.size());
+        for (Object id : ids) {
+            Object loadedEntity = loadedById.get(id);
+            if (loadedEntity != null) {
+                orderedEntities.add(loadedEntity);
+            }
+        }
+        return orderedEntities;
     }
 
     public void setEntityName(String entityName) {
@@ -1131,15 +1224,14 @@ public class EntityInspectorListView extends StandardListView<Object> {
                     && dataGrid.getItems() instanceof ContainerDataGridItems) {
                 selected = ((ContainerDataGridItems<Object>) dataGrid.getItems()).getContainer().getItems();
             }
+            FetchPlan fetchPlan = createEntityExportPlan(selectedMeta);
 
             int saveExportedByteArrayDataThresholdBytes = uiProperties.getSaveExportedByteArrayDataThresholdBytes();
             String tempDir = coreProperties.getTempDir();
 
             try {
-                Collection entities = reloadEntities(selected, createEntityExportPlan(selectedMeta));
-
                 if (format == ZIP) {
-                    byte[] data = entityImportExport.exportEntitiesToZIP(entities);
+                    byte[] data = exportEntitiesToZip(selected, fetchPlan);
                     String resourceName = metaClass.getJavaClass().getSimpleName() + ".zip";
                     ByteArrayDownloadDataProvider dataProvider =
                             new ByteArrayDownloadDataProvider(data, saveExportedByteArrayDataThresholdBytes, tempDir);
@@ -1147,7 +1239,7 @@ public class EntityInspectorListView extends StandardListView<Object> {
                     downloader.download(dataProvider, resourceName, ZIP);
 
                 } else if (format == JSON) {
-                    byte[] data = entityImportExport.exportEntitiesToJSON(entities)
+                    byte[] data = exportEntitiesToJson(selected, fetchPlan)
                             .getBytes(StandardCharsets.UTF_8);
                     String resourceName = metaClass.getJavaClass().getSimpleName() + ".json";
                     ByteArrayDownloadDataProvider dataProvider =
@@ -1162,21 +1254,6 @@ public class EntityInspectorListView extends StandardListView<Object> {
 
                 log.error("Entities export failed", e);
             }
-        }
-
-        protected Collection reloadEntities(Collection<Object> entities, FetchPlan fetchPlan) {
-            List ids = new ArrayList(entities.size());
-            for (Object entity : entities) {
-                ids.add(EntityValues.getId(entity));
-            }
-
-            MetaClass metaClass = metadata.getClass(fetchPlan.getEntityClass());
-            LoadContext<?> ctx = new LoadContext<>(metaClass)
-                    .setIds(ids)
-                    .setFetchPlan(fetchPlan)
-                    .setHint("jmix.softDeletion", false);
-
-            return dataManager.loadList(ctx);
         }
     }
 

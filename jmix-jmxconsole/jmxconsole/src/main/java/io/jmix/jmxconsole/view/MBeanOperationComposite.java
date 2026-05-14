@@ -21,6 +21,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import io.jmix.core.CoreProperties;
 import io.jmix.core.Messages;
 import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.Notifications;
@@ -33,6 +34,7 @@ import io.jmix.flowui.model.DataComponents;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.View;
 import io.jmix.jmxconsole.AttributeComponentProvider;
+import io.jmix.jmxconsole.JmxConsoleProperties;
 import io.jmix.jmxconsole.model.ManagedBeanAttribute;
 import io.jmix.jmxconsole.model.ManagedBeanOperation;
 import io.jmix.jmxconsole.model.ManagedBeanOperationParameter;
@@ -45,7 +47,6 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -69,6 +70,8 @@ public class MBeanOperationComposite extends Composite<JmixDetails>
     protected Messages messages;
     protected DataComponents dataComponents;
     protected DialogWindows dialogWindows;
+    protected CoreProperties coreProperties;
+    protected JmxConsoleProperties jmxConsoleProperties;
 
     protected CollectionContainer<ManagedBeanAttribute> attributeDc;
     protected CollectionLoader<ManagedBeanAttribute> attributeDl;
@@ -81,6 +84,7 @@ public class MBeanOperationComposite extends Composite<JmixDetails>
     protected ManagedBeanOperation operation;
     protected AttributeComponentProvider attributeComponentProvider;
     protected Map<Component, String> attributeFieldsTypeMap = new LinkedHashMap<>();
+    protected boolean writeAndInvokeEnabled = true;
 
     @Override
     public void afterPropertiesSet() {
@@ -94,6 +98,9 @@ public class MBeanOperationComposite extends Composite<JmixDetails>
         this.dataComponents = applicationContext.getBean(DataComponents.class);
         this.dialogWindows = applicationContext.getBean(DialogWindows.class);
         this.attributeComponentProvider = applicationContext.getBean(AttributeComponentProvider.class);
+        this.coreProperties = applicationContext.getBean(CoreProperties.class);
+        this.jmxConsoleProperties = applicationContext.getBean(JmxConsoleProperties.class);
+        this.writeAndInvokeEnabled = isWriteAndInvokeEnabled();
     }
 
     @Override
@@ -120,6 +127,7 @@ public class MBeanOperationComposite extends Composite<JmixDetails>
         invokeBtn = uiComponents.create(JmixButton.class);
         invokeBtn.setText(messages.getMessage(getClass(), "invokeButton.text"));
         invokeBtn.addClickListener(this::onInvokeButtonClick);
+        invokeBtn.setEnabled(writeAndInvokeEnabled);
 
         verticalLayout.add(nameLabel, descriptionSpan, operationVbox, invokeBtn);
 
@@ -163,6 +171,13 @@ public class MBeanOperationComposite extends Composite<JmixDetails>
 
 
     protected void onInvokeButtonClick(ClickEvent<Button> buttonClickEvent) {
+        if (!writeAndInvokeEnabled) {
+            notifications.create(messages.getMessage(getClass(), "writeAndInvokeDisabled"))
+                    .withType(Notifications.Type.ERROR)
+                    .show();
+            return;
+        }
+
         Object[] paramValues;
         try {
             paramValues = attributeFieldsTypeMap.entrySet()
@@ -195,5 +210,16 @@ public class MBeanOperationComposite extends Composite<JmixDetails>
 
     public void setOperation(ManagedBeanOperation operation) {
         this.operation = operation;
+    }
+
+    public void setWriteAndInvokeEnabled(boolean writeAndInvokeEnabled) {
+        this.writeAndInvokeEnabled = writeAndInvokeEnabled;
+        if (invokeBtn != null) {
+            invokeBtn.setEnabled(writeAndInvokeEnabled);
+        }
+    }
+
+    protected boolean isWriteAndInvokeEnabled() {
+        return coreProperties.isUnsafeRuntimeFeaturesEnabled() && jmxConsoleProperties.isWriteAndInvokeEnabled();
     }
 }

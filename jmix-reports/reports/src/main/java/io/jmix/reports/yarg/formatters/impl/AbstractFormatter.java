@@ -17,6 +17,7 @@ package io.jmix.reports.yarg.formatters.impl;
 
 import com.google.common.base.Preconditions;
 import io.jmix.reports.libintegration.GroovyScriptParametersProvider;
+import io.jmix.reports.libintegration.ReportsGroovyFeatureSupport;
 import io.jmix.reports.yarg.exception.ReportFormattingException;
 import io.jmix.reports.yarg.exception.ReportingException;
 import io.jmix.reports.yarg.exception.ReportingInterruptedException;
@@ -69,6 +70,8 @@ public abstract class AbstractFormatter implements ReportFormatter {
     protected GroovyScriptParametersProvider groovyScriptParametersProvider;
     @Autowired
     protected Scripting scripting;
+    @Autowired
+    protected ReportsGroovyFeatureSupport groovyFeatureSupport;
 
     /**
      * Chain of responsibility for content inliners
@@ -136,7 +139,11 @@ public abstract class AbstractFormatter implements ReportFormatter {
             if (Boolean.TRUE.equals(isGroovyScript(parameterName, fullParameterName))) {
                 Map<String, Object> params = groovyScriptParametersProvider.getParametersForFormatterParameters();
                 params.put(VALUE, value);
-                valueString = scripting.evaluateGroovy(formatString, params);
+                if (!groovyFeatureSupport.isGroovyEnabled()) {
+                    valueString = groovyFeatureSupport.getDisabledFormatterResult(fullParameterName);
+                } else {
+                    valueString = scripting.evaluateGroovy(formatString, params);
+                }
             } else if (formatString.startsWith("class:")) {
                 String className = formatString.replaceFirst("class:", "");
                 ValueFormat valueFormat;

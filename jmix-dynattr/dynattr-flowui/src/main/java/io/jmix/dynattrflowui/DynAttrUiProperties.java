@@ -33,11 +33,18 @@ public class DynAttrUiProperties {
      */
     int maxRecalculationLevel;
 
+    /**
+     * Whether Groovy-based dynamic attribute behavior is enabled.
+     */
+    boolean groovyEnabled;
+
     @ConstructorBinding
     public DynAttrUiProperties(@DefaultValue("4") int dynamicAttributesPanelMaxCount,
-                               @DefaultValue("10") int maxRecalculationLevel) {
+                               @DefaultValue("10") int maxRecalculationLevel,
+                               @DefaultValue("true") boolean groovyEnabled) {
         this.dynamicAttributesPanelMaxColumnsCount = dynamicAttributesPanelMaxCount;
         this.maxRecalculationLevel = maxRecalculationLevel;
+        this.groovyEnabled = groovyEnabled;
     }
 
     /**
@@ -52,5 +59,9 @@ public class DynAttrUiProperties {
      */
     public int getMaxRecalculationLevel() {
         return maxRecalculationLevel;
+    }
+
+    public boolean isGroovyEnabled() {
+        return groovyEnabled;
     }
 }

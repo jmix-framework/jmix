@@ -153,6 +153,8 @@ public class ReportDetailView extends StandardDetailView<Report> {
     @ViewComponent
     protected JmixButton dataSetScriptCodeEditorHelpBtn;
     @ViewComponent
+    protected JmixButton dataSetScriptFullScreenBtn;
+    @ViewComponent
     protected JmixSelect<String> dataStoreField;
     @ViewComponent
     protected JmixCheckbox isProcessTemplateField;
@@ -189,6 +191,8 @@ public class ReportDetailView extends StandardDetailView<Report> {
     @ViewComponent
     protected CodeEditor jsonGroovyCodeEditor;
     @ViewComponent
+    protected JmixButton jsonGroovyCodeEditorFullScreenBtn;
+    @ViewComponent
     protected DataGrid<ReportTemplate> templatesDataGrid;
     @ViewComponent
     protected JmixTextArea localeTextField;
@@ -210,6 +214,10 @@ public class ReportDetailView extends StandardDetailView<Report> {
     protected MessageBundle messageBundle;
     @ViewComponent
     protected NativeLabel codeEditorLabel;
+    @ViewComponent
+    protected CodeEditor validationScriptCodeEditor;
+    @ViewComponent
+    protected JmixButton validationScriptFullScreenBtn;
 
     @Autowired
     protected ReportsPersistence reportsPersistence;
@@ -233,6 +241,8 @@ public class ReportDetailView extends StandardDetailView<Report> {
     protected UiProperties uiProperties;
     @Autowired
     protected CoreProperties coreProperties;
+    @Autowired
+    protected ReportsProperties reportsProperties;
     @Autowired
     protected EntityStates entityStates;
     @Autowired
@@ -351,6 +361,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
         bandsTreeDataGrid.select(getEditedEntity().getRootBandDefinition());
 
         sortBandDefinitionsByPosition();
+        updateGroovyEditorsState(dataSetsDc.getItemOrNull());
     }
 
     @Subscribe("bandsTreeDataGrid.create")
@@ -1311,6 +1322,8 @@ public class ReportDetailView extends StandardDetailView<Report> {
 
             dataSetScriptCodeEditorHelpBtn.setVisible(CodeEditorMode.GROOVY.equals(dataSetScriptCodeEditor.getMode()));
         }
+
+        updateGroovyEditorsState(dataSet);
     }
 
     protected void updateFetchPlanNameFieldItems(@Nullable ReportInputParameter reportInputParameter) {
@@ -1386,6 +1399,8 @@ public class ReportDetailView extends StandardDetailView<Report> {
             default:
                 break;
         }
+
+        updateGroovyEditorsState(dataSet);
     }
 
     protected void setJsonDataSetFieldsVisibility(boolean visible) {
@@ -1462,6 +1477,9 @@ public class ReportDetailView extends StandardDetailView<Report> {
 
     protected void onDataSetScriptFieldExpandIconClick() {
         DataSet dataSet = dataSetsDc.getItem();
+        if (isGroovyDataSetLocked(dataSet)) {
+            return;
+        }
         CodeEditorMode codeEditorMode = getCodeEditorMode(dataSet);
         ReportScriptEditor.Builder reportScriptEditorBuilder = reportScriptEditor.create(this)
                 .withTitle(getScriptEditorDialogCaption())
@@ -1501,10 +1519,13 @@ public class ReportDetailView extends StandardDetailView<Report> {
 
     @Subscribe("jsonGroovyCodeEditorFullScreenBtn")
     public void onJsonGroovyCodeEditorFullScreenBtnClick(final ClickEvent<Button> event) {
+        if (isJsonGroovyEditorLocked(dataSetsDc.getItem())) {
+            return;
+        }
         reportScriptEditor.create(this)
                 .withTitle(getScriptEditorDialogCaption())
                 .withValue(dataSetsDc.getItem().getJsonSourceText())
-                .withEditorMode(CodeEditorMode.JSON)
+                .withEditorMode(CodeEditorMode.GROOVY)
                 .withCloseOnClick(value -> dataSetsDc.getItem().setJsonSourceText(value))
                 .withHelpOnClick(this::onJsonGroovyCodeEditorHelpIconClick)
                 .open();
@@ -1645,6 +1666,9 @@ public class ReportDetailView extends StandardDetailView<Report> {
 
     @Subscribe("validationScriptFullScreenBtn")
     public void onValidationScriptFullScreenBtnClick(final ClickEvent<Button> event) {
+        if (!isReportsGroovyEnabled()) {
+            return;
+        }
         reportScriptEditor.create(this)
                 .withTitle(messageBundle.getMessage("fullScreenBtn.title"))
                 .withValue(reportDc.getItem().getValidationScript())
@@ -1700,6 +1724,37 @@ public class ReportDetailView extends StandardDetailView<Report> {
         options.remove(JsonSourceType.DELEGATE); // can't set it up in runtime editor
 
         jsonSourceTypeField.setItems(options);
+    }
+
+    protected boolean isReportsGroovyEnabled() {
+        return coreProperties.isUnsafeRuntimeFeaturesEnabled() && reportsProperties.isGroovyEnabled();
+    }
+
+    protected void updateGroovyEditorsState(@Nullable DataSet dataSet) {
+        boolean groovyDataSetLocked = isGroovyDataSetLocked(dataSet);
+        boolean jsonGroovyLocked = isJsonGroovyEditorLocked(dataSet);
+
+        dataSetScriptCodeEditor.setReadOnly(isReadOnly() || groovyDataSetLocked);
+        dataSetScriptFullScreenBtn.setEnabled(!groovyDataSetLocked);
+
+        jsonGroovyCodeEditor.setReadOnly(isReadOnly() || jsonGroovyLocked);
+        jsonGroovyCodeEditorFullScreenBtn.setEnabled(!jsonGroovyLocked);
+
+        validationScriptCodeEditor.setReadOnly(isReadOnly() || !isReportsGroovyEnabled());
+        validationScriptFullScreenBtn.setEnabled(isReportsGroovyEnabled());
+    }
+
+    protected boolean isGroovyDataSetLocked(@Nullable DataSet dataSet) {
+        return dataSet != null
+                && dataSet.getType() == DataSetType.GROOVY
+                && !isReportsGroovyEnabled();
+    }
+
+    protected boolean isJsonGroovyEditorLocked(@Nullable DataSet dataSet) {
+        return dataSet != null
+                && dataSet.getType() == DataSetType.JSON
+                && dataSet.getJsonSourceType() == JsonSourceType.GROOVY_SCRIPT
+                && !isReportsGroovyEnabled();
     }
 
     @Install(to = "rolesDataGrid.exclude", subject = "enabledRule")

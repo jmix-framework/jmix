@@ -54,6 +54,9 @@ public class JpqlDataLoader extends AbstractDbDataLoader implements ReportDataLo
     @Autowired
     protected StoreAwareLocator storeAwareLocator;
 
+    @Autowired
+    protected ReportsGroovyFeatureSupport groovyFeatureSupport;
+
     private static final String QUERY_END = "%%END%%";
     private static final String ALIAS_PATTERN = "as\\s+\"?([\\w|\\d|_|\\.]+)\"?\\s*";
     private static final Pattern OUTPUT_PARAMS_PATTERN =
@@ -137,6 +140,14 @@ public class JpqlDataLoader extends AbstractDbDataLoader implements ReportDataLo
         //Just transform positional parameters into named - the simplest solution to the problem of mixing
         // input parameters and JPQL macros without modification of YARG (#805).
         return "param_" + parameter.getPosition();
+    }
+
+    @Override
+    protected String processQueryTemplate(String query, BandData parentBand, Map<String, Object> reportParams) {
+        if (!groovyFeatureSupport.isGroovyEnabled()) {
+            return groovyFeatureSupport.getDisabledQueryTemplateResult("jpql", query);
+        }
+        return super.processQueryTemplate(query, parentBand, reportParams);
     }
 
     protected String trimQuery(String query) {

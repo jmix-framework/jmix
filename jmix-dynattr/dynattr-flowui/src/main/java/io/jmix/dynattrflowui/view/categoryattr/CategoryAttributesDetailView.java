@@ -50,6 +50,7 @@ import io.jmix.dynattr.model.CategoryAttribute;
 import io.jmix.dynattr.model.CategoryAttributeConfiguration;
 import io.jmix.dynattr.model.ReferenceToEntity;
 import io.jmix.dynattr.utils.DynAttrStringUtils;
+import io.jmix.dynattrflowui.DynAttrUiProperties;
 import io.jmix.dynattrflowui.impl.DynAttrFacetInfo;
 import io.jmix.dynattrflowui.impl.model.TargetViewComponent;
 import io.jmix.dynattrflowui.utils.DataProviderUtils;
@@ -207,6 +208,8 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
     protected EntityStates entityStates;
     @Autowired
     protected Icons icons;
+    @Autowired
+    private DynAttrUiProperties dynAttrUiProperties;
 
     @ViewComponent
     protected JmixCheckbox lookupField;
@@ -383,6 +386,19 @@ public class CategoryAttributesDetailView extends StandardDetailView<CategoryAtt
         tabSheet.addSelectedChangeListener(e -> refreshOnce());
         screenField.addValueChangeListener(e -> getEditedEntity().setScreen(e.getValue()));
         loadTargetViews();
+
+        updateGroovyEditorsState();
+    }
+
+    private void updateGroovyEditorsState() {
+        boolean readOnly = isReadOnly() || !isGroovyEnabled();
+        validationScriptField.setReadOnly(readOnly);
+        recalculationScriptField.setReadOnly(readOnly);
+        optionsLoaderScriptField.setReadOnly(readOnly);
+    }
+
+    protected boolean isGroovyEnabled() {
+        return coreProperties.isUnsafeRuntimeFeaturesEnabled() && dynAttrUiProperties.isGroovyEnabled();
     }
 
     protected void initDefaultEntityFieldId() {

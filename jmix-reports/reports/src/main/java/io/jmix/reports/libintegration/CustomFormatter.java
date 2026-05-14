@@ -73,6 +73,9 @@ public class CustomFormatter implements CustomReport {
     @Autowired
     protected ApplicationContext applicationContext;
 
+    @Autowired
+    protected ReportsGroovyFeatureSupport groovyFeatureSupport;
+
     public static final String PARAMS = "params";
     private static final String ROOT_BAND = "rootBand";
     private static final String PATH_GROOVY_FILE = "(\\w[\\w\\d_-]*/)*(\\w[\\w\\d-_]*\\.groovy)";
@@ -130,6 +133,9 @@ public class CustomFormatter implements CustomReport {
     }
 
     protected byte[] generateReportWithScript(BandData rootBand, String customDefinition) {
+        if (!groovyFeatureSupport.isGroovyEnabled()) {
+            groovyFeatureSupport.throwGroovyDisabled("custom report script");
+        }
         Object result;
 
         if (customDefinition.startsWith("/")) {
@@ -165,6 +171,9 @@ public class CustomFormatter implements CustomReport {
     }
 
     protected byte[] generateReportWithUrl(BandData rootBand, String customDefinition) {
+        if (!groovyFeatureSupport.isGroovyEnabled()) {
+            groovyFeatureSupport.throwGroovyDisabled("custom report URL definition");
+        }
         Map<String, Object> convertedParams = new HashMap<>();
         for (Map.Entry<String, Object> entry : params.entrySet()) {
             if (entry.getValue() instanceof Date) {

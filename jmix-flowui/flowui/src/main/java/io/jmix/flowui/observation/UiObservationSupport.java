@@ -64,6 +64,14 @@ public class UiObservationSupport {
      */
     protected static final String DATA_LOADER_EMPTY_VIEW_ID = "N/A";
 
+    /**
+     * Sentinel for the low-cardinality {@code loader.id} tag when the loader carries an auto-generated id
+     * (prefix {@code generated_}). Aggregates all anonymous loaders into a single Prometheus time-series
+     * instead of producing one per instance. The original id is preserved as a high-cardinality
+     * {@code full_loader_id} attribute on the span for trace-level identification.
+     */
+    protected static final String GENERATED_LOADER_ID_SENTINEL = "<generated>";
+
     @Autowired(required = false)
     protected ObservationRegistry observationRegistry;
 
@@ -211,16 +219,22 @@ public class UiObservationSupport {
         }
 
         String loaderId = info.loaderId();
-        if (StringUtils.isBlank(loaderId)
-                || loaderId.startsWith(DataComponentsLoaderSupport.GENERATED_PREFIX)) {
+        if (StringUtils.isBlank(loaderId)) {
             return Observation.NOOP;
         }
+
+        // Generated id → sentinel in the low-cardinality `loader.id` tag (keeps Prometheus
+        // cardinality bounded), original preserved as high-cardinality attribute for trace search.
+        String aggregatedLoaderId = loaderId.startsWith(DataComponentsLoaderSupport.GENERATED_PREFIX)
+                ? GENERATED_LOADER_ID_SENTINEL
+                : loaderId;
 
         String viewId = info.viewId();
         Observation observation = Observation.createNotStarted(DATA_LOADER_OBSERVATION_NAME, observationRegistry)
                 .contextualName("data loader lifecycle")
                 .lowCardinalityKeyValue("lifecycle.name", lifecycle.getName())
-                .lowCardinalityKeyValue("loader.id", loaderId)
+                .lowCardinalityKeyValue("loader.id", aggregatedLoaderId)
+                .highCardinalityKeyValue("full_loader_id", loaderId)
                 .lowCardinalityKeyValue("view.id", Strings.isNullOrEmpty(viewId) ? DATA_LOADER_EMPTY_VIEW_ID : viewId);
 
         if (!Strings.isNullOrEmpty(info.fragmentId())) {

@@ -295,12 +295,32 @@ class UiObservationSupportTest extends Specification {
         "whitespace" | "  "
     }
 
-    def "data loader observation skipped for generated loader id"() {
+    def "generated loader id is aggregated under sentinel with original preserved as high cardinality"() {
         given: "a loader with an auto-generated id (prefix 'generated_')"
         def info = new DataLoaderMonitoringInfo("v", "generated_abc123", null)
 
-        expect: "observation is NOOP — auto-generated ids would explode Prometheus cardinality"
-        support.createDataLoaderObservation(info, DataLoaderLifeCycle.LOAD) == Observation.NOOP
+        when:
+        def obs = support.createDataLoaderObservation(info, DataLoaderLifeCycle.LOAD)
+
+        then: "loader.id collapses to a single low-cardinality bucket — keeps Prometheus cardinality bounded"
+        lowCardinalityValue(obs, "loader.id") == "<generated>"
+
+        and: "original id is preserved as high-cardinality attribute for trace search"
+        highCardinalityValue(obs, "full_loader_id") == "generated_abc123"
+    }
+
+    def "regular loader id is mirrored verbatim into full_loader_id"() {
+        given:
+        def info = new DataLoaderMonitoringInfo("orderList", "ordersDl", null)
+
+        when:
+        def obs = support.createDataLoaderObservation(info, DataLoaderLifeCycle.LOAD)
+
+        then: "non-generated loader.id passes through unchanged"
+        lowCardinalityValue(obs, "loader.id") == "ordersDl"
+
+        and: "full_loader_id mirrors loader.id for non-generated loaders"
+        highCardinalityValue(obs, "full_loader_id") == "ordersDl"
     }
 
     def "data loader observation NOOP when disabled"() {
@@ -555,6 +575,11 @@ class UiObservationSupportTest extends Specification {
 
     private static String lowCardinalityValue(Observation observation, String key) {
         def match = observation.getContextView().getLowCardinalityKeyValues().find { it.key == key }
+        return match?.value
+    }
+
+    private static String highCardinalityValue(Observation observation, String key) {
+        def match = observation.getContextView().getHighCardinalityKeyValues().find { it.key == key }
         return match?.value
     }
 

@@ -17,10 +17,7 @@
 package io.jmix.core;
 
 import com.google.common.base.Splitter;
-import io.jmix.core.annotation.DeletedBy;
-import io.jmix.core.annotation.DeletedDate;
-import io.jmix.core.annotation.Internal;
-import io.jmix.core.annotation.Secret;
+import io.jmix.core.annotation.*;
 import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.entity.EntityEntryHasUuid;
 import io.jmix.core.entity.EntityPreconditions;
@@ -354,6 +351,7 @@ public class MetadataTools {
      * <ul>
      *     <li>{@link Id}</li>
      *     <li>{@link JmixId}</li>
+     *     <li>{@link EmbeddedId}</li>
      *     <li>{@link JmixGeneratedValue}</li>
      *     <li>{@link Version}</li>
      *     <li>{@link CreatedDate}</li>
@@ -362,6 +360,7 @@ public class MetadataTools {
      *     <li>{@link LastModifiedBy}</li>
      *     <li>{@link DeletedDate}</li>
      *     <li>{@link DeletedBy}</li>
+     *     <li>{@link TenantId}</li>
      * </ul>
      */
     public boolean isSystem(MetaProperty metaProperty) {
@@ -370,24 +369,9 @@ public class MetadataTools {
     }
 
     /**
-     * <b>System Properties</b> - is important properties used for identification, audit, soft-delete and optimistic lock
-     * purposes
-     * More formally, it is properties with annotations:
-     * <ul>
-     *     <li>{@link Id},</li>
-     *     <li>{@link JmixId},</li>
-     *     <li>{@link EmbeddedId}</li>
-     *     <li>{@link JmixGeneratedValue}</li>
-     *     <li>{@link CreatedDate}</li>
-     *     <li>{@link CreatedBy}</li>
-     *     <li>{@link LastModifiedDate}</li>
-     *     <li>{@link LastModifiedBy}</li>
-     *     <li>{@link DeletedDate}</li>
-     *     <li>{@link DeletedBy}</li>
-     *     <li>{@link jakarta.persistence.Version}</li>
-     * </ul>
+     * @return names of system properties of the given entity.
      *
-     * @return names of system properties used in Entity determined by {@code metaClass} parameter
+     * @see #isSystem(MetaProperty)
      */
     public List<String> getSystemProperties(MetaClass metaClass) {
         List<String> result = new LinkedList<>();

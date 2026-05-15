@@ -20,6 +20,7 @@ import com.google.common.collect.ForwardingMap;
 import io.jmix.core.metamodel.model.*;
 
 import java.lang.reflect.AnnotatedElement;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -65,6 +66,7 @@ public class MetaPropertyImpl extends MetadataObjectImpl implements MetaProperty
 
     public MetaPropertyImpl(MetaPropertyImpl prototype) {
         name = prototype.name;
+        annotations = new HashMap<>(prototype.annotations);
 
         store = prototype.store;
         domain = prototype.domain;
@@ -152,6 +154,7 @@ public class MetaPropertyImpl extends MetadataObjectImpl implements MetaProperty
 
     public void setStore(Store store) {
         this.store = store;
+        withClones(clone -> clone.store = store);
     }
 
     public void setDeclaringClass(Class<?> declaringClass) {

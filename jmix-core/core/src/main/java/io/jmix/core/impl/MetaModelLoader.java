@@ -269,8 +269,6 @@ public class MetaModelLoader {
         if (!metaClass.getOwnProperties().isEmpty())
             return;
 
-        // load collection properties after non-collection in order to have all inverse properties loaded up
-        ArrayList<Field> collectionProps = new ArrayList<>();
         for (Field field : clazz.getDeclaredFields()) {
             if (field.isSynthetic())
                 continue;
@@ -285,25 +283,18 @@ public class MetaModelLoader {
                 if (property == null) {
                     MetadataObjectInfo<MetaProperty> info;
                     if (isCollection(field) || isMap(field)) {
-                        collectionProps.add(field);
+                        info = loadCollectionProperty(session, metaClass, field);
                     } else {
                         info = loadProperty(session, metaClass, field);
-                        tasks.addAll(info.getTasks());
-                        MetaProperty metaProperty = info.getObject();
-                        onPropertyLoaded(metaProperty, field);
                     }
+                    tasks.addAll(info.getTasks());
+                    MetaProperty metaProperty = info.getObject();
+                    onPropertyLoaded(metaProperty, field);
                 } else {
                     log.warn("Field " + clazz.getSimpleName() + "." + field.getName()
                             + " is not included in metadata because property " + property + " already exists");
                 }
             }
-        }
-
-        for (Field f : collectionProps) {
-            MetadataObjectInfo<MetaProperty> info = loadCollectionProperty(session, metaClass, f);
-            tasks.addAll(info.getTasks());
-            MetaProperty metaProperty = info.getObject();
-            onPropertyLoaded(metaProperty, f);
         }
 
         for (Method method : clazz.getDeclaredMethods()) {

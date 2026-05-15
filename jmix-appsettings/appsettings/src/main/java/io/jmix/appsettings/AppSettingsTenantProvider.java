@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,20 @@
  * limitations under the License.
  */
 
-group = 'io.jmix.appsettings'
-archivesBaseName = 'jmix-appsettings-starter'
+package io.jmix.appsettings;
 
-dependencies {
-    api project(':appsettings')
+/**
+ * Provides the current tenant id for app settings support.
+ */
+public interface AppSettingsTenantProvider {
 
-    compileOnly project(':multitenancy')
-    implementation 'org.springframework.boot:spring-boot-autoconfigure'
+    /**
+     * Constant to be returned by {@link #getCurrentTenantId()} if tenant is currently not determined.
+     */
+    String NO_TENANT = "no_tenant";
+
+    /**
+     * Returns the current tenant id, or {@link #NO_TENANT} if tenant is currently not determined.
+     */
+    String getCurrentTenantId();
 }

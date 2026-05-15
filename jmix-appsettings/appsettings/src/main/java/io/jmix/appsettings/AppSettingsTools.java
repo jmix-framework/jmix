@@ -8,12 +8,50 @@ import java.util.List;
 public interface AppSettingsTools {
 
     /**
-     * Loads application settings entity by it {@code clazz} from data store.
+     * Loads application settings entity by its {@code clazz} from data store for reading.
      *
      * @param clazz class that extends {@link AppSettingsEntity}
      * @return application settings entity
      */
-    <T extends AppSettingsEntity> T loadAppSettingsEntityFromDataStore(Class<T> clazz);
+    default <T extends AppSettingsEntity> T loadAppSettingsEntityFromDataStore(Class<T> clazz) {
+        return loadAppSettingsEntityFromDataStore(clazz, AppSettingsEntityLoadMode.FOR_READ, true);
+    }
+
+    /**
+     * Loads application settings entity by its {@code clazz} from data store for reading.
+     *
+     * @param clazz          class that extends {@link AppSettingsEntity}
+     * @param softDeletion   whether soft-deleted entities should be filtered out
+     * @return application settings entity
+     */
+    default <T extends AppSettingsEntity> T loadAppSettingsEntityFromDataStore(Class<T> clazz, boolean softDeletion) {
+        return loadAppSettingsEntityFromDataStore(clazz, AppSettingsEntityLoadMode.FOR_READ, softDeletion);
+    }
+
+    /**
+     * Loads application settings entity by its {@code clazz} from data store according to provided {@link AppSettingsEntityLoadMode}.
+     *
+     * @param clazz class that extends {@link AppSettingsEntity}
+     * @param mode  load mode
+     * @return application settings entity
+     */
+    default <T extends AppSettingsEntity> T loadAppSettingsEntityFromDataStore(Class<T> clazz,
+                                                                               AppSettingsEntityLoadMode mode) {
+        return loadAppSettingsEntityFromDataStore(clazz, mode, true);
+    }
+
+    /**
+     * Loads application settings entity by its {@code clazz} from data store according to provided
+     * {@link AppSettingsEntityLoadMode} and soft deletion hint.
+     *
+     * @param clazz         class that extends {@link AppSettingsEntity}
+     * @param mode          load mode
+     * @param softDeletion  whether soft-deleted entities should be filtered out
+     * @return application settings entity
+     */
+    <T extends AppSettingsEntity> T loadAppSettingsEntityFromDataStore(Class<T> clazz,
+                                                                       AppSettingsEntityLoadMode mode,
+                                                                       boolean softDeletion);
 
     /**
      * Returns actual value for provided {@code propertyName} and {@code clazz}.

@@ -27,6 +27,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import jakarta.persistence.EntityManager;
+
 import java.lang.reflect.Field;
 import java.text.ParseException;
 import java.util.List;
@@ -80,7 +81,7 @@ public class AppSettingsToolsImpl implements AppSettingsTools {
         boolean effectiveSoftDeletion = mode != AppSettingsEntityLoadMode.FOR_SAVE && softDeletion;
         String currentTenantId = tenantSupport.getCurrentTenantId();
         if (currentTenantId != null) {
-            T tenantEntity = loadCurrentTenantAppSettingsEntity(clazz, currentTenantId, effectiveSoftDeletion);
+            T tenantEntity = loadTenantSpecificAppSettingsEntity(clazz, currentTenantId, effectiveSoftDeletion);
             if (tenantEntity != null) {
                 return mode == AppSettingsEntityLoadMode.FOR_SAVE
                         ? restoreSoftDeletedEntity(tenantEntity)
@@ -184,9 +185,9 @@ public class AppSettingsToolsImpl implements AppSettingsTools {
     }
 
     @Nullable
-    protected <T extends AppSettingsEntity> T loadCurrentTenantAppSettingsEntity(Class<T> clazz,
-                                                                                 String tenantId,
-                                                                                 boolean softDeletion) {
+    protected <T extends AppSettingsEntity> T loadTenantSpecificAppSettingsEntity(Class<T> clazz,
+                                                                                  String tenantId,
+                                                                                  boolean softDeletion) {
         List<T> entities = getDataManagerForAppSettingsEntity().load(clazz)
                 .condition(PropertyCondition.equal(TENANT_ID_PROPERTY, tenantId))
                 .hint(PersistenceHints.SOFT_DELETION, softDeletion)
@@ -194,9 +195,9 @@ public class AppSettingsToolsImpl implements AppSettingsTools {
                 .list();
 
         if (entities.size() > 1) {
-            throw new IllegalStateException(String.format(
-                    "More than one tenant settings record exists for entity %s",
-                    metadata.getClass(clazz).getName()));
+            throw new IllegalStateException(
+                    "More than one tenant settings record exists for entity %s abd tenant '%s'"
+                            .formatted(metadata.getClass(clazz).getName(), tenantId));
         }
         return entities.isEmpty() ? null : entities.get(0);
     }
@@ -209,8 +210,8 @@ public class AppSettingsToolsImpl implements AppSettingsTools {
         TransactionTemplate transactionTemplate = storeAwareLocator.getTransactionTemplate(storeName);
         return transactionTemplate.execute(status -> {
             EntityManager entityManager = storeAwareLocator.getEntityManager(storeName);
-            boolean softDeletionBefore = PersistenceHints.isSoftDeletion(entityManager);
-            Object previousTenantId = entityManager.getProperties().get("tenantId");
+            boolean softDeletionBackup = PersistenceHints.isSoftDeletion(entityManager);
+            Object tenantIdBackup = entityManager.getProperties().get("tenantId");
             try {
                 entityManager.setProperty(PersistenceHints.SOFT_DELETION, softDeletion);
                 entityManager.setProperty("tenantId", AppSettingsTenantProvider.NO_TENANT);
@@ -221,8 +222,8 @@ public class AppSettingsToolsImpl implements AppSettingsTools {
                         .optional()
                         .orElse(null);
             } finally {
-                entityManager.setProperty(PersistenceHints.SOFT_DELETION, softDeletionBefore);
-                entityManager.setProperty("tenantId", previousTenantId);
+                entityManager.setProperty(PersistenceHints.SOFT_DELETION, softDeletionBackup);
+                entityManager.setProperty("tenantId", tenantIdBackup);
             }
         });
     }
@@ -232,12 +233,16 @@ public class AppSettingsToolsImpl implements AppSettingsTools {
     }
 
     protected <T extends AppSettingsEntity> T createTenantAppSettingsEntity(Class<T> clazz, String tenantId) {
-        T entity = metadata.create(clazz, Math.toIntExact(generateTenantEntityId(clazz)));
+        T entity = metadata.create(clazz, Math.toIntExact(generateTenantSpecificSettingsId(clazz)));
         entity.setTenantId(tenantId);
         return entity;
     }
 
-    protected <T extends AppSettingsEntity> long generateTenantEntityId(Class<T> clazz) {
+    /**
+     * Generates a synthetic identifier for a tenant-specific App Settings record.
+     * The legacy global record keeps the reserved identifier {@code 1}.
+     */
+    protected <T extends AppSettingsEntity> long generateTenantSpecificSettingsId(Class<T> clazz) {
         MetaClass metaClass = metadata.getClass(clazz);
         Sequence sequence = Sequence.withName(getTenantSettingsSequenceName(metaClass))
                 .setStore(metaClass.getStore().getName())

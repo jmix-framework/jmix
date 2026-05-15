@@ -86,7 +86,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.jspecify.annotations.Nullable;
 
-import java.io.ByteArrayOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
@@ -95,7 +95,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
+import java.util.zip.ZipInputStream;
 
 import static com.google.common.base.Strings.nullToEmpty;
 import static io.jmix.flowui.download.DownloadFormat.JSON;
@@ -542,11 +542,9 @@ public class EntityInspectorListView extends StandardListView<Object> {
 
                 if (JSON.getFileExt().equals(Files.getFileExtension(fileName))) {
                     String content = new String(Objects.requireNonNull(fileBytes), StandardCharsets.UTF_8);
-                    importedEntities = entityImportExport.importEntitiesFromJson(content,
-                            createEntityImportPlan(content, selectedMeta));
+                    importedEntities = importEntitiesFromJson(content, selectedMeta);
                 } else {
-                    importedEntities = entityImportExport.importEntitiesFromZIP(Objects.requireNonNull(fileBytes),
-                            createEntityImportPlan(selectedMeta));
+                    importedEntities = importEntitiesFromZip(Objects.requireNonNull(fileBytes), selectedMeta);
                 }
 
                 String importSuccessfulMessage = messages.formatMessage(EntityInspectorListView.class,
@@ -1074,105 +1072,31 @@ public class EntityInspectorListView extends StandardListView<Object> {
         return entityImportPlan;
     }
 
-    protected EntityImportPlan createEntityImportPlan(MetaClass metaClass) {
-        EntityImportPlanBuilder planBuilder = entityImportPlans.builder(metaClass.getJavaClass());
-        ExportImportEntityContext importContext = new ExportImportEntityContext(metaClass);
-        accessManager.applyRegisteredConstraints(importContext);
+    protected Collection<Object> importEntitiesFromJson(String content, MetaClass metaClass) {
+        return entityImportExport.importEntitiesFromJson(content, createEntityImportPlan(content, metaClass));
+    }
 
-        for (MetaProperty metaProperty : metaClass.getProperties()) {
-            if (!metadataTools.isJpa(metaProperty) || !importContext.canImported(metaProperty.getName())) {
-                continue;
+    protected Collection<Object> importEntitiesFromZip(byte[] zipBytes, MetaClass metaClass) {
+        try (ZipInputStream zipInputStream = new ZipInputStream(new ByteArrayInputStream(zipBytes), StandardCharsets.UTF_8)) {
+            ZipEntry entry;
+            while ((entry = zipInputStream.getNextEntry()) != null) {
+                if (!entry.isDirectory()) {
+                    String content = new String(zipInputStream.readAllBytes(), StandardCharsets.UTF_8);
+                    return entityImportExport.importEntitiesFromZIP(zipBytes, createEntityImportPlan(content, metaClass));
+                }
             }
-
-            switch (metaProperty.getType()) {
-                case DATATYPE:
-                case ENUM:
-                    planBuilder.addLocalProperty(metaProperty.getName());
-                    break;
-                case EMBEDDED:
-                case ASSOCIATION:
-                case COMPOSITION:
-                    Range.Cardinality cardinality = metaProperty.getRange().getCardinality();
-
-                    if (cardinality == Range.Cardinality.MANY_TO_ONE) {
-                        planBuilder.addManyToOneProperty(metaProperty.getName(), ReferenceImportBehaviour.IGNORE_MISSING);
-                    } else if (cardinality == Range.Cardinality.ONE_TO_ONE) {
-                        planBuilder.addOneToOneProperty(metaProperty.getName(), ReferenceImportBehaviour.IGNORE_MISSING);
-                    } else if (cardinality == Range.Cardinality.ONE_TO_MANY) {
-                        planBuilder.addOneToOneProperty(metaProperty.getName(), ReferenceImportBehaviour.IGNORE_MISSING);
-                    } else if (cardinality == Range.Cardinality.NONE) {
-                        planBuilder.addOneToOneProperty(metaProperty.getName(), ReferenceImportBehaviour.IGNORE_MISSING);
-                    }
-
-                    break;
-                default:
-                    throw new IllegalStateException("unknown property type");
-            }
+        } catch (IOException e) {
+            throw new RuntimeException("Exception occurred while importing", e);
         }
-
-        return planBuilder.build();
+        throw new RuntimeException("Zip archive does not contain entities export data");
     }
 
     protected String exportEntitiesToJson(Collection<Object> entities, FetchPlan fetchPlan) {
-        Collection<?> reloadedEntities = reloadEntitiesForExport(entities, fetchPlan);
-        return entitySerialization.toJson(reloadedEntities, null,
-                EntitySerializationOption.COMPACT_REPEATED_ENTITIES,
-                EntitySerializationOption.PRETTY_PRINT,
-                EntitySerializationOption.DO_NOT_SERIALIZE_DENIED_PROPERTY);
+        return entityImportExport.exportEntitiesToJSON(entities, fetchPlan);
     }
 
     protected byte[] exportEntitiesToZip(Collection<Object> entities, FetchPlan fetchPlan) {
-        Collection<?> reloadedEntities = reloadEntitiesForExport(entities, fetchPlan);
-        String json = entitySerialization.toJson(reloadedEntities, null,
-                EntitySerializationOption.COMPACT_REPEATED_ENTITIES,
-                EntitySerializationOption.DO_NOT_SERIALIZE_DENIED_PROPERTY);
-        byte[] jsonBytes = json.getBytes(StandardCharsets.UTF_8);
-
-        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-             ZipOutputStream zipOutputStream = new ZipOutputStream(byteArrayOutputStream, StandardCharsets.UTF_8)) {
-            zipOutputStream.putNextEntry(new ZipEntry("entities.json"));
-            zipOutputStream.write(jsonBytes);
-            zipOutputStream.closeEntry();
-            zipOutputStream.finish();
-            return byteArrayOutputStream.toByteArray();
-        } catch (IOException e) {
-            throw new RuntimeException("Error on creating zip archive during entities export", e);
-        }
-    }
-
-    protected Collection<?> reloadEntitiesForExport(Collection<Object> entities, FetchPlan fetchPlan) {
-        List<Object> ids = new ArrayList<>(entities.size());
-        for (Object entity : entities) {
-            ids.add(EntityValues.getId(entity));
-        }
-        if (ids.isEmpty()) {
-            return Collections.emptyList();
-        }
-
-        MetaClass metaClass = metadata.getClass(fetchPlan.getEntityClass());
-        String primaryKeyName = metadataTools.getPrimaryKeyName(metaClass);
-        LoadContext<?> ctx = new LoadContext<>(metaClass)
-                // setIds() expects every requested entity to be returned and fails on row-level filtered entries.
-                .setQuery(new LoadContext.Query(String.format("select e from %s e where e.%s in :entityIds",
-                        metaClass.getName(), primaryKeyName))
-                        .setParameter("entityIds", ids))
-                .setFetchPlan(fetchPlan)
-                .setHint("jmix.softDeletion", false);
-
-        List<?> loadedEntities = dataManager.loadList(ctx);
-        Map<Object, Object> loadedById = new HashMap<>(loadedEntities.size());
-        for (Object loadedEntity : loadedEntities) {
-            loadedById.put(EntityValues.getId(loadedEntity), loadedEntity);
-        }
-
-        List<Object> orderedEntities = new ArrayList<>(loadedEntities.size());
-        for (Object id : ids) {
-            Object loadedEntity = loadedById.get(id);
-            if (loadedEntity != null) {
-                orderedEntities.add(loadedEntity);
-            }
-        }
-        return orderedEntities;
+        return entityImportExport.exportEntitiesToZIP(entities, fetchPlan);
     }
 
     public void setEntityName(String entityName) {

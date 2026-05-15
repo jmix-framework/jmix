@@ -157,12 +157,12 @@ public class LocalFileStorage implements FileStorage {
                     "Cannot create directory: " + parentPath.toAbsolutePath());
         }
 
-        checkFileExists(path);
-
         if (isInvalidPath(path, root)) {
             log.error("Unable to save file. File '{}' is outside of root dir '{}': ", path, root);
             throw new FileStorageException(FileStorageException.Type.INVALID_PATH, path.toAbsolutePath().toString());
         }
+
+        checkFileExists(path);
 
         long size;
         long maxAllowedSize = properties.getMaxFileSize().toBytes();
@@ -239,20 +239,20 @@ public class LocalFileStorage implements FileStorage {
         for (Path root : roots) {
             Path path = root.resolve(relativePath);
 
+            if (isInvalidPath(path, root)) {
+                log.error("Unable to open file. File '{}' is outside of root dir '{}': ", path, root);
+                continue;
+            }
+
             if (!path.toFile().exists()) {
-                log.error("File " + path + " not found");
+                log.error("File '{}' not found", path);
                 continue;
             }
 
             try {
-                if (isInvalidPath(path, root)) {
-                    log.error("Unable to open file. File '{}' is outside of root dir '{}': ", path, root);
-                    continue;
-                }
-
                 inputStream = Files.newInputStream(path);
             } catch (IOException e) {
-                log.error("Error opening input stream for " + path, e);
+                log.error("Error opening input stream for {}", path, e);
             }
         }
 
@@ -324,13 +324,13 @@ public class LocalFileStorage implements FileStorage {
         Path relativePath = getRelativePath(reference.getPath());
         for (Path root : roots) {
             Path filePath = root.resolve(relativePath);
+            if (isInvalidPath(filePath, root)) {
+                log.error("Unable to remove file. File '{}' is outside of root dir '{}': ", filePath, root);
+                continue;
+            }
+
             File file = filePath.toFile();
             if (file.exists()) {
-                if (isInvalidPath(filePath, root)) {
-                    log.error("Unable to remove file. File '{}' is outside of root dir '{}': ", filePath, root);
-                    continue;
-                }
-
                 if (!file.delete()) {
                     throw new FileStorageException(FileStorageException.Type.IO_EXCEPTION,
                             "Unable to delete file " + file.getAbsolutePath());
@@ -346,11 +346,12 @@ public class LocalFileStorage implements FileStorage {
         Path relativePath = getRelativePath(reference.getPath());
         for (Path root : roots) {
             Path filePath = root.resolve(relativePath);
+            if (isInvalidPath(filePath, root)) {
+                log.error("File '{}' is outside of root dir '{}': ", filePath, root);
+                continue;
+            }
+
             if (filePath.toFile().exists()) {
-                if (isInvalidPath(filePath, root)) {
-                    log.error("File '{}' is outside of root dir '{}': ", filePath, root);
-                    continue;
-                }
                 return true;
             }
         }

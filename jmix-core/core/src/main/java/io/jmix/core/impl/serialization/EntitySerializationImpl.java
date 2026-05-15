@@ -32,6 +32,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.Range;
+import io.jmix.core.security.CurrentAuthentication;
 import jakarta.validation.constraints.NotNull;
 import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
@@ -75,6 +76,9 @@ public class EntitySerializationImpl implements EntitySerialization {
 
     @Autowired
     protected EntityAttributeSerializationExtensionResolver extensionResolver;
+
+    @Autowired
+    protected CurrentAuthentication currentAuthentication;
 
     protected ThreadLocal<EntitySerializationContext> context =
             ThreadLocal.withInitial(EntitySerializationContext::new);
@@ -220,6 +224,7 @@ public class EntitySerializationImpl implements EntitySerialization {
         protected JsonObject serializeEntity(Entity entity, @Nullable FetchPlan fetchPlan, Set<Entity> cyclicReferences) {
             JsonObject jsonObject = new JsonObject();
             MetaClass metaClass = metadata.getClass(entity);
+            ExportImportEntityContext exportImportEntityContext = createExportImportEntityContext(metaClass);
             if (metadataTools.getPrimaryKeyName(metaClass) != null) {
                 if (!ignoreEntityName) {
                     jsonObject.addProperty(ENTITY_NAME_PROP, metaClass.getName());
@@ -233,21 +238,21 @@ public class EntitySerializationImpl implements EntitySerialization {
                     }
                     jsonObject.addProperty(INSTANCE_NAME_PROP, instanceName);
                 }
-                writeIdField(entity, jsonObject);
+                writeIdField(entity, jsonObject, exportImportEntityContext);
                 if (compactRepeatedEntities) {
                     Table<Object, MetaClass, Object> processedObjects = context.get().getProcessedEntities();
                     if (processedObjects.get(EntityValues.getId(entity), metaClass) == null) {
                         processedObjects.put(EntityValues.getId(entity), metaClass, entity);
-                        writeFields(entity, jsonObject, fetchPlan, cyclicReferences);
+                        writeFields(entity, jsonObject, fetchPlan, cyclicReferences, exportImportEntityContext);
                     }
                 } else {
                     if (!cyclicReferences.contains(entity)) {
                         cyclicReferences.add(entity);
-                        writeFields(entity, jsonObject, fetchPlan, cyclicReferences);
+                        writeFields(entity, jsonObject, fetchPlan, cyclicReferences, exportImportEntityContext);
                     }
                 }
             } else {
-                writeFields(entity, jsonObject, fetchPlan, cyclicReferences);
+                writeFields(entity, jsonObject, fetchPlan, cyclicReferences, exportImportEntityContext);
             }
 
             if (coreProperties.isEntitySerializationTokenRequired()) {
@@ -260,11 +265,26 @@ public class EntitySerializationImpl implements EntitySerialization {
             return jsonObject;
         }
 
-        protected void writeIdField(Entity entity, JsonObject jsonObject) {
+        protected ExportImportEntityContext createExportImportEntityContext(MetaClass metaClass) {
+            ExportImportEntityContext exportImportEntityContext = new ExportImportEntityContext(metaClass);
+            if (doNotSerializeDeniedProperties && currentAuthentication.isSet()) {
+                accessManager.applyRegisteredConstraints(exportImportEntityContext);
+            }
+            return exportImportEntityContext;
+        }
+
+        protected void writeIdField(Entity entity, JsonObject jsonObject,
+                                    ExportImportEntityContext exportImportEntityContext) {
             MetaClass metaClass = metadata.getClass(entity);
             MetaProperty primaryKeyProperty = metadataTools.getPrimaryKeyProperty(metaClass);
+            if (primaryKeyProperty == null) {
+                primaryKeyProperty = metaClass.getProperty("id");
+            }
             if (primaryKeyProperty == null)
                 throw new EntitySerializationException("Primary key property not found for entity " + metaClass);
+            if (!exportImportEntityContext.canExported(primaryKeyProperty.getName())) {
+                return;
+            }
             if (metadataTools.hasCompositePrimaryKey(metaClass)) {
                 JsonObject serializedIdEntity = serializeEntity((Entity) EntityValues.getId(entity), null, Collections.emptySet());
                 jsonObject.add("id", serializedIdEntity);
@@ -283,27 +303,25 @@ public class EntitySerializationImpl implements EntitySerialization {
             String primaryKeyName = metadataTools.getPrimaryKeyName(metaClass);
             String propertyName = metaProperty.getName();
 
-            if (!Objects.equals(primaryKeyName, propertyName)) {
-                if (metadataTools.isJpa(metaProperty)) {
-                    return entityStates.isLoaded(entity, propertyName) && exportImportContext.canExported(propertyName);
-                } else {
-                    return (!metaProperty.isReadOnly() || !doNotSerializeReadOnlyProperties) && exportImportContext.canExported(propertyName);
-                }
+            if (Objects.equals(primaryKeyName, propertyName)) {
+                return false;
             }
 
-            return true;
+            if (metadataTools.isJpa(metaProperty)) {
+                return entityStates.isLoaded(entity, propertyName) && exportImportContext.canExported(propertyName);
+            } else {
+                return (!metaProperty.isReadOnly() || !doNotSerializeReadOnlyProperties) && exportImportContext.canExported(propertyName);
+            }
         }
 
-        protected void writeFields(Entity entity, JsonObject jsonObject, @Nullable FetchPlan fetchPlan, Set<Entity> cyclicReferences) {
+        protected void writeFields(Entity entity, JsonObject jsonObject, @Nullable FetchPlan fetchPlan,
+                                   Set<Entity> cyclicReferences,
+                                   ExportImportEntityContext exportImportEntityContext) {
             MetaClass metaClass = metadata.getClass(entity);
             Collection<MetaProperty> properties = new ArrayList<>(metaClass.getProperties());
 
             Set<MetaProperty> additionalProperties = metadataTools.getAdditionalProperties(metaClass);
             properties.addAll(additionalProperties);
-            ExportImportEntityContext exportImportEntityContext = new ExportImportEntityContext(metaClass);
-            if (doNotSerializeDeniedProperties) {
-                accessManager.applyRegisteredConstraints(exportImportEntityContext);
-            }
 
             for (MetaProperty metaProperty : properties) {
                 if (!propertyWritingAllowed(metaProperty, entity, exportImportEntityContext)) {

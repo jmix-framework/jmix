@@ -114,7 +114,9 @@ public class EntityImportExportImpl implements EntityImportExport {
 
     @Override
     public byte[] exportEntitiesToZIP(Collection<?> entities) {
-        String json = entitySerialization.toJson(entities, null, EntitySerializationOption.COMPACT_REPEATED_ENTITIES);
+        String json = entitySerialization.toJson(entities, null,
+                EntitySerializationOption.COMPACT_REPEATED_ENTITIES,
+                EntitySerializationOption.DO_NOT_SERIALIZE_DENIED_PROPERTY);
         byte[] jsonBytes = json.getBytes(StandardCharsets.UTF_8);
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -142,7 +144,9 @@ public class EntityImportExportImpl implements EntityImportExport {
     @Override
     public String exportEntitiesToJSON(Collection<?> entities) {
         return entitySerialization.toJson(entities, null,
-                EntitySerializationOption.COMPACT_REPEATED_ENTITIES, EntitySerializationOption.PRETTY_PRINT);
+                EntitySerializationOption.COMPACT_REPEATED_ENTITIES,
+                EntitySerializationOption.PRETTY_PRINT,
+                EntitySerializationOption.DO_NOT_SERIALIZE_DENIED_PROPERTY);
     }
 
     protected Collection<?> reloadEntities(Collection<?> entities, FetchPlan fetchPlan) {
@@ -156,7 +160,8 @@ public class EntityImportExportImpl implements EntityImportExport {
         MetaClass metaClass = metadata.getClass(fetchPlan.getEntityClass());
         LoadContext<?> ctx = new LoadContext<>(metaClass)
                 .setIds(ids)
-                .setFetchPlan(fetchPlan);
+                .setFetchPlan(fetchPlan)
+                .setAccessConstraints(accessConstraintsRegistry.getConstraints());
 
         return dataManager.loadList(ctx);
     }

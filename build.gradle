@@ -59,3 +59,17 @@ tasks.register('test') {
 
     dependsOn tasks.named('jmixGradlePluginTest')
 }
+
+subprojects {
+    afterEvaluate { project ->
+        project.tasks.register('CodeScoring_All_Dependencies', DependencyReportTask)
+    }
+}
+
+tasks.register('CodeScoring_All_Dependencies') {
+    dependsOn subprojects.findAll {
+        it.tasks.findByName('CodeScoring_All_Dependencies') != null
+    }.collect {
+        it.tasks.named('CodeScoring_All_Dependencies')
+    }
+}

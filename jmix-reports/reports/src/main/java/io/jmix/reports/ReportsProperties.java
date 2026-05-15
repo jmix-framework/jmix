@@ -160,6 +160,11 @@ public class ReportsProperties {
      */
     boolean useLegacyDateTimeTypes;
 
+    /**
+     * Whether Groovy execution is enabled in reports.
+     */
+    boolean groovyEnabled;
+
     public ReportsProperties(@DefaultValue("/") String officePath,
                              @DefaultValue({"8100", "8101", "8102", "8103"}) List<Integer> officePorts,
                              @DefaultValue("20") int docFormatterTimeout,
@@ -185,6 +190,7 @@ public class ReportsProperties {
                              @DefaultValue("false") boolean formulasPostProcessingEvaluationEnabled,
                              @DefaultValue("false") boolean multilineStringsProcessingEnabled,
                              @DefaultValue("false") boolean useLegacyDateTimeTypes,
+                             @DefaultValue("true") boolean groovyEnabled,
                              @DefaultValue({"htm", "html", "jpg", "png", "jpeg", "pdf"}) List<String> viewFileExtensions) {
         this.officePath = officePath;
         this.officePorts = officePorts;
@@ -211,6 +217,7 @@ public class ReportsProperties {
         this.formulasPostProcessingEvaluationEnabled = formulasPostProcessingEvaluationEnabled;
         this.multilineStringsProcessingEnabled = multilineStringsProcessingEnabled;
         this.useLegacyDateTimeTypes = useLegacyDateTimeTypes;
+        this.groovyEnabled = groovyEnabled;
         this.viewFileExtensions = viewFileExtensions;
     }
 
@@ -218,6 +225,10 @@ public class ReportsProperties {
      * @see #viewFileExtensions
      */
     public List<String> getViewFileExtensions() { return viewFileExtensions; }
+
+    public boolean isGroovyEnabled() {
+        return groovyEnabled;
+    }
 
     /**
      * @see #officePath

@@ -48,6 +48,7 @@ public class JavaClassLoader extends URLClassLoader {
     private static final Logger log = LoggerFactory.getLogger(JavaClassLoader.class);
 
     protected final Set<String> rootDirs;
+    protected final boolean hotDeployEnabled;
 
     protected final Map<String, TimestampClass> loaded = new ConcurrentHashMap<>();
     protected final Map<String, byte[]> generatedClassBytes = new ConcurrentHashMap<>();
@@ -66,6 +67,7 @@ public class JavaClassLoader extends URLClassLoader {
         super(new URL[0], Thread.currentThread().getContextClassLoader());
 
         this.proxyClassLoader = new ProxyClassLoader(Thread.currentThread().getContextClassLoader(), loaded);
+        this.hotDeployEnabled = coreProperties.isHotDeployEnabled();
         this.rootDirs = Sets.newHashSet(coreProperties.getConfDir()); //getRootPaths(); ToDo: multiple root paths
         this.classFilesProviders = new HashMap<>();
         for (String dir : this.rootDirs) {
@@ -75,13 +77,15 @@ public class JavaClassLoader extends URLClassLoader {
     }
 
     //Please use this constructor only in tests
-    JavaClassLoader(ClassLoader parent, String rootDir, Set<String> rootDirs, SpringBeanLoader springBeanLoader) {
+    JavaClassLoader(ClassLoader parent, String rootDir, Set<String> rootDirs, SpringBeanLoader springBeanLoader,
+                    boolean hotDeployEnabled) {
         super(new URL[0], parent);
 
         Preconditions.checkNotNull(rootDir);
 
         this.proxyClassLoader = new ProxyClassLoader(parent, loaded);
         this.springBeanLoader = springBeanLoader;
+        this.hotDeployEnabled = hotDeployEnabled;
         this.rootDirs = rootDirs;
         this.classFilesProviders = new HashMap<>();
         for (String dir : this.rootDirs) {
@@ -113,15 +117,17 @@ public class JavaClassLoader extends URLClassLoader {
                 return loadedClass.clazz;
             }
 
-            //first check if there is a ".class" file in the root directories
-            for (ClassFilesProvider classFilesProvider : classFilesProviders.values()) {
-                File classFile = classFilesProvider.getClassFile(containerClassName);
-                if (classFile.exists()) {
-                    TimestampClass timestampClass = loaded.get(containerClassName);
-                    if (timestampClass != null && classFile.lastModified() <= timestampClass.timestamp.getTime()) {
-                        return timestampClass.clazz;
+            if (hotDeployEnabled) {
+                //first check if there is a ".class" file in the root directories
+                for (ClassFilesProvider classFilesProvider : classFilesProviders.values()) {
+                    File classFile = classFilesProvider.getClassFile(containerClassName);
+                    if (classFile.exists()) {
+                        TimestampClass timestampClass = loaded.get(containerClassName);
+                        if (timestampClass != null && classFile.lastModified() <= timestampClass.timestamp.getTime()) {
+                            return timestampClass.clazz;
+                        }
+                        return loadClassFromClassFile(fullClassName, containerClassName, classFile);
                     }
-                    return loadClassFromClassFile(fullClassName, containerClassName, classFile);
                 }
             }
 

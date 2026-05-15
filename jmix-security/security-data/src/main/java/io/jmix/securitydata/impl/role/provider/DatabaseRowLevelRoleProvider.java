@@ -23,14 +23,11 @@ import io.jmix.security.role.RowLevelRoleProvider;
 import io.jmix.securitydata.entity.RowLevelPolicyEntity;
 import io.jmix.securitydata.entity.RowLevelRoleEntity;
 import org.springframework.context.ApplicationContext;
-import org.springframework.scripting.ScriptEvaluator;
-import org.springframework.scripting.support.StaticScriptSource;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -40,11 +37,12 @@ import java.util.stream.Collectors;
 public class DatabaseRowLevelRoleProvider extends BaseDatabaseRoleProvider<RowLevelRole>
         implements RowLevelRoleProvider {
 
-    private final ScriptEvaluator scriptEvaluator;
+    private final SecurityDataGroovyFeatureSupport groovyFeatureSupport;
     private final ApplicationContext applicationContext;
 
-    public DatabaseRowLevelRoleProvider(ScriptEvaluator scriptEvaluator, ApplicationContext applicationContext) {
-        this.scriptEvaluator = scriptEvaluator;
+    public DatabaseRowLevelRoleProvider(SecurityDataGroovyFeatureSupport groovyFeatureSupport,
+                                        ApplicationContext applicationContext) {
+        this.groovyFeatureSupport = groovyFeatureSupport;
         this.applicationContext = applicationContext;
     }
 
@@ -103,12 +101,6 @@ public class DatabaseRowLevelRoleProvider extends BaseDatabaseRoleProvider<RowLe
     }
 
     public RowLevelBiPredicate<Object, ApplicationContext> createPredicateFromScript(String script) {
-        return (entity, applicationContext) -> {
-            String modifiedScript = script.replace("{E}", "__entity__");
-            Map<String, Object> arguments = new HashMap<>();
-            arguments.put("__entity__", entity);
-            arguments.put("applicationContext", applicationContext);
-            return Boolean.TRUE.equals(scriptEvaluator.evaluate(new StaticScriptSource(modifiedScript), arguments));
-        };
+        return (entity, applicationContext) -> groovyFeatureSupport.evaluatePredicate(script, entity, applicationContext);
     }
 }

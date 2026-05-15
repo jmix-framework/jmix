@@ -27,8 +27,6 @@ import io.jmix.dynattr.OptionsLoaderType;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
-import org.springframework.scripting.ScriptEvaluator;
-import org.springframework.scripting.support.StaticScriptSource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
@@ -44,7 +42,7 @@ public class AttributeOptionsLoaderImpl implements AttributeOptionsLoader {
     protected StoreAwareLocator storeAwareLocator;
     protected DataManager dataManager;
     protected Metadata metadata;
-    protected ScriptEvaluator scriptEvaluator;
+    protected DynAttrGroovyFeatureSupport dynAttrGroovyFeatureSupport;
 
     protected static final String ENTITY_QUERY_PARAM = "entity";
     protected static final String ENTITY_FIELD_QUERY_PARAM = "entity.";
@@ -53,12 +51,11 @@ public class AttributeOptionsLoaderImpl implements AttributeOptionsLoader {
     public AttributeOptionsLoaderImpl(StoreAwareLocator storeAwareLocator,
                                       DataManager dataManager,
                                       Metadata metadata,
-                                      @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
-                                      ScriptEvaluator scriptEvaluator) {
+                                      DynAttrGroovyFeatureSupport dynAttrGroovyFeatureSupport) {
         this.storeAwareLocator = storeAwareLocator;
         this.dataManager = dataManager;
         this.metadata = metadata;
-        this.scriptEvaluator = scriptEvaluator;
+        this.dynAttrGroovyFeatureSupport = dynAttrGroovyFeatureSupport;
     }
 
     public interface OptionsLoaderStrategy {
@@ -209,7 +206,7 @@ public class AttributeOptionsLoaderImpl implements AttributeOptionsLoader {
 
     protected List<?> executeGroovyScript(Object entity, AttributeDefinition attribute, String script) {
         if (!Strings.isNullOrEmpty(script)) {
-            return (List<?>) scriptEvaluator.evaluate(new StaticScriptSource(script), Collections.singletonMap("entity", entity));
+            return dynAttrGroovyFeatureSupport.evaluateOptionsLoaderScript(script, entity);
         }
         return null;
     }

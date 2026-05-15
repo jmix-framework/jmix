@@ -9,10 +9,10 @@ import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.TextArea;
+import io.jmix.core.CoreProperties;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -30,6 +30,7 @@ import io.jmix.security.role.RolePersistence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 
 import java.util.List;
 import java.util.Map;
@@ -73,6 +74,10 @@ public class RowLevelPolicyModelDetailView extends StandardDetailView<RowLevelPo
     private Metadata metadata;
     @Autowired(required = false)
     private RolePersistence rolePersistence;
+    @Autowired
+    private CoreProperties coreProperties;
+    @Autowired
+    private Environment environment;
 
     @Subscribe
     public void onInit(InitEvent event) {
@@ -111,7 +116,8 @@ public class RowLevelPolicyModelDetailView extends StandardDetailView<RowLevelPo
                 break;
             case PREDICATE:
                 checkSyntaxBtn.setEnabled(!Strings.isNullOrEmpty(entity.getEntityName())
-                        && !Strings.isNullOrEmpty(entity.getScript()));
+                        && !Strings.isNullOrEmpty(entity.getScript())
+                        && isSecurityDataGroovyEnabled());
                 break;
             default:
                 checkSyntaxBtn.setEnabled(false);
@@ -141,6 +147,7 @@ public class RowLevelPolicyModelDetailView extends StandardDetailView<RowLevelPo
                 joinClauseField.setVisible(false);
                 whereClauseField.setVisible(false);
                 scriptField.setVisible(true);
+                scriptField.setReadOnly(isReadOnly() || !isSecurityDataGroovyEnabled());
 
                 getEditedEntity().setWhereClause(null);
                 getEditedEntity().setJoinClause(null);
@@ -156,6 +163,9 @@ public class RowLevelPolicyModelDetailView extends StandardDetailView<RowLevelPo
                 checkJpqlSyntax();
                 break;
             case PREDICATE:
+                if (!isSecurityDataGroovyEnabled()) {
+                    return;
+                }
                 checkPredicateSyntax();
                 break;
             default:
@@ -239,5 +249,10 @@ public class RowLevelPolicyModelDetailView extends StandardDetailView<RowLevelPo
             throw new IllegalStateException("RolePersistence is not available");
         }
         return rolePersistence;
+    }
+
+    private boolean isSecurityDataGroovyEnabled() {
+        return coreProperties.isUnsafeRuntimeFeaturesEnabled()
+                && environment.getProperty("jmix.security.data.groovy-enabled", Boolean.class, true);
     }
 }

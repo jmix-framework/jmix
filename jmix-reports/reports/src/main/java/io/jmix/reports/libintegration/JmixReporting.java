@@ -64,6 +64,9 @@ public class JmixReporting extends Reporting {
     @Autowired
     protected ApplicationContext applicationContext;
 
+    @Autowired
+    protected ReportsGroovyFeatureSupport groovyFeatureSupport;
+
     public void setScripting(Scripting scripting) {
         this.scripting = scripting;
     }
@@ -129,6 +132,9 @@ public class JmixReporting extends Reporting {
     }
 
     protected Object handleScriptTransformation(Object paramValue, String script, Map<String, Object> params) {
+        if (!groovyFeatureSupport.isGroovyEnabled()) {
+            return groovyFeatureSupport.getDisabledTransformationResult("parameter transformation", paramValue);
+        }
         Map<String, Object> scriptParams = new HashMap<>();
         scriptParams.put("params", params);
         scriptParams.put("paramValue", paramValue);

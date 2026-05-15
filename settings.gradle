@@ -10,6 +10,9 @@ includeBuild 'jmix-translations'
 
 includeProject('bom', 'jmix-bom')
 
+includeProject('aitools', 'jmix-aitools/aitools')
+includeProject('aitools-starter', 'jmix-aitools/aitools-starter')
+
 includeProject('appsettings', 'jmix-appsettings/appsettings')
 includeProject('appsettings-starter', 'jmix-appsettings/appsettings-starter')
 includeProject('appsettings-flowui', 'jmix-appsettings/appsettings-flowui')
@@ -168,9 +171,6 @@ includeProject('superset-flowui-starter', 'jmix-superset/superset-flowui-starter
 includeProject('pivottable-flowui', 'jmix-pivottable/pivottable-flowui')
 includeProject('pivottable-flowui-kit', 'jmix-pivottable/pivottable-flowui-kit')
 includeProject('pivottable-flowui-starter', 'jmix-pivottable/pivottable-flowui-starter')
-
-includeProject('texttodata', 'jmix-texttodata/texttodata')
-includeProject('texttodata-starter', 'jmix-texttodata/texttodata-starter')
 
 void includeProject(String name, String path, boolean changeBuildFileName = true) {
     include ":$name"

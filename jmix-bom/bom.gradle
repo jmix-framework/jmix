@@ -88,6 +88,9 @@ dependencies {
 
         // end community add-ons
 
+        api "io.jmix.aitools:jmix-aitools:$freeVersion"
+        api "io.jmix.aitools:jmix-aitools-starter:$freeVersion"
+
         api "io.jmix.appsettings:jmix-appsettings:$freeVersion"
         api "io.jmix.appsettings:jmix-appsettings-starter:$freeVersion"
         api "io.jmix.appsettings:jmix-appsettings-flowui:$freeVersion"
@@ -291,9 +294,6 @@ dependencies {
         api "io.jmix.translations:jmix-translations-cs:$freeVersion"
         api "io.jmix.translations:jmix-translations-da:$freeVersion"
         api "io.jmix.translations:jmix-translations-zh-tw:$freeVersion"
-
-        api "io.jmix.texttodata:jmix-texttodata:$freeVersion"
-        api "io.jmix.texttodata:jmix-texttodata-starter:$freeVersion"
 
         api "io.jmix.tabbedmode:jmix-tabbedmode-flowui:$premiumVersion"
         api "io.jmix.tabbedmode:jmix-tabbedmode-flowui-starter:$premiumVersion"

@@ -28,7 +28,7 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.flowui.model.*;
 import io.jmix.flowui.monitoring.DataLoaderLifeCycle;
-import io.jmix.flowui.monitoring.DataLoaderMonitoringInfo;
+import io.jmix.flowui.observation.DataLoaderObservationInfo;
 import io.jmix.flowui.observation.UiObservationSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.jspecify.annotations.Nullable;
@@ -64,7 +64,7 @@ public class KeyValueCollectionLoaderImpl implements KeyValueCollectionLoader {
     protected String storeName = Stores.MAIN;
     protected Function<ValueLoadContext, List<KeyValueEntity>> delegate;
     protected EventHub events = new EventHub();
-    protected Function<DataLoader, DataLoaderMonitoringInfo> monitoringInfoProvider = __ -> DataLoaderMonitoringInfo.empty();
+    protected Function<DataLoader, DataLoaderObservationInfo> observationInfoProvider = __ -> DataLoaderObservationInfo.empty();
 
     @Nullable
     @Override
@@ -78,14 +78,14 @@ public class KeyValueCollectionLoaderImpl implements KeyValueCollectionLoader {
     }
 
     @Override
-    public void setMonitoringInfoProvider(Function<DataLoader, DataLoaderMonitoringInfo> monitoringInfoProvider) {
-        Preconditions.checkNotNullArgument(monitoringInfoProvider);
-        this.monitoringInfoProvider = monitoringInfoProvider;
+    public void setObservationInfoProvider(Function<DataLoader, DataLoaderObservationInfo> observationInfoProvider) {
+        Preconditions.checkNotNullArgument(observationInfoProvider);
+        this.observationInfoProvider = observationInfoProvider;
     }
 
     @Override
-    public Function<DataLoader, DataLoaderMonitoringInfo> getMonitoringInfoProvider() {
-        return monitoringInfoProvider;
+    public Function<DataLoader, DataLoaderObservationInfo> getObservationInfoProvider() {
+        return observationInfoProvider;
     }
 
     @Override

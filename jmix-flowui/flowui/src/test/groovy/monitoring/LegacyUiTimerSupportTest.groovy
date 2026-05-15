@@ -19,8 +19,10 @@ package monitoring
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import io.jmix.flowui.UiProperties
 import io.jmix.flowui.model.DataLoader
+import io.jmix.flowui.model.impl.CollectionLoaderImpl
 import io.jmix.flowui.monitoring.DataLoaderLifeCycle
 import io.jmix.flowui.monitoring.DataLoaderMonitoringInfo
+import io.jmix.flowui.observation.DataLoaderObservationInfo
 import io.jmix.flowui.monitoring.LegacyUiTimerSupport
 import io.jmix.flowui.observation.ViewLifecycle
 import io.jmix.flowui.view.View
@@ -67,9 +69,9 @@ class LegacyUiTimerSupportTest extends Specification {
         timer.count() == 1
     }
 
-    def "fragment-owned loader keeps fragmentId in the legacy `view` tag for back-compat"() {
-        given: "monitoring info with both viewId and fragmentId — i.e. a loader living inside a fragment"
-        def info = new DataLoaderMonitoringInfo("orderDetail", "addressDl", "billing")
+    def "legacy `view` tag is whatever the monitoring info viewId provides"() {
+        given: "the (already-folded) legacy 2-tuple is passed straight through to the `view` tag"
+        def info = new DataLoaderMonitoringInfo("billing", "addressDl")
         def loader = Mock(DataLoader) {
             getMonitoringInfoProvider() >> ({ DataLoader dl -> info } as Function)
         }
@@ -78,9 +80,8 @@ class LegacyUiTimerSupportTest extends Specification {
         when:
         support.recordDataLoaderTimer(loader, DataLoaderLifeCycle.LOAD, { -> "x" } as Supplier)
 
-        then: "legacy `view` tag carries fragmentId (pre-2.9 behaviour), not the enclosing view id"
+        then:
         meterRegistry.find("jmix.ui.data").tag("view", "billing").timer() != null
-        meterRegistry.find("jmix.ui.data").tag("view", "orderDetail").timer() == null
     }
 
     def "recordDataLoaderTimer records lifeCycle tag for each phase"() {
@@ -151,6 +152,38 @@ class LegacyUiTimerSupportTest extends Specification {
 
         then:
         meterRegistry.find("jmix.ui.data").timer() == null
+    }
+
+    // -------- getMonitoringInfoProvider derivation (DataLoader default) --------
+
+    def "deprecated getMonitoringInfoProvider folds fragmentId into the legacy view slot"() {
+        given: "a real loader carrying a modern observation provider with a fragment id"
+        def loader = new CollectionLoaderImpl()
+        loader.setObservationInfoProvider({ DataLoader dl ->
+            new DataLoaderObservationInfo("orderDetail", "addressDl", "billing")
+        } as Function)
+
+        when: "reading the deprecated legacy provider"
+        def legacy = loader.getMonitoringInfoProvider().apply(loader)
+
+        then: "fragmentId becomes the legacy viewId; loaderId passes through"
+        legacy.viewId() == "billing"
+        legacy.loaderId() == "addressDl"
+    }
+
+    def "deprecated getMonitoringInfoProvider uses viewId when there is no fragment"() {
+        given: "a real loader whose observation provider has no fragment id"
+        def loader = new CollectionLoaderImpl()
+        loader.setObservationInfoProvider({ DataLoader dl ->
+            new DataLoaderObservationInfo("orders-view", "ordersDl", null)
+        } as Function)
+
+        when:
+        def legacy = loader.getMonitoringInfoProvider().apply(loader)
+
+        then: "viewId passes through unchanged"
+        legacy.viewId() == "orders-view"
+        legacy.loaderId() == "ordersDl"
     }
 
     // -------- recordViewTimer --------
@@ -251,13 +284,13 @@ class LegacyUiTimerSupportTest extends Specification {
 
     private LegacyUiTimerSupport createSupport(boolean enabled) {
         def support = new LegacyUiTimerSupport()
-        support.uiProperties = Mock(UiProperties) { isLegacyTimerEnabled() >> enabled }
+        support.uiProperties = Mock(UiProperties) { isLegacyMonitoringEnabled() >> enabled }
         support.meterRegistry = meterRegistry
         return support
     }
 
     private DataLoader mockLoader(String viewId, String loaderId) {
-        def info = new DataLoaderMonitoringInfo(viewId, loaderId, null)
+        def info = new DataLoaderMonitoringInfo(viewId, loaderId)
         return Mock(DataLoader) {
             getMonitoringInfoProvider() >> ({ DataLoader dl -> info } as Function)
         }

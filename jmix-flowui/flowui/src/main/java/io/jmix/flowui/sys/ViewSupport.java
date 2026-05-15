@@ -94,10 +94,10 @@ public class ViewSupport {
 
         ViewActions actions = uiObservationSupport.observeViewLifecycle(view, ViewLifecycle.CREATE, () -> {
             ViewControllerUtils.setViewData(view, applicationContext.getBean(ViewData.class));
-            ViewActions a = applicationContext.getBean(ViewActions.class, view);
-            ViewControllerUtils.setViewActions(view, a);
+            ViewActions viewActions = applicationContext.getBean(ViewActions.class, view);
+            ViewControllerUtils.setViewActions(view, viewActions);
             ViewControllerUtils.setViewFacets(view, applicationContext.getBean(ViewFacets.class, view));
-            return a;
+            return viewActions;
         });
 
         ViewInfo viewInfo = viewRegistry.getViewInfo(viewId);
@@ -130,7 +130,7 @@ public class ViewSupport {
         // perform injection for the nested fragments
         componentLoaderContext.executeAutowireTasks();
 
-        uiObservationSupport.observeViewLifecycle(view, ViewLifecycle.INIT, () -> fireViewInitEvent(view));
+        fireViewInitEvent(view);
 
         // InitTasks must be executed after View.InitEvent
         // in case something was replaced, e.g. actions

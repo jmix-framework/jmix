@@ -33,7 +33,7 @@ import org.jspecify.annotations.Nullable;
  * provides modern Observation-based instrumentation. The internal bridge to this class —
  * {@link LegacyUiTimerSupport} — is also marked for removal.
  */
-@Deprecated(since = "2.9", forRemoval = true)
+@Deprecated(since = "3.0", forRemoval = true)
 public class UiMonitoring {
 
     private static final String NOT_AVAILABLE_TAG_VALUE = "N/A";
@@ -74,12 +74,8 @@ public class UiMonitoring {
         if (!canDataLoaderBeMonitored(lifeCycle, info)) {
             return;
         }
-        // Preserve legacy `view` tag semantics: when the loader is fragment-owned, route fragmentId
-        // into the `view` tag so pre-existing dashboards filtering by `view=<fragment-id>` keep
-        // matching. Modern Observation uses the dedicated view.id / fragment.id tags instead.
-        String legacyOwner = info.fragmentId() != null ? info.fragmentId() : info.viewId();
         sample.stop(createDataLoaderTimer(
-                        meterRegistry, lifeCycle, handleNullTag(legacyOwner), handleNullTag(info.loaderId())
+                        meterRegistry, lifeCycle, handleNullTag(info.viewId()), handleNullTag(info.loaderId())
                 )
         );
     }

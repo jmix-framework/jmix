@@ -31,7 +31,7 @@ import java.util.function.Supplier;
 /**
  * Brackets a piece of work with the legacy {@link Timer}-based metrics
  * ({@code jmix.ui.data}, {@code jmix.ui.views}) when
- * {@link UiProperties#isLegacyTimerEnabled()} is on.
+ * {@link UiProperties#isLegacyMonitoringEnabled()} is on.
  * <p>
  * Exists solely for back-compat with dashboards built on the legacy tag schema. The whole bean
  * is expected to be removed in a future release once consumers migrate to the modern Observation
@@ -39,8 +39,7 @@ import java.util.function.Supplier;
  * impact on call sites in {@code UiObservationSupport}.
  */
 @Internal
-@Deprecated(since = "2.9", forRemoval = true)
-@SuppressWarnings("removal")
+@Deprecated(since = "3.0", forRemoval = true)
 @Component("flowui_LegacyUiTimerSupport")
 public class LegacyUiTimerSupport {
 
@@ -51,7 +50,7 @@ public class LegacyUiTimerSupport {
     protected UiProperties uiProperties;
 
     protected boolean isEnabled() {
-        return uiProperties.isLegacyTimerEnabled();
+        return uiProperties.isLegacyMonitoringEnabled();
     }
 
     public <T> T recordDataLoaderTimer(DataLoader loader, DataLoaderLifeCycle phase, Supplier<T> action) {

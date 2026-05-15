@@ -21,7 +21,7 @@ import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.Fragments;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.fragment.*;
-import io.jmix.flowui.observation.FragmentLifecycleObservationInfo;
+import io.jmix.flowui.observation.FragmentObservationInfo;
 import io.jmix.flowui.observation.FragmentLifecycle;
 import io.jmix.flowui.observation.UiObservationSupport;
 import io.jmix.flowui.sys.ViewDescriptorUtils;
@@ -93,8 +93,8 @@ public class FragmentsImpl implements Fragments {
         // fake host loader context
         ComponentLoader.Context hostContext = createHostLoaderContext(parent);
 
-        FragmentLifecycleObservationInfo observationInfo =
-                new FragmentLifecycleObservationInfo(parent, fragmentId, fragmentClass.getName());
+        FragmentObservationInfo observationInfo =
+                new FragmentObservationInfo(parent, fragmentId, fragmentClass.getName());
         F fragment = uiObservationSupport.observeFragmentLifecycle(
                 observationInfo, FragmentLifecycle.CREATE, () -> uiComponents.create(fragmentClass));
 
@@ -122,7 +122,7 @@ public class FragmentsImpl implements Fragments {
         FragmentOwner origin = ((FragmentOwner) hostContext.getOrigin());
         FragmentUtils.setParentController(fragment, origin);
 
-        FragmentData fragmentData = applicationContext.getBean(FragmentData.class);
+        FragmentData fragmentData = applicationContext.getBean(FragmentData.class, fragment);
         FragmentUtils.setFragmentData(fragment, fragmentData);
 
         FragmentActions actions = applicationContext.getBean(FragmentActions.class, fragment);

@@ -115,10 +115,21 @@ public class UiProperties {
      * UI metrics with their original tag schema. Currently controls {@code jmix.ui.data}
      * (tags {@code dataLoader}/{@code view}/{@code lifeCycle}) and {@code jmix.ui.views}
      * (tags {@code view}/{@code lifeCycle}). The same metric names are also produced by the modern
-     * Observation path with a different tag schema; this flag is intended for back-compat with
-     * dashboards built on the legacy tag set and is expected to be turned off as dashboards migrate.
+     * Observation path with a different tag schema; this flag exists only for back-compat with
+     * dashboards built on the legacy tag set.
+     * <p>
+     * Defaults to {@code false} in 3.0 — new projects start without the legacy Timer path. Set to
+     * {@code true} during a migration if you still have dashboards on the legacy tag schema, and
+     * drop the override once dashboards have moved to the modern schema. While both flags are
+     * {@code true} the modern Observation Timer-side for {@code jmix.ui.*} is suppressed by a
+     * {@code MeterFilter} so the two schemas don't collide on registration; tracing spans are
+     * unaffected. See {@link io.jmix.flowui.observation.UiObservationSupport}.
+     *
+     * @deprecated Goes away together with {@code UiMonitoring} and {@code LegacyUiTimerSupport}
+     * once consumers have migrated to the modern Observation tag schema.
      */
-    boolean legacyTimerEnabled;
+    @Deprecated(since = "3.0", forRemoval = true)
+    boolean legacyMonitoringEnabled;
 
     public UiProperties(@DefaultValue("false") boolean uiTestMode,
                         @DefaultValue("login") String loginViewId,
@@ -136,7 +147,7 @@ public class UiProperties {
                         @DefaultValue("false") boolean websocketRequestSecurityContextProvided,
                         @DefaultValue("true") boolean exceptionDialogModal,
                         @DefaultValue("false") boolean uiObservationEnabled,
-                        @DefaultValue("true") boolean legacyTimerEnabled
+                        @DefaultValue("false") boolean legacyMonitoringEnabled
     ) {
         this.uiTestMode = uiTestMode;
         this.loginViewId = loginViewId;
@@ -154,7 +165,7 @@ public class UiProperties {
         this.websocketRequestSecurityContextProvided = websocketRequestSecurityContextProvided;
         this.exceptionDialogModal = exceptionDialogModal;
         this.uiObservationEnabled = uiObservationEnabled;
-        this.legacyTimerEnabled = legacyTimerEnabled;
+        this.legacyMonitoringEnabled = legacyMonitoringEnabled;
     }
 
     /**
@@ -266,10 +277,12 @@ public class UiProperties {
     }
 
     /**
-     * @see #legacyTimerEnabled
+     * @see #legacyMonitoringEnabled
+     * @deprecated See {@link #legacyMonitoringEnabled}.
      */
     @Experimental
-    public boolean isLegacyTimerEnabled() {
-        return legacyTimerEnabled;
+    @Deprecated(since = "3.0", forRemoval = true)
+    public boolean isLegacyMonitoringEnabled() {
+        return legacyMonitoringEnabled;
     }
 }

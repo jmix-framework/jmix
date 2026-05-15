@@ -19,24 +19,30 @@ package observation
 import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.html.Div
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
+import com.vaadin.flow.router.QueryParameters
 import io.jmix.flowui.UiProperties
 import io.jmix.flowui.action.TargetAction
 import io.jmix.flowui.fragment.Fragment
 import io.jmix.flowui.kit.action.BaseAction
 import io.jmix.flowui.model.DataLoader
 import io.jmix.flowui.monitoring.DataLoaderLifeCycle
-import io.jmix.flowui.monitoring.DataLoaderMonitoringInfo
+import io.jmix.flowui.observation.DataLoaderObservationInfo
 import io.jmix.flowui.monitoring.LegacyUiTimerSupport
 import io.jmix.flowui.observation.FragmentLifecycle
-import io.jmix.flowui.observation.FragmentLifecycleObservationInfo
+import io.jmix.flowui.observation.FragmentObservationInfo
 import io.jmix.flowui.observation.UiObservationSupport
 import io.jmix.flowui.observation.ViewLifecycle
+import io.jmix.flowui.sys.ViewSupport
+import io.jmix.flowui.view.StandardCloseAction
 import io.jmix.flowui.view.View
+import io.jmix.flowui.view.ViewActions
+import io.jmix.flowui.view.ViewControllerUtils
 import io.micrometer.observation.Observation
 import io.micrometer.observation.tck.TestObservationRegistry
 import io.micrometer.observation.tck.TestObservationRegistryAssert
 import spock.lang.Specification
 
+import java.lang.reflect.Field
 import java.util.function.Function
 import java.util.function.Supplier
 
@@ -59,17 +65,18 @@ class UiObservationSupportTest extends Specification {
 
     // -------- action observation --------
 
-    def "standalone action without trigger falls back to N/A view.id"() {
+    def "standalone action without trigger falls back to N/A sentinels"() {
         given:
         def action = new BaseAction("create-order")
 
         when:
-        def obs = support.createActionExecutionObservation(action)
+        def obs = support.createActionExecutionObservation(action, null)
 
-        then:
+        then: "all optional tags are still present with the N/A sentinel so the tag-key schema stays stable"
         lowCardinalityValue(obs, "action.id") == "create-order"
-        lowCardinalityValue(obs, "target.id") == null
+        lowCardinalityValue(obs, "target.id") == "N/A"
         lowCardinalityValue(obs, "view.id") == "N/A"
+        lowCardinalityValue(obs, "fragment.id") == "N/A"
     }
 
     def "trigger component attached to a view yields view.id"() {
@@ -119,7 +126,7 @@ class UiObservationSupportTest extends Specification {
         def action = new TestTargetAction("act", grid)
 
         when:
-        def obs = support.createActionExecutionObservation(action)
+        def obs = support.createActionExecutionObservation(action, null)
 
         then:
         lowCardinalityValue(obs, "target.id") == "ordersGrid"
@@ -160,9 +167,9 @@ class UiObservationSupportTest extends Specification {
         when: "creating an observation with a valid trigger inside a view"
         def obs = support.createActionExecutionObservation(action, button)
 
-        then: "target.id is omitted, but view.id is still resolved via the trigger fallback"
+        then: "target.id falls back to the N/A sentinel, view.id is resolved via the trigger fallback"
         lowCardinalityValue(obs, "view.id") == "orders-view"
-        lowCardinalityValue(obs, "target.id") == null
+        lowCardinalityValue(obs, "target.id") == "N/A"
     }
 
     def "view without explicit id falls back to N/A view.id"() {
@@ -198,7 +205,7 @@ class UiObservationSupportTest extends Specification {
         lowCardinalityValue(obs, "view.id") == "orderDetail"
     }
 
-    def "action outside any fragment omits fragment.id"() {
+    def "action outside any fragment uses N/A sentinel for fragment.id"() {
         given: "a button directly inside a view (no fragment in between)"
         def view = new TestView()
         view.setId("orderDetail")
@@ -208,9 +215,9 @@ class UiObservationSupportTest extends Specification {
         when:
         def obs = support.createActionExecutionObservation(new BaseAction("save"), button)
 
-        then: "view.id is present but fragment.id is silently omitted"
+        then: "view.id is resolved, fragment.id falls back to the N/A sentinel to keep tag-key schema stable"
         lowCardinalityValue(obs, "view.id") == "orderDetail"
-        lowCardinalityValue(obs, "fragment.id") == null
+        lowCardinalityValue(obs, "fragment.id") == "N/A"
     }
 
     def "disabled observation returns NOOP"() {
@@ -236,44 +243,62 @@ class UiObservationSupportTest extends Specification {
         obs == Observation.NOOP
     }
 
-    // -------- data loader observation factory --------
+    // -------- data loader observation --------
 
     def "data loader observation has lifecycle.name, loader.id and view.id tags"() {
         given:
-        def info = new DataLoaderMonitoringInfo("orders-view", "ordersDl", null)
+        def loader = mockLoader("orders-view", "ordersDl")
+        def registry = (TestObservationRegistry) support.observationRegistry
 
         when:
-        def obs = support.createDataLoaderObservation(info, DataLoaderLifeCycle.LOAD)
+        support.observeDataLoader(loader, DataLoaderLifeCycle.LOAD, { -> } as Runnable)
 
         then:
-        lowCardinalityValue(obs, "lifecycle.name") == "load"
-        lowCardinalityValue(obs, "loader.id") == "ordersDl"
-        lowCardinalityValue(obs, "view.id") == "orders-view"
+        TestObservationRegistryAssert.assertThat(registry)
+                .hasNumberOfObservationsEqualTo(1)
+                .hasObservationWithNameEqualTo("jmix.ui.data")
+                .that()
+                .hasLowCardinalityKeyValue("lifecycle.name", "load")
+                .hasLowCardinalityKeyValue("loader.id", "ordersDl")
+                .hasLowCardinalityKeyValue("view.id", "orders-view")
     }
 
-    def "data loader lifecycle.name reflects the phase"() {
+    def "data loader observation lifecycle.name reflects the phase #lifecycleName"() {
         given:
-        def info = new DataLoaderMonitoringInfo("v", "dl", null)
+        def loader = mockLoader("v", "dl")
+        def registry = (TestObservationRegistry) support.observationRegistry
 
-        expect:
-        lowCardinalityValue(support.createDataLoaderObservation(info, phase), "lifecycle.name") == name
+        when:
+        support.observeDataLoader(loader, phase, { -> } as Runnable)
+
+        then:
+        TestObservationRegistryAssert.assertThat(registry)
+                .hasNumberOfObservationsEqualTo(1)
+                .hasObservationWithNameEqualTo("jmix.ui.data")
+                .that()
+                .hasLowCardinalityKeyValue("lifecycle.name", lifecycleName)
 
         where:
-        phase                         | name
+        phase                         | lifecycleName
         DataLoaderLifeCycle.PRE_LOAD  | "preLoad"
         DataLoaderLifeCycle.LOAD      | "load"
         DataLoaderLifeCycle.POST_LOAD | "postLoad"
     }
 
     def "data loader view.id falls back to N/A when viewId is #scenario"() {
-        given: "monitoring info with #scenario viewId (loader outside any view, or custom monitoringInfoProvider)"
-        def info = new DataLoaderMonitoringInfo(viewId, "dl", null)
+        given: "a loader whose info provider returns #scenario viewId (loader outside any view, or custom provider)"
+        def loader = mockLoader(viewId, "dl")
+        def registry = (TestObservationRegistry) support.observationRegistry
 
-        when: "creating a data loader observation"
-        def obs = support.createDataLoaderObservation(info, DataLoaderLifeCycle.LOAD)
+        when:
+        support.observeDataLoader(loader, DataLoaderLifeCycle.LOAD, { -> } as Runnable)
 
-        then: "view.id falls back to DATA_LOADER_EMPTY_VIEW_ID to keep the tag schema uniform"
-        lowCardinalityValue(obs, "view.id") == "N/A"
+        then: "view.id falls back to the N/A sentinel to keep the tag-key schema uniform"
+        TestObservationRegistryAssert.assertThat(registry)
+                .hasNumberOfObservationsEqualTo(1)
+                .hasObservationWithNameEqualTo("jmix.ui.data")
+                .that()
+                .hasLowCardinalityKeyValue("view.id", "N/A")
 
         where:
         scenario | viewId
@@ -283,10 +308,14 @@ class UiObservationSupportTest extends Specification {
 
     def "data loader observation skipped when loaderId is #scenario"() {
         given:
-        def info = new DataLoaderMonitoringInfo("v", loaderId, null)
+        def loader = mockLoader("v", loaderId)
+        def registry = (TestObservationRegistry) support.observationRegistry
 
-        expect:
-        support.createDataLoaderObservation(info, DataLoaderLifeCycle.LOAD) == Observation.NOOP
+        when: "observing a phase with blank loaderId — buildDataLoaderObservation short-circuits to NOOP"
+        support.observeDataLoader(loader, DataLoaderLifeCycle.LOAD, { -> } as Runnable)
+
+        then: "no observation is recorded"
+        TestObservationRegistryAssert.assertThat(registry).hasNumberOfObservationsEqualTo(0)
 
         where:
         scenario     | loaderId
@@ -297,77 +326,123 @@ class UiObservationSupportTest extends Specification {
 
     def "generated loader id is aggregated under sentinel with original preserved as high cardinality"() {
         given: "a loader with an auto-generated id (prefix 'generated_')"
-        def info = new DataLoaderMonitoringInfo("v", "generated_abc123", null)
+        def loader = mockLoader("v", "generated_abc123")
+        def registry = (TestObservationRegistry) support.observationRegistry
 
         when:
-        def obs = support.createDataLoaderObservation(info, DataLoaderLifeCycle.LOAD)
+        support.observeDataLoader(loader, DataLoaderLifeCycle.LOAD, { -> } as Runnable)
 
-        then: "loader.id collapses to a single low-cardinality bucket — keeps Prometheus cardinality bounded"
-        lowCardinalityValue(obs, "loader.id") == "<generated>"
-
-        and: "original id is preserved as high-cardinality attribute for trace search"
-        highCardinalityValue(obs, "full_loader_id") == "generated_abc123"
+        then: "loader.id collapses to a single low-cardinality bucket — keeps Prometheus cardinality bounded; original id is preserved as high-cardinality attribute for trace search"
+        TestObservationRegistryAssert.assertThat(registry)
+                .hasNumberOfObservationsEqualTo(1)
+                .hasObservationWithNameEqualTo("jmix.ui.data")
+                .that()
+                .hasLowCardinalityKeyValue("loader.id", "<generated>")
+                .hasHighCardinalityKeyValue("full_loader_id", "generated_abc123")
     }
 
     def "regular loader id is mirrored verbatim into full_loader_id"() {
         given:
-        def info = new DataLoaderMonitoringInfo("orderList", "ordersDl", null)
+        def loader = mockLoader("orderList", "ordersDl")
+        def registry = (TestObservationRegistry) support.observationRegistry
 
         when:
-        def obs = support.createDataLoaderObservation(info, DataLoaderLifeCycle.LOAD)
+        support.observeDataLoader(loader, DataLoaderLifeCycle.LOAD, { -> } as Runnable)
 
-        then: "non-generated loader.id passes through unchanged"
-        lowCardinalityValue(obs, "loader.id") == "ordersDl"
-
-        and: "full_loader_id mirrors loader.id for non-generated loaders"
-        highCardinalityValue(obs, "full_loader_id") == "ordersDl"
+        then: "non-generated loader.id passes through unchanged; full_loader_id mirrors it"
+        TestObservationRegistryAssert.assertThat(registry)
+                .hasNumberOfObservationsEqualTo(1)
+                .hasObservationWithNameEqualTo("jmix.ui.data")
+                .that()
+                .hasLowCardinalityKeyValue("loader.id", "ordersDl")
+                .hasHighCardinalityKeyValue("full_loader_id", "ordersDl")
     }
 
     def "data loader observation NOOP when disabled"() {
         given:
         def disabled = createSupport(false)
-        def info = new DataLoaderMonitoringInfo("v", "dl", null)
+        def loader = mockLoader("v", "dl")
+        def registry = (TestObservationRegistry) disabled.observationRegistry
 
-        expect:
-        disabled.createDataLoaderObservation(info, DataLoaderLifeCycle.LOAD) == Observation.NOOP
+        when:
+        disabled.observeDataLoader(loader, DataLoaderLifeCycle.LOAD, { -> } as Runnable)
+
+        then: "no observation is recorded — observation is disabled"
+        TestObservationRegistryAssert.assertThat(registry).hasNumberOfObservationsEqualTo(0)
     }
 
     def "data loader observation includes fragment.id when set"() {
-        given: "monitoring info with both view and fragment ids (loader lives inside a fragment)"
-        def info = new DataLoaderMonitoringInfo("orderDetail", "addressDl", "billing")
+        given: "loader info with both view and fragment ids (loader lives inside a fragment)"
+        def loader = mockLoader("orderDetail", "addressDl", "billing")
+        def registry = (TestObservationRegistry) support.observationRegistry
 
         when:
-        def obs = support.createDataLoaderObservation(info, DataLoaderLifeCycle.LOAD)
+        support.observeDataLoader(loader, DataLoaderLifeCycle.LOAD, { -> } as Runnable)
 
         then: "fragment.id is added alongside view.id, so the same loader.id can be attributed per fragment"
-        lowCardinalityValue(obs, "view.id") == "orderDetail"
-        lowCardinalityValue(obs, "fragment.id") == "billing"
+        TestObservationRegistryAssert.assertThat(registry)
+                .hasNumberOfObservationsEqualTo(1)
+                .hasObservationWithNameEqualTo("jmix.ui.data")
+                .that()
+                .hasLowCardinalityKeyValue("view.id", "orderDetail")
+                .hasLowCardinalityKeyValue("fragment.id", "billing")
     }
 
-    def "data loader observation omits fragment.id when null"() {
-        given: "monitoring info with no fragment context (loader belongs directly to a view)"
-        def info = new DataLoaderMonitoringInfo("orderDetail", "ordersDl", null)
+    def "data loader observation uses N/A sentinel for fragment.id when null"() {
+        given: "loader info with no fragment context (loader belongs directly to a view)"
+        def loader = mockLoader("orderDetail", "ordersDl", null)
+        def registry = (TestObservationRegistry) support.observationRegistry
 
         when:
-        def obs = support.createDataLoaderObservation(info, DataLoaderLifeCycle.LOAD)
+        support.observeDataLoader(loader, DataLoaderLifeCycle.LOAD, { -> } as Runnable)
 
-        then: "fragment.id tag is silently omitted"
-        lowCardinalityValue(obs, "fragment.id") == null
+        then: "fragment.id falls back to the N/A sentinel so the tag-key schema for jmix.ui.data stays stable"
+        TestObservationRegistryAssert.assertThat(registry)
+                .hasNumberOfObservationsEqualTo(1)
+                .hasObservationWithNameEqualTo("jmix.ui.data")
+                .that()
+                .hasLowCardinalityKeyValue("fragment.id", "N/A")
     }
 
-    def "loader-based overload extracts info via monitoringInfoProvider"() {
+    def "observeDataLoader extracts info via observationInfoProvider"() {
         given:
-        def info = new DataLoaderMonitoringInfo("orders-view", "ordersDl", null)
+        def info = new DataLoaderObservationInfo("orders-view", "ordersDl", null)
         def loader = Mock(DataLoader) {
-            getMonitoringInfoProvider() >> ({ DataLoader dl -> info } as Function)
+            getObservationInfoProvider() >> ({ DataLoader dl -> info } as Function)
+        }
+        def registry = (TestObservationRegistry) support.observationRegistry
+
+        when:
+        support.observeDataLoader(loader, DataLoaderLifeCycle.LOAD, { -> } as Runnable)
+
+        then: "tags are populated from the info returned by the provider"
+        TestObservationRegistryAssert.assertThat(registry)
+                .hasNumberOfObservationsEqualTo(1)
+                .hasObservationWithNameEqualTo("jmix.ui.data")
+                .that()
+                .hasLowCardinalityKeyValue("loader.id", "ordersDl")
+                .hasLowCardinalityKeyValue("view.id", "orders-view")
+    }
+
+    def "loader-based overload does not invoke observationInfoProvider when observation is disabled"() {
+        given: "observation disabled and a loader whose provider records whether it was consulted"
+        def disabled = createSupport(false)
+        def applied = false
+        def loader = Mock(DataLoader) {
+            getObservationInfoProvider() >> ({ DataLoader dl ->
+                applied = true
+                new DataLoaderObservationInfo("v", "dl", null)
+            } as Function)
         }
 
-        when:
-        def obs = support.createDataLoaderObservation(loader, DataLoaderLifeCycle.LOAD)
+        when: "observing a data loader phase with observation turned off"
+        def result = disabled.observeDataLoader(loader, DataLoaderLifeCycle.LOAD, { -> "result" } as Supplier)
 
-        then:
-        lowCardinalityValue(obs, "loader.id") == "ordersDl"
-        lowCardinalityValue(obs, "view.id") == "orders-view"
+        then: "the provider is never applied — the info extraction (a UI-tree walk for fragment loaders) is short-circuited"
+        !applied
+
+        and: "the supplied work still runs — legacy path is unaffected by the short-circuit"
+        result == "result"
     }
 
     // -------- observeDataLoader / observeViewLifecycle / observeFragmentLifecycle --------
@@ -439,21 +514,42 @@ class UiObservationSupportTest extends Specification {
         executed
     }
 
-    def "observeViewLifecycle records modern Observation with view.id and lifecycle.name tags"() {
-        given: "a view with an explicit id and access to the test observation registry"
+    def "observeViewLifecycle records exactly one Observation for #lifecycleName phase"() {
+        given: """
+            Each observeViewLifecycle call must produce exactly one Observation, regardless of
+            phase. Covers all eight ViewLifecycle values:
+              - non-event phases (CREATE/LOAD/INJECT) — invoked directly from ViewSupport.initView
+                per D2; R5 requires exactly one wrap per phase per occurrence;
+              - event phases (INIT/BEFORE_SHOW/READY/BEFORE_CLOSE/AFTER_CLOSE) — also reached
+                through observeViewLifecycle from drivers that fire via Composite.fireEvent
+                (View.afterNavigation, View.beforeEnter, View.close, StandardDetailView), per D1.
+            Guards against accidental double-wrapping at this layer.
+        """
         def view = new TestView()
         view.setId("orders-view")
         def registry = (TestObservationRegistry) support.observationRegistry
 
-        when: "running a view lifecycle phase through observeViewLifecycle"
-        support.observeViewLifecycle(view, ViewLifecycle.READY, { -> } as Runnable)
+        when:
+        support.observeViewLifecycle(view, phase, { -> } as Runnable)
 
-        then: "registry contains a started-and-stopped span with the expected tags"
+        then:
         TestObservationRegistryAssert.assertThat(registry)
+                .hasNumberOfObservationsEqualTo(1)
                 .hasObservationWithNameEqualTo("jmix.ui.views")
                 .that()
-                .hasLowCardinalityKeyValue("lifecycle.name", "ready")
+                .hasLowCardinalityKeyValue("lifecycle.name", lifecycleName)
                 .hasLowCardinalityKeyValue("view.id", "orders-view")
+
+        where:
+        phase                       | lifecycleName
+        ViewLifecycle.CREATE        | "create"
+        ViewLifecycle.LOAD          | "load"
+        ViewLifecycle.INJECT        | "inject"
+        ViewLifecycle.INIT          | "init"
+        ViewLifecycle.BEFORE_SHOW   | "beforeShow"
+        ViewLifecycle.READY         | "ready"
+        ViewLifecycle.BEFORE_CLOSE  | "beforeClose"
+        ViewLifecycle.AFTER_CLOSE   | "afterClose"
     }
 
     def "observeViewLifecycle delegates the work to LegacyUiTimerSupport"() {
@@ -469,9 +565,111 @@ class UiObservationSupportTest extends Specification {
                 { args -> ((Supplier) args[2]).get() }
     }
 
+    def "ViewSupport.fireViewInitEvent records exactly one INIT observation"() {
+        given: """
+            A test view wired to the test UiObservationSupport (so ViewControllerUtils.fireEvent
+            inside fireViewInitEvent resolves to our test registry) and a real ViewSupport exposing
+            the protected fireViewInitEvent method.
+        """
+        def view = new TestView()
+        view.setId("orders-view")
+        injectUiObservationSupport(view, support)
+        def viewSupport = new TestableViewSupport()
+        def registry = (TestObservationRegistry) support.observationRegistry
+
+        when: """
+            Reproduces ViewSupport.initView's INIT step. Per D1: initView calls fireViewInitEvent
+            directly, without an outer observeViewLifecycle wrap. The fire method itself goes
+            through ViewControllerUtils.fireEvent, which auto-observes the INIT phase. If an outer
+            wrap is reintroduced, this test catches the resulting double observation.
+        """
+        viewSupport.invokeFireViewInitEvent(view)
+
+        then:
+        TestObservationRegistryAssert.assertThat(registry)
+                .hasNumberOfObservationsEqualTo(1)
+                .hasObservationWithNameEqualTo("jmix.ui.views")
+                .that()
+                .hasLowCardinalityKeyValue("lifecycle.name", "init")
+                .hasLowCardinalityKeyValue("view.id", "orders-view")
+    }
+
+    def "ViewControllerUtils.fireEvent auto-observes lifecycle event #lifecycleName exactly once"() {
+        given: """
+            ViewControllerUtils.fireEvent must produce exactly one observation per lifecycle event
+            it dispatches — guards against both (a) someone removing the auto-observation (would
+            yield 0) and (b) someone wrapping it in an external observeViewLifecycle (would yield
+            2). Covers all five lifecycle events the contract recognises.
+
+            ReadyEvent additionally triggers View's internal refreshActionsState listener, which
+            walks getViewActions().getActions(); stub an empty ViewActions so it iterates nothing
+            instead of NPEing.
+        """
+        def view = new TestView()
+        view.setId("orders-view")
+        ViewControllerUtils.setViewActions(view, Mock(ViewActions) { getActions() >> [] })
+        injectUiObservationSupport(view, support)
+        def registry = (TestObservationRegistry) support.observationRegistry
+
+        when:
+        ViewControllerUtils.fireEvent(view, eventFactory(view))
+
+        then:
+        TestObservationRegistryAssert.assertThat(registry)
+                .hasNumberOfObservationsEqualTo(1)
+                .hasObservationWithNameEqualTo("jmix.ui.views")
+                .that()
+                .hasLowCardinalityKeyValue("lifecycle.name", lifecycleName)
+                .hasLowCardinalityKeyValue("view.id", "orders-view")
+
+        where:
+        lifecycleName | eventFactory
+        "init"        | { View v -> new View.InitEvent(v) }
+        "beforeShow"  | { View v -> new View.BeforeShowEvent(v) }
+        "ready"       | { View v -> new View.ReadyEvent(v) }
+        "beforeClose" | { View v -> new View.BeforeCloseEvent(v, new StandardCloseAction("close")) }
+        "afterClose"  | { View v -> new View.AfterCloseEvent(v, new StandardCloseAction("close")) }
+    }
+
+    def "ViewControllerUtils.fireEvent on a non-lifecycle event creates no observation"() {
+        given:
+        def view = new TestView()
+        view.setId("orders-view")
+        injectUiObservationSupport(view, support)
+        def registry = (TestObservationRegistry) support.observationRegistry
+
+        when: "firing an event that is not one of the five lifecycle events"
+        ViewControllerUtils.fireEvent(view,
+                new View.QueryParametersChangeEvent(view, QueryParameters.empty()))
+
+        then: "no observation is recorded — non-lifecycle events bypass the observation path"
+        TestObservationRegistryAssert.assertThat(registry).hasNumberOfObservationsEqualTo(0)
+    }
+
+    private static void injectUiObservationSupport(View<?> view, UiObservationSupport support) {
+        Field field = View.class.getDeclaredField("uiObservationSupport")
+        field.setAccessible(true)
+        field.set(view, support)
+    }
+
+    /**
+     * Subclass that exposes the protected {@code fireViewInitEvent} for direct invocation from the
+     * test. {@code fireViewInitEvent} itself does not touch any of the dependencies passed to the
+     * constructor, so {@code null} arguments are safe.
+     */
+    private static class TestableViewSupport extends ViewSupport {
+        TestableViewSupport() {
+            super(null, null, null, null, null, null, null, null)
+        }
+
+        void invokeFireViewInitEvent(View<?> view) {
+            fireViewInitEvent(view)
+        }
+    }
+
     def "observeFragmentLifecycle returns supplier value"() {
         given:
-        def info = new FragmentLifecycleObservationInfo("frag-id", "com.example.MyFragment", null)
+        def info = new FragmentObservationInfo("frag-id", "com.example.MyFragment", null)
 
         expect:
         support.observeFragmentLifecycle(info, FragmentLifecycle.CREATE,
@@ -480,7 +678,7 @@ class UiObservationSupportTest extends Specification {
 
     def "observeFragmentLifecycle does not invoke LegacyUiTimerSupport"() {
         given: "fragment monitoring info"
-        def info = new FragmentLifecycleObservationInfo("frag-id", "com.example.MyFragment", null)
+        def info = new FragmentObservationInfo("frag-id", "com.example.MyFragment", null)
 
         when: "running a fragment lifecycle phase through observeFragmentLifecycle"
         support.observeFragmentLifecycle(info, FragmentLifecycle.CREATE, { -> "x" } as Supplier)
@@ -491,7 +689,7 @@ class UiObservationSupportTest extends Specification {
 
     def "observeFragmentLifecycle propagates supplier exception"() {
         given:
-        def info = new FragmentLifecycleObservationInfo("frag-id", "com.example.MyFragment", null)
+        def info = new FragmentObservationInfo("frag-id", "com.example.MyFragment", null)
 
         when:
         support.observeFragmentLifecycle(info, FragmentLifecycle.CREATE,
@@ -520,6 +718,57 @@ class UiObservationSupportTest extends Specification {
                 .hasLowCardinalityKeyValue("fragment.id", "my-frag")
     }
 
+    def "observeFragmentLifecycle records exactly one Observation for #lifecycleName phase"() {
+        given: """
+            Per R3: each observeFragmentLifecycle call must produce exactly one Observation. D3
+            states fragments cannot double-observe by construction (single driver FragmentsImpl,
+            raw ComponentUtil.fireEvent for READY) — this test guards the invariant at the
+            method level, symmetric to view/loader coverage.
+        """
+        def fragment = Mock(Fragment) {
+            getId() >> Optional.of("my-frag")
+            getParent() >> Optional.empty()
+        }
+        def registry = (TestObservationRegistry) support.observationRegistry
+
+        when:
+        support.observeFragmentLifecycle(fragment, phase, { -> } as Runnable)
+
+        then:
+        TestObservationRegistryAssert.assertThat(registry)
+                .hasNumberOfObservationsEqualTo(1)
+                .hasObservationWithNameEqualTo("jmix.ui.fragments")
+                .that()
+                .hasLowCardinalityKeyValue("lifecycle.name", lifecycleName)
+                .hasLowCardinalityKeyValue("fragment.id", "my-frag")
+
+        where:
+        phase                    | lifecycleName
+        FragmentLifecycle.CREATE | "create"
+        FragmentLifecycle.READY  | "ready"
+    }
+
+    def "observeFragmentLifecycle(Info, ...) records exactly one Observation for CREATE phase"() {
+        given: """
+            Info-based observe is the production path for the CREATE phase (FragmentsImpl.create
+            uses it when the Fragment instance does not yet exist and is materialised inside the
+            observe block). Per R3 the call must produce exactly one Observation.
+        """
+        def info = new FragmentObservationInfo("frag-id", "com.example.MyFragment", null)
+        def registry = (TestObservationRegistry) support.observationRegistry
+
+        when:
+        support.observeFragmentLifecycle(info, FragmentLifecycle.CREATE, { -> "x" } as Supplier)
+
+        then:
+        TestObservationRegistryAssert.assertThat(registry)
+                .hasNumberOfObservationsEqualTo(1)
+                .hasObservationWithNameEqualTo("jmix.ui.fragments")
+                .that()
+                .hasLowCardinalityKeyValue("lifecycle.name", "create")
+                .hasLowCardinalityKeyValue("fragment.id", "frag-id")
+    }
+
     def "fragment observation includes view.id of the enclosing View"() {
         given: "a fragment attached to a view with an explicit id"
         def view = new TestView()
@@ -546,12 +795,17 @@ class UiObservationSupportTest extends Specification {
             getId() >> Optional.of("orphan")
             getParent() >> Optional.empty()
         }
+        def registry = (TestObservationRegistry) support.observationRegistry
 
-        when: "creating a fragment lifecycle observation directly"
-        def obs = support.createFragmentLifecycleObservation(fragment, FragmentLifecycle.CREATE)
+        when: "running a fragment lifecycle phase for a detached fragment"
+        support.observeFragmentLifecycle(fragment, FragmentLifecycle.CREATE, { -> } as Runnable)
 
         then: "view.id falls back to the sentinel — uniform tag schema across all observations"
-        lowCardinalityValue(obs, "view.id") == "N/A"
+        TestObservationRegistryAssert.assertThat(registry)
+                .hasNumberOfObservationsEqualTo(1)
+                .hasObservationWithNameEqualTo("jmix.ui.fragments")
+                .that()
+                .hasLowCardinalityKeyValue("view.id", "N/A")
     }
 
     // -------- helpers --------
@@ -566,10 +820,10 @@ class UiObservationSupportTest extends Specification {
         return support
     }
 
-    private DataLoader mockLoader(String viewId, String loaderId) {
-        def info = new DataLoaderMonitoringInfo(viewId, loaderId, null)
+    private DataLoader mockLoader(String viewId, String loaderId, String fragmentId = null) {
+        def info = new DataLoaderObservationInfo(viewId, loaderId, fragmentId)
         return Mock(DataLoader) {
-            getMonitoringInfoProvider() >> ({ DataLoader dl -> info } as Function)
+            getObservationInfoProvider() >> ({ DataLoader dl -> info } as Function)
         }
     }
 

@@ -31,15 +31,15 @@ import org.jspecify.annotations.Nullable;
  * @param viewId        id of the enclosing {@link View}, or {@code null} if the fragment is not attached
  *                      to any view (e.g. created standalone)
  */
-public record FragmentLifecycleObservationInfo(@Nullable String fragmentId,
+public record FragmentObservationInfo(@Nullable String fragmentId,
                                                String fragmentClass,
                                                @Nullable String viewId) {
 
-    public FragmentLifecycleObservationInfo(Fragment<?> fragment) {
+    public FragmentObservationInfo(Fragment<?> fragment) {
         this(fragment.getId().orElse(null), fragment.getClass().getName(), resolveViewId(fragment));
     }
 
-    public FragmentLifecycleObservationInfo(FragmentOwner parent,
+    public FragmentObservationInfo(FragmentOwner parent,
                                             @Nullable String fragmentId,
                                             String fragmentClass) {
         this(fragmentId, fragmentClass,

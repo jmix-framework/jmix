@@ -78,7 +78,6 @@ public abstract class Fragment<T extends Component> extends Composite<T> impleme
     protected void setFragmentData(FragmentData fragmentData) {
         this.fragmentData = fragmentData;
         fragmentData.setFragmentId(getId().orElse(getClass().getSimpleName()));
-        fragmentData.setHostFragment(this);
     }
 
     protected FragmentActions getFragmentActions() {

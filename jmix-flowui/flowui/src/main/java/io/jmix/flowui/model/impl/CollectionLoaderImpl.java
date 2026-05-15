@@ -29,7 +29,7 @@ import io.jmix.core.repository.JmixDataRepositoryContext;
 import io.jmix.core.repository.JmixDataRepositoryUtils;
 import io.jmix.flowui.model.*;
 import io.jmix.flowui.monitoring.DataLoaderLifeCycle;
-import io.jmix.flowui.monitoring.DataLoaderMonitoringInfo;
+import io.jmix.flowui.observation.DataLoaderObservationInfo;
 import io.jmix.flowui.observation.UiObservationSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -76,7 +76,7 @@ public class CollectionLoaderImpl<E> implements CollectionLoader<E> {
     protected Function<LoadContext<E>, List<E>> delegate;
     protected BiFunction<Pageable, JmixDataRepositoryContext, List<E>> loadFromRepositoryDelegate;
     protected EventHub events = new EventHub();
-    protected Function<DataLoader, DataLoaderMonitoringInfo> monitoringInfoProvider = __ -> DataLoaderMonitoringInfo.empty();
+    protected Function<DataLoader, DataLoaderObservationInfo> observationInfoProvider = __ -> DataLoaderObservationInfo.empty();
 
     @Nullable
     @Override
@@ -90,14 +90,14 @@ public class CollectionLoaderImpl<E> implements CollectionLoader<E> {
     }
 
     @Override
-    public void setMonitoringInfoProvider(Function<DataLoader, DataLoaderMonitoringInfo> monitoringInfoProvider) {
-        Preconditions.checkNotNullArgument(monitoringInfoProvider);
-        this.monitoringInfoProvider = monitoringInfoProvider;
+    public void setObservationInfoProvider(Function<DataLoader, DataLoaderObservationInfo> observationInfoProvider) {
+        Preconditions.checkNotNullArgument(observationInfoProvider);
+        this.observationInfoProvider = observationInfoProvider;
     }
 
     @Override
-    public Function<DataLoader, DataLoaderMonitoringInfo> getMonitoringInfoProvider() {
-        return monitoringInfoProvider;
+    public Function<DataLoader, DataLoaderObservationInfo> getObservationInfoProvider() {
+        return observationInfoProvider;
     }
 
     @Override

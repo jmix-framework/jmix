@@ -36,12 +36,4 @@ public interface FragmentData extends HasDataComponents {
      * @param fragmentId if to set
      */
     void setFragmentId(@Nullable String fragmentId);
-
-    /**
-     * Sets the host fragment so the data context can resolve the enclosing view lazily for
-     * monitoring purposes. Called by {@link Fragment} when this data context is assigned.
-     */
-    default void setHostFragment(Fragment<?> hostFragment) {
-        // default no-op
-    }
 }

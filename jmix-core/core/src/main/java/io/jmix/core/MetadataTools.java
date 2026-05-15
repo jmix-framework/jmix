@@ -31,6 +31,7 @@ import io.jmix.core.entity.annotation.JmixId;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.impl.scanning.EnumDetector;
 import io.jmix.core.impl.scanning.JmixModulesClasspathScanner;
+import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
@@ -803,7 +804,7 @@ public class MetadataTools {
     public List<String> getDependsOnProperties(MetaProperty metaProperty) {
         checkNotNullArgument(metaProperty, "metaProperty is null");
 
-        String dependsOnProperties = (String) metaProperty.getAnnotations().get("dependsOnProperties");
+        String dependsOnProperties = (String) metaProperty.getAnnotations().get(DependsOnProperties.class.getName());
         List<String> result = Collections.emptyList();
         if (dependsOnProperties != null) {
             result = Splitter.on(',').omitEmptyStrings().trimResults().splitToList(dependsOnProperties);

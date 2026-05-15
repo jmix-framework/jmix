@@ -792,7 +792,7 @@ public class MetaModelLoader {
         if (dependsOnAnnotation != null) {
             String[] dependsOn = dependsOnAnnotation.value();
             if (dependsOn.length != 0) {
-                metaProperty.getAnnotations().put("dependsOnProperties", Joiner.on(',').join(dependsOn));
+                metaProperty.getAnnotations().put(DependsOnProperties.class.getName(), Joiner.on(',').join(dependsOn));
             }
         }
 

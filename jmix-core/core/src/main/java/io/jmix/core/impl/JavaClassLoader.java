@@ -21,8 +21,6 @@ import com.google.common.collect.Sets;
 import io.jmix.core.CoreProperties;
 import io.jmix.core.TimeSource;
 import io.jmix.core.common.util.ReflectionHelper;
-import io.micrometer.core.instrument.MeterRegistry;
-import io.micrometer.core.instrument.Timer;
 import jakarta.annotation.PreDestroy;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -62,8 +60,6 @@ public class JavaClassLoader extends URLClassLoader {
     protected TimeSource timeSource;
     @Autowired
     protected SpringBeanLoader springBeanLoader;
-    @Autowired
-    protected MeterRegistry meterRegistry;
 
     @Autowired
     public JavaClassLoader(CoreProperties coreProperties) {
@@ -108,7 +104,6 @@ public class JavaClassLoader extends URLClassLoader {
     public Class loadClass(final String fullClassName, boolean resolve) throws ClassNotFoundException {
         String containerClassName = StringUtils.substringBefore(fullClassName, "$");
 
-        Timer.Sample sample = Timer.start(meterRegistry);
         try {
             lock(containerClassName);
             Class clazz;
@@ -135,7 +130,6 @@ public class JavaClassLoader extends URLClassLoader {
             return clazz;
         } finally {
             unlock(containerClassName);
-            sample.stop(meterRegistry.timer("jmix.JavaClassLoader.loadClass"));
         }
     }
 

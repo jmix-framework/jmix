@@ -16,8 +16,8 @@
 
 package texttodata.test_support;
 
-import io.jmix.texttodata.generation.*;
-import io.jmix.texttodata.repair.JpqlRepairer;
+import io.jmix.texttodata.dataload.generation.*;
+import io.jmix.texttodata.dataload.repair.JpqlRepairer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

@@ -16,14 +16,14 @@
 
 package repair;
 
-import io.jmix.texttodata.generation.GeneratedJpqlParameter;
-import io.jmix.texttodata.generation.GeneratedJpqlResult;
-import io.jmix.texttodata.generation.JpqlGenerationRequest;
-import io.jmix.texttodata.repair.JpqlRepairResult;
-import io.jmix.texttodata.repair.JpqlRepairService;
-import io.jmix.texttodata.repair.JpqlRepairer;
-import io.jmix.texttodata.validation.JpqlValidationResult;
-import io.jmix.texttodata.validation.JpqlValidationService;
+import io.jmix.texttodata.dataload.generation.GeneratedJpqlParameter;
+import io.jmix.texttodata.dataload.generation.GeneratedJpqlResult;
+import io.jmix.texttodata.dataload.generation.JpqlGenerationRequest;
+import io.jmix.texttodata.dataload.repair.JpqlRepairResult;
+import io.jmix.texttodata.dataload.repair.JpqlRepairService;
+import io.jmix.texttodata.dataload.repair.JpqlRepairer;
+import io.jmix.texttodata.dataload.validation.JpqlValidationResult;
+import io.jmix.texttodata.dataload.validation.JpqlValidationService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

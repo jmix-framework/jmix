@@ -17,17 +17,13 @@
 package generation;
 
 import generation.test_support.JpqlGenerationServiceTestConfiguration;
-import io.jmix.texttodata.generation.GeneratedJpqlParameter;
-import io.jmix.texttodata.generation.GeneratedJpqlResult;
-import io.jmix.texttodata.generation.JpqlGenerationRequest;
-import io.jmix.texttodata.generation.JpqlGenerationService;
-import io.jmix.texttodata.generation.JpqlGenerator;
+import io.jmix.texttodata.dataload.generation.GeneratedJpqlResult;
+import io.jmix.texttodata.dataload.generation.JpqlGenerationRequest;
+import io.jmix.texttodata.dataload.generation.JpqlGenerationService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import test_support.TextToDataTestConfiguration;

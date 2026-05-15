@@ -17,11 +17,11 @@
 package repair.test_support;
 
 import generation.test_support.StubChatModel;
-import io.jmix.texttodata.prompt.JpqlRepairerPromptProvider;
-import io.jmix.texttodata.prompt.SystemPromptProvider;
-import io.jmix.texttodata.prompt.impl.DefaultJpqlRepairerPromptProvider;
-import io.jmix.texttodata.prompt.impl.DefaultSystemPromptProvider;
-import io.jmix.texttodata.repair.impl.SpringAiJpqlRepairer;
+import io.jmix.texttodata.dataload.prompt.JpqlRepairerPromptProvider;
+import io.jmix.texttodata.dataload.prompt.SystemPromptProvider;
+import io.jmix.texttodata.dataload.prompt.impl.DefaultJpqlRepairerPromptProvider;
+import io.jmix.texttodata.dataload.prompt.impl.DefaultSystemPromptProvider;
+import io.jmix.texttodata.dataload.repair.impl.SpringAiJpqlRepairer;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

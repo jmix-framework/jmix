@@ -16,10 +16,10 @@
 
 package validation;
 
-import io.jmix.texttodata.generation.GeneratedJpqlParameter;
-import io.jmix.texttodata.generation.GeneratedJpqlResult;
-import io.jmix.texttodata.validation.JpqlValidationResult;
-import io.jmix.texttodata.validation.JpqlValidationService;
+import io.jmix.texttodata.dataload.generation.GeneratedJpqlParameter;
+import io.jmix.texttodata.dataload.generation.GeneratedJpqlResult;
+import io.jmix.texttodata.dataload.validation.JpqlValidationResult;
+import io.jmix.texttodata.dataload.validation.JpqlValidationService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

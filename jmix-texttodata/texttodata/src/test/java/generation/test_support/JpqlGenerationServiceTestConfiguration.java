@@ -16,9 +16,9 @@
 
 package generation.test_support;
 
-import io.jmix.texttodata.generation.GeneratedJpqlParameter;
-import io.jmix.texttodata.generation.GeneratedJpqlResult;
-import io.jmix.texttodata.generation.JpqlGenerator;
+import io.jmix.texttodata.dataload.generation.GeneratedJpqlParameter;
+import io.jmix.texttodata.dataload.generation.GeneratedJpqlResult;
+import io.jmix.texttodata.dataload.generation.JpqlGenerator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

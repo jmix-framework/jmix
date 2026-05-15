@@ -17,13 +17,13 @@
 package repair;
 
 import generation.test_support.StubChatModel;
-import io.jmix.texttodata.repair.impl.SpringAiJpqlRepairer;
-import io.jmix.texttodata.generation.GeneratedJpqlParameter;
-import io.jmix.texttodata.generation.GeneratedJpqlResult;
-import io.jmix.texttodata.generation.JpqlGenerationRequest;
-import io.jmix.texttodata.repair.JpqlRepairRequest;
-import io.jmix.texttodata.validation.JpqlValidationIssue;
-import io.jmix.texttodata.validation.JpqlValidationResult;
+import io.jmix.texttodata.dataload.repair.impl.SpringAiJpqlRepairer;
+import io.jmix.texttodata.dataload.generation.GeneratedJpqlParameter;
+import io.jmix.texttodata.dataload.generation.GeneratedJpqlResult;
+import io.jmix.texttodata.dataload.generation.JpqlGenerationRequest;
+import io.jmix.texttodata.dataload.repair.JpqlRepairRequest;
+import io.jmix.texttodata.dataload.validation.JpqlValidationIssue;
+import io.jmix.texttodata.dataload.validation.JpqlValidationResult;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

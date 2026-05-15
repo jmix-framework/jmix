@@ -22,7 +22,7 @@ import io.jmix.texttodata.introspection.model.EnumPropertyDescriptor;
 import io.jmix.texttodata.introspection.model.EnumValueDescriptor;
 import io.jmix.texttodata.introspection.model.RelationPropertyDescriptor;
 import io.jmix.texttodata.introspection.registry.DomainModelRegistry;
-import io.jmix.texttodata.prompt.PromptContextBuilder;
+import io.jmix.texttodata.dataload.prompt.PromptContextBuilder;
 import jakarta.annotation.PostConstruct;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;

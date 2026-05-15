@@ -16,11 +16,11 @@
 
 package generation.test_support;
 
-import io.jmix.texttodata.generation.impl.SpringAiJpqlGenerator;
-import io.jmix.texttodata.prompt.JpqlGenerationPromptProvider;
-import io.jmix.texttodata.prompt.SystemPromptProvider;
-import io.jmix.texttodata.prompt.impl.DefaultJpqlGenerationPromptProvider;
-import io.jmix.texttodata.prompt.impl.DefaultSystemPromptProvider;
+import io.jmix.texttodata.dataload.generation.impl.SpringAiJpqlGenerator;
+import io.jmix.texttodata.dataload.prompt.JpqlGenerationPromptProvider;
+import io.jmix.texttodata.dataload.prompt.SystemPromptProvider;
+import io.jmix.texttodata.dataload.prompt.impl.DefaultJpqlGenerationPromptProvider;
+import io.jmix.texttodata.dataload.prompt.impl.DefaultSystemPromptProvider;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

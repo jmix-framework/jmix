@@ -16,18 +16,18 @@
 
 package io.jmix.autoconfigure.texttodata;
 
-import io.jmix.texttodata.generation.impl.SpringAiJpqlGenerator;
-import io.jmix.texttodata.prompt.SystemPromptProvider;
-import io.jmix.texttodata.prompt.impl.DefaultJpqlGenerationPromptProvider;
-import io.jmix.texttodata.prompt.impl.DefaultJpqlRepairerPromptProvider;
-import io.jmix.texttodata.repair.impl.SpringAiJpqlRepairer;
+import io.jmix.texttodata.dataload.generation.impl.SpringAiJpqlGenerator;
+import io.jmix.texttodata.dataload.prompt.SystemPromptProvider;
+import io.jmix.texttodata.dataload.prompt.impl.DefaultJpqlGenerationPromptProvider;
+import io.jmix.texttodata.dataload.prompt.impl.DefaultJpqlRepairerPromptProvider;
+import io.jmix.texttodata.dataload.repair.impl.SpringAiJpqlRepairer;
 import io.jmix.texttodata.TextToDataConfiguration;
-import io.jmix.texttodata.generation.JpqlGenerator;
-import io.jmix.texttodata.prompt.JpqlGenerationPromptProvider;
+import io.jmix.texttodata.dataload.generation.JpqlGenerator;
+import io.jmix.texttodata.dataload.prompt.JpqlGenerationPromptProvider;
 import io.jmix.texttodata.introspection.introspector.JpaDomainModelIntrospector;
-import io.jmix.texttodata.prompt.JpqlRepairerPromptProvider;
-import io.jmix.texttodata.prompt.impl.DefaultSystemPromptProvider;
-import io.jmix.texttodata.repair.JpqlRepairer;
+import io.jmix.texttodata.dataload.prompt.JpqlRepairerPromptProvider;
+import io.jmix.texttodata.dataload.prompt.impl.DefaultSystemPromptProvider;
+import io.jmix.texttodata.dataload.repair.JpqlRepairer;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBooleanProperty;

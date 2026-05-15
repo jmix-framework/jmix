@@ -16,10 +16,10 @@
 
 package io.jmix.texttodata;
 
-import io.jmix.texttodata.generation.GeneratedJpqlResult;
-import io.jmix.texttodata.generation.JpqlGenerationRequest;
-import io.jmix.texttodata.postprocess.PostProcessedResult;
-import io.jmix.texttodata.validation.JpqlValidationResult;
+import io.jmix.texttodata.dataload.generation.GeneratedJpqlResult;
+import io.jmix.texttodata.dataload.generation.JpqlGenerationRequest;
+import io.jmix.texttodata.dataload.postprocess.PostProcessedResult;
+import io.jmix.texttodata.dataload.validation.JpqlValidationResult;
 
 /**
  * Final facade result returned by the end-to-end text-to-data pipeline.

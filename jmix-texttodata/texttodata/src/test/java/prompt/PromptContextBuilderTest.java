@@ -19,7 +19,7 @@ package prompt;
 import io.jmix.texttodata.introspection.registry.DomainModelRegistry;
 import io.jmix.texttodata.introspection.search.DomainModelSearchCandidate;
 import io.jmix.texttodata.introspection.search.DomainModelSearchService;
-import io.jmix.texttodata.prompt.PromptContextBuilder;
+import io.jmix.texttodata.dataload.prompt.PromptContextBuilder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

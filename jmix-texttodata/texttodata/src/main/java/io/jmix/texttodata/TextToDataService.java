@@ -16,15 +16,15 @@
 
 package io.jmix.texttodata;
 
-import io.jmix.texttodata.generation.GeneratedJpqlResult;
-import io.jmix.texttodata.generation.JpqlGenerationRequest;
-import io.jmix.texttodata.generation.JpqlGenerationService;
-import io.jmix.texttodata.postprocess.JpqlPostProcessingService;
-import io.jmix.texttodata.postprocess.PostProcessedResult;
-import io.jmix.texttodata.repair.JpqlRepairResult;
-import io.jmix.texttodata.repair.JpqlRepairService;
-import io.jmix.texttodata.validation.JpqlValidationResult;
-import io.jmix.texttodata.validation.JpqlValidationService;
+import io.jmix.texttodata.dataload.generation.GeneratedJpqlResult;
+import io.jmix.texttodata.dataload.generation.JpqlGenerationRequest;
+import io.jmix.texttodata.dataload.generation.JpqlGenerationService;
+import io.jmix.texttodata.dataload.postprocess.JpqlPostProcessingService;
+import io.jmix.texttodata.dataload.postprocess.PostProcessedResult;
+import io.jmix.texttodata.dataload.repair.JpqlRepairResult;
+import io.jmix.texttodata.dataload.repair.JpqlRepairService;
+import io.jmix.texttodata.dataload.validation.JpqlValidationResult;
+import io.jmix.texttodata.dataload.validation.JpqlValidationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

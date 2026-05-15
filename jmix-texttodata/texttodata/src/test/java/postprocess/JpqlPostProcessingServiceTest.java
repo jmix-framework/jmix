@@ -16,10 +16,10 @@
 
 package postprocess;
 
-import io.jmix.texttodata.generation.GeneratedJpqlParameter;
-import io.jmix.texttodata.generation.GeneratedJpqlResult;
-import io.jmix.texttodata.postprocess.JpqlPostProcessingService;
-import io.jmix.texttodata.postprocess.PostProcessedResult;
+import io.jmix.texttodata.dataload.generation.GeneratedJpqlParameter;
+import io.jmix.texttodata.dataload.generation.GeneratedJpqlResult;
+import io.jmix.texttodata.dataload.postprocess.JpqlPostProcessingService;
+import io.jmix.texttodata.dataload.postprocess.PostProcessedResult;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

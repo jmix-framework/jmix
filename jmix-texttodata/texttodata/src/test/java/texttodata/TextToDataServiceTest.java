@@ -18,23 +18,14 @@ package texttodata;
 
 import io.jmix.texttodata.TextToDataResult;
 import io.jmix.texttodata.TextToDataService;
-import io.jmix.texttodata.generation.GeneratedJpqlParameter;
-import io.jmix.texttodata.generation.GeneratedJpqlResult;
-import io.jmix.texttodata.generation.JpqlGenerationRequest;
-import io.jmix.texttodata.generation.JpqlGenerator;
-import io.jmix.texttodata.repair.JpqlRepairer;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import test_support.TextToDataTestConfiguration;
 import texttodata.test_support.TextToDataServiceTestConfiguration;
-
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 

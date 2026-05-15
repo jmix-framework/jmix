@@ -18,9 +18,9 @@ package generation;
 
 import generation.test_support.SpringAiJpqlGeneratorTestConfiguration;
 import generation.test_support.StubChatModel;
-import io.jmix.texttodata.generation.GeneratedJpqlResult;
-import io.jmix.texttodata.generation.JpqlGenerationRequest;
-import io.jmix.texttodata.generation.impl.SpringAiJpqlGenerator;
+import io.jmix.texttodata.dataload.generation.GeneratedJpqlResult;
+import io.jmix.texttodata.dataload.generation.JpqlGenerationRequest;
+import io.jmix.texttodata.dataload.generation.impl.SpringAiJpqlGenerator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

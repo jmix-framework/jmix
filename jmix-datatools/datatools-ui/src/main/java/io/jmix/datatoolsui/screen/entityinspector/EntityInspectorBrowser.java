@@ -60,13 +60,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
-import java.io.ByteArrayOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
+import java.util.zip.ZipInputStream;
 
 import static com.google.common.base.Strings.nullToEmpty;
 import static io.jmix.ui.download.DownloadFormat.JSON;
@@ -129,11 +129,7 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
     @Autowired
     protected EntityImportExport entityImportExport;
     @Autowired
-    protected EntitySerialization entitySerialization;
-    @Autowired
     protected EntityImportPlanJsonBuilder importPlanJsonBuilder;
-    @Autowired
-    protected EntityImportPlans entityImportPlans;
     @Autowired
     protected UnconstrainedDataManager unconstrainedDataManager;
     @Autowired
@@ -429,9 +425,9 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
                 Collection<Object> importedEntities;
                 if (JSON.getFileExt().equals(Files.getFileExtension(fileName))) {
                     String content = new String(fileBytes, StandardCharsets.UTF_8);
-                    importedEntities = entityImportExport.importEntitiesFromJson(content, createEntityImportPlan(content, selectedMeta));
+                    importedEntities = importEntitiesFromJson(content, selectedMeta);
                 } else {
-                    importedEntities = entityImportExport.importEntitiesFromZIP(fileBytes, createEntityImportPlan(selectedMeta));
+                    importedEntities = importEntitiesFromZip(fileBytes, selectedMeta);
                 }
 
                 notifications.create(Notifications.NotificationType.HUMANIZED)
@@ -593,6 +589,25 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
         return entityImportPlan;
     }
 
+    protected Collection<Object> importEntitiesFromJson(String content, MetaClass metaClass) {
+        return entityImportExport.importEntitiesFromJson(content, createEntityImportPlan(content, metaClass));
+    }
+
+    protected Collection<Object> importEntitiesFromZip(byte[] zipBytes, MetaClass metaClass) {
+        try (ZipInputStream zipInputStream = new ZipInputStream(new ByteArrayInputStream(zipBytes), StandardCharsets.UTF_8)) {
+            ZipEntry entry;
+            while ((entry = zipInputStream.getNextEntry()) != null) {
+                if (!entry.isDirectory()) {
+                    String content = new String(zipInputStream.readAllBytes(), StandardCharsets.UTF_8);
+                    return entityImportExport.importEntitiesFromZIP(zipBytes, createEntityImportPlan(content, metaClass));
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Exception occurred while importing report", e);
+        }
+        throw new RuntimeException("Zip archive does not contain entities export data");
+    }
+
     protected FetchPlan createEntityExportPlan(MetaClass metaClass) {
         FetchPlanBuilder fetchPlanBuilder = fetchPlans.builder(metaClass.getJavaClass());
         ExportImportEntityContext exportContext = new ExportImportEntityContext(metaClass);
@@ -640,87 +655,15 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
         return fetchPlanBuilder.build();
     }
 
-    protected EntityImportPlan createEntityImportPlan(MetaClass metaClass) {
-        EntityImportPlanBuilder planBuilder = entityImportPlans.builder(metaClass.getJavaClass());
-        ExportImportEntityContext importContext = new ExportImportEntityContext(metaClass);
-        accessManager.applyRegisteredConstraints(importContext);
-
-        for (MetaProperty metaProperty : metaClass.getProperties()) {
-            if (!metadataTools.isJpa(metaProperty) || !importContext.canImported(metaProperty.getName())) {
-                continue;
-            }
-
-            switch (metaProperty.getType()) {
-                case DATATYPE:
-                case ENUM:
-                    planBuilder.addLocalProperty(metaProperty.getName());
-                    break;
-                case EMBEDDED:
-                case ASSOCIATION:
-                case COMPOSITION:
-                    Range.Cardinality cardinality = metaProperty.getRange().getCardinality();
-                    if (cardinality == Range.Cardinality.MANY_TO_ONE) {
-                        planBuilder.addManyToOneProperty(metaProperty.getName(), ReferenceImportBehaviour.IGNORE_MISSING);
-                    } else if (cardinality == Range.Cardinality.ONE_TO_ONE) {
-                        planBuilder.addOneToOneProperty(metaProperty.getName(), ReferenceImportBehaviour.IGNORE_MISSING);
-                    } else if (cardinality == Range.Cardinality.ONE_TO_MANY) {
-                        planBuilder.addOneToOneProperty(metaProperty.getName(), ReferenceImportBehaviour.IGNORE_MISSING);
-                    } else if (cardinality == Range.Cardinality.NONE) {
-                        planBuilder.addOneToOneProperty(metaProperty.getName(), ReferenceImportBehaviour.IGNORE_MISSING);
-                    }
-                    break;
-                default:
-                    throw new IllegalStateException("unknown property type");
-            }
-        }
-        return planBuilder.build();
-    }
-
     /**
-     * Reloads entities with the export fetch plan using constrained DataManager semantics and serializes them with
-     * denied-property filtering.
+     * Delegates export to {@link EntityImportExport} using the security-aware fetch plan prepared by the inspector.
      */
     protected String exportEntitiesToJson(Collection<Object> entities, FetchPlan fetchPlan) {
-        Collection<Object> reloadedEntities = reloadEntitiesForExport(entities, fetchPlan);
-        return entitySerialization.toJson(reloadedEntities, null,
-                EntitySerializationOption.COMPACT_REPEATED_ENTITIES,
-                EntitySerializationOption.PRETTY_PRINT,
-                EntitySerializationOption.DO_NOT_SERIALIZE_DENIED_PROPERTY);
+        return entityImportExport.exportEntitiesToJSON(entities, fetchPlan);
     }
 
     protected byte[] exportEntitiesToZip(Collection<Object> entities, FetchPlan fetchPlan) {
-        Collection<Object> reloadedEntities = reloadEntitiesForExport(entities, fetchPlan);
-        String json = entitySerialization.toJson(reloadedEntities, null,
-                EntitySerializationOption.COMPACT_REPEATED_ENTITIES,
-                EntitySerializationOption.DO_NOT_SERIALIZE_DENIED_PROPERTY);
-        byte[] jsonBytes = json.getBytes(StandardCharsets.UTF_8);
-
-        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-             ZipOutputStream zipOutputStream = new ZipOutputStream(byteArrayOutputStream, StandardCharsets.UTF_8)) {
-            zipOutputStream.putNextEntry(new ZipEntry("entities.json"));
-            zipOutputStream.write(jsonBytes);
-            zipOutputStream.closeEntry();
-            zipOutputStream.finish();
-            return byteArrayOutputStream.toByteArray();
-        } catch (IOException e) {
-            throw new RuntimeException("Error on creating zip archive during entities export", e);
-        }
-    }
-
-    protected Collection<Object> reloadEntitiesForExport(Collection<Object> entities, FetchPlan fetchPlan) {
-        List<Object> ids = new ArrayList<>(entities.size());
-        for (Object entity : entities) {
-            ids.add(EntityValues.getId(entity));
-        }
-
-        MetaClass metaClass = metadata.getClass(fetchPlan.getEntityClass());
-        LoadContext.Query query = new LoadContext.Query("select e from " + metaClass.getName() + " e where e.id in :ids")
-                .setParameter("ids", ids);
-        LoadContext context = new LoadContext(metadata.getClass(fetchPlan.getEntityClass()))
-                .setQuery(query)
-                .setFetchPlan(fetchPlan);
-
-        return dataManager.loadList(context);
+        return entityImportExport.exportEntitiesToZIP(entities, fetchPlan);
     }
 
     protected boolean readPermitted(MetaClass metaClass) {

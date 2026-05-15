@@ -109,7 +109,9 @@ public class EntityImportExportImpl implements EntityImportExport {
 
     @Override
     public byte[] exportEntitiesToZIP(Collection<Object> entities) {
-        String json = entitySerialization.toJson(entities, null, EntitySerializationOption.COMPACT_REPEATED_ENTITIES);
+        String json = entitySerialization.toJson(entities, null,
+                EntitySerializationOption.COMPACT_REPEATED_ENTITIES,
+                EntitySerializationOption.DO_NOT_SERIALIZE_DENIED_PROPERTY);
         byte[] jsonBytes = json.getBytes(StandardCharsets.UTF_8);
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -137,7 +139,9 @@ public class EntityImportExportImpl implements EntityImportExport {
     @Override
     public String exportEntitiesToJSON(Collection<Object> entities) {
         return entitySerialization.toJson(entities, null,
-                EntitySerializationOption.COMPACT_REPEATED_ENTITIES, EntitySerializationOption.PRETTY_PRINT);
+                EntitySerializationOption.COMPACT_REPEATED_ENTITIES,
+                EntitySerializationOption.PRETTY_PRINT,
+                EntitySerializationOption.DO_NOT_SERIALIZE_DENIED_PROPERTY);
     }
 
     protected Collection reloadEntities(Collection<Object> entities, FetchPlan fetchPlan) {
@@ -149,9 +153,10 @@ public class EntityImportExportImpl implements EntityImportExport {
         MetaClass metaClass = metadata.getClass(fetchPlan.getEntityClass());
         LoadContext.Query query = new LoadContext.Query("select e from " + metaClass.getName() + " e where e.id in :ids")
                 .setParameter("ids", ids);
-        LoadContext<?> ctx = new LoadContext(metadata.getClass(fetchPlan.getEntityClass()))
+        LoadContext<?> ctx = new LoadContext<>(metadata.getClass(fetchPlan.getEntityClass()))
                 .setQuery(query)
-                .setFetchPlan(fetchPlan);
+                .setFetchPlan(fetchPlan)
+                .setAccessConstraints(accessConstraintsRegistry.getConstraints());
 
         return dataManager.loadList(ctx);
     }

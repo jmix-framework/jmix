@@ -196,7 +196,7 @@ public class AppSettingsToolsImpl implements AppSettingsTools {
 
         if (entities.size() > 1) {
             throw new IllegalStateException(
-                    "More than one tenant settings record exists for entity %s abd tenant '%s'"
+                    "More than one tenant settings record exists for entity %s and tenant '%s'"
                             .formatted(metadata.getClass(clazz).getName(), tenantId));
         }
         return entities.isEmpty() ? null : entities.get(0);

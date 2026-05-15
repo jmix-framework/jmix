@@ -31,7 +31,7 @@ import java.util.regex.Pattern;
 import static io.jmix.aitools.dataload.validation.validator.JpqlValidatorUtils.containsFunctionCall;
 import static io.jmix.aitools.dataload.validation.validator.JpqlValidatorUtils.containsWord;
 
-@Component("textdt_CommonNonJpqlConstructsJpqlValidator")
+@Component("aitols_CommonNonJpqlConstructsJpqlValidator")
 public class CommonNonJpqlConstructsValidator implements JpqlResultValidator, Ordered {
 
     protected static final Pattern CURRENT_DATE_WITH_PARENTHESES_PATTERN =

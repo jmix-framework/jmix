@@ -16,7 +16,7 @@
 
 package io.jmix.aitools.dataload.repair;
 
-import io.jmix.aitools.TextToDataProperties;
+import io.jmix.aitools.AiToolsProperties;
 import io.jmix.aitools.dataload.generation.GeneratedJpqlResult;
 import io.jmix.aitools.dataload.generation.JpqlGenerationRequest;
 import io.jmix.aitools.dataload.postprocess.JpqlPostProcessingService;
@@ -26,11 +26,11 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-@Component("textdt_JpqlRepairService")
+@Component("aitols_JpqlRepairService")
 public class JpqlRepairService {
 
     @Autowired
-    protected TextToDataProperties textToDataProperties;
+    protected AiToolsProperties aiToolsProperties;
 
     @Autowired
     protected JpqlValidationService jpqlValidationService;
@@ -44,7 +44,7 @@ public class JpqlRepairService {
     public JpqlRepairResult repairIfNeeded(JpqlGenerationRequest generationRequest,
                                            GeneratedJpqlResult generatedJpqlResult,
                                            JpqlValidationResult validationResult) {
-        return repairIfNeeded(generationRequest, generatedJpqlResult, validationResult, textToDataProperties.getMaxRepairAttempts());
+        return repairIfNeeded(generationRequest, generatedJpqlResult, validationResult, aiToolsProperties.getMaxRepairAttempts());
     }
 
     public JpqlRepairResult repairIfNeeded(JpqlGenerationRequest generationRequest,

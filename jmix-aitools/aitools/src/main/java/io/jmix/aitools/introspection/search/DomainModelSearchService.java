@@ -77,7 +77,7 @@ import java.util.stream.Collectors;
  *
  * @see PromptContextBuilder
  */
-@Component("textdt_DomainModelSearchService")
+@Component("aitols_DomainModelSearchService")
 public class DomainModelSearchService {
 
     protected static final String ENTITY_NAME_FIELD = "entityName";

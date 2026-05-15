@@ -21,8 +21,8 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import java.util.List;
 
-@ConfigurationProperties("texttodata")
-public class TextToDataProperties {
+@ConfigurationProperties("aitools")
+public class AiToolsProperties {
 
     Boolean enabled;
 
@@ -42,15 +42,15 @@ public class TextToDataProperties {
 
     List<String> excludePackages;
 
-    public TextToDataProperties(@DefaultValue("true") Boolean enabled,
-                                @DefaultValue("2") Integer maxRepairAttempts,
-                                @DefaultValue("10") Integer maxEntityCandidates,
-                                @DefaultValue("1") Integer relationExpansionDepth,
-                                @DefaultValue("true") Boolean excludeSystemLevelEntities,
-                                List<String> includeEntities,
-                                List<String> excludeEntities,
-                                List<String> includePackages,
-                                @DefaultValue("io.jmix") List<String> excludePackages) {
+    public AiToolsProperties(@DefaultValue("true") Boolean enabled,
+                             @DefaultValue("2") Integer maxRepairAttempts,
+                             @DefaultValue("10") Integer maxEntityCandidates,
+                             @DefaultValue("1") Integer relationExpansionDepth,
+                             @DefaultValue("true") Boolean excludeSystemLevelEntities,
+                             List<String> includeEntities,
+                             List<String> excludeEntities,
+                             List<String> includePackages,
+                             @DefaultValue("io.jmix") List<String> excludePackages) {
         this.enabled = enabled;
         this.maxRepairAttempts = maxRepairAttempts;
         this.maxEntityCandidates = maxEntityCandidates;

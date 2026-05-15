@@ -45,16 +45,16 @@ class JpqlPostProcessingServiceTest {
     @DisplayName("Extracts literal LIMIT and OFFSET into execution options")
     void testExtractsLiteralPagination() {
         PostProcessedResult postProcessedResult = jpqlPostProcessingService.process(new GeneratedJpqlResult(
-                "select e from textdt_Order e order by e.number limit 10 offset 5",
-                "textdt_Order",
+                "select e from aitols_Order e order by e.number limit 10 offset 5",
+                "aitols_Order",
                 List.of(),
-                List.of("textdt_Order"),
+                List.of("aitols_Order"),
                 List.of("number"),
                 "Orders with pagination",
                 List.of()
         ));
 
-        assertEquals("select e from textdt_Order e order by e.number", postProcessedResult.getGeneratedJpqlResult().getJpql());
+        assertEquals("select e from aitols_Order e order by e.number", postProcessedResult.getGeneratedJpqlResult().getJpql());
         assertEquals(10, postProcessedResult.getMaxResults());
         assertEquals(5, postProcessedResult.getFirstResult());
         assertTrue(postProcessedResult.getGeneratedJpqlResult().getWarnings()
@@ -65,20 +65,20 @@ class JpqlPostProcessingServiceTest {
     @DisplayName("Extracts parameterized LIMIT and OFFSET and removes pagination parameters")
     void testExtractsParameterizedPagination() {
         PostProcessedResult postProcessedResult = jpqlPostProcessingService.process(new GeneratedJpqlResult(
-                "select e from textdt_Order e where e.customer.name like :customerName limit :limit offset :offset",
-                "textdt_Order",
+                "select e from aitols_Order e where e.customer.name like :customerName limit :limit offset :offset",
+                "aitols_Order",
                 List.of(
                         new GeneratedJpqlParameter("customerName", "String", "%Acme%"),
                         new GeneratedJpqlParameter("limit", "Integer", 10),
                         new GeneratedJpqlParameter("offset", "Integer", 20)
                 ),
-                List.of("textdt_Order", "textdt_Customer"),
+                List.of("aitols_Order", "aitols_Customer"),
                 List.of("customer.name"),
                 "Orders with pagination params",
                 List.of()
         ));
 
-        assertEquals("select e from textdt_Order e where e.customer.name like :customerName",
+        assertEquals("select e from aitols_Order e where e.customer.name like :customerName",
                 postProcessedResult.getGeneratedJpqlResult().getJpql());
         assertEquals(10, postProcessedResult.getMaxResults());
         assertEquals(20, postProcessedResult.getFirstResult());
@@ -90,16 +90,16 @@ class JpqlPostProcessingServiceTest {
     @DisplayName("Keeps JPQL unchanged when pagination values cannot be resolved")
     void testKeepsUnresolvedPaginationForFurtherRepair() {
         PostProcessedResult postProcessedResult = jpqlPostProcessingService.process(new GeneratedJpqlResult(
-                "select e from textdt_Order e limit :limit",
-                "textdt_Order",
+                "select e from aitols_Order e limit :limit",
+                "aitols_Order",
                 List.of(new GeneratedJpqlParameter("limit", "String", "many")),
-                List.of("textdt_Order"),
+                List.of("aitols_Order"),
                 List.of(),
                 "Unresolved pagination",
                 List.of()
         ));
 
-        assertEquals("select e from textdt_Order e limit :limit", postProcessedResult.getGeneratedJpqlResult().getJpql());
+        assertEquals("select e from aitols_Order e limit :limit", postProcessedResult.getGeneratedJpqlResult().getJpql());
         assertFalse(postProcessedResult.getGeneratedJpqlResult().getWarnings()
                 .contains("Pagination clauses were normalized into execution options"));
     }

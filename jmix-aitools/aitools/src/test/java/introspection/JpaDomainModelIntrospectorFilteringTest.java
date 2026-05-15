@@ -43,10 +43,10 @@ class JpaDomainModelIntrospectorFilteringTest {
         @Test
         @DisplayName("Excludes system-level, DTO, and 'io.jmix' package entities by default")
         void testDefaultFiltering() {
-            assertNull(introspector.getEntityDescriptor("textdt_SystemLevelEntity"));
-            assertNull(introspector.getEntityDescriptor("textdt_DtoEntity"));
-            assertNull(introspector.getEntityDescriptor("textdt_PackageEntity"));
-            assertNotNull(introspector.getEntityDescriptor("textdt_Order"));
+            assertNull(introspector.getEntityDescriptor("aitols_SystemLevelEntity"));
+            assertNull(introspector.getEntityDescriptor("aitols_DtoEntity"));
+            assertNull(introspector.getEntityDescriptor("aitols_PackageEntity"));
+            assertNotNull(introspector.getEntityDescriptor("aitols_Order"));
         }
     }
 
@@ -54,8 +54,8 @@ class JpaDomainModelIntrospectorFilteringTest {
     @ExtendWith(SpringExtension.class)
     @ContextConfiguration(classes = TextToDataTestConfiguration.class)
     @TestPropertySource(properties = {
-            "texttodata.include-entities=textdt_SystemLevelEntity,textdt_Order",
-            "texttodata.exclude-entities=textdt_Order"
+            "aitools.include-entities=aitols_SystemLevelEntity,aitols_Order",
+            "aitools.exclude-entities=aitols_Order"
     })
     class ExplicitFiltering {
 
@@ -65,8 +65,8 @@ class JpaDomainModelIntrospectorFilteringTest {
         @Test
         @DisplayName("Allows explicit includes and applies explicit excludes last")
         void testExplicitFiltering() {
-            assertNotNull(introspector.getEntityDescriptor("textdt_SystemLevelEntity"));
-            assertNull(introspector.getEntityDescriptor("textdt_Order"));
+            assertNotNull(introspector.getEntityDescriptor("aitols_SystemLevelEntity"));
+            assertNull(introspector.getEntityDescriptor("aitols_Order"));
         }
     }
 }

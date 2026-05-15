@@ -49,12 +49,12 @@ class SpringAiJpqlGeneratorTest {
     void testParsesJsonResponse() {
         String content = """
                 {
-                  "jpql": "select e from textdt_Order e where e.customer.name like :customerName",
-                  "rootEntityName": "textdt_Order",
+                  "jpql": "select e from aitols_Order e where e.customer.name like :customerName",
+                  "rootEntityName": "aitols_Order",
                   "parameters": [
                     {"name": "customerName", "type": "String", "value": "%Acme%"}
                   ],
-                  "usedEntities": ["textdt_Order", "textdt_Customer"],
+                  "usedEntities": ["aitols_Order", "aitols_Customer"],
                   "usedPropertyPaths": ["customer.name"],
                   "explanation": "Find orders by customer name",
                   "warnings": ["Customer and counterparty may both match"],
@@ -68,11 +68,11 @@ class SpringAiJpqlGeneratorTest {
         GeneratedJpqlResult result = generator.generate(new JpqlGenerationRequest(
                 "orders by customer name",
                 List.of(),
-                "Entity textdt_Order"
+                "Entity aitols_Order"
         ));
 
-        assertEquals("select e from textdt_Order e where e.customer.name like :customerName", result.getJpql());
-        assertEquals("textdt_Order", result.getRootEntityName());
+        assertEquals("select e from aitols_Order e where e.customer.name like :customerName", result.getJpql());
+        assertEquals("aitols_Order", result.getRootEntityName());
         assertEquals(1, result.getParameters().size());
         assertEquals("customer.name", result.getUsedPropertyPaths().get(0));
         assertTrue(result.getWarnings().contains("Customer and counterparty may both match"));
@@ -86,10 +86,10 @@ class SpringAiJpqlGeneratorTest {
         String content = """
                 ```json
                 {
-                  "jpql": "select e from textdt_Order e",
-                  "rootEntityName": "textdt_Order",
+                  "jpql": "select e from aitols_Order e",
+                  "rootEntityName": "aitols_Order",
                   "parameters": [],
-                  "usedEntities": ["textdt_Order"],
+                  "usedEntities": ["aitols_Order"],
                   "usedPropertyPaths": [],
                   "explanation": "Return orders",
                   "warnings": []
@@ -102,9 +102,9 @@ class SpringAiJpqlGeneratorTest {
         GeneratedJpqlResult result = generator.generate(new JpqlGenerationRequest(
                 "orders",
                 List.of(),
-                "Entity textdt_Order"
+                "Entity aitols_Order"
         ));
 
-        assertEquals("select e from textdt_Order e", result.getJpql());
+        assertEquals("select e from aitols_Order e", result.getJpql());
     }
 }

@@ -6,13 +6,12 @@ import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.annotation.Comment;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.aitools.TextToDataProperties;
+import io.jmix.aitools.AiToolsProperties;
 import io.jmix.aitools.introspection.model.EntityDescriptor;
 import io.jmix.aitools.introspection.model.EntityPropertyDescriptor;
 import io.jmix.aitools.introspection.model.RelationPropertyDescriptor;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 
@@ -31,7 +30,7 @@ public class JpaDomainModelIntrospector {
     @Autowired
     protected MetadataTools metadataTools;
     @Autowired
-    protected TextToDataProperties textToDataProperties;
+    protected AiToolsProperties aiToolsProperties;
     @Autowired
     protected List<MetaPropertyIntrospector> propertyIntrospects;
 
@@ -57,10 +56,10 @@ public class JpaDomainModelIntrospector {
      * Rebuilds entity and property descriptor indexes from current metadata. It considers inclusion and exclusions
      * from the application properties.
      *
-     * @see TextToDataProperties#getExcludeEntities()
-     * @see TextToDataProperties#getExcludePackages()
-     * @see TextToDataProperties#getIncludeEntities()
-     * @see TextToDataProperties#getIncludePackages()
+     * @see AiToolsProperties#getExcludeEntities()
+     * @see AiToolsProperties#getExcludePackages()
+     * @see AiToolsProperties#getIncludeEntities()
+     * @see AiToolsProperties#getIncludePackages()
      */
     public void introspect() {
         Collection<MetaClass> classes = metadata.getClasses();
@@ -286,7 +285,7 @@ public class JpaDomainModelIntrospector {
             return true;
         }
 
-        if (Boolean.TRUE.equals(textToDataProperties.getExcludeSystemLevelEntities())
+        if (Boolean.TRUE.equals(aiToolsProperties.getExcludeSystemLevelEntities())
                 && metadataTools.isSystemLevel(metaClass)) {
             return false;
         }
@@ -295,26 +294,26 @@ public class JpaDomainModelIntrospector {
             return false;
         }
 
-        if (matchesAnyPackagePrefix(metaClass.getJavaClass().getPackageName(), textToDataProperties.getExcludePackages())) {
+        if (matchesAnyPackagePrefix(metaClass.getJavaClass().getPackageName(), aiToolsProperties.getExcludePackages())) {
             return false;
         }
 
-        if (!textToDataProperties.getIncludeEntities().isEmpty()
-                || !textToDataProperties.getIncludePackages().isEmpty()) {
-            return matchesEntityName(metaClass, textToDataProperties.getIncludeEntities())
-                    || matchesAnyPackagePrefix(metaClass.getJavaClass().getPackageName(), textToDataProperties.getIncludePackages());
+        if (!aiToolsProperties.getIncludeEntities().isEmpty()
+                || !aiToolsProperties.getIncludePackages().isEmpty()) {
+            return matchesEntityName(metaClass, aiToolsProperties.getIncludeEntities())
+                    || matchesAnyPackagePrefix(metaClass.getJavaClass().getPackageName(), aiToolsProperties.getIncludePackages());
         }
 
         return true;
     }
 
     protected boolean isExplicitlyIncluded(MetaClass metaClass) {
-        return matchesEntityName(metaClass, textToDataProperties.getIncludeEntities())
-                || matchesAnyPackagePrefix(metaClass.getJavaClass().getPackageName(), textToDataProperties.getIncludePackages());
+        return matchesEntityName(metaClass, aiToolsProperties.getIncludeEntities())
+                || matchesAnyPackagePrefix(metaClass.getJavaClass().getPackageName(), aiToolsProperties.getIncludePackages());
     }
 
     protected boolean isExplicitlyExcluded(MetaClass metaClass) {
-        return matchesEntityName(metaClass, textToDataProperties.getExcludeEntities());
+        return matchesEntityName(metaClass, aiToolsProperties.getExcludeEntities());
     }
 
     protected boolean matchesEntityName(MetaClass metaClass, List<String> entityNames) {

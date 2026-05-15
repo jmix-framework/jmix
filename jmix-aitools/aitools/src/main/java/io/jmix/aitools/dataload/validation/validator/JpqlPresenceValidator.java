@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Component("textdt_JpqlPresenceValidator")
+@Component("aitols_JpqlPresenceValidator")
 public class JpqlPresenceValidator implements JpqlResultValidator, Ordered {
 
     @Override

@@ -53,15 +53,15 @@ class PromptContextBuilderTest {
         String context = promptContextBuilder.build(candidates);
 
         assertFalse(context.isBlank());
-        assertTrue(context.contains("Entity textdt_Order"));
-        assertTrue(context.contains("Entity textdt_Customer"));
+        assertTrue(context.contains("Entity aitols_Order"));
+        assertTrue(context.contains("Entity aitols_Customer"));
         assertTrue(context.contains("datatypes:"));
         assertTrue(context.contains("enums:"));
         assertTrue(context.contains("relations:"));
         assertTrue(context.contains("number String persistent|required"));
         assertTrue(context.contains("status enum[CLOSED:C,OPEN:O] persistent|optional"));
         assertTrue(context.contains("plainStatus enum[DONE:DONE,NEW:NEW] persistent|optional storage=string"));
-        assertTrue(context.contains("customer -> textdt_Customer MANY_TO_ONE persistent|required"));
+        assertTrue(context.contains("customer -> aitols_Customer MANY_TO_ONE persistent|required"));
     }
 
     @Test
@@ -71,9 +71,9 @@ class PromptContextBuilderTest {
 
         String context = promptContextBuilder.build(candidates);
 
-        assertTrue(context.contains("Entity textdt_Order"));
-        assertTrue(context.contains("Entity textdt_Customer"));
-        assertTrue(context.contains("Entity textdt_OrderLine"));
+        assertTrue(context.contains("Entity aitols_Order"));
+        assertTrue(context.contains("Entity aitols_Customer"));
+        assertTrue(context.contains("Entity aitols_OrderLine"));
     }
 
     @Test
@@ -83,9 +83,9 @@ class PromptContextBuilderTest {
 
         String context = promptContextBuilder.build(candidates, 0);
 
-        assertTrue(context.contains("Entity textdt_Order"));
-        assertFalse(context.contains("Entity textdt_Customer"));
-        assertFalse(context.contains("Entity textdt_OrderLine"));
+        assertTrue(context.contains("Entity aitols_Order"));
+        assertFalse(context.contains("Entity aitols_Customer"));
+        assertFalse(context.contains("Entity aitols_OrderLine"));
     }
 
     @Test
@@ -96,7 +96,7 @@ class PromptContextBuilderTest {
 
     protected DomainModelSearchCandidate orderCandidate() {
         return new DomainModelSearchCandidate(
-                modelIntrospector.getEntityDescriptor("textdt_Order"),
+                modelIntrospector.getEntityDescriptor("aitols_Order"),
                 1000,
                 List.of("entityName")
         );

@@ -43,7 +43,7 @@ class DomainModelSearchServiceTest {
         List<DomainModelSearchCandidate> candidates = domainModelSearchService.search("test order", 3);
 
         assertFalse(candidates.isEmpty());
-        assertEquals("textdt_Order", candidates.get(0).getEntity().getName());
+        assertEquals("aitols_Order", candidates.get(0).getEntity().getName());
         assertTrue(candidates.get(0).getScore() > 0);
         assertTrue(candidates.get(0).getMatchedBy().contains("entityCaption")
                 || candidates.get(0).getMatchedBy().contains("entityName"));
@@ -54,11 +54,11 @@ class DomainModelSearchServiceTest {
     void testSearchesByPropertyNamesAndComments() {
         List<DomainModelSearchCandidate> numberCandidates = domainModelSearchService.search("number", 3);
         assertFalse(numberCandidates.isEmpty());
-        assertEquals("textdt_Order", numberCandidates.get(0).getEntity().getName());
+        assertEquals("aitols_Order", numberCandidates.get(0).getEntity().getName());
 
         List<DomainModelSearchCandidate> commentCandidates = domainModelSearchService.search("display", 3);
         assertFalse(commentCandidates.isEmpty());
-        assertEquals("textdt_Customer", commentCandidates.get(0).getEntity().getName());
+        assertEquals("aitols_Customer", commentCandidates.get(0).getEntity().getName());
     }
 
     @Test
@@ -66,12 +66,12 @@ class DomainModelSearchServiceTest {
     void testSearchesByEnumValuesAndRelationTargets() {
         List<DomainModelSearchCandidate> enumCandidates = domainModelSearchService.search("open", 3);
         assertFalse(enumCandidates.isEmpty());
-        assertEquals("textdt_Order", enumCandidates.get(0).getEntity().getName());
+        assertEquals("aitols_Order", enumCandidates.get(0).getEntity().getName());
 
         List<DomainModelSearchCandidate> relationCandidates = domainModelSearchService.search("customer", 5);
         assertFalse(relationCandidates.isEmpty());
-        assertEquals("textdt_Customer", relationCandidates.get(0).getEntity().getName());
-        assertTrue(relationCandidates.stream().anyMatch(candidate -> candidate.getEntity().getName().equals("textdt_Order")));
+        assertEquals("aitols_Customer", relationCandidates.get(0).getEntity().getName());
+        assertTrue(relationCandidates.stream().anyMatch(candidate -> candidate.getEntity().getName().equals("aitols_Order")));
     }
 
     @Test

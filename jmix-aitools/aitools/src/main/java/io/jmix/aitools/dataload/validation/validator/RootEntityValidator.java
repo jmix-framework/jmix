@@ -27,7 +27,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Component("textdt_RootEntityValidator")
+@Component("aitols_RootEntityValidator")
 public class RootEntityValidator implements JpqlResultValidator, Ordered {
 
     @Autowired

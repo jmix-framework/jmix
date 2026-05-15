@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
-@Component("textdt_PagingValidator")
+@Component("aitols_PagingValidator")
 public class PagingValidator implements JpqlResultValidator, Ordered {
 
     @Override

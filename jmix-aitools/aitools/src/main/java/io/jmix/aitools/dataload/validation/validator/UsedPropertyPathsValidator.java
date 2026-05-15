@@ -28,7 +28,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
-@Component("textdt_UsedPropertyPathsValidator")
+@Component("aitols_UsedPropertyPathsValidator")
 public class UsedPropertyPathsValidator implements JpqlResultValidator, Ordered {
 
     @Autowired

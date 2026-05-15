@@ -16,7 +16,7 @@
 
 package io.jmix.aitools.dataload.generation;
 
-import io.jmix.aitools.TextToDataProperties;
+import io.jmix.aitools.AiToolsProperties;
 import io.jmix.aitools.introspection.search.DomainModelSearchCandidate;
 import io.jmix.aitools.introspection.search.DomainModelSearchService;
 import io.jmix.aitools.dataload.prompt.PromptContextBuilder;
@@ -26,11 +26,11 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Component("textdt_TextToJpqlGenerationService")
+@Component("aitols_TextToJpqlGenerationService")
 public class JpqlGenerationService {
 
     @Autowired
-    protected TextToDataProperties textToDataProperties;
+    protected AiToolsProperties aiToolsProperties;
 
     @Autowired
     protected DomainModelSearchService domainModelSearchService;
@@ -42,7 +42,7 @@ public class JpqlGenerationService {
     protected ObjectProvider<JpqlGenerator> jpqlGeneratorProvider;
 
     public JpqlGenerationRequest prepareRequest(String userText) {
-        return prepareRequest(userText, textToDataProperties.getMaxEntityCandidates());
+        return prepareRequest(userText, aiToolsProperties.getMaxEntityCandidates());
     }
 
     public JpqlGenerationRequest prepareRequest(String userText, int candidateLimit) {

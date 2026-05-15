@@ -16,8 +16,8 @@
 
 apply plugin: 'io.jmix'
 
-group = 'io.jmix.texttodata'
-archivesBaseName = 'jmix-texttodata-starter'
+group = 'io.jmix.aitools'
+archivesBaseName = 'jmix-aitools-starter'
 
 dependencies {
     api project(":aitools")

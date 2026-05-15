@@ -14,35 +14,32 @@
  * limitations under the License.
  */
 
-package test_support.entity.sales;
+package io.jmix.aitools.memory;
 
-import io.jmix.core.metamodel.annotation.JmixEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Embeddable;
+import org.springframework.ai.chat.memory.ChatMemoryRepository;
+import org.springframework.ai.chat.messages.Message;
 
-@Embeddable
-@JmixEntity(name = "aitols_Address")
-public class Address {
+import java.util.List;
 
-    @Column(name = "CITY")
-    private String city;
+public class JmixChatMemoryRepository implements ChatMemoryRepository {
 
-    @Column(name = "ZIP")
-    private String zip;
-
-    public String getCity() {
-        return city;
+    @Override
+    public List<String> findConversationIds() {
+        return List.of();
     }
 
-    public void setCity(String city) {
-        this.city = city;
+    @Override
+    public List<Message> findByConversationId(String conversationId) {
+        return List.of();
     }
 
-    public String getZip() {
-        return zip;
+    @Override
+    public void saveAll(String conversationId, List<Message> messages) {
+
     }
 
-    public void setZip(String zip) {
-        this.zip = zip;
+    @Override
+    public void deleteByConversationId(String conversationId) {
+
     }
 }

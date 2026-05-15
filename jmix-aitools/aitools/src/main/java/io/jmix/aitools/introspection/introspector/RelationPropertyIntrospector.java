@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Component("textdt_RelationPropertyIntrospector")
+@Component("aitols_RelationPropertyIntrospector")
 public class RelationPropertyIntrospector extends AbstractPropertyIntrospector {
 
     @Override

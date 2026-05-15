@@ -47,7 +47,7 @@ class JpqlGenerationServiceTest {
         assertEquals("orders by customer name", request.getUserText());
         assertFalse(request.getCandidates().isEmpty());
         assertFalse(request.getPromptContext().isBlank());
-        assertTrue(request.getPromptContext().contains("Entity textdt_Order"));
+        assertTrue(request.getPromptContext().contains("Entity aitols_Order"));
     }
 
     @Test
@@ -55,9 +55,9 @@ class JpqlGenerationServiceTest {
     void testDelegatesGenerationToConfiguredGenerator() {
         GeneratedJpqlResult result = jpqlGenerationService.generate("orders by customer name");
 
-        assertEquals("select e from textdt_Order e", result.getJpql());
-        assertEquals("textdt_Order", result.getRootEntityName());
-        assertEquals(List.of("textdt_Order"), result.getUsedEntities());
+        assertEquals("select e from aitols_Order e", result.getJpql());
+        assertEquals("aitols_Order", result.getRootEntityName());
+        assertEquals(List.of("aitols_Order"), result.getUsedEntities());
         assertEquals(List.of("customer.name"), result.getUsedPropertyPaths());
         assertEquals("Fake generator result", result.getExplanation());
         assertEquals("customerName", result.getParameters().get(0).getName());

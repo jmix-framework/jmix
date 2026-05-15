@@ -52,12 +52,12 @@ class SpringAiJpqlRepairerTest {
     void testRepairsFromValidationFeedback() {
         String content = """
                 {
-                  "jpql": "select e from textdt_Order e where e.customer.name like :customerName",
-                  "rootEntityName": "textdt_Order",
+                  "jpql": "select e from aitols_Order e where e.customer.name like :customerName",
+                  "rootEntityName": "aitols_Order",
                   "parameters": [
                     {"name": "customerName", "type": "String", "value": "%Acme%"}
                   ],
-                  "usedEntities": ["textdt_Order", "textdt_Customer"],
+                  "usedEntities": ["aitols_Order", "aitols_Customer"],
                   "usedPropertyPaths": ["customer.name"],
                   "explanation": "Fixed property path",
                   "warnings": []
@@ -67,12 +67,12 @@ class SpringAiJpqlRepairerTest {
         stubChatModel.setContent(content);
 
         GeneratedJpqlResult repaired = repairer.repair(new JpqlRepairRequest(
-                new JpqlGenerationRequest("orders by customer name", List.of(), "Entity textdt_Order"),
+                new JpqlGenerationRequest("orders by customer name", List.of(), "Entity aitols_Order"),
                 new GeneratedJpqlResult(
-                        "select e from textdt_Order e where e.customer.fullTitle like :customerName",
-                        "textdt_Order",
+                        "select e from aitols_Order e where e.customer.fullTitle like :customerName",
+                        "aitols_Order",
                         List.of(new GeneratedJpqlParameter("customerName", "String", "%Acme%")),
-                        List.of("textdt_Order", "textdt_Customer"),
+                        List.of("aitols_Order", "aitols_Customer"),
                         List.of("customer.fullTitle"),
                         "Broken query",
                         List.of()
@@ -83,7 +83,7 @@ class SpringAiJpqlRepairerTest {
                 1
         ));
 
-        assertEquals("select e from textdt_Order e where e.customer.name like :customerName", repaired.getJpql());
+        assertEquals("select e from aitols_Order e where e.customer.name like :customerName", repaired.getJpql());
         assertEquals("customer.name", repaired.getUsedPropertyPaths().get(0));
     }
 }

@@ -29,7 +29,7 @@ import java.util.Locale;
 
 import static io.jmix.aitools.dataload.validation.validator.JpqlValidatorUtils.containsWord;
 
-@Component("textdt_ReadOnlyQueryJpqlValidator")
+@Component("aitols_ReadOnlyQueryJpqlValidator")
 public class ReadOnlyQueryValidator implements JpqlResultValidator, Ordered {
 
     @Override

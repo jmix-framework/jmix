@@ -49,10 +49,10 @@ public class TextToDataServiceTestConfiguration {
 
     protected GeneratedJpqlResult validResult() {
         return new GeneratedJpqlResult(
-                "select e from textdt_Order e where e.customer.name like :customerName",
-                "textdt_Order",
+                "select e from aitols_Order e where e.customer.name like :customerName",
+                "aitols_Order",
                 List.of(new GeneratedJpqlParameter("customerName", "String", "%Acme%")),
-                List.of("textdt_Order", "textdt_Customer"),
+                List.of("aitols_Order", "aitols_Customer"),
                 List.of("customer.name"),
                 "Valid test result",
                 List.of()
@@ -61,10 +61,10 @@ public class TextToDataServiceTestConfiguration {
 
     protected GeneratedJpqlResult invalidResult() {
         return new GeneratedJpqlResult(
-                "select e from textdt_Order e where e.customer.fullTitle like :customerName",
-                "textdt_Order",
+                "select e from aitols_Order e where e.customer.fullTitle like :customerName",
+                "aitols_Order",
                 List.of(new GeneratedJpqlParameter("customerName", "String", "%Acme%")),
-                List.of("textdt_Order", "textdt_Customer"),
+                List.of("aitols_Order", "aitols_Customer"),
                 List.of("customer.fullTitle"),
                 "Invalid test result",
                 List.of()
@@ -73,10 +73,10 @@ public class TextToDataServiceTestConfiguration {
 
     protected GeneratedJpqlResult paginatedResult() {
         return new GeneratedJpqlResult(
-                "select e from textdt_Order e limit 10 offset 5",
-                "textdt_Order",
+                "select e from aitols_Order e limit 10 offset 5",
+                "aitols_Order",
                 List.of(),
-                List.of("textdt_Order"),
+                List.of("aitols_Order"),
                 List.of(),
                 "Paginated test result",
                 List.of()

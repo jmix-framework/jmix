@@ -28,7 +28,7 @@ import io.jmix.aitools.dataload.validation.JpqlValidationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-@Component("textdt_TextToDataService")
+@Component("aitols_TextToDataService")
 public class TextToDataService {
 
     @Autowired

@@ -6,7 +6,7 @@ import io.jmix.aitools.introspection.model.EntityPropertyDescriptor;
 import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
-@Component("textdt_DatatypePropertyIntrospector")
+@Component("aitols_DatatypePropertyIntrospector")
 public class DatatypePropertyIntrospector extends AbstractPropertyIntrospector {
 
     @Override

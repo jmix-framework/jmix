@@ -22,8 +22,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
 @SystemLevel
-@Entity(name = "textdt_SystemLevelEntity")
-@JmixEntity(name = "textdt_SystemLevelEntity")
+@Entity(name = "aitols_SystemLevelEntity")
+@JmixEntity(name = "aitols_SystemLevelEntity")
 public class SystemLevelEntity {
 
     @Id

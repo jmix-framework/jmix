@@ -21,14 +21,19 @@ import io.jmix.aitools.dataload.prompt.SystemPromptProvider;
 import io.jmix.aitools.dataload.prompt.impl.DefaultJpqlGenerationPromptProvider;
 import io.jmix.aitools.dataload.prompt.impl.DefaultJpqlRepairerPromptProvider;
 import io.jmix.aitools.dataload.repair.impl.SpringAiJpqlRepairer;
-import io.jmix.aitools.TextToDataConfiguration;
+import io.jmix.aitools.AiToolsConfiguration;
 import io.jmix.aitools.dataload.generation.JpqlGenerator;
 import io.jmix.aitools.dataload.prompt.JpqlGenerationPromptProvider;
 import io.jmix.aitools.introspection.introspector.JpaDomainModelIntrospector;
 import io.jmix.aitools.dataload.prompt.JpqlRepairerPromptProvider;
 import io.jmix.aitools.dataload.prompt.impl.DefaultSystemPromptProvider;
 import io.jmix.aitools.dataload.repair.JpqlRepairer;
+import io.jmix.aitools.memory.JmixChatMemoryRepository;
+import io.jmix.core.CoreConfiguration;
+import io.jmix.data.DataConfiguration;
+import io.jmix.eclipselink.EclipselinkConfiguration;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.memory.ChatMemoryRepository;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBooleanProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -38,44 +43,50 @@ import org.springframework.context.annotation.Import;
 
 @AutoConfiguration
 @ConditionalOnBooleanProperty(value = "aitools.enabled", matchIfMissing = true)
-@Import(TextToDataConfiguration.class)
-public class TextToDataAutoConfiguration {
+@Import({AiToolsConfiguration.class, CoreConfiguration.class, DataConfiguration.class, EclipselinkConfiguration.class})
+public class AiToolsAutoConfiguration {
 
-    @Bean("textdt_JpaDomainModelIntrospector")
+    @Bean("aitols_JpaDomainModelIntrospector")
     @ConditionalOnMissingBean
     public JpaDomainModelIntrospector jpaDomainModelIntrospector() {
         return new JpaDomainModelIntrospector();
     }
 
-    @Bean("textdt_SpringAiJpqlGenerator")
+    @Bean("aitols_SpringAiJpqlGenerator")
     @ConditionalOnClass(ChatClient.class)
     @ConditionalOnMissingBean(JpqlGenerator.class)
     public JpqlGenerator textToJpqlGenerator() {
         return new SpringAiJpqlGenerator();
     }
 
-    @Bean("textdt_SpringAiJpqlRepairer")
+    @Bean("aitols_SpringAiJpqlRepairer")
     @ConditionalOnClass(ChatClient.class)
     @ConditionalOnMissingBean(JpqlRepairer.class)
     public JpqlRepairer textToJpqlRepairer() {
         return new SpringAiJpqlRepairer();
     }
 
-    @Bean("textdt_DefaultJpqlRepairerPromptProvider")
+    @Bean("aitols_DefaultJpqlRepairerPromptProvider")
     @ConditionalOnMissingBean(JpqlRepairerPromptProvider.class)
     public JpqlRepairerPromptProvider jpqlRepairerPromptProvider() {
         return new DefaultJpqlRepairerPromptProvider();
     }
 
-    @Bean("textdt_JpqlGenerationPromptProvider")
+    @Bean("aitols_JpqlGenerationPromptProvider")
     @ConditionalOnMissingBean(JpqlGenerationPromptProvider.class)
     public JpqlGenerationPromptProvider jpqlGenerationPromptProvider() {
         return new DefaultJpqlGenerationPromptProvider();
     }
 
-    @Bean("textdt_DefaultSystemPromptProvider")
+    @Bean("aitols_DefaultSystemPromptProvider")
     @ConditionalOnMissingBean(SystemPromptProvider.class)
     public SystemPromptProvider systemPromptProvider() {
         return new DefaultSystemPromptProvider();
+    }
+
+    @Bean("aitols_JmixChatMemoryRepository")
+    @ConditionalOnMissingBean(ChatMemoryRepository.class)
+    public ChatMemoryRepository jmixAiChatService() {
+        return new JmixChatMemoryRepository();
     }
 }

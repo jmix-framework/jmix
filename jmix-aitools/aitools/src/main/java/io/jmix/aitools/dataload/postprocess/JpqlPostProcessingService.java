@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Component("textdt_JpqlPostProcessingService")
+@Component("aitols_JpqlPostProcessingService")
 public class JpqlPostProcessingService {
 
     @Autowired(required = false)

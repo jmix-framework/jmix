@@ -45,7 +45,7 @@ class TextToDataServiceTest {
         assertFalse(result.getGenerationRequest().getCandidates().isEmpty());
         assertFalse(result.getGenerationRequest().getPromptContext().isBlank());
 
-        assertEquals("select e from textdt_Order e where e.customer.name like :customerName",
+        assertEquals("select e from aitols_Order e where e.customer.name like :customerName",
                 result.getGeneratedJpqlResult().getJpql());
         assertTrue(result.isValid());
         assertFalse(result.isRepaired());
@@ -61,7 +61,7 @@ class TextToDataServiceTest {
         assertTrue(result.isRepaired());
         assertEquals(1, result.getRepairAttempts());
         assertTrue(result.isValid());
-        assertEquals("select e from textdt_Order e where e.customer.name like :customerName",
+        assertEquals("select e from aitols_Order e where e.customer.name like :customerName",
                 result.getGeneratedJpqlResult().getJpql());
     }
 
@@ -83,7 +83,7 @@ class TextToDataServiceTest {
         TextToDataResult result = textToDataService.generateJpql("orders with limit");
 
         assertTrue(result.isValid());
-        assertEquals("select e from textdt_Order e", result.getGeneratedJpqlResult().getJpql());
+        assertEquals("select e from aitols_Order e", result.getGeneratedJpqlResult().getJpql());
         assertEquals(10, result.getMaxResults());
         assertEquals(5, result.getFirstResult());
     }

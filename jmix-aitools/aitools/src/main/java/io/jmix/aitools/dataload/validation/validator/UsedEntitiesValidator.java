@@ -28,7 +28,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
-@Component("textdt_UsedEntitiesValidator")
+@Component("aitols_UsedEntitiesValidator")
 public class UsedEntitiesValidator implements JpqlResultValidator, Ordered {
 
     @Autowired

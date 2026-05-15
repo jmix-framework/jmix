@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 
-@Component("textdt_EnumPropertyIntrospector")
+@Component("aitols_EnumPropertyIntrospector")
 public class EnumPropertyIntrospector extends AbstractPropertyIntrospector {
 
     @Autowired

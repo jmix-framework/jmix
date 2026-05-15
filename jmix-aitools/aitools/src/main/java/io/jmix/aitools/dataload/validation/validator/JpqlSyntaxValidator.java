@@ -27,7 +27,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Component("textdt_JpqlSyntaxValidator")
+@Component("aitols_JpqlSyntaxValidator")
 public class JpqlSyntaxValidator implements JpqlResultValidator, Ordered {
 
     @Autowired(required = false)

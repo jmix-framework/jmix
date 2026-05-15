@@ -29,7 +29,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Component("textdt_PaginationJpqlResultPostProcessor")
+@Component("aitols_PaginationJpqlResultPostProcessor")
 public class PaginationJpqlResultPostProcessor implements JpqlResultPostProcessor {
 
     // TODO: pinyazhin, used as fallback. Probably, will be removed in future

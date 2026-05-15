@@ -16,12 +16,13 @@
 
 apply plugin: 'io.jmix'
 
-group = 'io.jmix.texttodata'
-archivesBaseName = 'jmix-texttodata'
+group = 'io.jmix.aitools'
+archivesBaseName = 'jmix-aitools'
 
 dependencies {
     api project(":core")
-    compileOnly project(":data")
+    api project(':data')
+    api project(':eclipselink')
 
     implementation platform('org.springframework.ai:spring-ai-bom:2.0.0-M6')
     implementation 'org.springframework.ai:spring-ai-client-chat'
@@ -33,7 +34,6 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api'
     testImplementation 'org.springframework:spring-test'
     testImplementation project(':framework-test-support')
-    testImplementation project(':data')
 
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'

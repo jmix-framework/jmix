@@ -62,7 +62,7 @@ class JpqlRepairServiceTest {
         assertTrue(repairResult.isRepaired());
         assertEquals(1, repairResult.getRepairAttempts());
         assertTrue(repairResult.getValidationResult().isValid());
-        assertEquals("select e from textdt_Order e where e.customer.name like :customerName",
+        assertEquals("select e from aitols_Order e where e.customer.name like :customerName",
                 repairResult.getGeneratedJpqlResult().getJpql());
     }
 
@@ -93,7 +93,7 @@ class JpqlRepairServiceTest {
         assertTrue(repairResult.isRepaired());
         assertEquals(2, repairResult.getRepairAttempts());
         assertFalse(repairResult.getValidationResult().isValid());
-        assertEquals("select e from textdt_Order e where e.customer.fullTitle like :customerName",
+        assertEquals("select e from aitols_Order e where e.customer.fullTitle like :customerName",
                 repairResult.getGeneratedJpqlResult().getJpql());
     }
 
@@ -113,15 +113,15 @@ class JpqlRepairServiceTest {
     }
 
     protected JpqlGenerationRequest generationRequest(String userText) {
-        return new JpqlGenerationRequest(userText, List.of(), "Entity textdt_Order");
+        return new JpqlGenerationRequest(userText, List.of(), "Entity aitols_Order");
     }
 
     protected GeneratedJpqlResult validResult() {
         return new GeneratedJpqlResult(
-                "select e from textdt_Order e where e.customer.name like :customerName",
-                "textdt_Order",
+                "select e from aitols_Order e where e.customer.name like :customerName",
+                "aitols_Order",
                 List.of(new GeneratedJpqlParameter("customerName", "String", "%Acme%")),
-                List.of("textdt_Order", "textdt_Customer"),
+                List.of("aitols_Order", "aitols_Customer"),
                 List.of("customer.name"),
                 "Valid test result",
                 List.of()
@@ -130,10 +130,10 @@ class JpqlRepairServiceTest {
 
     protected GeneratedJpqlResult invalidResult() {
         return new GeneratedJpqlResult(
-                "select e from textdt_Order e where e.customer.fullTitle like :customerName",
-                "textdt_Order",
+                "select e from aitols_Order e where e.customer.fullTitle like :customerName",
+                "aitols_Order",
                 List.of(new GeneratedJpqlParameter("customerName", "String", "%Acme%")),
-                List.of("textdt_Order", "textdt_Customer"),
+                List.of("aitols_Order", "aitols_Customer"),
                 List.of("customer.fullTitle"),
                 "Invalid test result",
                 List.of()
@@ -159,10 +159,10 @@ class JpqlRepairServiceTest {
 
         protected static GeneratedJpqlResult validResultStatic() {
             return new GeneratedJpqlResult(
-                    "select e from textdt_Order e where e.customer.name like :customerName",
-                    "textdt_Order",
+                    "select e from aitols_Order e where e.customer.name like :customerName",
+                    "aitols_Order",
                     List.of(new GeneratedJpqlParameter("customerName", "String", "%Acme%")),
-                    List.of("textdt_Order", "textdt_Customer"),
+                    List.of("aitols_Order", "aitols_Customer"),
                     List.of("customer.name"),
                     "Valid test result",
                     List.of()
@@ -171,10 +171,10 @@ class JpqlRepairServiceTest {
 
         protected static GeneratedJpqlResult invalidResultStatic() {
             return new GeneratedJpqlResult(
-                    "select e from textdt_Order e where e.customer.fullTitle like :customerName",
-                    "textdt_Order",
+                    "select e from aitols_Order e where e.customer.fullTitle like :customerName",
+                    "aitols_Order",
                     List.of(new GeneratedJpqlParameter("customerName", "String", "%Acme%")),
-                    List.of("textdt_Order", "textdt_Customer"),
+                    List.of("aitols_Order", "aitols_Customer"),
                     List.of("customer.fullTitle"),
                     "Invalid test result",
                     List.of()

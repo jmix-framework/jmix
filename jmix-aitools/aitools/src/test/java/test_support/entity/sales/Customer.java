@@ -22,8 +22,8 @@ import jakarta.persistence.*;
 
 import java.util.List;
 
-@Entity(name = "textdt_Customer")
-@Table(name = "TEXTDT_CUSTOMER")
+@Entity(name = "aitols_Customer")
+@Table(name = "AITOLS_CUSTOMER")
 @JmixEntity
 public class Customer {
 

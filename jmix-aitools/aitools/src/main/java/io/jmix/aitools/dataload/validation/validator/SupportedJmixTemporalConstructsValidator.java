@@ -27,7 +27,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Component("textdt_SupportedJmixTemporalConstructsValidator")
+@Component("aitols_SupportedJmixTemporalConstructsValidator")
 public class SupportedJmixTemporalConstructsValidator implements JpqlResultValidator, Ordered {
 
     protected static final Pattern MACRO_PATTERN = Pattern.compile("@([A-Za-z][A-Za-z0-9]*)\\s*\\(");

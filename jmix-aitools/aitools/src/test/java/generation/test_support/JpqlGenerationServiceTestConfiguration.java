@@ -30,10 +30,10 @@ public class JpqlGenerationServiceTestConfiguration {
     @Bean
     JpqlGenerator testTextToJpqlGenerator() {
         return request -> new GeneratedJpqlResult(
-                "select e from textdt_Order e",
-                "textdt_Order",
+                "select e from aitols_Order e",
+                "aitols_Order",
                 List.of(new GeneratedJpqlParameter("customerName", "String", "%Acme%")),
-                List.of("textdt_Order"),
+                List.of("aitols_Order"),
                 List.of("customer.name"),
                 "Fake generator result",
                 List.of()

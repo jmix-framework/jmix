@@ -24,7 +24,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
-@Component("textdt_JpqlValidationService")
+@Component("aitols_JpqlValidationService")
 public class JpqlValidationService {
 
     @Autowired(required = false)

@@ -29,7 +29,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-@Component("textdt_SupportedRelativeDateTimeConstantsValidator")
+@Component("aitols_SupportedRelativeDateTimeConstantsValidator")
 public class SupportedRelativeDateTimeConstantsValidator implements JpqlResultValidator, Ordered {
 
     protected static final Pattern STRING_LITERAL_PATTERN = Pattern.compile("'(?:''|[^'])*'");

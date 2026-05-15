@@ -23,7 +23,7 @@ import jakarta.persistence.Embeddable;
 import java.util.Objects;
 
 @Embeddable
-@JmixEntity(name = "textdt_CompositeKey")
+@JmixEntity(name = "aitols_CompositeKey")
 public class CompositeKey {
 
     @Column(name = "TENANT")

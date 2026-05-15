@@ -16,7 +16,7 @@
 
 package io.jmix.aitools.dataload.prompt;
 
-import io.jmix.aitools.TextToDataProperties;
+import io.jmix.aitools.AiToolsProperties;
 import io.jmix.aitools.introspection.introspector.JpaDomainModelIntrospector;
 import io.jmix.aitools.introspection.model.DatatypePropertyDescriptor;
 import io.jmix.aitools.introspection.model.EmbeddedPropertyDescriptor;
@@ -39,19 +39,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
 
-@Component("textdt_PromptContextBuilder")
+@Component("aitols_PromptContextBuilder")
 public class PromptContextBuilder {
 
     private static final Logger log = LoggerFactory.getLogger(PromptContextBuilder.class);
 
     @Autowired
-    protected TextToDataProperties textToDataProperties;
+    protected AiToolsProperties aiToolsProperties;
 
     @Autowired
     protected JpaDomainModelIntrospector modelIntrospector;
 
     public String build(Collection<DomainModelSearchCandidate> candidates) {
-        return build(candidates, textToDataProperties.getRelationExpansionDepth());
+        return build(candidates, aiToolsProperties.getRelationExpansionDepth());
     }
 
     public String build(Collection<DomainModelSearchCandidate> candidates, int relationDepth) {

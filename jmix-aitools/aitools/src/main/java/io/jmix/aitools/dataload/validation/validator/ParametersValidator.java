@@ -28,7 +28,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Component("textdt_ParametersValidator")
+@Component("aitols_ParametersValidator")
 public class ParametersValidator implements JpqlResultValidator, Ordered {
 
     protected static final Pattern PARAMETER_PATTERN = Pattern.compile(":([A-Za-z_][A-Za-z0-9_]*)");

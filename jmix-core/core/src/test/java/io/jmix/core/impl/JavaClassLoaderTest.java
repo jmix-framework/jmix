@@ -16,7 +16,6 @@
 
 package io.jmix.core.impl;
 
-import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -66,7 +65,6 @@ class JavaClassLoaderTest {
                 new SpringBeanLoader(),
                 hotDeployEnabled
         );
-        classLoader.meterRegistry = new SimpleMeterRegistry();
         return classLoader;
     }
 

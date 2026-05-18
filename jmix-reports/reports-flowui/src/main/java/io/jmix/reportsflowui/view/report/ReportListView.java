@@ -50,7 +50,7 @@ import io.jmix.reportsflowui.helper.OutputTypeHelper;
 import io.jmix.reportsflowui.runner.FluentUiReportRunner;
 import io.jmix.reportsflowui.runner.ParametersDialogShowMode;
 import io.jmix.reportsflowui.runner.UiReportRunner;
-import io.jmix.reportsflowui.runner.impl.SpreadsheetReportInternalSupport;
+import io.jmix.reportsflowui.runner.SpreadsheetReportSupport;
 import io.jmix.reportsflowui.view.history.ReportExecutionListView;
 import io.jmix.reportsflowui.view.importdialog.ReportImportDialogView;
 import io.jmix.reportsflowui.view.reportwizard.ReportWizardCreatorView;
@@ -131,13 +131,13 @@ public class ReportListView extends StandardListView<Report> {
     @Autowired
     protected ReportGroupRepository reportGroupRepository;
     @Autowired
-    protected SpreadsheetReportInternalSupport spreadsheetReportInternalSupport;
+    protected SpreadsheetReportSupport spreadsheetReportSupport;
 
     @Subscribe
     protected void onInit(InitEvent event) {
         initReportsDataGridCreate();
         initOutputTypeList();
-        openInSpreadsheetBtn.setVisible(spreadsheetReportInternalSupport.isAvailable());
+        openInSpreadsheetBtn.setVisible(spreadsheetReportSupport.isAvailable());
 
         codeFilter.addTypedValueChangeListener(e -> onFilterFieldValueChange());
         nameFilter.addTypedValueChangeListener(e -> onFilterFieldValueChange());
@@ -178,7 +178,7 @@ public class ReportListView extends StandardListView<Report> {
         }
 
         Report reloadedReport = reportRepository.reloadForRunning(report);
-        return spreadsheetReportInternalSupport.supportsDefaultOutput(reloadedReport);
+        return spreadsheetReportSupport.supportsDefaultOutput(reloadedReport);
     }
 
     @Subscribe("reportsDataGrid.importAction")
@@ -287,7 +287,7 @@ public class ReportListView extends StandardListView<Report> {
                 fluentRunner.inBackground(this);
             }
             if (openInSpreadsheet) {
-                uiReportRunner.runAndShow(spreadsheetReportInternalSupport.createRunContext(fluentRunner));
+                uiReportRunner.runAndShow(spreadsheetReportSupport.createRunContext(fluentRunner));
             } else {
                 fluentRunner.runAndShow();
             }

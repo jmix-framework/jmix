@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package io.jmix.reportsflowui.runner.impl;
+package io.jmix.reportsflowui.runner;
 
-import io.jmix.reportsflowui.runner.UiReportRunContext;
+import io.jmix.core.annotation.Internal;
 
+@Internal
 public class SpreadsheetUiReportRunContext extends UiReportRunContext {
 
     public SpreadsheetUiReportRunContext(UiReportRunContext sourceContext) {

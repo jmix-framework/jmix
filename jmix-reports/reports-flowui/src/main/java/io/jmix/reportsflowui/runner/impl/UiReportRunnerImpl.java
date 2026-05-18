@@ -38,10 +38,7 @@ import io.jmix.reports.util.ReportZipUtils;
 import io.jmix.reports.yarg.reporting.ReportOutputDocument;
 import io.jmix.reportsflowui.ReportsClientProperties;
 import io.jmix.reportsflowui.download.ReportDownloader;
-import io.jmix.reportsflowui.runner.FluentUiReportRunner;
-import io.jmix.reportsflowui.runner.ParametersDialogShowMode;
-import io.jmix.reportsflowui.runner.UiReportRunContext;
-import io.jmix.reportsflowui.runner.UiReportRunner;
+import io.jmix.reportsflowui.runner.*;
 import io.jmix.reportsflowui.view.run.InputParametersDialog;
 import io.jmix.reportsflowui.view.run.ReportTableView;
 import org.apache.commons.collections4.CollectionUtils;
@@ -71,7 +68,7 @@ public class UiReportRunnerImpl implements UiReportRunner {
     protected final ObjectProvider<FluentUiReportRunner> fluentUiReportRunners;
     protected final Notifications notifications;
     protected final ReportsClientProperties reportsClientProperties;
-    protected final SpreadsheetReportInternalSupport spreadsheetReportInternalSupport;
+    protected final SpreadsheetReportSupport spreadsheetReportSupport;
 
     public UiReportRunnerImpl(ReportRunner reportRunner,
                               DialogWindows dialogWindows,
@@ -84,7 +81,7 @@ public class UiReportRunnerImpl implements UiReportRunner {
                               ObjectProvider<FluentUiReportRunner> fluentUiReportRunners,
                               Notifications notifications,
                               ReportsClientProperties reportsClientProperties,
-                              SpreadsheetReportInternalSupport spreadsheetReportInternalSupport) {
+                              SpreadsheetReportSupport spreadsheetReportSupport) {
         this.reportRunner = reportRunner;
         this.dialogWindows = dialogWindows;
         this.downloader = downloader;
@@ -96,7 +93,7 @@ public class UiReportRunnerImpl implements UiReportRunner {
         this.fluentUiReportRunners = fluentUiReportRunners;
         this.notifications = notifications;
         this.reportsClientProperties = reportsClientProperties;
-        this.spreadsheetReportInternalSupport = spreadsheetReportInternalSupport;
+        this.spreadsheetReportSupport = spreadsheetReportSupport;
     }
 
     @Override
@@ -274,7 +271,7 @@ public class UiReportRunnerImpl implements UiReportRunner {
         inputParametersDialog.setOutputFileName(context.getOutputNamePattern());
         inputParametersDialog.setBulkPrint(bulkPrint);
         inputParametersDialog.setInBackground(context.getInBackground());
-        inputParametersDialog.setOpenInSpreadsheet(spreadsheetReportInternalSupport.isSpreadsheetRunContext(context));
+        inputParametersDialog.setOpenInSpreadsheet(spreadsheetReportSupport.isSpreadsheetRunContext(context));
 
         inputParametersDialogWindow.open();
     }
@@ -308,9 +305,9 @@ public class UiReportRunnerImpl implements UiReportRunner {
             io.jmix.reports.yarg.structure.ReportOutputType finalOutputType =
                     (outputType != null) ? outputType.getOutputType() : document.getReportOutputType();
 
-            if (spreadsheetReportInternalSupport.isSpreadsheetRunContext(context)
-                    && spreadsheetReportInternalSupport.supportsExtension(finalOutputType.getId())
-                    && spreadsheetReportInternalSupport.open(context.getOwner(), document, documentName)) {
+            if (spreadsheetReportSupport.isSpreadsheetRunContext(context)
+                    && spreadsheetReportSupport.supportsExtension(finalOutputType.getId())
+                    && spreadsheetReportSupport.open(context.getOwner(), document, documentName)) {
                 return;
             }
 

@@ -33,7 +33,7 @@ import io.jmix.flowui.view.*;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportExecution;
 import io.jmix.reportsflowui.download.ReportDownloader;
-import io.jmix.reportsflowui.runner.impl.SpreadsheetReportInternalSupport;
+import io.jmix.reportsflowui.runner.SpreadsheetReportSupport;
 import io.jmix.reportsflowui.view.run.ReportExcelHelper;
 import io.jmix.reports.entity.ReportSource;
 import org.apache.commons.collections4.CollectionUtils;
@@ -78,14 +78,14 @@ public class ReportExecutionListView extends StandardListView<ReportExecution> {
     @Autowired
     protected MetadataTools metadataTools;
     @Autowired
-    protected SpreadsheetReportInternalSupport spreadsheetReportInternalSupport;
+    protected SpreadsheetReportSupport spreadsheetReportSupport;
 
     protected List<Report> filterByReports;
 
     @Subscribe
     public void onBeforeShow(final BeforeShowEvent event) {
         createExcelButton();
-        openInSpreadsheetBtn.setVisible(spreadsheetReportInternalSupport.isAvailable());
+        openInSpreadsheetBtn.setVisible(spreadsheetReportSupport.isAvailable());
     }
 
     protected void createExcelButton() {
@@ -124,7 +124,7 @@ public class ReportExecutionListView extends StandardListView<ReportExecution> {
     public void onOpenInSpreadsheetClick(final ActionPerformedEvent event) {
         ReportExecution execution = executionsDataGrid.getSingleSelectedItem();
         if (execution != null && execution.getOutputDocument() != null) {
-            spreadsheetReportInternalSupport.open(this, execution.getOutputDocument());
+            spreadsheetReportSupport.open(this, execution.getOutputDocument());
         }
     }
 
@@ -140,7 +140,7 @@ public class ReportExecutionListView extends StandardListView<ReportExecution> {
         }
 
         ReportExecution execution = executionsDataGrid.getSingleSelectedItem();
-        return execution != null && spreadsheetReportInternalSupport.supportsFileRef(execution.getOutputDocument());
+        return execution != null && spreadsheetReportSupport.supportsFileRef(execution.getOutputDocument());
     }
 
     @Override

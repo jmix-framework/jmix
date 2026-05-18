@@ -32,7 +32,7 @@ import io.jmix.reports.exception.ReportParametersValidationException;
 import io.jmix.reportsflowui.runner.FluentUiReportRunner;
 import io.jmix.reportsflowui.runner.ParametersDialogShowMode;
 import io.jmix.reportsflowui.runner.UiReportRunner;
-import io.jmix.reportsflowui.runner.impl.SpreadsheetReportInternalSupport;
+import io.jmix.reportsflowui.runner.SpreadsheetReportSupport;
 import io.jmix.reportsflowui.view.ReportParameterValidator;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,7 +65,7 @@ public class InputParametersDialog extends StandardView {
     @Autowired
     protected Messages messages;
     @Autowired
-    protected SpreadsheetReportInternalSupport spreadsheetReportInternalSupport;
+    protected SpreadsheetReportSupport spreadsheetReportSupport;
 
     protected String templateCode;
     protected String outputFileName;
@@ -159,7 +159,7 @@ public class InputParametersDialog extends StandardView {
                     if (bulkPrint) {
                         fluentRunner.runMultipleReports(inputParameter.getAlias(), selectedEntities);
                     } else if (inputParametersFragment.isOpenInSpreadsheet()) {
-                        uiReportRunner.runAndShow(spreadsheetReportInternalSupport.createRunContext(fluentRunner));
+                        uiReportRunner.runAndShow(spreadsheetReportSupport.createRunContext(fluentRunner));
                     } else {
                         fluentRunner.runAndShow();
                     }

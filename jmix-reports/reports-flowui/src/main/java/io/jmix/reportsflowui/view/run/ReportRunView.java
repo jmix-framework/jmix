@@ -48,7 +48,7 @@ import io.jmix.reportsflowui.helper.GridSortHelper;
 import io.jmix.reportsflowui.runner.FluentUiReportRunner;
 import io.jmix.reportsflowui.runner.ParametersDialogShowMode;
 import io.jmix.reportsflowui.runner.UiReportRunner;
-import io.jmix.reportsflowui.runner.impl.SpreadsheetReportInternalSupport;
+import io.jmix.reportsflowui.runner.SpreadsheetReportSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Date;
@@ -101,7 +101,7 @@ public class ReportRunView extends StandardListView<Report> {
     @Autowired
     protected ReportGroupRepository reportGroupRepository;
     @Autowired
-    protected SpreadsheetReportInternalSupport spreadsheetReportInternalSupport;
+    protected SpreadsheetReportSupport spreadsheetReportSupport;
 
     protected List<Report> reports;
     protected MetaClass metaClassParameter;
@@ -171,7 +171,7 @@ public class ReportRunView extends StandardListView<Report> {
         if (this.reports != null) {
             filterDetails.setVisible(false);
         }
-        openInSpreadsheetBtn.setVisible(spreadsheetReportInternalSupport.isAvailable());
+        openInSpreadsheetBtn.setVisible(spreadsheetReportSupport.isAvailable());
     }
 
     @Subscribe("reportDataGrid.runReport")
@@ -191,7 +191,7 @@ public class ReportRunView extends StandardListView<Report> {
             return false;
         }
         Report reloadedReport = reportRepository.reloadForRunning(report);
-        return spreadsheetReportInternalSupport.supportsDefaultOutput(reloadedReport);
+        return spreadsheetReportSupport.supportsDefaultOutput(reloadedReport);
     }
 
     protected void runSelectedReport(boolean openInSpreadsheet) {
@@ -206,7 +206,7 @@ public class ReportRunView extends StandardListView<Report> {
                 fluentRunner.inBackground(ReportRunView.this);
             }
             if (openInSpreadsheet) {
-                uiReportRunner.runAndShow(spreadsheetReportInternalSupport.createRunContext(fluentRunner));
+                uiReportRunner.runAndShow(spreadsheetReportSupport.createRunContext(fluentRunner));
             } else {
                 fluentRunner.runAndShow();
             }

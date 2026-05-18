@@ -1,0 +1,120 @@
+/*
+ * Copyright 2026 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.jmix.aitools.dataload.execution;
+
+import org.jspecify.annotations.Nullable;
+
+import java.util.List;
+
+public class JpqlExecutionRequest {
+
+    protected String userText;
+    protected String jpql;
+    protected String rootEntityName;
+    protected List<JpqlExecutionParameter> parameters = List.of();
+    protected List<String> usedEntities = List.of();
+    protected List<String> usedPropertyPaths = List.of();
+    protected Integer maxResults;
+    protected Integer firstResult;
+
+    public JpqlExecutionRequest() {
+    }
+
+    public JpqlExecutionRequest(String userText,
+                                String jpql,
+                                String rootEntityName,
+                                List<JpqlExecutionParameter> parameters,
+                                List<String> usedEntities,
+                                List<String> usedPropertyPaths,
+                                @Nullable Integer maxResults,
+                                @Nullable Integer firstResult) {
+        this.userText = userText;
+        this.jpql = jpql;
+        this.rootEntityName = rootEntityName;
+        setParameters(parameters);
+        setUsedEntities(usedEntities);
+        setUsedPropertyPaths(usedPropertyPaths);
+        this.maxResults = maxResults;
+        this.firstResult = firstResult;
+    }
+
+    public String getUserText() {
+        return userText;
+    }
+
+    public void setUserText(String userText) {
+        this.userText = userText;
+    }
+
+    public String getJpql() {
+        return jpql;
+    }
+
+    public void setJpql(String jpql) {
+        this.jpql = jpql;
+    }
+
+    public String getRootEntityName() {
+        return rootEntityName;
+    }
+
+    public void setRootEntityName(String rootEntityName) {
+        this.rootEntityName = rootEntityName;
+    }
+
+    public List<JpqlExecutionParameter> getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(@Nullable List<JpqlExecutionParameter> parameters) {
+        this.parameters = parameters == null ? List.of() : List.copyOf(parameters);
+    }
+
+    public List<String> getUsedEntities() {
+        return usedEntities;
+    }
+
+    public void setUsedEntities(@Nullable List<String> usedEntities) {
+        this.usedEntities = usedEntities == null ? List.of() : List.copyOf(usedEntities);
+    }
+
+    public List<String> getUsedPropertyPaths() {
+        return usedPropertyPaths;
+    }
+
+    public void setUsedPropertyPaths(@Nullable List<String> usedPropertyPaths) {
+        this.usedPropertyPaths = usedPropertyPaths == null ? List.of() : List.copyOf(usedPropertyPaths);
+    }
+
+    @Nullable
+    public Integer getMaxResults() {
+        return maxResults;
+    }
+
+    public void setMaxResults(@Nullable Integer maxResults) {
+        this.maxResults = maxResults;
+    }
+
+    @Nullable
+    public Integer getFirstResult() {
+        return firstResult;
+    }
+
+    public void setFirstResult(@Nullable Integer firstResult) {
+        this.firstResult = firstResult;
+    }
+}

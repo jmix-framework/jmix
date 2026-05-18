@@ -16,29 +16,30 @@
 
 package io.jmix.aitools.dataload.repair;
 
+import io.jmix.aitools.dataload.execution.JpqlExecutionRequest;
 import io.jmix.aitools.dataload.generation.GeneratedJpqlResult;
 import io.jmix.aitools.dataload.generation.JpqlGenerationRequest;
 import io.jmix.aitools.dataload.validation.JpqlValidationResult;
 
 public class JpqlRepairRequest {
 
-    protected JpqlGenerationRequest generationRequest;
+    protected JpqlExecutionRequest executionRequest;
     protected GeneratedJpqlResult generatedJpqlResult;
     protected JpqlValidationResult validationResult;
     protected int attempt;
 
-    public JpqlRepairRequest(JpqlGenerationRequest generationRequest,
+    public JpqlRepairRequest(JpqlExecutionRequest executionRequest,
                              GeneratedJpqlResult generatedJpqlResult,
                              JpqlValidationResult validationResult,
                              int attempt) {
-        this.generationRequest = generationRequest;
+        this.executionRequest = executionRequest;
         this.generatedJpqlResult = generatedJpqlResult;
         this.validationResult = validationResult;
         this.attempt = attempt;
     }
 
-    public JpqlGenerationRequest getGenerationRequest() {
-        return generationRequest;
+    public JpqlExecutionRequest getExecutionRequest() {
+        return executionRequest;
     }
 
     public GeneratedJpqlResult getGeneratedJpqlResult() {

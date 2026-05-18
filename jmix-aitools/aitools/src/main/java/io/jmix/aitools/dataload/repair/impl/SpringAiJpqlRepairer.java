@@ -56,8 +56,7 @@ public class SpringAiJpqlRepairer implements JpqlRepairer, InitializingBean {
         String repairPrompt = jpqlRepairerPromptProvider.getContent();
         String formattedPrompt = repairPrompt.formatted(
                 request.getAttempt(),
-                request.getGenerationRequest().getUserText(),
-                request.getGenerationRequest().getPromptContext(),
+                request.getExecutionRequest().getUserText(),
                 toJson(request.getGeneratedJpqlResult()),
                 formatValidationIssues(request.getValidationResult().getIssues()),
                 formatRepairGuidance(request.getValidationResult().getIssues()));

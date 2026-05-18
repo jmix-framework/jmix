@@ -17,10 +17,10 @@
 package repair;
 
 import generation.test_support.StubChatModel;
+import io.jmix.aitools.dataload.execution.JpqlExecutionRequest;
 import io.jmix.aitools.dataload.repair.impl.SpringAiJpqlRepairer;
 import io.jmix.aitools.dataload.generation.GeneratedJpqlParameter;
 import io.jmix.aitools.dataload.generation.GeneratedJpqlResult;
-import io.jmix.aitools.dataload.generation.JpqlGenerationRequest;
 import io.jmix.aitools.dataload.repair.JpqlRepairRequest;
 import io.jmix.aitools.dataload.validation.JpqlValidationIssue;
 import io.jmix.aitools.dataload.validation.JpqlValidationResult;
@@ -66,8 +66,12 @@ class SpringAiJpqlRepairerTest {
 
         stubChatModel.setContent(content);
 
+
+        JpqlExecutionRequest executionRequest = new JpqlExecutionRequest();
+        executionRequest.setUserText("orders by customer name");
+
         GeneratedJpqlResult repaired = repairer.repair(new JpqlRepairRequest(
-                new JpqlGenerationRequest("orders by customer name", List.of(), "Entity aitols_Order"),
+                executionRequest,
                 new GeneratedJpqlResult(
                         "select e from aitols_Order e where e.customer.fullTitle like :customerName",
                         "aitols_Order",

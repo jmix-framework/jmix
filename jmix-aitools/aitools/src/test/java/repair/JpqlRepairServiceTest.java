@@ -16,6 +16,7 @@
 
 package repair;
 
+import io.jmix.aitools.dataload.execution.JpqlExecutionRequest;
 import io.jmix.aitools.dataload.generation.GeneratedJpqlParameter;
 import io.jmix.aitools.dataload.generation.GeneratedJpqlResult;
 import io.jmix.aitools.dataload.generation.JpqlGenerationRequest;
@@ -53,11 +54,11 @@ class JpqlRepairServiceTest {
     @Test
     @DisplayName("Repairs invalid result on the first successful attempt")
     void testRepairsInvalidResult() {
-        JpqlGenerationRequest generationRequest = generationRequest("repair once");
+        JpqlExecutionRequest executionRequest = executionRequest("repair once");
         GeneratedJpqlResult invalidResult = invalidResult();
         JpqlValidationResult validationResult = jpqlValidationService.validate(invalidResult);
 
-        JpqlRepairResult repairResult = jpqlRepairService.repairIfNeeded(generationRequest, invalidResult, validationResult);
+        JpqlRepairResult repairResult = jpqlRepairService.repairIfNeeded(executionRequest, invalidResult, validationResult);
 
         assertTrue(repairResult.isRepaired());
         assertEquals(1, repairResult.getRepairAttempts());
@@ -69,11 +70,11 @@ class JpqlRepairServiceTest {
     @Test
     @DisplayName("Stops repairing when repairer returns null")
     void testStopsWhenRepairerReturnsNull() {
-        JpqlGenerationRequest generationRequest = generationRequest("return null");
+        JpqlExecutionRequest executionRequest = executionRequest("return null");
         GeneratedJpqlResult invalidResult = invalidResult();
         JpqlValidationResult validationResult = jpqlValidationService.validate(invalidResult);
 
-        JpqlRepairResult repairResult = jpqlRepairService.repairIfNeeded(generationRequest, invalidResult, validationResult);
+        JpqlRepairResult repairResult = jpqlRepairService.repairIfNeeded(executionRequest, invalidResult, validationResult);
 
         assertTrue(repairResult.isRepaired());
         assertEquals(1, repairResult.getRepairAttempts());
@@ -84,11 +85,11 @@ class JpqlRepairServiceTest {
     @Test
     @DisplayName("Respects max repair attempts when result stays invalid")
     void testRespectsMaxRepairAttempts() {
-        JpqlGenerationRequest generationRequest = generationRequest("always invalid");
+        JpqlExecutionRequest executionRequest = executionRequest("always invalid");
         GeneratedJpqlResult invalidResult = invalidResult();
         JpqlValidationResult validationResult = jpqlValidationService.validate(invalidResult);
 
-        JpqlRepairResult repairResult = jpqlRepairService.repairIfNeeded(generationRequest, invalidResult, validationResult, 2);
+        JpqlRepairResult repairResult = jpqlRepairService.repairIfNeeded(executionRequest, invalidResult, validationResult, 2);
 
         assertTrue(repairResult.isRepaired());
         assertEquals(2, repairResult.getRepairAttempts());
@@ -100,11 +101,11 @@ class JpqlRepairServiceTest {
     @Test
     @DisplayName("Does not call repairer for already valid result")
     void testSkipsRepairForValidResult() {
-        JpqlGenerationRequest generationRequest = generationRequest("already valid");
+        JpqlExecutionRequest executionRequest = executionRequest("already valid");
         GeneratedJpqlResult validResult = validResult();
         JpqlValidationResult validationResult = jpqlValidationService.validate(validResult);
 
-        JpqlRepairResult repairResult = jpqlRepairService.repairIfNeeded(generationRequest, validResult, validationResult);
+        JpqlRepairResult repairResult = jpqlRepairService.repairIfNeeded(executionRequest, validResult, validationResult);
 
         assertFalse(repairResult.isRepaired());
         assertEquals(0, repairResult.getRepairAttempts());
@@ -112,8 +113,10 @@ class JpqlRepairServiceTest {
         assertEquals(validResult.getJpql(), repairResult.getGeneratedJpqlResult().getJpql());
     }
 
-    protected JpqlGenerationRequest generationRequest(String userText) {
-        return new JpqlGenerationRequest(userText, List.of(), "Entity aitols_Order");
+    protected JpqlExecutionRequest executionRequest(String userText) {
+        JpqlExecutionRequest executionRequest = new JpqlExecutionRequest();
+        executionRequest.setUserText(userText);
+        return executionRequest;
     }
 
     protected GeneratedJpqlResult validResult() {
@@ -146,7 +149,7 @@ class JpqlRepairServiceTest {
         @Bean
         JpqlRepairer testTextToJpqlRepairer() {
             return request -> {
-                String userText = request.getGenerationRequest().getUserText();
+                String userText = request.getExecutionRequest().getUserText();
                 if (userText.contains("return null")) {
                     return null;
                 }

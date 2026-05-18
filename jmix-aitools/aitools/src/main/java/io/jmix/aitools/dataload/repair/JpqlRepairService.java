@@ -17,9 +17,8 @@
 package io.jmix.aitools.dataload.repair;
 
 import io.jmix.aitools.AiToolsProperties;
+import io.jmix.aitools.dataload.execution.JpqlExecutionRequest;
 import io.jmix.aitools.dataload.generation.GeneratedJpqlResult;
-import io.jmix.aitools.dataload.generation.JpqlGenerationRequest;
-import io.jmix.aitools.dataload.postprocess.JpqlPostProcessingService;
 import io.jmix.aitools.dataload.validation.JpqlValidationResult;
 import io.jmix.aitools.dataload.validation.JpqlValidationService;
 import org.springframework.beans.factory.ObjectProvider;
@@ -36,18 +35,15 @@ public class JpqlRepairService {
     protected JpqlValidationService jpqlValidationService;
 
     @Autowired
-    protected JpqlPostProcessingService jpqlPostProcessingService;
-
-    @Autowired
     protected ObjectProvider<JpqlRepairer> jpqlRepairerProvider;
 
-    public JpqlRepairResult repairIfNeeded(JpqlGenerationRequest generationRequest,
+    public JpqlRepairResult repairIfNeeded(JpqlExecutionRequest executionRequest,
                                            GeneratedJpqlResult generatedJpqlResult,
                                            JpqlValidationResult validationResult) {
-        return repairIfNeeded(generationRequest, generatedJpqlResult, validationResult, aiToolsProperties.getMaxRepairAttempts());
+        return repairIfNeeded(executionRequest, generatedJpqlResult, validationResult, aiToolsProperties.getMaxRepairAttempts());
     }
 
-    public JpqlRepairResult repairIfNeeded(JpqlGenerationRequest generationRequest,
+    public JpqlRepairResult repairIfNeeded(JpqlExecutionRequest executionRequest,
                                            GeneratedJpqlResult generatedJpqlResult,
                                            JpqlValidationResult validationResult,
                                            int maxRepairAttempts) {
@@ -65,12 +61,12 @@ public class JpqlRepairService {
 
         for (int attempt = 1; attempt <= maxRepairAttempts; attempt++) {
             GeneratedJpqlResult repairedResult = repairer.repair(
-                    new JpqlRepairRequest(generationRequest, currentResult, currentValidation, attempt));
+                    new JpqlRepairRequest(executionRequest, currentResult, currentValidation, attempt));
             if (repairedResult == null) {
                 return new JpqlRepairResult(currentResult, currentValidation, attempt, true);
             }
 
-            currentResult = jpqlPostProcessingService.process(repairedResult).getGeneratedJpqlResult();
+            currentResult = repairedResult;
             currentValidation = jpqlValidationService.validate(currentResult);
 
             if (currentValidation.isValid()) {

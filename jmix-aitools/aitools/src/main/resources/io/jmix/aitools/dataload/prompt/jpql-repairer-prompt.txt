@@ -4,9 +4,6 @@ Repair attempt:
 Original user request:
 %s
 
-Available schema:
-%s
-
 Previous generated result:
 %s
 

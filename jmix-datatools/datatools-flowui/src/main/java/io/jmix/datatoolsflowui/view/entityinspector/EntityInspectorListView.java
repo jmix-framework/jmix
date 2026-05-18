@@ -37,7 +37,6 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.core.impl.importexport.EntityImportPlanJsonBuilder;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.core.metamodel.model.Range;
 import io.jmix.core.metamodel.model.Session;
 import io.jmix.core.security.EntityOp;
 import io.jmix.data.PersistenceHints;
@@ -81,10 +80,10 @@ import io.jmix.flowui.model.DataComponents;
 import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.navigation.RouteSupport;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.jspecify.annotations.Nullable;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -162,11 +161,7 @@ public class EntityInspectorListView extends StandardListView<Object> {
     @Autowired
     protected EntityImportExport entityImportExport;
     @Autowired
-    protected EntitySerialization entitySerialization;
-    @Autowired
     protected EntityImportPlanJsonBuilder importPlanJsonBuilder;
-    @Autowired
-    protected EntityImportPlans entityImportPlans;
     @Autowired
     protected Actions actions;
     @Autowired

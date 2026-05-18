@@ -16,12 +16,12 @@
 
 package io.jmix.aitools.service.impl;
 
-import io.jmix.aitools.service.JmixAiChatService;
+import io.jmix.aitools.service.AiChatService;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class JmixAiChatServiceImpl implements JmixAiChatService, InitializingBean {
+public class AiChatServiceImpl implements AiChatService, InitializingBean {
 
     @Autowired
     protected ChatClient.Builder chatClientBuilder;

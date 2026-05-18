@@ -22,7 +22,7 @@ import io.jmix.aitools.dataload.generation.GeneratedJpqlResult;
 import io.jmix.aitools.dataload.generation.JpqlGenerationRequest;
 import io.jmix.aitools.dataload.generation.JpqlGenerator;
 import io.jmix.aitools.dataload.prompt.JpqlGenerationPromptProvider;
-import io.jmix.aitools.dataload.prompt.SystemPromptProvider;
+import io.jmix.aitools.dataload.prompt.DataLoadSystemPromptProvider;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ObjectProvider;
@@ -33,7 +33,7 @@ public class SpringAiJpqlGenerator implements JpqlGenerator, InitializingBean {
     @Autowired
     protected JpqlGenerationPromptProvider jpqlPromptProvider;
     @Autowired
-    protected SystemPromptProvider systemPromptProvider;
+    protected DataLoadSystemPromptProvider systemPromptProvider;
     @Autowired
     protected ObjectProvider<ChatModel> chatModelProvider;
 
@@ -46,14 +46,14 @@ public class SpringAiJpqlGenerator implements JpqlGenerator, InitializingBean {
 
     @Override
     public GeneratedJpqlResult generate(JpqlGenerationRequest request) {
-        String jpqlPrompt = jpqlPromptProvider.get();
+        String jpqlPrompt = jpqlPromptProvider.getContent();
         String formattedPrompt = jpqlPrompt.formatted(request.getUserText(), request.getPromptContext());
 
         return promptExecutor.executePrompt(formattedPrompt);
     }
 
     protected SpringAiPromptExecutor createPromptExecutor() {
-        return new SpringAiPromptExecutor(chatModelProvider, createObjectMapper(), systemPromptProvider.get());
+        return new SpringAiPromptExecutor(chatModelProvider, createObjectMapper(), systemPromptProvider.getContent());
     }
 
     protected ObjectMapper createObjectMapper() {

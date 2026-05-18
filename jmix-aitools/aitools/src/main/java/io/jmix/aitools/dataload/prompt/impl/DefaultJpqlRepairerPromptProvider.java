@@ -25,15 +25,20 @@ import java.nio.charset.StandardCharsets;
 
 public class DefaultJpqlRepairerPromptProvider implements JpqlRepairerPromptProvider {
 
-    @Value("classpath:io/jmix/aitools/prompt/jpql-repairer-prompt.txt")
+    @Value("classpath:io/jmix/aitools/dataload/prompt/jpql-repairer-prompt.txt")
     protected Resource promptResource;
 
     @Override
-    public String get() {
+    public String getContent() {
         try {
             return promptResource.getContentAsString(StandardCharsets.UTF_8);
         } catch (IOException e) {
             throw new IllegalStateException("Cannot read prompt resource", e);
         }
+    }
+
+    @Override
+    public Resource getResource() {
+        return promptResource;
     }
 }

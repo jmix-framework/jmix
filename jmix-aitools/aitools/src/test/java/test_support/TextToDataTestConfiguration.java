@@ -16,6 +16,10 @@
 
 package test_support;
 
+import io.jmix.aitools.dataload.prompt.DataLoadSystemPromptProvider;
+import io.jmix.aitools.dataload.prompt.JpqlGenerationPromptProvider;
+import io.jmix.aitools.dataload.prompt.impl.DefaultDataLoadSystemPromptProvider;
+import io.jmix.aitools.dataload.prompt.impl.DefaultJpqlGenerationPromptProvider;
 import io.jmix.core.CoreConfiguration;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.annotation.MessageSourceBasenames;
@@ -36,5 +40,15 @@ public class TextToDataTestConfiguration {
     @Bean("test_JpaDomainModelIntrospector")
     public JpaDomainModelIntrospector jpaDomainModelIntrospector() {
         return new JpaDomainModelIntrospector();
+    }
+
+    @Bean
+    DataLoadSystemPromptProvider systemPromptProvider() {
+        return new DefaultDataLoadSystemPromptProvider();
+    }
+
+    @Bean
+    JpqlGenerationPromptProvider jpqlGenerationPromptProvider() {
+        return new DefaultJpqlGenerationPromptProvider();
     }
 }

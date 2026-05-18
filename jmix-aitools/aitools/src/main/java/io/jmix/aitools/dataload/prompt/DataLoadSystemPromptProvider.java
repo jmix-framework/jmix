@@ -18,5 +18,5 @@ package io.jmix.aitools.dataload.prompt;
 
 import io.jmix.aitools.PromptProvider;
 
-public interface JpqlGenerationPromptProvider extends PromptProvider {
+public interface DataLoadSystemPromptProvider extends PromptProvider {
 }

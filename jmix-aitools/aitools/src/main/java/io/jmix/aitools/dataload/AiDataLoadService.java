@@ -18,5 +18,7 @@ package io.jmix.aitools.dataload;
 
 public interface AiDataLoadService {
 
+    String sendMessage(String message);
 
+    String sendMessage(String message, String conversationId);
 }

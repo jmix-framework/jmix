@@ -14,9 +14,13 @@
  * limitations under the License.
  */
 
-package io.jmix.aitools.dataload.prompt;
+package io.jmix.aitools;
 
-public interface SystemPromptProvider {
+import org.springframework.core.io.Resource;
 
-    String get();
+public interface PromptProvider {
+
+    String getContent();
+
+    Resource getResource();
 }

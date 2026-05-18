@@ -16,7 +16,7 @@
 
 package io.jmix.aitools.dataload.prompt;
 
-public interface JpqlRepairerPromptProvider {
+import io.jmix.aitools.PromptProvider;
 
-    String get();
+public interface JpqlRepairerPromptProvider extends PromptProvider {
 }

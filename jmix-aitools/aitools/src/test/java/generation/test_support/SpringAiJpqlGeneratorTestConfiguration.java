@@ -18,9 +18,9 @@ package generation.test_support;
 
 import io.jmix.aitools.dataload.generation.impl.SpringAiJpqlGenerator;
 import io.jmix.aitools.dataload.prompt.JpqlGenerationPromptProvider;
-import io.jmix.aitools.dataload.prompt.SystemPromptProvider;
+import io.jmix.aitools.dataload.prompt.DataLoadSystemPromptProvider;
 import io.jmix.aitools.dataload.prompt.impl.DefaultJpqlGenerationPromptProvider;
-import io.jmix.aitools.dataload.prompt.impl.DefaultSystemPromptProvider;
+import io.jmix.aitools.dataload.prompt.impl.DefaultDataLoadSystemPromptProvider;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -36,16 +36,6 @@ public class SpringAiJpqlGeneratorTestConfiguration {
     @Bean
     ChatClient.Builder chatClientBuilder(StubChatModel stubChatModel) {
         return ChatClient.builder(stubChatModel);
-    }
-
-    @Bean
-    JpqlGenerationPromptProvider jpqlGenerationPromptProvider() {
-        return new DefaultJpqlGenerationPromptProvider();
-    }
-
-    @Bean
-    SystemPromptProvider systemPromptProvider() {
-        return new DefaultSystemPromptProvider();
     }
 
     @Bean

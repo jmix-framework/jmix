@@ -14,9 +14,14 @@
  * limitations under the License.
  */
 
-package io.jmix.aitools.dataload.prompt;
+package io.jmix.aitools;
 
-import io.jmix.aitools.PromptProvider;
+import org.springframework.ai.tool.annotation.Tool;
 
-public interface JpqlGenerationPromptProvider extends PromptProvider {
+/**
+ * Marker interface for classes that are considered to be Spring AI tool.
+ *
+ * @see Tool
+ */
+public interface JmixAiTool {
 }

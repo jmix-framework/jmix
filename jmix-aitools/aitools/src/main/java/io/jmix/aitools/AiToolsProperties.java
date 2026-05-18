@@ -32,6 +32,8 @@ public class AiToolsProperties {
 
     Integer relationExpansionDepth;
 
+    Integer chatMemoryMaxMessages;
+
     Boolean excludeSystemLevelEntities;
 
     List<String> includeEntities;
@@ -46,6 +48,7 @@ public class AiToolsProperties {
                              @DefaultValue("2") Integer maxRepairAttempts,
                              @DefaultValue("10") Integer maxEntityCandidates,
                              @DefaultValue("1") Integer relationExpansionDepth,
+                             @DefaultValue("20") Integer chatMemoryMaxMessages,
                              @DefaultValue("true") Boolean excludeSystemLevelEntities,
                              List<String> includeEntities,
                              List<String> excludeEntities,
@@ -55,6 +58,7 @@ public class AiToolsProperties {
         this.maxRepairAttempts = maxRepairAttempts;
         this.maxEntityCandidates = maxEntityCandidates;
         this.relationExpansionDepth = relationExpansionDepth;
+        this.chatMemoryMaxMessages = chatMemoryMaxMessages;
         this.excludeSystemLevelEntities = excludeSystemLevelEntities;
         this.includeEntities = includeEntities == null ? List.of() : List.copyOf(includeEntities);
         this.excludeEntities = excludeEntities == null ? List.of() : List.copyOf(excludeEntities);
@@ -76,6 +80,10 @@ public class AiToolsProperties {
 
     public Integer getRelationExpansionDepth() {
         return relationExpansionDepth;
+    }
+
+    public Integer getChatMemoryMaxMessages() {
+        return chatMemoryMaxMessages;
     }
 
     public Boolean getExcludeSystemLevelEntities() {

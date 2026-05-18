@@ -16,17 +16,13 @@
 
 package io.jmix.aitools.service;
 
-public interface JmixAiChatService {
+public interface AiChatService {
 
     /* TODO: pinyazhin, implement */
 
     // Result sendMessage(String message);
 
     // Result sendMessage(String message, String conversationId);
-
-    // Flux<String> sendMessage(String message);
-
-    // Flux<String> sendMessage(String message, String conversationId);
 
     String sendMessage(String message);
 

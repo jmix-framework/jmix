@@ -21,7 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jmix.aitools.dataload.executor.SpringAiPromptExecutor;
 import io.jmix.aitools.dataload.generation.GeneratedJpqlResult;
 import io.jmix.aitools.dataload.prompt.JpqlRepairerPromptProvider;
-import io.jmix.aitools.dataload.prompt.SystemPromptProvider;
+import io.jmix.aitools.dataload.prompt.DataLoadSystemPromptProvider;
 import io.jmix.aitools.dataload.repair.JpqlRepairRequest;
 import io.jmix.aitools.dataload.repair.JpqlRepairer;
 import io.jmix.aitools.dataload.validation.JpqlValidationIssue;
@@ -38,7 +38,7 @@ public class SpringAiJpqlRepairer implements JpqlRepairer, InitializingBean {
     @Autowired
     protected JpqlRepairerPromptProvider jpqlRepairerPromptProvider;
     @Autowired
-    protected SystemPromptProvider systemPromptProvider;
+    protected DataLoadSystemPromptProvider dataLoadSystemPromptProvider;
     @Autowired
     protected ObjectProvider<ChatModel> chatModelProvider;
 
@@ -53,7 +53,7 @@ public class SpringAiJpqlRepairer implements JpqlRepairer, InitializingBean {
 
     @Override
     public GeneratedJpqlResult repair(JpqlRepairRequest request) {
-        String repairPrompt = jpqlRepairerPromptProvider.get();
+        String repairPrompt = jpqlRepairerPromptProvider.getContent();
         String formattedPrompt = repairPrompt.formatted(
                 request.getAttempt(),
                 request.getGenerationRequest().getUserText(),
@@ -122,7 +122,7 @@ public class SpringAiJpqlRepairer implements JpqlRepairer, InitializingBean {
     }
 
     protected SpringAiPromptExecutor createPromptExecutor() {
-        return new SpringAiPromptExecutor(chatModelProvider, objectMapper, systemPromptProvider.get());
+        return new SpringAiPromptExecutor(chatModelProvider, objectMapper, dataLoadSystemPromptProvider.getContent());
     }
 
     protected ObjectMapper createObjectMapper() {

@@ -172,6 +172,30 @@ public class DomainModelSearchService {
         }
     }
 
+    public List<DomainModelDocument> getAvailableEntities() {
+        return modelIntrospector.getEntityDescriptors().stream()
+                .sorted(Comparator.comparing(EntityDescriptor::getName))
+                .map(this::toDocument)
+                .map(this::toDomainModelDocument)
+                .toList();
+    }
+
+    public List<EntityDescriptor> getDomainModelForEntities(Collection<String> entityNames) {
+        if (entityNames == null || entityNames.isEmpty()) {
+            return List.of();
+        }
+
+        List<EntityDescriptor> entityDescriptors = new ArrayList<>();
+        for (String entityName : entityNames) {
+            EntityDescriptor entityDescriptor = modelIntrospector.getEntityDescriptor(entityName);
+            if (entityDescriptor != null) {
+                entityDescriptors.add(entityDescriptor);
+            }
+        }
+
+        return List.copyOf(entityDescriptors);
+    }
+
     /**
      * Rebuilds the whole in-memory Lucene index from the current registry snapshot.
      * <p>
@@ -380,9 +404,25 @@ public class DomainModelSearchService {
     protected void addValues(Document document, String fieldName, Collection<String> values) {
         for (String value : values) {
             if (value != null && !value.isBlank()) {
-                document.add(new TextField(fieldName, value, Field.Store.NO));
+                document.add(new TextField(fieldName, value, Field.Store.YES));
             }
         }
+    }
+
+    protected DomainModelDocument toDomainModelDocument(Document document) {
+        return new DomainModelDocument(
+                document.get(STORED_ENTITY_NAME_FIELD),
+                getStoredValues(document, ENTITY_CAPTION_FIELD),
+                getStoredValues(document, PROPERTY_NAME_FIELD),
+                getStoredValues(document, PROPERTY_CAPTION_FIELD)
+        );
+    }
+
+    protected List<String> getStoredValues(Document document, String fieldName) {
+        return Arrays.stream(document.getValues(fieldName))
+                .filter(value -> value != null && !value.isBlank())
+                .distinct()
+                .toList();
     }
 
     // TODO: pinyazhin, leave for debug? Enable it using app property?

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package io.jmix.aitools.dataload.prompt;
+package io.jmix.aitools.dataload.tool;
 
-import io.jmix.aitools.PromptProvider;
+import io.jmix.aitools.JmixAiTool;
 
-public interface JpqlGenerationPromptProvider extends PromptProvider {
+public interface DataLoadAiTool extends JmixAiTool {
 }

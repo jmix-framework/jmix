@@ -18,9 +18,9 @@ package repair.test_support;
 
 import generation.test_support.StubChatModel;
 import io.jmix.aitools.dataload.prompt.JpqlRepairerPromptProvider;
-import io.jmix.aitools.dataload.prompt.SystemPromptProvider;
+import io.jmix.aitools.dataload.prompt.DataLoadSystemPromptProvider;
 import io.jmix.aitools.dataload.prompt.impl.DefaultJpqlRepairerPromptProvider;
-import io.jmix.aitools.dataload.prompt.impl.DefaultSystemPromptProvider;
+import io.jmix.aitools.dataload.prompt.impl.DefaultDataLoadSystemPromptProvider;
 import io.jmix.aitools.dataload.repair.impl.SpringAiJpqlRepairer;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.context.annotation.Bean;
@@ -45,8 +45,8 @@ public class SpringAiJpqlRepairerTestConfiguration {
     }
 
     @Bean
-    SystemPromptProvider systemPromptProvider() {
-        return new DefaultSystemPromptProvider();
+    DataLoadSystemPromptProvider systemPromptProvider() {
+        return new DefaultDataLoadSystemPromptProvider();
     }
 
     @Bean

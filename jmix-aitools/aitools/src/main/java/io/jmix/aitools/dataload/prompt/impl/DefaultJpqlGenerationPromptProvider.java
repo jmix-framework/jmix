@@ -25,15 +25,20 @@ import java.nio.charset.StandardCharsets;
 
 public class DefaultJpqlGenerationPromptProvider implements JpqlGenerationPromptProvider {
 
-    @Value("classpath:io/jmix/aitools/prompt/jpql-generation-prompt.txt")
+    @Value("classpath:io/jmix/aitools/dataload/prompt/jpql-generation-prompt.txt")
     protected Resource promptResource;
 
     @Override
-    public String get() {
+    public String getContent() {
         try {
             return promptResource.getContentAsString(StandardCharsets.UTF_8);
         } catch (IOException e) {
             throw new RuntimeException("Cannot read prompt resource", e);
         }
+    }
+
+    @Override
+    public Resource getResource() {
+        return promptResource;
     }
 }

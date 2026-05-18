@@ -18,10 +18,14 @@ package io.jmix.aitools.memory;
 
 import org.springframework.ai.chat.memory.ChatMemoryRepository;
 import org.springframework.ai.chat.messages.Message;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component("aitols_JmixChatMemoryRepository")
 public class JmixChatMemoryRepository implements ChatMemoryRepository {
+
+    public static final String NO_OP_CONVERSATION_ID = "{noop}";
 
     @Override
     public List<String> findConversationIds() {

@@ -16,24 +16,29 @@
 
 package io.jmix.aitools.dataload.prompt.impl;
 
-import io.jmix.aitools.dataload.prompt.SystemPromptProvider;
+import io.jmix.aitools.dataload.prompt.DataLoadSystemPromptProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
-public class DefaultSystemPromptProvider implements SystemPromptProvider {
+public class DefaultDataLoadSystemPromptProvider implements DataLoadSystemPromptProvider {
 
-    @Value("classpath:io/jmix/aitools/prompt/system-prompt.txt")
+    @Value("classpath:io/jmix/aitools/dataload/prompt/dataload-system-prompt.txt")
     protected Resource promptResource;
 
     @Override
-    public String get() {
+    public String getContent() {
         try {
             return promptResource.getContentAsString(StandardCharsets.UTF_8);
         } catch (IOException e) {
             throw new IllegalStateException("Cannot read prompt resource", e);
         }
+    }
+
+    @Override
+    public Resource getResource() {
+        return promptResource;
     }
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.reportsflowui.runner;
+package io.jmix.reportsflowui.runner.impl;
 
 import io.jmix.core.FileRef;
 import io.jmix.flowui.component.UiComponentUtils;
@@ -23,21 +23,22 @@ import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportOutputType;
 import io.jmix.reports.entity.ReportTemplate;
 import io.jmix.reports.yarg.reporting.ReportOutputDocument;
+import io.jmix.reportsflowui.runner.FluentUiReportRunner;
+import io.jmix.reportsflowui.runner.SpreadsheetReportOpener;
+import io.jmix.reportsflowui.runner.UiReportRunContext;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Locale;
 
-@Component("report_SpreadsheetReportSupport")
-public class SpreadsheetReportSupport {
+@Component("report_SpreadsheetReportInternalSupport")
+public class SpreadsheetReportInternalSupport {
 
-    protected final ObjectProvider<SpreadsheetReportOpener> spreadsheetReportOpenerProvider;
-
-    public SpreadsheetReportSupport(ObjectProvider<SpreadsheetReportOpener> spreadsheetReportOpenerProvider) {
-        this.spreadsheetReportOpenerProvider = spreadsheetReportOpenerProvider;
-    }
+    @Autowired
+    protected ObjectProvider<SpreadsheetReportOpener> spreadsheetReportOpenerProvider;
 
     public boolean isAvailable() {
         return spreadsheetReportOpenerProvider.getIfAvailable() != null;
@@ -95,6 +96,18 @@ public class SpreadsheetReportSupport {
 
         spreadsheetReportOpener.open(resolvedOwner, fileRef);
         return true;
+    }
+
+    public UiReportRunContext createRunContext(FluentUiReportRunner fluentRunner) {
+        return createRunContext(fluentRunner.buildContext());
+    }
+
+    public UiReportRunContext createRunContext(UiReportRunContext sourceContext) {
+        return new SpreadsheetUiReportRunContext(sourceContext);
+    }
+
+    public boolean isSpreadsheetRunContext(UiReportRunContext context) {
+        return context instanceof SpreadsheetUiReportRunContext;
     }
 
     @Nullable

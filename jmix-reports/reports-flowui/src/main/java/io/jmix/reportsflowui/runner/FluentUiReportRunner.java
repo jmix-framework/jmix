@@ -56,7 +56,6 @@ public class FluentUiReportRunner {
     protected View<?> owner;
     protected boolean inBackground;
     protected ParametersDialogShowMode parametersDialogShowMode;
-    protected boolean openInSpreadsheet;
 
     public FluentUiReportRunner(ObjectProvider<FluentReportRunner> fluentReportRunners,
                                 UiReportRunner uiReportRunner) {
@@ -166,17 +165,6 @@ public class FluentUiReportRunner {
     }
 
     /**
-     * Opens spreadsheet report output inside a UI viewer when a spreadsheet bridge is available.
-     * If the bridge is unavailable or the output type is not supported, the regular file download is used.
-     *
-     * @return current instance of fluent runner
-     */
-    public FluentUiReportRunner openInSpreadsheet() {
-        this.openInSpreadsheet = true;
-        return this;
-    }
-
-    /**
      * Creates an instance of {@link UiReportRunContext} based on the parameters specified for the fluent runner.
      *
      * @return run context
@@ -186,8 +174,7 @@ public class FluentUiReportRunner {
                 .setReportRunContext(this.fluentReportRunner.buildContext())
                 .setOwner(this.owner)
                 .setInBackground(this.inBackground)
-                .setParametersDialogShowMode(this.parametersDialogShowMode)
-                .setOpenInSpreadsheet(this.openInSpreadsheet);
+                .setParametersDialogShowMode(this.parametersDialogShowMode);
     }
 
     /**

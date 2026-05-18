@@ -49,8 +49,8 @@ import io.jmix.reportsflowui.helper.GridSortHelper;
 import io.jmix.reportsflowui.helper.OutputTypeHelper;
 import io.jmix.reportsflowui.runner.FluentUiReportRunner;
 import io.jmix.reportsflowui.runner.ParametersDialogShowMode;
-import io.jmix.reportsflowui.runner.SpreadsheetReportSupport;
 import io.jmix.reportsflowui.runner.UiReportRunner;
+import io.jmix.reportsflowui.runner.impl.SpreadsheetReportInternalSupport;
 import io.jmix.reportsflowui.view.history.ReportExecutionListView;
 import io.jmix.reportsflowui.view.importdialog.ReportImportDialogView;
 import io.jmix.reportsflowui.view.reportwizard.ReportWizardCreatorView;
@@ -131,13 +131,13 @@ public class ReportListView extends StandardListView<Report> {
     @Autowired
     protected ReportGroupRepository reportGroupRepository;
     @Autowired
-    protected SpreadsheetReportSupport spreadsheetReportSupport;
+    protected SpreadsheetReportInternalSupport spreadsheetReportInternalSupport;
 
     @Subscribe
     protected void onInit(InitEvent event) {
         initReportsDataGridCreate();
         initOutputTypeList();
-        openInSpreadsheetBtn.setVisible(spreadsheetReportSupport.isAvailable());
+        openInSpreadsheetBtn.setVisible(spreadsheetReportInternalSupport.isAvailable());
 
         codeFilter.addTypedValueChangeListener(e -> onFilterFieldValueChange());
         nameFilter.addTypedValueChangeListener(e -> onFilterFieldValueChange());
@@ -178,7 +178,7 @@ public class ReportListView extends StandardListView<Report> {
         }
 
         Report reloadedReport = reportRepository.reloadForRunning(report);
-        return spreadsheetReportSupport.supportsDefaultOutput(reloadedReport);
+        return spreadsheetReportInternalSupport.supportsDefaultOutput(reloadedReport);
     }
 
     @Subscribe("reportsDataGrid.importAction")
@@ -282,14 +282,15 @@ public class ReportListView extends StandardListView<Report> {
 
         FluentUiReportRunner fluentRunner = uiReportRunner.byReportEntity(report)
                 .withParametersDialogShowMode(ParametersDialogShowMode.IF_REQUIRED);
-        if (openInSpreadsheet) {
-            fluentRunner.openInSpreadsheet();
-        }
         try {
             if (reportsClientProperties.getUseBackgroundReportProcessing()) {
                 fluentRunner.inBackground(this);
             }
-            fluentRunner.runAndShow();
+            if (openInSpreadsheet) {
+                uiReportRunner.runAndShow(spreadsheetReportInternalSupport.createRunContext(fluentRunner));
+            } else {
+                fluentRunner.runAndShow();
+            }
         } catch (MissingDefaultTemplateException e) {
             notifications.create(
                             messages.getMessage("runningReportError.title"),

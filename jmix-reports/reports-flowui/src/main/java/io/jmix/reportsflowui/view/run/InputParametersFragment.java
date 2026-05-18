@@ -37,7 +37,7 @@ import io.jmix.reports.entity.ReportInputParameter;
 import io.jmix.reports.entity.ReportOutputType;
 import io.jmix.reports.entity.ReportTemplate;
 import io.jmix.reports.yarg.util.converter.ObjectToStringConverter;
-import io.jmix.reportsflowui.runner.SpreadsheetReportSupport;
+import io.jmix.reportsflowui.runner.impl.SpreadsheetReportInternalSupport;
 import io.jmix.reportsflowui.view.validators.ReportCollectionValidator;
 import io.jmix.reportsflowui.view.validators.ReportParamFieldValidator;
 import org.apache.commons.collections4.CollectionUtils;
@@ -71,7 +71,7 @@ public class InputParametersFragment extends Composite<FormLayout>
     protected ParameterClassResolver parameterClassResolver;
     protected ObjectToStringConverter objectToStringConverter;
     protected ApplicationContext applicationContext;
-    protected SpreadsheetReportSupport spreadsheetReportSupport;
+    protected SpreadsheetReportInternalSupport spreadsheetReportInternalSupport;
 
     protected Report report;
     protected Map<String, Object> parameters;
@@ -88,7 +88,7 @@ public class InputParametersFragment extends Composite<FormLayout>
         this.parameterClassResolver = applicationContext.getBean(ParameterClassResolver.class);
         this.objectToStringConverter = applicationContext.getBean(ObjectToStringConverter.class);
         this.metadata = applicationContext.getBean(Metadata.class);
-        this.spreadsheetReportSupport = applicationContext.getBean(SpreadsheetReportSupport.class);
+        this.spreadsheetReportInternalSupport = applicationContext.getBean(SpreadsheetReportInternalSupport.class);
     }
 
     protected void updateOutputTypes() {
@@ -293,7 +293,7 @@ public class InputParametersFragment extends Composite<FormLayout>
             return;
         }
 
-        boolean supported = !bulkPrint && spreadsheetReportSupport.supportsOutputType(getEffectiveOutputType());
+        boolean supported = !bulkPrint && spreadsheetReportInternalSupport.supportsOutputType(getEffectiveOutputType());
         openInSpreadsheetCheckbox.setVisible(supported);
         if (!supported) {
             openInSpreadsheetCheckbox.setValue(false);

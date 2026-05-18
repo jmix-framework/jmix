@@ -39,7 +39,7 @@
                 <nav id="navigation"
                      classNames="jmix-main-view-navigation"
                      ariaLabel="msg://navigation.ariaLabel">
-                    <listMenu id="menu"/>
+                    <listMenu id="menu" themeNames="toggle-reverse"/>
                 </nav>
             </section>
         </drawerLayout>

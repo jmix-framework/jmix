@@ -3,7 +3,6 @@
 :where(:root),
 :where(:host) {
     --vaadin-app-layout-drawer-width: 256px;
-    --aura-app-layout-inset: 0px;
 }
 
 vaadin-app-layout.jmix-main-view-app-layout:not([primary-section='navbar']) {

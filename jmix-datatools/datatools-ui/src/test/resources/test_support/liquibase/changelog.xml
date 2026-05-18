@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2022 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <property name="uuid.type" dbms="oracle" value="varchar2(32)"/>
+    <property name="uuid.type" dbms="!oracle" value="uuid"/>
+
+    <include file="io/jmix/securitydata/liquibase/changelog.xml"/>
+
+    <changeSet author="test" id="inspector-policy-entity">
+        <createTable tableName="TEST_INSPECTOR_POLICY_ENTITY">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="NAME" type="varchar(255)"/>
+            <column name="ALLOWED_RELATION_ID" type="${uuid.type}"/>
+            <column name="EMBEDDED_ALLOWED_FIELD" type="varchar(255)"/>
+            <column name="EMBEDDED_DENIED_FIELD" type="varchar(255)"/>
+            <column name="COMPOSED_ENTITY_ID" type="${uuid.type}"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="test" id="inspector-policy-related-entity">
+        <createTable tableName="TEST_INSPECTOR_POLICY_RELATED_ENTITY">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="DENIED_FIELD" type="varchar(255)"/>
+            <column name="VERSION" type="int"/>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="TEST_INSPECTOR_POLICY_ENTITY"
+                                 baseColumnNames="ALLOWED_RELATION_ID"
+                                 constraintName="FK_TEST_INSPECTOR_POLICY_ENTITY_ON_ALLOWED_RELATION"
+                                 referencedTableName="TEST_INSPECTOR_POLICY_RELATED_ENTITY"
+                                 referencedColumnNames="ID"/>
+    </changeSet>
+
+    <changeSet author="test" id="inspector-policy-composed-entity">
+        <createTable tableName="TEST_INSPECTOR_POLICY_COMPOSED_ENTITY">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="ALLOWED_FIELD" type="varchar(255)"/>
+            <column name="DENIED_FIELD" type="varchar(255)"/>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="TEST_INSPECTOR_POLICY_ENTITY"
+                                 baseColumnNames="COMPOSED_ENTITY_ID"
+                                 constraintName="FK_TEST_INSPECTOR_POLICY_ENTITY_ON_COMPOSED_ENTITY"
+                                 referencedTableName="TEST_INSPECTOR_POLICY_COMPOSED_ENTITY"
+                                 referencedColumnNames="ID"/>
+    </changeSet>
+</databaseChangeLog>

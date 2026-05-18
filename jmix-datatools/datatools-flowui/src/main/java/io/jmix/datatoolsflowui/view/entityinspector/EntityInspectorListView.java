@@ -38,7 +38,6 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.core.impl.importexport.EntityImportPlanJsonBuilder;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.core.metamodel.model.Range;
 import io.jmix.core.metamodel.model.Session;
 import io.jmix.core.security.EntityOp;
 import io.jmix.data.PersistenceHints;
@@ -163,11 +162,7 @@ public class EntityInspectorListView extends StandardListView<Object> {
     @Autowired
     protected EntityImportExport entityImportExport;
     @Autowired
-    protected EntitySerialization entitySerialization;
-    @Autowired
     protected EntityImportPlanJsonBuilder importPlanJsonBuilder;
-    @Autowired
-    protected EntityImportPlans entityImportPlans;
     @Autowired
     protected Actions actions;
     @Autowired

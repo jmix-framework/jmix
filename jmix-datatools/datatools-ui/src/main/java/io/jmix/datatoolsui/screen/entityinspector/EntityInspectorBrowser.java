@@ -27,7 +27,6 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.core.impl.importexport.EntityImportPlanJsonBuilder;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.core.metamodel.model.Range;
 import io.jmix.core.metamodel.model.Session;
 import io.jmix.core.security.EntityOp;
 import io.jmix.data.PersistenceHints;
@@ -35,6 +34,7 @@ import io.jmix.datatools.EntityRestore;
 import io.jmix.datatoolsui.action.ShowEntityInfoAction;
 import io.jmix.datatoolsui.screen.entityinspector.assistant.InspectorFetchPlanBuilder;
 import io.jmix.datatoolsui.screen.entityinspector.assistant.InspectorTableBuilder;
+import io.jmix.gridexportui.action.ExcelExportAction;
 import io.jmix.ui.*;
 import io.jmix.ui.accesscontext.UiEntityContext;
 import io.jmix.ui.action.Action;
@@ -42,8 +42,8 @@ import io.jmix.ui.action.DialogAction;
 import io.jmix.ui.action.ItemTrackingAction;
 import io.jmix.ui.action.ListAction;
 import io.jmix.ui.action.list.*;
-import io.jmix.ui.component.LookupComponent;
 import io.jmix.ui.component.*;
+import io.jmix.ui.component.LookupComponent;
 import io.jmix.ui.download.ByteArrayDataProvider;
 import io.jmix.ui.download.DownloadFormat;
 import io.jmix.ui.download.Downloader;
@@ -54,7 +54,6 @@ import io.jmix.ui.model.CollectionLoader;
 import io.jmix.ui.model.DataComponents;
 import io.jmix.ui.navigation.Route;
 import io.jmix.ui.screen.*;
-import io.jmix.gridexportui.action.ExcelExportAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -130,8 +129,6 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
     protected EntityImportExport entityImportExport;
     @Autowired
     protected EntityImportPlanJsonBuilder importPlanJsonBuilder;
-    @Autowired
-    protected UnconstrainedDataManager unconstrainedDataManager;
     @Autowired
     private Dialogs dialogs;
     @Autowired

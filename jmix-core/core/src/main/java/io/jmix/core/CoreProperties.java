@@ -142,6 +142,13 @@ public class CoreProperties {
      */
     boolean useUserInfoForObservation;
 
+    /**
+     * Whether to enable application info file generation.
+     * <p>
+     * When enabled, application info file is created in the conf directory.
+     */
+    boolean applicationInfoFileEnabled;
+
     public CoreProperties(
             String webHostName,
             String webPort,
@@ -167,7 +174,8 @@ public class CoreProperties {
             @DefaultValue("false") boolean skipNullOrEmptyConditionsByDefault,
             @DefaultValue("true") boolean instanceNameFallbackEnabled,
             @DefaultValue("false") boolean dataObservationEnabled,
-            @DefaultValue("true") boolean useUserInfoForObservation) {
+            @DefaultValue("true") boolean useUserInfoForObservation,
+            @DefaultValue("true") boolean applicationInfoFileEnabled) {
         this.webHostName = webHostName;
         this.webPort = webPort;
         this.confDir = confDir;
@@ -201,6 +209,7 @@ public class CoreProperties {
         this.instanceNameFallbackEnabled = instanceNameFallbackEnabled;
         this.dataObservationEnabled = dataObservationEnabled;
         this.useUserInfoForObservation = useUserInfoForObservation;
+        this.applicationInfoFileEnabled = applicationInfoFileEnabled;
     }
 
     public String getWebHostName() {
@@ -338,5 +347,12 @@ public class CoreProperties {
     @Experimental
     public boolean isUseUserInfoForObservation() {
         return useUserInfoForObservation;
+    }
+
+    /**
+     * @see #applicationInfoFileEnabled
+     */
+    public boolean isApplicationInfoFileEnabled() {
+        return applicationInfoFileEnabled;
     }
 }

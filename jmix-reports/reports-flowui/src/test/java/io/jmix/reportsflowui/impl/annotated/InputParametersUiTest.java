@@ -19,11 +19,13 @@ package io.jmix.reportsflowui.impl.annotated;
 import io.jmix.core.MetadataTools;
 import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.Notifications;
+import io.jmix.flowui.component.checkbox.JmixCheckbox;
 import io.jmix.flowui.component.datepicker.TypedDatePicker;
 import io.jmix.flowui.component.valuepicker.EntityPicker;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.testassist.UiTestUtils;
 import io.jmix.flowui.testassist.notification.NotificationInfo;
+import io.jmix.reportsflowui.test_support.RuntimeReportUtil;
 import io.jmix.reportsflowui.test_support.report.PublishersAndGamesReport;
 import io.jmix.reportsflowui.test_support.report.SampleDefaultValueReport;
 import io.jmix.reportsflowui.view.run.InputParametersDialog;
@@ -39,6 +41,8 @@ public class InputParametersUiTest extends BaseRunReportUiTest {
 
     @Autowired
     MetadataTools metadataTools;
+    @Autowired
+    RuntimeReportUtil runtimeReportUtil;
 
     @Test
     public void testRequired() {
@@ -135,5 +139,30 @@ public class InputParametersUiTest extends BaseRunReportUiTest {
         EntityPicker field = findParameterField(parametersDialog, "param_" + parameterAlias);
         assertThat(field.getValue()).isNotNull();
         assertThat(metadataTools.getInstanceName(field.getValue())).isEqualTo("Ubisoft");
+    }
+
+    @Test
+    public void testOpenInSpreadsheetCheckboxVisibleForSpreadsheetOutput() {
+        runtimeReportUtil.createAndSaveSimpleSpreadsheetRuntimeReport();
+
+        launchReportFromRunView(RuntimeReportUtil.SIMPLE_SPREADSHEET_REPORT_CODE);
+
+        InputParametersDialog parametersDialog = (InputParametersDialog) dialogWindows.getOpenedDialogWindows()
+                .getCurrentDialog().orElse(null);
+
+        JmixCheckbox checkbox = findInputParametersComponent(parametersDialog, "openInSpreadsheetCheckbox");
+        assertThat(checkbox.isVisible()).isTrue();
+        assertThat(checkbox.getValue()).isFalse();
+    }
+
+    @Test
+    public void testOpenInSpreadsheetCheckboxHiddenForNonSpreadsheetOutput() {
+        launchReportFromRunView(SampleDefaultValueReport.CODE);
+
+        InputParametersDialog parametersDialog = (InputParametersDialog) dialogWindows.getOpenedDialogWindows()
+                .getCurrentDialog().orElse(null);
+
+        JmixCheckbox checkbox = findInputParametersComponent(parametersDialog, "openInSpreadsheetCheckbox");
+        assertThat(checkbox.isVisible()).isFalse();
     }
 }

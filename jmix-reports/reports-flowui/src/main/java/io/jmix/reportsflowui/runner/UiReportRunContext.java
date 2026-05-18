@@ -70,6 +70,7 @@ public class UiReportRunContext {
     private View<?> owner;
     private boolean inBackground;
     private ParametersDialogShowMode parametersDialogShowMode;
+    private boolean openInSpreadsheet;
 
     public UiReportRunContext() {
     }
@@ -112,6 +113,15 @@ public class UiReportRunContext {
 
     public UiReportRunContext setParametersDialogShowMode(@Nullable ParametersDialogShowMode parametersDialogShowMode) {
         this.parametersDialogShowMode = parametersDialogShowMode;
+        return this;
+    }
+
+    public boolean isOpenInSpreadsheet() {
+        return openInSpreadsheet;
+    }
+
+    public UiReportRunContext setOpenInSpreadsheet(boolean openInSpreadsheet) {
+        this.openInSpreadsheet = openInSpreadsheet;
         return this;
     }
 

@@ -26,6 +26,7 @@ import io.jmix.core.Metadata;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.SupportsValidation;
 import io.jmix.flowui.component.UiComponentUtils;
+import io.jmix.flowui.component.checkbox.JmixCheckbox;
 import io.jmix.flowui.component.combobox.EntityComboBox;
 import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.reports.ParameterClassResolver;
@@ -36,6 +37,7 @@ import io.jmix.reports.entity.ReportInputParameter;
 import io.jmix.reports.entity.ReportOutputType;
 import io.jmix.reports.entity.ReportTemplate;
 import io.jmix.reports.yarg.util.converter.ObjectToStringConverter;
+import io.jmix.reportsflowui.runner.SpreadsheetReportSupport;
 import io.jmix.reportsflowui.view.validators.ReportCollectionValidator;
 import io.jmix.reportsflowui.view.validators.ReportParamFieldValidator;
 import org.apache.commons.collections4.CollectionUtils;
@@ -57,6 +59,7 @@ public class InputParametersFragment extends Composite<FormLayout>
     //Components
     protected EntityComboBox<ReportTemplate> templateComboBox;
     protected JmixComboBox<ReportOutputType> outputTypeComboBox;
+    protected JmixCheckbox openInSpreadsheetCheckbox;
     protected FormLayout formLayout;
 
     // Autowired
@@ -68,10 +71,12 @@ public class InputParametersFragment extends Composite<FormLayout>
     protected ParameterClassResolver parameterClassResolver;
     protected ObjectToStringConverter objectToStringConverter;
     protected ApplicationContext applicationContext;
+    protected SpreadsheetReportSupport spreadsheetReportSupport;
 
     protected Report report;
     protected Map<String, Object> parameters;
     protected boolean bulkPrint;
+    protected boolean openInSpreadsheet;
     protected ReportInputParameter inputParameter;
     protected HashMap<String, AbstractField> parameterComponents = new HashMap<>();
 
@@ -83,11 +88,14 @@ public class InputParametersFragment extends Composite<FormLayout>
         this.parameterClassResolver = applicationContext.getBean(ParameterClassResolver.class);
         this.objectToStringConverter = applicationContext.getBean(ObjectToStringConverter.class);
         this.metadata = applicationContext.getBean(Metadata.class);
+        this.spreadsheetReportSupport = applicationContext.getBean(SpreadsheetReportSupport.class);
     }
 
     protected void updateOutputTypes() {
         if (!containsAlterableTemplate(report)) {
+            outputTypeComboBox.clear();
             outputTypeComboBox.setVisible(false);
+            updateSpreadsheetOpenOption();
             return;
         }
 
@@ -114,6 +122,7 @@ public class InputParametersFragment extends Composite<FormLayout>
             outputTypeComboBox.clear();
             outputTypeComboBox.setVisible(false);
         }
+        updateSpreadsheetOpenOption();
     }
 
     @Override
@@ -127,10 +136,18 @@ public class InputParametersFragment extends Composite<FormLayout>
 
         outputTypeComboBox = uiComponents.create(JmixComboBox.class);
         outputTypeComboBox.setLabel(messages.getMessage(getClass(), "reportOutputType.label"));
+        outputTypeComboBox.addValueChangeListener(e -> updateSpreadsheetOpenOption());
+
+        openInSpreadsheetCheckbox = uiComponents.create(JmixCheckbox.class);
+        openInSpreadsheetCheckbox.setId("openInSpreadsheetCheckbox");
+        openInSpreadsheetCheckbox.setLabel(messages.getMessage(getClass(), "openInSpreadsheet.label"));
+        openInSpreadsheetCheckbox.setValue(openInSpreadsheet);
+        openInSpreadsheetCheckbox.setVisible(false);
 
         formLayout = uiComponents.create(FormLayout.class);
         formLayout.add(templateComboBox);
         formLayout.add(outputTypeComboBox);
+        formLayout.add(openInSpreadsheetCheckbox);
         formLayout.setResponsiveSteps(
                 new FormLayout.ResponsiveStep("0", 1),
                 new FormLayout.ResponsiveStep("32em", 2),
@@ -160,6 +177,10 @@ public class InputParametersFragment extends Composite<FormLayout>
 
     public void setBulkPrint(boolean bulkPrint) {
         this.bulkPrint = bulkPrint;
+    }
+
+    public void setOpenInSpreadsheet(boolean openInSpreadsheet) {
+        this.openInSpreadsheet = openInSpreadsheet;
     }
 
     public void setInputParameter(ReportInputParameter inputParameter) {
@@ -242,7 +263,6 @@ public class InputParametersFragment extends Composite<FormLayout>
                 templateComboBox.setValue(report.getDefaultTemplate());
                 templateComboBox.setVisible(true);
             }
-            templateComboBox.addValueChangeListener(e -> updateOutputTypes());
             updateOutputTypes();
         }
     }
@@ -262,5 +282,44 @@ public class InputParametersFragment extends Composite<FormLayout>
 
     public ReportOutputType getOutputType() {
         return outputTypeComboBox.getValue();
+    }
+
+    public boolean isOpenInSpreadsheet() {
+        return openInSpreadsheetCheckbox.isVisible() && BooleanUtils.isTrue(openInSpreadsheetCheckbox.getValue());
+    }
+
+    protected void updateSpreadsheetOpenOption() {
+        if (openInSpreadsheetCheckbox == null) {
+            return;
+        }
+
+        boolean supported = !bulkPrint && spreadsheetReportSupport.supportsOutputType(getEffectiveOutputType());
+        openInSpreadsheetCheckbox.setVisible(supported);
+        if (!supported) {
+            openInSpreadsheetCheckbox.setValue(false);
+        }
+    }
+
+    @Nullable
+    protected ReportOutputType getEffectiveOutputType() {
+        if (outputTypeComboBox.isVisible() && outputTypeComboBox.getValue() != null) {
+            return outputTypeComboBox.getValue();
+        }
+
+        ReportTemplate template = getEffectiveTemplate();
+        return template != null ? template.getReportOutputType() : null;
+    }
+
+    @Nullable
+    protected ReportTemplate getEffectiveTemplate() {
+        if (report == null) {
+            return null;
+        }
+
+        if (report.getTemplates() != null && report.getTemplates().size() > 1) {
+            return templateComboBox.getValue();
+        }
+
+        return report.getDefaultTemplate();
     }
 }

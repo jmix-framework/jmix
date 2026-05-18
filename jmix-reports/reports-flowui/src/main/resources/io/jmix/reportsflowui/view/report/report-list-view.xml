@@ -59,6 +59,7 @@
                 <button id="importBtn" action="reportsDataGrid.importAction"/>
                 <button id="exportBtn" action="reportsDataGrid.export"/>
                 <button id="runReportBtn" action="reportsDataGrid.runReport"/>
+                <button id="openInSpreadsheetBtn" action="reportsDataGrid.openInSpreadsheet"/>
                 <button id="executionsBtn" action="reportsDataGrid.executions"/>
             </startSlot>
             <endSlot>
@@ -81,6 +82,8 @@
                         description="msg://action.export.description"/>
                 <action id="runReport" type="list_itemTracking" icon="ANGLE_DOUBLE_RIGHT"
                         text="msg://action.runReport.text"/>
+                <action id="openInSpreadsheet" type="list_itemTracking" icon="TABLE"
+                        text="msg://action.openInSpreadsheet.text"/>
                 <action id="executions" type="list_itemTracking" icon="FILE"
                         text="msg://action.executions.text"/>
             </actions>

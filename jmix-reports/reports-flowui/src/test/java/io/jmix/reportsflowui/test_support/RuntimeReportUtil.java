@@ -17,6 +17,7 @@
 package io.jmix.reportsflowui.test_support;
 
 import io.jmix.core.UnconstrainedDataManager;
+import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.reports.ReportsPersistence;
 import io.jmix.reports.ReportsSerialization;
 import io.jmix.reports.entity.*;
@@ -32,6 +33,7 @@ import java.util.Set;
 public class RuntimeReportUtil {
 
     public static final String SIMPLE_RUNTIME_REPORT_NAME = "Simple runtime report";
+    public static final String SIMPLE_SPREADSHEET_REPORT_CODE = "SIMPLE_SPREADSHEET_RUNTIME_REPORT";
 
     @Autowired
     protected UnconstrainedDataManager unconstrainedDataManager;
@@ -93,6 +95,51 @@ public class RuntimeReportUtil {
      */
     public Report createAndSaveSimpleRuntimeReport() {
         Report report = constructSimpleRuntimeReport();
+
+        return reportsPersistence.save(report);
+    }
+
+    public Report createAndSaveSimpleSpreadsheetRuntimeReport() {
+        Report existingReport = unconstrainedDataManager.load(Report.class)
+                .condition(PropertyCondition.equal("code", SIMPLE_SPREADSHEET_REPORT_CODE))
+                .optional()
+                .orElse(null);
+        if (existingReport != null) {
+            return existingReport;
+        }
+
+        Report report = unconstrainedDataManager.create(Report.class);
+        report.setName("Simple spreadsheet runtime report");
+        report.setCode(SIMPLE_SPREADSHEET_REPORT_CODE);
+
+        BandDefinition band = unconstrainedDataManager.create(BandDefinition.class);
+        band.setReport(report);
+        band.setOrientation(Orientation.HORIZONTAL);
+        band.setName("Root");
+        band.setMultiDataSet(false);
+        band.setPosition(0);
+        report.setBands(Set.of(band));
+
+        ReportInputParameter inputParameter = unconstrainedDataManager.create(ReportInputParameter.class);
+        inputParameter.setReport(report);
+        inputParameter.setAlias("input");
+        inputParameter.setName("Input");
+        inputParameter.setPosition(0);
+        inputParameter.setType(ParameterType.TEXT);
+        inputParameter.setRequired(true);
+        report.setInputParameters(List.of(inputParameter));
+
+        ReportTemplate template = unconstrainedDataManager.create(ReportTemplate.class);
+        template.setReport(report);
+        template.setCode("default");
+        template.setReportOutputType(ReportOutputType.XLSX);
+        template.setName("SimpleSpreadsheet.xlsx");
+        template.setContent("spreadsheet-template".getBytes(StandardCharsets.UTF_8));
+        report.setTemplates(List.of(template));
+        report.setDefaultTemplate(template);
+
+        String xml = reportsSerialization.convertToString(report);
+        report.setXml(xml);
 
         return reportsPersistence.save(report);
     }

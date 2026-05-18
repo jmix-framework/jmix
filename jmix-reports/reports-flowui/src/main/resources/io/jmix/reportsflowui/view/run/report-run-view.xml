@@ -62,6 +62,7 @@
 
         <hbox id="buttonsPanel" wrap="true" width="100%">
             <button id="runReport" action="reportDataGrid.runReport"/>
+            <button id="openInSpreadsheetBtn" action="reportDataGrid.openInSpreadsheet"/>
         </hbox>
         <dataGrid id="reportDataGrid"
                   width="100%" minHeight="20em"
@@ -70,6 +71,8 @@
             <actions>
                 <action id="runReport" text="msg://runReport.action.title" icon="ANGLE_DOUBLE_RIGHT"
                         actionVariant="PRIMARY"
+                        type="list_itemTracking"/>
+                <action id="openInSpreadsheet" text="msg://action.openInSpreadsheet.text" icon="TABLE"
                         type="list_itemTracking"/>
             </actions>
             <columns resizable="true">

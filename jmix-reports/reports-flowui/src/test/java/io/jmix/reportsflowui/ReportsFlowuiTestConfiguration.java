@@ -16,6 +16,7 @@
 
 package io.jmix.reportsflowui;
 
+import io.jmix.core.FileRef;
 import io.jmix.core.CoreConfiguration;
 import io.jmix.core.annotation.MessageSourceBasenames;
 import io.jmix.core.security.InMemoryUserRepository;
@@ -23,7 +24,10 @@ import io.jmix.core.security.UserRepository;
 import io.jmix.data.DataConfiguration;
 import io.jmix.eclipselink.EclipselinkConfiguration;
 import io.jmix.flowui.FlowuiConfiguration;
+import io.jmix.flowui.view.View;
 import io.jmix.reports.ReportsConfiguration;
+import io.jmix.reports.yarg.reporting.ReportOutputDocument;
+import io.jmix.reportsflowui.runner.SpreadsheetReportOpener;
 import io.jmix.reportsflowui.test_support.role.FullAccessRole;
 import io.jmix.reportsflowui.test_support.role.TestResourceRole2;
 import io.jmix.reportsflowui.test_support.role.TestResourceRole4;
@@ -94,5 +98,23 @@ public class ReportsFlowuiTestConfiguration {
     @Primary
     PasswordEncoder passwordEncoder() {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    }
+
+    @Bean
+    public SpreadsheetReportOpener spreadsheetReportOpener() {
+        return new SpreadsheetReportOpener() {
+            @Override
+            public boolean supportsExtension(String extension) {
+                return "xls".equals(extension) || "xlsx".equals(extension);
+            }
+
+            @Override
+            public void open(View<?> owner, ReportOutputDocument document, String documentName) {
+            }
+
+            @Override
+            public void open(View<?> owner, FileRef fileRef) {
+            }
+        };
     }
 }

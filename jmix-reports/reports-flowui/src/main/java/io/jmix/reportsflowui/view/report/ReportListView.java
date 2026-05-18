@@ -32,6 +32,7 @@ import io.jmix.flowui.component.datepicker.TypedDatePicker;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.select.JmixSelect;
 import io.jmix.flowui.component.textfield.TypedTextField;
+import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.download.ByteArrayDownloadDataProvider;
 import io.jmix.flowui.download.DownloadFormat;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
@@ -48,6 +49,7 @@ import io.jmix.reportsflowui.helper.GridSortHelper;
 import io.jmix.reportsflowui.helper.OutputTypeHelper;
 import io.jmix.reportsflowui.runner.FluentUiReportRunner;
 import io.jmix.reportsflowui.runner.ParametersDialogShowMode;
+import io.jmix.reportsflowui.runner.SpreadsheetReportSupport;
 import io.jmix.reportsflowui.runner.UiReportRunner;
 import io.jmix.reportsflowui.view.history.ReportExecutionListView;
 import io.jmix.reportsflowui.view.importdialog.ReportImportDialogView;
@@ -84,6 +86,8 @@ public class ReportListView extends StandardListView<Report> {
     protected JmixSelect<ReportOutputType> outputTypeFilter;
     @ViewComponent
     protected CollectionContainer<Report> reportsDc;
+    @ViewComponent
+    protected JmixButton openInSpreadsheetBtn;
     @Autowired
     protected DataManager dataManager;
     @Autowired
@@ -126,11 +130,14 @@ public class ReportListView extends StandardListView<Report> {
     protected OutputTypeHelper outputTypeHelper;
     @Autowired
     protected ReportGroupRepository reportGroupRepository;
+    @Autowired
+    protected SpreadsheetReportSupport spreadsheetReportSupport;
 
     @Subscribe
     protected void onInit(InitEvent event) {
         initReportsDataGridCreate();
         initOutputTypeList();
+        openInSpreadsheetBtn.setVisible(spreadsheetReportSupport.isAvailable());
 
         codeFilter.addTypedValueChangeListener(e -> onFilterFieldValueChange());
         nameFilter.addTypedValueChangeListener(e -> onFilterFieldValueChange());
@@ -155,25 +162,23 @@ public class ReportListView extends StandardListView<Report> {
 
     @Subscribe("reportsDataGrid.runReport")
     public void onReportsDataGridRunReport(ActionPerformedEvent event) {
+        runSelectedReport(false);
+    }
+
+    @Subscribe("reportsDataGrid.openInSpreadsheet")
+    public void onReportsDataGridOpenInSpreadsheet(ActionPerformedEvent event) {
+        runSelectedReport(true);
+    }
+
+    @Install(to = "reportsDataGrid.openInSpreadsheet", subject = "enabledRule")
+    protected boolean reportsDataGridOpenInSpreadsheetEnabledRule() {
         Report report = reportsDataGrid.getSingleSelectedItem();
         if (report == null) {
-            return;
+            return false;
         }
 
-        FluentUiReportRunner fluentRunner = uiReportRunner.byReportEntity(report)
-                .withParametersDialogShowMode(ParametersDialogShowMode.IF_REQUIRED);
-        try {
-            if (reportsClientProperties.getUseBackgroundReportProcessing()) {
-                fluentRunner.inBackground(this);
-            }
-            fluentRunner.runAndShow();
-        } catch (MissingDefaultTemplateException e) {
-            notifications.create(
-                            messages.getMessage("runningReportError.title"),
-                            messages.getMessage("missingDefaultTemplateError.description"))
-                    .withType(Notifications.Type.ERROR)
-                    .show();
-        }
+        Report reloadedReport = reportRepository.reloadForRunning(report);
+        return spreadsheetReportSupport.supportsDefaultOutput(reloadedReport);
     }
 
     @Subscribe("reportsDataGrid.importAction")
@@ -267,6 +272,31 @@ public class ReportListView extends StandardListView<Report> {
     protected boolean isDatabaseReportSelected() {
         Report report = reportsDataGrid.getSingleSelectedItem();
         return report != null && report.getSource() == ReportSource.DATABASE;
+    }
+
+    protected void runSelectedReport(boolean openInSpreadsheet) {
+        Report report = reportsDataGrid.getSingleSelectedItem();
+        if (report == null) {
+            return;
+        }
+
+        FluentUiReportRunner fluentRunner = uiReportRunner.byReportEntity(report)
+                .withParametersDialogShowMode(ParametersDialogShowMode.IF_REQUIRED);
+        if (openInSpreadsheet) {
+            fluentRunner.openInSpreadsheet();
+        }
+        try {
+            if (reportsClientProperties.getUseBackgroundReportProcessing()) {
+                fluentRunner.inBackground(this);
+            }
+            fluentRunner.runAndShow();
+        } catch (MissingDefaultTemplateException e) {
+            notifications.create(
+                            messages.getMessage("runningReportError.title"),
+                            messages.getMessage("missingDefaultTemplateError.description"))
+                    .withType(Notifications.Type.ERROR)
+                    .show();
+        }
     }
 
     @Subscribe("reportsDataGrid.wizard")

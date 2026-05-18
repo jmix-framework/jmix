@@ -40,6 +40,7 @@ import io.jmix.reportsflowui.ReportsClientProperties;
 import io.jmix.reportsflowui.download.ReportDownloader;
 import io.jmix.reportsflowui.runner.FluentUiReportRunner;
 import io.jmix.reportsflowui.runner.ParametersDialogShowMode;
+import io.jmix.reportsflowui.runner.SpreadsheetReportSupport;
 import io.jmix.reportsflowui.runner.UiReportRunContext;
 import io.jmix.reportsflowui.runner.UiReportRunner;
 import io.jmix.reportsflowui.view.run.InputParametersDialog;
@@ -71,6 +72,7 @@ public class UiReportRunnerImpl implements UiReportRunner {
     protected final ObjectProvider<FluentUiReportRunner> fluentUiReportRunners;
     protected final Notifications notifications;
     protected final ReportsClientProperties reportsClientProperties;
+    protected final SpreadsheetReportSupport spreadsheetReportSupport;
 
     public UiReportRunnerImpl(ReportRunner reportRunner,
                               DialogWindows dialogWindows,
@@ -82,7 +84,8 @@ public class UiReportRunnerImpl implements UiReportRunner {
                               ReportRepository reportRepository,
                               ObjectProvider<FluentUiReportRunner> fluentUiReportRunners,
                               Notifications notifications,
-                              ReportsClientProperties reportsClientProperties) {
+                              ReportsClientProperties reportsClientProperties,
+                              SpreadsheetReportSupport spreadsheetReportSupport) {
         this.reportRunner = reportRunner;
         this.dialogWindows = dialogWindows;
         this.downloader = downloader;
@@ -94,8 +97,7 @@ public class UiReportRunnerImpl implements UiReportRunner {
         this.fluentUiReportRunners = fluentUiReportRunners;
         this.notifications = notifications;
         this.reportsClientProperties = reportsClientProperties;
-
-
+        this.spreadsheetReportSupport = spreadsheetReportSupport;
     }
 
     @Override
@@ -273,6 +275,7 @@ public class UiReportRunnerImpl implements UiReportRunner {
         inputParametersDialog.setOutputFileName(context.getOutputNamePattern());
         inputParametersDialog.setBulkPrint(bulkPrint);
         inputParametersDialog.setInBackground(context.getInBackground());
+        inputParametersDialog.setOpenInSpreadsheet(context.isOpenInSpreadsheet());
 
         inputParametersDialogWindow.open();
     }
@@ -301,13 +304,18 @@ public class UiReportRunnerImpl implements UiReportRunner {
             showReportTableViewDialogWindow.open();
         } else {
             byte[] byteArr = document.getContent();
+            String outputFileName = context.getOutputNamePattern();
+            String documentName = isNotBlank(outputFileName) ? outputFileName : document.getDocumentName();
             io.jmix.reports.yarg.structure.ReportOutputType finalOutputType =
                     (outputType != null) ? outputType.getOutputType() : document.getReportOutputType();
 
-            DownloadFormat exportFormat = DownloadFormat.getByExtension(finalOutputType.getId());
-            String outputFileName = context.getOutputNamePattern();
-            String documentName = isNotBlank(outputFileName) ? outputFileName : document.getDocumentName();
+            if (context.isOpenInSpreadsheet()
+                    && spreadsheetReportSupport.supportsExtension(finalOutputType.getId())
+                    && spreadsheetReportSupport.open(context.getOwner(), document, documentName)) {
+                return;
+            }
 
+            DownloadFormat exportFormat = DownloadFormat.getByExtension(finalOutputType.getId());
             downloader.download(byteArr, documentName, exportFormat);
         }
     }

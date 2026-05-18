@@ -72,6 +72,7 @@ public class InputParametersDialog extends StandardView {
     protected Map<String, Object> parameters;
     protected Collection selectedEntities;
     protected boolean inBackground;
+    protected boolean openInSpreadsheet;
 
     protected InputParametersFragment inputParametersFragment;
 
@@ -103,6 +104,9 @@ public class InputParametersDialog extends StandardView {
         this.inBackground = inBackground;
     }
 
+    public void setOpenInSpreadsheet(boolean openInSpreadsheet) {
+        this.openInSpreadsheet = openInSpreadsheet;
+    }
 
     @Subscribe
     protected void onBeforeShow(BeforeShowEvent event) {
@@ -119,6 +123,7 @@ public class InputParametersDialog extends StandardView {
             inputParametersFragment.setInputParameter(inputParameter);
             inputParametersFragment.setParameters(parameters);
             inputParametersFragment.setBulkPrint(bulkPrint);
+            inputParametersFragment.setOpenInSpreadsheet(openInSpreadsheet);
             //inputParametersFragment.initLayout();
         }
         inputParametersLayout.add(inputParametersFragment);
@@ -143,6 +148,9 @@ public class InputParametersDialog extends StandardView {
                         .withOutputNamePattern(outputFileName)
                         .withOutputType(inputParametersFragment.getOutputType())
                         .withParametersDialogShowMode(ParametersDialogShowMode.NO);
+                if (inputParametersFragment.isOpenInSpreadsheet()) {
+                    fluentRunner.openInSpreadsheet();
+                }
                 if (inBackground) {
                     fluentRunner.inBackground(this);
                 }

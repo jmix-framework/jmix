@@ -33,6 +33,7 @@ import io.jmix.flowui.view.*;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportExecution;
 import io.jmix.reportsflowui.download.ReportDownloader;
+import io.jmix.reportsflowui.runner.SpreadsheetReportSupport;
 import io.jmix.reportsflowui.view.run.ReportExcelHelper;
 import io.jmix.reports.entity.ReportSource;
 import org.apache.commons.collections4.CollectionUtils;
@@ -61,6 +62,8 @@ public class ReportExecutionListView extends StandardListView<ReportExecution> {
     private HorizontalLayout buttonsPanel;
     @ViewComponent
     private JmixButton downloadBtn;
+    @ViewComponent
+    private JmixButton openInSpreadsheetBtn;
 
     @ViewComponent
     protected MessageBundle messageBundle;
@@ -74,12 +77,15 @@ public class ReportExecutionListView extends StandardListView<ReportExecution> {
     protected ReportExcelHelper reportExcelHelper;
     @Autowired
     protected MetadataTools metadataTools;
+    @Autowired
+    protected SpreadsheetReportSupport spreadsheetReportSupport;
 
     protected List<Report> filterByReports;
 
     @Subscribe
     public void onBeforeShow(final BeforeShowEvent event) {
         createExcelButton();
+        openInSpreadsheetBtn.setVisible(spreadsheetReportSupport.isAvailable());
     }
 
     protected void createExcelButton() {
@@ -114,9 +120,27 @@ public class ReportExecutionListView extends StandardListView<ReportExecution> {
         }
     }
 
+    @Subscribe("executionsDataGrid.openInSpreadsheet")
+    public void onOpenInSpreadsheetClick(final ActionPerformedEvent event) {
+        ReportExecution execution = executionsDataGrid.getSingleSelectedItem();
+        if (execution != null && execution.getOutputDocument() != null) {
+            spreadsheetReportSupport.open(this, execution.getOutputDocument());
+        }
+    }
+
     @Install(to = "executionsDataGrid.download", subject = "enabledRule")
     protected boolean reportsDataGridImportEnabledRule() {
         return downloadEnabledRule();
+    }
+
+    @Install(to = "executionsDataGrid.openInSpreadsheet", subject = "enabledRule")
+    protected boolean executionsDataGridOpenInSpreadsheetEnabledRule() {
+        if (!downloadEnabledRule()) {
+            return false;
+        }
+
+        ReportExecution execution = executionsDataGrid.getSingleSelectedItem();
+        return execution != null && spreadsheetReportSupport.supportsFileRef(execution.getOutputDocument());
     }
 
     @Override

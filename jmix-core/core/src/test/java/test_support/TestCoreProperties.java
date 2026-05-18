@@ -47,7 +47,8 @@ public class TestCoreProperties extends CoreProperties {
                               boolean skipNullOrEmptyConditionsByDefault,
                               boolean instanceNameFallbackEnabled,
                               boolean dataObservationEnabled,
-                              boolean useUserInfoForObservation) {
+                              boolean useUserInfoForObservation,
+                              boolean applicationInfoFileEnabled) {
         super(webHostName, webPort, confDir, workDir, tempDir, dbDir, availableLocales,
                 crossDataStoreReferenceLoadingBatchSize, idGenerationForEntitiesInAdditionalDataStoresEnabled,
                 dom4jMaxPoolSize, dom4jMaxBorrowWaitMillis, anonymousAuthenticationTokenKey, defaultFileStorage,
@@ -55,7 +56,7 @@ public class TestCoreProperties extends CoreProperties {
                 unsafeRuntimeFeaturesEnabled, hotDeployEnabled, legacyFetchPlanSerializationAttributeName,
                 triggerFilesEnabled, triggerFilesProcessInterval,
                 roundDecimalValueByFormat, skipNullOrEmptyConditionsByDefault, instanceNameFallbackEnabled,
-                dataObservationEnabled, useUserInfoForObservation);
+                dataObservationEnabled, useUserInfoForObservation, applicationInfoFileEnabled);
     }
 
     public static Builder builder() {
@@ -88,6 +89,7 @@ public class TestCoreProperties extends CoreProperties {
         boolean instanceNameFallbackEnabled = true;
         boolean dataObservationEnabled = false;
         boolean useUserInfoForObservation = false;
+        boolean applicationInfoFileEnabled = true;
 
         public Builder setWebHostName(String webHostName) {
             this.webHostName = webHostName;
@@ -235,7 +237,8 @@ public class TestCoreProperties extends CoreProperties {
                     this.skipNullOrEmptyConditionsByDefault,
                     this.instanceNameFallbackEnabled,
                     this.dataObservationEnabled,
-                    this.useUserInfoForObservation);
+                    this.useUserInfoForObservation,
+                    this.applicationInfoFileEnabled);
         }
     }
 }

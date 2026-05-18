@@ -18,6 +18,7 @@ package io.jmix.aitools.dataload.impl;
 
 import io.jmix.aitools.dataload.AiDataLoadService;
 import io.jmix.aitools.dataload.prompt.DataLoadSystemPromptProvider;
+import io.jmix.aitools.dataload.tool.DataLoadToolCallbackProvider;
 import io.jmix.aitools.memory.ChatMemoryProvider;
 import io.jmix.aitools.memory.JmixChatMemoryRepository;
 import io.jmix.core.common.util.Preconditions;
@@ -40,6 +41,8 @@ public class AiDataLoadServiceImpl implements AiDataLoadService, InitializingBea
     protected ChatMemoryProvider chatMemoryProvider;
     @Autowired
     protected DataLoadSystemPromptProvider systemPromptProvider;
+    @Autowired
+    protected DataLoadToolCallbackProvider dataLoadToolCallbackProvider;
     @Autowired
     protected CurrentAuthentication currentAuthentication;
 
@@ -72,6 +75,7 @@ public class AiDataLoadServiceImpl implements AiDataLoadService, InitializingBea
                         .text(systemPromptProvider.getResource())
                         .param("responseLanguage", resolveResponseLanguage()))
                 .user(user -> user.text(message))
+                .toolCallbacks(dataLoadToolCallbackProvider.getToolCallbacks())
                 .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
                 .call()
                 .content();

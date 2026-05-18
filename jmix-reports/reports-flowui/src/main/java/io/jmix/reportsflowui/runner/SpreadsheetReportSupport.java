@@ -32,6 +32,12 @@ import org.springframework.stereotype.Component;
 
 import java.util.Locale;
 
+/**
+ * Internal support bean for spreadsheet-specific report execution and opening logic.
+ * <p>
+ * The bean keeps spreadsheet viewer behavior out of the general OSS runner API while still allowing built-in
+ * reports UI and premium modules to opt into spreadsheet rendering.
+ */
 @Internal
 @Component("report_SpreadsheetReportSupport")
 public class SpreadsheetReportSupport {
@@ -39,16 +45,25 @@ public class SpreadsheetReportSupport {
     @Autowired
     protected ObjectProvider<SpreadsheetReportOpener> spreadsheetReportOpenerProvider;
 
+    /**
+     * Returns whether a spreadsheet opener bridge is available on the classpath.
+     */
     public boolean isAvailable() {
         return spreadsheetReportOpenerProvider.getIfAvailable() != null;
     }
 
+    /**
+     * Returns whether the given report output type can be opened in a spreadsheet viewer.
+     */
     public boolean supportsOutputType(@Nullable ReportOutputType outputType) {
         return outputType != null
                 && isSpreadsheetOutputType(outputType)
                 && supportsExtension(outputType.getOutputType().getId());
     }
 
+    /**
+     * Returns whether the report default template can be opened in a spreadsheet viewer.
+     */
     public boolean supportsDefaultOutput(@Nullable Report report) {
         if (report == null) {
             return false;
@@ -58,14 +73,23 @@ public class SpreadsheetReportSupport {
         return defaultTemplate != null && supportsOutputType(defaultTemplate.getReportOutputType());
     }
 
+    /**
+     * Returns whether the stored report output can be opened in a spreadsheet viewer.
+     */
     public boolean supportsFileRef(@Nullable FileRef fileRef) {
         return fileRef != null && supportsDocumentName(fileRef.getFileName());
     }
 
+    /**
+     * Returns whether a report document with the given name can be opened in a spreadsheet viewer.
+     */
     public boolean supportsDocumentName(@Nullable String documentName) {
         return supportsExtension(getExtension(documentName));
     }
 
+    /**
+     * Returns whether the specified file extension can be opened in a spreadsheet viewer.
+     */
     public boolean supportsExtension(@Nullable String extension) {
         SpreadsheetReportOpener spreadsheetReportOpener = spreadsheetReportOpenerProvider.getIfAvailable();
         String normalizedExtension = normalizeExtension(extension);
@@ -75,7 +99,10 @@ public class SpreadsheetReportSupport {
                 && spreadsheetReportOpener.supportsExtension(normalizedExtension);
     }
 
-    public boolean open(@Nullable View<?> owner, ReportOutputDocument document, String documentName) {
+    /**
+     * Opens a generated report document in a spreadsheet viewer.
+     */
+    public boolean open(@Nullable View<?> owner, ReportOutputDocument document, @Nullable String documentName) {
         SpreadsheetReportOpener spreadsheetReportOpener = spreadsheetReportOpenerProvider.getIfAvailable();
         View<?> resolvedOwner = resolveOwner(owner);
         if (spreadsheetReportOpener == null || resolvedOwner == null) {
@@ -86,6 +113,9 @@ public class SpreadsheetReportSupport {
         return true;
     }
 
+    /**
+     * Opens a stored report document in a spreadsheet viewer.
+     */
     public boolean open(@Nullable View<?> owner, FileRef fileRef) {
         SpreadsheetReportOpener spreadsheetReportOpener = spreadsheetReportOpenerProvider.getIfAvailable();
         View<?> resolvedOwner = resolveOwner(owner);
@@ -97,14 +127,16 @@ public class SpreadsheetReportSupport {
         return true;
     }
 
-    public UiReportRunContext createRunContext(FluentUiReportRunner fluentRunner) {
-        return createRunContext(fluentRunner.buildContext());
-    }
-
+    /**
+     * Wraps a regular report run context with an internal spreadsheet marker.
+     */
     public UiReportRunContext createRunContext(UiReportRunContext sourceContext) {
         return new SpreadsheetUiReportRunContext(sourceContext);
     }
 
+    /**
+     * Returns whether the given run context was explicitly marked for spreadsheet rendering.
+     */
     public boolean isSpreadsheetRunContext(UiReportRunContext context) {
         return context instanceof SpreadsheetUiReportRunContext;
     }

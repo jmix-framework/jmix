@@ -19,15 +19,35 @@ package io.jmix.reportsflowui.runner;
 import io.jmix.core.FileRef;
 import io.jmix.flowui.view.View;
 import io.jmix.reports.yarg.reporting.ReportOutputDocument;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Optional bridge contract for opening spreadsheet report output inside a UI viewer instead of downloading a file.
  */
 public interface SpreadsheetReportOpener {
 
+    /**
+     * Returns whether this opener supports the specified spreadsheet file extension.
+     *
+     * @param extension spreadsheet file extension without a leading dot
+     * @return {@code true} if this opener supports the extension
+     */
     boolean supportsExtension(String extension);
 
-    void open(View<?> owner, ReportOutputDocument document, String documentName);
+    /**
+     * Opens a generated report document in a spreadsheet viewer.
+     *
+     * @param owner        owner view used to open the dialog
+     * @param document     generated report output
+     * @param documentName report document name
+     */
+    void open(View<?> owner, ReportOutputDocument document, @Nullable String documentName);
 
+    /**
+     * Opens a previously saved report document in a spreadsheet viewer.
+     *
+     * @param owner   owner view used to open the dialog
+     * @param fileRef stored report document reference
+     */
     void open(View<?> owner, FileRef fileRef);
 }

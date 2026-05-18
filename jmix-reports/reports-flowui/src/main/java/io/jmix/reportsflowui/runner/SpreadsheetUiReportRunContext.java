@@ -18,12 +18,20 @@ package io.jmix.reportsflowui.runner;
 
 import io.jmix.core.annotation.Internal;
 
+/**
+ * Internal marker context that tells the UI runner to open a spreadsheet report in the embedded spreadsheet viewer.
+ */
 @Internal
 public class SpreadsheetUiReportRunContext extends UiReportRunContext {
 
+    /**
+     * Creates a spreadsheet-marked copy of a regular UI report run context.
+     */
     public SpreadsheetUiReportRunContext(UiReportRunContext sourceContext) {
         setReportRunContext(sourceContext.getReportRunContext());
-        setOwner(sourceContext.getOwner());
+        if (sourceContext.getOwner() != null) {
+            setOwner(sourceContext.getOwner());
+        }
         setInBackground(sourceContext.getInBackground());
         setParametersDialogShowMode(sourceContext.getParametersDialogShowMode());
     }

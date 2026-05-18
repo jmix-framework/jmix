@@ -287,7 +287,7 @@ public class ReportListView extends StandardListView<Report> {
                 fluentRunner.inBackground(this);
             }
             if (openInSpreadsheet) {
-                uiReportRunner.runAndShow(spreadsheetReportSupport.createRunContext(fluentRunner));
+                uiReportRunner.runAndShow(spreadsheetReportSupport.createRunContext(fluentRunner.buildContext()));
             } else {
                 fluentRunner.runAndShow();
             }

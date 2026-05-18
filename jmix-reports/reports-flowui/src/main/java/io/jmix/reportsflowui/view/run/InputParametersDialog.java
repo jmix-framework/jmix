@@ -159,7 +159,7 @@ public class InputParametersDialog extends StandardView {
                     if (bulkPrint) {
                         fluentRunner.runMultipleReports(inputParameter.getAlias(), selectedEntities);
                     } else if (inputParametersFragment.isOpenInSpreadsheet()) {
-                        uiReportRunner.runAndShow(spreadsheetReportSupport.createRunContext(fluentRunner));
+                        uiReportRunner.runAndShow(spreadsheetReportSupport.createRunContext(fluentRunner.buildContext()));
                     } else {
                         fluentRunner.runAndShow();
                     }

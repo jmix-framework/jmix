@@ -51,6 +51,7 @@ import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.util.ReflectionTestUtils
+import spock.lang.Ignore
 import spock.lang.Specification
 import test_support.EntityInspectorPolicyTestConfiguration
 import test_support.TestContextInititalizer
@@ -613,7 +614,7 @@ class EntityInspectorPolicyConstraintTest extends Specification {
         !json.contains("secret-value")
     }
 
-    @Disabled
+    @Ignore
     def "export reload respects row-level constraints"() {
         given:
         def allowed = metadata.create(InspectorPolicyEntity)

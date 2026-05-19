@@ -16,26 +16,23 @@
 
 package io.jmix.aitools.dataload.execution;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jmix.aitools.dataload.generation.GeneratedJpqlParameter;
 import io.jmix.aitools.dataload.generation.GeneratedJpqlResult;
 import io.jmix.aitools.dataload.repair.JpqlRepairResult;
 import io.jmix.aitools.dataload.repair.JpqlRepairService;
+import io.jmix.aitools.dataload.validation.JpqlValidationIssue;
 import io.jmix.aitools.dataload.validation.JpqlValidationResult;
 import io.jmix.aitools.dataload.validation.JpqlValidationService;
 import io.jmix.core.DataManager;
-import io.jmix.core.EntitySerialization;
-import io.jmix.core.FluentLoader;
-import io.jmix.core.Metadata;
+import io.jmix.core.FluentValuesLoader;
 import io.jmix.core.common.util.Preconditions;
-import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.entity.KeyValueEntity;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -45,9 +42,6 @@ public class JpqlExecutionService {
     // TODO: pinyazhin, app property?
     protected static final int DEFAULT_MAX_RESULTS = 50;
 
-    protected static final TypeReference<List<Map<String, Object>>> LIST_OF_MAPS_TYPE = new TypeReference<>() {
-    };
-
     @Autowired
     protected JpqlValidationService jpqlValidationService;
     @Autowired
@@ -56,15 +50,18 @@ public class JpqlExecutionService {
     protected JpqlParameterConversionService jpqlParameterConversionService;
     @Autowired
     protected DataManager dataManager;
-    @Autowired
-    protected Metadata metadata;
-    @Autowired
-    protected EntitySerialization entitySerialization;
-
-    protected ObjectMapper objectMapper;
 
     public JpqlExecutionResult execute(JpqlExecutionRequest request) {
         Preconditions.checkNotNullArgument(request, "request is null");
+
+        // TODO: pinyazhin rework?
+        if (request.getResultProperties().isEmpty()) {
+            JpqlValidationResult validationResult = new JpqlValidationResult(false, List.of(
+                    new JpqlValidationIssue("resultProperties.empty",
+                            "resultProperties must be specified for loadValues execution")
+            ));
+            return JpqlExecutionResult.failed(toGeneratedJpqlResult(request), validationResult, false);
+        }
 
         GeneratedJpqlResult initialGeneratedResult = toGeneratedJpqlResult(request);
 
@@ -91,7 +88,7 @@ public class JpqlExecutionService {
         }
 
         try {
-            List<Map<String, Object>> rows = executeQuery(generatedResult, executionParameters,
+            List<Map<String, Object>> rows = executeQuery(request, generatedResult, executionParameters,
                     effectiveMaxResults, generatedResult.getFirstResult());
 
             return new JpqlExecutionResult(generatedResult, validationResult, rows,
@@ -144,15 +141,14 @@ public class JpqlExecutionService {
         return List.copyOf(executionParameters);
     }
 
-    protected List<Map<String, Object>> executeQuery(GeneratedJpqlResult generatedJpqlResult,
+    protected List<Map<String, Object>> executeQuery(JpqlExecutionRequest request,
+                                                     GeneratedJpqlResult generatedJpqlResult,
                                                      Map<String, Object> executionParameters,
                                                      @Nullable Integer maxResults,
                                                      @Nullable Integer firstResult) {
-        MetaClass metaClass = metadata.getClass(generatedJpqlResult.getRootEntityName());
-
-        Class<Object> entityClass = metaClass.getJavaClass();
-
-        FluentLoader.ByQuery<Object> loader = dataManager.load(entityClass).query(generatedJpqlResult.getJpql());
+        FluentValuesLoader loader = dataManager
+                .loadValues(generatedJpqlResult.getJpql())
+                .properties(request.getResultProperties());
         executionParameters.forEach(loader::parameter);
 
         if (firstResult != null) {
@@ -162,20 +158,16 @@ public class JpqlExecutionService {
             loader.maxResults(maxResults);
         }
 
-        List<Object> entities = loader.list();
-
-        return deserializeRows(entitySerialization.toJson(entities));
+        return loader.list().stream()
+                .map(keyValueEntity -> toValueRow(keyValueEntity, request.getResultProperties()))
+                .toList();
     }
 
-    protected List<Map<String, Object>> deserializeRows(String rowsJson) {
-        try {
-            return getObjectMapper().readValue(rowsJson, LIST_OF_MAPS_TYPE);
-        } catch (IOException e) {
-            throw new IllegalStateException("Unable to deserialize query result rows", e);
+    protected Map<String, Object> toValueRow(KeyValueEntity keyValueEntity, List<String> resultProperties) {
+        Map<String, Object> row = new LinkedHashMap<>();
+        for (String property : resultProperties) {
+            row.put(property, keyValueEntity.getValue(property));
         }
-    }
-
-    protected ObjectMapper getObjectMapper() {
-        return objectMapper != null ? objectMapper : new ObjectMapper();
+        return Map.copyOf(row);
     }
 }

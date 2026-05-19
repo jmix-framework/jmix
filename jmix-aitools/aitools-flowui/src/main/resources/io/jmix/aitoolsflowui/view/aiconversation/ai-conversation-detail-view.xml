@@ -24,7 +24,8 @@
             </fetchPlan>
             <loader id="aiConversationDl"/>
         </instance>
-        <collection id="attachmentsDc"
+        <!--TODO: pinyazhin, attachments-->
+        <!--<collection id="attachmentsDc"
                     class="io.jmix.aitools.entity.AiConversationAttachment">
             <fetchPlan extends="_base"/>
             <loader id="attachmentsDl">
@@ -32,12 +33,22 @@
                     <![CDATA[select e from aitols_AiConversationAttachment e where e.conversation.id = :conversationId order by e.createdDate desc]]>
                 </query>
             </loader>
-        </collection>
+        </collection>-->
     </data>
     <facets>
         <dataLoadCoordinator auto="true"/>
     </facets>
     <layout>
-
+        <vbox id="chatPanel" width="100%" height="100%" spacing="true" padding="true">
+            <hbox id="conversationTitleLayout" spacing="false" alignItems="CENTER">
+                <h3 id="conversationTitle"
+                    dataContainer="aiConversationDc"
+                    property="title"
+                    classNames="m-0"/>
+                <button id="editConversationTitleBtn"
+                        icon="PENCIL"
+                        themeNames="tertiary-inline"/>
+            </hbox>
+        </vbox>
     </layout>
 </view>

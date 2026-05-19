@@ -47,23 +47,18 @@ public class JpqlExecutionTool implements DataLoadAiTool {
             - rootEntityName
             - structured parameters with name, type and value
             - usedEntities and usedPropertyPaths consistent with the JPQL query
-
-        CURRENT LIMITATION:
-            - The query must return root entity instances, for example: select e from Order e ...
-            - Scalar or loadValues-style projections are not supported by this tool yet.
+            - resultProperties listing returned columns in select-clause order for loadValues execution
 
         The tool returns:
             - the final JPQL draft after validation/repair
             - validation result
-            - converted execution parameters
             - query rows serialized as structured JSON objects
-            - execution warnings or execution error if the query could not be run
+            - execution error if the query could not be run
         """)
     public JpqlExecutionResult executeQuery(
             @ToolParam(description = "Structured request containing the original user text and the JPQL draft to execute.")
             JpqlExecutionRequest request) {
-        log.debug("LLM tool call: executeQuery(rootEntityName={}, jpql={})",
-                request == null ? null : request.getRootEntityName(),
+        log.debug("LLM tool call: executeQuery(jpql={})",
                 request == null ? null : request.getJpql());
 
         return jpqlExecutionService.execute(request);

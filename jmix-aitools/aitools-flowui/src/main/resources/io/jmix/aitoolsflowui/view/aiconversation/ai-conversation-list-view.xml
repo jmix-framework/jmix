@@ -22,7 +22,7 @@
             <fetchPlan extends="_base"/>
             <loader id="aiConversationsDl" readOnly="true">
                 <query>
-                    <![CDATA[select e from aitols_AiConversation e where e.firstMessageSent = true order by e.createdDate desc]]>
+                    <![CDATA[select e from aitols_AiConversation e order by e.createdDate desc]]>
                 </query>
             </loader>
         </collection>
@@ -38,7 +38,7 @@
         <action id="discardAction" type="lookup_discard"/>
     </actions>
     <layout>
-        <hbox id="buttonsPanel">
+        <hbox id="buttonsPanel" width="100%">
             <startSlot>
                 <button id="createButton" action="aiConversationsDataGrid.createAction"/>
                 <button id="editButton" action="aiConversationsDataGrid.editAction"/>

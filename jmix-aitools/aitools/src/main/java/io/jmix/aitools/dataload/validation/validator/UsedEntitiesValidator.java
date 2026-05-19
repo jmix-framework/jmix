@@ -17,10 +17,12 @@
 package io.jmix.aitools.dataload.validation.validator;
 
 import io.jmix.aitools.introspection.introspector.JpaDomainModelIntrospector;
-import io.jmix.core.JmixOrder;
 import io.jmix.aitools.dataload.generation.GeneratedJpqlResult;
 import io.jmix.aitools.dataload.validation.JpqlResultValidator;
 import io.jmix.aitools.dataload.validation.JpqlValidationIssue;
+import io.jmix.core.JmixOrder;
+import io.jmix.data.QueryParser;
+import io.jmix.data.QueryTransformerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
@@ -33,16 +35,27 @@ public class UsedEntitiesValidator implements JpqlResultValidator, Ordered {
 
     @Autowired
     protected JpaDomainModelIntrospector modelIntrospector;
+    @Autowired(required = false)
+    protected QueryTransformerFactory queryTransformerFactory;
 
     @Override
     public List<JpqlValidationIssue> validate(GeneratedJpqlResult result) {
+        QueryParser queryParser = JpqlValidatorUtils.getQueryParser(queryTransformerFactory, result.getJpql());
+        if (queryParser == null) {
+            return List.of();
+        }
+
         List<JpqlValidationIssue> issues = new ArrayList<>();
 
-        for (String usedEntity : result.getUsedEntities()) {
-            if (!modelIntrospector.containsEntity(usedEntity)) {
-                issues.add(new JpqlValidationIssue("usedEntity.unknown",
-                        "Unknown used entity: " + usedEntity));
+        try {
+            for (String usedEntity : queryParser.getAllEntityNames()) {
+                if (!modelIntrospector.containsEntity(usedEntity)) {
+                    issues.add(new JpqlValidationIssue("usedEntity.unknown",
+                            "Unknown used entity: " + usedEntity));
+                }
             }
+        } catch (RuntimeException e) {
+            return List.of();
         }
 
         return issues;

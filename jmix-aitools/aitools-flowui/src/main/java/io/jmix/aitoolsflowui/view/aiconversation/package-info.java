@@ -1,5 +1,5 @@
 /*
- * Copyright 2026 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.aitools;
+@NullMarked
+package io.jmix.aitoolsflowui.view.aiconversation;
 
-import io.jmix.core.annotation.JmixModule;
-import io.jmix.eclipselink.EclipselinkConfiguration;
-import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-
-@Configuration
-@ComponentScan
-@JmixModule(dependsOn = {EclipselinkConfiguration.class})
-@ConfigurationPropertiesScan
-public class AiToolsConfiguration {
-}
+import org.jspecify.annotations.NullMarked;

@@ -17,10 +17,12 @@
 package io.jmix.aitools.dataload.validation.validator;
 
 import io.jmix.aitools.introspection.introspector.JpaDomainModelIntrospector;
-import io.jmix.core.JmixOrder;
 import io.jmix.aitools.dataload.generation.GeneratedJpqlResult;
 import io.jmix.aitools.dataload.validation.JpqlResultValidator;
 import io.jmix.aitools.dataload.validation.JpqlValidationIssue;
+import io.jmix.core.JmixOrder;
+import io.jmix.data.QueryParser;
+import io.jmix.data.QueryTransformerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
@@ -32,16 +34,27 @@ public class RootEntityValidator implements JpqlResultValidator, Ordered {
 
     @Autowired
     protected JpaDomainModelIntrospector modelIntrospector;
+    @Autowired(required = false)
+    protected QueryTransformerFactory queryTransformerFactory;
 
     @Override
     public List<JpqlValidationIssue> validate(GeneratedJpqlResult result) {
-        String rootEntityName = result.getRootEntityName();
-        if (rootEntityName == null || rootEntityName.isBlank()) {
-            return List.of(new JpqlValidationIssue("rootEntity.blank", "Root entity name is blank"));
+        QueryParser queryParser = JpqlValidatorUtils.getQueryParser(queryTransformerFactory, result.getJpql());
+        if (queryParser == null) {
+            return List.of();
         }
 
-        if (!modelIntrospector.containsEntity(rootEntityName)) {
-            return List.of(new JpqlValidationIssue("rootEntity.unknown", "Unknown root entity: " + rootEntityName));
+        try {
+            String rootEntityName = queryParser.getEntityName();
+            if (rootEntityName.isBlank()) {
+                return List.of(new JpqlValidationIssue("rootEntity.blank", "Root entity name is blank"));
+            }
+
+            if (!modelIntrospector.containsEntity(rootEntityName)) {
+                return List.of(new JpqlValidationIssue("rootEntity.unknown", "Unknown root entity: " + rootEntityName));
+            }
+        } catch (RuntimeException e) {
+            return List.of();
         }
 
         return List.of();

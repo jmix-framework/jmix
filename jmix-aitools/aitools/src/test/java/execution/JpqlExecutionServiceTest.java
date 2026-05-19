@@ -42,7 +42,7 @@ class JpqlExecutionServiceTest {
     @DisplayName("Repairs and executes JPQL request")
     void testRepairsAndExecutesRequest() {
         TestJpqlExecutionService executionService = new TestJpqlExecutionService(List.of(
-                Map.of("_entityName", "aitols_Customer", "id", 1001L, "name", "Acme")
+                Map.of("id", 1001L, "name", "Acme")
         ));
         ReflectionTestUtils.setField(executionService, "jpqlValidationService", new SwitchingValidationService());
         ReflectionTestUtils.setField(executionService, "jpqlRepairService", new RepairingJpqlRepairService());
@@ -55,6 +55,7 @@ class JpqlExecutionServiceTest {
                 List.of(new JpqlExecutionParameter("id", "Long", "1001")),
                 List.of("aitols_Customer"),
                 List.of("badField"),
+                List.of("id", "name"),
                 null,
                 null
         ));
@@ -63,13 +64,14 @@ class JpqlExecutionServiceTest {
         assertTrue(result.isExecuted());
         assertTrue(result.isRepaired());
         assertEquals("select e from aitols_Customer e where e.id = :id", result.getGeneratedJpqlResult().getJpql());
+        assertEquals(List.of(Map.of("id", 1001L, "name", "Acme")), result.getRows());
     }
 
     @Test
     @DisplayName("Skips execution when JPQL remains invalid after repair")
     void testSkipsExecutionWhenResultRemainsInvalid() {
         TestJpqlExecutionService executionService = new TestJpqlExecutionService(List.of(
-                Map.of("_entityName", "aitols_Customer", "id", 1001L, "name", "Acme")
+                Map.of("id", 1001L, "name", "Acme")
         ));
         ReflectionTestUtils.setField(executionService, "jpqlValidationService", new AlwaysInvalidValidationService());
         ReflectionTestUtils.setField(executionService, "jpqlRepairService", new NoOpJpqlRepairService());
@@ -82,6 +84,7 @@ class JpqlExecutionServiceTest {
                 List.of(new JpqlExecutionParameter("name", "String", "Acme")),
                 List.of("aitols_Customer"),
                 List.of("fullTitle"),
+                List.of("id", "name"),
                 null,
                 null
         ));
@@ -94,6 +97,32 @@ class JpqlExecutionServiceTest {
                 .anyMatch(issue -> issue.getCode().equals("propertyPath.invalid")));
     }
 
+    @Test
+    @DisplayName("Fails loadValues execution without result properties")
+    void testFailsValuesRequestWithoutResultProperties() {
+        TestJpqlExecutionService executionService = new TestJpqlExecutionService(List.of());
+        ReflectionTestUtils.setField(executionService, "jpqlValidationService", new SwitchingValidationService());
+        ReflectionTestUtils.setField(executionService, "jpqlRepairService", new NoOpJpqlRepairService());
+        ReflectionTestUtils.setField(executionService, "jpqlParameterConversionService", new JpqlParameterConversionService());
+
+        JpqlExecutionResult result = executionService.execute(new JpqlExecutionRequest(
+                "Show customer order counts",
+                "select c.name, count(o) from aitols_Customer c join c.orders o group by c.name",
+                "aitols_Customer",
+                List.of(),
+                List.of("aitols_Customer", "aitols_Order"),
+                List.of("orders", "name"),
+                List.of(),
+                null,
+                null
+        ));
+
+        assertFalse(result.getValidationResult().isValid());
+        assertFalse(result.isExecuted());
+        assertTrue(result.getValidationResult().getIssues().stream()
+                .anyMatch(issue -> issue.getCode().equals("resultProperties.empty")));
+    }
+
     protected static class TestJpqlExecutionService extends JpqlExecutionService {
 
         protected List<Map<String, Object>> rows;
@@ -103,7 +132,8 @@ class JpqlExecutionServiceTest {
         }
 
         @Override
-        protected List<Map<String, Object>> executeQuery(GeneratedJpqlResult generatedJpqlResult,
+        protected List<Map<String, Object>> executeQuery(JpqlExecutionRequest request,
+                                                         GeneratedJpqlResult generatedJpqlResult,
                                                          Map<String, Object> executionParameters,
                                                          Integer maxResults,
                                                          Integer firstResult) {

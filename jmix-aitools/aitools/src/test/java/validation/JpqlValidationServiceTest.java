@@ -46,8 +46,8 @@ class JpqlValidationServiceTest {
                 "select e from aitols_Order e where e.customer.name like :customerName",
                 "aitols_Order",
                 List.of(new GeneratedJpqlParameter("customerName", "String", "%Acme%")),
-                List.of("aitols_Order", "aitols_Customer"),
-                List.of("customer.name"),
+                List.of(),
+                List.of(),
                 "Find orders by customer name",
                 List.of()
         );
@@ -79,15 +79,15 @@ class JpqlValidationServiceTest {
     }
 
     @Test
-    @DisplayName("Rejects unknown root entity, used entity, and property path")
-    void testRejectsUnknownMetadataReferences() {
+    @DisplayName("Rejects unknown root entity extracted from JPQL")
+    void testRejectsUnknownRootEntity() {
         GeneratedJpqlResult result = new GeneratedJpqlResult(
-                "select e from aitols_Order e where e.customer.fullTitle like :customerName",
-                "aitols_Unknown",
-                List.of(new GeneratedJpqlParameter("customerName", "String", "%Acme%")),
-                List.of("aitols_Order", "aitols_UnknownEntity"),
-                List.of("customer.fullTitle"),
-                "Unknown metadata references",
+                "select e from aitols_Unknown e where e.number = :number",
+                "aitols_Order",
+                List.of(new GeneratedJpqlParameter("number", "String", "1001")),
+                List.of(),
+                List.of(),
+                "Unknown root entity",
                 List.of()
         );
 
@@ -99,14 +99,34 @@ class JpqlValidationServiceTest {
     }
 
     @Test
-    @DisplayName("Rejects invalid property paths for known root entity")
+    @DisplayName("Rejects unknown used entities extracted from JPQL")
+    void testRejectsUnknownUsedEntity() {
+        GeneratedJpqlResult result = new GeneratedJpqlResult(
+                "select e from aitols_Order e, aitols_UnknownEntity u where e.number = :number",
+                "aitols_Order",
+                List.of(new GeneratedJpqlParameter("number", "String", "1001")),
+                List.of("aitols_Order", "aitols_UnknownEntity"),
+                List.of("number"),
+                "Unknown used entity",
+                List.of()
+        );
+
+        JpqlValidationResult validationResult = jpqlValidationService.validate(result);
+
+        assertFalse(validationResult.isValid());
+        assertFalse(validationResult.getIssues().stream().anyMatch(issue -> issue.getCode().equals("rootEntity.unknown")));
+        assertTrue(validationResult.getIssues().stream().anyMatch(issue -> issue.getCode().equals("usedEntity.unknown")));
+    }
+
+    @Test
+    @DisplayName("Rejects invalid property paths extracted from JPQL")
     void testRejectsInvalidPropertyPath() {
         GeneratedJpqlResult result = new GeneratedJpqlResult(
                 "select e from aitols_Order e where e.customer.fullTitle like :customerName",
                 "aitols_Order",
                 List.of(new GeneratedJpqlParameter("customerName", "String", "%Acme%")),
-                List.of("aitols_Order", "aitols_Customer"),
-                List.of("customer.fullTitle"),
+                List.of(),
+                List.of(),
                 "Invalid property path",
                 List.of()
         );
@@ -127,8 +147,8 @@ class JpqlValidationServiceTest {
                         new GeneratedJpqlParameter("customerName", "String", "%Acme%"),
                         new GeneratedJpqlParameter("unused", "String", "x")
                 ),
-                List.of("aitols_Order", "aitols_Customer"),
-                List.of("customer.name", "number"),
+                List.of(),
+                List.of(),
                 "Parameter mismatch",
                 List.of()
         );
@@ -147,8 +167,8 @@ class JpqlValidationServiceTest {
                 "select e from aitols_Order e where e.date >= DATE_SUB(CURRENT_DATE(), 1, 'month') limit :limit",
                 "aitols_Order",
                 List.of(new GeneratedJpqlParameter("limit", "Integer", 10)),
-                List.of("aitols_Order"),
-                List.of("date"),
+                List.of(),
+                List.of(),
                 "Invalid SQL constructs in JPQL",
                 List.of()
         );
@@ -167,8 +187,8 @@ class JpqlValidationServiceTest {
                 "select e from aitols_Order e where e.date >= CURRENT_DATE()",
                 "aitols_Order",
                 List.of(),
-                List.of("aitols_Order"),
-                List.of("date"),
+                List.of(),
+                List.of(),
                 "Uses CURRENT_DATE with parentheses",
                 List.of()
         );
@@ -187,8 +207,8 @@ class JpqlValidationServiceTest {
                 "select e from aitols_Order e where @between(e.orderDate, now-1, now, month)",
                 "aitols_Order",
                 List.of(),
-                List.of("aitols_Order"),
-                List.of("orderDate"),
+                List.of(),
+                List.of(),
                 "Orders for last month",
                 List.of()
         );
@@ -205,8 +225,8 @@ class JpqlValidationServiceTest {
                 "select e from aitols_Order e where e.orderDate >= FIRST_DAY_OF_CURRENT_MONTH and e.orderDate <= LAST_DAY_OF_CURRENT_MONTH",
                 "aitols_Order",
                 List.of(),
-                List.of("aitols_Order"),
-                List.of("orderDate"),
+                List.of(),
+                List.of(),
                 "Orders for current month",
                 List.of()
         );
@@ -223,8 +243,8 @@ class JpqlValidationServiceTest {
                 "select e from aitols_Order e where @unknownMacro(e.orderDate)",
                 "aitols_Order",
                 List.of(),
-                List.of("aitols_Order"),
-                List.of("orderDate"),
+                List.of(),
+                List.of(),
                 "Unsupported macro",
                 List.of()
         );
@@ -243,8 +263,8 @@ class JpqlValidationServiceTest {
                 "select e from aitols_Order e where e.orderDate >= START_OF_LAST_MONTH",
                 "aitols_Order",
                 List.of(),
-                List.of("aitols_Order"),
-                List.of("orderDate"),
+                List.of(),
+                List.of(),
                 "Unsupported relative constant",
                 List.of()
         );
@@ -263,8 +283,8 @@ class JpqlValidationServiceTest {
                 "select e from aitols_Order e where e.number = 'START_OF_LAST_MONTH'",
                 "aitols_Order",
                 List.of(),
-                List.of("aitols_Order"),
-                List.of("number"),
+                List.of(),
+                List.of(),
                 "String literal that looks like a relative constant",
                 List.of()
         );
@@ -281,7 +301,7 @@ class JpqlValidationServiceTest {
                 "select e from aitols_Order e limit 10",
                 "aitols_Order",
                 List.of(),
-                List.of("aitols_Order"),
+                List.of(),
                 List.of(),
                 "Invalid JPQL syntax",
                 List.of()

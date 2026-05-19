@@ -28,6 +28,7 @@ public class JpqlExecutionRequest {
     protected List<JpqlExecutionParameter> parameters = List.of();
     protected List<String> usedEntities = List.of();
     protected List<String> usedPropertyPaths = List.of();
+    protected List<String> resultProperties = List.of();
     protected Integer maxResults;
     protected Integer firstResult;
 
@@ -40,6 +41,7 @@ public class JpqlExecutionRequest {
                                 List<JpqlExecutionParameter> parameters,
                                 List<String> usedEntities,
                                 List<String> usedPropertyPaths,
+                                @Nullable List<String> resultProperties,
                                 @Nullable Integer maxResults,
                                 @Nullable Integer firstResult) {
         this.userText = userText;
@@ -48,6 +50,7 @@ public class JpqlExecutionRequest {
         setParameters(parameters);
         setUsedEntities(usedEntities);
         setUsedPropertyPaths(usedPropertyPaths);
+        setResultProperties(resultProperties);
         this.maxResults = maxResults;
         this.firstResult = firstResult;
     }
@@ -98,6 +101,14 @@ public class JpqlExecutionRequest {
 
     public void setUsedPropertyPaths(@Nullable List<String> usedPropertyPaths) {
         this.usedPropertyPaths = usedPropertyPaths == null ? List.of() : List.copyOf(usedPropertyPaths);
+    }
+
+    public List<String> getResultProperties() {
+        return resultProperties;
+    }
+
+    public void setResultProperties(@Nullable List<String> resultProperties) {
+        this.resultProperties = resultProperties == null ? List.of() : List.copyOf(resultProperties);
     }
 
     @Nullable

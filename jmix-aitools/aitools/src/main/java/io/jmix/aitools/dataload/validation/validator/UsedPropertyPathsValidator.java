@@ -17,10 +17,12 @@
 package io.jmix.aitools.dataload.validation.validator;
 
 import io.jmix.aitools.introspection.introspector.JpaDomainModelIntrospector;
-import io.jmix.core.JmixOrder;
 import io.jmix.aitools.dataload.generation.GeneratedJpqlResult;
 import io.jmix.aitools.dataload.validation.JpqlResultValidator;
 import io.jmix.aitools.dataload.validation.JpqlValidationIssue;
+import io.jmix.core.JmixOrder;
+import io.jmix.data.QueryParser;
+import io.jmix.data.QueryTransformerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
@@ -33,21 +35,33 @@ public class UsedPropertyPathsValidator implements JpqlResultValidator, Ordered 
 
     @Autowired
     protected JpaDomainModelIntrospector modelIntrospector;
+    @Autowired(required = false)
+    protected QueryTransformerFactory queryTransformerFactory;
 
     @Override
     public List<JpqlValidationIssue> validate(GeneratedJpqlResult result) {
-        String rootEntityName = result.getRootEntityName();
-        if (rootEntityName == null || rootEntityName.isBlank() || !modelIntrospector.containsEntity(rootEntityName)) {
+        QueryParser queryParser = JpqlValidatorUtils.getQueryParser(queryTransformerFactory, result.getJpql());
+        if (queryParser == null) {
             return List.of();
         }
 
         List<JpqlValidationIssue> issues = new ArrayList<>();
 
-        for (String propertyPath : result.getUsedPropertyPaths()) {
-            if (!modelIntrospector.containsPropertyPath(rootEntityName, propertyPath)) {
-                issues.add(new JpqlValidationIssue("propertyPath.invalid",
-                        "Invalid property path for root entity " + rootEntityName + ": " + propertyPath));
+        try {
+            for (QueryParser.QueryPath queryPath : queryParser.getQueryPaths()) {
+                if (queryPath.getFullPath().equals(queryPath.getVariableName())) {
+                    continue;
+                }
+
+                String entityName = queryPath.getEntityName();
+                String propertyPath = queryPath.getPropertyPath();
+                if (!modelIntrospector.containsPropertyPath(entityName, propertyPath)) {
+                    issues.add(new JpqlValidationIssue("propertyPath.invalid",
+                            "Invalid property path for entity " + entityName + ": " + propertyPath));
+                }
             }
+        } catch (RuntimeException e) {
+            return List.of();
         }
 
         return issues;

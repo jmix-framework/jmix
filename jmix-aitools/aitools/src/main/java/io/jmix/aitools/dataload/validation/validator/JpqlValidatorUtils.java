@@ -16,6 +16,10 @@
 
 package io.jmix.aitools.dataload.validation.validator;
 
+import io.jmix.data.QueryParser;
+import io.jmix.data.QueryTransformerFactory;
+import org.jspecify.annotations.Nullable;
+
 import java.util.regex.Pattern;
 
 public final class JpqlValidatorUtils {
@@ -29,5 +33,19 @@ public final class JpqlValidatorUtils {
 
     public static boolean containsFunctionCall(String text, String functionName) {
         return Pattern.compile("\\b" + Pattern.quote(functionName) + "\\s*\\(").matcher(text).find();
+    }
+
+    @Nullable
+    public static QueryParser getQueryParser(@Nullable QueryTransformerFactory queryTransformerFactory,
+                                             @Nullable String jpql) {
+        if (queryTransformerFactory == null || jpql == null || jpql.isBlank()) {
+            return null;
+        }
+
+        try {
+            return queryTransformerFactory.parser(jpql);
+        } catch (RuntimeException e) {
+            return null;
+        }
     }
 }

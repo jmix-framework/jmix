@@ -316,16 +316,7 @@ public class InstanceNameProviderImpl implements InstanceNameProvider {
             method = instanceNameMethods.get(0);
             method.setAccessible(true);
         } else if (!nameProperties.isEmpty()) {
-            selectedNameProperty = nameProperties.get(0);
-
-            for (int i = 1; i < nameProperties.size(); i++) {
-                MetaProperty current = nameProperties.get(i);
-                //check for null just in case: should not happen for @InstanceName-annotated property
-                if (selectedNameProperty.getDeclaringClass() != null && current.getDeclaringClass() != null
-                        && !current.getDeclaringClass().isAssignableFrom(selectedNameProperty.getDeclaringClass())) {
-                    selectedNameProperty = current;//use the one declared in extending class
-                }
-            }
+            selectedNameProperty = selectNameProperty(nameProperties);
         } else {
             if (metaClass.getAncestor() != null) {
                 InstanceNameRec ancestorRec = parseNamePattern(metaClass.getAncestor());
@@ -352,6 +343,36 @@ public class InstanceNameProviderImpl implements InstanceNameProvider {
         if (metaProperty.getAnnotatedElement().getAnnotation(InstanceName.class) != null) {
             return true;
         }
+        return Boolean.TRUE.equals(metadataTools.getMetaAnnotationValue(metaProperty, InstanceName.class));
+    }
+
+    protected MetaProperty selectNameProperty(List<MetaProperty> nameProperties) {
+        MetaProperty selectedNameProperty = nameProperties.get(0);
+
+        for (int i = 1; i < nameProperties.size(); i++) {
+            MetaProperty current = nameProperties.get(i);
+            if (isPreferredNameProperty(current, selectedNameProperty)) {
+                selectedNameProperty = current;
+            }
+        }
+
+        return selectedNameProperty;
+    }
+
+    protected boolean isPreferredNameProperty(MetaProperty candidate, MetaProperty current) {
+        boolean candidateHasRuntimeAnnotation = hasRuntimeInstanceNameAnnotation(candidate);
+        boolean currentHasRuntimeAnnotation = hasRuntimeInstanceNameAnnotation(current);
+        if (candidateHasRuntimeAnnotation != currentHasRuntimeAnnotation) {
+            return candidateHasRuntimeAnnotation;
+        }
+
+        // Check for null just in case: should not happen for @InstanceName-annotated property.
+        return candidate.getDeclaringClass() != null
+                && current.getDeclaringClass() != null
+                && !candidate.getDeclaringClass().isAssignableFrom(current.getDeclaringClass());
+    }
+
+    protected boolean hasRuntimeInstanceNameAnnotation(MetaProperty metaProperty) {
         return Boolean.TRUE.equals(metadataTools.getMetaAnnotationValue(metaProperty, InstanceName.class));
     }
 

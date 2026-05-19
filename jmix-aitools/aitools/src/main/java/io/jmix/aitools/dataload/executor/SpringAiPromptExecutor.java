@@ -89,10 +89,7 @@ public class SpringAiPromptExecutor {
 
         return new GeneratedJpqlResult(
                 payload.getJpql(),
-                payload.getRootEntityName(),
                 parameters,
-                payload.getUsedEntities() == null ? Collections.emptyList() : payload.getUsedEntities(),
-                payload.getUsedPropertyPaths() == null ? Collections.emptyList() : payload.getUsedPropertyPaths(),
                 payload.getExplanation(),
                 payload.getWarnings() == null ? Collections.emptyList() : payload.getWarnings(),
                 payload.getMaxResults(),

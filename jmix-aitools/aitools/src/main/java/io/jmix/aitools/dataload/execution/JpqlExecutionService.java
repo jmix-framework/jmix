@@ -102,16 +102,8 @@ public class JpqlExecutionService {
     }
 
     protected GeneratedJpqlResult toGeneratedJpqlResult(JpqlExecutionRequest request) {
-        return new GeneratedJpqlResult(
-                request.getJpql(),
-                request.getRootEntityName(),
-                toGeneratedParameters(request.getParameters()),
-                request.getUsedEntities(),
-                request.getUsedPropertyPaths(),
-                "",
-                List.of(),
-                request.getMaxResults(),
-                request.getFirstResult()
+        return new GeneratedJpqlResult(request.getJpql(), toGeneratedParameters(request.getParameters()),
+                "", List.of(), request.getMaxResults(), request.getFirstResult()
         );
     }
 

@@ -56,9 +56,6 @@ class JpqlGenerationServiceTest {
         GeneratedJpqlResult result = jpqlGenerationService.generate("orders by customer name");
 
         assertEquals("select e from aitols_Order e", result.getJpql());
-        assertEquals("aitols_Order", result.getRootEntityName());
-        assertEquals(List.of("aitols_Order"), result.getUsedEntities());
-        assertEquals(List.of("customer.name"), result.getUsedPropertyPaths());
         assertEquals("Fake generator result", result.getExplanation());
         assertEquals("customerName", result.getParameters().get(0).getName());
     }

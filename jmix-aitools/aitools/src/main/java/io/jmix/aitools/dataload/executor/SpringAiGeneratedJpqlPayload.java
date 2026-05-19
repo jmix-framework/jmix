@@ -21,10 +21,7 @@ import java.util.List;
 public class SpringAiGeneratedJpqlPayload {
 
     protected String jpql;
-    protected String rootEntityName;
     protected List<SpringAiGeneratedJpqlParameterPayload> parameters;
-    protected List<String> usedEntities;
-    protected List<String> usedPropertyPaths;
     protected String explanation;
     protected List<String> warnings;
     protected Integer maxResults;
@@ -38,36 +35,12 @@ public class SpringAiGeneratedJpqlPayload {
         this.jpql = jpql;
     }
 
-    public String getRootEntityName() {
-        return rootEntityName;
-    }
-
-    public void setRootEntityName(String rootEntityName) {
-        this.rootEntityName = rootEntityName;
-    }
-
     public List<SpringAiGeneratedJpqlParameterPayload> getParameters() {
         return parameters;
     }
 
     public void setParameters(List<SpringAiGeneratedJpqlParameterPayload> parameters) {
         this.parameters = parameters;
-    }
-
-    public List<String> getUsedEntities() {
-        return usedEntities;
-    }
-
-    public void setUsedEntities(List<String> usedEntities) {
-        this.usedEntities = usedEntities;
-    }
-
-    public List<String> getUsedPropertyPaths() {
-        return usedPropertyPaths;
-    }
-
-    public void setUsedPropertyPaths(List<String> usedPropertyPaths) {
-        this.usedPropertyPaths = usedPropertyPaths;
     }
 
     public String getExplanation() {

@@ -50,12 +50,9 @@ class SpringAiJpqlGeneratorTest {
         String content = """
                 {
                   "jpql": "select e from aitols_Order e where e.customer.name like :customerName",
-                  "rootEntityName": "aitols_Order",
                   "parameters": [
                     {"name": "customerName", "type": "String", "value": "%Acme%"}
                   ],
-                  "usedEntities": ["aitols_Order", "aitols_Customer"],
-                  "usedPropertyPaths": ["customer.name"],
                   "explanation": "Find orders by customer name",
                   "warnings": ["Customer and counterparty may both match"],
                   "maxResults": 10,
@@ -72,9 +69,7 @@ class SpringAiJpqlGeneratorTest {
         ));
 
         assertEquals("select e from aitols_Order e where e.customer.name like :customerName", result.getJpql());
-        assertEquals("aitols_Order", result.getRootEntityName());
         assertEquals(1, result.getParameters().size());
-        assertEquals("customer.name", result.getUsedPropertyPaths().get(0));
         assertTrue(result.getWarnings().contains("Customer and counterparty may both match"));
         assertEquals(10, result.getMaxResults());
         assertEquals(5, result.getFirstResult());
@@ -87,10 +82,7 @@ class SpringAiJpqlGeneratorTest {
                 ```json
                 {
                   "jpql": "select e from aitols_Order e",
-                  "rootEntityName": "aitols_Order",
                   "parameters": [],
-                  "usedEntities": ["aitols_Order"],
-                  "usedPropertyPaths": [],
                   "explanation": "Return orders",
                   "warnings": []
                 }

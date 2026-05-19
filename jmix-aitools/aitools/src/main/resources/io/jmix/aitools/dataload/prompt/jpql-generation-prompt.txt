@@ -6,5 +6,3 @@ Available schema:
 
 Produce a read-only JPQL draft that answers the request using only the schema above.
 Fill parameters with reasonable placeholders derived from the request text.
-Include all entities you used in usedEntities.
-Include all property paths you used in usedPropertyPaths.

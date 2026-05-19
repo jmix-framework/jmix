@@ -24,45 +24,33 @@ import java.util.List;
  * Structured JPQL draft returned by the generation layer.
  * <p>
  * This type represents what the LLM produced after generation or repair. It keeps the
- * generated JPQL text together with structured metadata such as parameters, used entities,
- * used property paths, explanation, warnings, and optional execution hints.
+ * generated JPQL text together with structured metadata such as parameters, explanation,
+ * warnings, and optional execution hints.
  */
 public class GeneratedJpqlResult {
 
     protected String jpql;
-    protected String rootEntityName;
     protected List<GeneratedJpqlParameter> parameters;
-    protected List<String> usedEntities;
-    protected List<String> usedPropertyPaths;
     protected String explanation;
     protected List<String> warnings;
     protected Integer maxResults;
     protected Integer firstResult;
 
     public GeneratedJpqlResult(String jpql,
-                               String rootEntityName,
                                List<GeneratedJpqlParameter> parameters,
-                               List<String> usedEntities,
-                               List<String> usedPropertyPaths,
                                String explanation,
                                List<String> warnings) {
-        this(jpql, rootEntityName, parameters, usedEntities, usedPropertyPaths, explanation, warnings, null, null);
+        this(jpql, parameters, explanation, warnings, null, null);
     }
 
     public GeneratedJpqlResult(String jpql,
-                               String rootEntityName,
                                List<GeneratedJpqlParameter> parameters,
-                               List<String> usedEntities,
-                               List<String> usedPropertyPaths,
                                String explanation,
                                List<String> warnings,
                                @Nullable Integer maxResults,
                                @Nullable Integer firstResult) {
         this.jpql = jpql;
-        this.rootEntityName = rootEntityName;
         this.parameters = parameters;
-        this.usedEntities = usedEntities;
-        this.usedPropertyPaths = usedPropertyPaths;
         this.explanation = explanation;
         this.warnings = warnings;
         this.maxResults = maxResults;
@@ -74,31 +62,10 @@ public class GeneratedJpqlResult {
     }
 
     /**
-     * Returns the root entity name selected by the generation layer.
-     */
-    public String getRootEntityName() {
-        return rootEntityName;
-    }
-
-    /**
      * Returns the structured parameters produced together with the JPQL draft.
      */
     public List<GeneratedJpqlParameter> getParameters() {
         return parameters;
-    }
-
-    /**
-     * Returns all entity names that the generation layer reported as used by the query.
-     */
-    public List<String> getUsedEntities() {
-        return usedEntities;
-    }
-
-    /**
-     * Returns all property paths that the generation layer reported as used by the query.
-     */
-    public List<String> getUsedPropertyPaths() {
-        return usedPropertyPaths;
     }
 
     /**
@@ -141,10 +108,7 @@ public class GeneratedJpqlResult {
     public String toString() {
         return "GeneratedJpqlResult{" +
                 "jpql='" + jpql + '\'' +
-                ", rootEntityName='" + rootEntityName + '\'' +
                 ", parameters=" + parameters +
-                ", usedEntities=" + usedEntities +
-                ", usedPropertyPaths=" + usedPropertyPaths +
                 ", explanation='" + explanation + '\'' +
                 ", warnings=" + warnings +
                 ", maxResults=" + maxResults +

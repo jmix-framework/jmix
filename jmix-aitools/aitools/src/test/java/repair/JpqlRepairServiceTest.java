@@ -122,10 +122,7 @@ class JpqlRepairServiceTest {
     protected GeneratedJpqlResult validResult() {
         return new GeneratedJpqlResult(
                 "select e from aitols_Order e where e.customer.name like :customerName",
-                "aitols_Order",
                 List.of(new GeneratedJpqlParameter("customerName", "String", "%Acme%")),
-                List.of("aitols_Order", "aitols_Customer"),
-                List.of("customer.name"),
                 "Valid test result",
                 List.of()
         );
@@ -134,10 +131,7 @@ class JpqlRepairServiceTest {
     protected GeneratedJpqlResult invalidResult() {
         return new GeneratedJpqlResult(
                 "select e from aitols_Order e where e.customer.fullTitle like :customerName",
-                "aitols_Order",
                 List.of(new GeneratedJpqlParameter("customerName", "String", "%Acme%")),
-                List.of("aitols_Order", "aitols_Customer"),
-                List.of("customer.fullTitle"),
                 "Invalid test result",
                 List.of()
         );
@@ -163,10 +157,7 @@ class JpqlRepairServiceTest {
         protected static GeneratedJpqlResult validResultStatic() {
             return new GeneratedJpqlResult(
                     "select e from aitols_Order e where e.customer.name like :customerName",
-                    "aitols_Order",
                     List.of(new GeneratedJpqlParameter("customerName", "String", "%Acme%")),
-                    List.of("aitols_Order", "aitols_Customer"),
-                    List.of("customer.name"),
                     "Valid test result",
                     List.of()
             );
@@ -175,10 +166,7 @@ class JpqlRepairServiceTest {
         protected static GeneratedJpqlResult invalidResultStatic() {
             return new GeneratedJpqlResult(
                     "select e from aitols_Order e where e.customer.fullTitle like :customerName",
-                    "aitols_Order",
                     List.of(new GeneratedJpqlParameter("customerName", "String", "%Acme%")),
-                    List.of("aitols_Order", "aitols_Customer"),
-                    List.of("customer.fullTitle"),
                     "Invalid test result",
                     List.of()
             );

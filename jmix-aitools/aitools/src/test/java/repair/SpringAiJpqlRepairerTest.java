@@ -53,12 +53,9 @@ class SpringAiJpqlRepairerTest {
         String content = """
                 {
                   "jpql": "select e from aitols_Order e where e.customer.name like :customerName",
-                  "rootEntityName": "aitols_Order",
                   "parameters": [
                     {"name": "customerName", "type": "String", "value": "%Acme%"}
                   ],
-                  "usedEntities": ["aitols_Order", "aitols_Customer"],
-                  "usedPropertyPaths": ["customer.name"],
                   "explanation": "Fixed property path",
                   "warnings": []
                 }
@@ -74,10 +71,7 @@ class SpringAiJpqlRepairerTest {
                 executionRequest,
                 new GeneratedJpqlResult(
                         "select e from aitols_Order e where e.customer.fullTitle like :customerName",
-                        "aitols_Order",
                         List.of(new GeneratedJpqlParameter("customerName", "String", "%Acme%")),
-                        List.of("aitols_Order", "aitols_Customer"),
-                        List.of("customer.fullTitle"),
                         "Broken query",
                         List.of()
                 ),
@@ -88,6 +82,5 @@ class SpringAiJpqlRepairerTest {
         ));
 
         assertEquals("select e from aitols_Order e where e.customer.name like :customerName", repaired.getJpql());
-        assertEquals("customer.name", repaired.getUsedPropertyPaths().get(0));
     }
 }

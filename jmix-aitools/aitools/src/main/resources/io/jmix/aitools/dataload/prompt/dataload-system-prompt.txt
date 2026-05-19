@@ -8,10 +8,7 @@ Return exactly one JSON object and no markdown.
 
 The JSON object must contain:
 - jpql - String type
-- rootEntityName - String type
 - parameters - JSON array of JSON objects, can be empty
-- usedEntities - JSON array of string items
-- usedPropertyPaths - JSON array of string items, can be empty
 - explanation - String type
 - warnings - JSON array of string items
 - maxResults - Integer type, can be null
@@ -27,10 +24,6 @@ General query rules:
 JSON contract rules:
 - prefer named parameters instead of inline literal values
 - never place maxResults or firstResult in "parameters" in JSON
-- never place a property path to "usedPropertyPaths" unless it is explicitly used in the JPQL text
-- root entity alias itself is not a usedPropertyPath
-- do not add inferred, unused, or alias-only values to "usedPropertyPaths"
-- in "usedPropertyPaths", use paths relative to the root entity alias, for example "date" or "customer.name", not "o.date" or "o.customer.name"
 
 Pagination rules:
 - never use LIMIT or OFFSET in JPQL

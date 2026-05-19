@@ -23,12 +23,11 @@ import java.util.List;
 public class JpqlExecutionRequest {
 
     protected String userText;
+
     protected String jpql;
-    protected String rootEntityName;
     protected List<JpqlExecutionParameter> parameters = List.of();
-    protected List<String> usedEntities = List.of();
-    protected List<String> usedPropertyPaths = List.of();
     protected List<String> resultProperties = List.of();
+
     protected Integer maxResults;
     protected Integer firstResult;
 
@@ -37,19 +36,13 @@ public class JpqlExecutionRequest {
 
     public JpqlExecutionRequest(String userText,
                                 String jpql,
-                                String rootEntityName,
                                 List<JpqlExecutionParameter> parameters,
-                                List<String> usedEntities,
-                                List<String> usedPropertyPaths,
                                 @Nullable List<String> resultProperties,
                                 @Nullable Integer maxResults,
                                 @Nullable Integer firstResult) {
         this.userText = userText;
         this.jpql = jpql;
-        this.rootEntityName = rootEntityName;
         setParameters(parameters);
-        setUsedEntities(usedEntities);
-        setUsedPropertyPaths(usedPropertyPaths);
         setResultProperties(resultProperties);
         this.maxResults = maxResults;
         this.firstResult = firstResult;
@@ -71,36 +64,12 @@ public class JpqlExecutionRequest {
         this.jpql = jpql;
     }
 
-    public String getRootEntityName() {
-        return rootEntityName;
-    }
-
-    public void setRootEntityName(String rootEntityName) {
-        this.rootEntityName = rootEntityName;
-    }
-
     public List<JpqlExecutionParameter> getParameters() {
         return parameters;
     }
 
     public void setParameters(@Nullable List<JpqlExecutionParameter> parameters) {
         this.parameters = parameters == null ? List.of() : List.copyOf(parameters);
-    }
-
-    public List<String> getUsedEntities() {
-        return usedEntities;
-    }
-
-    public void setUsedEntities(@Nullable List<String> usedEntities) {
-        this.usedEntities = usedEntities == null ? List.of() : List.copyOf(usedEntities);
-    }
-
-    public List<String> getUsedPropertyPaths() {
-        return usedPropertyPaths;
-    }
-
-    public void setUsedPropertyPaths(@Nullable List<String> usedPropertyPaths) {
-        this.usedPropertyPaths = usedPropertyPaths == null ? List.of() : List.copyOf(usedPropertyPaths);
     }
 
     public List<String> getResultProperties() {

@@ -44,9 +44,7 @@ public class JpqlExecutionTool implements DataLoadAiTool {
         The request must contain:
             - the original user text in userText
             - a JPQL select query in jpql
-            - rootEntityName
             - structured parameters with name, type and value
-            - usedEntities and usedPropertyPaths consistent with the JPQL query
             - resultProperties listing returned columns in select-clause order for loadValues execution
 
         The tool returns:

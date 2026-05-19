@@ -44,10 +44,7 @@ class JpqlValidationServiceTest {
     void testValidatesCorrectResult() {
         GeneratedJpqlResult result = new GeneratedJpqlResult(
                 "select e from aitols_Order e where e.customer.name like :customerName",
-                "aitols_Order",
                 List.of(new GeneratedJpqlParameter("customerName", "String", "%Acme%")),
-                List.of(),
-                List.of(),
                 "Find orders by customer name",
                 List.of()
         );
@@ -63,10 +60,7 @@ class JpqlValidationServiceTest {
     void testRejectsNonSelectAndWriteJpql() {
         GeneratedJpqlResult result = new GeneratedJpqlResult(
                 "delete from aitols_Order e where e.id = :id",
-                "aitols_Order",
                 List.of(new GeneratedJpqlParameter("id", "UUID", null)),
-                List.of("aitols_Order"),
-                List.of("id"),
                 "Delete order",
                 List.of()
         );
@@ -83,10 +77,7 @@ class JpqlValidationServiceTest {
     void testRejectsUnknownRootEntity() {
         GeneratedJpqlResult result = new GeneratedJpqlResult(
                 "select e from aitols_Unknown e where e.number = :number",
-                "aitols_Order",
                 List.of(new GeneratedJpqlParameter("number", "String", "1001")),
-                List.of(),
-                List.of(),
                 "Unknown root entity",
                 List.of()
         );
@@ -103,10 +94,7 @@ class JpqlValidationServiceTest {
     void testRejectsUnknownUsedEntity() {
         GeneratedJpqlResult result = new GeneratedJpqlResult(
                 "select e from aitols_Order e, aitols_UnknownEntity u where e.number = :number",
-                "aitols_Order",
                 List.of(new GeneratedJpqlParameter("number", "String", "1001")),
-                List.of("aitols_Order", "aitols_UnknownEntity"),
-                List.of("number"),
                 "Unknown used entity",
                 List.of()
         );
@@ -123,10 +111,7 @@ class JpqlValidationServiceTest {
     void testRejectsInvalidPropertyPath() {
         GeneratedJpqlResult result = new GeneratedJpqlResult(
                 "select e from aitols_Order e where e.customer.fullTitle like :customerName",
-                "aitols_Order",
                 List.of(new GeneratedJpqlParameter("customerName", "String", "%Acme%")),
-                List.of(),
-                List.of(),
                 "Invalid property path",
                 List.of()
         );
@@ -142,13 +127,10 @@ class JpqlValidationServiceTest {
     void testRejectsParameterMismatches() {
         GeneratedJpqlResult result = new GeneratedJpqlResult(
                 "select e from aitols_Order e where e.customer.name like :customerName and e.number = :number",
-                "aitols_Order",
                 List.of(
                         new GeneratedJpqlParameter("customerName", "String", "%Acme%"),
                         new GeneratedJpqlParameter("unused", "String", "x")
                 ),
-                List.of(),
-                List.of(),
                 "Parameter mismatch",
                 List.of()
         );
@@ -165,10 +147,7 @@ class JpqlValidationServiceTest {
     void testRejectsCommonNonJpqlConstructs() {
         GeneratedJpqlResult result = new GeneratedJpqlResult(
                 "select e from aitols_Order e where e.date >= DATE_SUB(CURRENT_DATE(), 1, 'month') limit :limit",
-                "aitols_Order",
                 List.of(new GeneratedJpqlParameter("limit", "Integer", 10)),
-                List.of(),
-                List.of(),
                 "Invalid SQL constructs in JPQL",
                 List.of()
         );
@@ -185,9 +164,6 @@ class JpqlValidationServiceTest {
     void testRejectsCurrentFunctionsWithParentheses() {
         GeneratedJpqlResult result = new GeneratedJpqlResult(
                 "select e from aitols_Order e where e.date >= CURRENT_DATE()",
-                "aitols_Order",
-                List.of(),
-                List.of(),
                 List.of(),
                 "Uses CURRENT_DATE with parentheses",
                 List.of()
@@ -205,9 +181,6 @@ class JpqlValidationServiceTest {
     void testAcceptsSupportedJmixDateMacros() {
         GeneratedJpqlResult result = new GeneratedJpqlResult(
                 "select e from aitols_Order e where @between(e.orderDate, now-1, now, month)",
-                "aitols_Order",
-                List.of(),
-                List.of(),
                 List.of(),
                 "Orders for last month",
                 List.of()
@@ -223,9 +196,6 @@ class JpqlValidationServiceTest {
     void testAcceptsSupportedRelativeDateTimeConstants() {
         GeneratedJpqlResult result = new GeneratedJpqlResult(
                 "select e from aitols_Order e where e.orderDate >= FIRST_DAY_OF_CURRENT_MONTH and e.orderDate <= LAST_DAY_OF_CURRENT_MONTH",
-                "aitols_Order",
-                List.of(),
-                List.of(),
                 List.of(),
                 "Orders for current month",
                 List.of()
@@ -241,9 +211,6 @@ class JpqlValidationServiceTest {
     void testRejectsUnsupportedJmixQueryMacros() {
         GeneratedJpqlResult result = new GeneratedJpqlResult(
                 "select e from aitols_Order e where @unknownMacro(e.orderDate)",
-                "aitols_Order",
-                List.of(),
-                List.of(),
                 List.of(),
                 "Unsupported macro",
                 List.of()
@@ -261,9 +228,6 @@ class JpqlValidationServiceTest {
     void testRejectsUnsupportedRelativeDateTimeConstants() {
         GeneratedJpqlResult result = new GeneratedJpqlResult(
                 "select e from aitols_Order e where e.orderDate >= START_OF_LAST_MONTH",
-                "aitols_Order",
-                List.of(),
-                List.of(),
                 List.of(),
                 "Unsupported relative constant",
                 List.of()
@@ -281,9 +245,6 @@ class JpqlValidationServiceTest {
     void testIgnoresRelativeDateTimeLikeStringLiteral() {
         GeneratedJpqlResult result = new GeneratedJpqlResult(
                 "select e from aitols_Order e where e.number = 'START_OF_LAST_MONTH'",
-                "aitols_Order",
-                List.of(),
-                List.of(),
                 List.of(),
                 "String literal that looks like a relative constant",
                 List.of()
@@ -299,9 +260,6 @@ class JpqlValidationServiceTest {
     void testRejectsInvalidJpqlSyntax() {
         GeneratedJpqlResult result = new GeneratedJpqlResult(
                 "select e from aitols_Order e limit 10",
-                "aitols_Order",
-                List.of(),
-                List.of(),
                 List.of(),
                 "Invalid JPQL syntax",
                 List.of()

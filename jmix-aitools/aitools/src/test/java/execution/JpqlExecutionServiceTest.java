@@ -51,10 +51,7 @@ class JpqlExecutionServiceTest {
         JpqlExecutionResult result = executionService.execute(new JpqlExecutionRequest(
                 "Show customer 1001",
                 "select e from aitols_Customer e where e.badField = :id",
-                "aitols_Customer",
                 List.of(new JpqlExecutionParameter("id", "Long", "1001")),
-                List.of("aitols_Customer"),
-                List.of("badField"),
                 List.of("id", "name"),
                 null,
                 null
@@ -80,10 +77,7 @@ class JpqlExecutionServiceTest {
         JpqlExecutionResult result = executionService.execute(new JpqlExecutionRequest(
                 "Show customer by full title",
                 "select e from aitols_Customer e where e.fullTitle = :name",
-                "aitols_Customer",
                 List.of(new JpqlExecutionParameter("name", "String", "Acme")),
-                List.of("aitols_Customer"),
-                List.of("fullTitle"),
                 List.of("id", "name"),
                 null,
                 null
@@ -108,10 +102,7 @@ class JpqlExecutionServiceTest {
         JpqlExecutionResult result = executionService.execute(new JpqlExecutionRequest(
                 "Show customer order counts",
                 "select c.name, count(o) from aitols_Customer c join c.orders o group by c.name",
-                "aitols_Customer",
                 List.of(),
-                List.of("aitols_Customer", "aitols_Order"),
-                List.of("orders", "name"),
                 List.of(),
                 null,
                 null
@@ -172,10 +163,7 @@ class JpqlExecutionServiceTest {
                                                JpqlValidationResult validationResult) {
             GeneratedJpqlResult repairedResult = new GeneratedJpqlResult(
                     "select e from aitols_Customer e where e.id = :id",
-                    "aitols_Customer",
                     generatedJpqlResult.getParameters(),
-                    List.of("aitols_Customer"),
-                    List.of("id"),
                     "",
                     List.of()
             );

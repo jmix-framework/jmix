@@ -1,5 +1,5 @@
 /*
- * Copyright 2026 Haulmont.
+ * Copyright 2022 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.aitoolsflowui.view.aiconversation;
+@NullMarked
+package io.jmix.aitools.memory;
 
-import com.vaadin.flow.router.Route;
-import io.jmix.aitools.entity.AiConversation;
-import io.jmix.flowui.view.*;
-
-@Route(value = "ai-conversations", layout = DefaultMainViewParent.class)
-@ViewController("aitols_AiConversation.list")
-@ViewDescriptor("ai-conversation-list-view.xml")
-@LookupComponent("aiConversationsDataGrid")
-@DialogMode(width = "90%", resizable = true)
-public class AiConversationListView extends StandardListView<AiConversation> {
-}
+import org.jspecify.annotations.NullMarked;

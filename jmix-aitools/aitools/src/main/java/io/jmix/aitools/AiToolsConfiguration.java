@@ -17,14 +17,14 @@
 package io.jmix.aitools;
 
 import io.jmix.core.annotation.JmixModule;
-import io.jmix.eclipselink.EclipselinkConfiguration;
+import io.jmix.data.DataConfiguration;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ComponentScan
-@JmixModule(dependsOn = {EclipselinkConfiguration.class})
+@JmixModule(dependsOn = {DataConfiguration.class})
 @ConfigurationPropertiesScan
 public class AiToolsConfiguration {
 }

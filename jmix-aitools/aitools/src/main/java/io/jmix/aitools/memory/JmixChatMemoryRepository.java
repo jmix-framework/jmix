@@ -23,6 +23,7 @@ import io.jmix.core.DataManager;
 import io.jmix.core.SaveContext;
 import io.jmix.core.Sort;
 import io.jmix.core.querycondition.PropertyCondition;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.memory.ChatMemoryRepository;
@@ -32,6 +33,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component("aitols_JmixChatMemoryRepository")
 public class JmixChatMemoryRepository implements ChatMemoryRepository {
@@ -39,6 +41,11 @@ public class JmixChatMemoryRepository implements ChatMemoryRepository {
     private static final Logger log = LoggerFactory.getLogger(JmixChatMemoryRepository.class);
 
     public static final String NO_OP_CONVERSATION_ID = "{noop}";
+
+    private static final String ENTITY_ID_METADATA_KEY = "jmixEntityId";
+    private static final String MESSAGE_TYPE_METADATA_KEY = "jmixMessageType";
+    private static final String ATTACHMENT_METADATA_VALUE = "attachment";
+    private static final String USER_UPLOAD_METADATA_VALUE = "userUpload";
 
     @Autowired
     protected DataManager dataManager;
@@ -54,6 +61,10 @@ public class JmixChatMemoryRepository implements ChatMemoryRepository {
 
     @Override
     public List<Message> findByConversationId(String conversationId) {
+        if (NO_OP_CONVERSATION_ID.equals(conversationId)) {
+            return Collections.emptyList();
+        }
+
         UUID uuid = parseConversationId(conversationId);
         return dataManager.load(AiConversation.class)
                 .id(uuid)
@@ -66,12 +77,39 @@ public class JmixChatMemoryRepository implements ChatMemoryRepository {
 
     @Override
     public void saveAll(String conversationId, List<Message> messages) {
-        // TODO: pinyazhin, implement
+        if (NO_OP_CONVERSATION_ID.equals(conversationId)) {
+            return;
+        }
+
+        UUID uuid = parseConversationId(conversationId);
+        AiConversation conversation = findConversation(uuid)
+                .orElseThrow(() -> new IllegalArgumentException("Conversation not found: " + conversationId));
+
+        SaveContext saveContext = new SaveContext();
+        List<ChatMessage> existingMessages = loadChatMessages(uuid);
+
+        Set<UUID> existingEntityIds = existingMessages.stream()
+                .map(ChatMessage::getId)
+                .collect(Collectors.toSet());
+
+        for (Message message : messages) {
+            UUID entityId = (UUID) message.getMetadata().get(ENTITY_ID_METADATA_KEY);
+            if (entityId == null || !existingEntityIds.contains(entityId)) {
+                saveContext.saving(mapMessageToEntity(message, conversation));
+            }
+        }
+
+        saveContext.setDiscardSaved(true);
+        dataManager.save(saveContext);
     }
 
     @Override
     @Transactional
     public void deleteByConversationId(String conversationId) {
+        if (NO_OP_CONVERSATION_ID.equals(conversationId)) {
+            return;
+        }
+
         UUID uuid = parseConversationId(conversationId);
         dataManager.load(AiConversation.class)
                 .id(uuid)
@@ -86,35 +124,77 @@ public class JmixChatMemoryRepository implements ChatMemoryRepository {
                 });
     }
 
+    protected ChatMessage mapMessageToEntity(Message message, AiConversation conversation) {
+        ChatMessage chatMessage = dataManager.create(ChatMessage.class);
+        chatMessage.setConversation(conversation);
+        chatMessage.setContent(message.getText());
+        chatMessage.setType(mapMessageToType(message));
+        return chatMessage;
+    }
+
     protected Message mapEntityToMessage(ChatMessage chatMessage) {
         String content = chatMessage.getContent();
         ChatMessageType type = chatMessage.getType();
         return mapTypeToMessage(content, type, chatMessage.getId());
     }
 
-    // TODO: pinyazhin, rework
-    private Message mapTypeToMessage(String content, ChatMessageType type, UUID entityId) {
+    protected Message mapTypeToMessage(@Nullable String content, @Nullable ChatMessageType type, UUID entityId) {
         if (type == null) {
             return new SystemMessage(content != null ? content : "");
         }
 
-        final Map<String, Object> metadata = Collections.emptyMap(); /*switch (type) {
+        final Map<String, Object> metadata = switch (type) {
             case ATTACHMENT -> Map.of(
                     ENTITY_ID_METADATA_KEY, entityId,
-                    CRM_MESSAGE_TYPE_METADATA_KEY, ATTACHMENT_METADATA_VALUE
+                    MESSAGE_TYPE_METADATA_KEY, ATTACHMENT_METADATA_VALUE
             );
             case USER_UPLOAD -> Map.of(
                     ENTITY_ID_METADATA_KEY, entityId,
-                    CRM_MESSAGE_TYPE_METADATA_KEY, USER_UPLOAD_METADATA_VALUE
+                    MESSAGE_TYPE_METADATA_KEY, USER_UPLOAD_METADATA_VALUE
             );
             default -> Map.of(ENTITY_ID_METADATA_KEY, entityId);
         };
-        */
+
+        content = content == null ? "" : content;
+
         return switch (type) {
             case USER, USER_UPLOAD, ATTACHMENT -> UserMessage.builder().text(content).metadata(metadata).build();
             case ASSISTANT, TOOL -> AssistantMessage.builder().content(content).properties(metadata).build();
             case SYSTEM -> SystemMessage.builder().text(content).metadata(metadata).build();
         };
+    }
+
+    protected ChatMessageType mapMessageToType(Message message) {
+        if (message instanceof UserMessage userMessage) {
+            if (isAttachmentMessage(userMessage)) {
+                return ChatMessageType.ATTACHMENT;
+            } else if (isUserUploadMessage(userMessage)) {
+                return ChatMessageType.USER_UPLOAD;
+            } else {
+                return ChatMessageType.SYSTEM;
+            }
+        } else if (message instanceof AssistantMessage) {
+            return ChatMessageType.ASSISTANT;
+        } else if (message instanceof SystemMessage) {
+            return ChatMessageType.SYSTEM;
+        }
+        return ChatMessageType.TOOL;
+    }
+
+    protected boolean isAttachmentMessage(UserMessage userMessage) {
+        Object rawMessageType = userMessage.getMetadata().get(MESSAGE_TYPE_METADATA_KEY);
+        return ATTACHMENT_METADATA_VALUE.equals(rawMessageType);
+    }
+
+    protected boolean isUserUploadMessage(UserMessage userMessage) {
+        Object rawMessageType = userMessage.getMetadata().get(MESSAGE_TYPE_METADATA_KEY);
+        return USER_UPLOAD_METADATA_VALUE.equals(rawMessageType);
+    }
+
+    protected Optional<AiConversation> findConversation(UUID conversationId) {
+        return dataManager.load(AiConversation.class)
+                .id(conversationId)
+                .optional();
     }
 
     protected List<ChatMessage> loadChatMessages(UUID conversationId) {

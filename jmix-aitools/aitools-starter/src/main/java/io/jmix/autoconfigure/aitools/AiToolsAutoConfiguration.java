@@ -43,7 +43,7 @@ import org.springframework.context.annotation.Import;
 
 @AutoConfiguration
 @ConditionalOnBooleanProperty(value = "aitools.enabled", matchIfMissing = true)
-@Import({AiToolsConfiguration.class, CoreConfiguration.class, DataConfiguration.class, EclipselinkConfiguration.class})
+@Import({CoreConfiguration.class, AiToolsConfiguration.class, DataConfiguration.class, EclipselinkConfiguration.class})
 public class AiToolsAutoConfiguration {
 
     @Bean("aitols_JpaDomainModelIntrospector")

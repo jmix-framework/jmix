@@ -14,7 +14,8 @@
   ~ limitations under the License.
   -->
 
-<view xmlns="http://jmix.io/schema/flowui/view">
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://aiConversationListView.title">
     <data>
         <collection id="aiConversationsDc"
                     class="io.jmix.aitools.entity.AiConversation">

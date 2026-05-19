@@ -16,7 +16,6 @@
 
 package io.jmix.aitools.dataload.generation;
 
-import io.jmix.aitools.dataload.postprocess.PostProcessedResult;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
@@ -27,9 +26,6 @@ import java.util.List;
  * This type represents what the LLM produced after generation or repair. It keeps the
  * generated JPQL text together with structured metadata such as parameters, used entities,
  * used property paths, explanation, warnings, and optional execution hints.
- * <p>
- * Unlike {@link PostProcessedResult}, this type still reflects
- * the generation-stage output. It may later be normalized by post-processors before execution.
  */
 public class GeneratedJpqlResult {
 

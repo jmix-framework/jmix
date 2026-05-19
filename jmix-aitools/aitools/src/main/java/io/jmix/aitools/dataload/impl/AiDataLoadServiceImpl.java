@@ -91,7 +91,7 @@ public class AiDataLoadServiceImpl implements AiDataLoadService, InitializingBea
     }
 
     protected ChatMemory buildChatMemory() {
-        return chatMemoryProvider.getChatMemory();
+        return chatMemoryProvider.build();
     }
 
     protected boolean isChatClientAvailable() {

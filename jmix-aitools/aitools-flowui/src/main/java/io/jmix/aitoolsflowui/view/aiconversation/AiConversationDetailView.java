@@ -21,7 +21,7 @@ import io.jmix.aitools.entity.AiConversation;
 import io.jmix.flowui.view.*;
 
 @Route(value = "ai-conversations/:id", layout = DefaultMainViewParent.class)
-@ViewController("AiConversation.detail")
+@ViewController("aitols_AiConversation.detail")
 @ViewDescriptor("ai-conversation-detail-view.xml")
 @EditedEntityContainer("aiConversationDc")
 public class AiConversationDetailView extends StandardDetailView<AiConversation> {

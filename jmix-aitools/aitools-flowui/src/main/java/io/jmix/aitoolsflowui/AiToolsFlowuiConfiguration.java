@@ -18,11 +18,25 @@ package io.jmix.aitoolsflowui;
 
 import io.jmix.aitools.AiToolsConfiguration;
 import io.jmix.core.annotation.JmixModule;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
+import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
+import io.jmix.flowui.sys.ViewControllersConfiguration;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.*;
+
+import java.util.Collections;
 
 @Configuration
 @ComponentScan
 @JmixModule(dependsOn = AiToolsConfiguration.class)
+@PropertySource(name = "io.jmix.aitoolsflowui", value = "classpath:/io/jmix/aitoolsflowui/module.properties")
 public class AiToolsFlowuiConfiguration {
+
+    @Bean("aitols_AiToolsViewControllers")
+    public ViewControllersConfiguration views(ApplicationContext applicationContext,
+                                              AnnotationScanMetadataReaderFactory metadataReaderFactory) {
+        ViewControllersConfiguration viewControllers
+                = new ViewControllersConfiguration(applicationContext, metadataReaderFactory);
+        viewControllers.setBasePackages(Collections.singletonList("io.jmix.aitoolsflowui.view"));
+        return viewControllers;
+    }
 }

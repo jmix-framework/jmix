@@ -292,6 +292,9 @@ public class MetadataSessionCloneSupport {
     }
 
     protected MetadataSessionCloneMetaPropertyHandler findMetaPropertyHandler(MetaProperty sourceMetaProperty) {
+        if (metaPropertyHandlers == null) {
+            return null;
+        }
         for (MetadataSessionCloneMetaPropertyHandler handler : metaPropertyHandlers) {
             if (handler.supports(sourceMetaProperty)) {
                 return handler;

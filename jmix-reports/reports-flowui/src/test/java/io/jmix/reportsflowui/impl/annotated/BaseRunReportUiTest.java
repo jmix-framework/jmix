@@ -53,18 +53,10 @@ public abstract class BaseRunReportUiTest extends BaseReportUiTest {
     }
 
     @SuppressWarnings("unchecked")
-    protected  <T> T findParameterField(InputParametersDialog dialog, String fieldId) {
+    protected  <T> T findInputParametersComponent(InputParametersDialog dialog, String fieldId) {
         Div div = findComponent(dialog, "inputParametersLayout");
         InputParametersFragment composite = (InputParametersFragment) div.getChildren().findFirst().orElseThrow();
         return (T) UiComponentUtils.findComponent(composite.getContent(), fieldId)
-                .orElseThrow();
-    }
-
-    @SuppressWarnings("unchecked")
-    protected <T> T findInputParametersComponent(InputParametersDialog dialog, String componentId) {
-        Div div = findComponent(dialog, "inputParametersLayout");
-        InputParametersFragment composite = (InputParametersFragment) div.getChildren().findFirst().orElseThrow();
-        return (T) UiComponentUtils.findComponent(composite.getContent(), componentId)
                 .orElseThrow();
     }
 }

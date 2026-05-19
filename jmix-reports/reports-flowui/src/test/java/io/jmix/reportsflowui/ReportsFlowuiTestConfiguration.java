@@ -39,6 +39,7 @@ import io.jmix.testsupport.config.HsqlEmbeddedDataSourceTestConfiguration;
 import io.jmix.testsupport.config.JpaMainStoreTestConfiguration;
 import io.jmix.testsupport.config.LiquibaseTestConfiguration;
 import io.jmix.flowui.testassist.FlowuiServletTestBeans;
+import org.jspecify.annotations.NonNull;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -104,16 +105,16 @@ public class ReportsFlowuiTestConfiguration {
     public SpreadsheetReportOpener spreadsheetReportOpener() {
         return new SpreadsheetReportOpener() {
             @Override
-            public boolean supportsExtension(String extension) {
+            public boolean supportsExtension(@NonNull String extension) {
                 return "xls".equals(extension) || "xlsx".equals(extension);
             }
 
             @Override
-            public void open(View<?> owner, ReportOutputDocument document, String documentName) {
+            public void open(@NonNull View<?> owner, @NonNull ReportOutputDocument document, String documentName) {
             }
 
             @Override
-            public void open(View<?> owner, FileRef fileRef) {
+            public void open(@NonNull View<?> owner, @NonNull FileRef fileRef) {
             }
         };
     }

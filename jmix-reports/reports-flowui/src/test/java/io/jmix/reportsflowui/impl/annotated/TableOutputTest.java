@@ -47,9 +47,9 @@ public class TableOutputTest extends BaseRunReportUiTest {
         InputParametersDialog parametersDialog = (InputParametersDialog) dialogWindows.getOpenedDialogWindows()
                 .getCurrentDialog().orElse(null);
 
-        TypedDatePicker startDateField = findParameterField(parametersDialog, "param_startDate");
+        TypedDatePicker startDateField = findInputParametersComponent(parametersDialog, "param_startDate");
         startDateField.setValue(parseDate(startDateStr));
-        TypedDatePicker endDateField = findParameterField(parametersDialog, "param_endDate");
+        TypedDatePicker endDateField = findInputParametersComponent(parametersDialog, "param_endDate");
         endDateField.setValue(parseDate(endDateStr));
 
         JmixButton runButton = findComponent(parametersDialog, "printReportButton");

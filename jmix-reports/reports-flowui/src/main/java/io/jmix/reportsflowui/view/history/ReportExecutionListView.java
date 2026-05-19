@@ -26,6 +26,7 @@ import io.jmix.core.FileRef;
 import io.jmix.flowui.Actions;
 import io.jmix.core.MetadataTools;
 import io.jmix.flowui.component.grid.DataGrid;
+import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.model.CollectionLoader;
@@ -58,12 +59,12 @@ public class ReportExecutionListView extends StandardListView<ReportExecution> {
     protected CollectionLoader<ReportExecution> executionsDl;
     @ViewComponent
     protected DataGrid<ReportExecution> executionsDataGrid;
+    @ViewComponent("executionsDataGrid.openInSpreadsheet")
+    protected Action openInSpreadhseetAction;
     @ViewComponent
     private HorizontalLayout buttonsPanel;
     @ViewComponent
     private JmixButton downloadBtn;
-    @ViewComponent
-    private JmixButton openInSpreadsheetBtn;
 
     @ViewComponent
     protected MessageBundle messageBundle;
@@ -85,7 +86,7 @@ public class ReportExecutionListView extends StandardListView<ReportExecution> {
     @Subscribe
     public void onBeforeShow(final BeforeShowEvent event) {
         createExcelButton();
-        openInSpreadsheetBtn.setVisible(spreadsheetReportSupport.isAvailable());
+        openInSpreadhseetAction.setVisible(spreadsheetReportSupport.isAvailable());
     }
 
     protected void createExcelButton() {

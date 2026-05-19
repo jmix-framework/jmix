@@ -81,9 +81,9 @@ public class InputParametersUiTest extends BaseRunReportUiTest {
         InputParametersDialog parametersDialog = (InputParametersDialog) dialogWindows.getOpenedDialogWindows()
                 .getCurrentDialog().orElse(null);
 
-        TypedDatePicker startDateField = findParameterField(parametersDialog, "param_startDate");
+        TypedDatePicker startDateField = findInputParametersComponent(parametersDialog, "param_startDate");
         startDateField.setValue(parseDate(startDateStr));
-        TypedDatePicker endDateField = findParameterField(parametersDialog, "param_endDate");
+        TypedDatePicker endDateField = findInputParametersComponent(parametersDialog, "param_endDate");
         endDateField.setValue(parseDate(endDateStr));
 
         JmixButton runButton = findComponent(parametersDialog, "printReportButton");
@@ -109,9 +109,9 @@ public class InputParametersUiTest extends BaseRunReportUiTest {
         InputParametersDialog parametersDialog = (InputParametersDialog) dialogWindows.getOpenedDialogWindows()
                 .getCurrentDialog().orElse(null);
 
-        TypedDatePicker startDateField = findParameterField(parametersDialog, "param_startDate");
+        TypedDatePicker startDateField = findInputParametersComponent(parametersDialog, "param_startDate");
         startDateField.setValue(parseDate(startDateStr));
-        TypedDatePicker endDateField = findParameterField(parametersDialog, "param_endDate");
+        TypedDatePicker endDateField = findInputParametersComponent(parametersDialog, "param_endDate");
         endDateField.setValue(parseDate(endDateStr));
 
         JmixButton runButton = findComponent(parametersDialog, "printReportButton");
@@ -136,7 +136,7 @@ public class InputParametersUiTest extends BaseRunReportUiTest {
                 .getCurrentDialog().orElse(null);
 
         // then
-        EntityPicker field = findParameterField(parametersDialog, "param_" + parameterAlias);
+        EntityPicker field = findInputParametersComponent(parametersDialog, "param_" + parameterAlias);
         assertThat(field.getValue()).isNotNull();
         assertThat(metadataTools.getInstanceName(field.getValue())).isEqualTo("Ubisoft");
     }

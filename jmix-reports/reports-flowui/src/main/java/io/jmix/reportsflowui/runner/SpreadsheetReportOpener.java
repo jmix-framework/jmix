@@ -17,6 +17,7 @@
 package io.jmix.reportsflowui.runner;
 
 import io.jmix.core.FileRef;
+import io.jmix.core.annotation.Internal;
 import io.jmix.flowui.view.View;
 import io.jmix.reports.yarg.reporting.ReportOutputDocument;
 import org.jspecify.annotations.Nullable;
@@ -24,13 +25,14 @@ import org.jspecify.annotations.Nullable;
 /**
  * Optional bridge contract for opening spreadsheet report output inside a UI viewer instead of downloading a file.
  */
+@Internal
 public interface SpreadsheetReportOpener {
 
     /**
      * Returns whether this opener supports the specified spreadsheet file extension.
      *
      * @param extension spreadsheet file extension without a leading dot
-     * @return {@code true} if this opener supports the extension
+     * @return {@code true} if this opener supports the extension, {@code false} otherwise
      */
     boolean supportsExtension(String extension);
 

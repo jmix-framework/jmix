@@ -32,6 +32,7 @@ import io.jmix.flowui.component.datepicker.TypedDatePicker;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.select.JmixSelect;
 import io.jmix.flowui.component.textfield.TypedTextField;
+import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.download.ByteArrayDownloadDataProvider;
 import io.jmix.flowui.download.DownloadFormat;
@@ -71,6 +72,8 @@ public class ReportListView extends StandardListView<Report> {
     protected DataGrid<Report> reportsDataGrid;
     @ViewComponent("reportsDataGrid.create")
     protected CreateAction<Report> reportsDataGridCreate;
+    @ViewComponent("reportsDataGrid.openInSpreadsheet")
+    protected Action openInSpreadsheetAction;
 
     @ViewComponent
     protected CollectionLoader<Report> reportsDl;
@@ -86,8 +89,6 @@ public class ReportListView extends StandardListView<Report> {
     protected JmixSelect<ReportOutputType> outputTypeFilter;
     @ViewComponent
     protected CollectionContainer<Report> reportsDc;
-    @ViewComponent
-    protected JmixButton openInSpreadsheetBtn;
     @Autowired
     protected DataManager dataManager;
     @Autowired
@@ -137,7 +138,8 @@ public class ReportListView extends StandardListView<Report> {
     protected void onInit(InitEvent event) {
         initReportsDataGridCreate();
         initOutputTypeList();
-        openInSpreadsheetBtn.setVisible(spreadsheetReportSupport.isAvailable());
+
+        openInSpreadsheetAction.setVisible(spreadsheetReportSupport.isAvailable());
 
         codeFilter.addTypedValueChangeListener(e -> onFilterFieldValueChange());
         nameFilter.addTypedValueChangeListener(e -> onFilterFieldValueChange());

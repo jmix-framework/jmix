@@ -46,14 +46,14 @@ public class SpreadsheetReportSupport {
     protected ObjectProvider<SpreadsheetReportOpener> spreadsheetReportOpenerProvider;
 
     /**
-     * Returns whether a spreadsheet opener bridge is available on the classpath.
+     * @return whether a spreadsheet opener bridge is available on the classpath
      */
     public boolean isAvailable() {
         return spreadsheetReportOpenerProvider.getIfAvailable() != null;
     }
 
     /**
-     * Returns whether the given report output type can be opened in a spreadsheet viewer.
+     * @return whether the given report output type can be opened in a spreadsheet viewer
      */
     public boolean supportsOutputType(@Nullable ReportOutputType outputType) {
         return outputType != null
@@ -62,7 +62,7 @@ public class SpreadsheetReportSupport {
     }
 
     /**
-     * Returns whether the report default template can be opened in a spreadsheet viewer.
+     * @return whether the report default template can be opened in a spreadsheet viewer
      */
     public boolean supportsDefaultOutput(@Nullable Report report) {
         if (report == null) {
@@ -74,21 +74,21 @@ public class SpreadsheetReportSupport {
     }
 
     /**
-     * Returns whether the stored report output can be opened in a spreadsheet viewer.
+     * @return whether the stored report output can be opened in a spreadsheet viewer
      */
     public boolean supportsFileRef(@Nullable FileRef fileRef) {
         return fileRef != null && supportsDocumentName(fileRef.getFileName());
     }
 
     /**
-     * Returns whether a report document with the given name can be opened in a spreadsheet viewer.
+     * @return whether a report document with the given name can be opened in a spreadsheet viewer
      */
     public boolean supportsDocumentName(@Nullable String documentName) {
         return supportsExtension(getExtension(documentName));
     }
 
     /**
-     * Returns whether the specified file extension can be opened in a spreadsheet viewer.
+     * @return whether the specified file extension can be opened in a spreadsheet viewer
      */
     public boolean supportsExtension(@Nullable String extension) {
         SpreadsheetReportOpener spreadsheetReportOpener = spreadsheetReportOpenerProvider.getIfAvailable();
@@ -101,6 +101,8 @@ public class SpreadsheetReportSupport {
 
     /**
      * Opens a generated report document in a spreadsheet viewer.
+     *
+     * @return {@code true} if opened correctly, {@code false} otherwise
      */
     public boolean open(@Nullable View<?> owner, ReportOutputDocument document, @Nullable String documentName) {
         SpreadsheetReportOpener spreadsheetReportOpener = spreadsheetReportOpenerProvider.getIfAvailable();
@@ -115,6 +117,8 @@ public class SpreadsheetReportSupport {
 
     /**
      * Opens a stored report document in a spreadsheet viewer.
+     *
+     * @return {@code true} if opened correctly, {@code false} otherwise
      */
     public boolean open(@Nullable View<?> owner, FileRef fileRef) {
         SpreadsheetReportOpener spreadsheetReportOpener = spreadsheetReportOpenerProvider.getIfAvailable();
@@ -135,7 +139,7 @@ public class SpreadsheetReportSupport {
     }
 
     /**
-     * Returns whether the given run context was explicitly marked for spreadsheet rendering.
+     * @return whether the given run context was explicitly marked for spreadsheet rendering
      */
     public boolean isSpreadsheetRunContext(UiReportRunContext context) {
         return context instanceof SpreadsheetUiReportRunContext;

@@ -17,59 +17,62 @@
 package io.jmix.autoconfigure.sessions;
 
 import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.spring.session.HazelcastIndexedSessionRepository;
+import com.hazelcast.spring.session.SessionMapCustomizer;
+import com.hazelcast.spring.session.config.annotation.SpringSessionHazelcastInstance;
+import com.hazelcast.spring.session.config.annotation.web.http.HazelcastHttpSessionConfiguration;
+import jakarta.servlet.ServletContext;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
-/*import org.springframework.boot.autoconfigure.hazelcast.HazelcastAutoConfiguration;
-
-import org.springframework.boot.autoconfigure.session.HazelcastSessionProperties;
-import org.springframework.boot.autoconfigure.session.SessionProperties;
-import org.springframework.boot.autoconfigure.web.ServerProperties;*/
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.context.properties.PropertyMapper;
+import org.springframework.boot.session.autoconfigure.SessionAutoConfiguration;
+import org.springframework.boot.session.autoconfigure.SessionTimeout;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
-import org.springframework.session.*;
+import org.springframework.session.FindByIndexNameSessionRepository;
+import org.springframework.session.IndexResolver;
+import org.springframework.session.Session;
+import org.springframework.session.SessionIdGenerator;
+import org.springframework.session.SessionRepository;
+import org.springframework.session.UuidSessionIdGenerator;
 import org.springframework.session.config.SessionRepositoryCustomizer;
 import org.springframework.session.config.annotation.web.http.SpringHttpSessionConfiguration;
-import org.springframework.session.hazelcast.HazelcastIndexedSessionRepository;
-import org.springframework.session.hazelcast.config.annotation.SpringSessionHazelcastInstance;
-import org.springframework.session.hazelcast.config.annotation.web.http.HazelcastHttpSessionConfiguration;
 
+import java.time.Duration;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Hazelcast sessions autoconfiguration. Copied from {@link HazelcastHttpSessionConfiguration}
- * and {@code org.springframework.boot.autoconfigure.session.HazelcastSessionConfiguration}.
+ * Hazelcast sessions autoconfiguration. Copied from {@link HazelcastHttpSessionConfiguration}.
  * <p>
  * {@link SpringHttpSessionConfiguration} import avoided in order to use Jmix bean implementations which add Vaadin compatibility.
  */
-/*@AutoConfiguration(after = HazelcastAutoConfiguration.class)
+@AutoConfiguration(after = SessionAutoConfiguration.class,
+        afterName = "org.springframework.boot.hazelcast.autoconfigure.HazelcastAutoConfiguration")
 @ConditionalOnClass({HazelcastInstance.class, HazelcastIndexedSessionRepository.class})
 @ConditionalOnSingleCandidate(HazelcastInstance.class)
 @ConditionalOnMissingBean(SessionRepository.class)
-@EnableConfigurationProperties(HazelcastSessionProperties.class)*/
 public class JmixHazelcastSessionsAutoConfiguration {
-    // TODO [SB4][hazelcast]
-    /*private HazelcastInstance hazelcastInstance;
+
+    private HazelcastInstance hazelcastInstance;
     private ApplicationEventPublisher applicationEventPublisher;
     private IndexResolver<Session> indexResolver;
-    private List<SessionRepositoryCustomizer<HazelcastIndexedSessionRepository>> sessionRepositoryCustomizers;
+    private List<SessionRepositoryCustomizer<HazelcastIndexedSessionRepository>> sessionRepositoryCustomizers = Collections.emptyList();
+    private SessionMapCustomizer sessionMapCustomizer;
     private SessionIdGenerator sessionIdGenerator = UuidSessionIdGenerator.getInstance();
 
-    private SessionProperties sessionProperties;
-    private HazelcastSessionProperties hazelcastSessionProperties;
-    private ServerProperties serverProperties;
+    private ObjectProvider<SessionTimeout> sessionTimeout;
+    private ServletContext servletContext;
 
     @Bean
     public FindByIndexNameSessionRepository<?> sessionRepository() {
         HazelcastIndexedSessionRepository sessionRepository = createHazelcastIndexedSessionRepository();
 
-        applyProperties(sessionRepository);
+        applyTimeout(sessionRepository);
 
         this.sessionRepositoryCustomizers
                 .forEach((sessionRepositoryCustomizer) -> sessionRepositoryCustomizer.customize(sessionRepository));
@@ -85,17 +88,21 @@ public class JmixHazelcastSessionsAutoConfiguration {
         }
 
         sessionRepository.setSessionIdGenerator(this.sessionIdGenerator);
+        if (this.sessionMapCustomizer != null) {
+            sessionRepository.setSessionMapConfigCustomizer(this.sessionMapCustomizer);
+        }
 
         return sessionRepository;
     }
 
-    private void applyProperties(HazelcastIndexedSessionRepository sessionRepository) {
-        PropertyMapper map = PropertyMapper.get().alwaysApplyingWhenNonNull();
-        map.from(sessionProperties.determineTimeout(() -> serverProperties.getServlet().getSession().getTimeout()))
-                .to(sessionRepository::setDefaultMaxInactiveInterval);
-        map.from(hazelcastSessionProperties::getMapName).to(sessionRepository::setSessionMapName);
-        map.from(hazelcastSessionProperties::getFlushMode).to(sessionRepository::setFlushMode);
-        map.from(hazelcastSessionProperties::getSaveMode).to(sessionRepository::setSaveMode);
+    private void applyTimeout(HazelcastIndexedSessionRepository sessionRepository) {
+        sessionRepository.setDefaultMaxInactiveInterval(determineTimeout());
+    }
+
+    private Duration determineTimeout() {
+        SessionTimeout sessionTimeout = this.sessionTimeout.getIfAvailable();
+        Duration timeout = sessionTimeout != null ? sessionTimeout.getTimeout() : null;
+        return timeout != null ? timeout : Duration.ofMinutes(this.servletContext.getSessionTimeout());
     }
 
     @Autowired
@@ -125,23 +132,25 @@ public class JmixHazelcastSessionsAutoConfiguration {
         this.sessionRepositoryCustomizers = sessionRepositoryCustomizers.orderedStream().collect(Collectors.toList());
     }
 
-    @Autowired
-    public void setServerProperties(ServerProperties serverProperties) {
-        this.serverProperties = serverProperties;
+    @Autowired(required = false)
+    public void setSessionMapCustomizer(ObjectProvider<SessionMapCustomizer> sessionMapCustomizers) {
+        this.sessionMapCustomizer = sessionMapCustomizers.orderedStream()
+                .reduce(SessionMapCustomizer::andThen)
+                .orElse(SessionMapCustomizer.noop());
     }
 
     @Autowired
-    public void setHazelcastSessionProperties(HazelcastSessionProperties hazelcastSessionProperties) {
-        this.hazelcastSessionProperties = hazelcastSessionProperties;
+    public void setSessionTimeout(ObjectProvider<SessionTimeout> sessionTimeout) {
+        this.sessionTimeout = sessionTimeout;
     }
 
     @Autowired
-    public void setSessionProperties(SessionProperties sessionProperties) {
-        this.sessionProperties = sessionProperties;
+    public void setServletContext(ServletContext servletContext) {
+        this.servletContext = servletContext;
     }
 
     @Autowired(required = false)
     public void setSessionIdGenerator(SessionIdGenerator sessionIdGenerator) {
         this.sessionIdGenerator = sessionIdGenerator;
-    }*/
+    }
 }

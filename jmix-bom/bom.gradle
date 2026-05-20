@@ -479,9 +479,8 @@ dependencies {
         api 'commons-beanutils:commons-beanutils:1.11.0'
         api 'com.github.junrar:junrar:7.5.10'
 
-        // TODO Spring Boot 4
-        api 'org.springframework.session:spring-session-hazelcast:4.0.0-M2'
-        api 'com.hazelcast:hazelcast:5.6.0' // TODO [SB4] spring-session-hazelcast:4.0.0-M2 uses hazelcast:5.5.0
+        api 'com.hazelcast.spring:hazelcast-spring-session:4.0.0'
+        api 'com.hazelcast:hazelcast:5.6.0'
         api 'io.rest-assured:rest-assured:6.0.0' //todo [SB4] 'io.rest-assured:rest-assured-bom:6.0.0' ?
 
     }

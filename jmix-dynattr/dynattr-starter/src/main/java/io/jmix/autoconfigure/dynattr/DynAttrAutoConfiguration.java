@@ -32,7 +32,7 @@ import javax.cache.configuration.MutableConfiguration;
 @Import({CoreConfiguration.class, DataConfiguration.class, DynAttrConfiguration.class})
 public class DynAttrAutoConfiguration {
 
-    // TODO [SB4] Consider switch to Spring Cache
+
     @Bean
     @SuppressWarnings({"rawtypes", "unchecked"})
     JCacheManagerCustomizer dynAttrCacheCustomizer() {

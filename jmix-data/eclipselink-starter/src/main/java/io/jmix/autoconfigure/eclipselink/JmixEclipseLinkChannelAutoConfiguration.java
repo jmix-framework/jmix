@@ -18,20 +18,17 @@ package io.jmix.autoconfigure.eclipselink;
 
 import com.hazelcast.core.HazelcastInstance;
 import io.jmix.eclipselink.impl.support.EclipseLinkChannelSupplier;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
-//import org.springframework.boot.autoconfigure.hazelcast.HazelcastAutoConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.Order;
 
-@AutoConfiguration
+@AutoConfiguration(afterName = "org.springframework.boot.hazelcast.autoconfigure.HazelcastAutoConfiguration")
 @ConditionalOnMissingBean(EclipseLinkChannelSupplier.class)
-//@AutoConfigureAfter(HazelcastAutoConfiguration.class) //todo [SB4][hazelcast]
 @Import({JmixEclipseLinkChannelAutoConfiguration.HazelcastChannelConfiguration.class,
         JmixEclipseLinkChannelAutoConfiguration.NoOpChannelConfiguration.class})
 public class JmixEclipseLinkChannelAutoConfiguration {

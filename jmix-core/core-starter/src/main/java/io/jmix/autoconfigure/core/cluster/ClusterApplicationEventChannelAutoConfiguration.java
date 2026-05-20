@@ -19,16 +19,13 @@ package io.jmix.autoconfigure.core.cluster;
 import com.hazelcast.core.HazelcastInstance;
 import io.jmix.core.cluster.ClusterApplicationEventChannelSupplier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
-//import org.springframework.boot.autoconfigure.hazelcast.HazelcastAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 
-@AutoConfiguration
+@AutoConfiguration(afterName = "org.springframework.boot.hazelcast.autoconfigure.HazelcastAutoConfiguration")
 @ConditionalOnMissingBean(ClusterApplicationEventChannelSupplier.class)
-// @AutoConfigureAfter(HazelcastAutoConfiguration.class) // TODO [SB4][hazelcast]
 @ConditionalOnClass(HazelcastInstance.class)
 @ConditionalOnSingleCandidate(HazelcastInstance.class)
 public class ClusterApplicationEventChannelAutoConfiguration {

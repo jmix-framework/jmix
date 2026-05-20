@@ -63,7 +63,7 @@ public class EclipselinkAutoConfiguration {
         return new JmixEclipselinkTransactionManager(Stores.MAIN, entityManagerFactory);
     }
 
-    // TODO [SB4] Consider switch to Spring Cache
+
     @Bean
     @SuppressWarnings({"rawtypes", "unchecked"})
     JCacheManagerCustomizer queryCacheCustomizer() {

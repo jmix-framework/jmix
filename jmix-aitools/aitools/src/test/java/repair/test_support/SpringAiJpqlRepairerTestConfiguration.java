@@ -16,7 +16,6 @@
 
 package repair.test_support;
 
-import generation.test_support.StubChatModel;
 import io.jmix.aitools.dataload.prompt.JpqlRepairerPromptProvider;
 import io.jmix.aitools.dataload.prompt.DataLoadSystemPromptProvider;
 import io.jmix.aitools.dataload.prompt.impl.DefaultJpqlRepairerPromptProvider;

@@ -19,7 +19,7 @@ package io.jmix.aitools.dataload.repair.impl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jmix.aitools.dataload.executor.SpringAiPromptExecutor;
-import io.jmix.aitools.dataload.generation.GeneratedJpqlResult;
+import io.jmix.aitools.dataload.execution.GeneratedJpqlResult;
 import io.jmix.aitools.dataload.prompt.JpqlRepairerPromptProvider;
 import io.jmix.aitools.dataload.prompt.DataLoadSystemPromptProvider;
 import io.jmix.aitools.dataload.repair.JpqlRepairRequest;

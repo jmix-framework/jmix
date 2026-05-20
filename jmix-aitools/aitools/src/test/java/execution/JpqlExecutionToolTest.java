@@ -19,7 +19,7 @@ package execution;
 import io.jmix.aitools.dataload.execution.JpqlExecutionRequest;
 import io.jmix.aitools.dataload.execution.JpqlExecutionResult;
 import io.jmix.aitools.dataload.execution.JpqlExecutionService;
-import io.jmix.aitools.dataload.generation.GeneratedJpqlResult;
+import io.jmix.aitools.dataload.execution.GeneratedJpqlResult;
 import io.jmix.aitools.dataload.tool.JpqlExecutionTool;
 import io.jmix.aitools.dataload.validation.JpqlValidationResult;
 import org.junit.jupiter.api.DisplayName;
@@ -27,7 +27,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertSame;
 

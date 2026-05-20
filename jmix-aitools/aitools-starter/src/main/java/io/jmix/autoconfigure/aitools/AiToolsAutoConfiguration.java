@@ -16,15 +16,11 @@
 
 package io.jmix.autoconfigure.aitools;
 
-import io.jmix.aitools.dataload.generation.impl.SpringAiJpqlGenerator;
 import io.jmix.aitools.dataload.prompt.DataLoadChatSystemPromptProvider;
 import io.jmix.aitools.dataload.prompt.DataLoadSystemPromptProvider;
-import io.jmix.aitools.dataload.prompt.impl.DefaultJpqlGenerationPromptProvider;
 import io.jmix.aitools.dataload.prompt.impl.DefaultJpqlRepairerPromptProvider;
 import io.jmix.aitools.dataload.repair.impl.SpringAiJpqlRepairer;
 import io.jmix.aitools.AiToolsConfiguration;
-import io.jmix.aitools.dataload.generation.JpqlGenerator;
-import io.jmix.aitools.dataload.prompt.JpqlGenerationPromptProvider;
 import io.jmix.aitools.introspection.introspector.JpaDomainModelIntrospector;
 import io.jmix.aitools.dataload.prompt.JpqlRepairerPromptProvider;
 import io.jmix.aitools.dataload.prompt.impl.DefaultDataLoadChatSystemPromptProvider;
@@ -54,13 +50,6 @@ public class AiToolsAutoConfiguration {
         return new JpaDomainModelIntrospector();
     }
 
-    @Bean("aitols_SpringAiJpqlGenerator")
-    @ConditionalOnClass(ChatClient.class)
-    @ConditionalOnMissingBean(JpqlGenerator.class)
-    public JpqlGenerator textToJpqlGenerator() {
-        return new SpringAiJpqlGenerator();
-    }
-
     @Bean("aitols_SpringAiJpqlRepairer")
     @ConditionalOnClass(ChatClient.class)
     @ConditionalOnMissingBean(JpqlRepairer.class)
@@ -72,12 +61,6 @@ public class AiToolsAutoConfiguration {
     @ConditionalOnMissingBean(JpqlRepairerPromptProvider.class)
     public JpqlRepairerPromptProvider jpqlRepairerPromptProvider() {
         return new DefaultJpqlRepairerPromptProvider();
-    }
-
-    @Bean("aitols_JpqlGenerationPromptProvider")
-    @ConditionalOnMissingBean(JpqlGenerationPromptProvider.class)
-    public JpqlGenerationPromptProvider jpqlGenerationPromptProvider() {
-        return new DefaultJpqlGenerationPromptProvider();
     }
 
     @Bean("aitols_DefaultSystemPromptProvider")

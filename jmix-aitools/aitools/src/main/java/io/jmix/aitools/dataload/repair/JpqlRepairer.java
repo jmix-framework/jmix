@@ -16,7 +16,7 @@
 
 package io.jmix.aitools.dataload.repair;
 
-import io.jmix.aitools.dataload.generation.GeneratedJpqlResult;
+import io.jmix.aitools.dataload.execution.GeneratedJpqlResult;
 import org.jspecify.annotations.Nullable;
 
 public interface JpqlRepairer {

@@ -16,8 +16,6 @@
 
 package io.jmix.aitools.dataload.execution;
 
-import io.jmix.aitools.dataload.generation.GeneratedJpqlParameter;
-import io.jmix.aitools.dataload.generation.GeneratedJpqlResult;
 import io.jmix.aitools.dataload.repair.JpqlRepairResult;
 import io.jmix.aitools.dataload.repair.JpqlRepairService;
 import io.jmix.aitools.dataload.validation.JpqlValidationIssue;

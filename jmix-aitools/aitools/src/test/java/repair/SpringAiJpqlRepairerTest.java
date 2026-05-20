@@ -16,11 +16,10 @@
 
 package repair;
 
-import generation.test_support.StubChatModel;
 import io.jmix.aitools.dataload.execution.JpqlExecutionRequest;
 import io.jmix.aitools.dataload.repair.impl.SpringAiJpqlRepairer;
-import io.jmix.aitools.dataload.generation.GeneratedJpqlParameter;
-import io.jmix.aitools.dataload.generation.GeneratedJpqlResult;
+import io.jmix.aitools.dataload.execution.GeneratedJpqlParameter;
+import io.jmix.aitools.dataload.execution.GeneratedJpqlResult;
 import io.jmix.aitools.dataload.repair.JpqlRepairRequest;
 import io.jmix.aitools.dataload.validation.JpqlValidationIssue;
 import io.jmix.aitools.dataload.validation.JpqlValidationResult;
@@ -31,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import repair.test_support.SpringAiJpqlRepairerTestConfiguration;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import repair.test_support.StubChatModel;
 import test_support.AiToolsTestConfiguration;
 
 import java.util.List;

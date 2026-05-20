@@ -17,8 +17,7 @@
 package io.jmix.aitools.dataload.repair;
 
 import io.jmix.aitools.dataload.execution.JpqlExecutionRequest;
-import io.jmix.aitools.dataload.generation.GeneratedJpqlResult;
-import io.jmix.aitools.dataload.generation.JpqlGenerationRequest;
+import io.jmix.aitools.dataload.execution.GeneratedJpqlResult;
 import io.jmix.aitools.dataload.validation.JpqlValidationResult;
 
 public class JpqlRepairRequest {

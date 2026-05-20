@@ -17,8 +17,8 @@
 package io.jmix.aitools.dataload.validation.validator;
 
 import io.jmix.core.JmixOrder;
-import io.jmix.aitools.dataload.generation.GeneratedJpqlParameter;
-import io.jmix.aitools.dataload.generation.GeneratedJpqlResult;
+import io.jmix.aitools.dataload.execution.GeneratedJpqlParameter;
+import io.jmix.aitools.dataload.execution.GeneratedJpqlResult;
 import io.jmix.aitools.dataload.validation.JpqlResultValidator;
 import io.jmix.aitools.dataload.validation.JpqlValidationIssue;
 import org.springframework.core.Ordered;

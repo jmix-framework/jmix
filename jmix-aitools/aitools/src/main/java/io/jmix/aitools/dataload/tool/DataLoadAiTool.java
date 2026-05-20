@@ -16,7 +16,7 @@
 
 package io.jmix.aitools.dataload.tool;
 
-import io.jmix.aitools.JmixAiTool;
+import io.jmix.aitools.tool.JmixAiTool;
 
 public interface DataLoadAiTool extends JmixAiTool {
 }

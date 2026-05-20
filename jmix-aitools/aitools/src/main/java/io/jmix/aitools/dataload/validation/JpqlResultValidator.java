@@ -16,7 +16,7 @@
 
 package io.jmix.aitools.dataload.validation;
 
-import io.jmix.aitools.dataload.generation.GeneratedJpqlResult;
+import io.jmix.aitools.dataload.execution.GeneratedJpqlResult;
 
 import java.util.List;
 

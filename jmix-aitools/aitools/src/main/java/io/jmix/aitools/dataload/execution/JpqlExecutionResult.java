@@ -16,7 +16,6 @@
 
 package io.jmix.aitools.dataload.execution;
 
-import io.jmix.aitools.dataload.generation.GeneratedJpqlResult;
 import io.jmix.aitools.dataload.validation.JpqlValidationResult;
 import org.jspecify.annotations.Nullable;
 

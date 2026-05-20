@@ -17,7 +17,7 @@
 package io.jmix.aitools.dataload.validation.validator;
 
 import io.jmix.aitools.introspection.introspector.JpaDomainModelIntrospector;
-import io.jmix.aitools.dataload.generation.GeneratedJpqlResult;
+import io.jmix.aitools.dataload.execution.GeneratedJpqlResult;
 import io.jmix.aitools.dataload.validation.JpqlResultValidator;
 import io.jmix.aitools.dataload.validation.JpqlValidationIssue;
 import io.jmix.core.JmixOrder;

@@ -33,7 +33,8 @@ public interface AiChatService {
     /*
      * ChatBuilder
      * - prompts
-     * - tools
+     * - tools // all/include/exclude/none() using interfaces
+     *
      * - conversationId
      * - other?
      *

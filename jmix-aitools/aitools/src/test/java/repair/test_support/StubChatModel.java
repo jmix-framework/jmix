@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package generation.test_support;
+package repair.test_support;
 
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.model.ChatModel;

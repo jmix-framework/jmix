@@ -16,8 +16,6 @@
 
 package io.jmix.aitools.tool;
 
-import io.jmix.aitools.JmixAiTool;
-
 import java.lang.reflect.Method;
 
 public interface AiToolDescriptorProvider {

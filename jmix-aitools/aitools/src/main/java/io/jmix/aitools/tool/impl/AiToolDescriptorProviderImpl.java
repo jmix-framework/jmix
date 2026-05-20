@@ -18,7 +18,7 @@ package io.jmix.aitools.tool.impl;
 
 import io.jmix.aitools.tool.AiToolDescriptor;
 import io.jmix.aitools.tool.AiToolDescriptorProvider;
-import io.jmix.aitools.JmixAiTool;
+import io.jmix.aitools.tool.JmixAiTool;
 import org.springframework.ai.tool.support.ToolUtils;
 import org.springframework.stereotype.Component;
 

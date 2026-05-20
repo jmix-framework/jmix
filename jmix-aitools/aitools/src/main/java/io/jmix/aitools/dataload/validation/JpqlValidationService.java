@@ -17,7 +17,7 @@
 package io.jmix.aitools.dataload.validation;
 
 import io.jmix.aitools.dataload.validation.validator.*;
-import io.jmix.aitools.dataload.generation.GeneratedJpqlResult;
+import io.jmix.aitools.dataload.execution.GeneratedJpqlResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

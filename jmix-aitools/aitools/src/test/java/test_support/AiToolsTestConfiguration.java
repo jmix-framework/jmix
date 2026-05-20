@@ -18,10 +18,8 @@ package test_support;
 
 import io.jmix.aitools.dataload.prompt.DataLoadChatSystemPromptProvider;
 import io.jmix.aitools.dataload.prompt.DataLoadSystemPromptProvider;
-import io.jmix.aitools.dataload.prompt.JpqlGenerationPromptProvider;
 import io.jmix.aitools.dataload.prompt.impl.DefaultDataLoadChatSystemPromptProvider;
 import io.jmix.aitools.dataload.prompt.impl.DefaultDataLoadSystemPromptProvider;
-import io.jmix.aitools.dataload.prompt.impl.DefaultJpqlGenerationPromptProvider;
 import io.jmix.core.CoreConfiguration;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.annotation.MessageSourceBasenames;
@@ -52,10 +50,5 @@ public class AiToolsTestConfiguration {
     @Bean
     DataLoadChatSystemPromptProvider chatSystemPromptProvider() {
         return new DefaultDataLoadChatSystemPromptProvider();
-    }
-
-    @Bean
-    JpqlGenerationPromptProvider jpqlGenerationPromptProvider() {
-        return new DefaultJpqlGenerationPromptProvider();
     }
 }

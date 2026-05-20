@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.aitools.dataload.generation;
+package io.jmix.aitools.dataload.execution;
 
 import org.jspecify.annotations.Nullable;
 

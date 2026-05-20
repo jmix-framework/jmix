@@ -25,7 +25,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import test_support.TextToDataTestConfiguration;
+import test_support.AiToolsTestConfiguration;
 import test_support.entity.sales.Order;
 
 import java.util.List;
@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = TextToDataTestConfiguration.class)
+@ContextConfiguration(classes = AiToolsTestConfiguration.class)
 class JpaDomainModelIntrospectorTest {
 
     @Autowired

@@ -55,7 +55,7 @@
             <column name="CREATED_DATE" type="datetime"/>
         </createTable>
 
-        <createIndex tableName="AITOLS_AI_CONV_ATTACHMENT" indexName="IDX_AI_CONV_ATTACH_CONV">
+        <createIndex tableName="AITOLS_AI_CONV_ATTACHMENT" indexName="IDX_AITOLS_AI_CONV_ATTACH_CONV">
             <column name="CONVERSATION_ID"/>
         </createIndex>
 
@@ -76,11 +76,11 @@
             <column name="CREATED_DATE" type="datetime"/>
         </createTable>
 
-        <createIndex tableName="AITOLS_CHAT_MESSAGE" indexName="IDX_CHAT_MESSAGE_CONV">
+        <createIndex tableName="AITOLS_CHAT_MESSAGE" indexName="IDX_AITOLS_CHAT_MESSAGE_CONV">
             <column name="CONVERSATION_ID"/>
         </createIndex>
 
-        <createIndex tableName="AITOLS_CHAT_MESSAGE" indexName="IDX_CHAT_MESSAGE">
+        <createIndex tableName="AITOLS_CHAT_MESSAGE" indexName="IDX_AITOLS_CHAT_MESSAGE">
             <column name="CONVERSATION_ID"/>
             <column name="CREATED_DATE"/>
         </createIndex>

@@ -19,7 +19,6 @@ package repair;
 import io.jmix.aitools.dataload.execution.JpqlExecutionRequest;
 import io.jmix.aitools.dataload.generation.GeneratedJpqlParameter;
 import io.jmix.aitools.dataload.generation.GeneratedJpqlResult;
-import io.jmix.aitools.dataload.generation.JpqlGenerationRequest;
 import io.jmix.aitools.dataload.repair.JpqlRepairResult;
 import io.jmix.aitools.dataload.repair.JpqlRepairService;
 import io.jmix.aitools.dataload.repair.JpqlRepairer;
@@ -33,7 +32,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import test_support.TextToDataTestConfiguration;
+import test_support.AiToolsTestConfiguration;
 
 import java.util.List;
 
@@ -42,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {TextToDataTestConfiguration.class, JpqlRepairServiceTest.TestConfiguration.class})
+@ContextConfiguration(classes = {AiToolsTestConfiguration.class, JpqlRepairServiceTest.TestConfiguration.class})
 class JpqlRepairServiceTest {
 
     @Autowired

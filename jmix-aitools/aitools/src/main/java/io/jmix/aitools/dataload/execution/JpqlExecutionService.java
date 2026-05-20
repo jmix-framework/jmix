@@ -16,18 +16,25 @@
 
 package io.jmix.aitools.dataload.execution;
 
+import io.jmix.aitools.dataload.execution.JpqlValidationAndRepairService.OperationResult;
 import io.jmix.aitools.dataload.generation.GeneratedJpqlParameter;
 import io.jmix.aitools.dataload.generation.GeneratedJpqlResult;
-import io.jmix.aitools.dataload.repair.JpqlRepairResult;
-import io.jmix.aitools.dataload.repair.JpqlRepairService;
-import io.jmix.aitools.dataload.validation.JpqlValidationIssue;
 import io.jmix.aitools.dataload.validation.JpqlValidationResult;
-import io.jmix.aitools.dataload.validation.JpqlValidationService;
+import io.jmix.core.AccessManager;
 import io.jmix.core.DataManager;
 import io.jmix.core.FluentValuesLoader;
+import io.jmix.core.Metadata;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.KeyValueEntity;
+import io.jmix.core.metamodel.model.MetadataObject;
+import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.core.security.AccessDeniedException;
+import io.jmix.core.security.EntityOp;
+import io.jmix.data.QueryTransformerFactory;
+import io.jmix.data.accesscontext.LoadValuesAccessContext;
 import org.jspecify.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -35,48 +42,37 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component("aitols_JpqlExecutionService")
 public class JpqlExecutionService {
+
+    private static final Logger log = LoggerFactory.getLogger(JpqlExecutionService.class);
 
     // TODO: pinyazhin, app property?
     protected static final int DEFAULT_MAX_RESULTS = 50;
 
     @Autowired
-    protected JpqlValidationService jpqlValidationService;
-    @Autowired
-    protected JpqlRepairService jpqlRepairService;
+    protected JpqlValidationAndRepairService validateAndRepair;
     @Autowired
     protected JpqlParameterConversionService jpqlParameterConversionService;
     @Autowired
     protected DataManager dataManager;
+    @Autowired(required = false)
+    protected AccessManager accessManager;
+    @Autowired(required = false)
+    protected QueryTransformerFactory queryTransformerFactory;
+    @Autowired(required = false)
+    protected Metadata metadata;
 
     public JpqlExecutionResult execute(JpqlExecutionRequest request) {
         Preconditions.checkNotNullArgument(request, "request is null");
 
-        // TODO: pinyazhin rework?
-        if (request.getResultProperties().isEmpty()) {
-            JpqlValidationResult validationResult = new JpqlValidationResult(false, List.of(
-                    new JpqlValidationIssue("resultProperties.empty",
-                            "resultProperties must be specified for loadValues execution")
-            ));
-            return JpqlExecutionResult.failed(toGeneratedJpqlResult(request), validationResult, false);
-        }
-
-        GeneratedJpqlResult initialGeneratedResult = toGeneratedJpqlResult(request);
-
-        // Validate LLM generated JPQL
-        JpqlValidationResult initialValidationResult = jpqlValidationService.validate(initialGeneratedResult);
-
-        // Repair it if needed
-        JpqlRepairResult repairResult = jpqlRepairService.repairIfNeeded(request, initialGeneratedResult, initialValidationResult);
-        GeneratedJpqlResult generatedResult = repairResult.getGeneratedJpqlResult();
-
-        // Final validation of repaired result
-        JpqlValidationResult validationResult = jpqlValidationService.validate(generatedResult);
-
-        if (!validationResult.isValid()) {
-            return JpqlExecutionResult.failed(generatedResult, validationResult, repairResult.isRepaired());
+        OperationResult vrResult = validateAndRepair.validateAndRepair(request);
+        GeneratedJpqlResult generatedResult = vrResult.getGeneratedResult();
+        JpqlValidationResult validationResult = vrResult.getValidationResult();
+        if (vrResult.isFailed()) {
+            return JpqlExecutionResult.failed(generatedResult, validationResult, false);
         }
 
         Map<String, Object> executionParameters =
@@ -87,37 +83,22 @@ public class JpqlExecutionService {
             effectiveMaxResults = DEFAULT_MAX_RESULTS;
         }
 
+        ensureQueryIsPermitted(generatedResult.getJpql());
+
         try {
             List<Map<String, Object>> rows = executeQuery(request, generatedResult, executionParameters,
                     effectiveMaxResults, generatedResult.getFirstResult());
 
             return new JpqlExecutionResult(generatedResult, validationResult, rows,
                     effectiveMaxResults, generatedResult.getFirstResult(),
-                    repairResult.isRepaired(), true, null
+                    vrResult.isRepaired(), true, null
             );
         } catch (RuntimeException e) {
+            log.error("Cannot execute query", e);
+
             return JpqlExecutionResult.failed(generatedResult, validationResult, effectiveMaxResults,
-                    repairResult.isRepaired(), e.getMessage());
+                    vrResult.isRepaired(), e.getMessage());
         }
-    }
-
-    protected GeneratedJpqlResult toGeneratedJpqlResult(JpqlExecutionRequest request) {
-        return new GeneratedJpqlResult(request.getJpql(), toGeneratedParameters(request.getParameters()),
-                "", List.of(), request.getMaxResults(), request.getFirstResult()
-        );
-    }
-
-    protected List<GeneratedJpqlParameter> toGeneratedParameters(List<JpqlExecutionParameter> parameters) {
-        if (parameters == null || parameters.isEmpty()) {
-            return List.of();
-        }
-
-        List<GeneratedJpqlParameter> generatedParameters = new ArrayList<>(parameters.size());
-        for (JpqlExecutionParameter parameter : parameters) {
-            generatedParameters.add(
-                    new GeneratedJpqlParameter(parameter.getName(), parameter.getType(), parameter.getValue()));
-        }
-        return List.copyOf(generatedParameters);
     }
 
     protected List<JpqlExecutionParameter> toExecutionParameters(GeneratedJpqlResult generatedJpqlResult) {
@@ -131,6 +112,49 @@ public class JpqlExecutionService {
                     new JpqlExecutionParameter(parameter.getName(), parameter.getType(), parameter.getValue()));
         }
         return List.copyOf(executionParameters);
+    }
+
+    protected void ensureQueryIsPermitted(String jpqlQuery) {
+        if (accessManager == null || queryTransformerFactory == null || metadata == null) {
+            return;
+        }
+
+        LoadValuesAccessContext queryContext = new LoadValuesAccessContext(jpqlQuery, queryTransformerFactory, metadata);
+        accessManager.applyRegisteredConstraints(queryContext);
+
+        if (!queryContext.isPermitted()) {
+            String entityNames = queryContext.getEntityClasses().stream()
+                    .map(MetadataObject::getName)
+                    .sorted()
+                    .collect(Collectors.joining(","));
+            String deniedResource = entityNames.isBlank() ? jpqlQuery : entityNames;
+            throw new AccessDeniedException("entity", deniedResource, EntityOp.READ.getId());
+        }
+
+        if (!queryContext.getDeniedSelectedIndexes().isEmpty()) {
+            List<MetaPropertyPath> selectedPropertyPaths = new ArrayList<>(queryContext.getSelectedPropertyPaths());
+            String deniedAttributes = queryContext.getDeniedSelectedIndexes().stream()
+                    .distinct()
+                    .sorted()
+                    .map(index -> getSelectedPropertyPath(selectedPropertyPaths, index))
+                    .map(this::toAttributeResource)
+                    .collect(Collectors.joining(","));
+            throw new AccessDeniedException("attribute", deniedAttributes);
+        }
+    }
+
+    protected MetaPropertyPath getSelectedPropertyPath(List<MetaPropertyPath> selectedPropertyPaths, Integer index) {
+        if (index < 0 || index >= selectedPropertyPaths.size()) {
+            throw new IllegalStateException("Denied selected property index is out of bounds: " + index);
+        }
+        return selectedPropertyPaths.get(index);
+    }
+
+    protected String toAttributeResource(@Nullable MetaPropertyPath propertyPath) {
+        if (propertyPath == null) {
+            return "<unknown>";
+        }
+        return propertyPath.getMetaClass().getName() + "." + propertyPath.toPathString();
     }
 
     protected List<Map<String, Object>> executeQuery(JpqlExecutionRequest request,
@@ -150,15 +174,21 @@ public class JpqlExecutionService {
             loader.maxResults(maxResults);
         }
 
-        return loader.list().stream()
-                .map(keyValueEntity -> toValueRow(keyValueEntity, request.getResultProperties()))
-                .toList();
+        List<KeyValueEntity> loadedRows = loader.list();
+        List<Map<String, Object>> rows = new ArrayList<>(loadedRows.size());
+        for (KeyValueEntity entity : loadedRows) {
+            Map<String, Object> valueRow = toValueRow(entity, request.getResultProperties());
+            rows.add(valueRow);
+        }
+
+        return List.copyOf(rows);
     }
 
     protected Map<String, Object> toValueRow(KeyValueEntity keyValueEntity, List<String> resultProperties) {
         Map<String, Object> row = new LinkedHashMap<>();
         for (String property : resultProperties) {
-            row.put(property, keyValueEntity.getValue(property));
+            Object value = keyValueEntity.getValue(property);
+            row.put(property, value == null ? "" : value);
         }
         return Map.copyOf(row);
     }

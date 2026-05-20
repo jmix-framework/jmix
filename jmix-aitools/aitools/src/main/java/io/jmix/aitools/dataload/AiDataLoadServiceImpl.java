@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package io.jmix.aitools.dataload.impl;
+package io.jmix.aitools.dataload;
 
-import io.jmix.aitools.dataload.AiDataLoadService;
-import io.jmix.aitools.dataload.prompt.DataLoadSystemPromptProvider;
+import io.jmix.aitools.dataload.prompt.DataLoadChatSystemPromptProvider;
 import io.jmix.aitools.dataload.tool.DataLoadToolCallbackProvider;
 import io.jmix.aitools.memory.ChatMemoryProvider;
 import io.jmix.aitools.memory.JmixChatMemoryRepository;
@@ -40,7 +39,7 @@ public class AiDataLoadServiceImpl implements AiDataLoadService, InitializingBea
     @Autowired
     protected ChatMemoryProvider chatMemoryProvider;
     @Autowired
-    protected DataLoadSystemPromptProvider systemPromptProvider;
+    protected DataLoadChatSystemPromptProvider systemPromptProvider;
     @Autowired
     protected DataLoadToolCallbackProvider dataLoadToolCallbackProvider;
     @Autowired

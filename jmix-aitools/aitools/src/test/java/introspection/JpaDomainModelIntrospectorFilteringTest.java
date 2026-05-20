@@ -25,7 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import test_support.TextToDataTestConfiguration;
+import test_support.AiToolsTestConfiguration;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -34,7 +34,7 @@ class JpaDomainModelIntrospectorFilteringTest {
 
     @Nested
     @ExtendWith(SpringExtension.class)
-    @ContextConfiguration(classes = TextToDataTestConfiguration.class)
+    @ContextConfiguration(classes = AiToolsTestConfiguration.class)
     class DefaultFiltering {
 
         @Autowired
@@ -52,7 +52,7 @@ class JpaDomainModelIntrospectorFilteringTest {
 
     @Nested
     @ExtendWith(SpringExtension.class)
-    @ContextConfiguration(classes = TextToDataTestConfiguration.class)
+    @ContextConfiguration(classes = AiToolsTestConfiguration.class)
     @TestPropertySource(properties = {
             "aitools.include-entities=aitols_SystemLevelEntity,aitols_Order",
             "aitools.exclude-entities=aitols_Order"

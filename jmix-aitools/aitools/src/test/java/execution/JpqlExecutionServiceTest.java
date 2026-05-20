@@ -21,6 +21,9 @@ import io.jmix.aitools.dataload.execution.JpqlExecutionRequest;
 import io.jmix.aitools.dataload.execution.JpqlExecutionResult;
 import io.jmix.aitools.dataload.execution.JpqlExecutionService;
 import io.jmix.aitools.dataload.execution.JpqlParameterConversionService;
+import io.jmix.aitools.dataload.generation.GeneratedJpqlParameter;
+import io.jmix.aitools.dataload.execution.JpqlValidationAndRepairService;
+import io.jmix.aitools.dataload.execution.JpqlValidationAndRepairService.OperationResult;
 import io.jmix.aitools.dataload.generation.GeneratedJpqlResult;
 import io.jmix.aitools.dataload.repair.JpqlRepairResult;
 import io.jmix.aitools.dataload.repair.JpqlRepairService;
@@ -44,8 +47,15 @@ class JpqlExecutionServiceTest {
         TestJpqlExecutionService executionService = new TestJpqlExecutionService(List.of(
                 Map.of("id", 1001L, "name", "Acme")
         ));
-        ReflectionTestUtils.setField(executionService, "jpqlValidationService", new SwitchingValidationService());
-        ReflectionTestUtils.setField(executionService, "jpqlRepairService", new RepairingJpqlRepairService());
+        ReflectionTestUtils.setField(executionService, "validateAndRepair", new SuccessfulValidationAndRepairService(
+                new GeneratedJpqlResult(
+                        "select e from aitols_Customer e where e.id = :id",
+                        List.of(new GeneratedJpqlParameter("id", "Long", "1001")),
+                        "",
+                        List.of()
+                ),
+                true
+        ));
         ReflectionTestUtils.setField(executionService, "jpqlParameterConversionService", new JpqlParameterConversionService());
 
         JpqlExecutionResult result = executionService.execute(new JpqlExecutionRequest(
@@ -70,8 +80,18 @@ class JpqlExecutionServiceTest {
         TestJpqlExecutionService executionService = new TestJpqlExecutionService(List.of(
                 Map.of("id", 1001L, "name", "Acme")
         ));
-        ReflectionTestUtils.setField(executionService, "jpqlValidationService", new AlwaysInvalidValidationService());
-        ReflectionTestUtils.setField(executionService, "jpqlRepairService", new NoOpJpqlRepairService());
+        ReflectionTestUtils.setField(executionService, "validateAndRepair", new FailedValidationAndRepairService(
+                new GeneratedJpqlResult(
+                        "select e from aitols_Customer e where e.fullTitle = :name",
+                        List.of(new GeneratedJpqlParameter("name", "String", "Acme")),
+                        "",
+                        List.of()
+                ),
+                new JpqlValidationResult(false, List.of(
+                        new JpqlValidationIssue("propertyPath.invalid", "Invalid property path: fullTitle")
+                )),
+                false
+        ));
         ReflectionTestUtils.setField(executionService, "jpqlParameterConversionService", new JpqlParameterConversionService());
 
         JpqlExecutionResult result = executionService.execute(new JpqlExecutionRequest(
@@ -95,8 +115,19 @@ class JpqlExecutionServiceTest {
     @DisplayName("Fails loadValues execution without result properties")
     void testFailsValuesRequestWithoutResultProperties() {
         TestJpqlExecutionService executionService = new TestJpqlExecutionService(List.of());
-        ReflectionTestUtils.setField(executionService, "jpqlValidationService", new SwitchingValidationService());
-        ReflectionTestUtils.setField(executionService, "jpqlRepairService", new NoOpJpqlRepairService());
+        ReflectionTestUtils.setField(executionService, "validateAndRepair", new FailedValidationAndRepairService(
+                new GeneratedJpqlResult(
+                        "select c.name, count(o) from aitols_Customer c join c.orders o group by c.name",
+                        List.of(),
+                        "",
+                        List.of()
+                ),
+                new JpqlValidationResult(false, List.of(
+                        new JpqlValidationIssue("resultProperties.empty",
+                                "resultProperties must be specified for loadValues execution")
+                )),
+                false
+        ));
         ReflectionTestUtils.setField(executionService, "jpqlParameterConversionService", new JpqlParameterConversionService());
 
         JpqlExecutionResult result = executionService.execute(new JpqlExecutionRequest(
@@ -132,52 +163,45 @@ class JpqlExecutionServiceTest {
         }
     }
 
-    protected static class SwitchingValidationService extends JpqlValidationService {
+    protected static class SuccessfulValidationAndRepairService extends JpqlValidationAndRepairService {
+
+        protected GeneratedJpqlResult generatedResult;
+        protected boolean repaired;
+
+        public SuccessfulValidationAndRepairService(GeneratedJpqlResult generatedResult, boolean repaired) {
+            this.generatedResult = generatedResult;
+            this.repaired = repaired;
+        }
 
         @Override
-        public JpqlValidationResult validate(GeneratedJpqlResult generatedJpqlResult) {
-            if (generatedJpqlResult.getJpql().contains("badField")) {
-                return new JpqlValidationResult(false, List.of(
-                        new JpqlValidationIssue("propertyPath.invalid", "Invalid property path: badField")
-                ));
-            }
-            return new JpqlValidationResult(true, List.of());
+        protected OperationResult validateAndRepair(JpqlExecutionRequest request) {
+            JpqlRepairResult repairResult = repaired
+                    ? new JpqlRepairResult(generatedResult, new JpqlValidationResult(true, List.of()), 1, true)
+                    : null;
+            return OperationResult.success(request, generatedResult, new JpqlValidationResult(true, List.of()), repairResult);
         }
     }
 
-    protected static class AlwaysInvalidValidationService extends JpqlValidationService {
+    protected static class FailedValidationAndRepairService extends JpqlValidationAndRepairService {
 
-        @Override
-        public JpqlValidationResult validate(GeneratedJpqlResult generatedJpqlResult) {
-            return new JpqlValidationResult(false, List.of(
-                    new JpqlValidationIssue("propertyPath.invalid", "Invalid property path: fullTitle")
-            ));
+        protected GeneratedJpqlResult generatedResult;
+        protected JpqlValidationResult validationResult;
+        protected boolean repaired;
+
+        public FailedValidationAndRepairService(GeneratedJpqlResult generatedResult,
+                                                JpqlValidationResult validationResult,
+                                                boolean repaired) {
+            this.generatedResult = generatedResult;
+            this.validationResult = validationResult;
+            this.repaired = repaired;
         }
-    }
-
-    protected static class RepairingJpqlRepairService extends JpqlRepairService {
 
         @Override
-        public JpqlRepairResult repairIfNeeded(JpqlExecutionRequest generationRequest,
-                                               GeneratedJpqlResult generatedJpqlResult,
-                                               JpqlValidationResult validationResult) {
-            GeneratedJpqlResult repairedResult = new GeneratedJpqlResult(
-                    "select e from aitols_Customer e where e.id = :id",
-                    generatedJpqlResult.getParameters(),
-                    "",
-                    List.of()
-            );
-            return new JpqlRepairResult(repairedResult, new JpqlValidationResult(true, List.of()), 1, true);
-        }
-    }
-
-    protected static class NoOpJpqlRepairService extends JpqlRepairService {
-
-        @Override
-        public JpqlRepairResult repairIfNeeded(JpqlExecutionRequest generationRequest,
-                                               GeneratedJpqlResult generatedJpqlResult,
-                                               JpqlValidationResult validationResult) {
-            return new JpqlRepairResult(generatedJpqlResult, validationResult, 0, false);
+        protected OperationResult validateAndRepair(JpqlExecutionRequest request) {
+            JpqlRepairResult repairResult = repaired
+                    ? new JpqlRepairResult(generatedResult, validationResult, 1, true)
+                    : null;
+            return OperationResult.failed(request, generatedResult, validationResult, repairResult);
         }
     }
 }

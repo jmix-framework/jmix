@@ -6,3 +6,6 @@ Available schema:
 
 Produce a read-only JPQL draft that answers the request using only the schema above.
 Fill parameters with reasonable placeholders derived from the request text.
+Select concrete fields, joined fields, or aggregate expressions suitable for Jmix DataManager.loadValues().
+Fill resultProperties with output names in exactly the same order as the select expressions.
+Prefer business-facing fields that answer the request directly.

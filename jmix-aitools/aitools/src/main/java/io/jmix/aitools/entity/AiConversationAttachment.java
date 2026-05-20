@@ -18,7 +18,7 @@ import java.util.UUID;
 
 @JmixEntity
 @Table(name = "AITOLS_AI_CONV_ATTACHMENT", indexes = {
-        @Index(name = "IDX_AI_CONV_ATTACH_CONV", columnList = "CONVERSATION_ID")
+        @Index(name = "IDX_AITOLS_AI_CONV_ATTACH_CONV", columnList = "CONVERSATION_ID")
 })
 @Entity(name = "aitols_AiConversationAttachment")
 public class AiConversationAttachment {

@@ -14,18 +14,9 @@
  * limitations under the License.
  */
 
-package io.jmix.aitools;
+package io.jmix.aitools.dataload.prompt;
 
-import io.jmix.core.annotation.JmixModule;
-import io.jmix.data.DataConfiguration;
-import io.jmix.eclipselink.EclipselinkConfiguration;
-import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
+import io.jmix.aitools.PromptProvider;
 
-@Configuration
-@ComponentScan
-@JmixModule(dependsOn = {DataConfiguration.class, EclipselinkConfiguration.class})
-@ConfigurationPropertiesScan
-public class AiToolsConfiguration {
+public interface DataLoadChatSystemPromptProvider extends PromptProvider {
 }

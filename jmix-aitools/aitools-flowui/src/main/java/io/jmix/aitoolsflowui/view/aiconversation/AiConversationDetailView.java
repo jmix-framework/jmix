@@ -52,7 +52,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-@Route(value = "ai-conversations/:id", layout = DefaultMainViewParent.class)
+@Route(value = "aitols-ai-conversations/:id", layout = DefaultMainViewParent.class)
 @ViewController("aitols_AiConversation.detail")
 @ViewDescriptor("ai-conversation-detail-view.xml")
 @EditedEntityContainer("aiConversationDc")

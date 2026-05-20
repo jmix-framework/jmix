@@ -31,14 +31,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import repair.test_support.SpringAiJpqlRepairerTestConfiguration;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import test_support.TextToDataTestConfiguration;
+import test_support.AiToolsTestConfiguration;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {TextToDataTestConfiguration.class, SpringAiJpqlRepairerTestConfiguration.class})
+@ContextConfiguration(classes = {AiToolsTestConfiguration.class, SpringAiJpqlRepairerTestConfiguration.class})
 class SpringAiJpqlRepairerTest {
 
     @Autowired

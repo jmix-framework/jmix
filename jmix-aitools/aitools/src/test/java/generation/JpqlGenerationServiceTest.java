@@ -26,14 +26,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import test_support.TextToDataTestConfiguration;
-
-import java.util.List;
+import test_support.AiToolsTestConfiguration;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {TextToDataTestConfiguration.class, JpqlGenerationServiceTestConfiguration.class})
+@ContextConfiguration(classes = {AiToolsTestConfiguration.class, JpqlGenerationServiceTestConfiguration.class})
 class JpqlGenerationServiceTest {
 
     @Autowired

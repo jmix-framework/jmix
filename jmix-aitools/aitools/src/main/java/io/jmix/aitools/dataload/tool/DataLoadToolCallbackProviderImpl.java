@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-package io.jmix.aitools.dataload.tool.impl;
+package io.jmix.aitools.dataload.tool;
 
 import io.jmix.aitools.tool.AiToolDescriptor;
 import io.jmix.aitools.tool.AiToolDescriptorProvider;
-import io.jmix.aitools.dataload.tool.DataLoadAiTool;
-import io.jmix.aitools.dataload.tool.DataLoadToolCallbackProvider;
 import org.springframework.ai.tool.ToolCallback;
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.ai.tool.definition.ToolDefinition;

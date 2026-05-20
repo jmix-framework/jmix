@@ -16,8 +16,10 @@
 
 package test_support;
 
+import io.jmix.aitools.dataload.prompt.DataLoadChatSystemPromptProvider;
 import io.jmix.aitools.dataload.prompt.DataLoadSystemPromptProvider;
 import io.jmix.aitools.dataload.prompt.JpqlGenerationPromptProvider;
+import io.jmix.aitools.dataload.prompt.impl.DefaultDataLoadChatSystemPromptProvider;
 import io.jmix.aitools.dataload.prompt.impl.DefaultDataLoadSystemPromptProvider;
 import io.jmix.aitools.dataload.prompt.impl.DefaultJpqlGenerationPromptProvider;
 import io.jmix.core.CoreConfiguration;
@@ -35,7 +37,7 @@ import org.springframework.context.annotation.Import;
 @Import({CoreConfiguration.class, AiToolsConfiguration.class, CommonCoreTestConfiguration.class, DataConfiguration.class})
 @JmixModule
 @MessageSourceBasenames("test_support/messages")
-public class TextToDataTestConfiguration {
+public class AiToolsTestConfiguration {
 
     @Bean("test_JpaDomainModelIntrospector")
     public JpaDomainModelIntrospector jpaDomainModelIntrospector() {
@@ -45,6 +47,11 @@ public class TextToDataTestConfiguration {
     @Bean
     DataLoadSystemPromptProvider systemPromptProvider() {
         return new DefaultDataLoadSystemPromptProvider();
+    }
+
+    @Bean
+    DataLoadChatSystemPromptProvider chatSystemPromptProvider() {
+        return new DefaultDataLoadChatSystemPromptProvider();
     }
 
     @Bean

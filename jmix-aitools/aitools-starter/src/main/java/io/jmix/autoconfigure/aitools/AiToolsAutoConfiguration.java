@@ -17,6 +17,7 @@
 package io.jmix.autoconfigure.aitools;
 
 import io.jmix.aitools.dataload.generation.impl.SpringAiJpqlGenerator;
+import io.jmix.aitools.dataload.prompt.DataLoadChatSystemPromptProvider;
 import io.jmix.aitools.dataload.prompt.DataLoadSystemPromptProvider;
 import io.jmix.aitools.dataload.prompt.impl.DefaultJpqlGenerationPromptProvider;
 import io.jmix.aitools.dataload.prompt.impl.DefaultJpqlRepairerPromptProvider;
@@ -26,6 +27,7 @@ import io.jmix.aitools.dataload.generation.JpqlGenerator;
 import io.jmix.aitools.dataload.prompt.JpqlGenerationPromptProvider;
 import io.jmix.aitools.introspection.introspector.JpaDomainModelIntrospector;
 import io.jmix.aitools.dataload.prompt.JpqlRepairerPromptProvider;
+import io.jmix.aitools.dataload.prompt.impl.DefaultDataLoadChatSystemPromptProvider;
 import io.jmix.aitools.dataload.prompt.impl.DefaultDataLoadSystemPromptProvider;
 import io.jmix.aitools.dataload.repair.JpqlRepairer;
 import io.jmix.aitools.memory.JmixChatMemoryRepository;
@@ -82,6 +84,12 @@ public class AiToolsAutoConfiguration {
     @ConditionalOnMissingBean(DataLoadSystemPromptProvider.class)
     public DataLoadSystemPromptProvider systemPromptProvider() {
         return new DefaultDataLoadSystemPromptProvider();
+    }
+
+    @Bean("aitols_DefaultChatSystemPromptProvider")
+    @ConditionalOnMissingBean(DataLoadChatSystemPromptProvider.class)
+    public DataLoadChatSystemPromptProvider chatSystemPromptProvider() {
+        return new DefaultDataLoadChatSystemPromptProvider();
     }
 
     @Bean("aitols_JmixChatMemoryRepository")

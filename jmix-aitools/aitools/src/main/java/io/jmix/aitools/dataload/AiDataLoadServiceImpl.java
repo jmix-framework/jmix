@@ -16,9 +16,10 @@
 
 package io.jmix.aitools.dataload;
 
+import io.jmix.aitools.ChatClientFactory;
 import io.jmix.aitools.dataload.prompt.DataLoadChatSystemPromptProvider;
 import io.jmix.aitools.dataload.tool.DataLoadToolCallbackProvider;
-import io.jmix.aitools.memory.ChatMemoryProvider;
+import io.jmix.aitools.memory.ChatMemoryFactory;
 import io.jmix.aitools.memory.JmixChatMemoryRepository;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.security.CurrentAuthentication;
@@ -27,7 +28,6 @@ import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -35,9 +35,9 @@ import org.springframework.stereotype.Component;
 public class AiDataLoadServiceImpl implements AiDataLoadService, InitializingBean {
 
     @Autowired
-    protected ObjectProvider<ChatClient.Builder> chatClientBuilder;
+    protected ChatClientFactory chatClientFactory;
     @Autowired
-    protected ChatMemoryProvider chatMemoryProvider;
+    protected ChatMemoryFactory chatMemoryFactory;
     @Autowired
     protected DataLoadChatSystemPromptProvider systemPromptProvider;
     @Autowired
@@ -49,7 +49,7 @@ public class AiDataLoadServiceImpl implements AiDataLoadService, InitializingBea
 
     @Override
     public void afterPropertiesSet() {
-        chatClientBuilder.ifAvailable(this::buildChatClient);
+        buildChatClient();
     }
 
     @Override
@@ -80,17 +80,16 @@ public class AiDataLoadServiceImpl implements AiDataLoadService, InitializingBea
                 .content();
     }
 
-    protected void buildChatClient(ChatClient.Builder builder) {
-        chatClient = builder
-                .defaultAdvisors(
+    protected void buildChatClient() {
+        chatClient = chatClientFactory.createChatClient(builder ->
+                builder.defaultAdvisors(
                         SimpleLoggerAdvisor.builder().build(),
                         MessageChatMemoryAdvisor.builder(buildChatMemory()).build()
-                )
-                .build();
+                ));
     }
 
     protected ChatMemory buildChatMemory() {
-        return chatMemoryProvider.build();
+        return chatMemoryFactory.build();
     }
 
     protected boolean isChatClientAvailable() {

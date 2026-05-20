@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package io.jmix.aitools.dataload.executor;
+package io.jmix.aitools.dataload.repair.impl;
 
+import java.util.Collections;
 import java.util.List;
 
 public class SpringAiGeneratedJpqlPayload {
 
     protected String jpql;
-    protected List<SpringAiGeneratedJpqlParameterPayload> parameters;
+    protected List<SpringAiGeneratedJpqlParameterPayload> parameters = Collections.emptyList();
     protected String explanation;
     protected List<String> warnings;
     protected Integer maxResults;

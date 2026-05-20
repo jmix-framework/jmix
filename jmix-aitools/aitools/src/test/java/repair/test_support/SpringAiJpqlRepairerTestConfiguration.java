@@ -17,9 +17,7 @@
 package repair.test_support;
 
 import io.jmix.aitools.dataload.prompt.JpqlRepairerPromptProvider;
-import io.jmix.aitools.dataload.prompt.DataLoadSystemPromptProvider;
 import io.jmix.aitools.dataload.prompt.impl.DefaultJpqlRepairerPromptProvider;
-import io.jmix.aitools.dataload.prompt.impl.DefaultDataLoadSystemPromptProvider;
 import io.jmix.aitools.dataload.repair.impl.SpringAiJpqlRepairer;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.context.annotation.Bean;
@@ -41,11 +39,6 @@ public class SpringAiJpqlRepairerTestConfiguration {
     @Bean
     JpqlRepairerPromptProvider jpqlRepairerPromptProvider() {
         return new DefaultJpqlRepairerPromptProvider();
-    }
-
-    @Bean
-    DataLoadSystemPromptProvider systemPromptProvider() {
-        return new DefaultDataLoadSystemPromptProvider();
     }
 
     @Bean

@@ -19,90 +19,24 @@ package io.jmix.aitools;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
-import java.util.List;
-
 @ConfigurationProperties("aitools")
 public class AiToolsProperties {
 
     Boolean enabled;
 
-    Integer maxRepairAttempts;
-
-    Integer maxEntityCandidates;
-
-    Integer relationExpansionDepth;
-
     Integer chatMemoryMaxMessages;
 
-    Boolean excludeSystemLevelEntities;
-
-    List<String> includeEntities;
-
-    List<String> excludeEntities;
-
-    List<String> includePackages;
-
-    List<String> excludePackages;
-
     public AiToolsProperties(@DefaultValue("true") Boolean enabled,
-                             @DefaultValue("2") Integer maxRepairAttempts,
-                             @DefaultValue("10") Integer maxEntityCandidates,
-                             @DefaultValue("1") Integer relationExpansionDepth,
-                             @DefaultValue("20") Integer chatMemoryMaxMessages,
-                             @DefaultValue("true") Boolean excludeSystemLevelEntities,
-                             List<String> includeEntities,
-                             List<String> excludeEntities,
-                             List<String> includePackages,
-                             @DefaultValue("io.jmix") List<String> excludePackages) {
+                             @DefaultValue("20") Integer chatMemoryMaxMessages) {
         this.enabled = enabled;
-        this.maxRepairAttempts = maxRepairAttempts;
-        this.maxEntityCandidates = maxEntityCandidates;
-        this.relationExpansionDepth = relationExpansionDepth;
         this.chatMemoryMaxMessages = chatMemoryMaxMessages;
-        this.excludeSystemLevelEntities = excludeSystemLevelEntities;
-        this.includeEntities = includeEntities == null ? List.of() : List.copyOf(includeEntities);
-        this.excludeEntities = excludeEntities == null ? List.of() : List.copyOf(excludeEntities);
-        this.includePackages = includePackages == null ? List.of() : List.copyOf(includePackages);
-        this.excludePackages = excludePackages == null ? List.of("io.jmix") : List.copyOf(excludePackages);
     }
 
     public Boolean getEnabled() {
         return enabled;
     }
 
-    public Integer getMaxRepairAttempts() {
-        return maxRepairAttempts;
-    }
-
-    public Integer getMaxEntityCandidates() {
-        return maxEntityCandidates;
-    }
-
-    public Integer getRelationExpansionDepth() {
-        return relationExpansionDepth;
-    }
-
     public Integer getChatMemoryMaxMessages() {
         return chatMemoryMaxMessages;
-    }
-
-    public Boolean getExcludeSystemLevelEntities() {
-        return excludeSystemLevelEntities;
-    }
-
-    public List<String> getIncludeEntities() {
-        return includeEntities;
-    }
-
-    public List<String> getExcludeEntities() {
-        return excludeEntities;
-    }
-
-    public List<String> getIncludePackages() {
-        return includePackages;
-    }
-
-    public List<String> getExcludePackages() {
-        return excludePackages;
     }
 }

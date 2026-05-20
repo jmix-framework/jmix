@@ -22,23 +22,14 @@ import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-@Component("aitols_ChatMemoryProvider")
-public class ChatMemoryProvider {
+@Component("aitols_ChatMemoryFactory")
+public class ChatMemoryFactory {
 
     @Autowired
     protected JmixChatMemoryRepository chatMemoryRepository;
 
     @Autowired
     protected AiToolsProperties toolsProperties;
-
-    private ChatMemory chatMemory;
-
-    public ChatMemory getChatMemory() {
-        if (chatMemory == null) {
-            chatMemory = build();
-        }
-        return chatMemory;
-    }
 
     public ChatMemory build() {
         return MessageWindowChatMemory.builder()

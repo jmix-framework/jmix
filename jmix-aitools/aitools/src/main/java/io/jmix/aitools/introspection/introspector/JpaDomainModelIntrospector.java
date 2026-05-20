@@ -1,12 +1,12 @@
 package io.jmix.aitools.introspection.introspector;
 
+import io.jmix.aitools.AiToolsDataLoadProperties;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.annotation.Comment;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.aitools.AiToolsProperties;
 import io.jmix.aitools.introspection.model.EntityDescriptor;
 import io.jmix.aitools.introspection.model.EntityPropertyDescriptor;
 import io.jmix.aitools.introspection.model.RelationPropertyDescriptor;
@@ -30,7 +30,7 @@ public class JpaDomainModelIntrospector {
     @Autowired
     protected MetadataTools metadataTools;
     @Autowired
-    protected AiToolsProperties aiToolsProperties;
+    protected AiToolsDataLoadProperties dataLoadProperties;
     @Autowired
     protected List<MetaPropertyIntrospector> propertyIntrospects;
 
@@ -56,10 +56,10 @@ public class JpaDomainModelIntrospector {
      * Rebuilds entity and property descriptor indexes from current metadata. It considers inclusion and exclusions
      * from the application properties.
      *
-     * @see AiToolsProperties#getExcludeEntities()
-     * @see AiToolsProperties#getExcludePackages()
-     * @see AiToolsProperties#getIncludeEntities()
-     * @see AiToolsProperties#getIncludePackages()
+     * @see AiToolsDataLoadProperties#getExcludeEntities()
+     * @see AiToolsDataLoadProperties#getExcludePackages()
+     * @see AiToolsDataLoadProperties#getIncludeEntities()
+     * @see AiToolsDataLoadProperties#getIncludePackages()
      */
     public void introspect() {
         Collection<MetaClass> classes = metadata.getClasses();
@@ -285,7 +285,7 @@ public class JpaDomainModelIntrospector {
             return true;
         }
 
-        if (Boolean.TRUE.equals(aiToolsProperties.getExcludeSystemLevelEntities())
+        if (Boolean.TRUE.equals(dataLoadProperties.getExcludeSystemLevelEntities())
                 && metadataTools.isSystemLevel(metaClass)) {
             return false;
         }
@@ -294,26 +294,26 @@ public class JpaDomainModelIntrospector {
             return false;
         }
 
-        if (matchesAnyPackagePrefix(metaClass.getJavaClass().getPackageName(), aiToolsProperties.getExcludePackages())) {
+        if (matchesAnyPackagePrefix(metaClass.getJavaClass().getPackageName(), dataLoadProperties.getExcludePackages())) {
             return false;
         }
 
-        if (!aiToolsProperties.getIncludeEntities().isEmpty()
-                || !aiToolsProperties.getIncludePackages().isEmpty()) {
-            return matchesEntityName(metaClass, aiToolsProperties.getIncludeEntities())
-                    || matchesAnyPackagePrefix(metaClass.getJavaClass().getPackageName(), aiToolsProperties.getIncludePackages());
+        if (!dataLoadProperties.getIncludeEntities().isEmpty()
+                || !dataLoadProperties.getIncludePackages().isEmpty()) {
+            return matchesEntityName(metaClass, dataLoadProperties.getIncludeEntities())
+                    || matchesAnyPackagePrefix(metaClass.getJavaClass().getPackageName(), dataLoadProperties.getIncludePackages());
         }
 
         return true;
     }
 
     protected boolean isExplicitlyIncluded(MetaClass metaClass) {
-        return matchesEntityName(metaClass, aiToolsProperties.getIncludeEntities())
-                || matchesAnyPackagePrefix(metaClass.getJavaClass().getPackageName(), aiToolsProperties.getIncludePackages());
+        return matchesEntityName(metaClass, dataLoadProperties.getIncludeEntities())
+                || matchesAnyPackagePrefix(metaClass.getJavaClass().getPackageName(), dataLoadProperties.getIncludePackages());
     }
 
     protected boolean isExplicitlyExcluded(MetaClass metaClass) {
-        return matchesEntityName(metaClass, aiToolsProperties.getExcludeEntities());
+        return matchesEntityName(metaClass, dataLoadProperties.getExcludeEntities());
     }
 
     protected boolean matchesEntityName(MetaClass metaClass, List<String> entityNames) {

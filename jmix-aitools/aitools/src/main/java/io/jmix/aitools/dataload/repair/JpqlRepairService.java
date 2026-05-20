@@ -16,7 +16,7 @@
 
 package io.jmix.aitools.dataload.repair;
 
-import io.jmix.aitools.AiToolsProperties;
+import io.jmix.aitools.AiToolsDataLoadProperties;
 import io.jmix.aitools.dataload.execution.JpqlExecutionRequest;
 import io.jmix.aitools.dataload.execution.GeneratedJpqlResult;
 import io.jmix.aitools.dataload.validation.JpqlValidationResult;
@@ -29,7 +29,7 @@ import org.springframework.stereotype.Component;
 public class JpqlRepairService {
 
     @Autowired
-    protected AiToolsProperties aiToolsProperties;
+    protected AiToolsDataLoadProperties dataLoadProperties;
 
     @Autowired
     protected JpqlValidationService jpqlValidationService;
@@ -40,7 +40,8 @@ public class JpqlRepairService {
     public JpqlRepairResult repairIfNeeded(JpqlExecutionRequest executionRequest,
                                            GeneratedJpqlResult generatedJpqlResult,
                                            JpqlValidationResult validationResult) {
-        return repairIfNeeded(executionRequest, generatedJpqlResult, validationResult, aiToolsProperties.getMaxRepairAttempts());
+        return repairIfNeeded(executionRequest, generatedJpqlResult, validationResult,
+                dataLoadProperties.getMaxRepairAttempts());
     }
 
     public JpqlRepairResult repairIfNeeded(JpqlExecutionRequest executionRequest,

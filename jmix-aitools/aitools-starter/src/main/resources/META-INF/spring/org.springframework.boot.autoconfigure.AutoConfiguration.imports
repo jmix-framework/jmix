@@ -1,1 +1,2 @@
 io.jmix.autoconfigure.aitools.AiToolsAutoConfiguration
+io.jmix.autoconfigure.aitools.AiToolsDataLoadAutoConfiguration

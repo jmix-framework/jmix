@@ -14,35 +14,21 @@
  * limitations under the License.
  */
 
-package io.jmix.aitools.dataload.executor;
+package introspection;
 
-public class SpringAiGeneratedJpqlParameterPayload {
+import io.jmix.aitools.introspection.AvailableEntityService;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import test_support.AiToolsTestConfiguration;
 
-    protected String name;
-    protected String type;
-    protected Object value;
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = AiToolsTestConfiguration.class)
+class AvailableEntityServiceTest {
 
-    public String getName() {
-        return name;
-    }
+    @Autowired
+    AvailableEntityService availableEntityService;
 
-    public void setName(String name) {
-        this.name = name;
-    }
 
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public Object getValue() {
-        return value;
-    }
-
-    public void setValue(Object value) {
-        this.value = value;
-    }
 }

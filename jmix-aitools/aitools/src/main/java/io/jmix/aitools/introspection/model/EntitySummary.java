@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package io.jmix.aitools.introspection.search;
+package io.jmix.aitools.introspection.model;
 
 import java.util.List;
 
-public class DomainModelDocument {
+public class EntitySummary {
 
     protected String entityName;
     protected List<String> localizedNames;
     protected List<String> propertyNames;
     protected List<String> propertyLocalizedNames;
 
-    public DomainModelDocument(String entityName,
-                               List<String> localizedNames,
-                               List<String> propertyNames,
-                               List<String> propertyLocalizedNames) {
+    public EntitySummary(String entityName,
+                         List<String> localizedNames,
+                         List<String> propertyNames,
+                         List<String> propertyLocalizedNames) {
         this.entityName = entityName;
         this.localizedNames = localizedNames;
         this.propertyNames = propertyNames;

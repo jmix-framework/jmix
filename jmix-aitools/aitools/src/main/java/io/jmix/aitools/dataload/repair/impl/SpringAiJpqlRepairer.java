@@ -18,50 +18,36 @@ package io.jmix.aitools.dataload.repair.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.jmix.aitools.dataload.executor.SpringAiPromptExecutor;
+import io.jmix.aitools.ChatClientFactory;
+import io.jmix.aitools.dataload.execution.GeneratedJpqlParameter;
 import io.jmix.aitools.dataload.execution.GeneratedJpqlResult;
 import io.jmix.aitools.dataload.prompt.JpqlRepairerPromptProvider;
-import io.jmix.aitools.dataload.prompt.DataLoadSystemPromptProvider;
 import io.jmix.aitools.dataload.repair.JpqlRepairRequest;
 import io.jmix.aitools.dataload.repair.JpqlRepairer;
 import io.jmix.aitools.dataload.validation.JpqlValidationIssue;
-import org.springframework.ai.chat.model.ChatModel;
+import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 
 public class SpringAiJpqlRepairer implements JpqlRepairer, InitializingBean {
 
     @Autowired
     protected JpqlRepairerPromptProvider jpqlRepairerPromptProvider;
     @Autowired
-    protected DataLoadSystemPromptProvider dataLoadSystemPromptProvider;
-    @Autowired
-    protected ObjectProvider<ChatModel> chatModelProvider;
+    protected ChatClientFactory chatClientFactory;
 
-    protected SpringAiPromptExecutor promptExecutor;
     protected ObjectMapper objectMapper;
 
     @Override
     public void afterPropertiesSet() {
         objectMapper = createObjectMapper();
-        promptExecutor = createPromptExecutor();
     }
 
     @Override
     public GeneratedJpqlResult repair(JpqlRepairRequest request) {
-        String repairPrompt = jpqlRepairerPromptProvider.getContent();
-        String formattedPrompt = repairPrompt.formatted(
-                request.getAttempt(),
-                request.getExecutionRequest().getUserText(),
-                toJson(request.getGeneratedJpqlResult()),
-                formatValidationIssues(request.getValidationResult().getIssues()),
-                formatRepairGuidance(request.getValidationResult().getIssues()));
-
-        return promptExecutor.executePrompt(formattedPrompt);
+        return executePrompt(request);
     }
 
     protected String formatValidationIssues(java.util.List<JpqlValidationIssue> issues) {
@@ -120,8 +106,44 @@ public class SpringAiJpqlRepairer implements JpqlRepairer, InitializingBean {
         return builder.toString();
     }
 
-    protected SpringAiPromptExecutor createPromptExecutor() {
-        return new SpringAiPromptExecutor(chatModelProvider, objectMapper, dataLoadSystemPromptProvider.getContent());
+    protected GeneratedJpqlResult executePrompt(JpqlRepairRequest request) {
+        String repairPrompt = jpqlRepairerPromptProvider.getContent();
+        String userPrompt = repairPrompt.formatted(
+                request.getAttempt(),
+                request.getExecutionRequest().getUserText(),
+                toJson(request.getGeneratedJpqlResult()),
+                formatValidationIssues(request.getValidationResult().getIssues()),
+                formatRepairGuidance(request.getValidationResult().getIssues()));
+
+        String content = chatClientFactory.createChatClient(builder ->
+                        builder.defaultAdvisors(SimpleLoggerAdvisor.builder().build()))
+                .prompt(userPrompt)
+                .call()
+                .content();
+
+        if (content == null || content.isBlank()) {
+            throw new IllegalStateException("LLM returned an empty response");
+        }
+
+        SpringAiGeneratedJpqlPayload payload;
+        try {
+            payload = objectMapper.readValue(content, SpringAiGeneratedJpqlPayload.class);
+        } catch (JsonProcessingException e) {
+            throw new IllegalStateException("Cannot parse LLM response as JSON: " + content, e);
+        }
+
+        return mapToGeneratedJpqlResult(payload);
+    }
+
+    protected GeneratedJpqlResult mapToGeneratedJpqlResult(SpringAiGeneratedJpqlPayload payload) {
+        List<GeneratedJpqlParameter> parameters = payload.getParameters().stream()
+                .map(parameter -> new GeneratedJpqlParameter(parameter.getName(), parameter.getType(), parameter.getValue()))
+                .toList();
+
+        return new GeneratedJpqlResult(payload.getJpql(), parameters, payload.getExplanation(),
+                payload.getWarnings() == null ? Collections.emptyList() : payload.getWarnings(),
+                payload.getMaxResults(), payload.getFirstResult()
+        );
     }
 
     protected ObjectMapper createObjectMapper() {

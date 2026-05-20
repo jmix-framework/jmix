@@ -17,8 +17,8 @@
 package io.jmix.aitools.dataload.tool;
 
 import io.jmix.aitools.introspection.model.EntityDescriptor;
-import io.jmix.aitools.introspection.search.DomainModelDocument;
-import io.jmix.aitools.introspection.search.DomainModelSearchService;
+import io.jmix.aitools.introspection.model.EntitySummary;
+import io.jmix.aitools.introspection.AvailableEntityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.tool.annotation.Tool;
@@ -33,8 +33,10 @@ public class DomainModelDiscoveryTool implements DataLoadAiTool {
 
     private static final Logger log = LoggerFactory.getLogger(DomainModelDiscoveryTool.class);
 
+    // TODO: pinyazhin, exlcude by roles for user
+
     @Autowired
-    protected DomainModelSearchService domainModelSearchService;
+    protected AvailableEntityService availableEntityService;
 
     @Tool(description = """
         Returns compact metadata for all entities in the domain model.
@@ -45,10 +47,10 @@ public class DomainModelDiscoveryTool implements DataLoadAiTool {
             - Choose which exact entities should be inspected in more detail
             - Get correct entity names for follow-up tool calls
         """)
-    public List<DomainModelDocument> getAvailableEntities() {
+    public List<EntitySummary> getAvailableEntities() {
         log.debug("LLM tool call: getAvailableEntities()");
 
-        return domainModelSearchService.getAvailableEntities();
+        return availableEntityService.getEntitySummaries();
     }
 
     @Tool(description = """
@@ -64,6 +66,6 @@ public class DomainModelDiscoveryTool implements DataLoadAiTool {
             @ToolParam(description = "Exact entity names to load detailed metadata for.") List<String> entityNames) {
         log.debug("LLM tool call: getDomainModelForEntities({})", entityNames);
 
-        return domainModelSearchService.getDomainModelForEntities(entityNames);
+        return availableEntityService.findEntityDescriptorsByNames(entityNames);
     }
 }

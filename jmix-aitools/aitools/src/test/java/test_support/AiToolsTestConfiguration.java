@@ -17,9 +17,7 @@
 package test_support;
 
 import io.jmix.aitools.dataload.prompt.DataLoadChatSystemPromptProvider;
-import io.jmix.aitools.dataload.prompt.DataLoadSystemPromptProvider;
 import io.jmix.aitools.dataload.prompt.impl.DefaultDataLoadChatSystemPromptProvider;
-import io.jmix.aitools.dataload.prompt.impl.DefaultDataLoadSystemPromptProvider;
 import io.jmix.core.CoreConfiguration;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.annotation.MessageSourceBasenames;
@@ -27,9 +25,12 @@ import io.jmix.data.DataConfiguration;
 import io.jmix.testsupport.config.CommonCoreTestConfiguration;
 import io.jmix.aitools.AiToolsConfiguration;
 import io.jmix.aitools.introspection.introspector.JpaDomainModelIntrospector;
+import io.micrometer.observation.ObservationRegistry;
+import org.springframework.ai.chat.client.DefaultChatClientBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import repair.test_support.StubChatModel;
 
 @Configuration
 @Import({CoreConfiguration.class, AiToolsConfiguration.class, CommonCoreTestConfiguration.class, DataConfiguration.class})
@@ -43,12 +44,12 @@ public class AiToolsTestConfiguration {
     }
 
     @Bean
-    DataLoadSystemPromptProvider systemPromptProvider() {
-        return new DefaultDataLoadSystemPromptProvider();
+    DataLoadChatSystemPromptProvider chatSystemPromptProvider() {
+        return new DefaultDataLoadChatSystemPromptProvider();
     }
 
     @Bean
-    DataLoadChatSystemPromptProvider chatSystemPromptProvider() {
-        return new DefaultDataLoadChatSystemPromptProvider();
+    DefaultChatClientBuilder  chatClientBuilder() {
+        return new DefaultChatClientBuilder(new StubChatModel(), ObservationRegistry.NOOP, null, null);
     }
 }

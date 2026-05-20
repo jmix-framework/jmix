@@ -54,8 +54,8 @@ class JpaDomainModelIntrospectorFilteringTest {
     @ExtendWith(SpringExtension.class)
     @ContextConfiguration(classes = AiToolsTestConfiguration.class)
     @TestPropertySource(properties = {
-            "aitools.include-entities=aitols_SystemLevelEntity,aitols_Order",
-            "aitools.exclude-entities=aitols_Order"
+            "aitools.dataload.include-entities=aitols_SystemLevelEntity,aitols_Order",
+            "aitools.dataload.exclude-entities=aitols_Order"
     })
     class ExplicitFiltering {
 

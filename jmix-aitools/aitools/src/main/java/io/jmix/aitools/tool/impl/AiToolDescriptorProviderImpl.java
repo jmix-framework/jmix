@@ -24,6 +24,7 @@ import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
 
+// TODO: pinyazhin, auto configuration?
 @Component("aitols_AiToolDescriptorProviderImpl")
 public class AiToolDescriptorProviderImpl implements AiToolDescriptorProvider {
 

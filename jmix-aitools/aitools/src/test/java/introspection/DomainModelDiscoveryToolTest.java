@@ -18,7 +18,7 @@ package introspection;
 
 import io.jmix.aitools.dataload.tool.DomainModelDiscoveryTool;
 import io.jmix.aitools.introspection.model.EntityDescriptor;
-import io.jmix.aitools.introspection.search.DomainModelDocument;
+import io.jmix.aitools.introspection.model.EntitySummary;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -41,11 +41,11 @@ class DomainModelDiscoveryToolTest {
     @Test
     @DisplayName("Returns compact metadata for all entities")
     void testReturnsCompactMetadataForAllEntities() {
-        List<DomainModelDocument> documents = domainModelDiscoveryTool.getAvailableEntities();
+        List<EntitySummary> documents = domainModelDiscoveryTool.getAvailableEntities();
 
         assertFalse(documents.isEmpty());
 
-        DomainModelDocument orderDocument = documents.stream()
+        EntitySummary orderDocument = documents.stream()
                 .filter(document -> document.getEntityName().equals("aitols_Order"))
                 .findFirst()
                 .orElseThrow();

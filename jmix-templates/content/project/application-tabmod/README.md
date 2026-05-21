@@ -30,3 +30,5 @@ The application will be available at <http://localhost:8080>.
 The default user credentials are:
 * Login: `admin`
 * Password: `admin`
+
+**WARNING**: Change admin password and remove `ui.login.defaultUsername` and `ui.login.defaultPassword` application properties when deploying the application to production.

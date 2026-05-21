@@ -14,21 +14,13 @@
  * limitations under the License.
  */
 
-package io.jmix.aitools.dataload;
+package io.jmix.aitools.dataload.generation;
 
-import reactor.core.publisher.Flux;
+import io.jmix.aitools.dataload.EntityDataLoadQuery;
 
-public interface AiDataLoadService {
+public interface EntityDataLoadGenerationService {
 
-    String sendMessage(String message);
+    EntityDataLoadQuery generate(String userText);
 
-    Flux<String> sendMessageStream(String message);
-
-    Flux<String> sendMessageStream(String message, String conversationId);
-
-    String sendMessage(String message, String conversationId);
-
-    EntityDataLoadResult loadData(String userText);
-
-    EntityDataLoadResult loadData(String userText, String conversationId);
+    EntityDataLoadQuery generate(String userText, String conversationId);
 }

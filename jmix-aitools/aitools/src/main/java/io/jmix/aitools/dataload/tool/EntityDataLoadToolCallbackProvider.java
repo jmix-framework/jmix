@@ -14,21 +14,13 @@
  * limitations under the License.
  */
 
-package io.jmix.aitools.dataload;
+package io.jmix.aitools.dataload.tool;
 
-import reactor.core.publisher.Flux;
+import org.springframework.ai.tool.ToolCallback;
 
-public interface AiDataLoadService {
+import java.util.List;
 
-    String sendMessage(String message);
+public interface EntityDataLoadToolCallbackProvider {
 
-    Flux<String> sendMessageStream(String message);
-
-    Flux<String> sendMessageStream(String message, String conversationId);
-
-    String sendMessage(String message, String conversationId);
-
-    EntityDataLoadResult loadData(String userText);
-
-    EntityDataLoadResult loadData(String userText, String conversationId);
+    List<ToolCallback> getToolCallbacks();
 }

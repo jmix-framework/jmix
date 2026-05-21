@@ -23,15 +23,15 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Component("aitols_DataLoadToolCallbackProviderImpl")
-public class DataLoadToolCallbackProviderImpl extends AbstractToolCallbackProvider<DataLoadAiTool>
-        implements DataLoadToolCallbackProvider {
+@Component("aitols_AiEntityDataLoadToolCallbackProvider")
+public class EntityDataLoadToolCallbackProviderImpl extends AbstractToolCallbackProvider<EntityDataLoadAiTool>
+        implements EntityDataLoadToolCallbackProvider {
 
     @Autowired
-    protected List<DataLoadAiTool> dataLoadAiTools;
+    protected List<EntityDataLoadAiTool> entityDataLoadAiTools;
 
     @Override
     public List<ToolCallback> getToolCallbacks() {
-        return getToolCallbacks(dataLoadAiTools);
+        return getToolCallbacks(entityDataLoadAiTools);
     }
 }

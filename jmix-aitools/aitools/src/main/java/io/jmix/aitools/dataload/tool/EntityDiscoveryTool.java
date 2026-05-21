@@ -29,7 +29,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component("aitols_DomainModelDiscoveryTool")
-public class EntityDiscoveryTool implements DataLoadAiTool {
+public class EntityDiscoveryTool implements DataLoadAiTool, EntityDataLoadAiTool {
 
     private static final Logger log = LoggerFactory.getLogger(EntityDiscoveryTool.class);
 

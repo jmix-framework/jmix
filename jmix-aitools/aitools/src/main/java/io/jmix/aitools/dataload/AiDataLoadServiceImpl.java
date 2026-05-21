@@ -17,6 +17,8 @@
 package io.jmix.aitools.dataload;
 
 import io.jmix.aitools.ChatClientFactory;
+import io.jmix.aitools.dataload.execution.*;
+import io.jmix.aitools.dataload.generation.EntityDataLoadGenerationService;
 import io.jmix.aitools.dataload.prompt.DataLoadChatSystemPromptProvider;
 import io.jmix.aitools.dataload.tool.DataLoadToolCallbackProvider;
 import io.jmix.aitools.memory.ChatMemoryFactory;
@@ -30,6 +32,10 @@ import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Flux;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Component("aitols_AiDataLoadServiceImpl")
 public class AiDataLoadServiceImpl implements AiDataLoadService, InitializingBean {
@@ -44,6 +50,10 @@ public class AiDataLoadServiceImpl implements AiDataLoadService, InitializingBea
     protected DataLoadToolCallbackProvider dataLoadToolCallbackProvider;
     @Autowired
     protected CurrentAuthentication currentAuthentication;
+    @Autowired
+    protected EntityDataLoadGenerationService entityDataLoadGenerationService;
+    @Autowired
+    protected JpqlExecutionService jpqlExecutionService;
 
     protected ChatClient chatClient;
 
@@ -58,6 +68,21 @@ public class AiDataLoadServiceImpl implements AiDataLoadService, InitializingBea
     }
 
     @Override
+    public Flux<String> sendMessageStream(String message) {
+        return sendMessageStream(message, JmixChatMemoryRepository.NO_OP_CONVERSATION_ID);
+    }
+
+    @Override
+    public Flux<String> sendMessageStream(String message, String conversationId) {
+        Preconditions.checkNotEmptyString(message);
+        Preconditions.checkNotEmptyString(conversationId);
+
+        checkChatClient();
+
+        return executePromptStream(message, conversationId);
+    }
+
+    @Override
     public String sendMessage(String message, String conversationId) {
         Preconditions.checkNotEmptyString(message);
         Preconditions.checkNotEmptyString(conversationId);
@@ -67,17 +92,83 @@ public class AiDataLoadServiceImpl implements AiDataLoadService, InitializingBea
         return executePrompt(message, conversationId);
     }
 
-    // TODO: pinyazhin, support attachments
+    @Override
+    public EntityDataLoadResult loadData(String userText) {
+        Preconditions.checkNotEmptyString(userText);
+
+        EntityDataLoadQuery queryDraft = entityDataLoadGenerationService.generate(userText);
+
+        JpqlExecutionResult executionResult = jpqlExecutionService.execute(
+                new JpqlExecutionRequest(
+                        userText,
+                        queryDraft.getJpql(),
+                        toExecutionParameters(queryDraft.getParameters()),
+                        queryDraft.getResultProperties(),
+                        queryDraft.getMaxResults(),
+                        queryDraft.getFirstResult()
+                )
+        );
+
+        return new EntityDataLoadResult(
+                userText,
+                queryDraft,
+                executionResult.getValidationResult(),
+                executionResult.getRows(),
+                executionResult.isHasMore(),
+                executionResult.isExecuted(),
+                executionResult.getExecutionError()
+        );
+    }
+
+    @Override
+    public EntityDataLoadResult loadData(String userText, String conversationId) {
+        Preconditions.checkNotEmptyString(userText);
+        Preconditions.checkNotEmptyString(conversationId);
+
+        EntityDataLoadQuery queryDraft = entityDataLoadGenerationService.generate(userText, conversationId);
+
+        JpqlExecutionResult executionResult = jpqlExecutionService.execute(
+                new JpqlExecutionRequest(
+                        userText,
+                        queryDraft.getJpql(),
+                        toExecutionParameters(queryDraft.getParameters()),
+                        queryDraft.getResultProperties(),
+                        queryDraft.getMaxResults(),
+                        queryDraft.getFirstResult()
+                )
+        );
+
+        return new EntityDataLoadResult(
+                userText,
+                queryDraft,
+                executionResult.getValidationResult(),
+                executionResult.getRows(),
+                executionResult.isHasMore(),
+                executionResult.isExecuted(),
+                executionResult.getExecutionError()
+        );
+    }
+
     protected String executePrompt(String message, String conversationId) {
+        return buildChatClientPrompt(message, conversationId)
+                .call()
+                .content();
+    }
+
+    protected Flux<String> executePromptStream(String message, String conversationId) {
+        return buildChatClientPrompt(message, conversationId)
+                .stream()
+                .content();
+    }
+
+    protected ChatClient.ChatClientRequestSpec buildChatClientPrompt(String message, String conversationId) {
         return chatClient.prompt()
                 .system(system -> system
                         .text(systemPromptProvider.getResource())
                         .param("responseLanguage", resolveResponseLanguage()))
                 .user(user -> user.text(message))
                 .toolCallbacks(dataLoadToolCallbackProvider.getToolCallbacks())
-                .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
-                .call()
-                .content();
+                .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId));
     }
 
     protected void buildChatClient() {
@@ -104,5 +195,21 @@ public class AiDataLoadServiceImpl implements AiDataLoadService, InitializingBea
         if (!isChatClientAvailable()) {
             throw new IllegalStateException(ChatClient.class.getSimpleName() + " is not configured in application");
         }
+    }
+
+    protected List<JpqlExecutionParameter> toExecutionParameters(List<GeneratedJpqlParameter> generatedParameters) {
+        if (generatedParameters.isEmpty()) {
+            return List.of();
+        }
+
+        List<JpqlExecutionParameter> executionParameters = new ArrayList<>(generatedParameters.size());
+        for (GeneratedJpqlParameter parameter : generatedParameters) {
+            executionParameters.add(new JpqlExecutionParameter(
+                    parameter.getName(),
+                    parameter.getType(),
+                    parameter.getValue()
+            ));
+        }
+        return List.copyOf(executionParameters);
     }
 }

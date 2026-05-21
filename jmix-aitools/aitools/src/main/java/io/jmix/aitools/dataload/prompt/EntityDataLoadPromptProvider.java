@@ -14,21 +14,9 @@
  * limitations under the License.
  */
 
-package io.jmix.aitools.dataload;
+package io.jmix.aitools.dataload.prompt;
 
-import reactor.core.publisher.Flux;
+import io.jmix.aitools.PromptProvider;
 
-public interface AiDataLoadService {
-
-    String sendMessage(String message);
-
-    Flux<String> sendMessageStream(String message);
-
-    Flux<String> sendMessageStream(String message, String conversationId);
-
-    String sendMessage(String message, String conversationId);
-
-    EntityDataLoadResult loadData(String userText);
-
-    EntityDataLoadResult loadData(String userText, String conversationId);
+public interface EntityDataLoadPromptProvider extends PromptProvider {
 }

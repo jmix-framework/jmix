@@ -30,6 +30,10 @@ import java.util.List;
 @Component("aitols_JpqlSyntaxValidator")
 public class JpqlSyntaxValidator implements JpqlResultValidator, Ordered {
 
+    public static final String JPQL_SYNTAX_INVALID_CODE = "jpql.syntax.invalid";
+    public static final String JPQL_SYNTAX_INVALID_GUIDANCE = "Rewrite the JPQL into valid JPQL syntax only. Do not" +
+            " keep SQL keywords or malformed JPQL fragments.";
+
     @Autowired(required = false)
     protected QueryTransformerFactory queryTransformerFactory;
 
@@ -44,8 +48,8 @@ public class JpqlSyntaxValidator implements JpqlResultValidator, Ordered {
             queryTransformerFactory.parser(jpql).getEntityName();
         } catch (RuntimeException e) {
             Throwable cause = e.getCause() != null ? e.getCause() : e;
-            return List.of(new JpqlValidationIssue("jpql.syntax.invalid",
-                    "Invalid JPQL syntax: " + cause.getMessage()));
+            return List.of(new JpqlValidationIssue(JPQL_SYNTAX_INVALID_CODE,
+                    "Invalid JPQL syntax: " + cause.getMessage(), JPQL_SYNTAX_INVALID_GUIDANCE));
         }
         return List.of();
     }

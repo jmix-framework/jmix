@@ -19,10 +19,10 @@ package io.jmix.aitools.dataload.repair.impl;
 import java.util.Collections;
 import java.util.List;
 
-public class SpringAiGeneratedJpqlPayload {
+public class GeneratedJpqlPayload {
 
     protected String jpql;
-    protected List<SpringAiGeneratedJpqlParameterPayload> parameters = Collections.emptyList();
+    protected List<GeneratedJpqlParameterPayload> parameters = Collections.emptyList();
     protected String explanation;
     protected List<String> warnings;
     protected Integer maxResults;
@@ -36,11 +36,11 @@ public class SpringAiGeneratedJpqlPayload {
         this.jpql = jpql;
     }
 
-    public List<SpringAiGeneratedJpqlParameterPayload> getParameters() {
+    public List<GeneratedJpqlParameterPayload> getParameters() {
         return parameters;
     }
 
-    public void setParameters(List<SpringAiGeneratedJpqlParameterPayload> parameters) {
+    public void setParameters(List<GeneratedJpqlParameterPayload> parameters) {
         this.parameters = parameters;
     }
 

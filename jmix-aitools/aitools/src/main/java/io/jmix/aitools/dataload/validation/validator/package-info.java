@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
+@Internal
 @NullMarked
 package io.jmix.aitools.dataload.validation.validator;
 
+import io.jmix.core.annotation.Internal;
 import org.jspecify.annotations.NullMarked;

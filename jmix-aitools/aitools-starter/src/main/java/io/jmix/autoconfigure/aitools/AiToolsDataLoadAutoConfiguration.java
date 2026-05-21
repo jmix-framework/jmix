@@ -21,7 +21,7 @@ import io.jmix.aitools.dataload.prompt.JpqlRepairerPromptProvider;
 import io.jmix.aitools.dataload.prompt.impl.DefaultDataLoadChatSystemPromptProvider;
 import io.jmix.aitools.dataload.prompt.impl.DefaultJpqlRepairerPromptProvider;
 import io.jmix.aitools.dataload.repair.JpqlRepairer;
-import io.jmix.aitools.dataload.repair.impl.SpringAiJpqlRepairer;
+import io.jmix.aitools.dataload.repair.impl.DefaultJpqlRepairer;
 import io.jmix.aitools.introspection.introspector.JpaDomainModelIntrospector;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -44,7 +44,7 @@ public class AiToolsDataLoadAutoConfiguration {
     @ConditionalOnClass(ChatClient.class)
     @ConditionalOnMissingBean(JpqlRepairer.class)
     public JpqlRepairer textToJpqlRepairer() {
-        return new SpringAiJpqlRepairer();
+        return new DefaultJpqlRepairer();
     }
 
     @Bean("aitols_DefaultJpqlRepairerPromptProvider")

@@ -33,6 +33,10 @@ import java.util.List;
 @Component("aitols_UsedPropertyPathsValidator")
 public class UsedPropertyPathsValidator implements JpqlResultValidator, Ordered {
 
+    public static final String PROPERTY_PATH_INVALID_CODE = "propertyPath.invalid";
+    public static final String PROPERTY_PATH_INVALID_GUIDANCE = "Replace invalid property paths with valid paths from" +
+            " the provided schema only.";
+
     @Autowired
     protected JpaDomainModelIntrospector modelIntrospector;
     @Autowired(required = false)
@@ -56,8 +60,9 @@ public class UsedPropertyPathsValidator implements JpqlResultValidator, Ordered 
                 String entityName = queryPath.getEntityName();
                 String propertyPath = queryPath.getPropertyPath();
                 if (!modelIntrospector.containsPropertyPath(entityName, propertyPath)) {
-                    issues.add(new JpqlValidationIssue("propertyPath.invalid",
-                            "Invalid property path for entity " + entityName + ": " + propertyPath));
+                    issues.add(new JpqlValidationIssue(PROPERTY_PATH_INVALID_CODE,
+                            "Invalid property path for entity " + entityName + ": " + propertyPath,
+                            PROPERTY_PATH_INVALID_GUIDANCE));
                 }
             }
         } catch (RuntimeException e) {

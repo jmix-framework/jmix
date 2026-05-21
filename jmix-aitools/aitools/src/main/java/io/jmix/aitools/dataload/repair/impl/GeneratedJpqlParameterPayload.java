@@ -16,7 +16,7 @@
 
 package io.jmix.aitools.dataload.repair.impl;
 
-public class SpringAiGeneratedJpqlParameterPayload {
+public class GeneratedJpqlParameterPayload {
 
     protected String name;
     protected String type;

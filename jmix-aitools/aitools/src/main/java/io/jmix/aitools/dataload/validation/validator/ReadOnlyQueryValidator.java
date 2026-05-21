@@ -32,6 +32,12 @@ import static io.jmix.aitools.dataload.validation.validator.JpqlValidatorUtils.c
 @Component("aitols_ReadOnlyQueryJpqlValidator")
 public class ReadOnlyQueryValidator implements JpqlResultValidator, Ordered {
 
+    public static final String JPQL_NOT_SELECT_CODE = "jpql.notSelect";
+    public static final String JPQL_NOT_SELECT_GUIDANCE = "Return a read-only select JPQL query only.";
+
+    public static final String JPQL_WRITE_OPERATION_CODE = "jpql.writeOperation";
+    public static final String JPQL_WRITE_OPERATION_GUIDANCE = "Return a read-only select JPQL query only.";
+
     @Override
     public List<JpqlValidationIssue> validate(GeneratedJpqlResult result) {
         List<JpqlValidationIssue> issues = new ArrayList<>();
@@ -42,13 +48,15 @@ public class ReadOnlyQueryValidator implements JpqlResultValidator, Ordered {
 
         String normalizedJpql = jpql.trim().toLowerCase(Locale.ROOT);
         if (!normalizedJpql.startsWith("select ")) {
-            issues.add(new JpqlValidationIssue("jpql.notSelect", "Only read-only select JPQL is supported"));
+            issues.add(new JpqlValidationIssue(JPQL_NOT_SELECT_CODE, "Only read-only select JPQL is supported",
+                    JPQL_NOT_SELECT_GUIDANCE));
         }
 
         if (containsWord(normalizedJpql, "update")
                 || containsWord(normalizedJpql, "delete")
                 || containsWord(normalizedJpql, "insert")) {
-            issues.add(new JpqlValidationIssue("jpql.writeOperation", "Write JPQL operations are not allowed"));
+            issues.add(new JpqlValidationIssue(JPQL_WRITE_OPERATION_CODE, "Write JPQL operations are not allowed",
+                    JPQL_WRITE_OPERATION_GUIDANCE));
         }
         return issues;
     }

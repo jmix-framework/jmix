@@ -26,9 +26,14 @@ public class AiToolsDataLoadProperties {
 
     Boolean enabled;
 
+    Boolean excludeSystemLevelEntities;
+
     Integer maxRepairAttempts;
 
-    Boolean excludeSystemLevelEntities;
+    /**
+     * Defines the default value for max results when executing a query if the LLM does not provide one.
+     */
+    Integer defaultMaxResult;
 
     List<String> includeEntities;
 
@@ -41,6 +46,7 @@ public class AiToolsDataLoadProperties {
     public AiToolsDataLoadProperties(@DefaultValue("true") Boolean enabled,
                                      @DefaultValue("true") Boolean excludeSystemLevelEntities,
                                      @DefaultValue("1") Integer maxRepairAttempts,
+                                     @DefaultValue("20") Integer defaultMaxResult,
                                      List<String> includeEntities,
                                      List<String> excludeEntities,
                                      List<String> includePackages,
@@ -48,6 +54,7 @@ public class AiToolsDataLoadProperties {
         this.enabled = enabled;
         this.excludeSystemLevelEntities = excludeSystemLevelEntities;
         this.maxRepairAttempts = maxRepairAttempts;
+        this.defaultMaxResult  = defaultMaxResult;
         this.includeEntities = includeEntities == null ? List.of() : List.copyOf(includeEntities);
         this.excludeEntities = excludeEntities == null ? List.of() : List.copyOf(excludeEntities);
         this.includePackages = includePackages == null ? List.of() : List.copyOf(includePackages);
@@ -64,6 +71,10 @@ public class AiToolsDataLoadProperties {
 
     public Integer getMaxRepairAttempts() {
         return maxRepairAttempts;
+    }
+
+    public Integer getDefaultMaxResult() {
+        return defaultMaxResult;
     }
 
     public List<String> getIncludeEntities() {

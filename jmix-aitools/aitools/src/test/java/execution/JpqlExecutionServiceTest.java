@@ -34,6 +34,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import java.util.List;
 import java.util.Map;
 
+import static io.jmix.aitools.dataload.validation.validator.UsedPropertyPathsValidator.PROPERTY_PATH_INVALID_CODE;
 import static org.junit.jupiter.api.Assertions.*;
 
 class JpqlExecutionServiceTest {
@@ -85,7 +86,7 @@ class JpqlExecutionServiceTest {
                         List.of()
                 ),
                 new JpqlValidationResult(false, List.of(
-                        new JpqlValidationIssue("propertyPath.invalid", "Invalid property path: fullTitle")
+                        new JpqlValidationIssue(PROPERTY_PATH_INVALID_CODE, "Invalid property path: fullTitle")
                 )),
                 false
         ));
@@ -105,7 +106,7 @@ class JpqlExecutionServiceTest {
         assertTrue(result.getRows().isEmpty());
         assertEquals(0, result.getRows().size());
         assertTrue(result.getValidationResult().getIssues().stream()
-                .anyMatch(issue -> issue.getCode().equals("propertyPath.invalid")));
+                .anyMatch(issue -> issue.getCode().equals(PROPERTY_PATH_INVALID_CODE)));
     }
 
     @Test

@@ -31,6 +31,13 @@ import java.util.regex.Pattern;
 @Component("aitols_ParametersValidator")
 public class ParametersValidator implements JpqlResultValidator, Ordered {
 
+    public static final String PARAMETER_MISSING_CODE = "parameter.missingInDto";
+    public static final String PARAMETER_MISSING_GUIDANCE = "Ensure every named JPQL parameter is declared in the" +
+            " parameters array.";
+
+    public static final String PARAMETER_UNUSED_CODE = "parameter.unusedInJpql";
+    public static final String PARAMETER_UNUSED_GUIDANCE = "Remove parameters that are not used in the JPQL text.";
+
     protected static final Pattern PARAMETER_PATTERN = Pattern.compile(":([A-Za-z_][A-Za-z0-9_]*)");
 
     @Override
@@ -50,15 +57,16 @@ public class ParametersValidator implements JpqlResultValidator, Ordered {
 
         for (String parameterName : jpqlParameters) {
             if (!dtoParameters.contains(parameterName)) {
-                issues.add(new JpqlValidationIssue("parameter.missingInDto",
-                        "JPQL parameter is missing in DTO parameters: " + parameterName));
+                issues.add(new JpqlValidationIssue(PARAMETER_MISSING_CODE,
+                        "JPQL parameter is missing in DTO parameters: " + parameterName,
+                        PARAMETER_MISSING_GUIDANCE));
             }
         }
 
         for (String parameterName : dtoParameters) {
             if (!jpqlParameters.contains(parameterName)) {
-                issues.add(new JpqlValidationIssue("parameter.unusedInJpql",
-                        "DTO parameter is not used in JPQL: " + parameterName));
+                issues.add(new JpqlValidationIssue(PARAMETER_UNUSED_CODE,
+                        "DTO parameter is not used in JPQL: " + parameterName, PARAMETER_UNUSED_GUIDANCE));
             }
         }
 

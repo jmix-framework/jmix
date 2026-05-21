@@ -37,7 +37,7 @@ public class JpqlValidationAndRepairService {
     @Autowired
     protected JpqlValidationService jpqlValidationService;
 
-    protected OperationResult validateAndRepair(JpqlExecutionRequest request) {
+    public OperationResult validateAndRepair(JpqlExecutionRequest request) {
         if (request.getResultProperties().isEmpty()) {
             JpqlValidationResult validationResult = new JpqlValidationResult(false, List.of(
                     new JpqlValidationIssue("resultProperties.empty",

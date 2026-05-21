@@ -16,6 +16,7 @@
 
 package io.jmix.aitools.dataload.execution;
 
+import io.jmix.aitools.AiToolsDataLoadProperties;
 import io.jmix.aitools.dataload.execution.JpqlValidationAndRepairService.OperationResult;
 import io.jmix.aitools.dataload.validation.JpqlValidationResult;
 import io.jmix.core.AccessManager;
@@ -47,13 +48,12 @@ public class JpqlExecutionService {
 
     private static final Logger log = LoggerFactory.getLogger(JpqlExecutionService.class);
 
-    // TODO: pinyazhin, app property?
-    protected static final int DEFAULT_MAX_RESULTS = 50;
-
     @Autowired
     protected JpqlValidationAndRepairService validateAndRepair;
     @Autowired
     protected JpqlParameterConversionService jpqlParameterConversionService;
+    @Autowired
+    protected AiToolsDataLoadProperties dataLoadProperties;
     @Autowired
     protected DataManager dataManager;
     @Autowired(required = false)
@@ -73,22 +73,19 @@ public class JpqlExecutionService {
             return JpqlExecutionResult.failed(generatedResult, validationResult, false);
         }
 
-        Map<String, Object> executionParameters =
-                jpqlParameterConversionService.convert(toExecutionParameters(generatedResult));
-
-        Integer effectiveMaxResults = generatedResult.getMaxResults();
-        if (effectiveMaxResults == null) {
-            effectiveMaxResults = DEFAULT_MAX_RESULTS;
-        }
-
         ensureQueryIsPermitted(generatedResult.getJpql());
 
+        Map<String, Object> executionParameters =
+                jpqlParameterConversionService.convert(toExecutionParameters(generatedResult));
+        Integer effectiveMaxResults = getEffectiveMaxResult(generatedResult.getMaxResults());
+
         try {
-            List<Map<String, Object>> rows = executeQuery(request, generatedResult, executionParameters,
+            ExecutionRows executionRows = executeQuery(request, generatedResult, executionParameters,
                     effectiveMaxResults, generatedResult.getFirstResult());
 
-            return new JpqlExecutionResult(generatedResult, validationResult, rows,
+            return new JpqlExecutionResult(generatedResult, validationResult, executionRows.rows(),
                     effectiveMaxResults, generatedResult.getFirstResult(),
+                    executionRows.hasMore(),
                     vrResult.isRepaired(), true, null
             );
         } catch (RuntimeException e) {
@@ -155,11 +152,11 @@ public class JpqlExecutionService {
         return propertyPath.getMetaClass().getName() + "." + propertyPath.toPathString();
     }
 
-    protected List<Map<String, Object>> executeQuery(JpqlExecutionRequest request,
-                                                     GeneratedJpqlResult generatedJpqlResult,
-                                                     Map<String, Object> executionParameters,
-                                                     @Nullable Integer maxResults,
-                                                     @Nullable Integer firstResult) {
+    protected ExecutionRows executeQuery(JpqlExecutionRequest request,
+                                         GeneratedJpqlResult generatedJpqlResult,
+                                         Map<String, Object> executionParameters,
+                                         Integer maxResults,
+                                         @Nullable Integer firstResult) {
         FluentValuesLoader loader = dataManager
                 .loadValues(generatedJpqlResult.getJpql())
                 .properties(request.getResultProperties());
@@ -168,18 +165,20 @@ public class JpqlExecutionService {
         if (firstResult != null) {
             loader.firstResult(firstResult);
         }
-        if (maxResults != null) {
-            loader.maxResults(maxResults);
-        }
+        loader.maxResults(maxResults + 1);
 
         List<KeyValueEntity> loadedRows = loader.list();
-        List<Map<String, Object>> rows = new ArrayList<>(loadedRows.size());
-        for (KeyValueEntity entity : loadedRows) {
+        boolean hasMore = loadedRows.size() > maxResults;
+        int rowCount = hasMore ? maxResults : loadedRows.size();
+
+        List<Map<String, Object>> rows = new ArrayList<>(rowCount);
+        for (int i = 0; i < rowCount; i++) {
+            KeyValueEntity entity = loadedRows.get(i);
             Map<String, Object> valueRow = toValueRow(entity, request.getResultProperties());
             rows.add(valueRow);
         }
 
-        return List.copyOf(rows);
+        return createExecutionRows(List.copyOf(rows), hasMore);
     }
 
     protected Map<String, Object> toValueRow(KeyValueEntity keyValueEntity, List<String> resultProperties) {
@@ -189,5 +188,19 @@ public class JpqlExecutionService {
             row.put(property, value == null ? "" : value);
         }
         return Map.copyOf(row);
+    }
+
+    protected Integer getEffectiveMaxResult(@Nullable Integer maxResults) {
+        if (maxResults == null) {
+            return dataLoadProperties.getDefaultMaxResult();
+        }
+        return maxResults;
+    }
+
+    protected ExecutionRows createExecutionRows(List<Map<String, Object>> rows, boolean hasMore) {
+        return new ExecutionRows(rows, hasMore);
+    }
+
+    protected record ExecutionRows(List<Map<String, Object>> rows, boolean hasMore) {
     }
 }

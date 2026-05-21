@@ -32,6 +32,10 @@ import java.util.List;
 @Component("aitols_RootEntityValidator")
 public class RootEntityValidator implements JpqlResultValidator, Ordered {
 
+    public static final String ROOT_ENTITY_UNKNOWN_CODE = "rootEntity.unknown";
+    public static final String ROOT_ENTITY_UNKNOWN_GUIDANCE = "Use only entity names that are present in the provided" +
+            " schema.";
+
     @Autowired
     protected JpaDomainModelIntrospector modelIntrospector;
     @Autowired(required = false)
@@ -51,7 +55,8 @@ public class RootEntityValidator implements JpqlResultValidator, Ordered {
             }
 
             if (!modelIntrospector.containsEntity(rootEntityName)) {
-                return List.of(new JpqlValidationIssue("rootEntity.unknown", "Unknown root entity: " + rootEntityName));
+                return List.of(new JpqlValidationIssue(ROOT_ENTITY_UNKNOWN_CODE,
+                        "Unknown root entity: " + rootEntityName, ROOT_ENTITY_UNKNOWN_GUIDANCE));
             }
         } catch (RuntimeException e) {
             return List.of();

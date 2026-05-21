@@ -14,21 +14,13 @@
  * limitations under the License.
  */
 
-package introspection;
+package io.jmix.aitools.introspection;
 
-import io.jmix.aitools.introspection.AvailableEntityService;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import test_support.AiToolsTestConfiguration;
+import io.jmix.aitools.introspection.model.EntityDescriptor;
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = AiToolsTestConfiguration.class)
-class AvailableEntityServiceTest {
+import java.util.List;
 
-    @Autowired
-    AvailableEntityService availableEntityService;
+public interface AvailableEntityFilter {
 
-
+    List<EntityDescriptor> filter(List<EntityDescriptor> entityDescriptors);
 }

@@ -16,26 +16,48 @@
 
 package io.jmix.aitools.introspection;
 
+import io.jmix.aitools.introspection.impl.DefaultAvailableEntityFilter;
 import io.jmix.aitools.introspection.introspector.JpaDomainModelIntrospector;
 import io.jmix.aitools.introspection.model.EntityDescriptor;
 import io.jmix.aitools.introspection.model.EntityPropertyDescriptor;
 import io.jmix.aitools.introspection.model.EntitySummary;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 
+/**
+ * Provides the subset of introspected domain-model entities that is currently available to the user.
+ * <p>
+ * Availability is resolved through an {@link AvailableEntityFilter}. By default, the filter checks
+ * read access for entities using Jmix security constraints. Applications may replace that behavior
+ * by registering a custom {@code AvailableEntityFilter} bean.
+ * <p>
+ * This service is intended for LLM-facing metadata discovery. It hides entities that are not
+ * available to the current user before they are exposed through tool calls.
+ */
 @Component("aitols_AvailableEntityService")
 public class AvailableEntityService {
 
     @Autowired
     protected JpaDomainModelIntrospector modelIntrospector;
+    @Autowired
+    protected ObjectProvider<AvailableEntityFilter> availableEntityFilters;
 
     protected List<EntitySummary> entitySummaries;
 
+    /**
+     * Returns compact summaries for all entities available to the current user.
+     * <p>
+     * The result is filtered through the active {@link AvailableEntityFilter}, sorted by entity name,
+     * and cached for subsequent calls within the bean lifecycle.
+     *
+     * @return immutable list of available entity summaries, or an empty list if no entities are available
+     */
     public List<EntitySummary> getEntitySummaries() {
         if (entitySummaries == null) {
-            entitySummaries = modelIntrospector.getEntityDescriptors().stream()
+            entitySummaries = getAvailableEntityDescriptors().stream()
                     .sorted(Comparator.comparing(EntityDescriptor::getName))
                     .map(this::toEntitySummary)
                     .toList();
@@ -43,6 +65,16 @@ public class AvailableEntityService {
         return entitySummaries;
     }
 
+    /**
+     * Returns detailed descriptors for the requested entity names that are both known to the introspector
+     * and available to the current user.
+     * <p>
+     * Unknown entity names are ignored. If all requested entities are unknown or filtered out by the
+     * active {@link AvailableEntityFilter}, the method returns an empty list.
+     *
+     * @param entityNames entity names to resolve
+     * @return immutable list of available entity descriptors for the requested names
+     */
     public List<EntityDescriptor> findEntityDescriptorsByNames(Collection<String> entityNames) {
         if (entityNames == null || entityNames.isEmpty()) {
             return List.of();
@@ -56,7 +88,29 @@ public class AvailableEntityService {
             }
         }
 
-        return List.copyOf(entityDescriptors);
+        return getEntityFilter().filter(List.copyOf(entityDescriptors));
+    }
+
+    protected List<EntityDescriptor> getAvailableEntityDescriptors() {
+        return getEntityFilter().filter(List.copyOf(modelIntrospector.getEntityDescriptors()));
+    }
+
+    protected AvailableEntityFilter getEntityFilter() {
+        List<AvailableEntityFilter> filters = availableEntityFilters.orderedStream().toList();
+        if (filters.isEmpty()) {
+            throw new IllegalStateException("No " + AvailableEntityFilter.class.getSimpleName() + " bean is defined");
+        }
+        if (filters.size() == 1) {
+            return filters.get(0);
+        }
+
+        for (AvailableEntityFilter filter : filters) {
+            if (!(filter instanceof DefaultAvailableEntityFilter)) {
+                return filter;
+            }
+        }
+
+        return filters.get(0);
     }
 
     protected EntitySummary toEntitySummary(EntityDescriptor entityDescriptor) {

@@ -31,7 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
 
-public class SpringAiJpqlRepairer implements JpqlRepairer, InitializingBean {
+public class DefaultJpqlRepairer implements JpqlRepairer, InitializingBean {
 
     @Autowired
     protected JpqlRepairerPromptProvider jpqlRepairerPromptProvider;
@@ -68,31 +68,10 @@ public class SpringAiJpqlRepairer implements JpqlRepairer, InitializingBean {
         Set<String> guidance = new LinkedHashSet<>();
         guidance.add("Keep the same JSON contract as the previous result.");
 
-        // TODO: pinyazhin, make extendable?
         for (JpqlValidationIssue issue : issues) {
-            switch (issue.getCode()) {
-                case "jpql.sqlPagination" ->
-                        guidance.add("Remove LIMIT and OFFSET from JPQL and move them into maxResults and firstResult when the intent requires pagination.");
-                case "jpql.sqlDateFunction" ->
-                        guidance.add("Remove SQL-specific date arithmetic and vendor functions. Prefer supported Jmix date macros or relative date time constants, and use named parameters only when the date range cannot be expressed through supported constructs.");
-                case "jpql.unsupportedMacro" ->
-                        guidance.add("Use only supported Jmix date macros: @between, @today, @dateEquals, @dateBefore, @dateAfter.");
-                case "jpql.currentFunctionParentheses" ->
-                        guidance.add("Use CURRENT_DATE, CURRENT_TIME, and CURRENT_TIMESTAMP without parentheses.");
-                case "jpql.syntax.invalid" ->
-                        guidance.add("Rewrite the JPQL into valid JPQL syntax only. Do not keep SQL keywords or malformed JPQL fragments.");
-                case "propertyPath.invalid" ->
-                        guidance.add("Replace invalid property paths with valid paths from the provided schema only.");
-                case "rootEntity.unknown", "usedEntity.unknown" ->
-                        guidance.add("Use only entity names that are present in the provided schema.");
-                case "parameter.missingInDto" ->
-                        guidance.add("Ensure every named JPQL parameter is declared in the parameters array.");
-                case "parameter.unusedInJpql" ->
-                        guidance.add("Remove parameters that are not used in the JPQL text.");
-                case "jpql.notSelect", "jpql.writeOperation" ->
-                        guidance.add("Return a read-only select JPQL query only.");
-                default -> {
-                }
+            String guidanceStr = issue.getGuidance();
+            if (guidanceStr != null) {
+                guidance.add(guidanceStr);
             }
         }
 
@@ -125,9 +104,9 @@ public class SpringAiJpqlRepairer implements JpqlRepairer, InitializingBean {
             throw new IllegalStateException("LLM returned an empty response");
         }
 
-        SpringAiGeneratedJpqlPayload payload;
+        GeneratedJpqlPayload payload;
         try {
-            payload = objectMapper.readValue(content, SpringAiGeneratedJpqlPayload.class);
+            payload = objectMapper.readValue(content, GeneratedJpqlPayload.class);
         } catch (JsonProcessingException e) {
             throw new IllegalStateException("Cannot parse LLM response as JSON: " + content, e);
         }
@@ -135,7 +114,7 @@ public class SpringAiJpqlRepairer implements JpqlRepairer, InitializingBean {
         return mapToGeneratedJpqlResult(payload);
     }
 
-    protected GeneratedJpqlResult mapToGeneratedJpqlResult(SpringAiGeneratedJpqlPayload payload) {
+    protected GeneratedJpqlResult mapToGeneratedJpqlResult(GeneratedJpqlPayload payload) {
         List<GeneratedJpqlParameter> parameters = payload.getParameters().stream()
                 .map(parameter -> new GeneratedJpqlParameter(parameter.getName(), parameter.getType(), parameter.getValue()))
                 .toList();

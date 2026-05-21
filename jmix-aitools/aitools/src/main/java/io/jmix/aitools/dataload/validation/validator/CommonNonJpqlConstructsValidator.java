@@ -28,11 +28,23 @@ import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
-import static io.jmix.aitools.dataload.validation.validator.JpqlValidatorUtils.containsFunctionCall;
-import static io.jmix.aitools.dataload.validation.validator.JpqlValidatorUtils.containsWord;
+import static io.jmix.aitools.dataload.validation.validator.JpqlValidatorUtils.*;
 
 @Component("aitols_CommonNonJpqlConstructsJpqlValidator")
 public class CommonNonJpqlConstructsValidator implements JpqlResultValidator, Ordered {
+
+    public static final String SQL_PAGINATION_CODE = "jpql.sqlPagination";
+    public static final String SQL_PAGINATION_GUIDANCE = "Remove LIMIT and OFFSET from JPQL and move them into" +
+            " maxResults and firstResult when the intent requires pagination.";
+
+    public static final String SQL_DATE_FUNCTION_CODE = "jpql.sqlDateFunction";
+    public static final String SQL_DATE_FUNCTION_GUIDANCE = "Remove SQL-specific date arithmetic and vendor functions." +
+            " Prefer supported Jmix date macros or relative date time constants, and use named parameters only when the" +
+            " date range cannot be expressed through supported constructs.";
+
+    public static final String CURRENT_FUNCTION_PARENTNESS_CODE = "jpql.currentFunctionParentheses";
+    public static final String CURRENT_FUNCTION_PARENTNESS_GUIDANCE = "Use CURRENT_DATE, CURRENT_TIME, and" +
+            " CURRENT_TIMESTAMP without parentheses.";
 
     protected static final Pattern CURRENT_DATE_WITH_PARENTHESES_PATTERN =
             Pattern.compile("\\bcurrent_date\\s*\\(", Pattern.CASE_INSENSITIVE);
@@ -53,8 +65,9 @@ public class CommonNonJpqlConstructsValidator implements JpqlResultValidator, Or
         String normalizedJpql = jpql.trim().toLowerCase(Locale.ROOT);
 
         if (containsWord(normalizedJpql, "limit") || containsWord(normalizedJpql, "offset")) {
-            issues.add(new JpqlValidationIssue("jpql.sqlPagination",
-                    "JPQL must not contain SQL pagination keywords such as LIMIT or OFFSET"));
+            issues.add(new JpqlValidationIssue(SQL_PAGINATION_CODE,
+                    "JPQL must not contain SQL pagination keywords such as LIMIT or OFFSET",
+                    SQL_PAGINATION_GUIDANCE));
         }
 
         if (containsWord(normalizedJpql, "date_sub")
@@ -62,15 +75,17 @@ public class CommonNonJpqlConstructsValidator implements JpqlResultValidator, Or
                 || containsWord(normalizedJpql, "interval")
                 || containsWord(normalizedJpql, "curdate")
                 || containsFunctionCall(normalizedJpql, "now")) {
-            issues.add(new JpqlValidationIssue("jpql.sqlDateFunction",
-                    "JPQL must not contain SQL-specific date functions or interval expressions"));
+            issues.add(new JpqlValidationIssue(SQL_DATE_FUNCTION_CODE,
+                    "JPQL must not contain SQL-specific date functions or interval expressions",
+                    SQL_DATE_FUNCTION_GUIDANCE));
         }
 
         if (CURRENT_DATE_WITH_PARENTHESES_PATTERN.matcher(jpql).find()
                 || CURRENT_TIME_WITH_PARENTHESES_PATTERN.matcher(jpql).find()
                 || CURRENT_TIMESTAMP_WITH_PARENTHESES_PATTERN.matcher(jpql).find()) {
-            issues.add(new JpqlValidationIssue("jpql.currentFunctionParentheses",
-                    "JPQL CURRENT_DATE, CURRENT_TIME, and CURRENT_TIMESTAMP must be used without parentheses"));
+            issues.add(new JpqlValidationIssue(CURRENT_FUNCTION_PARENTNESS_CODE,
+                    "JPQL CURRENT_DATE, CURRENT_TIME, and CURRENT_TIMESTAMP must be used without parentheses",
+                    CURRENT_FUNCTION_PARENTNESS_GUIDANCE));
         }
 
         return issues;

@@ -30,6 +30,19 @@ import test_support.AiToolsTestConfiguration;
 
 import java.util.List;
 
+import static io.jmix.aitools.dataload.validation.validator.CommonNonJpqlConstructsValidator.CURRENT_FUNCTION_PARENTNESS_CODE;
+import static io.jmix.aitools.dataload.validation.validator.CommonNonJpqlConstructsValidator.SQL_DATE_FUNCTION_CODE;
+import static io.jmix.aitools.dataload.validation.validator.CommonNonJpqlConstructsValidator.SQL_PAGINATION_CODE;
+import static io.jmix.aitools.dataload.validation.validator.JpqlSyntaxValidator.JPQL_SYNTAX_INVALID_CODE;
+import static io.jmix.aitools.dataload.validation.validator.JpqlValidatorUtils.*;
+import static io.jmix.aitools.dataload.validation.validator.ParametersValidator.PARAMETER_MISSING_CODE;
+import static io.jmix.aitools.dataload.validation.validator.ParametersValidator.PARAMETER_UNUSED_CODE;
+import static io.jmix.aitools.dataload.validation.validator.ReadOnlyQueryValidator.JPQL_NOT_SELECT_CODE;
+import static io.jmix.aitools.dataload.validation.validator.ReadOnlyQueryValidator.JPQL_WRITE_OPERATION_CODE;
+import static io.jmix.aitools.dataload.validation.validator.RootEntityValidator.ROOT_ENTITY_UNKNOWN_CODE;
+import static io.jmix.aitools.dataload.validation.validator.SupportedJmixTemporalConstructsValidator.UNSUPPORTED_MACRO_CODE;
+import static io.jmix.aitools.dataload.validation.validator.UsedEntitiesValidator.USED_ENTITY_UNKNOWN_CODE;
+import static io.jmix.aitools.dataload.validation.validator.UsedPropertyPathsValidator.PROPERTY_PATH_INVALID_CODE;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
@@ -68,8 +81,8 @@ class JpqlValidationServiceTest {
         JpqlValidationResult validationResult = jpqlValidationService.validate(result);
 
         assertFalse(validationResult.isValid());
-        assertTrue(validationResult.getIssues().stream().anyMatch(issue -> issue.getCode().equals("jpql.notSelect")));
-        assertTrue(validationResult.getIssues().stream().anyMatch(issue -> issue.getCode().equals("jpql.writeOperation")));
+        assertTrue(validationResult.getIssues().stream().anyMatch(issue -> issue.getCode().equals(JPQL_NOT_SELECT_CODE)));
+        assertTrue(validationResult.getIssues().stream().anyMatch(issue -> issue.getCode().equals(JPQL_WRITE_OPERATION_CODE)));
     }
 
     @Test
@@ -85,8 +98,8 @@ class JpqlValidationServiceTest {
         JpqlValidationResult validationResult = jpqlValidationService.validate(result);
 
         assertFalse(validationResult.isValid());
-        assertTrue(validationResult.getIssues().stream().anyMatch(issue -> issue.getCode().equals("rootEntity.unknown")));
-        assertTrue(validationResult.getIssues().stream().anyMatch(issue -> issue.getCode().equals("usedEntity.unknown")));
+        assertTrue(validationResult.getIssues().stream().anyMatch(issue -> issue.getCode().equals(ROOT_ENTITY_UNKNOWN_CODE)));
+        assertTrue(validationResult.getIssues().stream().anyMatch(issue -> issue.getCode().equals(USED_ENTITY_UNKNOWN_CODE)));
     }
 
     @Test
@@ -102,8 +115,8 @@ class JpqlValidationServiceTest {
         JpqlValidationResult validationResult = jpqlValidationService.validate(result);
 
         assertFalse(validationResult.isValid());
-        assertFalse(validationResult.getIssues().stream().anyMatch(issue -> issue.getCode().equals("rootEntity.unknown")));
-        assertTrue(validationResult.getIssues().stream().anyMatch(issue -> issue.getCode().equals("usedEntity.unknown")));
+        assertFalse(validationResult.getIssues().stream().anyMatch(issue -> issue.getCode().equals(ROOT_ENTITY_UNKNOWN_CODE)));
+        assertTrue(validationResult.getIssues().stream().anyMatch(issue -> issue.getCode().equals(USED_ENTITY_UNKNOWN_CODE)));
     }
 
     @Test
@@ -119,7 +132,7 @@ class JpqlValidationServiceTest {
         JpqlValidationResult validationResult = jpqlValidationService.validate(result);
 
         assertFalse(validationResult.isValid());
-        assertTrue(validationResult.getIssues().stream().anyMatch(issue -> issue.getCode().equals("propertyPath.invalid")));
+        assertTrue(validationResult.getIssues().stream().anyMatch(issue -> issue.getCode().equals(PROPERTY_PATH_INVALID_CODE)));
     }
 
     @Test
@@ -138,8 +151,8 @@ class JpqlValidationServiceTest {
         JpqlValidationResult validationResult = jpqlValidationService.validate(result);
 
         assertFalse(validationResult.isValid());
-        assertTrue(validationResult.getIssues().stream().anyMatch(issue -> issue.getCode().equals("parameter.missingInDto")));
-        assertTrue(validationResult.getIssues().stream().anyMatch(issue -> issue.getCode().equals("parameter.unusedInJpql")));
+        assertTrue(validationResult.getIssues().stream().anyMatch(issue -> issue.getCode().equals(PARAMETER_MISSING_CODE)));
+        assertTrue(validationResult.getIssues().stream().anyMatch(issue -> issue.getCode().equals(PARAMETER_UNUSED_CODE)));
     }
 
     @Test
@@ -155,8 +168,8 @@ class JpqlValidationServiceTest {
         JpqlValidationResult validationResult = jpqlValidationService.validate(result);
 
         assertFalse(validationResult.isValid());
-        assertTrue(validationResult.getIssues().stream().anyMatch(issue -> issue.getCode().equals("jpql.sqlPagination")));
-        assertTrue(validationResult.getIssues().stream().anyMatch(issue -> issue.getCode().equals("jpql.sqlDateFunction")));
+        assertTrue(validationResult.getIssues().stream().anyMatch(issue -> issue.getCode().equals(SQL_PAGINATION_CODE)));
+        assertTrue(validationResult.getIssues().stream().anyMatch(issue -> issue.getCode().equals(SQL_DATE_FUNCTION_CODE)));
     }
 
     @Test
@@ -173,7 +186,7 @@ class JpqlValidationServiceTest {
 
         assertFalse(validationResult.isValid());
         assertTrue(validationResult.getIssues().stream()
-                .anyMatch(issue -> issue.getCode().equals("jpql.currentFunctionParentheses")));
+                .anyMatch(issue -> issue.getCode().equals(CURRENT_FUNCTION_PARENTNESS_CODE)));
     }
 
     @Test
@@ -220,7 +233,7 @@ class JpqlValidationServiceTest {
 
         assertFalse(validationResult.isValid());
         assertTrue(validationResult.getIssues().stream()
-                .anyMatch(issue -> issue.getCode().equals("jpql.unsupportedMacro")));
+                .anyMatch(issue -> issue.getCode().equals(UNSUPPORTED_MACRO_CODE)));
     }
 
     @Test
@@ -268,6 +281,6 @@ class JpqlValidationServiceTest {
         JpqlValidationResult validationResult = jpqlValidationService.validate(result);
 
         assertFalse(validationResult.isValid());
-        assertTrue(validationResult.getIssues().stream().anyMatch(issue -> issue.getCode().equals("jpql.syntax.invalid")));
+        assertTrue(validationResult.getIssues().stream().anyMatch(issue -> issue.getCode().equals(JPQL_SYNTAX_INVALID_CODE)));
     }
 }

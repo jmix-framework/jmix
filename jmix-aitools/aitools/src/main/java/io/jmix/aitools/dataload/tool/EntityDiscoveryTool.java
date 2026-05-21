@@ -29,21 +29,21 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component("aitols_DomainModelDiscoveryTool")
-public class DomainModelDiscoveryTool implements DataLoadAiTool {
+public class EntityDiscoveryTool implements DataLoadAiTool {
 
-    private static final Logger log = LoggerFactory.getLogger(DomainModelDiscoveryTool.class);
-
-    // TODO: pinyazhin, exlcude by roles for user
+    private static final Logger log = LoggerFactory.getLogger(EntityDiscoveryTool.class);
 
     @Autowired
     protected AvailableEntityService availableEntityService;
 
     @Tool(description = """
-        Returns compact metadata for all entities in the domain model.
+        Returns compact metadata for all entities currently available to the user.
         Each item contains entity name, localized names, property names and property localized names.
+        Entities hidden by application filtering or security are not returned.
+        The result may be empty when the user has no available entities.
 
         Use this to:
-            - Explore the complete data model
+            - Explore the currently available data model
             - Choose which exact entities should be inspected in more detail
             - Get correct entity names for follow-up tool calls
         """)
@@ -54,9 +54,17 @@ public class DomainModelDiscoveryTool implements DataLoadAiTool {
     }
 
     @Tool(description = """
-        Returns detailed domain model metadata for the specified entities names.
+        Returns detailed domain model metadata for the specified entity names that are currently available to the user.
+        Entities hidden by application filtering or security are omitted from the result.
+        The result may be empty if none of the requested entities are available.
 
         MANDATORY: You MUST call this function for the entities you intend to query BEFORE any executeQuery() calls.
+        
+        Returns:
+        - Exact attribute names (Java property names)
+        - Entity relationships for JPQL joins
+        - Property types and constraints
+        - Enum properties in one map: enums.<ENUM_NAME>.id (+ optional enums.<ENUM_NAME>.description)
 
         ENUM RULE (CRITICAL):
             - When filtering enum properties in executeQuery(), use enums.<ENUM_NAME>.id, not enum constant names.

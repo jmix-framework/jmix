@@ -33,6 +33,10 @@ import java.util.List;
 @Component("aitols_UsedEntitiesValidator")
 public class UsedEntitiesValidator implements JpqlResultValidator, Ordered {
 
+    public static final String USED_ENTITY_UNKNOWN_CODE = "usedEntity.unknown";
+    public static final String USED_ENTITY_UNKNOWN_GUIDANCE = "Use only entity names that are present in the provided" +
+            " schema.";
+
     @Autowired
     protected JpaDomainModelIntrospector modelIntrospector;
     @Autowired(required = false)
@@ -50,8 +54,8 @@ public class UsedEntitiesValidator implements JpqlResultValidator, Ordered {
         try {
             for (String usedEntity : queryParser.getAllEntityNames()) {
                 if (!modelIntrospector.containsEntity(usedEntity)) {
-                    issues.add(new JpqlValidationIssue("usedEntity.unknown",
-                            "Unknown used entity: " + usedEntity));
+                    issues.add(new JpqlValidationIssue(USED_ENTITY_UNKNOWN_CODE,
+                            "Unknown used entity: " + usedEntity, USED_ENTITY_UNKNOWN_GUIDANCE));
                 }
             }
         } catch (RuntimeException e) {

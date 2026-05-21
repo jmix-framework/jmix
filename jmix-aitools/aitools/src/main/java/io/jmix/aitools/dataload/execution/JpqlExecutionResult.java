@@ -30,6 +30,7 @@ public class JpqlExecutionResult {
     protected List<Map<String, Object>> rows;
     protected Integer maxResults;
     protected Integer firstResult;
+    protected boolean hasMore;
 
     protected boolean repaired;
     protected boolean executed;
@@ -40,6 +41,7 @@ public class JpqlExecutionResult {
                                List<Map<String, Object>> rows,
                                @Nullable Integer maxResults,
                                @Nullable Integer firstResult,
+                               boolean hasMore,
                                boolean repaired,
                                boolean executed,
                                @Nullable String executionError) {
@@ -48,6 +50,7 @@ public class JpqlExecutionResult {
         this.rows = rows;
         this.maxResults = maxResults;
         this.firstResult = firstResult;
+        this.hasMore = hasMore;
         this.repaired = repaired;
         this.executed = executed;
         this.executionError = executionError;
@@ -58,7 +61,7 @@ public class JpqlExecutionResult {
                                              boolean repaired) {
         return new JpqlExecutionResult(generatedJpqlResult, validationResult, List.of(),
                 generatedJpqlResult.getMaxResults(), generatedJpqlResult.getFirstResult(),
-                repaired, false, null);
+                false, repaired, false, null);
     }
 
     public static JpqlExecutionResult failed(GeneratedJpqlResult generatedJpqlResult,
@@ -66,7 +69,7 @@ public class JpqlExecutionResult {
                                              int maxResults, boolean repaired,
                                              String executionError) {
         return new JpqlExecutionResult(generatedJpqlResult, validationResult, List.of(),
-                maxResults, generatedJpqlResult.getFirstResult(), repaired, false, executionError);
+                maxResults, generatedJpqlResult.getFirstResult(), false, repaired, false, executionError);
     }
 
     public GeneratedJpqlResult getGeneratedJpqlResult() {
@@ -89,6 +92,10 @@ public class JpqlExecutionResult {
     @Nullable
     public Integer getFirstResult() {
         return firstResult;
+    }
+
+    public boolean isHasMore() {
+        return hasMore;
     }
 
     public boolean isRepaired() {

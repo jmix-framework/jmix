@@ -27,8 +27,13 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+
 @Component("aitols_SupportedJmixTemporalConstructsValidator")
 public class SupportedJmixTemporalConstructsValidator implements JpqlResultValidator, Ordered {
+
+    public static final String UNSUPPORTED_MACRO_CODE = "jpql.unsupportedMacro";
+    public static final String UNSUPPORTED_MACRO_GUIDANCE = "Use only supported Jmix date macros: @between, @today," +
+            " @dateEquals, @dateBefore, @dateAfter.";
 
     protected static final Pattern MACRO_PATTERN = Pattern.compile("@([A-Za-z][A-Za-z0-9]*)\\s*\\(");
     protected static final Set<String> SUPPORTED_MACROS = Set.of(
@@ -52,8 +57,8 @@ public class SupportedJmixTemporalConstructsValidator implements JpqlResultValid
         while (macroMatcher.find()) {
             String macroName = macroMatcher.group(1).toLowerCase(Locale.ROOT);
             if (!SUPPORTED_MACROS.contains(macroName)) {
-                issues.add(new JpqlValidationIssue("jpql.unsupportedMacro",
-                        "Unsupported Jmix query macro: @" + macroMatcher.group(1)));
+                issues.add(new JpqlValidationIssue(UNSUPPORTED_MACRO_CODE,
+                        "Unsupported Jmix query macro: @" + macroMatcher.group(1), UNSUPPORTED_MACRO_GUIDANCE));
             }
         }
 

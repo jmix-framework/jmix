@@ -17,7 +17,7 @@
 package repair;
 
 import io.jmix.aitools.dataload.execution.JpqlExecutionRequest;
-import io.jmix.aitools.dataload.repair.impl.SpringAiJpqlRepairer;
+import io.jmix.aitools.dataload.repair.impl.DefaultJpqlRepairer;
 import io.jmix.aitools.dataload.execution.GeneratedJpqlParameter;
 import io.jmix.aitools.dataload.execution.GeneratedJpqlResult;
 import io.jmix.aitools.dataload.repair.JpqlRepairRequest;
@@ -35,14 +35,15 @@ import test_support.AiToolsTestConfiguration;
 
 import java.util.List;
 
+import static io.jmix.aitools.dataload.validation.validator.UsedPropertyPathsValidator.PROPERTY_PATH_INVALID_CODE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {AiToolsTestConfiguration.class, SpringAiJpqlRepairerTestConfiguration.class})
-class SpringAiJpqlRepairerTest {
+class DefaultJpqlRepairerTest {
 
     @Autowired
-    SpringAiJpqlRepairer repairer;
+    DefaultJpqlRepairer repairer;
 
     @Autowired
     StubChatModel stubChatModel;
@@ -76,7 +77,7 @@ class SpringAiJpqlRepairerTest {
                         List.of()
                 ),
                 new JpqlValidationResult(false, List.of(
-                        new JpqlValidationIssue("propertyPath.invalid", "Unknown property path: customer.fullTitle")
+                        new JpqlValidationIssue(PROPERTY_PATH_INVALID_CODE, "Unknown property path: customer.fullTitle")
                 )),
                 1
         ));

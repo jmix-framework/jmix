@@ -16,14 +16,23 @@
 
 package io.jmix.aitools.dataload.validation;
 
+import org.jspecify.annotations.Nullable;
+
 public class JpqlValidationIssue {
 
     protected String code;
     protected String message;
+    protected String guidance;
 
     public JpqlValidationIssue(String code, String message) {
         this.code = code;
         this.message = message;
+    }
+
+    public JpqlValidationIssue(String code, String message, @Nullable String guidance) {
+        this.code = code;
+        this.message = message;
+        this.guidance = guidance;
     }
 
     public String getCode() {
@@ -34,11 +43,17 @@ public class JpqlValidationIssue {
         return message;
     }
 
+    @Nullable
+    public String getGuidance() {
+        return guidance;
+    }
+
     @Override
     public String toString() {
         return "JpqlValidationIssue{" +
                 "code='" + code + '\'' +
                 ", message='" + message + '\'' +
+                ", guidance='" + guidance + '\'' +
                 '}';
     }
 }

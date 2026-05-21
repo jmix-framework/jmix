@@ -26,4 +26,14 @@ dependencies {
     api project(':eclipselink')
     api project(':security')
     api project(':security-data')
+
+    testImplementation 'org.springframework:spring-test'
+    testImplementation 'org.spockframework:spock-core'
+    testImplementation 'org.spockframework:spock-spring'
+    testImplementation project(':framework-test-support')
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+    testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'
+    testRuntimeOnly 'org.slf4j:slf4j-simple'
+    testRuntimeOnly 'org.hsqldb:hsqldb'
 }

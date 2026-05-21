@@ -147,7 +147,8 @@ public class LocalFileStorage implements FileStorage {
         checkStorageDefined(roots, fileRef.getFileName());
         checkPrimaryStorageAccessible(roots, fileRef.getFileName());
 
-        Path path = roots[0].resolve(relativePath);
+        Path root = roots[0];
+        Path path = root.resolve(relativePath);
         Path parentPath = path.getParent();
         if (parentPath == null) {
             throw new FileStorageException(FileStorageException.Type.IO_EXCEPTION,
@@ -156,6 +157,11 @@ public class LocalFileStorage implements FileStorage {
         if (!parentPath.toFile().exists() && !parentPath.toFile().mkdirs()) {
             throw new FileStorageException(FileStorageException.Type.IO_EXCEPTION,
                     "Cannot create directory: " + parentPath.toAbsolutePath());
+        }
+
+        if (isInvalidPath(path, root)) {
+            log.error("Unable to save file. File '{}' is outside of root dir '{}': ", path, root);
+            throw new FileStorageException(FileStorageException.Type.INVALID_PATH, path.toAbsolutePath().toString());
         }
 
         checkFileExists(path);
@@ -237,20 +243,20 @@ public class LocalFileStorage implements FileStorage {
         for (Path root : roots) {
             Path path = root.resolve(relativePath);
 
+            if (isInvalidPath(path, root)) {
+                log.error("Unable to open file. File '{}' is outside of root dir '{}': ", path, root);
+                continue;
+            }
+
             if (!path.toFile().exists()) {
-                log.error("File " + path + " not found");
+                log.error("File '{}' not found", path);
                 continue;
             }
 
             try {
-                if (!Boolean.TRUE.equals(disablePathCheck) && !path.toRealPath().startsWith(root.toRealPath())) {
-                    log.error("File '{}' is outside of root dir '{}': ", path, root);
-                    continue;
-                }
-
                 inputStream = Files.newInputStream(path);
             } catch (IOException e) {
-                log.error("Error opening input stream for " + path, e);
+                log.error("Error opening input stream for {}", path, e);
             }
         }
 
@@ -259,6 +265,56 @@ public class LocalFileStorage implements FileStorage {
         } else {
             throw new FileStorageException(FileStorageException.Type.FILE_NOT_FOUND, reference.toString());
         }
+    }
+
+    protected boolean isInvalidPath(Path filePath, Path rootDirectoryPath) {
+        return !Boolean.TRUE.equals(disablePathCheck) && !isFileWithinRootDirectory(filePath, rootDirectoryPath);
+    }
+
+    protected boolean isFileWithinRootDirectory(Path filePath, Path rootDirectoryPath) {
+        try {
+            return resolveActualPath(filePath).startsWith(resolveActualPath(rootDirectoryPath));
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+    protected Path resolveActualPath(Path path) throws IOException {
+        Path absolutePath = path.toAbsolutePath();
+        Path resolvedPath = absolutePath.getRoot();
+        if (resolvedPath == null) {
+            resolvedPath = absolutePath.getFileSystem().getPath("");
+        }
+
+        List<Path> pathParts = new ArrayList<>();
+        for (Path pathPart : absolutePath) {
+            pathParts.add(pathPart);
+        }
+
+        for (int i = 0; i < pathParts.size(); i++) {
+            Path candidate = resolvedPath.resolve(pathParts.get(i).toString());
+
+            if (Files.exists(candidate)) {
+                resolvedPath = candidate.toRealPath();
+                continue;
+            }
+
+            if (Files.isSymbolicLink(candidate)) {
+                Path symbolicLinkTarget = Files.readSymbolicLink(candidate);
+                Path targetPath = symbolicLinkTarget.isAbsolute()
+                        ? symbolicLinkTarget
+                        : candidate.getParent().resolve(symbolicLinkTarget);
+                resolvedPath = resolveActualPath(targetPath);
+                continue;
+            }
+
+            for (int j = i; j < pathParts.size(); j++) {
+                resolvedPath = resolvedPath.resolve(pathParts.get(j).toString());
+            }
+            return resolvedPath.normalize();
+        }
+
+        return resolvedPath.normalize();
     }
 
     @Override
@@ -272,6 +328,11 @@ public class LocalFileStorage implements FileStorage {
         Path relativePath = getRelativePath(reference.getPath());
         for (Path root : roots) {
             Path filePath = root.resolve(relativePath);
+            if (isInvalidPath(filePath, root)) {
+                log.error("Unable to remove file. File '{}' is outside of root dir '{}': ", filePath, root);
+                continue;
+            }
+
             File file = filePath.toFile();
             if (file.exists()) {
                 if (!file.delete()) {
@@ -289,6 +350,11 @@ public class LocalFileStorage implements FileStorage {
         Path relativePath = getRelativePath(reference.getPath());
         for (Path root : roots) {
             Path filePath = root.resolve(relativePath);
+            if (isInvalidPath(filePath, root)) {
+                log.error("File '{}' is outside of root dir '{}': ", filePath, root);
+                continue;
+            }
+
             if (filePath.toFile().exists()) {
                 return true;
             }

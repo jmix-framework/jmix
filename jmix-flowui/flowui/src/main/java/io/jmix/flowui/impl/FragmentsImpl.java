@@ -94,9 +94,9 @@ public class FragmentsImpl implements Fragments {
         ComponentLoader.Context hostContext = createHostLoaderContext(parent);
 
         FragmentLifecycleObservationInfo observationInfo =
-                new FragmentLifecycleObservationInfo(fragmentId, fragmentClass.getName());
-        F fragment = uiObservationSupport.createFragmentLifecycleObservation(observationInfo, FragmentLifecycle.CREATE)
-                        .observe(() -> uiComponents.create(fragmentClass));
+                new FragmentLifecycleObservationInfo(parent, fragmentId, fragmentClass.getName());
+        F fragment = uiObservationSupport.observeFragmentLifecycle(
+                observationInfo, FragmentLifecycle.CREATE, () -> uiComponents.create(fragmentClass));
 
         if (fragmentId != null) {
             Objects.requireNonNull(fragment).setId(fragmentId);
@@ -182,8 +182,8 @@ public class FragmentsImpl implements Fragments {
             context.executeInitTasks();
         }
 
-        uiObservationSupport.createFragmentLifecycleObservation(fragment, FragmentLifecycle.READY)
-                .observe(() -> ComponentUtil.fireEvent(fragment, new Fragment.ReadyEvent(fragment)));
+        uiObservationSupport.observeFragmentLifecycle(fragment, FragmentLifecycle.READY,
+                () -> ComponentUtil.fireEvent(fragment, new Fragment.ReadyEvent(fragment)));
     }
 
     protected void autowireFragment(Fragment<?> fragment) {

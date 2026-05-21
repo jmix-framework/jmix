@@ -44,7 +44,6 @@ import io.jmix.security.role.ResourceRoleRepository;
 import io.jmix.security.role.RolePersistence;
 import io.jmix.securityflowui.view.resourcepolicy.*;
 import org.jspecify.annotations.Nullable;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -184,12 +183,13 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
     }
 
     private BaseAction<?> getCreatePolicyAction(ResourcePolicyTypeProvider resourcePolicyTypeProvider) {
-        BaseAction<?> action = new BaseAction(RandomStringUtils.randomAlphabetic(5)) {
+        String actionId = "createPolicy_" + resourcePolicyTypeProvider.getCreatePolicyViewClass().getSimpleName();
+        BaseAction<?> action = new BaseAction(actionId) {
             @Override
             public void actionPerform(Component component) {
 
                 getApplicationContext().getBean(UiObservationSupport.class)
-                        .createActionExecutionObservation(this)
+                        .createActionExecutionObservation(this, component)
                         .observe(() ->
                                 dialogWindows.view(ResourceRoleModelDetailView.this, resourcePolicyTypeProvider.getCreatePolicyViewClass())
                                         .withAfterCloseListener(ResourceRoleModelDetailView.this::addPoliciesFromMultiplePoliciesView)

@@ -16,6 +16,8 @@
 
 package io.jmix.reportsflowui.view.report;
 
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
 import io.jmix.core.*;
@@ -141,6 +143,7 @@ public class ReportListView extends StandardListView<Report> {
     protected void onInit(InitEvent event) {
         initReportsDataGridCreate();
         initOutputTypeList();
+        initOutputTypeColumn();
 
         openInSpreadsheetAction.setVisible(spreadsheetViewSupport != null);
 
@@ -154,6 +157,18 @@ public class ReportListView extends StandardListView<Report> {
     protected void initOutputTypeList() {
         List<ReportOutputType> supportedOutputTypes = outputTypeHelper.getSupportedOutputTypes();
         outputTypeFilter.setItems(supportedOutputTypes);
+    }
+
+    protected void initOutputTypeColumn() {
+        reportsDataGrid.getColumnByKey("defaultTemplate.reportOutputType")
+                .setRenderer(new ComponentRenderer<>(this::createReportOutputTypeBadge));
+    }
+
+    protected HorizontalLayout createReportOutputTypeBadge(Report report) {
+        ReportOutputType outputType = report.getDefaultTemplate() != null
+                ? report.getDefaultTemplate().getReportOutputType()
+                : null;
+        return outputTypeHelper.createOutputTypeBadge(outputType);
     }
 
     private void initReportsDataGridCreate() {

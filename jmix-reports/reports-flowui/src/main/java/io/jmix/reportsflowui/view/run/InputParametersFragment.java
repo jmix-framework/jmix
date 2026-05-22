@@ -220,8 +220,9 @@ public class InputParametersFragment extends Composite<FormLayout>
             outputTypeComboBox.clear();
         }
 
-        outputTypeComboBox.setVisible(true);
-        outputTypeComboBox.setEnabled(outputTypes.size() > 1);
+        boolean multipleOutputTypes = outputTypes.size() > 1;
+        outputTypeComboBox.setVisible(multipleOutputTypes);
+        outputTypeComboBox.setEnabled(multipleOutputTypes);
     }
 
     public Map<String, Object> collectParameters() {

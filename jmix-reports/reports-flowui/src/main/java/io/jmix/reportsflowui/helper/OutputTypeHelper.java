@@ -67,7 +67,8 @@ public class OutputTypeHelper {
 
         HorizontalLayout layout = new HorizontalLayout(icon, text);
         layout.setAlignItems(FlexComponent.Alignment.CENTER);
-        layout.setSpacing("spacing-xs");
+        layout.setSpacing(false);
+        layout.getThemeList().add("spacing-xs");
 
         return layout;
     }

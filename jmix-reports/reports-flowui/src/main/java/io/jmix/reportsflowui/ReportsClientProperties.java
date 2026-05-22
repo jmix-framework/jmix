@@ -45,14 +45,22 @@ public class ReportsClientProperties {
      */
     boolean useMultiSelectComboBoxPickerForListOfEntitiesParameterComponent;
 
+    /**
+     * Whether to show the {@code report_ReportTableView} entry in the main application menu.
+     * Disabled by default — enable when you want end-users to open table reports directly from the menu.
+     */
+    boolean showReportTableViewInMenu;
+
     public ReportsClientProperties(@DefaultValue("false") boolean useBackgroundReportProcessing,
                                    @DefaultValue("10000") long backgroundReportProcessingTimeoutMs,
                                    @DefaultValue("false") boolean enableTabSymbolInDataSetEditor,
-                                   @DefaultValue("false") boolean useMultiSelectComboBoxPickerForListOfEntitiesParameterComponent) {
+                                   @DefaultValue("false") boolean useMultiSelectComboBoxPickerForListOfEntitiesParameterComponent,
+                                   @DefaultValue("false") boolean showReportTableViewInMenu) {
         this.useBackgroundReportProcessing = useBackgroundReportProcessing;
         this.backgroundReportProcessingTimeoutMs = backgroundReportProcessingTimeoutMs;
         this.enableTabSymbolInDataSetEditor = enableTabSymbolInDataSetEditor;
         this.useMultiSelectComboBoxPickerForListOfEntitiesParameterComponent = useMultiSelectComboBoxPickerForListOfEntitiesParameterComponent;
+        this.showReportTableViewInMenu = showReportTableViewInMenu;
     }
 
     /**
@@ -81,5 +89,12 @@ public class ReportsClientProperties {
      */
     public boolean isUseMultiSelectComboBoxPickerForListOfEntitiesParameterComponent() {
         return useMultiSelectComboBoxPickerForListOfEntitiesParameterComponent;
+    }
+
+    /**
+     * @see #showReportTableViewInMenu
+     */
+    public boolean isShowReportTableViewInMenu() {
+        return showReportTableViewInMenu;
     }
 }

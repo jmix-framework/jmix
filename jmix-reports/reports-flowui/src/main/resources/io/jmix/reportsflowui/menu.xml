@@ -5,7 +5,7 @@
         <item view="report_Report.list" title="msg://io.jmix.reportsflowui/reportListView.menu"/>
         <item view="report_ReportGroup.list" title="msg://io.jmix.reportsflowui/reportGroupListView.menu"/>
         <item view="report_ReportRunView" title="msg://io.jmix.reportsflowui/reportRunView.menu"/>
-        <item view="report_ReportTableView" title="msg://io.jmix.reportsflowui/reportTableView.menu"/>
+        <item view="report_ReportTableView" title="msg://io.jmix.reportsflowui/reportTableView.menu" visible="false"/>
     </menu>
 
 </menu-config>

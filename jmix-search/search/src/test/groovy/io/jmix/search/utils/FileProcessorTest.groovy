@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestPropertySource
 import spock.lang.Specification
+import test_support.FileProcessorTestConfiguration
 
 @ContextConfiguration(classes = [CoreConfiguration, LocalFileStorageConfiguration, FileProcessorTestConfiguration])
 @TestPropertySource(locations = 'classpath:/file_processor/test-app.properties')

@@ -102,16 +102,13 @@ public class TableReportExecutionPresentation implements ReportExecutionPresenta
     }
 
     /**
-     * @return {@code true} if the report has more than one table-compatible template and none is pre-selected
+     * @return {@code true} if the report has more than one table-compatible template
+     *         (the user must choose which template to use, even if a default was pre-filled)
      */
     @Override
     public boolean requiresUserChoice(@Nullable Report report, @Nullable ReportTemplate selectedTemplate,
                                       @Nullable ReportOutputType selectedOutputType) {
         if (report == null) {
-            return false;
-        }
-
-        if (supportsTemplate(selectedTemplate)) {
             return false;
         }
 

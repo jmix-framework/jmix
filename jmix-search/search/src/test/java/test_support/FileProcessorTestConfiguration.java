@@ -14,39 +14,40 @@
  * limitations under the License.
  */
 
-package io.jmix.search.utils
+package test_support;
 
-import io.jmix.core.FileStorage
-import io.jmix.core.FileStorageLocator
-import io.jmix.core.annotation.JmixModule
-import io.jmix.core.cluster.ClusterApplicationEventChannelSupplier
-import io.jmix.core.cluster.LocalApplicationEventChannelSupplier
-import io.jmix.localfs.LocalFileStorage
-import io.jmix.localfs.LocalFileStorageConfiguration
-import org.springframework.cache.CacheManager
-import org.springframework.cache.concurrent.ConcurrentMapCacheManager
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Configuration
-import org.springframework.context.annotation.Primary
+import io.jmix.core.FileStorage;
+import io.jmix.core.FileStorageLocator;
+import io.jmix.core.annotation.JmixModule;
+import io.jmix.core.cluster.ClusterApplicationEventChannelSupplier;
+import io.jmix.core.cluster.LocalApplicationEventChannelSupplier;
+import io.jmix.localfs.LocalFileStorage;
+import io.jmix.localfs.LocalFileStorageConfiguration;
+import io.jmix.search.utils.FileProcessor;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 @Configuration
-@JmixModule(dependsOn = LocalFileStorageConfiguration)
+@JmixModule(dependsOn = LocalFileStorageConfiguration.class)
 public class FileProcessorTestConfiguration {
 
     @Bean
     public FileProcessor fileProcessor(FileStorageLocator fileStorageLocator) {
-        new FileProcessor(fileStorageLocator)
+        return new FileProcessor(fileStorageLocator);
     }
 
     @Bean
     @Primary
     public FileStorage fileStorage() {
-        new LocalFileStorage('testFs')
+        return new LocalFileStorage("testFs");
     }
 
     @Bean
     public CacheManager cacheManager() {
-        new ConcurrentMapCacheManager()
+        return new ConcurrentMapCacheManager();
     }
 
     @Bean

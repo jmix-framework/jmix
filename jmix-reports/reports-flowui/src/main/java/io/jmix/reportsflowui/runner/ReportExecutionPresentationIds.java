@@ -19,20 +19,20 @@ package io.jmix.reportsflowui.runner;
 import io.jmix.core.annotation.Internal;
 
 /**
- * Internal marker context that tells the UI runner to open a spreadsheet report in the embedded spreadsheet viewer.
+ * Well-known identifiers for built-in {@link ReportExecutionPresentation} implementations.
  */
 @Internal
-public class SpreadsheetUiReportRunContext extends UiReportRunContext {
+public final class ReportExecutionPresentationIds {
 
-    /**
-     * Creates a spreadsheet-marked copy of a regular UI report run context.
-     */
-    public SpreadsheetUiReportRunContext(UiReportRunContext sourceContext) {
-        setReportRunContext(sourceContext.getReportRunContext());
-        if (sourceContext.getOwner() != null) {
-            setOwner(sourceContext.getOwner());
-        }
-        setInBackground(sourceContext.getInBackground());
-        setParametersDialogShowMode(sourceContext.getParametersDialogShowMode());
+    /** Default presentation: downloads the output document or opens a built-in viewer. */
+    public static final String DEFAULT = "default";
+
+    /** Spreadsheet presentation: opens XLS/XLSX output in the embedded spreadsheet viewer (premium). */
+    public static final String SPREADSHEET = "spreadsheet";
+
+    /** Table presentation: renders JSON output in an in-dialog table view. */
+    public static final String TABLE = "table";
+
+    private ReportExecutionPresentationIds() {
     }
 }

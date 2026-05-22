@@ -19,13 +19,18 @@ package io.jmix.reportsflowui.impl.annotated;
 import io.jmix.core.MetadataTools;
 import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.Notifications;
-import io.jmix.flowui.component.checkbox.JmixCheckbox;
+import io.jmix.flowui.component.UiComponentUtils;
+import io.jmix.flowui.component.combobox.EntityComboBox;
+import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.component.datepicker.TypedDatePicker;
 import io.jmix.flowui.component.valuepicker.EntityPicker;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.testassist.UiTestUtils;
 import io.jmix.flowui.testassist.notification.NotificationInfo;
+import io.jmix.reports.entity.ReportOutputType;
+import io.jmix.reports.entity.ReportTemplate;
 import io.jmix.reportsflowui.test_support.RuntimeReportUtil;
+import io.jmix.reportsflowui.test_support.report.SingleCompatibleSpreadsheetReport;
 import io.jmix.reportsflowui.test_support.report.PublishersAndGamesReport;
 import io.jmix.reportsflowui.test_support.report.SampleDefaultValueReport;
 import io.jmix.reportsflowui.view.run.InputParametersDialog;
@@ -142,27 +147,73 @@ public class InputParametersUiTest extends BaseRunReportUiTest {
     }
 
     @Test
-    public void testOpenInSpreadsheetCheckboxVisibleForSpreadsheetOutput() {
+    public void testOpenInSpreadsheetCheckboxRemoved() {
         runtimeReportUtil.createAndSaveSimpleSpreadsheetRuntimeReport();
 
-        launchReportFromRunView(RuntimeReportUtil.SIMPLE_SPREADSHEET_REPORT_CODE);
+        launchSpreadsheetReportFromRunView(RuntimeReportUtil.SIMPLE_SPREADSHEET_REPORT_CODE);
 
         InputParametersDialog parametersDialog = (InputParametersDialog) dialogWindows.getOpenedDialogWindows()
                 .getCurrentDialog().orElse(null);
+        assertThat(parametersDialog).isNotNull();
 
-        JmixCheckbox checkbox = findInputParametersComponent(parametersDialog, "openInSpreadsheetCheckbox");
-        assertThat(checkbox.isVisible()).isTrue();
-        assertThat(checkbox.getValue()).isFalse();
+        assertThat(findInputParametersComponentOptional(parametersDialog, "openInSpreadsheetCheckbox")).isEmpty();
     }
 
     @Test
-    public void testOpenInSpreadsheetCheckboxHiddenForNonSpreadsheetOutput() {
-        launchReportFromRunView(SampleDefaultValueReport.CODE);
+    public void testSpreadsheetModeFiltersOutputTypesToSpreadsheetOnes() {
+        runtimeReportUtil.createAndSaveAlterableSpreadsheetRuntimeReport();
+
+        launchSpreadsheetReportFromRunView(RuntimeReportUtil.ALTERABLE_SPREADSHEET_REPORT_CODE);
 
         InputParametersDialog parametersDialog = (InputParametersDialog) dialogWindows.getOpenedDialogWindows()
                 .getCurrentDialog().orElse(null);
+        assertThat(parametersDialog).isNotNull();
 
-        JmixCheckbox checkbox = findInputParametersComponent(parametersDialog, "openInSpreadsheetCheckbox");
-        assertThat(checkbox.isVisible()).isFalse();
+        EntityComboBox<ReportTemplate> templateComboBox = findInputParametersComponent(parametersDialog, "templateComboBox");
+        assertThat(templateComboBox.isVisible()).isFalse();
+        assertThat(templateComboBox.getValue()).isNotNull();
+        assertThat(templateComboBox.getValue().getCode()).isEqualTo("spreadsheet");
+
+        JmixComboBox<ReportOutputType> outputTypeComboBox =
+                findInputParametersComponent(parametersDialog, "outputTypeComboBox");
+        assertThat(outputTypeComboBox.isVisible()).isTrue();
+        assertThat(outputTypeComboBox.getGenericDataView().getItems().toList())
+                .containsExactly(ReportOutputType.XLS, ReportOutputType.XLSX);
+        assertThat(outputTypeComboBox.getValue()).isIn(ReportOutputType.XLS, ReportOutputType.XLSX);
+    }
+
+    @Test
+    public void testSpreadsheetModeShowsTemplateSelectionForMultipleCompatibleTemplates() {
+        runtimeReportUtil.createAndSaveMultiTemplateSpreadsheetRuntimeReport();
+
+        launchSpreadsheetReportFromRunView(RuntimeReportUtil.MULTI_TEMPLATE_SPREADSHEET_REPORT_CODE);
+
+        InputParametersDialog parametersDialog = (InputParametersDialog) dialogWindows.getOpenedDialogWindows()
+                .getCurrentDialog().orElse(null);
+        assertThat(parametersDialog).isNotNull();
+
+        EntityComboBox<ReportTemplate> templateComboBox = findInputParametersComponent(parametersDialog, "templateComboBox");
+        assertThat(templateComboBox.isVisible()).isTrue();
+        assertThat(templateComboBox.getGenericDataView().getItems().toList())
+                .extracting(ReportTemplate::getCode)
+                .containsExactlyInAnyOrder("xlsTemplate", "xlsxTemplate");
+        assertThat(templateComboBox.getValue()).isNotNull();
+        assertThat(templateComboBox.getValue().getCode()).isIn("xlsTemplate", "xlsxTemplate");
+
+        JmixComboBox<ReportOutputType> outputTypeComboBox =
+                findInputParametersComponent(parametersDialog, "outputTypeComboBox");
+        assertThat(outputTypeComboBox.isVisible()).isFalse();
+        assertThat(outputTypeComboBox.getValue()).isIn(ReportOutputType.XLS, ReportOutputType.XLSX);
+    }
+
+    @Test
+    public void testSpreadsheetModeSkipsDialogForSingleCompatibleTemplateWithoutParameters() {
+        launchSpreadsheetReportFromRunView(SingleCompatibleSpreadsheetReport.CODE);
+
+        Object openedView = dialogWindows.getOpenedDialogWindows()
+                .getCurrentDialog()
+                .orElse(null);
+
+        assertThat(openedView == null || !(openedView instanceof InputParametersDialog)).isTrue();
     }
 }

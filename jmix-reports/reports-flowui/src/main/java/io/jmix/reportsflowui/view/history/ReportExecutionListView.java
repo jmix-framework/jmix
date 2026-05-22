@@ -34,11 +34,12 @@ import io.jmix.flowui.view.*;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportExecution;
 import io.jmix.reportsflowui.download.ReportDownloader;
-import io.jmix.reportsflowui.runner.SpreadsheetReportSupport;
+import io.jmix.reportsflowui.runner.SpreadsheetViewSupport;
 import io.jmix.reportsflowui.view.run.ReportExcelHelper;
 import io.jmix.reports.entity.ReportSource;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashSet;
@@ -60,7 +61,7 @@ public class ReportExecutionListView extends StandardListView<ReportExecution> {
     @ViewComponent
     protected DataGrid<ReportExecution> executionsDataGrid;
     @ViewComponent("executionsDataGrid.openInSpreadsheet")
-    protected Action openInSpreadhseetAction;
+    protected Action openInSpreadsheetAction;
     @ViewComponent
     private HorizontalLayout buttonsPanel;
     @ViewComponent
@@ -78,15 +79,16 @@ public class ReportExecutionListView extends StandardListView<ReportExecution> {
     protected ReportExcelHelper reportExcelHelper;
     @Autowired
     protected MetadataTools metadataTools;
-    @Autowired
-    protected SpreadsheetReportSupport spreadsheetReportSupport;
+    @Nullable
+    @Autowired(required = false)
+    protected SpreadsheetViewSupport spreadsheetViewSupport;
 
     protected List<Report> filterByReports;
 
     @Subscribe
     public void onBeforeShow(final BeforeShowEvent event) {
         createExcelButton();
-        openInSpreadhseetAction.setVisible(spreadsheetReportSupport.isAvailable());
+        openInSpreadsheetAction.setVisible(spreadsheetViewSupport != null);
     }
 
     protected void createExcelButton() {
@@ -124,8 +126,8 @@ public class ReportExecutionListView extends StandardListView<ReportExecution> {
     @Subscribe("executionsDataGrid.openInSpreadsheet")
     public void onOpenInSpreadsheetClick(final ActionPerformedEvent event) {
         ReportExecution execution = executionsDataGrid.getSingleSelectedItem();
-        if (execution != null && execution.getOutputDocument() != null) {
-            spreadsheetReportSupport.open(this, execution.getOutputDocument());
+        if (execution != null && execution.getOutputDocument() != null && spreadsheetViewSupport != null) {
+            spreadsheetViewSupport.open(this, execution.getOutputDocument());
         }
     }
 
@@ -141,7 +143,9 @@ public class ReportExecutionListView extends StandardListView<ReportExecution> {
         }
 
         ReportExecution execution = executionsDataGrid.getSingleSelectedItem();
-        return execution != null && spreadsheetReportSupport.supportsFileRef(execution.getOutputDocument());
+        return execution != null
+                && spreadsheetViewSupport != null
+                && spreadsheetViewSupport.supportsFileRef(execution.getOutputDocument());
     }
 
     @Override

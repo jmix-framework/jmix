@@ -16,7 +16,6 @@
 
 package io.jmix.reportsflowui;
 
-import io.jmix.core.FileRef;
 import io.jmix.core.CoreConfiguration;
 import io.jmix.core.annotation.MessageSourceBasenames;
 import io.jmix.core.security.InMemoryUserRepository;
@@ -24,10 +23,9 @@ import io.jmix.core.security.UserRepository;
 import io.jmix.data.DataConfiguration;
 import io.jmix.eclipselink.EclipselinkConfiguration;
 import io.jmix.flowui.FlowuiConfiguration;
-import io.jmix.flowui.view.View;
 import io.jmix.reports.ReportsConfiguration;
-import io.jmix.reports.yarg.reporting.ReportOutputDocument;
-import io.jmix.reportsflowui.runner.SpreadsheetReportOpener;
+import io.jmix.reportsflowui.download.ReportDownloader;
+import io.jmix.reportsflowui.test_support.TestReportDownloader;
 import io.jmix.reportsflowui.test_support.role.FullAccessRole;
 import io.jmix.reportsflowui.test_support.role.TestResourceRole2;
 import io.jmix.reportsflowui.test_support.role.TestResourceRole4;
@@ -39,7 +37,6 @@ import io.jmix.testsupport.config.HsqlEmbeddedDataSourceTestConfiguration;
 import io.jmix.testsupport.config.JpaMainStoreTestConfiguration;
 import io.jmix.testsupport.config.LiquibaseTestConfiguration;
 import io.jmix.flowui.testassist.FlowuiServletTestBeans;
-import org.jspecify.annotations.NonNull;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -102,20 +99,8 @@ public class ReportsFlowuiTestConfiguration {
     }
 
     @Bean
-    public SpreadsheetReportOpener spreadsheetReportOpener() {
-        return new SpreadsheetReportOpener() {
-            @Override
-            public boolean supportsExtension(@NonNull String extension) {
-                return "xls".equals(extension) || "xlsx".equals(extension);
-            }
-
-            @Override
-            public void open(@NonNull View<?> owner, @NonNull ReportOutputDocument document, String documentName) {
-            }
-
-            @Override
-            public void open(@NonNull View<?> owner, @NonNull FileRef fileRef) {
-            }
-        };
+    @Primary
+    public TestReportDownloader reportDownloader() {
+        return new TestReportDownloader();
     }
 }

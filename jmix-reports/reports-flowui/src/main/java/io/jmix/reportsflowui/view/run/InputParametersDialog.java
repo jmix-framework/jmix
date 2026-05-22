@@ -31,8 +31,9 @@ import io.jmix.reports.exception.MissingDefaultTemplateException;
 import io.jmix.reports.exception.ReportParametersValidationException;
 import io.jmix.reportsflowui.runner.FluentUiReportRunner;
 import io.jmix.reportsflowui.runner.ParametersDialogShowMode;
+import io.jmix.reportsflowui.runner.ReportExecutionPresentationIds;
+import io.jmix.reportsflowui.runner.ReportPresentationRegistry;
 import io.jmix.reportsflowui.runner.UiReportRunner;
-import io.jmix.reportsflowui.runner.SpreadsheetReportSupport;
 import io.jmix.reportsflowui.view.ReportParameterValidator;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,7 +66,7 @@ public class InputParametersDialog extends StandardView {
     @Autowired
     protected Messages messages;
     @Autowired
-    protected SpreadsheetReportSupport spreadsheetReportSupport;
+    protected ReportPresentationRegistry reportPresentationRegistry;
 
     protected String templateCode;
     protected String outputFileName;
@@ -75,7 +76,7 @@ public class InputParametersDialog extends StandardView {
     protected Map<String, Object> parameters;
     protected Collection selectedEntities;
     protected boolean inBackground;
-    protected boolean openInSpreadsheet;
+    protected String presentationId = ReportExecutionPresentationIds.DEFAULT;
 
     protected InputParametersFragment inputParametersFragment;
 
@@ -107,8 +108,8 @@ public class InputParametersDialog extends StandardView {
         this.inBackground = inBackground;
     }
 
-    public void setOpenInSpreadsheet(boolean openInSpreadsheet) {
-        this.openInSpreadsheet = openInSpreadsheet;
+    public void setPresentationId(String presentationId) {
+        this.presentationId = presentationId;
     }
 
     @Subscribe
@@ -126,8 +127,7 @@ public class InputParametersDialog extends StandardView {
             inputParametersFragment.setInputParameter(inputParameter);
             inputParametersFragment.setParameters(parameters);
             inputParametersFragment.setBulkPrint(bulkPrint);
-            inputParametersFragment.setOpenInSpreadsheet(openInSpreadsheet);
-            //inputParametersFragment.initLayout();
+            inputParametersFragment.setPresentationId(presentationId);
         }
         inputParametersLayout.add(inputParametersFragment);
         inputParametersFragment.initTemplateAndOutputSelect();
@@ -158,10 +158,9 @@ public class InputParametersDialog extends StandardView {
                 try {
                     if (bulkPrint) {
                         fluentRunner.runMultipleReports(inputParameter.getAlias(), selectedEntities);
-                    } else if (inputParametersFragment.isOpenInSpreadsheet()) {
-                        uiReportRunner.runAndShow(spreadsheetReportSupport.createRunContext(fluentRunner.buildContext()));
                     } else {
-                        fluentRunner.runAndShow();
+                        uiReportRunner.runAndShow(
+                                reportPresentationRegistry.createRunContext(fluentRunner.buildContext(), presentationId));
                     }
                 } catch (MissingDefaultTemplateException e) {
                     notifications.create(

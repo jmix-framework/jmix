@@ -918,10 +918,7 @@
     </xs:simpleType>
 
     <xs:simpleType name="rangeInputOrientationEnum">
-        <xs:restriction base="xs:string">
-            <xs:enumeration value="HORIZONTAL"/>
-            <xs:enumeration value="VERTICAL"/>
-        </xs:restriction>
+        <xs:union memberTypes="orientationType"/>
     </xs:simpleType>
 
     <xs:simpleType name="multiSelectComboBoxAutoExpandModeEnum">
@@ -1398,7 +1395,7 @@
     </xs:simpleType>
 
     <xs:simpleType name="alignEnum">
-        <xs:restriction>
+        <xs:restriction base="xs:string">
             <xs:enumeration value="START"/>
             <xs:enumeration value="END"/>
             <xs:enumeration value="CENTER"/>
@@ -1409,7 +1406,7 @@
     </xs:simpleType>
 
     <xs:simpleType name="justifyContentModeEnum">
-        <xs:restriction>
+        <xs:restriction base="xs:string">
             <xs:enumeration value="START"/>
             <xs:enumeration value="END"/>
             <xs:enumeration value="CENTER"/>
@@ -1420,7 +1417,7 @@
     </xs:simpleType>
 
     <xs:simpleType name="contentAlignmentEnum">
-        <xs:restriction>
+        <xs:restriction base="xs:string">
             <xs:enumeration value="START"/>
             <xs:enumeration value="END"/>
             <xs:enumeration value="CENTER"/>
@@ -1431,7 +1428,7 @@
     </xs:simpleType>
 
     <xs:simpleType name="flexDirectionEnum">
-        <xs:restriction>
+        <xs:restriction base="xs:string">
             <xs:enumeration value="ROW"/>
             <xs:enumeration value="ROW_REVERSE"/>
             <xs:enumeration value="COLUMN"/>
@@ -1440,7 +1437,7 @@
     </xs:simpleType>
 
     <xs:simpleType name="flexWrapEnum">
-        <xs:restriction>
+        <xs:restriction base="xs:string">
             <xs:enumeration value="NOWRAP"/>
             <xs:enumeration value="WRAP"/>
             <xs:enumeration value="WRAP_REVERSE"/>
@@ -1448,7 +1445,7 @@
     </xs:simpleType>
 
     <xs:simpleType name="uploadReceiverEnum">
-        <xs:restriction>
+        <xs:restriction base="xs:string">
             <xs:enumeration value="MEMORY_BUFFER"/>
             <xs:enumeration value="MULTI_FILE_MEMORY_BUFFER"/>
             <xs:enumeration value="FILE_TEMPORARY_STORAGE_BUFFER"/>
@@ -1457,28 +1454,25 @@
     </xs:simpleType>
 
     <xs:simpleType name="uploadUploadHandlerEnum">
-        <xs:restriction>
+        <xs:restriction base="xs:string">
             <xs:enumeration value="IN_MEMORY"/>
             <xs:enumeration value="FILE_TEMPORARY_STORAGE"/>
         </xs:restriction>
     </xs:simpleType>
 
     <xs:simpleType name="labelPositionType">
-        <xs:restriction>
+        <xs:restriction base="xs:string">
             <xs:enumeration value="ASIDE"/>
             <xs:enumeration value="TOP"/>
         </xs:restriction>
     </xs:simpleType>
 
     <xs:simpleType name="formLabelsPosition">
-        <xs:restriction>
-            <xs:enumeration value="ASIDE"/>
-            <xs:enumeration value="TOP"/>
-        </xs:restriction>
+        <xs:union memberTypes="labelPositionType"/>
     </xs:simpleType>
 
     <xs:simpleType name="tooltipPosition">
-        <xs:restriction>
+        <xs:restriction base="xs:string">
             <xs:enumeration value="TOP_START"/>
             <xs:enumeration value="TOP"/>
             <xs:enumeration value="TOP_END"/>
@@ -1495,7 +1489,7 @@
     </xs:simpleType>
 
     <xs:simpleType name="boxSizingType">
-        <xs:restriction>
+        <xs:restriction base="xs:string">
             <xs:enumeration value="CONTENT_BOX"/>
             <xs:enumeration value="BORDER_BOX"/>
             <xs:enumeration value="UNDEFINED"/>
@@ -1568,9 +1562,50 @@
     </xs:simpleType>
 
     <xs:simpleType name="orientationType">
-        <xs:restriction>
+        <xs:restriction base="xs:string">
             <xs:enumeration value="HORIZONTAL"/>
             <xs:enumeration value="VERTICAL"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="sidePanelPositionType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="TOP"/>
+            <xs:enumeration value="RIGHT"/>
+            <xs:enumeration value="BOTTOM"/>
+            <xs:enumeration value="LEFT"/>
+            <xs:enumeration value="INLINE_START"/>
+            <xs:enumeration value="INLINE_END"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="fileStoragePutMode">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="MANUAL"/>
+            <xs:enumeration value="IMMEDIATE"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="menuFilterFieldFilterMode">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="CASE_SENSITIVE"/>
+            <xs:enumeration value="CASE_INSENSITIVE"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="onViewEventEnum">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="Init"/>
+            <xs:enumeration value="BeforeShow"/>
+            <xs:enumeration value="Ready"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="likeClauseEnum">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="NONE"/>
+            <xs:enumeration value="CASE_SENSITIVE"/>
+            <xs:enumeration value="CASE_INSENSITIVE"/>
         </xs:restriction>
     </xs:simpleType>
 
@@ -1602,16 +1637,12 @@
     </xs:simpleType>
 
     <xs:simpleType name="actionVariant">
-        <xs:union>
-            <xs:simpleType>
-                <xs:restriction base="xs:string">
-                    <xs:enumeration value="DEFAULT"/>
-                    <xs:enumeration value="PRIMARY"/>
-                    <xs:enumeration value="DANGER"/>
-                    <xs:enumeration value="SUCCESS"/>
-                </xs:restriction>
-            </xs:simpleType>
-        </xs:union>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="DEFAULT"/>
+            <xs:enumeration value="PRIMARY"/>
+            <xs:enumeration value="DANGER"/>
+            <xs:enumeration value="SUCCESS"/>
+        </xs:restriction>
     </xs:simpleType>
 
     <xs:complexType name="baseValidatorType">
@@ -1867,31 +1898,9 @@
     </xs:simpleType>
 
     <xs:simpleType name="propertyFilterOperationsList">
-        <xs:union>
+        <xs:union memberTypes="propertyFilterOperation">
             <xs:simpleType>
                 <xs:restriction base="xs:string"/>
-            </xs:simpleType>
-            <xs:simpleType>
-                <xs:restriction base="xs:string">
-                    <xs:enumeration value="EQUAL"/>
-                    <xs:enumeration value="NOT_EQUAL"/>
-                    <xs:enumeration value="GREATER"/>
-                    <xs:enumeration value="GREATER_OR_EQUAL"/>
-                    <xs:enumeration value="LESS"/>
-                    <xs:enumeration value="LESS_OR_EQUAL"/>
-                    <xs:enumeration value="CONTAINS"/>
-                    <xs:enumeration value="NOT_CONTAINS"/>
-                    <xs:enumeration value="STARTS_WITH"/>
-                    <xs:enumeration value="ENDS_WITH"/>
-                    <xs:enumeration value="IS_SET"/>
-                    <xs:enumeration value="IN_LIST"/>
-                    <xs:enumeration value="NOT_IN_LIST"/>
-                    <xs:enumeration value="IN_INTERVAL"/>
-                    <xs:enumeration value="DATE_EQUALS"/>
-                    <xs:enumeration value="IS_COLLECTION_EMPTY"/>
-                    <xs:enumeration value="MEMBER_OF_COLLECTION"/>
-                    <xs:enumeration value="NOT_MEMBER_OF_COLLECTION"/>
-                </xs:restriction>
             </xs:simpleType>
         </xs:union>
     </xs:simpleType>
@@ -1943,22 +1952,7 @@
     </xs:simpleType>
 
     <xs:simpleType name="textAreaThemeNames">
-        <xs:union>
-            <xs:simpleType>
-                <xs:restriction base="xs:string"/>
-            </xs:simpleType>
-            <xs:simpleType>
-                <xs:restriction base="xs:string">
-                    <xs:enumeration value="small"/>
-                    <xs:enumeration value="align-left"/>
-                    <xs:enumeration value="align-start"/>
-                    <xs:enumeration value="align-end"/>
-                    <xs:enumeration value="align-center"/>
-                    <xs:enumeration value="align-right"/>
-                    <xs:enumeration value="helper-above-field"/>
-                </xs:restriction>
-            </xs:simpleType>
-        </xs:union>
+        <xs:union memberTypes="textFieldThemeNames"/>
     </xs:simpleType>
 
     <xs:simpleType name="markdownEditorThemeNames">
@@ -2342,25 +2336,7 @@
     </xs:simpleType>
 
     <xs:simpleType name="gridColumnVisibilityThemeNames">
-        <xs:union>
-            <xs:simpleType>
-                <xs:restriction base="xs:string"/>
-            </xs:simpleType>
-            <xs:simpleType>
-                <xs:restriction base="xs:string">
-                    <xs:enumeration value="small"/>
-                    <xs:enumeration value="large"/>
-                    <xs:enumeration value="tertiary"/>
-                    <xs:enumeration value="tertiary-inline"/>
-                    <xs:enumeration value="primary"/>
-                    <xs:enumeration value="success"/>
-                    <xs:enumeration value="warning"/>
-                    <xs:enumeration value="error"/>
-                    <xs:enumeration value="contrast"/>
-                    <xs:enumeration value="icon"/>
-                </xs:restriction>
-            </xs:simpleType>
-        </xs:union>
+        <xs:union memberTypes="buttonThemeNames"/>
     </xs:simpleType>
 
     <xs:simpleType name="menuFilterFieldThemeNames">
@@ -2438,18 +2414,19 @@
         </xs:union>
     </xs:simpleType>
 
-    <xs:simpleType name="userMenuViewItemOpenModeType">
+    <xs:simpleType name="openModeType">
         <xs:restriction base="xs:string">
             <xs:enumeration value="NAVIGATION"/>
             <xs:enumeration value="DIALOG"/>
         </xs:restriction>
     </xs:simpleType>
 
+    <xs:simpleType name="userMenuViewItemOpenModeType">
+        <xs:union memberTypes="openModeType"/>
+    </xs:simpleType>
+
     <xs:simpleType name="detailButtonRendererOpenModeType">
-        <xs:restriction base="xs:string">
-            <xs:enumeration value="NAVIGATION"/>
-            <xs:enumeration value="DIALOG"/>
-        </xs:restriction>
+        <xs:union memberTypes="openModeType"/>
     </xs:simpleType>
 
     <!-- Interfaces -->
@@ -2506,6 +2483,11 @@
 
     <xs:attributeGroup name="hasIcon">
         <xs:attribute name="icon" type="jmixFontIconEnum"/>
+    </xs:attributeGroup>
+
+    <xs:attributeGroup name="hasItems">
+        <xs:attribute name="itemsContainer" type="xs:string"/>
+        <xs:attribute name="itemsEnum" type="xs:string"/>
     </xs:attributeGroup>
 
     <xs:attributeGroup name="hasShortcutCombination">
@@ -2798,7 +2780,6 @@
                 <xs:attribute name="autoOpen" type="xs:boolean"/>
                 <xs:attribute name="pageSize" type="xs:integer"/>
                 <xs:attribute name="autofocus" type="xs:boolean"/>
-                <xs:attribute name="required" type="xs:boolean"/>
                 <xs:attribute name="allowCustomValue" type="xs:boolean"/>
                 <xs:attribute name="themeNames" type="comboBoxThemeNames"/>
                 <xs:attribute name="allowedCharPattern" type="resourceString"/>
@@ -2810,6 +2791,7 @@
                 <xs:attributeGroup ref="hasFocusableAttributes"/>
                 <xs:attributeGroup ref="hasClassNames"/>
                 <xs:attributeGroup ref="hasOverlayWidth"/>
+                <xs:attributeGroup ref="hasRequired"/>
                 <xs:attributeGroup ref="hasValidation"/>
                 <xs:attributeGroup ref="hasHelperText"/>
                 <xs:attributeGroup ref="hasPlaceholder"/>
@@ -2893,10 +2875,6 @@
                 <xs:sequence minOccurs="0" maxOccurs="unbounded">
                     <xs:group ref="htmlLists"/>
                 </xs:sequence>
-
-                <xs:attribute name="themeNames" type="badgeThemeNames"/>
-                <xs:attributeGroup ref="hasEnabled"/>
-                <xs:attributeGroup ref="hasText"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -3082,15 +3060,15 @@
         <xs:sequence minOccurs="0" maxOccurs="unbounded">
             <xs:element name="property" type="itemsQueryFetchPlanPropertyType"/>
         </xs:sequence>
-        <xs:attribute name="extends"/>
+        <xs:attribute name="extends" type="xs:string"/>
     </xs:complexType>
 
     <xs:complexType name="itemsQueryFetchPlanPropertyType">
         <xs:sequence minOccurs="0" maxOccurs="unbounded">
             <xs:element name="property" type="itemsQueryFetchPlanPropertyType"/>
         </xs:sequence>
-        <xs:attribute name="name"/>
-        <xs:attribute name="fetchPlan"/>
+        <xs:attribute name="name" type="xs:string"/>
+        <xs:attribute name="fetchPlan" type="xs:string"/>
         <xs:attribute name="fetch" type="itemsQueryFetchPlanFetchMode"/>
     </xs:complexType>
 
@@ -3510,7 +3488,6 @@
                 <xs:attribute name="minLength" type="xs:integer"/>
                 <xs:attribute name="datatype" type="fieldDatatypeEnum"/>
 
-                <xs:attributeGroup ref="hasDataContainer"/>
                 <xs:attributeGroup ref="hasRequired"/>
                 <xs:attributeGroup ref="hasTrimming"/>
             </xs:extension>
@@ -3529,7 +3506,6 @@
                 <xs:attribute name="maxLength" type="xs:integer"/>
                 <xs:attribute name="minLength" type="xs:integer"/>
 
-                <xs:attributeGroup ref="hasDataContainer"/>
                 <xs:attributeGroup ref="hasRequired"/>
             </xs:extension>
         </xs:complexContent>
@@ -3667,8 +3643,7 @@
                     <xs:element name="tooltip" type="tooltipElement"/>
                 </xs:sequence>
 
-                <xs:attribute name="itemsContainer" type="xs:string"/>
-                <xs:attribute name="itemsEnum" type="xs:string"/>
+                <xs:attributeGroup ref="hasItems"/>
 
                 <xs:attribute name="selectAllButtonsVisible" type="xs:boolean"/>
                 <xs:attribute name="reorderable" type="xs:boolean"/>
@@ -3805,12 +3780,12 @@
                 </xs:sequence>
 
                 <xs:attribute name="opened" type="xs:boolean"/>
-                <xs:attribute name="itemsEnum" type="xs:string"/>
                 <xs:attribute name="autoOpen" type="xs:boolean"/>
                 <xs:attribute name="pageSize" type="xs:integer"/>
                 <xs:attribute name="autofocus" type="xs:boolean"/>
                 <xs:attribute name="selectedItemsOnTop" type="xs:boolean"/>
-                <xs:attribute name="itemsContainer" type="xs:string"/>
+
+                <xs:attributeGroup ref="hasItems"/>
                 <xs:attribute name="allowCustomValue" type="xs:boolean"/>
                 <xs:attribute name="allowedCharPattern" type="resourceString"/>
                 <xs:attribute name="clearButtonVisible" type="xs:boolean"/>
@@ -3822,7 +3797,6 @@
                 <xs:attributeGroup ref="hasRequired"/>
                 <xs:attributeGroup ref="hasFocusableAttributes"/>
                 <xs:attributeGroup ref="hasPlaceholder"/>
-                <xs:attributeGroup ref="hasValidation"/>
                 <xs:attributeGroup ref="hasOverlayWidth"/>
                 <xs:attributeGroup ref="hasAriaLabel"/>
             </xs:extension>
@@ -3862,7 +3836,6 @@
                 <xs:attribute name="metaClass" type="xs:string"/>
                 <xs:attribute name="itemsContainer" type="xs:string"/>
 
-                <xs:attributeGroup ref="hasRequired"/>
                 <xs:attributeGroup ref="hasDataContainer"/>
             </xs:extension>
         </xs:complexContent>
@@ -3978,9 +3951,9 @@
                 </xs:sequence>
 
                 <xs:attribute name="themeNames" type="radioButtonGroupThemeNames"/>
-                <xs:attribute name="itemsContainer" type="xs:string"/>
-                <xs:attribute name="itemsEnum" type="xs:string"/>
                 <xs:attribute name="datatype" type="fieldDatatypeEnum"/>
+
+                <xs:attributeGroup ref="hasItems"/>
 
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasLabel"/>
@@ -4005,10 +3978,9 @@
                     <xs:element name="fragmentRenderer" type="fragmentRendererElement"/>
                 </xs:sequence>
 
-                <xs:attribute name="itemsContainer" type="xs:string"/>
-                <xs:attribute name="itemsEnum" type="xs:string"/>
-
                 <xs:attribute name="themeNames" type="checkboxGroupThemeNames"/>
+
+                <xs:attributeGroup ref="hasItems"/>
 
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasLabel"/>
@@ -4033,10 +4005,9 @@
                     <xs:element name="fragmentRenderer" type="fragmentRendererElement"/>
                 </xs:sequence>
 
-                <xs:attribute name="itemsContainer" type="xs:string"/>
-                <xs:attribute name="itemsEnum" type="xs:string"/>
                 <xs:attribute name="readOnly" type="xs:boolean"/>
 
+                <xs:attributeGroup ref="hasItems"/>
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasEnabled"/>
                 <xs:attributeGroup ref="hasClassNames"/>
@@ -4054,10 +4025,9 @@
                     <xs:element name="fragmentRenderer" type="fragmentRendererElement"/>
                 </xs:sequence>
 
-                <xs:attribute name="itemsContainer" type="xs:string"/>
-                <xs:attribute name="itemsEnum" type="xs:string"/>
                 <xs:attribute name="readOnly" type="xs:boolean"/>
 
+                <xs:attributeGroup ref="hasItems"/>
                 <xs:attributeGroup ref="hasSize"/>
                 <xs:attributeGroup ref="hasEnabled"/>
                 <xs:attributeGroup ref="hasClassNames"/>
@@ -4358,9 +4328,9 @@
                 <xs:attribute name="autofocus" type="xs:boolean"/>
                 <xs:attribute name="emptySelectionCaption" type="resourceString"/>
                 <xs:attribute name="emptySelectionAllowed" type="xs:boolean"/>
-                <xs:attribute name="itemsContainer" type="xs:string"/>
-                <xs:attribute name="itemsEnum" type="xs:string"/>
                 <xs:attribute name="datatype" type="fieldDatatypeEnum"/>
+
+                <xs:attributeGroup ref="hasItems"/>
                 <xs:attribute name="themeNames" type="selectThemeNames"/>
                 <xs:attribute name="noVerticalOverlap" type="xs:boolean"/>
 
@@ -4427,17 +4397,6 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-
-    <xs:simpleType name="sidePanelPositionType">
-        <xs:restriction>
-            <xs:enumeration value="TOP"/>
-            <xs:enumeration value="RIGHT"/>
-            <xs:enumeration value="BOTTOM"/>
-            <xs:enumeration value="LEFT"/>
-            <xs:enumeration value="INLINE_START"/>
-            <xs:enumeration value="INLINE_END"/>
-        </xs:restriction>
-    </xs:simpleType>
 
     <!-- SidePanelLayoutCloser -->
 
@@ -4541,10 +4500,10 @@
                     <xs:group ref="layoutOrComponent"/>
                 </xs:sequence>
 
-                <xs:attribute name="itemsContainer" type="xs:string"/>
-                <xs:attribute name="itemsEnum" type="xs:string"/>
                 <xs:attribute name="columnMinWidth" type="xs:string"/>
                 <xs:attribute name="gap" type="xs:string"/>
+
+                <xs:attributeGroup ref="hasItems"/>
 
                 <xs:attributeGroup ref="hasEnabled"/>
                 <xs:attributeGroup ref="hasSize"/>
@@ -4728,13 +4687,6 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:simpleType name="fileStoragePutMode">
-        <xs:restriction base="xs:string">
-            <xs:enumeration value="MANUAL"/>
-            <xs:enumeration value="IMMEDIATE"/>
-        </xs:restriction>
-    </xs:simpleType>
-
     <!-- Image -->
     <xs:complexType name="imageComponent">
         <xs:complexContent>
@@ -4822,9 +4774,7 @@
                 <xs:attributeGroup ref="hasClassNames"/>
                 <xs:attributeGroup ref="hasEnabled"/>
                 <xs:attributeGroup ref="hasFocusableAttributes"/>
-
-                <xs:attribute name="itemsContainer" type="xs:string"/>
-                <xs:attribute name="itemsEnum" type="xs:string"/>
+                <xs:attributeGroup ref="hasItems"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -4894,13 +4844,6 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-
-    <xs:simpleType name="menuFilterFieldFilterMode">
-        <xs:restriction base="xs:string">
-            <xs:enumeration value="CASE_SENSITIVE"/>
-            <xs:enumeration value="CASE_INSENSITIVE"/>
-        </xs:restriction>
-    </xs:simpleType>
 
     <!-- RichTextEditorComponent -->
     <xs:complexType name="richTextEditorComponent">
@@ -5453,32 +5396,16 @@
         <xs:attribute name="type" type="onViewEventEnum" use="required"/>
     </xs:complexType>
 
-    <xs:simpleType name="onViewEventEnum">
-        <xs:restriction base="xs:string">
-            <xs:enumeration value="Init"/>
-            <xs:enumeration value="BeforeShow"/>
-            <xs:enumeration value="Ready"/>
-        </xs:restriction>
-    </xs:simpleType>
-
     <xs:complexType name="onContainerItemChangedType">
-        <xs:attribute name="container" use="required"/>
+        <xs:attribute name="container" type="xs:string" use="required"/>
         <xs:attribute name="param" type="xs:string"/>
     </xs:complexType>
 
     <xs:complexType name="onComponentValueChangedType">
-        <xs:attribute name="component" use="required"/>
+        <xs:attribute name="component" type="xs:string" use="required"/>
         <xs:attribute name="param" type="xs:string"/>
         <xs:attribute name="likeClause" type="likeClauseEnum"/>
     </xs:complexType>
-
-    <xs:simpleType name="likeClauseEnum">
-        <xs:restriction base="xs:string">
-            <xs:enumeration value="NONE"/>
-            <xs:enumeration value="CASE_SENSITIVE"/>
-            <xs:enumeration value="CASE_INSENSITIVE"/>
-        </xs:restriction>
-    </xs:simpleType>
 
     <!-- urlQueryParameters -->
 

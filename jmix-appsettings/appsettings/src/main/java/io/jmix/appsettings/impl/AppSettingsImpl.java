@@ -2,8 +2,10 @@ package io.jmix.appsettings.impl;
 
 import io.jmix.appsettings.AppSettings;
 import io.jmix.appsettings.AppSettingsEntityLoadMode;
+import io.jmix.appsettings.AppSettingsProperties;
 import io.jmix.appsettings.AppSettingsTools;
 import io.jmix.appsettings.entity.AppSettingsEntity;
+import io.jmix.core.DataManager;
 import io.jmix.core.UnconstrainedDataManager;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
@@ -21,13 +23,19 @@ public class AppSettingsImpl implements AppSettings {
     private static final Logger log = LoggerFactory.getLogger(AppSettingsImpl.class);
 
     @Autowired
-    protected UnconstrainedDataManager dataManager;
+    protected DataManager dataManager;
+
+    @Autowired
+    protected UnconstrainedDataManager unconstrainedDataManager;
 
     @Autowired
     protected DatatypeRegistry datatypeRegistry;
 
     @Autowired
     protected AppSettingsTools appSettingsTools;
+
+    @Autowired
+    protected AppSettingsProperties appSettingsProperties;
 
     @Override
     public <T extends AppSettingsEntity> T load(Class<T> clazz) {
@@ -59,7 +67,11 @@ public class AppSettingsImpl implements AppSettings {
     }
 
     protected <T extends AppSettingsEntity> void saveAppSettingsEntity(T settingsEntity) {
-        dataManager.save(settingsEntity);
+        getDataManagerForAppSettingsEntity().save(settingsEntity);
+    }
+
+    protected UnconstrainedDataManager getDataManagerForAppSettingsEntity() {
+        return appSettingsProperties.isCheckPermissionsForAppSettingsEntity() ? dataManager : unconstrainedDataManager;
     }
 
     protected <T extends AppSettingsEntity> List<String> getPropertyNames(Class<T> clazz) {

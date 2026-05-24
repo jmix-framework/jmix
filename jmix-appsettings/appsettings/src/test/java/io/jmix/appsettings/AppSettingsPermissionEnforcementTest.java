@@ -17,7 +17,7 @@
 package io.jmix.appsettings;
 
 import io.jmix.appsettings.test_entity.TestAppSettingsEntity;
-import io.jmix.appsettings.test_support.entity.TenantTestUser;
+import io.jmix.appsettings.test_support.entity.AppSettingsTestUser;
 import io.jmix.appsettings.test_support.role.AppSettingsReadOnlyRole;
 import io.jmix.core.Metadata;
 import io.jmix.core.SaveContext;
@@ -96,7 +96,7 @@ class AppSettingsPermissionEnforcementTest {
     }
 
     private <T> T asReadOnlyUser(Supplier<T> action) {
-        TenantTestUser user = metadata.create(TenantTestUser.class);
+        AppSettingsTestUser user = metadata.create(AppSettingsTestUser.class);
         user.setUsername("read-only-user");
         user.setPassword("{noop}read-only-user");
         GrantedAuthority authority = roleGrantedAuthorityUtils

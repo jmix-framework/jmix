@@ -30,6 +30,9 @@ dependencies {
     }
     testImplementation 'org.springframework:spring-test'
     testImplementation project(':eclipselink')
+    testImplementation project(':security')
+    testImplementation project(':security-data')
+    testImplementation project(':framework-test-support')
     testImplementation 'org.junit.jupiter:junit-jupiter-api'
     testImplementation 'org.liquibase:liquibase-core'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'

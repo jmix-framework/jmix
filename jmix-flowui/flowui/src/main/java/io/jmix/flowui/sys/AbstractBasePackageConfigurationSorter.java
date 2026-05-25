@@ -31,6 +31,7 @@ import java.util.regex.Pattern;
 /**
  * Provides base functionality to sort the list of scan configurations in the same order as Jmix modules have been sorted
  * using configuration base packages.
+ *
  * @param <T> type of specific scan configuration
  */
 @Internal
@@ -48,7 +49,17 @@ public abstract class AbstractBasePackageConfigurationSorter<T extends AbstractS
         sortedConfigurations.sort((o1, o2) -> {
             JmixModuleDescriptor module1 = evaluateJmixModule(getBasePackages(o1));
             JmixModuleDescriptor module2 = evaluateJmixModule(getBasePackages(o2));
-            if (module1 == null || module2 == null) return 0;
+
+            if (module1 == null && module2 == null) {
+                return 0;
+            }
+            if (module1 == null) {
+                return 1;
+            }
+            if (module2 == null) {
+                return -1;
+            }
+
             return sortedJmixModuleDescriptors.indexOf(module1) - sortedJmixModuleDescriptors.indexOf(module2);
         });
         return sortedConfigurations;

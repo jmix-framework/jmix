@@ -25,6 +25,8 @@ import io.jmix.flowui.kit.meta.StudioPropertyGroups;
 import io.jmix.flowui.kit.meta.StudioUiKit;
 import io.jmix.flowui.kit.meta.StudioXmlElements;
 
+import static io.jmix.flowui.kit.meta.StudioComponent.EMPTY_INJECTION_IDENTIFIER;
+
 @StudioUiKit
 interface StudioMainViewComponents {
 
@@ -35,6 +37,8 @@ interface StudioMainViewComponents {
             xmlElement = StudioXmlElements.APP_LAYOUT,
             icon = "io/jmix/flowui/kit/meta/icon/mainview/appLayout.svg",
             availablePlaceRegExp = "^mainView$",
+            isInjectable = false,
+            injectionIdentifier = EMPTY_INJECTION_IDENTIFIER,
             propertyGroups = StudioPropertyGroups.AppLayoutComponent.class)
     AppLayout appLayout();
 

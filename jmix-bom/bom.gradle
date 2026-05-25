@@ -68,11 +68,12 @@ javaPlatform {
 
 dependencies {
     api platform("org.springframework.boot:spring-boot-dependencies:2.7.18")
+    api platform("com.fasterxml.jackson:jackson-bom:2.18.7")
     api platform("org.springframework:spring-framework-bom:5.3.39")
     api platform("org.springframework.security:spring-security-bom:5.7.14")
-    api platform("io.netty:netty-bom:4.1.127.Final")
+    api platform("io.netty:netty-bom:4.1.133.Final")
     api platform("org.eclipse.jetty:jetty-bom:9.4.58.v20250814")
-    api platform('software.amazon.awssdk:bom:2.16.69')
+    api platform('software.amazon.awssdk:bom:2.16.104')
 
     def freeVersion = version
     def premiumVersion = version
@@ -357,7 +358,9 @@ dependencies {
         api 'com.amazonaws:aws-java-sdk-core:1.11.1034'
 
         api 'org.apache.tika:tika-parsers:1.28.5'
-        api 'org.apache.logging.log4j:log4j-core:2.18.0'
+        api 'org.apache.logging.log4j:log4j-core:2.26.0'
+        api 'org.apache.logging.log4j:log4j-api:2.26.0'
+        api 'org.apache.logging.log4j:log4j-to-slf4j:2.26.0'
 
         api 'org.webjars.bower:pivottable:2.21.0.jmix.0'
         api 'org.webjars:jquery-ui-touch-punch:0.2.3-2'
@@ -439,18 +442,16 @@ dependencies {
         api 'org.jetbrains:annotations:22.0.0'
         api 'commons-codec:commons-codec:1.15'
 
-        api 'org.elasticsearch.client:elasticsearch-rest-high-level-client:7.17.24'
+        api 'org.elasticsearch.client:elasticsearch-rest-high-level-client:7.17.29'
 
         api 'org.freemarker:freemarker:2.3.32'
         api 'xerces:xercesImpl:2.12.2'
         api 'com.hazelcast:hazelcast:5.3.6'
         api 'com.nimbusds:oauth2-oidc-sdk:9.43.4'
         api 'com.ibm.icu:icu4j:74.2'
-        api 'com.fasterxml.jackson.core:jackson-core:2.16.1'
-        api 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.16.1'
         api 'com.google.gwt:gwt-dev:2.10.0'
         api 'com.google.protobuf:protobuf-java:3.25.8'
-        api 'org.yaml:snakeyaml:2.2'
+        api 'org.yaml:snakeyaml:2.3'
         api 'com.fasterxml.woodstox:woodstox-core:6.5.1'
         api 'ch.qos.logback:logback-core:1.2.13'
         api 'ch.qos.logback:logback-classic:1.2.13'
@@ -460,10 +461,14 @@ dependencies {
         api 'net.minidev:json-smart:2.5.2'
         api 'io.github.classgraph:classgraph:4.8.181'
         api 'org.xmlunit:xmlunit-core:2.10.4'
+        api 'com.sun.mail:jakarta.mail:1.6.8'
+        api 'at.yawk.lz4:lz4-java:1.11.0'
+        api 'com.mchange:c3p0:0.13.0'
+        api 'com.mchange:mchange-commons-java:0.5.0'
 
-        api 'org.apache.tomcat.embed:tomcat-embed-core:9.0.110'
-        api 'org.apache.tomcat.embed:tomcat-embed-el:9.0.110'
-        api 'org.apache.tomcat.embed:tomcat-embed-websocket:9.0.110'
+        api 'org.apache.tomcat.embed:tomcat-embed-core:9.0.118'
+        api 'org.apache.tomcat.embed:tomcat-embed-el:9.0.118'
+        api 'org.apache.tomcat.embed:tomcat-embed-websocket:9.0.118'
 
         api('org.slf4j:slf4j-api') {
             version {
@@ -471,8 +476,8 @@ dependencies {
             }
         }
 
-        runtime 'org.postgresql:postgresql:42.7.3'
-        runtime 'org.hsqldb:hsqldb:2.7.2'
+        api 'org.postgresql:postgresql:42.7.11'
+        api 'org.hsqldb:hsqldb:2.7.2'
     }
 }
 

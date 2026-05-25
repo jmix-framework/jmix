@@ -28,7 +28,10 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-annotations'
     implementation 'com.fasterxml.jackson.module:jackson-module-jaxb-annotations'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml'
-    api 'org.elasticsearch.client:elasticsearch-rest-high-level-client'
+    api('org.elasticsearch.client:elasticsearch-rest-high-level-client') {
+        exclude group: 'org.lz4', module: 'lz4-java'
+    }
+    implementation 'at.yawk.lz4:lz4-java' //replace the old org.lz4:lz4-java with maintained fork
 
     implementation 'org.apache.poi:poi'
     implementation ('org.apache.tika:tika-parsers') {

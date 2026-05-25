@@ -78,20 +78,6 @@ export class JmixGridLayout extends ElementMixin(ThemableMixin(PolylitMixin(Lumo
         };
     }
 
-    ready() {
-        super.ready();
-
-        setTimeout(this._checkImport.bind(this), 2000);
-    }
-
-    /** @private */
-    _checkImport() {
-        const item = this.querySelector('jmix-grid-layout-item');
-        if (item && !(item instanceof PolymerElement)) {
-            console.warn(`Make sure you have imported the jmix-grid-layout-item element.`);
-        }
-    }
-
     /**
      * @param value new value
      * @private

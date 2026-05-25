@@ -33,17 +33,27 @@ public class DataProperties {
     String uniqueConstraintViolationPattern;
     boolean useUserLocaleForRelativeDateTimeMoments;
 
+    /**
+     * When {@code true}, negative property condition operators ({@code NOT_EQUAL}, {@code NOT_CONTAINS},
+     * {@code NOT_IN_LIST}) include records with {@code null} value of the filtered property in the result.
+     * By default ({@code false}) such records are excluded due to SQL three-valued logic
+     * (e.g. {@code NULL <> value} evaluates to {@code NULL}).
+     */
+    boolean negativePropertyConditionIncludesNulls;
+
     public DataProperties(
             @DefaultValue("true") boolean useReadOnlyTransactionForLoad,
             @DefaultValue("100") int numberIdCacheSize,
             boolean useEntityDataStoreForIdSequence,
             @Nullable String uniqueConstraintViolationPattern,
-            @DefaultValue("true") boolean useUserLocaleForRelativeDateTimeMoments) {
+            @DefaultValue("true") boolean useUserLocaleForRelativeDateTimeMoments,
+            @DefaultValue("false") boolean negativePropertyConditionIncludesNulls) {
         this.useReadOnlyTransactionForLoad = useReadOnlyTransactionForLoad;
         this.numberIdCacheSize = numberIdCacheSize;
         this.useEntityDataStoreForIdSequence = useEntityDataStoreForIdSequence;
         this.uniqueConstraintViolationPattern = uniqueConstraintViolationPattern;
         this.useUserLocaleForRelativeDateTimeMoments = useUserLocaleForRelativeDateTimeMoments;
+        this.negativePropertyConditionIncludesNulls = negativePropertyConditionIncludesNulls;
     }
 
     public boolean isUseReadOnlyTransactionForLoad() {
@@ -68,5 +78,12 @@ public class DataProperties {
 
     public boolean isUseUserLocaleForRelativeDateTimeMoments() {
         return useUserLocaleForRelativeDateTimeMoments;
+    }
+
+    /**
+     * @see #negativePropertyConditionIncludesNulls
+     */
+    public boolean isNegativePropertyConditionIncludesNulls() {
+        return negativePropertyConditionIncludesNulls;
     }
 }

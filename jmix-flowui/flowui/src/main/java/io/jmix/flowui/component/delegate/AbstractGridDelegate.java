@@ -935,10 +935,41 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
         }
 
         if (item != null && !(getSelectionModel() instanceof GridNoneSelectionModel)) {
-            // have to select clicked item to make action work, otherwise
-            // consecutive clicks on the same item deselect it
-            // selection from client is mandatory due to programmatic selection ignores selectableProvider
-            component.getSelectionModel().selectFromClient(item);
+            // First call selectFromClient to honor the selectableProvider — it updates only
+            // the server side; if the item is not selectable, it is a no-op.
+            GridSelectionModel<E> selectionModel = getSelectionModel();
+            selectionModel.selectFromClient(item);
+
+            if (selectionModel.isSelected(item)) {
+                // The item is selectable. Push the selection to the client (selectFromClient
+                // does not) and ensure exactly one selected item so that actions which require
+                // a single selection — like EditAction — can apply.
+                if (isMultiSelect()) {
+                    //noinspection unchecked
+                    SelectionModel.Multi<Grid<E>, E> multi =
+                            (SelectionModel.Multi<Grid<E>, E>) selectionModel;
+                    Set<E> toDeselect = new LinkedHashSet<>(multi.getSelectedItems());
+                    toDeselect.remove(item);
+
+                    if (toDeselect.isEmpty()) {
+                        // updateSelection would early-return because the item is already in
+                        // the selection and there is nothing to remove, leaving the client
+                        // out of sync. Force a push via the same dance as single-selection.
+                        selectionModel.deselectFromClient(item);
+                        selectionModel.select(item);
+                    } else {
+                        // updateSelection pushes both the addition and the deselections
+                        // of the previously selected items to the client.
+                        multi.updateSelection(Collections.singleton(item), toDeselect);
+                    }
+                } else {
+                    // For single selection, force a client-side update: deselectFromClient
+                    // resets the server state without touching the client; select() then
+                    // re-selects and pushes the new state to the client.
+                    selectionModel.deselectFromClient(item);
+                    selectionModel.select(item);
+                }
+            }
         }
 
         if (enterPressHandler != null) {

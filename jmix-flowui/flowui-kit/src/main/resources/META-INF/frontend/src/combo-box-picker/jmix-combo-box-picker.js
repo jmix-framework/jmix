@@ -23,7 +23,7 @@ import {comboBoxStyles} from '@vaadin/combo-box/src/styles/vaadin-combo-box-base
 import {inputFieldShared} from '@vaadin/field-base/src/styles/input-field-shared-styles.js';
 import {jmixComboBoxPickerStyles} from "./styles/jmix-combo-box-picker-base-styles";
 
-// CAUTION: copied from @vaadin/combo-box [last update Vaadin 25.0.4]
+// CAUTION: copied from @vaadin/combo-box [last update Vaadin 25.1.6]
 class JmixComboBoxPicker extends ComboBox {
 
     static get is() {

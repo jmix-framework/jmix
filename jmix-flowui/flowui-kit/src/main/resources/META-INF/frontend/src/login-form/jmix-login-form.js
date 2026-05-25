@@ -48,7 +48,7 @@ import { LoginForm } from '@vaadin/login/src/vaadin-login-form.js';
  * @fires {CustomEvent} remember-me-changed - Fired when "rememberMeCheckbox" is checked or unchecked.
  * @fires {CustomEvent} locale-selection-changed - Fired when selection in "localesSelect" is changed
  */
-// CAUTION: copied from @vaadin/login [last update Vaadin 25.0.0]
+// CAUTION: copied from @vaadin/login [last update Vaadin 25.1.6]
 class JmixLoginForm extends LoginForm {
     static get is() {
         return 'jmix-login-form';
@@ -135,7 +135,7 @@ class JmixLoginForm extends LoginForm {
     }
 
     /**
-     * CAUTION: copied from @vaadin/login/src/vaadin-login-form-mixin.js [last update Vaadin 25.0.0]
+     * CAUTION: copied from @vaadin/login/src/vaadin-login-form-mixin.js [last update Vaadin 25.1.6]
      * @override
      */
     __renderSlottedForm() {

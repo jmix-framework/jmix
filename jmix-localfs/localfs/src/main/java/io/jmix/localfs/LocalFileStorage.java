@@ -299,7 +299,7 @@ public class LocalFileStorage implements FileStorage {
                 Path symbolicLinkTarget = Files.readSymbolicLink(candidate);
                 Path targetPath = symbolicLinkTarget.isAbsolute()
                         ? symbolicLinkTarget
-                        : candidate.getParent().resolve(symbolicLinkTarget);
+                        : resolvedPath.resolve(symbolicLinkTarget);
                 resolvedPath = resolveActualPath(targetPath);
                 continue;
             }

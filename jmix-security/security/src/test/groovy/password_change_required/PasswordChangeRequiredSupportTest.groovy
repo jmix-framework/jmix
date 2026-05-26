@@ -21,6 +21,7 @@ import io.jmix.security.user.PasswordChangeRequiredSupport
 import org.springframework.beans.factory.annotation.Autowired
 import test_support.SecuritySpecification
 import test_support.entity.TestUserWithFlag
+import test_support.entity.TestUserWithTwoFlags
 import test_support.entity.TestUserWithoutFlag
 
 class PasswordChangeRequiredSupportTest extends SecuritySpecification {
@@ -104,5 +105,16 @@ class PasswordChangeRequiredSupportTest extends SecuritySpecification {
 
         then:
         noExceptionThrown()
+    }
+
+    def "findFlagProperty fails with a clear error when more than one field is annotated"() {
+        when:
+        support.findFlagProperty(TestUserWithTwoFlags)
+
+        then:
+        def ex = thrown(IllegalStateException)
+        ex.message.contains(TestUserWithTwoFlags.name)
+        ex.message.contains('flagOne')
+        ex.message.contains('flagTwo')
     }
 }

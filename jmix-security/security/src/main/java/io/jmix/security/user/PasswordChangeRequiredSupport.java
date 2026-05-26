@@ -27,8 +27,10 @@ import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * Helper for working with the user entity field marked with the {@link PasswordChangeRequired} annotation.
@@ -93,19 +95,27 @@ public class PasswordChangeRequiredSupport {
     }
 
     protected Optional<MetaProperty> lookupFlagProperty(Class<?> userClass) {
+        List<Field> annotatedFields = Arrays.stream(FieldUtils.getAllFields(userClass))
+                .filter(f -> f.isAnnotationPresent(PasswordChangeRequired.class))
+                .toList();
+        if (annotatedFields.isEmpty()) {
+            return Optional.empty();
+        }
+
+        if (annotatedFields.size() > 1) {
+            String names = annotatedFields.stream()
+                    .map(Field::getName)
+                    .collect(Collectors.joining(", "));
+            throw new IllegalStateException(
+                    "Class '%s' has multiple fields annotated with @PasswordChangeRequired: [%s]. Only one is allowed."
+                            .formatted(userClass.getName(), names));
+        }
+
         MetaClass metaClass = metadata.findClass(userClass);
         if (metaClass == null) {
             return Optional.empty();
         }
 
-        Field field = Arrays.stream(FieldUtils.getAllFields(userClass))
-                .filter(f -> f.isAnnotationPresent(PasswordChangeRequired.class))
-                .findFirst()
-                .orElse(null);
-        if (field == null) {
-            return Optional.empty();
-        }
-
-        return Optional.ofNullable(metaClass.findProperty(field.getName()));
+        return Optional.ofNullable(metaClass.findProperty(annotatedFields.get(0).getName()));
     }
 }

@@ -21,6 +21,7 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.textfield.PasswordField;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.common.util.Preconditions;
+import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.core.security.PasswordNotMatchException;
 import io.jmix.core.security.UserManager;
 import io.jmix.core.security.UserRepository;
@@ -30,6 +31,7 @@ import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.util.OperationResult;
 import io.jmix.flowui.view.*;
+import io.jmix.security.user.PasswordChangeRequiredSupport;
 import io.jmix.securityflowui.password.PasswordValidation;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,6 +70,10 @@ public class ChangePasswordView extends StandardView {
     protected UserRepository userRepository;
     @Autowired
     protected MetadataTools metadataTools;
+    @Autowired
+    protected CurrentAuthentication currentAuthentication;
+    @Autowired
+    protected PasswordChangeRequiredSupport passwordChangeRequiredSupport;
 
     protected String username;
     protected UserDetails user;
@@ -163,17 +169,22 @@ public class ChangePasswordView extends StandardView {
 
         changePassword(username, getPassword(), null)
                 .then(() -> {
+                    refreshCurrentUserPasswordChangeRequiredFlag();
                     notifications.create(messageBundle.getMessage("changePasswordView.passwordChanged"))
                             .withType(Notifications.Type.SUCCESS)
                             .withPosition(Notification.Position.MIDDLE)
                             .show();
                     close(StandardOutcome.SAVE);
-                }).otherwise(() -> {
-                    viewValidation.showValidationErrors(ValidationErrors.of(
-                            messageBundle.getMessage("changePasswordView.currentPasswordWarning")));
-                });
+                }).otherwise(() -> viewValidation.showValidationErrors(ValidationErrors.of(
+                        messageBundle.getMessage("changePasswordView.currentPasswordWarning"))));
+    }
 
-        close(StandardOutcome.SAVE);
+    protected void refreshCurrentUserPasswordChangeRequiredFlag() {
+        UserDetails currentUser = currentAuthentication.getUser();
+        if (Objects.equals(currentUser.getUsername(), username)) {
+            // Sync the principal cached in SecurityContext so that the view listener does not reopen the dialog.
+            passwordChangeRequiredSupport.setPasswordChangeRequired(currentUser, false);
+        }
     }
 
     @Subscribe("closeAction")

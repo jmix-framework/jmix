@@ -101,6 +101,8 @@ public class PasswordChangeRequiredViewListener {
         view.setCurrentPasswordRequired(false);
         view.setForced(true);
 
+        dialog.addClassName("force-change-password-view");
+
         dialog.setCloseOnEsc(false);
         dialog.setCloseOnOutsideClick(false);
         dialog.addAfterCloseListener(closeEvent -> {

@@ -14,7 +14,24 @@
  * limitations under the License.
  */
 
-@import './change-password-view.css';
-@import './reset-password-view.css';
-@import './role-assignment-view.css';
-@import './substitute-user-view.css';
+package test_support.entity;
+
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.security.user.PasswordChangeRequired;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+
+@Entity(name = "test_UserWithTwoFlags")
+@JmixEntity
+@Table(name = "TEST_USER_WITH_TWO_FLAGS")
+public class TestUserWithTwoFlags extends BaseEntity {
+
+    @PasswordChangeRequired
+    @Column(name = "FLAG_ONE")
+    private Boolean flagOne = false;
+
+    @PasswordChangeRequired
+    @Column(name = "FLAG_TWO")
+    private Boolean flagTwo = false;
+}

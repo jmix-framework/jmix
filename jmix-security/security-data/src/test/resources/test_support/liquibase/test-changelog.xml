@@ -126,6 +126,20 @@
             <column name="DETAILS" type="varchar2(32)"/>
         </createTable>
 
+        <createTable tableName="TEST_USER">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="VERSION" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="USERNAME" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PASSWORD" type="varchar(255)"/>
+            <column name="CHANGE_PASSWORD_AT_NEXT_LOGON" type="boolean" defaultValueBoolean="false"/>
+        </createTable>
+
     </changeSet>
 
 </databaseChangeLog>

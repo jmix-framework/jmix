@@ -153,7 +153,7 @@ public class ResetPasswordView extends StandardView {
     }
 
     protected void updateRequireChangeAtNextLogonFieldVisibility() {
-        if (users.isEmpty()) {
+        if (users == null || users.isEmpty()) {
             return;
         }
 

@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import test_support.SecuritySpecification
 import test_support.entity.TestUserWithFlag
 import test_support.entity.TestUserWithTwoFlags
+import test_support.entity.TestUserWithWrongFieldType
 import test_support.entity.TestUserWithoutFlag
 
 class PasswordChangeRequiredSupportTest extends SecuritySpecification {
@@ -116,5 +117,16 @@ class PasswordChangeRequiredSupportTest extends SecuritySpecification {
         ex.message.contains(TestUserWithTwoFlags.name)
         ex.message.contains('flagOne')
         ex.message.contains('flagTwo')
+    }
+
+    def "findFlagProperty fails with a clear error when the annotated field has a wrong type"() {
+        when:
+        support.findFlagProperty(TestUserWithWrongFieldType)
+
+        then:
+        def ex = thrown(IllegalStateException)
+        ex.message.contains(TestUserWithWrongFieldType.name)
+        ex.message.contains('flagAsString')
+        ex.message.contains('Boolean')
     }
 }

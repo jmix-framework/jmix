@@ -17,13 +17,11 @@
 package io.jmix.securityflowui.authentication;
 
 import com.google.common.base.Strings;
-import com.vaadin.flow.component.UI;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.event.view.ViewOpenedEvent;
 import io.jmix.flowui.view.DialogWindow;
-import io.jmix.flowui.view.StandardOutcome;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewInfo;
 import io.jmix.flowui.view.ViewRegistry;
@@ -61,7 +59,7 @@ public class PasswordChangeRequiredViewListener {
     @EventListener
     public void onViewOpened(ViewOpenedEvent event) {
         View<?> view = event.getSource();
-        if (!isMainOrDefaultView(view)) {
+        if (!shouldOpenDialog(view)) {
             return;
         }
 
@@ -73,14 +71,18 @@ public class PasswordChangeRequiredViewListener {
         openForcedChangePasswordDialog(view, user.getUsername());
     }
 
-    protected boolean isMainOrDefaultView(View<?> view) {
+    protected boolean shouldOpenDialog(View<?> view) {
         Class<?> viewClass = view.getClass();
-        if (isViewOfId(viewClass, uiProperties.getMainViewId())) {
-            return true;
+        // Skip the ChangePasswordView itself to avoid recursion.
+        if (isViewOfId(viewClass, "changePasswordView")) {
+            return false;
         }
 
-        String defaultViewId = uiProperties.getDefaultViewId();
-        return !Strings.isNullOrEmpty(defaultViewId) && isViewOfId(viewClass, defaultViewId);
+        String loginViewId = uiProperties.getLoginViewId();
+        // Skip the login view so the dialog is not opened before authentication.
+        // Any other view (main, default, or one navigated to via bookmark/URL) is a valid target.
+        return Strings.isNullOrEmpty(loginViewId) || !isViewOfId(viewClass, loginViewId);
+
     }
 
     protected boolean isViewOfId(Class<?> viewClass, String viewId) {
@@ -105,11 +107,6 @@ public class PasswordChangeRequiredViewListener {
 
         dialog.setCloseOnEsc(false);
         dialog.setCloseOnOutsideClick(false);
-        dialog.addAfterCloseListener(closeEvent -> {
-            if (!closeEvent.closedWith(StandardOutcome.SAVE)) {
-                UI.getCurrent().access(() -> openForcedChangePasswordDialog(origin, username));
-            }
-        });
 
         dialog.open();
     }

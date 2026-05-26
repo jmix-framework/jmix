@@ -207,6 +207,7 @@ public abstract class AbstractDatabaseUserRepository<T extends UserDetails> impl
         Preconditions.checkNotNullArgument(newPassword, "Null new password");
         T userDetails = loadUserByUsername(userName);
         changePassword(userDetails, oldPassword, newPassword);
+        passwordChangeRequiredSupport.setPasswordChangeRequired(userDetails, false);
 
         if (saveChanges) {
             userDetails = dataManager.save(userDetails);
@@ -225,7 +226,6 @@ public abstract class AbstractDatabaseUserRepository<T extends UserDetails> impl
         }
 
         EntityValues.setValue(userDetails, "password", passwordEncoder.encode(newPassword));
-        passwordChangeRequiredSupport.setPasswordChangeRequired(userDetails, false);
     }
 
     @Override
@@ -249,9 +249,7 @@ public abstract class AbstractDatabaseUserRepository<T extends UserDetails> impl
                 success = true;
             } while (!success);
 
-            if (requireChangeAtNextLogon) {
-                passwordChangeRequiredSupport.setPasswordChangeRequired(userDetails, true);
-            }
+            passwordChangeRequiredSupport.setPasswordChangeRequired(userDetails, requireChangeAtNextLogon);
             saveContext.saving(userDetails);
             usernamePasswordMap.put(userDetails, newPassword);
         }

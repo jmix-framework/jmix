@@ -111,11 +111,19 @@ public class PasswordChangeRequiredSupport {
                             .formatted(userClass.getName(), names));
         }
 
+        Field field = annotatedFields.get(0);
+        Class<?> fieldType = field.getType();
+        if (fieldType != Boolean.class && fieldType != boolean.class) {
+            throw new IllegalStateException(("Field '%s' in class '%s' annotated with @PasswordChangeRequired"
+                    + " must be of type Boolean or boolean, but is '%s'.")
+                    .formatted(field.getName(), userClass.getName(), fieldType.getName()));
+        }
+
         MetaClass metaClass = metadata.findClass(userClass);
         if (metaClass == null) {
             return Optional.empty();
         }
 
-        return Optional.ofNullable(metaClass.findProperty(annotatedFields.get(0).getName()));
+        return Optional.ofNullable(metaClass.findProperty(field.getName()));
     }
 }

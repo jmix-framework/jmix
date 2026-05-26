@@ -156,8 +156,8 @@ public class GenericFilterLoader extends AbstractComponentLoader<GenericFilter> 
             resultComponent.loadConfigurationsAndApplyDefault();
         } else {
             resultComponent.addAttachListener(attachEvent -> {
-                // TODO: pinyazhin, check for loading?
-                if (FilterUtils.findCurrentOwner(resultComponent) != null) {
+                if (FilterUtils.findCurrentOwner(resultComponent) != null
+                        && resultComponent.getConfigurations().isEmpty()) {
                     validateFilterPaths(context, filterPaths);
                     resultComponent.loadConfigurationsAndApplyDefault();
                 }

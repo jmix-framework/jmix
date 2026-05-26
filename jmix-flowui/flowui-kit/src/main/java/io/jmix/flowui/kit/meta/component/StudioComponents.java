@@ -1017,7 +1017,8 @@ interface StudioComponents {
             convertStrategy = @StudioConvertStrategy(tagsToConvertInto = {
                     @StudioConvertStrategy.TagInfo(qualifiedName = "textField"),
                     @StudioConvertStrategy.TagInfo(qualifiedName = "textArea"),
-                    @StudioConvertStrategy.TagInfo(qualifiedName = "richTextEditor")
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "richTextEditor"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "markdownEditor")
             }),
             propertyGroups = StudioPropertyGroups.CodeEditorComponent.class,
             propertiesBindings = {
@@ -1101,7 +1102,8 @@ interface StudioComponents {
             convertStrategy = @StudioConvertStrategy(tagsToConvertInto = {
                     @StudioConvertStrategy.TagInfo(qualifiedName = "textArea"),
                     @StudioConvertStrategy.TagInfo(qualifiedName = "textField"),
-                    @StudioConvertStrategy.TagInfo(qualifiedName = "codeEditor")
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "codeEditor"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "markdownEditor")
             }),
             propertyGroups = StudioPropertyGroups.RichTextEditorComponent.class)
     JmixRichTextEditor richTextEditor();

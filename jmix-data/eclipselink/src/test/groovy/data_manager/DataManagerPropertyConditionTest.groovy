@@ -200,6 +200,45 @@ class DataManagerPropertyConditionTest extends DataSpec {
         list.contains(testEntity3)
     }
 
+    def "NOT_EQUAL excludes records with null by default"() {
+
+        TestAppEntity testEntity1 = dataManager.create(TestAppEntity)
+        testEntity1.name = 'target'
+
+        TestAppEntity testEntity2 = dataManager.create(TestAppEntity)
+        testEntity2.name = 'other'
+
+        TestAppEntity testEntity3 = dataManager.create(TestAppEntity)
+        testEntity3.name = null
+
+        dataManager.save(testEntity1, testEntity2, testEntity3)
+
+        when:
+
+        def list = dataManager.load(TestAppEntity)
+                .condition(PropertyCondition.notEqual("name", "target"))
+                .list()
+
+        then:
+
+        list == [testEntity2]
+    }
+
+    def "generated JPQL for NOT_EQUAL is not wrapped by default"() {
+        when:
+
+        def property = PropertyCondition.notEqual("name", "target")
+        def context = new ConditionGenerationContext(property)
+        context.entityName = "test_TestAppEntity"
+        context.entityAlias = "e"
+        def where = propertyConditionGenerator.generateWhere(context)
+
+        then:
+
+        where.contains("e.name <>")
+        !where.contains("is null")
+    }
+
     def "load using PropertyCondition for non-empty collections"() {
 
         TestAppEntity testAppEntity1 = dataManager.create(TestAppEntity)

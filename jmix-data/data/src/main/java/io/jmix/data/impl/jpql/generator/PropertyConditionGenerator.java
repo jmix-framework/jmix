@@ -29,6 +29,7 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.core.querycondition.PropertyConditionUtils;
+import io.jmix.data.DataProperties;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +49,7 @@ public class PropertyConditionGenerator implements ConditionGenerator<PropertyCo
 
     protected MetadataTools metadataTools;
     protected Metadata metadata;
+    protected DataProperties dataProperties;
 
     @Nullable
     protected InIntervalParametersResolver inIntervalResolver;
@@ -62,6 +64,11 @@ public class PropertyConditionGenerator implements ConditionGenerator<PropertyCo
     public PropertyConditionGenerator(MetadataTools metadataTools, Metadata metadata) {
         this.metadataTools = metadataTools;
         this.metadata = metadata;
+    }
+
+    @Autowired
+    public void setDataProperties(DataProperties dataProperties) {
+        this.dataProperties = dataProperties;
     }
 
     @Autowired(required = false)
@@ -245,6 +252,17 @@ public class PropertyConditionGenerator implements ConditionGenerator<PropertyCo
                         entityAlias,
                         property);
             } else {
+                if (dataProperties.isIncludeNullClauseInNotConditions()
+                        && isNegativeComparison(propertyCondition.getOperation())) {
+                    return String.format("(%s.%s %s :%s or %s.%s is null)",
+                            entityAlias,
+                            property,
+                            PropertyConditionUtils.getJpqlOperation(propertyCondition),
+                            propertyCondition.getParameterName(),
+                            entityAlias,
+                            property);
+                }
+
                 return String.format("%s.%s %s :%s",
                         entityAlias,
                         property,

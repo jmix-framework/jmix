@@ -61,22 +61,46 @@ public interface UserManager {
 
     /**
      * Generates new passwords for passed users and saves changes to the database immediately.
+     * <p>
+     * If the user entity has a field marked with
+     * {@code @io.jmix.security.user.PasswordChangeRequired}, the field is set to
+     * {@code true} so that the user is required to change the password at the next logon.
      *
      * @param users users which need reset passwords
      * @return map which contains new passwords for the passed users
      */
     default Map<UserDetails, String> resetPasswords(Set<UserDetails> users) {
-        return resetPasswords(users, true);
+        return resetPasswords(users, true, true);
     }
 
     /**
      * Generates new passwords for passed users.
+     * <p>
+     * If the user entity has a field marked with
+     * {@code @io.jmix.security.user.PasswordChangeRequired}, the field is set to
+     * {@code true} so that the user is required to change the password at the next logon.
      *
      * @param users       users which need reset passwords
      * @param saveChanges whether to save changes to the database
      * @return map which contains new passwords for the passed users
      */
-    Map<UserDetails, String> resetPasswords(Set<UserDetails> users, boolean saveChanges);
+    default Map<UserDetails, String> resetPasswords(Set<UserDetails> users, boolean saveChanges) {
+        return resetPasswords(users, saveChanges, true);
+    }
+
+    /**
+     * Generates new passwords for passed users.
+     *
+     * @param users                      users which need reset passwords
+     * @param saveChanges                whether to save changes to the database
+     * @param requireChangeAtNextLogon   if {@code true} and the user entity has a field marked with
+     *                                   {@code @io.jmix.security.user.PasswordChangeRequired}, the field is set
+     *                                   to {@code true} so that the user is required to change the password at
+     *                                   the next logon
+     * @return map which contains new passwords for the passed users
+     */
+    Map<UserDetails, String> resetPasswords(Set<UserDetails> users, boolean saveChanges,
+                                            boolean requireChangeAtNextLogon);
 
     /**
      * Resets 'remember me' token for the specific user.

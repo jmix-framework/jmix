@@ -35,6 +35,8 @@ import io.jmix.core.security.event.UserPasswordResetEvent;
 import io.jmix.flowui.Dialogs;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.action.DialogAction;
+import io.jmix.flowui.component.checkbox.JmixCheckbox;
+import io.jmix.security.user.PasswordChangeRequiredSupport;
 import io.jmix.flowui.asynctask.UiAsyncTasks;
 import io.jmix.flowui.backgroundtask.BackgroundTask;
 import io.jmix.flowui.backgroundtask.BackgroundTaskHandler;
@@ -80,6 +82,8 @@ public class ResetPasswordView extends StandardView {
     @Autowired
     protected ApplicationEventPublisher applicationEventPublisher;
     @Autowired
+    protected PasswordChangeRequiredSupport passwordChangeRequiredSupport;
+    @Autowired
     protected UiAsyncTasks uiAsyncTasks;
     @Autowired
     protected BackgroundWorker backgroundWorker;
@@ -109,6 +113,8 @@ public class ResetPasswordView extends StandardView {
     protected DataGrid<UserPasswordValue> passwordsDataGrid;
     @ViewComponent
     protected JmixButton closeBtn;
+    @ViewComponent
+    protected JmixCheckbox requireChangeAtNextLogonField;
 
     @ViewComponent
     protected VerticalLayout progressBarLayout;
@@ -130,6 +136,7 @@ public class ResetPasswordView extends StandardView {
 
     protected Set<? extends UserDetails> users;
     protected Dialog cancelDialog;
+    protected boolean requireChangeAtNextLogon = true;
 
     @Subscribe
     public void onInit(InitEvent event) {
@@ -141,6 +148,18 @@ public class ResetPasswordView extends StandardView {
         if (!isSingleSelected()) {
             updateMultiSelectComponentsLabels();
         }
+
+        updateRequireChangeAtNextLogonFieldVisibility();
+    }
+
+    protected void updateRequireChangeAtNextLogonFieldVisibility() {
+        if (users.isEmpty()) {
+            return;
+        }
+
+        Class<?> userClass = users.iterator().next().getClass();
+        boolean supported = passwordChangeRequiredSupport.findFlagProperty(userClass) != null;
+        requireChangeAtNextLogonField.setVisible(supported);
     }
 
     @Subscribe
@@ -198,6 +217,7 @@ public class ResetPasswordView extends StandardView {
 
     @Subscribe("generateBtn")
     protected void onGenerateBtnClick(ClickEvent<JmixButton> event) {
+        requireChangeAtNextLogon = Boolean.TRUE.equals(requireChangeAtNextLogonField.getValue());
         configureComponentsBeforeGeneration();
 
         generationTaskHandler = backgroundWorker.handle(createBackgroundTask());
@@ -362,15 +382,16 @@ public class ResetPasswordView extends StandardView {
             int i = 0;
 
             for (UserDetails userDetails : users) {
-                Map<UserDetails, String> userPasswordMap =
-                        userManager.resetPasswords(Collections.singleton(userDetails), false);
+                Map<UserDetails, String> userPasswordMap = userManager.resetPasswords(
+                        Collections.singleton(userDetails), false, requireChangeAtNextLogon);
                 Map.Entry<UserDetails, String> userPassword = userPasswordMap.entrySet().iterator().next();
 
-                String username = userPassword.getKey().getUsername();
+                UserDetails refreshedUser = userPassword.getKey();
+                String username = refreshedUser.getUsername();
                 String password = userPassword.getValue();
 
                 usernamePasswordMap.put(username, password);
-                saveContext.saving(userPassword.getKey());
+                saveContext.saving(refreshedUser);
                 result.add(createPasswordValue(username, password));
 
                 taskLifeCycle.publish(++i);

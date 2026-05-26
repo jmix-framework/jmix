@@ -36,6 +36,7 @@ import io.jmix.security.role.RoleGrantedAuthorityUtils;
 import io.jmix.security.role.assignment.RoleAssignment;
 import io.jmix.security.role.assignment.RoleAssignmentRepository;
 import io.jmix.security.role.assignment.RoleAssignmentRoleType;
+import io.jmix.security.user.PasswordChangeRequiredSupport;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -79,6 +80,8 @@ public abstract class AbstractDatabaseUserRepository<T extends UserDetails> impl
     protected ApplicationEventPublisher eventPublisher;
     @Autowired
     protected RoleGrantedAuthorityUtils roleGrantedAuthorityUtils;
+    @Autowired
+    protected PasswordChangeRequiredSupport passwordChangeRequiredSupport;
 
     /**
      * Helps create authorities from roles.
@@ -222,10 +225,12 @@ public abstract class AbstractDatabaseUserRepository<T extends UserDetails> impl
         }
 
         EntityValues.setValue(userDetails, "password", passwordEncoder.encode(newPassword));
+        passwordChangeRequiredSupport.setPasswordChangeRequired(userDetails, false);
     }
 
     @Override
-    public Map<UserDetails, String> resetPasswords(Set<UserDetails> users, boolean saveChanges) {
+    public Map<UserDetails, String> resetPasswords(Set<UserDetails> users, boolean saveChanges,
+                                                   boolean requireChangeAtNextLogon) {
         Map<UserDetails, String> usernamePasswordMap = new LinkedHashMap<>();
         SaveContext saveContext = new SaveContext();
 
@@ -244,6 +249,9 @@ public abstract class AbstractDatabaseUserRepository<T extends UserDetails> impl
                 success = true;
             } while (!success);
 
+            if (requireChangeAtNextLogon) {
+                passwordChangeRequiredSupport.setPasswordChangeRequired(userDetails, true);
+            }
             saveContext.saving(userDetails);
             usernamePasswordMap.put(userDetails, newPassword);
         }

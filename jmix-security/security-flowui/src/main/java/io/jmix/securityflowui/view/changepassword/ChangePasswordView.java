@@ -26,23 +26,16 @@ import io.jmix.core.security.UserManager;
 import io.jmix.core.security.UserRepository;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.component.validation.ValidationErrors;
+import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.util.OperationResult;
-import io.jmix.flowui.view.DialogMode;
-import io.jmix.flowui.view.MessageBundle;
-import io.jmix.flowui.view.StandardOutcome;
-import io.jmix.flowui.view.StandardView;
-import io.jmix.flowui.view.Subscribe;
-import io.jmix.flowui.view.ViewComponent;
-import io.jmix.flowui.view.ViewController;
-import io.jmix.flowui.view.ViewDescriptor;
-import io.jmix.flowui.view.ViewValidation;
+import io.jmix.flowui.view.*;
 import io.jmix.securityflowui.password.PasswordValidation;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import org.jspecify.annotations.Nullable;
 import java.util.Objects;
 
 @ViewController("changePasswordView")
@@ -55,6 +48,9 @@ public class ChangePasswordView extends StandardView {
     protected PasswordField confirmPasswordField;
     @ViewComponent
     protected PasswordField currentPasswordField;
+
+    @ViewComponent
+    protected Action closeAction;
 
     @ViewComponent
     protected MessageBundle messageBundle;
@@ -75,6 +71,7 @@ public class ChangePasswordView extends StandardView {
 
     protected String username;
     protected UserDetails user;
+    protected boolean forced = false;
 
     /**
      * @return username for which should be changed password
@@ -110,17 +107,49 @@ public class ChangePasswordView extends StandardView {
         currentPasswordField.setVisible(required);
     }
 
+    /**
+     * @return {@code true} if the dialog is opened in the forced mode
+     */
+    public boolean isForced() {
+        return forced;
+    }
+
+    /**
+     * Sets the forced mode. In the forced mode the user cannot close the dialog without changing the password.
+     * <p>
+     * Default value is {@code false}.
+     *
+     * @param forced forced mode flag
+     */
+    public void setForced(boolean forced) {
+        this.forced = forced;
+    }
+
     @Subscribe
     public void onBeforeShow(BeforeShowEvent event) {
         Preconditions.checkNotNullArgument(username,
                 messageBundle.getMessage("changePasswordView.emptyUsernameMessage"));
         user = userRepository.loadUserByUsername(username);
+
+        closeAction.setVisible(!forced);
+
         if (currentPasswordField.isVisible())
             currentPasswordField.focus();
     }
 
+    @Subscribe
+    public void onBeforeClose(BeforeCloseEvent event) {
+        if (forced && !event.closedWith(StandardOutcome.SAVE)) {
+            event.preventClose();
+        }
+    }
+
     @Override
     public String getPageTitle() {
+        if (forced) {
+            return messageBundle.getMessage("changePasswordView.forcedTitle");
+        }
+
         return username != null
                 ? String.format(messageBundle.formatMessage("changePasswordView.title", username))
                 : super.getPageTitle();

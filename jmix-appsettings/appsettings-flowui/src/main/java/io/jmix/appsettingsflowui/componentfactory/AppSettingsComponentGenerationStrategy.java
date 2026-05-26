@@ -125,7 +125,13 @@ public class AppSettingsComponentGenerationStrategy
         JmixSelect enumField = uiComponents.create(JmixSelect.class);
         enumField.setItems(range.asEnumeration().getJavaClass());
 
+        initSelect(enumField);
+
         return enumField;
+    }
+
+    protected void initSelect(JmixSelect<?> field) {
+        field.setEmptySelectionAllowed(true);
     }
 
     protected EntityPicker<?> createEntityPickerField() {
@@ -145,6 +151,8 @@ public class AppSettingsComponentGenerationStrategy
                 Boolean.TRUE, messages.getMessage("trueString"),
                 Boolean.FALSE, messages.getMessage("falseString")
         ));
+
+        initSelect(field);
 
         return field;
     }

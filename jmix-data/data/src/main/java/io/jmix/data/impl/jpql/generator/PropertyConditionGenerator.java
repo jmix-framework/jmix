@@ -252,7 +252,7 @@ public class PropertyConditionGenerator implements ConditionGenerator<PropertyCo
                         entityAlias,
                         property);
             } else {
-                if (dataProperties.isNegativePropertyConditionIncludesNulls()
+                if (dataProperties.isIncludeNullClauseInNotConditions()
                         && isNegativeComparison(propertyCondition.getOperation())) {
                     return String.format("(%s.%s %s :%s or %s.%s is null)",
                             entityAlias,

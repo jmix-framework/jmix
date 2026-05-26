@@ -26,7 +26,7 @@ import org.springframework.test.context.TestPropertySource
 import test_support.DataSpec
 import test_support.entity.TestAppEntity
 
-@TestPropertySource(properties = ["jmix.data.negative-property-condition-includes-nulls=true"])
+@TestPropertySource(properties = ["jmix.data.include-null-clause-in-not-conditions=true"])
 class DataManagerNegativeConditionNullsTest extends DataSpec {
 
     @Autowired

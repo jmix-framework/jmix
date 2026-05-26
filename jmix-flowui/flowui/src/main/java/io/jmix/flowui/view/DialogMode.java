@@ -132,4 +132,14 @@ public @interface DialogMode {
      * @return {@code true} if the dialog should close on pressing the "Escape" key, otherwise {@code false}
      */
     boolean closeOnEsc() default false;
+
+    /**
+     * Specifies whether the doalog is prevented from moving outside the viewport bounds or not.
+     * When enabled, all four edges of the dialog will remain visible, for example when dragging
+     * the dialog or when the viewport is resized. Note that the dialog will also adjust any
+     * programmatically configured size and position so that it stays within the viewport.
+     *
+     * @return {@code true} to prevent the dialog from moving outside the viewport bounds, {@code false} otherwise
+     */
+    boolean keepInViewport() default false;
 }

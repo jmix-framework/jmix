@@ -71,7 +71,7 @@ dependencies {
     api platform("com.fasterxml.jackson:jackson-bom:2.18.7")
     api platform("org.springframework:spring-framework-bom:5.3.39")
     api platform("org.springframework.security:spring-security-bom:5.7.14")
-    api platform("io.netty:netty-bom:4.1.133.Final")
+    api platform("io.netty:netty-bom:4.1.134.Final")
     api platform("org.eclipse.jetty:jetty-bom:9.4.58.v20250814")
     api platform('software.amazon.awssdk:bom:2.16.104')
 

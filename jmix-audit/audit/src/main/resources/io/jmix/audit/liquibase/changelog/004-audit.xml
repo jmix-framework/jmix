@@ -21,14 +21,14 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
-    <changeSet author="audit" id="1" context="!cuba">
+    <changeSet author="audit" id="1">
         <renameColumn tableName="AUDIT_LOGGED_ENTITY"
                 oldColumnName="MANUAL"
                 newColumnName="MANUAL_"
                 columnDataType="boolean"/>
     </changeSet>
 
-    <changeSet author="audit" id="2" context="!cuba">
+    <changeSet author="audit" id="2">
         <renameColumn tableName="AUDIT_LOGGED_ENTITY"
                 oldColumnName="AUTO"
                 newColumnName="AUTO_"

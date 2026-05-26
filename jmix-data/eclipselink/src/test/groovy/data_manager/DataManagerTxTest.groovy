@@ -17,9 +17,16 @@
 package data_manager
 
 import io.jmix.core.DataManager
+import io.jmix.core.EntityStates
+import io.jmix.core.FetchPlans
 import io.jmix.core.SaveContext
 import io.jmix.core.event.EntityChangedEvent
+import io.jmix.data.PersistenceHints
 import io.jmix.eclipselink.impl.JpaDataStore
+import jakarta.persistence.EntityManager
+import jakarta.persistence.PersistenceContext
+import org.eclipse.persistence.internal.sessions.UnitOfWorkImpl
+import org.eclipse.persistence.queries.FetchGroupTracker
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.transaction.PlatformTransactionManager
 import org.springframework.transaction.TransactionDefinition
@@ -38,6 +45,15 @@ class DataManagerTxTest extends DataSpec {
 
     @Autowired
     PlatformTransactionManager txManager
+
+    @Autowired
+    FetchPlans fetchPlans
+
+    @Autowired
+    EntityStates entityStates
+
+    @PersistenceContext
+    EntityManager entityManager
 
     @Autowired
     TestCustomerListener listener
@@ -135,6 +151,57 @@ class DataManagerTxTest extends DataSpec {
 
         then:
         noExceptionThrown()
+
+        cleanup:
+        listener.beforeDetachConsumer = null
+    }
+
+    def "unfetched local attribute accessed before detach throws IllegalStateException"() {
+        def customer = dataManager.create(Customer)
+        customer.name = 'cust1'
+        dataManager.save(customer)
+
+        listener.beforeDetachConsumer = { entity ->
+            assert entity instanceof FetchGroupTracker
+            def session = ((FetchGroupTracker) entity)._persistence_getSession()
+            assert session != null
+            assert !(session instanceof UnitOfWorkImpl) || ((UnitOfWorkImpl) session).lifecycle < UnitOfWorkImpl.Death
+            assert !entityStates.isLoaded(entity, 'status')
+            entity.status
+        }
+
+        when:
+        def txStatus = txManager.getTransaction(new DefaultTransactionDefinition())
+        Throwable failure = null
+        try {
+            def fetchPlan = fetchPlans.builder(Customer)
+                    .add('name')
+                    .partial()
+                    .build()
+
+            entityManager.find(Customer, customer.id, PersistenceHints.builder().withFetchPlan(fetchPlan).build())
+
+            txManager.commit(txStatus)
+        } catch (Throwable t) {
+            failure = t
+            throw t
+        } finally {
+            if (!txStatus.completed) {
+                try {
+                    txManager.rollback(txStatus)
+                } catch (Throwable rollbackFailure) {
+                    if (failure != null) {
+                        failure.addSuppressed(rollbackFailure)
+                    } else {
+                        throw rollbackFailure
+                    }
+                }
+            }
+        }
+
+        then:
+        def e = thrown(IllegalStateException)
+        e.message.startsWith('Cannot get unfetched attribute [status]')
 
         cleanup:
         listener.beforeDetachConsumer = null

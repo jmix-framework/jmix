@@ -63,8 +63,18 @@ public class PasswordChangeRequiredViewListener {
             return;
         }
 
+        if (!currentAuthentication.isSet()) {
+            return;
+        }
+
         UserDetails user = currentAuthentication.getUser();
         if (!passwordChangeRequiredSupport.isPasswordChangeRequired(user)) {
+            return;
+        }
+
+        // A single navigation may open more than one view (e.g. main view and the default view inside it),
+        // each firing a ViewOpenedEvent. Avoid stacking several forced dialogs on top of each other.
+        if (isChangePasswordDialogOpened()) {
             return;
         }
 
@@ -109,5 +119,10 @@ public class PasswordChangeRequiredViewListener {
         dialog.setCloseOnOutsideClick(false);
 
         dialog.open();
+    }
+
+    protected boolean isChangePasswordDialogOpened() {
+        return dialogWindows.getOpenedDialogWindows().getDialogs().stream()
+                .anyMatch(ChangePasswordView.class::isInstance);
     }
 }

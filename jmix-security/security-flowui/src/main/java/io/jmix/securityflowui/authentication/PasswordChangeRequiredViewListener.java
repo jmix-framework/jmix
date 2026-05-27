@@ -38,7 +38,7 @@ import org.springframework.stereotype.Component;
  * <p>
  * Activates only when the user entity has a field marked with
  * {@link io.jmix.security.user.PasswordChangeRequired @PasswordChangeRequired} and the value is {@code true}.
- * Otherwise this listener does nothing.
+ * Otherwise, this listener does nothing.
  *
  * @see PasswordChangeRequiredSupport
  */

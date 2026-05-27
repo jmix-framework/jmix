@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright 2020 Haulmont.
+  ~ Copyright 2026 Haulmont.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -19,15 +19,20 @@
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
-                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
-    <property name="uuid.type" dbms="oracle" value="varchar2(32)"/>
-    <property name="uuid.type" dbms="mariadb" value="char(36)"/>
-    <property name="uuid.type" dbms="postgresql, mysql, mssql, hsqldb, h2" value="uuid"/>
+    <changeSet author="audit" id="1">
+        <renameColumn tableName="AUDIT_LOGGED_ENTITY"
+                oldColumnName="MANUAL"
+                newColumnName="MANUAL_"
+                columnDataType="boolean"/>
+    </changeSet>
 
-    <include file="/io/jmix/audit/liquibase/changelog/001-audit.xml"/>
-    <include file="/io/jmix/audit/liquibase/changelog/002-audit.xml"/>
-    <include file="/io/jmix/audit/liquibase/changelog/003-audit.xml"/>
-    <include file="/io/jmix/audit/liquibase/changelog/004-audit.xml"/>
+    <changeSet author="audit" id="2">
+        <renameColumn tableName="AUDIT_LOGGED_ENTITY"
+                oldColumnName="AUTO"
+                newColumnName="AUTO_"
+                columnDataType="boolean"/>
+    </changeSet>
 
 </databaseChangeLog>

@@ -68,7 +68,8 @@ javaPlatform {
 
 dependencies {
     api platform("org.springframework.boot:spring-boot-dependencies:3.5.14")
-    api platform('software.amazon.awssdk:bom:2.25.60')
+    api platform('software.amazon.awssdk:bom:2.25.70')
+    api platform("io.netty:netty-bom:4.1.134.Final")
 
     def freeVersion = version
     def premiumVersion = version
@@ -447,6 +448,11 @@ dependencies {
         api "org.flowable:flowable-spring-boot-starter-process-rest:$flowableVersion"
         api "org.flowable:flowable-spring-boot-starter-dmn-rest:$flowableVersion"
 
+        def tomcatEmbedVersion = '10.1.55'
+        api "org.apache.tomcat.embed:tomcat-embed-core:$tomcatEmbedVersion"
+        api "org.apache.tomcat.embed:tomcat-embed-el:$tomcatEmbedVersion"
+        api "org.apache.tomcat.embed:tomcat-embed-websocket:$tomcatEmbedVersion"
+
         // deprecated
         api 'io.leangen.graphql:graphql-spqr-spring-boot-starter:0.0.6'
         api 'com.graphql-java-kickstart:graphql-java-servlet:11.1.0'
@@ -478,6 +484,9 @@ dependencies {
         api 'org.apache.commons:commons-lang3:3.20.0'
         api 'commons-beanutils:commons-beanutils:1.11.0'
         api 'com.github.junrar:junrar:7.5.10'
+        api 'com.nimbusds:nimbus-jose-jwt:10.9'
+
+        api 'org.postgresql:postgresql:42.7.11'
     }
 }
 

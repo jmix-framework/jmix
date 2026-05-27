@@ -44,20 +44,12 @@ public record StartupContext(
         return getFrontendFolder(designerFolder, true);
     }
 
-    public File getProjectLegacyThemesFolder() {
-        return getLegacyThemesFolder(projectFolder);
-    }
-
-    public File getDesignerLegacyThemesFolder() {
-        return getLegacyThemesFolder(designerFolder);
-    }
-
     public File getProjectMetaInfResourcesFolder() {
         return getMetaInfResourcesFolder(projectFolder);
     }
 
-    private File getLegacyThemesFolder(File baseFolder) {
-        return getFrontendFolder(baseFolder, false).toPath().resolve(Constants.APPLICATION_THEME_ROOT).toFile();
+    public File getDesignerMetaInfResourcesFolder() {
+        return getMetaInfResourcesFolder(designerFolder);
     }
 
     private File getFrontendFolder(File baseFolder, boolean createIfNotExist) {

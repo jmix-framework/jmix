@@ -51,10 +51,9 @@ public class CopyFilesStartupTask implements StartupTask {
     public static void copyProjectResources(StartupContext context) {
         copyProjectFrontend(context);
         copyProjectMetaInfResources(context);
-        createPreviewThemeBridge(context);
     }
 
-    public static void copyProjectFrontend(StartupContext context) {
+    private static void copyProjectFrontend(StartupContext context) {
         File projectFrontend = context.getProjectFrontendFolder();
         File designerFrontend = context.getDesignerFrontendFolder();
 
@@ -73,63 +72,22 @@ public class CopyFilesStartupTask implements StartupTask {
         }
     }
 
-    public static void copyProjectMetaInfResources(StartupContext context) {
-        File projectClasspathFrontend = context.getProjectMetaInfResourcesFolder();
-        File designerClasspathFrontend = context.getDesignerFrontendFolder();
+    private static void copyProjectMetaInfResources(StartupContext context) {
+        File projectMetaInf = context.getProjectMetaInfResourcesFolder();
+        File designerMetaInf = context.getDesignerMetaInfResourcesFolder();
 
-        if (!projectClasspathFrontend.exists() || !projectClasspathFrontend.isDirectory()) {
-            log.info("Project classpath frontend folder {} does not exist, skipping mirror",
-                    projectClasspathFrontend);
+        if (!projectMetaInf.exists() || !projectMetaInf.isDirectory()) {
+            log.info("Project META-INF folder {} does not exist, skipping mirror", projectMetaInf);
             return;
         }
 
         logFileCopying("project META-INF/resources/frontend folder");
-        try {
-            FileUtils.copyDirectory(projectClasspathFrontend, designerClasspathFrontend);
-            log.info("Project classpath frontend folder has been copied successfully from {} to {}",
-                    projectClasspathFrontend, designerClasspathFrontend);
-        } catch (IOException e) {
-            log.warn("Cannot copy project classpath frontend folder from {} to {}",
-                    projectClasspathFrontend, designerClasspathFrontend, e);
-        }
-    }
-
-    public static void createPreviewThemeBridge(StartupContext context) {
-        createLegacyThemeFolder(context);
-    }
-
-    private static void createLegacyThemeFolder(StartupContext context) {
-        File designerThemesFolder = context.getDesignerLegacyThemesFolder();
-        File projectLegacyThemesFolder = context.getProjectLegacyThemesFolder();
-        File previewThemeFolder = new File(designerThemesFolder, AppShell.PREVIEW_THEME_NAME);
 
         try {
-            log.info("Creating empty preview theme folder {}...", previewThemeFolder);
-            FileUtils.forceMkdir(previewThemeFolder);
-
-            if (projectLegacyThemesFolder.exists() && projectLegacyThemesFolder.isDirectory()) {
-                logFileCopying("project themes folder '%s'".formatted(projectLegacyThemesFolder.getName()));
-                FileUtils.copyDirectory(projectLegacyThemesFolder, designerThemesFolder);
-
-                String themeName = context.themeName();
-                log.info("Project theme name is {}", themeName);
-                if (StringUtils.isNotBlank(themeName)) {
-                    File themeDir = new File(designerThemesFolder, themeName);
-                    if (themeDir.exists() && themeDir.isDirectory()) {
-                        FileUtils.copyDirectory(themeDir, previewThemeFolder);
-                        FileUtils.deleteDirectory(themeDir);
-                        log.info("Project theme folder '{}' has been successfully copied to '{}'", themeName, previewThemeFolder);
-                    }
-                }
-            }
-
-            File stylesCss = new File(previewThemeFolder, "styles.css");
-            if (!stylesCss.exists()) {
-                log.info("Creating empty styles.css file...");
-                FileUtils.write(stylesCss, "", StandardCharsets.UTF_8);
-            }
+            FileUtils.copyDirectory(projectMetaInf, designerMetaInf);
+            log.info("Project META-INFO folder has been copied successfully from {} to {}", projectMetaInf, designerMetaInf);
         } catch (IOException e) {
-            log.warn("Can not create preview theme folder {}", previewThemeFolder);
+            log.warn("Cannot copy project META-INF folder from {} to {}", projectMetaInf, designerMetaInf, e);
         }
     }
 

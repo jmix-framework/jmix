@@ -47,7 +47,7 @@ public record FragmentObservationInfo(@Nullable String fragmentId,
     }
 
     @Nullable
-    private static String resolveViewId(Component component) {
+    protected static String resolveViewId(Component component) {
         View<?> view = UiComponentUtils.findView(component);
         return view != null ? view.getId().orElse(null) : null;
     }

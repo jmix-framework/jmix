@@ -48,6 +48,7 @@ public abstract class AbstractValueHolder extends UnitOfWorkValueHolder implemen
     private final MetaPropertyInfo propertyInfo;
     private volatile boolean isInstantiated;
     private volatile Object value;
+    private transient volatile boolean loading;
     private LoadOptions loadOptions;
 
     public AbstractValueHolder(BeanFactory beanFactory,
@@ -259,29 +260,71 @@ public abstract class AbstractValueHolder extends UnitOfWorkValueHolder implemen
     public boolean isInstantiated() {
         if (isInstantiated) {
             return true;
-        } else {
-            if (LazyLoadingContext.isDisabled()) {
-                return originalValueHolder.isInstantiated();
-            }
         }
-        return false;
+
+        if (LazyLoadingContext.isDisabled()) {
+            return originalValueHolder.isInstantiated();
+        }
+
+        synchronized (this) {
+            return isInstantiated || loading && shouldDelegateOnRecursiveLoad();
+        }
     }
 
     @Override
     public Object getValue() {
-        if (!isInstantiated) {
+        if (isInstantiated) {
+            return value;
+        }
+
+        synchronized (this) {
+            if (isInstantiated) {
+                return value;
+            }
+
             if (LazyLoadingContext.isDisabled()) {
                 value = originalValueHolder.getValue();
-            } else {
-                synchronized (this) {
-                    value = loadValue();
-                    afterLoadValue(value);
-                    registerLoadedProperty(getOwner(), getPropertyInfo().getName());
-                }
+                isInstantiated = true;
+                return value;
             }
-            isInstantiated = true;
+
+            // A recursive load can reach the same holder for a managed owner. Delegate to EclipseLink only to
+            // break the cycle; the outer load will publish the final Jmix value and loaded-state.
+            if (loading && shouldDelegateOnRecursiveLoad()) {
+                return originalValueHolder.getValue();
+            }
+
+            loading = true;
+            try {
+                value = loadValue();
+                // Only the outer Jmix load may complete the holder. Recursive delegated values are temporary.
+                afterLoadValue(value);
+                registerLoadedProperty(getOwner(), getPropertyInfo().getName());
+                isInstantiated = true;
+            } catch (RuntimeException | Error e) {
+                value = null;
+                isInstantiated = false;
+                throw e;
+            } finally {
+                loading = false;
+            }
         }
+
         return value;
+    }
+
+    /**
+     * Allows a reentrant {@link #getValue()} call, made while this holder is already loading, to delegate to the
+     * original EclipseLink holder instead of starting the same Jmix load again.
+     * <p>
+     * Keep this opt-in: it is needed for collection holders whose owner is managed. During the internal owner reload,
+     * EclipseLink may resolve the same owner instance from the persistence context and touch the same collection holder.
+     * For detached owners the reload uses another managed instance, so the original holder is not expected to re-enter.
+     *
+     * @return true only when delegating is needed to break same-holder recursion
+     */
+    protected boolean shouldDelegateOnRecursiveLoad() {
+        return false;
     }
 
     protected abstract Object loadValue();

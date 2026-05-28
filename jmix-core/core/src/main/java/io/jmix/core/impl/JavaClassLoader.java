@@ -112,11 +112,6 @@ public class JavaClassLoader extends URLClassLoader {
             lock(containerClassName);
             Class clazz;
 
-            TimestampClass loadedClass = loaded.get(fullClassName);
-            if (loadedClass != null) {
-                return loadedClass.clazz;
-            }
-
             if (hotDeployEnabled) {
                 //first check if there is a ".class" file in the root directories
                 for (ClassFilesProvider classFilesProvider : classFilesProviders.values()) {
@@ -124,11 +119,19 @@ public class JavaClassLoader extends URLClassLoader {
                     if (classFile.exists()) {
                         TimestampClass timestampClass = loaded.get(containerClassName);
                         if (timestampClass != null && classFile.lastModified() <= timestampClass.timestamp.getTime()) {
-                            return timestampClass.clazz;
+                            TimestampClass cached = loaded.get(fullClassName);
+                            if (cached != null) {
+                                return cached.clazz;
+                            }
                         }
                         return loadClassFromClassFile(fullClassName, containerClassName, classFile);
                     }
                 }
+            }
+
+            TimestampClass loadedClass = loaded.get(fullClassName);
+            if (loadedClass != null) {
+                return loadedClass.clazz;
             }
 
             //default class loading

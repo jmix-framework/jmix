@@ -137,22 +137,7 @@ public class GenericFilterLoader extends AbstractComponentLoader<GenericFilter> 
         getContext().addInitTask(new AbstractInitTask() {
             @Override
             public void execute(Context context) {
-                ComponentUtil.findComponents(context.getOrigin().getElement(), component -> {
-                    if (component instanceof GenericFilter) {
-                        String path = FilterUtils.generateFilterPath((GenericFilter) component);
-
-                        if (filterPaths.contains(path)) {
-                            throw new GuiDevelopmentException(
-                                    "Filters with the same component path should have different ids",
-                                    getContext()
-                            );
-                        } else {
-                            filterPaths.add(path);
-                        }
-                    }
-                });
-
-                resultComponent.loadConfigurationsAndApplyDefault();
+                loadConfigurationsAndApplyDefault(context, resultComponent, filterPaths);
             }
         });
 
@@ -162,6 +147,40 @@ public class GenericFilterLoader extends AbstractComponentLoader<GenericFilter> 
                 loadConfiguration(resultComponent, configurationElement);
             }
         }
+    }
+
+    protected void loadConfigurationsAndApplyDefault(Context context, GenericFilter resultComponent,
+                                                     Set<String> filterPaths) {
+        if (FilterUtils.findCurrentOwner(resultComponent) != null) {
+            validateFilterPaths(context, filterPaths);
+            resultComponent.loadConfigurationsAndApplyDefault();
+        } else {
+            resultComponent.addAttachListener(attachEvent -> {
+                if (FilterUtils.findCurrentOwner(resultComponent) != null
+                        && resultComponent.getConfigurations().isEmpty()) {
+                    validateFilterPaths(context, filterPaths);
+                    resultComponent.loadConfigurationsAndApplyDefault();
+                }
+                attachEvent.unregisterListener();
+            });
+        }
+    }
+
+    protected void validateFilterPaths(Context context, Set<String> filterPaths) {
+        ComponentUtil.findComponents(context.getOrigin().getElement(), component -> {
+            if (component instanceof GenericFilter) {
+                String path = FilterUtils.generateFilterPath((GenericFilter) component);
+
+                if (filterPaths.contains(path)) {
+                    throw new GuiDevelopmentException(
+                            "Filters with the same component path should have different ids",
+                            getContext()
+                    );
+                } else {
+                    filterPaths.add(path);
+                }
+            }
+        });
     }
 
     protected void loadConfiguration(GenericFilter resultComponent, Element configurationElement) {

@@ -16,7 +16,9 @@
 
 package filter_configuration_persistence;
 
+import filter_configuration_persistence.view.FilterConfigurationPersistenceInTabTestView;
 import filter_configuration_persistence.view.FilterConfigurationPersistenceTestView;
+import io.jmix.flowui.component.genericfilter.GenericFilter;
 import io.jmix.core.DataManager;
 import io.jmix.core.EntityStates;
 import io.jmix.core.querycondition.*;
@@ -155,6 +157,63 @@ public class FilterConfigurationPersistenceTest {
                 .orElse(null);
 
         Assertions.assertNotNull(condition);
+    }
+
+    @Test
+    @DisplayName("Load FilterConfiguration for GenericFilter in non-selected tabs")
+    public void loadFilterConfigurationInNonSelectedTabs() {
+        String username = FilterConfigurationPersistenceTestAuthenticator.simpleUser;
+
+        FilterConfigurationModel regularTabConfiguration = createNewConfiguration(
+                "regularTabConfiguration",
+                "[FilterConfigurationPersistenceInTabTestView]genericFilterInRegularTab",
+                username
+        );
+        configurationPersistence.save(regularTabConfiguration);
+
+        FilterConfigurationModel lazyTabConfiguration = createNewConfiguration(
+                "lazyTabConfiguration",
+                "[FilterConfigurationPersistenceInTabTestView]genericFilterInLazyTab",
+                username
+        );
+        configurationPersistence.save(lazyTabConfiguration);
+
+        navigationSupport.navigate(FilterConfigurationPersistenceInTabTestView.class);
+        FilterConfigurationPersistenceInTabTestView view = UiTestUtils.getCurrentView();
+
+        Assertions.assertNull(view.genericFilterInRegularTab.getConfiguration("regularTabConfiguration"));
+        Assertions.assertTrue(view.tabSheet.findComponent("genericFilterInLazyTab").isEmpty());
+
+        /*
+         * Check Regular Tab
+         */
+        view.tabSheet.setSelectedTab(view.regularFiltersTab);
+
+        Configuration regularConfiguration = view.genericFilterInRegularTab.getConfiguration("regularTabConfiguration");
+        Assertions.assertNotNull(regularConfiguration);
+        assertNameCondition(regularConfiguration);
+
+        Assertions.assertTrue(view.tabSheet.findComponent("genericFilterInLazyTab").isEmpty());
+
+        /*
+         * Check Lazy Tab
+         */
+        view.tabSheet.setSelectedTab(view.lazyFiltersTab);
+
+        GenericFilter lazyTabFilter = (GenericFilter) view.tabSheet.findComponent("genericFilterInLazyTab")
+                .orElseThrow();
+
+        Configuration lazyConfiguration = lazyTabFilter.getConfiguration("lazyTabConfiguration");
+        Assertions.assertNotNull(lazyConfiguration);
+        assertNameCondition(lazyConfiguration);
+    }
+
+    private void assertNameCondition(Configuration configuration) {
+        List<Condition> conditions = configuration.getQueryCondition().getConditions();
+        Assertions.assertEquals(1, conditions.size());
+
+        PropertyCondition nameCondition = (PropertyCondition) conditions.get(0);
+        Assertions.assertEquals("name", nameCondition.getProperty());
     }
 
     private FilterConfigurationModel createNewConfiguration(String configurationId, String componentId, String username) {

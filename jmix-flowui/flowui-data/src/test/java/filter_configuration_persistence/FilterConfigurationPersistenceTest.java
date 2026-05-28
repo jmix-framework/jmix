@@ -18,6 +18,7 @@ package filter_configuration_persistence;
 
 import filter_configuration_persistence.view.FilterConfigurationPersistenceInTabTestView;
 import filter_configuration_persistence.view.FilterConfigurationPersistenceTestView;
+import com.vaadin.flow.component.UI;
 import io.jmix.flowui.component.genericfilter.GenericFilter;
 import io.jmix.core.DataManager;
 import io.jmix.core.EntityStates;
@@ -188,6 +189,7 @@ public class FilterConfigurationPersistenceTest {
          * Check Regular Tab
          */
         view.tabSheet.setSelectedTab(view.regularFiltersTab);
+        runBeforeClientResponseTasks();
 
         Configuration regularConfiguration = view.genericFilterInRegularTab.getConfiguration("regularTabConfiguration");
         Assertions.assertNotNull(regularConfiguration);
@@ -199,6 +201,7 @@ public class FilterConfigurationPersistenceTest {
          * Check Lazy Tab
          */
         view.tabSheet.setSelectedTab(view.lazyFiltersTab);
+        runBeforeClientResponseTasks();
 
         GenericFilter lazyTabFilter = (GenericFilter) view.tabSheet.findComponent("genericFilterInLazyTab")
                 .orElseThrow();
@@ -214,6 +217,10 @@ public class FilterConfigurationPersistenceTest {
 
         PropertyCondition nameCondition = (PropertyCondition) conditions.get(0);
         Assertions.assertEquals("name", nameCondition.getProperty());
+    }
+
+    private void runBeforeClientResponseTasks() {
+        UI.getCurrent().getInternals().getStateTree().runExecutionsBeforeClientResponse();
     }
 
     private FilterConfigurationModel createNewConfiguration(String configurationId, String componentId, String username) {

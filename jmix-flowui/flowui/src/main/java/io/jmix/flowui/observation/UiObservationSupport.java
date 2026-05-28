@@ -146,7 +146,7 @@ public class UiObservationSupport {
      * {@link DataLoader#getObservationInfoProvider()}, since that provider can walk the UI tree to
      * resolve fragment/view context (see R8) and should not run when observation is disabled.
      */
-    private Observation buildDataLoaderObservation(DataLoader loader, DataLoaderLifeCycle lifecycle) {
+    protected Observation buildDataLoaderObservation(DataLoader loader, DataLoaderLifeCycle lifecycle) {
         if (!isObservationAvailable()) {
             return Observation.NOOP;
         }
@@ -190,7 +190,7 @@ public class UiObservationSupport {
                 legacyUiTimerSupport.recordViewTimer(view, phase, action));
     }
 
-    private Observation buildViewLifecycleObservation(View<?> view, ViewLifecycle lifecycle) {
+    protected Observation buildViewLifecycleObservation(View<?> view, ViewLifecycle lifecycle) {
         if (!isObservationAvailable()) {
             return Observation.NOOP;
         }
@@ -230,7 +230,7 @@ public class UiObservationSupport {
         return buildFragmentLifecycleObservation(info, phase).observe(action);
     }
 
-    private Observation buildFragmentLifecycleObservation(FragmentObservationInfo info,
+    protected Observation buildFragmentLifecycleObservation(FragmentObservationInfo info,
                                                           FragmentLifecycle lifecycle) {
         if (!isObservationAvailable()) {
             return Observation.NOOP;

@@ -222,7 +222,7 @@ public final class ViewControllerUtils {
     }
 
     @Nullable
-    private static ViewLifecycle mapLifecycleEvent(ComponentEvent<?> event) {
+    protected static ViewLifecycle mapLifecycleEvent(ComponentEvent<?> event) {
         if (event instanceof View.InitEvent) {
             return ViewLifecycle.INIT;
         }

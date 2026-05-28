@@ -777,4 +777,38 @@ class DataContextTest extends DataContextSpec {
         mergedEntity.getName() == 'abc'
         mergedEntity.getFoo() == 'foo'
     }
+
+    def "merge bidirectional graph with two java instances of same id does not duplicate collection"() {
+        // When the source graph contains two java instances of the same logical entity
+        // (same id, different identity) and a bidirectional back-reference reaches the
+        // managed entity through a non-root path, mergeList may be re-entered for the
+        // same owner collection. Without protection, the inner call writes to the same
+        // dstList as the outer call, producing duplicates.
+        DataContext context = factory.createDataContext()
+
+        when:
+        User user1 = new User(login: 'u1', name: 'User 1')
+        User user1Dup = new User(id: user1.id, login: 'u1', name: 'User 1')
+
+        Role role1 = new Role(name: 'Role 1')
+        Role role2 = new Role(name: 'Role 2')
+
+        UserRole ur1 = new UserRole(user: user1Dup, role: role1)
+        UserRole ur2 = new UserRole(user: user1Dup, role: role2)
+
+        user1.userRoles = [ur1, ur2]
+        user1Dup.userRoles = [ur1, ur2]
+
+        // Root UserRole pulls user1 in as a NON-ROOT reference,
+        // so the outer mergeList for userRoles runs with replace=false.
+        Role rootRole = new Role(name: 'Root Role')
+        UserRole rootUr = new UserRole(user: user1, role: rootRole)
+
+        UserRole mergedRoot = context.merge(rootUr)
+        User mergedUser = mergedRoot.getUser()
+
+        then:
+        mergedUser.userRoles.size() == 2
+        mergedUser.userRoles.unique().size() == 2
+    }
 }

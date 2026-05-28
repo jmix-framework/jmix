@@ -82,6 +82,14 @@ public class DataContextImpl implements DataContextInternal {
 
     protected boolean disableListeners;
 
+    /**
+     * Tracks (managedEntity -> property names) whose collection is currently being merged
+     * within the active merge() call. Used to guard against re-entering mergeList for the
+     * same owner collection when the source graph contains multiple java instances of the
+     * same logical entity (same id, different identity).
+     */
+    protected Map<Object, Set<String>> mergeListInProgress;
+
     protected DataContextInternal parentContext;
 
     protected Function<SaveContext, Set<Object>> saveDelegate;
@@ -148,12 +156,14 @@ public class DataContextImpl implements DataContextInternal {
         checkNotNullArgument(entity, "options object is null");
 
         disableListeners = true;
+        mergeListInProgress = new IdentityHashMap<>();
         T result;
         try {
             Map<Object, Object> merged = new IdentityHashMap<>();
             result = (T) internalMerge(entity, merged, true, options);
         } finally {
             disableListeners = false;
+            mergeListInProgress = null;
         }
         return result;
     }
@@ -170,6 +180,7 @@ public class DataContextImpl implements DataContextInternal {
 
         List<Object> managedList = new ArrayList<>(entities.size());
         disableListeners = true;
+        mergeListInProgress = new IdentityHashMap<>();
         try {
             Map<Object, Object> merged = new IdentityHashMap<>();
 
@@ -179,6 +190,7 @@ public class DataContextImpl implements DataContextInternal {
             }
         } finally {
             disableListeners = false;
+            mergeListInProgress = null;
         }
         return EntitySet.of(managedList);
     }
@@ -426,79 +438,108 @@ public class DataContextImpl implements DataContextInternal {
 
     protected void mergeList(List<Object> list, Object managedEntity, MetaProperty property, boolean replace,
                              MergeOptions options, Map<Object, Object> mergedMap) {
-        if (replace) {
-            List<Object> managedRefs = new ArrayList<>(list.size());
-            for (Object entity : list) {
-                Object managedRef = internalMerge(entity, mergedMap, false, options);
-                managedRefs.add(managedRef);
-            }
-            List<Object> dstList = createObservableList(managedRefs, managedEntity);
-            setPropertyValue(managedEntity, property, dstList);
-
-        } else {
-            Object managedValue = EntityValues.getValue(managedEntity, property.getName());
-
-            List<Object> dstList = null;
-            if (managedValue instanceof List) {
-                dstList = (List<Object>) managedValue;
-            } else if (managedValue != null) {//any proxy Collection can be returned in case of Collection entity attribute (see Haulmont/jmix-ui#243)
-                dstList = new ArrayList<>((Collection<?>) managedValue);
-            }
-
-            if (dstList == null) {
-                dstList = createObservableList(managedEntity);
-                setPropertyValue(managedEntity, property, dstList);
-            }
-            if (dstList.size() == 0) {
-                for (Object srcRef : list) {
-                    dstList.add(internalMerge(srcRef, mergedMap, false, options));
+        // Guard against re-entry on the same owner collection within a single merge() call.
+        // This happens when the source graph contains multiple java instances of the same
+        // logical entity (same id, different identity) and a bidirectional back-reference
+        // causes the recursion to reach the same managed entity through internalMerge.
+        // Without this guard, the inner call writes to the same dstList as the outer one,
+        // producing duplicate elements.
+        Set<String> propsInProgress = mergeListInProgress.computeIfAbsent(managedEntity, k -> new HashSet<>());
+        if (!propsInProgress.add(property.getName())) {
+            return;
+        }
+        try {
+            if (replace) {
+                List<Object> managedRefs = new ArrayList<>(list.size());
+                for (Object entity : list) {
+                    Object managedRef = internalMerge(entity, mergedMap, false, options);
+                    managedRefs.add(managedRef);
                 }
+                List<Object> dstList = createObservableList(managedRefs, managedEntity);
+                setPropertyValue(managedEntity, property, dstList);
+
             } else {
-                for (Object srcRef : list) {
-                    Object managedRef = internalMerge(srcRef, mergedMap, false, options);
-                    if (!dstList.contains(managedRef)) {
-                        dstList.add(managedRef);
+                Object managedValue = EntityValues.getValue(managedEntity, property.getName());
+
+                List<Object> dstList = null;
+                if (managedValue instanceof List) {
+                    dstList = (List<Object>) managedValue;
+                } else if (managedValue != null) {//any proxy Collection can be returned in case of Collection entity attribute (see Haulmont/jmix-ui#243)
+                    dstList = new ArrayList<>((Collection<?>) managedValue);
+                }
+
+                if (dstList == null) {
+                    dstList = createObservableList(managedEntity);
+                    setPropertyValue(managedEntity, property, dstList);
+                }
+                if (dstList.size() == 0) {
+                    for (Object srcRef : list) {
+                        dstList.add(internalMerge(srcRef, mergedMap, false, options));
+                    }
+                } else {
+                    for (Object srcRef : list) {
+                        Object managedRef = internalMerge(srcRef, mergedMap, false, options);
+                        if (!dstList.contains(managedRef)) {
+                            dstList.add(managedRef);
+                        }
                     }
                 }
+            }
+        } finally {
+            propsInProgress.remove(property.getName());
+            if (propsInProgress.isEmpty()) {
+                mergeListInProgress.remove(managedEntity);
             }
         }
     }
 
     protected void mergeSet(Set<Object> set, Object managedEntity, MetaProperty property, boolean replace,
                             MergeOptions options, Map<Object, Object> mergedMap) {
-        if (replace) {
-            Set<Object> managedRefs = new LinkedHashSet<>(set.size());
-            for (Object entity : set) {
-                Object managedRef = internalMerge(entity, mergedMap, false, options);
-                managedRefs.add(managedRef);
-            }
-            Set<Object> dstSet = createObservableSet(managedRefs, managedEntity);
-            setPropertyValue(managedEntity, property, dstSet);
-
-        } else {
-            Object managedValue = EntityValues.getValue(managedEntity, property.getName());
-
-            Set<Object> dstSet = null;
-            if (managedValue instanceof Set) {
-                dstSet = (Set<Object>) managedValue;
-            } else if (managedValue != null) {//any proxy Collection can be returned in case of Collection entity attribute (see Haulmont/jmix-ui#243)
-                dstSet = new LinkedHashSet<>((Collection<?>) managedValue);
-            }
-
-
-            if (dstSet == null) {
-                dstSet = createObservableSet(managedEntity);
+        // See note in mergeList — same re-entry guard applies to Set collections.
+        Set<String> propsInProgress = mergeListInProgress.computeIfAbsent(managedEntity, k -> new HashSet<>());
+        if (!propsInProgress.add(property.getName())) {
+            return;
+        }
+        try {
+            if (replace) {
+                Set<Object> managedRefs = new LinkedHashSet<>(set.size());
+                for (Object entity : set) {
+                    Object managedRef = internalMerge(entity, mergedMap, false, options);
+                    managedRefs.add(managedRef);
+                }
+                Set<Object> dstSet = createObservableSet(managedRefs, managedEntity);
                 setPropertyValue(managedEntity, property, dstSet);
-            }
-            if (dstSet.size() == 0) {
-                for (Object srcRef : set) {
-                    dstSet.add(internalMerge(srcRef, mergedMap, false, options));
-                }
+
             } else {
-                for (Object srcRef : set) {
-                    Object managedRef = internalMerge(srcRef, mergedMap, false, options);
-                    dstSet.add(managedRef);
+                Object managedValue = EntityValues.getValue(managedEntity, property.getName());
+
+                Set<Object> dstSet = null;
+                if (managedValue instanceof Set) {
+                    dstSet = (Set<Object>) managedValue;
+                } else if (managedValue != null) {//any proxy Collection can be returned in case of Collection entity attribute (see Haulmont/jmix-ui#243)
+                    dstSet = new LinkedHashSet<>((Collection<?>) managedValue);
                 }
+
+
+                if (dstSet == null) {
+                    dstSet = createObservableSet(managedEntity);
+                    setPropertyValue(managedEntity, property, dstSet);
+                }
+                if (dstSet.size() == 0) {
+                    for (Object srcRef : set) {
+                        dstSet.add(internalMerge(srcRef, mergedMap, false, options));
+                    }
+                } else {
+                    for (Object srcRef : set) {
+                        Object managedRef = internalMerge(srcRef, mergedMap, false, options);
+                        dstSet.add(managedRef);
+                    }
+                }
+            }
+        } finally {
+            propsInProgress.remove(property.getName());
+            if (propsInProgress.isEmpty()) {
+                mergeListInProgress.remove(managedEntity);
             }
         }
     }

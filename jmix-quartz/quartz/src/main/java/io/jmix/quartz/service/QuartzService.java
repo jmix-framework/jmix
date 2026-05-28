@@ -7,14 +7,15 @@ import io.jmix.quartz.QuartzProperties;
 import io.jmix.quartz.exception.QuartzJobSaveException;
 import io.jmix.quartz.job.InvalidJobDetail;
 import io.jmix.quartz.model.*;
+import io.jmix.quartz.util.QuartzJobClassFinder;
 import io.jmix.quartz.util.QuartzJobDetailsFinder;
 import org.apache.commons.collections4.CollectionUtils;
+import org.jspecify.annotations.Nullable;
 import org.quartz.*;
 import org.quartz.impl.matchers.GroupMatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,6 +49,9 @@ public class QuartzService {
 
     @Autowired
     private QuartzProperties quartzProperties;
+
+    @Autowired
+    private QuartzJobClassFinder quartzJobClassFinder;
 
     /**
      * Returns information about all configured quartz jobs with related triggers
@@ -312,7 +316,15 @@ public class QuartzService {
         if (existedJobDetail != null) {
             jobBuilder = existedJobDetail.getJobBuilder();
         } else {
-            Class<? extends Job> jobClass = (Class<? extends Job>) Class.forName(jobModel.getJobClass());
+            String jobClassName = jobModel.getJobClass();
+            List<String> existedJobsClassNames = quartzJobClassFinder.getQuartzJobClassNames();
+            boolean allowed = existedJobsClassNames.stream().anyMatch(existingClass -> existingClass.equals(jobClassName));
+            if (!allowed) {
+                log.error("Attempt to use non-Job class as for a Job");
+                throw new QuartzJobSaveException("Class " + jobClassName + " is not allowed as a Job class");
+            }
+
+            Class<? extends Job> jobClass = (Class<? extends Job>) Class.forName(jobClassName);
             jobBuilder = JobBuilder.newJob()
                     .withIdentity(jobModel.getJobName(), jobModel.getJobGroup())
                     .ofType(jobClass)

@@ -33,7 +33,6 @@ export const gridLayoutStyles = css`
 
         height: 100%;
         width: 100%;
-        overflow: auto;
         -webkit-overflow-scrolling: touch;
     }
 `;

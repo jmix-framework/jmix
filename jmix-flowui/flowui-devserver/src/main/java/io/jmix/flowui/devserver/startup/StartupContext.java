@@ -52,6 +52,14 @@ public record StartupContext(
         return getMetaInfResourcesFolder(designerFolder);
     }
 
+    public File getProjectLegacyThemesFolder() {
+        return getLegacyThemesFolder(projectFolder);
+    }
+
+    private File getLegacyThemesFolder(File baseFolder) {
+        return getFrontendFolder(baseFolder, false).toPath().resolve(Constants.APPLICATION_THEME_ROOT).toFile();
+    }
+
     private File getFrontendFolder(File baseFolder, boolean createIfNotExist) {
         File frontendFolder = baseFolder.toPath()
                 .resolve("src")

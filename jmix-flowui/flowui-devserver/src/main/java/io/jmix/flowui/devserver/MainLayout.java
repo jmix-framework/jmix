@@ -25,6 +25,7 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouterLayout;
 import com.vaadin.flow.server.VaadinServlet;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
+import io.jmix.flowui.devserver.theme.LegacyThemeStyleSheets;
 import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +46,9 @@ public class MainLayout extends Div implements RouterLayout {
     @Override
     protected void onAttach(AttachEvent attachEvent) {
         super.onAttach(attachEvent);
-        addProjectStyleSheets(attachEvent.getUI());
+        UI ui = attachEvent.getUI();
+        addProjectStyleSheets(ui);
+        addLegacyThemeStyleSheets(ui);
     }
 
     private static void addProjectStyleSheets(UI ui) {
@@ -57,6 +60,15 @@ public class MainLayout extends Div implements RouterLayout {
             if (item instanceof String path && !path.isBlank()) {
                 ui.getPage().addStyleSheet(path);
                 log.debug("Added project stylesheet: {}", path);
+            }
+        }
+    }
+
+    private static void addLegacyThemeStyleSheets(UI ui) {
+        for (String path : LegacyThemeStyleSheets.getStyleSheets()) {
+            if (path != null && !path.isBlank()) {
+                ui.getPage().addStyleSheet(path);
+                log.debug("Added legacy theme stylesheet: {}", path);
             }
         }
     }

@@ -19,10 +19,13 @@ package io.jmix.reportsflowui.runner;
 import io.jmix.core.JmixOrder;
 import io.jmix.core.annotation.Internal;
 import io.jmix.flowui.DialogWindows;
+import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.view.DialogWindow;
+import io.jmix.flowui.view.OpenMode;
 import io.jmix.reports.entity.JmixReportOutputType;
 import io.jmix.reports.entity.ReportTemplate;
 import io.jmix.reports.yarg.reporting.ReportOutputDocument;
+import io.jmix.reportsflowui.ReportsClientProperties;
 import io.jmix.reportsflowui.view.run.ReportTableView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
@@ -30,10 +33,11 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * {@link ReportResultHandler} that opens report output with the {@code table} output type
- * in an in-dialog table viewer.
+ * in a table viewer (either dialog or via navigation, depending on configuration).
  */
 @Internal
 @Order(JmixOrder.HIGHEST_PRECEDENCE)
@@ -42,9 +46,13 @@ public class TableReportResultHandler implements ReportResultHandler {
 
     @Autowired
     protected DialogWindows dialogWindows;
+    @Autowired
+    protected ViewNavigators viewNavigators;
+    @Autowired
+    protected ReportsClientProperties reportsClientProperties;
 
     /**
-     * Handles the report output document by opening it in the table viewer dialog.
+     * Handles the report output document by opening it in the table viewer.
      * <p>
      * Returns {@code true} if the document was handled (output type is {@code table}),
      * {@code false} to pass handling to the next handler in the chain.
@@ -55,17 +63,26 @@ public class TableReportResultHandler implements ReportResultHandler {
             return false;
         }
 
-        DialogWindow<ReportTableView> dialogWindow = dialogWindows.view(context.getOwner(), ReportTableView.class)
-                .build();
-
         ReportTemplate reportTemplate = context.getReportTemplate();
         Map<String, Object> params = context.getParams() != null ? context.getParams() : Collections.emptyMap();
+        String templateCode = reportTemplate != null ? reportTemplate.getCode() : null;
 
-        ReportTableView reportTableView = dialogWindow.getView();
-        reportTableView.setReportOutputDocument(document);
-        reportTableView.setTemplateCode(reportTemplate != null ? reportTemplate.getCode() : null);
-        reportTableView.setReportParameters(params);
-        dialogWindow.open();
+        Consumer<ReportTableView> configurer = view -> {
+            view.setReportOutputDocument(document);
+            view.setTemplateCode(templateCode);
+            view.setReportParameters(params);
+        };
+
+        if (reportsClientProperties.getTableOutputOpenMode() == OpenMode.NAVIGATION) {
+            viewNavigators.view(context.getOwner(), ReportTableView.class)
+                    .withAfterNavigationHandler(event -> configurer.accept(event.getView()))
+                    .navigate();
+        } else {
+            DialogWindow<ReportTableView> dialogWindow = dialogWindows.view(context.getOwner(), ReportTableView.class)
+                    .build();
+            configurer.accept(dialogWindow.getView());
+            dialogWindow.open();
+        }
         return true;
     }
 }

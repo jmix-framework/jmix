@@ -40,6 +40,9 @@
             <h3 text="msg://parameters.title"/>
             <hbox id="parametersFrameHolder" alignItems="BASELINE" padding="false"/>
         </div>
+        <hbox id="topActionsPanel" visible="false" padding="false">
+            <button id="openInViewBtn" text="msg://action.openInView.text" icon="EXPAND"/>
+        </hbox>
         <vbox id="tablesVBoxLayout" padding="false"/>
     </layout>
 </view>

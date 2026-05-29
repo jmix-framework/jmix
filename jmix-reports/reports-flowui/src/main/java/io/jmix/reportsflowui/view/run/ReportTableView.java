@@ -17,6 +17,7 @@
 package io.jmix.reportsflowui.view.run;
 
 import com.vaadin.flow.component.AbstractField;
+import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -34,12 +35,15 @@ import io.jmix.core.usersubstitution.CurrentUserSubstitution;
 import io.jmix.flowui.Actions;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.UiComponents;
+import io.jmix.flowui.ViewNavigators;
+import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.combobox.EntityComboBox;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.tabsheet.JmixTabSheet;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.data.grid.ContainerDataGridItems;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
+import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.model.DataComponents;
 import io.jmix.flowui.model.KeyValueCollectionContainer;
@@ -55,8 +59,8 @@ import io.jmix.reports.exception.MissingDefaultTemplateException;
 import io.jmix.reports.runner.ReportRunner;
 import io.jmix.reports.yarg.reporting.ReportOutputDocument;
 import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.jspecify.annotations.Nullable;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
 
@@ -75,6 +79,10 @@ public class ReportTableView extends StandardView {
     protected VerticalLayout tablesVBoxLayout;
     @ViewComponent
     protected Div parametersBox;
+    @ViewComponent
+    protected HorizontalLayout topActionsPanel;
+    @ViewComponent
+    protected JmixButton openInViewBtn;
 
     @ViewComponent
     protected CollectionLoader<Report> reportsDl;
@@ -107,6 +115,8 @@ public class ReportTableView extends StandardView {
     protected ReportRepository reportRepository;
     @Autowired
     protected CurrentUserSubstitution currentUserSubstitution;
+    @Autowired
+    protected ViewNavigators viewNavigators;
 
     protected String templateCode;
     protected Map<String, Object> reportParameters;
@@ -138,7 +148,32 @@ public class ReportTableView extends StandardView {
             drawTables(reportOutputDocument);
             reportForm.setVisible(false);
             openReportParameters((Report) reportOutputDocument.getReport());
+            topActionsPanel.setVisible(UiComponentUtils.isComponentAttachedToDialog(this));
         }
+    }
+
+    @Subscribe("openInViewBtn")
+    protected void onOpenInViewBtnClick(ClickEvent<JmixButton> event) {
+        ReportOutputDocument documentToPass = reportOutputDocument;
+        String templateCodeToPass = templateCode;
+        Map<String, Object> parametersToPass = reportParameters;
+
+        closeWithDefaultAction();
+
+        viewNavigators.view(this, ReportTableView.class)
+                .withAfterNavigationHandler(navigationEvent -> {
+                    ReportTableView target = navigationEvent.getView();
+                    if (documentToPass != null) {
+                        target.setReportOutputDocument(documentToPass);
+                    }
+                    if (templateCodeToPass != null) {
+                        target.setTemplateCode(templateCodeToPass);
+                    }
+                    if (parametersToPass != null) {
+                        target.setReportParameters(parametersToPass);
+                    }
+                })
+                .navigate();
     }
 
     @Install(to = "reportsDl", target = Target.DATA_LOADER)

@@ -17,6 +17,7 @@
 package io.jmix.reportsflowui;
 
 import io.jmix.flowui.kit.component.multiselectcomboboxpicker.MultiSelectComboBoxPicker;
+import io.jmix.flowui.view.OpenMode;
 import io.jmix.reports.entity.ParameterType;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
@@ -51,16 +52,25 @@ public class ReportsClientProperties {
      */
     boolean showReportTableViewInMenu;
 
+    /**
+     * Default open mode for the {@code report_ReportTableView} when it is opened automatically as a report result.
+     * {@link OpenMode#DIALOG} shows the view as a modal dialog (default behaviour),
+     * {@link OpenMode#NAVIGATION} opens it via its route.
+     */
+    OpenMode tableOutputOpenMode;
+
     public ReportsClientProperties(@DefaultValue("false") boolean useBackgroundReportProcessing,
                                    @DefaultValue("10000") long backgroundReportProcessingTimeoutMs,
                                    @DefaultValue("false") boolean enableTabSymbolInDataSetEditor,
                                    @DefaultValue("false") boolean useMultiSelectComboBoxPickerForListOfEntitiesParameterComponent,
-                                   @DefaultValue("false") boolean showReportTableViewInMenu) {
+                                   @DefaultValue("false") boolean showReportTableViewInMenu,
+                                   @DefaultValue("DIALOG") OpenMode tableOutputOpenMode) {
         this.useBackgroundReportProcessing = useBackgroundReportProcessing;
         this.backgroundReportProcessingTimeoutMs = backgroundReportProcessingTimeoutMs;
         this.enableTabSymbolInDataSetEditor = enableTabSymbolInDataSetEditor;
         this.useMultiSelectComboBoxPickerForListOfEntitiesParameterComponent = useMultiSelectComboBoxPickerForListOfEntitiesParameterComponent;
         this.showReportTableViewInMenu = showReportTableViewInMenu;
+        this.tableOutputOpenMode = tableOutputOpenMode;
     }
 
     /**
@@ -96,5 +106,12 @@ public class ReportsClientProperties {
      */
     public boolean isShowReportTableViewInMenu() {
         return showReportTableViewInMenu;
+    }
+
+    /**
+     * @see #tableOutputOpenMode
+     */
+    public OpenMode getTableOutputOpenMode() {
+        return tableOutputOpenMode;
     }
 }

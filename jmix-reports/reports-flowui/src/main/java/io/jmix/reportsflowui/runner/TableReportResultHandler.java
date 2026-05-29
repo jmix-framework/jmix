@@ -16,22 +16,27 @@
 
 package io.jmix.reportsflowui.runner;
 
+import com.vaadin.flow.component.UI;
 import io.jmix.core.JmixOrder;
 import io.jmix.core.annotation.Internal;
 import io.jmix.flowui.DialogWindows;
+import io.jmix.flowui.OpenedDialogWindows;
 import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.OpenMode;
+import io.jmix.flowui.view.View;
 import io.jmix.reports.entity.JmixReportOutputType;
 import io.jmix.reports.entity.ReportTemplate;
 import io.jmix.reports.yarg.reporting.ReportOutputDocument;
 import io.jmix.reportsflowui.ReportsClientProperties;
 import io.jmix.reportsflowui.view.run.ReportTableView;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -50,6 +55,8 @@ public class TableReportResultHandler implements ReportResultHandler {
     protected ViewNavigators viewNavigators;
     @Autowired
     protected ReportsClientProperties reportsClientProperties;
+    @Autowired
+    protected ObjectProvider<OpenedDialogWindows> openedDialogWindowsProvider;
 
     /**
      * Handles the report output document by opening it in the table viewer.
@@ -74,6 +81,7 @@ public class TableReportResultHandler implements ReportResultHandler {
         };
 
         if (reportsClientProperties.getTableOutputOpenMode() == OpenMode.NAVIGATION) {
+            closeOpenedDialogs(context.getOwner());
             viewNavigators.view(context.getOwner(), ReportTableView.class)
                     .withAfterNavigationHandler(event -> {
                         ReportTableView view = event.getView();
@@ -88,5 +96,19 @@ public class TableReportResultHandler implements ReportResultHandler {
             dialogWindow.open();
         }
         return true;
+    }
+
+    /**
+     * Closes any dialog views currently opened in the owner's UI before navigating to the table view,
+     * so that the navigation target is not hidden behind leftover modal layers (e.g. the input parameters dialog).
+     */
+    protected void closeOpenedDialogs(View<?> owner) {
+        UI ui = owner.getUI().orElseGet(UI::getCurrent);
+        if (ui == null) {
+            return;
+        }
+        // Snapshot — closing each view removes it from the underlying list.
+        List.copyOf(openedDialogWindowsProvider.getObject().getDialogs(ui))
+                .forEach(View::closeWithDefaultAction);
     }
 }

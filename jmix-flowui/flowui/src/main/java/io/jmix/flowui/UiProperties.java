@@ -280,7 +280,6 @@ public class UiProperties {
      * @see #legacyMonitoringEnabled
      * @deprecated See {@link #legacyMonitoringEnabled}.
      */
-    @Experimental
     @Deprecated(since = "3.0", forRemoval = true)
     public boolean isLegacyMonitoringEnabled() {
         return legacyMonitoringEnabled;

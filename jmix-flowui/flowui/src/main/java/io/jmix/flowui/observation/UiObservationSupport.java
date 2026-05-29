@@ -29,11 +29,8 @@ import io.jmix.flowui.monitoring.DataLoaderLifeCycle;
 import io.jmix.flowui.monitoring.LegacyUiTimerSupport;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.xml.layout.support.DataComponentsLoaderSupport;
-import io.micrometer.core.instrument.MeterRegistry;
-import io.micrometer.core.instrument.config.MeterFilter;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
-import jakarta.annotation.PostConstruct;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.jspecify.annotations.Nullable;
@@ -55,28 +52,98 @@ import java.util.function.Supplier;
 @org.springframework.stereotype.Component("flowui_UiObservationSupport")
 public class UiObservationSupport {
 
-    public static final String VIEW_OBSERVATION_NAME = "jmix.ui.views";
-    public static final String FRAGMENT_OBSERVATION_NAME = "jmix.ui.fragments";
-    public static final String ACTION_OBSERVATION_NAME = "jmix.ui.actions";
-    public static final String DATA_LOADER_OBSERVATION_NAME = "jmix.ui.data";
+    /**
+     * Shared prefix of every {@code jmix.ui.*} observation/metric name produced by this support class.
+     */
+    public static final String OBSERVATION_NAME_PREFIX = "jmix.ui.";
+
+    public static final String VIEW_OBSERVATION_NAME = OBSERVATION_NAME_PREFIX + "views";
+    public static final String FRAGMENT_OBSERVATION_NAME = OBSERVATION_NAME_PREFIX + "fragments";
+    public static final String ACTION_OBSERVATION_NAME = OBSERVATION_NAME_PREFIX + "actions";
+    public static final String DATA_LOADER_OBSERVATION_NAME = OBSERVATION_NAME_PREFIX + "data";
 
     /**
-     * Sentinel for the low-cardinality {@code view.id} tag when the enclosing view cannot be resolved
-     * or has no explicit id.
+     * Human-readable contextual name passed to the {@link Observation} of view lifecycle phases.
      */
-    protected static final String MISSING_VIEW_ID = "N/A";
+    public static final String VIEW_CONTEXTUAL_NAME = "view lifecycle";
+    /**
+     * Human-readable contextual name passed to the {@link Observation} of fragment lifecycle phases.
+     */
+    public static final String FRAGMENT_CONTEXTUAL_NAME = "fragment lifecycle";
+    /**
+     * Human-readable contextual name passed to the {@link Observation} of data loader lifecycle phases.
+     */
+    public static final String DATA_LOADER_CONTEXTUAL_NAME = "data loader lifecycle";
+    /**
+     * Human-readable contextual name passed to the {@link Observation} of action executions.
+     */
+    public static final String ACTION_CONTEXTUAL_NAME = "execute action";
 
     /**
-     * Sentinel for the low-cardinality {@code fragment.id} tag when there is no enclosing fragment or
-     * the fragment has no explicit id. The tag is added unconditionally so the Prometheus meter for a
-     * given metric name always carries the same set of tag keys — otherwise conditionally-added tags
-     * make {@link io.micrometer.prometheusmetrics.PrometheusMeterRegistry} reject one of the
-     * registrations and silently drop a slice of the data.
+     * Tag key carrying the modern-schema lifecycle phase name on view / fragment / data-loader
+     * observations. Acts as the marker that distinguishes modern Observation meters from the
+     * legacy {@code Timer}-based schema; the legacy stack uses it to suppress modern Timer
+     * registrations under the same {@code jmix.ui.*} names (see {@code LegacyUiTimerSupport}).
      */
-    protected static final String MISSING_FRAGMENT_ID = "N/A";
+    public static final String LIFECYCLE_NAME_TAG = "lifecycle.name";
 
-    /** Same rationale as {@link #MISSING_FRAGMENT_ID}, for {@code target.id} of action observations. */
-    protected static final String MISSING_TARGET_ID = "N/A";
+    /**
+     * Low-cardinality tag key carrying the enclosing view's id.
+     */
+    public static final String VIEW_ID_TAG = "view.id";
+    /**
+     * Low-cardinality tag key carrying the FQN of the view's class.
+     */
+    public static final String VIEW_CLASS_TAG = "view.class";
+    /**
+     * Low-cardinality tag key carrying the enclosing fragment's id.
+     */
+    public static final String FRAGMENT_ID_TAG = "fragment.id";
+    /**
+     * Low-cardinality tag key carrying the FQN of the fragment's class.
+     */
+    public static final String FRAGMENT_CLASS_TAG = "fragment.class";
+    /**
+     * Low-cardinality tag key carrying the data loader's id (or {@link #GENERATED_LOADER_ID_SENTINEL}).
+     */
+    public static final String LOADER_ID_TAG = "loader.id";
+    /**
+     * High-cardinality span attribute key preserving the original loader id when {@link #LOADER_ID_TAG} collapses to the sentinel.
+     */
+    public static final String FULL_LOADER_ID_TAG = "full_loader_id";
+    /**
+     * Low-cardinality tag key carrying the action's id on action-execution observations.
+     */
+    public static final String ACTION_ID_TAG = "action.id";
+    /**
+     * Low-cardinality tag key carrying the target component's id on action-execution observations.
+     */
+    public static final String TARGET_ID_TAG = "target.id";
+
+    /**
+     * Sentinel value placed into low-cardinality tags when the underlying id cannot be resolved
+     * (view/fragment/target absent or without an explicit id). The tag is added unconditionally so
+     * the Prometheus meter for a given metric name always carries the same set of tag keys —
+     * otherwise conditionally-added tags make
+     * {@code PrometheusMeterRegistry} reject one of the registrations and silently drop a slice
+     * of the data.
+     */
+    private static final String NOT_AVAILABLE = "N/A";
+
+    /**
+     * Sentinel for the low-cardinality {@code view.id} tag — see {@link #NOT_AVAILABLE}.
+     */
+    protected static final String MISSING_VIEW_ID = NOT_AVAILABLE;
+
+    /**
+     * Sentinel for the low-cardinality {@code fragment.id} tag — see {@link #NOT_AVAILABLE}.
+     */
+    protected static final String MISSING_FRAGMENT_ID = NOT_AVAILABLE;
+
+    /**
+     * Sentinel for the low-cardinality {@code target.id} tag of action observations — see {@link #NOT_AVAILABLE}.
+     */
+    protected static final String MISSING_TARGET_ID = NOT_AVAILABLE;
 
     /**
      * Sentinel for the low-cardinality {@code loader.id} tag when the loader carries an auto-generated
@@ -88,38 +155,13 @@ public class UiObservationSupport {
     @Autowired(required = false)
     protected ObservationRegistry observationRegistry;
 
-    @Autowired(required = false)
-    protected MeterRegistry meterRegistry;
-
     @Autowired
     protected LegacyUiTimerSupport legacyUiTimerSupport;
 
     protected boolean observationEnabled;
-    protected boolean legacyMonitoringEnabled;
 
     public UiObservationSupport(UiProperties uiProperties) {
         this.observationEnabled = uiProperties.isUiObservationEnabled();
-        this.legacyMonitoringEnabled = uiProperties.isLegacyMonitoringEnabled();
-    }
-
-    /**
-     * In legacy mode the {@code jmix.ui.*} metrics must look exactly like Jmix 2.x — only the legacy
-     * Timer with the old tag schema. The installed {@link MeterFilter} denies any registration under
-     * {@code jmix.ui.*} that carries the modern-schema marker tag {@code lifecycle.name}, filtering
-     * out the Timer and LongTaskTimer that {@code DefaultMeterObservationHandler} would otherwise add.
-     * Tracing spans are unaffected — they don't go through the {@link MeterRegistry}.
-     */
-    @PostConstruct
-    protected void suppressObservationMetersInLegacyMode() {
-        if (meterRegistry == null || !legacyMonitoringEnabled) {
-            return;
-        }
-        meterRegistry.config().meterFilter(MeterFilter.deny(id -> {
-            String name = id.getName();
-            return name != null
-                    && name.startsWith("jmix.ui.")
-                    && id.getTags().stream().anyMatch(t -> "lifecycle.name".equals(t.getKey()));
-        }));
     }
 
     /**
@@ -162,12 +204,12 @@ public class UiObservationSupport {
 
         String viewId = info.viewId();
         return Observation.createNotStarted(DATA_LOADER_OBSERVATION_NAME, observationRegistry)
-                .contextualName("data loader lifecycle")
-                .lowCardinalityKeyValue("lifecycle.name", lifecycle.getName())
-                .lowCardinalityKeyValue("loader.id", aggregatedLoaderId)
-                .highCardinalityKeyValue("full_loader_id", loaderId)
-                .lowCardinalityKeyValue("view.id", Strings.isNullOrEmpty(viewId) ? MISSING_VIEW_ID : viewId)
-                .lowCardinalityKeyValue("fragment.id",
+                .contextualName(DATA_LOADER_CONTEXTUAL_NAME)
+                .lowCardinalityKeyValue(LIFECYCLE_NAME_TAG, lifecycle.getName())
+                .lowCardinalityKeyValue(LOADER_ID_TAG, aggregatedLoaderId)
+                .highCardinalityKeyValue(FULL_LOADER_ID_TAG, loaderId)
+                .lowCardinalityKeyValue(VIEW_ID_TAG, Strings.isNullOrEmpty(viewId) ? MISSING_VIEW_ID : viewId)
+                .lowCardinalityKeyValue(FRAGMENT_ID_TAG,
                         Strings.isNullOrEmpty(info.fragmentId()) ? MISSING_FRAGMENT_ID : info.fragmentId());
     }
 
@@ -196,11 +238,11 @@ public class UiObservationSupport {
         }
         String viewId = view.getId().orElse(null);
         return Observation.createNotStarted(VIEW_OBSERVATION_NAME, observationRegistry)
-                .contextualName("view lifecycle")
-                .lowCardinalityKeyValue("lifecycle.name", lifecycle.getName())
-                .lowCardinalityKeyValue("view.id",
+                .contextualName(VIEW_CONTEXTUAL_NAME)
+                .lowCardinalityKeyValue(LIFECYCLE_NAME_TAG, lifecycle.getName())
+                .lowCardinalityKeyValue(VIEW_ID_TAG,
                         Strings.isNullOrEmpty(viewId) ? MISSING_VIEW_ID : viewId)
-                .lowCardinalityKeyValue("view.class", view.getClass().getName());
+                .lowCardinalityKeyValue(VIEW_CLASS_TAG, view.getClass().getName());
     }
 
     /**
@@ -231,29 +273,29 @@ public class UiObservationSupport {
     }
 
     protected Observation buildFragmentLifecycleObservation(FragmentObservationInfo info,
-                                                          FragmentLifecycle lifecycle) {
+                                                            FragmentLifecycle lifecycle) {
         if (!isObservationAvailable()) {
             return Observation.NOOP;
         }
         return Observation.createNotStarted(FRAGMENT_OBSERVATION_NAME, observationRegistry)
-                .contextualName("fragment lifecycle")
-                .lowCardinalityKeyValue("lifecycle.name", lifecycle.getName())
-                .lowCardinalityKeyValue("fragment.class", info.fragmentClass())
-                .lowCardinalityKeyValue("view.id",
+                .contextualName(FRAGMENT_CONTEXTUAL_NAME)
+                .lowCardinalityKeyValue(LIFECYCLE_NAME_TAG, lifecycle.getName())
+                .lowCardinalityKeyValue(FRAGMENT_CLASS_TAG, info.fragmentClass())
+                .lowCardinalityKeyValue(VIEW_ID_TAG,
                         Strings.isNullOrEmpty(info.viewId()) ? MISSING_VIEW_ID : info.viewId())
-                .lowCardinalityKeyValue("fragment.id",
+                .lowCardinalityKeyValue(FRAGMENT_ID_TAG,
                         Strings.isNullOrEmpty(info.fragmentId()) ? MISSING_FRAGMENT_ID : info.fragmentId());
     }
 
-    public Observation createActionExecutionObservation(Action action, @Nullable Component triggerComponent) {
+    public Observation createActionExecutionObservation(Action action, @Nullable Component invocationSource) {
         if (!isObservationAvailable()) {
             return Observation.NOOP;
         }
 
-        Component viewSource = triggerComponent;
+        Component viewSource = invocationSource;
         String resolvedTargetId = null;
         if (action instanceof TargetAction<?> targetAction
-                && targetAction.getTarget() instanceof Component component) {
+            && targetAction.getTarget() instanceof Component component) {
             resolvedTargetId = UiComponentUtils.getComponentId(component).orElse(null);
             viewSource = component;
         }
@@ -273,13 +315,13 @@ public class UiObservationSupport {
         }
 
         return Observation.createNotStarted(ACTION_OBSERVATION_NAME, observationRegistry)
-                .contextualName("execute action")
-                .lowCardinalityKeyValue("action.id", action.getId())
-                .lowCardinalityKeyValue("target.id",
+                .contextualName(ACTION_CONTEXTUAL_NAME)
+                .lowCardinalityKeyValue(ACTION_ID_TAG, action.getId())
+                .lowCardinalityKeyValue(TARGET_ID_TAG,
                         Strings.isNullOrEmpty(resolvedTargetId) ? MISSING_TARGET_ID : resolvedTargetId)
-                .lowCardinalityKeyValue("view.id",
+                .lowCardinalityKeyValue(VIEW_ID_TAG,
                         Strings.isNullOrEmpty(resolvedViewId) ? MISSING_VIEW_ID : resolvedViewId)
-                .lowCardinalityKeyValue("fragment.id",
+                .lowCardinalityKeyValue(FRAGMENT_ID_TAG,
                         Strings.isNullOrEmpty(resolvedFragmentId) ? MISSING_FRAGMENT_ID : resolvedFragmentId);
     }
 

@@ -32,22 +32,22 @@ import org.jspecify.annotations.Nullable;
  *                      to any view (e.g. created standalone)
  */
 public record FragmentObservationInfo(@Nullable String fragmentId,
-                                               String fragmentClass,
-                                               @Nullable String viewId) {
+                                      String fragmentClass,
+                                      @Nullable String viewId) {
 
     public FragmentObservationInfo(Fragment<?> fragment) {
         this(fragment.getId().orElse(null), fragment.getClass().getName(), resolveViewId(fragment));
     }
 
     public FragmentObservationInfo(FragmentOwner parent,
-                                            @Nullable String fragmentId,
-                                            String fragmentClass) {
+                                   @Nullable String fragmentId,
+                                   String fragmentClass) {
         this(fragmentId, fragmentClass,
                 parent instanceof Component component ? resolveViewId(component) : null);
     }
 
     @Nullable
-    protected static String resolveViewId(Component component) {
+    private static String resolveViewId(Component component) {
         View<?> view = UiComponentUtils.findView(component);
         return view != null ? view.getId().orElse(null) : null;
     }

@@ -34,7 +34,7 @@ public record DataLoaderObservationInfo(@Nullable String viewId,
                                         @Nullable String loaderId,
                                         @Nullable String fragmentId) {
 
-    protected static final DataLoaderObservationInfo EMPTY = new DataLoaderObservationInfo(null, null, null);
+    private static final DataLoaderObservationInfo EMPTY = new DataLoaderObservationInfo(null, null, null);
 
     /**
      * Returns a stub object with null values. Observation will not be created from this info.

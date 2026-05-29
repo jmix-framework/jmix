@@ -222,7 +222,7 @@ public final class ViewControllerUtils {
     }
 
     @Nullable
-    protected static ViewLifecycle mapLifecycleEvent(ComponentEvent<?> event) {
+    private static ViewLifecycle mapLifecycleEvent(ComponentEvent<?> event) {
         if (event instanceof View.InitEvent) {
             return ViewLifecycle.INIT;
         }
@@ -404,7 +404,7 @@ public final class ViewControllerUtils {
      */
     public static boolean isSameView(View<?> view, View<?> other) {
         return view.getClass() == other.getClass()
-                && view.getId().equals(other.getId());
+               && view.getId().equals(other.getId());
     }
 
     /**

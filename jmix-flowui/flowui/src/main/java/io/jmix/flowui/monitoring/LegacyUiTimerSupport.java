@@ -19,10 +19,13 @@ package io.jmix.flowui.monitoring;
 import io.jmix.core.annotation.Internal;
 import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.model.DataLoader;
+import io.jmix.flowui.observation.UiObservationSupport;
 import io.jmix.flowui.observation.ViewLifecycle;
 import io.jmix.flowui.view.View;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
+import io.micrometer.core.instrument.config.MeterFilter;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -48,6 +51,29 @@ public class LegacyUiTimerSupport {
 
     @Autowired
     protected UiProperties uiProperties;
+
+    /**
+     * When legacy monitoring is on, modern {@code Observation}-based {@code Timer} and
+     * {@code LongTaskTimer} for the same {@code jmix.ui.*} metric names would collide with the
+     * legacy registrations under different tag schemas. {@code PrometheusMeterRegistry} keeps the
+     * first registration and silently drops conflicting ones. Suppress the modern side at the
+     * registry level by denying any meter under {@code jmix.ui.*} that carries the modern-schema
+     * marker tag {@code lifecycle.name}. Tracing spans don't go through {@code MeterRegistry} and
+     * are not affected.
+     */
+    @PostConstruct
+    protected void suppressObservationMetersInLegacyMode() {
+        if (!isEnabled()) {
+            return;
+        }
+        meterRegistry.config().meterFilter(MeterFilter.deny(id -> {
+            String name = id.getName();
+            return name != null
+                   && name.startsWith(UiObservationSupport.OBSERVATION_NAME_PREFIX)
+                   && id.getTags().stream().anyMatch(
+                    t -> UiObservationSupport.LIFECYCLE_NAME_TAG.equals(t.getKey()));
+        }));
+    }
 
     protected boolean isEnabled() {
         return uiProperties.isLegacyMonitoringEnabled();

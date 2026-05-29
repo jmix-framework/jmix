@@ -21,6 +21,7 @@ import io.jmix.core.querycondition.Condition;
 import io.jmix.flowui.monitoring.DataLoaderMonitoringInfo;
 import io.jmix.flowui.observation.DataLoaderObservationInfo;
 import org.jspecify.annotations.Nullable;
+
 import java.io.Serializable;
 import java.util.Map;
 import java.util.function.Function;
@@ -112,13 +113,25 @@ public interface DataLoader {
     Map<String, Serializable> getHints();
 
     /**
-     * No-op retained for binary compatibility. The legacy monitoring info is now derived from
-     * {@link #setObservationInfoProvider(Function)}; setting a legacy provider has no effect.
+     * Delegates to {@link #setObservationInfoProvider(Function)} so callers still using this
+     * legacy entry point get a working provider wired into the only remaining provider slot.
+     * The legacy 2-tuple {@code (viewId, loaderId)} is widened to the modern 3-tuple by leaving
+     * {@code fragmentId} {@code null} — fragment context cannot be recovered from a legacy
+     * {@link DataLoaderMonitoringInfo} (it does not carry it). For loaders that were historically
+     * fragment-owned the legacy {@code viewId} slot used to carry the fragment id; that value
+     * will end up in modern {@code view.id} unchanged, which matches what the legacy
+     * {@code jmix.ui.data} dashboard sees. Callers that need separate {@code fragment.id}
+     * attribution on the modern metric should migrate to
+     * {@link #setObservationInfoProvider(Function)} directly.
      *
      * @deprecated Use {@link #setObservationInfoProvider(Function)} instead.
      */
     @Deprecated(since = "3.0", forRemoval = true)
     default void setMonitoringInfoProvider(Function<DataLoader, DataLoaderMonitoringInfo> monitoringInfoProvider) {
+        setObservationInfoProvider(dl -> {
+            DataLoaderMonitoringInfo legacy = monitoringInfoProvider.apply(dl);
+            return new DataLoaderObservationInfo(legacy.viewId(), legacy.loaderId(), null);
+        });
     }
 
     /**

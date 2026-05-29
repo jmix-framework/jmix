@@ -75,7 +75,11 @@ public class TableReportResultHandler implements ReportResultHandler {
 
         if (reportsClientProperties.getTableOutputOpenMode() == OpenMode.NAVIGATION) {
             viewNavigators.view(context.getOwner(), ReportTableView.class)
-                    .withAfterNavigationHandler(event -> configurer.accept(event.getView()))
+                    .withAfterNavigationHandler(event -> {
+                        ReportTableView view = event.getView();
+                        configurer.accept(view);
+                        view.loadReportContent();
+                    })
                     .navigate();
         } else {
             DialogWindow<ReportTableView> dialogWindow = dialogWindows.view(context.getOwner(), ReportTableView.class)

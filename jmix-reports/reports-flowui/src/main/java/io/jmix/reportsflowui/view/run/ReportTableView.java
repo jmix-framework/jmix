@@ -18,6 +18,7 @@ package io.jmix.reportsflowui.view.run;
 
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -34,6 +35,7 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.usersubstitution.CurrentUserSubstitution;
 import io.jmix.flowui.Actions;
 import io.jmix.flowui.Notifications;
+import io.jmix.flowui.OpenedDialogWindows;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.component.UiComponentUtils;
@@ -117,11 +119,14 @@ public class ReportTableView extends StandardView {
     protected CurrentUserSubstitution currentUserSubstitution;
     @Autowired
     protected ViewNavigators viewNavigators;
+    @Autowired
+    protected OpenedDialogWindows openedDialogWindows;
 
     protected String templateCode;
     protected Map<String, Object> reportParameters;
     protected InputParametersFragment inputParametersFrame;
     protected ReportOutputDocument reportOutputDocument;
+    protected boolean tablesDrawn;
 
     public void setTemplateCode(@Nullable String templateCode) {
         this.templateCode = templateCode;
@@ -143,13 +148,30 @@ public class ReportTableView extends StandardView {
     @Subscribe
     protected void onBeforeShow(BeforeShowEvent event) {
         reportsDl.load();
+    }
 
-        if (reportOutputDocument != null) {
-            drawTables(reportOutputDocument);
-            reportForm.setVisible(false);
-            openReportParameters((Report) reportOutputDocument.getReport());
-            topActionsPanel.setVisible(UiComponentUtils.isComponentAttachedToDialog(this));
+    @Subscribe
+    protected void onReady(ReadyEvent event) {
+        loadReportContent();
+    }
+
+    /**
+     * Renders the configured report output document into the view.
+     * Idempotent: subsequent invocations are no-ops, and the method does nothing
+     * until {@link #setReportOutputDocument(ReportOutputDocument)} has been called.
+     * For the NAVIGATION open mode, where the document is set after the regular
+     * lifecycle events, this method must be invoked explicitly from
+     * {@code withAfterNavigationHandler}.
+     */
+    public void loadReportContent() {
+        if (tablesDrawn || reportOutputDocument == null) {
+            return;
         }
+        drawTables(reportOutputDocument);
+        reportForm.setVisible(false);
+        openReportParameters((Report) reportOutputDocument.getReport());
+        topActionsPanel.setVisible(UiComponentUtils.isComponentAttachedToDialog(this));
+        tablesDrawn = true;
     }
 
     @Subscribe("openInViewBtn")
@@ -157,23 +179,40 @@ public class ReportTableView extends StandardView {
         ReportOutputDocument documentToPass = reportOutputDocument;
         String templateCodeToPass = templateCode;
         Map<String, Object> parametersToPass = reportParameters;
+        UI ui = UI.getCurrent();
 
-        closeWithDefaultAction();
+        closeWithDefaultAction()
+                .then(() -> {
+                    closeOtherDialogs(ui);
+                    viewNavigators.view(this, ReportTableView.class)
+                            .withAfterNavigationHandler(navigationEvent -> {
+                                ReportTableView target = navigationEvent.getView();
+                                if (documentToPass != null) {
+                                    target.setReportOutputDocument(documentToPass);
+                                }
+                                if (templateCodeToPass != null) {
+                                    target.setTemplateCode(templateCodeToPass);
+                                }
+                                if (parametersToPass != null) {
+                                    target.setReportParameters(parametersToPass);
+                                }
+                                target.loadReportContent();
+                            })
+                            .navigate();
+                });
+    }
 
-        viewNavigators.view(this, ReportTableView.class)
-                .withAfterNavigationHandler(navigationEvent -> {
-                    ReportTableView target = navigationEvent.getView();
-                    if (documentToPass != null) {
-                        target.setReportOutputDocument(documentToPass);
-                    }
-                    if (templateCodeToPass != null) {
-                        target.setTemplateCode(templateCodeToPass);
-                    }
-                    if (parametersToPass != null) {
-                        target.setReportParameters(parametersToPass);
-                    }
-                })
-                .navigate();
+    /**
+     * Closes any other dialog views that remained open (e.g. the input parameters dialog stacked behind this view),
+     * so that the navigation target is shown without leftover modal layers.
+     */
+    protected void closeOtherDialogs(@Nullable UI ui) {
+        if (ui == null) {
+            return;
+        }
+        // Snapshot — closing each view removes it from the underlying list.
+        List.copyOf(openedDialogWindows.getDialogs(ui))
+                .forEach(View::closeWithDefaultAction);
     }
 
     @Install(to = "reportsDl", target = Target.DATA_LOADER)

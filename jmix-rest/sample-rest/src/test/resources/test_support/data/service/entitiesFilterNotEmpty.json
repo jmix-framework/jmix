@@ -1,0 +1,9 @@
+{
+  "conditions": [
+    {
+      "property": "model",
+      "operator": "notEmpty",
+      "value": "$VALUE$"
+    }
+  ]
+}

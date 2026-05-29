@@ -534,6 +534,30 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
+    void loadEntitiesFilterNotEmpty() throws Exception {
+        // 'model' is set for the car VWV000 and is not set for the car VWV002
+        String url = baseUrl + "/entities/ref_Car/search";
+
+        // 'notEmpty' with value 'true' must return only cars with the set 'model' property
+        String json = getFileContent("entitiesFilterNotEmpty.json", Map.of("$VALUE$", "true"));
+        try (CloseableHttpResponse response = sendGet(url, oauthToken, Map.of("filter", json))) {
+            assertEquals(HttpStatus.SC_OK, statusCode(response));
+            ReadContext ctx = parseResponse(response);
+            assertEquals(1, ctx.<Collection>read("$").size());
+            assertEquals("VWV000", ctx.read("$[0].vin"));
+        }
+
+        // 'notEmpty' with value 'false' must return only cars with the empty 'model' property
+        json = getFileContent("entitiesFilterNotEmpty.json", Map.of("$VALUE$", "false"));
+        try (CloseableHttpResponse response = sendGet(url, oauthToken, Map.of("filter", json))) {
+            assertEquals(HttpStatus.SC_OK, statusCode(response));
+            ReadContext ctx = parseResponse(response);
+            assertEquals(1, ctx.<Collection>read("$").size());
+            assertEquals("VWV002", ctx.read("$[0].vin"));
+        }
+    }
+
+    @Test
     void loadEntitiesListWithFilterAndCountPost() throws Exception {
         String url = baseUrl + "/entities/ref$Colour/search";
         String json = getFileContent("entitiesFilterPost2.json", null);

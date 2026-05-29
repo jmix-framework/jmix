@@ -29,13 +29,17 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.DisabledIf;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.support.TransactionTemplate;
 import test_support.DataTestConfiguration;
 import test_support.TestContextInititalizer;
 import test_support.entity.lazyloading.instantiated_vh_wrapping.InfoEntity;
 import test_support.entity.lazyloading.instantiated_vh_wrapping.LastEntity;
 import test_support.entity.lazyloading.instantiated_vh_wrapping.MyEntity;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.util.List;
+import java.util.UUID;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(
@@ -51,12 +55,18 @@ public class LazyLoadingVHWrappingTest {
     @Autowired
     protected JdbcTemplate jdbc;
 
+    @Autowired
+    protected TransactionTemplate transactionTemplate;
+
+    @PersistenceContext
+    protected EntityManager entityManager;
+
+    protected UUID myEntityId;
 
     @BeforeEach
     public void setUp() {
         MyEntity myEntity = dataManager.create(MyEntity.class);
         LastEntity lastEntity = dataManager.create(LastEntity.class);
-        LastEntity secondLastEntity = dataManager.create(LastEntity.class);
         InfoEntity infoEntity = dataManager.create(InfoEntity.class);
         InfoEntity secondInfoEntity = dataManager.create(InfoEntity.class);
 
@@ -72,6 +82,7 @@ public class LazyLoadingVHWrappingTest {
         saveContext.getEntitiesToSave().add(infoEntity);
 
         dataManager.save(saveContext);
+        myEntityId = myEntity.getId();
     }
 
     @Test
@@ -90,6 +101,21 @@ public class LazyLoadingVHWrappingTest {
         Assertions.assertNotNull(metaEntity);
         Assertions.assertNotNull(loadedOne);
         Assertions.assertNotNull(loadedInfoEntity);
+    }
+
+    @Test
+    public void embeddedReferenceLoadedBeforeIntermediateLoadKeepsNestedLazyLoadingTest() {
+        transactionTemplate.executeWithoutResult(status -> {
+            MyEntity managedMyEntity = entityManager.find(MyEntity.class, myEntityId);
+            LastEntity embeddedLastEntity = managedMyEntity.getMetaEntity().getLastentity();
+
+            dataManager.load(MyEntity.class)
+                    .all()
+                    .fetchPlan(FetchPlan.BASE)
+                    .list();
+
+            Assertions.assertNotNull(embeddedLastEntity.getInfoEntity());
+        });
     }
 
     @AfterEach

@@ -176,6 +176,10 @@ public class JpaLazyLoadingListener implements DataStoreEventListener {
             return;
         }
 
+        if (!property.getRange().isClass()) {
+            return;
+        }
+
         if (property.getRange().getCardinality().isMany()) {
             Collection<?> propertyCollection = EntityValues.getValue(entity, property.getName());
             if (propertyCollection != null) {

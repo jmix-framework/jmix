@@ -36,6 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.TestPropertySource
 import spock.lang.IgnoreIf
 import test_support.DataSpec
+import test_support.entity.lazyloading.instantiated_vh_wrapping.ElementCollectionHolder
 import test_support.entity.lazyloading.instantiated_vh_wrapping.Second
 import test_support.entity.lazyloading.instantiated_vh_wrapping.Third
 import test_support.entity.lazyloading.instantiated_vh_wrapping.First
@@ -236,6 +237,76 @@ class InstantiatedVHWrappingLLTest extends DataSpec {
         concurrentExecutor?.shutdownNow()
     }
 
+    def "test query by datatype element collection does not fail excessive value holder wrapping"() {
+        setup:
+        cleanupElementCollectionHolders()
+        def savedHolder = createElementCollectionHolder("holder-1", ["tag-1", "tag-2"])
+
+        when:
+        def loadedHolders = dataManager.load(ElementCollectionHolder)
+                .query("select e from ivw_ElementCollectionHolder e where :tag member of e.tags")
+                .parameter("tag", "tag-1")
+                .list()
+
+        then:
+        noExceptionThrown()
+        loadedHolders*.id == [savedHolder.id]
+
+        cleanup:
+        cleanupElementCollectionHolders()
+    }
+
+    def "test loaded datatype element collection is ignored during excessive value holder wrapping"() {
+        setup:
+        cleanupElementCollectionHolders()
+        def savedHolder = createElementCollectionHolder("holder-1", ["tag-1", "tag-2"])
+
+        when:
+        def loadedIds = transaction.execute {
+            ElementCollectionHolder managedHolder = entityManager.find(ElementCollectionHolder, savedHolder.id)
+            managedHolder.tags.size()
+            assert entityStates.isLoaded(managedHolder, "tags")
+
+            return dataManager.load(ElementCollectionHolder)
+                    .all()
+                    .list()
+                    .collect { it.id }
+        }
+
+        then:
+        noExceptionThrown()
+        loadedIds == [savedHolder.id]
+
+        cleanup:
+        cleanupElementCollectionHolders()
+    }
+
+    def "test managed datatype element collection loading after intermediate holder list load"() {
+        setup:
+        cleanupElementCollectionHolders()
+        def savedHolder = createElementCollectionHolder("holder-1", ["tag-1", "tag-2"])
+
+        when:
+        def loadedTags = transaction.execute {
+            ElementCollectionHolder managedHolder = entityManager.find(ElementCollectionHolder, savedHolder.id)
+            assert !entityStates.isLoaded(managedHolder, "tags")
+
+            dataManager.load(ElementCollectionHolder)
+                    .all()
+                    .list()
+
+            return new ArrayList<>(managedHolder.tags)
+        }
+
+        then:
+        noExceptionThrown()
+        loadedTags.size() == 2
+        loadedTags.containsAll(["tag-1", "tag-2"])
+
+        cleanup:
+        cleanupElementCollectionHolders()
+    }
+
     private RecursiveCollectionRoot createRecursiveCollectionGraph() {
         def owner = dataManager.create(RecursiveCollectionOwner)
         owner.name = "Owner"
@@ -284,6 +355,18 @@ class InstantiatedVHWrappingLLTest extends DataSpec {
         jdbc.update("delete from TEST_LL_RC_CHILD")
         jdbc.update("delete from TEST_LL_RC_ROOT")
         jdbc.update("delete from TEST_LL_RC_OWNER")
+    }
+
+    private ElementCollectionHolder createElementCollectionHolder(String name, List<String> tags) {
+        def holder = dataManager.create(ElementCollectionHolder)
+        holder.name = name
+        holder.tags = tags
+        return dataManager.save(holder)
+    }
+
+    private void cleanupElementCollectionHolders() {
+        jdbc.update("delete from IVW_ELEMENT_COLLECTION_HOLDER_TAG")
+        jdbc.update("delete from IVW_ELEMENT_COLLECTION_HOLDER")
     }
 
 

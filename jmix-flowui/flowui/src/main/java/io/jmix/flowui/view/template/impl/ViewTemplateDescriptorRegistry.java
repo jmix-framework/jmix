@@ -56,6 +56,16 @@ public class ViewTemplateDescriptorRegistry {
     }
 
     /**
+     * Removes a descriptor previously stored under the given synthetic path.
+     *
+     * @param path synthetic descriptor path
+     * @return {@code true} if a descriptor was stored under the path
+     */
+    public boolean remove(String path) {
+        return descriptors.remove(path) != null;
+    }
+
+    /**
      * Returns a rendered descriptor by its synthetic path.
      *
      * @param path synthetic descriptor path

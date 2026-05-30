@@ -17,10 +17,17 @@
 package io.jmix.aitools.dataload;
 
 import io.jmix.aitools.dataload.execution.GeneratedJpqlParameter;
+import io.jmix.aitools.dataload.execution.JpqlExecutionService;
+import io.jmix.aitools.dataload.generation.EntityDataLoadGenerationService;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
+/**
+ * Structured JPQL query draft produced by {@link EntityDataLoadGenerationService} for a
+ * natural-language request. Carries everything {@link JpqlExecutionService} needs to validate
+ * and run the query, plus the LLM's explanation and warnings for the caller.
+ */
 public class EntityDataLoadQuery {
 
     protected String jpql;
@@ -47,31 +54,64 @@ public class EntityDataLoadQuery {
         this.firstResult = firstResult;
     }
 
+    /**
+     * Returns the generated JPQL select query. Every SELECT expression is aliased via {@code AS}.
+     *
+     * @return the generated JPQL select query
+     */
     public String getJpql() {
         return jpql;
     }
 
+    /**
+     * Returns named parameters that must be bound when executing {@link #getJpql()}
+     *
+     * @return named parameters
+     */
     public List<GeneratedJpqlParameter> getParameters() {
         return parameters;
     }
 
+    /**
+     * Returns result column names in the exact order of the SELECT expressions in
+     * {@link #getJpql()}; used as keys for the row maps in the execution result.
+     *
+     * @return result column names
+     */
     public List<String> getResultProperties() {
         return resultProperties;
     }
 
+    /**
+     * @return human-readable explanation of what the query does, produced by the LLM
+     */
     public String getExplanation() {
         return explanation;
     }
 
+    /**
+     * @return warnings emitted by the LLM about the generated query (assumptions made,
+     * approximations, applied pagination, etc.)
+     */
     public List<String> getWarnings() {
         return warnings;
     }
 
+    /**
+     * Returns requested row limit, or {@code null} to apply the default limit on execution.
+     *
+     * @return requested row limit
+     */
     @Nullable
     public Integer getMaxResults() {
         return maxResults;
     }
 
+    /**
+     * Rrequested offset of the first row, or {@code null} to start from the first row.
+     *
+     * @return requested offset of the first row
+     */
     @Nullable
     public Integer getFirstResult() {
         return firstResult;

@@ -16,7 +16,17 @@
 
 package io.jmix.aitools.dataload.tool;
 
+import io.jmix.aitools.dataload.AiDataLoadService;
+import io.jmix.aitools.tool.AiToolRegistry;
 import io.jmix.aitools.tool.JmixAiTool;
 
+/**
+ * Marker interface for Spring AI tools exposed to the conversational data-load flow
+ * (natural-language data access chat).
+ * <p>
+ * Beans implementing this interface can be collected by {@link AiToolRegistry#findByMarker(Class)}.
+ *
+ * @see AiDataLoadService
+ */
 public interface DataLoadAiTool extends JmixAiTool {
 }

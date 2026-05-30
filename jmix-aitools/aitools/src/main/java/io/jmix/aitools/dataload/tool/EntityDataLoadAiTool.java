@@ -16,7 +16,17 @@
 
 package io.jmix.aitools.dataload.tool;
 
+import io.jmix.aitools.dataload.generation.EntityDataLoadGenerationService;
+import io.jmix.aitools.tool.AiToolRegistry;
 import io.jmix.aitools.tool.JmixAiTool;
 
+/**
+ * Marker interface for Spring AI tools exposed to the entity-scoped data-load flow that
+ * generates a JPQL query for a specific target entity.
+ * <p>
+ * Beans implementing this interface can be collected by {@link AiToolRegistry#findByMarker(Class)}.
+ *
+ * @see EntityDataLoadGenerationService
+ */
 public interface EntityDataLoadAiTool extends JmixAiTool {
 }

@@ -29,12 +29,14 @@ import org.springframework.stereotype.Component;
 @Component("aitols_JpqlExecutionTool")
 public class JpqlExecutionTool implements DataLoadAiTool {
 
+    public static final String EXECUTE_QUERY_TOOL = "aitols_executeQuery";
+
     private static final Logger log = LoggerFactory.getLogger(JpqlExecutionTool.class);
 
     @Autowired
     protected JpqlExecutionService jpqlExecutionService;
 
-    @Tool(description = """
+    @Tool(name = EXECUTE_QUERY_TOOL, description = """
             Validates, repairs if needed and executes a read-only JPQL query through Jmix DataManager.
             
             CRITICAL REQUIREMENTS:
@@ -51,7 +53,7 @@ public class JpqlExecutionTool implements DataLoadAiTool {
                 - The "resultProperties" listing returned columns in select-clause order
                 - The "maxResults"
                 - The "firstResult"
-
+            
             GENERAL QUERY RULES:
             - Only select queries are allowed
             - Never use update, delete, insert, or merge

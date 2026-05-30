@@ -39,6 +39,14 @@ import reactor.core.publisher.Flux;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The default implementation of {@link AiDataLoadService}.
+ * <p>
+ * It uses {@link DataLoadAiTool} tools (entity discovery, JPQL execution, etc.) to get a valid JPQL query from LLM.
+ * This JPQL is validated and can be repaired if it is required.
+ *
+ * @see EntityDataLoadGenerationService
+ */
 @Component("aitols_AiDataLoadServiceImpl")
 public class AiDataLoadServiceImpl implements AiDataLoadService, InitializingBean {
 
@@ -65,17 +73,17 @@ public class AiDataLoadServiceImpl implements AiDataLoadService, InitializingBea
     }
 
     @Override
-    public String sendMessage(String message) {
-        return sendMessage(message, JmixChatMemoryRepository.NO_OP_CONVERSATION_ID);
+    public String send(String message) {
+        return send(message, JmixChatMemoryRepository.NO_OP_CONVERSATION_ID);
     }
 
     @Override
-    public Flux<String> sendMessageStream(String message) {
-        return sendMessageStream(message, JmixChatMemoryRepository.NO_OP_CONVERSATION_ID);
+    public Flux<String> stream(String message) {
+        return stream(message, JmixChatMemoryRepository.NO_OP_CONVERSATION_ID);
     }
 
     @Override
-    public Flux<String> sendMessageStream(String message, String conversationId) {
+    public Flux<String> stream(String message, String conversationId) {
         Preconditions.checkNotEmptyString(message);
         Preconditions.checkNotEmptyString(conversationId);
 
@@ -85,7 +93,7 @@ public class AiDataLoadServiceImpl implements AiDataLoadService, InitializingBea
     }
 
     @Override
-    public String sendMessage(String message, String conversationId) {
+    public String send(String message, String conversationId) {
         Preconditions.checkNotEmptyString(message);
         Preconditions.checkNotEmptyString(conversationId);
 

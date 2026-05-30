@@ -65,6 +65,22 @@ public class DefaultViewTemplateHelper implements ViewTemplateHelper {
                 .toList();
     }
 
+    @Override
+    public List<MetaProperty> getCollectionProperties(MetaClass metaClass, List<String> excludeProperties) {
+        Set<String> excludedPropertyNames = validatePropertyNames(metaClass, excludeProperties);
+
+        return metaClass.getProperties().stream()
+                .filter(this::isSupportedCollectionProperty)
+                .filter(property -> !isDefaultExcluded(property))
+                .filter(property -> !excludedPropertyNames.contains(property.getName()))
+                .toList();
+    }
+
+    protected boolean isSupportedCollectionProperty(MetaProperty metaProperty) {
+        return metaProperty.getRange().getCardinality().isMany()
+                && metaProperty.getType() == MetaProperty.Type.COMPOSITION;
+    }
+
     protected Set<String> validatePropertyNames(MetaClass metaClass, Collection<String> propertyNames) {
         if (propertyNames == null || propertyNames.isEmpty()) {
             return Set.of();
@@ -91,6 +107,14 @@ public class DefaultViewTemplateHelper implements ViewTemplateHelper {
     protected boolean isDefaultExcluded(MetaProperty metaProperty) {
         return metadataTools.isSystemLevel(metaProperty)
                 || metadataTools.isSystem(metaProperty)
-                || metadataTools.isSecret(metaProperty);
+                || metadataTools.isSecret(metaProperty)
+                || isCompositionInverse(metaProperty);
+    }
+
+    protected boolean isCompositionInverse(MetaProperty metaProperty) {
+        MetaProperty inverse = metaProperty.getInverse();
+        return inverse != null
+                && inverse.getRange().getCardinality().isMany()
+                && inverse.getType() == MetaProperty.Type.COMPOSITION;
     }
 }

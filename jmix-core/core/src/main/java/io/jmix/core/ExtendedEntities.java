@@ -83,13 +83,14 @@ public class ExtendedEntities {
             for (MetaProperty metaProperty : metaClass.getOwnProperties()) {
                 MetaPropertyImpl propertyImpl = (MetaPropertyImpl) metaProperty;
 
-                // replace domain
-                Class<?> effectiveDomainClass = getEffectiveClass(metaProperty.getDomain());
-                MetaClass effectiveDomainMeta = session.getClass(effectiveDomainClass);
-                if (metaProperty.getDomain() != effectiveDomainMeta) {
-                    propertyImpl.setDomain(effectiveDomainMeta);
-                }
-
+                // IMPORTANT: range must be replaced BEFORE domain. MetaPropertyImpl.setRange()
+                // propagates the new range to clones held by descendant metaclasses via
+                // withClones(), which iterates over `domain.getDescendants()`. If domain has
+                // already been switched to the effective (replacing) metaclass, that class
+                // typically has no descendants, so the propagation silently does nothing, and
+                // the clones on replacing metaclasses are left with stale ranges pointing to
+                // the original (replaced) entity. setDomain() has no such cascade and is safe
+                // to call after setRange().
                 if (metaProperty.getRange().isClass()) {
                     // replace range class
                     ClassRange range = (ClassRange) metaProperty.getRange();
@@ -103,6 +104,13 @@ public class ExtendedEntities {
 
                         ((MetaPropertyImpl) metaProperty).setRange(newRange);
                     }
+                }
+
+                // replace domain
+                Class<?> effectiveDomainClass = getEffectiveClass(metaProperty.getDomain());
+                MetaClass effectiveDomainMeta = session.getClass(effectiveDomainClass);
+                if (metaProperty.getDomain() != effectiveDomainMeta) {
+                    propertyImpl.setDomain(effectiveDomainMeta);
                 }
             }
         }

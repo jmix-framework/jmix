@@ -25,8 +25,10 @@ import io.jmix.aitools.dataload.generation.EntityDataLoadGenerationService;
 import io.jmix.aitools.dataload.generation.EntityDataLoadQueryPayload;
 import io.jmix.aitools.dataload.prompt.EntityDataLoadPromptProvider;
 import io.jmix.aitools.dataload.repair.impl.GeneratedJpqlParameterPayload;
-import io.jmix.aitools.dataload.tool.EntityDataLoadToolCallbackProvider;
+import io.jmix.aitools.dataload.tool.EntityDataLoadAiTool;
 import io.jmix.aitools.memory.ChatMemoryFactory;
+import io.jmix.aitools.tool.AiToolRegistry;
+import io.jmix.aitools.tool.ResolvedAiTool;
 import io.jmix.aitools.memory.JmixChatMemoryRepository;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.security.CurrentAuthentication;
@@ -51,7 +53,7 @@ public class EntityDataLoadGenerationServiceImpl implements EntityDataLoadGenera
     @Autowired
     protected EntityDataLoadPromptProvider entityDataLoadPromptProvider;
     @Autowired
-    protected EntityDataLoadToolCallbackProvider entityDataLoadToolCallbackProvider;
+    protected AiToolRegistry aiToolRegistry;
     @Autowired
     protected CurrentAuthentication currentAuthentication;
 
@@ -99,7 +101,9 @@ public class EntityDataLoadGenerationServiceImpl implements EntityDataLoadGenera
                         .text(entityDataLoadPromptProvider.getResource())
                         .param("responseLanguage", resolveResponseLanguage()))
                 .user(user -> user.text(userText))
-                .toolCallbacks(entityDataLoadToolCallbackProvider.getToolCallbacks())
+                .toolCallbacks(aiToolRegistry.findByMarker(EntityDataLoadAiTool.class).stream()
+                        .map(ResolvedAiTool::getCallback)
+                        .toList())
                 .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId));
     }
 

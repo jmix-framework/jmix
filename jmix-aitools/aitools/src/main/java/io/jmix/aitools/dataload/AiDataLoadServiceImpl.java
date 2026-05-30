@@ -20,8 +20,10 @@ import io.jmix.aitools.ChatClientFactory;
 import io.jmix.aitools.dataload.execution.*;
 import io.jmix.aitools.dataload.generation.EntityDataLoadGenerationService;
 import io.jmix.aitools.dataload.prompt.DataLoadChatSystemPromptProvider;
-import io.jmix.aitools.dataload.tool.DataLoadToolCallbackProvider;
+import io.jmix.aitools.dataload.tool.DataLoadAiTool;
 import io.jmix.aitools.memory.ChatMemoryFactory;
+import io.jmix.aitools.tool.AiToolRegistry;
+import io.jmix.aitools.tool.ResolvedAiTool;
 import io.jmix.aitools.memory.JmixChatMemoryRepository;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.security.CurrentAuthentication;
@@ -47,7 +49,7 @@ public class AiDataLoadServiceImpl implements AiDataLoadService, InitializingBea
     @Autowired
     protected DataLoadChatSystemPromptProvider systemPromptProvider;
     @Autowired
-    protected DataLoadToolCallbackProvider dataLoadToolCallbackProvider;
+    protected AiToolRegistry aiToolRegistry;
     @Autowired
     protected CurrentAuthentication currentAuthentication;
     @Autowired
@@ -167,7 +169,9 @@ public class AiDataLoadServiceImpl implements AiDataLoadService, InitializingBea
                         .text(systemPromptProvider.getResource())
                         .param("responseLanguage", resolveResponseLanguage()))
                 .user(user -> user.text(message))
-                .toolCallbacks(dataLoadToolCallbackProvider.getToolCallbacks())
+                .toolCallbacks(aiToolRegistry.findByMarker(DataLoadAiTool.class).stream()
+                        .map(ResolvedAiTool::getCallback)
+                        .toList())
                 .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId));
     }
 

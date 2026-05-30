@@ -23,10 +23,10 @@ import com.vaadin.flow.component.messages.MessageListItem;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.progressbar.ProgressBar;
 import com.vaadin.flow.router.Route;
-import io.jmix.aitools.dataload.AiDataLoadService;
 import io.jmix.aitools.entity.AiConversation;
 import io.jmix.aitools.entity.ChatMessage;
 import io.jmix.aitools.entity.ChatMessageType;
+import io.jmix.aitools.service.AiChatService;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.TimeSource;
 import io.jmix.core.security.CurrentAuthentication;
@@ -75,9 +75,8 @@ public class AiConversationDetailView extends StandardDetailView<AiConversation>
     @Autowired
     private Dialogs dialogs;
 
-    // TODO: pinyazhin, use AiChatService
     @Autowired
-    private AiDataLoadService aiDataLoadService;
+    private AiChatService aiChatService;
 
     @ViewComponent
     private MessageBundle messageBundle;
@@ -204,7 +203,7 @@ public class AiConversationDetailView extends StandardDetailView<AiConversation>
         progressBar.setVisible(true);
         messageInput.setEnabled(false);
 
-        uiAsyncTasks.supplierConfigurer(() -> aiDataLoadService.sendMessage(userMessage, conversation.getId().toString()))
+        uiAsyncTasks.supplierConfigurer(() -> aiChatService.send(userMessage, conversation.getId().toString()))
                 /*TODO: pinyazhin, application property*/
                 .withTimeout(5, TimeUnit.MINUTES)
                 .withResultHandler(response -> {

@@ -16,28 +16,90 @@
 
 package io.jmix.aitools.service.impl;
 
+import io.jmix.aitools.ChatClientFactory;
+import io.jmix.aitools.memory.ChatMemoryFactory;
+import io.jmix.aitools.memory.JmixChatMemoryRepository;
 import io.jmix.aitools.service.AiChatService;
+import io.jmix.aitools.tool.AiToolRegistry;
+import io.jmix.core.common.util.Preconditions;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
+import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
+import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import reactor.core.publisher.Flux;
 
+@Component("aitols_AiChatServiceImpl")
 public class AiChatServiceImpl implements AiChatService, InitializingBean {
 
     @Autowired
-    protected ChatClient.Builder chatClientBuilder;
+    protected ChatClientFactory chatClientFactory;
+    @Autowired
+    protected ChatMemoryFactory chatMemoryFactory;
+    @Autowired
+    protected AiToolRegistry aiToolRegistry;
+
+    protected ChatClient chatClient;
 
     @Override
     public void afterPropertiesSet() {
-
+        buildChatClient();
     }
 
     @Override
-    public String sendMessage(String message) {
-        return "";
+    public String send(String message) {
+        return send(message, JmixChatMemoryRepository.NO_OP_CONVERSATION_ID);
     }
 
     @Override
-    public String sendMessage(String message, String conversationId) {
-        return "";
+    public String send(String message, String conversationId) {
+        Preconditions.checkNotEmptyString(message);
+        Preconditions.checkNotEmptyString(conversationId);
+
+        checkChatClient();
+
+        ChatClient.CallResponseSpec callResponseSpec = buildPrompt(message, conversationId).call();
+
+        return callResponseSpec.content();
+    }
+
+    @Override
+    public Flux<String> stream(String message) {
+        return stream(message, JmixChatMemoryRepository.NO_OP_CONVERSATION_ID);
+    }
+
+    @Override
+    public Flux<String> stream(String message, String conversationId) {
+        Preconditions.checkNotEmptyString(message);
+        Preconditions.checkNotEmptyString(conversationId);
+
+        checkChatClient();
+
+        ChatClient.StreamResponseSpec streamResponseSpec = buildPrompt(message, conversationId).stream();
+
+        return streamResponseSpec.content();
+    }
+
+    protected ChatClient.ChatClientRequestSpec buildPrompt(String message, String conversationId) {
+        return chatClient.prompt()
+                .user(user -> user.text(message))
+                .toolCallbacks(aiToolRegistry.getAllCallbacks())
+                .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId));
+    }
+
+    protected void buildChatClient() {
+        chatClient = chatClientFactory.createChatClient(builder ->
+                builder.defaultAdvisors(
+                        SimpleLoggerAdvisor.builder().build(),
+                        MessageChatMemoryAdvisor.builder(chatMemoryFactory.build()).build()
+                ));
+    }
+
+    protected void checkChatClient() {
+        if (chatClient == null) {
+            throw new IllegalStateException(ChatClient.class.getSimpleName() + " is not configured in application");
+        }
     }
 }

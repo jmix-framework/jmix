@@ -16,31 +16,15 @@
 
 package io.jmix.aitools.service;
 
+import reactor.core.publisher.Flux;
+
 public interface AiChatService {
 
-    /* TODO: pinyazhin, implement */
+    String send(String message);
 
-    // Result sendMessage(String message);
+    String send(String message, String conversationId);
 
-    // Result sendMessage(String message, String conversationId);
+    Flux<String> stream(String message);
 
-    String sendMessage(String message);
-
-    String sendMessage(String message, String conversationId);
-
-    // ChatBuilder sendMessage(String message);
-
-    /*
-     * ChatBuilder
-     * - prompts
-     * - tools // all/include/exclude/none() using interfaces
-     *
-     * - conversationId
-     * - other?
-     *
-     * support Result
-     * support String
-     * support Flux<String>
-     *
-     * */
+    Flux<String> stream(String message, String conversationId);
 }

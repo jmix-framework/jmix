@@ -30,7 +30,7 @@ import ${routeLayout.getControllerFqn()};
 import com.vaadin.flow.router.Route;
 import io.jmix.flowui.view.*;
 <%if (useDataRepositories){%>
-import io.jmix.core.FetchPlan;
+import io.jmix.core.repository.JmixDataRepositoryContext;
 
 import ${repository.getQualifiedName()};
 
@@ -60,8 +60,8 @@ public class ${detailControllerName} extends StandardDetailView<${entity.classNa
 <%}%><%if (useDataRepositories){%>
 
     @Install(to = "${dlId}", target = Target.DATA_LOADER, subject = "loadFromRepositoryDelegate")
-    private Optional<${entity.className}> loadDelegate(${getRepositoryIdClassName()} id, FetchPlan fetchPlan){
-        return repository.findById(id, fetchPlan);
+    private Optional<${entity.className}> loadDelegate(${getRepositoryIdClassName()} id, JmixDataRepositoryContext context){
+        return repository.findById(id, context);
     }<%}%><%if (useRepositorySaveDelegate){%>
 
     @Install(target = Target.DATA_CONTEXT)

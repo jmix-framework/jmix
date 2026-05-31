@@ -18,6 +18,7 @@ package data_components
 
 import io.jmix.core.FetchPlanRepository
 import io.jmix.core.common.util.Dom4j
+import io.jmix.core.repository.JmixDataRepositoryContext
 import io.jmix.flowui.model.CollectionContainer
 import io.jmix.flowui.model.CollectionLoader
 import io.jmix.flowui.model.DataContext
@@ -42,6 +43,8 @@ import test_support.entity.sales.Product
 import test_support.entity.sales.ProductTag
 import test_support.entity.sec.User
 import test_support.spec.DataContextSpec
+
+import java.util.function.BiFunction
 
 class ViewDataTest extends DataContextSpec {
 
@@ -291,6 +294,39 @@ class ViewDataTest extends DataContextSpec {
         userInfoLoader.storeName == 'foo'
 
         userInfoInstanceLoader.storeName == 'foo'
+    }
+
+    def "repository instance loader receives context"() {
+        def xml = '''
+            <data>
+                <instance id="userCont"
+                          class="test_support.entity.sec.User" fetchPlan="user.edit">
+                    <loader id="userLoader"/>
+                </instance>
+            </data>
+            '''
+        Document document = Dom4j.readDocument(xml)
+        ViewData viewData = new ViewDataImpl()
+        User user = metadata.create(User)
+        def repositoryContext = null
+
+        when:
+        viewDataLoader.load(viewData, document.rootElement)
+        InstanceLoader<User> userLoader = viewData.getLoader('userLoader')
+        userLoader.dataContext = null
+        userLoader.entityId = user.id
+        userLoader.setHint('test.hint', 'test-value')
+        userLoader.setLoadFromRepositoryDelegate({ id, context ->
+            assert id == user.id
+            repositoryContext = context
+            Optional.of(user)
+        } as BiFunction<Object, JmixDataRepositoryContext, Optional<User>>)
+        userLoader.load()
+
+        then:
+        repositoryContext.fetchPlan() == fetchPlanRepository.getFetchPlan(User, 'user.edit')
+        repositoryContext.hints()['test.hint'] == 'test-value'
+        viewData.getContainer('userCont').item == user
     }
 
     def "nested containers"() {

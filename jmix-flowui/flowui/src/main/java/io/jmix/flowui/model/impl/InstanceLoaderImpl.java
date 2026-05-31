@@ -22,6 +22,7 @@ import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.querycondition.Condition;
+import io.jmix.core.repository.JmixDataRepositoryContext;
 import io.jmix.flowui.model.*;
 import io.jmix.flowui.monitoring.DataLoaderLifeCycle;
 import io.jmix.flowui.monitoring.DataLoaderMonitoringInfo;
@@ -67,7 +68,7 @@ public class InstanceLoaderImpl<E> implements InstanceLoader<E> {
     protected String fetchPlanName;
     protected Map<String, Serializable> hints = new HashMap<>();
     protected Function<LoadContext<E>, E> delegate;
-    protected BiFunction<Object, FetchPlan, Optional<E>> loadFromRepositoryDelegate;
+    protected BiFunction<Object, JmixDataRepositoryContext, Optional<E>> loadFromRepositoryDelegate;
     protected EventHub events = new EventHub();
     protected Function<DataLoader, DataLoaderMonitoringInfo> monitoringInfoProvider = __ -> DataLoaderMonitoringInfo.empty();
 
@@ -128,7 +129,13 @@ public class InstanceLoaderImpl<E> implements InstanceLoader<E> {
             Timer.Sample sample = UiMonitoring.startTimerSample(meterRegistry);
 
             if (loadFromRepositoryDelegate != null) {
-                entity = loadFromRepositoryDelegate.apply(entityId, resolveFetchPlan()).orElse(null);
+                entity = loadFromRepositoryDelegate.apply(
+                                entityId,
+                                JmixDataRepositoryContext.builder()
+                                        .plan(resolveFetchPlan())
+                                        .hints(hints)
+                                        .build())
+                        .orElse(null);
             } else {
                 entity = delegate.apply(createLoadContext());
             }
@@ -308,12 +315,12 @@ public class InstanceLoaderImpl<E> implements InstanceLoader<E> {
     }
 
     @Override
-    public BiFunction<Object, FetchPlan, Optional<E>> getLoadFromRepositoryDelegate() {
+    public BiFunction<Object, JmixDataRepositoryContext, Optional<E>> getLoadFromRepositoryDelegate() {
         return loadFromRepositoryDelegate;
     }
 
     @Override
-    public void setLoadFromRepositoryDelegate(BiFunction<Object, FetchPlan, Optional<E>> delegate) {
+    public void setLoadFromRepositoryDelegate(BiFunction<Object, JmixDataRepositoryContext, Optional<E>> delegate) {
         this.loadFromRepositoryDelegate = delegate;
     }
 

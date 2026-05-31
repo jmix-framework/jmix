@@ -67,7 +67,6 @@ import io.jmix.flowui.view.Target
 <%if (useDataRepositories){%>import org.springframework.data.domain.Pageable
 import io.jmix.core.repository.JmixDataRepositoryContext
 import io.jmix.core.LoadContext
-import io.jmix.core.FetchPlan
 import ${getRepositoryIdFqn()}
 import ${repository.getQualifiedName()}<%}%>
 <%if (useRepositorySaveDelegate || useUpdateServiceSaveDelegate){%>
@@ -393,8 +392,8 @@ class ${viewControllerName}<%if (useDataRepositories || useUpdateServiceInContro
     }<%}%>
 
     @Install(to = "${detailDl}", target = Target.DATA_LOADER, subject = "loadFromRepositoryDelegate")
-    private fun detailLoadDelegate(id: ${getRepositoryIdClassName()}, fetchPlan: FetchPlan): Optional<${entity.className}> {
-        return repository.findById(id, fetchPlan)
+    private fun detailLoadDelegate(id: ${getRepositoryIdClassName()}, context: JmixDataRepositoryContext): Optional<${entity.className}> {
+        return repository.findById(id, context)
     }<%}%><%if (useRepositorySaveDelegate){%>
 
     @Install(target = Target.DATA_CONTEXT)

@@ -49,4 +49,16 @@ public class ViewDataImpl extends AbstractDataComponentsHolder implements ViewDa
     protected String getOwnerId() {
         return getViewId();
     }
+
+    @Nullable
+    @Override
+    public String getObservableViewId() {
+        return getViewId();
+    }
+
+    @Nullable
+    @Override
+    public String getObservableFragmentId() {
+        return null;
+    }
 }

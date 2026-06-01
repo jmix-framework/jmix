@@ -20,7 +20,8 @@ import io.jmix.flowui.component.HasDataComponents;
 import io.jmix.flowui.model.DataContext;
 import io.jmix.flowui.model.DataLoader;
 import io.jmix.flowui.model.InstanceContainer;
-import io.jmix.flowui.monitoring.DataLoaderMonitoringInfo;
+import io.jmix.flowui.monitoring.LoaderObservabilityWiring;
+import io.jmix.flowui.monitoring.ObservableDataHolder;
 import org.jspecify.annotations.Nullable;
 
 import java.util.LinkedHashMap;
@@ -30,8 +31,13 @@ import java.util.Set;
 /**
  * Abstract implementation of the {@link HasDataComponents} interface providing a base for managing
  * data-related components such as {@link DataContext}, {@link InstanceContainer}, and {@link DataLoader}.
+ * <p>
+ * Implements {@link ObservableDataHolder} so that every registered loader gets a monitoring info
+ * provider attached automatically in {@link #registerLoader(String, DataLoader)}. The two getters of
+ * {@link ObservableDataHolder} are not implemented here — concrete subclasses must declare their
+ * observability context explicitly.
  */
-public abstract class AbstractDataComponentsHolder implements HasDataComponents {
+public abstract class AbstractDataComponentsHolder implements HasDataComponents, ObservableDataHolder {
 
     protected DataContext dataContext;
 
@@ -96,9 +102,7 @@ public abstract class AbstractDataComponentsHolder implements HasDataComponents 
     @Override
     public void registerLoader(String id, DataLoader loader) {
         getLoaders().put(id, loader);
-
-        DataLoaderMonitoringInfo monitoringInfo = new DataLoaderMonitoringInfo(getOwnerId(), id);
-        loader.setMonitoringInfoProvider(dl -> monitoringInfo);
+        LoaderObservabilityWiring.install(this, loader, id);
     }
 
     @Nullable

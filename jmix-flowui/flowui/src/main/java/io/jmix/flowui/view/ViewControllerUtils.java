@@ -25,6 +25,7 @@ import com.vaadin.flow.shared.Registration;
 import io.jmix.core.annotation.Internal;
 import io.jmix.flowui.facet.Facet;
 import io.jmix.flowui.model.ViewData;
+import io.jmix.flowui.observation.ViewLifecycle;
 import io.jmix.flowui.view.StandardDetailView.InitEntityEvent;
 import io.jmix.flowui.view.StandardDetailView.ValidationEvent;
 import io.jmix.flowui.view.View.QueryParametersChangeEvent;
@@ -207,14 +208,37 @@ public final class ViewControllerUtils {
     }
 
     /**
-     * Fires the specified {@link ComponentEvent} for the given {@link View}.
-     *
-     * @param view  the target {@link View} on which the event should be fired; must not be null
-     * @param event the {@link ComponentEvent} to be fired; must not be null
+     * Fires the specified {@link ComponentEvent} for the given {@link View}. Lifecycle events are
+     * auto-observed; do not wrap this call in {@code observeViewLifecycle}.
      */
     public static void fireEvent(View<?> view, ComponentEvent<?> event) {
-        view.getUiObservationSupport().createViewLifecycleObservation(view, event)
-                .observe(() -> ComponentUtil.fireEvent(view, event));
+        ViewLifecycle phase = mapLifecycleEvent(event);
+        if (phase == null) {
+            ComponentUtil.fireEvent(view, event);
+            return;
+        }
+        view.getUiObservationSupport().observeViewLifecycle(view, phase,
+                () -> ComponentUtil.fireEvent(view, event));
+    }
+
+    @Nullable
+    private static ViewLifecycle mapLifecycleEvent(ComponentEvent<?> event) {
+        if (event instanceof View.InitEvent) {
+            return ViewLifecycle.INIT;
+        }
+        if (event instanceof View.BeforeShowEvent) {
+            return ViewLifecycle.BEFORE_SHOW;
+        }
+        if (event instanceof View.ReadyEvent) {
+            return ViewLifecycle.READY;
+        }
+        if (event instanceof View.BeforeCloseEvent) {
+            return ViewLifecycle.BEFORE_CLOSE;
+        }
+        if (event instanceof View.AfterCloseEvent) {
+            return ViewLifecycle.AFTER_CLOSE;
+        }
+        return null;
     }
 
     /**
@@ -380,7 +404,7 @@ public final class ViewControllerUtils {
      */
     public static boolean isSameView(View<?> view, View<?> other) {
         return view.getClass() == other.getClass()
-                && view.getId().equals(other.getId());
+               && view.getId().equals(other.getId());
     }
 
     /**

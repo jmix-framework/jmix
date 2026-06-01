@@ -48,4 +48,13 @@ public interface DiagramEngine {
      * @return {@code true} if the service is accessible, otherwise {@code false}.
      */
     boolean pingService();
+
+    /**
+     * Indicates whether diagram generation is permitted under the current configuration. Unlike {@link #pingService()},
+     * which checks network reachability, this reflects configuration and security policy. For example, generating
+     * diagrams via the public PlantUML server may be disabled when no private server is configured.
+     *
+     * @return {@code true} if diagram generation is allowed, otherwise {@code false}.
+     */
+    boolean isAvailable();
 }

@@ -16,6 +16,7 @@
 
 package io.jmix.datatools;
 
+import io.jmix.core.CoreProperties;
 import io.jmix.core.Metadata;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.data.DataConfiguration;
@@ -37,12 +38,13 @@ public class DatatoolsConfiguration {
 
     @Bean("datatl_DiagramEngine")
     public DiagramEngine diagramEngine(Metadata metadata,
-                                       DatatoolsProperties datatoolsProperties) {
+                                       DatatoolsProperties datatoolsProperties,
+                                       CoreProperties coreProperties) {
         EngineType engineType = datatoolsProperties.getDataModelDiagram().getEngineType();
 
         switch (engineType) {
             case PLANTUML -> {
-                return new PlantUmlDiagramEngine(datatoolsProperties, metadata);
+                return new PlantUmlDiagramEngine(datatoolsProperties, metadata, coreProperties);
             }
             case MERMAID -> {
                 throw new IllegalStateException("Failed to create diagram service bean: " +

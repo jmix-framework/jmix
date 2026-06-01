@@ -20,8 +20,10 @@ import io.jmix.aitools.ChatClientFactory;
 import io.jmix.aitools.memory.ChatMemoryFactory;
 import io.jmix.aitools.memory.JmixChatMemoryRepository;
 import io.jmix.aitools.service.AiChatService;
+import io.jmix.aitools.service.prompt.AiChatSystemPromptProvider;
 import io.jmix.aitools.tool.AiToolRegistry;
 import io.jmix.core.common.util.Preconditions;
+import io.jmix.core.security.CurrentAuthentication;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
@@ -40,6 +42,10 @@ public class AiChatServiceImpl implements AiChatService, InitializingBean {
     protected ChatMemoryFactory chatMemoryFactory;
     @Autowired
     protected AiToolRegistry aiToolRegistry;
+    @Autowired
+    protected AiChatSystemPromptProvider systemPromptProvider;
+    @Autowired
+    protected CurrentAuthentication currentAuthentication;
 
     protected ChatClient chatClient;
 
@@ -84,9 +90,17 @@ public class AiChatServiceImpl implements AiChatService, InitializingBean {
 
     protected ChatClient.ChatClientRequestSpec buildPrompt(String message, String conversationId) {
         return chatClient.prompt()
+                .system(s -> s
+                        .text(systemPromptProvider.getResource())
+                        .param("responseLanguage", resolveResponseLanguage())
+                        .param("additionalInstructions", ""))
                 .user(user -> user.text(message))
                 .toolCallbacks(aiToolRegistry.getAllCallbacks())
                 .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId));
+    }
+
+    protected String resolveResponseLanguage() {
+        return currentAuthentication.getLocale().getLanguage();
     }
 
     protected void buildChatClient() {

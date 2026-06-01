@@ -18,6 +18,8 @@ package test_support;
 
 import io.jmix.aitools.dataload.prompt.DataLoadChatSystemPromptProvider;
 import io.jmix.aitools.dataload.prompt.impl.DefaultDataLoadChatSystemPromptProvider;
+import io.jmix.aitools.service.prompt.AiChatSystemPromptProvider;
+import io.jmix.aitools.service.prompt.impl.DefaultAiChatSystemPromptProvider;
 import io.jmix.core.CoreConfiguration;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.annotation.MessageSourceBasenames;
@@ -25,6 +27,7 @@ import io.jmix.data.DataConfiguration;
 import io.jmix.testsupport.config.CommonCoreTestConfiguration;
 import io.jmix.aitools.AiToolsConfiguration;
 import io.jmix.aitools.introspection.introspector.JpaDomainModelIntrospector;
+import io.jmix.testsupport.config.CoreSecurityTestConfiguration;
 import io.micrometer.observation.ObservationRegistry;
 import org.springframework.ai.chat.client.DefaultChatClientBuilder;
 import org.springframework.context.annotation.Bean;
@@ -33,7 +36,8 @@ import org.springframework.context.annotation.Import;
 import repair.test_support.StubChatModel;
 
 @Configuration
-@Import({CoreConfiguration.class, AiToolsConfiguration.class, CommonCoreTestConfiguration.class, DataConfiguration.class})
+@Import({CoreConfiguration.class, AiToolsConfiguration.class, CommonCoreTestConfiguration.class,
+        DataConfiguration.class, CoreSecurityTestConfiguration.class})
 @JmixModule
 @MessageSourceBasenames("test_support/messages")
 public class AiToolsTestConfiguration {
@@ -49,7 +53,17 @@ public class AiToolsTestConfiguration {
     }
 
     @Bean
-    DefaultChatClientBuilder  chatClientBuilder() {
-        return new DefaultChatClientBuilder(new StubChatModel(), ObservationRegistry.NOOP, null, null);
+    AiChatSystemPromptProvider aiChatSystemPromptProvider() {
+        return new DefaultAiChatSystemPromptProvider();
+    }
+
+    @Bean
+    StubChatModel stubChatModel() {
+        return new StubChatModel();
+    }
+
+    @Bean
+    DefaultChatClientBuilder chatClientBuilder(StubChatModel stubChatModel) {
+        return new DefaultChatClientBuilder(stubChatModel, ObservationRegistry.NOOP, null, null);
     }
 }

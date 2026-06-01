@@ -27,6 +27,7 @@ import java.util.List;
 public class StubChatModel implements ChatModel {
 
     protected String content;
+    protected Prompt lastPrompt;
 
     public String getContent() {
         return content;
@@ -36,8 +37,13 @@ public class StubChatModel implements ChatModel {
         this.content = content;
     }
 
+    public Prompt getLastPrompt() {
+        return lastPrompt;
+    }
+
     @Override
     public ChatResponse call(Prompt prompt) {
+        this.lastPrompt = prompt;
         return ChatResponse.builder()
                 .generations(List.of(new Generation(new AssistantMessage(content))))
                 .build();

@@ -27,11 +27,6 @@ import org.springframework.context.annotation.Configuration;
 public class SpringAiJpqlRepairerTestConfiguration {
 
     @Bean
-    StubChatModel stubChatModel() {
-        return new StubChatModel();
-    }
-
-    @Bean
     ChatClient.Builder chatClientBuilder(StubChatModel stubChatModel) {
         return ChatClient.builder(stubChatModel);
     }

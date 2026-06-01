@@ -21,23 +21,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-
 @Component("aitols_EntityDataLoadPromptProvider")
 public class DefaultEntityDataLoadPromptProvider implements EntityDataLoadPromptProvider {
 
     @Value("classpath:io/jmix/aitools/dataload/prompt/entity-dataload-system-prompt.txt")
     protected Resource promptResource;
-
-    @Override
-    public String getContent() {
-        try {
-            return promptResource.getContentAsString(StandardCharsets.UTF_8);
-        } catch (IOException e) {
-            throw new IllegalStateException("Cannot read prompt resource", e);
-        }
-    }
 
     @Override
     public Resource getResource() {

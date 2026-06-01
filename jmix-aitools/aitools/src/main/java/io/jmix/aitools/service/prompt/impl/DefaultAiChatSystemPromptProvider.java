@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package io.jmix.aitools.dataload.prompt.impl;
+package io.jmix.aitools.service.prompt.impl;
 
-import io.jmix.aitools.dataload.prompt.JpqlRepairerPromptProvider;
+import io.jmix.aitools.service.prompt.AiChatSystemPromptProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 
-public class DefaultJpqlRepairerPromptProvider implements JpqlRepairerPromptProvider {
+public class DefaultAiChatSystemPromptProvider implements AiChatSystemPromptProvider {
 
-    @Value("classpath:io/jmix/aitools/dataload/prompt/jpql-repairer-prompt.txt")
+    @Value("classpath:io/jmix/aitools/service/prompt/system-chat-service-prompt.st")
     protected Resource promptResource;
 
     @Override

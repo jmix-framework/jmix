@@ -18,6 +18,8 @@ package io.jmix.autoconfigure.aitools;
 
 import io.jmix.aitools.AiToolsConfiguration;
 import io.jmix.aitools.memory.JmixChatMemoryRepository;
+import io.jmix.aitools.service.prompt.AiChatSystemPromptProvider;
+import io.jmix.aitools.service.prompt.impl.DefaultAiChatSystemPromptProvider;
 import io.jmix.core.CoreConfiguration;
 import io.jmix.data.DataConfiguration;
 import io.jmix.eclipselink.EclipselinkConfiguration;
@@ -37,5 +39,11 @@ public class AiToolsAutoConfiguration {
     @ConditionalOnMissingBean(ChatMemoryRepository.class)
     public ChatMemoryRepository jmixAiChatService() {
         return new JmixChatMemoryRepository();
+    }
+
+    @Bean("aitols_DefaultAiChatSystemPromptProvider")
+    @ConditionalOnMissingBean(AiChatSystemPromptProvider.class)
+    public AiChatSystemPromptProvider aiChatSystemPromptProvider() {
+        return new DefaultAiChatSystemPromptProvider();
     }
 }

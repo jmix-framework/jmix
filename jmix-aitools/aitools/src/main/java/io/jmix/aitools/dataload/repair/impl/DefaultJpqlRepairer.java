@@ -29,6 +29,8 @@ import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class DefaultJpqlRepairer implements JpqlRepairer, InitializingBean {
@@ -86,7 +88,7 @@ public class DefaultJpqlRepairer implements JpqlRepairer, InitializingBean {
     }
 
     protected GeneratedJpqlResult executePrompt(JpqlRepairRequest request) {
-        String repairPrompt = jpqlRepairerPromptProvider.getContent();
+        String repairPrompt = readPromptTemplate();
         String userPrompt = repairPrompt.formatted(
                 request.getAttempt(),
                 request.getExecutionRequest().getUserText(),
@@ -112,6 +114,14 @@ public class DefaultJpqlRepairer implements JpqlRepairer, InitializingBean {
         }
 
         return mapToGeneratedJpqlResult(payload);
+    }
+
+    protected String readPromptTemplate() {
+        try {
+            return jpqlRepairerPromptProvider.getResource().getContentAsString(StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            throw new IllegalStateException("Cannot read prompt resource", e);
+        }
     }
 
     protected GeneratedJpqlResult mapToGeneratedJpqlResult(GeneratedJpqlPayload payload) {

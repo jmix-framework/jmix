@@ -20,7 +20,5 @@ import org.springframework.core.io.Resource;
 
 public interface PromptProvider {
 
-    String getContent();
-
     Resource getResource();
 }

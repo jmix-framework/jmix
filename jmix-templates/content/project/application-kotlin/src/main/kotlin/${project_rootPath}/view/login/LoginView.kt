@@ -3,12 +3,14 @@ package ${project_rootPackage}.view.login
 import com.vaadin.flow.component.UI
 import com.vaadin.flow.component.login.AbstractLogin.LoginEvent
 import com.vaadin.flow.component.login.LoginI18n
+import com.vaadin.flow.component.notification.Notification
 import com.vaadin.flow.i18n.LocaleChangeEvent
 import com.vaadin.flow.i18n.LocaleChangeObserver
 import com.vaadin.flow.router.Route
 import com.vaadin.flow.server.VaadinSession
 import io.jmix.core.CoreProperties
 import io.jmix.core.MessageTools
+import io.jmix.flowui.Notifications
 import io.jmix.flowui.component.loginform.JmixLoginForm
 import io.jmix.flowui.kit.component.ComponentUtils
 import io.jmix.flowui.kit.component.loginform.JmixLoginI18n
@@ -35,6 +37,9 @@ open class LoginView : StandardView(), LocaleChangeObserver {
     @Autowired
     private lateinit var messageTools: MessageTools
 
+    @Autowired
+    private lateinit var notifications: Notifications
+
     @ViewComponent
     private lateinit var login: JmixLoginForm
 
@@ -53,6 +58,16 @@ open class LoginView : StandardView(), LocaleChangeObserver {
     fun onInit(event: InitEvent) {
         initLocales()
         initDefaultCredentials()
+        showWarningIfDefaultCredentials()
+    }
+
+    private fun showWarningIfDefaultCredentials() {
+        if ("admin" == defaultPassword) {
+            notifications.create("WARNING: Change admin password and remove ui.login.default* properties when deploying the application to production")
+                .withPosition(Notification.Position.BOTTOM_CENTER)
+                .withDuration(10000)
+                .show()
+        }
     }
 
     private fun initLocales() {

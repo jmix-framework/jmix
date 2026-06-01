@@ -121,29 +121,14 @@ public class UiObservationSupport {
     public static final String TARGET_ID_TAG = "target.id";
 
     /**
-     * Sentinel value placed into low-cardinality tags when the underlying id cannot be resolved
-     * (view/fragment/target absent or without an explicit id). The tag is added unconditionally so
-     * the Prometheus meter for a given metric name always carries the same set of tag keys —
-     * otherwise conditionally-added tags make
+     * Sentinel value placed into low-cardinality tags ({@link #VIEW_ID_TAG}, {@link #FRAGMENT_ID_TAG},
+     * {@link #TARGET_ID_TAG}) when the underlying id cannot be resolved (view/fragment/target absent
+     * or without an explicit id). The tag is added unconditionally so the Prometheus meter for a given
+     * metric name always carries the same set of tag keys — otherwise conditionally-added tags make
      * {@code PrometheusMeterRegistry} reject one of the registrations and silently drop a slice
      * of the data.
      */
-    private static final String NOT_AVAILABLE = "N/A";
-
-    /**
-     * Sentinel for the low-cardinality {@code view.id} tag — see {@link #NOT_AVAILABLE}.
-     */
-    protected static final String MISSING_VIEW_ID = NOT_AVAILABLE;
-
-    /**
-     * Sentinel for the low-cardinality {@code fragment.id} tag — see {@link #NOT_AVAILABLE}.
-     */
-    protected static final String MISSING_FRAGMENT_ID = NOT_AVAILABLE;
-
-    /**
-     * Sentinel for the low-cardinality {@code target.id} tag of action observations — see {@link #NOT_AVAILABLE}.
-     */
-    protected static final String MISSING_TARGET_ID = NOT_AVAILABLE;
+    public static final String NOT_AVAILABLE = "N/A";
 
     /**
      * Sentinel for the low-cardinality {@code loader.id} tag when the loader carries an auto-generated
@@ -208,9 +193,9 @@ public class UiObservationSupport {
                 .lowCardinalityKeyValue(LIFECYCLE_NAME_TAG, lifecycle.getName())
                 .lowCardinalityKeyValue(LOADER_ID_TAG, aggregatedLoaderId)
                 .highCardinalityKeyValue(FULL_LOADER_ID_TAG, loaderId)
-                .lowCardinalityKeyValue(VIEW_ID_TAG, Strings.isNullOrEmpty(viewId) ? MISSING_VIEW_ID : viewId)
+                .lowCardinalityKeyValue(VIEW_ID_TAG, Strings.isNullOrEmpty(viewId) ? NOT_AVAILABLE : viewId)
                 .lowCardinalityKeyValue(FRAGMENT_ID_TAG,
-                        Strings.isNullOrEmpty(info.fragmentId()) ? MISSING_FRAGMENT_ID : info.fragmentId());
+                        Strings.isNullOrEmpty(info.fragmentId()) ? NOT_AVAILABLE : info.fragmentId());
     }
 
     /**
@@ -241,7 +226,7 @@ public class UiObservationSupport {
                 .contextualName(VIEW_CONTEXTUAL_NAME)
                 .lowCardinalityKeyValue(LIFECYCLE_NAME_TAG, lifecycle.getName())
                 .lowCardinalityKeyValue(VIEW_ID_TAG,
-                        Strings.isNullOrEmpty(viewId) ? MISSING_VIEW_ID : viewId)
+                        Strings.isNullOrEmpty(viewId) ? NOT_AVAILABLE : viewId)
                 .lowCardinalityKeyValue(VIEW_CLASS_TAG, view.getClass().getName());
     }
 
@@ -282,9 +267,9 @@ public class UiObservationSupport {
                 .lowCardinalityKeyValue(LIFECYCLE_NAME_TAG, lifecycle.getName())
                 .lowCardinalityKeyValue(FRAGMENT_CLASS_TAG, info.fragmentClass())
                 .lowCardinalityKeyValue(VIEW_ID_TAG,
-                        Strings.isNullOrEmpty(info.viewId()) ? MISSING_VIEW_ID : info.viewId())
+                        Strings.isNullOrEmpty(info.viewId()) ? NOT_AVAILABLE : info.viewId())
                 .lowCardinalityKeyValue(FRAGMENT_ID_TAG,
-                        Strings.isNullOrEmpty(info.fragmentId()) ? MISSING_FRAGMENT_ID : info.fragmentId());
+                        Strings.isNullOrEmpty(info.fragmentId()) ? NOT_AVAILABLE : info.fragmentId());
     }
 
     public Observation createActionExecutionObservation(Action action, @Nullable Component invocationSource) {
@@ -318,11 +303,11 @@ public class UiObservationSupport {
                 .contextualName(ACTION_CONTEXTUAL_NAME)
                 .lowCardinalityKeyValue(ACTION_ID_TAG, action.getId())
                 .lowCardinalityKeyValue(TARGET_ID_TAG,
-                        Strings.isNullOrEmpty(resolvedTargetId) ? MISSING_TARGET_ID : resolvedTargetId)
+                        Strings.isNullOrEmpty(resolvedTargetId) ? NOT_AVAILABLE : resolvedTargetId)
                 .lowCardinalityKeyValue(VIEW_ID_TAG,
-                        Strings.isNullOrEmpty(resolvedViewId) ? MISSING_VIEW_ID : resolvedViewId)
+                        Strings.isNullOrEmpty(resolvedViewId) ? NOT_AVAILABLE : resolvedViewId)
                 .lowCardinalityKeyValue(FRAGMENT_ID_TAG,
-                        Strings.isNullOrEmpty(resolvedFragmentId) ? MISSING_FRAGMENT_ID : resolvedFragmentId);
+                        Strings.isNullOrEmpty(resolvedFragmentId) ? NOT_AVAILABLE : resolvedFragmentId);
     }
 
     protected boolean isObservationAvailable() {

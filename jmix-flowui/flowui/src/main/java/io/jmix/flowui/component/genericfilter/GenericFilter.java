@@ -603,6 +603,35 @@ public class GenericFilter extends Composite<JmixDetails>
         setCurrentConfigurationInternal(currentConfiguration, false);
     }
 
+    /**
+     * Registers the given configuration with this filter and immediately sets it as the current
+     * configuration, in the correct order and in a single call.
+     * <p>
+     * This is a convenience alternative to calling {@link #addConfiguration(Configuration)}
+     * followed by {@link #setCurrentConfiguration(Configuration)}, which fails silently when
+     * the configuration is not yet registered at the time {@code setCurrentConfiguration} is
+     * invoked.
+     *
+     * @param configuration the configuration to register and activate
+     */
+    public void addAndSetCurrentConfiguration(Configuration configuration) {
+        addConfiguration(configuration);
+        setCurrentConfiguration(configuration);
+    }
+
+    /**
+     * Refreshes the layout of the current configuration.
+     * <p>
+     * Call this method after programmatically modifying the current configuration's filter
+     * components (e.g. adding a component to the root {@link LogicalFilterComponent}) to force
+     * the filter UI to re-render remove buttons and update the data-loader condition.
+     * <p>
+     * This is a stable public equivalent of the internal {@code refreshCurrentConfigurationLayout()}.
+     */
+    public void refreshCurrentConfiguration() {
+        refreshCurrentConfigurationLayout();
+    }
+
     protected void setCurrentConfigurationInternal(Configuration currentConfiguration, boolean fromClient) {
         if (configurations.contains(currentConfiguration)
                 || getEmptyConfiguration().equals(currentConfiguration)) {
@@ -891,7 +920,8 @@ public class GenericFilter extends Composite<JmixDetails>
      */
     public void removeConfiguration(Configuration configuration) {
         if (configuration != getEmptyConfiguration()
-                && !(configuration instanceof DesignTimeConfiguration)) {
+                && !(configuration instanceof DesignTimeConfiguration)
+                && !(configuration instanceof MutableConfiguration mc && mc.isProtectedFromUserDeletion())) {
             configurations.remove(configuration);
             configuration.getRootLogicalFilterComponent().getElement().removeFromParent();
 

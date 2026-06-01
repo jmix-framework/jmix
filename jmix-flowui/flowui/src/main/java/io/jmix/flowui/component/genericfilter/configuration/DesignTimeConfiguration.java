@@ -24,10 +24,14 @@ import io.jmix.flowui.component.genericfilter.Configuration;
 import io.jmix.flowui.component.genericfilter.GenericFilter;
 import io.jmix.flowui.component.logicalfilter.LogicalFilterComponent;
 
-import org.jspecify.annotations.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * A read-only configuration defined at design time (e.g. via XML).
+ * Mutating methods inherited from {@link Configuration} throw {@link UnsupportedOperationException}.
+ */
 public class DesignTimeConfiguration implements Configuration {
 
     protected final String id;
@@ -107,7 +111,18 @@ public class DesignTimeConfiguration implements Configuration {
                 "Use FilterCopyAction to create a modifiable copy of configuration");
     }
 
+    /**
+     * Records the default value for the given filter component parameter.
+     * <p>
+     * Intended for framework-internal initialization only — called by the XML loader
+     * ({@code GenericFilterLoader}) and {@code DesignTimeConfigurationBuilder} when setting up
+     * the configuration. Not deprecated here intentionally: the deprecation on
+     * {@link Configuration#setFilterComponentDefaultValue} discourages calling this method
+     * through a {@link Configuration} reference, but direct calls on this class are valid
+     * during initialization.
+     */
     @Override
+    @SuppressWarnings({"deprecation", "removal"})
     public void setFilterComponentDefaultValue(String parameterName, @Nullable Object defaultValue) {
         Preconditions.checkNotNullArgument(parameterName);
         if (isFilterComponentExist(parameterName)) {

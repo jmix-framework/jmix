@@ -22,15 +22,24 @@ import io.jmix.flowui.component.filter.FilterComponent;
 import io.jmix.flowui.component.filter.SingleFilterComponentBase;
 import io.jmix.flowui.component.genericfilter.Configuration;
 import io.jmix.flowui.component.genericfilter.GenericFilter;
+import io.jmix.flowui.component.genericfilter.MutableConfiguration;
 import io.jmix.flowui.component.logicalfilter.LogicalFilterComponent;
 
-import org.jspecify.annotations.Nullable;
+import org.springframework.lang.Nullable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class RunTimeConfiguration implements Configuration {
+/**
+ * A runtime (user-created) filter configuration that supports dynamic modification of
+ * its filter components.
+ * <p>
+ * Implements {@link MutableConfiguration} — use that interface as the declared type when
+ * you need compile-time safety against calling mutating methods on a read-only
+ * {@link DesignTimeConfiguration}.
+ */
+public class RunTimeConfiguration implements MutableConfiguration {
 
     protected final String id;
     protected final GenericFilter owner;
@@ -40,6 +49,7 @@ public class RunTimeConfiguration implements Configuration {
     protected LogicalFilterComponent<?> rootLogicalFilterComponent;
     protected Set<FilterComponent> modifiedFilterComponents = new HashSet<>();
     protected Map<String, Object> defaultValuesMap = new HashMap<>();
+    protected boolean protectedFromUserDeletion = false;
 
     public RunTimeConfiguration(String id, LogicalFilterComponent<?> rootLogicalFilterComponent, GenericFilter owner) {
         this.id = id;
@@ -185,5 +195,15 @@ public class RunTimeConfiguration implements Configuration {
     @Override
     public int hashCode() {
         return id.hashCode();
+    }
+
+    @Override
+    public boolean isProtectedFromUserDeletion() {
+        return protectedFromUserDeletion;
+    }
+
+    @Override
+    public void setProtectedFromUserDeletion(boolean value) {
+        this.protectedFromUserDeletion = value;
     }
 }

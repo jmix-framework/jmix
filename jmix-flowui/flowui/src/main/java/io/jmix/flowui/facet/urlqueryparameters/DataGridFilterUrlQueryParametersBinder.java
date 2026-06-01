@@ -180,12 +180,54 @@ public class DataGridFilterUrlQueryParametersBinder extends AbstractUrlQueryPara
 
     protected void applyPropertyFilterParameters(List<String> params) {
         for (String parameterString : params) {
-            if (StringUtils.countOccurrencesOf(parameterString, SEPARATOR) == 3) {
+            if (isNewFormat(parameterString)) {
                 applyPropertyFilterParameter(parameterString);
             } else {
                 // use legacy api
                 _applyPropertyFilterParameter(parameterString);
             }
+        }
+    }
+
+    /**
+     * Distinguishes between the current URL parameter format and the legacy one.
+     * <p>
+     * Current format: {@code key_property_operation_value} (3 structural separators).
+     * Legacy format:  {@code property_operation_value}     (2 structural separators).
+     * <p>
+     * A simple separator count is unreliable because a user-entered {@code value}
+     * may itself contain {@code _}. Instead, this method inspects which positional
+     * component looks like a valid {@link PropertyFilter.Operation} name — in the
+     * current format the operation is the 3rd component, in the legacy format the
+     * 2nd one — and routes accordingly. When both look valid (rare ambiguity),
+     * the current format wins.
+     */
+    protected boolean isNewFormat(String parameterString) {
+        int separatorCount = StringUtils.countOccurrencesOf(parameterString, SEPARATOR);
+        if (separatorCount < 3) {
+            return false;
+        }
+
+        int firstSeparator = parameterString.indexOf(SEPARATOR);
+        int secondSeparator = parameterString.indexOf(SEPARATOR, firstSeparator + 1);
+        int thirdSeparator = parameterString.indexOf(SEPARATOR, secondSeparator + 1);
+
+        String newFormatOperation = parameterString.substring(secondSeparator + 1, thirdSeparator);
+        String legacyFormatOperation = parameterString.substring(firstSeparator + 1, secondSeparator);
+
+        boolean newFormatOperationValid = isValidOperationName(newFormatOperation);
+        boolean legacyFormatOperationValid = isValidOperationName(legacyFormatOperation);
+
+        return newFormatOperationValid || !legacyFormatOperationValid;
+    }
+
+    protected boolean isValidOperationName(String operationString) {
+        try {
+            urlParamSerializer.deserialize(PropertyFilter.Operation.class,
+                    filterUrlQueryParametersSupport.restoreSeparatorValue(operationString));
+            return true;
+        } catch (IllegalArgumentException e) {
+            return false;
         }
     }
 

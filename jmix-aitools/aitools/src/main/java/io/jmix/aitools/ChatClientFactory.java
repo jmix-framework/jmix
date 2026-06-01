@@ -16,8 +16,13 @@
 
 package io.jmix.aitools;
 
+import io.jmix.aitools.memory.ChatMemoryFactory;
 import io.jmix.core.common.util.Preconditions;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
+import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
+import org.springframework.ai.chat.client.advisor.ToolCallAdvisor;
+import org.springframework.ai.chat.client.advisor.api.BaseAdvisor;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -27,6 +32,8 @@ import java.util.function.Consumer;
 @Component("aitols_ChatClientFactory")
 public class ChatClientFactory {
 
+    @Autowired
+    protected ChatMemoryFactory chatMemoryFactory;
     @Autowired
     protected ObjectProvider<ChatClient.Builder> chatClientBuilderProvider;
 
@@ -40,6 +47,24 @@ public class ChatClientFactory {
         ChatClient.Builder builder = createBuilder();
         builderCustomizer.accept(builder);
         return builder.build();
+    }
+
+    public ChatClient createChatClientWithDefaultAdvisors() {
+        return createChatClient(builder ->
+                builder.defaultAdvisors(
+                        SimpleLoggerAdvisor.builder().build(),
+                        MessageChatMemoryAdvisor.builder(chatMemoryFactory.build())
+                                .order(BaseAdvisor.HIGHEST_PRECEDENCE + 200)
+                                .build(),
+                        // Memory has the lower order, so it wraps the tool loop and runs once (not reloaded
+                        // mid-iteration from the lossy repository). The tool advisor keeps its own conversation
+                        // history across iterations (conversationHistoryEnabled=true, the default), so within a
+                        // single exchange the live assistant(tool_calls) and tool responses stay intact and adjacent.
+                        // (Spring logs a warning that memory is not updated between iterations — harmless here,
+                        // since the tool advisor owns the in-loop history and memory persists once at the end.)
+                        ToolCallAdvisor.builder()
+                                .advisorOrder(BaseAdvisor.HIGHEST_PRECEDENCE + 300)
+                                .build()));
     }
 
     public ChatClient.Builder createBuilder() {

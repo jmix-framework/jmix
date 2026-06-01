@@ -20,7 +20,9 @@ import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.model.Generation;
+import org.springframework.ai.chat.prompt.ChatOptions;
 import org.springframework.ai.chat.prompt.Prompt;
+import org.springframework.ai.model.tool.ToolCallingChatOptions;
 
 import java.util.List;
 
@@ -31,6 +33,14 @@ public class StubChatModel implements ChatModel {
 
     public String getContent() {
         return content;
+    }
+
+    // The ToolCallAdvisor requires the prompt options to be ToolCallingChatOptions. A real model
+    // (e.g. OpenAiChatModel) supplies them via its default options; the stub mirrors that so the
+    // tool-calling advisor chain works under test.
+    @Override
+    public ChatOptions getDefaultOptions() {
+        return ToolCallingChatOptions.builder().build();
     }
 
     public void setContent(String content) {

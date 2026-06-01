@@ -17,7 +17,6 @@
 package io.jmix.aitools.service.impl;
 
 import io.jmix.aitools.ChatClientFactory;
-import io.jmix.aitools.memory.ChatMemoryFactory;
 import io.jmix.aitools.memory.JmixChatMemoryRepository;
 import io.jmix.aitools.service.AiChatService;
 import io.jmix.aitools.service.prompt.AiChatSystemPromptProvider;
@@ -25,8 +24,6 @@ import io.jmix.aitools.tool.AiToolRegistry;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.security.CurrentAuthentication;
 import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
-import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,8 +35,6 @@ public class AiChatServiceImpl implements AiChatService, InitializingBean {
 
     @Autowired
     protected ChatClientFactory chatClientFactory;
-    @Autowired
-    protected ChatMemoryFactory chatMemoryFactory;
     @Autowired
     protected AiToolRegistry aiToolRegistry;
     @Autowired
@@ -104,11 +99,7 @@ public class AiChatServiceImpl implements AiChatService, InitializingBean {
     }
 
     protected void buildChatClient() {
-        chatClient = chatClientFactory.createChatClient(builder ->
-                builder.defaultAdvisors(
-                        SimpleLoggerAdvisor.builder().build(),
-                        MessageChatMemoryAdvisor.builder(chatMemoryFactory.build()).build()
-                ));
+        chatClient = chatClientFactory.createChatClientWithDefaultAdvisors();
     }
 
     protected void checkChatClient() {

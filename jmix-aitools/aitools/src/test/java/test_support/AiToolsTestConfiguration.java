@@ -30,6 +30,8 @@ import io.jmix.aitools.introspection.introspector.JpaDomainModelIntrospector;
 import io.jmix.testsupport.config.CoreSecurityTestConfiguration;
 import io.micrometer.observation.ObservationRegistry;
 import org.springframework.ai.chat.client.DefaultChatClientBuilder;
+import org.springframework.ai.chat.client.advisor.ToolCallAdvisor;
+import org.springframework.ai.model.tool.ToolCallingChatOptions;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -64,6 +66,7 @@ public class AiToolsTestConfiguration {
 
     @Bean
     DefaultChatClientBuilder chatClientBuilder(StubChatModel stubChatModel) {
-        return new DefaultChatClientBuilder(stubChatModel, ObservationRegistry.NOOP, null, null);
+        return new DefaultChatClientBuilder(stubChatModel, ObservationRegistry.NOOP, null, null,
+                ToolCallAdvisor.builder());
     }
 }

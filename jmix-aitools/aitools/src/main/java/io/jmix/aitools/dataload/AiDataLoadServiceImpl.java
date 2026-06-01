@@ -28,8 +28,6 @@ import io.jmix.aitools.memory.JmixChatMemoryRepository;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.security.CurrentAuthentication;
 import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
-import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -184,15 +182,7 @@ public class AiDataLoadServiceImpl implements AiDataLoadService, InitializingBea
     }
 
     protected void buildChatClient() {
-        chatClient = chatClientFactory.createChatClient(builder ->
-                builder.defaultAdvisors(
-                        SimpleLoggerAdvisor.builder().build(),
-                        MessageChatMemoryAdvisor.builder(buildChatMemory()).build()
-                ));
-    }
-
-    protected ChatMemory buildChatMemory() {
-        return chatMemoryFactory.build();
+        chatClient = chatClientFactory.createChatClientWithDefaultAdvisors();
     }
 
     protected boolean isChatClientAvailable() {

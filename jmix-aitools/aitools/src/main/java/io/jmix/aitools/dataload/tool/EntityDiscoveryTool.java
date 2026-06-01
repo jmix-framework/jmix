@@ -31,8 +31,8 @@ import java.util.List;
 @Component("aitols_DomainModelDiscoveryTool")
 public class EntityDiscoveryTool implements DataLoadAiTool, EntityDataLoadAiTool {
 
-    public static final String AVAILABLE_ENTITIES_TOOL = "aitols_getAvailableEntities()";
-    public static final String DOMAIN_MODEL_FOR_ENTITIES_TOOL = "aitols_getDomainModelForEntities()";
+    public static final String AVAILABLE_ENTITIES_TOOL = "aitols_getAvailableEntities";
+    public static final String DOMAIN_MODEL_FOR_ENTITIES_TOOL = "aitols_getDomainModelForEntities";
 
     private static final Logger log = LoggerFactory.getLogger(EntityDiscoveryTool.class);
 

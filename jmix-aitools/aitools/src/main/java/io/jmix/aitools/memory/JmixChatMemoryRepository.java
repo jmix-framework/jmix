@@ -93,6 +93,9 @@ public class JmixChatMemoryRepository implements ChatMemoryRepository {
                 .collect(Collectors.toSet());
 
         for (Message message : messages) {
+            if (isTransientToolMessage(message)) {
+                continue;
+            }
             UUID entityId = (UUID) message.getMetadata().get(ENTITY_ID_METADATA_KEY);
             if (entityId == null || !existingEntityIds.contains(entityId)) {
                 saveContext.saving(mapMessageToEntity(message, conversation));
@@ -130,6 +133,20 @@ public class JmixChatMemoryRepository implements ChatMemoryRepository {
         chatMessage.setContent(message.getText());
         chatMessage.setType(mapMessageToType(message));
         return chatMessage;
+    }
+
+    /**
+     * Tool-calling scaffolding — the assistant turn that only requests tool calls and the tool response
+     * messages — is transient to a single exchange. The {@code ToolCallAdvisor} keeps it in memory during
+     * the tool loop, so it does not need to be persisted. Persisting it would store empty assistant turns
+     * and large tool-result payloads, clutter the displayed conversation, and replay that payload back to
+     * the model on the next turn. Only durable turns are stored: user messages and the final assistant answer.
+     */
+    protected boolean isTransientToolMessage(Message message) {
+        if (message instanceof ToolResponseMessage) {
+            return true;
+        }
+        return message instanceof AssistantMessage assistantMessage && assistantMessage.hasToolCalls();
     }
 
     protected Message mapEntityToMessage(ChatMessage chatMessage) {
@@ -171,7 +188,7 @@ public class JmixChatMemoryRepository implements ChatMemoryRepository {
             } else if (isUserUploadMessage(userMessage)) {
                 return ChatMessageType.USER_UPLOAD;
             } else {
-                return ChatMessageType.SYSTEM;
+                return ChatMessageType.USER;
             }
         } else if (message instanceof AssistantMessage) {
             return ChatMessageType.ASSISTANT;

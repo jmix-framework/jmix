@@ -23,7 +23,6 @@ archivesBaseName = 'jmix-audit'
 dependencies {
     api project(':data')
     api project(':eclipselink')
-    api 'com.thoughtworks.xstream:xstream'
 
     implementation 'org.springframework:spring-orm'
     implementation 'org.springframework:spring-tx'

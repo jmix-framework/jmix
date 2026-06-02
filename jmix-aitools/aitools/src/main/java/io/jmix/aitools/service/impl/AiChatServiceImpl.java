@@ -90,7 +90,7 @@ public class AiChatServiceImpl implements AiChatService, InitializingBean {
                         .param("responseLanguage", resolveResponseLanguage())
                         .param("additionalInstructions", ""))
                 .user(user -> user.text(message))
-                .toolCallbacks(aiToolRegistry.getAllCallbacks())
+                .tools(t -> t.callbacks(aiToolRegistry.getAllCallbacks()))
                 .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId));
     }
 

@@ -24,8 +24,7 @@ dependencies {
 
     api 'org.springframework.boot:spring-boot-autoconfigure'
 
-    // TODO: pinyazhin, 2.0.0-M6 requires SB 4.1-RC
-    implementation platform('org.springframework.ai:spring-ai-bom:2.0.0-M6')
+    implementation platform('org.springframework.ai:spring-ai-bom:2.0.0-M8')
     implementation 'org.springframework.ai:spring-ai-client-chat'
     implementation 'org.springframework.ai:spring-ai-model'
 }

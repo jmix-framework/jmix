@@ -20,20 +20,9 @@
                   class="io.jmix.aitools.entity.AiConversation">
             <fetchPlan extends="_base">
                 <property name="messages" fetchPlan="_base"/>
-                <property name="attachments" fetchPlan="_base"/>
             </fetchPlan>
             <loader id="aiConversationDl"/>
         </instance>
-        <!--TODO: pinyazhin, attachments-->
-        <!--<collection id="attachmentsDc"
-                    class="io.jmix.aitools.entity.AiConversationAttachment">
-            <fetchPlan extends="_base"/>
-            <loader id="attachmentsDl">
-                <query>
-                    <![CDATA[select e from aitols_AiConversationAttachment e where e.conversation.id = :conversationId order by e.createdDate desc]]>
-                </query>
-            </loader>
-        </collection>-->
     </data>
     <facets>
         <dataLoadCoordinator auto="true"/>

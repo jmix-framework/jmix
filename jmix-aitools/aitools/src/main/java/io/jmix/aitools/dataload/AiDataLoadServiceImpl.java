@@ -175,9 +175,9 @@ public class AiDataLoadServiceImpl implements AiDataLoadService, InitializingBea
                         .text(systemPromptProvider.getResource())
                         .param("responseLanguage", resolveResponseLanguage()))
                 .user(user -> user.text(message))
-                .toolCallbacks(aiToolRegistry.findByMarker(DataLoadAiTool.class).stream()
+                .tools(t -> t.callbacks(aiToolRegistry.findByMarker(DataLoadAiTool.class).stream()
                         .map(ResolvedAiTool::getCallback)
-                        .toList())
+                        .toList()))
                 .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId));
     }
 

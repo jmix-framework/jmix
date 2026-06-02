@@ -224,10 +224,6 @@ public class AiConversationDetailView extends StandardDetailView<AiConversation>
         if (ChatMessageType.ASSISTANT.equals(messageType)) {
             return assistantMessageListItem(message.getContent(), message.getCreatedDate());
         }
-        if (ChatMessageType.USER_UPLOAD.equals(messageType) || ChatMessageType.ATTACHMENT.equals(messageType)) {
-            // TODO: pinyazhin, attachment
-            return assistantMessageListItem(message.getContent(), message.getCreatedDate());
-        }
         return userMessageListItem(message.getContent(), message.getCreatedDate());
     }
 

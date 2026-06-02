@@ -32,33 +32,6 @@
             <column name="CREATED_DATE" type="datetime"/>
         </createTable>
 
-        <createTable tableName="AITOLS_AI_CONV_ATTACHMENT">
-            <column name="ID" type="${uuid.type}">
-                <constraints primaryKey="true" nullable="false"/>
-            </column>
-            <column name="CONVERSATION_ID" type="${uuid.type}">
-                <constraints nullable="false"
-                             foreignKeyName="FK_AITOLS_AI_CONV_ATT_CONV"
-                             references="AITOLS_AI_CONVERSATION(ID)"/>
-            </column>
-            <column name="FILE_" type="varchar(1024)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="FILE_NAME" type="varchar(255)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="TITLE" type="varchar(255)"/>
-            <column name="TYPE_" type="varchar(255)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="CREATED_BY" type="varchar(255)"/>
-            <column name="CREATED_DATE" type="datetime"/>
-        </createTable>
-
-        <createIndex tableName="AITOLS_AI_CONV_ATTACHMENT" indexName="IDX_AITOLS_AI_CONV_ATTACH_CONV">
-            <column name="CONVERSATION_ID"/>
-        </createIndex>
-
         <createTable tableName="AITOLS_CHAT_MESSAGE">
             <column name="ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>

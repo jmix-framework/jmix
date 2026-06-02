@@ -43,9 +43,6 @@ public class JmixChatMemoryRepository implements ChatMemoryRepository {
     public static final String NO_OP_CONVERSATION_ID = "{noop}";
 
     private static final String ENTITY_ID_METADATA_KEY = "jmixEntityId";
-    private static final String MESSAGE_TYPE_METADATA_KEY = "jmixMessageType";
-    private static final String ATTACHMENT_METADATA_VALUE = "attachment";
-    private static final String USER_UPLOAD_METADATA_VALUE = "userUpload";
 
     @Autowired
     protected DataManager dataManager;
@@ -93,7 +90,10 @@ public class JmixChatMemoryRepository implements ChatMemoryRepository {
                 .collect(Collectors.toSet());
 
         for (Message message : messages) {
-            if (isTransientToolMessage(message)) {
+            // The ToolCallAdvisor is configured to keep it in memory during the tool loop,
+            // so it does not need to be persisted. Persisting it would store empty
+            // assistant turns and large tool-result payloads.
+            if (isToolMessage(message)) {
                 continue;
             }
             UUID entityId = (UUID) message.getMetadata().get(ENTITY_ID_METADATA_KEY);
@@ -135,14 +135,7 @@ public class JmixChatMemoryRepository implements ChatMemoryRepository {
         return chatMessage;
     }
 
-    /**
-     * Tool-calling scaffolding — the assistant turn that only requests tool calls and the tool response
-     * messages — is transient to a single exchange. The {@code ToolCallAdvisor} keeps it in memory during
-     * the tool loop, so it does not need to be persisted. Persisting it would store empty assistant turns
-     * and large tool-result payloads, clutter the displayed conversation, and replay that payload back to
-     * the model on the next turn. Only durable turns are stored: user messages and the final assistant answer.
-     */
-    protected boolean isTransientToolMessage(Message message) {
+    protected boolean isToolMessage(Message message) {
         if (message instanceof ToolResponseMessage) {
             return true;
         }
@@ -160,52 +153,26 @@ public class JmixChatMemoryRepository implements ChatMemoryRepository {
             return new SystemMessage(content != null ? content : "");
         }
 
-        final Map<String, Object> metadata = switch (type) {
-            case ATTACHMENT -> Map.of(
-                    ENTITY_ID_METADATA_KEY, entityId,
-                    MESSAGE_TYPE_METADATA_KEY, ATTACHMENT_METADATA_VALUE
-            );
-            case USER_UPLOAD -> Map.of(
-                    ENTITY_ID_METADATA_KEY, entityId,
-                    MESSAGE_TYPE_METADATA_KEY, USER_UPLOAD_METADATA_VALUE
-            );
-            default -> Map.of(ENTITY_ID_METADATA_KEY, entityId);
-        };
+        final Map<String, Object> metadata = Map.of(ENTITY_ID_METADATA_KEY, entityId);
 
         content = content == null ? "" : content;
 
         return switch (type) {
-            case USER, USER_UPLOAD, ATTACHMENT -> UserMessage.builder().text(content).metadata(metadata).build();
+            case USER -> UserMessage.builder().text(content).metadata(metadata).build();
             case ASSISTANT, TOOL -> AssistantMessage.builder().content(content).properties(metadata).build();
             case SYSTEM -> SystemMessage.builder().text(content).metadata(metadata).build();
         };
     }
 
     protected ChatMessageType mapMessageToType(Message message) {
-        if (message instanceof UserMessage userMessage) {
-            if (isAttachmentMessage(userMessage)) {
-                return ChatMessageType.ATTACHMENT;
-            } else if (isUserUploadMessage(userMessage)) {
-                return ChatMessageType.USER_UPLOAD;
-            } else {
-                return ChatMessageType.USER;
-            }
+        if (message instanceof UserMessage) {
+            return ChatMessageType.USER;
         } else if (message instanceof AssistantMessage) {
             return ChatMessageType.ASSISTANT;
         } else if (message instanceof SystemMessage) {
             return ChatMessageType.SYSTEM;
         }
         return ChatMessageType.TOOL;
-    }
-
-    protected boolean isAttachmentMessage(UserMessage userMessage) {
-        Object rawMessageType = userMessage.getMetadata().get(MESSAGE_TYPE_METADATA_KEY);
-        return ATTACHMENT_METADATA_VALUE.equals(rawMessageType);
-    }
-
-    protected boolean isUserUploadMessage(UserMessage userMessage) {
-        Object rawMessageType = userMessage.getMetadata().get(MESSAGE_TYPE_METADATA_KEY);
-        return USER_UPLOAD_METADATA_VALUE.equals(rawMessageType);
     }
 
     protected Optional<AiConversation> findConversation(UUID conversationId) {

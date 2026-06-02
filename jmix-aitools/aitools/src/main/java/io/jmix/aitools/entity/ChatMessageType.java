@@ -13,16 +13,6 @@ public enum ChatMessageType implements EnumClass<String> {
     USER("user"),
 
     /**
-     * Attachment message
-     */
-    ATTACHMENT("attachment"),
-
-    /**
-     * User's uploaded file.
-     */
-    USER_UPLOAD("user_upload"),
-
-    /**
      * LLM answer.
      */
     ASSISTANT("assistant"),
@@ -35,7 +25,7 @@ public enum ChatMessageType implements EnumClass<String> {
     /**
      * Result of tool/function calling.
      */
-    TOOL("tool"),;
+    TOOL("tool");
 
     private String id;
 

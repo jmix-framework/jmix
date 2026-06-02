@@ -34,11 +34,6 @@ public class AiConversation {
     @OrderBy("createdDate ASC")
     private List<ChatMessage> messages = new ArrayList<>();
 
-    @Composition
-    @OneToMany(mappedBy = "conversation")
-    @OrderBy("createdDate ASC")
-    private List<AiConversationAttachment> attachments;
-
     @CreatedBy
     @Column(name = "CREATED_BY")
     private String createdBy;
@@ -71,14 +66,6 @@ public class AiConversation {
 
     public void setCreatedBy(String createdBy) {
         this.createdBy = createdBy;
-    }
-
-    public List<AiConversationAttachment> getAttachments() {
-        return attachments;
-    }
-
-    public void setAttachments(List<AiConversationAttachment> attachments) {
-        this.attachments = attachments;
     }
 
     public List<ChatMessage> getMessages() {

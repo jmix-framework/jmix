@@ -96,9 +96,9 @@ public class EntityDataLoadGenerationServiceImpl implements EntityDataLoadGenera
                         .text(entityDataLoadPromptProvider.getResource())
                         .param("responseLanguage", resolveResponseLanguage()))
                 .user(user -> user.text(userText))
-                .toolCallbacks(aiToolRegistry.findByMarker(EntityDataLoadAiTool.class).stream()
+                .tools(t -> t.callbacks(aiToolRegistry.findByMarker(EntityDataLoadAiTool.class).stream()
                         .map(ResolvedAiTool::getCallback)
-                        .toList())
+                        .toList()))
                 .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId));
     }
 

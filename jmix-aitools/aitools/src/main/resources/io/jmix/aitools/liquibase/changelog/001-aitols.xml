@@ -25,9 +25,6 @@
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="TITLE" type="varchar(255)"/>
-            <column name="FIRST_MESSAGE_SENT" type="boolean" defaultValueBoolean="false">
-                <constraints nullable="false"/>
-            </column>
             <column name="CREATED_BY" type="varchar(255)"/>
             <column name="CREATED_DATE" type="datetime"/>
         </createTable>

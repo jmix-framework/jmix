@@ -26,12 +26,12 @@ import com.vaadin.flow.router.Route;
 import io.jmix.aitools.entity.AiConversation;
 import io.jmix.aitools.entity.ChatMessage;
 import io.jmix.aitools.entity.ChatMessageType;
-import io.jmix.aitools.service.AiChatService;
+import io.jmix.aitools.service.AiConversationChatService;
+import io.jmix.aitools.service.AiConversationService;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.TimeSource;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.flowui.Dialogs;
-import io.jmix.flowui.Notifications;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.app.inputdialog.DialogActions;
 import io.jmix.flowui.app.inputdialog.DialogOutcome;
@@ -50,6 +50,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 @Route(value = "aitols-ai-conversations/:id", layout = DefaultMainViewParent.class)
@@ -63,8 +64,6 @@ public class AiConversationDetailView extends StandardDetailView<AiConversation>
     @Autowired
     private UiComponents uiComponents;
     @Autowired
-    private Notifications notifications;
-    @Autowired
     private UiAsyncTasks uiAsyncTasks;
     @Autowired
     private CurrentAuthentication currentAuthentication;
@@ -76,7 +75,9 @@ public class AiConversationDetailView extends StandardDetailView<AiConversation>
     private Dialogs dialogs;
 
     @Autowired
-    private AiChatService aiChatService;
+    private AiConversationService aiConversationService;
+    @Autowired
+    private AiConversationChatService aiConversationChatService;
 
     @ViewComponent
     private MessageBundle messageBundle;
@@ -184,26 +185,15 @@ public class AiConversationDetailView extends StandardDetailView<AiConversation>
             return;
         }
 
-        // TODO: pinyazhin
-        /*try {
-            markConversationStartedIfNeeded(conversation);
-        } catch (Exception e) {
-            log.error("Failed to mark conversation as started before message submit", e);
-            notifications.create("Failed to start conversation. Please try again.")
-                    .withType(Notifications.Type.ERROR)
-                    .show();
-            return;
-        }*/
+        ChatMessage savedUserMessage = aiConversationService.createUserMessage(conversation, userMessage);
+        UUID userMessageId = savedUserMessage.getId();
 
-        // Saves AiConversation before saving messages by ChatMemoryRepository
-        getViewData().getDataContext().save();
-
-        messageList.addItem(userMessageListItem(userMessage, now()));
+        messageList.addItem(userMessageListItem(savedUserMessage.getContent(), now()));
 
         progressBar.setVisible(true);
         messageInput.setEnabled(false);
 
-        uiAsyncTasks.supplierConfigurer(() -> aiChatService.send(userMessage, conversation.getId().toString()))
+        uiAsyncTasks.supplierConfigurer(() -> aiConversationChatService.process(userMessageId, null))
                 /*TODO: pinyazhin, application property*/
                 .withTimeout(5, TimeUnit.MINUTES)
                 .withResultHandler(response -> {

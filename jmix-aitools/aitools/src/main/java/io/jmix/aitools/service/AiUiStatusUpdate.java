@@ -16,18 +16,10 @@
 
 package io.jmix.aitools.service;
 
-import reactor.core.publisher.Flux;
-
 /**
- * Stateless programmatic wrapper around the application's chat LLM with the
- * default system prompt and registered tools. Does not persist anything and is
- * not aware of conversations or history.
- * <p>
- * UI-facing conversational interactions should use {@link AiConversationChatService} instead.
+ * Ephemeral status update emitted by an AI tool through {@link io.jmix.aitools.tool.AiToolStatusPublisher}
+ * and delivered to the UI through the callback put into the tool context by
+ * {@link AiConversationChatService}. Not persisted.
  */
-public interface AiChatService {
-
-    String send(String message);
-
-    Flux<String> stream(String message);
+public record AiUiStatusUpdate(String message) {
 }

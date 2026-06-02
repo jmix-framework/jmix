@@ -17,14 +17,12 @@
 package io.jmix.aitools.service.impl;
 
 import io.jmix.aitools.ChatClientFactory;
-import io.jmix.aitools.memory.JmixChatMemoryRepository;
 import io.jmix.aitools.service.AiChatService;
 import io.jmix.aitools.service.prompt.AiChatSystemPromptProvider;
 import io.jmix.aitools.tool.AiToolRegistry;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.security.CurrentAuthentication;
 import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -46,60 +44,35 @@ public class AiChatServiceImpl implements AiChatService, InitializingBean {
 
     @Override
     public void afterPropertiesSet() {
-        buildChatClient();
+        chatClient = chatClientFactory.createChatClientWithoutMemoryAdvisor();
     }
 
     @Override
     public String send(String message) {
-        return send(message, JmixChatMemoryRepository.NO_OP_CONVERSATION_ID);
-    }
-
-    @Override
-    public String send(String message, String conversationId) {
         Preconditions.checkNotEmptyString(message);
-        Preconditions.checkNotEmptyString(conversationId);
-
         checkChatClient();
-
-        ChatClient.CallResponseSpec callResponseSpec = buildPrompt(message, conversationId).call();
-
-        return callResponseSpec.content();
+        return buildPrompt(message).call().content();
     }
 
     @Override
     public Flux<String> stream(String message) {
-        return stream(message, JmixChatMemoryRepository.NO_OP_CONVERSATION_ID);
-    }
-
-    @Override
-    public Flux<String> stream(String message, String conversationId) {
         Preconditions.checkNotEmptyString(message);
-        Preconditions.checkNotEmptyString(conversationId);
-
         checkChatClient();
-
-        ChatClient.StreamResponseSpec streamResponseSpec = buildPrompt(message, conversationId).stream();
-
-        return streamResponseSpec.content();
+        return buildPrompt(message).stream().content();
     }
 
-    protected ChatClient.ChatClientRequestSpec buildPrompt(String message, String conversationId) {
+    protected ChatClient.ChatClientRequestSpec buildPrompt(String message) {
         return chatClient.prompt()
                 .system(s -> s
                         .text(systemPromptProvider.getResource())
                         .param("responseLanguage", resolveResponseLanguage())
                         .param("additionalInstructions", ""))
                 .user(user -> user.text(message))
-                .tools(t -> t.callbacks(aiToolRegistry.getAllCallbacks()))
-                .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId));
+                .tools(t -> t.callbacks(aiToolRegistry.getAllCallbacks()));
     }
 
     protected String resolveResponseLanguage() {
         return currentAuthentication.getLocale().getLanguage();
-    }
-
-    protected void buildChatClient() {
-        chatClient = chatClientFactory.createChatClientWithDefaultAdvisors();
     }
 
     protected void checkChatClient() {

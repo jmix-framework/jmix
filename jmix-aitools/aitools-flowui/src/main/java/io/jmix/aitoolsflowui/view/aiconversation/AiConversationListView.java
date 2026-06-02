@@ -18,8 +18,7 @@ package io.jmix.aitoolsflowui.view.aiconversation;
 
 import com.vaadin.flow.router.Route;
 import io.jmix.aitools.entity.AiConversation;
-import io.jmix.core.DataManager;
-import io.jmix.core.Messages;
+import io.jmix.aitools.service.AiConversationService;
 import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.view.*;
@@ -33,25 +32,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class AiConversationListView extends StandardListView<AiConversation> {
 
     @Autowired
-    private Messages messages;
-    @Autowired
     private ViewNavigators viewNavigators;
     @Autowired
-    private DataManager dataManager;
+    private AiConversationService aiConversationService;
 
     @Subscribe("aiConversationsDataGrid.createAction")
     public void onAiConversationsDataGridCreateAction(final ActionPerformedEvent event) {
-        AiConversation aiConversation = createAiConversation();
-        dataManager.save(aiConversation);
+        AiConversation conversation = aiConversationService.createNewConversation();
 
         viewNavigators.detailView(this, AiConversation.class)
-                .editEntity(aiConversation)
+                .editEntity(conversation)
                 .navigate();
-    }
-
-    protected AiConversation createAiConversation() {
-        AiConversation aiConversation = dataManager.create(AiConversation.class);
-        aiConversation.setTitle(messages.getMessage("aiConversation.defaultTitle"));
-        return aiConversation;
     }
 }

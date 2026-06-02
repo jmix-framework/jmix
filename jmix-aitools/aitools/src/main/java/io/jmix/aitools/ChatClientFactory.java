@@ -67,6 +67,21 @@ public class ChatClientFactory {
                                 .build()));
     }
 
+    /**
+     * Creates a {@link ChatClient} with the same default advisors as
+     * {@link #createChatClientWithDefaultAdvisors()} except for the
+     * {@link MessageChatMemoryAdvisor}. Used by services that manage chat memory
+     * themselves via {@link ChatClient.ChatClientRequestSpec#messages(java.util.List)}.
+     */
+    public ChatClient createChatClientWithoutMemoryAdvisor() {
+        return createChatClient(builder ->
+                builder.defaultAdvisors(
+                        SimpleLoggerAdvisor.builder().build(),
+                        ToolCallAdvisor.builder()
+                                .advisorOrder(BaseAdvisor.HIGHEST_PRECEDENCE + 300)
+                                .build()));
+    }
+
     public ChatClient.Builder createBuilder() {
         ChatClient.Builder builder = chatClientBuilderProvider.getIfAvailable();
         if (builder == null) {

@@ -69,11 +69,9 @@ javaPlatform {
 dependencies {
     api platform("org.springframework.boot:spring-boot-dependencies:4.0.6")
     api platform('software.amazon.awssdk:bom:2.25.60')
-
-
-    // TODO [SB4]
-    //api platform('io.rest-assured:rest-assured-bom:6.0.0')
-    //
+    api platform("io.netty:netty-bom:4.2.14.Final")
+    api platform('io.opentelemetry:opentelemetry-bom:1.62.0')
+    api platform('io.rest-assured:rest-assured-bom:6.0.0')
 
     def freeVersion = version
     def premiumVersion = version
@@ -253,7 +251,6 @@ dependencies {
 
         api "io.jmix.search:jmix-search:$freeVersion"
         api "io.jmix.search:jmix-search-starter:$freeVersion"
-        //api "io.jmix.search:jmix-search-aws-starter:$freeVersion"
         api "io.jmix.search:jmix-search-flowui:$freeVersion"
         api "io.jmix.search:jmix-search-flowui-kit:$freeVersion"
         api "io.jmix.search:jmix-search-flowui-starter:$freeVersion"
@@ -323,16 +320,12 @@ dependencies {
         api "io.jmix.webdav:jmix-webdav-flowui-starter:$premiumVersion"
 
         api 'com.google.guava:guava:32.1.2-jre'
-        api 'commons-io:commons-io:2.18.0'
-//        api 'javax.annotation:javax.annotation-api:1.3.2'
-//        api 'javax.inject:javax.inject:1'
-        api 'org.antlr:antlr-runtime:3.5.2'
-        api 'org.apache.commons:commons-collections4:4.4'
+        api 'commons-io:commons-io:2.22.0'
+        api 'org.antlr:antlr-runtime:3.5.3'
+        api 'org.apache.commons:commons-collections4:4.5.0'
         api 'org.apache.commons:commons-text:1.15.0'
-        api 'org.apache.commons:commons-compress:1.27.1'
-        api 'org.dom4j:dom4j:2.1.4'
-
-//        api 'org.eclipse.persistence:jakarta.persistence:2.2.3'
+        api 'org.apache.commons:commons-compress:1.28.0'
+        api 'org.dom4j:dom4j:2.1.5'
 
         def eclipselinkOriginalVersion = '5.0.0'
         def eclipselinkVersion = '5.0.0-1-jmix'
@@ -343,10 +336,9 @@ dependencies {
 
         api 'org.glassfish:jakarta.el:4.0.2'
 
-        api 'com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20211018.1'
+        api 'com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20260313.1'
 
-        //todo SB3 org.glassfish.jaxb:jaxb-runtime:2.3.6 -> 4.0.2
-        api 'org.glassfish.jaxb:jaxb-runtime:2.3.6'
+        api 'org.glassfish.jaxb:jaxb-runtime:4.0.9'
 
         api "com.vaadin:vaadin-spring-boot-starter:$vaadinFlowVersion"
         api "com.vaadin:vaadin-core:$vaadinFlowVersion"
@@ -360,8 +352,8 @@ dependencies {
         api 'org.spockframework:spock-core:2.4-groovy-5.0'
         api 'org.spockframework:spock-spring:2.4-groovy-5.0'
 
-        api 'io.swagger.core.v3:swagger-models-jakarta:2.2.17'
-        api 'io.swagger.core.v3:swagger-core-jakarta:2.2.17'
+        api 'io.swagger.core.v3:swagger-models-jakarta:2.2.49'
+        api 'io.swagger.core.v3:swagger-core-jakarta:2.2.49'
 
         api 'com.codeborne:selenide:7.9.1'
 
@@ -374,17 +366,18 @@ dependencies {
         api 'com.amazonaws:aws-java-sdk-core:1.11.1034'
 
         api 'org.apache.httpcomponents:httpclient:4.5.14'
+        api 'org.apache.httpcomponents.client5:httpclient5:5.6.1'
 
         def openOfficeVersion = '4.1.2'
         api "org.openoffice:juh:$openOfficeVersion"
         api "org.openoffice:ridl:$openOfficeVersion"
         api "org.openoffice:unoil:$openOfficeVersion"
 
-        def xmlgraphicsVersion = '2.10'
+        def xmlgraphicsVersion = '2.11'
         api "org.apache.xmlgraphics:fop:$xmlgraphicsVersion"
         api "org.apache.xmlgraphics:xmlgraphics-commons:$xmlgraphicsVersion"
 
-        def batikVersion = '1.16'
+        def batikVersion = '1.19'
         api "org.apache.xmlgraphics:batik-bridge:$batikVersion"
         api "org.apache.xmlgraphics:batik-svggen:$batikVersion"
         api "org.apache.xmlgraphics:batik-awt-util:$batikVersion"
@@ -423,12 +416,12 @@ dependencies {
 
         api 'org.apache.pdfbox:pdfbox:3.0.5'
 
-        api 'org.docx4j:docx4j-JAXB-ReferenceImpl:11.5.3'
+        api 'org.docx4j:docx4j-JAXB-ReferenceImpl:11.5.13'
         api 'org.docx4j:docx4j-ImportXHTML:11.4.8'
-        api 'org.docx4j:docx4j-export-fo:11.5.3'
+        api 'org.docx4j:docx4j-export-fo:11.5.13'
 
-        api 'org.jsoup:jsoup:1.16.1'
-        api 'com.opencsv:opencsv:5.7.1'
+        api 'org.jsoup:jsoup:1.22.2'
+        api 'com.opencsv:opencsv:5.12.0'
 
         def jasperVersion = '6.20.6'
         api "net.sf.jasperreports:jasperreports:$jasperVersion"
@@ -447,42 +440,39 @@ dependencies {
         api "org.flowable:flowable-spring-boot-starter-process-rest:$flowableVersion"
         api "org.flowable:flowable-spring-boot-starter-dmn-rest:$flowableVersion"
 
-        // deprecated
-        api 'io.leangen.graphql:graphql-spqr-spring-boot-starter:0.0.6'
-        api 'com.graphql-java-kickstart:graphql-java-servlet:11.1.0'
-        api('com.graphql-java:graphql-java') {
-            version {
-                strictly '16.2'
-            }
-        }
+        def tomcatEmbedVersion = '11.0.22'
+        api "org.apache.tomcat.embed:tomcat-embed-core:$tomcatEmbedVersion"
+        api "org.apache.tomcat.embed:tomcat-embed-el:$tomcatEmbedVersion"
+        api "org.apache.tomcat.embed:tomcat-embed-websocket:$tomcatEmbedVersion"
 
-        api 'io.vavr:vavr:0.9.3'
+        api 'io.vavr:vavr:1.0.1'
         api 'org.jetbrains:annotations:22.0.0'
 
-        api 'org.opensearch.client:opensearch-java:3.4.0'
-        api 'org.opensearch.client:opensearch-rest-client:3.4.0'
+        api 'co.elastic.clients:elasticsearch-java:9.4.1'
+        api 'org.opensearch.client:opensearch-java:3.8.0'
+        api 'org.opensearch.client:opensearch-rest-client:3.6.0'
 
-        api 'com.github.f4b6a3:uuid-creator:6.0.0'
+        api 'com.github.f4b6a3:uuid-creator:6.1.1'
 
         api 'xerces:xercesImpl:2.12.2'
-        api 'org.apache.james:apache-mime4j-core:0.8.12'
+        api 'org.apache.james:apache-mime4j-core:0.8.14'
         api 'com.google.protobuf:protobuf-java:3.25.6'
-        api 'com.fasterxml.woodstox:woodstox-core:6.4.0'
+        api 'com.fasterxml.woodstox:woodstox-core:7.2.0'
         api 'org.apache.lucene:lucene-queryparser:9.12.1'
 
-        api 'com.microsoft.azure:msal4j:1.23.1'
-        api 'com.google.auth:google-auth-library-oauth2-http:1.39.1'
+        api 'com.microsoft.azure:msal4j:1.24.1'
+        api 'com.google.auth:google-auth-library-oauth2-http:1.47.0'
 
-        api 'com.ibm.icu:icu4j:78.2'
-        api 'com.mchange:c3p0:0.12.0'
+        api 'com.ibm.icu:icu4j:78.3'
+        api 'com.mchange:c3p0:0.13.0'
         api 'org.apache.commons:commons-lang3:3.20.0'
         api 'commons-beanutils:commons-beanutils:1.11.0'
-        api 'com.github.junrar:junrar:7.5.10'
+        api 'com.github.junrar:junrar:7.6.0'
 
         api 'com.hazelcast.spring:hazelcast-spring-session:4.0.0'
         api 'com.hazelcast:hazelcast:5.6.0'
-        api 'io.rest-assured:rest-assured:6.0.0' //todo [SB4] 'io.rest-assured:rest-assured-bom:6.0.0' ?
 
+        api 'org.postgresql:postgresql:42.7.11'
     }
 }
 

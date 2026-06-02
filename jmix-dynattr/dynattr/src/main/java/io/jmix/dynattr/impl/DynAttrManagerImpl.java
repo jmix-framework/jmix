@@ -26,8 +26,11 @@ import io.jmix.core.entity.EntitySystemAccess;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.data.JmixQuery;
 import io.jmix.data.PersistenceHints;
+import io.jmix.data.QueryTransformerFactory;
 import io.jmix.data.StoreAwareLocator;
+import io.jmix.data.accesscontext.ReadEntityQueryContext;
 import io.jmix.dynattr.*;
 import io.jmix.dynattr.model.CategoryAttribute;
 import io.jmix.dynattr.model.CategoryAttributeValue;
@@ -74,6 +77,8 @@ public class DynAttrManagerImpl implements DynAttrManager {
     protected FetchPlans fetchPlans;
     @Autowired
     protected AccessManager accessManager;
+    @Autowired
+    protected QueryTransformerFactory queryTransformerFactory;
 
     protected String dynamicAttributesStore = Stores.MAIN;
 
@@ -376,11 +381,16 @@ public class DynAttrManagerImpl implements DynAttrManager {
 
             if (!ids.isEmpty()) {
                 String pkName = referenceToEntitySupport.getPrimaryKeyForLoadingEntity(metaClass);
-                List<?> resultList = entityManager.createQuery(
+                JmixQuery<?> query = (JmixQuery<?>) entityManager.createQuery(
                                 String.format("select e from %s e where e.%s in :ids", metaClass.getName(), pkName))
                         .setParameter("ids", ids)
-                        .setHint(PersistenceHints.FETCH_PLAN, fetchPlanRepository.getFetchPlan(metaClass, FetchPlan.INSTANCE_NAME))
-                        .getResultList();
+                        .setHint(PersistenceHints.FETCH_PLAN, fetchPlanRepository.getFetchPlan(metaClass, FetchPlan.INSTANCE_NAME));
+
+                ReadEntityQueryContext queryContext = new ReadEntityQueryContext(query, metaClass, queryTransformerFactory);
+                accessManager.applyConstraints(queryContext, accessConstraints);
+                query = queryContext.getResultQuery();
+
+                List<?> resultList = query.getResultList();
 
 
                 Map<Object, Object> entityById = new LinkedHashMap<>();

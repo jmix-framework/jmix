@@ -338,7 +338,7 @@ dependencies {
 
         api 'com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20260313.1'
 
-        api 'org.glassfish.jaxb:jaxb-runtime:4.0.9' //todo check
+        api 'org.glassfish.jaxb:jaxb-runtime:4.0.9'
 
         api "com.vaadin:vaadin-spring-boot-starter:$vaadinFlowVersion"
         api "com.vaadin:vaadin-core:$vaadinFlowVersion"

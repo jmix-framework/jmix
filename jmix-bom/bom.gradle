@@ -71,11 +71,7 @@ dependencies {
     api platform('software.amazon.awssdk:bom:2.25.60')
     api platform("io.netty:netty-bom:4.2.14.Final")
     api platform('io.opentelemetry:opentelemetry-bom:1.62.0')
-
-
-    // TODO [SB4]
-    //api platform('io.rest-assured:rest-assured-bom:6.0.0')
-    //
+    api platform('io.rest-assured:rest-assured-bom:6.0.0')
 
     def freeVersion = version
     def premiumVersion = version
@@ -255,7 +251,6 @@ dependencies {
 
         api "io.jmix.search:jmix-search:$freeVersion"
         api "io.jmix.search:jmix-search-starter:$freeVersion"
-        //api "io.jmix.search:jmix-search-aws-starter:$freeVersion"
         api "io.jmix.search:jmix-search-flowui:$freeVersion"
         api "io.jmix.search:jmix-search-flowui-kit:$freeVersion"
         api "io.jmix.search:jmix-search-flowui-starter:$freeVersion"
@@ -326,15 +321,11 @@ dependencies {
 
         api 'com.google.guava:guava:32.1.2-jre'
         api 'commons-io:commons-io:2.22.0'
-//        api 'javax.annotation:javax.annotation-api:1.3.2'
-//        api 'javax.inject:javax.inject:1'
         api 'org.antlr:antlr-runtime:3.5.3'
         api 'org.apache.commons:commons-collections4:4.5.0'
         api 'org.apache.commons:commons-text:1.15.0'
         api 'org.apache.commons:commons-compress:1.28.0'
         api 'org.dom4j:dom4j:2.1.5'
-
-//        api 'org.eclipse.persistence:jakarta.persistence:2.2.3'
 
         def eclipselinkOriginalVersion = '5.0.0'
         def eclipselinkVersion = '5.0.0-1-jmix'
@@ -347,8 +338,7 @@ dependencies {
 
         api 'com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20260313.1'
 
-        //todo SB3 org.glassfish.jaxb:jaxb-runtime:2.3.6 -> 4.0.2
-        api 'org.glassfish.jaxb:jaxb-runtime:4.0.8' //todo check
+        api 'org.glassfish.jaxb:jaxb-runtime:4.0.9' //todo check
 
         api "com.vaadin:vaadin-spring-boot-starter:$vaadinFlowVersion"
         api "com.vaadin:vaadin-core:$vaadinFlowVersion"
@@ -373,7 +363,7 @@ dependencies {
 
         api 'com.thoughtworks.xstream:xstream:1.4.21'
 
-        api 'com.amazonaws:aws-java-sdk-core:1.11.1034' //todo remove?
+        api 'com.amazonaws:aws-java-sdk-core:1.11.1034'
 
         api 'org.apache.httpcomponents:httpclient:4.5.14'
         api 'org.apache.httpcomponents.client5:httpclient5:5.6.1'
@@ -431,7 +421,7 @@ dependencies {
         api 'org.docx4j:docx4j-export-fo:11.5.13'
 
         api 'org.jsoup:jsoup:1.22.2'
-        api 'com.opencsv:opencsv:5.7.1'
+        api 'com.opencsv:opencsv:5.12.0'
 
         def jasperVersion = '6.20.6'
         api "net.sf.jasperreports:jasperreports:$jasperVersion"
@@ -454,15 +444,6 @@ dependencies {
         api "org.apache.tomcat.embed:tomcat-embed-core:$tomcatEmbedVersion"
         api "org.apache.tomcat.embed:tomcat-embed-el:$tomcatEmbedVersion"
         api "org.apache.tomcat.embed:tomcat-embed-websocket:$tomcatEmbedVersion"
-
-        // deprecated //todo remove?
-        api 'io.leangen.graphql:graphql-spqr-spring-boot-starter:0.0.6'
-        api 'com.graphql-java-kickstart:graphql-java-servlet:11.1.0'
-        api('com.graphql-java:graphql-java') {
-            version {
-                strictly '16.2'
-            }
-        }
 
         api 'io.vavr:vavr:1.0.1'
         api 'org.jetbrains:annotations:22.0.0'
@@ -490,7 +471,6 @@ dependencies {
 
         api 'com.hazelcast.spring:hazelcast-spring-session:4.0.0'
         api 'com.hazelcast:hazelcast:5.6.0'
-        api 'io.rest-assured:rest-assured:6.0.0' //todo [SB4] 'io.rest-assured:rest-assured-bom:6.0.0' ?
 
         api 'org.postgresql:postgresql:42.7.11'
     }

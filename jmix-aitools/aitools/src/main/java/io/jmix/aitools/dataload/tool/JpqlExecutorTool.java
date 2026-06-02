@@ -26,12 +26,12 @@ import org.springframework.ai.tool.annotation.ToolParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-@Component("aitols_JpqlExecutionTool")
-public class JpqlExecutionTool implements DataLoadAiTool {
+@Component("aitols_JpqlExecutorTool")
+public class JpqlExecutorTool implements DataLoadAiTool {
 
     public static final String EXECUTE_QUERY_TOOL = "aitols_executeQuery";
 
-    private static final Logger log = LoggerFactory.getLogger(JpqlExecutionTool.class);
+    private static final Logger log = LoggerFactory.getLogger(JpqlExecutorTool.class);
 
     @Autowired
     protected JpqlExecutionService jpqlExecutionService;

@@ -20,7 +20,7 @@ import io.jmix.aitools.dataload.execution.JpqlExecutionRequest;
 import io.jmix.aitools.dataload.execution.JpqlExecutionResult;
 import io.jmix.aitools.dataload.execution.JpqlExecutionService;
 import io.jmix.aitools.dataload.execution.GeneratedJpqlResult;
-import io.jmix.aitools.dataload.tool.JpqlExecutionTool;
+import io.jmix.aitools.dataload.tool.JpqlExecutorTool;
 import io.jmix.aitools.dataload.validation.JpqlValidationResult;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,7 +30,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-class JpqlExecutionToolTest {
+class JpqlExecutorToolTest {
 
     @Test
     @DisplayName("Delegates execution to JPQL execution service")
@@ -49,7 +49,7 @@ class JpqlExecutionToolTest {
                 null
         );
 
-        JpqlExecutionTool tool = new JpqlExecutionTool();
+        JpqlExecutorTool tool = new JpqlExecutorTool();
         ReflectionTestUtils.setField(tool, "jpqlExecutionService", new JpqlExecutionService() {
             @Override
             public JpqlExecutionResult execute(JpqlExecutionRequest request) {

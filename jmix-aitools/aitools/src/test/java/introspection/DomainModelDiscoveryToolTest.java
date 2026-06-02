@@ -16,7 +16,7 @@
 
 package introspection;
 
-import io.jmix.aitools.dataload.tool.EntityDiscoveryTool;
+import io.jmix.aitools.dataload.tool.DomainModelDiscoveryTool;
 import io.jmix.aitools.introspection.model.EntityDescriptor;
 import io.jmix.aitools.introspection.model.EntitySummary;
 import org.junit.jupiter.api.DisplayName;
@@ -33,15 +33,15 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = AiToolsTestConfiguration.class)
-class EntityDiscoveryToolTest {
+class DomainModelDiscoveryToolTest {
 
     @Autowired
-    EntityDiscoveryTool entityDiscoveryTool;
+    DomainModelDiscoveryTool domainModelDiscoveryTool;
 
     @Test
     @DisplayName("Returns compact metadata for all entities")
     void testReturnsCompactMetadataForAllEntities() {
-        List<EntitySummary> documents = entityDiscoveryTool.getAvailableEntities();
+        List<EntitySummary> documents = domainModelDiscoveryTool.getAvailableEntities();
 
         assertFalse(documents.isEmpty());
 
@@ -58,7 +58,7 @@ class EntityDiscoveryToolTest {
     @Test
     @DisplayName("Returns detailed entity descriptors for selected entities")
     void testReturnsDetailedEntityDescriptors() {
-        List<EntityDescriptor> entityDescriptors = entityDiscoveryTool.getDomainModelForEntities(
+        List<EntityDescriptor> entityDescriptors = domainModelDiscoveryTool.getDomainModelForEntities(
                 List.of("aitols_Order", "aitols_Customer"));
 
         assertEquals(2, entityDescriptors.size());

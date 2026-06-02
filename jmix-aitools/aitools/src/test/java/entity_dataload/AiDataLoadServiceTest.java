@@ -135,10 +135,10 @@ class AiDataLoadServiceTest {
                 null
         );
 
-        when(entityDataLoadGenerationService.generate("show customers", "conv-1")).thenReturn(query);
+        when(entityDataLoadGenerationService.generate("show customers")).thenReturn(query);
         when(jpqlExecutionService.execute(any())).thenReturn(executionResult);
 
-        EntityDataLoadResult result = service.loadData("show customers", "conv-1");
+        EntityDataLoadResult result = service.loadData("show customers");
 
         ArgumentCaptor<JpqlExecutionRequest> requestCaptor = ArgumentCaptor.forClass(JpqlExecutionRequest.class);
         verify(jpqlExecutionService).execute(requestCaptor.capture());

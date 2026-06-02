@@ -22,7 +22,7 @@ import io.jmix.aitools.dataload.prompt.impl.DefaultDataLoadChatSystemPromptProvi
 import io.jmix.aitools.dataload.prompt.impl.DefaultJpqlRepairerPromptProvider;
 import io.jmix.aitools.dataload.repair.JpqlRepairer;
 import io.jmix.aitools.dataload.repair.impl.DefaultJpqlRepairer;
-import io.jmix.aitools.introspection.introspector.JpaDomainModelIntrospector;
+import io.jmix.aitools.dataload.introspection.introspector.JpaDomainModelIntrospector;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBooleanProperty;

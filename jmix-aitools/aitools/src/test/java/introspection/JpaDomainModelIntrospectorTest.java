@@ -16,9 +16,9 @@
 
 package introspection;
 
+import io.jmix.aitools.dataload.introspection.model.*;
 import io.jmix.core.Metadata;
-import io.jmix.aitools.introspection.introspector.JpaDomainModelIntrospector;
-import io.jmix.aitools.introspection.model.*;
+import io.jmix.aitools.dataload.introspection.introspector.JpaDomainModelIntrospector;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

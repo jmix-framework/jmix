@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package io.jmix.aitools.introspection.impl;
+package io.jmix.aitools.dataload.introspection.impl;
 
-import io.jmix.aitools.introspection.AvailableEntityFilter;
-import io.jmix.aitools.introspection.model.EntityDescriptor;
+import io.jmix.aitools.dataload.introspection.AvailableEntityFilter;
+import io.jmix.aitools.dataload.introspection.model.EntityDescriptor;
 import io.jmix.core.AccessManager;
 import io.jmix.core.JmixOrder;
 import io.jmix.core.Metadata;

@@ -17,8 +17,8 @@
 package introspection;
 
 import io.jmix.aitools.dataload.tool.DomainModelDiscoveryTool;
-import io.jmix.aitools.introspection.model.EntityDescriptor;
-import io.jmix.aitools.introspection.model.EntitySummary;
+import io.jmix.aitools.dataload.introspection.model.EntityDescriptor;
+import io.jmix.aitools.dataload.introspection.model.EntitySummary;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

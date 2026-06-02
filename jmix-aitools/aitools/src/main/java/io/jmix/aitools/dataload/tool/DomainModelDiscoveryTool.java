@@ -16,9 +16,9 @@
 
 package io.jmix.aitools.dataload.tool;
 
-import io.jmix.aitools.introspection.model.EntityDescriptor;
-import io.jmix.aitools.introspection.model.EntitySummary;
-import io.jmix.aitools.introspection.AvailableEntityService;
+import io.jmix.aitools.dataload.introspection.model.EntityDescriptor;
+import io.jmix.aitools.dataload.introspection.model.EntitySummary;
+import io.jmix.aitools.dataload.introspection.AvailableEntityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.tool.annotation.Tool;

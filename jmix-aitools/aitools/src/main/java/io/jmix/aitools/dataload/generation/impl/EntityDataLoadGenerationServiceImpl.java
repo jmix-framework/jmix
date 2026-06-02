@@ -28,11 +28,9 @@ import io.jmix.aitools.dataload.repair.impl.GeneratedJpqlParameterPayload;
 import io.jmix.aitools.dataload.tool.EntityDataLoadAiTool;
 import io.jmix.aitools.tool.AiToolRegistry;
 import io.jmix.aitools.tool.ResolvedAiTool;
-import io.jmix.aitools.memory.JmixChatMemoryRepository;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.security.CurrentAuthentication;
 import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -63,17 +61,11 @@ public class EntityDataLoadGenerationServiceImpl implements EntityDataLoadGenera
 
     @Override
     public EntityDataLoadQuery generate(String userText) {
-        return generate(userText, JmixChatMemoryRepository.NO_OP_CONVERSATION_ID);
-    }
-
-    @Override
-    public EntityDataLoadQuery generate(String userText, String conversationId) {
         Preconditions.checkNotEmptyString(userText);
-        Preconditions.checkNotEmptyString(conversationId);
 
         checkChatClient();
 
-        String content = buildChatClientPrompt(userText, conversationId)
+        String content = buildChatClientPrompt(userText)
                 .call()
                 .content();
         if (content == null || content.isBlank()) {
@@ -90,7 +82,7 @@ public class EntityDataLoadGenerationServiceImpl implements EntityDataLoadGenera
         return mapToQueryDraft(payload);
     }
 
-    protected ChatClient.ChatClientRequestSpec buildChatClientPrompt(String userText, String conversationId) {
+    protected ChatClient.ChatClientRequestSpec buildChatClientPrompt(String userText) {
         return chatClient.prompt()
                 .system(system -> system
                         .text(entityDataLoadPromptProvider.getResource())
@@ -98,8 +90,7 @@ public class EntityDataLoadGenerationServiceImpl implements EntityDataLoadGenera
                 .user(user -> user.text(userText))
                 .tools(t -> t.callbacks(aiToolRegistry.findByMarker(EntityDataLoadAiTool.class).stream()
                         .map(ResolvedAiTool::getCallback)
-                        .toList()))
-                .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId));
+                        .toList()));
     }
 
     protected void buildChatClient() {

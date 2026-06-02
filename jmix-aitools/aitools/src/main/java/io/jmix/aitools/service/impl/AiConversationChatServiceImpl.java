@@ -76,7 +76,7 @@ public class AiConversationChatServiceImpl implements AiConversationChatService,
 
     @Override
     public void afterPropertiesSet() {
-        chatClient = chatClientFactory.createChatClientWithoutMemoryAdvisor();
+        chatClient = chatClientFactory.createChatClientWithDefaultAdvisors();
     }
 
     @Override

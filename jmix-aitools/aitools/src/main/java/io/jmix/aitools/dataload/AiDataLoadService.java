@@ -53,26 +53,6 @@ public interface AiDataLoadService {
      */
     Flux<String> stream(String message);
 
-    /**
-     * Streams a reply to the data-load chat within the given conversation, persisting the
-     * exchange in the chat memory under {@code conversationId}.
-     *
-     * @param message        user message in natural language
-     * @param conversationId identifier of the conversation to append the exchange to
-     * @return flux emitting reply chunks in order
-     */
-    Flux<String> stream(String message, String conversationId);
-
-    /**
-     * Sends a message to the data-load chat within the given conversation and blocks until the
-     * full reply is produced. The exchange is persisted in the chat memory under
-     * {@code conversationId}.
-     *
-     * @param message        user message in natural language
-     * @param conversationId identifier of the conversation to append the exchange to
-     * @return natural-language reply from the LLM
-     */
-    String send(String message, String conversationId);
 
     /**
      * Generates a JPQL query for the given natural-language request, executes it and returns
@@ -83,16 +63,4 @@ public interface AiDataLoadService {
      * @return result containing the generated query, its validation and the fetched rows
      */
     EntityDataLoadResult loadData(String userText);
-
-    /**
-     * Generates a JPQL query for the given natural-language request within the given
-     * conversation, executes it and returns the structured result. The exchange is persisted
-     * in the chat memory under {@code conversationId} so that follow-up requests can refine
-     * the query.
-     *
-     * @param userText       user request in natural language
-     * @param conversationId identifier of the conversation to append the exchange to
-     * @return result containing the generated query, its validation and the fetched rows
-     */
-    EntityDataLoadResult loadData(String userText, String conversationId);
 }

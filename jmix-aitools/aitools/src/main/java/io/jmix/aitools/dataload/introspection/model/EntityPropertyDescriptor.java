@@ -14,13 +14,29 @@
  * limitations under the License.
  */
 
-package io.jmix.aitools.introspection;
+package io.jmix.aitools.dataload.introspection.model;
 
-import io.jmix.aitools.introspection.model.EntityDescriptor;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
-public interface AvailableEntityFilter {
+public interface EntityPropertyDescriptor {
 
-    List<EntityDescriptor> filter(List<EntityDescriptor> entityDescriptors);
+    String getName();
+
+    List<String> getLocalizedNames();
+
+    String getJavaType();
+
+    String getPropertyType();
+
+    @Nullable
+    Boolean getIdentifier();
+
+    Boolean getPersistent();
+
+    Boolean getMandatory();
+
+    @Nullable
+    String getComment();
 }

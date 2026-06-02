@@ -21,14 +21,11 @@ import io.jmix.aitools.dataload.execution.*;
 import io.jmix.aitools.dataload.generation.EntityDataLoadGenerationService;
 import io.jmix.aitools.dataload.prompt.DataLoadChatSystemPromptProvider;
 import io.jmix.aitools.dataload.tool.DataLoadAiTool;
-import io.jmix.aitools.memory.ChatMemoryFactory;
 import io.jmix.aitools.tool.AiToolRegistry;
 import io.jmix.aitools.tool.ResolvedAiTool;
-import io.jmix.aitools.memory.JmixChatMemoryRepository;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.security.CurrentAuthentication;
 import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -51,8 +48,6 @@ public class AiDataLoadServiceImpl implements AiDataLoadService, InitializingBea
     @Autowired
     protected ChatClientFactory chatClientFactory;
     @Autowired
-    protected ChatMemoryFactory chatMemoryFactory;
-    @Autowired
     protected DataLoadChatSystemPromptProvider systemPromptProvider;
     @Autowired
     protected AiToolRegistry aiToolRegistry;
@@ -72,32 +67,24 @@ public class AiDataLoadServiceImpl implements AiDataLoadService, InitializingBea
 
     @Override
     public String send(String message) {
-        return send(message, JmixChatMemoryRepository.NO_OP_CONVERSATION_ID);
+        Preconditions.checkNotEmptyString(message);
+
+        checkChatClient();
+
+        return buildChatClientPrompt(message)
+                .call()
+                .content();
     }
 
     @Override
     public Flux<String> stream(String message) {
-        return stream(message, JmixChatMemoryRepository.NO_OP_CONVERSATION_ID);
-    }
-
-    @Override
-    public Flux<String> stream(String message, String conversationId) {
         Preconditions.checkNotEmptyString(message);
-        Preconditions.checkNotEmptyString(conversationId);
 
         checkChatClient();
 
-        return executePromptStream(message, conversationId);
-    }
-
-    @Override
-    public String send(String message, String conversationId) {
-        Preconditions.checkNotEmptyString(message);
-        Preconditions.checkNotEmptyString(conversationId);
-
-        checkChatClient();
-
-        return executePrompt(message, conversationId);
+        return buildChatClientPrompt(message)
+                .stream()
+                .content();
     }
 
     @Override
@@ -128,48 +115,7 @@ public class AiDataLoadServiceImpl implements AiDataLoadService, InitializingBea
         );
     }
 
-    @Override
-    public EntityDataLoadResult loadData(String userText, String conversationId) {
-        Preconditions.checkNotEmptyString(userText);
-        Preconditions.checkNotEmptyString(conversationId);
-
-        EntityDataLoadQuery queryDraft = entityDataLoadGenerationService.generate(userText, conversationId);
-
-        JpqlExecutionResult executionResult = jpqlExecutionService.execute(
-                new JpqlExecutionRequest(
-                        userText,
-                        queryDraft.getJpql(),
-                        toExecutionParameters(queryDraft.getParameters()),
-                        queryDraft.getResultProperties(),
-                        queryDraft.getMaxResults(),
-                        queryDraft.getFirstResult()
-                )
-        );
-
-        return new EntityDataLoadResult(
-                userText,
-                queryDraft,
-                executionResult.getValidationResult(),
-                executionResult.getRows(),
-                executionResult.isHasMore(),
-                executionResult.isExecuted(),
-                executionResult.getExecutionError()
-        );
-    }
-
-    protected String executePrompt(String message, String conversationId) {
-        return buildChatClientPrompt(message, conversationId)
-                .call()
-                .content();
-    }
-
-    protected Flux<String> executePromptStream(String message, String conversationId) {
-        return buildChatClientPrompt(message, conversationId)
-                .stream()
-                .content();
-    }
-
-    protected ChatClient.ChatClientRequestSpec buildChatClientPrompt(String message, String conversationId) {
+    protected ChatClient.ChatClientRequestSpec buildChatClientPrompt(String message) {
         return chatClient.prompt()
                 .system(system -> system
                         .text(systemPromptProvider.getResource())
@@ -177,8 +123,7 @@ public class AiDataLoadServiceImpl implements AiDataLoadService, InitializingBea
                 .user(user -> user.text(message))
                 .tools(t -> t.callbacks(aiToolRegistry.findByMarker(DataLoadAiTool.class).stream()
                         .map(ResolvedAiTool::getCallback)
-                        .toList()))
-                .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId));
+                        .toList()));
     }
 
     protected void buildChatClient() {

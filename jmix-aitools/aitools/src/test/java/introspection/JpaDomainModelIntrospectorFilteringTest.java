@@ -16,7 +16,7 @@
 
 package introspection;
 
-import io.jmix.aitools.introspection.introspector.JpaDomainModelIntrospector;
+import io.jmix.aitools.dataload.introspection.introspector.JpaDomainModelIntrospector;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

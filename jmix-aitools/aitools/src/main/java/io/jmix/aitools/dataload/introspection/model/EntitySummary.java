@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.aitools.introspection.model;
+package io.jmix.aitools.dataload.introspection.model;
 
 import java.util.List;
 

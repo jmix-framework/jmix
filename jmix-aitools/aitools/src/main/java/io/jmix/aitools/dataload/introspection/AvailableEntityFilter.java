@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-package io.jmix.aitools.dataload.generation;
+package io.jmix.aitools.dataload.introspection;
 
-import io.jmix.aitools.dataload.EntityDataLoadQuery;
+import io.jmix.aitools.dataload.introspection.model.EntityDescriptor;
 
-public interface EntityDataLoadGenerationService {
+import java.util.List;
 
-    EntityDataLoadQuery generate(String userText);
+public interface AvailableEntityFilter {
+
+    List<EntityDescriptor> filter(List<EntityDescriptor> entityDescriptors);
 }

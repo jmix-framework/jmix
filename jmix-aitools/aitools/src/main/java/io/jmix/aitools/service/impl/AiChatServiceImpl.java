@@ -44,7 +44,7 @@ public class AiChatServiceImpl implements AiChatService, InitializingBean {
 
     @Override
     public void afterPropertiesSet() {
-        chatClient = chatClientFactory.createChatClientWithoutMemoryAdvisor();
+        chatClient = chatClientFactory.createChatClientWithDefaultAdvisors();
     }
 
     @Override

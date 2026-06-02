@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package io.jmix.aitools.introspection;
+package io.jmix.aitools.dataload.introspection;
 
-import io.jmix.aitools.introspection.impl.DefaultAvailableEntityFilter;
-import io.jmix.aitools.introspection.introspector.JpaDomainModelIntrospector;
-import io.jmix.aitools.introspection.model.EntityDescriptor;
-import io.jmix.aitools.introspection.model.EntityPropertyDescriptor;
-import io.jmix.aitools.introspection.model.EntitySummary;
+import io.jmix.aitools.dataload.introspection.impl.DefaultAvailableEntityFilter;
+import io.jmix.aitools.dataload.introspection.introspector.JpaDomainModelIntrospector;
+import io.jmix.aitools.dataload.introspection.model.EntityDescriptor;
+import io.jmix.aitools.dataload.introspection.model.EntityPropertyDescriptor;
+import io.jmix.aitools.dataload.introspection.model.EntitySummary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Component;

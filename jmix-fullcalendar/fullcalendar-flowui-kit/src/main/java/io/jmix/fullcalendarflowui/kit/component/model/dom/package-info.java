@@ -14,7 +14,4 @@
  * limitations under the License.
  */
 
-@NullMarked
 package io.jmix.fullcalendarflowui.kit.component.model.dom;
-
-import org.jspecify.annotations.NullMarked;

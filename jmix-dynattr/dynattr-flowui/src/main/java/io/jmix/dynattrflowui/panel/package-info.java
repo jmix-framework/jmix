@@ -14,7 +14,4 @@
  * limitations under the License.
  */
 
-@NullMarked
 package io.jmix.dynattrflowui.panel;
-
-import org.jspecify.annotations.NullMarked;

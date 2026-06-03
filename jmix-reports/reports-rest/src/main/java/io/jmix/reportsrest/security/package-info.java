@@ -15,8 +15,6 @@
  */
 
 @Internal
-@NullMarked
 package io.jmix.reportsrest.security;
 
 import io.jmix.core.annotation.Internal;
-import org.jspecify.annotations.NullMarked;

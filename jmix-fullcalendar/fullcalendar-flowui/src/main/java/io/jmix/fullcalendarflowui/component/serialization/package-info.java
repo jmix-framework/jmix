@@ -15,8 +15,6 @@
  */
 
 @Internal
-@NullMarked
 package io.jmix.fullcalendarflowui.component.serialization;
 
 import io.jmix.core.annotation.Internal;
-import org.jspecify.annotations.NullMarked;

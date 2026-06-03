@@ -14,7 +14,4 @@
  * limitations under the License.
  */
 
-@NullMarked
 package io.jmix.pivottableflowui;
-
-import org.jspecify.annotations.NullMarked;

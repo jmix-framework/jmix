@@ -15,8 +15,6 @@
  */
 
 @Internal
-@NullMarked
 package io.jmix.flowuidata.dateinterval.converter;
 
 import io.jmix.core.annotation.Internal;
-import org.jspecify.annotations.NullMarked;

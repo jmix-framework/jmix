@@ -14,7 +14,4 @@
  * limitations under the License.
  */
 
-@NullMarked
 package io.jmix.dataimport.exception;
-
-import org.jspecify.annotations.NullMarked;

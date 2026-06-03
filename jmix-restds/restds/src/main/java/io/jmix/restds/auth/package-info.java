@@ -14,7 +14,4 @@
  * limitations under the License.
  */
 
-@NullMarked
 package io.jmix.restds.auth;
-
-import org.jspecify.annotations.NullMarked;

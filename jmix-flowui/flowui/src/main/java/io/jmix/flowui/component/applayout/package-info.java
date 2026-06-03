@@ -14,7 +14,4 @@
  * limitations under the License.
  */
 
-@NullMarked
 package io.jmix.flowui.component.applayout;
-
-import org.jspecify.annotations.NullMarked;

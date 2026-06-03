@@ -14,7 +14,4 @@
  * limitations under the License.
  */
 
-@NullMarked
 package io.jmix.ldap.authentication;
-
-import org.jspecify.annotations.NullMarked;

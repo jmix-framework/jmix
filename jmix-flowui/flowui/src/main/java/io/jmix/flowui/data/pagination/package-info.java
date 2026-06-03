@@ -14,7 +14,4 @@
  * limitations under the License.
  */
 
-@NullMarked
 package io.jmix.flowui.data.pagination;
-
-import org.jspecify.annotations.NullMarked;

@@ -14,7 +14,4 @@
  * limitations under the License.
  */
 
-@NullMarked
 package io.jmix.reportsflowui.view.reportwizard;
-
-import org.jspecify.annotations.NullMarked;

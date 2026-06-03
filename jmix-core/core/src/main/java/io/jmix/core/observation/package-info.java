@@ -15,8 +15,6 @@
  */
 
 @Experimental
-@NullMarked
 package io.jmix.core.observation;
 
 import io.jmix.core.annotation.Experimental;
-import org.jspecify.annotations.NullMarked;

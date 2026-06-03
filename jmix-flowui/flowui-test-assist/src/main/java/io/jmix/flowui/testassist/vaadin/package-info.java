@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-@NullMarked
 @Internal
 package io.jmix.flowui.testassist.vaadin;
 
 import io.jmix.core.annotation.Internal;
-import org.jspecify.annotations.NullMarked;

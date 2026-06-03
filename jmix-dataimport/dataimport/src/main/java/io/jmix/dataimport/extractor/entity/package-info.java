@@ -14,7 +14,4 @@
  * limitations under the License.
  */
 
-@NullMarked
 package io.jmix.dataimport.extractor.entity;
-
-import org.jspecify.annotations.NullMarked;

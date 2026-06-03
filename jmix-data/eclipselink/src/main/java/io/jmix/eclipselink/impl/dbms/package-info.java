@@ -14,7 +14,4 @@
  * limitations under the License.
  */
 
-@NullMarked
 package io.jmix.eclipselink.impl.dbms;
-
-import org.jspecify.annotations.NullMarked;

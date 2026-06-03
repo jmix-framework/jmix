@@ -14,7 +14,4 @@
  * limitations under the License.
  */
 
-@NullMarked
 package io.jmix.searchopensearch.searching.strategy;
-
-import org.jspecify.annotations.NullMarked;

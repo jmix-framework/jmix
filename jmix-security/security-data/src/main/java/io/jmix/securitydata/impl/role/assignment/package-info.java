@@ -15,8 +15,6 @@
  */
 
 @Internal
-@NullMarked
 package io.jmix.securitydata.impl.role.assignment;
 
 import io.jmix.core.annotation.Internal;
-import org.jspecify.annotations.NullMarked;

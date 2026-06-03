@@ -3,7 +3,4 @@
  * Use is subject to license terms.
  */
 
-@NullMarked
 package io.jmix.superset;
-
-import org.jspecify.annotations.NullMarked;

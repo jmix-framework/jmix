@@ -4,8 +4,6 @@
  */
 
 @Internal
-@NullMarked
 package io.jmix.superset.schedule;
 
 import io.jmix.core.annotation.Internal;
-import org.jspecify.annotations.NullMarked;

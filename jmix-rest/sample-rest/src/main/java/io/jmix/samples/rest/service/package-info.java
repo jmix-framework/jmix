@@ -14,7 +14,4 @@
  * limitations under the License.
  */
 
-@NullMarked
 package io.jmix.samples.rest.service;
-
-import org.jspecify.annotations.NullMarked;

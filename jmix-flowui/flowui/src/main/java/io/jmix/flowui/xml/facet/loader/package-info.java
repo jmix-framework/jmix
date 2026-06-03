@@ -14,7 +14,4 @@
  * limitations under the License.
  */
 
-@NullMarked
 package io.jmix.flowui.xml.facet.loader;
-
-import org.jspecify.annotations.NullMarked;

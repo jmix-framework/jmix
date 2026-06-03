@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-@NullMarked
 @Experimental
 package io.jmix.saml.mapper.user;
 
 import io.jmix.core.annotation.Experimental;
-import org.jspecify.annotations.NullMarked;

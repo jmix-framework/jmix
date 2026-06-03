@@ -14,7 +14,4 @@
  * limitations under the License.
  */
 
-@NullMarked
 package io.jmix.flowui.kit.component.sidepanellayout;
-
-import org.jspecify.annotations.NullMarked;

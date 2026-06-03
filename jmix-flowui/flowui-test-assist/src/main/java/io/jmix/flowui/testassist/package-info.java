@@ -14,7 +14,4 @@
  * limitations under the License.
  */
 
-@NullMarked
 package io.jmix.flowui.testassist;
-
-import org.jspecify.annotations.NullMarked;

@@ -19,15 +19,18 @@ package introspection;
 import io.jmix.aitools.dataload.tool.DomainModelDiscoveryTool;
 import io.jmix.aitools.dataload.introspection.model.EntityDescriptor;
 import io.jmix.aitools.dataload.introspection.model.EntitySummary;
+import io.jmix.core.security.SystemAuthenticator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.ai.chat.model.ToolContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import test_support.AiToolsTestConfiguration;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -38,10 +41,17 @@ class DomainModelDiscoveryToolTest {
     @Autowired
     DomainModelDiscoveryTool domainModelDiscoveryTool;
 
+    @Autowired
+    SystemAuthenticator systemAuthenticator;
+
     @Test
     @DisplayName("Returns compact metadata for all entities")
     void testReturnsCompactMetadataForAllEntities() {
-        List<EntitySummary> documents = domainModelDiscoveryTool.getAvailableEntities();
+        systemAuthenticator.begin();
+
+        List<EntitySummary> documents = domainModelDiscoveryTool.getAvailableEntities(new ToolContext(Map.of()));
+
+        systemAuthenticator.end();
 
         assertFalse(documents.isEmpty());
 
@@ -58,8 +68,12 @@ class DomainModelDiscoveryToolTest {
     @Test
     @DisplayName("Returns detailed entity descriptors for selected entities")
     void testReturnsDetailedEntityDescriptors() {
+        systemAuthenticator.begin();
+
         List<EntityDescriptor> entityDescriptors = domainModelDiscoveryTool.getDomainModelForEntities(
-                List.of("aitols_Order", "aitols_Customer"));
+                List.of("aitols_Order", "aitols_Customer"), new ToolContext(Map.of()));
+
+        systemAuthenticator.end();
 
         assertEquals(2, entityDescriptors.size());
 

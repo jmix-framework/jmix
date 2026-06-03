@@ -28,16 +28,7 @@
         <dataLoadCoordinator auto="true"/>
     </facets>
     <layout>
-        <vbox id="chatPanel" width="100%" height="100%" spacing="true" padding="true">
-            <hbox id="conversationTitleLayout" spacing="false" alignItems="CENTER">
-                <h3 id="conversationTitle"
-                    dataContainer="aiConversationDc"
-                    property="title"
-                    classNames="m-0"/>
-                <button id="editConversationTitleBtn"
-                        icon="PENCIL"
-                        themeNames="tertiary-inline"/>
-            </hbox>
-        </vbox>
+        <fragment id="detailFragment"
+                  class="io.jmix.aitoolsflowui.view.aiconversation.AiConversationDetailFragment"/>
     </layout>
 </view>

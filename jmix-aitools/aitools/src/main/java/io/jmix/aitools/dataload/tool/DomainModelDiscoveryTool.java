@@ -19,8 +19,11 @@ package io.jmix.aitools.dataload.tool;
 import io.jmix.aitools.dataload.introspection.model.EntityDescriptor;
 import io.jmix.aitools.dataload.introspection.model.EntitySummary;
 import io.jmix.aitools.dataload.introspection.AvailableEntityService;
+import io.jmix.aitools.tool.AiToolStatusPublisher;
+import io.jmix.core.Messages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.ai.chat.model.ToolContext;
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.ai.tool.annotation.ToolParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +41,10 @@ public class DomainModelDiscoveryTool implements DataLoadAiTool, EntityDataLoadA
 
     @Autowired
     protected AvailableEntityService availableEntityService;
+    @Autowired
+    protected AiToolStatusPublisher toolStatusPublisher;
+    @Autowired
+    protected Messages messages;
 
     @Tool(name = AVAILABLE_ENTITIES_TOOL, description = """
             Returns compact metadata for all entities currently available to the user.
@@ -50,10 +57,19 @@ public class DomainModelDiscoveryTool implements DataLoadAiTool, EntityDataLoadA
                 - Choose which exact entities should be inspected in more detail
                 - Get correct entity names for follow-up tool calls
             """)
-    public List<EntitySummary> getAvailableEntities() {
+    public List<EntitySummary> getAvailableEntities(ToolContext toolContext) {
         log.debug("LLM tool call: getAvailableEntities()");
 
-        return availableEntityService.getEntitySummaries();
+        String startStatus = messages.getMessage("DomainModelDiscoveryTool.getAvailableEntities.startStatus");
+        toolStatusPublisher.update(toolContext, startStatus);
+
+        List<EntitySummary> entitySummaries = availableEntityService.getEntitySummaries();
+
+        toolStatusPublisher.complete(toolContext, startStatus,
+                messages.formatMessage("", "DomainModelDiscoveryTool.getAvailableEntities.successStatus",
+                        entitySummaries.size()));
+
+        return entitySummaries;
     }
 
     @Tool(name = DOMAIN_MODEL_FOR_ENTITIES_TOOL, description = """
@@ -74,9 +90,24 @@ public class DomainModelDiscoveryTool implements DataLoadAiTool, EntityDataLoadA
                 - Example: if enums.PAID.id is 40, then pass parameter 40 (not "PAID").
             """)
     public List<EntityDescriptor> getDomainModelForEntities(
-            @ToolParam(description = "Exact entity names to load detailed metadata for.") List<String> entityNames) {
+            @ToolParam(description = "Exact entity names to load detailed metadata for.") List<String> entityNames,
+            ToolContext toolContext) {
         log.debug("LLM tool call: getDomainModelForEntities({})", entityNames);
 
-        return availableEntityService.findEntityDescriptorsByNames(entityNames);
+        String startStatus = messages.getMessage("DomainModelDiscoveryTool.getDomainModelForEntities.startStatus");
+        toolStatusPublisher.update(toolContext, startStatus);
+
+        List<EntityDescriptor> entityDescriptors = availableEntityService.findEntityDescriptorsByNames(entityNames);
+
+        if (entityDescriptors.isEmpty()) {
+            toolStatusPublisher.complete(toolContext, startStatus,
+                    messages.getMessage("DomainModelDiscoveryTool.getDomainModelForEntities.notFoundStatus"));
+        } else {
+            String entities = entityDescriptors.stream().map(EntityDescriptor::getName).reduce((s, s2) -> s + ", " + s2).get();
+            toolStatusPublisher.complete(toolContext, startStatus,
+                    messages.formatMessage("", "DomainModelDiscoveryTool.getDomainModelForEntities.successStatus", entities));
+        }
+
+        return entityDescriptors;
     }
 }

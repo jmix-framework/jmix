@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,12 @@
  * limitations under the License.
  */
 
-@NullMarked
 package io.jmix.aitoolsflowui.view.aiconversation;
 
-import org.jspecify.annotations.NullMarked;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import io.jmix.flowui.fragment.Fragment;
+import io.jmix.flowui.fragment.FragmentDescriptor;
+
+@FragmentDescriptor("ai-conversation-starter-fragment.xml")
+public class AiConversationStarterFragment extends Fragment<VerticalLayout> {
+}

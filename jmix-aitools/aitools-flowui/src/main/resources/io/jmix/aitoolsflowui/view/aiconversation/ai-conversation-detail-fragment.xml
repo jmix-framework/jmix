@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2026 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<fragment xmlns="http://jmix.io/schema/flowui/fragment">
+    <data>
+        <collection id="timelineItemsDc"
+                    class="io.jmix.aitoolsflowui.model.TimelineItem"/>
+    </data>
+    <content>
+        <vbox id="root"
+              width="100%"
+              height="100%"
+              spacing="false"
+              padding="false"
+              classNames="ai-conversation-timeline-view">
+            <vbox id="timelineCanvas"
+                  width="100%"
+                  height="100%"
+                  spacing="true"
+                  padding="false"
+                  classNames="ai-timeline-canvas">
+                <hbox id="conversationTitleLayout"
+                      width="100%"
+                      spacing="false"
+                      alignItems="CENTER"
+                      classNames="ai-conversation-title-layout">
+                    <h3 id="conversationTitle"
+                        classNames="m-0"/>
+                    <button id="editConversationTitleBtn"
+                            icon="PENCIL"
+                            themeNames="tertiary-inline small icon"
+                            classNames="ms-xs"
+                            ariaLabel="msg://editConversationTitleAction"/>
+                </hbox>
+                <vbox id="timelineContentLayout"
+                      width="100%"
+                      height="100%"
+                      spacing="true"
+                      padding="false"
+                      expand="timelineList"
+                      classNames="ai-timeline-content">
+                    <virtualList id="timelineList"
+                                 itemsContainer="timelineItemsDc"
+                                 width="100%"
+                                 height="100%"
+                                 classNames="ai-conversation-timeline-list">
+                        <fragmentRenderer class="io.jmix.aitoolsflowui.view.aiconversation.renderer.TimelineItemRenderer"/>
+                    </virtualList>
+                    <vbox id="composerContainer"
+                          width="100%"
+                          spacing="true"
+                          padding="false"
+                          classNames="ai-timeline-composer"/>
+                </vbox>
+            </vbox>
+        </vbox>
+    </content>
+</fragment>

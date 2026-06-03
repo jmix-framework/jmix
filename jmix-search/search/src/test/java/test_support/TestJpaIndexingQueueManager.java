@@ -16,7 +16,10 @@
 
 package test_support;
 
-import io.jmix.core.*;
+import io.jmix.core.IdSerialization;
+import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
+import io.jmix.core.UnconstrainedDataManager;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.SystemAuthenticator;
 import io.jmix.data.StoreAwareLocator;
@@ -29,7 +32,8 @@ import io.jmix.search.index.queue.entity.IndexingQueueItem;
 import io.jmix.search.index.queue.impl.EnqueueingSessionManager;
 import io.jmix.search.index.queue.impl.EntityIdsLoaderProvider;
 import io.jmix.search.index.queue.impl.JpaIndexingQueueManager;
-import jakarta.annotation.Nonnull;
+import org.jspecify.annotations.NonNull;
+
 import java.util.Collection;
 import java.util.List;
 
@@ -71,13 +75,13 @@ public class TestJpaIndexingQueueManager extends JpaIndexingQueueManager {
     }
 
     @Override
-    protected int enqueue(@Nonnull Collection<IndexingQueueItem> queueItems) {
+    protected int enqueue(@NonNull Collection<IndexingQueueItem> queueItems) {
         indexingQueueItemsTracker.accept(queueItems);
         return super.enqueue(queueItems);
     }
 
     @Override
-    protected int processRawIds(@Nonnull List<?> rawIds, @Nonnull MetaClass metaClass, int batchSize) {
+    protected int processRawIds(@NonNull List<?> rawIds, @NonNull MetaClass metaClass, int batchSize) {
         try {
             Thread.sleep(idsProcessingDelay);
         } catch (InterruptedException e) {

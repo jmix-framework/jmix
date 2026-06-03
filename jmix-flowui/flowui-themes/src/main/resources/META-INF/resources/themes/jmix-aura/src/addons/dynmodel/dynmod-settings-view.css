@@ -34,6 +34,23 @@
     width: 100%;
 }
 
+.dynmod-settings-view .entities-layout {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: var(--vaadin-gap-s);
+}
+
+@container dynmod-settings-view (max-width: 1280px) {
+    .dynmod-settings-view .entities-layout {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@container dynmod-settings-view (max-width: 1024px) {
+    .dynmod-settings-view .entities-layout {
+        grid-template-columns: 1fr;
+    }
+}
 
 @container dynmod-settings-view (max-width: 640px) {
     .dynmod-settings-view .header-box {

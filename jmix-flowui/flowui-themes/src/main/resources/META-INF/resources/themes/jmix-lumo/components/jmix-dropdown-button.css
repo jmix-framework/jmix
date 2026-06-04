@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
+vaadin-menu-bar[jmix-role='jmix-dropdown-button'],
+vaadin-menu-bar[jmix-role|='jmix-combo-button'] {
+    flex-shrink: 0;
+}
+
 vaadin-menu-bar[jmix-role='jmix-dropdown-button'] vaadin-menu-bar-item::part(content),
 vaadin-menu-bar[jmix-role|='jmix-combo-button'] vaadin-menu-bar-item::part(content) {
     align-items: center;

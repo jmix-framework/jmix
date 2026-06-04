@@ -254,20 +254,22 @@ public class PropertyConditionGenerator implements ConditionGenerator<PropertyCo
             } else {
                 if (dataProperties.isIncludeNullClauseInNotConditions()
                         && isNegativeComparison(propertyCondition.getOperation())) {
-                    return String.format("(%s.%s %s :%s or %s.%s is null)",
+                    return String.format("(%s.%s %s :%s%s or %s.%s is null)",
                             entityAlias,
                             property,
                             PropertyConditionUtils.getJpqlOperation(propertyCondition),
                             propertyCondition.getParameterName(),
+                            getLikeEscapeClause(propertyCondition),
                             entityAlias,
                             property);
                 }
 
-                return String.format("%s.%s %s :%s",
+                return String.format("%s.%s %s :%s%s",
                         entityAlias,
                         property,
                         PropertyConditionUtils.getJpqlOperation(propertyCondition),
-                        propertyCondition.getParameterName());
+                        propertyCondition.getParameterName(),
+                        getLikeEscapeClause(propertyCondition));
             }
         } else {
             if (PropertyConditionUtils.isInIntervalOperation(propertyCondition)
@@ -288,7 +290,7 @@ public class PropertyConditionGenerator implements ConditionGenerator<PropertyCo
                 }
             }
             if (isNegativeComparison(propertyCondition.getOperation())) {
-                return String.format("not exists (select t from %s.%s t where t %s :%s)",
+                return String.format("not exists (select t from %s.%s t where t %s :%s%s)",
                         entityAlias,
                         propertyCondition.getProperty(),
                         switch (propertyCondition.getOperation()) {
@@ -297,13 +299,26 @@ public class PropertyConditionGenerator implements ConditionGenerator<PropertyCo
                             case PropertyCondition.Operation.NOT_IN_LIST -> "in";
                             default -> throw new IllegalStateException("Unsupported operation: " + propertyCondition.getOperation());
                         },
-                        propertyCondition.getParameterName());
+                        propertyCondition.getParameterName(),
+                        getLikeEscapeClause(propertyCondition));
             }
-            return String.format("%s %s :%s",
+            return String.format("%s %s :%s%s",
                     entityAlias,
                     PropertyConditionUtils.getJpqlOperation(propertyCondition),
-                    propertyCondition.getParameterName());
+                    propertyCondition.getParameterName(),
+                    getLikeEscapeClause(propertyCondition));
         }
+    }
+
+    /**
+     * Returns a trailing {@code ESCAPE} clause for {@code LIKE}-based operations so that
+     * {@code _} and {@code %} produced by {@link QueryUtils#escapeForLike(String)} are
+     * recognised as literals by the database. Empty for non-{@code LIKE} operations.
+     */
+    protected String getLikeEscapeClause(PropertyCondition propertyCondition) {
+        return PropertyConditionUtils.isCaseInsensitiveOperation(propertyCondition)
+                ? " escape '" + QueryUtils.ESCAPE_CHARACTER + "'"
+                : "";
     }
 
     protected String getProperty(String property, @Nullable String entityName) {

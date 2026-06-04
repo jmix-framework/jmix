@@ -130,4 +130,45 @@ class DataManagerNegativeConditionNullsTest extends DataSpec {
         where.startsWith("(")
         where.endsWith(")")
     }
+
+    def "NOT_CONTAINS keeps LIKE-escape clause when wrapped with is-null check"() {
+
+        TestAppEntity literal = dataManager.create(TestAppEntity)
+        literal.name = '789_321'
+
+        TestAppEntity wildcardOnly = dataManager.create(TestAppEntity)
+        // matches LIKE '%_32%' when '_' is treated as a wildcard, but lacks the literal '_32'
+        wildcardOnly.name = '7894321'
+
+        dataManager.save(literal, wildcardOnly)
+
+        when: "NOT_CONTAINS with backslash-escaped underscore should treat it literally"
+
+        def list = dataManager.load(TestAppEntity)
+                .condition(PropertyCondition.createWithValue("name", PropertyCondition.Operation.NOT_CONTAINS, "\\_32")
+                        .skipNullOrEmpty())
+                .list()
+
+        then: "the literal '_32' is filtered out, the wildcard-only match remains"
+
+        list == [wildcardOnly]
+    }
+
+    def "generated JPQL keeps 'escape' clause when NOT_CONTAINS is wrapped with is-null check"() {
+        when:
+
+        def property = PropertyCondition.createWithValue("name", PropertyCondition.Operation.NOT_CONTAINS, "value")
+        def context = new ConditionGenerationContext(property)
+        context.entityName = "test_TestAppEntity"
+        context.entityAlias = "e"
+        def where = propertyConditionGenerator.generateWhere(context)
+
+        then:
+
+        where.startsWith("(")
+        where.endsWith(")")
+        where.contains("e.name not like")
+        where.contains("escape '\\'")
+        where.contains("e.name is null")
+    }
 }

@@ -44,7 +44,7 @@ class EnhancingClasspathFunctionalTest {
                 .forwardOutput()
                 .build()
 
-        Path persistenceXml = testProjectDir.resolve('feature/build/resources/main/sample/feature/persistence.xml')
+        Path persistenceXml = testProjectDir.resolve('feature/build/generated/jmix-descriptors/main/sample/feature/persistence.xml')
         assertTrue(Files.exists(persistenceXml), "Expected generated persistence.xml at ${persistenceXml}")
 
         String xml = Files.readString(persistenceXml)

@@ -548,7 +548,9 @@ class EntityInspectorPolicyConstraintTest extends Specification {
         importPlan.getProperty("composedDetails").plan.getProperty("allowedField") != null
         importPlan.getProperty("composedDetails").plan.getProperty("deniedField") == null
 
-        def loaded = unconstrainedDataManager.load(InspectorPolicyEntity).id(importedId).one()
+        def loaded = unconstrainedDataManager.load(InspectorPolicyEntity).id(importedId)
+                .fetchPlanProperties("composedDetails.allowedField", "composedDetails.deniedField")
+                .one()
         loaded.composedDetails != null
         loaded.composedDetails.allowedField == "composition-import-allowed"
         loaded.composedDetails.deniedField == null
@@ -586,7 +588,9 @@ class EntityInspectorPolicyConstraintTest extends Specification {
         importPlan.getProperty("allowedRelation") != null
         importPlan.getProperty("allowedRelation").plan == null
 
-        def loaded = unconstrainedDataManager.load(InspectorPolicyEntity).id(importedId).one()
+        def loaded = unconstrainedDataManager.load(InspectorPolicyEntity).id(importedId)
+                .fetchPlanProperties("allowedRelation.id")
+                .one()
         loaded.allowedRelation != null
         loaded.allowedRelation.id == related.id
         unconstrainedDataManager.load(Id.of(related)).one().deniedField == "relation-original"

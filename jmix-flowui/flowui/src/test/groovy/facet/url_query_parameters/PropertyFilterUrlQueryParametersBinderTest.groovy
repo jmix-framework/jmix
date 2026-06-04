@@ -68,6 +68,30 @@ class PropertyFilterUrlQueryParametersBinderTest extends FlowuiTestSpecification
         filter.operation == PropertyFilter.Operation.NOT_EQUAL
     }
 
+    def "PropertyFilter escapes LIKE wildcards in the underlying query condition"() {
+        given:
+        def screen = navigateToView(PropertyFilterUrlQueryParamsTestView)
+        def filter = screen.nameFilter
+
+        when:
+        filter.operation = operation
+        filter.value = userInput
+
+        then:
+        filter.value == userInput
+        filter.queryCondition.parameterValue == escapedValue
+
+        where:
+        operation                                  | userInput | escapedValue
+        PropertyFilter.Operation.CONTAINS          | "_32"     | "\\_32"
+        PropertyFilter.Operation.CONTAINS          | "%32"     | "\\%32"
+        PropertyFilter.Operation.NOT_CONTAINS      | "_32"     | "\\_32"
+        PropertyFilter.Operation.STARTS_WITH       | "_321"    | "\\_321"
+        PropertyFilter.Operation.ENDS_WITH         | "100%"    | "100\\%"
+        // operations that do not use LIKE leave the value alone
+        PropertyFilter.Operation.EQUAL             | "_32"     | "_32"
+    }
+
     def "roundtrip preserves value with underscores"() {
         given:
         def screen = navigateToView(PropertyFilterUrlQueryParamsTestView)

@@ -15,7 +15,9 @@
  */
 
 group = 'io.jmix.data'
-archivesBaseName = 'jmix-data-autoconfigure'
+base {
+    archivesName = 'jmix-data-autoconfigure'
+}
 
 dependencies {
     api project(':data')

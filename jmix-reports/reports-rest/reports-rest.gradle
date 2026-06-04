@@ -18,7 +18,9 @@ apply plugin: 'groovy'
 apply plugin: 'io.jmix'
 
 group = 'io.jmix.reports'
-archivesBaseName = 'jmix-reports-rest'
+base {
+    archivesName = 'jmix-reports-rest'
+}
 
 dependencies {
     api project(':reports')

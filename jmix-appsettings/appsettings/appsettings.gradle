@@ -15,7 +15,9 @@
  */
 
 group = 'io.jmix.appsettings'
-archivesBaseName = 'jmix-appsettings'
+base {
+    archivesName = 'jmix-appsettings'
+}
 
 apply plugin: 'groovy'
 apply plugin: 'io.jmix'

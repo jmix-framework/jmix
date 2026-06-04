@@ -15,7 +15,9 @@
  */
 
 group = 'io.jmix.search'
-archivesBaseName = 'jmix-search-flowui-starter'
+base {
+    archivesName = 'jmix-search-flowui-starter'
+}
 
 dependencies {
     api project(':search-flowui')

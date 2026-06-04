@@ -18,7 +18,9 @@ apply plugin: 'io.jmix'
 
 
 group = 'io.jmix.fullcalendar'
-archivesBaseName = 'jmix-fullcalendar-flowui-kit'
+base {
+    archivesName = 'jmix-fullcalendar-flowui-kit'
+}
 
 dependencies {
     api project(':flowui-kit')

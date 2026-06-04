@@ -17,7 +17,9 @@
 apply plugin: 'io.jmix'
 
 group = 'io.jmix.core'
-archivesBaseName = 'jmix-framework-test-support'
+base {
+    archivesName = 'jmix-framework-test-support'
+}
 
 jmix {
     entitiesEnhancing {

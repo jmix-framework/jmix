@@ -15,7 +15,9 @@
  */
 
 group = 'io.jmix.fullcalendar'
-archivesBaseName = 'jmix-fullcalendar-flowui-starter'
+base {
+    archivesName = 'jmix-fullcalendar-flowui-starter'
+}
 
 dependencies {
     api project(':fullcalendar-flowui')

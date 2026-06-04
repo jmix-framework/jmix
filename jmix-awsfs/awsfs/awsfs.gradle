@@ -18,7 +18,9 @@ apply plugin: 'groovy'
 apply plugin: 'io.jmix'
 
 group = 'io.jmix.awsfs'
-archivesBaseName = 'jmix-awsfs'
+base {
+    archivesName = 'jmix-awsfs'
+}
 
 dependencies {
     api project(':core')

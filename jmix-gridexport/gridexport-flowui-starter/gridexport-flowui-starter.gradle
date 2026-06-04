@@ -15,7 +15,9 @@
  */
 
 group = 'io.jmix.gridexport'
-archivesBaseName = 'jmix-gridexport-flowui-starter'
+base {
+    archivesName = 'jmix-gridexport-flowui-starter'
+}
 
 dependencies {
     api project(':gridexport-flowui')

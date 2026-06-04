@@ -18,7 +18,9 @@ apply plugin: 'groovy'
 apply plugin: 'io.jmix'
 
 group = 'io.jmix.core'
-archivesBaseName = 'jmix-core'
+base {
+    archivesName = 'jmix-core'
+}
 
 dependencies {
     api 'org.springframework.boot:spring-boot'

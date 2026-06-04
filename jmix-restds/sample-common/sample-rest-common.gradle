@@ -16,7 +16,9 @@
 
 apply plugin: 'io.jmix'
 
-archivesBaseName = 'sample-rest-common'
+base {
+    archivesName = 'sample-rest-common'
+}
 
 dependencies {
     implementation project(':core-starter')

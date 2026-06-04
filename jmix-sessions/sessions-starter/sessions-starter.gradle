@@ -15,7 +15,9 @@
  */
 
 group = 'io.jmix.sessions'
-archivesBaseName = 'jmix-sessions-starter'
+base {
+    archivesName = 'jmix-sessions-starter'
+}
 
 dependencies {
     api project(':sessions')

@@ -2,7 +2,9 @@ apply plugin: 'groovy'
 apply plugin: 'io.jmix'
 
 group = 'io.jmix.jmxconsole'
-archivesBaseName = 'jmix-jmxconsole'
+base {
+    archivesName = 'jmix-jmxconsole'
+}
 
 dependencies {
     api project(':core')

@@ -18,7 +18,9 @@ apply plugin: 'groovy'
 apply plugin: 'io.jmix'
 
 group = 'io.jmix.search'
-archivesBaseName = 'jmix-search'
+base {
+    archivesName = 'jmix-search'
+}
 
 dependencies {
     api project(':data')

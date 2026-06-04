@@ -18,7 +18,9 @@ apply plugin: 'groovy'
 apply plugin: 'io.jmix'
 
 group 'io.jmix.datatools'
-archivesBaseName = 'jmix-datatools-flowui'
+base {
+    archivesName = 'jmix-datatools-flowui'
+}
 
 dependencies {
     api project(':datatools')

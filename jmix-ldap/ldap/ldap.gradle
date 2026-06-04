@@ -18,7 +18,9 @@ apply plugin: 'groovy'
 apply plugin: 'io.jmix'
 
 group = 'io.jmix.ldap'
-archivesBaseName = 'jmix-ldap'
+base {
+    archivesName = 'jmix-ldap'
+}
 
 dependencies {
     api project(':core')

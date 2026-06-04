@@ -15,7 +15,9 @@
  */
 
 group = 'io.jmix.rest'
-archivesBaseName = 'jmix-rest-starter'
+base {
+    archivesName = 'jmix-rest-starter'
+}
 
 dependencies {
     api project(':rest')

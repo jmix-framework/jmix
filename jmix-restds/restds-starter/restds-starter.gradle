@@ -15,7 +15,9 @@
  */
 
 group = 'io.jmix.restds'
-archivesBaseName = 'jmix-restds-starter'
+base {
+    archivesName = 'jmix-restds-starter'
+}
 
 dependencies {
     api project(':restds')

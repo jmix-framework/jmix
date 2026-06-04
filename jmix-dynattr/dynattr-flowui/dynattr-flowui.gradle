@@ -18,7 +18,9 @@ apply plugin: 'groovy'
 apply plugin: 'io.jmix'
 
 group = 'io.jmix.dynattr'
-archivesBaseName = 'jmix-dynattr-flowui'
+base {
+    archivesName = 'jmix-dynattr-flowui'
+}
 
 dependencies {
     api project(':dynattr')

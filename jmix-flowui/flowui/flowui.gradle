@@ -19,7 +19,9 @@ apply plugin: 'io.jmix'
 
 
 group = 'io.jmix.flowui'
-archivesBaseName = 'jmix-flowui'
+base {
+    archivesName = 'jmix-flowui'
+}
 
 dependencies {
     api project(':core')

@@ -15,7 +15,9 @@
  */
 
 group = 'io.jmix.authserver'
-archivesBaseName = 'jmix-authserver-starter'
+base {
+    archivesName = 'jmix-authserver-starter'
+}
 
 dependencies {
     api project(':authserver')

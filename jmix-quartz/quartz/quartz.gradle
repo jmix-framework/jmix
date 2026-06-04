@@ -18,7 +18,9 @@ apply plugin: 'groovy'
 apply plugin: 'io.jmix'
 
 group = 'io.jmix.quartz'
-archivesBaseName = 'jmix-quartz'
+base {
+    archivesName = 'jmix-quartz'
+}
 
 dependencies {
     api project(':core')

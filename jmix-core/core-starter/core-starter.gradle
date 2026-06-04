@@ -15,7 +15,9 @@
  */
 
 group = 'io.jmix.core'
-archivesBaseName = 'jmix-core-starter'
+base {
+    archivesName = 'jmix-core-starter'
+}
 
 dependencies {
     api project(':core')

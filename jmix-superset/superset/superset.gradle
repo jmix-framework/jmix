@@ -17,7 +17,9 @@
 apply plugin: 'io.jmix'
 
 group = 'io.jmix.superset'
-archivesBaseName = 'jmix-superset'
+base {
+    archivesName = 'jmix-superset'
+}
 
 dependencies {
     api project(":core")

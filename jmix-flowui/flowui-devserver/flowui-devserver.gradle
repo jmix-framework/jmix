@@ -24,7 +24,9 @@ apply plugin: 'io.jmix'
 apply plugin: 'maven-publish'
 
 group = 'io.jmix.flowui'
-archivesBaseName = 'jmix-flowui-devserver'
+base {
+    archivesName = 'jmix-flowui-devserver'
+}
 
 dependencies {
     api(project(':flowui-kit')) {

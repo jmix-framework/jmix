@@ -17,7 +17,9 @@
 apply plugin: 'io.jmix'
 
 group = 'io.jmix.saml'
-archivesBaseName = 'jmix-saml'
+base {
+    archivesName = 'jmix-saml'
+}
 
 repositories {
     maven {

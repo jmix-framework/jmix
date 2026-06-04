@@ -17,7 +17,9 @@
 apply plugin: 'io.jmix'
 
 group = 'io.jmix.pessimisticlock'
-archivesBaseName = 'jmix-pessimisticlock-flowui'
+base {
+    archivesName = 'jmix-pessimisticlock-flowui'
+}
 
 dependencies {
     api project(':pessimisticlock')

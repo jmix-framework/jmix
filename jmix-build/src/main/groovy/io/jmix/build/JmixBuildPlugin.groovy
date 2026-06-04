@@ -88,6 +88,7 @@ class JmixBuildPlugin implements Plugin<Project> {
                 apply plugin: 'maven-publish'
 
                 afterEvaluate {
+                    def archivesName = project.base.archivesName.get()
                     java {
                         withSourcesJar()
                     }
@@ -110,7 +111,7 @@ class JmixBuildPlugin implements Plugin<Project> {
                         }
                         publications {
                             javaMaven(MavenPublication) {
-                                artifactId = archivesBaseName
+                                artifactId = archivesName
                                 from components.java
                                 pom {
                                     name = 'Jmix'

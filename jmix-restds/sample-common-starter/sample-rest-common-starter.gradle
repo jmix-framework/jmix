@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-archivesBaseName = 'sample-rest-common-starter'
+base {
+    archivesName = 'sample-rest-common-starter'
+}
 
 dependencies {
     api project(':sample-rest-common')

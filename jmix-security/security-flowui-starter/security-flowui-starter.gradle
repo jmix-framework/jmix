@@ -16,7 +16,9 @@
 
 
 group = 'io.jmix.security'
-archivesBaseName = 'jmix-security-flowui-starter'
+base {
+    archivesName = 'jmix-security-flowui-starter'
+}
 
 dependencies {
     api project(':security-flowui')

@@ -166,8 +166,8 @@ public class ViewValidation {
     public void showValidationErrors(ValidationErrors errors) {
         showValidationErrorsNotification(errors,
                 viewProperties.getValidationNotificationDuration(),
-                Notification.Position.valueOf(viewProperties.getValidationNotificationPosition()),
-                Notifications.Type.valueOf(viewProperties.getValidationNotificationType()));
+                viewProperties.getValidationNotificationPosition(),
+                viewProperties.getValidationNotificationType());
     }
 
     protected void showValidationErrorsNotification(ValidationErrors errors,

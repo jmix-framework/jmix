@@ -42,16 +42,14 @@ public class UiViewProperties {
     Position saveConfirmationPosition;
 
     /**
-     * Standard view validation error notification variant. Should contain the name of enum value
-     * {@link Notifications.Type}.
+     * Standard view validation error notification type.
      */
-    String validationNotificationType;
+    Notifications.Type validationNotificationType;
 
     /**
-     * Standard view validation error notification position. Should contain the name of enum value
-     * {@link Position}.
+     * Standard view validation error notification position.
      */
-    String validationNotificationPosition;
+    Position validationNotificationPosition;
 
     /**
      * The duration in milliseconds to show the view validation error notification.
@@ -76,8 +74,8 @@ public class UiViewProperties {
             @DefaultValue("true") boolean useSaveConfirmation,
             @DefaultValue("SUCCESS") Notifications.Type saveConfirmationType,
             @DefaultValue("TOP_END") Position saveConfirmationPosition,
-            @DefaultValue("DEFAULT") String validationNotificationType,
-            @DefaultValue("BOTTOM_END") String validationNotificationPosition,
+            @DefaultValue("DEFAULT") Notifications.Type validationNotificationType,
+            @DefaultValue("BOTTOM_END") Position validationNotificationPosition,
             @DefaultValue("3000") Integer validationNotificationDuration,
             @DefaultValue("true") boolean reloadUnfetchedAttributesFromLookupViews,
             @DefaultValue("false") boolean preventBrowserTabClosing
@@ -128,14 +126,14 @@ public class UiViewProperties {
     /**
      * @see #validationNotificationType
      */
-    public String getValidationNotificationType() {
+    public Notifications.Type getValidationNotificationType() {
         return validationNotificationType;
     }
 
     /**
      * @see #validationNotificationPosition
      */
-    public String getValidationNotificationPosition() {
+    public Position getValidationNotificationPosition() {
         return validationNotificationPosition;
     }
 

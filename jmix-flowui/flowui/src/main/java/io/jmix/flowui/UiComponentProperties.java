@@ -60,7 +60,7 @@ public class UiComponentProperties {
      */
     boolean gridContextMenuShowActionShortcuts;
 
-    String defaultNotificationPosition;
+    Notification.Position defaultNotificationPosition;
     int defaultNotificationDuration;
 
     /**
@@ -178,7 +178,7 @@ public class UiComponentProperties {
             @DefaultValue("ENTER") String gridReadShortcut,
             @DefaultValue("false") boolean gridContextMenuShowActionIcons,
             @DefaultValue("false") boolean gridContextMenuShowActionShortcuts,
-            @DefaultValue("MIDDLE") String defaultNotificationPosition,
+            @DefaultValue("MIDDLE") Notification.Position defaultNotificationPosition,
             @DefaultValue("false") boolean notificationsOpenedChangeEventsEnabled,
             @DefaultValue("false") boolean dialogsOpenedChangeEventsEnabled,
             @DefaultValue("3000") int defaultNotificationDuration,
@@ -280,7 +280,7 @@ public class UiComponentProperties {
     }
 
     public Notification.Position getDefaultNotificationPosition() {
-        return Notification.Position.valueOf(defaultNotificationPosition);
+        return defaultNotificationPosition;
     }
 
     public int getDefaultNotificationDuration() {

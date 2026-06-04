@@ -1,1 +1,3 @@
-archivesBaseName = 'sample-base'
+base {
+    archivesName = 'sample-base'
+}

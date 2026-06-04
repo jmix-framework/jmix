@@ -12,8 +12,18 @@ import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.api.tasks.testing.Test
 import org.gradle.external.javadoc.JavadocMemberLevel
+import org.gradle.process.ExecOperations
+
+import javax.inject.Inject
 
 class JmixBuildPlugin implements Plugin<Project> {
+
+    private final ExecOperations execOperations
+
+    @Inject
+    JmixBuildPlugin(ExecOperations execOperations) {
+        this.execOperations = execOperations
+    }
 
     @Override
     void apply(Project project) {
@@ -171,6 +181,7 @@ class JmixBuildPlugin implements Plugin<Project> {
     }
 
     private void setupAggregateJavadocsBuilding(Project project) {
+        ExecOperations execOps = execOperations
         Project rootProject = project.rootProject
         if (rootProject) {
             rootProject.gradle.projectsEvaluated {
@@ -196,9 +207,9 @@ class JmixBuildPlugin implements Plugin<Project> {
 
                             if (rootProject.hasProperty('javadocPublishCmd')) {
                                 doLast {
-                                    rootProject.exec {
-                                        workingDir "$rootProject.buildDir/docs/javadoc"
-                                        commandLine 'sh', '-c', rootProject.javadocPublishCmd
+                                    execOps.exec { spec ->
+                                        spec.workingDir "$rootProject.buildDir/docs/javadoc"
+                                        spec.commandLine 'sh', '-c', rootProject.javadocPublishCmd
                                     }
                                 }
                             }

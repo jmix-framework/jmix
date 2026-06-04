@@ -1,0 +1,60 @@
+/*
+ * Copyright 2026 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
+ * The fragment is a full-size flex layout. The outer view owns clipping and
+ * page padding; the canvas applies the single readable max-width for header,
+ * timeline, composer, and prompt suggestions.
+*/
+.ai-conversation-fragment {
+    box-sizing: border-box;
+    min-height: 0;
+    overflow: hidden;
+}
+
+/* Single centered canvas that imposes the 68rem max-width.
+   Every child inside just uses width: 100% - no per-component max-width needed. */
+.conversation-layout {
+    box-sizing: border-box;
+    align-self: center;
+    flex: 1 1 auto;
+    margin: 0 auto;
+    max-width: var(--jmix-ai-conversation-canvas-max-width, 68rem);
+    min-height: 0;
+    padding: var(--vaadin-padding-s);
+    width: 100%;
+}
+
+.conversation-title-layout {
+    border-bottom: 1px solid var(--vaadin-border-color.conversation-content-layout);
+    box-sizing: border-box;
+    padding-bottom: var(--vaadin-padding-s);
+    gap: var(--vaadin-gap-xs);
+}
+
+.conversation-content-layout {
+    box-sizing: border-box;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
+    padding: var(--vaadin-padding-xs) 0;
+}
+
+.conversation-timeline-list {
+    flex: 1 1 auto;
+    min-height: 0;
+    width: 100%;
+}

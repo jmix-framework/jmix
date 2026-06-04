@@ -29,7 +29,7 @@ import io.jmix.flowui.view.ViewController;
 import io.jmix.flowui.view.ViewDescriptor;
 
 /**
- * Thin host view around {@link AiConversationDetailFragment}.
+ * Thin host view around {@link AiConversationFragment}.
  * <p>
  * Owns the {@code aiConversationDc} instance container (so Jmix navigation
  * and {@code @EditedEntityContainer} keep working), and forwards the loaded
@@ -46,7 +46,7 @@ public class AiConversationDetailView extends StandardDetailView<AiConversation>
     private InstanceContainer<AiConversation> aiConversationDc;
 
     @ViewComponent
-    private AiConversationDetailFragment detailFragment;
+    private AiConversationFragment detailFragment;
 
     @Subscribe
     public void onInit(final InitEvent event) {

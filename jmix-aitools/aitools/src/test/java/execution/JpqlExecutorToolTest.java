@@ -24,9 +24,11 @@ import io.jmix.aitools.dataload.tool.JpqlExecutorTool;
 import io.jmix.aitools.dataload.validation.JpqlValidationResult;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.ai.chat.model.ToolContext;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertSame;
 
@@ -57,7 +59,7 @@ class JpqlExecutorToolTest {
             }
         });
 
-        JpqlExecutionResult actualResult = tool.executeQuery(request);
+        JpqlExecutionResult actualResult = tool.executeQuery(request, new ToolContext(Map.of()));
 
         assertSame(expectedResult, actualResult);
     }

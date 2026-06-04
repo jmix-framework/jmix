@@ -17,14 +17,18 @@
 package io.jmix.aitoolsflowui.view.aiconversation.renderer.component;
 
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.icon.SvgIcon;
+import com.vaadin.flow.server.streams.DownloadHandler;
+import com.vaadin.flow.server.streams.DownloadResponse;
 
 public class AssistantAvatar extends Div {
 
     protected static final String BASE_CN = "ai-timeline-avatar";
     protected static final String ASSISTANT_CN = "ai-timeline-avatar-assistant";
     protected static final String AVATAR_ICON_CN = "ai-timeline-avatar-icon";
+
+    protected  static final String ASSISTANT_AVATAR_PATH =
+            "io/jmix/aitoolsflowui/view/aiconversation/renderer/ai-assistant-avatar-dot.svg";
 
     public AssistantAvatar() {
         addClassNames(BASE_CN, ASSISTANT_CN);
@@ -33,8 +37,13 @@ public class AssistantAvatar extends Div {
     }
 
     protected void setupIcon() {
-        Icon defaultIcon = VaadinIcon.MAGIC.create();
-        defaultIcon.addClassName(AVATAR_ICON_CN);
-        add(defaultIcon);
+        DownloadHandler handler = DownloadHandler.fromInputStream(e -> {
+            var stream = getClass().getClassLoader().getResourceAsStream(ASSISTANT_AVATAR_PATH);
+            return new DownloadResponse(stream, "ai-assistant-avatar-dot.svg", "image/svg+xml", -1);
+        });
+
+        SvgIcon svgIcon = new SvgIcon(handler);
+        svgIcon.addClassName(AVATAR_ICON_CN);
+        add(svgIcon);
     }
 }

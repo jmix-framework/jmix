@@ -19,8 +19,11 @@ package io.jmix.aitools.dataload.tool;
 import io.jmix.aitools.dataload.execution.JpqlExecutionRequest;
 import io.jmix.aitools.dataload.execution.JpqlExecutionResult;
 import io.jmix.aitools.dataload.execution.JpqlExecutionService;
+import io.jmix.aitools.tool.AiToolStatusPublisher;
+import io.jmix.core.Messages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.ai.chat.model.ToolContext;
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.ai.tool.annotation.ToolParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +38,11 @@ public class JpqlExecutorTool implements DataLoadAiTool {
 
     @Autowired
     protected JpqlExecutionService jpqlExecutionService;
+
+    @Autowired
+    protected AiToolStatusPublisher toolStatusPublisher;
+    @Autowired
+    protected Messages messages;
 
     @Tool(name = EXECUTE_QUERY_TOOL, description = """
             Validates, repairs if needed and executes a read-only JPQL query through Jmix DataManager.
@@ -215,9 +223,24 @@ public class JpqlExecutorTool implements DataLoadAiTool {
             """)
     public JpqlExecutionResult executeQuery(
             @ToolParam(description = "Structured request containing the original user text and the JPQL draft to execute.")
-            JpqlExecutionRequest request) {
+            JpqlExecutionRequest request,
+            ToolContext toolContext) {
         log.debug("LLM tool call: executeQuery(jpql={})", request == null ? null : request.getJpql());
 
-        return jpqlExecutionService.execute(request);
+        String startStatus = messages.getMessage("JpqlExecutorTool.executeQuery.startStatus");
+        toolStatusPublisher.update(toolContext, startStatus);
+
+        JpqlExecutionResult executionResult = jpqlExecutionService.execute(request);
+
+        String snippet;
+        if (executionResult.getExecutionError() == null) {
+            snippet = messages.formatMessage("", "JpqlExecutorTool.executeQuery.successStatus", executionResult.getRows().size());
+        } else {
+            snippet = messages.formatMessage("", "JpqlExecutorTool.executeQuery.failStatus", executionResult.getExecutionError());
+        }
+
+        toolStatusPublisher.complete(toolContext, startStatus, snippet);
+
+        return executionResult;
     }
 }

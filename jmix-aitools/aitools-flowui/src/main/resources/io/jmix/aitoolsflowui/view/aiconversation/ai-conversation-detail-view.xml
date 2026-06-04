@@ -29,6 +29,6 @@
     </facets>
     <layout>
         <fragment id="detailFragment"
-                  class="io.jmix.aitoolsflowui.view.aiconversation.AiConversationDetailFragment"/>
+                  class="io.jmix.aitoolsflowui.view.aiconversation.AiConversationFragment"/>
     </layout>
 </view>

@@ -58,14 +58,15 @@ import java.util.UUID;
 /**
  * Encapsulates the "AI chat panel" UI — title row, message timeline, thinking
  * indicator and {@link MessageInput} composer — for an {@link AiConversation}.
- * Designed to be embedded into different host views (the detail view, a side
- * dialog, a starter view, custom layouts).
+ * Designed to be embedded into any host view (the standard detail view, a
+ * side dialog, a starter view, custom layouts).
  * <p>
  * <b>Ownership.</b> The fragment is UI-only: the host view owns the data
  * container that holds the {@link AiConversation} and feeds the fragment via
- * {@link #setConversation(AiConversation)}. The fragment never reloads the
- * container itself; instead it asks the host to reload after a message is
- * persisted, via the {@code onReload} callback.
+ * {@link #setConversation(AiConversation)}. The fragment never reloads its
+ * own state silently; it goes through the pluggable
+ * {@link PersistDelegate} / {@link ReloadDelegate} so the host can route
+ * persist/reload through its own {@code DataContext} / {@code DataLoader}.
  * <p>
  * <b>Attachments / entity references.</b> Intentionally absent — the add-on's
  * entity model does not carry them. The composer is a stock Vaadin
@@ -76,10 +77,10 @@ import java.util.UUID;
  * host {@link View} so cancellation on view detach is correct. The fragment
  * resolves its host view at submit time via {@link UiComponentUtils#findView}.
  */
-@FragmentDescriptor("ai-conversation-detail-fragment.xml")
-public class AiConversationDetailFragment extends Fragment<VerticalLayout> {
+@FragmentDescriptor("ai-conversation-fragment.xml")
+public class AiConversationFragment extends Fragment<VerticalLayout> {
 
-    private static final Logger log = LoggerFactory.getLogger(AiConversationDetailFragment.class);
+    private static final Logger log = LoggerFactory.getLogger(AiConversationFragment.class);
 
     @Autowired
     private DataManager dataManager;
@@ -288,12 +289,18 @@ public class AiConversationDetailFragment extends Fragment<VerticalLayout> {
         forceMessageInputFocus();
     }
 
-    // -- Thinking indicator ---------------------------------------------------
-
     protected void showThinkingIndicator() {
         ChatMessage placeholder = createTransientAssistantMessage("");
         activeThinkingItem = timelineItemFactory.createThinkingItem(placeholder);
         appendTimelineItem(activeThinkingItem);
+    }
+
+    protected void removeThinkingIndicator() {
+        if (activeThinkingItem == null) {
+            return;
+        }
+        timelineItemsDc.getMutableItems().remove(activeThinkingItem);
+        activeThinkingItem = null;
     }
 
     protected void appendThinkingStatusUpdate(AiUiStatusUpdate statusUpdate) {
@@ -315,7 +322,7 @@ public class AiConversationDetailFragment extends Fragment<VerticalLayout> {
                 if (statusUpdate.isCompleted()) {
                     statusUpdates.set(statusUpdates.size() - 1, createTimelineStatus(statusUpdate));
                     refreshTimelineItem(activeThinkingItem);
-                    scrollToBottom();
+                    scrollToBottom(false);
                 }
                 return;
             }
@@ -326,15 +333,7 @@ public class AiConversationDetailFragment extends Fragment<VerticalLayout> {
             statusUpdates.remove(0);
         }
         refreshTimelineItem(activeThinkingItem);
-        scrollToBottom();
-    }
-
-    protected void removeThinkingIndicator() {
-        if (activeThinkingItem == null) {
-            return;
-        }
-        timelineItemsDc.getMutableItems().remove(activeThinkingItem);
-        activeThinkingItem = null;
+        scrollToBottom(false);
     }
 
     protected void refreshAll() {
@@ -351,18 +350,18 @@ public class AiConversationDetailFragment extends Fragment<VerticalLayout> {
         focusMessageInput();
     }
 
-    private void refreshComposerVisibility() {
+    protected void refreshComposerVisibility() {
         boolean show = conversation != null && !readOnly;
         composerContainer.setVisible(show);
         editConversationTitleBtn.setVisible(show);
     }
 
-    private void appendTimelineItem(TimelineItem item) {
+    protected void appendTimelineItem(TimelineItem item) {
         timelineItemsDc.getMutableItems().add(item);
         scrollToBottom();
     }
 
-    private void refreshTimelineItem(TimelineItem item) {
+    protected void refreshTimelineItem(TimelineItem item) {
         // replaceItem fires SET_ITEM on the container, which makes the
         // virtual list re-render this single row — needed when in-place
         // mutations on the item (e.g. statusUpdates of the thinking row)
@@ -370,11 +369,85 @@ public class AiConversationDetailFragment extends Fragment<VerticalLayout> {
         timelineItemsDc.replaceItem(item);
     }
 
-    private void scrollToBottom() {
+    /**
+     * Scrolls the timeline to the latest row, forcing the move regardless of
+     * where the user is currently looking. Use for discrete, user-initiated
+     * events (opening a conversation, sending a message, the assistant's final
+     * answer) where the bottom must be shown.
+     */
+    protected void scrollToBottom() {
+        scrollToBottom(true);
+    }
+
+    /**
+     * Scrolls the timeline to the latest row.
+     *
+     * @param force when {@code true}, always scrolls to the bottom and resets
+     *              the "stick to bottom" intent. When {@code false}, scrolls
+     *              only if the user is already at (or near) the bottom — used
+     *              for streaming status updates so a user who scrolled up to
+     *              read is not yanked back down on every minor update.
+     */
+    protected void scrollToBottom(boolean force) {
         int size = timelineItemsDc.getItems().size();
-        if (size > 0) {
+        if (size <= 0) {
+            return;
+        }
+        if (force) {
+            // Coarse server-side positioning: makes the virtualizer render the
+            // rows near the end so their real heights get measured. Skipped
+            // for the conditional case — it would yank a user who scrolled up.
             timelineList.scrollToIndex(size - 1);
         }
+        // Rows have variable height and, crucially, assistant answers render
+        // through the <vaadin-markdown> web component which parses and lays
+        // out its content asynchronously *after* the row's initial render,
+        // in bursts. A one-shot re-pin fires before that growth lands; an
+        // "until scrollHeight is stable" loop exits during a lull between
+        // bursts (leaving the scroll "lower, but not at the bottom"). Instead
+        // we react to the actual cause: a MutationObserver re-pins on every
+        // DOM change (markdown rendering, row recycling) and we also re-pin
+        // every frame for a bounded window, then disconnect.
+        //
+        // "Stick to bottom" intent lives in l.__stick, kept up to date by a
+        // one-shot user-scroll listener: content growth alone fires no scroll
+        // event (so it never clears the flag), and our own pins land at the
+        // bottom (so they keep it set) — only a genuine user scroll-up clears
+        // it. force=true resets the flag; force=false honours it and bails out
+        // when the user is reading higher up. The per-element stop handle
+        // cancels an in-flight pin when a new scroll request arrives (e.g.
+        // back-to-back streaming updates) so loops don't stack.
+        timelineList.getElement().executeJs("""
+                        const l = this;
+                        const force = $0;
+                        const THRESHOLD = 50;
+                        if (!l.__stickInit) {
+                          l.__stickInit = true;
+                          l.__stick = true;
+                          l.addEventListener('scroll', () => {
+                            l.__stick = l.scrollTop + l.clientHeight >= l.scrollHeight - THRESHOLD;
+                          }, { passive: true });
+                        }
+                        if (force) { l.__stick = true; }
+                        if (!l.__stick) { return; }
+                        if (l.__scrollPinStop) { l.__scrollPinStop(); }
+                        const toBottom = () => { if (l.__stick) { l.scrollTop = l.scrollHeight; } };
+                        const mo = new MutationObserver(toBottom);
+                        mo.observe(l, { childList: true, subtree: true,
+                                        characterData: true, attributes: true });
+                        const stop = () => { l.__scrollPinStop = null; mo.disconnect(); };
+                        l.__scrollPinStop = stop;
+                        let frames = 0;
+                        const tick = () => {
+                          if (l.__scrollPinStop !== stop) { return; }
+                          if (!l.__stick) { stop(); return; }
+                          toBottom();
+                          if (++frames < 120) { requestAnimationFrame(tick); }
+                          else { stop(); }
+                        };
+                        requestAnimationFrame(tick);
+                        """,
+                force);
     }
 
     protected MessageInput createMessageInput() {
@@ -430,27 +503,6 @@ public class AiConversationDetailFragment extends Fragment<VerticalLayout> {
                 .one();
     }
 
-    /**
-     * Persists the conversation. Receives the current in-memory instance
-     * (with any pending edits applied by the fragment, e.g. a new title) and
-     * returns the saved/merged instance the fragment should treat as its
-     * live reference going forward.
-     */
-    @FunctionalInterface
-    public interface PersistDelegate {
-        AiConversation persist(AiConversation conversation);
-    }
-
-    /**
-     * Reloads the conversation. Receives the current live instance, returns
-     * a freshly-loaded one (typically with the {@code messages} collection
-     * eagerly fetched so the timeline can be rebuilt).
-     */
-    @FunctionalInterface
-    public interface ReloadDelegate {
-        AiConversation reload(AiConversation conversation);
-    }
-
     protected void openTitleEditDialog() {
         if (conversation == null) {
             return;
@@ -489,5 +541,26 @@ public class AiConversationDetailFragment extends Fragment<VerticalLayout> {
                     setConversation(reloaded);
                 })
                 .open();
+    }
+
+    /**
+     * Persists the conversation. Receives the current in-memory instance
+     * (with any pending edits applied by the fragment, e.g. a new title) and
+     * returns the saved/merged instance the fragment should treat as its
+     * live reference going forward.
+     */
+    @FunctionalInterface
+    public interface PersistDelegate {
+        AiConversation persist(AiConversation conversation);
+    }
+
+    /**
+     * Reloads the conversation. Receives the current live instance, returns
+     * a freshly-loaded one (typically with the {@code messages} collection
+     * eagerly fetched so the timeline can be rebuilt).
+     */
+    @FunctionalInterface
+    public interface ReloadDelegate {
+        AiConversation reload(AiConversation conversation);
     }
 }

@@ -1,0 +1,298 @@
+/*
+ * Copyright 2026 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+:root {
+    --aitols-assistant-background-color: oklch(from var(--aura-accent-color) 0.9 0.05 h);
+}
+
+.conversation-timeline-list::part(items) {
+    box-sizing: border-box;
+    padding: var(--vaadin-padding-s) var(--vaadin-padding-m) var(--vaadin-padding-l) var(--vaadin-padding-m);
+}
+
+.ai-timeline-message-row {
+    box-sizing: border-box;
+    padding: var(--vaadin-padding-s) 0;
+    width: 100%;
+}
+
+.ai-timeline-message-body {
+    min-width: 0;
+}
+
+/* HEADER */
+
+.ai-timeline-message-header {
+    color: var(--vaadin-text-color-secondary);
+    font-size: var(--aura-font-size-xs);
+    margin-bottom: var(--vaadin-padding-xs);
+}
+
+.ai-timeline-message-actor {
+    color: var(--vaadin-text-color);
+    font-weight: 700;
+}
+
+.ai-timeline-message-time {
+    color: var(--vaadin-text-color-secondary);
+}
+
+.ai-timeline-user-text {
+    display: block;
+    white-space: pre-wrap;
+}
+
+.ai-timeline-avatar-container {
+    /* Almost equal to Avatar sizes */
+    --_size: var(--vaadin-avatar-size, calc(1lh + var(--vaadin-padding-block-container) * 2 + var(--vaadin-focus-ring-width)));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: calc(var(--_size) + var(--vaadin-gap-xs));
+}
+
+.ai-timeline-avatar {
+    flex: 0 0 auto;
+    margin: 0;
+}
+
+.ai-timeline-avatar-assistant {
+    --_size: var(--vaadin-avatar-size, calc(1lh + var(--vaadin-padding-block-container) * 2 + var(--vaadin-focus-ring-width)));
+    --_shade: color-mix(in srgb, var(--vaadin-border-color) 20%, transparent);
+    height: var(--_size);
+    width: var(--_size);
+    background: var(--vaadin-avatar-background,
+                    linear-gradient(light-dark(transparent, var(--_shade)), transparent 50%, light-dark(var(--_shade), transparent)),
+                    var(--aura-accent-surface));
+    border: var(--vaadin-focus-ring-width) solid transparent;
+    background-clip: content-box;
+    align-items: center;
+    border-radius: 50%;
+    box-sizing: border-box;
+    display: inline-flex;
+    justify-content: center;
+    background-color: var(--aura-accent-color);
+    color: var(--aura-accent-contrast-color);
+    position: relative;
+}
+
+.ai-timeline-avatar-assistant::before {
+    position: absolute;
+    content: '';
+    inset: calc(var(--vaadin-focus-ring-width) * -1);
+    border-radius: inherit;
+    outline: var(--vaadin-avatar-border-width, 1px) solid var(--vaadin-avatar-border-color, transparent);
+    outline-offset: calc((var(--vaadin-focus-ring-width) + var(--vaadin-avatar-border-width, 1px)) * -1);
+}
+
+/* Markdown output
+   ---------------
+   Assistant messages can include tables, links, and headings. The rules here
+   constrain generated markdown so wide report tables scroll horizontally and
+   document-style headings do not overpower the chat timeline. */
+
+.ai-timeline-markdown {
+    box-sizing: border-box;
+    display: block;
+    line-height: 1.45;
+    max-width: 100%;
+    min-width: 0;
+    overflow: hidden;
+    width: 100%;
+}
+
+.ai-timeline-markdown table {
+    border-collapse: separate;
+    border-spacing: 0;
+    display: block;
+    font-size: var(--aura-font-size-s);
+    margin: var(--vaadin-gap-m) 0;
+    max-width: 100%;
+    overflow-x: auto;
+    width: 100%;
+}
+
+.ai-timeline-markdown thead {
+    background: oklch(from var(--vaadin-text-color) l c h / 0.05);
+}
+
+.ai-timeline-markdown th,
+.ai-timeline-markdown td {
+    border-bottom: 1px solid oklch(from var(--vaadin-text-color) l c h / 0.1);;
+    box-sizing: border-box;
+    padding: var(--vaadin-padding-xs) var(--vaadin-padding-s);
+    text-align: left;
+    vertical-align: top;
+    white-space: nowrap;
+}
+
+.ai-timeline-markdown th {
+    color: var(--vaadin-text-color);
+    font-weight: 700;
+}
+
+.ai-timeline-markdown th[align="right"],
+.ai-timeline-markdown td[align="right"] {
+    text-align: right;
+}
+
+.ai-timeline-markdown th:last-child,
+.ai-timeline-markdown td:last-child {
+    min-width: 24rem;
+    white-space: normal;
+}
+
+.ai-timeline-markdown a {
+    white-space: nowrap;
+}
+
+.ai-timeline-markdown p:first-child {
+    margin-top: 0;
+}
+
+.ai-timeline-markdown p:last-child {
+    margin-bottom: 0;
+}
+
+/* Dial down the default heading sizes - the LLM uses h2/h3 generously and the
+   Lumo defaults are tuned for stand-alone document headings, which looks
+   oversized inside the chat bubble. */
+.ai-timeline-markdown h1 {
+    font-size: var(--aura-font-size-l);
+}
+
+.ai-timeline-markdown h2 {
+    font-size: var(--aura-font-size-l);
+}
+
+.ai-timeline-markdown h3 {
+    font-size: var(--aura-font-size-m);
+}
+
+.ai-timeline-markdown h4 {
+    font-size: var(--aura-font-size-s);
+}
+
+
+/* Thinking indicator
+   ------------------
+   Replaces the old ProgressBar with text shimmer plus a thin moving bar. Tool
+   status lines are appended under the shimmer as deterministic work completes. */
+.ai-timeline-thinking-text {
+    background: linear-gradient(90deg,
+                                oklch(from var(--aura-accent-color) 0.7 0.08 h) 0%,
+                                oklch(from var(--aura-accent-color) 0.55 0.12 h) 50%,
+                                oklch(from var(--aura-accent-color) 0.7 0.08 h) 100%);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+    font-size: var(--aura-font-size-s);
+    font-weight: 500;
+    animation: ai-timeline-thinking-text-shimmer 2s linear infinite;
+}
+
+.ai-timeline-thinking-shimmer {
+    background-color: oklch(from var(--vaadin-text-color) l c h / 0.02);
+    border-radius: var(--vaadin-radius-s);
+    height: 2px;
+    margin-top: var(--vaadin-gap-xs);
+    overflow: hidden;
+    position: relative;
+    width: 12rem;
+    max-width: 100%;
+}
+
+.ai-timeline-thinking-shimmer::after {
+    background: linear-gradient(90deg, transparent 0%, var(--aitols-assistant-background-color) 50%, transparent 100%);
+    content: "";
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 35%;
+    animation: ai-timeline-thinking-shimmer 1.2s linear infinite;
+}
+
+.ai-timeline-thinking-status-list {
+    gap: 0.125rem;
+    margin-top: var(--vaadin-gap-xs);
+}
+
+.ai-timeline-thinking-status-item {
+    color: var(--vaadin-text-color-secondary);
+    font-size: var(--aura-font-size-xs);
+    line-height: 1.3;
+}
+
+.ai-timeline-thinking-status-result {
+    opacity: 0.7;
+    font-style: italic;
+}
+
+@keyframes ai-timeline-thinking-text-shimmer {
+    0% { background-position: 100% 0; }
+    100% { background-position: -100% 0; }
+}
+
+@keyframes ai-timeline-thinking-shimmer {
+    0% { left: -35%; }
+    100% { left: 100%; }
+}
+
+/* TODO: pinyazhin, check and fix */
+/* Marks the assistant reply that just finished streaming. Set by the Java
+   renderer for exactly one timeline item per submit; cleared on the next
+   submit. The row is freshly mounted by DataProvider.refreshItem(...) when the
+   thinking placeholder transitions to the resolved assistant reply, so the
+   animation triggers reliably on first paint.
+
+   The reveal effect is a soft-edged gradient mask whose cutoff scrolls from
+   top (0%) to bottom (112%) over the row, so the text appears top-down rather
+   than the whole block fading uniformly. The mask cutoff is driven by the
+   --ai-timeline-row-reveal custom property; @property registration is what
+   lets the browser interpolate the gradient stop percentages smoothly. */
+/*@property --ai-timeline-row-reveal {
+    syntax: "<percentage>";
+    inherits: false;
+    initial-value: 0%;
+}
+
+.ai-timeline-message-row-fresh {
+    --ai-timeline-row-reveal: 0%;
+    -webkit-mask-image: linear-gradient(180deg,
+                                        black 0%,
+                                        black calc(var(--ai-timeline-row-reveal) - 12%),
+                                        transparent var(--ai-timeline-row-reveal));
+    mask-image: linear-gradient(180deg,
+                                black 0%,
+                                black calc(var(--ai-timeline-row-reveal) - 12%),
+                                transparent var(--ai-timeline-row-reveal));
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    animation: ai-timeline-message-row-fresh-reveal 900ms ease-out forwards;
+}
+
+@keyframes ai-timeline-message-row-fresh-reveal {
+    0% {
+        --ai-timeline-row-reveal: 0%;
+    }
+    100% {
+        --ai-timeline-row-reveal: 112%;
+    }
+}*/

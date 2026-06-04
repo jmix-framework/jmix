@@ -18,6 +18,7 @@ package io.jmix.aitoolsflowui.view.aiconversation.renderer.component;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Composite;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -30,7 +31,9 @@ public abstract class AbstractTimelineItem extends Composite<HorizontalLayout> {
     protected static final String BODY_CN = "ai-timeline-message-body";
     protected static final String ACTOR_CN = "ai-timeline-message-actor";
     protected static final String TIME_CN = "ai-timeline-message-time";
+    protected static final String AVATAR_CONTAINER_CN = "ai-timeline-avatar-container";
 
+    protected Div avatarContainer;
     protected VerticalLayout body;
     protected HorizontalLayout header;
     protected Span actor;
@@ -49,9 +52,10 @@ public abstract class AbstractTimelineItem extends Composite<HorizontalLayout> {
 
         actor.setText(actorName);
 
-        Component avatar = createAvatar(actorName);
+        avatarContainer.removeAll();
+        avatarContainer.add(createAvatar(actorName));
 
-        getContent().add(avatar, body);
+        getContent().add(avatarContainer, body);
     }
 
     @Override
@@ -64,6 +68,8 @@ public abstract class AbstractTimelineItem extends Composite<HorizontalLayout> {
         actor = createActor();
         time = createTime();
         header.add(actor, time);
+
+        avatarContainer = createAvatarContainer();
 
         return root;
     }
@@ -106,6 +112,12 @@ public abstract class AbstractTimelineItem extends Composite<HorizontalLayout> {
         Span time = new Span();
         time.addClassName(TIME_CN);
         return time;
+    }
+
+    protected Div createAvatarContainer() {
+        Div avatarContainer = new Div();
+        avatarContainer.addClassName(AVATAR_CONTAINER_CN);
+        return avatarContainer;
     }
 
     protected abstract Component createAvatar(String actorName);

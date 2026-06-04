@@ -19,6 +19,7 @@ package io.jmix.aitools.dataload.execution;
 import io.jmix.aitools.dataload.validation.JpqlValidationResult;
 import org.jspecify.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -81,7 +82,7 @@ public class JpqlExecutionResult {
     }
 
     public List<Map<String, Object>> getRows() {
-        return rows;
+        return rows == null ? Collections.emptyList() : Collections.unmodifiableList(rows);
     }
 
     @Nullable

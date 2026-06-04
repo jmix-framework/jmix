@@ -29,6 +29,7 @@ import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
+import java.nio.file.StandardCopyOption
 import java.security.MessageDigest
 
 import static io.jmix.gradle.DescriptorGenerationUtils.CONVERTERS_LIST_PROPERTY
@@ -50,29 +51,149 @@ class EnhancingAction implements Action<Task> {
         this.sourceSetName = sourceSetName
     }
 
+    static String enhancedClassesDir(Project project, String sourceSetName) {
+        return "$project.buildDir/classes/jmix/$sourceSetName"
+    }
+
     @Override
     void execute(Task task) {
         Project project = task.getProject()
         project.logger.lifecycle "Enhancing entities in $project for source set '$sourceSetName'"
         SourceSet sourceSet = project.sourceSets.findByName(sourceSetName)
 
-        ClassesInfo classesInfo = collectClasses(project, sourceSet)
+        String compiledDir = sourceSet.java.destinationDirectory.get().getAsFile().absolutePath
+        String enhancedDir = enhancedClassesDir(project, sourceSetName)
+
+        if (!hasCompiledClasses(project, compiledDir)) {
+            project.logger.info "No compiled classes in $compiledDir; entity enhancing for source set '$sourceSetName' is not required"
+            return
+        }
+
+        ClassesInfo classesInfo = collectClasses(project, sourceSet, compiledDir)
 
         addAbsentEmptyStores(classesInfo, sourceSet, project)
 
-        constructDescriptors(project, sourceSet, classesInfo)
+        constructDescriptors(project, sourceSet, classesInfo, compiledDir)
+
+        Set<String> enhancedClassNames = classesInfo.getAllEntities() as Set
+
+        reconcileEnhancedDir(project, compiledDir, enhancedDir, enhancedClassNames)
 
         boolean entitiesEnhancingRequired = !project.jmix.entitiesEnhancing.skipUnmodifiedEntitiesEnhancing ||
-                entityClassesChangedSinceLastBuild(project, sourceSet, classesInfo)
+                entityClassesChangedSinceLastBuild(project, classesInfo, compiledDir) ||
+                enhancedEntitiesMissing(compiledDir, enhancedDir, enhancedClassNames)
 
         if (entitiesEnhancingRequired) {
-            persistenceProviderEnhancing().run(project, sourceSet, classesInfo.allStores())
-            runJmixEnhancing(project, sourceSet, classesInfo)
+            copyClasses(compiledDir, enhancedDir, enhancedClassNames)
+            persistenceProviderEnhancing().run(project, sourceSet, enhancedDir, classesInfo.allStores())
+            runJmixEnhancing(project, sourceSet, enhancedDir, classesInfo)
             if (project.jmix.entitiesEnhancing.skipUnmodifiedEntitiesEnhancing) {
-                saveEntityClassesChecksumForNextBuild(project, sourceSet, classesInfo)
+                saveEntityClassesChecksumForNextBuild(project, classesInfo, compiledDir)
             }
         } else {
             project.logger.lifecycle "Entities enhancing was skipped, because entity classes haven't been changed since the last build"
+        }
+    }
+
+    /**
+     * Reconciles the enhanced output directory against the compiled (input) directory:
+     * <ul>
+     *     <li>removes stale {@code *.class} files in {@code enhancedDir} whose <em>outer</em> class has no
+     *         counterpart in {@code compiledDir};</li>
+     *     <li>copies every non-enhanced class (not in {@code enhancedClassNames}) from {@code compiledDir} to {@code enhancedDir}.</li>
+     * </ul>
+     * Staleness is keyed on the outer class so that classes the enhancer <em>generates</em> (e.g.
+     * {@code SomeEntity$JmixEntityEntry}), which have no compiled counterpart of their own, are kept as long
+     * as their entity is still compiled, yet a removed class drops all of its (inner and generated) artifacts.
+     */
+    protected void reconcileEnhancedDir(Project project, String compiledDir, String enhancedDir, Set<String> enhancedClassNames) {
+        File compiledRoot = new File(compiledDir)
+        File enhancedRoot = new File(enhancedDir)
+
+        Set<String> enhancedRelativePaths = enhancedClassNames.collect { it.replace('.', '/') + '.class' } as Set
+
+        if (enhancedRoot.exists()) {
+            project.fileTree(enhancedRoot).each { File file ->
+                if (file.name.endsWith('.class')) {
+                    String relativePath = enhancedRoot.toPath().relativize(file.toPath()).toString().replace(File.separator, '/')
+                    File compiledOuterClass = new File(compiledRoot, outerClassFile(relativePath))
+                    if (!compiledOuterClass.exists()) {
+                        project.logger.info "Removing stale enhanced class: $relativePath"
+                        file.delete()
+                    }
+                }
+            }
+        }
+
+        if (compiledRoot.exists()) {
+            project.fileTree(compiledRoot).each { File file ->
+                if (file.name.endsWith('.class')) {
+                    String relativePath = compiledRoot.toPath().relativize(file.toPath()).toString().replace(File.separator, '/')
+                    if (!enhancedRelativePaths.contains(relativePath)) {
+                        File target = new File(enhancedRoot, relativePath)
+                        target.getParentFile().mkdirs()
+                        Files.copy(file.toPath(), target.toPath(), StandardCopyOption.REPLACE_EXISTING)
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Returns {@code true} if the compiled-classes directory exists and contains at least one {@code *.class}
+     * file. A source set with no compiled classes (e.g. a module with no test sources) has nothing to enhance,
+     * so enhancement is skipped to avoid running the persistence provider weaver with no input.
+     */
+    protected boolean hasCompiledClasses(Project project, String compiledDir) {
+        File compiledRoot = new File(compiledDir)
+        return compiledRoot.exists() && !project.fileTree(compiledRoot).matching { include '**/*.class' }.empty
+    }
+
+    /**
+     * Maps a class-file relative path to the relative path of its outer (top-level) class file, e.g.
+     * {@code a/b/Entity$JmixEntityEntry.class} -> {@code a/b/Entity.class}. Returns the input unchanged for
+     * a top-level class.
+     */
+    protected static String outerClassFile(String relativeClassFile) {
+        int dollarIndex = relativeClassFile.indexOf('$')
+        return dollarIndex < 0 ? relativeClassFile : relativeClassFile.substring(0, dollarIndex) + '.class'
+    }
+
+    /**
+     * Returns {@code true} if any entity class that belongs to this project (i.e. present in {@code compiledDir})
+     * is absent from {@code enhancedDir}. Guards the {@code skipUnmodifiedEntitiesEnhancing} optimization: the
+     * enhanced output dir and the saved checksum live in different {@code build} subtrees, so the enhanced dir
+     * can be cleared (e.g. {@code rm -rf build/classes}, an IDE rebuild, a partial clean) while the checksum
+     * survives. Without this check the task would run but skip weaving, leaving entities missing from the
+     * enhanced dir that downstream modules consume.
+     */
+    protected boolean enhancedEntitiesMissing(String compiledDir, String enhancedDir, Set<String> enhancedClassNames) {
+        File compiledRoot = new File(compiledDir)
+        File enhancedRoot = new File(enhancedDir)
+        for (String className : enhancedClassNames) {
+            String relativePath = className.replace('.', '/') + '.class'
+            if (new File(compiledRoot, relativePath).exists() && !new File(enhancedRoot, relativePath).exists()) {
+                return true
+            }
+        }
+        return false
+    }
+
+    /**
+     * Copies fresh, un-enhanced copies of the given classes from {@code compiledDir} to {@code enhancedDir},
+     * overwriting any previously enhanced copies, so they can be (re-)woven.
+     */
+    protected void copyClasses(String compiledDir, String enhancedDir, Set<String> classNames) {
+        File compiledRoot = new File(compiledDir)
+        File enhancedRoot = new File(enhancedDir)
+        for (String className : classNames) {
+            String relativePath = className.replace('.', '/') + '.class'
+            File source = new File(compiledRoot, relativePath)
+            if (source.exists()) {
+                File target = new File(enhancedRoot, relativePath)
+                target.getParentFile().mkdirs()
+                Files.copy(source.toPath(), target.toPath(), StandardCopyOption.REPLACE_EXISTING)
+            }
         }
     }
 
@@ -117,14 +238,16 @@ class EnhancingAction implements Action<Task> {
         }
     }
 
-    protected ClassesInfo collectClasses(Project project, SourceSet sourceSet) {
+    protected ClassesInfo collectClasses(Project project, SourceSet sourceSet, String projectClassesDir) {
         ClassesInfo classesInfo = new ClassesInfo()
 
         if (sourceSetName == TEST_SET_NAME) {
-            collectEntitiesFromSources(project, project.sourceSets.findByName(MAIN_SET_NAME), classesInfo)
+            def mainSourceSet = project.sourceSets.findByName(MAIN_SET_NAME)
+            String mainClassesDir = mainSourceSet.java.destinationDirectory.get().getAsFile().absolutePath
+            collectEntitiesFromSources(project, mainSourceSet, classesInfo, mainClassesDir)
         }
 
-        collectEntitiesFromSources(project, sourceSet, classesInfo)
+        collectEntitiesFromSources(project, sourceSet, classesInfo, projectClassesDir)
 
         if (sourceSetName == TEST_SET_NAME && classesInfo.modulePaths.size() > 1) {
             //test sourceSet can have 0 or more Configurations. Production Configuration path should be removed in case of test Configuration presence
@@ -138,7 +261,7 @@ class EnhancingAction implements Action<Task> {
             classesInfo.converters.add(it)
         }
 
-        collectEntitiesFromClasspathes(project, sourceSet, classesInfo)
+        collectEntitiesFromClasspathes(project, sourceSet, classesInfo, projectClassesDir)
 
         project.logger.info("Found entities:\n    JPA: ${classesInfo.getJpaEntities()};\n    DTO: ${classesInfo.getDtoEntities()}.\n" +
                 "Converters: ${classesInfo.getConverters()}")
@@ -146,8 +269,8 @@ class EnhancingAction implements Action<Task> {
         return classesInfo
     }
 
-    protected void collectEntitiesFromSources(Project project, sourceSet, ClassesInfo classesInfo) {
-        ClassPool classPool = createClassPool(project, sourceSet)
+    protected void collectEntitiesFromSources(Project project, sourceSet, ClassesInfo classesInfo, String projectClassesDir) {
+        ClassPool classPool = createClassPool(project, sourceSet, projectClassesDir)
 
         sourceSet.allJava.getSrcDirs().each { File srcDir ->
             project.fileTree(srcDir).each { File file ->
@@ -172,8 +295,8 @@ class EnhancingAction implements Action<Task> {
         }
     }
 
-    protected void collectEntitiesFromClasspathes(Project project, sourceSet, ClassesInfo classesInfo) {
-        ClassPool classPool = createClassPool(project, sourceSet)
+    protected void collectEntitiesFromClasspathes(Project project, sourceSet, ClassesInfo classesInfo, String projectClassesDir) {
+        ClassPool classPool = createClassPool(project, sourceSet, projectClassesDir)
 
         ClassesInfo compileClasses = collectEntitiesFromClasspath(project, sourceSet.compileClasspath, classPool)
         ClassesInfo runtimeClasses = collectEntitiesFromClasspath(project, sourceSet.runtimeClasspath, classPool)
@@ -232,7 +355,7 @@ class EnhancingAction implements Action<Task> {
         }
     }
 
-    protected void constructDescriptors(Project project, sourceSet, ClassesInfo classesInfo) {
+    protected void constructDescriptors(Project project, sourceSet, ClassesInfo classesInfo, String projectClassesDir) {
         for (String storeName : classesInfo.allStores()) {
             for (String modulePath : classesInfo.modulePaths) {
 
@@ -257,50 +380,43 @@ class EnhancingAction implements Action<Task> {
                 DescriptorGenerationUtils.constructOrmXml(
                         ormFileName,
                         jpaClasses,
-                        createClassPool(project, sourceSet))
+                        createClassPool(project, sourceSet, projectClassesDir))
 
-                //store all generated persistence/orm xml files in temporary resources dir, because output resources dir is not prepared yet
-                String tmpPath = "$project.buildDir/tmp/entitiesEnhancing/resources/$sourceSetName/$modulePath"
-                project.logger.info "Copying files $persistenceFileName and $ormFileName to $tmpPath"
+                //write generated persistence/orm xml into a dedicated generated resources dir,
+                //which is registered as a resources srcDir and consumed by processResources (single owner of build/resources)
+                String generatedPath = "${generatedDescriptorsDir(project, sourceSetName)}/$modulePath"
+                project.logger.info "Copying files $persistenceFileName and $ormFileName to $generatedPath"
                 project.copy {
                     from persistenceFileName, ormFileName
-                    into tmpPath
+                    into generatedPath
                     rename "persistence.xml", "${storePrefix}persistence.xml"
                 }
             }
         }
     }
 
-    static void copyGeneratedFiles(Project project, String sourceSetName) {
-        String sourcePath = "$project.buildDir/tmp/entitiesEnhancing/resources/$sourceSetName/"
-        String destPath = "$project.buildDir/resources/$sourceSetName/"
-        project.logger.info "Copying files from $sourcePath to $destPath"
-        project.copy {
-            from sourcePath
-            into destPath
-        }
+    static String generatedDescriptorsDir(Project project, String sourceSetName) {
+        return "$project.buildDir/generated/jmix-descriptors/$sourceSetName"
     }
 
-    protected void runJmixEnhancing(Project project, sourceSet, ClassesInfo classesInfo) {
+    protected void runJmixEnhancing(Project project, sourceSet, String enhancedDir, ClassesInfo classesInfo) {
         if (!classesInfo.getAllEntities().isEmpty()) {
             project.logger.lifecycle "Running Jmix enhancer in $project for $sourceSet"
 
-            String javaOutputDir = sourceSet.java.destinationDirectory.get().getAsFile().absolutePath
-
             for (EnhancingStep step : enhancingSteps()) {
 
-                ClassPool classPool = createClassPool(project, sourceSet)
+                ClassPool classPool = createClassPool(project, sourceSet, enhancedDir)
 
                 step.classPool = classPool
-                step.outputDir = javaOutputDir
+                step.outputDir = enhancedDir
                 step.logger = project.logger
 
                 for (className in classesInfo.getAllEntities()) {
                     def classFileName = className.replace('.', '/') + '.class'
-                    def classFile = new File(javaOutputDir, classFileName)
+                    def classFile = new File(enhancedDir, classFileName)
 
                     if (classFile.exists()) {
-                        // skip files from dependencies, enhance only classes from `javaOutputDir`
+                        // skip files from dependencies, enhance only classes from the enhanced output dir
                         step.execute(className)
                     }
                 }
@@ -314,8 +430,8 @@ class EnhancingAction implements Action<Task> {
      * On the next project build, the checksum of entities classes from the "build" directory will be compared with the
      * checksum saved to the file to find out if entities have been changed since the last compilation.
      */
-    protected void saveEntityClassesChecksumForNextBuild(Project project, sourceSet, ClassesInfo classesInfo) {
-        def allEntityClassesChecksum = evaluateEntityClassesChecksum(project, sourceSet, classesInfo)
+    protected void saveEntityClassesChecksumForNextBuild(Project project, ClassesInfo classesInfo, String compiledDir) {
+        def allEntityClassesChecksum = evaluateEntityClassesChecksum(project, classesInfo, compiledDir)
         Path checksumFilePath = getEntitiesChecksumFilePath(project)
         if (!Files.exists(checksumFilePath.getParent())) {
             Files.createDirectories(checksumFilePath.getParent())
@@ -326,16 +442,15 @@ class EnhancingAction implements Action<Task> {
     /**
      * Evaluates a single checksum for all entity classes (of the current project) extracted from the ClassesInfo.
      */
-    protected String evaluateEntityClassesChecksum(Project project, sourceSet, ClassesInfo classesInfo) {
+    protected String evaluateEntityClassesChecksum(Project project, ClassesInfo classesInfo, String compiledDir) {
         StringBuilder sb = new StringBuilder()
-        String javaOutputDir = sourceSet.java.destinationDirectory.get().getAsFile().absolutePath
         Collection<String> allEntities = classesInfo.getAllEntities()
         allEntities.sort()
         for (className in allEntities) {
             def classFileName = className.replace('.', '/') + '.class'
-            def classFile = new File(javaOutputDir, classFileName)
+            def classFile = new File(compiledDir, classFileName)
 
-            // skip files from dependencies, copy only classes from `javaOutputDir`
+            // skip files from dependencies, consider only compiled classes from `compiledDir`
             if (classFile.exists()) {
                 def fileChecksum = checkSum(classFile)
                 sb.append(fileChecksum)
@@ -350,14 +465,14 @@ class EnhancingAction implements Action<Task> {
      * the same. Method compares the checksum of entity classes saved during previous compilation with the checksum of
      * actual entity classes collection.
      */
-    protected boolean entityClassesChangedSinceLastBuild(Project project, SourceSet sourceSet, ClassesInfo classesInfo) {
+    protected boolean entityClassesChangedSinceLastBuild(Project project, ClassesInfo classesInfo, String compiledDir) {
         Path entitiesChecksumFilePath = getEntitiesChecksumFilePath(project)
         if (!Files.exists(entitiesChecksumFilePath)) {
             //previous entity classes checksum was not saved
             return true
         }
         def prevChecksum = Files.readString(entitiesChecksumFilePath)
-        def currentChecksum = evaluateEntityClassesChecksum(project, sourceSet, classesInfo)
+        def currentChecksum = evaluateEntityClassesChecksum(project, classesInfo, compiledDir)
         project.logger.debug("Previous entities checksum: {}, current entities checksum: {}", prevChecksum, currentChecksum)
         return prevChecksum != currentChecksum
     }
@@ -376,10 +491,10 @@ class EnhancingAction implements Action<Task> {
      * Returns a path to a file where entity classes checksum will be stored to.
      */
     protected Path getEntitiesChecksumFilePath(Project project) {
-        return Paths.get("$project.buildDir/tmp/entitiesEnhancing/entities.checksum")
+        return Paths.get("$project.buildDir/tmp/entitiesEnhancing/$sourceSetName/entities.checksum")
     }
 
-    static ClassPool createClassPool(Project project, sourceSet) {
+    static ClassPool createClassPool(Project project, sourceSet, String projectClassesDir) {
         ClassPool classPool = new ClassPool(null)
         classPool.appendSystemPath()
 
@@ -387,7 +502,7 @@ class EnhancingAction implements Action<Task> {
             classPool.insertClassPath(file.getAbsolutePath())
         }
 
-        classPool.insertClassPath(sourceSet.java.destinationDirectory.get().getAsFile().absolutePath)
+        classPool.insertClassPath(projectClassesDir)
 
         project.configurations.enhancing.files.each { File dep ->
             classPool.insertClassPath(dep.absolutePath)

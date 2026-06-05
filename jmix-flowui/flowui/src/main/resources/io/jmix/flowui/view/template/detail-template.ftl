@@ -37,7 +37,7 @@
     </actions>
     <layout>
         <#if collectionProperties?has_content>
-        <tabSheet id="contentTabSheet" width="100%">
+        <tabSheet id="contentTabSheet" alignSelf="STRETCH">
             <tab id="generalTab" label="msg:///viewTemplate.generalTab">
                 <@formLayout/>
             </tab>

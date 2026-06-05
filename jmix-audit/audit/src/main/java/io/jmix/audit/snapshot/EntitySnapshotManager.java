@@ -46,15 +46,6 @@ public interface EntitySnapshotManager {
     List<EntitySnapshotModel> getSnapshots(Object entity);
 
     /**
-     * Translate snapshots for archival classes
-     *
-     * @param metaClass    Metaclass
-     * @param id           Entity Id
-     * @param classMapping Map of [OldClass -&gt; NewClass] for migration
-     */
-    void migrateSnapshots(MetaClass metaClass, Object id, Map<Class, Class> classMapping);
-
-    /**
      * Create snapshot for Entity and store it to database
      *
      * @param entity    Entity

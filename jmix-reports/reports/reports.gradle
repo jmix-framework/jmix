@@ -28,8 +28,6 @@ dependencies {
 
     compileOnly project(':dynattr')
 
-    api 'com.thoughtworks.xstream:xstream'
-
     api 'org.apache.groovy:groovy-templates'
 
     api 'com.google.code.gson:gson'

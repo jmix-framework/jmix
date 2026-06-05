@@ -16,23 +16,41 @@
 
 package io.jmix.aitools.dataload.execution;
 
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
+/**
+ * A mutable named query parameter passed to JPQL execution.
+ * <p>
+ * Holds the parameter name, its declared Java type name (for example {@code "String"} or
+ * {@code "java.util.UUID"}) and the raw value. The value is converted to the actual Java type
+ * by {@link JpqlParameterConversionService} before the query is run.
+ */
+@NullMarked
 public class JpqlExecutionParameter {
 
     protected String name;
     protected String type;
+
+    @Nullable
     protected Object value;
 
-    public JpqlExecutionParameter() {
-    }
-
+    /**
+     * @param name  parameter name as used in the JPQL text
+     * @param type  declared Java type name of the parameter
+     * @param value raw parameter value
+     */
     public JpqlExecutionParameter(String name, String type, @Nullable Object value) {
         this.name = name;
         this.type = type;
         this.value = value;
     }
 
+    /**
+     * Returns the parameter name as used in the JPQL text.
+     *
+     * @return parameter name
+     */
     public String getName() {
         return name;
     }
@@ -41,6 +59,11 @@ public class JpqlExecutionParameter {
         this.name = name;
     }
 
+    /**
+     * Returns the declared Java type name of the parameter.
+     *
+     * @return Java type name
+     */
     public String getType() {
         return type;
     }
@@ -49,6 +72,11 @@ public class JpqlExecutionParameter {
         this.type = type;
     }
 
+    /**
+     * Returns the raw, not-yet-converted parameter value.
+     *
+     * @return parameter value, or {@code null} if none was provided
+     */
     @Nullable
     public Object getValue() {
         return value;

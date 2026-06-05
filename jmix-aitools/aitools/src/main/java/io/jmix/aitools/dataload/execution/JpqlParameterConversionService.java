@@ -19,7 +19,10 @@ package io.jmix.aitools.dataload.execution;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -37,24 +40,55 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * Converts raw JPQL parameter values to the Java types expected by the query.
+ * <p>
+ * Each {@link JpqlExecutionParameter} carries a declared type name and an untyped value (typically
+ * a string or a number as produced by the LLM). This service resolves the target Java class and
+ * coerces the value to it, supporting common JDK types and any type known to the
+ * {@link DatatypeRegistry}. Values whose type cannot be resolved are passed through unchanged.
+ */
+@NullMarked
 @Component("aitols_JpqlParameterConversionService")
 public class JpqlParameterConversionService {
+
+    private static final Logger log = LoggerFactory.getLogger(JpqlParameterConversionService.class);
 
     @Autowired
     protected DatatypeRegistry datatypeRegistry;
 
-    public Map<String, Object> convert(List<JpqlExecutionParameter> parameters) {
+    /**
+     * Converts a list of parameters to a name-to-value map of execution-ready values, preserving order.
+     * <p>
+     * Parameters whose value converts to {@code null} are skipped rather than bound.
+     *
+     * @param parameters parameters to convert
+     * @return map of parameter names to converted values; parameters with a {@code null} value are omitted
+     */
+    public Map<String, Object> convert(@Nullable List<JpqlExecutionParameter> parameters) {
         if (parameters == null || parameters.isEmpty()) {
             return Map.of();
         }
 
         Map<String, Object> convertedParameters = new LinkedHashMap<>();
         for (JpqlExecutionParameter parameter : parameters) {
-            convertedParameters.put(parameter.getName(), convert(parameter));
+            Object convertedValue = convert(parameter);
+            if (convertedValue == null) {
+                log.debug("Skipping query parameter '{}' because its value is null", parameter.getName());
+                continue;
+            }
+            convertedParameters.put(parameter.getName(), convertedValue);
         }
         return Map.copyOf(convertedParameters);
     }
 
+    /**
+     * Converts a single parameter's value to its declared Java type.
+     *
+     * @param parameter parameter whose value is converted
+     * @return the converted value, or {@code null} if the parameter value is {@code null}
+     * @throws IllegalArgumentException if the value cannot be parsed as the declared type
+     */
     @Nullable
     public Object convert(JpqlExecutionParameter parameter) {
         Preconditions.checkNotNullArgument(parameter, "parameter is null");

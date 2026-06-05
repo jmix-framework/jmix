@@ -17,26 +17,47 @@
 package io.jmix.aitools.dataload.execution;
 
 import io.jmix.aitools.dataload.validation.JpqlValidationResult;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Outcome of a single {@link JpqlExecutionService#execute} call.
+ */
+@NullMarked
 public class JpqlExecutionResult {
 
     protected GeneratedJpqlResult generatedJpqlResult;
     protected JpqlValidationResult validationResult;
 
     protected List<Map<String, Object>> rows;
-    protected Integer maxResults;
-    protected Integer firstResult;
     protected boolean hasMore;
 
     protected boolean repaired;
     protected boolean executed;
+
+    @Nullable
     protected String executionError;
 
+    @Nullable
+    protected Integer maxResults;
+    @Nullable
+    protected Integer firstResult;
+
+    /**
+     * @param generatedJpqlResult generated (and possibly repaired) query draft
+     * @param validationResult    validation result of the processed query
+     * @param rows                fetched rows, each a property-name-to-value map
+     * @param maxResults          effective maximum number of rows
+     * @param firstResult         applied row offset
+     * @param hasMore             whether more rows are available beyond {@code maxResults}
+     * @param repaired            whether the query was repaired before execution
+     * @param executed            whether the query was actually executed
+     * @param executionError      error message from a failed execution
+     */
     public JpqlExecutionResult(GeneratedJpqlResult generatedJpqlResult,
                                JpqlValidationResult validationResult,
                                List<Map<String, Object>> rows,
@@ -57,6 +78,12 @@ public class JpqlExecutionResult {
         this.executionError = executionError;
     }
 
+    /**
+     * Creates a non-executed result for a query that failed validation.
+     *
+     * @param repaired whether a repair attempt was made before validation failed
+     * @return non-executed result describing the validation failure
+     */
     public static JpqlExecutionResult failed(GeneratedJpqlResult generatedJpqlResult,
                                              JpqlValidationResult validationResult,
                                              boolean repaired) {
@@ -65,48 +92,102 @@ public class JpqlExecutionResult {
                 false, repaired, false, null);
     }
 
+    /**
+     * Creates a non-executed result for a query that passed validation but failed at execution time.
+     *
+     * @param maxResults     effective maximum number of rows that was applied
+     * @param repaired       whether the query was repaired before execution
+     * @param executionError error message from the failed execution, or {@code null} if unavailable
+     * @return non-executed result describing the execution failure
+     */
     public static JpqlExecutionResult failed(GeneratedJpqlResult generatedJpqlResult,
                                              JpqlValidationResult validationResult,
                                              int maxResults, boolean repaired,
-                                             String executionError) {
+                                             @Nullable String executionError) {
         return new JpqlExecutionResult(generatedJpqlResult, validationResult, List.of(),
                 maxResults, generatedJpqlResult.getFirstResult(), false, repaired, false, executionError);
     }
 
+    /**
+     * Returns the generated (and possibly repaired) JPQL draft that was processed.
+     *
+     * @return generated query draft
+     */
     public GeneratedJpqlResult getGeneratedJpqlResult() {
         return generatedJpqlResult;
     }
 
+    /**
+     * Returns the validation result of the processed query.
+     *
+     * @return validation result
+     */
     public JpqlValidationResult getValidationResult() {
         return validationResult;
     }
 
+    /**
+     * Returns the fetched rows as an unmodifiable list, each row being a property-name-to-value map.
+     * Empty if the query was not executed or returned nothing.
+     *
+     * @return fetched rows, never {@code null}
+     */
     public List<Map<String, Object>> getRows() {
-        return rows == null ? Collections.emptyList() : Collections.unmodifiableList(rows);
+        return Collections.unmodifiableList(rows);
     }
 
+    /**
+     * Returns the effective maximum number of rows that was applied.
+     *
+     * @return maximum number of rows, or {@code null} if unknown
+     */
     @Nullable
     public Integer getMaxResults() {
         return maxResults;
     }
 
+    /**
+     * Returns the row offset that was applied.
+     *
+     * @return row offset, or {@code null} if no offset was used
+     */
     @Nullable
     public Integer getFirstResult() {
         return firstResult;
     }
 
+    /**
+     * Returns whether more rows are available beyond {@link #getMaxResults()}.
+     *
+     * @return {@code true} if more rows are available
+     */
     public boolean isHasMore() {
         return hasMore;
     }
 
+    /**
+     * Returns whether the query was repaired before execution.
+     *
+     * @return {@code true} if the query was repaired
+     */
     public boolean isRepaired() {
         return repaired;
     }
 
+    /**
+     * Returns whether the query was actually executed against the data store.
+     *
+     * @return {@code true} if the query was executed
+     */
     public boolean isExecuted() {
         return executed;
     }
 
+    /**
+     * Returns the error message from a failed execution.
+     *
+     * @return execution error message, or {@code null} if execution succeeded or was never attempted
+     */
     @Nullable
     public String getExecutionError() {
         return executionError;

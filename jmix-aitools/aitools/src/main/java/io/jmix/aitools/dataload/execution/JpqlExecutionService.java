@@ -43,6 +43,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Validates, repairs and executes a generated JPQL query, returning the fetched rows.
+ */
 @Component("aitols_JpqlExecutionService")
 public class JpqlExecutionService {
 
@@ -63,6 +66,18 @@ public class JpqlExecutionService {
     @Autowired(required = false)
     protected Metadata metadata;
 
+    /**
+     * Validates, repairs if needed and executes the query described by the request.
+     * <p>
+     * This method runs the full pipeline: it validates and (if needed) repairs the
+     * query, enforces data-access constraints, converts the parameters to their Java types and runs
+     * the query through {@link DataManager#loadValues}. One extra row is fetched to detect whether
+     * more results are available. Validation or execution failures are reported as a non-successful
+     * {@link JpqlExecutionResult} rather than thrown.
+     *
+     * @param request query to execute together with its parameters and paging hints
+     * @return result with the fetched rows on success, or with validation/execution failure details
+     */
     public JpqlExecutionResult execute(JpqlExecutionRequest request) {
         Preconditions.checkNotNullArgument(request, "request is null");
 
@@ -201,6 +216,9 @@ public class JpqlExecutionService {
         return new ExecutionRows(rows, hasMore);
     }
 
+    /**
+     * Rows fetched for a query plus a flag telling whether more results are available beyond them.
+     */
     protected record ExecutionRows(List<Map<String, Object>> rows, boolean hasMore) {
     }
 }

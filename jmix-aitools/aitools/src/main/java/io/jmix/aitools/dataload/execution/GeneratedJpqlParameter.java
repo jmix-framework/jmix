@@ -16,28 +16,57 @@
 
 package io.jmix.aitools.dataload.execution;
 
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
+/**
+ * A single named query parameter as produced by the JPQL generation layer.
+ * <p>
+ * The value is still untyped at this stage and is converted to the actual Java type before execution.
+ */
+@NullMarked
 public class GeneratedJpqlParameter {
 
     protected String name;
     protected String type;
+
+    @Nullable
     protected Object value;
 
+    /**
+     * @param name  parameter name as used in the JPQL text
+     * @param type  declared Java type name of the parameter (for example {@code "String"} or {@code "java.util.UUID"})
+     * @param value raw parameter value
+     */
     public GeneratedJpqlParameter(String name, String type, @Nullable Object value) {
         this.name = name;
         this.type = type;
         this.value = value;
     }
 
+    /**
+     * Returns the parameter name as used in the JPQL text.
+     *
+     * @return parameter name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Returns the declared Java type name of the parameter, for example {@code "String"} or {@code "java.util.UUID"}.
+     *
+     * @return Java type name
+     */
     public String getType() {
         return type;
     }
 
+    /**
+     * Returns the raw, not-yet-converted parameter value.
+     *
+     * @return parameter value, or {@code null} if none was provided
+     */
     @Nullable
     public Object getValue() {
         return value;

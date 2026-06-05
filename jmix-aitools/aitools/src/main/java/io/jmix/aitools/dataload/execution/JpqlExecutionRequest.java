@@ -20,6 +20,9 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
+/**
+ * Input for {@link JpqlExecutionService}: a JPQL query together with everything needed to run it.
+ */
 public class JpqlExecutionRequest {
 
     protected String userText;
@@ -34,6 +37,14 @@ public class JpqlExecutionRequest {
     public JpqlExecutionRequest() {
     }
 
+    /**
+     * @param userText         original user request in natural language
+     * @param jpql             JPQL query to execute
+     * @param parameters       query parameters
+     * @param resultProperties properties to select, or {@code null} for none
+     * @param maxResults       maximum number of rows, or {@code null} for the configured default
+     * @param firstResult      row offset, or {@code null} for no offset
+     */
     public JpqlExecutionRequest(String userText,
                                 String jpql,
                                 List<JpqlExecutionParameter> parameters,
@@ -48,6 +59,11 @@ public class JpqlExecutionRequest {
         this.firstResult = firstResult;
     }
 
+    /**
+     * Returns the original user request in natural language.
+     *
+     * @return user request text
+     */
     public String getUserText() {
         return userText;
     }
@@ -56,6 +72,11 @@ public class JpqlExecutionRequest {
         this.userText = userText;
     }
 
+    /**
+     * Returns the JPQL query to execute.
+     *
+     * @return JPQL query
+     */
     public String getJpql() {
         return jpql;
     }
@@ -64,6 +85,11 @@ public class JpqlExecutionRequest {
         this.jpql = jpql;
     }
 
+    /**
+     * Returns the query parameters.
+     *
+     * @return query parameters, never {@code null}
+     */
     public List<JpqlExecutionParameter> getParameters() {
         return parameters;
     }
@@ -72,6 +98,11 @@ public class JpqlExecutionRequest {
         this.parameters = parameters == null ? List.of() : List.copyOf(parameters);
     }
 
+    /**
+     * Returns the properties to select for each result row.
+     *
+     * @return result properties, never {@code null}
+     */
     public List<String> getResultProperties() {
         return resultProperties;
     }
@@ -80,6 +111,11 @@ public class JpqlExecutionRequest {
         this.resultProperties = resultProperties == null ? List.of() : List.copyOf(resultProperties);
     }
 
+    /**
+     * Returns the requested maximum number of rows.
+     *
+     * @return maximum number of rows, or {@code null} for the configured default
+     */
     @Nullable
     public Integer getMaxResults() {
         return maxResults;
@@ -89,6 +125,11 @@ public class JpqlExecutionRequest {
         this.maxResults = maxResults;
     }
 
+    /**
+     * Returns the requested row offset.
+     *
+     * @return row offset, or {@code null} for no offset
+     */
     @Nullable
     public Integer getFirstResult() {
         return firstResult;

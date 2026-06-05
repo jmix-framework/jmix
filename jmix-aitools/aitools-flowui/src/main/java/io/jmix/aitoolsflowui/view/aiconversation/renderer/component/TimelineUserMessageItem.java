@@ -31,9 +31,9 @@ import io.jmix.aitools.entity.ChatMessage;
  */
 public class TimelineUserMessageItem extends AbstractTimelineItem {
 
-    protected static final String USER_MESSAGE_CN = "ai-timeline-message-row-user";
-    protected static final String USER_MESSAGE_CONTENT_CN = "ai-timeline-user-text";
-    protected static final String AVATAR_CN = "ai-timeline-avatar";
+    protected static final String USER_MESSAGE_CN = "timeline-message-row-user";
+    protected static final String USER_MESSAGE_CONTENT_CN = "timeline-user-text";
+    protected static final String AVATAR_CN = "timeline-avatar";
 
     public void setMessage(ChatMessage message, String actorName) {
         removeClassName(USER_MESSAGE_CN);

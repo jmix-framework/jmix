@@ -24,9 +24,9 @@ import java.util.Optional;
 
 public class TimelineAssistantMessageItem extends AbstractTimelineItem {
 
-    protected static final String ASSISTANT_MESSAGE_CN = "ai-timeline-message-row-assistant";
-    protected static final String ASSISTANT_MESSAGE_REFRESH_CN = "ai-timeline-message-row-fresh";
-    protected static final String ASSISTANT_MESSAGE_MARKDOWN_CN = "ai-timeline-markdown";
+    protected static final String ASSISTANT_MESSAGE_CN = "timeline-message-row-assistant";
+    protected static final String ASSISTANT_MESSAGE_REFRESH_CN = "timeline-message-row-fresh";
+    protected static final String ASSISTANT_MESSAGE_MARKDOWN_CN = "timeline-markdown";
 
     public void setMessage(ChatMessage message, boolean isFresh, String actorName) {
         removeClassNames(ASSISTANT_MESSAGE_REFRESH_CN, ASSISTANT_MESSAGE_CN);

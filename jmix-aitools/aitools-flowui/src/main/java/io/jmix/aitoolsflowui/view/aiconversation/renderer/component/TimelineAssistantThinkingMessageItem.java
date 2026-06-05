@@ -46,16 +46,16 @@ import java.util.List;
 public class TimelineAssistantThinkingMessageItem extends AbstractTimelineItem implements InitializingBean,
         ApplicationContextAware {
 
-    public static final String BASE_CN = "ai-timeline-message-row-assistant";
+    public static final String BASE_CN = "timeline-message-row-assistant";
 
-    public static final String THINKING_CN = "ai-timeline-message-row-thinking";
-    public static final String THINKING_STATUS_CN = "ai-timeline-thinking-status-base";
-    public static final String THINKING_STATUS_RESULT_CN = "ai-timeline-thinking-status-result";
+    public static final String THINKING_CN = "timeline-message-row-thinking";
+    public static final String THINKING_STATUS_CN = "timeline-thinking-status-base";
+    public static final String THINKING_STATUS_RESULT_CN = "timeline-thinking-status-result";
 
-    public static final String THINKING_TEXT_CN = "ai-timeline-thinking-text";
-    public static final String THINKING_SHIMMER_CN = "ai-timeline-thinking-shimmer";
-    public static final String THINKING_STATUS_LIST_CN = "ai-timeline-thinking-status-list";
-    public static final String THINKING_STATUS_LIST_ITEM_CN = "ai-timeline-thinking-status-item";
+    public static final String THINKING_TEXT_CN = "timeline-thinking-text";
+    public static final String THINKING_SHIMMER_CN = "timeline-thinking-shimmer";
+    public static final String THINKING_STATUS_LIST_CN = "timeline-thinking-status-list";
+    public static final String THINKING_STATUS_LIST_ITEM_CN = "timeline-thinking-status-item";
 
     protected ApplicationContext applicationContext;
     protected Metadata metadata;

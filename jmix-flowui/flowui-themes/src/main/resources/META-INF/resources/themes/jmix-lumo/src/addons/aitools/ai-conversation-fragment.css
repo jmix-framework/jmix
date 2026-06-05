@@ -33,15 +33,15 @@
         margin: 0 auto;
         max-width: var(--jmix-ai-conversation-canvas-max-width, 68rem);
         min-height: 0;
-        padding: var(--vaadin-padding-s);
+        padding: var(--lumo-space-m);
         width: 100%;
     }
 
     .conversation-title-layout {
-        border-bottom: 1px solid var(--vaadin-border-color.conversation-content-layout);
+        border-bottom: 1px solid var(--lumo-contrast-10pct);
         box-sizing: border-box;
-        padding-bottom: var(--vaadin-padding-s);
-        gap: var(--vaadin-gap-xs);
+        padding-bottom: var(--lumo-space-s);
+        gap: var(--lumo-space-s);
     }
 
     .conversation-content-layout {
@@ -49,16 +49,12 @@
         flex: 1 1 auto;
         min-height: 0;
         overflow: hidden;
-        padding: var(--vaadin-padding-xs) 0;
+        padding: var(--lumo-space-xs) 0;
     }
 
     .conversation-timeline-list {
         flex: 1 1 auto;
         min-height: 0;
         width: 100%;
-    }
-
-    .timeline-composer {
-        padding: 0 var(--vaadin-padding-xs);
     }
 }

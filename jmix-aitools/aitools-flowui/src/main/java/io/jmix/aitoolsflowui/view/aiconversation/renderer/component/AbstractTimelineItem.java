@@ -26,12 +26,12 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
 public abstract class AbstractTimelineItem extends Composite<HorizontalLayout> {
 
-    protected static final String BASE_CN = "ai-timeline-message-row";
-    protected static final String HEADER_CN = "ai-timeline-message-header";
-    protected static final String BODY_CN = "ai-timeline-message-body";
-    protected static final String ACTOR_CN = "ai-timeline-message-actor";
-    protected static final String TIME_CN = "ai-timeline-message-time";
-    protected static final String AVATAR_CONTAINER_CN = "ai-timeline-avatar-container";
+    protected static final String BASE_CN = "timeline-message-row";
+    protected static final String HEADER_CN = "timeline-message-header";
+    protected static final String BODY_CN = "timeline-message-body";
+    protected static final String ACTOR_CN = "timeline-message-actor";
+    protected static final String TIME_CN = "timeline-message-time";
+    protected static final String AVATAR_CONTAINER_CN = "timeline-avatar-container";
 
     protected Div avatarContainer;
     protected VerticalLayout body;

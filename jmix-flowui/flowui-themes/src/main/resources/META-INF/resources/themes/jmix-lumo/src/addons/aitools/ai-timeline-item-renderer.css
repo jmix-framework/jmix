@@ -17,12 +17,12 @@
 .timeline-row-host {
     .conversation-timeline-list::part(items) {
         box-sizing: border-box;
-        padding: var(--vaadin-padding-s) var(--vaadin-padding-m) var(--vaadin-padding-l) var(--vaadin-padding-m);
+        padding: var(--lumo-space-s) var(--lumo-space-m) var(--lumo-space-l) var(--lumo-space-m);
     }
 
     .timeline-message-row {
         box-sizing: border-box;
-        padding: var(--vaadin-padding-s) 0;
+        padding: var(--lumo-space-s) 0;
         width: 100%;
     }
 
@@ -31,18 +31,18 @@
     }
 
     .timeline-message-header {
-        color: var(--vaadin-text-color-secondary);
-        font-size: var(--aura-font-size-xs);
-        margin-bottom: var(--vaadin-padding-xs);
+        color: var(--lumo-secondary-text-colory);
+        font-size: var(--lumo-font-size-xs);
+        margin-bottom: var(--lumo-space-xs);
     }
 
     .timeline-message-actor {
-        color: var(--vaadin-text-color);
+        color: var(--lumo-body-text-colo);
         font-weight: 700;
     }
 
     .timeline-message-time {
-        color: var(--vaadin-text-color-secondary);
+        color: var(--lumo-tertiary-text-color);
     }
 
     .timeline-user-text {
@@ -56,7 +56,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        min-width: calc(var(--_size) + var(--vaadin-gap-xs));
+        min-width: calc(var(--_size) + var(--lumo-space-xs));
     }
 
     .timeline-avatar {
@@ -66,21 +66,18 @@
 
     .timeline-avatar-assistant {
         --_size: var(--vaadin-avatar-size, calc(1lh + var(--vaadin-padding-block-container) * 2 + var(--vaadin-focus-ring-width)));
-        --_shade: color-mix(in srgb, var(--vaadin-border-color) 20%, transparent);
         height: var(--_size);
         width: var(--_size);
-        background: var(--vaadin-avatar-background,
-        linear-gradient(light-dark(transparent, var(--_shade)), transparent 50%, light-dark(var(--_shade), transparent)),
-        var(--aura-accent-surface));
-        border: var(--vaadin-focus-ring-width) solid transparent;
+        background: var(--vaadin-avatar-background, var(--vaadin-background-container-strong));
         background-clip: content-box;
+        border: var(--vaadin-focus-ring-width) solid transparent;
         align-items: center;
         border-radius: 50%;
         box-sizing: border-box;
         display: inline-flex;
         justify-content: center;
-        background-color: var(--aura-accent-color);
-        color: var(--aura-accent-contrast-color);
+        background-color: var(--lumo-primary-color);
+        color: var(--lumo-primary-contrast-color);
         position: relative;
     }
 
@@ -113,29 +110,29 @@
         border-collapse: separate;
         border-spacing: 0;
         display: block;
-        font-size: var(--aura-font-size-s);
-        margin: var(--vaadin-gap-m) 0;
+        font-size: var(--lumo-font-size-s);
+        margin: var(--lumo-space-m) 0;
         max-width: 100%;
         overflow-x: auto;
         width: 100%;
     }
 
     .timeline-markdown thead {
-        background: oklch(from var(--vaadin-text-color) l c h / 0.05);
+        background: var(--lumo-contrast-5pct);
     }
 
     .timeline-markdown th,
     .timeline-markdown td {
-        border-bottom: 1px solid oklch(from var(--vaadin-text-color) l c h / 0.1);;
+        border-bottom: 1px solid var(--lumo-contrast-10pct);
         box-sizing: border-box;
-        padding: var(--vaadin-padding-xs) var(--vaadin-padding-s);
+        padding: var(--lumo-space-xs) var(--lumo-space-s);
         text-align: left;
         vertical-align: top;
         white-space: nowrap;
     }
 
     .timeline-markdown th {
-        color: var(--vaadin-text-color);
+        color: var(--lumo-header-text-color);
         font-weight: 700;
     }
 
@@ -166,46 +163,44 @@
        Lumo defaults are tuned for stand-alone document headings, which looks
        oversized inside the chat bubble. */
     .timeline-markdown h1 {
-        font-size: var(--aura-font-size-l);
+        font-size: var(--lumo-font-size-l);
     }
 
     .timeline-markdown h2 {
-        font-size: var(--aura-font-size-l);
+        font-size: var(--lumo-font-size-l);
     }
 
     .timeline-markdown h3 {
-        font-size: var(--aura-font-size-m);
+        font-size: var(--lumo-font-size-m);
     }
 
     .timeline-markdown h4 {
-        font-size: var(--aura-font-size-s);
+        font-size: var(--lumo-font-size-s);
     }
+
 
     /* Thinking indicator
        ------------------
        Replaces the old ProgressBar with text shimmer plus a thin moving bar. Tool
        status lines are appended under the shimmer as deterministic work completes. */
     .timeline-thinking-text {
-        background: linear-gradient(90deg,
-        oklch(from var(--aura-accent-color) 0.7 0.08 h) 0%,
-        oklch(from var(--aura-accent-color) 0.55 0.12 h) 50%,
-        oklch(from var(--aura-accent-color) 0.7 0.08 h) 100%);
+        background: linear-gradient(90deg, var(--lumo-primary-color) 0%, var(--lumo-secondary-text-color) 50%, var(--lumo-primary-color) 100%);
         background-size: 200% 100%;
         -webkit-background-clip: text;
         background-clip: text;
         color: transparent;
         -webkit-text-fill-color: transparent;
         display: inline-block;
-        font-size: var(--aura-font-size-s);
+        font-size: var(--lumo-font-size-s);
         font-weight: 500;
         animation: jmix-aitols-timeline-thinking-text-shimmer 2s linear infinite;
     }
 
     .timeline-thinking-shimmer {
-        background-color: oklch(from var(--vaadin-text-color) l c h / 0.02);
-        border-radius: var(--vaadin-radius-s);
+        background-color: var(--lumo-contrast-10pct);
+        border-radius: var(--lumo-border-radius-s);
         height: 2px;
-        margin-top: var(--vaadin-gap-xs);
+        margin-top: var(--lumo-space-xs);
         overflow: hidden;
         position: relative;
         width: 12rem;
@@ -213,7 +208,7 @@
     }
 
     .timeline-thinking-shimmer::after {
-        background: linear-gradient(90deg, transparent 0%, oklch(from var(--aura-accent-color) 0.9 0.05 h) 50%, transparent 100%);
+        background: linear-gradient(90deg, transparent 0%, var(--lumo-primary-color) 50%, transparent 100%);
         content: "";
         height: 100%;
         left: 0;
@@ -225,12 +220,12 @@
 
     .timeline-thinking-status-list {
         gap: 0.125rem;
-        margin-top: var(--vaadin-gap-xs);
+        margin-top: var(--lumo-space-xs);
     }
 
     .timeline-thinking-status-item {
-        color: var(--vaadin-text-color-secondary);
-        font-size: var(--aura-font-size-xs);
+        color: var(--lumo-secondary-text-color);
+        font-size: var(--lumo-font-size-xs);
         line-height: 1.3;
     }
 

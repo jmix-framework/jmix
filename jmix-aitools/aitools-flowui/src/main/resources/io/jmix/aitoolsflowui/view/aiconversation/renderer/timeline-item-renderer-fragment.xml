@@ -21,6 +21,6 @@
               width="100%"
               padding="false"
               spacing="false"
-              classNames="ai-timeline-row-host"/>
+              classNames="timeline-row-host"/>
     </content>
 </fragment>

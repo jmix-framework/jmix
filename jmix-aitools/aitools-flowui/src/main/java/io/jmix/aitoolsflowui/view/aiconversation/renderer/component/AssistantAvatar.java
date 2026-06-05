@@ -23,9 +23,9 @@ import com.vaadin.flow.server.streams.DownloadResponse;
 
 public class AssistantAvatar extends Div {
 
-    protected static final String BASE_CN = "ai-timeline-avatar";
-    protected static final String ASSISTANT_CN = "ai-timeline-avatar-assistant";
-    protected static final String AVATAR_ICON_CN = "ai-timeline-avatar-icon";
+    protected static final String BASE_CN = "timeline-avatar";
+    protected static final String ASSISTANT_CN = "timeline-avatar-assistant";
+    protected static final String AVATAR_ICON_CN = "timeline-avatar-icon";
 
     protected  static final String ASSISTANT_AVATAR_PATH =
             "io/jmix/aitoolsflowui/view/aiconversation/renderer/ai-assistant-avatar-dot.svg";

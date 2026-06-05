@@ -22,6 +22,8 @@ import io.jmix.flowui.view.template.ViewTemplateHelper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import test_support.entity.viewtemplate.ViewTemplateFilteringEntity
+import test_support.entity.viewtemplate.ViewTemplateLineEntity
+import test_support.entity.viewtemplate.ViewTemplateMasterEntity
 import test_support.spec.FlowuiTestSpecification
 
 @SpringBootTest
@@ -88,5 +90,61 @@ class DefaultViewTemplateHelperTest extends FlowuiTestSpecification {
 
         then:
         thrown(IllegalArgumentException)
+    }
+
+    def "getCollectionProperties returns composition collections only"() {
+        given:
+        def masterMetaClass = metadata.getClass(ViewTemplateMasterEntity)
+
+        when:
+        List<String> names = templateHelper.getCollectionProperties(masterMetaClass, [])*.name
+
+        then:
+        names == ['lines']
+    }
+
+    def "getCollectionProperties excludes association, datatype collections and single-value properties"() {
+        given:
+        def masterMetaClass = metadata.getClass(ViewTemplateMasterEntity)
+        def filteringMetaClass = metadata.getClass(ViewTemplateFilteringEntity)
+
+        when:
+        List<String> masterNames = templateHelper.getCollectionProperties(masterMetaClass, [])*.name
+
+        then:
+        !masterNames.contains('relatedCustomers')
+        !masterNames.contains('name')
+        templateHelper.getCollectionProperties(filteringMetaClass, []).isEmpty()
+    }
+
+    def "getCollectionProperties honors excludeProperties"() {
+        given:
+        def masterMetaClass = metadata.getClass(ViewTemplateMasterEntity)
+
+        expect:
+        templateHelper.getCollectionProperties(masterMetaClass, ['lines']).isEmpty()
+    }
+
+    def "getProperties excludes the inverse attribute of a composition collection"() {
+        given:
+        def lineMetaClass = metadata.getClass(ViewTemplateLineEntity)
+
+        when:
+        List<String> propertyNames = templateHelper.getProperties(lineMetaClass, [], [])*.name
+
+        then:
+        propertyNames.containsAll(['description', 'quantity'])
+        !propertyNames.contains('master')
+    }
+
+    def "Include properties restores the composition inverse attribute"() {
+        given:
+        def lineMetaClass = metadata.getClass(ViewTemplateLineEntity)
+
+        when:
+        List<String> propertyNames = templateHelper.getProperties(lineMetaClass, ['master'], [])*.name
+
+        then:
+        propertyNames.contains('master')
     }
 }

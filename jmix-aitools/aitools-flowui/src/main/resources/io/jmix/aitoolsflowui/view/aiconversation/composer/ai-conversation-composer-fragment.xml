@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2026 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<fragment xmlns="http://jmix.io/schema/flowui/fragment">
+    <content>
+        <vbox id="composerRoot"
+              width="100%"
+              padding="false"
+              spacing="false"
+              classNames="ai-conversation-composer">
+            <hbox id="inputBar"
+                  width="100%"
+                  spacing="true"
+                  alignItems="END"
+                  expand="messageField"
+                  classNames="ai-conversation-composer-input-bar">
+                <textArea id="messageField"
+                          trimEnabled="false"
+                          minRows="1"
+                          maxRows="6"
+                          width="100%"
+                          valueChangeMode="EAGER"
+                          placeholder="msg://aiConversationComposer.placeholder"
+                          classNames="ai-conversation-composer-textarea"/>
+                <button id="sendButton"
+                        icon="PAPERPLANE"
+                        themeNames="primary icon"
+                        ariaLabel="msg://aiConversationComposer.send"/>
+            </hbox>
+        </vbox>
+    </content>
+</fragment>

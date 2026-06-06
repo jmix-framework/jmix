@@ -62,7 +62,10 @@
                           width="100%"
                           spacing="true"
                           padding="false"
-                          classNames="timeline-composer"/>
+                          classNames="timeline-composer">
+                        <fragment id="composerFragment"
+                                  class="io.jmix.aitoolsflowui.view.aiconversation.composer.AiConversationComposerFragment"/>
+                    </vbox>
                 </vbox>
             </vbox>
         </vbox>

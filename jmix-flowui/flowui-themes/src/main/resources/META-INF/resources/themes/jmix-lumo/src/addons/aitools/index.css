@@ -16,3 +16,5 @@
 
 @import './ai-conversation-fragment.css';
 @import './ai-timeline-item-renderer.css';
+@import './ai-conversation-composer-fragment.css';
+@import './ai-conversation-starter-fragment.css';

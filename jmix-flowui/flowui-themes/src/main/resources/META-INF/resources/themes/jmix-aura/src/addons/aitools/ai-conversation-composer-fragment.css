@@ -14,7 +14,15 @@
  * limitations under the License.
  */
 
-@import './ai-conversation-fragment.css';
-@import './ai-timeline-item-renderer.css';
-@import './ai-conversation-composer-fragment.css';
-@import './ai-conversation-starter-fragment.css';
+.ai-conversation-composer {
+    width: 100%;
+
+    .ai-conversation-composer-input-bar {
+        align-items: flex-end;
+        gap: var(--vaadin-gap-s);
+    }
+
+    .ai-conversation-composer-textarea {
+        flex: 1 1 auto;
+    }
+}

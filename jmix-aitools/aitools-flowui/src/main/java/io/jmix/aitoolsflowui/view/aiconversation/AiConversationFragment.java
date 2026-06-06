@@ -18,8 +18,8 @@ package io.jmix.aitoolsflowui.view.aiconversation;
 
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.html.H3;
-import com.vaadin.flow.component.messages.MessageInput;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import io.jmix.aitoolsflowui.view.aiconversation.composer.AiConversationComposerFragment;
 import io.jmix.aitools.entity.AiConversation;
 import io.jmix.aitools.entity.ChatMessage;
 import io.jmix.aitools.entity.ChatMessageType;
@@ -57,7 +57,8 @@ import java.util.UUID;
 
 /**
  * Encapsulates the "AI chat panel" UI — title row, message timeline, thinking
- * indicator and {@link MessageInput} composer — for an {@link AiConversation}.
+ * indicator and the {@link io.jmix.aitoolsflowui.view.aiconversation.composer.AiConversationComposerFragment}
+ * composer — for an {@link AiConversation}.
  * Designed to be embedded into any host view (the standard detail view, a
  * side dialog, a starter view, custom layouts).
  * <p>
@@ -69,8 +70,8 @@ import java.util.UUID;
  * persist/reload through its own {@code DataContext} / {@code DataLoader}.
  * <p>
  * <b>Attachments / entity references.</b> Intentionally absent — the add-on's
- * entity model does not carry them. The composer is a stock Vaadin
- * {@link MessageInput}, not the CRM composer fragment.
+ * entity model does not carry them. The composer is a plain
+ * {@code TextArea} + send button, not the CRM composer fragment.
  * <p>
  * <b>Background task.</b> The LLM call runs through
  * {@link AssistantResponseTaskCoordinator}, which scopes the task to the
@@ -116,7 +117,8 @@ public class AiConversationFragment extends Fragment<VerticalLayout> {
     @ViewComponent
     private CollectionContainer<TimelineItem> timelineItemsDc;
 
-    private MessageInput messageInput;
+    @ViewComponent
+    private AiConversationComposerFragment composerFragment;
 
     private AiConversation conversation;
     private TimelineItem activeThinkingItem;
@@ -177,9 +179,7 @@ public class AiConversationFragment extends Fragment<VerticalLayout> {
      * response).
      */
     public void focusMessageInput() {
-        if (messageInput.isEnabled()) {
-            messageInput.focus();
-        }
+        composerFragment.focus();
     }
 
     /**
@@ -188,13 +188,12 @@ public class AiConversationFragment extends Fragment<VerticalLayout> {
      * it on completion; hosts can call this for additional read-only states.
      */
     public void setMessageInputEnabled(boolean enabled) {
-        messageInput.setEnabled(enabled);
+        composerFragment.setInputEnabled(enabled);
     }
 
     @Subscribe
     public void onReady(final ReadyEvent event) {
-        messageInput = createMessageInput();
-        composerContainer.add(messageInput);
+        composerFragment.setSubmitHandler(this::sendMessage);
 
         refreshAll();
     }
@@ -204,13 +203,17 @@ public class AiConversationFragment extends Fragment<VerticalLayout> {
         openTitleEditDialog();
     }
 
-    protected void onMessageSubmit(MessageInput.SubmitEvent event) {
+    /**
+     * Programmatic entry point to send a user message: persists it, appends it
+     * to the timeline, shows the thinking indicator, disables the composer and
+     * runs the assistant. Used by the composer's submit handler and by hosts
+     * that start a conversation with an initial prompt (the starter flow).
+     */
+    public void sendMessage(String userMessage) {
         if (conversation == null) {
             log.warn("Cannot submit message — no conversation bound to the fragment");
             return;
         }
-
-        String userMessage = event.getValue();
         if (userMessage == null || userMessage.isBlank()) {
             return;
         }
@@ -226,6 +229,7 @@ public class AiConversationFragment extends Fragment<VerticalLayout> {
             return;
         }
 
+        composerFragment.clear();
         appendTimelineItem(timelineItemFactory.createUserItem(savedUserMessage));
         showThinkingIndicator();
         setMessageInputEnabled(false);
@@ -448,14 +452,6 @@ public class AiConversationFragment extends Fragment<VerticalLayout> {
                         requestAnimationFrame(tick);
                         """,
                 force);
-    }
-
-    protected MessageInput createMessageInput() {
-        MessageInput messageInput = new MessageInput();
-        messageInput.setWidthFull();
-        messageInput.addSubmitListener(this::onMessageSubmit);
-        messageInput.addClassName("ai-conversation-message-input");
-        return messageInput;
     }
 
     protected ChatMessage createTransientAssistantMessage(String content) {

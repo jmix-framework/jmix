@@ -17,6 +17,8 @@
 
 <view xmlns="http://jmix.io/schema/flowui/view"
       title="msg://aiConversationStarterView.title">
-    <layout>
+    <layout padding="false">
+        <fragment id="starterFragment"
+                  class="io.jmix.aitoolsflowui.view.aiconversation.AiConversationStarterFragment"/>
     </layout>
 </view>

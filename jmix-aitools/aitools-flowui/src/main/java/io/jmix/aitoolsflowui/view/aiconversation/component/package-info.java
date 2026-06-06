@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@import './ai-conversation-fragment.css';
-@import './ai-timeline-item-renderer.css';
-@import './ai-conversation-composer-fragment.css';
-@import './ai-conversation-starter-fragment.css';
+@Internal
+package io.jmix.aitoolsflowui.view.aiconversation.component;
+
+import io.jmix.core.annotation.Internal;

@@ -48,6 +48,8 @@ public class AiConversationDetailView extends StandardDetailView<AiConversation>
     @ViewComponent
     private AiConversationFragment detailFragment;
 
+    private boolean initialPromptSent = false;
+
     @Subscribe
     public void onInit(final InitEvent event) {
         setShowSaveNotification(false);
@@ -60,6 +62,19 @@ public class AiConversationDetailView extends StandardDetailView<AiConversation>
     public void onReady(final ReadyEvent event) {
         detailFragment.setConversation(aiConversationDc.getItemOrNull());
         detailFragment.focusMessageInput();
+    }
+
+    /**
+     * Sends an initial user prompt into the bound conversation, used by the
+     * chat starter's navigation handler. Idempotent: runs at most once per view
+     * instance, so a re-fired navigation handler cannot double-submit.
+     */
+    public void sendInitialPrompt(String prompt) {
+        if (initialPromptSent || prompt == null || prompt.isBlank()) {
+            return;
+        }
+        initialPromptSent = true;
+        detailFragment.sendMessage(prompt);
     }
 
     protected AiConversation onDetailFragmentPersist(AiConversation conversation) {

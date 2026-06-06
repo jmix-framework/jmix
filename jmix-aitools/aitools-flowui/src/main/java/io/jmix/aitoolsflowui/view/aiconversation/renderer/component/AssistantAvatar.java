@@ -16,27 +16,36 @@
 
 package io.jmix.aitoolsflowui.view.aiconversation.renderer.component;
 
+import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.SvgIcon;
 import com.vaadin.flow.server.streams.DownloadHandler;
 import com.vaadin.flow.server.streams.DownloadResponse;
 
-public class AssistantAvatar extends Div {
+public class AssistantAvatar extends Composite<Div> {
 
     protected static final String BASE_CN = "timeline-avatar";
     protected static final String ASSISTANT_CN = "timeline-avatar-assistant";
     protected static final String AVATAR_ICON_CN = "timeline-avatar-icon";
 
-    protected  static final String ASSISTANT_AVATAR_PATH =
-            "io/jmix/aitoolsflowui/view/aiconversation/renderer/ai-assistant-avatar-dot.svg";
+    protected static final String ASSISTANT_AVATAR_PATH =
+            "io/jmix/aitoolsflowui/icon/ai-assistant-avatar-dot.svg";
 
-    public AssistantAvatar() {
-        addClassNames(BASE_CN, ASSISTANT_CN);
+    @Override
+    protected Div initContent() {
+        Div div = createContent();
+        div.addClassNames(BASE_CN, ASSISTANT_CN);
 
-        setupIcon();
+        div.add(createIcon());
+
+        return div;
     }
 
-    protected void setupIcon() {
+    protected Div createContent() {
+        return new Div();
+    }
+
+    protected SvgIcon createIcon() {
         DownloadHandler handler = DownloadHandler.fromInputStream(e -> {
             var stream = getClass().getClassLoader().getResourceAsStream(ASSISTANT_AVATAR_PATH);
             return new DownloadResponse(stream, "ai-assistant-avatar-dot.svg", "image/svg+xml", -1);
@@ -44,6 +53,6 @@ public class AssistantAvatar extends Div {
 
         SvgIcon svgIcon = new SvgIcon(handler);
         svgIcon.addClassName(AVATAR_ICON_CN);
-        add(svgIcon);
+        return svgIcon;
     }
 }

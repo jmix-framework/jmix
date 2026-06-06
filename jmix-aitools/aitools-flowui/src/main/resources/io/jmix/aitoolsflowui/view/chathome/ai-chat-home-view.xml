@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
   ~ Copyright 2026 Haulmont.
   ~
@@ -14,21 +15,10 @@
   ~ limitations under the License.
   -->
 
-<view xmlns="http://jmix.io/schema/flowui/view">
-    <data>
-        <instance id="aiConversationDc"
-                  class="io.jmix.aitools.entity.AiConversation">
-            <fetchPlan extends="_base">
-                <property name="messages" fetchPlan="_base"/>
-            </fetchPlan>
-            <loader id="aiConversationDl"/>
-        </instance>
-    </data>
-    <facets>
-        <dataLoadCoordinator auto="true"/>
-    </facets>
-    <layout>
-        <fragment id="detailFragment"
-                  class="io.jmix.aitoolsflowui.view.chat.AiChatFragment"/>
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://aiChatHomeView.title">
+    <layout padding="false">
+        <fragment id="homeFragment"
+                  class="io.jmix.aitoolsflowui.view.chathome.AiChatHomeFragment"/>
     </layout>
 </view>

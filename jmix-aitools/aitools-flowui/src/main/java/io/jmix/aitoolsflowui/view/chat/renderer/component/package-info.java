@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@import './ai-chat-fragment.css';
-@import './ai-chat-home-fragment.css';
-@import './ai-chat-input-fragment.css';
-@import './ai-timeline-item-renderer.css';
+@Internal
+package io.jmix.aitoolsflowui.view.chat.renderer.component;
+
+import io.jmix.core.annotation.Internal;

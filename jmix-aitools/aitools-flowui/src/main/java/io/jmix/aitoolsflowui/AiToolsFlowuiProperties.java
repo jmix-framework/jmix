@@ -23,17 +23,17 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 public class AiToolsFlowuiProperties {
 
     /**
-     * Number of recent conversations shown next to the composer on the chat
-     * starter screen. Can also be overridden per fragment via
-     * {@code AiConversationStarterFragment.setRecentConversationsCount(int)}.
+     * Number of recent chats shown next to the chat input on the chat home
+     * screen. Can also be overridden per fragment via
+     * {@code AiChatHomeFragment.setRecentChatsCount(int)}.
      */
-    int starterRecentConversationsCount;
+    int chatHomeRecentChatsCount;
 
-    public AiToolsFlowuiProperties(@DefaultValue("6") int starterRecentConversationsCount) {
-        this.starterRecentConversationsCount = starterRecentConversationsCount;
+    public AiToolsFlowuiProperties(@DefaultValue("6") int chatHomeRecentChatsCount) {
+        this.chatHomeRecentChatsCount = chatHomeRecentChatsCount;
     }
 
-    public int getStarterRecentConversationsCount() {
-        return starterRecentConversationsCount;
+    public int getChatHomeRecentChatsCount() {
+        return chatHomeRecentChatsCount;
     }
 }

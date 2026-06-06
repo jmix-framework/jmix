@@ -14,7 +14,15 @@
  * limitations under the License.
  */
 
-@import './ai-chat-fragment.css';
-@import './ai-chat-home-fragment.css';
-@import './ai-chat-input-fragment.css';
-@import './ai-timeline-item-renderer.css';
+.ai-chat-input {
+    width: 100%;
+
+    .ai-chat-input-bar {
+        align-items: flex-end;
+        gap: var(--lumo-space-s);
+    }
+
+    .ai-chat-input-textarea {
+        flex: 1 1 auto;
+    }
+}

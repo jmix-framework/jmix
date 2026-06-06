@@ -16,6 +16,7 @@
 
 package io.jmix.aitoolsflowui.view.aiconversation.support;
 
+import io.jmix.aitoolsflowui.view.chathome.component.HistoryBucket;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;

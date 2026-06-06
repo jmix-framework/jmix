@@ -15,7 +15,7 @@
  */
 
 .timeline-row-host {
-    .conversation-timeline-list::part(items) {
+    .chat-timeline-list::part(items) {
         box-sizing: border-box;
         padding: var(--vaadin-padding-s) var(--vaadin-padding-m) var(--vaadin-padding-l) var(--vaadin-padding-m);
     }

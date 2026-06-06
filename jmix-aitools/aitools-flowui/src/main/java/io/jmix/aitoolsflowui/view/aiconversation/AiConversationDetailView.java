@@ -18,6 +18,7 @@ package io.jmix.aitoolsflowui.view.aiconversation;
 
 import com.vaadin.flow.router.Route;
 import io.jmix.aitools.entity.AiConversation;
+import io.jmix.aitoolsflowui.view.chat.AiChatFragment;
 import io.jmix.core.EntitySet;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.view.DefaultMainViewParent;
@@ -29,7 +30,7 @@ import io.jmix.flowui.view.ViewController;
 import io.jmix.flowui.view.ViewDescriptor;
 
 /**
- * Thin host view around {@link AiConversationFragment}.
+ * Thin host view around {@link AiChatFragment}.
  * <p>
  * Owns the {@code aiConversationDc} instance container (so Jmix navigation
  * and {@code @EditedEntityContainer} keep working), and forwards the loaded
@@ -46,7 +47,7 @@ public class AiConversationDetailView extends StandardDetailView<AiConversation>
     private InstanceContainer<AiConversation> aiConversationDc;
 
     @ViewComponent
-    private AiConversationFragment detailFragment;
+    private AiChatFragment detailFragment;
 
     private boolean initialPromptSent = false;
 
@@ -66,7 +67,7 @@ public class AiConversationDetailView extends StandardDetailView<AiConversation>
 
     /**
      * Sends an initial user prompt into the bound conversation, used by the
-     * chat starter's navigation handler. Idempotent: runs at most once per view
+     * chat home's navigation handler. Idempotent: runs at most once per view
      * instance, so a re-fired navigation handler cannot double-submit.
      */
     public void sendInitialPrompt(String prompt) {

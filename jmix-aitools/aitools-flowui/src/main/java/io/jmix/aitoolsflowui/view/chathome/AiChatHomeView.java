@@ -14,7 +14,14 @@
  * limitations under the License.
  */
 
-@import './ai-chat-fragment.css';
-@import './ai-chat-home-fragment.css';
-@import './ai-chat-input-fragment.css';
-@import './ai-timeline-item-renderer.css';
+package io.jmix.aitoolsflowui.view.chathome;
+
+
+import com.vaadin.flow.router.Route;
+import io.jmix.flowui.view.*;
+
+@Route(value = "ai-chat-home-view", layout = DefaultMainViewParent.class)
+@ViewController(id = "AiChatHomeView")
+@ViewDescriptor(path = "ai-chat-home-view.xml")
+public class AiChatHomeView extends StandardView {
+}

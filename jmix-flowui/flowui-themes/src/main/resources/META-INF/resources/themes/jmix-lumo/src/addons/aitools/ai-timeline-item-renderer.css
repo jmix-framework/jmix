@@ -15,7 +15,7 @@
  */
 
 .timeline-row-host {
-    .conversation-timeline-list::part(items) {
+    .chat-timeline-list::part(items) {
         box-sizing: border-box;
         padding: var(--lumo-space-s) var(--lumo-space-m) var(--lumo-space-l) var(--lumo-space-m);
     }

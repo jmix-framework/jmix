@@ -14,21 +14,32 @@
   ~ limitations under the License.
   -->
 
-<view xmlns="http://jmix.io/schema/flowui/view">
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://aiConversationDetailView.title"
+      focusComponent="form">
     <data>
         <instance id="aiConversationDc"
                   class="io.jmix.aitools.entity.AiConversation">
-            <fetchPlan extends="_base">
-                <property name="messages" fetchPlan="_base"/>
-            </fetchPlan>
+            <fetchPlan extends="_base"/>
             <loader id="aiConversationDl"/>
         </instance>
     </data>
     <facets>
         <dataLoadCoordinator auto="true"/>
     </facets>
+    <actions>
+        <action id="saveCloseAction" type="detail_saveClose"/>
+        <action id="closeAction" type="detail_close"/>
+    </actions>
     <layout>
-        <fragment id="detailFragment"
-                  class="io.jmix.aitoolsflowui.view.chat.AiChatFragment"/>
+        <formLayout id="form" dataContainer="aiConversationDc">
+            <textField id="titleField" property="title"/>
+            <textField id="createdByField" property="createdBy" readOnly="true"/>
+            <dateTimePicker id="createdDateField" property="createdDate" readOnly="true"/>
+        </formLayout>
+        <hbox id="detailActions">
+            <button id="saveAndCloseButton" action="saveCloseAction"/>
+            <button id="closeButton" action="closeAction"/>
+        </hbox>
     </layout>
 </view>

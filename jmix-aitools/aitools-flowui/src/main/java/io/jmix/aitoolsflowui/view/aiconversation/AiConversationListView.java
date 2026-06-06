@@ -18,10 +18,12 @@ package io.jmix.aitoolsflowui.view.aiconversation;
 
 import com.vaadin.flow.router.Route;
 import io.jmix.aitools.entity.AiConversation;
-import io.jmix.aitools.service.AiConversationService;
+import io.jmix.aitoolsflowui.view.chat.AiChatView;
 import io.jmix.flowui.ViewNavigators;
+import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.view.*;
+import io.jmix.flowui.view.navigation.RouteSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Route(value = "aitols-ai-conversations", layout = DefaultMainViewParent.class)
@@ -32,16 +34,34 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class AiConversationListView extends StandardListView<AiConversation> {
 
     @Autowired
-    private ViewNavigators viewNavigators;
+    protected ViewNavigators viewNavigators;
     @Autowired
-    private AiConversationService aiConversationService;
+    protected RouteSupport routeSupport;
 
-    @Subscribe("aiConversationsDataGrid.createAction")
-    public void onAiConversationsDataGridCreateAction(final ActionPerformedEvent event) {
-        AiConversation conversation = aiConversationService.createNewConversation();
+    @ViewComponent
+    protected DataGrid<AiConversation> aiConversationsDataGrid;
 
-        viewNavigators.detailView(this, AiConversation.class)
-                .editEntity(conversation)
+    @Subscribe("aiConversationsDataGrid.editMessagesAction")
+    public void onAiConversationsDataGridEditMessagesAction(final ActionPerformedEvent event) {
+        AiConversation selected = aiConversationsDataGrid.getSingleSelectedItem();
+        if (selected == null) {
+            return;
+        }
+        viewNavigators.view(this, AiConversationMessagesView.class)
+                .withRouteParameters(routeSupport.createRouteParameters(
+                        AiConversationMessagesView.ROUTE_PARAM_ID, selected.getId()))
+                .navigate();
+    }
+
+    @Subscribe("aiConversationsDataGrid.openChatAction")
+    public void onAiConversationsDataGridOpenChatAction(final ActionPerformedEvent event) {
+        AiConversation selected = aiConversationsDataGrid.getSingleSelectedItem();
+        if (selected == null) {
+            return;
+        }
+        viewNavigators.view(this, AiChatView.class)
+                .withRouteParameters(routeSupport.createRouteParameters(
+                        AiChatView.ROUTE_PARAM_ID, selected.getId()))
                 .navigate();
     }
 }

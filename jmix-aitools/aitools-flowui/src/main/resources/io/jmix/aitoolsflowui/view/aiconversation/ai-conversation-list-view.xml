@@ -38,11 +38,21 @@
         <action id="discardAction" type="lookup_discard"/>
     </actions>
     <layout>
+        <hbox wrap="true">
+            <propertyFilter property="title" operation="CONTAINS"
+                            dataLoader="aiConversationsDl"
+                            operationTextVisible="false"/>
+            <propertyFilter property="createdBy" operation="EQUAL"
+                            operationTextVisible="false"
+                            dataLoader="aiConversationsDl"/>
+        </hbox>
         <hbox id="buttonsPanel" width="100%">
             <startSlot>
                 <button id="createButton" action="aiConversationsDataGrid.createAction"/>
                 <button id="editButton" action="aiConversationsDataGrid.editAction"/>
                 <button id="removeButton" action="aiConversationsDataGrid.removeAction"/>
+                <button id="editMessagesButton" action="aiConversationsDataGrid.editMessagesAction"/>
+                <button id="openChatButton" action="aiConversationsDataGrid.openChatAction"/>
             </startSlot>
             <endSlot>
                 <simplePagination id="pagination" dataLoader="aiConversationsDl"/>
@@ -54,13 +64,26 @@
                   dataContainer="aiConversationsDc"
                   columnReorderingAllowed="true">
             <actions>
-                <action id="createAction" type="list_create" />
-                <action id="editAction" type="list_edit"/>
+                <action id="createAction" type="list_create">
+                    <properties>
+                        <property name="openMode" value="DIALOG"/>
+                    </properties>
+                </action>
+                <action id="editAction" type="list_edit">
+                    <properties>
+                        <property name="openMode" value="DIALOG"/>
+                    </properties>
+                </action>
                 <action id="removeAction" type="list_remove"/>
+                <action id="editMessagesAction" type="list_itemTracking" icon="LIST"
+                        text="msg://aiConversationListView.editMessages"/>
+                <action id="openChatAction" type="list_itemTracking" icon="CHAT"
+                        text="msg://aiConversationListView.openChat"/>
             </actions>
             <columns resizable="true">
-                <column property="title" width="60%"/>
-                <column property="createdDate" width="40%"/>
+                <column property="title" flexGrow="1"/>
+                <column property="createdDate" autoWidth="true" flexGrow="0"/>
+                <column property="createdBy" autoWidth="true" flexGrow="0"/>
             </columns>
         </dataGrid>
         <hbox id="lookupActions" visible="false">

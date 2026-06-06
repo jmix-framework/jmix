@@ -18,10 +18,10 @@ package io.jmix.aitoolsflowui.view.aiconversation;
 
 import com.vaadin.flow.router.Route;
 import io.jmix.aitools.entity.AiConversation;
-import io.jmix.aitoolsflowui.view.chat.AiChatFragment;
-import io.jmix.core.EntitySet;
-import io.jmix.flowui.model.InstanceContainer;
+import io.jmix.flowui.component.datetimepicker.TypedDateTimePicker;
+import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.view.DefaultMainViewParent;
+import io.jmix.flowui.view.DialogMode;
 import io.jmix.flowui.view.EditedEntityContainer;
 import io.jmix.flowui.view.StandardDetailView;
 import io.jmix.flowui.view.Subscribe;
@@ -29,62 +29,21 @@ import io.jmix.flowui.view.ViewComponent;
 import io.jmix.flowui.view.ViewController;
 import io.jmix.flowui.view.ViewDescriptor;
 
-/**
- * Thin host view around {@link AiChatFragment}.
- * <p>
- * Owns the {@code aiConversationDc} instance container (so Jmix navigation
- * and {@code @EditedEntityContainer} keep working), and forwards the loaded
- * conversation to the fragment on each load. The fragment owns all of the
- * actual chat UI — timeline, composer, thinking indicator, title edit.
- */
 @Route(value = "aitols-ai-conversations/:id", layout = DefaultMainViewParent.class)
 @ViewController("aitols_AiConversation.detail")
 @ViewDescriptor("ai-conversation-detail-view.xml")
 @EditedEntityContainer("aiConversationDc")
+@DialogMode(width = "32em", resizable = true)
 public class AiConversationDetailView extends StandardDetailView<AiConversation> {
 
     @ViewComponent
-    private InstanceContainer<AiConversation> aiConversationDc;
-
+    private TypedTextField<String> createdByField;
     @ViewComponent
-    private AiChatFragment detailFragment;
-
-    private boolean initialPromptSent = false;
+    private TypedDateTimePicker<?> createdDateField;
 
     @Subscribe
-    public void onInit(final InitEvent event) {
-        setShowSaveNotification(false);
-
-        detailFragment.setPersistDelegate(this::onDetailFragmentPersist);
-        detailFragment.setReloadDelegate(this::onDetailFragmentReload);
-    }
-
-    @Subscribe
-    public void onReady(final ReadyEvent event) {
-        detailFragment.setConversation(aiConversationDc.getItemOrNull());
-        detailFragment.focusMessageInput();
-    }
-
-    /**
-     * Sends an initial user prompt into the bound conversation, used by the
-     * chat home's navigation handler. Idempotent: runs at most once per view
-     * instance, so a re-fired navigation handler cannot double-submit.
-     */
-    public void sendInitialPrompt(String prompt) {
-        if (initialPromptSent || prompt == null || prompt.isBlank()) {
-            return;
-        }
-        initialPromptSent = true;
-        detailFragment.sendMessage(prompt);
-    }
-
-    protected AiConversation onDetailFragmentPersist(AiConversation conversation) {
-        EntitySet entitySet = getViewData().getDataContext().save();
-        return entitySet.get(aiConversationDc.getItem());
-    }
-
-    protected AiConversation onDetailFragmentReload(AiConversation conversation) {
-        getViewData().loadAll();
-        return aiConversationDc.getItem();
+    public void onInitEntity(final InitEntityEvent<AiConversation> event) {
+        createdByField.setVisible(false);
+        createdDateField.setVisible(false);
     }
 }

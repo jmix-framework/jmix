@@ -27,7 +27,7 @@ import io.jmix.aitools.entity.ChatMessage;
 import io.jmix.aitools.entity.ChatMessageType;
 import io.jmix.aitools.service.AiConversationService;
 import io.jmix.aitoolsflowui.AiToolsFlowuiProperties;
-import io.jmix.aitoolsflowui.view.aiconversation.AiConversationDetailView;
+import io.jmix.aitoolsflowui.view.chat.AiChatView;
 import io.jmix.aitoolsflowui.view.chathome.component.AiAssistantIcon;
 import io.jmix.aitoolsflowui.view.chathome.component.AiConversationCard;
 import io.jmix.aitoolsflowui.view.chathome.component.AiConversationHistoryGroup;
@@ -53,6 +53,7 @@ import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.CollectionLoader;
+import io.jmix.flowui.view.navigation.RouteSupport;
 import io.jmix.flowui.view.*;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
@@ -77,10 +78,11 @@ import java.util.Optional;
  * into any host view; the add-on also ships {@code AiChatHomeView}
  * as a ready-made host.
  * <p>
- * Starting a chat creates a conversation and navigates to the detail view,
- * forwarding the prompt via {@code withAfterNavigationHandler} →
- * {@link AiConversationDetailView#sendInitialPrompt(String)} (works in both
- * standard routing and tabbed mode).
+ * Starting a chat creates a conversation and navigates to {@link AiChatView}
+ * (passing the conversation id as a route parameter), forwarding the prompt
+ * via {@code withAfterNavigationHandler} →
+ * {@link AiChatView#sendInitialPrompt(String)} (works in both standard routing
+ * and tabbed mode).
  */
 @FragmentDescriptor("ai-chat-home-fragment.xml")
 public class AiChatHomeFragment extends Fragment<VerticalLayout> {
@@ -124,6 +126,8 @@ public class AiChatHomeFragment extends Fragment<VerticalLayout> {
     protected CurrentAuthentication currentAuthentication;
     @Autowired
     protected ViewNavigators viewNavigators;
+    @Autowired
+    protected RouteSupport routeSupport;
     @Autowired
     protected Dialogs dialogs;
     @Autowired
@@ -186,9 +190,9 @@ public class AiChatHomeFragment extends Fragment<VerticalLayout> {
 
         composerFragment.clear();
 
-        viewNavigators.detailView(UiComponentUtils.getView(this), AiConversation.class)
-                .withViewClass(AiConversationDetailView.class)
-                .editEntity(conversation)
+        viewNavigators.view(UiComponentUtils.getView(this), AiChatView.class)
+                .withRouteParameters(routeSupport.createRouteParameters(
+                        AiChatView.ROUTE_PARAM_ID, conversation.getId()))
                 .withAfterNavigationHandler(e -> e.getView().sendInitialPrompt(prompt))
                 .navigate();
     }
@@ -248,8 +252,9 @@ public class AiChatHomeFragment extends Fragment<VerticalLayout> {
     }
 
     protected void openConversation(AiConversation conversation) {
-        viewNavigators.detailView(UiComponentUtils.getView(this), AiConversation.class)
-                .editEntity(conversation)
+        viewNavigators.view(UiComponentUtils.getView(this), AiChatView.class)
+                .withRouteParameters(routeSupport.createRouteParameters(
+                        AiChatView.ROUTE_PARAM_ID, conversation.getId()))
                 .navigate();
     }
 

@@ -16,9 +16,11 @@
 
 package io.jmix.aitoolsflowui.view.aiconversation;
 
+import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.Route;
 import io.jmix.aitools.entity.AiConversation;
 import io.jmix.aitoolsflowui.view.chat.AiChatView;
+import io.jmix.aitoolsflowui.view.chatmessage.ChatMessageListView;
 import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
@@ -47,9 +49,9 @@ public class AiConversationListView extends StandardListView<AiConversation> {
         if (selected == null) {
             return;
         }
-        viewNavigators.view(this, AiConversationMessagesView.class)
-                .withRouteParameters(routeSupport.createRouteParameters(
-                        AiConversationMessagesView.ROUTE_PARAM_ID, selected.getId()))
+        viewNavigators.view(this, ChatMessageListView.class)
+                .withQueryParameters(QueryParameters.of(
+                        ChatMessageListView.QUERY_PARAM_CONVERSATION_ID, selected.getId().toString()))
                 .navigate();
     }
 

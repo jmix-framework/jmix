@@ -42,7 +42,7 @@
             <propertyFilter property="title" operation="CONTAINS"
                             dataLoader="aiConversationsDl"
                             operationTextVisible="false"/>
-            <propertyFilter property="createdBy" operation="EQUAL"
+            <propertyFilter property="username" operation="EQUAL"
                             operationTextVisible="false"
                             dataLoader="aiConversationsDl"/>
         </hbox>
@@ -52,7 +52,6 @@
                 <button id="editButton" action="aiConversationsDataGrid.editAction"/>
                 <button id="removeButton" action="aiConversationsDataGrid.removeAction"/>
                 <button id="editMessagesButton" action="aiConversationsDataGrid.editMessagesAction"/>
-                <button id="openChatButton" action="aiConversationsDataGrid.openChatAction"/>
             </startSlot>
             <endSlot>
                 <simplePagination id="pagination" dataLoader="aiConversationsDl"/>
@@ -77,13 +76,12 @@
                 <action id="removeAction" type="list_remove"/>
                 <action id="editMessagesAction" type="list_itemTracking" icon="LIST"
                         text="msg://aiConversationListView.editMessages"/>
-                <action id="openChatAction" type="list_itemTracking" icon="CHAT"
-                        text="msg://aiConversationListView.openChat"/>
             </actions>
             <columns resizable="true">
                 <column property="title" flexGrow="1"/>
-                <column property="createdDate" autoWidth="true" flexGrow="0"/>
+                <column property="username" autoWidth="true" flexGrow="0"/>
                 <column property="createdBy" autoWidth="true" flexGrow="0"/>
+                <column property="createdDate" autoWidth="true" flexGrow="0"/>
             </columns>
         </dataGrid>
         <hbox id="lookupActions" visible="false">

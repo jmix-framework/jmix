@@ -24,7 +24,12 @@
             <column name="ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="TITLE" type="varchar(255)"/>
+            <column name="TITLE" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="USERNAME" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
             <column name="CREATED_BY" type="varchar(255)"/>
             <column name="CREATED_DATE" type="datetime"/>
         </createTable>

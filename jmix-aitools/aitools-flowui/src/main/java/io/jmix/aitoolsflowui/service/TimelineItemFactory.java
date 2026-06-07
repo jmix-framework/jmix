@@ -16,7 +16,6 @@
 
 package io.jmix.aitoolsflowui.service;
 
-import io.jmix.aitools.entity.AiConversation;
 import io.jmix.aitools.entity.ChatMessage;
 import io.jmix.aitools.entity.ChatMessageType;
 import io.jmix.aitoolsflowui.model.TimelineItem;
@@ -55,11 +54,11 @@ public class TimelineItemFactory {
         return thinkingItem;
     }
 
-    public List<TimelineItem> buildTimelineItems(@Nullable AiConversation conversation) {
-        if (conversation == null || conversation.getMessages() == null) {
+    public List<TimelineItem> buildTimelineItems(@Nullable List<ChatMessage> messages) {
+        if (messages == null) {
             return List.of();
         }
-        return conversation.getMessages().stream()
+        return messages.stream()
                 .map(this::createTimelineItem)
                 .toList();
     }

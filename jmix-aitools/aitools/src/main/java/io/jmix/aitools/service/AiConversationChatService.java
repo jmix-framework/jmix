@@ -16,6 +16,7 @@
 
 package io.jmix.aitools.service;
 
+import io.jmix.aitools.tool.AiUiStatusUpdate;
 import org.jspecify.annotations.Nullable;
 import reactor.core.publisher.Flux;
 

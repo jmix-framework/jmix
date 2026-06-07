@@ -25,6 +25,7 @@ import io.jmix.aitoolsflowui.view.chathome.AiChatHomeView;
 import io.jmix.core.DataManager;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.FetchPlans;
+import io.jmix.core.usersubstitution.CurrentUserSubstitution;
 import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.kit.component.button.JmixButton;
@@ -61,7 +62,7 @@ import java.util.UUID;
  * with no own {@code DataContext}; the fragment keeps its default
  * {@code DataManager}-based persist/reload.
  */
-@Route(value = "ai-chat/:id?", layout = DefaultMainViewParent.class)
+@Route(value = "aitols/ai-chat/:id?", layout = DefaultMainViewParent.class)
 @ViewController("AiChatView")
 @ViewDescriptor("ai-chat-view.xml")
 public class AiChatView extends StandardView {
@@ -80,6 +81,8 @@ public class AiChatView extends StandardView {
     private RouteSupport routeSupport;
     @Autowired
     private ViewNavigators viewNavigators;
+    @Autowired
+    private CurrentUserSubstitution currentUserSubstitution;
 
     @ViewComponent
     private AiChatFragment chatFragment;
@@ -141,8 +144,10 @@ public class AiChatView extends StandardView {
     /**
      * Reads the optional {@code :id} route segment and loads the corresponding
      * conversation. Idempotent: re-entering with the id of the already-loaded
-     * conversation does not reload. A non-empty id that does not resolve puts
-     * the view into the "not found" state.
+     * conversation does not reload. Only a conversation owned by the current
+     * user (matching {@code username}) resolves; a foreign or unknown id puts
+     * the view into the "not found" state, so chats cannot be opened by guessing
+     * another user's id.
      */
     protected void loadConversationFromRouteParameters(BeforeEnterEvent event) {
         Optional<String> rawId = event.getRouteParameters().get(ROUTE_PARAM_ID);
@@ -153,8 +158,11 @@ public class AiChatView extends StandardView {
         if (conversation != null && id.equals(conversation.getId())) {
             return;
         }
+        String username = currentUserSubstitution.getEffectiveUser().getUsername();
         Optional<AiConversation> loaded = dataManager.load(AiConversation.class)
-                .id(id)
+                .query("select e from aitols_AiConversation e where e.id = :id and e.username = :username")
+                .parameter("id", id)
+                .parameter("username", username)
                 .fetchPlan(buildFetchPlan())
                 .optional();
         if (loaded.isPresent()) {
@@ -170,7 +178,6 @@ public class AiChatView extends StandardView {
     protected FetchPlan buildFetchPlan() {
         return fetchPlans.builder(AiConversation.class)
                 .addFetchPlan(FetchPlan.BASE)
-                .add("messages", FetchPlan.BASE)
                 .build();
     }
 

@@ -20,7 +20,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import io.jmix.aitools.service.AiUiStatusUpdate;
+import io.jmix.aitools.tool.AiUiStatusUpdate;
 import io.jmix.aitoolsflowui.model.TimelineItem;
 import io.jmix.aitoolsflowui.model.TimelineItemStatus;
 import io.jmix.core.Messages;

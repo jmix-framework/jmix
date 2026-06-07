@@ -25,6 +25,7 @@ import io.jmix.core.Messages;
 import io.jmix.core.Sort;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.querycondition.PropertyCondition;
+import io.jmix.core.usersubstitution.CurrentUserSubstitution;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -38,11 +39,14 @@ public class AiConversationServiceImpl implements AiConversationService {
     protected DataManager dataManager;
     @Autowired
     protected Messages messages;
+    @Autowired
+    protected CurrentUserSubstitution currentUserSubstitution;
 
     @Override
     public AiConversation createNewConversation() {
         AiConversation conversation = dataManager.create(AiConversation.class);
         conversation.setTitle(messages.getMessage("aiConversation.defaultTitle"));
+        conversation.setUsername(currentUserSubstitution.getEffectiveUser().getUsername());
         return dataManager.save(conversation);
     }
 
@@ -64,13 +68,19 @@ public class AiConversationServiceImpl implements AiConversationService {
         if (limit <= 0) {
             return List.of();
         }
-        List<ChatMessage> all = dataManager.load(ChatMessage.class)
-                .condition(PropertyCondition.equal("conversation.id", conversationId))
-                .sort(Sort.by(Sort.Order.asc("createdDate"), Sort.Order.asc("id")))
-                .list();
+        List<ChatMessage> all = loadMessages(conversationId);
         if (all.size() <= limit) {
             return all;
         }
         return all.subList(all.size() - limit, all.size());
+    }
+
+    @Override
+    public List<ChatMessage> loadMessages(UUID conversationId) {
+        Preconditions.checkNotNullArgument(conversationId);
+        return dataManager.load(ChatMessage.class)
+                .condition(PropertyCondition.equal("conversation.id", conversationId))
+                .sort(Sort.by(Sort.Order.asc("createdDate"), Sort.Order.asc("id")))
+                .list();
     }
 }

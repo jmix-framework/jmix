@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package io.jmix.aitools.service;
+package io.jmix.aitools.tool;
 
+import io.jmix.aitools.service.AiConversationChatService;
 import org.jspecify.annotations.Nullable;
 
 /**

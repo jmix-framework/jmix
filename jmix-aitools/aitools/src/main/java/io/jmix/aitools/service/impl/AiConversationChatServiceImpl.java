@@ -23,7 +23,7 @@ import io.jmix.aitools.entity.ChatMessage;
 import io.jmix.aitools.entity.ChatMessageType;
 import io.jmix.aitools.service.AiConversationChatService;
 import io.jmix.aitools.service.AiConversationService;
-import io.jmix.aitools.service.AiUiStatusUpdate;
+import io.jmix.aitools.tool.AiUiStatusUpdate;
 import io.jmix.aitools.service.prompt.AiChatSystemPromptProvider;
 import io.jmix.aitools.tool.AiToolRegistry;
 import io.jmix.aitools.tool.AiToolStatusPublisher;

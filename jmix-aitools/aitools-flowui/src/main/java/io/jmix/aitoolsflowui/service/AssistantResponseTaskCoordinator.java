@@ -20,7 +20,7 @@ import io.jmix.aitools.entity.AiConversation;
 import io.jmix.aitools.entity.ChatMessage;
 import io.jmix.aitools.entity.ChatMessageType;
 import io.jmix.aitools.service.AiConversationChatService;
-import io.jmix.aitools.service.AiUiStatusUpdate;
+import io.jmix.aitools.tool.AiUiStatusUpdate;
 import io.jmix.core.DataManager;
 import io.jmix.flowui.backgroundtask.BackgroundTask;
 import io.jmix.flowui.backgroundtask.BackgroundWorker;

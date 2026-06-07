@@ -20,8 +20,8 @@ package io.jmix.aitoolsflowui.view.chathome;
 import com.vaadin.flow.router.Route;
 import io.jmix.flowui.view.*;
 
-@Route(value = "ai-chat-home-view", layout = DefaultMainViewParent.class)
-@ViewController(id = "AiChatHomeView")
+@Route(value = "aitols/ai-chat-home", layout = DefaultMainViewParent.class)
+@ViewController(id = "aitols_AiChatHomeView")
 @ViewDescriptor(path = "ai-chat-home-view.xml")
 public class AiChatHomeView extends StandardView {
 }

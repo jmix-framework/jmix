@@ -1,7 +1,7 @@
 package io.jmix.aitools.entity;
 
 import io.jmix.core.metamodel.datatype.EnumClass;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Objects;
 

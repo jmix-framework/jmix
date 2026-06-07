@@ -17,7 +17,7 @@
 
 <menu-config xmlns="http://jmix.io/schema/flowui/menu" order="900">
     <menu id="aitols">
-        <item view="AiChatHomeView"
+        <item view="aitols_AiChatHomeView"
               title="msg://io.jmix.aitoolsflowui.view.chathome/aiChatHomeView.title"/>
         <item view="aitols_AiConversation.list" title="msg://io.jmix.aitoolsflowui.view.aiconversation/aiConversationListView.menu"/>
 

@@ -25,14 +25,12 @@ import io.jmix.aitools.entity.AiConversation;
 import io.jmix.aitools.entity.ChatMessage;
 import io.jmix.aitools.entity.ChatMessageType;
 import io.jmix.aitools.service.AiConversationService;
-import io.jmix.aitools.service.AiUiStatusUpdate;
+import io.jmix.aitools.tool.AiUiStatusUpdate;
 import io.jmix.aitoolsflowui.model.TimelineItem;
 import io.jmix.aitoolsflowui.model.TimelineItemType;
 import io.jmix.aitoolsflowui.model.TimelineItemStatus;
 import io.jmix.aitoolsflowui.service.TimelineItemFactory;
 import io.jmix.core.DataManager;
-import io.jmix.core.FetchPlan;
-import io.jmix.core.FetchPlans;
 import io.jmix.core.TimeSource;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.flowui.Dialogs;
@@ -62,12 +60,11 @@ import java.util.UUID;
  * Designed to be embedded into any host view (the standard detail view, a
  * side dialog, a chat home view, custom layouts).
  * <p>
- * <b>Ownership.</b> The fragment is UI-only: the host view owns the data
- * container that holds the {@link AiConversation} and feeds the fragment via
- * {@link #setConversation(AiConversation)}. The fragment never reloads its
- * own state silently; it goes through the pluggable
- * {@link PersistDelegate} / {@link ReloadDelegate} so the host can route
- * persist/reload through its own {@code DataContext} / {@code DataLoader}.
+ * <b>Ownership.</b> The host supplies the conversation to display via
+ * {@link #setConversation(AiConversation)} or {@link #setConversationId(UUID)};
+ * the fragment loads that conversation's {@link ChatMessage}s itself — it does
+ * not rely on the {@code messages} collection being pre-fetched by the host —
+ * and reads/writes directly through {@link DataManager}.
  * <p>
  * <b>Attachments / entity references.</b> Intentionally absent — the add-on's
  * entity model does not carry them. The composer is a plain
@@ -84,49 +81,44 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
     private static final Logger log = LoggerFactory.getLogger(AiChatFragment.class);
 
     @Autowired
-    private DataManager dataManager;
+    protected DataManager dataManager;
     @Autowired
-    private FetchPlans fetchPlans;
+    protected TimeSource timeSource;
     @Autowired
-    private TimeSource timeSource;
+    protected CurrentAuthentication currentAuthentication;
     @Autowired
-    private CurrentAuthentication currentAuthentication;
+    protected Dialogs dialogs;
     @Autowired
-    private Dialogs dialogs;
+    protected Notifications notifications;
     @Autowired
-    private Notifications notifications;
+    protected AiConversationService aiConversationService;
     @Autowired
-    private AiConversationService aiConversationService;
-    @Autowired
-    private AssistantResponseTaskCoordinator assistantResponseTaskCoordinator;
+    protected AssistantResponseTaskCoordinator assistantResponseTaskCoordinator;
     @Autowired
     protected TimelineItemFactory timelineItemFactory;
 
     @ViewComponent
-    private MessageBundle messageBundle;
+    protected MessageBundle messageBundle;
 
     @ViewComponent
-    private H3 conversationTitle;
+    protected H3 conversationTitle;
     @ViewComponent
-    private JmixButton editConversationTitleBtn;
+    protected JmixButton editConversationTitleBtn;
     @ViewComponent
-    private VerticalLayout composerContainer;
+    protected VerticalLayout composerContainer;
     @ViewComponent
-    private JmixVirtualList<TimelineItem> timelineList;
+    protected JmixVirtualList<TimelineItem> timelineList;
 
     @ViewComponent
-    private CollectionContainer<TimelineItem> timelineItemsDc;
+    protected CollectionContainer<TimelineItem> timelineItemsDc;
 
     @ViewComponent
-    private AiChatInputFragment composerFragment;
+    protected AiChatInputFragment composerFragment;
 
-    private AiConversation conversation;
-    private TimelineItem activeThinkingItem;
+    protected AiConversation conversation;
+    protected TimelineItem activeThinkingItem;
 
-    private PersistDelegate persistDelegate = this::defaultPersist;
-    private ReloadDelegate reloadDelegate = this::defaultReload;
-
-    private boolean readOnly;
+    protected boolean readOnly;
 
     /**
      * Binds the fragment to a conversation. Re-renders the timeline,
@@ -141,28 +133,12 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
     }
 
     /**
-     * Overrides how the fragment persists the conversation entity (currently
-     * used after a title edit). Passing {@code null} restores the default,
-     * which calls {@link DataManager#save(Object)} directly. A host view
-     * typically supplies a delegate that goes through its own
-     * {@code DataContext} so other UI bound to the same container stays
-     * consistent.
+     * Binds the fragment to a conversation by id: loads the {@link AiConversation}
+     * and delegates to {@link #setConversation(AiConversation)}. A {@code null} id
+     * (or an id that no longer resolves) clears the fragment.
      */
-    public void setPersistDelegate(@Nullable PersistDelegate persistDelegate) {
-        this.persistDelegate = persistDelegate != null ? persistDelegate : this::defaultPersist;
-    }
-
-    /**
-     * Overrides how the fragment reloads the conversation entity (after a
-     * title edit and after the LLM assistant has finished writing). Passing
-     * {@code null} restores the default, which reads through
-     * {@link DataManager} with a fetch plan that includes the
-     * {@code messages} collection. A host view typically supplies a delegate
-     * that calls {@code getViewData().loadAll()} so its container reflects
-     * the freshly loaded instance.
-     */
-    public void setReloadDelegate(@Nullable ReloadDelegate reloadDelegate) {
-        this.reloadDelegate = reloadDelegate != null ? reloadDelegate : this::defaultReload;
+    public void setConversationId(@Nullable UUID conversationId) {
+        setConversation(conversationId != null ? loadConversation(conversationId) : null);
     }
 
     /**
@@ -255,13 +231,13 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
 
     protected void handleAssistantResponseDone(@Nullable ChatMessage finalMessage) {
         activeThinkingItem = null;
-        // Tools may persist side effects in their own transaction, so the
-        // in-memory conversation is stale here. The reload is synchronous —
-        // whether it goes through DataManager (default) or a host-supplied
-        // DataLoader delegate, by the time it returns we have a fresh entity
-        // (with the new assistant message inside) and can stamp it fresh.
-        AiConversation reloaded = reloadDelegate.reload(conversation);
-        setConversation(reloaded);
+        // Tools may persist side effects (including the new assistant message) in
+        // their own transaction, so the in-memory state is stale here. Re-binding
+        // by id reloads the conversation and its messages synchronously, after
+        // which the fresh assistant row can be stamped.
+        if (conversation != null) {
+            setConversationId(conversation.getId());
+        }
         if (finalMessage != null) {
             markFreshAssistantItem(finalMessage.getId());
         }
@@ -343,10 +319,21 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
     protected void refreshAll() {
         conversationTitle.setText(conversation != null ? conversation.getTitle() : "");
 
-        timelineItemsDc.setItems(timelineItemFactory.buildTimelineItems(conversation));
+        timelineItemsDc.setItems(timelineItemFactory.buildTimelineItems(loadMessages()));
         scrollToBottom();
 
         refreshComposerVisibility();
+    }
+
+    /**
+     * Loads all messages of the bound conversation, oldest first. Empty when no
+     * conversation is bound or it has not been persisted yet.
+     */
+    protected List<ChatMessage> loadMessages() {
+        if (conversation == null || conversation.getId() == null) {
+            return List.of();
+        }
+        return aiConversationService.loadMessages(conversation.getId());
     }
 
     protected void forceMessageInputFocus() {
@@ -472,31 +459,17 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
     }
 
     /**
-     * Default {@link PersistDelegate}: hands the conversation to
-     * {@link DataManager#save(Object)} and returns the saved instance.
-     * Bypasses any view-level {@code DataContext}, so a host that has other
-     * UI bound to the same container should provide its own delegate.
+     * Loads the conversation entity by id (without its {@code messages}
+     * collection — messages are loaded separately via
+     * {@link AiConversationService#loadMessages(UUID)}). Returns {@code null}
+     * if the conversation no longer exists.
      */
-    protected AiConversation defaultPersist(AiConversation conversation) {
-        return dataManager.save(conversation);
-    }
-
-    /**
-     * Default {@link ReloadDelegate}: re-reads the conversation by id with a
-     * fetch plan that brings in the {@code messages} collection (the timeline
-     * cannot render without it). The host can override with a delegate that
-     * goes through its own {@code DataLoader} so the host's container stays
-     * in sync.
-     */
-    protected AiConversation defaultReload(AiConversation conversation) {
-        FetchPlan fetchPlan = fetchPlans.builder(AiConversation.class)
-                .addFetchPlan(FetchPlan.BASE)
-                .add("messages", FetchPlan.BASE)
-                .build();
+    @Nullable
+    protected AiConversation loadConversation(UUID conversationId) {
         return dataManager.load(AiConversation.class)
-                .id(conversation.getId())
-                .fetchPlan(fetchPlan)
-                .one();
+                .id(conversationId)
+                .optional()
+                .orElse(null);
     }
 
     protected void openTitleEditDialog() {
@@ -532,31 +505,12 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
                         return;
                     }
                     conversation.setTitle(updatedTitle.trim());
-                    AiConversation saved = persistDelegate.persist(conversation);
-                    AiConversation reloaded = reloadDelegate.reload(saved);
-                    setConversation(reloaded);
+                    // Persist only the title and refresh just the header.
+                    // Reloading conversation while awaiting LLM answer
+                    // may break UI.
+                    conversationTitle.setText(conversation.getTitle());
                 })
                 .open();
     }
 
-    /**
-     * Persists the conversation. Receives the current in-memory instance
-     * (with any pending edits applied by the fragment, e.g. a new title) and
-     * returns the saved/merged instance the fragment should treat as its
-     * live reference going forward.
-     */
-    @FunctionalInterface
-    public interface PersistDelegate {
-        AiConversation persist(AiConversation conversation);
-    }
-
-    /**
-     * Reloads the conversation. Receives the current live instance, returns
-     * a freshly-loaded one (typically with the {@code messages} collection
-     * eagerly fetched so the timeline can be rebuilt).
-     */
-    @FunctionalInterface
-    public interface ReloadDelegate {
-        AiConversation reload(AiConversation conversation);
-    }
 }

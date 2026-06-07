@@ -22,7 +22,7 @@
             <fetchPlan extends="_base"/>
             <loader id="recentConversationsDl" readOnly="true">
                 <query>
-                    <![CDATA[select e from aitols_AiConversation e where e.createdBy = :currentUser order by e.createdDate desc]]>
+                    <![CDATA[select e from aitols_AiConversation e where e.username = :currentUser order by e.createdDate desc]]>
                 </query>
             </loader>
         </collection>
@@ -33,7 +33,7 @@
             </fetchPlan>
             <loader id="historyConversationsDl" readOnly="true">
                 <query>
-                    <![CDATA[select e from aitols_AiConversation e where e.createdBy = :currentUser order by e.createdDate desc]]>
+                    <![CDATA[select e from aitols_AiConversation e where e.username = :currentUser order by e.createdDate desc]]>
                 </query>
             </loader>
         </collection>

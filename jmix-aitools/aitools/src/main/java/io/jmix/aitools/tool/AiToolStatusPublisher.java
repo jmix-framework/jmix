@@ -17,7 +17,6 @@
 package io.jmix.aitools.tool;
 
 import io.jmix.aitools.service.AiConversationChatService;
-import io.jmix.aitools.service.AiUiStatusUpdate;
 import org.jspecify.annotations.Nullable;
 import org.springframework.ai.chat.model.ToolContext;
 import org.springframework.stereotype.Component;

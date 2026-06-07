@@ -50,4 +50,10 @@ public interface AiConversationService {
      * conversation has no messages or {@code limit} is non-positive.
      */
     List<ChatMessage> loadMessages(UUID conversationId, int limit);
+
+    /**
+     * Loads all chat messages for the conversation, ordered chronologically
+     * (oldest first). Returns an empty list if the conversation has no messages.
+     */
+    List<ChatMessage> loadMessages(UUID conversationId);
 }

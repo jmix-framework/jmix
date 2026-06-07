@@ -23,6 +23,8 @@ dependencies {
     api project(":aitools")
     api project(":flowui")
 
+    compileOnly project(":security-flowui")
+
     testImplementation 'org.junit.jupiter:junit-jupiter-api'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'

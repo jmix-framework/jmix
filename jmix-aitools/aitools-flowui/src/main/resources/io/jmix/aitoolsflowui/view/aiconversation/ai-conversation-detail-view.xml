@@ -34,8 +34,7 @@
     <layout>
         <formLayout id="form" dataContainer="aiConversationDc">
             <textField id="titleField" property="title"/>
-            <textField id="createdByField" property="createdBy" readOnly="true"/>
-            <dateTimePicker id="createdDateField" property="createdDate" readOnly="true"/>
+            <comboBox id="usernameField" property="username"/>
         </formLayout>
         <hbox id="detailActions">
             <button id="saveAndCloseButton" action="saveCloseAction"/>

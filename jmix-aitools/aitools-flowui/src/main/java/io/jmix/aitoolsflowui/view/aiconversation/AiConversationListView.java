@@ -19,16 +19,14 @@ package io.jmix.aitoolsflowui.view.aiconversation;
 import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.Route;
 import io.jmix.aitools.entity.AiConversation;
-import io.jmix.aitoolsflowui.view.chat.AiChatView;
 import io.jmix.aitoolsflowui.view.chatmessage.ChatMessageListView;
 import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.view.*;
-import io.jmix.flowui.view.navigation.RouteSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@Route(value = "aitols-ai-conversations", layout = DefaultMainViewParent.class)
+@Route(value = "aitols/ai-conversations", layout = DefaultMainViewParent.class)
 @ViewController("aitols_AiConversation.list")
 @ViewDescriptor("ai-conversation-list-view.xml")
 @LookupComponent("aiConversationsDataGrid")
@@ -37,8 +35,6 @@ public class AiConversationListView extends StandardListView<AiConversation> {
 
     @Autowired
     protected ViewNavigators viewNavigators;
-    @Autowired
-    protected RouteSupport routeSupport;
 
     @ViewComponent
     protected DataGrid<AiConversation> aiConversationsDataGrid;
@@ -52,18 +48,6 @@ public class AiConversationListView extends StandardListView<AiConversation> {
         viewNavigators.view(this, ChatMessageListView.class)
                 .withQueryParameters(QueryParameters.of(
                         ChatMessageListView.QUERY_PARAM_CONVERSATION_ID, selected.getId().toString()))
-                .navigate();
-    }
-
-    @Subscribe("aiConversationsDataGrid.openChatAction")
-    public void onAiConversationsDataGridOpenChatAction(final ActionPerformedEvent event) {
-        AiConversation selected = aiConversationsDataGrid.getSingleSelectedItem();
-        if (selected == null) {
-            return;
-        }
-        viewNavigators.view(this, AiChatView.class)
-                .withRouteParameters(routeSupport.createRouteParameters(
-                        AiChatView.ROUTE_PARAM_ID, selected.getId()))
                 .navigate();
     }
 }

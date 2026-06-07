@@ -31,7 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 import java.util.UUID;
 
-@Route(value = "aitols-chat-messages", layout = DefaultMainViewParent.class)
+@Route(value = "aitols/chat-messages", layout = DefaultMainViewParent.class)
 @ViewController("aitols_ChatMessage.list")
 @ViewDescriptor("chat-message-list-view.xml")
 @LookupComponent("chatMessagesDataGrid")

@@ -25,6 +25,7 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.shared.Tooltip;
 import io.jmix.flowui.theme.StyleUtility;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
@@ -112,6 +113,7 @@ public class AiConversationCard extends Composite<Card> {
     protected Span createTitle(String title) {
         Span titleSpan = new Span(title);
         titleSpan.addClassName(TITLE_CN);
+        Tooltip.forComponent(titleSpan).setText(title);
         return titleSpan;
     }
 

@@ -95,7 +95,7 @@ public class InstanceContainerImpl<E> implements InstanceContainer<E>, HasLoader
         if (item != null) {
             MetaClass aClass = item instanceof HasInstanceMetaClass ?
                     ((HasInstanceMetaClass) item).getInstanceMetaClass() : metadata.getClass(item);
-            if (!aClass.equals(entityMetaClass) && !entityMetaClass.getDescendants().contains(aClass)) {
+            if (!isItemMetaClassCompatible(aClass)) {
                 throw new DevelopmentException(String.format("Invalid item's metaClass '%s'", aClass),
                         ParamsMap.of("container", toString(), "metaClass", aClass));
             }
@@ -106,6 +106,18 @@ public class InstanceContainerImpl<E> implements InstanceContainer<E>, HasLoader
         this.item = item;
 
         fireItemChanged(prevItem);
+    }
+
+    protected boolean isItemMetaClassCompatible(MetaClass itemMetaClass) {
+        if (itemMetaClass.getName().equals(entityMetaClass.getName())) {
+            return true;
+        }
+        for (MetaClass descendant : entityMetaClass.getDescendants()) {
+            if (descendant.getName().equals(itemMetaClass.getName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

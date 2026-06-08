@@ -38,7 +38,7 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 
     compileOnly project(':security')
-    testImplementation project(':search').sourceSets.test.output
+    testImplementation rootProject.project(':search').sourceSets.test.output
     testImplementation project(':framework-test-support')
     testImplementation project(':eclipselink')
     testImplementation project(':dynattr')

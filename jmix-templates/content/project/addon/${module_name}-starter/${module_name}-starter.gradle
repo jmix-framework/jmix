@@ -1,4 +1,6 @@
-archivesBaseName = '${module_name}-starter'
+base {
+    archivesName = '${module_name}-starter'
+}
 
 jmix {
     entitiesEnhancing {

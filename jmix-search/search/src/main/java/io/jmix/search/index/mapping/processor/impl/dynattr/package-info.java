@@ -15,8 +15,6 @@
  */
 
 @Internal
-@NullMarked
 package io.jmix.search.index.mapping.processor.impl.dynattr;
 
 import io.jmix.core.annotation.Internal;
-import org.jspecify.annotations.NullMarked;

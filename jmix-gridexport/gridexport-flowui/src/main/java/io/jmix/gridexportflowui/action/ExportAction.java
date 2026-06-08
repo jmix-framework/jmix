@@ -120,10 +120,8 @@ public class ExportAction extends ListDataComponentAction<ExportAction, Object> 
 
     @Autowired
     public void setGridExportProperties(GridExportProperties gridExportProperties) {
-        this.availableExportModes = gridExportProperties.getDefaultExportModes().stream()
-                .map(ExportMode::valueOf)
-                .toList();
-        this.columnsToExport = ColumnsToExport.valueOf(gridExportProperties.getDefaultColumnsToExport());
+        this.availableExportModes = gridExportProperties.getDefaultExportModes();
+        this.columnsToExport = gridExportProperties.getDefaultColumnsToExport();
     }
 
     /**

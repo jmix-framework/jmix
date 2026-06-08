@@ -90,23 +90,23 @@ public abstract class AbstractLdapUserDetailsSynchronizationStrategy<T extends U
                     .query("select e from sec_RoleAssignmentEntity e where e.username = :username")
                     .parameter("username", username)
                     .list();
-            Set<String> existingRoleAssignmentCodes = existingRoleAssignments.stream()
-                    .map(RoleAssignmentEntity::getRoleCode)
+            Set<String> existingRoleAssignmentKeys = existingRoleAssignments.stream()
+                    .map(this::assignmentKey)
                     .collect(Collectors.toSet());
 
             Collection<RoleAssignmentEntity> grantedRoleAssignments = buildRoleAssignments(grantedAuthorities, username);
-            Set<String> grantedRoleAssignmentsCodes = grantedRoleAssignments.stream()
-                    .map(RoleAssignmentEntity::getRoleCode)
+            Set<String> grantedRoleAssignmentKeys = grantedRoleAssignments.stream()
+                    .map(this::assignmentKey)
                     .collect(Collectors.toSet());
 
             //remove only existing role assignments that should not be granted
             List<RoleAssignmentEntity> roleAssignmentsToRemove = existingRoleAssignments.stream()
-                    .filter(roleAssignmentEntity -> !grantedRoleAssignmentsCodes.contains(roleAssignmentEntity.getRoleCode()))
+                    .filter(roleAssignmentEntity -> !grantedRoleAssignmentKeys.contains(assignmentKey(roleAssignmentEntity)))
                     .collect(Collectors.toList());
 
             //create only non-existing assignments
             List<RoleAssignmentEntity> roleAssignmentsToCreate = grantedRoleAssignments.stream()
-                    .filter(roleAssignmentEntity -> !existingRoleAssignmentCodes.contains(roleAssignmentEntity.getRoleCode()))
+                    .filter(roleAssignmentEntity -> !existingRoleAssignmentKeys.contains(assignmentKey(roleAssignmentEntity)))
                     .collect(Collectors.toList());
 
             saveContext.removing(roleAssignmentsToRemove);
@@ -143,6 +143,10 @@ public abstract class AbstractLdapUserDetailsSynchronizationStrategy<T extends U
             }
         }
         return roleAssignmentEntities;
+    }
+
+    private String assignmentKey(RoleAssignmentEntity assignment) {
+        return assignment.getRoleCode() + ":" + assignment.getRoleType();
     }
 
     protected abstract Class<T> getUserClass();

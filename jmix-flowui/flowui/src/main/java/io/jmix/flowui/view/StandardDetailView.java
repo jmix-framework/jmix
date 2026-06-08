@@ -20,7 +20,6 @@ import com.google.common.base.Strings;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.notification.Notification.Position;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeLeaveEvent;
 import com.vaadin.flow.router.BeforeLeaveEvent.ContinueNavigationAction;
@@ -43,6 +42,7 @@ import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.event.view.ViewSetupLockEvent;
 import io.jmix.flowui.model.*;
+import io.jmix.flowui.observation.ViewLifecycle;
 import io.jmix.flowui.sys.event.UiEventsManager;
 import io.jmix.flowui.util.OperationResult;
 import io.jmix.flowui.util.UnknownOperationResult;
@@ -163,9 +163,11 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
     }
 
     private void showSaveNotification() {
+        UiViewProperties uiViewProperties = getUiViewProperties();
+
         getNotifications().create(getSaveNotificationText())
-                .withType(Notifications.Type.SUCCESS)
-                .withPosition(Position.TOP_END)
+                .withType(uiViewProperties.getSaveConfirmationType())
+                .withPosition(uiViewProperties.getSaveConfirmationPosition())
                 .show();
     }
 
@@ -429,8 +431,7 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
                 && hasUnsavedChanges()) {
             UnknownOperationResult result = new UnknownOperationResult();
 
-            boolean useSaveConfirmation = getApplicationContext()
-                    .getBean(UiViewProperties.class).isUseSaveConfirmation();
+            boolean useSaveConfirmation = getUiViewProperties().isUseSaveConfirmation();
 
             if (action instanceof NavigateCloseAction) {
                 BeforeLeaveEvent beforeLeaveEvent = ((NavigateCloseAction) action).getBeforeLeaveEvent();
@@ -491,7 +492,8 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
         navigationAction.proceed();
 
         AfterCloseEvent afterCloseEvent = new AfterCloseEvent(this, closeAction);
-        fireEvent(afterCloseEvent);
+        getUiObservationSupport().observeViewLifecycle(this, ViewLifecycle.AFTER_CLOSE,
+                () -> fireEvent(afterCloseEvent));
 
         return OperationResult.success();
     }
@@ -900,6 +902,10 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
 
     private Notifications getNotifications() {
         return getApplicationContext().getBean(Notifications.class);
+    }
+
+    private UiViewProperties getUiViewProperties() {
+        return getApplicationContext().getBean(UiViewProperties.class);
     }
 
     private ReadOnlyViewsSupport getReadOnlyViewSupport() {

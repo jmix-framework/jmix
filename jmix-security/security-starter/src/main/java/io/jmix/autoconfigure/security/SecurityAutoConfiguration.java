@@ -35,7 +35,7 @@ import javax.cache.configuration.MutableConfiguration;
 @Import({CoreConfiguration.class, SecurityConfiguration.class})
 public class SecurityAutoConfiguration {
 
-    // TODO [SB4] Consider switch to Spring Cache
+
     @Bean
     @SuppressWarnings({"rawtypes", "unchecked"})
     JCacheManagerCustomizer resourceRolesCacheCustomizer() {
@@ -48,7 +48,7 @@ public class SecurityAutoConfiguration {
         };
     }
 
-    // TODO [SB4] Consider switch to Spring Cache
+
     @Bean
     @SuppressWarnings({"rawtypes", "unchecked"})
     JCacheManagerCustomizer rowLevelRolesCacheCustomizer() {

@@ -14,8 +14,5 @@
  * limitations under the License.
  */
 
-@NullMarked
 /// For internal use only.
 package io.jmix.flowui.kit.meta.generator;
-
-import org.jspecify.annotations.NullMarked;

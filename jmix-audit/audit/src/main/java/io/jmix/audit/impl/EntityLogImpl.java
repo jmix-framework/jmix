@@ -446,7 +446,7 @@ public class EntityLogImpl implements EntityLog, JpaLifecycleListener {
             if (username != null)
                 return username;
             else
-                throw new RuntimeException("The user '" + username + "' specified in jmix.audit.systemUsername does not exist");
+                throw new RuntimeException("The system username (jmix.audit.systemUsername) is not specified");
         }
     }
 

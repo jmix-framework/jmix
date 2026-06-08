@@ -15,8 +15,6 @@
  */
 
 @Internal
-@NullMarked
 package io.jmix.data.impl.jpql.generator;
 
 import io.jmix.core.annotation.Internal;
-import org.jspecify.annotations.NullMarked;

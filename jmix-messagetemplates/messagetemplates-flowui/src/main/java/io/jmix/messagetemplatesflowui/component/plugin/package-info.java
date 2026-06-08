@@ -3,7 +3,4 @@
  * Use is subject to license terms.
  */
 
-@NullMarked
 package io.jmix.messagetemplatesflowui.component.plugin;
-
-import org.jspecify.annotations.NullMarked;

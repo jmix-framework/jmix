@@ -92,6 +92,9 @@ public class MenuConfig {
     protected ViewTemplateDefinitions viewTemplateDefinitions;
 
     @Autowired
+    protected ObjectProvider<MenuConfigCustomizer> menuConfigCustomizerProvider;
+
+    @Autowired
     protected ObjectProvider<IconLoaderSupport> iconLoaderSupportProvider;
 
     protected IconLoaderSupport iconLoaderSupport;
@@ -182,6 +185,11 @@ public class MenuConfig {
         }
 
         loadTemplateMenuItems();
+
+        List<MenuConfigCustomizer> customizers = new ArrayList<>(menuConfigCustomizerProvider.orderedStream().toList());
+        for (MenuConfigCustomizer customizer : customizers) {
+            customizer.customize(rootItems);
+        }
     }
 
     /**

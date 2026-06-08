@@ -66,7 +66,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import io.jmix.core.repository.JmixDataRepositoryContext;
 import java.util.List;
 import io.jmix.core.LoadContext;
-import io.jmix.core.FetchPlan;
 
 import java.util.Optional;
 import ${getRepositoryIdFqn()};
@@ -402,8 +401,8 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
     }<%}%>
 
     @Install(to = "${detailDl}", target = Target.DATA_LOADER, subject = "loadFromRepositoryDelegate")
-    private Optional<${entity.className}> detailLoadDelegate(${getRepositoryIdClassName()} id, FetchPlan fetchPlan){
-        return repository.findById(id, fetchPlan);
+    private Optional<${entity.className}> detailLoadDelegate(${getRepositoryIdClassName()} id, JmixDataRepositoryContext context){
+        return repository.findById(id, context);
     }<%}%><%if (useRepositorySaveDelegate){%>
 
     @Install(target = Target.DATA_CONTEXT)

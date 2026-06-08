@@ -1,0 +1,23 @@
+plugins {
+    id 'java-library'
+    id 'org.jetbrains.kotlin.jvm' version '2.1.10'
+    id 'io.jmix'
+}
+
+group = 'sample'
+version = '1.0-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+jmix {
+    bomVersion = findProperty('jmixBomVersion')
+}
+
+dependencies {
+    implementation 'io.jmix.core:jmix-core'
+    implementation 'io.jmix.data:jmix-eclipselink'
+}

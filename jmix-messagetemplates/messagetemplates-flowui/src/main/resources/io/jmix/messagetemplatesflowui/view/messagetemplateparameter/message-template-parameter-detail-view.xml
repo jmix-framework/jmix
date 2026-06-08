@@ -35,7 +35,7 @@
         <dataLoadCoordinator auto="true"/>
     </facets>
     <layout>
-        <tabSheet id="mainTabSheet" width="100%">
+        <tabSheet id="mainTabSheet" alignSelf="STRETCH">
             <tab id="generalTab" label="msg://mainTabSheet.detailsTab.label">
                 <formLayout id="form" dataContainer="messageTemplateParameterDc">
                     <textField id="nameField" property="name"/>

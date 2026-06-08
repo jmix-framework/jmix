@@ -16,23 +16,29 @@
 
 package io.jmix.reports.util;
 
-import io.jmix.core.*;
+import io.jmix.core.DataManager;
+import io.jmix.core.EntityStates;
+import io.jmix.core.TimeSource;
+import io.jmix.reports.ReportRepository;
+import io.jmix.reports.ReportsProperties;
 import io.jmix.reports.entity.ParameterType;
-import io.jmix.reports.entity.Report;
 import io.jmix.reports.exception.ReportingException;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
+import java.time.ZonedDateTime;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 @Component("report_ReportsUtils")
 public class ReportsUtils {
     protected static final int MAX_REPORT_NAME_LENGTH = 255;
+    protected static final int MAX_REPORT_CODE_LENGTH = 255;
 
     @Autowired
     protected TimeSource timeSource;
@@ -49,25 +55,84 @@ public class ReportsUtils {
     @Autowired
     protected EntityStates entityStates;
 
+    @Autowired
+    protected ReportsProperties reportsProperties;
+
+    @Autowired
+    protected ReportRepository reportRepository;
+
     public String generateReportName(String sourceName) {
         return generateReportName(sourceName, 0);
     }
 
-    public Date currentDateOrTime(ParameterType parameterType) {
-        Date now = timeSource.currentTimestamp();
-        switch (parameterType) {
-            case TIME:
-                now = truncateToTime(now);
-                break;
-            case DATETIME:
-                break;
-            case DATE:
-                now = truncateToDay(now);
-                break;
-            default:
-                throw new ReportingException("Not Date/Time related parameter types are not supported.");
+    public String generateReportCodeByName(String reportName) {
+        return generateReportCodeByName(reportName, "report");
+    }
+
+    public String generateReportCodeByName(String reportName, String defaultCode) {
+        String code = reportName
+                .trim()
+                .replaceAll("[^a-zA-Z0-9]+", "-")
+                .replaceAll("^-|-$", "")
+                .toLowerCase(Locale.ROOT);
+
+        if (code.isEmpty()) {
+            code = defaultCode;
+        } else if (code.length() > MAX_REPORT_CODE_LENGTH) {
+            code = code.substring(0, MAX_REPORT_CODE_LENGTH).replaceAll("-$", "");
         }
-        return now;
+
+        return code;
+    }
+
+    public String generateReportCode(String existedCode) {
+        int iteration = 1;
+        String reportCode = existedCode;
+
+        while (reportRepository.existsReportByCode(reportCode)) {
+            reportCode = StringUtils.stripEnd(existedCode, null);
+            String suffix = "-%s".formatted(iteration++);
+            String newReportCode = reportCode;
+
+            while (newReportCode.length() + suffix.length() > MAX_REPORT_CODE_LENGTH) {
+                newReportCode = StringUtils.chop(newReportCode);
+            }
+
+            reportCode = newReportCode + suffix;
+        }
+
+        return reportCode;
+    }
+
+    public Object currentDateOrTime(ParameterType parameterType) {
+        if (reportsProperties.isUseLegacyDateTimeTypes()) {
+            Date now = timeSource.currentTimestamp();
+            switch (parameterType) {
+                case TIME:
+                    now = truncateToTime(now);
+                    break;
+                case DATETIME:
+                    break;
+                case DATE:
+                    now = truncateToDay(now);
+                    break;
+                default:
+                    throw new ReportingException("Not Date/Time related parameter types are not supported.");
+            }
+            return now;
+        } else {
+            ZonedDateTime now = timeSource.now();
+            switch (parameterType) {
+                case TIME:
+                    return now.toLocalTime();
+                case DATETIME:
+                    return now.toLocalDateTime();
+                case DATE:
+                    return now.toLocalDate();
+                default:
+                    throw new ReportingException("Not Date/Time related parameter types are not supported.");
+            }
+        }
     }
 
     protected Date truncateToDay(Date date) {

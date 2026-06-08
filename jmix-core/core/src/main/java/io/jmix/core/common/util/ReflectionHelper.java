@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -39,11 +40,34 @@ import org.dom4j.Element;
  */
 public final class ReflectionHelper {
 
+    private static final Set<ClassLoader> classLoaders = new CopyOnWriteArraySet<>();
+
     private static final LoadingCache<Class<?>, Map<String, Field>> fieldsCache = CacheBuilder.newBuilder()
             .weakKeys()
             .build(CacheLoader.from(ReflectionHelper::getDeclaredFields));
 
     private ReflectionHelper() {
+    }
+
+    /**
+     * Add an additional class loader to be used by {@link #loadClass(String)}.
+     */
+    public static void addClassLoader(ClassLoader classLoader) {
+        classLoaders.add(classLoader);
+    }
+
+    /**
+     * Remove an additional class loader.
+     */
+    public static void removeClassLoader(ClassLoader classLoader) {
+        classLoaders.remove(classLoader);
+    }
+
+    /**
+     * Clear all additional class loaders.
+     */
+    public static void clearClassLoaders() {
+        classLoaders.clear();
     }
 
     /**
@@ -78,7 +102,18 @@ public final class ReflectionHelper {
                     "Consider setting it in a new thread using 'Thread.currentThread().setContextClassLoader()' " +
                     "to the classloader of the parent thread or executing class.");
         }
-        return contextClassLoader.loadClass(name);
+        try {
+            return contextClassLoader.loadClass(name);
+        } catch (ClassNotFoundException e) {
+            for (ClassLoader classLoader : classLoaders) {
+                try {
+                    return classLoader.loadClass(name);
+                } catch (ClassNotFoundException e1) {
+                    // ignore
+                }
+            }
+            throw e;
+        }
     }
 
     /**

@@ -35,16 +35,13 @@ import io.jmix.flowui.kit.component.HasSubParts;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.jspecify.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static io.jmix.flowui.component.UiComponentUtils.sameId;
 
-// CAUTION: copied from com.vaadin.flow.component.tabs.TabSheet [last update Vaadin 24.9.0]
+// CAUTION: copied from com.vaadin.flow.component.tabs.TabSheet [last update Vaadin 25.1.6]
 @Tag("jmix-tabsheet")
 @JsModule("./src/tabsheet/jmix-tabsheet.js")
 public class JmixTabSheet extends Component
@@ -55,6 +52,8 @@ public class JmixTabSheet extends Component
 
     protected Tabs tabs = new Tabs();
     protected Map<Tab, Component> tabToContent = new HashMap<>();
+
+    protected Registration deferredUpdateContent = null;
 
     public JmixTabSheet() {
         super();
@@ -345,10 +344,6 @@ public class JmixTabSheet extends Component
             Element content = entry.getValue().getElement();
 
             if (tab.equals(tabs.getSelectedTab())) {
-                if (content.getParent() == null) {
-                    getElement().appendChild(content);
-                }
-
                 content.setEnabled(true);
             } else {
                 // Can't use setEnabled(false) because it would also mark the
@@ -356,6 +351,25 @@ public class JmixTabSheet extends Component
                 // would then briefly show the content as disabled.
                 content.getNode().setEnabled(false);
             }
+        }
+
+        getElement().getNode().runWhenAttached(ui -> {
+            if (deferredUpdateContent != null) {
+                deferredUpdateContent.remove();
+            }
+
+            deferredUpdateContent = ui.beforeClientResponse(this, context -> {
+                ensureSelectedTabContentAttached();
+            });
+        });
+    }
+
+    protected void ensureSelectedTabContentAttached() {
+        var content = tabToContent.get(tabs.getSelectedTab());
+        if (content != null
+                && !Objects.equals(content.getElement().getParent(), getElement())) {
+            content.getElement().removeFromTree(false);
+            getElement().appendChild(content.getElement());
         }
     }
 

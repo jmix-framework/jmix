@@ -1,0 +1,174 @@
+/*
+ * Copyright 2026 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package data_manager
+
+import io.jmix.core.DataManager
+import io.jmix.core.querycondition.PropertyCondition
+import io.jmix.data.impl.jpql.generator.ConditionGenerationContext
+import io.jmix.data.impl.jpql.generator.PropertyConditionGenerator
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.test.context.TestPropertySource
+import test_support.DataSpec
+import test_support.entity.TestAppEntity
+
+@TestPropertySource(properties = ["jmix.data.include-null-clause-in-not-conditions=true"])
+class DataManagerNegativeConditionNullsTest extends DataSpec {
+
+    @Autowired
+    DataManager dataManager
+
+    @Autowired
+    @Qualifier("data_PropertyConditionGenerator")
+    PropertyConditionGenerator propertyConditionGenerator
+
+    def "NOT_EQUAL includes records with null"() {
+
+        TestAppEntity matching = dataManager.create(TestAppEntity)
+        matching.name = 'target'
+
+        TestAppEntity nonMatching = dataManager.create(TestAppEntity)
+        nonMatching.name = 'other'
+
+        TestAppEntity withNull = dataManager.create(TestAppEntity)
+        withNull.name = null
+
+        dataManager.save(matching, nonMatching, withNull)
+
+        when:
+
+        def list = dataManager.load(TestAppEntity)
+                .condition(PropertyCondition.notEqual("name", "target"))
+                .list()
+
+        then:
+
+        list.size() == 2
+        list.contains(nonMatching)
+        list.contains(withNull)
+    }
+
+    def "NOT_CONTAINS includes records with null"() {
+
+        TestAppEntity matching = dataManager.create(TestAppEntity)
+        matching.name = 'has target inside'
+
+        TestAppEntity nonMatching = dataManager.create(TestAppEntity)
+        nonMatching.name = 'other'
+
+        TestAppEntity withNull = dataManager.create(TestAppEntity)
+        withNull.name = null
+
+        dataManager.save(matching, nonMatching, withNull)
+
+        when:
+
+        def list = dataManager.load(TestAppEntity)
+                .condition(PropertyCondition.createWithValue("name", PropertyCondition.Operation.NOT_CONTAINS, "target"))
+                .list()
+
+        then:
+
+        list.size() == 2
+        list.contains(nonMatching)
+        list.contains(withNull)
+    }
+
+    def "NOT_IN_LIST includes records with null"() {
+
+        TestAppEntity matching = dataManager.create(TestAppEntity)
+        matching.name = 'one'
+
+        TestAppEntity nonMatching = dataManager.create(TestAppEntity)
+        nonMatching.name = 'three'
+
+        TestAppEntity withNull = dataManager.create(TestAppEntity)
+        withNull.name = null
+
+        dataManager.save(matching, nonMatching, withNull)
+
+        when:
+
+        def list = dataManager.load(TestAppEntity)
+                .condition(PropertyCondition.notInList("name", ["one", "two"]))
+                .list()
+
+        then:
+
+        list.size() == 2
+        list.contains(nonMatching)
+        list.contains(withNull)
+    }
+
+    def "generated JPQL wraps NOT_EQUAL with 'is null' check"() {
+        when:
+
+        def property = PropertyCondition.notEqual("name", "target")
+        def context = new ConditionGenerationContext(property)
+        context.entityName = "test_TestAppEntity"
+        context.entityAlias = "e"
+        def where = propertyConditionGenerator.generateWhere(context)
+
+        then:
+
+        where.contains("e.name <>")
+        where.contains("e.name is null")
+        where.startsWith("(")
+        where.endsWith(")")
+    }
+
+    def "NOT_CONTAINS keeps LIKE-escape clause when wrapped with is-null check"() {
+
+        TestAppEntity literal = dataManager.create(TestAppEntity)
+        literal.name = '789_321'
+
+        TestAppEntity wildcardOnly = dataManager.create(TestAppEntity)
+        // matches LIKE '%_32%' when '_' is treated as a wildcard, but lacks the literal '_32'
+        wildcardOnly.name = '7894321'
+
+        dataManager.save(literal, wildcardOnly)
+
+        when: "NOT_CONTAINS with backslash-escaped underscore should treat it literally"
+
+        def list = dataManager.load(TestAppEntity)
+                .condition(PropertyCondition.createWithValue("name", PropertyCondition.Operation.NOT_CONTAINS, "\\_32")
+                        .skipNullOrEmpty())
+                .list()
+
+        then: "the literal '_32' is filtered out, the wildcard-only match remains"
+
+        list == [wildcardOnly]
+    }
+
+    def "generated JPQL keeps 'escape' clause when NOT_CONTAINS is wrapped with is-null check"() {
+        when:
+
+        def property = PropertyCondition.createWithValue("name", PropertyCondition.Operation.NOT_CONTAINS, "value")
+        def context = new ConditionGenerationContext(property)
+        context.entityName = "test_TestAppEntity"
+        context.entityAlias = "e"
+        def where = propertyConditionGenerator.generateWhere(context)
+
+        then:
+
+        where.startsWith("(")
+        where.endsWith(")")
+        where.contains("e.name not like")
+        where.contains("escape '\\'")
+        where.contains("e.name is null")
+    }
+}

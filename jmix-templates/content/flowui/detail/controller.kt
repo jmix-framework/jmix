@@ -27,7 +27,7 @@ import ${routeLayout.getControllerFqn()}<%}%>
 import com.vaadin.flow.router.Route
 import io.jmix.flowui.view.*
 <%if (useDataRepositories){%>import io.jmix.core.LoadContext
-import io.jmix.core.FetchPlan
+import io.jmix.core.repository.JmixDataRepositoryContext
 import io.jmix.flowui.view.Target
 import ${repository.getQualifiedName()}
 import java.util.Optional
@@ -46,8 +46,8 @@ ${classComment}
 class ${detailControllerName}<%if (useDataRepositories || useUpdateServiceSaveDelegate){%>(<%if (useDataRepositories){%>private val repository: ${repository.getName()}<%}%><%if (useDataRepositories && useUpdateServiceSaveDelegate){%>, <%}%><%if (useUpdateServiceSaveDelegate){%>private val updateService: ${updateService.getName()}<%}%>)<%}%> : StandardDetailView<${entity.className}>() {<%if (useDataRepositories){%>
 
     @Install(to = "${dlId}", target = Target.DATA_LOADER, subject = "loadFromRepositoryDelegate")
-    private fun loadDelegate(id: ${getRepositoryIdClassName()}, fetchPlan: FetchPlan): Optional<${entity.className}> {
-        return repository.findById(id, fetchPlan)
+    private fun loadDelegate(id: ${getRepositoryIdClassName()}, context: JmixDataRepositoryContext): Optional<${entity.className}> {
+        return repository.findById(id, context)
     }<%}%><%if (useRepositorySaveDelegate){%>
 
     @Install(target = Target.DATA_CONTEXT)

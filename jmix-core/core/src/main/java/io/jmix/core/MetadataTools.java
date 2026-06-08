@@ -17,10 +17,7 @@
 package io.jmix.core;
 
 import com.google.common.base.Splitter;
-import io.jmix.core.annotation.DeletedBy;
-import io.jmix.core.annotation.DeletedDate;
-import io.jmix.core.annotation.Internal;
-import io.jmix.core.annotation.Secret;
+import io.jmix.core.annotation.*;
 import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.entity.EntityEntryHasUuid;
 import io.jmix.core.entity.EntityPreconditions;
@@ -31,6 +28,7 @@ import io.jmix.core.entity.annotation.JmixId;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.impl.scanning.EnumDetector;
 import io.jmix.core.impl.scanning.JmixModulesClasspathScanner;
+import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
@@ -80,6 +78,8 @@ public class MetadataTools {
     public static final String SYSTEM_ANN_NAME = "jmix.system";
     public static final String STORE_ANN_NAME = "jmix.storeName";
     public static final String LENGTH_ANN_NAME = "jmix.length";
+    public static final String LOB_ANN_NAME = "jmix.lob";
+    public static final String INCLUDE_IN_FETCH_PLAN_ANN_NAME = "jmix.includeInFetchPlan";
     public static final String CASCADE_TYPES_ANN_NAME = "jmix.cascadeTypes";
     public static final String CASCADE_PROPERTIES_ANN_NAME = "jmix.cascadeProperties";
     public static final String EMBEDDED_PROPERTIES_ANN_NAME = "jmix.embeddedProperties";
@@ -351,6 +351,7 @@ public class MetadataTools {
      * <ul>
      *     <li>{@link Id}</li>
      *     <li>{@link JmixId}</li>
+     *     <li>{@link EmbeddedId}</li>
      *     <li>{@link JmixGeneratedValue}</li>
      *     <li>{@link Version}</li>
      *     <li>{@link CreatedDate}</li>
@@ -359,6 +360,7 @@ public class MetadataTools {
      *     <li>{@link LastModifiedBy}</li>
      *     <li>{@link DeletedDate}</li>
      *     <li>{@link DeletedBy}</li>
+     *     <li>{@link TenantId}</li>
      * </ul>
      */
     public boolean isSystem(MetaProperty metaProperty) {
@@ -367,24 +369,9 @@ public class MetadataTools {
     }
 
     /**
-     * <b>System Properties</b> - is important properties used for identification, audit, soft-delete and optimistic lock
-     * purposes
-     * More formally, it is properties with annotations:
-     * <ul>
-     *     <li>{@link Id},</li>
-     *     <li>{@link JmixId},</li>
-     *     <li>{@link EmbeddedId}</li>
-     *     <li>{@link JmixGeneratedValue}</li>
-     *     <li>{@link CreatedDate}</li>
-     *     <li>{@link CreatedBy}</li>
-     *     <li>{@link LastModifiedDate}</li>
-     *     <li>{@link LastModifiedBy}</li>
-     *     <li>{@link DeletedDate}</li>
-     *     <li>{@link DeletedBy}</li>
-     *     <li>{@link jakarta.persistence.Version}</li>
-     * </ul>
+     * @return names of system properties of the given entity.
      *
-     * @return names of system properties used in Entity determined by {@code metaClass} parameter
+     * @see #isSystem(MetaProperty)
      */
     public List<String> getSystemProperties(MetaClass metaClass) {
         List<String> result = new LinkedList<>();
@@ -418,7 +405,8 @@ public class MetadataTools {
      */
     public boolean isJpa(MetaProperty metaProperty) {
         Objects.requireNonNull(metaProperty, "metaProperty is null");
-        return metaProperty.getStore().getDescriptor().isJpa();
+        return metaProperty.getStore().getDescriptor().isJpa()
+                && metaProperty.getDeclaringClass() != null; // not a dynamic property
     }
 
     /**
@@ -436,8 +424,8 @@ public class MetadataTools {
      */
     public boolean isLob(MetaProperty metaProperty) {
         Objects.requireNonNull(metaProperty, "metaProperty is null");
-        return metaProperty.getAnnotatedElement() != null
-                && metaProperty.getAnnotatedElement().isAnnotationPresent(Lob.class);
+        return metaProperty.getAnnotatedElement().isAnnotationPresent(Lob.class)
+                || Boolean.TRUE.equals(metaProperty.getAnnotations().get(LOB_ANN_NAME));
     }
 
     /**
@@ -800,7 +788,7 @@ public class MetadataTools {
     public List<String> getDependsOnProperties(MetaProperty metaProperty) {
         checkNotNullArgument(metaProperty, "metaProperty is null");
 
-        String dependsOnProperties = (String) metaProperty.getAnnotations().get("dependsOnProperties");
+        String dependsOnProperties = (String) metaProperty.getAnnotations().get(DependsOnProperties.class.getName());
         List<String> result = Collections.emptyList();
         if (dependsOnProperties != null) {
             result = Splitter.on(',').omitEmptyStrings().trimResults().splitToList(dependsOnProperties);

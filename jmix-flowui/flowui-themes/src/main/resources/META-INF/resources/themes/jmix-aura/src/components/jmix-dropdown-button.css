@@ -20,7 +20,8 @@
     gap: var(--vaadin-gap-s);
 }
 
-vaadin-menu-bar[jmix-role='jmix-dropdown-button'] {
+vaadin-menu-bar[jmix-role='jmix-dropdown-button'],
+vaadin-menu-bar[jmix-role|='jmix-combo-button'] {
     flex-shrink: 0;
 }
 

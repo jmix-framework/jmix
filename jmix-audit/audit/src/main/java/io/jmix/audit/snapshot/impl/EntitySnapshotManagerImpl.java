@@ -16,33 +16,20 @@
 
 package io.jmix.audit.snapshot.impl;
 
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.mapper.MapperWrapper;
 import io.jmix.audit.snapshot.EntitySnapshotManager;
 import io.jmix.audit.snapshot.datastore.EntitySnapshotDataStore;
 import io.jmix.audit.snapshot.model.EntitySnapshotModel;
-import io.jmix.core.Entity;
 import io.jmix.core.*;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.CurrentAuthentication;
-import org.apache.commons.lang3.reflect.FieldUtils;
-import org.dom4j.*;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedBy;
-import org.springframework.data.annotation.LastModifiedDate;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
-import org.jspecify.annotations.Nullable;
-import java.io.Serializable;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static java.lang.String.format;
 
 @Component("audit_EntitySnapshotManager")
@@ -109,33 +96,6 @@ public class EntitySnapshotManagerImpl implements EntitySnapshotManager {
     }
 
     @Override
-    public void migrateSnapshots(MetaClass metaClass, Object id, Map<Class, Class> classMapping) {
-        metaClass = extendedEntities.getOriginalOrThisMetaClass(metaClass);
-        // load snapshots
-        List<EntitySnapshotModel> snapshotList = getSnapshots(metaClass, id);
-        Class javaClass = metaClass.getJavaClass();
-
-        MetaClass mappedMetaClass = null;
-        if (classMapping.containsKey(javaClass)) {
-            Class mappedClass = classMapping.get(javaClass);
-            mappedMetaClass = extendedEntities.getOriginalOrThisMetaClass(metadata.getClass(mappedClass));
-        }
-
-        for (EntitySnapshotModel snapshot : snapshotList) {
-            if (mappedMetaClass != null) {
-                snapshot.setEntityMetaClass(mappedMetaClass.getName());
-            }
-
-            String snapshotXml = snapshot.getSnapshotXml();
-            String fetchPlanXml = snapshot.getFetchPlanXml();
-
-            snapshot.setSnapshotXml(processSnapshotXml(snapshotXml, classMapping));
-            snapshot.setFetchPlanXml(processFetchPlanXml(fetchPlanXml, classMapping));
-        }
-        entitySnapshotDataStore.saveSnapshot(snapshotList);
-    }
-
-    @Override
     public EntitySnapshotModel createSnapshot(Object entity, FetchPlan fetchPlan) {
         return createSnapshot(entity, fetchPlan, timeSource.currentTimestamp());
     }
@@ -155,25 +115,13 @@ public class EntitySnapshotManagerImpl implements EntitySnapshotManager {
     @Override
     public Object extractEntity(EntitySnapshotModel snapshot) {
         String rawResult = snapshot.getSnapshotXml();
-        Object entity;
-        if (isXml(rawResult)) {
-            entity = fromXML(snapshot.getSnapshotXml());
-        } else {
-            entity = entitySerialization.entityFromJson(rawResult, metadata.getClass(snapshot.getEntityMetaClass()));
-        }
-        return entity;
+        return entitySerialization.entityFromJson(rawResult, metadata.getClass(snapshot.getEntityMetaClass()));
     }
 
     @Override
     public FetchPlan extractFetchPlan(EntitySnapshotModel snapshot) {
         String rawResult = snapshot.getFetchPlanXml();
-        FetchPlan fetchPlan;
-        if (isXml(rawResult)) {
-            fetchPlan = (FetchPlan) fromXML(rawResult);
-        } else {
-            fetchPlan = fetchPlanSerialization.fromJson(rawResult);
-        }
-        return fetchPlan;
+        return fetchPlanSerialization.fromJson(rawResult);
     }
 
     @Nullable
@@ -213,131 +161,6 @@ public class EntitySnapshotManagerImpl implements EntitySnapshotManager {
         if (metadataTools.hasCompositePrimaryKey(metaClass) && !EntityValues.isUuidSupported(entity)) {
             throw new UnsupportedOperationException(format("Entity %s has no persistent UUID attribute", entity));
         }
-    }
-
-    private String processSnapshotXml(String snapshotXml, Map<Class, Class> classMapping) {
-        if (!isXml(snapshotXml)) {
-            return snapshotXml;
-        }
-        Document document;
-        try {
-            document = DocumentHelper.parseText(snapshotXml);
-        } catch (DocumentException e) {
-            throw new RuntimeException("Couldn't parse snapshot xml content", e);
-        }
-        replaceClasses(document.getRootElement(), classMapping);
-        replaceInXmlTree(document.getRootElement(), classMapping);
-        return document.asXML();
-    }
-
-    private void replaceClasses(Element element, Map<Class, Class> classMapping) {
-        // translate XML
-        for (Map.Entry<Class, Class> classEntry : classMapping.entrySet()) {
-            Class beforeClass = classEntry.getKey();
-            Class afterClass = classEntry.getValue();
-
-            checkNotNull(beforeClass);
-            checkNotNull(afterClass);
-
-            // If BeforeClass != AfterClass
-            if (!beforeClass.equals(afterClass)) {
-                String beforeClassName = beforeClass.getCanonicalName();
-                String afterClassName = afterClass.getCanonicalName();
-
-                if (beforeClassName.equals(element.getName())) {
-                    element.setName(afterClassName);
-                }
-
-                Attribute classAttribute = element.attribute("class");
-                if ((classAttribute != null) && beforeClassName.equals(classAttribute.getValue())) {
-                    classAttribute.setValue(afterClassName);
-                }
-            }
-        }
-    }
-
-    private void replaceInXmlTree(Element element, Map<Class, Class> classMapping) {
-        for (int i = 0; i < element.nodeCount(); i++) {
-            Node node = element.node(i);
-            if (node instanceof Element) {
-                Element childElement = (Element) node;
-                replaceClasses(childElement, classMapping);
-                replaceInXmlTree(childElement, classMapping);
-            }
-        }
-    }
-
-    private String processFetchPlanXml(String fetchPlanXml, Map<Class, Class> classMapping) {
-        if (!isXml(fetchPlanXml)) {
-            return fetchPlanXml;
-        }
-        for (Map.Entry<Class, Class> classEntry : classMapping.entrySet()) {
-            Class beforeClass = classEntry.getKey();
-            Class afterClass = classEntry.getValue();
-
-            checkNotNull(beforeClass);
-            checkNotNull(afterClass);
-
-            String beforeClassName = beforeClass.getCanonicalName();
-            String afterClassName = afterClass.getCanonicalName();
-
-            fetchPlanXml = fetchPlanXml.replaceAll(beforeClassName, afterClassName);
-        }
-        return fetchPlanXml;
-    }
-
-    private boolean isXml(String value) {
-        return value != null && value.trim().startsWith("<");
-    }
-
-    private Object fromXML(String xml) {
-        final List exclUpdateFields = Arrays.asList("updateDate", "updatedBy");
-        final List exclCreateFields = Arrays.asList("createTs", "createdBy");
-        XStream xStream = new XStream() {
-
-            @Override
-            protected MapperWrapper wrapMapper(MapperWrapper next) {
-                return new MapperWrapper(next) {
-                    @Override
-                    public boolean shouldSerializeMember(Class definedIn, String fieldName) {
-                        boolean result = super.shouldSerializeMember(definedIn, fieldName);
-                        if (!result) {
-                            return false;
-                        }
-                        if (fieldName != null) {
-                            if (exclUpdateFields.contains(fieldName)
-                                    && isUpdatable(definedIn)) {
-                                return false;
-                            }
-                            if (exclCreateFields.contains(fieldName)
-                                    && isCreatable(definedIn)) {
-                                return false;
-                            }
-                            if ("uuid".equals(fieldName)) {
-                                if (EntityValues.isUuidSupported(definedIn)) {
-                                    return false;
-                                }
-                            }
-                        }
-                        return true;
-                    }
-                };
-            }
-        };
-        XStream.setupDefaultSecurity(xStream);
-        xStream.allowTypeHierarchy(Serializable.class);
-
-        return xStream.fromXML(xml);
-    }
-
-    private boolean isUpdatable(Class<?> entityClass) {
-        return Arrays.stream(FieldUtils.getAllFields(entityClass))
-                .anyMatch(f -> f.isAnnotationPresent(LastModifiedBy.class) || f.isAnnotationPresent(LastModifiedDate.class));
-    }
-
-    private boolean isCreatable(Class<?> entityClass) {
-        return Arrays.stream(FieldUtils.getAllFields(entityClass))
-                .anyMatch(f -> f.isAnnotationPresent(CreatedBy.class) || f.isAnnotationPresent(CreatedDate.class));
     }
 
     private EntitySnapshotModel createEntitySnapshot(Object entity, FetchPlan fetchPlan, Date snapshotDate, String authorUsername) {

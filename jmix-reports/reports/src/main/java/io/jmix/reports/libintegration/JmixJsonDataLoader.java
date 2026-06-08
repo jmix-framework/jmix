@@ -56,6 +56,9 @@ public class JmixJsonDataLoader extends JsonDataLoader {
     protected Resources resources;
 
     @Autowired
+    protected ReportsGroovyFeatureSupport groovyFeatureSupport;
+
+    @Autowired
     public JmixJsonDataLoader(Scripting scripting) {
         this.scripting = scripting;
     }
@@ -115,6 +118,9 @@ public class JmixJsonDataLoader extends JsonDataLoader {
 
         Map<String, Object> scriptParams = groovyScriptParametersProvider.getParametersForDatasetParameters(
                 reportQuery, parentBand, reportParams);
+        if (!groovyFeatureSupport.isGroovyEnabled()) {
+            return groovyFeatureSupport.getDisabledJsonResult(reportQuery.getName());
+        }
         return scripting.evaluateGroovy(jsonSourceText, scriptParams);
     }
 

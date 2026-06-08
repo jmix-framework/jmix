@@ -161,7 +161,7 @@ public class AuthServerAutoConfiguration {
         @Order(JmixSecurityFilterChainOrder.AUTHSERVER_AUTHORIZATION_SERVER)
         public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http)
                 throws Exception {
-            OAuth2AuthorizationServerConfigurer authServerConfigurer = new OAuth2AuthorizationServerConfigurer(); //todo [SB4] review
+            OAuth2AuthorizationServerConfigurer authServerConfigurer = new OAuth2AuthorizationServerConfigurer();
             http
                     .securityMatcher(authServerConfigurer.getEndpointsMatcher())
                     .with(authServerConfigurer, Customizer.withDefaults())
@@ -215,15 +215,6 @@ public class AuthServerAutoConfiguration {
             successHandler.setUseReferer(authServerProperties.isUseRefererPostLogout());
             return successHandler;
         }
-
-        // TODO [SB4] ServerProperties is gone - use direct injection or custom @ConfigurationProperties class
-        /*protected String getSessionCookieName(ServerProperties serverProperties) {
-            String sessionCookieName = serverProperties.getServlet().getSession().getCookie().getName();
-            if (StringUtils.isBlank(sessionCookieName)) {
-                sessionCookieName = "JSESSIONID";
-            }
-            return sessionCookieName;
-        }*/
 
         protected RequestMatcher createLogoutRequestMatcher(String logoutUrl) {
             return RequestMatchers.anyOf(
@@ -319,7 +310,6 @@ public class AuthServerAutoConfiguration {
             JsonMapper.Builder jsonMapperBuilder = JsonMapper.builder()
                     .addModules(SecurityJacksonModules.getModules(classLoader, polymorphicTypeValidatorBuilder));
 
-            // TODO [SB4] Customize on builder level due to immutability of JsonMapper
             jsonMapperCustomizers.orderedStream().forEach(
                     customizer -> {
                         log.debug("Apply JsonMapper customizer: {}", customizer.getClass().getName());

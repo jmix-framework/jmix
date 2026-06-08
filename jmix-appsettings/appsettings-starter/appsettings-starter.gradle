@@ -20,5 +20,6 @@ archivesBaseName = 'jmix-appsettings-starter'
 dependencies {
     api project(':appsettings')
 
+    compileOnly project(':multitenancy')
     implementation 'org.springframework.boot:spring-boot-autoconfigure'
 }

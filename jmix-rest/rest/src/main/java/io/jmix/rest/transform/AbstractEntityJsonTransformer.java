@@ -16,16 +16,12 @@
 
 package io.jmix.rest.transform;
 
-/*import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;*/
-import io.jmix.rest.impl.config.RestJsonTransformations;
 import io.jmix.rest.exception.RestAPIException;
+import io.jmix.rest.impl.config.RestJsonTransformations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.node.ObjectNode;
@@ -85,12 +81,12 @@ public abstract class AbstractEntityJsonTransformer implements EntityJsonTransfo
         try {
             JsonNode rootNode = objectMapper.readTree(json);
             if (rootNode.isArray()) {
-                //TODO [SB4]
                 Collection<JsonNode> nestedElements = rootNode.values();
                 for (JsonNode element : nestedElements) {
-                    transformEntityJson((ObjectNode)element, objectMapper);
+                    if (element.isObject()) {
+                        transformEntityJson(element.asObject(), objectMapper);
+                    }
                 }
-
             } else if (rootNode.isObject()) {
                 transformEntityJson((ObjectNode) rootNode, objectMapper);
             }
@@ -114,7 +110,6 @@ public abstract class AbstractEntityJsonTransformer implements EntityJsonTransfo
     }
 
     protected void transformNestedToOneReferences(ObjectNode rootObjectNode, ObjectMapper objectMapper) throws IOException {
-        // TODO [SB4]
         Set<Map.Entry<String, JsonNode>> properties = rootObjectNode.properties();
         for (Map.Entry<String, JsonNode> entry : properties) {
             String attributeName = entry.getKey();
@@ -122,7 +117,7 @@ public abstract class AbstractEntityJsonTransformer implements EntityJsonTransfo
             if (nestedJsonNode.isObject()) {
                 JsonNode childEntityNameNode = nestedJsonNode.get(ENTITY_NAME_PROP);
                 if (childEntityNameNode != null) {
-                    String childEntityNameValue = childEntityNameNode.asText();
+                    String childEntityNameValue = childEntityNameNode.asString();
                     EntityJsonTransformer childEntityTransformer = jsonTransformations.getTransformer(childEntityNameValue,
                             this.version, this.direction);
                     if (childEntityTransformer != null) {
@@ -136,7 +131,6 @@ public abstract class AbstractEntityJsonTransformer implements EntityJsonTransfo
     }
 
     protected void transformNestedToManyReferences(ObjectNode rootObjectNode, ObjectMapper objectMapper) throws IOException {
-        // TODO [SB4]
         Set<Map.Entry<String, JsonNode>> properties = rootObjectNode.properties();
         for (Map.Entry<String, JsonNode> entry : properties) {
             String attributeName = entry.getKey();
@@ -146,7 +140,7 @@ public abstract class AbstractEntityJsonTransformer implements EntityJsonTransfo
                     JsonNode firstArrayElement = nestedJsonNode.get(0);
                     JsonNode nestedEntityNameNode = firstArrayElement.get(ENTITY_NAME_PROP);
                     if (nestedEntityNameNode != null) {
-                        String nestedEntityNameValue = nestedEntityNameNode.asText();
+                        String nestedEntityNameValue = nestedEntityNameNode.asString();
                         EntityJsonTransformer nestedEntityTransformer = jsonTransformations.getTransformer(nestedEntityNameValue,
                                 this.version, this.direction);
                         if (nestedEntityTransformer != null) {
@@ -176,7 +170,7 @@ public abstract class AbstractEntityJsonTransformer implements EntityJsonTransfo
     protected void replaceEntityName(ObjectNode rootObjectNode) {
         JsonNode entityName = rootObjectNode.get(ENTITY_NAME_PROP);
         if (entityName != null) {
-            String entityNameValue = entityName.asText();
+            String entityNameValue = entityName.asString();
             if (fromEntityName.equals(entityNameValue)) {
                 rootObjectNode.put(ENTITY_NAME_PROP, toEntityName);
             }

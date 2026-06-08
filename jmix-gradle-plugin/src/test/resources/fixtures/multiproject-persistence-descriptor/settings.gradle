@@ -1,0 +1,24 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        mavenCentral()
+        maven {
+            url = 'https://nexus.jmix.io/repository/public'
+        }
+    }
+}
+
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        mavenCentral()
+        maven {
+            url = 'https://nexus.jmix.io/repository/public'
+        }
+    }
+}
+
+rootProject.name = 'jmix-gradle-plugin-repro'
+
+include 'base'
+include 'feature'

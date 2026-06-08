@@ -24,8 +24,6 @@ import io.jmix.dynattr.DynAttrUtils;
 import io.jmix.dynattr.DynamicAttributes;
 import io.jmix.dynattr.DynamicAttributesState;
 import io.jmix.dynattrflowui.DynAttrUiProperties;
-import org.springframework.scripting.ScriptEvaluator;
-import org.springframework.scripting.support.StaticScriptSource;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -33,15 +31,14 @@ import java.util.*;
 @Component("dynat_AttributeRecalculationManager")
 public class AttributeRecalculationManager {
 
-    protected final ScriptEvaluator scriptEvaluator;
+    protected final DynAttrGroovyFeatureSupport dynAttrGroovyFeatureSupport;
     protected final AttributeDependencies attributeDependencies;
     protected final DynAttrUiProperties dynAttrUiProperties;
 
-    public AttributeRecalculationManager(@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
-                                         ScriptEvaluator scriptEvaluator,
+    public AttributeRecalculationManager(DynAttrGroovyFeatureSupport dynAttrGroovyFeatureSupport,
                                          AttributeDependencies attributeDependencies,
                                          DynAttrUiProperties dynAttrUiProperties) {
-        this.scriptEvaluator = scriptEvaluator;
+        this.dynAttrGroovyFeatureSupport = dynAttrGroovyFeatureSupport;
         this.attributeDependencies = attributeDependencies;
         this.dynAttrUiProperties = dynAttrUiProperties;
     }
@@ -112,6 +109,6 @@ public class AttributeRecalculationManager {
         params.put("entity", entity);
         params.put("dynamicAttributes", values);
 
-        return scriptEvaluator.evaluate(new StaticScriptSource(script), params);
+        return dynAttrGroovyFeatureSupport.evaluateRecalculationScript(script, params);
     }
 }

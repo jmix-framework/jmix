@@ -14,7 +14,4 @@
  * limitations under the License.
  */
 
-@NullMarked
 package io.jmix.securityflowui.view.resetpassword;
-
-import org.jspecify.annotations.NullMarked;

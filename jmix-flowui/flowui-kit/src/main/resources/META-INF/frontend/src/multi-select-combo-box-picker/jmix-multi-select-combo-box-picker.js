@@ -33,7 +33,7 @@ import {
 import {MultiSelectComboBoxMixin} from '@vaadin/multi-select-combo-box/src/vaadin-multi-select-combo-box-mixin.js';
 import {jmixMultiSelectComboBoxPickerStyles} from "./styles/jmix-multi-select-combo-box-picker-base-styles";
 
-// CAUTION: copied from @vaadin/multi-select-combo-box [last update Vaadin 25.0.4]
+// CAUTION: copied from @vaadin/multi-select-combo-box [last update Vaadin 25.1.6]
 class JmixMultiSelectComboBoxPicker extends MultiSelectComboBoxMixin(
     ThemableMixin(ElementMixin(PolylitMixin(LumoInjectionMixin(LitElement))))) {
 

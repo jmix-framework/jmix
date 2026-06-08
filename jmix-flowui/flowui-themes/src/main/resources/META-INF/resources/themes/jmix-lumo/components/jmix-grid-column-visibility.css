@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+vaadin-menu-bar[jmix-role='jmix-grid-column-visibility'] {
+    flex-shrink: 0;
+}
+
 vaadin-menu-bar[jmix-role='jmix-grid-column-visibility'] > vaadin-menu-bar-button {
     margin: var(--lumo-space-xs) 0;
 }

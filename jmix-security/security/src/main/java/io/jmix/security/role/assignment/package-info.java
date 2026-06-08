@@ -14,7 +14,4 @@
  * limitations under the License.
  */
 
-@NullMarked
 package io.jmix.security.role.assignment;
-
-import org.jspecify.annotations.NullMarked;

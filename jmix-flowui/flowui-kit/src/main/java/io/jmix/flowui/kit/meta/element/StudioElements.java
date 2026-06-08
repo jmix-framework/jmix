@@ -226,6 +226,71 @@ interface StudioElements {
     void numberRenderer();
 
     @StudioElement(
+            name = "DetailLinkRenderer",
+            classFqn = "io.jmix.flowui.component.grid.renderer.DetailLinkRenderer",
+            xmlElement = "detailLinkRenderer",
+            target = {"com.vaadin.flow.component.grid.Grid.Column"},
+            unsupportedTarget = {"io.jmix.flowui.kit.component.grid.EditorActionsColumn"},
+            documentationLink = "%VERSION%/flow-ui/vc/components/dataGrid.html#renderers",
+            properties = {
+                    @StudioProperty(xmlAttribute = "viewId",
+                            type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "viewClass",
+                            type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "text",
+                            type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "target",
+                            type = StudioPropertyType.ENUMERATION,
+                            classFqn = "com.vaadin.flow.component.html.AnchorTarget",
+                            options = {"BLANK", "PARENT", "SELF", "TOP"}),
+                    @StudioProperty(xmlAttribute = "classNames",
+                            category = StudioProperty.Category.LOOK_AND_FEEL,
+                            type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "css",
+                            category = StudioProperty.Category.LOOK_AND_FEEL,
+                            type = StudioPropertyType.STRING)
+            }
+    )
+    void detailLinkRenderer();
+
+    @StudioElement(
+            name = "DetailButtonRenderer",
+            classFqn = "io.jmix.flowui.component.grid.renderer.DetailButtonRenderer",
+            xmlElement = "detailButtonRenderer",
+            target = {"com.vaadin.flow.component.grid.Grid.Column"},
+            unsupportedTarget = {"io.jmix.flowui.kit.component.grid.EditorActionsColumn"},
+            documentationLink = "%VERSION%/flow-ui/vc/components/dataGrid.html#renderers",
+            properties = {
+                    @StudioProperty(xmlAttribute = "viewId",
+                            type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "viewClass",
+                            type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = "openMode",
+                            type = StudioPropertyType.ENUMERATION,
+                            classFqn = "io.jmix.flowui.view.OpenMode",
+                            defaultValue = "NAVIGATION",
+                            options = {"DIALOG", "NAVIGATION"}),
+                    @StudioProperty(xmlAttribute = "text",
+                            type = StudioPropertyType.LOCALIZED_STRING),
+                    @StudioProperty(xmlAttribute = "icon",
+                            category = StudioProperty.Category.LOOK_AND_FEEL,
+                            type = StudioPropertyType.ICON),
+                    @StudioProperty(xmlAttribute = "themeNames",
+                            category = StudioProperty.Category.LOOK_AND_FEEL,
+                            type = StudioPropertyType.VALUES_LIST,
+                            options = {"small", "large", "tertiary", "tertiary-inline",
+                                    "primary", "success", "warning", "error", "contrast", "icon", "contained", "outlined"}),
+                    @StudioProperty(xmlAttribute = "classNames",
+                            category = StudioProperty.Category.LOOK_AND_FEEL,
+                            type = StudioPropertyType.VALUES_LIST),
+                    @StudioProperty(xmlAttribute = "css",
+                            category = StudioProperty.Category.LOOK_AND_FEEL,
+                            type = StudioPropertyType.STRING)
+            }
+    )
+    void detailButtonRenderer();
+
+    @StudioElement(
             name = "ComponentItem",
             classFqn = "io.jmix.flowui.kit.component.dropdownbutton.ComponentItem",
             xmlElement = StudioXmlElements.COMPONENT_ITEM,
@@ -463,6 +528,7 @@ interface StudioElements {
                     "io.jmix.flowui.component.genericfilter.GenericFilter",
                     "io.jmix.flowui.component.propertyfilter.PropertyFilter",
                     "io.jmix.flowui.component.jpqlfilter.JpqlFilter",
+                    "io.jmix.flowui.component.markdowneditor.MarkdownEditor",
                     "io.jmix.flowui.component.menufilterfield.MenuFilterField"},
             propertyGroups = StudioPropertyGroups.TooltipComponent.class)
     Tooltip tooltip();

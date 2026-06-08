@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-@NullMarked
 @Internal
 package io.jmix.flowui.testassist.navigation;
 
-import org.jspecify.annotations.NullMarked;
 import io.jmix.core.annotation.Internal;

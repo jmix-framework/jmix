@@ -8,6 +8,7 @@ import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
+import io.jmix.core.CoreProperties;
 import io.jmix.core.Metadata;
 import io.jmix.flowui.Dialogs;
 import io.jmix.flowui.component.checkbox.JmixCheckbox;
@@ -16,6 +17,7 @@ import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.kit.component.codeeditor.CodeEditorMode;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.view.*;
+import io.jmix.reports.ReportsProperties;
 import io.jmix.reports.entity.ReportValueFormat;
 import io.jmix.reportsflowui.helper.ReportScriptEditor;
 import io.jmix.security.constraint.PolicyStore;
@@ -59,6 +61,8 @@ public class ReportValueFormatDetailView extends StandardDetailView<ReportValueF
     protected CodeEditor groovyCodeEditor;
     @ViewComponent
     protected Div groovyCodeEditorBox;
+    @ViewComponent
+    protected Button fullScreenTransformationBtn;
 
     @ViewComponent
     protected InstanceContainer<ReportValueFormat> valuesFormatsDc;
@@ -73,6 +77,10 @@ public class ReportValueFormatDetailView extends StandardDetailView<ReportValueF
     protected Dialogs dialogs;
     @Autowired
     protected ReportScriptEditor reportScriptEditor;
+    @Autowired
+    protected CoreProperties coreProperties;
+    @Autowired
+    protected ReportsProperties reportsProperties;
     @ViewComponent
     protected MessageBundle messageBundle;
 
@@ -93,6 +101,7 @@ public class ReportValueFormatDetailView extends StandardDetailView<ReportValueF
             }
             formatField.setValue(value);
         }
+        updateGroovyFieldState();
     }
 
     @Subscribe
@@ -115,6 +124,7 @@ public class ReportValueFormatDetailView extends StandardDetailView<ReportValueF
         }
         groovyCodeEditorBox.setVisible(Boolean.TRUE.equals(visible));
         formatField.setVisible(Boolean.FALSE.equals(visible));
+        updateGroovyFieldState();
     }
 
     @Subscribe("groovyCodeEditorHelpBtn")
@@ -124,6 +134,9 @@ public class ReportValueFormatDetailView extends StandardDetailView<ReportValueF
 
     @Subscribe("fullScreenTransformationBtn")
     public void onFullScreenTransformationBtnClick(final ClickEvent<Button> event) {
+        if (!isReportsGroovyEnabled()) {
+            return;
+        }
         reportScriptEditor.create(this)
                 .withTitle(messageBundle.getMessage("fullScreenBtn.title"))
                 .withValue(valuesFormatsDc.getItem().getFormatString())
@@ -166,5 +179,18 @@ public class ReportValueFormatDetailView extends StandardDetailView<ReportValueF
         optionsList.add(caption);
 
         formatField.setItems(optionsList);
+    }
+
+    protected boolean isReportsGroovyEnabled() {
+        return coreProperties.isUnsafeRuntimeFeaturesEnabled() && reportsProperties.isGroovyEnabled();
+    }
+
+    protected void updateGroovyFieldState() {
+        boolean groovyEnabled = isReportsGroovyEnabled();
+        boolean groovySelected = Boolean.TRUE.equals(groovyField.getValue());
+
+        groovyField.setReadOnly(isReadOnly() || !groovyEnabled);
+        groovyCodeEditor.setReadOnly(isReadOnly() || (groovySelected && !groovyEnabled));
+        fullScreenTransformationBtn.setEnabled(groovySelected && groovyEnabled);
     }
 }

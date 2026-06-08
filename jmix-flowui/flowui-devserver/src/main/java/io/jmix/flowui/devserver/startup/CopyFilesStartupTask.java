@@ -17,12 +17,18 @@
 package io.jmix.flowui.devserver.startup;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Stream;
 
-import io.jmix.flowui.devserver.AppShell;
+import com.vaadin.flow.server.Constants;
+import io.jmix.flowui.devserver.theme.LegacyThemeStyleSheets;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,57 +38,115 @@ public class CopyFilesStartupTask implements StartupTask {
 
     private static final Logger log = LoggerFactory.getLogger(CopyFilesStartupTask.class);
 
+    private static final Set<String> FRONTEND_COPY_EXCLUDES = Set.of(
+            "node_modules", "generated", "dist", "build", "target"
+    );
+
+    private static final FileFilter FRONTEND_COPY_FILTER =
+            file -> !FRONTEND_COPY_EXCLUDES.contains(file.getName());
+
     @Override
     public void execute(StartupContext context) {
-        copyThemes(context);
+        copyProjectResources(context);
         copyNpmrcFile(context);
         copyPackageLockFile(context);
     }
 
-    public static void copyThemes(StartupContext context) {
-        logFileCopying("project themes");
+    public static void copyProjectResources(StartupContext context) {
+        copyProjectFrontend(context);
+        copyProjectMetaInfResources(context);
+        copyProjectLegacyThemes(context);
+    }
 
-        File projectThemesFolder = context.getProjectThemesFolder();
-        File designerThemesFolder = context.getDesignerThemesFolder();
-        File defaultDesignerThemeFolder = new File(designerThemesFolder, AppShell.PREVIEW_THEME_NAME);
+    private static void copyProjectFrontend(StartupContext context) {
+        File projectFrontend = context.getProjectFrontendFolder();
+        File designerFrontend = context.getDesignerFrontendFolder();
 
-        if (projectThemesFolder.exists() && projectThemesFolder.isDirectory()) {
-            try {
-                FileUtils.copyDirectory(projectThemesFolder, designerThemesFolder);
-                log.info("Themes folder has been copied successfully from {} to {}",
-                        projectThemesFolder, designerThemesFolder);
+        if (!projectFrontend.exists() || !projectFrontend.isDirectory()) {
+            log.info("Project frontend folder {} does not exist, skipping mirror", projectFrontend);
+            return;
+        }
 
-                String themeName = context.themeName();
-                if (StringUtils.isNotBlank(themeName)) {
-                    File themeDir = new File(designerThemesFolder, themeName);
-                    if (themeDir.exists() && themeDir.isDirectory()) {
-                        FileUtils.copyDirectory(themeDir, defaultDesignerThemeFolder);
-                        FileUtils.deleteDirectory(themeDir);
-                        log.info("Theme folder '{}' has been successfully copied to '{}'",
-                                themeName, defaultDesignerThemeFolder);
-                    }
-                } else {
-                    createDefaultThemeFolder(defaultDesignerThemeFolder);
-                }
-            } catch (IOException e) {
-                log.warn("Cannot copy project themes from {} to {}", projectThemesFolder, designerThemesFolder);
-            }
-        } else {
-            createDefaultThemeFolder(defaultDesignerThemeFolder);
+        logFileCopying("project frontend folder");
+        try {
+            FileUtils.copyDirectory(projectFrontend, designerFrontend, FRONTEND_COPY_FILTER);
+            log.info("Project frontend folder has been copied successfully from {} to {}",
+                    projectFrontend, designerFrontend);
+        } catch (IOException e) {
+            log.warn("Cannot copy project frontend folder from {} to {}", projectFrontend, designerFrontend, e);
         }
     }
 
-    private static void createDefaultThemeFolder(File designerThemeFolder) {
-        try {
-            log.info("Creating empty designer theme folder {}...", designerThemeFolder);
-            FileUtils.forceMkdir(designerThemeFolder);
+    private static void copyProjectMetaInfResources(StartupContext context) {
+        File projectMetaInf = context.getProjectMetaInfResourcesFolder();
+        File designerMetaInf = context.getDesignerMetaInfResourcesFolder();
 
-            log.info("Creating empty styles.css file...");
-            File stylesCss = new File(designerThemeFolder, "styles.css");
-            FileUtils.write(stylesCss, "", StandardCharsets.UTF_8);
-        } catch (IOException e) {
-            log.warn("Can not create designer theme folder {}", designerThemeFolder);
+        if (!projectMetaInf.exists() || !projectMetaInf.isDirectory()) {
+            log.info("Project META-INF folder {} does not exist, skipping mirror", projectMetaInf);
+            return;
         }
+
+        logFileCopying("project META-INF/resources/frontend folder");
+
+        try {
+            FileUtils.copyDirectory(projectMetaInf, designerMetaInf);
+            log.info("Project META-INFO folder has been copied successfully from {} to {}", projectMetaInf, designerMetaInf);
+        } catch (IOException e) {
+            log.warn("Cannot copy project META-INF folder from {} to {}", projectMetaInf, designerMetaInf, e);
+        }
+    }
+
+    private static void copyProjectLegacyThemes(StartupContext context) {
+        File projectLegacyThemes = context.getProjectLegacyThemesFolder();
+        File designerMetaInf = context.getDesignerMetaInfResourcesFolder();
+
+        if (!projectLegacyThemes.exists() || !projectLegacyThemes.isDirectory()) {
+            log.info("Project legacy themes folder {} does not exist, skipping mirror", projectLegacyThemes);
+            LegacyThemeStyleSheets.setStyleSheets(List.of());
+            return;
+        }
+
+        logFileCopying("project legacy themes folder");
+
+        try {
+            FileUtils.copyDirectoryToDirectory(projectLegacyThemes, designerMetaInf);
+            log.info("Project legacy themes folder has been copied successfully from {} to {}",
+                    projectLegacyThemes, designerMetaInf);
+
+            File copiedThemesRoot = new File(designerMetaInf, Constants.APPLICATION_THEME_ROOT);
+            LegacyThemeStyleSheets.setStyleSheets(
+                    collectLegacyThemeStyleSheets(copiedThemesRoot, designerMetaInf));
+        } catch (IOException e) {
+            log.warn("Cannot copy project legacy themes folder from {} to {}",
+                    projectLegacyThemes, designerMetaInf, e);
+            LegacyThemeStyleSheets.setStyleSheets(List.of());
+        }
+    }
+
+    /**
+     * Support for projects with {@code @Theme} annotation:
+     * we will copy all theme files to the designer META-INF directory
+     * and add theme {@code style.css} file to UI via {@code Page#addStyleSheet} in {@code MainLayout}
+     * @see io.jmix.flowui.devserver.MainLayout
+     */
+    private static List<String> collectLegacyThemeStyleSheets(File copiedThemesRoot, File designerMetaInf) throws IOException {
+        if (!copiedThemesRoot.exists() || !copiedThemesRoot.isDirectory()) {
+            return List.of();
+        }
+
+        Path metaInfRoot = designerMetaInf.toPath();
+        List<String> result = new ArrayList<>();
+        try (Stream<Path> stream = Files.walk(copiedThemesRoot.toPath())) {
+            stream.filter(Files::isRegularFile)
+                    .filter(path -> "styles.css".equalsIgnoreCase(path.getFileName().toString()))
+                    .forEach(path -> {
+                        String relative = metaInfRoot.relativize(path).toString()
+                                .replace(File.separatorChar, '/');
+                        result.add(relative);
+                    });
+        }
+
+        return result;
     }
 
     private void copyNpmrcFile(StartupContext context) {

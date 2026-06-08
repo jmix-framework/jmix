@@ -152,7 +152,6 @@ public class ElasticsearchEntitySearcher extends AbstractEntitySearcher implemen
     }
 
     protected void configureHighlight(SearchRequest.Builder requestBuilder) {
-        // TODO [SB4] ES Rest Client 9 changed approach of configuration. Now differs from OpenSearch which keep using ola approach
         HighlightField highlightField = HighlightField.of(fieldBuilder ->
                 fieldBuilder
                         .preTags("<b>")

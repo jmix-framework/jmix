@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 @Internal
-@NullMarked
 package io.jmix.securitydata.impl.role;
 
 import io.jmix.core.annotation.Internal;
-import org.jspecify.annotations.NullMarked;

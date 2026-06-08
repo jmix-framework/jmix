@@ -49,7 +49,7 @@
             alignItems="STRETCH" padding="false" spacing="false"
             classNames="category-attributes-detail-view">
 <!--        <vbox id="contentBox" expand="tabSheet" classNames="overflow-auto" padding="false">-->
-        <tabSheet id="tabSheet" width="100%" height="100%"
+        <tabSheet id="tabSheet"
                       themeNames="no-padding no-border" classNames="main-tab-sheet">
                 <tab id="mainTab" label="msg://mainTab.title">
                     <vbox height="100%" classNames="main-tab-wrapper">

@@ -77,6 +77,8 @@ public class ViewTemplateIntegrationTest {
     protected static final String FILTERED_DETAIL_VIEW_ID = "test_ViewTemplateFilteringEntity.edit";
     protected static final String BINDINGS_LIST_VIEW_ID = "test_ViewTemplateBindingsEntity.list";
     protected static final String BINDINGS_DETAIL_VIEW_ID = "test_ViewTemplateBindingsEntity.detail";
+    protected static final String MASTER_DETAIL_VIEW_ID = "test_ViewTemplateMasterEntity.detail";
+    protected static final String LINE_DETAIL_VIEW_ID = "test_ViewTemplateLineEntity.detail";
     protected static final String LIST_VIEW_ROUTE = "templates/view-template/list";
     protected static final String DETAIL_VIEW_BASE_ROUTE = "templates/view-template/detail";
     protected static final String DETAIL_VIEW_ROUTE = DETAIL_VIEW_BASE_ROUTE + "/:id";
@@ -253,6 +255,56 @@ public class ViewTemplateIntegrationTest {
         assertTrue(listDescriptor.contains("action=\"dataGrid.removeAction\""));
 
         assertTrue(detailDescriptor.contains("<instance id=\"entityDc\""));
+        assertTrue(detailDescriptor.contains("<formLayout id=\"form\" dataContainer=\"entityDc\""));
+    }
+
+    @Test
+    void testDetailTemplateRendersCompositionCollectionsAsTabSheet() {
+        String detailDescriptor = getDescriptor(MASTER_DETAIL_VIEW_ID);
+
+        // Composition collection is fetched and gets a nested container
+        assertTrue(detailDescriptor.contains("<property name=\"lines\" fetchPlan=\"_base\"/>"));
+        assertTrue(detailDescriptor.contains("<collection id=\"linesDc\" property=\"lines\"/>"));
+
+        // TabSheet with a general tab holding the form
+        assertTrue(detailDescriptor.contains("<tabSheet id=\"contentTabSheet\""));
+        assertTrue(detailDescriptor.contains(
+                "<tab id=\"generalTab\" label=\"msg:///viewTemplate.generalTab\""));
+        assertTrue(detailDescriptor.contains("<formLayout id=\"form\" dataContainer=\"entityDc\""));
+
+        // Collection tab with a dataGrid, list actions and line-entity columns
+        assertTrue(detailDescriptor.contains("<tab id=\"linesTab\" "
+                + "label=\"msg://test_support.entity.viewtemplate/ViewTemplateMasterEntity.lines\""));
+        assertTrue(detailDescriptor.contains("<hbox id=\"linesButtonsPanel\""));
+        assertTrue(detailDescriptor.contains("<dataGrid id=\"linesDataGrid\""));
+        assertTrue(detailDescriptor.contains("dataContainer=\"linesDc\""));
+        assertTrue(detailDescriptor.contains("<action id=\"createAction\" type=\"list_create\">"));
+        assertTrue(detailDescriptor.contains("<action id=\"editAction\" type=\"list_edit\">"));
+        assertTrue(detailDescriptor.contains("<action id=\"removeAction\" type=\"list_remove\"/>"));
+        assertTrue(detailDescriptor.contains("<property name=\"openMode\" value=\"DIALOG\"/>"));
+        assertTrue(detailDescriptor.contains("<column property=\"description\"/>"));
+        assertTrue(detailDescriptor.contains("<column property=\"quantity\"/>"));
+        assertFalse(detailDescriptor.contains("<column property=\"master\"/>"));
+
+        // Association collection is NOT rendered
+        assertFalse(detailDescriptor.contains("relatedCustomers"));
+    }
+
+    @Test
+    void testCompositionItemDetailTemplateHidesInverseAttribute() {
+        String detailDescriptor = getDescriptor(LINE_DETAIL_VIEW_ID);
+
+        // Composition back-reference to the master must not be rendered as a field
+        assertFalse(detailDescriptor.contains("id=\"masterField\""));
+        assertTrue(detailDescriptor.contains("id=\"descriptionField\""));
+        assertTrue(detailDescriptor.contains("id=\"quantityField\""));
+    }
+
+    @Test
+    void testDetailTemplateWithoutCollectionsHasNoTabSheet() {
+        String detailDescriptor = getDescriptor(DETAIL_VIEW_ID);
+
+        assertFalse(detailDescriptor.contains("<tabSheet"));
         assertTrue(detailDescriptor.contains("<formLayout id=\"form\" dataContainer=\"entityDc\""));
     }
 

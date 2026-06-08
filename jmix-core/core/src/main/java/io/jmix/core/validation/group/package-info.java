@@ -14,7 +14,4 @@
  * limitations under the License.
  */
 
-@NullMarked
 package io.jmix.core.validation.group;
-
-import org.jspecify.annotations.NullMarked;

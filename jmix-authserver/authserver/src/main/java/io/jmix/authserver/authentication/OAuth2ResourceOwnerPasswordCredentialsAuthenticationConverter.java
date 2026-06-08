@@ -25,10 +25,6 @@ public class OAuth2ResourceOwnerPasswordCredentialsAuthenticationConverter imple
 
     private static final String ACCESS_TOKEN_REQUEST_ERROR_URI = "https://datatracker.ietf.org/doc/html/rfc6749#section-5.2";
 
-    //TODO [SB4] Temp custom implementation of Password Grant Type:
-    // AuthorizationGrantType.PASSWORD -> PasswordAuthorizationGrantTypeHelper.PASSWORD_GRANT_TYPE
-    // OAuth2ParameterNames.USERNAME/PASSWORD -> PasswordAuthorizationGrantTypeHelper.USERNAME/PASSWORD
-
     @Override
     public Authentication convert(HttpServletRequest request) {
         MultiValueMap<String, String> parameters = getFormParameters(request);

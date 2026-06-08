@@ -44,7 +44,7 @@
                 <nav id="navigation"
                      classNames="jmix-main-view-navigation"
                      ariaLabel="${messageKeys['navigationAriaLabel']}">
-                    <listMenu id="menu"/>
+                    <listMenu id="menu" themeNames="toggle-reverse"/>
                 </nav>
                 <%if (!createUserMenu) {%>
                 <footer id="footer" classNames="jmix-main-view-footer">

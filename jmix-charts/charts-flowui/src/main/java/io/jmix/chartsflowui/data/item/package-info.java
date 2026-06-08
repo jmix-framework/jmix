@@ -14,7 +14,4 @@
  * limitations under the License.
  */
 
-@NullMarked
 package io.jmix.chartsflowui.data.item;
-
-import org.jspecify.annotations.NullMarked;

@@ -20,9 +20,11 @@ import io.jmix.core.*;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.HasInstanceMetaClass;
+import io.jmix.core.impl.metadata.MetadataGenerationManager;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.Session;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
@@ -44,13 +46,38 @@ public class MetadataImpl implements Metadata {
     protected List<EntityInitializer> entityInitializers;
 
     @Autowired
+    protected ObjectProvider<MetadataGenerationManager> metadataGenerationManagerProvider;
+
+    @Autowired
     public MetadataImpl(MetadataLoader metadataLoader) {
         session = metadataLoader.getSession();
     }
 
     @Override
     public Session getSession() {
+        MetadataGenerationManager metadataGenerationManager = metadataGenerationManagerProvider.getIfAvailable();
+        if (metadataGenerationManager != null) {
+            return metadataGenerationManager.getPinnedOrCurrentGeneration().getSession();
+        }
         return session;
+    }
+
+    /**
+     * Returns the raw metadata session without applying generation pinning.
+     *
+     * <p>Intended for bootstrap and publication code that manages generation snapshots itself.</p>
+     */
+    public Session getRawSession() {
+        return session;
+    }
+
+    /**
+     * Replaces the raw metadata session exposed as the latest published snapshot.
+     *
+     * @param session metadata session to publish as the raw current snapshot
+     */
+    public void setRawSession(Session session) {
+        this.session = session;
     }
 
     @Override
@@ -59,7 +86,7 @@ public class MetadataImpl implements Metadata {
         if (entity instanceof HasInstanceMetaClass && ((HasInstanceMetaClass) entity).hasInstanceMetaClass()) {
             return ((HasInstanceMetaClass) entity).getInstanceMetaClass();
         }
-        return session.getClass(entity.getClass());
+        return getSession().getClass(entity.getClass());
     }
 
     protected <T> T internalCreate(Class<T> entityClass) {

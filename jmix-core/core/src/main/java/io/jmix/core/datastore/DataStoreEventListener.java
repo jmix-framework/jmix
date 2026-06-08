@@ -41,6 +41,9 @@ public interface DataStoreEventListener extends Ordered {
     default void entityDeleting(DataStoreEntityDeletingEvent event) {
     }
 
+    default void beforeSaveCommit(DataStoreBeforeSaveCommitEvent event) {
+    }
+
     default void entityReload(DataStoreEntityReloadEvent event) {
     }
 

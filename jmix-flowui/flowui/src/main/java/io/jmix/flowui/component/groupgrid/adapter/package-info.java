@@ -15,10 +15,8 @@
  */
 
 @Internal
-@NullMarked
 @Experimental
 package io.jmix.flowui.component.groupgrid.adapter;
 
 import io.jmix.core.annotation.Experimental;
 import io.jmix.core.annotation.Internal;
-import org.jspecify.annotations.NullMarked;

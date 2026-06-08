@@ -189,6 +189,16 @@ public class ViewRegistry implements ApplicationContextAware {
         }
     }
 
+    /**
+     * Same as {@link #checkInitialized()} but assumes the caller holds the write lock.
+     */
+    protected void initIfNeeded() {
+        if (!initialized) {
+            init();
+            initialized = true;
+        }
+    }
+
     protected void init() {
         long startTime = System.currentTimeMillis();
 
@@ -207,32 +217,38 @@ public class ViewRegistry implements ApplicationContextAware {
         for (ViewControllersConfiguration provider : configurations) {
             List<ViewControllerDefinition> viewControllers = provider.getViewControllers();
 
-            Map<String, String> projectViews = new HashMap<>(viewControllers.size());
+            Map<String, ViewInfo> configurationViews = new LinkedHashMap<>(viewControllers.size());
 
             for (ViewControllerDefinition definition : viewControllers) {
                 String viewId = definition.getId();
                 String controllerClassName = definition.getControllerClassName();
 
-                String existingViewController = projectViews.get(viewId);
-                if (existingViewController != null
-                        && !Objects.equals(existingViewController, controllerClassName)) {
-                    throw new RuntimeException(
-                            String.format("Project contains views with the same id: '%s'. See '%s' and '%s'",
-                                    viewId,
-                                    controllerClassName,
-                                    existingViewController));
-                } else {
-                    projectViews.put(viewId, controllerClassName);
-                }
-
                 Class<? extends View<?>> controllerClass = loadDefinedViewClass(controllerClassName);
                 String templatePath = ViewDescriptorUtils.resolveTemplatePath(controllerClass);
                 ViewInfo viewInfo = new ViewInfo(viewId, controllerClassName, controllerClass, templatePath);
 
-                registerView(viewId, viewInfo);
+                ViewInfo existingViewInfo = configurationViews.get(viewId);
+                if (existingViewInfo != null
+                        && !Objects.equals(existingViewInfo.getControllerClassName(), controllerClassName)) {
+
+                    Class<? extends View<?>> existingClass = existingViewInfo.getControllerClass();
+                    if (existingClass.isAssignableFrom(controllerClass)) {
+                        configurationViews.put(viewId, viewInfo);
+                    } else if (!controllerClass.isAssignableFrom(existingClass)) {
+                        throw new RuntimeException(
+                                String.format("Project contains views with the same id: '%s'. See '%s' and '%s'",
+                                        viewId,
+                                        controllerClassName,
+                                        existingViewInfo.getControllerClassName()));
+                    }
+                } else {
+                    configurationViews.put(viewId, viewInfo);
+                }
             }
 
-            projectViews.clear();
+            for (ViewInfo viewInfo : configurationViews.values()) {
+                registerView(viewInfo.getId(), viewInfo);
+            }
         }
     }
 
@@ -297,8 +313,8 @@ public class ViewRegistry implements ApplicationContextAware {
                 annotationMetadata.getAnnotationAttributes(annotationClass.getName());
 
         if (annotation != null) {
-            Class<?> entityClass = (Class<?>) annotation.get("value");
-            if (entityClass != null) {
+            Object value = annotation.get("value");
+            if (value instanceof Class<?> entityClass) {
                 MetaClass metaClass = metadata.getClass(entityClass);
                 MetaClass originalMetaClass = extendedEntities.getOriginalOrThisMetaClass(metaClass);
                 return Optional.of(originalMetaClass.getJavaClass());
@@ -622,6 +638,134 @@ public class ViewRegistry implements ApplicationContextAware {
     }
 
     /**
+     * Removes a view class previously registered via {@link #loadViewClass(String)}.
+     * Removes the explicit {@link ViewControllersConfiguration} entry holding the class,
+     * unregisters the view's Vaadin route, and resets the registry so the next access
+     * reloads view definitions.
+     *
+     * @param className fully qualified controller class name
+     * @return {@code true} if a matching configuration was found and removed
+     */
+    @SuppressWarnings("unchecked")
+    public boolean unloadViewClass(String className) {
+        boolean removed;
+        lock.writeLock().lock();
+        try {
+            removed = configurations.removeIf(configuration ->
+                    configuration.getViewControllers().stream()
+                            .anyMatch(definition -> className.equals(definition.getControllerClassName())));
+            if (removed) {
+                Class<?> viewClass = classManager.findClass(className);
+                if (viewClass != null && View.class.isAssignableFrom(viewClass)) {
+                    unregisterRoute((Class<? extends View<?>>) viewClass);
+                }
+                initialized = false;
+            }
+        } finally {
+            lock.writeLock().unlock();
+        }
+        if (removed) {
+            // Re-register routes so the original view replaced by the unloaded class becomes navigable again.
+            registerViewRoutes();
+        }
+        return removed;
+    }
+
+    /**
+     * Registers a primary list view for the given entity class.
+     *
+     * @param entityClass entity class
+     * @param viewInfo    view info to associate as the primary list view
+     */
+    public void setPrimaryListView(Class<?> entityClass, ViewInfo viewInfo) {
+        lock.writeLock().lock();
+        try {
+            initIfNeeded();
+            primaryListViews.put(entityClass, viewInfo);
+        } finally {
+            lock.writeLock().unlock();
+        }
+    }
+
+    /**
+     * Registers a primary detail view for the given entity class.
+     *
+     * @param entityClass entity class
+     * @param viewInfo    view info to associate as the primary detail view
+     */
+    public void setPrimaryDetailView(Class<?> entityClass, ViewInfo viewInfo) {
+        lock.writeLock().lock();
+        try {
+            initIfNeeded();
+            primaryDetailViews.put(entityClass, viewInfo);
+        } finally {
+            lock.writeLock().unlock();
+        }
+    }
+
+    /**
+     * Returns {@code true} if a primary list view is registered for the given entity class.
+     *
+     * @param entityClass entity class
+     */
+    public boolean hasPrimaryListView(Class<?> entityClass) {
+        lock.readLock().lock();
+        try {
+            checkInitialized();
+            return primaryListViews.containsKey(entityClass);
+        } finally {
+            lock.readLock().unlock();
+        }
+    }
+
+    /**
+     * Returns {@code true} if a primary detail view is registered for the given entity class.
+     *
+     * @param entityClass entity class
+     */
+    public boolean hasPrimaryDetailView(Class<?> entityClass) {
+        lock.readLock().lock();
+        try {
+            checkInitialized();
+            return primaryDetailViews.containsKey(entityClass);
+        } finally {
+            lock.readLock().unlock();
+        }
+    }
+
+    /**
+     * Removes the primary list view registration for the given entity class.
+     *
+     * @param entityClass entity class
+     * @return {@code true} if a primary list view was registered for the entity class
+     */
+    public boolean removePrimaryListView(Class<?> entityClass) {
+        lock.writeLock().lock();
+        try {
+            initIfNeeded();
+            return primaryListViews.remove(entityClass) != null;
+        } finally {
+            lock.writeLock().unlock();
+        }
+    }
+
+    /**
+     * Removes the primary detail view registration for the given entity class.
+     *
+     * @param entityClass entity class
+     * @return {@code true} if a primary detail view was registered for the entity class
+     */
+    public boolean removePrimaryDetailView(Class<?> entityClass) {
+        lock.writeLock().lock();
+        try {
+            initIfNeeded();
+            return primaryDetailViews.remove(entityClass) != null;
+        } finally {
+            lock.writeLock().unlock();
+        }
+    }
+
+    /**
      * Iterates over all registered views and registers their routes.
      */
     public void registerViewRoutes() {
@@ -672,6 +816,29 @@ public class ViewRegistry implements ApplicationContextAware {
 
         routeConfiguration.setRoute(routePath, viewClass,
                 getParentChain(layout, getDefaultParentChain()));
+    }
+
+    /**
+     * Unregisters the route and route aliases declared on the given view class.
+     *
+     * @param viewClass a view class whose routes should be removed
+     */
+    protected void unregisterRoute(Class<? extends View<?>> viewClass) {
+        Route route = viewClass.getAnnotation(Route.class);
+        if (route == null) {
+            return;
+        }
+        RouteConfiguration routeConfiguration = getRouteConfiguration();
+        String routePath = RouteUtil.getRoutePath(vaadinContext, viewClass);
+        if (routeConfiguration.isPathAvailable(routePath)) {
+            routeConfiguration.removeRoute(routePath);
+        }
+        for (RouteAlias alias : viewClass.getAnnotationsByType(RouteAlias.class)) {
+            String routeAliasPath = RouteUtil.getRouteAliasPath(viewClass, alias);
+            if (routeConfiguration.isPathAvailable(routeAliasPath)) {
+                routeConfiguration.removeRoute(routeAliasPath);
+            }
+        }
     }
 
     protected List<Class<? extends RouterLayout>> getParentChain(Class<? extends RouterLayout> layout,

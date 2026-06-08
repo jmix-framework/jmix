@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 @Internal
-@NullMarked
 package io.jmix.core.impl.repository.query;
 
 import io.jmix.core.annotation.Internal;
-import org.jspecify.annotations.NullMarked;

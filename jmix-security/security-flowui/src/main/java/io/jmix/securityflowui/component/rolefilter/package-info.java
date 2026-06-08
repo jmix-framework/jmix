@@ -14,7 +14,4 @@
  * limitations under the License.
  */
 
-@NullMarked
 package io.jmix.securityflowui.component.rolefilter;
-
-import org.jspecify.annotations.NullMarked;

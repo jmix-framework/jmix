@@ -27,7 +27,13 @@ import org.jspecify.annotations.Nullable;
 /**
  * Provides utility methods and constants to facilitate UI monitoring, including measuring and recording the
  * durations of various UI-related operations and lifecycle events.
+ *
+ * @deprecated Legacy {@link Timer}-based instrumentation, kept for back-compat with dashboards built on the
+ * old tag schema. New code should use {@link io.jmix.flowui.observation.UiObservationSupport}, which
+ * provides modern Observation-based instrumentation. The internal bridge to this class —
+ * {@link LegacyUiTimerSupport} — is also marked for removal.
  */
+@Deprecated(since = "3.0", forRemoval = true)
 public class UiMonitoring {
 
     private static final String NOT_AVAILABLE_TAG_VALUE = "N/A";

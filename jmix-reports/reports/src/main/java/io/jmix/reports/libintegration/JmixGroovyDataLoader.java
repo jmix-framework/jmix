@@ -40,6 +40,9 @@ public class JmixGroovyDataLoader implements ReportDataLoader {
     protected GroovyScriptParametersProvider groovyScriptParametersProvider;
 
     @Autowired
+    protected ReportsGroovyFeatureSupport groovyFeatureSupport;
+
+    @Autowired
     public JmixGroovyDataLoader(Scripting scripting) {
         this.scripting = scripting;
     }
@@ -54,6 +57,9 @@ public class JmixGroovyDataLoader implements ReportDataLoader {
             script = StringUtils.trim(script);
             if (script.endsWith(".groovy")) {
                 script = resources.getResourceAsString(script);
+            }
+            if (!groovyFeatureSupport.isGroovyEnabled()) {
+                return groovyFeatureSupport.getDisabledDataSetResult(reportQuery.getName());
             }
             return scripting.evaluateGroovy(script, scriptParams);
         } catch (ValidationException e) {

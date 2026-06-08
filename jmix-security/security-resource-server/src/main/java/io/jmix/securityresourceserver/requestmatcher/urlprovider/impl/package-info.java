@@ -14,7 +14,4 @@
  * limitations under the License.
  */
 
-@NullMarked
 package io.jmix.securityresourceserver.requestmatcher.urlprovider.impl;
-
-import org.jspecify.annotations.NullMarked;

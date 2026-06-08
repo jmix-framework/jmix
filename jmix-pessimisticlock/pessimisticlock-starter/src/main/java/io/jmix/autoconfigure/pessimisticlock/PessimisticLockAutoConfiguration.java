@@ -31,7 +31,6 @@ import javax.cache.configuration.MutableConfiguration;
 @Import({CoreConfiguration.class, PessimisticLockConfiguration.class})
 public class PessimisticLockAutoConfiguration {
 
-    // TODO [SB4] Consider switch to Spring Cache
     @Bean
     @SuppressWarnings({"rawtypes", "unchecked"})
     JCacheManagerCustomizer lockCacheCustomizer() {

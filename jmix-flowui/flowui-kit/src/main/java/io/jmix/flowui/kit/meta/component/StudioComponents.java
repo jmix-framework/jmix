@@ -48,6 +48,7 @@ import io.jmix.flowui.kit.component.checkbox.JmixSwitch;
 import io.jmix.flowui.kit.component.codeeditor.JmixCodeEditor;
 import io.jmix.flowui.kit.component.combobox.ComboBoxPicker;
 import io.jmix.flowui.kit.component.combobutton.ComboButton;
+import io.jmix.flowui.kit.component.markdowneditor.JmixMarkdownEditor;
 import io.jmix.flowui.kit.component.sidepanellayout.JmixSidePanelLayoutCloser;
 import io.jmix.flowui.kit.component.dropdownbutton.DropdownButton;
 import io.jmix.flowui.kit.component.grid.JmixGrid;
@@ -760,7 +761,8 @@ interface StudioComponents {
             convertStrategy = @StudioConvertStrategy(tagsToConvertInto = {
                     @StudioConvertStrategy.TagInfo(qualifiedName = "textField"),
                     @StudioConvertStrategy.TagInfo(qualifiedName = "codeEditor"),
-                    @StudioConvertStrategy.TagInfo(qualifiedName = "richTextEditor")
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "richTextEditor"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "markdownEditor")
             }),
             propertyGroups = StudioPropertyGroups.TextAreaComponent.class,
             propertiesBindings = {
@@ -787,7 +789,8 @@ interface StudioComponents {
                     @StudioConvertStrategy.TagInfo(qualifiedName = "passwordField"),
                     @StudioConvertStrategy.TagInfo(qualifiedName = "numberField"),
                     @StudioConvertStrategy.TagInfo(qualifiedName = "integerField"),
-                    @StudioConvertStrategy.TagInfo(qualifiedName = "bigDecimalField")
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "bigDecimalField"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "markdownEditor")
             }),
             propertyGroups = StudioPropertyGroups.TextFieldComponent.class,
             propertiesBindings = {
@@ -1014,7 +1017,8 @@ interface StudioComponents {
             convertStrategy = @StudioConvertStrategy(tagsToConvertInto = {
                     @StudioConvertStrategy.TagInfo(qualifiedName = "textField"),
                     @StudioConvertStrategy.TagInfo(qualifiedName = "textArea"),
-                    @StudioConvertStrategy.TagInfo(qualifiedName = "richTextEditor")
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "richTextEditor"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "markdownEditor")
             }),
             propertyGroups = StudioPropertyGroups.CodeEditorComponent.class,
             propertiesBindings = {
@@ -1098,7 +1102,8 @@ interface StudioComponents {
             convertStrategy = @StudioConvertStrategy(tagsToConvertInto = {
                     @StudioConvertStrategy.TagInfo(qualifiedName = "textArea"),
                     @StudioConvertStrategy.TagInfo(qualifiedName = "textField"),
-                    @StudioConvertStrategy.TagInfo(qualifiedName = "codeEditor")
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "codeEditor"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "markdownEditor")
             }),
             propertyGroups = StudioPropertyGroups.RichTextEditorComponent.class)
     JmixRichTextEditor richTextEditor();
@@ -1154,4 +1159,27 @@ interface StudioComponents {
                     StudioPropertyGroups.Content.class
             })
     Markdown markdown();
+
+    @StudioComponent(
+            name = "MarkdownEditor",
+            classFqn = "io.jmix.flowui.component.markdowneditor.MarkdownEditor",
+            category = "Components",
+            xmlElement = StudioXmlElements.MARKDOWN_EDITOR,
+            icon = "io/jmix/flowui/kit/meta/icon/component/markdownEditor.svg", // TODO icon
+            documentationLink = "%VERSION%/flow-ui/vc/components/markdownEditor.html",
+            convertStrategy = @StudioConvertStrategy(tagsToConvertInto = {
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "textField"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "textArea"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "codeEditor"),
+                    @StudioConvertStrategy.TagInfo(qualifiedName = "richTextEditor")
+            }),
+            propertyGroups = StudioPropertyGroups.MarkdownEditorComponent.class,
+            propertiesBindings = {
+                    @StudioPropertiesBinding(
+                            source = "dataContainer",
+                            item = "property"
+                    )
+            }
+    )
+    JmixMarkdownEditor markdownEditor();
 }

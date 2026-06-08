@@ -14,7 +14,4 @@
  * limitations under the License.
  */
 
-@NullMarked
 package io.jmix.securityflowui.accesscontext;
-
-import org.jspecify.annotations.NullMarked;

@@ -14,7 +14,4 @@
  * limitations under the License.
  */
 
-@NullMarked
 package io.jmix.searchflowui;
-
-import org.jspecify.annotations.NullMarked;

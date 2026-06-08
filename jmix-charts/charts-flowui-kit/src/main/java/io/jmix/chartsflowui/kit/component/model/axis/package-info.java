@@ -14,7 +14,4 @@
  * limitations under the License.
  */
 
-@NullMarked
 package io.jmix.chartsflowui.kit.component.model.axis;
-
-import org.jspecify.annotations.NullMarked;

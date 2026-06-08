@@ -20,10 +20,11 @@ import com.google.common.collect.ForwardingMap;
 import io.jmix.core.metamodel.model.*;
 
 import java.lang.reflect.AnnotatedElement;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class MetaPropertyImpl extends MetadataObjectImpl implements MetaProperty {
+public class MetaPropertyImpl extends MetadataObjectImpl implements MetaProperty, CloneableMetaProperty {
 
     private Store store;
     private MetaClass domain;
@@ -41,15 +42,31 @@ public class MetaPropertyImpl extends MetadataObjectImpl implements MetaProperty
     private Class<?> declaringClass;
 
     public MetaPropertyImpl(MetaClass domain, String name) {
+        this(domain, name, true);
+    }
+
+    /**
+     * Creates a meta property and optionally registers it in the owning meta class immediately.
+     *
+     * <p>Intended for metadata cloning where property instances must be assembled first and registered later.</p>
+     *
+     * @param domain owning meta class
+     * @param name property name
+     * @param register whether the property should be registered in {@code domain} during construction
+     */
+    public MetaPropertyImpl(MetaClass domain, String name, boolean register) {
         this.domain = domain;
         this.session = domain.getSession();
         this.name = name;
 
-        ((MetaClassImpl) domain).registerProperty(this);
+        if (register) {
+            ((MetaClassImpl) domain).registerProperty(this);
+        }
     }
 
     public MetaPropertyImpl(MetaPropertyImpl prototype) {
         name = prototype.name;
+        annotations = new HashMap<>(prototype.annotations);
 
         store = prototype.store;
         domain = prototype.domain;
@@ -62,6 +79,13 @@ public class MetaPropertyImpl extends MetadataObjectImpl implements MetaProperty
         annotatedElement = prototype.annotatedElement;
         javaType = prototype.javaType;
         declaringClass = prototype.declaringClass;
+    }
+
+    @Override
+    public MetaPropertyImpl makeClone(MetaClass metaClass) {
+        MetaPropertyImpl metaProperty = new MetaPropertyImpl(this);
+        metaProperty.setDomain(metaClass);
+        return metaProperty;
     }
 
     @Override
@@ -130,6 +154,7 @@ public class MetaPropertyImpl extends MetadataObjectImpl implements MetaProperty
 
     public void setStore(Store store) {
         this.store = store;
+        withClones(clone -> clone.store = store);
     }
 
     public void setDeclaringClass(Class<?> declaringClass) {

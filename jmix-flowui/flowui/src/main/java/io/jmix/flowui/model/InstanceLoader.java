@@ -19,6 +19,7 @@ package io.jmix.flowui.model;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.LoadContext;
 import io.jmix.core.common.event.Subscription;
+import io.jmix.core.repository.JmixDataRepositoryContext;
 import io.jmix.flowui.view.Subscribe;
 
 import org.jspecify.annotations.Nullable;
@@ -82,9 +83,9 @@ public interface InstanceLoader<E> extends DataLoader {
      */
     void setLoadDelegate(Function<LoadContext<E>, E> delegate);
 
-    BiFunction<Object, FetchPlan, Optional<E>> getLoadFromRepositoryDelegate();
+    BiFunction<Object, JmixDataRepositoryContext, Optional<E>> getLoadFromRepositoryDelegate();
 
-    void setLoadFromRepositoryDelegate(BiFunction<Object, FetchPlan, Optional<E>> delegate);
+    void setLoadFromRepositoryDelegate(BiFunction<Object, JmixDataRepositoryContext, Optional<E>> delegate);
 
     /**
      * Event sent before loading an entity instance.

@@ -39,7 +39,7 @@
             <textField id="categoryField" property="category"/>
             <comboBox id="iconsComboBox" property="icon"/>
         </formLayout>
-        <tabSheet id="tabSheet" width="100%" height="100%">
+        <tabSheet id="tabSheet" alignSelf="STRETCH" height="100%">
             <tab id="contentTab" label="msg://tabSheet.contentTab.label">
                 <msgtmp:grapesJs id="grapesJsEditor" width="100%" height="100%">
                     <msgtmp:plugins>

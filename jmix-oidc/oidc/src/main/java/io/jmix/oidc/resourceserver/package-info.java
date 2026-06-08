@@ -14,7 +14,4 @@
  * limitations under the License.
  */
 
-@NullMarked
 package io.jmix.oidc.resourceserver;
-
-import org.jspecify.annotations.NullMarked;

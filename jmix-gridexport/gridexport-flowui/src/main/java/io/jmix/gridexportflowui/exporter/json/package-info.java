@@ -14,7 +14,4 @@
  * limitations under the License.
  */
 
-@NullMarked
 package io.jmix.gridexportflowui.exporter.json;
-
-import org.jspecify.annotations.NullMarked;

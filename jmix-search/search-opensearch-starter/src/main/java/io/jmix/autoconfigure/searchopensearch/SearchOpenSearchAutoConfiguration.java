@@ -210,8 +210,7 @@ public class SearchOpenSearchAutoConfiguration {
     }
 
     protected AuthScope createAuthScope() {
-        // TODO [SB4] Same as AuthScope.ANY from old HttpClient 4
-        return new AuthScope(null, null, -1, null, null);
+        return new AuthScope(null, -1);
     }
 
     protected UsernamePasswordCredentials createCredentials() {

@@ -200,6 +200,45 @@ class DataManagerPropertyConditionTest extends DataSpec {
         list.contains(testEntity3)
     }
 
+    def "NOT_EQUAL excludes records with null by default"() {
+
+        TestAppEntity testEntity1 = dataManager.create(TestAppEntity)
+        testEntity1.name = 'target'
+
+        TestAppEntity testEntity2 = dataManager.create(TestAppEntity)
+        testEntity2.name = 'other'
+
+        TestAppEntity testEntity3 = dataManager.create(TestAppEntity)
+        testEntity3.name = null
+
+        dataManager.save(testEntity1, testEntity2, testEntity3)
+
+        when:
+
+        def list = dataManager.load(TestAppEntity)
+                .condition(PropertyCondition.notEqual("name", "target"))
+                .list()
+
+        then:
+
+        list == [testEntity2]
+    }
+
+    def "generated JPQL for NOT_EQUAL is not wrapped by default"() {
+        when:
+
+        def property = PropertyCondition.notEqual("name", "target")
+        def context = new ConditionGenerationContext(property)
+        context.entityName = "test_TestAppEntity"
+        context.entityAlias = "e"
+        def where = propertyConditionGenerator.generateWhere(context)
+
+        then:
+
+        where.contains("e.name <>")
+        !where.contains("is null")
+    }
+
     def "load using PropertyCondition for non-empty collections"() {
 
         TestAppEntity testAppEntity1 = dataManager.create(TestAppEntity)
@@ -537,5 +576,139 @@ class DataManagerPropertyConditionTest extends DataSpec {
         jdbc.update("DELETE FROM TEST_APP_ENTITY")
         jdbc.update("DELETE FROM SEC_USER")
         jdbc.update("DELETE FROM TEST_APP_ENTITY_ITEM")
+    }
+
+    // The five tests below pin down the ESCAPE-clause contract emitted by
+    // PropertyConditionGenerator for LIKE-based operations: a backslash in the parameter
+    // value escapes the following character so '_' and '%' can be matched literally.
+    // Direct PropertyCondition users who want SQL wildcards keep passing '_'/'%' as-is.
+
+    def "PropertyCondition 'contains' with backslash-escaped underscore matches it literally"() {
+
+        TestAppEntity literal = dataManager.create(TestAppEntity)
+        literal.name = '789_321'
+
+        TestAppEntity wildcardMatch = dataManager.create(TestAppEntity)
+        // matches LIKE '%_32%' when '_' is a wildcard, but lacks the literal '_32'
+        wildcardMatch.name = '7894321'
+
+        dataManager.save(literal, wildcardMatch)
+
+        when:
+
+        def list = dataManager.load(TestAppEntity)
+                .condition(PropertyCondition.contains("name", "\\_32").skipNullOrEmpty())
+                .list()
+
+        then:
+
+        list == [literal]
+    }
+
+    def "PropertyCondition 'contains' with backslash-escaped percent matches it literally"() {
+
+        TestAppEntity literal = dataManager.create(TestAppEntity)
+        literal.name = 'yuj%321'
+
+        TestAppEntity wildcardMatch = dataManager.create(TestAppEntity)
+        wildcardMatch.name = 'yuj32 something'
+
+        dataManager.save(literal, wildcardMatch)
+
+        when:
+
+        def list = dataManager.load(TestAppEntity)
+                .condition(PropertyCondition.contains("name", "\\%32").skipNullOrEmpty())
+                .list()
+
+        then:
+
+        list == [literal]
+    }
+
+    def "PropertyCondition 'startsWith' with backslash-escaped underscore matches it literally"() {
+
+        TestAppEntity literal = dataManager.create(TestAppEntity)
+        literal.name = '_321 abc'
+
+        TestAppEntity wildcardMatch = dataManager.create(TestAppEntity)
+        wildcardMatch.name = 'X321 abc'
+
+        dataManager.save(literal, wildcardMatch)
+
+        when:
+
+        def list = dataManager.load(TestAppEntity)
+                .condition(PropertyCondition.startsWith("name", "\\_321").skipNullOrEmpty())
+                .list()
+
+        then:
+
+        list == [literal]
+    }
+
+    def "PropertyCondition 'endsWith' with backslash-escaped percent matches it literally"() {
+
+        TestAppEntity literal = dataManager.create(TestAppEntity)
+        literal.name = 'abc 100%'
+
+        TestAppEntity wildcardMatch = dataManager.create(TestAppEntity)
+        wildcardMatch.name = 'abc 1003'
+
+        dataManager.save(literal, wildcardMatch)
+
+        when:
+
+        def list = dataManager.load(TestAppEntity)
+                .condition(PropertyCondition.endsWith("name", "100\\%").skipNullOrEmpty())
+                .list()
+
+        then:
+
+        list == [literal]
+    }
+
+    def "PropertyCondition 'notContains' with backslash-escaped underscore matches it literally"() {
+
+        TestAppEntity literal = dataManager.create(TestAppEntity)
+        literal.name = '789_321'
+
+        TestAppEntity other = dataManager.create(TestAppEntity)
+        other.name = '7894321'
+
+        dataManager.save(literal, other)
+
+        when:
+
+        def list = dataManager.load(TestAppEntity)
+                .condition(PropertyCondition.createWithValue("name", PropertyCondition.Operation.NOT_CONTAINS, "\\_32").skipNullOrEmpty())
+                .list()
+
+        then:
+
+        list == [other]
+    }
+
+    def "PropertyCondition 'contains' without escape still treats underscore as a SQL wildcard"() {
+
+        TestAppEntity literal = dataManager.create(TestAppEntity)
+        literal.name = '789_321'
+
+        TestAppEntity wildcardMatch = dataManager.create(TestAppEntity)
+        // matched as the wildcard expansion of '_32' = 'X32'
+        wildcardMatch.name = '7894321'
+
+        dataManager.save(literal, wildcardMatch)
+
+        when:
+
+        def list = dataManager.load(TestAppEntity)
+                .condition(PropertyCondition.contains("name", "_32").skipNullOrEmpty())
+                .list()
+
+        then: "both entities match because '_' is still a SQL wildcard at the API level"
+
+        list.size() == 2
+        list.containsAll([literal, wildcardMatch])
     }
 }

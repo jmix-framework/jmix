@@ -15,8 +15,6 @@
  */
 
 @Internal
-@NullMarked
 package io.jmix.rest.impl.controller;
 
 import io.jmix.core.annotation.Internal;
-import org.jspecify.annotations.NullMarked;

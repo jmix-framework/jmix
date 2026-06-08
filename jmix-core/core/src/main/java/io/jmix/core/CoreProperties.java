@@ -81,6 +81,16 @@ public class CoreProperties {
     String entitySerializationTokenEncryptionKey;
 
     /**
+     * Whether potentially dangerous runtime features are enabled.
+     */
+    boolean unsafeRuntimeFeaturesEnabled;
+
+    /**
+     * Whether loading of classes from the file system is enabled.
+     */
+    boolean hotDeployEnabled;
+
+    /**
      * Whether the processing of bean invocation trigger files is enabled. Default value: true The trigger file is a
      * file that is placed in the triggers subdirectory of the application's temporary directory. The file name consists
      * of two parts separated with a #: the first part is the bean class, the second part is the method name of the bean
@@ -132,6 +142,13 @@ public class CoreProperties {
      */
     boolean useUserInfoForObservation;
 
+    /**
+     * Whether to enable application info file generation.
+     * <p>
+     * When enabled, application info file is created in the conf directory.
+     */
+    boolean applicationInfoFileEnabled;
+
     public CoreProperties(
             String webHostName,
             String webPort,
@@ -148,6 +165,8 @@ public class CoreProperties {
             String defaultFileStorage,
             @DefaultValue("false") boolean entitySerializationTokenRequired,
             @DefaultValue("KEY") String entitySerializationTokenEncryptionKey,
+            @DefaultValue("true") boolean unsafeRuntimeFeaturesEnabled,
+            @DefaultValue("true") boolean hotDeployEnabled,
             @DefaultValue("false") boolean legacyFetchPlanSerializationAttributeName,
             @DefaultValue("true") boolean triggerFilesEnabled,
             @DefaultValue("5000") Duration triggerFilesProcessInterval,
@@ -155,7 +174,8 @@ public class CoreProperties {
             @DefaultValue("false") boolean skipNullOrEmptyConditionsByDefault,
             @DefaultValue("true") boolean instanceNameFallbackEnabled,
             @DefaultValue("false") boolean dataObservationEnabled,
-            @DefaultValue("true") boolean useUserInfoForObservation) {
+            @DefaultValue("true") boolean useUserInfoForObservation,
+            @DefaultValue("true") boolean applicationInfoFileEnabled) {
         this.webHostName = webHostName;
         this.webPort = webPort;
         this.confDir = confDir;
@@ -180,6 +200,8 @@ public class CoreProperties {
 
         this.entitySerializationTokenRequired = entitySerializationTokenRequired;
         this.entitySerializationTokenEncryptionKey = entitySerializationTokenEncryptionKey;
+        this.unsafeRuntimeFeaturesEnabled = unsafeRuntimeFeaturesEnabled;
+        this.hotDeployEnabled = hotDeployEnabled;
         this.triggerFilesEnabled = triggerFilesEnabled;
         this.triggerFilesProcessInterval = triggerFilesProcessInterval;
         this.roundDecimalValueByFormat = roundDecimalValueByFormat;
@@ -187,6 +209,7 @@ public class CoreProperties {
         this.instanceNameFallbackEnabled = instanceNameFallbackEnabled;
         this.dataObservationEnabled = dataObservationEnabled;
         this.useUserInfoForObservation = useUserInfoForObservation;
+        this.applicationInfoFileEnabled = applicationInfoFileEnabled;
     }
 
     public String getWebHostName() {
@@ -265,11 +288,19 @@ public class CoreProperties {
         return entitySerializationTokenEncryptionKey;
     }
 
+    public boolean isUnsafeRuntimeFeaturesEnabled() {
+        return unsafeRuntimeFeaturesEnabled;
+    }
+
+    public boolean isHotDeployEnabled() {
+        return unsafeRuntimeFeaturesEnabled && hotDeployEnabled;
+    }
+
     /**
      * @see #triggerFilesEnabled
      */
     public boolean isTriggerFilesEnabled() {
-        return triggerFilesEnabled;
+        return unsafeRuntimeFeaturesEnabled && triggerFilesEnabled;
     }
 
     /**
@@ -316,5 +347,12 @@ public class CoreProperties {
     @Experimental
     public boolean isUseUserInfoForObservation() {
         return useUserInfoForObservation;
+    }
+
+    /**
+     * @see #applicationInfoFileEnabled
+     */
+    public boolean isApplicationInfoFileEnabled() {
+        return applicationInfoFileEnabled;
     }
 }

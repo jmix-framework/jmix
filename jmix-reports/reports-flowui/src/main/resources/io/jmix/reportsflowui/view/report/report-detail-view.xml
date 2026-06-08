@@ -49,7 +49,7 @@
         <action id="closeAction" type="detail_close"/>
     </actions>
     <layout classNames="report-detail-view">
-        <tabSheet id="mainTabSheet" width="100%" height="100%" minHeight="0">
+        <tabSheet id="mainTabSheet" alignSelf="STRETCH" height="100%" minHeight="0">
             <tab id="detailsTab" label="msg://mainTabSheet.detailsTab.label">
                 <vbox id="detailsTabContent" padding="false">
                     <formLayout id="reportForm" dataContainer="reportDc">

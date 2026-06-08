@@ -20,6 +20,9 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import io.jmix.core.*;
+import io.jmix.core.impl.metadata.GenerationStateStore;
+import io.jmix.core.impl.metadata.MetadataGenerationManager;
+import io.jmix.core.impl.metadata.MetadataGenerationRetiredEvent;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.impl.method.ArgumentResolverComposite;
 import io.jmix.core.impl.method.ContextArgumentResolverComposite;
@@ -29,11 +32,11 @@ import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import jakarta.annotation.Nonnull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AnnotatedElementUtils;
+import org.springframework.context.event.EventListener;
 import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
@@ -74,15 +77,24 @@ public class InstanceNameProviderImpl implements InstanceNameProvider {
 
     protected MethodArgumentsProvider methodArgumentsProvider;
 
-    // stores methods in the execution order, all methods are accessible
-    protected LoadingCache<MetaClass, Optional<InstanceNameRec>> instanceNameRecCache =
-            CacheBuilder.newBuilder()
-                    .build(new CacheLoader<MetaClass, Optional<InstanceNameRec>>() {
+    protected static class State {
+        protected final LoadingCache<MetaClass, Optional<InstanceNameRec>> instanceNameRecCache;
+
+        protected State(InstanceNameProviderImpl provider) {
+            this.instanceNameRecCache = CacheBuilder.newBuilder()
+                    .build(new CacheLoader<>() {
                         @Override
-                        public Optional<InstanceNameRec> load(@Nonnull MetaClass metaClass) {
-                            return Optional.ofNullable(parseNamePattern(metaClass));
+                        public Optional<InstanceNameRec> load(MetaClass metaClass) {
+                            return Optional.ofNullable(provider.parseNamePattern(metaClass));
                         }
                     });
+        }
+    }
+
+    @Autowired
+    protected MetadataGenerationManager metadataGenerationManager;
+
+    protected final GenerationStateStore<State> stateStore = new GenerationStateStore<>();
 
     public static class InstanceNameRec {
         /**
@@ -144,10 +156,24 @@ public class InstanceNameProviderImpl implements InstanceNameProvider {
         this.methodArgumentsProvider = new MethodArgumentsProvider(resolvers);
     }
 
+    protected State getState() {
+        return stateStore.getOrCreate(metadataGenerationManager.getPinnedOrCurrentGenerationId(), () -> new State(this));
+    }
+
+    /**
+     * Drops instance-name cache entries associated with a retired metadata generation.
+     *
+     * @param event retired-generation event
+     */
+    @EventListener
+    public void onMetadataGenerationRetired(MetadataGenerationRetiredEvent event) {
+        stateStore.remove(event.getGenerationId());
+    }
+
     @Override
     public boolean isInstanceNameDefined(Class<?> aClass) {
         MetaClass metaClass = metadata.getClass(aClass);
-        return instanceNameRecCache.getUnchecked(metaClass).isPresent();
+        return getState().instanceNameRecCache.getUnchecked(metaClass).isPresent();
     }
 
     @Override
@@ -164,7 +190,7 @@ public class InstanceNameProviderImpl implements InstanceNameProvider {
     public String getInstanceName(Object instance, MetaClass metaClass) {
         checkNotNullArgument(instance, "instance is null");
 
-        Optional<InstanceNameRec> optional = instanceNameRecCache.getUnchecked(metaClass);
+        Optional<InstanceNameRec> optional = getState().instanceNameRecCache.getUnchecked(metaClass);
         if (optional.isEmpty()) {
             return instance.toString();
         }
@@ -239,14 +265,19 @@ public class InstanceNameProviderImpl implements InstanceNameProvider {
 
     @Override
     public Collection<MetaProperty> getInstanceNameRelatedProperties(MetaClass metaClass, boolean useOriginal) {
-        Optional<InstanceNameRec> optional = instanceNameRecCache.getUnchecked(metaClass);
+        Optional<InstanceNameRec> optional = getState().instanceNameRecCache.getUnchecked(metaClass);
         if (!optional.isPresent() && useOriginal) {
             MetaClass original = extendedEntities.getOriginalMetaClass(metaClass);
             if (original != null) {
-                optional = instanceNameRecCache.getUnchecked(original);
+                optional = getState().instanceNameRecCache.getUnchecked(original);
             }
         }
         return optional.map(instanceNameRec -> Arrays.asList(instanceNameRec.nameProperties)).orElse(Collections.emptyList());
+    }
+
+    @Override
+    public void evictInstanceNameCache() {
+        stateStore.clear();
     }
 
     protected Collection<MetaProperty> getInstanceNameProperties(MetaClass metaClass, @Nullable Method nameMethod, @Nullable MetaProperty nameProperty) {
@@ -278,23 +309,14 @@ public class InstanceNameProviderImpl implements InstanceNameProvider {
                 .filter(m -> AnnotatedElementUtils.findMergedAnnotation(m, InstanceName.class) != null)
                 .collect(Collectors.toList());
         List<MetaProperty> nameProperties = metaClass.getProperties().stream()
-                .filter(p -> p.getAnnotatedElement().getAnnotation(InstanceName.class) != null)
+                .filter(this::isInstanceNameProperty)
                 .filter(p -> !metadataTools.isMethodBased(p))
                 .collect(Collectors.toList());
         if (!instanceNameMethods.isEmpty()) {
             method = instanceNameMethods.get(0);
             method.setAccessible(true);
         } else if (!nameProperties.isEmpty()) {
-            selectedNameProperty = nameProperties.get(0);
-
-            for (int i = 1; i < nameProperties.size(); i++) {
-                MetaProperty current = nameProperties.get(i);
-                //check for null just in case: should not happen for @InstanceName-annotated property
-                if (selectedNameProperty.getDeclaringClass() != null && current.getDeclaringClass() != null
-                        && !current.getDeclaringClass().isAssignableFrom(selectedNameProperty.getDeclaringClass())) {
-                    selectedNameProperty = current;//use the one declared in extending class
-                }
-            }
+            selectedNameProperty = selectNameProperty(nameProperties);
         } else {
             if (metaClass.getAncestor() != null) {
                 InstanceNameRec ancestorRec = parseNamePattern(metaClass.getAncestor());
@@ -315,6 +337,43 @@ public class InstanceNameProviderImpl implements InstanceNameProvider {
         return new InstanceNameRec("%s", method,
                 getInstanceNameProperties(metaClass, method, selectedNameProperty).stream()
                         .toArray(MetaProperty[]::new));
+    }
+
+    protected boolean isInstanceNameProperty(MetaProperty metaProperty) {
+        if (metaProperty.getAnnotatedElement().getAnnotation(InstanceName.class) != null) {
+            return true;
+        }
+        return Boolean.TRUE.equals(metadataTools.getMetaAnnotationValue(metaProperty, InstanceName.class));
+    }
+
+    protected MetaProperty selectNameProperty(List<MetaProperty> nameProperties) {
+        MetaProperty selectedNameProperty = nameProperties.get(0);
+
+        for (int i = 1; i < nameProperties.size(); i++) {
+            MetaProperty current = nameProperties.get(i);
+            if (isPreferredNameProperty(current, selectedNameProperty)) {
+                selectedNameProperty = current;
+            }
+        }
+
+        return selectedNameProperty;
+    }
+
+    protected boolean isPreferredNameProperty(MetaProperty candidate, MetaProperty current) {
+        boolean candidateHasRuntimeAnnotation = hasRuntimeInstanceNameAnnotation(candidate);
+        boolean currentHasRuntimeAnnotation = hasRuntimeInstanceNameAnnotation(current);
+        if (candidateHasRuntimeAnnotation != currentHasRuntimeAnnotation) {
+            return candidateHasRuntimeAnnotation;
+        }
+
+        // Check for null just in case: should not happen for @InstanceName-annotated property.
+        return candidate.getDeclaringClass() != null
+                && current.getDeclaringClass() != null
+                && !candidate.getDeclaringClass().isAssignableFrom(current.getDeclaringClass());
+    }
+
+    protected boolean hasRuntimeInstanceNameAnnotation(MetaProperty metaProperty) {
+        return Boolean.TRUE.equals(metadataTools.getMetaAnnotationValue(metaProperty, InstanceName.class));
     }
 
     private void validateInstanceNameAnnotation(MetaClass metaClass,

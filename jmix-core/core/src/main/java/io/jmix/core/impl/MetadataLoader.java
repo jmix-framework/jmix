@@ -22,6 +22,7 @@ import io.jmix.core.Stores;
 import io.jmix.core.entity.annotation.*;
 import io.jmix.core.impl.scanning.EntityDetector;
 import io.jmix.core.impl.scanning.JmixModulesClasspathScanner;
+import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Session;
@@ -124,7 +125,7 @@ public class MetadataLoader {
                 !Objects.equals(metaProperty.getStore().getName(), metaClass.getStore().getName())
                 && !Stores.NOOP.equals(metaProperty.getRange().asClass().getStore().getName())
         ) {
-            String dependsOnPropertiesStr = (String) metaProperty.getAnnotations().get("dependsOnProperties");
+            String dependsOnPropertiesStr = (String) metaProperty.getAnnotations().get(DependsOnProperties.class.getName());
             if (dependsOnPropertiesStr != null) {
                 List<String> dependsOnProperties = Splitter.on(',').omitEmptyStrings().trimResults().splitToList(dependsOnPropertiesStr);
                 if (dependsOnProperties.size() == 1) {

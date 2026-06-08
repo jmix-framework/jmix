@@ -248,6 +248,16 @@ class JmixDataRepositoryContextTest extends DataSpec {
         orders[0].number == "114"
     }
 
+    void "check hints for find by id"() {
+        when:
+        def order = orderRepository.findById(removedOrder.id,
+                JmixDataRepositoryContext.of(Map.of(PersistenceHints.SOFT_DELETION, false)))
+
+        then:
+        order.isPresent()
+        order.get().number == "214"
+    }
+
     void "check top works"() {
         when:
         def orders = orderRepository.findTop3ByCountGreaterThanOrderByCount(8)

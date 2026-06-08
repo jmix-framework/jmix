@@ -31,10 +31,12 @@ dependencies {
         exclude group: 'com.vaadin', module: 'copilot'
     }
 
-    api 'com.vaadin:vaadin-dev'
+    api('com.vaadin:vaadin-dev') {
+        exclude group: 'com.vaadin', module: 'copilot'
+    }
 
-    api("org.eclipse.jetty.ee11:jetty-ee11-webapp")
-    api("org.eclipse.jetty.ee11.websocket:jetty-ee11-websocket-jakarta-server")
+    api('org.eclipse.jetty.ee11:jetty-ee11-webapp')
+    api('org.eclipse.jetty.ee11.websocket:jetty-ee11-websocket-jakarta-server')
     api('jakarta.servlet:jakarta.servlet-api')
     api('commons-logging:commons-logging:1.2')
     api('org.slf4j:slf4j-nop:2.0.7')

@@ -100,4 +100,40 @@ class FetchPlanLoaderTest extends Specification {
         fetchPlan.getProperty('customer').fetchPlan.containsProperty('name')
         fetchPlan.getProperty('customer').fetchPlan.containsProperty('status')
     }
+
+    def "_base fetchPlan of a property typed as a replaced entity includes fields added by replacing entity"() {
+        // FooOwner is replaced by ExtFooOwner. Its 'foo' / 'foos' properties are typed as Foo,
+        // which is replaced by ExtFoo adding the 'info' field. The XML below mimics a view
+        // inherited from an add-on: it references the original FooOwner by class name, and
+        // inner properties rely on the default _base fetch plan. The _base picked up for the
+        // inner properties must be the one of the effective (replacing) entity, so 'info' must
+        // be present.
+        def xml = '''
+            <fetchPlan name="fooOwner-test" class="test_support.app.entity.FooOwner">
+                <property name="name"/>
+                <property name="foo"/>
+                <property name="foos"/>
+            </fetchPlan>
+            '''
+        Document document = Dom4j.readDocument(xml)
+        def element = document.getRootElement()
+
+        when:
+
+        FetchPlanLoader.FetchPlanInfo fpInfo = fetchPlanLoader.getFetchPlanInfo(element)
+        FetchPlanBuilder builder = fetchPlanLoader.getFetchPlanBuilder(fpInfo, a ->
+                fetchPlanRepository.getFetchPlan(fpInfo.getMetaClass(), a))
+        fetchPlanLoader.loadFetchPlanProperties(element, builder, fpInfo.isSystemProperties(), (metaClass, fpName) ->
+                fetchPlanRepository.getFetchPlan(metaClass, fpName))
+        def fetchPlan = builder.build()
+
+        then:
+        fetchPlan.containsProperty('foo')
+        fetchPlan.getProperty('foo').fetchPlan.containsProperty('name')
+        fetchPlan.getProperty('foo').fetchPlan.containsProperty('info')
+
+        fetchPlan.containsProperty('foos')
+        fetchPlan.getProperty('foos').fetchPlan.containsProperty('name')
+        fetchPlan.getProperty('foos').fetchPlan.containsProperty('info')
+    }
 }

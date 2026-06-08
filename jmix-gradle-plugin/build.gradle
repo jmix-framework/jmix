@@ -30,7 +30,7 @@ dependencies {
     implementation localGroovy()
 
     implementation 'org.springframework.boot:spring-boot-gradle-plugin:4.0.6'
-    implementation 'com.vaadin:vaadin-gradle-plugin:25.1.4'
+    implementation 'com.vaadin:vaadin-gradle-plugin:25.1.6'
 
     implementation('org.dom4j:dom4j:2.1.4') {
         exclude group: 'xpp3', module: 'xpp3'
@@ -40,6 +40,23 @@ dependencies {
     implementation 'commons-io:commons-io:2.18.0'
     implementation 'org.apache.commons:commons-lang3:3.20.0'
     implementation 'com.google.guava:guava:32.1.2-jre'
+
+    testImplementation gradleTestKit()
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.3'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.3'
+}
+
+tasks.named('test', Test) {
+    systemProperty 'jmixBomVersion', project.version
+
+    useJUnitPlatform {
+        boolean result = project.hasProperty("includeSlowTests") ? project.getProperty("includeSlowTests") : false
+        if (!result) {
+            excludeTags 'slowTests'
+        } else {
+            environment "slowTests", "true"
+        }
+    }
 }
 
 tasks.jar {

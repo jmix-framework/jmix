@@ -16,11 +16,15 @@
 
 package io.jmix.flowui.fragment.impl;
 
+import io.jmix.core.common.util.Preconditions;
+import io.jmix.flowui.component.UiComponentUtils;
+import io.jmix.flowui.fragment.Fragment;
 import io.jmix.flowui.fragment.FragmentData;
 import io.jmix.flowui.model.impl.AbstractDataComponentsHolder;
+import io.jmix.flowui.view.View;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
-import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 /**
@@ -31,7 +35,13 @@ import org.springframework.stereotype.Component;
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class FragmentDataImpl extends AbstractDataComponentsHolder implements FragmentData {
 
+    protected final Fragment<?> hostFragment;
     protected String fragmentId;
+
+    public FragmentDataImpl(Fragment<?> hostFragment) {
+        Preconditions.checkNotNullArgument(hostFragment);
+        this.hostFragment = hostFragment;
+    }
 
     @Nullable
     @Override
@@ -47,6 +57,19 @@ public class FragmentDataImpl extends AbstractDataComponentsHolder implements Fr
     @Nullable
     @Override
     protected String getOwnerId() {
+        return getFragmentId();
+    }
+
+    @Nullable
+    @Override
+    public String getObservableViewId() {
+        View<?> view = UiComponentUtils.findView(hostFragment);
+        return view != null ? view.getId().orElse(null) : null;
+    }
+
+    @Nullable
+    @Override
+    public String getObservableFragmentId() {
         return getFragmentId();
     }
 }

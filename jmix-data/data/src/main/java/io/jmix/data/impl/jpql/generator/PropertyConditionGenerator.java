@@ -29,6 +29,7 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.core.querycondition.PropertyConditionUtils;
+import io.jmix.data.DataProperties;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +49,7 @@ public class PropertyConditionGenerator implements ConditionGenerator<PropertyCo
 
     protected MetadataTools metadataTools;
     protected Metadata metadata;
+    protected DataProperties dataProperties;
 
     @Nullable
     protected InIntervalParametersResolver inIntervalResolver;
@@ -62,6 +64,11 @@ public class PropertyConditionGenerator implements ConditionGenerator<PropertyCo
     public PropertyConditionGenerator(MetadataTools metadataTools, Metadata metadata) {
         this.metadataTools = metadataTools;
         this.metadata = metadata;
+    }
+
+    @Autowired
+    public void setDataProperties(DataProperties dataProperties) {
+        this.dataProperties = dataProperties;
     }
 
     @Autowired(required = false)
@@ -245,11 +252,24 @@ public class PropertyConditionGenerator implements ConditionGenerator<PropertyCo
                         entityAlias,
                         property);
             } else {
-                return String.format("%s.%s %s :%s",
+                if (dataProperties.isIncludeNullClauseInNotConditions()
+                        && isNegativeComparison(propertyCondition.getOperation())) {
+                    return String.format("(%s.%s %s :%s%s or %s.%s is null)",
+                            entityAlias,
+                            property,
+                            PropertyConditionUtils.getJpqlOperation(propertyCondition),
+                            propertyCondition.getParameterName(),
+                            getLikeEscapeClause(propertyCondition),
+                            entityAlias,
+                            property);
+                }
+
+                return String.format("%s.%s %s :%s%s",
                         entityAlias,
                         property,
                         PropertyConditionUtils.getJpqlOperation(propertyCondition),
-                        propertyCondition.getParameterName());
+                        propertyCondition.getParameterName(),
+                        getLikeEscapeClause(propertyCondition));
             }
         } else {
             if (PropertyConditionUtils.isInIntervalOperation(propertyCondition)
@@ -270,7 +290,7 @@ public class PropertyConditionGenerator implements ConditionGenerator<PropertyCo
                 }
             }
             if (isNegativeComparison(propertyCondition.getOperation())) {
-                return String.format("not exists (select t from %s.%s t where t %s :%s)",
+                return String.format("not exists (select t from %s.%s t where t %s :%s%s)",
                         entityAlias,
                         propertyCondition.getProperty(),
                         switch (propertyCondition.getOperation()) {
@@ -279,13 +299,26 @@ public class PropertyConditionGenerator implements ConditionGenerator<PropertyCo
                             case PropertyCondition.Operation.NOT_IN_LIST -> "in";
                             default -> throw new IllegalStateException("Unsupported operation: " + propertyCondition.getOperation());
                         },
-                        propertyCondition.getParameterName());
+                        propertyCondition.getParameterName(),
+                        getLikeEscapeClause(propertyCondition));
             }
-            return String.format("%s %s :%s",
+            return String.format("%s %s :%s%s",
                     entityAlias,
                     PropertyConditionUtils.getJpqlOperation(propertyCondition),
-                    propertyCondition.getParameterName());
+                    propertyCondition.getParameterName(),
+                    getLikeEscapeClause(propertyCondition));
         }
+    }
+
+    /**
+     * Returns a trailing {@code ESCAPE} clause for {@code LIKE}-based operations so that
+     * {@code _} and {@code %} produced by {@link QueryUtils#escapeForLike(String)} are
+     * recognised as literals by the database. Empty for non-{@code LIKE} operations.
+     */
+    protected String getLikeEscapeClause(PropertyCondition propertyCondition) {
+        return PropertyConditionUtils.isCaseInsensitiveOperation(propertyCondition)
+                ? " escape '" + QueryUtils.ESCAPE_CHARACTER + "'"
+                : "";
     }
 
     protected String getProperty(String property, @Nullable String entityName) {

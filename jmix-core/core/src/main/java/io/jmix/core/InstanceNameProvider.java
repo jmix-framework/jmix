@@ -78,4 +78,10 @@ public interface InstanceNameProvider {
      * @return collection of the name pattern properties
      */
     Collection<MetaProperty> getInstanceNameRelatedProperties(MetaClass metaClass, boolean useOriginal);
+
+    /**
+     * Evicts cached instance name metadata for all entities.
+     */
+    default void evictInstanceNameCache() {
+    }
 }

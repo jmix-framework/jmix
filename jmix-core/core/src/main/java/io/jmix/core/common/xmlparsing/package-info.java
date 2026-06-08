@@ -14,7 +14,4 @@
  * limitations under the License.
  */
 
-@NullMarked
 package io.jmix.core.common.xmlparsing;
-
-import org.jspecify.annotations.NullMarked;

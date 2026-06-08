@@ -17,23 +17,12 @@
 package io.jmix.flowui.view.template.impl;
 
 import io.jmix.core.MetadataTools;
-import io.jmix.core.annotation.DeletedBy;
-import io.jmix.core.annotation.DeletedDate;
-import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.flowui.view.template.ViewTemplateHelper;
-import jakarta.persistence.Id;
-import jakarta.persistence.Version;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedBy;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.AnnotatedElement;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -76,6 +65,22 @@ public class DefaultViewTemplateHelper implements ViewTemplateHelper {
                 .toList();
     }
 
+    @Override
+    public List<MetaProperty> getCollectionProperties(MetaClass metaClass, List<String> excludeProperties) {
+        Set<String> excludedPropertyNames = validatePropertyNames(metaClass, excludeProperties);
+
+        return metaClass.getProperties().stream()
+                .filter(this::isSupportedCollectionProperty)
+                .filter(property -> !isDefaultExcluded(property))
+                .filter(property -> !excludedPropertyNames.contains(property.getName()))
+                .toList();
+    }
+
+    protected boolean isSupportedCollectionProperty(MetaProperty metaProperty) {
+        return metaProperty.getRange().getCardinality().isMany()
+                && metaProperty.getType() == MetaProperty.Type.COMPOSITION;
+    }
+
     protected Set<String> validatePropertyNames(MetaClass metaClass, Collection<String> propertyNames) {
         if (propertyNames == null || propertyNames.isEmpty()) {
             return Set.of();
@@ -101,20 +106,15 @@ public class DefaultViewTemplateHelper implements ViewTemplateHelper {
 
     protected boolean isDefaultExcluded(MetaProperty metaProperty) {
         return metadataTools.isSystemLevel(metaProperty)
+                || metadataTools.isSystem(metaProperty)
                 || metadataTools.isSecret(metaProperty)
-                || hasAnnotation(metaProperty, Id.class)
-                || hasAnnotation(metaProperty, Version.class)
-                || hasAnnotation(metaProperty, JmixGeneratedValue.class)
-                || hasAnnotation(metaProperty, CreatedBy.class)
-                || hasAnnotation(metaProperty, CreatedDate.class)
-                || hasAnnotation(metaProperty, LastModifiedBy.class)
-                || hasAnnotation(metaProperty, LastModifiedDate.class)
-                || hasAnnotation(metaProperty, DeletedBy.class)
-                || hasAnnotation(metaProperty, DeletedDate.class);
+                || isCompositionInverse(metaProperty);
     }
 
-    protected boolean hasAnnotation(MetaProperty metaProperty, Class<? extends Annotation> annotationClass) {
-        AnnotatedElement annotatedElement = metaProperty.getAnnotatedElement();
-        return annotatedElement.isAnnotationPresent(annotationClass);
+    protected boolean isCompositionInverse(MetaProperty metaProperty) {
+        MetaProperty inverse = metaProperty.getInverse();
+        return inverse != null
+                && inverse.getRange().getCardinality().isMany()
+                && inverse.getType() == MetaProperty.Type.COMPOSITION;
     }
 }

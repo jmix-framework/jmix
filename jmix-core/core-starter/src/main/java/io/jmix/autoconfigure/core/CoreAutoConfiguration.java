@@ -36,6 +36,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.jmx.export.naming.ObjectNamingStrategy;
 import org.springframework.scripting.ScriptEvaluator;
 import org.springframework.scripting.groovy.GroovyScriptEvaluator;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.cors.CorsConfiguration;
@@ -81,7 +82,7 @@ public class CoreAutoConfiguration {
      * A bean with corsConfigurationSource is used by CorsFilter in Spring Security filter chain. Define a bean with the
      * "corsConfigurationSource" name in the application if you want to override the standard implementation.
      *
-     * @see HttpSecurity#cors()
+     * @see HttpSecurity#cors(Customizer)
      */
     @Bean
     @ConditionalOnMissingBean(name = "corsConfigurationSource")

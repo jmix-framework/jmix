@@ -26,18 +26,18 @@ import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.session.autoconfigure.SessionAutoConfiguration;
+import org.springframework.boot.session.autoconfigure.SessionTimeout;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.Order;
-import org.springframework.core.env.Environment;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
 import org.springframework.session.MapSession;
 import org.springframework.session.MapSessionRepository;
@@ -51,11 +51,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 
-@AutoConfiguration
+@AutoConfiguration(after = {JmixHazelcastSessionsAutoConfiguration.class, SessionAutoConfiguration.class})
 @Import({CoreConfiguration.class, SessionsAutoConfiguration.OAuth2SessionsConfiguration.class,
         SessionsAutoConfiguration.DefaultSessionsConfiguration.class, SessionsConfiguration.class})
-@AutoConfigureAfter(JmixHazelcastSessionsAutoConfiguration.class)
-//TODO [SB4] SessionAutoConfiguration.class is gone - should we add some another ordering anchor?
 @EnableConfigurationProperties(SessionsProperties.class)
 public class SessionsAutoConfiguration {
 
@@ -74,22 +72,22 @@ public class SessionsAutoConfiguration {
         @Bean
         @DependsOn("jmixExpiringSessionMap")
         public SessionRepository<MapSession> sessionRepository(JmixExpiringSessionMap jmixExpiringSessionMap,
-                                                               Environment environment,
+                                                               ObjectProvider<SessionTimeout> sessionTimeout,
                                                                ServletContext servletContext) {
             MapSessionRepository mapSessionRepository = new MapSessionRepository(jmixExpiringSessionMap);
 
-            Duration timeout = environment.getProperty("spring.session.timeout", Duration.class); //TODO [SB4]
-            if (timeout == null) {
-                int minutes = servletContext.getSessionTimeout();
-                timeout = Duration.ofMinutes(minutes);
-            }
-
-            mapSessionRepository.setDefaultMaxInactiveInterval(timeout);
+            mapSessionRepository.setDefaultMaxInactiveInterval(determineTimeout(sessionTimeout, servletContext));
 
             this.sessionRepositoryCustomizers
                     .forEach((sessionRepositoryCustomizer) -> sessionRepositoryCustomizer.customize(mapSessionRepository));
 
             return mapSessionRepository;
+        }
+
+        private Duration determineTimeout(ObjectProvider<SessionTimeout> sessionTimeout, ServletContext servletContext) {
+            SessionTimeout timeout = sessionTimeout.getIfAvailable();
+            Duration duration = timeout != null ? timeout.getTimeout() : null;
+            return duration != null ? duration : Duration.ofMinutes(servletContext.getSessionTimeout());
         }
 
         @Bean

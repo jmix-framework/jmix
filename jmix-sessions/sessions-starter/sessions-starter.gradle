@@ -22,6 +22,13 @@ dependencies {
 
     api 'org.springframework.boot:spring-boot-autoconfigure'
 
+    implementation 'org.springframework.boot:spring-boot-session'
+
     compileOnly 'org.springframework.security:spring-security-oauth2-authorization-server'
-    compileOnly 'org.springframework.session:spring-session-hazelcast'
+    compileOnly 'com.hazelcast.spring:hazelcast-spring-session'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'com.hazelcast.spring:hazelcast-spring-session'
+    testImplementation 'com.hazelcast:hazelcast'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }

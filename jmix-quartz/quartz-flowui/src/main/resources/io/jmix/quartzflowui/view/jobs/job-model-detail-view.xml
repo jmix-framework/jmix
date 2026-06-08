@@ -25,7 +25,7 @@
             <textArea id="jobDescriptionField" property="description" height="9.5em" colspan="2"/>
         </formLayout>
 
-        <tabSheet id="jobDetailsTabSheet" width="100%">
+        <tabSheet id="jobDetailsTabSheet" alignSelf="STRETCH">
             <tab id="triggers" label="msg://triggersTabCaption">
                 <vbox id="triggersTabContent"
                       padding="false"

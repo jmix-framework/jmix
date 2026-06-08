@@ -16,6 +16,7 @@
 
 package io.jmix.datatools.datamodel.engine.plantuml.impl;
 
+import io.jmix.core.CoreProperties;
 import io.jmix.core.Metadata;
 import io.jmix.datatools.DatatoolsProperties;
 import io.jmix.datatools.datamodel.RelationType;
@@ -40,6 +41,8 @@ import java.util.zip.Deflater;
 
 public class PlantUmlDiagramEngine implements DiagramEngine {
 
+    protected static final String PUBLIC_PLANTUML_SERVER = "https://www.plantuml.com";
+
     protected final DatatoolsProperties datatoolsProperties;
     protected final PlantUmlEncoder plantUmlEncoder;
     protected final String template;
@@ -49,9 +52,11 @@ public class PlantUmlDiagramEngine implements DiagramEngine {
     protected final String urlTemplate;
     protected final RestClient restClient;
     protected final int dataStoresCount;
+    protected final boolean available;
 
     public PlantUmlDiagramEngine(DatatoolsProperties datatoolsProperties,
-                                 Metadata metadata) {
+                                 Metadata metadata,
+                                 CoreProperties coreProperties) {
         this.datatoolsProperties = datatoolsProperties;
         this.dataStoresCount = getDataStoresCount(metadata);
         this.plantUmlEncoder = createEncoder();
@@ -60,9 +65,18 @@ public class PlantUmlDiagramEngine implements DiagramEngine {
         this.entityTemplate = createEntityTemplate();
         this.attributeTemplate = createAttributeTemplate();
         this.relationTemplate = createRelationTemplate();
+        this.available = resolveAvailable(coreProperties);
 
         String baseUrl = createBaseURL();
         this.restClient = configureClient(baseUrl);
+    }
+
+    protected boolean resolveAvailable(CoreProperties coreProperties) {
+        if (datatoolsProperties.getDataModelDiagram().getHost() != null) {
+            return true;
+        }
+        return coreProperties.isUnsafeRuntimeFeaturesEnabled()
+                && datatoolsProperties.getDataModelDiagram().isPublicServerEnabled();
     }
 
     protected int getDataStoresCount(Metadata metadata) {
@@ -77,7 +91,7 @@ public class PlantUmlDiagramEngine implements DiagramEngine {
         String host = datatoolsProperties.getDataModelDiagram().getHost();
         return host != null
                 ? host
-                : "https://www.plantuml.com";
+                : PUBLIC_PLANTUML_SERVER;
     }
 
     protected PlantUmlEncoder createEncoder() {
@@ -196,6 +210,10 @@ public class PlantUmlDiagramEngine implements DiagramEngine {
 
     @Override
     public boolean pingService() {
+        if (!available) {
+            return false;
+        }
+
         HttpStatusCode responseStatus;
         try {
             responseStatus = restClient
@@ -211,7 +229,16 @@ public class PlantUmlDiagramEngine implements DiagramEngine {
     }
 
     @Override
+    public boolean isAvailable() {
+        return available;
+    }
+
+    @Override
     public byte[] generateDiagram(String entitiesDescription, String relationsDescriptions) {
+        if (!available) {
+            throw new IllegalStateException("Data model diagram generation via the public PlantUML server is disabled");
+        }
+
         MessageFormat descriptionFormatter = new MessageFormat(template);
 
         String resultDescription = descriptionFormatter.format(new String[]{entitiesDescription, relationsDescriptions});

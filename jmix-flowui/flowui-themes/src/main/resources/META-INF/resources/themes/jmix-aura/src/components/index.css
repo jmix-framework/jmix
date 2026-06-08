@@ -30,6 +30,7 @@
 @import './jmix-jpql-filter.css';
 @import './jmix-list-menu.css';
 @import './jmix-login-form.css';
+@import './jmix-markdown-editor.css';
 @import './jmix-property-filter.css';
 @import './jmix-twin-column.css';
 @import './jmix-rich-text-editor.css';
@@ -39,7 +40,9 @@
 @import './jmix-user-indicator.css';
 @import './jmix-user-menu.css';
 @import './jmix-side-panel-layout-closer.css';
+@import './jmix-view-layout.css';
 
+@import './vaadin-details.css';
 @import './vaadin-form-layout.css';
 @import './vaadin-grid.css';
 @import './vaadin-notification-card.css';

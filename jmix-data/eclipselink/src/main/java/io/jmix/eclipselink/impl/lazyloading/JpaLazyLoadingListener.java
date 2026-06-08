@@ -57,7 +57,6 @@ import java.util.stream.Collectors;
 import static io.jmix.eclipselink.impl.lazyloading.AbstractSingleValueHolder.PREV_SOFT_DELETION;
 import static io.jmix.eclipselink.impl.lazyloading.AbstractSingleValueHolder.SOFT_DELETION_ABSENT;
 import static io.jmix.eclipselink.impl.lazyloading.ValueHoldersSupport.*;
-import static io.jmix.eclipselink.impl.lazyloading.ValueHoldersSupport.setSingleValueHolder;
 
 @Component("eclipselink_JpaLazyLoadingInterceptor")
 public class JpaLazyLoadingListener implements DataStoreEventListener {
@@ -85,6 +84,11 @@ public class JpaLazyLoadingListener implements DataStoreEventListener {
 
     @Autowired
     protected EclipselinkProperties eclipselinkProperties;
+
+    @Override
+    public int getOrder() {
+        return JmixOrder.HIGHEST_PRECEDENCE + 10;
+    }
 
     @Override
     public void afterEntityLoad(DataStoreAfterEntityLoadEvent event) {
@@ -169,6 +173,10 @@ public class JpaLazyLoadingListener implements DataStoreEventListener {
      */
     protected void wrapExcessivelyLoadedPropertyValueHolders(Object entity, MetaProperty property, LoadOptions loadOptions, Set<Object> processedEntities) {
         if (isSkipExcessiveLoadedProcessing(entity)) {
+            return;
+        }
+
+        if (!property.getRange().isClass()) {
             return;
         }
 

@@ -23,6 +23,7 @@ import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.HasValueAndElement;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.shared.Registration;
+import io.jmix.core.QueryUtils;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.datatype.EnumClass;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -329,7 +330,21 @@ public class PropertyFilter<V> extends SingleFilterComponentBase<V> {
 
     @Override
     protected void updateQueryCondition(@Nullable V newValue) {
-        getQueryCondition().setParameterValue(newValue);
+        getQueryCondition().setParameterValue(escapeLikeWildcardsIfNeeded(newValue));
+    }
+
+    /**
+     * For {@code LIKE}-based operations, escapes the SQL {@code _} and {@code %} wildcards in the
+     * user-entered value so they are matched literally. The generated JPQL carries the matching
+     * {@code ESCAPE '\'} clause, see
+     * {@code io.jmix.data.impl.jpql.generator.PropertyConditionGenerator}.
+     */
+    @Nullable
+    protected Object escapeLikeWildcardsIfNeeded(@Nullable V newValue) {
+        if (newValue instanceof String stringValue && isStringBasedOperation(operation)) {
+            return QueryUtils.escapeForLike(stringValue);
+        }
+        return newValue;
     }
 
     /**
@@ -405,7 +420,9 @@ public class PropertyFilter<V> extends SingleFilterComponentBase<V> {
                 || operation == null
                 || getProperty() == null
                 || !Strings.isNullOrEmpty(labelText)) {
-            newLabelText = labelText;
+            newLabelText = operationTextVisible && !operationEditable && operation != null
+                    ? labelText + " " + propertyFilterSupport.getOperationText(operation)
+                    : labelText;
         } else {
             MetaClass metaClass = dataLoader.getContainer().getEntityMetaClass();
             newLabelText = propertyFilterSupport.getPropertyFilterCaption(metaClass, getProperty(),
@@ -448,7 +465,7 @@ public class PropertyFilter<V> extends SingleFilterComponentBase<V> {
         @Override
         public void actionPerform(Component component) {
             getUiObservationSupport()
-                    .map(support -> support.createActionExecutionObservation(this))
+                    .map(support -> support.createActionExecutionObservation(this, component))
                     .orElse(Observation.NOOP)
                     .observe(() -> handler.accept(operation, true));
         }

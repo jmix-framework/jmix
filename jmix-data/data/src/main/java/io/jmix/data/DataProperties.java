@@ -33,17 +33,28 @@ public class DataProperties {
     String uniqueConstraintViolationPattern;
     boolean useUserLocaleForRelativeDateTimeMoments;
 
+    /**
+     * When {@code true}, an additional {@code is null} clause is appended to the generated JPQL for
+     * negative property condition operators ({@code NOT_EQUAL}, {@code NOT_CONTAINS}, {@code NOT_IN_LIST}),
+     * so that records with {@code null} value of the filtered property are returned by such conditions.
+     * By default ({@code false}) the clause is not added and such records are excluded due to SQL
+     * three-valued logic (e.g. {@code NULL <> value} evaluates to {@code NULL}).
+     */
+    boolean includeNullClauseInNotConditions;
+
     public DataProperties(
             @DefaultValue("true") boolean useReadOnlyTransactionForLoad,
             @DefaultValue("100") int numberIdCacheSize,
             boolean useEntityDataStoreForIdSequence,
             @Nullable String uniqueConstraintViolationPattern,
-            @DefaultValue("true") boolean useUserLocaleForRelativeDateTimeMoments) {
+            @DefaultValue("true") boolean useUserLocaleForRelativeDateTimeMoments,
+            @DefaultValue("false") boolean includeNullClauseInNotConditions) {
         this.useReadOnlyTransactionForLoad = useReadOnlyTransactionForLoad;
         this.numberIdCacheSize = numberIdCacheSize;
         this.useEntityDataStoreForIdSequence = useEntityDataStoreForIdSequence;
         this.uniqueConstraintViolationPattern = uniqueConstraintViolationPattern;
         this.useUserLocaleForRelativeDateTimeMoments = useUserLocaleForRelativeDateTimeMoments;
+        this.includeNullClauseInNotConditions = includeNullClauseInNotConditions;
     }
 
     public boolean isUseReadOnlyTransactionForLoad() {
@@ -68,5 +79,12 @@ public class DataProperties {
 
     public boolean isUseUserLocaleForRelativeDateTimeMoments() {
         return useUserLocaleForRelativeDateTimeMoments;
+    }
+
+    /**
+     * @see #includeNullClauseInNotConditions
+     */
+    public boolean isIncludeNullClauseInNotConditions() {
+        return includeNullClauseInNotConditions;
     }
 }

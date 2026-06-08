@@ -59,6 +59,16 @@ public interface JmixDataRepository<T, ID> extends ListPagingAndSortingRepositor
     Optional<T> findById(ID id, FetchPlan fetchPlan);
 
     /**
+     * Loads an entity by its {@code id} using hints and fetch plan from the given {@link JmixDataRepositoryContext context}.
+     *
+     * @param id      must not be {@literal null}.
+     * @param context the {@link JmixDataRepositoryContext} used to load the entity.
+     *                <b>NOTE:</b> {@code condition} is ignored when loading by id.
+     * @return the entity with the given id or {@literal Optional#empty()} if none found.
+     */
+    Optional<T> findById(ID id, JmixDataRepositoryContext context);
+
+    /**
      * Loads an entity by its {@code id} according to {@code fetchPlan}
      *
      * @param id must not be {@literal null}.

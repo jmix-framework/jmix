@@ -25,6 +25,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
+import io.jmix.core.CoreProperties;
 import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.Dialogs;
@@ -46,6 +47,7 @@ import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.view.*;
 import io.jmix.reports.ReportPrintHelper;
+import io.jmix.reports.ReportsProperties;
 import io.jmix.reports.entity.CustomTemplateDefinedBy;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportOutputType;
@@ -90,6 +92,8 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
     @ViewComponent
     protected JmixCodeEditor customDefinitionField;
     @ViewComponent
+    protected Button customDefinitionFullScreenBtn;
+    @ViewComponent
     protected JmixCheckbox alterableField;
     @ViewComponent
     protected FileUploadField templateUploadField;
@@ -125,6 +129,10 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
     protected ReportScriptEditor reportScriptEditor;
     @Autowired
     protected OutputTypeHelper outputTypeHelper;
+    @Autowired
+    protected CoreProperties coreProperties;
+    @Autowired
+    protected ReportsProperties reportsProperties;
 
     protected FontIcon customDefinitionHelpIcon;
     protected TableEditFragment tableEditComposite;
@@ -172,6 +180,7 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
         initTemplateEditor(reportTemplate);
         getDescriptionEditors().forEach(controller -> controller.setReportTemplate(reportTemplate));
         setupVisibility(reportTemplate.getCustom(), reportTemplate.getReportOutputType());
+        updateCustomDefinitionAccess();
     }
 
     @Subscribe
@@ -302,6 +311,9 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
 
     @Subscribe("customDefinitionFullScreenBtn")
     public void onCustomDefinitionFullScreenBtnClick(final ClickEvent<Button> event) {
+        if (isGroovyCustomDefinitionLocked()) {
+            return;
+        }
         reportScriptEditor.create(this)
                 .withTitle(messageBundle.getMessage("customDefinitionField.label"))
                 .withValue(getEditedEntity().getCustomDefinition())
@@ -348,7 +360,12 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
                 setupVisibility(Boolean.TRUE.equals(event.getValue()), reportTemplate.getReportOutputType());
                 break;
             }
+            case CUSTOM_DEFINE_BY_PROPERTY: {
+                updateCustomDefinitionAccess();
+                break;
+            }
         }
+        updateCustomDefinitionAccess();
     }
 
     protected Collection<AbstractDescriptionEditFragment<?>> getDescriptionEditors() {
@@ -444,6 +461,7 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
 
         setupTemplateTypeVisibility(templateOutputVisibility);
         setupVisibilityDescriptionEdit(enabled, reportOutputType);
+        updateCustomDefinitionAccess();
     }
 
     protected void setupTemplateTypeVisibility(boolean visibility) {
@@ -574,6 +592,11 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
         return CustomTemplateDefinedBy.SCRIPT == customTemplateDefinedBy;
     }
 
+    protected boolean hasGroovyCustomDefinedBy(@Nullable CustomTemplateDefinedBy customTemplateDefinedBy) {
+        return customTemplateDefinedBy == CustomTemplateDefinedBy.SCRIPT
+                || customTemplateDefinedBy == CustomTemplateDefinedBy.URL;
+    }
+
     protected boolean hasHtmlCsvTemplateOutput(@Nullable ReportOutputType reportOutputType) {
         return reportOutputType == ReportOutputType.CSV || reportOutputType == ReportOutputType.HTML;
     }
@@ -583,5 +606,21 @@ public class ReportTemplateDetailView extends StandardDetailView<ReportTemplate>
         return secureOperations.isEntityUpdatePermitted(templateMetaClass, policyStore)
                 && secureOperations.isEntityAttrUpdatePermitted(
                 templateMetaClass.getPropertyPath("content"), policyStore);
+    }
+
+    protected boolean isReportsGroovyEnabled() {
+        return coreProperties.isUnsafeRuntimeFeaturesEnabled() && reportsProperties.isGroovyEnabled();
+    }
+
+    protected boolean isGroovyCustomDefinitionLocked() {
+        return Boolean.TRUE.equals(getEditedEntity().getCustom())
+                && hasGroovyCustomDefinedBy(getEditedEntity().getCustomDefinedBy())
+                && !isReportsGroovyEnabled();
+    }
+
+    protected void updateCustomDefinitionAccess() {
+        boolean locked = isReadOnly() || isGroovyCustomDefinitionLocked();
+        customDefinitionField.setReadOnly(locked);
+        customDefinitionFullScreenBtn.setEnabled(!locked);
     }
 }

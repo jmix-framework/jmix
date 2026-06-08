@@ -23,13 +23,12 @@ archivesBaseName = 'jmix-audit'
 dependencies {
     api project(':data')
     api project(':eclipselink')
-    api 'com.thoughtworks.xstream:xstream'
 
     implementation 'org.springframework:spring-orm'
     implementation 'org.springframework:spring-tx'
     implementation 'org.eclipse.persistence:org.eclipse.persistence.extension'
 
-    testImplementation 'org.springframework.boot:spring-boot-starter-test' //todo [SB4]
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
     testImplementation 'org.springframework:spring-test'
     testImplementation 'org.spockframework:spock-core'

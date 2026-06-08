@@ -76,6 +76,14 @@ public class JmixDataRepositoryImpl<T, ID> implements JmixDataRepository<T, ID> 
     }
 
     @Override
+    public Optional<T> findById(ID id, JmixDataRepositoryContext context) {
+        return idLoader(id)
+                .hints(context.hints())
+                .fetchPlan(context.fetchPlan())
+                .optional();
+    }
+
+    @Override
     public T getById(ID id, FetchPlan fetchPlan) {
         return idLoader(id).fetchPlan(fetchPlan).one();
     }

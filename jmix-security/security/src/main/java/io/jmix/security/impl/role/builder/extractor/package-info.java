@@ -15,8 +15,6 @@
  */
 
 @Internal
-@NullMarked
 package io.jmix.security.impl.role.builder.extractor;
 
 import io.jmix.core.annotation.Internal;
-import org.jspecify.annotations.NullMarked;

@@ -14,6 +14,13 @@
  * limitations under the License.
  */
 
+:where(:root),
+:where(:host) {
+  --jmix-list-menu-item-font-size: var(--lumo-font-size-s);
+  --jmix-list-menu-item-font-weight: 500;
+  --jmix-list-menu-item-line-height: var(--lumo-line-height-s);
+}
+
 .jmix-list-menu {
   color: var(--lumo-secondary-text-color);
   margin: 0;
@@ -101,8 +108,10 @@
   height: auto;
 
   color: inherit;
-  font-size: inherit;
-  line-height: inherit;
+
+  font-size: var(--jmix-list-menu-item-font-size);
+  font-weight: var(--jmix-list-menu-item-font-weight);
+  line-height: var(--jmix-list-menu-item-line-height);
 
   padding: var(--vaadin-padding-s);
   margin: 0;
@@ -132,9 +141,9 @@
 }
 
 .jmix-list-menu a.jmix-menu-item .link-text {
-  font-size: var(--lumo-font-size-s);
-  font-weight: 500;
-  line-height: var(--lumo-line-height-s);
+  font-size: var(--jmix-list-menu-item-font-size);
+  font-weight: var(--jmix-list-menu-item-font-weight);
+  line-height: var(--jmix-list-menu-item-line-height);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

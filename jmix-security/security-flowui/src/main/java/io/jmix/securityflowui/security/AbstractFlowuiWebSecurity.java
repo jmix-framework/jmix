@@ -25,6 +25,7 @@ import io.jmix.security.util.JmixHttpSecurityUtils;
 import jakarta.servlet.ServletContext;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -45,6 +46,8 @@ public abstract class AbstractFlowuiWebSecurity {
     protected ServletContext servletContext;
     @Autowired(required = false)
     protected H2ConsoleProperties h2ConsoleProperties;
+    @Autowired
+    protected WebProperties webProperties;
 
     protected List<JmixRequestCacheRequestMatcher> requestCacheRequestMatchers = Collections.emptyList();
 
@@ -67,6 +70,12 @@ public abstract class AbstractFlowuiWebSecurity {
         JmixHttpSecurityUtils.configureAnonymous(http);
         JmixHttpSecurityUtils.configureSessionManagement(http);
         JmixHttpSecurityUtils.configureFrameOptions(http);
+
+        http.authorizeHttpRequests(registry -> {
+            registry.requestMatchers(
+                    PathPatternRequestMatcher.pathPattern(webProperties.getError().getPath())
+            ).permitAll();
+        });
 
         if (h2ConsoleProperties != null && h2ConsoleProperties.isEnabled()) {
             http.authorizeHttpRequests(registry ->

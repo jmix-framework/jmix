@@ -26,4 +26,8 @@ dependencies {
     implementation 'org.springframework:spring-context'
 
     compileOnly 'com.hazelcast:hazelcast'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'com.hazelcast:hazelcast'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }

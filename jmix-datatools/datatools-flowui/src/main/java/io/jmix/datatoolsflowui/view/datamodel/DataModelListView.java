@@ -66,6 +66,8 @@ public class DataModelListView extends StandardView {
     protected Span entityModelCount;
     @ViewComponent
     protected Span attributesCount;
+    @ViewComponent
+    protected JmixButton diagramButton;
 
     @ViewComponent
     protected CollectionContainer<EntityModel> entityModelsDc;
@@ -100,6 +102,11 @@ public class DataModelListView extends StandardView {
         urlQueryParametersFacet.registerBinder(new EntityNameUrlQueryParametersBinder());
         initDataStoreNames();
         initDataStoreColumnVisibility();
+        initDiagramButtonAvailability();
+    }
+
+    protected void initDiagramButtonAvailability() {
+        diagramButton.setVisible(diagramEngine.isAvailable());
     }
 
     protected void initDataStoreNames() {

@@ -14,7 +14,4 @@
  * limitations under the License.
  */
 
-@NullMarked
 package io.jmix.messagetemplatesflowui.view.messagetemplate;
-
-import org.jspecify.annotations.NullMarked;

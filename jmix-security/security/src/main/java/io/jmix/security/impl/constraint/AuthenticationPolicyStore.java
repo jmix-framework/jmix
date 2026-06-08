@@ -20,6 +20,7 @@ import io.jmix.core.ExtendedEntities;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.ClientDetails;
 import io.jmix.core.security.CurrentAuthentication;
+import io.jmix.security.constraint.PolicyStoreContributor;
 import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.model.*;
 import io.jmix.security.role.ResourceRoleRepository;
@@ -37,6 +38,9 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+/**
+ * Resolves the current user's security policies from assigned roles and registered policy contributors.
+ */
 @Component("sec_AuthenticationPolicyStore")
 public class AuthenticationPolicyStore implements PolicyStore {
 
@@ -56,6 +60,9 @@ public class AuthenticationPolicyStore implements PolicyStore {
     @Autowired
     protected RoleGrantedAuthorityUtils roleGrantedAuthorityUtils;
 
+    @Autowired(required = false)
+    protected List<PolicyStoreContributor> contributors = List.of();
+
     @Override
     public Stream<RowLevelPolicy> getRowLevelPolicies(MetaClass metaClass) {
         MetaClass originalMetaClass = extendedEntities.getOriginalMetaClass(metaClass);
@@ -71,17 +78,20 @@ public class AuthenticationPolicyStore implements PolicyStore {
             suitableMetaClassNames.add(ancestor.getName());
         }
 
-        return extractRowLevelPoliciesFromAuthentication(rowLevelRole ->
-                suitableMetaClassNames.stream()
-                        .flatMap(metaClassName ->
-                                rowLevelRole.getAllRowLevelPoliciesIndex().getRowLevelPoliciesByEntityName(metaClassName).stream())
+        return Stream.concat(
+                extractRowLevelPoliciesFromAuthentication(rowLevelRole ->
+                        suitableMetaClassNames.stream()
+                                .flatMap(metaClassName ->
+                                        rowLevelRole.getAllRowLevelPoliciesIndex().getRowLevelPoliciesByEntityName(metaClassName).stream())
+                ),
+                getContributorPolicies(contributor -> contributor.getRowLevelPolicies(metaClass))
         );
     }
 
     @Override
     public Stream<ResourcePolicy> getEntityResourcePolicies(MetaClass metaClass) {
         MetaClass originalMetaClass = extendedEntities.getOriginalMetaClass(metaClass);
-        return extractResourcePoliciesFromAuthenticationByScope(resourceRole -> {
+        Stream<ResourcePolicy> basePolicies = extractResourcePoliciesFromAuthenticationByScope(resourceRole -> {
             Set<String> resources = new HashSet<>();
             resources.add(metaClass.getName());
             if (originalMetaClass != null) {
@@ -89,21 +99,25 @@ public class AuthenticationPolicyStore implements PolicyStore {
             }
             return getPoliciesStreamByTypeAndResources(resourceRole, ResourcePolicyType.ENTITY, resources);
         });
+        return Stream.concat(basePolicies, getContributorPolicies(contributor -> contributor.getEntityResourcePolicies(metaClass)));
     }
 
     @Override
     public Stream<ResourcePolicy> getEntityResourcePoliciesByWildcard(String wildcard) {
-        return extractResourcePoliciesFromAuthenticationByScope(resourceRole ->
-                getPoliciesStreamByTypeAndResources(resourceRole,
-                        ResourcePolicyType.ENTITY,
-                        Set.of(wildcard))
+        return Stream.concat(
+                extractResourcePoliciesFromAuthenticationByScope(resourceRole ->
+                        getPoliciesStreamByTypeAndResources(resourceRole,
+                                ResourcePolicyType.ENTITY,
+                                Set.of(wildcard))
+                ),
+                getContributorPolicies(contributor -> contributor.getEntityResourcePoliciesByWildcard(wildcard))
         );
     }
 
     @Override
     public Stream<ResourcePolicy> getEntityAttributesResourcePolicies(MetaClass metaClass, String attribute) {
         MetaClass originalMetaClass = extendedEntities.getOriginalMetaClass(metaClass);
-        return extractResourcePoliciesFromAuthenticationByScope(resourceRole -> {
+        Stream<ResourcePolicy> basePolicies = extractResourcePoliciesFromAuthenticationByScope(resourceRole -> {
             Set<String> resources = new HashSet<>();
             resources.add(metaClass.getName() + "." + attribute);
             if (originalMetaClass != null) {
@@ -111,22 +125,33 @@ public class AuthenticationPolicyStore implements PolicyStore {
             }
             return getPoliciesStreamByTypeAndResources(resourceRole, ResourcePolicyType.ENTITY_ATTRIBUTE, resources);
         });
+        return Stream.concat(
+                basePolicies,
+                getContributorPolicies(contributor -> contributor.getEntityAttributesResourcePolicies(metaClass, attribute))
+        );
     }
 
     @Override
     public Stream<ResourcePolicy> getEntityAttributesResourcePoliciesByWildcard(String entityWildcard, String attributeWildcard) {
-        return extractResourcePoliciesFromAuthenticationByScope(resourceRole ->
-                getPoliciesStreamByTypeAndResources(resourceRole,
-                        ResourcePolicyType.ENTITY_ATTRIBUTE,
-                        Set.of(entityWildcard + "." + attributeWildcard)));
+        return Stream.concat(
+                extractResourcePoliciesFromAuthenticationByScope(resourceRole ->
+                        getPoliciesStreamByTypeAndResources(resourceRole,
+                                ResourcePolicyType.ENTITY_ATTRIBUTE,
+                                Set.of(entityWildcard + "." + attributeWildcard))),
+                getContributorPolicies(contributor ->
+                        contributor.getEntityAttributesResourcePoliciesByWildcard(entityWildcard, attributeWildcard))
+        );
     }
 
     @Override
     public Stream<ResourcePolicy> getSpecificResourcePolicies(String resourceName) {
-        return extractResourcePoliciesFromAuthenticationByScope(resourceRole ->
-                getPoliciesStreamByTypeAndResources(resourceRole,
-                        ResourcePolicyType.SPECIFIC,
-                        Set.of(resourceName)));
+        return Stream.concat(
+                extractResourcePoliciesFromAuthenticationByScope(resourceRole ->
+                        getPoliciesStreamByTypeAndResources(resourceRole,
+                                ResourcePolicyType.SPECIFIC,
+                                Set.of(resourceName))),
+                getContributorPolicies(contributor -> contributor.getSpecificResourcePolicies(resourceName))
+        );
     }
 
     protected Stream<ResourcePolicy> extractResourcePoliciesFromAuthenticationByScope(Function<ResourceRole, Stream<ResourcePolicy>> extractor) {
@@ -202,5 +227,13 @@ public class AuthenticationPolicyStore implements PolicyStore {
                                                                          Collection<String> resources) {
         return resources.stream()
                 .flatMap(r -> resourceRole.getAllResourcePoliciesIndex().getPoliciesByTypeAndResource(policyType, r).stream());
+    }
+
+    protected <T> Stream<T> getContributorPolicies(Function<PolicyStoreContributor, Stream<T>> extractor) {
+        return contributors.stream()
+                .flatMap(contributor -> {
+                    Stream<T> policies = extractor.apply(contributor);
+                    return policies != null ? policies : Stream.empty();
+                });
     }
 }

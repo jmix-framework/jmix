@@ -30,7 +30,6 @@ import javax.cache.configuration.MutableConfiguration;
 @Import({QuartzConfiguration.class})
 public class QuartzAutoConfiguration {
 
-    // TODO [SB4] Consider switch to Spring Cache
     @Bean
     @SuppressWarnings({"rawtypes", "unchecked"})
     JCacheManagerCustomizer runningJobsCacheCustomizer() {

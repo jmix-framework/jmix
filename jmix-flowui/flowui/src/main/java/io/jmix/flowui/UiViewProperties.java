@@ -32,16 +32,24 @@ public class UiViewProperties {
     boolean useSaveConfirmation;
 
     /**
-     * Standard view validation error notification variant. Should contain the name of enum value
-     * {@link Notifications.Type}.
+     * Standard detail view save confirmation type.
      */
-    String validationNotificationType;
+    Notifications.Type saveConfirmationType;
 
     /**
-     * Standard view validation error notification position. Should contain the name of enum value
-     * {@link Position}.
+     * Standard detail view save confirmation position.
      */
-    String validationNotificationPosition;
+    Position saveConfirmationPosition;
+
+    /**
+     * Standard view validation error notification type.
+     */
+    Notifications.Type validationNotificationType;
+
+    /**
+     * Standard view validation error notification position.
+     */
+    Position validationNotificationPosition;
 
     /**
      * The duration in milliseconds to show the view validation error notification.
@@ -64,8 +72,10 @@ public class UiViewProperties {
             String saveShortcut,
             @DefaultValue("true") boolean createActionAddsFirst,
             @DefaultValue("true") boolean useSaveConfirmation,
-            @DefaultValue("DEFAULT") String validationNotificationType,
-            @DefaultValue("BOTTOM_END") String validationNotificationPosition,
+            @DefaultValue("SUCCESS") Notifications.Type saveConfirmationType,
+            @DefaultValue("TOP_END") Position saveConfirmationPosition,
+            @DefaultValue("DEFAULT") Notifications.Type validationNotificationType,
+            @DefaultValue("BOTTOM_END") Position validationNotificationPosition,
             @DefaultValue("3000") Integer validationNotificationDuration,
             @DefaultValue("true") boolean reloadUnfetchedAttributesFromLookupViews,
             @DefaultValue("false") boolean preventBrowserTabClosing
@@ -74,6 +84,8 @@ public class UiViewProperties {
         this.saveShortcut = saveShortcut;
         this.createActionAddsFirst = createActionAddsFirst;
         this.useSaveConfirmation = useSaveConfirmation;
+        this.saveConfirmationType = saveConfirmationType;
+        this.saveConfirmationPosition = saveConfirmationPosition;
         this.validationNotificationType = validationNotificationType;
         this.validationNotificationPosition = validationNotificationPosition;
         this.validationNotificationDuration = validationNotificationDuration;
@@ -98,16 +110,30 @@ public class UiViewProperties {
     }
 
     /**
+     * @see #saveConfirmationType
+     */
+    public Notifications.Type getSaveConfirmationType() {
+        return saveConfirmationType;
+    }
+
+    /**
+     * @see #saveConfirmationPosition
+     */
+    public Position getSaveConfirmationPosition() {
+        return saveConfirmationPosition;
+    }
+
+    /**
      * @see #validationNotificationType
      */
-    public String getValidationNotificationType() {
+    public Notifications.Type getValidationNotificationType() {
         return validationNotificationType;
     }
 
     /**
      * @see #validationNotificationPosition
      */
-    public String getValidationNotificationPosition() {
+    public Position getValidationNotificationPosition() {
         return validationNotificationPosition;
     }
 

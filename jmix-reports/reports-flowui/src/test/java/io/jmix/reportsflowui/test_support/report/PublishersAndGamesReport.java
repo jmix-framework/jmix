@@ -19,15 +19,15 @@ package io.jmix.reportsflowui.test_support.report;
 import io.jmix.core.Messages;
 import io.jmix.reports.annotation.*;
 import io.jmix.reports.delegate.ParameterValidator;
+import io.jmix.reports.delegate.ParameterTransformer;
 import io.jmix.reports.delegate.ParametersCrossValidator;
 import io.jmix.reports.entity.DataSetType;
 import io.jmix.reports.entity.ParameterType;
 import io.jmix.reports.entity.ReportOutputType;
 import io.jmix.reports.exception.ReportParametersValidationException;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 @ReportDef(
         name = "Publishers and games info",
@@ -133,22 +133,32 @@ public class PublishersAndGamesReport {
     }
 
     @InputParameterDelegate(alias = "startDate")
-    public ParameterValidator<Date> startDateValidator() throws ParseException {
-        Date minDate = new SimpleDateFormat("yyyy-MM-dd").parse("2000-01-01");
+    public ParameterValidator<LocalDate> startDateValidator() {
+        LocalDate minDate = LocalDate.of(2000, 1, 1);
         return (value) -> {
-            if (value.before(minDate)) {
+            if (value.isBefore(minDate)) {
                 throw new ReportParametersValidationException(messages.getMessage(getClass(), "report.publishersGames.startDate.early"));
             }
         };
     }
 
+    @InputParameterDelegate(alias = "startDate")
+    public ParameterTransformer<LocalDate> startDateTransformer() {
+        return (value, parameterValues) -> value == null ? null : value.atStartOfDay();
+    }
+
+    @InputParameterDelegate(alias = "endDate")
+    public ParameterTransformer<LocalDate> endDateTransformer() {
+        return (value, parameterValues) -> value == null ? null : value.atTime(LocalTime.MAX);
+    }
+
     @ReportDelegate
     public ParametersCrossValidator crossValidator() {
         return (parameterValues) -> {
-            Date startDate = (Date) parameterValues.get(PARAM_START_DATE);
-            Date endDate = (Date) parameterValues.get(PARAM_END_DATE);
+            LocalDate startDate = (LocalDate) parameterValues.get(PARAM_START_DATE);
+            LocalDate endDate = (LocalDate) parameterValues.get(PARAM_END_DATE);
             if (startDate != null && endDate != null // may be invoked even if required parameters aren't filled
-                && endDate.before(startDate)) {
+                && endDate.isBefore(startDate)) {
                 throw new ReportParametersValidationException(messages.getMessage(getClass(), "report.publishersGames.badRange"));
             }
         };

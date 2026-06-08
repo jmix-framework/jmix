@@ -79,7 +79,7 @@ public abstract class GenericFilterAction<A extends GenericFilterAction<A>> exte
         // if standard behaviour
         if (!hasListener(ActionPerformedEvent.class)) {
             getUiObservationSupport()
-                    .map(support -> support.createActionExecutionObservation(this))
+                    .map(support -> support.createActionExecutionObservation(this, component))
                     .orElse(Observation.NOOP)
                     .observe(this::execute);
         } else {

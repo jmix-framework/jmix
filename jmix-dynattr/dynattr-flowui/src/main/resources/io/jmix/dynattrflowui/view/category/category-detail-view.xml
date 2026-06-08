@@ -33,7 +33,7 @@
         <action id="windowClose" type="detail_close"/>
     </actions>
     <layout expand="tabSheet">
-        <tabSheet id="tabSheet" height="AUTO" width="100%">
+        <tabSheet id="tabSheet" height="AUTO" alignSelf="STRETCH">
             <tab id="mainTab" label="msg://mainTab.title">
                 <formLayout id="form" dataContainer="categoryDc">
                     <responsiveSteps>

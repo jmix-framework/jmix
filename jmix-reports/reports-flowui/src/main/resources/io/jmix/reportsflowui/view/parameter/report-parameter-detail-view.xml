@@ -16,7 +16,7 @@
         <action id="closeAction" type="detail_close"/>
     </actions>
     <layout expand="tabsheet">
-        <tabSheet id="tabsheet" width="100%">
+        <tabSheet id="tabsheet" alignSelf="STRETCH">
             <tab id="optionsTab" label="msg://parameters.optionsTab">
                 <formLayout id="formLayout" dataContainer="parameterDc" width="100%">
                     <textField id="name" label="msg://parameters.caption"

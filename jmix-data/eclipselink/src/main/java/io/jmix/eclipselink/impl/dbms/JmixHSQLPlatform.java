@@ -16,11 +16,15 @@
 
 package io.jmix.eclipselink.impl.dbms;
 
+import org.eclipse.persistence.internal.sessions.AbstractSession;
 import org.eclipse.persistence.mappings.converters.Converter;
 import org.eclipse.persistence.platform.database.HSQLPlatform;
 import org.eclipse.persistence.queries.Call;
 
 import java.io.Writer;
+import java.sql.CallableStatement;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.sql.Types;
 
 public class JmixHSQLPlatform extends HSQLPlatform implements UuidMappingInfo {
@@ -34,6 +38,24 @@ public class JmixHSQLPlatform extends HSQLPlatform implements UuidMappingInfo {
     @Override
     public int appendParameterInternal(Call call, Writer writer, Object parameter) {
         return super.appendParameterInternal(call, writer, convertToDataValueIfUUID(parameter));
+    }
+
+    @Override
+    public void setParameterValueInDatabaseCall(Object parameter,
+                                                PreparedStatement statement,
+                                                int index,
+                                                AbstractSession session)
+            throws SQLException {
+        super.setParameterValueInDatabaseCall(convertToDataValueIfUUID(parameter), statement, index, session);
+    }
+
+    @Override
+    public void setParameterValueInDatabaseCall(Object parameter,
+                                                CallableStatement statement,
+                                                String name,
+                                                AbstractSession session)
+            throws SQLException {
+        super.setParameterValueInDatabaseCall(convertToDataValueIfUUID(parameter), statement, name, session);
     }
 
     @Override

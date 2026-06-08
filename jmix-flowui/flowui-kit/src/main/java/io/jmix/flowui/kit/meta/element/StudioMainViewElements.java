@@ -20,6 +20,8 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import io.jmix.flowui.kit.meta.*;
 
+import static io.jmix.flowui.kit.meta.StudioComponent.EMPTY_INJECTION_IDENTIFIER;
+
 @StudioUiKit
 interface StudioMainViewElements {
 
@@ -29,6 +31,8 @@ interface StudioMainViewElements {
             xmlElement = StudioXmlElements.NAVIGATION_BAR,
             target = {"com.vaadin.flow.component.applayout.AppLayout"},
             icon = "io/jmix/flowui/kit/meta/icon/element/navigationBar.svg",
+            isInjectable = false,
+            injectionIdentifier = EMPTY_INJECTION_IDENTIFIER,
             unlimitedCount = false,
             visible = true,
             propertyGroups = StudioPropertyGroups.NavigationBarComponent.class)
@@ -39,6 +43,8 @@ interface StudioMainViewElements {
             classFqn = "com.vaadin.flow.component.html.Div",
             xmlElement = StudioXmlElements.DRAWER_LAYOUT,
             icon = "io/jmix/flowui/kit/meta/icon/element/drawerLayout.svg",
+            isInjectable = false,
+            injectionIdentifier = EMPTY_INJECTION_IDENTIFIER,
             unlimitedCount = false,
             visible = true,
             target = {"com.vaadin.flow.component.applayout.AppLayout"},

@@ -23,7 +23,7 @@ archivesBaseName = 'jmix-core'
 dependencies {
     api 'org.springframework.boot:spring-boot'
     api 'org.springframework.boot:spring-boot-starter-validation'
-    api 'org.springframework.boot:spring-boot-cache' //todo [SB4]
+    api 'org.springframework.boot:spring-boot-cache'
     api 'org.springframework.boot:spring-boot-starter-liquibase' //todo [SB4]
     api 'org.springframework:spring-context'
     api 'org.springframework:spring-context-support'
@@ -62,6 +62,8 @@ dependencies {
 
     implementation'com.google.code.gson:gson'
     implementation 'com.github.f4b6a3:uuid-creator'
+
+    compileOnly 'org.springframework.boot:spring-boot-web-server'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api'
     testImplementation 'org.springframework:spring-test'

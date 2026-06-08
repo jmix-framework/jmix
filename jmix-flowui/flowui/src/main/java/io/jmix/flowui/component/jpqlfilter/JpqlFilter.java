@@ -19,6 +19,7 @@ package io.jmix.flowui.component.jpqlfilter;
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import io.jmix.core.entity.EntityValues;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.querycondition.JpqlCondition;
 import io.jmix.flowui.component.filter.SingleFilterComponentBase;
 import io.jmix.flowui.model.DataLoader;
@@ -103,7 +104,14 @@ public class JpqlFilter<V> extends SingleFilterComponentBase<V> {
             Object parameterValue = null;
             if (newValue != null) {
                 if (EntityValues.isEntity(newValue)) {
-                    parameterValue = EntityValues.getIdOrEntity(newValue);
+                    // If parameterClass is itself an entity type the JPQL compares entities directly
+                    // (e.g. "{E}.customer = :param") — pass the entity object as-is.
+                    // Otherwise (e.g. UUID param with "{E}.customer.id = :param") extract the ID.
+                    if (parameterClass != null && parameterClass.isAnnotationPresent(JmixEntity.class)) {
+                        parameterValue = newValue;
+                    } else {
+                        parameterValue = EntityValues.getIdOrEntity(newValue);
+                    }
                 } else {
                     parameterValue = newValue;
                 }

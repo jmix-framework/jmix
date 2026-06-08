@@ -59,9 +59,14 @@ class JmixPlugin implements Plugin<Project> {
 
             def kotlinPlugin = project.plugins.findPlugin("org.jetbrains.kotlin.jvm")
             def javaPlugin = project.plugins.findPlugin(JavaPlugin.class)
+            def groovyPlugin = project.plugins.hasPlugin('groovy')
 
             if (kotlinPlugin) {
                 setupKotlinOutputDir(project, kotlinPlugin.pluginVersion)
+            }
+
+            if (groovyPlugin) {
+                setupGroovyOutputDir(project)
             }
 
             if (project.jmix.entitiesEnhancing.enabled) {
@@ -90,6 +95,13 @@ class JmixPlugin implements Plugin<Project> {
                 if (kotlinPlugin) {
                     mainCompileTasks.add(project.tasks.named('compileKotlin'))
                     testCompileTasks.add(project.tasks.named('compileTestKotlin'))
+                }
+
+                // Groovy classes (e.g. Spock tests) are compiled into the java output dir (see setupGroovyOutputDir),
+                // so enhancing must run after them to mirror them into the enhanced output dir.
+                if (groovyPlugin) {
+                    mainCompileTasks.add(project.tasks.named('compileGroovy'))
+                    testCompileTasks.add(project.tasks.named('compileTestGroovy'))
                 }
 
                 def enhancedMainDir = project.file(EnhancingAction.enhancedClassesDir(project, 'main'))
@@ -178,6 +190,25 @@ class JmixPlugin implements Plugin<Project> {
             })
         } catch (UnknownTaskException ignored) {
             project.logger.debug("Unable to setup output directory for Kotlin. " + ignored.message)
+        }
+    }
+
+    /**
+     * Groovy classes output dir should be the same as java output dir.
+     * Otherwise the current implementation of entities enhancing doesn't work properly: enhancing mirrors
+     * only the java output dir into the enhanced output dir consumed by the test/jar tasks, so Groovy classes
+     * (e.g. Spock tests) would be left out of the source set output.
+     */
+    private void setupGroovyOutputDir(Project project) {
+        try {
+            project.tasks.getByName('compileGroovy', { task ->
+                task.destinationDirectory = project.sourceSets.main.java.destinationDirectory
+            })
+            project.tasks.getByName('compileTestGroovy', { task ->
+                task.destinationDirectory = project.sourceSets.test.java.destinationDirectory
+            })
+        } catch (UnknownTaskException ignored) {
+            project.logger.debug("Unable to setup output directory for Groovy. " + ignored.message)
         }
     }
 

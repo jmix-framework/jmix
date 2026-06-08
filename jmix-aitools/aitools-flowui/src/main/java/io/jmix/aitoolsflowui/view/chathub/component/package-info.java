@@ -15,6 +15,6 @@
  */
 
 @Internal
-package io.jmix.aitoolsflowui.view.chathome.component;
+package io.jmix.aitoolsflowui.view.chathub.component;
 
 import io.jmix.core.annotation.Internal;

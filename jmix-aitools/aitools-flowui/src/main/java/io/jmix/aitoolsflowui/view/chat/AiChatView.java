@@ -19,11 +19,10 @@ package io.jmix.aitoolsflowui.view.chat;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.BeforeEnterEvent;
-import com.vaadin.flow.router.BeforeLeaveEvent;
 import com.vaadin.flow.router.BeforeLeaveEvent.ContinueNavigationAction;
 import com.vaadin.flow.router.Route;
 import io.jmix.aitools.entity.AiConversation;
-import io.jmix.aitoolsflowui.view.chathome.AiChatHomeView;
+import io.jmix.aitoolsflowui.view.chathub.AiChatHubView;
 import io.jmix.core.DataManager;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.FetchPlans;
@@ -67,13 +66,13 @@ import java.util.UUID;
  * When the URL carries an id that does not resolve to a conversation, the
  * fragment is hidden and an in-view "chat not found" placeholder is shown.
  * When opened with no id and no conversation set, an empty-state placeholder
- * invites the user to start a chat (navigating to {@code AiChatHomeView}).
+ * invites the user to start a chat (navigating to {@code AiChatHubView}).
  * <p>
  * Unlike {@code AiConversationDetailView} this is a plain {@link StandardView}
  * with no own {@code DataContext}; the fragment keeps its default
  * {@code DataManager}-based persist/reload.
  */
-@Route(value = "aitols/ai-chat/:id?", layout = DefaultMainViewParent.class)
+@Route(value = "aitols/chat/:id?", layout = DefaultMainViewParent.class)
 @ViewController("AiChatView")
 @ViewDescriptor("ai-chat-view.xml")
 public class AiChatView extends StandardView {
@@ -145,7 +144,7 @@ public class AiChatView extends StandardView {
 
     /**
      * Sends an initial user prompt into the bound conversation, used by the
-     * chat home's navigation handler. Idempotent: runs at most once per view
+     * chat hub's navigation handler. Idempotent: runs at most once per view
      * instance, so a re-fired navigation handler cannot double-submit. No-op
      * when no conversation is bound (e.g. the id did not resolve).
      */
@@ -257,16 +256,16 @@ public class AiChatView extends StandardView {
 
     @Subscribe(id = "newChatBtn", subject = "clickListener")
     public void onNewChatBtnClick(final ClickEvent<JmixButton> event) {
-        navigateToChatHome();
+        navigateToChatHub();
     }
 
     @Subscribe(id = "notFoundNewChatBtn", subject = "clickListener")
     public void onNotFoundNewChatBtnClick(final ClickEvent<JmixButton> event) {
-        navigateToChatHome();
+        navigateToChatHub();
     }
 
-    protected void navigateToChatHome() {
-        viewNavigators.view(this, AiChatHomeView.class).navigate();
+    protected void navigateToChatHub() {
+        viewNavigators.view(this, AiChatHubView.class).navigate();
     }
 
     /**

@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-.ai-chat-home {
+.ai-chat-hub {
     box-sizing: border-box;
     min-height: 0;
     overflow: hidden;
 
-    .chat-home-scroll {
+    .chat-hub-scroll {
         box-sizing: border-box;
         flex: 1 1 auto;
         min-height: 0;
@@ -29,69 +29,73 @@
     /* One centered reading column for the whole starter. Narrower than the
        conversation timeline canvas — starter has composer + 2-col cards, the
        reading line stays comfortable around 54rem. Override with the
-       --jmix-ai-chat-home-canvas-max-width custom property. */
-    .chat-home-canvas {
+       --jmix-ai-chat-hub-canvas-max-width custom property. */
+    .chat-hub-canvas {
         box-sizing: border-box;
         align-self: center;
         margin: 0 auto;
-        max-width: var(--jmix-ai-chat-home-canvas-max-width, 54rem);
-        padding: var(--lumo-space-m);
+        max-width: var(--jmix-ai-chat-hub-canvas-max-width, 54rem);
+        padding: var(--vaadin-padding-m);
         width: 100%;
-        gap: var(--lumo-space-m);
+        gap: var(--vaadin-gap-m);
     }
 
-    .chat-home-heading {
+    .chat-hub-heading {
         text-align: center;
-        gap: var(--lumo-space-xs);
+        gap: var(--vaadin-gap-xs);
     }
 
-    .chat-home-title {
+    .chat-hub-title {
         margin: 0;
     }
 
-    .chat-home-subtitle {
-        color: var(--lumo-secondary-text-color);
-        font-size: var(--lumo-font-size-m);
+    .chat-hub-subtitle {
+        color: var(--vaadin-text-color-secondary);
+        font-size: var(--aura-font-size-m);
     }
 
-    .chat-home-hero-icon-glyph {
+    .chat-hub-hero-icon-glyph {
         height: 2.5rem;
         width: 2.5rem;
-        color: var(--lumo-primary-color);
+        color: var(--aura-accent-color);
     }
 
-    .chat-home-section-header {
-        gap: var(--lumo-space-s);
+    .chat-hub-section-header {
+        gap: var(--vaadin-gap-s);
+        /* Aura's vertical rhythm reads slightly tighter than Lumo's; add a
+           bit of extra breathing room between the composer and this section
+           header without touching the canvas-wide gap. */
+        margin-top: var(--vaadin-gap-s);
     }
 
-    .chat-home-section-rule {
-        border-top: 1px solid var(--lumo-contrast-10pct);
+    .chat-hub-section-rule {
+        border-top: 1px solid var(--vaadin-border-color);
         flex: 1 1 auto;
     }
 }
 
 /* Conversation cards — recent grid and the history panel (which may render in an
    overlay), so these are top-level selectors rather than nested under the root. */
-.chat-home-card {
+.chat-hub-card {
     /* vaadin-card requires a single length here (used by inner calc(... * -1)). */
-    --vaadin-card-padding: var(--lumo-space-s);
-    --vaadin-card-gap: var(--lumo-space-xs);
+    --vaadin-card-padding: var(--vaadin-padding-s);
+    --vaadin-card-gap: var(--vaadin-gap-xs);
 }
 
-.chat-home-card-body {
+.chat-hub-card-body {
     padding: 0;
 }
 
-.chat-home-card-title-row {
-    gap: var(--lumo-space-s);
+.chat-hub-card-title-row {
+    gap: var(--vaadin-gap-s);
     min-width: 0;
 }
 
 /* Own the title weight and the date colour/size rather than relying on Lumo
    utility classes (font-bold / text-secondary / text-xs), which the consuming
    app's theme may not bundle. */
-.chat-home-card-title {
-    font-size: var(--lumo-font-size-m);
+.chat-hub-card-title {
+    font-size: var(--aura-font-size-m);
     font-weight: 600;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -99,13 +103,13 @@
     min-width: 0;
 }
 
-.chat-home-card-date {
-    color: var(--lumo-secondary-text-color);
-    font-size: var(--lumo-font-size-xs);
+.chat-hub-card-date {
+    color: var(--vaadin-text-color-secondary);
+    font-size: var(--aura-font-size-xs);
 }
 
-.chat-home-card-icon {
-    color: var(--lumo-primary-color);
+.chat-hub-card-icon {
+    color: var(--aura-accent-color);
     flex: none;
     height: 1.25rem;
     width: 1.25rem;
@@ -120,67 +124,68 @@
    narrow screens. Outer ::part rules win over the component's own shadow part
    styles for normal declarations, so no !important is needed — and an add-on
    shouldn't impose it, leaving apps free to override. */
-.chat-home-recent-grid::part(items) {
-    grid-gap: var(--lumo-space-s);
+.chat-hub-recent-grid::part(items) {
+    grid-gap: var(--vaadin-gap-s);
     grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 @media (max-width: 720px) {
-    .chat-home-recent-grid::part(items) {
+    .chat-hub-recent-grid::part(items) {
         grid-template-columns: 1fr;
     }
 }
 
 /* History side panel content. */
-.chat-home-history-content {
+.chat-hub-history-content {
     box-sizing: border-box;
-    padding: var(--lumo-space-s);
-    gap: var(--lumo-space-s);
+    padding: var(--vaadin-padding-s);
+    gap: var(--vaadin-gap-s);
 
-    .chat-home-history-title {
+    .chat-hub-history-title {
         margin: 0;
     }
 
-    .chat-home-history-empty {
-        color: var(--lumo-secondary-text-color);
-        font-size: var(--lumo-font-size-s);
+    .chat-hub-history-empty {
+        color: var(--vaadin-text-color-secondary);
+        font-size: var(--aura-font-size-s);
     }
 
-    .chat-home-history-title-group {
-        gap: var(--lumo-space-m);
+    .chat-hub-history-title-group {
+        gap: var(--vaadin-gap-m);
     }
 
-    .chat-home-history-count {
+    .chat-hub-history-count {
         /* Inherits the shared badge look from the rule below. */
     }
 
-    .chat-home-history-header-spacer {
+    .chat-hub-history-header-spacer {
         flex: 1 1 auto;
     }
 
-    .chat-home-history-list {
+    .chat-hub-history-list {
         flex: 1 1 auto;
         min-height: 0;
         overflow-y: auto;
-        gap: var(--lumo-space-s);
+        gap: var(--vaadin-gap-s);
     }
 
-    .chat-home-history-group {
-        gap: var(--lumo-space-s);
+    .chat-hub-history-group {
+        gap: var(--vaadin-gap-s);
+        padding: 0 var(--vaadin-padding-xs);
     }
 
-    .chat-home-history-group-header {
-        gap: var(--lumo-space-m);
-        padding: var(--lumo-space-xs) 0;
+    .chat-hub-history-group-header {
+        gap: var(--vaadin-gap-m);
+        padding: var(--vaadin-padding-xs) 0;
     }
 
-    .chat-home-history-bucket {
-        color: var(--lumo-secondary-text-color);
-        font-size: var(--lumo-font-size-xs);
+    .chat-hub-history-bucket {
+        color: var(--vaadin-text-color-secondary);
+        font-size: var(--aura-font-size-xs);
         font-weight: 600;
     }
 
-    .chat-home-history-group-count {
+    .chat-hub-history-group-count {
         /* Inherits the shared badge look from the rule below. */
     }
 }
@@ -188,18 +193,20 @@
 /* Shared pill-badge look for the panel-header count and per-bucket count.
    Rectangular: horizontal padding gives single and multi-digit counts equal
    breathing room; vertical padding + a slightly relaxed line-height keep the
-   text comfortably inside the box (no clipping on tall digits). */
-.chat-home-history-count,
-.chat-home-history-group-count {
+   text comfortably inside the box (no clipping on tall digits).
+   The subtle background uses the same oklch-from-text-colour derivation that
+   the timeline CSS already uses for table headers in this add-on. */
+.chat-hub-history-count,
+.chat-hub-history-group-count {
     align-items: center;
-    background: var(--lumo-contrast-10pct);
-    border-radius: var(--lumo-border-radius-s);
+    background: oklch(from var(--vaadin-text-color) l c h / 0.1);
+    border-radius: var(--vaadin-radius-s);
     box-sizing: border-box;
-    color: var(--lumo-secondary-text-color);
+    color: var(--vaadin-text-color-secondary);
     display: inline-flex;
-    font-size: var(--lumo-font-size-xs);
+    font-size: var(--aura-font-size-xs);
     font-weight: 500;
     justify-content: center;
-    line-height: var(--lumo-line-height-m);
-    padding: 0 var(--lumo-space-xs);
+    line-height: var(--aura-line-height-m);
+    padding: 0 var(--vaadin-padding-xs);
 }

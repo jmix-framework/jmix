@@ -42,7 +42,7 @@
                     <button id="editConversationTitleBtn"
                             icon="PENCIL"
                             themeNames="tertiary icon small"
-                            ariaLabel="msg://editConversationTitleAction"/>
+                            ariaLabel="msg://aiChatFragment.editConversationTitleAction"/>
                 </hbox>
                 <vbox id="conversationContentLayout"
                       width="100%"

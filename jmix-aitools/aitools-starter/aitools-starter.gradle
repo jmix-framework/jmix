@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-apply plugin: 'io.jmix'
-
 group = 'io.jmix.aitools'
 archivesBaseName = 'jmix-aitools-starter'
 
@@ -24,7 +22,7 @@ dependencies {
 
     api 'org.springframework.boot:spring-boot-autoconfigure'
 
-    implementation platform('org.springframework.ai:spring-ai-bom:2.0.0-M8')
+    implementation platform('org.springframework.ai:spring-ai-bom:2.0.0-RC1')
     implementation 'org.springframework.ai:spring-ai-client-chat'
     implementation 'org.springframework.ai:spring-ai-model'
 }

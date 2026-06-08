@@ -16,9 +16,9 @@
   -->
 
 <view xmlns="http://jmix.io/schema/flowui/view"
-      title="msg://aiChatHomeView.title">
+      title="msg://aiChatHubView.title">
     <layout padding="false">
-        <fragment id="homeFragment"
-                  class="io.jmix.aitoolsflowui.view.chathome.AiChatHomeFragment"/>
+        <fragment id="hubFragment"
+                  class="io.jmix.aitoolsflowui.view.chathub.AiChatHubFragment"/>
     </layout>
 </view>

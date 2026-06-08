@@ -35,7 +35,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.stream.Stream;
 
-@Route(value = "aitols/ai-conversations/:id", layout = DefaultMainViewParent.class)
+@Route(value = "aitols/conversations/:id", layout = DefaultMainViewParent.class)
 @ViewController("aitols_AiConversation.detail")
 @ViewDescriptor("ai-conversation-detail-view.xml")
 @EditedEntityContainer("aiConversationDc")

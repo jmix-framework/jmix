@@ -17,13 +17,16 @@
 package io.jmix.aitoolsflowui.view.chat;
 
 import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.function.SerializableSupplier;
 import io.jmix.aitoolsflowui.service.AssistantResponseTaskCoordinator;
 import io.jmix.aitoolsflowui.view.input.AiChatInputFragment;
 import io.jmix.aitools.entity.AiConversation;
 import io.jmix.aitools.entity.ChatMessage;
 import io.jmix.aitools.entity.ChatMessageType;
+import io.jmix.aitools.service.AiConversationChatService;
 import io.jmix.aitools.service.AiConversationService;
 import io.jmix.aitools.tool.AiUiStatusUpdate;
 import io.jmix.aitoolsflowui.model.TimelineItem;
@@ -58,7 +61,7 @@ import java.util.UUID;
  * indicator and the {@link AiChatInputFragment}
  * composer — for an {@link AiConversation}.
  * Designed to be embedded into any host view (the standard detail view, a
- * side dialog, a chat home view, custom layouts).
+ * side dialog, a chat hub view, custom layouts).
  * <p>
  * <b>Ownership.</b> The host supplies the conversation to display via
  * {@link #setConversation(AiConversation)} or {@link #setConversationId(UUID)};
@@ -96,6 +99,8 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
     protected AssistantResponseTaskCoordinator assistantResponseTaskCoordinator;
     @Autowired
     protected TimelineItemFactory timelineItemFactory;
+    @Autowired
+    protected AiConversationChatService aiConversationChatService;
 
     @ViewComponent
     protected MessageBundle messageBundle;
@@ -121,6 +126,11 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
 
     protected boolean readOnly;
 
+    protected boolean aiUnavailableWarned;
+
+    @Nullable
+    protected SerializableSupplier<Component> aiAvatarIconSupplier;
+
     /**
      * Binds the fragment to a conversation. Re-renders the timeline,
      * refreshes the title and (re-)enables the composer. Safe to call
@@ -140,6 +150,15 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
      */
     public void setConversationId(@Nullable UUID conversationId) {
         setConversation(conversationId != null ? loadConversation(conversationId) : null);
+    }
+
+    public void setAiAvatarIconSupplier(@Nullable SerializableSupplier<Component> avatarIconSupplier) {
+        this.aiAvatarIconSupplier = avatarIconSupplier;
+    }
+
+    @Nullable
+    public SerializableSupplier<Component> getAiAvatarIconSupplier() {
+        return aiAvatarIconSupplier;
     }
 
     /**
@@ -194,7 +213,7 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
      * Programmatic entry point to send a user message: persists it, appends it
      * to the timeline, shows the thinking indicator, disables the composer and
      * runs the assistant. Used by the composer's submit handler and by hosts
-     * that start a conversation with an initial prompt (the chat-home flow).
+     * that start a conversation with an initial prompt (the chat-hub flow).
      */
     public void sendMessage(String userMessage) {
         if (conversation == null) {
@@ -204,13 +223,17 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
         if (userMessage == null || userMessage.isBlank()) {
             return;
         }
+        if (!aiConversationChatService.isAvailable()) {
+            log.warn("Cannot submit message — AI is not configured");
+            return;
+        }
 
         ChatMessage savedUserMessage;
         try {
             savedUserMessage = aiConversationService.createUserMessage(conversation, userMessage.trim());
         } catch (Exception e) {
             log.error("Failed to persist user message", e);
-            notifications.create(messageBundle.getMessage("errorProcessingMessage"))
+            notifications.create(messageBundle.getMessage("aiChatFragment.errorProcessingMessage"))
                     .withType(Notifications.Type.ERROR)
                     .show();
             return;
@@ -278,7 +301,7 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
         awaitingResponse = false;
         removeThinkingIndicator();
         appendTimelineItem(timelineItemFactory.createAssistantItem(createTransientAssistantMessage(
-                messageBundle.getMessage("errorProcessingMessage"))));
+                messageBundle.getMessage("aiChatFragment.errorProcessingMessage"))));
 
         forceMessageInputFocus();
     }
@@ -337,6 +360,17 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
         scrollToBottom();
 
         refreshComposerVisibility();
+        warnIfAiUnavailable();
+    }
+
+    protected void warnIfAiUnavailable() {
+        if (conversation == null || aiUnavailableWarned || aiConversationChatService.isAvailable()) {
+            return;
+        }
+        aiUnavailableWarned = true;
+        notifications.create(messageBundle.getMessage("aiChatFragment.aiNotConfigured"))
+                .withType(Notifications.Type.WARNING)
+                .show();
     }
 
     /**
@@ -356,7 +390,7 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
     }
 
     protected void refreshComposerVisibility() {
-        boolean show = conversation != null && !readOnly;
+        boolean show = conversation != null && !readOnly && aiConversationChatService.isAvailable();
         composerContainer.setVisible(show);
         editConversationTitleBtn.setVisible(show);
     }
@@ -498,11 +532,11 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
         }
 
         dialogs.createInputDialog(view)
-                .withHeader(messageBundle.getMessage("editConversationTitleDialog.header"))
+                .withHeader(messageBundle.getMessage("aiChatFragment.editConversationTitleDialog.header"))
                 .withLabelsPosition(Dialogs.InputDialogBuilder.LabelsPosition.TOP)
                 .withParameters(
                         InputParameter.stringParameter("title")
-                                .withLabel(messageBundle.getMessage("editConversationTitleDialog.titleField"))
+                                .withLabel(messageBundle.getMessage("aiChatFragment.editConversationTitleDialog.titleField"))
                                 .withRequired(true)
                                 .withDefaultValue(currentTitle)
                 )
@@ -522,6 +556,7 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
                     // Persist only the title and refresh just the header.
                     // Reloading conversation while awaiting LLM answer
                     // may break UI.
+                    conversation = dataManager.save(conversation);
                     conversationTitle.setText(conversation.getTitle());
                 })
                 .open();

@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package io.jmix.aitoolsflowui.view.chathome.component;
+package io.jmix.aitoolsflowui.view.chathub.component;
 
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.card.Card;
@@ -30,16 +31,20 @@ import io.jmix.flowui.theme.StyleUtility;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
+import static java.util.Objects.requireNonNull;
+
 /**
- * Outlined card for a single conversation in the chat home's recent list and
+ * Outlined card for a single conversation in the chat hub's recent list and
  * history side panel. Clicking the card body opens the conversation. The trash
  * delete button is rendered only when a delete handler is supplied (history
- * panel); the recent list passes {@code null} and shows no delete button.
+ * panel); without one the card shows no delete button.
+ * <p>
+ * Configure the card through the setters, then call {@link #build()} to
+ * (re)assemble its content from the current property values.
  */
-@NullMarked
 public class AiConversationCard extends Composite<Card> {
 
-    protected static final String BASE_CN = "chat-home-card";
+    protected static final String BASE_CN = "chat-hub-card";
     protected static final String ROW_CN = BASE_CN + "-row";
     protected static final String BODY_CN = BASE_CN + "-body";
     protected static final String TITLE_ROW_CN = BASE_CN + "-title-row";
@@ -48,19 +53,88 @@ public class AiConversationCard extends Composite<Card> {
     protected static final String DATE_CN = BASE_CN + "-date";
     protected static final String DELETE_CN = BASE_CN + "-delete";
 
+    protected String title;
+    protected Component icon;
+    protected Runnable openHandler;
+
+    @Nullable
+    protected String createdDate;
+    @Nullable
+    protected Runnable deleteHandler;
+    @Nullable
+    protected String deleteAriaLabel;
+
     @Override
     protected Card initContent() {
         return createContent();
     }
 
-    public void setConversation(String title,
-                                @Nullable String createdDate,
-                                Runnable openHandler,
-                                @Nullable Runnable deleteHandler,
-                                @Nullable String deleteAriaLabel) {
+    /**
+     * Sets the title-row icon (required). Call {@link #build()} afterwards to
+     * apply the change.
+     */
+    public void setIcon(Component icon) {
+        this.icon = icon;
+    }
+
+    /**
+     * Sets the conversation title (required). Call {@link #build()} afterwards
+     * to apply the change.
+     */
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    /**
+     * Sets the formatted creation date; when {@code null} the date line is
+     * omitted. Call {@link #build()} afterwards to apply the change.
+     */
+    @NullMarked
+    public void setCreatedDate(@Nullable String createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    /**
+     * Sets the handler invoked when the card body is clicked (required). Call
+     * {@link #build()} afterwards to apply the change.
+     */
+    public void setOpenHandler(Runnable openHandler) {
+        this.openHandler = openHandler;
+    }
+
+    /**
+     * Sets the handler invoked by the delete button; when {@code null} no
+     * delete button is rendered. Call {@link #build()} afterwards to apply the
+     * change.
+     */
+    @NullMarked
+    public void setDeleteHandler(@Nullable Runnable deleteHandler) {
+        this.deleteHandler = deleteHandler;
+    }
+
+    /**
+     * Sets the {@code aria-label} of the delete button. Call {@link #build()}
+     * afterwards to apply the change.
+     */
+    @NullMarked
+    public void setDeleteAriaLabel(@Nullable String deleteAriaLabel) {
+        this.deleteAriaLabel = deleteAriaLabel;
+    }
+
+    /**
+     * (Re)assembles the card content from the currently configured properties.
+     * Call after the setters; {@link #setIcon(Component)},
+     * {@link #setTitle(String)} and {@link #setOpenHandler(Runnable)} are
+     * required and must be set beforehand.
+     */
+    public void build() {
+        Component icon = requireNonNull(this.icon, "icon must be set before build()");
+        String title = requireNonNull(this.title, "title must be set before build()");
+        Runnable openHandler = requireNonNull(this.openHandler, "openHandler must be set before build()");
+
         getContent().removeAll();
 
-        VerticalLayout body = createBody(title, createdDate, openHandler);
+        VerticalLayout body = createBody(icon, title, openHandler, createdDate);
         HorizontalLayout row = createRow(body);
 
         if (deleteHandler != null) {
@@ -74,10 +148,11 @@ public class AiConversationCard extends Composite<Card> {
      * Stacks the title row and (optionally) the date as the clickable body of
      * the card. The whole body is the open-conversation hit area.
      */
-    protected VerticalLayout createBody(String title,
-                                        @Nullable String createdDate,
-                                        Runnable openHandler) {
-        VerticalLayout body = new VerticalLayout(createTitleRow(title));
+    protected VerticalLayout createBody(Component icon,
+                                        String title,
+                                        Runnable openHandler,
+                                        @Nullable String createdDate) {
+        VerticalLayout body = new VerticalLayout(createTitleRow(icon, title));
         body.setPadding(false);
         body.setSpacing(false);
         body.setWidthFull();
@@ -96,18 +171,13 @@ public class AiConversationCard extends Composite<Card> {
      * Icon + title in one row, so the icon visually reads as a marker of the
      * title rather than of the whole card.
      */
-    protected HorizontalLayout createTitleRow(String title) {
-        HorizontalLayout titleRow = new HorizontalLayout(createIcon(), createTitle(title));
+    protected HorizontalLayout createTitleRow(Component icon, String title) {
+        icon.getElement().getClassList().add(ICON_CN);
+        HorizontalLayout titleRow = new HorizontalLayout(icon, createTitle(title));
         titleRow.setAlignItems(FlexComponent.Alignment.CENTER);
         titleRow.setWidthFull();
         titleRow.addClassName(TITLE_ROW_CN);
         return titleRow;
-    }
-
-    protected AiAssistantIcon createIcon() {
-        AiAssistantIcon icon = new AiAssistantIcon();
-        icon.addClassName(ICON_CN);
-        return icon;
     }
 
     protected Span createTitle(String title) {
@@ -142,6 +212,7 @@ public class AiConversationCard extends Composite<Card> {
      * generic vaadin-button theme attributes (Lumo/Aura both honour them) —
      * no {@code LUMO_*} variant prefixes.
      */
+    @NullMarked
     protected Button createDeleteButton(Runnable deleteHandler,
                                         @Nullable String deleteAriaLabel) {
         Button deleteButton = new Button(VaadinIcon.TRASH.create());

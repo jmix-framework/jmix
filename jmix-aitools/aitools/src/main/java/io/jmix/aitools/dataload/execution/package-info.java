@@ -14,14 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.aitoolsflowui.view.chathome;
+@Experimental
+package io.jmix.aitools.dataload.execution;
 
-
-import com.vaadin.flow.router.Route;
-import io.jmix.flowui.view.*;
-
-@Route(value = "aitols/ai-chat-home", layout = DefaultMainViewParent.class)
-@ViewController(id = "aitols_AiChatHomeView")
-@ViewDescriptor(path = "ai-chat-home-view.xml")
-public class AiChatHomeView extends StandardView {
-}
+import io.jmix.core.annotation.Experimental;

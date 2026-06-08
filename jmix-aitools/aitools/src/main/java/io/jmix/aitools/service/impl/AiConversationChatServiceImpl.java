@@ -76,7 +76,12 @@ public class AiConversationChatServiceImpl implements AiConversationChatService,
 
     @Override
     public void afterPropertiesSet() {
-        chatClient = chatClientFactory.createChatClientWithDefaultAdvisors();
+        chatClient = chatClientFactory.createChatClientWithDefaultAdvisors().orElse(null);
+    }
+
+    @Override
+    public boolean isAvailable() {
+        return chatClient != null;
     }
 
     @Override
@@ -136,8 +141,8 @@ public class AiConversationChatServiceImpl implements AiConversationChatService,
                         .text(systemPromptProvider.getResource())
                         .param("responseLanguage", resolveResponseLanguage())
                         .param("additionalInstructions", ""))
-                .tools(t -> t.callbacks(aiToolRegistry.getAllCallbacks())
-                        .context(toolContext))
+                .tools(aiToolRegistry.getAllCallbacks())
+                .toolContext(toolContext)
                 .messages(history);
     }
 

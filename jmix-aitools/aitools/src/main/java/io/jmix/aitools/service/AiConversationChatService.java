@@ -64,4 +64,11 @@ public interface AiConversationChatService {
      * @return a cold flux emitting LLM response chunks in order
      */
     Flux<String> processStream(UUID userMessageId, @Nullable Consumer<AiUiStatusUpdate> statusCallback);
+
+    /**
+     * Whether the underlying chat model is configured and ready to process messages. When
+     * {@code false}, {@link #process} / {@link #processStream} would fail, so callers should
+     * degrade the UI to read-only instead of invoking them.
+     */
+    boolean isAvailable();
 }

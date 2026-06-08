@@ -21,7 +21,7 @@ import io.jmix.aitools.entity.ChatMessage;
 import io.jmix.aitoolsflowui.view.aiconversation.AiConversationDetailView;
 import io.jmix.aitoolsflowui.view.aiconversation.AiConversationListView;
 import io.jmix.aitoolsflowui.view.chat.AiChatView;
-import io.jmix.aitoolsflowui.view.chathome.AiChatHomeView;
+import io.jmix.aitoolsflowui.view.chathub.AiChatHubView;
 import io.jmix.aitoolsflowui.view.chatmessage.ChatMessageDetailView;
 import io.jmix.aitoolsflowui.view.chatmessage.ChatMessageListView;
 import io.jmix.security.model.EntityAttributePolicyAction;
@@ -49,13 +49,13 @@ public interface AiToolsFullAccessRole {
     void entityPolicies();
 
     @ViewPolicy(viewClasses = {
-            AiChatHomeView.class,
+            AiChatHubView.class,
             AiChatView.class,
             AiConversationListView.class,
             AiConversationDetailView.class,
             ChatMessageListView.class,
             ChatMessageDetailView.class
     })
-    @MenuPolicy(menuIds = {"aitols_AiChatHomeView", "aitols_AiConversation.list"})
+    @MenuPolicy(menuIds = {"aitols_AiChatHubView", "aitols_AiConversation.list"})
     void screenPolicies();
 }

@@ -44,7 +44,7 @@ public class AiChatServiceImpl implements AiChatService, InitializingBean {
 
     @Override
     public void afterPropertiesSet() {
-        chatClient = chatClientFactory.createChatClientWithDefaultAdvisors();
+        chatClient = chatClientFactory.createChatClientWithDefaultAdvisors().orElse(null);
     }
 
     @Override
@@ -68,7 +68,7 @@ public class AiChatServiceImpl implements AiChatService, InitializingBean {
                         .param("responseLanguage", resolveResponseLanguage())
                         .param("additionalInstructions", ""))
                 .user(user -> user.text(message))
-                .tools(t -> t.callbacks(aiToolRegistry.getAllCallbacks()));
+                .tools(aiToolRegistry.getAllCallbacks());
     }
 
     protected String resolveResponseLanguage() {

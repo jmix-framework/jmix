@@ -50,9 +50,7 @@
                             operationTextVisible="false"/>
         </hbox>
         <hbox id="buttonsPanel" width="100%">
-            <button id="createButton" action="chatMessagesDataGrid.create"/>
-            <button id="editButton" action="chatMessagesDataGrid.edit"/>
-            <button id="removeButton" action="chatMessagesDataGrid.remove"/>
+            <button id="readButton" action="chatMessagesDataGrid.readAction"/>
             <endSlot>
                 <simplePagination id="pagination" dataLoader="chatMessagesDl"/>
             </endSlot>
@@ -60,19 +58,13 @@
         <dataGrid id="chatMessagesDataGrid" width="100%" minHeight="20em"
                   dataContainer="chatMessagesDc">
             <actions>
-                <action id="create" type="list_create">
+                <action id="readAction" type="list_read">
                     <properties>
                         <property name="openMode" value="DIALOG"/>
                     </properties>
                 </action>
-                <action id="edit" type="list_edit">
-                    <properties>
-                        <property name="openMode" value="DIALOG"/>
-                    </properties>
-                </action>
-                <action id="remove" type="list_remove"/>
             </actions>
-            <columns>
+            <columns resizable="true">
                 <column property="type" autoWidth="true" flexGrow="0"/>
                 <column property="createdDate" autoWidth="true" flexGrow="0"/>
                 <column property="content" flexGrow="1"/>

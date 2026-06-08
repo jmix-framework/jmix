@@ -16,8 +16,11 @@
 
 package io.jmix.aitoolsflowui.view.chat.renderer;
 
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.function.SerializableSupplier;
 import io.jmix.aitools.entity.ChatMessage;
+import io.jmix.aitoolsflowui.icon.AiIconProvider;
 import io.jmix.aitoolsflowui.model.TimelineItem;
 import io.jmix.aitoolsflowui.model.TimelineItemType;
 import io.jmix.aitoolsflowui.service.ActorNameResolver;
@@ -30,6 +33,8 @@ import io.jmix.core.Messages;
 import io.jmix.core.metamodel.datatype.DatatypeFormatter;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.fragment.FragmentDescriptor;
+import io.jmix.flowui.fragment.FragmentOwner;
+import io.jmix.flowui.fragment.FragmentUtils;
 import io.jmix.flowui.fragmentrenderer.FragmentRenderer;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +69,8 @@ public class TimelineItemRenderer extends FragmentRenderer<VerticalLayout, Timel
     protected DatatypeFormatter datatypeFormatter;
     @Autowired
     protected Messages messages;
+    @Autowired
+    protected AiIconProvider iconProvider;
 
     // Per-instance lazy caches for the three inner row shapes. Each entry is
     // initialised on first use and then reused for every subsequent setItem
@@ -120,12 +127,14 @@ public class TimelineItemRenderer extends FragmentRenderer<VerticalLayout, Timel
             case ASSISTANT -> {
                 if (assistantItem == null) {
                     assistantItem = uiComponents.create(TimelineAssistantMessageItem.class);
+                    assistantItem.setAiAvatarIconSupplier(resolveAiAvatarIconSupplier());
                 }
                 yield assistantItem;
             }
             case ASSISTANT_THINKING -> {
                 if (thinkingItem == null) {
                     thinkingItem = uiComponents.create(TimelineAssistantThinkingMessageItem.class);
+                    thinkingItem.setAiAvatarIconSupplier(resolveAiAvatarIconSupplier());
                 }
                 yield thinkingItem;
             }
@@ -136,23 +145,31 @@ public class TimelineItemRenderer extends FragmentRenderer<VerticalLayout, Timel
         ChatMessage message = item.getMessage();
         switch (item.getType()) {
             case USER -> ((TimelineUserMessageItem) messageItem).setMessage(message,
-                    actorNameResolver.resolve(message, messages.getMessage(getMessageGroup(), "defaultActorName"))
+                    actorNameResolver.resolve(message, messages.getMessage(getMessageGroup(), "timelineItemRenderer.defaultActorName"))
             );
             case ASSISTANT -> ((TimelineAssistantMessageItem) messageItem).setMessage(
                     message,
                     Boolean.TRUE.equals(item.getFresh()),
-                    messages.getMessage(getMessageGroup(), "assistantName")
+                    messages.getMessage(getMessageGroup(), "timelineItemRenderer.assistantName")
             );
             case ASSISTANT_THINKING -> ((TimelineAssistantThinkingMessageItem) messageItem).setThinking(
                     item,
-                    messages.getMessage(getMessageGroup(), "assistantName"),
-                    messages.getMessage(getMessageGroup(), "thinkingIndicator")
+                    messages.getMessage(getMessageGroup(), "timelineItemRenderer.assistantName"),
+                    messages.getMessage(getMessageGroup(), "timelineItemRenderer.thinkingIndicator")
             );
         }
 
         messageItem.setTime(
                 datatypeFormatter.formatOffsetDateTime(
                         message != null ? message.getCreatedDate() : null));
+    }
+
+    protected SerializableSupplier<Component> resolveAiAvatarIconSupplier() {
+        FragmentOwner owner = FragmentUtils.getParentController(this);
+        if (owner instanceof AiChatFragment chatFragment && chatFragment.getAiAvatarIconSupplier() != null) {
+            return chatFragment.getAiAvatarIconSupplier();
+        }
+        return iconProvider::createAvatarIcon;
     }
 
     protected String getMessageGroup() {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.aitoolsflowui.view.chathome.component;
+package io.jmix.aitoolsflowui.view.chathub.component;
 
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.html.Span;
@@ -35,10 +35,10 @@ import java.util.function.Function;
 @NullMarked
 public class AiConversationHistoryGroup extends Composite<VerticalLayout> {
 
-    protected static final String BASE_CN = "chat-home-history-group";
+    protected static final String BASE_CN = "chat-hub-history-group";
     protected static final String HEADER_CN = BASE_CN + "-header";
     protected static final String COUNT_CN = BASE_CN + "-count";
-    protected static final String LABEL_CN = "chat-home-history-bucket";
+    protected static final String LABEL_CN = "chat-hub-history-bucket";
 
     @Override
     protected VerticalLayout initContent() {

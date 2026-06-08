@@ -14,45 +14,38 @@
  * limitations under the License.
  */
 
-package io.jmix.aitoolsflowui.view.chathome.component;
+package io.jmix.aitoolsflowui.icon;
 
-import com.vaadin.flow.component.Composite;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.icon.SvgIcon;
 import com.vaadin.flow.server.streams.DownloadHandler;
 import com.vaadin.flow.server.streams.DownloadResponse;
 import com.vaadin.flow.server.streams.InputStreamDownloadHandler;
-import org.jspecify.annotations.NullMarked;
 
 /**
- * The AI assistant brand mark (a sparkle burst, without the avatar's centre
- * dot). Reused on the chat home — the hero glyph and the per-conversation
- * card icon (recent list and history panel). The timeline avatar uses the
- * dot variant ({@code ai-assistant-avatar-dot.svg}) instead.
- * <p>
- * The glyph paints with {@code currentColor}, so size and colour are driven by
- * CSS on the element (e.g. {@code width}/{@code height}/{@code color}).
+ * Default implementation of {@link AiIconProvider} that uses the built-in
+ * sparkle-burst SVG mark and the dot-variant avatar shipped with the add-on.
  */
-@NullMarked
-public class AiAssistantIcon extends Composite<SvgIcon> {
-
-    protected static final String BASE_CN = "ai-assistant-mark";
+public class DefaultAiIconProvider implements AiIconProvider {
 
     protected static final String MARK_PATH = "io/jmix/aitoolsflowui/icon/ai-assistant-mark.svg";
+    protected static final String AVATAR_ICON_PATH = "io/jmix/aitoolsflowui/icon/ai-assistant-avatar-dot.svg";
 
     @Override
-    protected SvgIcon initContent() {
-        return createContent();
-    }
-
-    protected SvgIcon createContent() {
+    public Component createMarkIcon() {
         InputStreamDownloadHandler handler = DownloadHandler.fromInputStream(e -> {
-            var stream = AiAssistantIcon.class.getClassLoader().getResourceAsStream(MARK_PATH);
+            var stream = getClass().getClassLoader().getResourceAsStream(MARK_PATH);
             return new DownloadResponse(stream, "ai-assistant-mark.svg", "image/svg+xml", -1);
         });
+        return new SvgIcon(handler);
+    }
 
-        SvgIcon svgIcon = new SvgIcon();
-        svgIcon.addClassNames(BASE_CN);
-        svgIcon.setSrc(handler);
-        return svgIcon;
+    @Override
+    public Component createAvatarIcon() {
+        DownloadHandler handler = DownloadHandler.fromInputStream(e -> {
+            var stream = getClass().getClassLoader().getResourceAsStream(AVATAR_ICON_PATH);
+            return new DownloadResponse(stream, "ai-assistant-avatar-dot.svg", "image/svg+xml", -1);
+        });
+        return new SvgIcon(handler);
     }
 }

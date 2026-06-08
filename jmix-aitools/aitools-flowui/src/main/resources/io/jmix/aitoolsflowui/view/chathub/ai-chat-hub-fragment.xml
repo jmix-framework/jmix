@@ -44,7 +44,7 @@
               height="100%"
               padding="false"
               spacing="false"
-              classNames="ai-chat-home">
+              classNames="ai-chat-hub">
             <sidePanelLayout id="historySidePanel"
                              width="100%"
                              height="100%"
@@ -53,39 +53,39 @@
                              sidePanelHorizontalSize="26rem"
                              modal="false"
                              closeOnOutsideClick="true"
-                             classNames="chat-home-history-panel">
-                <vbox id="homeScrollArea"
+                             classNames="chat-hub-history-panel">
+                <vbox id="hubScrollArea"
                       width="100%"
                       height="100%"
                       padding="false"
                       spacing="false"
-                      classNames="chat-home-scroll">
-                    <vbox id="homeCanvas"
+                      classNames="chat-hub-scroll">
+                    <vbox id="hubCanvas"
                           width="100%"
                           spacing="true"
                           padding="false"
-                          classNames="chat-home-canvas">
-                        <vbox id="homeHeading"
+                          classNames="chat-hub-canvas">
+                        <vbox id="hubHeading"
                               width="100%"
                               spacing="false"
                               padding="false"
                               alignItems="CENTER"
-                              classNames="chat-home-heading">
-                            <div id="homeHeroIcon"
-                                 classNames="chat-home-hero-icon"/>
-                            <h2 id="homeTitle"
-                                text="msg://aiChatHomeFragment.heading"
-                                classNames="chat-home-title"/>
-                            <span id="homeSubtitle"
-                                  text="msg://aiChatHomeFragment.subheading"
-                                  classNames="chat-home-subtitle"/>
+                              classNames="chat-hub-heading">
+                            <div id="hubHeroIcon"
+                                 classNames="chat-hub-hero-icon"/>
+                            <h2 id="hubTitle"
+                                text="msg://aiChatHubFragment.heading"
+                                classNames="chat-hub-title"/>
+                            <span id="hubSubtitle"
+                                  text="msg://aiChatHubFragment.subheading"
+                                  classNames="chat-hub-subtitle"/>
                         </vbox>
 
                         <vbox id="composerCard"
                               width="100%"
                               spacing="false"
                               padding="false"
-                              classNames="chat-home-input">
+                              classNames="chat-hub-input">
                             <fragment id="composerFragment"
                                       class="io.jmix.aitoolsflowui.view.input.AiChatInputFragment"/>
                         </vbox>
@@ -94,14 +94,14 @@
                               width="100%"
                               alignItems="CENTER"
                               spacing="false"
-                              classNames="chat-home-section-header">
+                              classNames="chat-hub-section-header">
                             <h4 id="recentConversationsHeading"
-                                text="msg://aiChatHomeFragment.recentHeading"
-                                classNames="chat-home-section-heading"/>
+                                text="msg://aiChatHubFragment.recentHeading"
+                                classNames="chat-hub-section-heading"/>
                             <div id="recentConversationsSpacer"
-                                 classNames="chat-home-section-rule"/>
+                                 classNames="chat-hub-section-rule"/>
                             <button id="showAllHistoryBtn"
-                                    text="msg://aiChatHomeFragment.showAll"
+                                    text="msg://aiChatHubFragment.showAll"
                                     icon="ANGLE_RIGHT"
                                     iconAfterText="true"
                                     classNames="link-button"/>
@@ -110,7 +110,7 @@
                                     itemsContainer="recentConversationsDc"
                                     width="100%"
                                     columnMinWidth="16rem"
-                                    classNames="chat-home-recent-grid"/>
+                                    classNames="chat-hub-recent-grid"/>
 
                         <!-- Suggestions: scaffold, hidden until implemented. -->
                         <vbox id="suggestionsSection"
@@ -118,7 +118,7 @@
                               spacing="false"
                               padding="false"
                               visible="false"
-                              classNames="chat-home-suggestions"/>
+                              classNames="chat-hub-suggestions"/>
                     </vbox>
                 </vbox>
 
@@ -127,41 +127,41 @@
                       height="100%"
                       padding="false"
                       spacing="false"
-                      classNames="chat-home-history-content">
+                      classNames="chat-hub-history-content">
                     <hbox id="historyPanelHeader"
                           width="100%"
                           alignItems="CENTER"
                           spacing="true"
-                          classNames="chat-home-history-header">
+                          classNames="chat-hub-history-header">
                         <hbox id="historyPanelTitleGroup"
                               alignItems="CENTER"
                               spacing="false"
                               padding="false"
-                              classNames="chat-home-history-title-group">
+                              classNames="chat-hub-history-title-group">
                             <h3 id="historyPanelTitle"
-                                text="msg://aiChatHomeFragment.historyTitle"
-                                classNames="chat-home-history-title"/>
+                                text="msg://aiChatHubFragment.historyTitle"
+                                classNames="chat-hub-history-title"/>
                             <span id="historyPanelCount"
-                                  classNames="chat-home-history-count"/>
+                                  classNames="chat-hub-history-count"/>
                         </hbox>
                         <div id="historyHeaderSpacer"
-                             classNames="chat-home-history-header-spacer"/>
+                             classNames="chat-hub-history-header-spacer"/>
                         <button id="historyNewBtn"
-                                text="msg://aiChatHomeFragment.newConversation"
+                                text="msg://aiChatHubFragment.newConversation"
                                 icon="PLUS"
                                 themeNames="tertiary small"/>
                         <button id="historyCloseBtn"
                                 icon="CLOSE"
                                 themeNames="tertiary small icon"
-                                ariaLabel="msg://aiChatHomeFragment.historyClose"/>
+                                ariaLabel="msg://aiChatHubFragment.historyClose"/>
                     </hbox>
                     <textField id="historySearchField"
                                valueChangeMode="EAGER"
                                valueChangeTimeout="250"
-                               placeholder="msg://aiChatHomeFragment.historySearchPlaceholder"
+                               placeholder="msg://aiChatHubFragment.historySearchPlaceholder"
                                clearButtonVisible="true"
                                width="100%"
-                               classNames="chat-home-history-search">
+                               classNames="chat-hub-history-search">
                         <suffix>
                             <icon icon="SEARCH"/>
                         </suffix>
@@ -170,7 +170,7 @@
                           width="100%"
                           padding="false"
                           spacing="false"
-                          classNames="chat-home-history-list"/>
+                          classNames="chat-hub-history-list"/>
                 </vbox>
             </sidePanelLayout>
         </vbox>

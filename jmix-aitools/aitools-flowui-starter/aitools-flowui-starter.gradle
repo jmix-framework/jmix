@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-apply plugin: 'io.jmix'
-
 group = 'io.jmix.aitools'
 archivesBaseName = 'jmix-aitoolsflowui-starter'
 

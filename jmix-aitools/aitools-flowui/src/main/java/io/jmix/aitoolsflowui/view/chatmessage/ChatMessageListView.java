@@ -80,13 +80,4 @@ public class ChatMessageListView extends StandardListView<ChatMessage> {
             conversationTitle.setVisible(false);
         }
     }
-
-    @Install(to = "chatMessagesDataGrid.create", subject = "newEntitySupplier")
-    private ChatMessage chatMessagesDataGridCreateNewEntitySupplier() {
-        ChatMessage message = dataManager.create(ChatMessage.class);
-        if (conversation != null) {
-            message.setConversation(conversation);
-        }
-        return message;
-    }
 }

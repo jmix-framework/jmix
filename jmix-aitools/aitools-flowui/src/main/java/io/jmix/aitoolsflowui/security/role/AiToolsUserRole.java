@@ -19,7 +19,7 @@ package io.jmix.aitoolsflowui.security.role;
 import io.jmix.aitools.entity.AiConversation;
 import io.jmix.aitools.entity.ChatMessage;
 import io.jmix.aitoolsflowui.view.chat.AiChatView;
-import io.jmix.aitoolsflowui.view.chathome.AiChatHomeView;
+import io.jmix.aitoolsflowui.view.chathub.AiChatHubView;
 import io.jmix.security.model.EntityAttributePolicyAction;
 import io.jmix.security.model.EntityPolicyAction;
 import io.jmix.security.model.SecurityScope;
@@ -30,7 +30,7 @@ import io.jmix.securityflowui.role.annotation.MenuPolicy;
 import io.jmix.securityflowui.role.annotation.ViewPolicy;
 
 /**
- * Grants access to the AI Tools chat for an end user: the AI chat home and the conversation view,
+ * Grants access to the AI Tools chat for an end user: the AI chat hub and the conversation view,
  * with full management of conversations and chat messages (start, continue and delete chats).
  * Does not grant access to the administrative conversation and chat message browsers.
  */
@@ -45,7 +45,7 @@ public interface AiToolsUserRole {
     @EntityAttributePolicy(entityClass = ChatMessage.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
     void entityPolicies();
 
-    @ViewPolicy(viewClasses = {AiChatHomeView.class, AiChatView.class})
-    @MenuPolicy(menuIds = "aitols_AiChatHomeView")
+    @ViewPolicy(viewClasses = {AiChatHubView.class, AiChatView.class})
+    @MenuPolicy(menuIds = "aitols_AiChatHubView")
     void screenPolicies();
 }

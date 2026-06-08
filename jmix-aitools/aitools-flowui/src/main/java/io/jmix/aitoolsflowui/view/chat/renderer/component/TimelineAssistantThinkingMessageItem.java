@@ -20,11 +20,13 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.function.SerializableSupplier;
 import io.jmix.aitools.tool.AiUiStatusUpdate;
 import io.jmix.aitoolsflowui.model.TimelineItem;
 import io.jmix.aitoolsflowui.model.TimelineItemStatus;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -60,6 +62,9 @@ public class TimelineAssistantThinkingMessageItem extends AbstractTimelineItem i
     protected ApplicationContext applicationContext;
     protected Metadata metadata;
     protected Messages messages;
+
+    @Nullable
+    protected SerializableSupplier<Component> avatarIconSupplier;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) {
@@ -152,8 +157,16 @@ public class TimelineAssistantThinkingMessageItem extends AbstractTimelineItem i
         return statusUpdates.get(statusUpdates.size() - 1);
     }
 
+    public void setAiAvatarIconSupplier(@Nullable SerializableSupplier<Component> avatarIconSupplier) {
+        this.avatarIconSupplier = avatarIconSupplier;
+    }
+
     @Override
     protected Component createAvatar(String actorName) {
-        return new AssistantAvatar();
+        AssistantAvatar avatar = new AssistantAvatar();
+        if (avatarIconSupplier != null) {
+            avatar.setIcon(avatarIconSupplier.get());
+        }
+        return avatar;
     }
 }

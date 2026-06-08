@@ -18,7 +18,9 @@ package io.jmix.aitoolsflowui.view.chat.renderer.component;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.markdown.Markdown;
+import com.vaadin.flow.function.SerializableSupplier;
 import io.jmix.aitools.entity.ChatMessage;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Optional;
 
@@ -27,6 +29,9 @@ public class TimelineAssistantMessageItem extends AbstractTimelineItem {
     protected static final String ASSISTANT_MESSAGE_CN = "timeline-message-row-assistant";
     protected static final String ASSISTANT_MESSAGE_REFRESH_CN = "timeline-message-row-fresh";
     protected static final String ASSISTANT_MESSAGE_MARKDOWN_CN = "timeline-markdown";
+
+    @Nullable
+    protected SerializableSupplier<Component> avatarIconSupplier;
 
     public void setMessage(ChatMessage message, boolean isFresh, String actorName) {
         removeClassNames(ASSISTANT_MESSAGE_REFRESH_CN, ASSISTANT_MESSAGE_CN);
@@ -49,8 +54,16 @@ public class TimelineAssistantMessageItem extends AbstractTimelineItem {
         return markdown;
     }
 
+    public void setAiAvatarIconSupplier(@Nullable SerializableSupplier<Component> avatarIconSupplier) {
+        this.avatarIconSupplier = avatarIconSupplier;
+    }
+
     @Override
     protected Component createAvatar(String actorName) {
-        return new AssistantAvatar();
+        AssistantAvatar avatar = new AssistantAvatar();
+        if (avatarIconSupplier != null) {
+            avatar.setIcon(avatarIconSupplier.get());
+        }
+        return avatar;
     }
 }

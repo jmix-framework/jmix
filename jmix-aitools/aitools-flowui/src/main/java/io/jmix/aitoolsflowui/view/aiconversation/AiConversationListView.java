@@ -26,7 +26,7 @@ import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.view.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@Route(value = "aitols/ai-conversations", layout = DefaultMainViewParent.class)
+@Route(value = "aitols/conversations", layout = DefaultMainViewParent.class)
 @ViewController("aitols_AiConversation.list")
 @ViewDescriptor("ai-conversation-list-view.xml")
 @LookupComponent("aiConversationsDataGrid")
@@ -39,8 +39,8 @@ public class AiConversationListView extends StandardListView<AiConversation> {
     @ViewComponent
     protected DataGrid<AiConversation> aiConversationsDataGrid;
 
-    @Subscribe("aiConversationsDataGrid.editMessagesAction")
-    public void onAiConversationsDataGridEditMessagesAction(final ActionPerformedEvent event) {
+    @Subscribe("aiConversationsDataGrid.viewMessagesAction")
+    public void onAiConversationsDataGridViewMessagesAction(final ActionPerformedEvent event) {
         AiConversation selected = aiConversationsDataGrid.getSingleSelectedItem();
         if (selected == null) {
             return;

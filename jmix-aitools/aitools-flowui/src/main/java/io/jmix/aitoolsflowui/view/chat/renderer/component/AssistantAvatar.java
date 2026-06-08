@@ -16,43 +16,35 @@
 
 package io.jmix.aitoolsflowui.view.chat.renderer.component;
 
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.icon.SvgIcon;
-import com.vaadin.flow.server.streams.DownloadHandler;
-import com.vaadin.flow.server.streams.DownloadResponse;
+import org.jspecify.annotations.Nullable;
 
+/**
+ * Badge element shown in the timeline avatar column for assistant messages.
+ * The inner glyph is injected via {@link #setIcon(Component)} rather than
+ * created here, so callers can supply a custom icon from an
+ * {@code AiIconProvider}.
+ */
 public class AssistantAvatar extends Composite<Div> {
 
     protected static final String BASE_CN = "timeline-avatar";
     protected static final String ASSISTANT_CN = "timeline-avatar-assistant";
     protected static final String AVATAR_ICON_CN = "timeline-avatar-icon";
 
-    protected static final String ASSISTANT_AVATAR_PATH =
-            "io/jmix/aitoolsflowui/icon/ai-assistant-avatar-dot.svg";
-
     @Override
     protected Div initContent() {
-        Div div = createContent();
+        Div div = new Div();
         div.addClassNames(BASE_CN, ASSISTANT_CN);
-
-        div.add(createIcon());
-
         return div;
     }
 
-    protected Div createContent() {
-        return new Div();
-    }
-
-    protected SvgIcon createIcon() {
-        DownloadHandler handler = DownloadHandler.fromInputStream(e -> {
-            var stream = getClass().getClassLoader().getResourceAsStream(ASSISTANT_AVATAR_PATH);
-            return new DownloadResponse(stream, "ai-assistant-avatar-dot.svg", "image/svg+xml", -1);
-        });
-
-        SvgIcon svgIcon = new SvgIcon(handler);
-        svgIcon.addClassName(AVATAR_ICON_CN);
-        return svgIcon;
+    public void setIcon(@Nullable Component icon) {
+        getContent().removeAll();
+        if (icon != null) {
+            icon.getElement().getClassList().add(AVATAR_ICON_CN);
+            getContent().add(icon);
+        }
     }
 }

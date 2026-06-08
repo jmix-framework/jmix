@@ -121,13 +121,13 @@ public class AiDataLoadServiceImpl implements AiDataLoadService, InitializingBea
                         .text(systemPromptProvider.getResource())
                         .param("responseLanguage", resolveResponseLanguage()))
                 .user(user -> user.text(message))
-                .tools(t -> t.callbacks(aiToolRegistry.findByMarker(DataLoadAiTool.class).stream()
+                .tools(aiToolRegistry.findByMarker(DataLoadAiTool.class).stream()
                         .map(ResolvedAiTool::getCallback)
-                        .toList()));
+                        .toList());
     }
 
     protected void buildChatClient() {
-        chatClient = chatClientFactory.createChatClientWithDefaultAdvisors();
+        chatClient = chatClientFactory.createChatClientWithDefaultAdvisors().orElse(null);
     }
 
     protected boolean isChatClientAvailable() {

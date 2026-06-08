@@ -22,6 +22,8 @@ import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.html.Span;
 import io.jmix.aitools.entity.ChatMessage;
 
+import java.util.Locale;
+
 /**
  * A row representing a persisted user or assistant {@link ChatMessage}.
  * Assistant content is rendered as Markdown, user content as plain text.
@@ -48,8 +50,32 @@ public class TimelineUserMessageItem extends AbstractTimelineItem {
     @Override
     protected Component createAvatar(String actorName) {
         Avatar userAvatar = new Avatar(actorName);
+        userAvatar.setAbbreviation(avatarAbbreviation(actorName));
         userAvatar.addClassName(AVATAR_CN);
         return userAvatar;
+    }
+
+    /**
+     * Builds the avatar initials from the actor name. The Jmix {@code User}
+     * instance name embeds the login as {@code "First Last [username]"}; the
+     * bracketed login is dropped so the circle shows clean initials (e.g.
+     * {@code "JS"}), falling back to the login's first letter when no name is
+     * present. Set explicitly so the Avatar does not derive noisy initials from
+     * the whole string.
+     */
+    protected static String avatarAbbreviation(String actorName) {
+        String source = Strings.nullToEmpty(actorName);
+        String name = source.replaceAll("\\[.*?]", " ").trim();
+        if (name.isEmpty()) {
+            name = source.replace("[", " ").replace("]", " ").trim();
+        }
+        if (name.isEmpty()) {
+            return "";
+        }
+        String[] words = name.split("\\s+");
+        String abbreviation = words[0].charAt(0)
+                + (words.length > 1 ? words[words.length - 1].substring(0, 1) : "");
+        return abbreviation.toUpperCase(Locale.ROOT);
     }
 
     private Component createMessageContent(ChatMessage message) {

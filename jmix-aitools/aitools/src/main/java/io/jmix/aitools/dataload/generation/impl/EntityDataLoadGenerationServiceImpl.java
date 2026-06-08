@@ -88,13 +88,13 @@ public class EntityDataLoadGenerationServiceImpl implements EntityDataLoadGenera
                         .text(entityDataLoadPromptProvider.getResource())
                         .param("responseLanguage", resolveResponseLanguage()))
                 .user(user -> user.text(userText))
-                .tools(t -> t.callbacks(aiToolRegistry.findByMarker(EntityDataLoadAiTool.class).stream()
+                .tools(aiToolRegistry.findByMarker(EntityDataLoadAiTool.class).stream()
                         .map(ResolvedAiTool::getCallback)
-                        .toList()));
+                        .toList());
     }
 
     protected void buildChatClient() {
-        chatClient = chatClientFactory.createChatClientWithDefaultAdvisors();
+        chatClient = chatClientFactory.createChatClientWithDefaultAdvisors().orElse(null);
     }
 
     protected boolean isChatClientAvailable() {
@@ -115,8 +115,8 @@ public class EntityDataLoadGenerationServiceImpl implements EntityDataLoadGenera
         List<GeneratedJpqlParameter> parameters = payload.getParameters() == null
                 ? Collections.emptyList()
                 : payload.getParameters().stream()
-                .map(this::toGeneratedJpqlParameter)
-                .toList();
+                  .map(this::toGeneratedJpqlParameter)
+                  .toList();
 
         return new EntityDataLoadQuery(
                 payload.getJpql(),

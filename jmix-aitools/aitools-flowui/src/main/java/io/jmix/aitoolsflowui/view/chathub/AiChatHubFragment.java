@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.aitoolsflowui.view.chathome;
+package io.jmix.aitoolsflowui.view.chathub;
 
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Component;
@@ -22,17 +22,19 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
+import com.vaadin.flow.function.SerializableSupplier;
 import io.jmix.aitools.entity.AiConversation;
 import io.jmix.aitools.entity.ChatMessage;
 import io.jmix.aitools.entity.ChatMessageType;
+import io.jmix.aitools.service.AiConversationChatService;
 import io.jmix.aitools.service.AiConversationService;
 import io.jmix.aitoolsflowui.AiToolsFlowuiProperties;
+import io.jmix.aitoolsflowui.icon.AiIconProvider;
 import io.jmix.aitoolsflowui.view.chat.AiChatView;
-import io.jmix.aitoolsflowui.view.chathome.component.AiAssistantIcon;
-import io.jmix.aitoolsflowui.view.chathome.component.AiConversationCard;
-import io.jmix.aitoolsflowui.view.chathome.component.AiConversationHistoryGroup;
+import io.jmix.aitoolsflowui.view.chathub.component.AiConversationCard;
+import io.jmix.aitoolsflowui.view.chathub.component.AiConversationHistoryGroup;
 import io.jmix.aitoolsflowui.view.input.AiChatInputFragment;
-import io.jmix.aitoolsflowui.view.chathome.component.HistoryBucket;
+import io.jmix.aitoolsflowui.view.chathub.component.HistoryBucket;
 import io.jmix.core.DataManager;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.datatype.DatatypeFormatter;
@@ -72,10 +74,10 @@ import java.util.Objects;
 import java.util.Optional;
 
 /**
- * Self-contained chat home UI. Embeds the reusable chat input, shows the
+ * Self-contained chat hub UI. Embeds the reusable chat input, shows the
  * current user's most recent chats next to it, and a full searchable,
  * date-bucketed history in a {@link SidePanelLayout}. Designed to be dropped
- * into any host view; the add-on also ships {@code AiChatHomeView}
+ * into any host view; the add-on also ships {@code AiChatHubView}
  * as a ready-made host.
  * <p>
  * Starting a chat creates a conversation and navigates to {@link AiChatView}
@@ -84,15 +86,17 @@ import java.util.Optional;
  * {@link AiChatView#sendInitialPrompt(String)} (works in both standard routing
  * and tabbed mode).
  */
-@FragmentDescriptor("ai-chat-home-fragment.xml")
-public class AiChatHomeFragment extends Fragment<VerticalLayout> {
+@FragmentDescriptor("ai-chat-hub-fragment.xml")
+public class AiChatHubFragment extends Fragment<VerticalLayout> {
 
-    private static final Logger log = LoggerFactory.getLogger(AiChatHomeFragment.class);
+    private static final Logger log = LoggerFactory.getLogger(AiChatHubFragment.class);
+
+    protected static final String HERO_ICON_CN = "chat-hub-hero-icon-glyph";
 
     @ViewComponent
     protected MessageBundle messageBundle;
     @ViewComponent
-    protected Div homeHeroIcon;
+    protected Div hubHeroIcon;
     @ViewComponent
     protected AiChatInputFragment composerFragment;
     @ViewComponent
@@ -135,16 +139,31 @@ public class AiChatHomeFragment extends Fragment<VerticalLayout> {
     @Autowired
     protected AiConversationService aiConversationService;
     @Autowired
+    protected AiConversationChatService aiConversationChatService;
+    @Autowired
     protected AiToolsFlowuiProperties properties;
+    @Autowired
+    protected AiIconProvider iconProvider;
 
     @Nullable
     protected Integer recentChatsCount;
     protected String historyFilter = "";
 
+    @Nullable
+    protected SerializableSupplier<Component> markIconSupplier;
+
+    public void setMarkIconSupplier(@Nullable SerializableSupplier<Component> markIconSupplier) {
+        this.markIconSupplier = markIconSupplier;
+    }
+
+    protected Component resolveMarkIcon() {
+        return markIconSupplier != null ? markIconSupplier.get() : iconProvider.createMarkIcon();
+    }
+
     /**
      * Overrides the number of recent chats shown next to the chat input.
      * When unset, the value comes from
-     * {@code jmix.aitools.ui.chat-home-recent-chats-count} (default 6).
+     * {@code jmix.aitools.ui.chat-hub-recent-chats-count} (default 6).
      */
     public void setRecentChatsCount(int recentChatsCount) {
         this.recentChatsCount = recentChatsCount;
@@ -152,17 +171,32 @@ public class AiChatHomeFragment extends Fragment<VerticalLayout> {
 
     @Subscribe
     public void onReady(final ReadyEvent event) {
-        AiAssistantIcon heroIcon = new AiAssistantIcon();
-        heroIcon.addClassName("chat-home-hero-icon-glyph");
-        homeHeroIcon.removeAll();
-        homeHeroIcon.add(heroIcon);
+        Component heroIcon = resolveMarkIcon();
+        heroIcon.addClassNames("ai-assistant-mark", HERO_ICON_CN);
+        hubHeroIcon.removeAll();
+        hubHeroIcon.add(heroIcon);
 
         composerFragment.setSubmitHandler(this::startConversation);
 
         loadConversations();
         refreshRecentConversationsVisibility();
         renderHistoryList();
+        refreshComposerAvailability();
         composerFragment.focus();
+    }
+
+    /**
+     * Disables the composer and warns the user when the chat model is not configured —
+     * starting a new chat would fail.
+     */
+    protected void refreshComposerAvailability() {
+        if (aiConversationChatService.isAvailable()) {
+            return;
+        }
+        composerFragment.setInputEnabled(false);
+        notifications.create(messageBundle.getMessage("aiChatHubFragment.aiNotConfigured"))
+                .withType(Notifications.Type.WARNING)
+                .show();
     }
 
     protected void loadConversations() {
@@ -181,8 +215,8 @@ public class AiChatHomeFragment extends Fragment<VerticalLayout> {
         try {
             conversation = aiConversationService.createNewConversation();
         } catch (Exception e) {
-            log.error("Failed to create conversation from chat home", e);
-            notifications.create(messageBundle.getMessage("errorProcessingMessage"))
+            log.error("Failed to create conversation from chat hub", e);
+            notifications.create(messageBundle.getMessage("aiChatHubFragment.errorProcessingMessage"))
                     .withType(Notifications.Type.ERROR)
                     .show();
             return;
@@ -242,12 +276,15 @@ public class AiChatHomeFragment extends Fragment<VerticalLayout> {
 
     protected AiConversationCard createCard(AiConversation conversation, boolean deletable) {
         AiConversationCard card = new AiConversationCard();
-        card.setConversation(
-                metadataTools.getInstanceName(conversation),
-                formatDateTime(conversation.getCreatedDate()),
-                () -> openConversation(conversation),
-                deletable ? () -> confirmDelete(conversation) : null,
-                deletable ? messageBundle.getMessage("aiChatHomeFragment.deleteConversation") : null);
+        card.setIcon(resolveMarkIcon());
+        card.setTitle(metadataTools.getInstanceName(conversation));
+        card.setCreatedDate(formatDateTime(conversation.getCreatedDate()));
+        card.setOpenHandler(() -> openConversation(conversation));
+        if (deletable) {
+            card.setDeleteHandler(() -> confirmDelete(conversation));
+            card.setDeleteAriaLabel(messageBundle.getMessage("aiChatHubFragment.deleteConversation"));
+        }
+        card.build();
         return card;
     }
 
@@ -260,8 +297,8 @@ public class AiChatHomeFragment extends Fragment<VerticalLayout> {
 
     protected void confirmDelete(AiConversation conversation) {
         dialogs.createOptionDialog()
-                .withHeader(messageBundle.getMessage("aiChatHomeFragment.deleteConfirm.header"))
-                .withText(messageBundle.getMessage("aiChatHomeFragment.deleteConfirm.text"))
+                .withHeader(messageBundle.getMessage("aiChatHubFragment.deleteConfirm.header"))
+                .withText(messageBundle.getMessage("aiChatHubFragment.deleteConfirm.text"))
                 .withActions(
                         new DialogAction(DialogAction.Type.YES)
                                 .withVariant(ActionVariant.DANGER)
@@ -275,7 +312,7 @@ public class AiChatHomeFragment extends Fragment<VerticalLayout> {
             dataManager.remove(conversation);
         } catch (Exception e) {
             log.error("Failed to delete conversation", e);
-            notifications.create(messageBundle.getMessage("errorProcessingMessage"))
+            notifications.create(messageBundle.getMessage("aiChatHubFragment.errorProcessingMessage"))
                     .withType(Notifications.Type.ERROR)
                     .show();
             return;
@@ -294,8 +331,8 @@ public class AiChatHomeFragment extends Fragment<VerticalLayout> {
         historyListContainer.removeAll();
         if (filtered.isEmpty()) {
             Span emptyState = uiComponents.create(Span.class);
-            emptyState.setText(messageBundle.getMessage("aiChatHomeFragment.historyEmpty"));
-            emptyState.addClassName("chat-home-history-empty");
+            emptyState.setText(messageBundle.getMessage("aiChatHubFragment.historyEmpty"));
+            emptyState.addClassName("chat-hub-history-empty");
             historyListContainer.add(emptyState);
             return;
         }
@@ -342,10 +379,10 @@ public class AiChatHomeFragment extends Fragment<VerticalLayout> {
 
     protected String bucketLabel(HistoryBucket bucket) {
         return switch (bucket) {
-            case TODAY -> messageBundle.getMessage("aiChatHomeFragment.historyBucketToday");
-            case YESTERDAY -> messageBundle.getMessage("aiChatHomeFragment.historyBucketYesterday");
-            case LAST_WEEK -> messageBundle.getMessage("aiChatHomeFragment.historyBucketLastWeek");
-            case EARLIER -> messageBundle.getMessage("aiChatHomeFragment.historyBucketEarlier");
+            case TODAY -> messageBundle.getMessage("aiChatHubFragment.historyBucketToday");
+            case YESTERDAY -> messageBundle.getMessage("aiChatHubFragment.historyBucketYesterday");
+            case LAST_WEEK -> messageBundle.getMessage("aiChatHubFragment.historyBucketLastWeek");
+            case EARLIER -> messageBundle.getMessage("aiChatHubFragment.historyBucketEarlier");
         };
     }
 
@@ -372,7 +409,7 @@ public class AiChatHomeFragment extends Fragment<VerticalLayout> {
     protected int resolveRecentChatsCount() {
         return recentChatsCount != null
                 ? recentChatsCount
-                : properties.getChatHomeRecentChatsCount();
+                : properties.getChatHubRecentChatsCount();
     }
 
     @Nullable

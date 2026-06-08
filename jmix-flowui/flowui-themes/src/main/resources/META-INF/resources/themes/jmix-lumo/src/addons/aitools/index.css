@@ -15,6 +15,6 @@
  */
 
 @import './ai-chat-fragment.css';
-@import './ai-chat-home-fragment.css';
+@import './ai-chat-hub-fragment.css';
 @import './ai-chat-input-fragment.css';
 @import './ai-timeline-item-renderer.css';

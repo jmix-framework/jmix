@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.aitoolsflowui.view.chathome.component;
+package io.jmix.aitoolsflowui.view.chathub.component;
 
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;

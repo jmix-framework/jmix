@@ -14,7 +14,14 @@
  * limitations under the License.
  */
 
-@import './ai-chat-fragment.css';
-@import './ai-chat-hub-fragment.css';
-@import './ai-chat-input-fragment.css';
-@import './ai-timeline-item-renderer.css';
+package io.jmix.aitoolsflowui.view.chathub;
+
+
+import com.vaadin.flow.router.Route;
+import io.jmix.flowui.view.*;
+
+@Route(value = "aitols/chats", layout = DefaultMainViewParent.class)
+@ViewController(id = "aitols_AiChatHubView")
+@ViewDescriptor(path = "ai-chat-hub-view.xml")
+public class AiChatHubView extends StandardView {
+}

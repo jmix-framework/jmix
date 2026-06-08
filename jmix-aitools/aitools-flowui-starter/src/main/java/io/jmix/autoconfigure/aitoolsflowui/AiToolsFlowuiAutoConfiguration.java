@@ -17,11 +17,21 @@
 package io.jmix.autoconfigure.aitoolsflowui;
 
 import io.jmix.aitoolsflowui.AiToolsFlowuiConfiguration;
+import io.jmix.aitoolsflowui.icon.AiIconProvider;
+import io.jmix.aitoolsflowui.icon.DefaultAiIconProvider;
 import io.jmix.flowui.FlowuiConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 
 @AutoConfiguration
 @Import({AiToolsFlowuiConfiguration.class, FlowuiConfiguration.class})
 public class AiToolsFlowuiAutoConfiguration {
+
+    @Bean("aitols_DefaultAiIconProvider")
+    @ConditionalOnMissingBean(AiIconProvider.class)
+    public AiIconProvider aiIconProvider() {
+        return new DefaultAiIconProvider();
+    }
 }

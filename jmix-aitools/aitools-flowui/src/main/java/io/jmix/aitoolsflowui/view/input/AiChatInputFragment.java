@@ -30,7 +30,7 @@ import java.util.function.Consumer;
  * Reusable chat input ("composer"). Replaces the stock Vaadin
  * {@link com.vaadin.flow.component.messages.MessageInput} with a
  * {@link JmixTextArea} + send {@link JmixButton}, so it can be embedded both in
- * the timeline ({@code AiChatFragment}) and on the chat home screen.
+ * the timeline ({@code AiChatFragment}) and on the chat hub screen.
  * <p>
  * <b>Submit gesture.</b> Enter submits; Shift+Enter inserts a newline. The
  * server-side submit fires only for a bare Enter (DOM keydown filter) and the

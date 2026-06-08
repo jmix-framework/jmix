@@ -117,6 +117,7 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
 
     protected AiConversation conversation;
     protected TimelineItem activeThinkingItem;
+    protected boolean awaitingResponse;
 
     protected boolean readOnly;
 
@@ -180,6 +181,16 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
     }
 
     /**
+     * Whether an assistant response is currently being generated for the bound
+     * conversation. Hosts can use this to warn the user before closing — the
+     * background task is scoped to the host view and is cancelled (losing the
+     * answer) when the view detaches.
+     */
+    public boolean isAwaitingResponse() {
+        return awaitingResponse;
+    }
+
+    /**
      * Programmatic entry point to send a user message: persists it, appends it
      * to the timeline, shows the thinking indicator, disables the composer and
      * runs the assistant. Used by the composer's submit handler and by hosts
@@ -209,6 +220,7 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
         appendTimelineItem(timelineItemFactory.createUserItem(savedUserMessage));
         showThinkingIndicator();
         setMessageInputEnabled(false);
+        awaitingResponse = true;
 
         processUserMessage(savedUserMessage);
     }
@@ -231,6 +243,7 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
 
     protected void handleAssistantResponseDone(@Nullable ChatMessage finalMessage) {
         activeThinkingItem = null;
+        awaitingResponse = false;
         // Tools may persist side effects (including the new assistant message) in
         // their own transaction, so the in-memory state is stale here. Re-binding
         // by id reloads the conversation and its messages synchronously, after
@@ -262,6 +275,7 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
     }
 
     protected void showAssistantProcessingError() {
+        awaitingResponse = false;
         removeThinkingIndicator();
         appendTimelineItem(timelineItemFactory.createAssistantItem(createTransientAssistantMessage(
                 messageBundle.getMessage("errorProcessingMessage"))));

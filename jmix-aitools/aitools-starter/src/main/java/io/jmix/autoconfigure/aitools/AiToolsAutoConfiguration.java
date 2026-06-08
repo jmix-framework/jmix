@@ -17,13 +17,11 @@
 package io.jmix.autoconfigure.aitools;
 
 import io.jmix.aitools.AiToolsConfiguration;
-import io.jmix.aitools.memory.JmixChatMemoryRepository;
 import io.jmix.aitools.service.prompt.AiChatSystemPromptProvider;
 import io.jmix.aitools.service.prompt.impl.DefaultAiChatSystemPromptProvider;
 import io.jmix.core.CoreConfiguration;
 import io.jmix.data.DataConfiguration;
 import io.jmix.eclipselink.EclipselinkConfiguration;
-import org.springframework.ai.chat.memory.ChatMemoryRepository;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBooleanProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -34,12 +32,6 @@ import org.springframework.context.annotation.Import;
 @ConditionalOnBooleanProperty(value = "aitools.enabled", matchIfMissing = true)
 @Import({CoreConfiguration.class, AiToolsConfiguration.class, DataConfiguration.class, EclipselinkConfiguration.class})
 public class AiToolsAutoConfiguration {
-
-    @Bean("aitols_JmixChatMemoryRepository")
-    @ConditionalOnMissingBean(ChatMemoryRepository.class)
-    public ChatMemoryRepository jmixAiChatService() {
-        return new JmixChatMemoryRepository();
-    }
 
     @Bean("aitols_DefaultAiChatSystemPromptProvider")
     @ConditionalOnMissingBean(AiChatSystemPromptProvider.class)

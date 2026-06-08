@@ -17,11 +17,11 @@
 package io.jmix.aitools.service.impl;
 
 import io.jmix.aitools.ChatClientFactory;
+import io.jmix.aitools.ResponseLanguageProvider;
 import io.jmix.aitools.service.AiChatService;
 import io.jmix.aitools.service.prompt.AiChatSystemPromptProvider;
 import io.jmix.aitools.tool.AiToolRegistry;
 import io.jmix.core.common.util.Preconditions;
-import io.jmix.core.security.CurrentAuthentication;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +38,7 @@ public class AiChatServiceImpl implements AiChatService, InitializingBean {
     @Autowired
     protected AiChatSystemPromptProvider systemPromptProvider;
     @Autowired
-    protected CurrentAuthentication currentAuthentication;
+    protected ResponseLanguageProvider responseLanguageProvider;
 
     protected ChatClient chatClient;
 
@@ -72,7 +72,7 @@ public class AiChatServiceImpl implements AiChatService, InitializingBean {
     }
 
     protected String resolveResponseLanguage() {
-        return currentAuthentication.getLocale().getLanguage();
+        return responseLanguageProvider.getResponseLanguage();
     }
 
     protected void checkChatClient() {

@@ -19,6 +19,8 @@ package io.jmix.aitoolsflowui.view.chat;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.BeforeEnterEvent;
+import com.vaadin.flow.router.BeforeLeaveEvent;
+import com.vaadin.flow.router.BeforeLeaveEvent.ContinueNavigationAction;
 import com.vaadin.flow.router.Route;
 import io.jmix.aitools.entity.AiConversation;
 import io.jmix.aitoolsflowui.view.chathome.AiChatHomeView;
@@ -26,10 +28,19 @@ import io.jmix.core.DataManager;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.FetchPlans;
 import io.jmix.core.usersubstitution.CurrentUserSubstitution;
+import io.jmix.flowui.Dialogs;
 import io.jmix.flowui.ViewNavigators;
+import io.jmix.flowui.action.DialogAction;
 import io.jmix.flowui.component.UiComponentUtils;
+import io.jmix.flowui.kit.action.ActionVariant;
 import io.jmix.flowui.kit.component.button.JmixButton;
+import io.jmix.flowui.util.OperationResult;
+import io.jmix.flowui.util.UnknownOperationResult;
+import io.jmix.flowui.view.CloseAction;
 import io.jmix.flowui.view.DefaultMainViewParent;
+import io.jmix.flowui.view.MessageBundle;
+import io.jmix.flowui.view.NavigateCloseAction;
+import io.jmix.flowui.view.StandardOutcome;
 import io.jmix.flowui.view.StandardView;
 import io.jmix.flowui.view.Subscribe;
 import io.jmix.flowui.view.ViewComponent;
@@ -83,7 +94,11 @@ public class AiChatView extends StandardView {
     private ViewNavigators viewNavigators;
     @Autowired
     private CurrentUserSubstitution currentUserSubstitution;
+    @Autowired
+    private Dialogs dialogs;
 
+    @ViewComponent
+    private MessageBundle messageBundle;
     @ViewComponent
     private AiChatFragment chatFragment;
     @ViewComponent
@@ -96,6 +111,7 @@ public class AiChatView extends StandardView {
     private boolean conversationNotFound;
     private boolean contentInitialized;
     private boolean initialPromptSent;
+    private boolean leaveConfirmed;
 
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
@@ -179,6 +195,64 @@ public class AiChatView extends StandardView {
         return fetchPlans.builder(AiConversation.class)
                 .addFetchPlan(FetchPlan.BASE)
                 .build();
+    }
+
+    @Subscribe
+    public void onBeforeClose(final BeforeCloseEvent event) {
+        // Warns before leaving while the assistant response is still being
+        // generated.
+        // leaveConfirmed guards re-entry: confirming "Leave" calls close()
+        // again, which re-fires this event while the response is still in
+        // flight - without the flag that would loop the dialog.
+        if (leaveConfirmed || !chatFragment.isAwaitingResponse()) {
+            return;
+        }
+        CloseAction action = event.getCloseAction();
+        UnknownOperationResult result = new UnknownOperationResult();
+
+        if (action instanceof NavigateCloseAction navigateCloseAction) {
+            ContinueNavigationAction navigationAction = navigateCloseAction.getBeforeLeaveEvent().postpone();
+            showLeaveWhileRespondingDialog(
+                    () -> {
+                        leaveConfirmed = true;
+                        result.resume(proceedWithNavigation(navigationAction));
+                    },
+                    () -> {
+                        result.otherwise(navigationAction::cancel);
+                        result.fail();
+                    });
+        } else {
+            showLeaveWhileRespondingDialog(
+                    () -> {
+                        leaveConfirmed = true;
+                        result.resume(close(StandardOutcome.CLOSE));
+                    },
+                    result::fail);
+        }
+
+        event.preventClose(result);
+    }
+
+    protected void showLeaveWhileRespondingDialog(Runnable onLeave, Runnable onStay) {
+        dialogs.createOptionDialog()
+                .withHeader(messageBundle.getMessage("aiChatView.leaveWhileResponding.header"))
+                .withText(messageBundle.getMessage("aiChatView.leaveWhileResponding.text"))
+                .withActions(
+                        new DialogAction(DialogAction.Type.YES)
+                                .withText(messageBundle.getMessage("aiChatView.leaveWhileResponding.leave"))
+                                .withVariant(ActionVariant.DANGER)
+                                .withHandler(e -> onLeave.run()),
+                        new DialogAction(DialogAction.Type.NO)
+                                .withText(messageBundle.getMessage("aiChatView.leaveWhileResponding.stay"))
+                                .withHandler(e -> onStay.run()))
+                .open();
+    }
+
+    protected OperationResult proceedWithNavigation(ContinueNavigationAction navigationAction) {
+        navigationAction.proceed();
+        CloseAction closeAction = StandardOutcome.CLOSE.getCloseAction();
+        fireEvent(new AfterCloseEvent(this, closeAction));
+        return OperationResult.success();
     }
 
     @Subscribe(id = "newChatBtn", subject = "clickListener")

@@ -45,24 +45,18 @@ public class AvailableEntityService {
     @Autowired
     protected ObjectProvider<AvailableEntityFilter> availableEntityFilters;
 
-    protected List<EntitySummary> entitySummaries;
-
     /**
      * Returns compact summaries for all entities available to the current user.
      * <p>
-     * The result is filtered through the active {@link AvailableEntityFilter}, sorted by entity name,
-     * and cached for subsequent calls within the bean lifecycle.
+     * The result is filtered through the active {@link AvailableEntityFilter} and sorted by entity name.
      *
      * @return immutable list of available entity summaries, or an empty list if no entities are available
      */
     public List<EntitySummary> getEntitySummaries() {
-        if (entitySummaries == null) {
-            entitySummaries = getAvailableEntityDescriptors().stream()
-                    .sorted(Comparator.comparing(EntityDescriptor::getName))
-                    .map(this::toEntitySummary)
-                    .toList();
-        }
-        return entitySummaries;
+        return getAvailableEntityDescriptors().stream()
+                .sorted(Comparator.comparing(EntityDescriptor::getName))
+                .map(this::toEntitySummary)
+                .toList();
     }
 
     /**

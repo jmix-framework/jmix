@@ -18,6 +18,7 @@ package io.jmix.aitools.service.impl;
 
 import io.jmix.aitools.AiToolsProperties;
 import io.jmix.aitools.ChatClientFactory;
+import io.jmix.aitools.ResponseLanguageProvider;
 import io.jmix.aitools.entity.AiConversation;
 import io.jmix.aitools.entity.ChatMessage;
 import io.jmix.aitools.entity.ChatMessageType;
@@ -30,7 +31,6 @@ import io.jmix.aitools.tool.AiToolStatusPublisher;
 import io.jmix.core.DataManager;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.common.util.Preconditions;
-import io.jmix.core.security.CurrentAuthentication;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,7 +66,7 @@ public class AiConversationChatServiceImpl implements AiConversationChatService,
     @Autowired
     protected AiChatSystemPromptProvider systemPromptProvider;
     @Autowired
-    protected CurrentAuthentication currentAuthentication;
+    protected ResponseLanguageProvider responseLanguageProvider;
     @Autowired
     protected DataManager dataManager;
     @Autowired
@@ -207,7 +207,7 @@ public class AiConversationChatServiceImpl implements AiConversationChatService,
     }
 
     protected String resolveResponseLanguage() {
-        return currentAuthentication.getLocale().getLanguage();
+        return responseLanguageProvider.getResponseLanguage();
     }
 
     protected void checkChatClient() {

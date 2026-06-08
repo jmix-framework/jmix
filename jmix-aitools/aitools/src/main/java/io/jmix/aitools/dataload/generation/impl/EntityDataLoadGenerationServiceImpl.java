@@ -19,6 +19,7 @@ package io.jmix.aitools.dataload.generation.impl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jmix.aitools.ChatClientFactory;
+import io.jmix.aitools.ResponseLanguageProvider;
 import io.jmix.aitools.dataload.EntityDataLoadQuery;
 import io.jmix.aitools.dataload.execution.GeneratedJpqlParameter;
 import io.jmix.aitools.dataload.generation.EntityDataLoadGenerationService;
@@ -29,7 +30,6 @@ import io.jmix.aitools.dataload.tool.EntityDataLoadAiTool;
 import io.jmix.aitools.tool.AiToolRegistry;
 import io.jmix.aitools.tool.ResolvedAiTool;
 import io.jmix.core.common.util.Preconditions;
-import io.jmix.core.security.CurrentAuthentication;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +48,7 @@ public class EntityDataLoadGenerationServiceImpl implements EntityDataLoadGenera
     @Autowired
     protected AiToolRegistry aiToolRegistry;
     @Autowired
-    protected CurrentAuthentication currentAuthentication;
+    protected ResponseLanguageProvider responseLanguageProvider;
 
     protected ChatClient chatClient;
     protected ObjectMapper objectMapper;
@@ -108,7 +108,7 @@ public class EntityDataLoadGenerationServiceImpl implements EntityDataLoadGenera
     }
 
     protected String resolveResponseLanguage() {
-        return currentAuthentication.getLocale().getLanguage();
+        return responseLanguageProvider.getResponseLanguage();
     }
 
     protected EntityDataLoadQuery mapToQueryDraft(EntityDataLoadQueryPayload payload) {

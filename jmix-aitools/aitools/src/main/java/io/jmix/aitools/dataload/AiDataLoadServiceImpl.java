@@ -17,6 +17,7 @@
 package io.jmix.aitools.dataload;
 
 import io.jmix.aitools.ChatClientFactory;
+import io.jmix.aitools.ResponseLanguageProvider;
 import io.jmix.aitools.dataload.execution.*;
 import io.jmix.aitools.dataload.generation.EntityDataLoadGenerationService;
 import io.jmix.aitools.dataload.prompt.DataLoadChatSystemPromptProvider;
@@ -24,7 +25,6 @@ import io.jmix.aitools.dataload.tool.DataLoadAiTool;
 import io.jmix.aitools.tool.AiToolRegistry;
 import io.jmix.aitools.tool.ResolvedAiTool;
 import io.jmix.core.common.util.Preconditions;
-import io.jmix.core.security.CurrentAuthentication;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +52,7 @@ public class AiDataLoadServiceImpl implements AiDataLoadService, InitializingBea
     @Autowired
     protected AiToolRegistry aiToolRegistry;
     @Autowired
-    protected CurrentAuthentication currentAuthentication;
+    protected ResponseLanguageProvider responseLanguageProvider;
     @Autowired
     protected EntityDataLoadGenerationService entityDataLoadGenerationService;
     @Autowired
@@ -135,7 +135,7 @@ public class AiDataLoadServiceImpl implements AiDataLoadService, InitializingBea
     }
 
     protected String resolveResponseLanguage() {
-        return currentAuthentication.getLocale().getLanguage();
+        return responseLanguageProvider.getResponseLanguage();
     }
 
     protected void checkChatClient() {

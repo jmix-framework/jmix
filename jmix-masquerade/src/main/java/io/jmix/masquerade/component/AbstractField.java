@@ -16,7 +16,6 @@
 
 package io.jmix.masquerade.component;
 
-import com.codeborne.selenide.CheckResult;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 import com.google.common.base.Strings;
@@ -41,28 +40,25 @@ public abstract class AbstractField<T extends AbstractField<T>> extends Abstract
     }
 
     @Override
-    public CheckResult check(SpecificCondition condition) {
-        SelenideElement inputImpl = getInputDelegate();
-
+    public SpecificCheck resolve(SpecificCondition condition) {
         if (condition instanceof Value valueCondition) {
             String expectedValue = Strings.nullToEmpty(valueCondition.getValue());
 
-            inputImpl.shouldHave(Condition.exactValue(expectedValue));
+            return SpecificCheck.of(getInputDelegate(), Condition.exactValue(expectedValue));
         } else if (condition instanceof ValueContains valueContains) {
             String expectedValue = Strings.nullToEmpty(valueContains.getValue());
 
-            inputImpl.shouldHave(Condition.value(expectedValue));
+            return SpecificCheck.of(getInputDelegate(), Condition.value(expectedValue));
         } else if (condition instanceof Label labelCondition) {
             String expectedValue = Strings.nullToEmpty(labelCondition.getValue());
 
-            getLabelDelegate()
-                    .shouldBe(VISIBLE)
-                    .shouldHave(Condition.exactText(expectedValue));
+            return SpecificCheck.of(
+                    getLabelDelegate().shouldBe(VISIBLE),
+                    Condition.exactText(expectedValue)
+            );
         } else {
             throw new UnsupportedConditionException(condition, this);
         }
-
-        return CheckResult.accepted();
     }
 
     /**

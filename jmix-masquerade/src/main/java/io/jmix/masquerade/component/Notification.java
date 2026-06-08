@@ -16,7 +16,6 @@
 
 package io.jmix.masquerade.component;
 
-import com.codeborne.selenide.CheckResult;
 import com.codeborne.selenide.SelenideElement;
 import com.google.common.base.Strings;
 import io.jmix.masquerade.condition.*;
@@ -48,28 +47,24 @@ public class Notification extends Composite<Notification> {
     }
 
     @Override
-    public CheckResult check(SpecificCondition condition) {
+    public SpecificCheck resolve(SpecificCondition condition) {
         if (condition instanceof NotificationTheme notificationTheme) {
-            shouldHave(domAttribute("theme", notificationTheme.getValue().getThemeName()));
-            return CheckResult.accepted();
+            return SpecificCheck.of(getDelegate(),
+                    domAttribute("theme", notificationTheme.getValue().getThemeName()));
         } else if (condition instanceof NotificationPosition notificationPosition) {
-            shouldHave(domAttribute("slot", notificationPosition.getValue().getSlotName()));
-            return CheckResult.accepted();
+            return SpecificCheck.of(getDelegate(),
+                    domAttribute("slot", notificationPosition.getValue().getSlotName()));
         } else if (condition instanceof NotificationTitle notificationTitle) {
-            getTitleElement().shouldHave(exactText(notificationTitle.getValue()));
-            return CheckResult.accepted();
+            return SpecificCheck.of(getTitleElement(), exactText(notificationTitle.getValue()));
         } else if (condition instanceof NotificationTitleContains notificationTitleContains) {
-            getTitleElement().shouldHave(text(notificationTitleContains.getValue()));
-            return CheckResult.accepted();
+            return SpecificCheck.of(getTitleElement(), text(notificationTitleContains.getValue()));
         } else if (condition instanceof NotificationMessage notificationMessage) {
-            getMessageElement().shouldHave(exactText(notificationMessage.getValue()));
-            return CheckResult.accepted();
+            return SpecificCheck.of(getMessageElement(), exactText(notificationMessage.getValue()));
         } else if (condition instanceof NotificationMessageContains notificationMessageContains) {
-            getMessageElement().shouldHave(text(notificationMessageContains.getValue()));
-            return CheckResult.accepted();
+            return SpecificCheck.of(getMessageElement(), text(notificationMessageContains.getValue()));
         }
 
-        return super.check(condition);
+        return super.resolve(condition);
     }
 
     protected SelenideElement getTitleElement() {

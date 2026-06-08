@@ -16,7 +16,6 @@
 
 package io.jmix.masquerade.component;
 
-import com.codeborne.selenide.CheckResult;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 import com.google.common.base.Strings;
@@ -54,31 +53,32 @@ public class Select extends AbstractOverlayComponent<Select, SelectOverlay> {
     }
 
     @Override
-    public CheckResult check(SpecificCondition condition) {
+    public SpecificCheck resolve(SpecificCondition condition) {
         if (condition instanceof Value valueCondition) {
             String expectedValue = Strings.nullToEmpty(valueCondition.getValue());
 
             if (expectedValue.isEmpty()) {
-                getInputDelegate().shouldNotBe(EXIST);
-            } else {
-                getInputDelegate().shouldHave(Condition.exactValue(expectedValue));
+                // An empty expected value means no item is selected, i.e. the value element must be absent.
+                SelenideElement valueElement = $(byChained(by, TagNames.SELECT_VALUE_BUTTON, TagNames.SELECT_ITEM));
+                boolean noValueSelected = !valueElement.is(EXIST);
+                return SpecificCheck.of(noValueSelected, noValueSelected ? "" : valueElement.text());
             }
 
+            return SpecificCheck.of(getInputDelegate(), Condition.exactValue(expectedValue));
         } else if (condition instanceof ValueContains valueContains) {
             String expectedValue = Strings.nullToEmpty(valueContains.getValue());
 
-            getInputDelegate().shouldHave(Condition.value(expectedValue));
+            return SpecificCheck.of(getInputDelegate(), Condition.value(expectedValue));
         } else if (condition instanceof Label labelCondition) {
             String expectedValue = Strings.nullToEmpty(labelCondition.getValue());
 
-            getLabelDelegate()
-                    .shouldBe(VISIBLE)
-                    .shouldHave(Condition.exactText(expectedValue));
+            return SpecificCheck.of(
+                    getLabelDelegate().shouldBe(VISIBLE),
+                    Condition.exactText(expectedValue)
+            );
         } else {
             throw new UnsupportedConditionException(condition, this);
         }
-
-        return CheckResult.accepted();
     }
 
     @Override

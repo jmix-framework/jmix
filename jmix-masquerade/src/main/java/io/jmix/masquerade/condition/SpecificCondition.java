@@ -54,6 +54,6 @@ public abstract class SpecificCondition extends WebElementCondition {
             );
         }
 
-        return handler.check(this);
+        return handler.resolve(this).evaluate(driver);
     }
 }

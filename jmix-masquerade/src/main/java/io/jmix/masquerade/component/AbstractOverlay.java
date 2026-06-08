@@ -16,10 +16,10 @@
 
 package io.jmix.masquerade.component;
 
-import com.codeborne.selenide.CheckResult;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import com.google.common.collect.Sets;
+import io.jmix.masquerade.condition.SpecificCheck;
 import io.jmix.masquerade.condition.SpecificCondition;
 import io.jmix.masquerade.condition.VisibleItems;
 import io.jmix.masquerade.condition.VisibleItemsContains;
@@ -91,28 +91,28 @@ public abstract class AbstractOverlay<T extends AbstractOverlay<T, P>, P extends
     }
 
     @Override
-    public CheckResult check(SpecificCondition condition) {
+    public SpecificCheck resolve(SpecificCondition condition) {
         if (condition instanceof VisibleItems visibleItems) {
             List<String> currentVisibleItems = getVisibleItems();
-            return new CheckResult(
+            return SpecificCheck.of(
                     CollectionUtils.isEqualCollection(currentVisibleItems, visibleItems.getValue()),
                     currentVisibleItems
             );
         } else if (condition instanceof VisibleItemsCount visibleItemsCount) {
             List<String> currentVisibleItems = getVisibleItems();
-            return new CheckResult(
+            return SpecificCheck.of(
                     currentVisibleItems.size() == visibleItemsCount.getValue(),
                     currentVisibleItems
             );
         } else if (condition instanceof VisibleItemsContains visibleItemsContains) {
             List<String> currentVisibleItems = getVisibleItems();
-            return new CheckResult(
+            return SpecificCheck.of(
                     Sets.newHashSet(currentVisibleItems).containsAll(visibleItemsContains.getValue()),
                     currentVisibleItems
             );
         }
 
-        return super.check(condition);
+        return super.resolve(condition);
     }
 
     protected List<String> getVisibleItems() {

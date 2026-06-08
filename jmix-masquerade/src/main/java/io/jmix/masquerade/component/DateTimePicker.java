@@ -16,9 +16,9 @@
 
 package io.jmix.masquerade.component;
 
-import com.codeborne.selenide.CheckResult;
 import com.codeborne.selenide.SelenideElement;
 import io.jmix.masquerade.condition.DateValue;
+import io.jmix.masquerade.condition.SpecificCheck;
 import io.jmix.masquerade.condition.SpecificCondition;
 import io.jmix.masquerade.condition.TimeValue;
 import org.openqa.selenium.By;
@@ -46,16 +46,14 @@ public class DateTimePicker extends AbstractField<DateTimePicker> {
     }
 
     @Override
-    public CheckResult check(SpecificCondition condition) {
+    public SpecificCheck resolve(SpecificCondition condition) {
         if (condition instanceof DateValue dateValue) {
-            getDateInputDelegate().shouldHave(exactValue(dateValue.getValue()));
-            return CheckResult.accepted();
+            return SpecificCheck.of(getDateInputDelegate(), exactValue(dateValue.getValue()));
         } else if (condition instanceof TimeValue timeValue) {
-            getTimeInputDelegate().shouldHave(exactValue(timeValue.getValue()));
-            return CheckResult.accepted();
+            return SpecificCheck.of(getTimeInputDelegate(), exactValue(timeValue.getValue()));
         }
 
-        return super.check(condition);
+        return super.resolve(condition);
     }
 
     /**

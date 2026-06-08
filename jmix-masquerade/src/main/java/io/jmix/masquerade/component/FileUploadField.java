@@ -16,11 +16,11 @@
 
 package io.jmix.masquerade.component;
 
-import com.codeborne.selenide.CheckResult;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 import com.google.common.base.Strings;
 import io.jmix.masquerade.condition.Label;
+import io.jmix.masquerade.condition.SpecificCheck;
 import io.jmix.masquerade.condition.SpecificCondition;
 import io.jmix.masquerade.condition.UnsupportedConditionException;
 import io.jmix.masquerade.sys.TagNames;
@@ -41,18 +41,17 @@ public class FileUploadField extends AbstractUpload<FileUploadField> {
     }
 
     @Override
-    public CheckResult check(SpecificCondition condition) {
+    public SpecificCheck resolve(SpecificCondition condition) {
         if (condition instanceof Label labelCondition) {
             String expectedValue = Strings.nullToEmpty(labelCondition.getValue());
 
-            getLabelDelegate()
-                    .shouldBe(VISIBLE)
-                    .shouldHave(Condition.exactText(expectedValue));
+            return SpecificCheck.of(
+                    getLabelDelegate().shouldBe(VISIBLE),
+                    Condition.exactText(expectedValue)
+            );
         } else {
             throw new UnsupportedConditionException(condition, this);
         }
-
-        return CheckResult.accepted();
     }
 
     /**

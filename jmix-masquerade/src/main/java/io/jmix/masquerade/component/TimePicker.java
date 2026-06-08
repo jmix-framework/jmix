@@ -16,7 +16,7 @@
 
 package io.jmix.masquerade.component;
 
-import com.codeborne.selenide.CheckResult;
+import io.jmix.masquerade.condition.SpecificCheck;
 import io.jmix.masquerade.condition.SpecificCondition;
 import io.jmix.masquerade.condition.TimeValue;
 import org.openqa.selenium.By;
@@ -34,13 +34,12 @@ public class TimePicker extends AbstractField<TimePicker> {
     }
 
     @Override
-    public CheckResult check(SpecificCondition condition) {
+    public SpecificCheck resolve(SpecificCondition condition) {
         if (condition instanceof TimeValue timeValue) {
-            getInputDelegate().shouldHave(exactValue(timeValue.getValue()));
-            return CheckResult.accepted();
+            return SpecificCheck.of(getInputDelegate(), exactValue(timeValue.getValue()));
         }
 
-        return super.check(condition);
+        return super.resolve(condition);
     }
 
     /**

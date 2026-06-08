@@ -16,8 +16,8 @@
 
 package io.jmix.masquerade.component;
 
-import com.codeborne.selenide.CheckResult;
 import com.codeborne.selenide.WebElementCondition;
+import io.jmix.masquerade.condition.SpecificCheck;
 import io.jmix.masquerade.condition.SpecificCondition;
 import io.jmix.masquerade.condition.SpecificConditionHandler;
 import io.jmix.masquerade.condition.UnsupportedConditionException;
@@ -37,7 +37,7 @@ public abstract class AbstractSpecificConditionHandler<T>
         implements SelenideElementWrapper<T>, SpecificConditionHandler {
 
     @Override
-    public CheckResult check(SpecificCondition condition) {
+    public SpecificCheck resolve(SpecificCondition condition) {
         throw new UnsupportedConditionException(condition, this);
     }
 

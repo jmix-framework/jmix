@@ -16,10 +16,10 @@
 
 package io.jmix.masquerade.component;
 
-import com.codeborne.selenide.CheckResult;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 import com.google.common.base.Strings;
+import io.jmix.masquerade.condition.SpecificCheck;
 import io.jmix.masquerade.condition.SpecificCondition;
 import io.jmix.masquerade.condition.Value;
 import io.jmix.masquerade.condition.ValueContains;
@@ -46,21 +46,19 @@ public class CodeEditor extends AbstractTextInput<CodeEditor> {
     }
 
     @Override
-    public CheckResult check(SpecificCondition condition) {
+    public SpecificCheck resolve(SpecificCondition condition) {
         SelenideElement content = getContentDelegate();
         if (condition instanceof Value valueCondition) {
             String expectedValue = Strings.nullToEmpty(valueCondition.getValue());
 
-            content.shouldHave(Condition.exactText(expectedValue));
-            return CheckResult.accepted();
+            return SpecificCheck.of(content, Condition.exactText(expectedValue));
         } else if (condition instanceof ValueContains valueContains) {
             String expectedValue = Strings.nullToEmpty(valueContains.getValue());
 
-            content.shouldHave(Condition.text(expectedValue));
-            return CheckResult.accepted();
+            return SpecificCheck.of(content, Condition.text(expectedValue));
         }
 
-        return super.check(condition);
+        return super.resolve(condition);
     }
 
     @Override

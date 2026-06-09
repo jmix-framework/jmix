@@ -55,6 +55,7 @@
         <hbox id="buttonsPanel" wrap="true" width="100%">
             <startSlot>
                 <button id="downloadBtn" action="executionsDataGrid.download"/>
+                <button id="openInSpreadsheetBtn" action="executionsDataGrid.openInSpreadsheet"/>
             </startSlot>
             <endSlot>
                 <simplePagination id="pagination" dataLoader="executionsDl"/>
@@ -64,6 +65,8 @@
                   columnReorderingAllowed="true">
             <actions>
                 <action id="download" text="msg://action.download.text" icon="DOWNLOAD" type="list_itemTracking"/>
+                <action id="openInSpreadsheet" text="msg://action.openInSpreadsheet.text" icon="FILE_TABLE"
+                        type="list_itemTracking"/>
             </actions>
             <columns resizable="true">
                 <column property="startTime"/>

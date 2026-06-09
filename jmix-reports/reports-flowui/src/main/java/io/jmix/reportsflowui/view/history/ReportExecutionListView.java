@@ -26,6 +26,7 @@ import io.jmix.core.FileRef;
 import io.jmix.flowui.Actions;
 import io.jmix.core.MetadataTools;
 import io.jmix.flowui.component.grid.DataGrid;
+import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.model.CollectionLoader;
@@ -33,10 +34,12 @@ import io.jmix.flowui.view.*;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportExecution;
 import io.jmix.reportsflowui.download.ReportDownloader;
+import io.jmix.reportsflowui.runner.SpreadsheetViewSupport;
 import io.jmix.reportsflowui.view.run.ReportExcelHelper;
 import io.jmix.reports.entity.ReportSource;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashSet;
@@ -57,6 +60,8 @@ public class ReportExecutionListView extends StandardListView<ReportExecution> {
     protected CollectionLoader<ReportExecution> executionsDl;
     @ViewComponent
     protected DataGrid<ReportExecution> executionsDataGrid;
+    @ViewComponent("executionsDataGrid.openInSpreadsheet")
+    protected Action openInSpreadsheetAction;
     @ViewComponent
     private HorizontalLayout buttonsPanel;
     @ViewComponent
@@ -74,12 +79,16 @@ public class ReportExecutionListView extends StandardListView<ReportExecution> {
     protected ReportExcelHelper reportExcelHelper;
     @Autowired
     protected MetadataTools metadataTools;
+    @Nullable
+    @Autowired(required = false)
+    protected SpreadsheetViewSupport spreadsheetViewSupport;
 
     protected List<Report> filterByReports;
 
     @Subscribe
     public void onBeforeShow(final BeforeShowEvent event) {
         createExcelButton();
+        openInSpreadsheetAction.setVisible(spreadsheetViewSupport != null);
     }
 
     protected void createExcelButton() {
@@ -114,9 +123,29 @@ public class ReportExecutionListView extends StandardListView<ReportExecution> {
         }
     }
 
+    @Subscribe("executionsDataGrid.openInSpreadsheet")
+    public void onOpenInSpreadsheetClick(final ActionPerformedEvent event) {
+        ReportExecution execution = executionsDataGrid.getSingleSelectedItem();
+        if (execution != null && execution.getOutputDocument() != null && spreadsheetViewSupport != null) {
+            spreadsheetViewSupport.open(this, execution.getOutputDocument());
+        }
+    }
+
     @Install(to = "executionsDataGrid.download", subject = "enabledRule")
     protected boolean reportsDataGridImportEnabledRule() {
         return downloadEnabledRule();
+    }
+
+    @Install(to = "executionsDataGrid.openInSpreadsheet", subject = "enabledRule")
+    protected boolean executionsDataGridOpenInSpreadsheetEnabledRule() {
+        if (!downloadEnabledRule()) {
+            return false;
+        }
+
+        ReportExecution execution = executionsDataGrid.getSingleSelectedItem();
+        return execution != null
+                && spreadsheetViewSupport != null
+                && spreadsheetViewSupport.supportsFileRef(execution.getOutputDocument());
     }
 
     @Override

@@ -19,11 +19,18 @@ package io.jmix.reportsflowui.impl.annotated;
 import io.jmix.core.MetadataTools;
 import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.Notifications;
+import io.jmix.flowui.component.UiComponentUtils;
+import io.jmix.flowui.component.combobox.EntityComboBox;
+import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.component.datepicker.TypedDatePicker;
 import io.jmix.flowui.component.valuepicker.EntityPicker;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.testassist.UiTestUtils;
 import io.jmix.flowui.testassist.notification.NotificationInfo;
+import io.jmix.reports.entity.ReportOutputType;
+import io.jmix.reports.entity.ReportTemplate;
+import io.jmix.reportsflowui.test_support.RuntimeReportUtil;
+import io.jmix.reportsflowui.test_support.report.SingleCompatibleSpreadsheetReport;
 import io.jmix.reportsflowui.test_support.report.PublishersAndGamesReport;
 import io.jmix.reportsflowui.test_support.report.SampleDefaultValueReport;
 import io.jmix.reportsflowui.view.run.InputParametersDialog;
@@ -39,6 +46,8 @@ public class InputParametersUiTest extends BaseRunReportUiTest {
 
     @Autowired
     MetadataTools metadataTools;
+    @Autowired
+    RuntimeReportUtil runtimeReportUtil;
 
     @Test
     public void testRequired() {
@@ -77,9 +86,9 @@ public class InputParametersUiTest extends BaseRunReportUiTest {
         InputParametersDialog parametersDialog = (InputParametersDialog) dialogWindows.getOpenedDialogWindows()
                 .getCurrentDialog().orElse(null);
 
-        TypedDatePicker startDateField = findParameterField(parametersDialog, "param_startDate");
+        TypedDatePicker startDateField = findInputParametersComponent(parametersDialog, "param_startDate");
         startDateField.setValue(parseDate(startDateStr));
-        TypedDatePicker endDateField = findParameterField(parametersDialog, "param_endDate");
+        TypedDatePicker endDateField = findInputParametersComponent(parametersDialog, "param_endDate");
         endDateField.setValue(parseDate(endDateStr));
 
         JmixButton runButton = findComponent(parametersDialog, "printReportButton");
@@ -105,9 +114,9 @@ public class InputParametersUiTest extends BaseRunReportUiTest {
         InputParametersDialog parametersDialog = (InputParametersDialog) dialogWindows.getOpenedDialogWindows()
                 .getCurrentDialog().orElse(null);
 
-        TypedDatePicker startDateField = findParameterField(parametersDialog, "param_startDate");
+        TypedDatePicker startDateField = findInputParametersComponent(parametersDialog, "param_startDate");
         startDateField.setValue(parseDate(startDateStr));
-        TypedDatePicker endDateField = findParameterField(parametersDialog, "param_endDate");
+        TypedDatePicker endDateField = findInputParametersComponent(parametersDialog, "param_endDate");
         endDateField.setValue(parseDate(endDateStr));
 
         JmixButton runButton = findComponent(parametersDialog, "printReportButton");
@@ -132,8 +141,79 @@ public class InputParametersUiTest extends BaseRunReportUiTest {
                 .getCurrentDialog().orElse(null);
 
         // then
-        EntityPicker field = findParameterField(parametersDialog, "param_" + parameterAlias);
+        EntityPicker field = findInputParametersComponent(parametersDialog, "param_" + parameterAlias);
         assertThat(field.getValue()).isNotNull();
         assertThat(metadataTools.getInstanceName(field.getValue())).isEqualTo("Ubisoft");
+    }
+
+    @Test
+    public void testOpenInSpreadsheetCheckboxRemoved() {
+        runtimeReportUtil.createAndSaveSimpleSpreadsheetRuntimeReport();
+
+        launchSpreadsheetReportFromRunView(RuntimeReportUtil.SIMPLE_SPREADSHEET_REPORT_CODE);
+
+        InputParametersDialog parametersDialog = (InputParametersDialog) dialogWindows.getOpenedDialogWindows()
+                .getCurrentDialog().orElse(null);
+        assertThat(parametersDialog).isNotNull();
+
+        assertThat(findInputParametersComponentOptional(parametersDialog, "openInSpreadsheetCheckbox")).isEmpty();
+    }
+
+    @Test
+    public void testSpreadsheetModeFiltersOutputTypesToSpreadsheetOnes() {
+        runtimeReportUtil.createAndSaveAlterableSpreadsheetRuntimeReport();
+
+        launchSpreadsheetReportFromRunView(RuntimeReportUtil.ALTERABLE_SPREADSHEET_REPORT_CODE);
+
+        InputParametersDialog parametersDialog = (InputParametersDialog) dialogWindows.getOpenedDialogWindows()
+                .getCurrentDialog().orElse(null);
+        assertThat(parametersDialog).isNotNull();
+
+        EntityComboBox<ReportTemplate> templateComboBox = findInputParametersComponent(parametersDialog, "templateComboBox");
+        assertThat(templateComboBox.isVisible()).isFalse();
+        assertThat(templateComboBox.getValue()).isNotNull();
+        assertThat(templateComboBox.getValue().getCode()).isEqualTo("spreadsheet");
+
+        JmixComboBox<ReportOutputType> outputTypeComboBox =
+                findInputParametersComponent(parametersDialog, "outputTypeComboBox");
+        assertThat(outputTypeComboBox.isVisible()).isTrue();
+        assertThat(outputTypeComboBox.getGenericDataView().getItems().toList())
+                .containsExactly(ReportOutputType.XLS, ReportOutputType.XLSX);
+        assertThat(outputTypeComboBox.getValue()).isIn(ReportOutputType.XLS, ReportOutputType.XLSX);
+    }
+
+    @Test
+    public void testSpreadsheetModeShowsTemplateSelectionForMultipleCompatibleTemplates() {
+        runtimeReportUtil.createAndSaveMultiTemplateSpreadsheetRuntimeReport();
+
+        launchSpreadsheetReportFromRunView(RuntimeReportUtil.MULTI_TEMPLATE_SPREADSHEET_REPORT_CODE);
+
+        InputParametersDialog parametersDialog = (InputParametersDialog) dialogWindows.getOpenedDialogWindows()
+                .getCurrentDialog().orElse(null);
+        assertThat(parametersDialog).isNotNull();
+
+        EntityComboBox<ReportTemplate> templateComboBox = findInputParametersComponent(parametersDialog, "templateComboBox");
+        assertThat(templateComboBox.isVisible()).isTrue();
+        assertThat(templateComboBox.getGenericDataView().getItems().toList())
+                .extracting(ReportTemplate::getCode)
+                .containsExactlyInAnyOrder("xlsTemplate", "xlsxTemplate");
+        assertThat(templateComboBox.getValue()).isNotNull();
+        assertThat(templateComboBox.getValue().getCode()).isIn("xlsTemplate", "xlsxTemplate");
+
+        JmixComboBox<ReportOutputType> outputTypeComboBox =
+                findInputParametersComponent(parametersDialog, "outputTypeComboBox");
+        assertThat(outputTypeComboBox.isVisible()).isFalse();
+        assertThat(outputTypeComboBox.getValue()).isIn(ReportOutputType.XLS, ReportOutputType.XLSX);
+    }
+
+    @Test
+    public void testSpreadsheetModeSkipsDialogForSingleCompatibleTemplateWithoutParameters() {
+        launchSpreadsheetReportFromRunView(SingleCompatibleSpreadsheetReport.CODE);
+
+        Object openedView = dialogWindows.getOpenedDialogWindows()
+                .getCurrentDialog()
+                .orElse(null);
+
+        assertThat(openedView == null || !(openedView instanceof InputParametersDialog)).isTrue();
     }
 }

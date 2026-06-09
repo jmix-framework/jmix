@@ -29,37 +29,37 @@ import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.combobox.EntityComboBox;
 import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.reports.ParameterClassResolver;
-import io.jmix.reports.ReportPrintHelper;
 import io.jmix.reports.ReportRepository;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportInputParameter;
 import io.jmix.reports.entity.ReportOutputType;
 import io.jmix.reports.entity.ReportTemplate;
 import io.jmix.reports.yarg.util.converter.ObjectToStringConverter;
+import io.jmix.reportsflowui.runner.ReportExecutionPresentation;
+import io.jmix.reportsflowui.runner.ReportExecutionPresentationIds;
+import io.jmix.reportsflowui.runner.ReportPresentationRegistry;
 import io.jmix.reportsflowui.view.validators.ReportCollectionValidator;
 import io.jmix.reportsflowui.view.validators.ReportParamFieldValidator;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.jspecify.annotations.Nullable;
 
-import java.util.*;
-
-import static io.jmix.reports.util.ReportTemplateUtils.containsAlterableTemplate;
-import static io.jmix.reports.util.ReportTemplateUtils.supportAlterableForTemplate;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 public class InputParametersFragment extends Composite<FormLayout>
         implements ApplicationContextAware, HasSize, HasEnabled, InitializingBean {
 
-    //Components
     protected EntityComboBox<ReportTemplate> templateComboBox;
     protected JmixComboBox<ReportOutputType> outputTypeComboBox;
     protected FormLayout formLayout;
 
-    // Autowired
     protected ReportRepository reportRepository;
     protected UiComponents uiComponents;
     protected Messages messages;
@@ -68,14 +68,26 @@ public class InputParametersFragment extends Composite<FormLayout>
     protected ParameterClassResolver parameterClassResolver;
     protected ObjectToStringConverter objectToStringConverter;
     protected ApplicationContext applicationContext;
+    protected ReportPresentationRegistry reportPresentationRegistry;
 
     protected Report report;
     protected Map<String, Object> parameters;
     protected boolean bulkPrint;
+    protected String presentationId = ReportExecutionPresentationIds.DEFAULT;
     protected ReportInputParameter inputParameter;
     protected HashMap<String, AbstractField> parameterComponents = new HashMap<>();
 
-    private void initComponent() {
+    @Override
+    public void afterPropertiesSet() {
+        initComponent();
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
+
+    protected void initComponent() {
         this.uiComponents = applicationContext.getBean(UiComponents.class);
         this.messages = applicationContext.getBean(Messages.class);
         this.reportRepository = applicationContext.getBean(ReportRepository.class);
@@ -83,49 +95,21 @@ public class InputParametersFragment extends Composite<FormLayout>
         this.parameterClassResolver = applicationContext.getBean(ParameterClassResolver.class);
         this.objectToStringConverter = applicationContext.getBean(ObjectToStringConverter.class);
         this.metadata = applicationContext.getBean(Metadata.class);
-    }
-
-    protected void updateOutputTypes() {
-        if (!containsAlterableTemplate(report)) {
-            outputTypeComboBox.setVisible(false);
-            return;
-        }
-
-        ReportTemplate template;
-        if (report.getTemplates() != null && report.getTemplates().size() > 1) {
-            template = templateComboBox.getValue();
-        } else {
-            template = report.getDefaultTemplate();
-        }
-
-        if (template != null && supportAlterableForTemplate(template)) {
-            List<ReportOutputType> outputTypes = ReportPrintHelper.getInputOutputTypesMapping().get(template.getExt());
-            if (outputTypes != null && !outputTypes.isEmpty()) {
-                outputTypeComboBox.setItems(outputTypes);
-                if (outputTypeComboBox.getValue() == null) {
-                    outputTypeComboBox.setValue(template.getReportOutputType());
-                }
-                outputTypeComboBox.setVisible(true);
-            } else {
-                outputTypeComboBox.clear();
-                outputTypeComboBox.setVisible(false);
-            }
-        } else {
-            outputTypeComboBox.clear();
-            outputTypeComboBox.setVisible(false);
-        }
+        this.reportPresentationRegistry = applicationContext.getBean(ReportPresentationRegistry.class);
     }
 
     @Override
     protected FormLayout initContent() {
         templateComboBox = uiComponents.create(EntityComboBox.class);
+        templateComboBox.setId("templateComboBox");
         templateComboBox.setVisible(false);
         templateComboBox.setMetaClass(metadata.getClass(ReportTemplate.class));
-        templateComboBox.setItems(CollectionUtils.emptyIfNull(report.getTemplates()));
+        templateComboBox.setItems(Collections.emptyList());
         templateComboBox.setLabel(messages.getMessage(getClass(), "reportTemplate.label"));
         templateComboBox.addValueChangeListener(e -> updateOutputTypes());
 
         outputTypeComboBox = uiComponents.create(JmixComboBox.class);
+        outputTypeComboBox.setId("outputTypeComboBox");
         outputTypeComboBox.setLabel(messages.getMessage(getClass(), "reportOutputType.label"));
 
         formLayout = uiComponents.create(FormLayout.class);
@@ -138,32 +122,9 @@ public class InputParametersFragment extends Composite<FormLayout>
         );
 
         updateOutputTypes();
-
         onInit();
 
         return formLayout;
-    }
-
-    @Override
-    public void afterPropertiesSet() {
-        initComponent();
-    }
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
-    }
-
-    public void setParameters(Map<String, Object> parameters) {
-        this.parameters = parameters;
-    }
-
-    public void setBulkPrint(boolean bulkPrint) {
-        this.bulkPrint = bulkPrint;
-    }
-
-    public void setInputParameter(ReportInputParameter inputParameter) {
-        this.inputParameter = inputParameter;
     }
 
     protected void onInit() {
@@ -188,6 +149,81 @@ public class InputParametersFragment extends Composite<FormLayout>
         }
     }
 
+    public void setParameters(Map<String, Object> parameters) {
+        this.parameters = parameters;
+    }
+
+    public void setBulkPrint(boolean bulkPrint) {
+        this.bulkPrint = bulkPrint;
+    }
+
+    public void setPresentationId(String presentationId) {
+        this.presentationId = presentationId;
+    }
+
+    public void setInputParameter(ReportInputParameter inputParameter) {
+        this.inputParameter = inputParameter;
+    }
+
+    public void initTemplateAndOutputSelect() {
+        if (report != null) {
+            if (parameterComponents.isEmpty()) {
+                initLayout();
+            }
+            ReportExecutionPresentation presentation = getPresentation();
+            var availableTemplates = presentation.getAvailableTemplates(report);
+            templateComboBox.setItems(availableTemplates);
+
+            ReportTemplate template = presentation.resolveDefaultTemplate(report, templateComboBox.getValue());
+            if (template != null && availableTemplates.contains(template)) {
+                templateComboBox.setValue(template);
+            } else {
+                templateComboBox.clear();
+            }
+
+            boolean templateSelectionVisible = availableTemplates.size() > 1;
+            templateComboBox.setVisible(templateSelectionVisible);
+            templateComboBox.setEnabled(templateSelectionVisible);
+            updateOutputTypes();
+        }
+    }
+
+    protected void updateOutputTypes() {
+        if (report == null) {
+            outputTypeComboBox.clear();
+            outputTypeComboBox.setVisible(false);
+            outputTypeComboBox.setEnabled(false);
+            return;
+        }
+
+        ReportExecutionPresentation presentation = getPresentation();
+        ReportTemplate template = getEffectiveTemplate();
+        var outputTypes = presentation.getAvailableOutputTypes(report, template);
+        if (outputTypes.isEmpty()) {
+            ReportOutputType outputType = presentation.resolveDefaultOutputType(report, template, outputTypeComboBox.getValue());
+            if (outputType != null) {
+                outputTypeComboBox.setItems(outputType);
+                outputTypeComboBox.setValue(outputType);
+            } else {
+                outputTypeComboBox.clear();
+            }
+            outputTypeComboBox.setVisible(false);
+            outputTypeComboBox.setEnabled(false);
+            return;
+        }
+
+        outputTypeComboBox.setItems(outputTypes);
+        ReportOutputType outputType = presentation.resolveDefaultOutputType(report, template, outputTypeComboBox.getValue());
+        if (outputType != null && outputTypes.contains(outputType)) {
+            outputTypeComboBox.setValue(outputType);
+        } else {
+            outputTypeComboBox.clear();
+        }
+
+        boolean multipleOutputTypes = outputTypes.size() > 1;
+        outputTypeComboBox.setVisible(multipleOutputTypes);
+        outputTypeComboBox.setEnabled(multipleOutputTypes);
+    }
 
     public Map<String, Object> collectParameters() {
         Map<String, Object> parameters = new HashMap<>();
@@ -236,17 +272,6 @@ public class InputParametersFragment extends Composite<FormLayout>
         formLayout.add(field);
     }
 
-    public void initTemplateAndOutputSelect() {
-        if (report != null) {
-            if (report.getTemplates() != null && report.getTemplates().size() > 1) {
-                templateComboBox.setValue(report.getDefaultTemplate());
-                templateComboBox.setVisible(true);
-            }
-            templateComboBox.addValueChangeListener(e -> updateOutputTypes());
-            updateOutputTypes();
-        }
-    }
-
     public Report getReport() {
         return report;
     }
@@ -257,10 +282,27 @@ public class InputParametersFragment extends Composite<FormLayout>
 
     @Nullable
     public ReportTemplate getReportTemplate() {
-        return templateComboBox.getValue();
+        return getEffectiveTemplate();
     }
 
+    @Nullable
     public ReportOutputType getOutputType() {
         return outputTypeComboBox.getValue();
+    }
+
+    @Nullable
+    protected ReportTemplate getEffectiveTemplate() {
+        if (report == null) {
+            return null;
+        }
+
+        ReportTemplate selectedTemplate = templateComboBox.getValue();
+        return selectedTemplate != null
+                ? selectedTemplate
+                : getPresentation().resolveDefaultTemplate(report, null);
+    }
+
+    protected ReportExecutionPresentation getPresentation() {
+        return reportPresentationRegistry.getPresentation(presentationId);
     }
 }

@@ -61,7 +61,12 @@
         </details>
 
         <hbox id="buttonsPanel" wrap="true" width="100%">
-            <button id="runReport" action="reportDataGrid.runReport"/>
+            <comboButton id="runReport" action="reportDataGrid.runReport">
+                <items>
+                    <actionItem id="openInSpreadsheetActionItem" ref="reportDataGrid.openInSpreadsheet"/>
+                    <actionItem id="openInTableActionItem" ref="reportDataGrid.openInTable"/>
+                </items>
+            </comboButton>
         </hbox>
         <dataGrid id="reportDataGrid"
                   width="100%" minHeight="20em"
@@ -71,12 +76,17 @@
                 <action id="runReport" text="msg://runReport.action.title" icon="ANGLE_DOUBLE_RIGHT"
                         actionVariant="PRIMARY"
                         type="list_itemTracking"/>
+                <action id="openInSpreadsheet" text="msg://action.openInSpreadsheet.text" icon="FILE_TABLE"
+                        type="list_itemTracking"/>
+                <action id="openInTable" text="msg://action.openInTable.text" icon="TABLE"
+                        type="list_itemTracking"/>
             </actions>
             <columns resizable="true">
                 <column property="name"/>
                 <column property="group"/>
                 <column property="description"/>
                 <column property="code"/>
+                <column property="defaultTemplate.reportOutputType"/>
                 <column property="updateTs"/>
             </columns>
         </dataGrid>

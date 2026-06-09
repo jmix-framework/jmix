@@ -27,9 +27,11 @@ import io.jmix.flowui.download.DownloadFormat;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.View;
 import io.jmix.reports.ReportRepository;
-import io.jmix.reports.entity.*;
+import io.jmix.reports.entity.Report;
+import io.jmix.reports.entity.ReportInputParameter;
+import io.jmix.reports.entity.ReportOutputType;
+import io.jmix.reports.entity.ReportTemplate;
 import io.jmix.reports.exception.FailedToConnectToOpenOfficeException;
-import io.jmix.reports.exception.MissingDefaultTemplateException;
 import io.jmix.reports.exception.NoOpenOfficeFreePortsException;
 import io.jmix.reports.exception.ReportingException;
 import io.jmix.reports.runner.ReportRunContext;
@@ -38,23 +40,18 @@ import io.jmix.reports.util.ReportZipUtils;
 import io.jmix.reports.yarg.reporting.ReportOutputDocument;
 import io.jmix.reportsflowui.ReportsClientProperties;
 import io.jmix.reportsflowui.download.ReportDownloader;
-import io.jmix.reportsflowui.runner.FluentUiReportRunner;
-import io.jmix.reportsflowui.runner.ParametersDialogShowMode;
-import io.jmix.reportsflowui.runner.UiReportRunContext;
-import io.jmix.reportsflowui.runner.UiReportRunner;
+import io.jmix.reportsflowui.runner.*;
 import io.jmix.reportsflowui.view.run.InputParametersDialog;
-import io.jmix.reportsflowui.view.run.ReportTableView;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.ObjectProvider;
 import org.jspecify.annotations.Nullable;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-import static io.jmix.reports.util.ReportTemplateUtils.inputParametersRequiredByTemplates;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 @Component("report_UiReportRunner")
@@ -71,6 +68,8 @@ public class UiReportRunnerImpl implements UiReportRunner {
     protected final ObjectProvider<FluentUiReportRunner> fluentUiReportRunners;
     protected final Notifications notifications;
     protected final ReportsClientProperties reportsClientProperties;
+    protected final ReportPresentationRegistry reportPresentationRegistry;
+    protected final List<ReportResultHandler> reportResultHandlers;
 
     public UiReportRunnerImpl(ReportRunner reportRunner,
                               DialogWindows dialogWindows,
@@ -82,7 +81,9 @@ public class UiReportRunnerImpl implements UiReportRunner {
                               ReportRepository reportRepository,
                               ObjectProvider<FluentUiReportRunner> fluentUiReportRunners,
                               Notifications notifications,
-                              ReportsClientProperties reportsClientProperties) {
+                              ReportsClientProperties reportsClientProperties,
+                              ReportPresentationRegistry reportPresentationRegistry,
+                              List<ReportResultHandler> reportResultHandlers) {
         this.reportRunner = reportRunner;
         this.dialogWindows = dialogWindows;
         this.downloader = downloader;
@@ -94,17 +95,18 @@ public class UiReportRunnerImpl implements UiReportRunner {
         this.fluentUiReportRunners = fluentUiReportRunners;
         this.notifications = notifications;
         this.reportsClientProperties = reportsClientProperties;
-
-
+        this.reportPresentationRegistry = reportPresentationRegistry;
+        this.reportResultHandlers = reportResultHandlers;
     }
 
     @Override
     public void runAndShow(UiReportRunContext context) {
-        prepareContext(context);
+        reloadReport(context);
         if (needToShowParamsDialog(context)) {
             openReportParamsDialog(context, null, false);
             return;
         }
+        prepareContext(context);
 
         View<?> owner = context.getOwner();
         if (owner != null && context.getInBackground()) {
@@ -117,12 +119,13 @@ public class UiReportRunnerImpl implements UiReportRunner {
 
     @Override
     public void runMultipleReports(UiReportRunContext context, String multiParamAlias, Collection multiParamValue) {
-        prepareContext(context);
+        reloadReport(context);
         if (needToShowParamsDialog(context)) {
             context.addParam(multiParamAlias, multiParamValue);
             openReportParamsDialog(context, getInputParameter(context, multiParamAlias), true);
             return;
         }
+        prepareContext(context);
 
         View<?> owner = context.getOwner();
         if (owner != null && context.getInBackground()) {
@@ -273,6 +276,7 @@ public class UiReportRunnerImpl implements UiReportRunner {
         inputParametersDialog.setOutputFileName(context.getOutputNamePattern());
         inputParametersDialog.setBulkPrint(bulkPrint);
         inputParametersDialog.setInBackground(context.getInBackground());
+        inputParametersDialog.setPresentationId(reportPresentationRegistry.getPresentation(context).getId());
 
         inputParametersDialogWindow.open();
     }
@@ -285,31 +289,23 @@ public class UiReportRunnerImpl implements UiReportRunner {
     }
 
     protected void showResult(ReportOutputDocument document, UiReportRunContext context) {
-        String templateCode = getTemplateCode(context);
-        Map<String, Object> params = context.getParams();
-        ReportOutputType outputType = context.getOutputType();
-
-        if (document.getReportOutputType().getId().equals(JmixReportOutputType.table.getId())) {
-            DialogWindow<ReportTableView> showReportTableViewDialogWindow = dialogWindows.view(context.getOwner(),
-                            ReportTableView.class)
-                    .build();
-
-            ReportTableView reportTableView = showReportTableViewDialogWindow.getView();
-            reportTableView.setReportOutputDocument(document);
-            reportTableView.setTemplateCode(templateCode);
-            reportTableView.setReportParameters(params);
-            showReportTableViewDialogWindow.open();
-        } else {
-            byte[] byteArr = document.getContent();
-            io.jmix.reports.yarg.structure.ReportOutputType finalOutputType =
-                    (outputType != null) ? outputType.getOutputType() : document.getReportOutputType();
-
-            DownloadFormat exportFormat = DownloadFormat.getByExtension(finalOutputType.getId());
-            String outputFileName = context.getOutputNamePattern();
-            String documentName = isNotBlank(outputFileName) ? outputFileName : document.getDocumentName();
-
-            downloader.download(byteArr, documentName, exportFormat);
+        for (ReportResultHandler reportResultHandler : reportResultHandlers) {
+            if (reportResultHandler.handle(document, context)) {
+                return;
+            }
         }
+
+        byte[] byteArr = document.getContent();
+        String outputFileName = context.getOutputNamePattern();
+        String documentName = isNotBlank(outputFileName) ? outputFileName : document.getDocumentName();
+        ReportOutputType outputType = context.getOutputType();
+        io.jmix.reports.yarg.structure.ReportOutputType finalOutputType =
+                outputType != null ? outputType.getOutputType() : document.getReportOutputType();
+        DownloadFormat exportFormat = finalOutputType != null
+                ? DownloadFormat.getByExtension(finalOutputType.getId())
+                : null;
+
+        downloader.download(byteArr, documentName, exportFormat);
     }
 
     @Nullable
@@ -319,23 +315,12 @@ public class UiReportRunnerImpl implements UiReportRunner {
     }
 
     protected void prepareContext(UiReportRunContext context) {
-        Report report = context.getReport();
-        context.setReport(reportRepository.reloadForRunning(report));
-
-        ReportTemplate template = context.getReportTemplate();
-        if (template == null) {
-            template = getDefaultTemplate(report);
-            context.setReportTemplate(template);
-        }
+        reportPresentationRegistry.applyPresentationDefaults(context);
     }
 
-    protected ReportTemplate getDefaultTemplate(Report report) {
-        ReportTemplate defaultTemplate = report.getDefaultTemplate();
-        if (defaultTemplate == null) {
-            throw new MissingDefaultTemplateException(String.format("No default template specified for report [%s]",
-                    report.getName()));
-        }
-        return defaultTemplate;
+    protected void reloadReport(UiReportRunContext context) {
+        Report report = context.getReport();
+        context.setReport(reportRepository.reloadForRunning(report));
     }
 
     protected boolean needToShowParamsDialog(UiReportRunContext uiReportRunContext) {
@@ -345,7 +330,11 @@ public class UiReportRunnerImpl implements UiReportRunner {
             return true;
         }
         if (mode == null || mode == ParametersDialogShowMode.IF_REQUIRED) {
-            return containsVisibleInputParameters(report) || inputParametersRequiredByTemplates(report);
+            ReportExecutionPresentation presentation = reportPresentationRegistry.getPresentation(uiReportRunContext);
+            return containsVisibleInputParameters(report)
+                    || presentation.requiresUserChoice(report,
+                    uiReportRunContext.getReportTemplate(),
+                    uiReportRunContext.getOutputType());
         }
         return false;
     }

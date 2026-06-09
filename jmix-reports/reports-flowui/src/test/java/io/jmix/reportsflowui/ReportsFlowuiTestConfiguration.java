@@ -24,6 +24,8 @@ import io.jmix.data.DataConfiguration;
 import io.jmix.eclipselink.EclipselinkConfiguration;
 import io.jmix.flowui.FlowuiConfiguration;
 import io.jmix.reports.ReportsConfiguration;
+import io.jmix.reportsflowui.download.ReportDownloader;
+import io.jmix.reportsflowui.test_support.TestReportDownloader;
 import io.jmix.reportsflowui.test_support.role.FullAccessRole;
 import io.jmix.reportsflowui.test_support.role.TestResourceRole2;
 import io.jmix.reportsflowui.test_support.role.TestResourceRole4;
@@ -94,5 +96,11 @@ public class ReportsFlowuiTestConfiguration {
     @Primary
     PasswordEncoder passwordEncoder() {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    }
+
+    @Bean
+    @Primary
+    public TestReportDownloader reportDownloader() {
+        return new TestReportDownloader();
     }
 }

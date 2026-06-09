@@ -78,6 +78,7 @@ import io.jmix.reports.util.DataSetFactory;
 import io.jmix.reports.yarg.structure.BandOrientation;
 import io.jmix.reportsflowui.ReportsClientProperties;
 import io.jmix.reportsflowui.constant.ReportStyleConstants;
+import io.jmix.reportsflowui.helper.OutputTypeHelper;
 import io.jmix.reportsflowui.helper.ReportScriptEditor;
 import io.jmix.reportsflowui.support.CrossTabDataGridSupport;
 import io.jmix.reportsflowui.view.region.ReportRegionWizardDetailView;
@@ -277,6 +278,8 @@ public class ReportDetailView extends StandardDetailView<Report> {
     protected ReportGroupRepository reportGroupRepository;
     @Autowired
     protected ReportRepository reportRepository;
+    @Autowired
+    protected OutputTypeHelper outputTypeHelper;
 
     protected JmixComboBoxBinder<String> entityParamFieldBinder;
     protected JmixComboBoxBinder<String> entitiesParamFieldBinder;
@@ -305,6 +308,16 @@ public class ReportDetailView extends StandardDetailView<Report> {
         initScreenIdField();
         initSingleDataSetTypeField();
         initJsonSourceTypeField();
+        initTemplatesOutputTypeColumn();
+    }
+
+    protected void initTemplatesOutputTypeColumn() {
+        templatesDataGrid.getColumnByKey("reportOutputType")
+                .setRenderer(new ComponentRenderer<>(this::createTemplateOutputTypeBadge));
+    }
+
+    protected HorizontalLayout createTemplateOutputTypeBadge(ReportTemplate template) {
+        return outputTypeHelper.createOutputTypeBadge(template.getReportOutputType());
     }
 
     @Supply(to = "templatesDataGrid.alterable", subject = "renderer")

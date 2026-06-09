@@ -16,8 +16,8 @@
 
 package io.jmix.reportsflowui.view.report;
 
-import com.vaadin.flow.data.renderer.Renderer;
-import com.vaadin.flow.data.renderer.TextRenderer;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
 import io.jmix.core.*;
@@ -32,6 +32,7 @@ import io.jmix.flowui.component.datepicker.TypedDatePicker;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.select.JmixSelect;
 import io.jmix.flowui.component.textfield.TypedTextField;
+import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.download.ByteArrayDownloadDataProvider;
 import io.jmix.flowui.download.DownloadFormat;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
@@ -48,11 +49,15 @@ import io.jmix.reportsflowui.helper.GridSortHelper;
 import io.jmix.reportsflowui.helper.OutputTypeHelper;
 import io.jmix.reportsflowui.runner.FluentUiReportRunner;
 import io.jmix.reportsflowui.runner.ParametersDialogShowMode;
+import io.jmix.reportsflowui.runner.ReportExecutionPresentationIds;
+import io.jmix.reportsflowui.runner.ReportPresentationRegistry;
 import io.jmix.reportsflowui.runner.UiReportRunner;
+import io.jmix.reportsflowui.runner.SpreadsheetViewSupport;
 import io.jmix.reportsflowui.view.history.ReportExecutionListView;
 import io.jmix.reportsflowui.view.importdialog.ReportImportDialogView;
 import io.jmix.reportsflowui.view.reportwizard.ReportWizardCreatorView;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
@@ -69,6 +74,8 @@ public class ReportListView extends StandardListView<Report> {
     protected DataGrid<Report> reportsDataGrid;
     @ViewComponent("reportsDataGrid.create")
     protected CreateAction<Report> reportsDataGridCreate;
+    @ViewComponent("reportsDataGrid.openInSpreadsheet")
+    protected Action openInSpreadsheetAction;
 
     @ViewComponent
     protected CollectionLoader<Report> reportsDl;
@@ -126,11 +133,19 @@ public class ReportListView extends StandardListView<Report> {
     protected OutputTypeHelper outputTypeHelper;
     @Autowired
     protected ReportGroupRepository reportGroupRepository;
+    @Nullable
+    @Autowired(required = false)
+    protected SpreadsheetViewSupport spreadsheetViewSupport;
+    @Autowired
+    protected ReportPresentationRegistry reportPresentationRegistry;
 
     @Subscribe
     protected void onInit(InitEvent event) {
         initReportsDataGridCreate();
         initOutputTypeList();
+        initOutputTypeColumn();
+
+        openInSpreadsheetAction.setVisible(spreadsheetViewSupport != null);
 
         codeFilter.addTypedValueChangeListener(e -> onFilterFieldValueChange());
         nameFilter.addTypedValueChangeListener(e -> onFilterFieldValueChange());
@@ -144,36 +159,57 @@ public class ReportListView extends StandardListView<Report> {
         outputTypeFilter.setItems(supportedOutputTypes);
     }
 
+    protected void initOutputTypeColumn() {
+        reportsDataGrid.getColumnByKey("defaultTemplate.reportOutputType")
+                .setRenderer(new ComponentRenderer<>(this::createReportOutputTypeBadge));
+    }
+
+    protected HorizontalLayout createReportOutputTypeBadge(Report report) {
+        ReportOutputType outputType = report.getDefaultTemplate() != null
+                ? report.getDefaultTemplate().getReportOutputType()
+                : null;
+        return outputTypeHelper.createOutputTypeBadge(outputType);
+    }
+
     private void initReportsDataGridCreate() {
         reportsDataGridCreate.setIcon(null);
     }
 
-    @Supply(to = "reportsDataGrid.name", subject = "renderer")
-    private Renderer<Report> nameCellRenderer() {
-        return new TextRenderer<>(metadataTools::getInstanceName);
-    }
-
     @Subscribe("reportsDataGrid.runReport")
     public void onReportsDataGridRunReport(ActionPerformedEvent event) {
+        runSelectedReport(ReportExecutionPresentationIds.DEFAULT);
+    }
+
+    @Subscribe("reportsDataGrid.openInSpreadsheet")
+    public void onReportsDataGridOpenInSpreadsheet(ActionPerformedEvent event) {
+        runSelectedReport(ReportExecutionPresentationIds.SPREADSHEET);
+    }
+
+    @Subscribe("reportsDataGrid.openInTable")
+    public void onReportsDataGridOpenInTable(ActionPerformedEvent event) {
+        runSelectedReport(ReportExecutionPresentationIds.TABLE);
+    }
+
+    @Install(to = "reportsDataGrid.openInSpreadsheet", subject = "enabledRule")
+    protected boolean reportsDataGridOpenInSpreadsheetEnabledRule() {
         Report report = reportsDataGrid.getSingleSelectedItem();
         if (report == null) {
-            return;
+            return false;
         }
 
-        FluentUiReportRunner fluentRunner = uiReportRunner.byReportEntity(report)
-                .withParametersDialogShowMode(ParametersDialogShowMode.IF_REQUIRED);
-        try {
-            if (reportsClientProperties.getUseBackgroundReportProcessing()) {
-                fluentRunner.inBackground(this);
-            }
-            fluentRunner.runAndShow();
-        } catch (MissingDefaultTemplateException e) {
-            notifications.create(
-                            messages.getMessage("runningReportError.title"),
-                            messages.getMessage("missingDefaultTemplateError.description"))
-                    .withType(Notifications.Type.ERROR)
-                    .show();
+        Report reloadedReport = reportRepository.reloadForRunning(report);
+        return reportPresentationRegistry.supportsReport(reloadedReport, ReportExecutionPresentationIds.SPREADSHEET);
+    }
+
+    @Install(to = "reportsDataGrid.openInTable", subject = "enabledRule")
+    protected boolean reportsDataGridOpenInTableEnabledRule() {
+        Report report = reportsDataGrid.getSingleSelectedItem();
+        if (report == null) {
+            return false;
         }
+
+        Report reloadedReport = reportRepository.reloadForRunning(report);
+        return reportPresentationRegistry.supportsReport(reloadedReport, ReportExecutionPresentationIds.TABLE);
     }
 
     @Subscribe("reportsDataGrid.importAction")
@@ -267,6 +303,29 @@ public class ReportListView extends StandardListView<Report> {
     protected boolean isDatabaseReportSelected() {
         Report report = reportsDataGrid.getSingleSelectedItem();
         return report != null && report.getSource() == ReportSource.DATABASE;
+    }
+
+    protected void runSelectedReport(String presentationId) {
+        Report report = reportsDataGrid.getSingleSelectedItem();
+        if (report == null) {
+            return;
+        }
+
+        FluentUiReportRunner fluentRunner = uiReportRunner.byReportEntity(report)
+                .withParametersDialogShowMode(ParametersDialogShowMode.IF_REQUIRED);
+        try {
+            if (reportsClientProperties.getUseBackgroundReportProcessing()) {
+                fluentRunner.inBackground(this);
+            }
+            uiReportRunner.runAndShow(
+                    reportPresentationRegistry.createRunContext(fluentRunner.buildContext(), presentationId));
+        } catch (MissingDefaultTemplateException e) {
+            notifications.create(
+                            messages.getMessage("runningReportError.title"),
+                            messages.getMessage("missingDefaultTemplateError.description"))
+                    .withType(Notifications.Type.ERROR)
+                    .show();
+        }
     }
 
     @Subscribe("reportsDataGrid.wizard")

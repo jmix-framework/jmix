@@ -18,11 +18,15 @@ package io.jmix.reportsflowui.impl.annotated;
 
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.flowui.DialogWindows;
+import io.jmix.flowui.component.combobox.EntityComboBox;
 import io.jmix.flowui.component.datepicker.TypedDatePicker;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.data.grid.DataGridItems;
 import io.jmix.flowui.kit.component.button.JmixButton;
+import io.jmix.reports.entity.ReportTemplate;
+import io.jmix.reportsflowui.test_support.report.MultiTemplateTableReport;
 import io.jmix.reportsflowui.test_support.report.PublishersAndGamesReport;
+import io.jmix.reportsflowui.test_support.report.SingleCompatibleTableReport;
 import io.jmix.reportsflowui.view.run.InputParametersDialog;
 import io.jmix.reportsflowui.view.run.ReportTableView;
 import org.junit.jupiter.api.Test;
@@ -47,9 +51,9 @@ public class TableOutputTest extends BaseRunReportUiTest {
         InputParametersDialog parametersDialog = (InputParametersDialog) dialogWindows.getOpenedDialogWindows()
                 .getCurrentDialog().orElse(null);
 
-        TypedDatePicker startDateField = findParameterField(parametersDialog, "param_startDate");
+        TypedDatePicker startDateField = findInputParametersComponent(parametersDialog, "param_startDate");
         startDateField.setValue(parseDate(startDateStr));
-        TypedDatePicker endDateField = findParameterField(parametersDialog, "param_endDate");
+        TypedDatePicker endDateField = findInputParametersComponent(parametersDialog, "param_endDate");
         endDateField.setValue(parseDate(endDateStr));
 
         JmixButton runButton = findComponent(parametersDialog, "printReportButton");
@@ -84,5 +88,36 @@ public class TableOutputTest extends BaseRunReportUiTest {
         firstItem = gridItems.getItems().iterator().next();
         assertThat((String) firstItem.getValue("name")).isEqualTo("Assassin's Creed");
         assertThat((Long) firstItem.getValue("purchaseCount")).isEqualTo(2);
+    }
+
+    @Test
+    public void testTableModeSkipsDialogForSingleCompatibleTemplateWithoutParameters() {
+        launchTableReportFromRunView(SingleCompatibleTableReport.CODE);
+
+        ReportTableView tableOutputDialog = (ReportTableView) dialogWindows.getOpenedDialogWindows()
+                .getCurrentDialog().orElse(null);
+        assertThat(tableOutputDialog).isNotNull();
+
+        DataGrid<KeyValueEntity> tableGrid = findComponent(tableOutputDialog, "DataTable");
+        assertThat(tableGrid.getColumns().stream().map(DataGrid.Column::getHeaderText).toList())
+                .containsExactly("Name", "Count");
+    }
+
+    @Test
+    public void testTableModeShowsTemplateSelectionForMultipleCompatibleTemplates() {
+        launchTableReportFromRunView(MultiTemplateTableReport.CODE);
+
+        InputParametersDialog parametersDialog = (InputParametersDialog) dialogWindows.getOpenedDialogWindows()
+                .getCurrentDialog().orElse(null);
+        assertThat(parametersDialog).isNotNull();
+
+        EntityComboBox<ReportTemplate> templateComboBox = findInputParametersComponent(parametersDialog, "templateComboBox");
+        assertThat(templateComboBox.isVisible()).isTrue();
+        assertThat(templateComboBox.getGenericDataView().getItems().toList())
+                .extracting(ReportTemplate::getCode)
+                .containsExactlyInAnyOrder(
+                        MultiTemplateTableReport.FIRST_TABLE_TEMPLATE,
+                        MultiTemplateTableReport.SECOND_TABLE_TEMPLATE
+                );
     }
 }

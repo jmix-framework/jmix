@@ -31,6 +31,8 @@ import io.jmix.reports.exception.MissingDefaultTemplateException;
 import io.jmix.reports.exception.ReportParametersValidationException;
 import io.jmix.reportsflowui.runner.FluentUiReportRunner;
 import io.jmix.reportsflowui.runner.ParametersDialogShowMode;
+import io.jmix.reportsflowui.runner.ReportExecutionPresentationIds;
+import io.jmix.reportsflowui.runner.ReportPresentationRegistry;
 import io.jmix.reportsflowui.runner.UiReportRunner;
 import io.jmix.reportsflowui.view.ReportParameterValidator;
 import org.apache.commons.lang3.BooleanUtils;
@@ -63,6 +65,8 @@ public class InputParametersDialog extends StandardView {
     protected Notifications notifications;
     @Autowired
     protected Messages messages;
+    @Autowired
+    protected ReportPresentationRegistry reportPresentationRegistry;
 
     protected String templateCode;
     protected String outputFileName;
@@ -72,6 +76,7 @@ public class InputParametersDialog extends StandardView {
     protected Map<String, Object> parameters;
     protected Collection selectedEntities;
     protected boolean inBackground;
+    protected String presentationId = ReportExecutionPresentationIds.DEFAULT;
 
     protected InputParametersFragment inputParametersFragment;
 
@@ -103,6 +108,9 @@ public class InputParametersDialog extends StandardView {
         this.inBackground = inBackground;
     }
 
+    public void setPresentationId(String presentationId) {
+        this.presentationId = presentationId;
+    }
 
     @Subscribe
     protected void onBeforeShow(BeforeShowEvent event) {
@@ -119,7 +127,7 @@ public class InputParametersDialog extends StandardView {
             inputParametersFragment.setInputParameter(inputParameter);
             inputParametersFragment.setParameters(parameters);
             inputParametersFragment.setBulkPrint(bulkPrint);
-            //inputParametersFragment.initLayout();
+            inputParametersFragment.setPresentationId(presentationId);
         }
         inputParametersLayout.add(inputParametersFragment);
         inputParametersFragment.initTemplateAndOutputSelect();
@@ -151,7 +159,8 @@ public class InputParametersDialog extends StandardView {
                     if (bulkPrint) {
                         fluentRunner.runMultipleReports(inputParameter.getAlias(), selectedEntities);
                     } else {
-                        fluentRunner.runAndShow();
+                        uiReportRunner.runAndShow(
+                                reportPresentationRegistry.createRunContext(fluentRunner.buildContext(), presentationId));
                     }
                 } catch (MissingDefaultTemplateException e) {
                     notifications.create(

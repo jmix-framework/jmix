@@ -127,7 +127,7 @@ class ${viewControllerName}<%if (useDataRepositories || useUpdateServiceInContro
     @Subscribe
     fun onInit(event: InitEvent) {
         ${tableId}.getActions().forEach { action ->
-            if (action is SecuredBaseAction) {
+            if (action is SecuredBaseAction<*>) {
                 action.addEnabledRule { listLayout.isEnabled }
             }
         }

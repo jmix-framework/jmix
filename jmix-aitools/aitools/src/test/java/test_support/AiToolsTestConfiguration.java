@@ -16,10 +16,14 @@
 
 package test_support;
 
+import io.jmix.aitools.dataload.introspection.AvailableEntityFilter;
+import io.jmix.aitools.dataload.introspection.impl.DefaultAvailableEntityFilter;
 import io.jmix.aitools.dataload.prompt.DataLoadChatSystemPromptProvider;
 import io.jmix.aitools.dataload.prompt.impl.DefaultDataLoadChatSystemPromptProvider;
 import io.jmix.aitools.service.prompt.AiChatSystemPromptProvider;
 import io.jmix.aitools.service.prompt.impl.DefaultAiChatSystemPromptProvider;
+import io.jmix.aitools.tool.AiToolDescriptorProvider;
+import io.jmix.aitools.tool.impl.AiToolDescriptorProviderImpl;
 import io.jmix.core.CoreConfiguration;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.annotation.MessageSourceBasenames;
@@ -30,7 +34,7 @@ import io.jmix.aitools.dataload.introspection.introspector.JpaDomainModelIntrosp
 import io.jmix.testsupport.config.CoreSecurityTestConfiguration;
 import io.micrometer.observation.ObservationRegistry;
 import org.springframework.ai.chat.client.DefaultChatClientBuilder;
-import org.springframework.ai.chat.client.advisor.ToolCallAdvisor;
+import org.springframework.ai.chat.client.advisor.ToolCallingAdvisor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -66,6 +70,16 @@ public class AiToolsTestConfiguration {
     @Bean
     DefaultChatClientBuilder chatClientBuilder(StubChatModel stubChatModel) {
         return new DefaultChatClientBuilder(stubChatModel, ObservationRegistry.NOOP, null, null,
-                ToolCallAdvisor.builder());
+                ToolCallingAdvisor.builder());
+    }
+
+    @Bean
+    AvailableEntityFilter availableEntityFilter() {
+        return new DefaultAvailableEntityFilter();
+    }
+
+    @Bean
+    AiToolDescriptorProvider aiToolDescriptorProvider() {
+        return new AiToolDescriptorProviderImpl();
     }
 }

@@ -25,6 +25,8 @@ import io.jmix.aitools.dataload.prompt.JpqlRepairerPromptProvider;
 import io.jmix.aitools.dataload.repair.JpqlRepairRequest;
 import io.jmix.aitools.dataload.repair.JpqlRepairer;
 import io.jmix.aitools.dataload.validation.JpqlValidationIssue;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +35,10 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
+/**
+ * Default {@link JpqlRepairer} that re-prompts the LLM with the previous query and its validation
+ * issues, then parses the corrected JPQL from the model's JSON reply.
+ */
 public class DefaultJpqlRepairer implements JpqlRepairer, InitializingBean {
 
     @Autowired
@@ -42,11 +48,15 @@ public class DefaultJpqlRepairer implements JpqlRepairer, InitializingBean {
 
     protected ObjectMapper objectMapper;
 
+    /**
+     * Initializes the JSON object mapper after the bean is created.
+     */
     @Override
     public void afterPropertiesSet() {
         objectMapper = createObjectMapper();
     }
 
+    @NullMarked
     @Override
     public GeneratedJpqlResult repair(JpqlRepairRequest request) {
         return executePrompt(request);
@@ -125,14 +135,34 @@ public class DefaultJpqlRepairer implements JpqlRepairer, InitializingBean {
     }
 
     protected GeneratedJpqlResult mapToGeneratedJpqlResult(GeneratedJpqlPayload payload) {
-        List<GeneratedJpqlParameter> parameters = payload.getParameters().stream()
-                .map(parameter -> new GeneratedJpqlParameter(parameter.getName(), parameter.getType(), parameter.getValue()))
-                .toList();
+        List<GeneratedJpqlParameter> parameters = payload.getParameters() == null
+                ? Collections.emptyList()
+                : payload.getParameters().stream()
+                  .map(this::toGeneratedJpqlParameter)
+                  .filter(Objects::nonNull)
+                  .toList();
 
-        return new GeneratedJpqlResult(payload.getJpql(), parameters, payload.getExplanation(),
+        return new GeneratedJpqlResult(
+                Objects.requireNonNullElse(payload.getJpql(), ""),
+                parameters,
+                Objects.requireNonNullElse(payload.getExplanation(), ""),
                 payload.getWarnings() == null ? Collections.emptyList() : payload.getWarnings(),
-                payload.getMaxResults(), payload.getFirstResult()
+                payload.getMaxResults(),
+                payload.getFirstResult()
         );
+    }
+
+    /**
+     * Maps a parameter payload to a {@link GeneratedJpqlParameter}, or returns {@code null} to skip
+     * it when the model provided no parameter name (such a parameter cannot be bound).
+     */
+    @Nullable
+    protected GeneratedJpqlParameter toGeneratedJpqlParameter(GeneratedJpqlParameterPayload payload) {
+        String name = payload.getName();
+        if (name == null || name.isBlank()) {
+            return null;
+        }
+        return new GeneratedJpqlParameter(name, Objects.requireNonNullElse(payload.getType(), ""), payload.getValue());
     }
 
     protected ObjectMapper createObjectMapper() {

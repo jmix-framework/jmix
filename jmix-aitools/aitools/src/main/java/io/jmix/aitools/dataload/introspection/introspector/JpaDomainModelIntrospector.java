@@ -55,7 +55,6 @@ public class JpaDomainModelIntrospector {
 
     protected boolean initialized = false;
 
-    // TODO: pinyazhin, rework?
     @EventListener
     protected void onApplicationStarted(ContextRefreshedEvent event) {
         if (!initialized) {
@@ -63,19 +62,28 @@ public class JpaDomainModelIntrospector {
         }
     }
 
-    // TODO: pinyazhin, rework?
-    public boolean isInitialized() {
-        return initialized;
-    }
-
     /**
-     * Rebuilds entity and property descriptor indexes from current metadata. It considers inclusion and exclusions
-     * from the application properties.
+     * Rebuilds entity and property descriptor indexes from current metadata, applying the inclusion and
+     * exclusion rules from the application properties.
+     * <p>
+     * Each entity is checked against the rules below, in order; the first matching rule wins:
+     * <ol>
+     *     <li>listed in {@code excludeEntities} — excluded (takes precedence over everything else);</li>
+     *     <li>listed in {@code includeEntities} or matching {@code includePackages} — included
+     *     (overrides the system-level, DTO and {@code excludePackages} rules below);</li>
+     *     <li>system-level entity while {@code excludeSystemLevelEntities} is enabled — excluded;</li>
+     *     <li>not a JPA entity or embeddable (a DTO) — excluded;</li>
+     *     <li>matching {@code excludePackages} — excluded;</li>
+     *     <li>if {@code includeEntities} or {@code includePackages} is configured (allow-list mode) —
+     *     included only when it matches one of them, otherwise excluded;</li>
+     *     <li>otherwise — included by default.</li>
+     * </ol>
      *
      * @see AiToolsDataLoadProperties#getExcludeEntities()
      * @see AiToolsDataLoadProperties#getExcludePackages()
      * @see AiToolsDataLoadProperties#getIncludeEntities()
      * @see AiToolsDataLoadProperties#getIncludePackages()
+     * @see AiToolsDataLoadProperties#getExcludeSystemLevelEntities()
      */
     public void introspect() {
         Collection<MetaClass> classes = metadata.getClasses();

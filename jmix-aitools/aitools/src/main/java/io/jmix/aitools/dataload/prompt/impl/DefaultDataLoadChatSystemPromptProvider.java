@@ -20,6 +20,9 @@ import io.jmix.aitools.dataload.prompt.DataLoadChatSystemPromptProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 
+/**
+ * Default {@link DataLoadChatSystemPromptProvider} that loads the prompt from a bundled classpath resource.
+ */
 public class DefaultDataLoadChatSystemPromptProvider implements DataLoadChatSystemPromptProvider {
 
     @Value("classpath:io/jmix/aitools/dataload/prompt/dataload-chat-system-prompt.st")

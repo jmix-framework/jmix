@@ -16,7 +16,9 @@
 
 package io.jmix.aitools;
 
+import io.jmix.core.annotation.Experimental;
 import io.jmix.core.common.util.Preconditions;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +34,12 @@ import org.springframework.stereotype.Component;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+/**
+ * Class is a {@link ChatClient} factory. It creates instances from the application's configured
+ * Spring AI model.
+ */
+@Experimental
+@NullMarked
 @Component("aitols_ChatClientFactory")
 public class ChatClientFactory implements InitializingBean {
 
@@ -42,12 +50,6 @@ public class ChatClientFactory implements InitializingBean {
 
     private ChatClient.@Nullable Builder builder;
 
-    /**
-     * Resolves the {@link ChatClient.Builder} bean once at startup. Leaves it {@code null} both when no
-     * builder bean is declared and when it cannot be instantiated (e.g. a Spring AI model is on the
-     * classpath but no API key is set — the bean factory then throws). Swallowing the creation failure
-     * lets the application start and the UI degrade to read-only instead of failing at startup.
-     */
     @Override
     public void afterPropertiesSet() {
         try {
@@ -58,22 +60,35 @@ public class ChatClientFactory implements InitializingBean {
         }
     }
 
+    /**
+     * Creates a simple chat client with no extra configurations.
+     *
+     * @return a new chat client
+     * @throws IllegalStateException if no Spring AI model is configured
+     */
     public ChatClient createChatClient() {
         return createBuilder().build();
     }
 
+    /**
+     * Creates a chat client, applying the given customizer to the builder before building.
+     *
+     * @param builderCustomizer customizer applied to the chat client builder
+     * @return a new chat client
+     * @throws IllegalStateException if no Spring AI model is configured
+     */
     public ChatClient createChatClient(Consumer<ChatClient.Builder> builderCustomizer) {
         Preconditions.checkNotNullArgument(builderCustomizer);
 
         ChatClient.Builder clientBuilder = createBuilder();
         builderCustomizer.accept(clientBuilder);
+
         return clientBuilder.build();
     }
 
     /**
      * Creates a {@link ChatClient} with the default advisors, or an empty {@link Optional} when
-     * Spring AI is not configured (see {@link #isConfigured()}), so callers can degrade gracefully
-     * instead of failing.
+     * Spring AI is not configured (see {@link #isConfigured()}).
      */
     public Optional<ChatClient> createChatClientWithDefaultAdvisors() {
         if (!isConfigured()) {
@@ -85,20 +100,21 @@ public class ChatClientFactory implements InitializingBean {
                         ToolCallingAdvisor.builder().build())));
     }
 
-    public ChatClient.Builder createBuilder() {
+    /**
+     * Whether a usable {@link ChatClient.Builder} is available, i.e. the application has a configured
+     * Spring AI model.
+     *
+     * @return {@code true} if a Spring AI model is configured
+     */
+    public boolean isConfigured() {
+        return builder != null;
+    }
+
+    protected ChatClient.Builder createBuilder() {
         if (builder == null) {
             throw new IllegalStateException(ChatClient.Builder.class.getSimpleName()
                     + " is not configured in application");
         }
         return builder.clone();
-    }
-
-    /**
-     * Whether a usable {@link ChatClient.Builder} is available, i.e. the application has a configured
-     * Spring AI model. {@code false} both when no builder bean is declared and when it cannot be created
-     * (e.g. a model is present but no API key is configured).
-     */
-    public boolean isConfigured() {
-        return builder != null;
     }
 }

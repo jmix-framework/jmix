@@ -22,6 +22,7 @@ import io.jmix.aitools.tool.AiToolRegistry;
 import io.jmix.aitools.tool.JmixAiTool;
 import io.jmix.aitools.tool.ResolvedAiTool;
 import io.jmix.aitools.tool.ToolOverride;
+import io.jmix.core.common.util.Preconditions;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +52,20 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
+/**
+ * Default {@link AiToolRegistry}. On startup:
+ * <ul>
+ *     <li>
+ *         it scans all {@link JmixAiTool} beans for {@code @Tool}-annotated methods
+ *     </li>
+ *     <li>
+ *         resolves {@link ToolOverride @ToolOverride} conflicts
+ *     </li>
+ *     <li>
+ *         publishes an immutable set of {@link ResolvedAiTool}s.
+ *     </li>
+ * </ul>
+ */
 @Component("aitols_AiToolRegistryImpl")
 public class AiToolRegistryImpl implements AiToolRegistry, InitializingBean {
 
@@ -162,9 +177,8 @@ public class AiToolRegistryImpl implements AiToolRegistry, InitializingBean {
 
     @Override
     public List<ResolvedAiTool> findByMarker(Class<? extends JmixAiTool> marker) {
-        if (marker == null) {
-            return List.of();
-        }
+        Preconditions.checkNotNullArgument(marker);
+
         List<ResolvedAiTool> filtered = new ArrayList<>();
         for (ResolvedAiTool t : resolvedAiTools.resolvedTools()) {
             if (t.getMarkers().contains(marker)) {
@@ -317,7 +331,7 @@ public class AiToolRegistryImpl implements AiToolRegistry, InitializingBean {
     }
 
     @SuppressWarnings("unchecked")
-    protected void collectMarkersRecursive(Class<?> type, Set<Class<? extends JmixAiTool>> acc) {
+    protected void collectMarkersRecursive(@Nullable Class<?> type, Set<Class<? extends JmixAiTool>> acc) {
         if (type == null || type == Object.class) {
             return;
         }
@@ -327,7 +341,7 @@ public class AiToolRegistryImpl implements AiToolRegistry, InitializingBean {
                 collectMarkersRecursive(iface, acc);
             }
         }
-        collectMarkersRecursive(type.getSuperclass(), acc);
+        collectMarkersRecursive(type.getSuperclass(), acc); // type.getSuperclass() can return null
     }
 
     protected boolean isToolAnnotatedMethod(Method method) {
@@ -349,9 +363,7 @@ public class AiToolRegistryImpl implements AiToolRegistry, InitializingBean {
     }
 
     /**
-     * Immutable consistent registry state. Published as a single volatile reference so
-     * concurrent readers always observe {@code resolvedTools}, {@code toolsByName} and {@code allToolCallbacks}
-     * from the same {@link #refresh()} invocation.
+     * Immutable consistent registry state.
      */
     protected record ResolvedAiTools(List<ResolvedAiTool> resolvedTools,
                                      Map<String, ResolvedAiTool> toolsByName,
@@ -374,9 +386,9 @@ public class AiToolRegistryImpl implements AiToolRegistry, InitializingBean {
     protected record ToolCandidate(JmixAiTool source,
                                    Method method,
                                    AiToolDescriptor descriptor,
-                                   String overrideName) {
+                                   @Nullable String overrideName) {
 
-        protected ToolCandidate(JmixAiTool source, Method method, AiToolDescriptor descriptor, String overrideName) {
+        protected ToolCandidate(JmixAiTool source, Method method, AiToolDescriptor descriptor, @Nullable String overrideName) {
             this.source = Objects.requireNonNull(source);
             this.method = Objects.requireNonNull(method);
             this.descriptor = Objects.requireNonNull(descriptor);

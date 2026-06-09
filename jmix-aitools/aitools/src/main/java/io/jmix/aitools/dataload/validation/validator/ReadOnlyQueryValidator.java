@@ -29,6 +29,10 @@ import java.util.Locale;
 
 import static io.jmix.aitools.dataload.validation.validator.JpqlValidatorUtils.containsWord;
 
+/**
+ * Checks that the query is a read-only select, rejecting non-select queries and write operations
+ * (update, delete, insert).
+ */
 @Component("aitols_ReadOnlyQueryJpqlValidator")
 public class ReadOnlyQueryValidator implements JpqlResultValidator, Ordered {
 

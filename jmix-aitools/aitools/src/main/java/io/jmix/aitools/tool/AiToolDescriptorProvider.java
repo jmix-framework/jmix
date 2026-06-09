@@ -18,7 +18,17 @@ package io.jmix.aitools.tool;
 
 import java.lang.reflect.Method;
 
+/**
+ * Resolves the {@link AiToolDescriptor} (name and description) for a tool method.
+ */
 public interface AiToolDescriptorProvider {
 
+    /**
+     * Resolves the descriptor for the given tool method.
+     *
+     * @param tool       the tool bean declaring the method
+     * @param toolMethod the {@code @Tool}-annotated method
+     * @return the resolved descriptor
+     */
     AiToolDescriptor getDescriptor(JmixAiTool tool, Method toolMethod);
 }

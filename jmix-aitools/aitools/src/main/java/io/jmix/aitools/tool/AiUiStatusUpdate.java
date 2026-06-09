@@ -20,24 +20,37 @@ import io.jmix.aitools.service.AiConversationChatService;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Ephemeral status update emitted by an AI tool through
- * {@link io.jmix.aitools.tool.AiToolStatusPublisher} and delivered to the UI
- * through the callback put into the tool context by
+ * Ephemeral status update emitted by an AI tool through {@link AiToolStatusPublisher}
+ * and delivered to the UI through the callback put into the tool context by
  * {@link AiConversationChatService}. Not persisted.
  * <p>
  * <b>Two-phase semantics.</b> A tool publishes the SAME {@code message}
  * twice during its lifetime:
  * <ol>
- *     <li>first with {@code resultSnippet == null} — meaning "I started this
- *         step" (the UI renders it as an in-flight indicator);</li>
- *     <li>then with the same message and a non-blank {@code resultSnippet} —
+ *     <li>
+ *         first with {@code resultSnippet == null} — meaning "I started this
+ *         step" (the UI renders it as an in-flight indicator);
+ *     </li>
+ *     <li>
+ *         then with the same message and a non-blank {@code resultSnippet} —
  *         meaning "this step finished, here is the short result" (the UI
  *         folds the second into the first, marks it as completed and shows
- *         the snippet next to the base text).</li>
+ *         the snippet next to the base text).
+ *     </li>
  * </ol>
  * Use {@link #isCompleted()} on the UI side to tell the two apart.
  */
-public record AiUiStatusUpdate(String message, @Nullable String resultSnippet) {
+public class AiUiStatusUpdate {
+
+    protected final String message;
+
+    @Nullable
+    protected final String resultSnippet;
+
+    public AiUiStatusUpdate(String message, @Nullable String resultSnippet) {
+        this.message = message;
+        this.resultSnippet = resultSnippet;
+    }
 
     /**
      * Convenience constructor for an in-flight ("started, no result yet")
@@ -45,6 +58,25 @@ public record AiUiStatusUpdate(String message, @Nullable String resultSnippet) {
      */
     public AiUiStatusUpdate(String message) {
         this(message, null);
+    }
+
+    /**
+     * Returns the status message.
+     *
+     * @return status message
+     */
+    public String message() {
+        return message;
+    }
+
+    /**
+     * Returns the short result snippet of a completed step.
+     *
+     * @return result snippet, or {@code null} for an in-flight update
+     */
+    @Nullable
+    public String resultSnippet() {
+        return resultSnippet;
     }
 
     /**

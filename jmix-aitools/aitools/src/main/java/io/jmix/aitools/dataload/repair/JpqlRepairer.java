@@ -19,8 +19,17 @@ package io.jmix.aitools.dataload.repair;
 import io.jmix.aitools.dataload.execution.GeneratedJpqlResult;
 import org.jspecify.annotations.Nullable;
 
+/**
+ * To be implemented by classes that can repair an invalid JPQL query draft.
+ */
 public interface JpqlRepairer {
 
+    /**
+     * Attempts to repair the invalid query described by the request.
+     *
+     * @param request repair request with the current query
+     * @return query draft, or {@code null} if no repaired result could be produced
+     */
     @Nullable
     GeneratedJpqlResult repair(JpqlRepairRequest request);
 }

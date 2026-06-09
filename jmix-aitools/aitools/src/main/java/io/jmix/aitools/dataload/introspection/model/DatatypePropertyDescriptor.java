@@ -20,6 +20,9 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
+/**
+ * Descriptor of a datatype (scalar) entity property.
+ */
 public class DatatypePropertyDescriptor extends AbstractEntityPropertyDescriptor {
 
     public DatatypePropertyDescriptor(String name,

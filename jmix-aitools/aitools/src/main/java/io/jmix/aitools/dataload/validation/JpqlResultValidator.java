@@ -20,7 +20,17 @@ import io.jmix.aitools.dataload.execution.GeneratedJpqlResult;
 
 import java.util.List;
 
+/**
+ * A single validation rule applied to a generated JPQL draft. Implementations are ordered and run
+ * in sequence by {@link JpqlValidationService}.
+ */
 public interface JpqlResultValidator {
 
+    /**
+     * Validates the given query draft.
+     *
+     * @param result generated query draft to validate
+     * @return issues found, or an empty list if the rule passed
+     */
     List<JpqlValidationIssue> validate(GeneratedJpqlResult result);
 }

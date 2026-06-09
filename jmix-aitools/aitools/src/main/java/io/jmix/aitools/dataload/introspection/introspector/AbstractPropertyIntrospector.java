@@ -21,10 +21,14 @@ import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.annotation.Comment;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
 
+/**
+ * Base class for {@link MetaPropertyIntrospector} implementations.
+ */
 public abstract class AbstractPropertyIntrospector implements MetaPropertyIntrospector {
 
     @Autowired
@@ -32,6 +36,13 @@ public abstract class AbstractPropertyIntrospector implements MetaPropertyIntros
     @Autowired
     protected MetadataTools metadataTools;
 
+    /**
+     * Returns the property captions across all configured locales, skipping locales where the caption
+     * falls back to the raw property name.
+     *
+     * @param property property to read captions for
+     * @return localized property names
+     */
     public List<String> getPropertyLocalizedNames(MetaProperty property) {
         Collection<Locale> locales = messageTools.getAvailableLocalesMap().values();
         List<String> names = new ArrayList<>(locales.size());
@@ -45,6 +56,13 @@ public abstract class AbstractPropertyIntrospector implements MetaPropertyIntros
         return names;
     }
 
+    /**
+     * Returns the entity captions across all configured locales, skipping locales where the caption
+     * falls back to the raw entity name.
+     *
+     * @param metaClass entity meta-class to read captions for
+     * @return localized entity names
+     */
     public List<String> getEntityLocalizedNames(MetaClass metaClass) {
         Collection<Locale> locales = messageTools.getAvailableLocalesMap().values();
         List<String> names = new ArrayList<>(locales.size());
@@ -57,22 +75,54 @@ public abstract class AbstractPropertyIntrospector implements MetaPropertyIntros
         return names;
     }
 
+    /**
+     * Returns the value of the property's {@code @Comment} annotation.
+     *
+     * @param property property to read the comment for
+     * @return comment text, or {@code null} if the property is not annotated
+     */
+    @Nullable
     public String getComment(MetaProperty property) {
         return metadataTools.getMetaAnnotationValue(property, Comment.class);
     }
 
+    /**
+     * Returns the lower-cased Jmix property type name (for example {@code "datatype"} or {@code "enum"}).
+     *
+     * @param property property to read the type for
+     * @return property type name
+     */
     public String getPropertyType(MetaProperty property) {
         return property.getType().name().toLowerCase();
     }
 
+    /**
+     * Returns whether the property is the entity identifier.
+     *
+     * @param property property to check
+     * @return {@code true} if the property is the entity's primary key, or {@code null} otherwise
+     */
+    @Nullable
     public Boolean getIdentifier(MetaProperty property) {
         return property.equals(metadataTools.getPrimaryKeyProperty(property.getDomain())) ? true : null;
     }
 
+    /**
+     * Returns whether the property is persistent (stored in the database).
+     *
+     * @param property property to check
+     * @return {@code true} if the property is persistent
+     */
     public Boolean getPersistent(MetaProperty property) {
         return metadataTools.isJpa(property);
     }
 
+    /**
+     * Returns whether the property is mandatory.
+     *
+     * @param property property to check
+     * @return {@code true} if the property is mandatory
+     */
     public Boolean getMandatory(MetaProperty property) {
         return property.isMandatory();
     }

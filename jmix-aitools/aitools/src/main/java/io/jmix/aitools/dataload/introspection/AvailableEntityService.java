@@ -16,13 +16,12 @@
 
 package io.jmix.aitools.dataload.introspection;
 
-import io.jmix.aitools.dataload.introspection.impl.DefaultAvailableEntityFilter;
 import io.jmix.aitools.dataload.introspection.introspector.JpaDomainModelIntrospector;
 import io.jmix.aitools.dataload.introspection.model.EntityDescriptor;
 import io.jmix.aitools.dataload.introspection.model.EntityPropertyDescriptor;
 import io.jmix.aitools.dataload.introspection.model.EntitySummary;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -43,7 +42,7 @@ public class AvailableEntityService {
     @Autowired
     protected JpaDomainModelIntrospector modelIntrospector;
     @Autowired
-    protected ObjectProvider<AvailableEntityFilter> availableEntityFilters;
+    protected AvailableEntityFilter availableEntityFilter;
 
     /**
      * Returns compact summaries for all entities available to the current user.
@@ -69,7 +68,7 @@ public class AvailableEntityService {
      * @param entityNames entity names to resolve
      * @return immutable list of available entity descriptors for the requested names
      */
-    public List<EntityDescriptor> findEntityDescriptorsByNames(Collection<String> entityNames) {
+    public List<EntityDescriptor> findEntityDescriptorsByNames(@Nullable Collection<String> entityNames) {
         if (entityNames == null || entityNames.isEmpty()) {
             return List.of();
         }
@@ -82,29 +81,11 @@ public class AvailableEntityService {
             }
         }
 
-        return getEntityFilter().filter(List.copyOf(entityDescriptors));
+        return availableEntityFilter.filter(List.copyOf(entityDescriptors));
     }
 
     protected List<EntityDescriptor> getAvailableEntityDescriptors() {
-        return getEntityFilter().filter(List.copyOf(modelIntrospector.getEntityDescriptors()));
-    }
-
-    protected AvailableEntityFilter getEntityFilter() {
-        List<AvailableEntityFilter> filters = availableEntityFilters.orderedStream().toList();
-        if (filters.isEmpty()) {
-            throw new IllegalStateException("No " + AvailableEntityFilter.class.getSimpleName() + " bean is defined");
-        }
-        if (filters.size() == 1) {
-            return filters.get(0);
-        }
-
-        for (AvailableEntityFilter filter : filters) {
-            if (!(filter instanceof DefaultAvailableEntityFilter)) {
-                return filter;
-            }
-        }
-
-        return filters.get(0);
+        return availableEntityFilter.filter(List.copyOf(modelIntrospector.getEntityDescriptors()));
     }
 
     protected EntitySummary toEntitySummary(EntityDescriptor entityDescriptor) {

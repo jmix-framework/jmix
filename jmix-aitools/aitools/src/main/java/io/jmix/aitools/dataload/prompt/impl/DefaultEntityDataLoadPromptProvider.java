@@ -21,6 +21,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
+/**
+ * Default {@link EntityDataLoadPromptProvider} that loads the prompt from a bundled classpath resource.
+ */
 @Component("aitols_EntityDataLoadPromptProvider")
 public class DefaultEntityDataLoadPromptProvider implements EntityDataLoadPromptProvider {
 

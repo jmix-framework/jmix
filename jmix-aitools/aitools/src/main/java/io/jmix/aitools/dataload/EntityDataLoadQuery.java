@@ -35,7 +35,9 @@ public class EntityDataLoadQuery {
     protected List<String> resultProperties;
     protected String explanation;
     protected List<String> warnings;
+    @Nullable
     protected Integer maxResults;
+    @Nullable
     protected Integer firstResult;
 
     public EntityDataLoadQuery(String jpql,

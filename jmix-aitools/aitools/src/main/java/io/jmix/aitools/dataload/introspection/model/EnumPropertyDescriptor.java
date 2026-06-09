@@ -20,10 +20,15 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
+/**
+ * Descriptor of an enum entity property. Adds the enum class description and how its values are
+ * stored (for example by id, name or ordinal) on top of the common property attributes.
+ */
 public class EnumPropertyDescriptor extends AbstractEntityPropertyDescriptor {
 
     protected EnumClassDescriptor enumType;
 
+    @Nullable
     protected String enumStorageMode;
 
     public EnumPropertyDescriptor(String name,
@@ -42,10 +47,21 @@ public class EnumPropertyDescriptor extends AbstractEntityPropertyDescriptor {
         this.enumStorageMode = enumStorageMode;
     }
 
+    /**
+     * Returns the description of the enum class, including its constants.
+     *
+     * @return enum class descriptor
+     */
     public EnumClassDescriptor getEnumType() {
         return enumType;
     }
 
+    /**
+     * Returns how the enum values are stored.
+     *
+     * @return storage mode (for example {@code "ordinal"} or {@code "string"}), or {@code null} for
+     * a Jmix {@code EnumClass}
+     */
     @Nullable
     public String getEnumStorageMode() {
         return enumStorageMode;

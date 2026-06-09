@@ -30,6 +30,11 @@ import java.util.regex.Pattern;
 
 import static io.jmix.aitools.dataload.validation.validator.JpqlValidatorUtils.*;
 
+/**
+ * Rejects SQL-only constructs that are not valid JPQL: SQL pagination (LIMIT/OFFSET), SQL-specific
+ * date functions and interval expressions, and CURRENT_DATE/CURRENT_TIME/CURRENT_TIMESTAMP used
+ * with parentheses.
+ */
 @Component("aitols_CommonNonJpqlConstructsJpqlValidator")
 public class CommonNonJpqlConstructsValidator implements JpqlResultValidator, Ordered {
 

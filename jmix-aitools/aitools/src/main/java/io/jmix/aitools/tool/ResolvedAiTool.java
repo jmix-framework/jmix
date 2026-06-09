@@ -48,22 +48,47 @@ public class ResolvedAiTool {
         this.markers = Set.copyOf(markers);
     }
 
+    /**
+     * Returns the tool name as seen by the model.
+     *
+     * @return tool name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Returns the tool description as seen by the model.
+     *
+     * @return tool description
+     */
     public String getDescription() {
         return description;
     }
 
+    /**
+     * Returns the callback that invokes the tool.
+     *
+     * @return tool callback
+     */
     public ToolCallback getCallback() {
         return callback;
     }
 
+    /**
+     * Returns the bean that declares the tool method.
+     *
+     * @return source tool bean
+     */
     public JmixAiTool getSource() {
         return source;
     }
 
+    /**
+     * Returns the {@code @Tool}-annotated method backing this tool.
+     *
+     * @return tool method
+     */
     public Method getMethod() {
         return method;
     }

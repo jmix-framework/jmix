@@ -19,6 +19,9 @@ package io.jmix.aitools.dataload.introspection.model;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Description of an enum class used as a property type.
+ */
 public class EnumClassDescriptor {
 
     protected String name;
@@ -35,14 +38,29 @@ public class EnumClassDescriptor {
         this.constants = constants;
     }
 
+    /**
+     * Returns the simple name of the enum class.
+     *
+     * @return enum class name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Returns the enum class captions for the configured locales.
+     *
+     * @return localized enum class names
+     */
     public List<String> getLocalizedNames() {
         return localizedNames;
     }
 
+    /**
+     * Returns the enum constants keyed by constant name.
+     *
+     * @return enum constants by name
+     */
     public Map<String, EnumValueDescriptor> getConstants() {
         return constants;
     }

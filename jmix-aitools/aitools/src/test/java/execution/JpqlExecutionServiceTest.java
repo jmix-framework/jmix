@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package io.jmix.aitools.dataload.execution;
+package execution;
 
 import io.jmix.aitools.AiToolsDataLoadProperties;
+import io.jmix.aitools.dataload.execution.*;
 import io.jmix.aitools.dataload.execution.JpqlValidationAndRepairService.OperationResult;
 import io.jmix.aitools.dataload.repair.JpqlRepairResult;
 import io.jmix.aitools.dataload.validation.JpqlValidationIssue;
@@ -32,16 +33,11 @@ import java.util.List;
 import java.util.Map;
 
 import static io.jmix.aitools.dataload.validation.validator.UsedPropertyPathsValidator.PROPERTY_PATH_INVALID_CODE;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyMap;
-import static org.mockito.ArgumentMatchers.isNull;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -56,7 +52,7 @@ class JpqlExecutionServiceTest {
     @Test
     @DisplayName("Repairs and executes JPQL request")
     void testRepairsAndExecutesRequest() {
-        JpqlExecutionService executionService = createSpyService();
+        TestJpqlExecutionService executionService = createService();
         GeneratedJpqlResult generatedResult = new GeneratedJpqlResult(
                 "select e from aitols_Customer e where e.id = :id",
                 List.of(new GeneratedJpqlParameter("id", "Long", "1001")),
@@ -73,9 +69,7 @@ class JpqlExecutionServiceTest {
         when(jpqlParameterConversionService.convert(anyList()))
                 .thenReturn(Map.of("id", 1001L));
 
-        doReturn(executionService.createExecutionRows(List.of(Map.of("id", 1001L, "name", "Acme")), false))
-                .when(executionService)
-                .executeQuery(any(), any(), anyMap(), anyInt(), isNull());
+        executionService.stubRows(List.of(Map.of("id", 1001L, "name", "Acme")), false);
 
         JpqlExecutionResult result = executionService.execute(new JpqlExecutionRequest(
                 "Show customer 1001",
@@ -96,7 +90,7 @@ class JpqlExecutionServiceTest {
     @Test
     @DisplayName("Skips execution when JPQL remains invalid after repair")
     void testSkipsExecutionWhenResultRemainsInvalid() {
-        JpqlExecutionService executionService = createSpyService();
+        TestJpqlExecutionService executionService = createService();
 
         GeneratedJpqlResult generatedResult = new GeneratedJpqlResult(
                 "select e from aitols_Customer e where e.fullTitle = :name",
@@ -132,7 +126,7 @@ class JpqlExecutionServiceTest {
     @Test
     @DisplayName("Fails loadValues execution without result properties")
     void testFailsValuesRequestWithoutResultProperties() {
-        JpqlExecutionService executionService = createSpyService();
+        TestJpqlExecutionService executionService = createService();
         GeneratedJpqlResult generatedResult = new GeneratedJpqlResult(
                 "select c.name, count(o) from aitols_Customer c join c.orders o group by c.name",
                 List.of(),
@@ -165,7 +159,7 @@ class JpqlExecutionServiceTest {
     @Test
     @DisplayName("Sets hasMore when one extra row is available")
     void testSetsHasMoreWhenExtraRowExists() {
-        JpqlExecutionService executionService = createSpyService();
+        TestJpqlExecutionService executionService = createService();
         GeneratedJpqlResult generatedResult = new GeneratedJpqlResult(
                 "select e.id as id from aitols_Customer e",
                 List.of(),
@@ -182,10 +176,7 @@ class JpqlExecutionServiceTest {
 
         when(jpqlParameterConversionService.convert(anyList())).thenReturn(Map.of());
 
-        doReturn(executionService.createExecutionRows(
-                List.of(Map.of("id", 1L), Map.of("id", 2L)), true))
-                .when(executionService)
-                .executeQuery(any(), any(), anyMap(), anyInt(), any());
+        executionService.stubRows(List.of(Map.of("id", 1L), Map.of("id", 2L)), true);
 
         JpqlExecutionResult result = executionService.execute(new JpqlExecutionRequest(
                 "Show customers",
@@ -203,7 +194,7 @@ class JpqlExecutionServiceTest {
     @Test
     @DisplayName("Does not set hasMore when all rows fit into maxResults")
     void testDoesNotSetHasMoreWhenAllRowsFit() {
-        JpqlExecutionService executionService = createSpyService();
+        TestJpqlExecutionService executionService = createService();
         GeneratedJpqlResult generatedResult = new GeneratedJpqlResult(
                 "select e.id as id from aitols_Customer e",
                 List.of(), "", List.of(), 2, 0);
@@ -216,10 +207,7 @@ class JpqlExecutionServiceTest {
 
         when(jpqlParameterConversionService.convert(anyList())).thenReturn(Map.of());
 
-        doReturn(executionService.createExecutionRows(
-                List.of(Map.of("id", 1L), Map.of("id", 2L)), false))
-                .when(executionService)
-                .executeQuery(any(), any(), anyMap(), anyInt(), any());
+        executionService.stubRows(List.of(Map.of("id", 1L), Map.of("id", 2L)), false);
 
         JpqlExecutionResult result = executionService.execute(new JpqlExecutionRequest(
                 "Show customers",
@@ -234,12 +222,32 @@ class JpqlExecutionServiceTest {
         assertEquals(2, result.getRows().size());
     }
 
-    protected JpqlExecutionService createSpyService() {
-        JpqlExecutionService executionService = spy(new JpqlExecutionService());
+    TestJpqlExecutionService createService() {
+        TestJpqlExecutionService executionService = new TestJpqlExecutionService();
         ReflectionTestUtils.setField(executionService, "validateAndRepair", validateAndRepair);
         ReflectionTestUtils.setField(executionService, "jpqlParameterConversionService", jpqlParameterConversionService);
         ReflectionTestUtils.setField(executionService, "dataLoadProperties",
                 new AiToolsDataLoadProperties(true, true, 1, 20, null, null, null, null));
         return executionService;
+    }
+
+    static class TestJpqlExecutionService extends JpqlExecutionService {
+
+        private List<Map<String, Object>> stubbedRows = List.of();
+        private boolean stubbedHasMore;
+
+        void stubRows(List<Map<String, Object>> rows, boolean hasMore) {
+            this.stubbedRows = rows;
+            this.stubbedHasMore = hasMore;
+        }
+
+        @Override
+        protected ExecutionRows executeQuery(JpqlExecutionRequest request,
+                                             GeneratedJpqlResult generatedJpqlResult,
+                                             Map<String, Object> executionParameters,
+                                             Integer maxResults,
+                                             Integer firstResult) {
+            return createExecutionRows(stubbedRows, stubbedHasMore);
+        }
     }
 }

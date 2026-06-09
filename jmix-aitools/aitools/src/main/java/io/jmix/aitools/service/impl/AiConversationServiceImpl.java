@@ -32,6 +32,9 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Default {@link AiConversationService} persisting conversations and messages.
+ */
 @Component("aitols_AiConversationServiceImpl")
 public class AiConversationServiceImpl implements AiConversationService {
 

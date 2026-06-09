@@ -16,9 +16,21 @@
 
 package io.jmix.aitools;
 
+import io.jmix.core.annotation.Experimental;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.core.io.Resource;
 
+/**
+ * Supplies a prompt template as a {@link Resource}.
+ */
+@Experimental
+@NullMarked
 public interface PromptProvider {
 
+    /**
+     * Returns the prompt template resource.
+     *
+     * @return prompt template resource
+     */
     Resource getResource();
 }

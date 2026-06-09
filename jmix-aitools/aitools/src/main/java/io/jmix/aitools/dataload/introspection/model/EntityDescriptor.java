@@ -20,6 +20,9 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
+/**
+ * Full description of an introspected entity.
+ */
 public class EntityDescriptor {
 
     protected String name;
@@ -27,6 +30,7 @@ public class EntityDescriptor {
 
     protected List<EntityPropertyDescriptor> properties;
 
+    @Nullable
     protected String comment;
 
     public EntityDescriptor(String name,
@@ -39,19 +43,39 @@ public class EntityDescriptor {
         this.comment = comment;
     }
 
+    /**
+     * Returns the Jmix entity name.
+     *
+     * @return entity name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Returns the entity comment.
+     *
+     * @return comment text, or {@code null} if none
+     */
     @Nullable
     public String getComment() {
         return comment;
     }
 
+    /**
+     * Returns the entity captions for the configured locales.
+     *
+     * @return localized entity names
+     */
     public List<String> getLocalizedNames() {
         return localizedNames;
     }
 
+    /**
+     * Returns the descriptors of the entity's properties.
+     *
+     * @return property descriptors
+     */
     public List<EntityPropertyDescriptor> getProperties() {
         return properties;
     }

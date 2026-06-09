@@ -16,6 +16,7 @@
 
 package io.jmix.aitools.dataload.validation;
 
+import com.google.common.base.Preconditions;
 import io.jmix.aitools.dataload.validation.validator.*;
 import io.jmix.aitools.dataload.execution.GeneratedJpqlResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,10 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Runs all registered {@link JpqlResultValidator}s against a generated JPQL draft and aggregates
+ * their issues into a single {@link JpqlValidationResult}.
+ */
 @Component("aitols_JpqlValidationService")
 public class JpqlValidationService {
 
@@ -52,12 +57,9 @@ public class JpqlValidationService {
      * @return validation result
      */
     public JpqlValidationResult validate(GeneratedJpqlResult generatedJpqlResult) {
-        List<JpqlValidationIssue> issues = new ArrayList<>();
+        Preconditions.checkNotNull(generatedJpqlResult, "Generated JPQL result is null");
 
-        if (generatedJpqlResult == null) {
-            issues.add(new JpqlValidationIssue("result.missing", "Generated JPQL result is null"));
-            return invalid(issues);
-        }
+        List<JpqlValidationIssue> issues = new ArrayList<>();
 
         for (JpqlResultValidator validator : validators) {
             issues.addAll(validator.validate(generatedJpqlResult));

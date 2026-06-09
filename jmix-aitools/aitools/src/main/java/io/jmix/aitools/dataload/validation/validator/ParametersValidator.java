@@ -28,6 +28,11 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Checks that the JPQL named parameters and the declared parameters match — flagging both
+ * parameters used in the query but missing from the declaration, and declared parameters that the
+ * query never uses.
+ */
 @Component("aitols_ParametersValidator")
 public class ParametersValidator implements JpqlResultValidator, Ordered {
 

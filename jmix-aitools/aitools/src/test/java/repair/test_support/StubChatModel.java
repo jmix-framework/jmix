@@ -35,11 +35,8 @@ public class StubChatModel implements ChatModel {
         return content;
     }
 
-    // The ToolCallAdvisor requires the prompt options to be ToolCallingChatOptions. A real model
-    // (e.g. OpenAiChatModel) supplies them via its default options; the stub mirrors that so the
-    // tool-calling advisor chain works under test.
     @Override
-    public ChatOptions getDefaultOptions() {
+    public ChatOptions getOptions() {
         return ToolCallingChatOptions.builder().build();
     }
 

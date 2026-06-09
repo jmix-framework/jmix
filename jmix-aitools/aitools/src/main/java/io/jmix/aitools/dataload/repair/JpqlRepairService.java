@@ -25,6 +25,12 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+/**
+ * Repairs an invalid query by running the configured {@link JpqlRepairer}, re-validating after each
+ * attempt until the query becomes valid or the attempt limit is reached.
+ * <p>
+ * If no {@code JpqlRepairer} bean is available, the query is returned unchanged.
+ */
 @Component("aitols_JpqlRepairService")
 public class JpqlRepairService {
 
@@ -37,6 +43,15 @@ public class JpqlRepairService {
     @Autowired
     protected ObjectProvider<JpqlRepairer> jpqlRepairerProvider;
 
+    /**
+     * Repairs the query if its validation failed, using the configured maximum number of attempts.
+     *
+     * @param executionRequest    original execution request
+     * @param generatedJpqlResult current query draft
+     * @param validationResult    validation result of the current draft
+     * @return repair result; the query is returned unchanged if it is already valid
+     * @see AiToolsDataLoadProperties#getMaxRepairAttempts()
+     */
     public JpqlRepairResult repairIfNeeded(JpqlExecutionRequest executionRequest,
                                            GeneratedJpqlResult generatedJpqlResult,
                                            JpqlValidationResult validationResult) {
@@ -44,6 +59,18 @@ public class JpqlRepairService {
                 dataLoadProperties.getMaxRepairAttempts());
     }
 
+    /**
+     * Repairs the query if its validation failed, retrying up to {@code maxRepairAttempts} times.
+     * <p>
+     * The query is returned unchanged (with {@code repaired = false}) if it is already valid, if
+     * {@code maxRepairAttempts} is not positive, or if no {@link JpqlRepairer} bean is available.
+     *
+     * @param executionRequest    original execution request
+     * @param generatedJpqlResult current query draft
+     * @param validationResult    validation result of the current draft
+     * @param maxRepairAttempts   maximum number of repair attempts
+     * @return repair result with the final query draft and its validation result
+     */
     public JpqlRepairResult repairIfNeeded(JpqlExecutionRequest executionRequest,
                                            GeneratedJpqlResult generatedJpqlResult,
                                            JpqlValidationResult validationResult,

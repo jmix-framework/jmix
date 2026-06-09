@@ -44,12 +44,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Consumer;
 
+/**
+ * Default {@link AiConversationChatService}. Each {@link #process} / {@link #processStream} call:
+ * <ol>
+ *     <li>loads the conversation history, windowed by {@code aitools.chatMemoryMaxMessages};</li>
+ *     <li>creates an empty {@code ASSISTANT} placeholder message;</li>
+ *     <li>invokes the chat client with that history;</li>
+ *     <li>writes the response into the placeholder, or removes it if the call fails.</li>
+ * </ol>
+ * The optional status callback is delivered to tools via {@link AiToolStatusPublisher} for
+ * ephemeral progress messages.
+ */
 @Component("aitols_AiConversationChatServiceImpl")
 public class AiConversationChatServiceImpl implements AiConversationChatService, InitializingBean {
 
@@ -72,6 +80,7 @@ public class AiConversationChatServiceImpl implements AiConversationChatService,
     @Autowired
     protected AiToolsProperties toolsProperties;
 
+    @Nullable
     protected ChatClient chatClient;
 
     @Override
@@ -84,6 +93,7 @@ public class AiConversationChatServiceImpl implements AiConversationChatService,
         return chatClient != null;
     }
 
+    @Nullable
     @Override
     public String process(UUID userMessageId, @Nullable Consumer<AiUiStatusUpdate> statusCallback) {
         Preconditions.checkNotNullArgument(userMessageId);
@@ -130,13 +140,15 @@ public class AiConversationChatServiceImpl implements AiConversationChatService,
     protected ChatClient.ChatClientRequestSpec buildPromptSpec(List<Message> history,
                                                                UUID assistantMessageId,
                                                                @Nullable Consumer<AiUiStatusUpdate> statusCallback) {
+        checkChatClient();
+
         Map<String, Object> toolContext = new HashMap<>();
         toolContext.put(ASSISTANT_MESSAGE_ID_KEY, assistantMessageId);
         if (statusCallback != null) {
             toolContext.put(AiToolStatusPublisher.STATUS_UPDATE_CALLBACK, statusCallback);
         }
 
-        return chatClient.prompt()
+        return Objects.requireNonNull(chatClient).prompt()
                 .system(s -> s
                         .text(systemPromptProvider.getResource())
                         .param("responseLanguage", resolveResponseLanguage())
@@ -190,7 +202,7 @@ public class AiConversationChatServiceImpl implements AiConversationChatService,
         return dataManager.save(placeholder);
     }
 
-    protected void saveAssistantResponse(ChatMessage placeholder, String response) {
+    protected void saveAssistantResponse(ChatMessage placeholder, @Nullable String response) {
         placeholder.setContent(response);
         dataManager.save(placeholder);
     }

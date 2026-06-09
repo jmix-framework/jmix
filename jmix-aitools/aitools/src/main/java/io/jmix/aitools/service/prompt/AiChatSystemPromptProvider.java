@@ -17,17 +17,10 @@
 package io.jmix.aitools.service.prompt;
 
 import io.jmix.aitools.PromptProvider;
+import io.jmix.aitools.service.impl.AiChatServiceImpl;
 
 /**
- * Provides the system prompt template used by the generic {@code AiChatService}.
- * <p>
- * Mirrors {@code io.jmix.aitools.dataload.prompt.DataLoadChatSystemPromptProvider}
- * but for the umbrella chat that aggregates all {@code JmixAiTool}s.
- * <p>
- * Implementations return a {@link org.springframework.core.io.Resource} pointing at
- * a StringTemplate-style ({@code .st}) template. The final parameter binding is
- * performed by {@code AiChatServiceImpl} so additional parameters can be introduced
- * additively in the future without changing this contract.
+ * Provides the system prompt template used by the {@link AiChatServiceImpl}.
  */
 public interface AiChatSystemPromptProvider extends PromptProvider {
 }

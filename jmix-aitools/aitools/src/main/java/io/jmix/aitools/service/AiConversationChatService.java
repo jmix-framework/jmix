@@ -16,6 +16,7 @@
 
 package io.jmix.aitools.service;
 
+import io.jmix.aitools.entity.ChatMessage;
 import io.jmix.aitools.tool.AiUiStatusUpdate;
 import org.jspecify.annotations.Nullable;
 import reactor.core.publisher.Flux;
@@ -24,51 +25,43 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 /**
- * Conversation-aware chat orchestration. The caller must persist the user's
- * {@link io.jmix.aitools.entity.ChatMessage} (via {@link AiConversationService})
- * BEFORE invoking this service and pass the resulting id. This service:
- * <ol>
- *     <li>loads conversation history (windowed by
- *     {@code aitools.chatMemoryMaxMessages});</li>
- *     <li>creates an empty ASSISTANT placeholder for the upcoming turn;</li>
- *     <li>invokes the LLM with the history passed via
- *     {@link org.springframework.ai.chat.client.ChatClient.ChatClientRequestSpec#messages};</li>
- *     <li>writes the response into the placeholder (or removes it on error).</li>
- * </ol>
+ * Conversation-aware chat orchestration. The caller first persists the user's {@link ChatMessage}
+ * (via {@link AiConversationService}) and passes its id; this service produces the assistant's reply
+ * for that turn, taking the prior conversation history into account, and persists it back into the
+ * conversation.
  * <p>
- * The optional {@code statusCallback} is delivered to tools via
- * {@link io.jmix.aitools.tool.AiToolStatusPublisher} for ephemeral progress messages.
+ * An optional status callback receives ephemeral progress updates while the reply is produced.
  */
 public interface AiConversationChatService {
 
     /**
-     * Blocks until the LLM finishes; returns the full response text. Persists the
-     * response into the assistant placeholder. Removes the placeholder if the LLM
-     * call throws.
+     * Produces and persists the assistant reply for the given user message, blocking until the reply
+     * is complete.
      *
-     * @return the full LLM response text
+     * @param userMessageId  id of the previously persisted user message to reply to
+     * @param statusCallback optional callback for ephemeral progress updates, or {@code null}
+     * @return the full reply text
      */
+    @Nullable
     String process(UUID userMessageId, @Nullable Consumer<AiUiStatusUpdate> statusCallback);
 
     /**
-     * Streams the LLM response. Each emitted chunk is the next slice of text.
-     * The accumulated content is persisted into the assistant placeholder on
-     * {@code onComplete}. On {@code onError} or {@code onCancel} the placeholder
-     * is removed.
+     * Produces the assistant reply as a stream of text chunks, persisting the full reply once the
+     * stream completes.
      * <p>
-     * <b>Single-subscriber contract.</b> The returned {@link Flux} is cold:
-     * subscribing more than once triggers independent LLM invocations and
-     * corrupts the shared accumulator and placeholder. Callers must subscribe
-     * exactly once.
+     * <b>Single-subscriber contract.</b> The returned {@link Flux} is cold: subscribing more than
+     * once triggers independent reply generations and corrupts the persisted result. Callers must
+     * subscribe exactly once.
      *
-     * @return a cold flux emitting LLM response chunks in order
+     * @param userMessageId  id of the previously persisted user message to reply to
+     * @param statusCallback optional callback for ephemeral progress updates, or {@code null}
+     * @return a cold flux emitting reply chunks in order
      */
     Flux<String> processStream(UUID userMessageId, @Nullable Consumer<AiUiStatusUpdate> statusCallback);
 
     /**
-     * Whether the underlying chat model is configured and ready to process messages. When
-     * {@code false}, {@link #process} / {@link #processStream} would fail, so callers should
-     * degrade the UI to read-only instead of invoking them.
+     * Whether the service is configured and ready to process messages. When {@code false}, callers
+     * should degrade the UI to read-only instead of calling {@link #process} / {@link #processStream}.
      */
     boolean isAvailable();
 }

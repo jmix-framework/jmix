@@ -18,10 +18,14 @@ package io.jmix.aitools.dataload.validation;
 
 import org.jspecify.annotations.Nullable;
 
+/**
+ * A single problem found while validating a generated JPQL draft.
+ */
 public class JpqlValidationIssue {
 
     protected String code;
     protected String message;
+    @Nullable
     protected String guidance;
 
     public JpqlValidationIssue(String code, String message) {
@@ -35,14 +39,29 @@ public class JpqlValidationIssue {
         this.guidance = guidance;
     }
 
+    /**
+     * Returns the stable issue code, for example {@code "jpql.blank"}.
+     *
+     * @return issue code
+     */
     public String getCode() {
         return code;
     }
 
+    /**
+     * Returns the human-readable description of the problem.
+     *
+     * @return issue message
+     */
     public String getMessage() {
         return message;
     }
 
+    /**
+     * Returns a hint on how to fix the issue, fed back to the model during repair.
+     *
+     * @return repair guidance, or {@code null} if none
+     */
     @Nullable
     public String getGuidance() {
         return guidance;

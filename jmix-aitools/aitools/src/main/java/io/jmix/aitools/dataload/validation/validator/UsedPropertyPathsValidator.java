@@ -30,6 +30,10 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Checks that every property path referenced by the query resolves against the introspected
+ * domain model.
+ */
 @Component("aitols_UsedPropertyPathsValidator")
 public class UsedPropertyPathsValidator implements JpqlResultValidator, Ordered {
 

@@ -20,7 +20,16 @@ import io.jmix.aitools.dataload.introspection.model.EntityDescriptor;
 
 import java.util.List;
 
+/**
+ * Filters introspected entity descriptors down to the ones that may be exposed to the current user.
+ */
 public interface AvailableEntityFilter {
 
+    /**
+     * Filters the given descriptors, keeping only the available ones.
+     *
+     * @param entityDescriptors descriptors to filter
+     * @return descriptors that remain available
+     */
     List<EntityDescriptor> filter(List<EntityDescriptor> entityDescriptors);
 }

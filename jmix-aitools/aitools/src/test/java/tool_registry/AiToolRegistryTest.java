@@ -14,8 +14,11 @@
  * limitations under the License.
  */
 
-package io.jmix.aitools.tool;
+package tool_registry;
 
+import io.jmix.aitools.tool.JmixAiTool;
+import io.jmix.aitools.tool.ResolvedAiTool;
+import io.jmix.aitools.tool.ToolOverride;
 import io.jmix.aitools.tool.impl.AiToolDescriptorProviderImpl;
 import io.jmix.aitools.tool.impl.AiToolRegistryImpl;
 import org.junit.jupiter.api.BeforeEach;

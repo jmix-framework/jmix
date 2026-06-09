@@ -17,6 +17,12 @@
 package io.jmix.aitools.dataload.prompt;
 
 import io.jmix.aitools.PromptProvider;
+import io.jmix.aitools.dataload.impl.AiDataLoadServiceImpl;
 
+/**
+ * Provides the system prompt for the conversational data-load chat.
+ *
+ * @see AiDataLoadServiceImpl
+ */
 public interface DataLoadChatSystemPromptProvider extends PromptProvider {
 }

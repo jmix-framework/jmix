@@ -19,10 +19,7 @@ package io.jmix.aitoolsflowui.icon;
 import com.vaadin.flow.component.Component;
 
 /**
- * Strategy interface for providing AI assistant icon components.
- * <p>
- * Implement and register this bean to replace the default sparkle-burst / dot
- * glyphs with custom icons throughout the chat UI.
+ * Interface for providing AI assistant icon components.
  * <p>
  * <b>Important:</b> each method MUST return a fresh {@link Component} instance
  * on every call. A Vaadin component can only be attached to the DOM once; the

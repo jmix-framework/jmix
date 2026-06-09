@@ -207,7 +207,7 @@ public class JpqlExecutionService {
 
     protected Integer getEffectiveMaxResult(@Nullable Integer maxResults) {
         if (maxResults == null) {
-            return dataLoadProperties.getDefaultMaxResult();
+            return dataLoadProperties.getJpqlExecutionMaxResult();
         }
         return maxResults;
     }

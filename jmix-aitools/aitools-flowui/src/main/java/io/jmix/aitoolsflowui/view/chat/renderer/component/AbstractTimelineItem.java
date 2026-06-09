@@ -97,7 +97,7 @@ public abstract class AbstractTimelineItem extends Composite<HorizontalLayout> {
         VerticalLayout body = new VerticalLayout();
         body.setPadding(false);
         body.setSpacing(false);
-        body.setWidth("95%"); // TODO: pinyazhim
+        body.setWidthFull();
         body.addClassName(BODY_CN);
         return body;
     }

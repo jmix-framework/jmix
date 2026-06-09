@@ -16,18 +16,28 @@
 
 package io.jmix.aitools.service;
 
+import org.jspecify.annotations.Nullable;
 import reactor.core.publisher.Flux;
 
 /**
- * Stateless programmatic wrapper around the application's chat LLM with the
- * default system prompt and registered tools. Does not persist anything and is
- * not aware of conversations or history.
- * <p>
- * UI-facing conversational interactions should use {@link AiConversationChatService} instead.
+ * Stateless, programmatic access to the AI assistant.
  */
 public interface AiChatService {
 
+    /**
+     * Sends a message to the chat model and blocks until the full reply is produced.
+     *
+     * @param message user message
+     * @return full reply text
+     */
+    @Nullable
     String send(String message);
 
+    /**
+     * Streams the chat model's reply as a flux of text chunks.
+     *
+     * @param message user message
+     * @return flux emitting reply chunks in order
+     */
     Flux<String> stream(String message);
 }

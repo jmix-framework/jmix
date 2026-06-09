@@ -16,7 +16,9 @@
 
 package io.jmix.aitools;
 
+import io.jmix.core.annotation.Experimental;
 import io.jmix.core.security.CurrentAuthentication;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -34,6 +36,8 @@ import java.util.Locale;
  * <p>
  * Applications may register their own bean with the same name to change the format.
  */
+@Experimental
+@NullMarked
 @Component("aitols_ResponseLanguageProvider")
 public class ResponseLanguageProvider {
 

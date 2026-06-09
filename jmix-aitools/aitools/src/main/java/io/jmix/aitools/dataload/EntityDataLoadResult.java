@@ -40,6 +40,7 @@ public class EntityDataLoadResult {
     protected boolean hasMore;
     protected boolean executed;
 
+    @Nullable
     protected String executionError;
 
     public EntityDataLoadResult(String userText,

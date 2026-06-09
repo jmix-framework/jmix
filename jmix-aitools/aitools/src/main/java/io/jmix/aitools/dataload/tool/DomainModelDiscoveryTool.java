@@ -31,6 +31,10 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+/**
+ * Spring AI tool that lets the model discover the application's domain model: list the entities
+ * available to the user and load detailed metadata for the chosen ones.
+ */
 @Component("aitols_DomainModelDiscoveryTool")
 public class DomainModelDiscoveryTool implements DataLoadAiTool, EntityDataLoadAiTool {
 
@@ -46,6 +50,12 @@ public class DomainModelDiscoveryTool implements DataLoadAiTool, EntityDataLoadA
     @Autowired
     protected Messages messages;
 
+    /**
+     * Lists the entities currently available to the user as compact summaries.
+     *
+     * @param toolContext Spring AI tool context used to publish status updates
+     * @return available entity summaries (empty if none)
+     */
     @Tool(name = AVAILABLE_ENTITIES_TOOL, description = """
             Returns compact metadata for all entities currently available to the user.
             Each item contains entity name, localized names, property names and property localized names.
@@ -61,17 +71,24 @@ public class DomainModelDiscoveryTool implements DataLoadAiTool, EntityDataLoadA
         log.debug("LLM tool call: getAvailableEntities()");
 
         String startStatus = messages.getMessage("DomainModelDiscoveryTool.getAvailableEntities.startStatus");
-        toolStatusPublisher.update(toolContext, startStatus);
+        toolStatusPublisher.update(startStatus, toolContext);
 
         List<EntitySummary> entitySummaries = availableEntityService.getEntitySummaries();
 
-        toolStatusPublisher.complete(toolContext, startStatus,
-                messages.formatMessage("", "DomainModelDiscoveryTool.getAvailableEntities.successStatus",
-                        entitySummaries.size()));
+        String snippet = messages.formatMessage("",
+                "DomainModelDiscoveryTool.getAvailableEntities.successStatus", entitySummaries.size());
+        toolStatusPublisher.complete(startStatus, snippet, toolContext);
 
         return entitySummaries;
     }
 
+    /**
+     * Loads detailed metadata for the requested entity names, keeping only those available to the user.
+     *
+     * @param entityNames exact entity names to load metadata for
+     * @param toolContext Spring AI tool context used to publish status updates
+     * @return descriptors for the available requested entities (empty if none match)
+     */
     @Tool(name = DOMAIN_MODEL_FOR_ENTITIES_TOOL, description = """
             Returns detailed domain model metadata for the specified entity names that are currently available to the user.
             Entities hidden by application filtering or security are omitted from the result.
@@ -95,17 +112,19 @@ public class DomainModelDiscoveryTool implements DataLoadAiTool, EntityDataLoadA
         log.debug("LLM tool call: getDomainModelForEntities({})", entityNames);
 
         String startStatus = messages.getMessage("DomainModelDiscoveryTool.getDomainModelForEntities.startStatus");
-        toolStatusPublisher.update(toolContext, startStatus);
+        toolStatusPublisher.update(startStatus, toolContext);
 
         List<EntityDescriptor> entityDescriptors = availableEntityService.findEntityDescriptorsByNames(entityNames);
 
         if (entityDescriptors.isEmpty()) {
-            toolStatusPublisher.complete(toolContext, startStatus,
-                    messages.getMessage("DomainModelDiscoveryTool.getDomainModelForEntities.notFoundStatus"));
+            toolStatusPublisher.complete(startStatus,
+                    messages.getMessage("DomainModelDiscoveryTool.getDomainModelForEntities.notFoundStatus"),
+                    toolContext);
         } else {
             String entities = entityDescriptors.stream().map(EntityDescriptor::getName).reduce((s, s2) -> s + ", " + s2).get();
-            toolStatusPublisher.complete(toolContext, startStatus,
-                    messages.formatMessage("", "DomainModelDiscoveryTool.getDomainModelForEntities.successStatus", entities));
+            toolStatusPublisher.complete(startStatus,
+                    messages.formatMessage("", "DomainModelDiscoveryTool.getDomainModelForEntities.successStatus", entities),
+                    toolContext);
         }
 
         return entityDescriptors;

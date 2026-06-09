@@ -19,6 +19,10 @@ package io.jmix.aitools.dataload.repair;
 import io.jmix.aitools.dataload.execution.GeneratedJpqlResult;
 import io.jmix.aitools.dataload.validation.JpqlValidationResult;
 
+/**
+ * Outcome of {@link JpqlRepairService#repairIfNeeded}: the resulting query draft, its validation
+ * result, the number of repair attempts made and whether a repair was attempted at all.
+ */
 public class JpqlRepairResult {
 
     protected GeneratedJpqlResult generatedJpqlResult;
@@ -36,18 +40,38 @@ public class JpqlRepairResult {
         this.repaired = repaired;
     }
 
+    /**
+     * Returns the resulting query draft (repaired if a repair succeeded, otherwise the original).
+     *
+     * @return query draft
+     */
     public GeneratedJpqlResult getGeneratedJpqlResult() {
         return generatedJpqlResult;
     }
 
+    /**
+     * Returns the validation result of the resulting query draft.
+     *
+     * @return validation result
+     */
     public JpqlValidationResult getValidationResult() {
         return validationResult;
     }
 
+    /**
+     * Returns the number of repair attempts made.
+     *
+     * @return repair attempt count, {@code 0} if no repair was attempted
+     */
     public int getRepairAttempts() {
         return repairAttempts;
     }
 
+    /**
+     * Returns whether a repair was attempted (regardless of whether it produced a valid query).
+     *
+     * @return {@code true} if a repair attempt was made
+     */
     public boolean isRepaired() {
         return repaired;
     }

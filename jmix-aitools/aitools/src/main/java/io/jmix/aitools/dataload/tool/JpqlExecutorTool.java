@@ -29,6 +29,10 @@ import org.springframework.ai.tool.annotation.ToolParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+/**
+ * Spring AI tool that validates, repairs if needed and executes a read-only JPQL query through
+ * {@link JpqlExecutionService}, returning the fetched rows.
+ */
 @Component("aitols_JpqlExecutorTool")
 public class JpqlExecutorTool implements DataLoadAiTool {
 
@@ -44,6 +48,13 @@ public class JpqlExecutorTool implements DataLoadAiTool {
     @Autowired
     protected Messages messages;
 
+    /**
+     * Validates, repairs if needed and executes the JPQL query described by the request.
+     *
+     * @param request     execution request with the JPQL draft and its parameters
+     * @param toolContext Spring AI tool context used to publish status updates
+     * @return execution result with the fetched rows, or failure details
+     */
     @Tool(name = EXECUTE_QUERY_TOOL, description = """
             Validates, repairs if needed and executes a read-only JPQL query through Jmix DataManager.
             
@@ -228,7 +239,7 @@ public class JpqlExecutorTool implements DataLoadAiTool {
         log.debug("LLM tool call: executeQuery(jpql={})", request == null ? null : request.getJpql());
 
         String startStatus = messages.getMessage("JpqlExecutorTool.executeQuery.startStatus");
-        toolStatusPublisher.update(toolContext, startStatus);
+        toolStatusPublisher.update(startStatus, toolContext);
 
         JpqlExecutionResult executionResult = jpqlExecutionService.execute(request);
 
@@ -239,7 +250,7 @@ public class JpqlExecutorTool implements DataLoadAiTool {
             snippet = messages.formatMessage("", "JpqlExecutorTool.executeQuery.failStatus", executionResult.getExecutionError());
         }
 
-        toolStatusPublisher.complete(toolContext, startStatus, snippet);
+        toolStatusPublisher.complete(startStatus, snippet, toolContext);
 
         return executionResult;
     }

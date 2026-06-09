@@ -22,12 +22,20 @@ import io.jmix.aitools.service.AiChatService;
 import io.jmix.aitools.service.prompt.AiChatSystemPromptProvider;
 import io.jmix.aitools.tool.AiToolRegistry;
 import io.jmix.core.common.util.Preconditions;
+import org.jspecify.annotations.Nullable;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 
+import java.util.Objects;
+
+/**
+ * Default {@link AiChatService} based on the application's chat model.
+ * <p>
+ * Builds a chat client with the default system prompt and all registered tools on startup.
+ */
 @Component("aitols_AiChatServiceImpl")
 public class AiChatServiceImpl implements AiChatService, InitializingBean {
 
@@ -40,29 +48,36 @@ public class AiChatServiceImpl implements AiChatService, InitializingBean {
     @Autowired
     protected ResponseLanguageProvider responseLanguageProvider;
 
+    @Nullable
     protected ChatClient chatClient;
 
+    /**
+     * Builds the chat client after the bean is created.
+     */
     @Override
     public void afterPropertiesSet() {
         chatClient = chatClientFactory.createChatClientWithDefaultAdvisors().orElse(null);
     }
 
+    @Nullable
     @Override
     public String send(String message) {
         Preconditions.checkNotEmptyString(message);
-        checkChatClient();
+
         return buildPrompt(message).call().content();
     }
 
     @Override
     public Flux<String> stream(String message) {
         Preconditions.checkNotEmptyString(message);
-        checkChatClient();
+
         return buildPrompt(message).stream().content();
     }
 
     protected ChatClient.ChatClientRequestSpec buildPrompt(String message) {
-        return chatClient.prompt()
+        checkChatClient();
+
+        return Objects.requireNonNull(chatClient).prompt()
                 .system(s -> s
                         .text(systemPromptProvider.getResource())
                         .param("responseLanguage", resolveResponseLanguage())

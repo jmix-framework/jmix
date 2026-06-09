@@ -28,6 +28,10 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 
+/**
+ * Introspects enum properties into an {@link EnumPropertyDescriptor}, including the enum constants
+ * and how they are stored in the database.
+ */
 @Component("aitols_EnumPropertyIntrospector")
 public class EnumPropertyIntrospector extends AbstractPropertyIntrospector {
 
@@ -78,7 +82,6 @@ public class EnumPropertyIntrospector extends AbstractPropertyIntrospector {
                     getPersistent(property),
                     getMandatory(property),
                     getComment(property),
-                    // TODO: pinyazhin, how to get localized enum class name?
                     new EnumClassDescriptor(enumClass.getSimpleName(), Collections.emptyList(), enums),
                     getEnumStorageMode(property));
         }

@@ -30,6 +30,7 @@ import io.jmix.aitools.dataload.tool.EntityDataLoadAiTool;
 import io.jmix.aitools.tool.AiToolRegistry;
 import io.jmix.aitools.tool.ResolvedAiTool;
 import io.jmix.core.common.util.Preconditions;
+import org.jspecify.annotations.Nullable;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +38,12 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.Objects;
 
+/**
+ * Default {@link EntityDataLoadGenerationService} implementation based on an LLM chat client.
+ */
 @Component("aitols_EntityDataLoadGenerationService")
 public class EntityDataLoadGenerationServiceImpl implements EntityDataLoadGenerationService, InitializingBean {
 
@@ -50,6 +56,7 @@ public class EntityDataLoadGenerationServiceImpl implements EntityDataLoadGenera
     @Autowired
     protected ResponseLanguageProvider responseLanguageProvider;
 
+    @Nullable
     protected ChatClient chatClient;
     protected ObjectMapper objectMapper;
 
@@ -62,8 +69,6 @@ public class EntityDataLoadGenerationServiceImpl implements EntityDataLoadGenera
     @Override
     public EntityDataLoadQuery generate(String userText) {
         Preconditions.checkNotEmptyString(userText);
-
-        checkChatClient();
 
         String content = buildChatClientPrompt(userText)
                 .call()
@@ -83,7 +88,10 @@ public class EntityDataLoadGenerationServiceImpl implements EntityDataLoadGenera
     }
 
     protected ChatClient.ChatClientRequestSpec buildChatClientPrompt(String userText) {
-        return chatClient.prompt()
+        checkChatClient();
+
+        return Objects.requireNonNull(chatClient)
+                .prompt()
                 .system(system -> system
                         .text(entityDataLoadPromptProvider.getResource())
                         .param("responseLanguage", resolveResponseLanguage()))
@@ -97,12 +105,8 @@ public class EntityDataLoadGenerationServiceImpl implements EntityDataLoadGenera
         chatClient = chatClientFactory.createChatClientWithDefaultAdvisors().orElse(null);
     }
 
-    protected boolean isChatClientAvailable() {
-        return chatClient != null;
-    }
-
     protected void checkChatClient() {
-        if (!isChatClientAvailable()) {
+        if (chatClient == null) {
             throw new IllegalStateException(ChatClient.class.getSimpleName() + " is not configured in application");
         }
     }
@@ -116,6 +120,7 @@ public class EntityDataLoadGenerationServiceImpl implements EntityDataLoadGenera
                 ? Collections.emptyList()
                 : payload.getParameters().stream()
                   .map(this::toGeneratedJpqlParameter)
+                  .filter(Objects::nonNull)
                   .toList();
 
         return new EntityDataLoadQuery(
@@ -129,8 +134,17 @@ public class EntityDataLoadGenerationServiceImpl implements EntityDataLoadGenera
         );
     }
 
+    /**
+     * Maps a parameter payload to a {@link GeneratedJpqlParameter}, or returns {@code null} to skip
+     * it when the model provided no parameter name (such a parameter cannot be bound).
+     */
+    @Nullable
     protected GeneratedJpqlParameter toGeneratedJpqlParameter(GeneratedJpqlParameterPayload payload) {
-        return new GeneratedJpqlParameter(payload.getName(), payload.getType(), payload.getValue());
+        String name = payload.getName();
+        if (name == null || name.isBlank()) {
+            return null;
+        }
+        return new GeneratedJpqlParameter(name, Objects.requireNonNullElse(payload.getType(), ""), payload.getValue());
     }
 
     protected ObjectMapper createObjectMapper() {

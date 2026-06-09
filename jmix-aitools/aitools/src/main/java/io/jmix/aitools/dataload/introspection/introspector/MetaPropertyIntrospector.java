@@ -20,6 +20,9 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.aitools.dataload.introspection.model.EntityPropertyDescriptor;
 import org.jspecify.annotations.Nullable;
 
+/**
+ * Converts a single {@link MetaProperty} into a property descriptor.
+ */
 public interface MetaPropertyIntrospector {
 
     /**

@@ -14,10 +14,13 @@
  * limitations under the License.
  */
 
-package io.jmix.aitools.dataload;
+package io.jmix.aitools.dataload.impl;
 
 import io.jmix.aitools.ChatClientFactory;
 import io.jmix.aitools.ResponseLanguageProvider;
+import io.jmix.aitools.dataload.AiDataLoadService;
+import io.jmix.aitools.dataload.EntityDataLoadQuery;
+import io.jmix.aitools.dataload.EntityDataLoadResult;
 import io.jmix.aitools.dataload.execution.*;
 import io.jmix.aitools.dataload.generation.EntityDataLoadGenerationService;
 import io.jmix.aitools.dataload.prompt.DataLoadChatSystemPromptProvider;
@@ -25,6 +28,7 @@ import io.jmix.aitools.dataload.tool.DataLoadAiTool;
 import io.jmix.aitools.tool.AiToolRegistry;
 import io.jmix.aitools.tool.ResolvedAiTool;
 import io.jmix.core.common.util.Preconditions;
+import org.jspecify.annotations.Nullable;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +37,7 @@ import reactor.core.publisher.Flux;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * The default implementation of {@link AiDataLoadService}.
@@ -58,6 +63,7 @@ public class AiDataLoadServiceImpl implements AiDataLoadService, InitializingBea
     @Autowired
     protected JpqlExecutionService jpqlExecutionService;
 
+    @Nullable
     protected ChatClient chatClient;
 
     @Override
@@ -65,11 +71,10 @@ public class AiDataLoadServiceImpl implements AiDataLoadService, InitializingBea
         buildChatClient();
     }
 
+    @Nullable
     @Override
     public String send(String message) {
         Preconditions.checkNotEmptyString(message);
-
-        checkChatClient();
 
         return buildChatClientPrompt(message)
                 .call()
@@ -79,8 +84,6 @@ public class AiDataLoadServiceImpl implements AiDataLoadService, InitializingBea
     @Override
     public Flux<String> stream(String message) {
         Preconditions.checkNotEmptyString(message);
-
-        checkChatClient();
 
         return buildChatClientPrompt(message)
                 .stream()
@@ -116,7 +119,9 @@ public class AiDataLoadServiceImpl implements AiDataLoadService, InitializingBea
     }
 
     protected ChatClient.ChatClientRequestSpec buildChatClientPrompt(String message) {
-        return chatClient.prompt()
+        checkChatClient();
+
+        return Objects.requireNonNull(chatClient).prompt()
                 .system(system -> system
                         .text(systemPromptProvider.getResource())
                         .param("responseLanguage", resolveResponseLanguage()))
@@ -130,16 +135,12 @@ public class AiDataLoadServiceImpl implements AiDataLoadService, InitializingBea
         chatClient = chatClientFactory.createChatClientWithDefaultAdvisors().orElse(null);
     }
 
-    protected boolean isChatClientAvailable() {
-        return chatClient != null;
-    }
-
     protected String resolveResponseLanguage() {
         return responseLanguageProvider.getResponseLanguage();
     }
 
     protected void checkChatClient() {
-        if (!isChatClientAvailable()) {
+        if (chatClient == null) {
             throw new IllegalStateException(ChatClient.class.getSimpleName() + " is not configured in application");
         }
     }

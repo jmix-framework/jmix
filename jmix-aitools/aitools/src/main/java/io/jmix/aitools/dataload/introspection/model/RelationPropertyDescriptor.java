@@ -20,14 +20,19 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
+/**
+ * Descriptor of an association or composition (relation) entity property.
+ */
 public class RelationPropertyDescriptor extends AbstractEntityPropertyDescriptor {
 
+    @Nullable
     protected String mappedBy;
 
     protected String targetEntityName;
 
     protected List<String> targetEntityLocalizedNames;
 
+    @Nullable
     protected Boolean optionalRelation;
 
     protected String cardinality;
@@ -40,7 +45,7 @@ public class RelationPropertyDescriptor extends AbstractEntityPropertyDescriptor
                                       Boolean persistent,
                                       Boolean mandatory,
                                       @Nullable String comment,
-                                      String mappedBy,
+                                      @Nullable String mappedBy,
                                       String targetEntityName,
                                       List<String> targetEntityLocalizedNames,
                                       @Nullable Boolean optionalRelation,
@@ -53,23 +58,49 @@ public class RelationPropertyDescriptor extends AbstractEntityPropertyDescriptor
         this.cardinality = cardinality;
     }
 
+    /**
+     * Returns the name of the inverse property that owns this relation.
+     *
+     * @return {@code mappedBy} property name, or {@code null} if this side owns the relation
+     */
+    @Nullable
     public String getMappedBy() {
         return mappedBy;
     }
 
+    /**
+     * Returns the name of the entity this relation points to.
+     *
+     * @return target entity name
+     */
     public String getTargetEntityName() {
         return targetEntityName;
     }
 
+    /**
+     * Returns the captions of the target entity for the configured locales.
+     *
+     * @return localized target entity names
+     */
     public List<String> getTargetEntityLocalizedNames() {
         return targetEntityLocalizedNames;
     }
 
+    /**
+     * Returns whether the relation is optional.
+     *
+     * @return {@code false} if the relation is required, or {@code null} if it is optional
+     */
     @Nullable
     public Boolean getOptionalRelation() {
         return optionalRelation;
     }
 
+    /**
+     * Returns the relation cardinality (for example {@code "ONE_TO_MANY"}).
+     *
+     * @return cardinality name
+     */
     public String getCardinality() {
         return cardinality;
     }

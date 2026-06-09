@@ -19,6 +19,8 @@ package io.jmix.aitoolsflowui;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
+import java.time.Duration;
+
 @ConfigurationProperties(prefix = "jmix.aitools.ui")
 public class AiToolsFlowuiProperties {
 
@@ -29,11 +31,24 @@ public class AiToolsFlowuiProperties {
      */
     int chatHubRecentChatsCount;
 
-    public AiToolsFlowuiProperties(@DefaultValue("6") int chatHubRecentChatsCount) {
+    /**
+     * Timeout for the background task that runs the LLM call producing the
+     * assistant response. The task is cancelled and the failure handler is
+     * invoked once the timeout elapses.
+     */
+    Duration assistantResponseTimeout;
+
+    public AiToolsFlowuiProperties(@DefaultValue("6") int chatHubRecentChatsCount,
+                                   @DefaultValue("5m") Duration assistantResponseTimeout) {
         this.chatHubRecentChatsCount = chatHubRecentChatsCount;
+        this.assistantResponseTimeout = assistantResponseTimeout;
     }
 
     public int getChatHubRecentChatsCount() {
         return chatHubRecentChatsCount;
+    }
+
+    public Duration getAssistantResponseTimeout() {
+        return assistantResponseTimeout;
     }
 }

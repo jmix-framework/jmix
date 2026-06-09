@@ -16,6 +16,9 @@
 
 package io.jmix.aitools.tool;
 
+/**
+ * The model-facing identity of an AI tool method: its name and description.
+ */
 public class AiToolDescriptor {
 
     protected String name;
@@ -26,10 +29,20 @@ public class AiToolDescriptor {
         this.description = description;
     }
 
+    /**
+     * Returns the tool name presented to the model.
+     *
+     * @return tool name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Returns the tool description presented to the model.
+     *
+     * @return tool description
+     */
     public String getDescription() {
         return description;
     }

@@ -22,6 +22,8 @@ import io.jmix.aitools.dataload.execution.JpqlExecutionService;
 import io.jmix.aitools.dataload.execution.GeneratedJpqlResult;
 import io.jmix.aitools.dataload.tool.JpqlExecutorTool;
 import io.jmix.aitools.dataload.validation.JpqlValidationResult;
+import io.jmix.aitools.tool.AiToolStatusPublisher;
+import io.jmix.core.Messages;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.ai.chat.model.ToolContext;
@@ -31,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.mockito.Mockito.mock;
 
 class JpqlExecutorToolTest {
 
@@ -58,6 +61,8 @@ class JpqlExecutorToolTest {
                 return expectedResult;
             }
         });
+        ReflectionTestUtils.setField(tool, "messages", mock(Messages.class));
+        ReflectionTestUtils.setField(tool, "toolStatusPublisher", new AiToolStatusPublisher());
 
         JpqlExecutionResult actualResult = tool.executeQuery(request, new ToolContext(Map.of()));
 

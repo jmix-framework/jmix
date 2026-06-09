@@ -20,6 +20,9 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
+/**
+ * Base {@link EntityPropertyDescriptor} implementation holding the attributes common to all property kinds.
+ */
 public abstract class AbstractEntityPropertyDescriptor implements EntityPropertyDescriptor {
 
     protected String name;
@@ -30,12 +33,14 @@ public abstract class AbstractEntityPropertyDescriptor implements EntityProperty
 
     protected String propertyType;
 
+    @Nullable
     protected Boolean identifier;
 
     protected Boolean persistent;
 
     protected Boolean mandatory;
 
+    @Nullable
     protected String comment;
 
     public AbstractEntityPropertyDescriptor(String name,

@@ -17,6 +17,7 @@
 package io.jmix.aitools.dataload;
 
 
+import org.jspecify.annotations.Nullable;
 import reactor.core.publisher.Flux;
 
 /**
@@ -42,6 +43,7 @@ public interface AiDataLoadService {
      * @param message user message in natural language
      * @return natural-language reply from the LLM
      */
+    @Nullable
     String send(String message);
 
     /**

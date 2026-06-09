@@ -16,7 +16,7 @@
 
 package entity_dataload;
 
-import io.jmix.aitools.dataload.AiDataLoadServiceImpl;
+import io.jmix.aitools.dataload.impl.AiDataLoadServiceImpl;
 import io.jmix.aitools.dataload.EntityDataLoadQuery;
 import io.jmix.aitools.dataload.EntityDataLoadResult;
 import io.jmix.aitools.dataload.execution.GeneratedJpqlParameter;

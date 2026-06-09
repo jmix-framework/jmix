@@ -20,6 +20,9 @@ import io.jmix.aitools.service.prompt.AiChatSystemPromptProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 
+/**
+ * Default {@link AiChatSystemPromptProvider} that loads the prompt from a bundled classpath resource.
+ */
 public class DefaultAiChatSystemPromptProvider implements AiChatSystemPromptProvider {
 
     @Value("classpath:io/jmix/aitools/service/prompt/system-chat-service-prompt.st")

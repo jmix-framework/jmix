@@ -18,7 +18,19 @@ package io.jmix.aitools.dataload.generation;
 
 import io.jmix.aitools.dataload.EntityDataLoadQuery;
 
+/**
+ * Service for generating JPQL from user prompt.
+ * <p>
+ * Generation step of the natural-language data-load flow: turns a user's free-form request into a
+ * structured JPQL query draft (query text, parameters and result properties).
+ */
 public interface EntityDataLoadGenerationService {
 
+    /**
+     * Generates a JPQL query draft from the given natural-language request.
+     *
+     * @param userText user request in natural language
+     * @return generated query draft
+     */
     EntityDataLoadQuery generate(String userText);
 }

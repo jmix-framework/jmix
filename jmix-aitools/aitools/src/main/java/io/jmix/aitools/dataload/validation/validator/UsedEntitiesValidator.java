@@ -30,6 +30,9 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Checks that every entity referenced by the query is known to the introspected domain model.
+ */
 @Component("aitols_UsedEntitiesValidator")
 public class UsedEntitiesValidator implements JpqlResultValidator, Ordered {
 

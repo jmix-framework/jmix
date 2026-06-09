@@ -20,6 +20,9 @@ import io.jmix.aitools.dataload.prompt.JpqlRepairerPromptProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 
+/**
+ * Default {@link JpqlRepairerPromptProvider} that loads the prompt from a bundled classpath resource.
+ */
 public class DefaultJpqlRepairerPromptProvider implements JpqlRepairerPromptProvider {
 
     @Value("classpath:io/jmix/aitools/dataload/prompt/jpql-repairer-prompt.txt")

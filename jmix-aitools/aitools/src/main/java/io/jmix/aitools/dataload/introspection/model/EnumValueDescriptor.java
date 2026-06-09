@@ -18,6 +18,9 @@ package io.jmix.aitools.dataload.introspection.model;
 
 import java.util.List;
 
+/**
+ * Description of a single enum constant: its stored id, constant name and localized captions.
+ */
 public class EnumValueDescriptor {
 
     protected Object id;
@@ -32,14 +35,29 @@ public class EnumValueDescriptor {
         this.localizedName = localizedName;
     }
 
+    /**
+     * Returns the stored value of the enum constant (its id, name or ordinal).
+     *
+     * @return stored enum value
+     */
     public Object getId() {
         return id;
     }
 
+    /**
+     * Returns the enum constant name.
+     *
+     * @return constant name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Returns the enum constant captions for the configured locales.
+     *
+     * @return localized constant names
+     */
     public List<String> getLocalizedName() {
         return localizedName;
     }

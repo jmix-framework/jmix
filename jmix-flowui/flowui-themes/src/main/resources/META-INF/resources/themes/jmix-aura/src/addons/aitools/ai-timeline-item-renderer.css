@@ -23,6 +23,7 @@
     .timeline-message-row {
         box-sizing: border-box;
         padding: var(--vaadin-padding-s) 0;
+        padding-inline-end: var(--vaadin-horizontal-layout-gap, var(--vaadin-gap-s));
         width: 100%;
     }
 
@@ -241,11 +242,35 @@
 }
 
 @keyframes jmix-aitols-timeline-thinking-text-shimmer {
-    0% { background-position: 100% 0; }
-    100% { background-position: -100% 0; }
+    0% {
+        background-position: 100% 0;
+    }
+    100% {
+        background-position: -100% 0;
+    }
 }
 
 @keyframes jmix-aitols-timeline-thinking-shimmer {
-    0% { left: -35%; }
-    100% { left: 100%; }
+    0% {
+        left: -35%;
+    }
+    100% {
+        left: 100%;
+    }
+}
+
+/* Respect the user's reduced-motion preference: stop the thinking-indicator
+   animations. The shimmer text stays as a static gradient, and the moving bar
+   settles into a steady full-width glow instead of a frozen highlight segment. */
+@media (prefers-reduced-motion: reduce) {
+    .timeline-row-host {
+        .timeline-thinking-text {
+            animation: none;
+        }
+
+        .timeline-thinking-shimmer::after {
+            animation: none;
+            width: 100%;
+        }
+    }
 }

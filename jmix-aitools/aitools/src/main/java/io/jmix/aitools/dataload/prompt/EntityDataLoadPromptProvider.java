@@ -17,6 +17,12 @@
 package io.jmix.aitools.dataload.prompt;
 
 import io.jmix.aitools.PromptProvider;
+import io.jmix.aitools.dataload.generation.impl.EntityDataLoadGenerationServiceImpl;
 
+/**
+ * Provides the system prompt for generating a JPQL query from a natural-language data-load request.
+ *
+ * @see EntityDataLoadGenerationServiceImpl
+ */
 public interface EntityDataLoadPromptProvider extends PromptProvider {
 }

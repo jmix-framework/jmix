@@ -20,6 +20,9 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
+/**
+ * Descriptor of an embedded entity property.
+ */
 public class EmbeddedPropertyDescriptor extends AbstractEntityPropertyDescriptor {
 
     public EmbeddedPropertyDescriptor(String name,
@@ -33,6 +36,11 @@ public class EmbeddedPropertyDescriptor extends AbstractEntityPropertyDescriptor
         super(name, localizedNames, javaType, propertyType, identifier, persistent, mandatory, comment);
     }
 
+    /**
+     * Returns the marker telling that this property is embedded.
+     *
+     * @return always {@code true}
+     */
     public Boolean getEmbedded() {
         return true;
     }

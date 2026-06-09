@@ -20,6 +20,10 @@ import io.jmix.aitools.dataload.execution.JpqlExecutionRequest;
 import io.jmix.aitools.dataload.execution.GeneratedJpqlResult;
 import io.jmix.aitools.dataload.validation.JpqlValidationResult;
 
+/**
+ * Input for a single {@link JpqlRepairer} attempt: the original execution request, the current query
+ * draft, its validation result and the attempt number.
+ */
 public class JpqlRepairRequest {
 
     protected JpqlExecutionRequest executionRequest;
@@ -37,18 +41,38 @@ public class JpqlRepairRequest {
         this.attempt = attempt;
     }
 
+    /**
+     * Returns the original execution request that triggered the repair.
+     *
+     * @return execution request
+     */
     public JpqlExecutionRequest getExecutionRequest() {
         return executionRequest;
     }
 
+    /**
+     * Returns the current query draft to repair.
+     *
+     * @return query draft
+     */
     public GeneratedJpqlResult getGeneratedJpqlResult() {
         return generatedJpqlResult;
     }
 
+    /**
+     * Returns the validation result describing why the current draft is invalid.
+     *
+     * @return validation result
+     */
     public JpqlValidationResult getValidationResult() {
         return validationResult;
     }
 
+    /**
+     * Returns the 1-based number of the current repair attempt.
+     *
+     * @return attempt number
+     */
     public int getAttempt() {
         return attempt;
     }

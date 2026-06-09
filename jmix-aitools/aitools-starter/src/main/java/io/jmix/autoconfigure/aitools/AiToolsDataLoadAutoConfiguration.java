@@ -16,6 +16,8 @@
 
 package io.jmix.autoconfigure.aitools;
 
+import io.jmix.aitools.dataload.introspection.AvailableEntityFilter;
+import io.jmix.aitools.dataload.introspection.impl.DefaultAvailableEntityFilter;
 import io.jmix.aitools.dataload.prompt.DataLoadChatSystemPromptProvider;
 import io.jmix.aitools.dataload.prompt.JpqlRepairerPromptProvider;
 import io.jmix.aitools.dataload.prompt.impl.DefaultDataLoadChatSystemPromptProvider;
@@ -29,6 +31,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBooleanProp
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
 
 @AutoConfiguration
 @ConditionalOnBooleanProperty(value = "aitools.dataload.enabled", matchIfMissing = true)
@@ -57,5 +60,11 @@ public class AiToolsDataLoadAutoConfiguration {
     @ConditionalOnMissingBean(DataLoadChatSystemPromptProvider.class)
     public DataLoadChatSystemPromptProvider chatSystemPromptProvider() {
         return new DefaultDataLoadChatSystemPromptProvider();
+    }
+
+    @Bean("aitols_DefaultAvailableEntityFilter")
+    @ConditionalOnMissingBean(AvailableEntityFilter.class)
+    public AvailableEntityFilter availableEntityFilter() {
+        return new DefaultAvailableEntityFilter();
     }
 }

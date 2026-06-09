@@ -24,8 +24,10 @@ import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
 
-// TODO: pinyazhin, auto configuration?
-@Component("aitols_AiToolDescriptorProviderImpl")
+/**
+ * Default {@link AiToolDescriptorProvider} that derives the tool name and description from the
+ * method's Spring AI {@code @Tool} metadata.
+ */
 public class AiToolDescriptorProviderImpl implements AiToolDescriptorProvider {
 
     @Override

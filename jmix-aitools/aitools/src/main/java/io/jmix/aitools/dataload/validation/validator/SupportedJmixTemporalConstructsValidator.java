@@ -28,6 +28,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
+/**
+ * Checks that only supported Jmix date macros are used: {@code @between}, {@code @today},
+ * {@code @dateEquals}, {@code @dateBefore}, {@code @dateAfter}.
+ */
 @Component("aitols_SupportedJmixTemporalConstructsValidator")
 public class SupportedJmixTemporalConstructsValidator implements JpqlResultValidator, Ordered {
 

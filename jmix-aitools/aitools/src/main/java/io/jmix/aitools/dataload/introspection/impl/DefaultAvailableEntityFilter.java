@@ -19,19 +19,18 @@ package io.jmix.aitools.dataload.introspection.impl;
 import io.jmix.aitools.dataload.introspection.AvailableEntityFilter;
 import io.jmix.aitools.dataload.introspection.model.EntityDescriptor;
 import io.jmix.core.AccessManager;
-import io.jmix.core.JmixOrder;
 import io.jmix.core.Metadata;
 import io.jmix.core.accesscontext.CrudEntityContext;
 import io.jmix.core.metamodel.model.MetaClass;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Component("aitols_DefaultAvailableEntityFilter")
-@Order(JmixOrder.LOWEST_PRECEDENCE)
+/**
+ * Default {@link AvailableEntityFilter} that keeps only entities the current user is allowed to read,
+ * based on Jmix CRUD access constraints
+ */
 public class DefaultAvailableEntityFilter implements AvailableEntityFilter {
 
     @Autowired

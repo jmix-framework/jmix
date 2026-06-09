@@ -22,6 +22,9 @@ import io.jmix.aitools.dataload.introspection.model.EntityPropertyDescriptor;
 import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
+/**
+ * Introspects embedded properties into an {@link EmbeddedPropertyDescriptor}.
+ */
 @Component("aitols_EmbeddedPropertyIntrospector")
 public class EmbeddedPropertyIntrospector extends AbstractPropertyIntrospector {
 

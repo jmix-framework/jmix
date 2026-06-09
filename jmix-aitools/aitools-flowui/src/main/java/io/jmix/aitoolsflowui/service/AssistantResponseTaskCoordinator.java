@@ -21,6 +21,7 @@ import io.jmix.aitools.entity.ChatMessage;
 import io.jmix.aitools.entity.ChatMessageType;
 import io.jmix.aitools.service.AiConversationChatService;
 import io.jmix.aitools.tool.AiUiStatusUpdate;
+import io.jmix.aitoolsflowui.AiToolsFlowuiProperties;
 import io.jmix.core.DataManager;
 import io.jmix.flowui.backgroundtask.BackgroundTask;
 import io.jmix.flowui.backgroundtask.BackgroundWorker;
@@ -31,7 +32,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 /**
@@ -48,19 +48,19 @@ public class AssistantResponseTaskCoordinator {
 
     private static final Logger log = LoggerFactory.getLogger(AssistantResponseTaskCoordinator.class);
 
-    // TODO: pinyazhin — make timeout configurable via AiToolsProperties.
-    private static final int TIMEOUT_MINUTES = 5;
-
-    private final AiConversationChatService aiConversationChatService;
-    private final BackgroundWorker backgroundWorker;
-    private final DataManager dataManager;
+    protected final AiConversationChatService aiConversationChatService;
+    protected final BackgroundWorker backgroundWorker;
+    protected final DataManager dataManager;
+    protected final AiToolsFlowuiProperties properties;
 
     public AssistantResponseTaskCoordinator(AiConversationChatService aiConversationChatService,
                                             BackgroundWorker backgroundWorker,
-                                            DataManager dataManager) {
+                                            DataManager dataManager,
+                                            AiToolsFlowuiProperties properties) {
         this.aiConversationChatService = aiConversationChatService;
         this.backgroundWorker = backgroundWorker;
         this.dataManager = dataManager;
+        this.properties = properties;
     }
 
     /**
@@ -74,69 +74,19 @@ public class AssistantResponseTaskCoordinator {
                     Consumer<AiUiStatusUpdate> progressHandler,
                     Consumer<ChatMessage> doneHandler,
                     Runnable failureHandler) {
-        BackgroundTask<AiUiStatusUpdate, String> task = new AssistantResponseTask(
-                owner, conversation, savedUserMessage, progressHandler, doneHandler, failureHandler
-        );
-
+        BackgroundTask<AiUiStatusUpdate, String> task =
+                new AssistantResponseTask(owner, conversation, savedUserMessage, doneHandler, failureHandler);
+        task.addProgressListener(new BackgroundTask.ProgressListenerAdapter<>() {
+            @Override
+            public void onProgress(List<AiUiStatusUpdate> changes) {
+                changes.forEach(progressHandler);
+            }
+        });
         backgroundWorker.handle(task).execute();
     }
 
-    private class AssistantResponseTask extends BackgroundTask<AiUiStatusUpdate, String> {
-        private final AiConversation conversation;
-        private final ChatMessage savedUserMessage;
-        private final Consumer<AiUiStatusUpdate> progressHandler;
-        private final Consumer<ChatMessage> doneHandler;
-        private final Runnable failureHandler;
-
-        AssistantResponseTask(View<?> owner,
-                              AiConversation conversation,
-                              ChatMessage savedUserMessage,
-                              Consumer<AiUiStatusUpdate> progressHandler,
-                              Consumer<ChatMessage> doneHandler,
-                              Runnable failureHandler) {
-            super(TIMEOUT_MINUTES, TimeUnit.MINUTES, owner);
-            this.conversation = conversation;
-            this.savedUserMessage = savedUserMessage;
-            this.progressHandler = progressHandler;
-            this.doneHandler = doneHandler;
-            this.failureHandler = failureHandler;
-        }
-
-        @Override
-        public String run(TaskLifeCycle<AiUiStatusUpdate> taskLifeCycle) {
-            return aiConversationChatService.process(
-                    savedUserMessage.getId(),
-                    statusUpdate -> publishUiStatusUpdate(taskLifeCycle, statusUpdate)
-            );
-        }
-
-        @Override
-        public void progress(List<AiUiStatusUpdate> changes) {
-            changes.forEach(progressHandler);
-        }
-
-        @Override
-        public void done(String response) {
-            doneHandler.accept(loadLatestAssistantMessage(conversation));
-        }
-
-        @Override
-        public boolean handleException(Exception ex) {
-            log.error("Error processing AI message async", ex);
-            failureHandler.run();
-            return true;
-        }
-
-        @Override
-        public boolean handleTimeoutException() {
-            log.error("Timed out while processing AI message {}", savedUserMessage.getId());
-            failureHandler.run();
-            return true;
-        }
-    }
-
-    private void publishUiStatusUpdate(TaskLifeCycle<AiUiStatusUpdate> taskLifeCycle,
-                                       AiUiStatusUpdate statusUpdate) {
+    protected void publishUiStatusUpdate(TaskLifeCycle<AiUiStatusUpdate> taskLifeCycle,
+                                         AiUiStatusUpdate statusUpdate) {
         if (statusUpdate == null || taskLifeCycle.isInterrupted()) {
             return;
         }
@@ -157,5 +107,52 @@ public class AssistantResponseTaskCoordinator {
                 .maxResults(1)
                 .optional()
                 .orElse(null);
+    }
+
+    protected class AssistantResponseTask extends BackgroundTask<AiUiStatusUpdate, String> {
+
+        protected final AiConversation conversation;
+        protected final ChatMessage savedUserMessage;
+        protected final Consumer<ChatMessage> doneHandler;
+        protected final Runnable failureHandler;
+
+        AssistantResponseTask(View<?> owner,
+                              AiConversation conversation,
+                              ChatMessage savedUserMessage,
+                              Consumer<ChatMessage> doneHandler,
+                              Runnable failureHandler) {
+            super(properties.getAssistantResponseTimeout().toSeconds(), owner);
+            this.conversation = conversation;
+            this.savedUserMessage = savedUserMessage;
+            this.doneHandler = doneHandler;
+            this.failureHandler = failureHandler;
+        }
+
+        @Override
+        public String run(TaskLifeCycle<AiUiStatusUpdate> taskLifeCycle) {
+            return aiConversationChatService.process(
+                    savedUserMessage.getId(),
+                    statusUpdate -> publishUiStatusUpdate(taskLifeCycle, statusUpdate)
+            );
+        }
+
+        @Override
+        public void done(String response) {
+            doneHandler.accept(loadLatestAssistantMessage(conversation));
+        }
+
+        @Override
+        public boolean handleException(Exception ex) {
+            log.error("Error processing AI message async", ex);
+            failureHandler.run();
+            return true;
+        }
+
+        @Override
+        public boolean handleTimeoutException() {
+            log.error("Timed out while processing AI message {}", savedUserMessage.getId());
+            failureHandler.run();
+            return true;
+        }
     }
 }

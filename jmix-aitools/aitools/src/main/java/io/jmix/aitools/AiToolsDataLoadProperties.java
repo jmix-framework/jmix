@@ -24,29 +24,50 @@ import java.util.List;
 @ConfigurationProperties("aitools.dataload")
 public class AiToolsDataLoadProperties {
 
+    /**
+     * Whether the data-load autoconfiguration is enabled.
+     */
     Boolean enabled;
 
+    /**
+     * Whether system-level entities are excluded from the model exposed to the AI.
+     */
     Boolean excludeSystemLevelEntities;
 
+    /**
+     * Maximum number of attempts to repair an invalid generated query.
+     */
     Integer maxRepairAttempts;
 
     /**
-     * Defines the default value for max results when executing a query if the LLM does not provide one.
+     * Default maximum number of rows applied when a query does not specify one.
      */
-    Integer defaultMaxResult;
+    Integer jpqlExecutionMaxResult;
 
+    /**
+     * Entity names to explicitly include; never {@code null}.
+     */
     List<String> includeEntities;
 
+    /**
+     * Entity names to explicitly exclude; never {@code null}.
+     */
     List<String> excludeEntities;
 
+    /**
+     * Package prefixes to explicitly include; never {@code null}.
+     */
     List<String> includePackages;
 
+    /**
+     * Package prefixes to exclude; never {@code null}.
+     */
     List<String> excludePackages;
 
     public AiToolsDataLoadProperties(@DefaultValue("true") Boolean enabled,
                                      @DefaultValue("true") Boolean excludeSystemLevelEntities,
                                      @DefaultValue("1") Integer maxRepairAttempts,
-                                     @DefaultValue("20") Integer defaultMaxResult,
+                                     @DefaultValue("20") Integer jpqlExecutionMaxResult,
                                      List<String> includeEntities,
                                      List<String> excludeEntities,
                                      List<String> includePackages,
@@ -54,41 +75,65 @@ public class AiToolsDataLoadProperties {
         this.enabled = enabled;
         this.excludeSystemLevelEntities = excludeSystemLevelEntities;
         this.maxRepairAttempts = maxRepairAttempts;
-        this.defaultMaxResult  = defaultMaxResult;
+        this.jpqlExecutionMaxResult = jpqlExecutionMaxResult;
         this.includeEntities = includeEntities == null ? List.of() : List.copyOf(includeEntities);
         this.excludeEntities = excludeEntities == null ? List.of() : List.copyOf(excludeEntities);
         this.includePackages = includePackages == null ? List.of() : List.copyOf(includePackages);
         this.excludePackages = excludePackages == null ? List.of("io.jmix") : List.copyOf(excludePackages);
     }
 
+    /**
+     * @see #enabled
+     */
     public Boolean getEnabled() {
         return enabled;
     }
 
+    /**
+     * @see #excludeSystemLevelEntities
+     */
     public Boolean getExcludeSystemLevelEntities() {
         return excludeSystemLevelEntities;
     }
 
+    /**
+     * @see #maxRepairAttempts
+     */
     public Integer getMaxRepairAttempts() {
         return maxRepairAttempts;
     }
 
-    public Integer getDefaultMaxResult() {
-        return defaultMaxResult;
+    /**
+     * @see #jpqlExecutionMaxResult
+     */
+    public Integer getJpqlExecutionMaxResult() {
+        return jpqlExecutionMaxResult;
     }
 
+    /**
+     * @see #includeEntities
+     */
     public List<String> getIncludeEntities() {
         return includeEntities;
     }
 
+    /**
+     * @see #excludeEntities
+     */
     public List<String> getExcludeEntities() {
         return excludeEntities;
     }
 
+    /**
+     * @see #includePackages
+     */
     public List<String> getIncludePackages() {
         return includePackages;
     }
 
+    /**
+     * @see #excludePackages
+     */
     public List<String> getExcludePackages() {
         return excludePackages;
     }

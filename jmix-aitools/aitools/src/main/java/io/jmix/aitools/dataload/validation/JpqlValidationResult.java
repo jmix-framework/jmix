@@ -18,6 +18,9 @@ package io.jmix.aitools.dataload.validation;
 
 import java.util.List;
 
+/**
+ * Aggregated result of validating a generated JPQL draft.
+ */
 public class JpqlValidationResult {
 
     protected boolean valid;
@@ -28,10 +31,20 @@ public class JpqlValidationResult {
         this.issues = issues;
     }
 
+    /**
+     * Returns whether the query passed validation.
+     *
+     * @return {@code true} if no issues were found
+     */
     public boolean isValid() {
         return valid;
     }
 
+    /**
+     * Returns the issues found during validation.
+     *
+     * @return validation issues, empty when the query is valid
+     */
     public List<JpqlValidationIssue> getIssues() {
         return issues;
     }

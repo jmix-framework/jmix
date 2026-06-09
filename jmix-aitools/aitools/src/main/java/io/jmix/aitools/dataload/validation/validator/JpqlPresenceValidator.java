@@ -25,6 +25,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+/**
+ * Checks that the query text is present (not blank).
+ */
 @Component("aitols_JpqlPresenceValidator")
 public class JpqlPresenceValidator implements JpqlResultValidator, Ordered {
 

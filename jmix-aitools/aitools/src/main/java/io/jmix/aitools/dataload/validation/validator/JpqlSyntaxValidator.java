@@ -27,6 +27,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+/**
+ * Checks that the query is syntactically valid JPQL by parsing it.
+ */
 @Component("aitols_JpqlSyntaxValidator")
 public class JpqlSyntaxValidator implements JpqlResultValidator, Ordered {
 

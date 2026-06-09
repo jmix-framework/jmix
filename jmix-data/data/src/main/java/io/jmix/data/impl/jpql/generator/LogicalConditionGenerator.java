@@ -93,7 +93,10 @@ public class LogicalConditionGenerator implements ConditionGenerator<LogicalCond
                                                  LogicalCondition condition,
                                                  @Nullable String entityName) {
         for (Condition nestedCondition : condition.getConditions()) {
-            ConditionGenerator generator = resolver.getConditionGenerator(new ConditionGenerationContext(nestedCondition));
+            ConditionGenerationContext nestedContext = new ConditionGenerationContext(nestedCondition);
+            //propagate entityName so generators that depend on it (e.g. dynamic-model property generators) are resolved
+            nestedContext.setEntityName(entityName);
+            ConditionGenerator generator = resolver.getConditionGenerator(nestedContext);
             parameters = generator.processParameters(parameters, queryParameters, nestedCondition, entityName);
         }
 

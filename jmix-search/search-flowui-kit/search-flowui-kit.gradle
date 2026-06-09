@@ -1,7 +1,9 @@
 apply plugin: 'io.jmix'
 
 group = 'io.jmix.search'
-archivesBaseName = 'jmix-search-flowui-kit'
+base {
+    archivesName = 'jmix-search-flowui-kit'
+}
 
 dependencies {
     api project(':flowui-kit')

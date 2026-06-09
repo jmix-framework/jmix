@@ -15,7 +15,9 @@
  */
 
 group = 'io.jmix.audit'
-archivesBaseName = 'jmix-audit-flowui-starter'
+base {
+    archivesName = 'jmix-audit-flowui-starter'
+}
 
 dependencies {
     api project(':audit-flowui')

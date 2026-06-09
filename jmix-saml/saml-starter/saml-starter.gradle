@@ -15,7 +15,9 @@
  */
 
 group = 'io.jmix.saml'
-archivesBaseName = 'jmix-saml-starter'
+base {
+    archivesName = 'jmix-saml-starter'
+}
 
 repositories {
     maven {

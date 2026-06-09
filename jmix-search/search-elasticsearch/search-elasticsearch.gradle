@@ -18,7 +18,9 @@ apply plugin: 'groovy'
 apply plugin: 'io.jmix'
 
 group = 'io.jmix.search'
-archivesBaseName = 'jmix-search-elasticsearch'
+base {
+    archivesName = 'jmix-search-elasticsearch'
+}
 
 dependencies {
     api project(':search')
@@ -35,7 +37,7 @@ dependencies {
     api 'co.elastic.clients:elasticsearch-java'
 
     compileOnly project(':security')
-    testImplementation project(':search').sourceSets.test.output
+    testImplementation rootProject.project(':search').sourceSets.test.output
     testImplementation project(':framework-test-support')
     testImplementation project(':eclipselink')
     testImplementation project(':dynattr')

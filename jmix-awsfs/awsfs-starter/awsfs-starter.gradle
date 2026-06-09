@@ -15,7 +15,9 @@
  */
 
 group = 'io.jmix.awsfs'
-archivesBaseName = 'jmix-awsfs-starter'
+base {
+    archivesName = 'jmix-awsfs-starter'
+}
 
 dependencies {
     api project(':awsfs')

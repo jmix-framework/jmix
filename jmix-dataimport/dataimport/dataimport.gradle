@@ -18,7 +18,9 @@ apply plugin: 'groovy'
 apply plugin: 'io.jmix'
 
 group = 'io.jmix.dataimport'
-archivesBaseName = 'jmix-dataimport'
+base {
+    archivesName = 'jmix-dataimport'
+}
 
 dependencies {
     api project(':core')

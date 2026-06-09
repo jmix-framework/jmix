@@ -17,7 +17,9 @@
 apply plugin: 'io.jmix'
 
 group = 'io.jmix.flowui'
-archivesBaseName = 'jmix-flowui-themes'
+base {
+    archivesName = 'jmix-flowui-themes'
+}
 
 dependencies {
     api 'com.vaadin:vaadin-bom'

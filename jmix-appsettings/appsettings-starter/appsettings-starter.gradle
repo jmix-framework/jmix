@@ -15,7 +15,9 @@
  */
 
 group = 'io.jmix.appsettings'
-archivesBaseName = 'jmix-appsettings-starter'
+base {
+    archivesName = 'jmix-appsettings-starter'
+}
 
 dependencies {
     api project(':appsettings')

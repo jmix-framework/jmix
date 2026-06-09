@@ -1,4 +1,6 @@
-archivesBaseName = '${module_name}'
+base {
+    archivesName = '${module_name}'
+}
 
 dependencies {
     implementation 'io.jmix.core:jmix-core-starter'

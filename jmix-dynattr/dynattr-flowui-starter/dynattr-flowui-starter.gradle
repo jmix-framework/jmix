@@ -15,7 +15,9 @@
  */
 
 group = 'io.jmix.dynattr'
-archivesBaseName = 'jmix-dynattr-flowui-starter'
+base {
+    archivesName = 'jmix-dynattr-flowui-starter'
+}
 
 dependencies {
     api project(':dynattr-flowui')

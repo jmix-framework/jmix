@@ -29,11 +29,6 @@ subprojects {
     group = this.group
     version = this.version
 
-    def props = new Properties()
-    buildFile.withInputStream { props.load(it) }
-    def subArchivesBaseName = props.getProperty('archivesBaseName')
-    def archName = subArchivesBaseName.substring(1, subArchivesBaseName.length() - 1)
-
     java {
         withSourcesJar()
     }
@@ -42,21 +37,23 @@ subprojects {
         archives sourcesJar
     }
 
-    publishing {
-        repositories {
-            maven {
-                url = 'https://myrepo/releases/'
-                credentials {
-                    username rootProject.hasProperty('uploadUser') ? rootProject['uploadUser'] : 'admin'
-                    password rootProject.hasProperty('uploadPassword') ? rootProject['uploadPassword'] : 'admin'
+    afterEvaluate {
+        publishing {
+            repositories {
+                maven {
+                    url = 'https://myrepo/releases/'
+                    credentials {
+                        username rootProject.hasProperty('uploadUser') ? rootProject['uploadUser'] : 'admin'
+                        password rootProject.hasProperty('uploadPassword') ? rootProject['uploadPassword'] : 'admin'
+                    }
+                    allowInsecureProtocol = true
                 }
-                allowInsecureProtocol = true
             }
-        }
-        publications {
-            javaMaven(MavenPublication) {
-                artifactId = archName
-                from components.java
+            publications {
+                javaMaven(MavenPublication) {
+                    artifactId = project.base.archivesName.get()
+                    from components.java
+                }
             }
         }
     }

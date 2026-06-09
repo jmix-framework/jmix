@@ -20,6 +20,9 @@ import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.ResolvedDependency;
 import org.gradle.api.tasks.SourceSet;
+import org.gradle.process.ExecOperations;
+
+import javax.inject.Inject;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -28,6 +31,13 @@ import java.util.List;
 import java.util.Set;
 
 public class EclipselinkEnhancing implements PersistenceProviderEnhancing {
+
+    private final ExecOperations execOperations;
+
+    @Inject
+    public EclipselinkEnhancing(ExecOperations execOperations) {
+        this.execOperations = execOperations;
+    }
 
     public void run(Project project, SourceSet sourceSet, String enhancedDir, Set<String> allStores) {
         for (String storeName : allStores) {
@@ -39,7 +49,7 @@ public class EclipselinkEnhancing implements PersistenceProviderEnhancing {
 
             project.getLogger().lifecycle("Running EclipseLink enhancer in {} for {}", project, sourceSet);
 
-            project.javaexec(javaExecSpec -> {
+            execOperations.javaexec(javaExecSpec -> {
                 javaExecSpec.getMainClass().set("org.eclipse.persistence.tools.weaving.jpa.StaticWeave");
 
                 javaExecSpec.setClasspath(project.files(

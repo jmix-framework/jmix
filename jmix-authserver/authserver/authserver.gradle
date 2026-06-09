@@ -17,7 +17,9 @@
 apply plugin: 'io.jmix'
 
 group = 'io.jmix.authserver'
-archivesBaseName = 'jmix-authserver'
+base {
+    archivesName = 'jmix-authserver'
+}
 
 dependencies {
     api project(':core')

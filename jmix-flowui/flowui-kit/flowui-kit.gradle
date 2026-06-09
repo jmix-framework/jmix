@@ -18,7 +18,9 @@ apply plugin: 'groovy'
 apply plugin: 'io.jmix'
 
 group = 'io.jmix.flowui'
-archivesBaseName = 'jmix-flowui-kit'
+base {
+    archivesName = 'jmix-flowui-kit'
+}
 
 dependencies {
     api 'org.dom4j:dom4j'

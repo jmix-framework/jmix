@@ -15,7 +15,9 @@
  */
 
 group = 'io.jmix.pessimisticlock'
-archivesBaseName = 'jmix-pessimisticlock-starter'
+base {
+    archivesName = 'jmix-pessimisticlock-starter'
+}
 
 dependencies {
     api project(':pessimisticlock')

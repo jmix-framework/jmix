@@ -15,7 +15,9 @@
  */
 
 group = 'io.jmix.oidc'
-archivesBaseName = 'jmix-oidc-starter'
+base {
+    archivesName = 'jmix-oidc-starter'
+}
 
 dependencies {
     api project(':oidc')

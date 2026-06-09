@@ -16,6 +16,7 @@
 
 package io.jmix.gradle
 
+import groovy.xml.XmlParser
 import javassist.ClassPool
 import javassist.CtClass
 import javassist.NotFoundException
@@ -85,7 +86,7 @@ class EnhancingAction implements Action<Task> {
 
         if (entitiesEnhancingRequired) {
             copyClasses(compiledDir, enhancedDir, enhancedClassNames)
-            persistenceProviderEnhancing().run(project, sourceSet, enhancedDir, classesInfo.allStores())
+            persistenceProviderEnhancing(project).run(project, sourceSet, enhancedDir, classesInfo.allStores())
             runJmixEnhancing(project, sourceSet, enhancedDir, classesInfo)
             if (project.jmix.entitiesEnhancing.skipUnmodifiedEntitiesEnhancing) {
                 saveEntityClassesChecksumForNextBuild(project, classesInfo, compiledDir)
@@ -511,8 +512,8 @@ class EnhancingAction implements Action<Task> {
         return classPool
     }
 
-    protected static PersistenceProviderEnhancing persistenceProviderEnhancing() {
-        return new EclipselinkEnhancing()
+    protected static PersistenceProviderEnhancing persistenceProviderEnhancing(Project project) {
+        return project.objects.newInstance(EclipselinkEnhancing)
     }
 
     protected static List<EnhancingStep> enhancingSteps() {

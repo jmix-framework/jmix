@@ -17,7 +17,9 @@ apply plugin: 'groovy'
 apply plugin: 'io.jmix'
 
 group 'io.jmix.flowui'
-archivesBaseName = 'jmix-flowui-restds'
+base {
+    archivesName = 'jmix-flowui-restds'
+}
 
 dependencies {
     api project(':flowui')

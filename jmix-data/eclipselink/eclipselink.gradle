@@ -18,7 +18,9 @@ apply plugin: 'groovy'
 apply plugin: 'io.jmix'
 
 group = 'io.jmix.data'
-archivesBaseName = 'jmix-eclipselink'
+base {
+    archivesName = 'jmix-eclipselink'
+}
 
 dependencies {
     api project(':data')

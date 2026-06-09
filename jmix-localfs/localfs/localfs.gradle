@@ -18,7 +18,9 @@ apply plugin: 'groovy'
 apply plugin: 'io.jmix'
 
 group = 'io.jmix.localfs'
-archivesBaseName = 'jmix-localfs'
+base {
+    archivesName = 'jmix-localfs'
+}
 
 dependencies {
     api project(':core')

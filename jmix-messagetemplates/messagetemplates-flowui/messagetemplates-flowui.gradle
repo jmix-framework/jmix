@@ -17,7 +17,9 @@
 apply plugin: 'io.jmix'
 
 group = 'io.jmix.messagetemplates'
-archivesBaseName = 'jmix-messagetemplates-flowui'
+base {
+    archivesName = 'jmix-messagetemplates-flowui'
+}
 
 dependencies {
     api project(':messagetemplates')

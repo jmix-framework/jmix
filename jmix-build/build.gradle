@@ -16,7 +16,7 @@
 
 plugins {
     id 'groovy'
-    id 'com.gradle.plugin-publish' version '1.1.0'
+    id 'com.gradle.plugin-publish' version '2.1.1'
 }
 
 group = 'io.jmix.build'
@@ -28,7 +28,7 @@ repositories {
 
 dependencies {
     implementation localGroovy()
-    implementation 'com.github.spotbugs.snom:spotbugs-gradle-plugin:6.4.8'
+    implementation 'com.github.spotbugs.snom:spotbugs-gradle-plugin:6.5.5'
 }
 
 task sourcesJar(type: Jar) {

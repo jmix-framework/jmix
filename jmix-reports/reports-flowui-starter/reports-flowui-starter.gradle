@@ -15,7 +15,9 @@
  */
 
 group = 'io.jmix.reports'
-archivesBaseName = 'jmix-reports-flowui-starter'
+base {
+    archivesName = 'jmix-reports-flowui-starter'
+}
 
 dependencies {
     api project(':reports-flowui')

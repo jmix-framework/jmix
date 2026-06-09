@@ -1,8 +1,8 @@
 plugins {
-    id 'io.jmix' version '3.0.0-M4'
-    id 'org.jetbrains.kotlin.jvm' version '2.1.10'
+    id 'io.jmix' version '3.0.0-M5'
+    id 'org.jetbrains.kotlin.jvm' version '2.4.0'
     id 'java'
-    id 'org.jetbrains.gradle.plugin.idea-ext' version '1.1.9'
+    id 'org.jetbrains.gradle.plugin.idea-ext' version '1.4.1'
 }
 
 apply plugin: 'org.springframework.boot'

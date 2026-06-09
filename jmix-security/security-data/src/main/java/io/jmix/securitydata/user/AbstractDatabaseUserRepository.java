@@ -36,6 +36,7 @@ import io.jmix.security.role.RoleGrantedAuthorityUtils;
 import io.jmix.security.role.assignment.RoleAssignment;
 import io.jmix.security.role.assignment.RoleAssignmentRepository;
 import io.jmix.security.role.assignment.RoleAssignmentRoleType;
+import io.jmix.security.user.PasswordChangeRequiredSupport;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -79,6 +80,8 @@ public abstract class AbstractDatabaseUserRepository<T extends UserDetails> impl
     protected ApplicationEventPublisher eventPublisher;
     @Autowired
     protected RoleGrantedAuthorityUtils roleGrantedAuthorityUtils;
+    @Autowired
+    protected PasswordChangeRequiredSupport passwordChangeRequiredSupport;
 
     /**
      * Helps create authorities from roles.
@@ -204,6 +207,7 @@ public abstract class AbstractDatabaseUserRepository<T extends UserDetails> impl
         Preconditions.checkNotNullArgument(newPassword, "Null new password");
         T userDetails = loadUserByUsername(userName);
         changePassword(userDetails, oldPassword, newPassword);
+        passwordChangeRequiredSupport.setPasswordChangeRequired(userDetails, false);
 
         if (saveChanges) {
             userDetails = dataManager.save(userDetails);
@@ -225,7 +229,8 @@ public abstract class AbstractDatabaseUserRepository<T extends UserDetails> impl
     }
 
     @Override
-    public Map<UserDetails, String> resetPasswords(Set<UserDetails> users, boolean saveChanges) {
+    public Map<UserDetails, String> resetPasswords(Set<UserDetails> users, boolean saveChanges,
+                                                   boolean requireChangeAtNextLogon) {
         Map<UserDetails, String> usernamePasswordMap = new LinkedHashMap<>();
         SaveContext saveContext = new SaveContext();
 
@@ -244,6 +249,7 @@ public abstract class AbstractDatabaseUserRepository<T extends UserDetails> impl
                 success = true;
             } while (!success);
 
+            passwordChangeRequiredSupport.setPasswordChangeRequired(userDetails, requireChangeAtNextLogon);
             saveContext.saving(userDetails);
             usernamePasswordMap.put(userDetails, newPassword);
         }

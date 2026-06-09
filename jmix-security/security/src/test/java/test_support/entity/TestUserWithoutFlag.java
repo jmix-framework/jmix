@@ -14,7 +14,26 @@
  * limitations under the License.
  */
 
-@import './change-password-view.css';
-@import './reset-password-view.css';
-@import './role-assignment-view.css';
-@import './substitute-user-view.css';
+package test_support.entity;
+
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+
+@Entity(name = "test_UserWithoutFlag")
+@JmixEntity
+@Table(name = "TEST_USER_WITHOUT_FLAG")
+public class TestUserWithoutFlag extends BaseEntity {
+
+    @Column(name = "USERNAME")
+    private String username;
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+}

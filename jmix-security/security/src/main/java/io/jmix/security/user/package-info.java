@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@import './change-password-view.css';
-@import './reset-password-view.css';
-@import './role-assignment-view.css';
-@import './substitute-user-view.css';
+@NullMarked
+package io.jmix.security.user;
+
+import org.jspecify.annotations.NullMarked;

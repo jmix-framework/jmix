@@ -22,10 +22,12 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
+import org.gradle.work.DisableCachingByDefault
 
 /**
  * Create ZIP archive with the current project including HSQL database.
  */
+@DisableCachingByDefault
 class ZipProject extends DefaultTask {
 
     @Input

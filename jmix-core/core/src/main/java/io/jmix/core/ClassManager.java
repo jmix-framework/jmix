@@ -85,6 +85,16 @@ public class ClassManager {
     }
 
     /**
+     * Checks whether a class with the given name was loaded as a generated class.
+     *
+     * @param className fully qualified class name
+     * @return true if a generated class with this name is loaded
+     */
+    public boolean isGeneratedClass(String className) {
+        return javaClassLoader.isGeneratedClass(className);
+    }
+
+    /**
      * Remove compiled class from cache
      *
      * @return true if class removed from cache

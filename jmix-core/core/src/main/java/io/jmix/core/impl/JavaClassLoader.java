@@ -322,6 +322,10 @@ public class JavaClassLoader extends URLClassLoader {
         return loaded.containsKey(className);
     }
 
+    public boolean isGeneratedClass(String className) {
+        return generatedClassBytes.containsKey(className);
+    }
+
     public Collection<String> getClassDependencies(String className) {
         TimestampClass timestampClass = loaded.get(className);
         if (timestampClass != null) {

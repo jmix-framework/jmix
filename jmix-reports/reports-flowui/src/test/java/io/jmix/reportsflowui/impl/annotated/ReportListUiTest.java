@@ -199,7 +199,7 @@ public class ReportListUiTest extends BaseReportListUiTest<Report, ReportListVie
         EntityComboBox<ReportGroup> groupFilter = findComponent(listView, "groupFilter");
 
         List<ReportGroup> reportGroups = groupFilter.getDataProvider().fetch(new Query<>()).toList();
-        assertThat(reportGroups).size().isEqualTo(1);
+        assertThat(reportGroups).size().isEqualTo(2);
 
         groupFilter.setValue(annotatedGroupHolder.getGroupByCode(SampleReportGroup.CODE));
         assertThat(groupFilter.getSelectedItems()).anyMatch(r -> r.getCode().equals(SampleReportGroup.CODE));
@@ -250,6 +250,6 @@ public class ReportListUiTest extends BaseReportListUiTest<Report, ReportListVie
         List<Report> reportList = (List<Report>) dataGridItems.getItems();
 
         assertThat(reportList).isNotEmpty();
-        assertThat(reportList).size().isEqualTo(1);
+        assertThat(reportList).size().isEqualTo(3);
     }
 }

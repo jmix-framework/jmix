@@ -47,10 +47,6 @@ public abstract class BaseRunReportUiTest extends BaseReportUiTest {
         launchPresentedReportFromRunView(reportCode, ReportExecutionPresentationIds.DEFAULT);
     }
 
-    protected void launchSpreadsheetReportFromRunView(String reportCode) {
-        launchPresentedReportFromRunView(reportCode, ReportExecutionPresentationIds.SPREADSHEET);
-    }
-
     protected void launchTableReportFromRunView(String reportCode) {
         launchPresentedReportFromRunView(reportCode, ReportExecutionPresentationIds.TABLE);
     }

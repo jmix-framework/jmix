@@ -73,7 +73,7 @@ public class ReportGroupListUiTest extends BaseReportListUiTest<ReportGroup, Rep
         List<ReportGroup> reportGroups = groupRepository.loadAll();
 
         assertThat(reportGroups).isNotNull();
-        assertThat(reportGroups).size().isEqualTo(1);
+        assertThat(reportGroups).size().isEqualTo(2);
         assertThat(reportGroups).anyMatch(rg -> rg.getCode().equals(SampleReportGroup.CODE));
         assertThat(reportGroups).allMatch(rg -> groupRepository.existsGroupByCode(rg.getCode()));
 
@@ -82,7 +82,7 @@ public class ReportGroupListUiTest extends BaseReportListUiTest<ReportGroup, Rep
         dataGridItems = getDataGridItems();
         reportGroups = dataGridItems.getItems().stream().toList();
 
-        assertThat(reportGroups).size().isEqualTo(2);
+        assertThat(reportGroups).size().isEqualTo(3);
         assertThat(reportGroups).anyMatch(rg -> rg.getCode().equals(RuntimeReportGroupUtil.SIMPLE_RUNTIME_REPORT_GROUP_CODE));
         assertThat(reportGroups).allMatch(rg -> groupRepository.existsGroupByCode(rg.getCode()));
     }
@@ -150,7 +150,7 @@ public class ReportGroupListUiTest extends BaseReportListUiTest<ReportGroup, Rep
         dataGridItems = getDataGridItems();
 
         assertThat(dataGridItems).isNotNull();
-        assertThat(dataGridItems.getItems()).size().isEqualTo(2);
+        assertThat(dataGridItems.getItems()).size().isEqualTo(3);
 
         TypedTextField<String> titleFilterField = findComponent(listView, "titleFilter");
         titleFilterField.setValue("sample");

@@ -51,6 +51,8 @@ public class RuntimeReportGroupUtil {
     }
 
     public void cleanupDatabaseReportGroups() {
-        jdbcTemplate.update("delete from REPORT_GROUP");
+        // Keep the predefined system "General" group (created by Liquibase) so that the report group state
+        // is deterministic across tests regardless of their execution order.
+        jdbcTemplate.update("delete from REPORT_GROUP where CODE <> 'ReportGroup.default'");
     }
 }

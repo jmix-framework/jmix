@@ -25,10 +25,12 @@ import io.jmix.flowui.testassist.UiTestUtils;
 import io.jmix.flowui.view.navigation.ViewNavigationSupport;
 import navigation.view.BackwardNavigationDetailView;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jdbc.core.JdbcTemplate;
 import test_support.FlowuiTestConfiguration;
 import test_support.entity.sales.Customer;
 
@@ -40,6 +42,13 @@ public class TabSheetEditActionUiTest {
     ViewNavigationSupport navigationSupport;
     @Autowired
     DataManager dataManager;
+    @Autowired
+    JdbcTemplate jdbcTemplate;
+
+    @AfterEach
+    public void afterEach() {
+        jdbcTemplate.execute("delete from TEST_CUSTOMER");
+    }
 
     @Test
     @DisplayName("Edit action on a data grid inside a TabSheet opens the detail view")

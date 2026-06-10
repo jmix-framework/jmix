@@ -34,19 +34,28 @@ import com.vaadin.flow.server.VaadinRequest;
  * <p>
  * This UI emulates the cycle in two phases:
  * <ul>
- *     <li>while a navigation is in progress, callbacks are only collected, then executed as one
+ *     <li>while a navigation is being handled, callbacks are only collected, then executed as one
  *     batch once the navigation finishes — exactly as a real request behaves;</li>
- *     <li>afterwards the UI acts as if the client has responded: each subsequently registered
- *     callback runs immediately, so programmatic changes or dialogs opened after navigation (with
- *     no further navigation) are handled without any explicit flush.</li>
+ *     <li>at any other time there is no response to wait for, so each callback registered via
+ *     {@link #beforeClientResponse(Component, SerializableConsumer)} runs immediately, and
+ *     programmatic changes or dialogs opened without navigation are handled without any explicit
+ *     flush.</li>
+ * </ul>
+ * Known deviations from a running application:
+ * <ul>
+ *     <li>only registrations made through {@link UI#beforeClientResponse} trigger the immediate
+ *     run; code that registers directly on the {@code StateTree} (e.g. {@code Element#executeJs}
+ *     or data communicator flushes) is collected and executed at the next flush — the next
+ *     navigation or {@code beforeClientResponse} call — or explicitly via
+ *     {@link #runExecutionsBeforeClientResponse()};</li>
+ *     <li>the immediate run happens synchronously inside the registering call, whereas in a
+ *     running application the callback runs at the end of the request — caller code following the
+ *     registration that the callback depends on (e.g.
+ *     {@code field = ui.beforeClientResponse(owner, ctx -> field = null)}) observes the inverted
+ *     order.</li>
  * </ul>
  */
 public class TestUI extends UI {
-
-    // True once a navigation has finished: the UI then behaves as if the client responded, running
-    // each newly registered callback immediately. Reset when a new navigation starts, so every
-    // navigation is handled as its own request (collect during, flush at the end).
-    protected boolean clientResponded;
 
     protected boolean runningExecutions;
 
@@ -54,20 +63,21 @@ public class TestUI extends UI {
     public void doInit(VaadinRequest request, int uiId, String appId) {
         super.doInit(request, uiId, appId);
 
-        // Listeners are registered here, not in the constructor, because they require the UI
+        // The listener is registered here, not in the constructor, because it requires the UI
         // session, which is set after instantiation.
-        addBeforeEnterListener(event -> clientResponded = false);
-        addAfterNavigationListener(event -> {
-            runExecutionsBeforeClientResponse();
-            clientResponded = true;
-        });
+        addAfterNavigationListener(event -> runExecutionsBeforeClientResponse());
     }
 
     @Override
     public ExecutionRegistration beforeClientResponse(Component component,
                                                       SerializableConsumer<ExecutionContext> execution) {
         ExecutionRegistration registration = super.beforeClientResponse(component, execution);
-        if (clientResponded) {
+        // 'lastHandledNavigation' is non-null exactly while the Router is handling a navigation
+        // ('Router#navigate' clears it in 'finally' even if the navigation fails), so callbacks
+        // registered during navigation are left to the AfterNavigationListener batch, and at any
+        // other time they run at once. Unlike a mutable phase flag, this cannot get stuck after a
+        // failed navigation and requires no initial navigation to activate.
+        if (!getInternals().hasLastHandledLocation()) {
             runExecutionsBeforeClientResponse();
         }
         return registration;

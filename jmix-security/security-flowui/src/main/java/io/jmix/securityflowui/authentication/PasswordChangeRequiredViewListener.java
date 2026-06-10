@@ -23,7 +23,6 @@ import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.event.view.ViewOpenedEvent;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.View;
-import io.jmix.flowui.view.ViewInfo;
 import io.jmix.flowui.view.ViewRegistry;
 import io.jmix.security.user.PasswordChangeRequiredSupport;
 import io.jmix.securityflowui.view.changepassword.ChangePasswordView;
@@ -96,12 +95,9 @@ public class PasswordChangeRequiredViewListener {
     }
 
     protected boolean isViewOfId(Class<?> viewClass, String viewId) {
-        try {
-            ViewInfo viewInfo = viewRegistry.getViewInfo(viewId);
-            return viewInfo.getControllerClass().isAssignableFrom(viewClass);
-        } catch (IllegalArgumentException e) {
-            return false;
-        }
+        return viewRegistry.findViewInfo(viewId)
+                .map(viewInfo -> viewInfo.getControllerClass().isAssignableFrom(viewClass))
+                .orElse(false);
     }
 
     protected void openForcedChangePasswordDialog(View<?> origin, String username) {

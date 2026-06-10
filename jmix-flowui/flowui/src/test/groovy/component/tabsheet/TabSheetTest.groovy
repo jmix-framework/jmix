@@ -16,8 +16,8 @@
 
 package component.tabsheet
 
-import component.image.view.JmixImageTestView
 import component.tabsheet.view.TabSheetTestView
+import io.jmix.flowui.component.UiComponentUtils
 import org.springframework.boot.test.context.SpringBootTest
 import test_support.spec.FlowuiTestSpecification
 
@@ -46,5 +46,24 @@ class TabSheetTest extends FlowuiTestSpecification {
         screen.tabSheet.findComponent("tab4Span").isEmpty()
         screen.tabSheet.setSelectedTab(screen.tab4)
         screen.tabSheet.findComponent("tab4Span").isPresent()
+    }
+
+    def "Selected tab content is attached to the view after navigation"() {
+        when: "Open a view with TabSheet"
+        def screen = navigateToView(TabSheetTestView)
+
+        then: "Content of the selected tab is attached to the view"
+        UiComponentUtils.findView(screen.tab1Span) == screen
+    }
+
+    def "Selected tab content is attached to the view after switching tabs without navigation"() {
+        given: "An open view with a TabSheet"
+        def screen = navigateToView(TabSheetTestView)
+
+        when: "Switching to another tab programmatically, with no navigation happening"
+        screen.tabSheet.setSelectedIndex(2)
+
+        then: "Content of the newly selected tab is attached to the view"
+        UiComponentUtils.findView(screen.tab3Checkbox) == screen
     }
 }

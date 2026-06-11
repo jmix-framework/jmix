@@ -52,6 +52,7 @@
 - Pay attention to IDE warnings; suppress narrowly when unavoidable.
 - Prefer method references over lambdas when possible; avoid unnecessary lambdas when simple `for` loop is possible.
 - Dependency injection: field injection is preferred.
+- Parameterized messages: `Messages#formatMessage(...)` uses `String.format()`, so placeholders are `%s`/`%d` (not MessageFormat `{0}`). Escape a literal percent as `%%`.
 
 ## UI Practices
 - Use `em`/`rem` (avoid `px`); `spacing` is default; `vbox` needs `padding="false"` to avoid extra space.

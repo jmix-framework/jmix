@@ -246,7 +246,17 @@ public class MetaClassImpl extends MetadataObjectImpl implements MetaClass {
             return ownProperty;
         }
         if (ancestorProperty instanceof CloneableMetaProperty cloneableMetaProperty) {
-            return cloneableMetaProperty.makeClone(this);
+            MetaProperty clone = cloneableMetaProperty.makeClone(this);
+            // Preserve the store of the previously resolved clone: it is assigned per meta class by the
+            // metadata loader and may differ from the ancestor's store (e.g. UNDEFINED on a mapped
+            // superclass vs. MAIN on this concrete entity). Recreating the clone from the ancestor on a
+            // snapshot rebuild must not reset it.
+            MetaProperty previousProperty = propertyByName.get(ancestorProperty.getName());
+            if (previousProperty != null && previousProperty.getDomain() == this
+                    && clone instanceof MetaPropertyImpl cloneImpl) {
+                cloneImpl.setStore(previousProperty.getStore());
+            }
+            return clone;
         }
         return null;
     }

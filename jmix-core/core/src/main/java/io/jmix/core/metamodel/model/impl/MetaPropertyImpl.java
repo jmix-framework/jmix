@@ -154,7 +154,9 @@ public class MetaPropertyImpl extends MetadataObjectImpl implements MetaProperty
 
     public void setStore(Store store) {
         this.store = store;
-        withClones(clone -> clone.store = store);
+        // Store is domain-specific: a property declared in a @MappedSuperclass has an UNDEFINED store
+        // there, but the MAIN store when inherited into a concrete entity. It is assigned per meta class
+        // by the metadata loader, so it must not be propagated to descendant clones.
     }
 
     public void setDeclaringClass(Class<?> declaringClass) {

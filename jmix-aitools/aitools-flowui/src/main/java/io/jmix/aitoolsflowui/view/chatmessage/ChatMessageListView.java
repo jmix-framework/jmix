@@ -31,8 +31,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 import java.util.UUID;
 
-@Route(value = "aitols/chat-messages", layout = DefaultMainViewParent.class)
-@ViewController("aitols_ChatMessage.list")
+@Route(value = "aitls/chat-messages", layout = DefaultMainViewParent.class)
+@ViewController("aitls_ChatMessage.list")
 @ViewDescriptor("chat-message-list-view.xml")
 @LookupComponent("chatMessagesDataGrid")
 @DialogMode(width = "60em", height = "40em", resizable = true)

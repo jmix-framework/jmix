@@ -38,10 +38,10 @@ import java.util.function.Consumer;
  * statusPublisher.complete(toolContext, msg, "found " + result.size());
  * </pre>
  */
-@Component("aitols_AiToolStatusPublisher")
+@Component("aitls_AiToolStatusPublisher")
 public class AiToolStatusPublisher {
 
-    public static final String STATUS_UPDATE_CALLBACK = "aitols_statusUpdateCallback";
+    public static final String STATUS_UPDATE_CALLBACK = "aitls_statusUpdateCallback";
 
     /**
      * Publishes an in-flight status update — "this step has started, no result yet".

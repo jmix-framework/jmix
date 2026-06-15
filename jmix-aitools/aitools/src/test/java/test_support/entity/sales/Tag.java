@@ -23,8 +23,8 @@ import jakarta.persistence.*;
 import java.util.List;
 import java.util.UUID;
 
-@Entity(name = "aitols_Tag")
-@Table(name = "AITOLS_TAG")
+@Entity(name = "aitls_Tag")
+@Table(name = "AITLS_TAG")
 @JmixEntity
 public class Tag {
 
@@ -40,7 +40,7 @@ public class Tag {
     private List<Order> orders;
 
     @ManyToMany
-    @JoinTable(name = "AITOLS_CUSTOMER_TAG",
+    @JoinTable(name = "AITLS_CUSTOMER_TAG",
             joinColumns = @JoinColumn(name = "TAG_ID"),
             inverseJoinColumns = @JoinColumn(name = "CUSTOMER_ID"))
     private List<Customer> customers;

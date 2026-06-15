@@ -31,7 +31,7 @@ import java.util.List;
 /**
  * Creates {@link TimelineItem}s from chat messages for rendering the conversation timeline.
  */
-@Component("aitols_TimelineItemFactory")
+@Component("aitls_TimelineItemFactory")
 public class TimelineItemFactory {
 
     @Autowired

@@ -54,7 +54,7 @@ class JpqlExecutionServiceTest {
     void testRepairsAndExecutesRequest() {
         TestJpqlExecutionService executionService = createService();
         GeneratedJpqlResult generatedResult = new GeneratedJpqlResult(
-                "select e from aitols_Customer e where e.id = :id",
+                "select e from aitls_Customer e where e.id = :id",
                 List.of(new GeneratedJpqlParameter("id", "Long", "1001")),
                 "",
                 List.of());
@@ -73,7 +73,7 @@ class JpqlExecutionServiceTest {
 
         JpqlExecutionResult result = executionService.execute(new JpqlExecutionRequest(
                 "Show customer 1001",
-                "select e from aitols_Customer e where e.badField = :id",
+                "select e from aitls_Customer e where e.badField = :id",
                 List.of(new JpqlExecutionParameter("id", "Long", "1001")),
                 List.of("id", "name"),
                 null,
@@ -83,7 +83,7 @@ class JpqlExecutionServiceTest {
         assertTrue(result.isExecuted());
         assertTrue(result.isRepaired());
         assertFalse(result.isHasMore());
-        assertEquals("select e from aitols_Customer e where e.id = :id", result.getGeneratedJpqlResult().getJpql());
+        assertEquals("select e from aitls_Customer e where e.id = :id", result.getGeneratedJpqlResult().getJpql());
         assertEquals(List.of(Map.of("id", 1001L, "name", "Acme")), result.getRows());
     }
 
@@ -93,7 +93,7 @@ class JpqlExecutionServiceTest {
         TestJpqlExecutionService executionService = createService();
 
         GeneratedJpqlResult generatedResult = new GeneratedJpqlResult(
-                "select e from aitols_Customer e where e.fullTitle = :name",
+                "select e from aitls_Customer e where e.fullTitle = :name",
                 List.of(new GeneratedJpqlParameter("name", "String", "Acme")),
                 "",
                 List.of());
@@ -108,7 +108,7 @@ class JpqlExecutionServiceTest {
 
         JpqlExecutionResult result = executionService.execute(new JpqlExecutionRequest(
                 "Show customer by full title",
-                "select e from aitols_Customer e where e.fullTitle = :name",
+                "select e from aitls_Customer e where e.fullTitle = :name",
                 List.of(new JpqlExecutionParameter("name", "String", "Acme")),
                 List.of("id", "name"),
                 null,
@@ -128,7 +128,7 @@ class JpqlExecutionServiceTest {
     void testFailsValuesRequestWithoutResultProperties() {
         TestJpqlExecutionService executionService = createService();
         GeneratedJpqlResult generatedResult = new GeneratedJpqlResult(
-                "select c.name, count(o) from aitols_Customer c join c.orders o group by c.name",
+                "select c.name, count(o) from aitls_Customer c join c.orders o group by c.name",
                 List.of(),
                 "",
                 List.of());
@@ -143,7 +143,7 @@ class JpqlExecutionServiceTest {
 
         JpqlExecutionResult result = executionService.execute(new JpqlExecutionRequest(
                 "Show customer order counts",
-                "select c.name, count(o) from aitols_Customer c join c.orders o group by c.name",
+                "select c.name, count(o) from aitls_Customer c join c.orders o group by c.name",
                 List.of(),
                 List.of(),
                 null,
@@ -161,7 +161,7 @@ class JpqlExecutionServiceTest {
     void testSetsHasMoreWhenExtraRowExists() {
         TestJpqlExecutionService executionService = createService();
         GeneratedJpqlResult generatedResult = new GeneratedJpqlResult(
-                "select e.id as id from aitols_Customer e",
+                "select e.id as id from aitls_Customer e",
                 List.of(),
                 "",
                 List.of(),
@@ -180,7 +180,7 @@ class JpqlExecutionServiceTest {
 
         JpqlExecutionResult result = executionService.execute(new JpqlExecutionRequest(
                 "Show customers",
-                "select e.id as id from aitols_Customer e",
+                "select e.id as id from aitls_Customer e",
                 List.of(),
                 List.of("id"),
                 2,
@@ -196,7 +196,7 @@ class JpqlExecutionServiceTest {
     void testDoesNotSetHasMoreWhenAllRowsFit() {
         TestJpqlExecutionService executionService = createService();
         GeneratedJpqlResult generatedResult = new GeneratedJpqlResult(
-                "select e.id as id from aitols_Customer e",
+                "select e.id as id from aitls_Customer e",
                 List.of(), "", List.of(), 2, 0);
 
         when(validateAndRepair.validateAndRepair(any()))
@@ -211,7 +211,7 @@ class JpqlExecutionServiceTest {
 
         JpqlExecutionResult result = executionService.execute(new JpqlExecutionRequest(
                 "Show customers",
-                "select e.id as id from aitols_Customer e",
+                "select e.id as id from aitls_Customer e",
                 List.of(),
                 List.of("id"),
                 2,

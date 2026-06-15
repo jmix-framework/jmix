@@ -58,7 +58,7 @@ import java.util.function.Consumer;
  * The optional status callback is delivered to tools via {@link AiToolStatusPublisher} for
  * ephemeral progress messages.
  */
-@Component("aitols_AiConversationChatServiceImpl")
+@Component("aitls_AiConversationChatServiceImpl")
 public class AiConversationChatServiceImpl implements AiConversationChatService, InitializingBean {
 
     private static final Logger log = LoggerFactory.getLogger(AiConversationChatServiceImpl.class);

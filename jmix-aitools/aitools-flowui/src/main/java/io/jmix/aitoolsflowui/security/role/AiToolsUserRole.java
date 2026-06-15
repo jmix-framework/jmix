@@ -46,6 +46,6 @@ public interface AiToolsUserRole {
     void entityPolicies();
 
     @ViewPolicy(viewClasses = {AiChatHubView.class, AiChatView.class})
-    @MenuPolicy(menuIds = "aitols_AiChatHubView")
+    @MenuPolicy(menuIds = "aitls_AiChatHubView")
     void screenPolicies();
 }

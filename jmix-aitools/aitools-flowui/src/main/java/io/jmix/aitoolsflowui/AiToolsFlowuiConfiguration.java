@@ -33,7 +33,7 @@ import java.util.Collections;
 @EnableConfigurationProperties(AiToolsFlowuiProperties.class)
 public class AiToolsFlowuiConfiguration {
 
-    @Bean("aitols_AiToolsViewControllers")
+    @Bean("aitls_AiToolsViewControllers")
     public ViewControllersConfiguration views(ApplicationContext applicationContext,
                                               AnnotationScanMetadataReaderFactory metadataReaderFactory) {
         ViewControllersConfiguration viewControllers

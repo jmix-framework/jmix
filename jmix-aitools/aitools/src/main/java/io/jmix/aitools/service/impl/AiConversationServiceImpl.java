@@ -35,7 +35,7 @@ import java.util.UUID;
 /**
  * Default {@link AiConversationService} persisting conversations and messages.
  */
-@Component("aitols_AiConversationServiceImpl")
+@Component("aitls_AiConversationServiceImpl")
 public class AiConversationServiceImpl implements AiConversationService {
 
     @Autowired

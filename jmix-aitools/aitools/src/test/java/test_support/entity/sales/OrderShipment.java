@@ -22,8 +22,8 @@ import jakarta.persistence.*;
 
 import java.util.UUID;
 
-@Entity(name = "aitols_OrderShipment")
-@Table(name = "AITOLS_ORDER_SHIPMENT")
+@Entity(name = "aitls_OrderShipment")
+@Table(name = "AITLS_ORDER_SHIPMENT")
 @JmixEntity
 public class OrderShipment {
 

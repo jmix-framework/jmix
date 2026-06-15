@@ -34,7 +34,7 @@ import java.util.List;
  * Checks that every property path referenced by the query resolves against the introspected
  * domain model.
  */
-@Component("aitols_UsedPropertyPathsValidator")
+@Component("aitls_UsedPropertyPathsValidator")
 public class UsedPropertyPathsValidator implements JpqlResultValidator, Ordered {
 
     public static final String PROPERTY_PATH_INVALID_CODE = "propertyPath.invalid";

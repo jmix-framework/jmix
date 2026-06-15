@@ -44,7 +44,7 @@ class JpqlExecutorToolTest {
     void testDelegatesToExecutionService() {
         JpqlExecutionRequest request = new JpqlExecutionRequest();
         JpqlExecutionResult expectedResult = new JpqlExecutionResult(
-                new GeneratedJpqlResult("select e from aitols_Customer e",
+                new GeneratedJpqlResult("select e from aitls_Customer e",
                         List.of(), "", List.of()),
                 new JpqlValidationResult(true, List.of()),
                 List.of(),

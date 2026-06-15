@@ -29,8 +29,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
-@Entity(name = "aitols_Order")
-@Table(name = "AITOLS_ORDER")
+@Entity(name = "aitls_Order")
+@Table(name = "AITLS_ORDER")
 @JmixEntity
 public class Order {
 
@@ -93,7 +93,7 @@ public class Order {
     private List<OrderLine> lines;
 
     @ManyToMany
-    @JoinTable(name = "AITOLS_ORDER_TAG",
+    @JoinTable(name = "AITLS_ORDER_TAG",
             joinColumns = @JoinColumn(name = "ORDER_ID"),
             inverseJoinColumns = @JoinColumn(name = "TAG_ID"))
     private List<Tag> tags;

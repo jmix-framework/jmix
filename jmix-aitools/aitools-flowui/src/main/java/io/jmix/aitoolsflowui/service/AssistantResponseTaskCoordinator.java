@@ -44,7 +44,7 @@ import java.util.function.Consumer;
  * {@link AiConversationChatService} directly instead of going through a
  * project-specific analytics service.
  */
-@Component("aitols_AssistantResponseTaskCoordinator")
+@Component("aitls_AssistantResponseTaskCoordinator")
 public class AssistantResponseTaskCoordinator {
 
     private static final Logger log = LoggerFactory.getLogger(AssistantResponseTaskCoordinator.class);

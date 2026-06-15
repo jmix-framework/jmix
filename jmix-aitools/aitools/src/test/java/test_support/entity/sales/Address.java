@@ -21,7 +21,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 
 @Embeddable
-@JmixEntity(name = "aitols_Address")
+@JmixEntity(name = "aitls_Address")
 public class Address {
 
     @Column(name = "CITY")

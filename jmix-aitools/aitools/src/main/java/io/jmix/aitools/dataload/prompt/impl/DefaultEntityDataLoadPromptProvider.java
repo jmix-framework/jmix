@@ -24,7 +24,7 @@ import org.springframework.stereotype.Component;
 /**
  * Default {@link EntityDataLoadPromptProvider} that loads the prompt from a bundled classpath resource.
  */
-@Component("aitols_EntityDataLoadPromptProvider")
+@Component("aitls_EntityDataLoadPromptProvider")
 public class DefaultEntityDataLoadPromptProvider implements EntityDataLoadPromptProvider {
 
     @Value("classpath:io/jmix/aitools/dataload/prompt/entity-dataload-system-prompt.txt")

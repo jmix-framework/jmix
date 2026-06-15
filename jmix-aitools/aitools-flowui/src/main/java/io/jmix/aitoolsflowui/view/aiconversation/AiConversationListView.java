@@ -26,8 +26,8 @@ import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.view.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@Route(value = "aitols/conversations", layout = DefaultMainViewParent.class)
-@ViewController("aitols_AiConversation.list")
+@Route(value = "aitls/conversations", layout = DefaultMainViewParent.class)
+@ViewController("aitls_AiConversation.list")
 @ViewDescriptor("ai-conversation-list-view.xml")
 @LookupComponent("aiConversationsDataGrid")
 @DialogMode(width = "90%", resizable = true)

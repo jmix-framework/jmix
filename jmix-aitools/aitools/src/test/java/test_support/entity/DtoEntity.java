@@ -18,7 +18,7 @@ package test_support.entity;
 
 import io.jmix.core.metamodel.annotation.JmixEntity;
 
-@JmixEntity(name = "aitols_DtoEntity")
+@JmixEntity(name = "aitls_DtoEntity")
 public class DtoEntity {
 
     protected String name;

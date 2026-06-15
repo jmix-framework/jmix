@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
  * parameters used in the query but missing from the declaration, and declared parameters that the
  * query never uses.
  */
-@Component("aitols_ParametersValidator")
+@Component("aitls_ParametersValidator")
 public class ParametersValidator implements JpqlResultValidator, Ordered {
 
     public static final String PARAMETER_MISSING_CODE = "parameter.missingInDto";

@@ -30,7 +30,7 @@ import java.util.List;
 /**
  * Checks that the query is syntactically valid JPQL by parsing it.
  */
-@Component("aitols_JpqlSyntaxValidator")
+@Component("aitls_JpqlSyntaxValidator")
 public class JpqlSyntaxValidator implements JpqlResultValidator, Ordered {
 
     public static final String JPQL_SYNTAX_INVALID_CODE = "jpql.syntax.invalid";

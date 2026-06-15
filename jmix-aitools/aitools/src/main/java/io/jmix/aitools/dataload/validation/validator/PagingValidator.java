@@ -30,7 +30,7 @@ import java.util.List;
  * Checks that the paging hints are sane: {@code maxResults} positive and {@code firstResult}
  * zero or greater.
  */
-@Component("aitols_PagingValidator")
+@Component("aitls_PagingValidator")
 public class PagingValidator implements JpqlResultValidator, Ordered {
 
     @Override

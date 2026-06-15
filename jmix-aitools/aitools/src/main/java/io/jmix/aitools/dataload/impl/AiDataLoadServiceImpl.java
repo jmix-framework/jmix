@@ -47,7 +47,7 @@ import java.util.Objects;
  *
  * @see EntityDataLoadGenerationService
  */
-@Component("aitols_AiDataLoadServiceImpl")
+@Component("aitls_AiDataLoadServiceImpl")
 public class AiDataLoadServiceImpl implements AiDataLoadService, InitializingBean {
 
     @Autowired

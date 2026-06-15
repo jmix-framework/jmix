@@ -25,8 +25,8 @@ import io.jmix.flowui.view.StandardDetailView;
 import io.jmix.flowui.view.ViewController;
 import io.jmix.flowui.view.ViewDescriptor;
 
-@Route(value = "aitols/chat-messages/:id", layout = DefaultMainViewParent.class)
-@ViewController("aitols_ChatMessage.detail")
+@Route(value = "aitls/chat-messages/:id", layout = DefaultMainViewParent.class)
+@ViewController("aitls_ChatMessage.detail")
 @ViewDescriptor("chat-message-detail-view.xml")
 @EditedEntityContainer("chatMessageDc")
 @DialogMode(width = "32em", resizable = true)

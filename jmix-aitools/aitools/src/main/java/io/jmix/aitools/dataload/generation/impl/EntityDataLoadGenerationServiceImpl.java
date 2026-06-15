@@ -44,7 +44,7 @@ import java.util.Objects;
 /**
  * Default {@link EntityDataLoadGenerationService} implementation based on an LLM chat client.
  */
-@Component("aitols_EntityDataLoadGenerationService")
+@Component("aitls_EntityDataLoadGenerationService")
 public class EntityDataLoadGenerationServiceImpl implements EntityDataLoadGenerationService, InitializingBean {
 
     @Autowired

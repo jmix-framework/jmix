@@ -63,7 +63,7 @@ import java.util.UUID;
  * programmatically via {@link #setConversation(AiConversation)} (used by
  * {@code DialogWindows} and after-navigation handlers).
  */
-@Route(value = "aitols/chat/:id?", layout = DefaultMainViewParent.class)
+@Route(value = "aitls/chat/:id?", layout = DefaultMainViewParent.class)
 @ViewController("AiChatView")
 @ViewDescriptor("ai-chat-view.xml")
 public class AiChatView extends StandardView {
@@ -160,7 +160,7 @@ public class AiChatView extends StandardView {
         }
         String username = currentUserSubstitution.getEffectiveUser().getUsername();
         Optional<AiConversation> loaded = dataManager.load(AiConversation.class)
-                .query("select e from aitols_AiConversation e where e.id = :id and e.username = :username")
+                .query("select e from aitls_AiConversation e where e.id = :id and e.username = :username")
                 .parameter("id", id)
                 .parameter("username", username)
                 .fetchPlan(buildFetchPlan())

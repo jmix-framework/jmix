@@ -56,6 +56,6 @@ public interface AiToolsFullAccessRole {
             ChatMessageListView.class,
             ChatMessageDetailView.class
     })
-    @MenuPolicy(menuIds = {"aitols_AiChatHubView", "aitols_AiConversation.list"})
+    @MenuPolicy(menuIds = {"aitls_AiChatHubView", "aitls_AiConversation.list"})
     void screenPolicies();
 }

@@ -36,7 +36,7 @@ import java.util.Objects;
  * <p>
  * Builds a chat client with the default system prompt and all registered tools on startup.
  */
-@Component("aitols_AiChatServiceImpl")
+@Component("aitls_AiChatServiceImpl")
 public class AiChatServiceImpl implements AiChatService, InitializingBean {
 
     @Autowired

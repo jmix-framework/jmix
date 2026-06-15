@@ -33,7 +33,7 @@ import java.util.List;
 /**
  * Checks that every entity referenced by the query is known to the introspected domain model.
  */
-@Component("aitols_UsedEntitiesValidator")
+@Component("aitls_UsedEntitiesValidator")
 public class UsedEntitiesValidator implements JpqlResultValidator, Ordered {
 
     public static final String USED_ENTITY_UNKNOWN_CODE = "usedEntity.unknown";

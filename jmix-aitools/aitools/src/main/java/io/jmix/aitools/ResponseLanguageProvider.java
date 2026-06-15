@@ -38,7 +38,7 @@ import java.util.Locale;
  */
 @Experimental
 @NullMarked
-@Component("aitols_ResponseLanguageProvider")
+@Component("aitls_ResponseLanguageProvider")
 public class ResponseLanguageProvider {
 
     @Autowired

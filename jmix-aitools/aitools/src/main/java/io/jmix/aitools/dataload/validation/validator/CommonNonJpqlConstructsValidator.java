@@ -35,7 +35,7 @@ import static io.jmix.aitools.dataload.validation.validator.JpqlValidatorUtils.*
  * date functions and interval expressions, and CURRENT_DATE/CURRENT_TIME/CURRENT_TIMESTAMP used
  * with parentheses.
  */
-@Component("aitols_CommonNonJpqlConstructsJpqlValidator")
+@Component("aitls_CommonNonJpqlConstructsJpqlValidator")
 public class CommonNonJpqlConstructsValidator implements JpqlResultValidator, Ordered {
 
     public static final String SQL_PAGINATION_CODE = "jpql.sqlPagination";

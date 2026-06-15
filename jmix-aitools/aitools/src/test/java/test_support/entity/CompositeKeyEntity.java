@@ -22,8 +22,8 @@ import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 
-@Entity(name = "aitols_CompositeKeyEntity")
-@Table(name = "AITOLS_COMPOSITE_KEY_ENTITY")
+@Entity(name = "aitls_CompositeKeyEntity")
+@Table(name = "AITLS_COMPOSITE_KEY_ENTITY")
 @JmixEntity
 public class CompositeKeyEntity {
 

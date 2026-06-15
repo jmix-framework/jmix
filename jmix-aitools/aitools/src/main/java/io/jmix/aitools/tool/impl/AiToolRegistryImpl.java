@@ -66,7 +66,7 @@ import java.util.Set;
  *     </li>
  * </ul>
  */
-@Component("aitols_AiToolRegistryImpl")
+@Component("aitls_AiToolRegistryImpl")
 public class AiToolRegistryImpl implements AiToolRegistry, InitializingBean {
 
     private static final Logger log = LoggerFactory.getLogger(AiToolRegistryImpl.class);

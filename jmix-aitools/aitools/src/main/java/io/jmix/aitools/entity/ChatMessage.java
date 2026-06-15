@@ -15,11 +15,11 @@ import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @JmixEntity
-@Table(name = "AITOLS_CHAT_MESSAGE", indexes = {
-        @Index(name = "IDX_AITOLS_CHAT_MESSAGE_CONV", columnList = "CONVERSATION_ID"),
-        @Index(name = "IDX_AITOLS_CHAT_MESSAGE", columnList = "CONVERSATION_ID, CREATED_DATE")
+@Table(name = "AITLS_CHAT_MESSAGE", indexes = {
+        @Index(name = "IDX_AITLS_CHAT_MESSAGE_CONV", columnList = "CONVERSATION_ID"),
+        @Index(name = "IDX_AITLS_CHAT_MESSAGE", columnList = "CONVERSATION_ID, CREATED_DATE")
 })
-@Entity(name = "aitols_ChatMessage")
+@Entity(name = "aitls_ChatMessage")
 public class ChatMessage {
 
     @Id

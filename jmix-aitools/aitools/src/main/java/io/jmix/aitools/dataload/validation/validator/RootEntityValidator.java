@@ -32,7 +32,7 @@ import java.util.List;
 /**
  * Checks that the query's root entity is non-blank and known to the introspected domain model.
  */
-@Component("aitols_RootEntityValidator")
+@Component("aitls_RootEntityValidator")
 public class RootEntityValidator implements JpqlResultValidator, Ordered {
 
     public static final String ROOT_ENTITY_UNKNOWN_CODE = "rootEntity.unknown";

@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component;
 /**
  * Introspects datatype (scalar) properties into a {@link DatatypePropertyDescriptor}.
  */
-@Component("aitols_DatatypePropertyIntrospector")
+@Component("aitls_DatatypePropertyIntrospector")
 public class DatatypePropertyIntrospector extends AbstractPropertyIntrospector {
 
     @Override

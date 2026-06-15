@@ -23,8 +23,8 @@ import io.jmix.flowui.view.*;
 /**
  * Ready-made host view for {@link AiChatHubFragment} — the chat hub landing screen.
  */
-@Route(value = "aitols/chats", layout = DefaultMainViewParent.class)
-@ViewController(id = "aitols_AiChatHubView")
+@Route(value = "aitls/chats", layout = DefaultMainViewParent.class)
+@ViewController(id = "aitls_AiChatHubView")
 @ViewDescriptor(path = "ai-chat-hub-view.xml")
 public class AiChatHubView extends StandardView {
 }

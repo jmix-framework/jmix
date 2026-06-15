@@ -37,7 +37,7 @@ import java.util.List;
  * as an {@link OperationResult}, which also reports whether the operation ultimately failed.
  */
 @NullMarked
-@Component("aitols_JpqlValidationAndRepairService")
+@Component("aitls_JpqlValidationAndRepairService")
 public class JpqlValidationAndRepairService {
 
     @Autowired

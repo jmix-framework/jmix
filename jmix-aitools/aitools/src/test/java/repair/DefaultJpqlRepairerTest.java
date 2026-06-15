@@ -53,7 +53,7 @@ class DefaultJpqlRepairerTest {
     void testRepairsFromValidationFeedback() {
         String content = """
                 {
-                  "jpql": "select e from aitols_Order e where e.customer.name like :customerName",
+                  "jpql": "select e from aitls_Order e where e.customer.name like :customerName",
                   "parameters": [
                     {"name": "customerName", "type": "String", "value": "%Acme%"}
                   ],
@@ -71,7 +71,7 @@ class DefaultJpqlRepairerTest {
         GeneratedJpqlResult repaired = repairer.repair(new JpqlRepairRequest(
                 executionRequest,
                 new GeneratedJpqlResult(
-                        "select e from aitols_Order e where e.customer.fullTitle like :customerName",
+                        "select e from aitls_Order e where e.customer.fullTitle like :customerName",
                         List.of(new GeneratedJpqlParameter("customerName", "String", "%Acme%")),
                         "Broken query",
                         List.of()
@@ -82,6 +82,6 @@ class DefaultJpqlRepairerTest {
                 1
         ));
 
-        assertEquals("select e from aitols_Order e where e.customer.name like :customerName", repaired.getJpql());
+        assertEquals("select e from aitls_Order e where e.customer.name like :customerName", repaired.getJpql());
     }
 }

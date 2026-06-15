@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component;
 /**
  * Introspects embedded properties into an {@link EmbeddedPropertyDescriptor}.
  */
-@Component("aitols_EmbeddedPropertyIntrospector")
+@Component("aitls_EmbeddedPropertyIntrospector")
 public class EmbeddedPropertyIntrospector extends AbstractPropertyIntrospector {
 
     @Override

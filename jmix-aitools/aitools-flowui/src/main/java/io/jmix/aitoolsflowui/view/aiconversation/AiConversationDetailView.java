@@ -35,8 +35,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.stream.Stream;
 
-@Route(value = "aitols/conversations/:id", layout = DefaultMainViewParent.class)
-@ViewController("aitols_AiConversation.detail")
+@Route(value = "aitls/conversations/:id", layout = DefaultMainViewParent.class)
+@ViewController("aitls_AiConversation.detail")
 @ViewDescriptor("ai-conversation-detail-view.xml")
 @EditedEntityContainer("aiConversationDc")
 @DialogMode(width = "32em", resizable = true)

@@ -31,7 +31,7 @@ import org.springframework.stereotype.Component;
  * <p>
  * If no {@code JpqlRepairer} bean is available, the query is returned unchanged.
  */
-@Component("aitols_JpqlRepairService")
+@Component("aitls_JpqlRepairService")
 public class JpqlRepairService {
 
     @Autowired

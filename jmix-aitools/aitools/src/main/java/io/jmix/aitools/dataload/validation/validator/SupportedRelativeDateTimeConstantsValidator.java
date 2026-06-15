@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
  * Checks that only supported Jmix relative date-time constants (such as {@code FIRST_DAY_OF_CURRENT_MONTH})
  * are used, ignoring string literals and standard JPQL temporal keywords.
  */
-@Component("aitols_SupportedRelativeDateTimeConstantsValidator")
+@Component("aitls_SupportedRelativeDateTimeConstantsValidator")
 public class SupportedRelativeDateTimeConstantsValidator implements JpqlResultValidator, Ordered {
 
     protected static final Pattern STRING_LITERAL_PATTERN = Pattern.compile("'(?:''|[^'])*'");

@@ -46,7 +46,7 @@ import java.util.stream.Collectors;
 /**
  * Validates, repairs and executes a generated JPQL query, returning the fetched rows.
  */
-@Component("aitols_JpqlExecutionService")
+@Component("aitls_JpqlExecutionService")
 public class JpqlExecutionService {
 
     private static final Logger log = LoggerFactory.getLogger(JpqlExecutionService.class);

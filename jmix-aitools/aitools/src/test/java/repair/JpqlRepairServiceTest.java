@@ -62,7 +62,7 @@ class JpqlRepairServiceTest {
         assertTrue(repairResult.isRepaired());
         assertEquals(1, repairResult.getRepairAttempts());
         assertTrue(repairResult.getValidationResult().isValid());
-        assertEquals("select e from aitols_Order e where e.customer.name like :customerName",
+        assertEquals("select e from aitls_Order e where e.customer.name like :customerName",
                 repairResult.getGeneratedJpqlResult().getJpql());
     }
 
@@ -93,7 +93,7 @@ class JpqlRepairServiceTest {
         assertTrue(repairResult.isRepaired());
         assertEquals(2, repairResult.getRepairAttempts());
         assertFalse(repairResult.getValidationResult().isValid());
-        assertEquals("select e from aitols_Order e where e.customer.fullTitle like :customerName",
+        assertEquals("select e from aitls_Order e where e.customer.fullTitle like :customerName",
                 repairResult.getGeneratedJpqlResult().getJpql());
     }
 
@@ -120,7 +120,7 @@ class JpqlRepairServiceTest {
 
     protected GeneratedJpqlResult validResult() {
         return new GeneratedJpqlResult(
-                "select e from aitols_Order e where e.customer.name like :customerName",
+                "select e from aitls_Order e where e.customer.name like :customerName",
                 List.of(new GeneratedJpqlParameter("customerName", "String", "%Acme%")),
                 "Valid test result",
                 List.of()
@@ -129,7 +129,7 @@ class JpqlRepairServiceTest {
 
     protected GeneratedJpqlResult invalidResult() {
         return new GeneratedJpqlResult(
-                "select e from aitols_Order e where e.customer.fullTitle like :customerName",
+                "select e from aitls_Order e where e.customer.fullTitle like :customerName",
                 List.of(new GeneratedJpqlParameter("customerName", "String", "%Acme%")),
                 "Invalid test result",
                 List.of()
@@ -155,7 +155,7 @@ class JpqlRepairServiceTest {
 
         protected static GeneratedJpqlResult validResultStatic() {
             return new GeneratedJpqlResult(
-                    "select e from aitols_Order e where e.customer.name like :customerName",
+                    "select e from aitls_Order e where e.customer.name like :customerName",
                     List.of(new GeneratedJpqlParameter("customerName", "String", "%Acme%")),
                     "Valid test result",
                     List.of()
@@ -164,7 +164,7 @@ class JpqlRepairServiceTest {
 
         protected static GeneratedJpqlResult invalidResultStatic() {
             return new GeneratedJpqlResult(
-                    "select e from aitols_Order e where e.customer.fullTitle like :customerName",
+                    "select e from aitls_Order e where e.customer.fullTitle like :customerName",
                     List.of(new GeneratedJpqlParameter("customerName", "String", "%Acme%")),
                     "Invalid test result",
                     List.of()

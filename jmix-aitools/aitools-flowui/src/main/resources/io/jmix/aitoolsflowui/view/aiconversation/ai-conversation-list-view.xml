@@ -22,7 +22,7 @@
             <fetchPlan extends="_base"/>
             <loader id="aiConversationsDl" readOnly="true">
                 <query>
-                    <![CDATA[select e from aitols_AiConversation e order by e.createdDate desc]]>
+                    <![CDATA[select e from aitls_AiConversation e order by e.createdDate desc]]>
                 </query>
             </loader>
         </collection>

@@ -37,32 +37,32 @@ import org.springframework.stereotype.Component;
 @ConditionalOnBooleanProperty(value = "aitools.dataload.enabled", matchIfMissing = true)
 public class AiToolsDataLoadAutoConfiguration {
 
-    @Bean("aitols_JpaDomainModelIntrospector")
+    @Bean("aitls_JpaDomainModelIntrospector")
     @ConditionalOnMissingBean
     public JpaDomainModelIntrospector jpaDomainModelIntrospector() {
         return new JpaDomainModelIntrospector();
     }
 
-    @Bean("aitols_SpringAiJpqlRepairer")
+    @Bean("aitls_SpringAiJpqlRepairer")
     @ConditionalOnClass(ChatClient.class)
     @ConditionalOnMissingBean(JpqlRepairer.class)
     public JpqlRepairer textToJpqlRepairer() {
         return new DefaultJpqlRepairer();
     }
 
-    @Bean("aitols_DefaultJpqlRepairerPromptProvider")
+    @Bean("aitls_DefaultJpqlRepairerPromptProvider")
     @ConditionalOnMissingBean(JpqlRepairerPromptProvider.class)
     public JpqlRepairerPromptProvider jpqlRepairerPromptProvider() {
         return new DefaultJpqlRepairerPromptProvider();
     }
 
-    @Bean("aitols_DefaultChatSystemPromptProvider")
+    @Bean("aitls_DefaultChatSystemPromptProvider")
     @ConditionalOnMissingBean(DataLoadChatSystemPromptProvider.class)
     public DataLoadChatSystemPromptProvider chatSystemPromptProvider() {
         return new DefaultDataLoadChatSystemPromptProvider();
     }
 
-    @Bean("aitols_DefaultAvailableEntityFilter")
+    @Bean("aitls_DefaultAvailableEntityFilter")
     @ConditionalOnMissingBean(AvailableEntityFilter.class)
     public AvailableEntityFilter availableEntityFilter() {
         return new DefaultAvailableEntityFilter();

@@ -29,7 +29,7 @@ import org.springframework.context.annotation.Import;
 @Import({AiToolsFlowuiConfiguration.class, FlowuiConfiguration.class})
 public class AiToolsFlowuiAutoConfiguration {
 
-    @Bean("aitols_DefaultAiIconProvider")
+    @Bean("aitls_DefaultAiIconProvider")
     @ConditionalOnMissingBean(AiIconProvider.class)
     public AiIconProvider aiIconProvider() {
         return new DefaultAiIconProvider();

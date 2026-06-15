@@ -33,7 +33,7 @@ import static io.jmix.aitools.dataload.validation.validator.JpqlValidatorUtils.c
  * Checks that the query is a read-only select, rejecting non-select queries and write operations
  * (update, delete, insert).
  */
-@Component("aitols_ReadOnlyQueryJpqlValidator")
+@Component("aitls_ReadOnlyQueryJpqlValidator")
 public class ReadOnlyQueryValidator implements JpqlResultValidator, Ordered {
 
     public static final String JPQL_NOT_SELECT_CODE = "jpql.notSelect";

@@ -25,6 +25,6 @@
     <property name="uuid.type" dbms="mariadb" value="char(36)"/>
     <property name="uuid.type" dbms="postgresql, mysql, mssql, hsqldb, h2" value="uuid"/>
 
-    <include file="/io/jmix/aitools/liquibase/changelog/001-aitols.xml"/>
+    <include file="/io/jmix/aitools/liquibase/changelog/001-aitls.xml"/>
 
 </databaseChangeLog>

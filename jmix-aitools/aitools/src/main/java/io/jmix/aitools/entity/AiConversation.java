@@ -15,8 +15,8 @@ import java.util.List;
 import java.util.UUID;
 
 @JmixEntity
-@Table(name = "AITOLS_AI_CONVERSATION")
-@Entity(name = "aitols_AiConversation")
+@Table(name = "AITLS_AI_CONVERSATION")
+@Entity(name = "aitls_AiConversation")
 public class AiConversation {
 
     @Id

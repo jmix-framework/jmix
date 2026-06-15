@@ -53,7 +53,7 @@ class AiDataLoadServiceTest {
         AiDataLoadServiceImpl service = createService(entityDataLoadGenerationService, jpqlExecutionService);
 
         EntityDataLoadQuery query = new EntityDataLoadQuery(
-                "select c.name as clientName from aitols_Customer c where c.id = :id",
+                "select c.name as clientName from aitls_Customer c where c.id = :id",
                 List.of(new GeneratedJpqlParameter("id", "Long", "10")),
                 List.of("clientName"),
                 "Load one customer",
@@ -115,7 +115,7 @@ class AiDataLoadServiceTest {
         AiDataLoadServiceImpl service = createService(entityDataLoadGenerationService, jpqlExecutionService);
 
         EntityDataLoadQuery query = new EntityDataLoadQuery(
-                "select c.name as clientName from aitols_Customer c",
+                "select c.name as clientName from aitls_Customer c",
                 List.of(),
                 List.of("clientName"),
                 "",

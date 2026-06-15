@@ -30,7 +30,7 @@ import java.util.List;
 /**
  * Introspects association and composition properties into a {@link RelationPropertyDescriptor}.
  */
-@Component("aitols_RelationPropertyIntrospector")
+@Component("aitls_RelationPropertyIntrospector")
 public class RelationPropertyIntrospector extends AbstractPropertyIntrospector {
 
     @Override

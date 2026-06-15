@@ -28,7 +28,7 @@ import java.util.List;
 /**
  * Checks that the query text is present (not blank).
  */
-@Component("aitols_JpqlPresenceValidator")
+@Component("aitls_JpqlPresenceValidator")
 public class JpqlPresenceValidator implements JpqlResultValidator, Ordered {
 
     @Override

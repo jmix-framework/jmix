@@ -49,7 +49,7 @@ import java.util.UUID;
  * {@link DatatypeRegistry}. Values whose type cannot be resolved are passed through unchanged.
  */
 @NullMarked
-@Component("aitols_JpqlParameterConversionService")
+@Component("aitls_JpqlParameterConversionService")
 public class JpqlParameterConversionService {
 
     private static final Logger log = LoggerFactory.getLogger(JpqlParameterConversionService.class);

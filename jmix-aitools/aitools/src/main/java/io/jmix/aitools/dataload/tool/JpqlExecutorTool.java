@@ -33,10 +33,10 @@ import org.springframework.stereotype.Component;
  * Spring AI tool that validates, repairs if needed and executes a read-only JPQL query through
  * {@link JpqlExecutionService}, returning the fetched rows.
  */
-@Component("aitols_JpqlExecutorTool")
+@Component("aitls_JpqlExecutorTool")
 public class JpqlExecutorTool implements DataLoadAiTool {
 
-    public static final String EXECUTE_QUERY_TOOL = "aitols_executeQuery";
+    public static final String EXECUTE_QUERY_TOOL = "aitls_executeQuery";
 
     private static final Logger log = LoggerFactory.getLogger(JpqlExecutorTool.class);
 

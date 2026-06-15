@@ -23,7 +23,7 @@
             <fetchPlan extends="_base"/>
             <loader id="chatMessagesDl">
                 <query>
-                    <![CDATA[select e from aitols_ChatMessage e order by e.createdDate]]>
+                    <![CDATA[select e from aitls_ChatMessage e order by e.createdDate]]>
                     <condition>
                         <c:jpql>
                             <c:where>e.conversation.id = :conversationId</c:where>

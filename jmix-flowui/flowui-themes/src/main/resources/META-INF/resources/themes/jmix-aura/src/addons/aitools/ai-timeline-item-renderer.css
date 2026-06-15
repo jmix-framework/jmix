@@ -199,7 +199,7 @@
         display: inline-block;
         font-size: var(--aura-font-size-s);
         font-weight: 500;
-        animation: jmix-aitols-timeline-thinking-text-shimmer 2s linear infinite;
+        animation: jmix-aitls-timeline-thinking-text-shimmer 2s linear infinite;
     }
 
     .timeline-thinking-shimmer {
@@ -221,7 +221,7 @@
         position: absolute;
         top: 0;
         width: 35%;
-        animation: jmix-aitols-timeline-thinking-shimmer 1.2s linear infinite;
+        animation: jmix-aitls-timeline-thinking-shimmer 1.2s linear infinite;
     }
 
     .timeline-thinking-status-list {
@@ -241,7 +241,7 @@
     }
 }
 
-@keyframes jmix-aitols-timeline-thinking-text-shimmer {
+@keyframes jmix-aitls-timeline-thinking-text-shimmer {
     0% {
         background-position: 100% 0;
     }
@@ -250,7 +250,7 @@
     }
 }
 
-@keyframes jmix-aitols-timeline-thinking-shimmer {
+@keyframes jmix-aitls-timeline-thinking-shimmer {
     0% {
         left: -35%;
     }

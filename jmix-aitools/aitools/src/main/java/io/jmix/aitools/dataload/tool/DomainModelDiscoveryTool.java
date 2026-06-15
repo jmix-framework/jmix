@@ -35,11 +35,11 @@ import java.util.List;
  * Spring AI tool that lets the model discover the application's domain model: list the entities
  * available to the user and load detailed metadata for the chosen ones.
  */
-@Component("aitols_DomainModelDiscoveryTool")
+@Component("aitls_DomainModelDiscoveryTool")
 public class DomainModelDiscoveryTool implements DataLoadAiTool, EntityDataLoadAiTool {
 
-    public static final String AVAILABLE_ENTITIES_TOOL = "aitols_getAvailableEntities";
-    public static final String DOMAIN_MODEL_FOR_ENTITIES_TOOL = "aitols_getDomainModelForEntities";
+    public static final String AVAILABLE_ENTITIES_TOOL = "aitls_getAvailableEntities";
+    public static final String DOMAIN_MODEL_FOR_ENTITIES_TOOL = "aitls_getDomainModelForEntities";
 
     private static final Logger log = LoggerFactory.getLogger(DomainModelDiscoveryTool.class);
 

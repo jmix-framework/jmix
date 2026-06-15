@@ -40,7 +40,7 @@ import java.util.function.Consumer;
  */
 @Experimental
 @NullMarked
-@Component("aitols_ChatClientFactory")
+@Component("aitls_ChatClientFactory")
 public class ChatClientFactory implements InitializingBean {
 
     private static final Logger log = LoggerFactory.getLogger(ChatClientFactory.class);

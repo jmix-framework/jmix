@@ -36,13 +36,13 @@ import org.springframework.stereotype.Component;
 @Import({CoreConfiguration.class, AiToolsConfiguration.class, DataConfiguration.class, EclipselinkConfiguration.class})
 public class AiToolsAutoConfiguration {
 
-    @Bean("aitols_DefaultAiChatSystemPromptProvider")
+    @Bean("aitls_DefaultAiChatSystemPromptProvider")
     @ConditionalOnMissingBean(AiChatSystemPromptProvider.class)
     public AiChatSystemPromptProvider aiChatSystemPromptProvider() {
         return new DefaultAiChatSystemPromptProvider();
     }
 
-    @Bean("aitols_AiToolDescriptorProviderImpl")
+    @Bean("aitls_AiToolDescriptorProviderImpl")
     @ConditionalOnMissingBean(AiToolDescriptorProvider.class)
     public AiToolDescriptorProvider aiToolDescriptorProvider() {
         return new AiToolDescriptorProviderImpl();

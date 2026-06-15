@@ -36,7 +36,7 @@ import java.util.*;
  * This service is intended for LLM-facing metadata discovery. It hides entities that are not
  * available to the current user before they are exposed through tool calls.
  */
-@Component("aitols_AvailableEntityService")
+@Component("aitls_AvailableEntityService")
 public class AvailableEntityService {
 
     @Autowired

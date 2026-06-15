@@ -40,7 +40,7 @@ import java.util.Objects;
  * CRM equivalent this resolver relies on {@link MetadataTools#getInstanceName}
  * to render whichever User entity the consumer application uses.
  */
-@Component("aitols_ActorNameResolver")
+@Component("aitls_ActorNameResolver")
 public class ActorNameResolver {
 
     @Autowired

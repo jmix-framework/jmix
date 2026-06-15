@@ -32,7 +32,7 @@ import java.util.*;
  * Introspects enum properties into an {@link EnumPropertyDescriptor}, including the enum constants
  * and how they are stored in the database.
  */
-@Component("aitols_EnumPropertyIntrospector")
+@Component("aitls_EnumPropertyIntrospector")
 public class EnumPropertyIntrospector extends AbstractPropertyIntrospector {
 
     @Autowired

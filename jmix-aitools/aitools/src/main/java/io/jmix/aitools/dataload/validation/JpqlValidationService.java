@@ -29,7 +29,7 @@ import java.util.List;
  * Runs all registered {@link JpqlResultValidator}s against a generated JPQL draft and aggregates
  * their issues into a single {@link JpqlValidationResult}.
  */
-@Component("aitols_JpqlValidationService")
+@Component("aitls_JpqlValidationService")
 public class JpqlValidationService {
 
     @Autowired(required = false)

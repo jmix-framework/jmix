@@ -56,7 +56,7 @@ class DomainModelDiscoveryToolTest {
         assertFalse(documents.isEmpty());
 
         EntitySummary orderDocument = documents.stream()
-                .filter(document -> document.getEntityName().equals("aitols_Order"))
+                .filter(document -> document.getEntityName().equals("aitls_Order"))
                 .findFirst()
                 .orElseThrow();
 
@@ -71,14 +71,14 @@ class DomainModelDiscoveryToolTest {
         systemAuthenticator.begin();
 
         List<EntityDescriptor> entityDescriptors = domainModelDiscoveryTool.getDomainModelForEntities(
-                List.of("aitols_Order", "aitols_Customer"), new ToolContext(Map.of()));
+                List.of("aitls_Order", "aitls_Customer"), new ToolContext(Map.of()));
 
         systemAuthenticator.end();
 
         assertEquals(2, entityDescriptors.size());
 
         EntityDescriptor orderDescriptor = entityDescriptors.stream()
-                .filter(document -> document.getName().equals("aitols_Order"))
+                .filter(document -> document.getName().equals("aitls_Order"))
                 .findFirst()
                 .orElseThrow();
 

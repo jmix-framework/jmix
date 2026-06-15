@@ -24,12 +24,11 @@ dependencies {
 
     api 'com.zaxxer:HikariCP'
     api 'org.liquibase:liquibase-core'
+    api 'org.springframework.boot:spring-boot-liquibase'
 
     implementation 'org.springframework.boot:spring-boot-autoconfigure'
 
     implementation 'org.springframework.boot:spring-boot-starter-jdbc'
-    implementation("org.springframework.boot:spring-boot-liquibase")
-    //implementation("org.liquibase:liquibase-core")
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 

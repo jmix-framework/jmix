@@ -31,6 +31,7 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework:spring-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-quartz-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-liquibase'
     testImplementation project(':eclipselink')
     testImplementation 'org.liquibase:liquibase-core'
     testImplementation 'org.junit.jupiter:junit-jupiter-api'

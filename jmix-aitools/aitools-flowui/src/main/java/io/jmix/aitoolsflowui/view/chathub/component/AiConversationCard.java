@@ -72,6 +72,8 @@ public class AiConversationCard extends Composite<Card> {
     /**
      * Sets the title-row icon (required). Call {@link #build()} afterwards to
      * apply the change.
+     *
+     * @param icon title-row icon
      */
     public void setIcon(Component icon) {
         this.icon = icon;
@@ -80,6 +82,8 @@ public class AiConversationCard extends Composite<Card> {
     /**
      * Sets the conversation title (required). Call {@link #build()} afterwards
      * to apply the change.
+     *
+     * @param title conversation title
      */
     public void setTitle(String title) {
         this.title = title;
@@ -88,6 +92,8 @@ public class AiConversationCard extends Composite<Card> {
     /**
      * Sets the formatted creation date; when {@code null} the date line is
      * omitted. Call {@link #build()} afterwards to apply the change.
+     *
+     * @param createdDate formatted creation date, or {@code null} to omit the date line
      */
     @NullMarked
     public void setCreatedDate(@Nullable String createdDate) {
@@ -97,6 +103,8 @@ public class AiConversationCard extends Composite<Card> {
     /**
      * Sets the handler invoked when the card body is clicked (required). Call
      * {@link #build()} afterwards to apply the change.
+     *
+     * @param openHandler handler invoked when the card body is clicked
      */
     public void setOpenHandler(Runnable openHandler) {
         this.openHandler = openHandler;
@@ -106,6 +114,8 @@ public class AiConversationCard extends Composite<Card> {
      * Sets the handler invoked by the delete button; when {@code null} no
      * delete button is rendered. Call {@link #build()} afterwards to apply the
      * change.
+     *
+     * @param deleteHandler handler invoked by the delete button, or {@code null} to render no delete button
      */
     @NullMarked
     public void setDeleteHandler(@Nullable Runnable deleteHandler) {
@@ -115,6 +125,8 @@ public class AiConversationCard extends Composite<Card> {
     /**
      * Sets the {@code aria-label} of the delete button. Call {@link #build()}
      * afterwards to apply the change.
+     *
+     * @param deleteAriaLabel {@code aria-label} for the delete button, or {@code null} for none
      */
     @NullMarked
     public void setDeleteAriaLabel(@Nullable String deleteAriaLabel) {
@@ -147,6 +159,12 @@ public class AiConversationCard extends Composite<Card> {
     /**
      * Stacks the title row and (optionally) the date as the clickable body of
      * the card. The whole body is the open-conversation hit area.
+     *
+     * @param icon        title-row icon
+     * @param title       conversation title
+     * @param openHandler handler invoked when the body is clicked
+     * @param createdDate formatted creation date, or {@code null} to omit the date line
+     * @return the assembled card body
      */
     protected VerticalLayout createBody(Component icon,
                                         String title,
@@ -170,6 +188,10 @@ public class AiConversationCard extends Composite<Card> {
     /**
      * Icon + title in one row, so the icon visually reads as a marker of the
      * title rather than of the whole card.
+     *
+     * @param icon  title-row icon
+     * @param title conversation title
+     * @return the assembled title row
      */
     protected HorizontalLayout createTitleRow(Component icon, String title) {
         icon.getElement().getClassList().add(ICON_CN);
@@ -196,6 +218,9 @@ public class AiConversationCard extends Composite<Card> {
     /**
      * Outer row that lets the clickable body grow and parks an optional
      * delete button alongside it.
+     *
+     * @param body the clickable card body
+     * @return the assembled outer row
      */
     protected HorizontalLayout createRow(VerticalLayout body) {
         HorizontalLayout row = new HorizontalLayout(body);
@@ -211,6 +236,10 @@ public class AiConversationCard extends Composite<Card> {
      * the flat "tertiary-inline" look; {@code icon} and {@code error} are
      * generic vaadin-button theme attributes (Lumo/Aura both honour them) —
      * no {@code LUMO_*} variant prefixes.
+     *
+     * @param deleteHandler   handler invoked when the button is clicked
+     * @param deleteAriaLabel {@code aria-label} for the button, or {@code null} for none
+     * @return the assembled delete button
      */
     @NullMarked
     protected Button createDeleteButton(Runnable deleteHandler,

@@ -37,6 +37,7 @@ import io.jmix.aitoolsflowui.view.input.AiChatInputFragment;
 import io.jmix.aitoolsflowui.view.chathub.component.HistoryBucket;
 import io.jmix.core.DataManager;
 import io.jmix.core.MetadataTools;
+import io.jmix.core.annotation.Experimental;
 import io.jmix.core.metamodel.datatype.DatatypeFormatter;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.flowui.Dialogs;
@@ -77,15 +78,9 @@ import java.util.Optional;
  * Self-contained chat hub UI. Embeds the reusable chat input, shows the
  * current user's most recent chats next to it, and a full searchable,
  * date-bucketed history in a {@link SidePanelLayout}. Designed to be dropped
- * into any host view; the add-on also ships {@code AiChatHubView}
- * as a ready-made host.
- * <p>
- * Starting a chat creates a conversation and navigates to {@link AiChatView}
- * (passing the conversation id as a route parameter), forwarding the prompt
- * via {@code withAfterNavigationHandler} →
- * {@link AiChatView#sendInitialPrompt(String)} (works in both standard routing
- * and tabbed mode).
+ * into any host view.
  */
+@Experimental
 @FragmentDescriptor("ai-chat-hub-fragment.xml")
 public class AiChatHubFragment extends Fragment<VerticalLayout> {
 
@@ -152,18 +147,22 @@ public class AiChatHubFragment extends Fragment<VerticalLayout> {
     @Nullable
     protected SerializableSupplier<Component> markIconSupplier;
 
+    /**
+     * Sets a supplier of the brand mark icon shown on the hub hero and conversation cards, letting
+     * the host override the default add-on icon. The supplier must return a fresh component on every call.
+     *
+     * @param markIconSupplier supplier of the mark icon, or {@code null} to use the default
+     */
     public void setMarkIconSupplier(@Nullable SerializableSupplier<Component> markIconSupplier) {
         this.markIconSupplier = markIconSupplier;
-    }
-
-    protected Component resolveMarkIcon() {
-        return markIconSupplier != null ? markIconSupplier.get() : iconProvider.createMarkIcon();
     }
 
     /**
      * Overrides the number of recent chats shown next to the chat input.
      * When unset, the value comes from
      * {@code jmix.aitools.ui.chat-hub-recent-chats-count} (default 6).
+     *
+     * @param recentChatsCount number of recent chats to show
      */
     public void setRecentChatsCount(int recentChatsCount) {
         this.recentChatsCount = recentChatsCount;
@@ -410,6 +409,10 @@ public class AiChatHubFragment extends Fragment<VerticalLayout> {
         return recentChatsCount != null
                 ? recentChatsCount
                 : properties.getChatHubRecentChatsCount();
+    }
+
+    protected Component resolveMarkIcon() {
+        return markIconSupplier != null ? markIconSupplier.get() : iconProvider.createMarkIcon();
     }
 
     @Nullable

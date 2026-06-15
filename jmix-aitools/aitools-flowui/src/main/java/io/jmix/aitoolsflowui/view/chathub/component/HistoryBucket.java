@@ -38,6 +38,11 @@ public enum HistoryBucket {
      * Boundaries: today (or future) → {@link #TODAY}, the calendar day before
      * → {@link #YESTERDAY}, within the previous 7 days → {@link #LAST_WEEK},
      * anything older (or missing) → {@link #EARLIER}.
+     *
+     * @param created creation timestamp to classify, or {@code null}
+     * @param today   reference "today" date
+     * @param zone    time zone used to convert {@code created} to a local date
+     * @return the matching bucket ({@link #EARLIER} if {@code created} is {@code null})
      */
     public static HistoryBucket of(@Nullable OffsetDateTime created, LocalDate today, ZoneId zone) {
         if (created == null) {

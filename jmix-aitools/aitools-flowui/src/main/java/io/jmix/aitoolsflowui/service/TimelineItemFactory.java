@@ -21,18 +21,28 @@ import io.jmix.aitools.entity.ChatMessageType;
 import io.jmix.aitoolsflowui.model.TimelineItem;
 import io.jmix.aitoolsflowui.model.TimelineItemType;
 import io.jmix.core.Metadata;
+import io.jmix.core.common.util.Preconditions;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+/**
+ * Creates {@link TimelineItem}s from chat messages for rendering the conversation timeline.
+ */
 @Component("aitols_TimelineItemFactory")
 public class TimelineItemFactory {
 
     @Autowired
     protected Metadata metadata;
 
+    /**
+     * Creates a user timeline item for the given message.
+     *
+     * @param message message to wrap
+     * @return a new user timeline item
+     */
     public TimelineItem createUserItem(ChatMessage message) {
         TimelineItem userItem = metadata.create(TimelineItem.class);
         userItem.setMessage(message);
@@ -40,6 +50,12 @@ public class TimelineItemFactory {
         return userItem;
     }
 
+    /**
+     * Creates an assistant timeline item for the given message.
+     *
+     * @param message message to wrap
+     * @return a new assistant timeline item
+     */
     public TimelineItem createAssistantItem(ChatMessage message) {
         TimelineItem assistantItem = metadata.create(TimelineItem.class);
         assistantItem.setMessage(message);
@@ -47,6 +63,12 @@ public class TimelineItemFactory {
         return assistantItem;
     }
 
+    /**
+     * Creates a transient assistant "thinking" placeholder item for the given message.
+     *
+     * @param message message to wrap
+     * @return a new thinking placeholder timeline item
+     */
     public TimelineItem createThinkingItem(ChatMessage message) {
         TimelineItem thinkingItem = metadata.create(TimelineItem.class);
         thinkingItem.setMessage(message);
@@ -54,10 +76,16 @@ public class TimelineItemFactory {
         return thinkingItem;
     }
 
-    public List<TimelineItem> buildTimelineItems(@Nullable List<ChatMessage> messages) {
-        if (messages == null) {
-            return List.of();
-        }
+    /**
+     * Maps chat messages to timeline items, wrapping {@link ChatMessageType#ASSISTANT} /
+     * {@link ChatMessageType#TOOL} messages as assistant items and the rest as user items.
+     *
+     * @param messages messages to map
+     * @return timeline items in the same order
+     */
+    public List<TimelineItem> buildTimelineItems(List<ChatMessage> messages) {
+        Preconditions.checkNotNullArgument( messages);
+
         return messages.stream()
                 .map(this::createTimelineItem)
                 .toList();

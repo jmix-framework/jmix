@@ -14,18 +14,23 @@
  * limitations under the License.
  */
 
-package io.jmix.aitoolsflowui.icon;
+package io.jmix.aitoolsflowui.icon.impl;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.icon.SvgIcon;
 import com.vaadin.flow.server.streams.DownloadHandler;
 import com.vaadin.flow.server.streams.DownloadResponse;
 import com.vaadin.flow.server.streams.InputStreamDownloadHandler;
+import io.jmix.aitoolsflowui.icon.AiIconProvider;
+import io.jmix.core.annotation.Experimental;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Default implementation of {@link AiIconProvider} that uses the built-in
  * sparkle-burst SVG mark and the dot-variant avatar shipped with the add-on.
  */
+@NullMarked
+@Experimental
 public class DefaultAiIconProvider implements AiIconProvider {
 
     protected static final String MARK_PATH = "io/jmix/aitoolsflowui/icon/ai-assistant-mark.svg";

@@ -17,6 +17,8 @@
 package io.jmix.aitoolsflowui.icon;
 
 import com.vaadin.flow.component.Component;
+import io.jmix.core.annotation.Experimental;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Interface for providing AI assistant icon components.
@@ -27,6 +29,8 @@ import com.vaadin.flow.component.Component;
  * conversation cards, history panel, timeline rows), so reusing the same
  * instance would silently detach it from the earlier location.
  */
+@NullMarked
+@Experimental
 public interface AiIconProvider {
 
     /**

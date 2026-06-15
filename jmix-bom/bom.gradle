@@ -68,6 +68,7 @@ javaPlatform {
 
 dependencies {
     api platform("org.springframework.boot:spring-boot-dependencies:4.0.6")
+    api platform('org.springframework.ai:spring-ai-bom:2.0.0')
     api platform('software.amazon.awssdk:bom:2.25.60')
     api platform("io.netty:netty-bom:4.2.14.Final")
     api platform('io.opentelemetry:opentelemetry-bom:1.62.0')

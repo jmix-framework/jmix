@@ -51,7 +51,6 @@ public class AiConversationDetailView extends StandardDetailView<AiConversation>
     @Subscribe
     public void onInit(final InitEvent event) {
         usernameField.setItemsFetchCallback(this::onUsernameFieldFetchCallback);
-
     }
 
     protected Stream<String> onUsernameFieldFetchCallback(Query<String, String> query) {

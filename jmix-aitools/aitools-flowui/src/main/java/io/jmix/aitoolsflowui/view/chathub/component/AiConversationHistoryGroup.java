@@ -59,6 +59,10 @@ public class AiConversationHistoryGroup extends Composite<VerticalLayout> {
 
     /**
      * Header row: bucket label (e.g. "TODAY") followed by the count badge.
+     *
+     * @param bucketLabel localized bucket label
+     * @param count       number of conversations in the bucket
+     * @return the assembled header row
      */
     protected HorizontalLayout createHeader(String bucketLabel, int count) {
         HorizontalLayout header = new HorizontalLayout(

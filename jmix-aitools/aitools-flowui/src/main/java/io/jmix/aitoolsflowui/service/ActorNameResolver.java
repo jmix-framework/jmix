@@ -19,6 +19,7 @@ package io.jmix.aitoolsflowui.service;
 import io.jmix.aitools.entity.ChatMessage;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.security.CurrentAuthentication;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -47,17 +48,24 @@ public class ActorNameResolver {
     @Autowired
     protected MetadataTools metadataTools;
 
-    public String resolve(ChatMessage message, String defaultActorName) {
+    /**
+     * Resolves the display name of the actor that authored the given message.
+     *
+     * @param message          message whose author is resolved
+     * @param defaultActorName name to fall back to when the author cannot be determined
+     * @return the resolved actor name
+     */
+    public String resolve(@Nullable ChatMessage message, String defaultActorName) {
         UserDetails currentUser = currentAuthentication.getUser();
         String createdBy = message != null ? message.getCreatedBy() : null;
 
         if (isCurrentUser(createdBy, currentUser)) {
             return currentUserDisplayName(currentUser, defaultActorName);
         }
-        return createdBy;
+        return Objects.requireNonNullElse(createdBy, defaultActorName);
     }
 
-    private boolean isCurrentUser(String createdBy, UserDetails currentUser) {
+    private boolean isCurrentUser(@Nullable String createdBy, UserDetails currentUser) {
         return !StringUtils.hasText(createdBy)
                 || Objects.equals(createdBy, currentUser.getUsername());
     }

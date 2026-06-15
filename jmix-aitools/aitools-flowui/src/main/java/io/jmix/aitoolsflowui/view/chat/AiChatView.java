@@ -56,21 +56,12 @@ import java.util.Optional;
 import java.util.UUID;
 
 /**
- * Standalone (non-detail) host view around {@link AiChatFragment}.
+ * Standalone host view around {@link AiChatFragment}.
  * <p>
  * Opens either by URL — the {@code :id} route segment is the id of an
  * {@link AiConversation} that gets loaded and bound to the fragment — or
  * programmatically via {@link #setConversation(AiConversation)} (used by
  * {@code DialogWindows} and after-navigation handlers).
- * <p>
- * When the URL carries an id that does not resolve to a conversation, the
- * fragment is hidden and an in-view "chat not found" placeholder is shown.
- * When opened with no id and no conversation set, an empty-state placeholder
- * invites the user to start a chat (navigating to {@code AiChatHubView}).
- * <p>
- * Unlike {@code AiConversationDetailView} this is a plain {@link StandardView}
- * with no own {@code DataContext}; the fragment keeps its default
- * {@code DataManager}-based persist/reload.
  */
 @Route(value = "aitols/chat/:id?", layout = DefaultMainViewParent.class)
 @ViewController("AiChatView")
@@ -147,8 +138,10 @@ public class AiChatView extends StandardView {
      * chat hub's navigation handler. Idempotent: runs at most once per view
      * instance, so a re-fired navigation handler cannot double-submit. No-op
      * when no conversation is bound (e.g. the id did not resolve).
+     *
+     * @param prompt initial prompt text; a {@code null} or blank value is ignored
      */
-    public void sendInitialPrompt(String prompt) {
+    public void sendInitialPrompt(@Nullable String prompt) {
         if (initialPromptSent || prompt == null || prompt.isBlank() || conversation == null) {
             return;
         }
@@ -156,14 +149,6 @@ public class AiChatView extends StandardView {
         chatFragment.sendMessage(prompt);
     }
 
-    /**
-     * Reads the optional {@code :id} route segment and loads the corresponding
-     * conversation. Idempotent: re-entering with the id of the already-loaded
-     * conversation does not reload. Only a conversation owned by the current
-     * user (matching {@code username}) resolves; a foreign or unknown id puts
-     * the view into the "not found" state, so chats cannot be opened by guessing
-     * another user's id.
-     */
     protected void loadConversationFromRouteParameters(BeforeEnterEvent event) {
         Optional<String> rawId = event.getRouteParameters().get(ROUTE_PARAM_ID);
         if (rawId.isEmpty()) {
@@ -268,16 +253,6 @@ public class AiChatView extends StandardView {
         viewNavigators.view(this, AiChatHubView.class).navigate();
     }
 
-    /**
-     * Reconciles the view with one of three states:
-     * <ul>
-     *   <li>a conversation is bound → the fragment is shown and bound;</li>
-     *   <li>a requested id did not resolve → the "not found" placeholder;</li>
-     *   <li>nothing is bound (opened without id) → the empty-state placeholder
-     *       inviting the user to start a chat.</li>
-     * </ul>
-     * Binds the conversation and syncs the URL only in the first case.
-     */
     protected void applyConversation() {
         boolean hasConversation = conversation != null;
         chatFragment.setVisible(hasConversation);
@@ -289,12 +264,6 @@ public class AiChatView extends StandardView {
         }
     }
 
-    /**
-     * Updates the browser URL to {@code ai-chat/<id>} via
-     * {@code history.replaceState} so it stays consistent with the bound
-     * conversation. Skipped when the view is opened in a dialog (changing the
-     * page URL under a modal would be misleading) or has no UI yet.
-     */
     protected void syncUrl() {
         if (conversation == null || conversation.getId() == null) {
             return;

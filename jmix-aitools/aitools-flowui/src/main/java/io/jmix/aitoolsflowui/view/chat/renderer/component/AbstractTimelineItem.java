@@ -23,7 +23,11 @@ import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import org.jspecify.annotations.NullMarked;
 
+/**
+ * Base layout for a single timeline message row.
+ */
 public abstract class AbstractTimelineItem extends Composite<HorizontalLayout> {
 
     protected static final String BASE_CN = "timeline-message-row";
@@ -39,6 +43,11 @@ public abstract class AbstractTimelineItem extends Composite<HorizontalLayout> {
     protected Span actor;
     protected Span time;
 
+    /**
+     * Sets the timestamp text shown in the row header.
+     *
+     * @param time formatted timestamp (empty string if unknown)
+     */
     public void setTime(String time) {
         if (this.time != null) {
             this.time.setText(time);

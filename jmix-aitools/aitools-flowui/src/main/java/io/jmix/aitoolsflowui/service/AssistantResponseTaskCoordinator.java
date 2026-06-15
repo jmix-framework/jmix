@@ -27,6 +27,7 @@ import io.jmix.flowui.backgroundtask.BackgroundTask;
 import io.jmix.flowui.backgroundtask.BackgroundWorker;
 import io.jmix.flowui.backgroundtask.TaskLifeCycle;
 import io.jmix.flowui.view.View;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -64,9 +65,14 @@ public class AssistantResponseTaskCoordinator {
     }
 
     /**
-     * Submits an LLM call for {@code savedUserMessage}. The owner argument
-     * scopes the background task to the lifecycle of the view that hosts the
-     * fragment — when the view detaches, the task is cancelled.
+     * Submits an LLM call for {@code savedUserMessage} on a background task.
+     *
+     * @param owner            view hosting the chat; scopes the task lifecycle (the task is cancelled when it detaches)
+     * @param conversation     conversation the message belongs to
+     * @param savedUserMessage already-persisted user message to answer
+     * @param progressHandler  receives ephemeral status updates as they stream in
+     * @param doneHandler      receives the final assistant message when the call completes
+     * @param failureHandler   invoked on error or timeout
      */
     public void run(View<?> owner,
                     AiConversation conversation,
@@ -87,7 +93,7 @@ public class AssistantResponseTaskCoordinator {
 
     protected void publishUiStatusUpdate(TaskLifeCycle<AiUiStatusUpdate> taskLifeCycle,
                                          AiUiStatusUpdate statusUpdate) {
-        if (statusUpdate == null || taskLifeCycle.isInterrupted()) {
+        if (taskLifeCycle.isInterrupted()) {
             return;
         }
 
@@ -99,6 +105,7 @@ public class AssistantResponseTaskCoordinator {
         }
     }
 
+    @Nullable
     private ChatMessage loadLatestAssistantMessage(AiConversation conversation) {
         return dataManager.load(ChatMessage.class)
                 .query("e.conversation.id = :convId and e.type = :type order by e.createdDate desc, e.id desc")
@@ -113,13 +120,13 @@ public class AssistantResponseTaskCoordinator {
 
         protected final AiConversation conversation;
         protected final ChatMessage savedUserMessage;
-        protected final Consumer<ChatMessage> doneHandler;
+        protected final Consumer<@Nullable ChatMessage> doneHandler;
         protected final Runnable failureHandler;
 
         AssistantResponseTask(View<?> owner,
                               AiConversation conversation,
                               ChatMessage savedUserMessage,
-                              Consumer<ChatMessage> doneHandler,
+                              Consumer<@Nullable ChatMessage> doneHandler,
                               Runnable failureHandler) {
             super(properties.getAssistantResponseTimeout().toSeconds(), owner);
             this.conversation = conversation;
@@ -128,6 +135,7 @@ public class AssistantResponseTaskCoordinator {
             this.failureHandler = failureHandler;
         }
 
+        @Nullable
         @Override
         public String run(TaskLifeCycle<AiUiStatusUpdate> taskLifeCycle) {
             return aiConversationChatService.process(

@@ -19,13 +19,14 @@ package io.jmix.aitoolsflowui.view.chat.renderer.component;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.html.Div;
+import io.jmix.aitoolsflowui.icon.AiIconProvider;
 import org.jspecify.annotations.Nullable;
 
 /**
  * Badge element shown in the timeline avatar column for assistant messages.
  * The inner glyph is injected via {@link #setIcon(Component)} rather than
  * created here, so callers can supply a custom icon from an
- * {@code AiIconProvider}.
+ * {@link AiIconProvider}.
  */
 public class AssistantAvatar extends Composite<Div> {
 

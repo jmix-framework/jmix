@@ -33,7 +33,9 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class JpqlExecutorToolTest {
 
@@ -61,7 +63,9 @@ class JpqlExecutorToolTest {
                 return expectedResult;
             }
         });
-        ReflectionTestUtils.setField(tool, "messages", mock(Messages.class));
+        Messages messages = mock(Messages.class);
+        when(messages.getMessage(anyString())).thenReturn("status");
+        ReflectionTestUtils.setField(tool, "messages", messages);
         ReflectionTestUtils.setField(tool, "toolStatusPublisher", new AiToolStatusPublisher());
 
         JpqlExecutionResult actualResult = tool.executeQuery(request, new ToolContext(Map.of()));

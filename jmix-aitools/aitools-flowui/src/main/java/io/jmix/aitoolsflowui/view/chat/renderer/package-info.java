@@ -14,17 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.aitoolsflowui.view.chathub;
+@Internal
+package io.jmix.aitoolsflowui.view.chat.renderer;
 
-
-import com.vaadin.flow.router.Route;
-import io.jmix.flowui.view.*;
-
-/**
- * Ready-made host view for {@link AiChatHubFragment} — the chat hub landing screen.
- */
-@Route(value = "aitols/chats", layout = DefaultMainViewParent.class)
-@ViewController(id = "aitols_AiChatHubView")
-@ViewDescriptor(path = "ai-chat-hub-view.xml")
-public class AiChatHubView extends StandardView {
-}
+import io.jmix.core.annotation.Internal;

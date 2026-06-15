@@ -21,11 +21,13 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.function.SerializableSupplier;
+import io.jmix.aitools.tool.AiToolStatusPublisher;
 import io.jmix.aitools.tool.AiUiStatusUpdate;
 import io.jmix.aitoolsflowui.model.TimelineItem;
 import io.jmix.aitoolsflowui.model.TimelineItemStatus;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
@@ -36,11 +38,10 @@ import java.util.List;
 /**
  * Row shown while the assistant is preparing a response. Displays a shimmer
  * indicator, the latest live status, and a history of prior steps delivered
- * by AI tools through
- * {@link io.jmix.aitools.tool.AiToolStatusPublisher}.
+ * by AI tools through {@link AiToolStatusPublisher}.
  * <p>
  * Each {@link AiUiStatusUpdate} carries a {@code message} and an optional
- * {@code resultSnippet}; {@link AiUiStatusUpdate#isCompleted()} is true when
+ * {@code resultSnippet}; {@link AiUiStatusUpdate#isCompleted()} is {@code true} when
  * the snippet is non-blank. Completed past steps are prefixed with a
  * {@code "✓ "} check mark and their snippet is rendered next to the base
  * text; in-flight past steps render plain (no check, no snippet).
@@ -66,6 +67,7 @@ public class TimelineAssistantThinkingMessageItem extends AbstractTimelineItem i
     @Nullable
     protected SerializableSupplier<Component> avatarIconSupplier;
 
+    @NullMarked
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
@@ -83,6 +85,14 @@ public class TimelineAssistantThinkingMessageItem extends AbstractTimelineItem i
         addClassNames(BASE_CN, THINKING_CN);
     }
 
+    /**
+     * Renders the "thinking" row: the latest live status, a shimmer indicator and the history of
+     * prior steps carried by the given item.
+     *
+     * @param item                         thinking timeline item carrying the status updates
+     * @param assistantName                actor display name shown in the header
+     * @param defaultThinkingIndicatorText text shown while no status update has arrived yet
+     */
     public void setThinking(TimelineItem item,
                             String assistantName,
                             String defaultThinkingIndicatorText) {
@@ -103,7 +113,7 @@ public class TimelineAssistantThinkingMessageItem extends AbstractTimelineItem i
         }
     }
 
-    private Component createThinkingStatusList(List<TimelineItemStatus> statusUpdates) {
+    protected Component createThinkingStatusList(List<TimelineItemStatus> statusUpdates) {
         VerticalLayout statusList = new VerticalLayout();
         statusList.setPadding(false);
         statusList.setSpacing(false);
@@ -121,11 +131,11 @@ public class TimelineAssistantThinkingMessageItem extends AbstractTimelineItem i
         return statusList;
     }
 
-    private Span buildStatusSpan(TimelineItemStatus update) {
+    protected Span buildStatusSpan(TimelineItemStatus update) {
         return buildStatusSpan(update, THINKING_TEXT_CN, false);
     }
 
-    private Span buildStatusSpan(TimelineItemStatus update, String mainClass, boolean completedPrefix) {
+    protected Span buildStatusSpan(TimelineItemStatus update, String mainClass, boolean completedPrefix) {
         Span container = new Span();
         container.addClassName(mainClass);
 
@@ -148,7 +158,7 @@ public class TimelineAssistantThinkingMessageItem extends AbstractTimelineItem i
         return container;
     }
 
-    private TimelineItemStatus resolveActiveStatus(List<TimelineItemStatus> statusUpdates, String defaultThinkingIndicatorText) {
+    protected TimelineItemStatus resolveActiveStatus(List<TimelineItemStatus> statusUpdates, String defaultThinkingIndicatorText) {
         if (statusUpdates.isEmpty()) {
             TimelineItemStatus timelineStatus = metadata.create(TimelineItemStatus.class);
             timelineStatus.setMessage(defaultThinkingIndicatorText);
@@ -157,6 +167,13 @@ public class TimelineAssistantThinkingMessageItem extends AbstractTimelineItem i
         return statusUpdates.get(statusUpdates.size() - 1);
     }
 
+    /**
+     * Sets the supplier of the avatar icon shown for this row. The supplier must return a fresh
+     * component on every call.
+     *
+     * @param avatarIconSupplier supplier of the avatar icon, or {@code null} to render no icon
+     */
+    @NullMarked
     public void setAiAvatarIconSupplier(@Nullable SerializableSupplier<Component> avatarIconSupplier) {
         this.avatarIconSupplier = avatarIconSupplier;
     }

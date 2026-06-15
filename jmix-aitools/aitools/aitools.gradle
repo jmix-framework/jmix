@@ -24,7 +24,6 @@ dependencies {
     api project(':data')
     api project(':eclipselink')
 
-    implementation platform('org.springframework.ai:spring-ai-bom:2.0.0-RC1')
     implementation 'org.springframework.ai:spring-ai-client-chat'
     implementation 'org.springframework.ai:spring-ai-model'
 

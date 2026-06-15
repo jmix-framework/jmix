@@ -18,8 +18,14 @@ package io.jmix.aitoolsflowui.model;
 
 import io.jmix.core.metamodel.datatype.EnumClass;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
+/**
+ * Type of {@link TimelineItem}: a user message, an assistant message, or a transient assistant
+ * "thinking" placeholder shown while a response is being generated.
+ */
+@NullMarked
 public enum TimelineItemType implements EnumClass<Integer> {
 
     USER(10),
@@ -36,6 +42,12 @@ public enum TimelineItemType implements EnumClass<Integer> {
         return id;
     }
 
+    /**
+     * Returns the type with the given stored id.
+     *
+     * @param id stored enum id
+     * @return the matching type, or {@code null} if no type has that id
+     */
     @Nullable
     public static TimelineItemType fromId(Integer id) {
         for (TimelineItemType at : TimelineItemType.values()) {

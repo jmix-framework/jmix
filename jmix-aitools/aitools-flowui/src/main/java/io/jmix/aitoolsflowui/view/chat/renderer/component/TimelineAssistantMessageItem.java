@@ -24,6 +24,9 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.Optional;
 
+/**
+ * Timeline row for a persisted assistant {@link ChatMessage}, rendering its content as Markdown.
+ */
 public class TimelineAssistantMessageItem extends AbstractTimelineItem {
 
     protected static final String ASSISTANT_MESSAGE_CN = "timeline-message-row-assistant";
@@ -33,6 +36,13 @@ public class TimelineAssistantMessageItem extends AbstractTimelineItem {
     @Nullable
     protected SerializableSupplier<Component> avatarIconSupplier;
 
+    /**
+     * Renders the row for the given assistant message.
+     *
+     * @param message   assistant message to display
+     * @param isFresh   whether to highlight the row as just generated
+     * @param actorName actor display name shown in the header
+     */
     public void setMessage(ChatMessage message, boolean isFresh, String actorName) {
         removeClassNames(ASSISTANT_MESSAGE_REFRESH_CN, ASSISTANT_MESSAGE_CN);
 
@@ -54,6 +64,12 @@ public class TimelineAssistantMessageItem extends AbstractTimelineItem {
         return markdown;
     }
 
+    /**
+     * Sets the supplier of the avatar icon shown for this row. The supplier must return a fresh
+     * component on every call.
+     *
+     * @param avatarIconSupplier supplier of the avatar icon, or {@code null} to render no icon
+     */
     public void setAiAvatarIconSupplier(@Nullable SerializableSupplier<Component> avatarIconSupplier) {
         this.avatarIconSupplier = avatarIconSupplier;
     }

@@ -27,9 +27,6 @@ import java.util.Locale;
 /**
  * A row representing a persisted user or assistant {@link ChatMessage}.
  * Assistant content is rendered as Markdown, user content as plain text.
- * <p>
- * Attachments and entity references are intentionally not supported in the
- * add-on (the entity model does not carry them).
  */
 public class TimelineUserMessageItem extends AbstractTimelineItem {
 
@@ -37,6 +34,12 @@ public class TimelineUserMessageItem extends AbstractTimelineItem {
     protected static final String USER_MESSAGE_CONTENT_CN = "timeline-user-text";
     protected static final String AVATAR_CN = "timeline-avatar";
 
+    /**
+     * Renders the row for the given message.
+     *
+     * @param message   message to display
+     * @param actorName actor display name shown in the header
+     */
     public void setMessage(ChatMessage message, String actorName) {
         removeClassName(USER_MESSAGE_CN);
 
@@ -56,7 +59,7 @@ public class TimelineUserMessageItem extends AbstractTimelineItem {
     }
 
     /**
-     * Builds the avatar initials from the actor name. The Jmix {@code User}
+     * Builds the avatar initials from the actor name. The Jmix user
      * instance name embeds the login as {@code "First Last [username]"}; the
      * bracketed login is dropped so the circle shows clean initials (e.g.
      * {@code "JS"}), falling back to the login's first letter when no name is
@@ -78,7 +81,7 @@ public class TimelineUserMessageItem extends AbstractTimelineItem {
         return abbreviation.toUpperCase(Locale.ROOT);
     }
 
-    private Component createMessageContent(ChatMessage message) {
+    protected Component createMessageContent(ChatMessage message) {
         Span text = new Span(Strings.nullToEmpty(message.getContent()));
         text.addClassName(USER_MESSAGE_CONTENT_CN);
         return text;

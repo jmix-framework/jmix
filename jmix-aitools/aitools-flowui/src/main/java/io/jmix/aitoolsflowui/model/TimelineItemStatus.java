@@ -22,6 +22,10 @@ import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import java.util.UUID;
 
+/**
+ * A single status line shown under an assistant "thinking" timeline item: a message describing a
+ * step and an optional short result snippet once the step has finished.
+ */
 @JmixEntity
 public class TimelineItemStatus {
 
@@ -57,6 +61,11 @@ public class TimelineItemStatus {
         this.resultSnippet = resultSnippet;
     }
 
+    /**
+     * Returns whether this status represents a finished step, i.e. carries a non-empty result snippet.
+     *
+     * @return {@code true} if the step is completed
+     */
     public boolean isCompleted() {
         return resultSnippet != null && !resultSnippet.isEmpty();
     }

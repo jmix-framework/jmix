@@ -40,23 +40,7 @@ import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * Jmix {@link FragmentRenderer} painting a single {@link TimelineItem} row
- * for the conversation virtual list. Wired declaratively in the host
- * fragment descriptor via {@code <fragmentRenderer class="..."/>}.
- * <p>
- * <b>Instance reuse.</b> Vaadin's virtual list pools the fragment itself —
- * {@link #setItem(TimelineItem)} is called per row on the same instance as
- * the user scrolls. We additionally cache up to three inner item components
- * (user / assistant / thinking) per fragment instance so the inner component
- * is reused when consecutive {@code setItem} calls land the same row type
- * at the same position (e.g. when a thinking row is refreshed for every
- * incoming status update). Only a type change triggers a DOM swap; same-type
- * updates just push fresh data into the already-mounted inner component.
- * <p>
- * We do not use {@code @RendererItemContainer} / declarative data binding
- * because the three row shapes are structurally different (markdown vs
- * plain span vs shimmer + status list) and cannot be expressed as a single
- * data-bound layout.
+ * Painting a single {@link TimelineItem} row for the conversation virtual list.
  */
 @FragmentDescriptor("timeline-item-renderer-fragment.xml")
 public class TimelineItemRenderer extends FragmentRenderer<VerticalLayout, TimelineItem> {
@@ -81,21 +65,12 @@ public class TimelineItemRenderer extends FragmentRenderer<VerticalLayout, Timel
     private TimelineAssistantMessageItem assistantItem;
     @Nullable
     private TimelineAssistantThinkingMessageItem thinkingItem;
-
-    /**
-     * Type of the inner item currently mounted under {@link #getContent()}.
-     * {@code null} when nothing is mounted (initial state, or after being
-     * called with a {@code null} timeline item). Drives the "swap inner
-     * component only on type change" logic.
-     */
     @Nullable
     private TimelineItemType itemType;
 
     @Override
     public void setItem(@Nullable TimelineItem item) {
-        // Skip super.setItem — we have no @RendererItemContainer, so the base
-        // implementation would only log an INFO line per call (and we are
-        // called per row × every list refresh).
+        // Skip super.setItem()
         this.item = item;
 
         if (item == null || item.getType() == null) {

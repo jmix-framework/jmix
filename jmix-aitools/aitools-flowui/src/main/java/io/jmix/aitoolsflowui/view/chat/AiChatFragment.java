@@ -35,6 +35,7 @@ import io.jmix.aitoolsflowui.model.TimelineItemStatus;
 import io.jmix.aitoolsflowui.service.TimelineItemFactory;
 import io.jmix.core.DataManager;
 import io.jmix.core.TimeSource;
+import io.jmix.core.annotation.Experimental;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.flowui.Dialogs;
 import io.jmix.flowui.Notifications;
@@ -54,6 +55,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -68,16 +70,8 @@ import java.util.UUID;
  * the fragment loads that conversation's {@link ChatMessage}s itself — it does
  * not rely on the {@code messages} collection being pre-fetched by the host —
  * and reads/writes directly through {@link DataManager}.
- * <p>
- * <b>Attachments / entity references.</b> Intentionally absent — the add-on's
- * entity model does not carry them. The composer is a plain
- * {@code TextArea} + send button, not the CRM composer fragment.
- * <p>
- * <b>Background task.</b> The LLM call runs through
- * {@link AssistantResponseTaskCoordinator}, which scopes the task to the
- * host {@link View} so cancellation on view detach is correct. The fragment
- * resolves its host view at submit time via {@link UiComponentUtils#findView}.
  */
+@Experimental
 @FragmentDescriptor("ai-chat-fragment.xml")
 public class AiChatFragment extends Fragment<VerticalLayout> {
 
@@ -120,7 +114,9 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
     @ViewComponent
     protected AiChatInputFragment composerFragment;
 
+    @Nullable
     protected AiConversation conversation;
+    @Nullable
     protected TimelineItem activeThinkingItem;
     protected boolean awaitingResponse;
 
@@ -132,9 +128,9 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
     protected SerializableSupplier<Component> aiAvatarIconSupplier;
 
     /**
-     * Binds the fragment to a conversation. Re-renders the timeline,
-     * refreshes the title and (re-)enables the composer. Safe to call
-     * multiple times — each call rebuilds derived UI state.
+     * Binds the fragment to a conversation.
+     *
+     * @param conversation conversation to bind
      */
     public void setConversation(@Nullable AiConversation conversation) {
         this.conversation = conversation;
@@ -144,18 +140,30 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
     }
 
     /**
-     * Binds the fragment to a conversation by id: loads the {@link AiConversation}
-     * and delegates to {@link #setConversation(AiConversation)}. A {@code null} id
-     * (or an id that no longer resolves) clears the fragment.
+     * Binds the fragment to a conversation by id. A {@code null} id (or an id that no longer resolves)
+     * clears the fragment.
+     *
+     * @param conversationId conversation id to set
      */
     public void setConversationId(@Nullable UUID conversationId) {
         setConversation(conversationId != null ? loadConversation(conversationId) : null);
     }
 
+    /**
+     * Sets a supplier of the avatar icon shown next to assistant messages, letting the host override
+     * the default add-on icon. The supplier must return a fresh component on every call.
+     *
+     * @param avatarIconSupplier supplier of the assistant avatar icon, or {@code null} to use the default
+     */
     public void setAiAvatarIconSupplier(@Nullable SerializableSupplier<Component> avatarIconSupplier) {
         this.aiAvatarIconSupplier = avatarIconSupplier;
     }
 
+    /**
+     * Returns the custom assistant avatar icon supplier, if one was set.
+     *
+     * @return the avatar icon supplier, or {@code null} when the default icon is used
+     */
     @Nullable
     public SerializableSupplier<Component> getAiAvatarIconSupplier() {
         return aiAvatarIconSupplier;
@@ -187,13 +195,6 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
         composerFragment.setInputEnabled(enabled);
     }
 
-    @Subscribe
-    public void onReady(final ReadyEvent event) {
-        composerFragment.setSubmitHandler(this::sendMessage);
-
-        refreshAll();
-    }
-
     @Subscribe(id = "editConversationTitleBtn", subject = "clickListener")
     public void onEditConversationTitleBtnClick(final ClickEvent<JmixButton> event) {
         openTitleEditDialog();
@@ -214,8 +215,10 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
      * to the timeline, shows the thinking indicator, disables the composer and
      * runs the assistant. Used by the composer's submit handler and by hosts
      * that start a conversation with an initial prompt (the chat-hub flow).
+     *
+     * @param userMessage message text to send; a {@code null} or blank value is ignored
      */
-    public void sendMessage(String userMessage) {
+    public void sendMessage(@Nullable String userMessage) {
         if (conversation == null) {
             log.warn("Cannot submit message — no conversation bound to the fragment");
             return;
@@ -248,6 +251,14 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
         processUserMessage(savedUserMessage);
     }
 
+    @Subscribe
+    public void onReady(final ReadyEvent event) {
+        composerFragment.setSubmitHandler(this::sendMessage);
+
+        refreshAll();
+    }
+
+
     protected void processUserMessage(ChatMessage savedUserMessage) {
         View<?> hostView = UiComponentUtils.findView(this);
         if (hostView == null) {
@@ -256,7 +267,7 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
         }
         assistantResponseTaskCoordinator.run(
                 hostView,
-                conversation,
+                Objects.requireNonNull(conversation),
                 savedUserMessage,
                 this::appendThinkingStatusUpdate,
                 this::handleAssistantResponseDone,
@@ -320,10 +331,9 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
         activeThinkingItem = null;
     }
 
-    protected void appendThinkingStatusUpdate(AiUiStatusUpdate statusUpdate) {
+    protected void appendThinkingStatusUpdate(@Nullable AiUiStatusUpdate statusUpdate) {
         if (activeThinkingItem == null
                 || statusUpdate == null
-                || statusUpdate.message() == null
                 || statusUpdate.message().isBlank()) {
             return;
         }
@@ -429,7 +439,7 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
      */
     protected void scrollToBottom(boolean force) {
         int size = timelineItemsDc.getItems().size();
-        if (size <= 0) {
+        if (size == 0) {
             return;
         }
         if (force) {
@@ -557,7 +567,7 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
                     // Reloading conversation while awaiting LLM answer
                     // may break UI.
                     conversation = dataManager.save(conversation);
-                    conversationTitle.setText(conversation.getTitle());
+                    conversationTitle.setText(Objects.requireNonNull(conversation).getTitle());
                 })
                 .open();
     }

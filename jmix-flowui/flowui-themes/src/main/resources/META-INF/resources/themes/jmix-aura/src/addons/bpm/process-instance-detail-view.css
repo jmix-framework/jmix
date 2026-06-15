@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
+html {
+    --jmix-bpm-running-activity-color: rgba(194, 213, 237, 0.9);
+    --jmix-bpm-history-activity-color: rgba(162, 224, 172, 0.45);
+}
+
 .process-instance-detail-view .tree-toggle-container {
     display:flex;
     align-items:center;
@@ -23,7 +28,6 @@
     gap: var(--vaadin-gap-s);
 }
 
-html {
-    --jmix-bpm-running-activity-color: rgba(194, 213, 237, 0.9);
-    --jmix-bpm-history-activity-color: rgba(162, 224, 172, 0.45);
+.process-instance-detail-view :is(.runtime-tabsheet, .history-tabsheet) {
+    box-sizing: border-box;
 }

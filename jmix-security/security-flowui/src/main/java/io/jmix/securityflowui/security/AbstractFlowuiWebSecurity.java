@@ -63,7 +63,12 @@ public abstract class AbstractFlowuiWebSecurity {
     public SecurityFilterChain jmixSecurityFilterChain(HttpSecurity http) throws Exception {
         configureJmixSpecifics(http);
         configureVaadinSpecifics(http);
+        configureCustomSpecifics(http);
         return http.build();
+    }
+
+    protected void configureCustomSpecifics(HttpSecurity http) {
+        // Hook to be implemented...
     }
 
     protected void configureJmixSpecifics(HttpSecurity http) throws Exception {

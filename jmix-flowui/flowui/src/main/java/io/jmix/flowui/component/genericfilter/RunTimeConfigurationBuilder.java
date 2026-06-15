@@ -196,9 +196,9 @@ public class RunTimeConfigurationBuilder {
      *       and {@code setDataLoader(filter.getDataLoader())}</li>
      *   <li>Adds each filter component to the root</li>
      *   <li>Calls {@code setFilterComponentDefaultValue} for every component with a value</li>
-     *   <li>Calls {@link GenericFilter#addAndSetCurrentConfiguration(Configuration)} if
-     *       {@link #makeCurrent()} was requested, or {@link GenericFilter#addConfiguration(Configuration)}
-     *       otherwise</li>
+     *   <li>Registers the configuration via {@link GenericFilter#addConfiguration(Configuration)}, and
+     *       activates it via {@link GenericFilter#setCurrentConfiguration(Configuration)} if
+     *       {@link #makeCurrent()} was requested</li>
      * </ul>
      *
      * @return the newly created and registered {@link RunTimeConfiguration}
@@ -255,16 +255,13 @@ public class RunTimeConfigurationBuilder {
         config.setModified(true);
         config.setProtectedFromUserDeletion(!allowDeletion);
 
+        filter.addConfiguration(config);
         if (makeCurrent) {
-            filter.addAndSetCurrentConfiguration(config);
-        } else {
-            filter.addConfiguration(config);
+            filter.setCurrentConfiguration(config);
         }
 
         return config;
     }
-
-    // -------------------------------------------------------------------------
 
     protected static class ComponentEntry {
         protected final FilterComponent filterComponent;

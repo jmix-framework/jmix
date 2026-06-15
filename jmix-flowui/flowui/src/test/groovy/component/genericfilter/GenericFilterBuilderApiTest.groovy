@@ -74,9 +74,7 @@ class GenericFilterBuilderApiTest extends FlowuiTestSpecification {
         return navigateToView(GenericFilterApiTestView).genericFilter
     }
 
-    // =========================================================================
     // FilterComponentBuilder — PropertyFilter
-    // =========================================================================
 
     /**
      * Demonstrates building a {@link PropertyFilter} with {@code filter.filterComponentBuilder()}.
@@ -208,9 +206,7 @@ class GenericFilterBuilderApiTest extends FlowuiTestSpecification {
         thrown(IllegalStateException)
     }
 
-    // =========================================================================
     // FilterComponentBuilder — JpqlFilter
-    // =========================================================================
 
     /**
      * A <em>void</em> {@link JpqlFilter} has no query parameter — it is rendered as a checkbox
@@ -375,9 +371,7 @@ class GenericFilterBuilderApiTest extends FlowuiTestSpecification {
         thrown(IllegalStateException)
     }
 
-    // =========================================================================
     // FilterComponentBuilder — GroupFilter
-    // =========================================================================
 
     /**
      * {@link GroupFilter} bundles several conditions under a single logical operator
@@ -478,9 +472,7 @@ class GenericFilterBuilderApiTest extends FlowuiTestSpecification {
         thrown(IllegalStateException)
     }
 
-    // =========================================================================
     // FilterComponentBuilder — DataLoader requirement
-    // =========================================================================
 
     /**
      * The builder delegates to the framework converter, which needs the owning filter's
@@ -501,9 +493,7 @@ class GenericFilterBuilderApiTest extends FlowuiTestSpecification {
         thrown(IllegalStateException)
     }
 
-    // =========================================================================
     // RunTimeConfigurationBuilder
-    // =========================================================================
 
     /**
      * {@link io.jmix.flowui.component.genericfilter.RunTimeConfigurationBuilder}
@@ -654,9 +644,7 @@ class GenericFilterBuilderApiTest extends FlowuiTestSpecification {
         jf.getValue() == "ORD-999"
     }
 
-    // =========================================================================
     // RunTimeConfiguration — modified state
-    // =========================================================================
 
     /**
      * Components added through the builder are marked as modified by the builder
@@ -719,9 +707,7 @@ class GenericFilterBuilderApiTest extends FlowuiTestSpecification {
         !config.isModified()
     }
 
-    // =========================================================================
     // RunTimeConfiguration — protection from user deletion
-    // =========================================================================
 
     def "RunTimeConfigurationBuilder creates configuration protected from user deletion by default"() {
         given:
@@ -813,60 +799,7 @@ class GenericFilterBuilderApiTest extends FlowuiTestSpecification {
         !filter.getConfigurations().any { it.id == "deletable" }
     }
 
-    // =========================================================================
     // GenericFilter helper methods
-    // =========================================================================
-
-    /**
-     * {@link GenericFilter#addAndSetCurrentConfiguration} registers a configuration
-     * <em>and</em> makes it current in a single atomic call — avoiding the silent
-     * no-op of calling {@link GenericFilter#setCurrentConfiguration} on an
-     * unregistered configuration.
-     */
-    def "addAndSetCurrentConfiguration registers and activates an unregistered configuration"() {
-        given: "A GenericFilter and a RunTimeConfiguration that has NOT been registered yet"
-        GenericFilter filter = uiComponents.create(GenericFilter)
-        def initialConfig = filter.currentConfiguration
-        GroupFilter root = uiComponents.create(GroupFilter)
-        root.setConditionModificationDelegated(true)
-        root.setOperation(LogicalFilterComponent.Operation.AND)
-        RunTimeConfiguration config = new RunTimeConfiguration("new", root, filter)
-
-        expect: "configuration is not registered"
-        !filter.configurations.contains(config)
-
-        when: "addAndSetCurrentConfiguration registers and activates it atomically"
-        filter.addAndSetCurrentConfiguration(config)
-
-        then: "configuration is now registered and active"
-        filter.configurations.contains(config)
-        filter.currentConfiguration == config
-        filter.currentConfiguration != initialConfig
-    }
-
-    /**
-     * {@link GenericFilter#setCurrentConfiguration} silently ignores a configuration
-     * that has not been registered with the filter.  This is a known limitation of
-     * the existing API; use {@link GenericFilter#addAndSetCurrentConfiguration} to
-     * avoid it.
-     */
-    def "setCurrentConfiguration silently ignores an unregistered configuration"() {
-        given: "A GenericFilter with its initial current configuration"
-        GenericFilter filter = uiComponents.create(GenericFilter)
-        def initialConfig = filter.currentConfiguration
-
-        and: "A RunTimeConfiguration that has NOT been registered with this filter"
-        GroupFilter root = uiComponents.create(GroupFilter)
-        root.setConditionModificationDelegated(true)
-        root.setOperation(LogicalFilterComponent.Operation.AND)
-        RunTimeConfiguration unregistered = new RunTimeConfiguration("unregistered", root, filter)
-
-        when: "Trying to activate the unregistered configuration"
-        filter.setCurrentConfiguration(unregistered)
-
-        then: "Current configuration is unchanged — no exception, no switch"
-        filter.currentConfiguration == initialConfig
-    }
 
     /**
      * {@link GenericFilter#refreshCurrentConfiguration} forces the filter UI to

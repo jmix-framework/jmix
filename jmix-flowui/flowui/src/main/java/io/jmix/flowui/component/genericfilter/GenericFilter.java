@@ -26,9 +26,9 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.shared.HasTooltip;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.AccessManager;
-import io.jmix.core.annotation.Experimental;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
+import io.jmix.core.annotation.Experimental;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.LogicalCondition;
@@ -604,37 +604,16 @@ public class GenericFilter extends Composite<JmixDetails>
      * The configuration must already be registered with this filter via
      * {@link #addConfiguration(Configuration)}. If it is not registered, this method
      * logs a warning and does nothing.
-     * <p>
-     * To register and activate a configuration in one call, use
-     * {@link #addAndSetCurrentConfiguration(Configuration)}.
      *
      * @param currentConfiguration a configuration to activate
-     * @see #addAndSetCurrentConfiguration(Configuration)
      */
     public void setCurrentConfiguration(Configuration currentConfiguration) {
         if (!configurations.contains(currentConfiguration)
                 && !getEmptyConfiguration().equals(currentConfiguration)) {
-            log.warn("Configuration '{}' is not registered in this filter. " +
-                            "Call addConfiguration() first, or use addAndSetCurrentConfiguration().",
+            log.warn("Configuration '{}' is not registered in this filter; call addConfiguration() first.",
                     currentConfiguration.getId());
         }
         setCurrentConfigurationInternal(currentConfiguration, false);
-    }
-
-    /**
-     * Registers the given configuration with this filter and immediately sets it as the current
-     * configuration, in the correct order and in a single call.
-     * <p>
-     * This is a convenience alternative to calling {@link #addConfiguration(Configuration)}
-     * followed by {@link #setCurrentConfiguration(Configuration)}, which fails silently when
-     * the configuration is not yet registered at the time {@code setCurrentConfiguration} is
-     * invoked.
-     *
-     * @param configuration the configuration to register and activate
-     */
-    public void addAndSetCurrentConfiguration(Configuration configuration) {
-        addConfiguration(configuration);
-        setCurrentConfiguration(configuration);
     }
 
     /**

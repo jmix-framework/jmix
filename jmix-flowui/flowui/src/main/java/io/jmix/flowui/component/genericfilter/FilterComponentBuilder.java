@@ -83,17 +83,11 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 public class FilterComponentBuilder {
 
     protected final GenericFilter filter;
-    protected final UiComponents uiComponents;
-    protected final Metadata metadata;
-    protected final FilterComponents filterComponents;
-    protected final JpqlFilterSupport jpqlFilterSupport;
+    protected final ApplicationContext applicationContext;
 
     protected FilterComponentBuilder(GenericFilter filter, ApplicationContext applicationContext) {
         this.filter = filter;
-        this.uiComponents = applicationContext.getBean(UiComponents.class);
-        this.metadata = applicationContext.getBean(Metadata.class);
-        this.filterComponents = applicationContext.getBean(FilterComponents.class);
-        this.jpqlFilterSupport = applicationContext.getBean(JpqlFilterSupport.class);
+        this.applicationContext = applicationContext;
     }
 
     /**
@@ -103,7 +97,7 @@ public class FilterComponentBuilder {
      * @return a new {@link PropertyFilterBuilder}
      */
     public <V> PropertyFilterBuilder<V> propertyFilter() {
-        return new PropertyFilterBuilder<>(filter, metadata, filterComponents);
+        return new PropertyFilterBuilder<>(filter, applicationContext);
     }
 
     /**
@@ -118,7 +112,7 @@ public class FilterComponentBuilder {
      * @return a new {@link JpqlFilterBuilder} that produces a checkbox filter
      */
     public JpqlFilterBuilder<Boolean> jpqlFilter() {
-        return new JpqlFilterBuilder<>(filter, metadata, filterComponents, jpqlFilterSupport, Void.class);
+        return new JpqlFilterBuilder<>(filter, applicationContext, Void.class);
     }
 
     /**
@@ -131,7 +125,7 @@ public class FilterComponentBuilder {
      */
     public <V> JpqlFilterBuilder<V> jpqlFilter(Class<V> parameterClass) {
         checkNotNullArgument(parameterClass, "parameterClass must not be null");
-        return new JpqlFilterBuilder<>(filter, metadata, filterComponents, jpqlFilterSupport, parameterClass);
+        return new JpqlFilterBuilder<>(filter, applicationContext, parameterClass);
     }
 
     /**
@@ -140,32 +134,28 @@ public class FilterComponentBuilder {
      * @return a new {@link GroupFilterBuilder}
      */
     public GroupFilterBuilder groupFilter() {
-        return new GroupFilterBuilder(filter, uiComponents);
+        return new GroupFilterBuilder(filter, applicationContext);
     }
 
     protected static void checkDataLoaderPresent(GenericFilter filter) {
         if (filter.getDataLoader() == null) {
-            throw new IllegalStateException(
-                    "GenericFilter has no DataLoader. Filter components cannot be built without a DataLoader; " +
-                            "set it before using the builder (the 'dataLoader' attribute in XML, or " +
-                            "GenericFilter.setDataLoader(...)).");
+            throw new IllegalStateException(String.format(
+                    "%s has no DataLoader; set one before building filter components.",
+                    filter.getClass().getSimpleName()));
         }
     }
-
-    // -------------------------------------------------------------------------
-    // PropertyFilterBuilder
-    // -------------------------------------------------------------------------
 
     /**
      * Fluent builder for {@link PropertyFilter}.
      *
      * @param <V> the value type
      */
+    @Experimental
     public static class PropertyFilterBuilder<V> {
 
         protected final GenericFilter filter;
-        protected final Metadata metadata;
-        protected final FilterComponents filterComponents;
+        protected Metadata metadata;
+        protected FilterComponents filterComponents;
 
         protected String property;
         protected PropertyFilter.Operation operation;
@@ -175,10 +165,14 @@ public class FilterComponentBuilder {
         protected boolean operationTextVisible = true;
         protected boolean built = false;
 
-        protected PropertyFilterBuilder(GenericFilter filter, Metadata metadata, FilterComponents filterComponents) {
+        protected PropertyFilterBuilder(GenericFilter filter, ApplicationContext applicationContext) {
             this.filter = filter;
-            this.metadata = metadata;
-            this.filterComponents = filterComponents;
+            autowireDependencies(applicationContext);
+        }
+
+        protected void autowireDependencies(ApplicationContext applicationContext) {
+            this.metadata = applicationContext.getBean(Metadata.class);
+            this.filterComponents = applicationContext.getBean(FilterComponents.class);
         }
 
         /**
@@ -279,22 +273,19 @@ public class FilterComponentBuilder {
         }
     }
 
-    // -------------------------------------------------------------------------
-    // JpqlFilterBuilder
-    // -------------------------------------------------------------------------
-
     /**
      * Fluent builder for {@link JpqlFilter}.
      *
      * @param <V> the value type ({@link Boolean} for a void/checkbox filter, or the parameter type)
      */
+    @Experimental
     public static class JpqlFilterBuilder<V> {
 
         protected final GenericFilter filter;
-        protected final Metadata metadata;
-        protected final FilterComponents filterComponents;
-        protected final JpqlFilterSupport jpqlFilterSupport;
         protected final Class<?> parameterClass;
+        protected Metadata metadata;
+        protected FilterComponents filterComponents;
+        protected JpqlFilterSupport jpqlFilterSupport;
 
         protected String where;
         protected String join;
@@ -304,13 +295,16 @@ public class FilterComponentBuilder {
         protected boolean hasInExpression;
         protected boolean built = false;
 
-        protected JpqlFilterBuilder(GenericFilter filter, Metadata metadata, FilterComponents filterComponents,
-                          JpqlFilterSupport jpqlFilterSupport, Class<?> parameterClass) {
+        protected JpqlFilterBuilder(GenericFilter filter, ApplicationContext applicationContext, Class<?> parameterClass) {
             this.filter = filter;
-            this.metadata = metadata;
-            this.filterComponents = filterComponents;
-            this.jpqlFilterSupport = jpqlFilterSupport;
             this.parameterClass = parameterClass;
+            autowireDependencies(applicationContext);
+        }
+
+        protected void autowireDependencies(ApplicationContext applicationContext) {
+            this.metadata = applicationContext.getBean(Metadata.class);
+            this.filterComponents = applicationContext.getBean(FilterComponents.class);
+            this.jpqlFilterSupport = applicationContext.getBean(JpqlFilterSupport.class);
         }
 
         /**
@@ -411,25 +405,26 @@ public class FilterComponentBuilder {
         }
     }
 
-    // -------------------------------------------------------------------------
-    // GroupFilterBuilder
-    // -------------------------------------------------------------------------
-
     /**
      * Fluent builder for {@link GroupFilter}.
      */
+    @Experimental
     public static class GroupFilterBuilder {
 
         protected final GenericFilter filter;
-        protected final UiComponents uiComponents;
+        protected UiComponents uiComponents;
 
         protected LogicalFilterComponent.Operation operation = LogicalFilterComponent.Operation.AND;
         protected final List<FilterComponent> components = new ArrayList<>();
         protected boolean built = false;
 
-        protected GroupFilterBuilder(GenericFilter filter, UiComponents uiComponents) {
+        protected GroupFilterBuilder(GenericFilter filter, ApplicationContext applicationContext) {
             this.filter = filter;
-            this.uiComponents = uiComponents;
+            autowireDependencies(applicationContext);
+        }
+
+        protected void autowireDependencies(ApplicationContext applicationContext) {
+            this.uiComponents = applicationContext.getBean(UiComponents.class);
         }
 
         /**

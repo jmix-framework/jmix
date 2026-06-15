@@ -38,7 +38,6 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.Range;
 import io.jmix.core.security.CurrentAuthentication;
-import jakarta.annotation.Nonnull;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.*;
 import jakarta.persistence.Id;
@@ -52,6 +51,8 @@ import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
+
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
@@ -70,6 +71,7 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
  * application projects.
  */
 @Component("core_MetadataTools")
+@NullMarked
 public class MetadataTools {
 
     public static final String PRIMARY_KEY_ANN_NAME = "jmix.primaryKey";
@@ -613,7 +615,6 @@ public class MetadataTools {
      * @param metaClass entity metaclass
      * @return collection of the name pattern properties
      */
-    @Nonnull
     public Collection<MetaProperty> getInstanceNameRelatedProperties(MetaClass metaClass) {
         return getInstanceNameRelatedProperties(metaClass, false);
     }
@@ -626,8 +627,6 @@ public class MetadataTools {
      *                    extended entity, this method tries to find a name pattern in an original entity
      * @return collection of the name pattern properties
      */
-
-    @Nonnull
     public Collection<MetaProperty> getInstanceNameRelatedProperties(MetaClass metaClass, boolean useOriginal) {
         return instanceNameProvider.getInstanceNameRelatedProperties(metaClass, useOriginal);
     }
@@ -1103,6 +1102,7 @@ public class MetadataTools {
      * INTERNAL
      */
     @Internal
+    @NullMarked
     public interface EntitiesHolder {
         Object create(Class<?> entityClass, Object id);
 

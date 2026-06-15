@@ -16,12 +16,14 @@
 
 package io.jmix.core;
 
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import jakarta.persistence.LockModeType;
 
 /**
  * Base interface for load contexts used in {@link DataManager}.
  */
+@NullMarked
 public interface DataLoadContext {
 
     /**

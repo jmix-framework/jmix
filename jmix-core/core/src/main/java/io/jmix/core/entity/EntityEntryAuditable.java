@@ -18,9 +18,11 @@ package io.jmix.core.entity;
 
 import io.jmix.core.annotation.Internal;
 
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 @Internal
+@NullMarked
 public interface EntityEntryAuditable {
 
     Object getCreatedDate();

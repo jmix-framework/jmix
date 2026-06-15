@@ -20,6 +20,7 @@ import io.jmix.core.impl.StoreDescriptorsRegistry;
 import io.jmix.core.metamodel.model.Store;
 import io.jmix.core.metamodel.model.StoreDescriptor;
 import jakarta.annotation.PostConstruct;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
@@ -34,6 +35,7 @@ import java.util.Map;
  * Utility class for accessing registered data store names.
  */
 @Component("core_Stores")
+@NullMarked
 public class Stores {
 
     public static final String MAIN = "main";

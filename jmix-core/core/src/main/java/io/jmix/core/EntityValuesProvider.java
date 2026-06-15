@@ -18,9 +18,11 @@ package io.jmix.core;
 
 import io.jmix.core.event.AttributeChanges;
 
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import java.util.Set;
 
+@NullMarked
 public interface EntityValuesProvider {
 
     boolean supportAttribute(String name);

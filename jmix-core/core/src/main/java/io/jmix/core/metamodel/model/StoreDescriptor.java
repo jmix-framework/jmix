@@ -16,9 +16,12 @@
 
 package io.jmix.core.metamodel.model;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Describes the type of a data store.
  */
+@NullMarked
 public interface StoreDescriptor {
 
     /**

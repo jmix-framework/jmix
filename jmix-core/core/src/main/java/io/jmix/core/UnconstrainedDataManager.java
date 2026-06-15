@@ -18,6 +18,7 @@ package io.jmix.core;
 
 import io.jmix.core.entity.KeyValueEntity;
 
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
@@ -31,6 +32,7 @@ import java.util.List;
  * Does not apply registered access constraints. If you want to perform CRUD operations with authorization,
  * use {@link DataManager} instead.
  */
+@NullMarked
 public interface UnconstrainedDataManager {
 
     /**

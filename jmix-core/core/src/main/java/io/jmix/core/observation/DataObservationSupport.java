@@ -20,6 +20,7 @@ import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
@@ -42,6 +43,7 @@ import java.util.stream.Collectors;
  * @see CoreProperties#isDataObservationEnabled()
  */
 @Component("core_DataObservationSupport")
+@NullMarked
 public class DataObservationSupport {
 
     private static final String DATA_BASE_LOAD_NAME = "jmix.data.load";

@@ -16,6 +16,7 @@
 
 package io.jmix.core;
 
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -25,6 +26,7 @@ import org.jspecify.annotations.Nullable;
  * until a provider supporting this parameter is found. You can use the {@code Order} annotation with
  * the {@code JmixOrder.HIGHEST_PRECEDENCE - 10} value to override providers of the framework.
  */
+@NullMarked
 public interface QueryParamValueProvider {
 
     /**

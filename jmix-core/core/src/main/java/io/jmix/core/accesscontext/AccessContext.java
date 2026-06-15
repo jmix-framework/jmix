@@ -16,11 +16,13 @@
 
 package io.jmix.core.accesscontext;
 
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
  * Marker interface for classes defining authorization points.
  */
+@NullMarked
 public interface AccessContext {
 
     /**

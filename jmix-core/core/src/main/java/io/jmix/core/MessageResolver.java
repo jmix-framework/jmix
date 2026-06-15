@@ -18,12 +18,14 @@ package io.jmix.core;
 
 import io.jmix.core.metamodel.model.MetaProperty;
 
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import java.util.Locale;
 
 /**
  * Interface to provide a caption of property, for example if the property is a dynamic attribute.
  */
+@NullMarked
 public interface MessageResolver {
 
     /**

@@ -16,10 +16,12 @@
 
 package io.jmix.core;
 
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 
+@NullMarked
 public class QueryUtils {
 
     public static final String ESCAPE_CHARACTER = "\\";

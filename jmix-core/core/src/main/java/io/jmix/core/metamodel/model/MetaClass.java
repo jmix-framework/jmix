@@ -16,6 +16,7 @@
 
 package io.jmix.core.metamodel.model;
 
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
@@ -24,6 +25,7 @@ import java.util.List;
 /**
  * Metadata object representing an entity.
  */
+@NullMarked
 public interface MetaClass extends MetadataObject {
 
     /**

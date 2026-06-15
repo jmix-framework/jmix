@@ -2,11 +2,14 @@ package io.jmix.core.constraint;
 
 import io.jmix.core.accesscontext.AccessContext;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Base interface of classes that make authorization decisions.
  *
  * @param <T> access context for which this constraint is applied
  */
+@NullMarked
 public interface AccessConstraint<T extends AccessContext> {
 
     /**

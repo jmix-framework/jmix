@@ -18,11 +18,13 @@ package io.jmix.core.usersubstitution;
 
 import org.springframework.security.core.userdetails.UserDetails;
 
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
  * Interface is used to get the information about current user substitution
  */
+@NullMarked
 public interface CurrentUserSubstitution {
 
     /**

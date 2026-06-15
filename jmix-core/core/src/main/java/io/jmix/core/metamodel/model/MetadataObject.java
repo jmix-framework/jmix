@@ -16,12 +16,15 @@
 
 package io.jmix.core.metamodel.model;
 
+import org.jspecify.annotations.NullMarked;
+
 import java.util.Map;
 
 /**
  * Ancestor of main metadata objects: {@link io.jmix.core.metamodel.model.MetaClass} and {@link io.jmix.core.metamodel.model.MetaProperty}
  *
  */
+@NullMarked
 public interface MetadataObject {
 
     /**

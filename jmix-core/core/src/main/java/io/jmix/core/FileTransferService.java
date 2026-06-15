@@ -20,11 +20,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.servlet.http.HttpServletRequest;
+
+import org.jspecify.annotations.NullMarked;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * A service for uploading and downloading files to/from {@link FileStorage}s.
  */
+@NullMarked
 public interface FileTransferService {
 
     void downloadAndWriteResponse(FileRef fileReference,

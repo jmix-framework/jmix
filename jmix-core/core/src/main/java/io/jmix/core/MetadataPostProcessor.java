@@ -18,12 +18,15 @@ package io.jmix.core;
 
 import io.jmix.core.metamodel.model.Session;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Interface to be implemented by beans in add-ons and applications for processing metadata right after it is built.
  * <p>
  * The implementation can have the {@link org.springframework.core.annotation.Order} annotation
  * with a {@link JmixOrder} value.
  */
+@NullMarked
 public interface MetadataPostProcessor {
 
     /**

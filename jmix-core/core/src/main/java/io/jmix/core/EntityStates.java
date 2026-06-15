@@ -24,6 +24,7 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.LoadedPropertiesInfo;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
+import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +42,7 @@ import static io.jmix.core.entity.EntitySystemAccess.getUncheckedEntityEntry;
  * Provides information about entities states.
  */
 @Component("core_EntityStates")
+@NullMarked
 public class EntityStates {
 
     @Autowired

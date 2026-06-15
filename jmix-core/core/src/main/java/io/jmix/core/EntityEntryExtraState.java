@@ -16,8 +16,11 @@
 
 package io.jmix.core;
 
+import org.jspecify.annotations.NullMarked;
+
 import java.io.Serializable;
 
+@NullMarked
 public interface EntityEntryExtraState extends Serializable {
     /**
      * Copies the extra state.

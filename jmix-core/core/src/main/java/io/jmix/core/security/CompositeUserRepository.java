@@ -1,5 +1,6 @@
 package io.jmix.core.security;
 
+import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
  * by the delegates (the first one that hasn't ended up with an exception).
  * Method returning a collection includes the results obtained from all the delegates.
  */
+@NullMarked
 public class CompositeUserRepository implements UserRepository {
 
     private static final Logger log = LoggerFactory.getLogger(CompositeUserRepository.class);

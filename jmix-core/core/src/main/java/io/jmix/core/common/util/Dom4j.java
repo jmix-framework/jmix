@@ -32,6 +32,8 @@ import org.xml.sax.SAXNotSupportedException;
 import org.xml.sax.XMLReader;
 
 import javax.xml.parsers.ParserConfigurationException;
+
+import org.jspecify.annotations.NullMarked;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.*;
@@ -230,6 +232,7 @@ public final class Dom4j {
         }
     }
 
+    @NullMarked
     public interface ElementAttributeVisitor {
         void onVisit(Element element, Attribute attribute);
     }

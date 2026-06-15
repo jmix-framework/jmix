@@ -18,6 +18,7 @@ package io.jmix.core;
 
 import io.jmix.core.entity.KeyValueEntity;
 
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import java.util.List;
 import java.util.Set;
@@ -28,6 +29,7 @@ import java.util.Set;
  * Implementations of this interface must be prototype beans. They are used by {@link DataManager}, do not access
  * data stores directly from your application code.
  */
+@NullMarked
 public interface DataStore {
 
     /**

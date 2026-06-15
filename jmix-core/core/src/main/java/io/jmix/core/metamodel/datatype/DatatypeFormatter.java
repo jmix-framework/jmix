@@ -19,6 +19,7 @@ package io.jmix.core.metamodel.datatype;
 
 import io.jmix.core.metamodel.datatype.impl.DateTimeDatatype;
 import io.jmix.core.security.CurrentAuthentication;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -36,6 +37,7 @@ import java.util.TimeZone;
  * For locale-independent conversion use {@link Datatype} methods directly.
  */
 @Component("core_DatatypeFormatter")
+@NullMarked
 public class DatatypeFormatter {
 
     @Autowired

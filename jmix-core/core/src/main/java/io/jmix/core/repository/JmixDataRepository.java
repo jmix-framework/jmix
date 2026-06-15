@@ -23,6 +23,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.*;
+
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
@@ -39,6 +41,7 @@ import java.util.Optional;
  * @see PagingAndSortingRepository
  */
 @NoRepositoryBean
+@NullMarked
 @ApplyConstraints
 public interface JmixDataRepository<T, ID> extends ListPagingAndSortingRepository<T, ID>, ListCrudRepository<T, ID> {
 

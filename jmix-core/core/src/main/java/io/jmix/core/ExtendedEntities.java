@@ -30,6 +30,7 @@ import io.jmix.core.metamodel.model.SessionImplementation;
 import io.jmix.core.metamodel.model.impl.ClassRange;
 import io.jmix.core.metamodel.model.impl.MetaClassImpl;
 import io.jmix.core.metamodel.model.impl.MetaPropertyImpl;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Component;
@@ -47,6 +48,7 @@ import java.util.Map;
  *
  */
 @Component("core_ExtendedEntities")
+@NullMarked
 public class ExtendedEntities {
 
     protected Metadata metadata;

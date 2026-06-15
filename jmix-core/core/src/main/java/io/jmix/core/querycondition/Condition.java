@@ -17,6 +17,8 @@
 package io.jmix.core.querycondition;
 
 import io.jmix.core.CoreProperties;
+
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.io.Serializable;
@@ -27,6 +29,7 @@ import java.util.Set;
  * The tree of {@code Condition}s represents an optional part of a query that is added if the corresponding parameters
  * are present.
  */
+@NullMarked
 public interface Condition extends Serializable {
 
     /**

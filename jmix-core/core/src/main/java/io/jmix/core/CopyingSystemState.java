@@ -16,6 +16,8 @@
 
 package io.jmix.core;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Interface to be implemented by entities having a state which is not reflected in metadata. It's usually
  * a non-persistent state which resides in fields with types not supported by metadata, like {@code Object}.
@@ -26,6 +28,7 @@ package io.jmix.core;
  *
  * @param <T> entity type
  */
+@NullMarked
 public interface CopyingSystemState<T> {
 
     /**

@@ -16,8 +16,10 @@
 
 package io.jmix.core.suggestion;
 
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
+@NullMarked
 public interface QuerySuggestionProvider {
     @Nullable
     QuerySuggestions getSuggestions(QuerySuggestionsContext context);

@@ -19,6 +19,8 @@ package io.jmix.core.impl.repository.support.method_metadata;
 import io.jmix.core.repository.JmixDataRepository;
 
 import java.io.Serializable;
+
+import org.jspecify.annotations.NullMarked;
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.Map;
@@ -61,6 +63,7 @@ public class CrudMethodMetadata {
     /**
      * Provides {@code CrudMethodMetadata} for current invoked method
      */
+    @NullMarked
     public interface Accessor {
         CrudMethodMetadata getCrudMethodMetadata();
     }

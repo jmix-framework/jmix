@@ -16,6 +16,7 @@
 
 package io.jmix.core.metamodel.datatype;
 
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import java.util.Optional;
 import java.util.Set;
@@ -23,6 +24,7 @@ import java.util.Set;
 /**
  * Registry for {@link Datatype}s
  */
+@NullMarked
 public interface DatatypeRegistry {
 
     /**

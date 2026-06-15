@@ -18,6 +18,8 @@ package io.jmix.core;
 
 import io.jmix.core.metamodel.model.MetaProperty;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * An extension point for the entity import mechanism. The mechanism is implemented in
  * the {@link EntityImportExport} bean.
@@ -25,6 +27,7 @@ import io.jmix.core.metamodel.model.MetaProperty;
  * Such beans can be useful for defining specific logic for importing value of {@link MetaProperty}.
  * The supported {@link MetaProperty} is determined by the {@link #supports(MetaProperty)} method.
  */
+@NullMarked
 public interface EntityAttributeImportExtension {
 
     /**

@@ -16,9 +16,12 @@
 
 package io.jmix.core.metamodel.model;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Interface stores internal methods for {@link Session} implementations.
  */
+@NullMarked
 public interface SessionImplementation extends Session {
 
     void registerClass(MetaClass metaClass);

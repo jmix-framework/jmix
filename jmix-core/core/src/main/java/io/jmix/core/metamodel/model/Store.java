@@ -16,9 +16,12 @@
 
 package io.jmix.core.metamodel.model;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Defines a data store used in the application.
  */
+@NullMarked
 public interface Store {
 
     /**

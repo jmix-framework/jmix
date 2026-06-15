@@ -16,6 +16,7 @@
 
 package io.jmix.core.security;
 
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -26,6 +27,7 @@ import java.util.Set;
 /**
  * Interface provides API for some actions with users
  */
+@NullMarked
 public interface UserManager {
 
     /**

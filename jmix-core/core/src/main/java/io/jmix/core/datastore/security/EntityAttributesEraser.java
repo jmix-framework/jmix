@@ -20,11 +20,14 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
 import java.util.Collection;
+
+import org.jspecify.annotations.NullMarked;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Predicate;
 
+@NullMarked
 public interface EntityAttributesEraser {
 
     ReferencesCollector collectErasingReferences(Collection entityList, Predicate predicate);

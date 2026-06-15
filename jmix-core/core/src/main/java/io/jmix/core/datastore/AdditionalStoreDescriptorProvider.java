@@ -18,6 +18,9 @@ package io.jmix.core.datastore;
 
 import io.jmix.core.metamodel.model.StoreDescriptor;
 
+import org.jspecify.annotations.NullMarked;
+
+@NullMarked
 public interface AdditionalStoreDescriptorProvider {
 
     String getStoreName();

@@ -19,6 +19,9 @@ package io.jmix.core.datastore;
 import io.jmix.core.JmixOrder;
 import org.springframework.core.Ordered;
 
+import org.jspecify.annotations.NullMarked;
+
+@NullMarked
 public interface DataStoreEventListener extends Ordered {
     default void beforeEntityLoad(DataStoreBeforeEntityLoadEvent event) {
     }

@@ -18,9 +18,12 @@ package io.jmix.core.security;
 
 import org.springframework.security.core.Authentication;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Strategy for accessing root authentication from wrapped authentication in the current security context.
  */
+@NullMarked
 public interface AuthenticationResolver {
     /**
      * @return true if resolving strategy supports authentication from the current security context

@@ -18,10 +18,13 @@ package io.jmix.core;
 
 import io.jmix.core.metamodel.model.MetaProperty;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Visitor to be submitted to {@link MetadataTools#traverseAttributes(Object, EntityAttributeVisitor)}.
  *
  */
+@NullMarked
 public interface EntityAttributeVisitor {
 
     /**

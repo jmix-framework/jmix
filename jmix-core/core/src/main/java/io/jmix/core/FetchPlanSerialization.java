@@ -20,9 +20,12 @@ import io.jmix.core.metamodel.model.MetaClass;
 
 import java.util.function.Function;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Class that is used for serialization and deserialization of fetch plan to JSON.
  */
+@NullMarked
 public interface FetchPlanSerialization {
 
     /**

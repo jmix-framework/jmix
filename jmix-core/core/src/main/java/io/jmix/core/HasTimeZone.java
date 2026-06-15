@@ -16,12 +16,14 @@
 
 package io.jmix.core;
 
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
  * Provides user time zone information.
  * If User entity implements HasTimeZone, {@link io.jmix.core.security.CurrentAuthentication#getTimeZone} should use timezone from a User entity for all datetime operations.
  */
+@NullMarked
 public interface HasTimeZone {
 
     /**

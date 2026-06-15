@@ -19,6 +19,7 @@ package io.jmix.core.security;
 import org.springframework.core.Ordered;
 import org.springframework.security.core.Authentication;
 
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import java.util.Locale;
 
@@ -27,6 +28,7 @@ import java.util.Locale;
  *
  * @see CurrentAuthentication
  */
+@NullMarked
 public interface AuthenticationLocaleResolver extends Ordered {
 
     /**

@@ -22,12 +22,15 @@ import io.jmix.core.annotation.Internal;
 
 import java.io.Serializable;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Provides information about properties loaded from data store.
  * <p>
  * Implementations of this interface are used in {@link io.jmix.core.EntityEntry}.
  */
 @Internal
+@NullMarked
 public interface LoadedPropertiesInfo extends Serializable {
 
     /**

@@ -18,12 +18,14 @@ package io.jmix.core.metamodel.model;
 
 import io.jmix.core.entity.annotation.ReplaceEntity;
 
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import java.lang.reflect.AnnotatedElement;
 
 /**
  * Metadata object representing an entity attribute.
  */
+@NullMarked
 public interface MetaProperty extends MetadataObject {
 
     /**

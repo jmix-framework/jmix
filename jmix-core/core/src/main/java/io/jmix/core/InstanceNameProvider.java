@@ -22,9 +22,12 @@ import io.jmix.core.metamodel.model.MetaProperty;
 
 import java.util.Collection;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Provide instance name and instance name properties.
  */
+@NullMarked
 public interface InstanceNameProvider {
 
     /**

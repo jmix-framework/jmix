@@ -19,8 +19,10 @@ package io.jmix.core;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
+@NullMarked
 public interface MetaPropertyPathResolver {
     @Nullable
     MetaPropertyPath resolveMetaPropertyPath(MetaClass metaClass, String propertyPath);

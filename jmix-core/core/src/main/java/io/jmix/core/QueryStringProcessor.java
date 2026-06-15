@@ -16,11 +16,13 @@
 
 package io.jmix.core;
 
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
  * Interface to be implemented by beans that pre-process query text before setting it to {@code LoadContext.Query}.
  */
+@NullMarked
 public interface QueryStringProcessor {
 
     @Nullable

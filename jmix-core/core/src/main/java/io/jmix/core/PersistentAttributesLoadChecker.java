@@ -19,7 +19,10 @@ package io.jmix.core;
 import io.jmix.core.EntityStates.PropertyLoadedState;
 import io.jmix.core.annotation.Internal;
 
+import org.jspecify.annotations.NullMarked;
+
 @Internal
+@NullMarked
 public interface PersistentAttributesLoadChecker {
 
     /**

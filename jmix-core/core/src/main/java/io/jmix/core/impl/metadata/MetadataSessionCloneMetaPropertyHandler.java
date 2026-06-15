@@ -19,6 +19,8 @@ package io.jmix.core.impl.metadata;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Range;
+
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -27,6 +29,7 @@ import org.jspecify.annotations.Nullable;
  * Intended for modules that contribute custom meta-property types which cannot be cloned by
  * the built-in logic of {@link MetadataSessionCloneSupport}.
  */
+@NullMarked
 public interface MetadataSessionCloneMetaPropertyHandler {
 
     /**

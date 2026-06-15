@@ -16,6 +16,7 @@
 
 package io.jmix.core.metamodel.datatype;
 
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -23,6 +24,7 @@ import java.util.TimeZone;
 /**
  * A {@link Datatype} that supports correct presentation with timezone.
  */
+@NullMarked
 public interface TimeZoneAwareDatatype {
     /** Converts value to String taking into account local formats and timezone. Returns an empty string for null value. */
     String format(@Nullable Object value, Locale locale, @Nullable TimeZone timeZone);

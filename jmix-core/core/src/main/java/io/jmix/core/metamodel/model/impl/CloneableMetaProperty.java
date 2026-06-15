@@ -19,6 +19,9 @@ package io.jmix.core.metamodel.model.impl;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 
+import org.jspecify.annotations.NullMarked;
+
+@NullMarked
 public interface CloneableMetaProperty {
 
     MetaProperty makeClone(MetaClass metaClass);

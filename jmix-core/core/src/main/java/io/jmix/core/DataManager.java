@@ -16,10 +16,13 @@
 
 package io.jmix.core;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Same as {@link UnconstrainedDataManager} but performs authorization of all operations by applying registered
  * access constraints.
  */
+@NullMarked
 public interface DataManager extends UnconstrainedDataManager {
 
     /**

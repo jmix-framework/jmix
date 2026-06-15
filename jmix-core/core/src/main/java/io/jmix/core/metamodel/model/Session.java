@@ -16,12 +16,14 @@
 
 package io.jmix.core.metamodel.model;
 
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import java.util.Collection;
 
 /**
  * Meta-model entry point.
  */
+@NullMarked
 public interface Session {
 
     /**

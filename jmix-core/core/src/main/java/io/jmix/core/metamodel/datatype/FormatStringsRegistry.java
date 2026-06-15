@@ -16,12 +16,14 @@
 
 package io.jmix.core.metamodel.datatype;
 
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import java.util.Locale;
 
 /**
  * Registry for {@link FormatStrings}
  */
+@NullMarked
 public interface FormatStringsRegistry {
 
     /**

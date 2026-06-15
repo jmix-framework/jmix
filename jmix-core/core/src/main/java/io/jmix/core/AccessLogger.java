@@ -20,10 +20,13 @@ import io.jmix.core.accesscontext.AccessContext;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.constraint.AccessConstraint;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Helps to track access control restrictions of the current user.
  */
 @Internal
+@NullMarked
 public interface AccessLogger {
 
     <T extends AccessContext> void log(AccessConstraint<T> constraint, T accessContext);

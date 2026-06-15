@@ -16,6 +16,8 @@
 
 package io.jmix.core;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Creates copies of objects.
  * <p>
@@ -23,6 +25,7 @@ package io.jmix.core;
  * but different in that it doesn't rely on metadata and copies all object's state using a low-level mechanism
  * like Java serialization.
  */
+@NullMarked
 public interface Copier {
 
     /**

@@ -16,6 +16,8 @@
 
 package io.jmix.core;
 
+import org.jspecify.annotations.NullMarked;
+
 import java.util.Collection;
 
 /**
@@ -25,6 +27,7 @@ import java.util.Collection;
  * file storage of the application. If more than one file storage registered, the default file storage
  * should be specified in the {@code jmix.core.defaultFileStorage} application property.
  */
+@NullMarked
 public interface FileStorageLocator {
 
     /**

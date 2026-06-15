@@ -20,6 +20,7 @@ package io.jmix.core.impl;
 import com.google.common.collect.Iterables;
 import io.jmix.core.CoreProperties;
 import io.jmix.core.common.util.ReflectionHelper;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -29,7 +30,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.Nonnull;
 import org.jspecify.annotations.Nullable;
 import jakarta.annotation.PostConstruct;
 import java.io.IOException;
@@ -53,7 +53,7 @@ public class TriggerFilesProcessor implements ApplicationContextAware {
     protected static final Pattern FILE_NAME_PATTERN = Pattern.compile("(.+?)#(.+?)(\\(.+?\\))?$");
 
     @Override
-    public void setApplicationContext(@Nonnull ApplicationContext applicationContext) throws BeansException {
+    public void setApplicationContext(@NonNull ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }
 

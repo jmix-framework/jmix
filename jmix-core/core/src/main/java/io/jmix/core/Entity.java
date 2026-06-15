@@ -15,12 +15,15 @@
  */
 package io.jmix.core;
 
+import org.jspecify.annotations.NullMarked;
+
 import java.io.Serializable;
 
 /**
  * Interface to be implemented by domain model objects with identifiers.
  *
  */
+@NullMarked
 @SuppressWarnings("unused")
 public interface Entity extends Serializable {
     default EntityEntry __getEntityEntry() {

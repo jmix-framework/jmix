@@ -18,6 +18,7 @@ package io.jmix.core.security;
 
 import org.springframework.security.core.Authentication;
 
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -46,6 +47,7 @@ import org.jspecify.annotations.Nullable;
  * @see #begin()
  * @see #begin(String)
  */
+@NullMarked
 public interface SystemAuthenticator {
 
     /**
@@ -110,6 +112,7 @@ public interface SystemAuthenticator {
      * Operation with a result to be used in {@link #withSystem(AuthenticatedOperation)}
      * and {@link #withUser(String, AuthenticatedOperation)}.
      */
+    @NullMarked
     interface AuthenticatedOperation<T> {
         @Nullable
         T call();

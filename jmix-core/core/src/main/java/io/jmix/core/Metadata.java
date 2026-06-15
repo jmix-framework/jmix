@@ -19,10 +19,13 @@ package io.jmix.core;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.Session;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Central interface to provide metadata-related functionality.
  *
  */
+@NullMarked
 public interface Metadata extends Session {
 
     /**

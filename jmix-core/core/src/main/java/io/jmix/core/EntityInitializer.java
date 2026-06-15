@@ -16,9 +16,12 @@
 
 package io.jmix.core;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Interface to be implemented by beans that initialize new entity instances created via {@link Metadata#create(Class)}.
  */
+@NullMarked
 public interface EntityInitializer {
 
     void initEntity(Object entity);

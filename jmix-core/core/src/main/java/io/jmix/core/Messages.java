@@ -16,12 +16,14 @@
 
 package io.jmix.core;
 
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import java.util.Locale;
 
 /**
  * Central interface to work with localized messages.
  */
+@NullMarked
 public interface Messages {
 
     /**

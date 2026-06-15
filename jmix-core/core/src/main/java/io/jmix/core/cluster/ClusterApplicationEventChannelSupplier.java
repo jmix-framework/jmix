@@ -20,9 +20,12 @@ import org.springframework.messaging.SubscribableChannel;
 
 import java.util.function.Supplier;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Provides {@link SubscribableChannel} to pass and handle cluster application events.
  */
+@NullMarked
 public interface ClusterApplicationEventChannelSupplier extends Supplier<SubscribableChannel> {
 
 }

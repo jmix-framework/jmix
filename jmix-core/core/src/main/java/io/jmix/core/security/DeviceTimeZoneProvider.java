@@ -16,6 +16,7 @@
 
 package io.jmix.core.security;
 
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.util.TimeZone;
@@ -23,6 +24,7 @@ import java.util.TimeZone;
 /**
  * Interface for obtaining the user's device time zone.
  */
+@NullMarked
 public interface DeviceTimeZoneProvider {
 
     /**

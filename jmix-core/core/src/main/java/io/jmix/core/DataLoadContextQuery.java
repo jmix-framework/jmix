@@ -19,11 +19,14 @@ package io.jmix.core;
 import io.jmix.core.querycondition.Condition;
 
 import jakarta.persistence.TemporalType;
+
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Date;
 import java.util.Map;
 
+@NullMarked
 public interface DataLoadContextQuery {
 
     DataLoadContextQuery setParameter(String name, Object value);

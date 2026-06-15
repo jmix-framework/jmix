@@ -18,6 +18,7 @@ package io.jmix.core;
 
 import io.jmix.core.metamodel.model.MetaClass;
 
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import java.util.Collection;
 
@@ -25,6 +26,7 @@ import java.util.Collection;
  * Represents a repository of shared {@link FetchPlan} objects, accessible by names.
  * <br>Repository contains all fetch plans defined in XML and deployed at runtime.
  */
+@NullMarked
 public interface FetchPlanRepository {
 
     /**

@@ -16,6 +16,7 @@
 
 package io.jmix.core;
 
+import org.jspecify.annotations.NullMarked;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertySource;
 
@@ -28,6 +29,7 @@ import java.util.List;
 /**
  * Holds the list of {@link JmixModuleDescriptor}s.
  */
+@NullMarked
 public class JmixModules {
 
     private final List<JmixModuleDescriptor> moduleDescriptors;

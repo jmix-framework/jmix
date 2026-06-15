@@ -8,6 +8,10 @@
     {
       "name": "projectId",
       "mandatory": false
+    },
+    {
+      "name": "projectTheme",
+      "hidden": true
     }
   ]
 }

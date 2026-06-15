@@ -1,10 +1,18 @@
-package ${project_rootPackage}
+<%
+private String getThemeName(){
+    try {
+        return project_theme
+    } catch(Exception e) {
+        return "aura"
+    }
+}
+%>package ${project_rootPackage}
 
 import com.vaadin.flow.component.page.AppShellConfigurator
 import com.vaadin.flow.component.dependency.StyleSheet
 import com.vaadin.flow.component.page.Push
 import com.vaadin.flow.server.PWA
-import com.vaadin.flow.server.PWA;<%if("lumo".equals(project_theme)) {%>
+import com.vaadin.flow.server.PWA;<%if("lumo".equals(getThemeName())) {%>
 import com.vaadin.flow.theme.lumo.Lumo;
 import io.jmix.flowui.theme.lumo.JmixLumo;<%} else {%>
 import com.vaadin.flow.theme.aura.Aura;
@@ -23,7 +31,7 @@ import org.springframework.core.env.Environment
 import javax.sql.DataSource
 
 @Push
-<%if("lumo".equals(project_theme)) {%>@StyleSheet(Lumo.STYLESHEET)
+<%if("lumo".equals(getThemeName())) {%>@StyleSheet(Lumo.STYLESHEET)
 @StyleSheet(JmixLumo.STYLESHEET)
 @StyleSheet("themes/${project_name}-lumo/styles.css")
 <%} else {%>@StyleSheet(Aura.STYLESHEET)

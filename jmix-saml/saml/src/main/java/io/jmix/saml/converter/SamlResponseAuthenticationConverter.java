@@ -18,11 +18,11 @@ package io.jmix.saml.converter;
 
 import io.jmix.saml.mapper.user.SamlUserMapper;
 import io.jmix.saml.user.JmixSamlUserDetails;
+import org.jspecify.annotations.Nullable;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.Response;
 import org.slf4j.Logger;
 import org.springframework.core.convert.converter.Converter;
-import org.springframework.lang.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.saml2.Saml2Exception;
 import org.springframework.security.saml2.provider.service.authentication.OpenSaml5AuthenticationProvider;

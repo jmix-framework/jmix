@@ -20,7 +20,7 @@ import co.elastic.clients.elasticsearch.indices.IndexSettings;
 import co.elastic.clients.elasticsearch.indices.IndexSettingsAnalysis;
 import io.jmix.searchelasticsearch.index.ElasticsearchIndexSettingsConfigurationContext;
 import io.jmix.searchelasticsearch.index.ElasticsearchIndexSettingsConfigurer;
-import org.springframework.lang.NonNull;
+import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Component;
 import test_support.entity.TestRootEntity;
 

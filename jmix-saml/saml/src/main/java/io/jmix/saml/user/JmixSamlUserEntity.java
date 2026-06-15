@@ -19,7 +19,7 @@ package io.jmix.saml.user;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Transient;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.security.saml2.provider.service.authentication.Saml2AuthenticatedPrincipal;
 
 import java.util.List;

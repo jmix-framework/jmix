@@ -23,7 +23,7 @@ import io.jmix.multitenancyflowui.MultitenancyUiSupport;
 import io.jmix.securityflowui.authentication.AuthDetails;
 import io.jmix.securityflowui.authentication.AuthDetailsValidationResult;
 import io.jmix.securityflowui.authentication.AuthDetailsValidator;
-import org.springframework.lang.NonNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Optional;
 

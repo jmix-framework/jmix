@@ -21,11 +21,11 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import io.jmix.security.BruteForceProtection;
 import io.jmix.security.BruteForceProtectionProperties;
+import jakarta.annotation.PostConstruct;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.PostConstruct;
 import java.util.concurrent.ExecutionException;
 
 @Component("sec_BruteForceProtection")
@@ -40,7 +40,7 @@ public class BruteForceProtectionImpl implements BruteForceProtection {
                 .expireAfterWrite(properties.getBlockInterval())
                 .build(new CacheLoader<String, Integer>() {
                     @Override
-                    public Integer load(@Nonnull String key) throws Exception {
+                    public Integer load(@NonNull String key) throws Exception {
                         return 0;
                     }
                 });

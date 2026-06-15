@@ -21,7 +21,7 @@ import io.jmix.search.SearchProperties;
 import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.index.mapping.IndexMappingConfiguration;
-import org.springframework.lang.NonNull;
+import org.jspecify.annotations.NonNull;
 
 public class BaseIndexManagerTestImpl extends BaseIndexManager<Object, Object, Object> {
     protected BaseIndexManagerTestImpl(IndexConfigurationManager indexConfigurationManager,

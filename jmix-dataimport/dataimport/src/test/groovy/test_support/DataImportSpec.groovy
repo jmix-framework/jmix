@@ -20,13 +20,12 @@ import io.jmix.core.DataManager
 import io.jmix.core.FetchPlans
 import io.jmix.dataimport.extractor.data.ImportedObject
 import org.apache.commons.lang3.time.DateUtils
+import org.jspecify.annotations.Nullable
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 import test_support.entity.*
-
-import org.springframework.lang.Nullable
 
 @ContextConfiguration(classes = [DataImportTestConfiguration])
 class DataImportSpec extends Specification {

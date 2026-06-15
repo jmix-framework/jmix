@@ -18,9 +18,9 @@ package test_support;
 
 import io.jmix.searchopensearch.index.OpenSearchIndexSettingsConfigurationContext;
 import io.jmix.searchopensearch.index.OpenSearchIndexSettingsConfigurer;
+import org.jspecify.annotations.NonNull;
 import org.opensearch.client.opensearch.indices.IndexSettings;
 import org.opensearch.client.opensearch.indices.IndexSettingsAnalysis;
-import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import test_support.entity.TestRootEntity;
 

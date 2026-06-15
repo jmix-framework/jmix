@@ -22,7 +22,7 @@ import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.IndexManager;
 import io.jmix.search.index.IndexSynchronizationStatus;
 import io.jmix.search.index.IndexValidationStatus;
-import org.springframework.lang.NonNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Collection;
 import java.util.Map;

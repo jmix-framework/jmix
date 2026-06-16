@@ -18,6 +18,7 @@ package io.jmix.messagetemplatesflowui;
 
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.messagetemplatesflowui.kit.component.GrapesJsPlugin;
+import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -26,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@NullMarked
 @Component("msgtmp_GrapesJsPluginRegistryImpl")
 public class GrapesJsPluginRegistryImpl implements GrapesJsPluginRegistry {
 

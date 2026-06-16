@@ -18,6 +18,7 @@ package io.jmix.superset;
 
 import io.jmix.core.annotation.Internal;
 import io.jmix.superset.schedule.SupersetTokenScheduleConfigurer;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -25,6 +26,7 @@ import org.jspecify.annotations.Nullable;
  * refreshing tokens if it is needed.
  */
 @Internal
+@NullMarked
 public interface SupersetTokenManager {
 
     /**

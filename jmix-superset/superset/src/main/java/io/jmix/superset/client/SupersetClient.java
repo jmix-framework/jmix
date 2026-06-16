@@ -19,6 +19,7 @@ package io.jmix.superset.client;
 import io.jmix.superset.SupersetProperties;
 import io.jmix.superset.SupersetTokenManager;
 import io.jmix.superset.schedule.SupersetTokenScheduleConfigurer;
+import org.jspecify.annotations.NullMarked;
 import io.jmix.superset.client.model.*;
 import org.jspecify.annotations.Nullable;
 
@@ -29,6 +30,7 @@ import java.io.IOException;
  * <p>
  * See <a href="https://superset.apache.org/docs/api/">Apache Superset API</a>
  */
+@NullMarked
 public interface SupersetClient {
 
     /**

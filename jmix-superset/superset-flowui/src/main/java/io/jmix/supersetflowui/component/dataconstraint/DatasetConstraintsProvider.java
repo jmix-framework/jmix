@@ -17,6 +17,7 @@
 package io.jmix.supersetflowui.component.dataconstraint;
 
 import io.jmix.supersetflowui.component.SupersetDashboard;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.List;
 
@@ -43,6 +44,7 @@ import java.util.List;
  *                     embeddedId="d0ec568a-04cb-4408-a072-f2ba4e011f20"/&gt;
  * </pre>
  */
+@NullMarked
 public interface DatasetConstraintsProvider {
 
     /**

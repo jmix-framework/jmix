@@ -23,6 +23,7 @@ import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.html.ListItem;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.html.UnorderedList;
+import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.horizontalmenu.HorizontalMenu;
 import io.jmix.flowui.component.main.JmixListMenu;
@@ -43,12 +44,15 @@ public class UiTestIdSupport {
 
     private static final Logger log = LoggerFactory.getLogger(UiTestIdSupport.class);
 
-    public static final String UI_TEST_ID = "j-test-id";
+    public static final String UI_TEST_ID = "data-testid";
+    protected static final String J_TEST_ID = "j-testid";
 
     protected UiTestIdManager uiTestIdManager;
+    protected UiProperties uiProperties;
 
-    public UiTestIdSupport(UiTestIdManager uiTestIdManager) {
+    public UiTestIdSupport(UiTestIdManager uiTestIdManager, UiProperties uiProperties) {
         this.uiTestIdManager = uiTestIdManager;
+        this.uiProperties = uiProperties;
     }
 
     /**
@@ -153,8 +157,7 @@ public class UiTestIdSupport {
      * @param component component for calculating and setting UI test ID
      */
     protected void setTestId(Component component) {
-        String testId = component.getElement().getAttribute(UI_TEST_ID);
-        if (testId != null) {
+        if (component.getTestId() != null) {
             return;
         }
 
@@ -190,7 +193,10 @@ public class UiTestIdSupport {
      */
     protected void setTestId(Component component, @Nullable String testId) {
         if (testId != null) {
-            component.getElement().setAttribute(UI_TEST_ID, testId);
+            component.setTestId(testId);
+            if (uiProperties.isUseLegacyTestId()) {
+                component.getElement().setAttribute(J_TEST_ID, testId);
+            }
         } else {
             log.info("Calculated test id for {} component is null and will be skipped", component.getClass().getName());
         }

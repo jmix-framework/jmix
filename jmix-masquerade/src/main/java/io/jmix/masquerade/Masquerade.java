@@ -39,7 +39,7 @@ public class Masquerade {
      * A special static attribute for UI components in the framework that is generated for component.
      * To enable generation it is required to set the {@code jmix.ui.test-mode} application property to {@code true}.
      */
-    public static final String UI_TEST_ID = "j-test-id";
+    public static final String UI_TEST_ID = "data-testid";
 
     /**
      * Finds and returns the {@link SelenideElement} wrapper for the UI element with the passed {@link #UI_TEST_ID}.

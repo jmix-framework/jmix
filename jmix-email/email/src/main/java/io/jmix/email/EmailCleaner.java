@@ -16,9 +16,12 @@
 
 package io.jmix.email;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Should be used to delete old emails and attachments.
  */
+@NullMarked
 public interface EmailCleaner {
     /**
      * Deletes old email messages and attachments.

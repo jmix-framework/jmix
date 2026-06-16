@@ -17,11 +17,14 @@
 package io.jmix.email.authentication;
 
 import io.jmix.email.entity.RefreshToken;
+
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
  * Interface defining methods for management of refresh token used for OAuth2 authentication with SMTP server.
  */
+@NullMarked
 public interface EmailRefreshTokenManager {
 
     /**

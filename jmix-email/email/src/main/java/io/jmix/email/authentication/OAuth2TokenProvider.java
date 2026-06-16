@@ -16,9 +16,12 @@
 
 package io.jmix.email.authentication;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Interface defining methods for access/refresh token obtaining.
  */
+@NullMarked
 public interface OAuth2TokenProvider {
 
     /**

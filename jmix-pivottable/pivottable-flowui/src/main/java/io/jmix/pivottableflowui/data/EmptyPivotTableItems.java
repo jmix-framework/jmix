@@ -22,6 +22,7 @@ import io.jmix.flowui.data.DataUnit;
 import io.jmix.flowui.data.EmptyDataUnit;
 import io.jmix.pivottableflowui.component.PivotTable;
 import io.jmix.pivottableflowui.kit.data.JmixEmptyPivotTableItems;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.function.Consumer;
 
@@ -30,6 +31,7 @@ import java.util.function.Consumer;
  *
  * @param <T> type of items contained
  */
+@NullMarked
 public class EmptyPivotTableItems<T> extends JmixEmptyPivotTableItems<T>
         implements PivotTableItems<T>, EmptyDataUnit {
 

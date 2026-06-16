@@ -20,6 +20,7 @@ import io.jmix.jmxconsole.model.ManagedBeanAttribute;
 import io.jmix.jmxconsole.model.ManagedBeanDomain;
 import io.jmix.jmxconsole.model.ManagedBeanInfo;
 import io.jmix.jmxconsole.model.ManagedBeanOperation;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
@@ -27,6 +28,7 @@ import java.util.List;
 /**
  * Interface to provide JMX control functionality for local JMX interfaces.
  */
+@NullMarked
 public interface JmxControl {
 
     /**

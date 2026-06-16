@@ -116,7 +116,7 @@ public class ChartOptionXmlLoadTest extends AbstractXmlLoadTest {
                                 .withTextShadowOffsetY(42)
                                 .withOverflow(BREAK_ALL)
                                 .withEllipsis("......"),
-                        "listener"
+                        "listener", "dirty"
                 ).matches(chart.getTextStyle())
         );
 

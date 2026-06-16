@@ -9,6 +9,7 @@ package test_support.transformer;
 import com.google.common.base.Strings;
 import io.jmix.rest.transform.AbstractEntityJsonTransformer;
 import io.jmix.rest.transform.JsonTransformationDirection;
+import org.jspecify.annotations.NullMarked;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.node.ObjectNode;
@@ -16,6 +17,7 @@ import tools.jackson.databind.node.ObjectNode;
 /**
  *
  */
+@NullMarked
 public class RepairJsonTransformerToVersion extends AbstractEntityJsonTransformer {
 
     public RepairJsonTransformerToVersion() {

@@ -68,6 +68,7 @@ public class RunTimeConfigurationBuilder {
     protected LogicalFilterComponent.Operation operation = LogicalFilterComponent.Operation.AND;
     protected boolean makeCurrent = false;
     protected boolean allowDeletion = false;
+    protected boolean built = false;
 
     protected final List<ComponentEntry> entries = new ArrayList<>();
 
@@ -121,9 +122,6 @@ public class RunTimeConfigurationBuilder {
 
     /**
      * Adds several filter components at once, each using its current value (if any) as the default.
-     * <p>
-     * Named {@code addAll} rather than overloading {@code add} to avoid ambiguity with
-     * {@link #add(SingleFilterComponentBase, Object)} when two filter components are passed.
      *
      * @param filterComponents filter components to add
      */
@@ -202,11 +200,16 @@ public class RunTimeConfigurationBuilder {
      * </ul>
      *
      * @return the newly created and registered {@link RunTimeConfiguration}
-     * @throws IllegalStateException if {@code id} was not set, if a configuration with the
-     *         same id is already registered in the filter, or if the filter has no DataLoader
+     * @throws IllegalStateException if this builder instance has already been used, if {@code id}
+     *         was not set, if a configuration with the same id is already registered in the filter,
+     *         or if the filter has no DataLoader
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
     public RunTimeConfiguration buildAndRegister() {
+        if (built) {
+            throw new IllegalStateException(
+                    "RunTimeConfigurationBuilder.buildAndRegister() must not be called more than once; create a new instance per configuration");
+        }
         if (id == null) {
             throw new IllegalStateException(
                     "RunTimeConfigurationBuilder: 'id' is required — call .id(\"...\") before .buildAndRegister()");
@@ -234,8 +237,8 @@ public class RunTimeConfigurationBuilder {
         for (ComponentEntry entry : entries) {
             FilterComponent fc = entry.filterComponent;
 
-            if (entry.overrideDefault && fc instanceof SingleFilterComponentBase<?> sfc) {
-                ((SingleFilterComponentBase) sfc).setValue(entry.defaultValue);
+            if (entry.overrideDefault && fc instanceof SingleFilterComponentBase sfc) {
+                sfc.setValue(entry.defaultValue);
             }
 
             root.add(fc);
@@ -260,6 +263,7 @@ public class RunTimeConfigurationBuilder {
             filter.setCurrentConfiguration(config);
         }
 
+        built = true;
         return config;
     }
 

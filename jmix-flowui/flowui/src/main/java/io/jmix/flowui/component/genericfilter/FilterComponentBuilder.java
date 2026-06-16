@@ -242,7 +242,6 @@ public class FilterComponentBuilder {
                 throw new IllegalStateException(
                         "PropertyFilterBuilder.build() must not be called more than once; create a new instance per PropertyFilter");
             }
-            built = true;
             if (property == null) {
                 throw new IllegalStateException(
                         "PropertyFilterBuilder: 'property' is required — call .property(\"...\") before .build()");
@@ -269,6 +268,7 @@ public class FilterComponentBuilder {
             if (defaultValue != null) {
                 propertyFilter.setValue(defaultValue);
             }
+            built = true;
             return propertyFilter;
         }
     }
@@ -376,7 +376,6 @@ public class FilterComponentBuilder {
                 throw new IllegalStateException(
                         "JpqlFilterBuilder.build() must not be called more than once; create a new instance per JpqlFilter");
             }
-            built = true;
             if (where == null) {
                 throw new IllegalStateException(
                         "JpqlFilterBuilder: 'where' is required — call .where(\"...\") before .build()");
@@ -401,6 +400,7 @@ public class FilterComponentBuilder {
             if (defaultValue != null) {
                 jpqlFilter.setValue(defaultValue);
             }
+            built = true;
             return jpqlFilter;
         }
     }
@@ -447,9 +447,6 @@ public class FilterComponentBuilder {
 
         /**
          * Adds several filter components to this group at once.
-         * <p>
-         * Named {@code addAll} (rather than overloading {@code add}) for consistency with
-         * {@link RunTimeConfigurationBuilder#addAll(FilterComponent...)}.
          */
         public GroupFilterBuilder addAll(FilterComponent... filterComponents) {
             checkNotNullArgument(filterComponents, "filterComponents must not be null");
@@ -470,7 +467,6 @@ public class FilterComponentBuilder {
                 throw new IllegalStateException(
                         "GroupFilterBuilder.build() must not be called more than once; create a new instance per GroupFilter");
             }
-            built = true;
             checkDataLoaderPresent(filter);
 
             GroupFilter groupFilter = uiComponents.create(GroupFilter.class);
@@ -481,6 +477,7 @@ public class FilterComponentBuilder {
             for (FilterComponent component : components) {
                 groupFilter.add(component);
             }
+            built = true;
             return groupFilter;
         }
     }

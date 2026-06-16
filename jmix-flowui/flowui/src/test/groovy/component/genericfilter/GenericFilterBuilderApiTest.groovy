@@ -206,6 +206,30 @@ class GenericFilterBuilderApiTest extends FlowuiTestSpecification {
         thrown(IllegalStateException)
     }
 
+    /**
+     * The one-shot guard is set only after a successful build, so a build that fails validation
+     * does not "burn" the builder — the caller can fix the input and build again.
+     */
+    def "PropertyFilterBuilder.build() failing validation does not consume the builder"() {
+        given:
+        GenericFilter filter = filterWithLoader()
+        def builder = filter.filterComponentBuilder()
+                .propertyFilter()
+                .operation(PropertyFilter.Operation.EQUAL)   // 'property' not set yet
+
+        when: "first build fails validation"
+        builder.build()
+
+        then:
+        thrown(IllegalStateException)
+
+        when: "the missing property is set and build is retried on the same instance"
+        PropertyFilter<String> pf = builder.property("number").build()
+
+        then: "it builds successfully"
+        pf.property == "number"
+    }
+
     // FilterComponentBuilder — JpqlFilter
 
     /**
@@ -595,6 +619,19 @@ class GenericFilterBuilderApiTest extends FlowuiTestSpecification {
         filter.runtimeConfigurationBuilder()
                 .id("dup")
                 .buildAndRegister()
+
+        then:
+        thrown(IllegalStateException)
+    }
+
+    def "RunTimeConfigurationBuilder.buildAndRegister() throws when called twice on the same instance"() {
+        given: "A DataLoader-bound filter so the first build succeeds and sets the one-shot flag"
+        GenericFilter filter = filterWithLoader()
+        def builder = filter.runtimeConfigurationBuilder().id("once")
+        builder.buildAndRegister()
+
+        when:
+        builder.buildAndRegister()
 
         then:
         thrown(IllegalStateException)

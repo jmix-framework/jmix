@@ -19,9 +19,11 @@ package io.jmix.search.index.impl;
 import io.jmix.search.index.IndexConfiguration;
 import io.jmix.search.index.IndexSettingsConfigurer;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.Collection;
 
+@NullMarked
 public abstract class BaseExtendedIndexSettingsConfigurer<TContext> implements IndexSettingsConfigurer<TContext> {
 
     public static final String LOWERCASE_FILTER_NAME = "lowercase";

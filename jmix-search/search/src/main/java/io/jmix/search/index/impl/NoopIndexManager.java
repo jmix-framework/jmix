@@ -23,10 +23,12 @@ import io.jmix.search.index.IndexManager;
 import io.jmix.search.index.IndexSynchronizationStatus;
 import io.jmix.search.index.IndexValidationStatus;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.Collection;
 import java.util.Map;
 
+@NullMarked
 public class NoopIndexManager implements IndexManager {
 
     protected final ObjectMapper objectMapper;

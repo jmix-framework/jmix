@@ -25,11 +25,13 @@ import io.jmix.search.index.mapping.processor.AbstractFieldAnnotationProcessor;
 import io.jmix.search.index.mapping.strategy.FieldMappingStrategy;
 import io.jmix.search.index.mapping.strategy.impl.AutoMappingStrategy;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@NullMarked
 @Component("search_AutoMappedFieldAnnotationProcessor")
 public class AutoMappedFieldAnnotationProcessor extends AbstractFieldAnnotationProcessor<AutoMappedField> {
 

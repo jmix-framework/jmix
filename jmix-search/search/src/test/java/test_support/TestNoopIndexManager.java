@@ -8,7 +8,9 @@ import io.jmix.search.index.impl.IndexStateRegistry;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.index.mapping.IndexMappingConfiguration;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.NullMarked;
 
+@NullMarked
 public class TestNoopIndexManager extends BaseIndexManager {
 
     protected TestNoopIndexManager(IndexConfigurationManager indexConfigurationManager,
@@ -18,27 +20,27 @@ public class TestNoopIndexManager extends BaseIndexManager {
     }
 
     @Override
-    public boolean createIndex(@NonNull IndexConfiguration indexConfiguration) {
+    public boolean createIndex(IndexConfiguration indexConfiguration) {
         return true;
     }
 
     @Override
-    public boolean dropIndex(@NonNull String indexName) {
+    public boolean dropIndex(String indexName) {
         return true;
     }
 
     @Override
-    public boolean isIndexExist(@NonNull String indexName) {
+    public boolean isIndexExist(String indexName) {
         return true;
     }
 
     @Override
-    public ObjectNode getIndexMetadata(@NonNull String indexName) {
+    public ObjectNode getIndexMetadata(String indexName) {
         return objectMapper.createObjectNode();
     }
 
     @Override
-    public boolean putMapping(@NonNull String indexName, @NonNull IndexMappingConfiguration mapping) {
+    public boolean putMapping(String indexName, IndexMappingConfiguration mapping) {
         return false;
     }
 }

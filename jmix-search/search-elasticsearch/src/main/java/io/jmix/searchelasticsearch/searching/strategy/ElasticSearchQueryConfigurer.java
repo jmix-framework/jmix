@@ -23,6 +23,7 @@ import io.jmix.search.searching.AbstractSearchQueryConfigurer;
 import io.jmix.search.searching.SearchRequestContext;
 import io.jmix.search.searching.IndexSearchRequestScope;
 import io.jmix.search.searching.SearchRequestScopeProvider;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -34,6 +35,7 @@ import java.util.List;
  * The class uses an instance of {@link SearchRequestScopeProvider} to manage the relevant
  * search scopes for the requested entities and subfield settings.
  */
+@NullMarked
 @Component("search_ElasticSearchQueryConfigurer")
 public class ElasticSearchQueryConfigurer extends AbstractSearchQueryConfigurer<SearchRequest.Builder, Query.Builder, ObjectBuilder<Query>> {
 

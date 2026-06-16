@@ -21,12 +21,14 @@ import com.fasterxml.jackson.databind.node.TextNode;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.search.index.mapping.propertyvalue.PropertyValueExtractor;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import org.jspecify.annotations.Nullable;
 import java.util.Map;
 
+@NullMarked
 @Component("search_DisplayedNameValueExtractor")
 public class DisplayedNameValueExtractor implements PropertyValueExtractor {
 

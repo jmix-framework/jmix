@@ -5,12 +5,14 @@ import co.elastic.clients.elasticsearch.core.SearchRequest;
 import io.jmix.search.searching.SearchRequestContext;
 import io.jmix.search.searching.SearchStrategy;
 import io.jmix.searchelasticsearch.searching.strategy.ElasticSearchQueryConfigurer;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.stereotype.Component;
 
 /**
  * Class that encapsulates logic of {@link SearchStrategy} that searches documents
  * with at least one field matches at least one input word.
  */
+@NullMarked
 @Component("search_AnyTermAnyFieldElasticsearchSearchStrategy")
 public class AnyTermAnyFieldElasticsearchSearchStrategy extends AbstractElasticSearchStrategy{
 

@@ -3,10 +3,12 @@ package test_support;
 import io.jmix.core.Id;
 import io.jmix.search.index.EntityIndexer;
 import io.jmix.search.index.IndexResult;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.Collection;
 import java.util.Collections;
 
+@NullMarked
 public class TestNoopEntityIndexer implements EntityIndexer {
     @Override
     public IndexResult index(Object entityInstance) {

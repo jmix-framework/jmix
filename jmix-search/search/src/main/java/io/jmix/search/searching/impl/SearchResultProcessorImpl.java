@@ -23,12 +23,14 @@ import io.jmix.search.SearchProperties;
 import io.jmix.search.searching.SearchResult;
 import io.jmix.search.searching.SearchResultEntry;
 import io.jmix.search.searching.SearchResultProcessor;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
+@NullMarked
 @Component("search_SearchResultProcessor")
 public class SearchResultProcessorImpl implements SearchResultProcessor {
 

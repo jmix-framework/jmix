@@ -20,6 +20,7 @@ import io.jmix.search.searching.AbstractSearchQueryConfigurer;
 import io.jmix.search.searching.SearchRequestContext;
 import io.jmix.search.searching.IndexSearchRequestScope;
 import io.jmix.search.searching.SearchRequestScopeProvider;
+import org.jspecify.annotations.NullMarked;
 import org.opensearch.client.opensearch._types.query_dsl.Query;
 import org.opensearch.client.opensearch.core.SearchRequest;
 import org.opensearch.client.util.ObjectBuilder;
@@ -34,6 +35,7 @@ import java.util.List;
  * The class uses an instance of {@link SearchRequestScopeProvider} to manage the relevant
  * search scopes for the requested entities and subfield settings.
  */
+@NullMarked
 @Component("search_OpenSearchQueryConfigurer")
 public class OpenSearchQueryConfigurer extends AbstractSearchQueryConfigurer<SearchRequest.Builder, Query.Builder, ObjectBuilder<Query>> {
 

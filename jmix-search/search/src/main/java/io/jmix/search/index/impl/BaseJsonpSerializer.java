@@ -19,12 +19,14 @@ package io.jmix.search.index.impl;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Class is responsible for the transforming search clients' specific JSonp format to Jackson's ObjectNode.
  *
  * @param <TJsonp> search clients' specific JSonp format
  */
+@NullMarked
 public abstract class BaseJsonpSerializer<TJsonp> implements JsonpSerializer<TJsonp> {
 
     protected final ObjectMapper objectMapper = new ObjectMapper();

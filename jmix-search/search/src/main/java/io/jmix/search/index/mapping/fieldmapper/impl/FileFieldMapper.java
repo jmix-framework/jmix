@@ -22,12 +22,14 @@ import com.google.common.collect.Sets;
 import io.jmix.search.index.mapping.ExtendedSearchSettings;
 import io.jmix.search.index.mapping.ParameterKeys;
 import io.jmix.search.utils.ExtendedSearchSubFieldsApplier;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
+@NullMarked
 @Component("search_FileFieldMapper")
 public class FileFieldMapper extends AbstractFieldMapper {
 

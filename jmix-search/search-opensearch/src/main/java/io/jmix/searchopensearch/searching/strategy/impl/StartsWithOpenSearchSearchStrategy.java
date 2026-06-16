@@ -21,6 +21,7 @@ import io.jmix.search.searching.SearchRequestContext;
 import io.jmix.search.searching.SearchStrategy;
 import io.jmix.searchopensearch.searching.strategy.OpenSearchQueryConfigurer;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NullMarked;
 import org.opensearch.client.opensearch._types.query_dsl.TextQueryType;
 import org.opensearch.client.opensearch.core.SearchRequest;
 import org.springframework.stereotype.Component;
@@ -34,6 +35,7 @@ import static io.jmix.search.searching.AbstractSearchQueryConfigurer.WITH_PREFIX
 /**
  * Class that encapsulates logic of {@link SearchStrategy} that searches documents by prefix.
  */
+@NullMarked
 @Component("search_StartsWithOpenSearchSearchStrategy")
 public class StartsWithOpenSearchSearchStrategy extends AbstractOpenSearchStrategy{
 

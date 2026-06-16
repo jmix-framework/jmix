@@ -18,7 +18,7 @@ package io.jmix.search.index.queue;
 
 import io.jmix.core.annotation.Internal;
 import io.jmix.search.index.queue.entity.EnqueueingSession;
-
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
@@ -27,6 +27,7 @@ import java.util.List;
  * Allows to load ids of entity instances according to enqueueing session.
  */
 @Internal
+@NullMarked
 public interface EntityIdsLoader {
 
     /**
@@ -43,6 +44,7 @@ public interface EntityIdsLoader {
      */
     class ResultHolder {
         private final List<?> ids;
+        @Nullable
         private final Object lastOrderingValue;
 
         public static final ResultHolder EMPTY = new ResultHolder(Collections.emptyList(), null);

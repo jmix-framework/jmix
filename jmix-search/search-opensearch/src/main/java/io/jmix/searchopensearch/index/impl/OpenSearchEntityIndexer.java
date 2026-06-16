@@ -26,6 +26,7 @@ import io.jmix.search.index.impl.IndexStateRegistry;
 import io.jmix.search.index.impl.dynattr.DynamicAttributesSupport;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NullMarked;
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch._types.ErrorCause;
 import org.opensearch.client.opensearch._types.Refresh;
@@ -40,6 +41,7 @@ import java.util.*;
 /**
  * Implementation for OpenSearch
  */
+@NullMarked
 public class OpenSearchEntityIndexer extends BaseEntityIndexer {
 
     private static final Logger log = LoggerFactory.getLogger(OpenSearchEntityIndexer.class);

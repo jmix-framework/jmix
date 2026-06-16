@@ -24,6 +24,7 @@ import io.jmix.searchelasticsearch.searching.strategy.ElasticsearchSearchStrateg
 import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.constraint.SecureOperations;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,6 +35,7 @@ import java.util.stream.Collectors;
 /**
  * Implementation for Elasticsearch
  */
+@NullMarked
 public class ElasticsearchEntitySearcher extends AbstractEntitySearcher implements EntitySearcher {
 
     private static final Logger log = LoggerFactory.getLogger(ElasticsearchEntitySearcher.class);

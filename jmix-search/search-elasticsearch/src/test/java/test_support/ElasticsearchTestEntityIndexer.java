@@ -29,6 +29,7 @@ import co.elastic.clients.elasticsearch.core.BulkRequest;
 import co.elastic.clients.elasticsearch.core.BulkResponse;
 import co.elastic.clients.elasticsearch.core.bulk.BulkResponseItem;
 import co.elastic.clients.elasticsearch.core.bulk.OperationType;
+import org.jspecify.annotations.NullMarked;
 
 
 import javax.annotation.Nonnull;
@@ -39,6 +40,7 @@ import java.util.stream.Collectors;
 /**
  * Track incoming bulk requests via provided tracker instead of execution via ES client
  */
+@NullMarked
 public class ElasticsearchTestEntityIndexer extends ElasticsearchEntityIndexer {
 
     protected final ElasticsearchTestBulkRequestsTracker bulkRequestsTracker;
@@ -65,8 +67,7 @@ public class ElasticsearchTestEntityIndexer extends ElasticsearchEntityIndexer {
         this.bulkRequestsTracker = bulkRequestsTracker;
     }
 
-    @Nonnull
-    protected BulkResponse executeBulkRequest(@Nonnull BulkRequest request) {
+    protected BulkResponse executeBulkRequest(BulkRequest request) {
         bulkRequestsTracker.accept(request);
 
         return new BulkResponse.Builder()

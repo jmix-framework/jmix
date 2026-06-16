@@ -21,6 +21,7 @@ import com.google.common.collect.Sets;
 import io.jmix.search.index.mapping.ExtendedSearchSettings;
 import io.jmix.search.index.mapping.ParameterKeys;
 import io.jmix.search.utils.ExtendedSearchSubFieldsApplier;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -29,6 +30,7 @@ import java.util.Set;
 /**
  * Maps field as analyzed text
  */
+@NullMarked
 @Component("search_TextFieldMapper")
 public class TextFieldMapper extends SimpleFieldMapper {
 

@@ -23,12 +23,14 @@ import io.jmix.search.index.mapping.ExtendedSearchSettings;
 import io.jmix.search.index.mapping.ParameterKeys;
 import io.jmix.search.utils.Constants;
 import io.jmix.search.utils.ExtendedSearchSubFieldsApplier;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
+@NullMarked
 @Component("search_ReferenceFieldMapper")
 public class ReferenceFieldMapper extends AbstractFieldMapper {
 

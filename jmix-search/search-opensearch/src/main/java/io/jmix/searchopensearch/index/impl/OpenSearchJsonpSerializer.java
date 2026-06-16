@@ -20,6 +20,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.jmix.search.index.impl.BaseJsonpSerializer;
 import jakarta.json.stream.JsonGenerator;
+import org.jspecify.annotations.NullMarked;
 import org.opensearch.client.json.JsonpMapper;
 import org.opensearch.client.json.JsonpSerializable;
 import org.opensearch.client.opensearch.OpenSearchClient;
@@ -27,6 +28,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.StringWriter;
 
+@NullMarked
 @Component("search_OpenSearchJsonpSerializer")
 public class OpenSearchJsonpSerializer extends BaseJsonpSerializer<JsonpSerializable> {
 

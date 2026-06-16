@@ -29,6 +29,7 @@ import io.jmix.search.index.mapping.IndexMappingConfiguration;
 import io.jmix.searchopensearch.index.OpenSearchIndexSettingsProvider;
 import jakarta.json.spi.JsonProvider;
 import jakarta.json.stream.JsonParser;
+import org.jspecify.annotations.NullMarked;
 import org.opensearch.client.json.JsonpMapper;
 import org.opensearch.client.json.JsonpSerializable;
 import org.opensearch.client.opensearch.OpenSearchClient;
@@ -43,6 +44,7 @@ import java.io.StringReader;
 /**
  * Implementation for OpenSearch
  */
+@NullMarked
 public class OpenSearchIndexManager extends BaseIndexManager<IndexState, IndexSettings, JsonpSerializable> {
 
     private static final Logger log = LoggerFactory.getLogger(OpenSearchIndexManager.class);

@@ -17,6 +17,7 @@
 package io.jmix.search.index.queue;
 
 import io.jmix.core.Id;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.Collection;
 import java.util.List;
@@ -24,6 +25,7 @@ import java.util.List;
 /**
  * Provides functionality for enqueuing entity instances and processing queue.
  */
+@NullMarked
 public interface IndexingQueueManager {
 
     /**

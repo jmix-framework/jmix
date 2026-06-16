@@ -19,6 +19,7 @@ package io.jmix.search.index.mapping;
 import io.jmix.search.index.mapping.fieldmapper.FieldMapper;
 import io.jmix.search.index.mapping.propertyvalue.PropertyValueExtractor;
 import io.jmix.search.index.mapping.strategy.FieldMappingStrategy;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Map;
@@ -30,6 +31,7 @@ import java.util.Map;
  * or an explicit field configuration to control the mapping process. Additional customization can be achieved
  * through property value extractors and parameters.
  */
+@NullMarked
 public interface AttributesGroupConfiguration {
 
     /**

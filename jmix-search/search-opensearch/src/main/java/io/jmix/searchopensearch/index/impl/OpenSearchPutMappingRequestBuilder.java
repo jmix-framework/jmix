@@ -24,6 +24,7 @@ import io.jmix.search.index.mapping.IndexMappingConfiguration;
 import jakarta.json.spi.JsonProvider;
 import jakarta.json.stream.JsonParser;
 import jakarta.validation.Valid;
+import org.jspecify.annotations.NullMarked;
 import org.opensearch.client.json.JsonpDeserializer;
 import org.opensearch.client.json.JsonpMapper;
 import org.opensearch.client.opensearch._types.mapping.Property;
@@ -33,6 +34,7 @@ import org.springframework.stereotype.Component;
 import java.io.StringReader;
 import java.util.Map;
 
+@NullMarked
 @Component("search_OpenSearchPutMappingRequestBuilder")
 public class OpenSearchPutMappingRequestBuilder implements PutMappingBuilder<PutMappingRequest, JsonpMapper> {
 

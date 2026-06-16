@@ -34,6 +34,7 @@ import io.jmix.search.index.queue.IndexingQueueManager;
 import io.jmix.search.index.queue.entity.EnqueueingSession;
 import io.jmix.search.index.queue.entity.IndexingQueueItem;
 import org.apache.commons.collections4.MapUtils;
+import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.TransactionDefinition;
@@ -47,6 +48,7 @@ import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 
+@NullMarked
 public class JpaIndexingQueueManager implements IndexingQueueManager {
 
     private static final Logger log = LoggerFactory.getLogger(JpaIndexingQueueManager.class);

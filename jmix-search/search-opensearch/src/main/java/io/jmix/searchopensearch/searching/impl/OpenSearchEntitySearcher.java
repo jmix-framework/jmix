@@ -15,6 +15,7 @@ import io.jmix.searchopensearch.searching.strategy.OpenSearchSearchStrategyProvi
 import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.constraint.SecureOperations;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NullMarked;
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch.core.SearchRequest;
 import org.opensearch.client.opensearch.core.SearchResponse;
@@ -27,6 +28,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@NullMarked
 public class OpenSearchEntitySearcher extends AbstractEntitySearcher implements EntitySearcher {
 
     private static final Logger log = LoggerFactory.getLogger(OpenSearchEntitySearcher.class);

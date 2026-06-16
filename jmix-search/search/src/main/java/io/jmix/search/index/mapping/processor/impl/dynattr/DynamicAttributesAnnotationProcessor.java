@@ -27,6 +27,7 @@ import io.jmix.search.index.mapping.processor.AbstractFieldAnnotationProcessor;
 import io.jmix.search.index.mapping.strategy.FieldMappingStrategy;
 import io.jmix.search.index.mapping.strategy.impl.AutoMappingStrategy;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -39,6 +40,7 @@ import java.util.Map;
  * <p>
  * If the 'Dynamic attributes' module is absent, the {@link IndexConfigurationException} is thrown.
  */
+@NullMarked
 @Component("search_DynamicAttributesAnnotationProcessor")
 public class DynamicAttributesAnnotationProcessor extends AbstractFieldAnnotationProcessor<DynamicAttributes> {
 

@@ -18,10 +18,12 @@ package io.jmix.search.searching.impl;
 
 import io.jmix.search.searching.SearchQueryConfigurer;
 import io.jmix.search.searching.SearchStrategy;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Base class for all search strategies.
  */
+@NullMarked
 public abstract class AbstractSearchStrategy<RB, QC extends SearchQueryConfigurer<RB, ?, ?>>
         implements SearchStrategy<RB> {
 

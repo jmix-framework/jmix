@@ -17,6 +17,7 @@
 package io.jmix.search.searching;
 
 import io.jmix.search.index.IndexConfiguration;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.Set;
 
@@ -24,6 +25,7 @@ import java.util.Set;
  * A functional interface for providing logic of virtual subfields resolving by the field information.
  */
 @FunctionalInterface
+@NullMarked
 public interface VirtualSubfieldsProvider {
 
     Set<String> getSubfields(FieldInfo fieldInfo);

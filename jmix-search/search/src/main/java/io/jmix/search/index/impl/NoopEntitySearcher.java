@@ -20,7 +20,9 @@ import io.jmix.search.searching.EntitySearcher;
 import io.jmix.search.searching.SearchContext;
 import io.jmix.search.searching.SearchResult;
 import io.jmix.search.searching.impl.SearchResultImpl;
+import org.jspecify.annotations.NullMarked;
 
+@NullMarked
 public class NoopEntitySearcher implements EntitySearcher {
 
     @Override

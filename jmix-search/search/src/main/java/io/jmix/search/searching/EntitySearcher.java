@@ -16,9 +16,12 @@
 
 package io.jmix.search.searching;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Provides functionality for searching entities in index.
  */
+@NullMarked
 public interface EntitySearcher {
 
     /**

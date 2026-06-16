@@ -17,6 +17,7 @@
 package io.jmix.search.index.impl;
 
 import io.jmix.search.index.mapping.IndexMappingConfiguration;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * The builder is for making request to a search engine server for updating the mapping of the index.
@@ -24,6 +25,7 @@ import io.jmix.search.index.mapping.IndexMappingConfiguration;
  * @param <TRequest> the search client's PutMappingRequest type
  * @param <TJsonp>   search clients' specific JSonp format
  */
+@NullMarked
 public interface PutMappingBuilder<TRequest, TJsonp> {
 
     TRequest buildRequest(IndexMappingConfiguration mappingConfiguration, String indexName, TJsonp jsonpMapper);

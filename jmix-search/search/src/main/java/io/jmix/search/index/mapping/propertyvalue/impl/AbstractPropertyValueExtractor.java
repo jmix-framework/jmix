@@ -24,6 +24,7 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.search.index.mapping.propertyvalue.PropertyValueExtractor;
 
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +34,7 @@ import java.util.stream.StreamSupport;
 /**
  * Base class for {@link PropertyValueExtractor} implementations.
  */
+@NullMarked
 public abstract class AbstractPropertyValueExtractor implements PropertyValueExtractor {
 
     protected static final ObjectMapper objectMapper = new ObjectMapper();

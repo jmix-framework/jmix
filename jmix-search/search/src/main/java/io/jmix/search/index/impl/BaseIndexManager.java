@@ -6,6 +6,7 @@ import io.jmix.search.SearchProperties;
 import io.jmix.search.index.*;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.index.mapping.IndexMappingConfiguration;
+import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,6 +18,7 @@ import java.util.Map;
  * Contains non-platform-specific operations.
  * Interaction with indexes is performed in platform-specific implementations.
  */
+@NullMarked
 public abstract class BaseIndexManager<TState, TSettings, TJsonp> implements IndexManager {
 
     private static final Logger log = LoggerFactory.getLogger(BaseIndexManager.class);

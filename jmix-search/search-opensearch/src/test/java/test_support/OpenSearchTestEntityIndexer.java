@@ -25,6 +25,7 @@ import io.jmix.search.index.impl.IndexStateRegistry;
 import io.jmix.search.index.impl.dynattr.DynamicAttributesSupport;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.searchopensearch.index.impl.OpenSearchEntityIndexer;
+import org.jspecify.annotations.NullMarked;
 import org.opensearch.client.opensearch.core.BulkRequest;
 import org.opensearch.client.opensearch.core.BulkResponse;
 import org.opensearch.client.opensearch.core.bulk.BulkResponseItem;
@@ -39,6 +40,7 @@ import java.util.stream.Collectors;
 /**
  * Track incoming bulk requests via provided tracker instead of execution via ES client
  */
+@NullMarked
 public class OpenSearchTestEntityIndexer extends OpenSearchEntityIndexer {
 
     protected final OpenSearchTestBulkRequestsTracker bulkRequestsTracker;
@@ -66,8 +68,7 @@ public class OpenSearchTestEntityIndexer extends OpenSearchEntityIndexer {
         this.bulkRequestsTracker = bulkRequestsTracker;
     }
 
-    @Nonnull
-    protected BulkResponse executeBulkRequest(@Nonnull BulkRequest request) {
+    protected BulkResponse executeBulkRequest(BulkRequest request) {
         bulkRequestsTracker.accept(request);
 
         return new BulkResponse.Builder()

@@ -17,6 +17,7 @@
 package io.jmix.searchelasticsearch.index;
 
 import io.jmix.search.index.IndexSettingsConfigurer;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Base interface for configurers of Elasticsearch index settings.
@@ -50,6 +51,7 @@ import io.jmix.search.index.IndexSettingsConfigurer;
  * }
  * </pre>
  */
+@NullMarked
 public interface ElasticsearchIndexSettingsConfigurer extends IndexSettingsConfigurer<ElasticsearchIndexSettingsConfigurationContext> {
 
     void configure(ElasticsearchIndexSettingsConfigurationContext context);

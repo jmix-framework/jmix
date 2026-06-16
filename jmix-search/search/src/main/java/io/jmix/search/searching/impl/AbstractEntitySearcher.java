@@ -32,6 +32,7 @@ import io.jmix.search.searching.SearchContext;
 import io.jmix.search.searching.SearchResultEntry;
 import io.jmix.search.utils.Constants;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.jspecify.annotations.Nullable;
@@ -39,6 +40,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@NullMarked
 public abstract class AbstractEntitySearcher implements EntitySearcher {
 
     private static final Logger log = LoggerFactory.getLogger(AbstractEntitySearcher.class);

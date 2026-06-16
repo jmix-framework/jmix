@@ -4,6 +4,7 @@ import io.jmix.search.SearchProperties;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.searching.SearchStrategyProvider;
 import io.jmix.searchopensearch.searching.strategy.impl.StartsWithOpenSearchSearchStrategy;
+import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.jspecify.annotations.Nullable;
@@ -15,6 +16,7 @@ import java.util.Map;
 /**
  * Provides OpenSearch search strategies
  */
+@NullMarked
 public class OpenSearchSearchStrategyProvider implements SearchStrategyProvider<OpenSearchSearchStrategy> {
 
     private static final Logger log = LoggerFactory.getLogger(OpenSearchSearchStrategyProvider.class);

@@ -18,10 +18,12 @@ package io.jmix.search.index.impl;
 
 import io.jmix.core.Id;
 import io.jmix.search.index.queue.IndexingQueueManager;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.Collection;
 import java.util.List;
 
+@NullMarked
 public class NoopIndexingQueueManager implements IndexingQueueManager {
 
     @Override

@@ -20,12 +20,14 @@ import co.elastic.clients.elasticsearch.core.SearchRequest;
 import io.jmix.search.searching.impl.AbstractSearchStrategy;
 import io.jmix.searchelasticsearch.searching.strategy.ElasticSearchQueryConfigurer;
 import io.jmix.searchelasticsearch.searching.strategy.ElasticsearchSearchStrategy;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Abstract base class for Elasticsearch-specific search strategy implementations.
  * It provides a foundational structure for search strategies that configure Elasticsearch search requests.
  * Subclasses should implement specific search logic and provide concrete configurations for search requests.
  */
+@NullMarked
 public abstract class AbstractElasticSearchStrategy
         extends AbstractSearchStrategy<SearchRequest.Builder, ElasticSearchQueryConfigurer>
         implements ElasticsearchSearchStrategy {

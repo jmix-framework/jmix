@@ -20,10 +20,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
+@NullMarked
 @Component("search_SimplePropertyValueExtractor")
 public class SimplePropertyValueExtractor extends AbstractPropertyValueExtractor {
 

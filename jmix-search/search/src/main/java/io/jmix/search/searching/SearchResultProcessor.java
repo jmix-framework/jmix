@@ -17,6 +17,7 @@
 package io.jmix.search.searching;
 
 import io.jmix.core.FetchPlan;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.Collection;
 import java.util.Map;
@@ -24,6 +25,7 @@ import java.util.Map;
 /**
  * Provides additional functionality to work with {@link SearchResult}
  */
+@NullMarked
 public interface SearchResultProcessor {
 
     /**

@@ -22,12 +22,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jmix.search.index.impl.PutMappingBuilder;
 import io.jmix.search.index.mapping.IndexMappingConfiguration;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
+@NullMarked
 @Component("search_ElasticsearchPutMappingBuilder")
 public class ElasticsearchPutMappingRequestBuilder implements PutMappingBuilder<PutMappingRequest, JsonpMapper> {
 

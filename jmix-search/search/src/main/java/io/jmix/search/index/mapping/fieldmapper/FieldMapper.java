@@ -18,12 +18,14 @@ package io.jmix.search.index.mapping.fieldmapper;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.jmix.search.index.mapping.ExtendedSearchSettings;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.Map;
 
 /**
  * Maps some metamodel property to configuration of index field.
  */
+@NullMarked
 public interface FieldMapper {
 
     /**

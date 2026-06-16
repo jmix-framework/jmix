@@ -19,6 +19,7 @@ package io.jmix.search.index.mapping.processor;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.search.index.mapping.MappingDefinition.MappingDefinitionBuilder;
 import io.jmix.search.index.mapping.strategy.FieldMappingStrategy;
+import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,6 +31,7 @@ import java.util.Map;
  *
  * @param <T> specific annotation class
  */
+@NullMarked
 public abstract class AbstractFieldAnnotationProcessor<T extends Annotation> implements FieldAnnotationProcessor<T> {
 
     private static final Logger log = LoggerFactory.getLogger(AbstractFieldAnnotationProcessor.class);

@@ -17,6 +17,7 @@
 package io.jmix.searchopensearch.index;
 
 import io.jmix.search.index.IndexSettingsConfigurer;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Base interface for configurers of OpenSearch index settings.
@@ -50,6 +51,7 @@ import io.jmix.search.index.IndexSettingsConfigurer;
  * }
  * </pre>
  */
+@NullMarked
 public interface OpenSearchIndexSettingsConfigurer extends IndexSettingsConfigurer<OpenSearchIndexSettingsConfigurationContext> {
 
     void configure(OpenSearchIndexSettingsConfigurationContext context);

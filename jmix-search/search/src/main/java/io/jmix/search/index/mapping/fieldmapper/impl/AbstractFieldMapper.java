@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.jmix.search.index.mapping.ExtendedSearchSettings;
 import io.jmix.search.index.mapping.fieldmapper.FieldMapper;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,6 +29,7 @@ import java.util.Set;
 /**
  * Base class for {@link FieldMapper} implementations.
  */
+@NullMarked
 public abstract class AbstractFieldMapper implements FieldMapper {
 
     protected static final ObjectMapper objectMapper = new ObjectMapper();

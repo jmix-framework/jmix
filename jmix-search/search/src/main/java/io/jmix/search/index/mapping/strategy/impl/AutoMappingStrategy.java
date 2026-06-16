@@ -36,6 +36,7 @@ import io.jmix.search.index.mapping.propertyvalue.impl.FilePropertyValueExtracto
 import io.jmix.search.index.mapping.propertyvalue.impl.ReferencePropertyValueExtractor;
 import io.jmix.search.index.mapping.propertyvalue.impl.SimplePropertyValueExtractor;
 import io.jmix.search.index.mapping.strategy.FieldMappingStrategy;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -45,6 +46,7 @@ import java.util.Optional;
 /**
  * Strategy that automatically maps properties the most common way.
  */
+@NullMarked
 @Component("search_AutoMappingStrategy")
 public class AutoMappingStrategy implements FieldMappingStrategy {
 

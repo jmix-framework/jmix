@@ -24,6 +24,7 @@ import io.jmix.multitenancy.MultitenancyProperties;
 import io.jmix.multitenancy.entity.Tenant;
 import io.jmix.multitenancyflowui.MultitenancyUiSupport;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
@@ -34,6 +35,7 @@ import java.util.stream.Collectors;
 /**
  * Helper for login screen.
  */
+@NullMarked
 @Component("mten_MultitenancyUiSupport")
 public class MultitenancyUiSupportImpl implements MultitenancyUiSupport {
 
@@ -104,7 +106,7 @@ public class MultitenancyUiSupportImpl implements MultitenancyUiSupport {
         }
     }
 
-    protected String concatUsername(String username, String tenantId) {
+    protected String concatUsername(String username, @Nullable String tenantId) {
         if (!Strings.isNullOrEmpty(tenantId)) {
             username = String.format("%s%s%s", tenantId, TENANT_USERNAME_SEPARATOR, username);
         }

@@ -21,6 +21,7 @@ import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.core.usersubstitution.CurrentUserSubstitution;
 import io.jmix.multitenancy.core.TenantProvider;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -31,6 +32,7 @@ import java.util.WeakHashMap;
 /**
  * Implementation of {@link TenantProvider} based on {@link CurrentAuthentication}.
  */
+@NullMarked
 @Component("mten_TenantProvider")
 public class TenantProviderImpl implements TenantProvider {
 

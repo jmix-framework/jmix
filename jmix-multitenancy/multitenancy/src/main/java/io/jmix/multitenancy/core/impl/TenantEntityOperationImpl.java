@@ -23,6 +23,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.multitenancy.core.TenantEntityOperation;
 import org.apache.commons.lang3.reflect.FieldUtils;
+import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -34,6 +35,7 @@ import java.util.Arrays;
 /**
  * Helper for working with tenant entity.
  */
+@NullMarked
 @Component("mten_TenantEntityOperation")
 public class TenantEntityOperationImpl implements TenantEntityOperation {
 
@@ -51,6 +53,7 @@ public class TenantEntityOperationImpl implements TenantEntityOperation {
      * @param entityClass entity class
      * @return MetaProperty instance. Return if not found.
      */
+    @Nullable
     public MetaProperty findTenantProperty(Class<?> entityClass) {
         MetaClass metaClass = metadata.getClass(entityClass);
         Field tenantField = findTenantField(entityClass);

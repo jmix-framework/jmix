@@ -17,10 +17,12 @@
 package io.jmix.multitenancyflowui;
 
 import com.vaadin.flow.router.Location;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
+@NullMarked
 public interface MultitenancyUiSupport {
 
     String getUsernameByLocation(String username, Location location);

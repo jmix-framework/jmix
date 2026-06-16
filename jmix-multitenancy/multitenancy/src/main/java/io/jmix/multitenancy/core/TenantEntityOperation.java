@@ -19,9 +19,11 @@ package io.jmix.multitenancy.core;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.metamodel.model.MetaProperty;
 
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 @Internal
+@NullMarked
 public interface TenantEntityOperation {
 
     @Nullable

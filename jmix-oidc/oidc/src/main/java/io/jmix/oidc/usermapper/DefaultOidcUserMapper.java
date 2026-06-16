@@ -2,6 +2,7 @@ package io.jmix.oidc.usermapper;
 
 import io.jmix.oidc.claimsmapper.ClaimsRolesMapper;
 import io.jmix.oidc.user.DefaultJmixOidcUser;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 
@@ -11,6 +12,7 @@ import java.util.Collection;
  * The default implementation {@link OidcUserMapper} implementation that converts {@link OidcUser} into {@link
  * DefaultJmixOidcUser}.
  */
+@NullMarked
 public class DefaultOidcUserMapper extends BaseOidcUserMapper<DefaultJmixOidcUser> {
 
     protected ClaimsRolesMapper claimsRolesMapper;

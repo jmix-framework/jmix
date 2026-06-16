@@ -2,6 +2,7 @@ package io.jmix.oidc.usermapper;
 
 import io.jmix.oidc.user.HasOidcUserDelegate;
 import io.jmix.oidc.user.JmixOidcUser;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 
 /**
@@ -9,6 +10,7 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUser;
  *
  * @param <T> class of Jmix user
  */
+@NullMarked
 public abstract class BaseOidcUserMapper<T extends JmixOidcUser> implements OidcUserMapper<T> {
 
     /**

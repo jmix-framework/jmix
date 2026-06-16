@@ -4,6 +4,7 @@ import io.jmix.oidc.OidcProperties;
 import io.jmix.security.role.ResourceRoleRepository;
 import io.jmix.security.role.RoleGrantedAuthorityUtils;
 import io.jmix.security.role.RowLevelRoleRepository;
+import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
  * and {@link #rowLevelRolePrefix} prefixes, e.g. if the {@code resourceRolePrefix} is "resource$" then OIDC role with
  * the name "resource$system-full-access" will be mapped to Jmix role with the "system-full-access" code.
  */
+@NullMarked
 public class DefaultClaimsRolesMapper extends BaseClaimsRolesMapper {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultClaimsRolesMapper.class);

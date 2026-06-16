@@ -10,6 +10,7 @@ import io.jmix.oidc.user.JmixOidcUser;
 import io.jmix.security.role.RoleGrantedAuthorityUtils;
 import io.jmix.security.role.assignment.RoleAssignmentRoleType;
 import io.jmix.securitydata.entity.RoleAssignmentEntity;
+import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.GrantedAuthority;
@@ -27,6 +28,7 @@ import java.util.List;
  * @param <T>
  */
 //todo make the class generic and move it to jmix-security in order to share it with jmix-ldap and jmix-oidc
+@NullMarked
 public abstract class SynchronizingOidcUserMapper<T extends JmixOidcUser> extends BaseOidcUserMapper<T> {
 
     private static final Logger log = LoggerFactory.getLogger(SynchronizingOidcUserMapper.class);

@@ -5,6 +5,7 @@ import io.jmix.security.model.RowLevelRole;
 import io.jmix.security.role.ResourceRoleRepository;
 import io.jmix.security.role.RoleGrantedAuthorityUtils;
 import io.jmix.security.role.RowLevelRoleRepository;
+import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.GrantedAuthority;
@@ -18,6 +19,7 @@ import java.util.stream.Stream;
  * methods. The behavior for finding roles with given codes and transforming them into a collection of {@link
  * org.springframework.security.core.GrantedAuthority} is already implemented in the current class.
  */
+@NullMarked
 public class BaseClaimsRolesMapper implements ClaimsRolesMapper {
 
     private static final Logger log = LoggerFactory.getLogger(BaseClaimsRolesMapper.class);

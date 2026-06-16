@@ -1,6 +1,7 @@
 package io.jmix.oidc.usermapper;
 
 import io.jmix.oidc.user.JmixOidcUser;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 
 /**
@@ -10,6 +11,7 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUser;
  *
  * @param <T> type of user object used by Jmix application
  */
+@NullMarked
 public interface OidcUserMapper<T extends JmixOidcUser> {
 
     /**

@@ -2,6 +2,7 @@ package io.jmix.oidc.claimsmapper;
 
 import io.jmix.security.model.ResourceRole;
 import io.jmix.security.model.RowLevelRole;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Collection;
@@ -14,6 +15,7 @@ import java.util.Map;
  *
  * @see io.jmix.oidc.usermapper.OidcUserMapper
  */
+@NullMarked
 public interface ClaimsRolesMapper {
 
     Collection<ResourceRole> toResourceRoles(Map<String, Object> claims);

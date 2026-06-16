@@ -236,8 +236,9 @@ dependencies {
         api "io.jmix.reports:jmix-reports-rest-starter:$freeVersion"
         api "io.jmix.reports:jmix-reports-flowui:$freeVersion"
         api "io.jmix.reports:jmix-reports-flowui-starter:$freeVersion"
-        api "io.jmix.reports:jmix-reports-spreadsheet-flowui:$premiumVersion"
-        api "io.jmix.reports:jmix-reports-spreadsheet-flowui-starter:$premiumVersion"
+
+        api "io.jmix.reportsspreadsheet:jmix-reports-spreadsheet-flowui:$premiumVersion"
+        api "io.jmix.reportsspreadsheet:jmix-reports-spreadsheet-flowui-starter:$premiumVersion"
 
         api "io.jmix.jmxconsole:jmix-jmxconsole:$freeVersion"
         api "io.jmix.jmxconsole:jmix-jmxconsole-starter:$freeVersion"

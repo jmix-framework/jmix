@@ -16,11 +16,14 @@
 
 package io.jmix.ldap.userdetails;
 
+import org.jspecify.annotations.NullMarked;
+
 import java.util.Collection;
 
 /**
  * Allows providing mapping between LDAP group name and Jmix role codes.
  */
+@NullMarked
 public interface LdapAuthorityToJmixRoleCodesMapper {
 
     /**

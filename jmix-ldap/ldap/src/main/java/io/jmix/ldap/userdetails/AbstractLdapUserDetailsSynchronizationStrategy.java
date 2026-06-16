@@ -25,6 +25,7 @@ import io.jmix.ldap.LdapProperties;
 import io.jmix.security.role.RoleGrantedAuthorityUtils;
 import io.jmix.security.role.assignment.RoleAssignmentRoleType;
 import io.jmix.securitydata.entity.RoleAssignmentEntity;
+import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +46,7 @@ import java.util.stream.Collectors;
  *
  * @param <T> user details class
  */
+@NullMarked
 public abstract class AbstractLdapUserDetailsSynchronizationStrategy<T extends UserDetails>
         implements LdapUserDetailsSynchronizationStrategy {
 

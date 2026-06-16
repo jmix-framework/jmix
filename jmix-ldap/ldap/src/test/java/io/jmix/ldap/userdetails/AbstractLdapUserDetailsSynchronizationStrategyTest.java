@@ -24,6 +24,7 @@ import io.jmix.ldap.LdapProperties;
 import io.jmix.security.role.RoleGrantedAuthorityUtils;
 import io.jmix.security.role.assignment.RoleAssignmentRoleType;
 import io.jmix.securitydata.entity.RoleAssignmentEntity;
+import org.jspecify.annotations.NullMarked;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -234,6 +235,7 @@ class AbstractLdapUserDetailsSynchronizationStrategyTest {
         return code + ":" + type;
     }
 
+    @NullMarked
     private static class TestStrategy extends AbstractLdapUserDetailsSynchronizationStrategy<UserDetails> {
 
         @Override

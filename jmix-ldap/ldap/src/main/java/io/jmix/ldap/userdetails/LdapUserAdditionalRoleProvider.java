@@ -16,6 +16,7 @@
 
 package io.jmix.ldap.userdetails;
 
+import org.jspecify.annotations.NullMarked;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -24,6 +25,7 @@ import java.util.Set;
 /**
  * Extension point for fetching additional user roles for LDAP user.
  */
+@NullMarked
 public interface LdapUserAdditionalRoleProvider {
 
     /**

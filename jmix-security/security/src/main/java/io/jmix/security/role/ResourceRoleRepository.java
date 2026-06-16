@@ -18,6 +18,9 @@ package io.jmix.security.role;
 
 import io.jmix.security.model.ResourceRole;
 
+import org.jspecify.annotations.NullMarked;
+
+@NullMarked
 public interface ResourceRoleRepository extends RoleRepository<ResourceRole> {
 
     String RESOURCE_ROLES_CACHE_NAME = "resource-roles-cache";

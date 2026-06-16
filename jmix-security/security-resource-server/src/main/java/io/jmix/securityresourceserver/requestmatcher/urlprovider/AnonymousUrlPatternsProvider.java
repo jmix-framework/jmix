@@ -17,6 +17,7 @@
 package io.jmix.securityresourceserver.requestmatcher.urlprovider;
 
 import io.jmix.securityresourceserver.requestmatcher.impl.AnonymousUrlPatternsRequestMatcherProvider;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.List;
 
@@ -27,6 +28,7 @@ import java.util.List;
  *
  * @see AnonymousUrlPatternsRequestMatcherProvider
  */
+@NullMarked
 public interface AnonymousUrlPatternsProvider {
 
     List<String> getAnonymousUrlPatterns();

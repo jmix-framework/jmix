@@ -20,9 +20,12 @@ import org.springframework.security.web.SecurityFilterChain;
 
 import java.util.List;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Interface to be implemented by beans that customize Spring Security filter chains.
  */
+@NullMarked
 public interface SecurityFilterChainCustomizer {
 
     /**

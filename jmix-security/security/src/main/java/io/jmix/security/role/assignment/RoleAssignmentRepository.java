@@ -16,11 +16,14 @@
 
 package io.jmix.security.role.assignment;
 
+import org.jspecify.annotations.NullMarked;
+
 import java.util.Collection;
 
 /**
  * Repository of {@link RoleAssignment}
  */
+@NullMarked
 public interface RoleAssignmentRepository {
 
     Collection<RoleAssignment> getAllAssignments();

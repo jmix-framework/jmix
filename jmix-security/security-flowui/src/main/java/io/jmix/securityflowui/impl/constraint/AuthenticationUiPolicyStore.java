@@ -25,6 +25,7 @@ import io.jmix.security.role.ResourceRoleRepository;
 import io.jmix.security.role.RoleGrantedAuthorityUtils;
 import io.jmix.securityflowui.constraint.UiPolicyStore;
 import io.jmix.securityflowui.constraint.UiPolicyStoreContributor;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.Authentication;
@@ -41,6 +42,7 @@ import java.util.stream.Stream;
 /**
  * Resolves the current user's UI policies from assigned roles and registered UI policy contributors.
  */
+@NullMarked
 @Component("sec_AuthenticationUiPolicyStore")
 public class AuthenticationUiPolicyStore implements UiPolicyStore {
 

@@ -19,8 +19,11 @@ package io.jmix.security.authentication;
 import io.jmix.security.model.RowLevelPolicy;
 
 import java.io.Serializable;
+
+import org.jspecify.annotations.NullMarked;
 import java.util.Collection;
 
+@NullMarked
 public interface RowLevelPolicyIndex extends Serializable {
     void indexAll(Collection<RowLevelPolicy> rowLevelPolicies);
 }

@@ -18,6 +18,7 @@ package io.jmix.security.role;
 
 import io.jmix.security.model.BaseRole;
 
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import java.util.Collection;
 import java.util.Objects;
@@ -28,6 +29,7 @@ import java.util.Objects;
  * <p>
  * Role providers are used by {@link ResourceRoleRepository}/{@link RowLevelRoleRepository}
  */
+@NullMarked
 public interface RoleProvider<T extends BaseRole> {
 
     default T getRoleByCode(String code) {

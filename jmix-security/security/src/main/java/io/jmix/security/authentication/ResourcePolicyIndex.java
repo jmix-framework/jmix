@@ -19,8 +19,11 @@ package io.jmix.security.authentication;
 import io.jmix.security.model.ResourcePolicy;
 
 import java.io.Serializable;
+
+import org.jspecify.annotations.NullMarked;
 import java.util.Collection;
 
+@NullMarked
 public interface ResourcePolicyIndex extends Serializable {
     void indexAll(Collection<ResourcePolicy> resourcePolicies);
 }

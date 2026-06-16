@@ -22,6 +22,7 @@ import io.jmix.security.model.*;
 import io.jmix.security.role.RowLevelRoleProvider;
 import io.jmix.securitydata.entity.RowLevelPolicyEntity;
 import io.jmix.securitydata.entity.RowLevelRoleEntity;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
@@ -33,6 +34,7 @@ import java.util.stream.Collectors;
 /**
  * Role provider that gets row level roles from the database from the {@link RowLevelRoleEntity}.
  */
+@NullMarked
 @Component("sec_DatabaseRowLevelRoleProvider")
 public class DatabaseRowLevelRoleProvider extends BaseDatabaseRoleProvider<RowLevelRole>
         implements RowLevelRoleProvider {

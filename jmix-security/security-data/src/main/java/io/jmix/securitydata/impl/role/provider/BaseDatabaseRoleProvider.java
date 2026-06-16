@@ -24,9 +24,10 @@ import io.jmix.core.UnconstrainedDataManager;
 import io.jmix.core.accesscontext.CrudEntityContext;
 import io.jmix.security.model.BaseRole;
 import io.jmix.security.role.RoleProvider;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import org.jspecify.annotations.Nullable;
 import java.util.Collection;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -41,6 +42,7 @@ public abstract class BaseDatabaseRoleProvider<T extends BaseRole> implements Ro
     protected AccessManager accessManager;
 
     @Override
+    @NonNull
     public Collection<T> getAllRoles() {
         return dataManager.load(getRoleClass())
                 .all()
@@ -53,7 +55,7 @@ public abstract class BaseDatabaseRoleProvider<T extends BaseRole> implements Ro
 
     @Nullable
     @Override
-    public T findRoleByCode(String code) {
+    public T findRoleByCode(@NonNull String code) {
         return dataManager.load(getRoleClass())
                 .query(buildFindByCodeQuery())
                 .parameter("code", code)
@@ -64,7 +66,7 @@ public abstract class BaseDatabaseRoleProvider<T extends BaseRole> implements Ro
     }
 
     @Override
-    public boolean deleteRole(T role) {
+    public boolean deleteRole(@NonNull T role) {
         CrudEntityContext entityContext = new CrudEntityContext(metadata.getClass(getRoleClass()));
         accessManager.applyRegisteredConstraints(entityContext);
         if (!entityContext.isDeletePermitted()) {

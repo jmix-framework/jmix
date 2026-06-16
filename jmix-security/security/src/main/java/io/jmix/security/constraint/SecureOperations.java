@@ -19,9 +19,12 @@ package io.jmix.security.constraint;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Provides methods to check permissions of the current user.
  */
+@NullMarked
 public interface SecureOperations {
 
     /**

@@ -19,10 +19,12 @@ package io.jmix.securityflowui.impl.constraint;
 import io.jmix.security.model.ResourcePolicyEffect;
 import io.jmix.securityflowui.constraint.UiPolicyStore;
 import io.jmix.securityflowui.constraint.UiSecureOperations;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.stereotype.Component;
 
 import java.util.Objects;
 
+@NullMarked
 @Component("sec_UiSecureOperations")
 public class UiSecureOperationsImpl implements UiSecureOperations {
 

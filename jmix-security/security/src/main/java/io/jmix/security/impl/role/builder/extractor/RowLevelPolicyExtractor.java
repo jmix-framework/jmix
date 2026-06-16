@@ -19,8 +19,11 @@ package io.jmix.security.impl.role.builder.extractor;
 import io.jmix.security.model.RowLevelPolicy;
 
 import java.lang.reflect.Method;
+
+import org.jspecify.annotations.NullMarked;
 import java.util.Collection;
 
+@NullMarked
 public interface RowLevelPolicyExtractor {
 
     Collection<RowLevelPolicy> extractRowLevelPolicies(Method method);

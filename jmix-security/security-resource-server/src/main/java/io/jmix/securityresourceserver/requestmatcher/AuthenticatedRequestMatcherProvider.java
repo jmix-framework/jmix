@@ -17,12 +17,14 @@
 package io.jmix.securityresourceserver.requestmatcher;
 
 import io.jmix.securityresourceserver.requestmatcher.impl.CompositeResourceServerRequestMatcherProviderImpl;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
 /**
  * Interface provides a {@link RequestMatcher} for authenticated endpoints that will be processed by the
  * {@link CompositeResourceServerRequestMatcherProviderImpl}.
  */
+@NullMarked
 public interface AuthenticatedRequestMatcherProvider {
 
     RequestMatcher getAuthenticatedRequestMatcher();

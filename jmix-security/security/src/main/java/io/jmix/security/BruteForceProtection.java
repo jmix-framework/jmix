@@ -16,9 +16,12 @@
 
 package io.jmix.security;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Class is responsible for the brute-force protection on user authentication.
  */
+@NullMarked
 public interface BruteForceProtection {
     /**
      * Returns a number of login attempts left for the specified pair of login and IP-address.

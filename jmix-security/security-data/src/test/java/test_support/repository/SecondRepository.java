@@ -18,6 +18,7 @@ package test_support.repository;
 
 import io.jmix.core.FetchPlan;
 import io.jmix.core.repository.ApplyConstraints;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,6 +29,7 @@ import java.util.List;
 import java.util.UUID;
 
 @ApplyConstraints(false)
+@NullMarked
 public interface SecondRepository extends FirstRepository {
     @Override
     List<TestOrder> findAll(Sort sort, @Nullable FetchPlan fetchPlan);

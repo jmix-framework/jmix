@@ -26,6 +26,7 @@ import io.jmix.security.model.*;
 import io.jmix.security.role.ResourceRoleRepository;
 import io.jmix.security.role.RoleGrantedAuthorityUtils;
 import io.jmix.security.role.RowLevelRoleRepository;
+import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +42,7 @@ import java.util.stream.Stream;
 /**
  * Resolves the current user's security policies from assigned roles and registered policy contributors.
  */
+@NullMarked
 @Component("sec_AuthenticationPolicyStore")
 public class AuthenticationPolicyStore implements PolicyStore {
 

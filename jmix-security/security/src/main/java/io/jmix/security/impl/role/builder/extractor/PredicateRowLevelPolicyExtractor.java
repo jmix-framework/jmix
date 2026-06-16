@@ -27,6 +27,7 @@ import io.jmix.security.model.RowLevelPolicyAction;
 import io.jmix.security.model.RowLevelPredicate;
 import io.jmix.security.role.annotation.PredicateRowLevelPolicy;
 import org.apache.commons.lang3.SystemUtils;
+import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +45,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+@NullMarked
 @Component("sec_InMemoryRowLevelPolicyExtractor")
 public class PredicateRowLevelPolicyExtractor implements RowLevelPolicyExtractor {
 

@@ -18,6 +18,9 @@ package io.jmix.security.role;
 
 import io.jmix.security.model.RowLevelRole;
 
+import org.jspecify.annotations.NullMarked;
+
+@NullMarked
 public interface RowLevelRoleRepository extends RoleRepository<RowLevelRole> {
 
     String ROW_LEVEL_ROLES_CACHE_NAME = "row-level-roles-cache";

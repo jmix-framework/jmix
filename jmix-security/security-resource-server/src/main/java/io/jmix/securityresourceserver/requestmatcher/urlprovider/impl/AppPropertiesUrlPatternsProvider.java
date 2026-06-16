@@ -20,6 +20,7 @@ import com.google.common.base.Splitter;
 import io.jmix.core.JmixModules;
 import io.jmix.securityresourceserver.requestmatcher.urlprovider.AnonymousUrlPatternsProvider;
 import io.jmix.securityresourceserver.requestmatcher.urlprovider.AuthenticatedUrlPatternsProvider;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.List;
 
@@ -34,6 +35,7 @@ import java.util.List;
  * @see AuthenticatedUrlPatternsProvider
  * @see AnonymousUrlPatternsProvider
  */
+@NullMarked
 public class AppPropertiesUrlPatternsProvider implements AuthenticatedUrlPatternsProvider, AnonymousUrlPatternsProvider {
 
     private static final String AUTHENTICATED_URL_PATTERNS_PROPERTY = "jmix.resource-server.authenticated-url-patterns";

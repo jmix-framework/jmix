@@ -19,6 +19,7 @@ package test_support.repository;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.repository.ApplyConstraints;
 import io.jmix.core.repository.JmixDataRepository;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import org.springframework.data.domain.Sort;
 import test_support.entity.TestOrder;
@@ -26,6 +27,7 @@ import test_support.entity.TestOrder;
 import java.util.List;
 import java.util.UUID;
 
+@NullMarked
 public interface FirstRepository extends JmixDataRepository<TestOrder, UUID> {
 
     @Override

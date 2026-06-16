@@ -21,6 +21,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.security.model.RowLevelPolicy;
 import io.jmix.security.role.annotation.JpqlRowLevelPolicy;
 import io.jmix.security.role.annotation.JpqlRowLevelPolicyContainer;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.stereotype.Component;
@@ -28,6 +29,7 @@ import org.springframework.stereotype.Component;
 import java.lang.reflect.Method;
 import java.util.*;
 
+@NullMarked
 @Component("sec_JpqlRowLevelPolicyExtractor")
 public class JpqlRowLevelPolicyExtractor implements RowLevelPolicyExtractor {
 

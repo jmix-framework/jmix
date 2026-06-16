@@ -19,6 +19,7 @@ package io.jmix.security.impl.role.assignment;
 import io.jmix.security.role.assignment.RoleAssignment;
 import io.jmix.security.role.assignment.RoleAssignmentProvider;
 import io.jmix.security.role.assignment.RoleAssignmentRepository;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -27,6 +28,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@NullMarked
 @Component("sec_RoleAssignmentRepository")
 public class RoleAssignmentRepositoryImpl implements RoleAssignmentRepository {
 

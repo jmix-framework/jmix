@@ -19,6 +19,7 @@ package io.jmix.securityresourceserver.requestmatcher.impl;
 import io.jmix.securityresourceserver.requestmatcher.AuthenticatedRequestMatcherProvider;
 import io.jmix.securityresourceserver.requestmatcher.urlprovider.AuthenticatedUrlPatternsProvider;
 import io.jmix.securityresourceserver.requestmatcher.util.RequestMatcherUtils;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
@@ -32,6 +33,7 @@ import java.util.stream.Collectors;
  *
  * @see AuthenticatedUrlPatternsProvider
  */
+@NullMarked
 public class AuthenticatedUrlPatternsRequestMatcherProvider implements AuthenticatedRequestMatcherProvider {
 
     private final List<AuthenticatedUrlPatternsProvider> authenticatedUrlPatternsProviders;

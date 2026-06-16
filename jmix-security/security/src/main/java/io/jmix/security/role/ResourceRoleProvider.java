@@ -18,11 +18,14 @@ package io.jmix.security.role;
 
 import io.jmix.security.model.ResourceRole;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Interface must be implemented by classes that provide resource roles from a particular source type. A source type may be a
  * database, annotated interfaces, etc.
  * <p>
  * Role providers are used by {@link ResourceRoleRepository}
  */
+@NullMarked
 public interface ResourceRoleProvider extends RoleProvider<ResourceRole> {
 }

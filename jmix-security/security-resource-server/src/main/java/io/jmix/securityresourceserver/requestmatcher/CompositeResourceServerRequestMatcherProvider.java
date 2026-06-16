@@ -16,12 +16,14 @@
 
 package io.jmix.securityresourceserver.requestmatcher;
 
+import org.jspecify.annotations.NullMarked;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
 /**
  * Interface provides a {@link RequestMatcher} that will be used a security matcher for the resource server
  * configuration. Currently, it is used in the Authorization Server and OpenID Connect add-ons.
  */
+@NullMarked
 public interface CompositeResourceServerRequestMatcherProvider {
 
     /**

@@ -21,6 +21,7 @@ import io.jmix.core.UnconstrainedDataManager;
 import io.jmix.security.role.assignment.RoleAssignment;
 import io.jmix.security.role.assignment.RoleAssignmentProvider;
 import io.jmix.securitydata.entity.RoleAssignmentEntity;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -30,6 +31,7 @@ import java.util.stream.Collectors;
 /**
  * Role assignment provider that gets role assignments from the database.
  */
+@NullMarked
 @Component("sec_DatabaseRoleAssignmentProvider")
 public class DatabaseRoleAssignmentProvider implements RoleAssignmentProvider {
 

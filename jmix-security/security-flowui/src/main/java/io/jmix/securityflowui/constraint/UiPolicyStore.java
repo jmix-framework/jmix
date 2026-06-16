@@ -17,9 +17,11 @@
 package io.jmix.securityflowui.constraint;
 
 import io.jmix.security.model.ResourcePolicy;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.stream.Stream;
 
+@NullMarked
 public interface UiPolicyStore {
 
     Stream<ResourcePolicy> getViewResourcePolicies(String viewId);

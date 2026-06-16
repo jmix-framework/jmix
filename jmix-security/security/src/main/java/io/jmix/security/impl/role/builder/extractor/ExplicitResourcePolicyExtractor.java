@@ -18,11 +18,13 @@ package io.jmix.security.impl.role.builder.extractor;
 
 import io.jmix.security.model.ResourcePolicy;
 import io.jmix.security.role.annotation.ExplicitResourcePolicies;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.*;
 import java.util.*;
 
+@NullMarked
 @Component("sec_ExplicitResourcePolicyExtractor")
 public class ExplicitResourcePolicyExtractor implements ResourcePolicyExtractor {
 

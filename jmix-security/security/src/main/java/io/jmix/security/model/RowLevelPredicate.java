@@ -1,5 +1,7 @@
 package io.jmix.security.model;
 
+import org.jspecify.annotations.NullMarked;
+
 import java.io.Serializable;
 import java.util.function.Predicate;
 
@@ -8,5 +10,6 @@ import java.util.function.Predicate;
  * RowLevelBiPredicate} if you need to use Spring beans inside the function.
  */
 @FunctionalInterface
+@NullMarked
 public interface RowLevelPredicate<T> extends Predicate<T>, Serializable {
 }

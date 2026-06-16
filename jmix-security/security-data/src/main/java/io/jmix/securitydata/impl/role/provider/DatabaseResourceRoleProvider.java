@@ -24,6 +24,7 @@ import io.jmix.security.model.RoleSource;
 import io.jmix.security.role.ResourceRoleProvider;
 import io.jmix.securitydata.entity.ResourcePolicyEntity;
 import io.jmix.securitydata.entity.ResourceRoleEntity;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -35,6 +36,7 @@ import java.util.stream.Collectors;
 /**
  * Role provider that gets resource roles from the database from the {@link ResourceRoleEntity}.
  */
+@NullMarked
 @Component("sec_DatabaseResourceRoleProvider")
 public class DatabaseResourceRoleProvider extends BaseDatabaseRoleProvider<ResourceRole>
         implements ResourceRoleProvider {

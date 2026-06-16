@@ -23,6 +23,7 @@ import io.jmix.security.impl.role.builder.AnnotatedRoleBuilder;
 import io.jmix.security.impl.role.event.ResourceRoleModifiedEvent;
 import io.jmix.security.model.ResourceRole;
 import io.jmix.security.role.ResourceRoleProvider;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
@@ -38,6 +39,7 @@ import java.util.stream.Collectors;
  * Role provider that gets roles from classes annotated with
  * {@link io.jmix.security.role.annotation.ResourceRole}.
  */
+@NullMarked
 @Component("sec_AnnotatedResourceRoleProvider")
 public class AnnotatedResourceRoleProvider implements ResourceRoleProvider {
 

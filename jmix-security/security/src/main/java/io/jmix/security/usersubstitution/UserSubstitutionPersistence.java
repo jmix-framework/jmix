@@ -16,6 +16,8 @@
 
 package io.jmix.security.usersubstitution;
 
+import org.jspecify.annotations.NullMarked;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -24,6 +26,7 @@ import java.util.UUID;
 /**
  * Interface to be implemented by beans that store {@code UserSubstitutionModel} in a persistent storage.
  */
+@NullMarked
 public interface UserSubstitutionPersistence {
 
     boolean isViewPermitted();

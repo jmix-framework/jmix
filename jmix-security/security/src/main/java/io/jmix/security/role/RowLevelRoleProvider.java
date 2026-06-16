@@ -18,11 +18,14 @@ package io.jmix.security.role;
 
 import io.jmix.security.model.RowLevelRole;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Interface must be implemented by classes that provide row level roles from a particular source type. A source type may be a
  * database, annotated interfaces, etc.
  * <p>
  * Role providers are used by {@link RowLevelRoleRepository}
  */
+@NullMarked
 public interface RowLevelRoleProvider extends RoleProvider<RowLevelRole> {
 }

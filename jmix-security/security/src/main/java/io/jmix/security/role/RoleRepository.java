@@ -18,6 +18,7 @@ package io.jmix.security.role;
 
 import io.jmix.security.model.BaseRole;
 
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
@@ -26,6 +27,7 @@ import java.util.Collection;
  * Interface for roles repository. Implementations of the interface are responsible for finding roles of different
  * types: resource, row-level, etc.
  */
+@NullMarked
 public interface RoleRepository<T extends BaseRole> {
 
     T getRoleByCode(String code);

@@ -22,9 +22,12 @@ import io.jmix.security.model.RowLevelPolicy;
 
 import java.util.stream.Stream;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Contributes additional policies to {@link PolicyStore} implementations.
  */
+@NullMarked
 public interface PolicyStoreContributor {
 
     /**

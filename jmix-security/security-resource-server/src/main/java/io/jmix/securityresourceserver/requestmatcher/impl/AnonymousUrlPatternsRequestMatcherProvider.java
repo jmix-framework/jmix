@@ -19,6 +19,7 @@ package io.jmix.securityresourceserver.requestmatcher.impl;
 import io.jmix.securityresourceserver.requestmatcher.AnonymousRequestMatcherProvider;
 import io.jmix.securityresourceserver.requestmatcher.urlprovider.AnonymousUrlPatternsProvider;
 import io.jmix.securityresourceserver.requestmatcher.util.RequestMatcherUtils;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
@@ -31,6 +32,7 @@ import java.util.stream.Collectors;
  *
  * @see AnonymousUrlPatternsProvider
  */
+@NullMarked
 public class AnonymousUrlPatternsRequestMatcherProvider implements AnonymousRequestMatcherProvider {
 
     private final List<AnonymousUrlPatternsProvider> anonymousUrlPatternsProviders;

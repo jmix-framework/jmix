@@ -25,10 +25,12 @@ import io.jmix.security.model.EntityAttributePolicyAction;
 import io.jmix.security.model.EntityPolicyAction;
 import io.jmix.security.model.ResourcePolicy;
 import io.jmix.security.model.ResourcePolicyEffect;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.stereotype.Component;
 
 import java.util.Objects;
 
+@NullMarked
 @Component("sec_SecureOperations")
 public class SecureOperationsImpl implements SecureOperations {
 

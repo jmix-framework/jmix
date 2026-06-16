@@ -45,7 +45,7 @@ public class UiTestIdSupport {
     private static final Logger log = LoggerFactory.getLogger(UiTestIdSupport.class);
 
     public static final String UI_TEST_ID = "data-testid";
-    protected static final String J_TEST_ID = "j-testid";
+    protected static final String J_TEST_ID = "j-test-id";
 
     protected UiTestIdManager uiTestIdManager;
     protected UiProperties uiProperties;

@@ -18,6 +18,7 @@ package test_support.service;
 
 import io.jmix.core.FileRef;
 import io.jmix.restds.annotation.RemoteService;
+import org.jspecify.annotations.NullMarked;
 import test_support.entity.ContactType;
 import test_support.entity.Customer;
 import test_support.entity.CustomerContact;
@@ -27,6 +28,7 @@ import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.*;
 
+@NullMarked
 @RemoteService(store = "restService1")
 public interface SampleService {
 

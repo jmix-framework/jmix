@@ -1,5 +1,6 @@
 package io.jmix.restds.impl;
 
+import org.jspecify.annotations.NullMarked;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpRequest;
@@ -28,11 +29,13 @@ public class RestOAuth2ClientAuthenticator implements RestAuthenticator {
     private String oauth2ClientRegistration;
 
     @Override
+    @NullMarked
     public void setDataStoreName(String name) {
         oauth2ClientRegistration = environment.getRequiredProperty(name + ".oauth2-client-registration");
     }
 
     @Override
+    @NullMarked
     public ClientHttpRequestInterceptor getAuthenticationInterceptor() {
         return new AuthenticatingClientHttpRequestInterceptor();
     }
@@ -54,6 +57,7 @@ public class RestOAuth2ClientAuthenticator implements RestAuthenticator {
         return authorizedClient.getAccessToken().getTokenValue();
     }
 
+    @NullMarked
     private class AuthenticatingClientHttpRequestInterceptor implements ClientHttpRequestInterceptor {
         @Override
         public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {

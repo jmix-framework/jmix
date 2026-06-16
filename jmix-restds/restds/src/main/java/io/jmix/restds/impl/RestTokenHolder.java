@@ -16,8 +16,10 @@
 
 package io.jmix.restds.impl;
 
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
+@NullMarked
 public interface RestTokenHolder {
 
     @Nullable

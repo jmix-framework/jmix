@@ -17,9 +17,11 @@
 package test_support.service;
 
 import io.jmix.restds.annotation.RemoteService;
+import org.jspecify.annotations.NullMarked;
 import test_support.entity.Customer;
 import test_support.entity.CustomerContact;
 
+@NullMarked
 @RemoteService(store = "restService1", remoteName = "app_Customers")
 public interface CustomerService {
 

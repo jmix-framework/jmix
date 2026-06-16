@@ -17,6 +17,7 @@
 package io.jmix.restds.util;
 
 import io.jmix.core.JmixOrder;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.core.type.filter.TypeFilter;
 import org.jspecify.annotations.Nullable;
 
@@ -27,6 +28,7 @@ import org.jspecify.annotations.Nullable;
  * The implementation can have the {@link org.springframework.core.annotation.Order} annotation
  * with a {@link JmixOrder} value.
  */
+@NullMarked
 public interface RemoteServiceConfigurationCustomizer {
 
     /**
@@ -51,7 +53,9 @@ public interface RemoteServiceConfigurationCustomizer {
      */
     class ServiceParameters {
 
+        @Nullable
         private String storeName;
+        @Nullable
         private String serviceName;
 
         public ServiceParameters() {

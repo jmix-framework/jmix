@@ -16,11 +16,13 @@
 
 package io.jmix.restds.impl;
 
+import org.jspecify.annotations.NullMarked;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 
 /**
  * Provides authentication for {@link io.jmix.restds.impl.RestDataStore}.
  */
+@NullMarked
 public interface RestAuthenticator {
 
     /**

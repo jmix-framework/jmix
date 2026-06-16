@@ -16,6 +16,9 @@
 
 package io.jmix.sessions.validators;
 
+import org.jspecify.annotations.NullMarked;
+
+@NullMarked
 public interface SessionAttributePersistenceValidator {
 
     boolean isPersistent(String attributeName, Object attributeValue);

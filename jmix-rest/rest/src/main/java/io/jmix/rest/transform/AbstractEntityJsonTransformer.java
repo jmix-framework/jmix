@@ -18,6 +18,7 @@ package io.jmix.rest.transform;
 
 import io.jmix.rest.exception.RestAPIException;
 import io.jmix.rest.impl.config.RestJsonTransformations;
+import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +40,7 @@ import static io.jmix.core.EntitySerialization.ENTITY_NAME_PROP;
  *     <li>remove attribute</li>
  * </ul>
  */
+@NullMarked
 public abstract class AbstractEntityJsonTransformer implements EntityJsonTransformer {
 
     protected static final Logger log = LoggerFactory.getLogger(AbstractEntityJsonTransformer.class);

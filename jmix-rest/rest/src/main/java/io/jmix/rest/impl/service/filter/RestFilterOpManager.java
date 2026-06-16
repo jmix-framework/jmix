@@ -17,8 +17,11 @@
 
 package io.jmix.rest.impl.service.filter;
 
+import org.jspecify.annotations.NullMarked;
+
 import java.util.EnumSet;
 
+@NullMarked
 public interface RestFilterOpManager {
 
     EnumSet<RestFilterOp> availableOps(Class javaClass);

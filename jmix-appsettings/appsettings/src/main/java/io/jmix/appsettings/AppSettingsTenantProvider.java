@@ -16,9 +16,12 @@
 
 package io.jmix.appsettings;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Provides the current tenant id for app settings support.
  */
+@NullMarked
 public interface AppSettingsTenantProvider {
 
     /**

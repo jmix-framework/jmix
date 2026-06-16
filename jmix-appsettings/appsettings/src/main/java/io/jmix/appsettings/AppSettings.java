@@ -1,7 +1,9 @@
 package io.jmix.appsettings;
 
 import io.jmix.appsettings.entity.AppSettingsEntity;
+import org.jspecify.annotations.NullMarked;
 
+@NullMarked
 public interface AppSettings {
 
     /**

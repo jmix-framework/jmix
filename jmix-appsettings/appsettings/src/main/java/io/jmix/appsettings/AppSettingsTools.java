@@ -1,10 +1,12 @@
 package io.jmix.appsettings;
 
 import io.jmix.appsettings.entity.AppSettingsEntity;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
+@NullMarked
 public interface AppSettingsTools {
 
     /**

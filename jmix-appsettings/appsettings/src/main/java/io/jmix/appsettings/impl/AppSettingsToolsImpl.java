@@ -19,6 +19,7 @@ import io.jmix.data.PersistenceHints;
 import io.jmix.data.Sequence;
 import io.jmix.data.Sequences;
 import io.jmix.data.StoreAwareLocator;
+import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,7 @@ import java.text.ParseException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@NullMarked
 @Component("appset_AppSettingsTools")
 public class AppSettingsToolsImpl implements AppSettingsTools {
 

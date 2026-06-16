@@ -16,11 +16,14 @@
 
 package io.jmix.authserver.roleassignment;
 
+import org.jspecify.annotations.NullMarked;
+
 import java.util.Collection;
 
 /**
  * Repository for storing and retrieving {@link RegisteredClientRoleAssignment}
  */
+@NullMarked
 public interface RegisteredClientRoleAssignmentRepository {
 
     void save(RegisteredClientRoleAssignment roleAssignment);

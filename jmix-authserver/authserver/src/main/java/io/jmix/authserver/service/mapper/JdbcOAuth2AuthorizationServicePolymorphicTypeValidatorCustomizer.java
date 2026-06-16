@@ -16,6 +16,7 @@
 
 package io.jmix.authserver.service.mapper;
 
+import org.jspecify.annotations.NullMarked;
 import org.springframework.security.oauth2.server.authorization.JdbcOAuth2AuthorizationService;
 import tools.jackson.databind.json.JsonMapper;
 import tools.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
@@ -24,6 +25,7 @@ import tools.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
  * Interface to provide ability to customize {@link BasicPolymorphicTypeValidator}
  * that is used by {@link JsonMapper} within {@link JdbcOAuth2AuthorizationService}.
  */
+@NullMarked
 public interface JdbcOAuth2AuthorizationServicePolymorphicTypeValidatorCustomizer {
 
     void customize(BasicPolymorphicTypeValidator.Builder polymorphicTypeValidatorBuilder);

@@ -16,6 +16,7 @@
 
 package io.jmix.data.persistence;
 
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -25,6 +26,7 @@ import org.jspecify.annotations.Nullable;
  * {@link org.springframework.core.annotation.Order}. Return {@code null} if the supplier does not support the
  * specified property.
  */
+@NullMarked
 public interface JpqlSortExpressionSupplier {
 
     /**

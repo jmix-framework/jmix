@@ -16,12 +16,14 @@
 
 package io.jmix.eclipselink.persistence;
 
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import java.util.Map;
 
 /**
  * Provides the additional criteria for the query.
  */
+@NullMarked
 public interface AdditionalCriteriaProvider {
 
     /**

@@ -17,13 +17,14 @@
 package io.jmix.data;
 
 import io.jmix.core.event.AttributeChanges;
-
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import java.util.Set;
 
 /**
  * Provides information about changes in entity attributes.
  */
+@NullMarked
 public interface AttributeChangesProvider {
 
     /**

@@ -16,9 +16,12 @@
 
 package io.jmix.data;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Provides access to the database sequences.
  */
+@NullMarked
 public interface Sequences {
 
     /**

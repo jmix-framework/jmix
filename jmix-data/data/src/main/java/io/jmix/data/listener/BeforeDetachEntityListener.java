@@ -15,11 +15,14 @@
  */
 package io.jmix.data.listener;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Defines the contract for handling entities right before they are detached from an EntityManager
  * on transaction commit.
  */
 @Deprecated(since = "2.8", forRemoval = true)
+@NullMarked
 public interface BeforeDetachEntityListener<T> {
 
     /**

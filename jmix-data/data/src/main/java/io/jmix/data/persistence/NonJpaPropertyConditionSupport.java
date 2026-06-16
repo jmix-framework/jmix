@@ -18,10 +18,12 @@ package io.jmix.data.persistence;
 
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.querycondition.PropertyCondition;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Extension point for modules that translate non-JPA {@link PropertyCondition} instances to JPQL.
  */
+@NullMarked
 public interface NonJpaPropertyConditionSupport {
 
     /**

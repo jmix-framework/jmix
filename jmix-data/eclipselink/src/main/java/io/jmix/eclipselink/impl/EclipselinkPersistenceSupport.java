@@ -41,6 +41,7 @@ import org.eclipse.persistence.queries.FetchGroup;
 import org.eclipse.persistence.queries.FetchGroupTracker;
 import org.eclipse.persistence.sessions.Session;
 import org.eclipse.persistence.sessions.UnitOfWork;
+import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -378,6 +379,7 @@ public class EclipselinkPersistenceSupport implements ApplicationContextAware {
         }
     }
 
+    @NullMarked
     public interface EntityVisitor {
         boolean visit(Object entity);
     }

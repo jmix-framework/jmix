@@ -17,9 +17,11 @@
 package io.jmix.eclipselink.impl.dbms;
 
 import org.eclipse.persistence.mappings.converters.Converter;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.UUID;
 
+@NullMarked
 public interface UuidMappingInfo {
 
     int getUuidSqlType();

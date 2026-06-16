@@ -16,6 +16,7 @@
 package io.jmix.data;
 
 
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import java.util.List;
 import java.util.Set;
@@ -23,6 +24,7 @@ import java.util.Set;
 /**
  * Parses JPQL query and returns some information about it.
  */
+@NullMarked
 public interface QueryParser {
 
     /**

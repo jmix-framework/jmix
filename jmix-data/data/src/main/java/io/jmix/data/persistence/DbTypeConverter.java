@@ -16,6 +16,7 @@
 
 package io.jmix.data.persistence;
 
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import java.sql.ResultSet;
 
@@ -24,6 +25,7 @@ import java.sql.ResultSet;
  * DBMS type.
  * <br> The main goal is to convert dates and UUID.
  */
+@NullMarked
 public interface DbTypeConverter {
 
     /**

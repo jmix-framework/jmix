@@ -16,6 +16,9 @@
 
 package io.jmix.data.impl.jpql.model;
 
+import org.jspecify.annotations.NullMarked;
+
+@NullMarked
 public interface Attribute extends Cloneable {
     Class getSimpleType();
 

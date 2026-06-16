@@ -15,10 +15,13 @@
  */
 package io.jmix.data.listener;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Defines the contract for handling entities right before they are attached to an EntityManager on merge operation.
  */
 @Deprecated(since = "2.8", forRemoval = true)
+@NullMarked
 public interface BeforeAttachEntityListener<T> {
 
     /**

@@ -19,6 +19,7 @@ package test_support.repository;
 import io.jmix.core.repository.*;
 import io.jmix.data.PersistenceHints;
 import jakarta.persistence.QueryHint;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.query.Param;
@@ -28,6 +29,7 @@ import java.util.List;
 import java.util.UUID;
 
 
+@NullMarked
 public interface OrderWithContextRepository extends JmixDataRepository<SalesOrder, UUID> {
 
     @FetchPlan("SalesOrder.full")

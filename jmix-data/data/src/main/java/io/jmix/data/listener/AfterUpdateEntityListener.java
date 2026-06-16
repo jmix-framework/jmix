@@ -15,10 +15,13 @@
  */
 package io.jmix.data.listener;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Defines the contract for handling of entities after they have been updated in DB.
  */
 @Deprecated(since = "2.8", forRemoval = true)
+@NullMarked
 public interface AfterUpdateEntityListener<T> {
 
     /**

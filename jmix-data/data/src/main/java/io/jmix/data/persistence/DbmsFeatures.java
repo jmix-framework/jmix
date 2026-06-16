@@ -16,6 +16,7 @@
 
 package io.jmix.data.persistence;
 
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import java.util.Map;
 
@@ -25,6 +26,7 @@ import java.util.Map;
  *
  * @see DbmsSpecifics
  */
+@NullMarked
 public interface DbmsFeatures {
 
     /**

@@ -17,13 +17,14 @@
 package io.jmix.data;
 
 import org.springframework.security.core.userdetails.UserDetails;
-
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
  * Provides information about current user for audit purposes -
  * Creatable, Updatable, SoftDelete entities and for Entity Log.
  */
+@NullMarked
 public interface AuditInfoProvider {
 
     @Nullable

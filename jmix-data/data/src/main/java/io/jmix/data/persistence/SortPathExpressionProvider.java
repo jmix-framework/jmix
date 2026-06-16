@@ -18,6 +18,7 @@ package io.jmix.data.persistence;
 
 import io.jmix.core.Sort;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.Map;
 
@@ -26,6 +27,7 @@ import java.util.Map;
  * <p>
  * Returned expressions may use the {@code {E}} placeholder for the root entity alias.
  */
+@NullMarked
 public interface SortPathExpressionProvider {
 
     /**

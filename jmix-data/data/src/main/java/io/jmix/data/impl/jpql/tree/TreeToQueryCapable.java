@@ -19,9 +19,11 @@ package io.jmix.data.impl.jpql.tree;
 import io.jmix.data.impl.jpql.ErrorRec;
 import io.jmix.data.impl.jpql.QueryBuilder;
 import org.antlr.runtime.tree.CommonTree;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.List;
 
+@NullMarked
 public interface TreeToQueryCapable {
 
     CommonTree treeToQueryPre(QueryBuilder sb, List<ErrorRec> invalidNodes);

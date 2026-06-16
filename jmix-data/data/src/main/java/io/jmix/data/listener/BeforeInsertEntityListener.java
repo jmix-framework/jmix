@@ -15,10 +15,13 @@
  */
 package io.jmix.data.listener;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Defines the contract for handling entities before they have been inserted into DB.
  */
 @Deprecated(since = "2.8", forRemoval = true)
+@NullMarked
 public interface BeforeInsertEntityListener<T> {
 
     /**

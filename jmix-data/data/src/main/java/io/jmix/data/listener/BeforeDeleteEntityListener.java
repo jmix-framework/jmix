@@ -15,11 +15,14 @@
  */
 package io.jmix.data.listener;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Defines the contract for handling of entities before they have been deleted or
  * marked as deleted in DB.
  */
 @Deprecated(since = "2.8", forRemoval = true)
+@NullMarked
 public interface BeforeDeleteEntityListener<T> {
 
     /**

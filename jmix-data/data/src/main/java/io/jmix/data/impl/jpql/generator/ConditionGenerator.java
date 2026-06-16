@@ -17,6 +17,7 @@
 package io.jmix.data.impl.jpql.generator;
 
 import io.jmix.core.querycondition.Condition;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Map;
@@ -26,6 +27,7 @@ import java.util.Map;
  *
  * @param <T> condition type
  */
+@NullMarked
 public interface ConditionGenerator<T extends Condition> {
 
     /**

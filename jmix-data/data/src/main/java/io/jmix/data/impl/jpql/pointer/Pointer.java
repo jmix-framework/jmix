@@ -18,7 +18,9 @@
 package io.jmix.data.impl.jpql.pointer;
 
 import io.jmix.data.impl.jpql.DomainModel;
+import org.jspecify.annotations.NullMarked;
 
+@NullMarked
 public interface Pointer {
     Pointer next(DomainModel model, String field);
 }

@@ -17,7 +17,9 @@
 package io.jmix.data.impl.jpql.pointer;
 
 import io.jmix.data.impl.jpql.model.JpqlEntityModel;
+import org.jspecify.annotations.NullMarked;
 
+@NullMarked
 public interface HasEntityPointer extends Pointer {
     JpqlEntityModel getEntity();
 }

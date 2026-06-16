@@ -17,12 +17,13 @@
 package io.jmix.data;
 
 import io.jmix.core.FetchPlan;
-
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
  * Enables working with references to entities without loading them from the database.
  */
+@NullMarked
 public interface ReferenceIdProvider {
 
     /**

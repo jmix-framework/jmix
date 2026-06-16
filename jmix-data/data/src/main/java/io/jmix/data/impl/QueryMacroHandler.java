@@ -15,6 +15,8 @@
  */
 package io.jmix.data.impl;
 
+import org.jspecify.annotations.NullMarked;
+
 import java.util.Map;
 
 /**
@@ -22,6 +24,7 @@ import java.util.Map;
  * <p>The implementation must be a managed bean with "prototype" scope.</p>
  *
  */
+@NullMarked
 public interface QueryMacroHandler {
 
     /**

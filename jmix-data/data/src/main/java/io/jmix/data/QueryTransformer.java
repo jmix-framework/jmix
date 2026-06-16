@@ -16,6 +16,7 @@
 package io.jmix.data;
 
 import io.jmix.core.Sort;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.Map;
 import java.util.Set;
@@ -24,6 +25,7 @@ import java.util.Set;
  * Transforms JPQL query
  *
  */
+@NullMarked
 public interface QueryTransformer {
 
     /** Main entity alias placeholder  */

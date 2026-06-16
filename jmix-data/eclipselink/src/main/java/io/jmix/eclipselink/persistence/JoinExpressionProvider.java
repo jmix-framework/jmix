@@ -19,13 +19,14 @@ package io.jmix.eclipselink.persistence;
 import io.jmix.eclipselink.impl.mapping.JoinCriteriaMappingProcessor;
 import org.eclipse.persistence.expressions.Expression;
 import org.eclipse.persistence.mappings.DatabaseMapping;
-
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
  * Generates additional join expression for entity mappings. Used in {@link JoinCriteriaMappingProcessor}.
  * Every provider should be a Spring @{@link org.springframework.stereotype.Component}.
  */
+@NullMarked
 public interface JoinExpressionProvider {
 
     /**

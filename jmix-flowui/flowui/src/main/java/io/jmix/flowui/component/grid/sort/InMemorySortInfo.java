@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.component.grid.sort;
 
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Comparator;
@@ -23,6 +24,7 @@ import java.util.Comparator;
 /**
  * Represents sorting information for in-memory sorting operations.
  */
+@NullMarked
 public interface InMemorySortInfo extends SortInfo {
 
     /**

@@ -17,6 +17,7 @@
 package io.jmix.flowui.component;
 
 import com.vaadin.flow.data.provider.Query;
+import org.jspecify.annotations.NullMarked;
 
 import java.io.Serializable;
 import java.util.stream.Stream;
@@ -27,6 +28,7 @@ import java.util.stream.Stream;
  * @param <T> item type
  * @param <F> filter type
  */
+@NullMarked
 public interface SupportsItemsFetchCallback<T, F> {
 
     /**
@@ -45,6 +47,7 @@ public interface SupportsItemsFetchCallback<T, F> {
      *            {@code Void} if filtering is not supported
      */
     @FunctionalInterface
+    @NullMarked
     interface FetchCallback<T, F> extends Serializable {
 
         /**

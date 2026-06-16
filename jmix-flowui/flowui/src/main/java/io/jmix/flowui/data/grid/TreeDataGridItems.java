@@ -16,10 +16,13 @@
 
 package io.jmix.flowui.data.grid;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Represents a specialized type of {@link DataGridItems} designed to handle hierarchical data structures.
  *
  * @param <T> the type of items contained in the data grid
  */
+@NullMarked
 public interface TreeDataGridItems<T> extends DataGridItems<T> {
 }

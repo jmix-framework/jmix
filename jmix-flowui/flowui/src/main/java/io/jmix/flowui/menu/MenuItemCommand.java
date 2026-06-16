@@ -16,10 +16,13 @@
 
 package io.jmix.flowui.menu;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Represents a command that can be associated with a menu item,
  * providing a description and the logic to be executed when the command is run.
  */
+@NullMarked
 public interface MenuItemCommand {
 
     /**

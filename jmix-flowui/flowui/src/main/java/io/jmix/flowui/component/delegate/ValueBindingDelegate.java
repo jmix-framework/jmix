@@ -19,11 +19,12 @@ package io.jmix.flowui.component.delegate;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.data.ValueSource;
 import io.jmix.flowui.data.binding.ValueBinding;
-
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import java.util.EventObject;
 import java.util.function.Consumer;
 
+@NullMarked
 public interface ValueBindingDelegate<T> {
 
     ValueBinding<T> getValueBinding();

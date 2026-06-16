@@ -21,6 +21,7 @@ import io.jmix.flowui.model.DataLoader;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.fragment.Fragment;
 import io.jmix.flowui.view.View;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
@@ -30,6 +31,7 @@ import java.util.List;
  * Manages the association of data loaders to various triggers, such as view or fragment
  * events, container item changes, or component value changes.
  */
+@NullMarked
 public interface DataLoadCoordinator extends Facet {
 
     String NAME = "dataLoadCoordinator";
@@ -92,6 +94,7 @@ public interface DataLoadCoordinator extends Facet {
     /**
      * Load trigger.
      */
+    @NullMarked
     interface Trigger {
 
         /**

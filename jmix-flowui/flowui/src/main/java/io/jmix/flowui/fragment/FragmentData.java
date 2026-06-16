@@ -17,11 +17,13 @@
 package io.jmix.flowui.fragment;
 
 import io.jmix.flowui.component.HasDataComponents;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
  * Interface defining methods for interacting with data API elements of a {@link Fragment}.
  */
+@NullMarked
 public interface FragmentData extends HasDataComponents {
 
     /**

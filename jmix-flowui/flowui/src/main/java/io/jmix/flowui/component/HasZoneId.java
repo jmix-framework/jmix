@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.component;
 
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.time.ZoneId;
@@ -26,6 +27,7 @@ import java.time.ZoneId;
  * Implementations of this interface allow getting and setting a time zone identifier,
  * typically for handling date or time-related values with respect to a specific time zone.
  */
+@NullMarked
 public interface HasZoneId {
 
     /**

@@ -16,11 +16,14 @@
 
 package io.jmix.flowui.sys.substitutor;
 
+import org.jspecify.annotations.NullMarked;
+
 import java.util.Map;
 
 /**
  * Substitutes variables within a string by values.
  */
+@NullMarked
 public interface StringSubstitutor {
 
     /**

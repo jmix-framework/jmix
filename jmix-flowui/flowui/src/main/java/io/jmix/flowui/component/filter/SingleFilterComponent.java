@@ -23,6 +23,7 @@ import io.jmix.flowui.component.logicalfilter.LogicalFilterComponent;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter;
 import io.jmix.flowui.kit.component.HasSubParts;
 import io.jmix.flowui.model.DataLoader;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -34,6 +35,7 @@ import org.jspecify.annotations.Nullable;
  * @see JpqlFilter
  * @see LogicalFilterComponent
  */
+@NullMarked
 public interface SingleFilterComponent<V> extends FilterComponent, HasSubParts {
 
     /**

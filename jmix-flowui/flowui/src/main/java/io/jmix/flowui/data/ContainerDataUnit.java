@@ -17,12 +17,14 @@
 package io.jmix.flowui.data;
 
 import io.jmix.flowui.model.CollectionContainer;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Represents a data unit connected to a {@link CollectionContainer}.
  *
  * @param <E> the type of entity contained in the {@link CollectionContainer}
  */
+@NullMarked
 public interface ContainerDataUnit<E> extends EntityDataUnit {
 
     /**

@@ -17,12 +17,14 @@
 package io.jmix.flowui.component.grid.sort;
 
 import io.jmix.core.entity.KeyValueEntity;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.List;
 
 /**
  * Represents sorting information for persistent sorting operations.
  */
+@NullMarked
 public interface PersistentSortInfo extends SortInfo {
 
     /**

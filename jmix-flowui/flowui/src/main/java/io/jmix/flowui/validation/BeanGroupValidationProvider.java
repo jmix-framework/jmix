@@ -17,10 +17,12 @@
 package io.jmix.flowui.validation;
 
 import io.jmix.flowui.component.validation.ValidationErrors;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Adds custom bean-group validation results to Flow UI view validation.
  */
+@NullMarked
 public interface BeanGroupValidationProvider {
 
     /**

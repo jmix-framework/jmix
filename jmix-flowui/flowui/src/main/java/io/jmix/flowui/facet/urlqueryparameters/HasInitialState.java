@@ -16,9 +16,12 @@
 
 package io.jmix.flowui.facet.urlqueryparameters;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * A URL query parameter binder that saves the component's state upon initialization and can restore it.
  */
+@NullMarked
 public interface HasInitialState {
 
     /**

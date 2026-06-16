@@ -16,9 +16,12 @@
 
 package io.jmix.flowui.exception;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * An interface defines the contract for providing dialogs to handle and display exceptions in the user interface.
  */
+@NullMarked
 public interface ExceptionDialogProvider {
 
     /**

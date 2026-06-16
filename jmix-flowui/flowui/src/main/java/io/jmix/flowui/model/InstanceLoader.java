@@ -21,7 +21,7 @@ import io.jmix.core.LoadContext;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.repository.JmixDataRepositoryContext;
 import io.jmix.flowui.view.Subscribe;
-
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import java.util.EventObject;
 import java.util.Optional;
@@ -33,6 +33,7 @@ import java.util.function.Function;
  * Loader of a single entity instance.
  */
 @InstallSubject("loadDelegate")
+@NullMarked
 public interface InstanceLoader<E> extends DataLoader {
 
     /**

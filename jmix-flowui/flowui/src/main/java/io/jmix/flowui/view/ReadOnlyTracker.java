@@ -19,10 +19,12 @@ package io.jmix.flowui.view;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.shared.Registration;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Interface for views that support read-only state change tracking.
  */
+@NullMarked
 public interface ReadOnlyTracker extends ReadOnlyAwareView {
 
     /**

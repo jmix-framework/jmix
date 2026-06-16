@@ -17,10 +17,12 @@
 package io.jmix.flowui.component;
 
 import io.jmix.flowui.UiComponentProperties;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * A component that trims spaces at the beginning and at the end of the entered string.
  */
+@NullMarked
 public interface SupportsTrimming {
 
     /**

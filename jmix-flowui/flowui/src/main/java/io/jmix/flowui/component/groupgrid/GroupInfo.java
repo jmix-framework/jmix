@@ -16,11 +16,13 @@
 
 package io.jmix.flowui.component.groupgrid;
 
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
  * Represents a group of items in the {@link GroupListDataComponent}.
  */
+@NullMarked
 public interface GroupInfo {
 
     /**

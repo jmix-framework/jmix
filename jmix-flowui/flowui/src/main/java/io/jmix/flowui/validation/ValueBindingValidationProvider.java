@@ -18,10 +18,12 @@ package io.jmix.flowui.validation;
 
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.component.SupportsValidation;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Adds validators to data-bound value components for metadata properties that need custom validation.
  */
+@NullMarked
 public interface ValueBindingValidationProvider {
 
     /**

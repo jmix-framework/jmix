@@ -21,6 +21,7 @@ import com.vaadin.flow.component.HasElement;
 import io.jmix.flowui.data.SupportsValueSource;
 import io.jmix.flowui.kit.component.HasActions;
 import io.jmix.flowui.kit.component.SupportsUserAction;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Represents a component that facilitates selection or picking of values and provides additional
@@ -28,5 +29,6 @@ import io.jmix.flowui.kit.component.SupportsUserAction;
  *
  * @param <V> the type of the value handled by the component
  */
+@NullMarked
 public interface PickerComponent<V> extends SupportsValueSource<V>, HasActions, SupportsUserAction<V>, HasElement {
 }

@@ -16,11 +16,13 @@
 
 package io.jmix.flowui.model;
 
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
  * Interface to be implemented by containers that can be loaded by loaders.
  */
+@NullMarked
 public interface HasLoader {
 
     /**

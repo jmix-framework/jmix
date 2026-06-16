@@ -20,7 +20,7 @@ import io.jmix.flowui.component.filter.FilterComponent;
 import io.jmix.flowui.component.genericfilter.Configuration;
 import io.jmix.flowui.component.genericfilter.converter.FilterConverter;
 import io.jmix.flowui.entity.filter.FilterCondition;
-
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -46,6 +46,7 @@ import org.jspecify.annotations.Nullable;
  * @see FilterComponentRegistrationImpl
  * @see FilterComponents
  */
+@NullMarked
 public interface FilterComponentRegistration {
 
     /**

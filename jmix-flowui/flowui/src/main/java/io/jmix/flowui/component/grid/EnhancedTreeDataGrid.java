@@ -18,7 +18,9 @@ package io.jmix.flowui.component.grid;
 
 import com.vaadin.flow.component.grid.Grid;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import org.jspecify.annotations.NullMarked;
 
+@NullMarked
 public interface EnhancedTreeDataGrid<T> extends EnhancedDataGrid<T> {
 
     /**

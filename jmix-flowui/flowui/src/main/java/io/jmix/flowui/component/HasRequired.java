@@ -17,12 +17,14 @@
 package io.jmix.flowui.component;
 
 import com.vaadin.flow.component.HasElement;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
  * Interface that defines behavior for components that can be marked as required.
  * Provides methods to handle the required state and required messages for validation purposes.
  */
+@NullMarked
 public interface HasRequired extends HasElement {
 
     String PROPERTY_REQUIRED = "required";

@@ -18,6 +18,7 @@ package io.jmix.flowui.monitoring;
 
 import io.jmix.core.annotation.Internal;
 import io.jmix.flowui.model.DataLoader;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -25,6 +26,7 @@ import org.jspecify.annotations.Nullable;
  * {@link DataLoader}s as {@code view.id} / {@code fragment.id} tags of {@code jmix.ui.data} metrics.
  */
 @Internal
+@NullMarked
 public interface ObservableDataHolder {
 
     /**

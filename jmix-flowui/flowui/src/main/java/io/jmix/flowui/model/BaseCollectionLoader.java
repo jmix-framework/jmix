@@ -17,7 +17,7 @@
 package io.jmix.flowui.model;
 
 import io.jmix.core.Sort;
-
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -26,6 +26,7 @@ import org.jspecify.annotations.Nullable;
  * @see CollectionLoader
  * @see KeyValueCollectionLoader
  */
+@NullMarked
 public interface BaseCollectionLoader extends DataLoader {
 
     /**

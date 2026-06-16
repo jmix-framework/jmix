@@ -19,7 +19,7 @@ package io.jmix.flowui.data.pagination;
 import io.jmix.core.DataLoadContext;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.flowui.model.CollectionChangeType;
-
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.util.function.Consumer;
@@ -30,6 +30,7 @@ import java.util.function.Function;
  * Provides functionality to control the number of records fetched, the start position of the data,
  * and tracking changes in the data collection.
  */
+@NullMarked
 public interface PaginationDataLoader {
 
     /**

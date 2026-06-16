@@ -22,7 +22,7 @@ import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.flowui.component.ComponentGenerationContext;
 import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
-
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
@@ -36,6 +36,7 @@ import java.util.function.Predicate;
  *
  * @param <E> the type of elements handled by the multi-value select view
  */
+@NullMarked
 public interface MultiValueSelectView<E> {
 
     /**

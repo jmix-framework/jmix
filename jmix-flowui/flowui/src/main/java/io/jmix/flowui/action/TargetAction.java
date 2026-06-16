@@ -17,9 +17,10 @@
 package io.jmix.flowui.action;
 
 import io.jmix.flowui.kit.action.Action;
-
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
+@NullMarked
 public interface TargetAction<C> extends Action {
 
     @Nullable

@@ -17,6 +17,7 @@
 package io.jmix.flowui.component.groupgrid.adapter;
 
 import io.jmix.flowui.component.groupgrid.GroupListDataComponent;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -24,6 +25,7 @@ import org.jspecify.annotations.Nullable;
  *
  * @see DefaultGroupDataGridAdapterFactory
  */
+@NullMarked
 public interface GroupDataGridAdapterProvider {
 
     /**

@@ -18,6 +18,8 @@ package io.jmix.flowui.sys.event;
 
 import com.google.common.base.Strings;
 import io.jmix.core.annotation.Internal;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEvent;
@@ -33,8 +35,6 @@ import org.springframework.util.ClassUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.ReflectionUtils;
 
-import jakarta.annotation.Nonnull;
-import org.jspecify.annotations.Nullable;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -85,7 +85,7 @@ public class UiEventListenerMethodAdapter implements GenericApplicationListener 
     }
 
     @Override
-    public boolean supportsEventType(@Nonnull ResolvableType eventType) {
+    public boolean supportsEventType(@NonNull ResolvableType eventType) {
         for (ResolvableType declaredEventType : this.declaredEventTypes) {
             if (declaredEventType.isAssignableFrom(eventType)) {
                 return true;
@@ -106,7 +106,7 @@ public class UiEventListenerMethodAdapter implements GenericApplicationListener 
     }
 
     @Override
-    public void onApplicationEvent(@Nonnull ApplicationEvent event) {
+    public void onApplicationEvent(@NonNull ApplicationEvent event) {
         Object instance = instanceRef.get();
         if (instance != null) {
             processEvent(instance, event);

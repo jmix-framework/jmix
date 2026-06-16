@@ -17,6 +17,7 @@
 package io.jmix.flowui.facet.settings;
 
 import io.jmix.flowui.facet.settings.component.DataGridSettings;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -24,6 +25,7 @@ import org.jspecify.annotations.Nullable;
  * <p>
  * See {@link DataGridSettings} as an example.
  */
+@NullMarked
 public interface Settings {
 
     /**

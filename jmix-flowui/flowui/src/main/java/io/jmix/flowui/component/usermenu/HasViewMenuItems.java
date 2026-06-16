@@ -20,11 +20,13 @@ import com.vaadin.flow.component.Component;
 import io.jmix.flowui.kit.component.usermenu.HasMenuItems;
 import io.jmix.flowui.kit.component.usermenu.JmixUserMenu;
 import io.jmix.flowui.view.View;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Defines a set of methods for {@link JmixUserMenu} components where menu items
  * associated with a {@link View}.
  */
+@NullMarked
 public interface HasViewMenuItems extends HasMenuItems {
 
     /**

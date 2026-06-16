@@ -18,12 +18,14 @@ package io.jmix.flowui.app.propertyfilter.dateinterval.converter;
 
 import io.jmix.core.annotation.Internal;
 import io.jmix.flowui.app.propertyfilter.dateinterval.model.BaseDateInterval;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
  * Interface provides methods for parsing/formatting date interval values.
  */
 @Internal
+@NullMarked
 public interface DateIntervalConverter {
 
     String INCLUDING_CURRENT_DESCRIPTION = "including_current";

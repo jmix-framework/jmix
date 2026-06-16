@@ -35,6 +35,7 @@ import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.sidedialog.SideDialogPosition;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.View;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
@@ -44,6 +45,7 @@ import java.util.function.Function;
 /**
  * Provides fluent interface for configuring and displaying dialogs.
  */
+@NullMarked
 public interface Dialogs {
 
     /**
@@ -141,6 +143,7 @@ public interface Dialogs {
      */
     SideDialogBuilder createSideDialog();
 
+    @NullMarked
     interface OptionDialogBuilder extends DialogBuilder<OptionDialogBuilder>,
             HasText<OptionDialogBuilder>,
             HasContent<OptionDialogBuilder>,
@@ -177,6 +180,7 @@ public interface Dialogs {
         Dialog open();
     }
 
+    @NullMarked
     interface MessageDialogBuilder extends DialogBuilder<MessageDialogBuilder>,
             HasText<MessageDialogBuilder>,
             HasContent<MessageDialogBuilder>,
@@ -202,6 +206,7 @@ public interface Dialogs {
         Dialog open();
     }
 
+    @NullMarked
     interface InputDialogBuilder extends DialogBuilder<InputDialogBuilder>,
             Draggable<InputDialogBuilder> {
 
@@ -411,6 +416,7 @@ public interface Dialogs {
     /**
      * Builder of background task dialog.
      */
+    @NullMarked
     interface BackgroundTaskDialogBuilder<T extends Number, V> extends
             HasHeader<BackgroundTaskDialogBuilder<T, V>>,
             HasText<BackgroundTaskDialogBuilder<T, V>>,
@@ -481,6 +487,7 @@ public interface Dialogs {
     /**
      * Builder for {@link SideDialog}.
      */
+    @NullMarked
     interface SideDialogBuilder extends HasHeader<SideDialogBuilder>,
             HasStyle<SideDialogBuilder>,
             Closeable<SideDialogBuilder> {
@@ -808,6 +815,7 @@ public interface Dialogs {
      *
      * @param <T> return type of fluent API methods
      */
+    @NullMarked
     interface DialogBuilder<T extends DialogBuilder> extends HasHeader<T>, HasSize<T>, HasPosition<T> {
     }
 
@@ -816,6 +824,7 @@ public interface Dialogs {
      *
      * @param <T> return type of fluent API methods
      */
+    @NullMarked
     interface HasHeader<T> {
         /**
          * Sets a header text.
@@ -837,6 +846,7 @@ public interface Dialogs {
      *
      * @param <T> return type of fluent API methods
      */
+    @NullMarked
     interface HasSize<T> {
         /**
          * Sets dialog width.
@@ -870,6 +880,7 @@ public interface Dialogs {
      *
      * @param <T> return type of fluent API methods
      */
+    @NullMarked
     interface HasPosition<T> {
 
         /**
@@ -920,6 +931,7 @@ public interface Dialogs {
      *
      * @param <T> return type of fluent API methods
      */
+    @NullMarked
     interface HasText<T> {
         /**
          * Sets a text.
@@ -943,6 +955,7 @@ public interface Dialogs {
      *
      * @param <T> return type of fluent API methods
      */
+    @NullMarked
     interface HasContent<T> {
         /**
          * Sets a content.
@@ -964,6 +977,7 @@ public interface Dialogs {
      *
      * @param <T> return type of fluent API methods
      */
+    @NullMarked
     interface HasTheme<T> {
         /**
          * Sets the theme names of the dialog. This method overwrites any previous set theme names.
@@ -988,6 +1002,7 @@ public interface Dialogs {
      *
      * @param <T> return type of fluent API methods
      */
+    @NullMarked
     interface HasStyle<T> {
 
         /**
@@ -1014,6 +1029,7 @@ public interface Dialogs {
      *
      * @param <T> return type of fluent API methods
      */
+    @NullMarked
     interface Closeable<T> {
         /**
          * Sets whether this dialog can be closed by clicking outside.
@@ -1052,6 +1068,7 @@ public interface Dialogs {
      *
      * @param <T> return type of fluent API methods
      */
+    @NullMarked
     interface HasModal<T> {
         /**
          * Sets whether component will open modal or modeless dialog.
@@ -1072,6 +1089,7 @@ public interface Dialogs {
      *
      * @param <T> return type of fluent API methods
      */
+    @NullMarked
     interface Draggable<T> {
         /**
          * Sets whether dialog is enabled to be dragged by the user or not.
@@ -1104,6 +1122,7 @@ public interface Dialogs {
      *
      * @param <T> return type of fluent API methods
      */
+    @NullMarked
     interface Resizable<T> {
         /**
          * Sets whether dialog can be resized by user or not.

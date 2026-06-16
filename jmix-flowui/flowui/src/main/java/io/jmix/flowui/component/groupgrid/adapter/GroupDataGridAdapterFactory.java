@@ -17,11 +17,13 @@
 package io.jmix.flowui.component.groupgrid.adapter;
 
 import io.jmix.flowui.component.groupgrid.GroupListDataComponent;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
  * Factory for creating {@link AbstractGroupDataGridAdapter} instances.
  */
+@NullMarked
 public interface GroupDataGridAdapterFactory {
 
     /**

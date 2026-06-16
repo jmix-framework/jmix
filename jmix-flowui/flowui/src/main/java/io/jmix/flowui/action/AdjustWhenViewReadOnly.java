@@ -16,10 +16,13 @@
 
 package io.jmix.flowui.action;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Interface to be implemented by actions which may adjust
  * their 'enabled' state according to the view read-only mode.
  */
+@NullMarked
 public interface AdjustWhenViewReadOnly {
 
     /**

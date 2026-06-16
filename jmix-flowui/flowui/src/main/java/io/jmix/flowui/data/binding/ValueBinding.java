@@ -18,6 +18,7 @@ package io.jmix.flowui.data.binding;
 
 import com.vaadin.flow.component.HasValue;
 import io.jmix.flowui.data.ValueSource;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Represents a binding between a UI component and a {@link ValueSource}.
@@ -26,6 +27,7 @@ import io.jmix.flowui.data.ValueSource;
  *
  * @param <V> the type of the value being bound
  */
+@NullMarked
 public interface ValueBinding<V> extends JmixBinding {
 
     /**

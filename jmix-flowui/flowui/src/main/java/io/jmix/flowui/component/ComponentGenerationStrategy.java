@@ -17,12 +17,13 @@
 package io.jmix.flowui.component;
 
 import com.vaadin.flow.component.Component;
-
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
  * A strategy for creating FlowUi components by {@link UiComponentsGenerator}.
  */
+@NullMarked
 public interface ComponentGenerationStrategy {
 
     /**

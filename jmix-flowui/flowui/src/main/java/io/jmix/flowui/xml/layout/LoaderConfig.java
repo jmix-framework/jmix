@@ -17,12 +17,13 @@
 package io.jmix.flowui.xml.layout;
 
 import org.dom4j.Element;
-
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
  * Marker interface for component loaders.
  */
+@NullMarked
 public interface LoaderConfig {
 
     /**

@@ -18,9 +18,11 @@ package io.jmix.flowui.data.grid;
 
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.data.EntityDataUnit;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Represents a set of data items for {@link DataGrid}.
  */
+@NullMarked
 public interface EntityDataGridItems<E> extends DataGridItems<E>, EntityDataUnit {
 }

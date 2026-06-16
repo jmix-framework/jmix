@@ -17,7 +17,7 @@
 package io.jmix.flowui.model;
 
 import io.jmix.core.common.event.Subscription;
-
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import java.util.Collection;
 import java.util.EventObject;
@@ -27,6 +27,7 @@ import java.util.function.Consumer;
 /**
  * Container that holds a collection of entity instances.
  */
+@NullMarked
 public interface CollectionContainer<E> extends InstanceContainer<E> {
 
     /**

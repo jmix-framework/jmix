@@ -18,6 +18,7 @@ package io.jmix.flowui.component.grid;
 
 import io.jmix.core.annotation.Experimental;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -26,6 +27,7 @@ import org.jspecify.annotations.Nullable;
  * @param <E> entity type
  */
 @Experimental
+@NullMarked
 public interface ColumnSortInfo<E> {
 
     /**

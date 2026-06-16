@@ -23,6 +23,7 @@ import io.jmix.core.common.util.Dom4j;
 import io.jmix.core.common.util.ParamsMap;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.*;
+import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -213,6 +214,7 @@ public class XmlInheritanceProcessor {
         process(newElement, element);
     }
 
+    @NullMarked
     protected interface ElementTargetLocator {
         boolean suitableFor(Element extElem);
         @Nullable

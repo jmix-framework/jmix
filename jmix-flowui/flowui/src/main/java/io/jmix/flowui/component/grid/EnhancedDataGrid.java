@@ -24,11 +24,13 @@ import io.jmix.flowui.component.grid.headerfilter.DataGridHeaderFilter;
 import io.jmix.flowui.component.grid.sort.DataGridSort;
 import io.jmix.flowui.component.grid.sort.DataGridSortBuilder;
 import io.jmix.flowui.kit.component.grid.JmixGridContextMenu;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Function;
 
+@NullMarked
 public interface EnhancedDataGrid<T> {
 
     @Nullable

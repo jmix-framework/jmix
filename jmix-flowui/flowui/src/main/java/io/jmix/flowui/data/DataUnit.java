@@ -17,6 +17,7 @@
 package io.jmix.flowui.data;
 
 import com.vaadin.flow.shared.Registration;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.EventObject;
 import java.util.function.Consumer;
@@ -24,6 +25,7 @@ import java.util.function.Consumer;
 /**
  * Represents a data unit responsible for holding and managing data binding state within a UI component.
  */
+@NullMarked
 public interface DataUnit {
 
     /**

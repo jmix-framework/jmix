@@ -18,7 +18,7 @@ package io.jmix.flowui.sys.registration;
 
 import com.vaadin.flow.component.Component;
 import io.jmix.flowui.xml.layout.ComponentLoader;
-
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -40,6 +40,7 @@ import org.jspecify.annotations.Nullable;
  * @see ComponentRegistrationBuilder
  * @see CustomComponentsRegistry
  */
+@NullMarked
 public interface ComponentRegistration {
 
     /**

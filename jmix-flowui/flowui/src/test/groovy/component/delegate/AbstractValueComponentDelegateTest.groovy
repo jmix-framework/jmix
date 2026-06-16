@@ -24,11 +24,11 @@ import io.jmix.flowui.component.textfield.JmixIntegerField
 import io.jmix.flowui.data.BindingState
 import io.jmix.flowui.data.ValueSource
 import io.jmix.flowui.data.binding.impl.AbstractValueBinding
+import org.jspecify.annotations.Nullable
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import test_support.spec.FlowuiTestSpecification
 
-import org.springframework.lang.Nullable
 import java.util.function.Consumer
 
 @SpringBootTest

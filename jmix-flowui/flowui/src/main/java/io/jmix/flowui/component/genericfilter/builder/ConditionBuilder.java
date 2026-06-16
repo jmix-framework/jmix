@@ -18,10 +18,12 @@ package io.jmix.flowui.component.genericfilter.builder;
 
 import io.jmix.flowui.component.genericfilter.GenericFilter;
 import io.jmix.flowui.entity.filter.FilterCondition;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.core.Ordered;
 
 import java.util.List;
 
+@NullMarked
 public interface ConditionBuilder extends Ordered {
 
     List<FilterCondition> build(GenericFilter filter);

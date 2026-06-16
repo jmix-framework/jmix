@@ -17,12 +17,14 @@
 package io.jmix.flowui.backgroundtask;
 
 import io.jmix.flowui.backgroundtask.impl.TaskHandlerImpl;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Interface responsible for managing background task lifecycles such as starting, managing,
  * removing, and terminating tasks. It acts as a central coordinator for monitoring and
  * controlling tasks' execution state.
  */
+@NullMarked
 public interface BackgroundTaskWatchDog {
 
     /**

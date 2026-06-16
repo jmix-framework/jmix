@@ -17,6 +17,7 @@
 package io.jmix.flowui.data;
 
 import com.vaadin.flow.data.provider.DataProvider;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -24,6 +25,7 @@ import org.jspecify.annotations.Nullable;
  *
  * @param <V> the type of item provided by the {@link DataProvider}
  */
+@NullMarked
 public interface SupportsDataProvider<V> {
 
     /**

@@ -17,11 +17,13 @@
 package io.jmix.flowui.facet;
 
 import com.vaadin.flow.component.Composite;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
  * Non-visual component of a {@link FacetOwner}.
  */
+@NullMarked
 public interface Facet {
 
     /**

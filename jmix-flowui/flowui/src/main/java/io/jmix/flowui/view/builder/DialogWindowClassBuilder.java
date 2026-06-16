@@ -18,6 +18,7 @@ package io.jmix.flowui.view.builder;
 
 
 import io.jmix.flowui.view.View;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.Optional;
 
@@ -27,6 +28,7 @@ import java.util.Optional;
  *
  * @param <V> a view type which is opened in a dialog window
  */
+@NullMarked
 public interface DialogWindowClassBuilder<V extends View<?>> extends DialogWindowBuilder<V> {
 
     /**

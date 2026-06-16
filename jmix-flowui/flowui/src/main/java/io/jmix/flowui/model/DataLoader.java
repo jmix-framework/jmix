@@ -20,6 +20,7 @@ import io.jmix.core.querycondition.Condition;
 
 import io.jmix.flowui.monitoring.DataLoaderMonitoringInfo;
 import io.jmix.flowui.observation.DataLoaderObservationInfo;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.io.Serializable;
@@ -33,6 +34,7 @@ import java.util.function.Function;
  * @see InstanceContainer
  * @see CollectionContainer
  */
+@NullMarked
 public interface DataLoader {
 
     /**

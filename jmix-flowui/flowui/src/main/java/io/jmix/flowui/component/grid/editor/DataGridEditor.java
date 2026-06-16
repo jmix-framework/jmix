@@ -22,6 +22,7 @@ import com.vaadin.flow.component.grid.editor.Editor;
 import io.jmix.flowui.component.SupportsStatusChangeHandler;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.data.ValueSource;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.util.function.Consumer;
@@ -36,6 +37,7 @@ import java.util.function.Function;
  *
  * @param <T> the type of the row/item being edited
  */
+@NullMarked
 public interface DataGridEditor<T> extends Editor<T> {
 
     @Nullable

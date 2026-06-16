@@ -23,13 +23,14 @@ import io.jmix.core.DataLoadContext;
 import io.jmix.core.repository.JmixDataRepositoryContext;
 import io.jmix.flowui.data.pagination.PaginationDataLoader;
 import io.jmix.flowui.kit.component.pagination.AbstractPagination;
-
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import java.util.function.Function;
 
 /**
  * Base interface for components that make a data binding to load data by pages.
  */
+@NullMarked
 public interface PaginationComponent<T extends AbstractPagination> {
 
     /**

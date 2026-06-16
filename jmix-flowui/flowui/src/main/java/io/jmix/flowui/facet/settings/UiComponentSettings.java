@@ -18,10 +18,12 @@ package io.jmix.flowui.facet.settings;
 
 import com.vaadin.flow.component.Component;
 import io.jmix.flowui.facet.settings.component.JmixDetailsSettings;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Optional;
 
+@NullMarked
 public interface UiComponentSettings<S extends UiComponentSettings<S>> {
 
     /**

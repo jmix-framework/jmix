@@ -28,7 +28,7 @@ import io.jmix.flowui.sys.JmixServiceInitListener;
 import io.jmix.flowui.sys.LoginViewBeforeEnterHandler;
 import io.jmix.flowui.sys.LoginViewRedirectSupport;
 import io.jmix.flowui.view.ViewRegistry;
-import jakarta.annotation.Nonnull;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -75,7 +75,7 @@ class LoginViewBeforeEnterHandlerExtensionTest {
         }
 
         @Override
-        protected void handleAuthenticatedUser(@Nonnull BeforeEnterEvent event) {
+        protected void handleAuthenticatedUser(@NonNull BeforeEnterEvent event) {
             handledEvent = event;
         }
     }

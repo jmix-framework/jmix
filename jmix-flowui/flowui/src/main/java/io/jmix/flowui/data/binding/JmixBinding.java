@@ -16,9 +16,12 @@
 
 package io.jmix.flowui.data.binding;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Defines the contract for binding mechanisms.
  */
+@NullMarked
 public interface JmixBinding {
 
     /**

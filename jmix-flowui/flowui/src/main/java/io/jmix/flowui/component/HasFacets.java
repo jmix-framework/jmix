@@ -17,6 +17,7 @@
 package io.jmix.flowui.component;
 
 import io.jmix.flowui.facet.Facet;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.util.stream.Stream;
@@ -24,6 +25,7 @@ import java.util.stream.Stream;
 /**
  * Interface defining methods for managing facet API elements.
  */
+@NullMarked
 public interface HasFacets {
 
     /**

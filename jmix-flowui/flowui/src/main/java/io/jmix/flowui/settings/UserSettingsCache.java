@@ -17,12 +17,14 @@
 package io.jmix.flowui.settings;
 
 import io.jmix.core.annotation.Internal;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
  * Provides saving/loading settings using the cache.
  */
 @Internal
+@NullMarked
 public interface UserSettingsCache {
 
     /**

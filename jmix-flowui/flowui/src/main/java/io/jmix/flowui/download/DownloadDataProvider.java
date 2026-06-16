@@ -16,11 +16,14 @@
 
 package io.jmix.flowui.download;
 
+import org.jspecify.annotations.NullMarked;
+
 import java.io.InputStream;
 
 /**
  * Provides data for {@link Downloader}.
  */
+@NullMarked
 public interface DownloadDataProvider {
 
     /**

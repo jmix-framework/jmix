@@ -19,7 +19,7 @@ import io.jmix.core.FileRef;
 import io.jmix.core.FileStorage;
 import io.jmix.core.FileStorageException;
 import io.jmix.core.FileStorageLocator;
-
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import java.io.File;
 import java.io.InputStream;
@@ -28,11 +28,13 @@ import java.util.UUID;
 /**
  * API for uploading files to the temporary storage.
  */
+@NullMarked
 public interface TemporaryStorage {
 
     /**
      * Listener to be notified about the progress of uploading file into the temporary storage.
      */
+    @NullMarked
     interface UploadProgressListener {
 
         /**

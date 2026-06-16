@@ -16,6 +16,8 @@
 
 package io.jmix.flowui.component;
 
+import org.jspecify.annotations.NullMarked;
+
 import java.util.Collection;
 
 /**
@@ -24,5 +26,6 @@ import java.util.Collection;
  *
  * @param <E> the type of entity contained in the collection managed by the component
  */
+@NullMarked
 public interface EntityMultiPickerComponent<E> extends EntityPickerComponent<Collection<E>> {
 }

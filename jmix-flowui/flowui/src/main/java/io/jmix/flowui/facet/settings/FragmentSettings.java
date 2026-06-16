@@ -18,6 +18,7 @@ package io.jmix.flowui.facet.settings;
 
 import io.jmix.flowui.facet.SettingsFacet;
 import io.jmix.flowui.fragment.Fragment;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Base interface for classes that collect component settings from {@link Fragment}. It provides an API for
@@ -26,5 +27,6 @@ import io.jmix.flowui.fragment.Fragment;
  * @see SettingsFacet
  * @see UiComponentSettings
  */
+@NullMarked
 public interface FragmentSettings extends UiComponentSettings<FragmentSettings> {
 }

@@ -25,6 +25,7 @@ import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.flowui.component.filter.FilterComponent;
 import io.jmix.flowui.model.DataLoader;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
@@ -35,6 +36,7 @@ import java.util.Objects;
  * returned by the {@link DataLoader}. The component is related to {@link LogicalCondition} which
  * will be used together with query when loading entities into the {@link DataLoader}.
  */
+@NullMarked
 public interface LogicalFilterComponent<C extends Component & LogicalFilterComponent<C>> extends FilterComponent {
 
     /**

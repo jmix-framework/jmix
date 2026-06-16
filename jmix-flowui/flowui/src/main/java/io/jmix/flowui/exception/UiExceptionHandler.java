@@ -15,9 +15,12 @@
  */
 package io.jmix.flowui.exception;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Interface to be implemented by exception handlers
  */
+@NullMarked
 public interface UiExceptionHandler {
 
     /**

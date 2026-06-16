@@ -17,6 +17,7 @@
 package io.jmix.flowui.component;
 
 import io.jmix.core.metamodel.datatype.Datatype;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -24,6 +25,7 @@ import org.jspecify.annotations.Nullable;
  *
  * @param <V> the type of value the datatype describes
  */
+@NullMarked
 public interface SupportsDatatype<V> {
 
     /**

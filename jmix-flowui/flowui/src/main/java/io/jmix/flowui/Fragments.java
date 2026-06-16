@@ -20,12 +20,14 @@ import io.jmix.flowui.fragment.Fragment;
 import io.jmix.flowui.fragment.FragmentDescriptor;
 import io.jmix.flowui.fragment.FragmentOwner;
 import io.jmix.flowui.xml.layout.ComponentLoader;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 
 /**
  * Factory for creating {@link Fragment}s.
  */
+@NullMarked
 public interface Fragments {
 
     /**

@@ -38,6 +38,7 @@ import io.jmix.flowui.kit.component.HasTitle;
 import io.jmix.flowui.kit.component.dropdownbutton.AbstractDropdownButton;
 import io.jmix.flowui.kit.component.menubar.JmixMenuBar;
 import io.jmix.flowui.kit.component.menubar.JmixMenuItem;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
@@ -622,6 +623,7 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
     /**
      * Represents an item which allows to toggle column visibility.
      */
+    @NullMarked
     public interface MenuItem {
 
         /**

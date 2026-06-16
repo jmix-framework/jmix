@@ -16,9 +16,12 @@
 
 package io.jmix.flowui.view;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * An optional interface of {@link CloseAction}s used in views that may have unsaved changes on closing.
  */
+@NullMarked
 public interface ChangeTrackerCloseAction {
 
     /**

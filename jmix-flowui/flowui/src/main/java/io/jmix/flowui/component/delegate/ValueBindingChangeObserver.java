@@ -17,9 +17,11 @@
 package io.jmix.flowui.component.delegate;
 
 import io.jmix.flowui.component.delegate.ValueBindingDelegate.ValueBindingChangeEvent;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.function.Consumer;
 
+@NullMarked
 public interface ValueBindingChangeObserver<T> extends Consumer<ValueBindingChangeEvent<T>> {
 
     void valueBindingChanged(ValueBindingChangeEvent<? extends T> event);

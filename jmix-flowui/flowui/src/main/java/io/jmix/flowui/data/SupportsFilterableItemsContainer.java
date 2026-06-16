@@ -19,6 +19,7 @@ package io.jmix.flowui.data;
 import com.vaadin.flow.function.SerializableBiPredicate;
 import io.jmix.flowui.data.items.ContainerDataProvider;
 import io.jmix.flowui.model.CollectionContainer;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Represents a component capable of handling a collection of items and providing
@@ -26,6 +27,7 @@ import io.jmix.flowui.model.CollectionContainer;
  *
  * @param <E> the type of items contained in the component
  */
+@NullMarked
 public interface SupportsFilterableItemsContainer<E> extends SupportsItemsContainer<E> {
 
     /**

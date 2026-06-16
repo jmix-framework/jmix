@@ -17,11 +17,13 @@
 package io.jmix.flowui.sys;
 
 import com.vaadin.flow.component.Component;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
  * Manager for calculating a special static ID attribute for testing.
  */
+@NullMarked
 public interface UiTestIdManager {
 
     /**

@@ -23,6 +23,7 @@ import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.shared.Registration;
 
 import io.jmix.flowui.kit.meta.StudioIgnore;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -33,6 +34,7 @@ import org.jspecify.annotations.Nullable;
  * @param <V> the type of the value supported by the component
  * @param <P> the presentation type of the value
  */
+@NullMarked
 public interface SupportsTypedValue<C extends Component, E extends HasValue.ValueChangeEvent<P>, V, P> extends HasValue<E, P> {
 
     /**

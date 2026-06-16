@@ -17,12 +17,14 @@
 package io.jmix.flowui.component.groupgrid;
 
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.Objects;
 
 /**
  * Represents a property that can be used for grouping.
  */
+@NullMarked
 public interface GroupProperty {
 
     /**

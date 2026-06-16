@@ -18,12 +18,14 @@ package io.jmix.flowui.view.builder;
 
 import com.vaadin.flow.component.HasValue;
 import io.jmix.flowui.model.CollectionContainer;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Interface to be implemented by beans that transform an entity after returning it from a detail view.
  * <p>
  * A collection of such beans is used by {@link DetailWindowBuilderProcessor}.
  */
+@NullMarked
 public interface EditedEntityTransformer {
 
     /**

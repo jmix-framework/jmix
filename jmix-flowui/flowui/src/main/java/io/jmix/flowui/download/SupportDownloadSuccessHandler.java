@@ -17,6 +17,7 @@
 package io.jmix.flowui.download;
 
 import com.vaadin.flow.component.Component;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.io.Serializable;
@@ -24,6 +25,7 @@ import java.io.Serializable;
 /**
  * Interface for components that support setting a download success handler.
  */
+@NullMarked
 public interface SupportDownloadSuccessHandler {
 
     /**
@@ -38,6 +40,7 @@ public interface SupportDownloadSuccessHandler {
      * Represents a handler for successful download operations.
      */
     @FunctionalInterface
+    @NullMarked
     interface DownloadSuccessHandler extends Serializable {
 
         /**

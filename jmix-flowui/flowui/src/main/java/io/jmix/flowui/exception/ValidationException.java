@@ -16,6 +16,7 @@
 package io.jmix.flowui.exception;
 
 import com.vaadin.flow.component.Component;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Exception to be thrown by field validators.
@@ -50,6 +51,7 @@ public class ValidationException extends RuntimeException {
      * Represents a contract for exceptions or objects that are associated
      * with a specific UI {@link Component}.
      */
+    @NullMarked
     public interface HasRelatedComponent {
 
         /**

@@ -17,6 +17,7 @@
 package io.jmix.flowui.view.navigation;
 
 import io.jmix.flowui.view.View;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.EventObject;
 import java.util.Optional;
@@ -27,6 +28,7 @@ import java.util.function.Consumer;
  *
  * @param <V> view type
  */
+@NullMarked
 public interface SupportsAfterViewNavigationHandler<V extends View> {
 
     /**

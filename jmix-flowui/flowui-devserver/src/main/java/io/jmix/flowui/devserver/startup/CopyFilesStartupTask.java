@@ -29,11 +29,13 @@ import java.util.stream.Stream;
 import com.vaadin.flow.server.Constants;
 import io.jmix.flowui.devserver.theme.LegacyThemeStyleSheets;
 import org.apache.commons.io.FileUtils;
+import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static com.vaadin.flow.server.Constants.PACKAGE_LOCK_JSON;
 
+@NullMarked
 public class CopyFilesStartupTask implements StartupTask {
 
     private static final Logger log = LoggerFactory.getLogger(CopyFilesStartupTask.class);

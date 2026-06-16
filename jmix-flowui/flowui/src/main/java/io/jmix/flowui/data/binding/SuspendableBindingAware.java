@@ -16,11 +16,13 @@
 
 package io.jmix.flowui.data.binding;
 
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
  * Interface defining a contract for objects that support suspendable bindings.
  */
+@NullMarked
 public interface SuspendableBindingAware {
 
     /**

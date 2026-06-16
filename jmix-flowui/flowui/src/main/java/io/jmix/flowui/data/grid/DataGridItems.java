@@ -24,6 +24,7 @@ import io.jmix.flowui.component.grid.sort.DataGridSort;
 import io.jmix.flowui.component.grid.sort.PersistentSortInfo;
 import io.jmix.flowui.data.DataUnit;
 import io.jmix.flowui.data.HasType;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.util.*;
@@ -36,6 +37,7 @@ import java.util.function.Consumer;
  *
  * @param <T> the type of items contained within the data grid
  */
+@NullMarked
 public interface DataGridItems<T> extends DataUnit, HasType<T> {
 
     /**
@@ -106,6 +108,7 @@ public interface DataGridItems<T> extends DataUnit, HasType<T> {
      *
      * @param <T> items type
      */
+    @NullMarked
     interface Sortable<T> extends DataGridItems<T> {
 
         /**

@@ -17,9 +17,11 @@
 package io.jmix.flowui.fragment;
 
 import io.jmix.flowui.component.HasFacets;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Interface for managing facets associated with a {@link Fragment}.
  */
+@NullMarked
 public interface FragmentFacets extends HasFacets {
 }

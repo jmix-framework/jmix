@@ -18,11 +18,13 @@ package io.jmix.flowui.model;
 
 import io.jmix.flowui.component.HasDataComponents;
 import io.jmix.flowui.view.View;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
  * Interface defining methods for interacting with data API elements of a {@link View}.
  */
+@NullMarked
 public interface ViewData extends HasDataComponents {
 
     /**

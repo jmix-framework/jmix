@@ -3,10 +3,12 @@ package io.jmix.flowui.icon;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.icon.Icon;
 import io.jmix.flowui.kit.icon.IconFactory;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Central interface to provide UI components representing icons.
  */
+@NullMarked
 public interface Icons {
 
     /**

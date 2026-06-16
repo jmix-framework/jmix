@@ -17,11 +17,13 @@
 package io.jmix.flowui.component;
 
 import io.jmix.core.metamodel.model.MetaClass;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
  * Provides a contract for components that support working with a {@link MetaClass}.
  */
+@NullMarked
 public interface SupportsMetaClass {
 
     /**

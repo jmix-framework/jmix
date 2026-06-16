@@ -16,6 +16,8 @@
 
 package io.jmix.flowui.component;
 
+import org.jspecify.annotations.NullMarked;
+
 import java.util.Set;
 
 /**
@@ -23,6 +25,7 @@ import java.util.Set;
  *
  * @param <T> the type of items contained within the lookup component
  */
+@NullMarked
 public interface LookupComponent<T> {
 
     /**
@@ -35,6 +38,7 @@ public interface LookupComponent<T> {
      *
      * @param <T> the type of items contained within the lookup component
      */
+    @NullMarked
     interface MultiSelectLookupComponent<T> extends LookupComponent<T> {
 
         /**

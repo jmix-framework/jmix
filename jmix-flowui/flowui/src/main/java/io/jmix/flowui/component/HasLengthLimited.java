@@ -16,9 +16,12 @@
 
 package io.jmix.flowui.component;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * A component that may have a limit on the number of characters (in Unicode code points) that the user can enter.
  */
+@NullMarked
 public interface HasLengthLimited {
 
     /**

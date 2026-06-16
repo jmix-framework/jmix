@@ -16,12 +16,15 @@
 
 package io.jmix.flowui.view;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * An interface for views supporting entity locking functionality. This interface extends {@link HasEditedEntity}
  * to provide methods for accessing the currently edited entity and includes functionality related to entity locking.
  *
  * @param <E> the type of entity being edited
  */
+@NullMarked
 public interface SupportEntityLock<E> extends HasEditedEntity<E> {
 
     /**

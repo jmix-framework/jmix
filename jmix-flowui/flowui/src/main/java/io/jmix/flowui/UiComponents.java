@@ -17,12 +17,14 @@
 package io.jmix.flowui;
 
 import com.vaadin.flow.component.Component;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Factory for creating UI components.
  *
  * @see #create(Class)
  */
+@NullMarked
 public interface UiComponents {
 
     /**

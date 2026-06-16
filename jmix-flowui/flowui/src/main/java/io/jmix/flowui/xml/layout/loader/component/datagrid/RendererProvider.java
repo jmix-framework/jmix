@@ -22,12 +22,14 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import org.dom4j.Element;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Provides renderers for data grid columns loaded from XML.
  *
  * @param <R> renderer type
  */
+@NullMarked
 public interface RendererProvider<R extends Renderer<?>> {
 
     /**
@@ -178,6 +180,7 @@ public interface RendererProvider<R extends Renderer<?>> {
     /**
      * Context used for creating a renderer from a data grid XML declaration.
      */
+    @NullMarked
     interface RendererCreationContext {
 
         /**

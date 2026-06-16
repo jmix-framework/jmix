@@ -16,9 +16,12 @@
 
 package io.jmix.flowui.view;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Interface of views that can contain unsaved changes.
  */
+@NullMarked
 public interface ChangeTracker {
 
     /**

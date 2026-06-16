@@ -18,7 +18,7 @@ package io.jmix.flowui.data;
 
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import java.util.EventObject;
 import java.util.function.Consumer;
@@ -30,6 +30,7 @@ import java.util.function.Consumer;
  * @param <E> the type of the entity tied to this value source
  * @param <V> the type of the value provided by this value source
  */
+@NullMarked
 public interface EntityValueSource<E, V> extends ValueSource<V>, EntityDataUnit {
 
     /**

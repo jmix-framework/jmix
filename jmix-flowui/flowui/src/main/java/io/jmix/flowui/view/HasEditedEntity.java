@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.view;
 
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -23,6 +24,7 @@ import org.jspecify.annotations.Nullable;
  *
  * @param <E> type of entity
  */
+@NullMarked
 public interface HasEditedEntity<E> {
 
     /**

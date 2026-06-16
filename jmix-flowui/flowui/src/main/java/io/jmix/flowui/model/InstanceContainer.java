@@ -19,7 +19,7 @@ package io.jmix.flowui.model;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.metamodel.model.MetaClass;
-
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import java.util.EventObject;
 import java.util.function.Consumer;
@@ -32,6 +32,7 @@ import java.util.function.Consumer;
  *
  * @see CollectionContainer
  */
+@NullMarked
 public interface InstanceContainer<E> {
 
     /**

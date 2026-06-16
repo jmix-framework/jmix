@@ -18,6 +18,7 @@ package io.jmix.flowui.component.groupgrid;
 
 import com.vaadin.flow.component.Component;
 import io.jmix.core.annotation.Experimental;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -27,6 +28,7 @@ import org.jspecify.annotations.Nullable;
  * @param <E> item type
  */
 @Experimental
+@NullMarked
 public interface GroupColumn<E> {
 
     /**

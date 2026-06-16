@@ -16,6 +16,8 @@
 
 package io.jmix.flowui.exception;
 
+import org.jspecify.annotations.NullMarked;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -46,6 +48,7 @@ public class CompositeValidationException extends ValidationException {
      * Represents a cause of a validation violation, providing detailed
      * information about a specific validation error.
      */
+    @NullMarked
     public interface ViolationCause extends Serializable {
 
         /**

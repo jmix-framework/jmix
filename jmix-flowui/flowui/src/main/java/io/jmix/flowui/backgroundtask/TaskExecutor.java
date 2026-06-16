@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.backgroundtask;
 
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -27,6 +28,7 @@ import org.jspecify.annotations.Nullable;
  * @param <T> the type of progress updates passed during task execution
  * @param <V> the type of the result produced by the background task
  */
+@NullMarked
 public interface TaskExecutor<T, V> {
 
     /**

@@ -17,12 +17,14 @@
 package io.jmix.flowui.menu.provider;
 
 import io.jmix.flowui.kit.component.menu.MenuItem;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
  * Represents menus that have menu item providers
  * @param <T> menu item type
  */
+@NullMarked
 public interface HasMenuItemProvider<T extends MenuItem> {
 
     /**

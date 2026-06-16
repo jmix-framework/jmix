@@ -24,6 +24,7 @@ import io.jmix.flowui.kit.component.HasActions;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.xml.layout.support.LoaderSupport;
 import org.dom4j.Element;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.context.ApplicationContext;
 import org.jspecify.annotations.Nullable;
 
@@ -32,6 +33,7 @@ import org.jspecify.annotations.Nullable;
  *
  * @param <T> the type of component being loaded
  */
+@NullMarked
 public interface ComponentLoader<T extends Component> {
 
     /**
@@ -39,6 +41,7 @@ public interface ComponentLoader<T extends Component> {
      * provides access to the component being processed, its lifecycle tasks, and
      * associated data or actions holders.
      */
+    @NullMarked
     interface Context {
 
         /**
@@ -105,6 +108,7 @@ public interface ComponentLoader<T extends Component> {
     /**
      * Represents a context for loading and initializing UI components in {@link View}.
      */
+    @NullMarked
     interface ComponentContext extends Context {
 
         /**
@@ -128,6 +132,7 @@ public interface ComponentLoader<T extends Component> {
     /**
      * Represents a context for loading and initializing UI components in {@link Fragment}.
      */
+    @NullMarked
     interface FragmentContext extends Context {
 
         /**
@@ -139,6 +144,7 @@ public interface ComponentLoader<T extends Component> {
     /**
      * InitTasks are used to perform deferred initialization of visual components.
      */
+    @NullMarked
     interface InitTask {
 
         /**
@@ -152,6 +158,7 @@ public interface ComponentLoader<T extends Component> {
     /**
      * AutowireTasks are used to perform autowiring of nested fragments in a view.
      */
+    @NullMarked
     interface AutowireTask {
 
         /**

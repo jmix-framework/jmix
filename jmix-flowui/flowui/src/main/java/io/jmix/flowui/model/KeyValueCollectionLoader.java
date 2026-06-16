@@ -20,7 +20,7 @@ import io.jmix.core.ValueLoadContext;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.flowui.view.Subscribe;
-
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import java.util.EventObject;
 import java.util.List;
@@ -31,6 +31,7 @@ import java.util.function.Function;
  * Loader of {@link KeyValueEntity} collections.
  */
 @InstallSubject("loadDelegate")
+@NullMarked
 public interface KeyValueCollectionLoader extends BaseCollectionLoader {
 
     /**

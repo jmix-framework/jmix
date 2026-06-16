@@ -19,11 +19,13 @@ package io.jmix.flowui.xml.layout;
 import com.vaadin.flow.component.Component;
 import io.jmix.core.annotation.Internal;
 import org.dom4j.Element;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * INTERNAL
  */
 @Internal
+@NullMarked
 public interface ComponentRootLoader<T extends Component> extends ComponentLoader<T> {
 
     void createContent();

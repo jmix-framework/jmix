@@ -24,13 +24,14 @@ import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.Install;
 import io.jmix.flowui.view.OpenMode;
 import io.jmix.flowui.view.View;
-
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import java.util.function.Consumer;
 
 /**
  * Interface to be implemented by actions that open a view.
  */
+@NullMarked
 public interface ViewOpeningAction extends Action {
 
     /**
@@ -153,6 +154,7 @@ public interface ViewOpeningAction extends Action {
     <V extends View<?>> Consumer<V> getViewConfigurer();
 
     @FunctionalInterface
+    @NullMarked
     interface RouteParametersProvider {
 
         /**
@@ -163,6 +165,7 @@ public interface ViewOpeningAction extends Action {
     }
 
     @FunctionalInterface
+    @NullMarked
     interface QueryParametersProvider {
 
         /**

@@ -17,11 +17,13 @@
 package io.jmix.flowui.facet;
 
 import io.jmix.flowui.facet.settings.FragmentSettings;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Marker interface representing a facet that manages {@link FragmentSettings}.
  * Provides functionality for retrieving and storing configuration settings
  * associated with a {@link io.jmix.flowui.fragment.Fragment}.
  */
+@NullMarked
 public interface FragmentSettingsFacet extends SettingsFacet<FragmentSettings> {
 }

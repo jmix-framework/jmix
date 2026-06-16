@@ -19,12 +19,14 @@ package io.jmix.flowui.facet.settings;
 import com.vaadin.flow.component.Component;
 import io.jmix.flowui.facet.settings.component.binder.ComponentSettingsBinder;
 import io.jmix.flowui.facet.settings.component.binder.DataGridSettingsBinder;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.Collection;
 
 /**
  * Saves and restores settings for components.
  */
+@NullMarked
 public interface ComponentSettingsManager {
 
     /**

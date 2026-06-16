@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.component;
 
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Arrays;
@@ -24,6 +25,7 @@ import java.util.List;
 /**
  * An interface used in describing the responsive layouting behavior of an implementing layout.
  */
+@NullMarked
 public interface SupportsResponsiveSteps {
 
     /**

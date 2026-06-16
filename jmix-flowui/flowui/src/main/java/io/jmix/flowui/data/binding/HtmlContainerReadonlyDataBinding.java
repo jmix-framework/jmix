@@ -21,11 +21,13 @@ import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.data.ValueSource;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.InstanceContainer;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Binds {@link HtmlContainer} with {@link ValueSource}, {@link InstanceContainer} or {@link CollectionContainer}
  * to show entity property value.
  */
+@NullMarked
 public interface HtmlContainerReadonlyDataBinding {
 
     /**

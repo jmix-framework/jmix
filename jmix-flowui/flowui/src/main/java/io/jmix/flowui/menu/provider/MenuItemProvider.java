@@ -18,6 +18,7 @@ package io.jmix.flowui.menu.provider;
 
 import io.jmix.core.common.event.Subscription;
 import io.jmix.flowui.kit.component.menu.MenuItem;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.Collection;
 import java.util.EventObject;
@@ -30,6 +31,7 @@ import java.util.function.Function;
  *
  * @param <T> menu item type
  */
+@NullMarked
 public interface MenuItemProvider<T extends MenuItem> {
 
     /**

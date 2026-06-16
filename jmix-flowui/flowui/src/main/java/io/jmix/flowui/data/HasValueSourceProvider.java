@@ -17,11 +17,13 @@
 package io.jmix.flowui.data;
 
 import io.jmix.flowui.kit.meta.StudioIgnore;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
  * An object having a {@link ValueSourceProvider}.
  */
+@NullMarked
 public interface HasValueSourceProvider {
 
     /**

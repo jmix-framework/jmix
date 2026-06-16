@@ -16,6 +16,8 @@
 
 package io.jmix.flowui.action;
 
+import org.jspecify.annotations.NullMarked;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -89,6 +91,7 @@ public class SecuredBaseAction<A extends SecuredBaseAction<A>> extends Observabl
      * @see #addEnabledRule(EnabledRule)
      */
     @FunctionalInterface
+    @NullMarked
     public interface EnabledRule {
 
         /**

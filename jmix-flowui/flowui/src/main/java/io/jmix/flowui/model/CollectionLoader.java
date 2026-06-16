@@ -21,6 +21,7 @@ import io.jmix.core.LoadContext;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.repository.JmixDataRepositoryContext;
 import io.jmix.flowui.view.Subscribe;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.data.domain.Pageable;
 
 import java.util.EventObject;
@@ -33,6 +34,7 @@ import java.util.function.Function;
  * Loader of entity collections.
  */
 @InstallSubject("loadDelegate")
+@NullMarked
 public interface CollectionLoader<E> extends BaseCollectionLoader {
 
     /**

@@ -18,10 +18,11 @@ package io.jmix.flowui.action;
 
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.util.OperationResult;
-
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import java.util.function.Supplier;
 
+@NullMarked
 public interface OperationResultAction extends Action {
 
     OperationResult getOperationResult();

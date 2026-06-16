@@ -16,10 +16,13 @@
 
 package io.jmix.flowui.component;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * An interface that represents a picker component for selecting or interacting with entities.
  *
  * @param <E> the type of entity to be selected or managed by the component
  */
+@NullMarked
 public interface EntityPickerComponent<E> extends PickerComponent<E>, SupportsMetaClass {
 }

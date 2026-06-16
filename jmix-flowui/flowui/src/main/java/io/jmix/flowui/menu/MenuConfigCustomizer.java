@@ -16,6 +16,8 @@
 
 package io.jmix.flowui.menu;
 
+import org.jspecify.annotations.NullMarked;
+
 import java.util.List;
 
 /**
@@ -23,6 +25,7 @@ import java.util.List;
  *
  * @see MenuConfig
  */
+@NullMarked
 public interface MenuConfigCustomizer {
 
     /**

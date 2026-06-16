@@ -16,11 +16,14 @@
 
 package io.jmix.flowui.backgroundtask;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Interface that allows to read/write state of UI from background threads.
  *
  * @see BackgroundWorker#getUIAccessor()
  */
+@NullMarked
 public interface UIAccessor {
 
     /**

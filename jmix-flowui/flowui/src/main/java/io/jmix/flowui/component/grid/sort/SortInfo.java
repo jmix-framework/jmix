@@ -17,11 +17,13 @@
 package io.jmix.flowui.component.grid.sort;
 
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
  * Interface representing sorting information for a property.
  */
+@NullMarked
 public interface SortInfo {
 
     /**

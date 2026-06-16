@@ -16,6 +16,8 @@
 
 package io.jmix.flowui.backgroundtask;
 
+import org.jspecify.annotations.NullMarked;
+
 import java.util.Map;
 
 /**
@@ -24,6 +26,7 @@ import java.util.Map;
  *
  * @param <T> task progress measurement unit
  */
+@NullMarked
 public interface TaskLifeCycle<T> {
     /**
      * Publishes changes to show progress.

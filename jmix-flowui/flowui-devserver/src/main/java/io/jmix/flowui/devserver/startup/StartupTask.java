@@ -16,6 +16,9 @@
 
 package io.jmix.flowui.devserver.startup;
 
+import org.jspecify.annotations.NullMarked;
+
+@NullMarked
 public interface StartupTask {
     void execute(StartupContext context);
 }

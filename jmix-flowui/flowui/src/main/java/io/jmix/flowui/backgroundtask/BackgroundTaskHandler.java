@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.backgroundtask;
 
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -23,6 +24,7 @@ import org.jspecify.annotations.Nullable;
  *
  * @param <V> type of task's result
  */
+@NullMarked
 public interface BackgroundTaskHandler<V> {
 
     /**

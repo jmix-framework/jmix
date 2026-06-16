@@ -16,9 +16,12 @@
 
 package io.jmix.flowui.backgroundtask;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Entry point to {@link BackgroundTask} execution functionality.
  */
+@NullMarked
 public interface BackgroundWorker {
 
     /**

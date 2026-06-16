@@ -21,11 +21,13 @@ import io.jmix.flowui.kit.component.usermenu.HasMenuItems;
 import io.jmix.flowui.kit.component.usermenu.UserMenuItem;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import org.dom4j.Element;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * An interface that provides a contract for loading {@link UserMenuItem}
  * into a {@link UserMenu}.
  */
+@NullMarked
 public interface UserMenuItemLoader {
 
     boolean supports(String itemName);

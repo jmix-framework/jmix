@@ -18,6 +18,7 @@ package io.jmix.flowui.sys.registration;
 
 import io.jmix.flowui.facet.Facet;
 import io.jmix.flowui.xml.facet.loader.FacetLoader;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -40,6 +41,7 @@ import org.jspecify.annotations.Nullable;
  * @see FacetRegistrationBuilder
  * @see CustomFacetsRegistry
  */
+@NullMarked
 public interface FacetRegistration {
 
     /**

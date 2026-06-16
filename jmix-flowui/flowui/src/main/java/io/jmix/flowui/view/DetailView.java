@@ -17,6 +17,7 @@
 package io.jmix.flowui.view;
 
 import io.jmix.flowui.util.OperationResult;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -24,6 +25,7 @@ import org.jspecify.annotations.Nullable;
  *
  * @param <E> type of entity
  */
+@NullMarked
 public interface DetailView<E> extends ChangeTracker, SupportEntityLock<E> {
 
     /**

@@ -19,7 +19,7 @@ package io.jmix.flowui.view;
 
 import io.jmix.flowui.component.LookupComponent;
 import io.jmix.flowui.util.OperationResult;
-
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import java.util.Collection;
 import java.util.Optional;
@@ -31,6 +31,7 @@ import java.util.function.Predicate;
  *
  * @param <E> entity class
  */
+@NullMarked
 public interface LookupView<E> {
 
     /**

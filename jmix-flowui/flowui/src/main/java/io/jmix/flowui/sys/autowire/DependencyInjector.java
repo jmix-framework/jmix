@@ -17,6 +17,7 @@
 package io.jmix.flowui.sys.autowire;
 
 import com.vaadin.flow.component.Composite;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.Collection;
 
@@ -26,6 +27,7 @@ import java.util.Collection;
  *
  * @see AutowireManager
  */
+@NullMarked
 public interface DependencyInjector {
 
     /**
@@ -46,6 +48,7 @@ public interface DependencyInjector {
     /**
      * Base injection context interface.
      */
+    @NullMarked
     interface AutowireContext<T extends Composite<?>> {
 
         /**

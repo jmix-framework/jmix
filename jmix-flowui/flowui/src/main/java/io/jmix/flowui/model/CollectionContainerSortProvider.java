@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.model;
 
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -23,6 +24,7 @@ import org.jspecify.annotations.Nullable;
  * This interface is used to obtain a {@link Sorter} instance that can be applied to
  * a {@link CollectionContainer} according to the information provided in the {@link CollectionContainerSortContext}.
  */
+@NullMarked
 public interface CollectionContainerSortProvider {
 
     /**

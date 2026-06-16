@@ -25,6 +25,7 @@ import io.jmix.flowui.facet.settings.component.binder.ComponentSettingsBinder;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.View.BeforeShowEvent;
 import io.jmix.flowui.view.View.ReadyEvent;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
@@ -40,6 +41,7 @@ import java.util.function.Consumer;
  * Note, facet works with components that contain an id and have {@link ComponentSettingsBinder}.
  * Otherwise, it cannot match saved settings with a component.
  */
+@NullMarked
 public interface SettingsFacet<S extends UiComponentSettings<S>> extends Facet {
 
     /**

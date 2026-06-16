@@ -18,6 +18,8 @@ package io.jmix.reports.yarg.loaders;
 
 import io.jmix.reports.yarg.structure.BandData;
 import io.jmix.reports.yarg.structure.ReportQuery;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
@@ -26,9 +28,10 @@ import java.util.Map;
  * This interface describes a logic which load rows of data using report query, parent band and params
  */
 @FunctionalInterface
+@NullMarked
 public interface ReportDataLoader {
     /**
      * This method MUST return list of mutable maps. We need mutability to put there some values implicitly.
      */
-    List<Map<String, Object>> loadData(ReportQuery reportQuery, BandData parentBand, Map<String, Object> params);
+    List<Map<String, Object>> loadData(ReportQuery reportQuery, @Nullable BandData parentBand, Map<String, Object> params);
 }

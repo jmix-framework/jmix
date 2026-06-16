@@ -15,9 +15,12 @@
  */
 package io.jmix.reports.yarg.formatters;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * This interface describes a logic which construct resulting document
  */
+@NullMarked
 public interface ReportFormatter {
 
     /**

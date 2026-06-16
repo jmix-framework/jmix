@@ -21,11 +21,13 @@ import io.jmix.reports.yarg.structure.ReportQuery;
 import io.jmix.core.*;
 import io.jmix.reports.entity.DataSet;
 import io.jmix.reports.entity.Report;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.jspecify.annotations.Nullable;
 
+@NullMarked
 public abstract class AbstractEntityDataLoader implements ReportDataLoader {
 
     @Autowired

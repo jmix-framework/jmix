@@ -1,11 +1,13 @@
 package io.jmix.reports.delegate;
 
 import io.jmix.reports.exception.ReportParametersValidationException;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Interface for implementing a custom input parameter validator.
  * @param <T> parameter type
  */
+@NullMarked
 public interface ParameterValidator<T> {
 
     /**

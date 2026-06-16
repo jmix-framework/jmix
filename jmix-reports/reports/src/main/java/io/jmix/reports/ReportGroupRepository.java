@@ -17,6 +17,7 @@
 package io.jmix.reports;
 
 import io.jmix.reports.entity.ReportGroup;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,6 +29,7 @@ import java.util.UUID;
  * <br/>
  * Application should generally should use this interface to work with groups, instead of DataManager.
  */
+@NullMarked
 public interface ReportGroupRepository {
 
     /**

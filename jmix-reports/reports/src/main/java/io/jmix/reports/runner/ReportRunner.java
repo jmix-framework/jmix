@@ -17,11 +17,13 @@
 package io.jmix.reports.runner;
 
 import io.jmix.reports.yarg.reporting.ReportOutputDocument;
+import org.jspecify.annotations.NullMarked;
 import io.jmix.reports.entity.Report;
 
 /**
  * Interface is used for running reports
  */
+@NullMarked
 public interface ReportRunner {
 
     /**

@@ -19,6 +19,8 @@ package io.jmix.reports.yarg.reporting.extraction;
 import io.jmix.reports.yarg.reporting.DataExtractor;
 import io.jmix.reports.yarg.structure.BandData;
 import io.jmix.reports.yarg.structure.ReportBand;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.Map;
@@ -28,13 +30,15 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Default data extraction context implementation
  */
+@NullMarked
 public class ExtractionContextImpl implements ExtractionContext {
     protected DataExtractor extractor;
     protected ReportBand band;
+    @Nullable
     protected BandData parentBand;
     protected Map<String, Object> params;
 
-    public ExtractionContextImpl(DataExtractor extractor, ReportBand band, BandData parentBand, Map<String, Object> params) {
+    public ExtractionContextImpl(DataExtractor extractor, ReportBand band, @Nullable BandData parentBand, Map<String, Object> params) {
         checkNotNull(extractor);
         checkNotNull(band);
         checkNotNull(params);
@@ -53,6 +57,7 @@ public class ExtractionContextImpl implements ExtractionContext {
         return band;
     }
 
+    @Nullable
     public BandData getParentBandData() {
         return parentBand;
     }

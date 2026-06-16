@@ -16,6 +16,8 @@
 
 package io.jmix.reports.impl;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Performs the following tasks:
  * <ul>
@@ -23,6 +25,7 @@ package io.jmix.reports.impl;
  *  <li>reloading hot-deployed definitions</li>
  * </ul>
  */
+@NullMarked
 public interface AnnotatedReportScanner {
     /**
      * Scan and import group definitions from application context.

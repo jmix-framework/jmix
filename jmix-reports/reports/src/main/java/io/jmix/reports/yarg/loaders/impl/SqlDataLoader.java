@@ -22,6 +22,8 @@ import io.jmix.reports.yarg.exception.DataLoadingException;
 import io.jmix.reports.yarg.structure.BandData;
 import io.jmix.reports.yarg.structure.ReportQuery;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import javax.sql.DataSource;
 import java.sql.ResultSet;
@@ -43,6 +45,7 @@ import java.util.regex.Pattern;
  *
  * ${startDate} is alias of the input parameter, which will be passed to the query
  */
+@NullMarked
 public class SqlDataLoader extends AbstractDbDataLoader {
 
     private DataSource dataSource;
@@ -52,7 +55,7 @@ public class SqlDataLoader extends AbstractDbDataLoader {
     }
 
     @Override
-    public List<Map<String, Object>> loadData(ReportQuery reportQuery, BandData parentBand, Map<String, Object> params) {
+    public List<Map<String, Object>> loadData(ReportQuery reportQuery, @Nullable BandData parentBand, Map<String, Object> params) {
         try {
             String query = reportQuery.getScript();
             if (StringUtils.isBlank(query)) {

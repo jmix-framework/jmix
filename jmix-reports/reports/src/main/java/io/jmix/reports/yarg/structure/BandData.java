@@ -16,6 +16,8 @@
 
 package io.jmix.reports.yarg.structure;
 
+import org.jspecify.annotations.NullMarked;
+
 import java.io.Serializable;
 import java.util.*;
 
@@ -229,6 +231,7 @@ public class BandData implements Serializable {
         }
 
         @Override
+        @NullMarked
         public boolean visit(BandData band) {
             boolean found = band.getName().equals(name);
             if (found) {

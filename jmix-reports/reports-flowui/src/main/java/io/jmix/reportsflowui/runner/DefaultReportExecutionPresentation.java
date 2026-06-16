@@ -21,6 +21,7 @@ import io.jmix.reports.ReportPrintHelper;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportOutputType;
 import io.jmix.reports.entity.ReportTemplate;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
@@ -31,6 +32,7 @@ import static io.jmix.reports.util.ReportTemplateUtils.inputParametersRequiredBy
 import static io.jmix.reports.util.ReportTemplateUtils.supportAlterableForTemplate;
 
 @Internal
+@NullMarked
 @Component("report_DefaultReportExecutionPresentation")
 public class DefaultReportExecutionPresentation implements ReportExecutionPresentation {
 

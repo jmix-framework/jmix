@@ -35,6 +35,7 @@ import jakarta.persistence.PersistenceContext;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
+import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +45,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import java.io.ByteArrayInputStream;
 import java.util.*;
 
+@NullMarked
 @Component("report_ExecutionHistoryRecorder")
 public class ReportExecutionHistoryRecorderImpl implements ReportExecutionHistoryRecorder {
     private static final Logger log = LoggerFactory.getLogger(ReportExecutionHistoryRecorderImpl.class);

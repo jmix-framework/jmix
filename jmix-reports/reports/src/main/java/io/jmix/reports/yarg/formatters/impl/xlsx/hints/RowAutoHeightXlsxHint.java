@@ -23,6 +23,7 @@ import io.jmix.reports.yarg.formatters.impl.xlsx.StyleSheet;
 import io.jmix.reports.yarg.structure.BandData;
 import org.apache.commons.lang3.StringUtils;
 import org.docx4j.openpackaging.parts.SpreadsheetML.WorksheetPart;
+import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.jspecify.annotations.Nullable;
@@ -40,6 +41,7 @@ import java.util.*;
 /**
  * Recalculates row heights depending on the cell values and fonts.
  */
+@NullMarked
 public class RowAutoHeightXlsxHint implements XlsxHint {
     protected static final Logger log = LoggerFactory.getLogger(RowAutoHeightXlsxHint.class);
 

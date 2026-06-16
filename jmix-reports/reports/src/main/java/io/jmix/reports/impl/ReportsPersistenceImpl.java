@@ -26,6 +26,7 @@ import io.jmix.reports.entity.*;
 import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.constraint.SecureOperations;
 import org.apache.commons.collections4.CollectionUtils;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -38,6 +39,7 @@ import java.util.UUID;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
+@NullMarked
 @Component("report_ReportsPersistence")
 public class ReportsPersistenceImpl implements ReportsPersistence {
 

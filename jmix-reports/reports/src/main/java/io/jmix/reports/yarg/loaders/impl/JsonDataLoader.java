@@ -21,6 +21,8 @@ import io.jmix.reports.yarg.structure.BandData;
 import io.jmix.reports.yarg.structure.ReportQuery;
 import com.jayway.jsonpath.JsonPath;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -55,11 +57,13 @@ import java.util.regex.Pattern;
  * parameter=param1 $.store.book[*]
  * We get json string from parameter param1 and select all "book" objects from the "store" object
  */
+
+@NullMarked
 public class JsonDataLoader extends AbstractDataLoader {
     protected Pattern parameterPattern = Pattern.compile("parameter=([A-z0-9_]+)");
 
     @Override
-    public List<Map<String, Object>> loadData(ReportQuery reportQuery, BandData parentBand, Map<String, Object> reportParams) {
+    public List<Map<String, Object>> loadData(ReportQuery reportQuery, @Nullable BandData parentBand, Map<String, Object> reportParams) {
         Map<String, Object> currentParams = copyParameters(reportParams);
 
         Matcher matcher = parameterPattern.matcher(reportQuery.getScript());
@@ -148,6 +152,7 @@ public class JsonDataLoader extends AbstractDataLoader {
         }
     }
 
+    @Nullable
     protected String getParameterName(Matcher matcher) {
         if (matcher.find()) {
             return matcher.group(1);
@@ -168,7 +173,7 @@ public class JsonDataLoader extends AbstractDataLoader {
         return copyParams;
     }
 
-    protected void addParentBandDataToParametersRecursively(BandData parentBand, Map<String, Object> currentParams) {
+    protected void addParentBandDataToParametersRecursively(@Nullable BandData parentBand, Map<String, Object> currentParams) {
         while (parentBand != null) {
             addParentBandDataToParameters(parentBand, currentParams);
             parentBand = parentBand.getParentBand();

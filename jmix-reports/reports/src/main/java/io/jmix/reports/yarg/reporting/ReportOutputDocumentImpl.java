@@ -17,7 +17,9 @@ package io.jmix.reports.yarg.reporting;
 
 import io.jmix.reports.yarg.structure.Report;
 import io.jmix.reports.yarg.structure.ReportOutputType;
+import org.jspecify.annotations.NullMarked;
 
+@NullMarked
 public class ReportOutputDocumentImpl implements ReportOutputDocument {
 
     protected Report report;

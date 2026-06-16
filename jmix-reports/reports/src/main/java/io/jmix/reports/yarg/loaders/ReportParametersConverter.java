@@ -16,9 +16,12 @@
 
 package io.jmix.reports.yarg.loaders;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * This interface describes logic which transform input parameters. Example: convert Entity object to entity id for sql data loader.
  */
+@NullMarked
 public interface ReportParametersConverter {
     <T> T convert(Object input);
 }

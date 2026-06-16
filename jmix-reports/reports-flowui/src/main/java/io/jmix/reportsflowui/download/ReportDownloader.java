@@ -19,11 +19,13 @@ package io.jmix.reportsflowui.download;
 import io.jmix.core.FileRef;
 import io.jmix.flowui.download.DownloadDataProvider;
 import io.jmix.flowui.download.DownloadFormat;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
  * Generic interface to download report data from the system.
  */
+@NullMarked
 public interface ReportDownloader {
     /**
      * Downloads an arbitrary resource defined by a DownloadDataProvider.

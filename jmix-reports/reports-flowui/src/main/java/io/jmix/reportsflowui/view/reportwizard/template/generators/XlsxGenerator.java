@@ -29,12 +29,14 @@ import org.docx4j.openpackaging.parts.PartName;
 import org.docx4j.openpackaging.parts.Parts;
 import org.docx4j.openpackaging.parts.SpreadsheetML.Styles;
 import org.docx4j.openpackaging.parts.SpreadsheetML.WorksheetPart;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.stereotype.Component;
 import org.xlsx4j.sml.*;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
+@NullMarked
 @Component("report_XlsxGenerator")
 public class XlsxGenerator extends AbstractOfficeGenerator {
 

@@ -17,6 +17,7 @@
 package io.jmix.reports.libintegration;
 
 import io.jmix.reports.yarg.util.groovy.Scripting;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scripting.ScriptEvaluator;
 import org.springframework.scripting.support.StaticScriptSource;
@@ -24,6 +25,7 @@ import org.springframework.scripting.support.StaticScriptSource;
 import org.jspecify.annotations.Nullable;
 import java.util.Map;
 
+@NullMarked
 public class JmixReportingScripting implements Scripting {
 
     @Autowired

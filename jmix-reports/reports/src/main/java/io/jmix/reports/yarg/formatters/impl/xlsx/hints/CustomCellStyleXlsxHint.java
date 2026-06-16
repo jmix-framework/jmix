@@ -19,8 +19,10 @@ package io.jmix.reports.yarg.formatters.impl.xlsx.hints;
 import io.jmix.reports.yarg.formatters.impl.xlsx.Document;
 import io.jmix.reports.yarg.formatters.impl.xlsx.StyleSheet;
 import io.jmix.reports.yarg.structure.BandData;
+import org.jspecify.annotations.NullMarked;
 import org.xlsx4j.sml.Cell;
 
+@NullMarked
 public class CustomCellStyleXlsxHint extends io.jmix.reports.yarg.formatters.impl.xlsx.hints.AbstractXlsxHint {
     protected Document document;
 

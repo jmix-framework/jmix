@@ -24,11 +24,14 @@ import io.jmix.reports.yarg.structure.BandData;
 import io.jmix.reports.yarg.structure.ReportQuery;
 import io.jmix.reports.yarg.util.groovy.Scripting;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import java.util.Map;
 
+@NullMarked
 public class JmixGroovyDataLoader implements ReportDataLoader {
 
     protected Scripting scripting;
@@ -48,7 +51,7 @@ public class JmixGroovyDataLoader implements ReportDataLoader {
     }
 
     @Override
-    public List<Map<String, Object>> loadData(ReportQuery reportQuery, BandData parentBand, Map<String, Object> params) {
+    public List<Map<String, Object>> loadData(ReportQuery reportQuery, @Nullable BandData parentBand, Map<String, Object> params) {
         try {
             String script = reportQuery.getScript();
             Map<String, Object> scriptParams = groovyScriptParametersProvider.getParametersForDatasetParameters(

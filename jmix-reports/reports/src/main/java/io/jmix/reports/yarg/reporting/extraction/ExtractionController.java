@@ -17,6 +17,7 @@
 package io.jmix.reports.yarg.reporting.extraction;
 
 import io.jmix.reports.yarg.structure.BandData;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.Collections;
 import java.util.List;
@@ -28,6 +29,7 @@ import java.util.Map;
  * <p>The default implementation is <b>io.jmix.reports.yarg.reporting.extraction.controller.DefaultExtractionController</b></p>
  */
 @FunctionalInterface
+@NullMarked
 public interface ExtractionController {
 
     /**

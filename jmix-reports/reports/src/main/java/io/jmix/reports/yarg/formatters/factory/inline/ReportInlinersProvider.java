@@ -18,9 +18,11 @@ package io.jmix.reports.yarg.formatters.factory.inline;
 
 
 import io.jmix.reports.yarg.formatters.impl.inline.ContentInliner;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.List;
 
+@NullMarked
 public interface ReportInlinersProvider {
 
     List<ContentInliner> getContentInliners();

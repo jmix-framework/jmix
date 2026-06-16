@@ -17,11 +17,13 @@
 package io.jmix.reports.impl.builder;
 
 import io.jmix.reports.entity.ReportGroup;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Bean responsible for parsing, validating annotated report group definition
  * and creating a model object that can be referenced by annotated reports or used otherwise by the application.
  */
+@NullMarked
 public interface AnnotatedGroupBuilder {
 
     /**

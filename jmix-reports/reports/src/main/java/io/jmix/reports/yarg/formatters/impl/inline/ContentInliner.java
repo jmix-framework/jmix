@@ -24,6 +24,7 @@ import org.docx4j.openpackaging.packages.SpreadsheetMLPackage;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.docx4j.openpackaging.parts.SpreadsheetML.WorksheetPart;
 import org.docx4j.wml.Text;
+import org.jspecify.annotations.NullMarked;
 import org.xlsx4j.sml.Cell;
 
 import java.util.regex.Matcher;
@@ -32,6 +33,7 @@ import java.util.regex.Pattern;
 /**
  * Handle tags in format strings
  */
+@NullMarked
 public interface ContentInliner {
 
     /**

@@ -17,10 +17,12 @@
 package io.jmix.reports.yarg.formatters.impl.docx;
 
 import org.docx4j.wml.Text;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Processes texts that have a multiline text as value.
  */
+@NullMarked
 public interface MultilineTextProcessor {
 
     /**

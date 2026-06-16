@@ -18,6 +18,7 @@ package io.jmix.reports.yarg.formatters;
 
 import io.jmix.reports.yarg.structure.BandData;
 import io.jmix.reports.yarg.structure.Report;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.Map;
 
@@ -26,6 +27,7 @@ import java.util.Map;
  * Example: you need to merge pdfs created by another reports
  */
 @FunctionalInterface
+@NullMarked
 public interface CustomReport {
 
     /**

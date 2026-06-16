@@ -28,6 +28,7 @@ import io.jmix.reports.yarg.formatters.ReportFormatter;
 import io.jmix.reports.yarg.structure.BandData;
 import io.jmix.reports.yarg.structure.ReportTemplate;
 import io.jmix.reports.yarg.util.groovy.Scripting;
+import org.jspecify.annotations.NullMarked;
 
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -160,6 +161,7 @@ public class DefaultFormatterFactory implements ReportFormatterFactory {
         this.formulasPostProcessingEvaluationEnabled = formulasPostProcessingEvaluationEnabled;
     }
 
+    @NullMarked
     public ReportFormatter createFormatter(FormatterFactoryInput factoryInput) {
         String templateExtension = factoryInput.templateExtension;
         BandData rootBand = factoryInput.rootBand;
@@ -183,6 +185,7 @@ public class DefaultFormatterFactory implements ReportFormatterFactory {
         inlinersProvider = new DefaultInlinersProvider();
     }
 
+    @NullMarked
     protected static interface FormatterCreator {
         ReportFormatter create(FormatterFactoryInput formatterFactoryInput);
     }

@@ -23,12 +23,14 @@ import io.jmix.core.metamodel.datatype.EnumClass;
 import io.jmix.data.persistence.DbmsSpecifics;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+@NullMarked
 public class SqlParametersConverter implements ReportParametersConverter {
 
     @Autowired

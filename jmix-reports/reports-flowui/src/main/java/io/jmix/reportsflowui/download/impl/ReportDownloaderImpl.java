@@ -23,6 +23,7 @@ import io.jmix.flowui.download.Downloader;
 import io.jmix.reports.ReportsProperties;
 import io.jmix.reportsflowui.download.ReportDownloader;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -32,6 +33,7 @@ import org.springframework.stereotype.Component;
 /**
  * Shows report data in the web browser or downloads it.
  */
+@NullMarked
 @Component("report_ReportDownloader")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ReportDownloaderImpl implements ReportDownloader {

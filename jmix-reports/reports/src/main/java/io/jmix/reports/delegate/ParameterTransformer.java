@@ -1,5 +1,7 @@
 package io.jmix.reports.delegate;
 
+import org.jspecify.annotations.NullMarked;
+
 import java.util.Map;
 
 /**
@@ -8,6 +10,7 @@ import java.util.Map;
  * @param <T> class of the input parameter
  */
 @FunctionalInterface
+@NullMarked
 public interface ParameterTransformer<T> {
 
     /**

@@ -20,6 +20,7 @@ import io.jmix.core.annotation.Internal;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportOutputType;
 import io.jmix.reports.entity.ReportTemplate;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
@@ -32,6 +33,7 @@ import java.util.List;
  * Supports only templates whose output type is {@link ReportOutputType#TABLE}.
  */
 @Internal
+@NullMarked
 @Component("report_TableReportExecutionPresentation")
 public class TableReportExecutionPresentation implements ReportExecutionPresentation {
 

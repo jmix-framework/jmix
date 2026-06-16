@@ -24,12 +24,14 @@ import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportScreen;
 import io.jmix.reports.impl.builder.AnnotatedReportScreenExtractor;
 import io.jmix.reports.impl.builder.InvalidReportDefinitionException;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@NullMarked
 @Component("report_AnnotatedReportScreenExtractor")
 public class AnnotatedReportScreenExtractorImpl implements AnnotatedReportScreenExtractor {
 

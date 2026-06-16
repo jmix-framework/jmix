@@ -17,11 +17,13 @@
 package io.jmix.reports.yarg.formatters.impl.xlsx.hints;
 
 import io.jmix.reports.yarg.structure.BandData;
+import org.jspecify.annotations.NullMarked;
 import org.xlsx4j.sml.Cell;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@NullMarked
 public abstract class AbstractXlsxHint implements XlsxHint {
 
     protected static class DataObject {

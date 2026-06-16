@@ -19,9 +19,11 @@ package io.jmix.reportsflowui.view.reportwizard.template;
 import freemarker.template.TemplateException;
 import io.jmix.reports.entity.wizard.ReportData;
 import io.jmix.reports.exception.TemplateGenerationException;
+import org.jspecify.annotations.NullMarked;
 
 import java.io.IOException;
 
+@NullMarked
 public interface Generator {
 
     byte[] generate(ReportData reportData) throws TemplateGenerationException, TemplateException, IOException;

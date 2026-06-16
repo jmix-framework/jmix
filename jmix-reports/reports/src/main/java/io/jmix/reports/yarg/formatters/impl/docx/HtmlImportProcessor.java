@@ -16,6 +16,9 @@
 
 package io.jmix.reports.yarg.formatters.impl.docx;
 
+import org.jspecify.annotations.NullMarked;
+
+@NullMarked
 public interface HtmlImportProcessor {
     String processHtml(String source);
 }

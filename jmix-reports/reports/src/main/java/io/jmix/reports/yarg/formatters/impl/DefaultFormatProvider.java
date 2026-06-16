@@ -15,5 +15,8 @@
  */
 package io.jmix.reports.yarg.formatters.impl;
 
+import org.jspecify.annotations.NullMarked;
+
+@NullMarked
 public interface DefaultFormatProvider extends ValueFormat {
 }

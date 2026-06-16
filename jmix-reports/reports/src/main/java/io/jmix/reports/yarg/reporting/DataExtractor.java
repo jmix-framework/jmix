@@ -17,6 +17,7 @@ package io.jmix.reports.yarg.reporting;
 
 import io.jmix.reports.yarg.structure.BandData;
 import io.jmix.reports.yarg.structure.Report;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.Map;
 
@@ -26,6 +27,7 @@ import java.util.Map;
  * !Attention! Please make sure if you really need to change this behaviour against default implementation cause it might crash report generation logic
  */
 @FunctionalInterface
+@NullMarked
 public interface DataExtractor {
 
     void extractData(Report report, Map<String, Object> params, BandData rootBand);

@@ -20,6 +20,8 @@ import io.jmix.reports.yarg.exception.DataLoadingException;
 import io.jmix.reports.yarg.loaders.ReportDataLoader;
 import io.jmix.reports.yarg.structure.BandData;
 import io.jmix.reports.yarg.structure.ReportQuery;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
@@ -27,10 +29,11 @@ import java.util.Map;
 /**
  * Delegates data loading operation to an object provided by {@link ReportQuery}.
  */
+@NullMarked
 public class DelegatingDataLoader implements ReportDataLoader {
 
     @Override
-    public List<Map<String, Object>> loadData(ReportQuery reportQuery, BandData parentBand, Map<String, Object> params) {
+    public List<Map<String, Object>> loadData(ReportQuery reportQuery, @Nullable BandData parentBand, Map<String, Object> params) {
         ReportDataLoader delegate = reportQuery.getLoaderDelegate();
         if (delegate == null) {
             throw new DataLoadingException(

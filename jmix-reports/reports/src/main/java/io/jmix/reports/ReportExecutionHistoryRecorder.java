@@ -17,11 +17,13 @@
 package io.jmix.reports;
 
 import io.jmix.reports.yarg.reporting.ReportOutputDocument;
+import org.jspecify.annotations.NullMarked;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportExecution;
 
 import java.util.Map;
 
+@NullMarked
 public interface ReportExecutionHistoryRecorder {
 
     ReportExecution startExecution(Report report, Map<String, Object> params);

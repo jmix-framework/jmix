@@ -18,6 +18,7 @@ package io.jmix.reports.yarg.reporting.extraction;
 
 import io.jmix.reports.yarg.loaders.factory.ReportLoaderFactory;
 import io.jmix.reports.yarg.structure.BandOrientation;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.function.BiFunction;
 
@@ -28,6 +29,7 @@ import java.util.function.BiFunction;
  *
  * <p>The default implementation is <b>io.jmix.reports.yarg.reporting.extraction.DefaultExtractionControllerFactory</b></p>
  */
+@NullMarked
 public interface ExtractionControllerFactory {
     /**
      * Method for runtime configuring data extraction logic by orientation

@@ -16,9 +16,12 @@
 
 package io.jmix.reports.yarg.loaders;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * This interface describes logic which transform resulting values. Example: convert PGObject from postgresql to java.util.UUID
  */
+@NullMarked
 public interface ReportFieldsConverter {
     <T> T convert(Object input);
 }

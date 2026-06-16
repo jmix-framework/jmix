@@ -26,6 +26,7 @@ import io.jmix.data.StoreAwareLocator;
 import io.jmix.reports.app.EntityMap;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -40,6 +41,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@NullMarked
 public class JpqlDataLoader extends AbstractDbDataLoader implements ReportDataLoader {
 
     @Autowired
@@ -75,7 +77,7 @@ public class JpqlDataLoader extends AbstractDbDataLoader implements ReportDataLo
     }
 
     @Override
-    public List<Map<String, Object>> loadData(ReportQuery reportQuery, BandData parentBand, Map<String, Object> params) {
+    public List<Map<String, Object>> loadData(ReportQuery reportQuery, @Nullable BandData parentBand, Map<String, Object> params) {
         String storeName = StoreUtils.getStoreName(reportQuery);
         String query = reportQuery.getScript();
         if (StringUtils.isBlank(query)) {
@@ -143,7 +145,7 @@ public class JpqlDataLoader extends AbstractDbDataLoader implements ReportDataLo
     }
 
     @Override
-    protected String processQueryTemplate(String query, BandData parentBand, Map<String, Object> reportParams) {
+    protected String processQueryTemplate(String query, @Nullable BandData parentBand, Map<String, Object> reportParams) {
         if (!groovyFeatureSupport.isGroovyEnabled()) {
             return groovyFeatureSupport.getDisabledQueryTemplateResult("jpql", query);
         }

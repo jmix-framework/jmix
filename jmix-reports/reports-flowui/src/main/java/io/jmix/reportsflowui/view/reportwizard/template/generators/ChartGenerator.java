@@ -27,6 +27,7 @@ import io.jmix.reports.entity.wizard.ReportData;
 import io.jmix.reports.entity.wizard.ReportRegion;
 import io.jmix.reports.exception.TemplateGenerationException;
 import org.apache.commons.collections4.CollectionUtils;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -34,6 +35,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+@NullMarked
 @Component("report_ChartGenerator")
 public class ChartGenerator implements Generator {
 

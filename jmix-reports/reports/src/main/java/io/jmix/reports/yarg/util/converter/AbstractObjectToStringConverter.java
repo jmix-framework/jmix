@@ -19,10 +19,12 @@ package io.jmix.reports.yarg.util.converter;
 import io.jmix.reports.yarg.exception.ReportingException;
 import org.apache.commons.lang3.reflect.ConstructorUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
+import org.jspecify.annotations.NullMarked;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
+@NullMarked
 public abstract class AbstractObjectToStringConverter implements ObjectToStringConverter {
     protected Object convertFromStringUnresolved(Class<?> parameterClass, String paramValueStr) {
         try {

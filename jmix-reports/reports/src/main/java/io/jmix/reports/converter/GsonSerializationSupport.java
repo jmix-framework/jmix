@@ -31,6 +31,7 @@ import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Range;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.beans.factory.BeanFactory;
 
 import org.jspecify.annotations.Nullable;
@@ -57,6 +58,7 @@ public class GsonSerializationSupport {
     protected EntityStates entityStates;
     protected DatatypeRegistry datatypeRegistry;
 
+    @NullMarked
     public interface ExclusionPolicy {
         boolean exclude(Class objectClass, String propertyName);
     }

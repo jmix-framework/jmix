@@ -19,6 +19,7 @@ package io.jmix.reportsflowui.runner;
 import io.jmix.core.FileRef;
 import io.jmix.core.annotation.Internal;
 import io.jmix.flowui.view.View;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -26,6 +27,7 @@ import org.jspecify.annotations.Nullable;
  * Implemented by the premium spreadsheet module and injected as an optional bean.
  */
 @Internal
+@NullMarked
 public interface SpreadsheetViewSupport {
 
     /**

@@ -18,11 +18,13 @@ package io.jmix.reports.impl.builder;
 
 import io.jmix.reports.annotation.ReportDef;
 import io.jmix.reports.entity.Report;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Bean responsible for parsing, validating report definition
  * and creating a model object that can be used by the application.
  */
+@NullMarked
 public interface AnnotatedReportBuilder {
 
     /**

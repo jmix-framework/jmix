@@ -17,12 +17,15 @@
 package io.jmix.reports.yarg.reporting;
 
 
+import org.jspecify.annotations.NullMarked;
+
 import java.io.OutputStream;
 
 /**
  * This class is entry point for reporting functionality
  * Use it to print reports
  */
+@NullMarked
 public interface ReportingAPI {
 
     /**

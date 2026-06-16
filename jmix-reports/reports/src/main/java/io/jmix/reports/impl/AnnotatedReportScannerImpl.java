@@ -25,6 +25,7 @@ import io.jmix.reports.entity.ReportGroup;
 import io.jmix.reports.impl.builder.AnnotatedGroupBuilder;
 import io.jmix.reports.impl.builder.AnnotatedReportBuilder;
 import io.jmix.reports.impl.builder.InvalidReportDefinitionException;
+import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -43,6 +44,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@NullMarked
 @Component("reports_AnnotatedReportScanner")
 public class AnnotatedReportScannerImpl implements AnnotatedReportScanner, ApplicationContextAware {
     private static final Logger log = LoggerFactory.getLogger(AnnotatedReportScannerImpl.class);

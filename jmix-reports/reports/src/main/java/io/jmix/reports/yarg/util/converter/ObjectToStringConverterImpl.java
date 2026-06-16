@@ -17,6 +17,8 @@
 package io.jmix.reports.yarg.util.converter;
 
 import io.jmix.reports.yarg.exception.ReportingException;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -27,6 +29,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Date;
 
+@NullMarked
 public class ObjectToStringConverterImpl extends AbstractObjectToStringConverter {
 
     protected SimpleDateFormat dateTimeFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm");
@@ -37,6 +40,7 @@ public class ObjectToStringConverterImpl extends AbstractObjectToStringConverter
     protected DateTimeFormatter localTimeFormat = DateTimeFormatter.ofPattern("HH:mm");
 
     @Override
+    @Nullable
     public String convertToString(Class parameterClass, Object paramValue) {
         if (paramValue == null) {
             return null;
@@ -56,6 +60,7 @@ public class ObjectToStringConverterImpl extends AbstractObjectToStringConverter
     }
 
     @Override
+    @Nullable
     public Object convertFromString(Class parameterClass, String paramValueStr) {
         if (paramValueStr == null) {
             return null;

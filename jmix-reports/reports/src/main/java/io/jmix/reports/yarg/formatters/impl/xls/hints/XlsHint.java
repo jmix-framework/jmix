@@ -18,7 +18,9 @@ package io.jmix.reports.yarg.formatters.impl.xls.hints;
 
 import io.jmix.reports.yarg.structure.BandData;
 import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.jspecify.annotations.NullMarked;
 
+@NullMarked
 public interface XlsHint {
 
     class CheckResult {

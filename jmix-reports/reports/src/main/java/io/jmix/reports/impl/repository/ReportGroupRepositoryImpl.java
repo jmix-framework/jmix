@@ -27,11 +27,13 @@ import io.jmix.reports.ReportGroupRepository;
 import io.jmix.reports.entity.ReportGroup;
 import io.jmix.reports.impl.AnnotatedReportGroupHolder;
 import io.jmix.reports.util.MsgBundleTools;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.stream.Stream;
 
+@NullMarked
 @Component("report_ReportGroupRepository")
 public class ReportGroupRepositoryImpl implements ReportGroupRepository {
 

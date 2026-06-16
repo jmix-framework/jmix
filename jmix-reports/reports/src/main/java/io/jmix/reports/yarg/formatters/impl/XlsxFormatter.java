@@ -67,6 +67,7 @@ import org.docx4j.openpackaging.parts.SpreadsheetML.PivotCacheDefinition;
 import org.docx4j.openpackaging.parts.SpreadsheetML.WorksheetPart;
 import org.docx4j.openpackaging.parts.WordprocessingML.BinaryPartAbstractImage;
 import org.docx4j.openpackaging.parts.relationships.RelationshipsPart;
+import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xlsx4j.jaxb.Context;
@@ -1275,6 +1276,7 @@ public class XlsxFormatter extends AbstractFormatter {
         private int lastRow = 0;
 
         @Override
+        @NullMarked
         public boolean visit(BandData band) {
             Range range = bandsForRanges.resultForBand(band);
             if (range != null && range.getLastRow() > lastRow) {

@@ -1,5 +1,7 @@
 package io.jmix.reports.yarg.structure;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Custom implementation of the result field formatting.
  *
@@ -7,6 +9,7 @@ package io.jmix.reports.yarg.structure;
  * @see ReportFieldFormat
  */
 @FunctionalInterface
+@NullMarked
 public interface CustomValueFormatter<T> {
 
     /**

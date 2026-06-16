@@ -1,6 +1,7 @@
 package io.jmix.reports.delegate;
 
 import io.jmix.reports.exception.ReportParametersValidationException;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.Map;
 
@@ -10,6 +11,7 @@ import java.util.Map;
  * (e.g. it can check that at least one of several parameters must be specified).
  */
 @FunctionalInterface
+@NullMarked
 public interface ParametersCrossValidator {
 
     /**

@@ -29,6 +29,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +54,7 @@ import java.util.regex.Pattern;
 
 import static java.lang.String.format;
 
+@NullMarked
 @Component("report_CustomFormatter")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class CustomFormatter implements CustomReport {

@@ -18,10 +18,12 @@ package io.jmix.reports.yarg.loaders.factory.impl;
 import io.jmix.reports.yarg.loaders.factory.ReportLoaderFactory;
 import io.jmix.reports.yarg.exception.UnsupportedLoaderException;
 import io.jmix.reports.yarg.loaders.ReportDataLoader;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@NullMarked
 public class DefaultLoaderFactory implements ReportLoaderFactory {
     public static final String GROOVY_DATA_LOADER = "groovy";
     public static final String SQL_DATA_LOADER = "sql";

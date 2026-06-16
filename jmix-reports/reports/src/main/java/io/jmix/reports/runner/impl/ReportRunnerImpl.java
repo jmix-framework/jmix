@@ -38,6 +38,7 @@ import io.jmix.reports.yarg.reporting.ReportingAPI;
 import io.jmix.reports.yarg.reporting.RunParams;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.lang3.time.StopWatch;
+import org.jspecify.annotations.NullMarked;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +51,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+@NullMarked
 @Component("report_ReportRunner")
 public class ReportRunnerImpl implements ReportRunner {
 

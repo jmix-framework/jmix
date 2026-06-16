@@ -20,10 +20,12 @@ import io.jmix.reports.yarg.formatters.impl.inline.BitmapContentInliner;
 import io.jmix.reports.yarg.formatters.impl.inline.ContentInliner;
 import io.jmix.reports.yarg.formatters.impl.inline.HtmlContentInliner;
 import io.jmix.reports.yarg.formatters.impl.inline.ImageContentInliner;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@NullMarked
 public class DefaultInlinersProvider implements ReportInlinersProvider {
 
     protected List<ContentInliner> contentInliners;

@@ -23,17 +23,20 @@ import io.jmix.core.Entity;
 import io.jmix.reports.app.EntityMap;
 import io.jmix.reports.entity.DataSet;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+@NullMarked
 public class SingleEntityDataLoader extends AbstractEntityDataLoader {
 
     public static final String DEFAULT_ENTITY_PARAM_NAME = "entity";
 
     @Override
-    public List<Map<String, Object>> loadData(ReportQuery dataSet, BandData parentBand, Map<String, Object> params) {
+    public List<Map<String, Object>> loadData(ReportQuery dataSet, @Nullable BandData parentBand, Map<String, Object> params) {
         Map<String, Object> additionalParams = dataSet.getAdditionalParams();
         String paramName = (String) additionalParams.get(DataSet.ENTITY_PARAM_NAME);
         if (StringUtils.isBlank(paramName)) {

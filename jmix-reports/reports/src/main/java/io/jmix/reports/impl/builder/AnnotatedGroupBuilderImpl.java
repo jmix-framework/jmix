@@ -22,10 +22,12 @@ import io.jmix.core.Metadata;
 import io.jmix.reports.annotation.ReportGroupDef;
 import io.jmix.reports.entity.ReportGroup;
 import io.jmix.reports.entity.ReportSource;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
+@NullMarked
 @Component("reports_AnnotatedGroupBuilder")
 public class AnnotatedGroupBuilderImpl implements AnnotatedGroupBuilder {
 

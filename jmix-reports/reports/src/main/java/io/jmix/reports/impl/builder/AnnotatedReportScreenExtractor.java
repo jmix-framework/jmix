@@ -18,6 +18,7 @@ package io.jmix.reports.impl.builder;
 
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportScreen;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.List;
 
@@ -25,6 +26,7 @@ import java.util.List;
  * Part of the {@link AnnotatedReportBuilder}.
  * Performs extracting screens from the report definition.
  */
+@NullMarked
 public interface AnnotatedReportScreenExtractor {
 
     /**

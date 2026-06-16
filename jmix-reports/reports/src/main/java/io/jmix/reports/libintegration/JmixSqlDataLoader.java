@@ -22,6 +22,8 @@ import io.jmix.reports.yarg.util.db.QueryRunner;
 import io.jmix.reports.yarg.util.db.ResultSetHandler;
 import io.jmix.reports.yarg.structure.ReportQuery;
 import io.jmix.data.StoreAwareLocator;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.sql.DataSource;
@@ -29,6 +31,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
+@NullMarked
 public class JmixSqlDataLoader extends SqlDataLoader {
 
     @Autowired
@@ -47,7 +50,7 @@ public class JmixSqlDataLoader extends SqlDataLoader {
     }
 
     @Override
-    protected String processQueryTemplate(String query, BandData parentBand, Map<String, Object> reportParams) {
+    protected String processQueryTemplate(String query, @Nullable BandData parentBand, Map<String, Object> reportParams) {
         if (!groovyFeatureSupport.isGroovyEnabled()) {
             return groovyFeatureSupport.getDisabledQueryTemplateResult("sql", query);
         }

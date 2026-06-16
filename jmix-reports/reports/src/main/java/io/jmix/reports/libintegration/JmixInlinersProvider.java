@@ -18,7 +18,9 @@ package io.jmix.reports.libintegration;
 
 import io.jmix.reports.yarg.formatters.factory.inline.DefaultInlinersProvider;
 import io.jmix.reports.yarg.formatters.impl.inline.ContentInliner;
+import org.jspecify.annotations.NullMarked;
 
+@NullMarked
 public class JmixInlinersProvider extends DefaultInlinersProvider {
 
     public JmixInlinersProvider(ContentInliner... inliners) {

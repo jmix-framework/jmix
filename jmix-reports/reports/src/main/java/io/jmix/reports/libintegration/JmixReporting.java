@@ -35,6 +35,7 @@ import io.jmix.reports.entity.ReportInputParameter;
 import io.jmix.reports.util.ReportsUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
@@ -43,6 +44,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+@NullMarked
 public class JmixReporting extends Reporting {
 
     public static final String REPORT_FILE_NAME_KEY = "__REPORT_FILE_NAME";

@@ -26,6 +26,7 @@ import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.docx4j.openpackaging.io3.Save;
 import org.docx4j.openpackaging.packages.OpcPackage;
 import org.docx4j.wml.*;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.xlsx4j.sml.Cell;
 import org.xlsx4j.sml.Row;
@@ -35,6 +36,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 
+@NullMarked
 public abstract class AbstractOfficeGenerator implements Generator {
 
     @Autowired

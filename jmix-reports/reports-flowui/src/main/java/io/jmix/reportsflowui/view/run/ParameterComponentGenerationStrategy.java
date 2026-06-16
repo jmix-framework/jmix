@@ -58,6 +58,7 @@ import io.jmix.reportsflowui.ReportsClientProperties;
 import io.jmix.reportsflowui.action.ReportsMultiValueSelectAction;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -137,6 +138,7 @@ public class ParameterComponentGenerationStrategy {
         parameter.setDefaultValue(objectToStringConverter.convertToString(now.getClass(), now));
     }
 
+    @NullMarked
     protected interface FieldCreator<T extends AbstractField> {
         T createField(ReportInputParameter parameter);
     }

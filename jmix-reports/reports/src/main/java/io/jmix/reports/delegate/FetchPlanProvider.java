@@ -17,6 +17,7 @@
 package io.jmix.reports.delegate;
 
 import io.jmix.core.FetchPlan;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Interface implemented by client to dynamically construct fetch plan for an entity Data Set.
@@ -25,6 +26,7 @@ import io.jmix.core.FetchPlan;
  * @see io.jmix.reports.entity.DataSetType#MULTI
  */
 @FunctionalInterface
+@NullMarked
 public interface FetchPlanProvider {
 
     /**

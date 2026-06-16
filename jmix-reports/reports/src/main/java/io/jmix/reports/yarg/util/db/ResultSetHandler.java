@@ -15,12 +15,15 @@
  */
 package io.jmix.reports.yarg.util.db;
 
+import org.jspecify.annotations.NullMarked;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
  * Implementations of this interface convert ResultSets into other objects.
  */
+@NullMarked
 public interface ResultSetHandler<T> {
 
     /**

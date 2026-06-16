@@ -1,5 +1,7 @@
 package io.jmix.reports.yarg.structure;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Interface implemented by clients that need to provide a dynamic default value for a input parameter,
  *   or default value for a complex data type that can't be expressed with annotation.
@@ -8,6 +10,7 @@ package io.jmix.reports.yarg.structure;
  * @see ReportParameter
  */
 @FunctionalInterface
+@NullMarked
 public interface DefaultValueProvider<T> {
 
     /**

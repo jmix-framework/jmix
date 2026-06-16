@@ -27,6 +27,7 @@ import io.jmix.core.Messages;
 import io.jmix.reports.entity.wizard.RegionProperty;
 import io.jmix.reports.entity.wizard.ReportData;
 import io.jmix.reports.entity.wizard.ReportRegion;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -54,6 +55,7 @@ public class HtmlGenerator implements Generator {
     protected volatile Configuration freeMarkerConfiguration;
 
     @Override
+    @NullMarked
     public byte[] generate(ReportData reportData) throws TemplateException, IOException {
         Configuration conf = getFreemarkerConfiguration();
         Template freeMarkerHtmlReportTemplate = conf.getTemplate(HTML_TEMPLATE_NAME);

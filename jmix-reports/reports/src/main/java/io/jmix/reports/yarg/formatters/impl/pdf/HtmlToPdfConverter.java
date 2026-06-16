@@ -15,10 +15,13 @@
  */
 package io.jmix.reports.yarg.formatters.impl.pdf;
 
+import org.jspecify.annotations.NullMarked;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 
+@NullMarked
 public interface HtmlToPdfConverter {
 
     void addFont(File file) throws IOException;

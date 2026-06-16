@@ -17,12 +17,14 @@
 package io.jmix.reports.util;
 
 import io.jmix.reports.yarg.reporting.ReportOutputDocument;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.List;
 
 /**
  * Interface contains utility methods for working with report zip archives
  */
+@NullMarked
 public interface ReportZipUtils {
 
     /**

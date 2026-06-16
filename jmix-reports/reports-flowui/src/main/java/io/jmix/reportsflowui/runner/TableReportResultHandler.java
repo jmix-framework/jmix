@@ -30,6 +30,7 @@ import io.jmix.reports.entity.ReportTemplate;
 import io.jmix.reports.yarg.reporting.ReportOutputDocument;
 import io.jmix.reportsflowui.ReportsClientProperties;
 import io.jmix.reportsflowui.view.run.ReportTableView;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
@@ -45,6 +46,7 @@ import java.util.function.Consumer;
  * in a table viewer (either dialog or via navigation, depending on configuration).
  */
 @Internal
+@NullMarked
 @Order(JmixOrder.HIGHEST_PRECEDENCE)
 @Component("report_TableReportResultHandler")
 public class TableReportResultHandler implements ReportResultHandler {

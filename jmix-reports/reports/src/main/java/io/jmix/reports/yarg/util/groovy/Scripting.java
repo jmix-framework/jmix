@@ -16,11 +16,15 @@
 
 package io.jmix.reports.yarg.util.groovy;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
 import java.util.Map;
 
 /**
  * This interface describes logic which evaluates groovy scripts
  */
+@NullMarked
 public interface Scripting {
-    <T> T evaluateGroovy(String script,Map<String, Object> params);
+    <T> T evaluateGroovy(String script, Map<String, Object> params);
 }

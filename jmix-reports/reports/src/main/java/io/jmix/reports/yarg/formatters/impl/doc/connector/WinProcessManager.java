@@ -18,6 +18,7 @@ package io.jmix.reports.yarg.formatters.impl.doc.connector;
 
 
 import org.apache.commons.io.IOUtils;
+import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,6 +32,7 @@ import java.util.regex.Pattern;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
+@NullMarked
 public class WinProcessManager extends JavaProcessManager implements ProcessManager {
     protected static final Logger log = LoggerFactory.getLogger(WinProcessManager.class);
 

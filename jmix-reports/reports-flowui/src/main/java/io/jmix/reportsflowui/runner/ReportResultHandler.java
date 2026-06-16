@@ -18,6 +18,7 @@ package io.jmix.reportsflowui.runner;
 
 import io.jmix.core.annotation.Internal;
 import io.jmix.reports.yarg.reporting.ReportOutputDocument;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Strategy interface for handling a completed report execution.
@@ -27,6 +28,7 @@ import io.jmix.reports.yarg.reporting.ReportOutputDocument;
  * {@link org.springframework.stereotype.Component @Component} and {@code @Order}.
  */
 @Internal
+@NullMarked
 public interface ReportResultHandler {
 
     /**

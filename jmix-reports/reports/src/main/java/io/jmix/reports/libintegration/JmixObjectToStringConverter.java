@@ -22,11 +22,13 @@ import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.reports.yarg.util.converter.AbstractObjectToStringConverter;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.jspecify.annotations.Nullable;
 import java.text.ParseException;
 
+@NullMarked
 public class JmixObjectToStringConverter extends AbstractObjectToStringConverter {
 
     @Autowired

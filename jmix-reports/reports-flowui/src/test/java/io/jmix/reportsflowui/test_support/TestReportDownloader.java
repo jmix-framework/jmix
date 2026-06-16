@@ -20,6 +20,7 @@ import io.jmix.core.FileRef;
 import io.jmix.flowui.download.DownloadDataProvider;
 import io.jmix.flowui.download.DownloadFormat;
 import io.jmix.reportsflowui.download.ReportDownloader;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 public class TestReportDownloader implements ReportDownloader {
@@ -34,6 +35,7 @@ public class TestReportDownloader implements ReportDownloader {
     protected DownloadFormat lastFormat;
 
     @Override
+    @NullMarked
     public void download(DownloadDataProvider dataProvider, String resourceName, @Nullable DownloadFormat format) {
         dataProviderDownloadCount++;
         lastDataProvider = dataProvider;
@@ -42,16 +44,19 @@ public class TestReportDownloader implements ReportDownloader {
     }
 
     @Override
+    @NullMarked
     public void download(DownloadDataProvider dataProvider, String resourceName) {
         download(dataProvider, resourceName, null);
     }
 
     @Override
+    @NullMarked
     public void download(FileRef fileReference) {
         download(fileReference, null);
     }
 
     @Override
+    @NullMarked
     public void download(FileRef fileReference, @Nullable DownloadFormat format) {
         fileRefDownloadCount++;
         lastFileRef = fileReference;
@@ -59,11 +64,13 @@ public class TestReportDownloader implements ReportDownloader {
     }
 
     @Override
+    @NullMarked
     public void download(byte[] data, String resourceName) {
         download(data, resourceName, null);
     }
 
     @Override
+    @NullMarked
     public void download(byte[] data, String resourceName, @Nullable DownloadFormat format) {
         byteArrayDownloadCount++;
         lastBytes = data;

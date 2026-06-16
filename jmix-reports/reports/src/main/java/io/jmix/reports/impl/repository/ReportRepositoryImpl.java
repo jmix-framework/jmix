@@ -37,6 +37,7 @@ import io.jmix.security.role.RoleGrantedAuthorityUtils;
 import io.jmix.security.role.assignment.RoleAssignmentRepository;
 import io.jmix.security.role.assignment.RoleAssignmentRoleType;
 import org.apache.commons.collections.CollectionUtils;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.event.EventListener;
 import org.jspecify.annotations.Nullable;
@@ -48,6 +49,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@NullMarked
 @Component("report_ReportRepository")
 public class ReportRepositoryImpl implements ReportRepository {
     /**

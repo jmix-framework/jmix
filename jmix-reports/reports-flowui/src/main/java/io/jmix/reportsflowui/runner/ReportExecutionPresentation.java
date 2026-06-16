@@ -20,6 +20,7 @@ import io.jmix.core.annotation.Internal;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportOutputType;
 import io.jmix.reports.entity.ReportTemplate;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
@@ -33,6 +34,7 @@ import java.util.List;
  * Use {@link ReportExecutionPresentationIds} for the well-known built-in identifiers.
  */
 @Internal
+@NullMarked
 public interface ReportExecutionPresentation {
 
     /**

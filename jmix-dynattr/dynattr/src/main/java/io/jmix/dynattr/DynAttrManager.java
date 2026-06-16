@@ -19,9 +19,11 @@ package io.jmix.dynattr;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.constraint.AccessConstraint;
 
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import java.util.Collection;
 
+@NullMarked
 public interface DynAttrManager {
 
     /**

@@ -27,6 +27,7 @@ import io.jmix.dynattr.OptionsLoaderType;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
@@ -58,6 +59,7 @@ public class AttributeOptionsLoaderImpl implements AttributeOptionsLoader {
         this.dynAttrGroovyFeatureSupport = dynAttrGroovyFeatureSupport;
     }
 
+    @NullMarked
     public interface OptionsLoaderStrategy {
         List<?> loadOptions(Object entity, AttributeDefinition attribute, String script);
     }

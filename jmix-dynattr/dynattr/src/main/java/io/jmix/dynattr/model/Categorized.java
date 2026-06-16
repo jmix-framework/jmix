@@ -16,12 +16,15 @@
 
 package io.jmix.dynattr.model;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Interface to be implemented by entities which can be separated by categories and hence have several sets of
  * dynamic attributes.
  * <p>
  * Such entities can be displayed in {@code DynamicAttributesPanel}.
  */
+@NullMarked
 public interface Categorized {
     Category getCategory();
 

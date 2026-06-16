@@ -18,13 +18,16 @@ package io.jmix.dynattr;
 
 import io.jmix.core.metamodel.model.MetaProperty;
 
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
 
+@NullMarked
 public interface AttributeDefinition extends Serializable {
+    @NullMarked
     interface Configuration extends Serializable {
         boolean isLookup();
 

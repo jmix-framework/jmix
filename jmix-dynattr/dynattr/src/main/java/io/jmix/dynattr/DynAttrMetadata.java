@@ -20,8 +20,11 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 
 import java.util.Collection;
+
+import org.jspecify.annotations.NullMarked;
 import java.util.Optional;
 
+@NullMarked
 public interface DynAttrMetadata {
 
     String DYN_ATTR_CACHE_NAME = "jmix-dyn-attr-cache";

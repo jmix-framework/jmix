@@ -17,7 +17,9 @@
 package io.jmix.dynattrflowui.impl;
 
 import com.vaadin.flow.component.Component;
+import org.jspecify.annotations.NullMarked;
 
+@NullMarked
 public interface EmbeddingStrategy {
 
     boolean supportComponent(Component component);

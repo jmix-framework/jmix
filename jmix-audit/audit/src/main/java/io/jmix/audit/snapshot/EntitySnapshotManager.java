@@ -19,7 +19,7 @@ package io.jmix.audit.snapshot;
 import io.jmix.audit.snapshot.model.EntitySnapshotModel;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.metamodel.model.MetaClass;
-
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import java.util.Date;
 import java.util.List;
@@ -28,6 +28,7 @@ import java.util.Map;
 /**
  * Creates and analyzes entity snapshots.
  */
+@NullMarked
 public interface EntitySnapshotManager {
     /**
      * Load snapshots for entity

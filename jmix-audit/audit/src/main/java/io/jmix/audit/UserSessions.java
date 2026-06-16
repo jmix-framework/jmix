@@ -17,12 +17,14 @@
 package io.jmix.audit;
 
 import io.jmix.audit.entity.UserSession;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.stream.Stream;
 
 /**
  * Provides information about current active user sessions
  **/
+@NullMarked
 public interface UserSessions {
 
     /**

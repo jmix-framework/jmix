@@ -24,6 +24,7 @@ import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.CurrentAuthentication;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
@@ -32,6 +33,7 @@ import java.util.List;
 
 import static java.lang.String.format;
 
+@NullMarked
 @Component("audit_EntitySnapshotManager")
 public class EntitySnapshotManagerImpl implements EntitySnapshotManager {
 

@@ -18,9 +18,10 @@ package io.jmix.audit.snapshot;
 
 import io.jmix.audit.snapshot.model.EntityDifferenceModel;
 import io.jmix.audit.snapshot.model.EntitySnapshotModel;
-
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
+@NullMarked
 public interface EntityDifferenceManager {
 
     /**

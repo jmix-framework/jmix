@@ -18,7 +18,7 @@ package io.jmix.audit.snapshot.datastore;
 
 import io.jmix.audit.snapshot.model.EntitySnapshotModel;
 import io.jmix.core.metamodel.model.MetaClass;
-
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import java.util.Collection;
 import java.util.List;
@@ -30,6 +30,7 @@ import java.util.List;
  * The default behavior is to save entity snapshots as JPA entities in one table.
  * If you want to redefinition default behavior you must create your own implementation of the interface.
  */
+@NullMarked
 public interface EntitySnapshotDataStore {
 
     /**

@@ -28,6 +28,7 @@ import com.vaadin.flow.shared.Registration;
 import io.jmix.core.AccessManager;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
+import io.jmix.core.annotation.Experimental;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.LogicalCondition;
@@ -69,6 +70,8 @@ import io.jmix.flowui.model.DataLoader;
 import io.jmix.flowui.theme.StyleUtility;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -87,6 +90,8 @@ import static com.google.common.base.Preconditions.checkState;
 public class GenericFilter extends Composite<JmixDetails>
         implements SupportsResponsiveSteps, HasActions, HasEnabled, HasSize, HasStyle, HasTheme, HasTooltip,
         ApplicationContextAware, InitializingBean {
+
+    private static final Logger log = LoggerFactory.getLogger(GenericFilter.class);
 
     protected static final String CONDITION_REMOVE_BUTTON_ID_SUFFIX = "conditionRemoveButton";
 
@@ -594,13 +599,59 @@ public class GenericFilter extends Composite<JmixDetails>
     }
 
     /**
-     * Sets the given configuration as current and displays filter components from the current
-     * configuration.
+     * Sets the given configuration as current and displays its filter components.
+     * <p>
+     * The configuration must already be registered with this filter via
+     * {@link #addConfiguration(Configuration)}. If it is not registered, this method
+     * logs a warning and does nothing.
      *
-     * @param currentConfiguration a configuration
+     * @param currentConfiguration a configuration to activate
      */
     public void setCurrentConfiguration(Configuration currentConfiguration) {
+        if (!configurations.contains(currentConfiguration)
+                && !getEmptyConfiguration().equals(currentConfiguration)) {
+            log.warn("Configuration '{}' is not registered in this filter; call addConfiguration() first.",
+                    currentConfiguration.getId());
+        }
         setCurrentConfigurationInternal(currentConfiguration, false);
+    }
+
+    /**
+     * Refreshes the layout of the current configuration.
+     * <p>
+     * Call this method after programmatically modifying the current configuration's filter
+     * components (e.g. adding a component to the root {@link LogicalFilterComponent}) to force
+     * the filter UI to re-render remove buttons and update the data-loader condition.
+     * <p>
+     * This is a stable public equivalent of the internal {@code refreshCurrentConfigurationLayout()}.
+     */
+    public void refreshCurrentConfiguration() {
+        refreshCurrentConfigurationLayout();
+    }
+
+    /**
+     * Creates a new {@link FilterComponentBuilder} bound to this filter.
+     * <p>
+     * The builder assembles a condition model from its fluent parameters and delegates to the
+     * framework's converter, so a programmatically built component is initialised exactly like
+     * one loaded from XML. This filter must have a {@code DataLoader}.
+     *
+     * @return a new {@code FilterComponentBuilder} instance
+     */
+    @Experimental
+    public FilterComponentBuilder filterComponentBuilder() {
+        return new FilterComponentBuilder(this, applicationContext);
+    }
+
+    /**
+     * Creates a new {@link RunTimeConfigurationBuilder} for building and registering
+     * a {@link io.jmix.flowui.component.genericfilter.configuration.RunTimeConfiguration}.
+     *
+     * @return a new {@code RunTimeConfigurationBuilder} instance
+     */
+    @Experimental
+    public RunTimeConfigurationBuilder runtimeConfigurationBuilder() {
+        return new RunTimeConfigurationBuilder(this, uiComponents);
     }
 
     protected void setCurrentConfigurationInternal(Configuration currentConfiguration, boolean fromClient) {

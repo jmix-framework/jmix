@@ -40,6 +40,7 @@ public class RunTimeConfiguration implements Configuration {
     protected LogicalFilterComponent<?> rootLogicalFilterComponent;
     protected Set<FilterComponent> modifiedFilterComponents = new HashSet<>();
     protected Map<String, Object> defaultValuesMap = new HashMap<>();
+    protected boolean protectedFromUserDeletion = false;
 
     public RunTimeConfiguration(String id, LogicalFilterComponent<?> rootLogicalFilterComponent, GenericFilter owner) {
         this.id = id;
@@ -185,5 +186,25 @@ public class RunTimeConfiguration implements Configuration {
     @Override
     public int hashCode() {
         return id.hashCode();
+    }
+
+    /**
+     * Returns whether this configuration is protected from deletion by the user through the UI.
+     * <p>
+     * When {@code true}, the Remove action in the filter toolbar is hidden for this configuration.
+     *
+     * @return whether this configuration is protected from user deletion
+     */
+    public boolean isProtectedFromUserDeletion() {
+        return protectedFromUserDeletion;
+    }
+
+    /**
+     * Sets whether this configuration is protected from deletion by the user through the UI.
+     *
+     * @param protectedFromUserDeletion {@code true} to prevent the user from deleting this configuration
+     */
+    public void setProtectedFromUserDeletion(boolean protectedFromUserDeletion) {
+        this.protectedFromUserDeletion = protectedFromUserDeletion;
     }
 }

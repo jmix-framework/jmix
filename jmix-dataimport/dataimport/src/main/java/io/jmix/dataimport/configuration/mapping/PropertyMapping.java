@@ -16,6 +16,7 @@
 
 package io.jmix.dataimport.configuration.mapping;
 
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -37,6 +38,7 @@ import org.jspecify.annotations.Nullable;
  * @see ReferencePropertyMapping
  * @see ReferenceMultiFieldPropertyMapping
  */
+@NullMarked
 public interface PropertyMapping {
     /**
      * Gets an entity property name.

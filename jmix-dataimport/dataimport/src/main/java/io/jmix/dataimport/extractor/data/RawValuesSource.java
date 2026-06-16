@@ -16,12 +16,14 @@
 
 package io.jmix.dataimport.extractor.data;
 
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import java.util.Map;
 
 /**
  * Interface for source of extracted raw values
  */
+@NullMarked
 public interface RawValuesSource {
     /**
      * @return map that contains raw values by data field names

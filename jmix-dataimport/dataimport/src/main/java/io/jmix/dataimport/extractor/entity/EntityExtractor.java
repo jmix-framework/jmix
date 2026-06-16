@@ -22,9 +22,12 @@ import io.jmix.dataimport.extractor.data.ImportedDataItem;
 
 import java.util.List;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Provides methods to extract entities and populate their properties by values from the imported data
  */
+@NullMarked
 public interface EntityExtractor {
     /**
      * Creates an entity using {@link ImportConfiguration#entityClass} and populates the properties for which mappings are set in import configuration.

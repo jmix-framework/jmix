@@ -20,6 +20,7 @@ import com.codeborne.selenide.CheckResult;
 import com.codeborne.selenide.Driver;
 import com.codeborne.selenide.SelenideElement;
 import com.codeborne.selenide.WebElementCondition;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Description of how a {@link SpecificCondition} must be checked, produced by a {@link SpecificConditionHandler}.
@@ -28,6 +29,7 @@ import com.codeborne.selenide.WebElementCondition;
  * ACCEPT/REJECT {@link CheckResult} verdict is computed centrally by {@link SpecificCondition#check}, so that
  * specific conditions can be negated ({@code shouldNot*}) and composed ({@code and}/{@code or}).
  */
+@NullMarked
 public interface SpecificCheck {
 
     /**

@@ -16,11 +16,14 @@
 
 package io.jmix.masquerade.condition;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Interface for checking {@link SpecificCondition Specific Conditions}.
  * <p>
  * Handling of {@link SpecificCondition Specific Conditions} depends on the component type and state.
  */
+@NullMarked
 public interface SpecificConditionHandler {
 
     /**

@@ -23,6 +23,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.repository.JmixDataRepository;
 import io.jmix.core.repository.JmixDataRepositoryContext;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.data.domain.*;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.NoRepositoryBean;
@@ -39,6 +40,7 @@ import static io.jmix.core.impl.repository.query.utils.LoaderHelper.springToJmix
  * @param <T>
  * @param <ID>
  */
+@NullMarked
 @NoRepositoryBean
 public class JmixDataRepositoryImpl<T, ID> implements JmixDataRepository<T, ID> {
 
@@ -84,7 +86,7 @@ public class JmixDataRepositoryImpl<T, ID> implements JmixDataRepository<T, ID> 
     }
 
     @Override
-    public T getById(ID id, FetchPlan fetchPlan) {
+    public T getById(ID id, @Nullable FetchPlan fetchPlan) {
         return idLoader(id).fetchPlan(fetchPlan).one();
     }
 
@@ -232,7 +234,7 @@ public class JmixDataRepositoryImpl<T, ID> implements JmixDataRepository<T, ID> 
     }
 
     @Override
-    public Slice<T> findAllSlice(Pageable pageable, FetchPlan fetchPlan) {
+    public Slice<T> findAllSlice(Pageable pageable, @Nullable FetchPlan fetchPlan) {
         return findAllSlice(pageable, JmixDataRepositoryContext.plan(fetchPlan).build());
     }
 

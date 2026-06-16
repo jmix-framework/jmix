@@ -18,7 +18,7 @@ package io.jmix.authserver.authentication;
 
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 
-//TODO [SB4] Temp replacement for PASSWORD grant type and parameter names. Maybe should be removed if will not support PASSWORD
+//Temp replacement for PASSWORD grant type and parameter names due to SB4 doesn't support it.
 public class PasswordAuthorizationGrantTypeHelper {
 
     public static final AuthorizationGrantType PASSWORD_GRANT_TYPE = new AuthorizationGrantType("password");

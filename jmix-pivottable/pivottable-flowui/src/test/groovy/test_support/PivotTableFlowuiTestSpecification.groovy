@@ -40,6 +40,7 @@ import io.jmix.flowui.sys.event.UiEventsManager
 import io.jmix.flowui.testassist.FlowuiTestAssistConfiguration
 import io.jmix.flowui.testassist.vaadin.TestServletContext
 import io.jmix.flowui.testassist.vaadin.TestSpringServlet
+import io.jmix.flowui.testassist.vaadin.TestUI
 import io.jmix.flowui.testassist.vaadin.TestVaadinRequest
 import io.jmix.flowui.testassist.vaadin.TestVaadinSession
 import io.jmix.flowui.view.View
@@ -153,7 +154,10 @@ class PivotTableFlowuiTestSpecification extends Specification {
 
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request))
 
-        ui = new UI()
+        // TestUI emulates the client response cycle, so components that defer initialization until
+        // 'beforeClientResponse' (e.g. JmixTabSheet attaching the selected tab content) get fully
+        // initialized in tests, where there is no client-server communication.
+        ui = new TestUI()
         ui.getInternals().setSession(vaadinSession)
 
         // ExtendedClientDetails is not available since we don't have client-side here.

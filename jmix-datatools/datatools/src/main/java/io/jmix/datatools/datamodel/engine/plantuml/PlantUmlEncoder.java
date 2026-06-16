@@ -16,12 +16,14 @@
 
 package io.jmix.datatools.datamodel.engine.plantuml;
 
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
  * PlantUML encoder that adds support for encoding diagram description, compressed by deflate algorithm,
  * in a Base64-like format for further sending as a URL parameter
  */
+@NullMarked
 public interface PlantUmlEncoder {
 
     /**

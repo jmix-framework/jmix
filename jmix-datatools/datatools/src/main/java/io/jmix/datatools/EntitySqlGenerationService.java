@@ -17,6 +17,9 @@
 
 package io.jmix.datatools;
 
+import org.jspecify.annotations.NullMarked;
+
+@NullMarked
 public interface EntitySqlGenerationService {
 
     /**

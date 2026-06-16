@@ -16,12 +16,14 @@
 
 package io.jmix.datatoolsflowui.view.datamodel;
 
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 /**
  * Provides an interface for managing and displaying diagram data,
  * intended for use in views where diagram data needs to be handled dynamically.
  */
+@NullMarked
 public interface DiagramView {
 
     /**

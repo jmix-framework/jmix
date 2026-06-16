@@ -16,11 +16,14 @@
 
 package io.jmix.datatools;
 
+import org.jspecify.annotations.NullMarked;
+
 import java.util.Collection;
 
 /**
  * Allows to restore entities have been soft-deleted previously
  */
+@NullMarked
 public interface EntityRestore {
 
     /**

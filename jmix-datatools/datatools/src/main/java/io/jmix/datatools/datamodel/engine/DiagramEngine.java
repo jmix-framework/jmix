@@ -5,10 +5,13 @@ import io.jmix.datatools.datamodel.entity.AttributeModel;
 
 import java.util.List;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Interface for constructing entity and relationship descriptions, as well as generating diagrams,
  * designed to work with a specific diagramming library.
  */
+@NullMarked
 public interface DiagramEngine {
 
     /**

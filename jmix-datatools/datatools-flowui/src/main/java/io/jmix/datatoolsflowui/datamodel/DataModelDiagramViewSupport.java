@@ -17,10 +17,12 @@
 package io.jmix.datatoolsflowui.datamodel;
 
 import io.jmix.flowui.view.View;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Provides support for opening a view that visualizes a data model diagram.
  */
+@NullMarked
 public interface DataModelDiagramViewSupport {
 
     /**

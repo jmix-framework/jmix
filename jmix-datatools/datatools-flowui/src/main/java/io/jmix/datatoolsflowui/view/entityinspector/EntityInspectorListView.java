@@ -80,6 +80,7 @@ import io.jmix.flowui.model.DataComponents;
 import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.navigation.RouteSupport;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1183,6 +1184,7 @@ public class EntityInspectorListView extends StandardListView<Object> {
         }
     }
 
+    @NullMarked
     protected interface DialogConsumer<T, U> {
         void accept(T t, U u);
     }

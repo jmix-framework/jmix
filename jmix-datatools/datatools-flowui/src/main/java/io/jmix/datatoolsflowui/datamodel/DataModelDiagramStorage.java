@@ -16,6 +16,7 @@
 
 package io.jmix.datatoolsflowui.datamodel;
 
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.util.UUID;
@@ -25,6 +26,7 @@ import java.util.UUID;
  * This provides methods to store, retrieve, remove, and clear diagram data,
  * which is identified by a unique {@link UUID}.
  */
+@NullMarked
 public interface DataModelDiagramStorage {
 
     /**

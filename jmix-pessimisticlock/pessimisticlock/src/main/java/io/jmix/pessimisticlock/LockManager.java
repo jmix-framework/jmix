@@ -18,10 +18,12 @@ package io.jmix.pessimisticlock;
 
 import io.jmix.pessimisticlock.entity.LockInfo;
 import io.jmix.pessimisticlock.entity.LockNotSupported;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 
+@NullMarked
 public interface LockManager {
 
     String LOCKS_CACHE_NAME = "jmix-locks-cache";

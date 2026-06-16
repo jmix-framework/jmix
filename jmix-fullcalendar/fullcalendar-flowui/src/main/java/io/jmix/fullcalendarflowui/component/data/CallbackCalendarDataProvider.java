@@ -17,6 +17,7 @@
 package io.jmix.fullcalendarflowui.component.data;
 
 import io.jmix.fullcalendarflowui.component.FullCalendar;
+import org.jspecify.annotations.NullMarked;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -44,6 +45,7 @@ import java.util.TimeZone;
  * @see EntityCalendarDataRetriever
  * @see CalendarDataRetriever
  */
+@NullMarked
 public interface CallbackCalendarDataProvider extends CalendarDataProvider {
 
     /**

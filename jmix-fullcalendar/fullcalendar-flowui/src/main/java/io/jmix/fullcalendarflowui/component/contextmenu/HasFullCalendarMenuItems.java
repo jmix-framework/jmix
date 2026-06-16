@@ -4,12 +4,14 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import io.jmix.fullcalendarflowui.component.FullCalendar;
+import org.jspecify.annotations.NullMarked;
 
 import java.io.Serializable;
 
 /**
  * Interface to be implemented by context menu that works with {@link FullCalendar}.
  */
+@NullMarked
 public interface HasFullCalendarMenuItems extends Serializable {
 
     /**

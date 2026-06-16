@@ -17,6 +17,7 @@
 package io.jmix.fullcalendarflowui.component.data;
 
 import com.vaadin.flow.shared.Registration;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
@@ -27,6 +28,7 @@ import java.util.function.Consumer;
 /**
  * Interface to be implemented by data providers that should load a list of events.
  */
+@NullMarked
 public interface ItemsCalendarDataProvider extends CalendarDataProvider {
 
     /**

@@ -1,6 +1,7 @@
 package io.jmix.fullcalendarflowui.component.data;
 
 import io.jmix.core.metamodel.model.MetaClass;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.List;
  * Base interface for data providers that work with entities, containing property names to retrieve values
  * for {@link CalendarEvent} entities.
  */
+@NullMarked
 public interface EntityCalendarDataProvider extends CalendarDataProvider {
 
     /**

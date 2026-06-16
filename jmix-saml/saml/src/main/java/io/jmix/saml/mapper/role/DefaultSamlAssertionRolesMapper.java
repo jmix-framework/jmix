@@ -19,6 +19,7 @@ package io.jmix.saml.mapper.role;
 import io.jmix.saml.SamlProperties;
 import io.jmix.saml.util.SamlAssertionUtils;
 import org.apache.commons.collections4.CollectionUtils;
+import org.jspecify.annotations.NullMarked;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.slf4j.Logger;
 
@@ -42,6 +43,7 @@ import static org.slf4j.LoggerFactory.getLogger;
  * the name "resource$system-full-access" will be mapped to Jmix role with the "system-full-access" code.
  * By default the prefixes are empty.
  */
+@NullMarked
 public class DefaultSamlAssertionRolesMapper extends BaseSamlAssertionRolesMapper {
 
     private static final Logger log = getLogger(DefaultSamlAssertionRolesMapper.class);

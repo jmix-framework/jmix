@@ -18,6 +18,7 @@ package io.jmix.saml.mapper.role;
 
 import io.jmix.security.model.ResourceRole;
 import io.jmix.security.model.RowLevelRole;
+import org.jspecify.annotations.NullMarked;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -26,6 +27,7 @@ import java.util.Collection;
 /**
  * Interface for mapper of SAML assertion into Jmix resource and row-level roles.
  */
+@NullMarked
 public interface SamlAssertionRolesMapper {
 
     /**

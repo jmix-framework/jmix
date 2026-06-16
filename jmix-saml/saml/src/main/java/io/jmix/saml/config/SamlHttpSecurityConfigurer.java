@@ -17,6 +17,7 @@
 package io.jmix.saml.config;
 
 import io.jmix.saml.SamlVaadinWebSecurity;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 
 /**
@@ -24,6 +25,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
  * All beans that implement this interface will be automatically applied
  * during SAML configuration within {@link SamlVaadinWebSecurity}.
  */
+@NullMarked
 public interface SamlHttpSecurityConfigurer {
 
     void configure(HttpSecurity http) throws Exception;

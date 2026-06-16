@@ -22,6 +22,7 @@ import io.jmix.saml.user.HasSamlPrincipalDelegate;
 import io.jmix.saml.user.JmixSamlUserDetails;
 import io.jmix.saml.util.SamlAssertionUtils;
 import jakarta.annotation.PostConstruct;
+import org.jspecify.annotations.NullMarked;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +40,7 @@ import static org.slf4j.LoggerFactory.getLogger;
  *
  * @param <T> class of Jmix user
  */
+@NullMarked
 public abstract class BaseSamlUserMapper<T extends JmixSamlUserDetails> implements SamlUserMapper<T> {
 
     private static final Logger log = getLogger(BaseSamlUserMapper.class);

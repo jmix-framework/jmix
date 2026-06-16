@@ -18,6 +18,7 @@ package io.jmix.saml.mapper.user;
 
 import io.jmix.saml.mapper.role.SamlAssertionRolesMapper;
 import io.jmix.saml.user.DefaultJmixSamlUserDetails;
+import org.jspecify.annotations.NullMarked;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 /**
  * Default implementation of {@link SamlUserMapper} that converts SAML assertion into {@link DefaultJmixSamlUserDetails}.
  */
+@NullMarked
 public class DefaultSamlUserMapper extends BaseSamlUserMapper<DefaultJmixSamlUserDetails> {
 
     private static final Logger log = getLogger(DefaultSamlUserMapper.class);

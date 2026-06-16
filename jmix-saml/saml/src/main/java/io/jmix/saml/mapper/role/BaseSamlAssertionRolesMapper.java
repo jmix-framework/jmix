@@ -21,6 +21,7 @@ import io.jmix.security.model.RowLevelRole;
 import io.jmix.security.role.ResourceRoleRepository;
 import io.jmix.security.role.RoleGrantedAuthorityUtils;
 import io.jmix.security.role.RowLevelRoleRepository;
+import org.jspecify.annotations.NullMarked;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,7 @@ import static org.slf4j.LoggerFactory.getLogger;
  * The behavior for finding roles with given codes and transforming them into a collection of {@link GrantedAuthority}
  * is already implemented in the current class.
  */
+@NullMarked
 public abstract class BaseSamlAssertionRolesMapper implements SamlAssertionRolesMapper {
 
     private static final Logger log = getLogger(BaseSamlAssertionRolesMapper.class);

@@ -20,6 +20,7 @@ import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.Route;
 import io.jmix.core.DataManager;
+import io.jmix.core.FetchPlan;
 import io.jmix.core.Metadata;
 import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.component.grid.DataGrid;
@@ -77,7 +78,7 @@ public class OrderView extends StandardView implements HasUrlParameter<String> {
     @Override
     public void setParameter(BeforeEvent event, String parameter) {
         Object orderId = urlParamSerializer.deserialize(UUID.class, parameter);
-        order = dataManager.load(Order.class).id(orderId).fetchPlan(b->b.add("orderLines")).one();
+        order = dataManager.load(Order.class).id(orderId).fetchPlan(b->b.add("orderLines", FetchPlan.BASE)).one();
     }
 
     @Subscribe

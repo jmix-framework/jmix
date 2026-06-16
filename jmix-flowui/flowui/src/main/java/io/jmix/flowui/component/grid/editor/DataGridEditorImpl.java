@@ -244,8 +244,7 @@ public class DataGridEditorImpl<T> extends AbstractGridExtension<T>
                 editItemRequest = null;
             };
             getGrid().getElement().getNode().runWhenAttached(
-                    ui -> ui.getInternals().getStateTree().beforeClientResponse(
-                            getGrid().getElement().getNode(), editItemRequest));
+                    ui -> ui.beforeClientResponse(getGrid(), editItemRequest));
         }
     }
 

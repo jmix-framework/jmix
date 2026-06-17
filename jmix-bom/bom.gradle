@@ -68,6 +68,7 @@ javaPlatform {
 
 dependencies {
     api platform("org.springframework.boot:spring-boot-dependencies:4.0.6")
+    api platform('org.springframework.ai:spring-ai-bom:2.0.0')
     api platform('software.amazon.awssdk:bom:2.25.60')
     api platform("io.netty:netty-bom:4.2.15.Final")
     api platform('io.opentelemetry:opentelemetry-bom:1.62.0')
@@ -85,6 +86,13 @@ dependencies {
         // community add-ons
 
         // end community add-ons
+
+        api "io.jmix.aitools:jmix-aitools:$freeVersion"
+        api "io.jmix.aitools:jmix-aitools-starter:$freeVersion"
+        api "io.jmix.aitools:jmix-aitoolsflowui:$freeVersion"
+        api "io.jmix.aitools:jmix-aitoolsflowui-starter:$freeVersion"
+        api "io.jmix.aitools:jmix-aitoolsflowui-data:$freeVersion"
+        api "io.jmix.aitools:jmix-aitoolsflowui-data-starter:$freeVersion"
 
         api "io.jmix.appsettings:jmix-appsettings:$freeVersion"
         api "io.jmix.appsettings:jmix-appsettings-starter:$freeVersion"

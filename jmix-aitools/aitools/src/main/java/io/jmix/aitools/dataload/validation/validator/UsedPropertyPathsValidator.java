@@ -1,0 +1,83 @@
+/*
+ * Copyright 2026 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.jmix.aitools.dataload.validation.validator;
+
+import io.jmix.aitools.dataload.introspection.introspector.JpaDomainModelIntrospector;
+import io.jmix.aitools.dataload.execution.GeneratedJpqlResult;
+import io.jmix.aitools.dataload.validation.JpqlResultValidator;
+import io.jmix.aitools.dataload.validation.JpqlValidationIssue;
+import io.jmix.core.JmixOrder;
+import io.jmix.data.QueryParser;
+import io.jmix.data.QueryTransformerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.Ordered;
+import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Checks that every property path referenced by the query resolves against the introspected
+ * domain model.
+ */
+@Component("aitls_UsedPropertyPathsValidator")
+public class UsedPropertyPathsValidator implements JpqlResultValidator, Ordered {
+
+    public static final String PROPERTY_PATH_INVALID_CODE = "propertyPath.invalid";
+    public static final String PROPERTY_PATH_INVALID_GUIDANCE = "Replace invalid property paths with valid paths from" +
+            " the provided schema only.";
+
+    @Autowired
+    protected JpaDomainModelIntrospector modelIntrospector;
+    @Autowired(required = false)
+    protected QueryTransformerFactory queryTransformerFactory;
+
+    @Override
+    public List<JpqlValidationIssue> validate(GeneratedJpqlResult result) {
+        QueryParser queryParser = JpqlValidatorUtils.getQueryParser(queryTransformerFactory, result.getJpql());
+        if (queryParser == null) {
+            return List.of();
+        }
+
+        List<JpqlValidationIssue> issues = new ArrayList<>();
+
+        try {
+            for (QueryParser.QueryPath queryPath : queryParser.getQueryPaths()) {
+                if (queryPath.getFullPath().equals(queryPath.getVariableName())) {
+                    continue;
+                }
+
+                String entityName = queryPath.getEntityName();
+                String propertyPath = queryPath.getPropertyPath();
+                if (!modelIntrospector.containsPropertyPath(entityName, propertyPath)) {
+                    issues.add(new JpqlValidationIssue(PROPERTY_PATH_INVALID_CODE,
+                            "Invalid property path for entity " + entityName + ": " + propertyPath,
+                            PROPERTY_PATH_INVALID_GUIDANCE));
+                }
+            }
+        } catch (RuntimeException e) {
+            return List.of();
+        }
+
+        return issues;
+    }
+
+    @Override
+    public int getOrder() {
+        return JmixOrder.HIGHEST_PRECEDENCE + 1000;
+    }
+}

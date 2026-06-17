@@ -1,0 +1,151 @@
+/*
+ * Copyright 2026 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.jmix.aitools.dataload.generation;
+
+import io.jmix.aitools.dataload.EntityDataLoadQuery;
+import io.jmix.aitools.dataload.repair.impl.GeneratedJpqlParameterPayload;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
+import java.util.Collections;
+import java.util.List;
+
+/**
+ * Raw LLM output for a data-load request, deserialized from the model's JSON response.
+ * <p>
+ * All fields are optional: depending on what the model returns, any of them may be absent
+ * ({@code null}). The payload is mapped to a validated {@link EntityDataLoadQuery} before it is
+ * used for execution.
+ */
+@NullMarked
+public class EntityDataLoadQueryPayload {
+
+    @Nullable
+    protected String jpql;
+    @Nullable
+    protected List<GeneratedJpqlParameterPayload> parameters = Collections.emptyList();
+    @Nullable
+    protected List<String> resultProperties = Collections.emptyList();
+
+    @Nullable
+    protected String explanation;
+    @Nullable
+    protected List<String> warnings;
+
+    @Nullable
+    protected Integer maxResults;
+    @Nullable
+    protected Integer firstResult;
+
+    /**
+     * Returns the generated JPQL query text produced by the LLM.
+     *
+     * @return JPQL query, or {@code null} if the model did not provide one
+     */
+    @Nullable
+    public String getJpql() {
+        return jpql;
+    }
+
+    public void setJpql(@Nullable String jpql) {
+        this.jpql = jpql;
+    }
+
+    /**
+     * Returns the named query parameters produced by the LLM.
+     *
+     * @return query parameters, or {@code null} if absent
+     */
+    @Nullable
+    public List<GeneratedJpqlParameterPayload> getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(@Nullable List<GeneratedJpqlParameterPayload> parameters) {
+        this.parameters = parameters;
+    }
+
+    /**
+     * Returns the result property names in the order of the SELECT expressions.
+     *
+     * @return result properties, or {@code null} if absent
+     */
+    @Nullable
+    public List<String> getResultProperties() {
+        return resultProperties;
+    }
+
+    public void setResultProperties(@Nullable List<String> resultProperties) {
+        this.resultProperties = resultProperties;
+    }
+
+    /**
+     * Returns the human-readable explanation of the query produced by the LLM.
+     *
+     * @return query explanation, or {@code null} if absent
+     */
+    @Nullable
+    public String getExplanation() {
+        return explanation;
+    }
+
+    public void setExplanation(@Nullable String explanation) {
+        this.explanation = explanation;
+    }
+
+    /**
+     * Returns the warnings produced by the LLM about the generated query.
+     *
+     * @return warnings, or {@code null} if absent
+     */
+    @Nullable
+    public List<String> getWarnings() {
+        return warnings;
+    }
+
+    public void setWarnings(@Nullable List<String> warnings) {
+        this.warnings = warnings;
+    }
+
+    /**
+     * Returns the requested maximum number of rows.
+     *
+     * @return maximum number of rows, or {@code null} to apply the default limit
+     */
+    @Nullable
+    public Integer getMaxResults() {
+        return maxResults;
+    }
+
+    public void setMaxResults(@Nullable Integer maxResults) {
+        this.maxResults = maxResults;
+    }
+
+    /**
+     * Returns the requested offset of the first row.
+     *
+     * @return row offset, or {@code null} to start from the first row
+     */
+    @Nullable
+    public Integer getFirstResult() {
+        return firstResult;
+    }
+
+    public void setFirstResult(@Nullable Integer firstResult) {
+        this.firstResult = firstResult;
+    }
+}

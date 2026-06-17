@@ -1,0 +1,207 @@
+/*
+ * Copyright 2026 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.jmix.aitools.dataload.execution;
+
+import io.jmix.aitools.dataload.repair.JpqlRepairResult;
+import io.jmix.aitools.dataload.repair.JpqlRepairService;
+import io.jmix.aitools.dataload.validation.JpqlValidationIssue;
+import io.jmix.aitools.dataload.validation.JpqlValidationResult;
+import io.jmix.aitools.dataload.validation.JpqlValidationService;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Validates a generated JPQL query and repairs it when validation fails.
+ * <p>
+ * The query is validated, then repaired if needed and validated again. The combined outcome —
+ * the (possibly repaired) query, the final validation result and the repair details — is returned
+ * as an {@link OperationResult}, which also reports whether the operation ultimately failed.
+ */
+@NullMarked
+@Component("aitls_JpqlValidationAndRepairService")
+public class JpqlValidationAndRepairService {
+
+    @Autowired
+    protected JpqlRepairService jpqlRepairService;
+
+    @Autowired
+    protected JpqlValidationService jpqlValidationService;
+
+    /**
+     * Validates the query from the request and repairs it if the first validation fails.
+     *
+     * @param request execution request carrying the query, its parameters and result properties
+     * @return outcome with the final query
+     */
+    public OperationResult validateAndRepair(JpqlExecutionRequest request) {
+        if (request.getResultProperties().isEmpty()) {
+            JpqlValidationResult validationResult = new JpqlValidationResult(false, List.of(
+                    new JpqlValidationIssue("resultProperties.empty",
+                            "resultProperties must be specified for loadValues execution")
+            ));
+            return OperationResult.failed(request, toGeneratedJpqlResult(request), validationResult, null);
+        }
+
+        GeneratedJpqlResult initialGeneratedResult = toGeneratedJpqlResult(request);
+
+        // Validate LLM generated JPQL
+        JpqlValidationResult initialValidationResult = jpqlValidationService.validate(initialGeneratedResult);
+
+        // Repair it if needed
+        JpqlRepairResult repairResult = jpqlRepairService.repairIfNeeded(request, initialGeneratedResult, initialValidationResult);
+        GeneratedJpqlResult generatedResult = repairResult.getGeneratedJpqlResult();
+
+        // Final validation of repaired result
+        JpqlValidationResult validationResult = jpqlValidationService.validate(generatedResult);
+
+        if (!validationResult.isValid()) {
+            return OperationResult.failed(request, generatedResult, validationResult, repairResult);
+        }
+
+        return OperationResult.success(request, generatedResult, validationResult, repairResult);
+    }
+
+    protected GeneratedJpqlResult toGeneratedJpqlResult(JpqlExecutionRequest request) {
+        return new GeneratedJpqlResult(request.getJpql(), toGeneratedParameters(request.getParameters()),
+                "", List.of(), request.getMaxResults(), request.getFirstResult()
+        );
+    }
+
+    protected List<GeneratedJpqlParameter> toGeneratedParameters(@Nullable List<JpqlExecutionParameter> parameters) {
+        if (parameters == null || parameters.isEmpty()) {
+            return List.of();
+        }
+
+        List<GeneratedJpqlParameter> generatedParameters = new ArrayList<>(parameters.size());
+        for (JpqlExecutionParameter parameter : parameters) {
+            generatedParameters.add(
+                    new GeneratedJpqlParameter(parameter.getName(), parameter.getType(), parameter.getValue()));
+        }
+        return List.copyOf(generatedParameters);
+    }
+
+    /**
+     * Combined outcome of the validate-and-repair operation.
+     */
+    public static class OperationResult {
+
+        protected JpqlExecutionRequest request;
+        @Nullable
+        protected JpqlRepairResult repairResult;
+        protected GeneratedJpqlResult generatedResult;
+        protected JpqlValidationResult validationResult;
+
+        protected boolean failed;
+
+        protected OperationResult(JpqlExecutionRequest request,
+                                  GeneratedJpqlResult generatedResult,
+                                  JpqlValidationResult validationResult,
+                                  @Nullable JpqlRepairResult repairResult, boolean failed) {
+            this.request = request;
+            this.generatedResult = generatedResult;
+            this.validationResult = validationResult;
+            this.repairResult = repairResult;
+            this.failed = failed;
+        }
+
+        /**
+         * Creates a successful outcome.
+         *
+         * @param repairResult repair details, or {@code null} if no repair was attempted
+         * @return successful outcome
+         */
+        public static OperationResult success(JpqlExecutionRequest request,
+                                              GeneratedJpqlResult generatedResult,
+                                              JpqlValidationResult validationResult,
+                                              @Nullable JpqlRepairResult repairResult) {
+            return new OperationResult(request, generatedResult, validationResult, repairResult, false);
+        }
+
+        /**
+         * Creates a failed outcome.
+         *
+         * @param repairResult repair details, or {@code null} if no repair was attempted
+         * @return failed outcome
+         */
+        public static OperationResult failed(JpqlExecutionRequest request,
+                                             GeneratedJpqlResult generatedResult,
+                                             JpqlValidationResult validationResult,
+                                             @Nullable JpqlRepairResult repairResult) {
+            return new OperationResult(request, generatedResult, validationResult, repairResult, true);
+        }
+
+        /**
+         * Returns whether validation failed and the query must not be executed.
+         *
+         * @return {@code true} if the operation failed
+         */
+        public boolean isFailed() {
+            return failed;
+        }
+
+        /**
+         * Returns the original execution request.
+         *
+         * @return execution request
+         */
+        public JpqlExecutionRequest getRequest() {
+            return request;
+        }
+
+        /**
+         * Returns the final query draft after validation and any repair.
+         *
+         * @return final query draft
+         */
+        public GeneratedJpqlResult getGeneratedResult() {
+            return generatedResult;
+        }
+
+        /**
+         * Returns the final validation result.
+         *
+         * @return validation result
+         */
+        public JpqlValidationResult getValidationResult() {
+            return validationResult;
+        }
+
+        /**
+         * Returns the repair details.
+         *
+         * @return repair details, or {@code null} if no repair was attempted
+         */
+        @Nullable
+        public JpqlRepairResult getRepairResult() {
+            return repairResult;
+        }
+
+        /**
+         * Returns whether the query was actually repaired.
+         *
+         * @return {@code true} if the query was repaired
+         */
+        public boolean isRepaired() {
+            return repairResult != null && repairResult.isRepaired();
+        }
+    }
+}

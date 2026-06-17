@@ -16,7 +16,6 @@
 
 package io.jmix.aitools.tool;
 
-import io.jmix.aitools.service.AiConversationChatService;
 import org.jspecify.annotations.Nullable;
 import org.springframework.ai.chat.model.ToolContext;
 import org.springframework.stereotype.Component;
@@ -26,7 +25,7 @@ import java.util.function.Consumer;
 /**
  * Helper for AI tools that want to surface ephemeral status updates to the UI.
  * <p>
- * The callback is placed into the {@link ToolContext} by {@link AiConversationChatService}
+ * The callback is placed into the {@link ToolContext} by {@code AiConversationChatService}
  * under {@link #STATUS_UPDATE_CALLBACK}. If no callback was provided by the caller (typical for non-UI scenarios),
  * all methods on this publisher are silent no-ops.
  * <p>
@@ -91,7 +90,7 @@ public class AiToolStatusPublisher {
      */
     @SuppressWarnings("unchecked")
     public void publish(AiUiStatusUpdate update, @Nullable ToolContext toolContext) {
-        if (toolContext == null || update.message().isBlank()) {
+        if (toolContext == null || update.getMessage().isBlank()) {
             return;
         }
         Object raw = toolContext.getContext().get(STATUS_UPDATE_CALLBACK);

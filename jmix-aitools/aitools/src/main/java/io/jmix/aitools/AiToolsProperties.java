@@ -30,15 +30,8 @@ public class AiToolsProperties {
      */
     Boolean enabled;
 
-    /**
-     * Maximum number of most recent conversation messages kept as chat memory and sent with each request.
-     */
-    Integer chatMemoryMaxMessages;
-
-    public AiToolsProperties(@DefaultValue("true") Boolean enabled,
-                             @DefaultValue("20") Integer chatMemoryMaxMessages) {
+    public AiToolsProperties(@DefaultValue("true") Boolean enabled) {
         this.enabled = enabled;
-        this.chatMemoryMaxMessages = chatMemoryMaxMessages;
     }
 
     /**
@@ -46,12 +39,5 @@ public class AiToolsProperties {
      */
     public Boolean getEnabled() {
         return enabled;
-    }
-
-    /**
-     * @see #chatMemoryMaxMessages
-     */
-    public Integer getChatMemoryMaxMessages() {
-        return chatMemoryMaxMessages;
     }
 }

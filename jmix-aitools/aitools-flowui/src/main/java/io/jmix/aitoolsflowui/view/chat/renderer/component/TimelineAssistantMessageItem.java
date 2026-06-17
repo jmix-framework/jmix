@@ -19,13 +19,13 @@ package io.jmix.aitoolsflowui.view.chat.renderer.component;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.markdown.Markdown;
 import com.vaadin.flow.function.SerializableSupplier;
-import io.jmix.aitools.entity.ChatMessage;
+import io.jmix.aitoolsflowui.model.UserAiMessage;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Optional;
 
 /**
- * Timeline row for a persisted assistant {@link ChatMessage}, rendering its content as Markdown.
+ * Timeline row for a persisted assistant {@link UserAiMessage}, rendering its content as Markdown.
  */
 public class TimelineAssistantMessageItem extends AbstractTimelineItem {
 
@@ -43,7 +43,7 @@ public class TimelineAssistantMessageItem extends AbstractTimelineItem {
      * @param isFresh   whether to highlight the row as just generated
      * @param actorName actor display name shown in the header
      */
-    public void setMessage(ChatMessage message, boolean isFresh, String actorName) {
+    public void setMessage(UserAiMessage message, boolean isFresh, String actorName) {
         removeClassNames(ASSISTANT_MESSAGE_REFRESH_CN, ASSISTANT_MESSAGE_CN);
 
         addClassNames(ASSISTANT_MESSAGE_CN);
@@ -57,7 +57,7 @@ public class TimelineAssistantMessageItem extends AbstractTimelineItem {
         body.add(createMessageContent(message));
     }
 
-    private Component createMessageContent(ChatMessage message) {
+    private Component createMessageContent(UserAiMessage message) {
         String content = Optional.ofNullable(message.getContent()).orElse("");
         Markdown markdown = new Markdown(content);
         markdown.addClassName(ASSISTANT_MESSAGE_MARKDOWN_CN);

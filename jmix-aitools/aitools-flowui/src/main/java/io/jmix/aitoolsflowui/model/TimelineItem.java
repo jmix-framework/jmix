@@ -16,7 +16,6 @@
 
 package io.jmix.aitoolsflowui.model;
 
-import io.jmix.aitools.entity.ChatMessage;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.JmixId;
 import io.jmix.core.metamodel.annotation.JmixEntity;
@@ -42,7 +41,7 @@ public class TimelineItem {
 
     private Integer type;
 
-    private ChatMessage message;
+    private UserAiMessage message;
 
     private List<TimelineItemStatus> statusUpdates = new ArrayList<>();
 
@@ -70,11 +69,11 @@ public class TimelineItem {
         this.type = type == null ? null : type.getId();
     }
 
-    public ChatMessage getMessage() {
+    public UserAiMessage getMessage() {
         return message;
     }
 
-    public void setMessage(ChatMessage message) {
+    public void setMessage(UserAiMessage message) {
         this.message = message;
     }
 

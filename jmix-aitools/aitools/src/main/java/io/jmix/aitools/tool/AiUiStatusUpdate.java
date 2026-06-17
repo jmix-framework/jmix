@@ -16,13 +16,10 @@
 
 package io.jmix.aitools.tool;
 
-import io.jmix.aitools.service.AiConversationChatService;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Ephemeral status update emitted by an AI tool through {@link AiToolStatusPublisher}
- * and delivered to the UI through the callback put into the tool context by
- * {@link AiConversationChatService}. Not persisted.
+ * Ephemeral status update emitted by an AI tool through {@link AiToolStatusPublisher}.
  * <p>
  * <b>Two-phase semantics.</b> A tool publishes the SAME {@code message}
  * twice during its lifetime:
@@ -65,7 +62,7 @@ public class AiUiStatusUpdate {
      *
      * @return status message
      */
-    public String message() {
+    public String getMessage() {
         return message;
     }
 
@@ -75,7 +72,7 @@ public class AiUiStatusUpdate {
      * @return result snippet, or {@code null} for an in-flight update
      */
     @Nullable
-    public String resultSnippet() {
+    public String getResultSnippet() {
         return resultSnippet;
     }
 

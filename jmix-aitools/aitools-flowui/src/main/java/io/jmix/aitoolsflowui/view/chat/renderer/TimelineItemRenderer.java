@@ -19,10 +19,10 @@ package io.jmix.aitoolsflowui.view.chat.renderer;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.function.SerializableSupplier;
-import io.jmix.aitools.entity.ChatMessage;
 import io.jmix.aitoolsflowui.icon.AiIconProvider;
 import io.jmix.aitoolsflowui.model.TimelineItem;
 import io.jmix.aitoolsflowui.model.TimelineItemType;
+import io.jmix.aitoolsflowui.model.UserAiMessage;
 import io.jmix.aitoolsflowui.service.ActorNameResolver;
 import io.jmix.aitoolsflowui.view.chat.AiChatFragment;
 import io.jmix.aitoolsflowui.view.chat.renderer.component.AbstractTimelineItem;
@@ -117,7 +117,7 @@ public class TimelineItemRenderer extends FragmentRenderer<VerticalLayout, Timel
     }
 
     private void applyData(AbstractTimelineItem messageItem, TimelineItem item) {
-        ChatMessage message = item.getMessage();
+        UserAiMessage message = item.getMessage();
         switch (item.getType()) {
             case USER -> ((TimelineUserMessageItem) messageItem).setMessage(message,
                     actorNameResolver.resolve(message, messages.getMessage(getMessageGroup(), "timelineItemRenderer.defaultActorName"))

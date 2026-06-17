@@ -23,29 +23,26 @@ import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.function.SerializableSupplier;
-import io.jmix.aitools.entity.AiConversation;
-import io.jmix.aitools.entity.ChatMessage;
-import io.jmix.aitools.entity.ChatMessageType;
-import io.jmix.aitools.service.AiConversationChatService;
-import io.jmix.aitools.service.AiConversationService;
 import io.jmix.aitoolsflowui.AiToolsFlowuiProperties;
 import io.jmix.aitoolsflowui.icon.AiIconProvider;
+import io.jmix.aitoolsflowui.model.UserAiConversation;
+import io.jmix.aitoolsflowui.service.UserAiChatService;
+import io.jmix.aitoolsflowui.service.UserAiConversationService;
 import io.jmix.aitoolsflowui.view.chat.AiChatView;
 import io.jmix.aitoolsflowui.view.chathub.component.AiConversationCard;
 import io.jmix.aitoolsflowui.view.chathub.component.AiConversationHistoryGroup;
 import io.jmix.aitoolsflowui.view.input.AiChatInputFragment;
 import io.jmix.aitoolsflowui.view.chathub.component.HistoryBucket;
-import io.jmix.core.DataManager;
+import io.jmix.core.LoadContext;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.annotation.Experimental;
 import io.jmix.core.metamodel.datatype.DatatypeFormatter;
-import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.flowui.Dialogs;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.action.DialogAction;
-import io.jmix.flowui.component.SupportsTypedValue;
+import io.jmix.flowui.component.SupportsTypedValue.TypedValueChangeEvent;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.gridlayout.GridLayout;
 import io.jmix.flowui.component.sidepanellayout.SidePanelLayout;
@@ -71,7 +68,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -95,15 +91,15 @@ public class AiChatHubFragment extends Fragment<VerticalLayout> {
     @ViewComponent
     protected AiChatInputFragment composerFragment;
     @ViewComponent
-    protected CollectionContainer<AiConversation> recentConversationsDc;
+    protected CollectionContainer<UserAiConversation> recentConversationsDc;
     @ViewComponent
-    protected CollectionLoader<AiConversation> recentConversationsDl;
+    protected CollectionLoader<UserAiConversation> recentConversationsDl;
     @ViewComponent
-    protected CollectionContainer<AiConversation> historyConversationsDc;
+    protected CollectionContainer<UserAiConversation> historyConversationsDc;
     @ViewComponent
-    protected CollectionLoader<AiConversation> historyConversationsDl;
+    protected CollectionLoader<UserAiConversation> historyConversationsDl;
     @ViewComponent
-    protected GridLayout<AiConversation> recentConversationsGridLayout;
+    protected GridLayout<UserAiConversation> recentConversationsGridLayout;
     @ViewComponent
     protected Component recentConversationsHeader;
     @ViewComponent
@@ -116,13 +112,9 @@ public class AiChatHubFragment extends Fragment<VerticalLayout> {
     @Autowired
     protected UiComponents uiComponents;
     @Autowired
-    protected DataManager dataManager;
-    @Autowired
     protected MetadataTools metadataTools;
     @Autowired
     protected DatatypeFormatter datatypeFormatter;
-    @Autowired
-    protected CurrentAuthentication currentAuthentication;
     @Autowired
     protected ViewNavigators viewNavigators;
     @Autowired
@@ -132,9 +124,9 @@ public class AiChatHubFragment extends Fragment<VerticalLayout> {
     @Autowired
     protected Notifications notifications;
     @Autowired
-    protected AiConversationService aiConversationService;
+    protected UserAiConversationService conversationService;
     @Autowired
-    protected AiConversationChatService aiConversationChatService;
+    protected UserAiChatService chatService;
     @Autowired
     protected AiToolsFlowuiProperties properties;
     @Autowired
@@ -184,35 +176,50 @@ public class AiChatHubFragment extends Fragment<VerticalLayout> {
         composerFragment.focus();
     }
 
-    /**
-     * Disables the composer and warns the user when the chat model is not configured —
-     * starting a new chat would fail.
-     */
-    protected void refreshComposerAvailability() {
-        if (aiConversationChatService.isAvailable()) {
-            return;
-        }
-        composerFragment.setInputEnabled(false);
-        notifications.create(messageBundle.getMessage("aiChatHubFragment.aiNotConfigured"))
-                .withType(Notifications.Type.WARNING)
-                .show();
+    @Install(to = "recentConversationsDl", target = Target.DATA_LOADER)
+    public List<UserAiConversation> recentConversationsLoadDelegate(LoadContext<UserAiConversation> loadContext) {
+        return conversationService.loadConversations().stream()
+                .limit(resolveRecentChatsCount())
+                .toList();
     }
 
-    protected void loadConversations() {
-        String username = currentAuthentication.getUser().getUsername();
+    @Install(to = "historyConversationsDl", target = Target.DATA_LOADER)
+    public List<UserAiConversation> historyConversationsLoadDelegate(LoadContext<UserAiConversation> loadContext) {
+        return conversationService.loadConversations();
+    }
 
-        recentConversationsDl.setParameter("currentUser", username);
-        recentConversationsDl.setMaxResults(resolveRecentChatsCount());
-        recentConversationsDl.load();
+    @Supply(to = "recentConversationsGridLayout", subject = "renderer")
+    protected ComponentRenderer<AiConversationCard, UserAiConversation> recentConversationsGridLayoutRenderer() {
+        return new ComponentRenderer<>(this::createRecentCard);
+    }
 
-        historyConversationsDl.setParameter("currentUser", username);
-        historyConversationsDl.load();
+    @Subscribe("showAllHistoryBtn")
+    public void onShowAllHistoryBtnClick(final ClickEvent<JmixButton> event) {
+        renderHistoryList();
+        historySidePanel.openSidePanel();
+    }
+
+    @Subscribe("historyCloseBtn")
+    public void onHistoryCloseBtnClick(final ClickEvent<JmixButton> event) {
+        historySidePanel.closeSidePanel();
+    }
+
+    @Subscribe("historyNewBtn")
+    public void onHistoryNewBtnClick(final ClickEvent<JmixButton> event) {
+        historySidePanel.closeSidePanel();
+        composerFragment.focus();
+    }
+
+    @Subscribe("historySearchField")
+    public void onHistorySearchFieldValueChange(final TypedValueChangeEvent<TypedTextField<String>, String> event) {
+        historyFilter = Optional.ofNullable(event.getValue()).orElse("").trim().toLowerCase(Locale.ROOT);
+        renderHistoryList();
     }
 
     protected void startConversation(String prompt) {
-        AiConversation conversation;
+        UserAiConversation conversation;
         try {
-            conversation = aiConversationService.createNewConversation();
+            conversation = conversationService.create();
         } catch (Exception e) {
             log.error("Failed to create conversation from chat hub", e);
             notifications.create(messageBundle.getMessage("aiChatHubFragment.errorProcessingMessage"))
@@ -236,44 +243,34 @@ public class AiChatHubFragment extends Fragment<VerticalLayout> {
         recentConversationsGridLayout.setVisible(hasRecent);
     }
 
-    @Supply(to = "recentConversationsGridLayout", subject = "renderer")
-    protected ComponentRenderer<AiConversationCard, AiConversation> recentConversationsGridLayoutRenderer() {
-        return new ComponentRenderer<>(this::createRecentCard);
+    /**
+     * Disables the composer and warns the user when the chat model is not configured —
+     * starting a new chat would fail.
+     */
+    protected void refreshComposerAvailability() {
+        if (chatService.isAvailable()) {
+            return;
+        }
+        composerFragment.setInputEnabled(false);
+        notifications.create(messageBundle.getMessage("aiChatHubFragment.chatUnavailable"))
+                .withType(Notifications.Type.WARNING)
+                .show();
     }
 
-    @Subscribe("showAllHistoryBtn")
-    public void onShowAllHistoryBtnClick(final ClickEvent<JmixButton> event) {
-        renderHistoryList();
-        historySidePanel.openSidePanel();
+    protected void loadConversations() {
+        recentConversationsDl.load();
+        historyConversationsDl.load();
     }
 
-    @Subscribe("historyCloseBtn")
-    public void onHistoryCloseBtnClick(final ClickEvent<JmixButton> event) {
-        historySidePanel.closeSidePanel();
-    }
-
-    @Subscribe("historyNewBtn")
-    public void onHistoryNewBtnClick(final ClickEvent<JmixButton> event) {
-        historySidePanel.closeSidePanel();
-        composerFragment.focus();
-    }
-
-    @Subscribe("historySearchField")
-    public void onHistorySearchFieldValueChange(
-            final SupportsTypedValue.TypedValueChangeEvent<TypedTextField<String>, String> event) {
-        historyFilter = Optional.ofNullable(event.getValue()).orElse("").trim().toLowerCase(Locale.ROOT);
-        renderHistoryList();
-    }
-
-    protected AiConversationCard createRecentCard(AiConversation conversation) {
+    protected AiConversationCard createRecentCard(UserAiConversation conversation) {
         return createCard(conversation, false);
     }
 
-    protected AiConversationCard createHistoryCard(AiConversation conversation) {
+    protected AiConversationCard createHistoryCard(UserAiConversation conversation) {
         return createCard(conversation, true);
     }
 
-    protected AiConversationCard createCard(AiConversation conversation, boolean deletable) {
+    protected AiConversationCard createCard(UserAiConversation conversation, boolean deletable) {
         AiConversationCard card = new AiConversationCard();
         card.setIcon(resolveMarkIcon());
         card.setTitle(metadataTools.getInstanceName(conversation));
@@ -287,14 +284,14 @@ public class AiChatHubFragment extends Fragment<VerticalLayout> {
         return card;
     }
 
-    protected void openConversation(AiConversation conversation) {
+    protected void openConversation(UserAiConversation conversation) {
         viewNavigators.view(UiComponentUtils.getView(this), AiChatView.class)
                 .withRouteParameters(routeSupport.createRouteParameters(
                         AiChatView.ROUTE_PARAM_ID, conversation.getId()))
                 .navigate();
     }
 
-    protected void confirmDelete(AiConversation conversation) {
+    protected void confirmDelete(UserAiConversation conversation) {
         dialogs.createOptionDialog()
                 .withHeader(messageBundle.getMessage("aiChatHubFragment.deleteConfirm.header"))
                 .withText(messageBundle.getMessage("aiChatHubFragment.deleteConfirm.text"))
@@ -306,9 +303,9 @@ public class AiChatHubFragment extends Fragment<VerticalLayout> {
                 .open();
     }
 
-    protected void deleteConversation(AiConversation conversation) {
+    protected void deleteConversation(UserAiConversation conversation) {
         try {
-            dataManager.remove(conversation);
+            conversationService.remove(conversation);
         } catch (Exception e) {
             log.error("Failed to delete conversation", e);
             notifications.create(messageBundle.getMessage("aiChatHubFragment.errorProcessingMessage"))
@@ -322,10 +319,10 @@ public class AiChatHubFragment extends Fragment<VerticalLayout> {
     }
 
     protected void renderHistoryList() {
-        List<AiConversation> all = historyConversationsDc.getItems();
+        List<UserAiConversation> all = historyConversationsDc.getItems();
         historyPanelCount.setText(String.valueOf(all.size()));
 
-        List<AiConversation> filtered = applyHistoryFilter(all);
+        List<UserAiConversation> filtered = applyHistoryFilter(all);
 
         historyListContainer.removeAll();
         if (filtered.isEmpty()) {
@@ -336,38 +333,31 @@ public class AiChatHubFragment extends Fragment<VerticalLayout> {
             return;
         }
 
-        Map<HistoryBucket, List<AiConversation>> grouped = groupByBucket(filtered);
+        Map<HistoryBucket, List<UserAiConversation>> grouped = groupByBucket(filtered);
         grouped.forEach((bucket, items) ->
                 historyListContainer.add(createHistoryGroup(bucketLabel(bucket), items)));
     }
 
-    protected List<AiConversation> applyHistoryFilter(List<AiConversation> conversations) {
+    protected List<UserAiConversation> applyHistoryFilter(List<UserAiConversation> conversations) {
         if (historyFilter.isEmpty()) {
             return conversations;
         }
         return conversations.stream()
-                .filter(c -> {
-                    String title = Optional.of(metadataTools.getInstanceName(c))
-                            .orElse("").toLowerCase(Locale.ROOT);
-                    if (title.contains(historyFilter)) {
-                        return true;
-                    }
-                    return firstUserMessageSnippet(c).toLowerCase(Locale.ROOT).contains(historyFilter);
-                })
+                .filter(c -> metadataTools.getInstanceName(c).toLowerCase(Locale.ROOT).contains(historyFilter))
                 .toList();
     }
 
-    protected Map<HistoryBucket, List<AiConversation>> groupByBucket(List<AiConversation> conversations) {
+    protected Map<HistoryBucket, List<UserAiConversation>> groupByBucket(List<UserAiConversation> conversations) {
         ZoneId zone = ZoneId.systemDefault();
         LocalDate today = LocalDate.now(zone);
 
         // Seed with an empty, ordered map so buckets always render
         // most-recent-first regardless of the data order.
-        Map<HistoryBucket, List<AiConversation>> grouped = new LinkedHashMap<>();
+        Map<HistoryBucket, List<UserAiConversation>> grouped = new LinkedHashMap<>();
         for (HistoryBucket bucket : HistoryBucket.values()) {
             grouped.put(bucket, new ArrayList<>());
         }
-        for (AiConversation conversation : conversations) {
+        for (UserAiConversation conversation : conversations) {
             HistoryBucket bucket = HistoryBucket.of(
                     conversation.getCreatedDate(), today, zone);
             grouped.get(bucket).add(conversation);
@@ -385,24 +375,10 @@ public class AiChatHubFragment extends Fragment<VerticalLayout> {
         };
     }
 
-    protected Component createHistoryGroup(String bucketLabel, List<AiConversation> conversations) {
+    protected Component createHistoryGroup(String bucketLabel, List<UserAiConversation> conversations) {
         AiConversationHistoryGroup group = new AiConversationHistoryGroup();
         group.setGroup(bucketLabel, conversations, this::createHistoryCard);
         return group;
-    }
-
-    protected String firstUserMessageSnippet(AiConversation conversation) {
-        List<ChatMessage> messages = conversation.getMessages();
-        if (messages == null) {
-            return "";
-        }
-        return messages.stream()
-                .filter(Objects::nonNull)
-                .filter(m -> ChatMessageType.USER.equals(m.getType()))
-                .map(ChatMessage::getContent)
-                .filter(Objects::nonNull)
-                .findFirst()
-                .orElse("");
     }
 
     protected int resolveRecentChatsCount() {

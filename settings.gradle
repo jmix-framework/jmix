@@ -14,6 +14,8 @@ includeProject('aitools', 'jmix-aitools/aitools')
 includeProject('aitools-starter', 'jmix-aitools/aitools-starter')
 includeProject('aitools-flowui', 'jmix-aitools/aitools-flowui')
 includeProject('aitools-flowui-starter', 'jmix-aitools/aitools-flowui-starter')
+includeProject('aitools-flowui-data', 'jmix-aitools/aitools-flowui-data')
+includeProject('aitools-flowui-data-starter', 'jmix-aitools/aitools-flowui-data-starter')
 
 includeProject('appsettings', 'jmix-appsettings/appsettings')
 includeProject('appsettings-starter', 'jmix-appsettings/appsettings-starter')

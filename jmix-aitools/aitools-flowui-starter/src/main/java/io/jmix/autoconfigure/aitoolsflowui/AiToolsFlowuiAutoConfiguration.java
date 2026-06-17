@@ -19,6 +19,12 @@ package io.jmix.autoconfigure.aitoolsflowui;
 import io.jmix.aitoolsflowui.AiToolsFlowuiConfiguration;
 import io.jmix.aitoolsflowui.icon.AiIconProvider;
 import io.jmix.aitoolsflowui.icon.impl.DefaultAiIconProvider;
+import io.jmix.aitoolsflowui.service.UserAiChatService;
+import io.jmix.aitoolsflowui.service.UserAiConversationService;
+import io.jmix.aitoolsflowui.service.UserAiMessageService;
+import io.jmix.aitoolsflowui.service.impl.UserAiChatEmptyService;
+import io.jmix.aitoolsflowui.service.impl.UserAiConversationEmptyService;
+import io.jmix.aitoolsflowui.service.impl.UserAiMessageEmptyService;
 import io.jmix.flowui.FlowuiConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -33,5 +39,23 @@ public class AiToolsFlowuiAutoConfiguration {
     @ConditionalOnMissingBean(AiIconProvider.class)
     public AiIconProvider aiIconProvider() {
         return new DefaultAiIconProvider();
+    }
+
+    @Bean("aitls_UserAiChatEmptyService")
+    @ConditionalOnMissingBean(UserAiChatService.class)
+    public UserAiChatService userAiChatService() {
+        return new UserAiChatEmptyService();
+    }
+
+    @Bean("aitls_UserAiConversationEmptyService")
+    @ConditionalOnMissingBean(UserAiConversationService.class)
+    public UserAiConversationService userAiConversationService() {
+        return new UserAiConversationEmptyService();
+    }
+
+    @Bean("aitls_UserAiMessageEmptyService")
+    @ConditionalOnMissingBean(UserAiMessageService.class)
+    public UserAiMessageService userAiMessageService() {
+        return new UserAiMessageEmptyService();
     }
 }

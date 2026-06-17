@@ -16,16 +16,14 @@
 
 package io.jmix.aitoolsflowui.service;
 
-import io.jmix.aitools.entity.ChatMessage;
-import io.jmix.aitools.entity.ChatMessageType;
-import io.jmix.aitoolsflowui.model.TimelineItem;
-import io.jmix.aitoolsflowui.model.TimelineItemType;
+import io.jmix.aitoolsflowui.model.*;
 import io.jmix.core.Metadata;
 import io.jmix.core.common.util.Preconditions;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -43,7 +41,7 @@ public class TimelineItemFactory {
      * @param message message to wrap
      * @return a new user timeline item
      */
-    public TimelineItem createUserItem(ChatMessage message) {
+    public TimelineItem createUserItem(UserAiMessage message) {
         TimelineItem userItem = metadata.create(TimelineItem.class);
         userItem.setMessage(message);
         userItem.setType(TimelineItemType.USER);
@@ -56,7 +54,7 @@ public class TimelineItemFactory {
      * @param message message to wrap
      * @return a new assistant timeline item
      */
-    public TimelineItem createAssistantItem(ChatMessage message) {
+    public TimelineItem createAssistantItem(UserAiMessage message) {
         TimelineItem assistantItem = metadata.create(TimelineItem.class);
         assistantItem.setMessage(message);
         assistantItem.setType(TimelineItemType.ASSISTANT);
@@ -69,7 +67,7 @@ public class TimelineItemFactory {
      * @param message message to wrap
      * @return a new thinking placeholder timeline item
      */
-    public TimelineItem createThinkingItem(ChatMessage message) {
+    public TimelineItem createThinkingItem(UserAiMessage message) {
         TimelineItem thinkingItem = metadata.create(TimelineItem.class);
         thinkingItem.setMessage(message);
         thinkingItem.setType(TimelineItemType.ASSISTANT_THINKING);
@@ -77,13 +75,13 @@ public class TimelineItemFactory {
     }
 
     /**
-     * Maps chat messages to timeline items, wrapping {@link ChatMessageType#ASSISTANT} /
-     * {@link ChatMessageType#TOOL} messages as assistant items and the rest as user items.
+     * Maps chat messages to timeline items, wrapping {@link UserAiMessageType#ASSISTANT} /
+     * {@link UserAiMessageType#TOOL} messages as assistant items and the rest as user items.
      *
      * @param messages messages to map
      * @return timeline items in the same order
      */
-    public List<TimelineItem> buildTimelineItems(List<ChatMessage> messages) {
+    public List<TimelineItem> buildTimelineItems(Collection<UserAiMessage> messages) {
         Preconditions.checkNotNullArgument( messages);
 
         return messages.stream()
@@ -91,9 +89,9 @@ public class TimelineItemFactory {
                 .toList();
     }
 
-    protected TimelineItem createTimelineItem(ChatMessage message) {
-        ChatMessageType type = message.getType();
-        if (ChatMessageType.ASSISTANT.equals(type) || ChatMessageType.TOOL.equals(type)) {
+    protected TimelineItem createTimelineItem(UserAiMessage message) {
+        UserAiMessageType type = message.getType();
+        if (UserAiMessageType.ASSISTANT.equals(type) || UserAiMessageType.TOOL.equals(type)) {
             return createAssistantItem(message);
         }
         return createUserItem(message);

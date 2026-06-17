@@ -21,12 +21,9 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeLeaveEvent.ContinueNavigationAction;
 import com.vaadin.flow.router.Route;
-import io.jmix.aitools.entity.AiConversation;
+import io.jmix.aitoolsflowui.model.UserAiConversation;
+import io.jmix.aitoolsflowui.service.UserAiConversationService;
 import io.jmix.aitoolsflowui.view.chathub.AiChatHubView;
-import io.jmix.core.DataManager;
-import io.jmix.core.FetchPlan;
-import io.jmix.core.FetchPlans;
-import io.jmix.core.usersubstitution.CurrentUserSubstitution;
 import io.jmix.flowui.Dialogs;
 import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.action.DialogAction;
@@ -59,8 +56,8 @@ import java.util.UUID;
  * Standalone host view around {@link AiChatFragment}.
  * <p>
  * Opens either by URL — the {@code :id} route segment is the id of an
- * {@link AiConversation} that gets loaded and bound to the fragment — or
- * programmatically via {@link #setConversation(AiConversation)} (used by
+ * {@link UserAiConversation} that gets loaded and bound to the fragment — or
+ * programmatically via {@link #setConversation(UserAiConversation)} (used by
  * {@code DialogWindows} and after-navigation handlers).
  */
 @Route(value = "aitls/chat/:id?", layout = DefaultMainViewParent.class)
@@ -73,17 +70,13 @@ public class AiChatView extends StandardView {
     public static final String ROUTE_PARAM_ID = "id";
 
     @Autowired
-    private DataManager dataManager;
-    @Autowired
-    private FetchPlans fetchPlans;
+    private UserAiConversationService conversationService;
     @Autowired
     private UrlParamSerializer urlParamSerializer;
     @Autowired
     private RouteSupport routeSupport;
     @Autowired
     private ViewNavigators viewNavigators;
-    @Autowired
-    private CurrentUserSubstitution currentUserSubstitution;
     @Autowired
     private Dialogs dialogs;
 
@@ -97,7 +90,7 @@ public class AiChatView extends StandardView {
     private VerticalLayout emptyLayout;
 
     @Nullable
-    private AiConversation conversation;
+    private UserAiConversation conversation;
     private boolean conversationNotFound;
     private boolean contentInitialized;
     private boolean initialPromptSent;
@@ -125,7 +118,7 @@ public class AiChatView extends StandardView {
      * state and keeps the browser URL in sync (unless the view is opened in a
      * dialog).
      */
-    public void setConversation(@Nullable AiConversation conversation) {
+    public void setConversation(@Nullable UserAiConversation conversation) {
         this.conversation = conversation;
         this.conversationNotFound = false;
         if (contentInitialized) {
@@ -158,27 +151,15 @@ public class AiChatView extends StandardView {
         if (conversation != null && id.equals(conversation.getId())) {
             return;
         }
-        String username = currentUserSubstitution.getEffectiveUser().getUsername();
-        Optional<AiConversation> loaded = dataManager.load(AiConversation.class)
-                .query("select e from aitls_AiConversation e where e.id = :id and e.username = :username")
-                .parameter("id", id)
-                .parameter("username", username)
-                .fetchPlan(buildFetchPlan())
-                .optional();
-        if (loaded.isPresent()) {
-            this.conversation = loaded.get();
+        UserAiConversation loaded = conversationService.loadConversation(id);
+        if (loaded != null) {
+            this.conversation = loaded;
             this.conversationNotFound = false;
         } else {
             this.conversation = null;
             this.conversationNotFound = true;
-            log.warn("AiConversation with id {} not found", id);
+            log.warn("User AI conversation with id {} not found", id);
         }
-    }
-
-    protected FetchPlan buildFetchPlan() {
-        return fetchPlans.builder(AiConversation.class)
-                .addFetchPlan(FetchPlan.BASE)
-                .build();
     }
 
     @Subscribe

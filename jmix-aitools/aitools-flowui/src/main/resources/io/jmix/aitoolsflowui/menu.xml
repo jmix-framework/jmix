@@ -19,7 +19,5 @@
     <menu id="aitls">
         <item view="aitls_AiChatHubView"
               title="msg://io.jmix.aitoolsflowui.view.chathub/aiChatHubView.menu"/>
-        <item view="aitls_AiConversation.list"
-              title="msg://io.jmix.aitoolsflowui.view.aiconversation/aiConversationListView.menu"/>
     </menu>
 </menu-config>

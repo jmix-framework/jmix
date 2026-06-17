@@ -21,22 +21,13 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.function.SerializableSupplier;
-import io.jmix.aitoolsflowui.service.AssistantResponseTaskCoordinator;
+import io.jmix.aitoolsflowui.model.*;
+import io.jmix.aitoolsflowui.service.*;
 import io.jmix.aitoolsflowui.view.input.AiChatInputFragment;
-import io.jmix.aitools.entity.AiConversation;
-import io.jmix.aitools.entity.ChatMessage;
-import io.jmix.aitools.entity.ChatMessageType;
-import io.jmix.aitools.service.AiConversationChatService;
-import io.jmix.aitools.service.AiConversationService;
 import io.jmix.aitools.tool.AiUiStatusUpdate;
-import io.jmix.aitoolsflowui.model.TimelineItem;
-import io.jmix.aitoolsflowui.model.TimelineItemType;
-import io.jmix.aitoolsflowui.model.TimelineItemStatus;
-import io.jmix.aitoolsflowui.service.TimelineItemFactory;
 import io.jmix.core.DataManager;
 import io.jmix.core.TimeSource;
 import io.jmix.core.annotation.Experimental;
-import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.flowui.Dialogs;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.app.inputdialog.DialogActions;
@@ -54,20 +45,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Encapsulates the "AI chat panel" UI — title row, message timeline, thinking
- * indicator and the {@link AiChatInputFragment}
- * composer — for an {@link AiConversation}.
+ * indicator and the {@link AiChatInputFragment} composer — for an {@link UserAiConversation}.
  * Designed to be embedded into any host view (the standard detail view, a
  * side dialog, a chat hub view, custom layouts).
  * <p>
  * <b>Ownership.</b> The host supplies the conversation to display via
- * {@link #setConversation(AiConversation)} or {@link #setConversationId(UUID)};
- * the fragment loads that conversation's {@link ChatMessage}s itself — it does
+ * {@link #setConversation(UserAiConversation)} or {@link #setConversationId(UUID)};
+ * the fragment loads that conversation's {@link UserAiMessage}s itself — it does
  * not rely on the {@code messages} collection being pre-fetched by the host —
  * and reads/writes directly through {@link DataManager}.
  */
@@ -82,19 +70,19 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
     @Autowired
     protected TimeSource timeSource;
     @Autowired
-    protected CurrentAuthentication currentAuthentication;
-    @Autowired
     protected Dialogs dialogs;
     @Autowired
     protected Notifications notifications;
     @Autowired
-    protected AiConversationService aiConversationService;
+    protected UserAiMessageService messageService;
+    @Autowired
+    protected UserAiConversationService conversationService;
     @Autowired
     protected AssistantResponseTaskCoordinator assistantResponseTaskCoordinator;
     @Autowired
     protected TimelineItemFactory timelineItemFactory;
     @Autowired
-    protected AiConversationChatService aiConversationChatService;
+    protected UserAiChatService chatService;
 
     @ViewComponent
     protected MessageBundle messageBundle;
@@ -115,14 +103,14 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
     protected AiChatInputFragment composerFragment;
 
     @Nullable
-    protected AiConversation conversation;
+    protected UserAiConversation conversation;
     @Nullable
     protected TimelineItem activeThinkingItem;
     protected boolean awaitingResponse;
 
     protected boolean readOnly;
 
-    protected boolean aiUnavailableWarned;
+    protected boolean chatUnavailableWarned;
 
     @Nullable
     protected SerializableSupplier<Component> aiAvatarIconSupplier;
@@ -132,7 +120,7 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
      *
      * @param conversation conversation to bind
      */
-    public void setConversation(@Nullable AiConversation conversation) {
+    public void setConversation(@Nullable UserAiConversation conversation) {
         this.conversation = conversation;
         this.activeThinkingItem = null;
 
@@ -226,14 +214,14 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
         if (userMessage == null || userMessage.isBlank()) {
             return;
         }
-        if (!aiConversationChatService.isAvailable()) {
+        if (!chatService.isAvailable()) {
             log.warn("Cannot submit message — AI is not configured");
             return;
         }
 
-        ChatMessage savedUserMessage;
+        UserAiMessage savedUserMessage;
         try {
-            savedUserMessage = aiConversationService.createUserMessage(conversation, userMessage.trim());
+            savedUserMessage = messageService.createMessage(conversation, UserAiMessageType.USER, userMessage.trim());
         } catch (Exception e) {
             log.error("Failed to persist user message", e);
             notifications.create(messageBundle.getMessage("aiChatFragment.errorProcessingMessage"))
@@ -258,8 +246,7 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
         refreshAll();
     }
 
-
-    protected void processUserMessage(ChatMessage savedUserMessage) {
+    protected void processUserMessage(UserAiMessage savedUserMessage) {
         View<?> hostView = UiComponentUtils.findView(this);
         if (hostView == null) {
             log.warn("Fragment is not attached to a view — cannot run assistant response task");
@@ -275,7 +262,7 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
         );
     }
 
-    protected void handleAssistantResponseDone(@Nullable ChatMessage finalMessage) {
+    protected void handleAssistantResponseDone(@Nullable UserAiMessage finalMessage) {
         activeThinkingItem = null;
         awaitingResponse = false;
         // Tools may persist side effects (including the new assistant message) in
@@ -318,7 +305,7 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
     }
 
     protected void showThinkingIndicator() {
-        ChatMessage placeholder = createTransientAssistantMessage("");
+        UserAiMessage placeholder = createTransientAssistantMessage("");
         activeThinkingItem = timelineItemFactory.createThinkingItem(placeholder);
         appendTimelineItem(activeThinkingItem);
     }
@@ -334,7 +321,7 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
     protected void appendThinkingStatusUpdate(@Nullable AiUiStatusUpdate statusUpdate) {
         if (activeThinkingItem == null
                 || statusUpdate == null
-                || statusUpdate.message().isBlank()) {
+                || statusUpdate.getMessage().isBlank()) {
             return;
         }
 
@@ -345,7 +332,7 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
             // result yet). A completed entry with the same base message
             // belongs to a previous tool call and must not swallow a fresh
             // start phrase for the next call.
-            if (last.getMessage().equals(statusUpdate.message()) && !last.isCompleted()) {
+            if (last.getMessage().equals(statusUpdate.getMessage()) && !last.isCompleted()) {
                 if (statusUpdate.isCompleted()) {
                     statusUpdates.set(statusUpdates.size() - 1, createTimelineStatus(statusUpdate));
                     refreshTimelineItem(activeThinkingItem);
@@ -374,11 +361,11 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
     }
 
     protected void warnIfAiUnavailable() {
-        if (conversation == null || aiUnavailableWarned || aiConversationChatService.isAvailable()) {
+        if (conversation == null || chatUnavailableWarned || chatService.isAvailable()) {
             return;
         }
-        aiUnavailableWarned = true;
-        notifications.create(messageBundle.getMessage("aiChatFragment.aiNotConfigured"))
+        chatUnavailableWarned = true;
+        notifications.create(messageBundle.getMessage("aiChatFragment.chatUnavailable"))
                 .withType(Notifications.Type.WARNING)
                 .show();
     }
@@ -387,11 +374,11 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
      * Loads all messages of the bound conversation, oldest first. Empty when no
      * conversation is bound or it has not been persisted yet.
      */
-    protected List<ChatMessage> loadMessages() {
+    protected Collection<UserAiMessage> loadMessages() {
         if (conversation == null || conversation.getId() == null) {
             return List.of();
         }
-        return aiConversationService.loadMessages(conversation.getId());
+        return messageService.loadMessages(conversation);
     }
 
     protected void forceMessageInputFocus() {
@@ -400,7 +387,7 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
     }
 
     protected void refreshComposerVisibility() {
-        boolean show = conversation != null && !readOnly && aiConversationChatService.isAvailable();
+        boolean show = conversation != null && !readOnly && chatService.isAvailable();
         composerContainer.setVisible(show);
         editConversationTitleBtn.setVisible(show);
     }
@@ -499,35 +486,25 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
                 force);
     }
 
-    protected ChatMessage createTransientAssistantMessage(String content) {
-        ChatMessage message = dataManager.create(ChatMessage.class);
+    protected UserAiMessage createTransientAssistantMessage(String content) {
+        UserAiMessage message = dataManager.create(UserAiMessage.class);
         message.setConversation(conversation);
         message.setContent(content);
-        message.setType(ChatMessageType.ASSISTANT);
+        message.setType(UserAiMessageType.ASSISTANT);
         message.setCreatedDate(timeSource.now().toOffsetDateTime());
-        message.setCreatedBy(currentAuthentication.getUser().getUsername());
         return message;
     }
 
     protected TimelineItemStatus createTimelineStatus(AiUiStatusUpdate statusUpdate) {
         TimelineItemStatus timelineStatus = dataManager.create(TimelineItemStatus.class);
-        timelineStatus.setMessage(statusUpdate.message());
-        timelineStatus.setResultSnippet(statusUpdate.resultSnippet());
+        timelineStatus.setMessage(statusUpdate.getMessage());
+        timelineStatus.setResultSnippet(statusUpdate.getResultSnippet());
         return timelineStatus;
     }
 
-    /**
-     * Loads the conversation entity by id (without its {@code messages}
-     * collection — messages are loaded separately via
-     * {@link AiConversationService#loadMessages(UUID)}). Returns {@code null}
-     * if the conversation no longer exists.
-     */
     @Nullable
-    protected AiConversation loadConversation(UUID conversationId) {
-        return dataManager.load(AiConversation.class)
-                .id(conversationId)
-                .optional()
-                .orElse(null);
+    protected UserAiConversation loadConversation(UUID conversationId) {
+        return conversationService.loadConversation(conversationId);
     }
 
     protected void openTitleEditDialog() {
@@ -566,7 +543,7 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
                     // Persist only the title and refresh just the header.
                     // Reloading conversation while awaiting LLM answer
                     // may break UI.
-                    conversation = dataManager.save(conversation);
+                    conversation = conversationService.save(conversation);
                     conversationTitle.setText(Objects.requireNonNull(conversation).getTitle());
                 })
                 .open();

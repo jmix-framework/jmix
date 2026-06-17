@@ -89,10 +89,10 @@ dependencies {
 
         api "io.jmix.aitools:jmix-aitools:$freeVersion"
         api "io.jmix.aitools:jmix-aitools-starter:$freeVersion"
-        api "io.jmix.aitools:jmix-aitoolsflowui:$freeVersion"
-        api "io.jmix.aitools:jmix-aitoolsflowui-starter:$freeVersion"
-        api "io.jmix.aitools:jmix-aitoolsflowui-data:$freeVersion"
-        api "io.jmix.aitools:jmix-aitoolsflowui-data-starter:$freeVersion"
+        api "io.jmix.aitools:jmix-aitools-flowui:$freeVersion"
+        api "io.jmix.aitools:jmix-aitools-flowui-starter:$freeVersion"
+        api "io.jmix.aitools:jmix-aitools-flowui-data:$freeVersion"
+        api "io.jmix.aitools:jmix-aitools-flowui-data-starter:$freeVersion"
 
         api "io.jmix.appsettings:jmix-appsettings:$freeVersion"
         api "io.jmix.appsettings:jmix-appsettings-starter:$freeVersion"

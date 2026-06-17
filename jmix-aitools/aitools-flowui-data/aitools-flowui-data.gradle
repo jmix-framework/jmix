@@ -17,7 +17,9 @@
 apply plugin: 'io.jmix'
 
 group = 'io.jmix.aitools'
-archivesBaseName = 'jmix-aitoolsflowui-data'
+base {
+    archivesName = 'jmix-aitools-flowui-data'
+}
 
 dependencies {
     api project(":aitools")

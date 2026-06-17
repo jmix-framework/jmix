@@ -158,7 +158,7 @@ public class AiChatView extends StandardView {
         } else {
             this.conversation = null;
             this.conversationNotFound = true;
-            log.warn("User AI conversation with id {} not found", id);
+            log.warn("AI conversation with id {} not found", id);
         }
     }
 

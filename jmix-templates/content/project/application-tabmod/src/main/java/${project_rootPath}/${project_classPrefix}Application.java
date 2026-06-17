@@ -32,11 +32,11 @@ import org.springframework.core.env.Environment;
 
 import javax.sql.DataSource;
 
-@Push
-<%if("lumo".equals(getThemeName())) {%>@StyleSheet(Lumo.STYLESHEET)
+@Push<%if("lumo".equals(getThemeName())) {%>
+@StyleSheet(Lumo.STYLESHEET)
 @StyleSheet(JmixLumo.STYLESHEET)
-@StyleSheet("themes/${project_name}-lumo/styles.css")
-<%} else {%>@StyleSheet(Aura.STYLESHEET)
+@StyleSheet("themes/${project_name}-lumo/styles.css")<%} else {%>
+@StyleSheet(Aura.STYLESHEET)
 @StyleSheet(JmixAura.STYLESHEET)
 @StyleSheet("themes/${project_name}-aura/styles.css")<%}%>
 @PWA(name = "${project_projectPrintableName}", shortName = "${project_projectPrintableName}", offline = false)

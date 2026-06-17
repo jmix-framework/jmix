@@ -22,12 +22,12 @@ import io.jmix.aitools.service.prompt.AiChatSystemPromptProvider;
 import io.jmix.aitools.tool.AiToolRegistry;
 import io.jmix.aitools.tool.AiToolStatusPublisher;
 import io.jmix.aitools.tool.AiUiStatusUpdate;
-import io.jmix.aitoolsflowui.model.UserAiMessage;
+import io.jmix.aitoolsflowui.model.AiChatMessage;
 import io.jmix.aitoolsflowui.service.UserAiChatService;
 import io.jmix.aitoolsflowuidata.AiToolsFlowuiDataProperties;
 import io.jmix.aitoolsflowuidata.entity.AiChatMessageEntity;
 import io.jmix.aitoolsflowuidata.entity.AiConversationEntity;
-import io.jmix.aitoolsflowuidata.entity.AiChatMessageType;
+import io.jmix.aitoolsflowuidata.entity.AiChatMessageEntityType;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.Sort;
 import io.jmix.core.UnconstrainedDataManager;
@@ -92,16 +92,16 @@ public class UserAiChatDataService implements UserAiChatService, InitializingBea
     }
 
     @Override
-    public String processMessage(UserAiMessage message) {
+    public String processMessage(AiChatMessage message) {
         return processMessageInternal(message, null);
     }
 
     @Override
-    public String processMessage(UserAiMessage message, @Nullable Consumer<AiUiStatusUpdate> statusCallback) {
+    public String processMessage(AiChatMessage message, @Nullable Consumer<AiUiStatusUpdate> statusCallback) {
         return processMessageInternal(message, statusCallback);
     }
 
-    protected String processMessageInternal(UserAiMessage message,
+    protected String processMessageInternal(AiChatMessage message,
                                             @Nullable Consumer<AiUiStatusUpdate> statusCallback) {
         Preconditions.checkNotNullArgument(message);
         String response = process(message.getId(), statusCallback);
@@ -159,7 +159,7 @@ public class UserAiChatDataService implements UserAiChatService, InitializingBea
                 .optional()
                 .orElseThrow(() -> new IllegalArgumentException(
                         "AiChatMessageEntity not found: " + userMessageId));
-        if (message.getType() != AiChatMessageType.USER) {
+        if (message.getType() != AiChatMessageEntityType.USER) {
             throw new IllegalArgumentException(
                     "Expected USER AiChatMessageEntity but got " + message.getType() + " for id " + userMessageId);
         }
@@ -188,7 +188,7 @@ public class UserAiChatDataService implements UserAiChatService, InitializingBea
 
     protected Message mapEntityToMessage(AiChatMessageEntity chatMessage) {
         String content = chatMessage.getContent() != null ? chatMessage.getContent() : "";
-        AiChatMessageType type = chatMessage.getType();
+        AiChatMessageEntityType type = chatMessage.getType();
         if (type == null) {
             return new SystemMessage(content);
         }
@@ -202,7 +202,7 @@ public class UserAiChatDataService implements UserAiChatService, InitializingBea
     protected AiChatMessageEntity createAssistantPlaceholder(AiConversationEntity conversation) {
         AiChatMessageEntity placeholder = dataManager.create(AiChatMessageEntity.class);
         placeholder.setConversation(conversation);
-        placeholder.setType(AiChatMessageType.ASSISTANT);
+        placeholder.setType(AiChatMessageEntityType.ASSISTANT);
         placeholder.setContent("");
         return dataManager.save(placeholder);
     }

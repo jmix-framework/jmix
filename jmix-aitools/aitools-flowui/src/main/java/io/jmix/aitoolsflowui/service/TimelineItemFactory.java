@@ -41,7 +41,7 @@ public class TimelineItemFactory {
      * @param message message to wrap
      * @return a new user timeline item
      */
-    public TimelineItem createUserItem(UserAiMessage message) {
+    public TimelineItem createUserItem(AiChatMessage message) {
         TimelineItem userItem = metadata.create(TimelineItem.class);
         userItem.setMessage(message);
         userItem.setType(TimelineItemType.USER);
@@ -54,7 +54,7 @@ public class TimelineItemFactory {
      * @param message message to wrap
      * @return a new assistant timeline item
      */
-    public TimelineItem createAssistantItem(UserAiMessage message) {
+    public TimelineItem createAssistantItem(AiChatMessage message) {
         TimelineItem assistantItem = metadata.create(TimelineItem.class);
         assistantItem.setMessage(message);
         assistantItem.setType(TimelineItemType.ASSISTANT);
@@ -67,7 +67,7 @@ public class TimelineItemFactory {
      * @param message message to wrap
      * @return a new thinking placeholder timeline item
      */
-    public TimelineItem createThinkingItem(UserAiMessage message) {
+    public TimelineItem createThinkingItem(AiChatMessage message) {
         TimelineItem thinkingItem = metadata.create(TimelineItem.class);
         thinkingItem.setMessage(message);
         thinkingItem.setType(TimelineItemType.ASSISTANT_THINKING);
@@ -75,13 +75,13 @@ public class TimelineItemFactory {
     }
 
     /**
-     * Maps chat messages to timeline items, wrapping {@link UserAiMessageType#ASSISTANT} /
-     * {@link UserAiMessageType#TOOL} messages as assistant items and the rest as user items.
+     * Maps chat messages to timeline items, wrapping {@link AiChatMessageType#ASSISTANT} /
+     * {@link AiChatMessageType#TOOL} messages as assistant items and the rest as user items.
      *
      * @param messages messages to map
      * @return timeline items in the same order
      */
-    public List<TimelineItem> buildTimelineItems(Collection<UserAiMessage> messages) {
+    public List<TimelineItem> buildTimelineItems(Collection<AiChatMessage> messages) {
         Preconditions.checkNotNullArgument( messages);
 
         return messages.stream()
@@ -89,9 +89,9 @@ public class TimelineItemFactory {
                 .toList();
     }
 
-    protected TimelineItem createTimelineItem(UserAiMessage message) {
-        UserAiMessageType type = message.getType();
-        if (UserAiMessageType.ASSISTANT.equals(type) || UserAiMessageType.TOOL.equals(type)) {
+    protected TimelineItem createTimelineItem(AiChatMessage message) {
+        AiChatMessageType type = message.getType();
+        if (AiChatMessageType.ASSISTANT.equals(type) || AiChatMessageType.TOOL.equals(type)) {
             return createAssistantItem(message);
         }
         return createUserItem(message);

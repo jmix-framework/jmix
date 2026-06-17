@@ -20,12 +20,12 @@ import com.google.common.base.Strings;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.html.Span;
-import io.jmix.aitoolsflowui.model.UserAiMessage;
+import io.jmix.aitoolsflowui.model.AiChatMessage;
 
 import java.util.Locale;
 
 /**
- * A row representing a persisted user or assistant {@link UserAiMessage}.
+ * A row representing a persisted user or assistant {@link AiChatMessage}.
  * Assistant content is rendered as Markdown, user content as plain text.
  */
 public class TimelineUserMessageItem extends AbstractTimelineItem {
@@ -40,7 +40,7 @@ public class TimelineUserMessageItem extends AbstractTimelineItem {
      * @param message   message to display
      * @param actorName actor display name shown in the header
      */
-    public void setMessage(UserAiMessage message, String actorName) {
+    public void setMessage(AiChatMessage message, String actorName) {
         removeClassName(USER_MESSAGE_CN);
 
         addClassNames(USER_MESSAGE_CN);
@@ -81,7 +81,7 @@ public class TimelineUserMessageItem extends AbstractTimelineItem {
         return abbreviation.toUpperCase(Locale.ROOT);
     }
 
-    protected Component createMessageContent(UserAiMessage message) {
+    protected Component createMessageContent(AiChatMessage message) {
         Span text = new Span(Strings.nullToEmpty(message.getContent()));
         text.addClassName(USER_MESSAGE_CONTENT_CN);
         return text;

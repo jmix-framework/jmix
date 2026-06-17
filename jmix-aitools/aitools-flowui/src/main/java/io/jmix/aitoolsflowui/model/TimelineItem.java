@@ -41,7 +41,7 @@ public class TimelineItem {
 
     private Integer type;
 
-    private UserAiMessage message;
+    private AiChatMessage message;
 
     private List<TimelineItemStatus> statusUpdates = new ArrayList<>();
 
@@ -69,11 +69,11 @@ public class TimelineItem {
         this.type = type == null ? null : type.getId();
     }
 
-    public UserAiMessage getMessage() {
+    public AiChatMessage getMessage() {
         return message;
     }
 
-    public void setMessage(UserAiMessage message) {
+    public void setMessage(AiChatMessage message) {
         this.message = message;
     }
 

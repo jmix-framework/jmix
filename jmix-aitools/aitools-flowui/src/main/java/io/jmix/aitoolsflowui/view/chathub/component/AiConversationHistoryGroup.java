@@ -21,7 +21,7 @@ import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import io.jmix.aitoolsflowui.model.UserAiConversation;
+import io.jmix.aitoolsflowui.model.AiConversation;
 import org.jspecify.annotations.NullMarked;
 
 import java.util.List;
@@ -46,8 +46,8 @@ public class AiConversationHistoryGroup extends Composite<VerticalLayout> {
     }
 
     public void setGroup(String bucketLabel,
-                         List<UserAiConversation> conversations,
-                         Function<UserAiConversation, AiConversationCard> cardCreator) {
+                         List<AiConversation> conversations,
+                         Function<AiConversation, AiConversationCard> cardCreator) {
         getContent().removeAll();
 
         getContent().add(createHeader(bucketLabel, conversations.size()));

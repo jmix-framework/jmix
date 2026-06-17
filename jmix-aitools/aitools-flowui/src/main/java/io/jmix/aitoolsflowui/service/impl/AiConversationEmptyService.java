@@ -16,8 +16,8 @@
 
 package io.jmix.aitoolsflowui.service.impl;
 
-import io.jmix.aitoolsflowui.model.UserAiConversation;
-import io.jmix.aitoolsflowui.service.UserAiConversationService;
+import io.jmix.aitoolsflowui.model.AiConversation;
+import io.jmix.aitoolsflowui.service.AiConversationService;
 import io.jmix.core.Metadata;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,33 +25,33 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 import java.util.UUID;
 
-public class UserAiConversationEmptyService implements UserAiConversationService {
+public class AiConversationEmptyService implements AiConversationService {
 
     @Autowired
     protected Metadata metadata;
 
     @Nullable
     @Override
-    public UserAiConversation loadConversation(UUID conversationId) {
+    public AiConversation loadConversation(UUID conversationId) {
         return null;
     }
 
     @Override
-    public UserAiConversation create() {
-        return metadata.create(UserAiConversation.class);
+    public AiConversation create() {
+        return metadata.create(AiConversation.class);
     }
 
     @Override
-    public UserAiConversation save(UserAiConversation conversation) {
+    public AiConversation save(AiConversation conversation) {
         return conversation;
     }
 
     @Override
-    public void remove(UserAiConversation conversation) {
+    public void remove(AiConversation conversation) {
     }
 
     @Override
-    public List<UserAiConversation> loadConversations() {
+    public List<AiConversation> loadConversations() {
         return List.of();
     }
 }

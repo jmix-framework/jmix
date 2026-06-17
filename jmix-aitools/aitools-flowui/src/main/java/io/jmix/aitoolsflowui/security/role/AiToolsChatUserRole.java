@@ -16,8 +16,8 @@
 
 package io.jmix.aitoolsflowui.security.role;
 
-import io.jmix.aitoolsflowui.model.UserAiConversation;
-import io.jmix.aitoolsflowui.model.UserAiMessage;
+import io.jmix.aitoolsflowui.model.AiConversation;
+import io.jmix.aitoolsflowui.model.AiChatMessage;
 import io.jmix.aitoolsflowui.view.chat.AiChatView;
 import io.jmix.aitoolsflowui.view.chathub.AiChatHubView;
 import io.jmix.security.model.EntityAttributePolicyAction;
@@ -41,10 +41,10 @@ public interface AiToolsChatUserRole {
 
     String CODE = "aitools-chat-user";
 
-    @EntityPolicy(entityClass = UserAiConversation.class, actions = EntityPolicyAction.ALL)
-    @EntityPolicy(entityClass = UserAiMessage.class, actions = {EntityPolicyAction.CREATE, EntityPolicyAction.READ})
-    @EntityAttributePolicy(entityClass = UserAiConversation.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
-    @EntityAttributePolicy(entityClass = UserAiMessage.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
+    @EntityPolicy(entityClass = AiConversation.class, actions = EntityPolicyAction.ALL)
+    @EntityPolicy(entityClass = AiChatMessage.class, actions = {EntityPolicyAction.CREATE, EntityPolicyAction.READ})
+    @EntityAttributePolicy(entityClass = AiConversation.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
+    @EntityAttributePolicy(entityClass = AiChatMessage.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
     void entityPolicies();
 
     @ViewPolicy(viewClasses = {AiChatHubView.class, AiChatView.class})

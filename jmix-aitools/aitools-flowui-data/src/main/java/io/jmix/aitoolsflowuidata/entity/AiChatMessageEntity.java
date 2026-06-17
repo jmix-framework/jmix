@@ -80,11 +80,11 @@ public class AiChatMessageEntity {
         this.type = type;
     }
 
-    public AiChatMessageType getType() {
-        return type == null ? null : AiChatMessageType.fromId(type);
+    public AiChatMessageEntityType getType() {
+        return type == null ? null : AiChatMessageEntityType.fromId(type);
     }
 
-    public void setType(AiChatMessageType type) {
+    public void setType(AiChatMessageEntityType type) {
         this.type = type == null ? null : type.getId();
     }
 

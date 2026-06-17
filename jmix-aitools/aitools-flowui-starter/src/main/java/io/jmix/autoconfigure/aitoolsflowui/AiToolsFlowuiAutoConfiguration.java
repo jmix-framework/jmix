@@ -20,11 +20,11 @@ import io.jmix.aitoolsflowui.AiToolsFlowuiConfiguration;
 import io.jmix.aitoolsflowui.icon.AiIconProvider;
 import io.jmix.aitoolsflowui.icon.impl.DefaultAiIconProvider;
 import io.jmix.aitoolsflowui.service.UserAiChatService;
-import io.jmix.aitoolsflowui.service.UserAiConversationService;
-import io.jmix.aitoolsflowui.service.UserAiMessageService;
+import io.jmix.aitoolsflowui.service.AiConversationService;
+import io.jmix.aitoolsflowui.service.AiChatMessageService;
 import io.jmix.aitoolsflowui.service.impl.UserAiChatEmptyService;
-import io.jmix.aitoolsflowui.service.impl.UserAiConversationEmptyService;
-import io.jmix.aitoolsflowui.service.impl.UserAiMessageEmptyService;
+import io.jmix.aitoolsflowui.service.impl.AiConversationEmptyService;
+import io.jmix.aitoolsflowui.service.impl.AiChatMessageEmptyService;
 import io.jmix.flowui.FlowuiConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -47,15 +47,15 @@ public class AiToolsFlowuiAutoConfiguration {
         return new UserAiChatEmptyService();
     }
 
-    @Bean("aitls_UserAiConversationEmptyService")
-    @ConditionalOnMissingBean(UserAiConversationService.class)
-    public UserAiConversationService userAiConversationService() {
-        return new UserAiConversationEmptyService();
+    @Bean("aitls_AiConversationEmptyService")
+    @ConditionalOnMissingBean(AiConversationService.class)
+    public AiConversationService userAiConversationService() {
+        return new AiConversationEmptyService();
     }
 
-    @Bean("aitls_UserAiMessageEmptyService")
-    @ConditionalOnMissingBean(UserAiMessageService.class)
-    public UserAiMessageService userAiMessageService() {
-        return new UserAiMessageEmptyService();
+    @Bean("aitls_AiChatMessageEmptyService")
+    @ConditionalOnMissingBean(AiChatMessageService.class)
+    public AiChatMessageService userAiMessageService() {
+        return new AiChatMessageEmptyService();
     }
 }

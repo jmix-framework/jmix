@@ -17,15 +17,15 @@
 package io.jmix.aitoolsflowui.service;
 
 import io.jmix.aitools.tool.AiUiStatusUpdate;
-import io.jmix.aitoolsflowui.model.UserAiMessage;
+import io.jmix.aitoolsflowui.model.AiChatMessage;
 
 import java.util.function.Consumer;
 
 public interface UserAiChatService {
 
-    String processMessage(UserAiMessage message);
+    String processMessage(AiChatMessage message);
 
-    String processMessage(UserAiMessage message, Consumer<AiUiStatusUpdate> statusCallback);
+    String processMessage(AiChatMessage message, Consumer<AiUiStatusUpdate> statusCallback);
 
     boolean isAvailable();
 }

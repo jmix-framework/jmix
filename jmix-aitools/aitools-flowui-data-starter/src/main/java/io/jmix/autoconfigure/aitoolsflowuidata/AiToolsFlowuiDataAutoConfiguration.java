@@ -17,12 +17,12 @@
 package io.jmix.autoconfigure.aitoolsflowuidata;
 
 import io.jmix.aitoolsflowui.service.UserAiChatService;
-import io.jmix.aitoolsflowui.service.UserAiConversationService;
-import io.jmix.aitoolsflowui.service.UserAiMessageService;
+import io.jmix.aitoolsflowui.service.AiConversationService;
+import io.jmix.aitoolsflowui.service.AiChatMessageService;
 import io.jmix.aitoolsflowuidata.AiToolsFlowuiDataConfiguration;
 import io.jmix.aitoolsflowuidata.service.impl.UserAiChatDataService;
-import io.jmix.aitoolsflowuidata.service.impl.UserAiConversationDataService;
-import io.jmix.aitoolsflowuidata.service.impl.UserAiMessageDataService;
+import io.jmix.aitoolsflowuidata.service.impl.AiConversationDataService;
+import io.jmix.aitoolsflowuidata.service.impl.AiChatMessageDataService;
 import io.jmix.autoconfigure.aitoolsflowui.AiToolsFlowuiAutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBooleanProperty;
@@ -42,16 +42,16 @@ import org.springframework.context.annotation.Import;
 @Import(AiToolsFlowuiDataConfiguration.class)
 public class AiToolsFlowuiDataAutoConfiguration {
 
-    @Bean("aitls_UserAiConversationDataService")
-    @ConditionalOnMissingBean(UserAiConversationService.class)
-    public UserAiConversationService userAiConversationService() {
-        return new UserAiConversationDataService();
+    @Bean("aitls_AiConversationDataService")
+    @ConditionalOnMissingBean(AiConversationService.class)
+    public AiConversationService userAiConversationService() {
+        return new AiConversationDataService();
     }
 
-    @Bean("aitls_UserAiMessageDataService")
-    @ConditionalOnMissingBean(UserAiMessageService.class)
-    public UserAiMessageService userAiMessageService() {
-        return new UserAiMessageDataService();
+    @Bean("aitls_AiChatMessageDataService")
+    @ConditionalOnMissingBean(AiChatMessageService.class)
+    public AiChatMessageService userAiMessageService() {
+        return new AiChatMessageDataService();
     }
 
     @Bean("aitls_UserAiChatDataService")

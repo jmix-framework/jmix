@@ -17,10 +17,10 @@
 package io.jmix.aitoolsflowui.service.impl;
 
 import io.jmix.aitools.tool.AiUiStatusUpdate;
-import io.jmix.aitoolsflowui.model.UserAiMessage;
+import io.jmix.aitoolsflowui.model.AiChatMessage;
 import io.jmix.aitoolsflowui.service.UserAiChatService;
-import io.jmix.aitoolsflowui.service.UserAiConversationService;
-import io.jmix.aitoolsflowui.service.UserAiMessageService;
+import io.jmix.aitoolsflowui.service.AiConversationService;
+import io.jmix.aitoolsflowui.service.AiChatMessageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,17 +36,17 @@ public class UserAiChatEmptyService implements UserAiChatService {
                         "Add the 'jmix-aitoolsflowui-data-starter', or provide your own {}, " +
                         "{} and {} beans, to enable AI chat.",
                 UserAiChatService.class.getSimpleName(),
-                UserAiConversationService.class.getSimpleName(),
-                UserAiMessageService.class.getSimpleName());
+                AiConversationService.class.getSimpleName(),
+                AiChatMessageService.class.getSimpleName());
     }
 
     @Override
-    public String processMessage(UserAiMessage message) {
+    public String processMessage(AiChatMessage message) {
         return "";
     }
 
     @Override
-    public String processMessage(UserAiMessage message, Consumer<AiUiStatusUpdate> statusCallback) {
+    public String processMessage(AiChatMessage message, Consumer<AiUiStatusUpdate> statusCallback) {
         return "";
     }
 

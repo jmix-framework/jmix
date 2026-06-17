@@ -25,9 +25,9 @@ import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.function.SerializableSupplier;
 import io.jmix.aitoolsflowui.AiToolsFlowuiProperties;
 import io.jmix.aitoolsflowui.icon.AiIconProvider;
-import io.jmix.aitoolsflowui.model.UserAiConversation;
+import io.jmix.aitoolsflowui.model.AiConversation;
 import io.jmix.aitoolsflowui.service.UserAiChatService;
-import io.jmix.aitoolsflowui.service.UserAiConversationService;
+import io.jmix.aitoolsflowui.service.AiConversationService;
 import io.jmix.aitoolsflowui.view.chat.AiChatView;
 import io.jmix.aitoolsflowui.view.chathub.component.AiConversationCard;
 import io.jmix.aitoolsflowui.view.chathub.component.AiConversationHistoryGroup;
@@ -91,15 +91,15 @@ public class AiChatHubFragment extends Fragment<VerticalLayout> {
     @ViewComponent
     protected AiChatInputFragment composerFragment;
     @ViewComponent
-    protected CollectionContainer<UserAiConversation> recentConversationsDc;
+    protected CollectionContainer<AiConversation> recentConversationsDc;
     @ViewComponent
-    protected CollectionLoader<UserAiConversation> recentConversationsDl;
+    protected CollectionLoader<AiConversation> recentConversationsDl;
     @ViewComponent
-    protected CollectionContainer<UserAiConversation> historyConversationsDc;
+    protected CollectionContainer<AiConversation> historyConversationsDc;
     @ViewComponent
-    protected CollectionLoader<UserAiConversation> historyConversationsDl;
+    protected CollectionLoader<AiConversation> historyConversationsDl;
     @ViewComponent
-    protected GridLayout<UserAiConversation> recentConversationsGridLayout;
+    protected GridLayout<AiConversation> recentConversationsGridLayout;
     @ViewComponent
     protected Component recentConversationsHeader;
     @ViewComponent
@@ -124,7 +124,7 @@ public class AiChatHubFragment extends Fragment<VerticalLayout> {
     @Autowired
     protected Notifications notifications;
     @Autowired
-    protected UserAiConversationService conversationService;
+    protected AiConversationService conversationService;
     @Autowired
     protected UserAiChatService chatService;
     @Autowired
@@ -177,19 +177,19 @@ public class AiChatHubFragment extends Fragment<VerticalLayout> {
     }
 
     @Install(to = "recentConversationsDl", target = Target.DATA_LOADER)
-    public List<UserAiConversation> recentConversationsLoadDelegate(LoadContext<UserAiConversation> loadContext) {
+    public List<AiConversation> recentConversationsLoadDelegate(LoadContext<AiConversation> loadContext) {
         return conversationService.loadConversations().stream()
                 .limit(resolveRecentChatsCount())
                 .toList();
     }
 
     @Install(to = "historyConversationsDl", target = Target.DATA_LOADER)
-    public List<UserAiConversation> historyConversationsLoadDelegate(LoadContext<UserAiConversation> loadContext) {
+    public List<AiConversation> historyConversationsLoadDelegate(LoadContext<AiConversation> loadContext) {
         return conversationService.loadConversations();
     }
 
     @Supply(to = "recentConversationsGridLayout", subject = "renderer")
-    protected ComponentRenderer<AiConversationCard, UserAiConversation> recentConversationsGridLayoutRenderer() {
+    protected ComponentRenderer<AiConversationCard, AiConversation> recentConversationsGridLayoutRenderer() {
         return new ComponentRenderer<>(this::createRecentCard);
     }
 
@@ -217,7 +217,7 @@ public class AiChatHubFragment extends Fragment<VerticalLayout> {
     }
 
     protected void startConversation(String prompt) {
-        UserAiConversation conversation;
+        AiConversation conversation;
         try {
             conversation = conversationService.create();
         } catch (Exception e) {
@@ -262,15 +262,15 @@ public class AiChatHubFragment extends Fragment<VerticalLayout> {
         historyConversationsDl.load();
     }
 
-    protected AiConversationCard createRecentCard(UserAiConversation conversation) {
+    protected AiConversationCard createRecentCard(AiConversation conversation) {
         return createCard(conversation, false);
     }
 
-    protected AiConversationCard createHistoryCard(UserAiConversation conversation) {
+    protected AiConversationCard createHistoryCard(AiConversation conversation) {
         return createCard(conversation, true);
     }
 
-    protected AiConversationCard createCard(UserAiConversation conversation, boolean deletable) {
+    protected AiConversationCard createCard(AiConversation conversation, boolean deletable) {
         AiConversationCard card = new AiConversationCard();
         card.setIcon(resolveMarkIcon());
         card.setTitle(metadataTools.getInstanceName(conversation));
@@ -284,14 +284,14 @@ public class AiChatHubFragment extends Fragment<VerticalLayout> {
         return card;
     }
 
-    protected void openConversation(UserAiConversation conversation) {
+    protected void openConversation(AiConversation conversation) {
         viewNavigators.view(UiComponentUtils.getView(this), AiChatView.class)
                 .withRouteParameters(routeSupport.createRouteParameters(
                         AiChatView.ROUTE_PARAM_ID, conversation.getId()))
                 .navigate();
     }
 
-    protected void confirmDelete(UserAiConversation conversation) {
+    protected void confirmDelete(AiConversation conversation) {
         dialogs.createOptionDialog()
                 .withHeader(messageBundle.getMessage("aiChatHubFragment.deleteConfirm.header"))
                 .withText(messageBundle.getMessage("aiChatHubFragment.deleteConfirm.text"))
@@ -303,7 +303,7 @@ public class AiChatHubFragment extends Fragment<VerticalLayout> {
                 .open();
     }
 
-    protected void deleteConversation(UserAiConversation conversation) {
+    protected void deleteConversation(AiConversation conversation) {
         try {
             conversationService.remove(conversation);
         } catch (Exception e) {
@@ -319,10 +319,10 @@ public class AiChatHubFragment extends Fragment<VerticalLayout> {
     }
 
     protected void renderHistoryList() {
-        List<UserAiConversation> all = historyConversationsDc.getItems();
+        List<AiConversation> all = historyConversationsDc.getItems();
         historyPanelCount.setText(String.valueOf(all.size()));
 
-        List<UserAiConversation> filtered = applyHistoryFilter(all);
+        List<AiConversation> filtered = applyHistoryFilter(all);
 
         historyListContainer.removeAll();
         if (filtered.isEmpty()) {
@@ -333,12 +333,12 @@ public class AiChatHubFragment extends Fragment<VerticalLayout> {
             return;
         }
 
-        Map<HistoryBucket, List<UserAiConversation>> grouped = groupByBucket(filtered);
+        Map<HistoryBucket, List<AiConversation>> grouped = groupByBucket(filtered);
         grouped.forEach((bucket, items) ->
                 historyListContainer.add(createHistoryGroup(bucketLabel(bucket), items)));
     }
 
-    protected List<UserAiConversation> applyHistoryFilter(List<UserAiConversation> conversations) {
+    protected List<AiConversation> applyHistoryFilter(List<AiConversation> conversations) {
         if (historyFilter.isEmpty()) {
             return conversations;
         }
@@ -347,17 +347,17 @@ public class AiChatHubFragment extends Fragment<VerticalLayout> {
                 .toList();
     }
 
-    protected Map<HistoryBucket, List<UserAiConversation>> groupByBucket(List<UserAiConversation> conversations) {
+    protected Map<HistoryBucket, List<AiConversation>> groupByBucket(List<AiConversation> conversations) {
         ZoneId zone = ZoneId.systemDefault();
         LocalDate today = LocalDate.now(zone);
 
         // Seed with an empty, ordered map so buckets always render
         // most-recent-first regardless of the data order.
-        Map<HistoryBucket, List<UserAiConversation>> grouped = new LinkedHashMap<>();
+        Map<HistoryBucket, List<AiConversation>> grouped = new LinkedHashMap<>();
         for (HistoryBucket bucket : HistoryBucket.values()) {
             grouped.put(bucket, new ArrayList<>());
         }
-        for (UserAiConversation conversation : conversations) {
+        for (AiConversation conversation : conversations) {
             HistoryBucket bucket = HistoryBucket.of(
                     conversation.getCreatedDate(), today, zone);
             grouped.get(bucket).add(conversation);
@@ -375,7 +375,7 @@ public class AiChatHubFragment extends Fragment<VerticalLayout> {
         };
     }
 
-    protected Component createHistoryGroup(String bucketLabel, List<UserAiConversation> conversations) {
+    protected Component createHistoryGroup(String bucketLabel, List<AiConversation> conversations) {
         AiConversationHistoryGroup group = new AiConversationHistoryGroup();
         group.setGroup(bucketLabel, conversations, this::createHistoryCard);
         return group;

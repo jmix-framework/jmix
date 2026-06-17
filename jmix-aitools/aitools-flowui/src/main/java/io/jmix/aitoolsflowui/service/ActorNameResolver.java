@@ -16,7 +16,7 @@
 
 package io.jmix.aitoolsflowui.service;
 
-import io.jmix.aitoolsflowui.model.UserAiMessage;
+import io.jmix.aitoolsflowui.model.AiChatMessage;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.security.CurrentAuthentication;
 import org.jspecify.annotations.Nullable;
@@ -28,7 +28,7 @@ import org.springframework.util.StringUtils;
 import java.util.Objects;
 
 /**
- * Resolves a human-readable actor name for a user-authored {@link UserAiMessage}.
+ * Resolves a human-readable actor name for a user-authored {@link AiChatMessage}.
  * <p>
  * For messages authored by the currently logged-in user, returns the user's
  * instance name (preferred) or, failing that, the username. For messages
@@ -55,7 +55,7 @@ public class ActorNameResolver {
      * @param defaultActorName name to fall back to when the author cannot be determined
      * @return the resolved actor name
      */
-    public String resolve(@Nullable UserAiMessage message, String defaultActorName) {
+    public String resolve(@Nullable AiChatMessage message, String defaultActorName) {
         UserDetails currentUser = currentAuthentication.getUser();
         String createdBy = message != null ? message.getCreatedBy() : null;
 

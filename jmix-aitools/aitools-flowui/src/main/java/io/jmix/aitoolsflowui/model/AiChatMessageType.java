@@ -19,7 +19,7 @@ package io.jmix.aitoolsflowui.model;
 import io.jmix.core.metamodel.datatype.EnumClass;
 import org.jspecify.annotations.Nullable;
 
-public enum UserAiMessageType implements EnumClass<Integer> {
+public enum AiChatMessageType implements EnumClass<Integer> {
 
     USER(10),
     ASSISTANT(20),
@@ -28,7 +28,7 @@ public enum UserAiMessageType implements EnumClass<Integer> {
 
     private final Integer id;
 
-    UserAiMessageType(Integer id) {
+    AiChatMessageType(Integer id) {
         this.id = id;
     }
 
@@ -37,8 +37,8 @@ public enum UserAiMessageType implements EnumClass<Integer> {
     }
 
     @Nullable
-    public static UserAiMessageType fromId(Integer id) {
-        for (UserAiMessageType at : UserAiMessageType.values()) {
+    public static AiChatMessageType fromId(Integer id) {
+        for (AiChatMessageType at : AiChatMessageType.values()) {
             if (at.getId().equals(id)) {
                 return at;
             }

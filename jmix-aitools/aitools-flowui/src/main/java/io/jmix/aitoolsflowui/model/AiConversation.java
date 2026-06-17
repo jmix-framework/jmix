@@ -26,7 +26,8 @@ import java.util.List;
 import java.util.UUID;
 
 @JmixEntity
-public class UserAiConversation {
+public class AiConversation {
+
     @JmixGeneratedValue
     @JmixId
     private UUID id;
@@ -38,13 +39,13 @@ public class UserAiConversation {
 
     private OffsetDateTime createdDate;
 
-    private List<UserAiMessage> messages;
+    private List<AiChatMessage> messages;
 
-    public List<UserAiMessage> getMessages() {
+    public List<AiChatMessage> getMessages() {
         return messages;
     }
 
-    public void setMessages(List<UserAiMessage> messages) {
+    public void setMessages(List<AiChatMessage> messages) {
         this.messages = messages;
     }
 

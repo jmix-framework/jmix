@@ -18,12 +18,12 @@
 <fragment xmlns="http://jmix.io/schema/flowui/fragment">
     <data>
         <collection id="recentConversationsDc"
-                    class="io.jmix.aitoolsflowui.model.UserAiConversation">
+                    class="io.jmix.aitoolsflowui.model.AiConversation">
             <fetchPlan extends="_base"/>
             <loader id="recentConversationsDl" readOnly="true"/>
         </collection>
         <collection id="historyConversationsDc"
-                    class="io.jmix.aitoolsflowui.model.UserAiConversation">
+                    class="io.jmix.aitoolsflowui.model.AiConversation">
             <fetchPlan extends="_base"/>
             <loader id="historyConversationsDl" readOnly="true"/>
         </collection>

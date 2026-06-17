@@ -16,8 +16,8 @@
 
 package io.jmix.aitoolsflowuidata.service.impl;
 
-import io.jmix.aitoolsflowui.model.UserAiConversation;
-import io.jmix.aitoolsflowui.service.UserAiConversationService;
+import io.jmix.aitoolsflowui.model.AiConversation;
+import io.jmix.aitoolsflowui.service.AiConversationService;
 import io.jmix.aitoolsflowuidata.converter.ConversationConverter;
 import io.jmix.aitoolsflowuidata.entity.AiConversationEntity;
 import io.jmix.core.FetchPlan;
@@ -36,15 +36,15 @@ import java.util.Objects;
 import java.util.UUID;
 
 /**
- * Default {@link UserAiConversationService} backed by persisted {@link AiConversationEntity} entities,
- * mapped to and from the persistence-agnostic {@link UserAiConversation} model.
+ * Default {@link AiConversationService} backed by persisted {@link AiConversationEntity} entities,
+ * mapped to and from the persistence-agnostic {@link AiConversation} model.
  * <p>
  * The underlying entities are an internal detail, accessed through {@link UnconstrainedDataManager}
  * so the chat user needs no direct permissions on them. Access control is enforced here: every
  * operation is scoped to the current (effective) user, and modifying another user's conversation
  * is denied.
  */
-public class UserAiConversationDataService implements UserAiConversationService {
+public class AiConversationDataService implements AiConversationService {
 
     @Autowired
     protected ConversationConverter conversationConverter;
@@ -57,7 +57,7 @@ public class UserAiConversationDataService implements UserAiConversationService 
 
     @Nullable
     @Override
-    public UserAiConversation loadConversation(UUID conversationId) {
+    public AiConversation loadConversation(UUID conversationId) {
         AiConversationEntity aiConversation = loadAiConversation(conversationId);
         if (aiConversation == null || !isOwner(aiConversation)) {
             return null;
@@ -66,7 +66,7 @@ public class UserAiConversationDataService implements UserAiConversationService 
     }
 
     @Override
-    public UserAiConversation create() {
+    public AiConversation create() {
         AiConversationEntity conversation = dataManager.create(AiConversationEntity.class);
         conversation.setTitle(messages.getMessage("aiConversation.defaultTitle"));
         conversation.setUsername(currentUsername());
@@ -74,7 +74,7 @@ public class UserAiConversationDataService implements UserAiConversationService 
     }
 
     @Override
-    public UserAiConversation save(UserAiConversation conversation) {
+    public AiConversation save(AiConversation conversation) {
         AiConversationEntity aiConversation = loadAiConversation(conversation.getId());
         if (aiConversation == null) {
             aiConversation = conversationConverter.convertToEntity(conversation);
@@ -87,7 +87,7 @@ public class UserAiConversationDataService implements UserAiConversationService 
     }
 
     @Override
-    public void remove(UserAiConversation conversation) {
+    public void remove(AiConversation conversation) {
         AiConversationEntity aiConversation = loadAiConversation(conversation.getId());
         if (aiConversation == null) {
             return;
@@ -97,7 +97,7 @@ public class UserAiConversationDataService implements UserAiConversationService 
     }
 
     @Override
-    public List<UserAiConversation> loadConversations() {
+    public List<AiConversation> loadConversations() {
         List<AiConversationEntity> conversations = dataManager.load(AiConversationEntity.class)
                 .condition(PropertyCondition.equal("username", currentUsername()))
                 .sort(Sort.by(Sort.Order.desc("createdDate")))
@@ -106,8 +106,8 @@ public class UserAiConversationDataService implements UserAiConversationService 
         return convert(conversations);
     }
 
-    protected List<UserAiConversation> convert(List<AiConversationEntity> conversations) {
-        List<UserAiConversation> result = new ArrayList<>(conversations.size());
+    protected List<AiConversation> convert(List<AiConversationEntity> conversations) {
+        List<AiConversation> result = new ArrayList<>(conversations.size());
         for (AiConversationEntity conversation : conversations) {
             result.add(conversationConverter.convertToModel(conversation));
         }

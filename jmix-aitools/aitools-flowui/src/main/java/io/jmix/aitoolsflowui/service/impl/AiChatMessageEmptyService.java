@@ -16,10 +16,10 @@
 
 package io.jmix.aitoolsflowui.service.impl;
 
-import io.jmix.aitoolsflowui.model.UserAiConversation;
-import io.jmix.aitoolsflowui.model.UserAiMessage;
-import io.jmix.aitoolsflowui.model.UserAiMessageType;
-import io.jmix.aitoolsflowui.service.UserAiMessageService;
+import io.jmix.aitoolsflowui.model.AiConversation;
+import io.jmix.aitoolsflowui.model.AiChatMessage;
+import io.jmix.aitoolsflowui.model.AiChatMessageType;
+import io.jmix.aitoolsflowui.service.AiChatMessageService;
 import io.jmix.core.Metadata;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,14 +28,14 @@ import java.time.OffsetDateTime;
 import java.util.Collection;
 import java.util.List;
 
-public class UserAiMessageEmptyService implements UserAiMessageService {
+public class AiChatMessageEmptyService implements AiChatMessageService {
 
     @Autowired
     protected Metadata metadata;
 
     @Override
-    public UserAiMessage createMessage(UserAiConversation conversation, UserAiMessageType type, String message) {
-        UserAiMessage aiMessage = metadata.create(UserAiMessage.class);
+    public AiChatMessage createMessage(AiConversation conversation, AiChatMessageType type, String message) {
+        AiChatMessage aiMessage = metadata.create(AiChatMessage.class);
         aiMessage.setType(type);
         aiMessage.setConversation(conversation);
         aiMessage.setContent(message);
@@ -45,12 +45,12 @@ public class UserAiMessageEmptyService implements UserAiMessageService {
 
     @Nullable
     @Override
-    public UserAiMessage loadLatestMessage(UserAiConversation conversation, @Nullable UserAiMessageType type) {
+    public AiChatMessage loadLatestMessage(AiConversation conversation, @Nullable AiChatMessageType type) {
         return null;
     }
 
     @Override
-    public Collection<UserAiMessage> loadMessages(UserAiConversation conversation) {
+    public Collection<AiChatMessage> loadMessages(AiConversation conversation) {
         return List.of();
     }
 }

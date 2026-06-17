@@ -24,13 +24,13 @@ import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @JmixEntity
-public class UserAiMessage {
+public class AiChatMessage {
 
     @JmixGeneratedValue
     @JmixId
     private UUID id;
 
-    private UserAiConversation conversation;
+    private AiConversation conversation;
 
     private String content;
 
@@ -48,11 +48,11 @@ public class UserAiMessage {
         this.createdDate = createdDate;
     }
 
-    public UserAiMessageType getType() {
-        return type == null ? null : UserAiMessageType.fromId(type);
+    public AiChatMessageType getType() {
+        return type == null ? null : AiChatMessageType.fromId(type);
     }
 
-    public void setType(UserAiMessageType type) {
+    public void setType(AiChatMessageType type) {
         this.type = type == null ? null : type.getId();
     }
 
@@ -72,11 +72,11 @@ public class UserAiMessage {
         this.createdBy = createdBy;
     }
 
-    public UserAiConversation getConversation() {
+    public AiConversation getConversation() {
         return conversation;
     }
 
-    public void setConversation(UserAiConversation conversation) {
+    public void setConversation(AiConversation conversation) {
         this.conversation = conversation;
     }
 

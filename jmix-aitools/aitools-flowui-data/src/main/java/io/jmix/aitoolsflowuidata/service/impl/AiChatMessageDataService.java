@@ -16,10 +16,10 @@
 
 package io.jmix.aitoolsflowuidata.service.impl;
 
-import io.jmix.aitoolsflowui.model.UserAiConversation;
-import io.jmix.aitoolsflowui.model.UserAiMessage;
-import io.jmix.aitoolsflowui.model.UserAiMessageType;
-import io.jmix.aitoolsflowui.service.UserAiMessageService;
+import io.jmix.aitoolsflowui.model.AiConversation;
+import io.jmix.aitoolsflowui.model.AiChatMessage;
+import io.jmix.aitoolsflowui.model.AiChatMessageType;
+import io.jmix.aitoolsflowui.service.AiChatMessageService;
 import io.jmix.aitoolsflowuidata.converter.MessageConverter;
 import io.jmix.aitoolsflowuidata.entity.AiChatMessageEntity;
 import io.jmix.aitoolsflowuidata.entity.AiConversationEntity;
@@ -40,10 +40,10 @@ import java.util.Objects;
 import java.util.UUID;
 
 /**
- * Default {@link UserAiMessageService} backed by persisted {@link AiChatMessageEntity} entities,
- * mapped to and from the {@link UserAiMessage} model.
+ * Default {@link AiChatMessageService} backed by persisted {@link AiChatMessageEntity} entities,
+ * mapped to and from the {@link AiChatMessage} model.
  */
-public class UserAiMessageDataService implements UserAiMessageService {
+public class AiChatMessageDataService implements AiChatMessageService {
 
     @Autowired
     protected UnconstrainedDataManager dataManager;
@@ -53,7 +53,7 @@ public class UserAiMessageDataService implements UserAiMessageService {
     protected CurrentUserSubstitution currentUserSubstitution;
 
     @Override
-    public UserAiMessage createMessage(UserAiConversation conversation, UserAiMessageType type, String message) {
+    public AiChatMessage createMessage(AiConversation conversation, AiChatMessageType type, String message) {
         Preconditions.checkNotNullArgument(conversation);
         Preconditions.checkNotNullArgument(type);
         Preconditions.checkNotEmptyString(message);
@@ -74,7 +74,7 @@ public class UserAiMessageDataService implements UserAiMessageService {
 
     @Nullable
     @Override
-    public UserAiMessage loadLatestMessage(UserAiConversation conversation, @Nullable UserAiMessageType type) {
+    public AiChatMessage loadLatestMessage(AiConversation conversation, @Nullable AiChatMessageType type) {
         Preconditions.checkNotNullArgument(conversation);
 
         LogicalCondition condition = LogicalCondition.and(
@@ -96,7 +96,7 @@ public class UserAiMessageDataService implements UserAiMessageService {
     }
 
     @Override
-    public Collection<UserAiMessage> loadMessages(UserAiConversation conversation) {
+    public Collection<AiChatMessage> loadMessages(AiConversation conversation) {
         Preconditions.checkNotNullArgument(conversation);
         List<AiChatMessageEntity> messages = dataManager.load(AiChatMessageEntity.class)
                 .condition(LogicalCondition.and(

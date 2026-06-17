@@ -21,8 +21,8 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeLeaveEvent.ContinueNavigationAction;
 import com.vaadin.flow.router.Route;
-import io.jmix.aitoolsflowui.model.UserAiConversation;
-import io.jmix.aitoolsflowui.service.UserAiConversationService;
+import io.jmix.aitoolsflowui.model.AiConversation;
+import io.jmix.aitoolsflowui.service.AiConversationService;
 import io.jmix.aitoolsflowui.view.chathub.AiChatHubView;
 import io.jmix.flowui.Dialogs;
 import io.jmix.flowui.ViewNavigators;
@@ -56,8 +56,8 @@ import java.util.UUID;
  * Standalone host view around {@link AiChatFragment}.
  * <p>
  * Opens either by URL — the {@code :id} route segment is the id of an
- * {@link UserAiConversation} that gets loaded and bound to the fragment — or
- * programmatically via {@link #setConversation(UserAiConversation)} (used by
+ * {@link AiConversation} that gets loaded and bound to the fragment — or
+ * programmatically via {@link #setConversation(AiConversation)} (used by
  * {@code DialogWindows} and after-navigation handlers).
  */
 @Route(value = "aitls/chat/:id?", layout = DefaultMainViewParent.class)
@@ -70,7 +70,7 @@ public class AiChatView extends StandardView {
     public static final String ROUTE_PARAM_ID = "id";
 
     @Autowired
-    private UserAiConversationService conversationService;
+    private AiConversationService conversationService;
     @Autowired
     private UrlParamSerializer urlParamSerializer;
     @Autowired
@@ -90,7 +90,7 @@ public class AiChatView extends StandardView {
     private VerticalLayout emptyLayout;
 
     @Nullable
-    private UserAiConversation conversation;
+    private AiConversation conversation;
     private boolean conversationNotFound;
     private boolean contentInitialized;
     private boolean initialPromptSent;
@@ -118,7 +118,7 @@ public class AiChatView extends StandardView {
      * state and keeps the browser URL in sync (unless the view is opened in a
      * dialog).
      */
-    public void setConversation(@Nullable UserAiConversation conversation) {
+    public void setConversation(@Nullable AiConversation conversation) {
         this.conversation = conversation;
         this.conversationNotFound = false;
         if (contentInitialized) {
@@ -151,7 +151,7 @@ public class AiChatView extends StandardView {
         if (conversation != null && id.equals(conversation.getId())) {
             return;
         }
-        UserAiConversation loaded = conversationService.loadConversation(id);
+        AiConversation loaded = conversationService.loadConversation(id);
         if (loaded != null) {
             this.conversation = loaded;
             this.conversationNotFound = false;

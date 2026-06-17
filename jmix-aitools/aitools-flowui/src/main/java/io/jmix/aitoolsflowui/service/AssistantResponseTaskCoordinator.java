@@ -18,9 +18,9 @@ package io.jmix.aitoolsflowui.service;
 
 import io.jmix.aitools.tool.AiUiStatusUpdate;
 import io.jmix.aitoolsflowui.AiToolsFlowuiProperties;
-import io.jmix.aitoolsflowui.model.UserAiConversation;
-import io.jmix.aitoolsflowui.model.UserAiMessage;
-import io.jmix.aitoolsflowui.model.UserAiMessageType;
+import io.jmix.aitoolsflowui.model.AiConversation;
+import io.jmix.aitoolsflowui.model.AiChatMessage;
+import io.jmix.aitoolsflowui.model.AiChatMessageType;
 import io.jmix.flowui.backgroundtask.BackgroundTask;
 import io.jmix.flowui.backgroundtask.BackgroundWorker;
 import io.jmix.flowui.backgroundtask.TaskLifeCycle;
@@ -35,9 +35,9 @@ import java.util.List;
 import java.util.function.Consumer;
 
 /**
- * Runs the LLM call for a freshly persisted user {@link UserAiMessage} on a
+ * Runs the LLM call for a freshly persisted user {@link AiChatMessage} on a
  * background task that streams ephemeral status updates and reports the
- * final assistant {@link UserAiMessage} back to the UI.
+ * final assistant {@link AiChatMessage} back to the UI.
  * <p>
  * Mirrors the CRM coordinator but invokes the add-on's
  * {@link UserAiChatService} directly instead of going through a
@@ -49,7 +49,7 @@ public class AssistantResponseTaskCoordinator {
     private static final Logger log = LoggerFactory.getLogger(AssistantResponseTaskCoordinator.class);
 
     @Autowired
-    protected UserAiMessageService userAiMessageService;
+    protected AiChatMessageService userAiMessageService;
     @Autowired
     protected UserAiChatService userAiChatService;
     @Autowired
@@ -68,10 +68,10 @@ public class AssistantResponseTaskCoordinator {
      * @param failureHandler   invoked on error or timeout
      */
     public void run(View<?> owner,
-                    UserAiConversation conversation,
-                    UserAiMessage savedUserMessage,
+                    AiConversation conversation,
+                    AiChatMessage savedUserMessage,
                     Consumer<AiUiStatusUpdate> progressHandler,
-                    Consumer<UserAiMessage> doneHandler,
+                    Consumer<AiChatMessage> doneHandler,
                     Runnable failureHandler) {
         BackgroundTask<AiUiStatusUpdate, String> task =
                 new AssistantResponseTask(owner, conversation, savedUserMessage, doneHandler, failureHandler);
@@ -99,21 +99,21 @@ public class AssistantResponseTaskCoordinator {
     }
 
     @Nullable
-    private UserAiMessage loadLatestAssistantMessage(UserAiConversation conversation) {
-        return userAiMessageService.loadLatestMessage(conversation, UserAiMessageType.ASSISTANT);
+    private AiChatMessage loadLatestAssistantMessage(AiConversation conversation) {
+        return userAiMessageService.loadLatestMessage(conversation, AiChatMessageType.ASSISTANT);
     }
 
     protected class AssistantResponseTask extends BackgroundTask<AiUiStatusUpdate, String> {
 
-        protected final UserAiConversation conversation;
-        protected final UserAiMessage message;
-        protected final Consumer<@Nullable UserAiMessage> doneHandler;
+        protected final AiConversation conversation;
+        protected final AiChatMessage message;
+        protected final Consumer<@Nullable AiChatMessage> doneHandler;
         protected final Runnable failureHandler;
 
         AssistantResponseTask(View<?> owner,
-                              UserAiConversation conversation,
-                              UserAiMessage message,
-                              Consumer<@Nullable UserAiMessage> doneHandler,
+                              AiConversation conversation,
+                              AiChatMessage message,
+                              Consumer<@Nullable AiChatMessage> doneHandler,
                               Runnable failureHandler) {
             super(properties.getAssistantResponseTimeout().toSeconds(), owner);
             this.conversation = conversation;

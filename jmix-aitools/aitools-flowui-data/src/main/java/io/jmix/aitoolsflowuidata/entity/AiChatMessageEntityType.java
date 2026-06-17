@@ -5,7 +5,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.Objects;
 
-public enum AiChatMessageType implements EnumClass<String> {
+public enum AiChatMessageEntityType implements EnumClass<String> {
 
     /**
      * User message.
@@ -29,7 +29,7 @@ public enum AiChatMessageType implements EnumClass<String> {
 
     private String id;
 
-    AiChatMessageType(String id) {
+    AiChatMessageEntityType(String id) {
         this.id = id;
     }
 
@@ -39,11 +39,11 @@ public enum AiChatMessageType implements EnumClass<String> {
     }
 
     @Nullable
-    public static AiChatMessageType fromId(String id) {
+    public static AiChatMessageEntityType fromId(String id) {
         if (id == null) {
             return null;
         }
-        for (AiChatMessageType messageType : values()) {
+        for (AiChatMessageEntityType messageType : values()) {
             if (Objects.equals(messageType.getId(), id)) {
                 return messageType;
             }

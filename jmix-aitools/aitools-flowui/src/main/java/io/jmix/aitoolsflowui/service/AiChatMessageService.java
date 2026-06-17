@@ -16,19 +16,19 @@
 
 package io.jmix.aitoolsflowui.service;
 
-import io.jmix.aitoolsflowui.model.UserAiConversation;
-import io.jmix.aitoolsflowui.model.UserAiMessage;
-import io.jmix.aitoolsflowui.model.UserAiMessageType;
+import io.jmix.aitoolsflowui.model.AiConversation;
+import io.jmix.aitoolsflowui.model.AiChatMessage;
+import io.jmix.aitoolsflowui.model.AiChatMessageType;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 
-public interface UserAiMessageService {
+public interface AiChatMessageService {
 
-    UserAiMessage createMessage(UserAiConversation conversation, UserAiMessageType type, String message);
+    AiChatMessage createMessage(AiConversation conversation, AiChatMessageType type, String message);
 
     @Nullable
-    UserAiMessage loadLatestMessage(UserAiConversation conversation, @Nullable UserAiMessageType type);
+    AiChatMessage loadLatestMessage(AiConversation conversation, @Nullable AiChatMessageType type);
 
-    Collection<UserAiMessage> loadMessages(UserAiConversation conversation);
+    Collection<AiChatMessage> loadMessages(AiConversation conversation);
 }

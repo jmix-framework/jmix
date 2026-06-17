@@ -5,9 +5,7 @@ import io.jmix.search.searching.SearchStrategy;
 import org.jspecify.annotations.NullMarked;
 
 /**
- * Represents a search strategy specifically designed for Elasticsearch integration.
- * An implementation of this interface configures an Elasticsearch {@link SearchRequest}
- * based on the provided search context.
+ * Elasticsearch-specific {@link SearchStrategy} that builds an Elasticsearch {@link SearchRequest}.
  */
 @NullMarked
 public interface ElasticsearchSearchStrategy extends SearchStrategy<SearchRequest.Builder> {

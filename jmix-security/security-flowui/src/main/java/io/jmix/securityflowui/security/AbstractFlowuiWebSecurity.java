@@ -16,47 +16,26 @@
 
 package io.jmix.securityflowui.security;
 
-import com.vaadin.flow.spring.security.VaadinDefaultRequestCache;
 import io.jmix.core.H2ConsoleProperties;
 import io.jmix.core.JmixSecurityFilterChainOrder;
-import io.jmix.flowui.view.ViewRegistry;
-import io.jmix.security.configurer.JmixRequestCacheRequestMatcher;
 import io.jmix.security.util.JmixHttpSecurityUtils;
 import jakarta.servlet.ServletContext;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
-import org.springframework.security.web.savedrequest.RequestCache;
 import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
-import org.springframework.security.web.util.matcher.RequestMatcher;
-
-import java.util.Collections;
-import java.util.List;
 
 public abstract class AbstractFlowuiWebSecurity {
 
-    @Autowired
-    protected ViewRegistry viewRegistry;
     @Autowired
     protected ServletContext servletContext;
     @Autowired(required = false)
     protected H2ConsoleProperties h2ConsoleProperties;
     @Autowired
     protected WebProperties webProperties;
-
-    protected List<JmixRequestCacheRequestMatcher> requestCacheRequestMatchers = Collections.emptyList();
-
-    @Autowired
-    public void setVaadinDefaultRequestCache(VaadinDefaultRequestCache vaadinDefaultRequestCache,
-                                             ObjectProvider<List<JmixRequestCacheRequestMatcher>> requestCacheRequestMatchersProvider) {
-        this.requestCacheRequestMatchers = requestCacheRequestMatchersProvider.getIfAvailable(Collections::emptyList);
-        vaadinDefaultRequestCache.setDelegateRequestCache(getDelegateRequestCache());
-    }
 
     @Bean("jmixSecurityFilterChain")
     @Order(JmixSecurityFilterChainOrder.FLOWUI)
@@ -90,14 +69,4 @@ public abstract class AbstractFlowuiWebSecurity {
     }
 
     protected abstract void configureVaadinSpecifics(HttpSecurity http) throws Exception;
-
-    protected RequestCache getDelegateRequestCache() {
-        HttpSessionRequestCache cache = new HttpSessionRequestCache();
-        cache.setRequestMatcher(createViewPathRequestMatcher(viewRegistry));
-        return cache;
-    }
-
-    protected RequestMatcher createViewPathRequestMatcher(ViewRegistry viewRegistry) {
-        return new JmixViewPathRequestMatcher(viewRegistry, requestCacheRequestMatchers);
-    }
 }

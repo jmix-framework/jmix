@@ -15,7 +15,9 @@
  */
 
 group = 'io.jmix.aitools'
-archivesBaseName = 'jmix-aitools-starter'
+base {
+    archivesName = 'jmix-aitools-starter'
+}
 
 dependencies {
     api project(":aitools")

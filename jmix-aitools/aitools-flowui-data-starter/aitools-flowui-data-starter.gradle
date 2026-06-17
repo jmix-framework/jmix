@@ -15,7 +15,9 @@
  */
 
 group = 'io.jmix.aitools'
-archivesBaseName = 'jmix-aitoolsflowui-data-starter'
+base {
+    archivesName = 'jmix-aitools-flowui-data-starter'
+}
 
 dependencies {
     api project(":aitools-flowui-data")

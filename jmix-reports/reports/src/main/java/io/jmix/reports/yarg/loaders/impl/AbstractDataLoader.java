@@ -24,11 +24,8 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.Map;
 
-@NullMarked
 public abstract class AbstractDataLoader implements ReportDataLoader {
-    @Nullable
     protected ReportParametersConverter parametersConverter = null;
-    @Nullable
     protected ReportFieldsConverter fieldsConverter = null;
 
 
@@ -56,12 +53,10 @@ public abstract class AbstractDataLoader implements ReportDataLoader {
         this.fieldsConverter = reportFieldsConverter;
     }
 
-    @Nullable
     public ReportParametersConverter getParametersConverter() {
         return parametersConverter;
     }
 
-    @Nullable
     public ReportFieldsConverter getFieldsConverter() {
         return fieldsConverter;
     }

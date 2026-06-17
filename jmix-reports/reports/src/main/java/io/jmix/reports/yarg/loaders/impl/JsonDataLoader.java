@@ -15,13 +15,12 @@
  */
 package io.jmix.reports.yarg.loaders.impl;
 
-import io.jmix.reports.yarg.loaders.impl.json.JsonMap;
+import com.jayway.jsonpath.JsonPath;
 import io.jmix.reports.yarg.exception.DataLoadingException;
+import io.jmix.reports.yarg.loaders.impl.json.JsonMap;
 import io.jmix.reports.yarg.structure.BandData;
 import io.jmix.reports.yarg.structure.ReportQuery;
-import com.jayway.jsonpath.JsonPath;
 import org.apache.commons.lang3.StringUtils;
-import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.util.*;
@@ -58,7 +57,6 @@ import java.util.regex.Pattern;
  * We get json string from parameter param1 and select all "book" objects from the "store" object
  */
 
-@NullMarked
 public class JsonDataLoader extends AbstractDataLoader {
     protected Pattern parameterPattern = Pattern.compile("parameter=([A-z0-9_]+)");
 

@@ -16,13 +16,12 @@
 
 package io.jmix.reports.yarg.loaders.impl;
 
-import io.jmix.reports.yarg.util.db.QueryRunner;
-import io.jmix.reports.yarg.util.db.ResultSetHandler;
 import io.jmix.reports.yarg.exception.DataLoadingException;
 import io.jmix.reports.yarg.structure.BandData;
 import io.jmix.reports.yarg.structure.ReportQuery;
+import io.jmix.reports.yarg.util.db.QueryRunner;
+import io.jmix.reports.yarg.util.db.ResultSetHandler;
 import org.apache.commons.lang3.StringUtils;
-import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import javax.sql.DataSource;
@@ -45,7 +44,6 @@ import java.util.regex.Pattern;
  *
  * ${startDate} is alias of the input parameter, which will be passed to the query
  */
-@NullMarked
 public class SqlDataLoader extends AbstractDbDataLoader {
 
     private DataSource dataSource;

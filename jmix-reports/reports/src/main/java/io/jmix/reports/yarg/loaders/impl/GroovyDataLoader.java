@@ -20,7 +20,6 @@ import io.jmix.reports.yarg.loaders.ReportDataLoader;
 import io.jmix.reports.yarg.structure.BandData;
 import io.jmix.reports.yarg.structure.ReportQuery;
 import io.jmix.reports.yarg.util.groovy.Scripting;
-import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.util.HashMap;
@@ -34,7 +33,6 @@ import java.util.Map;
  * Example:
  * return [['a':123, 'b':321], ['a':456, 'b':params['param1']]]
  */
-@NullMarked
 public class GroovyDataLoader implements ReportDataLoader {
     private Scripting scripting;
 

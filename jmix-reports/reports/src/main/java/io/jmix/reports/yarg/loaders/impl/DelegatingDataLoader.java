@@ -20,7 +20,6 @@ import io.jmix.reports.yarg.exception.DataLoadingException;
 import io.jmix.reports.yarg.loaders.ReportDataLoader;
 import io.jmix.reports.yarg.structure.BandData;
 import io.jmix.reports.yarg.structure.ReportQuery;
-import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
@@ -29,7 +28,6 @@ import java.util.Map;
 /**
  * Delegates data loading operation to an object provided by {@link ReportQuery}.
  */
-@NullMarked
 public class DelegatingDataLoader implements ReportDataLoader {
 
     @Override

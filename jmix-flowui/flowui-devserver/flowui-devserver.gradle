@@ -46,6 +46,17 @@ dependencies {
 
 shadowJar {
     dependsOn(jar)
-    mergeServiceFiles()
+
+    // Shadow 9.x defaults duplicatesStrategy to EXCLUDE, which drops duplicate
+    // META-INF/services files before mergeServiceFiles() can concatenate them.
+    // Use INCLUDE so service files are merged, then EXCLUDE duplicates of everything else.
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+
+    mergeServiceFiles('META-INF/services')
+
+    filesNotMatching('META-INF/services/**') {
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    }
+
     archiveClassifier.set("")
 }

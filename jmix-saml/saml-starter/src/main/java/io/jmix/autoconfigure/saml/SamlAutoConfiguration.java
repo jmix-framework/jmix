@@ -36,8 +36,11 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.saml2.provider.service.registration.RelyingPartyRegistrationRepository;
 
-@AutoConfiguration(beforeName = "io.jmix.autoconfigure.securityflowui.SecurityFlowuiAutoConfiguration")
+@AutoConfiguration(
+        afterName = "org.springframework.boot.security.saml2.autoconfigure.Saml2RelyingPartyAutoConfiguration",
+        beforeName = "io.jmix.autoconfigure.securityflowui.SecurityFlowuiAutoConfiguration")
 @Import({SamlConfiguration.class})
 @ConditionalOnProperty(name = "jmix.saml.use-default-configuration", matchIfMissing = true)
 public class SamlAutoConfiguration {
@@ -62,8 +65,14 @@ public class SamlAutoConfiguration {
         return new DefaultSamlUserMapper();
     }
 
+    /**
+     * Configures FlowUI views protection together with SAML login. Applies only when a relying party is
+     * configured (a {@link RelyingPartyRegistrationRepository} bean is present), so that applications that
+     * do not use SAML login are not affected.
+     */
     @EnableWebSecurity
     @ConditionalOnProperty(value = "jmix.saml.use-default-ui-configuration", havingValue = "true", matchIfMissing = true)
+    @ConditionalOnBean(RelyingPartyRegistrationRepository.class)
     public static class DefaulSamlVaadinWebSecurity extends SamlVaadinWebSecurity {
 
         @Bean("saml_SamlVaadinSecurityFilterChainCustomizer")

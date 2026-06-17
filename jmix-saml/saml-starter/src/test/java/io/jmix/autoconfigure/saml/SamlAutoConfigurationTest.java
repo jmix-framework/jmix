@@ -33,10 +33,25 @@ import static org.mockito.Mockito.mock;
 class SamlAutoConfigurationTest {
 
     @Test
-    void testStartsWithoutFlowuiWhenViewRegistryBeanIsAbsent() {
-        // Reproduces jmix-framework/jmix#5373 for SAML: an application that uses SAML for authentication
-        // without FlowUI starters has no ViewRegistry bean. The SAML web security configuration must not
-        // depend on FlowUI beans, so creating it must not require a ViewRegistry.
+    void testUiSecurityNotRegisteredWithoutRelyingPartyRegistration() {
+        // Reproduces jmix-framework/jmix#5373 for SAML: an application without a configured relying party
+        // has no RelyingPartyRegistrationRepository. The default SAML login security configuration is
+        // interactive login and must not apply there, mirroring how Spring Boot gates saml2Login security.
+        new WebApplicationContextRunner()
+                .withConfiguration(AutoConfigurations.of(SamlAutoConfiguration.class))
+                .withBean(SamlUserMapper.class, () -> mock(SamlUserMapper.class))
+                .run(context -> {
+                    assertThat(context).hasNotFailed();
+                    assertThat(context).doesNotHaveBean(SamlAutoConfiguration.DefaulSamlVaadinWebSecurity.class);
+                });
+    }
+
+    @Test
+    void testSecurityBeanDoesNotRequireFlowuiViewRegistry() {
+        // Guards the split of FlowUI-specific request-cache logic out of AbstractFlowuiWebSecurity:
+        // SamlVaadinWebSecurity must be creatable without the FlowUI ViewRegistry bean. A
+        // RelyingPartyRegistrationRepository is provided because the SAML login configuration legitimately
+        // needs one; ViewRegistry is deliberately absent.
         new WebApplicationContextRunner()
                 .withBean(SamlUserMapper.class, () -> mock(SamlUserMapper.class))
                 .withBean(RelyingPartyRegistrationRepository.class, () -> mock(RelyingPartyRegistrationRepository.class))
@@ -46,23 +61,9 @@ class SamlAutoConfigurationTest {
                 .run(context -> assertThat(context).hasNotFailed());
     }
 
-    @Test
-    void testDefaultUiConfigurationCanBeDisabledExplicitly() {
-        // The documented workaround keeps working: the property switches the UI configuration off.
-        new WebApplicationContextRunner()
-                .withConfiguration(AutoConfigurations.of(SamlAutoConfiguration.class))
-                .withPropertyValues("jmix.saml.use-default-ui-configuration=false")
-                .withBean(SamlUserMapper.class, () -> mock(SamlUserMapper.class))
-                .run(context -> {
-                    assertThat(context).hasNotFailed();
-                    assertThat(context).doesNotHaveBean(SamlAutoConfiguration.DefaulSamlVaadinWebSecurity.class);
-                });
-    }
-
     /**
-     * Mimics {@link SamlAutoConfiguration.DefaulSamlVaadinWebSecurity} without building the Vaadin filter
-     * chain: the regression is the inherited {@code @Autowired ViewRegistry}, injected regardless of how
-     * the chain is configured.
+     * Mimics {@link SamlAutoConfiguration.DefaulSamlVaadinWebSecurity} without building the Vaadin filter chain:
+     * the inherited dependencies are injected regardless of how the chain is configured.
      */
     @EnableWebSecurity
     static class TestSamlWebSecurity extends SamlVaadinWebSecurity {

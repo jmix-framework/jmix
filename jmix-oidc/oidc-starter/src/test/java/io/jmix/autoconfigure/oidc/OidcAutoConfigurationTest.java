@@ -34,10 +34,26 @@ import static org.mockito.Mockito.mock;
 class OidcAutoConfigurationTest {
 
     @Test
-    void testStartsWithoutFlowuiWhenViewRegistryBeanIsAbsent() {
+    void testUiSecurityNotRegisteredWithoutClientRegistration() {
         // Reproduces jmix-framework/jmix#5373: an application that uses OIDC as an OAuth2 resource
-        // server only, without FlowUI starters, has no ViewRegistry bean. The OIDC web security
-        // configuration must not depend on FlowUI beans, so creating it must not require a ViewRegistry.
+        // server only has no ClientRegistrationRepository (no client registrations configured). The
+        // default OIDC login security configuration is interactive login and must not apply there,
+        // mirroring how Spring Boot gates its own oauth2Login security on a ClientRegistrationRepository.
+        new WebApplicationContextRunner()
+                .withConfiguration(AutoConfigurations.of(OidcAutoConfiguration.class))
+                .withPropertyValues("jmix.oidc.use-default-jwt-configuration=false")
+                .withBean(OidcUserMapper.class, () -> mock(OidcUserMapper.class))
+                .run(context -> {
+                    assertThat(context).hasNotFailed();
+                    assertThat(context).doesNotHaveBean(OidcAutoConfiguration.DefaulOidcVaadinWebSecurity.class);
+                });
+    }
+
+    @Test
+    void testSecurityBeanDoesNotRequireFlowuiViewRegistry() {
+        // Guards the split of FlowUI-specific request-cache logic out of AbstractFlowuiWebSecurity:
+        // OidcVaadinWebSecurity must be creatable without the FlowUI ViewRegistry bean. A ClientRegistrationRepository
+        // is provided here because the OIDC login configuration legitimately needs one; ViewRegistry is deliberately absent.
         new WebApplicationContextRunner()
                 .withBean(JmixOidcUserService.class, () -> mock(JmixOidcUserService.class))
                 .withBean(OidcProperties.class, () -> mock(OidcProperties.class))
@@ -47,25 +63,9 @@ class OidcAutoConfigurationTest {
                 .run(context -> assertThat(context).hasNotFailed());
     }
 
-    @Test
-    void testDefaultUiConfigurationCanBeDisabledExplicitly() {
-        // The documented workaround keeps working: the property switches the UI configuration off.
-        new WebApplicationContextRunner()
-                .withConfiguration(AutoConfigurations.of(OidcAutoConfiguration.class))
-                .withPropertyValues(
-                        "jmix.oidc.use-default-ui-configuration=false",
-                        "jmix.oidc.use-default-jwt-configuration=false")
-                .withBean(OidcUserMapper.class, () -> mock(OidcUserMapper.class))
-                .run(context -> {
-                    assertThat(context).hasNotFailed();
-                    assertThat(context).doesNotHaveBean(OidcAutoConfiguration.DefaulOidcVaadinWebSecurity.class);
-                });
-    }
-
     /**
-     * Mimics {@link OidcAutoConfiguration.DefaulOidcVaadinWebSecurity} without building the Vaadin filter
-     * chain: the regression is the inherited {@code @Autowired ViewRegistry}, injected regardless of how
-     * the chain is configured.
+     * Mimics {@link OidcAutoConfiguration.DefaulOidcVaadinWebSecurity} without building the Vaadin filter chain:
+     * the inherited dependencies are injected regardless of how the chain is configured.
      */
     @EnableWebSecurity
     static class TestOidcWebSecurity extends OidcVaadinWebSecurity {

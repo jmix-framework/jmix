@@ -19,10 +19,10 @@ package io.jmix.autoconfigure.aitoolsflowui;
 import io.jmix.aitoolsflowui.AiToolsFlowuiConfiguration;
 import io.jmix.aitoolsflowui.icon.AiIconProvider;
 import io.jmix.aitoolsflowui.icon.impl.DefaultAiIconProvider;
-import io.jmix.aitoolsflowui.service.UserAiChatService;
+import io.jmix.aitoolsflowui.service.AiChatService;
 import io.jmix.aitoolsflowui.service.AiConversationService;
 import io.jmix.aitoolsflowui.service.AiChatMessageService;
-import io.jmix.aitoolsflowui.service.impl.UserAiChatEmptyService;
+import io.jmix.aitoolsflowui.service.impl.AiChatEmptyService;
 import io.jmix.aitoolsflowui.service.impl.AiConversationEmptyService;
 import io.jmix.aitoolsflowui.service.impl.AiChatMessageEmptyService;
 import io.jmix.flowui.FlowuiConfiguration;
@@ -41,10 +41,10 @@ public class AiToolsFlowuiAutoConfiguration {
         return new DefaultAiIconProvider();
     }
 
-    @Bean("aitls_UserAiChatEmptyService")
-    @ConditionalOnMissingBean(UserAiChatService.class)
-    public UserAiChatService userAiChatService() {
-        return new UserAiChatEmptyService();
+    @Bean("aitls_AiChatEmptyService")
+    @ConditionalOnMissingBean(AiChatService.class)
+    public AiChatService userAiChatService() {
+        return new AiChatEmptyService();
     }
 
     @Bean("aitls_AiConversationEmptyService")

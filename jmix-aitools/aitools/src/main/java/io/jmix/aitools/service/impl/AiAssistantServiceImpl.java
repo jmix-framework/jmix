@@ -18,7 +18,7 @@ package io.jmix.aitools.service.impl;
 
 import io.jmix.aitools.ChatClientFactory;
 import io.jmix.aitools.ResponseLanguageProvider;
-import io.jmix.aitools.service.AiChatService;
+import io.jmix.aitools.service.AiAssistantService;
 import io.jmix.aitools.service.prompt.AiChatSystemPromptProvider;
 import io.jmix.aitools.tool.AiToolRegistry;
 import io.jmix.core.common.util.Preconditions;
@@ -32,12 +32,12 @@ import reactor.core.publisher.Flux;
 import java.util.Objects;
 
 /**
- * Default {@link AiChatService} based on the application's chat model.
+ * Default {@link AiAssistantService} based on the application's chat model.
  * <p>
  * Builds a chat client with the default system prompt and all registered tools on startup.
  */
-@Component("aitls_AiChatServiceImpl")
-public class AiChatServiceImpl implements AiChatService, InitializingBean {
+@Component("aitls_AiAssistantServiceImpl")
+public class AiAssistantServiceImpl implements AiAssistantService, InitializingBean {
 
     @Autowired
     protected ChatClientFactory chatClientFactory;

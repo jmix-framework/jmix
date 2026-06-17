@@ -26,7 +26,7 @@ import com.vaadin.flow.function.SerializableSupplier;
 import io.jmix.aitoolsflowui.AiToolsFlowuiProperties;
 import io.jmix.aitoolsflowui.icon.AiIconProvider;
 import io.jmix.aitoolsflowui.model.AiConversation;
-import io.jmix.aitoolsflowui.service.UserAiChatService;
+import io.jmix.aitoolsflowui.service.AiChatService;
 import io.jmix.aitoolsflowui.service.AiConversationService;
 import io.jmix.aitoolsflowui.view.chat.AiChatView;
 import io.jmix.aitoolsflowui.view.chathub.component.AiConversationCard;
@@ -126,7 +126,7 @@ public class AiChatHubFragment extends Fragment<VerticalLayout> {
     @Autowired
     protected AiConversationService conversationService;
     @Autowired
-    protected UserAiChatService chatService;
+    protected AiChatService chatService;
     @Autowired
     protected AiToolsFlowuiProperties properties;
     @Autowired

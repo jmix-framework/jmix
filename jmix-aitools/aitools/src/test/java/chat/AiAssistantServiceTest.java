@@ -16,7 +16,7 @@
 
 package chat;
 
-import io.jmix.aitools.service.AiChatService;
+import io.jmix.aitools.service.AiAssistantService;
 import io.jmix.core.security.SystemAuthenticator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -36,10 +36,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = AiToolsTestConfiguration.class)
-class AiChatServiceTest {
+class AiAssistantServiceTest {
 
     @Autowired
-    AiChatService aiChatService;
+    AiAssistantService aiChatService;
 
     @Autowired
     StubChatModel stubChatModel;

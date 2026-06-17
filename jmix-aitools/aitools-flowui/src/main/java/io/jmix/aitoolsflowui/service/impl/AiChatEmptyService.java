@@ -18,7 +18,7 @@ package io.jmix.aitoolsflowui.service.impl;
 
 import io.jmix.aitools.tool.AiUiStatusUpdate;
 import io.jmix.aitoolsflowui.model.AiChatMessage;
-import io.jmix.aitoolsflowui.service.UserAiChatService;
+import io.jmix.aitoolsflowui.service.AiChatService;
 import io.jmix.aitoolsflowui.service.AiConversationService;
 import io.jmix.aitoolsflowui.service.AiChatMessageService;
 import org.slf4j.Logger;
@@ -26,16 +26,16 @@ import org.slf4j.LoggerFactory;
 
 import java.util.function.Consumer;
 
-public class UserAiChatEmptyService implements UserAiChatService {
+public class AiChatEmptyService implements AiChatService {
 
-    private static final Logger log = LoggerFactory.getLogger(UserAiChatEmptyService.class);
+    private static final Logger log = LoggerFactory.getLogger(AiChatEmptyService.class);
 
-    public UserAiChatEmptyService() {
+    public AiChatEmptyService() {
         // Active only as the no-persistence fallback; warn once so a missing data module is noticed.
         log.warn("AI chat is running in no-op mode: no persistence implementation found. " +
                         "Add the 'jmix-aitoolsflowui-data-starter', or provide your own {}, " +
                         "{} and {} beans, to enable AI chat.",
-                UserAiChatService.class.getSimpleName(),
+                AiChatService.class.getSimpleName(),
                 AiConversationService.class.getSimpleName(),
                 AiChatMessageService.class.getSimpleName());
     }

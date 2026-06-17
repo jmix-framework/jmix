@@ -22,7 +22,7 @@ import reactor.core.publisher.Flux;
 /**
  * Stateless, programmatic access to the AI assistant.
  */
-public interface AiChatService {
+public interface AiAssistantService {
 
     /**
      * Sends a message to the chat model and blocks until the full reply is produced.

@@ -17,10 +17,10 @@
 package io.jmix.aitools.service.prompt;
 
 import io.jmix.aitools.PromptProvider;
-import io.jmix.aitools.service.impl.AiChatServiceImpl;
+import io.jmix.aitools.service.impl.AiAssistantServiceImpl;
 
 /**
- * Provides the system prompt template used by the {@link AiChatServiceImpl}.
+ * Provides the system prompt template used by the {@link AiAssistantServiceImpl}.
  */
 public interface AiChatSystemPromptProvider extends PromptProvider {
 }

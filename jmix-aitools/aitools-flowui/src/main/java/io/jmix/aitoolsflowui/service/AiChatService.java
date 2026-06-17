@@ -21,7 +21,7 @@ import io.jmix.aitoolsflowui.model.AiChatMessage;
 
 import java.util.function.Consumer;
 
-public interface UserAiChatService {
+public interface AiChatService {
 
     String processMessage(AiChatMessage message);
 

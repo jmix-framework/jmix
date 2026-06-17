@@ -40,7 +40,7 @@ import java.util.function.Consumer;
  * final assistant {@link AiChatMessage} back to the UI.
  * <p>
  * Mirrors the CRM coordinator but invokes the add-on's
- * {@link UserAiChatService} directly instead of going through a
+ * {@link AiChatService} directly instead of going through a
  * project-specific analytics service.
  */
 @Component("aitls_AssistantResponseTaskCoordinator")
@@ -51,7 +51,7 @@ public class AssistantResponseTaskCoordinator {
     @Autowired
     protected AiChatMessageService userAiMessageService;
     @Autowired
-    protected UserAiChatService userAiChatService;
+    protected AiChatService userAiChatService;
     @Autowired
     protected BackgroundWorker backgroundWorker;
     @Autowired

@@ -82,7 +82,7 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
     @Autowired
     protected TimelineItemFactory timelineItemFactory;
     @Autowired
-    protected UserAiChatService chatService;
+    protected AiChatService chatService;
 
     @ViewComponent
     protected MessageBundle messageBundle;

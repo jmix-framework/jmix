@@ -16,11 +16,11 @@
 
 package io.jmix.autoconfigure.aitoolsflowuidata;
 
-import io.jmix.aitoolsflowui.service.UserAiChatService;
+import io.jmix.aitoolsflowui.service.AiChatService;
 import io.jmix.aitoolsflowui.service.AiConversationService;
 import io.jmix.aitoolsflowui.service.AiChatMessageService;
 import io.jmix.aitoolsflowuidata.AiToolsFlowuiDataConfiguration;
-import io.jmix.aitoolsflowuidata.service.impl.UserAiChatDataService;
+import io.jmix.aitoolsflowuidata.service.impl.AiChatDataService;
 import io.jmix.aitoolsflowuidata.service.impl.AiConversationDataService;
 import io.jmix.aitoolsflowuidata.service.impl.AiChatMessageDataService;
 import io.jmix.autoconfigure.aitoolsflowui.AiToolsFlowuiAutoConfiguration;
@@ -54,9 +54,9 @@ public class AiToolsFlowuiDataAutoConfiguration {
         return new AiChatMessageDataService();
     }
 
-    @Bean("aitls_UserAiChatDataService")
-    @ConditionalOnMissingBean(UserAiChatService.class)
-    public UserAiChatService userAiChatService() {
-        return new UserAiChatDataService();
+    @Bean("aitls_AiChatDataService")
+    @ConditionalOnMissingBean(AiChatService.class)
+    public AiChatService userAiChatService() {
+        return new AiChatDataService();
     }
 }

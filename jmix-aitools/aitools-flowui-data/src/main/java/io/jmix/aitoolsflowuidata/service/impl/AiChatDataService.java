@@ -23,7 +23,7 @@ import io.jmix.aitools.tool.AiToolRegistry;
 import io.jmix.aitools.tool.AiToolStatusPublisher;
 import io.jmix.aitools.tool.AiUiStatusUpdate;
 import io.jmix.aitoolsflowui.model.AiChatMessage;
-import io.jmix.aitoolsflowui.service.UserAiChatService;
+import io.jmix.aitoolsflowui.service.AiChatService;
 import io.jmix.aitoolsflowuidata.AiToolsFlowuiDataProperties;
 import io.jmix.aitoolsflowuidata.entity.AiChatMessageEntity;
 import io.jmix.aitoolsflowuidata.entity.AiConversationEntity;
@@ -49,7 +49,7 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 /**
- * Default {@link UserAiChatService}. For an already-persisted user message it:
+ * Default {@link AiChatService}. For an already-persisted user message it:
  * <ol>
  *     <li>loads the conversation history, windowed by {@code jmix.aitools.ui.data.chat-memory-max-messages};</li>
  *     <li>creates an empty {@code ASSISTANT} placeholder message;</li>
@@ -59,9 +59,9 @@ import java.util.function.Consumer;
  * The optional status callback is delivered to tools via {@link AiToolStatusPublisher} for
  * ephemeral progress messages.
  */
-public class UserAiChatDataService implements UserAiChatService, InitializingBean {
+public class AiChatDataService implements AiChatService, InitializingBean {
 
-    private static final Logger log = LoggerFactory.getLogger(UserAiChatDataService.class);
+    private static final Logger log = LoggerFactory.getLogger(AiChatDataService.class);
 
     protected static final String ASSISTANT_MESSAGE_ID_KEY = "assistantMessageId";
 

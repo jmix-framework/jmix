@@ -1,0 +1,205 @@
+/*
+ * Copyright 2026 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+.ai-chat-hub {
+    box-sizing: border-box;
+    min-height: 0;
+    overflow: hidden;
+
+    .chat-hub-scroll {
+        box-sizing: border-box;
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow-y: auto;
+    }
+
+    /* One centered reading column for the whole starter. Narrower than the
+       conversation timeline canvas — starter has composer + 2-col cards, the
+       reading line stays comfortable around 54rem. Override with the
+       --jmix-ai-chat-hub-canvas-max-width custom property. */
+    .chat-hub-canvas {
+        box-sizing: border-box;
+        align-self: center;
+        margin: 0 auto;
+        max-width: var(--jmix-ai-chat-hub-canvas-max-width, 54rem);
+        padding: var(--lumo-space-m);
+        width: 100%;
+        gap: var(--lumo-space-m);
+    }
+
+    .chat-hub-heading {
+        text-align: center;
+        gap: var(--lumo-space-xs);
+    }
+
+    .chat-hub-title {
+        margin: 0;
+    }
+
+    .chat-hub-subtitle {
+        color: var(--lumo-secondary-text-color);
+        font-size: var(--lumo-font-size-m);
+    }
+
+    .chat-hub-hero-icon-glyph {
+        height: 2.5rem;
+        width: 2.5rem;
+        color: var(--lumo-primary-color);
+    }
+
+    .chat-hub-section-header {
+        gap: var(--lumo-space-s);
+    }
+
+    .chat-hub-section-rule {
+        border-top: 1px solid var(--lumo-contrast-10pct);
+        flex: 1 1 auto;
+    }
+}
+
+/* Conversation cards — recent grid and the history panel (which may render in an
+   overlay), so these are top-level selectors rather than nested under the root. */
+.chat-hub-card {
+    /* vaadin-card requires a single length here (used by inner calc(... * -1)). */
+    --vaadin-card-padding: var(--lumo-space-s);
+    --vaadin-card-gap: var(--lumo-space-xs);
+}
+
+.chat-hub-card-body {
+    padding: 0;
+}
+
+.chat-hub-card-title-row {
+    gap: var(--lumo-space-s);
+    min-width: 0;
+}
+
+/* Own the title weight and the date colour/size rather than relying on Lumo
+   utility classes (font-bold / text-secondary / text-xs), which the consuming
+   app's theme may not bundle. */
+.chat-hub-card-title {
+    font-size: var(--lumo-font-size-m);
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+}
+
+.chat-hub-card-date {
+    color: var(--lumo-secondary-text-color);
+    font-size: var(--lumo-font-size-xs);
+}
+
+.chat-hub-card-icon {
+    color: var(--lumo-primary-color);
+    flex: none;
+    height: 1.25rem;
+    width: 1.25rem;
+}
+
+.ai-assistant-icon {
+    flex: none;
+}
+
+/* Recent chats: force exactly two columns (overrides the grid's responsive
+   auto-fit template via the exposed shadow part), collapsing to one column on
+   narrow screens. Outer ::part rules win over the component's own shadow part
+   styles for normal declarations, so no !important is needed — and an add-on
+   shouldn't impose it, leaving apps free to override. */
+.chat-hub-recent-grid::part(items) {
+    grid-gap: var(--lumo-space-s);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (max-width: 720px) {
+    .chat-hub-recent-grid::part(items) {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* History side panel content. */
+.chat-hub-history-content {
+    box-sizing: border-box;
+    padding: var(--lumo-space-s);
+    gap: var(--lumo-space-s);
+
+    .chat-hub-history-title {
+        margin: 0;
+    }
+
+    .chat-hub-history-empty {
+        color: var(--lumo-secondary-text-color);
+        font-size: var(--lumo-font-size-s);
+    }
+
+    .chat-hub-history-title-group {
+        gap: var(--lumo-space-m);
+    }
+
+    .chat-hub-history-count {
+        /* Inherits the shared badge look from the rule below. */
+    }
+
+    .chat-hub-history-header-spacer {
+        flex: 1 1 auto;
+    }
+
+    .chat-hub-history-list {
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow-y: auto;
+        gap: var(--lumo-space-s);
+    }
+
+    .chat-hub-history-group {
+        gap: var(--lumo-space-s);
+    }
+
+    .chat-hub-history-group-header {
+        gap: var(--lumo-space-m);
+        padding: var(--lumo-space-xs) 0;
+    }
+
+    .chat-hub-history-bucket {
+        color: var(--lumo-secondary-text-color);
+        font-size: var(--lumo-font-size-xs);
+        font-weight: 600;
+    }
+
+    .chat-hub-history-group-count {
+        /* Inherits the shared badge look from the rule below. */
+    }
+}
+
+/* Shared pill-badge look for the panel-header count and per-bucket count.
+   Rectangular: horizontal padding gives single and multi-digit counts equal
+   breathing room; vertical padding + a slightly relaxed line-height keep the
+   text comfortably inside the box (no clipping on tall digits). */
+.chat-hub-history-count,
+.chat-hub-history-group-count {
+    align-items: center;
+    background: var(--lumo-contrast-10pct);
+    border-radius: var(--lumo-border-radius-s);
+    box-sizing: border-box;
+    color: var(--lumo-secondary-text-color);
+    display: inline-flex;
+    font-size: var(--lumo-font-size-xs);
+    font-weight: 500;
+    justify-content: center;
+    line-height: var(--lumo-line-height-m);
+    padding: 0 var(--lumo-space-xs);
+}

@@ -1,0 +1,30 @@
+Repair attempt:
+%s
+
+Original user request:
+%s
+
+Previous generated result:
+%s
+
+Validation errors:
+%s
+
+Additional repair guidance:
+%s
+
+CONSTRAINTS:
+- Repair the result so that it uses only valid metadata from the provided schema and fixes the listed validation errors.
+- Preserve execution options such as maxResults and firstResult when they are relevant.
+- Preserve the original intent as much as possible.
+- Never invent entities, properties, joins, or parameter names.
+
+RETURN FORMAT
+Return exactly one JSON object and no Markdown.
+The JSON object must contain:
+- jpql - String type
+- parameters - JSON array of JSON objects, can be empty
+- explanation - String type
+- warnings - JSON array of string items
+- maxResults - Integer type, can be null
+- firstResult - Integer type, can be null

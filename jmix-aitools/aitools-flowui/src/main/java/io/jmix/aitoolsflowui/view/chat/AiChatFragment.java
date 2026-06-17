@@ -1,0 +1,552 @@
+/*
+ * Copyright 2026 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.jmix.aitoolsflowui.view.chat;
+
+import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.html.H3;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.function.SerializableSupplier;
+import io.jmix.aitoolsflowui.model.*;
+import io.jmix.aitoolsflowui.service.*;
+import io.jmix.aitoolsflowui.view.input.AiChatInputFragment;
+import io.jmix.aitools.tool.AiUiStatusUpdate;
+import io.jmix.core.DataManager;
+import io.jmix.core.TimeSource;
+import io.jmix.core.annotation.Experimental;
+import io.jmix.flowui.Dialogs;
+import io.jmix.flowui.Notifications;
+import io.jmix.flowui.app.inputdialog.DialogActions;
+import io.jmix.flowui.app.inputdialog.DialogOutcome;
+import io.jmix.flowui.app.inputdialog.InputParameter;
+import io.jmix.flowui.component.UiComponentUtils;
+import io.jmix.flowui.component.virtuallist.JmixVirtualList;
+import io.jmix.flowui.fragment.Fragment;
+import io.jmix.flowui.fragment.FragmentDescriptor;
+import io.jmix.flowui.kit.component.button.JmixButton;
+import io.jmix.flowui.model.CollectionContainer;
+import io.jmix.flowui.view.*;
+import org.jspecify.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.*;
+
+/**
+ * Encapsulates the "AI chat panel" UI — title row, message timeline, thinking
+ * indicator and the {@link AiChatInputFragment} composer — for an {@link AiConversation}.
+ * Designed to be embedded into any host view (the standard detail view, a
+ * side dialog, a chat hub view, custom layouts).
+ * <p>
+ * <b>Ownership.</b> The host supplies the conversation to display via
+ * {@link #setConversation(AiConversation)} or {@link #setConversationId(UUID)};
+ * the fragment loads that conversation's {@link AiChatMessage}s itself — it does
+ * not rely on the {@code messages} collection being pre-fetched by the host —
+ * and reads/writes directly through {@link DataManager}.
+ */
+@Experimental
+@FragmentDescriptor("ai-chat-fragment.xml")
+public class AiChatFragment extends Fragment<VerticalLayout> {
+
+    private static final Logger log = LoggerFactory.getLogger(AiChatFragment.class);
+
+    @Autowired
+    protected DataManager dataManager;
+    @Autowired
+    protected TimeSource timeSource;
+    @Autowired
+    protected Dialogs dialogs;
+    @Autowired
+    protected Notifications notifications;
+    @Autowired
+    protected AiChatMessageService messageService;
+    @Autowired
+    protected AiConversationService conversationService;
+    @Autowired
+    protected AssistantResponseTaskCoordinator assistantResponseTaskCoordinator;
+    @Autowired
+    protected TimelineItemFactory timelineItemFactory;
+    @Autowired
+    protected AiChatService chatService;
+
+    @ViewComponent
+    protected MessageBundle messageBundle;
+
+    @ViewComponent
+    protected H3 conversationTitle;
+    @ViewComponent
+    protected JmixButton editConversationTitleBtn;
+    @ViewComponent
+    protected VerticalLayout composerContainer;
+    @ViewComponent
+    protected JmixVirtualList<TimelineItem> timelineList;
+
+    @ViewComponent
+    protected CollectionContainer<TimelineItem> timelineItemsDc;
+
+    @ViewComponent
+    protected AiChatInputFragment composerFragment;
+
+    @Nullable
+    protected AiConversation conversation;
+    @Nullable
+    protected TimelineItem activeThinkingItem;
+    protected boolean awaitingResponse;
+
+    protected boolean readOnly;
+
+    protected boolean chatUnavailableWarned;
+
+    @Nullable
+    protected SerializableSupplier<Component> aiAvatarIconSupplier;
+
+    /**
+     * Binds the fragment to a conversation.
+     *
+     * @param conversation conversation to bind
+     */
+    public void setConversation(@Nullable AiConversation conversation) {
+        this.conversation = conversation;
+        this.activeThinkingItem = null;
+
+        refreshAll();
+    }
+
+    /**
+     * Binds the fragment to a conversation by id. A {@code null} id (or an id that no longer resolves)
+     * clears the fragment.
+     *
+     * @param conversationId conversation id to set
+     */
+    public void setConversationId(@Nullable UUID conversationId) {
+        setConversation(conversationId != null ? loadConversation(conversationId) : null);
+    }
+
+    /**
+     * Sets a supplier of the avatar icon shown next to assistant messages, letting the host override
+     * the default add-on icon. The supplier must return a fresh component on every call.
+     *
+     * @param avatarIconSupplier supplier of the assistant avatar icon, or {@code null} to use the default
+     */
+    public void setAiAvatarIconSupplier(@Nullable SerializableSupplier<Component> avatarIconSupplier) {
+        this.aiAvatarIconSupplier = avatarIconSupplier;
+    }
+
+    /**
+     * Returns the custom assistant avatar icon supplier, if one was set.
+     *
+     * @return the avatar icon supplier, or {@code null} when the default icon is used
+     */
+    @Nullable
+    public SerializableSupplier<Component> getAiAvatarIconSupplier() {
+        return aiAvatarIconSupplier;
+    }
+
+    /**
+     * Hides the composer and the title-edit button.
+     */
+    public void setReadOnly(boolean readOnly) {
+        this.readOnly = readOnly;
+        refreshComposerVisibility();
+    }
+
+    /**
+     * Moves keyboard focus to the message composer. No-op if the composer is
+     * currently disabled (e.g. while the assistant is still generating a
+     * response).
+     */
+    public void focusMessageInput() {
+        composerFragment.focus();
+    }
+
+    /**
+     * Enables or disables the message composer. The fragment disables it
+     * automatically while an assistant response is in flight and re-enables
+     * it on completion; hosts can call this for additional read-only states.
+     */
+    public void setMessageInputEnabled(boolean enabled) {
+        composerFragment.setInputEnabled(enabled);
+    }
+
+    @Subscribe(id = "editConversationTitleBtn", subject = "clickListener")
+    public void onEditConversationTitleBtnClick(final ClickEvent<JmixButton> event) {
+        openTitleEditDialog();
+    }
+
+    /**
+     * Whether an assistant response is currently being generated for the bound
+     * conversation. Hosts can use this to warn the user before closing — the
+     * background task is scoped to the host view and is cancelled (losing the
+     * answer) when the view detaches.
+     */
+    public boolean isAwaitingResponse() {
+        return awaitingResponse;
+    }
+
+    /**
+     * Programmatic entry point to send a user message: persists it, appends it
+     * to the timeline, shows the thinking indicator, disables the composer and
+     * runs the assistant. Used by the composer's submit handler and by hosts
+     * that start a conversation with an initial prompt (the chat-hub flow).
+     *
+     * @param userMessage message text to send; a {@code null} or blank value is ignored
+     */
+    public void sendMessage(@Nullable String userMessage) {
+        if (conversation == null) {
+            log.warn("Cannot submit message — no conversation bound to the fragment");
+            return;
+        }
+        if (userMessage == null || userMessage.isBlank()) {
+            return;
+        }
+        if (!chatService.isAvailable()) {
+            log.warn("Cannot submit message — AI is not configured");
+            return;
+        }
+
+        AiChatMessage savedUserMessage;
+        try {
+            savedUserMessage = messageService.createMessage(conversation, AiChatMessageType.USER, userMessage.trim());
+        } catch (Exception e) {
+            log.error("Failed to persist user message", e);
+            notifications.create(messageBundle.getMessage("aiChatFragment.errorProcessingMessage"))
+                    .withType(Notifications.Type.ERROR)
+                    .show();
+            return;
+        }
+
+        composerFragment.clear();
+        appendTimelineItem(timelineItemFactory.createUserItem(savedUserMessage));
+        showThinkingIndicator();
+        setMessageInputEnabled(false);
+        awaitingResponse = true;
+
+        processUserMessage(savedUserMessage);
+    }
+
+    @Subscribe
+    public void onReady(final ReadyEvent event) {
+        composerFragment.setSubmitHandler(this::sendMessage);
+
+        refreshAll();
+    }
+
+    protected void processUserMessage(AiChatMessage savedUserMessage) {
+        View<?> hostView = UiComponentUtils.findView(this);
+        if (hostView == null) {
+            log.warn("Fragment is not attached to a view — cannot run assistant response task");
+            return;
+        }
+        assistantResponseTaskCoordinator.run(
+                hostView,
+                Objects.requireNonNull(conversation),
+                savedUserMessage,
+                this::appendThinkingStatusUpdate,
+                this::handleAssistantResponseDone,
+                this::showAssistantProcessingError
+        );
+    }
+
+    protected void handleAssistantResponseDone(@Nullable AiChatMessage finalMessage) {
+        activeThinkingItem = null;
+        awaitingResponse = false;
+        // Tools may persist side effects (including the new assistant message) in
+        // their own transaction, so the in-memory state is stale here. Re-binding
+        // by id reloads the conversation and its messages synchronously, after
+        // which the fresh assistant row can be stamped.
+        if (conversation != null) {
+            setConversationId(conversation.getId());
+        }
+        if (finalMessage != null) {
+            markFreshAssistantItem(finalMessage.getId());
+        }
+        forceMessageInputFocus();
+    }
+
+    /**
+     * Locates the assistant item that just landed in the container after the
+     * post-LLM reload and stamps it with the "fresh" flag, triggering a
+     * single-row re-render via {@link CollectionContainer#replaceItem}.
+     */
+    protected void markFreshAssistantItem(UUID assistantMessageId) {
+        timelineItemsDc.getItems().stream()
+                .filter(item -> item.getType() == TimelineItemType.ASSISTANT
+                        && item.getMessage() != null
+                        && assistantMessageId.equals(item.getMessage().getId()))
+                .findFirst()
+                .ifPresent(item -> {
+                    item.setFresh(true);
+                    timelineItemsDc.replaceItem(item);
+                });
+    }
+
+    protected void showAssistantProcessingError() {
+        awaitingResponse = false;
+        removeThinkingIndicator();
+        appendTimelineItem(timelineItemFactory.createAssistantItem(createTransientAssistantMessage(
+                messageBundle.getMessage("aiChatFragment.errorProcessingMessage"))));
+
+        forceMessageInputFocus();
+    }
+
+    protected void showThinkingIndicator() {
+        AiChatMessage placeholder = createTransientAssistantMessage("");
+        activeThinkingItem = timelineItemFactory.createThinkingItem(placeholder);
+        appendTimelineItem(activeThinkingItem);
+    }
+
+    protected void removeThinkingIndicator() {
+        if (activeThinkingItem == null) {
+            return;
+        }
+        timelineItemsDc.getMutableItems().remove(activeThinkingItem);
+        activeThinkingItem = null;
+    }
+
+    protected void appendThinkingStatusUpdate(@Nullable AiUiStatusUpdate statusUpdate) {
+        if (activeThinkingItem == null
+                || statusUpdate == null
+                || statusUpdate.getMessage().isBlank()) {
+            return;
+        }
+
+        List<TimelineItemStatus> statusUpdates = activeThinkingItem.getStatusUpdates();
+        if (!statusUpdates.isEmpty()) {
+            TimelineItemStatus last = statusUpdates.get(statusUpdates.size() - 1);
+            // Fold only into the last entry if it is still in-flight (no
+            // result yet). A completed entry with the same base message
+            // belongs to a previous tool call and must not swallow a fresh
+            // start phrase for the next call.
+            if (last.getMessage().equals(statusUpdate.getMessage()) && !last.isCompleted()) {
+                if (statusUpdate.isCompleted()) {
+                    statusUpdates.set(statusUpdates.size() - 1, createTimelineStatus(statusUpdate));
+                    refreshTimelineItem(activeThinkingItem);
+                    scrollToBottom(false);
+                }
+                return;
+            }
+        }
+
+        statusUpdates.add(createTimelineStatus(statusUpdate));
+        if (statusUpdates.size() > 6) {
+            statusUpdates.remove(0);
+        }
+        refreshTimelineItem(activeThinkingItem);
+        scrollToBottom(false);
+    }
+
+    protected void refreshAll() {
+        conversationTitle.setText(conversation != null ? conversation.getTitle() : "");
+
+        timelineItemsDc.setItems(timelineItemFactory.buildTimelineItems(loadMessages()));
+        scrollToBottom();
+
+        refreshComposerVisibility();
+        warnIfAiUnavailable();
+    }
+
+    protected void warnIfAiUnavailable() {
+        if (conversation == null || chatUnavailableWarned || chatService.isAvailable()) {
+            return;
+        }
+        chatUnavailableWarned = true;
+        notifications.create(messageBundle.getMessage("aiChatFragment.chatUnavailable"))
+                .withType(Notifications.Type.WARNING)
+                .show();
+    }
+
+    /**
+     * Loads all messages of the bound conversation, oldest first. Empty when no
+     * conversation is bound or it has not been persisted yet.
+     */
+    protected Collection<AiChatMessage> loadMessages() {
+        if (conversation == null || conversation.getId() == null) {
+            return List.of();
+        }
+        return messageService.loadMessages(conversation);
+    }
+
+    protected void forceMessageInputFocus() {
+        setMessageInputEnabled(true);
+        focusMessageInput();
+    }
+
+    protected void refreshComposerVisibility() {
+        boolean show = conversation != null && !readOnly && chatService.isAvailable();
+        composerContainer.setVisible(show);
+        editConversationTitleBtn.setVisible(show);
+    }
+
+    protected void appendTimelineItem(TimelineItem item) {
+        timelineItemsDc.getMutableItems().add(item);
+        scrollToBottom();
+    }
+
+    protected void refreshTimelineItem(TimelineItem item) {
+        // replaceItem fires SET_ITEM on the container, which makes the
+        // virtual list re-render this single row — needed when in-place
+        // mutations on the item (e.g. statusUpdates of the thinking row)
+        // wouldn't otherwise be observable to the data provider.
+        timelineItemsDc.replaceItem(item);
+    }
+
+    /**
+     * Scrolls the timeline to the latest row, forcing the move regardless of
+     * where the user is currently looking. Use for discrete, user-initiated
+     * events (opening a conversation, sending a message, the assistant's final
+     * answer) where the bottom must be shown.
+     */
+    protected void scrollToBottom() {
+        scrollToBottom(true);
+    }
+
+    /**
+     * Scrolls the timeline to the latest row.
+     *
+     * @param force when {@code true}, always scrolls to the bottom and resets
+     *              the "stick to bottom" intent. When {@code false}, scrolls
+     *              only if the user is already at (or near) the bottom — used
+     *              for streaming status updates so a user who scrolled up to
+     *              read is not yanked back down on every minor update.
+     */
+    protected void scrollToBottom(boolean force) {
+        int size = timelineItemsDc.getItems().size();
+        if (size == 0) {
+            return;
+        }
+        if (force) {
+            // Coarse server-side positioning: makes the virtualizer render the
+            // rows near the end so their real heights get measured. Skipped
+            // for the conditional case — it would yank a user who scrolled up.
+            timelineList.scrollToIndex(size - 1);
+        }
+        // Rows have variable height and, crucially, assistant answers render
+        // through the <vaadin-markdown> web component which parses and lays
+        // out its content asynchronously *after* the row's initial render,
+        // in bursts. A one-shot re-pin fires before that growth lands; an
+        // "until scrollHeight is stable" loop exits during a lull between
+        // bursts (leaving the scroll "lower, but not at the bottom"). Instead
+        // we react to the actual cause: a MutationObserver re-pins on every
+        // DOM change (markdown rendering, row recycling) and we also re-pin
+        // every frame for a bounded window, then disconnect.
+        //
+        // "Stick to bottom" intent lives in l.__stick, kept up to date by a
+        // one-shot user-scroll listener: content growth alone fires no scroll
+        // event (so it never clears the flag), and our own pins land at the
+        // bottom (so they keep it set) — only a genuine user scroll-up clears
+        // it. force=true resets the flag; force=false honours it and bails out
+        // when the user is reading higher up. The per-element stop handle
+        // cancels an in-flight pin when a new scroll request arrives (e.g.
+        // back-to-back streaming updates) so loops don't stack.
+        timelineList.getElement().executeJs("""
+                        const l = this;
+                        const force = $0;
+                        const THRESHOLD = 50;
+                        if (!l.__stickInit) {
+                          l.__stickInit = true;
+                          l.__stick = true;
+                          l.addEventListener('scroll', () => {
+                            l.__stick = l.scrollTop + l.clientHeight >= l.scrollHeight - THRESHOLD;
+                          }, { passive: true });
+                        }
+                        if (force) { l.__stick = true; }
+                        if (!l.__stick) { return; }
+                        if (l.__scrollPinStop) { l.__scrollPinStop(); }
+                        const toBottom = () => { if (l.__stick) { l.scrollTop = l.scrollHeight; } };
+                        const mo = new MutationObserver(toBottom);
+                        mo.observe(l, { childList: true, subtree: true,
+                                        characterData: true, attributes: true });
+                        const stop = () => { l.__scrollPinStop = null; mo.disconnect(); };
+                        l.__scrollPinStop = stop;
+                        let frames = 0;
+                        const tick = () => {
+                          if (l.__scrollPinStop !== stop) { return; }
+                          if (!l.__stick) { stop(); return; }
+                          toBottom();
+                          if (++frames < 120) { requestAnimationFrame(tick); }
+                          else { stop(); }
+                        };
+                        requestAnimationFrame(tick);
+                        """,
+                force);
+    }
+
+    protected AiChatMessage createTransientAssistantMessage(String content) {
+        AiChatMessage message = dataManager.create(AiChatMessage.class);
+        message.setConversation(conversation);
+        message.setContent(content);
+        message.setType(AiChatMessageType.ASSISTANT);
+        message.setCreatedDate(timeSource.now().toOffsetDateTime());
+        return message;
+    }
+
+    protected TimelineItemStatus createTimelineStatus(AiUiStatusUpdate statusUpdate) {
+        TimelineItemStatus timelineStatus = dataManager.create(TimelineItemStatus.class);
+        timelineStatus.setMessage(statusUpdate.getMessage());
+        timelineStatus.setResultSnippet(statusUpdate.getResultSnippet());
+        return timelineStatus;
+    }
+
+    @Nullable
+    protected AiConversation loadConversation(UUID conversationId) {
+        return conversationService.loadConversation(conversationId);
+    }
+
+    protected void openTitleEditDialog() {
+        if (conversation == null) {
+            return;
+        }
+        String currentTitle = conversation.getTitle() == null ? "" : conversation.getTitle();
+
+        View<?> view = UiComponentUtils.findView(this);
+        if (view == null) {
+            throw new IllegalStateException("Fragment is not attached to a view");
+        }
+
+        dialogs.createInputDialog(view)
+                .withHeader(messageBundle.getMessage("aiChatFragment.editConversationTitleDialog.header"))
+                .withLabelsPosition(Dialogs.InputDialogBuilder.LabelsPosition.TOP)
+                .withParameters(
+                        InputParameter.stringParameter("title")
+                                .withLabel(messageBundle.getMessage("aiChatFragment.editConversationTitleDialog.titleField"))
+                                .withRequired(true)
+                                .withDefaultValue(currentTitle)
+                )
+                .withActions(DialogActions.OK_CANCEL)
+                .withCloseListener(closeEvent -> {
+                    if (!closeEvent.closedWith(DialogOutcome.OK)) {
+                        return;
+                    }
+                    String updatedTitle = closeEvent.getValue("title");
+                    if (updatedTitle == null || updatedTitle.isBlank()) {
+                        return;
+                    }
+                    if (conversation == null) {
+                        return;
+                    }
+                    conversation.setTitle(updatedTitle.trim());
+                    // Persist only the title and refresh just the header.
+                    // Reloading conversation while awaiting LLM answer
+                    // may break UI.
+                    conversation = conversationService.save(conversation);
+                    conversationTitle.setText(Objects.requireNonNull(conversation).getTitle());
+                })
+                .open();
+    }
+
+}

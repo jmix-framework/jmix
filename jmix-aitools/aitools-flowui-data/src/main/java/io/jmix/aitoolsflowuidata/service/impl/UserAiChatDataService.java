@@ -25,9 +25,9 @@ import io.jmix.aitools.tool.AiUiStatusUpdate;
 import io.jmix.aitoolsflowui.model.UserAiMessage;
 import io.jmix.aitoolsflowui.service.UserAiChatService;
 import io.jmix.aitoolsflowuidata.AiToolsFlowuiDataProperties;
-import io.jmix.aitoolsflowuidata.entity.AiConversation;
-import io.jmix.aitoolsflowuidata.entity.ChatMessage;
-import io.jmix.aitoolsflowuidata.entity.ChatMessageType;
+import io.jmix.aitoolsflowuidata.entity.AiChatMessageEntity;
+import io.jmix.aitoolsflowuidata.entity.AiConversationEntity;
+import io.jmix.aitoolsflowuidata.entity.AiChatMessageType;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.Sort;
 import io.jmix.core.UnconstrainedDataManager;
@@ -113,11 +113,11 @@ public class UserAiChatDataService implements UserAiChatService, InitializingBea
         Preconditions.checkNotNullArgument(userMessageId);
         checkChatClient();
 
-        ChatMessage userMessage = loadUserMessage(userMessageId);
-        AiConversation conversation = userMessage.getConversation();
+        AiChatMessageEntity userMessage = loadUserMessage(userMessageId);
+        AiConversationEntity conversation = userMessage.getConversation();
         List<Message> history = loadHistory(conversation.getId());
 
-        ChatMessage placeholder = createAssistantPlaceholder(conversation);
+        AiChatMessageEntity placeholder = createAssistantPlaceholder(conversation);
         try {
             String response = buildPromptSpec(history, placeholder.getId(), statusCallback)
                     .call()
@@ -151,17 +151,17 @@ public class UserAiChatDataService implements UserAiChatService, InitializingBea
                 .messages(history);
     }
 
-    protected ChatMessage loadUserMessage(UUID userMessageId) {
-        ChatMessage message = dataManager.load(ChatMessage.class)
+    protected AiChatMessageEntity loadUserMessage(UUID userMessageId) {
+        AiChatMessageEntity message = dataManager.load(AiChatMessageEntity.class)
                 .id(userMessageId)
                 .fetchPlan(fp -> fp.addFetchPlan(FetchPlan.BASE)
                         .add("conversation", FetchPlan.BASE))
                 .optional()
                 .orElseThrow(() -> new IllegalArgumentException(
-                        "ChatMessage not found: " + userMessageId));
-        if (message.getType() != ChatMessageType.USER) {
+                        "AiChatMessageEntity not found: " + userMessageId));
+        if (message.getType() != AiChatMessageType.USER) {
             throw new IllegalArgumentException(
-                    "Expected USER ChatMessage but got " + message.getType() + " for id " + userMessageId);
+                    "Expected USER AiChatMessageEntity but got " + message.getType() + " for id " + userMessageId);
         }
         return message;
     }
@@ -172,11 +172,11 @@ public class UserAiChatDataService implements UserAiChatService, InitializingBea
                 .toList();
     }
 
-    protected List<ChatMessage> loadRecentMessages(UUID conversationId, int limit) {
+    protected List<AiChatMessageEntity> loadRecentMessages(UUID conversationId, int limit) {
         if (limit <= 0) {
             return List.of();
         }
-        List<ChatMessage> all = dataManager.load(ChatMessage.class)
+        List<AiChatMessageEntity> all = dataManager.load(AiChatMessageEntity.class)
                 .condition(PropertyCondition.equal("conversation.id", conversationId))
                 .sort(Sort.by(Sort.Order.asc("createdDate"), Sort.Order.asc("id")))
                 .list();
@@ -186,9 +186,9 @@ public class UserAiChatDataService implements UserAiChatService, InitializingBea
         return all.subList(all.size() - limit, all.size());
     }
 
-    protected Message mapEntityToMessage(ChatMessage chatMessage) {
+    protected Message mapEntityToMessage(AiChatMessageEntity chatMessage) {
         String content = chatMessage.getContent() != null ? chatMessage.getContent() : "";
-        ChatMessageType type = chatMessage.getType();
+        AiChatMessageType type = chatMessage.getType();
         if (type == null) {
             return new SystemMessage(content);
         }
@@ -199,20 +199,20 @@ public class UserAiChatDataService implements UserAiChatService, InitializingBea
         };
     }
 
-    protected ChatMessage createAssistantPlaceholder(AiConversation conversation) {
-        ChatMessage placeholder = dataManager.create(ChatMessage.class);
+    protected AiChatMessageEntity createAssistantPlaceholder(AiConversationEntity conversation) {
+        AiChatMessageEntity placeholder = dataManager.create(AiChatMessageEntity.class);
         placeholder.setConversation(conversation);
-        placeholder.setType(ChatMessageType.ASSISTANT);
+        placeholder.setType(AiChatMessageType.ASSISTANT);
         placeholder.setContent("");
         return dataManager.save(placeholder);
     }
 
-    protected void saveAssistantResponse(ChatMessage placeholder, @Nullable String response) {
+    protected void saveAssistantResponse(AiChatMessageEntity placeholder, @Nullable String response) {
         placeholder.setContent(response);
         dataManager.saveWithoutReload(placeholder);
     }
 
-    protected void removeAssistantPlaceholderSafely(ChatMessage placeholder) {
+    protected void removeAssistantPlaceholderSafely(AiChatMessageEntity placeholder) {
         try {
             dataManager.remove(placeholder);
         } catch (Exception cleanupError) {

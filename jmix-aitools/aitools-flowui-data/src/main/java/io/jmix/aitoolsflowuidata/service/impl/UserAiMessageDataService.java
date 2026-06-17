@@ -21,13 +21,12 @@ import io.jmix.aitoolsflowui.model.UserAiMessage;
 import io.jmix.aitoolsflowui.model.UserAiMessageType;
 import io.jmix.aitoolsflowui.service.UserAiMessageService;
 import io.jmix.aitoolsflowuidata.converter.MessageConverter;
-import io.jmix.aitoolsflowuidata.entity.AiConversation;
-import io.jmix.aitoolsflowuidata.entity.ChatMessage;
+import io.jmix.aitoolsflowuidata.entity.AiChatMessageEntity;
+import io.jmix.aitoolsflowuidata.entity.AiConversationEntity;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.Sort;
 import io.jmix.core.UnconstrainedDataManager;
 import io.jmix.core.common.util.Preconditions;
-import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.core.security.AccessDeniedException;
@@ -41,7 +40,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 /**
- * Default {@link UserAiMessageService} backed by persisted {@link ChatMessage} entities,
+ * Default {@link UserAiMessageService} backed by persisted {@link AiChatMessageEntity} entities,
  * mapped to and from the {@link UserAiMessage} model.
  */
 public class UserAiMessageDataService implements UserAiMessageService {
@@ -59,18 +58,18 @@ public class UserAiMessageDataService implements UserAiMessageService {
         Preconditions.checkNotNullArgument(type);
         Preconditions.checkNotEmptyString(message);
 
-        AiConversation aiConversation = loadAiConversation(conversation.getId());
+        AiConversationEntity aiConversation = loadAiConversation(conversation.getId());
         if (aiConversation == null) {
             throw new IllegalArgumentException("Conversation not found: " + conversation.getId());
         }
         checkOwner(aiConversation);
 
-        ChatMessage chatMessage = dataManager.create(ChatMessage.class);
+        AiChatMessageEntity chatMessage = dataManager.create(AiChatMessageEntity.class);
         chatMessage.setConversation(aiConversation);
-        chatMessage.setType(messageConverter.convertChatMessageType(type));
+        chatMessage.setType(messageConverter.convertToEntityType(type));
         chatMessage.setContent(message);
 
-        return messageConverter.convertToUserAiMessage(dataManager.save(chatMessage));
+        return messageConverter.convertToModel(dataManager.save(chatMessage));
     }
 
     @Nullable
@@ -78,13 +77,14 @@ public class UserAiMessageDataService implements UserAiMessageService {
     public UserAiMessage loadLatestMessage(UserAiConversation conversation, @Nullable UserAiMessageType type) {
         Preconditions.checkNotNullArgument(conversation);
 
-        PropertyCondition conversationCondition = PropertyCondition.equal("conversation.id", conversation.getId());
-        Condition condition = type == null
-                ? conversationCondition
-                : LogicalCondition.and(conversationCondition,
-                        PropertyCondition.equal("type", messageConverter.convertChatMessageType(type)));
+        LogicalCondition condition = LogicalCondition.and(
+                PropertyCondition.equal("conversation.id", conversation.getId()),
+                PropertyCondition.equal("conversation.username", currentUsername()));
+        if (type != null) {
+            condition.add(PropertyCondition.equal("type", messageConverter.convertToEntityType(type)));
+        }
 
-        ChatMessage chatMessage = dataManager.load(ChatMessage.class)
+        AiChatMessageEntity chatMessage = dataManager.load(AiChatMessageEntity.class)
                 .condition(condition)
                 .sort(Sort.by(Sort.Order.desc("createdDate"), Sort.Order.desc("id")))
                 .fetchPlan(FetchPlan.BASE)
@@ -92,23 +92,25 @@ public class UserAiMessageDataService implements UserAiMessageService {
                 .optional()
                 .orElse(null);
 
-        return chatMessage != null ? messageConverter.convertToUserAiMessage(chatMessage) : null;
+        return chatMessage != null ? messageConverter.convertToModel(chatMessage) : null;
     }
 
     @Override
     public Collection<UserAiMessage> loadMessages(UserAiConversation conversation) {
         Preconditions.checkNotNullArgument(conversation);
-        List<ChatMessage> messages = dataManager.load(ChatMessage.class)
-                .condition(PropertyCondition.equal("conversation.id", conversation.getId()))
+        List<AiChatMessageEntity> messages = dataManager.load(AiChatMessageEntity.class)
+                .condition(LogicalCondition.and(
+                        PropertyCondition.equal("conversation.id", conversation.getId()),
+                        PropertyCondition.equal("conversation.username", currentUsername())))
                 .sort(Sort.by(Sort.Order.asc("createdDate"), Sort.Order.asc("id")))
                 .fetchPlan(FetchPlan.BASE)
                 .list();
-        return messageConverter.convertToUserAiMessages(messages);
+        return messageConverter.convertToModel(messages);
     }
 
-    protected void checkOwner(AiConversation conversation) {
+    protected void checkOwner(AiConversationEntity conversation) {
         if (!Objects.equals(conversation.getUsername(), currentUsername())) {
-            throw new AccessDeniedException("entity", "aitls_AiConversation");
+            throw new AccessDeniedException("entity", "aitls_AiConversationEntity");
         }
     }
 
@@ -117,11 +119,11 @@ public class UserAiMessageDataService implements UserAiMessageService {
     }
 
     @Nullable
-    protected AiConversation loadAiConversation(@Nullable UUID conversationId) {
+    protected AiConversationEntity loadAiConversation(@Nullable UUID conversationId) {
         if (conversationId == null) {
             return null;
         }
-        return dataManager.load(AiConversation.class)
+        return dataManager.load(AiConversationEntity.class)
                 .id(conversationId)
                 .fetchPlan(FetchPlan.BASE)
                 .optional()

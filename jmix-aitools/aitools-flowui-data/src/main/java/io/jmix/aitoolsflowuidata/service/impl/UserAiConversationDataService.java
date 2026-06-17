@@ -19,7 +19,7 @@ package io.jmix.aitoolsflowuidata.service.impl;
 import io.jmix.aitoolsflowui.model.UserAiConversation;
 import io.jmix.aitoolsflowui.service.UserAiConversationService;
 import io.jmix.aitoolsflowuidata.converter.ConversationConverter;
-import io.jmix.aitoolsflowuidata.entity.AiConversation;
+import io.jmix.aitoolsflowuidata.entity.AiConversationEntity;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.Messages;
 import io.jmix.core.Sort;
@@ -36,7 +36,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 /**
- * Default {@link UserAiConversationService} backed by persisted {@link AiConversation} entities,
+ * Default {@link UserAiConversationService} backed by persisted {@link AiConversationEntity} entities,
  * mapped to and from the persistence-agnostic {@link UserAiConversation} model.
  * <p>
  * The underlying entities are an internal detail, accessed through {@link UnconstrainedDataManager}
@@ -58,37 +58,37 @@ public class UserAiConversationDataService implements UserAiConversationService 
     @Nullable
     @Override
     public UserAiConversation loadConversation(UUID conversationId) {
-        AiConversation aiConversation = loadAiConversation(conversationId);
+        AiConversationEntity aiConversation = loadAiConversation(conversationId);
         if (aiConversation == null || !isOwner(aiConversation)) {
             return null;
         }
-        return conversationConverter.convertToUserAiConversation(aiConversation);
+        return conversationConverter.convertToModel(aiConversation);
     }
 
     @Override
     public UserAiConversation create() {
-        AiConversation conversation = dataManager.create(AiConversation.class);
+        AiConversationEntity conversation = dataManager.create(AiConversationEntity.class);
         conversation.setTitle(messages.getMessage("aiConversation.defaultTitle"));
         conversation.setUsername(currentUsername());
-        return conversationConverter.convertToUserAiConversation(dataManager.save(conversation));
+        return conversationConverter.convertToModel(dataManager.save(conversation));
     }
 
     @Override
     public UserAiConversation save(UserAiConversation conversation) {
-        AiConversation aiConversation = loadAiConversation(conversation.getId());
+        AiConversationEntity aiConversation = loadAiConversation(conversation.getId());
         if (aiConversation == null) {
-            aiConversation = conversationConverter.convertToAiConversation(conversation);
+            aiConversation = conversationConverter.convertToEntity(conversation);
             aiConversation.setUsername(currentUsername());
         } else {
             checkOwner(aiConversation);
             aiConversation.setTitle(conversation.getTitle());
         }
-        return conversationConverter.convertToUserAiConversation(dataManager.save(aiConversation));
+        return conversationConverter.convertToModel(dataManager.save(aiConversation));
     }
 
     @Override
     public void remove(UserAiConversation conversation) {
-        AiConversation aiConversation = loadAiConversation(conversation.getId());
+        AiConversationEntity aiConversation = loadAiConversation(conversation.getId());
         if (aiConversation == null) {
             return;
         }
@@ -98,7 +98,7 @@ public class UserAiConversationDataService implements UserAiConversationService 
 
     @Override
     public List<UserAiConversation> loadConversations() {
-        List<AiConversation> conversations = dataManager.load(AiConversation.class)
+        List<AiConversationEntity> conversations = dataManager.load(AiConversationEntity.class)
                 .condition(PropertyCondition.equal("username", currentUsername()))
                 .sort(Sort.by(Sort.Order.desc("createdDate")))
                 .fetchPlan(FetchPlan.BASE)
@@ -106,21 +106,21 @@ public class UserAiConversationDataService implements UserAiConversationService 
         return convert(conversations);
     }
 
-    protected List<UserAiConversation> convert(List<AiConversation> conversations) {
+    protected List<UserAiConversation> convert(List<AiConversationEntity> conversations) {
         List<UserAiConversation> result = new ArrayList<>(conversations.size());
-        for (AiConversation conversation : conversations) {
-            result.add(conversationConverter.convertToUserAiConversation(conversation));
+        for (AiConversationEntity conversation : conversations) {
+            result.add(conversationConverter.convertToModel(conversation));
         }
         return result;
     }
 
-    protected boolean isOwner(AiConversation conversation) {
+    protected boolean isOwner(AiConversationEntity conversation) {
         return Objects.equals(conversation.getUsername(), currentUsername());
     }
 
-    protected void checkOwner(AiConversation conversation) {
+    protected void checkOwner(AiConversationEntity conversation) {
         if (!isOwner(conversation)) {
-            throw new AccessDeniedException("entity", "aitls_AiConversation");
+            throw new AccessDeniedException("entity", "aitls_AiConversationEntity");
         }
     }
 
@@ -129,11 +129,11 @@ public class UserAiConversationDataService implements UserAiConversationService 
     }
 
     @Nullable
-    protected AiConversation loadAiConversation(@Nullable UUID conversationId) {
+    protected AiConversationEntity loadAiConversation(@Nullable UUID conversationId) {
         if (conversationId == null) {
             return null;
         }
-        return dataManager.load(AiConversation.class)
+        return dataManager.load(AiConversationEntity.class)
                 .id(conversationId)
                 .fetchPlan(FetchPlan.BASE)
                 .optional()

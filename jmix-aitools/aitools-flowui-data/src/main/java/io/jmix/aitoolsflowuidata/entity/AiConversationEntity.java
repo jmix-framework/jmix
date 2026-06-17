@@ -3,6 +3,7 @@ package io.jmix.aitoolsflowuidata.entity;
 import io.jmix.core.Messages;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.*;
+import io.jmix.eclipselink.lazyloading.NotInstantiatedList;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import org.jspecify.annotations.Nullable;
@@ -10,14 +11,13 @@ import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @JmixEntity
-@Table(name = "AITLS_AI_CONVERSATION")
-@Entity(name = "aitls_AiConversation")
-public class AiConversation {
+@Table(name = "AITLS_AI_CONVERSATION_ENTITY")
+@Entity(name = "aitls_AiConversationEntity")
+public class AiConversationEntity {
 
     @Id
     @Column(name = "ID", nullable = false)
@@ -35,7 +35,7 @@ public class AiConversation {
     @Composition
     @OneToMany(mappedBy = "conversation", cascade = CascadeType.REMOVE)
     @OrderBy("createdDate ASC")
-    private List<ChatMessage> messages = new ArrayList<>();
+    private List<AiChatMessageEntity> messages = new NotInstantiatedList<>();
 
     @CreatedBy
     @Column(name = "CREATED_BY")
@@ -79,18 +79,18 @@ public class AiConversation {
         this.createdBy = createdBy;
     }
 
-    public List<ChatMessage> getMessages() {
+    public List<AiChatMessageEntity> getMessages() {
         return messages;
     }
 
-    public void setMessages(List<ChatMessage> messages) {
+    public void setMessages(List<AiChatMessageEntity> messages) {
         this.messages = messages;
     }
 
     @InstanceName
     @DependsOnProperties({"title", "id"})
     public String getInstanceName(Messages messages) {
-        return title != null ? title : messages.getMessage(getClass(), "AiConversation.instanceName.conversation") + getId();
+        return title != null ? title : messages.getMessage(getClass(), "AiConversationEntity.instanceName.conversation") + getId();
     }
 
     public String getTitle() {

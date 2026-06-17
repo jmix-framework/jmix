@@ -18,8 +18,8 @@ package io.jmix.aitoolsflowuidata.converter;
 
 import io.jmix.aitoolsflowui.model.UserAiMessage;
 import io.jmix.aitoolsflowui.model.UserAiMessageType;
-import io.jmix.aitoolsflowuidata.entity.ChatMessage;
-import io.jmix.aitoolsflowuidata.entity.ChatMessageType;
+import io.jmix.aitoolsflowuidata.entity.AiChatMessageEntity;
+import io.jmix.aitoolsflowuidata.entity.AiChatMessageType;
 import io.jmix.core.Metadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -34,26 +34,26 @@ public class MessageConverter {
     @Autowired
     protected Metadata metadata;
 
-    public UserAiMessage convertToUserAiMessage(ChatMessage chatMessage) {
-        UserAiMessage userAiMessage = metadata.create(UserAiMessage.class);
-        userAiMessage.setId(chatMessage.getId());
-        userAiMessage.setContent(chatMessage.getContent());
-        userAiMessage.setType(convertUserAiMessageType(chatMessage.getType()));
-        userAiMessage.setCreatedBy(chatMessage.getCreatedBy());
-        userAiMessage.setCreatedDate(chatMessage.getCreatedDate());
-        return userAiMessage;
+    public UserAiMessage convertToModel(AiChatMessageEntity entity) {
+        UserAiMessage model = metadata.create(UserAiMessage.class);
+        model.setId(entity.getId());
+        model.setContent(entity.getContent());
+        model.setType(convertToModelType(entity.getType()));
+        model.setCreatedBy(entity.getCreatedBy());
+        model.setCreatedDate(entity.getCreatedDate());
+        return model;
     }
 
-    public Collection<UserAiMessage> convertToUserAiMessages(Collection<ChatMessage> chatMessages) {
-        List<UserAiMessage> userAiMessages = new ArrayList<>(chatMessages.size());
-        for (ChatMessage chatMessage : chatMessages) {
-            userAiMessages.add(convertToUserAiMessage(chatMessage));
+    public Collection<UserAiMessage> convertToModel(Collection<AiChatMessageEntity> entities) {
+        List<UserAiMessage> models = new ArrayList<>(entities.size());
+        for (AiChatMessageEntity chatMessage : entities) {
+            models.add(convertToModel(chatMessage));
         }
-        return userAiMessages;
+        return models;
     }
 
-    public UserAiMessageType convertUserAiMessageType(ChatMessageType chatMessageType) {
-        return switch (chatMessageType) {
+    public UserAiMessageType convertToModelType(AiChatMessageType entityType) {
+        return switch (entityType) {
             case USER -> UserAiMessageType.USER;
             case ASSISTANT -> UserAiMessageType.ASSISTANT;
             case TOOL -> UserAiMessageType.TOOL;
@@ -61,12 +61,12 @@ public class MessageConverter {
         };
     }
 
-    public ChatMessageType convertChatMessageType(UserAiMessageType userAiMessageType) {
-        return switch (userAiMessageType) {
-            case USER -> ChatMessageType.USER;
-            case ASSISTANT -> ChatMessageType.ASSISTANT;
-            case TOOL -> ChatMessageType.TOOL;
-            default -> ChatMessageType.SYSTEM;
+    public AiChatMessageType convertToEntityType(UserAiMessageType modelType) {
+        return switch (modelType) {
+            case USER -> AiChatMessageType.USER;
+            case ASSISTANT -> AiChatMessageType.ASSISTANT;
+            case TOOL -> AiChatMessageType.TOOL;
+            default -> AiChatMessageType.SYSTEM;
         };
     }
 }

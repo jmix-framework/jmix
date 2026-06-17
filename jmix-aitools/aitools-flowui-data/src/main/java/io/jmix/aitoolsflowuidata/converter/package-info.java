@@ -15,8 +15,8 @@
  */
 
 @NullMarked
-@Experimental
+@Internal
 package io.jmix.aitoolsflowuidata.converter;
 
-import io.jmix.core.annotation.Experimental;
+import io.jmix.core.annotation.Internal;
 import org.jspecify.annotations.NullMarked;

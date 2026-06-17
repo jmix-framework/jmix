@@ -20,7 +20,7 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
     <changeSet id="1" author="aitls">
-        <createTable tableName="AITLS_AI_CONVERSATION">
+        <createTable tableName="AITLS_AI_CONVERSATION_ENTITY">
             <column name="ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
@@ -34,14 +34,14 @@
             <column name="CREATED_DATE" type="datetime"/>
         </createTable>
 
-        <createTable tableName="AITLS_CHAT_MESSAGE">
+        <createTable tableName="AITLS_AI_CHAT_MESSAGE_ENTITY">
             <column name="ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="CONVERSATION_ID" type="${uuid.type}">
                 <constraints nullable="false"
-                             foreignKeyName="FK_AITLS_CHAT_MSG_CONV"
-                             references="AITLS_AI_CONVERSATION(ID)"/>
+                             foreignKeyName="FK_AITLS_AI_CHAT_MSG_ENT_CONV"
+                             references="AITLS_AI_CONVERSATION_ENTITY(ID)"/>
             </column>
             <column name="CONTENT" type="clob"/>
             <column name="TYPE_" type="varchar(255)">
@@ -51,11 +51,11 @@
             <column name="CREATED_DATE" type="datetime"/>
         </createTable>
 
-        <createIndex tableName="AITLS_CHAT_MESSAGE" indexName="IDX_AITLS_CHAT_MESSAGE_CONV">
+        <createIndex tableName="AITLS_AI_CHAT_MESSAGE_ENTITY" indexName="IDX_AITLS_AI_CHAT_MSG_ENT_CONV">
             <column name="CONVERSATION_ID"/>
         </createIndex>
 
-        <createIndex tableName="AITLS_CHAT_MESSAGE" indexName="IDX_AITLS_CHAT_MESSAGE">
+        <createIndex tableName="AITLS_AI_CHAT_MESSAGE_ENTITY" indexName="IDX_AITLS_AI_CHAT_MSG_ENT">
             <column name="CONVERSATION_ID"/>
             <column name="CREATED_DATE"/>
         </createIndex>

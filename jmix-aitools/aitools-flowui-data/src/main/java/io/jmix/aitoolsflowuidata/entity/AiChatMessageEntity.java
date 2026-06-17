@@ -15,12 +15,12 @@ import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @JmixEntity
-@Table(name = "AITLS_CHAT_MESSAGE", indexes = {
-        @Index(name = "IDX_AITLS_CHAT_MESSAGE_CONV", columnList = "CONVERSATION_ID"),
-        @Index(name = "IDX_AITLS_CHAT_MESSAGE", columnList = "CONVERSATION_ID, CREATED_DATE")
+@Table(name = "AITLS_AI_CHAT_MESSAGE_ENTITY", indexes = {
+        @Index(name = "IDX_AITLS_AI_CHAT_MSG_ENT_CONV", columnList = "CONVERSATION_ID"),
+        @Index(name = "IDX_AITLS_AI_CHAT_MSG_ENT", columnList = "CONVERSATION_ID, CREATED_DATE")
 })
-@Entity(name = "aitls_ChatMessage")
-public class ChatMessage {
+@Entity(name = "aitls_AiChatMessageEntity")
+public class AiChatMessageEntity {
 
     @Id
     @Column(name = "ID")
@@ -31,7 +31,7 @@ public class ChatMessage {
     @JoinColumn(name = "CONVERSATION_ID", nullable = false)
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    private AiConversation conversation;
+    private AiConversationEntity conversation;
 
     @InstanceName
     @Column(name = "CONTENT")
@@ -80,11 +80,11 @@ public class ChatMessage {
         this.type = type;
     }
 
-    public ChatMessageType getType() {
-        return type == null ? null : ChatMessageType.fromId(type);
+    public AiChatMessageType getType() {
+        return type == null ? null : AiChatMessageType.fromId(type);
     }
 
-    public void setType(ChatMessageType type) {
+    public void setType(AiChatMessageType type) {
         this.type = type == null ? null : type.getId();
     }
 
@@ -96,11 +96,11 @@ public class ChatMessage {
         this.content = content;
     }
 
-    public AiConversation getConversation() {
+    public AiConversationEntity getConversation() {
         return conversation;
     }
 
-    public void setConversation(AiConversation conversation) {
+    public void setConversation(AiConversationEntity conversation) {
         this.conversation = conversation;
     }
 }

@@ -17,7 +17,7 @@
 package io.jmix.aitoolsflowuidata.converter;
 
 import io.jmix.aitoolsflowui.model.UserAiConversation;
-import io.jmix.aitoolsflowuidata.entity.AiConversation;
+import io.jmix.aitoolsflowuidata.entity.AiConversationEntity;
 import io.jmix.core.Metadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -28,7 +28,7 @@ public class ConversationConverter {
     @Autowired
     protected Metadata metadata;
 
-    public UserAiConversation convertToUserAiConversation(AiConversation conversation) {
+    public UserAiConversation convertToModel(AiConversationEntity conversation) {
         UserAiConversation userAiConversation = metadata.create(UserAiConversation.class);
         userAiConversation.setId(conversation.getId());
         userAiConversation.setTitle(conversation.getTitle());
@@ -37,8 +37,8 @@ public class ConversationConverter {
         return userAiConversation;
     }
 
-    public AiConversation convertToAiConversation(UserAiConversation userAiConversation) {
-        AiConversation aiConversation = metadata.create(AiConversation.class);
+    public AiConversationEntity convertToEntity(UserAiConversation userAiConversation) {
+        AiConversationEntity aiConversation = metadata.create(AiConversationEntity.class);
         aiConversation.setId(userAiConversation.getId());
         aiConversation.setTitle(userAiConversation.getTitle());
         aiConversation.setUsername(userAiConversation.getUsername());

@@ -35,7 +35,7 @@ public @interface DetailViewTemplate {
     /**
      * Resource path to the Freemarker XML descriptor template.
      */
-    String path() default "io/jmix/flowui/view/template/detail-template.ftl";
+    String path() default "io/jmix/flowui/view/template/detail-view.ftl";
 
     /**
      * JSON object with additional template parameters.

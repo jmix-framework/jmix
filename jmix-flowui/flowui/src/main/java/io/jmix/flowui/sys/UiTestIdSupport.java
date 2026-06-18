@@ -23,6 +23,7 @@ import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.html.ListItem;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.html.UnorderedList;
+import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.horizontalmenu.HorizontalMenu;
 import io.jmix.flowui.component.main.JmixListMenu;
@@ -43,12 +44,15 @@ public class UiTestIdSupport {
 
     private static final Logger log = LoggerFactory.getLogger(UiTestIdSupport.class);
 
-    public static final String UI_TEST_ID = "j-test-id";
+    public static final String UI_TEST_ID = "data-testid";
+    protected static final String J_TEST_ID = "j-test-id";
 
     protected UiTestIdManager uiTestIdManager;
+    protected UiProperties uiProperties;
 
-    public UiTestIdSupport(UiTestIdManager uiTestIdManager) {
+    public UiTestIdSupport(UiTestIdManager uiTestIdManager, UiProperties uiProperties) {
         this.uiTestIdManager = uiTestIdManager;
+        this.uiProperties = uiProperties;
     }
 
     /**
@@ -148,13 +152,17 @@ public class UiTestIdSupport {
      * Typically it equals to {@link Component#getId()}, but in certain cases it can be calculated from
      * the component state.
      * <p>
-     * If UI test ID already exist, nothing will happen.
+     * If the native {@link #UI_TEST_ID} attribute is already assigned, it is kept as is and only mirrored
+     * to the legacy {@link #J_TEST_ID} attribute when {@link UiProperties#isUseLegacyTestId() legacy test IDs}
+     * are enabled.
      *
      * @param component component for calculating and setting UI test ID
      */
     protected void setTestId(Component component) {
-        String testId = component.getElement().getAttribute(UI_TEST_ID);
+        String testId = component.getTestId();
         if (testId != null) {
+            // The native test id is already assigned: keep it and only mirror it to the legacy attribute.
+            setLegacyTestId(component, testId);
             return;
         }
 
@@ -190,9 +198,23 @@ public class UiTestIdSupport {
      */
     protected void setTestId(Component component, @Nullable String testId) {
         if (testId != null) {
-            component.getElement().setAttribute(UI_TEST_ID, testId);
+            component.setTestId(testId);
+            setLegacyTestId(component, testId);
         } else {
             log.info("Calculated test id for {} component is null and will be skipped", component.getClass().getName());
+        }
+    }
+
+    /**
+     * Mirrors the passed test ID to the legacy {@link #J_TEST_ID} attribute if
+     * {@link UiProperties#isUseLegacyTestId() legacy test IDs} are enabled.
+     *
+     * @param component component to set the legacy test ID attribute for
+     * @param testId    test ID to set
+     */
+    protected void setLegacyTestId(Component component, String testId) {
+        if (uiProperties.isUseLegacyTestId()) {
+            component.getElement().setAttribute(J_TEST_ID, testId);
         }
     }
 }

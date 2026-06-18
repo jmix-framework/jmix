@@ -104,6 +104,13 @@ public class UiProperties {
     boolean exceptionDialogModal;
 
     /**
+     * When {@code true}, additionally sets the legacy {@code j-test-id} attribute alongside
+     * the Vaadin {@code data-testid} attribute for backward compatibility with existing UI tests.
+     * Set to {@code false} once all tests have been migrated to use {@code data-testid}.
+     */
+    boolean useLegacyTestId;
+
+    /**
      * Whether to enable UI observation for view lifecycle events and actions execution.
      * <p>
      * When observation is enabled, custom spans are created using the {@link io.micrometer.observation.Observation}.
@@ -147,7 +154,8 @@ public class UiProperties {
                         @DefaultValue("false") boolean websocketRequestSecurityContextProvided,
                         @DefaultValue("true") boolean exceptionDialogModal,
                         @DefaultValue("false") boolean uiObservationEnabled,
-                        @DefaultValue("false") boolean legacyMonitoringEnabled
+                        @DefaultValue("false") boolean legacyMonitoringEnabled,
+                        @DefaultValue("false") boolean useLegacyTestId
     ) {
         this.uiTestMode = uiTestMode;
         this.loginViewId = loginViewId;
@@ -166,6 +174,7 @@ public class UiProperties {
         this.exceptionDialogModal = exceptionDialogModal;
         this.uiObservationEnabled = uiObservationEnabled;
         this.legacyMonitoringEnabled = legacyMonitoringEnabled;
+        this.useLegacyTestId = useLegacyTestId;
     }
 
     /**
@@ -283,5 +292,12 @@ public class UiProperties {
     @Deprecated(since = "3.0", forRemoval = true)
     public boolean isLegacyMonitoringEnabled() {
         return legacyMonitoringEnabled;
+    }
+
+    /**
+     * @see #useLegacyTestId
+     */
+    public boolean isUseLegacyTestId() {
+        return useLegacyTestId;
     }
 }

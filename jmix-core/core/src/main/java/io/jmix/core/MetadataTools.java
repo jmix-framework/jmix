@@ -82,6 +82,7 @@ public class MetadataTools {
     public static final String LENGTH_ANN_NAME = "jmix.length";
     public static final String LOB_ANN_NAME = "jmix.lob";
     public static final String INCLUDE_IN_FETCH_PLAN_ANN_NAME = "jmix.includeInFetchPlan";
+    public static final String SORTABLE_IN_STORE_ANN_NAME = "jmix.sortableInStore";
     public static final String CASCADE_TYPES_ANN_NAME = "jmix.cascadeTypes";
     public static final String CASCADE_PROPERTIES_ANN_NAME = "jmix.cascadeProperties";
     public static final String EMBEDDED_PROPERTIES_ANN_NAME = "jmix.embeddedProperties";

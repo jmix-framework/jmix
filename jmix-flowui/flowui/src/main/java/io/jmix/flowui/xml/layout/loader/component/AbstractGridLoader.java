@@ -37,6 +37,7 @@ import io.jmix.core.accesscontext.InMemoryCrudEntityContext;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.impl.FetchPlanRepositoryImpl;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.MetadataObject;
 import io.jmix.flowui.accesscontext.UiEntityContext;
@@ -915,9 +916,13 @@ public abstract class AbstractGridLoader<T extends Grid & EnhancedDataGrid & Has
         if (metaPropertyPath == null) {
             return false;
         }
+        MetaProperty metaProperty = metaPropertyPath.getMetaProperty();
+        if (Boolean.TRUE.equals(metaProperty.getAnnotations().get(MetadataTools.SORTABLE_IN_STORE_ANN_NAME))) {
+            return false;
+        }
         MetaClass metaClass = getMetaDataTools().getPropertyEnclosingMetaClass(metaPropertyPath);
         return getMetaDataTools().isJpaEntity(metaClass)
-                && !getMetaDataTools().isJpa(metaPropertyPath.getMetaProperty());
+                && !getMetaDataTools().isJpa(metaProperty);
     }
 
     protected void loadActions() {

@@ -17,14 +17,24 @@
 package io.jmix.securityflowui.security;
 
 import com.google.common.base.Strings;
+import com.vaadin.flow.spring.security.VaadinDefaultRequestCache;
 import com.vaadin.flow.spring.security.VaadinSecurityConfigurer;
 import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.view.View;
+import io.jmix.flowui.view.ViewRegistry;
+import io.jmix.security.configurer.JmixRequestCacheRequestMatcher;
 import io.jmix.security.util.JmixHttpSecurityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
+import org.springframework.security.web.savedrequest.RequestCache;
+import org.springframework.security.web.util.matcher.RequestMatcher;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Provides default Vaadin and Jmix FlowUI security to the project.
@@ -35,6 +45,17 @@ public class FlowuiVaadinWebSecurity extends AbstractFlowuiWebSecurity {
 
     @Autowired
     protected UiProperties uiProperties;
+    @Autowired
+    protected ViewRegistry viewRegistry;
+
+    protected List<JmixRequestCacheRequestMatcher> requestCacheRequestMatchers = Collections.emptyList();
+
+    @Autowired
+    public void setVaadinDefaultRequestCache(VaadinDefaultRequestCache vaadinDefaultRequestCache,
+                                             ObjectProvider<List<JmixRequestCacheRequestMatcher>> requestCacheRequestMatchersProvider) {
+        this.requestCacheRequestMatchers = requestCacheRequestMatchersProvider.getIfAvailable(Collections::emptyList);
+        vaadinDefaultRequestCache.setDelegateRequestCache(getDelegateRequestCache());
+    }
 
     @Override
     protected void configureVaadinSpecifics(HttpSecurity http) {
@@ -67,5 +88,15 @@ public class FlowuiVaadinWebSecurity extends AbstractFlowuiWebSecurity {
     protected String getLogoutSuccessUrl() {
         String contextPath = servletContext.getContextPath();
         return contextPath.startsWith("/") ? contextPath : "/" + contextPath;
+    }
+
+    protected RequestCache getDelegateRequestCache() {
+        HttpSessionRequestCache cache = new HttpSessionRequestCache();
+        cache.setRequestMatcher(createViewPathRequestMatcher(viewRegistry));
+        return cache;
+    }
+
+    protected RequestMatcher createViewPathRequestMatcher(ViewRegistry viewRegistry) {
+        return new JmixViewPathRequestMatcher(viewRegistry, requestCacheRequestMatchers);
     }
 }

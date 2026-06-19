@@ -18,6 +18,7 @@ package io.jmix.aitoolsflowuidata.converter;
 
 import io.jmix.aitoolsflowui.model.AiChatMessage;
 import io.jmix.aitoolsflowui.model.AiChatMessageType;
+import io.jmix.aitoolsflowui.model.AiConversation;
 import io.jmix.aitoolsflowuidata.entity.AiChatMessageEntity;
 import io.jmix.aitoolsflowuidata.entity.AiChatMessageEntityType;
 import io.jmix.core.Metadata;
@@ -29,25 +30,27 @@ import java.util.Collection;
 import java.util.List;
 
 @Component("aitls_AiChatMessageConverter")
-public class MessageConverter {
+public class AiChatMessageConverter {
 
     @Autowired
     protected Metadata metadata;
 
-    public AiChatMessage convertToModel(AiChatMessageEntity entity) {
+    public AiChatMessage convertToModel(AiChatMessageEntity entity, AiConversation conversation) {
         AiChatMessage model = metadata.create(AiChatMessage.class);
         model.setId(entity.getId());
         model.setContent(entity.getContent());
         model.setType(convertToModelType(entity.getType()));
         model.setCreatedBy(entity.getCreatedBy());
         model.setCreatedDate(entity.getCreatedDate());
+        model.setConversation(conversation);
         return model;
     }
 
-    public Collection<AiChatMessage> convertToModel(Collection<AiChatMessageEntity> entities) {
+    public Collection<AiChatMessage> convertToModel(Collection<AiChatMessageEntity> entities,
+                                                    AiConversation conversation) {
         List<AiChatMessage> models = new ArrayList<>(entities.size());
         for (AiChatMessageEntity chatMessage : entities) {
-            models.add(convertToModel(chatMessage));
+            models.add(convertToModel(chatMessage, conversation));
         }
         return models;
     }
@@ -57,7 +60,7 @@ public class MessageConverter {
             case USER -> AiChatMessageType.USER;
             case ASSISTANT -> AiChatMessageType.ASSISTANT;
             case TOOL -> AiChatMessageType.TOOL;
-            default -> AiChatMessageType.SYSTEM;
+            case SYSTEM -> AiChatMessageType.SYSTEM;
         };
     }
 
@@ -66,7 +69,7 @@ public class MessageConverter {
             case USER -> AiChatMessageEntityType.USER;
             case ASSISTANT -> AiChatMessageEntityType.ASSISTANT;
             case TOOL -> AiChatMessageEntityType.TOOL;
-            default -> AiChatMessageEntityType.SYSTEM;
+            case SYSTEM -> AiChatMessageEntityType.SYSTEM;
         };
     }
 }

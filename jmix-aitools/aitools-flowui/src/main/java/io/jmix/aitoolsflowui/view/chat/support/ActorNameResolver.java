@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.aitoolsflowui.service;
+package io.jmix.aitoolsflowui.view.chat.support;
 
 import io.jmix.aitoolsflowui.model.AiChatMessage;
 import io.jmix.core.MetadataTools;

@@ -81,7 +81,9 @@ public class JpqlExecutionResult {
     /**
      * Creates a non-executed result for a query that failed validation.
      *
-     * @param repaired whether a repair attempt was made before validation failed
+     * @param generatedJpqlResult generated (and possibly repaired) query draft
+     * @param validationResult    validation result of the processed query
+     * @param repaired            whether a repair attempt was made before validation failed
      * @return non-executed result describing the validation failure
      */
     public static JpqlExecutionResult failed(GeneratedJpqlResult generatedJpqlResult,
@@ -95,9 +97,11 @@ public class JpqlExecutionResult {
     /**
      * Creates a non-executed result for a query that passed validation but failed at execution time.
      *
-     * @param maxResults     effective maximum number of rows that was applied
-     * @param repaired       whether the query was repaired before execution
-     * @param executionError error message from the failed execution, or {@code null} if unavailable
+     * @param generatedJpqlResult generated (and possibly repaired) query draft
+     * @param validationResult    validation result of the processed query
+     * @param maxResults          effective maximum number of rows that was applied
+     * @param repaired            whether the query was repaired before execution
+     * @param executionError      error message from the failed execution, or {@code null} if unavailable
      * @return non-executed result describing the execution failure
      */
     public static JpqlExecutionResult failed(GeneratedJpqlResult generatedJpqlResult,

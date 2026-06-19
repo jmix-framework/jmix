@@ -22,9 +22,9 @@ import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.function.SerializableSupplier;
 import io.jmix.aitools.tool.AiToolStatusPublisher;
-import io.jmix.aitools.tool.AiUiStatusUpdate;
-import io.jmix.aitoolsflowui.model.TimelineItem;
-import io.jmix.aitoolsflowui.model.TimelineItemStatus;
+import io.jmix.aitools.tool.AiToolStatusUpdate;
+import io.jmix.aitoolsflowui.view.chat.timeline.TimelineItem;
+import io.jmix.aitoolsflowui.view.chat.timeline.TimelineItemStatus;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import org.jspecify.annotations.NullMarked;
@@ -40,8 +40,8 @@ import java.util.List;
  * indicator, the latest live status, and a history of prior steps delivered
  * by AI tools through {@link AiToolStatusPublisher}.
  * <p>
- * Each {@link AiUiStatusUpdate} carries a {@code message} and an optional
- * {@code resultSnippet}; {@link AiUiStatusUpdate#isCompleted()} is {@code true} when
+ * Each {@link AiToolStatusUpdate} carries a {@code message} and an optional
+ * {@code resultSnippet}; {@link AiToolStatusUpdate#isCompleted()} is {@code true} when
  * the snippet is non-blank. Completed past steps are prefixed with a
  * {@code "✓ "} check mark and their snippet is rendered next to the base
  * text; in-flight past steps render plain (no check, no snippet).
@@ -49,16 +49,16 @@ import java.util.List;
 public class TimelineAssistantThinkingMessageItem extends AbstractTimelineItem implements InitializingBean,
         ApplicationContextAware {
 
-    public static final String BASE_CN = "timeline-message-row-assistant";
+    protected static final String BASE_CN = "timeline-message-row-assistant";
 
-    public static final String THINKING_CN = "timeline-message-row-thinking";
-    public static final String THINKING_STATUS_CN = "timeline-thinking-status-base";
-    public static final String THINKING_STATUS_RESULT_CN = "timeline-thinking-status-result";
+    protected static final String THINKING_CN = "timeline-message-row-thinking";
+    protected static final String THINKING_STATUS_CN = "timeline-thinking-status-base";
+    protected static final String THINKING_STATUS_RESULT_CN = "timeline-thinking-status-result";
 
-    public static final String THINKING_TEXT_CN = "timeline-thinking-text";
-    public static final String THINKING_SHIMMER_CN = "timeline-thinking-shimmer";
-    public static final String THINKING_STATUS_LIST_CN = "timeline-thinking-status-list";
-    public static final String THINKING_STATUS_LIST_ITEM_CN = "timeline-thinking-status-item";
+    protected static final String THINKING_TEXT_CN = "timeline-thinking-text";
+    protected static final String THINKING_SHIMMER_CN = "timeline-thinking-shimmer";
+    protected static final String THINKING_STATUS_LIST_CN = "timeline-thinking-status-list";
+    protected static final String THINKING_STATUS_LIST_ITEM_CN = "timeline-thinking-status-item";
 
     protected ApplicationContext applicationContext;
     protected Metadata metadata;

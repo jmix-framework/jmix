@@ -34,9 +34,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
@@ -84,6 +85,9 @@ public class JpqlParameterConversionService {
 
     /**
      * Converts a single parameter's value to its declared Java type.
+     * <p>
+     * Collection values (used for {@code IN} clauses) are converted element by element to the
+     * declared type, so e.g. a list of UUID strings becomes a list of {@link UUID}s.
      *
      * @param parameter parameter whose value is converted
      * @return the converted value, or {@code null} if the parameter value is {@code null}
@@ -99,7 +103,29 @@ public class JpqlParameterConversionService {
         }
 
         Class<?> targetClass = resolveJavaClass(parameter.getType());
-        if (targetClass == null || targetClass.isInstance(value)) {
+        if (targetClass == null) {
+            return value;
+        }
+
+        if (value instanceof Collection<?> collection) {
+            return convertCollection(collection, targetClass);
+        }
+
+        return convertScalar(value, targetClass);
+    }
+
+    /**
+     * Converts a single scalar value to the target type, leaving it unchanged when it is already an
+     * instance of the target type or cannot be coerced.
+     *
+     * @param value       scalar value to convert
+     * @param targetClass type to convert the value to
+     * @return the converted value
+     * @throws IllegalArgumentException if the value cannot be parsed as the target type
+     */
+    @Nullable
+    protected Object convertScalar(Object value, Class<?> targetClass) {
+        if (targetClass.isInstance(value)) {
             return value;
         }
 
@@ -116,6 +142,22 @@ public class JpqlParameterConversionService {
         }
 
         return value;
+    }
+
+    /**
+     * Converts every element of a collection parameter to the target type, preserving order and
+     * {@code null} elements.
+     *
+     * @param values      collection values to convert (e.g. the operands of an {@code IN} clause)
+     * @param targetClass type to convert each element to
+     * @return a list of converted elements
+     */
+    protected List<Object> convertCollection(Collection<?> values, Class<?> targetClass) {
+        List<Object> converted = new ArrayList<>(values.size());
+        for (Object element : values) {
+            converted.add(element == null ? null : convertScalar(element, targetClass));
+        }
+        return converted;
     }
 
     @Nullable
@@ -172,7 +214,9 @@ public class JpqlParameterConversionService {
         Datatype<?> datatype = datatypeRegistry.find(targetClass);
         if (datatype != null) {
             try {
-                return datatype.parse(value, Locale.getDefault());
+                // Parse in the datatype's locale-independent standard format: LLM-produced values are
+                // locale-neutral (ISO-like), so the platform locale must not influence parsing.
+                return datatype.parse(value);
             } catch (ParseException e) {
                 throw new IllegalArgumentException("Unable to parse parameter value '" + value
                         + "' as " + targetClass.getSimpleName(), e);

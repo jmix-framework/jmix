@@ -20,7 +20,7 @@ import io.jmix.aitoolsflowui.model.AiConversation;
 import io.jmix.aitoolsflowui.model.AiChatMessage;
 import io.jmix.aitoolsflowui.model.AiChatMessageType;
 import io.jmix.aitoolsflowui.service.AiChatMessageService;
-import io.jmix.aitoolsflowuidata.converter.MessageConverter;
+import io.jmix.aitoolsflowuidata.converter.AiChatMessageConverter;
 import io.jmix.aitoolsflowuidata.entity.AiChatMessageEntity;
 import io.jmix.aitoolsflowuidata.entity.AiConversationEntity;
 import io.jmix.core.FetchPlan;
@@ -48,7 +48,7 @@ public class AiChatMessageDataService implements AiChatMessageService {
     @Autowired
     protected UnconstrainedDataManager dataManager;
     @Autowired
-    protected MessageConverter messageConverter;
+    protected AiChatMessageConverter messageConverter;
     @Autowired
     protected CurrentUserSubstitution currentUserSubstitution;
 
@@ -69,7 +69,7 @@ public class AiChatMessageDataService implements AiChatMessageService {
         chatMessage.setType(messageConverter.convertToEntityType(type));
         chatMessage.setContent(message);
 
-        return messageConverter.convertToModel(dataManager.save(chatMessage));
+        return messageConverter.convertToModel(dataManager.save(chatMessage), conversation);
     }
 
     @Nullable
@@ -92,7 +92,7 @@ public class AiChatMessageDataService implements AiChatMessageService {
                 .optional()
                 .orElse(null);
 
-        return chatMessage != null ? messageConverter.convertToModel(chatMessage) : null;
+        return chatMessage != null ? messageConverter.convertToModel(chatMessage, conversation) : null;
     }
 
     @Override
@@ -105,7 +105,7 @@ public class AiChatMessageDataService implements AiChatMessageService {
                 .sort(Sort.by(Sort.Order.asc("createdDate"), Sort.Order.asc("id")))
                 .fetchPlan(FetchPlan.BASE)
                 .list();
-        return messageConverter.convertToModel(messages);
+        return messageConverter.convertToModel(messages, conversation);
     }
 
     protected void checkOwner(AiConversationEntity conversation) {

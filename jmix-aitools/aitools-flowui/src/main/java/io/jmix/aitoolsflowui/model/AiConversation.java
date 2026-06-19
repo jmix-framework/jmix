@@ -22,9 +22,12 @@ import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import java.time.OffsetDateTime;
-import java.util.List;
 import java.util.UUID;
 
+/**
+ * An AI chat conversation: a single thread of messages between a user and the
+ * assistant.
+ */
 @JmixEntity
 public class AiConversation {
 
@@ -38,16 +41,6 @@ public class AiConversation {
     private String username;
 
     private OffsetDateTime createdDate;
-
-    private List<AiChatMessage> messages;
-
-    public List<AiChatMessage> getMessages() {
-        return messages;
-    }
-
-    public void setMessages(List<AiChatMessage> messages) {
-        this.messages = messages;
-    }
 
     public String getUsername() {
         return username;

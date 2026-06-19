@@ -16,7 +16,7 @@
 
 package introspection;
 
-import io.jmix.aitools.dataload.introspection.introspector.JpaDomainModelIntrospector;
+import io.jmix.aitools.dataload.introspection.JpaDomainModelIntrospector;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -54,8 +54,8 @@ class JpaDomainModelIntrospectorFilteringTest {
     @ExtendWith(SpringExtension.class)
     @ContextConfiguration(classes = AiToolsTestConfiguration.class)
     @TestPropertySource(properties = {
-            "aitools.dataload.include-entities=aitls_SystemLevelEntity,aitls_Order",
-            "aitools.dataload.exclude-entities=aitls_Order"
+            "jmix.aitools.dataload.include-entities=aitls_SystemLevelEntity,aitls_Order",
+            "jmix.aitools.dataload.exclude-entities=aitls_Order"
     })
     class ExplicitFiltering {
 

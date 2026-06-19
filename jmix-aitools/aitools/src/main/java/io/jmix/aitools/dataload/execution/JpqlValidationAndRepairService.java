@@ -126,7 +126,10 @@ public class JpqlValidationAndRepairService {
         /**
          * Creates a successful outcome.
          *
-         * @param repairResult repair details, or {@code null} if no repair was attempted
+         * @param request          original execution request
+         * @param generatedResult  final query draft after validation and any repair
+         * @param validationResult final validation result
+         * @param repairResult     repair details, or {@code null} if no repair was attempted
          * @return successful outcome
          */
         public static OperationResult success(JpqlExecutionRequest request,
@@ -139,7 +142,10 @@ public class JpqlValidationAndRepairService {
         /**
          * Creates a failed outcome.
          *
-         * @param repairResult repair details, or {@code null} if no repair was attempted
+         * @param request          original execution request
+         * @param generatedResult  final query draft after validation and any repair
+         * @param validationResult final validation result
+         * @param repairResult     repair details, or {@code null} if no repair was attempted
          * @return failed outcome
          */
         public static OperationResult failed(JpqlExecutionRequest request,

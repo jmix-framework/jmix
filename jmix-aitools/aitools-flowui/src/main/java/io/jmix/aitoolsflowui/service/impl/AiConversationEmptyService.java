@@ -25,6 +25,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * No-op implementation.
+ */
 public class AiConversationEmptyService implements AiConversationService {
 
     @Autowired

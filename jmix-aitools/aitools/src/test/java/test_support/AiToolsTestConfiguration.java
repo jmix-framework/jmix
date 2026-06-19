@@ -20,8 +20,8 @@ import io.jmix.aitools.dataload.introspection.AvailableEntityFilter;
 import io.jmix.aitools.dataload.introspection.impl.DefaultAvailableEntityFilter;
 import io.jmix.aitools.dataload.prompt.DataLoadChatSystemPromptProvider;
 import io.jmix.aitools.dataload.prompt.impl.DefaultDataLoadChatSystemPromptProvider;
-import io.jmix.aitools.service.prompt.AiChatSystemPromptProvider;
-import io.jmix.aitools.service.prompt.impl.DefaultAiChatSystemPromptProvider;
+import io.jmix.aitools.service.prompt.AiAssistantSystemPromptProvider;
+import io.jmix.aitools.service.prompt.impl.DefaultAiAssistantSystemPromptProvider;
 import io.jmix.aitools.tool.AiToolDescriptorProvider;
 import io.jmix.aitools.tool.impl.AiToolDescriptorProviderImpl;
 import io.jmix.core.CoreConfiguration;
@@ -30,7 +30,7 @@ import io.jmix.core.annotation.MessageSourceBasenames;
 import io.jmix.data.DataConfiguration;
 import io.jmix.testsupport.config.CommonCoreTestConfiguration;
 import io.jmix.aitools.AiToolsConfiguration;
-import io.jmix.aitools.dataload.introspection.introspector.JpaDomainModelIntrospector;
+import io.jmix.aitools.dataload.introspection.JpaDomainModelIntrospector;
 import io.jmix.testsupport.config.CoreSecurityTestConfiguration;
 import io.micrometer.observation.ObservationRegistry;
 import org.springframework.ai.chat.client.DefaultChatClientBuilder;
@@ -58,8 +58,8 @@ public class AiToolsTestConfiguration {
     }
 
     @Bean
-    AiChatSystemPromptProvider aiChatSystemPromptProvider() {
-        return new DefaultAiChatSystemPromptProvider();
+    AiAssistantSystemPromptProvider aiAssistantSystemPromptProvider() {
+        return new DefaultAiAssistantSystemPromptProvider();
     }
 
     @Bean

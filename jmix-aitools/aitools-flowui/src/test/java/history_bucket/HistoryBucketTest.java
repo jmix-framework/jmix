@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.aitoolsflowui.view.aiconversation.support;
+package history_bucket;
 
 import io.jmix.aitoolsflowui.view.chathub.component.HistoryBucket;
 import org.junit.jupiter.api.Test;

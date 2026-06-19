@@ -33,24 +33,34 @@ public interface AiToolRegistry {
 
     /**
      * Returns all resolved tools in registration order.
+     *
+     * @return all resolved tools
      */
     List<ResolvedAiTool> getAll();
 
     /**
      * Returns a resolved tool by its name (the value passed to {@code @Tool(name=...)} or derived
      * from the method name), or empty when no such tool is registered.
+     *
+     * @param name tool name to look up
+     * @return the matching tool, or empty when none is registered under that name
      */
     Optional<ResolvedAiTool> findByName(String name);
 
     /**
      * Returns all resolved tools produced by beans implementing the given marker sub-interface of
      * {@link JmixAiTool} (e.g. {@code DataLoadAiTool.class}).
+     *
+     * @param marker marker sub-interface to filter by
+     * @return resolved tools whose source bean implements the marker
      */
     List<ResolvedAiTool> findByMarker(Class<? extends JmixAiTool> marker);
 
     /**
      * Shortcut returning {@link ToolCallback}s of all resolved tools in the same order as
      * {@link #getAll()}.
+     *
+     * @return callbacks of all resolved tools
      */
     List<ToolCallback> getAllCallbacks();
 }

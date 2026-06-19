@@ -16,7 +16,7 @@
 
 package io.jmix.aitoolsflowui.service.impl;
 
-import io.jmix.aitools.tool.AiUiStatusUpdate;
+import io.jmix.aitools.tool.AiToolStatusUpdate;
 import io.jmix.aitoolsflowui.model.AiChatMessage;
 import io.jmix.aitoolsflowui.service.AiChatService;
 import io.jmix.aitoolsflowui.service.AiConversationService;
@@ -26,6 +26,9 @@ import org.slf4j.LoggerFactory;
 
 import java.util.function.Consumer;
 
+/**
+ * No-op implementation.
+ */
 public class AiChatEmptyService implements AiChatService {
 
     private static final Logger log = LoggerFactory.getLogger(AiChatEmptyService.class);
@@ -46,7 +49,7 @@ public class AiChatEmptyService implements AiChatService {
     }
 
     @Override
-    public String processMessage(AiChatMessage message, Consumer<AiUiStatusUpdate> statusCallback) {
+    public String processMessage(AiChatMessage message, Consumer<AiToolStatusUpdate> statusCallback) {
         return "";
     }
 

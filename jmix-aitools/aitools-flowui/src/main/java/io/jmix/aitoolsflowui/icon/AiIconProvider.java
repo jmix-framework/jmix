@@ -17,20 +17,10 @@
 package io.jmix.aitoolsflowui.icon;
 
 import com.vaadin.flow.component.Component;
-import io.jmix.core.annotation.Experimental;
-import org.jspecify.annotations.NullMarked;
 
 /**
  * Interface for providing AI assistant icon components.
- * <p>
- * <b>Important:</b> each method MUST return a fresh {@link Component} instance
- * on every call. A Vaadin component can only be attached to the DOM once; the
- * icons are rendered in multiple places simultaneously (hero section, recent
- * conversation cards, history panel, timeline rows), so reusing the same
- * instance would silently detach it from the earlier location.
  */
-@NullMarked
-@Experimental
 public interface AiIconProvider {
 
     /**

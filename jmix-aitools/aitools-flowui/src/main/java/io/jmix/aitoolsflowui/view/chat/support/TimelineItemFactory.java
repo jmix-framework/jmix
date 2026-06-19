@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
-package io.jmix.aitoolsflowui.service;
+package io.jmix.aitoolsflowui.view.chat.support;
 
-import io.jmix.aitoolsflowui.model.*;
+import io.jmix.aitoolsflowui.model.AiChatMessage;
+import io.jmix.aitoolsflowui.model.AiChatMessageType;
+import io.jmix.aitoolsflowui.view.chat.timeline.TimelineItem;
+import io.jmix.aitoolsflowui.view.chat.timeline.TimelineItemType;
 import io.jmix.core.Metadata;
 import io.jmix.core.common.util.Preconditions;
 import org.jspecify.annotations.Nullable;

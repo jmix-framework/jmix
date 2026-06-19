@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component;
 import java.util.function.Consumer;
 
 /**
- * Helper for AI tools that want to surface ephemeral status updates to the UI.
+ * Lets AI tools surface ephemeral status updates to a status consumer (e.g. the UI).
  * <p>
  * The callback is placed into the {@link ToolContext} by {@code AiConversationChatService}
  * under {@link #STATUS_UPDATE_CALLBACK}. If no callback was provided by the caller (typical for non-UI scenarios),
@@ -44,13 +44,13 @@ public class AiToolStatusPublisher {
 
     /**
      * Publishes an in-flight status update — "this step has started, no result yet".
-     * Sends an {@link AiUiStatusUpdate} with a blank {@code resultSnippet}.
+     * Sends an {@link AiToolStatusUpdate} with a blank {@code resultSnippet}.
      *
      * @param message     status text describing the step that has started
      * @param toolContext current tool context carrying the UI callback; {@code null} (no callback) makes this a no-op
      */
     public void update(String message, @Nullable ToolContext toolContext) {
-        publish(new AiUiStatusUpdate(message), toolContext);
+        publish(new AiToolStatusUpdate(message), toolContext);
     }
 
     /**
@@ -68,11 +68,11 @@ public class AiToolStatusPublisher {
         if (snippet == null || snippet.isBlank()) {
             return;
         }
-        publish(new AiUiStatusUpdate(baseMessage, snippet), toolContext);
+        publish(new AiToolStatusUpdate(baseMessage, snippet), toolContext);
     }
 
     /**
-     * Forwards an arbitrary {@link AiUiStatusUpdate} through the UI callback.
+     * Forwards an arbitrary {@link AiToolStatusUpdate} through the status callback.
      * <p>
      * <b>Note, prefer:</b>
      * <ul>
@@ -89,7 +89,7 @@ public class AiToolStatusPublisher {
      * @param toolContext current tool context carrying the UI callback; {@code null} (no callback) makes this a no-op
      */
     @SuppressWarnings("unchecked")
-    public void publish(AiUiStatusUpdate update, @Nullable ToolContext toolContext) {
+    public void publish(AiToolStatusUpdate update, @Nullable ToolContext toolContext) {
         if (toolContext == null || update.getMessage().isBlank()) {
             return;
         }
@@ -97,7 +97,7 @@ public class AiToolStatusPublisher {
         if (!(raw instanceof Consumer<?>)) {
             return;
         }
-        Consumer<AiUiStatusUpdate> callback = (Consumer<AiUiStatusUpdate>) raw;
+        Consumer<AiToolStatusUpdate> callback = (Consumer<AiToolStatusUpdate>) raw;
         callback.accept(update);
     }
 }

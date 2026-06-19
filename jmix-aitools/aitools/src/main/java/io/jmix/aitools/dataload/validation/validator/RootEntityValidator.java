@@ -16,7 +16,7 @@
 
 package io.jmix.aitools.dataload.validation.validator;
 
-import io.jmix.aitools.dataload.introspection.introspector.JpaDomainModelIntrospector;
+import io.jmix.aitools.dataload.introspection.JpaDomainModelIntrospector;
 import io.jmix.aitools.dataload.execution.GeneratedJpqlResult;
 import io.jmix.aitools.dataload.validation.JpqlResultValidator;
 import io.jmix.aitools.dataload.validation.JpqlValidationIssue;
@@ -46,7 +46,7 @@ public class RootEntityValidator implements JpqlResultValidator, Ordered {
 
     @Override
     public List<JpqlValidationIssue> validate(GeneratedJpqlResult result) {
-        QueryParser queryParser = JpqlValidatorUtils.getQueryParser(queryTransformerFactory, result.getJpql());
+        QueryParser queryParser = JpqlValidatorSupport.getQueryParser(queryTransformerFactory, result.getJpql());
         if (queryParser == null) {
             return List.of();
         }

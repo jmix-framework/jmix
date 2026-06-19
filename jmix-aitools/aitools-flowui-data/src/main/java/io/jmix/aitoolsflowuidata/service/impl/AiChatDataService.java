@@ -18,10 +18,10 @@ package io.jmix.aitoolsflowuidata.service.impl;
 
 import io.jmix.aitools.ChatClientFactory;
 import io.jmix.aitools.ResponseLanguageProvider;
-import io.jmix.aitools.service.prompt.AiChatSystemPromptProvider;
+import io.jmix.aitoolsflowuidata.service.prompt.AiChatSystemPromptProvider;
 import io.jmix.aitools.tool.AiToolRegistry;
 import io.jmix.aitools.tool.AiToolStatusPublisher;
-import io.jmix.aitools.tool.AiUiStatusUpdate;
+import io.jmix.aitools.tool.AiToolStatusUpdate;
 import io.jmix.aitoolsflowui.model.AiChatMessage;
 import io.jmix.aitoolsflowui.service.AiChatService;
 import io.jmix.aitoolsflowuidata.AiToolsFlowuiDataProperties;
@@ -33,6 +33,8 @@ import io.jmix.core.Sort;
 import io.jmix.core.UnconstrainedDataManager;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.querycondition.PropertyCondition;
+import io.jmix.core.security.AccessDeniedException;
+import io.jmix.core.usersubstitution.CurrentUserSubstitution;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +43,8 @@ import org.springframework.ai.chat.messages.*;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -77,6 +81,8 @@ public class AiChatDataService implements AiChatService, InitializingBean {
     protected UnconstrainedDataManager dataManager;
     @Autowired
     protected AiToolsFlowuiDataProperties dataProperties;
+    @Autowired
+    protected CurrentUserSubstitution currentUserSubstitution;
 
     @Nullable
     protected ChatClient chatClient;
@@ -97,19 +103,19 @@ public class AiChatDataService implements AiChatService, InitializingBean {
     }
 
     @Override
-    public String processMessage(AiChatMessage message, @Nullable Consumer<AiUiStatusUpdate> statusCallback) {
+    public String processMessage(AiChatMessage message, @Nullable Consumer<AiToolStatusUpdate> statusCallback) {
         return processMessageInternal(message, statusCallback);
     }
 
     protected String processMessageInternal(AiChatMessage message,
-                                            @Nullable Consumer<AiUiStatusUpdate> statusCallback) {
+                                            @Nullable Consumer<AiToolStatusUpdate> statusCallback) {
         Preconditions.checkNotNullArgument(message);
         String response = process(message.getId(), statusCallback);
         return response != null ? response : "";
     }
 
     @Nullable
-    protected String process(UUID userMessageId, @Nullable Consumer<AiUiStatusUpdate> statusCallback) {
+    protected String process(UUID userMessageId, @Nullable Consumer<AiToolStatusUpdate> statusCallback) {
         Preconditions.checkNotNullArgument(userMessageId);
         checkChatClient();
 
@@ -132,7 +138,7 @@ public class AiChatDataService implements AiChatService, InitializingBean {
 
     protected ChatClient.ChatClientRequestSpec buildPromptSpec(List<Message> history,
                                                                UUID assistantMessageId,
-                                                               @Nullable Consumer<AiUiStatusUpdate> statusCallback) {
+                                                               @Nullable Consumer<AiToolStatusUpdate> statusCallback) {
         checkChatClient();
 
         Map<String, Object> toolContext = new HashMap<>();
@@ -163,7 +169,15 @@ public class AiChatDataService implements AiChatService, InitializingBean {
             throw new IllegalArgumentException(
                     "Expected USER AiChatMessageEntity but got " + message.getType() + " for id " + userMessageId);
         }
+        AiConversationEntity conversation = message.getConversation();
+        if (!Objects.equals(conversation.getUsername(), currentUsername())) {
+            throw new AccessDeniedException("entity", "aitls_AiConversationEntity");
+        }
         return message;
+    }
+
+    protected String currentUsername() {
+        return currentUserSubstitution.getEffectiveUser().getUsername();
     }
 
     protected List<Message> loadHistory(UUID conversationId) {
@@ -176,14 +190,13 @@ public class AiChatDataService implements AiChatService, InitializingBean {
         if (limit <= 0) {
             return List.of();
         }
-        List<AiChatMessageEntity> all = dataManager.load(AiChatMessageEntity.class)
+        List<AiChatMessageEntity> recent = new ArrayList<>(dataManager.load(AiChatMessageEntity.class)
                 .condition(PropertyCondition.equal("conversation.id", conversationId))
-                .sort(Sort.by(Sort.Order.asc("createdDate"), Sort.Order.asc("id")))
-                .list();
-        if (all.size() <= limit) {
-            return all;
-        }
-        return all.subList(all.size() - limit, all.size());
+                .sort(Sort.by(Sort.Order.desc("createdDate"), Sort.Order.desc("id")))
+                .maxResults(limit)
+                .list());
+        Collections.reverse(recent);
+        return recent;
     }
 
     protected Message mapEntityToMessage(AiChatMessageEntity chatMessage) {

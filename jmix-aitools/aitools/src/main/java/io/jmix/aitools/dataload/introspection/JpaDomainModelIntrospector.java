@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.aitools.dataload.introspection.introspector;
+package io.jmix.aitools.dataload.introspection;
 
 import io.jmix.aitools.AiToolsDataLoadProperties;
 import io.jmix.core.MessageTools;
@@ -23,6 +23,7 @@ import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.annotation.Comment;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.aitools.dataload.introspection.introspector.MetaPropertyIntrospector;
 import io.jmix.aitools.dataload.introspection.model.EntityDescriptor;
 import io.jmix.aitools.dataload.introspection.model.EntityPropertyDescriptor;
 import io.jmix.aitools.dataload.introspection.model.RelationPropertyDescriptor;
@@ -48,10 +49,10 @@ public class JpaDomainModelIntrospector {
     @Autowired
     protected AiToolsDataLoadProperties dataLoadProperties;
     @Autowired
-    protected List<MetaPropertyIntrospector> propertyIntrospects;
+    protected List<MetaPropertyIntrospector> propertyIntrospectors;
 
-    protected Map<String, EntityDescriptor> entitiesByName = Map.of();
-    protected Map<String, Map<String, EntityPropertyDescriptor>> propertiesByEntityName = Map.of();
+    protected volatile Map<String, EntityDescriptor> entitiesByName = Map.of();
+    protected volatile Map<String, Map<String, EntityPropertyDescriptor>> propertiesByEntityName = Map.of();
 
     protected boolean initialized = false;
 
@@ -206,6 +207,7 @@ public class JpaDomainModelIntrospector {
      *
      * @param entityName   entity name
      * @param propertyPath dot-separated property path
+     * @return {@code true} if the path can be resolved, {@code false} otherwise
      */
     public boolean containsPropertyPath(String entityName, String propertyPath) {
         return resolvePropertyPath(entityName, propertyPath) != null;
@@ -220,14 +222,16 @@ public class JpaDomainModelIntrospector {
      */
     @Nullable
     public List<EntityPropertyDescriptor> resolvePropertyPath(String entityName, String propertyPath) {
-        if (propertyPath == null || propertyPath.isBlank()) {
+        if (propertyPath.isBlank()) {
             return null;
         }
 
         String currentEntityName = entityName;
         List<EntityPropertyDescriptor> resolvedPath = new ArrayList<>();
 
-        for (String segment : propertyPath.split("\\.")) {
+        String[] segments = propertyPath.split("\\.");
+        for (int i = 0; i < segments.length; i++) {
+            String segment = segments[i];
             EntityPropertyDescriptor propertyDescriptor = getPropertyDescriptor(currentEntityName, segment);
             if (propertyDescriptor == null) {
                 return null;
@@ -237,7 +241,8 @@ public class JpaDomainModelIntrospector {
 
             if (propertyDescriptor instanceof RelationPropertyDescriptor relationPropertyDescriptor) {
                 currentEntityName = relationPropertyDescriptor.getTargetEntityName();
-            } else if (!segment.equals(lastSegment(propertyPath))) {
+            } else if (i < segments.length - 1) {
+                // A non-relation property (datatype/enum/embedded) may only appear as the last segment.
                 return null;
             }
         }
@@ -275,7 +280,7 @@ public class JpaDomainModelIntrospector {
 
     @Nullable
     protected EntityPropertyDescriptor introspectProperty(MetaProperty property) {
-        for (MetaPropertyIntrospector propertyIntrospector : propertyIntrospects) {
+        for (MetaPropertyIntrospector propertyIntrospector : propertyIntrospectors) {
             if (propertyIntrospector.supports(property)) {
                 return propertyIntrospector.introspect(property);
             }
@@ -363,10 +368,5 @@ public class JpaDomainModelIntrospector {
     protected Map<String, EntityPropertyDescriptor> indexProperties(EntityDescriptor entityDescriptor) {
         return entityDescriptor.getProperties().stream()
                 .collect(Collectors.toUnmodifiableMap(EntityPropertyDescriptor::getName, property -> property));
-    }
-
-    protected String lastSegment(String propertyPath) {
-        int lastDot = propertyPath.lastIndexOf('.');
-        return lastDot >= 0 ? propertyPath.substring(lastDot + 1) : propertyPath;
     }
 }

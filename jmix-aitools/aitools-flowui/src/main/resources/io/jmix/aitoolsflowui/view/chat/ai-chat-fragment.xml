@@ -18,7 +18,7 @@
 <fragment xmlns="http://jmix.io/schema/flowui/fragment">
     <data>
         <collection id="timelineItemsDc"
-                    class="io.jmix.aitoolsflowui.model.TimelineItem"/>
+                    class="io.jmix.aitoolsflowui.view.chat.timeline.TimelineItem"/>
     </data>
     <content>
         <vbox id="root"

@@ -83,7 +83,7 @@ public class JpqlExecutorTool implements DataLoadAiTool {
             - You may select properties of the root entity, properties reached through joins, and aggregate expressions
             
             PAGINATION RULES:
-            - Results are limited to 50 rows by default (max 200).
+            - Results are limited to 20 rows by default.
             - If the result contains 'hasMore: true', more data is available in the database.
             - To fetch the next set of results, call this tool again with an increased "firstResult".
             - if the user asks for a row limit or offset, put them into "maxResults" and "firstResult" instead.
@@ -241,7 +241,14 @@ public class JpqlExecutorTool implements DataLoadAiTool {
         String startStatus = messages.getMessage("JpqlExecutorTool.executeQuery.startStatus");
         toolStatusPublisher.update(startStatus, toolContext);
 
-        JpqlExecutionResult executionResult = jpqlExecutionService.execute(request);
+        JpqlExecutionResult executionResult;
+        try {
+            executionResult = jpqlExecutionService.execute(request);
+        } catch (RuntimeException e) {
+            toolStatusPublisher.complete(startStatus,
+                    messages.formatMessage("", "JpqlExecutorTool.executeQuery.failStatus", e.getMessage()), toolContext);
+            throw e;
+        }
 
         String snippet;
         if (executionResult.getExecutionError() == null) {

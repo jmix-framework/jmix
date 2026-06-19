@@ -22,8 +22,8 @@ import io.jmix.core.Metadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-@Component("aitls_ConversationConverter")
-public class ConversationConverter {
+@Component("aitls_AiConversationConverter")
+public class AiConversationConverter {
 
     @Autowired
     protected Metadata metadata;

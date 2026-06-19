@@ -23,6 +23,10 @@ import io.jmix.core.metamodel.annotation.JmixEntity;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
+/**
+ * A single message in an {@link AiConversation}, authored by a user, the assistant
+ * or a tool (its {@link AiChatMessageType}).
+ */
 @JmixEntity
 public class AiChatMessage {
 

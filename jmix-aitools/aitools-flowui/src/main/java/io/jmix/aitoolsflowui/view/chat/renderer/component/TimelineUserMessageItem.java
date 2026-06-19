@@ -25,8 +25,7 @@ import io.jmix.aitoolsflowui.model.AiChatMessage;
 import java.util.Locale;
 
 /**
- * A row representing a persisted user or assistant {@link AiChatMessage}.
- * Assistant content is rendered as Markdown, user content as plain text.
+ * Timeline row for a persisted user {@link AiChatMessage}, rendering its content as plain text.
  */
 public class TimelineUserMessageItem extends AbstractTimelineItem {
 
@@ -65,6 +64,9 @@ public class TimelineUserMessageItem extends AbstractTimelineItem {
      * {@code "JS"}), falling back to the login's first letter when no name is
      * present. Set explicitly so the Avatar does not derive noisy initials from
      * the whole string.
+     *
+     * @param actorName actor display name to derive initials from
+     * @return the avatar initials (empty string if none can be derived)
      */
     protected static String avatarAbbreviation(String actorName) {
         String source = Strings.nullToEmpty(actorName);

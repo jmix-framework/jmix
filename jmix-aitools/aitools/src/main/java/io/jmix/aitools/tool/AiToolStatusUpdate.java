@@ -26,34 +26,36 @@ import org.jspecify.annotations.Nullable;
  * <ol>
  *     <li>
  *         first with {@code resultSnippet == null} — meaning "I started this
- *         step" (the UI renders it as an in-flight indicator);
+ *         step" (the consumer renders it as an in-flight indicator);
  *     </li>
  *     <li>
  *         then with the same message and a non-blank {@code resultSnippet} —
- *         meaning "this step finished, here is the short result" (the UI
+ *         meaning "this step finished, here is the short result" (the consumer
  *         folds the second into the first, marks it as completed and shows
  *         the snippet next to the base text).
  *     </li>
  * </ol>
- * Use {@link #isCompleted()} on the UI side to tell the two apart.
+ * Use {@link #isCompleted()} to tell the two apart.
  */
-public class AiUiStatusUpdate {
+public class AiToolStatusUpdate {
 
     protected final String message;
 
     @Nullable
     protected final String resultSnippet;
 
-    public AiUiStatusUpdate(String message, @Nullable String resultSnippet) {
+    public AiToolStatusUpdate(String message, @Nullable String resultSnippet) {
         this.message = message;
         this.resultSnippet = resultSnippet;
     }
 
     /**
      * Convenience constructor for an in-flight ("started, no result yet")
-     * update. Equivalent to {@code new AiUiStatusUpdate(message, null)}.
+     * update. Equivalent to {@code new AiToolStatusUpdate(message, null)}.
+     *
+     * @param message status text describing the step that has started
      */
-    public AiUiStatusUpdate(String message) {
+    public AiToolStatusUpdate(String message) {
         this(message, null);
     }
 
@@ -79,6 +81,8 @@ public class AiUiStatusUpdate {
     /**
      * {@code true} if the update carries a non-blank {@code resultSnippet}
      * (i.e. is the "completed" half of the two-phase publish).
+     *
+     * @return whether this update represents a completed step
      */
     public boolean isCompleted() {
         return resultSnippet != null && !resultSnippet.isBlank();

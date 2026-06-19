@@ -20,9 +20,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
 /**
- * Configuration properties of the AI Tools add-on, bound from the {@code aitools} prefix.
+ * Configuration properties of the AI Tools add-on, bound from the {@code jmix.aitools} prefix.
  */
-@ConfigurationProperties("aitools")
+@ConfigurationProperties("jmix.aitools")
 public class AiToolsProperties {
 
     /**

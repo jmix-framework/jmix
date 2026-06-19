@@ -17,8 +17,8 @@
 package io.jmix.autoconfigure.aitools;
 
 import io.jmix.aitools.AiToolsConfiguration;
-import io.jmix.aitools.service.prompt.AiChatSystemPromptProvider;
-import io.jmix.aitools.service.prompt.impl.DefaultAiChatSystemPromptProvider;
+import io.jmix.aitools.service.prompt.AiAssistantSystemPromptProvider;
+import io.jmix.aitools.service.prompt.impl.DefaultAiAssistantSystemPromptProvider;
 import io.jmix.aitools.tool.AiToolDescriptorProvider;
 import io.jmix.aitools.tool.impl.AiToolDescriptorProviderImpl;
 import io.jmix.core.CoreConfiguration;
@@ -29,17 +29,16 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBooleanProp
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-import org.springframework.stereotype.Component;
 
 @AutoConfiguration
-@ConditionalOnBooleanProperty(value = "aitools.enabled", matchIfMissing = true)
+@ConditionalOnBooleanProperty(value = "jmix.aitools.enabled", matchIfMissing = true)
 @Import({CoreConfiguration.class, AiToolsConfiguration.class, DataConfiguration.class, EclipselinkConfiguration.class})
 public class AiToolsAutoConfiguration {
 
-    @Bean("aitls_DefaultAiChatSystemPromptProvider")
-    @ConditionalOnMissingBean(AiChatSystemPromptProvider.class)
-    public AiChatSystemPromptProvider aiChatSystemPromptProvider() {
-        return new DefaultAiChatSystemPromptProvider();
+    @Bean("aitls_DefaultAiAssistantSystemPromptProvider")
+    @ConditionalOnMissingBean(AiAssistantSystemPromptProvider.class)
+    public AiAssistantSystemPromptProvider aiAssistantSystemPromptProvider() {
+        return new DefaultAiAssistantSystemPromptProvider();
     }
 
     @Bean("aitls_AiToolDescriptorProviderImpl")

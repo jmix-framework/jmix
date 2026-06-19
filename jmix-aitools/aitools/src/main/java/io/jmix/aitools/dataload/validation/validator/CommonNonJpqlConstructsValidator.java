@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
-import static io.jmix.aitools.dataload.validation.validator.JpqlValidatorUtils.*;
+import static io.jmix.aitools.dataload.validation.validator.JpqlValidatorSupport.*;
 
 /**
  * Rejects SQL-only constructs that are not valid JPQL: SQL pagination (LIMIT/OFFSET), SQL-specific
@@ -47,8 +47,8 @@ public class CommonNonJpqlConstructsValidator implements JpqlResultValidator, Or
             " Prefer supported Jmix date macros or relative date time constants, and use named parameters only when the" +
             " date range cannot be expressed through supported constructs.";
 
-    public static final String CURRENT_FUNCTION_PARENTNESS_CODE = "jpql.currentFunctionParentheses";
-    public static final String CURRENT_FUNCTION_PARENTNESS_GUIDANCE = "Use CURRENT_DATE, CURRENT_TIME, and" +
+    public static final String CURRENT_FUNCTION_PARENTHESES_CODE = "jpql.currentFunctionParentheses";
+    public static final String CURRENT_FUNCTION_PARENTHESES_GUIDANCE = "Use CURRENT_DATE, CURRENT_TIME, and" +
             " CURRENT_TIMESTAMP without parentheses.";
 
     protected static final Pattern CURRENT_DATE_WITH_PARENTHESES_PATTERN =
@@ -88,9 +88,9 @@ public class CommonNonJpqlConstructsValidator implements JpqlResultValidator, Or
         if (CURRENT_DATE_WITH_PARENTHESES_PATTERN.matcher(jpql).find()
                 || CURRENT_TIME_WITH_PARENTHESES_PATTERN.matcher(jpql).find()
                 || CURRENT_TIMESTAMP_WITH_PARENTHESES_PATTERN.matcher(jpql).find()) {
-            issues.add(new JpqlValidationIssue(CURRENT_FUNCTION_PARENTNESS_CODE,
+            issues.add(new JpqlValidationIssue(CURRENT_FUNCTION_PARENTHESES_CODE,
                     "JPQL CURRENT_DATE, CURRENT_TIME, and CURRENT_TIMESTAMP must be used without parentheses",
-                    CURRENT_FUNCTION_PARENTNESS_GUIDANCE));
+                    CURRENT_FUNCTION_PARENTHESES_GUIDANCE));
         }
 
         return issues;

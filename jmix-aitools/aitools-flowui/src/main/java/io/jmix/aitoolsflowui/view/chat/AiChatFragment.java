@@ -23,8 +23,10 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.function.SerializableSupplier;
 import io.jmix.aitoolsflowui.model.*;
 import io.jmix.aitoolsflowui.service.*;
+import io.jmix.aitoolsflowui.view.chat.support.*;
+import io.jmix.aitoolsflowui.view.chat.timeline.*;
 import io.jmix.aitoolsflowui.view.input.AiChatInputFragment;
-import io.jmix.aitools.tool.AiUiStatusUpdate;
+import io.jmix.aitools.tool.AiToolStatusUpdate;
 import io.jmix.core.DataManager;
 import io.jmix.core.TimeSource;
 import io.jmix.core.annotation.Experimental;
@@ -159,6 +161,8 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
 
     /**
      * Hides the composer and the title-edit button.
+     *
+     * @param readOnly {@code true} to hide the composer and the title-edit button
      */
     public void setReadOnly(boolean readOnly) {
         this.readOnly = readOnly;
@@ -178,6 +182,8 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
      * Enables or disables the message composer. The fragment disables it
      * automatically while an assistant response is in flight and re-enables
      * it on completion; hosts can call this for additional read-only states.
+     *
+     * @param enabled {@code true} to enable the composer, {@code false} to disable it
      */
     public void setMessageInputEnabled(boolean enabled) {
         composerFragment.setInputEnabled(enabled);
@@ -193,6 +199,8 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
      * conversation. Hosts can use this to warn the user before closing — the
      * background task is scoped to the host view and is cancelled (losing the
      * answer) when the view detaches.
+     *
+     * @return {@code true} while an assistant response is being generated
      */
     public boolean isAwaitingResponse() {
         return awaitingResponse;
@@ -207,6 +215,10 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
      * @param userMessage message text to send; a {@code null} or blank value is ignored
      */
     public void sendMessage(@Nullable String userMessage) {
+        if (awaitingResponse) {
+            log.debug("Ignoring sendMessage call while awaiting an assistant response");
+            return;
+        }
         if (conversation == null) {
             log.warn("Cannot submit message — no conversation bound to the fragment");
             return;
@@ -282,6 +294,8 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
      * Locates the assistant item that just landed in the container after the
      * post-LLM reload and stamps it with the "fresh" flag, triggering a
      * single-row re-render via {@link CollectionContainer#replaceItem}.
+     *
+     * @param assistantMessageId id of the assistant message to mark as fresh
      */
     protected void markFreshAssistantItem(UUID assistantMessageId) {
         timelineItemsDc.getItems().stream()
@@ -318,7 +332,7 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
         activeThinkingItem = null;
     }
 
-    protected void appendThinkingStatusUpdate(@Nullable AiUiStatusUpdate statusUpdate) {
+    protected void appendThinkingStatusUpdate(@Nullable AiToolStatusUpdate statusUpdate) {
         if (activeThinkingItem == null
                 || statusUpdate == null
                 || statusUpdate.getMessage().isBlank()) {
@@ -373,6 +387,8 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
     /**
      * Loads all messages of the bound conversation, oldest first. Empty when no
      * conversation is bound or it has not been persisted yet.
+     *
+     * @return the bound conversation's messages, oldest first; empty if none
      */
     protected Collection<AiChatMessage> loadMessages() {
         if (conversation == null || conversation.getId() == null) {
@@ -495,7 +511,7 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
         return message;
     }
 
-    protected TimelineItemStatus createTimelineStatus(AiUiStatusUpdate statusUpdate) {
+    protected TimelineItemStatus createTimelineStatus(AiToolStatusUpdate statusUpdate) {
         TimelineItemStatus timelineStatus = dataManager.create(TimelineItemStatus.class);
         timelineStatus.setMessage(statusUpdate.getMessage());
         timelineStatus.setResultSnippet(statusUpdate.getResultSnippet());

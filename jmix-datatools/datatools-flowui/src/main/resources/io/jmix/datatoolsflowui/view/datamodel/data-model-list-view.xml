@@ -46,7 +46,7 @@
                       alignSelf="CENTER" value="false"/>
         </hbox>
 
-        <flexLayout id="contentBox" classNames="content-wrapper">
+        <div id="contentBox" classNames="content-wrapper">
             <vbox id="entitiesBox" padding="false" classNames="entities-box" width="unset">
                 <hbox id="entitiesHeaderBox"
                       justifyContent="BETWEEN" alignItems="CENTER"
@@ -96,6 +96,6 @@
                     </columns>
                 </dataGrid>
             </vbox>
-        </flexLayout>
+        </div>
     </layout>
 </view>

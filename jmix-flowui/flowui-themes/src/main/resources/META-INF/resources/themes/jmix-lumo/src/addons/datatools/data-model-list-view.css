@@ -20,22 +20,19 @@
 }
 
 .data-model-list-view .content-wrapper {
-    flex-direction: column;
-
-    overflow: auto;
+    display: grid;
+    grid-template-columns: 1fr 2fr;
     gap: var(--lumo-space-m);
 }
 
-.data-model-list-view .entities-box {
-    flex-grow: 1;
-}
-
-.data-model-list-view .attributes-box {
-    flex-grow: 2;
-}
-
-@container data-model-list-view (min-width: 60em) {
+@container data-model-list-view (max-width: 1280px) {
     .data-model-list-view .content-wrapper {
-        flex-direction: row;
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@container data-model-list-view (max-width: 960px) {
+    .data-model-list-view .content-wrapper {
+        grid-template-columns: 1fr;
     }
 }

@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@import '../src/mixins/picker-field-actions.css';
-
 :root::before,
 :host::before {
     --_lumo-jmix-value-picker-inject: 1;

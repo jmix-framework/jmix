@@ -20,7 +20,7 @@ import io.jmix.aitools.AiToolsConfiguration;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
 import io.jmix.flowui.sys.ViewControllersConfiguration;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.*;
 
@@ -30,7 +30,7 @@ import java.util.Collections;
 @ComponentScan
 @JmixModule(dependsOn = AiToolsConfiguration.class)
 @PropertySource(name = "io.jmix.aitoolsflowui", value = "classpath:/io/jmix/aitoolsflowui/module.properties")
-@EnableConfigurationProperties(AiToolsFlowuiProperties.class)
+@ConfigurationPropertiesScan
 public class AiToolsFlowuiConfiguration {
 
     @Bean("aitls_AiToolsViewControllers")

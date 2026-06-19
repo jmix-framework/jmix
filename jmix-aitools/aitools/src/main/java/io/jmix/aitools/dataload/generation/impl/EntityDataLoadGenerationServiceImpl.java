@@ -30,6 +30,7 @@ import io.jmix.aitools.dataload.tool.EntityDataLoadAiTool;
 import io.jmix.aitools.tool.AiToolRegistry;
 import io.jmix.aitools.tool.ResolvedAiTool;
 import io.jmix.core.common.util.Preconditions;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.InitializingBean;
@@ -38,7 +39,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.Objects;
 
 /**
@@ -66,6 +66,7 @@ public class EntityDataLoadGenerationServiceImpl implements EntityDataLoadGenera
         buildChatClient();
     }
 
+    @NullMarked
     @Override
     public EntityDataLoadQuery generate(String userText) {
         Preconditions.checkNotEmptyString(userText);
@@ -137,6 +138,9 @@ public class EntityDataLoadGenerationServiceImpl implements EntityDataLoadGenera
     /**
      * Maps a parameter payload to a {@link GeneratedJpqlParameter}, or returns {@code null} to skip
      * it when the model provided no parameter name (such a parameter cannot be bound).
+     *
+     * @param payload raw parameter payload from the model
+     * @return mapped parameter, or {@code null} if it has no usable name
      */
     @Nullable
     protected GeneratedJpqlParameter toGeneratedJpqlParameter(GeneratedJpqlParameterPayload payload) {

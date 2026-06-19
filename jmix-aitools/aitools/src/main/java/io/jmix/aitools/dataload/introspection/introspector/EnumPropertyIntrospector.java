@@ -57,7 +57,7 @@ public class EnumPropertyIntrospector extends AbstractPropertyIntrospector {
             if (EnumClass.class.isAssignableFrom(enumClass)) {
                 for (Object enumConstant : enumClass.getEnumConstants()) {
                     EnumClass<?> enumClassConstant = (EnumClass<?>) enumConstant;
-                    String enumName = enumConstant.toString();
+                    String enumName = ((Enum<?>) enumConstant).name();
                     enums.put(enumName,
                             new EnumValueDescriptor(enumClassConstant.getId(), enumName,
                                     getLocalizedEnumValueNames(enumConstant)));
@@ -66,7 +66,7 @@ public class EnumPropertyIntrospector extends AbstractPropertyIntrospector {
                 // For plain enums
                 String storageMode = getEnumStorageMode(property);
                 for (Object enumConstant : enumClass.getEnumConstants()) {
-                    String enumName = enumConstant.toString();
+                    String enumName = ((Enum<?>) enumConstant).name();
                     Object id = Objects.requireNonNull(storageMode).equals(EnumType.ORDINAL.name().toLowerCase())
                             ? ((Enum<?>) enumConstant).ordinal()
                             : ((Enum<?>) enumConstant).name();
@@ -93,7 +93,8 @@ public class EnumPropertyIntrospector extends AbstractPropertyIntrospector {
         List<String> names = new ArrayList<>(locales.size());
         for (Locale locale : locales) {
             String localizedName = messages.getMessage((Enum<?>) enumConstant, locale);
-            if (!enumConstant.toString().equals(localizedName) && !getEnumCaptionFallbackKey(enumConstant).equals(localizedName)) {
+            if (!((Enum<?>) enumConstant).name().equals(localizedName)
+                    && !getEnumCaptionFallbackKey(enumConstant).equals(localizedName)) {
                 names.add(localizedName);
             }
         }

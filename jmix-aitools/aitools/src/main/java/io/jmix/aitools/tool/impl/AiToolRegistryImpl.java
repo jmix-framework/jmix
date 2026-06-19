@@ -198,6 +198,9 @@ public class AiToolRegistryImpl implements AiToolRegistry, InitializingBean {
      * (this can happen when a single bean is exposed via several {@link JmixAiTool} sub-interfaces
      * and Spring resolves the injection through each of them). Deduplication is based on object
      * identity, so multiple distinct beans of the same class are preserved.
+     *
+     * @param tools autowired tool beans, possibly containing the same instance more than once
+     * @return tools with duplicate instances removed, preserving first-seen order
      */
     protected List<JmixAiTool> deduplicate(List<JmixAiTool> tools) {
         Set<JmixAiTool> seen = Collections.newSetFromMap(new IdentityHashMap<>());
@@ -277,6 +280,9 @@ public class AiToolRegistryImpl implements AiToolRegistry, InitializingBean {
      * Union of marker sub-interfaces from every candidate in the bucket. Ensures that an override
      * does not silently drop a tool from a {@link AiToolRegistry#findByMarker(Class) marker-specific}
      * view that the original implementation participated in.
+     *
+     * @param candidates all candidates grouped under the same tool name
+     * @return union of marker sub-interfaces across the candidates' source beans
      */
     protected Set<Class<? extends JmixAiTool>> unionMarkers(List<ToolCandidate> candidates) {
         Set<Class<? extends JmixAiTool>> markers = new LinkedHashSet<>();
@@ -296,6 +302,11 @@ public class AiToolRegistryImpl implements AiToolRegistry, InitializingBean {
      * The {@link ToolCallback#getToolMetadata() metadata} (description and other attributes) comes
      * from the winner's own {@code @Tool} annotation via {@link AiToolDescriptor}, which means an
      * override author can change the description while keeping the tool name stable.
+     *
+     * @param registryKey the name under which the tool is registered and exposed to the LLM
+     * @param candidate   the winning candidate the entry is built from
+     * @param markers     marker sub-interfaces this tool participates in
+     * @return the resolved tool entry
      */
     protected ResolvedAiTool buildResolvedTool(String registryKey,
                                                ToolCandidate candidate,
@@ -364,6 +375,10 @@ public class AiToolRegistryImpl implements AiToolRegistry, InitializingBean {
 
     /**
      * Immutable consistent registry state.
+     *
+     * @param resolvedTools    all resolved tools in registration order
+     * @param toolsByName      resolved tools indexed by their registry name
+     * @param allToolCallbacks callbacks of all resolved tools, in the same order as {@code resolvedTools}
      */
     protected record ResolvedAiTools(List<ResolvedAiTool> resolvedTools,
                                      Map<String, ResolvedAiTool> toolsByName,
@@ -382,6 +397,11 @@ public class AiToolRegistryImpl implements AiToolRegistry, InitializingBean {
 
     /**
      * Internal candidate gathered during registry build, before override resolution.
+     *
+     * @param source       the tool bean declaring the method
+     * @param method       the {@code @Tool}-annotated method
+     * @param descriptor   the resolved name and description
+     * @param overrideName the {@link ToolOverride @ToolOverride} target name, or {@code null} for a regular tool
      */
     protected record ToolCandidate(JmixAiTool source,
                                    Method method,

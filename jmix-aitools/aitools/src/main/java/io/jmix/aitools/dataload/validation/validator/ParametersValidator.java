@@ -28,6 +28,8 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static io.jmix.aitools.dataload.validation.validator.JpqlValidatorSupport.stripStringLiterals;
+
 /**
  * Checks that the JPQL named parameters and the declared parameters match — flagging both
  * parameters used in the query but missing from the declaration, and declared parameters that the
@@ -85,7 +87,8 @@ public class ParametersValidator implements JpqlResultValidator, Ordered {
 
     protected Set<String> extractParameterNames(String jpql) {
         Set<String> parameterNames = new LinkedHashSet<>();
-        Matcher matcher = PARAMETER_PATTERN.matcher(jpql);
+        // Strip string literals first: a ':'-prefixed word inside a literal is not a JPQL parameter.
+        Matcher matcher = PARAMETER_PATTERN.matcher(stripStringLiterals(jpql));
         while (matcher.find()) {
             parameterNames.add(matcher.group(1));
         }

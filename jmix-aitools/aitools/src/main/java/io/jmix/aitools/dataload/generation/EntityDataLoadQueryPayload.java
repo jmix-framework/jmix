@@ -18,7 +18,6 @@ package io.jmix.aitools.dataload.generation;
 
 import io.jmix.aitools.dataload.EntityDataLoadQuery;
 import io.jmix.aitools.dataload.repair.impl.GeneratedJpqlParameterPayload;
-import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Collections;
@@ -31,7 +30,6 @@ import java.util.List;
  * ({@code null}). The payload is mapped to a validated {@link EntityDataLoadQuery} before it is
  * used for execution.
  */
-@NullMarked
 public class EntityDataLoadQueryPayload {
 
     @Nullable

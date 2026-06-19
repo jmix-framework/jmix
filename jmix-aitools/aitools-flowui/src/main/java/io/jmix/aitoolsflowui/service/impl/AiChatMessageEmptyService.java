@@ -28,6 +28,9 @@ import java.time.OffsetDateTime;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * No-op implementation.
+ */
 public class AiChatMessageEmptyService implements AiChatMessageService {
 
     @Autowired

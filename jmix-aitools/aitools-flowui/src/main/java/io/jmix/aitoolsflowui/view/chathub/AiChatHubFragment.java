@@ -29,6 +29,7 @@ import io.jmix.aitoolsflowui.model.AiConversation;
 import io.jmix.aitoolsflowui.service.AiChatService;
 import io.jmix.aitoolsflowui.service.AiConversationService;
 import io.jmix.aitoolsflowui.view.chat.AiChatView;
+import io.jmix.aitoolsflowui.view.chat.support.ChatDateTimeSupport;
 import io.jmix.aitoolsflowui.view.chathub.component.AiConversationCard;
 import io.jmix.aitoolsflowui.view.chathub.component.AiConversationHistoryGroup;
 import io.jmix.aitoolsflowui.view.input.AiChatInputFragment;
@@ -36,7 +37,6 @@ import io.jmix.aitoolsflowui.view.chathub.component.HistoryBucket;
 import io.jmix.core.LoadContext;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.annotation.Experimental;
-import io.jmix.core.metamodel.datatype.DatatypeFormatter;
 import io.jmix.flowui.Dialogs;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.UiComponents;
@@ -114,7 +114,7 @@ public class AiChatHubFragment extends Fragment<VerticalLayout> {
     @Autowired
     protected MetadataTools metadataTools;
     @Autowired
-    protected DatatypeFormatter datatypeFormatter;
+    protected ChatDateTimeSupport chatDateTimeSupport;
     @Autowired
     protected ViewNavigators viewNavigators;
     @Autowired
@@ -348,7 +348,7 @@ public class AiChatHubFragment extends Fragment<VerticalLayout> {
     }
 
     protected Map<HistoryBucket, List<AiConversation>> groupByBucket(List<AiConversation> conversations) {
-        ZoneId zone = ZoneId.systemDefault();
+        ZoneId zone = chatDateTimeSupport.getCurrentUserZone();
         LocalDate today = LocalDate.now(zone);
 
         // Seed with an empty, ordered map so buckets always render
@@ -393,6 +393,6 @@ public class AiChatHubFragment extends Fragment<VerticalLayout> {
 
     @Nullable
     protected String formatDateTime(@Nullable OffsetDateTime dateTime) {
-        return dateTime != null ? datatypeFormatter.formatOffsetDateTime(dateTime) : null;
+        return dateTime != null ? chatDateTimeSupport.formatInUserZone(dateTime) : null;
     }
 }

@@ -18,7 +18,7 @@ package io.jmix.aitoolsflowuidata.service.impl;
 
 import io.jmix.aitoolsflowui.model.AiConversation;
 import io.jmix.aitoolsflowui.service.AiConversationService;
-import io.jmix.aitoolsflowuidata.converter.ConversationConverter;
+import io.jmix.aitoolsflowuidata.converter.AiConversationConverter;
 import io.jmix.aitoolsflowuidata.entity.AiConversationEntity;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.Messages;
@@ -47,7 +47,7 @@ import java.util.UUID;
 public class AiConversationDataService implements AiConversationService {
 
     @Autowired
-    protected ConversationConverter conversationConverter;
+    protected AiConversationConverter conversationConverter;
     @Autowired
     protected UnconstrainedDataManager dataManager;
     @Autowired

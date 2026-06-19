@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-package io.jmix.aitoolsflowui.service;
+package io.jmix.aitoolsflowui.view.chat.support;
 
-import io.jmix.aitools.tool.AiUiStatusUpdate;
+import io.jmix.aitools.tool.AiToolStatusUpdate;
 import io.jmix.aitoolsflowui.AiToolsFlowuiProperties;
 import io.jmix.aitoolsflowui.model.AiConversation;
 import io.jmix.aitoolsflowui.model.AiChatMessage;
 import io.jmix.aitoolsflowui.model.AiChatMessageType;
+import io.jmix.aitoolsflowui.service.AiChatMessageService;
+import io.jmix.aitoolsflowui.service.AiChatService;
 import io.jmix.flowui.backgroundtask.BackgroundTask;
 import io.jmix.flowui.backgroundtask.BackgroundWorker;
 import io.jmix.flowui.backgroundtask.TaskLifeCycle;
@@ -70,22 +72,22 @@ public class AssistantResponseTaskCoordinator {
     public void run(View<?> owner,
                     AiConversation conversation,
                     AiChatMessage savedUserMessage,
-                    Consumer<AiUiStatusUpdate> progressHandler,
+                    Consumer<AiToolStatusUpdate> progressHandler,
                     Consumer<AiChatMessage> doneHandler,
                     Runnable failureHandler) {
-        BackgroundTask<AiUiStatusUpdate, String> task =
+        BackgroundTask<AiToolStatusUpdate, String> task =
                 new AssistantResponseTask(owner, conversation, savedUserMessage, doneHandler, failureHandler);
         task.addProgressListener(new BackgroundTask.ProgressListenerAdapter<>() {
             @Override
-            public void onProgress(List<AiUiStatusUpdate> changes) {
+            public void onProgress(List<AiToolStatusUpdate> changes) {
                 changes.forEach(progressHandler);
             }
         });
         backgroundWorker.handle(task).execute();
     }
 
-    protected void publishUiStatusUpdate(TaskLifeCycle<AiUiStatusUpdate> taskLifeCycle,
-                                         AiUiStatusUpdate statusUpdate) {
+    protected void publishUiStatusUpdate(TaskLifeCycle<AiToolStatusUpdate> taskLifeCycle,
+                                         AiToolStatusUpdate statusUpdate) {
         if (taskLifeCycle.isInterrupted()) {
             return;
         }
@@ -103,7 +105,7 @@ public class AssistantResponseTaskCoordinator {
         return userAiMessageService.loadLatestMessage(conversation, AiChatMessageType.ASSISTANT);
     }
 
-    protected class AssistantResponseTask extends BackgroundTask<AiUiStatusUpdate, String> {
+    protected class AssistantResponseTask extends BackgroundTask<AiToolStatusUpdate, String> {
 
         protected final AiConversation conversation;
         protected final AiChatMessage message;
@@ -124,7 +126,7 @@ public class AssistantResponseTaskCoordinator {
 
         @Nullable
         @Override
-        public String run(TaskLifeCycle<AiUiStatusUpdate> taskLifeCycle) {
+        public String run(TaskLifeCycle<AiToolStatusUpdate> taskLifeCycle) {
             return userAiChatService.processMessage(message,
                     statusUpdate -> publishUiStatusUpdate(taskLifeCycle, statusUpdate));
         }

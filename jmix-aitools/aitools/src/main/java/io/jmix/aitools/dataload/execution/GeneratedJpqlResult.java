@@ -41,6 +41,11 @@ public class GeneratedJpqlResult {
 
     /**
      * Creates a result without execution hints ({@code maxResults} / {@code firstResult} are unset).
+     *
+     * @param jpql        generated JPQL text
+     * @param parameters  structured query parameters
+     * @param explanation short human-readable explanation of the query intent
+     * @param warnings    warnings produced during generation
      */
     public GeneratedJpqlResult(String jpql,
                                List<GeneratedJpqlParameter> parameters,

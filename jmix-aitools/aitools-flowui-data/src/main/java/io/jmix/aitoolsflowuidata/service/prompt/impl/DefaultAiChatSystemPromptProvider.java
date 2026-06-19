@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package io.jmix.aitools.service.prompt.impl;
+package io.jmix.aitoolsflowuidata.service.prompt.impl;
 
-import io.jmix.aitools.service.prompt.AiChatSystemPromptProvider;
+import io.jmix.aitoolsflowuidata.service.prompt.AiChatSystemPromptProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 
@@ -25,7 +25,7 @@ import org.springframework.core.io.Resource;
  */
 public class DefaultAiChatSystemPromptProvider implements AiChatSystemPromptProvider {
 
-    @Value("classpath:io/jmix/aitools/service/prompt/system-chat-service-prompt.st")
+    @Value("classpath:io/jmix/aitoolsflowuidata/service/prompt/system-chat-prompt.st")
     protected Resource promptResource;
 
     @Override

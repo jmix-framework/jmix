@@ -25,10 +25,8 @@ import java.util.UUID;
 /**
  * Provides access to the current user's AI conversations for the chat UI.
  * <p>
- * Operates purely on the {@link AiConversation} model: the chat fragment, hub
- * and conversation view depend on this contract and stay independent of how (or
- * whether) conversations are persisted. List operations are implicitly scoped to
- * the current user.
+ * Operates purely on the {@link AiConversation} model. List operations are implicitly
+ * scoped to the current user.
  */
 public interface AiConversationService {
 

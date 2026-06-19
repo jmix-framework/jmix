@@ -96,6 +96,8 @@ public class ResolvedAiTool {
     /**
      * Marker sub-interfaces of {@link JmixAiTool} that the source bean implements. Used by registry
      * lookups such as {@link AiToolRegistry#findByMarker(Class)}.
+     *
+     * @return marker sub-interfaces implemented by the source bean
      */
     public Set<Class<? extends JmixAiTool>> getMarkers() {
         return markers;

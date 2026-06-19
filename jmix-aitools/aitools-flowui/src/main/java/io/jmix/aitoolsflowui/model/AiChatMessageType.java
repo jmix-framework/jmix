@@ -19,6 +19,10 @@ package io.jmix.aitoolsflowui.model;
 import io.jmix.core.metamodel.datatype.EnumClass;
 import org.jspecify.annotations.Nullable;
 
+/**
+ * Origin of an {@link AiChatMessage}: a user prompt, an assistant reply, a tool result
+ * or a system message.
+ */
 public enum AiChatMessageType implements EnumClass<Integer> {
 
     USER(10),

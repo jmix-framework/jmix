@@ -17,12 +17,9 @@
 package io.jmix.aitools.dataload.prompt;
 
 import io.jmix.aitools.PromptProvider;
-import io.jmix.aitools.dataload.repair.impl.DefaultJpqlRepairer;
 
 /**
  * Provides the prompt for repairing an invalid JPQL query.
- *
- * @see DefaultJpqlRepairer
  */
 public interface JpqlRepairerPromptProvider extends PromptProvider {
 }

@@ -21,7 +21,7 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import java.util.List;
 
-@ConfigurationProperties("aitools.dataload")
+@ConfigurationProperties("jmix.aitools.dataload")
 public class AiToolsDataLoadProperties {
 
     /**
@@ -43,6 +43,13 @@ public class AiToolsDataLoadProperties {
      * Default maximum number of rows applied when a query does not specify one.
      */
     Integer jpqlExecutionMaxResult;
+
+    /**
+     * Hard upper bound for the number of rows a single query may request. Any larger
+     * {@code maxResults} (whether supplied by the query or coming from the default) is
+     * capped to this value before execution.
+     */
+    Integer jpqlExecutionMaxResultLimit;
 
     /**
      * Entity names to explicitly include; never {@code null}.
@@ -68,6 +75,7 @@ public class AiToolsDataLoadProperties {
                                      @DefaultValue("true") Boolean excludeSystemLevelEntities,
                                      @DefaultValue("1") Integer maxRepairAttempts,
                                      @DefaultValue("20") Integer jpqlExecutionMaxResult,
+                                     @DefaultValue("200") Integer jpqlExecutionMaxResultLimit,
                                      List<String> includeEntities,
                                      List<String> excludeEntities,
                                      List<String> includePackages,
@@ -76,6 +84,7 @@ public class AiToolsDataLoadProperties {
         this.excludeSystemLevelEntities = excludeSystemLevelEntities;
         this.maxRepairAttempts = maxRepairAttempts;
         this.jpqlExecutionMaxResult = jpqlExecutionMaxResult;
+        this.jpqlExecutionMaxResultLimit = jpqlExecutionMaxResultLimit;
         this.includeEntities = includeEntities == null ? List.of() : List.copyOf(includeEntities);
         this.excludeEntities = excludeEntities == null ? List.of() : List.copyOf(excludeEntities);
         this.includePackages = includePackages == null ? List.of() : List.copyOf(includePackages);
@@ -108,6 +117,13 @@ public class AiToolsDataLoadProperties {
      */
     public Integer getJpqlExecutionMaxResult() {
         return jpqlExecutionMaxResult;
+    }
+
+    /**
+     * @see #jpqlExecutionMaxResultLimit
+     */
+    public Integer getJpqlExecutionMaxResultLimit() {
+        return jpqlExecutionMaxResultLimit;
     }
 
     /**

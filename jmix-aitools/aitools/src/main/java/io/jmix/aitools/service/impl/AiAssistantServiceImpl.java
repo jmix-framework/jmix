@@ -19,7 +19,7 @@ package io.jmix.aitools.service.impl;
 import io.jmix.aitools.ChatClientFactory;
 import io.jmix.aitools.ResponseLanguageProvider;
 import io.jmix.aitools.service.AiAssistantService;
-import io.jmix.aitools.service.prompt.AiChatSystemPromptProvider;
+import io.jmix.aitools.service.prompt.AiAssistantSystemPromptProvider;
 import io.jmix.aitools.tool.AiToolRegistry;
 import io.jmix.core.common.util.Preconditions;
 import org.jspecify.annotations.Nullable;
@@ -44,7 +44,7 @@ public class AiAssistantServiceImpl implements AiAssistantService, InitializingB
     @Autowired
     protected AiToolRegistry aiToolRegistry;
     @Autowired
-    protected AiChatSystemPromptProvider systemPromptProvider;
+    protected AiAssistantSystemPromptProvider systemPromptProvider;
     @Autowired
     protected ResponseLanguageProvider responseLanguageProvider;
 

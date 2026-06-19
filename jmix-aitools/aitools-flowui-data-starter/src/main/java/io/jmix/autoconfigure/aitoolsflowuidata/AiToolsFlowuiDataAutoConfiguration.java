@@ -23,6 +23,8 @@ import io.jmix.aitoolsflowuidata.AiToolsFlowuiDataConfiguration;
 import io.jmix.aitoolsflowuidata.service.impl.AiChatDataService;
 import io.jmix.aitoolsflowuidata.service.impl.AiConversationDataService;
 import io.jmix.aitoolsflowuidata.service.impl.AiChatMessageDataService;
+import io.jmix.aitoolsflowuidata.service.prompt.AiChatSystemPromptProvider;
+import io.jmix.aitoolsflowuidata.service.prompt.impl.DefaultAiChatSystemPromptProvider;
 import io.jmix.autoconfigure.aitoolsflowui.AiToolsFlowuiAutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBooleanProperty;
@@ -58,5 +60,11 @@ public class AiToolsFlowuiDataAutoConfiguration {
     @ConditionalOnMissingBean(AiChatService.class)
     public AiChatService userAiChatService() {
         return new AiChatDataService();
+    }
+
+    @Bean("aitls_DefaultAiChatSystemPromptProvider")
+    @ConditionalOnMissingBean(AiChatSystemPromptProvider.class)
+    public AiChatSystemPromptProvider aiChatSystemPromptProvider() {
+        return new DefaultAiChatSystemPromptProvider();
     }
 }

@@ -155,6 +155,9 @@ public class DefaultJpqlRepairer implements JpqlRepairer, InitializingBean {
     /**
      * Maps a parameter payload to a {@link GeneratedJpqlParameter}, or returns {@code null} to skip
      * it when the model provided no parameter name (such a parameter cannot be bound).
+     *
+     * @param payload raw parameter payload from the model
+     * @return mapped parameter, or {@code null} if it has no usable name
      */
     @Nullable
     protected GeneratedJpqlParameter toGeneratedJpqlParameter(GeneratedJpqlParameterPayload payload) {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.aitoolsflowui.model;
+package io.jmix.aitoolsflowui.view.chat.timeline;
 
 import io.jmix.core.metamodel.datatype.EnumClass;
 

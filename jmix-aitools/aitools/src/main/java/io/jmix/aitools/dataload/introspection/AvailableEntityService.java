@@ -16,7 +16,6 @@
 
 package io.jmix.aitools.dataload.introspection;
 
-import io.jmix.aitools.dataload.introspection.introspector.JpaDomainModelIntrospector;
 import io.jmix.aitools.dataload.introspection.model.EntityDescriptor;
 import io.jmix.aitools.dataload.introspection.model.EntityPropertyDescriptor;
 import io.jmix.aitools.dataload.introspection.model.EntitySummary;

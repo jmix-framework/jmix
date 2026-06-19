@@ -25,9 +25,11 @@ import java.util.regex.Pattern;
 /**
  * Shared helpers for JPQL validators.
  */
-public final class JpqlValidatorUtils {
+public final class JpqlValidatorSupport {
 
-    private JpqlValidatorUtils() {
+    private static final Pattern STRING_LITERAL_PATTERN = Pattern.compile("'(?:''|[^'])*'");
+
+    private JpqlValidatorSupport() {
     }
 
     /**
@@ -50,6 +52,18 @@ public final class JpqlValidatorUtils {
      */
     public static boolean containsFunctionCall(String text, String functionName) {
         return Pattern.compile("\\b" + Pattern.quote(functionName) + "\\s*\\(").matcher(text).find();
+    }
+
+    /**
+     * Replaces every single-quoted string literal with an empty literal ({@code ''}), so the
+     * literal's content (e.g. a {@code :}-prefixed word or an uppercase token) is not mistaken for
+     * a JPQL parameter, keyword or constant.
+     *
+     * @param jpql JPQL text
+     * @return the text with all string literals emptied
+     */
+    public static String stripStringLiterals(String jpql) {
+        return STRING_LITERAL_PATTERN.matcher(jpql).replaceAll("''");
     }
 
     /**

@@ -206,10 +206,14 @@ public class JpqlExecutionService {
     }
 
     protected Integer getEffectiveMaxResult(@Nullable Integer maxResults) {
-        if (maxResults == null) {
-            return dataLoadProperties.getJpqlExecutionMaxResult();
+        int limit = dataLoadProperties.getJpqlExecutionMaxResultLimit();
+        int requested = maxResults != null ? maxResults : dataLoadProperties.getJpqlExecutionMaxResult();
+        if (requested > limit) {
+            log.debug("Requested maxResults {} exceeds the configured limit {}; capping to the limit",
+                    requested, limit);
+            return limit;
         }
-        return maxResults;
+        return requested;
     }
 
     protected ExecutionRows createExecutionRows(List<Map<String, Object>> rows, boolean hasMore) {
@@ -218,6 +222,9 @@ public class JpqlExecutionService {
 
     /**
      * Rows fetched for a query plus a flag telling whether more results are available beyond them.
+     *
+     * @param rows    the fetched rows
+     * @param hasMore {@code true} if more rows are available beyond {@code rows}
      */
     protected record ExecutionRows(List<Map<String, Object>> rows, boolean hasMore) {
     }

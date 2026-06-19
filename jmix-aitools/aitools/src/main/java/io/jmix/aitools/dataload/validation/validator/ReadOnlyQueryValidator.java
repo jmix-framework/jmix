@@ -27,11 +27,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import static io.jmix.aitools.dataload.validation.validator.JpqlValidatorUtils.containsWord;
+import static io.jmix.aitools.dataload.validation.validator.JpqlValidatorSupport.containsFunctionCall;
+import static io.jmix.aitools.dataload.validation.validator.JpqlValidatorSupport.containsWord;
 
 /**
  * Checks that the query is a read-only select, rejecting non-select queries and write operations
- * (update, delete, insert).
+ * (update, delete, insert), as well as the native escape functions {@code SQL(...)} and
+ * {@code FUNCTION(...)} that can run raw SQL or native database functions and so bypass the
+ * read-only guarantee.
  */
 @Component("aitls_ReadOnlyQueryJpqlValidator")
 public class ReadOnlyQueryValidator implements JpqlResultValidator, Ordered {
@@ -41,6 +44,10 @@ public class ReadOnlyQueryValidator implements JpqlResultValidator, Ordered {
 
     public static final String JPQL_WRITE_OPERATION_CODE = "jpql.writeOperation";
     public static final String JPQL_WRITE_OPERATION_GUIDANCE = "Return a read-only select JPQL query only.";
+
+    public static final String JPQL_NATIVE_FUNCTION_CODE = "jpql.nativeFunction";
+    public static final String JPQL_NATIVE_FUNCTION_GUIDANCE = "Do not use the native escape functions SQL(...) or" +
+            " FUNCTION(...). Use plain JPQL only.";
 
     @Override
     public List<JpqlValidationIssue> validate(GeneratedJpqlResult result) {
@@ -61,6 +68,13 @@ public class ReadOnlyQueryValidator implements JpqlResultValidator, Ordered {
                 || containsWord(normalizedJpql, "insert")) {
             issues.add(new JpqlValidationIssue(JPQL_WRITE_OPERATION_CODE, "Write JPQL operations are not allowed",
                     JPQL_WRITE_OPERATION_GUIDANCE));
+        }
+
+        if (containsFunctionCall(normalizedJpql, "sql")
+                || containsFunctionCall(normalizedJpql, "function")) {
+            issues.add(new JpqlValidationIssue(JPQL_NATIVE_FUNCTION_CODE,
+                    "Native escape functions SQL(...) and FUNCTION(...) are not allowed",
+                    JPQL_NATIVE_FUNCTION_GUIDANCE));
         }
         return issues;
     }

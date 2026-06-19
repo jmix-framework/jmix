@@ -20,17 +20,17 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.function.SerializableSupplier;
 import io.jmix.aitoolsflowui.icon.AiIconProvider;
-import io.jmix.aitoolsflowui.model.TimelineItem;
-import io.jmix.aitoolsflowui.model.TimelineItemType;
 import io.jmix.aitoolsflowui.model.AiChatMessage;
-import io.jmix.aitoolsflowui.service.ActorNameResolver;
+import io.jmix.aitoolsflowui.view.chat.support.ActorNameResolver;
+import io.jmix.aitoolsflowui.view.chat.support.ChatDateTimeSupport;
+import io.jmix.aitoolsflowui.view.chat.timeline.TimelineItem;
+import io.jmix.aitoolsflowui.view.chat.timeline.TimelineItemType;
 import io.jmix.aitoolsflowui.view.chat.AiChatFragment;
 import io.jmix.aitoolsflowui.view.chat.renderer.component.AbstractTimelineItem;
 import io.jmix.aitoolsflowui.view.chat.renderer.component.TimelineAssistantMessageItem;
 import io.jmix.aitoolsflowui.view.chat.renderer.component.TimelineAssistantThinkingMessageItem;
 import io.jmix.aitoolsflowui.view.chat.renderer.component.TimelineUserMessageItem;
 import io.jmix.core.Messages;
-import io.jmix.core.metamodel.datatype.DatatypeFormatter;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.fragment.FragmentDescriptor;
 import io.jmix.flowui.fragment.FragmentOwner;
@@ -50,7 +50,7 @@ public class TimelineItemRenderer extends FragmentRenderer<VerticalLayout, Timel
     @Autowired
     protected ActorNameResolver actorNameResolver;
     @Autowired
-    protected DatatypeFormatter datatypeFormatter;
+    protected ChatDateTimeSupport chatDateTimeSupport;
     @Autowired
     protected Messages messages;
     @Autowired
@@ -122,11 +122,18 @@ public class TimelineItemRenderer extends FragmentRenderer<VerticalLayout, Timel
             case USER -> ((TimelineUserMessageItem) messageItem).setMessage(message,
                     actorNameResolver.resolve(message, messages.getMessage(getMessageGroup(), "timelineItemRenderer.defaultActorName"))
             );
-            case ASSISTANT -> ((TimelineAssistantMessageItem) messageItem).setMessage(
-                    message,
-                    Boolean.TRUE.equals(item.getFresh()),
-                    messages.getMessage(getMessageGroup(), "timelineItemRenderer.assistantName")
-            );
+            case ASSISTANT -> {
+                boolean fresh = Boolean.TRUE.equals(item.getFresh());
+                ((TimelineAssistantMessageItem) messageItem).setMessage(
+                        message,
+                        fresh,
+                        messages.getMessage(getMessageGroup(), "timelineItemRenderer.assistantName")
+                );
+                if (fresh) {
+                    // Consume the marker: animate once, do not replay when the row is re-rendered.
+                    item.setFresh(false);
+                }
+            }
             case ASSISTANT_THINKING -> ((TimelineAssistantThinkingMessageItem) messageItem).setThinking(
                     item,
                     messages.getMessage(getMessageGroup(), "timelineItemRenderer.assistantName"),
@@ -135,7 +142,7 @@ public class TimelineItemRenderer extends FragmentRenderer<VerticalLayout, Timel
         }
 
         messageItem.setTime(
-                datatypeFormatter.formatOffsetDateTime(
+                chatDateTimeSupport.formatInUserZone(
                         message != null ? message.getCreatedDate() : null));
     }
 

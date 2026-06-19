@@ -16,9 +16,7 @@
 
 package io.jmix.aitoolsflowuidata.entity;
 
-import io.jmix.core.DeletePolicy;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
-import io.jmix.core.entity.annotation.OnDeleteInverse;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import jakarta.persistence.*;
@@ -43,7 +41,6 @@ public class AiChatMessageEntity {
     @JmixGeneratedValue
     private UUID id;
 
-    @OnDeleteInverse(DeletePolicy.CASCADE)
     @JoinColumn(name = "CONVERSATION_ID", nullable = false)
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

@@ -30,13 +30,14 @@ import test_support.AiToolsTestConfiguration;
 
 import java.util.List;
 
-import static io.jmix.aitools.dataload.validation.validator.CommonNonJpqlConstructsValidator.CURRENT_FUNCTION_PARENTNESS_CODE;
+import static io.jmix.aitools.dataload.validation.validator.CommonNonJpqlConstructsValidator.CURRENT_FUNCTION_PARENTHESES_CODE;
 import static io.jmix.aitools.dataload.validation.validator.CommonNonJpqlConstructsValidator.SQL_DATE_FUNCTION_CODE;
 import static io.jmix.aitools.dataload.validation.validator.CommonNonJpqlConstructsValidator.SQL_PAGINATION_CODE;
 import static io.jmix.aitools.dataload.validation.validator.JpqlSyntaxValidator.JPQL_SYNTAX_INVALID_CODE;
-import static io.jmix.aitools.dataload.validation.validator.JpqlValidatorUtils.*;
+import static io.jmix.aitools.dataload.validation.validator.JpqlValidatorSupport.*;
 import static io.jmix.aitools.dataload.validation.validator.ParametersValidator.PARAMETER_MISSING_CODE;
 import static io.jmix.aitools.dataload.validation.validator.ParametersValidator.PARAMETER_UNUSED_CODE;
+import static io.jmix.aitools.dataload.validation.validator.ReadOnlyQueryValidator.JPQL_NATIVE_FUNCTION_CODE;
 import static io.jmix.aitools.dataload.validation.validator.ReadOnlyQueryValidator.JPQL_NOT_SELECT_CODE;
 import static io.jmix.aitools.dataload.validation.validator.ReadOnlyQueryValidator.JPQL_WRITE_OPERATION_CODE;
 import static io.jmix.aitools.dataload.validation.validator.RootEntityValidator.ROOT_ENTITY_UNKNOWN_CODE;
@@ -83,6 +84,36 @@ class JpqlValidationServiceTest {
         assertFalse(validationResult.isValid());
         assertTrue(validationResult.getIssues().stream().anyMatch(issue -> issue.getCode().equals(JPQL_NOT_SELECT_CODE)));
         assertTrue(validationResult.getIssues().stream().anyMatch(issue -> issue.getCode().equals(JPQL_WRITE_OPERATION_CODE)));
+    }
+
+    @Test
+    @DisplayName("Rejects native escape functions SQL() and FUNCTION()")
+    void testRejectsNativeEscapeFunctions() {
+        GeneratedJpqlResult functionResult = new GeneratedJpqlResult(
+                "select FUNCTION('some_proc', e.id) as v from aitls_Order e",
+                List.of(),
+                "Uses FUNCTION escape",
+                List.of()
+        );
+
+        JpqlValidationResult functionValidation = jpqlValidationService.validate(functionResult);
+
+        assertFalse(functionValidation.isValid());
+        assertTrue(functionValidation.getIssues().stream()
+                .anyMatch(issue -> issue.getCode().equals(JPQL_NATIVE_FUNCTION_CODE)));
+
+        GeneratedJpqlResult sqlResult = new GeneratedJpqlResult(
+                "select e.id as id from aitls_Order e where SQL('1 = 1')",
+                List.of(),
+                "Uses SQL escape",
+                List.of()
+        );
+
+        JpqlValidationResult sqlValidation = jpqlValidationService.validate(sqlResult);
+
+        assertFalse(sqlValidation.isValid());
+        assertTrue(sqlValidation.getIssues().stream()
+                .anyMatch(issue -> issue.getCode().equals(JPQL_NATIVE_FUNCTION_CODE)));
     }
 
     @Test
@@ -156,6 +187,23 @@ class JpqlValidationServiceTest {
     }
 
     @Test
+    @DisplayName("Does not treat a colon-prefixed word inside a string literal as a parameter")
+    void testIgnoresParameterLikeStringLiteral() {
+        GeneratedJpqlResult result = new GeneratedJpqlResult(
+                "select e from aitls_Order e where e.number = ':deadline reached'",
+                List.of(),
+                "String literal that looks like a named parameter",
+                List.of()
+        );
+
+        JpqlValidationResult validationResult = jpqlValidationService.validate(result);
+
+        assertTrue(validationResult.isValid());
+        assertTrue(validationResult.getIssues().stream()
+                .noneMatch(issue -> issue.getCode().equals(PARAMETER_MISSING_CODE)));
+    }
+
+    @Test
     @DisplayName("Rejects SQL-style pagination and date functions")
     void testRejectsCommonNonJpqlConstructs() {
         GeneratedJpqlResult result = new GeneratedJpqlResult(
@@ -186,7 +234,7 @@ class JpqlValidationServiceTest {
 
         assertFalse(validationResult.isValid());
         assertTrue(validationResult.getIssues().stream()
-                .anyMatch(issue -> issue.getCode().equals(CURRENT_FUNCTION_PARENTNESS_CODE)));
+                .anyMatch(issue -> issue.getCode().equals(CURRENT_FUNCTION_PARENTHESES_CODE)));
     }
 
     @Test

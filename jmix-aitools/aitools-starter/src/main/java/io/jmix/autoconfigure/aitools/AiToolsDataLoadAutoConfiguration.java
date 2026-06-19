@@ -24,17 +24,16 @@ import io.jmix.aitools.dataload.prompt.impl.DefaultDataLoadChatSystemPromptProvi
 import io.jmix.aitools.dataload.prompt.impl.DefaultJpqlRepairerPromptProvider;
 import io.jmix.aitools.dataload.repair.JpqlRepairer;
 import io.jmix.aitools.dataload.repair.impl.DefaultJpqlRepairer;
-import io.jmix.aitools.dataload.introspection.introspector.JpaDomainModelIntrospector;
+import io.jmix.aitools.dataload.introspection.JpaDomainModelIntrospector;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBooleanProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
 
 @AutoConfiguration
-@ConditionalOnBooleanProperty(value = "aitools.dataload.enabled", matchIfMissing = true)
+@ConditionalOnBooleanProperty(value = "jmix.aitools.dataload.enabled", matchIfMissing = true)
 public class AiToolsDataLoadAutoConfiguration {
 
     @Bean("aitls_JpaDomainModelIntrospector")
@@ -43,10 +42,10 @@ public class AiToolsDataLoadAutoConfiguration {
         return new JpaDomainModelIntrospector();
     }
 
-    @Bean("aitls_SpringAiJpqlRepairer")
+    @Bean("aitls_DefaultJpqlRepairer")
     @ConditionalOnClass(ChatClient.class)
     @ConditionalOnMissingBean(JpqlRepairer.class)
-    public JpqlRepairer textToJpqlRepairer() {
+    public JpqlRepairer jpqlRepairer() {
         return new DefaultJpqlRepairer();
     }
 

@@ -27,7 +27,7 @@ import org.springframework.stereotype.Component;
 @Component("aitls_EntityDataLoadPromptProvider")
 public class DefaultEntityDataLoadPromptProvider implements EntityDataLoadPromptProvider {
 
-    @Value("classpath:io/jmix/aitools/dataload/prompt/entity-dataload-system-prompt.txt")
+    @Value("classpath:io/jmix/aitools/dataload/prompt/entity-dataload-system-prompt.st")
     protected Resource promptResource;
 
     @Override

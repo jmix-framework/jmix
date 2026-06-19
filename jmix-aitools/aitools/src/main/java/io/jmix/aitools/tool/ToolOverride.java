@@ -44,7 +44,7 @@ import java.lang.annotation.Target;
  *
  *     &#064;Tool(description = "Improved listing of available entities")
  *     &#064;ToolOverride("getAvailableEntities")
- *     public List<EntitySummary> customListing() { ... }
+ *     public List&lt;EntitySummary&gt; customListing() { ... }
  * }
  * </pre>
  *
@@ -59,6 +59,8 @@ public @interface ToolOverride {
     /**
      * Name of the existing tool that this method overrides. Must match the {@code name} value of
      * the original {@link Tool @Tool} method (or its derived name, if not explicitly set).
+     *
+     * @return name of the tool being overridden
      */
     String value();
 }

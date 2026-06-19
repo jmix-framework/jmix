@@ -24,6 +24,7 @@ import com.vaadin.flow.router.Route;
 import io.jmix.aitoolsflowui.model.AiConversation;
 import io.jmix.aitoolsflowui.service.AiConversationService;
 import io.jmix.aitoolsflowui.view.chathub.AiChatHubView;
+import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.Dialogs;
 import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.action.DialogAction;
@@ -58,10 +59,10 @@ import java.util.UUID;
  * Opens either by URL — the {@code :id} route segment is the id of an
  * {@link AiConversation} that gets loaded and bound to the fragment — or
  * programmatically via {@link #setConversation(AiConversation)} (used by
- * {@code DialogWindows} and after-navigation handlers).
+ * {@link DialogWindows} and after-navigation handlers).
  */
 @Route(value = "aitls/chat/:id?", layout = DefaultMainViewParent.class)
-@ViewController("AiChatView")
+@ViewController(id = "aitls_AiChatView")
 @ViewDescriptor("ai-chat-view.xml")
 public class AiChatView extends StandardView {
 
@@ -70,31 +71,31 @@ public class AiChatView extends StandardView {
     public static final String ROUTE_PARAM_ID = "id";
 
     @Autowired
-    private AiConversationService conversationService;
+    protected AiConversationService conversationService;
     @Autowired
-    private UrlParamSerializer urlParamSerializer;
+    protected UrlParamSerializer urlParamSerializer;
     @Autowired
-    private RouteSupport routeSupport;
+    protected RouteSupport routeSupport;
     @Autowired
-    private ViewNavigators viewNavigators;
+    protected ViewNavigators viewNavigators;
     @Autowired
-    private Dialogs dialogs;
+    protected Dialogs dialogs;
 
     @ViewComponent
-    private MessageBundle messageBundle;
+    protected MessageBundle messageBundle;
     @ViewComponent
-    private AiChatFragment chatFragment;
+    protected AiChatFragment chatFragment;
     @ViewComponent
-    private VerticalLayout notFoundLayout;
+    protected VerticalLayout notFoundLayout;
     @ViewComponent
-    private VerticalLayout emptyLayout;
+    protected VerticalLayout emptyLayout;
 
     @Nullable
-    private AiConversation conversation;
-    private boolean conversationNotFound;
-    private boolean contentInitialized;
-    private boolean initialPromptSent;
-    private boolean leaveConfirmed;
+    protected AiConversation conversation;
+    protected boolean conversationNotFound;
+    protected boolean contentInitialized;
+    protected boolean initialPromptSent;
+    protected boolean leaveConfirmed;
 
     @Override
     public void beforeEnter(BeforeEnterEvent event) {
@@ -117,6 +118,8 @@ public class AiChatView extends StandardView {
      * it is applied on {@code ReadyEvent}. Clears any previous "not found"
      * state and keeps the browser URL in sync (unless the view is opened in a
      * dialog).
+     *
+     * @param conversation conversation to bind, or {@code null} to show the empty state
      */
     public void setConversation(@Nullable AiConversation conversation) {
         this.conversation = conversation;

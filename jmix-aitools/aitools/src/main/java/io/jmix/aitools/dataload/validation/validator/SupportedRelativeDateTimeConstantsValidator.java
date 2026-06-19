@@ -29,14 +29,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static io.jmix.aitools.dataload.validation.validator.JpqlValidatorSupport.stripStringLiterals;
+
 /**
  * Checks that only supported Jmix relative date-time constants (such as {@code FIRST_DAY_OF_CURRENT_MONTH})
  * are used, ignoring string literals and standard JPQL temporal keywords.
  */
 @Component("aitls_SupportedRelativeDateTimeConstantsValidator")
 public class SupportedRelativeDateTimeConstantsValidator implements JpqlResultValidator, Ordered {
-
-    protected static final Pattern STRING_LITERAL_PATTERN = Pattern.compile("'(?:''|[^'])*'");
 
     protected static final Pattern RELATIVE_DATE_TIME_CONSTANT_PATTERN =
             Pattern.compile("\\b[A-Z][A-Z0-9]*_[A-Z0-9_]*\\b");
@@ -175,9 +175,5 @@ public class SupportedRelativeDateTimeConstantsValidator implements JpqlResultVa
         }
 
         return text.substring(index + 1, end).toLowerCase(Locale.ROOT);
-    }
-
-    protected String stripStringLiterals(String jpql) {
-        return STRING_LITERAL_PATTERN.matcher(jpql).replaceAll("''");
     }
 }

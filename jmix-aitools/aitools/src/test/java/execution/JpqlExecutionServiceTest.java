@@ -222,12 +222,42 @@ class JpqlExecutionServiceTest {
         assertEquals(2, result.getRows().size());
     }
 
+    @Test
+    @DisplayName("Caps maxResults to the configured limit")
+    void testCapsMaxResultsToConfiguredLimit() {
+        TestJpqlExecutionService executionService = createService();
+        GeneratedJpqlResult generatedResult = new GeneratedJpqlResult(
+                "select e.id as id from aitls_Customer e",
+                List.of(), "", List.of(), 1000, 0);
+
+        when(validateAndRepair.validateAndRepair(any()))
+                .thenReturn(
+                        OperationResult.success(
+                                new JpqlExecutionRequest(), generatedResult,
+                                new JpqlValidationResult(true, List.of()), null));
+
+        when(jpqlParameterConversionService.convert(anyList())).thenReturn(Map.of());
+
+        executionService.stubRows(List.of(Map.of("id", 1L)), false);
+
+        JpqlExecutionResult result = executionService.execute(new JpqlExecutionRequest(
+                "Show customers",
+                "select e.id as id from aitls_Customer e",
+                List.of(),
+                List.of("id"),
+                1000,
+                0));
+
+        assertTrue(result.isExecuted());
+        assertEquals(200, result.getMaxResults().intValue());
+    }
+
     TestJpqlExecutionService createService() {
         TestJpqlExecutionService executionService = new TestJpqlExecutionService();
         ReflectionTestUtils.setField(executionService, "validateAndRepair", validateAndRepair);
         ReflectionTestUtils.setField(executionService, "jpqlParameterConversionService", jpqlParameterConversionService);
         ReflectionTestUtils.setField(executionService, "dataLoadProperties",
-                new AiToolsDataLoadProperties(true, true, 1, 20, null, null, null, null));
+                new AiToolsDataLoadProperties(true, true, 1, 20, 200, null, null, null, null));
         return executionService;
     }
 

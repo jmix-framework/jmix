@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
+@NullMarked
 @Experimental
 package io.jmix.aitools.dataload.introspection.model;
 
 import io.jmix.core.annotation.Experimental;
+import org.jspecify.annotations.NullMarked;

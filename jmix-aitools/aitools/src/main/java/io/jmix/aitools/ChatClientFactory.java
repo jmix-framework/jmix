@@ -89,6 +89,8 @@ public class ChatClientFactory implements InitializingBean {
     /**
      * Creates a {@link ChatClient} with the default advisors, or an empty {@link Optional} when
      * Spring AI is not configured (see {@link #isConfigured()}).
+     *
+     * @return a new chat client with default advisors, or empty when Spring AI is not configured
      */
     public Optional<ChatClient> createChatClientWithDefaultAdvisors() {
         if (!isConfigured()) {

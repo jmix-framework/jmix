@@ -138,7 +138,7 @@ public class InstanceLoaderImpl<E> implements InstanceLoader<E> {
     }
 
     protected boolean needLoad() {
-        return delegate != null || entityId != null || !Strings.isNullOrEmpty(query);
+        return entityId != null || !Strings.isNullOrEmpty(query);
     }
 
     /**

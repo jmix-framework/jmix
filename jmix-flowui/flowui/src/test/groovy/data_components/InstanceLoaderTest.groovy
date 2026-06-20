@@ -112,13 +112,11 @@ class InstanceLoaderTest extends DataContextSpec {
         loader.setLoadDelegate({ loadContext -> foo })
         loader.load()
 
-        then:
+        then: "delegate is not invoked and nothing is loaded"
 
-        container.getItem() == foo
+        container.getItemOrNull() == null
 
-        1 * preLoadListener.accept({ InstanceLoader.PreLoadEvent event ->
-            event.loadContext.id == null && event.loadContext.query.queryString == null
-        })
-        1 * postLoadListener.accept(_ as InstanceLoader.PostLoadEvent<Foo>)
+        0 * preLoadListener.accept(_)
+        0 * postLoadListener.accept(_)
     }
 }

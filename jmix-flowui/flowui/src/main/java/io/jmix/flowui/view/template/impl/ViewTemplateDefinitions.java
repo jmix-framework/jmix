@@ -98,6 +98,17 @@ public class ViewTemplateDefinitions {
         return Objects.requireNonNull(definitions);
     }
 
+    /**
+     * Re-renders all template view descriptors from current metadata and updates the descriptor
+     * registry. Used when runtime metadata changes after startup so that template-generated views
+     * reflect the current entity properties.
+     */
+    public void refresh() {
+        synchronized (this) {
+            definitions = Collections.unmodifiableList(loadDefinitions());
+        }
+    }
+
     protected List<ViewTemplateDefinition> loadDefinitions() {
         List<ViewTemplateDefinition> result = new ArrayList<>();
         Set<String> viewIds = new HashSet<>();

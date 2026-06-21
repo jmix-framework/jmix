@@ -45,6 +45,7 @@ import io.jmix.flowui.view.ViewRegistry;
 import io.jmix.flowui.view.navigation.ViewNavigationSupport;
 import io.jmix.flowui.view.template.impl.TemplateDetailView;
 import io.jmix.flowui.view.template.impl.TemplateListView;
+import io.jmix.flowui.view.template.impl.ViewTemplateDefinitions;
 import io.jmix.flowui.view.template.impl.ViewTemplateDescriptorRegistry;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -109,6 +110,25 @@ public class ViewTemplateIntegrationTest {
 
     @Autowired
     DataManager dataManager;
+
+    @Autowired
+    ViewTemplateDefinitions viewTemplateDefinitions;
+    @Autowired
+    ViewTemplateDescriptorRegistry viewTemplateDescriptorRegistry;
+
+    @Test
+    void testRefreshRerendersDescriptorFromCurrentMetadata() {
+        String path = viewTemplateDescriptorRegistry.createPath(LIST_VIEW_ID);
+        String before = viewTemplateDescriptorRegistry.getDescriptor(path).orElseThrow();
+
+        viewTemplateDefinitions.refresh();
+
+        String after = viewTemplateDescriptorRegistry.getDescriptor(path).orElseThrow();
+        // Metadata is unchanged in this test, so a re-render must reproduce the same descriptor.
+        assertEquals(before, after);
+        assertTrue(viewTemplateDefinitions.getDefinitions().stream()
+                .anyMatch(definition -> LIST_VIEW_ID.equals(definition.getId())));
+    }
 
     @Test
     void testTemplateViewsRegisteredInViewRegistry() {

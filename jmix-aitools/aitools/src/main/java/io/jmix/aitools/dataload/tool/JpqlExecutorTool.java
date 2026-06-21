@@ -21,6 +21,7 @@ import io.jmix.aitools.dataload.execution.JpqlExecutionResult;
 import io.jmix.aitools.dataload.execution.JpqlExecutionService;
 import io.jmix.aitools.tool.AiToolStatusPublisher;
 import io.jmix.core.Messages;
+import io.jmix.core.common.util.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.model.ToolContext;
@@ -236,7 +237,8 @@ public class JpqlExecutorTool implements DataLoadAiTool {
             @ToolParam(description = "Structured request containing the original user text and the JPQL draft to execute.")
             JpqlExecutionRequest request,
             ToolContext toolContext) {
-        log.debug("LLM tool call: executeQuery(jpql={})", request == null ? null : request.getJpql());
+        Preconditions.checkNotNullArgument(request, "request is null");
+        log.debug("LLM tool call: executeQuery(jpql={})", request.getJpql());
 
         String startStatus = messages.getMessage("JpqlExecutorTool.executeQuery.startStatus");
         toolStatusPublisher.update(startStatus, toolContext);

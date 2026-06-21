@@ -54,7 +54,7 @@ public class JpaDomainModelIntrospector {
     protected volatile Map<String, EntityDescriptor> entitiesByName = Map.of();
     protected volatile Map<String, Map<String, EntityPropertyDescriptor>> propertiesByEntityName = Map.of();
 
-    protected boolean initialized = false;
+    protected volatile boolean initialized = false;
 
     @EventListener
     protected void onApplicationStarted(ContextRefreshedEvent event) {

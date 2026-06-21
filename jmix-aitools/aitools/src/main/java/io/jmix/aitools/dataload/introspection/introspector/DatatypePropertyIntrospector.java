@@ -44,7 +44,7 @@ public class DatatypePropertyIntrospector extends AbstractPropertyIntrospector {
                 getPropertyLocalizedNames(property),
                 property.getJavaType().getSimpleName(),
                 property.getType().name().toLowerCase(),
-                getIdentifier(property),
+                isIdentifier(property) ? Boolean.TRUE : null,
                 getPersistent(property),
                 getMandatory(property),
                 getComment(property));

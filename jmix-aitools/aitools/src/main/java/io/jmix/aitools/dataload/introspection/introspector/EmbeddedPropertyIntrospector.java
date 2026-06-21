@@ -44,7 +44,7 @@ public class EmbeddedPropertyIntrospector extends AbstractPropertyIntrospector {
                 getPropertyLocalizedNames(property),
                 property.getRange().asClass().getName(),
                 getPropertyType(property),
-                getIdentifier(property),
+                isIdentifier(property) ? Boolean.TRUE : null,
                 getPersistent(property),
                 getMandatory(property),
                 getComment(property));

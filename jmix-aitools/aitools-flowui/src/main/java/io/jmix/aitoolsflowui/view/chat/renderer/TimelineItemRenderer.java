@@ -31,7 +31,6 @@ import io.jmix.aitoolsflowui.view.chat.renderer.component.TimelineAssistantMessa
 import io.jmix.aitoolsflowui.view.chat.renderer.component.TimelineAssistantThinkingMessageItem;
 import io.jmix.aitoolsflowui.view.chat.renderer.component.TimelineUserMessageItem;
 import io.jmix.core.Messages;
-import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.fragment.FragmentDescriptor;
 import io.jmix.flowui.fragment.FragmentOwner;
 import io.jmix.flowui.fragment.FragmentUtils;
@@ -45,8 +44,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 @FragmentDescriptor("timeline-item-renderer-fragment.xml")
 public class TimelineItemRenderer extends FragmentRenderer<VerticalLayout, TimelineItem> {
 
-    @Autowired
-    protected UiComponents uiComponents;
     @Autowired
     protected ActorNameResolver actorNameResolver;
     @Autowired

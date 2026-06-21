@@ -97,14 +97,13 @@ public abstract class AbstractPropertyIntrospector implements MetaPropertyIntros
     }
 
     /**
-     * Returns whether the property is the entity identifier.
+     * Returns whether the property is the entity's primary key.
      *
      * @param property property to check
-     * @return {@code true} if the property is the entity's primary key, or {@code null} otherwise
+     * @return {@code true} if the property is the entity's primary key
      */
-    @Nullable
-    public Boolean getIdentifier(MetaProperty property) {
-        return property.equals(metadataTools.getPrimaryKeyProperty(property.getDomain())) ? true : null;
+    public boolean isIdentifier(MetaProperty property) {
+        return property.equals(metadataTools.getPrimaryKeyProperty(property.getDomain()));
     }
 
     /**

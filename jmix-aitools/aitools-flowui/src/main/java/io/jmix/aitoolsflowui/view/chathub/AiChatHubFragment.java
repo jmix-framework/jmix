@@ -39,7 +39,6 @@ import io.jmix.core.MetadataTools;
 import io.jmix.core.annotation.Experimental;
 import io.jmix.flowui.Dialogs;
 import io.jmix.flowui.Notifications;
-import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.action.DialogAction;
 import io.jmix.flowui.component.SupportsTypedValue.TypedValueChangeEvent;
@@ -109,8 +108,6 @@ public class AiChatHubFragment extends Fragment<VerticalLayout> {
     @ViewComponent
     protected Span historyPanelCount;
 
-    @Autowired
-    protected UiComponents uiComponents;
     @Autowired
     protected MetadataTools metadataTools;
     @Autowired

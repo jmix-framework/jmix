@@ -26,8 +26,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 /**
  * REST API authentication utility class
@@ -46,19 +48,25 @@ public class RequestLocaleProvider {
      */
     @Nullable
     public Locale getLocale(HttpServletRequest request) {
-        Locale locale = null;
-        if (!Strings.isNullOrEmpty(request.getHeader(HttpHeaders.ACCEPT_LANGUAGE))) {
-            Locale requestLocale = request.getLocale();
+        if (Strings.isNullOrEmpty(request.getHeader(HttpHeaders.ACCEPT_LANGUAGE))) {
+            return null;
+        }
 
-            List<Locale> availableLocales = coreProperties.getAvailableLocales();
-            if (availableLocales.contains(requestLocale)
-                    || availableLocales.stream().anyMatch(l -> l.getLanguage().equals(requestLocale.getLanguage()))) {
-                locale = requestLocale;
-            } else {
-                log.warn("Locale {} passed in the Accept-Language header is not supported by the application. " +
-                        "It was ignored.", requestLocale);
+        List<Locale> requestLocales = Collections.list(request.getLocales());
+        List<Locale> availableLocales = coreProperties.getAvailableLocales();
+        for (Locale requestLocale : requestLocales) {
+            if (availableLocales.contains(requestLocale)) {
+                return requestLocale;
+            }
+            Optional<Locale> foundLocaleOpt = availableLocales.stream()
+                    .filter(l -> l.getLanguage().equals(requestLocale.getLanguage()))
+                    .findFirst();
+            if (foundLocaleOpt.isPresent()) {
+                return foundLocaleOpt.get();
             }
         }
-        return locale;
+        log.debug("None of the locales {} passed in the Accept-Language header is supported by the application. " +
+                "They were ignored.", requestLocales);
+        return null;
     }
 }

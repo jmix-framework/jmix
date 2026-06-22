@@ -41,11 +41,10 @@ class JpaDomainModelIntrospectorFilteringTest {
         JpaDomainModelIntrospector introspector;
 
         @Test
-        @DisplayName("Excludes system-level, DTO, and 'io.jmix' package entities by default")
+        @DisplayName("Excludes system-level and DTO entities by default")
         void testDefaultFiltering() {
             assertNull(introspector.getEntityDescriptor("aitls_SystemLevelEntity"));
             assertNull(introspector.getEntityDescriptor("aitls_DtoEntity"));
-            assertNull(introspector.getEntityDescriptor("aitls_PackageEntity"));
             assertNotNull(introspector.getEntityDescriptor("aitls_Order"));
         }
     }
@@ -67,6 +66,48 @@ class JpaDomainModelIntrospectorFilteringTest {
         void testExplicitFiltering() {
             assertNotNull(introspector.getEntityDescriptor("aitls_SystemLevelEntity"));
             assertNull(introspector.getEntityDescriptor("aitls_Order"));
+        }
+    }
+
+    @Nested
+    @ExtendWith(SpringExtension.class)
+    @ContextConfiguration(classes = AiToolsTestConfiguration.class)
+    @TestPropertySource(properties = {
+            "jmix.aitools.dataload.exclude-packages=test_support.entity.sales"
+    })
+    class ExcludePackagesFiltering {
+
+        @Autowired
+        JpaDomainModelIntrospector introspector;
+
+        @Test
+        @DisplayName("Excludes entities whose package matches exclude-packages, keeps the rest")
+        void testExcludePackages() {
+            // 'aitls_Order' is in test_support.entity.sales
+            assertNull(introspector.getEntityDescriptor("aitls_Order"));
+            // 'aitls_CompositeKeyEntity' is in test_support.entity, which is not matched by the prefix
+            assertNotNull(introspector.getEntityDescriptor("aitls_CompositeKeyEntity"));
+        }
+    }
+
+    @Nested
+    @ExtendWith(SpringExtension.class)
+    @ContextConfiguration(classes = AiToolsTestConfiguration.class)
+    @TestPropertySource(properties = {
+            "jmix.aitools.dataload.include-packages=test_support.entity.sales"
+    })
+    class IncludePackagesFiltering {
+
+        @Autowired
+        JpaDomainModelIntrospector introspector;
+
+        @Test
+        @DisplayName("With include-packages set, only entities in those packages remain (allow-list)")
+        void testIncludePackagesActAsAllowList() {
+            // 'aitls_Order' is in the included package
+            assertNotNull(introspector.getEntityDescriptor("aitls_Order"));
+            // 'aitls_CompositeKeyEntity' is outside it, so allow-list mode excludes it
+            assertNull(introspector.getEntityDescriptor("aitls_CompositeKeyEntity"));
         }
     }
 }

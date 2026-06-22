@@ -16,7 +16,7 @@
 
 package io.jmix.aitools;
 
-import io.jmix.core.annotation.Experimental;
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.util.Preconditions;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
@@ -38,7 +38,7 @@ import java.util.function.Consumer;
  * Class is a {@link ChatClient} factory. It creates instances from the application's configured
  * Spring AI model.
  */
-@Experimental
+@Internal
 @NullMarked
 @Component("aitls_ChatClientFactory")
 public class ChatClientFactory implements InitializingBean {

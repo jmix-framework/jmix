@@ -80,6 +80,8 @@ public class ViewTemplateIntegrationTest {
     protected static final String BINDINGS_DETAIL_VIEW_ID = "test_ViewTemplateBindingsEntity.detail";
     protected static final String MASTER_DETAIL_VIEW_ID = "test_ViewTemplateMasterEntity.detail";
     protected static final String LINE_DETAIL_VIEW_ID = "test_ViewTemplateLineEntity.detail";
+    protected static final String MSG_TITLE_LIST_VIEW_ID = "test_ViewTemplateMsgTitleEntity.list";
+    protected static final String MSG_TITLE_DETAIL_VIEW_ID = "test_ViewTemplateMsgTitleEntity.detail";
     protected static final String LIST_VIEW_ROUTE = "templates/view-template/list";
     protected static final String DETAIL_VIEW_BASE_ROUTE = "templates/view-template/detail";
     protected static final String DETAIL_VIEW_ROUTE = DETAIL_VIEW_BASE_ROUTE + "/:id";
@@ -212,6 +214,26 @@ public class ViewTemplateIntegrationTest {
         assertEquals("params marker", ((Span) marker).getText());
 
         assertEquals(PARAMS_VIEW_ID, viewRegistry.getListViewInfo(ViewTemplateParamsEntity.class).getId());
+    }
+
+    @Test
+    void testViewTitleResolvedFromMessageBundle() {
+        // List view uses the full reference format: msg://group/key
+        View<?> listView = views.create(MSG_TITLE_LIST_VIEW_ID);
+        assertEquals("Localized list title", listView.getPageTitle());
+
+        // Detail view uses the brief reference format: msg://key, resolved against the entity package
+        View<?> detailView = views.create(MSG_TITLE_DETAIL_VIEW_ID);
+        assertEquals("Localized detail title", detailView.getPageTitle());
+    }
+
+    @Test
+    void testMenuItemTitleResolvedFromMessageBundle() {
+        MenuItem listItem = findMenuItemByView(MSG_TITLE_LIST_VIEW_ID).orElseThrow();
+        assertEquals("Localized list title", menuConfig.getItemTitle(listItem));
+
+        MenuItem detailItem = findMenuItemByView(MSG_TITLE_DETAIL_VIEW_ID).orElseThrow();
+        assertEquals("Localized detail title", menuConfig.getItemTitle(detailItem));
     }
 
     @Test
@@ -452,6 +474,13 @@ public class ViewTemplateIntegrationTest {
     protected Optional<MenuItem> findChildItem(MenuItem parentItem, String id) {
         return parentItem.getChildren().stream()
                 .filter(item -> id.equals(item.getId()))
+                .findFirst();
+    }
+
+    protected Optional<MenuItem> findMenuItemByView(String viewId) {
+        return menuConfig.getRootItems().stream()
+                .flatMap(rootItem -> rootItem.getChildren().stream())
+                .filter(item -> viewId.equals(item.getView()))
                 .findFirst();
     }
 

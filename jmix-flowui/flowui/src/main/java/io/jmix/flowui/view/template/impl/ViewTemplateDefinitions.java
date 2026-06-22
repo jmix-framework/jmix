@@ -26,6 +26,7 @@ import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import io.jmix.core.DevelopmentException;
+import io.jmix.core.MessageTools;
 import io.jmix.core.Metadata;
 import io.jmix.core.Resources;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -178,6 +179,8 @@ public class ViewTemplateDefinitions {
                                                      MetaClass metaClass,
                                                      Map<String, Object> attributes,
                                                      String title) {
+        title = resolveTitleMessageReference(metaClass, title);
+
         String routePath = resolveRoutePath(viewId, type, attributes);
         String templatePath = getStringAttribute(attributes, "path");
         Map<String, Object> templateParams = parseTemplateParams(getStringAttribute(attributes, "templateParams"));
@@ -293,6 +296,26 @@ public class ViewTemplateDefinitions {
             return defaultValue;
         }
         return value;
+    }
+
+    /**
+     * Normalizes a {@code viewTitle} defined as a message reference so that it is resolved
+     * through the {@code Messages} bean by the framework. A brief reference {@code msg://message_id}
+     * is expanded to the full form {@code msg://group/message_id} using the entity package as the
+     * message group. The reference itself is kept intact so the title is resolved per locale later.
+     */
+    protected String resolveTitleMessageReference(MetaClass metaClass, String title) {
+        if (!title.startsWith(MessageTools.MARK)) {
+            return title;
+        }
+
+        String reference = title.substring(MessageTools.MARK.length());
+        if (reference.contains("/")) {
+            return title;
+        }
+
+        String group = metaClass.getJavaClass().getPackageName();
+        return MessageTools.MARK + group + "/" + reference;
     }
 
     protected String getStringAttribute(Map<String, Object> attributes, String name) {

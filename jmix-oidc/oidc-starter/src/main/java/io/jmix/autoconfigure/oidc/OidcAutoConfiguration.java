@@ -38,6 +38,7 @@ import io.jmix.security.role.RowLevelRoleRepository;
 import io.jmix.security.util.ClientDetailsSourceSupport;
 import io.jmix.security.util.JmixHttpSecurityUtils;
 import io.jmix.securityresourceserver.requestmatcher.CompositeResourceServerRequestMatcherProvider;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -54,7 +55,9 @@ import org.springframework.security.web.access.intercept.AuthorizationFilter;
 import org.springframework.security.web.util.matcher.OrRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
-@AutoConfiguration
+@AutoConfiguration(
+        afterName = "org.springframework.boot.security.oauth2.client.autoconfigure.OAuth2ClientAutoConfiguration",
+        beforeName = "io.jmix.autoconfigure.securityflowui.SecurityFlowuiAutoConfiguration")
 @Import({OidcConfiguration.class})
 @ConditionalOnProperty(name = "jmix.oidc.use-default-configuration", matchIfMissing = true)
 public class OidcAutoConfiguration {
@@ -87,10 +90,13 @@ public class OidcAutoConfiguration {
     }
 
     /**
-     * Configures FlowUI views protection.
+     * Configures FlowUI views protection together with OIDC login. Applies only when an OIDC client is
+     * configured (a {@link ClientRegistrationRepository} bean is present), so that applications using the
+     * add-on as an OAuth2 resource server only are not affected.
      */
     @EnableWebSecurity
     @ConditionalOnProperty(value = "jmix.oidc.use-default-ui-configuration", havingValue = "true", matchIfMissing = true)
+    @ConditionalOnBean(ClientRegistrationRepository.class)
     public static class DefaulOidcVaadinWebSecurity extends OidcVaadinWebSecurity {
 
         @Bean("oidc_OidcVaadinSecurityFilterChainCustomizer")

@@ -56,7 +56,7 @@ import org.springframework.security.web.util.matcher.OrRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
 @AutoConfiguration(
-        afterName = "org.springframework.boot.security.oauth2.client.autoconfigure.OAuth2ClientAutoConfiguration",
+        afterName = "org.springframework.boot.autoconfigure.security.oauth2.client.OAuth2ClientAutoConfiguration",
         beforeName = "io.jmix.autoconfigure.securityflowui.SecurityFlowuiAutoConfiguration")
 @Import({OidcConfiguration.class})
 @ConditionalOnProperty(name = "jmix.oidc.use-default-configuration", matchIfMissing = true)

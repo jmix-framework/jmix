@@ -39,7 +39,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.saml2.provider.service.registration.RelyingPartyRegistrationRepository;
 
 @AutoConfiguration(
-        afterName = "org.springframework.boot.security.saml2.autoconfigure.Saml2RelyingPartyAutoConfiguration",
+        afterName = "org.springframework.boot.autoconfigure.security.saml2.Saml2RelyingPartyAutoConfiguration",
         beforeName = "io.jmix.autoconfigure.securityflowui.SecurityFlowuiAutoConfiguration")
 @Import({SamlConfiguration.class})
 @ConditionalOnProperty(name = "jmix.saml.use-default-configuration", matchIfMissing = true)

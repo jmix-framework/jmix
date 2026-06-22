@@ -165,6 +165,7 @@ class JmixBuildPlugin implements Plugin<Project> {
 
     private void setupTestExecution(Project project) {
         project.tasks.withType(Test) {
+            maxHeapSize = '2g'
             systemProperty('org.slf4j.simpleLogger.defaultLogLevel', 'debug')
             systemProperty('org.slf4j.simpleLogger.log.org.springframework', 'info')
             systemProperty('org.slf4j.simpleLogger.log.eclipselink.sql', 'debug')

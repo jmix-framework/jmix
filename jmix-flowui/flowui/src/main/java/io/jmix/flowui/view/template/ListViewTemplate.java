@@ -59,6 +59,10 @@ public @interface ListViewTemplate {
 
     /**
      * View title. If empty, the framework uses {@code <entityName> list}.
+     * <p>
+     * If the value starts with {@code msg://}, it is treated as a message reference and resolved
+     * through the {@code Messages} bean. Both the full format {@code msg://group/message_id} and the
+     * brief format {@code msg://message_id} (resolved against the entity package) are supported.
      */
     String viewTitle() default "";
 

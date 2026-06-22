@@ -56,19 +56,19 @@ public class AiToolStatusPublisher {
     /**
      * Publishes the completion of a previously-started step.
      * <p>
-     * The {@code baseMessage} must match the one passed to {@link #update(String, ToolContext)} so the UI
+     * The {@code message} must match the one passed to {@link #update(String, ToolContext)} so the UI
      * can fold the two into a single completed entry. A blank {@code snippet} is treated as
      * "nothing to report" and the call is a silent no-op.
      *
-     * @param baseMessage same status text that was passed to {@link #update(String, ToolContext)}
+     * @param message     same status text that was passed to {@link #update(String, ToolContext)}
      * @param snippet     short result of the finished step; blank or {@code null} makes this a no-op
      * @param toolContext current tool context carrying the UI callback; {@code null} (no callback) makes this a no-op
      */
-    public void complete(String baseMessage, @Nullable String snippet, @Nullable ToolContext toolContext) {
+    public void complete(String message, @Nullable String snippet, @Nullable ToolContext toolContext) {
         if (snippet == null || snippet.isBlank()) {
             return;
         }
-        publish(new AiToolStatusUpdate(baseMessage, snippet), toolContext);
+        publish(new AiToolStatusUpdate(message, snippet), toolContext);
     }
 
     /**

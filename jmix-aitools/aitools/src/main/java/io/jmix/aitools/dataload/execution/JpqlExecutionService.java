@@ -26,7 +26,6 @@ import io.jmix.core.Metadata;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.metamodel.model.MetadataObject;
-import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.security.AccessDeniedException;
 import io.jmix.core.security.EntityOp;
 import io.jmix.data.QueryTransformerFactory;
@@ -72,8 +71,7 @@ public class JpqlExecutionService {
      * This method runs the full pipeline: it validates and (if needed) repairs the
      * query, enforces data-access constraints, converts the parameters to their Java types and runs
      * the query through {@link DataManager#loadValues}. One extra row is fetched to detect whether
-     * more results are available. Validation or execution failures are reported as a non-successful
-     * {@link JpqlExecutionResult} rather than thrown.
+     * more results are available.
      *
      * @param request query to execute together with its parameters and paging hints
      * @return result with the fetched rows on success, or with validation/execution failure details
@@ -88,17 +86,29 @@ public class JpqlExecutionService {
             return JpqlExecutionResult.failed(generatedResult, validationResult, false);
         }
 
-        ensureQueryIsPermitted(generatedResult.getJpql());
+        List<Integer> deniedSelectedIndexes = resolveDeniedSelectedIndexes(generatedResult.getJpql());
+        List<String> retainedProperties = retainPermittedProperties(request.getResultProperties(), deniedSelectedIndexes);
+        Integer effectiveMaxResults = getEffectiveMaxResult(generatedResult.getMaxResults());
+
+        if (!request.getResultProperties().isEmpty() && retainedProperties.isEmpty()) {
+            // Every selected column is inaccessible to the current user: there is nothing to return,
+            // so skip execution and report an empty, non-executed result instead of failing.
+            return new JpqlExecutionResult(generatedResult, validationResult, List.of(),
+                    effectiveMaxResults, generatedResult.getFirstResult(), false,
+                    vrResult.isRepaired(), false, null);
+        }
 
         Map<String, Object> executionParameters =
                 jpqlParameterConversionService.convert(toExecutionParameters(generatedResult));
-        Integer effectiveMaxResults = getEffectiveMaxResult(generatedResult.getMaxResults());
 
         try {
             ExecutionRows executionRows = executeQuery(request, generatedResult, executionParameters,
                     effectiveMaxResults, generatedResult.getFirstResult());
 
-            return new JpqlExecutionResult(generatedResult, validationResult, executionRows.rows(),
+            List<Map<String, Object>> rows = retainProperties(executionRows.rows(),
+                    request.getResultProperties(), retainedProperties);
+
+            return new JpqlExecutionResult(generatedResult, validationResult, rows,
                     effectiveMaxResults, generatedResult.getFirstResult(),
                     executionRows.hasMore(),
                     vrResult.isRepaired(), true, null
@@ -124,9 +134,17 @@ public class JpqlExecutionService {
         return List.copyOf(executionParameters);
     }
 
-    protected void ensureQueryIsPermitted(String jpqlQuery) {
+    /**
+     * Resolves the positions of the selected columns the current user is not allowed to read.
+     *
+     * @param jpqlQuery query whose data access is being checked
+     * @return positions (in select-clause order) of the denied columns, or an empty list if access
+     * checking is unavailable or all selected columns are readable
+     * @throws AccessDeniedException if the current user cannot read the queried entity
+     */
+    protected List<Integer> resolveDeniedSelectedIndexes(String jpqlQuery) {
         if (accessManager == null || queryTransformerFactory == null || metadata == null) {
-            return;
+            return List.of();
         }
 
         LoadValuesAccessContext queryContext = new LoadValuesAccessContext(jpqlQuery, queryTransformerFactory, metadata);
@@ -141,30 +159,58 @@ public class JpqlExecutionService {
             throw new AccessDeniedException("entity", deniedResource, EntityOp.READ.getId());
         }
 
-        if (!queryContext.getDeniedSelectedIndexes().isEmpty()) {
-            List<MetaPropertyPath> selectedPropertyPaths = new ArrayList<>(queryContext.getSelectedPropertyPaths());
-            String deniedAttributes = queryContext.getDeniedSelectedIndexes().stream()
-                    .distinct()
-                    .sorted()
-                    .map(index -> getSelectedPropertyPath(selectedPropertyPaths, index))
-                    .map(this::toAttributeResource)
-                    .collect(Collectors.joining(","));
-            throw new AccessDeniedException("attribute", deniedAttributes);
-        }
+        return queryContext.getDeniedSelectedIndexes().stream()
+                .distinct()
+                .collect(Collectors.toList());
     }
 
-    protected MetaPropertyPath getSelectedPropertyPath(List<MetaPropertyPath> selectedPropertyPaths, Integer index) {
-        if (index < 0 || index >= selectedPropertyPaths.size()) {
-            throw new IllegalStateException("Denied selected property index is out of bounds: " + index);
+    /**
+     * Returns the result properties that stay readable, dropping the ones at the denied select
+     * positions so the inaccessible columns are omitted from the result.
+     *
+     * @param resultProperties      result property names in select-clause order
+     * @param deniedSelectedIndexes positions of the denied columns
+     * @return the retained property names, in their original order
+     */
+    protected List<String> retainPermittedProperties(List<String> resultProperties,
+                                                     List<Integer> deniedSelectedIndexes) {
+        if (deniedSelectedIndexes.isEmpty()) {
+            return resultProperties;
         }
-        return selectedPropertyPaths.get(index);
+
+        List<String> retained = new ArrayList<>(resultProperties.size());
+        for (int i = 0; i < resultProperties.size(); i++) {
+            if (!deniedSelectedIndexes.contains(i)) {
+                retained.add(resultProperties.get(i));
+            }
+        }
+        return List.copyOf(retained);
     }
 
-    protected String toAttributeResource(@Nullable MetaPropertyPath propertyPath) {
-        if (propertyPath == null) {
-            return "<unknown>";
+    /**
+     * Rebuilds each row keeping only the retained properties, in their original order.
+     *
+     * @param rows               fetched rows keyed by all result properties
+     * @param resultProperties   all result property names the rows are keyed by
+     * @param retainedProperties property names to keep in the output rows
+     * @return rows containing only the retained properties, or the original rows if nothing is dropped
+     */
+    protected List<Map<String, Object>> retainProperties(List<Map<String, Object>> rows,
+                                                         List<String> resultProperties,
+                                                         List<String> retainedProperties) {
+        if (retainedProperties.size() == resultProperties.size()) {
+            return rows;
         }
-        return propertyPath.getMetaClass().getName() + "." + propertyPath.toPathString();
+
+        List<Map<String, Object>> retainedRows = new ArrayList<>(rows.size());
+        for (Map<String, Object> row : rows) {
+            Map<String, Object> retainedRow = new LinkedHashMap<>();
+            for (String property : retainedProperties) {
+                retainedRow.put(property, row.getOrDefault(property, ""));
+            }
+            retainedRows.add(Map.copyOf(retainedRow));
+        }
+        return List.copyOf(retainedRows);
     }
 
     protected ExecutionRows executeQuery(JpqlExecutionRequest request,

@@ -242,7 +242,7 @@ public class DataGridHeaderFilter extends Composite<HorizontalLayout>
         applyButton.setIcon(icons.get(JmixFontIcon.DATA_GRID_HEADER_FILTER_APPLY));
         applyButton.setText(messages.getMessage("columnFilter.apply.text"));
 
-        applyButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        applyButton.addThemeVariants(ButtonVariant.PRIMARY);
         applyButton.addClickListener(this::onApplyButtonClick);
         applyShortcutCombination(applyButton);
         setupButtonFlexGrowStyle(applyButton);

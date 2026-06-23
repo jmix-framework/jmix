@@ -100,7 +100,7 @@ public class AbstractDialogWindow<V extends View<?>> implements HasSize, HasThem
         dialog.setCloseOnOutsideClick(false);
         dialog.setDraggable(true);
 
-        dialog.addThemeVariants(DialogVariant.LUMO_NO_PADDING);
+        dialog.addThemeVariants(DialogVariant.NO_PADDING);
         dialog.getElement().setAttribute("aria-label", title);
         dialog.addDialogCloseActionListener(this::onDialogCloseAction);
 

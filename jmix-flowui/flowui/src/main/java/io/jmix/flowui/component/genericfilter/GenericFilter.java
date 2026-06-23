@@ -268,7 +268,7 @@ public class GenericFilter extends Composite<JmixDetails>
     }
 
     protected void initAddConditionButton(JmixButton addConditionButton) {
-        addConditionButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+        addConditionButton.addThemeVariants(ButtonVariant.TERTIARY);
 
         GenericFilterAddConditionAction addConditionAction = actions.create(GenericFilterAddConditionAction.ID);
         addConditionAction.setTarget(this);
@@ -283,7 +283,7 @@ public class GenericFilter extends Composite<JmixDetails>
 
     protected void initApplyButton(ComboButton applyButton) {
         applyButton.addClickListener(this::onApplyButtonClick);
-        applyButton.addThemeVariants(ComboButtonVariant.LUMO_SUCCESS, ComboButtonVariant.LUMO_PRIMARY);
+        applyButton.addThemeVariants(ComboButtonVariant.SUCCESS, ComboButtonVariant.PRIMARY);
         applyShortcutCombination(applyButton, applyShortcut);
 
         updateApplyButtonText(isAutoApply());
@@ -327,7 +327,6 @@ public class GenericFilter extends Composite<JmixDetails>
     }
 
     protected void initSettingsButton(DropdownButton settingsButton) {
-        settingsButton.addThemeVariants(DropdownButtonVariant.LUMO_ICON);
         settingsButton.setDropdownIndicatorVisible(false);
         settingsButton.setIcon(icons.get(JmixFontIcon.GENERIC_FILTER_SETTINGS));
 

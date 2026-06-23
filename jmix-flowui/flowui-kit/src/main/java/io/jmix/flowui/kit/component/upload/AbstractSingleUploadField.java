@@ -129,7 +129,7 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
         }
 
         if (fileNameComponent instanceof Button) {
-            ((Button) fileNameComponent).addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+            ((Button) fileNameComponent).addThemeVariants(ButtonVariant.TERTIARY);
         }
 
         setComponentEnabled(fileNameComponent, false);

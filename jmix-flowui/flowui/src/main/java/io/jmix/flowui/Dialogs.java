@@ -521,7 +521,7 @@ public interface Dialogs {
          *
          *                 JmixButton closeButton = uiComponents.create(JmixButton.class);
          *                 closeButton.setIcon(JmixFontIcon.CLOSE.create());
-         *                 closeButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
+         *                 closeButton.addThemeVariants(ButtonVariant.TERTIARY);
          *                 closeButton.addClickListener(__ -> sideDialog.close());
          *
          *                 layout.add(closeButton);

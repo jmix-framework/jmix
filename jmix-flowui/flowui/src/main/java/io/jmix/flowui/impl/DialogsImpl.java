@@ -397,15 +397,15 @@ public class DialogsImpl implements Dialogs {
 
                 switch (action.getVariant()) {
                     case PRIMARY:
-                        button.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+                        button.addThemeVariants(ButtonVariant.PRIMARY);
                         button.focus();
                         hasPrimaryAction = true;
                         break;
                     case DANGER:
-                        button.addThemeVariants(ButtonVariant.LUMO_ERROR);
+                        button.addThemeVariants(ButtonVariant.ERROR);
                         break;
                     case SUCCESS:
-                        button.addThemeVariants(ButtonVariant.LUMO_SUCCESS);
+                        button.addThemeVariants(ButtonVariant.SUCCESS);
                         break;
                     default:
                 }

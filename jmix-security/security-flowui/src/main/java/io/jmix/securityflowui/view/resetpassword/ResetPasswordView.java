@@ -18,7 +18,6 @@ package io.jmix.securityflowui.view.resetpassword;
 
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
@@ -71,6 +70,7 @@ public class ResetPasswordView extends StandardView {
 
     protected static final String RESET_PASSWORD_FIELD_CLASS_NAME = "reset-password-field";
     protected static final String COPY_BUTTON_CLASS_NAME = "copy-button";
+    protected static final String COPY_BUTTON_COPIED_CLASS_NAME = COPY_BUTTON_CLASS_NAME + "-copied";
 
     protected static final String PASSWORD_FIELD_ID = "passwordField";
     protected static final String BUTTON_ID = "copyButton";
@@ -320,14 +320,12 @@ public class ResetPasswordView extends StandardView {
     }
 
     protected void applyCopyButtonSuccessStyles(JmixButton button) {
-        button.removeThemeVariants(ButtonVariant.LUMO_CONTRAST);
-        button.addThemeVariants(ButtonVariant.LUMO_SUCCESS);
+        button.addClassName(COPY_BUTTON_COPIED_CLASS_NAME);
         button.setIcon(icons.get(JmixFontIcon.CHECK));
     }
 
     protected void applyCopyButtonDefaultStyles(JmixButton button) {
-        button.removeThemeVariants(ButtonVariant.LUMO_SUCCESS);
-        button.addThemeVariants(ButtonVariant.LUMO_CONTRAST);
+        button.removeClassName(COPY_BUTTON_COPIED_CLASS_NAME);
         button.setIcon(icons.get(JmixFontIcon.COPY));
     }
 

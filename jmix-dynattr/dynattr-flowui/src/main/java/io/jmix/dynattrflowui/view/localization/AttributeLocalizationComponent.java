@@ -173,12 +173,12 @@ public class AttributeLocalizationComponent extends Composite<VerticalLayout> {
         Button saveButton = uiComponents.create(Button.class);
         saveButton.setIcon(icons.get(JmixFontIcon.CHECK));
         saveButton.addClickListener(e -> editor.save());
-        saveButton.addThemeVariants(ButtonVariant.LUMO_SUCCESS);
+        saveButton.addThemeVariants(ButtonVariant.SUCCESS);
 
         Button cancelButton = uiComponents.create(Button.class);
         cancelButton.setIcon(icons.get(JmixFontIcon.CLOSE));
         cancelButton.addClickListener(e -> editor.cancel());
-        cancelButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
+        cancelButton.addThemeVariants(ButtonVariant.ERROR);
 
         HorizontalLayout actions = new HorizontalLayout(saveButton, cancelButton);
         actions.setPadding(false);

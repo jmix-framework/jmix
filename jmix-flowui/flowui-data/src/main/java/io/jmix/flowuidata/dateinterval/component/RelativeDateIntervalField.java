@@ -135,7 +135,7 @@ public class RelativeDateIntervalField extends CustomField<RelativeDateInterval>
         );
         select.setRequired(true);
 
-        select.addThemeVariants(SelectVariant.LUMO_ALIGN_CENTER);
+        select.addThemeVariants(SelectVariant.ALIGN_CENTER);
         return select;
     }
 

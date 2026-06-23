@@ -132,7 +132,7 @@ public abstract class AbstractIntervalField extends CustomField<DateInterval>
                 messages.getMessage(getClass(), "NextLastIntervalField.numberField.requiredMessage"));
         numberField.setRequired(true);
 
-        numberField.addThemeVariants(TextFieldVariant.LUMO_ALIGN_CENTER);
+        numberField.addThemeVariants(TextFieldVariant.ALIGN_CENTER);
         numberField.setWidth("5em");
 
         //noinspection unchecked
@@ -154,7 +154,7 @@ public abstract class AbstractIntervalField extends CustomField<DateInterval>
         // which in this case is the default width
         timeUnitSelect.setMinWidth("1px");
 
-        timeUnitSelect.addThemeVariants(SelectVariant.LUMO_ALIGN_CENTER);
+        timeUnitSelect.addThemeVariants(SelectVariant.ALIGN_CENTER);
 
         fieldBox.add(timeUnitSelect);
         fieldBox.setFlexGrow(1D, timeUnitSelect);

@@ -116,19 +116,11 @@ dependencies {
     api 'com.jayway.jsonpath:json-path'
     api 'com.opencsv:opencsv'
 
-    api('net.sf.jasperreports:jasperreports') {
-        exclude group: 'org.apache.lucene'
-        exclude group: 'commons-beanutils', module: 'commons-beanutils'
-        exclude group: 'com.google.zxing', module: 'core'
-        exclude group: 'com.ibm.icu', module: 'icu4j'
-        exclude group: 'com.fasterxml.jackson.core'
-        exclude group: 'org.jfree'
-        exclude group: 'org.eclipse.jdt.core.compiler', module: 'ecj'
-        exclude group: 'com.lowagie', module: 'itext'
-        exclude group: 'org.codehaus.castor', module: 'castor-xml'
-    }
-    api 'net.sf.jasperreports:jasperreports-fonts'
-    api 'net.sf.jasperreports:jasperreports-functions'
+    // JasperReports is an optional dependency: the 'jasper'/'jrxml' template types are supported only
+    // if an application adds these artifacts explicitly.
+    compileOnly 'net.sf.jasperreports:jasperreports'
+    compileOnly 'net.sf.jasperreports:jasperreports-fonts'
+    compileOnly 'net.sf.jasperreports:jasperreports-functions'
 
     api 'jakarta.xml.bind:jakarta.xml.bind-api'
 

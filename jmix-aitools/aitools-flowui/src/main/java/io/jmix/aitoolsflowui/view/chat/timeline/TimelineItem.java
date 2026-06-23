@@ -33,7 +33,7 @@ import java.util.UUID;
  * The {@code statusUpdates} list is mutable on {@link TimelineItemType#ASSISTANT_THINKING}
  * items and gets appended in-place by the controller while a background task is running.
  */
-@JmixEntity
+@JmixEntity(name = "aitls_TimelineItem")
 public class TimelineItem {
 
     @JmixId

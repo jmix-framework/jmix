@@ -28,7 +28,7 @@ import java.util.UUID;
  * An AI chat conversation: a single thread of messages between a user and the
  * assistant.
  */
-@JmixEntity
+@JmixEntity(name = "aitls_AiConversation")
 public class AiConversation {
 
     @JmixGeneratedValue

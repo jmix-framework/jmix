@@ -52,22 +52,30 @@ public class AiToolsDataLoadProperties {
     Integer jpqlExecutionMaxResultLimit;
 
     /**
-     * Entity names to explicitly include; never {@code null}.
+     * Entity names to force-include into the model exposed to the AI.
+     * <p>
+     * Additive: a listed entity is included even if it would otherwise be dropped as a
+     * system-level entity, a DTO, or by {@link #excludePackages}. {@link #excludeEntities}
+     * still takes precedence over this list.
      */
     List<String> includeEntities;
 
     /**
-     * Entity names to explicitly exclude; never {@code null}.
+     * Entity names to exclude from the model exposed to the AI.
+     * Takes precedence over every include rule.
      */
     List<String> excludeEntities;
 
     /**
-     * Package prefixes to explicitly include; never {@code null}.
+     * Package prefixes whose entities are force-included into the model exposed to the AI.
+     * Additive, with the same precedence as {@link #includeEntities}.
      */
     List<String> includePackages;
 
     /**
-     * Package prefixes to exclude; never {@code null}.
+     * Package prefixes whose entities are excluded from the model exposed to the AI, unless
+     * force-included via {@link #includeEntities} or {@link #includePackages}. Defaults to
+     * {@code io.jmix}.
      */
     List<String> excludePackages;
 

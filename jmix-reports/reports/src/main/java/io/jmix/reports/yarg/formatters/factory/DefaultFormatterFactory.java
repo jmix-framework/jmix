@@ -15,6 +15,8 @@
  */
 package io.jmix.reports.yarg.formatters.factory;
 
+import io.jmix.reports.yarg.exception.UnsupportedFormatException;
+import io.jmix.reports.yarg.formatters.ReportFormatter;
 import io.jmix.reports.yarg.formatters.factory.inline.DefaultInlinersProvider;
 import io.jmix.reports.yarg.formatters.factory.inline.ReportInlinersProvider;
 import io.jmix.reports.yarg.formatters.impl.*;
@@ -23,14 +25,13 @@ import io.jmix.reports.yarg.formatters.impl.docx.HtmlImportProcessor;
 import io.jmix.reports.yarg.formatters.impl.docx.HtmlImportProcessorImpl;
 import io.jmix.reports.yarg.formatters.impl.xls.DocumentConverter;
 import io.jmix.reports.yarg.formatters.impl.xls.DocumentConverterImpl;
-import io.jmix.reports.yarg.exception.UnsupportedFormatException;
-import io.jmix.reports.yarg.formatters.ReportFormatter;
 import io.jmix.reports.yarg.structure.BandData;
 import io.jmix.reports.yarg.structure.ReportTemplate;
 import io.jmix.reports.yarg.util.groovy.Scripting;
 import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.ClassUtils;
 
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -198,12 +199,7 @@ public class DefaultFormatterFactory implements ReportFormatterFactory {
      * Checks whether the optional JasperReports library is present on the classpath.
      */
     protected boolean isJasperReportsAvailable() {
-        try {
-            Class.forName(JASPER_REPORTS_MARKER_CLASS, false, DefaultFormatterFactory.class.getClassLoader());
-            return true;
-        } catch (ClassNotFoundException e) {
-            return false;
-        }
+        return ClassUtils.isPresent(JASPER_REPORTS_MARKER_CLASS, DefaultFormatterFactory.class.getClassLoader());
     }
 
     /**

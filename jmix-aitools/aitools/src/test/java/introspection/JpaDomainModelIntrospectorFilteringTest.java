@@ -62,10 +62,14 @@ class JpaDomainModelIntrospectorFilteringTest {
         JpaDomainModelIntrospector introspector;
 
         @Test
-        @DisplayName("Allows explicit includes and applies explicit excludes last")
+        @DisplayName("Explicit include is additive (overrides default exclusions); explicit exclude wins")
         void testExplicitFiltering() {
+            // Explicit include force-includes an otherwise-excluded system-level entity.
             assertNotNull(introspector.getEntityDescriptor("aitls_SystemLevelEntity"));
+            // Explicit exclude wins even over an explicit include.
             assertNull(introspector.getEntityDescriptor("aitls_Order"));
+            // Additive: a business entity not listed in include is still included by default.
+            assertNotNull(introspector.getEntityDescriptor("aitls_Customer"));
         }
     }
 
@@ -94,6 +98,7 @@ class JpaDomainModelIntrospectorFilteringTest {
     @ExtendWith(SpringExtension.class)
     @ContextConfiguration(classes = AiToolsTestConfiguration.class)
     @TestPropertySource(properties = {
+            "jmix.aitools.dataload.exclude-packages=test_support.entity.sales",
             "jmix.aitools.dataload.include-packages=test_support.entity.sales"
     })
     class IncludePackagesFiltering {
@@ -102,12 +107,14 @@ class JpaDomainModelIntrospectorFilteringTest {
         JpaDomainModelIntrospector introspector;
 
         @Test
-        @DisplayName("With include-packages set, only entities in those packages remain (allow-list)")
-        void testIncludePackagesActAsAllowList() {
-            // 'aitls_Order' is in the included package
+        @DisplayName("include-packages is additive: force-includes its packages over excludes, keeps the rest")
+        void testIncludePackagesAreAdditive() {
+            // 'aitls_Order' is in test_support.entity.sales: excluded by exclude-packages but
+            // force-included by include-packages (include wins over exclude-packages).
             assertNotNull(introspector.getEntityDescriptor("aitls_Order"));
-            // 'aitls_CompositeKeyEntity' is outside it, so allow-list mode excludes it
-            assertNull(introspector.getEntityDescriptor("aitls_CompositeKeyEntity"));
+            // 'aitls_CompositeKeyEntity' (in test_support.entity) is not listed anywhere — still
+            // included by default (additive, not an allow-list).
+            assertNotNull(introspector.getEntityDescriptor("aitls_CompositeKeyEntity"));
         }
     }
 }

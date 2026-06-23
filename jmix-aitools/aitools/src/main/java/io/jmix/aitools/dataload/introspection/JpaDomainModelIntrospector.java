@@ -70,15 +70,16 @@ public class JpaDomainModelIntrospector {
      * Each entity is checked against the rules below, in order; the first matching rule wins:
      * <ol>
      *     <li>listed in {@code excludeEntities} — excluded (takes precedence over everything else);</li>
-     *     <li>listed in {@code includeEntities} or matching {@code includePackages} — included
-     *     (overrides the system-level, DTO and {@code excludePackages} rules below);</li>
+     *     <li>listed in {@code includeEntities} or matching {@code includePackages} — included,
+     *     overriding the system-level, DTO and {@code excludePackages} rules below;</li>
      *     <li>system-level entity while {@code excludeSystemLevelEntities} is enabled — excluded;</li>
      *     <li>not a JPA entity or embeddable (a DTO) — excluded;</li>
      *     <li>matching {@code excludePackages} — excluded;</li>
-     *     <li>if {@code includeEntities} or {@code includePackages} is configured (allow-list mode) —
-     *     included only when it matches one of them, otherwise excluded;</li>
-     *     <li>otherwise — included by default.</li>
+     *     <li>otherwise — included.</li>
      * </ol>
+     * <p>
+     * {@code includeEntities}/{@code includePackages} are additive: they force-include the listed
+     * entities (overriding the exclusions above) without narrowing the otherwise-included set.
      *
      * @see AiToolsDataLoadProperties#getExcludeEntities()
      * @see AiToolsDataLoadProperties#getExcludePackages()
@@ -306,10 +307,13 @@ public class JpaDomainModelIntrospector {
     }
 
     protected boolean shouldInclude(MetaClass metaClass) {
+        // Explicit exclude takes precedence over everything.
         if (isExplicitlyExcluded(metaClass)) {
             return false;
         }
 
+        // Explicit include is additive: it force-includes the entity, overriding the default
+        // exclusions below (system-level, DTO, excluded packages).
         if (isExplicitlyIncluded(metaClass)) {
             return true;
         }
@@ -325,12 +329,6 @@ public class JpaDomainModelIntrospector {
 
         if (matchesAnyPackagePrefix(metaClass.getJavaClass().getPackageName(), dataLoadProperties.getExcludePackages())) {
             return false;
-        }
-
-        if (!dataLoadProperties.getIncludeEntities().isEmpty()
-                || !dataLoadProperties.getIncludePackages().isEmpty()) {
-            return matchesEntityName(metaClass, dataLoadProperties.getIncludeEntities())
-                    || matchesAnyPackagePrefix(metaClass.getJavaClass().getPackageName(), dataLoadProperties.getIncludePackages());
         }
 
         return true;

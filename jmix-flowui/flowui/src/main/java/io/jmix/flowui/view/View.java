@@ -356,11 +356,11 @@ public class View<T extends Component> extends Composite<T>
     }
 
     /**
-     * Sets whether this view must prevent browser tab from
-     * accidentally closing. Enabled by default.
+     * Sets whether this view must prevent a browser tab from accidentally
+     * closing if {@link UiViewProperties#isPreventBrowserTabClosing()} is enabled.
      *
-     * @param preventBrowserTabClosing whether this details view must prevent
-     *                                 browser tab from accidentally closing
+     * @param preventBrowserTabClosing whether this view must prevent a browser
+     *                                 tab from accidentally closing
      */
     public void setPreventBrowserTabClosing(boolean preventBrowserTabClosing) {
         this.preventBrowserTabClosing = preventBrowserTabClosing;

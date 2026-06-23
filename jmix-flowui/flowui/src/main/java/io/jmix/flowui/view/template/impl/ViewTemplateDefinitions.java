@@ -22,6 +22,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
+import freemarker.core.TemplateClassResolver;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -79,6 +80,9 @@ public class ViewTemplateDefinitions {
     protected void init() {
         Configuration configuration = new Configuration(Configuration.VERSION_2_3_31);
         configuration.setDefaultEncoding("UTF-8");
+        // Disable the ?new / ?api built-ins so a template body cannot instantiate or reflect over
+        // arbitrary classes. View templates only need plain data rendering.
+        configuration.setNewBuiltinClassResolver(TemplateClassResolver.ALLOWS_NOTHING_RESOLVER);
         this.freemarkerConfiguration = configuration;
     }
 

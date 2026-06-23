@@ -78,6 +78,6 @@ public class UsedPropertyPathsValidator implements JpqlResultValidator, Ordered 
 
     @Override
     public int getOrder() {
-        return JmixOrder.HIGHEST_PRECEDENCE + 1000;
+        return JmixOrder.HIGHEST_PRECEDENCE + 1100;
     }
 }

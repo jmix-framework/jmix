@@ -70,6 +70,6 @@ public class UsedEntitiesValidator implements JpqlResultValidator, Ordered {
 
     @Override
     public int getOrder() {
-        return JmixOrder.HIGHEST_PRECEDENCE + 900;
+        return JmixOrder.HIGHEST_PRECEDENCE + 1000;
     }
 }

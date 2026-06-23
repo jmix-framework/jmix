@@ -47,6 +47,7 @@ public class JpqlValidationService {
      *     <li>{@link SupportedRelativeDateTimeConstantsValidator}</li>
      *     <li>{@link PagingValidator}</li>
      *     <li>{@link JpqlSyntaxValidator}</li>
+     *     <li>{@link ReservedWordAliasValidator}</li>
      *     <li>{@link RootEntityValidator}</li>
      *     <li>{@link UsedEntitiesValidator}</li>
      *     <li>{@link UsedPropertyPathsValidator}</li>

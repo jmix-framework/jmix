@@ -40,6 +40,7 @@ import static io.jmix.aitools.dataload.validation.validator.ParametersValidator.
 import static io.jmix.aitools.dataload.validation.validator.ReadOnlyQueryValidator.JPQL_NATIVE_FUNCTION_CODE;
 import static io.jmix.aitools.dataload.validation.validator.ReadOnlyQueryValidator.JPQL_NOT_SELECT_CODE;
 import static io.jmix.aitools.dataload.validation.validator.ReadOnlyQueryValidator.JPQL_WRITE_OPERATION_CODE;
+import static io.jmix.aitools.dataload.validation.validator.ReservedWordAliasValidator.RESERVED_ALIAS_CODE;
 import static io.jmix.aitools.dataload.validation.validator.RootEntityValidator.ROOT_ENTITY_UNKNOWN_CODE;
 import static io.jmix.aitools.dataload.validation.validator.SupportedJmixTemporalConstructsValidator.UNSUPPORTED_MACRO_CODE;
 import static io.jmix.aitools.dataload.validation.validator.UsedEntitiesValidator.USED_ENTITY_UNKNOWN_CODE;
@@ -314,6 +315,40 @@ class JpqlValidationServiceTest {
         JpqlValidationResult validationResult = jpqlValidationService.validate(result);
 
         assertTrue(validationResult.isValid());
+    }
+
+    @Test
+    @DisplayName("Rejects a reserved word used as a select alias")
+    void testRejectsReservedWordAlias() {
+        GeneratedJpqlResult result = new GeneratedJpqlResult(
+                "select e.id as id from aitls_Order e",
+                List.of(),
+                "Reserved word 'id' used as alias",
+                List.of()
+        );
+
+        JpqlValidationResult validationResult = jpqlValidationService.validate(result);
+
+        assertFalse(validationResult.isValid());
+        assertTrue(validationResult.getIssues().stream()
+                .anyMatch(issue -> issue.getCode().equals(RESERVED_ALIAS_CODE)));
+    }
+
+    @Test
+    @DisplayName("Accepts a non-reserved select alias")
+    void testAcceptsNonReservedAlias() {
+        GeneratedJpqlResult result = new GeneratedJpqlResult(
+                "select e.id as orderId from aitls_Order e",
+                List.of(),
+                "Non-reserved alias",
+                List.of()
+        );
+
+        JpqlValidationResult validationResult = jpqlValidationService.validate(result);
+
+        assertTrue(validationResult.isValid());
+        assertTrue(validationResult.getIssues().stream()
+                .noneMatch(issue -> issue.getCode().equals(RESERVED_ALIAS_CODE)));
     }
 
     @Test

@@ -70,6 +70,6 @@ public class RootEntityValidator implements JpqlResultValidator, Ordered {
 
     @Override
     public int getOrder() {
-        return JmixOrder.HIGHEST_PRECEDENCE + 800;
+        return JmixOrder.HIGHEST_PRECEDENCE + 900;
     }
 }

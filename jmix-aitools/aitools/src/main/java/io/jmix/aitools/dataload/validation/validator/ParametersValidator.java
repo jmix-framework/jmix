@@ -82,7 +82,7 @@ public class ParametersValidator implements JpqlResultValidator, Ordered {
 
     @Override
     public int getOrder() {
-        return JmixOrder.HIGHEST_PRECEDENCE + 1100;
+        return JmixOrder.HIGHEST_PRECEDENCE + 1200;
     }
 
     protected Set<String> extractParameterNames(String jpql) {

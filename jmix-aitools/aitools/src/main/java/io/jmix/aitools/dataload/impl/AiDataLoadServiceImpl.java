@@ -94,22 +94,22 @@ public class AiDataLoadServiceImpl implements AiDataLoadService, InitializingBea
     public EntityDataLoadResult loadData(String userText) {
         Preconditions.checkNotEmptyString(userText);
 
-        EntityDataLoadQuery queryDraft = entityDataLoadGenerationService.generate(userText);
+        EntityDataLoadQuery query = entityDataLoadGenerationService.generate(userText);
 
         JpqlExecutionResult executionResult = jpqlExecutionService.execute(
                 new JpqlExecutionRequest(
                         userText,
-                        queryDraft.getJpql(),
-                        toExecutionParameters(queryDraft.getParameters()),
-                        queryDraft.getResultProperties(),
-                        queryDraft.getMaxResults(),
-                        queryDraft.getFirstResult()
+                        query.getJpql(),
+                        toExecutionParameters(query.getParameters()),
+                        query.getResultProperties(),
+                        query.getMaxResults(),
+                        query.getFirstResult()
                 )
         );
 
         return new EntityDataLoadResult(
                 userText,
-                queryDraft,
+                query,
                 executionResult.getValidationResult(),
                 executionResult.getRows(),
                 executionResult.isHasMore(),

@@ -108,7 +108,7 @@ public class JpqlExecutorTool implements DataLoadAiTool {
             - Use GROUP BY entity not GROUP BY entity.id
             
             IMPORTANT - AVOID JPQL RESERVED WORDS AS ALIASES:
-            Never use these words as AS aliases: position, user, order, table, group, where, select, from, join,
+            Never use these words as AS aliases: id, position, user, order, table, group, where, select, from, join,
             left, right, inner, outer, on, and, or, not, in, exists, between, like, is, null, true, false,
             count, sum, avg, max, min, distinct, all, any, some, union, except, intersect, case, when, then,
             else, end, new, constructor, size, index, key, value, entry, type, treat, current_date, current_time,

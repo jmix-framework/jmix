@@ -83,7 +83,7 @@ public class AiToolsDataLoadProperties {
                                      @DefaultValue("true") Boolean excludeSystemLevelEntities,
                                      @DefaultValue("1") Integer maxRepairAttempts,
                                      @DefaultValue("20") Integer jpqlExecutionMaxResult,
-                                     @DefaultValue("200") Integer jpqlExecutionMaxResultLimit,
+                                     @DefaultValue("100") Integer jpqlExecutionMaxResultLimit,
                                      List<String> includeEntities,
                                      List<String> excludeEntities,
                                      List<String> includePackages,

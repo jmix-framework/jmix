@@ -14,7 +14,4 @@
  * limitations under the License.
  */
 
-@Internal
 package io.jmix.search.index.mapping.strategy.impl;
-
-import io.jmix.core.annotation.Internal;

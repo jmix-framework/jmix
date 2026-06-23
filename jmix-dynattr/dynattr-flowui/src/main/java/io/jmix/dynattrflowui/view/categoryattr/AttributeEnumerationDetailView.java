@@ -168,7 +168,7 @@ public class AttributeEnumerationDetailView extends StandardView {
     protected JmixButton createEditorSaveButton(DataGridEditor<AttributeLocalizedEnumValue> editor) {
         JmixButton saveButton = uiComponents.create(JmixButton.class);
         saveButton.setIcon(icons.get(JmixFontIcon.CHECK));
-        saveButton.addThemeVariants(ButtonVariant.LUMO_SUCCESS);
+        saveButton.addThemeVariants(ButtonVariant.SUCCESS);
         saveButton.addClickListener(__ -> editor.save());
 
         return saveButton;
@@ -177,7 +177,7 @@ public class AttributeEnumerationDetailView extends StandardView {
     protected JmixButton createEditorCancelButton(DataGridEditor<AttributeLocalizedEnumValue> editor) {
         JmixButton cancelButton = uiComponents.create(JmixButton.class);
         cancelButton.setIcon(icons.get(JmixFontIcon.CLOSE));
-        cancelButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
+        cancelButton.addThemeVariants(ButtonVariant.ERROR);
 
         cancelButton.addClickListener(__ -> editor.cancel());
 
@@ -219,7 +219,7 @@ public class AttributeEnumerationDetailView extends StandardView {
     protected JmixButton createEditorRemoveButton(AttributeLocalizedEnumValue currentItem) {
         JmixButton removeButton = uiComponents.create(JmixButton.class);
         removeButton.setIcon(icons.get(JmixFontIcon.TRASH));
-        removeButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
+        removeButton.addThemeVariants(ButtonVariant.ERROR);
 
         removeButton.addClickListener(__ -> {
             localizedEnumValues.remove(currentItem);

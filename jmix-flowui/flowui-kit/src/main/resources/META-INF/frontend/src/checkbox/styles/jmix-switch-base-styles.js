@@ -25,6 +25,7 @@ const jmixSwitch = css`
         --_switch-size: var(--jmix-switch-size, 1lh);
         --_switch-indicator-offset: calc(var(--vaadin-padding-xs) / 2);
         --_switch-indicator-size: var(--jmix-switch-indicator-size, calc(var(--_switch-size) - var(--_switch-indicator-offset) * 2));
+        --_switch-indicator-border-width: var(--vaadin-switch-indicator-border-width, var(--vaadin-input-field-border-width, 1px));
     }
 
     [part='switch'] {
@@ -50,7 +51,7 @@ const jmixSwitch = css`
         box-sizing: border-box;
         background-color: var(--jmix-switch-indicator-color, var(--vaadin-text-color));
         
-        margin-inline-start: var(--_switch-indicator-offset);
+        margin-inline-start: calc(var(--_switch-indicator-offset) - var(--_switch-indicator-border-width));
         transform: none;
         
         opacity: 1;
@@ -61,11 +62,11 @@ const jmixSwitch = css`
         background-color: transparent;
         border-color: var(--vaadin-switch-indicator-border-color, var(--vaadin-input-field-border-color, var(--vaadin-border-color)));
         border-style: var(--_border-style, solid);
-        border-width: var(--vaadin-switch-indicator-border-width, var(--vaadin-input-field-border-width, 1px));
+        border-width: var(--_switch-indicator-border-width);
     }
 
     :host([checked]) [part='switch'] .indicator {
-        margin-inline-start: calc(100% - var(--_switch-indicator-size) - var(--_switch-indicator-offset));
+        margin-inline-start: calc(100% - var(--_switch-indicator-size) - var(--_switch-indicator-offset) +  var(--_switch-indicator-border-width));
         background-color: var(--jmix-switch-checked-indicator-color, var(--vaadin-background-color));
     }
 

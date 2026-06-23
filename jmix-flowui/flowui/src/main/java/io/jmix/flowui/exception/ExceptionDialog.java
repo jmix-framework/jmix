@@ -19,7 +19,6 @@ package io.jmix.flowui.exception;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.dialog.DialogVariant;
 import com.vaadin.flow.component.notification.Notification;
@@ -151,7 +150,7 @@ public class ExceptionDialog implements InitializingBean {
         dialog.setModal(exceptionDialogModal);
         dialog.setWidth(WIDTH);
 
-        dialog.addThemeVariants(DialogVariant.LUMO_NO_PADDING);
+        dialog.addThemeVariants(DialogVariant.NO_PADDING);
 
         initLayout(dialog);
     }

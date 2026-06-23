@@ -19,6 +19,18 @@ import {css} from 'lit';
 import {jmixValuePickerActionsShared} from "../../styles/value-picker-actions-shared-styles";
 
 const jmixMultiSelectComboBoxPicker = css`
+    [part="input-field"] {
+        padding: 0;
+    }
+
+    :host([has-actions]) [part="input-field"] {
+        padding-inline-end: var(--vaadin-padding-xs);
+    }
+
+    [part='input-field'] ::slotted(:is(input, textarea)) {
+        padding: var(--vaadin-input-field-padding, var(--vaadin-padding-block-container) var(--vaadin-padding-inline-container));
+        padding-inline-end: 0;
+    }
 `;
 
 export const jmixMultiSelectComboBoxPickerStyles = [jmixValuePickerActionsShared, jmixMultiSelectComboBoxPicker];

@@ -95,13 +95,13 @@ public class ComboButtonActionSupport {
     protected void addActionVariant(ComboButton component, ActionVariant actionVariant) {
         switch (actionVariant) {
             case PRIMARY:
-                component.addThemeVariants(ComboButtonVariant.LUMO_PRIMARY);
+                component.addThemeVariants(ComboButtonVariant.PRIMARY);
                 break;
             case DANGER:
-                component.addThemeVariants(ComboButtonVariant.LUMO_ERROR);
+                component.addThemeVariants(ComboButtonVariant.ERROR);
                 break;
             case SUCCESS:
-                component.addThemeVariants(ComboButtonVariant.LUMO_SUCCESS);
+                component.addThemeVariants(ComboButtonVariant.SUCCESS);
                 break;
             default:
         }
@@ -110,13 +110,13 @@ public class ComboButtonActionSupport {
     protected void removeActionVariant(ComboButton component, ActionVariant actionVariant) {
         switch (actionVariant) {
             case PRIMARY:
-                component.removeThemeVariants(ComboButtonVariant.LUMO_PRIMARY);
+                component.removeThemeVariants(ComboButtonVariant.PRIMARY);
                 break;
             case DANGER:
-                component.removeThemeVariants(ComboButtonVariant.LUMO_ERROR);
+                component.removeThemeVariants(ComboButtonVariant.ERROR);
                 break;
             case SUCCESS:
-                component.removeThemeVariants(ComboButtonVariant.LUMO_SUCCESS);
+                component.removeThemeVariants(ComboButtonVariant.SUCCESS);
                 break;
             default:
         }

@@ -30,9 +30,6 @@ const jmixValuePicker = css`
 
     [part='input-field'] ::slotted(:is(input, textarea)) {
         padding: var(--vaadin-input-field-padding, var(--vaadin-padding-block-container) var(--vaadin-padding-inline-container));
-    }
-
-    :host([focused]) [part='input-field'] ::slotted(:is(input, textarea)) {
         padding-inline-end: 0;
     }
 `;

@@ -146,7 +146,7 @@ public class DaysOfWeekEditAction extends PickerAction<DaysOfWeekEditAction, Pic
 
         JmixButton okBtn = uiComponents.create(JmixButton.class);
         okBtn.setText(messages.getMessage("actions.Ok"));
-        okBtn.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        okBtn.addThemeVariants(ButtonVariant.PRIMARY);
         okBtn.addClickListener(__ -> onOkBtnClick(dialog, checkboxGroup.getValue()));
 
         JmixButton cancelBtn = uiComponents.create(JmixButton.class);

@@ -72,7 +72,7 @@ public class MainView extends StandardTabbedModeMainView {
         String name = generateUserName(user);
 
         Avatar avatar = createAvatar(name);
-        avatar.addThemeVariants(AvatarVariant.LUMO_LARGE);
+        avatar.addThemeVariants(AvatarVariant.LARGE);
 
         Span text = uiComponents.create(Span.class);
         text.setText(name);

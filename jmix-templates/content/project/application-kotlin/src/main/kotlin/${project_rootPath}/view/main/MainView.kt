@@ -67,7 +67,7 @@ open class MainView : StandardMainView() {
         content.className = "user-menu-header-content"
 
         val avatar: Avatar = createAvatar(name)
-        avatar.addThemeVariants(AvatarVariant.LUMO_LARGE)
+        avatar.addThemeVariants(AvatarVariant.LARGE)
 
         val text = uiComponents.create(Span::class.java)
         text.text = name

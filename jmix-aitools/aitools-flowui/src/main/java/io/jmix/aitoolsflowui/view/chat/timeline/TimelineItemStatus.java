@@ -26,7 +26,7 @@ import java.util.UUID;
  * A single status line shown under an assistant "thinking" timeline item: a message describing a
  * step and an optional short result snippet once the step has finished.
  */
-@JmixEntity
+@JmixEntity(name = "aitls_TimelineItemStatus")
 public class TimelineItemStatus {
 
     @JmixId

@@ -27,7 +27,7 @@ import java.util.UUID;
  * A single message in an {@link AiConversation}, authored by a user, the assistant
  * or a tool (its {@link AiChatMessageType}).
  */
-@JmixEntity
+@JmixEntity(name = "aitls_AiChatMessage")
 public class AiChatMessage {
 
     @JmixGeneratedValue

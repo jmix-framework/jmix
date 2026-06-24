@@ -116,6 +116,14 @@
         </dynamicAttribute>
     </property>
 
+    <property caption="Project theme"
+              code="projectTheme"
+              required="true"
+              propertyType="OPTION">
+        <option id="Aura"/>
+        <option id="Lumo"/>
+    </property>
+
     <source fileExt="xml"
             name="descriptor"/>
     <source fileExt="java"

@@ -169,6 +169,9 @@ class JmixBuildPlugin implements Plugin<Project> {
             systemProperty('org.slf4j.simpleLogger.defaultLogLevel', 'debug')
             systemProperty('org.slf4j.simpleLogger.log.org.springframework', 'info')
             systemProperty('org.slf4j.simpleLogger.log.eclipselink.sql', 'debug')
+            // Gradle 9 fails a test task that discovers no tests (unless a filter is applied).
+            // Modules may legitimately have test sources without runnable tests, so don't fail on that.
+            failOnNoDiscoveredTests = false
         }
         project.with {
             afterEvaluate {

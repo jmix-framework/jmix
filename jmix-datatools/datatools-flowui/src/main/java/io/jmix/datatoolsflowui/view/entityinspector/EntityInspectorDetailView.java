@@ -343,10 +343,11 @@ public class EntityInspectorDetailView extends StandardDetailView<Object> {
 
         VerticalLayout vbox = uiComponents.create(VerticalLayout.class);
 
-        vbox.setWidthFull();
+        vbox.setSizeFull();
         vbox.setPadding(false);
         vbox.setVisible(false);
         vbox.add(buttonsPanel, entitiesGrid);
+        vbox.expand(entitiesGrid);
 
         tab.setLabel(getPropertyTitle(parent.getEntityMetaClass(), childMeta));
         tabToContentMap.put(tab, vbox);

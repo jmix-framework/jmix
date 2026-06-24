@@ -15,6 +15,8 @@
  */
 package io.jmix.reports.yarg.formatters.factory;
 
+import io.jmix.reports.yarg.exception.UnsupportedFormatException;
+import io.jmix.reports.yarg.formatters.ReportFormatter;
 import io.jmix.reports.yarg.formatters.factory.inline.DefaultInlinersProvider;
 import io.jmix.reports.yarg.formatters.factory.inline.ReportInlinersProvider;
 import io.jmix.reports.yarg.formatters.impl.*;
@@ -23,12 +25,13 @@ import io.jmix.reports.yarg.formatters.impl.docx.HtmlImportProcessor;
 import io.jmix.reports.yarg.formatters.impl.docx.HtmlImportProcessorImpl;
 import io.jmix.reports.yarg.formatters.impl.xls.DocumentConverter;
 import io.jmix.reports.yarg.formatters.impl.xls.DocumentConverterImpl;
-import io.jmix.reports.yarg.exception.UnsupportedFormatException;
-import io.jmix.reports.yarg.formatters.ReportFormatter;
 import io.jmix.reports.yarg.structure.BandData;
 import io.jmix.reports.yarg.structure.ReportTemplate;
 import io.jmix.reports.yarg.util.groovy.Scripting;
 import org.jspecify.annotations.NullMarked;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.ClassUtils;
 
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -36,6 +39,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class DefaultFormatterFactory implements ReportFormatterFactory {
+
+    private static final Logger log = LoggerFactory.getLogger(DefaultFormatterFactory.class);
+
+    protected static final String JASPER_REPORTS_MARKER_CLASS = "net.sf.jasperreports.engine.JasperReport";
 
     protected OfficeIntegrationAPI officeIntegration;
     protected DocumentConverter documentConverter;
@@ -104,9 +111,12 @@ public class DefaultFormatterFactory implements ReportFormatterFactory {
 
         formattersMap.put("csv", CsvFormatter::new);
 
-        FormatterCreator jasperCreator = JasperFormatter::new;
-        formattersMap.put("jasper", jasperCreator);
-        formattersMap.put("jrxml", jasperCreator);
+        if (isJasperReportsAvailable()) {
+            registerJasperFormatters();
+        } else {
+            log.debug("JasperReports library is not available on the classpath. " +
+                    "Templates with 'jasper' and 'jrxml' extensions are not supported.");
+        }
 
         if (inlinersProvider == null)
             setDefaultInlinersProvider();
@@ -183,6 +193,23 @@ public class DefaultFormatterFactory implements ReportFormatterFactory {
 
     protected void setDefaultInlinersProvider() {
         inlinersProvider = new DefaultInlinersProvider();
+    }
+
+    /**
+     * Checks whether the optional JasperReports library is present on the classpath.
+     */
+    protected boolean isJasperReportsAvailable() {
+        return ClassUtils.isPresent(JASPER_REPORTS_MARKER_CLASS, DefaultFormatterFactory.class.getClassLoader());
+    }
+
+    /**
+     * Registers formatters for 'jasper' and 'jrxml' templates. Keeps the reference to {@link JasperFormatter}
+     * isolated in this method so that JasperReports classes are loaded only when the library is available.
+     */
+    protected void registerJasperFormatters() {
+        FormatterCreator jasperCreator = JasperFormatter::new;
+        formattersMap.put("jasper", jasperCreator);
+        formattersMap.put("jrxml", jasperCreator);
     }
 
     @NullMarked

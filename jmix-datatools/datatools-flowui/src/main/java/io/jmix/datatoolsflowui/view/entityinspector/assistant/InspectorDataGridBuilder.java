@@ -136,8 +136,7 @@ public class InspectorDataGridBuilder {
             addMetaPropertyToDataGrid(dataGrid, metaProperty);
         }
 
-        dataGrid.setSizeFull();
-        dataGrid.setAllRowsVisible(true);
+        dataGrid.setWidthFull();
         dataGrid.setMinHeight("20em");
         dataGrid.setColumnReorderingAllowed(true);
 

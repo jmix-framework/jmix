@@ -837,6 +837,61 @@ class DataContextMergeTest extends DataContextSpec {
     }
 
     @IgnoreIf({Boolean.valueOf(System.getenv("JMIX_ECLIPSELINK_DISABLELAZYLOADING"))})
+    def "non-root merge of entity with unloaded reference does not overwrite reference set on managed instance"() {
+        // Mirrors the "add to one-to-many collection from a lookup" flow, where AddAction merges each
+        // selected item and then sets the master reference on it in memory. Here:
+        //  - managedOrder is in the context and its customer reference is reassigned in memory to
+        //    managedCustomer2 (mimicking the master-reference assignment after merge);
+        //  - then orderLine, which references orderSlim (the SAME order, but loaded without customer),
+        //    is merged. This triggers a non-root merge of orderSlim into managedOrder.
+        // The non-root merge must NOT replace managedOrder.customer by copying the uninstantiated value
+        // holder from orderSlim. Before the fix, managedOrder.customer reverted to the persisted value.
+        //
+        // orderFull / managedOrder    orderSlim  (same DB row, different fetch plan)
+        //   number: '1'                 number: '1'
+        //   customer: customer1         customer: <not loaded>
+        //
+        // orderLine
+        //   order: orderSlim
+        //
+        // After merge, managedOrder.customer is reassigned to managedCustomer2 in memory, then orderLine
+        // is merged. managedOrder.customer must remain managedCustomer2.
+
+        DataContext context = factory.createDataContext()
+
+        given:
+        Customer customer1 = dataManager.save(new Customer(name: 'c1', address: new Address()))
+        Customer customer2 = dataManager.save(new Customer(name: 'c2', address: new Address()))
+        Order order1 = dataManager.save(new Order(number: '1', customer: customer1))
+
+        def orderFull = dataManager.load(Id.of(order1))
+                .fetchPlan { it.addAll('number', 'customer.name') }
+                .one()
+        def orderSlim = dataManager.load(Id.of(order1))
+                .fetchPlan { it.add('number') }
+                .one()
+
+        when: "order is merged and its customer reference is reassigned in memory"
+        def managedOrder = context.merge(orderFull)
+        def managedCustomer2 = context.merge(customer2)
+        managedOrder.customer = managedCustomer2
+
+        then:
+        managedOrder.customer == managedCustomer2
+
+        when: "entity referencing the slim version of the same order is merged"
+        OrderLine orderLine = new OrderLine(quantity: 1, order: orderSlim)
+        makeDetached(orderLine)
+        context.merge(orderLine)
+
+        then: "the in-memory customer reference is preserved, not overwritten by the unloaded value holder"
+        managedOrder.customer == managedCustomer2
+
+        cleanup:
+        dataManager.remove(order1, customer1, customer2)
+    }
+
+    @IgnoreIf({Boolean.valueOf(System.getenv("JMIX_ECLIPSELINK_DISABLELAZYLOADING"))})
     def "merge into entity with not loaded local property"() {
         DataContext context = factory.createDataContext()
 

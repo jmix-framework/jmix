@@ -135,9 +135,25 @@ public final class ComponentUtils {
     private static void copyAbstractIconAttributes(AbstractIcon<?> icon, AbstractIcon<?> iconCopy) {
         iconCopy.setColor(icon.getColor());
         iconCopy.setSize(icon.getStyle().get(ElementConstants.STYLE_WIDTH));
-        iconCopy.setTooltipText(icon.getTooltip().getText());
+        copyTooltipText(icon, iconCopy);
         iconCopy.setVisible(icon.isVisible());
         iconCopy.addClassNames(icon.getClassNames().toArray(new String[0]));
+    }
+
+    /**
+     * Reads the tooltip text directly from the source's slot instead of calling AbstractIcon#getTooltip(),
+     * which lazily creates and attaches a tooltip element to the source on first access. The source icon
+     * may be shared between UIs (e.g. an icon from menu configuration), so mutating its state node from
+     * several threads concurrently would cause a ConcurrentModificationException.
+     *
+     * @param icon     source icon
+     * @param iconCopy copy of the source icon
+     */
+    private static void copyTooltipText(AbstractIcon<?> icon, AbstractIcon<?> iconCopy) {
+        SlotUtils.getElementsInSlot(icon, "tooltip")
+                .findFirst()
+                .map(element -> element.getProperty("text"))
+                .ifPresent(iconCopy::setTooltipText);
     }
 
     /**

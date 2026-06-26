@@ -1,0 +1,45 @@
+/*
+ * Copyright 2026 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@media lumo_components_jmix-bpmn-modeler {
+
+    /* Ex Base styles */
+
+    :host {
+        display: block;
+        height: 100%;
+        outline: none;
+    }
+
+    [part='container'] {
+        border-radius: inherit;
+        overflow: hidden;
+    }
+
+    [part='focus-ring'] {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        border-radius: inherit;
+        pointer-events: none;
+    }
+
+    /* Lumo specific styles */
+
+    :host([focus-ring]) [part='focus-ring'] {
+        box-shadow: inset 0 0 0 var(--vaadin-focus-ring-width, 2px) var(--jmix-bpmn-modeler-focus-ring-color, var(--vaadin-focus-ring-color, var(--lumo-primary-color-50pct)));
+    }
+}

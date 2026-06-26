@@ -32,6 +32,14 @@
     padding-inline-start: 0;
 }
 
+.bpmn-modeler-view .bpm-modeler-bpmn-panel {
+    margin-inline-end: var(--vaadin-gap-s);
+}
+
+.bpmn-modeler-view jmix-bpmn-modeler {
+    border-radius: var(--vaadin-radius-m);
+}
+
 .bpm-modeler-properties-panel {
     --aura-base-size: 12;
     --aura-base-font-size: 13;

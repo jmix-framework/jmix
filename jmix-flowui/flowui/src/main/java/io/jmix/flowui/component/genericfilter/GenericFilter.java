@@ -115,13 +115,9 @@ public class GenericFilter extends Composite<JmixDetails>
     protected String applyShortcut;
     protected int propertyHierarchyDepth;
     protected DataLoader dataLoader;
-    /**
-     * The data loader's own condition (without any filter contribution), captured lazily and once
-     * before the filter first updates the loader condition, then combined (AND) with the current
-     * configuration on every change.
-     */
     protected Condition initialDataLoaderCondition;
     protected boolean initialDataLoaderConditionInitialized;
+    protected Condition lastConditionSetByFilter;
     protected Predicate<MetaPropertyPath> propertyFiltersPredicate;
 
     protected VerticalLayout contentWrapper;
@@ -368,11 +364,6 @@ public class GenericFilter extends Composite<JmixDetails>
 
     /**
      * Sets a {@link DataLoader} related to the filter.
-     * <p>
-     * The data loader's own condition is preserved and combined (AND) with the current
-     * configuration's condition. It is captured once, before the filter first applies a
-     * configuration; therefore any base loader condition must be set (in XML or in {@code onInit})
-     * before a configuration is activated.
      *
      * @param dataLoader a {@link DataLoader} to set
      */
@@ -392,7 +383,7 @@ public class GenericFilter extends Composite<JmixDetails>
      * in {@link #updateDataLoaderCondition()} before the first filter contribution. Retained for
      * backward compatibility.
      */
-    @Deprecated
+    @Deprecated(since = "3.0", forRemoval = true)
     protected void updateDataLoaderInitialCondition(@Nullable Condition condition) {
         this.initialDataLoaderCondition = copy(condition);
         this.initialDataLoaderConditionInitialized = true;
@@ -847,10 +838,12 @@ public class GenericFilter extends Composite<JmixDetails>
 
     protected void updateDataLoaderCondition() {
         if (dataLoader != null) {
-            if (!initialDataLoaderConditionInitialized) {
-                // Capture the data loader's own condition once, before the first filter contribution,
-                // so it is never polluted by a configuration activated during onInit.
-                initialDataLoaderCondition = copy(dataLoader.getCondition());
+            Condition currentCondition = dataLoader.getCondition();
+            // Re-capture the loader's own condition only when it was replaced externally (a different
+            // object than the filter's last output); the filter never adopts its own output.
+            if (!initialDataLoaderConditionInitialized
+                    || (lastConditionSetByFilter != null && currentCondition != lastConditionSetByFilter)) {
+                initialDataLoaderCondition = copy(currentCondition);
                 initialDataLoaderConditionInitialized = true;
             }
             LogicalFilterComponent<?> logicalFilterComponent = getCurrentConfiguration().getRootLogicalFilterComponent();
@@ -869,6 +862,7 @@ public class GenericFilter extends Composite<JmixDetails>
             }
 
             dataLoader.setCondition(resultCondition);
+            lastConditionSetByFilter = resultCondition;
         }
     }
 

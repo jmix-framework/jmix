@@ -854,8 +854,6 @@ class GenericFilterBuilderApiTest extends FlowuiTestSpecification {
         noExceptionThrown()
     }
 
-    // Builder options and RunTimeConfigurationBuilder edge branches
-
     def "PropertyFilterBuilder.label() sets the label on the built PropertyFilter"() {
         given:
         GenericFilter filter = filterWithLoader()

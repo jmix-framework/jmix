@@ -66,6 +66,7 @@ public class GroupFilter extends Composite<VerticalLayout>
     protected DataLoader dataLoader;
     protected Condition initialDataLoaderCondition;
     protected boolean initialDataLoaderConditionInitialized;
+    protected Condition lastConditionSetByFilter;
     protected boolean autoApply;
 
     @Internal
@@ -200,7 +201,7 @@ public class GroupFilter extends Composite<VerticalLayout>
      * in {@link #updateDataLoaderCondition()} before the first filter contribution. Retained for
      * backward compatibility.
      */
-    @Deprecated
+    @Deprecated(since = "3.0", forRemoval = true)
     protected void updateDataLoaderInitialCondition(@Nullable Condition condition) {
         this.initialDataLoaderCondition = copy(condition);
         this.initialDataLoaderConditionInitialized = true;
@@ -211,9 +212,12 @@ public class GroupFilter extends Composite<VerticalLayout>
             return;
         }
 
-        if (!initialDataLoaderConditionInitialized) {
-            // Capture the data loader's own condition once, before the first filter contribution.
-            initialDataLoaderCondition = copy(dataLoader.getCondition());
+        Condition currentCondition = dataLoader.getCondition();
+        // Re-capture the loader's own condition only when it was replaced externally (a different
+        // object than the filter's last output); the filter never adopts its own output.
+        if (!initialDataLoaderConditionInitialized
+                || (lastConditionSetByFilter != null && currentCondition != lastConditionSetByFilter)) {
+            initialDataLoaderCondition = copy(currentCondition);
             initialDataLoaderConditionInitialized = true;
         }
 
@@ -230,6 +234,7 @@ public class GroupFilter extends Composite<VerticalLayout>
         }
 
         dataLoader.setCondition(resultCondition);
+        lastConditionSetByFilter = resultCondition;
     }
 
     @Override

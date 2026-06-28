@@ -27,7 +27,7 @@ public class GroupFilterUtils {
      * @deprecated no longer used internally; {@link GroupFilter} now captures the initial data loader
      * condition lazily. Retained for backward compatibility.
      */
-    @Deprecated
+    @Deprecated(since = "3.0", forRemoval = true)
     public static void updateDataLoaderInitialCondition(GroupFilter groupFilter, @Nullable Condition condition) {
         groupFilter.updateDataLoaderInitialCondition(condition);
     }

@@ -22,6 +22,7 @@ import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.html.Span
 import com.vaadin.flow.component.icon.VaadinIcon
 import com.vaadin.flow.component.progressbar.ProgressBarVariant
+import com.vaadin.flow.component.shared.SlotUtils
 import com.vaadin.flow.component.shared.Tooltip
 import com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer
 import com.vaadin.flow.dom.ElementConstants
@@ -167,6 +168,22 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
             tooltip.opened
             tooltip.position == Tooltip.TooltipPosition.BOTTOM
         }
+    }
+
+    def "Load tooltip with markdown from XML"() {
+        when: "Open the ComponentView"
+        def componentView = navigateToView(ComponentView.class)
+
+        then: "Tooltip with markdown=\"true\" is loaded in Markdown mode"
+        def markdownTooltip = SlotUtils.getElementsInSlot(componentView.markdownTooltipButtonId, "tooltip")
+                .findFirst().get()
+        markdownTooltip.getProperty("text") == "**Bold** _italic_"
+        markdownTooltip.getProperty("markdown", false)
+
+        and: "Tooltip without markdown attribute stays in plain text mode"
+        def plainTooltip = SlotUtils.getElementsInSlot(componentView.buttonId, "tooltip")
+                .findFirst().get()
+        !plainTooltip.getProperty("markdown", false)
     }
 
     def "Load button component with Action from XML"() {

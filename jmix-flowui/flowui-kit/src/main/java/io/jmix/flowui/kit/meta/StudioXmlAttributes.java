@@ -523,6 +523,7 @@ public final class StudioXmlAttributes {
     public static final String LOOKUP_VIEW_ID = "lookupViewId";
     public static final String MANUAL = "manual";
     public static final String MARGIN = "margin";
+    public static final String MARKDOWN = "markdown";
     public static final String MAX = "max";
     public static final String MAXIMUM_COLUMN_COUNT = "maximumColumnCount";
     public static final String MAXIMUM_COLUMN_WIDTH = "maximumColumnWidth";

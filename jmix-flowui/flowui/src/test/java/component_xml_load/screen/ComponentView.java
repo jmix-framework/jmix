@@ -103,6 +103,9 @@ public class ComponentView extends StandardView {
     public JmixButton buttonWithActionId;
 
     @ViewComponent
+    public JmixButton markdownTooltipButtonId;
+
+    @ViewComponent
     public JmixCheckbox checkBoxId;
 
     @ViewComponent

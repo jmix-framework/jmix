@@ -116,6 +116,8 @@ public class GenericFilter extends Composite<JmixDetails>
     protected int propertyHierarchyDepth;
     protected DataLoader dataLoader;
     protected Condition initialDataLoaderCondition;
+    protected boolean initialDataLoaderConditionInitialized;
+    protected Condition lastConditionSetByFilter;
     protected Predicate<MetaPropertyPath> propertyFiltersPredicate;
 
     protected VerticalLayout contentWrapper;
@@ -369,15 +371,21 @@ public class GenericFilter extends Composite<JmixDetails>
         checkNotNull(dataLoader);
 
         this.dataLoader = dataLoader;
-        this.initialDataLoaderCondition = dataLoader.getCondition();
 
         LogicalFilterComponent<?> rootLogicalFilterComponent = emptyConfiguration.getRootLogicalFilterComponent();
         rootLogicalFilterComponent.setDataLoader(dataLoader);
         rootLogicalFilterComponent.setAutoApply(autoApply);
     }
 
+    /**
+     * @deprecated no longer used internally; the initial data loader condition is now captured lazily
+     * in {@link #updateDataLoaderCondition()} before the first filter contribution. Retained for
+     * backward compatibility.
+     */
+    @Deprecated(since = "3.0", forRemoval = true)
     protected void updateDataLoaderInitialCondition(@Nullable Condition condition) {
         this.initialDataLoaderCondition = copy(condition);
+        this.initialDataLoaderConditionInitialized = true;
     }
 
     /**
@@ -829,6 +837,14 @@ public class GenericFilter extends Composite<JmixDetails>
 
     protected void updateDataLoaderCondition() {
         if (dataLoader != null) {
+            Condition currentCondition = dataLoader.getCondition();
+            // Re-capture the loader's own condition only when it was replaced externally (a different
+            // object than the filter's last output); the filter never adopts its own output.
+            if (!initialDataLoaderConditionInitialized
+                    || (lastConditionSetByFilter != null && currentCondition != lastConditionSetByFilter)) {
+                initialDataLoaderCondition = copy(currentCondition);
+                initialDataLoaderConditionInitialized = true;
+            }
             LogicalFilterComponent<?> logicalFilterComponent = getCurrentConfiguration().getRootLogicalFilterComponent();
             LogicalCondition filterCondition = logicalFilterComponent.getQueryCondition();
 
@@ -845,6 +861,7 @@ public class GenericFilter extends Composite<JmixDetails>
             }
 
             dataLoader.setCondition(resultCondition);
+            lastConditionSetByFilter = resultCondition;
         }
     }
 

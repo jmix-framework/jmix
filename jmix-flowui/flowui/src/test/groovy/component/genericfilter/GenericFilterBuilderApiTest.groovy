@@ -853,4 +853,86 @@ class GenericFilterBuilderApiTest extends FlowuiTestSpecification {
         then:
         noExceptionThrown()
     }
+
+    def "PropertyFilterBuilder.label() sets the label on the built PropertyFilter"() {
+        given:
+        GenericFilter filter = filterWithLoader()
+
+        when:
+        PropertyFilter<String> pf = filter.filterComponentBuilder()
+                .<String> propertyFilter()
+                .property("number")
+                .operation(PropertyFilter.Operation.EQUAL)
+                .label("Order number")
+                .build()
+
+        then:
+        pf.label == "Order number"
+    }
+
+    def "JpqlFilterBuilder.join() sets the JOIN clause on the built JpqlFilter"() {
+        given:
+        GenericFilter filter = filterWithLoader()
+
+        when:
+        JpqlFilter<String> jf = filter.filterComponentBuilder()
+                .jpqlFilter(String)
+                .parameterName("tag")
+                .where("t.name = ?")
+                .join("join {E}.tags t")
+                .build()
+
+        then:
+        jf.queryCondition.join == "join {E}.tags t"
+    }
+
+    def "RunTimeConfigurationBuilder.buildAndRegister() throws when the filter has no DataLoader"() {
+        given: "a GenericFilter without a DataLoader, with an id set so the DataLoader check is reached"
+        GenericFilter filter = uiComponents.create(GenericFilter)
+
+        when:
+        filter.runtimeConfigurationBuilder()
+                .id("noLoader")
+                .buildAndRegister()
+
+        then:
+        thrown(IllegalStateException)
+    }
+
+    def "RunTimeConfigurationBuilder.add() accepts a non-single filter component (GroupFilter)"() {
+        given: "a GenericFilter with a DataLoader and a GroupFilter condition"
+        GenericFilter filter = filterWithLoader()
+        GroupFilter group = filter.filterComponentBuilder()
+                .groupFilter()
+                .add(filter.filterComponentBuilder().jpqlFilter().where("{E}.number = '1'").build())
+                .build()
+
+        when: "adding the GroupFilter (not a SingleFilterComponentBase) to a runtime configuration"
+        RunTimeConfiguration config = filter.runtimeConfigurationBuilder()
+                .id("withGroup")
+                .add(group)
+                .buildAndRegister()
+
+        then: "the GroupFilter is part of the configuration"
+        config.rootLogicalFilterComponent.filterComponents.contains(group)
+    }
+
+    def "RunTimeConfigurationBuilder.add() of a value-less single component stores no default value"() {
+        given: "a GenericFilter and a PropertyFilter on a numeric property with no value"
+        GenericFilter filter = filterWithLoader()
+        PropertyFilter<BigDecimal> pf = filter.filterComponentBuilder()
+                .<BigDecimal> propertyFilter()
+                .property("amount")
+                .operation(PropertyFilter.Operation.EQUAL)
+                .build()
+
+        when: "adding it without a value (paramName non-null, value null)"
+        RunTimeConfiguration config = filter.runtimeConfigurationBuilder()
+                .id("noValue")
+                .add(pf)
+                .buildAndRegister()
+
+        then: "no default value is recorded for the parameter"
+        config.getFilterComponentDefaultValue(pf.parameterName) == null
+    }
 }

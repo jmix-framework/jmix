@@ -65,6 +65,8 @@ public class GroupFilter extends Composite<VerticalLayout>
 
     protected DataLoader dataLoader;
     protected Condition initialDataLoaderCondition;
+    protected boolean initialDataLoaderConditionInitialized;
+    protected Condition lastConditionSetByFilter;
     protected boolean autoApply;
 
     @Internal
@@ -186,7 +188,6 @@ public class GroupFilter extends Composite<VerticalLayout>
         checkNotNull(dataLoader);
 
         this.dataLoader = dataLoader;
-        this.initialDataLoaderCondition = dataLoader.getCondition();
 
         if (!isConditionModificationDelegated()) {
             updateDataLoaderCondition();
@@ -195,13 +196,29 @@ public class GroupFilter extends Composite<VerticalLayout>
         updateSummaryText();
     }
 
+    /**
+     * @deprecated no longer used internally; the initial data loader condition is now captured lazily
+     * in {@link #updateDataLoaderCondition()} before the first filter contribution. Retained for
+     * backward compatibility.
+     */
+    @Deprecated(since = "3.0", forRemoval = true)
     protected void updateDataLoaderInitialCondition(@Nullable Condition condition) {
         this.initialDataLoaderCondition = copy(condition);
+        this.initialDataLoaderConditionInitialized = true;
     }
 
     protected void updateDataLoaderCondition() {
         if (dataLoader == null) {
             return;
+        }
+
+        Condition currentCondition = dataLoader.getCondition();
+        // Re-capture the loader's own condition only when it was replaced externally (a different
+        // object than the filter's last output); the filter never adopts its own output.
+        if (!initialDataLoaderConditionInitialized
+                || (lastConditionSetByFilter != null && currentCondition != lastConditionSetByFilter)) {
+            initialDataLoaderCondition = copy(currentCondition);
+            initialDataLoaderConditionInitialized = true;
         }
 
         LogicalCondition resultCondition;
@@ -217,6 +234,7 @@ public class GroupFilter extends Composite<VerticalLayout>
         }
 
         dataLoader.setCondition(resultCondition);
+        lastConditionSetByFilter = resultCondition;
     }
 
     @Override

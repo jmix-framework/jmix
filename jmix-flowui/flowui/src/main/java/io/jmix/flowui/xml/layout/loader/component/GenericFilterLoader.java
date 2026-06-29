@@ -87,14 +87,6 @@ public class GenericFilterLoader extends AbstractComponentLoader<GenericFilter> 
                 (dataLoaderId) -> {
                     DataLoader dataLoader = getContext().getDataHolder().getLoader(dataLoaderId);
                     component.setDataLoader(dataLoader);
-
-                    getContext().addInitTask(new AbstractInitTask() {
-                        @Override
-                        public void execute(Context context) {
-                            FilterUtils.updateDataLoaderInitialCondition(resultComponent,
-                                    dataLoader.getCondition());
-                        }
-                    });
                 });
     }
 

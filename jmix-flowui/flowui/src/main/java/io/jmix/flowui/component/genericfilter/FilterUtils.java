@@ -48,6 +48,11 @@ public class FilterUtils {
         filter.setCurrentConfigurationInternal(currentConfiguration, fromClient);
     }
 
+    /**
+     * @deprecated no longer used internally; {@link GenericFilter} now captures the initial data loader
+     * condition lazily. Retained for backward compatibility.
+     */
+    @Deprecated(since = "3.0", forRemoval = true)
     @Internal
     public static void updateDataLoaderInitialCondition(GenericFilter genericFilter, @Nullable Condition condition) {
         genericFilter.updateDataLoaderInitialCondition(condition);

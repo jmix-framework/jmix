@@ -153,6 +153,43 @@ class DatabaseRoleProviderTest extends SecurityDataSpecification {
 
     }
 
+    def "get all resource roles without policies"() {
+        when:
+        def roles = databaseResourceRoleProvider.getAllRoles(false)
+
+        then:
+        roles.size() == 1
+        def role1 = roles.find { it.code == 'role1' }
+        role1 != null
+        role1.resourcePolicies.isEmpty()
+    }
+
+    def "get all resource roles with policies via flag"() {
+        when:
+        def roles = databaseResourceRoleProvider.getAllRoles(true)
+
+        then:
+        def role1 = roles.find { it.code == 'role1' }
+        role1.resourcePolicies.size() == 2
+    }
+
+    def "get all row level roles without policies"() {
+        when:
+        def roles = databaseRowLevelRoleProvider.getAllRoles(false)
+
+        then:
+        roles.size() == 2
+        roles.every { it.rowLevelPolicies.isEmpty() }
+    }
+
+    def "find resource role by code still loads policies"() {
+        when:
+        def role = databaseResourceRoleProvider.getRoleByCode('role1')
+
+        then:
+        role.resourcePolicies.size() == 2
+    }
+
     private void prepareTestData() {
         ResourceRoleEntity role1 = metadata.create(ResourceRoleEntity)
         role1.code = 'role1'

@@ -33,6 +33,8 @@ import org.springframework.security.core.userdetails.UserDetails
 import test_support.SecurityDataSpecification
 import test_support.role.TestFullAccessRole
 
+import java.nio.charset.StandardCharsets
+
 class RolePersistenceTest extends SecurityDataSpecification {
 
     @Autowired
@@ -205,5 +207,36 @@ class RolePersistenceTest extends SecurityDataSpecification {
             policy.entityName == 'User' &&
                     policy.whereClause == 'other query'
         }
+    }
+
+    def "export includes policies even for models loaded without policies"() {
+        given: "a saved role with one entity policy"
+        def policyModel = dataManager.create(ResourcePolicyModel)
+        policyModel.type = ResourcePolicyType.ENTITY
+        policyModel.resource = 'User'
+        policyModel.action = EntityPolicyAction.READ.id
+        policyModel.effect = ResourcePolicyEffect.ALLOW
+
+        def roleModel = dataManager.create(ResourceRoleModel)
+        roleModel.name = 'Export Role'
+        roleModel.code = 'export-role'
+        roleModel.resourcePolicies = [policyModel]
+        rolePersistence.save(roleModel)
+
+        and: "a light model as produced by the list view (no policies, id from databaseId)"
+        def lightModel = roleModelConverter.createResourceRoleModel(
+                resourceRoleProvider.getRoleByCode('export-role'), false)
+
+        expect: "the light model carries no policies but has the database id"
+        lightModel.resourcePolicies == null
+        lightModel.id != null
+
+        when:
+        def json = new String(rolePersistence.exportResourceRoles([lightModel], false),
+                StandardCharsets.UTF_8)
+
+        then: "exported JSON still contains the policy reloaded from the database"
+        json.contains('resourcePolicies')
+        json.contains('User')
     }
 }

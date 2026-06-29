@@ -42,4 +42,12 @@ public interface RoleProvider<T extends BaseRole> {
     boolean deleteRole(T role);
 
     Collection<T> getAllRoles();
+
+    /**
+     * Returns all roles. When {@code includePolicies} is {@code false}, implementations may skip
+     * loading role policies to speed up listing scenarios that do not need them.
+     */
+    default Collection<T> getAllRoles(boolean includePolicies) {
+        return getAllRoles();
+    }
 }

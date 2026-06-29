@@ -91,6 +91,11 @@ public class RowLevelRoleRepositoryImpl implements RowLevelRoleRepository {
     }
 
     @Override
+    public Collection<RowLevelRole> getAllRoles(boolean includePolicies) {
+        return roleRepositoryProviderUtils.getAllRoles(includePolicies);
+    }
+
+    @Override
     public void invalidateCache() {
         rolesCache.clear();
     }

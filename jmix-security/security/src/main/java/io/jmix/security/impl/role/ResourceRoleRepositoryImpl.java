@@ -93,6 +93,11 @@ public class ResourceRoleRepositoryImpl implements ResourceRoleRepository {
     }
 
     @Override
+    public Collection<ResourceRole> getAllRoles(boolean includePolicies) {
+        return roleRepositoryProviderUtils.getAllRoles(includePolicies);
+    }
+
+    @Override
     public void invalidateCache() {
         rolesCache.clear();
     }

@@ -154,7 +154,11 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
             String text = loaderSupport.loadResourceString(tooltipElement, "text", context.getMessageGroup())
                     .orElse(null);
 
-            Tooltip tooltip = component.setTooltipText(text);
+            boolean markdown = loaderSupport.loadBoolean(tooltipElement, "markdown").orElse(false);
+
+            Tooltip tooltip = markdown
+                    ? component.setTooltipMarkdown(text)
+                    : component.setTooltipText(text);
 
             loaderSupport.loadInteger(tooltipElement, "focusDelay", tooltip::setFocusDelay);
             loaderSupport.loadInteger(tooltipElement, "hideDelay", tooltip::setHideDelay);

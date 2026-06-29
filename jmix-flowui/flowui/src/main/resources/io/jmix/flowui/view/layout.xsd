@@ -2955,6 +2955,7 @@
 
     <xs:complexType name="tooltipElement">
         <xs:attribute name="text" type="resourceString" use="required"/>
+        <xs:attribute name="markdown" type="xs:boolean"/>
         <xs:attribute name="focusDelay" type="xs:int"/>
         <xs:attribute name="hideDelay" type="xs:int"/>
         <xs:attribute name="hoverDelay" type="xs:int"/>

@@ -2731,7 +2731,12 @@ public final class StudioPropertyGroups {
                             classFqn = "com.vaadin.flow.component.shared.Tooltip$TooltipPosition",
                             options = {"TOP_START", "TOP", "TOP_END", "BOTTOM_START", "BOTTOM", "BOTTOM_END",
                                     "START_TOP", "START", "START_BOTTOM", "END_TOP", "END", "END_BOTTOM"},
-                            setParameterFqn = "com.vaadin.flow.component.shared.Tooltip$TooltipPosition")
+                            setParameterFqn = "com.vaadin.flow.component.shared.Tooltip$TooltipPosition"),
+                    @StudioProperty(
+                            xmlAttribute = StudioXmlAttributes.MARKDOWN,
+                            type = StudioPropertyType.BOOLEAN,
+                            category = StudioProperty.Category.GENERAL,
+                            defaultValue = "false")
             }
     )
     public interface TooltipComponent extends HideDelay, RequiredText, Opened {

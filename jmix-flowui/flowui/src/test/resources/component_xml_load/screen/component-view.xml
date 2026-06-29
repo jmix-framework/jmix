@@ -158,6 +158,12 @@
         <button id="buttonWithActionId"
                 action="buttonAction"/>
 
+        <button id="markdownTooltipButtonId"
+                text="markdownTooltipButton">
+            <tooltip text="**Bold** _italic_"
+                     markdown="true"/>
+        </button>
+
         <checkbox id="checkBoxId"
                   ariaLabel="ariaLabelString"
                   autofocus="true"

@@ -23,6 +23,7 @@ import io.jmix.flowui.view.View;
 import io.jmix.messagetemplates.MessageTemplatesGenerator;
 import io.jmix.messagetemplates.entity.MessageTemplate;
 import io.jmix.messagetemplatesflowui.view.parametersinputdialog.MessageTemplateParametersInputDialog;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -60,7 +61,7 @@ public class MessageTemplatesPreviewer {
             return;
         }
 
-        if (!messageTemplate.getParameters().isEmpty()) {
+        if (CollectionUtils.isNotEmpty(messageTemplate.getParameters())) {
             dialogWindows.view(origin, MessageTemplateParametersInputDialog.class)
                     .withViewConfigurer(view ->
                             view.setTemplateParameters(messageTemplate.getParameters()))

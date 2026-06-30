@@ -59,6 +59,7 @@
         <xs:attribute name="applyPreviousValue" type="xs:boolean"/>
         <xs:attribute name="preferences" type="xs:boolean"/>
         <xs:attribute name="required" type="xs:boolean"/>
+        <xs:attribute name="nullAllowed" type="xs:boolean"/>
         <xs:attribute name="relatedProperty" type="xs:string"/>
         <xs:attribute name="filterScript" type="xs:string"/>
         <xs:attribute name="advanced" type="xs:boolean"/>

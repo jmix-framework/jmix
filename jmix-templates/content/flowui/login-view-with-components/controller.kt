@@ -45,8 +45,9 @@ import java.util.stream.Collectors
  */
 @Route(value = "${route}")<%} else {%>@Route(value = "login")<%}%>
 @ViewController(id = "${id}")
-@ViewDescriptor(path = "${descriptorName}.xml")
-@CssImport("./styles/login-view/login-view.css")
+@ViewDescriptor(path = "${descriptorName}.xml")<%if("lumo".equalsIgnoreCase(projectTheme)) {%>
+@CssImport("./styles/login-view/login-view-lumo.css")<%} else {%>
+@CssImport("./styles/login-view/login-view-aura.css")<%}%>
 open class ${controllerName} : StandardView(), LocaleChangeObserver {
 
     @ViewComponent

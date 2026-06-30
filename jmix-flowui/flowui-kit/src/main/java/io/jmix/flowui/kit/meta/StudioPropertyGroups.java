@@ -365,6 +365,20 @@ public final class StudioPropertyGroups {
     }
 
     @StudioPropertyGroup(properties = @StudioProperty(
+            xmlAttribute = StudioXmlAttributes.ACCEPTED_MIME_TYPES,
+            type = StudioPropertyType.VALUES_LIST,
+            category = StudioProperty.Category.VALIDATION))
+    public interface AcceptedMimeTypes {
+    }
+
+    @StudioPropertyGroup(properties = @StudioProperty(
+            xmlAttribute = StudioXmlAttributes.ACCEPTED_FILE_EXTENSIONS,
+            type = StudioPropertyType.VALUES_LIST,
+            category = StudioProperty.Category.VALIDATION))
+    public interface AcceptedFileExtensions {
+    }
+
+    @StudioPropertyGroup(properties = @StudioProperty(
             xmlAttribute = StudioXmlAttributes.ACCEPTED_FILE_TYPES,
             type = StudioPropertyType.VALUES_LIST,
             category = StudioProperty.Category.GENERAL))
@@ -2375,7 +2389,8 @@ public final class StudioPropertyGroups {
 
     @StudioPropertyGroup
     public interface FileUploadFieldDefaultProperties extends BaseSizedEnabledComponentWithClassName,
-            HasRequiredAndValidationAttributes, AcceptedFileTypes, ClearButtonAriaLabel, ClearButtonVisible,
+            HasRequiredAndValidationAttributes, AcceptedFileTypes, AcceptedMimeTypes, AcceptedFileExtensions,
+            ClearButtonAriaLabel, ClearButtonVisible,
             ConnectingStatusText, CollectionOrInstanceDataContainer, DropAllowed, FileNameVisible,
             FileNotSelectedText, FileTooBigText, HelperText, IncorrectFileTypeText, Label, MaxFileSize,
             ProcessingStatusText, Property, ReadOnly, RemainingTimeText, RemainingTimeUnknownText,
@@ -3361,7 +3376,15 @@ public final class StudioPropertyGroups {
                             xmlAttribute = StudioXmlAttributes.UPLOAD_HANDLER_TYPE,
                             type = StudioPropertyType.ENUMERATION,
                             defaultValue = "IN_MEMORY",
-                            options = {"IN_MEMORY", "FILE_TEMPORARY_STORAGE"})
+                            options = {"IN_MEMORY", "FILE_TEMPORARY_STORAGE"}),
+                    @StudioProperty(
+                            xmlAttribute = StudioXmlAttributes.ACCEPTED_MIME_TYPES,
+                            type = StudioPropertyType.VALUES_LIST,
+                            category = StudioProperty.Category.GENERAL),
+                    @StudioProperty(
+                            xmlAttribute = StudioXmlAttributes.ACCEPTED_FILE_EXTENSIONS,
+                            type = StudioPropertyType.VALUES_LIST,
+                            category = StudioProperty.Category.GENERAL)
             }
     )
     public interface UploadComponent extends SizedComponentDefaultProperties, UploadText, UploadIcon,

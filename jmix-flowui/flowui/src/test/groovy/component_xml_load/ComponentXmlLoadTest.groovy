@@ -403,6 +403,18 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
         }
     }
 
+    def "Load upload component with accepted MIME types and file extensions from XML"() {
+        when: "Open the ComponentView"
+        def componentView = navigateToView(ComponentView.class)
+
+        then: "Accepted MIME types and file extensions will be loaded"
+        verifyAll(componentView.acceptedTypesUpload) {
+            id.get() == "acceptedTypesUpload"
+            acceptedMimeTypes == ["image/png", "image/jpeg"]
+            acceptedFileExtensions == [".pdf", ".doc"]
+        }
+    }
+
     def "Load virtualList component from XML"() {
         when: "Open the ComponentView"
         def componentView = navigateToView(ComponentView.class)

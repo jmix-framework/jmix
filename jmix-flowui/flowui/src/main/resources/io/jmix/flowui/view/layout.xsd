@@ -4618,6 +4618,8 @@
                 <xs:attribute name="uploadIcon" type="jmixFontIconEnum"/>
 
                 <xs:attribute name="acceptedFileTypes" type="xs:string"/>
+                <xs:attribute name="acceptedMimeTypes" type="xs:string"/>
+                <xs:attribute name="acceptedFileExtensions" type="xs:string"/>
                 <xs:attribute name="autoUpload" type="xs:boolean"/>
                 <xs:attribute name="dropAllowed" type="xs:boolean"/>
                 <xs:attribute name="maxFiles" type="xs:int"/>
@@ -4682,6 +4684,8 @@
 
                 <xs:attribute name="maxFileSize" type="xs:int"/>
                 <xs:attribute name="acceptedFileTypes" type="xs:string"/>
+                <xs:attribute name="acceptedMimeTypes" type="xs:string"/>
+                <xs:attribute name="acceptedFileExtensions" type="xs:string"/>
                 <xs:attribute name="uploadIcon" type="jmixFontIconEnum"/>
                 <xs:attribute name="dropAllowed" type="xs:boolean"/>
 

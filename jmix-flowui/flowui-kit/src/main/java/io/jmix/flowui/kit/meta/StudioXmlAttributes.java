@@ -28,7 +28,9 @@ import java.util.Map;
  */
 public final class StudioXmlAttributes {
     public static final String ABBREVIATION = "abbreviation";
+    public static final String ACCEPTED_FILE_EXTENSIONS = "acceptedFileExtensions";
     public static final String ACCEPTED_FILE_TYPES = "acceptedFileTypes";
+    public static final String ACCEPTED_MIME_TYPES = "acceptedMimeTypes";
     public static final String ACTION = "action";
     public static final String ACTION_VARIANT = "actionVariant";
     public static final String ACTIVE_SHEET_INDEX = "activeSheetIndex";

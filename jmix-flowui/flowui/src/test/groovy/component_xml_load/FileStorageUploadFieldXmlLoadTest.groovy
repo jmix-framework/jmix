@@ -50,6 +50,16 @@ class FileStorageUploadFieldXmlLoadTest extends FlowuiTestSpecification {
         view.vceOccurred
     }
 
+    def "Load FileStorageUploadField accepted MIME types and file extensions from XML"() {
+        when: "Open view with FileStorageUploadFields"
+        def view = navigateToView(FileStorageUploadFieldView)
+
+        then: "Accepted MIME types and file extensions should be loaded"
+        def field = view.acceptedTypesFileStorageUploadField
+        field.acceptedMimeTypes == ["image/png", "image/jpeg"]
+        field.acceptedFileExtensions == [".pdf", ".doc"]
+    }
+
     def "Load FileStorageUploadField component from XML"() {
         when: "Open view with FileStorageUploadFields"
         def view = navigateToView(FileStorageUploadFieldView)

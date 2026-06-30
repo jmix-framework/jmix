@@ -79,5 +79,8 @@
         <fileStorageUploadField id="disabledFileStorageUploadField"
                                 enabled="false"/>
         <fileStorageUploadField id="localizedFileStorageUploadField"/>
+        <fileStorageUploadField id="acceptedTypesFileStorageUploadField"
+                                acceptedMimeTypes="image/png, image/jpeg"
+                                acceptedFileExtensions=".pdf, .doc"/>
     </layout>
 </view>

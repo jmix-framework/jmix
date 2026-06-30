@@ -1051,6 +1051,10 @@
         <upload id="uploadWithReceiverFqn"
                 receiverFqn="io.jmix.flowui.component.upload.receiver.FileTemporaryStorageBuffer"/>
 
+        <upload id="acceptedTypesUpload"
+                acceptedMimeTypes="image/png, image/jpeg"
+                acceptedFileExtensions=".pdf, .doc"/>
+
         <codeEditor id="codeEditorId"
                     classNames="cssClassName1, cssClassName2"
                     css="color: red;"

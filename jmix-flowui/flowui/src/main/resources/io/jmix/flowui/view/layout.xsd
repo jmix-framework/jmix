@@ -2387,6 +2387,14 @@
         </xs:union>
     </xs:simpleType>
 
+    <xs:simpleType name="tooltipAriaLinkMode">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="NONE"/>
+            <xs:enumeration value="ARIA_DESCRIBED_BY"/>
+            <xs:enumeration value="ARIA_LABELLED_BY"/>
+        </xs:restriction>
+    </xs:simpleType>
+
     <xs:simpleType name="userMenuThemeNames">
         <xs:union>
             <xs:simpleType>
@@ -2963,6 +2971,7 @@
         <xs:attribute name="manual" type="xs:boolean"/>
         <xs:attribute name="opened" type="xs:boolean"/>
         <xs:attribute name="position" type="tooltipPosition"/>
+        <xs:attribute name="ariaLinkMode" type="tooltipAriaLinkMode"/>
     </xs:complexType>
 
     <xs:complexType name="formattableRendererType">

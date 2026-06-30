@@ -116,6 +116,7 @@ class MultiSelectComboBoxXmlLoadTest extends FlowuiTestSpecification {
             tooltip.manual
             tooltip.opened
             tooltip.position == Tooltip.TooltipPosition.BOTTOM
+            tooltip.ariaLinkMode == Tooltip.AriaLinkMode.ARIA_DESCRIBED_BY
         }
 
         where:

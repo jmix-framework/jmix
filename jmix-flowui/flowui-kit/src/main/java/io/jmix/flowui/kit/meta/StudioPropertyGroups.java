@@ -451,6 +451,15 @@ public final class StudioPropertyGroups {
     }
 
     @StudioPropertyGroup(properties = @StudioProperty(
+            xmlAttribute = StudioXmlAttributes.ARIA_LINK_MODE,
+            type = StudioPropertyType.ENUMERATION,
+            classFqn = "com.vaadin.flow.component.shared.Tooltip$AriaLinkMode",
+            defaultValue = "NONE",
+            options = {"NONE", "ARIA_DESCRIBED_BY", "ARIA_LABELLED_BY"}))
+    public interface AriaLinkMode {
+    }
+
+    @StudioPropertyGroup(properties = @StudioProperty(
             xmlAttribute = StudioXmlAttributes.AUTO_APPLY,
             type = StudioPropertyType.BOOLEAN))
     public interface AutoApply {
@@ -2762,7 +2771,7 @@ public final class StudioPropertyGroups {
                             defaultValue = "false")
             }
     )
-    public interface TooltipComponent extends HideDelay, RequiredText, Opened {
+    public interface TooltipComponent extends HideDelay, RequiredText, Opened, AriaLinkMode {
     }
 
     @StudioPropertyGroup(

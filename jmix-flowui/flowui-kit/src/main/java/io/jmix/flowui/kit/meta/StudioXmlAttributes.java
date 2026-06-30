@@ -75,6 +75,7 @@ public final class StudioXmlAttributes {
     public static final String APPLY_SHORTCUT = "applyShortcut";
     public static final String ARIA_LABEL = "ariaLabel";
     public static final String ARIA_LABELLED_BY = "ariaLabelledBy";
+    public static final String ARIA_LINK_MODE = "ariaLinkMode";
     public static final String ATTRIBUTES = "attributes";
     public static final String ATTRIBUTIONS = "attributions";
     public static final String ATTRIBUTIONS_COLLAPSIBLE = "attributionsCollapsible";

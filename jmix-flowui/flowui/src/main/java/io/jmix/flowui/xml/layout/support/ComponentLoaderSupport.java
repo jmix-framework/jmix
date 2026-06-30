@@ -167,6 +167,8 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
             loaderSupport.loadBoolean(tooltipElement, "opened", tooltip::setOpened);
             loaderSupport.loadEnum(tooltipElement, Tooltip.TooltipPosition.class, "position",
                     tooltip::setPosition);
+            loaderSupport.loadEnum(tooltipElement, Tooltip.AriaLinkMode.class, "ariaLinkMode",
+                    tooltip::setAriaLinkMode);
         }
     }
 

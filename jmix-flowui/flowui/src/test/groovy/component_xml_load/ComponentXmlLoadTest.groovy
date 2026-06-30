@@ -285,6 +285,7 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
             (getItem("viewItem") as ViewUserMenuItem).getText() == "viewItemText"
             (getItem("viewItem") as ViewUserMenuItem).getViewClass() == ComponentView
             (getItem("viewItem") as ViewUserMenuItem).getOpenMode() == OpenMode.DIALOG
+            getItem("secondActionItem").item.element.getProperty("tooltip") == "Action Description"
         }
     }
 

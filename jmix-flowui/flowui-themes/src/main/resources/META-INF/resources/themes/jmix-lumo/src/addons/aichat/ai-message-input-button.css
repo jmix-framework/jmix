@@ -1,0 +1,133 @@
+@media lumo_components_jmix-ai-message-input-button {
+  :host {
+    display: inline-block;
+    position: relative;
+    outline: none;
+    -webkit-user-select: none;
+    user-select: none;
+    flex: none;
+    align-self: center;
+    --lumo-button-size: var(--lumo-size-m);
+    --_button-size: var(--vaadin-button-height, var(--lumo-button-size));
+    min-width: 0;
+    width: var(--_button-size);
+    height: var(--_button-size);
+    padding: 0;
+    margin: var(--vaadin-button-margin, 0);
+    box-sizing: border-box;
+    color: var(--vaadin-button-primary-text-color, var(--lumo-primary-contrast-color));
+    background: var(--vaadin-button-primary-background, var(--lumo-primary-color));
+    border: var(--vaadin-button-primary-border, none);
+    border-radius: var(--vaadin-button-border-radius, var(--lumo-border-radius-m));
+    cursor: var(--lumo-clickable-cursor);
+    -webkit-tap-highlight-color: transparent;
+    align-items: center;
+    justify-content: center;
+  }
+
+  :host([hidden]) {
+    display: none !important;
+  }
+
+  .vaadin-button-container {
+    display: inline-flex;
+    align-items: inherit;
+    justify-content: inherit;
+    width: 100%;
+    height: 100%;
+  }
+
+  [part='label'] {
+    flex: none;
+    inline-size: var(--lumo-icon-size-m);
+    block-size: var(--lumo-icon-size-m);
+    background: currentColor;
+    mask-image: var(--ai-message-input-icon-send);
+    mask-repeat: no-repeat;
+    mask-position: center;
+    mask-size: contain;
+    -webkit-mask-image: var(--ai-message-input-icon-send);
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    -webkit-mask-size: contain;
+  }
+
+  :host([generating]) [part='label'] {
+    mask-image: var(--ai-message-input-icon-stop);
+    -webkit-mask-image: var(--ai-message-input-icon-stop);
+  }
+
+  :host::before,
+  :host::after {
+    content: '';
+    position: absolute;
+    z-index: 1;
+    inset: 0;
+    background-color: currentColor;
+    border-radius: inherit;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  :host::before {
+    background-color: black;
+  }
+
+  @media (any-hover: hover) {
+    :host(:hover)::before {
+      opacity: 0.05;
+    }
+  }
+
+  :host::after {
+    transition:
+      opacity 1.4s,
+      transform 0.1s;
+    filter: blur(8px);
+  }
+
+  :host([active])::before {
+    opacity: 0.1;
+    transition-duration: 0s;
+  }
+
+  :host([active])::after {
+    opacity: 0.2;
+    transition-duration: 0s, 0s;
+    transform: scale(0);
+  }
+
+  :host([focus-ring]) {
+    box-shadow:
+      0 0 0 1px var(--lumo-base-color),
+      0 0 0 calc(var(--vaadin-focus-ring-width, 2px) + 1px)
+        var(--vaadin-focus-ring-color, var(--lumo-primary-color-50pct));
+  }
+
+  :host([disabled]) {
+    pointer-events: var(--_vaadin-button-disabled-pointer-events, none);
+    cursor: not-allowed;
+    background-color: var(--lumo-contrast-30pct);
+    color: var(--lumo-base-color);
+  }
+
+  :host([disabled]) [part] {
+    opacity: 0.7;
+  }
+
+  @media (forced-colors: active) {
+    :host {
+      forced-color-adjust: none;
+    }
+
+    [part='label'] {
+      background: currentColor;
+    }
+  }
+}
+
+:root,
+:host {
+  --_lumo-jmix-ai-message-input-button-inject: 1;
+  --_lumo-jmix-ai-message-input-button-inject-modules: lumo_components_jmix-ai-message-input-button;
+}

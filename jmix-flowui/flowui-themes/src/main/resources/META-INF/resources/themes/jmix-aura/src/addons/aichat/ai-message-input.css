@@ -1,0 +1,77 @@
+:is(jmix-ai-message-input) {
+  background: var(--ai-message-input-background, var(--aura-surface-color));
+  --aura-surface-level: 4;
+  --aura-surface-opacity: 0.7;
+  background-clip: padding-box;
+}
+
+:is(jmix-ai-message-input):not([disabled]) {
+  box-shadow: var(--aura-shadow-xs);
+}
+
+:is(jmix-ai-message-input)[disabled] {
+  background: var(--vaadin-background-container);
+}
+
+:is(jmix-ai-message-input) > vaadin-text-area::part(input-field) {
+  background: var(--vaadin-input-field-background, transparent);
+}
+
+:is(jmix-ai-message-input)[disabled] > vaadin-text-area::part(input-field) {
+  background: transparent;
+}
+
+:is(jmix-ai-message-input):not([disabled]) > vaadin-text-area::part(input-field) {
+  box-shadow: none;
+}
+
+:is(jmix-ai-message-input-button) {
+  --vaadin-button-background: var(--aura-accent-color);
+  --vaadin-button-text-color: var(--aura-accent-contrast-color);
+  position: relative;
+  box-shadow: var(--aura-shadow-s);
+  transition: scale 180ms;
+}
+
+:is(jmix-ai-message-input-button)::after {
+  content: '';
+  position: absolute;
+  inset: calc(var(--vaadin-button-border-width, 1px) * -1);
+  pointer-events: none;
+  border-radius: inherit;
+  background-color: var(--vaadin-button-text-color);
+  opacity: 0;
+  transition:
+          opacity 100ms,
+          background-color 100ms;
+}
+
+@supports (color: hsl(0 0 0)) {
+  :is(jmix-ai-message-input-button)::after {
+    background-color: oklch(from var(--vaadin-button-text-color) calc(l + 0.4 - c) c h / calc(1 - l / 2));
+  }
+}
+
+@media (any-hover: hover) {
+  :is(jmix-ai-message-input-button):hover:not([disabled], [active])::after {
+    opacity: 0.12;
+  }
+}
+
+@media (min-resolution: 2x) {
+  /* prettier-ignore */
+  :is(jmix-ai-message-input-button)[active]:not([disabled]) {
+    scale: 0.98;
+    transition-duration: 50ms;
+  }
+}
+
+:is(jmix-ai-message-input-button)[active]:not([disabled]) {
+  box-shadow: none;
+}
+
+:is(jmix-ai-message-input-button)[active]:not([disabled])::after {
+  transition-duration: 0s;
+  opacity: 0.16;
+  background: oklch(from var(--vaadin-button-text-color) min(c, 1 - l + c) calc(c * 0.9) h);
+}

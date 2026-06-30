@@ -1,0 +1,3 @@
+:is(jmix-ai-markdown) {
+  --_ai-markdown-link-color-default: var(--aura-accent-text-color);
+}

@@ -1,0 +1,79 @@
+@media lumo_components_jmix-ai-message-input {
+  :host {
+    box-sizing: border-box;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--ai-message-input-gap, var(--lumo-space-m));
+    width: 100%;
+    max-width: var(--ai-message-input-max-width);
+    margin-inline: auto;
+    max-height: 50vh;
+    flex-shrink: 0;
+    padding: var(--ai-message-input-padding, var(--lumo-space-s));
+    background: var(--ai-message-input-background, var(--lumo-base-color));
+    box-shadow: inset 0 0 0 var(--vaadin-input-field-border-width, 1px)
+      var(--vaadin-input-field-border-color, var(--lumo-contrast-30pct));
+    border-radius: var(--vaadin-input-field-border-radius, var(--lumo-border-radius-l));
+    --ai-message-input-icon-send: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M12 19V5'/><path d='m5 12 7-7 7 7'/></svg>");
+    --ai-message-input-icon-stop: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='currentColor'><rect x='6' y='6' width='12' height='12' rx='2'/></svg>");
+  }
+
+  :host([hidden]) {
+    display: none !important;
+  }
+
+  :host([focus-ring]) {
+    box-shadow: 0 0 0 var(--vaadin-focus-ring-width, 2px)
+      var(--vaadin-focus-ring-color, var(--lumo-primary-color-50pct));
+  }
+
+  :host([disabled]) {
+    --ai-message-input-background: var(--lumo-contrast-5pct);
+    box-shadow: none;
+  }
+
+  @media (forced-colors: active) {
+    :host {
+      border: 1px solid CanvasText;
+    }
+  }
+
+  ::slotted([slot='textarea']) {
+    flex: 1 1 auto;
+    min-width: 0;
+    align-self: center;
+    --vaadin-input-field-border-width: 0 !important;
+    --vaadin-focus-ring-width: 0;
+    --vaadin-input-field-background: transparent !important;
+    --vaadin-input-field-hover-highlight: transparent !important;
+  }
+
+  :host([expanded]) ::slotted([slot='textarea']),
+  :host([theme~='fixed-toolbar']) ::slotted([slot='textarea']) {
+    order: -1;
+    flex-basis: 100%;
+  }
+
+  :host([expanded]) ::slotted([slot='prefix']),
+  :host([theme~='fixed-toolbar']) ::slotted([slot='prefix']) {
+    margin-inline-end: auto;
+  }
+}
+
+jmix-ai-message-input > vaadin-text-area::part(input-field) {
+  background: transparent;
+}
+
+@media (forced-colors: active) {
+  jmix-ai-message-input > vaadin-text-area::part(input-field) {
+    outline: none;
+  }
+}
+
+:root,
+:host {
+  --_lumo-jmix-ai-message-input-inject: 1;
+  --_lumo-jmix-ai-message-input-inject-modules: lumo_components_jmix-ai-message-input;
+}

@@ -1,0 +1,262 @@
+@media lumo_components_jmix-ai-code-block {
+  :host {
+    --ai-code-block-color-text: light-dark(#24292e, #c9d1d9);
+    --ai-code-block-color-keyword: light-dark(#d73a49, #ff7b72);
+    --ai-code-block-color-string: light-dark(#032f62, #a5d6ff);
+    --ai-code-block-color-comment: light-dark(#6a737d, #8b949e);
+    --ai-code-block-color-number: light-dark(#005cc5, #79c0ff);
+    --ai-code-block-color-title: light-dark(#6f42c1, #d2a8ff);
+    --ai-code-block-color-type: light-dark(#953800, #ffa657);
+    --ai-code-block-color-built-in: light-dark(#e36209, #ffa657);
+    --ai-code-block-color-attr: light-dark(#005cc5, #79c0ff);
+    --ai-code-block-color-tag: light-dark(#22863a, #7ee787);
+    --ai-code-block-color-meta: light-dark(#6a737d, #8b949e);
+
+    --ai-code-block-icon-copy: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><rect width='14' height='14' x='8' y='8' rx='2' ry='2'/><path d='M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2'/></svg>");
+    --ai-code-block-icon-check: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M20 6 9 17l-5-5'/></svg>");
+    --ai-code-block-icon-wrap: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><line x1='3' x2='21' y1='6' y2='6'/><path d='M3 12h15a3 3 0 1 1 0 6h-4'/><polyline points='16 16 14 18 16 20'/><line x1='3' x2='10' y1='18' y2='18'/></svg>");
+    --ai-code-block-icon-no-wrap: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M21 5H3'/><path d='M15 12H3'/><path d='M17 19H3'/></svg>");
+
+    --_focus-ring-color: var(--vaadin-focus-ring-color, var(--lumo-primary-color-50pct));
+    --_focus-ring-width: var(--vaadin-focus-ring-width, 2px);
+
+    --_action-icon-size: var(--ai-code-block-action-icon-size, var(--lumo-font-size-l));
+    --_action-padding: var(--lumo-space-s);
+    --_actions-gap: var(--ai-code-block-actions-gap, var(--lumo-space-xs));
+    --_actions-inset: var(--lumo-space-s);
+
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    max-width: 100%;
+    color: var(--ai-code-block-color-text);
+    background: var(--ai-code-block-background, light-dark(#f6f8fa, #161b22));
+    border: 1px solid var(--lumo-contrast-20pct);
+    border-radius: var(--ai-code-block-border-radius, var(--lumo-border-radius-l));
+    overflow: hidden;
+    font-size: var(--ai-code-block-font-size, var(--lumo-font-size-s));
+  }
+
+  :host([hidden]) {
+    display: none !important;
+  }
+
+  [part='header'] {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--lumo-space-s) var(--lumo-space-xs) var(--lumo-space-s) var(--lumo-space-m);
+    font-family: var(--lumo-font-family);
+    font-size: var(--lumo-font-size-xxs);
+  }
+
+  [part='language'] {
+    color: var(--ai-code-block-color-comment);
+    letter-spacing: 0.02em;
+  }
+
+  [part='actions'] {
+    display: inline-flex;
+    gap: var(--_actions-gap);
+  }
+
+  [part='actions'].floating {
+    position: absolute;
+    top: var(--_actions-inset);
+    inset-inline-end: var(--_actions-inset);
+  }
+
+  [part='content'] {
+    flex: 1 1 auto;
+    min-width: 0;
+    min-height: 0;
+    margin: 0;
+    padding: 0 var(--lumo-space-m) var(--lumo-space-m);
+    overflow: auto;
+    border-radius: inherit;
+    font-family: var(--ai-code-block-font-family, ui-monospace, SFMono-Regular, Menlo, monospace);
+    line-height: 1.55;
+    scrollbar-width: thin;
+    scrollbar-color: light-dark(oklch(0% 0 none / 0.05), oklch(100% 0 none / 0.05)) transparent;
+  }
+
+  [part='content']:focus {
+    outline: none;
+  }
+
+  [part='content']:focus-visible {
+    outline: none;
+    box-shadow: inset 0 0 0 var(--_focus-ring-width) var(--_focus-ring-color);
+  }
+
+  [part='content'].no-toolbar {
+    padding-top: var(--lumo-space-s);
+    margin-inline-end: calc(
+      var(--_actions-inset) + 2 * (var(--_action-icon-size) + 2 * var(--_action-padding)) + 2 * var(--_actions-gap)
+    );
+  }
+
+  [part='code'] {
+    white-space: pre;
+  }
+
+  :host([code-wrapped]) [part='code'] {
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  [part='copy-button'],
+  [part='wrap-button'] {
+    display: inline-grid;
+    place-items: center;
+    padding: var(--_action-padding);
+    border: none;
+    border-radius: var(--lumo-border-radius-m);
+    background: transparent;
+    color: var(--ai-code-block-color-comment);
+    cursor: var(--lumo-clickable-cursor, pointer);
+  }
+
+  [part='copy-button']:hover,
+  [part='wrap-button']:hover {
+    color: var(--ai-code-block-color-text);
+    background: var(--lumo-contrast-5pct);
+  }
+
+  [part='copy-button']:focus-visible,
+  [part='wrap-button']:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 var(--_focus-ring-width) var(--_focus-ring-color);
+  }
+
+  [part='copy-button']::before,
+  [part='copy-button']::after,
+  [part='wrap-button']::before {
+    content: '';
+    grid-area: 1 / 1;
+    width: var(--_action-icon-size);
+    height: var(--_action-icon-size);
+    background: currentColor;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
+    -webkit-mask-size: 100%;
+    mask-size: 100%;
+  }
+
+  [part='copy-button']::before {
+    -webkit-mask-image: var(--ai-code-block-icon-copy);
+    mask-image: var(--ai-code-block-icon-copy);
+  }
+
+  [part='copy-button']::after {
+    background: var(--ai-code-block-color-success, var(--lumo-success-color));
+    -webkit-mask-image: var(--ai-code-block-icon-check);
+    mask-image: var(--ai-code-block-icon-check);
+    opacity: 0;
+    transform: scale(0.4);
+  }
+
+  [part='copy-button'][copied]::before {
+    opacity: 0;
+    transform: scale(0.5);
+    transition:
+      opacity 120ms ease,
+      transform 120ms ease;
+  }
+
+  [part='copy-button'][copied]::after {
+    opacity: 1;
+    transform: scale(1);
+    transition:
+      opacity 100ms ease 50ms,
+      transform 220ms cubic-bezier(0.34, 1.56, 0.64, 1) 50ms;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [part='copy-button'][copied]::before,
+    [part='copy-button'][copied]::after {
+      transition: none;
+    }
+  }
+
+  [part='wrap-button']::before {
+    -webkit-mask-image: var(--ai-code-block-icon-no-wrap);
+    mask-image: var(--ai-code-block-icon-no-wrap);
+  }
+  :host([code-wrapped]) [part='wrap-button']::before {
+    -webkit-mask-image: var(--ai-code-block-icon-wrap);
+    mask-image: var(--ai-code-block-icon-wrap);
+  }
+
+  .hljs-keyword,
+  .hljs-literal,
+  .hljs-selector-tag {
+    color: var(--ai-code-block-color-keyword);
+  }
+  .hljs-string,
+  .hljs-regexp,
+  .hljs-symbol {
+    color: var(--ai-code-block-color-string);
+  }
+  .hljs-comment,
+  .hljs-quote {
+    color: var(--ai-code-block-color-comment);
+    font-style: italic;
+  }
+  .hljs-number {
+    color: var(--ai-code-block-color-number);
+  }
+  .hljs-title,
+  .hljs-title.function_,
+  .hljs-section {
+    color: var(--ai-code-block-color-title);
+  }
+  .hljs-type,
+  .hljs-title.class_,
+  .hljs-class .hljs-title {
+    color: var(--ai-code-block-color-type);
+  }
+  .hljs-built_in {
+    color: var(--ai-code-block-color-built-in);
+  }
+  .hljs-attr,
+  .hljs-attribute,
+  .hljs-variable {
+    color: var(--ai-code-block-color-attr);
+  }
+  .hljs-tag,
+  .hljs-name {
+    color: var(--ai-code-block-color-tag);
+  }
+  .hljs-meta {
+    color: var(--ai-code-block-color-meta);
+  }
+
+  @media (forced-colors: active) {
+    [part='content']:focus-visible {
+      outline: 2px solid;
+      outline-offset: -2px;
+    }
+
+    [part='copy-button']:focus-visible,
+    [part='wrap-button']:focus-visible {
+      outline: 2px solid;
+      outline-offset: -2px;
+    }
+
+    [part='copy-button']::before,
+    [part='copy-button']::after,
+    [part='wrap-button']::before {
+      forced-color-adjust: none;
+      background: ButtonText;
+    }
+  }
+}
+
+:root,
+:host {
+  --_lumo-jmix-ai-code-block-inject: 1;
+  --_lumo-jmix-ai-code-block-inject-modules: lumo_components_jmix-ai-code-block;
+}

@@ -1,0 +1,4 @@
+:is(jmix-ai-message) {
+  --_ai-message-success-color-default: var(--aura-green);
+  --_ai-message-action-icon-size-default: var(--aura-font-size-l);
+}

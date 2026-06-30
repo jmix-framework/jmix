@@ -1,0 +1,206 @@
+@media lumo_components_jmix-ai-message {
+  :host {
+    display: flex;
+    flex-direction: column;
+    color: var(--lumo-body-text-color);
+    font-family: var(--lumo-font-family);
+    font-size: var(--lumo-font-size-m);
+    line-height: var(--lumo-line-height-m);
+    padding: var(--ai-message-padding, var(--lumo-space-s) var(--lumo-space-m));
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
+    -webkit-text-size-adjust: 100%;
+    --_focus-ring-color: var(--vaadin-focus-ring-color, var(--lumo-primary-color-50pct));
+    --_focus-ring-width: var(--vaadin-focus-ring-width, 2px);
+    --ai-message-icon-copy: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><rect width='14' height='14' x='8' y='8' rx='2' ry='2'/><path d='M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2'/></svg>");
+    --ai-message-icon-check: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M20 6 9 17l-5-5'/></svg>");
+  }
+
+  :host([hidden]) {
+    display: none !important;
+  }
+
+  :host(:is(:focus-visible, [focus-ring])) {
+    outline: none;
+    box-shadow: inset 0 0 0 var(--_focus-ring-width) var(--_focus-ring-color);
+  }
+
+  [part='content'] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--lumo-space-xs);
+    min-width: 0;
+  }
+
+  [part='message'] {
+    font-size: var(--ai-message-font-size, inherit);
+    line-height: var(--ai-message-line-height, inherit);
+    color: var(--ai-message-text-color, inherit);
+  }
+
+  :host([message-role='user']) {
+    align-items: flex-end;
+  }
+
+  :host([message-role='user']) [part='content'] {
+    max-width: 75%;
+    background: var(--lumo-contrast-5pct);
+    border-radius: var(--lumo-border-radius-l);
+    padding: var(--lumo-space-s) var(--lumo-space-m);
+  }
+
+  :host([message-role='user']) [part='message'] {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+
+  :host([message-role='assistant']) [part='content'] {
+    max-width: 100%;
+  }
+
+  ::slotted(jmix-ai-markdown) {
+    display: block;
+    white-space: normal;
+  }
+
+  [part='actions'] {
+    display: flex;
+    align-items: center;
+    gap: var(--lumo-space-xs);
+    margin-top: var(--lumo-space-xs);
+    position: relative;
+    opacity: 0;
+    transition: opacity 0.12s ease-in-out;
+    pointer-events: none;
+  }
+
+  :host(:hover) [part='actions'],
+  :host(:focus-within) [part='actions'],
+  :host([message-last-assistant]) [part='actions'] {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  :host([message-state='generating']) [part='actions'] {
+    display: none;
+  }
+
+  @media (hover: none) {
+    [part='actions'] {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  }
+
+  [part='action'] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font: inherit;
+    padding: var(--ai-message-action-padding, var(--lumo-space-s));
+    border: none;
+    border-radius: var(--ai-message-action-border-radius, var(--lumo-border-radius-m));
+    background: transparent;
+    color: var(--lumo-secondary-text-color);
+    cursor: var(--lumo-clickable-cursor, pointer);
+  }
+
+  [part='action']:hover {
+    background: var(--lumo-contrast-5pct);
+    color: var(--lumo-body-text-color);
+  }
+
+  [part='action']:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 var(--_focus-ring-width) var(--_focus-ring-color);
+  }
+
+  [part='actions'] vaadin-icon,
+  [part='actions'] img,
+  [part='action'].ai-message-action-copy::before,
+  [part='action'].ai-message-action-copy::after {
+    width: var(--ai-message-action-icon-size, var(--lumo-font-size-l));
+    height: var(--ai-message-action-icon-size, var(--lumo-font-size-l));
+  }
+
+  [part='action'].ai-message-action-copy {
+    display: inline-grid;
+    place-items: center;
+  }
+
+  [part='action'].ai-message-action-copy::before {
+    content: '';
+    grid-area: 1 / 1;
+    background: currentColor;
+    -webkit-mask: var(--ai-message-icon-copy) center / contain no-repeat;
+    mask: var(--ai-message-icon-copy) center / contain no-repeat;
+  }
+
+  [part='action'].ai-message-action-copy::after {
+    content: '';
+    grid-area: 1 / 1;
+    background: var(--ai-message-success-color, var(--lumo-success-color));
+    -webkit-mask: var(--ai-message-icon-check) center / contain no-repeat;
+    mask: var(--ai-message-icon-check) center / contain no-repeat;
+    opacity: 0;
+    transform: scale(0.4);
+  }
+
+  [part='action'][copied].ai-message-action-copy::before {
+    opacity: 0;
+    transform: scale(0.5);
+    transition:
+      opacity 120ms ease,
+      transform 120ms ease;
+  }
+
+  [part='action'][copied].ai-message-action-copy::after {
+    opacity: 1;
+    transform: scale(1);
+    transition:
+      opacity 100ms ease 50ms,
+      transform 220ms cubic-bezier(0.34, 1.56, 0.64, 1) 50ms;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [part='action'][copied].ai-message-action-copy::before,
+    [part='action'][copied].ai-message-action-copy::after {
+      transition: none;
+    }
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+    clip-path: inset(50%);
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  @media (forced-colors: active) {
+    :host(:is(:focus-visible, [focus-ring])) {
+      outline: 2px solid;
+      outline-offset: -2px;
+    }
+
+    [part='action']:focus-visible {
+      outline: 2px solid;
+    }
+
+    [part='action'].ai-message-action-copy::before,
+    [part='action'].ai-message-action-copy::after {
+      forced-color-adjust: none;
+      background: ButtonText;
+    }
+  }
+}
+
+:root,
+:host {
+  --_lumo-jmix-ai-message-inject: 1;
+  --_lumo-jmix-ai-message-inject-modules: lumo_components_jmix-ai-message;
+}

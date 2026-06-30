@@ -119,6 +119,7 @@
     <property caption="Project theme"
               code="projectTheme"
               required="true"
+              nullAllowed="true"
               propertyType="OPTION">
         <option id="Aura"/>
         <option id="Lumo"/>

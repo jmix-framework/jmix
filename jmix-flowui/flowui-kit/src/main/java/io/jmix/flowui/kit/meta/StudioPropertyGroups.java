@@ -3006,6 +3006,10 @@ public final class StudioPropertyGroups {
                     @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.SELECTED_ITEMS_ON_TOP,
                             type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(
+                            xmlAttribute = StudioXmlAttributes.COLLAPSE_CHIPS,
+                            type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false")
             }
     )

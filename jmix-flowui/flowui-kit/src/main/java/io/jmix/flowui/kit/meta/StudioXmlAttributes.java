@@ -168,6 +168,7 @@ public final class StudioXmlAttributes {
     public static final String CLOSE_HINT = "closeHint";
     public static final String CLOSE_ON_OUTSIDE_CLICK = "closeOnOutsideClick";
     public static final String CODE = "code";
+    public static final String COLLAPSE_CHIPS = "collapseChips";
     public static final String COLLAPSED = "collapsed";
     public static final String COLLAPSIBLE = "collapsible";
     public static final String COLOR = "color";

@@ -99,6 +99,7 @@ class MultiSelectComboBoxXmlLoadTest extends FlowuiTestSpecification {
             readOnly
             required
             selectedItemsOnTop
+            collapseChips
             tabIndex == 3
             themeNames.containsAll(["small", "align-center"])
             (it as HasTitle).getTitle() == "titleString"

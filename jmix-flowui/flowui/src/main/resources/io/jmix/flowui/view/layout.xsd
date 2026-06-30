@@ -2781,6 +2781,7 @@
                 <xs:attribute name="pageSize" type="xs:integer"/>
                 <xs:attribute name="autofocus" type="xs:boolean"/>
                 <xs:attribute name="allowCustomValue" type="xs:boolean"/>
+                <xs:attribute name="focusSelectedItem" type="xs:boolean"/>
                 <xs:attribute name="themeNames" type="comboBoxThemeNames"/>
                 <xs:attribute name="allowedCharPattern" type="resourceString"/>
 
@@ -3752,6 +3753,7 @@
                 <xs:attribute name="pageSize" type="xs:integer"/>
                 <xs:attribute name="autofocus" type="xs:boolean"/>
                 <xs:attribute name="allowCustomValue" type="xs:boolean"/>
+                <xs:attribute name="focusSelectedItem" type="xs:boolean"/>
                 <xs:attribute name="themeNames" type="comboBoxThemeNames"/>
                 <xs:attribute name="clearButtonVisible" type="xs:boolean"/>
                 <xs:attribute name="itemsEnum" type="xs:string"/>

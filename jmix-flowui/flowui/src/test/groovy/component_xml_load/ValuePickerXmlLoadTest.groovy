@@ -211,6 +211,7 @@ class ValuePickerXmlLoadTest extends FlowuiTestSpecification {
             allowCustomValue
             autofocus
             autoOpen
+            focusSelectedItem
             classNames.containsAll(["cssClassName1", "cssClassName2"])
             style.get("color") == "red"
             clearButtonVisible
@@ -261,6 +262,7 @@ class ValuePickerXmlLoadTest extends FlowuiTestSpecification {
             allowCustomValue
             autofocus
             autoOpen
+            focusSelectedItem
             classNames.containsAll(["cssClassName1", "cssClassName2"])
             style.get("color") == "red"
             enabled

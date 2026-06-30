@@ -183,6 +183,7 @@ class FieldsComponentXmlLoadTest extends FlowuiTestSpecification {
             allowCustomValue
             autofocus
             autoOpen
+            focusSelectedItem
             classNames.containsAll(["cssClassName1", "cssClassName2"])
             datatype.class == StringDatatype
             style.get("color") == "red"

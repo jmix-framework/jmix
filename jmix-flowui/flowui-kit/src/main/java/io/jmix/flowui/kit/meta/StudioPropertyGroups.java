@@ -864,6 +864,13 @@ public final class StudioPropertyGroups {
     }
 
     @StudioPropertyGroup(properties = @StudioProperty(
+            xmlAttribute = StudioXmlAttributes.FOCUS_SELECTED_ITEM,
+            type = StudioPropertyType.BOOLEAN,
+            defaultValue = "false"))
+    public interface FocusSelectedItem {
+    }
+
+    @StudioPropertyGroup(properties = @StudioProperty(
             xmlAttribute = StudioXmlAttributes.FONT_FAMILY,
             type = StudioPropertyType.STRING,
             category = StudioProperty.Category.LOOK_AND_FEEL))
@@ -2302,8 +2309,9 @@ public final class StudioPropertyGroups {
 
     @StudioPropertyGroup
     public interface EntityComboBoxComponent extends FieldDefaultProperties, AllowedCharPattern, AllowCustomValue,
-            Autofocus, AutoOpen, OverlayWidth, ItemsContainerTypeParameterV, MetaClassTypeParameterV, Opened,
-            PageSize, Pattern, Placeholder, PropertyTypeParameterV, TextInputFieldThemeNames, Title {
+            Autofocus, AutoOpen, FocusSelectedItem, OverlayWidth, ItemsContainerTypeParameterV,
+            MetaClassTypeParameterV, Opened, PageSize, Pattern, Placeholder, PropertyTypeParameterV,
+            TextInputFieldThemeNames, Title {
     }
 
     @StudioPropertyGroup
@@ -2983,8 +2991,8 @@ public final class StudioPropertyGroups {
             type = StudioPropertyType.BOOLEAN,
             defaultValue = "true"))
     public interface ComboBoxComponent extends FieldDefaultProperties, Title, Pattern, PageSize, Datatype, ItemsEnum,
-            Autofocus, Placeholder, OverlayWidth, AllowCustomValue, ClearButtonVisible, PropertyTypeParameterV,
-            TextInputFieldThemeNames {
+            Autofocus, Placeholder, OverlayWidth, AllowCustomValue, FocusSelectedItem, ClearButtonVisible,
+            PropertyTypeParameterV, TextInputFieldThemeNames {
     }
 
     @StudioPropertyGroup(

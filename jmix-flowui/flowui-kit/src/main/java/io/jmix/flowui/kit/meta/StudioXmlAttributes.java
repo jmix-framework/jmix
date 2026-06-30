@@ -386,6 +386,7 @@ public final class StudioXmlAttributes {
     public static final String FOCUS_COMPONENT = "focusComponent";
     public static final String FOCUS_DELAY = "focusDelay";
     public static final String FOCUS_MODE = "focusMode";
+    public static final String FOCUS_SELECTED_ITEM = "focusSelectedItem";
     public static final String FOCUS_SHORTCUT = "focusShortcut";
     public static final String FONT_FAMILY = "fontFamily";
     public static final String FONT_SIZE = "fontSize";

@@ -320,6 +320,7 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
             (getItem("secondActionItem") as ActionItem).getAction().getText() == "Action Text"
             ((getItem("componentItem") as ComponentItem).getContent() as Span).getText() == "content"
             (getItem("textItem") as TextItem).getText() == "textItemContent"
+            getItem("secondActionItem").item.element.getProperty("tooltip") == "Action Description"
         }
     }
 
@@ -357,6 +358,7 @@ class ComponentXmlLoadTest extends FlowuiTestSpecification {
             (getItem("secondActionItem") as ActionItem).getAction().getText() == "Action Text"
             ((getItem("componentItem") as ComponentItem).getContent() as Span).getText() == "content"
             (getItem("textItem") as TextItem).getText() == "textItemContent"
+            getItem("secondActionItem").item.element.getProperty("tooltip") == "Action Description"
         }
     }
 

@@ -28,7 +28,9 @@ import java.util.Map;
  */
 public final class StudioXmlAttributes {
     public static final String ABBREVIATION = "abbreviation";
+    public static final String ACCEPTED_FILE_EXTENSIONS = "acceptedFileExtensions";
     public static final String ACCEPTED_FILE_TYPES = "acceptedFileTypes";
+    public static final String ACCEPTED_MIME_TYPES = "acceptedMimeTypes";
     public static final String ACTION = "action";
     public static final String ACTION_VARIANT = "actionVariant";
     public static final String ACTIVE_SHEET_INDEX = "activeSheetIndex";
@@ -73,6 +75,7 @@ public final class StudioXmlAttributes {
     public static final String APPLY_SHORTCUT = "applyShortcut";
     public static final String ARIA_LABEL = "ariaLabel";
     public static final String ARIA_LABELLED_BY = "ariaLabelledBy";
+    public static final String ARIA_LINK_MODE = "ariaLinkMode";
     public static final String ATTRIBUTES = "attributes";
     public static final String ATTRIBUTIONS = "attributions";
     public static final String ATTRIBUTIONS_COLLAPSIBLE = "attributionsCollapsible";
@@ -168,6 +171,7 @@ public final class StudioXmlAttributes {
     public static final String CLOSE_HINT = "closeHint";
     public static final String CLOSE_ON_OUTSIDE_CLICK = "closeOnOutsideClick";
     public static final String CODE = "code";
+    public static final String COLLAPSE_CHIPS = "collapseChips";
     public static final String COLLAPSED = "collapsed";
     public static final String COLLAPSIBLE = "collapsible";
     public static final String COLOR = "color";
@@ -386,6 +390,7 @@ public final class StudioXmlAttributes {
     public static final String FOCUS_COMPONENT = "focusComponent";
     public static final String FOCUS_DELAY = "focusDelay";
     public static final String FOCUS_MODE = "focusMode";
+    public static final String FOCUS_SELECTED_ITEM = "focusSelectedItem";
     public static final String FOCUS_SHORTCUT = "focusShortcut";
     public static final String FONT_FAMILY = "fontFamily";
     public static final String FONT_SIZE = "fontSize";

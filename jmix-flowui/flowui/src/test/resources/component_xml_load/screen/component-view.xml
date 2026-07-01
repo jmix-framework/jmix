@@ -224,6 +224,7 @@
         <comboBox id="comboBoxId"
                   allowCustomValue="true"
                   autoOpen="true"
+                  focusSelectedItem="true"
                   autofocus="true"
                   classNames="cssClassName1, cssClassName2"
                   css="color: red;"
@@ -799,6 +800,7 @@
                         allowCustomValue="true"
                         autofocus="true"
                         autoOpen="true"
+                        focusSelectedItem="true"
                         classNames="cssClassName1, cssClassName2"
                         css="color: red;"
                         clearButtonVisible="true"
@@ -841,6 +843,7 @@
                         allowCustomValue="true"
                         autofocus="true"
                         autoOpen="true"
+                        focusSelectedItem="true"
                         classNames="cssClassName1, cssClassName2"
                         css="color: red;"
                         enabled="true"
@@ -1047,6 +1050,10 @@
 
         <upload id="uploadWithReceiverFqn"
                 receiverFqn="io.jmix.flowui.component.upload.receiver.FileTemporaryStorageBuffer"/>
+
+        <upload id="acceptedTypesUpload"
+                acceptedMimeTypes="image/png, image/jpeg"
+                acceptedFileExtensions=".pdf, .doc"/>
 
         <codeEditor id="codeEditorId"
                     classNames="cssClassName1, cssClassName2"

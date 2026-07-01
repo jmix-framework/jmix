@@ -36,6 +36,7 @@ import io.jmix.flowui.xml.layout.support.IconLoaderSupport;
 import org.dom4j.Element;
 import org.springframework.beans.BeansException;
 
+import java.util.List;
 import java.util.Optional;
 
 public class UploadLoader extends AbstractComponentLoader<JmixUpload> {
@@ -53,6 +54,8 @@ public class UploadLoader extends AbstractComponentLoader<JmixUpload> {
         loadDropLabel(resultComponent, element);
         loadUploadButton(resultComponent, element);
         loadReceiver(resultComponent, element);
+        loadAcceptedMimeTypes(resultComponent, element);
+        loadAcceptedFileExtensions(resultComponent, element);
 
         loadBoolean(element, "autoUpload", resultComponent::setAutoUpload);
         loadBoolean(element, "dropAllowed", resultComponent::setDropAllowed);
@@ -210,12 +213,26 @@ public class UploadLoader extends AbstractComponentLoader<JmixUpload> {
     }
 
     protected void loadAcceptedFileTypes(JmixUpload component, Element element) {
-        loadString(element, "acceptedFileTypes")
+        loadFileTypeList(element, "acceptedFileTypes")
+                .ifPresent(types -> component.setAcceptedFileTypes(types.toArray(new String[0])));
+    }
+
+    protected void loadAcceptedMimeTypes(JmixUpload component, Element element) {
+        loadFileTypeList(element, "acceptedMimeTypes")
+                .ifPresent(types -> component.setAcceptedMimeTypes(types.toArray(new String[0])));
+    }
+
+    protected void loadAcceptedFileExtensions(JmixUpload component, Element element) {
+        loadFileTypeList(element, "acceptedFileExtensions")
+                .ifPresent(types -> component.setAcceptedFileExtensions(types.toArray(new String[0])));
+    }
+
+    protected Optional<List<String>> loadFileTypeList(Element element, String attribute) {
+        return loadString(element, attribute)
                 .map(s -> Splitter.onPattern("[\\s,]+")
                         .omitEmptyStrings()
                         .trimResults()
-                        .splitToList(s))
-                .ifPresent(types -> component.setAcceptedFileTypes(types.toArray(new String[0])));
+                        .splitToList(s));
     }
 
     protected void loadDropLabel(JmixUpload component, Element element) {

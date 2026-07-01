@@ -22,6 +22,8 @@ import com.vaadin.flow.component.contextmenu.MenuItemsArrayGenerator;
 import com.vaadin.flow.component.contextmenu.SubMenu;
 import com.vaadin.flow.component.menubar.MenuBar;
 import com.vaadin.flow.component.shared.HasTooltip;
+import com.vaadin.flow.component.shared.SlotUtils;
+import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.function.SerializableConsumer;
 import com.vaadin.flow.function.SerializableRunnable;
 import io.jmix.flowui.kit.component.contextmenu.JmixMenuManager;
@@ -29,7 +31,7 @@ import io.jmix.flowui.kit.component.contextmenu.JmixMenuManager;
 import java.util.List;
 import java.util.stream.Stream;
 
-// CAUTION: copied from com.vaadin.flow.component.menubar.MenuBar [last update Vaadin 25.1.6]
+// CAUTION: copied from com.vaadin.flow.component.menubar.MenuBar [last update Vaadin 25.2.1]
 public class JmixMenuBar extends MenuBar
         implements HasMenuItemsEnhanced, Focusable<JmixMenuBar>, HasTooltip {
 
@@ -78,6 +80,28 @@ public class JmixMenuBar extends MenuBar
     public JmixMenuItem addItem(Component component,
                                 ComponentEventListener<ClickEvent<MenuItem>> clickListener) {
         return (JmixMenuItem) menuManager.addItem(component, clickListener);
+    }
+
+    @Override
+    public JmixMenuItem addItem(String text, String tooltipText) {
+        return (JmixMenuItem) menuManager.addItem(text, tooltipText);
+    }
+
+    @Override
+    public JmixMenuItem addItem(Component component, String tooltipText) {
+        return (JmixMenuItem) menuManager.addItem(component, tooltipText);
+    }
+
+    @Override
+    public JmixMenuItem addItem(String text, String tooltipText,
+                                ComponentEventListener<ClickEvent<MenuItem>> clickListener) {
+        return (JmixMenuItem) menuManager.addItem(text, tooltipText, clickListener);
+    }
+
+    @Override
+    public JmixMenuItem addItem(Component component, String tooltipText,
+                                ComponentEventListener<ClickEvent<MenuItem>> clickListener) {
+        return (JmixMenuItem) menuManager.addItem(component, tooltipText, clickListener);
     }
 
     public JmixMenuItem addItemAtIndex(int index, String text) {
@@ -138,6 +162,12 @@ public class JmixMenuBar extends MenuBar
             updateScheduled = false;
         });
         updateScheduled = true;
+    }
+
+    protected void ensureTooltipElement() {
+        if (SlotUtils.getElementsInSlot(this, "tooltip").count() == 0) {
+            SlotUtils.addToSlot(this, "tooltip", new Element("vaadin-tooltip"));
+        }
     }
 
     protected void attachListener(AttachEvent attachEvent) {

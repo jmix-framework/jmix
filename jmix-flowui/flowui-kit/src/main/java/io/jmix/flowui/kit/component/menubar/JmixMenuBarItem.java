@@ -17,15 +17,22 @@
 package io.jmix.flowui.kit.component.menubar;
 
 import com.vaadin.flow.component.Tag;
-import com.vaadin.flow.component.contextmenu.ContextMenu;
 import com.vaadin.flow.function.SerializableRunnable;
 
-// CAUTION: copied from com.vaadin.flow.component.menubar.MenuBarItem [last update Vaadin 25.1.6]
+// CAUTION: copied from com.vaadin.flow.component.menubar.MenuBarItem [last update Vaadin 25.2.1]
 @Tag("vaadin-menu-bar-item")
 public class JmixMenuBarItem extends JmixMenuItem {
 
-    public JmixMenuBarItem(ContextMenu contextMenu, SerializableRunnable contentReset) {
-        super(contextMenu, contentReset);
+    protected final JmixMenuBar menuBar;
+
+    public JmixMenuBarItem(JmixMenuBar menuBar, SerializableRunnable contentReset) {
+        super(null, contentReset);
+        this.menuBar = menuBar;
+    }
+
+    @Override
+    protected void ensureTooltipElement() {
+        menuBar.ensureTooltipElement();
     }
 
     @Override

@@ -111,11 +111,14 @@ const DEFAULT_I18N = Object.freeze({
  * @mixes ThemableMixin
  */
 export class JmixMarkdownEditor extends I18nMixin(
-  DEFAULT_I18N,
   DelegateStateMixin(FieldMixin(DelegateFocusMixin(ThemableMixin(ElementMixin(PolylitMixin(LumoInjectionMixin(LitElement))))))),
 ) {
   static get is() {
     return 'jmix-markdown-editor';
+  }
+
+  static get defaultI18n() {
+    return DEFAULT_I18N;
   }
 
   static get styles() {

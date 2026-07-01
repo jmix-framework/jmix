@@ -348,7 +348,9 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
 
     /**
      * @return the list of accepted file types for upload
+     * @deprecated use {@link #getAcceptedMimeTypes()} and {@link #getAcceptedFileExtensions()} instead
      */
+    @Deprecated(since = "3.1", forRemoval = true)
     public List<String> getAcceptedFileTypes() {
         return uploadButton.getAcceptedFileTypes();
     }
@@ -362,9 +364,51 @@ public abstract class AbstractSingleUploadField<C extends AbstractSingleUploadFi
      *
      * @param acceptedFileTypes the allowed file types to be uploaded, or {@code null} to clear any restrictions
      * @see Upload#setAcceptedFileTypes(String...)
+     * @deprecated use {@link #setAcceptedMimeTypes(String...)} and/or {@link #setAcceptedFileExtensions(String...)} instead
      */
+    @Deprecated(since = "3.1", forRemoval = true)
     public void setAcceptedFileTypes(String... acceptedFileTypes) {
         uploadButton.setAcceptedFileTypes(acceptedFileTypes);
+    }
+
+    /**
+     * @return the list of accepted MIME types for upload
+     */
+    public List<String> getAcceptedMimeTypes() {
+        return uploadButton.getAcceptedMimeTypes();
+    }
+
+    /**
+     * Sets the MIME types that the server accepts. Wildcards are allowed, e.g. {@code "image/*"}, {@code "application/pdf"}.
+     * <p>
+     * Cannot be combined with {@link #setAcceptedFileTypes(String...)} and requires an upload handler
+     * (not the deprecated {@code Receiver} API).
+     *
+     * @param acceptedMimeTypes the allowed MIME types to be uploaded, or empty to clear any restrictions
+     * @see Upload#setAcceptedMimeTypes(String...)
+     */
+    public void setAcceptedMimeTypes(String... acceptedMimeTypes) {
+        uploadButton.setAcceptedMimeTypes(acceptedMimeTypes);
+    }
+
+    /**
+     * @return the list of accepted file extensions for upload
+     */
+    public List<String> getAcceptedFileExtensions() {
+        return uploadButton.getAcceptedFileExtensions();
+    }
+
+    /**
+     * Sets the file extensions that the server accepts, each starting with a dot, e.g. {@code ".pdf"}, {@code ".jpg"}.
+     * <p>
+     * Cannot be combined with {@link #setAcceptedFileTypes(String...)} and requires an upload handler
+     * (not the deprecated {@code Receiver} API).
+     *
+     * @param acceptedFileExtensions the allowed file extensions to be uploaded, or empty to clear any restrictions
+     * @see Upload#setAcceptedFileExtensions(String...)
+     */
+    public void setAcceptedFileExtensions(String... acceptedFileExtensions) {
+        uploadButton.setAcceptedFileExtensions(acceptedFileExtensions);
     }
 
     /**

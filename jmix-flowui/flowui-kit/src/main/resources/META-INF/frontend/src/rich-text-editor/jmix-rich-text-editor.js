@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import './vendor/quill.min.js';
+import QuillModule from './vendor/quill.min.js';
 import '@vaadin/button/src/vaadin-button.js';
 import '@vaadin/tooltip/src/vaadin-tooltip.js';
 import {html, LitElement} from 'lit';
@@ -30,7 +30,10 @@ import {LumoInjectionMixin} from '@vaadin/vaadin-themable-mixin/lumo-injection-m
 import {PolylitMixin} from '@vaadin/component-base/src/polylit-mixin.js';
 import {jmixRichTextEditorStyles} from './styles/jmix-rich-text-editor-base-styles.js';
 
-const Quill = window.Quill;
+// The vendored Quill is a UMD bundle. Depending on the frontend bundler it either assigns
+// the constructor to window.Quill (global branch) or to the module export (CommonJS branch),
+// so resolve it from both to stay independent of the bundler's UMD interop.
+const Quill = window.Quill || (QuillModule && QuillModule.default) || QuillModule;
 
 // Workaround for text disappearing when accepting spellcheck suggestion
 // See https://github.com/quilljs/quill/issues/2096#issuecomment-399576957

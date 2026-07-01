@@ -63,6 +63,7 @@
                              readOnly="true"
                              required="true"
                              selectedItemsOnTop="true"
+                             collapseChips="true"
                              tabIndex="3"
                              themeNames="small, align-center"
                              title="titleString"
@@ -76,6 +77,7 @@
                      manual="true"
                      opened="true"
                      position="BOTTOM"
+                     ariaLinkMode="ARIA_DESCRIBED_BY"
             />
         </multiSelectComboBox>
 
@@ -106,6 +108,7 @@
                                    readOnly="true"
                                    required="true"
                                    selectedItemsOnTop="true"
+                                   collapseChips="true"
                                    tabIndex="3"
                                    themeNames="small, align-center"
                                    title="titleString"
@@ -119,6 +122,7 @@
                      manual="true"
                      opened="true"
                      position="BOTTOM"
+                     ariaLinkMode="ARIA_DESCRIBED_BY"
             />
             <actions>
                 <action id="lookup" type="entity_lookup"/>

@@ -99,6 +99,7 @@ class MultiSelectComboBoxXmlLoadTest extends FlowuiTestSpecification {
             readOnly
             required
             selectedItemsOnTop
+            collapseChips
             tabIndex == 3
             themeNames.containsAll(["small", "align-center"])
             (it as HasTitle).getTitle() == "titleString"
@@ -115,6 +116,7 @@ class MultiSelectComboBoxXmlLoadTest extends FlowuiTestSpecification {
             tooltip.manual
             tooltip.opened
             tooltip.position == Tooltip.TooltipPosition.BOTTOM
+            tooltip.ariaLinkMode == Tooltip.AriaLinkMode.ARIA_DESCRIBED_BY
         }
 
         where:

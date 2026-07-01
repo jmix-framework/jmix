@@ -365,6 +365,20 @@ public final class StudioPropertyGroups {
     }
 
     @StudioPropertyGroup(properties = @StudioProperty(
+            xmlAttribute = StudioXmlAttributes.ACCEPTED_MIME_TYPES,
+            type = StudioPropertyType.VALUES_LIST,
+            category = StudioProperty.Category.VALIDATION))
+    public interface AcceptedMimeTypes {
+    }
+
+    @StudioPropertyGroup(properties = @StudioProperty(
+            xmlAttribute = StudioXmlAttributes.ACCEPTED_FILE_EXTENSIONS,
+            type = StudioPropertyType.VALUES_LIST,
+            category = StudioProperty.Category.VALIDATION))
+    public interface AcceptedFileExtensions {
+    }
+
+    @StudioPropertyGroup(properties = @StudioProperty(
             xmlAttribute = StudioXmlAttributes.ACCEPTED_FILE_TYPES,
             type = StudioPropertyType.VALUES_LIST,
             category = StudioProperty.Category.GENERAL))
@@ -434,6 +448,15 @@ public final class StudioPropertyGroups {
             type = StudioPropertyType.LOCALIZED_STRING,
             setMethod = "setAlt"))
     public interface AlternateText {
+    }
+
+    @StudioPropertyGroup(properties = @StudioProperty(
+            xmlAttribute = StudioXmlAttributes.ARIA_LINK_MODE,
+            type = StudioPropertyType.ENUMERATION,
+            classFqn = "com.vaadin.flow.component.shared.Tooltip$AriaLinkMode",
+            defaultValue = "NONE",
+            options = {"NONE", "ARIA_DESCRIBED_BY", "ARIA_LABELLED_BY"}))
+    public interface AriaLinkMode {
     }
 
     @StudioPropertyGroup(properties = @StudioProperty(
@@ -861,6 +884,13 @@ public final class StudioPropertyGroups {
             type = StudioPropertyType.INTEGER,
             category = StudioProperty.Category.POSITION))
     public interface FlexGrow {
+    }
+
+    @StudioPropertyGroup(properties = @StudioProperty(
+            xmlAttribute = StudioXmlAttributes.FOCUS_SELECTED_ITEM,
+            type = StudioPropertyType.BOOLEAN,
+            defaultValue = "false"))
+    public interface FocusSelectedItem {
     }
 
     @StudioPropertyGroup(properties = @StudioProperty(
@@ -2302,8 +2332,9 @@ public final class StudioPropertyGroups {
 
     @StudioPropertyGroup
     public interface EntityComboBoxComponent extends FieldDefaultProperties, AllowedCharPattern, AllowCustomValue,
-            Autofocus, AutoOpen, OverlayWidth, ItemsContainerTypeParameterV, MetaClassTypeParameterV, Opened,
-            PageSize, Pattern, Placeholder, PropertyTypeParameterV, TextInputFieldThemeNames, Title {
+            Autofocus, AutoOpen, FocusSelectedItem, OverlayWidth, ItemsContainerTypeParameterV,
+            MetaClassTypeParameterV, Opened, PageSize, Pattern, Placeholder, PropertyTypeParameterV,
+            TextInputFieldThemeNames, Title {
     }
 
     @StudioPropertyGroup
@@ -2367,7 +2398,8 @@ public final class StudioPropertyGroups {
 
     @StudioPropertyGroup
     public interface FileUploadFieldDefaultProperties extends BaseSizedEnabledComponentWithClassName,
-            HasRequiredAndValidationAttributes, AcceptedFileTypes, ClearButtonAriaLabel, ClearButtonVisible,
+            HasRequiredAndValidationAttributes, AcceptedFileTypes, AcceptedMimeTypes, AcceptedFileExtensions,
+            ClearButtonAriaLabel, ClearButtonVisible,
             ConnectingStatusText, CollectionOrInstanceDataContainer, DropAllowed, FileNameVisible,
             FileNotSelectedText, FileTooBigText, HelperText, IncorrectFileTypeText, Label, MaxFileSize,
             ProcessingStatusText, Property, ReadOnly, RemainingTimeText, RemainingTimeUnknownText,
@@ -2739,7 +2771,7 @@ public final class StudioPropertyGroups {
                             defaultValue = "false")
             }
     )
-    public interface TooltipComponent extends HideDelay, RequiredText, Opened {
+    public interface TooltipComponent extends HideDelay, RequiredText, Opened, AriaLinkMode {
     }
 
     @StudioPropertyGroup(
@@ -2983,8 +3015,8 @@ public final class StudioPropertyGroups {
             type = StudioPropertyType.BOOLEAN,
             defaultValue = "true"))
     public interface ComboBoxComponent extends FieldDefaultProperties, Title, Pattern, PageSize, Datatype, ItemsEnum,
-            Autofocus, Placeholder, OverlayWidth, AllowCustomValue, ClearButtonVisible, PropertyTypeParameterV,
-            TextInputFieldThemeNames {
+            Autofocus, Placeholder, OverlayWidth, AllowCustomValue, FocusSelectedItem, ClearButtonVisible,
+            PropertyTypeParameterV, TextInputFieldThemeNames {
     }
 
     @StudioPropertyGroup(
@@ -2997,6 +3029,10 @@ public final class StudioPropertyGroups {
                             options = {"VERTICAL", "HORIZONTAL", "BOTH", "NONE"}),
                     @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.SELECTED_ITEMS_ON_TOP,
+                            type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(
+                            xmlAttribute = StudioXmlAttributes.COLLAPSE_CHIPS,
                             type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false")
             }
@@ -3349,7 +3385,15 @@ public final class StudioPropertyGroups {
                             xmlAttribute = StudioXmlAttributes.UPLOAD_HANDLER_TYPE,
                             type = StudioPropertyType.ENUMERATION,
                             defaultValue = "IN_MEMORY",
-                            options = {"IN_MEMORY", "FILE_TEMPORARY_STORAGE"})
+                            options = {"IN_MEMORY", "FILE_TEMPORARY_STORAGE"}),
+                    @StudioProperty(
+                            xmlAttribute = StudioXmlAttributes.ACCEPTED_MIME_TYPES,
+                            type = StudioPropertyType.VALUES_LIST,
+                            category = StudioProperty.Category.GENERAL),
+                    @StudioProperty(
+                            xmlAttribute = StudioXmlAttributes.ACCEPTED_FILE_EXTENSIONS,
+                            type = StudioPropertyType.VALUES_LIST,
+                            category = StudioProperty.Category.GENERAL)
             }
     )
     public interface UploadComponent extends SizedComponentDefaultProperties, UploadText, UploadIcon,

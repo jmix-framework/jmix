@@ -26,7 +26,7 @@ import com.vaadin.flow.component.contextmenu.SubMenu;
 import com.vaadin.flow.function.SerializableRunnable;
 import io.jmix.flowui.kit.component.contextmenu.JmixMenuManager;
 
-// CAUTION: copied from com.vaadin.flow.component.contextmenu.SubMenu [last update Vaadin 25.1.6]
+// CAUTION: copied from com.vaadin.flow.component.contextmenu.SubMenu [last update Vaadin 25.2.1]
 public class JmixSubMenu extends SubMenu implements HasMenuItemsEnhanced {
 
     protected final SerializableRunnable contentReset;
@@ -55,6 +55,28 @@ public class JmixSubMenu extends SubMenu implements HasMenuItemsEnhanced {
     public JmixMenuItem addItem(Component component,
                                 ComponentEventListener<ClickEvent<MenuItem>> clickListener) {
         return (JmixMenuItem) getMenuManager().addItem(component, clickListener);
+    }
+
+    @Override
+    public JmixMenuItem addItem(String text, String tooltipText) {
+        return (JmixMenuItem) getMenuManager().addItem(text, tooltipText);
+    }
+
+    @Override
+    public JmixMenuItem addItem(Component component, String tooltipText) {
+        return (JmixMenuItem) getMenuManager().addItem(component, tooltipText);
+    }
+
+    @Override
+    public JmixMenuItem addItem(String text, String tooltipText,
+                                ComponentEventListener<ClickEvent<MenuItem>> clickListener) {
+        return (JmixMenuItem) getMenuManager().addItem(text, tooltipText, clickListener);
+    }
+
+    @Override
+    public JmixMenuItem addItem(Component component, String tooltipText,
+                                ComponentEventListener<ClickEvent<MenuItem>> clickListener) {
+        return (JmixMenuItem) getMenuManager().addItem(component, tooltipText, clickListener);
     }
 
     @Override

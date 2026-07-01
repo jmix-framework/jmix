@@ -49,7 +49,7 @@ public class FileTemporaryStorageUploadHandler
 
     @Override
     public void handleUploadRequest(UploadEvent event) throws IOException {
-        // CAUTION: copied from com.vaadin.flow.server.streams.AbstractFileUploadHandler [last update Vaadin 25.1.6]
+        // CAUTION: copied from com.vaadin.flow.server.streams.AbstractFileUploadHandler [last update Vaadin 25.2.1]
         UploadMetadata metadata = new UploadMetadata(event.getFileName(),
                 event.getContentType(), event.getFileSize());
         File file;
@@ -97,7 +97,7 @@ public class FileTemporaryStorageUploadHandler
 
     @Override
     protected TransferContext getTransferContext(UploadEvent transferEvent) {
-        // CAUTION: copied from com.vaadin.flow.server.streams.AbstractFileUploadHandler [last update Vaadin 25.1.6]
+        // CAUTION: copied from com.vaadin.flow.server.streams.AbstractFileUploadHandler [last update Vaadin 25.2.1]
         return new TransferContext(transferEvent.getRequest(),
                 transferEvent.getResponse(), transferEvent.getSession(),
                 transferEvent.getFileName(), transferEvent.getOwningElement(),

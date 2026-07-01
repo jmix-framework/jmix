@@ -2387,6 +2387,14 @@
         </xs:union>
     </xs:simpleType>
 
+    <xs:simpleType name="tooltipAriaLinkMode">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="NONE"/>
+            <xs:enumeration value="ARIA_DESCRIBED_BY"/>
+            <xs:enumeration value="ARIA_LABELLED_BY"/>
+        </xs:restriction>
+    </xs:simpleType>
+
     <xs:simpleType name="userMenuThemeNames">
         <xs:union>
             <xs:simpleType>
@@ -2781,6 +2789,7 @@
                 <xs:attribute name="pageSize" type="xs:integer"/>
                 <xs:attribute name="autofocus" type="xs:boolean"/>
                 <xs:attribute name="allowCustomValue" type="xs:boolean"/>
+                <xs:attribute name="focusSelectedItem" type="xs:boolean"/>
                 <xs:attribute name="themeNames" type="comboBoxThemeNames"/>
                 <xs:attribute name="allowedCharPattern" type="resourceString"/>
 
@@ -2962,6 +2971,7 @@
         <xs:attribute name="manual" type="xs:boolean"/>
         <xs:attribute name="opened" type="xs:boolean"/>
         <xs:attribute name="position" type="tooltipPosition"/>
+        <xs:attribute name="ariaLinkMode" type="tooltipAriaLinkMode"/>
     </xs:complexType>
 
     <xs:complexType name="formattableRendererType">
@@ -3752,6 +3762,7 @@
                 <xs:attribute name="pageSize" type="xs:integer"/>
                 <xs:attribute name="autofocus" type="xs:boolean"/>
                 <xs:attribute name="allowCustomValue" type="xs:boolean"/>
+                <xs:attribute name="focusSelectedItem" type="xs:boolean"/>
                 <xs:attribute name="themeNames" type="comboBoxThemeNames"/>
                 <xs:attribute name="clearButtonVisible" type="xs:boolean"/>
                 <xs:attribute name="itemsEnum" type="xs:string"/>
@@ -3793,6 +3804,7 @@
                 <xs:attribute name="themeNames" type="comboBoxThemeNames"/>
                 <xs:attribute name="metaClass" type="xs:string"/>
                 <xs:attribute name="autoExpand" type="multiSelectComboBoxAutoExpandModeEnum"/>
+                <xs:attribute name="collapseChips" type="xs:boolean"/>
 
                 <xs:attributeGroup ref="hasTitle"/>
                 <xs:attributeGroup ref="hasRequired"/>
@@ -4615,6 +4627,8 @@
                 <xs:attribute name="uploadIcon" type="jmixFontIconEnum"/>
 
                 <xs:attribute name="acceptedFileTypes" type="xs:string"/>
+                <xs:attribute name="acceptedMimeTypes" type="xs:string"/>
+                <xs:attribute name="acceptedFileExtensions" type="xs:string"/>
                 <xs:attribute name="autoUpload" type="xs:boolean"/>
                 <xs:attribute name="dropAllowed" type="xs:boolean"/>
                 <xs:attribute name="maxFiles" type="xs:int"/>
@@ -4679,6 +4693,8 @@
 
                 <xs:attribute name="maxFileSize" type="xs:int"/>
                 <xs:attribute name="acceptedFileTypes" type="xs:string"/>
+                <xs:attribute name="acceptedMimeTypes" type="xs:string"/>
+                <xs:attribute name="acceptedFileExtensions" type="xs:string"/>
                 <xs:attribute name="uploadIcon" type="jmixFontIconEnum"/>
                 <xs:attribute name="dropAllowed" type="xs:boolean"/>
 

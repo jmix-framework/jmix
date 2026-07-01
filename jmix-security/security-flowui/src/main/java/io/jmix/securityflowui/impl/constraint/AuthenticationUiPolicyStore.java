@@ -24,8 +24,10 @@ import io.jmix.security.model.ResourceRole;
 import io.jmix.security.role.ResourceRoleRepository;
 import io.jmix.security.role.RoleGrantedAuthorityUtils;
 import io.jmix.securityflowui.constraint.UiPolicyStore;
+import io.jmix.securityflowui.constraint.UiPolicyStoreContributor;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
@@ -37,6 +39,10 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+/**
+ * Resolves the current user's UI policies from assigned roles and registered UI policy contributors.
+ */
+@NullMarked
 @Component("sec_AuthenticationUiPolicyStore")
 public class AuthenticationUiPolicyStore implements UiPolicyStore {
 
@@ -49,17 +55,24 @@ public class AuthenticationUiPolicyStore implements UiPolicyStore {
     @Autowired
     protected RoleGrantedAuthorityUtils roleGrantedAuthorityUtils;
 
+    @Autowired(required = false)
+    protected List<UiPolicyStoreContributor> contributors = List.of();
+
     @Override
     public Stream<ResourcePolicy> getViewResourcePolicies(String viewId) {
-        return extractFromAuthenticationByScope(resourceRole ->
-                getPoliciesStreamByTypeAndResources(resourceRole, ResourcePolicyType.SCREEN, Set.of(viewId))
+        return Stream.concat(
+                extractFromAuthenticationByScope(resourceRole ->
+                        getPoliciesStreamByTypeAndResources(resourceRole, ResourcePolicyType.SCREEN, Set.of(viewId))),
+                getContributorPolicies(contributor -> contributor.getViewResourcePolicies(viewId))
         );
     }
 
     @Override
     public Stream<ResourcePolicy> getMenuResourcePolicies(String menuId) {
-        return extractFromAuthenticationByScope(resourceRole ->
-                        getPoliciesStreamByTypeAndResources(resourceRole, ResourcePolicyType.MENU, Set.of(menuId))
+        return Stream.concat(
+                extractFromAuthenticationByScope(resourceRole ->
+                        getPoliciesStreamByTypeAndResources(resourceRole, ResourcePolicyType.MENU, Set.of(menuId))),
+                getContributorPolicies(contributor -> contributor.getMenuResourcePolicies(menuId))
         );
     }
 
@@ -108,5 +121,13 @@ public class AuthenticationUiPolicyStore implements UiPolicyStore {
                                                                          Collection<String> resources) {
         return resources.stream()
                 .flatMap(r -> resourceRole.getAllResourcePoliciesIndex().getPoliciesByTypeAndResource(policyType, r).stream());
+    }
+
+    protected <T> Stream<T> getContributorPolicies(Function<UiPolicyStoreContributor, Stream<T>> extractor) {
+        return contributors.stream()
+                .flatMap(contributor -> {
+                    Stream<T> policies = extractor.apply(contributor);
+                    return policies != null ? policies : Stream.empty();
+                });
     }
 }

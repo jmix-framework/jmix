@@ -20,6 +20,10 @@ import io.jmix.flowui.kit.meta.StudioElement;
 import io.jmix.flowui.kit.meta.StudioProperty;
 import io.jmix.flowui.kit.meta.StudioPropertyType;
 import io.jmix.flowui.kit.meta.StudioUiKit;
+import io.jmix.flowui.kit.meta.StudioPropertyGroups;
+import io.jmix.flowui.kit.meta.datacomponent.StudioDataComponentPropertyGroups;
+import io.jmix.flowui.kit.meta.StudioXmlAttributes;
+import io.jmix.flowui.kit.meta.StudioXmlElements;
 
 @StudioUiKit
 interface StudioDataElements {
@@ -27,138 +31,93 @@ interface StudioDataElements {
     @StudioElement(
             name = "Instance",
             classFqn = "io.jmix.flowui.model.InstancePropertyContainer",
-            xmlElement = "instance",
+            xmlElement = StudioXmlElements.INSTANCE,
             icon = "io/jmix/flowui/kit/meta/icon/datacomponent/instance.svg",
             target = "io.jmix.flowui.model.InstanceContainer",
             unsupportedTarget = {"io.jmix.flowui.model.KeyValueContainer",
                     "io.jmix.flowui.model.KeyValueCollectionContainer"},
             documentationLink = "%VERSION%/flow-ui/data/property-containers.html",
-            properties = {
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true),
-                    @StudioProperty(xmlAttribute = "property", type = StudioPropertyType.STRING, required = true),
-            }
-    )
+            propertyGroups = StudioDataComponentPropertyGroups.NestedDataContainerDefaultProperties.class)
     void nestedInstance();
 
     @StudioElement(
             name = "Collection",
             classFqn = "io.jmix.flowui.model.CollectionPropertyContainer",
-            xmlElement = "collection",
+            xmlElement = StudioXmlElements.COLLECTION,
             icon = "io/jmix/flowui/kit/meta/icon/datacomponent/collection.svg",
             target = {"io.jmix.flowui.model.InstanceContainer"},
             documentationLink = "%VERSION%/flow-ui/data/property-containers.html",
             unsupportedTarget = {"io.jmix.flowui.model.KeyValueContainer",
                     "io.jmix.flowui.model.KeyValueCollectionContainer"},
-            properties = {
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true),
-                    @StudioProperty(xmlAttribute = "property", type = StudioPropertyType.STRING, required = true),
-            }
-    )
+            propertyGroups = StudioDataComponentPropertyGroups.NestedDataContainerDefaultProperties.class)
     void nestedCollection();
 
     @StudioElement(
             name = "Loader",
             classFqn = "io.jmix.flowui.model.InstanceLoader",
-            xmlElement = "loader",
+            xmlElement = StudioXmlElements.LOADER,
             icon = "io/jmix/flowui/kit/meta/icon/datacomponent/instanceLoader.svg",
             target = "io.jmix.flowui.model.InstanceContainer",
             unsupportedTarget = {"io.jmix.flowui.model.KeyValueContainer",
                     "io.jmix.flowui.model.KeyValueCollectionContainer",
                     "io.jmix.flowui.model.CollectionContainer"},
             documentationLink = "%VERSION%/flow-ui/data/data-loaders.html",
-            properties = {
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
-                    @StudioProperty(xmlAttribute = "firstResult", type = StudioPropertyType.INTEGER,
-                            defaultValue = "0"),
-                    @StudioProperty(xmlAttribute = "maxResults", type = StudioPropertyType.INTEGER,
-                            defaultValue = "0"),
-                    @StudioProperty(xmlAttribute = "readOnly", type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false"),
-                    @StudioProperty(xmlAttribute = "query", type = StudioPropertyType.JPA_QUERY)
-            }
-    )
+            propertyGroups = StudioDataComponentPropertyGroups.InstanceLoaderComponent.class)
     void instanceLoader();
 
     @StudioElement(
             name = "Loader",
             classFqn = "io.jmix.flowui.model.CollectionLoader",
-            xmlElement = "loader",
+            xmlElement = StudioXmlElements.LOADER,
             icon = "io/jmix/flowui/kit/meta/icon/datacomponent/collectionLoader.svg",
             target = "io.jmix.flowui.model.CollectionContainer",
             unsupportedTarget = {"io.jmix.flowui.model.KeyValueContainer",
                     "io.jmix.flowui.model.KeyValueCollectionContainer"},
             documentationLink = "%VERSION%/flow-ui/data/data-loaders.html",
-            properties = {
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
-                    @StudioProperty(xmlAttribute = "firstResult", type = StudioPropertyType.INTEGER,
-                            defaultValue = "0"),
-                    @StudioProperty(xmlAttribute = "maxResults", type = StudioPropertyType.INTEGER,
-                            defaultValue = "0"),
-                    @StudioProperty(xmlAttribute = "cacheable", type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false"),
-                    @StudioProperty(xmlAttribute = "readOnly", type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false"),
-                    @StudioProperty(xmlAttribute = "query", type = StudioPropertyType.JPA_QUERY)
-            }
-    )
+            propertyGroups = StudioDataComponentPropertyGroups.CollectionLoaderComponent.class)
     void collectionLoader();
 
     @StudioElement(
             name = "Loader",
             classFqn = "io.jmix.flowui.model.KeyValueInstanceLoader",
-            xmlElement = "loader",
+            xmlElement = StudioXmlElements.LOADER,
             icon = "io/jmix/flowui/kit/meta/icon/datacomponent/keyValueLoader.svg",
             target = "io.jmix.flowui.model.KeyValueContainer",
             unsupportedTarget = {"io.jmix.flowui.model.CollectionContainer",
                     "io.jmix.flowui.model.KeyValueCollectionContainer"},
             documentationLink = "%VERSION%/flow-ui/data/data-loaders.html",
-            properties = {
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
-                    @StudioProperty(xmlAttribute = "store", type = StudioPropertyType.STORE),
-                    @StudioProperty(xmlAttribute = "query", type = StudioPropertyType.JPA_QUERY)
-            }
-    )
+            propertyGroups = {
+                    StudioPropertyGroups.Id.class,
+                    StudioPropertyGroups.Store.class,
+                    StudioPropertyGroups.Query.class
+            })
     void keyValueInstanceLoader();
 
     @StudioElement(
             name = "Loader",
             classFqn = "io.jmix.flowui.model.KeyValueCollectionLoader",
-            xmlElement = "loader",
+            xmlElement = StudioXmlElements.LOADER,
             icon = "io/jmix/flowui/kit/meta/icon/datacomponent/keyValueLoader.svg",
             target = "io.jmix.flowui.model.KeyValueCollectionContainer",
             documentationLink = "%VERSION%/flow-ui/data/data-loaders.html",
-            properties = {
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
-                    @StudioProperty(xmlAttribute = "firstResult", type = StudioPropertyType.INTEGER,
-                            defaultValue = "0"),
-                    @StudioProperty(xmlAttribute = "maxResults", type = StudioPropertyType.INTEGER,
-                            defaultValue = "0"),
-                    @StudioProperty(xmlAttribute = "store", type = StudioPropertyType.STORE),
-                    @StudioProperty(xmlAttribute = "query", type = StudioPropertyType.JPA_QUERY)
-            }
-    )
+            propertyGroups = StudioPropertyGroups.KeyValueCollectionLoaderDefaultProperties.class)
     void keyValueCollectionLoader();
 
     @StudioElement(
             name = "Property",
             classFqn = "io.jmix.core.impl.keyvalue.KeyValueMetaProperty",
-            xmlElement = "property",
+            xmlElement = StudioXmlElements.PROPERTY,
             icon = "io/jmix/flowui/kit/meta/icon/element/property.svg",
-            properties = {
-                    @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.STRING, required = true),
-                    @StudioProperty(xmlAttribute = "datatype", type = StudioPropertyType.DATATYPE_ID),
-                    @StudioProperty(xmlAttribute = "class", type = StudioPropertyType.ENTITY_CLASS)
-            }
-    )
+            propertyGroups = StudioDataComponentPropertyGroups.PropertyComponent.class)
     void property();
 
     @StudioElement(
             name = "OnViewEventLoadTrigger",
             classFqn = "io.jmix.flowui.facet.dataloadcoordinator.OnViewEventLoadTrigger",
-            xmlElement = "onViewEvent",
+            xmlElement = StudioXmlElements.ON_VIEW_EVENT,
             icon = "io/jmix/flowui/kit/meta/icon/element/onViewEventLoadTrigger.svg",
             properties = {
-                    @StudioProperty(xmlAttribute = "type", type = StudioPropertyType.ENUMERATION,
+                    @StudioProperty(xmlAttribute = StudioXmlAttributes.TYPE, type = StudioPropertyType.ENUMERATION,
                             options = {"Init", "BeforeShow", "Ready"}, required = true)
             }
     )
@@ -167,10 +126,10 @@ interface StudioDataElements {
     @StudioElement(
             name = "OnFragmentEventLoadTrigger",
             classFqn = "io.jmix.flowui.facet.dataloadcoordinator.OnFragmentEventLoadTrigger",
-            xmlElement = "onFragmentEvent",
+            xmlElement = StudioXmlElements.ON_FRAGMENT_EVENT,
             icon = "io/jmix/flowui/kit/meta/icon/element/onFragmentEventLoadTrigger.svg",
             properties = {
-                    @StudioProperty(xmlAttribute = "type", type = StudioPropertyType.ENUMERATION,
+                    @StudioProperty(xmlAttribute = StudioXmlAttributes.TYPE, type = StudioPropertyType.ENUMERATION,
                             options = {"Ready", "Host.Init", "Host.BeforeShow", "Host.Ready"}, required = true)
             }
     )
@@ -179,13 +138,13 @@ interface StudioDataElements {
     @StudioElement(
             name = "OnComponentValueChangedLoadTrigger",
             classFqn = "io.jmix.flowui.facet.dataloadcoordinator.OnComponentValueChangedLoadTrigger",
-            xmlElement = "onComponentValueChanged",
+            xmlElement = StudioXmlElements.ON_COMPONENT_VALUE_CHANGED,
             icon = "io/jmix/flowui/kit/meta/icon/element/onComponentValueChangedLoadTrigger.svg",
             properties = {
-                    @StudioProperty(xmlAttribute = "param", type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = "likeClause", type = StudioPropertyType.ENUMERATION,
+                    @StudioProperty(xmlAttribute = StudioXmlAttributes.PARAM, type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = StudioXmlAttributes.LIKE_CLAUSE, type = StudioPropertyType.ENUMERATION,
                             options = {"NONE", "CASE_SENSITIVE", "CASE_INSENSITIVE"}, defaultValue = "NONE"),
-                    @StudioProperty(xmlAttribute = "component", type = StudioPropertyType.COMPONENT_REF, required = true)
+                    @StudioProperty(xmlAttribute = StudioXmlAttributes.COMPONENT, type = StudioPropertyType.COMPONENT_REF, required = true)
             }
     )
     void onComponentValueChangedLoadTrigger();
@@ -193,11 +152,11 @@ interface StudioDataElements {
     @StudioElement(
             name = "OnContainerItemChangedLoadTrigger",
             classFqn = "io.jmix.flowui.facet.dataloadcoordinator.OnContainerItemChangedLoadTrigger",
-            xmlElement = "onContainerItemChanged",
+            xmlElement = StudioXmlElements.ON_CONTAINER_ITEM_CHANGED,
             icon = "io/jmix/flowui/kit/meta/icon/element/onContainerItemChangedLoadTrigger.svg",
             properties = {
-                    @StudioProperty(xmlAttribute = "param", type = StudioPropertyType.PROPERTY_REF),
-                    @StudioProperty(xmlAttribute = "container", type = StudioPropertyType.COLLECTION_OR_INSTANCE_DATA_CONTAINER_REF, required = true)
+                    @StudioProperty(xmlAttribute = StudioXmlAttributes.PARAM, type = StudioPropertyType.STRING),
+                    @StudioProperty(xmlAttribute = StudioXmlAttributes.CONTAINER, type = StudioPropertyType.COLLECTION_OR_INSTANCE_DATA_CONTAINER_REF, required = true)
             }
     )
     void onContainerItemChangedLoadTrigger();

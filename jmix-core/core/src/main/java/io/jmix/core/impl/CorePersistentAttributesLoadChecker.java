@@ -16,10 +16,8 @@
 
 package io.jmix.core.impl;
 
-import io.jmix.core.Entity;
-import io.jmix.core.Metadata;
-import io.jmix.core.MetadataTools;
-import io.jmix.core.PersistentAttributesLoadChecker;
+import io.jmix.core.*;
+import io.jmix.core.EntityStates.PropertyLoadedState;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -31,6 +29,9 @@ import org.springframework.stereotype.Component;
 import java.util.Collection;
 import java.util.List;
 
+
+import static io.jmix.core.EntityStates.PropertyLoadedState.*;
+
 @Component("core_PersistentAttributesLoadChecker")
 public class CorePersistentAttributesLoadChecker implements PersistentAttributesLoadChecker {
 
@@ -40,23 +41,29 @@ public class CorePersistentAttributesLoadChecker implements PersistentAttributes
     @Autowired
     protected Metadata metadata;
 
-    protected enum PropertyLoadedState {
-        YES,
-        NO,
-        UNKNOWN
-    }
 
     @Override
     public boolean isLoaded(Object entity, String property) {
+        return YES.equals(isLoadedInternal(entity, property, false));
+    }
+
+    /**
+     * Checks whether the {@code property} of the {@code entity} is loaded.
+     *
+     * @param safe determines the behavior when the loaded state cannot be determined using standard JPA mechanisms:
+     *             if {@code true}, {@code UNKNOWN} is returned;
+     *             if {@code false}, the getter is invoked, which may trigger lazy loading
+     */
+    public PropertyLoadedState isLoadedInternal(Object entity, String property, boolean safe) {
         if (entity instanceof KeyValueEntity) {
             KeyValueEntity keyValue = (KeyValueEntity) entity;
-            return keyValue.getInstanceMetaClass() != null && keyValue.getInstanceMetaClass().findProperty(property) != null;
+            return PropertyLoadedState.fromBoolean(keyValue.getInstanceMetaClass() != null && keyValue.getInstanceMetaClass().findProperty(property) != null);
         }
 
         MetaClass metaClass = metadata.getClass(entity);
 
         if (ObjectPathUtils.isSpecialPath(property)) {
-            return metadataTools.isAdditionalProperty(metaClass, property);
+            return PropertyLoadedState.fromBoolean(metadataTools.isAdditionalProperty(metaClass, property));
         }
 
         MetaProperty metaProperty = metaClass.getProperty(property);
@@ -64,7 +71,7 @@ public class CorePersistentAttributesLoadChecker implements PersistentAttributes
         if (!metadataTools.isJpa(metaProperty)) {
             List<String> dependsOnProperties = metadataTools.getDependsOnProperties(metaProperty);
             if (dependsOnProperties.isEmpty()) {
-                return true;
+                return YES;
             } else {
                 boolean fullFetchingOfAllPropertiesGuaranteed = true;
                 for (String relatedPropertyName : dependsOnProperties) {
@@ -72,20 +79,30 @@ public class CorePersistentAttributesLoadChecker implements PersistentAttributes
                     if (relatedProperty.getRange().isClass()) {
                         fullFetchingOfAllPropertiesGuaranteed = false;
                     }
-                    if (!isLoaded(entity, relatedPropertyName))
-                        return false;
+                    PropertyLoadedState propertyState = isLoadedInternal(entity, relatedPropertyName, safe);
+                    if (propertyState == NO)
+                        return NO;
                 }
 
-                return fullFetchingOfAllPropertiesGuaranteed || checkIsLoadedWithGetter(entity, property);
+                if (fullFetchingOfAllPropertiesGuaranteed) {
+                    return YES;
+                } else {
+                    return safe ? UNKNOWN : checkIsLoadedWithGetter(entity, property);
+                }
             }
         }
 
         PropertyLoadedState isLoaded = isLoadedCommonCheck(entity, property);
-        if (isLoaded != PropertyLoadedState.UNKNOWN) {
-            return isLoaded == PropertyLoadedState.YES;
+        if (isLoaded != UNKNOWN) {
+            return isLoaded;
         }
 
-        return isLoadedSpecificCheck(entity, property, metaClass, metaProperty);
+        return isLoadedSpecificCheck(entity, property, metaClass, metaProperty, safe);
+    }
+
+    @Override
+    public PropertyLoadedState isLoadedSafe(Object entity, String property) {
+        return isLoadedInternal(entity, property, true);
     }
 
     protected PropertyLoadedState isLoadedCommonCheck(Object entity, String property) {
@@ -93,18 +110,25 @@ public class CorePersistentAttributesLoadChecker implements PersistentAttributes
             return isLoadedByFetchGroup(entity, property);
         }
 
-        return PropertyLoadedState.UNKNOWN;
+        return UNKNOWN;
     }
 
     protected PropertyLoadedState isLoadedByFetchGroup(Object entity, String property) {
-        return PropertyLoadedState.UNKNOWN;
+        return UNKNOWN;
     }
 
-    protected boolean isLoadedSpecificCheck(Object entity, String property, MetaClass metaClass, MetaProperty metaProperty) {
-        return checkIsLoadedWithGetter(entity, property);
+    /**
+     * Checks whether the {@code property} of the {@code entity} is loaded using store-specific mechanisms.
+     *
+     * @param safe determines the behavior when the loaded state cannot be determined using standard mechanisms:
+     *             if {@code true}, {@code UNKNOWN} is returned;
+     *             if {@code false}, the getter is invoked, which may trigger lazy loading
+     */
+    protected PropertyLoadedState isLoadedSpecificCheck(Object entity, String property, MetaClass metaClass, MetaProperty metaProperty, boolean safe) {
+        return safe ? UNKNOWN : checkIsLoadedWithGetter(entity, property);
     }
 
-    protected boolean checkIsLoadedWithGetter(Object entity, String property) {
+    protected PropertyLoadedState checkIsLoadedWithGetter(Object entity, String property) {
         if (entity instanceof Entity) {
             try {
                 Object value = EntityValues.getValue(entity, property);
@@ -112,9 +136,9 @@ public class CorePersistentAttributesLoadChecker implements PersistentAttributes
                     //noinspection ResultOfMethodCallIgnored
                     ((Collection) value).size();
                 }
-                return true;
+                return YES;
             } catch (Exception ignored) {
-                return false;
+                return NO;
             }
         } else {
             throw new IllegalArgumentException("Unable to check if the attribute is loaded: the entity is of unknown type");

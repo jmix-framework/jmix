@@ -22,6 +22,7 @@ import io.jmix.search.index.mapping.ExtendedSearchSettings;
 import io.jmix.search.index.mapping.MappingFieldDescriptor;
 import io.jmix.search.index.mapping.processor.AttributesGroupProcessor;
 import io.jmix.search.utils.PropertyTools;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.List;
 
@@ -36,6 +37,7 @@ import java.util.List;
  * @param <G> the type of {@link AttributesGroupConfiguration} processed by this processor
  *            implementation
  */
+@NullMarked
 public abstract class AbstractAttributesGroupProcessor<G extends AttributesGroupConfiguration>
         implements AttributesGroupProcessor<G> {
 

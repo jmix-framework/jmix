@@ -18,12 +18,15 @@ apply plugin: 'groovy'
 apply plugin: 'io.jmix'
 
 group = 'io.jmix.security'
-archivesBaseName = 'jmix-security'
+base {
+    archivesName = 'jmix-security'
+}
 
 dependencies {
     api project(':core')
     implementation 'org.springframework:spring-tx'
 
+    testImplementation project(':framework-test-support')
     testImplementation 'org.springframework:spring-test'
     testImplementation 'org.spockframework:spock-core'
     testImplementation 'org.spockframework:spock-spring'

@@ -28,7 +28,7 @@
                     itemsEnum="io.jmix.datatoolsflowui.view.entityinspector.ShowMode"
                     emptySelectionAllowed="false"/>
         </formLayout>
-        <hbox id="buttonsPanel" classNames="buttons-panel" visible="false"/>
+        <hbox id="buttonsPanel" wrap="true" width="100%" visible="false"/>
         <hbox id="lookupActions" visible="false">
             <button id="selectButton"/>
             <button action="discardAction"/>

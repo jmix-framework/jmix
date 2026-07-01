@@ -8,6 +8,7 @@ import io.jmix.core.metamodel.annotation.DependsOnProperties
 import io.jmix.core.metamodel.annotation.InstanceName
 import io.jmix.core.metamodel.annotation.JmixEntity
 import io.jmix.security.authentication.JmixUserDetails
+import io.jmix.security.user.PasswordChangeRequired
 import jakarta.persistence.*
 import jakarta.validation.constraints.Email
 import org.springframework.security.core.GrantedAuthority
@@ -56,17 +57,20 @@ open class User : JmixUserDetails, HasTimeZone {
     @get:JvmName("getTimeZoneId_")
     var timeZoneId: String? = null
 
+    @PasswordChangeRequired
+    @Column(name = "PASSWORD_CHANGE_REQUIRED")
+    var passwordChangeRequired: Boolean? = false
+
     @Transient
-    private var userAuthorities: Collection<GrantedAuthority?>? = null
+    private var userAuthorities: Collection<GrantedAuthority> = emptyList()
 
     override fun getPassword(): String? = password
 
-    override fun getUsername(): String? = username
+    override fun getUsername(): String = username ?: ""
 
-    override fun getAuthorities(): Collection<GrantedAuthority?> =
-            userAuthorities ?: emptyList()
+    override fun getAuthorities(): Collection<GrantedAuthority> = userAuthorities
 
-    override fun setAuthorities(authorities: Collection<GrantedAuthority?>) {
+    override fun setAuthorities(authorities: Collection<GrantedAuthority>) {
         this.userAuthorities = authorities
     }
 

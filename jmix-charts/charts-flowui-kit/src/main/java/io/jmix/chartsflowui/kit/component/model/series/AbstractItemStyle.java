@@ -20,6 +20,7 @@ import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
 import io.jmix.chartsflowui.kit.component.model.HasBorder;
 import io.jmix.chartsflowui.kit.component.model.HasShadow;
 import io.jmix.chartsflowui.kit.component.model.shared.Color;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The base class for series item style.
@@ -49,6 +50,7 @@ public abstract class AbstractItemStyle<T extends AbstractItemStyle<T>> extends 
 
     protected Double opacity;
 
+    @Nullable
     public Color getColor() {
         return color;
     }
@@ -58,6 +60,7 @@ public abstract class AbstractItemStyle<T extends AbstractItemStyle<T>> extends 
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Color getBorderColor() {
         return borderColor;
@@ -69,6 +72,7 @@ public abstract class AbstractItemStyle<T extends AbstractItemStyle<T>> extends 
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getBorderWidth() {
         return borderWidth;
@@ -80,6 +84,7 @@ public abstract class AbstractItemStyle<T extends AbstractItemStyle<T>> extends 
         markAsDirty();
     }
 
+    @Nullable
     public String getBorderType() {
         return borderType;
     }
@@ -89,6 +94,7 @@ public abstract class AbstractItemStyle<T extends AbstractItemStyle<T>> extends 
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getBorderRadius() {
         return borderRadius;
@@ -100,6 +106,7 @@ public abstract class AbstractItemStyle<T extends AbstractItemStyle<T>> extends 
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getShadowBlur() {
         return shadowBlur;
@@ -111,6 +118,7 @@ public abstract class AbstractItemStyle<T extends AbstractItemStyle<T>> extends 
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Color getShadowColor() {
         return shadowColor;
@@ -122,6 +130,7 @@ public abstract class AbstractItemStyle<T extends AbstractItemStyle<T>> extends 
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getShadowOffsetX() {
         return shadowOffsetX;
@@ -133,6 +142,7 @@ public abstract class AbstractItemStyle<T extends AbstractItemStyle<T>> extends 
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getShadowOffsetY() {
         return shadowOffsetY;
@@ -144,6 +154,7 @@ public abstract class AbstractItemStyle<T extends AbstractItemStyle<T>> extends 
         markAsDirty();
     }
 
+    @Nullable
     public Double getOpacity() {
         return opacity;
     }

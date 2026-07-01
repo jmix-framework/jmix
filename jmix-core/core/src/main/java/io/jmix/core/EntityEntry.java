@@ -22,13 +22,16 @@ import io.jmix.core.entity.annotation.JmixId;
 import io.jmix.core.impl.EntityInternals;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Id;
-import org.springframework.lang.Nullable;
+
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Set;
 
 
+@NullMarked
 public interface EntityEntry extends Serializable {
 
     Entity getSource();

@@ -23,11 +23,13 @@ import com.vaadin.flow.component.shared.ThemeVariant;
  */
 public enum MenuFilterFieldVariant implements ThemeVariant {
 
-    SMALL("small"),
+    ALIGN_LEFT("align-left"),
     ALIGN_CENTER("align-center"),
     ALIGN_RIGHT("align-right"),
+    ALIGN_START("align-start"),
+    ALIGN_END("align-end"),
     HELPER_ABOVE_FIELD("helper-above-field"),
-    ALWAYS_FLOAT_LABEL("always-float-label");
+    SMALL("small");
 
     private final String variant;
 

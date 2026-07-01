@@ -49,7 +49,7 @@ public class EntityElementCollectionInitializer implements EntityInitializer, Or
     public void initEntity(Object entity) {
         MetaClass metaClass = metadata.getClass(entity);
         for (MetaProperty property : metaClass.getProperties()) {
-            if (metadataTools.isElementCollection(property)) {
+            if (metadataTools.isElementCollection(property) && !property.isReadOnly()) {
                 if (List.class.isAssignableFrom(property.getJavaType())) {
                     EntityValues.setValue(entity, property.getName(), new ArrayList<>());
                 } else if (Set.class.isAssignableFrom(property.getJavaType())) {

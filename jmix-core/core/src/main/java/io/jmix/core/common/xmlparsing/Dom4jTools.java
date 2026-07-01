@@ -31,7 +31,7 @@ import org.xml.sax.SAXException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import jakarta.servlet.ServletContext;
 import javax.xml.parsers.SAXParser;
 import java.io.*;

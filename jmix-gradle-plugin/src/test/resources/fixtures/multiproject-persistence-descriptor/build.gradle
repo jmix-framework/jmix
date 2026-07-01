@@ -1,0 +1,26 @@
+plugins {
+    id 'io.jmix' apply false
+}
+
+subprojects {
+    apply plugin: 'java-library'
+    apply plugin: 'io.jmix'
+
+    group = 'sample'
+    version = '1.0-SNAPSHOT'
+
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(21)
+        }
+    }
+
+    jmix {
+        bomVersion = findProperty('jmixBomVersion')
+    }
+
+    dependencies {
+        implementation 'io.jmix.core:jmix-core'
+        implementation 'io.jmix.data:jmix-eclipselink'
+    }
+}

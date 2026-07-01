@@ -31,7 +31,7 @@ import io.jmix.flowui.view.StandardListView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 @ActionType(LookupSelectAction.ID)
 public class LookupSelectAction<E> extends OperationResultViewAction<LookupSelectAction<E>, StandardListView<E>> {
@@ -73,7 +73,7 @@ public class LookupSelectAction<E> extends OperationResultViewAction<LookupSelec
 
     @Autowired
     protected void setUiViewProperties(UiViewProperties viewProperties) {
-        this.shortcutCombination = KeyCombination.create(viewProperties.getSaveShortcut());
+        setShortcutCombination(KeyCombination.create(viewProperties.getSaveShortcut()));
     }
 
     @Override

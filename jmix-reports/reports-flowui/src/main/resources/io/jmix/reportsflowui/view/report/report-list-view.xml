@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2026 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
 <view xmlns="http://jmix.io/schema/flowui/view"
-      xmlns:c="http://jmix.io/schema/flowui/jpql-condition"
       title="msg://reportListView.title"
       focusComponent="reportsDataGrid">
     <data>
@@ -28,6 +43,7 @@
         <details id="filterDetails"
                  summaryText="msg://io.jmix.reportsflowui.view/filter"
                  opened="true"
+                 themeNames="no-padding"
                  width="100%">
             <formLayout id="filterPanel">
                 <responsiveSteps>
@@ -44,21 +60,31 @@
                         label="msg://filter.outputType" emptySelectionAllowed="true"/>
             </formLayout>
         </details>
-        <hbox id="buttonsPanel" classNames="buttons-panel">
-            <dropdownButton id="dropdownCreateBtn" icon="PLUS" text="msg://dropdownCreateBtn.text" themeNames="primary">
-                <items>
-                    <actionItem id="create" ref="reportsDataGrid.create"/>
-                    <actionItem id="wizard" ref="reportsDataGrid.wizard"/>
-                </items>
-            </dropdownButton>
-            <button id="editBtn" action="reportsDataGrid.edit"/>
-            <button id="removeBtn" action="reportsDataGrid.remove"/>
-            <button id="copyBtn" action="reportsDataGrid.copy"/>
-            <button id="importBtn" action="reportsDataGrid.importAction"/>
-            <button id="exportBtn" action="reportsDataGrid.export"/>
-            <button id="runReportBtn" action="reportsDataGrid.runReport"/>
-            <button id="executionsBtn" action="reportsDataGrid.executions"/>
-            <simplePagination id="pagination" dataLoader="reportsDl"/>
+        <hbox id="buttonsPanel" wrap="true" width="100%">
+            <startSlot>
+                <dropdownButton id="dropdownCreateBtn" icon="PLUS" text="msg://dropdownCreateBtn.text"
+                                themeNames="primary">
+                    <items>
+                        <actionItem id="create" ref="reportsDataGrid.create"/>
+                        <actionItem id="wizard" ref="reportsDataGrid.wizard"/>
+                    </items>
+                </dropdownButton>
+                <button id="editBtn" action="reportsDataGrid.edit"/>
+                <button id="removeBtn" action="reportsDataGrid.remove"/>
+                <button id="copyBtn" action="reportsDataGrid.copy"/>
+                <button id="importBtn" action="reportsDataGrid.importAction"/>
+                <button id="exportBtn" action="reportsDataGrid.export"/>
+                <comboButton id="runReportBtn" action="reportsDataGrid.runReport">
+                    <items>
+                        <actionItem id="openInSpreadsheetActionItem" ref="reportsDataGrid.openInSpreadsheet"/>
+                        <actionItem id="openInTableActionItem" ref="reportsDataGrid.openInTable"/>
+                    </items>
+                </comboButton>
+                <button id="executionsBtn" action="reportsDataGrid.executions"/>
+            </startSlot>
+            <endSlot>
+                <simplePagination id="pagination" dataLoader="reportsDl"/>
+            </endSlot>
         </hbox>
         <dataGrid id="reportsDataGrid"
                   width="100%"
@@ -72,9 +98,14 @@
                 <action id="remove" type="list_remove"/>
                 <action id="copy" type="list_itemTracking" icon="COPY" text="msg://action.copy.text"/>
                 <action id="importAction" icon="UPLOAD" description="msg://action.import.description"/>
-                <action id="export" type="list_itemTracking" icon="DOWNLOAD" description="msg://action.export.description"/>
+                <action id="export" type="list_itemTracking" icon="DOWNLOAD"
+                        description="msg://action.export.description"/>
                 <action id="runReport" type="list_itemTracking" icon="ANGLE_DOUBLE_RIGHT"
                         text="msg://action.runReport.text"/>
+                <action id="openInSpreadsheet" type="list_itemTracking" icon="FILE_TABLE"
+                        text="msg://action.openInSpreadsheet.text"/>
+                <action id="openInTable" type="list_itemTracking" icon="TABLE"
+                        text="msg://action.openInTable.text"/>
                 <action id="executions" type="list_itemTracking" icon="FILE"
                         text="msg://action.executions.text"/>
             </actions>
@@ -84,6 +115,7 @@
                 <column property="description"/>
                 <column property="code"/>
                 <column property="source"/>
+                <column property="defaultTemplate.reportOutputType"/>
                 <column property="updateTs"/>
                 <column property="system"/>
             </columns>

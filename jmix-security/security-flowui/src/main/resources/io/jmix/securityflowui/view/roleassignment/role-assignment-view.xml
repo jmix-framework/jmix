@@ -47,11 +47,11 @@
     <layout alignItems="STRETCH"
             padding="false" spacing="false"
             expand="contentBox"
-            classNames="jmix-role-assignment-layout">
-        <flexLayout id="contentBox" classNames="jmix-role-assignment-content-wrapper">
+            classNames="role-assignment-view">
+        <flexLayout id="contentBox" classNames="content-wrapper">
             <vbox id="resourceRolesWrapper" padding="false">
                 <h4 text="msg://resourceRoles.text"/>
-                <hbox id="resourceRoleButtonsPanel" classNames="buttons-panel">
+                <hbox id="resourceRoleButtonsPanel" wrap="true" width="100%">
                     <button id="addResourceRoleBtn"
                             action="resourceRoleAssignmentsTable.addResourceRole"/>
                     <button id="removeResourceRoleBtn"
@@ -81,7 +81,7 @@
 
             <vbox id="rowLevelRolesWrapper" padding="false">
                 <h4 text="msg://rowLevelRoles.text"/>
-                <hbox id="rowLevelRoleButtonsPanel" classNames="buttons-panel">
+                <hbox id="rowLevelRoleButtonsPanel" wrap="true" width="100%">
                     <button id="addRowLevelRoleBtn"
                             action="rowLevelRoleAssignmentsTable.addRowLevelRole"/>
                     <button id="removeRowLevelRoleBtn"
@@ -110,7 +110,7 @@
         </flexLayout>
 
         <hbox id="detailActions"
-              classNames="px-m py-s bg-contrast-5">
+              classNames="footer-panel">
             <button id="saveAndCloseBtn" action="saveAction"/>
             <button id="closeBtn" action="closeAction"/>
         </hbox>

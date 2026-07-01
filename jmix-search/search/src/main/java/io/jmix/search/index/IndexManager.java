@@ -17,6 +17,7 @@
 package io.jmix.search.index;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.Collection;
 import java.util.Map;
@@ -24,6 +25,7 @@ import java.util.Map;
 /**
  * Provides functionality for index management.
  */
+@NullMarked
 public interface IndexManager {
 
     /**

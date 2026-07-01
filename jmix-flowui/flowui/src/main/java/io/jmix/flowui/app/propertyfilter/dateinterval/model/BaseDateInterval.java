@@ -17,6 +17,7 @@
 package io.jmix.flowui.app.propertyfilter.dateinterval.model;
 
 import io.jmix.flowui.app.propertyfilter.dateinterval.model.predefined.PredefinedDateInterval;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -25,7 +26,8 @@ import java.util.function.Supplier;
  * Base interface for date intervals. Extending {@link Function} interface it enables to format interval to JPQL
  * string operation with property.
  */
-public interface BaseDateInterval extends Function<String, String>, Supplier<String> {
+@NullMarked
+public interface BaseDateInterval extends Supplier<String> {
 
     /**
      * @return type of date interval
@@ -33,23 +35,10 @@ public interface BaseDateInterval extends Function<String, String>, Supplier<Str
     Type getType();
 
     /**
-     * @param property entity property
-     * @return formatted JPQL string operation
-     * @deprecated use {@link #get()} instead
-     */
-    @Override
-    @Deprecated(since = "2.7", forRemoval = true)
-    default String apply(String property) {
-        return property;
-    }
-
-    /**
      * @return formatted JPQL string operation prepared for entity alias and property injecting
      */
     @Override
-    default String get() {
-        return apply("");
-    }
+    String get();
 
     /**
      * Type of date interval.

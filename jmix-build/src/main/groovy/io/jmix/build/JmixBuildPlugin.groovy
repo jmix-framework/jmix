@@ -1,3 +1,19 @@
+/*
+ * Copyright 2026 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.jmix.build
 
 import org.gradle.api.JavaVersion
@@ -12,8 +28,18 @@ import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.api.tasks.testing.Test
 import org.gradle.external.javadoc.JavadocMemberLevel
+import org.gradle.process.ExecOperations
+
+import javax.inject.Inject
 
 class JmixBuildPlugin implements Plugin<Project> {
+
+    private final ExecOperations execOperations
+
+    @Inject
+    JmixBuildPlugin(ExecOperations execOperations) {
+        this.execOperations = execOperations
+    }
 
     @Override
     void apply(Project project) {
@@ -88,6 +114,7 @@ class JmixBuildPlugin implements Plugin<Project> {
                 apply plugin: 'maven-publish'
 
                 afterEvaluate {
+                    def archivesName = project.base.archivesName.get()
                     java {
                         withSourcesJar()
                     }
@@ -110,7 +137,7 @@ class JmixBuildPlugin implements Plugin<Project> {
                         }
                         publications {
                             javaMaven(MavenPublication) {
-                                artifactId = archivesBaseName
+                                artifactId = archivesName
                                 from components.java
                                 pom {
                                     name = 'Jmix'
@@ -138,9 +165,13 @@ class JmixBuildPlugin implements Plugin<Project> {
 
     private void setupTestExecution(Project project) {
         project.tasks.withType(Test) {
+            maxHeapSize = '2g'
             systemProperty('org.slf4j.simpleLogger.defaultLogLevel', 'debug')
             systemProperty('org.slf4j.simpleLogger.log.org.springframework', 'info')
             systemProperty('org.slf4j.simpleLogger.log.eclipselink.sql', 'debug')
+            // Gradle 9 fails a test task that discovers no tests (unless a filter is applied).
+            // Modules may legitimately have test sources without runnable tests, so don't fail on that.
+            failOnNoDiscoveredTests = false
         }
         project.with {
             afterEvaluate {
@@ -170,6 +201,7 @@ class JmixBuildPlugin implements Plugin<Project> {
     }
 
     private void setupAggregateJavadocsBuilding(Project project) {
+        ExecOperations execOps = execOperations
         Project rootProject = project.rootProject
         if (rootProject) {
             rootProject.gradle.projectsEvaluated {
@@ -195,9 +227,9 @@ class JmixBuildPlugin implements Plugin<Project> {
 
                             if (rootProject.hasProperty('javadocPublishCmd')) {
                                 doLast {
-                                    rootProject.exec {
-                                        workingDir "$rootProject.buildDir/docs/javadoc"
-                                        commandLine 'sh', '-c', rootProject.javadocPublishCmd
+                                    execOps.exec { spec ->
+                                        spec.workingDir "$rootProject.buildDir/docs/javadoc"
+                                        spec.commandLine 'sh', '-c', rootProject.javadocPublishCmd
                                     }
                                 }
                             }

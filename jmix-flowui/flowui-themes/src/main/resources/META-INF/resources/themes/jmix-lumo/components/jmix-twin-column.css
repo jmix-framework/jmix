@@ -1,0 +1,110 @@
+/*
+ * Copyright 2026 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@import '../src/components/jmix-twin-column.css';
+
+:root::before,
+:host::before {
+    --_lumo-jmix-twin-column-inject: 1;
+    --_lumo-jmix-twin-column-inject-modules:
+            lumo_mixins_field-label,
+            lumo_mixins_field-required,
+            lumo_mixins_field-error-message,
+            lumo_mixins_field-helper,
+            lumo_components_jmix-twin-column;
+}
+
+jmix-twin-column vaadin-item {
+    border-bottom: 1px solid var(--lumo-contrast-10pct);
+    border-radius: 0;
+    padding: var(--lumo-space-xs) var(--lumo-space-m);
+}
+
+jmix-twin-column vaadin-item::part(checkmark) {
+    display: none;
+}
+
+jmix-twin-column vaadin-item[selected] {
+    background-color: var(--lumo-primary-color-10pct);
+}
+
+jmix-twin-column vaadin-item:not([selected]):hover {
+    background-color: transparent;
+}
+
+jmix-twin-column[theme~="no-border"] vaadin-list-box  {
+    border-width: 0;
+}
+
+jmix-twin-column[theme~="no-row-border"] vaadin-item  {
+    border-width: 0;
+}
+
+jmix-twin-column[theme~="checkmarks"] vaadin-item::part(checkmark)  {
+    display: block;
+}
+
+jmix-twin-column[theme~="checkmarks"] vaadin-item {
+    padding: var(--lumo-space-xs) var(--lumo-space-m) var(--lumo-space-xs) var(--lumo-space-xs);
+}
+
+jmix-twin-column[theme~="checkmarks"] vaadin-item[selected] {
+    background-color: transparent;
+}
+
+jmix-twin-column[theme~="checkmarks"] vaadin-item:hover {
+    background-color: var(--lumo-primary-color-10pct);
+}
+
+jmix-twin-column vaadin-item:nth-last-of-type(1) {
+    border-bottom: 0px;
+}
+
+jmix-twin-column vaadin-button {
+    margin: 0;
+}
+
+jmix-twin-column[theme~="no-space-between-actions"] .jmix-twin-column-actions-panel {
+    gap: 0;
+}
+
+jmix-twin-column[theme~="no-space-between-actions"] vaadin-button:first-child {
+    border-top-left-radius: var(--lumo-border-radius-m);
+    border-top-right-radius: var(--lumo-border-radius-m);
+}
+
+jmix-twin-column[theme~="no-space-between-actions"] vaadin-button {
+    border-radius: 0;
+}
+
+jmix-twin-column[theme~="no-space-between-actions"] vaadin-button:last-child {
+    border-bottom-left-radius: var(--lumo-border-radius-m);
+    border-bottom-right-radius: var(--lumo-border-radius-m);
+}
+
+jmix-twin-column vaadin-button vaadin-icon[dir="rtl"] {
+    rotate: 180deg;
+}
+
+@media (forced-colors: active) {
+    jmix-twin-column vaadin-item::part(checkmark)  {
+        display: block;
+    }
+
+    jmix-twin-column vaadin-item {
+        padding: var(--lumo-space-xs) var(--lumo-space-m) var(--lumo-space-xs) var(--lumo-space-xs);
+    }
+}

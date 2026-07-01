@@ -18,7 +18,7 @@ package io.jmix.core.impl;
 
 import io.jmix.core.entity.LoadedPropertiesInfo;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 /**

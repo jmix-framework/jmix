@@ -18,7 +18,9 @@ package io.jmix.flowui.component.formatter;
 
 import io.jmix.core.annotation.Internal;
 import io.jmix.flowui.kit.component.formatter.Formatter;
+import org.jspecify.annotations.NullMarked;
 
 @Internal
+@NullMarked
 public interface CustomFormatter extends Formatter<Object> {
 }

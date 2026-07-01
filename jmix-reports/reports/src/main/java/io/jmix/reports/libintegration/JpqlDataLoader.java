@@ -26,11 +26,12 @@ import io.jmix.data.StoreAwareLocator;
 import io.jmix.reports.app.EntityMap;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 import java.util.ArrayList;
@@ -40,6 +41,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@NullMarked
 public class JpqlDataLoader extends AbstractDbDataLoader implements ReportDataLoader {
 
     @Autowired
@@ -53,6 +55,9 @@ public class JpqlDataLoader extends AbstractDbDataLoader implements ReportDataLo
 
     @Autowired
     protected StoreAwareLocator storeAwareLocator;
+
+    @Autowired
+    protected ReportsGroovyFeatureSupport groovyFeatureSupport;
 
     private static final String QUERY_END = "%%END%%";
     private static final String ALIAS_PATTERN = "as\\s+\"?([\\w|\\d|_|\\.]+)\"?\\s*";
@@ -72,7 +77,7 @@ public class JpqlDataLoader extends AbstractDbDataLoader implements ReportDataLo
     }
 
     @Override
-    public List<Map<String, Object>> loadData(ReportQuery reportQuery, BandData parentBand, Map<String, Object> params) {
+    public List<Map<String, Object>> loadData(ReportQuery reportQuery, @Nullable BandData parentBand, Map<String, Object> params) {
         String storeName = StoreUtils.getStoreName(reportQuery);
         String query = reportQuery.getScript();
         if (StringUtils.isBlank(query)) {
@@ -137,6 +142,14 @@ public class JpqlDataLoader extends AbstractDbDataLoader implements ReportDataLo
         //Just transform positional parameters into named - the simplest solution to the problem of mixing
         // input parameters and JPQL macros without modification of YARG (#805).
         return "param_" + parameter.getPosition();
+    }
+
+    @Override
+    protected String processQueryTemplate(String query, @Nullable BandData parentBand, Map<String, Object> reportParams) {
+        if (!groovyFeatureSupport.isGroovyEnabled()) {
+            return groovyFeatureSupport.getDisabledQueryTemplateResult("jpql", query);
+        }
+        return super.processQueryTemplate(query, parentBand, reportParams);
     }
 
     protected String trimQuery(String query) {

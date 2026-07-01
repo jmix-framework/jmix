@@ -21,9 +21,12 @@ import io.jmix.email.entity.SendingMessage;
 
 import java.util.List;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Interface provides methods to load, store and update email message and attachment entities
  */
+@NullMarked
 public interface EmailDataProvider {
     /**
      * Loads email messages to be sent.

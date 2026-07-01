@@ -33,13 +33,14 @@ import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.component.valuepicker.ValuePicker;
 import io.jmix.flowui.kit.icon.JmixFontIcon;
+import io.jmix.flowui.theme.StyleUtility;
 import io.jmix.fullcalendarflowui.FullCalendarProperties;
 import io.jmix.fullcalendarflowui.component.model.DayOfWeek;
 import io.jmix.fullcalendarflowui.component.model.DaysOfWeek;
 import io.jmix.fullcalendarflowui.datatype.DaysOfWeekDatatypeUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.time.temporal.WeekFields;
 import java.util.HashSet;
@@ -145,7 +146,7 @@ public class DaysOfWeekEditAction extends PickerAction<DaysOfWeekEditAction, Pic
 
         JmixButton okBtn = uiComponents.create(JmixButton.class);
         okBtn.setText(messages.getMessage("actions.Ok"));
-        okBtn.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        okBtn.addThemeVariants(ButtonVariant.PRIMARY);
         okBtn.addClickListener(__ -> onOkBtnClick(dialog, checkboxGroup.getValue()));
 
         JmixButton cancelBtn = uiComponents.create(JmixButton.class);
@@ -160,11 +161,7 @@ public class DaysOfWeekEditAction extends PickerAction<DaysOfWeekEditAction, Pic
     protected Button createHeaderCloseButton(Dialog dialog) {
         JmixButton closeButton = uiComponents.create(JmixButton.class);
         closeButton.setIcon(icons.get(JmixFontIcon.CLOSE_SMALL));
-        closeButton.addThemeVariants(
-                ButtonVariant.LUMO_TERTIARY_INLINE,
-                ButtonVariant.LUMO_ICON,
-                ButtonVariant.LUMO_CONTRAST
-        );
+        closeButton.setClassName(StyleUtility.Button.DIALOG_CLOSE_BUTTON);
         closeButton.setTitle(messages.getMessage("actions.Close"));
         closeButton.addClickListener(__ -> onCloseButtonClick(dialog));
         return closeButton;

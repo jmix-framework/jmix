@@ -29,6 +29,7 @@ import io.jmix.chartsflowui.kit.component.model.toolbox.Toolbox;
 import io.jmix.chartsflowui.kit.component.model.visualMap.AbstractVisualMap;
 import io.jmix.chartsflowui.kit.component.serialization.JmixChartSerializer;
 import io.jmix.chartsflowui.kit.data.chart.DataItem;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
@@ -39,6 +40,7 @@ import java.util.function.Function;
 /**
  * Chart is a component for showing data in graphical form. Allows to configure axes, series, legend, tooltip,
  * data source and other options. For more detailed information, see the documentation.
+ *
  * @see <a href="https://echarts.apache.org/en/option.html">Apache ECharts option documentation</a>
  */
 public class Chart extends JmixChart

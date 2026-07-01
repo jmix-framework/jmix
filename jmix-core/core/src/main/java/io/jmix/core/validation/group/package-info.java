@@ -14,7 +14,4 @@
  * limitations under the License.
  */
 
-@NonNullApi
 package io.jmix.core.validation.group;
-
-import org.springframework.lang.NonNullApi;

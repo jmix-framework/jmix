@@ -16,11 +16,14 @@
 
 package io.jmix.eclipselink.persistence;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Updates mapping properties according to requirements. Processors application
  * order is not guaranteed. Every mapping processor should be a Spring @{@link org.springframework.stereotype.Component},
  * so you can inject other beans to it.
  */
+@NullMarked
 public interface MappingProcessor {
 
     /**

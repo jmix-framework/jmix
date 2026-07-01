@@ -19,7 +19,7 @@ package io.jmix.flowui.sys.registration;
 import io.jmix.core.annotation.Internal;
 import io.jmix.flowui.facet.Facet;
 import io.jmix.flowui.xml.facet.loader.FacetLoader;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Default implementation of {@link FacetRegistration}.

@@ -16,6 +16,8 @@
 
 package io.jmix.flowui.kit.component;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.Arrays;
 
 /**
@@ -64,7 +66,7 @@ public enum Alignment {
         return flexValue;
     }
 
-    public static Alignment toAlignment(String flexValue, Alignment defaultValue) {
+    public static Alignment toAlignment(@Nullable String flexValue, Alignment defaultValue) {
         return Arrays.stream(values()).filter(
                         alignment -> alignment.getFlexValue().equals(flexValue))
                 .findFirst().orElse(defaultValue);

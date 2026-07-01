@@ -22,6 +22,8 @@ import io.jmix.dataimport.result.ImportResult;
 
 import java.io.InputStream;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * API to import entities from the input data using specified import configuration.
  * Supported formats of the input data:
@@ -34,6 +36,7 @@ import java.io.InputStream;
  *
  * @see ImportConfiguration
  */
+@NullMarked
 public interface DataImporter {
     /**
      * Creates the entities using data from the given byte array (XLSX, CSV, JSON, XML) and specified import configuration

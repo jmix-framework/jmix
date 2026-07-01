@@ -1,3 +1,19 @@
+/*
+ * Copyright 2026 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.jmix.reportsflowui.view.reportvalueformat;
 
 import com.vaadin.flow.component.AbstractField;
@@ -8,6 +24,7 @@ import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
+import io.jmix.core.CoreProperties;
 import io.jmix.core.Metadata;
 import io.jmix.flowui.Dialogs;
 import io.jmix.flowui.component.checkbox.JmixCheckbox;
@@ -16,12 +33,13 @@ import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.kit.component.codeeditor.CodeEditorMode;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.view.*;
+import io.jmix.reports.ReportsProperties;
 import io.jmix.reports.entity.ReportValueFormat;
 import io.jmix.reportsflowui.helper.ReportScriptEditor;
 import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.constraint.SecureOperations;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -59,6 +77,8 @@ public class ReportValueFormatDetailView extends StandardDetailView<ReportValueF
     protected CodeEditor groovyCodeEditor;
     @ViewComponent
     protected Div groovyCodeEditorBox;
+    @ViewComponent
+    protected Button fullScreenTransformationBtn;
 
     @ViewComponent
     protected InstanceContainer<ReportValueFormat> valuesFormatsDc;
@@ -73,6 +93,10 @@ public class ReportValueFormatDetailView extends StandardDetailView<ReportValueF
     protected Dialogs dialogs;
     @Autowired
     protected ReportScriptEditor reportScriptEditor;
+    @Autowired
+    protected CoreProperties coreProperties;
+    @Autowired
+    protected ReportsProperties reportsProperties;
     @ViewComponent
     protected MessageBundle messageBundle;
 
@@ -93,6 +117,7 @@ public class ReportValueFormatDetailView extends StandardDetailView<ReportValueF
             }
             formatField.setValue(value);
         }
+        updateGroovyFieldState();
     }
 
     @Subscribe
@@ -115,6 +140,7 @@ public class ReportValueFormatDetailView extends StandardDetailView<ReportValueF
         }
         groovyCodeEditorBox.setVisible(Boolean.TRUE.equals(visible));
         formatField.setVisible(Boolean.FALSE.equals(visible));
+        updateGroovyFieldState();
     }
 
     @Subscribe("groovyCodeEditorHelpBtn")
@@ -124,6 +150,9 @@ public class ReportValueFormatDetailView extends StandardDetailView<ReportValueF
 
     @Subscribe("fullScreenTransformationBtn")
     public void onFullScreenTransformationBtnClick(final ClickEvent<Button> event) {
+        if (!isReportsGroovyEnabled()) {
+            return;
+        }
         reportScriptEditor.create(this)
                 .withTitle(messageBundle.getMessage("fullScreenBtn.title"))
                 .withValue(valuesFormatsDc.getItem().getFormatString())
@@ -166,5 +195,18 @@ public class ReportValueFormatDetailView extends StandardDetailView<ReportValueF
         optionsList.add(caption);
 
         formatField.setItems(optionsList);
+    }
+
+    protected boolean isReportsGroovyEnabled() {
+        return coreProperties.isUnsafeRuntimeFeaturesEnabled() && reportsProperties.isGroovyEnabled();
+    }
+
+    protected void updateGroovyFieldState() {
+        boolean groovyEnabled = isReportsGroovyEnabled();
+        boolean groovySelected = Boolean.TRUE.equals(groovyField.getValue());
+
+        groovyField.setReadOnly(isReadOnly() || !groovyEnabled);
+        groovyCodeEditor.setReadOnly(isReadOnly() || (groovySelected && !groovyEnabled));
+        fullScreenTransformationBtn.setEnabled(groovySelected && groovyEnabled);
     }
 }

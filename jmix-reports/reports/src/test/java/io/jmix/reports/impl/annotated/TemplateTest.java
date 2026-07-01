@@ -30,9 +30,7 @@ import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
-import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -42,8 +40,8 @@ public class TemplateTest extends BaseAnnotatedReportExecutionTest {
     public void testOutputNamePattern() {
         // given
         String reportCode = RevenueByGameReport.CODE;
-        Date startDate = parseDate("2025-01-15");
-        Date endDate = parseDate("2025-05-08");
+        LocalDate startDate = parseDate("2025-01-15");
+        LocalDate endDate = parseDate("2025-05-08");
 
         // when
         ReportOutputDocument outputDocument = reportRunner.byReportCode(reportCode)
@@ -82,11 +80,7 @@ public class TemplateTest extends BaseAnnotatedReportExecutionTest {
         assertThat(root.getName()).isEqualTo("Profile");
     }
 
-    private Date parseDate(String isoDateString) {
-        return Date.from(
-                LocalDate.parse(isoDateString, DateTimeFormatter.ISO_LOCAL_DATE)
-                        .atTime(0, 0)
-                        .toInstant(ZoneOffset.UTC)
-        );
+    private LocalDate parseDate(String isoDateString) {
+        return LocalDate.parse(isoDateString, DateTimeFormatter.ISO_LOCAL_DATE);
     }
 }

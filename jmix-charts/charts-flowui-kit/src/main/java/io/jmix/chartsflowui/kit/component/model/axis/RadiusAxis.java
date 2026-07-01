@@ -16,6 +16,8 @@
 
 package io.jmix.chartsflowui.kit.component.model.axis;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * Radial axis of polar coordinate.
  * More detailed information is provided in the documentation.
@@ -40,6 +42,7 @@ public class RadiusAxis extends AbstractPolarAxis<RadiusAxis> implements HasAxis
         super(AxisType.VALUE);
     }
 
+    @Nullable
     @Override
     public String getName() {
         return name;
@@ -51,6 +54,7 @@ public class RadiusAxis extends AbstractPolarAxis<RadiusAxis> implements HasAxis
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public NameLocation getNameLocation() {
         return nameLocation;
@@ -62,6 +66,7 @@ public class RadiusAxis extends AbstractPolarAxis<RadiusAxis> implements HasAxis
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public NameTextStyle getNameTextStyle() {
         return nameTextStyle;
@@ -77,6 +82,7 @@ public class RadiusAxis extends AbstractPolarAxis<RadiusAxis> implements HasAxis
         addChild(nameTextStyle);
     }
 
+    @Nullable
     @Override
     public Integer getNameGap() {
         return nameGap;
@@ -88,6 +94,7 @@ public class RadiusAxis extends AbstractPolarAxis<RadiusAxis> implements HasAxis
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getNameRotate() {
         return nameRotate;
@@ -99,6 +106,7 @@ public class RadiusAxis extends AbstractPolarAxis<RadiusAxis> implements HasAxis
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Boolean getInverse() {
         return inverse;

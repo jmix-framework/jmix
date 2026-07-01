@@ -1,4 +1,20 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2026 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
 <view xmlns="http://jmix.io/schema/flowui/view"
       title="msg://reportWizard.title">
     <data>
@@ -17,7 +33,7 @@
         <action id="next" icon="ARROW_RIGHT" text="msg://forward"/>
         <action id="save" icon="CHECK" text="msg://save"/>
     </actions>
-    <layout spacing="false">
+    <layout spacing="false" classNames="report-wizard-creator-view">
         <vbox id="contentVBox" padding="false" spacing="true">
             <span id="wizardDescriptionSpan" classNames="report-wizard-tip-label"
                   themeNames="badge normal" width="100%"/>
@@ -56,7 +72,7 @@
                 </formLayout>
             </vbox>
             <vbox id="regionsVBox" padding="false">
-                <hbox width="100%" classNames="buttons-panel">
+                <hbox wrap="true" width="100%">
                     <hbox id="buttonsBox">
                         <button id="addRegionDisabledBtn" text="msg://addRegion" enabled="false"/>
                         <button id="addSimpleRegionBtn"
@@ -106,14 +122,17 @@
                 </formLayout>
             </vbox>
             <vbox id="queryVBox" padding="false">
-                <div classNames="flex, justify-between, buttons-panel">
-                    <button id="queryRunBtn" text="msg://runReport" icon="ANGLE_DOUBLE_RIGHT"/>
-                    <button id="fullScreenTransformationBtn"
-                            text="msg://fullScreen.title"
-                            classNames="link"
-                            themeNames="icon, tertiary-inline"/>
-                </div>
-                <div width="100%" classNames="flex, items-start">
+                <hbox width="100%" alignItems="CENTER">
+                    <startSlot>
+                        <button id="queryRunBtn" text="msg://runReport" icon="ANGLE_DOUBLE_RIGHT"/>
+                    </startSlot>
+                    <endSlot>
+                        <button id="fullScreenTransformationBtn"
+                                text="msg://fullScreen.title"
+                                classNames="link-button"/>
+                    </endSlot>
+                </hbox>
+                <flexLayout width="100%" alignItems="START">
                     <codeEditor id="reportQueryCodeEditor"
                                 title="msg://reportQuery"
                                 width="100%"
@@ -125,10 +144,10 @@
                                 dataContainer="reportDataDc"
                                 property="query"/>
                     <button id="queryCodeEditorHelpIcon"
-                            themeNames="icon, tertiary-inline"
+                            classNames="link-button"
                             icon="QUESTION_CIRCLE"/>
-                </div>
-                <hbox classNames="buttons-panel">
+                </flexLayout>
+                <hbox wrap="true" width="100%">
                     <button id="createParameterBtn" action="reportParameterDataGrid.create"/>
                     <button id="generateParameters" action="reportParameterDataGrid.generate"/>
                     <button id="editParameterBtn" action="reportParameterDataGrid.edit"/>
@@ -151,12 +170,16 @@
                 </dataGrid>
             </vbox>
         </vbox>
-        <hbox id="buttonPanel" classNames="mt-m" padding="false" width="100%">
-            <button id="backBtn" visible="false" action="back"/>
-            <button id="nextBtn" action="next"/>
-            <button id="saveBtn" visible="false" themeNames="primary" action="save"/>
-            <button id="downloadTemplateFileBtn" classNames="ml-auto" iconAfterText="true"
-                    text="msg://downloadTemplateFile" visible="false" icon="DOWNLOAD"/>
+        <hbox id="buttonPanel" classNames="footer-buttons-panel" padding="false" width="100%">
+            <startSlot>
+                <button id="backBtn" visible="false" action="back"/>
+                <button id="nextBtn" action="next"/>
+                <button id="saveBtn" visible="false" themeNames="primary" action="save"/>
+            </startSlot>
+            <endSlot>
+                <button id="downloadTemplateFileBtn" iconAfterText="true"
+                        text="msg://downloadTemplateFile" visible="false" icon="DOWNLOAD"/>
+            </endSlot>
         </hbox>
     </layout>
 </view>

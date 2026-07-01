@@ -14,7 +14,4 @@
  * limitations under the License.
  */
 
-@NonNullApi
 package io.jmix.reportsflowui.view.reportwizard.template;
-
-import org.springframework.lang.NonNullApi;

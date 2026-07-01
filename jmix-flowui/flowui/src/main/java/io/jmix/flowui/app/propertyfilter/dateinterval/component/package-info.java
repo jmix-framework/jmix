@@ -15,8 +15,6 @@
  */
 
 @Internal
-@NonNullApi
 package io.jmix.flowui.app.propertyfilter.dateinterval.component;
 
 import io.jmix.core.annotation.Internal;
-import org.springframework.lang.NonNullApi;

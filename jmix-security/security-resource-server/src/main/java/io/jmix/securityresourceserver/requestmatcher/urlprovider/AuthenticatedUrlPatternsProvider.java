@@ -17,6 +17,7 @@
 package io.jmix.securityresourceserver.requestmatcher.urlprovider;
 
 import io.jmix.securityresourceserver.requestmatcher.impl.AuthenticatedUrlPatternsRequestMatcherProvider;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.List;
 
@@ -27,6 +28,7 @@ import java.util.List;
  *
  * @see AuthenticatedUrlPatternsRequestMatcherProvider
  */
+@NullMarked
 public interface AuthenticatedUrlPatternsProvider {
 
     List<String> getAuthenticatedUrlPatterns();

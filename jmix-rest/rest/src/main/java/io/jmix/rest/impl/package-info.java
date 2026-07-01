@@ -15,8 +15,6 @@
  */
 
 @Internal
-@NonNullApi
 package io.jmix.rest.impl;
 
 import io.jmix.core.annotation.Internal;
-import org.springframework.lang.NonNullApi;

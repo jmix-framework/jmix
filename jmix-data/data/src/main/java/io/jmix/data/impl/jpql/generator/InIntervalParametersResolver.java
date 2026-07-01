@@ -18,6 +18,7 @@ package io.jmix.data.impl.jpql.generator;
 
 import io.jmix.core.common.datastruct.Pair;
 import io.jmix.core.querycondition.PropertyCondition;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.List;
 
@@ -25,6 +26,7 @@ import java.util.List;
  * Interface for resolving parameters for a {@link PropertyCondition}
  * with {@link PropertyCondition.Operation#IN_INTERVAL} operation.
  */
+@NullMarked
 public interface InIntervalParametersResolver {
 
     /**

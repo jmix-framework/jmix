@@ -27,6 +27,8 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collection;
+
+import org.jspecify.annotations.NullMarked;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -153,6 +155,7 @@ public abstract class BaseEntityAttributesEraser implements EntityAttributesEras
 
     protected abstract boolean isPropertyToCheck(MetaProperty metaProperty);
 
+    @NullMarked
     protected interface Visitor {
         boolean visit(Object entity, Object reference, String propertyName);
     }

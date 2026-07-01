@@ -16,13 +16,15 @@
 
 package io.jmix.flowui.model;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import java.util.Collection;
 import java.util.List;
 
 /**
  * Container that holds a collection of entity instances which is a collection property of another entity.
  */
+@NullMarked
 public interface CollectionPropertyContainer<E> extends CollectionContainer<E>, Nested {
 
     /**

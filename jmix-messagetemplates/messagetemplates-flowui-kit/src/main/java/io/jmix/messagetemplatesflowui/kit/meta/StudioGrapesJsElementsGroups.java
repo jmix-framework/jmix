@@ -18,6 +18,7 @@ package io.jmix.messagetemplatesflowui.kit.meta;
 
 import io.jmix.flowui.kit.meta.StudioElementsGroup;
 import io.jmix.flowui.kit.meta.StudioUiKit;
+import io.jmix.flowui.kit.meta.StudioXmlElements;
 
 @StudioUiKit
 public interface StudioGrapesJsElementsGroups {
@@ -25,7 +26,7 @@ public interface StudioGrapesJsElementsGroups {
     @StudioElementsGroup(
             name = "Plugins",
             elementClassFqn = "io.jmix.messagetemplatesflowui.kit.meta.stub.StudioGrapesJsPluginElement",
-            xmlElement = "plugins",
+            xmlElement = StudioXmlElements.PLUGINS,
             xmlns = "http://jmix.io/schema/messagetemplates/ui",
             xmlnsAlias = "msgtmp",
             icon = "io/jmix/messagetemplatesflowui/kit/meta/icon/elementsgroup/plugins.svg",
@@ -36,7 +37,7 @@ public interface StudioGrapesJsElementsGroups {
     @StudioElementsGroup(
             name = "Blocks",
             elementClassFqn = "io.jmix.messagetemplatesflowui.kit.meta.stub.StudioGrapesJsBlockElement",
-            xmlElement = "blocks",
+            xmlElement = StudioXmlElements.BLOCKS,
             xmlns = "http://jmix.io/schema/messagetemplates/ui",
             xmlnsAlias = "msgtmp",
             icon = "io/jmix/messagetemplatesflowui/kit/meta/icon/elementsgroup/blocks.svg",

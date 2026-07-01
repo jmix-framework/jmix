@@ -16,12 +16,15 @@
 
 package io.jmix.core.session;
 
+import org.jspecify.annotations.NullMarked;
+
 import java.io.Serializable;
 import java.util.Collection;
 
 /**
  * Interface to work with current session and its attributes.
  */
+@NullMarked
 public interface SessionData extends Serializable {
 
     /**

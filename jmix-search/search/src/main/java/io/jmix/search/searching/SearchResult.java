@@ -16,11 +16,14 @@
 
 package io.jmix.search.searching;
 
+import org.jspecify.annotations.NullMarked;
+
 import java.util.Collection;
 
 /**
  * Represents result of search by some text.
  */
+@NullMarked
 public interface SearchResult {
 
     /**

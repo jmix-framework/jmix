@@ -24,10 +24,15 @@ import io.jmix.flowui.component.factory.EntityFieldCreationSupport;
 import io.jmix.flowui.component.genericfilter.GenericFilter;
 import io.jmix.flowui.component.genericfilter.configuration.FilterConfigurationDetail;
 import io.jmix.flowui.component.grid.DataGrid;
+import io.jmix.flowui.component.grid.headerfilter.DataGridHeaderFilter;
+import io.jmix.flowui.component.sidedialog.SideDialog;
+import io.jmix.flowui.component.sidepanellayout.SidePanelLayout;
+import io.jmix.flowui.kit.component.sidedialog.SideDialogPosition;
+import io.jmix.flowui.kit.component.sidepanellayout.SidePanelPosition;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
@@ -55,7 +60,7 @@ public class UiComponentProperties {
      */
     boolean gridContextMenuShowActionShortcuts;
 
-    String defaultNotificationPosition;
+    Notification.Position defaultNotificationPosition;
     int defaultNotificationDuration;
 
     /**
@@ -104,6 +109,11 @@ public class UiComponentProperties {
     String filterApplyShortcut;
 
     /**
+     * Shortcut for applying {@link DataGridHeaderFilter}
+     */
+    String dataGridHeaderFilterApplyShortcut;
+
+    /**
      * Number of nested properties in the {@link AddConditionView}. I.e. if the depth is 2, then you'll be able to
      * select a property "contractor.city.country", if the value is 3, then "contractor.city.country.name", etc.
      */
@@ -150,6 +160,16 @@ public class UiComponentProperties {
      */
     boolean gridRefreshAllOnItemReplace;
 
+    /**
+     * Default placement for {@link SidePanelLayout} components.
+     */
+    SidePanelPosition sidePanelLayoutDefaultPlacement;
+
+    /**
+     * Default placement for {@link SideDialog} dialogs.
+     */
+    SideDialogPosition sideDialogDefaultPlacement;
+
     public UiComponentProperties(
             String gridCreateShortcut,
             String gridAddShortcut,
@@ -158,7 +178,7 @@ public class UiComponentProperties {
             @DefaultValue("ENTER") String gridReadShortcut,
             @DefaultValue("false") boolean gridContextMenuShowActionIcons,
             @DefaultValue("false") boolean gridContextMenuShowActionShortcuts,
-            @DefaultValue("MIDDLE") String defaultNotificationPosition,
+            @DefaultValue("MIDDLE") Notification.Position defaultNotificationPosition,
             @DefaultValue("false") boolean notificationsOpenedChangeEventsEnabled,
             @DefaultValue("false") boolean dialogsOpenedChangeEventsEnabled,
             @DefaultValue("3000") int defaultNotificationDuration,
@@ -170,6 +190,7 @@ public class UiComponentProperties {
             @Nullable Map<String, List<String>> entityFieldActions,
             @DefaultValue("true") boolean filterAutoApply,
             String filterApplyShortcut,
+            String dataGridHeaderFilterApplyShortcut,
             @DefaultValue("2") int filterPropertiesHierarchyDepth,
             @DefaultValue("false") boolean filterShowConfigurationIdField,
             @DefaultValue("true") boolean filterShowNonJpaProperties,
@@ -178,7 +199,9 @@ public class UiComponentProperties {
             @DefaultValue("true") boolean immediateRequiredValidationEnabled,
             @DefaultValue("true") boolean defaultTrimEnabled,
             @DefaultValue("true") boolean checkboxRequiredStateInitializationEnabled,
-            @DefaultValue("false") boolean gridRefreshAllOnItemReplace) {
+            @DefaultValue("false") boolean gridRefreshAllOnItemReplace,
+            @DefaultValue("RIGHT") SidePanelPosition sidePanelLayoutDefaultPlacement,
+            @DefaultValue("RIGHT") SideDialogPosition sideDialogDefaultPlacement) {
         this.gridCreateShortcut = gridCreateShortcut;
         this.gridAddShortcut = gridAddShortcut;
         this.gridRemoveShortcut = gridRemoveShortcut;
@@ -203,6 +226,7 @@ public class UiComponentProperties {
 
         this.filterAutoApply = filterAutoApply;
         this.filterApplyShortcut = filterApplyShortcut;
+        this.dataGridHeaderFilterApplyShortcut = dataGridHeaderFilterApplyShortcut;
         this.filterPropertiesHierarchyDepth = filterPropertiesHierarchyDepth;
         this.filterShowConfigurationIdField = filterShowConfigurationIdField;
         this.filterShowNonJpaProperties = filterShowNonJpaProperties;
@@ -216,6 +240,9 @@ public class UiComponentProperties {
         this.checkboxRequiredStateInitializationEnabled = checkboxRequiredStateInitializationEnabled;
 
         this.gridRefreshAllOnItemReplace = gridRefreshAllOnItemReplace;
+
+        this.sidePanelLayoutDefaultPlacement = sidePanelLayoutDefaultPlacement;
+        this.sideDialogDefaultPlacement = sideDialogDefaultPlacement;
     }
 
     public String getGridCreateShortcut() {
@@ -253,7 +280,7 @@ public class UiComponentProperties {
     }
 
     public Notification.Position getDefaultNotificationPosition() {
-        return Notification.Position.valueOf(defaultNotificationPosition);
+        return defaultNotificationPosition;
     }
 
     public int getDefaultNotificationDuration() {
@@ -322,6 +349,13 @@ public class UiComponentProperties {
     }
 
     /**
+     * @see #dataGridHeaderFilterApplyShortcut
+     */
+    public String getDataGridHeaderFilterApplyShortcut() {
+        return dataGridHeaderFilterApplyShortcut;
+    }
+
+    /**
      * @see #filterPropertiesHierarchyDepth
      */
     public int getFilterPropertiesHierarchyDepth() {
@@ -382,5 +416,19 @@ public class UiComponentProperties {
      */
     public boolean isGridRefreshAllOnItemReplace() {
         return gridRefreshAllOnItemReplace;
+    }
+
+    /**
+     * @see #sidePanelLayoutDefaultPlacement
+     */
+    public SidePanelPosition getSidePanelLayoutDefaultPlacement() {
+        return sidePanelLayoutDefaultPlacement;
+    }
+
+    /**
+     * @see #sideDialogDefaultPlacement
+     */
+    public SideDialogPosition getSideDialogDefaultPlacement() {
+        return sideDialogDefaultPlacement;
     }
 }

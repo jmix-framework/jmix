@@ -16,16 +16,16 @@
 
 package io.jmix.chartsflowui.component.serialization;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.SerializerProvider;
 import io.jmix.chartsflowui.kit.component.model.DataSet;
 import io.jmix.chartsflowui.kit.data.chart.ChartItems;
 import io.jmix.chartsflowui.kit.data.chart.DataItem;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.SerializationContext;
 
-import java.io.IOException;
 import java.util.function.Function;
 
 @SuppressWarnings("rawtypes")
@@ -39,8 +39,8 @@ public class DataSetSourceSerializer extends AbstractDataSerializer<DataSet.Sour
 
     @SuppressWarnings("unchecked")
     @Override
-    public void serializeNonNullValue(DataSet.Source value, JsonGenerator gen, SerializerProvider provider)
-            throws IOException {
+    public void serializeNonNullValue(DataSet.Source value, JsonGenerator gen, SerializationContext provider)
+            throws JacksonException {
         if (value.getDataProvider() instanceof ChartItems chartItems) {
             gen.writeStartArray();
             for (Object item : chartItems.getItems()) {

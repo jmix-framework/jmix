@@ -19,6 +19,7 @@ package io.jmix.flowui.kit.meta;
 /**
  * Meta description that describes available component conversions.
  */
+@StudioAPI
 public @interface StudioConvertStrategy {
 
     /**
@@ -46,7 +47,7 @@ public @interface StudioConvertStrategy {
     @interface TagInfo {
 
         /**
-         * Xml tag FQN.
+         * XML tag FQN.
          */
         String qualifiedName();
 
@@ -61,17 +62,17 @@ public @interface StudioConvertStrategy {
      */
     @interface AttributeConvertStrategy {
         /**
-         * Xml attribute FQN.
+         * XML attribute FQN.
          */
         String qualifiedName();
 
         /**
-         * Xml attribute type.
+         * XML attribute type.
          */
         StudioPropertyType type();
 
         /**
-         * Xml attribute new value.
+         * XML attribute new value.
          */
         String value();
 

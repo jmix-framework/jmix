@@ -17,8 +17,9 @@
 package io.jmix.restds.util;
 
 import io.jmix.core.JmixOrder;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.core.type.filter.TypeFilter;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Interface for customizing the configuration of services available through the REST DataStore.
@@ -27,6 +28,7 @@ import org.springframework.lang.Nullable;
  * The implementation can have the {@link org.springframework.core.annotation.Order} annotation
  * with a {@link JmixOrder} value.
  */
+@NullMarked
 public interface RemoteServiceConfigurationCustomizer {
 
     /**
@@ -51,7 +53,9 @@ public interface RemoteServiceConfigurationCustomizer {
      */
     class ServiceParameters {
 
+        @Nullable
         private String storeName;
+        @Nullable
         private String serviceName;
 
         public ServiceParameters() {

@@ -1,4 +1,20 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2026 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
 <view xmlns="http://jmix.io/schema/flowui/view"
       title="msg://triggerModelDetailView.title"
       focusComponent="form">
@@ -23,15 +39,16 @@
             </formItem>
             <formItem id="cronExpressionFormItem" visible="false"
                       label="msg://io.jmix.quartz.model/TriggerModel.cronExpression">
-                <hbox id="cronExpressionBox">
+                <hbox id="cronExpressionBox" alignItems="CENTER">
                     <textField id="cronExpressionField" property="cronExpression" required="true" width="100%"/>
-                    <button id="cronExpressionHelpButton" classNames="self-center"/>
+                    <button id="cronExpressionHelpButton"/>
                 </hbox>
             </formItem>
             <formItem id="repeatModeFormItem" label="msg://triggerRepeatMode">
-                <hbox id="repeatModeBox">
-                    <radioButtonGroup id="repeatModeSelector" itemsEnum="io.jmix.quartz.model.RepeatMode" width="100%"/>
-                    <button id="repeatModeSelectorHelpButton" classNames="self-center"/>
+                <hbox id="repeatModeBox" alignItems="CENTER">
+                    <radioButtonGroup id="repeatModeSelector" itemsEnum="io.jmix.quartz.model.RepeatMode"
+                                      width="100%" themeNames="horizontal"/>
+                    <button id="repeatModeSelectorHelpButton"/>
                 </hbox>
             </formItem>
             <formItem id="timezoneFormItem">
@@ -39,9 +56,9 @@
             </formItem>
             <formItem id="repeatCountFormItem" visible="false"
                       label="msg://io.jmix.quartz.model/TriggerModel.repeatCount">
-                <hbox id="repeatCountBox">
+                <hbox id="repeatCountBox" alignItems="CENTER">
                     <textField id="repeatCountField" property="repeatCount" width="100%"/>
-                    <button id="repeatCountHelpButton" classNames="self-center"/>
+                    <button id="repeatCountHelpButton"/>
                 </hbox>
             </formItem>
             <formItem id="repeatIntervalFormItem" visible="false">
@@ -55,10 +72,10 @@
             </formItem>
             <formItem id="misfireInstructionFormItem"
                       label="msg://io.jmix.quartz.model/TriggerModel.misfireInstructionId">
-                <hbox id="misfireInstructionBox">
+                <hbox id="misfireInstructionBox" alignItems="CENTER">
                     <comboBox id="misfireInstructionField" dataContainer="triggerModelDc"
                               property="misfireInstructionId" width="100%"/>
-                    <button id="misfireInstructionHelpButton" classNames="self-center"/>
+                    <button id="misfireInstructionHelpButton"/>
                 </hbox>
             </formItem>
             <formItem>

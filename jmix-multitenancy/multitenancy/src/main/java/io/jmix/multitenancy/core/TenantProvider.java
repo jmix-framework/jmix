@@ -18,9 +18,12 @@ package io.jmix.multitenancy.core;
 
 import org.springframework.security.core.userdetails.UserDetails;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Provides the tenant id for user.
  */
+@NullMarked
 public interface TenantProvider {
 
     /**

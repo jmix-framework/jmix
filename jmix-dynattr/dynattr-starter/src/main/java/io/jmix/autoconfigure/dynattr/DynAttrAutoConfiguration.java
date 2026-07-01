@@ -20,7 +20,7 @@ import io.jmix.core.CoreConfiguration;
 import io.jmix.data.DataConfiguration;
 import io.jmix.dynattr.DynAttrConfiguration;
 import io.jmix.dynattr.DynAttrMetadata;
-import org.springframework.boot.autoconfigure.cache.JCacheManagerCustomizer;
+import org.springframework.boot.cache.autoconfigure.JCacheManagerCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Import;
@@ -31,6 +31,7 @@ import javax.cache.configuration.MutableConfiguration;
 @AutoConfiguration
 @Import({CoreConfiguration.class, DataConfiguration.class, DynAttrConfiguration.class})
 public class DynAttrAutoConfiguration {
+
 
     @Bean
     @SuppressWarnings({"rawtypes", "unchecked"})

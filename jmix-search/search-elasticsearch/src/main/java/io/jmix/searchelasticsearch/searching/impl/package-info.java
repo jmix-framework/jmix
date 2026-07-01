@@ -15,8 +15,6 @@
  */
 
 @Internal
-@NonNullApi
 package io.jmix.searchelasticsearch.searching.impl;
 
 import io.jmix.core.annotation.Internal;
-import org.springframework.lang.NonNullApi;

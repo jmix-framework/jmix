@@ -25,5 +25,5 @@ import java.util.Set;
  * Used in {@link EnhancingAction} to run provider-specific enhancing logic.
  */
 public interface PersistenceProviderEnhancing {
-    void run(Project project, SourceSet sourceSet, Set<String> allStores);
+    void run(Project project, SourceSet sourceSet, String enhancedDir, Set<String> allStores);
 }

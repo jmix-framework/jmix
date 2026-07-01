@@ -16,12 +16,12 @@
 
 package io.jmix.masquerade.component;
 
-import com.codeborne.selenide.CheckResult;
 import com.codeborne.selenide.SelenideElement;
 import com.google.common.collect.Sets;
 import io.jmix.masquerade.condition.CheckedItems;
 import io.jmix.masquerade.condition.CheckedItemsContains;
 import io.jmix.masquerade.condition.CheckedItemsCount;
+import io.jmix.masquerade.condition.SpecificCheck;
 import io.jmix.masquerade.condition.SpecificCondition;
 import io.jmix.masquerade.sys.TagNames;
 import org.apache.commons.collections4.CollectionUtils;
@@ -49,28 +49,28 @@ public class CheckboxGroup extends AbstractCheckbox<CheckboxGroup> {
     }
 
     @Override
-    public CheckResult check(SpecificCondition condition) {
+    public SpecificCheck resolve(SpecificCondition condition) {
         if (condition instanceof CheckedItems checkedItems) {
             List<String> currentCheckboxLabelTexts = getCheckboxLabelTexts();
-            return new CheckResult(
+            return SpecificCheck.of(
                     CollectionUtils.isEqualCollection(currentCheckboxLabelTexts, checkedItems.getValue()),
                     currentCheckboxLabelTexts
             );
         } else if (condition instanceof CheckedItemsCount checkedItemsCount) {
             List<String> currentCheckboxLabelTexts = getCheckboxLabelTexts();
-            return new CheckResult(
+            return SpecificCheck.of(
                     currentCheckboxLabelTexts.size() == checkedItemsCount.getValue(),
                     currentCheckboxLabelTexts
             );
         } else if (condition instanceof CheckedItemsContains checkedItemsContains) {
             List<String> currentCheckboxLabelTexts = getCheckboxLabelTexts();
-            return new CheckResult(
+            return SpecificCheck.of(
                     Sets.newHashSet(currentCheckboxLabelTexts).containsAll(checkedItemsContains.getValue()),
                     currentCheckboxLabelTexts
             );
         }
 
-        return super.check(condition);
+        return super.resolve(condition);
     }
 
     /**

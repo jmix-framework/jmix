@@ -18,6 +18,7 @@ package io.jmix.reports.libintegration;
 
 import io.jmix.reports.yarg.structure.BandData;
 import io.jmix.reports.yarg.structure.ReportQuery;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.Map;
 
@@ -26,6 +27,7 @@ import java.util.Map;
  * Realization of this interface is intended to prepare a map of parameters filled with beans or other objects
  */
 
+@NullMarked
 public interface GroovyScriptParametersProvider {
     /**
      * Prepares and return the map of objects

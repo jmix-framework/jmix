@@ -16,13 +16,10 @@
 
 package io.jmix.reportsflowui.view.run;
 
-import com.vaadin.flow.data.renderer.Renderer;
-import com.vaadin.flow.data.renderer.TextRenderer;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
 import io.jmix.core.LoadContext;
 import io.jmix.core.Messages;
-import io.jmix.core.MetadataTools;
 import io.jmix.core.Sort;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.usersubstitution.CurrentUserSubstitution;
@@ -32,6 +29,7 @@ import io.jmix.flowui.component.datepicker.TypedDatePicker;
 import io.jmix.flowui.component.details.JmixDetails;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.textfield.TypedTextField;
+import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.view.*;
@@ -46,7 +44,11 @@ import io.jmix.reportsflowui.ReportsClientProperties;
 import io.jmix.reportsflowui.helper.GridSortHelper;
 import io.jmix.reportsflowui.runner.FluentUiReportRunner;
 import io.jmix.reportsflowui.runner.ParametersDialogShowMode;
+import io.jmix.reportsflowui.runner.ReportExecutionPresentationIds;
+import io.jmix.reportsflowui.runner.ReportPresentationRegistry;
 import io.jmix.reportsflowui.runner.UiReportRunner;
+import io.jmix.reportsflowui.runner.SpreadsheetViewSupport;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Date;
@@ -75,6 +77,8 @@ public class ReportRunView extends StandardListView<Report> {
     protected JmixDetails filterDetails;
     @ViewComponent
     protected CollectionLoader<Report> reportsDl;
+    @ViewComponent("reportDataGrid.openInSpreadsheet")
+    protected Action openInSpreadsheetAction;
 
     @ViewComponent
     protected MessageBundle messageBundle;
@@ -82,8 +86,6 @@ public class ReportRunView extends StandardListView<Report> {
     protected ReportRepository reportRepository;
     @Autowired
     protected CurrentUserSubstitution currentUserSubstitution;
-    @Autowired
-    protected MetadataTools metadataTools;
     @Autowired
     protected UiReportRunner uiReportRunner;
     @Autowired
@@ -96,6 +98,11 @@ public class ReportRunView extends StandardListView<Report> {
     protected GridSortHelper gridSortHelper;
     @Autowired
     protected ReportGroupRepository reportGroupRepository;
+    @Nullable
+    @Autowired(required = false)
+    protected SpreadsheetViewSupport spreadsheetViewSupport;
+    @Autowired
+    protected ReportPresentationRegistry reportPresentationRegistry;
 
     protected List<Report> reports;
     protected MetaClass metaClassParameter;
@@ -149,12 +156,6 @@ public class ReportRunView extends StandardListView<Report> {
         return filter;
     }
 
-    @Supply(to = "reportDataGrid.name", subject = "renderer")
-    private Renderer<Report> nameCellRenderer() {
-        return new TextRenderer<>(report ->
-                metadataTools.getInstanceName(report));
-    }
-
     @Install(to = "reportGroupsDl", target = Target.DATA_LOADER)
     protected List<ReportGroup> reportGroupsDlLoadDelegate(final LoadContext<ReportGroup> ignored) {
         return reportGroupRepository.loadAll();
@@ -165,22 +166,57 @@ public class ReportRunView extends StandardListView<Report> {
         if (this.reports != null) {
             filterDetails.setVisible(false);
         }
+        openInSpreadsheetAction.setVisible(spreadsheetViewSupport != null);
     }
 
     @Subscribe("reportDataGrid.runReport")
     protected void onReportDataGridRunReport(ActionPerformedEvent event) {
+        runSelectedReport(ReportExecutionPresentationIds.DEFAULT);
+    }
+
+    @Subscribe("reportDataGrid.openInSpreadsheet")
+    protected void onReportDataGridOpenInSpreadsheet(ActionPerformedEvent event) {
+        runSelectedReport(ReportExecutionPresentationIds.SPREADSHEET);
+    }
+
+    @Subscribe("reportDataGrid.openInTable")
+    protected void onReportDataGridOpenInTable(ActionPerformedEvent event) {
+        runSelectedReport(ReportExecutionPresentationIds.TABLE);
+    }
+
+    @Install(to = "reportDataGrid.openInSpreadsheet", subject = "enabledRule")
+    protected boolean reportDataGridOpenInSpreadsheetEnabledRule() {
+        Report report = reportDataGrid.getSingleSelectedItem();
+        if (report == null) {
+            return false;
+        }
+        Report reloadedReport = reportRepository.reloadForRunning(report);
+        return reportPresentationRegistry.supportsReport(reloadedReport, ReportExecutionPresentationIds.SPREADSHEET);
+    }
+
+    @Install(to = "reportDataGrid.openInTable", subject = "enabledRule")
+    protected boolean reportDataGridOpenInTableEnabledRule() {
+        Report report = reportDataGrid.getSingleSelectedItem();
+        if (report == null) {
+            return false;
+        }
+        Report reloadedReport = reportRepository.reloadForRunning(report);
+        return reportPresentationRegistry.supportsReport(reloadedReport, ReportExecutionPresentationIds.TABLE);
+    }
+
+    protected void runSelectedReport(String presentationId) {
         Report report = reportDataGrid.getSingleSelectedItem();
         if (report == null) {
             return;
         }
-
         FluentUiReportRunner fluentRunner = uiReportRunner.byReportEntity(report)
                 .withParametersDialogShowMode(ParametersDialogShowMode.IF_REQUIRED);
         try {
             if (reportsClientProperties.getUseBackgroundReportProcessing()) {
                 fluentRunner.inBackground(ReportRunView.this);
             }
-            fluentRunner.runAndShow();
+            uiReportRunner.runAndShow(
+                    reportPresentationRegistry.createRunContext(fluentRunner.buildContext(), presentationId));
         } catch (MissingDefaultTemplateException e) {
             notifications.create(
                             messages.getMessage("runningReportError.title"),

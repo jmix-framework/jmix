@@ -17,12 +17,14 @@
 package io.jmix.search.index;
 
 import io.jmix.core.Id;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.Collection;
 
 /**
  * Provides functionality for direct documents indexing.
  */
+@NullMarked
 public interface EntityIndexer {
 
     /**

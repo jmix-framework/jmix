@@ -195,9 +195,9 @@ class ${controllerName} : StandardListView<TaskData>() {
     fun onFilterBtnClick(event: ClickEvent<JmixButton?>?) {
         filterContainer.isVisible = !filterContainer.isVisible
         if (filterContainer.isVisible) {
-            filterBtn.addThemeVariants(ButtonVariant.LUMO_PRIMARY)
+            filterBtn.addThemeVariants(ButtonVariant.PRIMARY)
         } else {
-            filterBtn.removeThemeVariants(ButtonVariant.LUMO_PRIMARY)
+            filterBtn.removeThemeVariants(ButtonVariant.PRIMARY)
         }
     }
 

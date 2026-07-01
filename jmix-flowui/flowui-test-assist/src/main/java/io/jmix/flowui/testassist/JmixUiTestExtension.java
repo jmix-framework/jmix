@@ -39,6 +39,7 @@ import io.jmix.flowui.testassist.dialog.OpenedDialogs;
 import io.jmix.flowui.testassist.notification.OpenedNotifications;
 import io.jmix.flowui.testassist.vaadin.TestServletContext;
 import io.jmix.flowui.testassist.vaadin.TestSpringServlet;
+import io.jmix.flowui.testassist.vaadin.TestUI;
 import io.jmix.flowui.testassist.vaadin.TestVaadinRequest;
 import io.jmix.flowui.testassist.vaadin.TestVaadinSession;
 import io.jmix.flowui.testassist.view.initial.InitialView;
@@ -54,7 +55,7 @@ import org.junit.jupiter.api.extension.TestInstancePostProcessor;
 import org.junit.platform.commons.support.AnnotationSupport;
 import org.mockito.Mockito;
 import org.springframework.context.ApplicationContext;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.mock.web.MockServletConfig;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -238,14 +239,15 @@ public class JmixUiTestExtension implements TestInstancePostProcessor, BeforeEac
         vaadinSession.setAttribute(UiEventsManager.class, new UiEventsManager());
         VaadinSession.setCurrent(vaadinSession);
 
-        vaadinSession.setConfiguration(springServlet.getService().getDeploymentConfiguration());
-
         TestVaadinRequest request = new TestVaadinRequest(springServlet.getService());
         CurrentInstance.set(VaadinRequest.class, request);
 
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
 
-        ui = new UI();
+        // TestUI emulates the client response cycle, so components that defer initialization until
+        // 'beforeClientResponse' (e.g. JmixTabSheet attaching the selected tab content) get fully
+        // initialized in tests, where there is no client-server communication.
+        ui = new TestUI();
         ui.getInternals().setSession(vaadinSession);
 
         // ExtendedClientDetails is not available since we don't have client-side here.

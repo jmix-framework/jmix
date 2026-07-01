@@ -18,11 +18,13 @@ package io.jmix.flowui.sys;
 
 import com.vaadin.flow.router.NavigationEvent;
 import io.jmix.flowui.view.View;
+import org.jspecify.annotations.NullMarked;
 
 /**
  *
  * Allows to customize view right before navigation occurs.
  */
+@NullMarked
 public interface BeforeNavigationInitializer {
     void initialize(View<?> instance, NavigationEvent event);
 }

@@ -33,7 +33,7 @@ import io.jmix.flowui.app.propertyfilter.dateinterval.model.BaseDateInterval;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter.Operation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
@@ -214,10 +214,24 @@ public class PropertyFilterSupport {
                     enumSet.add(IS_SET);
                 }
                 return enumSet;
+            } else if (FileRef.class.equals(type)) {
+                EnumSet<Operation> enumSet = EnumSet.noneOf(Operation.class);
+                if (elementCollection) {
+                    enumSet.add(IS_COLLECTION_EMPTY);
+                } else {
+                    enumSet.add(IS_SET);
+                }
+                return enumSet;
             } else {
-                log.warn("Cannot find predefined PropertyFilter operations for {} datatype. " +
-                        "The default set of operations (EQUAL, NOT_EQUAL, IS_SET) will be used", type);
-                return EnumSet.of(EQUAL, NOT_EQUAL, IS_SET);
+                log.debug("Cannot find predefined PropertyFilter operations for {} datatype. " +
+                        "The default set of operations will be used.", type);
+                EnumSet<Operation> enumSet = EnumSet.of(EQUAL, NOT_EQUAL);
+                if (elementCollection) {
+                    enumSet.add(IS_COLLECTION_EMPTY);
+                } else {
+                    enumSet.add(IS_SET);
+                }
+                return enumSet;
             }
         }
 
@@ -245,6 +259,8 @@ public class PropertyFilterSupport {
             return CONTAINS;
         } else if (isCollectionDatatype(mpp)) {
             return IS_COLLECTION_EMPTY;
+        } else if (isFileRefDatatype(mpp)) {
+            return IS_SET;
         } else {
             return EQUAL;
         }
@@ -258,6 +274,11 @@ public class PropertyFilterSupport {
     protected boolean isCollectionDatatype(MetaPropertyPath mpp) {
         Range range = mpp.getMetaProperty().getRange();
         return range.isClass() && range.getCardinality().isMany();
+    }
+
+    protected boolean isFileRefDatatype(MetaPropertyPath mpp) {
+        Range range = mpp.getMetaProperty().getRange();
+        return range.isDatatype() && FileRef.class.equals(range.asDatatype().getJavaClass());
     }
 
     public String toPropertyConditionOperation(Operation operation) {

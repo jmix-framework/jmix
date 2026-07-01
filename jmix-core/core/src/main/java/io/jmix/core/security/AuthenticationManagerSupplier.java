@@ -18,6 +18,8 @@ package io.jmix.core.security;
 
 import org.springframework.security.authentication.AuthenticationManager;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Interface is responsible for providing an instance of global {@link AuthenticationManager}. It iterates over all
  * registered {@link AddonAuthenticationManagerSupplier} and returns an AuthenticationManager provided by the supplier
@@ -25,6 +27,7 @@ import org.springframework.security.authentication.AuthenticationManager;
  *
  * @see AddonAuthenticationManagerSupplier
  */
+@NullMarked
 public interface AuthenticationManagerSupplier {
 
     /**

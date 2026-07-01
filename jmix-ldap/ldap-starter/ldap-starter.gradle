@@ -15,7 +15,9 @@
  */
 
 group = 'io.jmix.ldap'
-archivesBaseName = 'jmix-ldap-starter'
+base {
+    archivesName = 'jmix-ldap-starter'
+}
 
 dependencies {
     api project(':ldap')

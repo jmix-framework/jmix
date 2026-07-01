@@ -17,10 +17,12 @@
 package io.jmix.fullcalendarflowui.component.data;
 
 import io.jmix.fullcalendarflowui.component.FullCalendar;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Base interface of data providers in {@link FullCalendar}.
  */
+@NullMarked
 public interface CalendarDataProvider {
 
     /**

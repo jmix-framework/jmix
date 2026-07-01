@@ -60,6 +60,7 @@ import org.docx4j.openpackaging.parts.relationships.RelationshipsPart;
 import org.docx4j.relationships.Relationship;
 import org.docx4j.wml.R;
 import org.docx4j.wml.Text;
+import org.jspecify.annotations.NullMarked;
 import org.xlsx4j.sml.Cell;
 
 import java.awt.*;
@@ -70,6 +71,7 @@ import java.util.regex.Pattern;
 
 import static io.jmix.reports.yarg.formatters.impl.doc.UnoConverter.as;
 import static org.apache.poi.util.Units.EMU_PER_PIXEL;
+
 
 public abstract class AbstractInliner implements ContentInliner {
     private static final String TEXT_GRAPHIC_OBJECT = "com.sun.star.text.TextGraphicObject";
@@ -82,6 +84,7 @@ public abstract class AbstractInliner implements ContentInliner {
     protected abstract byte[] getContent(Object paramValue);
 
     @Override
+    @NullMarked
     public void inlineToXlsx(SpreadsheetMLPackage pkg, WorksheetPart worksheetPart, Cell newCell, Object paramValue, Matcher matcher) {
         try {
             Image image = new Image(paramValue, matcher);
@@ -174,6 +177,7 @@ public abstract class AbstractInliner implements ContentInliner {
     }
 
     @Override
+    @NullMarked
     public void inlineToDocx(WordprocessingMLPackage wordPackage, Text text, Object paramValue, Matcher paramsMatcher) {
         try {
             Image image = new Image(paramValue, paramsMatcher);
@@ -205,6 +209,7 @@ public abstract class AbstractInliner implements ContentInliner {
     }
 
     @Override
+    @NullMarked
     public void inlineToXls(HSSFPatriarch patriarch, HSSFCell resultCell, Object paramValue, Matcher paramsMatcher) {
         try {
             Image image = new Image(paramValue, paramsMatcher);
@@ -235,6 +240,7 @@ public abstract class AbstractInliner implements ContentInliner {
     }
 
     @Override
+    @NullMarked
     public void inlineToDoc(OfficeComponent officeComponent, XTextRange textRange, XText destination, Object paramValue,
                             Matcher paramsMatcher) throws Exception {
         try {

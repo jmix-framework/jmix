@@ -17,6 +17,7 @@
 package io.jmix.chartsflowui.kit.component.event.dto;
 
 import io.jmix.chartsflowui.kit.component.event.ChartLegendSelectAllEvent;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Map;
 
@@ -27,6 +28,7 @@ public class ChartLegendSelectAllEventDetail extends BaseChartEventDetail {
 
     protected Map<String, Boolean> selected;
 
+    @Nullable
     public Map<String, Boolean> getSelected() {
         return selected;
     }

@@ -16,7 +16,9 @@
 
 
 group = 'io.jmix.pessimisticlock'
-archivesBaseName = 'jmix-pessimisticlock-flowui-starter'
+base {
+    archivesName = 'jmix-pessimisticlock-flowui-starter'
+}
 
 dependencies {
     api project(':pessimisticlock-flowui')

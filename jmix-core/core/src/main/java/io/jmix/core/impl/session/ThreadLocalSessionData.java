@@ -17,7 +17,7 @@
 package io.jmix.core.impl.session;
 
 import jakarta.servlet.http.HttpSession;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;

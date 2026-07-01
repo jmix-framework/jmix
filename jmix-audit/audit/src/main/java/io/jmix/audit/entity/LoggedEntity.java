@@ -59,10 +59,10 @@ public class LoggedEntity implements Serializable {
     @Column(name = "NAME", length = 100, unique = true)
     private String name;
 
-    @Column(name = "AUTO")
+    @Column(name = "AUTO_")
     private Boolean auto;
 
-    @Column(name = "MANUAL")
+    @Column(name = "MANUAL_")
     private Boolean manual;
 
     @OneToMany(mappedBy = "entity")

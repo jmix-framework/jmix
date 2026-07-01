@@ -19,6 +19,8 @@ package io.jmix.security.model;
 import org.springframework.context.ApplicationContext;
 
 import java.io.Serializable;
+
+import org.jspecify.annotations.NullMarked;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
@@ -28,5 +30,6 @@ import java.util.function.Predicate;
  * the bean inside the function.
  */
 @FunctionalInterface
+@NullMarked
 public interface RowLevelBiPredicate<T, U extends ApplicationContext> extends BiPredicate<T, U>, Serializable {
 }

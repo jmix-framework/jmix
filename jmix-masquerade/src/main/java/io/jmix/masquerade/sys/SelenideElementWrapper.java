@@ -19,6 +19,7 @@ package io.jmix.masquerade.sys;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 import com.codeborne.selenide.WebElementCondition;
+import org.jspecify.annotations.NullMarked;
 import org.openqa.selenium.WebDriver;
 
 import java.time.Duration;
@@ -32,6 +33,7 @@ import static io.jmix.masquerade.JConditions.ENABLED;
  *
  * @param <T> wrapper component type
  */
+@NullMarked
 @SuppressWarnings({"unchecked", "UnusedReturnValue"})
 public interface SelenideElementWrapper<T> {
 

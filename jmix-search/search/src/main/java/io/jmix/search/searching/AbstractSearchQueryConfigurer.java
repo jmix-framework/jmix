@@ -17,6 +17,7 @@
 package io.jmix.search.searching;
 
 import io.jmix.search.utils.Constants;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.List;
 import java.util.Set;
@@ -31,6 +32,7 @@ import static java.util.Collections.emptySet;
  * @param <QB> platform-specific QueryBuilder type
  * @param <OB> platform-specific ObjectBuilder type
  */
+@NullMarked
 public abstract class AbstractSearchQueryConfigurer<RB, QB, OB> implements SearchQueryConfigurer<RB, QB, OB> {
 
     public static final VirtualSubfieldsProvider NO_VIRTUAL_SUBFIELDS = fieldInfo -> emptySet();

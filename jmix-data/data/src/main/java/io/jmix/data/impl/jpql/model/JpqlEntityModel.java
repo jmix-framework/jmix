@@ -17,10 +17,12 @@
 package io.jmix.data.impl.jpql.model;
 
 import io.jmix.data.impl.jpql.InferredType;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.List;
 import java.util.Set;
 
+@NullMarked
 public interface JpqlEntityModel {
 
     String getName();

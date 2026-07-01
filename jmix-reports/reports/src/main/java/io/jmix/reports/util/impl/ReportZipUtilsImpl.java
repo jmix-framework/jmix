@@ -19,6 +19,7 @@ package io.jmix.reports.util.impl;
 import io.jmix.reports.yarg.reporting.ReportOutputDocument;
 import io.jmix.reports.util.ReportZipUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -32,6 +33,7 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+@NullMarked
 @Component("report_ReportZipUtils")
 public class ReportZipUtilsImpl implements ReportZipUtils {
 

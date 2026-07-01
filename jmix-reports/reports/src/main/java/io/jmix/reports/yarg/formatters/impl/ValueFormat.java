@@ -16,6 +16,9 @@
 
 package io.jmix.reports.yarg.formatters.impl;
 
+import org.jspecify.annotations.NullMarked;
+
+@NullMarked
 public interface ValueFormat {
 
     String format(Object o);

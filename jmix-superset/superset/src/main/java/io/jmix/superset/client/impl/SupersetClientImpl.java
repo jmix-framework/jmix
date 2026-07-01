@@ -26,11 +26,12 @@ import io.jmix.superset.client.SupersetClient;
 import io.jmix.superset.client.cookie.SupersetCookieManager;
 import io.jmix.superset.client.model.*;
 import org.apache.commons.collections4.CollectionUtils;
+import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -40,6 +41,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.List;
 
+@NullMarked
 @Service("sprset_SupersetService")
 public class SupersetClientImpl implements SupersetClient {
     private static final Logger log = LoggerFactory.getLogger(SupersetClientImpl.class);

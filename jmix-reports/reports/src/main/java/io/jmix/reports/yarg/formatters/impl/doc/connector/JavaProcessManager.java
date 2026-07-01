@@ -17,12 +17,14 @@
 package io.jmix.reports.yarg.formatters.impl.doc.connector;
 
 import io.jmix.reports.yarg.formatters.impl.doc.connector.ProcessManager;
+import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.List;
 
+@NullMarked
 public class JavaProcessManager implements ProcessManager {
     protected static final Logger log = LoggerFactory.getLogger(JavaProcessManager.class);
 

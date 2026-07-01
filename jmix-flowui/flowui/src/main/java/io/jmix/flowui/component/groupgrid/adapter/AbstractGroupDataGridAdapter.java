@@ -25,7 +25,7 @@ import io.jmix.flowui.component.groupgrid.GroupColumn;
 import io.jmix.flowui.component.groupgrid.GroupInfo;
 import io.jmix.flowui.component.groupgrid.GroupListDataComponent;
 import io.jmix.flowui.component.groupgrid.data.GroupDataGridItems;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.List;

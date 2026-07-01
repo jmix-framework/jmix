@@ -19,8 +19,11 @@ package io.jmix.security.impl.role.builder.extractor;
 import io.jmix.security.model.ResourcePolicy;
 
 import java.lang.reflect.Method;
+
+import org.jspecify.annotations.NullMarked;
 import java.util.Collection;
 
+@NullMarked
 public interface ResourcePolicyExtractor {
 
     Collection<ResourcePolicy> extractResourcePolicies(Method method);

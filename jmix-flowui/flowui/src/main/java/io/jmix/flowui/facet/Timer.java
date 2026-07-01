@@ -16,6 +16,7 @@
 package io.jmix.flowui.facet;
 
 import com.vaadin.flow.shared.Registration;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.EventObject;
 import java.util.function.Consumer;
@@ -23,6 +24,7 @@ import java.util.function.Consumer;
 /**
  * Client-side timer component that fires events at fixed intervals.
  */
+@NullMarked
 public interface Timer extends Facet {
 
     String NAME = "timer";

@@ -15,7 +15,9 @@
  */
 
 group 'io.jmix.quartz'
-archivesBaseName = 'jmix-quartz-starter'
+base {
+    archivesName = 'jmix-quartz-starter'
+}
 
 dependencies {
     api project(':quartz')

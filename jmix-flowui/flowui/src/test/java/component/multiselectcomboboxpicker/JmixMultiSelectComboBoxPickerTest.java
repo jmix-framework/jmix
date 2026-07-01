@@ -35,6 +35,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -128,6 +129,63 @@ public class JmixMultiSelectComboBoxPickerTest {
         // JmixMultiSelectComboBoxPicker value should have saved previously 'selected' OrderLine
 
         Assertions.assertTrue(orderDetailView.orderLinesField.getValue().contains(orderLineValue));
+    }
+
+    @Test
+    @DisplayName("Set empty value from client should not cause unparseable validation error")
+    public void setEmptyValueFromClientShouldNotCauseUnparseableValidationError() {
+        var origin = navigateTo(BlankTestView.class);
+        viewNavigators.view(origin, JmixMultiSelectComboBoxPickerOrderListTestView.class)
+                .navigate();
+
+        var orderListView = UiTestUtils.getCurrentView();
+
+        // Create new order in detail view
+        JmixButton createButton = UiTestUtils.getComponent(orderListView, "createButton");
+        createButton.click();
+
+        JmixMultiSelectComboBoxPickerOrderDetailTestView orderDetailView = UiTestUtils.getCurrentView();
+
+        // Pre-fill value to check clearing
+        var orderLineValue = orderDetailView.getOrderLineByDescription("1");
+        orderDetailView.orderLinesField.setTypedValue(Set.of(orderLineValue));
+
+        // Simulate user action that sets an empty value
+        orderDetailView.orderLinesField.setValueFromClient(null);
+
+        // This should not have unparseable validation error
+        Assertions.assertFalse(orderDetailView.orderLinesField.isInvalid());
+        Assertions.assertNull(orderDetailView.orderLinesField.getErrorMessage());
+    }
+
+    @Test
+    @DisplayName("Value change event should be fired when value is changed via setValueFromClient")
+    public void setValueFromClientShouldFireValueChangeEvent() {
+        var origin = navigateTo(BlankTestView.class);
+        viewNavigators.view(origin, JmixMultiSelectComboBoxPickerOrderListTestView.class)
+                .navigate();
+
+        var orderListView = UiTestUtils.getCurrentView();
+
+        // Create new order in detail view
+        JmixButton createButton = UiTestUtils.getComponent(orderListView, "createButton");
+        createButton.click();
+
+        JmixMultiSelectComboBoxPickerOrderDetailTestView orderDetailView = UiTestUtils.getCurrentView();
+
+        // Pre-fill value to check clearing
+        var orderLineValue = orderDetailView.getOrderLineByDescription("1");
+        orderDetailView.orderLinesField.setTypedValue(Set.of(orderLineValue));
+
+        final boolean[] eventFired = {false, false};
+        orderDetailView.orderLinesField.addValueChangeListener(event -> eventFired[0] = true);
+        orderDetailView.orderLinesField.addTypedValueChangeListener(event -> eventFired[1] = true);
+
+        // Simulate user action that sets an empty value (e.g., from EntityClearAction)
+        orderDetailView.orderLinesField.setValueFromClient(null);
+
+        Assertions.assertTrue(eventFired[0], "Value change event should be fired");
+        Assertions.assertTrue(eventFired[1], "Type Value change event should be fired");
     }
 
     private static void findOrderAndEdit(JmixMultiSelectComboBoxPickerOrderListTestView orderListView, String number) {

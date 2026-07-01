@@ -18,7 +18,9 @@ apply plugin: 'groovy'
 apply plugin: 'io.jmix'
 
 group = 'io.jmix.messagetemplates'
-archivesBaseName = 'jmix-messagetemplates'
+base {
+    archivesName = 'jmix-messagetemplates'
+}
 
 dependencies {
     api project(':data')
@@ -26,6 +28,9 @@ dependencies {
 
     api 'org.freemarker:freemarker'
 
+    api 'org.springframework.boot:spring-boot-starter-freemarker'
+
+    testImplementation project(':framework-test-support')
     testImplementation 'org.spockframework:spock-core'
     testImplementation 'org.spockframework:spock-spring'
     testImplementation 'org.springframework.boot:spring-boot-test'
@@ -34,4 +39,5 @@ dependencies {
 
     testImplementation 'org.apache.commons:commons-dbcp2'
     testRuntimeOnly 'org.hsqldb:hsqldb'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }

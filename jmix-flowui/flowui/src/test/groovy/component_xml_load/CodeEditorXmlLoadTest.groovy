@@ -77,6 +77,7 @@ class CodeEditorXmlLoadTest extends FlowuiTestSpecification {
             minWidth == "80px"
             mode == CodeEditorMode.SQL
             printMarginColumn == 120
+            placeholder == "placeholder"
             readOnly
             required
             requiredMessage == "requiredMessageString"
@@ -86,6 +87,7 @@ class CodeEditorXmlLoadTest extends FlowuiTestSpecification {
             suggestOn == "{E}\\."
             tabIndex == 3
             textWrap
+            tabSize == 2
             !useSoftTabs
             theme == CodeEditorTheme.TERMINAL
             title == "titleString"

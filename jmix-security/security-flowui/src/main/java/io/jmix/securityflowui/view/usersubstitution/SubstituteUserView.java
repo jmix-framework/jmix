@@ -55,7 +55,7 @@ import java.util.List;
 public class SubstituteUserView extends StandardView {
 
     @ViewComponent
-    protected BaseAction applyAction;
+    protected BaseAction<?> applyAction;
     @ViewComponent
     protected TypedTextField<String> userFilter;
     @ViewComponent

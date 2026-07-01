@@ -30,21 +30,7 @@ interface StudioPickerActions {
                     "io.jmix.flowui.component.ListDataComponent"
             },
             documentationLink = "%VERSION%/flow-ui/actions/declarative-actions.html",
-            properties = {
-                    @StudioProperty(xmlAttribute = "actionVariant", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
-                            setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
-                            defaultValue = "DEFAULT", options = {"DEFAULT", "PRIMARY", "DANGER", "SUCCESS"}),
-                    @StudioProperty(xmlAttribute = "description", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = "enabled", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = "icon", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ICON,
-                            setParameterFqn = "com.vaadin.flow.component.icon.Icon", initialValue = "ABACUS", required = true),
-                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL,
-                            type = StudioPropertyType.COMPONENT_ID, required = true),
-                    @StudioProperty(xmlAttribute = "shortcutCombination", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.SHORTCUT_COMBINATION),
-                    @StudioProperty(xmlAttribute = "text", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = "visible", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN, defaultValue = "true")
-            }
-    )
+            propertyGroups = StudioActionPropertyGroups.BaseActionComponent.class)
     void baseAction();
 
     @StudioAction(
@@ -52,22 +38,7 @@ interface StudioPickerActions {
             description = "Clears the value of picker component",
             classFqn = "io.jmix.flowui.action.valuepicker.ValueClearAction",
             documentationLink = "%VERSION%/flow-ui/actions/value-picker-actions.html#value_clear",
-            properties = {
-                    @StudioProperty(xmlAttribute = "actionVariant", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
-                            setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
-                            defaultValue = "DEFAULT", options = {"DEFAULT", "PRIMARY", "DANGER", "SUCCESS"}),
-                    @StudioProperty(xmlAttribute = "description", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = "enabled", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = "icon", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ICON, defaultValue = "CLOSE",
-                            setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
-                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL,
-                            type = StudioPropertyType.COMPONENT_ID, required = true, initialValue = "valueClear"),
-                    @StudioProperty(xmlAttribute = "shortcutCombination", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.SHORTCUT_COMBINATION),
-                    @StudioProperty(xmlAttribute = "text", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING,
-                            defaultValue = "msg:///actions.valuePicker.clear.description"),
-                    @StudioProperty(xmlAttribute = "visible", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN, defaultValue = "true")
-            }
-    )
+            propertyGroups = StudioActionPropertyGroups.ValueClearActionComponent.class)
     void valueClearAction();
 
     @StudioAction(
@@ -81,22 +52,7 @@ interface StudioPickerActions {
                     "io.jmix.flowui.component.valuepicker.JmixMultiValuePicker"
             },
             documentationLink = "%VERSION%/flow-ui/actions/entity-picker-actions.html#entity_clear",
-            properties = {
-                    @StudioProperty(xmlAttribute = "actionVariant", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
-                            setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
-                            defaultValue = "DEFAULT", options = {"DEFAULT", "PRIMARY", "DANGER", "SUCCESS"}),
-                    @StudioProperty(xmlAttribute = "description", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = "enabled", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = "icon", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ICON, defaultValue = "CLOSE",
-                            setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
-                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL,
-                            type = StudioPropertyType.COMPONENT_ID, required = true, initialValue = "entityClear"),
-                    @StudioProperty(xmlAttribute = "shortcutCombination", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.SHORTCUT_COMBINATION),
-                    @StudioProperty(xmlAttribute = "text", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING,
-                            defaultValue = "msg:///actions.valuePicker.clear.description"),
-                    @StudioProperty(xmlAttribute = "visible", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN, defaultValue = "true")
-            }
-    )
+            propertyGroups = StudioActionPropertyGroups.EntityClearActionComponent.class)
     void entityClearAction();
 
     @StudioAction(
@@ -110,24 +66,10 @@ interface StudioPickerActions {
                     "io.jmix.flowui.component.valuepicker.JmixMultiValuePicker"
             },
             documentationLink = "%VERSION%/flow-ui/actions/entity-picker-actions.html#entity_lookup",
-            properties = {
-                    @StudioProperty(xmlAttribute = "actionVariant", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
-                            setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
-                            defaultValue = "DEFAULT", options = {"DEFAULT", "PRIMARY", "DANGER", "SUCCESS"}),
-                    @StudioProperty(xmlAttribute = "description", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = "enabled", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = "icon", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ICON, defaultValue = "ELLIPSIS_DOTS_H",
-                            setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
-                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL,
-                            type = StudioPropertyType.COMPONENT_ID, required = true, initialValue = "entityLookup"),
-                    @StudioProperty(xmlAttribute = "shortcutCombination", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.SHORTCUT_COMBINATION),
-                    @StudioProperty(xmlAttribute = "text", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING,
-                            defaultValue = "msg:///actions.entityPicker.lookup.description"),
-                    @StudioProperty(xmlAttribute = "visible", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN, defaultValue = "true")
-            },
+            propertyGroups = StudioActionPropertyGroups.EntityLookupActionComponent.class,
             items = {
-                    @StudioPropertiesItem(xmlAttribute = "viewId", type = StudioPropertyType.STRING),
-                    @StudioPropertiesItem(xmlAttribute = "viewClass", type = StudioPropertyType.STRING)
+                    @StudioPropertiesItem(xmlAttribute = StudioXmlAttributes.VIEW_ID, type = StudioPropertyType.STRING),
+                    @StudioPropertiesItem(xmlAttribute = StudioXmlAttributes.VIEW_CLASS, type = StudioPropertyType.STRING)
             }
     )
     void entityLookupAction();
@@ -143,24 +85,10 @@ interface StudioPickerActions {
                     "io.jmix.flowui.component.valuepicker.JmixMultiValuePicker"
             },
             documentationLink = "%VERSION%/flow-ui/actions/entity-picker-actions.html#entity_open",
-            properties = {
-                    @StudioProperty(xmlAttribute = "actionVariant", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
-                            setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
-                            defaultValue = "DEFAULT", options = {"DEFAULT", "PRIMARY", "DANGER", "SUCCESS"}),
-                    @StudioProperty(xmlAttribute = "description", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = "enabled", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = "icon", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ICON, defaultValue = "SEARCH",
-                            setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
-                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL,
-                            type = StudioPropertyType.COMPONENT_ID, required = true, initialValue = "entityOpen"),
-                    @StudioProperty(xmlAttribute = "shortcutCombination", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.SHORTCUT_COMBINATION),
-                    @StudioProperty(xmlAttribute = "text", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING,
-                            defaultValue = "msg:///actions.entityPicker.open.description"),
-                    @StudioProperty(xmlAttribute = "visible", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN, defaultValue = "true")
-            },
+            propertyGroups = StudioActionPropertyGroups.EntityOpenActionComponent.class,
             items = {
-                    @StudioPropertiesItem(xmlAttribute = "viewId", type = StudioPropertyType.STRING),
-                    @StudioPropertiesItem(xmlAttribute = "viewClass", type = StudioPropertyType.STRING)
+                    @StudioPropertiesItem(xmlAttribute = StudioXmlAttributes.VIEW_ID, type = StudioPropertyType.STRING),
+                    @StudioPropertiesItem(xmlAttribute = StudioXmlAttributes.VIEW_CLASS, type = StudioPropertyType.STRING)
             }
     )
     void entityOpenAction();
@@ -176,24 +104,10 @@ interface StudioPickerActions {
                     "io.jmix.flowui.component.valuepicker.JmixMultiValuePicker"
             },
             documentationLink = "%VERSION%/flow-ui/actions/entity-picker-actions.html#entity_openComposition",
-            properties = {
-                    @StudioProperty(xmlAttribute = "actionVariant", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
-                            setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
-                            defaultValue = "DEFAULT", options = {"DEFAULT", "PRIMARY", "DANGER", "SUCCESS"}),
-                    @StudioProperty(xmlAttribute = "description", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = "enabled", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = "icon", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ICON, defaultValue = "SEARCH",
-                            setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
-                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL,
-                            type = StudioPropertyType.COMPONENT_ID, required = true, initialValue = "entityOpenComposition"),
-                    @StudioProperty(xmlAttribute = "shortcutCombination", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.SHORTCUT_COMBINATION),
-                    @StudioProperty(xmlAttribute = "text", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING,
-                            defaultValue = "msg:///actions.entityPicker.open.description"),
-                    @StudioProperty(xmlAttribute = "visible", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN, defaultValue = "true")
-            },
+            propertyGroups = StudioActionPropertyGroups.EntityOpenCompositionActionComponent.class,
             items = {
-                    @StudioPropertiesItem(xmlAttribute = "viewId", type = StudioPropertyType.STRING),
-                    @StudioPropertiesItem(xmlAttribute = "viewClass", type = StudioPropertyType.STRING)
+                    @StudioPropertiesItem(xmlAttribute = StudioXmlAttributes.VIEW_ID, type = StudioPropertyType.STRING),
+                    @StudioPropertiesItem(xmlAttribute = StudioXmlAttributes.VIEW_CLASS, type = StudioPropertyType.STRING)
             }
     )
     void entityOpenCompositionAction();
@@ -204,30 +118,16 @@ interface StudioPickerActions {
             classFqn = "io.jmix.flowui.action.multivaluepicker.MultiValueSelectAction",
             target = {"io.jmix.flowui.component.valuepicker.JmixMultiValuePicker"},
             documentationLink = "%VERSION%/flow-ui/actions/value-picker-actions.html#multi_value_select",
-            properties = {
-                    @StudioProperty(xmlAttribute = "actionVariant", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ENUMERATION,
-                            setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
-                            defaultValue = "DEFAULT", options = {"DEFAULT", "PRIMARY", "DANGER", "SUCCESS"}),
-                    @StudioProperty(xmlAttribute = "description", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = "enabled", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = "icon", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.ICON, defaultValue = "ELLIPSIS_DOTS_H",
-                            setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
-                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL,
-                            type = StudioPropertyType.COMPONENT_ID, required = true, initialValue = "multiValueSelect"),
-                    @StudioProperty(xmlAttribute = "shortcutCombination", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.SHORTCUT_COMBINATION),
-                    @StudioProperty(xmlAttribute = "text", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.LOCALIZED_STRING,
-                            defaultValue = "msg:///actions.multiValuePicker.select.description"),
-                    @StudioProperty(xmlAttribute = "visible", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN, defaultValue = "true")
-            },
+            propertyGroups = StudioActionPropertyGroups.MultiValueSelectActionComponent.class,
             items = {
-                    @StudioPropertiesItem(xmlAttribute = "useComboBox", type = StudioPropertyType.BOOLEAN,
+                    @StudioPropertiesItem(xmlAttribute = StudioXmlAttributes.USE_COMBO_BOX, type = StudioPropertyType.BOOLEAN,
                             defaultValue = "false"),
-                    @StudioPropertiesItem(xmlAttribute = "javaClass", type = StudioPropertyType.STRING),
-                    @StudioPropertiesItem(xmlAttribute = "entityName", type = StudioPropertyType.STRING),
-                    @StudioPropertiesItem(xmlAttribute = "enumClass", type = StudioPropertyType.ENUM_CLASS),
-                    @StudioPropertiesItem(xmlAttribute = "lookupViewId", type = StudioPropertyType.STRING),
-                    @StudioPropertiesItem(xmlAttribute = "viewId", type = StudioPropertyType.STRING),
-                    @StudioPropertiesItem(xmlAttribute = "viewClass", type = StudioPropertyType.STRING)
+                    @StudioPropertiesItem(xmlAttribute = StudioXmlAttributes.JAVA_CLASS, type = StudioPropertyType.STRING),
+                    @StudioPropertiesItem(xmlAttribute = StudioXmlAttributes.ENTITY_NAME, type = StudioPropertyType.STRING),
+                    @StudioPropertiesItem(xmlAttribute = StudioXmlAttributes.ENUM_CLASS, type = StudioPropertyType.ENUM_CLASS),
+                    @StudioPropertiesItem(xmlAttribute = StudioXmlAttributes.LOOKUP_VIEW_ID, type = StudioPropertyType.STRING),
+                    @StudioPropertiesItem(xmlAttribute = StudioXmlAttributes.VIEW_ID, type = StudioPropertyType.STRING),
+                    @StudioPropertiesItem(xmlAttribute = StudioXmlAttributes.VIEW_CLASS, type = StudioPropertyType.STRING)
             }
     )
     void multiValueSelectAction();

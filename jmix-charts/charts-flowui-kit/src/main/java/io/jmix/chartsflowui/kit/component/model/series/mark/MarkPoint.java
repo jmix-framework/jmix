@@ -19,6 +19,7 @@ package io.jmix.chartsflowui.kit.component.model.series.mark;
 import io.jmix.chartsflowui.kit.component.model.shared.HasSymbols;
 import io.jmix.chartsflowui.kit.component.model.shared.ItemStyle;
 import io.jmix.chartsflowui.kit.component.model.shared.JsFunction;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,6 +60,7 @@ public class MarkPoint extends AbstractMark<MarkPoint>
 
         protected Boolean disabled;
 
+        @Nullable
         public Boolean getDisabled() {
             return disabled;
         }
@@ -114,6 +116,7 @@ public class MarkPoint extends AbstractMark<MarkPoint>
 
         protected Emphasis emphasis;
 
+        @Nullable
         public String getName() {
             return name;
         }
@@ -123,6 +126,7 @@ public class MarkPoint extends AbstractMark<MarkPoint>
             markAsDirty();
         }
 
+        @Nullable
         public PointDataType getType() {
             return type;
         }
@@ -132,6 +136,7 @@ public class MarkPoint extends AbstractMark<MarkPoint>
             markAsDirty();
         }
 
+        @Nullable
         public Integer getValueIndex() {
             return valueIndex;
         }
@@ -141,6 +146,7 @@ public class MarkPoint extends AbstractMark<MarkPoint>
             markAsDirty();
         }
 
+        @Nullable
         public String getValueDim() {
             return valueDim;
         }
@@ -150,6 +156,7 @@ public class MarkPoint extends AbstractMark<MarkPoint>
             markAsDirty();
         }
 
+        @Nullable
         public Coordinate getCoordinate() {
             return coordinate;
         }
@@ -164,6 +171,7 @@ public class MarkPoint extends AbstractMark<MarkPoint>
             markAsDirty();
         }
 
+        @Nullable
         public String getX() {
             return x;
         }
@@ -173,6 +181,7 @@ public class MarkPoint extends AbstractMark<MarkPoint>
             markAsDirty();
         }
 
+        @Nullable
         public String getY() {
             return y;
         }
@@ -182,6 +191,7 @@ public class MarkPoint extends AbstractMark<MarkPoint>
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public Symbol getSymbol() {
             return symbol;
@@ -199,6 +209,7 @@ public class MarkPoint extends AbstractMark<MarkPoint>
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public Integer getSymbolSize() {
             return symbolSize;
@@ -210,6 +221,7 @@ public class MarkPoint extends AbstractMark<MarkPoint>
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public JsFunction getSymbolSizeFunction() {
             return symbolSizeFunction;
@@ -227,6 +239,7 @@ public class MarkPoint extends AbstractMark<MarkPoint>
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public Integer getSymbolRotate() {
             return symbolRotate;
@@ -238,6 +251,7 @@ public class MarkPoint extends AbstractMark<MarkPoint>
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public Boolean getSymbolKeepAspect() {
             return symbolKeepAspect;
@@ -249,6 +263,7 @@ public class MarkPoint extends AbstractMark<MarkPoint>
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public String[] getSymbolOffset() {
             return symbolOffset;
@@ -260,6 +275,7 @@ public class MarkPoint extends AbstractMark<MarkPoint>
             markAsDirty();
         }
 
+        @Nullable
         public Emphasis getEmphasis() {
             return emphasis;
         }
@@ -320,7 +336,7 @@ public class MarkPoint extends AbstractMark<MarkPoint>
     }
 
     @Override
-    public HasSymbols.Symbol getSymbol() {
+    public HasSymbols.@Nullable Symbol getSymbol() {
         return symbol;
     }
 
@@ -336,6 +352,7 @@ public class MarkPoint extends AbstractMark<MarkPoint>
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getSymbolSize() {
         return symbolSize;
@@ -347,6 +364,7 @@ public class MarkPoint extends AbstractMark<MarkPoint>
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public JsFunction getSymbolSizeFunction() {
         return symbolSizeFunction;
@@ -364,6 +382,7 @@ public class MarkPoint extends AbstractMark<MarkPoint>
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getSymbolRotate() {
         return symbolRotate;
@@ -375,6 +394,7 @@ public class MarkPoint extends AbstractMark<MarkPoint>
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Boolean getSymbolKeepAspect() {
         return symbolKeepAspect;
@@ -386,6 +406,7 @@ public class MarkPoint extends AbstractMark<MarkPoint>
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public String[] getSymbolOffset() {
         return symbolOffset;
@@ -397,6 +418,7 @@ public class MarkPoint extends AbstractMark<MarkPoint>
         markAsDirty();
     }
 
+    @Nullable
     public ItemStyle getItemStyle() {
         return itemStyle;
     }
@@ -406,6 +428,7 @@ public class MarkPoint extends AbstractMark<MarkPoint>
         markAsDirty();
     }
 
+    @Nullable
     public Emphasis getEmphasis() {
         return emphasis;
     }
@@ -415,6 +438,7 @@ public class MarkPoint extends AbstractMark<MarkPoint>
         markAsDirty();
     }
 
+    @Nullable
     public Blur getBlur() {
         return blur;
     }
@@ -424,6 +448,7 @@ public class MarkPoint extends AbstractMark<MarkPoint>
         markAsDirty();
     }
 
+    @Nullable
     public List<Point> getData() {
         return data;
     }

@@ -31,6 +31,7 @@ import io.jmix.search.index.impl.IndexStateRegistry;
 import io.jmix.search.index.impl.dynattr.DynamicAttributesSupport;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,6 +41,7 @@ import java.util.*;
 /**
  * Implementation for Elasticsearch
  */
+@NullMarked
 public class ElasticsearchEntityIndexer extends BaseEntityIndexer {
 
     private static final Logger log = LoggerFactory.getLogger(ElasticsearchEntityIndexer.class);

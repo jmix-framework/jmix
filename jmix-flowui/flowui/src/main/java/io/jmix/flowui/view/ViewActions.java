@@ -18,9 +18,11 @@ package io.jmix.flowui.view;
 
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.HasActions;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Interface providing methods for managing {@link Action actions} in a {@link View} context.
  */
+@NullMarked
 public interface ViewActions extends HasActions {
 }

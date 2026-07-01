@@ -27,13 +27,13 @@
     </actions>
     <layout alignItems="STRETCH"
             padding="false" spacing="false"
-            expand="usersListWrapper">
-
+            expand="usersListWrapper"
+            classNames="substitute-user-view">
         <textField id="userFilter"
                    datatype="string"
                    placeholder="msg://userFilter.placeholder"
                    width="100%" maxWidth="30em"
-                   classNames="pt-m px-m box-border"
+                   classNames="user-filter"
                    clearButtonVisible="true">
             <prefix>
                 <icon icon="SEARCH"/>
@@ -46,7 +46,7 @@
         </vbox>
 
         <hbox id="actionsBox"
-              classNames="px-m py-s bg-contrast-5">
+              classNames="footer-panel">
             <button id="applyButton" action="applyAction"/>
             <button id="cancelButton" action="cancelAction"/>
         </hbox>

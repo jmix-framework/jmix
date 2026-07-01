@@ -16,7 +16,7 @@
 
 package io.jmix.chartsflowui.kit.component;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Objects;
 

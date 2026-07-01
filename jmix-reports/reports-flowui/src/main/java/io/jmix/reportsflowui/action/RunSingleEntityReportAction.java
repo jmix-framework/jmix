@@ -26,7 +26,7 @@ import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.view.StandardDetailView;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 @ActionType(RunSingleEntityReportAction.ID)
 public class RunSingleEntityReportAction<E> extends ViewAction<DetailCloseAction<E>, StandardDetailView<E>> {

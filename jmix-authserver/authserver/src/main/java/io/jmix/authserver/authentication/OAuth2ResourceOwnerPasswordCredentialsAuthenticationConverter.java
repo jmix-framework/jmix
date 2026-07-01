@@ -1,9 +1,24 @@
+/*
+ * Copyright 2026 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.jmix.authserver.authentication;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.OAuth2Error;
 import org.springframework.security.oauth2.core.OAuth2ErrorCodes;
@@ -32,27 +47,27 @@ public class OAuth2ResourceOwnerPasswordCredentialsAuthenticationConverter imple
 
         // grant_type (REQUIRED)
         String grantType = parameters.getFirst(OAuth2ParameterNames.GRANT_TYPE);
-        if (!AuthorizationGrantType.PASSWORD.getValue().equals(grantType)) {
+        if (!PasswordAuthorizationGrantTypeHelper.PASSWORD_GRANT_TYPE.getValue().equals(grantType)) {
             return null;
         }
 
         // username (REQUIRED)
-        String username = parameters.getFirst(OAuth2ParameterNames.USERNAME);
+        String username = parameters.getFirst(PasswordAuthorizationGrantTypeHelper.USERNAME_PARAMETER_NAME);
         if (!StringUtils.hasText(username) ||
-                parameters.get(OAuth2ParameterNames.USERNAME).size() != 1) {
+                parameters.get(PasswordAuthorizationGrantTypeHelper.USERNAME_PARAMETER_NAME).size() != 1) {
             throwError(
                     OAuth2ErrorCodes.INVALID_REQUEST,
-                    OAuth2ParameterNames.USERNAME,
+                    PasswordAuthorizationGrantTypeHelper.USERNAME_PARAMETER_NAME,
                     ACCESS_TOKEN_REQUEST_ERROR_URI);
         }
 
         // password (REQUIRED)
-        String password = parameters.getFirst(OAuth2ParameterNames.PASSWORD);
+        String password = parameters.getFirst(PasswordAuthorizationGrantTypeHelper.PASSWORD_PARAMETER_NAME);
         if (!StringUtils.hasText(password) ||
-                parameters.get(OAuth2ParameterNames.PASSWORD).size() != 1) {
+                parameters.get(PasswordAuthorizationGrantTypeHelper.PASSWORD_PARAMETER_NAME).size() != 1) {
             throwError(
                     OAuth2ErrorCodes.INVALID_REQUEST,
-                    OAuth2ParameterNames.PASSWORD,
+                    PasswordAuthorizationGrantTypeHelper.PASSWORD_PARAMETER_NAME,
                     ACCESS_TOKEN_REQUEST_ERROR_URI);
         }
 
@@ -77,8 +92,8 @@ public class OAuth2ResourceOwnerPasswordCredentialsAuthenticationConverter imple
         request.getParameterMap().forEach((key, value) -> {
                     if (!key.equals(OAuth2ParameterNames.GRANT_TYPE) &&
                             !key.equals(OAuth2ParameterNames.SCOPE) &&
-                            !key.equals(OAuth2ParameterNames.USERNAME) &&
-                            !key.equals(OAuth2ParameterNames.PASSWORD)) {
+                            !key.equals(PasswordAuthorizationGrantTypeHelper.USERNAME_PARAMETER_NAME) &&
+                            !key.equals(PasswordAuthorizationGrantTypeHelper.PASSWORD_PARAMETER_NAME)) {
                         if (value.length > 0) {
                             additionalParameters.put(key, value[0]);
                         }

@@ -25,7 +25,7 @@
                 <responsiveStep minWidth="0" columns="1"/>
             </responsiveSteps>
         </formLayout>
-        <hbox classNames="buttons-panel">
+        <hbox wrap="true" width="100%">
             <button id="resendEmailBtn" text="msg://resendMessageView.resendEmailBtn.text" icon="ENVELOPE"
                     themeNames="primary"/>
         </hbox>

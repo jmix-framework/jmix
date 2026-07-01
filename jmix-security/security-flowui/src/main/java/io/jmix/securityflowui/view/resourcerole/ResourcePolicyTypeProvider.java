@@ -19,12 +19,14 @@ package io.jmix.securityflowui.view.resourcerole;
 import io.jmix.flowui.view.StandardDetailView;
 import io.jmix.security.model.ResourcePolicyModel;
 import io.jmix.securityflowui.view.resourcepolicy.MultipleResourcePolicyModelCreateView;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Interface for supporting additional resource policy types (e.g. that come from add-ons) in the resource role details
  * view. Implementations of this interface provide necessary information for creating and editing resource policies of
  * specific types.
  */
+@NullMarked
 public interface ResourcePolicyTypeProvider {
 
     /**

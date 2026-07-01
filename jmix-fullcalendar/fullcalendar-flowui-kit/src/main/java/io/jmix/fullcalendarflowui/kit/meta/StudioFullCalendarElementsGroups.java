@@ -18,13 +18,14 @@ package io.jmix.fullcalendarflowui.kit.meta;
 
 import io.jmix.flowui.kit.meta.StudioElementsGroup;
 import io.jmix.flowui.kit.meta.StudioUiKit;
+import io.jmix.flowui.kit.meta.StudioXmlElements;
 
 @StudioUiKit
 public interface StudioFullCalendarElementsGroups {
 
     @StudioElementsGroup(
             name = "Data Providers",
-            xmlElement = "dataProviders",
+            xmlElement = StudioXmlElements.DATA_PROVIDERS,
             xmlnsAlias = "calendar",
             xmlns = "http://jmix.io/schema/fullcalendar/ui",
             elementClassFqn = "io.jmix.fullcalendarflowui.component.data.CalendarDataProvider",
@@ -36,7 +37,7 @@ public interface StudioFullCalendarElementsGroups {
 
     @StudioElementsGroup(
             name = "Custom Display Modes",
-            xmlElement = "customDisplayModes",
+            xmlElement = StudioXmlElements.CUSTOM_DISPLAY_MODES,
             xmlnsAlias = "calendar",
             xmlns = "http://jmix.io/schema/fullcalendar/ui",
             elementClassFqn = "io.jmix.fullcalendarflowui.kit.component.model.CustomCalendarDisplayMode",
@@ -48,7 +49,7 @@ public interface StudioFullCalendarElementsGroups {
 
     @StudioElementsGroup(
             name = "Properties",
-            xmlElement = "properties",
+            xmlElement = StudioXmlElements.PROPERTIES,
             xmlnsAlias = "calendar",
             xmlns = "http://jmix.io/schema/fullcalendar/ui",
             elementClassFqn = "io.jmix.fullcalendarflowui.kit.meta.group.StudioFullCalendarProperties",
@@ -73,7 +74,7 @@ public interface StudioFullCalendarElementsGroups {
 
     @StudioElementsGroup(
             name = "Business Hours",
-            xmlElement = "businessHours",
+            xmlElement = StudioXmlElements.BUSINESS_HOURS,
             xmlnsAlias = "calendar",
             xmlns = "http://jmix.io/schema/fullcalendar/ui",
             elementClassFqn = "io.jmix.fullcalendarflowui.component.model.CalendarBusinessHours",
@@ -85,7 +86,7 @@ public interface StudioFullCalendarElementsGroups {
 
     @StudioElementsGroup(
             name = "Hidden Days",
-            xmlElement = "hiddenDays",
+            xmlElement = StudioXmlElements.HIDDEN_DAYS,
             xmlnsAlias = "calendar",
             xmlns = "http://jmix.io/schema/fullcalendar/ui",
             elementClassFqn = "io.jmix.fullcalendarflowui.kit.meta.group.StudioFullCalendarHiddenDays",

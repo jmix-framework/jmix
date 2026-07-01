@@ -14,7 +14,4 @@
  * limitations under the License.
  */
 
-@NonNullApi
 package io.jmix.search.index.mapping.strategy;
-
-import org.springframework.lang.NonNullApi;

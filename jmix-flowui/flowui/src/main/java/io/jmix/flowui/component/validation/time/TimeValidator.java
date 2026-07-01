@@ -16,9 +16,12 @@
 
 package io.jmix.flowui.component.validation.time;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Base interface for date/time validators which contains all restrictions.
  */
+@NullMarked
 public interface TimeValidator {
 
     /**

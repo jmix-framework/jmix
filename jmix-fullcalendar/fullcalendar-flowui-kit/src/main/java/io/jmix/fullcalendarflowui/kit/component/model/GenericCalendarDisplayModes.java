@@ -17,6 +17,7 @@
 package io.jmix.fullcalendarflowui.kit.component.model;
 
 import io.jmix.fullcalendarflowui.kit.component.JmixFullCalendar;
+import org.jspecify.annotations.Nullable;
 
 import java.time.LocalDate;
 
@@ -42,6 +43,7 @@ public enum GenericCalendarDisplayModes implements CalendarDisplayMode {
         return id;
     }
 
+    @Nullable
     public static GenericCalendarDisplayModes fromId(String id) {
         for (GenericCalendarDisplayModes mode : GenericCalendarDisplayModes.values()) {
             if (mode.getId().equals(id)) {

@@ -16,13 +16,15 @@
 
 package io.jmix.flowui.view;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The interface of views that display and may change the instance of an entity.
  *
  * @param <E> type of entity
  */
+@NullMarked
 public interface HasEditedEntity<E> {
 
     /**

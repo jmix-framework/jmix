@@ -21,9 +21,12 @@ import io.jmix.core.metamodel.model.MetaProperty;
 
 import java.util.Set;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Interface to provide additional properties of MetaClass, e.g. dynamic attributes.
  */
+@NullMarked
 public interface MetadataExtension {
 
     /**

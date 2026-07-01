@@ -15,8 +15,6 @@
  */
 
 @Internal
-@NonNullApi
 package io.jmix.securityflowui.impl.role.extractor;
 
 import io.jmix.core.annotation.Internal;
-import org.springframework.lang.NonNullApi;

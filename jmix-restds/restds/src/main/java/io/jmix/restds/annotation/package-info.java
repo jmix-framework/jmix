@@ -14,7 +14,4 @@
  * limitations under the License.
  */
 
-@NonNullApi
 package io.jmix.restds.annotation;
-
-import org.springframework.lang.NonNullApi;

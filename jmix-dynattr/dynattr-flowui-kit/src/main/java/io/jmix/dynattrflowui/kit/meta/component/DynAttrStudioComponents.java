@@ -16,9 +16,9 @@
 package io.jmix.dynattrflowui.kit.meta.component;
 
 import io.jmix.flowui.kit.meta.StudioComponent;
-import io.jmix.flowui.kit.meta.StudioProperty;
-import io.jmix.flowui.kit.meta.StudioPropertyType;
 import io.jmix.flowui.kit.meta.StudioUiKit;
+import io.jmix.flowui.kit.meta.StudioPropertyGroups;
+import io.jmix.flowui.kit.meta.StudioXmlElements;
 
 @StudioUiKit
 public interface DynAttrStudioComponents {
@@ -27,15 +27,10 @@ public interface DynAttrStudioComponents {
             name = "DynamicAttributesPanel",
             classFqn = "io.jmix.dynattrflowui.panel.DynamicAttributesPanel",
             category = "Components",
-            xmlElement = "dynamicAttributesPanel",
+            xmlElement = StudioXmlElements.DYNAMIC_ATTRIBUTES_PANEL,
             xmlns = "http://jmix.io/schema/dynattr/flowui",
             xmlnsAlias = "dynattr",
             icon = "io/jmix/dynattrflowui/icon/component/dynamicAttributesPanel.svg",
-            properties = {
-                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL,  type = StudioPropertyType.COMPONENT_ID),
-                    @StudioProperty(xmlAttribute = "dataContainer", category = StudioProperty.Category.DATA_BINDING, type = StudioPropertyType.DATA_CONTAINER_REF, required = true),
-                    @StudioProperty(xmlAttribute = "fieldWidth", type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = "categoryFieldVisible", type = StudioPropertyType.BOOLEAN),
-            })
+            propertyGroups = DynAttrStudioPropertyGroups.DynamicAttributesPanelComponent.class)
     void dynamicAttributesPanel();
 }

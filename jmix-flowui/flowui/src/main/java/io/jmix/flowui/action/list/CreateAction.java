@@ -39,7 +39,7 @@ import io.jmix.flowui.view.DialogWindow.AfterCloseEvent;
 import io.jmix.flowui.view.builder.DetailWindowBuilder;
 import io.jmix.flowui.view.navigation.DetailViewNavigator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -278,7 +278,7 @@ public class CreateAction<E> extends ListDataComponentAction<CreateAction<E>, E>
 
     @Autowired
     protected void setUiComponentProperties(UiComponentProperties uiComponentProperties) {
-        this.shortcutCombination = KeyCombination.create(uiComponentProperties.getGridCreateShortcut());
+        setShortcutCombination(KeyCombination.create(uiComponentProperties.getGridCreateShortcut()));
     }
 
     @Autowired

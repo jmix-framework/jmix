@@ -18,6 +18,7 @@ package io.jmix.chartsflowui.kit.component.model.axis;
 
 import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
 import io.jmix.chartsflowui.kit.component.model.shared.InnerTooltip;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Polar coordinate which can be used in scatter and line chart. Every polar coordinate
@@ -40,6 +41,7 @@ public class Polar extends ChartObservableObject {
 
     protected InnerTooltip tooltip;
 
+    @Nullable
     public String getId() {
         return id;
     }
@@ -49,6 +51,7 @@ public class Polar extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public Integer getZLevel() {
         return zLevel;
     }
@@ -58,6 +61,7 @@ public class Polar extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public Integer getZ() {
         return z;
     }
@@ -67,6 +71,7 @@ public class Polar extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public String[] getCenter() {
         return center;
     }
@@ -76,6 +81,7 @@ public class Polar extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public String[] getRadius() {
         return radius;
     }
@@ -85,6 +91,7 @@ public class Polar extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public InnerTooltip getTooltip() {
         return tooltip;
     }

@@ -17,6 +17,7 @@
 package io.jmix.chartsflowui.kit.component.model;
 
 import io.jmix.chartsflowui.kit.component.model.shared.Color;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A component that has shadow.
@@ -28,6 +29,7 @@ public interface HasShadow<T> {
     /**
      * @return depth of shadow blur
      */
+    @Nullable
     Integer getShadowBlur();
 
     /**
@@ -51,6 +53,7 @@ public interface HasShadow<T> {
     /**
      * @return shadow color
      */
+    @Nullable
     Color getShadowColor();
 
     /**
@@ -74,6 +77,7 @@ public interface HasShadow<T> {
     /**
      * @return horizontal offset for shadow in pixels
      */
+    @Nullable
     Integer getShadowOffsetX();
 
     /**
@@ -97,6 +101,7 @@ public interface HasShadow<T> {
     /**
      * @return vertical offset for shadow in pixels
      */
+    @Nullable
     Integer getShadowOffsetY();
 
     /**

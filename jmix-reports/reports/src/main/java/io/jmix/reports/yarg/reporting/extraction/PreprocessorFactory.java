@@ -17,6 +17,7 @@
 package io.jmix.reports.yarg.reporting.extraction;
 
 import io.jmix.reports.yarg.loaders.QueryLoaderPreprocessor;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * <p>This interface implementation should holding relation between name of data loader type (<b>ex: sql</b>)
@@ -26,6 +27,7 @@ import io.jmix.reports.yarg.loaders.QueryLoaderPreprocessor;
  *
  * <p>The default implementation is <b>io.jmix.reports.yarg.reporting.extraction.DefaultPreprocessorFactory</b></p>
  */
+@NullMarked
 public interface PreprocessorFactory {
     /**
      * Method for registering query preprocessing by loader type

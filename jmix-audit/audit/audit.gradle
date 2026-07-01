@@ -18,21 +18,27 @@ apply plugin: 'groovy'
 apply plugin: 'io.jmix'
 
 group = 'io.jmix.audit'
-archivesBaseName = 'jmix-audit'
+base {
+    archivesName = 'jmix-audit'
+}
 
 dependencies {
     api project(':data')
     api project(':eclipselink')
-    api 'com.thoughtworks.xstream:xstream'
 
     implementation 'org.springframework:spring-orm'
     implementation 'org.springframework:spring-tx'
     implementation 'org.eclipse.persistence:org.eclipse.persistence.extension'
 
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
     testImplementation 'org.springframework:spring-test'
     testImplementation 'org.spockframework:spock-core'
     testImplementation 'org.spockframework:spock-spring'
     testImplementation project(':dynattr')
+    testImplementation project(':framework-test-support')
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
     testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'
     testRuntimeOnly 'org.slf4j:slf4j-simple'
     testRuntimeOnly 'org.hsqldb:hsqldb'

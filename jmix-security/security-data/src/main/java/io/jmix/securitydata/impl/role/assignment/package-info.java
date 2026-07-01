@@ -15,8 +15,6 @@
  */
 
 @Internal
-@NonNullApi
 package io.jmix.securitydata.impl.role.assignment;
 
 import io.jmix.core.annotation.Internal;
-import org.springframework.lang.NonNullApi;

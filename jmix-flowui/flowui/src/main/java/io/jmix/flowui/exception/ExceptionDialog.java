@@ -19,7 +19,6 @@ package io.jmix.flowui.exception;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.dialog.DialogVariant;
 import com.vaadin.flow.component.notification.Notification;
@@ -38,6 +37,7 @@ import io.jmix.flowui.fragment.FragmentDescriptor;
 import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.icon.JmixFontIcon;
+import io.jmix.flowui.theme.StyleUtility;
 import io.jmix.flowui.view.ViewRegistry;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.ComponentLoader.FragmentContext;
@@ -150,7 +150,7 @@ public class ExceptionDialog implements InitializingBean {
         dialog.setModal(exceptionDialogModal);
         dialog.setWidth(WIDTH);
 
-        dialog.addThemeVariants(DialogVariant.LUMO_NO_PADDING);
+        dialog.addThemeVariants(DialogVariant.NO_PADDING);
 
         initLayout(dialog);
     }
@@ -173,12 +173,7 @@ public class ExceptionDialog implements InitializingBean {
     protected Button createHeaderCloseButton() {
         JmixButton closeButton = uiComponents.create(JmixButton.class);
         closeButton.setIcon(icons.get(JmixFontIcon.CLOSE_SMALL));
-        closeButton.addThemeVariants(
-                ButtonVariant.LUMO_TERTIARY_INLINE,
-                ButtonVariant.LUMO_ICON,
-                ButtonVariant.LUMO_CONTRAST
-        );
-        closeButton.setClassName(HEADER_CLOSE_BUTTON_CLASS_NAME);
+        closeButton.addClassNames(HEADER_CLOSE_BUTTON_CLASS_NAME, StyleUtility.Button.DIALOG_CLOSE_BUTTON);
         closeButton.setTitle(messages.getMessage("exceptionDialog.header.closeButton.description"));
         closeButton.addClickListener(this::onHeaderCloseButtonClick);
         return closeButton;
@@ -217,16 +212,15 @@ public class ExceptionDialog implements InitializingBean {
     protected HorizontalLayout createButtonsPanel() {
         HorizontalLayout layout = new HorizontalLayout();
         layout.setWidthFull();
-        layout.add(createCloseButton());
+        layout.addToStart(createCloseButton());
 
         if (isExceptionDetailsPermitted()) {
             detailsButton = createDetailsButton();
-            layout.add(detailsButton);
+            layout.addToStart(detailsButton);
         }
 
         copyButton = createCopyButton();
-        copyButton.getStyle().set("margin-inline-start", "auto");
-        layout.add(copyButton);
+        layout.addToEnd(copyButton);
         return layout;
     }
 

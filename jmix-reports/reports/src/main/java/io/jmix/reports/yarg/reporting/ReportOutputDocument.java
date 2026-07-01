@@ -17,6 +17,7 @@ package io.jmix.reports.yarg.reporting;
 
 import io.jmix.reports.yarg.structure.Report;
 import io.jmix.reports.yarg.structure.ReportOutputType;
+import org.jspecify.annotations.NullMarked;
 
 import java.io.Serializable;
 
@@ -24,6 +25,7 @@ import java.io.Serializable;
  * This interface describes reporting result object.
  * Generally returned by io.jmix.reports.yarg.reporting.ReportingAPI
  */
+@NullMarked
 public interface ReportOutputDocument extends Serializable {
 
     Report getReport();

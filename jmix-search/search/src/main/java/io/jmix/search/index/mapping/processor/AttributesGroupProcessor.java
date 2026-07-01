@@ -20,6 +20,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.search.index.mapping.AttributesGroupConfiguration;
 import io.jmix.search.index.mapping.ExtendedSearchSettings;
 import io.jmix.search.index.mapping.MappingFieldDescriptor;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.List;
 
@@ -32,6 +33,7 @@ import java.util.List;
  *
  * @param <G> the type of {@link AttributesGroupConfiguration} processed by this processor
  */
+@NullMarked
 public interface AttributesGroupProcessor<G extends AttributesGroupConfiguration> {
 
     Class<G> getConfigurationClass();

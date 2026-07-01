@@ -19,11 +19,14 @@ package io.jmix.core.usersubstitution;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Date;
+
+import org.jspecify.annotations.NullMarked;
 import java.util.List;
 
 /**
  * Interface is used for getting possible substituted users and for performing the substitution operation.
  */
+@NullMarked
 public interface UserSubstitutionManager {
 
     /**

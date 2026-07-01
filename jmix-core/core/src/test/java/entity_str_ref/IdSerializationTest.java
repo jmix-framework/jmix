@@ -79,7 +79,7 @@ public class IdSerializationTest {
         entity.setId(key);
 
         String strRef = idSerialization.idToString(Id.of(entity));
-        assertEquals("app_CompositeKeyEntity.{\"entityId\":10,\"tenant\":\"abc\"}", strRef);
+        assertEquals("app_CompositeKeyEntity.{\"tenant\":\"abc\",\"entityId\":10}", strRef);
 
         Id<CompositeKeyEntity> entityId = idSerialization.stringToId(strRef);
         assertEquals(CompositeKeyEntity.class, entityId.getEntityClass());

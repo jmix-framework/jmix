@@ -16,7 +16,6 @@
 
 package io.jmix.masquerade.component;
 
-import com.codeborne.selenide.CheckResult;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 import com.google.common.base.Strings;
@@ -53,7 +52,7 @@ public abstract class AbstractMultiSelectComboBox<T extends AbstractMultiSelectC
     @Override
     protected ComboBoxOverlay<T> getItemsOverlayElement() {
         return new ComboBoxOverlay<>(
-                TagNames.MULTI_SELECT_COMBO_BOX_OVERLAY,
+                byChained(by, TagNames.MULTI_SELECT_COMBO_BOX_OVERLAY),
                 (T) this,
                 TagNames.MULTI_SELECT_COMBO_BOX_ITEM
         );
@@ -92,35 +91,34 @@ public abstract class AbstractMultiSelectComboBox<T extends AbstractMultiSelectC
     }
 
     @Override
-    public CheckResult check(SpecificCondition condition) {
+    public SpecificCheck resolve(SpecificCondition condition) {
         if (condition instanceof SelectedItems selectedItemsCondition) {
             List<String> currentValue = getValue();
-            return new CheckResult(
+            return SpecificCheck.of(
                     CollectionUtils.isEqualCollection(currentValue, selectedItemsCondition.getValue()), currentValue
             );
         } else if (condition instanceof SelectedItemsContains selectedItemsContainsCondition) {
             List<String> currentValue = getValue();
-            return new CheckResult(
+            return SpecificCheck.of(
                     Sets.newHashSet(currentValue).containsAll(selectedItemsContainsCondition.getValue()),
                     currentValue
             );
         } else if (condition instanceof SelectedItemsCount selectedItemsCountCondition) {
             List<String> currentValue = getValue();
-            return new CheckResult(
+            return SpecificCheck.of(
                     currentValue.size() == selectedItemsCountCondition.getValue(),
                     currentValue.size()
             );
         } else if (condition instanceof Label labelCondition) {
             String expectedValue = Strings.nullToEmpty(labelCondition.getValue());
 
-            getLabelDelegate()
-                    .shouldBe(VISIBLE)
-                    .shouldHave(Condition.exactText(expectedValue));
+            return SpecificCheck.of(
+                    getLabelDelegate().shouldBe(VISIBLE),
+                    Condition.exactText(expectedValue)
+            );
         } else {
             throw new UnsupportedConditionException(condition, this);
         }
-
-        return CheckResult.accepted();
     }
 
     protected void clearValue() {
@@ -176,7 +174,7 @@ public abstract class AbstractMultiSelectComboBox<T extends AbstractMultiSelectC
             @Override
             public SelenideElement next() {
                 SelenideElement item = getMultiSelectComboBoxItemElementByIndex(overlayBy, index++);
-                item.sendKeys(Keys.ARROW_DOWN);
+                item.scrollIntoView(true);
                 return item;
             }
 

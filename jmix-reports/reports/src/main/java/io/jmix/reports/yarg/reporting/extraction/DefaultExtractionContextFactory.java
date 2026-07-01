@@ -19,12 +19,15 @@ package io.jmix.reports.yarg.reporting.extraction;
 import io.jmix.reports.yarg.reporting.DataExtractor;
 import io.jmix.reports.yarg.structure.BandData;
 import io.jmix.reports.yarg.structure.ReportBand;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Map;
 
 /**
  * Default extraction context implementation
  */
+@NullMarked
 public class DefaultExtractionContextFactory implements ExtractionContextFactory {
 
     protected DataExtractor dataExtractor;
@@ -34,7 +37,7 @@ public class DefaultExtractionContextFactory implements ExtractionContextFactory
     }
 
     @Override
-    public ExtractionContext context(ReportBand band, BandData parentBand, Map<String, Object> params) {
+    public ExtractionContext context(ReportBand band, @Nullable BandData parentBand, Map<String, Object> params) {
         return new ExtractionContextImpl(dataExtractor, band, parentBand, params);
     }
 }

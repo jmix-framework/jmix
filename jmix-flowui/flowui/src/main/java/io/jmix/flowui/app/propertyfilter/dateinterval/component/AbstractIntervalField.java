@@ -20,13 +20,12 @@ import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.customfield.CustomField;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.select.SelectVariant;
 import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.shared.Registration;
-import com.vaadin.flow.theme.lumo.LumoUtility;
 import io.jmix.core.Messages;
 import io.jmix.core.annotation.Internal;
 import io.jmix.flowui.Dialogs;
@@ -45,6 +44,7 @@ import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.icon.JmixFontIcon;
+import io.jmix.flowui.theme.StyleUtility;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
@@ -106,7 +106,7 @@ public abstract class AbstractIntervalField extends CustomField<DateInterval>
 
     protected void initRoot() {
         root = createLayout();
-        root.addClassName(LumoUtility.FlexWrap.WRAP);
+        root.setWrap(true);
 
         fieldBox = createLayout();
         root.add(fieldBox);
@@ -119,7 +119,7 @@ public abstract class AbstractIntervalField extends CustomField<DateInterval>
         HorizontalLayout layout = uiComponents.create(HorizontalLayout.class);
 
         layout.setPadding(false);
-        layout.addClassNames(LumoUtility.AlignItems.BASELINE);
+        layout.setAlignItems(FlexComponent.Alignment.BASELINE);
         return layout;
     }
 
@@ -132,7 +132,7 @@ public abstract class AbstractIntervalField extends CustomField<DateInterval>
                 messages.getMessage(getClass(), "NextLastIntervalField.numberField.requiredMessage"));
         numberField.setRequired(true);
 
-        numberField.addThemeVariants(TextFieldVariant.LUMO_ALIGN_CENTER);
+        numberField.addThemeVariants(TextFieldVariant.ALIGN_CENTER);
         numberField.setWidth("5em");
 
         //noinspection unchecked
@@ -154,7 +154,7 @@ public abstract class AbstractIntervalField extends CustomField<DateInterval>
         // which in this case is the default width
         timeUnitSelect.setMinWidth("1px");
 
-        timeUnitSelect.addThemeVariants(SelectVariant.LUMO_ALIGN_CENTER);
+        timeUnitSelect.addThemeVariants(SelectVariant.ALIGN_CENTER);
 
         fieldBox.add(timeUnitSelect);
         fieldBox.setFlexGrow(1D, timeUnitSelect);
@@ -168,7 +168,7 @@ public abstract class AbstractIntervalField extends CustomField<DateInterval>
         HorizontalLayout includingCurrentBox = uiComponents.create(HorizontalLayout.class);
         includingCurrentBox.setPadding(false);
         includingCurrentBox.setSpacing(false);
-        includingCurrentBox.addClassNames(LumoUtility.AlignItems.BASELINE);
+        includingCurrentBox.setAlignItems(FlexComponent.Alignment.BASELINE);
 
         includingCurrentCheckbox = uiComponents.create(JmixCheckbox.class);
         includingCurrentCheckbox.setLabel(messages.getMessage(getClass(),
@@ -184,7 +184,7 @@ public abstract class AbstractIntervalField extends CustomField<DateInterval>
     protected void initIncludingCurrentHelperBtn(HorizontalLayout includingCurrentBox) {
         includingCurrentHelperBtn = uiComponents.create(JmixButton.class);
         includingCurrentHelperBtn.setIcon(icons.get(JmixFontIcon.INTERVAL_FIELD_HELP));
-        includingCurrentHelperBtn.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
+        includingCurrentHelperBtn.setClassName(StyleUtility.Button.LINK_BUTTON);
 
         includingCurrentHelperBtn.addClickListener(this::onIncludingCurrentHelperBtnClick);
 

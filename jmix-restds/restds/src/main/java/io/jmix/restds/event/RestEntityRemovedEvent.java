@@ -18,7 +18,7 @@ package io.jmix.restds.event;
 
 import io.jmix.core.event.AbstractEntityEvent;
 import io.jmix.core.metamodel.model.MetaClass;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A Spring application event which is sent after the entity is removed from the REST data store.

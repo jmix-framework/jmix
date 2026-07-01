@@ -19,6 +19,9 @@ package io.jmix.security.impl.role.builder;
 import io.jmix.security.model.ResourceRole;
 import io.jmix.security.model.RowLevelRole;
 
+import org.jspecify.annotations.NullMarked;
+
+@NullMarked
 public interface AnnotatedRoleBuilder {
 
     ResourceRole createResourceRole(String className);

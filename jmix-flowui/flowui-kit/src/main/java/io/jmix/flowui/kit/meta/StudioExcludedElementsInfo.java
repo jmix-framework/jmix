@@ -19,6 +19,7 @@ package io.jmix.flowui.kit.meta;
 /**
  * Description of excluded elements.
  */
+@StudioAPI
 public @interface StudioExcludedElementsInfo {
 
     /**

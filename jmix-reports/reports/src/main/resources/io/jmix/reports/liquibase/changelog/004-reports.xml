@@ -26,6 +26,8 @@
     </changeSet>
 
     <changeSet id="1-mysql" author="reports" dbms="mysql,mariadb">
+          <validCheckSum>9:ff4f3c04be8fe2f89581ce00095ddc76</validCheckSum>
+
         <dropNotNullConstraint tableName="REPORT_REPORT" columnName="GROUP_ID" columnDataType="${uuid.type}"/>
     </changeSet>
 

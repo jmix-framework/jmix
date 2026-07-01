@@ -20,7 +20,6 @@ import com.google.common.base.Strings;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.notification.Notification.Position;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeLeaveEvent;
 import com.vaadin.flow.router.BeforeLeaveEvent.ContinueNavigationAction;
@@ -43,13 +42,14 @@ import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.event.view.ViewSetupLockEvent;
 import io.jmix.flowui.model.*;
+import io.jmix.flowui.observation.ViewLifecycle;
 import io.jmix.flowui.sys.event.UiEventsManager;
 import io.jmix.flowui.util.OperationResult;
 import io.jmix.flowui.util.UnknownOperationResult;
 import io.jmix.flowui.view.navigation.RouteSupport;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
 import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -163,9 +163,11 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
     }
 
     private void showSaveNotification() {
+        UiViewProperties uiViewProperties = getUiViewProperties();
+
         getNotifications().create(getSaveNotificationText())
-                .withType(Notifications.Type.SUCCESS)
-                .withPosition(Position.TOP_END)
+                .withType(uiViewProperties.getSaveConfirmationType())
+                .withPosition(uiViewProperties.getSaveConfirmationPosition())
                 .show();
     }
 
@@ -429,8 +431,7 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
                 && hasUnsavedChanges()) {
             UnknownOperationResult result = new UnknownOperationResult();
 
-            boolean useSaveConfirmation = getApplicationContext()
-                    .getBean(UiViewProperties.class).isUseSaveConfirmation();
+            boolean useSaveConfirmation = getUiViewProperties().isUseSaveConfirmation();
 
             if (action instanceof NavigateCloseAction) {
                 BeforeLeaveEvent beforeLeaveEvent = ((NavigateCloseAction) action).getBeforeLeaveEvent();
@@ -475,7 +476,8 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
 
     private OperationResult navigateWithSave(ContinueNavigationAction navigationAction) {
         return saveChanges(reloadSaved)
-                .compose(() -> navigate(navigationAction, StandardOutcome.SAVE.getCloseAction()));
+                .compose(() -> navigate(navigationAction, StandardOutcome.SAVE.getCloseAction()))
+                .otherwise(() -> cancelNavigation(navigationAction));
     }
 
     private void cancelNavigation(ContinueNavigationAction navigationAction) {
@@ -490,7 +492,8 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
         navigationAction.proceed();
 
         AfterCloseEvent afterCloseEvent = new AfterCloseEvent(this, closeAction);
-        fireEvent(afterCloseEvent);
+        getUiObservationSupport().observeViewLifecycle(this, ViewLifecycle.AFTER_CLOSE,
+                () -> fireEvent(afterCloseEvent));
 
         return OperationResult.success();
     }
@@ -601,17 +604,21 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
      * @param serializedEntityId serialized id of the edited entity or {@link #NEW_ENTITY_ID} when creating new entity
      */
     protected void setupEntityToEdit(String serializedEntityId) {
-        //noinspection unchecked
-        Class<T> entityClass = (Class<T>) DetailViewTypeExtractor.extractEntityClass(getClass())
-                .orElseThrow(() ->
-                        new IllegalStateException("Failed to determine entity type. " +
-                                "Detail class: " + getClass().getName()));
+        Class<T> entityClass = resolveEntityClass();
 
         if (NEW_ENTITY_ID.equals(serializedEntityId)) {
             initNewEntity(entityClass);
         } else {
             initExistingEntity(serializedEntityId);
         }
+    }
+
+    protected Class<T> resolveEntityClass() {
+        //noinspection unchecked
+        return (Class<T>) DetailViewTypeExtractor.extractEntityClass(getClass())
+                .orElseThrow(() ->
+                        new IllegalStateException("Failed to determine entity type. " +
+                                "Detail class: " + getClass().getName()));
     }
 
     protected void initNewEntity(Class<T> entityClass) {
@@ -895,6 +902,10 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
 
     private Notifications getNotifications() {
         return getApplicationContext().getBean(Notifications.class);
+    }
+
+    private UiViewProperties getUiViewProperties() {
+        return getApplicationContext().getBean(UiViewProperties.class);
     }
 
     private ReadOnlyViewsSupport getReadOnlyViewSupport() {

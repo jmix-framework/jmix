@@ -30,9 +30,16 @@ public class JmxConsoleProperties {
      */
     int jmxConsoleMBeanOperationTimeoutSec;
 
+    /**
+     * Whether JMX write and invoke operations are enabled.
+     */
+    boolean writeAndInvokeEnabled;
 
-    public JmxConsoleProperties(@DefaultValue("600") int jmxConsoleMBeanOperationTimeoutSec) {
+
+    public JmxConsoleProperties(@DefaultValue("600") int jmxConsoleMBeanOperationTimeoutSec,
+                                @DefaultValue("true") boolean writeAndInvokeEnabled) {
         this.jmxConsoleMBeanOperationTimeoutSec = jmxConsoleMBeanOperationTimeoutSec;
+        this.writeAndInvokeEnabled = writeAndInvokeEnabled;
     }
 
     /**
@@ -40,5 +47,9 @@ public class JmxConsoleProperties {
      */
     public int getJmxConsoleMBeanOperationTimeoutSec() {
         return jmxConsoleMBeanOperationTimeoutSec;
+    }
+
+    public boolean isWriteAndInvokeEnabled() {
+        return writeAndInvokeEnabled;
     }
 }

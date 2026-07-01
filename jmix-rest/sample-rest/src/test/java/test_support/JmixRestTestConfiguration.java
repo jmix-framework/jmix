@@ -20,18 +20,18 @@ import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.security.UserRepository;
 import io.jmix.core.security.InMemoryUserRepository;
 import io.jmix.rest.RestConfiguration;
+import io.jmix.testsupport.config.HsqlMemDataSourceTestConfiguration;
 import test_support.transformer.RepairJsonTransformerFromVersion;
 import test_support.transformer.RepairJsonTransformerToVersion;
-import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
-
-import javax.sql.DataSource;
 
 @Configuration
 @JmixModule(dependsOn = RestConfiguration.class)
 @PropertySource("classpath:/application.properties")
+@Import(HsqlMemDataSourceTestConfiguration.class)
 public class JmixRestTestConfiguration {
 
     @Bean(name = "jmix_RepairJsonTransformerToVersion")
@@ -42,15 +42,6 @@ public class JmixRestTestConfiguration {
     @Bean(name = "jmix_RepairJsonTransformerFromVersion")
     public RepairJsonTransformerFromVersion repairJsonTransformerFromVersion() {
         return new RepairJsonTransformerFromVersion();
-    }
-
-    @Bean
-    protected DataSource dataSource() {
-        BasicDataSource dataSource = new BasicDataSource();
-        dataSource.setUrl("jdbc:hsqldb:mem:testdb");
-        dataSource.setUsername("sa");
-        dataSource.setPassword("");
-        return dataSource;
     }
 
     @Bean

@@ -15,15 +15,20 @@
  */
 
 group = 'io.jmix.data'
-archivesBaseName = 'jmix-data-autoconfigure'
+base {
+    archivesName = 'jmix-data-autoconfigure'
+}
 
 dependencies {
     api project(':data')
 
     api 'com.zaxxer:HikariCP'
     api 'org.liquibase:liquibase-core'
+    api 'org.springframework.boot:spring-boot-liquibase'
 
     implementation 'org.springframework.boot:spring-boot-autoconfigure'
+
+    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 

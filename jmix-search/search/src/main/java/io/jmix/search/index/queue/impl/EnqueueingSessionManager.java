@@ -25,17 +25,19 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.search.index.impl.IndexingLocker;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.index.queue.entity.EnqueueingSession;
+import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+@NullMarked
 @Component("search_EnqueueingSessionManager")
 public class EnqueueingSessionManager {
 
@@ -274,6 +276,7 @@ public class EnqueueingSessionManager {
         return orderingValue.toString();
     }
 
+    @NullMarked
     protected interface SessionManagementAction {
 
         boolean execute();

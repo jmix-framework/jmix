@@ -20,12 +20,15 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Locale;
+
+import org.jspecify.annotations.NullMarked;
 import java.util.Map;
 import java.util.TimeZone;
 
 /**
  * Provides information about the currently authenticated user.
  */
+@NullMarked
 public interface CurrentAuthentication {
 
     /**

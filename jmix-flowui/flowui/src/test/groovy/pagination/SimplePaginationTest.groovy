@@ -156,6 +156,24 @@ class SimplePaginationTest extends FlowuiTestSpecification {
         !simplePagination.lastButton.isEnabled()
     }
 
+    def "SimplePagination updates total count label after items per page change"() {
+        given: "19 items"
+        def additionalCustomers = new ArrayList<Customer>(19)
+        19.times { additionalCustomers.add(dataManager.create(Customer)) }
+        dataManager.save(additionalCustomers.toArray())
+        customers.addAll(additionalCustomers)
+
+        def view = (SimplePaginationTestView) navigateToView(SimplePaginationTestView)
+
+        when: "Items per page changes from 50 to 20"
+        view.simplePaginationItemsPerPage.itemsPerPage.itemsPerPageValue = 20
+
+        then: "Total count should be shown with text, not empty"
+        view.simplePaginationItemsPerPage.totalCountLabel.visible
+        view.simplePaginationItemsPerPage.totalCountLabel.text == "[?]"
+        view.simplePaginationItemsPerPage.rowsStatusLabel.text.contains("1-20")
+    }
+
     def "SimplePagination changes affect another SimplePagination with the same loader"() {
         def view = (SimplePaginationConsistenceTestView) navigateToView(SimplePaginationConsistenceTestView)
 

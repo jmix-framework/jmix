@@ -16,6 +16,8 @@
 
 package io.jmix.core.usersubstitution;
 
+import org.jspecify.annotations.NullMarked;
+
 import java.util.Collection;
 import java.util.Date;
 
@@ -23,6 +25,7 @@ import java.util.Date;
  * Interface to be implemented by classes that provide {@link UserSubstitution}. Each provider is responsible for
  * extracting an information from a specific source (in-memory, database, etc.)
  */
+@NullMarked
 public interface UserSubstitutionProvider {
 
     /**

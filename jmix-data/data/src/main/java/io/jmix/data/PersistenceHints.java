@@ -18,13 +18,29 @@ package io.jmix.data;
 
 import io.jmix.core.FetchPlan;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import jakarta.persistence.EntityManager;
 import java.util.*;
 
 public class PersistenceHints {
 
     public static final String SOFT_DELETION = "jmix.softDeletion";
+
+    /**
+     * Hint that disables sending of {@code io.jmix.core.event.EntitySavingEvent} when saving entities
+     * through {@code DataManager}. Set the value to {@code true} in {@code SaveContext} hints to suppress the event.
+     * <p>
+     * Note: this also disables listeners that rely on the event, such as multitenancy tenant-id assignment.
+     */
+    public static final String SKIP_ENTITY_SAVING_EVENT = "jmix.skipEntitySavingEvent";
+
+    /**
+     * Hint that disables sending of {@code io.jmix.core.event.EntityChangedEvent} when saving entities
+     * through {@code DataManager}. Set the value to {@code true} in {@code SaveContext} hints to suppress the event.
+     * <p>
+     * Note: this also disables listeners that rely on the event, such as full-text search re-indexing.
+     */
+    public static final String SKIP_ENTITY_CHANGED_EVENT = "jmix.skipEntityChangedEvent";
 
     public static final String FETCH_PLAN = "jmix.fetchPlan";
 

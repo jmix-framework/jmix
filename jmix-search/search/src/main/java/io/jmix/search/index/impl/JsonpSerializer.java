@@ -17,12 +17,14 @@
 package io.jmix.search.index.impl;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * The interface for transforming search clients' specific JSonp format to Jackson's ObjectNode.
  *
  * @param <TJsonp> search clients' specific JSonp format
  */
+@NullMarked
 public interface JsonpSerializer<TJsonp> {
 
     ObjectNode toObjectNode(TJsonp object);

@@ -278,7 +278,8 @@ simple_cond_expression
     | empty_collection_comparison_expression
     | collection_member_expression
     | exists_expression
-    | date_macro_expression;
+    | date_macro_expression
+    | function_invocation;
 
 //Start: Here we insert our custom macroses
 date_macro_expression
@@ -314,7 +315,7 @@ between_expression
     | string_expression ('NOT')? 'BETWEEN' string_expression 'AND' string_expression
     | datetime_expression ('NOT')? 'BETWEEN' datetime_expression 'AND' datetime_expression;
 in_expression
-    : (path_expression | type_discriminator | identification_variable | extract_function) (NOT)? IN
+    : (path_expression | type_discriminator | identification_variable | extract_function | function_invocation) (NOT)? IN
             ( '(' in_item (',' in_item)* ')'
             | subquery
             | collection_valued_input_parameter
@@ -329,7 +330,7 @@ in_item
 like_expression
     : (string_expression | identification_variable) ('NOT')? 'LIKE' (string_expression | pattern_value | input_parameter)('ESCAPE' escape_character)?;
 null_comparison_expression
-    : (path_expression | input_parameter | join_association_path_expression) 'IS' ('NOT')? 'NULL';
+    : (path_expression | input_parameter | join_association_path_expression | function_invocation) 'IS' ('NOT')? 'NULL';
 empty_collection_comparison_expression
     : path_expression 'IS' ('NOT')? 'EMPTY';
 collection_member_expression
@@ -449,7 +450,8 @@ functions_returning_strings
 trim_specification
     : 'LEADING' | 'TRAILING' | 'BOTH';
 function_invocation
-    : 'FUNCTION('function_name (',' function_arg)* ')';
+    : 'FUNCTION('function_name (',' function_arg)* ')'
+    | 'SQL(' string_literal (',' function_arg)* ')';
 function_arg
     : literal
     | path_expression
@@ -597,5 +599,3 @@ ESCAPE_CHARACTER
 INT_NUMERAL
     : ('0'..'9')+;
 //End : Here we insert tail from old grammar
-
-

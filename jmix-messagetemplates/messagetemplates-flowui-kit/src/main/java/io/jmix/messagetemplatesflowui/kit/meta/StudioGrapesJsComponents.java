@@ -17,11 +17,11 @@
 package io.jmix.messagetemplatesflowui.kit.meta;
 
 import io.jmix.flowui.kit.meta.StudioComponent;
-import io.jmix.flowui.kit.meta.StudioProperty;
-import io.jmix.flowui.kit.meta.StudioPropertyType;
 import io.jmix.flowui.kit.meta.StudioUiKit;
 import io.jmix.messagetemplatesflowui.kit.component.GrapesJs;
 
+import io.jmix.flowui.kit.meta.StudioPropertyGroups;
+import io.jmix.flowui.kit.meta.StudioXmlElements;
 @StudioUiKit(studioClassloaderDependencies = "io.jmix.messagetemplates:jmix-messagetemplates-flowui-kit")
 public interface StudioGrapesJsComponents {
 
@@ -29,44 +29,13 @@ public interface StudioGrapesJsComponents {
             name = "GrapesJs",
             classFqn = "io.jmix.messagetemplatesflowui.kit.component.GrapesJs",
             category = "Components",
-            xmlElement = "grapesJs",
+            xmlElement = StudioXmlElements.GRAPES_JS,
             xmlns = "http://jmix.io/schema/messagetemplates/ui",
             xmlnsAlias = "msgtmp",
             icon = "io/jmix/messagetemplatesflowui/kit/meta/icon/unknownComponent.svg",
-            properties = {
-                    @StudioProperty(xmlAttribute = "alignSelf", type = StudioPropertyType.ENUMERATION,
-                            category = StudioProperty.Category.POSITION,
-                            classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
-                            defaultValue = "AUTO",
-                            options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
-                    @StudioProperty(xmlAttribute = "classNames", type = StudioPropertyType.VALUES_LIST,
-                            category = StudioProperty.Category.LOOK_AND_FEEL),
-                    @StudioProperty(xmlAttribute = "css", type = StudioPropertyType.STRING,
-                            category = StudioProperty.Category.LOOK_AND_FEEL),
-                    @StudioProperty(xmlAttribute = "colspan", type = StudioPropertyType.INTEGER,
-                            category = StudioProperty.Category.POSITION),
-                    @StudioProperty(xmlAttribute = "height", type = StudioPropertyType.SIZE,
-                            category = StudioProperty.Category.SIZE),
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID,
-                            category = StudioProperty.Category.GENERAL),
-                    @StudioProperty(xmlAttribute = "maxHeight", type = StudioPropertyType.SIZE,
-                            category = StudioProperty.Category.SIZE),
-                    @StudioProperty(xmlAttribute = "maxWidth", type = StudioPropertyType.SIZE,
-                            category = StudioProperty.Category.SIZE),
-                    @StudioProperty(xmlAttribute = "minHeight", type = StudioPropertyType.SIZE,
-                            category = StudioProperty.Category.SIZE),
-                    @StudioProperty(xmlAttribute = "minWidth", type = StudioPropertyType.SIZE,
-                            category = StudioProperty.Category.SIZE),
-                    @StudioProperty(xmlAttribute = "readOnly", type = StudioPropertyType.BOOLEAN,
-                            category = StudioProperty.Category.GENERAL,
-                            defaultValue = "false"),
-                    @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN,
-                            category = StudioProperty.Category.GENERAL,
-                            defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = "width", type = StudioPropertyType.SIZE,
-                            category = StudioProperty.Category.SIZE)
-            }
-
-    )
+            propertyGroups = {
+                    StudioPropertyGroups.NoOptionSizedAddonComponentDefaultProperties.class,
+                    StudioPropertyGroups.ReadOnly.class
+            })
     GrapesJs grapesJs();
 }

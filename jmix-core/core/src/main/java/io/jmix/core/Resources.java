@@ -18,7 +18,8 @@ package io.jmix.core;
 
 import org.springframework.core.io.ResourceLoader;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import java.io.InputStream;
 
 /**
@@ -33,6 +34,7 @@ import java.io.InputStream;
  *     <li> Otherwise searches for a classpath resource for the given location.</li>
  * </ul>
  */
+@NullMarked
 public interface Resources extends ResourceLoader {
 
     /**

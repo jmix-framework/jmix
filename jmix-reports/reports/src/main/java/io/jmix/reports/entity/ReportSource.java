@@ -17,7 +17,7 @@
 package io.jmix.reports.entity;
 
 import io.jmix.core.metamodel.datatype.EnumClass;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Defines where the report or report group comes from.

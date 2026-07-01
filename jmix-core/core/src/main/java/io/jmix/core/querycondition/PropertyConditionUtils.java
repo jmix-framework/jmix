@@ -19,7 +19,7 @@ package io.jmix.core.querycondition;
 import com.google.common.base.Strings;
 import org.apache.commons.lang3.RandomStringUtils;
 
-import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class PropertyConditionUtils {
 
@@ -69,6 +69,20 @@ public class PropertyConditionUtils {
         String operation = propertyCondition.getOperation();
         return PropertyCondition.Operation.MEMBER_OF_COLLECTION.equals(operation)
                 || PropertyCondition.Operation.NOT_MEMBER_OF_COLLECTION.equals(operation);
+    }
+
+    /**
+     * Checks if the property condition's operation is case-insensitive.
+     * @param condition property condition
+     * @return true if the operation is case-insensitive, otherwise - false
+     */
+    public static boolean isCaseInsensitiveOperation(PropertyCondition condition) {
+        String operation = condition.getOperation();
+
+        return PropertyCondition.Operation.CONTAINS.equals(operation)
+               || PropertyCondition.Operation.NOT_CONTAINS.equals(operation)
+               || PropertyCondition.Operation.STARTS_WITH.equals(operation)
+               || PropertyCondition.Operation.ENDS_WITH.equals(operation);
     }
 
     /**
@@ -133,6 +147,6 @@ public class PropertyConditionUtils {
         }
 
         //noinspection unchecked
-        return ((Function<String, String>) parameterValue).apply(condition.getProperty());
+        return ((Supplier<String>) parameterValue).get();
     }
 }

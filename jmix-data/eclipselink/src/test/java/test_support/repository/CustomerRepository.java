@@ -21,12 +21,14 @@ import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.repository.*;
 import io.jmix.data.PersistenceHints;
 import jakarta.persistence.QueryHint;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.data.repository.query.Param;
 import test_support.entity.repository.Customer;
 import test_support.entity.repository.CustomerGrade;
 
 import java.util.*;
 
+@NullMarked
 public interface CustomerRepository extends JmixDataRepository<Customer, UUID> {
     @FetchPlan("repository_Customer.full")
     List<Customer> findByName(String name);

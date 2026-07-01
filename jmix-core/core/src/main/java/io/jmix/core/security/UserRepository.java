@@ -21,9 +21,12 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.util.List;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * An extended {@link UserDetailsService} defining methods specific to Jmix.
  */
+@NullMarked
 public interface UserRepository extends UserDetailsService {
 
     /**

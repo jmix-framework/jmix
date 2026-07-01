@@ -15,7 +15,9 @@
  */
 
 group = 'io.jmix.dataimport'
-archivesBaseName = 'jmix-dataimport-starter'
+base {
+    archivesName = 'jmix-dataimport-starter'
+}
 
 dependencies {
     api project(':dataimport')

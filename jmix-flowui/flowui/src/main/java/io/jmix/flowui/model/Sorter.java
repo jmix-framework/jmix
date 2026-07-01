@@ -17,10 +17,12 @@
 package io.jmix.flowui.model;
 
 import io.jmix.core.Sort;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Interface for sorting data in {@link CollectionContainer}s.
  */
+@NullMarked
 public interface Sorter {
 
     /**

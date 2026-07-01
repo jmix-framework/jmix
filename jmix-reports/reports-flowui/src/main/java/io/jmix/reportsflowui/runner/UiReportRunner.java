@@ -17,12 +17,14 @@
 package io.jmix.reportsflowui.runner;
 
 import io.jmix.reports.entity.Report;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.Collection;
 
 /**
  * Interface is used for running reports from UI
  */
+@NullMarked
 public interface UiReportRunner {
 
     /**

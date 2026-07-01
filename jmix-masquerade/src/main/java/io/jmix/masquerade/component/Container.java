@@ -17,6 +17,7 @@
 package io.jmix.masquerade.component;
 
 import io.jmix.masquerade.sys.ByLocator;
+import org.jspecify.annotations.NullMarked;
 import org.openqa.selenium.By;
 
 import static io.jmix.masquerade.JSelectors.byChained;
@@ -26,6 +27,7 @@ import static io.jmix.masquerade.Masquerade.$j;
 /**
  * Interface for container web-elements wrappers that have a child web-elements.
  */
+@NullMarked
 public interface Container extends ByLocator {
 
     /**

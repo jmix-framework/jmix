@@ -16,9 +16,12 @@
 
 package io.jmix.flowui.data;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Provides instances of {@link ValueSource}, for instance, for child components.
  */
+@NullMarked
 public interface ValueSourceProvider {
 
     /**

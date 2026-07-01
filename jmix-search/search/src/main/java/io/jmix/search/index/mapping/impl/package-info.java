@@ -15,8 +15,6 @@
  */
 
 @Internal
-@NonNullApi
 package io.jmix.search.index.mapping.impl;
 
 import io.jmix.core.annotation.Internal;
-import org.springframework.lang.NonNullApi;

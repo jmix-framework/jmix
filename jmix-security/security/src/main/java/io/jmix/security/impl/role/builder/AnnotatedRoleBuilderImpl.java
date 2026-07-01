@@ -21,6 +21,7 @@ import io.jmix.core.ClassManager;
 import io.jmix.security.impl.role.builder.extractor.ResourcePolicyExtractor;
 import io.jmix.security.impl.role.builder.extractor.RowLevelPolicyExtractor;
 import io.jmix.security.model.*;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -30,6 +31,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
+@NullMarked
 @Component("sec_AnnotatedRoleBuilder")
 public class AnnotatedRoleBuilderImpl implements AnnotatedRoleBuilder {
 

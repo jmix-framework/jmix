@@ -50,7 +50,7 @@ import io.jmix.flowui.data.value.ContainerValueSource;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.ComponentUtils;
 import org.springframework.core.Ordered;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 @org.springframework.stereotype.Component("appsettings_AppSettingsComponentGenerationStrategy")
 public class AppSettingsComponentGenerationStrategy
@@ -125,7 +125,13 @@ public class AppSettingsComponentGenerationStrategy
         JmixSelect enumField = uiComponents.create(JmixSelect.class);
         enumField.setItems(range.asEnumeration().getJavaClass());
 
+        initSelect(enumField);
+
         return enumField;
+    }
+
+    protected void initSelect(JmixSelect<?> field) {
+        field.setEmptySelectionAllowed(true);
     }
 
     protected EntityPicker<?> createEntityPickerField() {
@@ -145,6 +151,8 @@ public class AppSettingsComponentGenerationStrategy
                 Boolean.TRUE, messages.getMessage("trueString"),
                 Boolean.FALSE, messages.getMessage("falseString")
         ));
+
+        initSelect(field);
 
         return field;
     }

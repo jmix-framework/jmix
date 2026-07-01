@@ -19,6 +19,7 @@ package io.jmix.flowui.kit.meta;
 /**
  * Type of {@link StudioProperty}.
  */
+@StudioAPI
 public enum StudioPropertyType {
     /**
      * Identifier of an action defined in view.

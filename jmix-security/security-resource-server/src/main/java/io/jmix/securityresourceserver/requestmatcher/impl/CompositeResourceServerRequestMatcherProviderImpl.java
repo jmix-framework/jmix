@@ -20,6 +20,7 @@ import io.jmix.securityresourceserver.requestmatcher.AnonymousRequestMatcherProv
 import io.jmix.securityresourceserver.requestmatcher.AuthenticatedRequestMatcherProvider;
 import io.jmix.securityresourceserver.requestmatcher.CompositeResourceServerRequestMatcherProvider;
 import io.jmix.securityresourceserver.requestmatcher.util.RequestMatcherUtils;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.security.web.util.matcher.OrRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
@@ -32,6 +33,7 @@ import java.util.List;
  *
  * @see AuthenticatedRequestMatcherProvider
  */
+@NullMarked
 public class CompositeResourceServerRequestMatcherProviderImpl implements CompositeResourceServerRequestMatcherProvider {
 
     private final Collection<AuthenticatedRequestMatcherProvider> authenticatedRequestMatcherProviders;

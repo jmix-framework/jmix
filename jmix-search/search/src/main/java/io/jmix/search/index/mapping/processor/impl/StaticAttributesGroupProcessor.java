@@ -24,6 +24,7 @@ import io.jmix.search.index.mapping.MappingFieldDescriptor;
 import io.jmix.search.index.mapping.StaticAttributesGroupConfiguration;
 import io.jmix.search.utils.PropertyTools;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -35,6 +36,7 @@ import java.util.stream.Stream;
 /**
  * Processes attributes groups defined as static attributes configurations.
  **/
+@NullMarked
 @Component("search_StaticAttributesGroupProcessor")
 public class StaticAttributesGroupProcessor extends AbstractAttributesGroupProcessor<StaticAttributesGroupConfiguration> {
 

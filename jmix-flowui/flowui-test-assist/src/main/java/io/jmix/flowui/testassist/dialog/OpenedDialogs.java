@@ -22,7 +22,7 @@ import io.jmix.flowui.event.dialog.DialogClosedEvent;
 import io.jmix.flowui.event.dialog.DialogOpenedEvent;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.context.event.EventListener;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.util.Iterator;
@@ -90,6 +90,9 @@ public class OpenedDialogs {
     protected DialogInfo mapToDialogInfo(DialogOpenedEvent event) {
         return new DialogInfo(event.getSource())
                 .withContent(event.getContent())
-                .withButtons(event.getButtons());
+                .withButtons(event.getButtons())
+                .withHeaderComponents(event.getHeaderComponents())
+                .withContentComponents(event.getContentComponents())
+                .withFooterComponents(event.getFooterComponents());
     }
 }

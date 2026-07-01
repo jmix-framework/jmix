@@ -18,11 +18,9 @@ package io.jmix.flowui.xml.layout.loader.component;
 
 import io.jmix.flowui.component.filter.FilterComponent;
 import io.jmix.flowui.component.logicalfilter.GroupFilter;
-import io.jmix.flowui.component.logicalfilter.GroupFilterUtils;
 import io.jmix.flowui.component.logicalfilter.LogicalFilterComponent;
 import io.jmix.flowui.model.DataLoader;
 import io.jmix.flowui.xml.layout.ComponentLoader;
-import io.jmix.flowui.xml.layout.inittask.AbstractInitTask;
 import io.jmix.flowui.xml.layout.loader.AbstractComponentLoader;
 import org.dom4j.Element;
 
@@ -55,14 +53,6 @@ public class GroupFilterLoader extends AbstractComponentLoader<GroupFilter> {
                 .ifPresent(dataLoaderId -> {
                     DataLoader dataLoader = context.getDataHolder().getLoader(dataLoaderId);
                     resultComponent.setDataLoader(dataLoader);
-
-                    getContext().addInitTask(new AbstractInitTask() {
-                        @Override
-                        public void execute(Context context) {
-                            GroupFilterUtils.updateDataLoaderInitialCondition(resultComponent,
-                                    dataLoader.getCondition());
-                        }
-                    });
                 });
     }
 

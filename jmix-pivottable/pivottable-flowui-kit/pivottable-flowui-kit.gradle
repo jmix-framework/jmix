@@ -17,7 +17,9 @@
 apply plugin: 'io.jmix'
 
 group = 'io.jmix.pivottable'
-archivesBaseName = 'jmix-pivottable-flowui-kit'
+base {
+    archivesName = 'jmix-pivottable-flowui-kit'
+}
 
 dependencies {
     api project(':flowui-kit')

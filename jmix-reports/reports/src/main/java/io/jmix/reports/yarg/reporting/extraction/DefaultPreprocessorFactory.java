@@ -17,6 +17,7 @@
 package io.jmix.reports.yarg.reporting.extraction;
 
 import io.jmix.reports.yarg.loaders.QueryLoaderPreprocessor;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.Collections;
 import java.util.Map;
@@ -27,6 +28,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Default preprocessor factory implementation
  */
+@NullMarked
 public class DefaultPreprocessorFactory implements PreprocessorFactory {
     protected QueryLoaderPreprocessor defaultPreprocessor;
     protected Map<String, QueryLoaderPreprocessor> preprocessorMap = new ConcurrentHashMap<>();

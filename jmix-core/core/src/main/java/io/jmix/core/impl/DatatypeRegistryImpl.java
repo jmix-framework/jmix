@@ -21,16 +21,18 @@ import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.datatype.impl.DatatypeDefUtils;
+import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Component("core_DatatypeRegistry")
+@NullMarked
 public class DatatypeRegistryImpl implements DatatypeRegistry {
 
     private static final Logger log = LoggerFactory.getLogger(DatatypeRegistryImpl.class);

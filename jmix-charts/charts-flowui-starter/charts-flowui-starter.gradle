@@ -15,7 +15,9 @@
  */
 
 group = 'io.jmix.charts'
-archivesBaseName = 'jmix-charts-flowui-starter'
+base {
+    archivesName = 'jmix-charts-flowui-starter'
+}
 
 dependencies {
     api project(':charts-flowui')

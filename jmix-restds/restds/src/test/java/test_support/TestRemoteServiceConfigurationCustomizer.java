@@ -19,15 +19,19 @@ package test_support;
 import io.jmix.core.JmixOrder;
 import io.jmix.restds.util.RemoteServiceConfigurationCustomizer;
 import io.jmix.samples.restds.common.service.ProductService;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.type.filter.TypeFilter;
 import org.springframework.stereotype.Component;
 
+@NullMarked
 @Component
 @Order(JmixOrder.HIGHEST_PRECEDENCE - 10)
 public class TestRemoteServiceConfigurationCustomizer implements RemoteServiceConfigurationCustomizer {
 
     @Override
+    @Nullable
     public TypeFilter getScannerIncludeFilter() {
         return ((metadataReader, metadataReaderFactory) -> {
             String className = metadataReader.getClassMetadata().getClassName();
@@ -36,6 +40,7 @@ public class TestRemoteServiceConfigurationCustomizer implements RemoteServiceCo
     }
 
     @Override
+    @Nullable
     public ServiceParameters getServiceParameters(Class<?> serviceInterface) {
         if (serviceInterface.equals(ProductService.class))
             return new ServiceParameters().withStoreName("restService1").withServiceName("app_Products");

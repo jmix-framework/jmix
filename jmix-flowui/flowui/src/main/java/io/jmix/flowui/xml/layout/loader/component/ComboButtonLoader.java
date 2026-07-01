@@ -52,7 +52,7 @@ public class ComboButtonLoader extends AbstractDropdownButtonLoader<ComboButton>
         loadVisible(resultComponent, element);
         componentLoader().loadEnabled(resultComponent, element);
         componentLoader().loadThemeNames(resultComponent, element);
-        iconLoaderSupport().loadIcon(element, resultComponent::setIconComponent);
+        iconLoaderSupport().loadIcon(element, resultComponent::setIcon);
 
         // set event if an 'empty' value to clear a value from the action
         loadResourceString(element, "title", context.getMessageGroup(), false)
@@ -63,6 +63,6 @@ public class ComboButtonLoader extends AbstractDropdownButtonLoader<ComboButton>
 
     protected void loadDropdownIcon(ComboButton component, Element element) {
         iconLoaderSupport().loadIcon(element, "dropdownIcon",
-                component::setDropdownIconComponent);
+                component::setDropdownIcon);
     }
 }

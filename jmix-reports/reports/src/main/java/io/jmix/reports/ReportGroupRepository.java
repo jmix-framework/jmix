@@ -17,7 +17,7 @@
 package io.jmix.reports;
 
 import io.jmix.reports.entity.ReportGroup;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.List;
 import java.util.Optional;
@@ -29,6 +29,7 @@ import java.util.UUID;
  * <br/>
  * Application should generally should use this interface to work with groups, instead of DataManager.
  */
+@NullMarked
 public interface ReportGroupRepository {
 
     /**
@@ -43,6 +44,14 @@ public interface ReportGroupRepository {
      * @return list of groups
      */
     List<ReportGroup> loadList(ReportGroupLoadContext loadContext);
+
+    /**
+     * Load report group by id.
+     *
+     * @param id report group id
+     * @return optional report group
+     */
+    Optional<ReportGroup> loadById(UUID id);
 
     /**
      * Calculate total count of entities that conform to passed filter.

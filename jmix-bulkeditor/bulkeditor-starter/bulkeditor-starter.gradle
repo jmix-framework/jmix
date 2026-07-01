@@ -15,7 +15,9 @@
  */
 
 group = 'io.jmix.bulkeditor'
-archivesBaseName = 'jmix-bulkeditor-starter'
+base {
+    archivesName = 'jmix-bulkeditor-starter'
+}
 
 dependencies {
     api project(':bulkeditor')

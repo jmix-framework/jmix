@@ -19,13 +19,15 @@ package io.jmix.flowui.component;
 import io.jmix.flowui.model.DataContext;
 import io.jmix.flowui.model.DataLoader;
 import io.jmix.flowui.model.InstanceContainer;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Set;
 
 /**
  * Interface defining methods for interacting with data API elements.
  */
+@NullMarked
 public interface HasDataComponents {
 
     /**

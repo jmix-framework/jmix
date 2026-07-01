@@ -17,7 +17,7 @@
 package io.jmix.flowui.kit.component;
 
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Interface to be implemented by UI components that provide additional

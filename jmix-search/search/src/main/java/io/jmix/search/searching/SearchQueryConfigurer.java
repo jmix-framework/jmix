@@ -16,6 +16,8 @@
 
 package io.jmix.search.searching;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Provides a mechanism for configuring search queries against a search server.
  * The {@code SearchQueryConfigurer} interface allows for building and customizing search request
@@ -27,6 +29,7 @@ package io.jmix.search.searching;
  * @param <QB> type of platform-specific query builder
  * @param <OB> type of platform-specific object builder
  */
+@NullMarked
 public interface SearchQueryConfigurer<RB, QB, OB> {
 
     /**
@@ -61,6 +64,7 @@ public interface SearchQueryConfigurer<RB, QB, OB> {
      * @param <QB> type of query builder that is passed for configuration
      * @param <OB> type of object that is returned after the query has been configured
      */
+    @NullMarked
     interface BusinessQueryConfigurer<QB, OB> {
         OB apply(QB queryBuilder, IndexSearchRequestScope indexSearchRequestScope);
     }

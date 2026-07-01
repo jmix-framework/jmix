@@ -18,7 +18,7 @@ package io.jmix.chartsflowui.kit.component.model;
 
 import io.jmix.chartsflowui.kit.component.model.shared.AbstractTooltip;
 import io.jmix.chartsflowui.kit.component.model.shared.TriggerOnMode;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Tooltip component. Used to display some contextual information.
@@ -114,6 +114,7 @@ public class Tooltip extends AbstractTooltip<Tooltip> {
         }
     }
 
+    @Nullable
     public Boolean getShowContent() {
         return showContent;
     }
@@ -123,6 +124,7 @@ public class Tooltip extends AbstractTooltip<Tooltip> {
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getAlwaysShowContent() {
         return alwaysShowContent;
     }
@@ -132,6 +134,7 @@ public class Tooltip extends AbstractTooltip<Tooltip> {
         markAsDirty();
     }
 
+    @Nullable
     public TriggerOnMode getTriggerOn() {
         return triggerOn;
     }
@@ -141,6 +144,7 @@ public class Tooltip extends AbstractTooltip<Tooltip> {
         markAsDirty();
     }
 
+    @Nullable
     public Integer getShowDelay() {
         return showDelay;
     }
@@ -150,6 +154,7 @@ public class Tooltip extends AbstractTooltip<Tooltip> {
         markAsDirty();
     }
 
+    @Nullable
     public Integer getHideDelay() {
         return hideDelay;
     }
@@ -159,6 +164,7 @@ public class Tooltip extends AbstractTooltip<Tooltip> {
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getEnterable() {
         return enterable;
     }
@@ -168,6 +174,7 @@ public class Tooltip extends AbstractTooltip<Tooltip> {
         markAsDirty();
     }
 
+    @Nullable
     public RenderMode getRenderMode() {
         return renderMode;
     }
@@ -177,6 +184,7 @@ public class Tooltip extends AbstractTooltip<Tooltip> {
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getConfine() {
         return confine;
     }
@@ -186,6 +194,7 @@ public class Tooltip extends AbstractTooltip<Tooltip> {
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getAppendToBody() {
         return appendToBody;
     }
@@ -195,6 +204,7 @@ public class Tooltip extends AbstractTooltip<Tooltip> {
         markAsDirty();
     }
 
+    @Nullable
     public String getClassName() {
         return className;
     }
@@ -204,6 +214,7 @@ public class Tooltip extends AbstractTooltip<Tooltip> {
         markAsDirty();
     }
 
+    @Nullable
     public Double getTransitionDuration() {
         return transitionDuration;
     }
@@ -213,6 +224,7 @@ public class Tooltip extends AbstractTooltip<Tooltip> {
         markAsDirty();
     }
 
+    @Nullable
     public OrderType getOrder() {
         return order;
     }

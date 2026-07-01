@@ -18,7 +18,9 @@ apply plugin: 'groovy'
 apply plugin: 'io.jmix'
 
 group = 'io.jmix.data'
-archivesBaseName = 'jmix-eclipselink'
+base {
+    archivesName = 'jmix-eclipselink'
+}
 
 dependencies {
     api project(':data')
@@ -39,6 +41,7 @@ dependencies {
     testImplementation 'ch.qos.logback:logback-classic'
     testImplementation 'org.assertj:assertj-core'
     testImplementation 'com.fasterxml.jackson.core:jackson-databind'
+    testImplementation project(':framework-test-support')
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'

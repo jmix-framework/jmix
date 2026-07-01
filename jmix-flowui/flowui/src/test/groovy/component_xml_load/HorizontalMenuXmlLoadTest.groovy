@@ -22,10 +22,13 @@ import com.vaadin.flow.component.icon.VaadinIcon
 import component_xml_load.screen.HorizontalMenuView
 import io.jmix.flowui.component.horizontalmenu.HorizontalMenu
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.ContextConfiguration
+import test_support.MenuConfigIsolationTestConfiguration
 import test_support.ComponentTestUtils
 import test_support.spec.FlowuiTestSpecification
 
 @SpringBootTest(["jmix.ui.composite-menu=false", "jmix.ui.menu-config=menu/horizontalmenu/menu.xml"])
+@ContextConfiguration(classes = [MenuConfigIsolationTestConfiguration])
 class HorizontalMenuXmlLoadTest extends FlowuiTestSpecification {
 
     @Override

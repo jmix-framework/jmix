@@ -37,8 +37,10 @@
     </actions>
     <layout>
         <genericFilter dataLoader="sendingAttachmentsDl"/>
-        <hbox classNames="buttons-panel">
-            <simplePagination id="pagination" dataLoader="sendingAttachmentsDl"/>
+        <hbox wrap="true" width="100%">
+            <endSlot>
+                <simplePagination id="pagination" dataLoader="sendingAttachmentsDl"/>
+            </endSlot>
         </hbox>
         <dataGrid id="attachmentsDataGrid"
                   dataContainer="attachmentsDc"

@@ -22,13 +22,15 @@ import io.jmix.dataimport.configuration.mapping.ReferenceMultiFieldPropertyMappi
 import io.jmix.dataimport.extractor.data.ImportedDataItem;
 import io.jmix.dataimport.extractor.data.RawValuesSource;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import java.util.List;
 import java.util.Map;
 
 /**
  * API to populate the entity by property values using property mappings and raw values source.
  */
+@NullMarked
 public interface EntityPropertiesPopulator {
 
     /**

@@ -19,6 +19,7 @@ package io.jmix.rest.impl;
 import io.jmix.rest.transform.AbstractEntityJsonTransformer;
 import io.jmix.rest.transform.EntityJsonTransformer;
 import io.jmix.rest.transform.JsonTransformationDirection;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -27,6 +28,7 @@ import org.springframework.stereotype.Component;
  * Standard implementation of the {@link EntityJsonTransformer}. Instances of this class are created and registered
  * automatically by the {@link io.jmix.rest.impl.config.RestJsonTransformations} class.
  */
+@NullMarked
 @Component("rest_StandardEntityJsonTransformer")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class StandardEntityJsonTransformer extends AbstractEntityJsonTransformer {

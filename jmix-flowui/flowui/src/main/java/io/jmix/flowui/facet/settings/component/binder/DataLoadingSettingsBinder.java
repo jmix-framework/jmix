@@ -18,10 +18,12 @@ package io.jmix.flowui.facet.settings.component.binder;
 
 import com.vaadin.flow.component.Component;
 import io.jmix.flowui.facet.settings.Settings;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Settings binder for components which support data loading.
  */
+@NullMarked
 public interface DataLoadingSettingsBinder<V extends Component, S extends Settings>
         extends ComponentSettingsBinder<V, S> {
 

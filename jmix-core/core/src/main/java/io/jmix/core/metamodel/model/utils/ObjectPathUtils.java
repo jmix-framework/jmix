@@ -16,7 +16,7 @@
 
 package io.jmix.core.metamodel.model.utils;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 

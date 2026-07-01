@@ -67,10 +67,12 @@ public class KeyValuePropertyConditionGenerator extends PropertyConditionGenerat
         int index = valueProperties.indexOf(entityAlias);
         if (index >= 0 && index < selectedExpressions.size()) {
             entityAlias = selectedExpressions.get(index);
+        } else {
+            entityAlias = context.getEntityAlias() + '.' + entityAlias;
         }
 
         if (property != null) {
-            return generateWhere(propertyCondition, entityAlias, property);
+            return generateWhere(propertyCondition, entityAlias, property, context.isElementCollection());
         } else {
             return generateKeyValueWhere(propertyCondition, entityAlias);
         }

@@ -18,6 +18,7 @@ package io.jmix.flowui.component.groupgrid;
 
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.component.ListDataComponent;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.Collection;
 import java.util.EventObject;
@@ -29,6 +30,7 @@ import java.util.function.Consumer;
  *
  * @param <E> item type
  */
+@NullMarked
 public interface GroupListDataComponent<E> extends ListDataComponent<E> {
 
     /**

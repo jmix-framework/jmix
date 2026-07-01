@@ -29,8 +29,10 @@ import io.jmix.flowui.Actions;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.action.entitypicker.EntityClearAction;
 import io.jmix.flowui.action.entitypicker.EntityLookupAction;
+import io.jmix.flowui.action.multivaluepicker.MultiValueSelectAction;
 import io.jmix.flowui.action.valuepicker.ValueClearAction;
 import io.jmix.flowui.component.HasRequired;
+import io.jmix.flowui.component.PickerComponent;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.checkbox.JmixCheckbox;
 import io.jmix.flowui.component.combobox.EntityComboBox;
@@ -41,19 +43,29 @@ import io.jmix.flowui.component.select.JmixSelect;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.component.timepicker.TypedTimePicker;
 import io.jmix.flowui.component.valuepicker.EntityPicker;
+import io.jmix.flowui.component.valuepicker.JmixMultiValuePicker;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.model.DataComponents;
+import io.jmix.flowui.sys.BeanUtil;
+import io.jmix.reports.ReportsProperties;
 import io.jmix.reports.entity.ParameterType;
 import io.jmix.reports.entity.ReportInputParameter;
 import io.jmix.reports.util.ReportsUtils;
 import io.jmix.reports.yarg.util.converter.ObjectToStringConverter;
+import io.jmix.reportsflowui.ReportsClientProperties;
+import io.jmix.reportsflowui.action.ReportsMultiValueSelectAction;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.*;
 
 @Component("report_ParameterComponentGenerationStrategy")
@@ -83,6 +95,12 @@ public class ParameterComponentGenerationStrategy {
     protected MetadataTools metadataTools;
     @Autowired
     protected ObjectToStringConverter objectToStringConverter;
+    @Autowired
+    protected ApplicationContext applicationContext;
+    @Autowired
+    protected ReportsClientProperties reportsClientProperties;
+    @Autowired
+    protected ReportsProperties reportsProperties;
 
     protected Map<ParameterType, FieldCreator<?>> fieldCreationMapping = new ImmutableMap.Builder<ParameterType, FieldCreator<?>>()
             .put(ParameterType.BOOLEAN, new CheckBoxCreator())
@@ -91,7 +109,7 @@ public class ParameterComponentGenerationStrategy {
             .put(ParameterType.ENUMERATION, new EnumFieldCreator())
             .put(ParameterType.TEXT, new TextFieldCreator())
             .put(ParameterType.NUMERIC, new NumericFieldCreator())
-            .put(ParameterType.ENTITY_LIST, new MultiFieldCreator())
+            .put(ParameterType.ENTITY_LIST, new MultiFieldCreator<>())
             .put(ParameterType.DATETIME, new DateTimeFieldCreator())
             .put(ParameterType.TIME, new TimeFieldCreator())
             .build();
@@ -115,20 +133,25 @@ public class ParameterComponentGenerationStrategy {
     }
 
     protected void setCurrentDateAsNow(ReportInputParameter parameter, AbstractField dateField) {
-        Date now = reportsUtils.currentDateOrTime(parameter.getType());
+        Object now = reportsUtils.currentDateOrTime(parameter.getType());
         UiComponentUtils.setValue(dateField, now);
         parameter.setDefaultValue(objectToStringConverter.convertToString(now.getClass(), now));
     }
 
+    @NullMarked
     protected interface FieldCreator<T extends AbstractField> {
         T createField(ReportInputParameter parameter);
     }
 
-    protected class DateFieldCreator implements FieldCreator<TypedDatePicker<Date>> {
+    protected class DateFieldCreator implements FieldCreator<TypedDatePicker> {
         @Override
-        public TypedDatePicker<Date> createField(ReportInputParameter parameter) {
-            TypedDatePicker<Date> dateField = uiComponents.create(TypedDatePicker.class);
-            dateField.setDatatype(datatypeRegistry.get(Date.class));
+        public TypedDatePicker createField(ReportInputParameter parameter) {
+            TypedDatePicker dateField = uiComponents.create(TypedDatePicker.class);
+            if (reportsProperties.isUseLegacyDateTimeTypes()) {
+                dateField.setDatatype(datatypeRegistry.get(Date.class));
+            } else {
+                dateField.setDatatype(datatypeRegistry.get(LocalDate.class));
+            }
 
             if (BooleanUtils.isTrue(parameter.getDefaultDateIsCurrent())) {
                 setCurrentDateAsNow(parameter, dateField);
@@ -137,11 +160,15 @@ public class ParameterComponentGenerationStrategy {
         }
     }
 
-    protected class DateTimeFieldCreator implements FieldCreator<TypedDateTimePicker<Date>> {
+    protected class DateTimeFieldCreator implements FieldCreator<TypedDateTimePicker> {
         @Override
-        public TypedDateTimePicker<Date> createField(ReportInputParameter parameter) {
-            TypedDateTimePicker<Date> dateField = uiComponents.create(TypedDateTimePicker.class);
-            dateField.setDatatype(datatypeRegistry.get(Date.class));
+        public TypedDateTimePicker createField(ReportInputParameter parameter) {
+            TypedDateTimePicker dateField = uiComponents.create(TypedDateTimePicker.class);
+            if (reportsProperties.isUseLegacyDateTimeTypes()) {
+                dateField.setDatatype(datatypeRegistry.get(Date.class));
+            } else {
+                dateField.setDatatype(datatypeRegistry.get(LocalDateTime.class));
+            }
 
             if (BooleanUtils.isTrue(parameter.getDefaultDateIsCurrent())) {
                 setCurrentDateAsNow(parameter, dateField);
@@ -150,12 +177,16 @@ public class ParameterComponentGenerationStrategy {
         }
     }
 
-    protected class TimeFieldCreator implements FieldCreator<TypedTimePicker<Date>> {
+    protected class TimeFieldCreator implements FieldCreator<TypedTimePicker> {
 
         @Override
-        public TypedTimePicker<Date> createField(ReportInputParameter parameter) {
-            TypedTimePicker<Date> timeField = uiComponents.create(TypedTimePicker.class);
-            timeField.setDatatype(datatypeRegistry.get(Date.class));
+        public TypedTimePicker createField(ReportInputParameter parameter) {
+            TypedTimePicker timeField = uiComponents.create(TypedTimePicker.class);
+            if (reportsProperties.isUseLegacyDateTimeTypes()) {
+                timeField.setDatatype(datatypeRegistry.get(Date.class));
+            } else {
+                timeField.setDatatype(datatypeRegistry.get(LocalTime.class));
+            }
 
             if (BooleanUtils.isTrue(parameter.getDefaultDateIsCurrent())) {
                 setCurrentDateAsNow(parameter, timeField);
@@ -302,10 +333,44 @@ public class ParameterComponentGenerationStrategy {
         }
     }
 
-    protected class MultiFieldCreator implements FieldCreator<JmixMultiSelectComboBoxPicker<?>> {
+    protected class MultiFieldCreator<T extends AbstractField & PickerComponent<?>> implements FieldCreator<T> {
 
         @Override
-        public JmixMultiSelectComboBoxPicker<?> createField(final ReportInputParameter parameter) {
+        public T createField(final ReportInputParameter parameter) {
+            T pickerComponent;
+
+            if (reportsClientProperties.isUseMultiSelectComboBoxPickerForListOfEntitiesParameterComponent()) {
+                pickerComponent = createMultiSelectComboBoxPicker(parameter);
+            } else {
+                pickerComponent = createMultiValuePicker(parameter);
+            }
+
+            ValueClearAction<?> valueClearAction = createValueClearAction();
+            pickerComponent.addAction(valueClearAction);
+
+            return pickerComponent;
+        }
+
+        protected T createMultiValuePicker(ReportInputParameter parameter) {
+            JmixMultiValuePicker<?> multiValuePicker = uiComponents.create(JmixMultiValuePicker.class);
+
+            MultiValueSelectAction<?> selectAction = new ReportsMultiValueSelectAction<>();
+            BeanUtil.autowireContext(applicationContext, selectAction);
+
+            String screen = parameter.getScreen();
+            if (StringUtils.isNotEmpty(screen)) {
+                selectAction.setLookupViewId(screen);
+            }
+
+            MetaClass entityMetaClass = metadata.getClass(parameter.getEntityMetaClass());
+            selectAction.setEntityName(entityMetaClass.getName());
+            multiValuePicker.addAction(selectAction);
+
+            //noinspection unchecked
+            return (T) multiValuePicker;
+        }
+
+        public T createMultiSelectComboBoxPicker(final ReportInputParameter parameter) {
             JmixMultiSelectComboBoxPicker<?> multiComboBoxPicker = uiComponents.create(JmixMultiSelectComboBoxPicker.class);
             MetaClass entityMetaClass = metadata.getClass(parameter.getEntityMetaClass());
             multiComboBoxPicker.setMetaClass(entityMetaClass);
@@ -320,10 +385,8 @@ public class ParameterComponentGenerationStrategy {
             }
             multiComboBoxPicker.addAction(pickerLookupAction);
 
-            ValueClearAction<?> valueClearAction = createValueClearAction();
-            multiComboBoxPicker.addAction(valueClearAction);
-
-            return multiComboBoxPicker;
+            //noinspection unchecked
+            return (T) multiComboBoxPicker;
         }
 
         protected ValueClearAction<?> createValueClearAction() {

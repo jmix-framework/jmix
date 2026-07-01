@@ -17,7 +17,9 @@
 apply plugin: 'io.jmix'
 
 group = 'io.jmix.gridexport'
-archivesBaseName = 'jmix-gridexport-flowui'
+base {
+    archivesName = 'jmix-gridexport-flowui'
+}
 
 dependencies {
     api project(':flowui')

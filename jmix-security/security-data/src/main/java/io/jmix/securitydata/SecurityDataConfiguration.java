@@ -20,6 +20,7 @@ import io.jmix.core.annotation.JmixModule;
 import io.jmix.data.DataConfiguration;
 import io.jmix.security.SecurityConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.*;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
@@ -28,6 +29,7 @@ import javax.sql.DataSource;
 
 @Configuration
 @ComponentScan
+@EnableConfigurationProperties(SecurityDataProperties.class)
 @JmixModule(dependsOn = {SecurityConfiguration.class, DataConfiguration.class})
 @PropertySource(name = "io.jmix.securitydata", value = "classpath:/io/jmix/securitydata/module.properties")
 public class SecurityDataConfiguration {

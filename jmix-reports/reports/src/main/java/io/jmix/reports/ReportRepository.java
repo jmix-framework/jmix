@@ -19,7 +19,8 @@ package io.jmix.reports;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportGroup;
 import io.jmix.reports.entity.ReportTemplate;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.List;
@@ -32,6 +33,7 @@ import java.util.UUID;
  * <br/>
  * Application should generally should use this interface to load reports, instead of DataManager.
  */
+@NullMarked
 public interface ReportRepository {
 
     /**

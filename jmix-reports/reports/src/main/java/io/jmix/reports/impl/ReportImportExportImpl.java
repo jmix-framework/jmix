@@ -17,6 +17,7 @@ package io.jmix.reports.impl;
 
 import io.jmix.core.*;
 import io.jmix.reports.ReportImportExport;
+import io.jmix.reports.ReportRepository;
 import io.jmix.reports.ReportsPersistence;
 import io.jmix.reports.ReportsSerialization;
 import io.jmix.reports.entity.Report;
@@ -24,16 +25,18 @@ import io.jmix.reports.entity.ReportImportOption;
 import io.jmix.reports.entity.ReportImportResult;
 import io.jmix.reports.entity.ReportTemplate;
 import io.jmix.reports.exception.ReportingException;
+import io.jmix.reports.util.ReportsUtils;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayInputStream;
@@ -44,6 +47,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.zip.CRC32;
 
+@NullMarked
 @Component("report_ReportImportExport")
 public class ReportImportExportImpl implements ReportImportExport {
     public static final String ENCODING = "CP866";
@@ -61,6 +65,12 @@ public class ReportImportExportImpl implements ReportImportExport {
 
     @Autowired
     protected Metadata metadata;
+
+    @Autowired
+    protected ReportRepository reportRepository;
+
+    @Autowired
+    protected ReportsUtils reportsUtils;
 
     @Override
     public byte[] exportReports(Collection<Report> reports) {
@@ -242,8 +252,21 @@ public class ReportImportExportImpl implements ReportImportExport {
         Optional<Report> existingReport = dataManager
                 .load(Report.class)
                 .id(report.getId())
-                .fetchPlan(FetchPlan.INSTANCE_NAME)
+                .fetchPlanProperties("code")
                 .optional();
+
+        if (report.getCode() == null) {
+            // in case of importing a report from a CUBA, the code may be missing
+            // try to generate the report code from its name
+            report.setCode(reportsUtils.generateReportCodeByName(report.getName(), "imported-report"));
+        }
+
+        if ((existingReport.isEmpty() || !Objects.equals(existingReport.get().getCode(), report.getCode()))
+                && reportRepository.existsReportByCode(report.getCode())) {
+            String previousCode = report.getCode();
+            report.setCode(reportsUtils.generateReportCode(previousCode));
+            log.info("Report with code {} already exists. New code {} is assigned", previousCode, report.getCode());
+        }
 
         report = reportsPersistence.save(report);
         importResult.addImportedReport(report);

@@ -22,7 +22,7 @@ import com.vaadin.flow.component.html.Span;
 import io.jmix.flowui.kit.component.HasTitle;
 import io.jmix.flowui.kit.component.SupportsFormatter;
 import io.jmix.flowui.kit.component.formatter.Formatter;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Displays information about the current user. If the user substitution is set up,

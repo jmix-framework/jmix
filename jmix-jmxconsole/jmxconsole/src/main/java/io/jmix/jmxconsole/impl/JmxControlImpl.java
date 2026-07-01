@@ -18,17 +18,19 @@ package io.jmix.jmxconsole.impl;
 
 import io.jmix.core.EntityStates;
 import io.jmix.core.Metadata;
+import io.jmix.core.CoreProperties;
 import io.jmix.jmxconsole.JmxControl;
+import io.jmix.jmxconsole.JmxConsoleProperties;
 import io.jmix.jmxconsole.JmxControlException;
 import io.jmix.jmxconsole.model.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
-import org.springframework.lang.Nullable;
 
 import javax.management.*;
 import java.io.IOException;
@@ -67,14 +69,19 @@ public class JmxControlImpl implements JmxControl {
 
     private final Logger log = LoggerFactory.getLogger(JmxControlImpl.class);
     private final EntityStates entityStates;
+    private final CoreProperties coreProperties;
+    private final JmxConsoleProperties jmxConsoleProperties;
 
     protected ApplicationContext applicationContext;
     protected Metadata metadata;
 
-    public JmxControlImpl(ApplicationContext applicationContext, Metadata metadata, EntityStates entityStates) {
+    public JmxControlImpl(ApplicationContext applicationContext, Metadata metadata, EntityStates entityStates,
+                          CoreProperties coreProperties, JmxConsoleProperties jmxConsoleProperties) {
         this.applicationContext = applicationContext;
         this.metadata = metadata;
         this.entityStates = entityStates;
+        this.coreProperties = coreProperties;
+        this.jmxConsoleProperties = jmxConsoleProperties;
     }
 
     @Override
@@ -149,7 +156,6 @@ public class JmxControlImpl implements JmxControl {
     }
 
     @Override
-    @Nullable
     public void loadAttributes(final ManagedBeanInfo mbinfo) {
         checkNotNullArgument(mbinfo);
 
@@ -239,7 +245,6 @@ public class JmxControlImpl implements JmxControl {
     }
 
     @Override
-    @Nullable
     public void loadAttributeValue(final ManagedBeanAttribute attribute) {
         checkNotNullArgument(attribute);
         checkNotNullArgument(attribute.getMbean());
@@ -285,10 +290,10 @@ public class JmxControlImpl implements JmxControl {
 
 
     @Override
-    @Nullable
     public void saveAttributeValue(final ManagedBeanAttribute attribute) {
         checkNotNullArgument(attribute);
         checkNotNullArgument(attribute.getMbean());
+        checkWriteAndInvokeEnabled();
 
         withConnection((connection) -> {
             try {
@@ -314,6 +319,7 @@ public class JmxControlImpl implements JmxControl {
     public Object invokeOperation(final ManagedBeanOperation operation, final Object[] parameterValues) {
         checkNotNullArgument(operation);
         checkNotNullArgument(operation.getMbean());
+        checkWriteAndInvokeEnabled();
 
         return withConnection((connection) -> {
             try {
@@ -438,6 +444,16 @@ public class JmxControlImpl implements JmxControl {
             mba.setValue(value.toString());
         }
 
+    }
+
+    protected void checkWriteAndInvokeEnabled() {
+        if (!isWriteAndInvokeEnabled()) {
+            throw new JmxControlException("JMX write and invoke operations are disabled");
+        }
+    }
+
+    protected boolean isWriteAndInvokeEnabled() {
+        return coreProperties.isUnsafeRuntimeFeaturesEnabled() && jmxConsoleProperties.isWriteAndInvokeEnabled();
     }
 
     /**

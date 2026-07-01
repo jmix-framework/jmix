@@ -22,7 +22,7 @@ import io.jmix.flowui.data.ContainerDataUnit;
 import io.jmix.flowui.data.DataUnit;
 import io.jmix.flowui.data.ValueSource;
 import io.jmix.flowui.data.value.ContainerValueSource;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import static org.apache.commons.lang3.StringUtils.deleteWhitespace;
 import static org.apache.commons.lang3.StringUtils.uncapitalize;

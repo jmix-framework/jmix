@@ -16,12 +16,9 @@
 
 package io.jmix.reportsflowui.view.reportwizard;
 
-import com.vaadin.flow.component.Composite;
-import com.vaadin.flow.component.HasComponents;
-import com.vaadin.flow.component.HasEnabled;
-import com.vaadin.flow.component.HasSize;
-import com.vaadin.flow.component.formlayout.FormLayout;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.*;
+import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
@@ -39,6 +36,7 @@ import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.model.DataComponents;
+import io.jmix.flowui.theme.StyleUtility;
 import io.jmix.reports.entity.wizard.EntityTreeNode;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -52,7 +50,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-public class EntityTreeComposite extends Composite<FormLayout>
+public class EntityTreeComposite extends Composite<VerticalLayout>
         implements ApplicationContextAware, HasSize, HasEnabled, InitializingBean, HasComponents {
 
     protected TreeDataGrid<EntityTreeNode> entityTree;
@@ -64,7 +62,7 @@ public class EntityTreeComposite extends Composite<FormLayout>
     protected TextField reportPropertyName;
     protected Notifications notifications;
     protected MetadataTools metadataTools;
-    protected FormLayout formLayout;
+    protected VerticalLayout rootLayout;
     protected Messages messages;
     protected Metadata metadata;
     protected Icons icons;
@@ -106,32 +104,22 @@ public class EntityTreeComposite extends Composite<FormLayout>
 
     @SuppressWarnings("unchecked")
     @Override
-    protected FormLayout initContent() {
+    protected VerticalLayout initContent() {
         reportPropertyName = uiComponents.create(TextField.class);
+        reportPropertyName.setId("reportPropertyNameSearch");
+        reportPropertyName.setWidthFull();
+        reportPropertyName.setPlaceholder(messages.getMessage(getClass(), "entityTree.reportPropertyNameSearch.placeholder"));
+        reportPropertyName.addKeyPressListener(Key.ENTER, __ -> filterProperties());
+
         JmixButton reportPropertyNameSearchButton = uiComponents.create(JmixButton.class);
         reportPropertyNameSearchButton.setIcon(icons.get(JmixFontIcon.SEARCH));
-        reportPropertyNameSearchButton.addClickListener(event -> {
-            reportEntityTreeNodeDl.load();
-            if (reportEntityTreeNodeDc.getItems().isEmpty()) {
-                notifications.create(messages.getMessage(getClass(), "valueNotFound.title"))
-                        .show();
-            } else {
-                if (StringUtils.isEmpty(reportPropertyName.getValue())) {
-                    entityTree.collapse();
-                    entityTree.expand(rootEntity);
-                } else {
-                    entityTree.expand();
-                }
-            }
-        });
+        reportPropertyNameSearchButton.addClickListener(__ -> filterProperties());
+        reportPropertyNameSearchButton.setClassName(StyleUtility.Button.LINK_BUTTON);
 
-        HorizontalLayout reportPropertyHBox = uiComponents.create(HorizontalLayout.class);
-        reportPropertyHBox.add(reportPropertyName);
-        reportPropertyHBox.add(reportPropertyNameSearchButton);
-        reportPropertyHBox.setPadding(false);
-        reportPropertyHBox.setClassName("mb-s");
+        reportPropertyName.setPrefixComponent(reportPropertyNameSearchButton);
 
         entityTree = uiComponents.create(TreeDataGrid.class);
+        entityTree.setMinWidth("12em");
         entityTree.setDataProvider(new ContainerTreeDataGridItems<>(reportEntityTreeNodeDc, "parent"));
         MetaPropertyPath metaPropertyPath = metadataTools.resolveMetaPropertyPath(metadata.getClass(EntityTreeNode.class), "localizedName");
         entityTree.addHierarchyColumn("localizedName", metaPropertyPath)
@@ -139,14 +127,16 @@ public class EntityTreeComposite extends Composite<FormLayout>
                 .setSortable(false);
         entityTree.setId("treeDataGrid");
         entityTree.addValueProvider("name", EntityTreeNode::getLocalizedName);
-        formLayout = uiComponents.create(FormLayout.class);
-        formLayout.setId("entityTreeFormLayout");
-        formLayout.setWidth("30em");
-        formLayout.setHeightFull();
-        formLayout.add(reportPropertyHBox);
-        formLayout.add(entityTree);
 
-        return formLayout;
+        rootLayout = uiComponents.create(VerticalLayout.class);
+        rootLayout.setPadding(false);
+        rootLayout.setId("entityTreeLayout");
+        rootLayout.setWidthFull();
+        rootLayout.setHeightFull();
+        rootLayout.add(reportPropertyName);
+        rootLayout.add(entityTree);
+
+        return rootLayout;
     }
 
     @Override
@@ -246,5 +236,19 @@ public class EntityTreeComposite extends Composite<FormLayout>
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
+    }
+
+    protected void filterProperties() {
+        reportEntityTreeNodeDl.load();
+        if (reportEntityTreeNodeDc.getItems().isEmpty()) {
+            notifications.show(messages.getMessage(getClass(), "valueNotFound.title"));
+        } else {
+            if (StringUtils.isEmpty(reportPropertyName.getValue())) {
+                entityTree.collapse();
+                entityTree.expand(rootEntity);
+            } else {
+                entityTree.expand();
+            }
+        }
     }
 }

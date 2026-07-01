@@ -20,6 +20,8 @@ import io.jmix.core.accesscontext.SpecificOperationAccessContext;
 
 import java.util.List;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Provides an information about specific policies defined in the application. In order to be returned by the service,
  * the specific policy must have a corresponding {@link SpecificOperationAccessContext}. E.g. for the {@code
@@ -36,6 +38,7 @@ import java.util.List;
  * }
  * </pre>
  */
+@NullMarked
 public interface SpecificPolicyInfoRegistry {
 
     /**

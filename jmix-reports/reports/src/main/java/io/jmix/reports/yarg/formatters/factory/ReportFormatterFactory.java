@@ -16,10 +16,12 @@
 package io.jmix.reports.yarg.formatters.factory;
 
 import io.jmix.reports.yarg.formatters.ReportFormatter;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * This interface describes a factory which spawns formatters. The default implementation is io.jmix.reports.yarg.formatters.factory.DefaultFormatterFactory
  */
+@NullMarked
 public interface ReportFormatterFactory {
 
     ReportFormatter createFormatter(FormatterFactoryInput factoryInput);

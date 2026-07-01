@@ -16,6 +16,8 @@
 
 package io.jmix.chartsflowui.kit.component.model.shared;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * A component that has a space around content.
  *
@@ -26,6 +28,7 @@ public interface HasPadding<T> {
     /**
      * @return space around content
      */
+    @Nullable
     Padding getPadding();
 
     /**

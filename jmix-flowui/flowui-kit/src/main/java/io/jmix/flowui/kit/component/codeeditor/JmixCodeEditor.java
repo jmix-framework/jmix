@@ -16,8 +16,6 @@
 package io.jmix.flowui.kit.component.codeeditor;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.dependency.NpmPackage;
@@ -26,18 +24,20 @@ import com.vaadin.flow.component.shared.HasValidationProperties;
 import com.vaadin.flow.data.binder.HasValidator;
 import com.vaadin.flow.data.binder.ValidationResult;
 import com.vaadin.flow.data.binder.Validator;
-import elemental.json.JsonFactory;
-import elemental.json.JsonValue;
-import elemental.json.impl.JreJsonFactory;
 import io.jmix.flowui.kit.component.HasTitle;
 import io.jmix.flowui.kit.component.codeeditor.autocomplete.Suggester;
 import io.jmix.flowui.kit.component.codeeditor.autocomplete.Suggestion;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Code Editor is a multi-line text area to display and enter source code featured
@@ -79,7 +79,6 @@ public class JmixCodeEditor extends AbstractSinglePropertyField<JmixCodeEditor, 
     protected Suggester suggester;
 
     protected ObjectMapper objectMapper;
-    protected JsonFactory jsonFactory;
 
     public JmixCodeEditor() {
         super(PROPERTY_VALUE, "", true);
@@ -217,7 +216,9 @@ public class JmixCodeEditor extends AbstractSinglePropertyField<JmixCodeEditor, 
      */
     @Synchronize(property = PROPERTY_THEME, value = PROPERTY_THEME_CHANGED_EVENT)
     public CodeEditorTheme getTheme() {
-        return CodeEditorTheme.fromId(getElement().getProperty(PROPERTY_THEME, CodeEditorTheme.TEXTMATE.getId()));
+        return Optional.ofNullable(getElement().getProperty(PROPERTY_THEME))
+                .map(CodeEditorTheme::fromId)
+                .orElse(CodeEditorTheme.TEXTMATE);
     }
 
     /**
@@ -239,7 +240,9 @@ public class JmixCodeEditor extends AbstractSinglePropertyField<JmixCodeEditor, 
      */
     @Synchronize(PROPERTY_MODE)
     public CodeEditorMode getMode() {
-        return CodeEditorMode.fromId(getElement().getProperty(PROPERTY_MODE, CodeEditorMode.PLAIN_TEXT.getId()));
+        return Optional.ofNullable(getElement().getProperty(PROPERTY_MODE))
+                .map(CodeEditorMode::fromId)
+                .orElse(CodeEditorMode.PLAIN_TEXT);
     }
 
     /**
@@ -305,6 +308,44 @@ public class JmixCodeEditor extends AbstractSinglePropertyField<JmixCodeEditor, 
      */
     public void setUseSoftTabs(boolean useSoftTabs) {
         getElement().setProperty(PROPERTY_USE_SOFT_TABS, useSoftTabs);
+    }
+
+    /**
+     * @return tab size in spaces
+     */
+    public int getTabSize() {
+        return getElement().getProperty("tabSize", 4);
+    }
+
+    /**
+     * Sets the tab size in spaces. The tab size is 4 by default.
+     *
+     * @param tabSize tab size in spaces
+     */
+    public void setTabSize(int tabSize) {
+        getElement().setProperty("tabSize", tabSize);
+    }
+
+    /**
+     * The placeholder text that should be displayed in the input element when
+     * the user has not entered a value
+     *
+     * @return the {@code placeholder} property from the web component. May be
+     * {@code null} if not yet set.
+     */
+    @Nullable
+    public String getPlaceholder() {
+        return getElement().getProperty("placeholder");
+    }
+
+    /**
+     * Sets the placeholder text that should be displayed in the input element
+     * when the user has not entered a value
+     *
+     * @param placeholder the placeholder text, may be {@code null} to remove.
+     */
+    public void setPlaceholder(@Nullable String placeholder) {
+        getElement().setProperty("placeholder", placeholder);
     }
 
     /**
@@ -418,7 +459,7 @@ public class JmixCodeEditor extends AbstractSinglePropertyField<JmixCodeEditor, 
      * @see #setSuggester(Suggester)
      */
     @ClientCallable
-    protected JsonValue getSuggestions(String value, Double cursorPosition, String prefix) {
+    protected JsonNode getSuggestions(String value, Double cursorPosition, String prefix) {
         List<Suggestion> suggestions = suggester == null
                 ? Collections.emptyList()
                 : suggester.getSuggestions(new Suggester.SuggestionContext(value, cursorPosition.intValue(), prefix));
@@ -472,35 +513,34 @@ public class JmixCodeEditor extends AbstractSinglePropertyField<JmixCodeEditor, 
         return validationSupport;
     }
 
-    protected JsonValue serialize(Object object) {
+    protected JsonNode serialize(Object object) {
+        // TODO: gg, looks like it can be simplified
         String rawJson;
 
         try {
             rawJson = getObjectMapper().writeValueAsString(object);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             throw new IllegalStateException("Cannot serialize", e);
         }
 
         log.debug("Serialized {}", rawJson);
 
-        return getJsonFactory().parse(rawJson);
+        try {
+            return getObjectMapper().readTree(rawJson);
+        } catch (JacksonException e) {
+            throw new IllegalStateException("Cannot deserialize", e);
+        }
     }
 
     protected ObjectMapper getObjectMapper() {
         if (objectMapper == null) {
-            objectMapper = new ObjectMapper();
-            objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+            objectMapper = JsonMapper.builder()
+                    .changeDefaultPropertyInclusion(incl ->
+                            incl.withValueInclusion(JsonInclude.Include.NON_NULL))
+                    .build();
         }
 
         return objectMapper;
-    }
-
-    protected JsonFactory getJsonFactory() {
-        if (jsonFactory == null) {
-            jsonFactory = new JreJsonFactory();
-        }
-
-        return jsonFactory;
     }
 
     /**

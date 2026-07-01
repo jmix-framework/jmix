@@ -18,11 +18,13 @@ package io.jmix.reports.yarg.loaders.factory;
 
 
 import io.jmix.reports.yarg.loaders.ReportDataLoader;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * This interface describes a factory which spawns data loaders. The default implementation is
  * io.jmix.reports.yarg.loaders.factory.DefaultLoaderFactory
  */
+@NullMarked
 public interface ReportLoaderFactory {
     ReportDataLoader createDataLoader(String loaderType);
 }

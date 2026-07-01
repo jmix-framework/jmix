@@ -20,6 +20,8 @@ import java.lang.annotation.*;
 
 /**
  * Exposes a service method through the Generic REST API.
+ * <p>
+ * Parameter names used by REST can be specified explicitly with {@link RestParam}.
  */
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)

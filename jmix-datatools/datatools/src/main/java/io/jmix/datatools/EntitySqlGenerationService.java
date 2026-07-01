@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2016 Haulmont.
+ * Copyright 2016 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,9 @@
 
 package io.jmix.datatools;
 
+import org.jspecify.annotations.NullMarked;
+
+@NullMarked
 public interface EntitySqlGenerationService {
 
     /**

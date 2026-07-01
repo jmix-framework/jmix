@@ -44,7 +44,7 @@ import io.jmix.flowui.component.upload.FileUploadField;
 import io.jmix.flowui.component.valuepicker.EntityPicker;
 import org.springframework.core.Ordered;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.List;
 import java.util.Objects;
 

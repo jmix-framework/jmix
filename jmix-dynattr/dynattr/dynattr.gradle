@@ -18,7 +18,9 @@ apply plugin: 'groovy'
 apply plugin: 'io.jmix'
 
 group = 'io.jmix.dynattr'
-archivesBaseName = 'jmix-dynattr'
+base {
+    archivesName = 'jmix-dynattr'
+}
 
 dependencies {
     api project(':data')
@@ -31,7 +33,8 @@ dependencies {
     testImplementation 'org.spockframework:spock-spring'
     testImplementation project(':eclipselink')
     testImplementation project(':pessimisticlock')
-    testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'
+    testImplementation project(':framework-test-support')
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     testRuntimeOnly 'org.slf4j:slf4j-simple'
     testRuntimeOnly 'org.hsqldb:hsqldb'
 }

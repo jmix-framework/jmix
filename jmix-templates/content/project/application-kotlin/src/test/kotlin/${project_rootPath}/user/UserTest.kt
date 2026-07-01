@@ -11,12 +11,14 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.test.context.ActiveProfiles
 
 /**
  * Sample integration test for the User entity.
  */
 @SpringBootTest
 @ExtendWith(AuthenticatedAsAdmin::class)
+@ActiveProfiles("test")
 class UserTest {
 
     @Autowired

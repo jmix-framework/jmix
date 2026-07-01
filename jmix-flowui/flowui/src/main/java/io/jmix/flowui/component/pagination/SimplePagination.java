@@ -52,7 +52,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.List;
@@ -493,8 +493,15 @@ public class SimplePagination extends JmixSimplePagination implements Pagination
             lastState = state;
         }
 
+        boolean previousTotalCountVisible = getTotalCountLabel().isVisible();
+
         updateNavigationButtonsAvailability();
         updateItemsPerPageAvailability();
+
+        if (!updateTotalCountValue) {
+            // During refresh, we only force update when the count label has just become visible.
+            updateTotalCountValue = !previousTotalCountVisible && getTotalCountLabel().isVisible();
+        }
 
         getRowsStatusLabel().setText(
                 messages.formatMessage("", getLabelMessageKey(), calculateRowsStatusLabelValue()));

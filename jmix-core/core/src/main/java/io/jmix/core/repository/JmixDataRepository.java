@@ -23,7 +23,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.*;
-import org.springframework.lang.Nullable;
+
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 import java.util.Optional;
@@ -39,6 +41,7 @@ import java.util.Optional;
  * @see PagingAndSortingRepository
  */
 @NoRepositoryBean
+@NullMarked
 @ApplyConstraints
 public interface JmixDataRepository<T, ID> extends ListPagingAndSortingRepository<T, ID>, ListCrudRepository<T, ID> {
 
@@ -57,6 +60,16 @@ public interface JmixDataRepository<T, ID> extends ListPagingAndSortingRepositor
      * @return the entity with the given id or {@literal Optional#empty()} if none found.
      */
     Optional<T> findById(ID id, FetchPlan fetchPlan);
+
+    /**
+     * Loads an entity by its {@code id} using hints and fetch plan from the given {@link JmixDataRepositoryContext context}.
+     *
+     * @param id      must not be {@literal null}.
+     * @param context the {@link JmixDataRepositoryContext} used to load the entity.
+     *                <b>NOTE:</b> {@code condition} is ignored when loading by id.
+     * @return the entity with the given id or {@literal Optional#empty()} if none found.
+     */
+    Optional<T> findById(ID id, JmixDataRepositoryContext context);
 
     /**
      * Loads an entity by its {@code id} according to {@code fetchPlan}

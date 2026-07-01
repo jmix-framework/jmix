@@ -72,7 +72,7 @@ public class MainView extends StandardTabbedModeMainView {
         String name = generateUserName(user);
 
         Avatar avatar = createAvatar(name);
-        avatar.addThemeVariants(AvatarVariant.LUMO_LARGE);
+        avatar.addThemeVariants(AvatarVariant.LARGE);
 
         Span text = uiComponents.create(Span.class);
         text.setText(name);
@@ -81,7 +81,7 @@ public class MainView extends StandardTabbedModeMainView {
         content.add(avatar, text);
 
         if (name.equals(user.getUsername())) {
-            text.addClassNames("user-menu-text-subtext");
+            text.addClassName("user-menu-text-subtext");
         } else {
             Span subtext = uiComponents.create(Span.class);
             subtext.setText(user.getUsername());

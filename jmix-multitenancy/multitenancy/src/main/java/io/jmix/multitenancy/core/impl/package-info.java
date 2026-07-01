@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-@NonNullApi
 @Internal
 package io.jmix.multitenancy.core.impl;
 
 import io.jmix.core.annotation.Internal;
-import org.springframework.lang.NonNullApi;

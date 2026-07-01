@@ -29,6 +29,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +37,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.scripting.ScriptEvaluator;
 import org.springframework.scripting.support.ResourceScriptSource;
 import org.springframework.scripting.support.StaticScriptSource;
@@ -53,6 +54,7 @@ import java.util.regex.Pattern;
 
 import static java.lang.String.format;
 
+@NullMarked
 @Component("report_CustomFormatter")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class CustomFormatter implements CustomReport {
@@ -72,6 +74,9 @@ public class CustomFormatter implements CustomReport {
 
     @Autowired
     protected ApplicationContext applicationContext;
+
+    @Autowired
+    protected ReportsGroovyFeatureSupport groovyFeatureSupport;
 
     public static final String PARAMS = "params";
     private static final String ROOT_BAND = "rootBand";
@@ -130,6 +135,9 @@ public class CustomFormatter implements CustomReport {
     }
 
     protected byte[] generateReportWithScript(BandData rootBand, String customDefinition) {
+        if (!groovyFeatureSupport.isGroovyEnabled()) {
+            groovyFeatureSupport.throwGroovyDisabled("custom report script");
+        }
         Object result;
 
         if (customDefinition.startsWith("/")) {
@@ -165,6 +173,9 @@ public class CustomFormatter implements CustomReport {
     }
 
     protected byte[] generateReportWithUrl(BandData rootBand, String customDefinition) {
+        if (!groovyFeatureSupport.isGroovyEnabled()) {
+            groovyFeatureSupport.throwGroovyDisabled("custom report URL definition");
+        }
         Map<String, Object> convertedParams = new HashMap<>();
         for (Map.Entry<String, Object> entry : params.entrySet()) {
             if (entry.getValue() instanceof Date) {

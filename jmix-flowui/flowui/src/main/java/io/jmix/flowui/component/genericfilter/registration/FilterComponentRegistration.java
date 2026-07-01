@@ -20,8 +20,8 @@ import io.jmix.flowui.component.filter.FilterComponent;
 import io.jmix.flowui.component.genericfilter.Configuration;
 import io.jmix.flowui.component.genericfilter.converter.FilterConverter;
 import io.jmix.flowui.entity.filter.FilterCondition;
-
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Registers a UI filter component in the framework. Registered components can be
@@ -46,6 +46,7 @@ import org.springframework.lang.Nullable;
  * @see FilterComponentRegistrationImpl
  * @see FilterComponents
  */
+@NullMarked
 public interface FilterComponentRegistration {
 
     /**

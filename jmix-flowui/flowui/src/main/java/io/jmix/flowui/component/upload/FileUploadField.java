@@ -44,10 +44,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.boot.autoconfigure.web.servlet.MultipartProperties;
+import org.springframework.boot.servlet.autoconfigure.MultipartProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.function.Consumer;
 
@@ -88,7 +88,6 @@ public class FileUploadField extends JmixFileUploadField<FileUploadField> implem
         setComponentClickListener(fileNameComponent, this::onFileNameClick);
         setComponentText(fileNameComponent, generateFileName());
         setComponentText(uploadButton.getUploadButton(), getDefaultUploadText());
-
         multipartPropertiesProvider.ifAvailable(properties ->
                 setMaxFileSize((int) properties.getMaxFileSize().toBytes()));
 

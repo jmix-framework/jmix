@@ -17,9 +17,11 @@
 package io.jmix.dynattrflowui.impl;
 
 import io.jmix.dynattr.AttributeDefinition;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.List;
 
+@NullMarked
 public interface AttributeOptionsLoader {
 
     List<?> loadOptions(Object entity, AttributeDefinition attribute);

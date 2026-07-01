@@ -22,6 +22,7 @@
         <property name="localeNames"/>
         <property name="code"/>
         <property name="description"/>
+        <property name="defaultTemplate" fetchPlan="template.outputType"/>
         <property name="group" fetchPlan="_local"/>
         <property name="updateTs"/>
         <property name="restAccess"/>
@@ -42,8 +43,16 @@
         </property>
     </fetchPlan>
 
+    <fetchPlan entity="report_ReportTemplate" name="template.outputType">
+        <property name="code"/>
+        <property name="name"/>
+        <property name="reportOutputType"/>
+    </fetchPlan>
+
     <fetchPlan entity="report_Report" name="report.run" extends="_base">
-        <property name="templates" fetchPlan="_base"/>
+        <property name="templates" fetchPlan="_base">
+            <property name="report" fetchPlan="_base"/>
+        </property>
         <property name="defaultTemplate" fetchPlan="_base"/>
     </fetchPlan>
 

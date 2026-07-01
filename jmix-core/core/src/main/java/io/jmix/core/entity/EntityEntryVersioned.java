@@ -18,10 +18,13 @@ package io.jmix.core.entity;
 
 import io.jmix.core.annotation.Internal;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Interface to be implemented by optimistically locked entities.
  */
 @Internal
+@NullMarked
 public interface EntityEntryVersioned {
 
     Object getVersion();

@@ -20,7 +20,7 @@ import io.jmix.core.common.util.StringHelper;
 import io.jmix.core.constraint.AccessConstraint;
 import io.jmix.core.querycondition.Condition;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import jakarta.persistence.LockModeType;
 import jakarta.persistence.TemporalType;
 

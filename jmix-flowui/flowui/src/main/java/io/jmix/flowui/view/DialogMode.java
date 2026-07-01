@@ -102,8 +102,18 @@ public @interface DialogMode {
      * will disable interaction with elements outside of the dialog while it is open.
      *
      * @return {@code true} if the dialog is modal, otherwise {@code false}
+     * @deprecated Use {@link #modality()} instead.
      */
+    @Deprecated(since = "3.0", forRemoval = true)
     boolean modal() default true;
+
+    /**
+     * Specifies the modality mode for the dialog window. Determines how the dialog interacts with
+     * other windows in the application.
+     *
+     * @return the modality mode for the dialog
+     */
+    DialogModalityMode modality() default DialogModalityMode.DEFAULT;
 
     /**
      * Specifies whether the dialog window can be dragged by the user.
@@ -132,4 +142,14 @@ public @interface DialogMode {
      * @return {@code true} if the dialog should close on pressing the "Escape" key, otherwise {@code false}
      */
     boolean closeOnEsc() default false;
+
+    /**
+     * Specifies whether the dialog is prevented from moving outside the viewport bounds or not.
+     * When enabled, all four edges of the dialog will remain visible, for example when dragging
+     * the dialog or when the viewport is resized. Note that the dialog will also adjust any
+     * programmatically configured size and position so that it stays within the viewport.
+     *
+     * @return {@code true} to prevent the dialog from moving outside the viewport bounds, {@code false} otherwise
+     */
+    boolean keepInViewport() default false;
 }

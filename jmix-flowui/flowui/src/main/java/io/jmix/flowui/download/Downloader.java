@@ -18,14 +18,15 @@ package io.jmix.flowui.download;
 
 import io.jmix.core.FileRef;
 import io.jmix.core.FileStorage;
-
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import java.util.function.Predicate;
 
 /**
  * Generic interface to download data from the system.
  */
+@NullMarked
 public interface Downloader {
 
     /**

@@ -19,6 +19,7 @@ package io.jmix.flowui.kit.meta;
 /**
  * Describes how generics should be resolved.
  */
+@StudioAPI
 public @interface GenericResolvingInfo {
 
     /**

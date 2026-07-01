@@ -19,7 +19,8 @@ package io.jmix.flowui.facet;
 import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.component.HasSubParts;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import java.util.EventObject;
 import java.util.List;
@@ -29,6 +30,7 @@ import java.util.function.Consumer;
  * Represents a facet that manages URL query parameters and provides
  * the ability to bind these parameters to UI components.
  */
+@NullMarked
 public interface UrlQueryParametersFacet extends Facet, HasSubParts {
 
     String NAME = "urlQueryParameters";
@@ -48,6 +50,7 @@ public interface UrlQueryParametersFacet extends Facet, HasSubParts {
     /**
      * An interface to be implemented by an object that binds UI component with query parameters.
      */
+    @NullMarked
     interface Binder {
 
         /**

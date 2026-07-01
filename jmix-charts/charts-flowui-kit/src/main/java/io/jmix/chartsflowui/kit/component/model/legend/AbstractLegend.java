@@ -18,7 +18,7 @@ package io.jmix.chartsflowui.kit.component.model.legend;
 
 import io.jmix.chartsflowui.kit.component.model.*;
 import io.jmix.chartsflowui.kit.component.model.shared.*;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -217,6 +217,7 @@ public abstract class AbstractLegend<T extends AbstractLegend<T>> extends ChartO
 
         protected Integer shadowOffsetY;
 
+        @Nullable
         public Color getBackgroundColor() {
             return backgroundColor;
         }
@@ -226,6 +227,7 @@ public abstract class AbstractLegend<T extends AbstractLegend<T>> extends ChartO
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public Color getBorderColor() {
             return borderColor;
@@ -237,6 +239,7 @@ public abstract class AbstractLegend<T extends AbstractLegend<T>> extends ChartO
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public Integer getBorderWidth() {
             return borderWidth;
@@ -248,6 +251,7 @@ public abstract class AbstractLegend<T extends AbstractLegend<T>> extends ChartO
             markAsDirty();
         }
 
+        @Nullable
         public String getBorderType() {
             return borderType;
         }
@@ -257,6 +261,7 @@ public abstract class AbstractLegend<T extends AbstractLegend<T>> extends ChartO
             markAsDirty();
         }
 
+        @Nullable
         public Integer getBorderDashOffset() {
             return borderDashOffset;
         }
@@ -266,6 +271,7 @@ public abstract class AbstractLegend<T extends AbstractLegend<T>> extends ChartO
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public Integer getBorderRadius() {
             return borderRadius;
@@ -277,6 +283,7 @@ public abstract class AbstractLegend<T extends AbstractLegend<T>> extends ChartO
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public Padding getPadding() {
             return padding;
@@ -300,6 +307,7 @@ public abstract class AbstractLegend<T extends AbstractLegend<T>> extends ChartO
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public Integer getShadowBlur() {
             return shadowBlur;
@@ -311,6 +319,7 @@ public abstract class AbstractLegend<T extends AbstractLegend<T>> extends ChartO
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public Color getShadowColor() {
             return shadowColor;
@@ -322,6 +331,7 @@ public abstract class AbstractLegend<T extends AbstractLegend<T>> extends ChartO
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public Integer getShadowOffsetX() {
             return shadowOffsetX;
@@ -333,6 +343,7 @@ public abstract class AbstractLegend<T extends AbstractLegend<T>> extends ChartO
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public Integer getShadowOffsetY() {
             return shadowOffsetY;
@@ -367,6 +378,7 @@ public abstract class AbstractLegend<T extends AbstractLegend<T>> extends ChartO
 
         protected SelectorLabel selectorLabel;
 
+        @Nullable
         public SelectorLabel getSelectorLabel() {
             return selectorLabel;
         }
@@ -398,6 +410,7 @@ public abstract class AbstractLegend<T extends AbstractLegend<T>> extends ChartO
         return type;
     }
 
+    @Nullable
     public String getId() {
         return id;
     }
@@ -412,6 +425,7 @@ public abstract class AbstractLegend<T extends AbstractLegend<T>> extends ChartO
         return (T) this;
     }
 
+    @Nullable
     public Boolean getShow() {
         return show;
     }
@@ -426,6 +440,7 @@ public abstract class AbstractLegend<T extends AbstractLegend<T>> extends ChartO
         return (T) this;
     }
 
+    @Nullable
     public Integer getZLevel() {
         return zLevel;
     }
@@ -440,6 +455,7 @@ public abstract class AbstractLegend<T extends AbstractLegend<T>> extends ChartO
         return (T) this;
     }
 
+    @Nullable
     public Integer getZ() {
         return z;
     }
@@ -454,6 +470,7 @@ public abstract class AbstractLegend<T extends AbstractLegend<T>> extends ChartO
         return (T) this;
     }
 
+    @Nullable
     @Override
     public String getLeft() {
         return left;
@@ -465,6 +482,7 @@ public abstract class AbstractLegend<T extends AbstractLegend<T>> extends ChartO
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public String getTop() {
         return top;
@@ -476,6 +494,7 @@ public abstract class AbstractLegend<T extends AbstractLegend<T>> extends ChartO
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public String getRight() {
         return right;
@@ -487,6 +506,7 @@ public abstract class AbstractLegend<T extends AbstractLegend<T>> extends ChartO
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public String getBottom() {
         return bottom;
@@ -498,6 +518,7 @@ public abstract class AbstractLegend<T extends AbstractLegend<T>> extends ChartO
         markAsDirty();
     }
 
+    @Nullable
     public String getWidth() {
         return width;
     }
@@ -512,6 +533,7 @@ public abstract class AbstractLegend<T extends AbstractLegend<T>> extends ChartO
         return (T) this;
     }
 
+    @Nullable
     public String getHeight() {
         return height;
     }
@@ -526,6 +548,7 @@ public abstract class AbstractLegend<T extends AbstractLegend<T>> extends ChartO
         return (T) this;
     }
 
+    @Nullable
     public Orientation getOrientation() {
         return orientation;
     }
@@ -540,6 +563,7 @@ public abstract class AbstractLegend<T extends AbstractLegend<T>> extends ChartO
         return (T) this;
     }
 
+    @Nullable
     public Align getAlign() {
         return align;
     }
@@ -554,6 +578,7 @@ public abstract class AbstractLegend<T extends AbstractLegend<T>> extends ChartO
         return (T) this;
     }
 
+    @Nullable
     @Override
     public Padding getPadding() {
         return padding;
@@ -577,6 +602,7 @@ public abstract class AbstractLegend<T extends AbstractLegend<T>> extends ChartO
         markAsDirty();
     }
 
+    @Nullable
     public Integer getItemGap() {
         return itemGap;
     }
@@ -591,6 +617,7 @@ public abstract class AbstractLegend<T extends AbstractLegend<T>> extends ChartO
         return (T) this;
     }
 
+    @Nullable
     public Integer getItemWidth() {
         return itemWidth;
     }
@@ -605,6 +632,7 @@ public abstract class AbstractLegend<T extends AbstractLegend<T>> extends ChartO
         return (T) this;
     }
 
+    @Nullable
     public Integer getItemHeight() {
         return itemHeight;
     }
@@ -619,6 +647,7 @@ public abstract class AbstractLegend<T extends AbstractLegend<T>> extends ChartO
         return (T) this;
     }
 
+    @Nullable
     public ItemStyle getItemStyle() {
         return itemStyle;
     }
@@ -637,6 +666,7 @@ public abstract class AbstractLegend<T extends AbstractLegend<T>> extends ChartO
         return (T) this;
     }
 
+    @Nullable
     public LineStyle getLineStyle() {
         return lineStyle;
     }
@@ -655,6 +685,7 @@ public abstract class AbstractLegend<T extends AbstractLegend<T>> extends ChartO
         return (T) this;
     }
 
+    @Nullable
     public Integer getSymbolRotate() {
         return symbolRotate;
     }
@@ -669,6 +700,7 @@ public abstract class AbstractLegend<T extends AbstractLegend<T>> extends ChartO
         return (T) this;
     }
 
+    @Nullable
     public String getFormatter() {
         return formatter;
     }
@@ -683,6 +715,7 @@ public abstract class AbstractLegend<T extends AbstractLegend<T>> extends ChartO
         return (T) this;
     }
 
+    @Nullable
     public JsFunction getFormatterFunction() {
         return formatterFunction;
     }
@@ -707,6 +740,7 @@ public abstract class AbstractLegend<T extends AbstractLegend<T>> extends ChartO
         return (T) this;
     }
 
+    @Nullable
     public SelectedMode getSelectedMode() {
         return selectedMode;
     }
@@ -721,6 +755,7 @@ public abstract class AbstractLegend<T extends AbstractLegend<T>> extends ChartO
         return (T) this;
     }
 
+    @Nullable
     public Color getInactiveColor() {
         return inactiveColor;
     }
@@ -735,6 +770,7 @@ public abstract class AbstractLegend<T extends AbstractLegend<T>> extends ChartO
         return (T) this;
     }
 
+    @Nullable
     public Color getInactiveBorderColor() {
         return inactiveBorderColor;
     }
@@ -749,6 +785,7 @@ public abstract class AbstractLegend<T extends AbstractLegend<T>> extends ChartO
         return (T) this;
     }
 
+    @Nullable
     public Integer getInactiveBorderWidth() {
         return inactiveBorderWidth;
     }
@@ -797,6 +834,7 @@ public abstract class AbstractLegend<T extends AbstractLegend<T>> extends ChartO
         return (T) this;
     }
 
+    @Nullable
     public TextStyle getTextStyle() {
         return textStyle;
     }
@@ -815,6 +853,7 @@ public abstract class AbstractLegend<T extends AbstractLegend<T>> extends ChartO
         return (T) this;
     }
 
+    @Nullable
     public Tooltip getTooltip() {
         return tooltip;
     }
@@ -833,6 +872,7 @@ public abstract class AbstractLegend<T extends AbstractLegend<T>> extends ChartO
         return (T) this;
     }
 
+    @Nullable
     public String getIcon() {
         return icon;
     }
@@ -847,6 +887,7 @@ public abstract class AbstractLegend<T extends AbstractLegend<T>> extends ChartO
         return (T) this;
     }
 
+    @Nullable
     public Color getBackgroundColor() {
         return backgroundColor;
     }
@@ -861,6 +902,7 @@ public abstract class AbstractLegend<T extends AbstractLegend<T>> extends ChartO
         return (T) this;
     }
 
+    @Nullable
     @Override
     public Color getBorderColor() {
         return borderColor;
@@ -872,6 +914,7 @@ public abstract class AbstractLegend<T extends AbstractLegend<T>> extends ChartO
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getBorderWidth() {
         return borderWidth;
@@ -883,6 +926,7 @@ public abstract class AbstractLegend<T extends AbstractLegend<T>> extends ChartO
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getBorderRadius() {
         return borderRadius;
@@ -894,6 +938,7 @@ public abstract class AbstractLegend<T extends AbstractLegend<T>> extends ChartO
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getShadowBlur() {
         return shadowBlur;
@@ -905,6 +950,7 @@ public abstract class AbstractLegend<T extends AbstractLegend<T>> extends ChartO
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Color getShadowColor() {
         return shadowColor;
@@ -916,6 +962,7 @@ public abstract class AbstractLegend<T extends AbstractLegend<T>> extends ChartO
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getShadowOffsetX() {
         return shadowOffsetX;
@@ -927,6 +974,7 @@ public abstract class AbstractLegend<T extends AbstractLegend<T>> extends ChartO
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getShadowOffsetY() {
         return shadowOffsetY;
@@ -938,6 +986,7 @@ public abstract class AbstractLegend<T extends AbstractLegend<T>> extends ChartO
         markAsDirty();
     }
 
+    @Nullable
     public Emphasis getEmphasis() {
         return emphasis;
     }
@@ -956,6 +1005,7 @@ public abstract class AbstractLegend<T extends AbstractLegend<T>> extends ChartO
         return (T) this;
     }
 
+    @Nullable
     public Boolean getSelector() {
         return selector;
     }
@@ -970,6 +1020,7 @@ public abstract class AbstractLegend<T extends AbstractLegend<T>> extends ChartO
         return (T) this;
     }
 
+    @Nullable
     public SelectorLabel getSelectorLabel() {
         return selectorLabel;
     }
@@ -988,6 +1039,7 @@ public abstract class AbstractLegend<T extends AbstractLegend<T>> extends ChartO
         return (T) this;
     }
 
+    @Nullable
     public Position getSelectorPosition() {
         return selectorPosition;
     }
@@ -1002,6 +1054,7 @@ public abstract class AbstractLegend<T extends AbstractLegend<T>> extends ChartO
         return (T) this;
     }
 
+    @Nullable
     public Integer getSelectorItemGap() {
         return selectorItemGap;
     }
@@ -1016,6 +1069,7 @@ public abstract class AbstractLegend<T extends AbstractLegend<T>> extends ChartO
         return (T) this;
     }
 
+    @Nullable
     public Integer getSelectorButtonGap() {
         return selectorButtonGap;
     }

@@ -17,17 +17,19 @@
 package io.jmix.core.security;
 
 import io.jmix.core.impl.logging.LogMdc;
+import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Helper class to get/set Authentication in the current {@link SecurityContext}.
  */
+@NullMarked
 public class SecurityContextHelper {
 
     private static final Logger log = LoggerFactory.getLogger(SecurityContextHelper.class);

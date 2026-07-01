@@ -14,7 +14,4 @@
  * limitations under the License.
  */
 
-@NonNullApi
 package io.jmix.supersetflowui.component.loader;
-
-import org.springframework.lang.NonNullApi;

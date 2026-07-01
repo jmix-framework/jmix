@@ -26,7 +26,7 @@ import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.view.LockStatus;
 import io.jmix.flowui.view.StandardDetailView;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 @ActionType(DetailSaveCloseAction.ID)
 public class DetailSaveCloseAction<E>
@@ -65,7 +65,7 @@ public class DetailSaveCloseAction<E>
 
     @Autowired
     protected void setUiViewProperties(UiViewProperties uiViewProperties) {
-        this.shortcutCombination = KeyCombination.create(uiViewProperties.getSaveShortcut());
+        setShortcutCombination(KeyCombination.create(uiViewProperties.getSaveShortcut()));
     }
 
     @Override

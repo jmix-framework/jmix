@@ -1,6 +1,25 @@
+/*
+ * Copyright 2026 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.jmix.reportsflowui.view.parameter;
 
-import com.vaadin.flow.component.*;
+import com.vaadin.flow.component.AbstractField;
+import com.vaadin.flow.component.AbstractSinglePropertyField;
+import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.html.Div;
@@ -9,6 +28,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
+import io.jmix.core.CoreProperties;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
@@ -33,6 +53,7 @@ import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.view.*;
 import io.jmix.reports.ParameterClassResolver;
+import io.jmix.reports.ReportsProperties;
 import io.jmix.reports.entity.ParameterType;
 import io.jmix.reports.entity.PredefinedTransformation;
 import io.jmix.reports.entity.ReportInputParameter;
@@ -48,10 +69,7 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.Optional;
-import java.util.TreeMap;
+import java.util.*;
 
 @RouteAlias(value = "reports/parameters/:id", layout = DefaultMainViewParent.class)
 @Route(value = "report/parameters/:id", layout = DefaultMainViewParent.class)
@@ -95,6 +113,14 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
     protected InstanceContainer<ReportInputParameter> parameterDc;
     @ViewComponent
     protected TypedTextField<String> alias;
+    @ViewComponent
+    protected CodeEditor transformationScript;
+    @ViewComponent
+    protected CodeEditor validationScript;
+    @ViewComponent
+    protected Button fullScreenTransformationBtn;
+    @ViewComponent
+    protected Button fullScreenValidationBtn;
 
     @Autowired
     protected ParameterClassResolver parameterClassResolver;
@@ -122,6 +148,10 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
     protected ParameterComponentGenerationStrategy parameterComponentGenerationStrategy;
     @Autowired
     protected ReportParamAliasValidator reportParamAliasValidator;
+    @Autowired
+    protected CoreProperties coreProperties;
+    @Autowired
+    protected ReportsProperties reportsProperties;
 
     @Subscribe
     public void onInit(InitEvent event) {
@@ -140,8 +170,8 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
             editedParam.setParameterClass(parameterClassResolver.resolveClass(editedParam));
         }
         enableControlsByParamType(editedParam.getType());
-        initScreensLookup();
         initTransformations();
+        updateGroovyEditorsState();
     }
 
     private void initParameterTypeField() {
@@ -150,20 +180,8 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
 
     @Override
     public void setEntityToEdit(ReportInputParameter entity) {
+        initScreensLookup(entity);
         super.setEntityToEdit(entity);
-
-        if (getEditedEntity().getScreen() != null) {
-            initScreensLookup();
-            screenField.setValue(getEditedEntity().getScreen());
-        }
-    }
-
-    @Subscribe("screenField")
-    public void onScreenFieldAttach(final AttachEvent event) {
-        if (getEditedEntity().getScreen() != null) {
-            initScreensLookup();
-            screenField.setValue(getEditedEntity().getScreen());
-        }
     }
 
     @Install(to = "alias", subject = "validator")
@@ -194,6 +212,9 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
 
     @Subscribe("fullScreenTransformationBtn")
     public void onFullScreenTransformationBtnClick(final ClickEvent<Button> event) {
+        if (!isReportsGroovyEnabled()) {
+            return;
+        }
         reportScriptEditor.create(this)
                 .withTitle(messages.getMessage("fullScreenBtn.title"))
                 .withValue(parameterDc.getItem().getTransformationScript())
@@ -220,6 +241,9 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
 
     @Subscribe("fullScreenValidationBtn")
     public void onFullScreenValidationBtnClick(final ClickEvent<Button> event) {
+        if (!isReportsGroovyEnabled()) {
+            return;
+        }
         reportScriptEditor.create(this)
                 .withTitle(messages.getMessage("fullScreenBtn.title"))
                 .withValue(parameterDc.getItem().getValidationScript())
@@ -321,7 +345,7 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
             parameter.setDefaultValue(null);
             parameter.setScreen(null);
 
-            initScreensLookup();
+            initScreensLookup(parameter);
             initDefaultValueField();
         }
 
@@ -329,6 +353,20 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
             initDefaultValueField();
             initCurrentDateTimeField();
         }
+
+        updateGroovyEditorsState();
+    }
+
+    protected boolean isReportsGroovyEnabled() {
+        return coreProperties.isUnsafeRuntimeFeaturesEnabled() && reportsProperties.isGroovyEnabled();
+    }
+
+    protected void updateGroovyEditorsState() {
+        boolean groovyEnabled = isReportsGroovyEnabled();
+        transformationScript.setReadOnly(isReadOnly() || !groovyEnabled);
+        validationScript.setReadOnly(isReadOnly() || !groovyEnabled);
+        fullScreenTransformationBtn.setEnabled(groovyEnabled);
+        fullScreenValidationBtn.setEnabled(groovyEnabled);
     }
 
     @Subscribe("isLookupField")
@@ -336,13 +374,18 @@ public class ReportParameterDetailView extends StandardDetailView<ReportInputPar
         tabsheet.getTabAt((int) tabsheet.getChildren().count() - 1).setVisible(Boolean.TRUE.equals(event.getValue()));
     }
 
-    protected void initScreensLookup() {
-        ReportInputParameter parameter = getEditedEntity();
-        if (parameter.getType() == ParameterType.ENTITY || parameter.getType() == ParameterType.ENTITY_LIST) {
-            Class clazz = parameterClassResolver.resolveClass(parameter);
+    protected void initScreensLookup(ReportInputParameter entity) {
+        if (entity.getType() == ParameterType.ENTITY || entity.getType() == ParameterType.ENTITY_LIST) {
+            Class clazz = parameterClassResolver.resolveClass(entity);
             if (clazz != null) {
                 String availableListViewId = viewRegistry.getAvailableListViewId(metadata.getClass(clazz));
-                screenField.setItems(availableListViewId);
+                String availableLookupViewId = viewRegistry.getAvailableLookupViewId(metadata.getClass(clazz));
+
+                if (!Objects.equals(availableListViewId, availableLookupViewId)) {
+                    screenField.setItems(availableListViewId, availableLookupViewId);
+                } else {
+                    screenField.setItems(availableLookupViewId);
+                }
             }
         }
     }

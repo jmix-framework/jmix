@@ -69,7 +69,7 @@ public class CustomDateInterval implements BaseDateInterval {
     }
 
     @Override
-    public String apply(String property) {
+    public String get() {
         return "@dateBetween(%s.%s, :%s, :%s)".formatted("%s", "%s",
                 getStartParameterName(), getEndParameterName()
         );

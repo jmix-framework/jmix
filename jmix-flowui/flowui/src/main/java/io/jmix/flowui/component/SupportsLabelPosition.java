@@ -16,11 +16,14 @@
 
 package io.jmix.flowui.component;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Interface for components that support managing the position of their associated label.
  * Components implementing this interface can specify where the label should be displayed
  * relative to the component.
  */
+@NullMarked
 public interface SupportsLabelPosition {
 
     /**

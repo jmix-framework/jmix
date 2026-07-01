@@ -67,7 +67,7 @@ def optionsDatasourceXml = api.processSnippet('optionsDsSource.xml',
         <%if (detailFixedFooter) {%>
         </vbox>
         <hbox id="detailActions"
-              classNames="px-m py-s bg-contrast-5">
+              classNames="footer-panel">
         <%} else {%>
         <hbox id="detailActions">
         <%}%>

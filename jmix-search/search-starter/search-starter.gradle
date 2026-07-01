@@ -15,7 +15,9 @@
  */
 
 group = 'io.jmix.search'
-archivesBaseName = 'jmix-search-starter'
+base {
+    archivesName = 'jmix-search-starter'
+}
 
 dependencies {
     api project(':search')

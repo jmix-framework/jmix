@@ -17,6 +17,7 @@
 package io.jmix.flowui.component;
 
 import com.vaadin.flow.component.Component;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -26,6 +27,7 @@ import java.util.Optional;
  * within a container. It defines utility methods to find, retrieve, and list components based on their identifiers
  * or their hierarchical relationship with the container.
  */
+@NullMarked
 public interface ComponentContainer {
 
     /**

@@ -16,12 +16,15 @@
 
 package io.jmix.core.impl.method;
 
+import org.jspecify.annotations.NullMarked;
+
 import java.util.List;
 
 /**
  * Strategy interface to Resolves method parameters by delegating to a list of registered
  * {@link MethodArgumentResolver MethodArgumentResolvers}.
  */
+@NullMarked
 public interface ArgumentResolverComposite extends MethodArgumentResolver {
 
     /**

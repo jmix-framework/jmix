@@ -20,10 +20,12 @@ import org.docx4j.XmlUtils;
 import org.docx4j.wml.Br;
 import org.docx4j.wml.R;
 import org.docx4j.wml.Text;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@NullMarked
 public class MultilineTextProcessorImpl implements MultilineTextProcessor {
 
     @Override

@@ -17,6 +17,7 @@
 package io.jmix.chartsflowui.kit.component.model.shared;
 
 import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The separator between data and data description.
@@ -27,6 +28,7 @@ public class Separator extends ChartObservableObject {
 
     protected String end;
 
+    @Nullable
     public String getMiddle() {
         return middle;
     }
@@ -36,6 +38,7 @@ public class Separator extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public String getEnd() {
         return end;
     }

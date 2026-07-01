@@ -18,6 +18,7 @@ package io.jmix.flowui.facet.settings;
 
 import io.jmix.flowui.facet.SettingsFacet;
 import io.jmix.flowui.view.View;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Base interface for classes that collect component settings from {@link View}. It provides an API for
@@ -27,17 +28,6 @@ import io.jmix.flowui.view.View;
  * @see UiComponentSettings
  * @see ComponentSettingsManager
  */
+@NullMarked
 public interface ViewSettings extends UiComponentSettings<ViewSettings> {
-
-    /**
-     * @return a {@link View} id to which settings are corresponded
-     * @deprecated use {@link #getOwnerId()} instead
-     */
-    @Deprecated(since = "3.0", forRemoval = true)
-    String getViewId();
-
-    @Override
-    default String getOwnerId() {
-        return getViewId();
-    }
 }

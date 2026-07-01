@@ -29,7 +29,7 @@ import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewController;
 import io.jmix.flowui.view.ViewInfo;
 import io.jmix.flowui.view.ViewRegistry;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.security.Principal;

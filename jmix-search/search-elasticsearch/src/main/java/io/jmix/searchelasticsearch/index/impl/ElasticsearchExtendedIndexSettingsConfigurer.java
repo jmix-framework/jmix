@@ -23,12 +23,14 @@ import io.jmix.search.index.mapping.ExtendedSearchSettings;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.searchelasticsearch.index.ElasticsearchIndexSettingsConfigurationContext;
 import io.jmix.searchelasticsearch.index.ElasticsearchIndexSettingsConfigurer;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+@NullMarked
 @Component("search_ElasticsearchExtendedIndexSettingsConfigurer")
 public class ElasticsearchExtendedIndexSettingsConfigurer
         extends BaseExtendedIndexSettingsConfigurer<ElasticsearchIndexSettingsConfigurationContext>

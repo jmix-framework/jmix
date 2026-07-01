@@ -16,6 +16,8 @@
 
 package io.jmix.chartsflowui.kit.component.model.toolbox;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * A tool feature for restoring a chart options.
  * More detailed information is provided in the documentation.
@@ -28,6 +30,7 @@ public class RestoreFeature extends AbstractFeature<RestoreFeature> {
 
     protected String icon;
 
+    @Nullable
     public String getTitle() {
         return title;
     }
@@ -37,6 +40,7 @@ public class RestoreFeature extends AbstractFeature<RestoreFeature> {
         markAsDirty();
     }
 
+    @Nullable
     public String getIcon() {
         return icon;
     }

@@ -16,13 +16,11 @@
 
 package io.jmix.fullcalendarflowui.component.serialization;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import io.jmix.fullcalendarflowui.component.model.DayOfWeek;
 import io.jmix.fullcalendarflowui.component.model.DaysOfWeek;
-
-import java.io.IOException;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.ser.std.StdSerializer;
 
 public class DaysOfWeekSerializer extends StdSerializer<DaysOfWeek> {
 
@@ -31,7 +29,7 @@ public class DaysOfWeekSerializer extends StdSerializer<DaysOfWeek> {
     }
 
     @Override
-    public void serialize(DaysOfWeek value, JsonGenerator gen, SerializerProvider provider) throws IOException {
+    public void serialize(DaysOfWeek value, JsonGenerator gen, SerializationContext provider) {
         if (value.getDaysOfWeek().isEmpty()) {
             return;
         }

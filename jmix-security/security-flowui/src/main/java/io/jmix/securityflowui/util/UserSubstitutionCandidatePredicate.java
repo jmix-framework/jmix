@@ -16,6 +16,7 @@
 
 package io.jmix.securityflowui.util;
 
+import org.jspecify.annotations.NullMarked;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.function.BiPredicate;
@@ -24,6 +25,7 @@ import java.util.function.BiPredicate;
  * Interface to provide predicate to test the possibility to use some user as substitution based on target user.
  * Accepts the user to be substituted and another user as substitution candidate.
  */
+@NullMarked
 public interface UserSubstitutionCandidatePredicate extends BiPredicate<UserDetails, UserDetails> {
 
     /**

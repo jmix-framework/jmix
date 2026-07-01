@@ -19,6 +19,7 @@ package io.jmix.chartsflowui.kit.component.model.axis;
 import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
 import io.jmix.chartsflowui.kit.component.model.shared.JsFunction;
 import io.jmix.chartsflowui.kit.component.model.shared.LineStyle;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Options component related to axis tick.
@@ -41,6 +42,7 @@ public class AxisTick extends ChartObservableObject {
 
     protected LineStyle lineStyle;
 
+    @Nullable
     public Boolean getShow() {
         return show;
     }
@@ -50,6 +52,7 @@ public class AxisTick extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getAlignWithLabel() {
         return alignWithLabel;
     }
@@ -59,6 +62,7 @@ public class AxisTick extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public Integer getInterval() {
         return interval;
     }
@@ -68,6 +72,7 @@ public class AxisTick extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public JsFunction getIntervalFunction() {
         return intervalFunction;
     }
@@ -82,6 +87,7 @@ public class AxisTick extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getInside() {
         return inside;
     }
@@ -91,6 +97,7 @@ public class AxisTick extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public Integer getLength() {
         return length;
     }
@@ -100,6 +107,7 @@ public class AxisTick extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public LineStyle getLineStyle() {
         return lineStyle;
     }

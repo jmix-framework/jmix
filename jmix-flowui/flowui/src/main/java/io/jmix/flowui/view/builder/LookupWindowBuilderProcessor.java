@@ -36,7 +36,7 @@ import io.jmix.flowui.model.Nested;
 import io.jmix.flowui.sys.UiAccessChecker;
 import io.jmix.flowui.view.*;
 import org.springframework.context.ApplicationContext;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
@@ -85,9 +85,10 @@ public class LookupWindowBuilderProcessor extends AbstractWindowBuilderProcessor
         //noinspection unchecked
         LookupView<E> lookupView = (LookupView<E>) view;
 
-        if (builder.isLookupComponentMultiSelect()
+        if (builder.getLookupComponentMultiSelect() != null
                 && view instanceof MultiSelectLookupView multiSelectLookupView) {
-            multiSelectLookupView.setLookupComponentMultiSelect(true);
+            multiSelectLookupView.setLookupComponentMultiSelect(
+                    Boolean.TRUE.equals(builder.getLookupComponentMultiSelect()));
         }
 
         CollectionContainer<E> container = findContainer(builder);

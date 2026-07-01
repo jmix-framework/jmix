@@ -18,6 +18,8 @@ package io.jmix.eclipselink.impl;
 
 import io.jmix.core.Entity;
 import io.jmix.core.EntityEntry;
+import io.jmix.core.EntityStates;
+import io.jmix.core.EntityStates.PropertyLoadedState;
 import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.entity.NoValueCollection;
 import io.jmix.core.impl.CorePersistentAttributesLoadChecker;
@@ -32,6 +34,7 @@ import org.springframework.context.ApplicationContext;
 
 import jakarta.persistence.EntityManagerFactory;
 
+import static io.jmix.core.EntityStates.PropertyLoadedState.*;
 import static io.jmix.core.entity.EntitySystemAccess.getEntityEntry;
 
 public class DataPersistentAttributesLoadChecker extends CorePersistentAttributesLoadChecker {
@@ -52,39 +55,39 @@ public class DataPersistentAttributesLoadChecker extends CorePersistentAttribute
                 boolean inFetchGroup = fetchGroup.containsAttributeInternal(property);
                 if (!inFetchGroup) {
                     // definitely not loaded
-                    return PropertyLoadedState.NO;
+                    return NO;
                 } else {
                     // requires additional check specific for the tier
-                    return PropertyLoadedState.UNKNOWN;
+                    return UNKNOWN;
                 }
             }
         }
-        return PropertyLoadedState.UNKNOWN;
+        return UNKNOWN;
     }
 
     @Override
-    protected boolean isLoadedSpecificCheck(Object entity, String property, MetaClass metaClass, MetaProperty metaProperty) {
+    protected PropertyLoadedState isLoadedSpecificCheck(Object entity, String property, MetaClass metaClass, MetaProperty metaProperty, boolean safe) {
         if (metadataTools.isJpaEmbeddable(metaClass)
                 || entity instanceof Entity && entityIsNewOrPatch(entity)) {
             // this is a workaround for unexpected EclipseLink behaviour when PersistenceUnitUtil.isLoaded
             // throws exception if embedded entity refers to persistent entity
-            return checkIsLoadedWithGetter(entity, property);
+            return safe ? UNKNOWN : checkIsLoadedWithGetter(entity, property);
         }
         if (!metadataTools.isJpaEntity(metaClass)) {
-            return checkIsLoadedWithGetter(entity, property);
+            return safe ? UNKNOWN : checkIsLoadedWithGetter(entity, property);
         }
 
         try {
             Object rawValue = ReflectionHelper.getFieldValue(entity, property);
             if (rawValue instanceof NoValueCollection) {
-                return true;//NoValue placeholder should be considered as loaded like null values of just saved entities
+                return YES;//NoValue placeholder should be considered as loaded like null values of just saved entities
             }
         } catch (RuntimeException e) {
             log.trace("Cannot get value for property {} of class {}", property, entity.getClass().getName());
         }
 
         EntityManagerFactory emf = storeAwareLocator.getEntityManagerFactory(metaClass.getStore().getName());
-        return emf.getPersistenceUnitUtil().isLoaded(entity, property);
+        return PropertyLoadedState.fromBoolean(emf.getPersistenceUnitUtil().isLoaded(entity, property));
     }
 
     private boolean entityIsNewOrPatch(Object entity) {

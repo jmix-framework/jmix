@@ -15,7 +15,9 @@
  */
 
 group = 'io.jmix.email'
-archivesBaseName = 'jmix-email-starter'
+base {
+    archivesName = 'jmix-email-starter'
+}
 
 dependencies {
     api project(':email')

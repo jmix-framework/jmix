@@ -17,12 +17,14 @@
 package io.jmix.reports.impl;
 
 import io.jmix.reports.entity.ReportGroup;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+@NullMarked
 @Component("reports_AnnotatedReportGroupProvider")
 public class AnnotatedReportGroupHolderImpl implements AnnotatedReportGroupHolder {
 

@@ -17,9 +17,8 @@
 package io.jmix.flowui.kit.meta.actionsgroup;
 
 import io.jmix.flowui.kit.meta.StudioActionsGroup;
-import io.jmix.flowui.kit.meta.StudioProperty;
-import io.jmix.flowui.kit.meta.StudioPropertyType;
 import io.jmix.flowui.kit.meta.StudioUiKit;
+import io.jmix.flowui.kit.meta.StudioPropertyGroups;
 
 @StudioUiKit
 interface StudioActionsGroups {
@@ -56,14 +55,9 @@ interface StudioActionsGroups {
             name = "Actions",
             actionClassFqn = "io.jmix.flowui.action.list.ListDataComponentAction",
             target = {"io.jmix.flowui.component.ListDataComponent"},
-            properties = {
-                    @StudioProperty(
-                            xmlAttribute = "showInContextMenuEnabled",
-                            type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"
-                    )
-            }
-    )
+            propertyGroups = {
+                    StudioPropertyGroups.ShowInContextMenuEnabled.class
+            })
     void listDataComponentActions();
 
     @StudioActionsGroup(

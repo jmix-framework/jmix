@@ -19,8 +19,8 @@ package io.jmix.fullcalendarflowui.kit.component.event.dom;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.DomEvent;
 import com.vaadin.flow.component.EventData;
-import elemental.json.JsonObject;
 import io.jmix.fullcalendarflowui.kit.component.JmixFullCalendar;
+import tools.jackson.databind.node.ObjectNode;
 
 /**
  * INTERNAL.
@@ -28,13 +28,13 @@ import io.jmix.fullcalendarflowui.kit.component.JmixFullCalendar;
 @DomEvent("jmix-dates-set")
 public class DatesSetDomEvent extends ComponentEvent<JmixFullCalendar> {
 
-    protected final JsonObject context;
+    protected final ObjectNode context;
     protected final String viewType;
     protected final String currentDate;
 
     public DatesSetDomEvent(JmixFullCalendar source,
                             boolean fromClient,
-                            @EventData("event.detail.context") JsonObject context,
+                            @EventData("event.detail.context") ObjectNode context,
                             @EventData("event.detail.context.viewType") String viewType,
                             @EventData("event.detail.context.currentDate") String currentDate) {
         super(source, fromClient);
@@ -44,7 +44,7 @@ public class DatesSetDomEvent extends ComponentEvent<JmixFullCalendar> {
         this.currentDate = currentDate;
     }
 
-    public JsonObject getContext() {
+    public ObjectNode getContext() {
         return context;
     }
 

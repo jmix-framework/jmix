@@ -17,13 +17,15 @@
 package io.jmix.flowui.component;
 
 import io.jmix.core.metamodel.datatype.Datatype;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Represents a contract for components or classes that support specifying a datatype.
  *
  * @param <V> the type of value the datatype describes
  */
+@NullMarked
 public interface SupportsDatatype<V> {
 
     /**

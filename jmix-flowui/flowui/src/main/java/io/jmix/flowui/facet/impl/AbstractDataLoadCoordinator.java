@@ -32,7 +32,7 @@ import io.jmix.flowui.model.DataLoader;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.model.impl.DataLoadersHelper;
 import io.jmix.flowui.sys.autowire.ReflectionCacheManager;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;

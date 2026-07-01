@@ -20,6 +20,7 @@ import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
 import io.jmix.chartsflowui.kit.component.model.shared.Color;
 import io.jmix.chartsflowui.kit.component.model.shared.HasSymbols;
 import io.jmix.chartsflowui.kit.component.model.shared.SelectedMode;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,6 +88,7 @@ public class PiecewiseVisualMap extends AbstractVisualMap<PiecewiseVisualMap> {
 
         protected Color color;
 
+        @Nullable
         public Double getMin() {
             return min;
         }
@@ -96,6 +98,7 @@ public class PiecewiseVisualMap extends AbstractVisualMap<PiecewiseVisualMap> {
             markAsDirty();
         }
 
+        @Nullable
         public Double getMax() {
             return max;
         }
@@ -105,6 +108,7 @@ public class PiecewiseVisualMap extends AbstractVisualMap<PiecewiseVisualMap> {
             markAsDirty();
         }
 
+        @Nullable
         public String getLabel() {
             return label;
         }
@@ -114,6 +118,7 @@ public class PiecewiseVisualMap extends AbstractVisualMap<PiecewiseVisualMap> {
             markAsDirty();
         }
 
+        @Nullable
         public Double getValue() {
             return value;
         }
@@ -123,6 +128,7 @@ public class PiecewiseVisualMap extends AbstractVisualMap<PiecewiseVisualMap> {
             markAsDirty();
         }
 
+        @Nullable
         public Color getColor() {
             return color;
         }
@@ -158,6 +164,7 @@ public class PiecewiseVisualMap extends AbstractVisualMap<PiecewiseVisualMap> {
         }
     }
 
+    @Nullable
     public Integer getSplitNumber() {
         return splitNumber;
     }
@@ -167,6 +174,7 @@ public class PiecewiseVisualMap extends AbstractVisualMap<PiecewiseVisualMap> {
         markAsDirty();
     }
 
+    @Nullable
     public List<Piece> getPieces() {
         return pieces;
     }
@@ -205,6 +213,7 @@ public class PiecewiseVisualMap extends AbstractVisualMap<PiecewiseVisualMap> {
         addChild(piece);
     }
 
+    @Nullable
     public String[] getCategories() {
         return categories;
     }
@@ -214,6 +223,7 @@ public class PiecewiseVisualMap extends AbstractVisualMap<PiecewiseVisualMap> {
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getMinOpen() {
         return minOpen;
     }
@@ -223,6 +233,7 @@ public class PiecewiseVisualMap extends AbstractVisualMap<PiecewiseVisualMap> {
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getMaxOpen() {
         return maxOpen;
     }
@@ -232,6 +243,7 @@ public class PiecewiseVisualMap extends AbstractVisualMap<PiecewiseVisualMap> {
         markAsDirty();
     }
 
+    @Nullable
     public SelectedMode getSelectedMode() {
         return selectedMode;
     }
@@ -241,6 +253,7 @@ public class PiecewiseVisualMap extends AbstractVisualMap<PiecewiseVisualMap> {
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getShowLabel() {
         return showLabel;
     }
@@ -250,6 +263,7 @@ public class PiecewiseVisualMap extends AbstractVisualMap<PiecewiseVisualMap> {
         markAsDirty();
     }
 
+    @Nullable
     public Integer getItemGap() {
         return itemGap;
     }
@@ -259,7 +273,7 @@ public class PiecewiseVisualMap extends AbstractVisualMap<PiecewiseVisualMap> {
         markAsDirty();
     }
 
-    public HasSymbols.SymbolType getItemSymbol() {
+    public HasSymbols.@Nullable SymbolType getItemSymbol() {
         return itemSymbol;
     }
 

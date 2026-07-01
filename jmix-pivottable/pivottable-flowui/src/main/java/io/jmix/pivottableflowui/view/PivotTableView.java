@@ -38,6 +38,7 @@ import java.util.List;
 @Route(value = "pvttbl/pivot-table", layout = DefaultMainViewParent.class)
 @ViewController("pvttbl_PivotTableView")
 @ViewDescriptor("pivot-table-view.xml")
+@DialogMode(resizable = true, width = "64em", height = "48em")
 public class PivotTableView extends StandardView {
 
     @Autowired

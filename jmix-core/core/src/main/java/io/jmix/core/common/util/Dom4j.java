@@ -32,6 +32,8 @@ import org.xml.sax.SAXNotSupportedException;
 import org.xml.sax.XMLReader;
 
 import javax.xml.parsers.ParserConfigurationException;
+
+import org.jspecify.annotations.NullMarked;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.*;
@@ -95,8 +97,8 @@ public final class Dom4j {
         setParserFeature(xmlReader, "http://xml.org/sax/features/namespace-prefixes", false);
 
         // external entites
-        setParserFeature(xmlReader, "http://xml.org/sax/properties/external-general-entities", false);
-        setParserFeature(xmlReader, "http://xml.org/sax/properties/external-parameter-entities", false);
+        setParserFeature(xmlReader, "http://xml.org/sax/features/external-general-entities", false);
+        setParserFeature(xmlReader, "http://xml.org/sax/features/external-parameter-entities", false);
 
         // external DTD
         setParserFeature(xmlReader, "http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
@@ -230,6 +232,7 @@ public final class Dom4j {
         }
     }
 
+    @NullMarked
     public interface ElementAttributeVisitor {
         void onVisit(Element element, Attribute attribute);
     }

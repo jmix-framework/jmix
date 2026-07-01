@@ -24,11 +24,13 @@ import io.jmix.reports.yarg.formatters.impl.doc.connector.OfficeIntegrationAPI;
 import io.jmix.reports.yarg.formatters.impl.doc.connector.OfficeResourceProvider;
 import io.jmix.reports.yarg.formatters.impl.doc.connector.OfficeTask;
 import com.sun.star.lang.XComponent;
+import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.OutputStream;
 
+@NullMarked
 public class DocumentConverterImpl implements DocumentConverter {
     protected static final Logger log = LoggerFactory.getLogger(DocumentConverterImpl.class);
 

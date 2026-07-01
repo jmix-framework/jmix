@@ -24,11 +24,13 @@ import io.jmix.security.role.assignment.RoleAssignment;
 import io.jmix.security.role.assignment.RoleAssignmentModel;
 import io.jmix.security.role.assignment.RoleAssignmentPersistence;
 import io.jmix.securitydata.entity.RoleAssignmentEntity;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.List;
 
+@NullMarked
 @Component("sec_DatabaseRoleAssignmentPersistence")
 public class DatabaseRoleAssignmentPersistence implements RoleAssignmentPersistence {
 

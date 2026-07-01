@@ -23,7 +23,7 @@ import com.vaadin.flow.component.contextmenu.MenuItem;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionVariant;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.beans.PropertyChangeEvent;
 import java.util.Objects;
@@ -95,13 +95,13 @@ public class ComboButtonActionSupport {
     protected void addActionVariant(ComboButton component, ActionVariant actionVariant) {
         switch (actionVariant) {
             case PRIMARY:
-                component.addThemeVariants(ComboButtonVariant.LUMO_PRIMARY);
+                component.addThemeVariants(ComboButtonVariant.PRIMARY);
                 break;
             case DANGER:
-                component.addThemeVariants(ComboButtonVariant.LUMO_ERROR);
+                component.addThemeVariants(ComboButtonVariant.ERROR);
                 break;
             case SUCCESS:
-                component.addThemeVariants(ComboButtonVariant.LUMO_SUCCESS);
+                component.addThemeVariants(ComboButtonVariant.SUCCESS);
                 break;
             default:
         }
@@ -110,13 +110,13 @@ public class ComboButtonActionSupport {
     protected void removeActionVariant(ComboButton component, ActionVariant actionVariant) {
         switch (actionVariant) {
             case PRIMARY:
-                component.removeThemeVariants(ComboButtonVariant.LUMO_PRIMARY);
+                component.removeThemeVariants(ComboButtonVariant.PRIMARY);
                 break;
             case DANGER:
-                component.removeThemeVariants(ComboButtonVariant.LUMO_ERROR);
+                component.removeThemeVariants(ComboButtonVariant.ERROR);
                 break;
             case SUCCESS:
-                component.removeThemeVariants(ComboButtonVariant.LUMO_SUCCESS);
+                component.removeThemeVariants(ComboButtonVariant.SUCCESS);
                 break;
             default:
         }
@@ -157,8 +157,8 @@ public class ComboButtonActionSupport {
     }
 
     protected void updateIcon(boolean overrideComponentProperties) {
-        if (comboButton.getIconComponent() == null || overrideComponentProperties) {
-            comboButton.setIconComponent(action.getIconComponent());
+        if (comboButton.getIcon() == null || overrideComponentProperties) {
+            comboButton.setIcon(action.getIconComponent());
         }
     }
 
@@ -184,7 +184,7 @@ public class ComboButtonActionSupport {
                 comboButton.setVisible((Boolean) event.getNewValue());
                 break;
             case Action.PROP_ICON:
-                comboButton.setIconComponent((Component) event.getNewValue());
+                comboButton.setIcon((Component) event.getNewValue());
                 break;
             case Action.PROP_DESCRIPTION:
                 comboButton.setTitle((String) event.getNewValue());

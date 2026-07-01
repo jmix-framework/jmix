@@ -17,6 +17,7 @@
 package io.jmix.securityflowui.util;
 
 import io.jmix.security.model.BaseRole;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.function.BiPredicate;
@@ -25,6 +26,7 @@ import java.util.function.BiPredicate;
  * Interface to provide predicate to test the possibility to assign some role to specific user.
  * Accepts the role to be assigned and the target user.
  */
+@NullMarked
 public interface RoleAssignmentCandidatePredicate extends BiPredicate<UserDetails, BaseRole> {
 
     /**

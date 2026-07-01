@@ -14,7 +14,4 @@
  * limitations under the License.
  */
 
-@NonNullApi
 package io.jmix.securityresourceserver.requestmatcher.urlprovider.impl;
-
-import org.springframework.lang.NonNullApi;

@@ -1,0 +1,62 @@
+/*
+ * Copyright 2026 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+:where(:root),
+:where(:host) {
+  --_grid-border-radius: var(--vaadin-grid-border-radius, var(--vaadin-radius-m));
+}
+
+/* Header */
+
+vaadin-grid::part(first-header-row):after {
+  border-start-start-radius: var(--_grid-border-radius);
+}
+
+vaadin-grid:not([overflow~='bottom']):not([overflow~='top'])::part(first-header-row):after {
+  border-start-end-radius: var(--_grid-border-radius);
+}
+
+vaadin-grid::part(first-header-row-cell first-column-cell):after {
+  border-start-start-radius: var(--_grid-border-radius);
+}
+
+vaadin-grid:not([overflow~='bottom']):not([overflow~='top'])::part(first-header-row-cell last-column-cell):after {
+  border-start-end-radius: var(--_grid-border-radius);
+}
+
+/* Footer */
+
+vaadin-grid:not([overflow~='start']):not([overflow~='end'])::part(last-footer-row):after {
+  border-end-start-radius: var(--_grid-border-radius);
+}
+
+vaadin-grid:not([overflow])::part(last-footer-row):after {
+  border-end-end-radius: var(--_grid-border-radius);
+}
+
+vaadin-grid:not([overflow~='start']):not([overflow~='end'])::part(last-footer-row-cell first-column-cell):after {
+  border-end-start-radius: var(--_grid-border-radius);
+}
+
+vaadin-grid:not([overflow])::part(last-footer-row-cell last-column-cell):after {
+  border-end-end-radius: var(--_grid-border-radius);
+}
+
+/* Theme Variants */
+
+vaadin-grid[theme~='no-header']::part(header-cell) {
+  display: none;
+}

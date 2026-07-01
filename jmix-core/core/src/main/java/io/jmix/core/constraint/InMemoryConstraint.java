@@ -18,5 +18,8 @@ package io.jmix.core.constraint;
 
 import io.jmix.core.accesscontext.AccessContext;
 
+import org.jspecify.annotations.NullMarked;
+
+@NullMarked
 public interface InMemoryConstraint<T extends AccessContext> extends AccessConstraint<T> {
 }

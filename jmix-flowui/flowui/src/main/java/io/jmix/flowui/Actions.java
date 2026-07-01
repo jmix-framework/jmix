@@ -18,12 +18,14 @@ package io.jmix.flowui;
 
 import io.jmix.flowui.action.ActionType;
 import io.jmix.flowui.kit.action.Action;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Factory to create actions declared as {@link ActionType}.
  *
  * @see Action
  */
+@NullMarked
 public interface Actions {
 
     /**

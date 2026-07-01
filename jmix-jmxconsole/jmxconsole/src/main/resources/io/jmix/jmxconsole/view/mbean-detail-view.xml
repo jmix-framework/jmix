@@ -29,7 +29,7 @@
         <action id="close" type="detail_discard" text="msg://actions.Close"/>
     </actions>
     <layout>
-        <hbox classNames="buttons-panel">
+        <hbox wrap="true" width="100%">
             <button action="attributesDataGrid.refresh"/>
             <button action="attributesDataGrid.edit"/>
         </hbox>

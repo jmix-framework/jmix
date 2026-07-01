@@ -19,7 +19,7 @@ package io.jmix.flowui.kit.component;
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.HasElement;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Mixin interface for components that displays text in a tooltip popup when the mouse is over it.

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2018 Haulmont.
+ * Copyright 2018 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -20,10 +20,12 @@ import io.jmix.reports.yarg.formatters.impl.inline.BitmapContentInliner;
 import io.jmix.reports.yarg.formatters.impl.inline.ContentInliner;
 import io.jmix.reports.yarg.formatters.impl.inline.HtmlContentInliner;
 import io.jmix.reports.yarg.formatters.impl.inline.ImageContentInliner;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@NullMarked
 public class DefaultInlinersProvider implements ReportInlinersProvider {
 
     protected List<ContentInliner> contentInliners;

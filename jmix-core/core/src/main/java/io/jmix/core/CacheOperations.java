@@ -16,11 +16,12 @@
 
 package io.jmix.core;
 
+import org.jspecify.annotations.NullMarked;
 import org.springframework.cache.Cache;
 import org.springframework.cache.concurrent.ConcurrentMapCache;
 import org.springframework.stereotype.Component;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentMap;
@@ -32,6 +33,7 @@ import java.util.function.BiConsumer;
  * so the {@link CacheOperations} facade uses specific API of cache implementations.
  */
 @Component("core_CacheOperations")
+@NullMarked
 public class CacheOperations {
 
     /**

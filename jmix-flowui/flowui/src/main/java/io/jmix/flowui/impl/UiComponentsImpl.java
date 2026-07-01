@@ -70,6 +70,7 @@ import io.jmix.flowui.component.image.JmixImage;
 import io.jmix.flowui.component.listbox.JmixListBox;
 import io.jmix.flowui.component.listbox.JmixMultiSelectListBox;
 import io.jmix.flowui.component.loginform.JmixLoginForm;
+import io.jmix.flowui.component.markdowneditor.MarkdownEditor;
 import io.jmix.flowui.component.multiselectcombobox.JmixMultiSelectComboBox;
 import io.jmix.flowui.component.radiobuttongroup.JmixRadioButtonGroup;
 import io.jmix.flowui.component.richtexteditor.RichTextEditor;
@@ -87,6 +88,7 @@ import io.jmix.flowui.component.virtuallist.JmixVirtualList;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.component.gridlayout.JmixGridLayout;
 import io.jmix.flowui.kit.component.checkbox.JmixSwitch;
+import io.jmix.flowui.kit.component.markdowneditor.JmixMarkdownEditor;
 import io.jmix.flowui.kit.component.menubar.JmixMenuBar;
 import io.jmix.flowui.kit.component.richtexteditor.JmixRichTextEditor;
 import io.jmix.flowui.kit.component.usermenu.JmixUserMenu;
@@ -94,7 +96,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -157,6 +159,7 @@ public class UiComponentsImpl implements UiComponents {
         register(UserMenu.class, JmixUserMenu.class);
         register(JmixCard.class, Card.class);
         register(GridLayout.class, JmixGridLayout.class);
+        register(MarkdownEditor.class, JmixMarkdownEditor.class);
     }
 
     @SuppressWarnings("unchecked")

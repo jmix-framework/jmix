@@ -20,84 +20,47 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import io.jmix.flowui.kit.meta.*;
 
+import static io.jmix.flowui.kit.meta.StudioComponent.EMPTY_INJECTION_IDENTIFIER;
+
 @StudioUiKit
 interface StudioMainViewElements {
 
     @StudioElement(
             name = "NavigationBar",
             classFqn = "com.vaadin.flow.component.html.Div",
-            xmlElement = "navigationBar",
+            xmlElement = StudioXmlElements.NAVIGATION_BAR,
             target = {"com.vaadin.flow.component.applayout.AppLayout"},
             icon = "io/jmix/flowui/kit/meta/icon/element/navigationBar.svg",
+            isInjectable = false,
+            injectionIdentifier = EMPTY_INJECTION_IDENTIFIER,
             unlimitedCount = false,
             visible = true,
-            properties = {
-                    @StudioProperty(xmlAttribute = "css", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = "touchOptimized", type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true")
-            }
-    )
+            propertyGroups = StudioPropertyGroups.NavigationBarComponent.class)
     Div navigationBar();
 
     @StudioElement(
             name = "DrawerLayout",
             classFqn = "com.vaadin.flow.component.html.Div",
-            xmlElement = "drawerLayout",
+            xmlElement = StudioXmlElements.DRAWER_LAYOUT,
             icon = "io/jmix/flowui/kit/meta/icon/element/drawerLayout.svg",
+            isInjectable = false,
+            injectionIdentifier = EMPTY_INJECTION_IDENTIFIER,
             unlimitedCount = false,
             visible = true,
             target = {"com.vaadin.flow.component.applayout.AppLayout"},
-            properties = {
-                    @StudioProperty(xmlAttribute = "css", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.STRING)
-            }
-    )
+            propertyGroups = {
+                    StudioPropertyGroups.Css.class
+            })
     Div drawerLayout();
 
     @StudioElement(
             name = "InitialLayout",
             classFqn = "com.vaadin.flow.component.orderedlayout.VerticalLayout",
-            xmlElement = "initialLayout",
+            xmlElement = StudioXmlElements.INITIAL_LAYOUT,
             icon = "io/jmix/flowui/kit/meta/icon/layout/vbox.svg",
             target = {"com.vaadin.flow.component.applayout.AppLayout", "io.jmix.tabbedmode.component.workarea.WorkArea"},
             unlimitedCount = false,
             visible = true,
-            properties = {
-                    @StudioProperty(xmlAttribute = "id", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.COMPONENT_ID),
-                    @StudioProperty(xmlAttribute = "alignItems", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
-                            setParameterFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
-                            classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$Alignment",
-                            defaultValue = "START",
-                            options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
-                    @StudioProperty(xmlAttribute = "boxSizing", category = StudioProperty.Category.SIZE, type = StudioPropertyType.ENUMERATION,
-                            setParameterFqn = "com.vaadin.flow.component.orderedlayout.BoxSizing",
-                            classFqn = "com.vaadin.flow.component.orderedlayout.BoxSizing",
-                            defaultValue = "UNDEFINED",
-                            options = {"UNDEFINED", "CONTENT_BOX", "BORDER_BOX"}),
-                    @StudioProperty(xmlAttribute = "classNames", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST),
-                    @StudioProperty(xmlAttribute = "css", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = "enabled", category = StudioProperty.Category.GENERAL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = "expand", category = StudioProperty.Category.POSITION, type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = "height", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
-                    @StudioProperty(xmlAttribute = "justifyContent", category = StudioProperty.Category.POSITION, type = StudioPropertyType.ENUMERATION,
-                            setParameterFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$JustifyContentMode",
-                            classFqn = "com.vaadin.flow.component.orderedlayout.FlexComponent$JustifyContentMode",
-                            setMethod = "setJustifyContentMode", defaultValue = "START",
-                            options = {"START", "END", "CENTER", "BETWEEN", "AROUND", "EVENLY"}),
-                    @StudioProperty(xmlAttribute = "margin", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false"),
-                    @StudioProperty(xmlAttribute = "maxHeight", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
-                    @StudioProperty(xmlAttribute = "maxWidth", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
-                    @StudioProperty(xmlAttribute = "minHeight", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
-                    @StudioProperty(xmlAttribute = "minWidth", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}),
-                    @StudioProperty(xmlAttribute = "padding", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = "spacing", category = StudioProperty.Category.POSITION, type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = "themeNames", category = StudioProperty.Category.LOOK_AND_FEEL, type = StudioPropertyType.VALUES_LIST,
-                            options = {"spacing-xs", "spacing-s", "spacing", "spacing-l", "spacing-xl"}),
-                    @StudioProperty(xmlAttribute = "width", category = StudioProperty.Category.SIZE, type = StudioPropertyType.SIZE, options = {"AUTO", "100%"}, defaultValue = "100%")
-            }
-    )
+            propertyGroups = StudioPropertyGroups.InitialLayoutDefaultProperties.class)
     VerticalLayout initialLayout();
 }

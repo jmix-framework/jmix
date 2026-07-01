@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2016 Haulmont.
+ * Copyright 2016 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,12 @@
 
 package io.jmix.security;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Class is responsible for the brute-force protection on user authentication.
  */
+@NullMarked
 public interface BruteForceProtection {
     /**
      * Returns a number of login attempts left for the specified pair of login and IP-address.

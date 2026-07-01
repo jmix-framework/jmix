@@ -15,7 +15,9 @@
  */
 
 group = 'io.jmix.email'
-archivesBaseName = 'jmix-email-flowui-starter'
+base {
+    archivesName = 'jmix-email-flowui-starter'
+}
 
 dependencies {
     api project(':email-flowui')

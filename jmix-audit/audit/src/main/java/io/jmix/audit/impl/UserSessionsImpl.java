@@ -18,6 +18,7 @@ package io.jmix.audit.impl;
 
 import io.jmix.audit.UserSessions;
 import io.jmix.audit.entity.UserSession;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.session.SessionInformation;
 import org.springframework.security.core.session.SessionRegistry;
@@ -29,6 +30,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+@NullMarked
 @Component("audit_UserSessions")
 public class UserSessionsImpl implements UserSessions {
 

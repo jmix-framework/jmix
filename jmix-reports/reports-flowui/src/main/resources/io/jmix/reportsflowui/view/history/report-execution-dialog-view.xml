@@ -41,6 +41,7 @@
         <details id="filterDetails"
                  summaryText="msg://io.jmix.reportsflowui.view/filter"
                  opened="true"
+                 themeNames="no-padding"
                  width="100%">
             <formLayout id="gridFilter">
                 <responsiveSteps>

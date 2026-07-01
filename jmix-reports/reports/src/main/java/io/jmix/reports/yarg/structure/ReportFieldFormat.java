@@ -15,13 +15,15 @@
  */
 package io.jmix.reports.yarg.structure;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import java.io.Serializable;
 
 /**
  * This interface describes a format for certain result field.
  */
+@NullMarked
 public interface ReportFieldFormat extends Serializable {
     /**
      * @return formatted field name. Should also contain all parent band names.

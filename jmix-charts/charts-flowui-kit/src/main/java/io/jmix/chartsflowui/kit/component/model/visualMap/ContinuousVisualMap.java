@@ -17,6 +17,7 @@
 package io.jmix.chartsflowui.kit.component.model.visualMap;
 
 import io.jmix.chartsflowui.kit.component.model.shared.ItemStyle;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Visual map component for displaying data in continuous form.<br/>
@@ -48,6 +49,7 @@ public class ContinuousVisualMap extends AbstractVisualMap<ContinuousVisualMap> 
         super(VisualMapType.CONTINUOUS);
     }
 
+    @Nullable
     public Boolean getCalculable() {
         return calculable;
     }
@@ -57,6 +59,7 @@ public class ContinuousVisualMap extends AbstractVisualMap<ContinuousVisualMap> 
         markAsDirty();
     }
 
+    @Nullable
     public Integer[] getRange() {
         return range;
     }
@@ -66,6 +69,7 @@ public class ContinuousVisualMap extends AbstractVisualMap<ContinuousVisualMap> 
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getRealtime() {
         return realtime;
     }
@@ -75,6 +79,7 @@ public class ContinuousVisualMap extends AbstractVisualMap<ContinuousVisualMap> 
         markAsDirty();
     }
 
+    @Nullable
     public String getHandleIcon() {
         return handleIcon;
     }
@@ -84,6 +89,7 @@ public class ContinuousVisualMap extends AbstractVisualMap<ContinuousVisualMap> 
         markAsDirty();
     }
 
+    @Nullable
     public String getHandleSize() {
         return handleSize;
     }
@@ -93,6 +99,7 @@ public class ContinuousVisualMap extends AbstractVisualMap<ContinuousVisualMap> 
         markAsDirty();
     }
 
+    @Nullable
     public ItemStyle getHandleStyle() {
         return handleStyle;
     }
@@ -106,6 +113,7 @@ public class ContinuousVisualMap extends AbstractVisualMap<ContinuousVisualMap> 
         addChild(handleStyle);
     }
 
+    @Nullable
     public String getIndicatorIcon() {
         return indicatorIcon;
     }
@@ -115,6 +123,7 @@ public class ContinuousVisualMap extends AbstractVisualMap<ContinuousVisualMap> 
         markAsDirty();
     }
 
+    @Nullable
     public String getIndicatorSize() {
         return indicatorSize;
     }
@@ -124,6 +133,7 @@ public class ContinuousVisualMap extends AbstractVisualMap<ContinuousVisualMap> 
         markAsDirty();
     }
 
+    @Nullable
     public ItemStyle getIndicatorStyle() {
         return indicatorStyle;
     }

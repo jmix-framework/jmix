@@ -16,11 +16,14 @@
 
 package io.jmix.search.searching;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Describes the way search context should be processed.
  *
  * @param <T> platform-specific request builder type
  */
+@NullMarked
 public interface SearchStrategy<T> {
 
     /**

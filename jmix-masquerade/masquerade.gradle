@@ -15,7 +15,9 @@
  */
 
 group = 'io.jmix.masquerade'
-archivesBaseName = 'jmix-masquerade'
+base {
+    archivesName = 'jmix-masquerade'
+}
 
 dependencies {
     api 'com.codeborne:selenide'

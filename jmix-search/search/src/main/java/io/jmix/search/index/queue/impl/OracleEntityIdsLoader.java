@@ -18,6 +18,7 @@ package io.jmix.search.index.queue.impl;
 
 import io.jmix.core.ValueLoadContext;
 import io.jmix.core.entity.KeyValueEntity;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -33,6 +34,7 @@ import java.util.Map;
  * Oracle-specific implementation of {@link OrderBasedEntityIdsLoader}.
  * Ensures that ordering and comparison works the same way.
  */
+@NullMarked
 @Component("search_OracleEntityIdsLoader")
 public class OracleEntityIdsLoader extends OrderBasedEntityIdsLoader {
 

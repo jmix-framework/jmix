@@ -18,10 +18,10 @@
 <fragment xmlns="http://jmix.io/schema/flowui/fragment">
     <content>
         <hbox id="emptyStateByPermissionsLayout" height="100%" padding="false" spacing="false"
-              classNames="gap-x-s"
+              classNames="data-grid-empty-state-by-permissions-fragment"
               justifyContent="CENTER" alignItems="CENTER">
             <icon id="emptyStateIcon" icon="WARNING"
-                  color="var(--lumo-error-contrast)" size="1em"/>
+                  classNames="empty-state-icon"/>
             <h4 id="emptyStateHeader" text="msg://gridEmptyStateHeader"/>
         </hbox>
     </content>

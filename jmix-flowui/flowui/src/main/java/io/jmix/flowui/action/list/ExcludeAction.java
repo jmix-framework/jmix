@@ -34,7 +34,7 @@ import io.jmix.flowui.util.RemoveOperation;
 import io.jmix.flowui.util.RemoveOperation.ActionCancelledEvent;
 import io.jmix.flowui.util.RemoveOperation.AfterActionPerformedEvent;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.function.Consumer;
 
@@ -88,7 +88,7 @@ public class ExcludeAction<E> extends SecuredListDataComponentAction<ExcludeActi
 
     @Autowired
     protected void setUiComponentProperties(UiComponentProperties uiComponentProperties) {
-        this.shortcutCombination = KeyCombination.create(uiComponentProperties.getGridRemoveShortcut());
+        setShortcutCombination(KeyCombination.create(uiComponentProperties.getGridRemoveShortcut()));
     }
 
     /**

@@ -19,10 +19,12 @@ package io.jmix.search.index.impl;
 import io.jmix.core.Id;
 import io.jmix.search.index.EntityIndexer;
 import io.jmix.search.index.IndexResult;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.Collection;
 import java.util.Collections;
 
+@NullMarked
 public class NoopEntityIndexer implements EntityIndexer {
 
     @Override

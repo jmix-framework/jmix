@@ -19,6 +19,7 @@ package io.jmix.chartsflowui.kit.component.model.shared;
 import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
 import io.jmix.chartsflowui.kit.component.model.HasLineStyle;
 import io.jmix.chartsflowui.kit.component.model.HasShadow;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The base class for text with border.
@@ -54,6 +55,7 @@ public abstract class AbstractBorderedTextStyle<T extends AbstractBorderedTextSt
 
     protected Double opacity;
 
+    @Nullable
     public Color getColor() {
         return color;
     }
@@ -63,6 +65,7 @@ public abstract class AbstractBorderedTextStyle<T extends AbstractBorderedTextSt
         markAsDirty();
     }
 
+    @Nullable
     public Color getBorderColor() {
         return borderColor;
     }
@@ -72,6 +75,7 @@ public abstract class AbstractBorderedTextStyle<T extends AbstractBorderedTextSt
         markAsDirty();
     }
 
+    @Nullable
     public Integer getBorderWidth() {
         return borderWidth;
     }
@@ -81,6 +85,7 @@ public abstract class AbstractBorderedTextStyle<T extends AbstractBorderedTextSt
         markAsDirty();
     }
 
+    @Nullable
     public String getBorderType() {
         return borderType;
     }
@@ -90,6 +95,7 @@ public abstract class AbstractBorderedTextStyle<T extends AbstractBorderedTextSt
         markAsDirty();
     }
 
+    @Nullable
     public Integer getBorderDashOffset() {
         return borderDashOffset;
     }
@@ -99,6 +105,7 @@ public abstract class AbstractBorderedTextStyle<T extends AbstractBorderedTextSt
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Cap getCap() {
         return borderCap;
@@ -110,6 +117,7 @@ public abstract class AbstractBorderedTextStyle<T extends AbstractBorderedTextSt
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Join getJoin() {
         return borderJoin;
@@ -121,6 +129,7 @@ public abstract class AbstractBorderedTextStyle<T extends AbstractBorderedTextSt
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getMiterLimit() {
         return borderMiterLimit;
@@ -132,6 +141,7 @@ public abstract class AbstractBorderedTextStyle<T extends AbstractBorderedTextSt
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getShadowBlur() {
         return shadowBlur;
@@ -143,6 +153,7 @@ public abstract class AbstractBorderedTextStyle<T extends AbstractBorderedTextSt
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Color getShadowColor() {
         return shadowColor;
@@ -154,6 +165,7 @@ public abstract class AbstractBorderedTextStyle<T extends AbstractBorderedTextSt
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getShadowOffsetX() {
         return shadowOffsetX;
@@ -165,6 +177,7 @@ public abstract class AbstractBorderedTextStyle<T extends AbstractBorderedTextSt
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getShadowOffsetY() {
         return shadowOffsetY;
@@ -176,6 +189,7 @@ public abstract class AbstractBorderedTextStyle<T extends AbstractBorderedTextSt
         markAsDirty();
     }
 
+    @Nullable
     public Double getOpacity() {
         return opacity;
     }

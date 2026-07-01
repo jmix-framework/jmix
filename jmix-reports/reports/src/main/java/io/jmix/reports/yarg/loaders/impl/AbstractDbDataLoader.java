@@ -20,6 +20,7 @@ import io.jmix.reports.yarg.exception.DataLoadingException;
 import io.jmix.reports.yarg.structure.BandData;
 import groovy.text.GStringTemplateEngine;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.*;
@@ -183,7 +184,7 @@ public abstract class AbstractDbDataLoader extends AbstractDataLoader {
     }
 
     @SuppressWarnings("unchecked")
-    protected String processQueryTemplate(String query, BandData parentBand, Map<String, Object> reportParams) {
+    protected String processQueryTemplate(String query, @Nullable BandData parentBand, Map<String, Object> reportParams) {
         try {
             GStringTemplateEngine engine = new GStringTemplateEngine();
             Map bindings = new HashMap();

@@ -18,6 +18,7 @@ package io.jmix.authserver.roleassignment;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -25,6 +26,7 @@ import java.util.Collection;
 /**
  * In-memory implementation of {@link RegisteredClientRoleAssignmentRepository}.
  */
+@NullMarked
 public class InMemoryRegisteredClientRoleAssignmentRepository implements RegisteredClientRoleAssignmentRepository {
 
     protected Multimap<String, RegisteredClientRoleAssignment> registrationToRoleAssignmentsMap = HashMultimap.create();

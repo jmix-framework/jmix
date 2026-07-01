@@ -17,8 +17,8 @@
 package io.jmix.flowui.model;
 
 import io.jmix.core.Sort;
-
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Root interface of collection loaders.
@@ -26,6 +26,7 @@ import org.springframework.lang.Nullable;
  * @see CollectionLoader
  * @see KeyValueCollectionLoader
  */
+@NullMarked
 public interface BaseCollectionLoader extends DataLoader {
 
     /**

@@ -15,6 +15,8 @@
  */
 package io.jmix.reports.yarg.structure;
 
+import org.jspecify.annotations.NullMarked;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -22,6 +24,7 @@ import java.util.List;
  * This interface describes Band abstraction. Band is description of some data.
  * Bands have tree structure - parent has several children, they also can have children, etc.
  */
+@NullMarked
 public interface ReportBand extends Serializable {
     String getName();
 

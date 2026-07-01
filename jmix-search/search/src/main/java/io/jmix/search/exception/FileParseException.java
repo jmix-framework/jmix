@@ -18,7 +18,7 @@ package io.jmix.search.exception;
 
 import org.apache.commons.lang3.StringUtils;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public class FileParseException extends Exception {
 

@@ -16,6 +16,7 @@
 
 package io.jmix.core;
 
+import org.jspecify.annotations.NullMarked;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Component;
  * Factory for {@link FetchPlanBuilder}.
  */
 @Component("core_FetchPlans")
+@NullMarked
 public class FetchPlans {
 
     @Autowired

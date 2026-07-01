@@ -17,11 +17,13 @@
 package io.jmix.flowui.xml.facet;
 
 import org.dom4j.Element;
+import org.jspecify.annotations.NullMarked;
 import io.jmix.flowui.xml.facet.loader.FacetLoader;
 
 /**
  * Configuration interface for {@link FacetLoader} implementations.
  */
+@NullMarked
 public interface FacetLoaderConfig {
 
     /**

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2019 Haulmont.
+ * Copyright 2019 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,11 +18,14 @@ package io.jmix.rest.impl.openapi;
 
 import io.swagger.v3.oas.models.OpenAPI;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * This bean generates OpenAPI documentation according to the 3.1 specification.
  * <p>
  * Generated documentation includes operations with entities, predefined REST queries and exposed services.
  */
+@NullMarked
 public interface OpenAPIGenerator {
 
     /**

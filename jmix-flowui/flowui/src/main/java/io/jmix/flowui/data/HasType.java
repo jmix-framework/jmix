@@ -16,11 +16,14 @@
 
 package io.jmix.flowui.data;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Represents a data unit that provides the type information of its value.
  *
  * @param <T> the type associated with the value
  */
+@NullMarked
 public interface HasType<T> {
 
     /**

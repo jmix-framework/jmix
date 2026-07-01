@@ -50,11 +50,15 @@
                 </prefix>
             </textField>
         </propertyFilter>
-        <hbox id="buttonsPanel" classNames="buttons-panel">
-            <button id="createButton" action="messageTemplateGroupsDataGrid.create"/>
-            <button id="editButton" action="messageTemplateGroupsDataGrid.edit"/>
-            <button id="removeButton" action="messageTemplateGroupsDataGrid.remove"/>
-            <simplePagination id="pagination" dataLoader="messageTemplateGroupsDl"/>
+        <hbox id="buttonsPanel" wrap="true" width="100%">
+            <startSlot>
+                <button id="createButton" action="messageTemplateGroupsDataGrid.create"/>
+                <button id="editButton" action="messageTemplateGroupsDataGrid.edit"/>
+                <button id="removeButton" action="messageTemplateGroupsDataGrid.remove"/>
+            </startSlot>
+            <endSlot>
+                <simplePagination id="pagination" dataLoader="messageTemplateGroupsDl"/>
+            </endSlot>
         </hbox>
         <dataGrid id="messageTemplateGroupsDataGrid"
                   width="100%"

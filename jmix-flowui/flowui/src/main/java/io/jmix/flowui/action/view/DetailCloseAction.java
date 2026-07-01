@@ -26,7 +26,7 @@ import io.jmix.flowui.view.StandardDetailView;
 import io.jmix.flowui.view.StandardOutcome;
 import io.jmix.flowui.view.ViewControllerUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 @ActionType(DetailCloseAction.ID)
 public class DetailCloseAction<E> extends OperationResultViewAction<DetailCloseAction<E>, StandardDetailView<E>> {
@@ -57,7 +57,7 @@ public class DetailCloseAction<E> extends OperationResultViewAction<DetailCloseA
 
     @Autowired
     protected void setUiViewProperties(UiViewProperties viewProperties) {
-        this.shortcutCombination = KeyCombination.create(viewProperties.getCloseShortcut());
+        setShortcutCombination(KeyCombination.create(viewProperties.getCloseShortcut()));
     }
 
     @Override

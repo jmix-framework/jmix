@@ -37,7 +37,7 @@ import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.builder.DetailWindowBuilder;
 import io.jmix.flowui.view.navigation.DetailViewNavigator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -225,7 +225,7 @@ public class ReadAction<E> extends SecuredListDataComponentAction<ReadAction<E>,
 
     @Autowired
     protected void setUiComponentProperties(UiComponentProperties uiComponentProperties) {
-        this.shortcutCombination = KeyCombination.create(uiComponentProperties.getGridReadShortcut());
+        setShortcutCombination(KeyCombination.create(uiComponentProperties.getGridReadShortcut()));
     }
 
     @Autowired

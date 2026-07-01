@@ -23,11 +23,12 @@ import io.jmix.security.impl.role.builder.AnnotatedRoleBuilder;
 import io.jmix.security.impl.role.event.RowLevelRoleModifiedEvent;
 import io.jmix.security.model.RowLevelRole;
 import io.jmix.security.role.RowLevelRoleProvider;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
@@ -38,6 +39,7 @@ import java.util.stream.Collectors;
  * Role provider that gets row level roles from classes annotated with
  * {@link io.jmix.security.role.annotation.RowLevelRole}.
  */
+@NullMarked
 @Component("sec_AnnotatedRowLevelRoleProvider")
 public class AnnotatedRowLevelRoleProvider implements RowLevelRoleProvider {
 

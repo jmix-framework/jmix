@@ -17,6 +17,7 @@
 package io.jmix.flowui;
 
 import io.jmix.flowui.facet.Facet;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -24,6 +25,7 @@ import org.springframework.context.ApplicationContext;
  * <br>
  * An instance of the factory can be injected into view controllers or obtained through {@link ApplicationContext}.
  */
+@NullMarked
 public interface Facets {
 
     /**

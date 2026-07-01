@@ -28,7 +28,6 @@ import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.function.SerializableConsumer;
 import com.vaadin.flow.internal.ExecutionContext;
 import com.vaadin.flow.shared.Registration;
-import elemental.json.JsonObject;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.impl.keyvalue.KeyValueMetaClass;
@@ -48,10 +47,11 @@ import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.view.ViewValidation;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
-import org.springframework.lang.Nullable;
+import tools.jackson.databind.node.ObjectNode;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -70,6 +70,7 @@ public class DataGridEditorImpl<T> extends AbstractGridExtension<T>
 
     protected Consumer<StatusContext<?>> defaultComponentStatusHandler;
     protected Consumer<ValidationErrors> validationErrorsHandler;
+    protected Consumer<ComponentConfigurerContext<T>> editComponentConfigurer;
 
     protected T edited;
     protected boolean buffered;
@@ -243,8 +244,7 @@ public class DataGridEditorImpl<T> extends AbstractGridExtension<T>
                 editItemRequest = null;
             };
             getGrid().getElement().getNode().runWhenAttached(
-                    ui -> ui.getInternals().getStateTree().beforeClientResponse(
-                            getGrid().getElement().getNode(), editItemRequest));
+                    ui -> ui.beforeClientResponse(getGrid(), editItemRequest));
         }
     }
 
@@ -278,7 +278,7 @@ public class DataGridEditorImpl<T> extends AbstractGridExtension<T>
     }
 
     @Override
-    public void generateData(@Nullable T item, JsonObject jsonObject) {
+    public void generateData(@Nullable T item, ObjectNode jsonObject) {
         if (item != null && item.equals(edited)) {
             jsonObject.put(EDITING, true);
         } else {
@@ -449,6 +449,10 @@ public class DataGridEditorImpl<T> extends AbstractGridExtension<T>
 
             Component editComponent = generator.apply(generationContext);
 
+            if (editComponentConfigurer != null) {
+                editComponentConfigurer.accept(new ComponentConfigurerContext<>(item, property, editComponent));
+            }
+
             if (isBuffered()) {
                 registerEditComponent(column, editComponent);
             }
@@ -482,6 +486,11 @@ public class DataGridEditorImpl<T> extends AbstractGridExtension<T>
     @Override
     public void setValidationErrorsHandler(@Nullable Consumer<ValidationErrors> validationErrorsHandler) {
         this.validationErrorsHandler = validationErrorsHandler;
+    }
+
+    @Override
+    public void setEditComponentConfigurer(@Nullable Consumer<ComponentConfigurerContext<T>> editComponentConfigurer) {
+        this.editComponentConfigurer = editComponentConfigurer;
     }
 
     protected void registerEditComponent(Grid.Column<T> column, Component editComponent) {

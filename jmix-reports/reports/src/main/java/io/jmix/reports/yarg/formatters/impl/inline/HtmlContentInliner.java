@@ -33,6 +33,7 @@ import org.docx4j.openpackaging.parts.WordprocessingML.AltChunkType;
 import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
 import org.docx4j.wml.R;
 import org.docx4j.wml.Text;
+import org.jspecify.annotations.NullMarked;
 import org.xlsx4j.sml.Cell;
 
 import java.io.File;
@@ -46,6 +47,7 @@ import static io.jmix.reports.yarg.formatters.impl.doc.UnoConverter.as;
 /**
  * Handle HTML with format string: ${html}
  */
+@NullMarked
 public class HtmlContentInliner implements ContentInliner {
 
     public final static String REGULAR_EXPRESSION = "\\$\\{html\\}";

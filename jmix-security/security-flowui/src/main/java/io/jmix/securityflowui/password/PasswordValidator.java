@@ -16,12 +16,15 @@
 
 package io.jmix.securityflowui.password;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Interface to be implemented by beans that validate password when it is created or changed for a user.
  *
  * @param <E> type of the user entity
  * @see #validate(PasswordValidationContext)
  */
+@NullMarked
 public interface PasswordValidator<E> {
 
     /**

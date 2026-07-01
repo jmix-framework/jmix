@@ -21,10 +21,13 @@
  */
 package io.jmix.data.persistence;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Interface defining methods for managing database sequences.
  *
  */
+@NullMarked
 public interface SequenceSupport {
 
     String SQL_DELIMITER = "^";

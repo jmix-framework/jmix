@@ -19,7 +19,7 @@ package io.jmix.chartsflowui.kit.component.model.toolbox;
 import io.jmix.chartsflowui.kit.component.model.Brush;
 import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
 import io.jmix.chartsflowui.kit.component.model.HasEnumId;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A tool feature for brush-selecting. It can also be configured at {@link Brush#setToolboxes(Brush.Toolbox...)}.
@@ -85,6 +85,7 @@ public class BrushFeature extends ToolboxFeature {
 
         protected String clear;
 
+        @Nullable
         public String getRect() {
             return rect;
         }
@@ -94,6 +95,7 @@ public class BrushFeature extends ToolboxFeature {
             markAsDirty();
         }
 
+        @Nullable
         public String getPolygon() {
             return polygon;
         }
@@ -103,6 +105,7 @@ public class BrushFeature extends ToolboxFeature {
             markAsDirty();
         }
 
+        @Nullable
         public String getLineX() {
             return lineX;
         }
@@ -112,6 +115,7 @@ public class BrushFeature extends ToolboxFeature {
             markAsDirty();
         }
 
+        @Nullable
         public String getLineY() {
             return lineY;
         }
@@ -121,6 +125,7 @@ public class BrushFeature extends ToolboxFeature {
             markAsDirty();
         }
 
+        @Nullable
         public String getKeep() {
             return keep;
         }
@@ -130,6 +135,7 @@ public class BrushFeature extends ToolboxFeature {
             markAsDirty();
         }
 
+        @Nullable
         public String getClear() {
             return clear;
         }
@@ -187,6 +193,7 @@ public class BrushFeature extends ToolboxFeature {
 
         protected String clear;
 
+        @Nullable
         public String getRect() {
             return rect;
         }
@@ -196,6 +203,7 @@ public class BrushFeature extends ToolboxFeature {
             markAsDirty();
         }
 
+        @Nullable
         public String getPolygon() {
             return polygon;
         }
@@ -205,6 +213,7 @@ public class BrushFeature extends ToolboxFeature {
             markAsDirty();
         }
 
+        @Nullable
         public String getLineX() {
             return lineX;
         }
@@ -214,6 +223,7 @@ public class BrushFeature extends ToolboxFeature {
             markAsDirty();
         }
 
+        @Nullable
         public String getLineY() {
             return lineY;
         }
@@ -223,6 +233,7 @@ public class BrushFeature extends ToolboxFeature {
             markAsDirty();
         }
 
+        @Nullable
         public String getKeep() {
             return keep;
         }
@@ -232,6 +243,7 @@ public class BrushFeature extends ToolboxFeature {
             markAsDirty();
         }
 
+        @Nullable
         public String getClear() {
             return clear;
         }
@@ -272,6 +284,7 @@ public class BrushFeature extends ToolboxFeature {
         }
     }
 
+    @Nullable
     public BrushType[] getTypes() {
         return types;
     }
@@ -281,6 +294,7 @@ public class BrushFeature extends ToolboxFeature {
         markAsDirty();
     }
 
+    @Nullable
     public Icon getIcon() {
         return icon;
     }
@@ -294,6 +308,7 @@ public class BrushFeature extends ToolboxFeature {
         addChild(icon);
     }
 
+    @Nullable
     public Title getTitle() {
         return title;
     }

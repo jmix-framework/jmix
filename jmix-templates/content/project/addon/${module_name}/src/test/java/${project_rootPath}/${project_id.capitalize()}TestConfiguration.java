@@ -24,7 +24,7 @@ public class ${project_id.capitalize()}TestConfiguration {
     DataSource dataSource() {
         return new EmbeddedDatabaseBuilder()
                 .generateUniqueName(true)
-                .setType(EmbeddedDatabaseType.H2)
+                .setType(EmbeddedDatabaseType.HSQL)
                 .build();
     }
 }

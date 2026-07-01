@@ -19,6 +19,7 @@ package io.jmix.chartsflowui.kit.component.model.axis;
 import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
 import io.jmix.chartsflowui.kit.component.model.Grid;
 import io.jmix.chartsflowui.kit.component.model.shared.LineStyle;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Minor split lines of axis in the {@link Grid} area. It will align to the {@link MinorTick}.
@@ -31,6 +32,7 @@ public class MinorSplitLine extends ChartObservableObject {
 
     protected LineStyle lineStyle;
 
+    @Nullable
     public Boolean getShow() {
         return show;
     }
@@ -40,6 +42,7 @@ public class MinorSplitLine extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public LineStyle getLineStyle() {
         return lineStyle;
     }

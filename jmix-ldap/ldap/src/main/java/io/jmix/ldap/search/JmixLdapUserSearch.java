@@ -16,6 +16,7 @@
 
 package io.jmix.ldap.search;
 
+import org.jspecify.annotations.NullMarked;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.security.ldap.search.LdapUserSearch;
 
@@ -24,6 +25,7 @@ import java.util.Set;
 /**
  * Extension of LdapUserSearch interface which adds extra method required by Jmix.
  */
+@NullMarked
 public interface JmixLdapUserSearch extends LdapUserSearch {
     /**
      * Locates multiple user in the directory by the given substring

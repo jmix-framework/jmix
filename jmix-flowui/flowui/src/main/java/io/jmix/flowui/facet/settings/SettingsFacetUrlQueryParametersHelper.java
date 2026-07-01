@@ -20,11 +20,12 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.router.QueryParameters;
 import io.jmix.core.annotation.Internal;
 import io.jmix.flowui.component.PaginationComponent;
+import io.jmix.flowui.component.genericfilter.GenericFilter;
 import io.jmix.flowui.facet.SettingsFacet;
 import io.jmix.flowui.facet.UrlQueryParametersFacet;
 import io.jmix.flowui.facet.urlqueryparameters.AbstractUrlQueryParametersBinder;
+import io.jmix.flowui.facet.urlqueryparameters.GenericFilterUrlQueryParametersBinder;
 import io.jmix.flowui.facet.urlqueryparameters.PaginationUrlQueryParametersBinder;
-import io.jmix.flowui.facet.urlqueryparameters.UrlQueryParametersBinderUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -47,6 +48,11 @@ public class SettingsFacetUrlQueryParametersHelper {
         if (binder instanceof PaginationUrlQueryParametersBinder paginationBinder) {
             return containsParametersForPagination(queryParameters.getParameters(), paginationBinder);
         }
+
+        if (binder instanceof GenericFilterUrlQueryParametersBinder filterBinder) {
+            return containsParametersForGenericFilter(queryParameters.getParameters(), filterBinder);
+        }
+
         return false;
     }
 
@@ -71,7 +77,19 @@ public class SettingsFacetUrlQueryParametersHelper {
      */
     protected boolean containsParametersForPagination(Map<String, List<String>> parameters,
                                                       PaginationUrlQueryParametersBinder paginationBinder) {
-        return parameters.containsKey(paginationBinder.getMaxResultsParam()) ||
-                parameters.containsKey(UrlQueryParametersBinderUtils.getPaginationMaxResultsParam(paginationBinder));
+        return parameters.containsKey(paginationBinder.getMaxResultsParam());
+    }
+
+    /**
+     * Checks only {@link GenericFilterUrlQueryParametersBinder#getConfigurationParam()} since {@link GenericFilter}
+     * supports {@code configuration} in settings.
+     *
+     * @param parameters   query parameters map
+     * @param filterBinder filter URL query binder
+     * @return {@code true} if parameters map contains 'configuration' parameter
+     */
+    protected boolean containsParametersForGenericFilter(Map<String, List<String>> parameters,
+                                                         GenericFilterUrlQueryParametersBinder filterBinder) {
+        return parameters.containsKey(filterBinder.getConfigurationParam());
     }
 }

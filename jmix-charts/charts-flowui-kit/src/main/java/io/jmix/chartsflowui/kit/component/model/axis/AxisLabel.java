@@ -20,6 +20,7 @@ import io.jmix.chartsflowui.kit.component.model.HasAlign;
 import io.jmix.chartsflowui.kit.component.model.HasBorder;
 import io.jmix.chartsflowui.kit.component.model.HasShadow;
 import io.jmix.chartsflowui.kit.component.model.shared.*;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Options component related to axis label.
@@ -79,6 +80,7 @@ public class AxisLabel extends AbstractRichText<AxisLabel>
 
     protected Integer shadowOffsetY;
 
+    @Nullable
     public Boolean getShow() {
         return show;
     }
@@ -88,6 +90,7 @@ public class AxisLabel extends AbstractRichText<AxisLabel>
         markAsDirty();
     }
 
+    @Nullable
     public Integer getInterval() {
         return interval;
     }
@@ -97,6 +100,7 @@ public class AxisLabel extends AbstractRichText<AxisLabel>
         markAsDirty();
     }
 
+    @Nullable
     public JsFunction getIntervalFunction() {
         return intervalFunction;
     }
@@ -111,6 +115,7 @@ public class AxisLabel extends AbstractRichText<AxisLabel>
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getInside() {
         return inside;
     }
@@ -120,6 +125,7 @@ public class AxisLabel extends AbstractRichText<AxisLabel>
         markAsDirty();
     }
 
+    @Nullable
     public Integer getRotate() {
         return rotate;
     }
@@ -129,6 +135,7 @@ public class AxisLabel extends AbstractRichText<AxisLabel>
         markAsDirty();
     }
 
+    @Nullable
     public Integer getMargin() {
         return margin;
     }
@@ -138,6 +145,7 @@ public class AxisLabel extends AbstractRichText<AxisLabel>
         markAsDirty();
     }
 
+    @Nullable
     public String getFormatter() {
         return formatter;
     }
@@ -147,6 +155,7 @@ public class AxisLabel extends AbstractRichText<AxisLabel>
         markAsDirty();
     }
 
+    @Nullable
     public JsFunction getFormatterFunction() {
         return formatterFunction;
     }
@@ -161,6 +170,7 @@ public class AxisLabel extends AbstractRichText<AxisLabel>
         markAsDirty();
     }
 
+    @Nullable
     public JsFunction getColorFunction() {
         return colorFunction;
     }
@@ -175,6 +185,7 @@ public class AxisLabel extends AbstractRichText<AxisLabel>
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getShowMinLabel() {
         return showMinLabel;
     }
@@ -184,6 +195,7 @@ public class AxisLabel extends AbstractRichText<AxisLabel>
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getShowMaxLabel() {
         return showMaxLabel;
     }
@@ -193,6 +205,7 @@ public class AxisLabel extends AbstractRichText<AxisLabel>
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getHideOverlap() {
         return hideOverlap;
     }
@@ -202,6 +215,7 @@ public class AxisLabel extends AbstractRichText<AxisLabel>
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Align getAlign() {
         return align;
@@ -213,6 +227,7 @@ public class AxisLabel extends AbstractRichText<AxisLabel>
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public VerticalAlign getVerticalAlign() {
         return verticalAlign;
@@ -224,6 +239,7 @@ public class AxisLabel extends AbstractRichText<AxisLabel>
         markAsDirty();
     }
 
+    @Nullable
     public Color getBackgroundColor() {
         return backgroundColor;
     }
@@ -233,6 +249,7 @@ public class AxisLabel extends AbstractRichText<AxisLabel>
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Color getBorderColor() {
         return borderColor;
@@ -244,6 +261,7 @@ public class AxisLabel extends AbstractRichText<AxisLabel>
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getBorderWidth() {
         return borderWidth;
@@ -255,6 +273,7 @@ public class AxisLabel extends AbstractRichText<AxisLabel>
         markAsDirty();
     }
 
+    @Nullable
     public String getBorderType() {
         return borderType;
     }
@@ -264,6 +283,7 @@ public class AxisLabel extends AbstractRichText<AxisLabel>
         markAsDirty();
     }
 
+    @Nullable
     public Integer getBorderDashOffset() {
         return borderDashOffset;
     }
@@ -273,6 +293,7 @@ public class AxisLabel extends AbstractRichText<AxisLabel>
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getBorderRadius() {
         return borderRadius;
@@ -284,6 +305,7 @@ public class AxisLabel extends AbstractRichText<AxisLabel>
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Padding getPadding() {
         return padding;
@@ -307,6 +329,7 @@ public class AxisLabel extends AbstractRichText<AxisLabel>
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Color getShadowColor() {
         return shadowColor;
@@ -318,6 +341,7 @@ public class AxisLabel extends AbstractRichText<AxisLabel>
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getShadowBlur() {
         return shadowBlur;
@@ -329,6 +353,7 @@ public class AxisLabel extends AbstractRichText<AxisLabel>
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getShadowOffsetX() {
         return shadowOffsetX;
@@ -340,6 +365,7 @@ public class AxisLabel extends AbstractRichText<AxisLabel>
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getShadowOffsetY() {
         return shadowOffsetY;

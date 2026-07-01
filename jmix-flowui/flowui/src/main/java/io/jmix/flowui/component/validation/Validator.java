@@ -16,7 +16,8 @@
 
 package io.jmix.flowui.component.validation;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import java.util.function.Consumer;
 
 /**
@@ -25,6 +26,7 @@ import java.util.function.Consumer;
  * @param <T> value type
  */
 @FunctionalInterface
+@NullMarked
 public interface Validator<T> extends Consumer<T> {
 
     /**

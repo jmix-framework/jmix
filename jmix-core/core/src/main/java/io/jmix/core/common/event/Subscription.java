@@ -16,11 +16,14 @@
 
 package io.jmix.core.common.event;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * A registration object for removing an event listener added to a source.
  *
  * @see #remove()
  */
+@NullMarked
 public interface Subscription {
     /**
      * Removes the associated listener from the event source.

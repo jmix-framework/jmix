@@ -19,8 +19,8 @@ package io.jmix.audit.snapshot;
 import io.jmix.audit.snapshot.model.EntitySnapshotModel;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.metamodel.model.MetaClass;
-
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +28,7 @@ import java.util.Map;
 /**
  * Creates and analyzes entity snapshots.
  */
+@NullMarked
 public interface EntitySnapshotManager {
     /**
      * Load snapshots for entity
@@ -44,15 +45,6 @@ public interface EntitySnapshotManager {
      * @return Snapshot list
      */
     List<EntitySnapshotModel> getSnapshots(Object entity);
-
-    /**
-     * Translate snapshots for archival classes
-     *
-     * @param metaClass    Metaclass
-     * @param id           Entity Id
-     * @param classMapping Map of [OldClass -&gt; NewClass] for migration
-     */
-    void migrateSnapshots(MetaClass metaClass, Object id, Map<Class, Class> classMapping);
 
     /**
      * Create snapshot for Entity and store it to database

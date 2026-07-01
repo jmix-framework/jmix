@@ -17,13 +17,15 @@
 package io.jmix.flowui.view;
 
 import io.jmix.flowui.util.OperationResult;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Interface of views that display an entity instance and can save changes made by the user.
  *
  * @param <E> type of entity
  */
+@NullMarked
 public interface DetailView<E> extends ChangeTracker, SupportEntityLock<E> {
 
     /**

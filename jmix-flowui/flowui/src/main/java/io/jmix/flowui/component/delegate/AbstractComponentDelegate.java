@@ -24,6 +24,12 @@ public abstract class AbstractComponentDelegate<C extends Component> {
 
     public AbstractComponentDelegate(C component) {
         this.component = component;
+
+        initComponent(component);
+    }
+
+    protected void initComponent(C component) {
+        // hook to implement
     }
 
     public C getComponent() {

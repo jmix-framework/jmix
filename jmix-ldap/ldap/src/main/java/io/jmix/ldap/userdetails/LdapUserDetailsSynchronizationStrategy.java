@@ -16,12 +16,14 @@
 
 package io.jmix.ldap.userdetails;
 
+import org.jspecify.annotations.NullMarked;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 
+@NullMarked
 public interface LdapUserDetailsSynchronizationStrategy {
     UserDetails synchronizeUserDetails(DirContextOperations ctx, String username,
                                        Collection<? extends GrantedAuthority> authorities);

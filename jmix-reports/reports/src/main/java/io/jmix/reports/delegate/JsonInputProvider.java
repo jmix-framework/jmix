@@ -18,6 +18,7 @@ package io.jmix.reports.delegate;
 
 import io.jmix.reports.yarg.structure.BandData;
 import io.jmix.reports.yarg.structure.ReportQuery;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.Map;
 
@@ -26,6 +27,7 @@ import java.util.Map;
  * for a {@link io.jmix.reports.entity.DataSetType#JSON} data set.
  */
 @FunctionalInterface
+@NullMarked
 public interface JsonInputProvider {
 
     /**

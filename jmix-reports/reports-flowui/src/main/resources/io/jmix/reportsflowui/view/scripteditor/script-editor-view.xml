@@ -1,4 +1,20 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2026 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
 <view xmlns="http://jmix.io/schema/flowui/view"
       title="msg://scriptEditorView.title">
     <facets>
@@ -13,14 +29,14 @@
     </actions>
 
     <layout expand="codeEditorBox">
-        <div id="codeEditorBox" classNames="flex, items-start" width="100%">
+        <flexLayout id="codeEditorBox" alignItems="START" width="100%">
             <codeEditor id="editor"
                         width="100%"
                         height="100%"/>
             <button id="codeEditorHelpBtn"
-                    themeNames="icon, tertiary-inline"
+                    classNames="link-button"
                     icon="QUESTION_CIRCLE"/>
-        </div>
+        </flexLayout>
         <hbox width="100%" id="lookupActions" justifyContent="END">
             <button action="okAction"/>
             <button action="cancelAction"/>

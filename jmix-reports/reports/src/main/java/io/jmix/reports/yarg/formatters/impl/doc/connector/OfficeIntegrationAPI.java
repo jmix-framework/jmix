@@ -18,7 +18,9 @@ package io.jmix.reports.yarg.formatters.impl.doc.connector;
 
 import io.jmix.reports.yarg.formatters.impl.doc.connector.NoFreePortsException;
 import io.jmix.reports.yarg.formatters.impl.doc.connector.OfficeTask;
+import org.jspecify.annotations.NullMarked;
 
+@NullMarked
 public interface OfficeIntegrationAPI {
 
     int DEFAULT_RETRY_COUNT = 2;

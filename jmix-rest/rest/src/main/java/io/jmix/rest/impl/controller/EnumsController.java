@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2019 Haulmont.
+ * Copyright 2019 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ import java.util.List;
  * REST controller that is used for getting an information about enums
  */
 @RestController("rest_EnumsController")
-@RequestMapping(path = "${jmix.rest.base-path}${jmix.rest.metadata-path}/enums", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+@RequestMapping(path = "${jmix.rest.base-path}${jmix.rest.metadata-path}/enums", produces = MediaType.APPLICATION_JSON_VALUE)
 public class EnumsController {
     @Autowired
     protected EnumsControllerManager enumsControllerManager;

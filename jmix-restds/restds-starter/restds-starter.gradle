@@ -15,11 +15,14 @@
  */
 
 group = 'io.jmix.restds'
-archivesBaseName = 'jmix-restds-starter'
+base {
+    archivesName = 'jmix-restds-starter'
+}
 
 dependencies {
     api project(':restds')
     compileOnly project(':security')
 
+    api 'org.springframework.boot:spring-boot-restclient'
     api 'org.springframework.boot:spring-boot-autoconfigure'
 }

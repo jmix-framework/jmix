@@ -17,7 +17,8 @@
 package io.jmix.flowui.data;
 
 import com.vaadin.flow.shared.Registration;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import java.util.EventObject;
 import java.util.function.Consumer;
@@ -25,6 +26,7 @@ import java.util.function.Consumer;
 /**
  * Data component holding a typed value.
  */
+@NullMarked
 public interface ValueSource<V> extends DataUnit, HasType<V> {
 
     /**

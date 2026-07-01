@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-@NonNullApi
 @Internal
 package io.jmix.flowui.testassist.navigation;
 
-import org.springframework.lang.NonNullApi;
 import io.jmix.core.annotation.Internal;

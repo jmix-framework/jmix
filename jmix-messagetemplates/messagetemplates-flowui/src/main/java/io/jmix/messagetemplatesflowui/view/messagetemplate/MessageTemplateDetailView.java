@@ -42,6 +42,7 @@ import io.jmix.messagetemplatesflowui.kit.component.GrapesJs;
 import io.jmix.messagetemplatesflowui.kit.component.GrapesJsBlock;
 import io.jmix.messagetemplatesflowui.view.htmleditor.HtmlEditorView;
 import io.jmix.messagetemplatesflowui.view.messagetemplateparameter.MessageTemplateParameterDetailView;
+import io.jmix.messagetemplatesflowui.view.messagetemplatepreview.MessageTemplatesPreviewer;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.nio.charset.StandardCharsets;
@@ -79,6 +80,8 @@ public class MessageTemplateDetailView extends StandardDetailView<MessageTemplat
     protected Metadata metadata;
     @Autowired
     protected AccessManager accessManager;
+    @Autowired
+    protected MessageTemplatesPreviewer messageTemplatesPreviewer;
 
     @Autowired
     protected UiProperties uiProperties;
@@ -236,5 +239,10 @@ public class MessageTemplateDetailView extends StandardDetailView<MessageTemplat
     @Install(to = "parametersDataGrid.edit", subject = "viewConfigurer")
     public void parametersDataGridEditViewConfigurer(MessageTemplateParameterDetailView detailView) {
         detailView.setParentTemplateParameters(getEditedEntity().getParameters());
+    }
+
+    @Subscribe("previewButton")
+    public void onPreviewButtonClick(ClickEvent<JmixButton> event) {
+        messageTemplatesPreviewer.showPreview(this, getEditedEntity());
     }
 }

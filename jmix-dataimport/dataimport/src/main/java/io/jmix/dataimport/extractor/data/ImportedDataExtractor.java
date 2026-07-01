@@ -21,9 +21,12 @@ import io.jmix.dataimport.configuration.ImportConfiguration;
 
 import java.io.InputStream;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Parses the data from source and returns an instance of {@link ImportedData} containing list of {@link ImportedDataItem} with raw values
  */
+@NullMarked
 public interface ImportedDataExtractor {
 
     /**

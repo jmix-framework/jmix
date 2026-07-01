@@ -1,5 +1,7 @@
 group = 'io.jmix.data'
-archivesBaseName = 'jmix-eclipselink-starter'
+base {
+    archivesName = 'jmix-eclipselink-starter'
+}
 
 dependencies {
     api project(':eclipselink')
@@ -10,6 +12,7 @@ dependencies {
     compileOnly 'com.hazelcast:hazelcast'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'com.hazelcast:hazelcast'
     testRuntimeOnly 'org.hsqldb:hsqldb'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }

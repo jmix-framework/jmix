@@ -18,34 +18,23 @@ package test_support;
 
 import io.jmix.core.FileStorage;
 import io.jmix.core.annotation.JmixModule;
-import io.jmix.core.cluster.ClusterApplicationEventChannelSupplier;
-import io.jmix.core.cluster.LocalApplicationEventChannelSupplier;
 import io.jmix.localfs.LocalFileStorageConfiguration;
 import io.jmix.localfs.LocalFileStorage;
-import org.springframework.cache.CacheManager;
-import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.PropertySource;
+import io.jmix.testsupport.config.CommonCoreTestConfiguration;
 
 @Configuration
 @PropertySource("classpath:/test_support/test-app.properties")
 @JmixModule(dependsOn = LocalFileStorageConfiguration.class)
+@Import(CommonCoreTestConfiguration.class)
 public class LocalFileStorageTestConfiguration {
     @Bean
     @Primary
     FileStorage fileStorage() {
         return new LocalFileStorage("testFs");
-    }
-
-    @Bean
-    public CacheManager cacheManager() {
-        return new ConcurrentMapCacheManager();
-    }
-
-    @Bean
-    public ClusterApplicationEventChannelSupplier clusterApplicationEventChannelSupplier() {
-        return new LocalApplicationEventChannelSupplier();
     }
 }

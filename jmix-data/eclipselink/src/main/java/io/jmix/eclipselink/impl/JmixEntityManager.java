@@ -31,7 +31,7 @@ import io.jmix.data.impl.EntityListenerType;
 import io.jmix.data.impl.converters.AuditConversionService;
 import io.jmix.eclipselink.persistence.AdditionalCriteriaProvider;
 import jakarta.persistence.criteria.*;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import jakarta.persistence.*;
 import jakarta.persistence.metamodel.Metamodel;
 import org.apache.commons.collections4.CollectionUtils;
@@ -172,7 +172,6 @@ public class JmixEntityManager implements EntityManager {
     public <T> T find(Class<T> entityClass, Object primaryKey, LockModeType lockMode, Map<String, Object> properties) {
         return internalFind(entityClass, primaryKey, lockMode, properties);
     }
-
 
     @Override
     @Nullable

@@ -16,7 +16,9 @@
 package io.jmix.reports.yarg.formatters.impl.doc.connector;
 
 import io.jmix.reports.yarg.formatters.impl.doc.connector.OfficeResourceProvider;
+import org.jspecify.annotations.NullMarked;
 
+@NullMarked
 public interface OfficeTask {
     void processTaskInOpenOffice(OfficeResourceProvider officeResourceProvider);
 }

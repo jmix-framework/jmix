@@ -16,13 +16,15 @@
 
 package io.jmix.core.security;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import java.util.TimeZone;
 
 /**
  * Interface for obtaining the user's device time zone.
  */
+@NullMarked
 public interface DeviceTimeZoneProvider {
 
     /**

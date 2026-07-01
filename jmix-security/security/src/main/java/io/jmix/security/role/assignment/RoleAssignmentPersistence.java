@@ -16,12 +16,15 @@
 
 package io.jmix.security.role.assignment;
 
+import org.jspecify.annotations.NullMarked;
+
 import java.util.Collection;
 import java.util.List;
 
 /**
  * Interface to be implemented by beans that store role assignments in a persistent storage.
  */
+@NullMarked
 public interface RoleAssignmentPersistence {
 
     List<String> getExcludedUsernames(String roleCode);

@@ -18,6 +18,7 @@ package io.jmix.chartsflowui.kit.component.model;
 
 import io.jmix.chartsflowui.kit.component.JmixChart;
 import io.jmix.chartsflowui.kit.component.model.shared.Color;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A component that has text.
@@ -29,6 +30,7 @@ public interface HasText<T> {
     /**
      * @return stroke color of the text
      */
+    @Nullable
     Color getTextBorderColor();
 
     /**
@@ -52,6 +54,7 @@ public interface HasText<T> {
     /**
      * @return stroke line width of the text in pixels
      */
+    @Nullable
     Double getTextBorderWidth();
 
     /**
@@ -75,6 +78,7 @@ public interface HasText<T> {
     /**
      * @return stroke line type of the text
      */
+    @Nullable
     String getTextBorderType();
 
     /**
@@ -106,6 +110,7 @@ public interface HasText<T> {
     /**
      * @return offset of the line dash
      */
+    @Nullable
     Integer getTextBorderDashOffset();
 
     /**
@@ -130,6 +135,7 @@ public interface HasText<T> {
     /**
      * @return shadow blur of the text itself
      */
+    @Nullable
     Integer getTextShadowBlur();
 
     /**
@@ -153,6 +159,7 @@ public interface HasText<T> {
     /**
      * @return text shadow color
      */
+    @Nullable
     Color getTextShadowColor();
 
     /**
@@ -176,6 +183,7 @@ public interface HasText<T> {
     /**
      * @return horizontal offset for text shadow in pixels
      */
+    @Nullable
     Integer getTextShadowOffsetX();
 
     /**
@@ -199,6 +207,7 @@ public interface HasText<T> {
     /**
      * @return vertical offset for text shadow in pixels
      */
+    @Nullable
     Integer getTextShadowOffsetY();
 
     /**

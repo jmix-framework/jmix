@@ -17,20 +17,27 @@
 package io.jmix.reports.libintegration;
 
 import io.jmix.reports.yarg.loaders.impl.SqlDataLoader;
+import io.jmix.reports.yarg.structure.BandData;
 import io.jmix.reports.yarg.util.db.QueryRunner;
 import io.jmix.reports.yarg.util.db.ResultSetHandler;
 import io.jmix.reports.yarg.structure.ReportQuery;
 import io.jmix.data.StoreAwareLocator;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
+@NullMarked
 public class JmixSqlDataLoader extends SqlDataLoader {
 
     @Autowired
     protected StoreAwareLocator storeAwareLocator;
+    @Autowired
+    protected ReportsGroovyFeatureSupport groovyFeatureSupport;
 
     public JmixSqlDataLoader(DataSource dataSource) {
         super(dataSource);
@@ -40,5 +47,13 @@ public class JmixSqlDataLoader extends SqlDataLoader {
     protected List runQuery(ReportQuery reportQuery, String queryString, Object[] params, ResultSetHandler<List> handler) throws SQLException {
         QueryRunner runner = new QueryRunner(storeAwareLocator.getDataSource(StoreUtils.getStoreName(reportQuery)));
         return runner.query(queryString, params, handler);
+    }
+
+    @Override
+    protected String processQueryTemplate(String query, @Nullable BandData parentBand, Map<String, Object> reportParams) {
+        if (!groovyFeatureSupport.isGroovyEnabled()) {
+            return groovyFeatureSupport.getDisabledQueryTemplateResult("sql", query);
+        }
+        return super.processQueryTemplate(query, parentBand, reportParams);
     }
 }

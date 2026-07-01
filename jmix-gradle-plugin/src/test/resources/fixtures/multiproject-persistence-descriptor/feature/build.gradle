@@ -1,0 +1,7 @@
+base {
+    archivesName = 'sample-feature'
+}
+
+dependencies {
+    api project(':base')
+}

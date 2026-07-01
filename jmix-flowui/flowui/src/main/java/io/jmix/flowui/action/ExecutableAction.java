@@ -17,7 +17,9 @@
 package io.jmix.flowui.action;
 
 import io.jmix.flowui.kit.action.Action;
+import org.jspecify.annotations.NullMarked;
 
+@NullMarked
 public interface ExecutableAction extends Action {
 
     /**

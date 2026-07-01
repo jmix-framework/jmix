@@ -17,13 +17,15 @@
 package test_support.repository;
 
 import io.jmix.core.FetchPlan;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.springframework.data.domain.Sort;
 import test_support.entity.TestOrder;
 
 import java.util.List;
 import java.util.UUID;
 
+@NullMarked
 public interface ThirdRepository extends SecondRepository {
 
     @Override

@@ -45,7 +45,7 @@ public class EntityRestoreImpl implements EntityRestore {
     private static final Logger log = LoggerFactory.getLogger(EntityRestore.class);
 
     @Autowired
-    private UnconstrainedDataManager dataManager;
+    private DataManager dataManager;
 
     @Autowired
     protected Metadata metadata;

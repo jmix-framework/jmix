@@ -28,7 +28,7 @@ import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewControllerUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.text.WordUtils;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public class FilterUtils {
 
@@ -48,6 +48,11 @@ public class FilterUtils {
         filter.setCurrentConfigurationInternal(currentConfiguration, fromClient);
     }
 
+    /**
+     * @deprecated no longer used internally; {@link GenericFilter} now captures the initial data loader
+     * condition lazily. Retained for backward compatibility.
+     */
+    @Deprecated(since = "3.0", forRemoval = true)
     @Internal
     public static void updateDataLoaderInitialCondition(GenericFilter genericFilter, @Nullable Condition condition) {
         genericFilter.updateDataLoaderInitialCondition(condition);

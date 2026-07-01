@@ -18,12 +18,14 @@ package io.jmix.search.index.mapping.propertyvalue;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.Map;
 
 /**
  * Provide functionality for value extraction from entity instance.
  */
+@NullMarked
 public interface PropertyValueExtractor {
 
     /**

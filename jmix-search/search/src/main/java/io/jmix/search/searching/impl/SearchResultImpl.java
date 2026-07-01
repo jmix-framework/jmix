@@ -19,9 +19,11 @@ package io.jmix.search.searching.impl;
 import io.jmix.search.searching.SearchContext;
 import io.jmix.search.searching.SearchResult;
 import io.jmix.search.searching.SearchResultEntry;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.*;
 
+@NullMarked
 public class SearchResultImpl implements SearchResult {
     protected SearchContext searchContext;
     protected final Map<String, Collection<SearchResultEntry>> entriesByEntityName = new HashMap<>();

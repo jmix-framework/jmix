@@ -26,15 +26,16 @@ import java.lang.annotation.Target;
  */
 @Documented
 @Target(ElementType.TYPE_PARAMETER)
+@StudioAPI
 public @interface StudioPropertiesItem {
 
     /**
-     * Xml attribute name.
+     * XML attribute name.
      */
     String xmlAttribute();
 
     /**
-     * Xml attribute type.
+     * XML attribute type.
      */
     StudioPropertyType type();
 

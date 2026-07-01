@@ -16,11 +16,14 @@
 
 package io.jmix.flowui.facet;
 
+import org.jspecify.annotations.NullMarked;
+
 import java.util.Optional;
 
 /**
  * Marker interface for components that can have facets.
  */
+@NullMarked
 public interface FacetOwner {
 
     /**

@@ -23,7 +23,8 @@ import io.jmix.flowui.component.groupgrid.GroupInfo;
 import io.jmix.flowui.component.groupgrid.GroupListDataComponent;
 import io.jmix.flowui.component.groupgrid.GroupProperty;
 import io.jmix.flowui.data.grid.DataGridItems;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.EventObject;
@@ -36,6 +37,7 @@ import java.util.function.Consumer;
  *
  * @param <T> the type of items contained within the group data grid
  */
+@NullMarked
 public interface GroupDataGridItems<T> extends DataGridItems<T>, HierarchicalDataProvider<T, Void> {
 
     /**

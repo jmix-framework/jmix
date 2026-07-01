@@ -18,7 +18,7 @@ package io.jmix.flowui.accesscontext;
 
 import io.jmix.core.accesscontext.AccessContext;
 import io.jmix.flowui.view.View;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Defines an authorization point for showing {@link View}.

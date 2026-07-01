@@ -48,7 +48,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -446,7 +446,7 @@ public class EntityLogImpl implements EntityLog, JpaLifecycleListener {
             if (username != null)
                 return username;
             else
-                throw new RuntimeException("The user '" + username + "' specified in jmix.audit.systemUsername does not exist");
+                throw new RuntimeException("The system username (jmix.audit.systemUsername) is not specified");
         }
     }
 

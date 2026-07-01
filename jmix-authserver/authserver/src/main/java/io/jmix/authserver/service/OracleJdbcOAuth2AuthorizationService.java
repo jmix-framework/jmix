@@ -18,7 +18,7 @@ package io.jmix.authserver.service;
 
 import org.springframework.jdbc.core.*;
 import org.springframework.jdbc.support.lob.LobCreator;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.security.oauth2.core.oidc.endpoint.OidcParameterNames;
 import org.springframework.security.oauth2.server.authorization.JdbcOAuth2AuthorizationService;
@@ -38,7 +38,7 @@ import java.util.Map;
 /**
  * Class that provides JdbcOAuth2AuthorizationService for Oracle database.
  */
-public class OracleJdbcOAuth2AuthorizationService extends JdbcOAuth2AuthorizationService {
+public class OracleJdbcOAuth2AuthorizationService extends JmixJdbcOAuth2AuthorizationService {
 
     private static final String COLUMN_NAMES = "id, "
             + "registered_client_id, "

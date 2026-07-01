@@ -33,7 +33,7 @@ public class ThisYearPredefinedDateInterval extends PredefinedDateInterval {
     }
 
     @Override
-    public String apply(String property) {
+    public String get() {
         return "@between(%s.%s, now, now+1, year)";
     }
 }

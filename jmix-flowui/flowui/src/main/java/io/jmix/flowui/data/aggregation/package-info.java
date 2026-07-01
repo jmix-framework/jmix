@@ -14,7 +14,4 @@
  * limitations under the License.
  */
 
-@NonNullApi
 package io.jmix.flowui.data.aggregation;
-
-import org.springframework.lang.NonNullApi;

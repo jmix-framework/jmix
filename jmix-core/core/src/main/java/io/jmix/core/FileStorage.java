@@ -16,6 +16,8 @@
 
 package io.jmix.core;
 
+import org.jspecify.annotations.NullMarked;
+
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.Map;
@@ -23,6 +25,7 @@ import java.util.Map;
 /**
  * Interface of a component to store and load files defined by file references.
  */
+@NullMarked
 public interface FileStorage {
 
     /**

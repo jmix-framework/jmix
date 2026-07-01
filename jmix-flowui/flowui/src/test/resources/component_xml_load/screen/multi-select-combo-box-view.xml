@@ -68,7 +68,6 @@
                              title="titleString"
                              visible="true"
                              width="100px"
-                             overlayClass="overlayClassName"
                              overlayWidth="300px">
             <tooltip text="tooltipText"
                      focusDelay="1"
@@ -112,7 +111,6 @@
                                    title="titleString"
                                    visible="true"
                                    width="100px"
-                                   overlayClass="overlayClassName"
                                    overlayWidth="300px">
             <tooltip text="tooltipText"
                      focusDelay="1"

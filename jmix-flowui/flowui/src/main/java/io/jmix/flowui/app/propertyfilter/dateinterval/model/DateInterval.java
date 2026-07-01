@@ -16,7 +16,7 @@
 
 package io.jmix.flowui.app.propertyfilter.dateinterval.model;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Class describes date interval with the following types.
@@ -62,7 +62,7 @@ public class DateInterval implements BaseDateInterval {
     }
 
     @Override
-    public String apply(String property) {
+    public String get() {
         String moment1 = "";
         String moment2 = "";
 

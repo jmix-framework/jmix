@@ -26,7 +26,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 import org.springframework.security.web.util.matcher.OrRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
@@ -109,14 +109,14 @@ public class JmixHttpSecurityUtils {
     private static OrRequestMatcher createSecurityMatcher(Collection<String> anonymousUrlPatterns,
                                                           Collection<String> authenticatedUrlPatterns) {
         List<RequestMatcher> antPathMatchers = Stream.concat(anonymousUrlPatterns.stream(), authenticatedUrlPatterns.stream())
-                .map(AntPathRequestMatcher::new)
+                .map(PathPatternRequestMatcher::pathPattern)
                 .collect(Collectors.toList());
         return new OrRequestMatcher(antPathMatchers);
     }
 
-    private static AntPathRequestMatcher[] createAntPathRequestMatchers(Collection<String> urlPatterns) {
+    private static PathPatternRequestMatcher[] createAntPathRequestMatchers(Collection<String> urlPatterns) {
         return urlPatterns.stream()
-                .map(AntPathRequestMatcher::new)
-                .toArray(AntPathRequestMatcher[]::new);
+                .map(PathPatternRequestMatcher::pathPattern)
+                .toArray(PathPatternRequestMatcher[]::new);
     }
 }

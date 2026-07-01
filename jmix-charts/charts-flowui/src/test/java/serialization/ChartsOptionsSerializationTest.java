@@ -16,7 +16,6 @@
 
 package serialization;
 
-import elemental.json.JsonValue;
 import io.jmix.chartsflowui.kit.component.JmixChart;
 import io.jmix.chartsflowui.kit.component.model.*;
 import io.jmix.chartsflowui.kit.component.model.axis.*;
@@ -30,6 +29,7 @@ import org.json.JSONException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
+import tools.jackson.databind.JsonNode;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -151,11 +151,11 @@ public class ChartsOptionsSerializationTest extends AbstractSerializationTest {
                 .withShadowOffsetY(321);
 
         chartOptions.setTitle(title);
-        JsonValue serializedJson = chartSerializer.serialize(chartOptions);
+        JsonNode serializedJson = chartSerializer.serialize(chartOptions);
 
         String expectedJson = readFile("title-result.json");
 
-        JSONAssert.assertEquals(expectedJson, serializedJson.toJson(), true);
+        JSONAssert.assertEquals(expectedJson, serializedJson.toString(), true);
     }
 
     @Test
@@ -436,11 +436,11 @@ public class ChartsOptionsSerializationTest extends AbstractSerializationTest {
                 .withSelectorButtonGap(75);
 
         chartOptions.setLegend(scrollableLegend);
-        JsonValue serializedJson = chartSerializer.serialize(chartOptions);
+        JsonNode serializedJson = chartSerializer.serialize(chartOptions);
 
         String expectedJson = readFile("legend-result.json");
 
-        JSONAssert.assertEquals(expectedJson, serializedJson.toJson(), true);
+        JSONAssert.assertEquals(expectedJson, serializedJson.toString(), true);
     }
 
     @Test
@@ -504,11 +504,11 @@ public class ChartsOptionsSerializationTest extends AbstractSerializationTest {
                 );
 
         chartOptions.addGrid(grid);
-        JsonValue serializedJson = chartSerializer.serialize(chartOptions);
+        JsonNode serializedJson = chartSerializer.serialize(chartOptions);
 
         String expectedJson = readFile("grid-result.json");
 
-        JSONAssert.assertEquals(expectedJson, serializedJson.toJson(), true);
+        JSONAssert.assertEquals(expectedJson, serializedJson.toString(), true);
     }
 
     @Test
@@ -568,11 +568,11 @@ public class ChartsOptionsSerializationTest extends AbstractSerializationTest {
                 );
 
         chartOptions.setPolar(polar);
-        JsonValue serializedJson = chartSerializer.serialize(chartOptions);
+        JsonNode serializedJson = chartSerializer.serialize(chartOptions);
 
         String expectedJson = readFile("polar-result.json");
 
-        JSONAssert.assertEquals(expectedJson, serializedJson.toJson(), true);
+        JSONAssert.assertEquals(expectedJson, serializedJson.toString(), true);
     }
 
     @Test
@@ -770,11 +770,11 @@ public class ChartsOptionsSerializationTest extends AbstractSerializationTest {
                 );
 
         chartOptions.setRadar(radar);
-        JsonValue serializedJson = chartSerializer.serialize(chartOptions);
+        JsonNode serializedJson = chartSerializer.serialize(chartOptions);
 
         String expectedJson = readFile("radar-result.json");
 
-        JSONAssert.assertEquals(expectedJson, serializedJson.toJson(), true);
+        JSONAssert.assertEquals(expectedJson, serializedJson.toString(), true);
     }
 
     @Test
@@ -917,11 +917,11 @@ public class ChartsOptionsSerializationTest extends AbstractSerializationTest {
                 .withOrder(Tooltip.OrderType.SERIES_DESC);
 
         chartOptions.setTooltip(tooltip);
-        JsonValue serializedJson = chartSerializer.serialize(chartOptions);
+        JsonNode serializedJson = chartSerializer.serialize(chartOptions);
 
         String expectedJson = readFile("tooltip-result.json");
 
-        JSONAssert.assertEquals(expectedJson, serializedJson.toJson(), true);
+        JSONAssert.assertEquals(expectedJson, serializedJson.toString(), true);
     }
 
     @Test
@@ -1014,11 +1014,11 @@ public class ChartsOptionsSerializationTest extends AbstractSerializationTest {
                 .withTriggerOn(TriggerOnMode.MOUSE_MOVE_CLICK);
 
         chartOptions.setAxisPointer(axisPointer);
-        JsonValue serializedJson = chartSerializer.serialize(chartOptions);
+        JsonNode serializedJson = chartSerializer.serialize(chartOptions);
 
         String expectedJson = readFile("axis-pointer-result.json");
 
-        JSONAssert.assertEquals(expectedJson, serializedJson.toJson(), true);
+        JSONAssert.assertEquals(expectedJson, serializedJson.toString(), true);
     }
 
     @Test
@@ -1068,11 +1068,11 @@ public class ChartsOptionsSerializationTest extends AbstractSerializationTest {
         chartOptions.setHoverLayerThreshold(6000);
         chartOptions.setUseUtc(true);
 
-        JsonValue serializedJson = chartSerializer.serialize(chartOptions);
+        JsonNode serializedJson = chartSerializer.serialize(chartOptions);
 
         String expectedJson = readFile("base-chart-options-result.json");
 
-        JSONAssert.assertEquals(expectedJson, serializedJson.toJson(), true);
+        JSONAssert.assertEquals(expectedJson, serializedJson.toString(), true);
     }
 
     @Test
@@ -1173,11 +1173,11 @@ public class ChartsOptionsSerializationTest extends AbstractSerializationTest {
 
         chartOptions.setToolbox(toolbox);
 
-        JsonValue serializedJson = chartSerializer.serialize(chartOptions);
+        JsonNode serializedJson = chartSerializer.serialize(chartOptions);
 
         String expectedJson = readFile("toolbox-result.json");
 
-        JSONAssert.assertEquals(expectedJson, serializedJson.toJson(), true);
+        JSONAssert.assertEquals(expectedJson, serializedJson.toString(), true);
     }
 
     @Test
@@ -1271,11 +1271,11 @@ public class ChartsOptionsSerializationTest extends AbstractSerializationTest {
                 );
         chartOptions.setAria(aria);
 
-        JsonValue serializedJson = chartSerializer.serialize(chartOptions);
+        JsonNode serializedJson = chartSerializer.serialize(chartOptions);
 
         String expectedJson = readFile("aria-result.json");
 
-        JSONAssert.assertEquals(expectedJson, serializedJson.toJson(), true);
+        JSONAssert.assertEquals(expectedJson, serializedJson.toString(), true);
     }
 
     @Test
@@ -1328,10 +1328,10 @@ public class ChartsOptionsSerializationTest extends AbstractSerializationTest {
 
         chartOptions.setBrush(brush);
 
-        JsonValue serializedJson = chartSerializer.serialize(chartOptions);
+        JsonNode serializedJson = chartSerializer.serialize(chartOptions);
 
         String expectedJson = readFile("brush-result.json");
 
-        JSONAssert.assertEquals(expectedJson, serializedJson.toJson(), true);
+        JSONAssert.assertEquals(expectedJson, serializedJson.toString(), true);
     }
 }

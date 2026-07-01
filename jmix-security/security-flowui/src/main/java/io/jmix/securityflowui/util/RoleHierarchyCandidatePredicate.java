@@ -17,6 +17,7 @@
 package io.jmix.securityflowui.util;
 
 import io.jmix.security.model.BaseRole;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.function.BiPredicate;
 
@@ -24,6 +25,7 @@ import java.util.function.BiPredicate;
  * Interface to provide predicate to test the possibility to use some role as base for other role.
  * Accepts the role to be assigned and the target user.
  */
+@NullMarked
 public interface RoleHierarchyCandidatePredicate extends BiPredicate<BaseRole, BaseRole> {
 
     /**

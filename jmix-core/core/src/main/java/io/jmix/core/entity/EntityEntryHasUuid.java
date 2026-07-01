@@ -22,6 +22,8 @@ import io.jmix.core.entity.annotation.JmixGeneratedValue;
 
 import java.util.UUID;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Used to clearly identify entity.<br>
  * Property selection performs as follows:
@@ -33,6 +35,7 @@ import java.util.UUID;
  */
 
 @Internal
+@NullMarked
 public interface EntityEntryHasUuid {
 
     UUID getUuid();

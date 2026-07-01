@@ -16,6 +16,8 @@
 
 package io.jmix.data.impl;
 
+import org.jspecify.annotations.NullMarked;
+
 import java.util.Collection;
 
 /**
@@ -26,6 +28,7 @@ import java.util.Collection;
  * the {@code Ordered} interface to influence their execution order. A listener that does not implement the
  * {@code Ordered} interface is appended to the end of the invocation list.
  */
+@NullMarked
 public interface BeforeCommitTransactionListener {
 
     /**

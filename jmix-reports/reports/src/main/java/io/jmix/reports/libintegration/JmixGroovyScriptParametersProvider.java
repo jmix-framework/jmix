@@ -27,6 +27,7 @@ import io.jmix.reports.exception.ReportParametersValidationException;
 import io.jmix.reports.yarg.exception.ValidationException;
 import io.jmix.reports.yarg.structure.BandData;
 import io.jmix.reports.yarg.structure.ReportQuery;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
@@ -120,6 +121,7 @@ public class JmixGroovyScriptParametersProvider implements GroovyScriptParameter
      * Interface that throws exceptions in a Groovy script.
      */
     @FunctionalInterface
+    @NullMarked
     public interface ExceptionCallable {
 
         /**

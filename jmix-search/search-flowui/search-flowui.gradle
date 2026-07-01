@@ -18,13 +18,16 @@ apply plugin: 'groovy'
 apply plugin: 'io.jmix'
 
 group = 'io.jmix.search'
-archivesBaseName = 'jmix-search-flowui'
+base {
+    archivesName = 'jmix-search-flowui'
+}
 
 dependencies {
     api project(':search')
     api project(':search-flowui-kit')
 
     api project(':flowui')
+    api project(':flowui-themes')
 
     compileOnly project(':security')
     compileOnly project(':security-flowui')

@@ -16,12 +16,15 @@
 
 package io.jmix.security.role.assignment;
 
+import org.jspecify.annotations.NullMarked;
+
 import java.util.Collection;
 
 /**
  * Interface to be implemented by classes that provide {@link RoleAssignment}. Each role assignment provider is
  * responsible for extracting an information from a specific source (in-memory, database, etc.)
  */
+@NullMarked
 public interface RoleAssignmentProvider {
 
     Collection<RoleAssignment> getAllAssignments();

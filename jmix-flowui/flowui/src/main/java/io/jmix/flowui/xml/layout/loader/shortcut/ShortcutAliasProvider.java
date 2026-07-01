@@ -16,6 +16,8 @@
 
 package io.jmix.flowui.xml.layout.loader.shortcut;
 
+import org.jspecify.annotations.NullMarked;
+
 import java.util.Map;
 import java.util.function.Function;
 
@@ -27,6 +29,7 @@ import java.util.function.Function;
  *
  * @param <T> the type of configuration properties class that provides the shortcut values
  */
+@NullMarked
 public interface ShortcutAliasProvider<T> {
 
     /**

@@ -15,7 +15,9 @@
  */
 
 group = 'io.jmix.security'
-archivesBaseName = 'jmix-security-data-starter'
+base {
+    archivesName = 'jmix-security-data-starter'
+}
 
 dependencies {
     api project(':security-data')

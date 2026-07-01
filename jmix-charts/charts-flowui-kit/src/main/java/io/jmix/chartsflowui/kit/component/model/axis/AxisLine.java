@@ -18,6 +18,7 @@ package io.jmix.chartsflowui.kit.component.model.axis;
 
 import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
 import io.jmix.chartsflowui.kit.component.model.shared.LineStyle;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Options component related to axis line.
@@ -40,6 +41,7 @@ public class AxisLine extends ChartObservableObject {
 
     protected LineStyle lineStyle;
 
+    @Nullable
     public Boolean getShow() {
         return show;
     }
@@ -49,6 +51,7 @@ public class AxisLine extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getOnZero() {
         return onZero;
     }
@@ -58,6 +61,7 @@ public class AxisLine extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public Integer getOnZeroAxisIndex() {
         return onZeroAxisIndex;
     }
@@ -67,6 +71,7 @@ public class AxisLine extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public String[] getSymbols() {
         return symbols;
     }
@@ -76,6 +81,7 @@ public class AxisLine extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public Integer[] getSymbolsSize() {
         return symbolsSize;
     }
@@ -85,6 +91,7 @@ public class AxisLine extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public Integer[] getSymbolsOffset() {
         return symbolsOffset;
     }
@@ -94,6 +101,7 @@ public class AxisLine extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public LineStyle getLineStyle() {
         return lineStyle;
     }

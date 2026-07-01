@@ -16,11 +16,14 @@
 
 package io.jmix.securityflowui.authentication;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Interface to be implemented by custom validators of {@link AuthDetails}.
  *
  * @see LoginViewSupport
  */
+@NullMarked
 public interface AuthDetailsValidator {
 
     AuthDetailsValidationResult validate(AuthDetails authDetails);

@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jmix.restds.exception.InvalidRefreshTokenException;
 import io.jmix.restds.exception.RestDataStoreAccessException;
 import org.apache.commons.io.IOUtils;
+import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,6 +69,7 @@ public class RestPasswordAuthenticator implements RestAuthenticator {
     private ApplicationContext applicationContext;
 
     @Override
+    @NullMarked
     public void setDataStoreName(String name) {
         this.dataStoreName = name;
         initClient();
@@ -88,6 +90,7 @@ public class RestPasswordAuthenticator implements RestAuthenticator {
     }
 
     @Override
+    @NullMarked
     public ClientHttpRequestInterceptor getAuthenticationInterceptor() {
         return new RetryingClientHttpRequestInterceptor();
     }
@@ -177,6 +180,7 @@ public class RestPasswordAuthenticator implements RestAuthenticator {
         return accessToken;
     }
 
+    @NullMarked
     private class RetryingClientHttpRequestInterceptor implements ClientHttpRequestInterceptor {
         @Override
         public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
@@ -190,6 +194,7 @@ public class RestPasswordAuthenticator implements RestAuthenticator {
         }
     }
 
+    @NullMarked
     private static class LoggingClientHttpRequestInterceptor implements ClientHttpRequestInterceptor {
 
         @Override

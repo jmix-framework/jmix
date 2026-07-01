@@ -22,7 +22,7 @@ import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.data.ValueSource;
 import io.jmix.flowui.data.binding.impl.AbstractValueBinding;
 import io.jmix.flowui.data.binding.impl.FieldValueBinding;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public abstract class AbstractNumberFieldDelegate<C extends AbstractNumberField<?, V>, T extends Number, V extends Number>
         extends AbstractFieldDelegate<C, T, V> {

@@ -17,8 +17,13 @@
 package dynamic_attributes
 
 import io.jmix.core.*
+import io.jmix.core.constraint.AccessConstraint
+import io.jmix.core.constraint.RowLevelConstraint
 import io.jmix.core.entity.EntityValues
+import io.jmix.core.security.SecurityContextHelper
+import io.jmix.core.security.SystemAuthenticationToken
 import io.jmix.data.DataConfiguration
+import io.jmix.data.accesscontext.ReadEntityQueryContext
 import io.jmix.dynattr.AttributeType
 import io.jmix.dynattr.DynAttrConfiguration
 import io.jmix.dynattr.DynAttrMetadata
@@ -482,5 +487,61 @@ class DynamicAttributesTest extends Specification {
         Task loaded = dataManager.load(Task).id(task.id).hint(DynAttrQueryHints.LOAD_DYN_ATTR, true).one()
         loaded != null
         EntityValues.getValue(loaded, '+taskAttribute') == 'theValue'
+    }
+
+    def "entity dynamic attribute resolution applies row-level read constraints"() {
+        setup:
+
+        def hiddenGroup = metadata.create(Group)
+        hiddenGroup.name = 'hidden'
+        dataManager.save(hiddenGroup)
+
+        def user = dataManager.load(User)
+                .id(user1.id)
+                .hint(DynAttrQueryHints.LOAD_DYN_ATTR, true)
+                .one()
+
+        EntityValues.setValue(user, '+userGroupAttribute', hiddenGroup)
+        dataManager.save(user)
+
+        Collection<AccessConstraint<?>> constraints = [new HideHiddenGroupConstraint()]
+
+        when: "the owner entity is loaded with a row-level constraint hiding the referenced group"
+
+        def principal = org.springframework.security.core.userdetails.User.builder()
+                .username('test').password('').authorities(Collections.emptyList()).build()
+        def loaded
+        try {
+            SecurityContextHelper.setAuthentication(new SystemAuthenticationToken(principal, Collections.emptyList()))
+            loaded = dataManager.load(User)
+                    .id(user1.id)
+                    .hint(DynAttrQueryHints.LOAD_DYN_ATTR, true)
+                    .accessConstraints(constraints)
+                    .one()
+        } finally {
+            SecurityContextHelper.setAuthentication(null)
+        }
+
+        then: "the hidden group is not exposed through the dynamic attribute"
+
+        EntityValues.getValue(loaded, '+userGroupAttribute') == null
+    }
+}
+
+/**
+ * Test row-level constraint that hides {@code Group} rows named 'hidden'.
+ */
+class HideHiddenGroupConstraint implements RowLevelConstraint<ReadEntityQueryContext> {
+
+    @Override
+    Class<ReadEntityQueryContext> getContextType() {
+        return ReadEntityQueryContext
+    }
+
+    @Override
+    void applyTo(ReadEntityQueryContext context) {
+        if (context.entityClass.javaClass == Group) {
+            context.addJoinAndWhere(null, "{E}.name <> 'hidden'")
+        }
     }
 }

@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.component.upload.handler;
 
+import com.vaadin.flow.server.communication.TransferUtil;
 import com.vaadin.flow.server.streams.*;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.component.streams.TransferProgressNotifier;
@@ -23,7 +24,7 @@ import io.jmix.flowui.kit.component.upload.handler.SupportUploadSuccessHandler;
 import io.jmix.flowui.upload.TemporaryStorage;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
@@ -48,7 +49,7 @@ public class FileTemporaryStorageUploadHandler
 
     @Override
     public void handleUploadRequest(UploadEvent event) throws IOException {
-        // CAUTION: copied from com.vaadin.flow.server.streams.AbstractFileUploadHandler [last update Vaadin 24.9.0]
+        // CAUTION: copied from com.vaadin.flow.server.streams.AbstractFileUploadHandler [last update Vaadin 25.1.6]
         UploadMetadata metadata = new UploadMetadata(event.getFileName(),
                 event.getContentType(), event.getFileSize());
         File file;
@@ -96,7 +97,7 @@ public class FileTemporaryStorageUploadHandler
 
     @Override
     protected TransferContext getTransferContext(UploadEvent transferEvent) {
-        // CAUTION: copied from com.vaadin.flow.server.streams.AbstractFileUploadHandler [last update Vaadin 24.9.0]
+        // CAUTION: copied from com.vaadin.flow.server.streams.AbstractFileUploadHandler [last update Vaadin 25.1.6]
         return new TransferContext(transferEvent.getRequest(),
                 transferEvent.getResponse(), transferEvent.getSession(),
                 transferEvent.getFileName(), transferEvent.getOwningElement(),

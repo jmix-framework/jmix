@@ -19,11 +19,14 @@ package io.jmix.core.entity;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.metamodel.model.MetaClass;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Interface to be implemented by entities that are not included in static metadata, but can provide a {@code MetaClass}
  * specifically for each instance.
  */
 @Internal
+@NullMarked
 public interface HasInstanceMetaClass {
 
     /**

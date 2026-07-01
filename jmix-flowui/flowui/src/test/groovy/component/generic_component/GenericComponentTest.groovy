@@ -21,8 +21,8 @@ import com.vaadin.flow.component.icon.VaadinIcon
 import component.generic_component.view.GenericComponentTestView
 import io.jmix.flowui.component.propertyfilter.PropertyFilter
 import io.jmix.flowui.kit.component.button.JmixButton
+import org.jspecify.annotations.Nullable
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.lang.Nullable
 import test_support.spec.FlowuiTestSpecification
 
 @SpringBootTest

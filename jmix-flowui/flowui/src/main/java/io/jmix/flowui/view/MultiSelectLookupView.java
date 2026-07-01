@@ -16,9 +16,12 @@
 
 package io.jmix.flowui.view;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * A view that can change selection mode of its lookup component.
  */
+@NullMarked
 public interface MultiSelectLookupView {
 
     /**

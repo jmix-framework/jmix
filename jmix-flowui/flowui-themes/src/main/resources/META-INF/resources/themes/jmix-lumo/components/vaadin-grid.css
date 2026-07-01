@@ -1,0 +1,55 @@
+/*
+ * Copyright 2026 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+vaadin-grid[theme~='no-header']::part(header-cell) {
+  display: none;
+}
+
+/* Dialog overlay style like a popup */
+vaadin-dialog[class~='column-filter-popup']::part(backdrop) {
+  background: unset;
+}
+
+vaadin-dialog[class~='column-filter-dialog']::part(content) {
+  display: flex;
+  flex-direction: row;
+  gap: var(--lumo-space-s);
+  padding: var(--lumo-space-wide-m);
+}
+
+vaadin-dialog[class~='column-filter-popup']::part(overlay) {
+  align-self: flex-start;
+  position: absolute;
+}
+
+vaadin-dialog[class~='column-filter-footer-small']::slotted([slot='footer']) {
+  display: flex;
+  gap: var(--lumo-space-s);
+  width: 100%;
+}
+
+/* Styles for the column-filter button */
+[jmix-role='column-filter-button']:not([activated]):hover {
+  color: var(--lumo-contrast);
+}
+
+[jmix-role='column-filter-button']:not([activated]) {
+  color: var(--lumo-tertiary-text-color);
+}
+
+[jmix-role='column-filter-button']:is([activated]) {
+  color: var(--lumo-primary-text-color);
+}

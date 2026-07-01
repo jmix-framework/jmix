@@ -22,12 +22,14 @@ import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportRole;
 import io.jmix.security.model.ResourceRole;
 import io.jmix.security.role.ResourceRoleRepository;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+@NullMarked
 @Component("reports_AnnotatedReportRoleExtractor")
 public class AnnotatedReportRoleExtractorImpl implements AnnotatedReportRoleExtractor {
 

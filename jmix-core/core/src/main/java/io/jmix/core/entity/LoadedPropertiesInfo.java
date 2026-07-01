@@ -17,9 +17,12 @@
 package io.jmix.core.entity;
 
 import io.jmix.core.PersistentAttributesLoadChecker;
+import io.jmix.core.EntityStates.PropertyLoadedState;
 import io.jmix.core.annotation.Internal;
 
 import java.io.Serializable;
+
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Provides information about properties loaded from data store.
@@ -27,9 +30,23 @@ import java.io.Serializable;
  * Implementations of this interface are used in {@link io.jmix.core.EntityEntry}.
  */
 @Internal
+@NullMarked
 public interface LoadedPropertiesInfo extends Serializable {
 
+    /**
+     * Checks whether the property is loaded from the data store. This may trigger fetching of the property if its state
+     * cannot be determined using standard mechanisms.
+     *
+     * @see io.jmix.core.EntityStates#isLoaded(Object, String)
+     */
     boolean isLoaded(Object entity, String property, PersistentAttributesLoadChecker checker);
+
+    /**
+     * Checks whether the property is loaded from the data store without risking fetching it.
+     *
+     * @see io.jmix.core.EntityStates#isLoaded(Object, String)
+     */
+    PropertyLoadedState isLoadedSafe(Object entity, String property, PersistentAttributesLoadChecker checker);
 
     void registerProperty(String name, boolean loaded);
 

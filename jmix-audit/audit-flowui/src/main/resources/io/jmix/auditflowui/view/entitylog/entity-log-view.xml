@@ -93,12 +93,13 @@
             <pagination component="paginationLoggedEntity"/>
         </urlQueryParameters>
     </facets>
-    <layout padding="false" classNames="entity-log-wrapper">
-        <tabSheet id="tabsheet" width="100%" height="100%" classNames="entity-log-main-tab-sheet">
+    <layout padding="false" classNames="entity-log-view">
+        <tabSheet id="tabsheet" alignSelf="STRETCH" height="100%" classNames="content-root">
             <tab id="view" label="msg://view">
-                <vbox id="viewWrapper" width="100%" height="100%"
-                      padding="false" themeNames="spacing-s">
-                    <details opened="true" width="100%" summaryText="msg://filterParameters">
+                <vbox id="viewWrapper" width="100%" height="100%" padding="false">
+                    <details opened="true" width="100%" summaryText="msg://filterParameters"
+                             themeNames="no-padding"
+                             classNames="filter-layout">
                         <vbox padding="false">
                             <formLayout>
                                 <responsiveSteps>
@@ -109,7 +110,7 @@
                                 <comboBox id="userField" label="msg://user" autoOpen="true"/>
                                 <comboBox id="substitutedUserField" label="msg://substitutedUser" autoOpen="true"/>
                                 <select id="changeTypeField" label="msg://changeType"/>
-                                <div classNames="datetime-picker-container">
+                                <div classNames="audit-datetime-picker-container">
                                     <datePicker id="fromDateField" datatype="localDate"
                                                 label="msg://from"/>
                                     <timePicker id="fromTimeField" datatype="localTime"/>
@@ -122,21 +123,25 @@
                                         <action id="valueClearAction" type="value_clear"/>
                                     </actions>
                                 </valuePicker>
-                                <div classNames="datetime-picker-container">
+                                <div classNames="audit-datetime-picker-container">
                                     <datePicker id="tillDateField" datatype="localDate"
                                                 label="msg://till"/>
                                     <timePicker id="tillTimeField" datatype="localTime"/>
                                 </div>
                             </formLayout>
 
-                            <hbox id="buttonsPanel" classNames="buttons-panel">
-                                <button id="searchBtn" icon="SEARCH" themeNames="primary" text="msg://search"/>
-                                <button id="clearEntityLogTableBtn" icon="ERASER" text="msg://clear"/>
-                                <simplePagination id="paginationEntityLog" dataLoader="entityLogDl"/>
+                            <hbox id="buttonsPanel" wrap="true" width="100%">
+                                <startSlot>
+                                    <button id="searchBtn" icon="SEARCH" themeNames="primary" text="msg://search"/>
+                                    <button id="clearEntityLogTableBtn" icon="ERASER" text="msg://clear"/>
+                                </startSlot>
+                                <endSlot>
+                                    <simplePagination id="paginationEntityLog" dataLoader="entityLogDl"/>
+                                </endSlot>
                             </hbox>
                         </vbox>
                     </details>
-                    <div width="100%" height="100%" classNames="entity-log-grid-wrapper">
+                    <div width="100%" height="100%" classNames="data-grid-wrapper">
                         <dataGrid id="entityLogTable" dataContainer="entityLogDc"
                                   width="100%" height="100%"
                                   minHeight="20em"
@@ -170,21 +175,25 @@
                 <hbox width="100%" height="100%" classNames="setup-logged-entity-wrapper">
                     <vbox id="loggedEntityTableBox" width="100%"
                           expand="loggedEntityTable" padding="false">
-                        <hbox id="loggedEntityButtonPanel" classNames="buttons-panel">
-                            <button id="createBtn" action="loggedEntityTable.create"/>
-                            <button id="editBtn" action="loggedEntityTable.edit"/>
-                            <button id="removeBtn" action="loggedEntityTable.remove"/>
-                            <dropdownButton id="exportBtn" text="msg://exportMenu.text" icon="DOWNLOAD">
-                                <items>
-                                    <actionItem id="exportJSONItem" ref="loggedEntityTable.exportJSON"/>
-                                    <actionItem id="exportZIPItem" ref="loggedEntityTable.exportZIP"/>
-                                </items>
-                            </dropdownButton>
-                            <fileUploadField id="importField"
-                                             uploadIcon="UPLOAD"
-                                             uploadText="msg://importMenu.text"
-                                             acceptedFileTypes=".json,.zip"/>
-                            <simplePagination id="paginationLoggedEntity" dataLoader="loggedEntityDl"/>
+                        <hbox id="loggedEntityButtonPanel" wrap="true" width="100%">
+                            <startSlot>
+                                <button id="createBtn" action="loggedEntityTable.create"/>
+                                <button id="editBtn" action="loggedEntityTable.edit"/>
+                                <button id="removeBtn" action="loggedEntityTable.remove"/>
+                                <dropdownButton id="exportBtn" text="msg://exportMenu.text" icon="DOWNLOAD">
+                                    <items>
+                                        <actionItem id="exportJSONItem" ref="loggedEntityTable.exportJSON"/>
+                                        <actionItem id="exportZIPItem" ref="loggedEntityTable.exportZIP"/>
+                                    </items>
+                                </dropdownButton>
+                                <fileUploadField id="importField"
+                                                 uploadIcon="UPLOAD"
+                                                 uploadText="msg://importMenu.text"
+                                                 acceptedFileTypes=".json,.zip"/>
+                            </startSlot>
+                            <endSlot>
+                                <simplePagination id="paginationLoggedEntity" dataLoader="loggedEntityDl"/>
+                            </endSlot>
                         </hbox>
                         <dataGrid id="loggedEntityTable" minHeight="20em" dataContainer="loggedEntityDc"
                                   columnReorderingAllowed="true">

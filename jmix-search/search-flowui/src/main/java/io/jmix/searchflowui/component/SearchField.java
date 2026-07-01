@@ -18,7 +18,6 @@ package io.jmix.searchflowui.component;
 
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.customfield.CustomField;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.shared.HasSuffix;
@@ -34,6 +33,7 @@ import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.component.HasAutofocus;
 import io.jmix.flowui.kit.component.HasTitle;
 import io.jmix.flowui.kit.icon.JmixFontIcon;
+import io.jmix.flowui.theme.StyleUtility;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.OpenMode;
 import io.jmix.flowui.view.StandardOutcome;
@@ -49,7 +49,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
@@ -65,6 +65,7 @@ public class SearchField extends CustomField<String>
         InputNotifier, KeyNotifier, HasAriaLabel, HasAutofocus, HasPlaceholder {
 
     public static final String SEARCH_FIELD_STYLENAME = "jmix-search-field";
+    public static final String SEARCH_FIELD_ACTIONS_CONTAINER_CLASS_NAME = SEARCH_FIELD_STYLENAME + "-actions-container";
 
     protected ApplicationContext applicationContext;
     protected UiComponents uiComponents;
@@ -166,6 +167,7 @@ public class SearchField extends CustomField<String>
         this.settingsButton = createSettingsButton();
 
         HorizontalLayout hbox = uiComponents.create(HorizontalLayout.class);
+        hbox.setClassName(SEARCH_FIELD_ACTIONS_CONTAINER_CLASS_NAME);
         hbox.setSpacing(false);
         hbox.add(searchButton);
         hbox.add(settingsButton);
@@ -175,12 +177,7 @@ public class SearchField extends CustomField<String>
 
     protected Button createSearchButton() {
         Button button = uiComponents.create(Button.class);
-        button.addThemeVariants(
-                ButtonVariant.LUMO_TERTIARY_INLINE,
-                ButtonVariant.LUMO_CONTRAST,
-                ButtonVariant.LUMO_ICON,
-                ButtonVariant.LUMO_SMALL
-        );
+        button.setClassName(StyleUtility.Button.LINK_BUTTON);
         button.setIcon(icons.get(JmixFontIcon.SEARCH_FIELD_SEARCH));
 
         button.addClickListener(clickEvent -> performSearch());
@@ -189,12 +186,7 @@ public class SearchField extends CustomField<String>
 
     protected Button createSettingsButton() {
         Button settingsButton = uiComponents.create(Button.class);
-        settingsButton.addThemeVariants(
-                ButtonVariant.LUMO_TERTIARY_INLINE,
-                ButtonVariant.LUMO_CONTRAST,
-                ButtonVariant.LUMO_ICON,
-                ButtonVariant.LUMO_SMALL
-        );
+        settingsButton.setClassName(StyleUtility.Button.LINK_BUTTON);
         settingsButton.setIcon(icons.get(JmixFontIcon.SEARCH_FIELD_SETTINGS));
 
         settingsButton.addClickListener(clickEvent -> {

@@ -17,6 +17,7 @@
 package io.jmix.chartsflowui.kit.component.model;
 
 import io.jmix.chartsflowui.kit.component.model.shared.Separator;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,6 +64,7 @@ public class Aria extends ChartObservableObject {
 
             protected String withoutTitle;
 
+            @Nullable
             public String getWithTitle() {
                 return withTitle;
             }
@@ -72,6 +74,7 @@ public class Aria extends ChartObservableObject {
                 markAsDirty();
             }
 
+            @Nullable
             public String getWithoutTitle() {
                 return withoutTitle;
             }
@@ -116,6 +119,7 @@ public class Aria extends ChartObservableObject {
 
                 protected String withoutName;
 
+                @Nullable
                 public String getPrefix() {
                     return prefix;
                 }
@@ -125,6 +129,7 @@ public class Aria extends ChartObservableObject {
                     markAsDirty();
                 }
 
+                @Nullable
                 public String getWithName() {
                     return withName;
                 }
@@ -134,6 +139,7 @@ public class Aria extends ChartObservableObject {
                     markAsDirty();
                 }
 
+                @Nullable
                 public String getWithoutName() {
                     return withoutName;
                 }
@@ -175,6 +181,7 @@ public class Aria extends ChartObservableObject {
 
                 protected Separator separator;
 
+                @Nullable
                 public Separator getSeparator() {
                     return separator;
                 }
@@ -194,6 +201,7 @@ public class Aria extends ChartObservableObject {
                 }
             }
 
+            @Nullable
             public Integer getMaxCount() {
                 return maxCount;
             }
@@ -203,6 +211,7 @@ public class Aria extends ChartObservableObject {
                 markAsDirty();
             }
 
+            @Nullable
             public Single getSingle() {
                 return single;
             }
@@ -216,6 +225,7 @@ public class Aria extends ChartObservableObject {
                 addChild(single);
             }
 
+            @Nullable
             public Multiple getMultiple() {
                 return multiple;
             }
@@ -262,6 +272,7 @@ public class Aria extends ChartObservableObject {
 
             protected Separator separator;
 
+            @Nullable
             public Integer getMaxCount() {
                 return maxCount;
             }
@@ -271,6 +282,7 @@ public class Aria extends ChartObservableObject {
                 markAsDirty();
             }
 
+            @Nullable
             public String getAllData() {
                 return allData;
             }
@@ -280,6 +292,7 @@ public class Aria extends ChartObservableObject {
                 markAsDirty();
             }
 
+            @Nullable
             public String getPartialData() {
                 return partialData;
             }
@@ -289,6 +302,7 @@ public class Aria extends ChartObservableObject {
                 markAsDirty();
             }
 
+            @Nullable
             public String getWithName() {
                 return withName;
             }
@@ -298,6 +312,7 @@ public class Aria extends ChartObservableObject {
                 markAsDirty();
             }
 
+            @Nullable
             public String getWithoutName() {
                 return withoutName;
             }
@@ -307,6 +322,7 @@ public class Aria extends ChartObservableObject {
                 markAsDirty();
             }
 
+            @Nullable
             public Separator getSeparator() {
                 return separator;
             }
@@ -351,6 +367,7 @@ public class Aria extends ChartObservableObject {
             }
         }
 
+        @Nullable
         public Boolean getEnabled() {
             return enabled;
         }
@@ -360,6 +377,7 @@ public class Aria extends ChartObservableObject {
             markAsDirty();
         }
 
+        @Nullable
         public String getDescription() {
             return description;
         }
@@ -369,6 +387,7 @@ public class Aria extends ChartObservableObject {
             markAsDirty();
         }
 
+        @Nullable
         public General getGeneral() {
             return general;
         }
@@ -382,6 +401,7 @@ public class Aria extends ChartObservableObject {
             addChild(general);
         }
 
+        @Nullable
         public Series getSeries() {
             return series;
         }
@@ -395,6 +415,7 @@ public class Aria extends ChartObservableObject {
             addChild(series);
         }
 
+        @Nullable
         public Data getData() {
             return data;
         }
@@ -443,6 +464,7 @@ public class Aria extends ChartObservableObject {
 
         protected List<io.jmix.chartsflowui.kit.component.model.shared.Decal> decals;
 
+        @Nullable
         public Boolean getShow() {
             return show;
         }
@@ -452,6 +474,7 @@ public class Aria extends ChartObservableObject {
             markAsDirty();
         }
 
+        @Nullable
         public List<io.jmix.chartsflowui.kit.component.model.shared.Decal> getDecals() {
             return decals;
         }
@@ -509,6 +532,7 @@ public class Aria extends ChartObservableObject {
         }
     }
 
+    @Nullable
     public Boolean getEnabled() {
         return enabled;
     }
@@ -518,6 +542,7 @@ public class Aria extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public Label getLabel() {
         return label;
     }
@@ -531,6 +556,7 @@ public class Aria extends ChartObservableObject {
         addChild(label);
     }
 
+    @Nullable
     public Decal getDecal() {
         return decal;
     }

@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2026 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<view xmlns="http://jmix.io/schema/flowui/view"
+      title="msg://entityModelListView.title"
+      focusComponent="entityFilter">
+    <data>
+        <collection id="entityModelsDc"
+                    class="io.jmix.datatools.datamodel.entity.EntityModel">
+            <loader id="entityModelsDl" readOnly="true">
+                <query/>
+            </loader>
+        </collection>
+        <collection id="attributeModelsDc"
+                    class="io.jmix.datatools.datamodel.entity.AttributeModel">
+            <loader id="attributeModelsDl" readOnly="true">
+                <query/>
+            </loader>
+        </collection>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+        <urlQueryParameters id="urlQueryParametersFacet"/>
+    </facets>
+
+    <layout alignItems="STRETCH"
+            expand="contentBox"
+            classNames="data-model-list-view">
+        <hbox id="buttonsPanel" wrap="true" width="100%">
+            <textField id="entityFilter" datatype="string"
+                       width="100%" maxWidth="35em"
+                       placeholder="msg://entityModelListView.entityFilter.placeholder.text"
+                       clearButtonVisible="true">
+                <prefix>
+                    <fontIcon iconClassNames="jmix-font-icon jmix-font-icon-search"/>
+                </prefix>
+                <suffix>
+                    <fontIcon id="helpIcon" iconClassNames="jmix-font-icon jmix-font-icon-question-circle">
+                        <tooltip text="msg://entityModelListView.entityFilter.tooltip.text"/>
+                    </fontIcon>
+                </suffix>
+            </textField>
+
+            <button id="diagramButton" icon="SITEMAP" text="msg://entityModelListView.diagramButton.text"/>
+
+            <checkbox id="showSystemCheckBox"
+                      label="msg://entityModelListView.showSystemEntities.text"
+                      alignSelf="CENTER" value="false"/>
+        </hbox>
+
+        <div id="contentBox" classNames="content-wrapper">
+            <vbox id="entitiesBox" padding="false" classNames="entities-box" width="unset">
+                <hbox id="entitiesHeaderBox"
+                      justifyContent="BETWEEN" alignItems="CENTER"
+                      width="100%">
+                    <startSlot>
+                        <h4 text="msg://entityModelListView.entityModelsDataGrid.title"/>
+                    </startSlot>
+                    <endSlot>
+                        <span id="entityModelCount"/>
+                    </endSlot>
+                </hbox>
+                <dataGrid id="entityModelsDataGrid"
+                          dataContainer="entityModelsDc"
+                          width="100%"
+                          minHeight="20em"
+                          columnReorderingAllowed="true">
+                    <columns resizable="true">
+                        <column property="name"/>
+                        <column property="dataStore"/>
+                        <column property="tableName"/>
+                    </columns>
+                </dataGrid>
+            </vbox>
+            <vbox id="attributesBox" padding="false" classNames="attributes-box" width="unset">
+                <hbox id="attributesHeaderBox"
+                      alignItems="CENTER"
+                      width="100%">
+                    <startSlot>
+                        <h4 text="msg://entityModelListView.attributeModelsDataGrid.title"/>
+                    </startSlot>
+                    <endSlot>
+                        <span id="attributesCount"/>
+                    </endSlot>
+                </hbox>
+                <dataGrid id="attributeModelsDataGrid"
+                          dataContainer="attributeModelsDc"
+                          width="100%"
+                          minHeight="20em"
+                          columnReorderingAllowed="true"
+                          selectionMode="NONE">
+                    <columns resizable="true">
+                        <column property="attributeName"/>
+                        <column property="javaType"/>
+                        <column property="columnName"/>
+                        <column property="dbType" flexGrow="2"/>
+                        <column property="isMandatory" textAlign="CENTER" flexGrow="0" autoWidth="true"/>
+                    </columns>
+                </dataGrid>
+            </vbox>
+        </div>
+    </layout>
+</view>

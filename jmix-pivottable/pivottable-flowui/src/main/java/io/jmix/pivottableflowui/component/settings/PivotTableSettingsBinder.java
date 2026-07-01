@@ -25,7 +25,7 @@ import io.jmix.pivottableflowui.kit.component.model.Aggregation;
 import io.jmix.pivottableflowui.kit.component.model.AggregationMode;
 import io.jmix.pivottableflowui.kit.component.model.Order;
 import io.jmix.pivottableflowui.kit.component.model.Renderer;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;

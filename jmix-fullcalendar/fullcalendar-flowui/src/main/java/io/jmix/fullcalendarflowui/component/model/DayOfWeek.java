@@ -17,7 +17,7 @@
 package io.jmix.fullcalendarflowui.component.model;
 
 import io.jmix.core.metamodel.datatype.EnumClass;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The enum represents day of week with ids that corresponds the order in full calendar component.

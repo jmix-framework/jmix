@@ -18,11 +18,6 @@ package io.jmix.reportsflowui.constant;
 
 public class ReportStyleConstants {
 
-    public static final String TABLE_EDIT_FRAGMENT_ROOT_CLASS_NAME = "report-table-edit-fragment-root";
-    public static final String DATA_GRIDS_BOX_CLASS_NAME = "report-table-edit-fragment-data-grids-box";
-    public static final String BAND_BOX_CLASS_NAME = "report-table-edit-fragment-band-box";
     public static final String FIELD_ICON_CLASS_NAME = "report-field-icon";
     public static final String FIELD_ICON_SIZE_CLASS_NAME = "report-field-icon-size";
-    public static final String TRANSPARENT_CODE_CLASS_NAME = "report-dialog-transparent-code";
-
 }

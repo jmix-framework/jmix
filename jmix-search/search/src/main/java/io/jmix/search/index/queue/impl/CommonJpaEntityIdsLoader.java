@@ -18,6 +18,7 @@ package io.jmix.search.index.queue.impl;
 
 import io.jmix.core.ValueLoadContext;
 import io.jmix.core.entity.KeyValueEntity;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -25,6 +26,7 @@ import java.util.List;
 /**
  * Common implementation of {@link OrderBasedEntityIdsLoader}.
  */
+@NullMarked
 @Component("search_CommonJpaEntityIdsLoader")
 public class CommonJpaEntityIdsLoader extends OrderBasedEntityIdsLoader {
 

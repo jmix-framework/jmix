@@ -39,8 +39,17 @@ public class JmixDeleteQuery extends JmixListQuery {
 
     @Override
     public Object execute(Object[] parameters) {
-        List<Object> loaded = (List<Object>) super.execute(parameters);
-        dataManager.save(new SaveContext().removing(loaded).setHints(collectHints(parameters)));
-        return loaded;
+        Object rawResult = super.execute(parameters);
+        if (rawResult == null) {
+            // Null is not expected from super.execute in case of delete operation
+            throw new IllegalStateException("NULL was returned instead of List of entities to delete");
+        }
+
+        if (rawResult instanceof List<?> loaded) {
+            dataManager.save(new SaveContext().removing(loaded).setHints(collectHints(parameters)));
+            return loaded;
+        } else {
+            throw new IllegalStateException("Delete query should return a list");
+        }
     }
 }

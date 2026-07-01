@@ -1,4 +1,20 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2026 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
 <view xmlns="http://jmix.io/schema/flowui/view"
       title="msg://reportParameterDetailView.title"
       focusComponent="formLayout">
@@ -16,7 +32,7 @@
         <action id="closeAction" type="detail_close"/>
     </actions>
     <layout expand="tabsheet">
-        <tabSheet id="tabsheet" width="100%">
+        <tabSheet id="tabsheet" alignSelf="STRETCH">
             <tab id="optionsTab" label="msg://parameters.optionsTab">
                 <formLayout id="formLayout" dataContainer="parameterDc" width="100%">
                     <textField id="name" label="msg://parameters.caption"
@@ -42,7 +58,8 @@
                     <comboBox id="enumerationField" width="100%" label="msg://parameters.enum"
                               property="enumerationClass"
                               requiredMessage="msg://parameters.requiredEnumClass" required="true"/>
-                    <comboBox id="screenField" width="100%" label="msg://parameters.screen"/>
+                    <comboBox id="screenField" width="100%" label="msg://parameters.screen"
+                              property="screen"/>
                     <hbox id="defaultValueBox" width="100%"/>
                     <checkbox id="isDefaultDateIsCurrentField" label="msg://parameters.defaultDateIsCurrent"
                               property="defaultDateIsCurrent"/>
@@ -72,12 +89,12 @@
                                   width="100%"/>
                     </vbox>
                     <div id="transformationEditorBox">
-                        <div classNames="flex, justify-between">
+                        <flexLayout justifyContent="BETWEEN">
                             <nativeLabel text="msg://parameters.groovyScript.title" setFor="transformationScript"/>
                             <button id="fullScreenTransformationBtn" text="msg:///fullScreenBtn.title"
-                                    themeNames="tertiary-inline"/>
-                        </div>
-                        <div classNames="flex, items-start">
+                                    classNames="link-button"/>
+                        </flexLayout>
+                        <flexLayout alignItems="START">
                             <codeEditor id="transformationScript"
                                         width="100%"
                                         height="15em"
@@ -85,9 +102,9 @@
                                         property="transformationScript"
                                         dataContainer="parameterDc"/>
                             <button id="transformationScriptHelpBtn"
-                                    themeNames="icon, tertiary-inline"
+                                    classNames="link-button"
                                     icon="QUESTION_CIRCLE"/>
-                        </div>
+                        </flexLayout>
                     </div>
                 </div>
             </tab>
@@ -96,12 +113,12 @@
                     <checkbox id="includeValidation" dataContainer="parameterDc"
                               label="msg://parameters.validateFields"
                               property="validationOn"/>
-                    <div classNames="flex, justify-between">
+                    <flexLayout justifyContent="BETWEEN">
                         <nativeLabel text="msg://parameters.groovyScript.title" setFor="validationScript"/>
                         <button id="fullScreenValidationBtn" text="msg:///fullScreenBtn.title"
-                                themeNames="tertiary-inline"/>
-                    </div>
-                    <div classNames="flex, items-start">
+                                classNames="link-button"/>
+                    </flexLayout>
+                    <flexLayout alignItems="START">
                         <codeEditor id="validationScript"
                                     width="100%"
                                     height="15em"
@@ -109,43 +126,43 @@
                                     property="validationScript"
                                     dataContainer="parameterDc"/>
                         <button id="validationScriptHelpBtn"
-                                themeNames="icon, tertiary-inline"
+                                classNames="link-button"
                                 icon="QUESTION_CIRCLE"/>
-                    </div>
+                    </flexLayout>
                 </div>
             </tab>
             <tab id="lookupSettingsTab" label="msg://parameters.dropdownSettingsTab">
                 <div id="lookupSettingsBox" width="100%">
-                    <div classNames="flex, justify-between">
+                    <flexLayout justifyContent="BETWEEN">
                         <nativeLabel text="msg://lookupJoin" setFor="lookupJoinCodeEditor"/>
                         <button id="lookupJoinFullScreenBtn" text="msg:///fullScreenBtn.title"
-                                themeNames="tertiary-inline"/>
-                    </div>
-                    <div classNames="flex, items-start">
+                                classNames="link-button"/>
+                    </flexLayout>
+                    <flexLayout alignItems="START">
                         <codeEditor id="lookupJoinCodeEditor"
                                     height="15em"
                                     width="100%"
                                     property="lookupJoin"
                                     dataContainer="parameterDc"/>
                         <button id="lookupJoinHelpBtn"
-                                themeNames="icon, tertiary-inline"
+                                classNames="link-button"
                                 icon="QUESTION_CIRCLE"/>
-                    </div>
-                    <div classNames="flex, justify-between">
+                    </flexLayout>
+                    <flexLayout justifyContent="BETWEEN">
                         <nativeLabel text="msg://lookupWhere" setFor="lookupWhereCodeEditor"/>
                         <button id="lookupWhereFullScreenBtn" text="msg:///fullScreenBtn.title"
-                                themeNames="tertiary-inline"/>
-                    </div>
-                    <div classNames="flex, items-start">
+                                classNames="link-button"/>
+                    </flexLayout>
+                    <flexLayout alignItems="START">
                         <codeEditor id="lookupWhereCodeEditor"
                                     height="15em"
                                     width="100%"
                                     property="lookupWhere"
                                     dataContainer="parameterDc"/>
                         <button id="lookupWhereHelpBtn"
-                                themeNames="icon, tertiary-inline"
+                                classNames="link-button"
                                 icon="QUESTION_CIRCLE"/>
-                    </div>
+                    </flexLayout>
                 </div>
             </tab>
         </tabSheet>

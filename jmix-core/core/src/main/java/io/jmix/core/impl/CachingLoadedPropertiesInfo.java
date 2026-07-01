@@ -16,7 +16,9 @@
 
 package io.jmix.core.impl;
 
+import io.jmix.core.EntityStates;
 import io.jmix.core.PersistentAttributesLoadChecker;
+import io.jmix.core.EntityStates.PropertyLoadedState;
 import io.jmix.core.entity.EntitySystemAccess;
 import io.jmix.core.entity.LoadedPropertiesInfo;
 
@@ -40,6 +42,22 @@ public class CachingLoadedPropertiesInfo implements LoadedPropertiesInfo {
         }
         return cache.computeIfAbsent(property, name ->
                 checker.isLoaded(entity, name));
+    }
+
+    @Override
+    public PropertyLoadedState isLoadedSafe(Object entity, String property, PersistentAttributesLoadChecker checker) {
+        if (EntitySystemAccess.getEntityEntry(entity).isManaged()) {
+            return checker.isLoadedSafe(entity, property);
+        }
+        if (cache.containsKey(property)) {
+            return EntityStates.PropertyLoadedState.fromBoolean(cache.get(property));
+        } else {
+            PropertyLoadedState state = checker.isLoadedSafe(entity, property);
+            if (state != EntityStates.PropertyLoadedState.UNKNOWN) {
+                cache.put(property, EntityStates.PropertyLoadedState.YES.equals(state));
+            }
+            return state;
+        }
     }
 
     @Override

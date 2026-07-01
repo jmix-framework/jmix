@@ -18,7 +18,7 @@ package io.jmix.search.index.queue.impl;
 
 import io.jmix.core.metamodel.datatype.EnumClass;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Status of session.

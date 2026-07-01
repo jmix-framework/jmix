@@ -16,7 +16,9 @@
 
 
 group = 'io.jmix.multitenancy'
-archivesBaseName = 'jmix-multitenancy-flowui-starter'
+base {
+    archivesName = 'jmix-multitenancy-flowui-starter'
+}
 
 dependencies {
     api project(':multitenancy-flowui')

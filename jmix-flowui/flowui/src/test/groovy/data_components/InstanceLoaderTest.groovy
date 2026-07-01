@@ -93,4 +93,30 @@ class InstanceLoaderTest extends DataContextSpec {
 
         deleteRecord(foo)
     }
+
+    def "load using delegate without entity id or query"() {
+        InstanceLoader<Foo> loader = factory.createInstanceLoader()
+        InstanceContainer<Foo> container = factory.createInstanceContainer(Foo)
+
+        Foo foo = new Foo(name: 'foo')
+
+        Consumer preLoadListener = Mock()
+        loader.addPreLoadListener(preLoadListener)
+
+        Consumer postLoadListener = Mock()
+        loader.addPostLoadListener(postLoadListener)
+
+        when:
+
+        loader.setContainer(container)
+        loader.setLoadDelegate({ loadContext -> foo })
+        loader.load()
+
+        then: "delegate is not invoked and nothing is loaded"
+
+        container.getItemOrNull() == null
+
+        0 * preLoadListener.accept(_)
+        0 * postLoadListener.accept(_)
+    }
 }

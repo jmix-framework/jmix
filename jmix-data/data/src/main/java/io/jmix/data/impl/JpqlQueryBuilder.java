@@ -35,13 +35,14 @@ import io.jmix.data.impl.jpql.generator.ConditionGenerationContext;
 import io.jmix.data.impl.jpql.generator.ConditionJpqlGenerator;
 import io.jmix.data.impl.jpql.generator.ParameterJpqlGenerator;
 import io.jmix.data.impl.jpql.generator.SortJpqlGenerator;
+import io.jmix.data.persistence.NonJpaPropertyConditionSupport;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.LockModeType;
 import jakarta.persistence.Query;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -103,6 +104,9 @@ public class JpqlQueryBuilder<Q extends JmixQuery> {
 
     @Autowired
     protected CoreProperties coreProperties;
+
+    @Autowired(required = false)
+    protected List<NonJpaPropertyConditionSupport> nonJpaPropertyConditionSupports = Collections.emptyList();
 
     public JpqlQueryBuilder setId(@Nullable Object id) {
         this.id = id;
@@ -215,18 +219,19 @@ public class JpqlQueryBuilder<Q extends JmixQuery> {
 
     protected void buildResultQuery() {
         resultQuery = queryString;
-        resultParameters = queryParameters;
+        resultParameters = queryParameters != null ? new LinkedHashMap<>(queryParameters) : new LinkedHashMap<>();
         if (entityName != null) {
             if (Strings.isNullOrEmpty(queryString)) {
+                resultParameters = new HashMap<>();
                 if (id != null) {
                     resultQuery = String.format("select e from %s e where e.%s = :entityId", entityName, getPrimaryKeyProperty().getName());
-                    resultParameters = Maps.newHashMap(ImmutableMap.of("entityId", id));
+                    resultParameters.put("entityId", id);
                 } else if (ids != null && !ids.isEmpty()) {
                     resultQuery = String.format("select e from %s e where e.%s in :entityIds", entityName, getPrimaryKeyProperty().getName());
-                    resultParameters = Maps.newHashMap(ImmutableMap.of("entityIds", ids));
+                    resultParameters.put("entityIds", ids);
                 } else {
                     resultQuery = String.format("select e from %s e", entityName);
-                    resultParameters = Collections.emptyMap();
+                    resultParameters = new LinkedHashMap<>();
                 }
             }
         }
@@ -293,18 +298,23 @@ public class JpqlQueryBuilder<Q extends JmixQuery> {
         } else if (condition instanceof PropertyCondition propertyCondition && entityName != null) {
             String property = propertyCondition.getProperty();
             MetaClass metaClass = metadata.getClass(entityName);
-            MetaPropertyPath propertyPath = metaClass.getPropertyPath(property);
+            boolean supportedByExtension = supportsNonJpaPropertyCondition(metaClass, propertyCondition);
+            MetaPropertyPath propertyPath = metadataTools.resolveMetaPropertyPathOrNull(metaClass, property);
 
-            // in case of dynamic attributes
-            if (property.startsWith("+")) {
-                return condition.copy();
-            } else if (propertyPath == null) {
+            if (propertyPath == null) {
+                if (supportedByExtension) {
+                    return condition.copy();
+                }
+                resultParameters.remove(propertyCondition.getParameterName());
                 return null;
             }
 
             for (MetaProperty metaProperty : propertyPath.getMetaProperties()) {
                 if (!metadataTools.isJpa(metaProperty)
                         && !isCrossDataStoreReference(metaProperty)) {
+                    if (supportedByExtension) {
+                        return condition.copy();
+                    }
                     resultParameters.remove(propertyCondition.getParameterName());
                     return null;
                 }
@@ -320,6 +330,15 @@ public class JpqlQueryBuilder<Q extends JmixQuery> {
         return metadataTools.getCrossDataStoreReferenceIdProperty(
                 metaProperty.getDomain().getStore().getName(),
                 metaProperty) != null;
+    }
+
+    protected boolean supportsNonJpaPropertyCondition(MetaClass metaClass, PropertyCondition propertyCondition) {
+        for (NonJpaPropertyConditionSupport support : nonJpaPropertyConditionSupports) {
+            if (support.supports(metaClass, propertyCondition)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     protected ConditionGenerationContext createConditionGenerationContext(@Nullable Condition condition) {

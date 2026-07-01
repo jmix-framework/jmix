@@ -16,21 +16,14 @@
 
 package io.jmix.flowui.action;
 
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.icon.Icon;
-import io.jmix.flowui.kit.action.ActionPerformedEvent;
-import io.jmix.flowui.kit.action.ActionVariant;
-import io.jmix.flowui.kit.action.BaseAction;
-import io.jmix.flowui.kit.component.KeyCombination;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
-public class SecuredBaseAction extends BaseAction {
+public class SecuredBaseAction<A extends SecuredBaseAction<A>> extends ObservableBaseAction<A> {
 
     protected List<EnabledRule> enabledRules;
 
@@ -98,62 +91,14 @@ public class SecuredBaseAction extends BaseAction {
      * @see #addEnabledRule(EnabledRule)
      */
     @FunctionalInterface
+    @NullMarked
     public interface EnabledRule {
+
+        /**
+         * Determines whether the action is currently enabled.
+         *
+         * @return {@code true} if the action is enabled, {@code false} otherwise
+         */
         boolean isActionEnabled();
-    }
-
-    @Override
-    public SecuredBaseAction withText(@Nullable String text) {
-        setText(text);
-        return this;
-    }
-
-    @Override
-    public SecuredBaseAction withEnabled(boolean enabled) {
-        setEnabled(enabled);
-        return this;
-    }
-
-    @Override
-    public SecuredBaseAction withVisible(boolean visible) {
-        setVisible(visible);
-        return this;
-    }
-
-    @Override
-    public SecuredBaseAction withIcon(@Nullable Component icon) {
-        return (SecuredBaseAction) super.withIcon(icon);
-    }
-
-    @Deprecated(since = "3.0", forRemoval = true)
-    @Override
-    public SecuredBaseAction withIcon(@Nullable Icon icon) {
-        setIcon(icon);
-        return this;
-    }
-
-    @Override
-    public SecuredBaseAction withVariant(ActionVariant actionVariant) {
-        setVariant(actionVariant);
-        return this;
-    }
-
-    @Override
-    public SecuredBaseAction withShortcutCombination(@Nullable KeyCombination shortcutCombination) {
-        setShortcutCombination(shortcutCombination);
-        return this;
-    }
-
-    @Override
-    public SecuredBaseAction withHandler(@Nullable Consumer<ActionPerformedEvent> handler) {
-        if (handler == null) {
-            if (getEventBus().hasListener(ActionPerformedEvent.class)) {
-                getEventBus().removeListener(ActionPerformedEvent.class);
-            }
-        } else {
-            addActionPerformedListener(handler);
-        }
-
-        return this;
     }
 }

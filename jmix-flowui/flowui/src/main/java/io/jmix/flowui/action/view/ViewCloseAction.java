@@ -26,10 +26,10 @@ import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.view.StandardOutcome;
 import io.jmix.flowui.view.View;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 @ActionType(ViewCloseAction.ID)
-public class ViewCloseAction extends OperationResultViewAction<ViewCloseAction, View> {
+public class ViewCloseAction extends OperationResultViewAction<ViewCloseAction, View<?>> {
 
     public static final String ID = "view_close";
 
@@ -59,7 +59,7 @@ public class ViewCloseAction extends OperationResultViewAction<ViewCloseAction, 
 
     @Autowired
     protected void setUiViewProperties(UiViewProperties viewProperties) {
-        this.shortcutCombination = KeyCombination.create(viewProperties.getCloseShortcut());
+        setShortcutCombination(KeyCombination.create(viewProperties.getCloseShortcut()));
     }
 
     @Override

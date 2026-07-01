@@ -1,0 +1,76 @@
+/*
+ * Copyright 2026 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.jmix.aitools.dataload.introspection.model;
+
+import org.jspecify.annotations.Nullable;
+
+import java.util.List;
+
+/**
+ * Descriptor of an enum entity property. Adds the enum class description and how its values are
+ * stored (for example by id, name or ordinal) on top of the common property attributes.
+ */
+public class EnumPropertyDescriptor extends AbstractEntityPropertyDescriptor {
+
+    protected EnumClassDescriptor enumType;
+
+    @Nullable
+    protected String enumStorageMode;
+
+    public EnumPropertyDescriptor(String name,
+                                  List<String> localizedNames,
+                                  String javaType,
+                                  String propertyType,
+                                  @Nullable Boolean identifier,
+                                  Boolean persistent,
+                                  Boolean mandatory,
+                                  @Nullable String comment,
+                                  EnumClassDescriptor enumType,
+                                  @Nullable String enumStorageMode) {
+        super(name, localizedNames, javaType, propertyType, identifier, persistent, mandatory, comment);
+
+        this.enumType = enumType;
+        this.enumStorageMode = enumStorageMode;
+    }
+
+    /**
+     * Returns the description of the enum class, including its constants.
+     *
+     * @return enum class descriptor
+     */
+    public EnumClassDescriptor getEnumType() {
+        return enumType;
+    }
+
+    /**
+     * Returns how the enum values are stored.
+     *
+     * @return storage mode (for example {@code "ordinal"} or {@code "string"}), or {@code null} for
+     * a Jmix {@code EnumClass}
+     */
+    @Nullable
+    public String getEnumStorageMode() {
+        return enumStorageMode;
+    }
+
+    @Override
+    protected String fieldsToString() {
+        return super.fieldsToString() +
+                ", enumType=" + enumType +
+                ", enumStorageMode='" + enumStorageMode + '\'';
+    }
+}

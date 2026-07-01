@@ -16,11 +16,11 @@
 
 package io.jmix.pivottableflowui.serialization;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.SerializerProvider;
 import io.jmix.pivottableflowui.kit.component.serialization.AbstractSerializer;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.SerializationContext;
 
-import java.io.IOException;
 import java.util.function.Function;
 
 public class PivotTableBooleanSerializer extends AbstractSerializer<Boolean> {
@@ -34,7 +34,8 @@ public class PivotTableBooleanSerializer extends AbstractSerializer<Boolean> {
     }
 
     @Override
-    public void serializeNonNullValue(Boolean value, JsonGenerator gen, SerializerProvider provider) throws IOException {
+    public void serializeNonNullValue(Boolean value, JsonGenerator gen, SerializationContext provider)
+            throws JacksonException {
         gen.writeString(value ? messagesProvider.apply("boolean.yes") : messagesProvider.apply("boolean.no"));
     }
 }

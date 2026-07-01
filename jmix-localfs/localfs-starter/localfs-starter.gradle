@@ -15,7 +15,9 @@
  */
 
 group = 'io.jmix.localfs'
-archivesBaseName = 'jmix-localfs-starter'
+base {
+    archivesName = 'jmix-localfs-starter'
+}
 
 dependencies {
     api project(':localfs')

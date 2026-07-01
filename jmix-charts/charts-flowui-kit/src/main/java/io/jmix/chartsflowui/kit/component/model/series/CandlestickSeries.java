@@ -20,6 +20,7 @@ import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
 import io.jmix.chartsflowui.kit.component.model.HasShadow;
 import io.jmix.chartsflowui.kit.component.model.shared.Color;
 import io.jmix.chartsflowui.kit.component.model.shared.Orientation;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A candlestick chart is a style of financial chart used to describe price movements
@@ -99,6 +100,7 @@ public class CandlestickSeries extends AbstractAxisAwareSeries<CandlestickSeries
 
         protected Double opacity;
 
+        @Nullable
         public Color getBullishColor() {
             return bullishColor;
         }
@@ -108,6 +110,7 @@ public class CandlestickSeries extends AbstractAxisAwareSeries<CandlestickSeries
             markAsDirty();
         }
 
+        @Nullable
         public Color getBearishColor() {
             return bearishColor;
         }
@@ -117,6 +120,7 @@ public class CandlestickSeries extends AbstractAxisAwareSeries<CandlestickSeries
             markAsDirty();
         }
 
+        @Nullable
         public Color getBullishBorderColor() {
             return bullishBorderColor;
         }
@@ -126,6 +130,7 @@ public class CandlestickSeries extends AbstractAxisAwareSeries<CandlestickSeries
             markAsDirty();
         }
 
+        @Nullable
         public Color getBearishBorderColor() {
             return bearishBorderColor;
         }
@@ -135,6 +140,7 @@ public class CandlestickSeries extends AbstractAxisAwareSeries<CandlestickSeries
             markAsDirty();
         }
 
+        @Nullable
         public Color getDojiBorderColor() {
             return dojiBorderColor;
         }
@@ -144,6 +150,7 @@ public class CandlestickSeries extends AbstractAxisAwareSeries<CandlestickSeries
             markAsDirty();
         }
 
+        @Nullable
         public Double getBorderWidth() {
             return borderWidth;
         }
@@ -153,6 +160,7 @@ public class CandlestickSeries extends AbstractAxisAwareSeries<CandlestickSeries
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public Integer getShadowBlur() {
             return shadowBlur;
@@ -164,6 +172,7 @@ public class CandlestickSeries extends AbstractAxisAwareSeries<CandlestickSeries
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public Color getShadowColor() {
             return shadowColor;
@@ -175,6 +184,7 @@ public class CandlestickSeries extends AbstractAxisAwareSeries<CandlestickSeries
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public Integer getShadowOffsetX() {
             return shadowOffsetX;
@@ -186,6 +196,7 @@ public class CandlestickSeries extends AbstractAxisAwareSeries<CandlestickSeries
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public Integer getShadowOffsetY() {
             return shadowOffsetY;
@@ -197,6 +208,7 @@ public class CandlestickSeries extends AbstractAxisAwareSeries<CandlestickSeries
             markAsDirty();
         }
 
+        @Nullable
         public Double getOpacity() {
             return opacity;
         }
@@ -253,6 +265,7 @@ public class CandlestickSeries extends AbstractAxisAwareSeries<CandlestickSeries
 
         protected BlurScopeType blurScope;
 
+        @Nullable
         public Boolean getDisabled() {
             return disabled;
         }
@@ -262,6 +275,7 @@ public class CandlestickSeries extends AbstractAxisAwareSeries<CandlestickSeries
             markAsDirty();
         }
 
+        @Nullable
         public FocusType getFocus() {
             return focus;
         }
@@ -271,6 +285,7 @@ public class CandlestickSeries extends AbstractAxisAwareSeries<CandlestickSeries
             markAsDirty();
         }
 
+        @Nullable
         public BlurScopeType getBlurScope() {
             return blurScope;
         }
@@ -309,6 +324,7 @@ public class CandlestickSeries extends AbstractAxisAwareSeries<CandlestickSeries
 
         protected Boolean disabled;
 
+        @Nullable
         public Boolean getDisabled() {
             return disabled;
         }
@@ -335,6 +351,7 @@ public class CandlestickSeries extends AbstractAxisAwareSeries<CandlestickSeries
 
         protected ItemStyle itemStyle;
 
+        @Nullable
         public ItemStyle getItemStyle() {
             return itemStyle;
         }
@@ -355,6 +372,7 @@ public class CandlestickSeries extends AbstractAxisAwareSeries<CandlestickSeries
         }
     }
 
+    @Nullable
     public CoordinateSystem getCoordinateSystem() {
         return coordinateSystem;
     }
@@ -364,6 +382,7 @@ public class CandlestickSeries extends AbstractAxisAwareSeries<CandlestickSeries
         markAsDirty();
     }
 
+    @Nullable
     public Integer getXAxisIndex() {
         return xAxisIndex;
     }
@@ -373,6 +392,7 @@ public class CandlestickSeries extends AbstractAxisAwareSeries<CandlestickSeries
         markAsDirty();
     }
 
+    @Nullable
     public Integer getYAxisIndex() {
         return yAxisIndex;
     }
@@ -382,6 +402,7 @@ public class CandlestickSeries extends AbstractAxisAwareSeries<CandlestickSeries
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getHoverAnimation() {
         return hoverAnimation;
     }
@@ -391,6 +412,7 @@ public class CandlestickSeries extends AbstractAxisAwareSeries<CandlestickSeries
         markAsDirty();
     }
 
+    @Nullable
     public Orientation getLayout() {
         return layout;
     }
@@ -400,6 +422,7 @@ public class CandlestickSeries extends AbstractAxisAwareSeries<CandlestickSeries
         markAsDirty();
     }
 
+    @Nullable
     public String getBarWidth() {
         return barWidth;
     }
@@ -409,6 +432,7 @@ public class CandlestickSeries extends AbstractAxisAwareSeries<CandlestickSeries
         markAsDirty();
     }
 
+    @Nullable
     public String getBarMaxWidth() {
         return barMaxWidth;
     }
@@ -418,6 +442,7 @@ public class CandlestickSeries extends AbstractAxisAwareSeries<CandlestickSeries
         markAsDirty();
     }
 
+    @Nullable
     public String getBarMinWidth() {
         return barMinWidth;
     }
@@ -427,6 +452,7 @@ public class CandlestickSeries extends AbstractAxisAwareSeries<CandlestickSeries
         markAsDirty();
     }
 
+    @Nullable
     public ItemStyle getItemStyle() {
         return itemStyle;
     }
@@ -440,6 +466,7 @@ public class CandlestickSeries extends AbstractAxisAwareSeries<CandlestickSeries
         addChild(itemStyle);
     }
 
+    @Nullable
     public Emphasis getEmphasis() {
         return emphasis;
     }
@@ -453,6 +480,7 @@ public class CandlestickSeries extends AbstractAxisAwareSeries<CandlestickSeries
         addChild(emphasis);
     }
 
+    @Nullable
     public Blur getBlur() {
         return blur;
     }
@@ -466,6 +494,7 @@ public class CandlestickSeries extends AbstractAxisAwareSeries<CandlestickSeries
         addChild(blur);
     }
 
+    @Nullable
     public Select getSelect() {
         return select;
     }
@@ -479,6 +508,7 @@ public class CandlestickSeries extends AbstractAxisAwareSeries<CandlestickSeries
         addChild(select);
     }
 
+    @Nullable
     public Boolean getLarge() {
         return large;
     }
@@ -488,6 +518,7 @@ public class CandlestickSeries extends AbstractAxisAwareSeries<CandlestickSeries
         markAsDirty();
     }
 
+    @Nullable
     public Integer getLargeThreshold() {
         return largeThreshold;
     }
@@ -497,6 +528,7 @@ public class CandlestickSeries extends AbstractAxisAwareSeries<CandlestickSeries
         markAsDirty();
     }
 
+    @Nullable
     public Integer getProgressive() {
         return progressive;
     }
@@ -506,6 +538,7 @@ public class CandlestickSeries extends AbstractAxisAwareSeries<CandlestickSeries
         markAsDirty();
     }
 
+    @Nullable
     public Integer getProgressiveThreshold() {
         return progressiveThreshold;
     }
@@ -515,6 +548,7 @@ public class CandlestickSeries extends AbstractAxisAwareSeries<CandlestickSeries
         markAsDirty();
     }
 
+    @Nullable
     public ProgressiveChunkMode getProgressiveChunkMode() {
         return progressiveChunkMode;
     }
@@ -524,6 +558,7 @@ public class CandlestickSeries extends AbstractAxisAwareSeries<CandlestickSeries
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getClip() {
         return clip;
     }

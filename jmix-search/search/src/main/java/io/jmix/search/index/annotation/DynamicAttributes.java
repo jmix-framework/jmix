@@ -16,11 +16,9 @@
 
 package io.jmix.search.index.annotation;
 
-import com.drew.lang.annotations.Nullable;
-
 import java.lang.annotation.*;
 
-import static io.jmix.search.index.annotation.ReferenceAttributesIndexingMode.*;
+import static io.jmix.search.index.annotation.ReferenceAttributesIndexingMode.INSTANCE_NAME_ONLY;
 
 /**
  * Annotation for marking methods in index definition interfaces that define dynamic attributes to be indexed.
@@ -46,13 +44,11 @@ public @interface DynamicAttributes {
     /**
      * Specifies dynamic attribute categories to be excluded from indexing for the annotated method.
      */
-    @Nullable
     String[] excludeCategories() default {};
 
     /**
      * Specifies dynamic attributes to be excluded from indexing for the annotated method.
      */
-    @Nullable
     String[] excludeAttributes() default {};
 
     /**
@@ -61,7 +57,6 @@ public @interface DynamicAttributes {
      * reference values are indexed based on instance names or excluded completely.
      * Defaults to {@code INSTANCE_NAME_ONLY}.
      */
-    @Nullable
     ReferenceAttributesIndexingMode referenceAttributesIndexingMode() default INSTANCE_NAME_ONLY;
 
     /**

@@ -23,10 +23,9 @@ import io.jmix.flowui.data.BindingState;
 import io.jmix.flowui.data.DataUnit;
 import io.jmix.flowui.kit.event.EventBus;
 import io.jmix.pivottableflowui.component.PivotTable;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 /**
@@ -35,7 +34,6 @@ import java.util.function.Consumer;
 public class ListPivotTableItems<T> implements PivotTableItems<T> {
 
     private EventBus eventBus;
-    private static final Map<Class<?>, MethodsCache> methodCacheMap = new ConcurrentHashMap<>();
 
     protected final List<T> items = new ArrayList<>();
     protected final String idAttribute;
@@ -246,8 +244,7 @@ public class ListPivotTableItems<T> implements PivotTableItems<T> {
     }
 
     protected MethodsCache getMethodsCache(Object object) {
-        Class<?> cls = object.getClass();
-        return methodCacheMap.computeIfAbsent(cls, k -> MethodsCache.getOrCreate(cls));
+        return MethodsCache.getOrCreate(object.getClass());
     }
 
     protected void fireChangeEvent(ItemsChangeType operationType, Collection<T> items) {

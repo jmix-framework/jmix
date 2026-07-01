@@ -16,7 +16,6 @@
 
 package io.jmix.masquerade.component;
 
-import com.codeborne.selenide.CheckResult;
 import com.codeborne.selenide.SelenideElement;
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
@@ -48,40 +47,39 @@ public class RadioButtonGroup extends AbstractComponent<RadioButtonGroup> {
     }
 
     @Override
-    public CheckResult check(SpecificCondition condition) {
+    public SpecificCheck resolve(SpecificCondition condition) {
         if (condition instanceof Label labelCondition) {
             String expectedValue = Strings.nullToEmpty(labelCondition.getValue());
 
-            getLabelDelegate()
-                    .shouldBe(VISIBLE)
-                    .shouldHave(exactText(expectedValue));
-            return CheckResult.accepted();
+            return SpecificCheck.of(
+                    getLabelDelegate().shouldBe(VISIBLE),
+                    exactText(expectedValue)
+            );
         } else if (condition instanceof Value valueCondition) {
             String expectedValue = Strings.nullToEmpty(valueCondition.getValue());
 
-            getCheckedRadioButtonLabelElement().shouldHave(exactText(expectedValue));
-            return CheckResult.accepted();
+            return SpecificCheck.of(getCheckedRadioButtonLabelElement(), exactText(expectedValue));
         } else if (condition instanceof VisibleItems visibleItems) {
             List<String> currentRadioButtonLabelTexts = getRadioButtonLabelTexts();
-            return new CheckResult(
+            return SpecificCheck.of(
                     CollectionUtils.isEqualCollection(currentRadioButtonLabelTexts, visibleItems.getValue()),
                     currentRadioButtonLabelTexts
             );
         } else if (condition instanceof VisibleItemsCount visibleItemsCount) {
             List<String> currentRadioButtonLabelTexts = getRadioButtonLabelTexts();
-            return new CheckResult(
+            return SpecificCheck.of(
                     currentRadioButtonLabelTexts.size() == visibleItemsCount.getValue(),
                     currentRadioButtonLabelTexts
             );
         } else if (condition instanceof VisibleItemsContains visibleItemsContains) {
             List<String> currentRadioButtonLabelTexts = getRadioButtonLabelTexts();
-            return new CheckResult(
+            return SpecificCheck.of(
                     Sets.newHashSet(currentRadioButtonLabelTexts).containsAll(visibleItemsContains.getValue()),
                     currentRadioButtonLabelTexts
             );
         }
 
-        return super.check(condition);
+        return super.resolve(condition);
     }
 
     /**

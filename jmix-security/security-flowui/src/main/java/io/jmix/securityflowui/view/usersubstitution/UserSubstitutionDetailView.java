@@ -58,7 +58,7 @@ public class UserSubstitutionDetailView extends StandardDetailView<UserSubstitut
     @Autowired(required = false)
     protected List<UserSubstitutionCandidatePredicate> userSubstitutionCandidatePredicates = Collections.emptyList();
 
-    protected UserSubstitutionCandidatePredicate compositeUserSubstitutionCandidatePredicate;
+    protected UserSubstitutionCandidatePredicate compositeUserSubstitutionCandidatePredicate = (userDetails, substitutionCandidate) -> true;
 
     @Subscribe
     public void onInit(final InitEvent event) {

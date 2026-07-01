@@ -38,18 +38,25 @@ public class TestCoreProperties extends CoreProperties {
                               String defaultFileStorage,
                               boolean entitySerializationTokenRequired,
                               String entitySerializationTokenEncryptionKey,
+                              boolean unsafeRuntimeFeaturesEnabled,
+                              boolean hotDeployEnabled,
                               boolean legacyFetchPlanSerializationAttributeName,
                               boolean triggerFilesEnabled,
                               Duration triggerFilesProcessInterval,
                               boolean roundDecimalValueByFormat,
                               boolean skipNullOrEmptyConditionsByDefault,
-                              boolean instanceNameFallbackEnabled) {
+                              boolean instanceNameFallbackEnabled,
+                              boolean dataObservationEnabled,
+                              boolean useUserInfoForObservation,
+                              boolean applicationInfoFileEnabled) {
         super(webHostName, webPort, confDir, workDir, tempDir, dbDir, availableLocales,
                 crossDataStoreReferenceLoadingBatchSize, idGenerationForEntitiesInAdditionalDataStoresEnabled,
                 dom4jMaxPoolSize, dom4jMaxBorrowWaitMillis, anonymousAuthenticationTokenKey, defaultFileStorage,
                 entitySerializationTokenRequired, entitySerializationTokenEncryptionKey,
-                legacyFetchPlanSerializationAttributeName, triggerFilesEnabled, triggerFilesProcessInterval,
-                roundDecimalValueByFormat, skipNullOrEmptyConditionsByDefault, instanceNameFallbackEnabled);
+                unsafeRuntimeFeaturesEnabled, hotDeployEnabled, legacyFetchPlanSerializationAttributeName,
+                triggerFilesEnabled, triggerFilesProcessInterval,
+                roundDecimalValueByFormat, skipNullOrEmptyConditionsByDefault, instanceNameFallbackEnabled,
+                dataObservationEnabled, useUserInfoForObservation, applicationInfoFileEnabled);
     }
 
     public static Builder builder() {
@@ -72,12 +79,17 @@ public class TestCoreProperties extends CoreProperties {
         String defaultFileStorage;
         boolean entitySerializationTokenRequired = false;
         String entitySerializationTokenEncryptionKey = "KEY";
+        boolean unsafeRuntimeFeaturesEnabled = true;
+        boolean hotDeployEnabled = true;
         boolean legacyFetchPlanSerializationAttributeName = false;
         boolean triggerFilesEnabled = true;
         Duration triggerFilesProcessInterval = Duration.ofSeconds(5000);
         boolean roundDecimalValueByFormat = true;
         boolean skipNullOrEmptyConditionsByDefault = false;
         boolean instanceNameFallbackEnabled = true;
+        boolean dataObservationEnabled = false;
+        boolean useUserInfoForObservation = false;
+        boolean applicationInfoFileEnabled = true;
 
         public Builder setWebHostName(String webHostName) {
             this.webHostName = webHostName;
@@ -159,6 +171,16 @@ public class TestCoreProperties extends CoreProperties {
             return this;
         }
 
+        public Builder setUnsafeRuntimeFeaturesEnabled(boolean unsafeRuntimeFeaturesEnabled) {
+            this.unsafeRuntimeFeaturesEnabled = unsafeRuntimeFeaturesEnabled;
+            return this;
+        }
+
+        public Builder setHotDeployEnabled(boolean hotDeployEnabled) {
+            this.hotDeployEnabled = hotDeployEnabled;
+            return this;
+        }
+
         public Builder setTriggerFilesEnabled(boolean triggerFilesEnabled) {
             this.triggerFilesEnabled = triggerFilesEnabled;
             return this;
@@ -179,6 +201,16 @@ public class TestCoreProperties extends CoreProperties {
             return this;
         }
 
+        public Builder setDataObservationEnabled(boolean dataObservationEnabled) {
+            this.dataObservationEnabled = dataObservationEnabled;
+            return this;
+        }
+
+        public Builder setUseUserInfoForObservation(boolean useUserInfoForObservation) {
+            this.useUserInfoForObservation = useUserInfoForObservation;
+            return this;
+        }
+
         public TestCoreProperties build() {
             return new TestCoreProperties(
                     this.webHostName,
@@ -196,12 +228,17 @@ public class TestCoreProperties extends CoreProperties {
                     this.defaultFileStorage,
                     this.entitySerializationTokenRequired,
                     this.entitySerializationTokenEncryptionKey,
+                    this.unsafeRuntimeFeaturesEnabled,
+                    this.hotDeployEnabled,
                     this.legacyFetchPlanSerializationAttributeName,
                     this.triggerFilesEnabled,
                     this.triggerFilesProcessInterval,
                     this.roundDecimalValueByFormat,
                     this.skipNullOrEmptyConditionsByDefault,
-                    this.instanceNameFallbackEnabled);
+                    this.instanceNameFallbackEnabled,
+                    this.dataObservationEnabled,
+                    this.useUserInfoForObservation,
+                    this.applicationInfoFileEnabled);
         }
     }
 }

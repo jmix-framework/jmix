@@ -22,6 +22,7 @@ import io.jmix.search.index.mapping.ExtendedSearchSettings;
 import io.jmix.search.index.mapping.FieldConfiguration;
 import io.jmix.search.index.mapping.MappingFieldDescriptor;
 import io.jmix.search.index.mapping.propertyvalue.PropertyValueExtractor;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.Map;
 
@@ -29,6 +30,7 @@ import java.util.Map;
  * Base interface for mapping strategy.
  * <p>Mapping strategy defines the way of transformation of property metadata and content into index mapping and value.
  */
+@NullMarked
 public interface FieldMappingStrategy {
 
     /**

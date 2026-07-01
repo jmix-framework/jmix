@@ -17,7 +17,9 @@
 apply plugin: 'io.jmix'
 
 group = 'io.jmix.charts'
-archivesBaseName = 'jmix-charts-flowui'
+base {
+    archivesName = 'jmix-charts-flowui'
+}
 
 dependencies {
     api project(':flowui')
@@ -25,6 +27,7 @@ dependencies {
     api project(':charts-flowui-kit')
 
     testImplementation project(':flowui-test-assist')
+    testImplementation project(':framework-test-support')
     testImplementation project(':eclipselink-starter')
     testImplementation 'org.apache.commons:commons-dbcp2'
 

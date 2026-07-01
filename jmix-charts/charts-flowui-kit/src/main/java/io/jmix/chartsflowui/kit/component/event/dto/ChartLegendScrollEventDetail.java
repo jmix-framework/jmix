@@ -17,6 +17,7 @@
 package io.jmix.chartsflowui.kit.component.event.dto;
 
 import io.jmix.chartsflowui.kit.component.event.ChartLegendScrollEvent;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @see ChartLegendScrollEvent
@@ -27,6 +28,7 @@ public class ChartLegendScrollEventDetail extends BaseChartEventDetail {
 
     protected String legendId;
 
+    @Nullable
     public Integer getScrollDataIndex() {
         return scrollDataIndex;
     }
@@ -35,6 +37,7 @@ public class ChartLegendScrollEventDetail extends BaseChartEventDetail {
         this.scrollDataIndex = scrollDataIndex;
     }
 
+    @Nullable
     public String getLegendId() {
         return legendId;
     }

@@ -24,7 +24,7 @@ open class ${project_id.capitalize()}TestConfiguration {
     open fun dataSource(): DataSource {
         return EmbeddedDatabaseBuilder()
                 .generateUniqueName(true)
-                .setType(EmbeddedDatabaseType.H2)
+                .setType(EmbeddedDatabaseType.HSQL)
                 .build();
     }
 }

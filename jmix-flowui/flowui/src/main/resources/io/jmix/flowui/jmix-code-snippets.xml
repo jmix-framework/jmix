@@ -519,6 +519,7 @@
                         .withResultHandler(result -> {
                             notifications.show("Done! Result: " + result);
                         })
+                        .withOwner(this)
                         .supplyAsync();
                 ]]>
             </text>
@@ -533,6 +534,7 @@
                 .withResultHandler { result ->
                     notifications.show("Done! Result: \$result")
                 }
+                .withOwner(this)
                 .supplyAsync()
                 ]]>
             </text>

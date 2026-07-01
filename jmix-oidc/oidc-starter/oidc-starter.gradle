@@ -15,7 +15,9 @@
  */
 
 group = 'io.jmix.oidc'
-archivesBaseName = 'jmix-oidc-starter'
+base {
+    archivesName = 'jmix-oidc-starter'
+}
 
 dependencies {
     api project(':oidc')
@@ -26,4 +28,8 @@ dependencies {
     implementation project(':security-resource-server-starter')
 
     implementation 'org.springframework.boot:spring-boot-autoconfigure'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }

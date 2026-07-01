@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2019 Haulmont.
+ * Copyright 2019 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,7 +53,7 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -484,7 +484,7 @@ public class EntitiesControllerManager {
 
         Object entity = createEntityFromJson(metaClass, entityJson);
 
-        UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(request.getRequestURL().toString())
+        UriComponents uriComponents = UriComponentsBuilder.fromUriString(request.getRequestURL().toString())
                 .path("/{id}")
                 .buildAndExpand(EntityValues.getId(entity).toString());
 
@@ -524,7 +524,7 @@ public class EntitiesControllerManager {
             }
         }
 
-        UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(request.getRequestURL().toString()).buildAndExpand();
+        UriComponents uriComponents = UriComponentsBuilder.fromUriString(request.getRequestURL().toString()).buildAndExpand();
         String bodyJson = createEntitiesJson(mainCollectionEntity, metaClass, responseFetchPlan, modelVersion);
 
         return new ResponseInfo(uriComponents.toUri(), bodyJson);
@@ -546,13 +546,15 @@ public class EntitiesControllerManager {
         Collection<Pair<Object, Object>> referencesToExclude = new ArrayList<>();
         for (Object entity : entities) {
             for (MetaProperty metaProperty : metadata.getClass(entity).getProperties()) {
-                if (metaProperty.getRange().isClass() && entityStates.isLoaded(entity, metaProperty.getName())) {
+                if (metaProperty.getRange().isClass() && entityStates.isLoaded(entity, metaProperty.getName())
+                        && !metadataTools.isMethodBased(metaProperty)
+                        && metadataTools.isAnnotationPresent(entity, metaProperty.getName(), Valid.class)) {
                     Object reference = EntityValues.getValue(entity, metaProperty.getName());
                     if (reference != null && !(reference instanceof Collection)) {
                         reference = Collections.singletonList(reference);
                     }
                     //to handle composition references marked as @Valid
-                    if (reference != null && metadataTools.isAnnotationPresent(entity, metaProperty.getName(), Valid.class)) {
+                    if (reference != null) {
                         ((Collection<Object>) reference).stream()
                                 //to handle one-to-many composition. when the composition collection objects has a reference to the root entity
                                 .filter(x -> !referencesToExclude.contains(new Pair<>(x, entity)))

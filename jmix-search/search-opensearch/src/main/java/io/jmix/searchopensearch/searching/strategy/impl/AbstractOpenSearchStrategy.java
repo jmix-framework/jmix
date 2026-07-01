@@ -19,6 +19,7 @@ package io.jmix.searchopensearch.searching.strategy.impl;
 import io.jmix.search.searching.impl.AbstractSearchStrategy;
 import io.jmix.searchopensearch.searching.strategy.OpenSearchQueryConfigurer;
 import io.jmix.searchopensearch.searching.strategy.OpenSearchSearchStrategy;
+import org.jspecify.annotations.NullMarked;
 import org.opensearch.client.opensearch.core.SearchRequest;
 
 /**
@@ -26,6 +27,7 @@ import org.opensearch.client.opensearch.core.SearchRequest;
  * It provides a foundational structure for search strategies that configure OpenSearch search requests.
  * Subclasses should implement specific search logic and provide concrete configurations for search requests.
  */
+@NullMarked
 public abstract class AbstractOpenSearchStrategy
         extends AbstractSearchStrategy<SearchRequest.Builder, OpenSearchQueryConfigurer>
         implements OpenSearchSearchStrategy {

@@ -19,6 +19,7 @@ package io.jmix.chartsflowui.kit.component.model.series;
 import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
 import io.jmix.chartsflowui.kit.component.model.shared.ItemStyle;
 import io.jmix.chartsflowui.kit.component.model.shared.Orientation;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Boxplot is a convenient way of graphically depicting groups of numerical data through their quartiles.
@@ -63,6 +64,7 @@ public class BoxplotSeries extends AbstractAxisAwareSeries<BoxplotSeries> {
 
         protected BlurScopeType blurScope;
 
+        @Nullable
         public Boolean getDisabled() {
             return disabled;
         }
@@ -72,6 +74,7 @@ public class BoxplotSeries extends AbstractAxisAwareSeries<BoxplotSeries> {
             markAsDirty();
         }
 
+        @Nullable
         public FocusType getFocus() {
             return focus;
         }
@@ -81,6 +84,7 @@ public class BoxplotSeries extends AbstractAxisAwareSeries<BoxplotSeries> {
             markAsDirty();
         }
 
+        @Nullable
         public BlurScopeType getBlurScope() {
             return blurScope;
         }
@@ -119,6 +123,7 @@ public class BoxplotSeries extends AbstractAxisAwareSeries<BoxplotSeries> {
 
         protected Boolean disabled;
 
+        @Nullable
         public Boolean getDisabled() {
             return disabled;
         }
@@ -144,6 +149,7 @@ public class BoxplotSeries extends AbstractAxisAwareSeries<BoxplotSeries> {
 
         protected ItemStyle itemStyle;
 
+        @Nullable
         public ItemStyle getItemStyle() {
             return itemStyle;
         }
@@ -164,6 +170,7 @@ public class BoxplotSeries extends AbstractAxisAwareSeries<BoxplotSeries> {
         }
     }
 
+    @Nullable
     public CoordinateSystem getCoordinateSystem() {
         return coordinateSystem;
     }
@@ -173,6 +180,7 @@ public class BoxplotSeries extends AbstractAxisAwareSeries<BoxplotSeries> {
         markAsDirty();
     }
 
+    @Nullable
     public Integer getXAxisIndex() {
         return xAxisIndex;
     }
@@ -182,6 +190,7 @@ public class BoxplotSeries extends AbstractAxisAwareSeries<BoxplotSeries> {
         markAsDirty();
     }
 
+    @Nullable
     public Integer getYAxisIndex() {
         return yAxisIndex;
     }
@@ -191,6 +200,7 @@ public class BoxplotSeries extends AbstractAxisAwareSeries<BoxplotSeries> {
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getHoverAnimation() {
         return hoverAnimation;
     }
@@ -200,6 +210,7 @@ public class BoxplotSeries extends AbstractAxisAwareSeries<BoxplotSeries> {
         markAsDirty();
     }
 
+    @Nullable
     public Orientation getLayout() {
         return layout;
     }
@@ -209,6 +220,7 @@ public class BoxplotSeries extends AbstractAxisAwareSeries<BoxplotSeries> {
         markAsDirty();
     }
 
+    @Nullable
     public String[] getBoxWidth() {
         return boxWidth;
     }
@@ -218,6 +230,7 @@ public class BoxplotSeries extends AbstractAxisAwareSeries<BoxplotSeries> {
         markAsDirty();
     }
 
+    @Nullable
     public ItemStyle getItemStyle() {
         return itemStyle;
     }
@@ -231,6 +244,7 @@ public class BoxplotSeries extends AbstractAxisAwareSeries<BoxplotSeries> {
         addChild(itemStyle);
     }
 
+    @Nullable
     public Emphasis getEmphasis() {
         return emphasis;
     }
@@ -244,6 +258,7 @@ public class BoxplotSeries extends AbstractAxisAwareSeries<BoxplotSeries> {
         addChild(emphasis);
     }
 
+    @Nullable
     public Blur getBlur() {
         return blur;
     }
@@ -257,6 +272,7 @@ public class BoxplotSeries extends AbstractAxisAwareSeries<BoxplotSeries> {
         addChild(blur);
     }
 
+    @Nullable
     public Select getSelect() {
         return select;
     }

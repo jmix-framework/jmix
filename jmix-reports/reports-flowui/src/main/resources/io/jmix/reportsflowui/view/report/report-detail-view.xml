@@ -48,8 +48,8 @@
         <action id="runAction" icon="ANGLE_DOUBLE_RIGHT" text="msg://view.runAction.text"/>
         <action id="closeAction" type="detail_close"/>
     </actions>
-    <layout>
-        <tabSheet id="mainTabSheet" width="100%" height="100%" minHeight="0">
+    <layout classNames="report-detail-view">
+        <tabSheet id="mainTabSheet" alignSelf="STRETCH" height="100%" minHeight="0">
             <tab id="detailsTab" label="msg://mainTabSheet.detailsTab.label">
                 <vbox id="detailsTabContent" padding="false">
                     <formLayout id="reportForm" dataContainer="reportDc">
@@ -77,9 +77,9 @@
                 </vbox>
             </tab>
             <tab id="bandsTab" label="msg://mainTabSheet.bandsTab.label">
-                <div id="bandsTabContent" width="100%" height="100%" classNames="report-flex-layout">
-                    <vbox id="bandsLayout" classNames="report-bands-layout" padding="false">
-                        <hbox id="bandsButtonsLayout" classNames="buttons-panel">
+                <flexLayout id="bandsTabContent" width="100%" height="100%" classNames="flex-layout" flexWrap="WRAP">
+                    <vbox id="bandsLayout" classNames="bands-layout" padding="false">
+                        <hbox id="bandsButtonsLayout" wrap="true" width="100%">
                             <button id="createBandBtn" action="bandsTreeDataGrid.create"/>
                             <button id="removeBandBtn" action="bandsTreeDataGrid.remove"/>
                             <button id="upBandBtn" action="bandsTreeDataGrid.upBand"/>
@@ -102,7 +102,7 @@
                             </columns>
                         </treeDataGrid>
                     </vbox>
-                    <vbox id="bandsDetailsLayout" classNames="report-bands-details-layout">
+                    <vbox id="bandsDetailsLayout" classNames="bands-details-layout" padding="false">
                         <formLayout id="bandForm" dataContainer="bandsDc">
                             <textField id="bandNameField" property="name"/>
                             <select id="orientationField" property="orientation" emptySelectionAllowed="true"/>
@@ -119,30 +119,33 @@
                                 <responsiveStep minWidth="50em" columns="4"/>
                             </responsiveSteps>
                         </formLayout>
-                        <div id="dataSetsLayout" classNames="report-flex-layout" width="100%" height="100%">
-                            <div id="singleDataSetLayout" classNames="report-flex-layout" width="100%" height="100%">
+                        <flexLayout id="dataSetsLayout" classNames="flex-layout"
+                                    width="100%" height="100%" flexWrap="WRAP">
+                            <flexLayout id="singleDataSetLayout" classNames="flex-layout"
+                                        width="100%" height="100%" flexWrap="WRAP">
                                 <!--Movable layout-->
                                 <div id="dataSetTypeLayout" width="100%" height="100%">
-                                    <vbox id="dataSetScriptBox" padding="false" expand="dataSetScriptCodeEditor"
+                                    <vbox id="dataSetScriptBox" padding="false" expand="dataSetScriptCodeEditorBox"
                                           spacing="false"
                                           height="100%">
-                                        <div width="100%" classNames="flex, justify-between">
+                                        <flexLayout width="100%" justifyContent="BETWEEN">
                                             <nativeLabel id="codeEditorLabel"
                                                          text="msg://report.groovyScript.title"
                                                          setFor="jsonGroovyCodeEditor"/>
                                             <button id="dataSetScriptFullScreenBtn" text="msg:///fullScreenBtn.title"
-                                                    themeNames="tertiary-inline"/>
-                                        </div>
-                                        <div width="100%" classNames="flex, items-start">
+                                                    classNames="link-button"/>
+                                        </flexLayout>
+                                        <flexLayout id="dataSetScriptCodeEditorBox" width="100%" alignItems="START">
                                             <codeEditor id="dataSetScriptCodeEditor"
                                                         width="100%"
-                                                        height="13em"
+                                                        height="100%"
+                                                        minHeight="13em"
                                                         dataContainer="dataSetsDc"
                                                         property="text"/>
                                             <button id="dataSetScriptCodeEditorHelpBtn"
-                                                    themeNames="icon, tertiary-inline"
+                                                    classNames="link-button"
                                                     icon="QUESTION_CIRCLE"/>
-                                        </div>
+                                        </flexLayout>
                                         <formLayout id="textParamsForm" dataContainer="dataSetsDc" width="100%">
                                             <textField id="linkParameterNameField"
                                                        label="msg://bandsTab.dataSetTypeLayout.linkParameterNameField.label"
@@ -164,14 +167,32 @@
                                     </vbox>
                                     <vbox id="commonEntityGrid" padding="false" width="100%">
                                         <formLayout>
-                                            <comboBox id="entitiesParamField"
-                                                      allowCustomValue="true"
-                                                      clearButtonVisible="true"
-                                                      label="msg://bandsTab.dataSetTypeLayout.entitiesParamField.label"/>
-                                            <comboBox id="entityParamField"
-                                                      allowCustomValue="true"
-                                                      clearButtonVisible="true"
-                                                      label="msg://bandsTab.dataSetTypeLayout.entityParamField.label"/>
+                                            <hbox id="entitiesParamLayout" padding="false" alignItems="BASELINE">
+                                                <comboBox id="entitiesParamField"
+                                                          width="100%"
+                                                          allowCustomValue="true"
+                                                          clearButtonVisible="true"
+                                                          label="msg://bandsTab.dataSetTypeLayout.entitiesParamField.label">
+                                                    <tooltip
+                                                            text="msg://bandsTab.dataSetTypeLayout.entitiesParamField.tooltip"
+                                                            manual="true" position="BOTTOM"/>
+                                                </comboBox>
+                                                <button id="entitiesParamFieldHelperButton"
+                                                        classNames="link-button" icon="QUESTION_CIRCLE"/>
+                                            </hbox>
+                                            <hbox id="entityParamLayout" padding="false" alignItems="BASELINE">
+                                                <comboBox id="entityParamField"
+                                                          width="100%"
+                                                          allowCustomValue="true"
+                                                          clearButtonVisible="true"
+                                                          label="msg://bandsTab.dataSetTypeLayout.entityParamField.label">
+                                                    <tooltip
+                                                            text="msg://bandsTab.dataSetTypeLayout.entityParamField.tooltip"
+                                                            manual="true" position="BOTTOM"/>
+                                                </comboBox>
+                                                <button id="entityParamFieldHelperButton"
+                                                        classNames="link-button" icon="QUESTION_CIRCLE"/>
+                                            </hbox>
                                             <checkbox id="isUseExistingFetchPlanField" dataContainer="dataSetsDc"
                                                       property="useExistingFetchPLan"
                                                       label="msg://bandsTab.dataSetTypeLayout.useExistingFetchPlan.label"/>
@@ -188,6 +209,7 @@
                                     </vbox>
                                     <vbox id="jsonDataSetTypeVBox" padding="false" width="100%" height="100%">
                                         <textArea id="jsonPathQueryTextAreaField"
+                                                  minHeight="10em"
                                                   dataContainer="dataSetsDc"
                                                   label="msg://bandsTab.dataSetTypeLayout.jsonPathQueryTextAreaField.label"
                                                   property="jsonPathQuery"
@@ -210,23 +232,23 @@
                                             </responsiveSteps>
                                         </formLayout>
                                         <div id="jsonGroovyCodeEditorBox" width="100%">
-                                            <div width="100%" classNames="flex, justify-between">
+                                            <flexLayout width="100%" justifyContent="BETWEEN">
                                                 <nativeLabel text="msg://report.groovyScript.title"
                                                              setFor="jsonGroovyCodeEditor"/>
                                                 <button id="jsonGroovyCodeEditorFullScreenBtn"
                                                         text="msg:///fullScreenBtn.title"
-                                                        themeNames="tertiary-inline"/>
-                                            </div>
-                                            <div width="100%" classNames="flex, items-start">
+                                                        classNames="link-button"/>
+                                            </flexLayout>
+                                            <flexLayout width="100%" alignItems="START">
                                                 <codeEditor id="jsonGroovyCodeEditor"
                                                             width="100%"
                                                             dataContainer="dataSetsDc"
                                                             mode="GROOVY"
                                                             property="jsonSourceText"/>
                                                 <button id="jsonGroovyCodeEditorHelpBtn"
-                                                        themeNames="icon, tertiary-inline"
+                                                        classNames="link-button"
                                                         icon="QUESTION_CIRCLE"/>
-                                            </div>
+                                            </flexLayout>
                                         </div>
                                         <textArea id="jsonSourceURLTextArea" width="100%"
                                                   dataContainer="dataSetsDc"
@@ -235,40 +257,41 @@
                                                   requiredMessage="msg://bandsTab.dataSetTypeLayout.jsonSourceURLTextArea.requiredMessage"/>
                                     </vbox>
                                 </div>
-                            </div>
-                            <div id="multiDataSetLayout" classNames="report-flex-layout report-multi-data-set-layout"
-                                 width="100%" height="100%"
+                            </flexLayout>
+                            <flexLayout id="multiDataSetLayout" classNames="multi-data-set-layout" flexDirection="COLUMN"
+                                 width="100%" height="100%" flexWrap="WRAP"
                                  visible="false">
                                 <vbox id="dataSetsDataGridLayout" padding="false" minHeight="15em" maxHeight="100%"
-                                      classNames="report-data-sets-data-grid-layout">
+                                      classNames="data-sets-data-grid-layout">
                                     <hbox id="dataSetsButtonsLayout">
                                         <button id="createDataSetBtn" action="dataSetsDataGrid.create"/>
                                         <button id="removeDataSetBtn" action="dataSetsDataGrid.remove"/>
                                     </hbox>
-                                    <dataGrid id="dataSetsDataGrid" dataContainer="dataSetsDc" height="100%">
+                                    <dataGrid id="dataSetsDataGrid" dataContainer="dataSetsDc" height="100%"
+                                              minHeight="15em">
                                         <actions>
                                             <action id="create" type="list_create" actionVariant="PRIMARY"
                                                     description="msg://bandsTab.dataSetsDataGrid.action.create.description"/>
                                             <action id="remove" type="list_remove"
                                                     description="msg://bandsTab.dataSetsDataGrid.action.remove.description"/>
                                         </actions>
-                                        <columns>
+                                        <columns resizable="true">
                                             <column property="name"/>
                                             <column property="type"/>
                                         </columns>
                                     </dataGrid>
                                 </vbox>
-                                <div id="dataSetDetailsLayout" classNames="report-data-set-details-layout">
+                                <div id="dataSetDetailsLayout" classNames="data-set-details-layout">
                                     <!--In multiDataSet mode contains 'dataSetTypeLayout'-->
                                 </div>
-                            </div>
-                        </div>
+                            </flexLayout>
+                        </flexLayout>
                     </vbox>
-                </div>
+                </flexLayout>
             </tab>
             <tab id="parametersTab" label="msg://mainTabSheet.parametersTab.label">
-                <div classNames="report-flex-layout" width="100%" height="100%">
-                    <vbox classNames="report-parameters-layout" padding="false">
+                <flexLayout classNames="flex-layout" width="100%" height="100%" flexWrap="WRAP">
+                    <vbox classNames="parameters-layout" padding="false">
                         <hbox>
                             <button action="inputParametersDataGrid.createParameter"/>
                             <button action="inputParametersDataGrid.editParameter"/>
@@ -304,18 +327,18 @@
                             </columns>
                         </dataGrid>
                     </vbox>
-                    <vbox classNames="report-parameters-validate-layout" padding="false" spacing="false">
+                    <vbox classNames="parameters-validate-layout" padding="false" spacing="false">
                         <h4 text="msg://report.crossParametersValidation"/>
-                        <div width="100%" classNames="flex, justify-between">
+                        <flexLayout width="100%" justifyContent="BETWEEN">
                             <checkbox id="validationOnCheckBox"
                                       label="msg://parameters.validationOn"
                                       dataContainer="reportDc"
                                       property="validationOn"/>
                             <button id="validationScriptFullScreenBtn"
                                     text="msg:///fullScreenBtn.title"
-                                    themeNames="tertiary-inline"/>
-                        </div>
-                        <div width="100%" classNames="flex, items-start">
+                                    classNames="link-button"/>
+                        </flexLayout>
+                        <flexLayout width="100%" alignItems="START">
                             <codeEditor id="validationScriptCodeEditor"
                                         title="msg://validationScript.title"
                                         width="100%"
@@ -325,11 +348,11 @@
                                         dataContainer="reportDc"
                                         property="validationScript"/>
                             <button id="validationScriptCodeEditorHelpBtn"
-                                    themeNames="icon, tertiary-inline"
+                                    classNames="link-button"
                                     icon="QUESTION_CIRCLE"/>
-                        </div>
+                        </flexLayout>
                     </vbox>
-                </div>
+                </flexLayout>
             </tab>
             <tab id="valuesFormatsTab" label="msg://mainTabSheet.valuesFormats.label">
                 <vbox id="valuesFormatsVBox" height="100%" padding="false">
@@ -394,8 +417,9 @@
                 </vbox>
             </tab>
             <tab id="securityTab" label="msg://mainTabSheet.securityTab.label">
-                <div id="securityTabContent" width="100%" height="100%" classNames="report-flex-layout">
-                    <vbox classNames="report-roles-layout" expand="rolesDataGrid" padding="false">
+                <flexLayout id="securityTabContent" width="100%" height="100%"
+                            classNames="flex-layout" flexWrap="WRAP">
+                    <vbox classNames="roles-layout" expand="rolesDataGrid" padding="false">
                         <h4 text="msg://io.jmix.reportsflowui.view.report/securityTab.roles.title"/>
                         <hbox id="addRoleGroupBox" expand="rolesField" width="100%">
                             <comboBox id="rolesField"/>
@@ -416,9 +440,9 @@
                             </columns>
                         </dataGrid>
                     </vbox>
-                    <vbox classNames="report-views-layout" expand="screenDataGrid" padding="false">
+                    <vbox classNames="views-layout" expand="screenDataGrid" padding="false">
                         <h4 text="msg://io.jmix.reportsflowui.view.report/securityTab.views.title"/>
-                        <hbox id="addScreenGroupBox" expand="screenIdField" width="100%" classNames="margin-inline-end">
+                        <hbox id="addScreenGroupBox" expand="screenIdField" width="100%">
                             <comboBox id="screenIdField"/>
                             <button id="addReportScreenBtn" action="screenDataGrid.add"
                                     text="msg://views.add"/>
@@ -436,7 +460,7 @@
                             </columns>
                         </dataGrid>
                     </vbox>
-                </div>
+                </flexLayout>
             </tab>
         </tabSheet>
         <hbox id="detailActions">

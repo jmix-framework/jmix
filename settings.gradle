@@ -10,6 +10,13 @@ includeBuild 'jmix-translations'
 
 includeProject('bom', 'jmix-bom')
 
+includeProject('aitools', 'jmix-aitools/aitools')
+includeProject('aitools-starter', 'jmix-aitools/aitools-starter')
+includeProject('aitools-flowui', 'jmix-aitools/aitools-flowui')
+includeProject('aitools-flowui-starter', 'jmix-aitools/aitools-flowui-starter')
+includeProject('aitools-flowui-data', 'jmix-aitools/aitools-flowui-data')
+includeProject('aitools-flowui-data-starter', 'jmix-aitools/aitools-flowui-data-starter')
+
 includeProject('appsettings', 'jmix-appsettings/appsettings')
 includeProject('appsettings-starter', 'jmix-appsettings/appsettings-starter')
 includeProject('appsettings-flowui', 'jmix-appsettings/appsettings-flowui')
@@ -35,6 +42,7 @@ includeProject('charts-flowui-starter', 'jmix-charts/charts-flowui-starter')
 
 includeProject('core', 'jmix-core/core')
 includeProject('core-starter', 'jmix-core/core-starter')
+includeProject('framework-test-support', 'jmix-core/framework-test-support')
 
 includeProject('data', 'jmix-data/data')
 includeProject('data-autoconfigure', 'jmix-data/data-autoconfigure')
@@ -131,6 +139,9 @@ includeProject('reports-flowui-starter', 'jmix-reports/reports-flowui-starter')
 
 includeProject('jmxconsole', 'jmix-jmxconsole/jmxconsole')
 includeProject('jmxconsole-starter', 'jmix-jmxconsole/jmxconsole-starter')
+
+includeProject('saml', 'jmix-saml/saml')
+includeProject('saml-starter', 'jmix-saml/saml-starter')
 
 includeProject('search', 'jmix-search/search')
 includeProject('search-starter', 'jmix-search/search-starter')

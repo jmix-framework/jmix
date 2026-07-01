@@ -22,9 +22,12 @@ import io.jmix.core.EntityImportPlanProperty;
 import io.jmix.core.ReferenceImportBehaviour;
 import io.jmix.core.metamodel.model.MetaClass;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Class that is used for building an {@link EntityImportPlan} based on the JSON object that represents an entity.
  */
+@NullMarked
 public interface EntityImportPlanJsonBuilder {
 
     /**

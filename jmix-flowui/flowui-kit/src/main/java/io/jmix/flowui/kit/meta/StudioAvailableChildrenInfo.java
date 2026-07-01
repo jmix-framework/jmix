@@ -22,6 +22,7 @@ package io.jmix.flowui.kit.meta;
  * If {@link StudioAvailableChildrenInfo#availableTags()} and {@link StudioAvailableChildrenInfo#availableClasses()}
  * are empty, then the Studio will use an internal standard mechanism to identify available children.
  */
+@StudioAPI
 public @interface StudioAvailableChildrenInfo {
 
     /**

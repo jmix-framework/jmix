@@ -88,7 +88,7 @@ open class UserDetailView : StandardDetailView<User>() {
     fun onAfterSave(event: AfterSaveEvent) {
         if (newEntity) {
             notifications.create(messageBundle.getMessage("noAssignedRolesNotification"))
-                .withThemeVariant(NotificationVariant.LUMO_WARNING)
+                .withThemeVariant(NotificationVariant.WARNING)
                 .withPosition(Notification.Position.TOP_END)
                 .show()
 

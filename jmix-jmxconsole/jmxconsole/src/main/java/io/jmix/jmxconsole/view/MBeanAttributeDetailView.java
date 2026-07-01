@@ -20,9 +20,11 @@ import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.HasLabel;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
+import io.jmix.core.CoreProperties;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.view.*;
 import io.jmix.jmxconsole.AttributeComponentProvider;
+import io.jmix.jmxconsole.JmxConsoleProperties;
 import io.jmix.jmxconsole.JmxControl;
 import io.jmix.jmxconsole.model.ManagedBeanAttribute;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +44,10 @@ public class MBeanAttributeDetailView extends StandardDetailView<ManagedBeanAttr
     protected AttributeComponentProvider attributeComponentProvider;
     @Autowired
     protected Notifications notifications;
+    @Autowired
+    protected CoreProperties coreProperties;
+    @Autowired
+    protected JmxConsoleProperties jmxConsoleProperties;
     @ViewComponent
     protected MessageBundle messageBundle;
 
@@ -67,6 +73,7 @@ public class MBeanAttributeDetailView extends StandardDetailView<ManagedBeanAttr
         if (attributeField instanceof HasLabel hasLabelComponent) {
             hasLabelComponent.setLabel("Value");
         }
+        attributeField.setReadOnly(isReadOnly() || !isWriteAndInvokeEnabled());
 
         getContent().addComponentAsFirst(attributeField);
     }
@@ -79,6 +86,13 @@ public class MBeanAttributeDetailView extends StandardDetailView<ManagedBeanAttr
     }
 
     protected boolean valueNotAssigned() {
+        if (!isWriteAndInvokeEnabled()) {
+            notifications.create(messageBundle.getMessage("writeAndInvokeDisabled"))
+                    .withType(Notifications.Type.ERROR)
+                    .show();
+            return true;
+        }
+
         ManagedBeanAttribute managedBeanAttribute = getEditedEntity();
 
         Object oldValue = managedBeanAttribute.getValue();
@@ -117,5 +131,9 @@ public class MBeanAttributeDetailView extends StandardDetailView<ManagedBeanAttr
         } else {
             return super.getPageTitle();
         }
+    }
+
+    protected boolean isWriteAndInvokeEnabled() {
+        return coreProperties.isUnsafeRuntimeFeaturesEnabled() && jmxConsoleProperties.isWriteAndInvokeEnabled();
     }
 }

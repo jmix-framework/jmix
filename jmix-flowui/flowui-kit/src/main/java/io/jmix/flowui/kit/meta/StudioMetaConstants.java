@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.kit.meta;
 
+@StudioAPI
 public final class StudioMetaConstants {
     public static final String IDENTIFIER_PREFIX = "identifier:";
     public static final String TAG_PREFIX = "tag:";

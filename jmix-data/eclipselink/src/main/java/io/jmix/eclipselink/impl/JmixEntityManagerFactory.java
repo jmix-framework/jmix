@@ -160,5 +160,4 @@ public class JmixEntityManagerFactory implements EntityManagerFactory {
     public <R> R callInTransaction(Function<EntityManager, R> work) {
         return delegate.callInTransaction(work);
     }
-
 }

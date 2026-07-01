@@ -23,12 +23,4 @@ import io.jmix.flowui.component.layout.ViewLayout;
  * Base class of regular views opened either inside {@link AppLayout} or in a {@link DialogWindow}.
  */
 public class StandardView extends View<ViewLayout> {
-
-    @Override
-    protected ViewLayout initContent() {
-        ViewLayout content = super.initContent();
-        content.setSizeFull();
-
-        return content;
-    }
 }

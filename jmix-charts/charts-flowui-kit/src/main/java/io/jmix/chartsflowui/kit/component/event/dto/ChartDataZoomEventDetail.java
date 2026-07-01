@@ -17,6 +17,7 @@
 package io.jmix.chartsflowui.kit.component.event.dto;
 
 import io.jmix.chartsflowui.kit.component.event.ChartDataZoomEvent;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
@@ -39,6 +40,7 @@ public class ChartDataZoomEventDetail extends BaseChartEventDetail {
 
     protected List<ChartDataZoomEventDetail> batch;
 
+    @Nullable
     public String getDataZoomId() {
         return dataZoomId;
     }
@@ -47,6 +49,7 @@ public class ChartDataZoomEventDetail extends BaseChartEventDetail {
         this.dataZoomId = dataZoomId;
     }
 
+    @Nullable
     public String getFrom() {
         return from;
     }
@@ -55,6 +58,7 @@ public class ChartDataZoomEventDetail extends BaseChartEventDetail {
         this.from = from;
     }
 
+    @Nullable
     public List<ChartDataZoomEventDetail> getBatch() {
         return batch;
     }
@@ -63,6 +67,7 @@ public class ChartDataZoomEventDetail extends BaseChartEventDetail {
         this.batch = batch;
     }
 
+    @Nullable
     public Integer getStart() {
         return start;
     }
@@ -71,6 +76,7 @@ public class ChartDataZoomEventDetail extends BaseChartEventDetail {
         this.start = start;
     }
 
+    @Nullable
     public Integer getEnd() {
         return end;
     }
@@ -79,6 +85,7 @@ public class ChartDataZoomEventDetail extends BaseChartEventDetail {
         this.end = end;
     }
 
+    @Nullable
     public Integer getStartValue() {
         return startValue;
     }
@@ -87,6 +94,7 @@ public class ChartDataZoomEventDetail extends BaseChartEventDetail {
         this.startValue = startValue;
     }
 
+    @Nullable
     public Integer getEndValue() {
         return endValue;
     }

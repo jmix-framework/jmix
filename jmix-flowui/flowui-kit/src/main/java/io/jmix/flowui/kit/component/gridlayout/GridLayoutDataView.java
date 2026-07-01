@@ -20,6 +20,7 @@ import com.vaadin.flow.data.provider.AbstractDataView;
 import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.function.SerializableSupplier;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Implementation of generic data view for {@link JmixGridLayout}.
@@ -45,6 +46,7 @@ public class GridLayoutDataView<T> extends AbstractDataView<T> {
         return DataProvider.class;
     }
 
+    @Nullable
     @Override
     public T getItem(int index) {
         final int dataSize = dataProviderSupplier.get().size(new Query<>());

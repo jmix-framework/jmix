@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 @Internal
-@NonNullApi
 package io.jmix.search.exception;
 
 import io.jmix.core.annotation.Internal;
-import org.springframework.lang.NonNullApi;

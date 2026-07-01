@@ -16,7 +16,9 @@
 
 package io.jmix.chartsflowui.kit.component.model.shared;
 
-import io.jmix.chartsflowui.kit.component.model.*;
+import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
+import io.jmix.chartsflowui.kit.component.model.HasText;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The base class for text components.
@@ -62,6 +64,7 @@ public abstract class AbstractText<T extends AbstractText<T>> extends ChartObser
 
     protected String ellipsis;
 
+    @Nullable
     public Color getColor() {
         return color;
     }
@@ -71,6 +74,7 @@ public abstract class AbstractText<T extends AbstractText<T>> extends ChartObser
         markAsDirty();
     }
 
+    @Nullable
     public FontStyle getFontStyle() {
         return fontStyle;
     }
@@ -80,6 +84,7 @@ public abstract class AbstractText<T extends AbstractText<T>> extends ChartObser
         markAsDirty();
     }
 
+    @Nullable
     public String getFontWeight() {
         return fontWeight;
     }
@@ -89,6 +94,7 @@ public abstract class AbstractText<T extends AbstractText<T>> extends ChartObser
         markAsDirty();
     }
 
+    @Nullable
     public String getFontFamily() {
         return fontFamily;
     }
@@ -98,6 +104,7 @@ public abstract class AbstractText<T extends AbstractText<T>> extends ChartObser
         markAsDirty();
     }
 
+    @Nullable
     public Integer getFontSize() {
         return fontSize;
     }
@@ -107,6 +114,7 @@ public abstract class AbstractText<T extends AbstractText<T>> extends ChartObser
         markAsDirty();
     }
 
+    @Nullable
     public Integer getLineHeight() {
         return lineHeight;
     }
@@ -116,6 +124,7 @@ public abstract class AbstractText<T extends AbstractText<T>> extends ChartObser
         markAsDirty();
     }
 
+    @Nullable
     public Integer getWidth() {
         return width;
     }
@@ -125,6 +134,7 @@ public abstract class AbstractText<T extends AbstractText<T>> extends ChartObser
         markAsDirty();
     }
 
+    @Nullable
     public Integer getHeight() {
         return height;
     }
@@ -134,6 +144,7 @@ public abstract class AbstractText<T extends AbstractText<T>> extends ChartObser
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Color getTextBorderColor() {
         return textBorderColor;
@@ -145,6 +156,7 @@ public abstract class AbstractText<T extends AbstractText<T>> extends ChartObser
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Double getTextBorderWidth() {
         return textBorderWidth;
@@ -156,6 +168,7 @@ public abstract class AbstractText<T extends AbstractText<T>> extends ChartObser
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public String getTextBorderType() {
         return textBorderType;
@@ -167,6 +180,7 @@ public abstract class AbstractText<T extends AbstractText<T>> extends ChartObser
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getTextBorderDashOffset() {
         return textBorderDashOffset;
@@ -178,6 +192,7 @@ public abstract class AbstractText<T extends AbstractText<T>> extends ChartObser
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Color getTextShadowColor() {
         return textShadowColor;
@@ -189,6 +204,7 @@ public abstract class AbstractText<T extends AbstractText<T>> extends ChartObser
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getTextShadowBlur() {
         return textShadowBlur;
@@ -200,6 +216,7 @@ public abstract class AbstractText<T extends AbstractText<T>> extends ChartObser
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getTextShadowOffsetX() {
         return textShadowOffsetX;
@@ -211,6 +228,7 @@ public abstract class AbstractText<T extends AbstractText<T>> extends ChartObser
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getTextShadowOffsetY() {
         return textShadowOffsetY;
@@ -222,6 +240,7 @@ public abstract class AbstractText<T extends AbstractText<T>> extends ChartObser
         markAsDirty();
     }
 
+    @Nullable
     public Overflow getOverflow() {
         return overflow;
     }
@@ -231,6 +250,7 @@ public abstract class AbstractText<T extends AbstractText<T>> extends ChartObser
         markAsDirty();
     }
 
+    @Nullable
     public String getEllipsis() {
         return ellipsis;
     }

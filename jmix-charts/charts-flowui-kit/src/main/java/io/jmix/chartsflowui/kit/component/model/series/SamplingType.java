@@ -17,7 +17,7 @@
 package io.jmix.chartsflowui.kit.component.model.series;
 
 import io.jmix.chartsflowui.kit.component.model.HasEnumId;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The down-sampling strategy used when the data size is much larger than pixel size. It will improve the performance

@@ -21,7 +21,7 @@ import io.jmix.flowui.kit.component.usermenu.ActionUserMenuItem;
 import io.jmix.flowui.kit.component.usermenu.HasActionMenuItems;
 import io.jmix.flowui.kit.component.usermenu.UserMenuItem;
 import io.jmix.flowui.xml.layout.ComponentLoader;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.function.Consumer;
 

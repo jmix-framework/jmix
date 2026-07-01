@@ -33,6 +33,7 @@ import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
+import org.springframework.security.core.authority.FactorGrantedAuthority
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
 import test_support.SecurityDataSpecification
@@ -124,8 +125,9 @@ class UserSubstitutionsTest extends SecurityDataSpecification {
         authToken.setDetails(USER_DETAILS)
         then:
         ((UserDetails) authToken.principal) == user1
-        authToken.authorities.size() == 1
+        authToken.authorities.size() == 2
         authToken.authorities[0].authority == "ROLE_" + TestDataManagerReadQueryRole.NAME
+        authToken.authorities[1].authority == FactorGrantedAuthority.PASSWORD_AUTHORITY
 
         currentUserSubstitution.getAuthenticatedUser() == user1
         currentUserSubstitution.getSubstitutedUser() == null
@@ -139,7 +141,14 @@ class UserSubstitutionsTest extends SecurityDataSpecification {
         substitutedToken instanceof SubstitutedUserAuthenticationToken
         ((UserDetails) substitutedToken.principal) == user1
         ((UserDetails) substitutedToken.substitutedPrincipal) == user2
-        substitutedToken.authorities.size() == 1
+        substitutedToken.authorities.size() == 3
+        substitutedToken.authorities.stream()
+                .map { it.authority }
+                .allMatch { authority ->
+                    authority == "ROLE_" + TestDataManagerEntityOperationsRole.NAME
+                            || authority == FactorGrantedAuthority.PASSWORD_AUTHORITY
+                            || authority == "FACTOR_SUBSTITUTION"
+                }
         substitutedToken.authorities[0].authority == "ROLE_" + TestDataManagerEntityOperationsRole.NAME
         substitutedToken.getDetails() == USER_DETAILS
 

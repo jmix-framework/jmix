@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-apply plugin: 'groovy'
 apply plugin: 'io.jmix'
 
 group = 'io.jmix.pivottable'
-archivesBaseName = 'jmix-pivottable-flowui'
+base {
+    archivesName = 'jmix-pivottable-flowui'
+}
 
 dependencies {
     api project(':flowui')
@@ -28,6 +29,7 @@ dependencies {
     implementation('org.apache.poi:poi-ooxml')
 
     testImplementation project(':flowui-test-assist')
+    testImplementation project(':framework-test-support')
     testImplementation project(':eclipselink-starter')
     testImplementation 'org.apache.commons:commons-dbcp2'
 

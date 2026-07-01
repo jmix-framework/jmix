@@ -23,10 +23,13 @@ import io.jmix.dynattr.DynAttrQueryHints;
 import test_support.entity.User;
 
 import jakarta.persistence.QueryHint;
+
+import org.jspecify.annotations.NullMarked;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@NullMarked
 public interface UserRepository extends JmixDataRepository<User, UUID> {
 
     @Override

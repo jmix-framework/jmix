@@ -18,11 +18,14 @@ package io.jmix.core.security;
 
 import org.springframework.security.core.Authentication;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Strategy for resolving a principal from the authentication. Used by {@link CurrentAuthentication#getUser()}.
  *
  * @see CurrentAuthentication#getUser()
  */
+@NullMarked
 public interface AuthenticationPrincipalResolver {
 
     /**

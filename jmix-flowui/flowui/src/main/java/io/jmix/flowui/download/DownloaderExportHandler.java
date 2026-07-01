@@ -17,19 +17,21 @@
 package io.jmix.flowui.download;
 
 import com.google.common.base.Strings;
-import com.vaadin.flow.server.VaadinRequest;
 import com.vaadin.flow.server.VaadinResponse;
-import com.vaadin.flow.server.VaadinSession;
+import com.vaadin.flow.server.VaadinServletResponse;
+import com.vaadin.flow.server.communication.TransferUtil;
 import com.vaadin.flow.server.streams.AbstractDownloadHandler;
 import com.vaadin.flow.server.streams.DownloadEvent;
 import com.vaadin.flow.server.streams.TransferProgressListener;
-import com.vaadin.flow.server.streams.TransferUtil;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.component.streams.TransferProgressNotifier;
+import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.ContentDisposition;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -46,6 +48,8 @@ import java.util.function.Predicate;
 public class DownloaderExportHandler extends AbstractDownloadHandler<DownloaderExportHandler>
         implements TransferProgressNotifier, SupportDownloadSuccessHandler {
 
+    private static final Logger log = LoggerFactory.getLogger(DownloaderExportHandler.class);
+
     protected final DownloadContext downloadContext;
 
     protected DownloadSuccessHandler successHandler;
@@ -56,7 +60,7 @@ public class DownloaderExportHandler extends AbstractDownloadHandler<DownloaderE
     }
 
     @Override
-    public void setDownloadSuccessHandler(@Nullable SupportDownloadSuccessHandler.DownloadSuccessHandler handler) {
+    public void setDownloadSuccessHandler(@Nullable DownloadSuccessHandler handler) {
         this.successHandler = handler;
     }
 
@@ -74,7 +78,7 @@ public class DownloaderExportHandler extends AbstractDownloadHandler<DownloaderE
         String type = isInline() ? "inline" : "attachment";
 
         VaadinResponse response = event.getResponse();
-        response.setStatus(200);
+        response.setStatus(HttpServletResponse.SC_OK);
         response.setHeader(
                 "Content-Disposition",
                 ContentDisposition.builder(type)
@@ -88,8 +92,8 @@ public class DownloaderExportHandler extends AbstractDownloadHandler<DownloaderE
             event.setContentType(contentType);
         }
 
-        try (OutputStream outputStream = event.getOutputStream();
-             InputStream inputStream = downloadContext.dataProvider().getStream()) {
+        try (InputStream inputStream = downloadContext.dataProvider().getStream();
+             OutputStream outputStream = event.getOutputStream()) {
             // Write data to the output stream
             TransferUtil.transfer(inputStream, outputStream,
                     getTransferContext(event), getListeners());
@@ -97,8 +101,25 @@ public class DownloaderExportHandler extends AbstractDownloadHandler<DownloaderE
             if (!isInline()
                     || fileNotFoundExceptionHandler == null
                     || !fileNotFoundExceptionHandler.test(new FileNotFoundContext(e, response))) {
+
+                if (response instanceof VaadinServletResponse servletResponse) {
+                    HttpServletResponse httpResponse = servletResponse.getHttpServletResponse();
+
+                    if (httpResponse != null && httpResponse.isCommitted()) {
+                        log.warn("Response is already committed. Status code cannot be changed.");
+                    } else {
+                        applyErrorHeaders(response);
+                    }
+                }
+
                 // send exception further
-                throw e;
+                // UI access is required to correct exception handling using UiExceptionHandlers
+                event.getUI().access(() -> {
+                    event.getOwningElement().removeFromParent();
+                    throw new RuntimeException(e);
+                });
+
+                return;
             }
         } finally {
             response.getOutputStream().close();
@@ -115,6 +136,11 @@ public class DownloaderExportHandler extends AbstractDownloadHandler<DownloaderE
         });
     }
 
+    protected void applyErrorHeaders(VaadinResponse response) {
+        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        response.setContentType("text/html; charset=utf-8");
+    }
+
     @Override
     public Registration addTransferProgressListener(TransferProgressListener listener) {
         return super.addTransferProgressListener(listener);
@@ -129,6 +155,14 @@ public class DownloaderExportHandler extends AbstractDownloadHandler<DownloaderE
     public DownloaderExportHandler inline() {
         throw new UnsupportedOperationException("Inline mode is considered based on the passed %s object"
                 .formatted(DownloadContext.class.getSimpleName()));
+    }
+
+    @Override
+    public boolean isAllowInert() {
+        // 'Downloader' creates a link appended to the UI to trigger a programmatic download.
+        // Because 'Downloader' can be called from a modal dialog window, we need to allow
+        // inert elements to be invoked.
+        return true;
     }
 
     /**

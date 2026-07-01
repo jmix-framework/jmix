@@ -1,0 +1,87 @@
+/*
+ * Copyright 2026 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+vaadin-button.picker-button {
+    font-size: inherit;
+    line-height: inherit;
+
+    padding: 0px;
+    margin: 0px;
+
+    --lumo-button-size: var(--lumo-size-s);
+    min-width: var(--lumo-button-size);
+    height: var(--lumo-button-size);
+
+    color: var(--_lumo-button-text-color);
+}
+
+vaadin-button.picker-button::part(label) {
+    line-height: inherit;
+    overflow: visible;
+    padding: 0px;
+}
+
+vaadin-radio-group.tab-list::part(group-field) {
+    flex-wrap: nowrap;
+    gap: var(--lumo-space-xs);
+
+    box-sizing: border-box;
+
+    padding: var(--lumo-space-xs);
+
+    background: var(--lumo-contrast-10pct);
+    border-radius: calc(var(--lumo-border-radius-l) + var(--lumo-space-xs));
+}
+
+vaadin-radio-group.tab-list vaadin-radio-button {
+    color: var(--lumo-secondary-text-color);
+    padding: var(--lumo-space-wide-s);
+    border-radius: var(--lumo-border-radius-l);
+
+    flex-grow: 1;
+
+    transition: color .12s, background-color .12s;
+
+    cursor: var(--_cursor);
+}
+
+vaadin-radio-group.tab-list vaadin-radio-button[checked] {
+    color: var(--lumo-primary-text-color);
+    background: var(--lumo-base-color);
+
+    box-shadow: var(--lumo-box-shadow-xs);
+}
+
+vaadin-radio-group.tab-list vaadin-radio-button > label {
+    color: inherit;
+    padding: 0;
+    justify-self: stretch;
+}
+
+vaadin-radio-group.tab-list vaadin-radio-button::part(radio) {
+    display: none;
+}
+
+vaadin-radio-group.tab-list vaadin-radio-button[focus-ring] {
+    box-shadow: 0 0 0 1px var(--lumo-base-color),
+    0 0 0 calc(var(--_focus-ring-width) + 1px) var(--_focus-ring-color);
+}
+
+@media (any-hover: hover) {
+    vaadin-radio-group.tab-list vaadin-radio-button:not([checked], [disabled]):hover {
+        color: var(--lumo-body-text-color);
+    }
+}

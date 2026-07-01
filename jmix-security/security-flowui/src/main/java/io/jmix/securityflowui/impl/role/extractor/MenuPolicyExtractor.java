@@ -21,6 +21,7 @@ import io.jmix.security.model.ResourcePolicy;
 import io.jmix.security.model.ResourcePolicyType;
 import io.jmix.securityflowui.role.annotation.MenuPolicy;
 import io.jmix.securityflowui.role.annotation.MenuPolicyContainer;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.stereotype.Component;
 
@@ -29,6 +30,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+@NullMarked
 @Component("sec_MenuPolicyExtractor")
 public class MenuPolicyExtractor implements ResourcePolicyExtractor {
 

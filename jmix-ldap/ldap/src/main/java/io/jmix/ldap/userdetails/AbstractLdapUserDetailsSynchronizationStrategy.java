@@ -25,6 +25,7 @@ import io.jmix.ldap.LdapProperties;
 import io.jmix.security.role.RoleGrantedAuthorityUtils;
 import io.jmix.security.role.assignment.RoleAssignmentRoleType;
 import io.jmix.securitydata.entity.RoleAssignmentEntity;
+import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +46,7 @@ import java.util.stream.Collectors;
  *
  * @param <T> user details class
  */
+@NullMarked
 public abstract class AbstractLdapUserDetailsSynchronizationStrategy<T extends UserDetails>
         implements LdapUserDetailsSynchronizationStrategy {
 
@@ -90,23 +92,23 @@ public abstract class AbstractLdapUserDetailsSynchronizationStrategy<T extends U
                     .query("select e from sec_RoleAssignmentEntity e where e.username = :username")
                     .parameter("username", username)
                     .list();
-            Set<String> existingRoleAssignmentCodes = existingRoleAssignments.stream()
-                    .map(RoleAssignmentEntity::getRoleCode)
+            Set<String> existingRoleAssignmentKeys = existingRoleAssignments.stream()
+                    .map(this::assignmentKey)
                     .collect(Collectors.toSet());
 
             Collection<RoleAssignmentEntity> grantedRoleAssignments = buildRoleAssignments(grantedAuthorities, username);
-            Set<String> grantedRoleAssignmentsCodes = grantedRoleAssignments.stream()
-                    .map(RoleAssignmentEntity::getRoleCode)
+            Set<String> grantedRoleAssignmentKeys = grantedRoleAssignments.stream()
+                    .map(this::assignmentKey)
                     .collect(Collectors.toSet());
 
             //remove only existing role assignments that should not be granted
             List<RoleAssignmentEntity> roleAssignmentsToRemove = existingRoleAssignments.stream()
-                    .filter(roleAssignmentEntity -> !grantedRoleAssignmentsCodes.contains(roleAssignmentEntity.getRoleCode()))
+                    .filter(roleAssignmentEntity -> !grantedRoleAssignmentKeys.contains(assignmentKey(roleAssignmentEntity)))
                     .collect(Collectors.toList());
 
             //create only non-existing assignments
             List<RoleAssignmentEntity> roleAssignmentsToCreate = grantedRoleAssignments.stream()
-                    .filter(roleAssignmentEntity -> !existingRoleAssignmentCodes.contains(roleAssignmentEntity.getRoleCode()))
+                    .filter(roleAssignmentEntity -> !existingRoleAssignmentKeys.contains(assignmentKey(roleAssignmentEntity)))
                     .collect(Collectors.toList());
 
             saveContext.removing(roleAssignmentsToRemove);
@@ -143,6 +145,10 @@ public abstract class AbstractLdapUserDetailsSynchronizationStrategy<T extends U
             }
         }
         return roleAssignmentEntities;
+    }
+
+    private String assignmentKey(RoleAssignmentEntity assignment) {
+        return assignment.getRoleCode() + ":" + assignment.getRoleType();
     }
 
     protected abstract Class<T> getUserClass();

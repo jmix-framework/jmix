@@ -19,11 +19,13 @@ package io.jmix.flowui.facet.urlqueryparameters;
 import io.jmix.flowui.facet.UrlQueryParametersFacet;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import org.dom4j.Element;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Interface to be implemented by Spring beans that should load binder for specific component from
  * {@link UrlQueryParametersFacet} XML description.
  */
+@NullMarked
 public interface UrlQueryParametersBinderProvider {
 
     /**

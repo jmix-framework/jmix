@@ -16,11 +16,10 @@
 
 package io.jmix.chartsflowui.kit.component.serialization;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.SerializerProvider;
 import io.jmix.chartsflowui.kit.component.model.shared.Color;
-
-import java.io.IOException;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.SerializationContext;
 
 public class ColorSerializer extends AbstractSerializer<Color> {
 
@@ -29,8 +28,8 @@ public class ColorSerializer extends AbstractSerializer<Color> {
     }
 
     @Override
-    public void serializeNonNullValue(Color value, JsonGenerator gen, SerializerProvider provider)
-            throws IOException {
+    public void serializeNonNullValue(Color value, JsonGenerator gen, SerializationContext provider)
+            throws JacksonException {
         gen.writeString(value.getValue());
     }
 }

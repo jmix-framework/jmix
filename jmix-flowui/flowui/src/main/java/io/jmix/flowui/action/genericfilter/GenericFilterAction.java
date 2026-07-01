@@ -17,7 +17,6 @@
 package io.jmix.flowui.action.genericfilter;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.action.ExecutableAction;
 import io.jmix.flowui.action.SecuredBaseAction;
@@ -26,15 +25,13 @@ import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.genericfilter.GenericFilter;
 import io.jmix.flowui.component.logicalfilter.LogicalFilterComponent;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
-import io.jmix.flowui.kit.action.ActionVariant;
-import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.view.View;
-import org.springframework.lang.Nullable;
+import io.micrometer.observation.Observation;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Objects;
-import java.util.function.Consumer;
 
-public abstract class GenericFilterAction<A extends GenericFilterAction<A>> extends SecuredBaseAction
+public abstract class GenericFilterAction<A extends GenericFilterAction<A>> extends SecuredBaseAction<A>
         implements TargetAction<GenericFilter>, ExecutableAction {
 
     protected GenericFilter target;
@@ -81,7 +78,10 @@ public abstract class GenericFilterAction<A extends GenericFilterAction<A>> exte
     public void actionPerform(Component component) {
         // if standard behaviour
         if (!hasListener(ActionPerformedEvent.class)) {
-            execute();
+            getUiObservationSupport()
+                    .map(support -> support.createActionExecutionObservation(this, component))
+                    .orElse(Observation.NOOP)
+                    .observe(this::execute);
         } else {
             super.actionPerform(component);
         }
@@ -146,59 +146,9 @@ public abstract class GenericFilterAction<A extends GenericFilterAction<A>> exte
         refreshState();
     }
 
-    @SuppressWarnings("unchecked")
     public A withTarget(@Nullable GenericFilter target) {
         setTarget(target);
-        return ((A) this);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public A withText(@Nullable String text) {
-        return ((A) super.withText(text));
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public A withEnabled(boolean enabled) {
-        return ((A) super.withEnabled(enabled));
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public A withVisible(boolean visible) {
-        return ((A) super.withVisible(visible));
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public A withIcon(@Nullable Component icon) {
-        return (A) super.withIcon(icon);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Deprecated(since = "3.0", forRemoval = true)
-    @Override
-    public A withIcon(@Nullable Icon icon) {
-        return ((A) super.withIcon(icon));
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public A withVariant(ActionVariant actionVariant) {
-        return ((A) super.withVariant(actionVariant));
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public A withShortcutCombination(@Nullable KeyCombination shortcutCombination) {
-        return ((A) super.withShortcutCombination(shortcutCombination));
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public A withHandler(@Nullable Consumer<ActionPerformedEvent> handler) {
-        return ((A) super.withHandler(handler));
+        return self();
     }
 
     protected void checkTarget() {

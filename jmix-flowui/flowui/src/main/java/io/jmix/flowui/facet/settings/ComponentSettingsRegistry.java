@@ -19,10 +19,12 @@ package io.jmix.flowui.facet.settings;
 import com.vaadin.flow.component.Component;
 import io.jmix.flowui.component.details.JmixDetails;
 import io.jmix.flowui.facet.settings.component.binder.ComponentSettingsBinder;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Provides information for which component registered settings class.
  */
+@NullMarked
 public interface ComponentSettingsRegistry {
 
     /**

@@ -23,6 +23,7 @@ import io.jmix.chartsflowui.kit.component.model.series.LineSeries;
 import io.jmix.chartsflowui.kit.component.model.series.ScatterSeries;
 import io.jmix.chartsflowui.kit.component.model.shared.Color;
 import io.jmix.chartsflowui.kit.component.model.shared.InnerTooltip;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Grid component is used to drawing grid in rectangular coordinate. In a single grid, at most
@@ -73,6 +74,7 @@ public class Grid extends ChartObservableObject
 
     protected InnerTooltip tooltip;
 
+    @Nullable
     public String getId() {
         return id;
     }
@@ -82,6 +84,7 @@ public class Grid extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getShow() {
         return show;
     }
@@ -91,6 +94,7 @@ public class Grid extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     public Integer getZLevel() {
         return zLevel;
     }
@@ -100,6 +104,7 @@ public class Grid extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     public Integer getZ() {
         return z;
     }
@@ -109,6 +114,7 @@ public class Grid extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public String getLeft() {
         return left;
@@ -120,6 +126,7 @@ public class Grid extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public String getTop() {
         return top;
@@ -131,6 +138,7 @@ public class Grid extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public String getRight() {
         return right;
@@ -142,6 +150,7 @@ public class Grid extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public String getBottom() {
         return bottom;
@@ -153,6 +162,7 @@ public class Grid extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     public String getWidth() {
         return width;
     }
@@ -162,6 +172,7 @@ public class Grid extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     public String getHeight() {
         return height;
     }
@@ -171,6 +182,7 @@ public class Grid extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getContainLabel() {
         return containLabel;
     }
@@ -180,6 +192,7 @@ public class Grid extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     public Color getBackgroundColor() {
         return backgroundColor;
     }
@@ -189,6 +202,7 @@ public class Grid extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     public Color getBorderColor() {
         return borderColor;
     }
@@ -198,6 +212,7 @@ public class Grid extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     public Integer getBorderWidth() {
         return borderWidth;
     }
@@ -207,6 +222,7 @@ public class Grid extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getShadowBlur() {
         return shadowBlur;
@@ -218,6 +234,7 @@ public class Grid extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Color getShadowColor() {
         return shadowColor;
@@ -229,6 +246,7 @@ public class Grid extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getShadowOffsetX() {
         return shadowOffsetX;
@@ -240,6 +258,7 @@ public class Grid extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getShadowOffsetY() {
         return shadowOffsetY;
@@ -251,6 +270,7 @@ public class Grid extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     public InnerTooltip getTooltip() {
         return tooltip;
     }

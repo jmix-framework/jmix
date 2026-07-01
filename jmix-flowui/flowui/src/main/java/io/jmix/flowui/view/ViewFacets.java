@@ -17,9 +17,11 @@
 package io.jmix.flowui.view;
 
 import io.jmix.flowui.component.HasFacets;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Interface for managing facets associated with a {@link View}.
  */
+@NullMarked
 public interface ViewFacets extends HasFacets {
 }

@@ -18,6 +18,7 @@ package io.jmix.chartsflowui.kit.component.model;
 
 import io.jmix.chartsflowui.kit.component.model.shared.AbstractAxisPointer;
 import io.jmix.chartsflowui.kit.component.model.shared.TriggerOnMode;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The global option for {@code axisPointer}. AxisPointer is a tool for displaying
@@ -31,6 +32,7 @@ public class AxisPointer extends AbstractAxisPointer<AxisPointer> {
 
     protected TriggerOnMode triggerOn;
 
+    @Nullable
     public String getId() {
         return id;
     }
@@ -40,6 +42,7 @@ public class AxisPointer extends AbstractAxisPointer<AxisPointer> {
         markAsDirty();
     }
 
+    @Nullable
     public TriggerOnMode getTriggerOn() {
         return triggerOn;
     }

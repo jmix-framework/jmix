@@ -16,6 +16,8 @@
 
 package io.jmix.chartsflowui.kit.component.model;
 
+import org.jspecify.annotations.Nullable;
+
 import java.io.Serializable;
 import java.util.EventObject;
 import java.util.LinkedHashSet;
@@ -38,7 +40,7 @@ public abstract class ChartObservableObject implements Serializable {
         dirty = true;
     }
 
-    protected void setChartObjectChangeListener(Consumer<ObjectChangeEvent> listener) {
+    protected void setChartObjectChangeListener(@Nullable Consumer<ObjectChangeEvent> listener) {
         this.listener = listener;
     }
 
@@ -81,7 +83,7 @@ public abstract class ChartObservableObject implements Serializable {
         return false;
     }
 
-    protected void addChild(ChartObservableObject child) {
+    protected void addChild(@Nullable ChartObservableObject child) {
         markAsDirty();
 
         if (child != null) {

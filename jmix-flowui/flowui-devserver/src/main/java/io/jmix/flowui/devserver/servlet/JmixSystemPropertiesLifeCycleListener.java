@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 import static com.vaadin.flow.server.Constants.VAADIN_PREFIX;
 import static com.vaadin.flow.server.InitParameters.FRONTEND_HOTDEPLOY;
 import static com.vaadin.flow.server.InitParameters.SERVLET_PARAMETER_ENABLE_PNPM;
-import static com.vaadin.flow.server.frontend.FrontendUtils.PROJECT_BASEDIR;
+import static com.vaadin.flow.internal.FrontendUtils.PROJECT_BASEDIR;
 import static java.lang.Boolean.parseBoolean;
 
 public class JmixSystemPropertiesLifeCycleListener implements LifeCycle.Listener {

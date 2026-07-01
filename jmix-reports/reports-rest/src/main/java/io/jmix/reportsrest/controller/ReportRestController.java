@@ -45,12 +45,12 @@ public class ReportRestController {
     @Autowired
     protected ReportRestControllerManager controllerManager;
 
-    @GetMapping(value = "/report", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(value = "/report", produces = MediaType.APPLICATION_JSON_VALUE)
     public String loadReportsList() {
         return controllerManager.loadReportsList();
     }
 
-    @GetMapping(value = "/report/{entityId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(value = "/report/{entityId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public String loadReport(@PathVariable String entityId) {
         return controllerManager.loadReport(entityId);
     }

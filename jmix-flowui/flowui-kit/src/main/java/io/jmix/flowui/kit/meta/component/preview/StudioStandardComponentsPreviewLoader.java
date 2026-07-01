@@ -23,7 +23,7 @@ import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import io.jmix.flowui.kit.component.usermenu.JmixUserMenu;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.dom4j.Element;
 
 import static io.jmix.flowui.kit.component.usermenu.JmixUserMenu.BUTTON_CONTENT_CLASS_NAME;

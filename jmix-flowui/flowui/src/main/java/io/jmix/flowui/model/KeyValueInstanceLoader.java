@@ -20,8 +20,8 @@ import io.jmix.core.ValueLoadContext;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.flowui.view.Subscribe;
-
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import java.util.EventObject;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -30,6 +30,7 @@ import java.util.function.Function;
  * Loads a single instance of {@link KeyValueEntity}.
  */
 @InstallSubject("loadDelegate")
+@NullMarked
 public interface KeyValueInstanceLoader extends DataLoader {
 
     /**

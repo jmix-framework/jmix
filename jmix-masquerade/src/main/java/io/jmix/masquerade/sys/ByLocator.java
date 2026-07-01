@@ -16,6 +16,7 @@
 
 package io.jmix.masquerade.sys;
 
+import org.jspecify.annotations.NullMarked;
 import org.openqa.selenium.By;
 
 /**
@@ -23,6 +24,7 @@ import org.openqa.selenium.By;
  *
  * @see By
  */
+@NullMarked
 public interface ByLocator {
 
     /**

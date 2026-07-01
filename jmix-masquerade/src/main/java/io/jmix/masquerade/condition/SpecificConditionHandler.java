@@ -16,21 +16,22 @@
 
 package io.jmix.masquerade.condition;
 
-import com.codeborne.selenide.CheckResult;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Interface for checking {@link SpecificCondition Specific Conditions}.
  * <p>
  * Handling of {@link SpecificCondition Specific Conditions} depends on the component type and state.
  */
+@NullMarked
 public interface SpecificConditionHandler {
 
     /**
-     * Checks whether the current handler matches the passed {@link SpecificCondition}.
+     * Resolves the passed {@link SpecificCondition} into a {@link SpecificCheck} that describes how it must be
+     * checked for the current handler. The actual verdict is computed centrally by {@link SpecificCondition#check}.
      *
-     * @param condition condition to check
-     * @return {@link CheckResult} that contains {@link  CheckResult.Verdict#ACCEPT} if the current handler matches the
-     * passed {@link SpecificCondition}, {@link  CheckResult.Verdict#REJECT} otherwise
+     * @param condition condition to resolve
+     * @return a {@link SpecificCheck} describing how to check the passed condition
      */
-    CheckResult check(SpecificCondition condition);
+    SpecificCheck resolve(SpecificCondition condition);
 }

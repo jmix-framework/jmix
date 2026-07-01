@@ -18,6 +18,8 @@ package io.jmix.reports.yarg.reporting.extraction;
 
 import io.jmix.reports.yarg.structure.BandData;
 import io.jmix.reports.yarg.structure.ReportBand;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Map;
 
@@ -26,9 +28,10 @@ import java.util.Map;
  *
  * <p>The default implementation is <b>io.jmix.reports.yarg.reporting.extraction.DefaultExtractionContextFactory</b></p>
  */
+@NullMarked
 public interface ExtractionContextFactory {
     /**
      * Method should always return new <b>immutable</b> context object
      */
-    ExtractionContext context(ReportBand band, BandData parentBand, Map<String, Object> params);
+    ExtractionContext context(ReportBand band, @Nullable BandData parentBand, Map<String, Object> params);
 }

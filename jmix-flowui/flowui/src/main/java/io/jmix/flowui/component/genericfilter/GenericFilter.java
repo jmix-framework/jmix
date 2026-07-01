@@ -28,6 +28,7 @@ import com.vaadin.flow.shared.Registration;
 import io.jmix.core.AccessManager;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
+import io.jmix.core.annotation.Experimental;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.LogicalCondition;
@@ -37,6 +38,7 @@ import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.UiComponentProperties;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.accesscontext.UiGenericFilterModifyConfigurationContext;
+import io.jmix.flowui.action.ObservableBaseAction;
 import io.jmix.flowui.action.genericfilter.GenericFilterAction;
 import io.jmix.flowui.action.genericfilter.GenericFilterAddConditionAction;
 import io.jmix.flowui.action.genericfilter.GenericFilterResetAction;
@@ -55,7 +57,6 @@ import io.jmix.flowui.component.logicalfilter.LogicalFilterComponent;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter;
 import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.action.Action;
-import io.jmix.flowui.kit.action.BaseAction;
 import io.jmix.flowui.kit.component.HasActions;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.kit.component.button.JmixButton;
@@ -66,11 +67,14 @@ import io.jmix.flowui.kit.component.dropdownbutton.DropdownButtonVariant;
 import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.model.BaseCollectionLoader;
 import io.jmix.flowui.model.DataLoader;
+import io.jmix.flowui.theme.StyleUtility;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.lang.Nullable;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -86,6 +90,8 @@ import static com.google.common.base.Preconditions.checkState;
 public class GenericFilter extends Composite<JmixDetails>
         implements SupportsResponsiveSteps, HasActions, HasEnabled, HasSize, HasStyle, HasTheme, HasTooltip,
         ApplicationContextAware, InitializingBean {
+
+    private static final Logger log = LoggerFactory.getLogger(GenericFilter.class);
 
     protected static final String CONDITION_REMOVE_BUTTON_ID_SUFFIX = "conditionRemoveButton";
 
@@ -110,6 +116,8 @@ public class GenericFilter extends Composite<JmixDetails>
     protected int propertyHierarchyDepth;
     protected DataLoader dataLoader;
     protected Condition initialDataLoaderCondition;
+    protected boolean initialDataLoaderConditionInitialized;
+    protected Condition lastConditionSetByFilter;
     protected Predicate<MetaPropertyPath> propertyFiltersPredicate;
 
     protected VerticalLayout contentWrapper;
@@ -130,6 +138,7 @@ public class GenericFilter extends Composite<JmixDetails>
     protected List<FilterComponent> conditions;
 
     protected boolean configurationModifyPermitted;
+    protected String summaryText;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) {
@@ -180,8 +189,8 @@ public class GenericFilter extends Composite<JmixDetails>
         emptyConfiguration =
                 new RunTimeConfiguration("empty_configuration", configurationLogicalComponent, this);
 
-        String emptyConfigurationName = StringUtils.isNotEmpty(getSummaryText())
-                ? getSummaryText()
+        String emptyConfigurationName = StringUtils.isNotEmpty(summaryText)
+                ? summaryText
                 : messages.getMessage("genericFilter.emptyConfiguration.name");
         emptyConfiguration.setName(emptyConfigurationName);
 
@@ -240,6 +249,7 @@ public class GenericFilter extends Composite<JmixDetails>
 
     protected void initControlsLayout(HorizontalLayout controlsLayout) {
         controlsLayout.setWidthFull();
+        controlsLayout.setWrap(true);
         controlsLayout.setClassName(FILTER_CONTROLS_LAYOUT_CLASS_NAME);
 
         applyButton = createApplyButton();
@@ -260,7 +270,7 @@ public class GenericFilter extends Composite<JmixDetails>
     }
 
     protected void initAddConditionButton(JmixButton addConditionButton) {
-        addConditionButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+        addConditionButton.addThemeVariants(ButtonVariant.TERTIARY);
 
         GenericFilterAddConditionAction addConditionAction = actions.create(GenericFilterAddConditionAction.ID);
         addConditionAction.setTarget(this);
@@ -275,7 +285,7 @@ public class GenericFilter extends Composite<JmixDetails>
 
     protected void initApplyButton(ComboButton applyButton) {
         applyButton.addClickListener(this::onApplyButtonClick);
-        applyButton.addThemeVariants(ComboButtonVariant.LUMO_SUCCESS, ComboButtonVariant.LUMO_PRIMARY);
+        applyButton.addThemeVariants(ComboButtonVariant.SUCCESS, ComboButtonVariant.PRIMARY);
         applyShortcutCombination(applyButton, applyShortcut);
 
         updateApplyButtonText(isAutoApply());
@@ -319,9 +329,8 @@ public class GenericFilter extends Composite<JmixDetails>
     }
 
     protected void initSettingsButton(DropdownButton settingsButton) {
-        settingsButton.addThemeVariants(DropdownButtonVariant.LUMO_ICON);
         settingsButton.setDropdownIndicatorVisible(false);
-        settingsButton.setIconComponent(icons.get(JmixFontIcon.GENERIC_FILTER_SETTINGS));
+        settingsButton.setIcon(icons.get(JmixFontIcon.GENERIC_FILTER_SETTINGS));
 
         List<GenericFilterAction<?>> defaultFilterActions = genericFilterSupport.getDefaultFilterActions(this);
         for (GenericFilterAction<?> filterAction : defaultFilterActions) {
@@ -362,15 +371,21 @@ public class GenericFilter extends Composite<JmixDetails>
         checkNotNull(dataLoader);
 
         this.dataLoader = dataLoader;
-        this.initialDataLoaderCondition = dataLoader.getCondition();
 
         LogicalFilterComponent<?> rootLogicalFilterComponent = emptyConfiguration.getRootLogicalFilterComponent();
         rootLogicalFilterComponent.setDataLoader(dataLoader);
         rootLogicalFilterComponent.setAutoApply(autoApply);
     }
 
+    /**
+     * @deprecated no longer used internally; the initial data loader condition is now captured lazily
+     * in {@link #updateDataLoaderCondition()} before the first filter contribution. Retained for
+     * backward compatibility.
+     */
+    @Deprecated(since = "3.0", forRemoval = true)
     protected void updateDataLoaderInitialCondition(@Nullable Condition condition) {
         this.initialDataLoaderCondition = copy(condition);
+        this.initialDataLoaderConditionInitialized = true;
     }
 
     /**
@@ -461,7 +476,7 @@ public class GenericFilter extends Composite<JmixDetails>
      * @return this component summary text
      */
     public String getSummaryText() {
-        return getContent().getSummaryText();
+        return summaryText != null ? summaryText : getContent().getSummaryText();
     }
 
     /**
@@ -470,6 +485,14 @@ public class GenericFilter extends Composite<JmixDetails>
      * @param summary text to set
      */
     public void setSummaryText(String summary) {
+        setSummaryTextInternal(summary, true);
+    }
+
+    protected void setSummaryTextInternal(String summary, boolean fromUser) {
+        if (fromUser) {
+            this.summaryText = summary;
+        }
+
         getContent().setSummaryText(summary);
     }
 
@@ -583,13 +606,59 @@ public class GenericFilter extends Composite<JmixDetails>
     }
 
     /**
-     * Sets the given configuration as current and displays filter components from the current
-     * configuration.
+     * Sets the given configuration as current and displays its filter components.
+     * <p>
+     * The configuration must already be registered with this filter via
+     * {@link #addConfiguration(Configuration)}. If it is not registered, this method
+     * logs a warning and does nothing.
      *
-     * @param currentConfiguration a configuration
+     * @param currentConfiguration a configuration to activate
      */
     public void setCurrentConfiguration(Configuration currentConfiguration) {
+        if (!configurations.contains(currentConfiguration)
+                && !getEmptyConfiguration().equals(currentConfiguration)) {
+            log.warn("Configuration '{}' is not registered in this filter; call addConfiguration() first.",
+                    currentConfiguration.getId());
+        }
         setCurrentConfigurationInternal(currentConfiguration, false);
+    }
+
+    /**
+     * Refreshes the layout of the current configuration.
+     * <p>
+     * Call this method after programmatically modifying the current configuration's filter
+     * components (e.g. adding a component to the root {@link LogicalFilterComponent}) to force
+     * the filter UI to re-render remove buttons and update the data-loader condition.
+     * <p>
+     * This is a stable public equivalent of the internal {@code refreshCurrentConfigurationLayout()}.
+     */
+    public void refreshCurrentConfiguration() {
+        refreshCurrentConfigurationLayout();
+    }
+
+    /**
+     * Creates a new {@link FilterComponentBuilder} bound to this filter.
+     * <p>
+     * The builder assembles a condition model from its fluent parameters and delegates to the
+     * framework's converter, so a programmatically built component is initialised exactly like
+     * one loaded from XML. This filter must have a {@code DataLoader}.
+     *
+     * @return a new {@code FilterComponentBuilder} instance
+     */
+    @Experimental
+    public FilterComponentBuilder filterComponentBuilder() {
+        return new FilterComponentBuilder(this, applicationContext);
+    }
+
+    /**
+     * Creates a new {@link RunTimeConfigurationBuilder} for building and registering
+     * a {@link io.jmix.flowui.component.genericfilter.configuration.RunTimeConfiguration}.
+     *
+     * @return a new {@code RunTimeConfigurationBuilder} instance
+     */
+    @Experimental
+    public RunTimeConfigurationBuilder runtimeConfigurationBuilder() {
+        return new RunTimeConfigurationBuilder(this, uiComponents);
     }
 
     protected void setCurrentConfigurationInternal(Configuration currentConfiguration, boolean fromClient) {
@@ -716,7 +785,7 @@ public class GenericFilter extends Composite<JmixDetails>
         JmixButton conditionRemoveButton = uiComponents.create(JmixButton.class);
         conditionRemoveButton.setId(removeButtonId);
         conditionRemoveButton.setIcon(icons.get(JmixFontIcon.GENERIC_FILTER_CONDITION_REMOVE));
-        conditionRemoveButton.addThemeVariants(ButtonVariant.LUMO_ICON, ButtonVariant.LUMO_TERTIARY_INLINE);
+        conditionRemoveButton.setClassName(StyleUtility.Button.LINK_BUTTON);
 
         conditionRemoveButton.addClickListener(clickEvent -> {
             removeFilterComponent(filterComponent);
@@ -738,13 +807,17 @@ public class GenericFilter extends Composite<JmixDetails>
     }
 
     protected void updateRootLayoutSummaryText() {
+        if (summaryText != null) {
+            return;
+        }
+
         StringBuilder stringBuilder = new StringBuilder(getConfigurationName(getEmptyConfiguration()));
         if (!getEmptyConfiguration().equals(getCurrentConfiguration())) {
             stringBuilder.append(" : ")
                     .append(getConfigurationName(getCurrentConfiguration()));
         }
 
-        setSummaryText(stringBuilder.toString());
+        setSummaryTextInternal(stringBuilder.toString(), false);
     }
 
     protected String getConfigurationName(Configuration configuration) {
@@ -764,6 +837,14 @@ public class GenericFilter extends Composite<JmixDetails>
 
     protected void updateDataLoaderCondition() {
         if (dataLoader != null) {
+            Condition currentCondition = dataLoader.getCondition();
+            // Re-capture the loader's own condition only when it was replaced externally (a different
+            // object than the filter's last output); the filter never adopts its own output.
+            if (!initialDataLoaderConditionInitialized
+                    || (lastConditionSetByFilter != null && currentCondition != lastConditionSetByFilter)) {
+                initialDataLoaderCondition = copy(currentCondition);
+                initialDataLoaderConditionInitialized = true;
+            }
             LogicalFilterComponent<?> logicalFilterComponent = getCurrentConfiguration().getRootLogicalFilterComponent();
             LogicalCondition filterCondition = logicalFilterComponent.getQueryCondition();
 
@@ -780,6 +861,7 @@ public class GenericFilter extends Composite<JmixDetails>
             }
 
             dataLoader.setCondition(resultCondition);
+            lastConditionSetByFilter = resultCondition;
         }
     }
 
@@ -907,7 +989,7 @@ public class GenericFilter extends Composite<JmixDetails>
     }
 
     protected Action createConfigurationAction(Configuration configuration) {
-        return new BaseAction("genericFilter_select_" + configuration.getId())
+        return new ObservableBaseAction<>("genericFilter_select_" + configuration.getId())
                 .withText(getConfigurationName(configuration))
                 .withHandler(actionPerformedEvent -> {
                     setCurrentConfigurationInternal(configuration, true);

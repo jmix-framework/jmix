@@ -23,7 +23,7 @@ import io.jmix.flowui.sys.ExtendedClientDetailsProvider;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
@@ -154,9 +154,6 @@ public class ViewAttributes {
 
     protected String getWindowName() {
         ExtendedClientDetails clientDetails = extendedClientDetailsProvider.getExtendedClientDetails();
-        if (clientDetails == null) {
-            throw new IllegalStateException("Cannot retrieve a window name");
-        }
         return clientDetails.getWindowName();
     }
 

@@ -20,7 +20,11 @@ import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.ResolvedDependency;
 import org.gradle.api.tasks.SourceSet;
+import org.gradle.process.ExecOperations;
 
+import javax.inject.Inject;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -28,7 +32,14 @@ import java.util.Set;
 
 public class EclipselinkEnhancing implements PersistenceProviderEnhancing {
 
-    public void run(Project project, SourceSet sourceSet, Set<String> allStores) {
+    private final ExecOperations execOperations;
+
+    @Inject
+    public EclipselinkEnhancing(ExecOperations execOperations) {
+        this.execOperations = execOperations;
+    }
+
+    public void run(Project project, SourceSet sourceSet, String enhancedDir, Set<String> allStores) {
         for (String storeName : allStores) {
             Configuration conf = project.getConfigurations().findByName(sourceSet.getCompileClasspathConfigurationName());
             if (!findJpaDependencies(conf.getResolvedConfiguration().getFirstLevelModuleDependencies(), new HashSet<>())) {
@@ -38,18 +49,18 @@ public class EclipselinkEnhancing implements PersistenceProviderEnhancing {
 
             project.getLogger().lifecycle("Running EclipseLink enhancer in {} for {}", project, sourceSet);
 
-            project.javaexec(javaExecSpec -> {
+            execOperations.javaexec(javaExecSpec -> {
                 javaExecSpec.getMainClass().set("org.eclipse.persistence.tools.weaving.jpa.StaticWeave");
 
                 javaExecSpec.setClasspath(project.files(
                         project.getConfigurations().getByName("enhancing").getAsFileTree(),
                         sourceSet.getCompileClasspath().getFiles(),
-                        sourceSet.getJava().getDestinationDirectory().get().getAsFileTree()));
+                        project.files(new File(enhancedDir)).getAsFileTree()));
 
                 javaExecSpec.args("-loglevel", "INFO", "-persistenceinfo",
                         project.getBuildDir() + "/tmp/entitiesEnhancing/" + sourceSet.getName() + "/" + (("main".equals(storeName) ? "" : (storeName + '-')) + "persistence"),
-                        sourceSet.getJava().getDestinationDirectory().get().getAsFile().getAbsolutePath(),
-                        sourceSet.getJava().getDestinationDirectory().get().getAsFile().getAbsolutePath()
+                        enhancedDir,
+                        enhancedDir
                 );
                 javaExecSpec.setDebug(project.hasProperty("debugEnhancing") && Boolean.parseBoolean((String) project.property("debugEnhancing")));
             });

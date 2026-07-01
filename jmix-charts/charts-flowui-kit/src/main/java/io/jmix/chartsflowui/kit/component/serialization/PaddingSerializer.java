@@ -16,11 +16,10 @@
 
 package io.jmix.chartsflowui.kit.component.serialization;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.SerializerProvider;
 import io.jmix.chartsflowui.kit.component.model.shared.Padding;
-
-import java.io.IOException;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.SerializationContext;
 
 public class PaddingSerializer extends AbstractSerializer<Padding> {
 
@@ -29,8 +28,8 @@ public class PaddingSerializer extends AbstractSerializer<Padding> {
     }
 
     @Override
-    public void serializeNonNullValue(Padding value, JsonGenerator gen, SerializerProvider provider)
-            throws IOException {
+    public void serializeNonNullValue(Padding value, JsonGenerator gen, SerializationContext provider)
+            throws JacksonException {
         gen.writeArray(new int[]{value.getTop(), value.getRight(), value.getBottom(), value.getLeft()}, 0, 4);
     }
 }

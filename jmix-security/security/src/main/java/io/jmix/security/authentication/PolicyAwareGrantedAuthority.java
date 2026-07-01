@@ -21,6 +21,8 @@ import io.jmix.security.model.RowLevelPolicy;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Collection;
+
+import org.jspecify.annotations.NullMarked;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -30,6 +32,7 @@ import java.util.stream.Stream;
  * @see ResourcePolicy
  * @see RowLevelPolicy
  */
+@NullMarked
 public interface PolicyAwareGrantedAuthority extends GrantedAuthority {
     Collection<String> getScopes();
 

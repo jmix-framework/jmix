@@ -12,6 +12,10 @@ private Object getActionSearchSafely() {
     }
 }
 
+def groupDataGridNamespace = tableType.getXmlName().equals("groupg:groupDataGrid")
+        ? ' xmlns:groupg="http://jmix.io/schema/groupgrid/ui"'
+        : ''
+
 def tableXml = api.processSnippet('dto_table.xml',
         ['jmixProjectModule': api.jmixProjectModule,
         'actionSearch': getActionSearchSafely(),
@@ -26,6 +30,7 @@ def tableXml = api.processSnippet('dto_table.xml',
         'multiselect': multiselect])
 %><?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <view xmlns="http://jmix.io/schema/flowui/view"
+      ${groupDataGridNamespace}
       title="${messageKeys['viewTitle']}"
       focusComponent="${tableId}">
     <data>
@@ -56,7 +61,7 @@ def tableXml = api.processSnippet('dto_table.xml',
         <%if (listFixedFooter) {%>
         </vbox>
         <hbox id="lookupActions" visible="false"
-              classNames="px-m py-s bg-contrast-5">
+              classNames="footer-panel">
         <%} else {%>
         <hbox id="lookupActions" visible="false">
         <%}%>

@@ -16,12 +16,13 @@
 
 package io.jmix.reports.yarg.loaders.impl;
 
-import io.jmix.reports.yarg.util.db.QueryRunner;
-import io.jmix.reports.yarg.util.db.ResultSetHandler;
 import io.jmix.reports.yarg.exception.DataLoadingException;
 import io.jmix.reports.yarg.structure.BandData;
 import io.jmix.reports.yarg.structure.ReportQuery;
+import io.jmix.reports.yarg.util.db.QueryRunner;
+import io.jmix.reports.yarg.util.db.ResultSetHandler;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 
 import javax.sql.DataSource;
 import java.sql.ResultSet;
@@ -52,7 +53,7 @@ public class SqlDataLoader extends AbstractDbDataLoader {
     }
 
     @Override
-    public List<Map<String, Object>> loadData(ReportQuery reportQuery, BandData parentBand, Map<String, Object> params) {
+    public List<Map<String, Object>> loadData(ReportQuery reportQuery, @Nullable BandData parentBand, Map<String, Object> params) {
         try {
             String query = reportQuery.getScript();
             if (StringUtils.isBlank(query)) {

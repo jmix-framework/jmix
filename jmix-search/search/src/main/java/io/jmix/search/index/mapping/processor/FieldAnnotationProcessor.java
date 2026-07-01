@@ -18,6 +18,7 @@ package io.jmix.search.index.mapping.processor;
 
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.search.index.mapping.MappingDefinition.MappingDefinitionBuilder;
+import org.jspecify.annotations.NullMarked;
 
 import java.lang.annotation.Annotation;
 
@@ -26,6 +27,7 @@ import java.lang.annotation.Annotation;
  *
  * @param <T> specific annotation class
  */
+@NullMarked
 public interface FieldAnnotationProcessor<T extends Annotation> {
 
     /**

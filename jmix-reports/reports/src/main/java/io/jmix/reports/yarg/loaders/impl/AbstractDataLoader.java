@@ -19,6 +19,8 @@ import io.jmix.reports.yarg.loaders.ReportFieldsConverter;
 import io.jmix.reports.yarg.loaders.ReportParametersConverter;
 import io.jmix.reports.yarg.loaders.ReportDataLoader;
 import io.jmix.reports.yarg.structure.BandData;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Map;
 

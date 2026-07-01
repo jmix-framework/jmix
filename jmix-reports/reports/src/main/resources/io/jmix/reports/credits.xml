@@ -16,9 +16,6 @@
 
 <credits xmlns="http://jmix.io/schema/core/credits">
     <items>
-        <item name="XStream" url="http://x-stream.github.io/">
-            <license name="BSD license" url="https://github.com/x-stream/xstream/blob/master/LICENSE.txt"/>
-        </item>
         <item name="YARG" url="https://github.com/cuba-platform/yarg">
             <license ref="apache-2.0"/>
         </item>

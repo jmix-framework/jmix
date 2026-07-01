@@ -21,6 +21,7 @@ import io.jmix.chartsflowui.kit.component.model.HasBorder;
 import io.jmix.chartsflowui.kit.component.model.HasShadow;
 import io.jmix.chartsflowui.kit.component.model.shared.Color;
 import io.jmix.chartsflowui.kit.component.model.shared.LineStyle;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Bar chart shows different data through the height of a bar, which is used in rectangular coordinate
@@ -133,6 +134,7 @@ public class BarSeries extends AbstractAxisAwareSeries<BarSeries>
 
         protected Double opacity;
 
+        @Nullable
         public Color getColor() {
             return color;
         }
@@ -142,6 +144,7 @@ public class BarSeries extends AbstractAxisAwareSeries<BarSeries>
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public Color getBorderColor() {
             return borderColor;
@@ -153,6 +156,7 @@ public class BarSeries extends AbstractAxisAwareSeries<BarSeries>
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public Integer getBorderWidth() {
             return borderWidth;
@@ -164,6 +168,7 @@ public class BarSeries extends AbstractAxisAwareSeries<BarSeries>
             markAsDirty();
         }
 
+        @Nullable
         public String getBorderType() {
             return borderType;
         }
@@ -173,6 +178,7 @@ public class BarSeries extends AbstractAxisAwareSeries<BarSeries>
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public Integer getBorderRadius() {
             return borderRadius;
@@ -184,6 +190,7 @@ public class BarSeries extends AbstractAxisAwareSeries<BarSeries>
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public Integer getShadowBlur() {
             return shadowBlur;
@@ -195,6 +202,7 @@ public class BarSeries extends AbstractAxisAwareSeries<BarSeries>
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public Color getShadowColor() {
             return shadowColor;
@@ -206,6 +214,7 @@ public class BarSeries extends AbstractAxisAwareSeries<BarSeries>
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public Integer getShadowOffsetX() {
             return shadowOffsetX;
@@ -217,6 +226,7 @@ public class BarSeries extends AbstractAxisAwareSeries<BarSeries>
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public Integer getShadowOffsetY() {
             return shadowOffsetY;
@@ -228,6 +238,7 @@ public class BarSeries extends AbstractAxisAwareSeries<BarSeries>
             markAsDirty();
         }
 
+        @Nullable
         public Double getOpacity() {
             return opacity;
         }
@@ -264,6 +275,7 @@ public class BarSeries extends AbstractAxisAwareSeries<BarSeries>
 
         protected LineStyle lineStyle;
 
+        @Nullable
         public Boolean getShow() {
             return show;
         }
@@ -273,6 +285,7 @@ public class BarSeries extends AbstractAxisAwareSeries<BarSeries>
             markAsDirty();
         }
 
+        @Nullable
         public LineStyle getLineStyle() {
             return lineStyle;
         }
@@ -316,6 +329,7 @@ public class BarSeries extends AbstractAxisAwareSeries<BarSeries>
 
         protected BlurScopeType blurScope;
 
+        @Nullable
         public Boolean getDisabled() {
             return disabled;
         }
@@ -325,6 +339,7 @@ public class BarSeries extends AbstractAxisAwareSeries<BarSeries>
             markAsDirty();
         }
 
+        @Nullable
         public FocusType getFocus() {
             return focus;
         }
@@ -334,6 +349,7 @@ public class BarSeries extends AbstractAxisAwareSeries<BarSeries>
             markAsDirty();
         }
 
+        @Nullable
         public BlurScopeType getBlurScope() {
             return blurScope;
         }
@@ -372,6 +388,7 @@ public class BarSeries extends AbstractAxisAwareSeries<BarSeries>
 
         protected Boolean disabled;
 
+        @Nullable
         public Boolean getDisabled() {
             return disabled;
         }
@@ -401,6 +418,7 @@ public class BarSeries extends AbstractAxisAwareSeries<BarSeries>
 
         protected ItemStyle itemStyle;
 
+        @Nullable
         public Label getLabel() {
             return label;
         }
@@ -410,6 +428,7 @@ public class BarSeries extends AbstractAxisAwareSeries<BarSeries>
             markAsDirty();
         }
 
+        @Nullable
         public LabelLine getLabelLine() {
             return labelLine;
         }
@@ -419,6 +438,7 @@ public class BarSeries extends AbstractAxisAwareSeries<BarSeries>
             markAsDirty();
         }
 
+        @Nullable
         public ItemStyle getItemStyle() {
             return itemStyle;
         }
@@ -447,6 +467,7 @@ public class BarSeries extends AbstractAxisAwareSeries<BarSeries>
         }
     }
 
+    @Nullable
     public CoordinateSystem getCoordinateSystem() {
         return coordinateSystem;
     }
@@ -456,6 +477,7 @@ public class BarSeries extends AbstractAxisAwareSeries<BarSeries>
         markAsDirty();
     }
 
+    @Nullable
     public Integer getXAxisIndex() {
         return xAxisIndex;
     }
@@ -465,6 +487,7 @@ public class BarSeries extends AbstractAxisAwareSeries<BarSeries>
         markAsDirty();
     }
 
+    @Nullable
     public Integer getYAxisIndex() {
         return yAxisIndex;
     }
@@ -474,6 +497,7 @@ public class BarSeries extends AbstractAxisAwareSeries<BarSeries>
         markAsDirty();
     }
 
+    @Nullable
     public Integer getPolarIndex() {
         return polarIndex;
     }
@@ -483,6 +507,7 @@ public class BarSeries extends AbstractAxisAwareSeries<BarSeries>
         markAsDirty();
     }
 
+    @Nullable
     public SamplingType getSampling() {
         return sampling;
     }
@@ -492,6 +517,7 @@ public class BarSeries extends AbstractAxisAwareSeries<BarSeries>
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public String getStack() {
         return stack;
@@ -503,6 +529,7 @@ public class BarSeries extends AbstractAxisAwareSeries<BarSeries>
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getClip() {
         return clip;
     }
@@ -512,6 +539,7 @@ public class BarSeries extends AbstractAxisAwareSeries<BarSeries>
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public StackStrategy getStackStrategy() {
         return stackStrategy;
@@ -523,6 +551,7 @@ public class BarSeries extends AbstractAxisAwareSeries<BarSeries>
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getRoundCap() {
         return roundCap;
     }
@@ -532,6 +561,7 @@ public class BarSeries extends AbstractAxisAwareSeries<BarSeries>
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getRealtimeSort() {
         return realtimeSort;
     }
@@ -541,6 +571,7 @@ public class BarSeries extends AbstractAxisAwareSeries<BarSeries>
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getShowBackground() {
         return showBackground;
     }
@@ -550,6 +581,7 @@ public class BarSeries extends AbstractAxisAwareSeries<BarSeries>
         markAsDirty();
     }
 
+    @Nullable
     public BackgroundStyle getBackgroundStyle() {
         return backgroundStyle;
     }
@@ -563,6 +595,7 @@ public class BarSeries extends AbstractAxisAwareSeries<BarSeries>
         addChild(backgroundStyle);
     }
 
+    @Nullable
     public LabelLine getLabelLine() {
         return labelLine;
     }
@@ -576,6 +609,7 @@ public class BarSeries extends AbstractAxisAwareSeries<BarSeries>
         addChild(labelLine);
     }
 
+    @Nullable
     public ItemStyleWithDecal getItemStyle() {
         return itemStyle;
     }
@@ -589,6 +623,7 @@ public class BarSeries extends AbstractAxisAwareSeries<BarSeries>
         addChild(itemStyle);
     }
 
+    @Nullable
     public Emphasis getEmphasis() {
         return emphasis;
     }
@@ -602,6 +637,7 @@ public class BarSeries extends AbstractAxisAwareSeries<BarSeries>
         addChild(emphasis);
     }
 
+    @Nullable
     public Blur getBlur() {
         return blur;
     }
@@ -615,6 +651,7 @@ public class BarSeries extends AbstractAxisAwareSeries<BarSeries>
         addChild(blur);
     }
 
+    @Nullable
     public Select getSelect() {
         return select;
     }
@@ -628,6 +665,7 @@ public class BarSeries extends AbstractAxisAwareSeries<BarSeries>
         addChild(select);
     }
 
+    @Nullable
     public String getBarWidth() {
         return barWidth;
     }
@@ -637,6 +675,7 @@ public class BarSeries extends AbstractAxisAwareSeries<BarSeries>
         markAsDirty();
     }
 
+    @Nullable
     public String getBarMaxWidth() {
         return barMaxWidth;
     }
@@ -646,6 +685,7 @@ public class BarSeries extends AbstractAxisAwareSeries<BarSeries>
         markAsDirty();
     }
 
+    @Nullable
     public String getBarMinWidth() {
         return barMinWidth;
     }
@@ -655,6 +695,7 @@ public class BarSeries extends AbstractAxisAwareSeries<BarSeries>
         markAsDirty();
     }
 
+    @Nullable
     public Integer getBarMinHeight() {
         return barMinHeight;
     }
@@ -664,6 +705,7 @@ public class BarSeries extends AbstractAxisAwareSeries<BarSeries>
         markAsDirty();
     }
 
+    @Nullable
     public Integer getBarMinAngle() {
         return barMinAngle;
     }
@@ -673,6 +715,7 @@ public class BarSeries extends AbstractAxisAwareSeries<BarSeries>
         markAsDirty();
     }
 
+    @Nullable
     public String getBarGap() {
         return barGap;
     }
@@ -682,6 +725,7 @@ public class BarSeries extends AbstractAxisAwareSeries<BarSeries>
         markAsDirty();
     }
 
+    @Nullable
     public String getBarCategoryGap() {
         return barCategoryGap;
     }
@@ -691,6 +735,7 @@ public class BarSeries extends AbstractAxisAwareSeries<BarSeries>
         markAsDirty();
     }
 
+    @Nullable
     public String getCursor() {
         return cursor;
     }
@@ -700,6 +745,7 @@ public class BarSeries extends AbstractAxisAwareSeries<BarSeries>
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getLarge() {
         return large;
     }
@@ -709,6 +755,7 @@ public class BarSeries extends AbstractAxisAwareSeries<BarSeries>
         markAsDirty();
     }
 
+    @Nullable
     public Integer getLargeThreshold() {
         return largeThreshold;
     }
@@ -718,6 +765,7 @@ public class BarSeries extends AbstractAxisAwareSeries<BarSeries>
         markAsDirty();
     }
 
+    @Nullable
     public Integer getProgressive() {
         return progressive;
     }
@@ -727,6 +775,7 @@ public class BarSeries extends AbstractAxisAwareSeries<BarSeries>
         markAsDirty();
     }
 
+    @Nullable
     public Integer getProgressiveThreshold() {
         return progressiveThreshold;
     }
@@ -736,6 +785,7 @@ public class BarSeries extends AbstractAxisAwareSeries<BarSeries>
         markAsDirty();
     }
 
+    @Nullable
     public ProgressiveChunkMode getProgressiveChunkMode() {
         return progressiveChunkMode;
     }
@@ -745,6 +795,7 @@ public class BarSeries extends AbstractAxisAwareSeries<BarSeries>
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getAnimation() {
         return animation;
     }
@@ -754,6 +805,7 @@ public class BarSeries extends AbstractAxisAwareSeries<BarSeries>
         markAsDirty();
     }
 
+    @Nullable
     public Integer getAnimationThreshold() {
         return animationThreshold;
     }
@@ -763,6 +815,7 @@ public class BarSeries extends AbstractAxisAwareSeries<BarSeries>
         markAsDirty();
     }
 
+    @Nullable
     public Integer getAnimationDurationUpdate() {
         return animationDurationUpdate;
     }
@@ -772,6 +825,7 @@ public class BarSeries extends AbstractAxisAwareSeries<BarSeries>
         markAsDirty();
     }
 
+    @Nullable
     public String getAnimationEasingUpdate() {
         return animationEasingUpdate;
     }
@@ -781,6 +835,7 @@ public class BarSeries extends AbstractAxisAwareSeries<BarSeries>
         markAsDirty();
     }
 
+    @Nullable
     public Integer getAnimationDelayUpdate() {
         return animationDelayUpdate;
     }

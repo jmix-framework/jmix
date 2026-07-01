@@ -16,9 +16,12 @@
 
 package io.jmix.flowui.data.binding;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Represents a binding mechanism that can be suspended and resumed.
  */
+@NullMarked
 public interface SuspendableBinding {
 
     /**

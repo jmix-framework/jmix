@@ -19,6 +19,7 @@ package io.jmix.reports.impl.builder;
 import io.jmix.reports.annotation.AvailableForRoles;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportRole;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.Set;
 
@@ -26,6 +27,7 @@ import java.util.Set;
  * Part of the {@link AnnotatedReportBuilder}.
  * Performs extracting roles from the report definition.
  */
+@NullMarked
 public interface AnnotatedReportRoleExtractor {
 
     /**

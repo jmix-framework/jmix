@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,63 +14,4 @@
  * limitations under the License.
  */
 
-@import url('app/exception-dialog-window.css');
-@import url('app/misc.css');
-@import url('app/role-assignment-view.css');
-
-@import url('component/jmix-list-menu.css');
-@import url('component/jmix-user-indicator.css');
-@import url('component/jmix-simple-pagination.css');
-@import url('component/jmix-items-per-page.css');
-@import url('component/jmix-dropdown-button.css');
-@import url('component/jmix-upload-field.css');
-@import url('component/jmix-image.css');
-@import url('component/jmix-generic-filter.css');
-@import url('component/jmix-property-filter.css');
-@import url('component/jmix-group-filter.css');
-@import url('component/jmix-grid-column-visibility.css');
-@import url('component/jmix-menu-filter-field.css');
-@import url('component/jmix-horizontal-menu.css');
-@import url('component/jmix-grid-context-menu.css');
-@import url('component/jmix-rich-text-editor.css');
-@import url('component/jmix-combo-box-picker.css');
-@import url('component/jmix-code-editor.css');
-@import url('component/jmix-value-picker.css');
-@import url('component/jmix-multi-select-combo-box-picker.css');
-@import url('component/jmix-twin-column.css');
-@import url('component/jmix-user-menu.css');
-
-@import url('component/vaadin-text-field.css');
-@import url('component/vaadin-text-area.css');
-@import url('component/vaadin-number-field.css');
-@import url('component/vaadin-big-decimal-field.css');
-@import url('component/vaadin-integer-field.css');
-@import url('component/vaadin-password-field.css');
-@import url('component/vaadin-email-field.css');
-@import url('component/vaadin-select.css');
-@import url('component/vaadin-checkbox-group.css');
-@import url('component/vaadin-radio-group.css');
-@import url('component/vaadin-date-picker.css');
-@import url('component/vaadin-time-picker.css');
-@import url('component/vaadin-date-time-picker.css');
-@import url('component/vaadin-dialog.css');
-@import url('component/vaadin-combo-box.css');
-@import url('component/vaadin-multi-select-combo-box.css');
-@import url('component/vaadin-form-layout.css');
-@import url('component/vaadin-grid.css');
-@import url('component/vaadin-notification-card.css');
-@import url('component/vaadin-split-layout.css');
-@import url('component/vaadin-checkbox.css');
-
-@import url('icons/jmix-font-icons.css');
-@import url('icons/vaadin-icons/vaadin-icons.css');
-
-html {
-  --jmix-lumo-warning-background-color: var(--lumo-warning-color);
-  --jmix-lumo-warning-background-color-50pct: hsla(48, 100%, 50%, 0.5);
-  --jmix-lumo-warning-background-color-10pct: var(--lumo-warning-color-10pct);
-  --jmix-lumo-warning-primary-text-color: var(--lumo-warning-text-color);
-  --jmix-lumo-warning-color: var(--lumo-warning-contrast-color);
-
-  --jmix-simple-pagination-gap: 0.3em;
-}
+@import 'jmix-lumo.css';

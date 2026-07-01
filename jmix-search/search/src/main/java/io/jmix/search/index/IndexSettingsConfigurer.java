@@ -16,12 +16,15 @@
 
 package io.jmix.search.index;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Base interface for Index settings configurers.
  * Platform-specific implementations should support respective configuration context.
  *
  * @param <TContext>
  */
+@NullMarked
 public interface IndexSettingsConfigurer<TContext> {
 
     /**

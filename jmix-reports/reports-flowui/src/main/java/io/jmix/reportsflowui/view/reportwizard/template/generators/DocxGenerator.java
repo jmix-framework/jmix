@@ -26,11 +26,13 @@ import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
 import org.docx4j.wml.Tbl;
 import org.docx4j.wml.Tr;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@NullMarked
 @Component("report_DocxGenerator")
 public class DocxGenerator extends AbstractOfficeGenerator {
 

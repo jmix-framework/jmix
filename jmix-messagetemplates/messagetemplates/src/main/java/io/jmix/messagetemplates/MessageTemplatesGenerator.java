@@ -18,6 +18,7 @@ package io.jmix.messagetemplates;
 
 import freemarker.template.Configuration;
 import io.jmix.messagetemplates.entity.MessageTemplate;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.List;
 import java.util.Map;
@@ -25,6 +26,7 @@ import java.util.Map;
 /**
  * Interface defining methods for generating messages using templates.
  */
+@NullMarked
 public interface MessageTemplatesGenerator {
 
     /**
@@ -117,6 +119,7 @@ public interface MessageTemplatesGenerator {
      * The generator is used to create messages based on a single template and a single map of parameters.
      * The result of the generation is a template filled with passed parameters.
      */
+    @NullMarked
     interface SingleTemplateGenerator {
 
         /**
@@ -172,6 +175,7 @@ public interface MessageTemplatesGenerator {
      * The generator is used to create messages based on a multiple set of templates and a single map of parameters.
      * The result of the generation is a list of templates filled with passed parameters.
      */
+    @NullMarked
     interface MultiTemplateGenerator {
 
         /**
@@ -227,6 +231,7 @@ public interface MessageTemplatesGenerator {
      * The generator is used to create messages based on a single template and multiple set of parameters.
      * The result of the generation is a list of templates filled with different parameters.
      */
+    @NullMarked
     interface MultiParamTemplateGenerator {
 
         /**

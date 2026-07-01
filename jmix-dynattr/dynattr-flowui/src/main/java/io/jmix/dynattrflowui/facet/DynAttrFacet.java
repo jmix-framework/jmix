@@ -18,8 +18,10 @@ package io.jmix.dynattrflowui.facet;
 
 
 import io.jmix.flowui.facet.Facet;
+import org.jspecify.annotations.NullMarked;
 
 
+@NullMarked
 public interface DynAttrFacet extends Facet {
     String FACET_NAME = "dynamicAttributes";
 }

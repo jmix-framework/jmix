@@ -21,6 +21,7 @@ import io.jmix.chartsflowui.kit.component.model.HasPosition;
 import io.jmix.chartsflowui.kit.component.model.Tooltip;
 import io.jmix.chartsflowui.kit.component.model.shared.ItemStyle;
 import io.jmix.chartsflowui.kit.component.model.shared.Orientation;
+import org.jspecify.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.List;
@@ -73,6 +74,7 @@ public class Toolbox extends ChartObservableObject
 
     protected Tooltip tooltip;
 
+    @Nullable
     public String getId() {
         return id;
     }
@@ -82,6 +84,7 @@ public class Toolbox extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getShow() {
         return show;
     }
@@ -91,6 +94,7 @@ public class Toolbox extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     public Orientation getOrientation() {
         return orientation;
     }
@@ -100,6 +104,7 @@ public class Toolbox extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     public Integer getItemSize() {
         return itemSize;
     }
@@ -109,6 +114,7 @@ public class Toolbox extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     public Integer getItemGap() {
         return itemGap;
     }
@@ -118,6 +124,7 @@ public class Toolbox extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getShowTitle() {
         return showTitle;
     }
@@ -173,6 +180,7 @@ public class Toolbox extends ChartObservableObject
         }
     }
 
+    @Nullable
     public ItemStyle getIconStyle() {
         return iconStyle;
     }
@@ -186,6 +194,7 @@ public class Toolbox extends ChartObservableObject
         addChild(iconStyle);
     }
 
+    @Nullable
     public Emphasis getEmphasis() {
         return emphasis;
     }
@@ -199,6 +208,7 @@ public class Toolbox extends ChartObservableObject
         addChild(emphasis);
     }
 
+    @Nullable
     public Integer getZLevel() {
         return zLevel;
     }
@@ -208,6 +218,7 @@ public class Toolbox extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     public Integer getZ() {
         return z;
     }
@@ -217,6 +228,7 @@ public class Toolbox extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public String getLeft() {
         return left;
@@ -228,6 +240,7 @@ public class Toolbox extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public String getTop() {
         return top;
@@ -239,6 +252,7 @@ public class Toolbox extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public String getRight() {
         return right;
@@ -250,6 +264,7 @@ public class Toolbox extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public String getBottom() {
         return bottom;
@@ -261,6 +276,7 @@ public class Toolbox extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     public String getWidth() {
         return width;
     }
@@ -270,6 +286,7 @@ public class Toolbox extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     public String getHeight() {
         return height;
     }
@@ -279,6 +296,7 @@ public class Toolbox extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     public Tooltip getTooltip() {
         return tooltip;
     }

@@ -17,7 +17,9 @@
 apply plugin: 'io.jmix'
 
 group = 'io.jmix.bulkeditor'
-archivesBaseName = 'jmix-bulkeditor'
+base {
+    archivesName = 'jmix-bulkeditor'
+}
 
 dependencies {
     api project(':flowui')

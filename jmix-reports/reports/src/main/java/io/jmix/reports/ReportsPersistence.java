@@ -17,8 +17,10 @@
 package io.jmix.reports;
 
 import io.jmix.reports.entity.Report;
+import org.jspecify.annotations.NullMarked;
 
 
+@NullMarked
 public interface ReportsPersistence {
 
     /**

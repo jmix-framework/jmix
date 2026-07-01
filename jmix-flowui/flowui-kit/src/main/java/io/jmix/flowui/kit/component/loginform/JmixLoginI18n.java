@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.kit.component.loginform;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.common.base.Preconditions;
 import com.vaadin.flow.component.login.LoginForm;
 import com.vaadin.flow.component.login.LoginI18n;
@@ -27,6 +28,7 @@ import com.vaadin.flow.component.login.LoginI18n;
  *
  * @see LoginForm#setI18n(LoginI18n)
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class JmixLoginI18n extends LoginI18n {
 
     protected JmixForm form;

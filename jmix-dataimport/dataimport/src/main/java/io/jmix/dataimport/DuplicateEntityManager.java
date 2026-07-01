@@ -20,13 +20,15 @@ import io.jmix.core.FetchPlan;
 import io.jmix.dataimport.configuration.UniqueEntityConfiguration;
 import io.jmix.dataimport.extractor.data.ImportedData;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import java.util.Collection;
 import java.util.Map;
 
 /**
  * Executes import for a given import configuration and {@link ImportedData}.
  */
+@NullMarked
 public interface DuplicateEntityManager {
     /**
      * Searches in the database the duplicate for a specified entity by properties from the given {@link UniqueEntityConfiguration}.

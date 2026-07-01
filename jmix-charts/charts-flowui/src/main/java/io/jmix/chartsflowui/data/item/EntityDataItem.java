@@ -18,6 +18,7 @@ package io.jmix.chartsflowui.data.item;
 
 import io.jmix.chartsflowui.kit.data.chart.DataItem;
 import io.jmix.core.entity.EntityValues;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.List;
@@ -43,6 +44,7 @@ public class EntityDataItem implements DataItem {
      * <li>Otherwise method returns value by {@link EntityValues#getValueEx(Object, String)}</li>
      * </ul>
      */
+    @Nullable
     @Override
     public Object getValue(String property) {
         Object value = EntityValues.getValueEx(item, property);
@@ -63,6 +65,7 @@ public class EntityDataItem implements DataItem {
         return item;
     }
 
+    @Nullable
     @Override
     public Object getId() {
         return EntityValues.getId(item);

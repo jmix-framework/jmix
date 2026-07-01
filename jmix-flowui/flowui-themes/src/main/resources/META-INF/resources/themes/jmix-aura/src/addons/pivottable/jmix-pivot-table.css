@@ -1,0 +1,401 @@
+/*
+ * Copyright 2026 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+jmix-pivot-table {
+    .pvtUi {
+        color: var(--vaadin-text-color);
+    }
+
+    table.pvtTable {
+        font-size: var(--aura-font-size-m);
+        font-family: var(--aura-font-family);
+        font-weight: var(--jmix-pivot-table-font-weight-normal, 400);
+        text-align: left;
+        border-collapse: collapse;
+    }
+
+    table.pvtTable thead tr th,
+    table.pvtTable tbody tr th {
+        border: 1px solid var(--vaadin-border-color);
+        padding: var(--vaadin-padding-s);
+    }
+
+    table.pvtTable .pvtColLabel {
+        text-align: center;
+    }
+
+    table.pvtTable .pvtTotalLabel {
+        text-align: right;
+    }
+
+    table.pvtTable tbody tr td {
+        border: 1px solid var(--vaadin-border-color);
+        padding: var(--vaadin-padding-s);
+        vertical-align: top;
+        text-align: right;
+    }
+
+    .pvtVals {
+        text-align: center;
+        white-space: nowrap;
+    }
+
+    .pvtRowOrder,
+    .pvtColOrder {
+        cursor: pointer;
+        width: var(--vaadin-padding-m);
+        margin-left: var(--vaadin-padding-s);
+        display: inline-block;
+    }
+
+    .pvtUiCell,
+    .pvtAxisContainer,
+    .pvtVals {
+        border: 1px solid var(--vaadin-border-color);
+        background: var(--vaadin-background-color);
+        padding: var(--vaadin-padding-xs);
+        min-width: var(--vaadin-padding-l);
+        min-height: var(--vaadin-padding-l);
+        user-select: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -khtml-user-select: none;
+        -ms-user-select: none;
+    }
+
+    .pvtAxisContainer li {
+        padding: var(--vaadin-padding-s) var(--vaadin-padding-xs);
+        list-style-type: none;
+        cursor: move;
+    }
+
+    .pvtAxisContainer li.pvtPlaceholder {
+        padding: var(--vaadin-padding-xs) var(--vaadin-padding-m);
+        -webkit-border-radius: var(--vaadin-radius-m);
+        -moz-border-radius: var(--vaadin-radius-m);
+        border-radius: var(--vaadin-radius-m);
+        border: 1px dashed var(--vaadin-border-color);
+    }
+
+    .pvtAxisContainer li span.pvtAttr {
+        -webkit-text-size-adjust: 100%;
+        padding: 2px var(--vaadin-padding-xs);
+        white-space: nowrap;
+        -webkit-border-radius: var(--vaadin-radius-m);
+        -moz-border-radius: var(--vaadin-radius-m);
+        border-radius: var(--vaadin-radius-m);
+    }
+
+    .pvtTriangle {
+        cursor: pointer;
+    }
+
+    .pvtHorizList li {
+        display: inline;
+    }
+
+    .pvtVertList {
+        vertical-align: top;
+    }
+
+    .pvtFilterBox {
+        z-index: 100;
+        width: 18rem;
+        position: absolute;
+        text-align: center;
+        border: 1px solid var(--vaadin-border-color);
+    }
+
+    .pvtFilterBox h4 {
+        margin: var(--vaadin-padding-m);
+    }
+
+    .pvtFilterBox p {
+        margin: var(--vaadin-padding-s) auto;
+    }
+
+    .pvtFilterBox label {
+        font-weight: var(--jmix-pivot-table-font-weight-normal, 400);
+    }
+
+    .pvtFilterBox input[type='checkbox'] {
+        margin-right: var(--vaadin-padding-s);
+        margin-left: var(--vaadin-padding-s);
+    }
+
+    .pvtFilterBox input[type='text'] {
+        width: 14rem;
+    }
+
+    .pvtFilterBox .count {
+        color: var(--vaadin-text-color-secondary);
+        font-weight: var(--jmix-pivot-table-font-weight-normal, 400);
+        margin-left: var(--vaadin-padding-xs);
+    }
+
+    .pvtCheckContainer {
+        text-align: left;
+        font-size: var(--vaadin-padding-m);
+        white-space: nowrap;
+        overflow-y: scroll;
+        width: 100%;
+        max-height: 16rem;
+        border-top: 1px solid var(--vaadin-border-color);
+        border-bottom: 1px solid var(--vaadin-border-color);
+    }
+
+    .pvtCheckContainer p {
+        margin: var(--vaadin-padding-xs);
+    }
+
+    .pvtRendererArea {
+        padding: 0px;
+    }
+
+    select {
+        appearance: none;
+        -webkit-appearance: none;
+        border-color: transparent;
+        box-sizing: border-box;
+
+        padding: var(--vaadin-padding-block-container) var(--vaadin-padding-xl) var(--vaadin-padding-block-container) var(--vaadin-padding-inline-container);
+
+        border: var(--vaadin-input-field-border-width, 1px) solid var(--vaadin-input-field-border-color, var(--vaadin-border-color));
+        --_radius: var(--vaadin-input-field-border-radius, var(--vaadin-radius-m));
+        border-radius:
+            /* See https://developer.mozilla.org/en-US/docs/Web/CSS/border-radius */
+                var(--vaadin-input-field-top-start-radius, var(--_radius))
+                var(--vaadin-input-field-top-end-radius, var(--_radius))
+                var(--vaadin-input-field-bottom-end-radius, var(--_radius))
+                var(--vaadin-input-field-bottom-start-radius, var(--_radius));
+        background: var(--vaadin-input-field-background, var(--vaadin-background-color));
+        color: var(--vaadin-input-field-value-color, var(--vaadin-text-color));
+
+        font-size: var(--vaadin-input-field-value-font-size, inherit);
+        font-family: var(--aura-font-family);
+        line-height: var(--vaadin-input-field-value-line-height, inherit);
+        font-weight: var(--vaadin-input-field-value-font-weight, 400);
+
+        background-image: url('data:image/svg+xml;utf8,<svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6.780692 9.39493c-.43905-.393718-1.11414-.356968-1.507858.082082-.393716.43905-.356966 1.114141.082084 1.507858l5.864118 5.381134c.405651.363767 1.020124.363767 1.425775 0l6.000272-5.503229c.43905-.393717.4758-1.068807.082083-1.507857-.393717-.43905-1.068808-.4758-1.507858-.082083l-5.287384 4.863949-5.151232-4.741855z" opacity="0.5"/></svg>');
+        background-position: center right;
+        background-repeat: no-repeat;
+    }
+
+    select:focus-within {
+        outline: var(--vaadin-focus-ring-width) solid var(--vaadin-focus-ring-color);
+        outline-offset: calc(var(--vaadin-input-field-border-width, 1px) * -1);
+    }
+
+    select:hover {
+        background-color: var(--vaadin-background-container);
+        background-image: url('data:image/svg+xml;utf8,<svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6.780692 9.39493c-.43905-.393718-1.11414-.356968-1.507858.082082-.393716.43905-.356966 1.114141.082084 1.507858l5.864118 5.381134c.405651.363767 1.020124.363767 1.425775 0l6.000272-5.503229c.43905-.393717.4758-1.068807.082083-1.507857-.393717-.43905-1.068808-.4758-1.507858-.082083l-5.287384 4.863949-5.151232-4.741855z" opacity="0.7"/></svg>');
+    }
+
+    select:focus {
+        outline: var(--vaadin-focus-ring-width) solid var(--vaadin-focus-ring-color);
+    }
+
+    .pvtAttrDropdown {
+        margin-top: var(--vaadin-padding-xs);
+    }
+
+    th {
+        background-color: var(--vaadin-background-container);
+    }
+
+    .pvtAttr {
+        border: 1px solid var(--vaadin-border-color);
+        background-color: var(--vaadin-background-container);
+        border-radius: var(--vaadin-radius-m);
+        padding: var(--vaadin-padding-xs) var(--vaadin-padding-s) !important;
+        font-size: var(--aura-font-size-s) ;
+        font-weight: var(--jmix-pivot-table-font-weight-bold, 500);
+        font-family: var(--aura-font-family);
+        color: var(--aura-accent-text-color);
+    }
+
+    .pvtTriangle {
+        width: 0px;
+        visibility: hidden;
+    }
+
+    .pvtTriangle::after {
+        font-family: 'Vaadin-Icons';
+        color: var(--aura-accent-text-color);
+        content: '\e7bc';
+        width: 0.3em;
+        height: 0.3em;
+        position: relative;
+        visibility: visible;
+    }
+
+    .pvtFilteredAttribute {
+        font-style: italic;
+    }
+
+    .pvtFilterBox button {
+        appearance: none;
+        -webkit-appearance: none;
+        background: var(--aura-accent-color);
+        border: 1px solid var(--vaadin-border-color);
+        border-radius: var(--vaadin-radius-m);
+        padding: var(--vaadin-padding-xs) var(--vaadin-padding-s);
+        color: var(--aura-accent-contrast-color);
+        font-size: var(--aura-font-size-m);
+        font-weight: var(--jmix-pivot-table-font-normal, 400);
+        font-family: var(--aura-font-family);
+    }
+
+    .pvtFilterBox button:first-child {
+        margin-right: var(--vaadin-padding-s);
+        font-family: var(--aura-font-family);
+        font-weight: var(--jmix-pivot-table-font-weight-bold, 500);
+        border-color: var(--aura-accent-color);
+        outline-offset: 4px;
+    }
+
+    .pvtFilterBox button:first-child::before {
+        font-family: 'Vaadin-Icons';
+        content: '\e75B';
+        font-weight: var(--jmix-pivot-table-font-normal, 400);
+        padding: 0.25em;
+    }
+
+    .pvtFilterBox button:last-child {
+        background: var(--vaadin-background-container);
+        color: var(--aura-accent-text-color);
+        font-family: var(--aura-font-family);
+        font-weight: var(--jmix-pivot-table-font-weight-bold, 500);
+    }
+
+    .pvtFilterBox button:last-child::before {
+        font-family: 'Vaadin-Icons';
+        content: '\e6f7';
+        font-weight: var(--jmix-pivot-table-font-normal, 400);
+        padding: 0.25em;
+    }
+
+    .pvtFilterBox {
+        box-shadow: var(--aura-shadow-m);
+        border-radius: var(--vaadin-radius-m);
+        background-color: var(--vaadin-background-color);
+    }
+
+    .pvtSearch {
+        appearance: none;
+        -webkit-appearance: none;
+        background-color: var(--vaadin-background-container);
+        border-radius: var(--vaadin-radius-m);
+        border-color: transparent;
+        padding: var(--vaadin-padding-xs) var(--vaadin-padding-xl) var(--vaadin-padding-xs) var(--vaadin-padding-s);
+        box-sizing: border-box;
+        color: var(--vaadin-text-color);
+        font-size: var(--aura-font-size-m);
+        font-weight: var(--jmix-pivot-table-font-weight-bold, 500);
+        font-family: var(--aura-font-family);
+        border: 1px solid transparent;
+    }
+
+    .pvtSearch {
+        margin-bottom: var(--vaadin-padding-s);
+    }
+
+    .pvtSearch:hover {
+        background-color: var(--vaadin-background-container);
+    }
+
+    .pvtSearch:focus {
+        box-shadow: 0 0 0 2px var(--aura-accent-color-50pct);
+        outline: none;
+    }
+
+    th, td {
+        font-weight: var(--jmix-pivot-table-font-weight-normal, 400);
+    }
+
+    td .pvtTotal {
+        font-weight: var(--jmix-pivot-table-font-weight-bold, 500);
+    }
+
+    td .pvtGrandTotal {
+        font-weight: var(--jmix-pivot-table-font-weight-extra-bold, 700);
+    }
+
+    select.pvtAttrDropdown {
+        margin-right: var(--vaadin-padding-xs);
+    }
+
+    /* Set transparent color to avoid blinking of row and column order original symbol  */
+    a.pvtRowOrder, a.pvtColOrder {
+        color: #FFFFFF00;
+    }
+
+    a.pvtRowOrder::before, a.pvtColOrder::before {
+        font-family: 'Vaadin-Icons';
+        color: var(--aura-accent-text-color);
+    }
+
+    a.pvtRowOrder.key-a-to-z::before {
+        content: '\e754';
+    }
+
+    a.pvtRowOrder.value-a-to-z::before {
+        content: '\e74e';
+    }
+
+    a.pvtRowOrder.value-z-to-a::before {
+        content: '\e753';
+    }
+
+    a.pvtColOrder.key-a-to-z::before {
+        content: '\e751';
+    }
+
+    a.pvtColOrder.value-a-to-z::before {
+        content: '\e752';
+    }
+
+    a.pvtColOrder.value-z-to-a::before {
+        content: '\e74f';
+    }
+
+    a.pvtRowOrder.disabled, a.pvtColOrder.disabled {
+        cursor: default;
+
+    }
+
+    a.pvtRowOrder.disabled::before, a.pvtColOrder.disabled::before {
+        color: var(--vaadin-text-color-disabled);
+    }
+
+    .pvtRenderer {
+        min-width: 7em;
+        width: 100%;
+    }
+
+    span.pvtAttr.disabled .pvtTriangle {
+        display: none;
+    }
+
+    span.pvtAttr.disabled {
+        color: var(--vaadin-text-color-disabled);
+        cursor: default;
+    }
+
+    li.ui-sortable-handle.disabled {
+        cursor:default;
+    }
+}

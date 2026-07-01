@@ -22,8 +22,13 @@ import io.jmix.data.impl.jpql.QueryParserAstBased;
 import io.jmix.data.impl.jpql.model.EntityBuilder;
 import io.jmix.data.impl.jpql.model.JpqlEntityModel;
 import io.jmix.data.impl.jpql.transform.QueryTransformerAstBased;
+import io.jmix.data.QueryParser.QueryPath;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -417,6 +422,59 @@ public class QueryParserAstBasedTest {
     }
 
     @Test
+    public void testSqlFunctionInWhereCondition() {
+        DomainModel model = prepareDomainModel();
+        QueryTransformerAstBased transformer = new QueryTransformerAstBased(model,
+                "select c from sec_Constraint c");
+
+        transformer.addWhere("sql('exists (select 1 from DYN_CONSTRAINT dc where dc.DYNMOD_ID = ? and dc.NAME = ?)', " +
+                "{E}.group.createdBy, :name)");
+
+        String query = transformer.getResult();
+        assertTrue(query.toLowerCase().contains("sql("));
+
+        QueryParserAstBased parser = new QueryParserAstBased(model, query);
+        assertTrue(parser.getParamNames().contains("name"));
+    }
+
+    @Test
+    public void testSqlFunctionInOrderByExpression() {
+        DomainModel model = prepareDomainModel();
+        QueryTransformerAstBased transformer = new QueryTransformerAstBased(model,
+                "select c from sec_Constraint c");
+
+        Map<String, io.jmix.core.Sort.Direction> sortExpressions = new LinkedHashMap<>();
+        sortExpressions.put("sql('(select min(dc.NAME) from DYN_CONSTRAINT dc where dc.DYNMOD_ID = ?)', {E}.group.createdBy)",
+                io.jmix.core.Sort.Direction.ASC);
+        transformer.replaceOrderByExpressions(sortExpressions);
+
+        String query = transformer.getResult();
+        assertTrue(query.toLowerCase().contains("order by"));
+        assertTrue(query.toLowerCase().contains("sql("));
+
+        QueryParserAstBased parser = new QueryParserAstBased(model, query);
+        assertEquals("sec_Constraint", parser.getEntityName());
+    }
+
+    @Test
+    public void testSqlFunctionSurvivesCountTransformation() {
+        DomainModel model = prepareDomainModel();
+        QueryTransformerAstBased transformer = new QueryTransformerAstBased(model,
+                "select c from sec_Constraint c " +
+                        "where sql('exists (select 1 from DYN_CONSTRAINT dc where dc.DYNMOD_ID = ?)', c.group.createdBy) " +
+                        "order by sql('(select min(dc.NAME) from DYN_CONSTRAINT dc where dc.DYNMOD_ID = ?)', c.group.createdBy)");
+
+        transformer.replaceWithCount();
+        transformer.removeOrderBy();
+
+        String countQuery = transformer.getResult();
+        assertTrue(countQuery.toLowerCase().contains("sql("));
+
+        QueryParserAstBased parser = new QueryParserAstBased(model, countQuery);
+        assertEquals("sec_Constraint", parser.getEntityName());
+    }
+
+    @Test
     public void testSameAliasSeveralTimes() {
         DomainModel model = prepareDomainModel();
         QueryParserAstBased parser = new QueryParserAstBased(model,
@@ -439,6 +497,51 @@ public class QueryParserAstBasedTest {
         parser = new QueryParserAstBased(model,
                 "select h from sec_GroupHierarchy h where exists(select c from h.constraints c)");
         parser.getEntityAlias();
+    }
+
+    @Test
+    void testGetQueryPaths() {
+        EntityBuilder builder = EntityBuilder.create();
+        builder.startNewEntity("Product");
+        builder.addStringAttribute("name");
+        builder.addSingleValueAttribute(Collection.class, "tags");
+        JpqlEntityModel productEntity = builder.produce();
+
+        DomainModel model = new DomainModel(productEntity);
+        QueryParserAstBased parser = new QueryParserAstBased(model,
+                "select p.name, t from Product p join p.tags t"
+        );
+
+        List<QueryPath> queryPaths = parser.getQueryPaths();
+        assertEquals(3, queryPaths.size());
+
+        QueryPath selectedPath = queryPaths.stream()
+                .filter(QueryPath::isSelectedPath)
+                .filter(path -> "p.name".equals(path.getFullPath()))
+                .findFirst()
+                .orElseThrow();
+        assertEquals("Product", selectedPath.getEntityName());
+        assertEquals("p", selectedPath.getVariableName());
+        assertEquals("p.name", selectedPath.getFullPath());
+        assertEquals("name", selectedPath.getPropertyPath());
+
+        QueryPath selectedElementCollection = queryPaths.stream()
+                .filter(QueryPath::isSelectedPath)
+                .filter(path -> "p.tags".equals(path.getFullPath()))
+                .findFirst()
+                .orElseThrow();
+        assertEquals("Product", selectedElementCollection.getEntityName());
+        assertEquals("p", selectedElementCollection.getVariableName());
+        assertEquals("tags", selectedElementCollection.getPropertyPath());
+
+        QueryPath joinPath = queryPaths.stream()
+                .filter(path -> !path.isSelectedPath())
+                .filter(path -> "p.tags".equals(path.getFullPath()))
+                .findFirst()
+                .orElseThrow();
+        assertEquals("Product", joinPath.getEntityName());
+        assertEquals("p", joinPath.getVariableName());
+        assertEquals("tags", joinPath.getPropertyPath());
     }
 
     private DomainModel prepareDomainModel() {

@@ -28,7 +28,7 @@ import io.jmix.flowuidata.dateinterval.component.RelativeDateIntervalField;
 import io.jmix.flowuidata.dateinterval.model.CustomDateInterval;
 import io.jmix.flowuidata.dateinterval.model.RelativeDateInterval;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;

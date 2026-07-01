@@ -22,7 +22,8 @@ import com.vaadin.flow.component.grid.editor.Editor;
 import io.jmix.flowui.component.SupportsStatusChangeHandler;
 import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.data.ValueSource;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -36,6 +37,7 @@ import java.util.function.Function;
  *
  * @param <T> the type of the row/item being edited
  */
+@NullMarked
 public interface DataGridEditor<T> extends Editor<T> {
 
     @Nullable
@@ -123,4 +125,27 @@ public interface DataGridEditor<T> extends Editor<T> {
      * @see #setBuffered(boolean)
      */
     void setValidationErrorsHandler(@Nullable Consumer<ValidationErrors> validationErrorsHandler);
+
+    /**
+     * Sets a callback function that is applied to configure edit components used in the editor.
+     * This method can be used to customize the behavior or attributes of the components.
+     *
+     * @param editComponentConfigurer a callback function that accepts a {@link ComponentConfigurerContext}
+     *                                instance and applies desired configurations to a corresponding component.
+     *                                Can be {@code null} to remove.
+     */
+    void setEditComponentConfigurer(@Nullable Consumer<ComponentConfigurerContext<T>> editComponentConfigurer);
+
+    /**
+     * Represents the context used for configuring an editor component associated with a specific
+     * property of a grid item. This class serves as a container for carrying information needed
+     * during the configuration of an editor component.
+     *
+     * @param <T>           the type of the grid item being edited
+     * @param item          the item being edited in the grid
+     * @param property      the property of the item that the editor component is bound to
+     * @param editComponent the editor component associated with the specified property
+     */
+    record ComponentConfigurerContext<T>(T item, String property, Component editComponent) {
+    }
 }

@@ -15,7 +15,7 @@
  */
 
 plugins {
-    id 'com.github.johnrengelman.shadow' version '8.1.1'
+    id 'com.gradleup.shadow' version '9.4.2'
 }
 
 apply plugin: 'java'
@@ -24,15 +24,21 @@ apply plugin: 'io.jmix'
 apply plugin: 'maven-publish'
 
 group = 'io.jmix.flowui'
-archivesBaseName = 'jmix-flowui-devserver'
+base {
+    archivesName = 'jmix-flowui-devserver'
+}
 
 dependencies {
     api(project(':flowui-kit')) {
         exclude group: 'com.vaadin', module: 'copilot'
     }
 
-    api("org.eclipse.jetty.ee10:jetty-ee10-webapp")
-    api("org.eclipse.jetty.ee10.websocket:jetty-ee10-websocket-jakarta-server")
+    api('com.vaadin:vaadin-dev') {
+        exclude group: 'com.vaadin', module: 'copilot'
+    }
+
+    api('org.eclipse.jetty.ee11:jetty-ee11-webapp')
+    api('org.eclipse.jetty.ee11.websocket:jetty-ee11-websocket-jakarta-server')
     api('jakarta.servlet:jakarta.servlet-api')
     api('commons-logging:commons-logging:1.2')
     api('org.slf4j:slf4j-nop:2.0.7')
@@ -40,6 +46,17 @@ dependencies {
 
 shadowJar {
     dependsOn(jar)
-    mergeServiceFiles()
+
+    // Shadow 9.x defaults duplicatesStrategy to EXCLUDE, which drops duplicate
+    // META-INF/services files before mergeServiceFiles() can concatenate them.
+    // Use INCLUDE so service files are merged, then EXCLUDE duplicates of everything else.
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+
+    mergeServiceFiles('META-INF/services')
+
+    filesNotMatching('META-INF/services/**') {
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    }
+
     archiveClassifier.set("")
 }

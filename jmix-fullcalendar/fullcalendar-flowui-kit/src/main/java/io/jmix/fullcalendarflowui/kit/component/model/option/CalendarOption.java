@@ -18,7 +18,7 @@ package io.jmix.fullcalendarflowui.kit.component.model.option;
 
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.event.EventBus;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.io.Serializable;
 import java.util.EventObject;

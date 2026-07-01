@@ -18,7 +18,9 @@ apply plugin: 'groovy'
 apply plugin: 'io.jmix'
 
 group = 'io.jmix.reports'
-archivesBaseName = 'jmix-reports-flowui'
+base {
+    archivesName = 'jmix-reports-flowui'
+}
 
 dependencies {
     api project(':reports')
@@ -32,6 +34,7 @@ dependencies {
     testImplementation 'ch.qos.logback:logback-classic'
     testImplementation 'org.assertj:assertj-core'
     testImplementation project(':flowui-test-assist')
+    testImplementation project(':framework-test-support')
     testImplementation 'org.liquibase:liquibase-core'
     testImplementation project(':security-data')
 

@@ -15,8 +15,6 @@
  */
 
 @Internal
-@NonNullApi
 package io.jmix.flowui.facet.dataloadcoordinator;
 
 import io.jmix.core.annotation.Internal;
-import org.springframework.lang.NonNullApi;

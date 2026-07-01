@@ -18,13 +18,15 @@ package io.jmix.flowui.component;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEvent;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import java.util.function.Consumer;
 
 /**
  * A component that supports Enter key handling.
  */
+@NullMarked
 public interface SupportsEnterPress<C extends Component> {
 
     /**

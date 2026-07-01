@@ -17,7 +17,7 @@
 package io.jmix.fullcalendarflowui.component.data;
 
 import io.jmix.fullcalendarflowui.kit.component.model.HasEnumId;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Describes possible data operations in data providers.

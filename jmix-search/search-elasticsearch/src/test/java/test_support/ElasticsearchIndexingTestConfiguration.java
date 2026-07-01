@@ -19,7 +19,8 @@ package test_support;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.json.jackson.JacksonJsonpMapper;
-import co.elastic.clients.transport.rest_client.RestClientTransport;
+import co.elastic.clients.transport.rest5_client.Rest5ClientTransport;
+import co.elastic.clients.transport.rest5_client.low_level.Rest5Client;
 import io.jmix.core.DataManager;
 import io.jmix.core.Metadata;
 import io.jmix.core.annotation.JmixModule;
@@ -27,23 +28,22 @@ import io.jmix.core.annotation.MessageSourceBasenames;
 import io.jmix.search.SearchProperties;
 import io.jmix.search.index.EntityIndexer;
 import io.jmix.search.index.impl.IndexStateRegistry;
-import liquibase.integration.spring.SpringLiquibase;
-import org.apache.http.HttpHost;
-import org.elasticsearch.client.RestClient;
+import io.jmix.testsupport.config.LiquibaseTestConfiguration;
+import org.apache.hc.core5.http.HttpHost;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.annotation.*;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
-import javax.sql.DataSource;
+import java.net.URISyntaxException;
 
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.mock;
 
 @Configuration
 @JmixModule
-@Import({BaseSearchTestConfiguration.class})
+@Import({BaseSearchTestConfiguration.class, LiquibaseTestConfiguration.class})
 @PropertySource("classpath:/test_support/test-entity-indexing-app.properties")
 @EnableWebSecurity
 @MessageSourceBasenames({"test_support/messages"})
@@ -55,14 +55,6 @@ public class ElasticsearchIndexingTestConfiguration {
     @Bean
     public TestAutoDetectableIndexDefinitionScope testAutoDetectableIndexDefinitionScope() {
         return TestAutoDetectableIndexDefinitionScope.builder().packages("test_support.indexing").build();
-    }
-
-    @Bean
-    public SpringLiquibase liquibase(DataSource dataSource) {
-        SpringLiquibase liquibase = new SpringLiquibase();
-        liquibase.setDataSource(dataSource);
-        liquibase.setChangeLog("test_support/liquibase/changelog.xml");
-        return liquibase;
     }
 
     @Bean
@@ -92,9 +84,16 @@ public class ElasticsearchIndexingTestConfiguration {
     @Bean
     public ElasticsearchClient testElasticsearchClient(SearchProperties searchProperties) {
         String url = searchProperties.getServerUrl();
-        RestClient restClient = RestClient.builder(HttpHost.create(url)).build();
+        HttpHost httpHost;
+        try {
+            httpHost = HttpHost.create(url);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException("Invalid Elasticsearch URL: " + url, e);
+        }
 
-        RestClientTransport transport = new RestClientTransport(restClient, new JacksonJsonpMapper());
+        Rest5Client restClient = Rest5Client.builder(httpHost).build();
+
+        Rest5ClientTransport transport = new Rest5ClientTransport(restClient, new JacksonJsonpMapper());
         return new ElasticsearchClient(transport);
     }
 
@@ -110,4 +109,3 @@ public class ElasticsearchIndexingTestConfiguration {
         return new TestNoopDynAttrMetadata();
     }
 }
-

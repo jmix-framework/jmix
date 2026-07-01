@@ -15,7 +15,9 @@
  */
 
 group 'io.jmix.flowui'
-archivesBaseName = 'jmix-flowui-restds-starter'
+base {
+    archivesName = 'jmix-flowui-restds-starter'
+}
 
 dependencies {
     api project(':flowui-restds')

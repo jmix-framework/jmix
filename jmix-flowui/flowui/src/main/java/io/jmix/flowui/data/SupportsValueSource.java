@@ -16,7 +16,8 @@
 
 package io.jmix.flowui.data;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Interface defining a component or object that can be associated with a {@link ValueSource}.
@@ -24,6 +25,7 @@ import org.springframework.lang.Nullable;
  *
  * @param <V> the type of the value managed by the value source
  */
+@NullMarked
 public interface SupportsValueSource<V> {
 
     /**

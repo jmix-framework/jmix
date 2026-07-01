@@ -22,6 +22,7 @@ import io.jmix.flowui.view.DialogWindow.AfterCloseEvent;
 import io.jmix.flowui.view.DialogWindow.AfterOpenEvent;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewController;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -31,6 +32,7 @@ import java.util.function.Consumer;
  *
  * @param <V> a view type which is opened in a dialog window
  */
+@NullMarked
 public interface DialogWindowBuilder<V extends View<?>> {
 
     /**

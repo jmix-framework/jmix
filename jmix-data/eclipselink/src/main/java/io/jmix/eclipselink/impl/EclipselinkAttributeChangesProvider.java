@@ -28,7 +28,7 @@ import org.eclipse.persistence.internal.descriptors.changetracking.AttributeChan
 import org.eclipse.persistence.sessions.changesets.AggregateChangeRecord;
 import org.eclipse.persistence.sessions.changesets.ChangeRecord;
 import org.eclipse.persistence.sessions.changesets.ObjectChangeSet;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 import jakarta.persistence.EntityManager;

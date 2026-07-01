@@ -16,13 +16,19 @@
 
 package io.jmix.reports.yarg.util.converter;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
 /**
  * Converts parameters from string to object and from object to string
  */
+@NullMarked
 public interface ObjectToStringConverter {
 
+    @Nullable
     String convertToString(Class parameterClass, Object paramValue);
 
+    @Nullable
     Object convertFromString(Class parameterClass, String paramValueStr);
 
 }

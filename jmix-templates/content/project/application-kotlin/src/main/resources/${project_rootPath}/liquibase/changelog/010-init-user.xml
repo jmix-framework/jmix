@@ -3,7 +3,8 @@
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
-                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd"
+        logicalFilePath="${project_rootPath}/liquibase/changelog/010-init-user.xml">
 
     <!-- DO NOT REMOVE. This changelog is required for user management. -->
 
@@ -25,6 +26,7 @@
             <column name="EMAIL" type="varchar(255)"/>
             <column name="ACTIVE" type="boolean"/>
             <column name="TIME_ZONE_ID" type="VARCHAR(255)"/>
+            <column name="PASSWORD_CHANGE_REQUIRED" type="boolean"/>
         </createTable>
 
     </changeSet>

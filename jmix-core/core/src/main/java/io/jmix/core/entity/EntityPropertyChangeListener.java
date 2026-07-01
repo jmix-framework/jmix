@@ -16,10 +16,13 @@
 
 package io.jmix.core.entity;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Interface to track changes in data model objects.
  */
 @FunctionalInterface
+@NullMarked
 public interface EntityPropertyChangeListener {
     /**
      * Called when value of instance property changed.

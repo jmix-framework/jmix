@@ -18,6 +18,9 @@ package io.jmix.core.datastore;
 
 import io.jmix.core.DataStore;
 
+import org.jspecify.annotations.NullMarked;
+
+@NullMarked
 public interface DataStoreCustomizer {
     void customize(DataStore dataStore);
 }

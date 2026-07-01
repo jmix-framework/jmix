@@ -18,6 +18,8 @@ package io.jmix.reports.yarg.reporting.extraction;
 
 import io.jmix.reports.yarg.structure.BandData;
 import io.jmix.reports.yarg.structure.ReportBand;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Map;
 
@@ -26,6 +28,7 @@ import java.util.Map;
  *
  * <p>The default implementation is <b>io.jmix.reports.yarg.reporting.extraction.ExtractionContextImpl</b></p>
  */
+@NullMarked
 public interface ExtractionContext {
     /**
      * @return boolean flag that controller should create empty data row if no report query data presented
@@ -40,6 +43,7 @@ public interface ExtractionContext {
     /**
      * @return parent report band loaded data
      */
+    @Nullable
     BandData getParentBandData();
 
     /**

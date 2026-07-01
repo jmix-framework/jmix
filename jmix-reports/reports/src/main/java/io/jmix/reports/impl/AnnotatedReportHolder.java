@@ -17,13 +17,15 @@
 package io.jmix.reports.impl;
 
 import io.jmix.reports.entity.Report;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 
 /**
  * Bean that holds report definitions parsed from annotated classes.
  */
+@NullMarked
 public interface AnnotatedReportHolder {
 
     Collection<Report> getAllReports();

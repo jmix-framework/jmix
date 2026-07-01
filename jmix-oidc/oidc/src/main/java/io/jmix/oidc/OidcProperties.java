@@ -1,7 +1,26 @@
+/*
+ * Copyright 2026 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.jmix.oidc;
 
+import org.apache.commons.collections4.ListUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
+
+import java.util.List;
 
 @ConfigurationProperties(prefix = "jmix.oidc")
 public class OidcProperties {
@@ -26,16 +45,23 @@ public class OidcProperties {
      */
     JwtAuthenticationConverterConfig jwtAuthenticationConverter;
 
+    /**
+     * Set of properties to configure Security filter chains
+     */
+    FilterChain filterChain;
+
     public OidcProperties(
             @DefaultValue("true") boolean useDefaultConfiguration,
             @DefaultValue("{baseUrl}") String postLogoutRedirectUri,
             @DefaultValue DefaultClaimsRolesMapperConfig defaultClaimsRolesMapper,
-            @DefaultValue JwtAuthenticationConverterConfig jwtAuthenticationConverter
+            @DefaultValue JwtAuthenticationConverterConfig jwtAuthenticationConverter,
+            @DefaultValue FilterChain filterChain
     ) {
         this.useDefaultConfiguration = useDefaultConfiguration;
         this.postLogoutRedirectUri = postLogoutRedirectUri;
         this.defaultClaimsRolesMapper = defaultClaimsRolesMapper;
         this.jwtAuthenticationConverter = jwtAuthenticationConverter;
+        this.filterChain = filterChain;
     }
 
     public boolean isUseDefaultConfiguration() {
@@ -52,6 +78,10 @@ public class OidcProperties {
 
     public JwtAuthenticationConverterConfig getJwtAuthenticationConverter() {
         return jwtAuthenticationConverter;
+    }
+
+    public FilterChain getFilterChain() {
+        return filterChain;
     }
 
     public static class DefaultClaimsRolesMapperConfig {
@@ -107,6 +137,73 @@ public class OidcProperties {
 
         public String getUsernameClaim() {
             return usernameClaim;
+        }
+    }
+
+    public static class FilterChain {
+
+        /**
+         * Whether the forced API scope is enabled for Security filter chains provided via {@link #apiScopeSecurityFilterChainNames}.
+         */
+        boolean forceApiScopeEnabled;
+
+        /**
+         * Whether the forced UI scope is enabled for Security filter chains provided via {@link #uiScopeSecurityFilterChainNames}.
+         */
+        boolean forceUiScopeEnabled;
+
+        /**
+         * Represents a list of security filter chain names which should be customized
+         * by {@link io.jmix.oidc.filter.OidcResourceServerSecurityFilterChainCustomizer}.
+         *
+         * @see #forceApiScopeEnabled
+         */
+        List<String> apiScopeSecurityFilterChainNames;
+
+        /**
+         * Represents a list of security filter chain names which should be customized
+         * by {@link io.jmix.oidc.filter.OidcVaadinSecurityFilterChainCustomizer}.
+         *
+         * @see #forceUiScopeEnabled
+         */
+        List<String> uiScopeSecurityFilterChainNames;
+
+        public FilterChain(@DefaultValue("true") boolean forceApiScopeEnabled,
+                           @DefaultValue("true") boolean forceUiScopeEnabled,
+                           List<String> apiScopeSecurityFilterChainNames,
+                           List<String> uiScopeSecurityFilterChainNames) {
+            this.forceApiScopeEnabled = forceApiScopeEnabled;
+            this.apiScopeSecurityFilterChainNames = ListUtils.emptyIfNull(apiScopeSecurityFilterChainNames);
+            this.forceUiScopeEnabled = forceUiScopeEnabled;
+            this.uiScopeSecurityFilterChainNames = ListUtils.emptyIfNull(uiScopeSecurityFilterChainNames);
+        }
+
+        /**
+         * @see #forceApiScopeEnabled
+         */
+        public boolean isForceApiScopeEnabled() {
+            return forceApiScopeEnabled;
+        }
+
+        /**
+         * @see #forceUiScopeEnabled
+         */
+        public boolean isForceUiScopeEnabled() {
+            return forceUiScopeEnabled;
+        }
+
+        /**
+         * @see #apiScopeSecurityFilterChainNames
+         */
+        public List<String> getApiScopeSecurityFilterChainNames() {
+            return apiScopeSecurityFilterChainNames;
+        }
+
+        /**
+         * @see #uiScopeSecurityFilterChainNames
+         */
+        public List<String> getUiScopeSecurityFilterChainNames() {
+            return uiScopeSecurityFilterChainNames;
         }
     }
 }

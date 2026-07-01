@@ -17,13 +17,15 @@
 package io.jmix.flowui.data;
 
 import com.vaadin.flow.data.provider.DataProvider;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Defines a contract for components that support the use of a {@link DataProvider} to manage and provide their data.
  *
  * @param <V> the type of item provided by the {@link DataProvider}
  */
+@NullMarked
 public interface SupportsDataProvider<V> {
 
     /**

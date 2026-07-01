@@ -15,7 +15,9 @@
  */
 
 group = 'io.jmix.multitenancy'
-archivesBaseName = 'jmix-multitenancy-starter'
+base {
+    archivesName = 'jmix-multitenancy-starter'
+}
 
 dependencies {
     api project(':multitenancy')

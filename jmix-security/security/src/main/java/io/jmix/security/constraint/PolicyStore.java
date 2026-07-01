@@ -22,9 +22,12 @@ import io.jmix.security.model.RowLevelPolicy;
 
 import java.util.stream.Stream;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Provides all security policies of the current user.
  */
+@NullMarked
 public interface PolicyStore {
 
     Stream<RowLevelPolicy> getRowLevelPolicies(MetaClass entityClass);

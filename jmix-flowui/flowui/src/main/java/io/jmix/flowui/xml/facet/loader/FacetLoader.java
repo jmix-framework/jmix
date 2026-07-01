@@ -19,6 +19,7 @@ package io.jmix.flowui.xml.facet.loader;
 import io.jmix.flowui.facet.Facet;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import org.dom4j.Element;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -26,6 +27,7 @@ import org.springframework.context.ApplicationContext;
  *
  * @param <F> the type of facet being loaded
  */
+@NullMarked
 public interface FacetLoader<F extends Facet> {
 
     /**

@@ -18,11 +18,13 @@ package io.jmix.flowui.facet;
 
 import io.jmix.flowui.facet.settings.ViewSettings;
 import io.jmix.flowui.view.View;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Marker interface representing a facet that manages {@link ViewSettings}.
  * Provides functionality for retrieving and storing configuration settings
  * associated with a {@link View}.
  */
+@NullMarked
 public interface ViewSettingsFacet extends SettingsFacet<ViewSettings> {
 }

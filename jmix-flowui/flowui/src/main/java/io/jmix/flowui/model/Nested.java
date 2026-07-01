@@ -16,9 +16,12 @@
 
 package io.jmix.flowui.model;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Interface to be implemented by containers that work with entities that are properties of other entities.
  */
+@NullMarked
 public interface Nested {
 
     /**

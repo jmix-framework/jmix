@@ -21,7 +21,7 @@ import io.jmix.chartsflowui.kit.component.model.HasAlign;
 import io.jmix.chartsflowui.kit.component.model.HasEnumId;
 import io.jmix.chartsflowui.kit.component.model.shared.*;
 import io.jmix.chartsflowui.kit.component.model.shared.AbstractTooltip.Position.ItemTriggerPosition;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The base class for any series.
@@ -123,6 +123,7 @@ public abstract class AbstractSeries<T extends AbstractSeries<T>> extends ChartO
             }
         }
 
+        @Nullable
         public Boolean getHideOverlap() {
             return hideOverlap;
         }
@@ -132,6 +133,7 @@ public abstract class AbstractSeries<T extends AbstractSeries<T>> extends ChartO
             markAsDirty();
         }
 
+        @Nullable
         public MoveOverlapPosition getMoveOverlap() {
             return moveOverlap;
         }
@@ -141,6 +143,7 @@ public abstract class AbstractSeries<T extends AbstractSeries<T>> extends ChartO
             markAsDirty();
         }
 
+        @Nullable
         public String getX() {
             return x;
         }
@@ -150,6 +153,7 @@ public abstract class AbstractSeries<T extends AbstractSeries<T>> extends ChartO
             markAsDirty();
         }
 
+        @Nullable
         public String getY() {
             return y;
         }
@@ -159,6 +163,7 @@ public abstract class AbstractSeries<T extends AbstractSeries<T>> extends ChartO
             markAsDirty();
         }
 
+        @Nullable
         public Integer getDx() {
             return dx;
         }
@@ -168,6 +173,7 @@ public abstract class AbstractSeries<T extends AbstractSeries<T>> extends ChartO
             markAsDirty();
         }
 
+        @Nullable
         public Integer getDy() {
             return dy;
         }
@@ -177,6 +183,7 @@ public abstract class AbstractSeries<T extends AbstractSeries<T>> extends ChartO
             markAsDirty();
         }
 
+        @Nullable
         public Integer getRotate() {
             return rotate;
         }
@@ -186,6 +193,7 @@ public abstract class AbstractSeries<T extends AbstractSeries<T>> extends ChartO
             markAsDirty();
         }
 
+        @Nullable
         public Integer getWidth() {
             return width;
         }
@@ -195,6 +203,7 @@ public abstract class AbstractSeries<T extends AbstractSeries<T>> extends ChartO
             markAsDirty();
         }
 
+        @Nullable
         public Integer getHeight() {
             return height;
         }
@@ -204,6 +213,7 @@ public abstract class AbstractSeries<T extends AbstractSeries<T>> extends ChartO
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public Align getAlign() {
             return align;
@@ -215,6 +225,7 @@ public abstract class AbstractSeries<T extends AbstractSeries<T>> extends ChartO
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public VerticalAlign getVerticalAlign() {
             return verticalAlign;
@@ -226,6 +237,7 @@ public abstract class AbstractSeries<T extends AbstractSeries<T>> extends ChartO
             markAsDirty();
         }
 
+        @Nullable
         public Integer getFontSize() {
             return fontSize;
         }
@@ -235,6 +247,7 @@ public abstract class AbstractSeries<T extends AbstractSeries<T>> extends ChartO
             markAsDirty();
         }
 
+        @Nullable
         public Boolean getDraggable() {
             return draggable;
         }
@@ -244,6 +257,7 @@ public abstract class AbstractSeries<T extends AbstractSeries<T>> extends ChartO
             markAsDirty();
         }
 
+        @Nullable
         public Integer[][] getLabelLinePoints() {
             return labelLinePoints;
         }
@@ -340,7 +354,7 @@ public abstract class AbstractSeries<T extends AbstractSeries<T>> extends ChartO
 
         protected String extraCssText;
 
-        public AbstractTooltip.Position getPosition() {
+        public AbstractTooltip.@Nullable Position getPosition() {
             return position;
         }
 
@@ -356,6 +370,7 @@ public abstract class AbstractSeries<T extends AbstractSeries<T>> extends ChartO
             markAsDirty();
         }
 
+        @Nullable
         public String getFormatter() {
             return formatter;
         }
@@ -365,6 +380,7 @@ public abstract class AbstractSeries<T extends AbstractSeries<T>> extends ChartO
             markAsDirty();
         }
 
+        @Nullable
         public JsFunction getFormatterFunction() {
             return formatterFunction;
         }
@@ -379,6 +395,7 @@ public abstract class AbstractSeries<T extends AbstractSeries<T>> extends ChartO
             markAsDirty();
         }
 
+        @Nullable
         public String getValueFormatter() {
             return valueFormatter;
         }
@@ -388,6 +405,7 @@ public abstract class AbstractSeries<T extends AbstractSeries<T>> extends ChartO
             markAsDirty();
         }
 
+        @Nullable
         public Color getBackgroundColor() {
             return backgroundColor;
         }
@@ -397,6 +415,7 @@ public abstract class AbstractSeries<T extends AbstractSeries<T>> extends ChartO
             markAsDirty();
         }
 
+        @Nullable
         public Color getBorderColor() {
             return borderColor;
         }
@@ -406,6 +425,7 @@ public abstract class AbstractSeries<T extends AbstractSeries<T>> extends ChartO
             markAsDirty();
         }
 
+        @Nullable
         public Integer getBorderWidth() {
             return borderWidth;
         }
@@ -415,6 +435,7 @@ public abstract class AbstractSeries<T extends AbstractSeries<T>> extends ChartO
             markAsDirty();
         }
 
+        @Nullable
         @Override
         public Padding getPadding() {
             return padding;
@@ -438,6 +459,7 @@ public abstract class AbstractSeries<T extends AbstractSeries<T>> extends ChartO
             markAsDirty();
         }
 
+        @Nullable
         public TextStyle getTextStyle() {
             return textStyle;
         }
@@ -451,6 +473,7 @@ public abstract class AbstractSeries<T extends AbstractSeries<T>> extends ChartO
             addChild(textStyle);
         }
 
+        @Nullable
         public String getExtraCssText() {
             return extraCssText;
         }
@@ -529,6 +552,7 @@ public abstract class AbstractSeries<T extends AbstractSeries<T>> extends ChartO
         markAsDirty();
     }
 
+    @Nullable
     public String getId() {
         return id;
     }
@@ -538,6 +562,7 @@ public abstract class AbstractSeries<T extends AbstractSeries<T>> extends ChartO
         markAsDirty();
     }
 
+    @Nullable
     public String getName() {
         return name;
     }
@@ -547,6 +572,7 @@ public abstract class AbstractSeries<T extends AbstractSeries<T>> extends ChartO
         markAsDirty();
     }
 
+    @Nullable
     public ColorBy getColorBy() {
         return colorBy;
     }
@@ -556,6 +582,7 @@ public abstract class AbstractSeries<T extends AbstractSeries<T>> extends ChartO
         markAsDirty();
     }
 
+    @Nullable
     public Label getLabel() {
         return label;
     }
@@ -569,6 +596,7 @@ public abstract class AbstractSeries<T extends AbstractSeries<T>> extends ChartO
         addChild(label);
     }
 
+    @Nullable
     public LabelLayout getLabelLayout() {
         return labelLayout;
     }
@@ -582,6 +610,7 @@ public abstract class AbstractSeries<T extends AbstractSeries<T>> extends ChartO
         addChild(labelLayout);
     }
 
+    @Nullable
     public SelectedMode getSelectedMode() {
         return selectedMode;
     }
@@ -591,6 +620,7 @@ public abstract class AbstractSeries<T extends AbstractSeries<T>> extends ChartO
         markAsDirty();
     }
 
+    @Nullable
     public String getDataGroupId() {
         return dataGroupId;
     }
@@ -600,6 +630,7 @@ public abstract class AbstractSeries<T extends AbstractSeries<T>> extends ChartO
         markAsDirty();
     }
 
+    @Nullable
     public Integer getZLevel() {
         return zLevel;
     }
@@ -609,6 +640,7 @@ public abstract class AbstractSeries<T extends AbstractSeries<T>> extends ChartO
         markAsDirty();
     }
 
+    @Nullable
     public Integer getZ() {
         return z;
     }
@@ -618,6 +650,7 @@ public abstract class AbstractSeries<T extends AbstractSeries<T>> extends ChartO
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getSilent() {
         return silent;
     }
@@ -627,6 +660,7 @@ public abstract class AbstractSeries<T extends AbstractSeries<T>> extends ChartO
         markAsDirty();
     }
 
+    @Nullable
     public Integer getAnimationDuration() {
         return animationDuration;
     }
@@ -636,6 +670,7 @@ public abstract class AbstractSeries<T extends AbstractSeries<T>> extends ChartO
         markAsDirty();
     }
 
+    @Nullable
     public String getAnimationEasing() {
         return animationEasing;
     }
@@ -645,6 +680,7 @@ public abstract class AbstractSeries<T extends AbstractSeries<T>> extends ChartO
         markAsDirty();
     }
 
+    @Nullable
     public Integer getAnimationDelay() {
         return animationDelay;
     }
@@ -654,6 +690,7 @@ public abstract class AbstractSeries<T extends AbstractSeries<T>> extends ChartO
         markAsDirty();
     }
 
+    @Nullable
     public Tooltip getTooltip() {
         return tooltip;
     }

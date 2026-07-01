@@ -26,11 +26,25 @@ public enum RichTextEditorVariant implements ThemeVariant {
     /**
      * Removes Rich Text Editor’s border.
      */
-    NO_BORDER("no-border"),
+    LUMO_NO_BORDER("no-border"),
 
     /**
      * Makes the toolbar more compact.
      */
+    LUMO_COMPACT("compact"),
+
+    /**
+     * Removes Rich Text Editor’s border.
+     * @deprecated Use {@link #LUMO_NO_BORDER} instead.
+     */
+    @Deprecated(since = "3.0", forRemoval = true)
+    NO_BORDER("no-border"),
+
+    /**
+     * Makes the toolbar more compact.
+     * @deprecated Use {@link #LUMO_COMPACT} instead.
+     */
+    @Deprecated(since = "3.0", forRemoval = true)
     COMPACT("compact");
 
     private final String variant;

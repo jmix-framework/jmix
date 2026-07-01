@@ -17,6 +17,7 @@
 package io.jmix.flowui.model.impl;
 
 import io.jmix.core.entity.EntityPropertyChangeEvent;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Interface that defines a contract for handling changes to properties of a particular item.
@@ -24,6 +25,7 @@ import io.jmix.core.entity.EntityPropertyChangeEvent;
  * Implementations of this interface allow the monitoring and reacting to changes in the properties
  * of entities, facilitating dynamic updates and maintaining consistency between state and data.
  */
+@NullMarked
 public interface ItemPropertyChangeNotifier {
 
     /**

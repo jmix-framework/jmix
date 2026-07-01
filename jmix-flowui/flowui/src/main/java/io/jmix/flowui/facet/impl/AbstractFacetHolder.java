@@ -20,7 +20,7 @@ import com.vaadin.flow.component.Composite;
 import io.jmix.flowui.component.HasFacets;
 import io.jmix.flowui.facet.Facet;
 import io.jmix.flowui.facet.FacetOwner;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.Set;

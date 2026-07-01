@@ -18,6 +18,7 @@ package io.jmix.masquerade.component;
 
 import io.jmix.masquerade.sys.ByLocator;
 import io.jmix.masquerade.sys.Composite;
+import org.jspecify.annotations.NullMarked;
 
 import static com.codeborne.selenide.Selenide.$;
 import static io.jmix.masquerade.JConditions.ENABLED;
@@ -31,6 +32,7 @@ import static io.jmix.masquerade.Masquerade.$j;
  *
  * @param <T> inheritor class type
  */
+@NullMarked
 public interface HasActions<T extends HasActions<T>> extends ByLocator {
 
     /**

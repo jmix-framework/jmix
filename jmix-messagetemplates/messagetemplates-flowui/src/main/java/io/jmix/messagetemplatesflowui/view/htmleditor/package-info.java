@@ -14,7 +14,4 @@
  * limitations under the License.
  */
 
-@NonNullApi
 package io.jmix.messagetemplatesflowui.view.htmleditor;
-
-import org.springframework.lang.NonNullApi;

@@ -58,7 +58,7 @@ public class ValueClearAction<V> extends PickerAction<ValueClearAction<V>, Picke
 
     @Autowired
     protected void setUiComponentProperties(UiComponentProperties uiComponentProperties) {
-        this.shortcutCombination = KeyCombination.create(uiComponentProperties.getPickerClearShortcut());
+        setShortcutCombination(KeyCombination.create(uiComponentProperties.getPickerClearShortcut()));
     }
 
     @Override

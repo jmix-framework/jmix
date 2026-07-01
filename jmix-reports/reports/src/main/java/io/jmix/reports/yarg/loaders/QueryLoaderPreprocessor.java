@@ -17,6 +17,7 @@
 package io.jmix.reports.yarg.loaders;
 
 import io.jmix.reports.yarg.structure.ReportQuery;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.List;
 import java.util.Map;
@@ -26,6 +27,7 @@ import java.util.function.BiFunction;
  * The interface implementation should provides custom query preprocessing before data loading
  */
 @FunctionalInterface
+@NullMarked
 public interface QueryLoaderPreprocessor {
 
      List<Map<String, Object>> preprocess(ReportQuery query, Map<String, Object> params,

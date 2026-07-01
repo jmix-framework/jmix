@@ -16,7 +16,6 @@
 
 package io.jmix.quartzflowui.exception;
 
-import com.vaadin.flow.component.notification.Notification;
 import io.jmix.core.JmixOrder;
 import io.jmix.core.Messages;
 import io.jmix.flowui.Notifications;
@@ -47,8 +46,8 @@ public class QuartzExceptionHandler extends AbstractUiExceptionHandler {
         notifications.create(messages.getMessage("io.jmix.quartzflowui.view.template",
                         "notification.template.validation.header"), message)
                 .withDuration(viewProperties.getValidationNotificationDuration())
-                .withPosition(Notification.Position.valueOf(viewProperties.getValidationNotificationPosition()))
-                .withType(Notifications.Type.valueOf(viewProperties.getValidationNotificationType()))
+                .withPosition(viewProperties.getValidationNotificationPosition())
+                .withType(viewProperties.getValidationNotificationType())
                 .show();
     }
 }

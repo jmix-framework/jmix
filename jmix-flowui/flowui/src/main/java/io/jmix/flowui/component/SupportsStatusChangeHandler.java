@@ -18,8 +18,8 @@ package io.jmix.flowui.component;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasValidation;
-
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import java.util.function.Consumer;
 
 /**
@@ -28,6 +28,7 @@ import java.util.function.Consumer;
  *
  * @param <C> the component type
  */
+@NullMarked
 public interface SupportsStatusChangeHandler<C extends Component> {
 
     /**

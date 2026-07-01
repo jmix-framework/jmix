@@ -21,15 +21,18 @@ import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.constraint.AccessConstraint;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.KeyValueEntity;
+import io.jmix.core.impl.metadata.MetadataGenerationManager;
+import io.jmix.core.impl.metadata.MetadataGenerationScope;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.core.observation.DataObservationSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
@@ -85,44 +88,60 @@ public class UnconstrainedDataManagerImpl implements UnconstrainedDataManager {
     @Autowired
     protected TransactionManagerLocator transactionManagerLocator;
 
+    @Autowired
+    protected DataObservationSupport observationSupport;
+
+    @Autowired
+    protected MetadataGenerationManager metadataGenerationManager;
+
     @Nullable
     @Override
     public <E> E load(LoadContext<E> context) {
-        MetaClass metaClass = getEffectiveMetaClassFromContext(context);
-        DataStore storage = dataStoreFactory.get(getStoreName(metaClass));
+        try (MetadataGenerationScope ignored = metadataGenerationManager.enterCurrent()) {
+            MetaClass metaClass = getEffectiveMetaClassFromContext(context);
+            DataStore storage = dataStoreFactory.get(getStoreName(metaClass));
 
-        context.setAccessConstraints(mergeConstraints(context.getAccessConstraints()));
+            context.setAccessConstraints(mergeConstraints(context.getAccessConstraints()));
 
-        @SuppressWarnings("unchecked")
-        E entity = (E) storage.load(context);
+            @SuppressWarnings("unchecked")
+            E entity = (E) observationSupport.createEntityLoadObservation(metaClass, context.getQuery())
+                    .observe(() -> storage.load(context));
 
-        if (entity != null)
-            readCrossDataStoreReferences(Collections.singletonList(entity), context.getFetchPlan(), metaClass, context.isJoinTransaction());
-        return entity;
+            if (entity != null)
+                readCrossDataStoreReferences(Collections.singletonList(entity), context.getFetchPlan(), metaClass, context.isJoinTransaction());
+            return entity;
+        }
     }
 
     @Override
     public <E> List<E> loadList(LoadContext<E> context) {
-        MetaClass metaClass = getEffectiveMetaClassFromContext(context);
-        DataStore storage = dataStoreFactory.get(getStoreName(metaClass));
+        try (MetadataGenerationScope ignored = metadataGenerationManager.enterCurrent()) {
+            MetaClass metaClass = getEffectiveMetaClassFromContext(context);
+            DataStore storage = dataStoreFactory.get(getStoreName(metaClass));
 
-        context.setAccessConstraints(mergeConstraints(context.getAccessConstraints()));
+            context.setAccessConstraints(mergeConstraints(context.getAccessConstraints()));
 
-        @SuppressWarnings("unchecked")
-        List<E> entities = (List<E>) storage.loadList(context);
+            @SuppressWarnings("unchecked")
+            List<E> entities = (List<E>) observationSupport.createEntityListLoadObservation(metaClass, context.getQuery())
+                    .observe(() -> storage.loadList(context));
 
-        readCrossDataStoreReferences(entities, context.getFetchPlan(), metaClass, context.isJoinTransaction());
-        return entities;
+            readCrossDataStoreReferences(entities, context.getFetchPlan(), metaClass, context.isJoinTransaction());
+            return entities;
+        }
     }
 
     @Override
     public long getCount(LoadContext<?> context) {
-        MetaClass metaClass = getEffectiveMetaClassFromContext(context);
-        DataStore storage = dataStoreFactory.get(getStoreName(metaClass));
+        try (MetadataGenerationScope ignored = metadataGenerationManager.enterCurrent()) {
+            MetaClass metaClass = getEffectiveMetaClassFromContext(context);
+            DataStore storage = dataStoreFactory.get(getStoreName(metaClass));
 
-        context.setAccessConstraints(mergeConstraints(context.getAccessConstraints()));
+            context.setAccessConstraints(mergeConstraints(context.getAccessConstraints()));
 
-        return storage.getCount(context);
+            //noinspection DataFlowIssue
+            return observationSupport.createEntityCountObservation(metaClass, context.getQuery())
+                    .observe(() -> storage.getCount(context));
+        }
     }
 
     @Override
@@ -162,96 +181,98 @@ public class UnconstrainedDataManagerImpl implements UnconstrainedDataManager {
 
     @Override
     public EntitySet save(SaveContext context) {
-        context.setAccessConstraints(mergeConstraints(context.getAccessConstraints()));
-        Map<String, SaveContext> storeToContextMap = new TreeMap<>();
-        Set<Object> toRepeat = new HashSet<>();
-        for (Object entity : context.getEntitiesToSave()) {
-            MetaClass metaClass = metadata.getClass(entity);
-            String storeName = getStoreName(metaClass);
+        try (MetadataGenerationScope ignored = metadataGenerationManager.enterCurrent()) {
+            context.setAccessConstraints(mergeConstraints(context.getAccessConstraints()));
+            Map<String, SaveContext> storeToContextMap = new TreeMap<>();
+            Set<Object> toRepeat = new HashSet<>();
+            for (Object entity : context.getEntitiesToSave()) {
+                MetaClass metaClass = metadata.getClass(entity);
+                String storeName = getStoreName(metaClass);
 
-            boolean repeatRequired = writeCrossDataStoreReferences(entity, context.getEntitiesToSave());
-            if (repeatRequired) {
-                toRepeat.add(entity);
+                boolean repeatRequired = writeCrossDataStoreReferences(entity, context.getEntitiesToSave());
+                if (repeatRequired) {
+                    toRepeat.add(entity);
+                }
+
+                SaveContext sc = storeToContextMap.computeIfAbsent(storeName, key -> createSaveContext(context));
+                sc.saving(entity);
+                FetchPlan fetchPlan = context.getFetchPlans().get(entity);
+                if (fetchPlan != null)
+                    sc.getFetchPlans().put(entity, fetchPlan);
+            }
+            for (Object entity : context.getEntitiesToRemove()) {
+                MetaClass metaClass = metadata.getClass(entity);
+                String storeName = getStoreName(metaClass);
+
+                SaveContext sc = storeToContextMap.computeIfAbsent(storeName, key -> createSaveContext(context));
+                sc.removing(entity);
+                FetchPlan fetchPlan = context.getFetchPlans().get(entity);
+                if (fetchPlan != null)
+                    sc.getFetchPlans().put(entity, fetchPlan);
             }
 
-            SaveContext sc = storeToContextMap.computeIfAbsent(storeName, key -> createSaveContext(context));
-            sc.saving(entity);
-            FetchPlan fetchPlan = context.getFetchPlans().get(entity);
-            if (fetchPlan != null)
-                sc.getFetchPlans().put(entity, fetchPlan);
-        }
-        for (Object entity : context.getEntitiesToRemove()) {
-            MetaClass metaClass = metadata.getClass(entity);
-            String storeName = getStoreName(metaClass);
-
-            SaveContext sc = storeToContextMap.computeIfAbsent(storeName, key -> createSaveContext(context));
-            sc.removing(entity);
-            FetchPlan fetchPlan = context.getFetchPlans().get(entity);
-            if (fetchPlan != null)
-                sc.getFetchPlans().put(entity, fetchPlan);
-        }
-
-        Map<PlatformTransactionManager, Set<String>> txManagerToStore = new HashMap<>();
-        Set<String> storesWithoutTxManager = new TreeSet<>();
-        for (String store : storeToContextMap.keySet()) {
-            try {
-                PlatformTransactionManager transactionManager = transactionManagerLocator.getTransactionManager(store);
-                Set<String> stores = txManagerToStore.computeIfAbsent(transactionManager, key -> new TreeSet<>());
-                stores.add(store);
-            } catch (NoSuchBeanDefinitionException e) {
-                storesWithoutTxManager.add(store);
-            }
-        }
-
-        Set result = new LinkedHashSet<>();
-        TransactionDefinition def = createTransactionDefinition(context.isJoinTransaction());
-        for (Map.Entry<PlatformTransactionManager, Set<String>> txMapEntry : txManagerToStore.entrySet()) {
-            Set<String> stores = txMapEntry.getValue();
-            if (stores.size() > 1) {
-                PlatformTransactionManager tm = txMapEntry.getKey();
-                TransactionStatus transaction = tm.getTransaction(def);
+            Map<PlatformTransactionManager, Set<String>> txManagerToStore = new HashMap<>();
+            Set<String> storesWithoutTxManager = new TreeSet<>();
+            for (String store : storeToContextMap.keySet()) {
                 try {
+                    PlatformTransactionManager transactionManager = transactionManagerLocator.getTransactionManager(store);
+                    Set<String> stores = txManagerToStore.computeIfAbsent(transactionManager, key -> new TreeSet<>());
+                    stores.add(store);
+                } catch (NoSuchBeanDefinitionException e) {
+                    storesWithoutTxManager.add(store);
+                }
+            }
+
+            Set result = new LinkedHashSet<>();
+            TransactionDefinition def = createTransactionDefinition(context.isJoinTransaction());
+            for (Map.Entry<PlatformTransactionManager, Set<String>> txMapEntry : txManagerToStore.entrySet()) {
+                Set<String> stores = txMapEntry.getValue();
+                if (stores.size() > 1) {
+                    PlatformTransactionManager tm = txMapEntry.getKey();
+                    TransactionStatus transaction = tm.getTransaction(def);
+                    try {
+                        for (String store : stores) {
+                            SaveContext sc = storeToContextMap.get(store);
+                            boolean joinTransaction = sc.isJoinTransaction();
+                            sc.setJoinTransaction(true);
+                            result.addAll(saveContextToStore(store, sc));
+                            sc.setJoinTransaction(joinTransaction);
+                        }
+                        tm.commit(transaction);
+                    } finally {
+                        if (!transaction.isCompleted()) {
+                            tm.rollback(transaction);
+                        }
+                    }
+                } else {
                     for (String store : stores) {
-                        SaveContext sc = storeToContextMap.get(store);
-                        boolean joinTransaction = sc.isJoinTransaction();
-                        sc.setJoinTransaction(true);
-                        result.addAll(saveContextToStore(store, sc));
-                        sc.setJoinTransaction(joinTransaction);
-                    }
-                    tm.commit(transaction);
-                } finally {
-                    if (!transaction.isCompleted()) {
-                        tm.rollback(transaction);
+                        result.addAll(saveContextToStore(store, storeToContextMap.get(store)));
                     }
                 }
-            } else {
-                for (String store : stores) {
-                    result.addAll(saveContextToStore(store, storeToContextMap.get(store)));
-                }
             }
-        }
-        for (String store : storesWithoutTxManager) {
-            result.addAll(saveContextToStore(store, storeToContextMap.get(store)));
-        }
+            for (String store : storesWithoutTxManager) {
+                result.addAll(saveContextToStore(store, storeToContextMap.get(store)));
+            }
 
-        if (!toRepeat.isEmpty()) {
-            SaveContext sc = new SaveContext();
-            sc.setJoinTransaction(context.isJoinTransaction());
-            for (Object entity : result) {
-                if (toRepeat.contains(entity)) {
-                    sc.saving(entity, context.getFetchPlans().get(entity));
+            if (!toRepeat.isEmpty()) {
+                SaveContext sc = new SaveContext();
+                sc.setJoinTransaction(context.isJoinTransaction());
+                for (Object entity : result) {
+                    if (toRepeat.contains(entity)) {
+                        sc.saving(entity, context.getFetchPlans().get(entity));
+                    }
+                }
+                Set committedEntities = save(sc);
+                for (Object committedEntity : committedEntities) {
+                    if (result.contains(committedEntity)) {
+                        result.remove(committedEntity);
+                        result.add(committedEntity);
+                    }
                 }
             }
-            Set committedEntities = save(sc);
-            for (Object committedEntity : committedEntities) {
-                if (result.contains(committedEntity)) {
-                    result.remove(committedEntity);
-                    result.add(committedEntity);
-                }
-            }
-        }
 
-        return EntitySet.of(result);
+            return EntitySet.of(result);
+        }
     }
 
     protected TransactionDefinition createTransactionDefinition(boolean isJoinTransaction) {
@@ -267,21 +288,33 @@ public class UnconstrainedDataManagerImpl implements UnconstrainedDataManager {
 
     protected Set saveContextToStore(String store, SaveContext context) {
         DataStore dataStore = dataStoreFactory.get(store);
-        return dataStore.save(context);
+        //noinspection DataFlowIssue
+        return observationSupport.createEntitiesSaveObservation(context, store)
+                .observe(() -> dataStore.save(context));
     }
 
     @Override
     public List<KeyValueEntity> loadValues(ValueLoadContext context) {
-        DataStore store = dataStoreFactory.get(getStoreName(context.getStoreName()));
-        context.setAccessConstraints(mergeConstraints(context.getAccessConstraints()));
-        return store.loadValues(context);
+        try (MetadataGenerationScope ignored = metadataGenerationManager.enterCurrent()) {
+            DataStore store = dataStoreFactory.get(getStoreName(context.getStoreName()));
+            context.setAccessConstraints(mergeConstraints(context.getAccessConstraints()));
+
+            //noinspection DataFlowIssue
+            return observationSupport.createValuesLoadObservation(context)
+                    .observe(() -> store.loadValues(context));
+        }
     }
 
     @Override
     public long getCount(ValueLoadContext context) {
-        DataStore store = dataStoreFactory.get(getStoreName(context.getStoreName()));
-        context.setAccessConstraints(mergeConstraints(context.getAccessConstraints()));
-        return store.getCount(context);
+        try (MetadataGenerationScope ignored = metadataGenerationManager.enterCurrent()) {
+            DataStore store = dataStoreFactory.get(getStoreName(context.getStoreName()));
+            context.setAccessConstraints(mergeConstraints(context.getAccessConstraints()));
+
+            //noinspection DataFlowIssue
+            return observationSupport.createValuesCountObservation(context)
+                    .observe(() -> store.getCount(context));
+        }
     }
 
     @Override

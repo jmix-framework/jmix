@@ -14,7 +14,4 @@
  * limitations under the License.
  */
 
-@NonNullApi
 package io.jmix.eclipselink.impl.dbms;
-
-import org.springframework.lang.NonNullApi;

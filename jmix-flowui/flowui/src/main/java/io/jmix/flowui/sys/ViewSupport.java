@@ -26,7 +26,8 @@ import io.jmix.core.MessageTools;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.flowui.model.ViewData;
-import io.jmix.flowui.monitoring.ViewLifeCycle;
+import io.jmix.flowui.observation.UiObservationSupport;
+import io.jmix.flowui.observation.ViewLifecycle;
 import io.jmix.flowui.sys.autowire.AutowireManager;
 import io.jmix.flowui.sys.autowire.ViewAutowireContext;
 import io.jmix.flowui.view.*;
@@ -36,22 +37,17 @@ import io.jmix.flowui.view.navigation.ViewNavigationSupport;
 import io.jmix.flowui.xml.layout.ComponentLoader;
 import io.jmix.flowui.xml.layout.loader.ComponentLoaderContext;
 import io.jmix.flowui.xml.layout.loader.LayoutLoader;
-import io.micrometer.core.instrument.MeterRegistry;
-import io.micrometer.core.instrument.Timer;
 import org.dom4j.Element;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
-import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.net.URL;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Consumer;
 
-import static io.jmix.flowui.monitoring.UiMonitoring.startTimerSample;
-import static io.jmix.flowui.monitoring.UiMonitoring.stopViewTimerSample;
 import static io.jmix.flowui.view.ViewControllerUtils.getPackage;
 
 @Internal
@@ -67,7 +63,7 @@ public class ViewSupport {
     protected CurrentAuthentication currentAuthentication;
     protected AutowireManager autowireManager;
     protected RouteSupport routeSupport;
-    protected MeterRegistry meterRegistry;
+    protected UiObservationSupport uiObservationSupport;
 
     protected Map<String, String> titleCache = new ConcurrentHashMap<>();
 
@@ -78,7 +74,7 @@ public class ViewSupport {
                        CurrentAuthentication currentAuthentication,
                        AutowireManager autowireManager,
                        RouteSupport routeSupport,
-                       MeterRegistry meterRegistry) {
+                       UiObservationSupport uiObservationSupport) {
         this.applicationContext = applicationContext;
         this.viewXmlLoader = viewXmlLoader;
         this.viewRegistry = viewRegistry;
@@ -86,65 +82,55 @@ public class ViewSupport {
         this.currentAuthentication = currentAuthentication;
         this.autowireManager = autowireManager;
         this.routeSupport = routeSupport;
-        this.meterRegistry = meterRegistry;
+        this.uiObservationSupport = uiObservationSupport;
     }
 
     public void initView(View<?> view) {
         log.debug("Init view: " + view);
 
-        Timer.Sample createSample = startTimerSample(meterRegistry);
-
+        // setId must run before the CREATE-phase observation so that view.id is captured into the span/timer tags
         String viewId = getInferredViewId(view);
         view.setId(viewId);
 
-        ViewControllerUtils.setViewData(view, applicationContext.getBean(ViewData.class));
-
-        ViewActions actions = applicationContext.getBean(ViewActions.class, view);
-        ViewControllerUtils.setViewActions(view, actions);
-
-        ViewControllerUtils.setViewFacets(view, applicationContext.getBean(ViewFacets.class, view));
-
-        stopViewTimerSample(createSample, meterRegistry, ViewLifeCycle.CREATE, viewId);
+        ViewActions actions = uiObservationSupport.observeViewLifecycle(view, ViewLifecycle.CREATE, () -> {
+            ViewControllerUtils.setViewData(view, applicationContext.getBean(ViewData.class));
+            ViewActions viewActions = applicationContext.getBean(ViewActions.class, view);
+            ViewControllerUtils.setViewActions(view, viewActions);
+            ViewControllerUtils.setViewFacets(view, applicationContext.getBean(ViewFacets.class, view));
+            return viewActions;
+        });
 
         ViewInfo viewInfo = viewRegistry.getViewInfo(viewId);
 
-        Timer.Sample loadSample = startTimerSample(meterRegistry);
+        ComponentLoaderContext componentLoaderContext = uiObservationSupport.observeViewLifecycle(
+                view, ViewLifecycle.LOAD, () -> {
+                    ComponentLoaderContext ctx = createComponentLoaderContext();
+                    ctx.setFullOriginId(viewInfo.getId());
+                    ctx.setMessageGroup(getPackage(viewInfo.getControllerClass()));
+                    ctx.setView(view);
+                    ctx.setActionsHolder(actions);
 
-        ComponentLoaderContext componentLoaderContext = createComponentLoaderContext();
-
-        componentLoaderContext.setFullOriginId(viewInfo.getId());
-        componentLoaderContext.setMessageGroup(getPackage(viewInfo.getControllerClass()));
-        componentLoaderContext.setView(view);
-        componentLoaderContext.setActionsHolder(actions);
-
-        Element element = loadViewXml(viewInfo);
-        if (element != null) {
-            loadMessageGroup(element)
-                    .ifPresent(componentLoaderContext::setMessageGroup);
-            loadWindowFromXml(element, view, componentLoaderContext);
-        }
-
-        stopViewTimerSample(loadSample, meterRegistry, ViewLifeCycle.LOAD, viewId);
+                    Element element = loadViewXml(viewInfo);
+                    if (element != null) {
+                        loadMessageGroup(element).ifPresent(ctx::setMessageGroup);
+                        loadWindowFromXml(element, view, ctx);
+                    }
+                    return ctx;
+                });
 
         // Pre InitTasks must be executed before DependencyManager
         // invocation to have precedence over @Subscribe methods
         componentLoaderContext.executePreInitTasks();
 
-        Timer.Sample injectSample = startTimerSample(meterRegistry);
-
-        ViewAutowireContext viewAutowireContext = new ViewAutowireContext(view);
-        autowireManager.autowire(viewAutowireContext);
-
-        stopViewTimerSample(injectSample, meterRegistry, ViewLifeCycle.INJECT, viewId);
+        uiObservationSupport.observeViewLifecycle(view, ViewLifecycle.INJECT, () -> {
+            ViewAutowireContext viewAutowireContext = new ViewAutowireContext(view);
+            autowireManager.autowire(viewAutowireContext);
+        });
 
         // perform injection for the nested fragments
         componentLoaderContext.executeAutowireTasks();
 
-        Timer.Sample initSample = startTimerSample(meterRegistry);
-
         fireViewInitEvent(view);
-
-        stopViewTimerSample(initSample, meterRegistry, ViewLifeCycle.INIT, viewId);
 
         // InitTasks must be executed after View.InitEvent
         // in case something was replaced, e.g. actions
@@ -156,9 +142,8 @@ public class ViewSupport {
     }
 
     public void registerBackwardNavigation(UI ui, Class<? extends View> viewClass, URL url) {
-        retrieveExtendedClientDetails(ui, details ->
-                registerBackwardNavigation(ui.getSession(), details.getWindowName(),
-                        viewClass, url));
+        ExtendedClientDetails details = getExtendedClientDetails(ui);
+        registerBackwardNavigation(ui.getSession(), details.getWindowName(), viewClass, url);
     }
 
     protected void registerBackwardNavigation(VaadinSession session, String windowName,
@@ -190,8 +175,8 @@ public class ViewSupport {
             return;
         }
 
-        retrieveExtendedClientDetails(ui, details ->
-                unregisterBackwardNavigation(ui.getSession(), details.getWindowName()));
+        ExtendedClientDetails details = getExtendedClientDetails(ui);
+        unregisterBackwardNavigation(ui.getSession(), details.getWindowName());
     }
 
     protected void unregisterBackwardNavigation(VaadinSession session, String windowName) {
@@ -239,6 +224,15 @@ public class ViewSupport {
      */
     public String getLocalizedTitle(View<?> view, Locale locale) {
         return getLocalizedTitle(view, locale, true);
+    }
+
+    /**
+     * Clears cached localized view titles.
+     *
+     * <p>Intended for metadata publication listeners that must refresh title resolution after runtime model changes.</p>
+     */
+    public void clearTitleCache() {
+        titleCache.clear();
     }
 
     /**
@@ -366,8 +360,8 @@ public class ViewSupport {
     }
 
     protected void doBackwardNavigation(UI ui, View<?> view, QueryParameters returnParams) {
-        retrieveExtendedClientDetails(ui, details ->
-                doBackwardNavigation(ui, details.getWindowName(), view, returnParams));
+        ExtendedClientDetails details = getExtendedClientDetails(ui);
+        doBackwardNavigation(ui, details.getWindowName(), view, returnParams);
     }
 
     protected void doBackwardNavigation(UI ui, String windowName, View<?> view, QueryParameters returnParams) {
@@ -408,9 +402,8 @@ public class ViewSupport {
                 .findFirst();
     }
 
-    protected void retrieveExtendedClientDetails(UI ui,
-                                                 Consumer<ExtendedClientDetails> details) {
-        ui.getPage().retrieveExtendedClientDetails(details::accept);
+    protected ExtendedClientDetails getExtendedClientDetails(UI ui) {
+        return ui.getPage().getExtendedClientDetails();
     }
 
     protected String getInferredViewId(View<?> view) {

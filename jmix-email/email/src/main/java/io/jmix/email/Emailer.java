@@ -17,7 +17,8 @@ package io.jmix.email;
 
 import io.jmix.email.entity.SendingMessage;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import java.util.Date;
 
 
@@ -30,6 +31,7 @@ import java.util.Date;
  * In order to send emails asynchronously, you should register a scheduled task that periodically invokes
  * {@link #processQueuedEmails()} method.
  */
+@NullMarked
 public interface Emailer {
     /**
      * Send email synchronously.

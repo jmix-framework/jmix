@@ -16,9 +16,12 @@
 
 package io.jmix.flowui.xml.layout.loader;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * A parser for converting string representation into actual value by {@link PropertiesLoaderSupport}
  */
+@NullMarked
 public interface PropertyParser {
 
     /**

@@ -22,7 +22,7 @@ import io.jmix.flowui.data.aggregation.AggregationStrategy;
 import io.jmix.flowui.kit.component.SupportsFormatter;
 import io.jmix.flowui.kit.component.formatter.Formatter;
 import io.jmix.flowui.kit.meta.StudioIgnore;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * POJO to store all information needed to create aggregation in {@link DataGrid}.

@@ -17,7 +17,9 @@
 apply plugin: 'io.jmix'
 
 group = 'io.jmix.superset'
-archivesBaseName = 'jmix-superset-flowui'
+base {
+    archivesName = 'jmix-superset-flowui'
+}
 
 dependencies {
     api project(":superset")
@@ -25,4 +27,5 @@ dependencies {
     api project(":flowui")
 
     testImplementation project(':flowui-test-assist')
+    testImplementation project(':framework-test-support')
 }

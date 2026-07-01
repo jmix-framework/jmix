@@ -16,7 +16,7 @@
 
 package io.jmix.flowui.kit.component.menu;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Represents generic item of a menu (for example, {@link io.jmix.flowui.kit.component.main.ListMenu})

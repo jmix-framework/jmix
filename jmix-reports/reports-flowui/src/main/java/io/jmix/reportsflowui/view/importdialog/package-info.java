@@ -14,7 +14,4 @@
  * limitations under the License.
  */
 
-@NonNullApi
 package io.jmix.reportsflowui.view.importdialog;
-
-import org.springframework.lang.NonNullApi;

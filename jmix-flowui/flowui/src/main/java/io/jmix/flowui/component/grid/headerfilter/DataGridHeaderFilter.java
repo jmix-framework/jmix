@@ -24,12 +24,12 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.shared.Registration;
-import com.vaadin.flow.theme.lumo.LumoUtility;
 import io.jmix.core.Messages;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.querycondition.PropertyConditionUtils;
+import io.jmix.flowui.UiComponentProperties;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.app.datagrid.HeaderPropertyFilterLayout;
 import io.jmix.flowui.component.grid.DataGridColumn;
@@ -38,6 +38,7 @@ import io.jmix.flowui.component.propertyfilter.PropertyFilter;
 import io.jmix.flowui.component.propertyfilter.PropertyFilterSupport;
 import io.jmix.flowui.data.grid.ContainerDataGridItems;
 import io.jmix.flowui.icon.Icons;
+import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.model.DataLoader;
@@ -45,7 +46,7 @@ import io.jmix.flowui.model.HasLoader;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A UI component used for displaying the filter in the column header. Modifies the standard header by
@@ -66,6 +67,7 @@ public class DataGridHeaderFilter extends Composite<HorizontalLayout>
     protected Messages messages;
     protected PropertyFilterSupport propertyFilterSupport;
     protected Icons icons;
+    protected UiComponentProperties uiComponentProperties;
 
     protected HeaderFilterContext context;
 
@@ -98,6 +100,7 @@ public class DataGridHeaderFilter extends Composite<HorizontalLayout>
         messages = applicationContext.getBean(Messages.class);
         propertyFilterSupport = applicationContext.getBean(PropertyFilterSupport.class);
         icons = applicationContext.getBean(Icons.class);
+        uiComponentProperties = applicationContext.getBean(UiComponentProperties.class);
     }
 
     protected void initComponent() {
@@ -114,11 +117,7 @@ public class DataGridHeaderFilter extends Composite<HorizontalLayout>
 
         root.setPadding(false);
         root.setSpacing(false);
-        root.addClassName(LumoUtility.Display.INLINE_FLEX);
-        root.getThemeList().add("spacing-xs");
-        // Padding for filterButton's focus-ring
-        root.getStyle().set("padding-inline-end", "2px");
-        root.getStyle().set("padding-block", "2px");
+        root.setClassName("jmix-grid-header-filter");
 
         return root;
     }
@@ -177,9 +176,8 @@ public class DataGridHeaderFilter extends Composite<HorizontalLayout>
 
     protected void initFunnelButton() {
         filterButton = uiComponents.create(JmixButton.class);
-        filterButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE, ButtonVariant.LUMO_ICON);
         filterButton.setIcon(icons.get(JmixFontIcon.DATA_GRID_HEADER_FILTER));
-        filterButton.setClassName(LumoUtility.TextColor.TERTIARY);
+        filterButton.setClassName("jmix-grid-header-filter-filter-button");
         filterButton.getElement().setAttribute(ATTRIBUTE_JMIX_ROLE_NAME, COLUMN_FILTER_BUTTON_ROLE);
         filterButton.addClickListener(this::onFilterButtonClick);
 
@@ -244,11 +242,26 @@ public class DataGridHeaderFilter extends Composite<HorizontalLayout>
         applyButton.setIcon(icons.get(JmixFontIcon.DATA_GRID_HEADER_FILTER_APPLY));
         applyButton.setText(messages.getMessage("columnFilter.apply.text"));
 
-        applyButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        applyButton.addThemeVariants(ButtonVariant.PRIMARY);
         applyButton.addClickListener(this::onApplyButtonClick);
+        applyShortcutCombination(applyButton);
         setupButtonFlexGrowStyle(applyButton);
 
         return applyButton;
+    }
+
+    protected void applyShortcutCombination(JmixButton applyButton) {
+        String shortcut = context.getHeaderFilterApplyShortcut();
+
+        if (shortcut == null) {
+            shortcut = uiComponentProperties.getDataGridHeaderFilterApplyShortcut();
+        }
+
+        KeyCombination shortcutCombination = KeyCombination.create(shortcut);
+        if (shortcutCombination != null) {
+            shortcutCombination.setResetFocusOnActiveElement(true);
+            applyButton.setShortcutCombination(shortcutCombination);
+        }
     }
 
     protected void onApplyButtonClick(ClickEvent<Button> event) {
@@ -275,7 +288,7 @@ public class DataGridHeaderFilter extends Composite<HorizontalLayout>
 
     protected void setupButtonFlexGrowStyle(JmixButton button) {
         if (isSmallDevice()) {
-            button.getStyle().set("flex-grow", "1");
+            button.addClassName("small-device");
         }
     }
 
@@ -293,8 +306,8 @@ public class DataGridHeaderFilter extends Composite<HorizontalLayout>
 
     @SuppressWarnings({"unchecked"})
     protected void doCancel() {
-        propertyFilter.setValue(appliedValue);
         propertyFilter.setOperation(appliedOperation);
+        propertyFilter.setValue(appliedValue);
 
         overlay.close();
     }
@@ -302,7 +315,6 @@ public class DataGridHeaderFilter extends Composite<HorizontalLayout>
     protected JmixButton createClearFilterButton() {
         JmixButton clearButton = uiComponents.create(JmixButton.class);
 
-        clearButton.addThemeVariants(ButtonVariant.LUMO_ICON);
         clearButton.setIcon(icons.get(JmixFontIcon.DATA_GRID_HEADER_FILTER_CLEAR));
         clearButton.addClickListener(this::onClearButtonClick);
 
@@ -358,6 +370,7 @@ public class DataGridHeaderFilter extends Composite<HorizontalLayout>
         protected DataLoader dataLoader;
         protected MetaClass metaClass;
         protected String property;
+        protected String headerFilterApplyShortcut;
 
         protected Component headerComponent;
 
@@ -379,6 +392,7 @@ public class DataGridHeaderFilter extends Composite<HorizontalLayout>
 
                 metaClass = propertyPath.getMetaClass();
                 property = propertyPath.toPathString();
+                headerFilterApplyShortcut = enhancedDataGrid.getHeaderFilterApplyShortcut();
             }
 
             if (column.getHeaderText() != null) {
@@ -398,6 +412,11 @@ public class DataGridHeaderFilter extends Composite<HorizontalLayout>
 
         public String getProperty() {
             return property;
+        }
+
+        @Nullable
+        public String getHeaderFilterApplyShortcut() {
+            return headerFilterApplyShortcut;
         }
 
         public Component getHeaderComponent() {

@@ -15,7 +15,9 @@
  */
 
 group = 'io.jmix.audit'
-archivesBaseName = 'jmix-audit-starter'
+base {
+    archivesName = 'jmix-audit-starter'
+}
 
 dependencies {
     api project(':audit')

@@ -17,8 +17,10 @@
 package io.jmix.flowui.component.grid;
 
 import io.jmix.core.annotation.Internal;
+import org.jspecify.annotations.NullMarked;
 
 @Internal
+@NullMarked
 public interface DataGridDataProviderChangeObserver {
 
     void dataProviderChanged();

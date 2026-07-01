@@ -18,9 +18,11 @@ package io.jmix.flowui.fragment;
 
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.HasActions;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Interface providing methods for managing {@link Action actions} in a {@link Fragment} context.
  */
+@NullMarked
 public interface FragmentActions extends HasActions {
 }

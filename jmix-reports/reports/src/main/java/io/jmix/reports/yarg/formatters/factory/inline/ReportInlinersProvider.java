@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2018 Haulmont.
+ * Copyright 2018 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -18,9 +18,11 @@ package io.jmix.reports.yarg.formatters.factory.inline;
 
 
 import io.jmix.reports.yarg.formatters.impl.inline.ContentInliner;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.List;
 
+@NullMarked
 public interface ReportInlinersProvider {
 
     List<ContentInliner> getContentInliners();

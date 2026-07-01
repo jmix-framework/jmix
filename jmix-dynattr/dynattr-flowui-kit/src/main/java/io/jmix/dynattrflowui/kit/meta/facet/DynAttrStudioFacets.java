@@ -16,9 +16,9 @@
 package io.jmix.dynattrflowui.kit.meta.facet;
 
 import io.jmix.flowui.kit.meta.StudioFacet;
-import io.jmix.flowui.kit.meta.StudioProperty;
-import io.jmix.flowui.kit.meta.StudioPropertyType;
 import io.jmix.flowui.kit.meta.StudioUiKit;
+import io.jmix.flowui.kit.meta.StudioPropertyGroups;
+import io.jmix.flowui.kit.meta.StudioXmlElements;
 
 @StudioUiKit
 public interface DynAttrStudioFacets {
@@ -26,13 +26,12 @@ public interface DynAttrStudioFacets {
             name = "DynamicAttributes",
             classFqn = "io.jmix.dynattrflowui.facet.DynAttrFacet",
             category = "Facets",
-            xmlElement = "dynamicAttributes",
+            xmlElement = StudioXmlElements.DYNAMIC_ATTRIBUTES,
             xmlns = "http://jmix.io/schema/dynattr/flowui",
             xmlnsAlias = "dynattr",
             icon = "io/jmix/dynattrflowui/icon/facet/dynamicAttributes.svg",
-            properties = {
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
-            }
-    )
+            propertyGroups = {
+                    StudioPropertyGroups.Id.class
+            })
     void dynamicAttributesFacet();
 }

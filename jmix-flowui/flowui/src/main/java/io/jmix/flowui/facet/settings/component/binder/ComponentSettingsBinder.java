@@ -20,10 +20,12 @@ import com.vaadin.flow.component.Component;
 import io.jmix.flowui.component.details.JmixDetails;
 import io.jmix.flowui.facet.settings.Settings;
 import io.jmix.flowui.facet.settings.component.JmixDetailsSettings;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Base interface for component settings registration. As an example see {@link JmixDetailsSettingsBinder}.
  */
+@NullMarked
 public interface ComponentSettingsBinder<V extends Component, S extends Settings> {
 
     /**

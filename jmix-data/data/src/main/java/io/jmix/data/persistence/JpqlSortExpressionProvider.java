@@ -17,12 +17,15 @@
 package io.jmix.data.persistence;
 
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Interface to be implemented by a Spring bean to generate sort expression for datatype and LOB properties.
  * <p>
  * You can provide your own implementation bean and use custom sort logic, e.g. use functions.
+ * Use {@link JpqlSortExpressionSupplier} beans to supply independent sort expression rules.
  */
+@NullMarked
 public interface JpqlSortExpressionProvider {
 
     /**

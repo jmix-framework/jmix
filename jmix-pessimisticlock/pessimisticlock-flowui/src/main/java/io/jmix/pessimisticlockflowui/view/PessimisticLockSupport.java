@@ -92,7 +92,7 @@ public class PessimisticLockSupport {
 
             notifications.create(title, message)
                     .withPosition(Notification.Position.MIDDLE)
-                    .withThemeVariant(NotificationVariant.LUMO_PRIMARY)
+                    .withThemeVariant(NotificationVariant.INFO)
                     .withDuration(3000)
                     .show();
 

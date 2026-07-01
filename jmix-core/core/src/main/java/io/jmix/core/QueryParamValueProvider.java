@@ -16,7 +16,8 @@
 
 package io.jmix.core;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Interface to be implemented by beans that provide values for query parameters if they are not set explicitly.
@@ -25,6 +26,7 @@ import org.springframework.lang.Nullable;
  * until a provider supporting this parameter is found. You can use the {@code Order} annotation with
  * the {@code JmixOrder.HIGHEST_PRECEDENCE - 10} value to override providers of the framework.
  */
+@NullMarked
 public interface QueryParamValueProvider {
 
     /**

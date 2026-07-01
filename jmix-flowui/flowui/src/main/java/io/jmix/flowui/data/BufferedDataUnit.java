@@ -16,11 +16,14 @@
 
 package io.jmix.flowui.data;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Interface that provides buffering capabilities to a data unit.
  * This allows modifications to be made in a temporary state and either persisted
  * or discarded based on specific actions.
  */
+@NullMarked
 public interface BufferedDataUnit {
 
     /**

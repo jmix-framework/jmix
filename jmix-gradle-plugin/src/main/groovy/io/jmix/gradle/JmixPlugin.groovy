@@ -16,12 +16,12 @@
 
 package io.jmix.gradle
 
-
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.UnknownTaskException
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.tasks.Delete
+import org.yaml.snakeyaml.Yaml
 
 import java.util.jar.Manifest
 
@@ -59,14 +59,19 @@ class JmixPlugin implements Plugin<Project> {
 
             def kotlinPlugin = project.plugins.findPlugin("org.jetbrains.kotlin.jvm")
             def javaPlugin = project.plugins.findPlugin(JavaPlugin.class)
+            def groovyPlugin = project.plugins.hasPlugin('groovy')
 
             if (kotlinPlugin) {
                 setupKotlinOutputDir(project, kotlinPlugin.pluginVersion)
             }
 
+            if (groovyPlugin) {
+                setupGroovyOutputDir(project)
+            }
+
             if (project.jmix.entitiesEnhancing.enabled) {
                 project.configurations.create('enhancing')
-                project.dependencies.add('enhancing', 'org.eclipse.persistence:org.eclipse.persistence.jpa:5.0.0-B13-1-jmix')
+                project.dependencies.add('enhancing', 'org.eclipse.persistence:org.eclipse.persistence.jpa:5.0.0-1-jmix')
 
                 def enhanceMainTask = project.tasks.register('enhanceJmixMain') {
                     doLast(new EnhancingAction('main'))
@@ -77,16 +82,6 @@ class JmixPlugin implements Plugin<Project> {
 
                 def mainCompileTasks = []
                 def testCompileTasks = []
-
-                // Run enhancing when compile tasks actually produced outputs, including outputs restored from build cache.
-                // This avoids skipping enhancement on FROM_CACHE while still skipping for up-to-date/no-source compiles.
-                def shouldRunEnhancing = { taskProviders ->
-                    !taskProviders.isEmpty() && taskProviders.any { taskProvider ->
-                        def state = taskProvider.get().state
-                        def outcome = state.hasProperty('outcome') ? state.outcome?.toString() : null
-                        state.didWork || outcome == 'FROM_CACHE' || (state.skipMessage?.contains('FROM-CACHE') ?: false)
-                    }
-                }
 
                 if (javaPlugin) {
                     mainCompileTasks.add(project.tasks.named('compileJava'))
@@ -102,42 +97,54 @@ class JmixPlugin implements Plugin<Project> {
                     testCompileTasks.add(project.tasks.named('compileTestKotlin'))
                 }
 
+                // Groovy classes (e.g. Spock tests) are compiled into the java output dir (see setupGroovyOutputDir),
+                // so enhancing must run after them to mirror them into the enhanced output dir.
+                if (groovyPlugin) {
+                    mainCompileTasks.add(project.tasks.named('compileGroovy'))
+                    testCompileTasks.add(project.tasks.named('compileTestGroovy'))
+                }
+
+                def enhancedMainDir = project.file(EnhancingAction.enhancedClassesDir(project, 'main'))
+                def enhancedTestDir = project.file(EnhancingAction.enhancedClassesDir(project, 'test'))
+
                 enhanceMainTask.configure {
                     dependsOn(mainCompileTasks)
-                    onlyIf { shouldRunEnhancing(mainCompileTasks) }
+                    dependsOnClasspathArtifacts(project, it, 'main')
+                    inputs.files(project.sourceSets.main.java.classesDirectory)
+                            .withPropertyName('compiledClasses')
+                            .withPathSensitivity(org.gradle.api.tasks.PathSensitivity.RELATIVE)
+                    inputs.files(project.sourceSets.main.compileClasspath)
+                            .withNormalizer(org.gradle.api.tasks.ClasspathNormalizer)
+                    outputs.dir(enhancedMainDir).withPropertyName('enhancedClasses')
+                    outputs.dir(project.file(EnhancingAction.generatedDescriptorsDir(project, 'main'))).withPropertyName('descriptors')
+                    outputs.cacheIf { true }
                 }
                 enhanceTestTask.configure {
                     dependsOn(testCompileTasks)
-                    onlyIf { shouldRunEnhancing(testCompileTasks) }
+                    dependsOnClasspathArtifacts(project, it, 'test')
+                    inputs.files(project.sourceSets.test.java.classesDirectory)
+                            .withPropertyName('compiledClasses')
+                            .withPathSensitivity(org.gradle.api.tasks.PathSensitivity.RELATIVE)
+                    inputs.files(project.sourceSets.test.compileClasspath)
+                            .withNormalizer(org.gradle.api.tasks.ClasspathNormalizer)
+                    outputs.dir(enhancedTestDir).withPropertyName('enhancedClasses')
+                    outputs.dir(project.file(EnhancingAction.generatedDescriptorsDir(project, 'test'))).withPropertyName('descriptors')
+                    outputs.cacheIf { true }
                 }
 
-                def copyEnhancingResourcesMainTask = project.tasks.register('copyJmixEnhancingResourcesMain') {
-                    doLast({ EnhancingAction.copyGeneratedFiles(project, 'main') })
-                }
-                def copyEnhancingResourcesTestTask = project.tasks.register('copyJmixEnhancingResourcesTest') {
-                    doLast({ EnhancingAction.copyGeneratedFiles(project, 'test') })
-                }
+                project.sourceSets.main.output.classesDirs.setFrom(enhancedMainDir)
+                project.sourceSets.main.output.classesDirs.builtBy(enhanceMainTask)
+                project.tasks.named(project.sourceSets.main.classesTaskName) { dependsOn(enhanceMainTask) }
 
-                copyEnhancingResourcesMainTask.configure {
-                    dependsOn(enhanceMainTask)
-                    onlyIf { enhanceMainTask.get().state.didWork }
-                    if (project.tasks.findByName('processResources')) {
-                        mustRunAfter(project.tasks.named('processResources'))
-                    }
-                }
-                copyEnhancingResourcesTestTask.configure {
-                    dependsOn(enhanceTestTask)
-                    onlyIf { enhanceTestTask.get().state.didWork }
-                    if (project.tasks.findByName('processTestResources')) {
-                        mustRunAfter(project.tasks.named('processTestResources'))
-                    }
-                }
+                project.sourceSets.test.output.classesDirs.setFrom(enhancedTestDir)
+                project.sourceSets.test.output.classesDirs.builtBy(enhanceTestTask)
+                project.tasks.named(project.sourceSets.test.classesTaskName) { dependsOn(enhanceTestTask) }
 
-                project.tasks.named('classes') {
-                    dependsOn(copyEnhancingResourcesMainTask)
-                }
-                project.tasks.named('testClasses') {
-                    dependsOn(copyEnhancingResourcesTestTask)
+                registerGeneratedDescriptors(project, 'main', enhanceMainTask)
+                registerGeneratedDescriptors(project, 'test', enhanceTestTask)
+
+                if (kotlinPlugin) {
+                    redirectKotlinArchiveOutput(project, 'main', enhancedMainDir)
                 }
             }
 
@@ -186,6 +193,92 @@ class JmixPlugin implements Plugin<Project> {
         }
     }
 
+    /**
+     * Groovy classes output dir should be the same as java output dir.
+     * Otherwise the current implementation of entities enhancing doesn't work properly: enhancing mirrors
+     * only the java output dir into the enhanced output dir consumed by the test/jar tasks, so Groovy classes
+     * (e.g. Spock tests) would be left out of the source set output.
+     */
+    private void setupGroovyOutputDir(Project project) {
+        try {
+            project.tasks.getByName('compileGroovy', { task ->
+                task.destinationDirectory = project.sourceSets.main.java.destinationDirectory
+            })
+            project.tasks.getByName('compileTestGroovy', { task ->
+                task.destinationDirectory = project.sourceSets.test.java.destinationDirectory
+            })
+        } catch (UnknownTaskException ignored) {
+            project.logger.debug("Unable to setup output directory for Groovy. " + ignored.message)
+        }
+    }
+
+    private static void registerGeneratedDescriptors(Project project, String sourceSetName, enhanceTask) {
+        def sourceSet = project.sourceSets.getByName(sourceSetName)
+        def generatedDir = project.file(EnhancingAction.generatedDescriptorsDir(project, sourceSetName))
+
+        // Generated persistence.xml/orm.xml are registered as a first-class generated output of the source
+        // set: they reach the runtime classpath and the jar without being reprocessed by processResources.
+        sourceSet.output.dir([builtBy: enhanceTask], generatedDir)
+    }
+
+    /**
+     * The Kotlin JVM plugin adds the raw compile output directory to archive tasks (e.g. 'jar')
+     * through a source path that bypasses sourceSet.output. Since enhancement produces a separate
+     * enhanced output directory, that raw path would put un-enhanced (and duplicate) classes into
+     * the archive. Redirect any archive source that points at the raw compiled-classes directory
+     * to the enhanced directory.
+     */
+    private static void redirectKotlinArchiveOutput(Project project, String sourceSetName, File enhancedDir) {
+        def sourceSet = project.sourceSets.getByName(sourceSetName)
+        def rawDir = sourceSet.java.classesDirectory.get().asFile
+
+        def archiveTaskNames = [sourceSet.jarTaskName]
+        if (project.plugins.hasPlugin('org.springframework.boot')) {
+            archiveTaskNames.add('bootJar')
+        }
+
+        archiveTaskNames.each { taskName ->
+            try {
+                project.tasks.named(taskName).configure { task ->
+                    redirectArchiveSources(task, rawDir, enhancedDir)
+                }
+            } catch (UnknownTaskException ignored) {
+                // No such archive task in this project.
+            }
+        }
+    }
+
+    private static void redirectArchiveSources(task, File rawDir, File enhancedDir) {
+        // Walk the archive's CopySpec tree and redirect directory sources pointing at the raw dir.
+        // Relies on the internal CopySpec structure (rootSpec/children/sourcePaths); guarded so that
+        // a non-directory or read-only source is skipped rather than failing the build.
+        def walk
+        walk = { spec ->
+            spec.sourcePaths.each { sourcePath ->
+                try {
+                    if (sourcePath.respondsTo('getOrNull') && sourcePath.getOrNull()?.asFile == rawDir) {
+                        sourcePath.set(enhancedDir)
+                    }
+                } catch (ignored) {
+                    // Source path is not a redirectable directory property.
+                }
+            }
+            spec.children.each { child -> walk(child) }
+        }
+        walk(task.rootSpec)
+    }
+
+    private static void dependsOnClasspathArtifacts(Project project, task, String sourceSetName) {
+        def sourceSet = project.sourceSets.getByName(sourceSetName)
+
+        [
+                sourceSet.compileClasspathConfigurationName,
+                sourceSet.runtimeClasspathConfigurationName
+        ].each { configurationName ->
+            task.dependsOn(project.configurations.getByName(configurationName))
+        }
+    }
+
     private boolean isJmixApp(Project project) {
         !project.plugins.hasPlugin('io.jmix.build')
     }
@@ -217,14 +310,7 @@ class JmixPlugin implements Plugin<Project> {
                 if (project.jmix.confDirCleanupEnabled) {
                     def resources = project.file("src/main/resources/")
                     if (resources.exists() && resources.isDirectory()) {
-                        def mainProperties = new Properties()
-                        def appPropsFile = project.file("src/main/resources/application.properties")
-                        if (appPropsFile.exists()) {
-                            appPropsFile.withInputStream { mainProperties.load(it) }
-                        } else {
-                            project.logger.lifecycle("File src/main/resources/application.properties not found")
-                        }
-
+                        def mainProperties = loadProperties(project)
                         def confDir = resolveConfDir(project, mainProperties)
 
                         project.logger.lifecycle("Delete directory: {}", confDir)
@@ -245,6 +331,71 @@ class JmixPlugin implements Plugin<Project> {
         }
     }
 
+    private static Properties loadProperties(Project project, String profileName = null) {
+        project.logger.lifecycle("Load properties (profile = $profileName)")
+
+        def appPropertiesFile = getAppPropertiesFile(project, profileName)
+        def yamlPropertiesFile = getYamlPropertiesFile(project, profileName)
+
+        if (appPropertiesFile.exists()) {
+            project.logger.lifecycle("Found file: {}", appPropertiesFile.getName())
+            return loadPropertiesFromAppPropertiesFile(appPropertiesFile)
+        } else if (yamlPropertiesFile.exists()) {
+            project.logger.lifecycle("Found file: {}", yamlPropertiesFile.getName())
+            return loadPropertiesFromYamlPropertiesFile(yamlPropertiesFile)
+        } else {
+            project.logger.lifecycle("File with properties is not found")
+            return new Properties()
+        }
+    }
+
+    private static File getAppPropertiesFile(Project project, String profileName = null) {
+        def preparedProfileName = (profileName?.trim() ?: "").with { name -> name ? "-$name" : "" }
+        def fileName = "src/main/resources/application%s.properties".formatted(preparedProfileName)
+        return project.file(fileName)
+    }
+
+    private static File getYamlPropertiesFile(Project project, String profileName = null) {
+        def basePath = "src/main/resources"
+        def templates = ["application%s.yaml", "application%s.yml"]
+                .collect { template ->
+                    def preparedProfileName = (profileName?.trim() ?: "").with { name -> name ? "-$name" : "" }
+                    def fileName = "$template".formatted(preparedProfileName)
+                    project.file("$basePath/$fileName")
+                }
+
+        return templates.find { it.exists() } ?: templates.first()
+    }
+
+    private static Properties loadPropertiesFromAppPropertiesFile(File appPropsFile) {
+        Properties properties = new Properties()
+        appPropsFile.withInputStream { properties.load(it) }
+        return properties;
+    }
+
+    private static Properties loadPropertiesFromYamlPropertiesFile(File yamlPropsFile) {
+        Yaml yaml = new Yaml()
+        Map<String, Object> yamlMap
+        yamlPropsFile.withInputStream { yamlMap = yaml.load(it) }
+
+        Properties properties = new Properties()
+        flattenPropertiesMap("", yamlMap, properties)
+        return properties;
+    }
+
+    private static void flattenPropertiesMap(String prefix, Map<String, Object> map, Properties props) {
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            String key = prefix.isEmpty() ? entry.getKey() : prefix + "." + entry.getKey();
+            Object value = entry.getValue();
+
+            if (value instanceof Map) {
+                flattenPropertiesMap(key, (Map<String, Object>) value, props);
+            } else {
+                props.put(key, value.toString());
+            }
+        }
+    }
+
     private static String resolveConfDir(Project project, Properties mainProperties) {
         def profilesList = resolveActiveProfiles(project, mainProperties)
 
@@ -252,15 +403,10 @@ class JmixPlugin implements Plugin<Project> {
         if (!profilesList.isEmpty()) {
             for (def profileName : profilesList) {
                 project.logger.lifecycle("Check profile: {}", profileName)
-                def profilePropertyFilePath = "src/main/resources/application-%s.properties".formatted(profileName)
-                def profilePropertiesFile = project.file(profilePropertyFilePath)
-                if (profilePropertiesFile.exists()) {
-                    def profileProps = new Properties()
-                    project.file(profilePropertyFilePath).withInputStream { profileProps.load(it) }
-                    confDir = profileProps.getProperty("jmix.core.conf-dir") ?: profileProps.getProperty("jmix.core.confDir") ?: null
-                    if (confDir != null) {
-                        break
-                    }
+                def profileProperties = loadProperties(project, profileName)
+                confDir = profileProperties.getProperty("jmix.core.conf-dir") ?: profileProperties.getProperty("jmix.core.confDir") ?: null
+                if (confDir != null) {
+                    break
                 }
             }
         }
@@ -282,8 +428,8 @@ class JmixPlugin implements Plugin<Project> {
 
         def profilesList = []
         if (profiles != null) {
-            def split = profiles.split(",")
-            profilesList = Arrays.stream(split).map { s -> s.trim().toLowerCase() }.toList().reverse()
+            def split = profiles.trim().replaceAll(/^\[(.*)\]$/, '$1').split(",")
+            profilesList = Arrays.stream(split).map { s -> s.trim().toLowerCase() }.toList()
         }
         return profilesList
     }

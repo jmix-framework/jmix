@@ -1,5 +1,7 @@
 group = 'io.jmix.jmxconsole'
-archivesBaseName = 'jmix-jmxconsole-starter'
+base {
+    archivesName = 'jmix-jmxconsole-starter'
+}
 
 dependencies {
     api project(':jmxconsole')

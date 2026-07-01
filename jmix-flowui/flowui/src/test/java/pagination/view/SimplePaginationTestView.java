@@ -36,4 +36,7 @@ public class SimplePaginationTestView extends StandardView {
 
     @ViewComponent
     public SimplePagination simplePaginationWithoutLoader;
+
+    @ViewComponent
+    public SimplePagination simplePaginationItemsPerPage;
 }

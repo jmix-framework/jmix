@@ -57,18 +57,22 @@
 
             <!-- A container with a data grid displaying the current user's tasks with filters applied -->
             <vbox id="tasksDataGridBox" height="100%" themeNames="spacing-s" padding="false">
-                <hbox id="buttonsPanel" classNames="buttons-panel">
-                    <!-- A button that opens and hides a task filter panel.
-                        This button also shows a number of applied filters to the user tasks.
-                    -->
-                    <div id="filterBtnContainer" classNames="relative inline-flex items-start" width="3em">
-                        <button id="filterBtn" icon="FILTER" themeNames="primary"/>
-                        <span id="appliedFiltersCount" themeNames="badge contrast primary small"
-                              css="border-radius: 50%; left: -0.75em" classNames="relative z-10" visible="false"/>
-                    </div>
-                    <button id="refreshBtn" action="tasksDataGrid.refresh" themeNames="primary success"/>
-                    <button id="openTaskFormBtn" action="tasksDataGrid.openTaskForm"/>
-                    <simplePagination id="tasksPagination" dataLoader="tasksDl"/>
+                <hbox id="buttonsPanel" wrap="true" width="100%">
+                    <startSlot>
+                        <!-- A button that opens and hides a task filter panel.
+                            This button also shows a number of applied filters to the user tasks.
+                        -->
+                        <div id="filterBtnContainer" classNames="relative inline-flex items-start" width="3em">
+                            <button id="filterBtn" icon="FILTER" themeNames="primary"/>
+                            <span id="appliedFiltersCount" themeNames="badge contrast primary small"
+                                  css="border-radius: 50%; left: -0.75em" classNames="relative z-10" visible="false"/>
+                        </div>
+                        <button id="refreshBtn" action="tasksDataGrid.refresh" themeNames="primary success"/>
+                        <button id="openTaskFormBtn" action="tasksDataGrid.openTaskForm"/>
+                    </startSlot>
+                    <endSlot>
+                        <simplePagination id="tasksPagination" dataLoader="tasksDl"/>
+                    </endSlot>
                 </hbox>
 
                 <dataGrid id="tasksDataGrid" width="100%" minHeight="20em" dataContainer="tasksDc"

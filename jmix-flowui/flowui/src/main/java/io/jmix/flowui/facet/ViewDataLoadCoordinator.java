@@ -17,11 +17,13 @@
 package io.jmix.flowui.facet;
 
 import io.jmix.flowui.view.View;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * A non-visual component for coordinating data loading operations in a {@link View}.
  * Manages the association of data loaders to various triggers, such as view
  * events, container item changes, or component value changes.
  */
+@NullMarked
 public interface ViewDataLoadCoordinator extends DataLoadCoordinator {
 }

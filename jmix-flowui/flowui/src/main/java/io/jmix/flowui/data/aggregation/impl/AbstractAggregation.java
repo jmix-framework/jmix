@@ -18,7 +18,7 @@ package io.jmix.flowui.data.aggregation.impl;
 
 import io.jmix.flowui.component.AggregationInfo;
 import io.jmix.flowui.data.aggregation.Aggregation;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.EnumSet;

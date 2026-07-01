@@ -14,7 +14,4 @@
  * limitations under the License.
  */
 
-@NonNullApi
 package io.jmix.security.configurer;
-
-import org.springframework.lang.NonNullApi;

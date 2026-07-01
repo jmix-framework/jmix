@@ -23,11 +23,13 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.search.utils.Constants;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
+@NullMarked
 @Component("search_ReferencePropertyValueExtractor")
 public class ReferencePropertyValueExtractor extends AbstractPropertyValueExtractor {
 

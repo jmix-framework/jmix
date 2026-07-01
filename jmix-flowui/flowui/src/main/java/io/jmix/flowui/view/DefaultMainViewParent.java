@@ -18,10 +18,12 @@ package io.jmix.flowui.view;
 
 import com.vaadin.flow.router.RouterLayout;
 import io.jmix.flowui.UiProperties;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Marker interface which indicates that the actual view's route parent
  * must be the main view returned by {@link UiProperties#getMainViewId()}.
  */
+@NullMarked
 public interface DefaultMainViewParent extends RouterLayout {
 }

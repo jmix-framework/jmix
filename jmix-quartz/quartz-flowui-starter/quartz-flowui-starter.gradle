@@ -15,7 +15,9 @@
  */
 
 group 'io.jmix.quartz'
-archivesBaseName = 'jmix-quartz-flowui-starter'
+base {
+    archivesName = 'jmix-quartz-flowui-starter'
+}
 
 dependencies {
     api project(':quartz-flowui')

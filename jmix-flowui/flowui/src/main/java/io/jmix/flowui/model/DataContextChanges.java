@@ -16,11 +16,14 @@
 
 package io.jmix.flowui.model;
 
+import org.jspecify.annotations.NullMarked;
+
 import java.util.Set;
 
 /**
  * Gives direct access to collections of modified and removed instances in {@link DataContext}.
  */
+@NullMarked
 public interface DataContextChanges {
 
     /**

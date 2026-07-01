@@ -21,6 +21,9 @@ import io.jmix.core.common.util.Preconditions;
 import io.jmix.flowui.Fragments;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.fragment.*;
+import io.jmix.flowui.observation.FragmentObservationInfo;
+import io.jmix.flowui.observation.FragmentLifecycle;
+import io.jmix.flowui.observation.UiObservationSupport;
 import io.jmix.flowui.sys.ViewDescriptorUtils;
 import io.jmix.flowui.sys.autowire.AutowireManager;
 import io.jmix.flowui.sys.autowire.FragmentAutowireContext;
@@ -36,10 +39,12 @@ import io.jmix.flowui.xml.layout.loader.FragmentLoaderContext;
 import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -57,6 +62,9 @@ public class FragmentsImpl implements Fragments {
     protected final UiComponents uiComponents;
     protected final ViewRegistry viewRegistry;
     protected final AutowireManager autowireManager;
+
+    @Autowired
+    protected UiObservationSupport uiObservationSupport;
 
     public FragmentsImpl(ApplicationContext applicationContext,
                          FragmentDescriptorLoader fragmentDescriptorLoader,
@@ -85,12 +93,16 @@ public class FragmentsImpl implements Fragments {
         // fake host loader context
         ComponentLoader.Context hostContext = createHostLoaderContext(parent);
 
-        F fragment = uiComponents.create(fragmentClass);
+        FragmentObservationInfo observationInfo =
+                new FragmentObservationInfo(parent, fragmentId, fragmentClass.getName());
+        F fragment = uiObservationSupport.observeFragmentLifecycle(
+                observationInfo, FragmentLifecycle.CREATE, () -> uiComponents.create(fragmentClass));
+
         if (fragmentId != null) {
-            fragment.setId(fragmentId);
+            Objects.requireNonNull(fragment).setId(fragmentId);
         }
 
-        init(hostContext, fragment);
+        init(hostContext, Objects.requireNonNull(fragment));
 
         // perform automatic autowiring when the fragment is created programmatically
         if (hostContext instanceof ComponentLoader.ComponentContext componentContext) {
@@ -110,7 +122,7 @@ public class FragmentsImpl implements Fragments {
         FragmentOwner origin = ((FragmentOwner) hostContext.getOrigin());
         FragmentUtils.setParentController(fragment, origin);
 
-        FragmentData fragmentData = applicationContext.getBean(FragmentData.class);
+        FragmentData fragmentData = applicationContext.getBean(FragmentData.class, fragment);
         FragmentUtils.setFragmentData(fragment, fragmentData);
 
         FragmentActions actions = applicationContext.getBean(FragmentActions.class, fragment);
@@ -170,7 +182,8 @@ public class FragmentsImpl implements Fragments {
             context.executeInitTasks();
         }
 
-        ComponentUtil.fireEvent(fragment, new Fragment.ReadyEvent(fragment));
+        uiObservationSupport.observeFragmentLifecycle(fragment, FragmentLifecycle.READY,
+                () -> ComponentUtil.fireEvent(fragment, new Fragment.ReadyEvent(fragment)));
     }
 
     protected void autowireFragment(Fragment<?> fragment) {
@@ -178,8 +191,7 @@ public class FragmentsImpl implements Fragments {
         autowireManager.autowire(fragmentAutowireContext);
     }
 
-    @Nullable
-    protected ComponentLoader.Context findHostLoaderContext(ComponentLoader.Context hostContext) {
+    protected ComponentLoader.@Nullable Context findHostLoaderContext(ComponentLoader.Context hostContext) {
         ComponentLoader.Context targetContext = hostContext;
         while (targetContext.getParentContext() != null) {
             targetContext = targetContext.getParentContext();

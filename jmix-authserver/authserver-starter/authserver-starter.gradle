@@ -15,7 +15,9 @@
  */
 
 group = 'io.jmix.authserver'
-archivesBaseName = 'jmix-authserver-starter'
+base {
+    archivesName = 'jmix-authserver-starter'
+}
 
 dependencies {
     api project(':authserver')
@@ -26,5 +28,6 @@ dependencies {
     implementation project(':security-starter')
     implementation project(':security-resource-server-starter')
 
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-authorization-server'
     implementation 'org.springframework.boot:spring-boot-autoconfigure'
 }

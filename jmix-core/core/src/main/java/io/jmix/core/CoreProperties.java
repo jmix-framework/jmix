@@ -16,9 +16,11 @@
 
 package io.jmix.core;
 
+import io.jmix.core.annotation.Experimental;
+import io.micrometer.observation.Observation;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.time.Duration;
 import java.util.Collections;
@@ -79,6 +81,16 @@ public class CoreProperties {
     String entitySerializationTokenEncryptionKey;
 
     /**
+     * Whether potentially dangerous runtime features are enabled.
+     */
+    boolean unsafeRuntimeFeaturesEnabled;
+
+    /**
+     * Whether loading of classes from the file system is enabled.
+     */
+    boolean hotDeployEnabled;
+
+    /**
      * Whether the processing of bean invocation trigger files is enabled. Default value: true The trigger file is a
      * file that is placed in the triggers subdirectory of the application's temporary directory. The file name consists
      * of two parts separated with a #: the first part is the bean class, the second part is the method name of the bean
@@ -117,6 +129,26 @@ public class CoreProperties {
      * */
     boolean instanceNameFallbackEnabled;
 
+    /**
+     * Whether to enable data observation for loading and saving data using {@link UnconstrainedDataManager}.
+     * <p>
+     * When observation is enabled, custom spans are created using the {@link io.micrometer.observation.Observation}.
+     */
+    boolean dataObservationEnabled;
+
+    /**
+     * Whether to include user information about username and tenant ID to root {@link Observation}
+     * as high cardinality values.
+     */
+    boolean useUserInfoForObservation;
+
+    /**
+     * Whether to enable application info file generation.
+     * <p>
+     * When enabled, application info file is created in the conf directory.
+     */
+    boolean applicationInfoFileEnabled;
+
     public CoreProperties(
             String webHostName,
             String webPort,
@@ -133,12 +165,17 @@ public class CoreProperties {
             String defaultFileStorage,
             @DefaultValue("false") boolean entitySerializationTokenRequired,
             @DefaultValue("KEY") String entitySerializationTokenEncryptionKey,
+            @DefaultValue("true") boolean unsafeRuntimeFeaturesEnabled,
+            @DefaultValue("true") boolean hotDeployEnabled,
             @DefaultValue("false") boolean legacyFetchPlanSerializationAttributeName,
             @DefaultValue("true") boolean triggerFilesEnabled,
             @DefaultValue("5000") Duration triggerFilesProcessInterval,
             @DefaultValue("true") boolean roundDecimalValueByFormat,
             @DefaultValue("false") boolean skipNullOrEmptyConditionsByDefault,
-            @DefaultValue("true") boolean instanceNameFallbackEnabled) {
+            @DefaultValue("true") boolean instanceNameFallbackEnabled,
+            @DefaultValue("false") boolean dataObservationEnabled,
+            @DefaultValue("true") boolean useUserInfoForObservation,
+            @DefaultValue("true") boolean applicationInfoFileEnabled) {
         this.webHostName = webHostName;
         this.webPort = webPort;
         this.confDir = confDir;
@@ -163,11 +200,16 @@ public class CoreProperties {
 
         this.entitySerializationTokenRequired = entitySerializationTokenRequired;
         this.entitySerializationTokenEncryptionKey = entitySerializationTokenEncryptionKey;
+        this.unsafeRuntimeFeaturesEnabled = unsafeRuntimeFeaturesEnabled;
+        this.hotDeployEnabled = hotDeployEnabled;
         this.triggerFilesEnabled = triggerFilesEnabled;
         this.triggerFilesProcessInterval = triggerFilesProcessInterval;
         this.roundDecimalValueByFormat = roundDecimalValueByFormat;
         this.skipNullOrEmptyConditionsByDefault = skipNullOrEmptyConditionsByDefault;
         this.instanceNameFallbackEnabled = instanceNameFallbackEnabled;
+        this.dataObservationEnabled = dataObservationEnabled;
+        this.useUserInfoForObservation = useUserInfoForObservation;
+        this.applicationInfoFileEnabled = applicationInfoFileEnabled;
     }
 
     public String getWebHostName() {
@@ -246,11 +288,19 @@ public class CoreProperties {
         return entitySerializationTokenEncryptionKey;
     }
 
+    public boolean isUnsafeRuntimeFeaturesEnabled() {
+        return unsafeRuntimeFeaturesEnabled;
+    }
+
+    public boolean isHotDeployEnabled() {
+        return unsafeRuntimeFeaturesEnabled && hotDeployEnabled;
+    }
+
     /**
      * @see #triggerFilesEnabled
      */
     public boolean isTriggerFilesEnabled() {
-        return triggerFilesEnabled;
+        return unsafeRuntimeFeaturesEnabled && triggerFilesEnabled;
     }
 
     /**
@@ -281,5 +331,28 @@ public class CoreProperties {
      */
     public boolean isInstanceNameFallbackEnabled() {
         return instanceNameFallbackEnabled;
+    }
+
+    /**
+     * @see #dataObservationEnabled
+     */
+    @Experimental
+    public boolean isDataObservationEnabled() {
+        return dataObservationEnabled;
+    }
+
+    /**
+     * @see #useUserInfoForObservation
+     */
+    @Experimental
+    public boolean isUseUserInfoForObservation() {
+        return useUserInfoForObservation;
+    }
+
+    /**
+     * @see #applicationInfoFileEnabled
+     */
+    public boolean isApplicationInfoFileEnabled() {
+        return applicationInfoFileEnabled;
     }
 }

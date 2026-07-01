@@ -15,7 +15,9 @@
  */
 
 group = 'io.jmix.datatools'
-archivesBaseName = 'jmix-datatools-starter'
+base {
+    archivesName = 'jmix-datatools-starter'
+}
 
 dependencies {
     api project(':datatools')

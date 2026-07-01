@@ -17,6 +17,7 @@
 package io.jmix.core;
 
 import io.jmix.core.entity.EntityValues;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,6 +31,7 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
  *
  * @param <T> type of entity
  */
+@NullMarked
 public final class Ids<T> extends ArrayList<Id<T>> {
 
     /**

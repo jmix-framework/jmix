@@ -16,6 +16,8 @@
 
 package io.jmix.chartsflowui.kit.component.event.dto;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.List;
 import java.util.Map;
 
@@ -52,6 +54,7 @@ public abstract class AbstractChartMouseEventDetail extends AbstractChartCompone
 
     protected Integer singleData;
 
+    @Nullable
     public Double getPercent() {
         return percent;
     }
@@ -60,6 +63,7 @@ public abstract class AbstractChartMouseEventDetail extends AbstractChartCompone
         this.percent = percent;
     }
 
+    @Nullable
     public String getColor() {
         return color;
     }
@@ -68,6 +72,7 @@ public abstract class AbstractChartMouseEventDetail extends AbstractChartCompone
         this.color = color;
     }
 
+    @Nullable
     public List<String> getDimensionNames() {
         return dimensionNames;
     }
@@ -76,6 +81,7 @@ public abstract class AbstractChartMouseEventDetail extends AbstractChartCompone
         this.dimensionNames = dimensionNames;
     }
 
+    @Nullable
     public Map<String, Object> getEncode() {
         return encode;
     }
@@ -84,6 +90,7 @@ public abstract class AbstractChartMouseEventDetail extends AbstractChartCompone
         this.encode = encode;
     }
 
+    @Nullable
     public List<Object> get$vars() {
         return $vars;
     }
@@ -92,6 +99,7 @@ public abstract class AbstractChartMouseEventDetail extends AbstractChartCompone
         this.$vars = $vars;
     }
 
+    @Nullable
     public Integer getTickIndex() {
         return tickIndex;
     }
@@ -100,6 +108,7 @@ public abstract class AbstractChartMouseEventDetail extends AbstractChartCompone
         this.tickIndex = tickIndex;
     }
 
+    @Nullable
     public Integer getDataIndex() {
         return dataIndex;
     }
@@ -108,6 +117,7 @@ public abstract class AbstractChartMouseEventDetail extends AbstractChartCompone
         this.dataIndex = dataIndex;
     }
 
+    @Nullable
     public Integer getXAxisIndex() {
         return xAxisIndex;
     }
@@ -116,6 +126,7 @@ public abstract class AbstractChartMouseEventDetail extends AbstractChartCompone
         this.xAxisIndex = xAxisIndex;
     }
 
+    @Nullable
     public Integer getYAxisIndex() {
         return yAxisIndex;
     }
@@ -124,6 +135,7 @@ public abstract class AbstractChartMouseEventDetail extends AbstractChartCompone
         this.yAxisIndex = yAxisIndex;
     }
 
+    @Nullable
     public String getName() {
         return name;
     }
@@ -132,6 +144,7 @@ public abstract class AbstractChartMouseEventDetail extends AbstractChartCompone
         this.name = name;
     }
 
+    @Nullable
     public Object getValue() {
         return value;
     }
@@ -140,6 +153,7 @@ public abstract class AbstractChartMouseEventDetail extends AbstractChartCompone
         this.value = value;
     }
 
+    @Nullable
     public String getTargetType() {
         return targetType;
     }
@@ -148,6 +162,7 @@ public abstract class AbstractChartMouseEventDetail extends AbstractChartCompone
         this.targetType = targetType;
     }
 
+    @Nullable
     public Map<String, Object> getData() {
         return data;
     }
@@ -156,6 +171,7 @@ public abstract class AbstractChartMouseEventDetail extends AbstractChartCompone
         this.data = data;
     }
 
+    @Nullable
     public Integer getSingleData() {
         return singleData;
     }

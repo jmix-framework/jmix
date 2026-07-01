@@ -52,14 +52,21 @@
 
     <layout>
         <genericFilter id="genericFilter" dataLoader="executionsDl" opened="false"/>
-        <hbox id="buttonsPanel" classNames="buttons-panel">
-            <button id="downloadBtn" action="executionsDataGrid.download"/>
-            <simplePagination id="pagination" dataLoader="executionsDl"/>
+        <hbox id="buttonsPanel" wrap="true" width="100%">
+            <startSlot>
+                <button id="downloadBtn" action="executionsDataGrid.download"/>
+                <button id="openInSpreadsheetBtn" action="executionsDataGrid.openInSpreadsheet"/>
+            </startSlot>
+            <endSlot>
+                <simplePagination id="pagination" dataLoader="executionsDl"/>
+            </endSlot>
         </hbox>
         <dataGrid id="executionsDataGrid" dataContainer="executionsDc" width="100%" selectionMode="MULTI"
                   columnReorderingAllowed="true">
             <actions>
                 <action id="download" text="msg://action.download.text" icon="DOWNLOAD" type="list_itemTracking"/>
+                <action id="openInSpreadsheet" text="msg://action.openInSpreadsheet.text" icon="FILE_TABLE"
+                        type="list_itemTracking"/>
             </actions>
             <columns resizable="true">
                 <column property="startTime"/>

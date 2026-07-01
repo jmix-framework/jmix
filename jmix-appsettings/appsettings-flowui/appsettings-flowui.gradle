@@ -18,7 +18,9 @@ apply plugin: 'groovy'
 apply plugin: 'io.jmix'
 
 group = 'io.jmix.appsettings'
-archivesBaseName = 'jmix-appsettings-flowui'
+base {
+    archivesName = 'jmix-appsettings-flowui'
+}
 
 dependencies {
     api project(':appsettings')

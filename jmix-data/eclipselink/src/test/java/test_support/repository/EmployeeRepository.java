@@ -20,6 +20,7 @@ import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.repository.JmixDataRepository;
 import io.jmix.core.repository.JmixDataRepositoryContext;
 import io.jmix.core.repository.Query;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -31,6 +32,7 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Stream;
 
+@NullMarked
 public interface EmployeeRepository extends JmixDataRepository<Employee, UUID> {
     List<Employee> findEmployeesByHomeAddressStreetOrWorkAddressStreetOrRegistrationAddressStreet(String homeStreet, String workStreet, String registrationStreet);
 
@@ -89,6 +91,9 @@ public interface EmployeeRepository extends JmixDataRepository<Employee, UUID> {
 
     @Query(value = "select e.secondName from repository$Employee e", properties = "secondNameReturnColumn")
     List<String> queryEmployeeSecondNamesByContext(JmixDataRepositoryContext context);
+
+    @Query(value = "select e from repository$Employee e")
+    List<Employee> queryEmployeeByContext(JmixDataRepositoryContext context);
 
     @Query("select e.secondName from repository$Employee e where e.name = :name")
     Optional<String> queryEmployeeSecondNameByFirstName(@Param("name") String name);

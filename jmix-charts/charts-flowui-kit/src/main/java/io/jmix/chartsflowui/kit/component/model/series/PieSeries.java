@@ -21,7 +21,7 @@ import io.jmix.chartsflowui.kit.component.model.HasEnumId;
 import io.jmix.chartsflowui.kit.component.model.HasPosition;
 import io.jmix.chartsflowui.kit.component.model.shared.ItemStyle;
 import io.jmix.chartsflowui.kit.component.model.shared.LineStyle;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The pie chart is mainly used for showing proportion of different categories. Each arc length represents
@@ -213,6 +213,7 @@ public class PieSeries extends AbstractAxisAwareSeries<PieSeries>
 
         protected Integer maxSurfaceAngle;
 
+        @Nullable
         public Boolean getShow() {
             return show;
         }
@@ -222,6 +223,7 @@ public class PieSeries extends AbstractAxisAwareSeries<PieSeries>
             markAsDirty();
         }
 
+        @Nullable
         public Boolean getShowAbove() {
             return showAbove;
         }
@@ -231,6 +233,7 @@ public class PieSeries extends AbstractAxisAwareSeries<PieSeries>
             markAsDirty();
         }
 
+        @Nullable
         public Integer getLength() {
             return length;
         }
@@ -240,6 +243,7 @@ public class PieSeries extends AbstractAxisAwareSeries<PieSeries>
             markAsDirty();
         }
 
+        @Nullable
         public Integer getLength2() {
             return length2;
         }
@@ -249,6 +253,7 @@ public class PieSeries extends AbstractAxisAwareSeries<PieSeries>
             markAsDirty();
         }
 
+        @Nullable
         public Boolean getSmooth() {
             return smooth;
         }
@@ -258,6 +263,7 @@ public class PieSeries extends AbstractAxisAwareSeries<PieSeries>
             markAsDirty();
         }
 
+        @Nullable
         public Integer getMinTurnAngle() {
             return minTurnAngle;
         }
@@ -267,6 +273,7 @@ public class PieSeries extends AbstractAxisAwareSeries<PieSeries>
             markAsDirty();
         }
 
+        @Nullable
         public LineStyle getLineStyle() {
             return lineStyle;
         }
@@ -280,6 +287,7 @@ public class PieSeries extends AbstractAxisAwareSeries<PieSeries>
             addChild(lineStyle);
         }
 
+        @Nullable
         public Integer getMaxSurfaceAngle() {
             return maxSurfaceAngle;
         }
@@ -345,6 +353,7 @@ public class PieSeries extends AbstractAxisAwareSeries<PieSeries>
 
         protected BlurScopeType blurScope;
 
+        @Nullable
         public Boolean getDisabled() {
             return disabled;
         }
@@ -354,6 +363,7 @@ public class PieSeries extends AbstractAxisAwareSeries<PieSeries>
             markAsDirty();
         }
 
+        @Nullable
         public Boolean getScale() {
             return scale;
         }
@@ -363,6 +373,7 @@ public class PieSeries extends AbstractAxisAwareSeries<PieSeries>
             markAsDirty();
         }
 
+        @Nullable
         public Integer getScaleSize() {
             return scaleSize;
         }
@@ -372,6 +383,7 @@ public class PieSeries extends AbstractAxisAwareSeries<PieSeries>
             markAsDirty();
         }
 
+        @Nullable
         public FocusType getFocus() {
             return focus;
         }
@@ -381,6 +393,7 @@ public class PieSeries extends AbstractAxisAwareSeries<PieSeries>
             markAsDirty();
         }
 
+        @Nullable
         public BlurScopeType getBlurScope() {
             return blurScope;
         }
@@ -429,6 +442,7 @@ public class PieSeries extends AbstractAxisAwareSeries<PieSeries>
 
         protected Boolean disabled;
 
+        @Nullable
         public Boolean getDisabled() {
             return disabled;
         }
@@ -457,6 +471,7 @@ public class PieSeries extends AbstractAxisAwareSeries<PieSeries>
 
         protected ItemStyle itemStyle;
 
+        @Nullable
         public Label getLabel() {
             return label;
         }
@@ -470,6 +485,7 @@ public class PieSeries extends AbstractAxisAwareSeries<PieSeries>
             addChild(label);
         }
 
+        @Nullable
         public ElementLabelLine getLabelLine() {
             return labelLine;
         }
@@ -483,6 +499,7 @@ public class PieSeries extends AbstractAxisAwareSeries<PieSeries>
             addChild(labelLine);
         }
 
+        @Nullable
         public ItemStyle getItemStyle() {
             return itemStyle;
         }
@@ -570,6 +587,7 @@ public class PieSeries extends AbstractAxisAwareSeries<PieSeries>
         return this;
     }
 
+    @Nullable
     public Integer getGeoIndex() {
         return geoIndex;
     }
@@ -579,6 +597,7 @@ public class PieSeries extends AbstractAxisAwareSeries<PieSeries>
         markAsDirty();
     }
 
+    @Nullable
     public Integer getCalendarIndex() {
         return calendarIndex;
     }
@@ -588,6 +607,7 @@ public class PieSeries extends AbstractAxisAwareSeries<PieSeries>
         markAsDirty();
     }
 
+    @Nullable
     public Integer getSelectedOffset() {
         return selectedOffset;
     }
@@ -597,6 +617,7 @@ public class PieSeries extends AbstractAxisAwareSeries<PieSeries>
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getClockwise() {
         return clockwise;
     }
@@ -606,6 +627,7 @@ public class PieSeries extends AbstractAxisAwareSeries<PieSeries>
         markAsDirty();
     }
 
+    @Nullable
     public Integer getStartAngle() {
         return startAngle;
     }
@@ -615,6 +637,7 @@ public class PieSeries extends AbstractAxisAwareSeries<PieSeries>
         markAsDirty();
     }
 
+    @Nullable
     public Integer getMinAngle() {
         return minAngle;
     }
@@ -624,6 +647,7 @@ public class PieSeries extends AbstractAxisAwareSeries<PieSeries>
         markAsDirty();
     }
 
+    @Nullable
     public Integer getMinShowLabelAngle() {
         return minShowLabelAngle;
     }
@@ -633,6 +657,7 @@ public class PieSeries extends AbstractAxisAwareSeries<PieSeries>
         markAsDirty();
     }
 
+    @Nullable
     public RoseType getRoseType() {
         return roseType;
     }
@@ -642,6 +667,7 @@ public class PieSeries extends AbstractAxisAwareSeries<PieSeries>
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getAvoidLabelOverlap() {
         return avoidLabelOverlap;
     }
@@ -651,6 +677,7 @@ public class PieSeries extends AbstractAxisAwareSeries<PieSeries>
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getStillShowZeroSum() {
         return stillShowZeroSum;
     }
@@ -660,6 +687,7 @@ public class PieSeries extends AbstractAxisAwareSeries<PieSeries>
         markAsDirty();
     }
 
+    @Nullable
     public Integer getPercentPrecision() {
         return percentPrecision;
     }
@@ -669,6 +697,7 @@ public class PieSeries extends AbstractAxisAwareSeries<PieSeries>
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public String getLeft() {
         return left;
@@ -680,6 +709,7 @@ public class PieSeries extends AbstractAxisAwareSeries<PieSeries>
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public String getTop() {
         return top;
@@ -691,6 +721,7 @@ public class PieSeries extends AbstractAxisAwareSeries<PieSeries>
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public String getRight() {
         return right;
@@ -702,6 +733,7 @@ public class PieSeries extends AbstractAxisAwareSeries<PieSeries>
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public String getBottom() {
         return bottom;
@@ -713,6 +745,7 @@ public class PieSeries extends AbstractAxisAwareSeries<PieSeries>
         markAsDirty();
     }
 
+    @Nullable
     public String getWidth() {
         return width;
     }
@@ -722,6 +755,7 @@ public class PieSeries extends AbstractAxisAwareSeries<PieSeries>
         markAsDirty();
     }
 
+    @Nullable
     public String getHeight() {
         return height;
     }
@@ -731,6 +765,7 @@ public class PieSeries extends AbstractAxisAwareSeries<PieSeries>
         markAsDirty();
     }
 
+    @Nullable
     public String getCursor() {
         return cursor;
     }
@@ -740,6 +775,7 @@ public class PieSeries extends AbstractAxisAwareSeries<PieSeries>
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getShowEmptyCircle() {
         return showEmptyCircle;
     }
@@ -749,6 +785,7 @@ public class PieSeries extends AbstractAxisAwareSeries<PieSeries>
         markAsDirty();
     }
 
+    @Nullable
     public ItemStyle getEmptyCircleStyle() {
         return emptyCircleStyle;
     }
@@ -762,6 +799,7 @@ public class PieSeries extends AbstractAxisAwareSeries<PieSeries>
         addChild(emptyCircleStyle);
     }
 
+    @Nullable
     public LabelLine getLabelLine() {
         return labelLine;
     }
@@ -775,6 +813,7 @@ public class PieSeries extends AbstractAxisAwareSeries<PieSeries>
         addChild(labelLine);
     }
 
+    @Nullable
     public ItemStyle getItemStyle() {
         return itemStyle;
     }
@@ -788,6 +827,7 @@ public class PieSeries extends AbstractAxisAwareSeries<PieSeries>
         addChild(this.itemStyle);
     }
 
+    @Nullable
     public Emphasis getEmphasis() {
         return emphasis;
     }
@@ -801,6 +841,7 @@ public class PieSeries extends AbstractAxisAwareSeries<PieSeries>
         addChild(emphasis);
     }
 
+    @Nullable
     public Blur getBlur() {
         return blur;
     }
@@ -814,6 +855,7 @@ public class PieSeries extends AbstractAxisAwareSeries<PieSeries>
         addChild(blur);
     }
 
+    @Nullable
     public Selected getSelected() {
         return selected;
     }
@@ -827,6 +869,7 @@ public class PieSeries extends AbstractAxisAwareSeries<PieSeries>
         addChild(selected);
     }
 
+    @Nullable
     public String[] getCenter() {
         return center;
     }
@@ -836,6 +879,7 @@ public class PieSeries extends AbstractAxisAwareSeries<PieSeries>
         markAsDirty();
     }
 
+    @Nullable
     public String[] getRadius() {
         return radius;
     }
@@ -845,6 +889,7 @@ public class PieSeries extends AbstractAxisAwareSeries<PieSeries>
         markAsDirty();
     }
 
+    @Nullable
     public AnimationType getAnimationType() {
         return animationType;
     }
@@ -854,6 +899,7 @@ public class PieSeries extends AbstractAxisAwareSeries<PieSeries>
         markAsDirty();
     }
 
+    @Nullable
     public AnimationUpdateType getAnimationTypeUpdate() {
         return animationTypeUpdate;
     }
@@ -863,6 +909,7 @@ public class PieSeries extends AbstractAxisAwareSeries<PieSeries>
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getAnimation() {
         return animation;
     }
@@ -872,6 +919,7 @@ public class PieSeries extends AbstractAxisAwareSeries<PieSeries>
         markAsDirty();
     }
 
+    @Nullable
     public Integer getAnimationThreshold() {
         return animationThreshold;
     }
@@ -881,6 +929,7 @@ public class PieSeries extends AbstractAxisAwareSeries<PieSeries>
         markAsDirty();
     }
 
+    @Nullable
     public Integer getAnimationDurationUpdate() {
         return animationDurationUpdate;
     }
@@ -890,6 +939,7 @@ public class PieSeries extends AbstractAxisAwareSeries<PieSeries>
         markAsDirty();
     }
 
+    @Nullable
     public String getAnimationEasingUpdate() {
         return animationEasingUpdate;
     }
@@ -899,6 +949,7 @@ public class PieSeries extends AbstractAxisAwareSeries<PieSeries>
         markAsDirty();
     }
 
+    @Nullable
     public Integer getAnimationDelayUpdate() {
         return animationDelayUpdate;
     }

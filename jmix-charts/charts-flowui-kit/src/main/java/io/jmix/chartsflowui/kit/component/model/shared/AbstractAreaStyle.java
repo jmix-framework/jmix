@@ -18,6 +18,7 @@ package io.jmix.chartsflowui.kit.component.model.shared;
 
 import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
 import io.jmix.chartsflowui.kit.component.model.HasShadow;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The base class for area style.
@@ -37,6 +38,7 @@ public abstract class AbstractAreaStyle<T extends AbstractAreaStyle<T>> extends 
 
     protected Double opacity;
 
+    @Nullable
     @Override
     public Integer getShadowBlur() {
         return shadowBlur;
@@ -48,6 +50,7 @@ public abstract class AbstractAreaStyle<T extends AbstractAreaStyle<T>> extends 
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Color getShadowColor() {
         return shadowColor;
@@ -59,6 +62,7 @@ public abstract class AbstractAreaStyle<T extends AbstractAreaStyle<T>> extends 
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getShadowOffsetX() {
         return shadowOffsetX;
@@ -70,6 +74,7 @@ public abstract class AbstractAreaStyle<T extends AbstractAreaStyle<T>> extends 
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getShadowOffsetY() {
         return shadowOffsetY;
@@ -81,6 +86,7 @@ public abstract class AbstractAreaStyle<T extends AbstractAreaStyle<T>> extends 
         markAsDirty();
     }
 
+    @Nullable
     public Double getOpacity() {
         return opacity;
     }

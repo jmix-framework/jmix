@@ -18,7 +18,9 @@ apply plugin: 'groovy'
 apply plugin: 'io.jmix'
 
 group = 'io.jmix.security'
-archivesBaseName = 'jmix-security-flowui'
+base {
+    archivesName = 'jmix-security-flowui'
+}
 
 dependencies {
     api project(':security')

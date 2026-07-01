@@ -32,7 +32,7 @@ import io.jmix.flowui.settings.UserSettingsCache;
 import io.jmix.flowui.settings.UserSettingsService;
 import io.jmix.flowui.sys.autowire.ReflectionCacheManager;
 import io.jmix.flowui.view.View;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public class FragmentSettingsFacetImpl extends AbstractSettingsFacet<FragmentSettings>
         implements FragmentSettingsFacet {

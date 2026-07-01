@@ -26,6 +26,12 @@
         <![CDATA[<html>Blank view fragment.</html>]]>
     </description>
 
+    <property caption="Root component"
+              code="rootComponent"
+              defaultValue="vbox"
+              propertyType="OPTION"
+              optionsString="div,hbox,vbox,gridLayout,formLayout"/>
+
     <property caption="Descriptor name"
               code="descriptorName"
               defaultValue="blank-fragment"

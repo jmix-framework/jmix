@@ -19,6 +19,7 @@ package io.jmix.flowui.data.aggregation;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.flowui.component.AggregationInfo;
 import io.jmix.flowui.component.grid.DataGrid;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.Collection;
 
@@ -30,6 +31,7 @@ import java.util.Collection;
  *            or type of data container items if {@link AggregationInfo.Type#CUSTOM} and
  *            {@link MetaPropertyPath} of aggregation info is null
  */
+@NullMarked
 public interface AggregationStrategy<V, T> {
 
     /**

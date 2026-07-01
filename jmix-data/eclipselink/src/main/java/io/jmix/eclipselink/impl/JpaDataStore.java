@@ -48,7 +48,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
@@ -359,10 +359,15 @@ public class JpaDataStore extends AbstractDataStore implements DataSortingOption
     protected Set<Object> saveAll(SaveContext context) {
         EntityManager em = storeAwareLocator.getEntityManager(storeName);
 
+        boolean skipSavingEvent = Boolean.TRUE.equals(
+                context.getHints().get(PersistenceHints.SKIP_ENTITY_SAVING_EVENT));
+
         Set<Object> result = new HashSet<>();
         for (Object entity : context.getEntitiesToSave()) {
             if (entityStates.isNew(entity)) {
-                entityEventManager.publishEntitySavingEvent(entity, true);
+                if (!skipSavingEvent) {
+                    entityEventManager.publishEntitySavingEvent(entity, true);
+                }
                 em.persist(entity);
                 result.add(entity);
             }
@@ -370,7 +375,9 @@ public class JpaDataStore extends AbstractDataStore implements DataSortingOption
 
         for (Object entity : context.getEntitiesToSave()) {
             if (!entityStates.isNew(entity)) {
-                entityEventManager.publishEntitySavingEvent(entity, false);
+                if (!skipSavingEvent) {
+                    entityEventManager.publishEntitySavingEvent(entity, false);
+                }
                 Object merged = em.merge(entity);
                 result.add(merged);
             }
@@ -564,7 +571,11 @@ public class JpaDataStore extends AbstractDataStore implements DataSortingOption
                 }
             }
 
-            entityChangedEventManager.publish(events);
+            boolean skipChangedEvent = Boolean.TRUE.equals(
+                    context.getHints().get(PersistenceHints.SKIP_ENTITY_CHANGED_EVENT));
+            if (!skipChangedEvent) {
+                entityChangedEventManager.publish(events);
+            }
         }
     }
 

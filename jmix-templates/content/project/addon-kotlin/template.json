@@ -12,6 +12,10 @@
     {
       "name": "locales",
       "hidden": true
+    },
+    {
+      "name": "projectTheme",
+      "hidden": true
     }
   ]
 }

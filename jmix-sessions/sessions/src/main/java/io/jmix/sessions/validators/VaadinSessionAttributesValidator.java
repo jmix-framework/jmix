@@ -16,9 +16,12 @@
 
 package io.jmix.sessions.validators;
 
+import org.jspecify.annotations.NullMarked;
+
 import java.util.Arrays;
 import java.util.List;
 
+@NullMarked
 public class VaadinSessionAttributesValidator implements SessionAttributePersistenceValidator {
 
     public final static String SERVLET_NAME = "springServlet";

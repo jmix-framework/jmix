@@ -17,6 +17,7 @@
 package io.jmix.chartsflowui.kit.component.model.shared;
 
 import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The style of the decal pattern.
@@ -90,20 +91,23 @@ public class Decal extends ChartObservableObject {
             this.twoDimensionalArray = twoDimensionalArray;
         }
 
+        @Nullable
         public Integer getNumber() {
             return number;
         }
 
+        @Nullable
         public Integer[] getArray() {
             return array;
         }
 
+        @Nullable
         public Integer[][] getTwoDimensionalArray() {
             return twoDimensionalArray;
         }
     }
 
-    public HasSymbols.Symbol getSymbol() {
+    public HasSymbols.@Nullable Symbol getSymbol() {
         return symbol;
     }
 
@@ -117,6 +121,7 @@ public class Decal extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public Double getSymbolSize() {
         return symbolSize;
     }
@@ -126,6 +131,7 @@ public class Decal extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getSymbolKeepAspect() {
         return symbolKeepAspect;
     }
@@ -135,6 +141,7 @@ public class Decal extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public Color getColor() {
         return color;
     }
@@ -144,6 +151,7 @@ public class Decal extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public Color getBackgroundColor() {
         return backgroundColor;
     }
@@ -153,6 +161,7 @@ public class Decal extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public DashArray getDashArrayX() {
         return dashArrayX;
     }
@@ -172,6 +181,7 @@ public class Decal extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public DashArray getDashArrayY() {
         return dashArrayY;
     }
@@ -191,6 +201,7 @@ public class Decal extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public Double getRotation() {
         return rotation;
     }
@@ -200,6 +211,7 @@ public class Decal extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public Integer getMaxTileWidth() {
         return maxTileWidth;
     }
@@ -209,6 +221,7 @@ public class Decal extends ChartObservableObject {
         markAsDirty();
     }
 
+    @Nullable
     public Integer getMaxTileHeight() {
         return maxTileHeight;
     }

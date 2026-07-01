@@ -18,7 +18,7 @@ package io.jmix.chartsflowui.kit.component.model.shared;
 
 import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
 import io.jmix.chartsflowui.kit.component.model.HasEnumId;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The base class for tooltip components.
@@ -127,10 +127,12 @@ public abstract class AbstractTooltip<T extends ChartObservableObject> extends C
             }
         }
 
+        @Nullable
         public String[] getCoordinates() {
             return coordinates;
         }
 
+        @Nullable
         public ItemTriggerPosition getItemTriggerPosition() {
             return itemTriggerPosition;
         }
@@ -234,6 +236,7 @@ public abstract class AbstractTooltip<T extends ChartObservableObject> extends C
             }
         }
 
+        @Nullable
         public IndicatorType getType() {
             return type;
         }
@@ -243,6 +246,7 @@ public abstract class AbstractTooltip<T extends ChartObservableObject> extends C
             markAsDirty();
         }
 
+        @Nullable
         public AxisType getAxis() {
             return axis;
         }
@@ -252,6 +256,7 @@ public abstract class AbstractTooltip<T extends ChartObservableObject> extends C
             markAsDirty();
         }
 
+        @Nullable
         public Boolean getSnap() {
             return snap;
         }
@@ -261,6 +266,7 @@ public abstract class AbstractTooltip<T extends ChartObservableObject> extends C
             markAsDirty();
         }
 
+        @Nullable
         public Integer getZ() {
             return z;
         }
@@ -270,6 +276,7 @@ public abstract class AbstractTooltip<T extends ChartObservableObject> extends C
             markAsDirty();
         }
 
+        @Nullable
         public Label getLabel() {
             return label;
         }
@@ -283,6 +290,7 @@ public abstract class AbstractTooltip<T extends ChartObservableObject> extends C
             addChild(label);
         }
 
+        @Nullable
         public LineStyle getLineStyle() {
             return lineStyle;
         }
@@ -296,6 +304,7 @@ public abstract class AbstractTooltip<T extends ChartObservableObject> extends C
             addChild(lineStyle);
         }
 
+        @Nullable
         public ShadowStyle getShadowStyle() {
             return shadowStyle;
         }
@@ -309,6 +318,7 @@ public abstract class AbstractTooltip<T extends ChartObservableObject> extends C
             addChild(shadowStyle);
         }
 
+        @Nullable
         public LineStyle getCrossStyle() {
             return crossStyle;
         }
@@ -322,6 +332,7 @@ public abstract class AbstractTooltip<T extends ChartObservableObject> extends C
             addChild(crossStyle);
         }
 
+        @Nullable
         public Boolean getAnimation() {
             return animation;
         }
@@ -331,6 +342,7 @@ public abstract class AbstractTooltip<T extends ChartObservableObject> extends C
             markAsDirty();
         }
 
+        @Nullable
         public Integer getAnimationThreshold() {
             return animationThreshold;
         }
@@ -340,6 +352,7 @@ public abstract class AbstractTooltip<T extends ChartObservableObject> extends C
             markAsDirty();
         }
 
+        @Nullable
         public Integer getAnimationDuration() {
             return animationDuration;
         }
@@ -349,6 +362,7 @@ public abstract class AbstractTooltip<T extends ChartObservableObject> extends C
             markAsDirty();
         }
 
+        @Nullable
         public JsFunction getAnimationDurationFunction() {
             return animationDurationFunction;
         }
@@ -363,6 +377,7 @@ public abstract class AbstractTooltip<T extends ChartObservableObject> extends C
             markAsDirty();
         }
 
+        @Nullable
         public String getAnimationEasing() {
             return animationEasing;
         }
@@ -372,6 +387,7 @@ public abstract class AbstractTooltip<T extends ChartObservableObject> extends C
             markAsDirty();
         }
 
+        @Nullable
         public Integer getAnimationDelay() {
             return animationDelay;
         }
@@ -381,6 +397,7 @@ public abstract class AbstractTooltip<T extends ChartObservableObject> extends C
             markAsDirty();
         }
 
+        @Nullable
         public JsFunction getAnimationDelayFunction() {
             return animationDelayFunction;
         }
@@ -394,6 +411,7 @@ public abstract class AbstractTooltip<T extends ChartObservableObject> extends C
             this.animationDelayFunction = new JsFunction(animationDelayFunction);
         }
 
+        @Nullable
         public Integer getAnimationDurationUpdate() {
             return animationDurationUpdate;
         }
@@ -403,6 +421,7 @@ public abstract class AbstractTooltip<T extends ChartObservableObject> extends C
             markAsDirty();
         }
 
+        @Nullable
         public JsFunction getAnimationDurationUpdateFunction() {
             return animationDurationUpdateFunction;
         }
@@ -417,6 +436,7 @@ public abstract class AbstractTooltip<T extends ChartObservableObject> extends C
             markAsDirty();
         }
 
+        @Nullable
         public String getAnimationEasingUpdate() {
             return animationEasingUpdate;
         }
@@ -426,6 +446,7 @@ public abstract class AbstractTooltip<T extends ChartObservableObject> extends C
             markAsDirty();
         }
 
+        @Nullable
         public Integer getAnimationDelayUpdate() {
             return animationDelayUpdate;
         }
@@ -435,6 +456,7 @@ public abstract class AbstractTooltip<T extends ChartObservableObject> extends C
             markAsDirty();
         }
 
+        @Nullable
         public JsFunction getAnimationDelayUpdateFunction() {
             return animationDelayUpdateFunction;
         }
@@ -570,6 +592,7 @@ public abstract class AbstractTooltip<T extends ChartObservableObject> extends C
         }
     }
 
+    @Nullable
     public Boolean getShow() {
         return show;
     }
@@ -579,7 +602,7 @@ public abstract class AbstractTooltip<T extends ChartObservableObject> extends C
         markAsDirty();
     }
 
-    public AbstractTooltip.Trigger getTrigger() {
+    public AbstractTooltip.@Nullable Trigger getTrigger() {
         return trigger;
     }
 
@@ -588,7 +611,7 @@ public abstract class AbstractTooltip<T extends ChartObservableObject> extends C
         markAsDirty();
     }
 
-    public AbstractTooltip.Position getPosition() {
+    public AbstractTooltip.@Nullable Position getPosition() {
         return position;
     }
 
@@ -602,7 +625,7 @@ public abstract class AbstractTooltip<T extends ChartObservableObject> extends C
         markAsDirty();
     }
 
-    public AbstractTooltip.AxisPointer getAxisPointer() {
+    public AbstractTooltip.@Nullable AxisPointer getAxisPointer() {
         return axisPointer;
     }
 
@@ -615,6 +638,7 @@ public abstract class AbstractTooltip<T extends ChartObservableObject> extends C
         addChild(axisPointer);
     }
 
+    @Nullable
     public String getFormatter() {
         return formatter;
     }
@@ -624,6 +648,7 @@ public abstract class AbstractTooltip<T extends ChartObservableObject> extends C
         markAsDirty();
     }
 
+    @Nullable
     public JsFunction getFormatterFunction() {
         return formatterFunction;
     }
@@ -638,6 +663,7 @@ public abstract class AbstractTooltip<T extends ChartObservableObject> extends C
         markAsDirty();
     }
 
+    @Nullable
     public String getValueFormatter() {
         return valueFormatter;
     }
@@ -647,6 +673,7 @@ public abstract class AbstractTooltip<T extends ChartObservableObject> extends C
         markAsDirty();
     }
 
+    @Nullable
     public JsFunction getValueFormatterFunction() {
         return valueFormatterFunction;
     }
@@ -661,6 +688,7 @@ public abstract class AbstractTooltip<T extends ChartObservableObject> extends C
         markAsDirty();
     }
 
+    @Nullable
     public Color getBackgroundColor() {
         return backgroundColor;
     }
@@ -670,6 +698,7 @@ public abstract class AbstractTooltip<T extends ChartObservableObject> extends C
         markAsDirty();
     }
 
+    @Nullable
     public Color getBorderColor() {
         return borderColor;
     }
@@ -679,6 +708,7 @@ public abstract class AbstractTooltip<T extends ChartObservableObject> extends C
         markAsDirty();
     }
 
+    @Nullable
     public Integer getBorderWidth() {
         return borderWidth;
     }
@@ -688,6 +718,7 @@ public abstract class AbstractTooltip<T extends ChartObservableObject> extends C
         markAsDirty();
     }
 
+    @Nullable
     public TextStyle getTextStyle() {
         return textStyle;
     }
@@ -701,6 +732,7 @@ public abstract class AbstractTooltip<T extends ChartObservableObject> extends C
         addChild(textStyle);
     }
 
+    @Nullable
     public String getExtraCssText() {
         return extraCssText;
     }
@@ -710,6 +742,7 @@ public abstract class AbstractTooltip<T extends ChartObservableObject> extends C
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Padding getPadding() {
         return padding;

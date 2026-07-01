@@ -18,12 +18,14 @@ package io.jmix.flowui;
 
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewController;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Creates UI view instances.
  * <p>
  * To open views, use {@link ViewNavigators} and {@link DialogWindows}.
  */
+@NullMarked
 public interface Views {
 
     /**

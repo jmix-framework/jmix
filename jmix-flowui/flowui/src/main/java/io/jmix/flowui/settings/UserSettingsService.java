@@ -15,7 +15,8 @@
  */
 package io.jmix.flowui.settings;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Optional;
 
@@ -25,6 +26,7 @@ import java.util.Optional;
  * <p>
  * It is usually used by UI Views and components.
  */
+@NullMarked
 public interface UserSettingsService {
 
     /**

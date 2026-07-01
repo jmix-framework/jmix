@@ -17,12 +17,10 @@
 
 package io.jmix.fullcalendarflowui.component.serialization;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import io.jmix.core.metamodel.datatype.EnumClass;
-
-import java.io.IOException;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.ser.std.StdSerializer;
 
 public class EnumClassSerializer extends StdSerializer<EnumClass> {
 
@@ -31,7 +29,7 @@ public class EnumClassSerializer extends StdSerializer<EnumClass> {
     }
 
     @Override
-    public void serialize(EnumClass value, JsonGenerator gen, SerializerProvider provider) throws IOException {
+    public void serialize(EnumClass value, JsonGenerator gen, SerializationContext provider) {
         if (value.getId() instanceof String id) {
             gen.writeString(id);
         } else if (value.getId() instanceof Integer id) {

@@ -17,7 +17,9 @@
 apply plugin: 'io.jmix'
 
 group = 'io.jmix.charts'
-archivesBaseName = 'jmix-charts-flowui-kit'
+base {
+    archivesName = 'jmix-charts-flowui-kit'
+}
 
 dependencies {
     api project(':flowui-kit')

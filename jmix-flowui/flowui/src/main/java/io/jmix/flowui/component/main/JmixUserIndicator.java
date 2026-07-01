@@ -90,6 +90,7 @@ public class JmixUserIndicator extends UserIndicator<UserDetails> implements App
         messages = applicationContext.getBean(Messages.class);
         actions = applicationContext.getBean(Actions.class);
         userRepository = applicationContext.getBean(UserRepository.class);
+        icons = applicationContext.getBean(Icons.class);
     }
 
     @Override

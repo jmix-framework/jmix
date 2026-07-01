@@ -16,10 +16,13 @@
 
 package io.jmix.data.impl;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Interface to be implemented by JPQL constant handlers.
  * <p>The implementation must be a managed bean with "prototype" scope.</p>
  */
+@NullMarked
 public interface QueryConstantHandler {
 
     /**

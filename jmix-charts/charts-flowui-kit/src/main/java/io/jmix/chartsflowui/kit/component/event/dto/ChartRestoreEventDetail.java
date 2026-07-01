@@ -17,6 +17,7 @@
 package io.jmix.chartsflowui.kit.component.event.dto;
 
 import io.jmix.chartsflowui.kit.component.event.ChartRestoreEvent;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @see ChartRestoreEvent
@@ -25,6 +26,7 @@ public class ChartRestoreEventDetail extends BaseChartEventDetail {
 
     protected String from;
 
+    @Nullable
     public String getFrom() {
         return from;
     }

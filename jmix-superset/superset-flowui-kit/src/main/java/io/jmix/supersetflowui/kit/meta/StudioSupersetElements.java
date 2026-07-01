@@ -17,9 +17,8 @@
 package io.jmix.supersetflowui.kit.meta;
 
 import io.jmix.flowui.kit.meta.StudioElement;
-import io.jmix.flowui.kit.meta.StudioProperty;
-import io.jmix.flowui.kit.meta.StudioPropertyType;
 import io.jmix.flowui.kit.meta.StudioUiKit;
+import io.jmix.flowui.kit.meta.StudioXmlElements;
 
 @StudioUiKit
 public interface StudioSupersetElements {
@@ -27,14 +26,10 @@ public interface StudioSupersetElements {
     @StudioElement(
             name = "DatasetConstraint",
             classFqn = "io.jmix.supersetflowui.component.dataconstraint.DatasetConstraint",
-            xmlElement = "datasetConstraint",
+            xmlElement = StudioXmlElements.DATASET_CONSTRAINT,
             xmlns = "http://jmix.io/schema/superset/ui",
             xmlnsAlias = "superset",
             icon = "io/jmix/supersetflowui/kit/meta/icon/unknownComponent.svg",
-            properties = {
-                    @StudioProperty(xmlAttribute = "datasetId", type = StudioPropertyType.INTEGER, required = true),
-                    @StudioProperty(xmlAttribute = "constraint", type = StudioPropertyType.CDATA)
-            }
-    )
+            propertyGroups = StudioSupersetPropertyGroups.DatasetConstraintComponent.class)
     void datasetConstraint();
 }

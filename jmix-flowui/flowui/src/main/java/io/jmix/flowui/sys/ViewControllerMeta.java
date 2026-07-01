@@ -25,7 +25,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.type.classreading.MetadataReader;
 import org.springframework.core.type.classreading.MetadataReaderFactory;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -110,18 +110,18 @@ public class ViewControllerMeta {
     protected Map<String, Object> getControllerAnnotationAttributes(String annotationName,
                                                                     Class<? extends View> viewClass) {
         for (Annotation annotation : viewClass.getAnnotations()) {
-            Class<? extends Annotation> annotationClass = annotation.getClass();
-            if (!annotationClass.getName().equals(annotationName)) {
+            Class<? extends Annotation> annotationType = annotation.annotationType();
+            if (!annotationType.getName().equals(annotationName)) {
                 continue;
             }
 
             Map<String, Object> annotationAttributes = new HashMap<>();
-            for (Method method : annotationClass.getDeclaredMethods()) {
+            for (Method method : annotationType.getDeclaredMethods()) {
                 try {
                     annotationAttributes.put(method.getName(), method.invoke(annotation));
                 } catch (IllegalAccessException | InvocationTargetException e) {
                     log.warn("Failed to get '{}#{}' property value for class '{}'",
-                            annotationClass.getName(), method.getName(), viewClass.getName(), e);
+                            annotationType.getName(), method.getName(), viewClass.getName(), e);
                 }
             }
             return annotationAttributes;

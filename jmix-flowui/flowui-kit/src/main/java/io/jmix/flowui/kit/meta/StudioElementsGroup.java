@@ -30,6 +30,7 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.METHOD)
 @Inherited
+@StudioAPI
 public @interface StudioElementsGroup {
 
     /**
@@ -131,6 +132,16 @@ public @interface StudioElementsGroup {
      * @see StudioComponent#properties
      */
     StudioProperty[] properties() default {};
+
+    /**
+     * @see StudioComponent#propertyGroups()
+     */
+    Class<?>[] propertyGroups() default {};
+
+    /**
+     * @see StudioComponent#xmlElementInitializer
+     */
+    StudioXmlElementInitializer xmlElementInitializer() default @StudioXmlElementInitializer();
 
     /**
      * @see StudioComponent#documentationLink

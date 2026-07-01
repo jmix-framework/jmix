@@ -23,6 +23,7 @@ import io.jmix.search.searching.SearchRequestContext;
 import io.jmix.search.searching.SearchStrategy;
 import io.jmix.searchelasticsearch.searching.strategy.ElasticSearchQueryConfigurer;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -34,6 +35,7 @@ import static io.jmix.search.searching.AbstractSearchQueryConfigurer.WITH_PREFIX
 /**
  * Class that encapsulates logic of {@link SearchStrategy} that searches documents by prefix.
  */
+@NullMarked
 @Component("search_StartsWithElasticsearchSearchStrategy")
 public class StartsWithElasticsearchSearchStrategy extends AbstractElasticSearchStrategy{
 

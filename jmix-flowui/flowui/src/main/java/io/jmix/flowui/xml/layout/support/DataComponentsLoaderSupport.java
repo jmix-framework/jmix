@@ -32,7 +32,7 @@ import io.jmix.flowui.model.impl.NoopDataContext;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.dom4j.Element;
 import org.springframework.context.ApplicationContext;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.text.ParseException;

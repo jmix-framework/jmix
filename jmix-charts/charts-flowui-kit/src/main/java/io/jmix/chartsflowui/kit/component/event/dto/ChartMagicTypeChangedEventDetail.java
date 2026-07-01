@@ -17,6 +17,7 @@
 package io.jmix.chartsflowui.kit.component.event.dto;
 
 import io.jmix.chartsflowui.kit.component.event.ChartMagicTypeChangedEvent;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Map;
 
@@ -31,6 +32,7 @@ public class ChartMagicTypeChangedEventDetail extends BaseChartEventDetail {
 
     protected String featureName;
 
+    @Nullable
     public String getCurrentType() {
         return currentType;
     }
@@ -39,6 +41,7 @@ public class ChartMagicTypeChangedEventDetail extends BaseChartEventDetail {
         this.currentType = currentType;
     }
 
+    @Nullable
     public Map<String, Object> getNewOption() {
         return newOption;
     }
@@ -47,6 +50,7 @@ public class ChartMagicTypeChangedEventDetail extends BaseChartEventDetail {
         this.newOption = newOption;
     }
 
+    @Nullable
     public String getFeatureName() {
         return featureName;
     }

@@ -15,8 +15,11 @@
  */
 package io.jmix.reports.yarg.formatters.impl.xls;
 
+import org.jspecify.annotations.NullMarked;
+
 import java.io.OutputStream;
 
+@NullMarked
 public interface DocumentConverter {
     enum FileType {
         SPREADSHEET,

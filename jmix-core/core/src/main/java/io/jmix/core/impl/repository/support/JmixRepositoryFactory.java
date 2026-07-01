@@ -20,14 +20,14 @@ import io.jmix.core.*;
 import io.jmix.core.impl.repository.query.utils.JmixQueryLookupStrategy;
 import io.jmix.core.impl.repository.support.method_metadata.CrudMethodMetadataAccessingPostProcessor;
 import io.jmix.core.repository.JmixDataRepository;
+import org.jspecify.annotations.Nullable;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.repository.core.EntityInformation;
 import org.springframework.data.repository.core.RepositoryInformation;
 import org.springframework.data.repository.core.RepositoryMetadata;
 import org.springframework.data.repository.core.support.RepositoryFactorySupport;
 import org.springframework.data.repository.query.QueryLookupStrategy;
-import org.springframework.data.repository.query.QueryMethodEvaluationContextProvider;
-import org.springframework.lang.Nullable;
+import org.springframework.data.repository.query.ValueExpressionDelegate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,10 +66,9 @@ public class JmixRepositoryFactory extends RepositoryFactorySupport {
         return JmixDataRepositoryImpl.class;
     }
 
-
     @Override
-    protected Optional<QueryLookupStrategy> getQueryLookupStrategy(@Nullable QueryLookupStrategy.Key key,
-                                                                   QueryMethodEvaluationContextProvider evaluationContextProvider) {
+    protected Optional<QueryLookupStrategy> getQueryLookupStrategy(QueryLookupStrategy.@Nullable Key key,
+                                                                   ValueExpressionDelegate valueExpressionDelegate) {
         return Optional.of(new JmixQueryLookupStrategy(
                 ctx.getBean(DataManager.class),
                 ctx.getBean(Metadata.class),

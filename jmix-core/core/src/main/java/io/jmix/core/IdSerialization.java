@@ -16,6 +16,8 @@
 
 package io.jmix.core;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Provides conversion of {@link Id} to and from the string representation.
  * <p>
@@ -31,6 +33,7 @@ package io.jmix.core;
  *     app_CompositeKeyEntity.{"entityId":10,"tenant":"abc"}
  * </pre>
  */
+@NullMarked
 public interface IdSerialization {
 
     /**

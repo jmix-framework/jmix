@@ -16,8 +16,11 @@
 
 package io.jmix.reports.yarg.formatters.impl.doc.connector;
 
+import org.jspecify.annotations.NullMarked;
+
 import java.util.List;
 
+@NullMarked
 public interface ProcessManager {
 
     long PID_UNKNOWN = -1;

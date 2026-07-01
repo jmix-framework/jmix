@@ -17,9 +17,9 @@
 package io.jmix.flowui.kit.meta.facet;
 
 import io.jmix.flowui.kit.meta.StudioFacet;
-import io.jmix.flowui.kit.meta.StudioProperty;
-import io.jmix.flowui.kit.meta.StudioPropertyType;
 import io.jmix.flowui.kit.meta.StudioUiKit;
+import io.jmix.flowui.kit.meta.StudioPropertyGroups;
+import io.jmix.flowui.kit.meta.StudioXmlElements;
 
 @StudioUiKit
 interface StudioFacets {
@@ -28,94 +28,57 @@ interface StudioFacets {
             name = "DataLoadCoordinator",
             classFqn = "io.jmix.flowui.facet.ViewDataLoadCoordinator",
             category = "Facets",
-            xmlElement = "dataLoadCoordinator",
+            xmlElement = StudioXmlElements.DATA_LOAD_COORDINATOR,
             icon = "io/jmix/flowui/kit/meta/icon/facet/dataLoadCoordinator.svg",
             documentationLink = "%VERSION%/flow-ui/facets/dataLoadCoordinator.html",
-            properties = {
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
-                    @StudioProperty(xmlAttribute = "auto", type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false", initialValue = "true"),
-                    @StudioProperty(xmlAttribute = "componentPrefix", type = StudioPropertyType.STRING,
-                            defaultValue = "component_"),
-                    @StudioProperty(xmlAttribute = "containerPrefix", type = StudioPropertyType.STRING,
-                            defaultValue = "container_"),
-            }
-    )
+            propertyGroups = StudioPropertyGroups.DataLoadCoordinatorDefaultProperties.class)
     void dataLoadCoordinator();
 
     @StudioFacet(
             name = "FragmentDataLoadCoordinator",
             classFqn = "io.jmix.flowui.facet.FragmentDataLoadCoordinator",
             category = "Facets",
-            xmlElement = "fragmentDataLoadCoordinator",
+            xmlElement = StudioXmlElements.FRAGMENT_DATA_LOAD_COORDINATOR,
             icon = "io/jmix/flowui/kit/meta/icon/facet/dataLoadCoordinator.svg",
             documentationLink = "%VERSION%/flow-ui/facets/dataLoadCoordinator.html",
-            properties = {
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
-                    @StudioProperty(xmlAttribute = "auto", type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false", initialValue = "true"),
-                    @StudioProperty(xmlAttribute = "componentPrefix", type = StudioPropertyType.STRING,
-                            defaultValue = "component_"),
-                    @StudioProperty(xmlAttribute = "containerPrefix", type = StudioPropertyType.STRING,
-                            defaultValue = "container_"),
-            }
-    )
+            propertyGroups = StudioPropertyGroups.DataLoadCoordinatorDefaultProperties.class)
     void fragmentDataLoadCoordinator();
 
     @StudioFacet(
             name = "UrlQueryParameters",
             classFqn = "io.jmix.flowui.facet.UrlQueryParametersFacet",
             category = "Facets",
-            xmlElement = "urlQueryParameters",
+            xmlElement = StudioXmlElements.URL_QUERY_PARAMETERS,
             icon = "io/jmix/flowui/kit/meta/icon/facet/urlQueryParameters.svg",
             documentationLink = "%VERSION%/flow-ui/facets/urlQueryParameters.html",
-            properties = {
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
-            }
-    )
+            propertyGroups = StudioPropertyGroups.Id.class)
     void queryParameters();
 
     @StudioFacet(
             name = "Timer",
             classFqn = "io.jmix.flowui.facet.Timer",
             category = "Facets",
-            xmlElement = "timer",
+            xmlElement = StudioXmlElements.TIMER,
             icon = "io/jmix/flowui/kit/meta/icon/facet/timer.svg",
             documentationLink = "%VERSION%/flow-ui/facets/timer.html",
-            properties = {
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true),
-                    @StudioProperty(xmlAttribute = "delay", type = StudioPropertyType.INTEGER, required = true),
-                    @StudioProperty(xmlAttribute = "repeating", type = StudioPropertyType.BOOLEAN, defaultValue = "false"),
-                    @StudioProperty(xmlAttribute = "autostart", type = StudioPropertyType.BOOLEAN, defaultValue = "false")
-            }
-    )
+            propertyGroups = StudioPropertyGroups.TimerComponent.class)
     void timer();
 
     @StudioFacet(
             name = "Settings",
             classFqn = "io.jmix.flowui.facet.ViewSettingsFacet",
             category = "Facets",
-            xmlElement = "settings",
+            xmlElement = StudioXmlElements.SETTINGS,
             icon = "io/jmix/flowui/kit/meta/icon/facet/settings.svg",
-            properties = {
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
-                    @StudioProperty(xmlAttribute = "auto", type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false", initialValue = "true"),
-            }
-    )
+            propertyGroups = StudioPropertyGroups.SettingsDefaultProperties.class)
     void settings();
 
     @StudioFacet(
             name = "FragmentSettings",
             classFqn = "io.jmix.flowui.facet.FragmentSettingsFacet",
             category = "Facets",
-            xmlElement = "fragmentSettings",
+            xmlElement = StudioXmlElements.FRAGMENT_SETTINGS,
             icon = "io/jmix/flowui/kit/meta/icon/facet/settings.svg",
-            properties = {
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID),
-                    @StudioProperty(xmlAttribute = "auto", type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false", initialValue = "true"),
-            }
-    )
+            propertyGroups = StudioPropertyGroups.SettingsDefaultProperties.class)
     void fragmentSettings();
 }

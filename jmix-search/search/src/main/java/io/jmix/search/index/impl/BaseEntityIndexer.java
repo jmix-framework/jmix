@@ -32,6 +32,7 @@ import io.jmix.search.index.mapping.DisplayedNameDescriptor;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.search.index.mapping.IndexMappingConfiguration;
 import io.jmix.search.index.mapping.MappingFieldDescriptor;
+import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,6 +44,7 @@ import java.util.stream.Collectors;
  * Provides non-platform-specific functionality.
  * Interaction with indexes is performed in platform-specific implementations.
  */
+@NullMarked
 public abstract class BaseEntityIndexer implements EntityIndexer {
 
     private static final Logger log = LoggerFactory.getLogger(BaseEntityIndexer.class);

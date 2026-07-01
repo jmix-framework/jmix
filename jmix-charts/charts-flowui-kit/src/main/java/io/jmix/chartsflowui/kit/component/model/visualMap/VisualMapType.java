@@ -17,7 +17,7 @@
 package io.jmix.chartsflowui.kit.component.model.visualMap;
 
 import io.jmix.chartsflowui.kit.component.model.HasEnumId;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Type of component for visual encoding

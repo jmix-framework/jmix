@@ -21,6 +21,7 @@ import io.jmix.core.JmixOrder;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.QueryUtils;
+import io.jmix.core.common.datastruct.Pair;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -28,23 +29,30 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.core.querycondition.PropertyConditionUtils;
+import io.jmix.data.DataProperties;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import org.springframework.lang.Nullable;
+import java.util.List;
+import java.util.Map;
 
 import static io.jmix.core.metamodel.model.MetaProperty.Type.ASSOCIATION;
 import static io.jmix.core.metamodel.model.MetaProperty.Type.COMPOSITION;
 
 @Component("data_PropertyConditionGenerator")
 @Order(JmixOrder.LOWEST_PRECEDENCE)
-public class PropertyConditionGenerator implements ConditionGenerator {
+public class PropertyConditionGenerator implements ConditionGenerator<PropertyCondition> {
 
     protected MetadataTools metadataTools;
     protected Metadata metadata;
+    protected DataProperties dataProperties;
+
+    @Nullable
+    protected InIntervalParametersResolver inIntervalResolver;
 
     @Value("${jmix.eclipselink.use-inner-join-in-condition:false}")
     protected boolean useInnerJoinInCondition;
@@ -56,6 +64,16 @@ public class PropertyConditionGenerator implements ConditionGenerator {
     public PropertyConditionGenerator(MetadataTools metadataTools, Metadata metadata) {
         this.metadataTools = metadataTools;
         this.metadata = metadata;
+    }
+
+    @Autowired
+    public void setDataProperties(DataProperties dataProperties) {
+        this.dataProperties = dataProperties;
+    }
+
+    @Autowired(required = false)
+    public void setInIntervalResolver(InIntervalParametersResolver inIntervalResolver) {
+        this.inIntervalResolver = inIntervalResolver;
     }
 
     @Override
@@ -108,14 +126,19 @@ public class PropertyConditionGenerator implements ConditionGenerator {
             propertyName = childProperty;
         }
 
-        MetaProperty metaProperty = metaClass.getProperty(propertyName);
-        if (metadataTools.isElementCollection(metaProperty)
-                && !propertyCondition.getOperation().equals(PropertyCondition.Operation.IS_COLLECTION_EMPTY)) {
-            String joinAlias = joinAliasPrefix + context.generateNextJoinIndex();
-            context.setJoinAlias(joinAlias);
-            context.setJoinProperty(propertyName);
-            context.setJoinMetaClass(null);
-            joinBuilder.append(" join " + joinPropertyBuilder + "." + propertyName + " " + joinAlias);
+        // the property may not exist in the metaClass in case of a dynamic attributes
+        MetaProperty metaProperty = metaClass.findProperty(propertyName);
+        if (metaProperty != null && metadataTools.isElementCollection(metaProperty)) {
+            context.setElementCollection(true);
+            String operation = propertyCondition.getOperation();
+            if (!operation.equals(PropertyCondition.Operation.IS_COLLECTION_EMPTY)
+                    && !isNegativeComparison(operation)) {
+                String joinAlias = joinAliasPrefix + context.generateNextJoinIndex();
+                context.setJoinAlias(joinAlias);
+                context.setJoinProperty(propertyName);
+                context.setJoinMetaClass(null);
+                joinBuilder.append(" join " + joinPropertyBuilder + "." + propertyName + " " + joinAlias);
+            }
         }
 
         return joinBuilder.toString();
@@ -132,16 +155,52 @@ public class PropertyConditionGenerator implements ConditionGenerator {
             MetaClass joinMetaClass = context.getJoinMetaClass();
             if (joinMetaClass != null) {
                 String property = getProperty(context.getJoinProperty(), joinMetaClass.getName());
-                return generateWhere(propertyCondition, context.getJoinAlias(), property);
+                return generateWhere(propertyCondition, context.getJoinAlias(), property, context.isElementCollection());
             } else { // case of ElementCollection
-                return generateWhere(propertyCondition, context.getJoinAlias(), null);
+                return generateWhere(propertyCondition, context.getJoinAlias(), null, context.isElementCollection());
             }
         } else {
             String entityAlias = context.getEntityAlias();
             String property = getProperty(propertyCondition.getProperty(), context.getEntityName());
-            return generateWhere(propertyCondition, entityAlias, property);
+            return generateWhere(propertyCondition, entityAlias, property, context.isElementCollection());
+        }
+    }
+
+    @Override
+    public Map<String, Object> processParameters(Map<String, Object> parameters,
+                                                 Map<String, Object> queryParameters,
+                                                 PropertyCondition condition,
+                                                 @Nullable String entityName) {
+        String parameterName = condition.getParameterName();
+        if (PropertyConditionUtils.isUnaryOperation(condition)) {
+            //remove query parameter for unary operations (e.g. IS_NULL)
+            parameters.remove(parameterName);
+        } else if (PropertyConditionUtils.isInIntervalOperation(condition)) {
+            //remove query parameter for "in interval" operations
+            parameters.remove(parameterName);
+
+            if (inIntervalResolver != null) {
+                // trying to resolve parameters for "in interval date between" operation
+                List<Pair<String, Object>> inIntervalParameters = inIntervalResolver.resolveParameters(condition);
+                if (!inIntervalParameters.isEmpty()) {
+                    inIntervalParameters.forEach(p -> parameters.put(p.getFirst(), p.getSecond()));
+                }
+            }
+        } else {
+            //PropertyCondition may take a value from queryParameters collection or from the
+            //PropertyCondition.parameterValue attribute. queryParameters has higher priority.
+            Object parameterValue;
+            if (!queryParameters.containsKey(parameterName) || queryParameters.get(parameterName) == null) {
+                parameterValue = generateParameterValue(condition, condition.getParameterValue(), entityName);
+            } else {
+                //modify the query parameter value (e.g. wrap value for "contains" jpql operation)
+                Object queryParameterValue = queryParameters.get(parameterName);
+                parameterValue = generateParameterValue(condition, queryParameterValue, entityName);
+            }
+            parameters.put(parameterName, parameterValue);
         }
 
+        return parameters;
     }
 
     @Nullable
@@ -170,8 +229,9 @@ public class PropertyConditionGenerator implements ConditionGenerator {
         return parameterValue;
     }
 
-    protected String generateWhere(PropertyCondition propertyCondition, String entityAlias, @Nullable String property) {
-        if (property != null) {
+    protected String generateWhere(PropertyCondition propertyCondition, String entityAlias, @Nullable String property,
+                                   boolean isElementCollection) {
+        if (!isElementCollection) {
             if (PropertyConditionUtils.isUnaryOperation(propertyCondition)) {
                 return String.format("%s.%s %s",
                         entityAlias,
@@ -192,29 +252,73 @@ public class PropertyConditionGenerator implements ConditionGenerator {
                         entityAlias,
                         property);
             } else {
-                return String.format("%s.%s %s :%s",
+                if (dataProperties.isIncludeNullClauseInNotConditions()
+                        && isNegativeComparison(propertyCondition.getOperation())) {
+                    return String.format("(%s.%s %s :%s%s or %s.%s is null)",
+                            entityAlias,
+                            property,
+                            PropertyConditionUtils.getJpqlOperation(propertyCondition),
+                            propertyCondition.getParameterName(),
+                            getLikeEscapeClause(propertyCondition),
+                            entityAlias,
+                            property);
+                }
+
+                return String.format("%s.%s %s :%s%s",
                         entityAlias,
                         property,
                         PropertyConditionUtils.getJpqlOperation(propertyCondition),
-                        propertyCondition.getParameterName());
+                        propertyCondition.getParameterName(),
+                        getLikeEscapeClause(propertyCondition));
             }
         } else {
-            // case of ElementCollection
             if (PropertyConditionUtils.isInIntervalOperation(propertyCondition)
                     || PropertyConditionUtils.isDateEqualsOperation(propertyCondition)
                     || PropertyConditionUtils.isMemberOfCollectionOperation(propertyCondition)) {
                 throw new IllegalStateException("Unsupported property condition for ElementCollection: " + propertyCondition);
             }
             if (PropertyConditionUtils.isUnaryOperation(propertyCondition)) {
-                return String.format("%s %s",
-                        entityAlias,
-                        PropertyConditionUtils.getJpqlOperation(propertyCondition));
+                if (property == null) {
+                    return String.format("%s %s",
+                            entityAlias,
+                            PropertyConditionUtils.getJpqlOperation(propertyCondition));
+                } else {
+                    return String.format("%s.%s %s",
+                            entityAlias,
+                            property,
+                            PropertyConditionUtils.getJpqlOperation(propertyCondition));
+                }
             }
-            return String.format("%s %s :%s",
+            if (isNegativeComparison(propertyCondition.getOperation())) {
+                return String.format("not exists (select t from %s.%s t where t %s :%s%s)",
+                        entityAlias,
+                        propertyCondition.getProperty(),
+                        switch (propertyCondition.getOperation()) {
+                            case PropertyCondition.Operation.NOT_CONTAINS -> "like";
+                            case PropertyCondition.Operation.NOT_EQUAL -> "=";
+                            case PropertyCondition.Operation.NOT_IN_LIST -> "in";
+                            default -> throw new IllegalStateException("Unsupported operation: " + propertyCondition.getOperation());
+                        },
+                        propertyCondition.getParameterName(),
+                        getLikeEscapeClause(propertyCondition));
+            }
+            return String.format("%s %s :%s%s",
                     entityAlias,
                     PropertyConditionUtils.getJpqlOperation(propertyCondition),
-                    propertyCondition.getParameterName());
+                    propertyCondition.getParameterName(),
+                    getLikeEscapeClause(propertyCondition));
         }
+    }
+
+    /**
+     * Returns a trailing {@code ESCAPE} clause for {@code LIKE}-based operations so that
+     * {@code _} and {@code %} produced by {@link QueryUtils#escapeForLike(String)} are
+     * recognised as literals by the database. Empty for non-{@code LIKE} operations.
+     */
+    protected String getLikeEscapeClause(PropertyCondition propertyCondition) {
+        return PropertyConditionUtils.isCaseInsensitiveOperation(propertyCondition)
+                ? " escape '" + QueryUtils.ESCAPE_CHARACTER + "'"
+                : "";
     }
 
     protected String getProperty(String property, @Nullable String entityName) {
@@ -252,5 +356,11 @@ public class PropertyConditionGenerator implements ConditionGenerator {
 
         return metadataTools.getCrossDataStoreReferenceIdProperty(
                 metaClass.getStore().getName(), mpp.getMetaProperty()) != null;
+    }
+
+    protected boolean isNegativeComparison(String operation) {
+        return operation.equals(PropertyCondition.Operation.NOT_CONTAINS)
+                || operation.equals(PropertyCondition.Operation.NOT_EQUAL)
+                || operation.equals(PropertyCondition.Operation.NOT_IN_LIST);
     }
 }

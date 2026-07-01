@@ -48,7 +48,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
@@ -215,9 +215,7 @@ public class JmixMultiSelectComboBoxPicker<V> extends MultiSelectComboBoxPicker<
 
     @Override
     public void setValueFromClient(@Nullable Collection<V> value) {
-        Set<V> convertedValue = fieldDelegate.convertToPresentation(value);
-        setModelValue(convertedValue, true);
-        setPresentationValue(convertedValue);
+        setValueInternal(fieldDelegate.convertToPresentation(value), true);
     }
 
     @Nullable

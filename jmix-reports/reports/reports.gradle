@@ -18,7 +18,9 @@ apply plugin: 'groovy'
 apply plugin: 'io.jmix'
 
 group = 'io.jmix.reports'
-archivesBaseName = 'jmix-reports'
+base {
+    archivesName = 'jmix-reports'
+}
 
 dependencies {
     api project(':core')
@@ -27,8 +29,6 @@ dependencies {
     api project(':eclipselink')
 
     compileOnly project(':dynattr')
-
-    api 'com.thoughtworks.xstream:xstream'
 
     api 'org.apache.groovy:groovy-templates'
 
@@ -116,19 +116,11 @@ dependencies {
     api 'com.jayway.jsonpath:json-path'
     api 'com.opencsv:opencsv'
 
-    api('net.sf.jasperreports:jasperreports') {
-        exclude group: 'org.apache.lucene'
-        exclude group: 'commons-beanutils', module: 'commons-beanutils'
-        exclude group: 'com.google.zxing', module: 'core'
-        exclude group: 'com.ibm.icu', module: 'icu4j'
-        exclude group: 'com.fasterxml.jackson.core'
-        exclude group: 'org.jfree'
-        exclude group: 'org.eclipse.jdt.core.compiler', module: 'ecj'
-        exclude group: 'com.lowagie', module: 'itext'
-        exclude group: 'org.codehaus.castor', module: 'castor-xml'
-    }
-    api 'net.sf.jasperreports:jasperreports-fonts'
-    api 'net.sf.jasperreports:jasperreports-functions'
+    // JasperReports is an optional dependency: the 'jasper'/'jrxml' template types are supported only
+    // if an application adds these artifacts explicitly.
+    compileOnly 'net.sf.jasperreports:jasperreports'
+    compileOnly 'net.sf.jasperreports:jasperreports-fonts'
+    compileOnly 'net.sf.jasperreports:jasperreports-functions'
 
     api 'jakarta.xml.bind:jakarta.xml.bind-api'
 
@@ -144,6 +136,7 @@ dependencies {
     testImplementation 'org.assertj:assertj-core'
     testImplementation 'org.liquibase:liquibase-core'
     testImplementation project(':security-data')
+    testImplementation project(':framework-test-support')
 
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'

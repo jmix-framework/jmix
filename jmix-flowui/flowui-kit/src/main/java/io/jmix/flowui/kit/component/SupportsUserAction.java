@@ -18,7 +18,7 @@ package io.jmix.flowui.kit.component;
 
 import com.vaadin.flow.component.HasValue;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Interface to be implemented by UI components, which provide an API that pretends

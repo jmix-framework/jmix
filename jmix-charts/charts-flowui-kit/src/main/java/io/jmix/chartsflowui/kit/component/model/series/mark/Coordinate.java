@@ -16,6 +16,8 @@
 
 package io.jmix.chartsflowui.kit.component.model.series.mark;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * A class for describing coordinates in numerical and percentage representation.
  */
@@ -33,10 +35,12 @@ public class Coordinate {
         this.stringCoordinates = stringCoordinates;
     }
 
+    @Nullable
     public Double[] getNumberCoordinates() {
         return numberCoordinates;
     }
 
+    @Nullable
     public String[] getStringCoordinates() {
         return stringCoordinates;
     }

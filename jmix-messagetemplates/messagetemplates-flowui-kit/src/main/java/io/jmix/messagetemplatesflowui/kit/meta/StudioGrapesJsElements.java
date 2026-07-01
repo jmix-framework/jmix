@@ -17,9 +17,9 @@
 package io.jmix.messagetemplatesflowui.kit.meta;
 
 import io.jmix.flowui.kit.meta.StudioElement;
-import io.jmix.flowui.kit.meta.StudioProperty;
-import io.jmix.flowui.kit.meta.StudioPropertyType;
 import io.jmix.flowui.kit.meta.StudioUiKit;
+import io.jmix.flowui.kit.meta.StudioPropertyGroups;
+import io.jmix.flowui.kit.meta.StudioXmlElements;
 
 @StudioUiKit
 public interface StudioGrapesJsElements {
@@ -27,62 +27,42 @@ public interface StudioGrapesJsElements {
     @StudioElement(
             name = "Plugin",
             classFqn = "io.jmix.messagetemplatesflowui.kit.meta.stub.StudioGrapesJsPluginElement",
-            xmlElement = "plugin",
+            xmlElement = StudioXmlElements.PLUGIN,
             xmlns = "http://jmix.io/schema/messagetemplates/ui",
             xmlnsAlias = "msgtmp",
             icon = "io/jmix/messagetemplatesflowui/kit/meta/icon/elementsgroup/plugins.svg",
-            properties = {
-                    @StudioProperty(xmlAttribute = "name", type = StudioPropertyType.STRING, required = true,
-                            options = {"grapesjs-blocks-basic", "grapesjs-blocks-flexbox", "grapesjs-custom-code",
-                                    "grapesjs-plugin-forms", "grapesjs-preset-newsletter", "grapesjs-parser-postcss",
-                                    "grapesjs-style-filter", "grapesjs-tabs", "grapesjs-tooltip",
-                                    "grapesjs-tui-image-editor"})
-            }
-    )
+            propertyGroups = StudioMessageTemplatesPropertyGroups.PluginComponent.class)
     void plugin();
 
     @StudioElement(
             name = "Block",
             classFqn = "io.jmix.messagetemplatesflowui.kit.meta.stub.StudioGrapesJsBlockElement",
-            xmlElement = "block",
+            xmlElement = StudioXmlElements.BLOCK,
             xmlns = "http://jmix.io/schema/messagetemplates/ui",
             xmlnsAlias = "msgtmp",
             icon = "io/jmix/messagetemplatesflowui/kit/meta/icon/element/block.svg",
-            properties = {
-                    @StudioProperty(xmlAttribute = "attributes", type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = "category", type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = "content", type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.STRING, required = true),
-                    @StudioProperty(xmlAttribute = "label", type = StudioPropertyType.LOCALIZED_STRING),
-            }
-    )
+            propertyGroups = StudioMessageTemplatesPropertyGroups.BlockComponent.class)
     void block();
 
     @StudioElement(
             name = "Content",
-            xmlElement = "content",
+            xmlElement = StudioXmlElements.CONTENT,
             xmlns = "http://jmix.io/schema/messagetemplates/ui",
             xmlnsAlias = "msgtmp",
             target = {"io.jmix.messagetemplatesflowui.kit.meta.stub.StudioGrapesJsBlockElement"},
             unlimitedCount = false,
             icon = "io/jmix/messagetemplatesflowui/kit/meta/icon/element/content.svg",
-            properties = {
-                    @StudioProperty(xmlAttribute = "value", type = StudioPropertyType.CDATA)
-            }
-    )
+            propertyGroups = StudioMessageTemplatesPropertyGroups.ContentComponent.class)
     void content();
 
     @StudioElement(
             name = "Attributes",
-            xmlElement = "attributes",
+            xmlElement = StudioXmlElements.ATTRIBUTES,
             xmlns = "http://jmix.io/schema/messagetemplates/ui",
             xmlnsAlias = "msgtmp",
             target = {"io.jmix.messagetemplatesflowui.kit.meta.stub.StudioGrapesJsBlockElement"},
             unlimitedCount = false,
             icon = "io/jmix/messagetemplatesflowui/kit/meta/icon/element/attributes.svg",
-            properties = {
-                    @StudioProperty(xmlAttribute = "value", type = StudioPropertyType.CDATA)
-            }
-    )
+            propertyGroups = StudioMessageTemplatesPropertyGroups.AttributesComponent.class)
     void attributes();
 }

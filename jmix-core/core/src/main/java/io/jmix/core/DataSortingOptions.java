@@ -16,9 +16,12 @@
 
 package io.jmix.core;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Defines sorting options of a data store.
  */
+@NullMarked
 public interface DataSortingOptions {
 
     /**

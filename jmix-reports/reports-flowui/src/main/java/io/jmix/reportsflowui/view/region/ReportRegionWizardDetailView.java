@@ -1,20 +1,38 @@
+/*
+ * Copyright 2026 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.jmix.reportsflowui.view.region;
 
-import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.grid.dnd.GridDropEvent;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
 import io.jmix.core.Metadata;
 import io.jmix.flowui.Actions;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.UiComponents;
+import io.jmix.flowui.action.ObservableBaseAction;
 import io.jmix.flowui.action.list.ItemTrackingAction;
 import io.jmix.flowui.action.list.ListDataComponentAction;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.grid.TreeDataGrid;
 import io.jmix.flowui.icon.Icons;
+import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
-import io.jmix.flowui.kit.action.BaseAction;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.model.CollectionContainer;
@@ -27,6 +45,7 @@ import io.jmix.reports.entity.wizard.RegionProperty;
 import io.jmix.reports.entity.wizard.ReportRegion;
 import io.jmix.reportsflowui.view.reportwizard.EntityTreeComposite;
 import org.apache.commons.collections4.IterableUtils;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
@@ -36,6 +55,7 @@ import java.util.*;
 @ViewController("report_WizardReportRegion.detail")
 @ViewDescriptor("report-region-wizard-detail-view.xml")
 @EditedEntityContainer("reportRegionDc")
+@DialogMode(width = "40em", resizable = true)
 public class ReportRegionWizardDetailView extends StandardDetailView<ReportRegion> {
 
     @ViewComponent
@@ -49,7 +69,7 @@ public class ReportRegionWizardDetailView extends StandardDetailView<ReportRegio
     @ViewComponent
     protected CollectionPropertyContainer<RegionProperty> reportRegionPropertiesDataGridDc;
     @ViewComponent
-    protected FormLayout treePanel;
+    protected HorizontalLayout mainContent;
     @ViewComponent
     protected DataGrid<RegionProperty> propertiesDataGrid;
     @ViewComponent
@@ -75,6 +95,8 @@ public class ReportRegionWizardDetailView extends StandardDetailView<ReportRegio
     protected boolean persistentOnly = false;
     protected boolean isTabulated;//if true then user perform add tabulated region action
     protected boolean updatePermission = true;
+
+    protected @Nullable EntityTreeNode draggedNode;
 
     public void setParameters(EntityTreeNode rootEntity, boolean scalarOnly, boolean collectionsOnly, boolean persistentOnly) {
         this.rootEntity = rootEntity;
@@ -110,6 +132,13 @@ public class ReportRegionWizardDetailView extends StandardDetailView<ReportRegio
     @Subscribe("propertiesDataGrid.downItemAction")
     protected void onPropertiesDataGridDown(ActionPerformedEvent event) {
         swapItems(false);
+    }
+
+    @Subscribe("propertiesDataGrid")
+    protected void onPropertiedDataGridDrop(GridDropEvent<EntityTreeNode> event) {
+        if (draggedNode != null) {
+            addProperty(Set.of(draggedNode));
+        }
     }
 
     protected void swapItems(boolean up) {
@@ -151,34 +180,37 @@ public class ReportRegionWizardDetailView extends StandardDetailView<ReportRegio
         entityTree = entityTreeComposite.getEntityTree();
         entityTree.expand(rootEntity);
 
-        BaseAction doubleClickAction = new BaseAction("doubleClick")
-                .withHandler(event -> addProperty());
+        Action doubleClickAction = new ObservableBaseAction<>("doubleClick")
+                .withHandler(event -> addProperty(entityTree.getSelectedItems()));
         doubleClickAction.setEnabled(isUpdatePermitted());
         entityTree.addAction(doubleClickAction);
         entityTree.addItemClickListener(event -> {
             if (event.getClickCount() > 1) {
                 entityTree.select(event.getItem());
-                addProperty();
+                addProperty(entityTree.getSelectedItems());
             }
         });
 
+        entityTree.setRowsDraggable(true);
+        entityTree.addDragStartListener(e -> draggedNode = e.getDraggedItems().getFirst());
+        entityTree.addDragEndListener(e -> draggedNode = null);
+
         ListDataComponentAction<?, ?> addPropertyAction = actions.create(ItemTrackingAction.ID, "addItemAction");
-        addPropertyAction.addActionPerformedListener(event -> addProperty());
+        addPropertyAction.addActionPerformedListener(event -> addProperty(entityTree.getSelectedItems()));
         addPropertyAction.addEnabledRule(this::isUpdatePermitted);
         entityTree.addAction(addPropertyAction);
         addItem.setAction(addPropertyAction);
         addItem.setIcon(icons.get(JmixFontIcon.ARROW_RIGHT));
-        treePanel.add(entityTreeComposite);
+        mainContent.addComponentAsFirst(entityTreeComposite);
     }
 
-    protected void addProperty() {
+    protected void addProperty(Set<EntityTreeNode> selectedItems) {
         List<EntityTreeNode> nodesList = reportRegionPropertiesDataGridDc.getItems()
                 .stream()
                 .map(RegionProperty::getEntityTreeNode).toList();
 
         Set<EntityTreeNode> alreadyAddedNodes = new HashSet<>(nodesList);
 
-        Set<EntityTreeNode> selectedItems = entityTree.getSelectedItems();
         List<RegionProperty> addedItems = new ArrayList<>();
         boolean alreadyAdded = false;
         for (EntityTreeNode entityTreeNode : selectedItems) {

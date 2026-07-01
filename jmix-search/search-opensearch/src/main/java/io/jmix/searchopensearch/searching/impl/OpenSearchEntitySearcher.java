@@ -1,3 +1,19 @@
+/*
+ * Copyright 2026 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.jmix.searchopensearch.searching.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -15,6 +31,7 @@ import io.jmix.searchopensearch.searching.strategy.OpenSearchSearchStrategyProvi
 import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.constraint.SecureOperations;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NullMarked;
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch.core.SearchRequest;
 import org.opensearch.client.opensearch.core.SearchResponse;
@@ -27,6 +44,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@NullMarked
 public class OpenSearchEntitySearcher extends AbstractEntitySearcher implements EntitySearcher {
 
     private static final Logger log = LoggerFactory.getLogger(OpenSearchEntitySearcher.class);
@@ -70,7 +88,7 @@ public class OpenSearchEntitySearcher extends AbstractEntitySearcher implements 
 
     @Override
     public SearchResult search(SearchContext searchContext, String searchStrategyName) {
-        log.debug("Perform search by context '{}'", searchContext);
+        log.debug("Perform search by context '{}' and strategy '{}'", searchContext, searchStrategyName);
 
         OpenSearchSearchStrategy searchStrategy = resolveSearchStrategy(searchStrategyName);
         SearchResultImpl searchResult = initSearchResult(searchContext, searchStrategy);
@@ -116,7 +134,13 @@ public class OpenSearchEntitySearcher extends AbstractEntitySearcher implements 
     }
 
     protected OpenSearchSearchStrategy resolveSearchStrategy(String searchStrategyName) {
-        return searchStrategyManager.getSearchStrategyByName(searchStrategyName);
+        OpenSearchSearchStrategy strategy = searchStrategyManager.findSearchStrategyByName(searchStrategyName);
+        if (strategy == null) {
+            strategy = searchStrategyManager.getDefaultSearchStrategy();
+            log.warn("Search strategy with name '{}' not found - using default strategy '{}'", searchStrategyName, strategy.getName());
+        }
+
+        return strategy;
     }
 
     protected SearchRequestContext<SearchRequest.Builder> createRequest(SearchContext searchContext,

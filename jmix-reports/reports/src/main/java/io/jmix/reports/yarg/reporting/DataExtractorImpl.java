@@ -27,6 +27,7 @@ import io.jmix.reports.yarg.structure.BandData;
 import io.jmix.reports.yarg.structure.Report;
 import io.jmix.reports.yarg.structure.ReportBand;
 import org.apache.commons.collections4.CollectionUtils;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.Collections;
 import java.util.List;
@@ -34,6 +35,7 @@ import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+@NullMarked
 public class DataExtractorImpl implements DataExtractor {
     protected static final Map<String, Object> EMPTY_MAP = Collections.emptyMap();
 

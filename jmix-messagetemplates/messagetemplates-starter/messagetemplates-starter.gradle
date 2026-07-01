@@ -15,7 +15,9 @@
  */
 
 group = 'io.jmix.messagetemplates'
-archivesBaseName = 'jmix-messagetemplates-starter'
+base {
+    archivesName = 'jmix-messagetemplates-starter'
+}
 
 dependencies {
     api project(':messagetemplates')

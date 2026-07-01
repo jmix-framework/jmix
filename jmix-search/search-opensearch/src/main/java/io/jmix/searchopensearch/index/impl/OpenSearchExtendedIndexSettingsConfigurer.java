@@ -22,6 +22,7 @@ import io.jmix.search.index.mapping.ExtendedSearchSettings;
 import io.jmix.search.index.mapping.IndexConfigurationManager;
 import io.jmix.searchopensearch.index.OpenSearchIndexSettingsConfigurationContext;
 import io.jmix.searchopensearch.index.OpenSearchIndexSettingsConfigurer;
+import org.jspecify.annotations.NullMarked;
 import org.opensearch.client.opensearch.indices.IndexSettingsAnalysis;
 import org.springframework.stereotype.Component;
 
@@ -29,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+@NullMarked
 @Component("search_OpenSearchExtendedIndexSettingsConfigurer")
 public class OpenSearchExtendedIndexSettingsConfigurer
         extends BaseExtendedIndexSettingsConfigurer<OpenSearchIndexSettingsConfigurationContext>

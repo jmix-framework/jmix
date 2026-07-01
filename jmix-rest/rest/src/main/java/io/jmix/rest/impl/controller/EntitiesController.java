@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2019 Haulmont.
+ * Copyright 2019 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ import org.springframework.web.bind.annotation.*;
  * Controller that performs CRUD entity operations
  */
 @RestController("rest_EntitiesController")
-@RequestMapping(value = "${jmix.rest.base-path}${jmix.rest.entities-path}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+@RequestMapping(value = "${jmix.rest.base-path}${jmix.rest.entities-path}", produces = MediaType.APPLICATION_JSON_VALUE)
 public class EntitiesController {
 
     @Autowired

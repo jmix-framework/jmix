@@ -23,7 +23,7 @@ import io.jmix.flowui.app.propertyfilter.dateinterval.model.BaseDateInterval;
 import io.jmix.flowuidata.dateinterval.RelativeDateTimeMomentProvider;
 import io.jmix.flowuidata.dateinterval.model.RelativeDateInterval;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.util.regex.Pattern;

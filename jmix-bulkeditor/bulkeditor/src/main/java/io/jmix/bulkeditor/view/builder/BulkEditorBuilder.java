@@ -25,7 +25,7 @@ import io.jmix.flowui.component.validation.Validator;
 import io.jmix.flowui.model.DataContext;
 import io.jmix.flowui.view.DialogWindow;
 import io.jmix.flowui.view.View;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Collections;

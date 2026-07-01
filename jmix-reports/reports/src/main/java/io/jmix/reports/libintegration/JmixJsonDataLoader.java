@@ -34,8 +34,9 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.BasicHttpClientConnectionManager;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -45,6 +46,7 @@ import java.util.Map;
 import static io.jmix.reports.entity.DataSet.*;
 import static java.lang.String.format;
 
+@NullMarked
 public class JmixJsonDataLoader extends JsonDataLoader {
 
     protected Scripting scripting;
@@ -54,6 +56,9 @@ public class JmixJsonDataLoader extends JsonDataLoader {
 
     @Autowired
     protected Resources resources;
+
+    @Autowired
+    protected ReportsGroovyFeatureSupport groovyFeatureSupport;
 
     @Autowired
     public JmixJsonDataLoader(Scripting scripting) {
@@ -115,6 +120,9 @@ public class JmixJsonDataLoader extends JsonDataLoader {
 
         Map<String, Object> scriptParams = groovyScriptParametersProvider.getParametersForDatasetParameters(
                 reportQuery, parentBand, reportParams);
+        if (!groovyFeatureSupport.isGroovyEnabled()) {
+            return groovyFeatureSupport.getDisabledJsonResult(reportQuery.getName());
+        }
         return scripting.evaluateGroovy(jsonSourceText, scriptParams);
     }
 

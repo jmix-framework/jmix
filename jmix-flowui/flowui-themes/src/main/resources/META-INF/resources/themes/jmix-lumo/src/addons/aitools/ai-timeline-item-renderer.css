@@ -1,0 +1,272 @@
+/*
+ * Copyright 2026 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+.timeline-row-host {
+    .chat-timeline-list::part(items) {
+        box-sizing: border-box;
+        padding: var(--lumo-space-s) var(--lumo-space-m) var(--lumo-space-l) var(--lumo-space-m);
+    }
+
+    .timeline-message-row {
+        box-sizing: border-box;
+        padding: var(--lumo-space-s) 0;
+        padding-inline-end: var(--vaadin-horizontal-layout-gap, var(--lumo-space-m));
+        width: 100%;
+    }
+
+    .timeline-message-body {
+        min-width: 0;
+    }
+
+    .timeline-message-header {
+        color: var(--lumo-secondary-text-colory);
+        font-size: var(--lumo-font-size-xs);
+        margin-bottom: var(--lumo-space-xs);
+    }
+
+    .timeline-message-actor {
+        color: var(--lumo-body-text-colo);
+        font-weight: 700;
+    }
+
+    .timeline-message-time {
+        color: var(--lumo-tertiary-text-color);
+    }
+
+    .timeline-user-text {
+        display: block;
+        white-space: pre-wrap;
+    }
+
+    .timeline-avatar-container {
+        /* Almost equal to Avatar sizes */
+        --_size: var(--vaadin-avatar-size, calc(1lh + var(--vaadin-padding-block-container) * 2 + var(--vaadin-focus-ring-width)));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: calc(var(--_size) + var(--lumo-space-xs));
+    }
+
+    .timeline-avatar {
+        flex: 0 0 auto;
+        margin: 0;
+    }
+
+    .timeline-avatar-assistant {
+        --_size: var(--vaadin-avatar-size, calc(1lh + var(--vaadin-padding-block-container) * 2 + var(--vaadin-focus-ring-width)));
+        height: var(--_size);
+        width: var(--_size);
+        background: var(--vaadin-avatar-background, var(--vaadin-background-container-strong));
+        background-clip: content-box;
+        border: var(--vaadin-focus-ring-width) solid transparent;
+        align-items: center;
+        border-radius: 50%;
+        box-sizing: border-box;
+        display: inline-flex;
+        justify-content: center;
+        background-color: var(--lumo-primary-color);
+        color: var(--lumo-primary-contrast-color);
+        position: relative;
+    }
+
+    .timeline-avatar-assistant::before {
+        position: absolute;
+        content: '';
+        inset: calc(var(--vaadin-focus-ring-width) * -1);
+        border-radius: inherit;
+        outline: var(--vaadin-avatar-border-width, 1px) solid var(--vaadin-avatar-border-color, transparent);
+        outline-offset: calc((var(--vaadin-focus-ring-width) + var(--vaadin-avatar-border-width, 1px)) * -1);
+    }
+
+    /* Markdown output
+       ---------------
+       Assistant messages can include tables, links, and headings. The rules here
+       constrain generated markdown so wide report tables scroll horizontally and
+       document-style headings do not overpower the chat timeline. */
+
+    .timeline-markdown {
+        box-sizing: border-box;
+        display: block;
+        line-height: 1.45;
+        max-width: 100%;
+        min-width: 0;
+        overflow: hidden;
+        width: 100%;
+    }
+
+    .timeline-markdown table {
+        border-collapse: separate;
+        border-spacing: 0;
+        display: block;
+        font-size: var(--lumo-font-size-s);
+        margin: var(--lumo-space-m) 0;
+        max-width: 100%;
+        overflow-x: auto;
+        width: 100%;
+    }
+
+    .timeline-markdown thead {
+        background: var(--lumo-contrast-5pct);
+    }
+
+    .timeline-markdown th,
+    .timeline-markdown td {
+        border-bottom: 1px solid var(--lumo-contrast-10pct);
+        box-sizing: border-box;
+        padding: var(--lumo-space-xs) var(--lumo-space-s);
+        text-align: left;
+        vertical-align: top;
+        white-space: nowrap;
+    }
+
+    .timeline-markdown th {
+        color: var(--lumo-header-text-color);
+        font-weight: 700;
+    }
+
+    .timeline-markdown th[align="right"],
+    .timeline-markdown td[align="right"] {
+        text-align: right;
+    }
+
+    .timeline-markdown th:last-child,
+    .timeline-markdown td:last-child {
+        min-width: 24rem;
+        white-space: normal;
+    }
+
+    .timeline-markdown a {
+        white-space: nowrap;
+    }
+
+    .timeline-markdown p:first-child {
+        margin-top: 0;
+    }
+
+    .timeline-markdown p:last-child {
+        margin-bottom: 0;
+    }
+
+    /* Dial down the default heading sizes - the LLM uses h2/h3 generously and the
+       Lumo defaults are tuned for stand-alone document headings, which looks
+       oversized inside the chat bubble. */
+    .timeline-markdown h1 {
+        font-size: var(--lumo-font-size-l);
+    }
+
+    .timeline-markdown h2 {
+        font-size: var(--lumo-font-size-l);
+    }
+
+    .timeline-markdown h3 {
+        font-size: var(--lumo-font-size-m);
+    }
+
+    .timeline-markdown h4 {
+        font-size: var(--lumo-font-size-s);
+    }
+
+
+    /* Thinking indicator
+       ------------------
+       Replaces the old ProgressBar with text shimmer plus a thin moving bar. Tool
+       status lines are appended under the shimmer as deterministic work completes. */
+
+    .timeline-thinking-text {
+        background: linear-gradient(90deg, var(--lumo-primary-color) 0%, var(--lumo-secondary-text-color) 50%, var(--lumo-primary-color) 100%);
+        background-size: 200% 100%;
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        -webkit-text-fill-color: transparent;
+        display: inline-block;
+        font-size: var(--lumo-font-size-s);
+        font-weight: 500;
+        animation: jmix-aitls-timeline-thinking-text-shimmer 2s linear infinite;
+    }
+
+    .timeline-thinking-shimmer {
+        background-color: var(--lumo-contrast-10pct);
+        border-radius: var(--lumo-border-radius-s);
+        height: 2px;
+        margin-top: var(--lumo-space-xs);
+        overflow: hidden;
+        position: relative;
+        width: 12rem;
+        max-width: 100%;
+    }
+
+    .timeline-thinking-shimmer::after {
+        background: linear-gradient(90deg, transparent 0%, var(--lumo-primary-color) 50%, transparent 100%);
+        content: "";
+        height: 100%;
+        left: 0;
+        position: absolute;
+        top: 0;
+        width: 35%;
+        animation: jmix-aitls-timeline-thinking-shimmer 1.2s linear infinite;
+    }
+
+    .timeline-thinking-status-list {
+        gap: 0.125rem;
+        margin-top: var(--lumo-space-xs);
+    }
+
+    .timeline-thinking-status-item {
+        color: var(--lumo-secondary-text-color);
+        font-size: var(--lumo-font-size-xs);
+        line-height: 1.3;
+    }
+
+    .timeline-thinking-status-result {
+        opacity: 0.7;
+        font-style: italic;
+    }
+}
+
+@keyframes jmix-aitls-timeline-thinking-text-shimmer {
+    0% {
+        background-position: 100% 0;
+    }
+    100% {
+        background-position: -100% 0;
+    }
+}
+
+@keyframes jmix-aitls-timeline-thinking-shimmer {
+    0% {
+        left: -35%;
+    }
+    100% {
+        left: 100%;
+    }
+}
+
+/* Respect the user's reduced-motion preference: stop the thinking-indicator
+   animations. The shimmer text stays as a static gradient, and the moving bar
+   settles into a steady full-width glow instead of a frozen highlight segment. */
+@media (prefers-reduced-motion: reduce) {
+    .timeline-row-host {
+        .timeline-thinking-text {
+            animation: none;
+        }
+
+        .timeline-thinking-shimmer::after {
+            animation: none;
+            width: 100%;
+        }
+    }
+}

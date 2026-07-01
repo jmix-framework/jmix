@@ -302,8 +302,6 @@ class ContainerXmlLoadTest extends FlowuiTestSpecification {
         }
     }
 
-    // CAUTION: remove after Vaadin 24.8 update
-    @Ignore("The Card component is an experimental feature for Vaadin <24.8")
     def "Load card component from XML"() {
         when: "ContainerView is opened"
         def containerView = navigateToView ContainerView
@@ -344,8 +342,6 @@ class ContainerXmlLoadTest extends FlowuiTestSpecification {
         }
     }
 
-    // CAUTION: remove after Vaadin 24.8 update
-    @Ignore("The Card component is an experimental feature for Vaadin 24.7")
     def "Load card component from XML with title nested element"() {
         when: "ContainerView opened"
         def containerView = navigateToView ContainerView

@@ -8,6 +8,7 @@ import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.security.authentication.JmixUserDetails;
+import io.jmix.security.user.PasswordChangeRequired;
 import org.springframework.security.core.GrantedAuthority;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -54,6 +55,10 @@ public class User implements JmixUserDetails, HasTimeZone {
 
     @Column(name = "TIME_ZONE_ID")
     private String timeZoneId;
+
+    @PasswordChangeRequired
+    @Column(name = "PASSWORD_CHANGE_REQUIRED")
+    private Boolean passwordChangeRequired = false;
 
     @Transient
     private Collection<? extends GrantedAuthority> authorities;
@@ -121,6 +126,14 @@ public class User implements JmixUserDetails, HasTimeZone {
 
     public void setLastName(final String lastName) {
         this.lastName = lastName;
+    }
+
+    public Boolean getPasswordChangeRequired() {
+        return passwordChangeRequired;
+    }
+
+    public void setPasswordChangeRequired(final Boolean passwordChangeRequired) {
+        this.passwordChangeRequired = passwordChangeRequired;
     }
 
     @Override

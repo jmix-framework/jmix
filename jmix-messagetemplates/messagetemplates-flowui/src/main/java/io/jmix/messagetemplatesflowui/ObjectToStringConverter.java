@@ -27,7 +27,7 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.messagetemplates.entity.MessageTemplateParameter;
 import org.apache.commons.lang3.reflect.ConstructorUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Constructor;

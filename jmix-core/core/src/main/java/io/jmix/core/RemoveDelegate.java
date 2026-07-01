@@ -18,6 +18,8 @@ package io.jmix.core;
 
 import io.jmix.core.annotation.Experimental;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Interface to be implemented by custom update services.
  * The {@link RemoveDelegate#remove} method is called by generic framework mechanisms instead of {@code DataManager}
@@ -26,6 +28,7 @@ import io.jmix.core.annotation.Experimental;
  * @param <E> entity type
  */
 @Experimental
+@NullMarked
 public interface RemoveDelegate<E> {
 
     /**

@@ -20,6 +20,7 @@ import io.jmix.reports.yarg.loaders.ReportDataLoader;
 import io.jmix.reports.yarg.structure.BandData;
 import io.jmix.reports.yarg.structure.ReportQuery;
 import io.jmix.reports.yarg.util.groovy.Scripting;
+import org.jspecify.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.List;
@@ -40,7 +41,7 @@ public class GroovyDataLoader implements ReportDataLoader {
     }
 
     @Override
-    public List<Map<String, Object>> loadData(ReportQuery reportQuery, BandData parentBand, Map<String, Object> params) {
+    public List<Map<String, Object>> loadData(ReportQuery reportQuery, @Nullable BandData parentBand, Map<String, Object> params) {
         try {
             String script = reportQuery.getScript();
             Map<String, Object> scriptParams = new HashMap<String, Object>();

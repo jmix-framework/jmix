@@ -16,6 +16,7 @@
 
 package io.jmix.authserver.introspection;
 
+import io.jmix.authserver.authentication.PasswordAuthorizationGrantTypeHelper;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -78,7 +79,7 @@ public class AuthorizationServiceOpaqueTokenIntrospector implements OpaqueTokenI
             } catch (UsernameNotFoundException e) {
                 throw new BadOpaqueTokenException("User " + principalName + " not found");
             }
-        } else if (AuthorizationGrantType.PASSWORD.equals(authorization.getAuthorizationGrantType())) {
+        } else if (PasswordAuthorizationGrantTypeHelper.PASSWORD_GRANT_TYPE.equals(authorization.getAuthorizationGrantType())) {
             Object principal = authorization.getAttribute(Principal.class.getCanonicalName());
             if (principal instanceof Authentication) {
                 principalName = ((Authentication) principal).getName();

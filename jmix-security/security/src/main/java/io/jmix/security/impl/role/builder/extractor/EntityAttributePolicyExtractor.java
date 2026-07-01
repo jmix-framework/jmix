@@ -23,6 +23,7 @@ import io.jmix.security.model.ResourcePolicyType;
 import io.jmix.security.role.annotation.EntityAttributePolicy;
 import io.jmix.security.role.annotation.EntityAttributePolicyContainer;
 import io.jmix.security.role.annotation.NullEntity;
+import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+@NullMarked
 @Component("sec_EntityAttributePolicyExtractor")
 public class EntityAttributePolicyExtractor implements ResourcePolicyExtractor {
 

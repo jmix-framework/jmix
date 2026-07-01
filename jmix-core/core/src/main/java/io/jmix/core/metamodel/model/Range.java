@@ -19,10 +19,13 @@ package io.jmix.core.metamodel.model;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.Enumeration;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Object encapsulating common properties of {@link MetaProperty}.
  *
  */
+@NullMarked
 public interface Range {
 
     /** Is this property of a simple type? */

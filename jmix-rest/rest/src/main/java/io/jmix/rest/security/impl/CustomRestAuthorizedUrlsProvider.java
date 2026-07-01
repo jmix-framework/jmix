@@ -20,11 +20,13 @@ import com.google.common.base.Splitter;
 import io.jmix.core.JmixModules;
 import io.jmix.securityresourceserver.requestmatcher.urlprovider.AnonymousUrlPatternsProvider;
 import io.jmix.securityresourceserver.requestmatcher.urlprovider.AuthenticatedUrlPatternsProvider;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@NullMarked
 public class CustomRestAuthorizedUrlsProvider
         implements AuthenticatedUrlPatternsProvider, AnonymousUrlPatternsProvider {
 

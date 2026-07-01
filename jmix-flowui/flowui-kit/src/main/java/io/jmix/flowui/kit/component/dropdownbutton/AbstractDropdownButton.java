@@ -18,10 +18,9 @@ package io.jmix.flowui.kit.component.dropdownbutton;
 
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.contextmenu.MenuItem;
+import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Hr;
-import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.shared.HasOverlayClassName;
 import com.vaadin.flow.dom.ClassList;
 import com.vaadin.flow.dom.ThemeList;
 import com.vaadin.flow.shared.Registration;
@@ -31,10 +30,13 @@ import io.jmix.flowui.kit.component.menubar.JmixMenuBar;
 import io.jmix.flowui.kit.component.menubar.JmixMenuItem;
 import io.jmix.flowui.kit.component.menubar.JmixSubMenu;
 import io.jmix.flowui.kit.event.EventBus;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.beans.PropertyChangeEvent;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 /**
@@ -44,7 +46,7 @@ import java.util.function.Consumer;
  */
 public abstract class AbstractDropdownButton extends Composite<JmixMenuBar>
         implements DropdownButtonComponent, AttachNotifier, DetachNotifier,
-        HasTitle, HasSize, HasTheme, HasEnabled, HasStyle, HasOverlayClassName, HasText,
+        HasTitle, HasSize, HasTheme, HasEnabled, HasStyle, HasText,
         Focusable<AbstractDropdownButton> {
 
     protected static final String ATTRIBUTE_JMIX_ROLE_NAME = "jmix-role";
@@ -55,6 +57,11 @@ public abstract class AbstractDropdownButton extends Composite<JmixMenuBar>
     protected Component iconComponent;
 
     protected abstract JmixMenuItem getDropdownItem();
+
+    @Override
+    protected JmixMenuBar initContent() {
+        return new DropdownButtonMenuBar();
+    }
 
     @Override
     public DropdownButtonItem addItem(String id, Action action) {
@@ -257,19 +264,18 @@ public abstract class AbstractDropdownButton extends Composite<JmixMenuBar>
         return getContent().addDetachListener(listener);
     }
 
-    @Deprecated(since = "3.0", forRemoval = true)
     @Nullable
     @Override
-    public Icon getIcon() {
-        return iconComponent instanceof Icon icon ? icon : null;
+    public Component getIcon() {
+        return getIconComponent();
     }
 
-    @Deprecated(since = "3.0", forRemoval = true)
     @Override
-    public void setIcon(@Nullable Icon icon) {
+    public void setIcon(@Nullable Component icon) {
         setIconComponent(icon);
     }
 
+    @Deprecated(since = "3.0", forRemoval = true)
     @Nullable
     @Override
     public Component getIconComponent() {
@@ -319,16 +325,6 @@ public abstract class AbstractDropdownButton extends Composite<JmixMenuBar>
     @Override
     public boolean hasClassName(String className) {
         return getContent().hasClassName(className);
-    }
-
-    @Override
-    public String getOverlayClassName() {
-        return getContent().getOverlayClassName();
-    }
-
-    @Override
-    public void setOverlayClassName(String overlayClassName) {
-        getContent().setOverlayClassName(overlayClassName);
     }
 
     @Override
@@ -662,7 +658,7 @@ public abstract class AbstractDropdownButton extends Composite<JmixMenuBar>
         protected String text;
 
         public TextItemImpl(String id,
-                            @Nullable String text,
+                            String text,
                             DropdownButtonComponent parent,
                             MenuItemProvider<String> textMenuItemProvider) {
             super(id, textMenuItemProvider.createMenuItem(text), parent);
@@ -847,5 +843,16 @@ public abstract class AbstractDropdownButton extends Composite<JmixMenuBar>
         public Registration addClickListener(Consumer<ClickEvent> listener) {
             return null;
         }
+    }
+}
+
+@JsModule("./src/menubar/jmix-noncollapsible-menubar-connector.js")
+class DropdownButtonMenuBar extends JmixMenuBar {
+
+    @Override
+    protected void initConnector(String appId) {
+        super.initConnector(appId);
+
+        getElement().executeJs("window.Vaadin.Flow.nonCollapsibleMenubarConnector.initLazy(this)");
     }
 }

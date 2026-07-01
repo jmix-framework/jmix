@@ -17,12 +17,14 @@ package io.jmix.reports.yarg.formatters.impl.xls.hints;
 
 import io.jmix.reports.yarg.structure.BandData;
 import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@NullMarked
 public abstract class AbstractHint implements XlsHint {
 
     protected static class DataObject {

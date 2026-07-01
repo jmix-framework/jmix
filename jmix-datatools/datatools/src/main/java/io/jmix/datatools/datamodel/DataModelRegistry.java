@@ -1,0 +1,630 @@
+/*
+ * Copyright 2026 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.jmix.datatools.datamodel;
+
+import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
+import io.jmix.core.common.util.Preconditions;
+import io.jmix.core.impl.metadata.GenerationStateStore;
+import io.jmix.core.impl.metadata.MetadataGenerationManager;
+import io.jmix.core.impl.metadata.MetadataGenerationRetiredEvent;
+import io.jmix.core.entity.annotation.SystemLevel;
+import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.data.StoreAwareLocator;
+import io.jmix.data.persistence.DbmsType;
+import io.jmix.datatools.datamodel.engine.DiagramEngine;
+import io.jmix.datatools.datamodel.entity.AttributeModel;
+import io.jmix.datatools.datamodel.entity.EntityModel;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.EventListener;
+import org.jspecify.annotations.Nullable;
+import org.springframework.stereotype.Component;
+
+import javax.sql.DataSource;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.stream.Collectors;
+
+/**
+ * Provides information about entity data models organized by data stores.
+ */
+@Component("datatl_DataModelProvider")
+public class DataModelRegistry {
+
+    private static final Logger log = LoggerFactory.getLogger(DataModelRegistry.class);
+
+    protected static class State {
+        protected final Map<String, Map<String, DataModel>> dataModels = new HashMap<>();
+        protected final ReadWriteLock lock = new ReentrantReadWriteLock();
+        protected volatile boolean initialized;
+    }
+
+    @Autowired
+    protected DbmsType dbmsType;
+    @Autowired
+    protected Metadata metadata;
+    @Autowired
+    protected DiagramEngine diagramEngine;
+    @Autowired
+    protected MetadataTools metadataTools;
+    @Autowired
+    protected StoreAwareLocator storeAwareLocator;
+
+    @Autowired
+    protected MetadataGenerationManager metadataGenerationManager;
+
+    protected final GenerationStateStore<State> stateStore = new GenerationStateStore<>();
+
+    protected State getState() {
+        return stateStore.getOrCreate(metadataGenerationManager.getPinnedOrCurrentGenerationId(), State::new);
+    }
+
+    /**
+     * Make the registry to reload data models on the next request.
+     */
+    public void reset() {
+        stateStore.clear();
+    }
+
+    /**
+     * Removes registry state cached for a retired metadata generation.
+     *
+     * @param event retired-generation event
+     */
+    @EventListener
+    public void onMetadataGenerationRetired(MetadataGenerationRetiredEvent event) {
+        stateStore.remove(event.getGenerationId());
+    }
+
+    protected void checkInitialized(State state) {
+        if (!state.initialized) {
+            state.lock.readLock().unlock();
+            state.lock.writeLock().lock();
+            try {
+                if (!state.initialized) {
+                    init(state);
+                    state.initialized = true;
+                }
+            } finally {
+                state.lock.readLock().lock();
+                state.lock.writeLock().unlock();
+            }
+        }
+    }
+
+    protected void init(State state) {
+        long startTime = System.currentTimeMillis();
+
+        state.dataModels.clear();
+        constructDataModel(state);
+
+        log.info("{} initialized in {} ms", getClass().getSimpleName(), System.currentTimeMillis() - startTime);
+    }
+
+    protected void constructDataModel(State state) {
+        Collection<MetaClass> metaClasses = metadata.getClasses();
+
+        for (MetaClass metaClass : metaClasses) {
+            if (metadataTools.isJpaEntity(metaClass)
+                    // In rare cases Jpa entity may not have the Table annotation,
+                    // e.g. 'io.jmix.appsettings.entity.dummy.DummyAppSettingsEntity'
+                    && metaClass.getJavaClass().isAnnotationPresent(Table.class)) {
+                createEntityDescription(state, metaClass, false);
+            }
+        }
+    }
+
+    protected DataModel createEntityDescription(State state, MetaClass entity, boolean isEmbeddable) {
+        List<AttributeModel> attributeModelsList = new ArrayList<>();
+        List<MetaProperty> fields = entity.getProperties().stream().toList();
+        Map<RelationType, List<Relation>> relationsMap = new HashMap<>();
+        String dataStoreName = entity.getStore().getName();
+
+        for (MetaProperty field : fields) {
+            String fieldName = field.getName();
+
+            if (!metadataTools.isJpa(field)) {
+                continue;
+            }
+
+            if (isAnnotationPresent(field, ElementCollection.class)) {
+                addElementCollectionAttribute(entity, field, fieldName, attributeModelsList);
+
+            } else if ((field.getType().equals(MetaProperty.Type.DATATYPE)
+                    || field.getType().equals(MetaProperty.Type.ENUM))
+                    && isAnnotationPresent(field, Column.class)) {
+                addDatatypeAttribute(entity, isEmbeddable, field, fieldName, attributeModelsList);
+
+            } else if (field.getType().equals(MetaProperty.Type.EMBEDDED)) {
+                addEmbeddedAttribute(state, entity, field, fieldName, attributeModelsList);
+
+            } else if (isAnnotationPresent(field, ManyToOne.class)) {
+                addManyToOneAttribute(entity, isEmbeddable, field, fieldName,
+                        attributeModelsList, dataStoreName, relationsMap);
+
+            } else if (isAnnotationPresent(field, OneToMany.class)) {
+                addOneToManyAttribute(entity, field, fieldName, dataStoreName, relationsMap, attributeModelsList);
+
+            } else if (isAnnotationPresent(field, OneToOne.class)) {
+                addOneToOneAttribute(entity, isEmbeddable, field, fieldName,
+                        dataStoreName, relationsMap, attributeModelsList);
+
+            } else if (isAnnotationPresent(field, ManyToMany.class)) {
+                addManyToManyAttribute(entity, field, fieldName, dataStoreName, relationsMap, attributeModelsList);
+
+            } else {
+                log.warn("Cannot generate data model description for '{}'", field);
+            }
+        }
+
+        boolean isSystem = entity.getJavaClass().isAnnotationPresent(SystemLevel.class);
+
+        String currentEntityType = entity.getName();
+        String entityDescription = diagramEngine
+                .constructEntityDescription(currentEntityType, dataStoreName, attributeModelsList);
+
+        EntityModel entityModel = constructEntityModel(entity, isSystem);
+        DataModel dataModel = new DataModel(
+                currentEntityType,
+                entity.getStore().getName(),
+                entityModel,
+                relationsMap,
+                entityDescription,
+                attributeModelsList
+        );
+
+        putDataModel(state, dataModel);
+
+        return dataModel;
+    }
+
+    protected void addDatatypeAttribute(MetaClass entity, boolean isEmbeddable, MetaProperty field,
+                                        String fieldName, List<AttributeModel> attributeModelsList) {
+        String fieldType = field.getJavaType().getSimpleName();
+
+        AttributeModel attributeModel = isEmbeddable
+                ? constructAttribute(fieldName, fieldType, field.isMandatory())
+                : constructAttribute(getAnnotation(field, Column.class).name(),
+                fieldName, fieldType, findEntityForField(entity, field), field.isMandatory());
+        attributeModelsList.add(attributeModel);
+    }
+
+    /**
+     * Finds the most appropriate {@link MetaClass} representation of the entity to which a given field belongs.
+     * It checks the declaring class of the field and navigates through the entity's inheritance hierarchy to locate
+     * the last JPA entity associated with the given field.
+     * <p>
+     * NOTE: needed for inheritance strategy 'JOINED'.
+     *
+     * @param entity the initial {@link MetaClass} representing the starting point for the search in the hierarchy
+     * @param field  the {@link MetaProperty} representing the field whose associated entity is to be determined
+     * @return the {@link MetaClass} representing the most specific JPA entity associated with the field or the
+     * initial entity if no more specific JPA entity could be found
+     */
+    protected MetaClass findEntityForField(MetaClass entity, MetaProperty field) {
+        if (field.getDeclaringClass() == null) {
+            return entity;
+        }
+
+        MetaClass current = entity;
+        MetaClass lastJpaEntity = null;
+        while (current != null) {
+            if (metadataTools.isJpaEntity(current)
+                    && current.getJavaClass().isAnnotationPresent(Table.class)) {
+                lastJpaEntity = current;
+            }
+            if (current.getJavaClass().equals(field.getDeclaringClass())) {
+                return lastJpaEntity != null ? lastJpaEntity : entity;
+            }
+            current = current.getAncestor();
+        }
+
+        return entity;
+    }
+
+    protected void addEmbeddedAttribute(State state, MetaClass entity, MetaProperty field, String fieldName,
+                                        List<AttributeModel> attributeModelsList) {
+        MetaClass embeddableClass = metadata.findClass(field.getJavaType());
+
+        if (embeddableClass == null) {
+            log.warn("Embeddable class not found");
+            return;
+        }
+
+        DataModel embeddableDataModel = createEntityDescription(state, embeddableClass, true);
+        String fieldType = field.getJavaType().getSimpleName();
+
+        if (isAnnotationPresent(field, AttributeOverrides.class)) {
+            AttributeOverride[] attributeOverrides = getAnnotation(field, AttributeOverrides.class).value();
+
+            for (int i = 0; i < attributeOverrides.length; i++) {
+                AttributeModel temp = constructAttribute(field.getAnnotatedElement()
+                                .getAnnotation(AttributeOverrides.class).value()[i].column().name(),
+                        fieldName, fieldType, findEntityForField(entity, field), field.isMandatory());
+                AttributeModel dataModelEntityAttributes = embeddableDataModel.attributeModels().get(i);
+                String embeddableFieldName = fieldName + "." + dataModelEntityAttributes.getAttributeName();
+                String embeddableJavaType = dataModelEntityAttributes.getJavaType();
+
+                AttributeModel embeddableAttribute = constructAttribute(temp.getColumnName(),
+                        embeddableFieldName, embeddableJavaType, temp.getDbType(),
+                        isAnnotationPresent(field, NotNull.class));
+
+                attributeModelsList.add(embeddableAttribute);
+            }
+        }
+    }
+
+    protected void addManyToOneAttribute(MetaClass entity, boolean isEmbeddable, MetaProperty field, String fieldName,
+                                         List<AttributeModel> attributeModelsList, String dataStoreName,
+                                         Map<RelationType, List<Relation>> relationsMap) {
+        String fieldType = field.getJavaType().getSimpleName();
+
+        AttributeModel attributeModel = isEmbeddable
+                ? constructAttribute(fieldName, fieldType, isAnnotationPresent(field, NotNull.class))
+                : constructAttribute(getAnnotation(field, JoinColumn.class).name(),
+                fieldName, fieldType, findEntityForField(entity, field), field.isMandatory());
+        attributeModelsList.add(attributeModel);
+
+        String referencedClassName = field.getRange().asClass().getName();
+        String relationDescription = diagramEngine.constructRelationDescription(entity.getName(),
+                referencedClassName, RelationType.MANY_TO_ONE, dataStoreName);
+        Relation relation = new Relation(dataStoreName, referencedClassName, relationDescription);
+        putRelation(relationsMap, RelationType.MANY_TO_ONE, relation);
+    }
+
+    protected void addOneToManyAttribute(MetaClass entity, MetaProperty field, String fieldName,
+                                         String dataStoreName, Map<RelationType, List<Relation>> relationsMap,
+                                         List<AttributeModel> attributeModelsList) {
+        String fieldType = "%s<%s>".formatted(
+                field.getJavaType().getSimpleName(), getElementTypeFromCollection(field));
+
+        AttributeModel attributeModel =
+                constructAttribute(fieldName, fieldType, isAnnotationPresent(field, NotNull.class));
+        attributeModelsList.add(attributeModel);
+
+        String referencedClassName = field.getRange().asClass().getName();
+        String relationDescription = diagramEngine.constructRelationDescription(entity.getName(),
+                referencedClassName, RelationType.ONE_TO_MANY, dataStoreName);
+        Relation relation = new Relation(dataStoreName, referencedClassName, relationDescription);
+        putRelation(relationsMap, RelationType.ONE_TO_MANY, relation);
+    }
+
+    protected void addOneToOneAttribute(MetaClass entity, boolean isEmbeddable, MetaProperty field, String fieldName,
+                                        String dataStoreName, Map<RelationType, List<Relation>> relationsMap,
+                                        List<AttributeModel> attributeModelsList) {
+        AttributeModel attributeModel;
+        String fieldType = field.getJavaType().getSimpleName();
+
+        if (isAnnotationPresent(field, JoinColumn.class)) {
+            if (isEmbeddable) {
+                attributeModel = constructAttribute(fieldName, fieldType, isAnnotationPresent(field, NotNull.class));
+            } else {
+                attributeModel = constructAttribute(getAnnotation(field, JoinColumn.class).name(),
+                        fieldName, fieldType, findEntityForField(entity, field), field.isMandatory());
+            }
+        } else {
+            boolean isMandatory = getAnnotation(field, OneToOne.class).optional();
+            attributeModel = constructAttribute(fieldName, fieldType, isMandatory);
+        }
+
+        attributeModelsList.add(attributeModel);
+
+        String referencedClassName = field.getRange().asClass().getName();
+        String relationDescription = diagramEngine.constructRelationDescription(entity.getName(),
+                referencedClassName, RelationType.ONE_TO_ONE, dataStoreName);
+        Relation relation = new Relation(dataStoreName, referencedClassName, relationDescription);
+        putRelation(relationsMap, RelationType.ONE_TO_ONE, relation);
+    }
+
+    protected void addManyToManyAttribute(MetaClass entity, MetaProperty field, String fieldName,
+                                          String dataStoreName, Map<RelationType, List<Relation>> relationsMap,
+                                          List<AttributeModel> attributeModelsList) {
+        String fieldType = "%s<%s>".formatted(
+                field.getJavaType().getSimpleName(), getElementTypeFromCollection(field));
+
+        AttributeModel attributeModel = constructAttribute(fieldName, fieldType, isAnnotationPresent(field, NotNull.class));
+
+        JoinTable annotation = getAnnotation(field, JoinTable.class);
+        String columnName = annotation.name()
+                + "."
+                + annotation.joinColumns()[0].name();
+        attributeModel.setColumnName(columnName);
+        attributeModelsList.add(attributeModel);
+
+        String referencedClassName = field.getRange().asClass().getName();
+        String relationDescription = diagramEngine.constructRelationDescription(entity.getName(),
+                referencedClassName, RelationType.MANY_TO_MANY, dataStoreName);
+        Relation relation = new Relation(dataStoreName, referencedClassName, relationDescription);
+        putRelation(relationsMap, RelationType.MANY_TO_MANY, relation);
+    }
+
+    protected void addElementCollectionAttribute(MetaClass entity, MetaProperty field, String fieldName,
+                                                 List<AttributeModel> attributeModelsList) {
+        String fieldType = "%s<%s>".formatted(
+                field.getJavaType().getSimpleName(), getElementTypeFromCollection(field));
+        AttributeModel attributeModel = constructAttribute(fieldName, fieldType,
+                isAnnotationPresent(field, NotNull.class));
+
+        String collectionTableName = getAnnotation(field, CollectionTable.class).name();
+        String valueColumnName = getAnnotation(field, Column.class).name();
+        String columnName = "%s.%s".formatted(collectionTableName, valueColumnName);
+        attributeModel.setColumnName(columnName);
+
+        Table tableAnnotation = entity.getJavaClass().getAnnotation(Table.class);
+        String storeName = entity.getStore().getName();
+        attributeModel.setDbType(getDatabaseColumnType(
+                storeName,
+                getSchemaName(tableAnnotation),
+                getCatalogName(tableAnnotation),
+                applyRegister(collectionTableName, storeName),
+                applyRegister(valueColumnName, storeName)
+        ));
+
+        attributeModelsList.add(attributeModel);
+    }
+
+    protected EntityModel constructEntityModel(MetaClass entity, boolean isSystem) {
+        EntityModel entityModel = metadata.create(EntityModel.class);
+
+        entityModel.setName(entity.getName());
+        entityModel.setDataStore(entity.getStore().getName());
+        entityModel.setIsSystem(isSystem);
+        entityModel.setTableName(entity.getJavaClass().isAnnotationPresent(Table.class)
+                ? entity.getJavaClass().getAnnotation(Table.class).name()
+                : "");
+
+        return entityModel;
+    }
+
+    protected void putRelation(Map<RelationType, List<Relation>> relations,
+                               RelationType relationType, Relation relation) {
+        if (relations.containsKey(relationType)) {
+            relations.get(relationType).add(relation);
+        } else {
+            relations.put(relationType, new ArrayList<>(List.of(relation)));
+        }
+    }
+
+    protected AttributeModel constructAttribute(String fieldName, String fieldType) {
+        AttributeModel attributeModel = metadata.create(AttributeModel.class);
+
+        attributeModel.setAttributeName(fieldName);
+        attributeModel.setJavaType(fieldType);
+
+        return attributeModel;
+    }
+
+    protected AttributeModel constructAttribute(String fieldName, String fieldType,
+                                                boolean isMandatory) {
+        AttributeModel attributeModel = constructAttribute(fieldName, fieldType);
+        attributeModel.setIsMandatory(isMandatory);
+
+        return attributeModel;
+    }
+
+    protected AttributeModel constructAttribute(String columnName, String fieldName,
+                                                String fieldType, MetaClass entity,
+                                                boolean isMandatory) {
+        AttributeModel attributeModel = constructAttribute(fieldName, fieldType);
+        attributeModel.setColumnName(columnName);
+        attributeModel.setDbType(getDatabaseColumnType(entity, columnName));
+        attributeModel.setIsMandatory(isMandatory);
+
+        return attributeModel;
+    }
+
+    protected AttributeModel constructAttribute(String columnName, String fieldName,
+                                                String fieldType, String dbType,
+                                                boolean isMandatory) {
+        AttributeModel attributeModel = constructAttribute(fieldName, fieldType);
+        attributeModel.setColumnName(columnName);
+        attributeModel.setDbType(dbType);
+        attributeModel.setIsMandatory(isMandatory);
+
+        return attributeModel;
+    }
+
+    protected String getDatabaseColumnType(String storeName,
+                                           @Nullable String schemaName,
+                                           @Nullable String catalogName,
+                                           String tableName,
+                                           String columnName) {
+        DataSource dataSource = storeAwareLocator.getDataSource(storeName);
+        try (Connection conn = dataSource.getConnection()) {
+            DatabaseMetaData dbMetaData = conn.getMetaData();
+
+            try (ResultSet columns = dbMetaData.getColumns(
+                    catalogName,
+                    schemaName,
+                    tableName,
+                    columnName)) {
+
+                if (columns.next()) {
+                    String typeName = columns.getString("TYPE_NAME");
+                    int columnSize = columns.getInt("COLUMN_SIZE");
+                    int decimalDigits = columns.getInt("DECIMAL_DIGITS");
+
+                    StringBuilder type = new StringBuilder(typeName);
+
+                    if (columnSize > 0) {
+                        type.append("(").append(columnSize);
+                        if (decimalDigits > 0) {
+                            type.append(",").append(decimalDigits);
+                        }
+                        type.append(")");
+                    }
+
+                    return type.toString();
+                } else {
+                    log.warn("Column: '{}' is not found in table: '{}'", columnName, tableName);
+                    return "";
+                }
+            }
+        } catch (SQLException e) {
+            throw new IllegalStateException("Error while receiving from database", e);
+        }
+    }
+
+    protected String getDatabaseColumnType(MetaClass entity, String columnName) {
+        Table tableAnnotation = entity.getJavaClass().getAnnotation(Table.class);
+
+        String catalogName = getCatalogName(tableAnnotation);
+        String schemaName = getSchemaName(tableAnnotation);
+        String storeName = entity.getStore().getName();
+        String tableName = applyRegister(tableAnnotation.name(), storeName);
+        String finalColumnName = applyRegister(columnName, storeName);
+
+        return getDatabaseColumnType(storeName, schemaName, catalogName, tableName, finalColumnName);
+    }
+
+    protected String applyRegister(String name, String storeName) {
+        return dbmsType.getType(storeName).equals("POSTGRESQL")
+                ? name.toLowerCase()
+                : name.toUpperCase();
+    }
+
+    @Nullable
+    protected String getCatalogName(Table annotation) {
+        return annotation.catalog().isEmpty()
+                ? null
+                : annotation.catalog().toUpperCase();
+    }
+
+    @Nullable
+    protected String getSchemaName(Table annotation) {
+        return annotation.schema().isEmpty()
+                ? null
+                : annotation.schema().toUpperCase();
+    }
+
+    protected void putDataModel(State state, DataModel dataModel) {
+        String dataStore = dataModel.dataStore();
+        String entityName = dataModel.entityName();
+
+        state.dataModels.computeIfAbsent(dataStore, __ -> new HashMap<>())
+                .put(entityName, dataModel);
+    }
+
+    public Set<String> getDataStoreNames() {
+        State state = getState();
+        state.lock.readLock().lock();
+        try {
+            checkInitialized(state);
+
+            return Collections.unmodifiableSet(state.dataModels.keySet());
+        } finally {
+            state.lock.readLock().unlock();
+        }
+    }
+
+    /**
+     * Retrieves an unmodifiable view of the internal data model storage.
+     * The returned map represents an organizational structure where the first-level keys are
+     * data store identifiers and the values are nested maps. The nested maps use
+     * entity names as keys and their corresponding {@link DataModel} objects as values.
+     *
+     * @return a map containing data store identifiers as keys, where each value is another map that
+     * maps entity names to their respective {@link DataModel} instances. The returned map
+     * is unmodifiable.
+     */
+    public Map<String, Map<String, DataModel>> getDataModels() {
+        State state = getState();
+        state.lock.readLock().lock();
+        try {
+            checkInitialized(state);
+
+            return state.dataModels.entrySet().stream()
+                    .collect(Collectors.toUnmodifiableMap(
+                            Map.Entry::getKey,
+                            entry -> Map.copyOf(entry.getValue())
+                    ));
+        } finally {
+            state.lock.readLock().unlock();
+        }
+    }
+
+    /**
+     * Retrieves the data models associated with a specific data store.
+     *
+     * @param dataStore the name of the data store whose data models are to be retrieved; must not be null
+     * @return a map where the keys are entity names and the values are the corresponding {@link DataModel} instances
+     */
+    public Map<String, DataModel> getDataModels(String dataStore) {
+        Preconditions.checkNotNullArgument(dataStore, "Data store name cannot be null");
+
+        State state = getState();
+        state.lock.readLock().lock();
+        try {
+            checkInitialized(state);
+
+            Map<String, DataModel> dataModelMap = state.dataModels.get(dataStore);
+            return dataModelMap != null ? Collections.unmodifiableMap(dataModelMap) : Collections.emptyMap();
+        } finally {
+            state.lock.readLock().unlock();
+        }
+    }
+
+    protected boolean isAnnotationPresent(MetaProperty field, Class<? extends Annotation> annotationClass) {
+        return field.getAnnotatedElement().isAnnotationPresent(annotationClass);
+    }
+
+    protected <T extends Annotation> T getAnnotation(MetaProperty field, Class<T> annotationClass) {
+        AnnotatedElement annotatedElement = field.getAnnotatedElement();
+        if (annotatedElement.isAnnotationPresent(annotationClass)) {
+            return annotatedElement.getAnnotation(annotationClass);
+        } else {
+            throw new IllegalStateException("Annotation '%s' is not present on field: '%s'"
+                    .formatted(annotationClass.getSimpleName(), field));
+        }
+    }
+
+    protected String getElementTypeFromCollection(MetaProperty metaProperty) {
+        AnnotatedElement annotatedElement = metaProperty.getAnnotatedElement();
+        if (annotatedElement instanceof Field field) {
+            if (field.getGenericType() instanceof ParameterizedType parameterizedType) {
+                Type[] typeArguments = parameterizedType.getActualTypeArguments();
+
+                if (typeArguments.length > 0) {
+                    Type elementType = typeArguments[0];
+                    if (elementType instanceof Class) {
+                        return ((Class<?>) elementType).getSimpleName();
+                    } else {
+                        return elementType.getTypeName();
+                    }
+                }
+            }
+        }
+
+        // Fallback to Object if we can't determine the type
+        return "Object";
+    }
+}

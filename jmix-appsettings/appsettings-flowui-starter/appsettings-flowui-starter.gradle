@@ -15,7 +15,9 @@
  */
 
 group 'io.jmix.appsettings'
-archivesBaseName = 'jmix-appsettings-flowui-starter'
+base {
+    archivesName = 'jmix-appsettings-flowui-starter'
+}
 
 dependencies {
     api project(':appsettings-flowui')

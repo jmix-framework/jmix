@@ -18,9 +18,11 @@ package io.jmix.search.index.mapping.fieldmapper.impl;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.jmix.search.index.mapping.ExtendedSearchSettings;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.Map;
 
+@NullMarked
 public abstract class SimpleFieldMapper extends AbstractFieldMapper {
 
     @Override

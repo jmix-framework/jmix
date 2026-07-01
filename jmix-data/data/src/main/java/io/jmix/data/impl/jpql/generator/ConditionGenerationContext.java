@@ -20,7 +20,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.LogicalCondition;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -37,6 +37,7 @@ public class ConditionGenerationContext {
     protected MetaClass joinMetaClass;
     protected List<String> valueProperties;
     protected List<String> selectedExpressions;
+    protected boolean elementCollection;
 
     protected Map<Condition, ConditionGenerationContext> childContexts;
 
@@ -137,6 +138,14 @@ public class ConditionGenerationContext {
 
     public void setSelectedExpressions(@Nullable List<String> selectedExpressions) {
         this.selectedExpressions = selectedExpressions;
+    }
+
+    public boolean isElementCollection() {
+        return elementCollection;
+    }
+
+    public void setElementCollection(boolean elementCollection) {
+        this.elementCollection = elementCollection;
     }
 
     /**

@@ -16,6 +16,9 @@
 
 package io.jmix.data.impl;
 
+import org.jspecify.annotations.NullMarked;
+
+@NullMarked
 public interface NumberIdSource {
 
     Long createLongId(String entityName);

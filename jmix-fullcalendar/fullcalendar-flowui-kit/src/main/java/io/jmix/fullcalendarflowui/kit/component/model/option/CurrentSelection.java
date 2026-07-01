@@ -16,7 +16,7 @@
 
 package io.jmix.fullcalendarflowui.kit.component.model.option;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import static io.jmix.fullcalendarflowui.kit.component.model.option.OptionUtils.CURRENT_SELECTION;
 
@@ -38,27 +38,29 @@ public class CurrentSelection extends CalendarOption {
         return allDay;
     }
 
-    public void setAllDay(Boolean allDay) {
+    public void setAllDay(@Nullable Boolean allDay) {
         this.allDay = allDay;
 
         markAsDirty();
     }
 
+    @Nullable
     public String getStartDateTime() {
         return startDateTime;
     }
 
-    public void setStartDateTime(String startDateTime) {
+    public void setStartDateTime(@Nullable String startDateTime) {
         this.startDateTime = startDateTime;
 
         markAsDirty();
     }
 
+    @Nullable
     public String getEndDateTime() {
         return endDateTime;
     }
 
-    public void setEndDateTime(String endDateTime) {
+    public void setEndDateTime(@Nullable String endDateTime) {
         this.endDateTime = endDateTime;
 
         markAsDirty();

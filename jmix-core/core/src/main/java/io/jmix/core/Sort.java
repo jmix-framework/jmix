@@ -17,6 +17,7 @@
 package io.jmix.core;
 
 import io.jmix.core.common.util.Preconditions;
+import io.jmix.core.entity.KeyValueEntity;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -134,6 +135,48 @@ public class Sort implements Serializable {
         @Override
         public String toString() {
             return property + ": " + direction;
+        }
+    }
+
+    /**
+     * Sort order that uses an expression instead of a property.
+     */
+    public static class ExpressionOrder extends Order {
+
+        protected String expression;
+
+        protected ExpressionOrder(Direction direction, String expression) {
+            super(direction, expression);
+
+            this.expression = expression;
+        }
+
+        /**
+         * Creates a new order for the given expression with ASC direction.
+         */
+        public static Order asc(String expression) {
+            return new ExpressionOrder(Direction.ASC, expression);
+        }
+
+        /**
+         * Creates a new order for the given expression with DESC direction.
+         */
+        public static Order desc(String expression) {
+            return new ExpressionOrder(Direction.DESC, expression);
+        }
+
+        /**
+         * Returns the expression that should be added to the sorting.
+         * <p>
+         * For instance, for the JPQL it can be {@code "function('calc_total_sum', {E}.id)"}.
+         * <p>
+         * <strong>Note that for {@link KeyValueEntity}, the {@code {E}} alias is not supported.</strong> Use the concrete
+         * alias from the query, e.g. {@code "e.id"}.
+         *
+         * @return the expression
+         */
+        public String getExpression() {
+            return expression;
         }
     }
 

@@ -21,6 +21,8 @@ import com.vaadin.flow.router.*;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.annotation.Internal;
+import io.jmix.flowui.model.DataContext;
+import io.jmix.flowui.observation.UiObservationSupport;
 import io.jmix.flowui.UiViewProperties;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.event.view.ViewClosedEvent;
@@ -29,16 +31,16 @@ import io.jmix.flowui.facet.FacetOwner;
 import io.jmix.flowui.fragment.FragmentOwner;
 import io.jmix.flowui.kit.meta.StudioIgnore;
 import io.jmix.flowui.model.ViewData;
+import io.jmix.flowui.observation.ViewLifecycle;
 import io.jmix.flowui.sys.ViewSupport;
 import io.jmix.flowui.sys.event.UiEventsManager;
 import io.jmix.flowui.util.OperationResult;
 import io.jmix.flowui.util.WebBrowserTools;
-import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
@@ -46,11 +48,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-import static io.jmix.flowui.monitoring.UiMonitoring.startTimerSample;
-import static io.jmix.flowui.monitoring.UiMonitoring.stopViewTimerSample;
-import static io.jmix.flowui.monitoring.ViewLifeCycle.*;
-import static io.micrometer.core.instrument.Timer.Sample;
-import static io.micrometer.core.instrument.Timer.start;
 
 /**
  * Base class for UI views.
@@ -73,7 +70,7 @@ public class View<T extends Component> extends Composite<T>
         FragmentOwner, FacetOwner {
 
     private ApplicationContext applicationContext;
-    private MeterRegistry meterRegistry;
+    private UiObservationSupport uiObservationSupport;
 
     private ViewData viewData;
     private ViewActions viewActions;
@@ -123,11 +120,6 @@ public class View<T extends Component> extends Composite<T>
         this.applicationContext = applicationContext;
     }
 
-    @Autowired
-    protected void setMeterRegistry(MeterRegistry meterRegistry) {
-        this.meterRegistry = meterRegistry;
-    }
-
     @Override
     public void setId(String id) {
         super.setId(id);
@@ -142,9 +134,8 @@ public class View<T extends Component> extends Composite<T>
     public void afterNavigation(AfterNavigationEvent event) {
         afterNavigationProcessed = false;
 
-        Sample sample = start(meterRegistry);
-        fireEvent(new ReadyEvent(this));
-        stopViewTimerSample(sample, meterRegistry, READY, getId().orElse(null));
+        getUiObservationSupport().observeViewLifecycle(this, ViewLifecycle.READY,
+                () -> fireEvent(new ReadyEvent(this)));
 
         ViewOpenedEvent viewOpenedEvent = new ViewOpenedEvent(this);
         applicationContext.publishEvent(viewOpenedEvent);
@@ -176,9 +167,8 @@ public class View<T extends Component> extends Composite<T>
     public void beforeEnter(BeforeEnterEvent event) {
         fireEvent(new QueryParametersChangeEvent(this, event.getLocation().getQueryParameters()));
 
-        Sample sample = startTimerSample(meterRegistry);
-        fireEvent(new BeforeShowEvent(this));
-        stopViewTimerSample(sample, meterRegistry, BEFORE_SHOW, getId().orElse(null));
+        getUiObservationSupport().observeViewLifecycle(this, ViewLifecycle.BEFORE_SHOW,
+                () -> fireEvent(new BeforeShowEvent(this)));
     }
 
     /**
@@ -216,9 +206,8 @@ public class View<T extends Component> extends Composite<T>
                 CloseAction closeAction = new NavigateCloseAction(event);
                 BeforeCloseEvent beforeCloseEvent = new BeforeCloseEvent(this, closeAction);
 
-                Sample beforeCloseSample = startTimerSample(meterRegistry);
-                fireEvent(beforeCloseEvent);
-                stopViewTimerSample(beforeCloseSample, meterRegistry, BEFORE_CLOSE, getId().orElse(null));
+                getUiObservationSupport().observeViewLifecycle(this, ViewLifecycle.BEFORE_CLOSE,
+                        () -> fireEvent(beforeCloseEvent));
 
                 if (beforeCloseEvent.isClosePrevented()) {
                     closeActionPerformed = false;
@@ -226,9 +215,9 @@ public class View<T extends Component> extends Composite<T>
                 }
 
                 AfterCloseEvent afterCloseEvent = new AfterCloseEvent(this, closeAction);
-                Sample afterCloseSample = startTimerSample(meterRegistry);
-                fireEvent(afterCloseEvent);
-                stopViewTimerSample(afterCloseSample, meterRegistry, AFTER_CLOSE, getId().orElse(null));
+
+                getUiObservationSupport().observeViewLifecycle(this, ViewLifecycle.AFTER_CLOSE,
+                        () -> fireEvent(afterCloseEvent));
 
                 ViewClosedEvent viewClosedEvent = new ViewClosedEvent(this);
                 applicationContext.publishEvent(viewClosedEvent);
@@ -288,6 +277,11 @@ public class View<T extends Component> extends Composite<T>
             removeViewAttributes();
             unregisterBackNavigation();
         }
+
+        DataContext dataContext = viewData.getDataContextOrNull();
+        if (dataContext != null) {
+            dataContext.clear();
+        }
     }
 
     protected void unregisterBackNavigation() {
@@ -332,7 +326,8 @@ public class View<T extends Component> extends Composite<T>
      */
     public OperationResult close(CloseAction closeAction) {
         BeforeCloseEvent beforeCloseEvent = new BeforeCloseEvent(this, closeAction);
-        fireEvent(beforeCloseEvent);
+        getUiObservationSupport().observeViewLifecycle(this, ViewLifecycle.BEFORE_CLOSE,
+                () -> fireEvent(beforeCloseEvent));
         if (beforeCloseEvent.isClosePrevented()) {
             return beforeCloseEvent.getCloseResult()
                     .orElse(OperationResult.fail());
@@ -343,7 +338,8 @@ public class View<T extends Component> extends Composite<T>
         closeDelegate.accept(this);
 
         AfterCloseEvent afterCloseEvent = new AfterCloseEvent(this, closeAction);
-        fireEvent(afterCloseEvent);
+        getUiObservationSupport().observeViewLifecycle(this, ViewLifecycle.AFTER_CLOSE,
+                () -> fireEvent(afterCloseEvent));
 
         ViewClosedEvent viewClosedEvent = new ViewClosedEvent(this);
         applicationContext.publishEvent(viewClosedEvent);
@@ -360,11 +356,11 @@ public class View<T extends Component> extends Composite<T>
     }
 
     /**
-     * Sets whether this view must prevent browser tab from
-     * accidentally closing. Enabled by default.
+     * Sets whether this view must prevent a browser tab from accidentally
+     * closing if {@link UiViewProperties#isPreventBrowserTabClosing()} is enabled.
      *
-     * @param preventBrowserTabClosing whether this details view must prevent
-     *                                 browser tab from accidentally closing
+     * @param preventBrowserTabClosing whether this view must prevent a browser
+     *                                 tab from accidentally closing
      */
     public void setPreventBrowserTabClosing(boolean preventBrowserTabClosing) {
         this.preventBrowserTabClosing = preventBrowserTabClosing;
@@ -429,6 +425,15 @@ public class View<T extends Component> extends Composite<T>
 
     protected ViewSupport getViewSupport() {
         return getApplicationContext().getBean(ViewSupport.class);
+    }
+
+    @Internal
+    UiObservationSupport getUiObservationSupport() {
+        if (uiObservationSupport == null) {
+            uiObservationSupport = getApplicationContext().getBean(UiObservationSupport.class);
+        }
+
+        return uiObservationSupport;
     }
 
     @Override

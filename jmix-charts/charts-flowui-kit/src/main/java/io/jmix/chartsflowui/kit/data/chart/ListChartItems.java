@@ -20,6 +20,7 @@ import com.vaadin.flow.data.provider.AbstractDataProvider;
 import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.event.EventBus;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -52,6 +53,7 @@ public class ListChartItems<T extends DataItem> extends AbstractDataProvider<T, 
         return items;
     }
 
+    @Nullable
     @Override
     public T getItem(Object id) {
         return items.stream()

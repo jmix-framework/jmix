@@ -19,7 +19,7 @@ package io.jmix.flowui.kit.component;
 
 import io.jmix.flowui.kit.component.formatter.Formatter;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Interface to be implemented by UI components supporting value formatting.

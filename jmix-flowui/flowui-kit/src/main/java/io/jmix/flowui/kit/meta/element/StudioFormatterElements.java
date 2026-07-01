@@ -17,9 +17,9 @@
 package io.jmix.flowui.kit.meta.element;
 
 import io.jmix.flowui.kit.meta.StudioElement;
-import io.jmix.flowui.kit.meta.StudioProperty;
-import io.jmix.flowui.kit.meta.StudioPropertyType;
 import io.jmix.flowui.kit.meta.StudioUiKit;
+import io.jmix.flowui.kit.meta.StudioPropertyGroups;
+import io.jmix.flowui.kit.meta.StudioXmlElements;
 
 @StudioUiKit
 interface StudioFormatterElements {
@@ -27,7 +27,7 @@ interface StudioFormatterElements {
     @StudioElement(
             name = "CollectionFormatter",
             classFqn = "io.jmix.flowui.component.formatter.CollectionFormatter",
-            xmlElement = "collection",
+            xmlElement = StudioXmlElements.COLLECTION,
             icon = "io/jmix/flowui/kit/meta/icon/element/formatter.svg",
             documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/formatter.html#collection-formatter"
     )
@@ -36,40 +36,35 @@ interface StudioFormatterElements {
     @StudioElement(
             name = "CustomFormatter",
             classFqn = "io.jmix.flowui.component.formatter.CustomFormatter",
-            xmlElement = "custom",
+            xmlElement = StudioXmlElements.CUSTOM,
             icon = "io/jmix/flowui/kit/meta/icon/element/formatter.svg",
             documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/formatter.html#custom-formatter",
-            properties = {
-                    @StudioProperty(xmlAttribute = "bean", type = StudioPropertyType.STRING, required = true)
-            }
-    )
+            propertyGroups = {
+                    StudioPropertyGroups.Bean.class
+            })
     void customFormatter();
 
     @StudioElement(
             name = "DateFormatter",
             classFqn = "io.jmix.flowui.component.formatter.DateFormatter",
-            xmlElement = "date",
+            xmlElement = StudioXmlElements.DATE,
             icon = "io/jmix/flowui/kit/meta/icon/element/formatter.svg",
             documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/formatter.html#date-time-formatter",
-            properties = {
-                    @StudioProperty(xmlAttribute = "format", type = StudioPropertyType.STRING),
-                    @StudioProperty(xmlAttribute = "type", type = StudioPropertyType.ENUMERATION,
-                            options = {"DATE", "DATETIME"}),
-                    @StudioProperty(xmlAttribute = "useUserTimezone", type = StudioPropertyType.BOOLEAN,
-                            defaultValue = "false"),
-            }
-    )
+            propertyGroups = {
+                    StudioPropertyGroups.StringFormat.class,
+                    StudioPropertyGroups.DateFormatterType.class,
+                    StudioPropertyGroups.UseUserTimezone.class
+            })
     void dateFormatter();
 
     @StudioElement(
             name = "NumberFormatter",
             classFqn = "io.jmix.flowui.component.formatter.NumberFormatter",
-            xmlElement = "number",
+            xmlElement = StudioXmlElements.NUMBER,
             icon = "io/jmix/flowui/kit/meta/icon/element/formatter.svg",
             documentationLink = "%VERSION%/flow-ui/vc/miscellaneous/formatter.html#number-formatter",
-            properties = {
-                    @StudioProperty(xmlAttribute = "format", type = StudioPropertyType.STRING)
-            }
-    )
+            propertyGroups = {
+                    StudioPropertyGroups.StringFormat.class
+            })
     void numberFormatter();
 }

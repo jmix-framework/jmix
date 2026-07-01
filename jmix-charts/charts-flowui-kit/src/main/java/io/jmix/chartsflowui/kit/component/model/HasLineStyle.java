@@ -16,7 +16,7 @@
 
 package io.jmix.chartsflowui.kit.component.model;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A component that has line style.
@@ -28,6 +28,7 @@ public interface HasLineStyle<T> {
     /**
      * @return Style for drawing line endpoints
      */
+    @Nullable
     Cap getCap();
 
     /**
@@ -53,6 +54,7 @@ public interface HasLineStyle<T> {
     /**
      * @return style that used to join two line segments where they intersect
      */
+    @Nullable
     Join getJoin();
 
     /**
@@ -78,6 +80,7 @@ public interface HasLineStyle<T> {
     /**
      * @return miter limit ratio
      */
+    @Nullable
     Integer getMiterLimit();
 
     /**

@@ -24,7 +24,7 @@ import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.data.SupportsValueSource;
 import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.button.JmixButton;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Implementation of the {@link UiTestIdManager} interface that generates unique static ID attributes

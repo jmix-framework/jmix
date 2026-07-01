@@ -18,24 +18,28 @@ import 'ace-builds/src-min-noconflict/ace.js';
 import './jmix-esm-resolver.js';
 import {keyWordCompleter, snippetCompleter, textCompleter} from 'ace-builds/src-noconflict/ext-language_tools.js';
 import {ElementMixin} from '@vaadin/component-base/src/element-mixin.js';
+import {PolylitMixin} from '@vaadin/component-base/src/polylit-mixin.js';
 import {defineCustomElement} from '@vaadin/component-base/src/define.js';
 import {ResizeMixin} from '@vaadin/component-base/src/resize-mixin.js';
 import {InputFieldMixin} from '@vaadin/field-base/src/input-field-mixin.js';
 import {TooltipController} from '@vaadin/component-base/src/tooltip-controller.js';
-import {html, PolymerElement} from '@polymer/polymer/polymer-element.js';
+import {html, LitElement} from 'lit';
 import {inputFieldShared} from '@vaadin/field-base/src/styles/input-field-shared-styles.js';
-import {registerStyles, ThemableMixin} from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
-import {jmixCodeEditorStyles} from './jmix-code-editor-styles';
+import {LumoInjectionMixin} from '@vaadin/vaadin-themable-mixin/lumo-injection-mixin.js';
+import {ThemableMixin} from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
+import {jmixCodeEditorStyles} from './styles/jmix-code-editor-base-styles';
 
-registerStyles('jmix-code-editor', [inputFieldShared, jmixCodeEditorStyles], {moduleId: 'jmix-code-editor-styles'});
-
-class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMixin(PolymerElement)))) {
+class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMixin(PolylitMixin(LumoInjectionMixin(LitElement)))))) {
 
     static get is() {
         return 'jmix-code-editor';
     }
 
-    static get template() {
+    static get styles() {
+        return [inputFieldShared].concat(jmixCodeEditorStyles);
+    }
+
+    render() {
         return html`
             <div class="jmix-code-editor-container">
                 <div part="label">
@@ -44,9 +48,9 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
                 </div>
 
                 <div part="input-field"
-                     readonly="[[readonly]]"
-                     disabled="[[disabled]]"
-                     invalid="[[invalid]]"></div>
+                     .readonly="${this.readonly}"
+                     .disabled="${this.disabled}"
+                     .invalid="${this.invalid}"></div>
 
                 <div part="helper-text">
                     <slot name="helper"></slot>
@@ -134,6 +138,18 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
                 observer: '_onUseSoftTabsChange'
             },
 
+            tabSize: {
+                type: Number,
+                value: 4,
+                observer: '_onTabSizeChange'
+            },
+
+            placeholder: {
+                type: String,
+                value: '',
+                observer: '_onPlaceholderChange'
+            },
+
             defaultSuggestionsEnabled: {
                 type: Boolean,
                 value: false,
@@ -201,6 +217,8 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
             fontSize: this.fontSize,
             wrap: this.textWrap,
             useSoftTabs: this.useSoftTabs,
+            tabSize: this.tabSize,
+            placeholder: this.placeholder,
             enableBasicAutocompletion: true,
             enableLiveAutocompletion: this.liveSuggestionsEnabled,
             useWorker: false
@@ -486,6 +504,28 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
     /**
      * @private
      */
+    _onTabSizeChange(tabSize) {
+        if (this._editor === undefined) {
+            return;
+        }
+
+        this._editor.session.setTabSize(tabSize);
+    }
+
+    /**
+     * @private
+     */
+    _onPlaceholderChange(placeholder) {
+        if (this._editor === undefined) {
+            return;
+        }
+
+        this._editor.setOption('placeholder', placeholder);
+    }
+
+    /**
+     * @private
+     */
     _onDefaultSuggestionsEnabledChange() {
         if (this._editor === undefined) {
             return;
@@ -561,5 +601,3 @@ class JmixCodeEditor extends ResizeMixin(InputFieldMixin(ThemableMixin(ElementMi
 }
 
 defineCustomElement(JmixCodeEditor);
-
-export {JmixCodeEditor};

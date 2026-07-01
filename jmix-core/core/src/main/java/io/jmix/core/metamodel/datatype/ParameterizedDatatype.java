@@ -16,11 +16,14 @@
 
 package io.jmix.core.metamodel.datatype;
 
+import org.jspecify.annotations.NullMarked;
+
 import java.util.Map;
 
 /**
  * A {@link Datatype} that exposes some internal parameters.
  */
+@NullMarked
 public interface ParameterizedDatatype {
 
     Map<String, Object> getParameters();

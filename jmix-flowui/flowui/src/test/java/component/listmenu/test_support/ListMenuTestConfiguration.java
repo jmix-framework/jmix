@@ -16,25 +16,28 @@
 
 package component.listmenu.test_support;
 
-import io.jmix.core.*;
-import io.jmix.core.common.xmlparsing.Dom4jTools;
+import io.jmix.core.CoreConfiguration;
 import io.jmix.flowui.FlowuiConfiguration;
-import io.jmix.flowui.UiProperties;
-import io.jmix.flowui.menu.MenuConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.core.env.Environment;
+import org.springframework.context.annotation.Primary;
 
+/**
+ * Test configuration that exposes a customizable {@link TestMenuConfig} bean.
+ */
 @Import({FlowuiConfiguration.class, CoreConfiguration.class})
 @Configuration
 public class ListMenuTestConfiguration {
 
+    /**
+     * Creates the {@link TestMenuConfig} used by list menu tests.
+     *
+     * @return test menu configuration bean
+     */
     @Bean
-    public MenuConfig menuConfig(Resources resources, Messages messages, MessageTools messageTools, Dom4jTools dom4JTools,
-                                 Environment environment, UiProperties uiProperties, JmixModules modules,
-                                 Metadata metadata, MetadataTools metadataTools) {
-        return new TestMenuConfig(resources, messages, messageTools, dom4JTools, environment, uiProperties,
-                modules, metadata, metadataTools);
+    @Primary
+    public TestMenuConfig menuConfig() {
+        return new TestMenuConfig();
     }
 }

@@ -16,15 +16,15 @@
 
 package io.jmix.chartsflowui.kit.component.event;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.vaadin.flow.component.ComponentEvent;
-import elemental.json.JsonObject;
 import io.jmix.chartsflowui.kit.component.JmixChart;
 import io.jmix.chartsflowui.kit.component.event.dto.BaseChartEventDetail;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.MapperFeature;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.node.ObjectNode;
 
 /**
  * Base chart event class. Stores an {@link AbstractChartEvent#detailJson} object containing the event context.
@@ -40,13 +40,13 @@ public abstract class AbstractChartEvent<T extends BaseChartEventDetail> extends
             .configure(MapperFeature.DEFAULT_VIEW_INCLUSION, true)
             .build();
 
-    protected JsonObject detailJson;
+    protected ObjectNode detailJson;
 
     protected T detail;
     protected Class<T> detailClass;
 
     public AbstractChartEvent(JmixChart source, boolean fromClient,
-                              JsonObject detail, Class<T> detailClass) {
+                              ObjectNode detail, Class<T> detailClass) {
         super(source, fromClient);
 
         this.detailJson = detail;
@@ -56,9 +56,9 @@ public abstract class AbstractChartEvent<T extends BaseChartEventDetail> extends
     /**
      * {@code detailJson} can be used for independent parsing if the predefined mapping doesn't match.
      *
-     * @return {@link JsonObject} describing the context of the event that occurred on the client-side.
+     * @return {@link ObjectNode} describing the context of the event that occurred on the client-side.
      */
-    public JsonObject getDetailJson() {
+    public ObjectNode getDetailJson() {
         return detailJson;
     }
 
@@ -86,8 +86,8 @@ public abstract class AbstractChartEvent<T extends BaseChartEventDetail> extends
     protected <M> M convertDetail(Class<M> detailClass) {
         M converted;
         try {
-            converted = mapper.readValue(detailJson.toJson(), detailClass);
-        } catch (JsonProcessingException e) {
+            converted = mapper.readValue(detailJson.toString(), detailClass);
+        } catch (JacksonException e) {
             String message = String.format("Unparsable JsonObject for the '%s'", detailClass.getSimpleName());
             throw new IllegalArgumentException(message, e);
         }

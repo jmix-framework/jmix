@@ -19,15 +19,18 @@ package io.jmix.gridexportflowui.exporter.entitiesloader;
 import io.jmix.flowui.data.DataUnit;
 import io.jmix.gridexportflowui.GridExportProperties;
 import io.jmix.gridexportflowui.exporter.EntityExportContext;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * This interface should be implemented by any bean which loads all entities for json or excel export.
  */
+@NullMarked
 public interface AllEntitiesLoader {
 
     /**
      * Visitor is passed to {@link AllEntitiesLoader} to export loaded entity
      */
+    @NullMarked
     interface ExportedEntityVisitor {
 
         /**

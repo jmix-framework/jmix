@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2016 Haulmont.
+ * Copyright 2016 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,13 +21,15 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import io.jmix.security.BruteForceProtection;
 import io.jmix.security.BruteForceProtectionProperties;
+import jakarta.annotation.PostConstruct;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.PostConstruct;
 import java.util.concurrent.ExecutionException;
 
+@NullMarked
 @Component("sec_BruteForceProtection")
 public class BruteForceProtectionImpl implements BruteForceProtection {
     private LoadingCache<String, Integer> attemptsCache;
@@ -40,7 +42,7 @@ public class BruteForceProtectionImpl implements BruteForceProtection {
                 .expireAfterWrite(properties.getBlockInterval())
                 .build(new CacheLoader<String, Integer>() {
                     @Override
-                    public Integer load(@Nonnull String key) throws Exception {
+                    public Integer load(String key) throws Exception {
                         return 0;
                     }
                 });

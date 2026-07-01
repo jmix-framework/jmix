@@ -84,6 +84,24 @@ class FilterXmlLoadTest extends FlowuiTestSpecification {
         }
     }
 
+    def "Load PropertyFilter component with operationsList from XML"() {
+        when: "Open the FilterView"
+        def filterView = navigateToView(FilterView)
+
+        then: "PropertyFilter operation attributes will be loaded"
+        verifyAll(filterView.propertyFilterOperationsListId) {
+            id.get() == "propertyFilterOperationsListId"
+            property == "number"
+            operation == PropertyFilter.Operation.EQUAL
+            operationsList.size() == 3
+            operationsList.containsAll([
+                    PropertyFilter.Operation.EQUAL,
+                    PropertyFilter.Operation.CONTAINS,
+                    PropertyFilter.Operation.STARTS_WITH
+            ])
+        }
+    }
+
     def "Load PropertyFilter component with custom value component from XML"() {
         when: "Open the FilterView"
         def filterView = navigateToView(FilterView)

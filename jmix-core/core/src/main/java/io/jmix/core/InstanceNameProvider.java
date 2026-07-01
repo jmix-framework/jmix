@@ -22,9 +22,12 @@ import io.jmix.core.metamodel.model.MetaProperty;
 
 import java.util.Collection;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Provide instance name and instance name properties.
  */
+@NullMarked
 public interface InstanceNameProvider {
 
     /**
@@ -78,4 +81,10 @@ public interface InstanceNameProvider {
      * @return collection of the name pattern properties
      */
     Collection<MetaProperty> getInstanceNameRelatedProperties(MetaClass metaClass, boolean useOriginal);
+
+    /**
+     * Evicts cached instance name metadata for all entities.
+     */
+    default void evictInstanceNameCache() {
+    }
 }

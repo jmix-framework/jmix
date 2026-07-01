@@ -17,6 +17,7 @@
 package io.jmix.chartsflowui.kit.component.model.toolbox;
 
 import io.jmix.chartsflowui.kit.component.model.shared.ItemStyle;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A base class for toolbox feature.
@@ -31,6 +32,7 @@ public abstract class AbstractFeature<T extends AbstractFeature<T>> extends Tool
 
     protected Emphasis emphasis;
 
+    @Nullable
     public Boolean getShow() {
         return show;
     }
@@ -40,6 +42,7 @@ public abstract class AbstractFeature<T extends AbstractFeature<T>> extends Tool
         markAsDirty();
     }
 
+    @Nullable
     public ItemStyle getIconStyle() {
         return iconStyle;
     }
@@ -53,6 +56,7 @@ public abstract class AbstractFeature<T extends AbstractFeature<T>> extends Tool
         addChild(iconStyle);
     }
 
+    @Nullable
     public Emphasis getEmphasis() {
         return emphasis;
     }

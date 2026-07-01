@@ -120,6 +120,9 @@ class JmixChartMixins {
 
     static abstract class AbstractAxis {
 
+        @JsonProperty("zlevel")
+        abstract Integer getZLevel();
+
         static abstract class AxisLine {
 
             @JsonProperty("symbol")
@@ -139,13 +142,25 @@ class JmixChartMixins {
         abstract Color[] getColors();
     }
 
+    static abstract class Polar {
+
+        @JsonProperty("zlevel")
+        abstract Integer getZLevel();
+    }
+
     static abstract class Radar {
+
+        @JsonProperty("zlevel")
+        abstract Integer getZLevel();
 
         @JsonProperty("indicator")
         abstract List<Indicator> getIndicators();
     }
 
     static abstract class AbstractDataZoom {
+
+        @JsonProperty("zlevel")
+        abstract Integer getZLevel();
 
         @JsonProperty("xAxisIndex")
         abstract Integer[] getXAxisIndexes();
@@ -165,6 +180,9 @@ class JmixChartMixins {
 
     static abstract class AbstractVisualMap {
 
+        @JsonProperty("zlevel")
+        abstract Integer getZLevel();
+
         @JsonProperty("orient")
         abstract Orientation getOrientation();
     }
@@ -182,6 +200,9 @@ class JmixChartMixins {
     }
 
     static abstract class Toolbox {
+
+        @JsonProperty("zlevel")
+        abstract Integer getZLevel();
 
         @JsonProperty("feature")
         abstract ToolboxFeature[] getFeatures();
@@ -256,7 +277,13 @@ class JmixChartMixins {
         }
     }
 
-    static abstract class Series {
+    static abstract class AbstractSeries {
+
+        @JsonProperty("zlevel")
+        abstract Integer getZLevel();
+    }
+
+    static abstract class SeriesWithAxisIndex extends AbstractSeries {
 
         @JsonProperty("xAxisIndex")
         abstract Integer getXAxisIndex();
@@ -265,13 +292,13 @@ class JmixChartMixins {
         abstract Integer getYAxisIndex();
     }
 
-    static abstract class FunnelSeries {
+    static abstract class FunnelSeries extends AbstractSeries {
 
         @JsonProperty("orient")
         abstract Orientation getOrientation();
     }
 
-    static abstract class CandlestickSeries {
+    static abstract class CandlestickSeries extends AbstractSeries {
 
         static abstract class ItemStyle {
 

@@ -23,17 +23,22 @@ import com.vaadin.flow.server.VaadinRequest;
 import com.vaadin.flow.server.VaadinService;
 import com.vaadin.flow.server.VaadinSession;
 import io.jmix.core.TimeSource;
+import io.jmix.core.impl.metadata.MetadataGeneration;
+import io.jmix.core.impl.metadata.MetadataGenerationManager;
+import io.jmix.core.impl.metadata.MetadataGenerationScope;
 import io.jmix.core.impl.session.ThreadLocalSessionData;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.core.security.SecurityContextHelper;
 import io.jmix.flowui.backgroundtask.*;
 import io.jmix.flowui.event.BackgroundTaskUnhandledExceptionEvent;
+import io.micrometer.observation.Observation;
+import io.micrometer.observation.ObservationRegistry;
 import jakarta.annotation.PreDestroy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
@@ -66,6 +71,10 @@ public class BackgroundWorkerImpl implements BackgroundWorker {
     protected ApplicationEventPublisher applicationEventPublisher;
     @Autowired
     protected TimeSource timeSource;
+    @Autowired(required = false)
+    protected ObservationRegistry observationRegistry;
+    @Autowired
+    protected MetadataGenerationManager metadataGenerationManager;
 
     protected UiBackgroundTaskProperties properties;
 
@@ -165,6 +174,7 @@ public class BackgroundWorkerImpl implements BackgroundWorker {
         private Authentication authentication;
         private final Map<String, Object> sessionAttributes;
         private final VaadinRequest vaadinRequest;
+        private final MetadataGeneration metadataGeneration;
 
         private String username;
 
@@ -183,6 +193,7 @@ public class BackgroundWorkerImpl implements BackgroundWorker {
             authentication = SecurityContextHelper.getAuthentication();
             sessionAttributes = ThreadLocalSessionData.extractHttpSessionAttributes();
             vaadinRequest = VaadinService.getCurrentRequest();
+            metadataGeneration = metadataGenerationManager.getPinnedOrCurrentGeneration();
 
             this.username = currentAuthentication.getUser().getUsername();
 
@@ -195,9 +206,11 @@ public class BackgroundWorkerImpl implements BackgroundWorker {
                     ThreadLocalSessionData.setAttributes(sessionAttributes);
                     ThreadLocalVaadinRequestHolder.setRequest(vaadinRequest);
                     try {
-                        TaskExecutorImpl.this.ui.access(() ->
-                                handleDone()
-                        );
+                        TaskExecutorImpl.this.ui.access(() -> {
+                            try (MetadataGenerationScope ignored = metadataGenerationManager.enter(metadataGeneration)) {
+                                handleDone();
+                            }
+                        });
                     } catch (UIDetachedException e) {
                         log.debug("Cannot handle 'Done' statement because UI is detached from session. It may be due " +
                                 "to canceling task after session is invalidated");
@@ -222,33 +235,35 @@ public class BackgroundWorkerImpl implements BackgroundWorker {
             SecurityContextHelper.setAuthentication(authentication);
             ThreadLocalSessionData.setAttributes(sessionAttributes);
             try {
-                // do not run any activity if canceled before start
-                return runnableTask.run(new TaskLifeCycle<>() {
-                    @SafeVarargs
-                    @Override
-                    public final void publish(T... changes) throws InterruptedException {
-                        if (Thread.currentThread().isInterrupted()) {
-                            throw new InterruptedException("Task is interrupted and is trying to publish changes");
+                try (MetadataGenerationScope ignored = metadataGenerationManager.enter(metadataGeneration)) {
+                    // do not run any activity if canceled before start
+                    return runnableTask.run(new TaskLifeCycle<>() {
+                        @SafeVarargs
+                        @Override
+                        public final void publish(T... changes) throws InterruptedException {
+                            if (Thread.currentThread().isInterrupted()) {
+                                throw new InterruptedException("Task is interrupted and is trying to publish changes");
+                            }
+
+                            handleProgress(changes);
                         }
 
-                        handleProgress(changes);
-                    }
+                        @Override
+                        public boolean isInterrupted() {
+                            return Thread.currentThread().isInterrupted();
+                        }
 
-                    @Override
-                    public boolean isInterrupted() {
-                        return Thread.currentThread().isInterrupted();
-                    }
+                        @Override
+                        public boolean isCancelled() {
+                            return future.isCancelled();
+                        }
 
-                    @Override
-                    public boolean isCancelled() {
-                        return future.isCancelled();
-                    }
-
-                    @Override
-                    public Map<String, Object> getParams() {
-                        return params;
-                    }
-                });
+                        @Override
+                        public Map<String, Object> getParams() {
+                            return params;
+                        }
+                    });
+                }
             } finally {
                 SecurityContextHelper.setAuthentication(null);
                 ThreadLocalSessionData.clear();
@@ -258,7 +273,11 @@ public class BackgroundWorkerImpl implements BackgroundWorker {
         @SafeVarargs
         @Override
         public final void handleProgress(T... changes) {
-            ui.access(() -> process(Arrays.asList(changes)));
+            ui.access(() -> {
+                try (MetadataGenerationScope ignored = metadataGenerationManager.enter(metadataGeneration)) {
+                    process(Arrays.asList(changes));
+                }
+            });
         }
 
         @ExecutedOnUIThread
@@ -397,9 +416,20 @@ public class BackgroundWorkerImpl implements BackgroundWorker {
         @ExecutedOnUIThread
         @Override
         public final void startExecution() {
+            Observation parentObservation = observationRegistry != null
+                    ? observationRegistry.getCurrentObservation()
+                    : null;
+
             // Start thread
-            executorService.execute(() ->
-                    future.run()
+            executorService.execute(() -> {
+                        if (parentObservation != null) {
+                            try (Observation.Scope ignored = parentObservation.openScope()) {
+                                future.run();
+                            }
+                        } else {
+                            future.run();
+                        }
+                    }
             );
         }
 

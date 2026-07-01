@@ -48,16 +48,16 @@ public abstract class MultipleResourcePolicyModelCreateView extends StandardView
     }
 
     protected void initScreenActions() {
-        SecuredBaseAction saveAction = createSaveAction();
+        SecuredBaseAction<?> saveAction = createSaveAction();
 
         getViewActions().addAction(saveAction);
     }
 
-    protected SecuredBaseAction createSaveAction() {
+    protected SecuredBaseAction<?> createSaveAction() {
         Messages messages = getApplicationContext().getBean(Messages.class);
         UiViewProperties flowUiViewProperties = getApplicationContext().getBean(UiViewProperties.class);
 
-        return new SecuredBaseAction(SAVE_ACTION_ID)
+        return new SecuredBaseAction<>(SAVE_ACTION_ID)
                 .withText(messages.getMessage("actions.Ok"))
                 .withIcon(icons.get(JmixFontIcon.OK))
                 .withVariant(ActionVariant.PRIMARY)

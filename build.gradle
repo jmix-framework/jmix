@@ -30,8 +30,8 @@ buildscript {
 }
 
 plugins {
-    id "org.sonarqube" version "6.3.1.5724"
-    id "org.cyclonedx.bom" version "3.0.2"
+    id "org.sonarqube" version "7.3.1.8318"
+    id "org.cyclonedx.bom" version "3.2.4"
 }
 
 sonarqube {
@@ -44,4 +44,18 @@ sonarqube {
 
 configure(subprojects.findAll { it.name != 'bom' }) {
     apply(plugin: 'io.jmix.build')
+}
+
+tasks.register('jmixGradlePluginTest') {
+    group = 'verification'
+    description = 'Runs tests for the included Jmix Gradle plugin build.'
+
+    dependsOn gradle.includedBuild('jmix-gradle-plugin').task(':test')
+}
+
+tasks.register('test') {
+    group = 'verification'
+    description = 'Runs root-level tests and verification tasks.'
+
+    dependsOn tasks.named('jmixGradlePluginTest')
 }

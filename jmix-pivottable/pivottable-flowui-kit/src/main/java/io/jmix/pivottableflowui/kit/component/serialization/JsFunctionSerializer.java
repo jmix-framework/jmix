@@ -16,11 +16,10 @@
 
 package io.jmix.pivottableflowui.kit.component.serialization;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.SerializerProvider;
 import io.jmix.pivottableflowui.kit.component.model.JsFunction;
-
-import java.io.IOException;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.SerializationContext;
 
 public class JsFunctionSerializer extends AbstractSerializer<JsFunction> {
 
@@ -29,8 +28,8 @@ public class JsFunctionSerializer extends AbstractSerializer<JsFunction> {
     }
 
     @Override
-    public void serializeNonNullValue(JsFunction value, JsonGenerator gen, SerializerProvider provider)
-            throws IOException {
+    public void serializeNonNullValue(JsFunction value, JsonGenerator gen, SerializationContext provider)
+            throws JacksonException {
         gen.writeString(value.getCode());
     }
 }

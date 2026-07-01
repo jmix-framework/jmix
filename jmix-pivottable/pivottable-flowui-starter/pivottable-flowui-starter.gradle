@@ -15,7 +15,9 @@
  */
 
 group = 'io.jmix.pivottable'
-archivesBaseName = 'jmix-pivottable-flowui-starter'
+base {
+    archivesName = 'jmix-pivottable-flowui-starter'
+}
 
 dependencies {
     api project(':pivottable-flowui')

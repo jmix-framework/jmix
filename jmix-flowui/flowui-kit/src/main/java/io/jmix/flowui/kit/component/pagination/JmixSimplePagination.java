@@ -100,13 +100,6 @@ public class JmixSimplePagination extends AbstractPagination {
         return statusBar;
     }
 
-    @Override
-    protected Button createNavigationButton(String additionalClassName, Component icon) {
-        Button button = super.createNavigationButton(additionalClassName, icon);
-        button.addThemeVariants(ButtonVariant.LUMO_SMALL);
-        return button;
-    }
-
     protected Span getRowsStatusLabel() {
         return rowsStatusSpan;
     }

@@ -17,7 +17,9 @@
 package io.jmix.flowui.devserver.startup;
 
 import io.jmix.flowui.devserver.theme.ThemeFilesSynchronizer;
+import org.jspecify.annotations.NullMarked;
 
+@NullMarked
 public class SynchronizeThemesStartupTask implements StartupTask {
     @Override
     public void execute(StartupContext context) {

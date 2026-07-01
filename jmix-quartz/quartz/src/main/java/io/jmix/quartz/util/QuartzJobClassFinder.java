@@ -1,5 +1,22 @@
+/*
+ * Copyright 2026 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.jmix.quartz.util;
 
+import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
 import io.jmix.core.impl.scanning.ClasspathScanCandidateDetector;
 import io.jmix.core.impl.scanning.JmixModulesClasspathScanner;
 import org.apache.commons.collections4.CollectionUtils;
@@ -8,8 +25,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.type.classreading.MetadataReader;
+import org.springframework.core.type.filter.AssignableTypeFilter;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,14 +56,20 @@ public class QuartzJobClassFinder {
 
     @Component("quartz_QuartzJobDetector")
     private static class QuartzJobDetector implements ClasspathScanCandidateDetector {
+
+        private static final AssignableTypeFilter JOB_TYPE_FILTER = new AssignableTypeFilter(Job.class);
+
+        @Autowired
+        private AnnotationScanMetadataReaderFactory metadataReaderFactory;
+
         @Override
         public boolean isCandidate(MetadataReader metadataReader) {
             try {
                 return !metadataReader.getClassMetadata().isInterface()
                         && !metadataReader.getClassMetadata().isAbstract()
-                        && Job.class.isAssignableFrom(Class.forName(metadataReader.getClassMetadata().getClassName()));
-            } catch (ClassNotFoundException | NoClassDefFoundError e) {
-                log.trace("Class not found", e);
+                        && JOB_TYPE_FILTER.match(metadataReader, metadataReaderFactory);
+            } catch (IOException e) {
+                log.trace("Cannot read class metadata", e);
                 return false;
             }
         }

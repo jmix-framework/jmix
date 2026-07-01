@@ -17,7 +17,9 @@
 apply plugin: 'io.jmix'
 
 group = 'io.jmix.security'
-archivesBaseName = 'jmix-security-resource-server'
+base {
+    archivesName = 'jmix-security-resource-server'
+}
 
 dependencies {
     api project(':core')

@@ -28,8 +28,9 @@ import io.jmix.securitydata.entity.*;
 import io.jmix.securitydata.impl.role.provider.DatabaseRowLevelRoleProvider;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.context.ApplicationContext;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.scripting.ScriptCompilationException;
 import org.springframework.stereotype.Component;
 
@@ -38,6 +39,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+@NullMarked
 @Component("sec_DatabaseRolePersistence")
 public class DatabaseRolePersistence implements RolePersistence {
 

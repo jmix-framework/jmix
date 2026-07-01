@@ -19,11 +19,8 @@ package io.jmix.flowui.devserver;
 import com.vaadin.flow.component.page.AppShellConfigurator;
 import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.shared.communication.PushMode;
-import com.vaadin.flow.theme.Theme;
 
 @Push(value = PushMode.MANUAL)
-@Theme(AppShell.PREVIEW_THEME_NAME)
 @SuppressWarnings("unused")
 public class AppShell implements AppShellConfigurator {
-    public static final String PREVIEW_THEME_NAME = "preview-theme";
 }

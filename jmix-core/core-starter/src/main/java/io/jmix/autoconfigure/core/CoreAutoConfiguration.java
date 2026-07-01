@@ -18,21 +18,25 @@ package io.jmix.autoconfigure.core;
 
 import io.jmix.core.*;
 import io.jmix.core.impl.JmixMessageSource;
+import io.jmix.core.observation.JmixUserContextObservationFilter;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.SearchStrategy;
 import org.springframework.boot.autoconfigure.jmx.JmxAutoConfiguration;
 import org.springframework.boot.autoconfigure.jmx.JmxProperties;
 import org.springframework.boot.autoconfigure.jmx.ParentAwareNamingStrategy;
-import org.springframework.boot.autoconfigure.validation.ValidationAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.validation.autoconfigure.ValidationAutoConfiguration;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.jmx.export.naming.ObjectNamingStrategy;
 import org.springframework.scripting.ScriptEvaluator;
 import org.springframework.scripting.groovy.GroovyScriptEvaluator;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.cors.CorsConfiguration;
@@ -43,6 +47,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @Import({CoreConfiguration.class})
 @EnableConfigurationProperties(JmxProperties.class)
 @AutoConfigureBefore({ValidationAutoConfiguration.class, JmxAutoConfiguration.class})
+@AutoConfigureAfter(name = "org.springframework.boot.autoconfigure.observation.ObservationAutoConfiguration")
 public class CoreAutoConfiguration {
 
     @Bean
@@ -77,7 +82,7 @@ public class CoreAutoConfiguration {
      * A bean with corsConfigurationSource is used by CorsFilter in Spring Security filter chain. Define a bean with the
      * "corsConfigurationSource" name in the application if you want to override the standard implementation.
      *
-     * @see HttpSecurity#cors()
+     * @see HttpSecurity#cors(Customizer)
      */
     @Bean
     @ConditionalOnMissingBean(name = "corsConfigurationSource")
@@ -93,5 +98,13 @@ public class CoreAutoConfiguration {
             source.registerCorsConfiguration(urlPattern, configuration);
         }
         return source;
+    }
+
+    @Bean
+    @ConditionalOnProperty(prefix = "jmix.core", name = "use-user-info-for-observation",
+            havingValue = "true", matchIfMissing = true)
+    @ConditionalOnMissingBean
+    public JmixUserContextObservationFilter userContextObservationFilter() {
+        return new JmixUserContextObservationFilter();
     }
 }

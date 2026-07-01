@@ -20,7 +20,8 @@ import com.google.common.base.Strings;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.JsModule;
-import com.vaadin.flow.component.html.NativeLabel;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.listbox.MultiSelectListBox;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -63,13 +64,13 @@ public class JmixTwinColumn<V> extends AbstractField<JmixTwinColumn<V>, Collecti
     private static final String HAS_WIDTH_ATTRIBUTE_NAME = "has-width";
     private static final String HAS_HEIGHT_ATTRIBUTE_NAME = "has-height";
 
-    protected NativeLabel itemsColumnLabel;
-    protected NativeLabel selectedItemsColumnLabel;
+    protected Span itemsColumnLabel;
+    protected Span selectedItemsColumnLabel;
 
     protected MultiSelectListBox<V> items;
     protected MultiSelectListBox<V> selectedItems;
 
-    protected VerticalLayout actionsPanel;
+    protected Div actionsPanel;
 
     protected Button selectItems;
     protected Button selectAllItems;
@@ -366,10 +367,7 @@ public class JmixTwinColumn<V> extends AbstractField<JmixTwinColumn<V>, Collecti
     }
 
     protected void createButtonsPanel() {
-        actionsPanel = new VerticalLayout();
-        actionsPanel.setAlignItems(FlexComponent.Alignment.BASELINE);
-        actionsPanel.setWidth("AUTO");
-        actionsPanel.setSpacing(false);
+        actionsPanel = new Div();
 
         selectItems = createButton(
                 "jmix-twin-column-select-items-action",
@@ -389,8 +387,8 @@ public class JmixTwinColumn<V> extends AbstractField<JmixTwinColumn<V>, Collecti
         SlotUtils.addToSlot(this, "actions", actionsPanel);
     }
 
-    protected NativeLabel createColumnLabel() {
-        return new NativeLabel();
+    protected Span createColumnLabel() {
+        return new Span();
     }
 
     protected MultiSelectListBox<V> createColumn() {
@@ -462,7 +460,7 @@ public class JmixTwinColumn<V> extends AbstractField<JmixTwinColumn<V>, Collecti
         return value.toString();
     }
 
-    protected void updateColumnLabelPadding(NativeLabel label) {
+    protected void updateColumnLabelPadding(Span label) {
         label.setVisible(!Strings.isNullOrEmpty(label.getText()));
     }
 

@@ -23,8 +23,6 @@ import io.jmix.pessimisticlock.entity.LockDescriptor;
 import io.jmix.pessimisticlock.LockDescriptorProvider;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.pessimisticlock.annotation.PessimisticLock;
-import io.micrometer.core.instrument.MeterRegistry;
-import io.micrometer.core.instrument.Timer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -46,42 +44,33 @@ public class AnnotationLockDescriptorProvider implements LockDescriptorProvider 
     protected final ExtendedEntities extendedEntities;
     protected final MetadataTools metadataTools;
     protected final Metadata metadata;
-    protected final MeterRegistry meterRegistry;
 
     public AnnotationLockDescriptorProvider(ExtendedEntities extendedEntities,
                                             MetadataTools metadataTools,
-                                            Metadata metadata,
-                                            MeterRegistry meterRegistry) {
+                                            Metadata metadata) {
         this.extendedEntities = extendedEntities;
         this.metadataTools = metadataTools;
         this.metadata = metadata;
-        this.meterRegistry = meterRegistry;
     }
 
     @Override
     public List<LockDescriptor> getLockDescriptors() {
-        Timer.Sample sample = Timer.start(meterRegistry);
+        log.info("Collecting pessimistic locks configuration annotations");
+
         List<LockDescriptor> config = new ArrayList<>();
-        try {
-            log.info("Collecting pessimistic locks configuration annotations");
+        for (MetaClass metaClass : metadata.getSession().getClasses()) {
+            MetaClass originalMetaClass = extendedEntities.getOriginalOrThisMetaClass(metaClass);
+            Map<String, Object> attributes =
+                    metadataTools.getMetaAnnotationAttributes(originalMetaClass.getAnnotations(),
+                            PessimisticLock.class);
 
-            for (MetaClass metaClass : metadata.getSession().getClasses()) {
-                MetaClass originalMetaClass = extendedEntities.getOriginalOrThisMetaClass(metaClass);
-                Map<String, Object> attributes =
-                        metadataTools.getMetaAnnotationAttributes(originalMetaClass.getAnnotations(),
-                                PessimisticLock.class);
-
-                if (!attributes.isEmpty()) {
-                    String originalName = originalMetaClass.getName();
-                    Integer timeoutSec = (Integer) attributes.get("timeoutSec");
-                    LockDescriptor descriptor = new LockDescriptor(originalName, timeoutSec);
-                    config.add(descriptor);
-                }
+            if (!attributes.isEmpty()) {
+                String originalName = originalMetaClass.getName();
+                Integer timeoutSec = (Integer) attributes.get("timeoutSec");
+                LockDescriptor descriptor = new LockDescriptor(originalName, timeoutSec);
+                config.add(descriptor);
             }
-        } finally {
-            sample.stop(meterRegistry.timer("jmix.AnnotationLockDescriptorProvider.loadConfig"));
         }
-
         return config;
     }
 }

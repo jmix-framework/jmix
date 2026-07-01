@@ -17,11 +17,14 @@
 package io.jmix.eclipselink.impl.entitycache;
 
 
+import org.jspecify.annotations.NullMarked;
+
 import java.util.Set;
 
 /**
  * Cache that contains queries and a collection of object identifiers
  */
+@NullMarked
 public interface QueryCache {
 
     /**

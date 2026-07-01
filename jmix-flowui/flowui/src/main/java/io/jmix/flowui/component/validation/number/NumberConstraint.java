@@ -16,11 +16,14 @@
 
 package io.jmix.flowui.component.validation.number;
 
+import org.jspecify.annotations.NullMarked;
+
 import java.math.BigDecimal;
 
 /**
  * Base interface for number type validators which contains all numeric restrictions.
  */
+@NullMarked
 public interface NumberConstraint {
 
     /**

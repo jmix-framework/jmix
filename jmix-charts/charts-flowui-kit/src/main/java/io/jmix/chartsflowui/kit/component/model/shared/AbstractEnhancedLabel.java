@@ -19,6 +19,7 @@ package io.jmix.chartsflowui.kit.component.model.shared;
 import io.jmix.chartsflowui.kit.component.model.HasAlign;
 import io.jmix.chartsflowui.kit.component.model.HasBorder;
 import io.jmix.chartsflowui.kit.component.model.HasShadow;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The base class for enhanced label.
@@ -62,6 +63,7 @@ public abstract class AbstractEnhancedLabel<T extends AbstractEnhancedLabel<T>> 
 
     protected Integer shadowOffsetY;
 
+    @Nullable
     public Boolean getShow() {
         return show;
     }
@@ -71,6 +73,7 @@ public abstract class AbstractEnhancedLabel<T extends AbstractEnhancedLabel<T>> 
         markAsDirty();
     }
 
+    @Nullable
     public Integer getDistance() {
         return distance;
     }
@@ -80,6 +83,7 @@ public abstract class AbstractEnhancedLabel<T extends AbstractEnhancedLabel<T>> 
         markAsDirty();
     }
 
+    @Nullable
     public Integer getRotate() {
         return rotate;
     }
@@ -89,6 +93,7 @@ public abstract class AbstractEnhancedLabel<T extends AbstractEnhancedLabel<T>> 
         markAsDirty();
     }
 
+    @Nullable
     public Integer[] getOffset() {
         return offset;
     }
@@ -98,6 +103,7 @@ public abstract class AbstractEnhancedLabel<T extends AbstractEnhancedLabel<T>> 
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Align getAlign() {
         return align;
@@ -109,6 +115,7 @@ public abstract class AbstractEnhancedLabel<T extends AbstractEnhancedLabel<T>> 
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public VerticalAlign getVerticalAlign() {
         return verticalAlign;
@@ -120,6 +127,7 @@ public abstract class AbstractEnhancedLabel<T extends AbstractEnhancedLabel<T>> 
         markAsDirty();
     }
 
+    @Nullable
     public Color getBackgroundColor() {
         return backgroundColor;
     }
@@ -129,6 +137,7 @@ public abstract class AbstractEnhancedLabel<T extends AbstractEnhancedLabel<T>> 
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Color getBorderColor() {
         return borderColor;
@@ -140,6 +149,7 @@ public abstract class AbstractEnhancedLabel<T extends AbstractEnhancedLabel<T>> 
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getBorderWidth() {
         return borderWidth;
@@ -151,6 +161,7 @@ public abstract class AbstractEnhancedLabel<T extends AbstractEnhancedLabel<T>> 
         markAsDirty();
     }
 
+    @Nullable
     public String getBorderType() {
         return borderType;
     }
@@ -160,6 +171,7 @@ public abstract class AbstractEnhancedLabel<T extends AbstractEnhancedLabel<T>> 
         markAsDirty();
     }
 
+    @Nullable
     public Integer getBorderDashOffset() {
         return borderDashOffset;
     }
@@ -169,6 +181,7 @@ public abstract class AbstractEnhancedLabel<T extends AbstractEnhancedLabel<T>> 
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getBorderRadius() {
         return borderRadius;
@@ -180,6 +193,7 @@ public abstract class AbstractEnhancedLabel<T extends AbstractEnhancedLabel<T>> 
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Padding getPadding() {
         return padding;
@@ -203,6 +217,7 @@ public abstract class AbstractEnhancedLabel<T extends AbstractEnhancedLabel<T>> 
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Color getShadowColor() {
         return shadowColor;
@@ -214,6 +229,7 @@ public abstract class AbstractEnhancedLabel<T extends AbstractEnhancedLabel<T>> 
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getShadowBlur() {
         return shadowBlur;
@@ -225,6 +241,7 @@ public abstract class AbstractEnhancedLabel<T extends AbstractEnhancedLabel<T>> 
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getShadowOffsetX() {
         return shadowOffsetX;
@@ -236,6 +253,7 @@ public abstract class AbstractEnhancedLabel<T extends AbstractEnhancedLabel<T>> 
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getShadowOffsetY() {
         return shadowOffsetY;

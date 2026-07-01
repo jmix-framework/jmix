@@ -16,9 +16,12 @@
 
 package io.jmix.rest.transform;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * An interface for entity JSON transformers used by the REST API
  */
+@NullMarked
 public interface EntityJsonTransformer {
 
     String getTransformedEntityName();

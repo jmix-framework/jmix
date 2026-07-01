@@ -21,19 +21,19 @@ import io.jmix.sessions.SessionsConfiguration;
 import io.jmix.sessions.SessionsProperties;
 import io.jmix.sessions.impl.JmixExpiringSessionMap;
 import io.jmix.sessions.resolver.OAuth2AndCookieSessionIdResolver;
+import jakarta.servlet.ServletContext;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.session.SessionAutoConfiguration;
-import org.springframework.boot.autoconfigure.session.SessionProperties;
-import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.session.autoconfigure.SessionAutoConfiguration;
+import org.springframework.boot.session.autoconfigure.SessionTimeout;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Import;
@@ -46,14 +46,14 @@ import org.springframework.session.config.SessionRepositoryCustomizer;
 import org.springframework.session.web.http.CookieHttpSessionIdResolver;
 import org.springframework.session.web.http.HttpSessionIdResolver;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.stream.Collectors;
 
 
-@AutoConfiguration
+@AutoConfiguration(after = {JmixHazelcastSessionsAutoConfiguration.class, SessionAutoConfiguration.class})
 @Import({CoreConfiguration.class, SessionsAutoConfiguration.OAuth2SessionsConfiguration.class,
         SessionsAutoConfiguration.DefaultSessionsConfiguration.class, SessionsConfiguration.class})
-@AutoConfigureAfter({SessionAutoConfiguration.class, JmixHazelcastSessionsAutoConfiguration.class})
 @EnableConfigurationProperties(SessionsProperties.class)
 public class SessionsAutoConfiguration {
 
@@ -65,24 +65,29 @@ public class SessionsAutoConfiguration {
 
         @Autowired(required = false)
         public void setSessionRepositoryCustomizer(
-                ObjectProvider<SessionRepositoryCustomizer<MapSessionRepository>> sessionRepositoryCustomizers) {
+                ObjectProvider<@NonNull SessionRepositoryCustomizer<MapSessionRepository>> sessionRepositoryCustomizers) {
             this.sessionRepositoryCustomizers = sessionRepositoryCustomizers.orderedStream().collect(Collectors.toList());
         }
 
         @Bean
         @DependsOn("jmixExpiringSessionMap")
         public SessionRepository<MapSession> sessionRepository(JmixExpiringSessionMap jmixExpiringSessionMap,
-                                                               SessionProperties sessionProperties,
-                                                               ServerProperties serverProperties) {
+                                                               ObjectProvider<SessionTimeout> sessionTimeout,
+                                                               ServletContext servletContext) {
             MapSessionRepository mapSessionRepository = new MapSessionRepository(jmixExpiringSessionMap);
 
-            mapSessionRepository.setDefaultMaxInactiveInterval(
-                    sessionProperties.determineTimeout(() -> serverProperties.getServlet().getSession().getTimeout()));
+            mapSessionRepository.setDefaultMaxInactiveInterval(determineTimeout(sessionTimeout, servletContext));
 
             this.sessionRepositoryCustomizers
                     .forEach((sessionRepositoryCustomizer) -> sessionRepositoryCustomizer.customize(mapSessionRepository));
 
             return mapSessionRepository;
+        }
+
+        private Duration determineTimeout(ObjectProvider<SessionTimeout> sessionTimeout, ServletContext servletContext) {
+            SessionTimeout timeout = sessionTimeout.getIfAvailable();
+            Duration duration = timeout != null ? timeout.getTimeout() : null;
+            return duration != null ? duration : Duration.ofMinutes(servletContext.getSessionTimeout());
         }
 
         @Bean

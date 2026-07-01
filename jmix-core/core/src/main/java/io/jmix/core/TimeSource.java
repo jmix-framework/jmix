@@ -16,6 +16,8 @@
 
 package io.jmix.core;
 
+import org.jspecify.annotations.NullMarked;
+
 import java.time.ZonedDateTime;
 import java.util.Date;
 
@@ -24,6 +26,7 @@ import java.util.Date;
  * <code>System.currentTimeMillis()</code>
  *
  */
+@NullMarked
 public interface TimeSource {
 
     /**

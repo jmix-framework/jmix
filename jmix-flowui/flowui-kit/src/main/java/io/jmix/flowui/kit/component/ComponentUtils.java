@@ -30,11 +30,12 @@ import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.shared.SlotUtils;
 import com.vaadin.flow.data.provider.HasListDataView;
+import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.dom.ElementConstants;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.loginform.EnhancedLoginForm;
 import io.jmix.flowui.kit.component.twincolumn.JmixTwinColumn;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 import java.util.Locale;
@@ -93,7 +94,6 @@ public final class ComponentUtils {
         return icon != null ? icon.create() : null;
     }
 
-
     /**
      * Creates a copy of icon component. For the moment only Icon, SvgIcon and FontIcon types are supported.
      *
@@ -134,9 +134,40 @@ public final class ComponentUtils {
     private static void copyAbstractIconAttributes(AbstractIcon<?> icon, AbstractIcon<?> iconCopy) {
         iconCopy.setColor(icon.getColor());
         iconCopy.setSize(icon.getStyle().get(ElementConstants.STYLE_WIDTH));
-        iconCopy.setTooltipText(icon.getTooltip().getText());
+        copyTooltip(icon, iconCopy);
         iconCopy.setVisible(icon.isVisible());
         iconCopy.addClassNames(icon.getClassNames().toArray(new String[0]));
+    }
+
+    /**
+     * Copies the tooltip content (plain text or Markdown) from the source icon to its copy.
+     * <p>
+     * Reads the tooltip directly from the source's slot instead of calling AbstractIcon#getTooltip(),
+     * which lazily creates and attaches a tooltip element to the source on first access. The source icon
+     * may be shared between UIs (e.g. an icon from menu configuration), so mutating its state node from
+     * several threads concurrently would cause a ConcurrentModificationException.
+     *
+     * @param icon     source icon
+     * @param iconCopy copy of the source icon
+     */
+    private static void copyTooltip(AbstractIcon<?> icon, AbstractIcon<?> iconCopy) {
+        Element tooltipElement = SlotUtils.getElementsInSlot(icon, "tooltip")
+                .findFirst()
+                .orElse(null);
+        if (tooltipElement == null) {
+            return;
+        }
+
+        String text = tooltipElement.getProperty("text");
+        if (text == null) {
+            return;
+        }
+
+        if (tooltipElement.getProperty("markdown", false)) {
+            iconCopy.setTooltipMarkdown(text);
+        } else {
+            iconCopy.setTooltipText(text);
+        }
     }
 
     /**

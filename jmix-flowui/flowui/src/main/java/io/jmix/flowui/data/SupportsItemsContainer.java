@@ -18,6 +18,7 @@ package io.jmix.flowui.data;
 
 import io.jmix.flowui.data.items.ContainerDataProvider;
 import io.jmix.flowui.model.CollectionContainer;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Interface to be implemented by components that support handling items
@@ -25,6 +26,7 @@ import io.jmix.flowui.model.CollectionContainer;
  *
  * @param <E> the type of items managed by the container
  */
+@NullMarked
 public interface SupportsItemsContainer<E> {
 
     /**

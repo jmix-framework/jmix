@@ -14,7 +14,4 @@
  * limitations under the License.
  */
 
-@NonNullApi
 package io.jmix.reportsrest.security.accesscontext;
-
-import org.springframework.lang.NonNullApi;

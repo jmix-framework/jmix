@@ -22,27 +22,28 @@ import com.vaadin.flow.function.ValueProvider;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
 import io.jmix.core.MessageTools;
-import io.jmix.core.Messages;
 import io.jmix.core.SaveContext;
 import io.jmix.flowui.DialogWindows;
+import io.jmix.flowui.Notifications;
 import io.jmix.flowui.action.list.ReadAction;
 import io.jmix.flowui.component.checkboxgroup.JmixCheckboxGroup;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.textfield.TypedTextField;
+import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.exception.ValidationException;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.action.BaseAction;
 import io.jmix.flowui.kit.component.dropdownbutton.DropdownButton;
 import io.jmix.flowui.model.*;
+import io.jmix.flowui.observation.UiObservationSupport;
 import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
 import io.jmix.security.model.*;
 import io.jmix.security.role.ResourceRoleRepository;
 import io.jmix.security.role.RolePersistence;
 import io.jmix.securityflowui.view.resourcepolicy.*;
-import jakarta.annotation.Nullable;
-import org.apache.commons.lang3.RandomStringUtils;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,12 +82,10 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
     @ViewComponent
     private CollectionPropertyContainer<ResourcePolicyModel> resourcePoliciesDc;
 
-    @ViewComponent
-    private MessageBundle messageBundle;
-    @Autowired
-    private Messages messages;
     @Autowired
     private MessageTools messageTools;
+    @Autowired
+    private Notifications notifications;
     @Autowired(required = false)
     private RolePersistence rolePersistence;
     @Autowired
@@ -99,6 +98,8 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
     private UrlParamSerializer urlParamSerializer;
     @Autowired(required = false)
     private List<ResourcePolicyTypeProvider> resourcePolicyTypeProviders;
+    @ViewComponent
+    private MessageBundle messageBundle;
 
     @Subscribe
     public void onInit(InitEvent event) {
@@ -130,6 +131,14 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
         String code = urlParamSerializer.deserialize(String.class, serializedEntityCode);
         ResourceRole roleByCode = roleRepository.findRoleByCode(code);
 
+        if (roleByCode == null) {
+            notifications.create(messageBundle.getMessage("error.roleNotFound.message")
+                            .formatted(code))
+                    .withType(Notifications.Type.ERROR)
+                    .show();
+            return;
+        }
+
         ResourceRoleModel resourceRoleModel = roleModelConverter.createResourceRoleModel(roleByCode);
 
         childRolesDc.mute();
@@ -159,26 +168,32 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
 
     @Subscribe
     public void onBeforeShow(BeforeShowEvent event) {
-        setupRoleReadOnlyMode(isDatabaseSource());
+        // may be 'null' if a role not found by a code
+        setupRoleReadOnlyMode(getEditedEntityOrNull() != null && isDatabaseSource());
         initAdditionalResourcePolicyTypes();
     }
 
     private void initAdditionalResourcePolicyTypes() {
         if (resourcePolicyTypeProviders != null) {
             for (ResourcePolicyTypeProvider resourcePolicyTypeProvider : resourcePolicyTypeProviders) {
-                BaseAction action = getCreatePolicyAction(resourcePolicyTypeProvider);
+                BaseAction<?> action = getCreatePolicyAction(resourcePolicyTypeProvider);
                 createDropdownButton.addItem(action.getId(), action);
             }
         }
     }
 
-    private BaseAction getCreatePolicyAction(ResourcePolicyTypeProvider resourcePolicyTypeProvider) {
-        BaseAction action = new BaseAction(RandomStringUtils.randomAlphabetic(5)) {
+    private BaseAction<?> getCreatePolicyAction(ResourcePolicyTypeProvider resourcePolicyTypeProvider) {
+        String actionId = "createPolicy_" + resourcePolicyTypeProvider.getCreatePolicyViewClass().getSimpleName();
+        BaseAction<?> action = new BaseAction(actionId) {
             @Override
             public void actionPerform(Component component) {
-                dialogWindows.view(ResourceRoleModelDetailView.this, resourcePolicyTypeProvider.getCreatePolicyViewClass())
-                        .withAfterCloseListener(ResourceRoleModelDetailView.this::addPoliciesFromMultiplePoliciesView)
-                        .open();
+
+                getApplicationContext().getBean(UiObservationSupport.class)
+                        .createActionExecutionObservation(this, component)
+                        .observe(() ->
+                                dialogWindows.view(ResourceRoleModelDetailView.this, resourcePolicyTypeProvider.getCreatePolicyViewClass())
+                                        .withAfterCloseListener(ResourceRoleModelDetailView.this::addPoliciesFromMultiplePoliciesView)
+                                        .open());
             }
 
             @Nullable
@@ -206,15 +221,23 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
         }
     }
 
+    @Override
+    protected ValidationErrors validateView() {
+        if (isReadOnly()) {
+            return ValidationErrors.none();
+        } else {
+            return super.validateView();
+        }
+    }
+
     @Subscribe("childRolesTable.add")
     public void onChildRolesTableAdd(ActionPerformedEvent event) {
         ResourceRoleModel resourceRoleModel = getEditedEntity();
-        ResourceRole currentRole = roleRepository.findRoleByCode(resourceRoleModel.getCode());
 
         DialogWindow<ResourceRoleModelLookupView> lookupDialog = dialogWindows.lookup(childRolesTable)
                 .withViewClass(ResourceRoleModelLookupView.class)
                 .withViewConfigurer(configurer -> {
-                    configurer.setCurrentRole(currentRole);
+                    configurer.setCurrentRoleModel(resourceRoleModel);
                 })
                 .build();
 
@@ -271,7 +294,7 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
                 })
                 .anyMatch(resourceRole -> resourceRole.getCode().equals(value));
         if (exist) {
-            throw new ValidationException(messages.getMessage("io.jmix.securityflowui.view.resourcerole/uniqueCode"));
+            throw new ValidationException(messageBundle.getMessage("uniqueCode"));
         }
     }
 
@@ -431,7 +454,8 @@ public class ResourceRoleModelDetailView extends StandardDetailView<ResourceRole
 
     @Install(target = Target.DATA_CONTEXT)
     private Set<Object> saveDelegate(final SaveContext saveContext) {
-        if (isDatabaseSource()) {
+        // may be 'null' if a role not found by a code
+        if (getEditedEntityOrNull() != null && isDatabaseSource()) {
             getRolePersistence().save(getEditedEntity());
             return Set.of(getEditedEntity());
         } else {

@@ -18,10 +18,10 @@ package io.jmix.flowui.component.gridcolumnvisibility;
 
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.*;
+import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Hr;
 import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.shared.HasOverlayClassName;
 import com.vaadin.flow.component.shared.HasThemeVariant;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.MessageTools;
@@ -38,11 +38,12 @@ import io.jmix.flowui.kit.component.HasTitle;
 import io.jmix.flowui.kit.component.dropdownbutton.AbstractDropdownButton;
 import io.jmix.flowui.kit.component.menubar.JmixMenuBar;
 import io.jmix.flowui.kit.component.menubar.JmixMenuItem;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -54,7 +55,7 @@ import java.util.stream.IntStream;
  */
 public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
         implements AttachNotifier, DetachNotifier, ApplicationContextAware, InitializingBean,
-        HasTitle, HasSize, HasThemeVariant<GridColumnVisibilityVariant>, HasEnabled, HasStyle, HasOverlayClassName,
+        HasTitle, HasSize, HasThemeVariant<GridColumnVisibilityVariant>, HasEnabled, HasStyle,
         HasText, Focusable<AbstractDropdownButton> {
 
     protected static final String ATTRIBUTE_JMIX_ROLE_NAME = "jmix-role";
@@ -102,30 +103,9 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
 
     @Override
     protected JmixMenuBar initContent() {
-        JmixMenuBar menuBar = super.initContent();
+        JmixMenuBar menuBar = new ColumnVisibilityMenuBar();
         menuBar.getElement().setAttribute(ATTRIBUTE_JMIX_ROLE_NAME, ATTRIBUTE_JMIX_ROLE_VALUE);
         return menuBar;
-    }
-
-    /**
-     * @return icon of the component
-     * @deprecated use {@link #getIconComponent()} instead
-     */
-    @Deprecated(since = "3.0", forRemoval = true)
-    @Nullable
-    public Icon getIcon() {
-        return icon instanceof Icon iconComponent ? iconComponent : null;
-    }
-
-    /**
-     * Sets component icon.
-     *
-     * @param icon icon to set
-     * @deprecated use {@link #setIconComponent(Component)} instead
-     */
-    @Deprecated(since = "3.0", forRemoval = true)
-    public void setIcon(@Nullable Icon icon) {
-        setIconComponent(icon);
     }
 
     /**
@@ -133,6 +113,27 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
      *
      * @return the icon component, or {@code null} if no icon has been set
      */
+    @Nullable
+    public Component getIcon() {
+        return getIconComponent();
+    }
+
+    /**
+     * Sets the given component as the icon of this component.
+     *
+     * @param icon the component to be set as the icon, or {@code null} to remove the current icon
+     */
+    public void setIcon(@Nullable Component icon) {
+        setIconComponent(icon);
+    }
+
+    /**
+     * Returns the icon component associated with this component, if available.
+     *
+     * @return the icon component, or {@code null} if no icon has been set
+     * @deprecated use {@link #getIcon()} instead
+     */
+    @Deprecated(since = "3.0", forRemoval = true)
     @Nullable
     public Component getIconComponent() {
         return icon;
@@ -142,7 +143,9 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
      * Sets the given component as the icon of this component.
      *
      * @param icon the component to be set as the icon, or {@code null} to remove the current icon
+     * @deprecated use {@link #setIcon(Component)} instead
      */
+    @Deprecated(since = "3.0", forRemoval = true)
     public void setIconComponent(@Nullable Component icon) {
         if (icon != null && icon.getElement().isTextNode()) {
             throw new IllegalArgumentException(
@@ -620,6 +623,7 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
     /**
      * Represents an item which allows to toggle column visibility.
      */
+    @NullMarked
     public interface MenuItem {
 
         /**
@@ -707,5 +711,16 @@ public class JmixGridColumnVisibility extends Composite<JmixMenuBar>
                 column.getGrid().recalculateColumnWidths();
             }
         }
+    }
+}
+
+@JsModule("./src/menubar/jmix-noncollapsible-menubar-connector.js")
+class ColumnVisibilityMenuBar extends JmixMenuBar {
+
+    @Override
+    protected void initConnector(String appId) {
+        super.initConnector(appId);
+
+        getElement().executeJs("window.Vaadin.Flow.nonCollapsibleMenubarConnector.initLazy(this)");
     }
 }

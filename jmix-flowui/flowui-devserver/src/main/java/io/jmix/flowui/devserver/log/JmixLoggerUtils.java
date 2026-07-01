@@ -28,11 +28,11 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Optional;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
-import static com.vaadin.flow.server.frontend.FrontendUtils.BRIGHT_BLUE;
-import static com.vaadin.flow.server.frontend.FrontendUtils.RED;
-import static com.vaadin.flow.server.frontend.FrontendUtils.console;
+import static com.vaadin.flow.internal.FrontendUtils.BRIGHT_BLUE;
+import static com.vaadin.flow.internal.FrontendUtils.RED;
+import static com.vaadin.flow.internal.FrontendUtils.console;
 import static io.jmix.flowui.devserver.servlet.JmixSystemPropertiesLifeCycleListener.STUDIO_VIEW_DESIGNER_DIR_PROPERTY;
 
 public final class JmixLoggerUtils {

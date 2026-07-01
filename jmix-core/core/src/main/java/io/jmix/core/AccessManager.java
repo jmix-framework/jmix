@@ -18,6 +18,7 @@ package io.jmix.core;
 
 import io.jmix.core.constraint.AccessConstraint;
 import io.jmix.core.accesscontext.AccessContext;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -27,6 +28,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 @Component("core_AccessManager")
+@NullMarked
 public class AccessManager {
 
     @Autowired

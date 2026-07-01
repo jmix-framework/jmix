@@ -1,0 +1,49 @@
+/*
+ * Copyright 2026 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@import './button.css';
+@import './jmix-date-range-picker.css';
+@import './jmix-dialog-window.css';
+@import './jmix-dropdown-button.css';
+@import './jmix-generic-filter.css';
+@import './jmix-grid-column-visibility.css';
+@import './jmix-grid-context-menu.css';
+@import './jmix-grid-header-filter.css';
+@import './jmix-grid-layout.css';
+@import './jmix-group-filter.css';
+@import './jmix-horizontal-menu.css';
+@import './jmix-image.css';
+@import './jmix-items-per-page.css';
+@import './jmix-jpql-filter.css';
+@import './jmix-list-menu.css';
+@import './jmix-login-form.css';
+@import './jmix-markdown-editor.css';
+@import './jmix-property-filter.css';
+@import './jmix-twin-column.css';
+@import './jmix-rich-text-editor.css';
+@import './jmix-simple-pagination.css';
+@import './jmix-switch.css';
+@import './jmix-upload-field.css';
+@import './jmix-user-indicator.css';
+@import './jmix-user-menu.css';
+@import './jmix-side-panel-layout-closer.css';
+@import './jmix-view-layout.css';
+
+@import './vaadin-details.css';
+@import './vaadin-form-layout.css';
+@import './vaadin-grid.css';
+@import './vaadin-notification-card.css';
+@import './vaadin-split-layout.css';

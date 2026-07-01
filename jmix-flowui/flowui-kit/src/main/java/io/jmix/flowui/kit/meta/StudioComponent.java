@@ -27,6 +27,7 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.METHOD)
 @Inherited
+@StudioAPI
 public @interface StudioComponent {
 
     /**
@@ -109,6 +110,15 @@ public @interface StudioComponent {
     StudioProperty[] properties() default {};
 
     /**
+     * Reusable groups of XML attributes.
+     * <p>
+     * Studio will merge group properties with {@link #properties()}.
+     * @see StudioPropertyGroup
+     * @see StudioPropertyGroups
+     */
+    Class<?>[] propertyGroups() default {};
+
+    /**
      * Descriptions of the XML attributes relationship.
      * For example <code>property</code> and <code>dataContainer</code>
      */
@@ -142,6 +152,13 @@ public @interface StudioComponent {
      * @see StudioConvertStrategy
      */
     StudioConvertStrategy convertStrategy() default @StudioConvertStrategy();
+
+    /**
+     * Additional XML element initialization.
+     *
+     * @see StudioXmlElementInitializer
+     */
+    StudioXmlElementInitializer xmlElementInitializer() default @StudioXmlElementInitializer();
 
     /**
      * Link to the component documentation.

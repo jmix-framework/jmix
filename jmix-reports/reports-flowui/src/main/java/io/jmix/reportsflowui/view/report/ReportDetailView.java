@@ -29,9 +29,11 @@ import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.icon.FontIcon;
 import com.vaadin.flow.component.html.NativeLabel;
+import com.vaadin.flow.component.icon.FontIcon;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.orderedlayout.FlexLayout;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.data.provider.ListDataProvider;
@@ -76,6 +78,7 @@ import io.jmix.reports.util.DataSetFactory;
 import io.jmix.reports.yarg.structure.BandOrientation;
 import io.jmix.reportsflowui.ReportsClientProperties;
 import io.jmix.reportsflowui.constant.ReportStyleConstants;
+import io.jmix.reportsflowui.helper.OutputTypeHelper;
 import io.jmix.reportsflowui.helper.ReportScriptEditor;
 import io.jmix.reportsflowui.support.CrossTabDataGridSupport;
 import io.jmix.reportsflowui.view.region.ReportRegionWizardDetailView;
@@ -91,7 +94,7 @@ import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -133,9 +136,9 @@ public class ReportDetailView extends StandardDetailView<Report> {
     @ViewComponent
     protected JmixCheckbox multiDataSetField;
     @ViewComponent
-    protected Div multiDataSetLayout;
+    protected FlexLayout multiDataSetLayout;
     @ViewComponent
-    protected Div singleDataSetLayout;
+    protected FlexLayout singleDataSetLayout;
     @ViewComponent
     protected Div dataSetDetailsLayout;
     @ViewComponent
@@ -151,6 +154,8 @@ public class ReportDetailView extends StandardDetailView<Report> {
     @ViewComponent
     protected JmixButton dataSetScriptCodeEditorHelpBtn;
     @ViewComponent
+    protected JmixButton dataSetScriptFullScreenBtn;
+    @ViewComponent
     protected JmixSelect<String> dataStoreField;
     @ViewComponent
     protected JmixCheckbox isProcessTemplateField;
@@ -163,7 +168,11 @@ public class ReportDetailView extends StandardDetailView<Report> {
     @ViewComponent
     protected JmixComboBox<String> entitiesParamField;
     @ViewComponent
+    protected HorizontalLayout entitiesParamLayout;
+    @ViewComponent
     protected JmixComboBox<String> entityParamField;
+    @ViewComponent
+    protected HorizontalLayout entityParamLayout;
     @ViewComponent
     protected JmixComboBox<String> fetchPlanNameField;
     @ViewComponent
@@ -182,6 +191,8 @@ public class ReportDetailView extends StandardDetailView<Report> {
     protected EntityComboBox<ReportInputParameter> jsonQueryParameterField;
     @ViewComponent
     protected CodeEditor jsonGroovyCodeEditor;
+    @ViewComponent
+    protected JmixButton jsonGroovyCodeEditorFullScreenBtn;
     @ViewComponent
     protected DataGrid<ReportTemplate> templatesDataGrid;
     @ViewComponent
@@ -204,6 +215,10 @@ public class ReportDetailView extends StandardDetailView<Report> {
     protected MessageBundle messageBundle;
     @ViewComponent
     protected NativeLabel codeEditorLabel;
+    @ViewComponent
+    protected CodeEditor validationScriptCodeEditor;
+    @ViewComponent
+    protected JmixButton validationScriptFullScreenBtn;
 
     @Autowired
     protected ReportsPersistence reportsPersistence;
@@ -227,6 +242,8 @@ public class ReportDetailView extends StandardDetailView<Report> {
     protected UiProperties uiProperties;
     @Autowired
     protected CoreProperties coreProperties;
+    @Autowired
+    protected ReportsProperties reportsProperties;
     @Autowired
     protected EntityStates entityStates;
     @Autowired
@@ -261,6 +278,8 @@ public class ReportDetailView extends StandardDetailView<Report> {
     protected ReportGroupRepository reportGroupRepository;
     @Autowired
     protected ReportRepository reportRepository;
+    @Autowired
+    protected OutputTypeHelper outputTypeHelper;
 
     protected JmixComboBoxBinder<String> entityParamFieldBinder;
     protected JmixComboBoxBinder<String> entitiesParamFieldBinder;
@@ -289,6 +308,16 @@ public class ReportDetailView extends StandardDetailView<Report> {
         initScreenIdField();
         initSingleDataSetTypeField();
         initJsonSourceTypeField();
+        initTemplatesOutputTypeColumn();
+    }
+
+    protected void initTemplatesOutputTypeColumn() {
+        templatesDataGrid.getColumnByKey("reportOutputType")
+                .setRenderer(new ComponentRenderer<>(this::createTemplateOutputTypeBadge));
+    }
+
+    protected HorizontalLayout createTemplateOutputTypeBadge(ReportTemplate template) {
+        return outputTypeHelper.createOutputTypeBadge(template.getReportOutputType());
     }
 
     @Supply(to = "templatesDataGrid.alterable", subject = "renderer")
@@ -345,6 +374,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
         bandsTreeDataGrid.select(getEditedEntity().getRootBandDefinition());
 
         sortBandDefinitionsByPosition();
+        updateGroovyEditorsState(dataSetsDc.getItemOrNull());
     }
 
     @Subscribe("bandsTreeDataGrid.create")
@@ -619,18 +649,22 @@ public class ReportDetailView extends StandardDetailView<Report> {
 
     @Subscribe(id = "parametersDc", target = Target.DATA_CONTAINER)
     protected void onParametersDcCollectionChange(CollectionContainer.CollectionChangeEvent<ReportInputParameter> event) {
-        Map<String, String> paramAliases = new HashMap<>();
+        Map<String, String> entityParamAliases = new LinkedHashMap<>();
+        Map<String, String> entitiesParamAliases = new LinkedHashMap<>();
 
         for (ReportInputParameter item : event.getSource().getItems()) {
-            paramAliases.put(item.getName(), item.getAlias());
+            if (ParameterType.ENTITY.equals(item.getType())) {
+                entityParamAliases.put(item.getAlias(), item.getName());
+            } else if (ParameterType.ENTITY_LIST.equals(item.getType())) {
+                entitiesParamAliases.put(item.getAlias(), item.getName());
+            }
         }
-        BiMap<String, String> biMap = ImmutableBiMap.copyOf(paramAliases);
 
-        entitiesParamFieldBinder.setItemsSilently(biMap.values(), true);
-        entitiesParamField.setItemLabelGenerator(o -> biMap.inverse().getOrDefault(o, o));
+        entityParamFieldBinder.setItemsSilently(entityParamAliases.keySet(), true);
+        entityParamField.setItemLabelGenerator(alias -> "%s (%s)".formatted(entityParamAliases.get(alias), alias));
 
-        entityParamFieldBinder.setItemsSilently(biMap.values(), true);
-        entityParamField.setItemLabelGenerator(o -> biMap.inverse().getOrDefault(o, o));
+        entitiesParamFieldBinder.setItemsSilently(entitiesParamAliases.keySet(), true);
+        entitiesParamField.setItemLabelGenerator(alias -> "%s (%s)".formatted(entitiesParamAliases.get(alias), alias));
     }
 
     @Subscribe
@@ -1189,6 +1223,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
         dataGridDecorator.decorate(dataSetsDataGrid, dataSetsDc, bandsDc);
         dataSetsDataGrid
                 .addComponentColumn(this::dataSetTypeColumnValueProvider)
+                .setKey("typeEditor")
                 .setHeader(messageBundle.getMessage("bandsTab.dataSetsDataGrid.typeColumn.header"));
 
         dataSetsDataGrid.getActions().forEach(action -> action.setText(""));
@@ -1300,6 +1335,8 @@ public class ReportDetailView extends StandardDetailView<Report> {
 
             dataSetScriptCodeEditorHelpBtn.setVisible(CodeEditorMode.GROOVY.equals(dataSetScriptCodeEditor.getMode()));
         }
+
+        updateGroovyEditorsState(dataSet);
     }
 
     protected void updateFetchPlanNameFieldItems(@Nullable ReportInputParameter reportInputParameter) {
@@ -1375,6 +1412,8 @@ public class ReportDetailView extends StandardDetailView<Report> {
             default:
                 break;
         }
+
+        updateGroovyEditorsState(dataSet);
     }
 
     protected void setJsonDataSetFieldsVisibility(boolean visible) {
@@ -1408,12 +1447,22 @@ public class ReportDetailView extends StandardDetailView<Report> {
         entityParamFieldBinder.setValueChangeListener(this::onEntityParamFieldComponentValueChange);
     }
 
+    @Subscribe("entitiesParamFieldHelperButton")
+    protected void onEntitiesParamFieldHelperButtonClick(ClickEvent<JmixButton> event) {
+        entitiesParamField.getTooltip().setOpened(!entitiesParamField.getTooltip().isOpened());
+    }
+
     protected void initEntityParamField() {
         entityParamField.addCustomValueSetListener(customValueEvent ->
                 dataSetsDc.getItem().setEntityParamName(customValueEvent.getDetail()));
 
         entitiesParamFieldBinder = new JmixComboBoxBinder(entitiesParamField);
         entitiesParamFieldBinder.setValueChangeListener(this::onEntitiesParamFieldComponentValueChange);
+    }
+
+    @Subscribe("entityParamFieldHelperButton")
+    protected void onEntityParamFieldHelperButtonClick(ClickEvent<JmixButton> event) {
+        entityParamField.getTooltip().setOpened(!entityParamField.getTooltip().isOpened());
     }
 
     protected void initFetchPlanNameField() {
@@ -1441,6 +1490,9 @@ public class ReportDetailView extends StandardDetailView<Report> {
 
     protected void onDataSetScriptFieldExpandIconClick() {
         DataSet dataSet = dataSetsDc.getItem();
+        if (isGroovyDataSetLocked(dataSet)) {
+            return;
+        }
         CodeEditorMode codeEditorMode = getCodeEditorMode(dataSet);
         ReportScriptEditor.Builder reportScriptEditorBuilder = reportScriptEditor.create(this)
                 .withTitle(getScriptEditorDialogCaption())
@@ -1466,7 +1518,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
     protected void onJsonPathQueryTextAreaFieldHelpIconClick(ClickEvent<?> event) {
         Html content = new Html(messageBundle.getMessage(
                 "bandsTab.dataSetTypeLayout.jsonPathQueryTextAreaField.helpIcon.dialog.content"));
-        content.addClassName(ReportStyleConstants.TRANSPARENT_CODE_CLASS_NAME);
+        content.addClassName("help-dialog-json");
 
         dialogs.createMessageDialog()
                 .withHeader(messageBundle.getMessage(
@@ -1480,10 +1532,13 @@ public class ReportDetailView extends StandardDetailView<Report> {
 
     @Subscribe("jsonGroovyCodeEditorFullScreenBtn")
     public void onJsonGroovyCodeEditorFullScreenBtnClick(final ClickEvent<Button> event) {
+        if (isJsonGroovyEditorLocked(dataSetsDc.getItem())) {
+            return;
+        }
         reportScriptEditor.create(this)
                 .withTitle(getScriptEditorDialogCaption())
                 .withValue(dataSetsDc.getItem().getJsonSourceText())
-                .withEditorMode(CodeEditorMode.JSON)
+                .withEditorMode(CodeEditorMode.GROOVY)
                 .withCloseOnClick(value -> dataSetsDc.getItem().setJsonSourceText(value))
                 .withHelpOnClick(this::onJsonGroovyCodeEditorHelpIconClick)
                 .open();
@@ -1513,8 +1568,10 @@ public class ReportDetailView extends StandardDetailView<Report> {
     }
 
     protected void setCommonEntityGridVisibility(boolean visibleEntityGrid, boolean visibleEntitiesGrid) {
-        entityParamField.setVisible(visibleEntityGrid);
-        entitiesParamField.setVisible(visibleEntitiesGrid);
+        entityParamLayout.setVisible(visibleEntityGrid);
+        entityParamField.getTooltip().setOpened(false);
+        entitiesParamLayout.setVisible(visibleEntitiesGrid);
+        entitiesParamField.getTooltip().setOpened(false);
     }
 //todo AN implement value provider
 //    @Install(to = "inputParametersDataGrid.name", subject = "valueProvider")
@@ -1622,6 +1679,9 @@ public class ReportDetailView extends StandardDetailView<Report> {
 
     @Subscribe("validationScriptFullScreenBtn")
     public void onValidationScriptFullScreenBtnClick(final ClickEvent<Button> event) {
+        if (!isReportsGroovyEnabled()) {
+            return;
+        }
         reportScriptEditor.create(this)
                 .withTitle(messageBundle.getMessage("fullScreenBtn.title"))
                 .withValue(reportDc.getItem().getValidationScript())
@@ -1677,6 +1737,37 @@ public class ReportDetailView extends StandardDetailView<Report> {
         options.remove(JsonSourceType.DELEGATE); // can't set it up in runtime editor
 
         jsonSourceTypeField.setItems(options);
+    }
+
+    protected boolean isReportsGroovyEnabled() {
+        return coreProperties.isUnsafeRuntimeFeaturesEnabled() && reportsProperties.isGroovyEnabled();
+    }
+
+    protected void updateGroovyEditorsState(@Nullable DataSet dataSet) {
+        boolean groovyDataSetLocked = isGroovyDataSetLocked(dataSet);
+        boolean jsonGroovyLocked = isJsonGroovyEditorLocked(dataSet);
+
+        dataSetScriptCodeEditor.setReadOnly(isReadOnly() || groovyDataSetLocked);
+        dataSetScriptFullScreenBtn.setEnabled(!groovyDataSetLocked);
+
+        jsonGroovyCodeEditor.setReadOnly(isReadOnly() || jsonGroovyLocked);
+        jsonGroovyCodeEditorFullScreenBtn.setEnabled(!jsonGroovyLocked);
+
+        validationScriptCodeEditor.setReadOnly(isReadOnly() || !isReportsGroovyEnabled());
+        validationScriptFullScreenBtn.setEnabled(isReportsGroovyEnabled());
+    }
+
+    protected boolean isGroovyDataSetLocked(@Nullable DataSet dataSet) {
+        return dataSet != null
+                && dataSet.getType() == DataSetType.GROOVY
+                && !isReportsGroovyEnabled();
+    }
+
+    protected boolean isJsonGroovyEditorLocked(@Nullable DataSet dataSet) {
+        return dataSet != null
+                && dataSet.getType() == DataSetType.JSON
+                && dataSet.getJsonSourceType() == JsonSourceType.GROOVY_SCRIPT
+                && !isReportsGroovyEnabled();
     }
 
     @Install(to = "rolesDataGrid.exclude", subject = "enabledRule")

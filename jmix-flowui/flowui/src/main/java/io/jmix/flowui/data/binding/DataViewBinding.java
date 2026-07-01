@@ -20,6 +20,7 @@ package io.jmix.flowui.data.binding;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.provider.HasDataView;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Represents a binding between a UI component and a data provider. This interface is used to
@@ -29,6 +30,7 @@ import com.vaadin.flow.data.provider.HasDataView;
  *            {@link HasDataView}
  * @param <V> the type of data provided by the {@link DataProvider}
  */
+@NullMarked
 public interface DataViewBinding<C extends Component & HasDataView<V, ?, ?>, V> extends JmixBinding {
 
     /**

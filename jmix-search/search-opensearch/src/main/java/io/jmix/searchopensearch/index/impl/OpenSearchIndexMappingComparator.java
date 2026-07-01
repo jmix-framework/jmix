@@ -18,7 +18,7 @@ package io.jmix.searchopensearch.index.impl;
 
 import io.jmix.search.index.impl.IndexMappingComparator;
 import io.jmix.search.index.impl.MappingFieldComparator;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.opensearch.client.json.JsonpSerializable;
 import org.opensearch.client.opensearch.indices.IndexState;
 import org.springframework.stereotype.Component;

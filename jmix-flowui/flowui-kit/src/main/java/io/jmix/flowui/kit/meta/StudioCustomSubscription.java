@@ -19,6 +19,7 @@ package io.jmix.flowui.kit.meta;
 /**
  * Describes non-standard {@code @io.jmix.core.common.event.Subscription} handler
  */
+@StudioAPI
 public @interface StudioCustomSubscription {
     String methodName();
 

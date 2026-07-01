@@ -16,14 +16,18 @@
 
 package io.jmix.flowui.data.grid;
 
+import com.google.common.primitives.Booleans;
 import com.vaadin.flow.shared.Registration;
+import io.jmix.core.annotation.Experimental;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.flowui.component.grid.sort.DataGridSort;
+import io.jmix.flowui.component.grid.sort.PersistentSortInfo;
 import io.jmix.flowui.data.DataUnit;
 import io.jmix.flowui.data.HasType;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.EventObject;
+import java.util.*;
 import java.util.function.Consumer;
 
 /**
@@ -33,6 +37,7 @@ import java.util.function.Consumer;
  *
  * @param <T> the type of items contained within the data grid
  */
+@NullMarked
 public interface DataGridItems<T> extends DataUnit, HasType<T> {
 
     /**
@@ -103,6 +108,7 @@ public interface DataGridItems<T> extends DataUnit, HasType<T> {
      *
      * @param <T> items type
      */
+    @NullMarked
     interface Sortable<T> extends DataGridItems<T> {
 
         /**
@@ -113,6 +119,34 @@ public interface DataGridItems<T> extends DataUnit, HasType<T> {
          *                   where true represents ascending order and false represents descending order
          */
         void sort(Object[] propertyId, boolean[] ascending);
+
+        /**
+         * Sorts the items based on the specified {@link DataGridSort}.
+         * <p>
+         * The default implementation delegates to {@link #sort(Object[], boolean[])} and filters out properties
+         * without a {@link MetaPropertyPath}.
+         *
+         * @param dataGridSort an object that contains sorting information
+         */
+        @Experimental
+        default void sort(DataGridSort dataGridSort) {
+            List<PersistentSortInfo> sortInfos = dataGridSort.getPersistentSortInfos();
+
+            List<Object> propertyIds = new ArrayList<>(sortInfos.size());
+            List<Boolean> ascendingOrders = new ArrayList<>(sortInfos.size());
+
+            for (PersistentSortInfo sortInfo : sortInfos) {
+                MetaPropertyPath propertyPath = sortInfo.getMetaPropertyPath();
+                if (propertyPath == null) {
+                    continue;
+                }
+
+                propertyIds.add(propertyPath);
+                ascendingOrders.add(sortInfo.isAscending());
+            }
+
+            sort(propertyIds.toArray(new Object[0]), Booleans.toArray(ascendingOrders));
+        }
 
         /**
          * Resets the sort order of the items to the default state or removes any applied sorting.

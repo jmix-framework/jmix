@@ -32,6 +32,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -44,6 +45,9 @@ public class ChartFormatter extends AbstractFormatter {
 
     @Autowired
     private MetadataTools metadataTools;
+
+    @Autowired
+    protected ReportValueConverter reportValueConverter;
 
     public ChartFormatter(FormatterFactoryInput formatterFactoryInput) {
         super(formatterFactoryInput);
@@ -73,7 +77,7 @@ public class ChartFormatter extends AbstractFormatter {
         List<Map<String, Object>> data = new ArrayList<>();
         List<BandData> childrenByName = rootBand.getChildrenByName(description.getBandName());
         for (BandData bandData : childrenByName) {
-            data.add(bandData.getData());
+            data.add(convertMap(bandData.getData()));
         }
 
         return beanFactory.getBean(ChartToJsonConverter.class, metadataTools.getInstanceName(((ReportTemplate) reportTemplate).getReport()))
@@ -84,10 +88,16 @@ public class ChartFormatter extends AbstractFormatter {
         List<Map<String, Object>> data = new ArrayList<>();
         List<BandData> childrenByName = rootBand.getChildrenByName(description.getBandName());
         for (BandData bandData : childrenByName) {
-            data.add(bandData.getData());
+            data.add(convertMap(bandData.getData()));
         }
 
         return beanFactory.getBean(ChartToJsonConverter.class, metadataTools.getInstanceName(((ReportTemplate) reportTemplate).getReport()))
                 .convertPieChart(description, data);
+    }
+
+    protected Map<String, Object> convertMap(Map<String, Object> data) {
+        Map<String, Object> result = new HashMap<>();
+        data.forEach((name, value) -> result.put(name, reportValueConverter.convertValue(value)));
+        return result;
     }
 }

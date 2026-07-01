@@ -17,8 +17,8 @@
 package io.jmix.flowui.component;
 
 import io.jmix.flowui.data.DataUnit;
-
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
@@ -28,6 +28,7 @@ import java.util.Set;
  *
  * @param <T> item type
  */
+@NullMarked
 public interface ListDataComponent<T> {
 
     /**

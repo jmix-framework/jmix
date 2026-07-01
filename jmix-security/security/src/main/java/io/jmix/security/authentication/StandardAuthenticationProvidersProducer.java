@@ -19,6 +19,7 @@ package io.jmix.security.authentication;
 import io.jmix.core.security.PostAuthenticationChecks;
 import io.jmix.core.security.PreAuthenticationChecks;
 import io.jmix.core.security.UserRepository;
+import io.jmix.core.security.impl.JmixDaoAuthenticationProvider;
 import io.jmix.core.security.impl.SubstitutedUserAuthenticationProvider;
 import io.jmix.core.security.impl.SystemAuthenticationProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -60,8 +61,7 @@ public class StandardAuthenticationProvidersProducer {
         providers.add(new SystemAuthenticationProvider(userRepository));
         providers.add(new SubstitutedUserAuthenticationProvider(userRepository));
 
-        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
-        daoAuthenticationProvider.setUserDetailsService(userRepository);
+        DaoAuthenticationProvider daoAuthenticationProvider = new JmixDaoAuthenticationProvider(userRepository);
         daoAuthenticationProvider.setPasswordEncoder(passwordEncoder);
         daoAuthenticationProvider.setPreAuthenticationChecks(preAuthenticationChecks);
         daoAuthenticationProvider.setPostAuthenticationChecks(postAuthenticationChecks);

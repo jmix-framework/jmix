@@ -19,10 +19,10 @@ package io.jmix.pivottableflowui.kit.event;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.DomEvent;
 import com.vaadin.flow.component.EventData;
-import elemental.json.JsonArray;
-import elemental.json.JsonObject;
 import io.jmix.pivottableflowui.kit.component.JmixPivotTable;
 import io.jmix.pivottableflowui.kit.component.serialization.JmixPivotTableSerializer;
+import tools.jackson.databind.node.ArrayNode;
+import tools.jackson.databind.node.ObjectNode;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -35,11 +35,11 @@ public class PivotTableCellClickEvent<T> extends ComponentEvent<JmixPivotTable<T
 
     public static final String EVENT_NAME = "jmix-pivottable:cellclick";
 
-    protected JsonObject detailJson;
+    protected ObjectNode detailJson;
     protected PivotTableCellClickEventDetail detail;
 
     public PivotTableCellClickEvent(JmixPivotTable<T> pivotTable, boolean fromClient,
-                                    @EventData("event.detail") JsonObject detailJson) {
+                                    @EventData("event.detail") ObjectNode detailJson) {
         super(pivotTable, fromClient);
         this.detailJson = detailJson;
     }
@@ -51,9 +51,9 @@ public class PivotTableCellClickEvent<T> extends ComponentEvent<JmixPivotTable<T
                     detailJson, PivotTableCellClickEventDetail.class);
 
             List<T> clickedItems = new LinkedList<>();
-            JsonArray dataItemsKeys = detailJson.getArray("itemsKeys");
+            ArrayNode dataItemsKeys = (ArrayNode) detailJson.get("itemsKeys");
             if (dataItemsKeys != null) {
-                for (int i = 0; i < dataItemsKeys.length(); i++) {
+                for (int i = 0; i < dataItemsKeys.size(); i++) {
                     String key = dataItemsKeys.get(i).asString();
                     T item = getSource().getItems().getItem(key);
                     if (item != null) {

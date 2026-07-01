@@ -33,7 +33,8 @@ public class JmixH2Platform extends H2Platform implements UuidMappingInfo {
     @Override
     public void initializeConnectionData(Connection connection) throws SQLException {
         super.initializeConnectionData(connection);
-        // Set LEGACY mode for each new connection until https://github.com/eclipse-ee4j/eclipselink/issues/1393 is fixed
+        // Set LEGACY mode for each new connection until https://github.com/eclipse-ee4j/eclipselink/issues/1393
+        // and https://github.com/eclipse-ee4j/eclipselink/issues/1578 is fixed
         try (Statement stmt = connection.createStatement()) {
             stmt.execute("SET MODE LEGACY");
         }

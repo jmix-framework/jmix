@@ -14,7 +14,4 @@
  * limitations under the License.
  */
 
-@NonNullApi
 package io.jmix.securityflowui.component.rolefilter;
-
-import org.springframework.lang.NonNullApi;

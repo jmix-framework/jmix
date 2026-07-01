@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-@NonNullApi
 @Internal
 package io.jmix.security.impl.role.provider;
 
 import io.jmix.core.annotation.Internal;
-import org.springframework.lang.NonNullApi;

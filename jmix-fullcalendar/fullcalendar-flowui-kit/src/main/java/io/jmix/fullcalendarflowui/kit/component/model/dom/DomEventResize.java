@@ -16,7 +16,7 @@
 
 package io.jmix.fullcalendarflowui.kit.component.model.dom;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * INTERNAL.

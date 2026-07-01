@@ -30,9 +30,12 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.URI;
 import java.sql.Time;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.temporal.ChronoField;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -48,23 +51,12 @@ public class UrlParamSerializer {
     public static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd";
     public static final String DEFAULT_TIME_FORMAT = "HH-mm-ss";
     public static final String DEFAULT_OFFSET_FORMAT = "Z";
-    public static final String DEFAULT_DATE_TIME_FORMAT =
-            DEFAULT_DATE_FORMAT + "'T'" + DEFAULT_TIME_FORMAT;
-    public static final String DEFAULT_OFFSET_DATE_TIME_FORMAT =
-            DEFAULT_DATE_FORMAT + "'T'" + DEFAULT_TIME_FORMAT + DEFAULT_OFFSET_FORMAT;
-    public static final String DEFAULT_OFFSET_TIME_FORMAT =
-            DEFAULT_TIME_FORMAT + DEFAULT_OFFSET_FORMAT;
 
-    protected static final DateTimeFormatter TEMPORAL_DATE_FORMATTER
-            = DateTimeFormatter.ofPattern(DEFAULT_DATE_FORMAT);
-    protected static final DateTimeFormatter TEMPORAL_TIME_FORMATTER
-            = DateTimeFormatter.ofPattern(DEFAULT_TIME_FORMAT);
-    protected static final DateTimeFormatter TEMPORAL_DATE_TIME_FORMATTER
-            = DateTimeFormatter.ofPattern(DEFAULT_DATE_TIME_FORMAT);
-    protected static final DateTimeFormatter TEMPORAL_OFFSET_DATE_TIME_FORMATTER
-            = DateTimeFormatter.ofPattern(DEFAULT_OFFSET_DATE_TIME_FORMAT);
-    protected static final DateTimeFormatter TEMPORAL_OFFSET_TIME_FORMATTER
-            = DateTimeFormatter.ofPattern(DEFAULT_OFFSET_TIME_FORMAT);
+    protected DateTimeFormatter temporalDateFormatter;
+    protected DateTimeFormatter temporalTimeFormatter;
+    protected DateTimeFormatter temporalDateTimeFormatter;
+    protected DateTimeFormatter temporalOffsetDateTimeFormatter;
+    protected DateTimeFormatter temporalOffsetTimeFormatter;
 
     protected UiNavigationProperties navigationProperties;
     protected MetadataTools metadataTools;
@@ -79,6 +71,38 @@ public class UrlParamSerializer {
         this.metadataTools = metadataTools;
         this.metadata = metadata;
         this.dateIntervalSupport = dateIntervalSupport;
+
+        initFormatters();
+    }
+
+    protected void initFormatters() {
+        temporalDateFormatter = DateTimeFormatter.ofPattern(DEFAULT_DATE_FORMAT);
+
+        DateTimeFormatterBuilder dateTimeFormatterBuilder = new DateTimeFormatterBuilder()
+                .appendPattern(DEFAULT_TIME_FORMAT);
+        if (navigationProperties.isUseNanosecondsInUrlParams()) {
+            dateTimeFormatterBuilder
+                    .optionalStart()
+                    .appendFraction(ChronoField.NANO_OF_SECOND, 9, 9, true)
+                    .optionalEnd();
+        }
+        temporalTimeFormatter = dateTimeFormatterBuilder.toFormatter();
+
+        temporalDateTimeFormatter = new DateTimeFormatterBuilder()
+                .append(temporalDateFormatter)
+                .appendLiteral('T')
+                .append(temporalTimeFormatter)
+                .toFormatter();
+
+        temporalOffsetDateTimeFormatter = new DateTimeFormatterBuilder()
+                .append(temporalDateTimeFormatter)
+                .appendPattern(DEFAULT_OFFSET_FORMAT)
+                .toFormatter();
+
+        temporalOffsetTimeFormatter = new DateTimeFormatterBuilder()
+                .append(temporalTimeFormatter)
+                .appendPattern(DEFAULT_OFFSET_FORMAT)
+                .toFormatter();
     }
 
     /**
@@ -123,6 +147,9 @@ public class UrlParamSerializer {
             return serializePrimitive(value);
 
         } else if (String.class == type) {
+            return serializePrimitive(value);
+
+        } else if (URI.class == type) {
             return serializePrimitive(value);
 
         } else if (java.sql.Date.class == type) {
@@ -176,11 +203,11 @@ public class UrlParamSerializer {
     }
 
     protected String serializeLocalDate(LocalDate value) {
-        return TEMPORAL_DATE_FORMATTER.format(value);
+        return temporalDateFormatter.format(value);
     }
 
     protected String serializeLocalDateTime(LocalDateTime value) {
-        return TEMPORAL_DATE_TIME_FORMATTER.format(value);
+        return temporalDateTimeFormatter.format(value);
     }
 
     protected String serializeDate(java.sql.Date value) {
@@ -188,15 +215,15 @@ public class UrlParamSerializer {
     }
 
     protected String serializeOffsetDateTime(OffsetDateTime value) {
-        return TEMPORAL_OFFSET_DATE_TIME_FORMATTER.format(value);
+        return temporalOffsetDateTimeFormatter.format(value);
     }
 
     protected String serializeLocalTime(LocalTime value) {
-        return TEMPORAL_TIME_FORMATTER.format(value);
+        return temporalTimeFormatter.format(value);
     }
 
     protected String serializeOffsetTime(OffsetTime value) {
-        return TEMPORAL_OFFSET_TIME_FORMATTER.format(value);
+        return temporalOffsetTimeFormatter.format(value);
     }
 
     protected String serializeTime(Time value) {
@@ -293,6 +320,9 @@ public class UrlParamSerializer {
             } else if (Integer.class == type) {
                 return ((T) parseInteger(serializedValue));
 
+            } else if (URI.class == type) {
+                return ((T) parseUri(serializedValue));
+
             } else if (LocalDate.class == type) {
                 return ((T) parseLocalDate(serializedValue));
 
@@ -342,11 +372,11 @@ public class UrlParamSerializer {
     }
 
     protected OffsetDateTime parseOffsetDateTime(String stringValue) {
-        return OffsetDateTime.parse(stringValue, TEMPORAL_OFFSET_DATE_TIME_FORMATTER);
+        return OffsetDateTime.parse(stringValue, temporalOffsetDateTimeFormatter);
     }
 
     protected OffsetTime parseOffsetTime(String stringValue) {
-        return OffsetTime.parse(stringValue, TEMPORAL_OFFSET_TIME_FORMATTER);
+        return OffsetTime.parse(stringValue, temporalOffsetTimeFormatter);
     }
 
     protected BigDecimal parseBigDecimal(String stringValue) {
@@ -390,15 +420,15 @@ public class UrlParamSerializer {
     }
 
     protected LocalDate parseLocalDate(String stringValue) {
-        return LocalDate.parse(stringValue, TEMPORAL_DATE_FORMATTER);
+        return LocalDate.parse(stringValue, temporalDateFormatter);
     }
 
     protected LocalDateTime parseLocalDateTime(String stringValue) {
-        return LocalDateTime.parse(stringValue, TEMPORAL_DATE_TIME_FORMATTER);
+        return LocalDateTime.parse(stringValue, temporalDateTimeFormatter);
     }
 
     protected LocalTime parseLocalTime(String stringValue) {
-        return LocalTime.parse(stringValue, TEMPORAL_TIME_FORMATTER);
+        return LocalTime.parse(stringValue, temporalTimeFormatter);
     }
 
     protected Short parseShort(String stringValue) {
@@ -419,6 +449,10 @@ public class UrlParamSerializer {
 
     protected Integer parseInteger(String stringValue) {
         return Integer.valueOf(stringValue);
+    }
+
+    protected URI parseUri(String stringValue) {
+        return URI.create(stringValue);
     }
 
     protected Long parseLong(String stringValue) {

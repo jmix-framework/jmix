@@ -18,12 +18,14 @@ package io.jmix.flowui.facet;
 
 import io.jmix.flowui.fragment.Fragment;
 import io.jmix.flowui.model.DataLoader;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * A non-visual component for coordinating data loading operations in a {@link Fragment}.
  * Manages the association of data loaders to various triggers, such as fragment
  * events, container item changes, or component value changes.
  */
+@NullMarked
 public interface FragmentDataLoadCoordinator extends DataLoadCoordinator {
 
     /**

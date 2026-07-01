@@ -16,6 +16,7 @@
 
 package io.jmix.eclipselink.impl.support;
 
+import org.jspecify.annotations.NullMarked;
 import org.springframework.messaging.SubscribableChannel;
 
 import java.util.function.Supplier;
@@ -24,5 +25,6 @@ import java.util.function.Supplier;
  * Defines an interface for EclipseLink cluster communication
  */
 @FunctionalInterface
+@NullMarked
 public interface EclipseLinkChannelSupplier extends Supplier<SubscribableChannel> {
 }

@@ -18,7 +18,9 @@ apply plugin: 'groovy'
 apply plugin: 'io.jmix'
 
 group 'io.jmix.datatools'
-archivesBaseName = 'jmix-datatools-flowui'
+base {
+    archivesName = 'jmix-datatools-flowui'
+}
 
 dependencies {
     api project(':datatools')
@@ -26,17 +28,25 @@ dependencies {
     api project(':core')
     api project(':data')
     api project(':flowui')
+    api project(':flowui-themes');
 
     api 'com.google.code.gson:gson'
 
     compileOnly project(':gridexport-flowui')
     compileOnly project(':security-flowui')
 
+    testImplementation 'org.springframework:spring-test'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api'
     testImplementation 'org.spockframework:spock-core'
     testImplementation 'org.spockframework:spock-spring'
     testImplementation 'org.apache.commons:commons-dbcp2'
+    testImplementation 'org.liquibase:liquibase-core'
     testImplementation 'org.springframework:spring-orm'
+    testImplementation project(':eclipselink')
+    testImplementation project(':security')
+    testImplementation project(':security-data')
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'
     testRuntimeOnly 'org.hsqldb:hsqldb'
     testRuntimeOnly 'org.slf4j:slf4j-simple'

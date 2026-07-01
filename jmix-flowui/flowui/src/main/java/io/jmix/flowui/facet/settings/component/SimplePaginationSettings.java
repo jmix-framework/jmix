@@ -17,7 +17,7 @@
 package io.jmix.flowui.facet.settings.component;
 
 import io.jmix.flowui.facet.settings.Settings;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Represents settings for a simple pagination component, allowing configuration of pagination properties

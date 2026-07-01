@@ -30,6 +30,7 @@ import io.jmix.search.index.mapping.ParameterKeys;
 import io.jmix.search.utils.BooleanParser;
 import io.jmix.search.utils.FileProcessor;
 import org.apache.commons.io.FilenameUtils;
+import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
+@NullMarked
 @Component("search_FilePropertyValueExtractor")
 public class FilePropertyValueExtractor extends AbstractPropertyValueExtractor {
 

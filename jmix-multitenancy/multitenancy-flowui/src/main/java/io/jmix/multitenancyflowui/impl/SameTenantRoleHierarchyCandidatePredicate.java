@@ -16,9 +16,11 @@
 
 package io.jmix.multitenancyflowui.impl;
 
+import io.jmix.multitenancy.core.TenantProvider;
 import io.jmix.security.model.BaseRole;
 import io.jmix.security.model.RoleSource;
 import io.jmix.securityflowui.util.RoleHierarchyCandidatePredicate;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Objects;
 
@@ -28,18 +30,31 @@ import java.util.Objects;
  */
 public class SameTenantRoleHierarchyCandidatePredicate implements RoleHierarchyCandidatePredicate {
 
+    @Autowired
+    protected TenantProvider tenantProvider;
+
     @Override
     public boolean test(BaseRole currentRole, BaseRole baseRoleCandidate) {
         if (RoleSource.ANNOTATED_CLASS.equals(baseRoleCandidate.getSource())) {
+            // Design-time roles are always allowed
             return true;
         }
-        if (currentRole == null || baseRoleCandidate == null) {
+        if (baseRoleCandidate == null) {
             return false;
         }
 
-        String childRoleTenantId = currentRole.getTenantId();
+        String currentRoleTenantId;
+        if (currentRole == null) {
+            // 'Null' current role means this role is during creation process - get tenant fron current user
+            String currentUserTenant = tenantProvider.getCurrentUserTenantId();
+            // Convert "NO_TENANT" to null to match null tenant of role
+            currentRoleTenantId = TenantProvider.NO_TENANT.equals(currentUserTenant) ? null : currentUserTenant;
+        } else {
+            currentRoleTenantId = currentRole.getTenantId();
+        }
+
         String baseRoleCandidateTenantId = baseRoleCandidate.getTenantId();
 
-        return Objects.equals(baseRoleCandidateTenantId, childRoleTenantId);
+        return Objects.equals(baseRoleCandidateTenantId, currentRoleTenantId);
     }
 }

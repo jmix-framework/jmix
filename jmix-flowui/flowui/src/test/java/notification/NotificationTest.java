@@ -40,7 +40,7 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
 
 @UiTest(viewBasePackages = "notification.view")
-@SpringBootTest(classes = {FlowuiTestAssistConfiguration.class, FlowuiTestConfiguration.class})
+@SpringBootTest(classes = {FlowuiTestConfiguration.class, FlowuiTestAssistConfiguration.class})
 public class NotificationTest {
 
     @Autowired

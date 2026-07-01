@@ -19,7 +19,7 @@ package io.jmix.searchflowui.view.result;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.Html;
+import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -38,6 +38,7 @@ import io.jmix.flowui.Notifications;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.kit.component.button.JmixButton;
+import io.jmix.flowui.theme.StyleUtility;
 import io.jmix.flowui.view.*;
 import io.jmix.search.SearchProperties;
 import io.jmix.search.searching.*;
@@ -221,10 +222,43 @@ public class SearchResultsView extends StandardView {
         return span;
     }
 
-    protected Div createHitDiv(String caption) {
+    protected Div createHitDiv(String fieldCaption, String highlights) {
         Div hitDiv = uiComponents.create(Div.class);
-        hitDiv.add(new Html(caption));
+        hitDiv.add(new Text(fieldCaption + " : "));
+        appendHighlights(hitDiv, highlights);
         return hitDiv;
+    }
+
+    protected void appendHighlights(Div hitDiv, String highlights) {
+        if (StringUtils.isEmpty(highlights)) {
+            return;
+        }
+
+        int position = 0;
+        while (position < highlights.length()) {
+            int openTagIndex = highlights.indexOf("<b>", position);
+            if (openTagIndex < 0) {
+                hitDiv.add(new Text(highlights.substring(position)));
+                return;
+            }
+
+            if (openTagIndex > position) {
+                hitDiv.add(new Text(highlights.substring(position, openTagIndex)));
+            }
+
+            int closeTagIndex = highlights.indexOf("</b>", openTagIndex + 3);
+            if (closeTagIndex < 0) {
+                hitDiv.add(new Text(highlights.substring(openTagIndex)));
+                return;
+            }
+
+            Span highlightSpan = new Span();
+            highlightSpan.getStyle().setFontWeight("bold");
+            highlightSpan.setText(highlights.substring(openTagIndex + 3, closeTagIndex));
+            hitDiv.add(highlightSpan);
+
+            position = closeTagIndex + 4;
+        }
     }
 
     protected SearchField createSearchField(SearchResult searchResult) {
@@ -244,8 +278,7 @@ public class SearchResultsView extends StandardView {
 
     protected JmixButton createInstanceButton(String entityName, SearchResultEntry entry) {
         JmixButton instanceBtn = uiComponents.create(JmixButton.class);
-        instanceBtn.addClassName("link");
-        instanceBtn.addThemeName("tertiary-inline");
+        instanceBtn.setClassName(StyleUtility.Button.LINK_BUTTON);
         instanceBtn.setText(messageTools.getEntityCaption(metadata.getClass(entry.getEntityName())) + " - "
                 + entry.getInstanceName());
         instanceBtn.addClickListener(event -> openEntityView(entry, entityName));
@@ -273,29 +306,23 @@ public class SearchResultsView extends StandardView {
         verticalLayout.setWidthFull();
         verticalLayout.setPadding(false);
         verticalLayout.setSpacing(false);
-        verticalLayout.getThemeList().add("spacing-s");
-        verticalLayout.addClassName("mt-l");
+        verticalLayout.setClassName("search-result-renderer");
 
         JmixButton instanceBtn = createInstanceButton(entry.getEntityName(), entry);
         verticalLayout.add(instanceBtn);
 
-        List<String> list = new ArrayList<>(entry.getFieldHits().size());
-        Set<String> uniqueCaptions = new HashSet<>();
+        Map<String, String> hitCaptions = new TreeMap<>();
         for (FieldHit fieldHit : entry.getFieldHits()) {
             String fieldCaption = formatFieldCaption(entry.getEntityName(), fieldHit.getFieldName());
-            if (!uniqueCaptions.contains(fieldCaption)) {
-                list.add("<div>" + fieldCaption + " : " + fieldHit.getHighlights() + "</div>");
-                uniqueCaptions.add(fieldCaption);
-            }
+            hitCaptions.putIfAbsent(fieldCaption, fieldHit.getHighlights());
         }
         VerticalLayout hitLayout = uiComponents.create(VerticalLayout.class);
         hitLayout.setPadding(false);
         hitLayout.setSpacing(false);
-        hitLayout.getThemeList().add("spacing-xs");
+        hitLayout.setClassName("search-result-renderer-hit-layout");
 
-        Collections.sort(list);
-        for (String caption : list) {
-            hitLayout.add(createHitDiv(caption));
+        for (Map.Entry<String, String> hitCaption : hitCaptions.entrySet()) {
+            hitLayout.add(createHitDiv(hitCaption.getKey(), hitCaption.getValue()));
         }
         verticalLayout.add(hitLayout);
 

@@ -33,7 +33,7 @@ public class NextMonthPredefinedDateInterval extends PredefinedDateInterval {
     }
 
     @Override
-    public String apply(String property) {
+    public String get() {
         return "@between(%s.%s, now+1, now+2, month)";
     }
 }

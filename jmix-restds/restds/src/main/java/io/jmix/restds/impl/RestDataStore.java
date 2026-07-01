@@ -29,7 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
@@ -230,11 +230,11 @@ public class RestDataStore extends AbstractDataStore {
         }
     }
 
-    private int getMaxResults(@Nullable LoadContext.Query query) {
+    private int getMaxResults(LoadContext.@Nullable Query query) {
         return query == null ? 0 : query.getMaxResults();
     }
 
-    private int getFirstResult(@Nullable LoadContext.Query query) {
+    private int getFirstResult(LoadContext.@Nullable Query query) {
         return query == null ? 0 : query.getFirstResult();
     }
 
@@ -252,7 +252,7 @@ public class RestDataStore extends AbstractDataStore {
     }
 
     @Nullable
-    private String createRestSort(@Nullable LoadContext.Query query) {
+    private String createRestSort(LoadContext.@Nullable Query query) {
         if (query == null || query.getSort() == null)
             return null;
         List<Sort.Order> sortOrders = query.getSort().getOrders();

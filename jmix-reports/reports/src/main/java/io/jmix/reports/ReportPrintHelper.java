@@ -18,7 +18,7 @@ package io.jmix.reports;
 
 import io.jmix.reports.yarg.structure.ReportOutputType;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;

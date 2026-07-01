@@ -18,7 +18,7 @@ package io.jmix.reportsrest.controller;
 
 import org.springframework.http.HttpStatus;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public class RestAPIException extends RuntimeException {
 

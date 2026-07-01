@@ -15,7 +15,9 @@
  */
 
 group = 'io.jmix.flowui'
-archivesBaseName = 'jmix-flowui-starter'
+base {
+    archivesName = 'jmix-flowui-starter'
+}
 
 dependencies {
     api project(':flowui')

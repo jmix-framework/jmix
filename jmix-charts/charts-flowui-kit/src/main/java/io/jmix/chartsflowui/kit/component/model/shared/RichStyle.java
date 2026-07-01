@@ -17,6 +17,7 @@
 package io.jmix.chartsflowui.kit.component.model.shared;
 
 import io.jmix.chartsflowui.kit.component.model.*;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Common rich text styles. Can be used in labels of series, axis or other components.
@@ -86,6 +87,7 @@ public class RichStyle extends ChartObservableObject
 
     protected Integer textShadowOffsetY;
 
+    @Nullable
     public Color getColor() {
         return color;
     }
@@ -95,6 +97,7 @@ public class RichStyle extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     public FontStyle getFontStyle() {
         return fontStyle;
     }
@@ -104,6 +107,7 @@ public class RichStyle extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     public String getFontWeight() {
         return fontWeight;
     }
@@ -113,6 +117,7 @@ public class RichStyle extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     public String getFontFamily() {
         return fontFamily;
     }
@@ -122,6 +127,7 @@ public class RichStyle extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     public Integer getFontSize() {
         return fontSize;
     }
@@ -131,6 +137,7 @@ public class RichStyle extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Align getAlign() {
         return align;
@@ -142,6 +149,7 @@ public class RichStyle extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public VerticalAlign getVerticalAlign() {
         return verticalAlign;
@@ -153,6 +161,7 @@ public class RichStyle extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     public Integer getLineHeight() {
         return lineHeight;
     }
@@ -162,6 +171,7 @@ public class RichStyle extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     public Color getBackgroundColor() {
         return backgroundColor;
     }
@@ -171,6 +181,7 @@ public class RichStyle extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Color getBorderColor() {
         return borderColor;
@@ -182,6 +193,7 @@ public class RichStyle extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getBorderWidth() {
         return borderWidth;
@@ -193,6 +205,7 @@ public class RichStyle extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     public String getBorderType() {
         return borderType;
     }
@@ -202,6 +215,7 @@ public class RichStyle extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     public Integer getBorderDashOffset() {
         return borderDashOffset;
     }
@@ -211,6 +225,7 @@ public class RichStyle extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getBorderRadius() {
         return borderRadius;
@@ -222,6 +237,7 @@ public class RichStyle extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Padding getPadding() {
         return padding;
@@ -245,6 +261,7 @@ public class RichStyle extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Color getShadowColor() {
         return shadowColor;
@@ -256,6 +273,7 @@ public class RichStyle extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getShadowBlur() {
         return shadowBlur;
@@ -267,6 +285,7 @@ public class RichStyle extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getShadowOffsetX() {
         return shadowOffsetX;
@@ -278,6 +297,7 @@ public class RichStyle extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getShadowOffsetY() {
         return shadowOffsetY;
@@ -289,6 +309,7 @@ public class RichStyle extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     public Integer getWidth() {
         return width;
     }
@@ -298,6 +319,7 @@ public class RichStyle extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     public Integer getHeight() {
         return height;
     }
@@ -307,6 +329,7 @@ public class RichStyle extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Color getTextBorderColor() {
         return textBorderColor;
@@ -318,6 +341,7 @@ public class RichStyle extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Double getTextBorderWidth() {
         return textBorderWidth;
@@ -329,6 +353,7 @@ public class RichStyle extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public String getTextBorderType() {
         return textBorderType;
@@ -340,6 +365,7 @@ public class RichStyle extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getTextBorderDashOffset() {
         return textBorderDashOffset;
@@ -351,6 +377,7 @@ public class RichStyle extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Color getTextShadowColor() {
         return textShadowColor;
@@ -362,6 +389,7 @@ public class RichStyle extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getTextShadowBlur() {
         return textShadowBlur;
@@ -373,6 +401,7 @@ public class RichStyle extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getTextShadowOffsetX() {
         return textShadowOffsetX;
@@ -384,6 +413,7 @@ public class RichStyle extends ChartObservableObject
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public Integer getTextShadowOffsetY() {
         return textShadowOffsetY;

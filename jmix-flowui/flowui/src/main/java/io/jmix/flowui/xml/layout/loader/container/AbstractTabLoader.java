@@ -25,7 +25,7 @@ public abstract class AbstractTabLoader extends AbstractContainerLoader<Tab>{
     public void loadComponent() {
         loadDouble(element, "flexGrow", resultComponent::setFlexGrow);
 
-        componentLoader().loadLabel(resultComponent, element);
+        loaderSupport.loadResourceString(element, "label", context.getMessageGroup(), resultComponent::setLabel);
         componentLoader().loadEnabled(resultComponent, element);
         componentLoader().loadTooltip(resultComponent, element);
         componentLoader().loadThemeNames(resultComponent, element);

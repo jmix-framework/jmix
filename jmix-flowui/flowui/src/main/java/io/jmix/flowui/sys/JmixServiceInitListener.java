@@ -17,8 +17,8 @@
 package io.jmix.flowui.sys;
 
 import com.google.common.base.Strings;
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.internal.LocaleUtil;
+import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.InternalServerError;
 import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.flow.router.internal.ErrorTargetEntry;
@@ -38,12 +38,12 @@ import io.jmix.flowui.view.ViewRegistry;
 import org.jsoup.nodes.DataNode;
 import org.jsoup.nodes.Element;
 import org.jsoup.parser.Tag;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
@@ -68,6 +68,7 @@ public class JmixServiceInitListener implements VaadinServiceInitListener, Appli
     protected ViewRegistry viewRegistry;
     protected UiExceptionHandlers uiExceptionHandlers;
     protected CoreProperties coreProperties;
+    protected LoginViewBeforeEnterHandler loginViewBeforeEnterHandler;
     protected JmixModules modules;
     protected Resources resources;
 
@@ -76,11 +77,13 @@ public class JmixServiceInitListener implements VaadinServiceInitListener, Appli
     public JmixServiceInitListener(ViewRegistry viewRegistry,
                                    UiExceptionHandlers uiExceptionHandlers,
                                    CoreProperties coreProperties,
+                                   LoginViewBeforeEnterHandler loginViewBeforeEnterHandler,
                                    JmixModules modules,
                                    Resources resources) {
         this.viewRegistry = viewRegistry;
         this.uiExceptionHandlers = uiExceptionHandlers;
         this.coreProperties = coreProperties;
+        this.loginViewBeforeEnterHandler = loginViewBeforeEnterHandler;
         this.modules = modules;
         this.resources = resources;
     }
@@ -110,10 +113,11 @@ public class JmixServiceInitListener implements VaadinServiceInitListener, Appli
     }
 
     protected void onUIInitEvent(UIInitEvent uiInitEvent) {
-        UI ui = uiInitEvent.getUI();
-        // retrieve ExtendedClientDetails to be cached
-        ui.getPage().retrieveExtendedClientDetails(extendedClientDetails -> {
-        });
+        uiInitEvent.getUI().addBeforeEnterListener(this::onLoginViewBeforeEnter);
+    }
+
+    protected void onLoginViewBeforeEnter(BeforeEnterEvent event) {
+        loginViewBeforeEnterHandler.handle(event);
     }
 
     protected void onSessionDestroyEvent(SessionDestroyEvent event) {

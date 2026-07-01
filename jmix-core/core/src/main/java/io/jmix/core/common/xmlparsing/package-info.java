@@ -14,7 +14,4 @@
  * limitations under the License.
  */
 
-@NonNullApi
 package io.jmix.core.common.xmlparsing;
-
-import org.springframework.lang.NonNullApi;

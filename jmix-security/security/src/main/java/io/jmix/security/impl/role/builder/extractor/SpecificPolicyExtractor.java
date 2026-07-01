@@ -20,12 +20,14 @@ import io.jmix.security.model.ResourcePolicy;
 import io.jmix.security.model.ResourcePolicyType;
 import io.jmix.security.role.annotation.SpecificPolicy;
 import io.jmix.security.role.annotation.SpecificPolicyContainer;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
 import java.util.*;
 
+@NullMarked
 @Component("sec_SpecificPolicyExtractor")
 public class SpecificPolicyExtractor implements ResourcePolicyExtractor {
 

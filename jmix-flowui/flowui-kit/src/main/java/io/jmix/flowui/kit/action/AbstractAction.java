@@ -20,12 +20,11 @@ import com.google.common.base.Preconditions;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.icon.AbstractIcon;
-import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.component.ComponentUtils;
 import io.jmix.flowui.kit.component.KeyCombination;
 import io.jmix.flowui.kit.event.EventBus;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.beans.PropertyChangeEvent;
 import java.util.EventObject;
@@ -102,24 +101,18 @@ public abstract class AbstractAction implements Action {
         }
     }
 
-    @Deprecated(since = "3.0", forRemoval = true)
     @Nullable
     @Override
-    public Icon getIcon() {
-        // Action returns a copy of an icon, because the icon is actually
-        // used by the components linked to this action and an icon cannot
-        // have several parents.
-        return icon instanceof Icon iconComponent
-                ? ComponentUtils.copyIconComponent(iconComponent)
-                : null;
+    public Component getIcon() {
+        return getIconComponent();
     }
 
-    @Deprecated(since = "3.0", forRemoval = true)
     @Override
-    public void setIcon(@Nullable Icon icon) {
+    public void setIcon(@Nullable Component icon) {
         setIconComponent(icon);
     }
 
+    @Deprecated(since = "3.0", forRemoval = true)
     @Nullable
     @Override
     public Component getIconComponent() {
@@ -131,6 +124,7 @@ public abstract class AbstractAction implements Action {
                 : null;
     }
 
+    @Deprecated(since = "3.0", forRemoval = true)
     @Override
     public void setIconComponent(@Nullable Component icon) {
         // Action returns a copy of an icon, because the icon is actually

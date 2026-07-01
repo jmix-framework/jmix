@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2026 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+    <changeSet id="1" author="aitls">
+        <!-- Drop the index that includes CREATED_DATE first. On SQL Server, altering the type of a
+             column that participates in an index fails (error 5074), so the migration would break there
+             without this. PostgreSQL, Oracle and HSQLDB rebuild the index automatically, but
+             dropping and recreating it is safe everywhere. The index is recreated below once the
+             column type is changed. -->
+        <dropIndex tableName="AITLS_AI_CHAT_MESSAGE_ENTITY" indexName="IDX_AITLS_AI_CHAT_MSG_ENT"/>
+
+        <modifyDataType tableName="AITLS_AI_CONVERSATION_ENTITY" columnName="CREATED_DATE"
+                        newDataType="${offsetDateTime.type}"/>
+        <modifyDataType tableName="AITLS_AI_CHAT_MESSAGE_ENTITY" columnName="CREATED_DATE"
+                        newDataType="${offsetDateTime.type}"/>
+
+        <createIndex tableName="AITLS_AI_CHAT_MESSAGE_ENTITY" indexName="IDX_AITLS_AI_CHAT_MSG_ENT">
+            <column name="CONVERSATION_ID"/>
+            <column name="CREATED_DATE"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="2" author="aitls">
+        <!-- Recreate the conversation FK with ON DELETE CASCADE so deleting a conversation also
+             removes its messages at the database level (a backstop for bulk/native deletes, in
+             addition to the JPA composition cascade on the DataManager path). -->
+        <dropForeignKeyConstraint baseTableName="AITLS_AI_CHAT_MESSAGE_ENTITY"
+                                  constraintName="FK_AITLS_AI_CHAT_MSG_ENT_CONV"/>
+
+        <addForeignKeyConstraint baseTableName="AITLS_AI_CHAT_MESSAGE_ENTITY"
+                                 baseColumnNames="CONVERSATION_ID"
+                                 constraintName="FK_AITLS_AI_CHAT_MSG_ENT_CONV"
+                                 referencedTableName="AITLS_AI_CONVERSATION_ENTITY"
+                                 referencedColumnNames="ID"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+</databaseChangeLog>

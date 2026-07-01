@@ -22,14 +22,15 @@ import io.jmix.core.Resources;
 import io.jmix.core.Stores;
 import io.jmix.data.DataConfiguration;
 import io.jmix.data.impl.JmixEntityManagerFactoryBean;
-import io.jmix.eclipselink.impl.entitycache.StandardQueryCache;
 import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.eclipselink.EclipselinkConfiguration;
 import io.jmix.eclipselink.impl.JmixEclipselinkTransactionManager;
-import org.springframework.boot.autoconfigure.cache.JCacheManagerCustomizer;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.context.annotation.Bean;
+import io.jmix.eclipselink.impl.entitycache.StandardQueryCache;
+import jakarta.persistence.EntityManagerFactory;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.cache.autoconfigure.JCacheManagerCustomizer;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
 import org.springframework.orm.jpa.JpaVendorAdapter;
@@ -38,7 +39,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.cache.Cache;
 import javax.cache.configuration.MutableConfiguration;
-import jakarta.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
 @AutoConfiguration
@@ -62,6 +62,7 @@ public class EclipselinkAutoConfiguration {
     protected PlatformTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
         return new JmixEclipselinkTransactionManager(Stores.MAIN, entityManagerFactory);
     }
+
 
     @Bean
     @SuppressWarnings({"rawtypes", "unchecked"})

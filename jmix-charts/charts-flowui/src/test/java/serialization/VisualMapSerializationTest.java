@@ -16,7 +16,6 @@
 
 package serialization;
 
-import elemental.json.JsonValue;
 import io.jmix.chartsflowui.kit.component.JmixChart;
 import io.jmix.chartsflowui.kit.component.model.ChartOptions;
 import io.jmix.chartsflowui.kit.component.model.shared.*;
@@ -28,6 +27,7 @@ import org.json.JSONException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
+import tools.jackson.databind.JsonNode;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -114,11 +114,11 @@ public class VisualMapSerializationTest extends AbstractSerializationTest {
 
         chartOptions.addVisualMap(visualMap);
 
-        JsonValue serializedJson = chartSerializer.serialize(chartOptions);
+        JsonNode serializedJson = chartSerializer.serialize(chartOptions);
 
         String expectedJson = readFile("visualMap/continuous-visual-map-result.json");
 
-        JSONAssert.assertEquals(expectedJson, serializedJson.toJson(), true);
+        JSONAssert.assertEquals(expectedJson, serializedJson.toString(), true);
     }
 
     @Test
@@ -199,12 +199,12 @@ public class VisualMapSerializationTest extends AbstractSerializationTest {
 
         chartOptions.addVisualMap(visualMap);
 
-        JsonValue serializedJson = chartSerializer.serialize(chartOptions);
+        JsonNode serializedJson = chartSerializer.serialize(chartOptions);
 
-        System.out.println(serializedJson.toJson());
+        System.out.println(serializedJson.toString());
 
         String expectedJson = readFile("visualMap/piecewise-visual-map-result.json");
 
-        JSONAssert.assertEquals(expectedJson, serializedJson.toJson(), true);
+        JSONAssert.assertEquals(expectedJson, serializedJson.toString(), true);
     }
 }

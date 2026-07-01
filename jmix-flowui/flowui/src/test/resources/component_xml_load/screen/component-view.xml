@@ -158,6 +158,12 @@
         <button id="buttonWithActionId"
                 action="buttonAction"/>
 
+        <button id="markdownTooltipButtonId"
+                text="markdownTooltipButton">
+            <tooltip text="**Bold** _italic_"
+                     markdown="true"/>
+        </button>
+
         <checkbox id="checkBoxId"
                   ariaLabel="ariaLabelString"
                   autofocus="true"
@@ -246,7 +252,6 @@
                   title="titleString"
                   visible="true"
                   width="100px"
-                  overlayClass="overlayClassName"
                   overlayWidth="300px">
             <tooltip text="tooltipText"
                      focusDelay="1"
@@ -560,7 +565,6 @@
                 themeNames="helper-above-field align-center"
                 emptySelectionCaption="emptySelectionString"
                 emptySelectionAllowed="true"
-                overlayClass="overlayClassName"
                 overlayWidth="300px"
                 noVerticalOverlap="true"
 
@@ -861,7 +865,6 @@
                         title="titleString"
                         visible="true"
                         width="100px"
-                        overlayClass="overlayClassName"
                         overlayWidth="300px"
 
                         dataContainer="orderDc" property="customer">
@@ -885,8 +888,7 @@
                   tabIndex="3"
                   themeNames="small primary"
                   title="dropdownButtonTitle"
-                  visible="true"
-                  overlayClass="overlayClassName">
+                  visible="true">
             <items>
                 <actionItem id="firstActionItem">
                     <action id="action2" icon="vaadin:diploma"/>
@@ -1065,6 +1067,7 @@
                     minWidth="80px"
                     mode="SQL"
                     printMarginColumn="120"
+                    placeholder="placeholder"
                     readOnly="true"
                     required="true"
                     requiredMessage="requiredMessageString"
@@ -1074,6 +1077,7 @@
                     suggestOn="{E}\."
                     tabIndex="3"
                     textWrap="true"
+                    tabSize="2"
                     useSoftTabs="false"
                     theme="TERMINAL"
                     title="titleString"

@@ -17,131 +17,64 @@
 package io.jmix.securityflowui.security;
 
 import com.google.common.base.Strings;
-import com.vaadin.flow.internal.AnnotationReader;
-import com.vaadin.flow.router.Route;
-import com.vaadin.flow.router.internal.RouteUtil;
-import com.vaadin.flow.server.VaadinServletContext;
 import com.vaadin.flow.spring.security.VaadinDefaultRequestCache;
-import com.vaadin.flow.spring.security.VaadinWebSecurity;
+import com.vaadin.flow.spring.security.VaadinSecurityConfigurer;
 import io.jmix.flowui.UiProperties;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.ViewRegistry;
 import io.jmix.security.configurer.JmixRequestCacheRequestMatcher;
 import io.jmix.security.util.JmixHttpSecurityUtils;
-import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.h2.H2ConsoleProperties;
-import org.springframework.boot.autoconfigure.web.ServerProperties;
-import org.springframework.context.ApplicationContext;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.savedrequest.RequestCache;
-import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
-import org.springframework.security.web.util.matcher.*;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Provides default Vaadin and Jmix FlowUI security to the project.
  */
-public class FlowuiVaadinWebSecurity extends VaadinWebSecurity {
+public class FlowuiVaadinWebSecurity extends AbstractFlowuiWebSecurity {
 
-    private static Logger log = LoggerFactory.getLogger(FlowuiVaadinWebSecurity.class);
+    private static final Logger log = LoggerFactory.getLogger(FlowuiVaadinWebSecurity.class);
 
+    @Autowired
     protected UiProperties uiProperties;
+    @Autowired
     protected ViewRegistry viewRegistry;
-    protected ApplicationContext applicationContext;
-    protected ServerProperties serverProperties;
-    protected H2ConsoleProperties h2ConsoleProperties;
-    protected ServletContext servletContext;
-    protected List<JmixRequestCacheRequestMatcher> requestCacheRequestMatchers;
 
-    @Autowired
-    public void setApplicationContext(ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
-    }
-
-    @Autowired
-    public void setUiProperties(UiProperties uiProperties) {
-        this.uiProperties = uiProperties;
-    }
-
-    @Autowired
-    public void setViewRegistry(ViewRegistry viewRegistry) {
-        this.viewRegistry = viewRegistry;
-    }
-
-    @Autowired
-    public void setServerProperties(ServerProperties serverProperties) {
-        this.serverProperties = serverProperties;
-    }
-
-    @Autowired(required = false)
-    public void setH2ConsoleProperties(H2ConsoleProperties h2ConsoleProperties) {
-        this.h2ConsoleProperties = h2ConsoleProperties;
-    }
-
-    @Autowired
-    public void setServletContext(ServletContext servletContext) {
-        this.servletContext = servletContext;
-    }
+    protected List<JmixRequestCacheRequestMatcher> requestCacheRequestMatchers = Collections.emptyList();
 
     @Autowired
     public void setVaadinDefaultRequestCache(VaadinDefaultRequestCache vaadinDefaultRequestCache,
                                              ObjectProvider<List<JmixRequestCacheRequestMatcher>> requestCacheRequestMatchersProvider) {
-        // Configure request cache to do not save resource
-        // requests as they are not valid redirect routes.
         this.requestCacheRequestMatchers = requestCacheRequestMatchersProvider.getIfAvailable(Collections::emptyList);
         vaadinDefaultRequestCache.setDelegateRequestCache(getDelegateRequestCache());
     }
 
     @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        //apply Jmix configuration
-        configureJmixSpecifics(http);
-
-        //apply Vaadin configuration
-        super.configure(http);
+    protected void configureVaadinSpecifics(HttpSecurity http) {
+        http.with(VaadinSecurityConfigurer.vaadin(), this::initLoginView);
     }
 
     /**
      * Configures the {@link HttpSecurity} by adding Jmix-specific settings.
      */
+    @Override
     protected void configureJmixSpecifics(HttpSecurity http) throws Exception {
-        JmixHttpSecurityUtils.configureAnonymous(http);
-        JmixHttpSecurityUtils.configureSessionManagement(http);
+        super.configureJmixSpecifics(http);
         JmixHttpSecurityUtils.configureRememberMe(http);
-        JmixHttpSecurityUtils.configureFrameOptions(http);
-
-        http.authorizeHttpRequests(urlRegistry -> {
-            //We need such request matcher here in order to permit access to login page when a query parameter is passed.
-            //For example, in case of using the multi-tenancy add-on we need to pass the query parameter: /login?tenantId=mytenant
-            //By default, only access to /login is allowed and access to /login?someParam=someVal is blocked. The request
-            //matcher below allows access to login view with any query parameter.
-            String loginPath = getLoginPath();
-            urlRegistry.requestMatchers(request -> loginPath.equals(request.getRequestURI())).permitAll();
-
-            // Permit default Spring framework error page (/error)
-            MvcRequestMatcher.Builder mvcRequestMatcherBuilder = new MvcRequestMatcher.Builder(applicationContext.getBean(HandlerMappingIntrospector.class));
-            MvcRequestMatcher errorPageRequestMatcher = mvcRequestMatcherBuilder.pattern(serverProperties.getError().getPath());
-            urlRegistry.requestMatchers(errorPageRequestMatcher).permitAll();
-        });
-
-        initLoginView(http);
     }
 
     /**
-     * Configures login view by finding login view id in application properties.
+     * Configures a login view by finding login view id in application properties.
      */
-    protected void initLoginView(HttpSecurity http) throws Exception {
+    protected void initLoginView(VaadinSecurityConfigurer configurer) {
         String loginViewId = uiProperties.getLoginViewId();
         if (Strings.isNullOrEmpty(loginViewId)) {
             log.debug("Login view Id is not defined");
@@ -149,54 +82,12 @@ public class FlowuiVaadinWebSecurity extends VaadinWebSecurity {
         }
         Class<? extends View<?>> controllerClass =
                 viewRegistry.getViewInfo(loginViewId).getControllerClass();
-        setLoginView(http, controllerClass, getLogoutSuccessUrl());
+        configurer.loginView(controllerClass, getLogoutSuccessUrl());
     }
 
     protected String getLogoutSuccessUrl() {
         String contextPath = servletContext.getContextPath();
         return contextPath.startsWith("/") ? contextPath : "/" + contextPath;
-    }
-
-    protected String getLoginPath() {
-        String loginViewId = uiProperties.getLoginViewId();
-        Class<? extends View<?>> loginViewClass =
-                viewRegistry.getViewInfo(loginViewId).getControllerClass();
-
-        Optional<Route> route = AnnotationReader.getAnnotationFor(loginViewClass, Route.class);
-
-        if (route.isEmpty()) {
-            throw new IllegalArgumentException(
-                    "Unable find a @Route annotation on the login view "
-                            + loginViewClass.getName());
-        }
-
-        if (!(applicationContext instanceof WebApplicationContext)) {
-            throw new RuntimeException(
-                    "VaadinWebSecurity cannot be used without WebApplicationContext.");
-        }
-
-        VaadinServletContext vaadinServletContext = new VaadinServletContext(
-                ((WebApplicationContext) applicationContext).getServletContext());
-        String loginPath = RouteUtil.getRoutePath(vaadinServletContext, loginViewClass);
-        if (!loginPath.startsWith("/")) {
-            loginPath = "/" + loginPath;
-        }
-        loginPath = applyUrlMapping(loginPath);
-
-        return loginPath;
-    }
-
-    /**
-     * Temporary workaround until https://github.com/vaadin/flow/issues/19075 is fixed
-     */
-    @Override
-    protected void configure(WebSecurity web) throws Exception {
-        super.configure(web);
-        web.ignoring().requestMatchers(new AntPathRequestMatcher("/VAADIN/push/**"));
-
-        if (h2ConsoleProperties != null && h2ConsoleProperties.isEnabled()) {
-            web.ignoring().requestMatchers(new AntPathRequestMatcher(h2ConsoleProperties.getPath() + "/**"));
-        }
     }
 
     protected RequestCache getDelegateRequestCache() {

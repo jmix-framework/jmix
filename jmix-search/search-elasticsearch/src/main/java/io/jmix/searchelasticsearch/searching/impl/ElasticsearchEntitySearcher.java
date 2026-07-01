@@ -1,10 +1,28 @@
+/*
+ * Copyright 2026 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.jmix.searchelasticsearch.searching.impl;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
+import co.elastic.clients.elasticsearch.core.search.HighlightField;
 import co.elastic.clients.elasticsearch.core.search.Hit;
 import co.elastic.clients.elasticsearch.core.search.HitsMetadata;
+import co.elastic.clients.util.NamedValue;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -22,6 +40,7 @@ import io.jmix.searchelasticsearch.searching.strategy.ElasticsearchSearchStrateg
 import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.constraint.SecureOperations;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,6 +51,7 @@ import java.util.stream.Collectors;
 /**
  * Implementation for Elasticsearch
  */
+@NullMarked
 public class ElasticsearchEntitySearcher extends AbstractEntitySearcher implements EntitySearcher {
 
     private static final Logger log = LoggerFactory.getLogger(ElasticsearchEntitySearcher.class);
@@ -73,7 +93,7 @@ public class ElasticsearchEntitySearcher extends AbstractEntitySearcher implemen
 
     @Override
     public SearchResult search(SearchContext searchContext, String searchStrategyName) {
-        log.debug("Perform search by context '{}'", searchContext);
+        log.debug("Perform search by context '{}' and strategy '{}'", searchContext, searchStrategyName);
 
         ElasticsearchSearchStrategy searchStrategy = resolveSearchStrategy(searchStrategyName);
         SearchResultImpl searchResult = initSearchResult(searchContext, searchStrategy);
@@ -118,7 +138,12 @@ public class ElasticsearchEntitySearcher extends AbstractEntitySearcher implemen
     }
 
     protected ElasticsearchSearchStrategy resolveSearchStrategy(String searchStrategyName) {
-        return searchStrategyManager.getSearchStrategyByName(searchStrategyName);
+        ElasticsearchSearchStrategy strategy = searchStrategyManager.findSearchStrategyByName(searchStrategyName);
+        if (strategy == null) {
+            strategy = searchStrategyManager.getDefaultSearchStrategy();
+            log.warn("Search strategy with name '{}' not found - using default strategy '{}'", searchStrategyName, strategy.getName());
+        }
+        return strategy;
     }
 
     protected SearchRequestContext<SearchRequest.Builder> createRequest(SearchContext searchContext,
@@ -145,11 +170,16 @@ public class ElasticsearchEntitySearcher extends AbstractEntitySearcher implemen
     }
 
     protected void configureHighlight(SearchRequest.Builder requestBuilder) {
+        HighlightField highlightField = HighlightField.of(fieldBuilder ->
+                fieldBuilder
+                        .preTags("<b>")
+                        .postTags("</b>")
+        );
+
         requestBuilder.highlight(highlightBuilder ->
-                highlightBuilder.requireFieldMatch(true)
-                        .fields("*", highlightFieldBuilder ->
-                                highlightFieldBuilder.preTags("<b>").postTags("</b>")
-                        )
+                highlightBuilder
+                        .requireFieldMatch(true)
+                        .fields(new NamedValue<>("*", highlightField))
         );
     }
 

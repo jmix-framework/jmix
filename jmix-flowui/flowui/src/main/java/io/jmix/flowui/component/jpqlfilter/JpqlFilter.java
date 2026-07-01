@@ -23,7 +23,7 @@ import io.jmix.core.querycondition.JpqlCondition;
 import io.jmix.flowui.component.filter.SingleFilterComponentBase;
 import io.jmix.flowui.model.DataLoader;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collections;
 

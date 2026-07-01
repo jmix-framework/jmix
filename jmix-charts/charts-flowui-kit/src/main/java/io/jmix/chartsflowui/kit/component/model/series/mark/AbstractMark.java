@@ -18,6 +18,7 @@ package io.jmix.chartsflowui.kit.component.model.series.mark;
 
 import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
 import io.jmix.chartsflowui.kit.component.model.series.Label;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Base class for mark point, mark line and mark area.
@@ -46,6 +47,7 @@ public abstract class AbstractMark<T extends AbstractMark<T>> extends ChartObser
 
     protected Integer animationDelayUpdate;
 
+    @Nullable
     public Boolean getSilent() {
         return silent;
     }
@@ -55,6 +57,7 @@ public abstract class AbstractMark<T extends AbstractMark<T>> extends ChartObser
         markAsDirty();
     }
 
+    @Nullable
     public Label getLabel() {
         return label;
     }
@@ -68,6 +71,7 @@ public abstract class AbstractMark<T extends AbstractMark<T>> extends ChartObser
         addChild(label);
     }
 
+    @Nullable
     public Boolean getAnimation() {
         return animation;
     }
@@ -77,6 +81,7 @@ public abstract class AbstractMark<T extends AbstractMark<T>> extends ChartObser
         markAsDirty();
     }
 
+    @Nullable
     public Integer getAnimationThreshold() {
         return animationThreshold;
     }
@@ -86,6 +91,7 @@ public abstract class AbstractMark<T extends AbstractMark<T>> extends ChartObser
         markAsDirty();
     }
 
+    @Nullable
     public Integer getAnimationDuration() {
         return animationDuration;
     }
@@ -95,6 +101,7 @@ public abstract class AbstractMark<T extends AbstractMark<T>> extends ChartObser
         markAsDirty();
     }
 
+    @Nullable
     public String getAnimationEasing() {
         return animationEasing;
     }
@@ -104,6 +111,7 @@ public abstract class AbstractMark<T extends AbstractMark<T>> extends ChartObser
         markAsDirty();
     }
 
+    @Nullable
     public Integer getAnimationDelay() {
         return animationDelay;
     }
@@ -113,6 +121,7 @@ public abstract class AbstractMark<T extends AbstractMark<T>> extends ChartObser
         markAsDirty();
     }
 
+    @Nullable
     public Integer getAnimationDurationUpdate() {
         return animationDurationUpdate;
     }
@@ -122,6 +131,7 @@ public abstract class AbstractMark<T extends AbstractMark<T>> extends ChartObser
         markAsDirty();
     }
 
+    @Nullable
     public String getAnimationEasingUpdate() {
         return animationEasingUpdate;
     }
@@ -131,6 +141,7 @@ public abstract class AbstractMark<T extends AbstractMark<T>> extends ChartObser
         markAsDirty();
     }
 
+    @Nullable
     public Integer getAnimationDelayUpdate() {
         return animationDelayUpdate;
     }

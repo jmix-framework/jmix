@@ -41,6 +41,9 @@ public class PivotTableFormatter extends AbstractFormatter {
     @Autowired
     private BeanFactory beanFactory;
 
+    @Autowired
+    protected ReportValueConverter reportValueConverter;
+
     public PivotTableFormatter(FormatterFactoryInput formatterFactoryInput) {
         super(formatterFactoryInput);
         this.rootBand = formatterFactoryInput.getRootBand();
@@ -61,7 +64,7 @@ public class PivotTableFormatter extends AbstractFormatter {
                 .filter(band -> band.getData() != null && !band.getData().isEmpty())
                 .map(band -> {
                     KeyValueEntity entity = new KeyValueEntity();
-                    band.getData().forEach(entity::setValue);
+                    band.getData().forEach((name, value) -> entity.setValue(name, reportValueConverter.convertValue(value)));
                     return entity;
                 })
                 .collect(Collectors.toList());

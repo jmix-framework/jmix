@@ -1,7 +1,13 @@
 <%
 def isDataGridTable = tableType.getXmlName().equals("dataGrid")
+def isGroupDataGridTable = tableType.getXmlName().equals("groupg:groupDataGrid")
 def pluralForm = api.pluralForm(entity.uncapitalizedClassName)
 def tableDl = entity.uncapitalizedClassName.equals(pluralForm) ? pluralForm + "CollectionDl" : pluralForm + "Dl"
+def useUpdateServiceSaveDelegate = useUpdateService && binding.hasVariable('updateService') && updateService != null && updateService.isSaveDelegate()
+def useUpdateServiceRemoveDelegate = useUpdateService && binding.hasVariable('updateService') && updateService != null && updateService.isRemoveDelegate() && tableActions.contains("remove")
+def useRepositorySaveDelegate = useDataRepositories && !useUpdateServiceSaveDelegate
+def useRepositoryRemoveDelegate = useDataRepositories && tableActions.contains("remove") && !useUpdateServiceRemoveDelegate
+def useUpdateServiceInController = useUpdateServiceSaveDelegate || useUpdateServiceRemoveDelegate
 
 private String getRepositoryIdFqn() {
     try {
@@ -43,7 +49,9 @@ import io.jmix.flowui.UiViewProperties;
 import io.jmix.flowui.accesscontext.UiEntityAttributeContext;
 import io.jmix.flowui.action.SecuredBaseAction;
 import io.jmix.flowui.component.UiComponentUtils;
-import <%if (isDataGridTable) {%> io.jmix.flowui.component.grid.DataGrid <%} else {%> io.jmix.flowui.component.grid.TreeDataGrid <%}%>;
+import <%if (isDataGridTable) {%> io.jmix.flowui.component.grid.DataGrid <%}
+        else if (isGroupDataGridTable) {%>io.jmix.groupgridflowui.component.GroupDataGrid <%}
+        else {%> io.jmix.flowui.component.grid.TreeDataGrid <%}%>;
 import io.jmix.flowui.data.EntityValueSource;
 import io.jmix.flowui.data.SupportsValueSource;
 import io.jmix.flowui.kit.action.Action;
@@ -56,15 +64,16 @@ import io.jmix.flowui.view.*;
 import org.springframework.beans.factory.annotation.Autowired;
 <%if (useDataRepositories){%>import org.springframework.data.domain.Pageable;
 import io.jmix.core.repository.JmixDataRepositoryContext;
-import java.util.Collection;
 import java.util.List;
 import io.jmix.core.LoadContext;
-import io.jmix.core.SaveContext;
-import io.jmix.core.FetchPlan;
 
 import java.util.Optional;
-import java.util.Set;
 import ${getRepositoryIdFqn()};
+<%}%>
+<%if (useRepositoryRemoveDelegate || useUpdateServiceRemoveDelegate){%>import java.util.Collection;
+<%}%>
+<%if (useRepositorySaveDelegate || useUpdateServiceSaveDelegate){%>import io.jmix.core.SaveContext;
+import java.util.Set;
 <%}%>
 import static io.jmix.flowui.component.delegate.AbstractFieldDelegate.PROPERTY_INVALID;
 <%if (classComment) {%>
@@ -78,6 +87,9 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
 <%if (useDataRepositories){%>
     @Autowired
     private ${repository.getQualifiedName()} repository;
+<%}%><%if (useUpdateServiceInController){%>
+    @Autowired
+    private ${updateService.getQualifiedName()} updateService;
 <%}%>
     @ViewComponent
     private DataContext dataContext;
@@ -95,7 +107,7 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
     private VerticalLayout listLayout;
 
     @ViewComponent
-    private <%if (isDataGridTable) {%> DataGrid<%} else {%> TreeDataGrid<%}%><${entity.className}> ${tableId};
+    private <%if (isDataGridTable) {%> DataGrid<%} else if (isGroupDataGridTable) {%> GroupDataGrid<%} else {%> TreeDataGrid<%}%><${entity.className}> ${tableId};
 
     @ViewComponent
     private FormLayout form;
@@ -123,7 +135,7 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
     @Subscribe
     public void onInit(final InitEvent event) {
         ${tableId}.getActions().forEach(action -> {
-            if (action instanceof SecuredBaseAction secured) {
+            if (action instanceof SecuredBaseAction<?> secured) {
                 secured.addEnabledRule(() -> listLayout.isEnabled());
             }
         });
@@ -381,7 +393,7 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
     @Install(to = "pagination", subject = "totalCountByRepositoryDelegate")
     private Long paginationTotalCountByRepositoryDelegate(final JmixDataRepositoryContext context) {
         return repository.count(context);
-    }<%if (tableActions.contains("remove")) {%>
+    }<%if (useRepositoryRemoveDelegate) {%>
 
     @Install(to = "${tableId}.removeAction", subject = "delegate")
     private void ${tableId}RemoveDelegate(final Collection<${entity.className}> collection) {
@@ -389,9 +401,9 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
     }<%}%>
 
     @Install(to = "${detailDl}", target = Target.DATA_LOADER, subject = "loadFromRepositoryDelegate")
-    private Optional<${entity.className}> detailLoadDelegate(${getRepositoryIdClassName()} id, FetchPlan fetchPlan){
-        return repository.findById(id, fetchPlan);
-    }
+    private Optional<${entity.className}> detailLoadDelegate(${getRepositoryIdClassName()} id, JmixDataRepositoryContext context){
+        return repository.findById(id, context);
+    }<%}%><%if (useRepositorySaveDelegate){%>
 
     @Install(target = Target.DATA_CONTEXT)
     private Set<Object> saveDelegate(SaveContext saveContext) {
@@ -407,5 +419,28 @@ public class ${viewControllerName} extends StandardListView<${entity.className}>
             out.println("        // ${entity.className} has the following @Composition attributes: ${compositeAttrs.join(', ')}.")
             out.println("        // Make sure they have CascadeType.ALL in @OneToMany annotation.")
         }%>return Set.of(repository.save(${detailDc}.getItem()));
+    }<%}%>
+<%if (useUpdateServiceRemoveDelegate){%>
+
+    @Install(to = "${tableId}.removeAction", subject = "delegate")
+    private void ${tableId}RemoveDelegate(final Collection<${entity.className}> collection) {
+        collection.forEach(updateService::remove);
+    }<%}%>
+<%if (useUpdateServiceSaveDelegate){%>
+
+    @Install(target = Target.DATA_CONTEXT)
+    private Set<Object> saveDelegate(SaveContext saveContext) {
+        <%
+        def compositeAttrs = []
+        detailFetchPlan.orderedRootProperties.each { property ->
+                def propAttr = detailFetchPlan.entity.getAttribute(property.name)
+            if (propAttr != null && propAttr.hasAnnotation('Composition')) {
+                compositeAttrs << property.name
+            }
+        }
+        if (!compositeAttrs.isEmpty()) {
+            out.println("        // ${entity.className} has the following @Composition attributes: ${compositeAttrs.join(', ')}.")
+            out.println("        // Make sure they have CascadeType.ALL in @OneToMany annotation.")
+        }%>return Set.of(updateService.save(${detailDc}.getItem(), saveContext));
     }<%}%>
 }

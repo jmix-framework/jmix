@@ -22,6 +22,7 @@ import io.jmix.dataimport.extractor.data.ImportedData;
 import io.jmix.dataimport.extractor.data.ImportedDataExtractor;
 import io.jmix.dataimport.extractor.data.ImportedDataExtractors;
 import io.jmix.dataimport.result.ImportResult;
+import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
@@ -31,6 +32,7 @@ import org.springframework.stereotype.Component;
 import java.io.InputStream;
 
 @Component("datimp_DataImporter")
+@NullMarked
 public class DataImporterImpl implements DataImporter {
     protected static final Logger log = LoggerFactory.getLogger(DataImporter.class);
     @Autowired

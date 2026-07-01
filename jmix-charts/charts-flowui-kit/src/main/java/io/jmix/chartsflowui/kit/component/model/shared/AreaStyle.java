@@ -16,6 +16,8 @@
 
 package io.jmix.chartsflowui.kit.component.model.shared;
 
+import org.jspecify.annotations.Nullable;
+
 /**
  * Common style of area.
  */
@@ -23,6 +25,7 @@ public class AreaStyle extends AbstractAreaStyle<AreaStyle> {
 
     protected Color[] colors;
 
+    @Nullable
     public Color[] getColors() {
         return colors;
     }

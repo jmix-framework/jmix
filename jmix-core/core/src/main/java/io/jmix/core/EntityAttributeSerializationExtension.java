@@ -19,7 +19,8 @@ package io.jmix.core;
 import com.google.gson.JsonElement;
 import io.jmix.core.metamodel.model.MetaProperty;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /**
  * An extension point for a mechanism to serialize and deserialize entity to JSON.
@@ -29,6 +30,7 @@ import org.springframework.lang.Nullable;
  * a {@link MetaProperty} value. The supported {@link MetaProperty} is determined by the
  * {@link #supports(MetaProperty)} method.
  */
+@NullMarked
 public interface EntityAttributeSerializationExtension {
 
     /**

@@ -35,7 +35,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 import org.xhtmlrenderer.layout.SharedContext;
 import org.xhtmlrenderer.pdf.ITextFSImage;
@@ -77,6 +77,8 @@ public class JmixHtmlFormatter extends HtmlFormatter {
     protected FileStorageLocator fileStorageLocator;
     @Autowired
     protected Resources resources;
+    @Autowired
+    protected ReportsGroovyFeatureSupport groovyFeatureSupport;
 
     public JmixHtmlFormatter(FormatterFactoryInput formatterFactoryInput) {
         super(formatterFactoryInput);
@@ -125,6 +127,14 @@ public class JmixHtmlFormatter extends HtmlFormatter {
             File systemFontsDir = new File(reportsProperties.getPdfFontsDirectory());
             loadFontsFromDirectory(converter, systemFontsDir);
         }
+    }
+
+    @Override
+    protected void writeHtmlDocument(BandData rootBand, OutputStream outputStream) {
+        if (reportTemplate.isGroovy() && !groovyFeatureSupport.isGroovyEnabled()) {
+            groovyFeatureSupport.throwGroovyDisabled("Groovy HTML template");
+        }
+        super.writeHtmlDocument(rootBand, outputStream);
     }
 
     protected String resolveResourceUri(String uri) {

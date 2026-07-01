@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
@@ -120,10 +120,8 @@ public class ExportAction extends ListDataComponentAction<ExportAction, Object> 
 
     @Autowired
     public void setGridExportProperties(GridExportProperties gridExportProperties) {
-        this.availableExportModes = gridExportProperties.getDefaultExportModes().stream()
-                .map(ExportMode::valueOf)
-                .toList();
-        this.columnsToExport = ColumnsToExport.valueOf(gridExportProperties.getDefaultColumnsToExport());
+        this.availableExportModes = gridExportProperties.getDefaultExportModes();
+        this.columnsToExport = gridExportProperties.getDefaultColumnsToExport();
     }
 
     /**
@@ -345,19 +343,19 @@ public class ExportAction extends ListDataComponentAction<ExportAction, Object> 
     }
 
     protected Action createExportSelectedAction(Predicate<Grid.Column<Object>> primaryFilterPredicate) {
-        return new SecuredBaseAction("ExportMode.SELECTED_ROWS")
+        return new SecuredBaseAction<>("ExportMode.SELECTED_ROWS")
                 .withText(messages.getMessage(ExportMode.SELECTED_ROWS))
                 .withHandler(event -> doExport(ExportMode.SELECTED_ROWS, primaryFilterPredicate));
     }
 
     protected Action createExportAllAction(Predicate<Grid.Column<Object>> primaryFilterPredicate) {
-        return new SecuredBaseAction("ExportMode.CURRENT_PAGE")
+        return new SecuredBaseAction<>("ExportMode.CURRENT_PAGE")
                 .withText(messages.getMessage(ExportMode.ALL_ROWS))
                 .withHandler(event -> doExport(ExportMode.ALL_ROWS, primaryFilterPredicate));
     }
 
     protected Action createCurrentPageAction(Predicate<Grid.Column<Object>> primaryFilterPredicate) {
-        return new SecuredBaseAction("ExportMode.CURRENT_PAGE")
+        return new SecuredBaseAction<>("ExportMode.CURRENT_PAGE")
                 .withText(messages.getMessage(ExportMode.CURRENT_PAGE))
                 .withHandler(event -> doExport(ExportMode.CURRENT_PAGE, primaryFilterPredicate));
     }

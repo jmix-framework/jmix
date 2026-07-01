@@ -96,6 +96,14 @@ public class MBeanOperationResultView extends StandardView {
 
     @Subscribe
     public void onBeforeShow(final BeforeShowEvent event) {
+        if (!isWriteAndInvokeEnabled()) {
+            notifications.create(messageBundle.getMessage("writeAndInvokeDisabled"))
+                    .withType(Notifications.Type.ERROR)
+                    .show();
+            closeWithDefaultAction();
+            return;
+        }
+
         BackgroundTask<Long, Object> task =
                 new OperationBackgroundTask(jmxConsoleProperties.getJmxConsoleMBeanOperationTimeoutSec(), this);
         taskHandler = backgroundWorker.handle(task);
@@ -139,6 +147,10 @@ public class MBeanOperationResultView extends StandardView {
         textArea.setValue(message);
         textArea.setReadOnly(true);
         return textArea;
+    }
+
+    protected boolean isWriteAndInvokeEnabled() {
+        return coreProperties.isUnsafeRuntimeFeaturesEnabled() && jmxConsoleProperties.isWriteAndInvokeEnabled();
     }
 
 

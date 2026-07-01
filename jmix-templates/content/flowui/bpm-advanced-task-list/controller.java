@@ -49,7 +49,7 @@ import org.flowable.task.api.TaskQuery;
 import org.flowable.task.service.impl.TaskQueryProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 import java.util.Optional;
@@ -184,9 +184,9 @@ public class ${controllerName} extends StandardListView<TaskData> {
     public void onFilterBtnClick(final ClickEvent<JmixButton> event) {
         filterContainer.setVisible(!filterContainer.isVisible());
         if (filterContainer.isVisible()) {
-            filterBtn.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+            filterBtn.addThemeVariants(ButtonVariant.PRIMARY);
         } else {
-            filterBtn.removeThemeVariants(ButtonVariant.LUMO_PRIMARY);
+            filterBtn.removeThemeVariants(ButtonVariant.PRIMARY);
         }
     }
 

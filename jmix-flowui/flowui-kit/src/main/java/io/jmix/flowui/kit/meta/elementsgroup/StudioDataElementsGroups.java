@@ -20,6 +20,8 @@ import io.jmix.flowui.kit.meta.StudioElementsGroup;
 import io.jmix.flowui.kit.meta.StudioProperty;
 import io.jmix.flowui.kit.meta.StudioPropertyType;
 import io.jmix.flowui.kit.meta.StudioUiKit;
+import io.jmix.flowui.kit.meta.StudioXmlAttributes;
+import io.jmix.flowui.kit.meta.StudioXmlElements;
 
 @StudioUiKit
 interface StudioDataElementsGroups {
@@ -27,12 +29,12 @@ interface StudioDataElementsGroups {
     @StudioElementsGroup(
             name = "Refresh",
             elementClassFqn = "io.jmix.flowui.facet.DataLoadCoordinator.Trigger",
-            xmlElement = "refresh",
+            xmlElement = StudioXmlElements.REFRESH,
             icon = "io/jmix/flowui/kit/meta/icon/elementsgroup/refresh.svg",
             target = {"io.jmix.flowui.facet.DataLoadCoordinator"},
             unlimitedCount = true,
             properties = {
-                    @StudioProperty(xmlAttribute = "loader", type = StudioPropertyType.DATA_LOADER_REF, required = true)
+                    @StudioProperty(xmlAttribute = StudioXmlAttributes.LOADER, type = StudioPropertyType.DATA_LOADER_REF, required = true)
             }
     )
     void refresh();
@@ -40,11 +42,11 @@ interface StudioDataElementsGroups {
     @StudioElementsGroup(
             name = "Properties",
             elementClassFqn = "io.jmix.core.impl.keyvalue.KeyValueMetaProperty",
-            xmlElement = "properties",
+            xmlElement = StudioXmlElements.PROPERTIES,
             icon = "io/jmix/flowui/kit/meta/icon/elementsgroup/properties.svg",
             target = {"io.jmix.flowui.model.KeyValueContainer"},
             properties = {
-                    @StudioProperty(xmlAttribute = "idProperty", type = StudioPropertyType.STRING)
+                    @StudioProperty(xmlAttribute = StudioXmlAttributes.ID_PROPERTY, type = StudioPropertyType.STRING)
             }
     )
     void properties();

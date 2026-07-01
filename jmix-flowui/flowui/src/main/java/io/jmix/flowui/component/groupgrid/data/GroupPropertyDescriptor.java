@@ -18,6 +18,7 @@ package io.jmix.flowui.component.groupgrid.data;
 
 import io.jmix.core.annotation.Experimental;
 import io.jmix.flowui.component.groupgrid.GroupProperty;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.Collections;
 import java.util.List;
@@ -41,6 +42,7 @@ import java.util.function.Function;
  * @param <E> item type
  */
 @Experimental
+@NullMarked
 public interface GroupPropertyDescriptor<E> {
 
     /**

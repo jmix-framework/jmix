@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2026 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<fragment xmlns="http://jmix.io/schema/flowui/fragment">
+    <data>
+        <collection id="recentConversationsDc"
+                    class="io.jmix.aitoolsflowui.model.AiConversation">
+            <fetchPlan extends="_base"/>
+            <loader id="recentConversationsDl" readOnly="true"/>
+        </collection>
+        <collection id="historyConversationsDc"
+                    class="io.jmix.aitoolsflowui.model.AiConversation">
+            <fetchPlan extends="_base"/>
+            <loader id="historyConversationsDl" readOnly="true"/>
+        </collection>
+    </data>
+    <content>
+        <vbox id="root"
+              width="100%"
+              height="100%"
+              padding="false"
+              spacing="false"
+              classNames="ai-chat-hub">
+            <sidePanelLayout id="historySidePanel"
+                             width="100%"
+                             height="100%"
+                             sidePanelPosition="RIGHT"
+                             sidePanelOverlay="true"
+                             sidePanelHorizontalSize="26rem"
+                             modal="false"
+                             closeOnOutsideClick="true"
+                             classNames="chat-hub-history-panel">
+                <vbox id="hubScrollArea"
+                      width="100%"
+                      height="100%"
+                      padding="false"
+                      spacing="false"
+                      classNames="chat-hub-scroll">
+                    <vbox id="hubCanvas"
+                          width="100%"
+                          spacing="true"
+                          padding="false"
+                          classNames="chat-hub-canvas">
+                        <vbox id="hubHeading"
+                              width="100%"
+                              spacing="false"
+                              padding="false"
+                              alignItems="CENTER"
+                              classNames="chat-hub-heading">
+                            <div id="hubHeroIcon"
+                                 classNames="chat-hub-hero-icon"/>
+                            <h2 id="hubTitle"
+                                text="msg://aiChatHubFragment.heading"
+                                classNames="chat-hub-title"/>
+                            <span id="hubSubtitle"
+                                  text="msg://aiChatHubFragment.subheading"
+                                  classNames="chat-hub-subtitle"/>
+                        </vbox>
+
+                        <vbox id="composerCard"
+                              width="100%"
+                              spacing="false"
+                              padding="false"
+                              classNames="chat-hub-input">
+                            <fragment id="composerFragment"
+                                      class="io.jmix.aitoolsflowui.view.input.AiChatInputFragment"/>
+                        </vbox>
+
+                        <hbox id="recentConversationsHeader"
+                              width="100%"
+                              alignItems="CENTER"
+                              spacing="false"
+                              classNames="chat-hub-section-header">
+                            <h4 id="recentConversationsHeading"
+                                text="msg://aiChatHubFragment.recentHeading"
+                                classNames="chat-hub-section-heading"/>
+                            <div id="recentConversationsSpacer"
+                                 classNames="chat-hub-section-rule"/>
+                            <button id="showAllHistoryBtn"
+                                    text="msg://aiChatHubFragment.showAll"
+                                    icon="ANGLE_RIGHT"
+                                    iconAfterText="true"
+                                    classNames="link-button"/>
+                        </hbox>
+                        <gridLayout id="recentConversationsGridLayout"
+                                    itemsContainer="recentConversationsDc"
+                                    width="100%"
+                                    columnMinWidth="16rem"
+                                    classNames="chat-hub-recent-grid"/>
+
+                        <!-- Suggestions: scaffold, hidden until implemented. -->
+                        <vbox id="suggestionsSection"
+                              width="100%"
+                              spacing="false"
+                              padding="false"
+                              visible="false"
+                              classNames="chat-hub-suggestions"/>
+                    </vbox>
+                </vbox>
+
+                <vbox id="historySidePanelContent"
+                      width="100%"
+                      height="100%"
+                      padding="false"
+                      spacing="false"
+                      classNames="chat-hub-history-content">
+                    <hbox id="historyPanelHeader"
+                          width="100%"
+                          alignItems="CENTER"
+                          spacing="true"
+                          classNames="chat-hub-history-header">
+                        <hbox id="historyPanelTitleGroup"
+                              alignItems="CENTER"
+                              spacing="false"
+                              padding="false"
+                              classNames="chat-hub-history-title-group">
+                            <h3 id="historyPanelTitle"
+                                text="msg://aiChatHubFragment.historyTitle"
+                                classNames="chat-hub-history-title"/>
+                            <span id="historyPanelCount"
+                                  classNames="chat-hub-history-count"/>
+                        </hbox>
+                        <div id="historyHeaderSpacer"
+                             classNames="chat-hub-history-header-spacer"/>
+                        <button id="historyNewBtn"
+                                text="msg://aiChatHubFragment.newConversation"
+                                icon="PLUS"
+                                themeNames="tertiary small"/>
+                        <button id="historyCloseBtn"
+                                icon="CLOSE"
+                                themeNames="tertiary small icon"
+                                ariaLabel="msg://aiChatHubFragment.historyClose"/>
+                    </hbox>
+                    <textField id="historySearchField"
+                               valueChangeMode="EAGER"
+                               valueChangeTimeout="250"
+                               placeholder="msg://aiChatHubFragment.historySearchPlaceholder"
+                               clearButtonVisible="true"
+                               width="100%"
+                               classNames="chat-hub-history-search">
+                        <suffix>
+                            <icon icon="SEARCH"/>
+                        </suffix>
+                    </textField>
+                    <vbox id="historyListContainer"
+                          width="100%"
+                          padding="false"
+                          spacing="false"
+                          classNames="chat-hub-history-list"/>
+                </vbox>
+            </sidePanelLayout>
+        </vbox>
+    </content>
+</fragment>

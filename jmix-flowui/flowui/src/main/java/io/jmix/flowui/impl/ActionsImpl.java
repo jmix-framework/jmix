@@ -26,8 +26,8 @@ import io.jmix.flowui.sys.ActionDefinition;
 import io.jmix.flowui.sys.ActionsConfiguration;
 import io.jmix.flowui.sys.ActionsConfigurationSorter;
 import io.jmix.flowui.sys.BeanUtil;
-import jakarta.annotation.Nonnull;
 import jakarta.annotation.PostConstruct;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -174,7 +174,7 @@ public class ActionsImpl implements Actions, ApplicationListener<ContextRefreshe
 
     @SuppressWarnings("unchecked")
     @Override
-    public void onApplicationEvent(@Nonnull ContextRefreshedEvent event) {
+    public void onApplicationEvent(@NonNull ContextRefreshedEvent event) {
         // here we receive events for all child contexts
         if (event.getApplicationContext() == this.applicationContext) {
             long startTime = System.currentTimeMillis();

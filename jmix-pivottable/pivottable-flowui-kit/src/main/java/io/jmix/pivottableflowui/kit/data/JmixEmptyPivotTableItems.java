@@ -18,7 +18,7 @@ package io.jmix.pivottableflowui.kit.data;
 
 import com.vaadin.flow.shared.Registration;
 import io.jmix.pivottableflowui.kit.component.JmixPivotTable;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Collections;

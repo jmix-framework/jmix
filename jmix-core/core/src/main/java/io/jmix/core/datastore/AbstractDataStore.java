@@ -25,7 +25,7 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -229,6 +229,9 @@ public abstract class AbstractDataStore implements DataStore {
             fireEvent(deletingEvent);
 
             beforeSaveTransactionCommit(context, savedEntities, deletedEntities);
+            DataStoreBeforeSaveCommitEvent beforeSaveCommitEvent =
+                    new DataStoreBeforeSaveCommitEvent(context, savedEntities, deletedEntities, saveState);
+            fireEvent(beforeSaveCommitEvent);
             commitTransaction(transaction);
         } finally {
             beforeSaveTransactionRollback(context);

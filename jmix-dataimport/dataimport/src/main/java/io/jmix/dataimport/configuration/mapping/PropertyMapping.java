@@ -16,7 +16,8 @@
 
 package io.jmix.dataimport.configuration.mapping;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Property mapping describes how to map a field from input data with entity property.
@@ -37,6 +38,7 @@ import org.springframework.lang.Nullable;
  * @see ReferencePropertyMapping
  * @see ReferenceMultiFieldPropertyMapping
  */
+@NullMarked
 public interface PropertyMapping {
     /**
      * Gets an entity property name.

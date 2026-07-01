@@ -21,7 +21,7 @@ import io.jmix.flowui.component.PaginationComponent;
 import io.jmix.flowui.facet.SettingsFacet;
 import io.jmix.flowui.facet.settings.component.binder.SimplePaginationSettingsBinder;
 import io.jmix.flowui.view.View;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Class provides access to protected functionality from {@link PaginationComponent} to support

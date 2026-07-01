@@ -16,8 +16,11 @@
 
 package io.jmix.flowui.model;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Container that holds a single instance which is loaded as a property of another entity.
  */
+@NullMarked
 public interface InstancePropertyContainer<E> extends InstanceContainer<E>, Nested {
 }

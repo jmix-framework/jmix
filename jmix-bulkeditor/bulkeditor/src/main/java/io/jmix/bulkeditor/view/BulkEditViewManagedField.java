@@ -18,7 +18,7 @@ package io.jmix.bulkeditor.view;
 
 import io.jmix.core.metamodel.model.MetaProperty;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public class BulkEditViewManagedField {
 

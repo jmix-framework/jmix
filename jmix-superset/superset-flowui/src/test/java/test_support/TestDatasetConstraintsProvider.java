@@ -18,9 +18,11 @@ package test_support;
 
 import io.jmix.supersetflowui.component.dataconstraint.DatasetConstraintsProvider;
 import io.jmix.supersetflowui.component.dataconstraint.DatasetConstraint;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.List;
 
+@NullMarked
 public class TestDatasetConstraintsProvider implements DatasetConstraintsProvider {
 
     @Override

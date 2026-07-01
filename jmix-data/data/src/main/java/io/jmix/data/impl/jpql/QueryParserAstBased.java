@@ -28,8 +28,10 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -193,18 +195,50 @@ public class QueryParserAstBased implements QueryParser {
     public List<QueryPath> getQueryPaths() {
         List<QueryPath> queryPaths = new ArrayList<>();
         QueryVariableContext variableContext = getTree().getQueryVariableContext();
+        // join variable -> join path (for element collections or simple type joins)
+        var joinVariablePaths = getTree().getAstJoinVariableNodes()
+                .map(joinNode -> new AbstractMap.SimpleEntry<>(joinNode, joinNode.findPathNode()))
+                .filter(entry -> entry.getValue() != null)
+                .collect(Collectors.toMap(entry -> entry.getKey().getVariableName(), Map.Entry::getValue, (left, right) -> left));
         PathNodeFinder finder = getTree().visit(new PathNodeFinder());
         for (PathNode node : finder.getSelectedPathNodes()) {
-            JpqlEntityModel model = variableContext.getEntityByVariableNameHierarchically(node.getEntityVariableName());
-            QueryPath queryPath = new QueryPath(model.getName(), node.getEntityVariableName(), node.asPathString(), true);
+            QueryPath queryPath = createQueryPath(variableContext, joinVariablePaths, node, true);
+            if (queryPath == null) {
+                continue;
+            }
             queryPaths.add(queryPath);
         }
         for (PathNode node : finder.getOtherPathNodes()) {
-            JpqlEntityModel model = variableContext.getEntityByVariableNameHierarchically(node.getEntityVariableName());
-            QueryPath queryPath = new QueryPath(model.getName(), node.getEntityVariableName(), node.asPathString(), false);
+            QueryPath queryPath = createQueryPath(variableContext, joinVariablePaths, node, false);
+            if (queryPath == null) {
+                continue;
+            }
             queryPaths.add(queryPath);
         }
         return queryPaths;
+    }
+
+    protected QueryPath createQueryPath(QueryVariableContext variableContext,
+                                        Map<String, PathNode> joinVariablePaths,
+                                        PathNode node,
+                                        boolean selected) {
+        JpqlEntityModel model = variableContext.getEntityByVariableNameHierarchically(node.getEntityVariableName());
+        String variableName = node.getEntityVariableName();
+        String pathString = node.asPathString();
+
+        if (model == null) {
+            PathNode joinPathNode = joinVariablePaths.get(node.getEntityVariableName());
+            if (joinPathNode != null) {
+                variableName = joinPathNode.getEntityVariableName();
+                pathString = joinPathNode.asPathString();
+                model = variableContext.getEntityByVariableNameHierarchically(variableName);
+            }
+        }
+
+        if (model == null) {
+            return null;
+        }
+        return new QueryPath(model.getName(), variableName, pathString, selected);
     }
 
     @Override

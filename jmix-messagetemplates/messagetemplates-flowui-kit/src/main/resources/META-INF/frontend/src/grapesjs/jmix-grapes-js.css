@@ -18,10 +18,3 @@ jmix-grapes-js {
     width: 100%;
     height: 100%;
 }
-
-:root {
-    --gjs-primary-color: var(--lumo-base-color);
-    --gjs-secondary-color: var(--lumo-contrast-60pct);
-    --gjs-tertiary-color: var(--lumo-primary-text-color);
-    --gjs-quaternary-color: var(--lumo-primary-text-color);
-}

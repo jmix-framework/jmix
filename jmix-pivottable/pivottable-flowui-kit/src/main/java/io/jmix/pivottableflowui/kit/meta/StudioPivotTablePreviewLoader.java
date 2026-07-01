@@ -21,7 +21,7 @@ import com.vaadin.flow.component.Component;
 import io.jmix.flowui.kit.meta.component.preview.StudioPreviewComponentLoader;
 import io.jmix.pivottableflowui.kit.component.JmixPivotTable;
 import io.jmix.pivottableflowui.kit.component.model.*;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.dom4j.Element;
 
 import java.util.*;

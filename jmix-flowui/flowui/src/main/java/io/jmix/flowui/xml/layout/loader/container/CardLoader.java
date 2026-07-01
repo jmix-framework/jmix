@@ -113,11 +113,7 @@ public class CardLoader extends AbstractComponentLoader<Card> {
             return;
         }
 
-        Div subtitleComponent = factory.create(Div.class);
-        subtitleComponent.setClassName("subtitle");
-        subtitleComponent.setText(subTitle);
-
-        resultComponent.setSubtitle(subtitleComponent);
+        resultComponent.setSubtitle(subTitle);
     }
 
     protected void validateChildElement(Element element) {

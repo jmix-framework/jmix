@@ -37,6 +37,9 @@ public class FilterView extends StandardView {
     public PropertyFilter<String> propertyFilterWithCustomValueComponentId;
 
     @ViewComponent
+    public PropertyFilter<String> propertyFilterOperationsListId;
+
+    @ViewComponent
     public JpqlFilter<Void> jpqlFilterId;
 
     @ViewComponent

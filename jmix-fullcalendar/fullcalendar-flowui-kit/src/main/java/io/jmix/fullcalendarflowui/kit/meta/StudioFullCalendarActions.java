@@ -27,25 +27,11 @@ public interface StudioFullCalendarActions {
             classFqn = "io.jmix.fullcalendarflowui.action.DaysOfWeekEditAction",
             icon = "io/jmix/fullcalendarflowui/kit/meta/icon/action/action.svg",
             documentationLink = "%VERSION%/calendar/full-calendar-component.html#days-of-week-datatype",
-            properties = {
-                    @StudioProperty(xmlAttribute = "actionVariant", type = StudioPropertyType.ENUMERATION,
-                            setMethod = "setVariant", classFqn = "io.jmix.flowui.kit.action.ActionVariant",
-                            defaultValue = "DEFAULT", options = {"DEFAULT", "PRIMARY", "DANGER", "SUCCESS"}),
-                    @StudioProperty(xmlAttribute = "description", type = StudioPropertyType.LOCALIZED_STRING),
-                    @StudioProperty(xmlAttribute = "enabled", type = StudioPropertyType.BOOLEAN, defaultValue = "true"),
-                    @StudioProperty(xmlAttribute = "icon", type = StudioPropertyType.ICON,
-                            setParameterFqn = "com.vaadin.flow.component.icon.Icon"),
-                    @StudioProperty(xmlAttribute = "id", type = StudioPropertyType.COMPONENT_ID, required = true,
-                            initialValue = "daysOfWeekEdit"),
-                    @StudioProperty(xmlAttribute = "shortcutCombination", type = StudioPropertyType.SHORTCUT_COMBINATION),
-                    @StudioProperty(xmlAttribute = "text", type = StudioPropertyType.LOCALIZED_STRING,
-                            defaultValue = "msg://io.jmix.datatoolsflowui.action/showEntityInfoAction.title"),
-                    @StudioProperty(xmlAttribute = "visible", type = StudioPropertyType.BOOLEAN, defaultValue = "true")
-            },
+            propertyGroups = StudioFullCalendarPropertyGroups.DaysOfWeekEditActionComponent.class,
             items = {
-                    @StudioPropertiesItem(xmlAttribute = "enabledByUiPermissions", type = StudioPropertyType.BOOLEAN,
+                    @StudioPropertiesItem(xmlAttribute = StudioXmlAttributes.ENABLED_BY_UI_PERMISSIONS, type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
-                    @StudioPropertiesItem(xmlAttribute = "visibleByUiPermissions", type = StudioPropertyType.BOOLEAN,
+                    @StudioPropertiesItem(xmlAttribute = StudioXmlAttributes.VISIBLE_BY_UI_PERMISSIONS, type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true")
             }
     )

@@ -18,6 +18,7 @@ package io.jmix.flowui;
 
 import io.jmix.flowui.view.navigation.CrockfordUuidEncoder;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import java.util.UUID;
 
@@ -33,8 +34,17 @@ public class UiNavigationProperties {
      */
     boolean useCrockfordUuidEncoder;
 
-    public UiNavigationProperties(boolean useCrockfordUuidEncoder) {
+    /**
+     * Whether nanoseconds must be used for serializing/deserializing
+     * temporal URL parameters.
+     */
+    boolean useNanosecondsInUrlParams;
+
+    public UiNavigationProperties(
+            @DefaultValue("false") boolean useCrockfordUuidEncoder,
+            @DefaultValue("true") boolean useNanosecondsInUrlParams) {
         this.useCrockfordUuidEncoder = useCrockfordUuidEncoder;
+        this.useNanosecondsInUrlParams = useNanosecondsInUrlParams;
     }
 
     /**
@@ -42,5 +52,12 @@ public class UiNavigationProperties {
      */
     public boolean isUseCrockfordUuidEncoder() {
         return useCrockfordUuidEncoder;
+    }
+
+    /**
+     * @see #useNanosecondsInUrlParams
+     */
+    public boolean isUseNanosecondsInUrlParams() {
+        return useNanosecondsInUrlParams;
     }
 }

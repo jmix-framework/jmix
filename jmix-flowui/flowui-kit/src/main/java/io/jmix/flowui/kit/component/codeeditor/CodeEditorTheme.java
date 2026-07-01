@@ -15,7 +15,7 @@
  */
 package io.jmix.flowui.kit.component.codeeditor;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Objects;
 

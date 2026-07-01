@@ -31,7 +31,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public class JmixCheckbox extends Checkbox implements SupportsValueSource<Boolean>, SupportsValidation<Boolean>,
         HasRequired, ApplicationContextAware, InitializingBean {

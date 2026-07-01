@@ -19,11 +19,15 @@ package io.jmix.email;
 import io.jmix.email.entity.SendingMessage;
 
 import jakarta.mail.MessagingException;
+
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Adapter to javax.mail email sending API.
  * <br>
  * Should not be used from application code, use {@link Emailer}.
  */
+@NullMarked
 public interface EmailSender {
     /**
      * Sends email with help of {@link org.springframework.mail.javamail.JavaMailSender}.

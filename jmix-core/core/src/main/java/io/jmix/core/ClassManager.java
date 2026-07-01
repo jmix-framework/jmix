@@ -19,8 +19,10 @@ package io.jmix.core;
 import io.jmix.core.impl.JavaClassLoader;
 import org.springframework.stereotype.Component;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Map;
 
 /**
  * Loads classes taking into account hot-deploy feature.
@@ -59,6 +61,37 @@ public class ClassManager {
         } catch (ClassNotFoundException e) {
             throw new IllegalStateException("Unable to load class", e);
         }
+    }
+
+    /**
+     * Loads a generated class from bytecode and replaces the cached class with the same name if it exists.
+     *
+     * @param className fully qualified class name
+     * @param bytes     bytecode
+     * @return loaded class
+     */
+    public Class<?> loadGeneratedClass(String className, byte[] bytes) {
+        return javaClassLoader.loadGeneratedClass(className, bytes);
+    }
+
+    /**
+     * Loads generated classes from bytecode and replaces cached classes with the same names if they exist.
+     *
+     * @param generatedClasses bytecode by fully qualified class name
+     * @return loaded classes by fully qualified class name
+     */
+    public Map<String, Class<?>> loadGeneratedClasses(Map<String, byte[]> generatedClasses) {
+        return javaClassLoader.loadGeneratedClasses(generatedClasses);
+    }
+
+    /**
+     * Checks whether a class with the given name was loaded as a generated class.
+     *
+     * @param className fully qualified class name
+     * @return true if a generated class with this name is loaded
+     */
+    public boolean isGeneratedClass(String className) {
+        return javaClassLoader.isGeneratedClass(className);
     }
 
     /**

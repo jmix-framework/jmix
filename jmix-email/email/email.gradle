@@ -18,7 +18,9 @@ apply plugin: 'groovy'
 apply plugin: 'io.jmix'
 
 group = 'io.jmix.email'
-archivesBaseName = 'jmix-email'
+base {
+    archivesName = 'jmix-email'
+}
 
 dependencies {
     api project(':core')
@@ -30,9 +32,12 @@ dependencies {
     //todo SB3 check email sending. Do we need this starter?
     api 'org.springframework.boot:spring-boot-starter-mail'
 
+    implementation 'org.eclipse.angus:angus-mail'
+
     compileOnly 'com.microsoft.azure:msal4j'
     compileOnly 'com.google.auth:google-auth-library-oauth2-http'
 
+    testImplementation project(':framework-test-support')
     testImplementation 'org.spockframework:spock-core'
     testImplementation 'org.spockframework:spock-spring'
     testImplementation 'org.junit.jupiter:junit-jupiter-engine'

@@ -16,9 +16,12 @@
 
 package io.jmix.core.metamodel.model;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Property path descriptor.
  */
+@NullMarked
 public interface PropertyPath {
     /**
      * @return names of properties

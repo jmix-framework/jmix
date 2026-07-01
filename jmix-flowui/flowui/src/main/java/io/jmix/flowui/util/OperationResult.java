@@ -16,11 +16,14 @@
 
 package io.jmix.flowui.util;
 
+import org.jspecify.annotations.NullMarked;
+
 import java.util.function.Supplier;
 
 /**
  * Operation result object.
  */
+@NullMarked
 public interface OperationResult {
 
     /**

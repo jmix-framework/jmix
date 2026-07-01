@@ -17,7 +17,7 @@
 package io.jmix.autoconfigure.data;
 
 import liquibase.integration.spring.SpringLiquibase;
-import org.springframework.boot.autoconfigure.liquibase.LiquibaseProperties;
+import org.springframework.boot.liquibase.autoconfigure.LiquibaseProperties;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 

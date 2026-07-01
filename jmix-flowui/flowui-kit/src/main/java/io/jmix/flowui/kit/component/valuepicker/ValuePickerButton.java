@@ -22,7 +22,7 @@ import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.shared.SlotUtils;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.*;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Objects;
 

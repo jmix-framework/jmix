@@ -16,6 +16,9 @@
 
 package io.jmix.securityflowui.constraint;
 
+import org.jspecify.annotations.NullMarked;
+
+@NullMarked
 public interface UiSecureOperations {
 
     boolean isViewPermitted(String viewId, UiPolicyStore policyStore);

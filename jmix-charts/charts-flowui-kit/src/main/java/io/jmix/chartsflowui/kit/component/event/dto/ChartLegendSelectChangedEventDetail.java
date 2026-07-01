@@ -17,6 +17,7 @@
 package io.jmix.chartsflowui.kit.component.event.dto;
 
 import io.jmix.chartsflowui.kit.component.event.ChartLegendSelectChangedEvent;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Map;
 
@@ -33,6 +34,7 @@ public class ChartLegendSelectChangedEventDetail extends BaseChartEventDetail {
 
     protected Map<String, Object> fromActionPayload;
 
+    @Nullable
     public String getName() {
         return name;
     }
@@ -41,6 +43,7 @@ public class ChartLegendSelectChangedEventDetail extends BaseChartEventDetail {
         this.name = name;
     }
 
+    @Nullable
     public Map<String, Boolean> getSelected() {
         return selected;
     }
@@ -49,6 +52,7 @@ public class ChartLegendSelectChangedEventDetail extends BaseChartEventDetail {
         this.selected = selected;
     }
 
+    @Nullable
     public Boolean getIsFromClick() {
         return isFromClick;
     }
@@ -57,6 +61,7 @@ public class ChartLegendSelectChangedEventDetail extends BaseChartEventDetail {
         isFromClick = fromClick;
     }
 
+    @Nullable
     public Map<String, Object> getFromActionPayload() {
         return fromActionPayload;
     }

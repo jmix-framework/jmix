@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2019 Haulmont.
+ * Copyright 2019 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ import java.util.Map;
  * Controller that returns localized messages
  */
 @RestController("rest_MessagesController")
-@RequestMapping(value = "${jmix.rest.base-path}${jmix.rest.messages-path}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+@RequestMapping(value = "${jmix.rest.base-path}${jmix.rest.messages-path}", produces = MediaType.APPLICATION_JSON_VALUE)
 public class MessagesController {
 
     @Autowired

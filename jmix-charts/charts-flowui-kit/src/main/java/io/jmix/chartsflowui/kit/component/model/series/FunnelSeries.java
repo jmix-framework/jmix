@@ -20,7 +20,7 @@ import io.jmix.chartsflowui.kit.component.model.ChartObservableObject;
 import io.jmix.chartsflowui.kit.component.model.HasEnumId;
 import io.jmix.chartsflowui.kit.component.model.HasPosition;
 import io.jmix.chartsflowui.kit.component.model.shared.*;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A funnel chart is a graphical representation that resembles the shape of a funnel where each segment
@@ -129,6 +129,7 @@ public class FunnelSeries extends AbstractAxisAwareSeries<FunnelSeries>
 
         protected LineStyle lineStyle;
 
+        @Nullable
         public Boolean getShow() {
             return show;
         }
@@ -138,6 +139,7 @@ public class FunnelSeries extends AbstractAxisAwareSeries<FunnelSeries>
             markAsDirty();
         }
 
+        @Nullable
         public Integer getLength() {
             return length;
         }
@@ -147,6 +149,7 @@ public class FunnelSeries extends AbstractAxisAwareSeries<FunnelSeries>
             markAsDirty();
         }
 
+        @Nullable
         public LineStyle getLineStyle() {
             return lineStyle;
         }
@@ -187,6 +190,7 @@ public class FunnelSeries extends AbstractAxisAwareSeries<FunnelSeries>
 
         protected BlurScopeType blurScope;
 
+        @Nullable
         public Boolean getDisabled() {
             return disabled;
         }
@@ -196,6 +200,7 @@ public class FunnelSeries extends AbstractAxisAwareSeries<FunnelSeries>
             markAsDirty();
         }
 
+        @Nullable
         public FocusType getFocus() {
             return focus;
         }
@@ -205,6 +210,7 @@ public class FunnelSeries extends AbstractAxisAwareSeries<FunnelSeries>
             markAsDirty();
         }
 
+        @Nullable
         public BlurScopeType getBlurScope() {
             return blurScope;
         }
@@ -243,6 +249,7 @@ public class FunnelSeries extends AbstractAxisAwareSeries<FunnelSeries>
 
         protected Boolean disabled;
 
+        @Nullable
         public Boolean getDisabled() {
             return disabled;
         }
@@ -272,6 +279,7 @@ public class FunnelSeries extends AbstractAxisAwareSeries<FunnelSeries>
 
         protected ItemStyle itemStyle;
 
+        @Nullable
         public Label getLabel() {
             return label;
         }
@@ -285,6 +293,7 @@ public class FunnelSeries extends AbstractAxisAwareSeries<FunnelSeries>
             addChild(label);
         }
 
+        @Nullable
         public ElementLabelLine getLabelLine() {
             return labelLine;
         }
@@ -298,6 +307,7 @@ public class FunnelSeries extends AbstractAxisAwareSeries<FunnelSeries>
             addChild(labelLine);
         }
 
+        @Nullable
         public ItemStyle getItemStyle() {
             return itemStyle;
         }
@@ -330,6 +340,7 @@ public class FunnelSeries extends AbstractAxisAwareSeries<FunnelSeries>
         }
     }
 
+    @Nullable
     public Integer getMax() {
         return max;
     }
@@ -339,6 +350,7 @@ public class FunnelSeries extends AbstractAxisAwareSeries<FunnelSeries>
         markAsDirty();
     }
 
+    @Nullable
     public Integer getMin() {
         return min;
     }
@@ -348,6 +360,7 @@ public class FunnelSeries extends AbstractAxisAwareSeries<FunnelSeries>
         markAsDirty();
     }
 
+    @Nullable
     public String getMinSize() {
         return minSize;
     }
@@ -357,6 +370,7 @@ public class FunnelSeries extends AbstractAxisAwareSeries<FunnelSeries>
         markAsDirty();
     }
 
+    @Nullable
     public String getMaxSize() {
         return maxSize;
     }
@@ -366,6 +380,7 @@ public class FunnelSeries extends AbstractAxisAwareSeries<FunnelSeries>
         markAsDirty();
     }
 
+    @Nullable
     public Orientation getOrientation() {
         return orientation;
     }
@@ -375,6 +390,7 @@ public class FunnelSeries extends AbstractAxisAwareSeries<FunnelSeries>
         markAsDirty();
     }
 
+    @Nullable
     public SortType getSort() {
         return sort;
     }
@@ -384,6 +400,7 @@ public class FunnelSeries extends AbstractAxisAwareSeries<FunnelSeries>
         markAsDirty();
     }
 
+    @Nullable
     public JsFunction getSortFunction() {
         return sortFunction;
     }
@@ -398,6 +415,7 @@ public class FunnelSeries extends AbstractAxisAwareSeries<FunnelSeries>
         markAsDirty();
     }
 
+    @Nullable
     public Integer getGap() {
         return gap;
     }
@@ -407,6 +425,7 @@ public class FunnelSeries extends AbstractAxisAwareSeries<FunnelSeries>
         markAsDirty();
     }
 
+    @Nullable
     public Align getFunnelAlign() {
         return funnelAlign;
     }
@@ -416,6 +435,7 @@ public class FunnelSeries extends AbstractAxisAwareSeries<FunnelSeries>
         markAsDirty();
     }
 
+    @Nullable
     public ItemStyle getItemStyle() {
         return itemStyle;
     }
@@ -429,6 +449,7 @@ public class FunnelSeries extends AbstractAxisAwareSeries<FunnelSeries>
         addChild(itemStyle);
     }
 
+    @Nullable
     public LabelLine getLabelLine() {
         return labelLine;
     }
@@ -442,6 +463,7 @@ public class FunnelSeries extends AbstractAxisAwareSeries<FunnelSeries>
         addChild(labelLine);
     }
 
+    @Nullable
     public Emphasis getEmphasis() {
         return emphasis;
     }
@@ -455,6 +477,7 @@ public class FunnelSeries extends AbstractAxisAwareSeries<FunnelSeries>
         addChild(emphasis);
     }
 
+    @Nullable
     public Blur getBlur() {
         return blur;
     }
@@ -468,6 +491,7 @@ public class FunnelSeries extends AbstractAxisAwareSeries<FunnelSeries>
         addChild(blur);
     }
 
+    @Nullable
     public Select getSelect() {
         return select;
     }
@@ -481,6 +505,7 @@ public class FunnelSeries extends AbstractAxisAwareSeries<FunnelSeries>
         addChild(select);
     }
 
+    @Nullable
     @Override
     public String getLeft() {
         return left;
@@ -492,6 +517,7 @@ public class FunnelSeries extends AbstractAxisAwareSeries<FunnelSeries>
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public String getTop() {
         return top;
@@ -503,6 +529,7 @@ public class FunnelSeries extends AbstractAxisAwareSeries<FunnelSeries>
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public String getRight() {
         return right;
@@ -514,6 +541,7 @@ public class FunnelSeries extends AbstractAxisAwareSeries<FunnelSeries>
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public String getBottom() {
         return bottom;
@@ -525,6 +553,7 @@ public class FunnelSeries extends AbstractAxisAwareSeries<FunnelSeries>
         markAsDirty();
     }
 
+    @Nullable
     public String getWidth() {
         return width;
     }
@@ -534,6 +563,7 @@ public class FunnelSeries extends AbstractAxisAwareSeries<FunnelSeries>
         markAsDirty();
     }
 
+    @Nullable
     public String getHeight() {
         return height;
     }
@@ -543,6 +573,7 @@ public class FunnelSeries extends AbstractAxisAwareSeries<FunnelSeries>
         markAsDirty();
     }
 
+    @Nullable
     public Boolean getAnimation() {
         return animation;
     }
@@ -552,6 +583,7 @@ public class FunnelSeries extends AbstractAxisAwareSeries<FunnelSeries>
         markAsDirty();
     }
 
+    @Nullable
     public Integer getAnimationThreshold() {
         return animationThreshold;
     }
@@ -561,6 +593,7 @@ public class FunnelSeries extends AbstractAxisAwareSeries<FunnelSeries>
         markAsDirty();
     }
 
+    @Nullable
     public Integer getAnimationDurationUpdate() {
         return animationDurationUpdate;
     }
@@ -570,6 +603,7 @@ public class FunnelSeries extends AbstractAxisAwareSeries<FunnelSeries>
         markAsDirty();
     }
 
+    @Nullable
     public String getAnimationEasingUpdate() {
         return animationEasingUpdate;
     }
@@ -579,6 +613,7 @@ public class FunnelSeries extends AbstractAxisAwareSeries<FunnelSeries>
         markAsDirty();
     }
 
+    @Nullable
     public Integer getAnimationDelayUpdate() {
         return animationDelayUpdate;
     }

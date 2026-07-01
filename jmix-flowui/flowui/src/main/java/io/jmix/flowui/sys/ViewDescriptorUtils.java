@@ -20,9 +20,10 @@ import com.google.common.base.Strings;
 import io.jmix.core.DevelopmentException;
 import io.jmix.core.annotation.Internal;
 import io.jmix.flowui.view.*;
+import io.jmix.flowui.view.template.impl.ViewTemplateDescriptorRegistry;
 import org.apache.commons.lang3.StringUtils;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
@@ -39,7 +40,8 @@ public final class ViewDescriptorUtils {
             return null;
         } else {
             String templatePath = ViewDescriptorUtils.getInferredTemplate(annotation, controllerClass);
-            if (!templatePath.startsWith("/")) {
+            if (!templatePath.startsWith("/")
+                    && !templatePath.startsWith(ViewTemplateDescriptorRegistry.PATH_PREFIX)) {
                 String packageName = ViewControllerUtils.getPackage(controllerClass);
                 if (StringUtils.isNotEmpty(packageName)) {
                     String relativePath = packageName.replace('.', '/');

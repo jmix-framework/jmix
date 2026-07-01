@@ -22,6 +22,7 @@ import io.jmix.reports.yarg.loaders.QueryLoaderPreprocessor;
 import io.jmix.reports.yarg.structure.ProxyWrapper;
 import io.jmix.reports.yarg.structure.ReportQuery;
 import org.apache.commons.lang3.ObjectUtils;
+import org.jspecify.annotations.NullMarked;
 
 import java.lang.reflect.Proxy;
 import java.util.*;
@@ -40,6 +41,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  *
  * Another function is wrapping query object to inject processed query without breaking reportQuery immutability
  */
+@NullMarked
 public class SqlCrosstabPreprocessor implements QueryLoaderPreprocessor {
 
     private static final Pattern REF_PATTERN = Pattern.compile("(\\w+)@(.+?)\\b");

@@ -29,6 +29,7 @@ import io.jmix.reports.yarg.util.converter.ObjectToStringConverter;
 import io.jmix.reports.yarg.util.converter.ObjectToStringConverterImpl;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,6 +72,7 @@ public class Reporting implements ReportingAPI {
     }
 
     @Override
+    @NullMarked
     public ReportOutputDocument runReport(RunParams runParams, OutputStream outputStream) {
         Report report = runParams.report;
         ReportTemplate reportTemplate = runParams.reportTemplate;
@@ -109,6 +111,7 @@ public class Reporting implements ReportingAPI {
     }
 
     @Override
+    @NullMarked
     public ReportOutputDocument runReport(RunParams runParams) {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         ReportOutputDocument reportOutputDocument = runReport(runParams, result);

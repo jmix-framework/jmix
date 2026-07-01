@@ -26,13 +26,14 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.data.StoreAwareLocator;
 import io.jmix.search.index.queue.EntityIdsLoader;
 import io.jmix.search.index.queue.entity.EnqueueingSession;
+import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 import java.util.ArrayList;
@@ -46,6 +47,7 @@ import static java.lang.String.format;
 /**
  * Loads data using ordering property.
  */
+@NullMarked
 public abstract class OrderBasedEntityIdsLoader implements EntityIdsLoader {
 
     private static final Logger log = LoggerFactory.getLogger(OracleEntityIdsLoader.class);

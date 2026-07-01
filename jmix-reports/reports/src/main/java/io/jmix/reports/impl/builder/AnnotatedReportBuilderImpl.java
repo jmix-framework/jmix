@@ -34,9 +34,10 @@ import io.jmix.reports.yarg.structure.DefaultValueProvider;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.pdfbox.io.IOUtils;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AnnotatedElementUtils;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ReflectionUtils;
 
@@ -48,6 +49,7 @@ import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.function.Function;
 
+@NullMarked
 @Component("report_AnnotatedReportBuilder")
 public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
 

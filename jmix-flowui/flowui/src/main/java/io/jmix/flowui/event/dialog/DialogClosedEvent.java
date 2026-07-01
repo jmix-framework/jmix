@@ -30,6 +30,6 @@ public class DialogClosedEvent extends ApplicationEvent {
 
     @Override
     public Dialog getSource() {
-        return ((Dialog) super.getSource());
+        return (Dialog) super.getSource();
     }
 }

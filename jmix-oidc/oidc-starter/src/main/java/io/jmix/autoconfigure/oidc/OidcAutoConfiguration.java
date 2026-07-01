@@ -22,18 +22,24 @@ import io.jmix.oidc.OidcProperties;
 import io.jmix.oidc.OidcVaadinWebSecurity;
 import io.jmix.oidc.claimsmapper.ClaimsRolesMapper;
 import io.jmix.oidc.claimsmapper.DefaultClaimsRolesMapper;
+import io.jmix.oidc.filter.OidcResourceServerSecurityFilterChainCustomizer;
+import io.jmix.oidc.filter.OidcVaadinSecurityFilterChainCustomizer;
 import io.jmix.oidc.jwt.JmixJwtAuthenticationConverter;
 import io.jmix.oidc.resourceserver.OidcResourceServerEventSecurityFilter;
+import io.jmix.oidc.user.JmixOidcUser;
 import io.jmix.oidc.userinfo.DefaultJmixOidcUserService;
 import io.jmix.oidc.userinfo.JmixOidcUserService;
 import io.jmix.oidc.usermapper.DefaultOidcUserMapper;
 import io.jmix.oidc.usermapper.OidcUserMapper;
 import io.jmix.security.SecurityConfigurers;
+import io.jmix.security.configurer.SecurityFilterChainCustomizer;
 import io.jmix.security.role.ResourceRoleRepository;
 import io.jmix.security.role.RoleGrantedAuthorityUtils;
 import io.jmix.security.role.RowLevelRoleRepository;
+import io.jmix.security.util.ClientDetailsSourceSupport;
 import io.jmix.security.util.JmixHttpSecurityUtils;
 import io.jmix.securityresourceserver.requestmatcher.CompositeResourceServerRequestMatcherProvider;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -50,14 +56,16 @@ import org.springframework.security.web.access.intercept.AuthorizationFilter;
 import org.springframework.security.web.util.matcher.OrRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
-@AutoConfiguration
+@AutoConfiguration(
+        afterName = "org.springframework.boot.security.oauth2.client.autoconfigure.OAuth2ClientAutoConfiguration",
+        beforeName = "io.jmix.autoconfigure.securityflowui.SecurityFlowuiAutoConfiguration")
 @Import({OidcConfiguration.class})
 @ConditionalOnProperty(name = "jmix.oidc.use-default-configuration", matchIfMissing = true)
 public class OidcAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(JmixOidcUserService.class)
-    public JmixOidcUserService oidcUserService(OidcUserMapper oidcUserMapper) {
+    public JmixOidcUserService oidcUserService(OidcUserMapper<? extends JmixOidcUser> oidcUserMapper) {
         return new DefaultJmixOidcUserService(oidcUserMapper);
     }
 
@@ -83,11 +91,21 @@ public class OidcAutoConfiguration {
     }
 
     /**
-     * Configures FlowUI views protection.
+     * Configures FlowUI views protection together with OIDC login. Applies only when an OIDC client is
+     * configured (a {@link ClientRegistrationRepository} bean is present), so that applications using the
+     * add-on as an OAuth2 resource server only are not affected.
      */
     @EnableWebSecurity
     @ConditionalOnProperty(value = "jmix.oidc.use-default-ui-configuration", havingValue = "true", matchIfMissing = true)
-    public static class DefaulOidcVaadinWebSecurity extends OidcVaadinWebSecurity {}
+    @ConditionalOnBean(ClientRegistrationRepository.class)
+    public static class DefaulOidcVaadinWebSecurity extends OidcVaadinWebSecurity {
+
+        @Bean("oidc_OidcVaadinSecurityFilterChainCustomizer")
+        public SecurityFilterChainCustomizer oidcVaadinSecurityFilterChainCustomizer(ClientDetailsSourceSupport clientDetailsSourceSupport,
+                                                                                     OidcProperties oidcProperties) {
+            return new OidcVaadinSecurityFilterChainCustomizer(clientDetailsSourceSupport, oidcProperties);
+        }
+    }
 
     /**
      * Configures API endpoints (e.g. REST API) protection. Invocations to these resources require a bearer token
@@ -138,6 +156,12 @@ public class OidcAutoConfiguration {
         @ConditionalOnMissingBean(JmixJwtAuthenticationConverter.class)
         public JmixJwtAuthenticationConverter jmixJwtAuthenticationConverter(OidcUserMapper oidcUserMapper, OidcProperties oidcProperties) {
             return new JmixJwtAuthenticationConverter(oidcUserMapper, oidcProperties);
+        }
+
+        @Bean("oidc_OidcResourceServerSecurityFilterChainCustomizer")
+        public SecurityFilterChainCustomizer oidcResourceServerSecurityFilterChainCustomizer(ClientDetailsSourceSupport clientDetailsSourceSupport,
+                                                                                             OidcProperties oidcProperties) {
+            return new OidcResourceServerSecurityFilterChainCustomizer(clientDetailsSourceSupport, oidcProperties);
         }
     }
 }

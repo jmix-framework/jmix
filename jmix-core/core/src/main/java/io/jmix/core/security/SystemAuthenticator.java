@@ -18,7 +18,8 @@ package io.jmix.core.security;
 
 import org.springframework.security.core.Authentication;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Provides ad-hoc authentication, i.e. allows you to execute code on behalf of the 'system' or a specified user.
@@ -46,6 +47,7 @@ import org.springframework.lang.Nullable;
  * @see #begin()
  * @see #begin(String)
  */
+@NullMarked
 public interface SystemAuthenticator {
 
     /**
@@ -110,6 +112,7 @@ public interface SystemAuthenticator {
      * Operation with a result to be used in {@link #withSystem(AuthenticatedOperation)}
      * and {@link #withUser(String, AuthenticatedOperation)}.
      */
+    @NullMarked
     interface AuthenticatedOperation<T> {
         @Nullable
         T call();

@@ -1,0 +1,156 @@
+/*
+ * Copyright 2026 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@media lumo_components_jmix-value-picker-button {
+
+    :host {
+        display: inline-block;
+        position: relative;
+        outline: none;
+        white-space: nowrap;
+        -webkit-user-select: none;
+        user-select: none;
+        /* Sizing */
+        --lumo-button-size: var(--lumo-size-s);
+        min-width: var(--lumo-button-size);
+        height: var(--lumo-button-size);
+        box-sizing: border-box;
+        /* Style */
+        font-family: var(--lumo-font-family);
+        font-size: var(--vaadin-button-font-size, var(--lumo-font-size-m));
+        font-weight: var(--vaadin-button-font-weight, 500);
+        color: var(--_lumo-button-text-color);
+        background: var(--_lumo-button-background);
+        border: var(--vaadin-button-border, none);
+        border-radius: var(--vaadin-button-border-radius, var(--lumo-border-radius-m));
+        cursor: var(--lumo-clickable-cursor);
+        -webkit-tap-highlight-color: transparent;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        flex-shrink: 0;
+        --_button-size: var(--vaadin-button-height, var(--lumo-button-size));
+        --_focus-ring-color: var(--vaadin-focus-ring-color, var(--lumo-primary-color-50pct));
+        --_focus-ring-width: var(--vaadin-focus-ring-width, 2px);
+        /* Used by notification */
+        --_lumo-button-background: var(--vaadin-button-background, var(--lumo-contrast-5pct));
+        --_lumo-button-text-color: var(--vaadin-button-text-color, var(--lumo-primary-text-color));
+        /* Allow controlling these from the host (inherited by the inner container */
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
+
+    :host([hidden]) {
+        display: none !important;
+    }
+
+    .value-picker-button-container {
+        display: inline-flex;
+        align-items: inherit;
+        justify-content: inherit;
+        text-align: inherit;
+        width: 100%;
+        height: 100%;
+        min-height: inherit;
+        text-shadow: inherit;
+    }
+
+    [part='icon'] {
+        flex: none;
+    }
+
+    /* Set only for the internal parts so we don’t affect the host vertical alignment */
+    [part='icon'] {
+        line-height: var(--lumo-line-height-xs);
+    }
+
+    /* For interaction states */
+    :host::before,
+    :host::after {
+        content: '';
+        /* We rely on the host always being relative */
+        position: absolute;
+        z-index: 1;
+        inset: 0;
+        background-color: currentColor;
+        border-radius: inherit;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    /* Hover */
+    @media (any-hover: hover) {
+        :host(:hover)::before {
+            opacity: 0.02;
+        }
+    }
+
+    /* Active */
+    :host::after {
+        transition: opacity 1.4s, transform 0.1s;
+        filter: blur(8px);
+    }
+
+    :host([active])::before {
+        opacity: 0.05;
+        transition-duration: 0s;
+    }
+
+    :host([active])::after {
+        opacity: 0.1;
+        transition-duration: 0s, 0s;
+        transform: scale(0);
+    }
+
+    /* Keyboard focus */
+    :host([focus-ring]) {
+        box-shadow: 0 0 0 calc(1px * var(--_focus-ring-gap-on, 0)) var(--_focus-ring-gap-color, var(--lumo-base-color)),
+        0 0 0 calc(var(--_focus-ring-width) + 1px * var(--_focus-ring-gap-on, 0)) var(--_focus-ring-color);
+    }
+
+    /* Disabled state. Keep selectors after other color variants. */
+    :host([disabled]) {
+        color: var(--lumo-disabled-text-color);
+        pointer-events: var(--_vaadin-button-disabled-pointer-events, none);
+        cursor: not-allowed;
+    }
+
+    /* Icons */
+    [part] ::slotted(vaadin-icon) {
+        width: var(--lumo-icon-size-m);
+        height: var(--lumo-icon-size-m);
+    }
+
+    [part] ::slotted(vaadin-icon[icon^='vaadin:']) {
+        padding: 0.25em;
+        box-sizing: border-box !important;
+    }
+
+    @media (forced-colors: active) {
+        :host {
+            outline: 1px solid;
+            outline-offset: -1px;
+        }
+
+        :host([focused]) {
+            outline-width: 2px;
+        }
+
+        :host([disabled]) {
+            outline-color: GrayText;
+        }
+    }
+}

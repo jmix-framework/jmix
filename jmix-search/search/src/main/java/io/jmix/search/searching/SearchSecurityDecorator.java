@@ -28,7 +28,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Decorates CurrentUserSecurityFacade and adds functionality that is necessary for the Search Engine.
+ * Provides entity- and attribute-level read permission checks required by the search engine,
+ * delegating to {@link SecureOperations} and {@link PolicyStore}.
  */
 @Component("search_SearchSecurityDecorator")
 public class SearchSecurityDecorator {

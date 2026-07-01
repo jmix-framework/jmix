@@ -22,7 +22,7 @@ import io.jmix.core.Sort;
 import io.jmix.core.ValueLoadContext;
 import org.springframework.data.domain.Pageable;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.io.Serializable;
 import java.util.LinkedList;
@@ -68,7 +68,7 @@ public class LoaderHelper {
         return loader;
     }
 
-    public static Sort springToJmixSort(@Nullable org.springframework.data.domain.Sort sort) {
+    public static Sort springToJmixSort(org.springframework.data.domain.@Nullable Sort sort) {
         if (sort != null && sort.isSorted()) {
             List<Sort.Order> orders = new LinkedList<>();
             for (org.springframework.data.domain.Sort.Order order : sort) {

@@ -16,9 +16,12 @@
 
 package io.jmix.authserver.service.cleanup;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * Interface that provides functionality to remove expired tokens.
  */
+@NullMarked
 public interface OAuth2ExpiredTokenCleaner {
 
     /**

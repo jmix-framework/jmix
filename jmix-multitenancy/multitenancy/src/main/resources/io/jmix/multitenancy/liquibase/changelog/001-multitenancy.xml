@@ -21,6 +21,7 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
     <changeSet author="multitenancy" id="1" context="!cuba">
+        <validCheckSum>9:b72aaeb82ab60d314eac13995aa8a49f</validCheckSum>
 
         <createTable tableName="MTEN_TENANT">
             <column name="ID" type="${uuid.type}">

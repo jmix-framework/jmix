@@ -28,7 +28,7 @@ import com.vaadin.flow.function.SerializableConsumer;
 import com.vaadin.flow.function.SerializablePredicate;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.component.Alignment;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.List;
@@ -62,14 +62,13 @@ public class JmixGridLayout<T> extends Component implements HasSize, HasItemComp
     protected SerializableConsumer<UI> sizeRequest;
 
     /**
-     * Returns the gap of the grid layout in the {@link JmixGridLayout}. Default value is {@code var(--lumo-space-s)}.
+     * Returns the gap of the grid layout in the {@link JmixGridLayout}. Default value is {@code 0.5rem}.
      *
      * @return the gap of the grid layout
      */
     public String getGap() {
-        return getElement().getProperty("gridGap", "var(--lumo-space-s)");
+        return getElement().getProperty("gridGap", "0.5rem");
     }
-
 
     /**
      * Sets the gap of the grid layout in the {@link JmixGridLayout}.

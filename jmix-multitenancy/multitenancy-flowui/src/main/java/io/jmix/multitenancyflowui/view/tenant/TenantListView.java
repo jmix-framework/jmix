@@ -17,13 +17,10 @@
 package io.jmix.multitenancyflowui.view.tenant;
 
 import com.vaadin.flow.router.Route;
-import io.jmix.flowui.view.DefaultMainViewParent;
-import io.jmix.flowui.view.DialogMode;
-import io.jmix.flowui.view.LookupComponent;
-import io.jmix.flowui.view.StandardListView;
-import io.jmix.flowui.view.ViewController;
-import io.jmix.flowui.view.ViewDescriptor;
+import io.jmix.flowui.view.*;
+import io.jmix.multitenancy.core.TenantProvider;
 import io.jmix.multitenancy.entity.Tenant;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Route(value = "mten/tenants", layout = DefaultMainViewParent.class)
 @ViewController("mten_Tenant.list")
@@ -31,4 +28,27 @@ import io.jmix.multitenancy.entity.Tenant;
 @LookupComponent("tenantsTable")
 @DialogMode(width = "50em")
 public class TenantListView extends StandardListView<Tenant> {
+
+    @Autowired
+    private TenantProvider tenantProvider;
+
+    @Install(to = "tenantsTable.create", subject = "enabledRule")
+    private boolean tenantsTableCreateEnabledRule() {
+        return !isTenantUser();
+    }
+
+    @Install(to = "tenantsTable.edit", subject = "enabledRule")
+    private boolean tenantsTableEditEnabledRule() {
+        return !isTenantUser();
+    }
+
+    @Install(to = "tenantsTable.remove", subject = "enabledRule")
+    private boolean tenantsTableRemoveEnabledRule() {
+        return !isTenantUser();
+    }
+
+    protected boolean isTenantUser() {
+        String currentUserTenantId = tenantProvider.getCurrentUserTenantId();
+        return !TenantProvider.NO_TENANT.equals(currentUserTenantId);
+    }
 }

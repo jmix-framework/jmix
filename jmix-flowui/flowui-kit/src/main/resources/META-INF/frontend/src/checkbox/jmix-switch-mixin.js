@@ -15,13 +15,16 @@
  */
 import {ActiveMixin} from '@vaadin/a11y-base/src/active-mixin.js';
 import {DelegateFocusMixin} from '@vaadin/a11y-base/src/delegate-focus-mixin.js';
+import {SlotStylesMixin} from '@vaadin/component-base/src/slot-styles-mixin.js';
 import {CheckedMixin} from '@vaadin/field-base/src/checked-mixin.js';
 import {FieldMixin} from '@vaadin/field-base/src/field-mixin.js';
 import {InputController} from '@vaadin/field-base/src/input-controller.js';
 import {LabelledInputController} from '@vaadin/field-base/src/labelled-input-controller.js';
 
 export const SwitchMixin = (superclass) =>
-    class SwitchMixinClass extends FieldMixin(CheckedMixin(DelegateFocusMixin(ActiveMixin(superclass)))) {
+    class SwitchMixinClass extends SlotStylesMixin(
+        FieldMixin(CheckedMixin(DelegateFocusMixin(ActiveMixin(superclass))))
+    ) {
 
         static get properties() {
             return {
@@ -45,20 +48,8 @@ export const SwitchMixin = (superclass) =>
                     type: Boolean,
                     value: false,
                     reflectToAttribute: true,
-                },
-
-                /**
-                 * Indicates whether the element can be focused and where it participates in sequential keyboard navigation.
-                 *
-                 * @override
-                 * @protected
-                 */
-                tabindex: {
-                    type: Number,
-                    value: 0,
-                    reflectToAttribute: true,
-                },
-            }
+                }
+            };
         }
 
         static get observers() {
@@ -80,6 +71,25 @@ export const SwitchMixin = (superclass) =>
             // Set the string "on" as the default value for the switch following the HTML specification:
             // https://html.spec.whatwg.org/multipage/input.html#dom-input-value-default-on
             this.value = 'on';
+
+            // Set tabindex to 0 by default to not lose focus on click in Safari
+            // See https://github.com/vaadin/web-components/pull/6780
+            this.tabindex = 0;
+        }
+
+        /** @protected */
+        get slotStyles() {
+            const tag = this.localName;
+
+            // Needed to override `opacity: 1` set on `input` by Tailwind CSS.
+            // See https://github.com/vaadin/web-components/issues/8881
+            return [
+                `
+          ${tag} > input[slot='input'] {
+            opacity: 0;
+          }
+        `,
+            ];
         }
 
         /** @protected */

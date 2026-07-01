@@ -100,4 +100,25 @@ class ViewControllerConfigurationSorterTest extends Specification {
         sorted.indexOf(appAddonUiConfiguration2) < sorted.indexOf(appUiConfiguration)
         sorted.indexOf(appAddonUiConfiguration3) < sorted.indexOf(appUiConfiguration)
     }
+
+    def "test ViewControllerConfigurations sorting with unknown base package"() {
+        def appUiConfiguration = new ViewControllersConfiguration(applicationContext, annotationScanMetadataReaderFactory)
+        appUiConfiguration.basePackages = ["com.company.app.screen"]
+
+        def jmixAddonUiConfiguration = new ViewControllersConfiguration(applicationContext, annotationScanMetadataReaderFactory)
+        jmixAddonUiConfiguration.basePackages = ["io.jmix.addon1.screen"]
+
+        def unknownUiConfiguration = new ViewControllersConfiguration(applicationContext, annotationScanMetadataReaderFactory)
+        unknownUiConfiguration.basePackages = ["com.unknown.screen"]
+
+        def configurations = [unknownUiConfiguration, appUiConfiguration, jmixAddonUiConfiguration]
+
+        when:
+        def sorted = viewControllersConfigurationSorter.sort(configurations)
+
+        then:
+        sorted.indexOf(jmixAddonUiConfiguration) < sorted.indexOf(appUiConfiguration)
+        sorted.indexOf(appUiConfiguration) < sorted.indexOf(unknownUiConfiguration)
+        sorted.indexOf(jmixAddonUiConfiguration) < sorted.indexOf(unknownUiConfiguration)
+    }
 }

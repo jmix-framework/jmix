@@ -24,6 +24,7 @@ import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
+import io.jmix.core.CoreProperties;
 import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.details.JmixDetails;
@@ -35,6 +36,7 @@ import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.view.*;
 import io.jmix.flowui.view.navigation.UrlParamSerializer;
 import io.jmix.jmxconsole.JmxControl;
+import io.jmix.jmxconsole.JmxConsoleProperties;
 import io.jmix.jmxconsole.model.ManagedBeanAttribute;
 import io.jmix.jmxconsole.model.ManagedBeanInfo;
 import org.apache.commons.collections4.CollectionUtils;
@@ -71,6 +73,10 @@ public class MBeanInfoDetailView extends StandardDetailView<ManagedBeanInfo> {
     protected DialogWindows dialogWindows;
     @Autowired
     protected UrlParamSerializer urlParamSerializer;
+    @Autowired
+    protected CoreProperties coreProperties;
+    @Autowired
+    protected JmxConsoleProperties jmxConsoleProperties;
 
     @Override
     protected void setupEntityToEdit(ManagedBeanInfo entityToEdit) {
@@ -186,7 +192,7 @@ public class MBeanInfoDetailView extends StandardDetailView<ManagedBeanInfo> {
     @Install(to = "attributesDataGrid.edit", subject = "enabledRule")
     protected boolean attributesDataGridEditEnabledRule() {
         ManagedBeanAttribute managedBeanAttribute = attributesDataGrid.getSingleSelectedItem();
-        return managedBeanAttribute != null && managedBeanAttribute.getWriteable();
+        return managedBeanAttribute != null && managedBeanAttribute.getWriteable() && isWriteAndInvokeEnabled();
     }
 
     @Subscribe("attributesDataGrid.edit")
@@ -200,6 +206,9 @@ public class MBeanInfoDetailView extends StandardDetailView<ManagedBeanInfo> {
             return;
         }
         if (!managedBeanAttribute.getWriteable()) {
+            return;
+        }
+        if (!isWriteAndInvokeEnabled()) {
             return;
         }
 
@@ -232,8 +241,13 @@ public class MBeanInfoDetailView extends StandardDetailView<ManagedBeanInfo> {
             mbean.getOperations().forEach(managedBeanOperation -> {
                 MBeanOperationComposite mBeanOperationComposite = uiComponents.create(MBeanOperationComposite.class);
                 mBeanOperationComposite.setOperation(managedBeanOperation);
+                mBeanOperationComposite.setWriteAndInvokeEnabled(isWriteAndInvokeEnabled());
                 operations.add(mBeanOperationComposite);
             });
         }
+    }
+
+    protected boolean isWriteAndInvokeEnabled() {
+        return coreProperties.isUnsafeRuntimeFeaturesEnabled() && jmxConsoleProperties.isWriteAndInvokeEnabled();
     }
 }

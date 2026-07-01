@@ -14,7 +14,4 @@
  * limitations under the License.
  */
 
-@NonNullApi
 package io.jmix.authserver.service.mapper;
-
-import org.springframework.lang.NonNullApi;

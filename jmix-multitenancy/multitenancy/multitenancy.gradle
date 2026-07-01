@@ -18,7 +18,9 @@ apply plugin: 'groovy'
 apply plugin: 'io.jmix'
 
 group = 'io.jmix.multitenancy'
-archivesBaseName = 'jmix-multitenancy'
+base {
+    archivesName = 'jmix-multitenancy'
+}
 
 dependencies {
     api project(':core')

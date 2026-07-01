@@ -14,7 +14,4 @@
  * limitations under the License.
  */
 
-@NonNullApi
 package io.jmix.fullcalendarflowui.component.data;
-
-import org.springframework.lang.NonNullApi;

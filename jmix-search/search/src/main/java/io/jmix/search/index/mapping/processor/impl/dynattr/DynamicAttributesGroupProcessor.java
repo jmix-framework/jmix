@@ -24,6 +24,7 @@ import io.jmix.search.index.mapping.MappingFieldDescriptor;
 import io.jmix.search.index.mapping.processor.impl.AbstractAttributesGroupProcessor;
 import io.jmix.search.index.mapping.processor.impl.FieldMappingCreator;
 import io.jmix.search.utils.PropertyTools;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -32,6 +33,7 @@ import java.util.stream.Collectors;
  * This processor is responsible for resolving dynamic attributes, validating the configuration,
  * and creating field mappings based on the provided {@link DynamicAttributesGroupConfiguration}.
  */
+@NullMarked
 public class DynamicAttributesGroupProcessor extends AbstractAttributesGroupProcessor<DynamicAttributesGroupConfiguration> {
 
     protected final DynamicAttributesResolver dynamicAttributesResolver;

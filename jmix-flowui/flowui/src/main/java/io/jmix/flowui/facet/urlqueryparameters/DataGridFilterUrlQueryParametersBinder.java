@@ -34,7 +34,7 @@ import io.jmix.flowui.view.navigation.UrlParamSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
@@ -180,7 +180,11 @@ public class DataGridFilterUrlQueryParametersBinder extends AbstractUrlQueryPara
 
     protected void applyPropertyFilterParameters(List<String> params) {
         for (String parameterString : params) {
-            if (StringUtils.countOccurrencesOf(parameterString, SEPARATOR) == 3) {
+            // The current format is key_property_operation_value — three structural separators.
+            // Any underscores beyond the third belong to the value itself and are handled by the parser.
+            // Anything with fewer separators is malformed (e.g. a stale bookmark or a hand-crafted URL)
+            // and is silently skipped so we don't throw mid-navigation.
+            if (StringUtils.countOccurrencesOf(parameterString, SEPARATOR) >= 3) {
                 applyPropertyFilterParameter(parameterString);
             }
         }

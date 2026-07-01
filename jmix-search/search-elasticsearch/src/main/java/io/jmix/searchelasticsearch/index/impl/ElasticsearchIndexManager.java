@@ -34,6 +34,7 @@ import io.jmix.search.index.mapping.IndexMappingConfiguration;
 import io.jmix.searchelasticsearch.index.ElasticsearchIndexSettingsProvider;
 import jakarta.json.spi.JsonProvider;
 import jakarta.json.stream.JsonParser;
+import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,6 +43,7 @@ import java.io.*;
 /**
  * Implementation for Elasticsearch
  */
+@NullMarked
 public class ElasticsearchIndexManager extends BaseIndexManager<IndexState, IndexSettings, JsonpSerializable> {
 
     private static final Logger log = LoggerFactory.getLogger(ElasticsearchIndexManager.class);

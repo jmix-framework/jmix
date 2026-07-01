@@ -16,11 +16,14 @@
 
 package io.jmix.core;
 
+import org.jspecify.annotations.NullMarked;
+
 import java.util.Collection;
 
 /**
  * Bean that is used for exporting a collection of entities and importing them.
  */
+@NullMarked
 public interface EntityImportExport {
 
     /**

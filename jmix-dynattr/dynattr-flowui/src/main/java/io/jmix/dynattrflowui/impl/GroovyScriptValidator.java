@@ -23,15 +23,10 @@ import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.flowui.component.validation.AbstractValidator;
 import io.jmix.flowui.exception.ValidationException;
 import io.jmix.flowui.sys.substitutor.StringSubstitutor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
-import org.springframework.scripting.ScriptEvaluator;
-import org.springframework.scripting.support.StaticScriptSource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-
-import java.util.Collections;
 
 /**
  * GroovyScript validator runs a custom Groovy script. If the script returns any object,
@@ -58,20 +53,19 @@ public class GroovyScriptValidator<T> extends AbstractValidator<T> {
 
     protected String validatorGroovyScript;
 
-    protected final ScriptEvaluator scriptEvaluator;
+    protected final DynAttrGroovyFeatureSupport dynAttrGroovyFeatureSupport;
 
     public GroovyScriptValidator(Messages messages,
                                  DatatypeRegistry datatypeRegistry,
                                  CurrentAuthentication currentAuthentication,
                                  @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
                                  StringSubstitutor substitutor,
-                                 @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
-                                 ScriptEvaluator scriptEvaluator) {
+                                 DynAttrGroovyFeatureSupport dynAttrGroovyFeatureSupport) {
         this.messages = messages;
         this.datatypeRegistry = datatypeRegistry;
         this.currentAuthentication = currentAuthentication;
         this.substitutor = substitutor;
-        this.scriptEvaluator = scriptEvaluator;
+        this.dynAttrGroovyFeatureSupport = dynAttrGroovyFeatureSupport;
     }
 
 
@@ -81,8 +75,7 @@ public class GroovyScriptValidator<T> extends AbstractValidator<T> {
         if (value == null || !StringUtils.hasText(validatorGroovyScript)) {
             return;
         }
-        Object scriptResult = scriptEvaluator.evaluate(new StaticScriptSource(validatorGroovyScript),
-                Collections.singletonMap("value", value));
+        Object scriptResult = dynAttrGroovyFeatureSupport.evaluateValidationScript(validatorGroovyScript, value);
         if (scriptResult != null) {
             setMessage(scriptResult.toString());
             fireValidationException(value);

@@ -18,13 +18,15 @@ package io.jmix.core;
 
 import io.jmix.core.metamodel.model.MetaClass;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import java.lang.reflect.Type;
 import java.util.Collection;
 
 /**
  * Class that is used for serialization and deserialization of entities to JSON.
  */
+@NullMarked
 public interface EntitySerialization {
 
     String ENTITY_NAME_PROP = "_entityName";

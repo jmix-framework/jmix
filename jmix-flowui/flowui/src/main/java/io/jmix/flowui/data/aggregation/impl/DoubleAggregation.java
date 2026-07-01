@@ -17,7 +17,7 @@
 package io.jmix.flowui.data.aggregation.impl;
 
 import io.jmix.flowui.data.aggregation.Aggregation;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Implementation of {@link Aggregation} intended for aggregating {@link Double} values.

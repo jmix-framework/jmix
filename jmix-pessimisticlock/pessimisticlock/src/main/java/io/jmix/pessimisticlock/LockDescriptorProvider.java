@@ -17,12 +17,14 @@
 package io.jmix.pessimisticlock;
 
 import io.jmix.pessimisticlock.entity.LockDescriptor;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.Collection;
 
 /**
  * Interface that provides {@link LockDescriptor} objects for {@code LockManager}.
  */
+@NullMarked
 public interface LockDescriptorProvider {
 
     Collection<LockDescriptor> getLockDescriptors();

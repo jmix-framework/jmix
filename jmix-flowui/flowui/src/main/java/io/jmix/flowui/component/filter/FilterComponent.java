@@ -23,12 +23,14 @@ import io.jmix.core.annotation.Internal;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.flowui.component.genericfilter.GenericFilter;
 import io.jmix.flowui.model.DataLoader;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Component that can be used for filtering entities returned by the {@link DataLoader}.
  * The filter component is related to {@link Condition} which will be used together with
  * query when loading entities into the {@link DataLoader}.
  */
+@NullMarked
 public interface FilterComponent extends HasElement, HasEnabled, HasStyle {
 
     /**

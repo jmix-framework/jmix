@@ -15,6 +15,9 @@
  */
 package io.jmix.reports.yarg.structure;
 
+import org.jspecify.annotations.NullMarked;
+
+@NullMarked
 public interface BandVisitor {
     boolean visit(BandData band);
 }

@@ -33,7 +33,7 @@ import org.docx4j.openpackaging.parts.SpreadsheetML.WorksheetPart;
 import org.docx4j.openpackaging.parts.relationships.RelationshipsPart;
 import org.docx4j.relationships.Relationship;
 import org.jvnet.jaxb2_commons.ppp.Child;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.xlsx4j.sml.CTDefinedName;
 import org.xlsx4j.sml.CTMergeCells;
 import org.xlsx4j.sml.CTPageBreak;
@@ -213,8 +213,7 @@ public class Document {
         return styleSheet.getCellStyle(cell.getS());
     }
 
-    @Nullable
-    public StyleSheet.Font getCellFont(Cell cell) {
+    public StyleSheet.@Nullable Font getCellFont(Cell cell) {
         StyleSheet.CellXfs cellStyle = styleSheet.getCellStyle(cell.getS());
         if (cellStyle == null || cellStyle.getFontId() == null) {
             return null;

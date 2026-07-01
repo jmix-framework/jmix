@@ -25,7 +25,6 @@ import com.vaadin.flow.component.orderedlayout.BoxSizing;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.ThemableLayout;
 import com.vaadin.flow.component.shared.HasAllowedCharPattern;
-import com.vaadin.flow.component.shared.HasOverlayClassName;
 import com.vaadin.flow.component.shared.HasTooltip;
 import com.vaadin.flow.component.shared.Tooltip;
 import com.vaadin.flow.component.textfield.*;
@@ -59,7 +58,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.env.Environment;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.InvocationTargetException;
@@ -155,7 +154,11 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
             String text = loaderSupport.loadResourceString(tooltipElement, "text", context.getMessageGroup())
                     .orElse(null);
 
-            Tooltip tooltip = component.setTooltipText(text);
+            boolean markdown = loaderSupport.loadBoolean(tooltipElement, "markdown").orElse(false);
+
+            Tooltip tooltip = markdown
+                    ? component.setTooltipMarkdown(text)
+                    : component.setTooltipText(text);
 
             loaderSupport.loadInteger(tooltipElement, "focusDelay", tooltip::setFocusDelay);
             loaderSupport.loadInteger(tooltipElement, "hideDelay", tooltip::setHideDelay);
@@ -270,11 +273,6 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
     public void loadClassNames(HasStyle component, Element element) {
         loaderSupport.loadString(element, "classNames")
                 .ifPresent(classNamesString -> split(classNamesString, component::addClassName));
-    }
-
-    public void loadOverlayClass(HasOverlayClassName component, Element element) {
-        loaderSupport.loadString(element, "overlayClass")
-                .ifPresent(component::setOverlayClassName);
     }
 
     public void loadThemeList(com.vaadin.flow.component.Component component, Element element) {
@@ -430,38 +428,6 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
     public Optional<Icon> loadIconSetIcon(Element element, String attributeName) {
         return loaderSupport.loadString(element, attributeName)
                 .map(ComponentUtils::parseIcon);
-    }
-
-    /**
-     * Loads an {@link Icon} from the given {@link Element}.
-     * The method tries to retrieve the "icon" attribute value from the element and,
-     * if present, parses it into an {@link Icon}.
-     *
-     * @param element the XML element from which to load the icon
-     * @return an {@link Optional} containing the parsed {@link Icon} if the "icon" attribute
-     * is present and valid, or an empty {@link Optional} otherwise
-     * @deprecated use {@link ComponentLoaderSupport#loadIconSetIcon(Element)} instead
-     */
-    @Deprecated(since = "3.0", forRemoval = true)
-    public Optional<Icon> loadIcon(Element element) {
-        return loaderSupport.loadString(element, "icon")
-                .map(ComponentUtils::parseIcon);
-    }
-
-    /**
-     * Loads an {@link Icon} from the provided {@link Element} and applies
-     * the result using the specified {@link Consumer}. The method attempts
-     * to retrieve the "icon" attribute value from the given element, parse
-     * it into an {@link Icon}, and pass it to the setter if successfully parsed.
-     *
-     * @param element the XML element from which to load the icon
-     * @param setter  the {@link Consumer} used to apply the loaded {@link Icon}
-     * @deprecated use {@link IconLoaderSupport#loadIcon(Element, Consumer)} instead
-     */
-    @Deprecated(since = "3.0", forRemoval = true)
-    public void loadIcon(Element element, Consumer<Icon> setter) {
-        loadIcon(element)
-                .ifPresent(setter);
     }
 
     public Optional<String> loadShortcutCombination(Element element) {

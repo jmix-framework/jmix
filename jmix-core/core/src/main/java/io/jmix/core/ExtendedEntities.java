@@ -20,6 +20,8 @@ import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.datastruct.Pair;
 import io.jmix.core.entity.annotation.ReplaceEntity;
 import io.jmix.core.entity.annotation.ReplacedByEntity;
+import io.jmix.core.impl.MetadataImpl;
+import io.jmix.core.impl.metadata.MetadataGenerationManager;
 import io.jmix.core.impl.keyvalue.KeyValueMetaClass;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -28,12 +30,16 @@ import io.jmix.core.metamodel.model.SessionImplementation;
 import io.jmix.core.metamodel.model.impl.ClassRange;
 import io.jmix.core.metamodel.model.impl.MetaClassImpl;
 import io.jmix.core.metamodel.model.impl.MetaPropertyImpl;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Component;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -42,20 +48,32 @@ import java.util.Map;
  *
  */
 @Component("core_ExtendedEntities")
+@NullMarked
 public class ExtendedEntities {
 
     protected Metadata metadata;
 
     protected Map<Class<?>, MetaClass> replacedMetaClasses = new HashMap<>();
+    protected volatile ExtendedEntitiesState currentState = ExtendedEntitiesState.of(replacedMetaClasses);
+
+    @Autowired
+    protected ObjectProvider<MetadataGenerationManager> metadataGenerationManagerProvider;
 
     @Autowired
     public ExtendedEntities(Metadata metadata) {
         this.metadata = metadata;
-        replaceExtendedMetaClasses();
+        replaceExtendedMetaClasses(getBootstrapSession());
+        currentState = ExtendedEntitiesState.of(replacedMetaClasses);
     }
 
-    protected void replaceExtendedMetaClasses() {
-        Session session = metadata.getSession();
+    protected Session getBootstrapSession() {
+        if (metadata instanceof MetadataImpl metadataImpl) {
+            return metadataImpl.getRawSession();
+        }
+        return metadata.getSession();
+    }
+
+    protected void replaceExtendedMetaClasses(Session session) {
         List<Pair<MetaClass, MetaClass>> replaceMap = new ArrayList<>();
         for (MetaClass metaClass : session.getClasses()) {
             MetaClass effectiveMetaClass = session.getClass(getEffectiveClass(metaClass));
@@ -67,13 +85,14 @@ public class ExtendedEntities {
             for (MetaProperty metaProperty : metaClass.getOwnProperties()) {
                 MetaPropertyImpl propertyImpl = (MetaPropertyImpl) metaProperty;
 
-                // replace domain
-                Class<?> effectiveDomainClass = getEffectiveClass(metaProperty.getDomain());
-                MetaClass effectiveDomainMeta = session.getClass(effectiveDomainClass);
-                if (metaProperty.getDomain() != effectiveDomainMeta) {
-                    propertyImpl.setDomain(effectiveDomainMeta);
-                }
-
+                // IMPORTANT: range must be replaced BEFORE domain. MetaPropertyImpl.setRange()
+                // propagates the new range to clones held by descendant metaclasses via
+                // withClones(), which iterates over `domain.getDescendants()`. If domain has
+                // already been switched to the effective (replacing) metaclass, that class
+                // typically has no descendants, so the propagation silently does nothing, and
+                // the clones on replacing metaclasses are left with stale ranges pointing to
+                // the original (replaced) entity. setDomain() has no such cascade and is safe
+                // to call after setRange().
                 if (metaProperty.getRange().isClass()) {
                     // replace range class
                     ClassRange range = (ClassRange) metaProperty.getRange();
@@ -87,6 +106,13 @@ public class ExtendedEntities {
 
                         ((MetaPropertyImpl) metaProperty).setRange(newRange);
                     }
+                }
+
+                // replace domain
+                Class<?> effectiveDomainClass = getEffectiveClass(metaProperty.getDomain());
+                MetaClass effectiveDomainMeta = session.getClass(effectiveDomainClass);
+                if (metaProperty.getDomain() != effectiveDomainMeta) {
+                    propertyImpl.setDomain(effectiveDomainMeta);
                 }
             }
         }
@@ -198,7 +224,7 @@ public class ExtendedEntities {
             return null;
         }
 
-        MetaClass metaClass = replacedMetaClasses.get(originalClass);
+        MetaClass metaClass = getState().getReplacedMetaClasses().get(originalClass);
         if (metaClass != null) {
             return metaClass;
         }
@@ -231,5 +257,76 @@ public class ExtendedEntities {
     @Internal
     public void registerReplacedMetaClass(MetaClass metaClass) {
         replacedMetaClasses.put(metaClass.getJavaClass(), metaClass);
+        currentState = ExtendedEntitiesState.of(replacedMetaClasses);
+    }
+
+    /**
+     * Returns the extended-entities state visible to the current metadata generation.
+     *
+     * <p>Intended for infrastructure that needs a stable replacement map for the whole request or data operation.</p>
+     */
+    public ExtendedEntitiesState getCurrentStateSnapshot() {
+        MetadataGenerationManager metadataGenerationManager = metadataGenerationManagerProvider.getIfAvailable();
+        if (metadataGenerationManager != null) {
+            return metadataGenerationManager.getPinnedOrCurrentGeneration().getExtendedEntitiesState();
+        }
+        return currentState;
+    }
+
+    /**
+     * Returns the extended-entities state built from the bootstrap metadata session.
+     *
+     * <p>Intended for initialization of the first published metadata generation.</p>
+     */
+    public ExtendedEntitiesState getBootstrapState() {
+        return currentState;
+    }
+
+    protected ExtendedEntitiesState getState() {
+        MetadataGenerationManager metadataGenerationManager = metadataGenerationManagerProvider.getIfAvailable();
+        if (metadataGenerationManager != null) {
+            return metadataGenerationManager.getPinnedOrCurrentGeneration().getExtendedEntitiesState();
+        }
+        return currentState;
+    }
+
+    public static class ExtendedEntitiesState {
+
+        protected final Map<Class<?>, MetaClass> replacedMetaClasses;
+
+        protected ExtendedEntitiesState(Map<Class<?>, MetaClass> replacedMetaClasses) {
+            this.replacedMetaClasses = Collections.unmodifiableMap(replacedMetaClasses);
+        }
+
+        /**
+         * Creates an immutable snapshot of replaced meta classes.
+         *
+         * @param replacedMetaClasses replacement mapping to snapshot
+         * @return immutable state snapshot
+         */
+        public static ExtendedEntitiesState of(Map<Class<?>, MetaClass> replacedMetaClasses) {
+            return new ExtendedEntitiesState(new LinkedHashMap<>(replacedMetaClasses));
+        }
+
+        /**
+         * Returns replaced meta classes keyed by original Java type.
+         */
+        public Map<Class<?>, MetaClass> getReplacedMetaClasses() {
+            return replacedMetaClasses;
+        }
+
+        /**
+         * Rebuilds the state for a cloned metadata session.
+         *
+         * @param metaClassMap mapping from source meta classes to cloned meta classes
+         * @return state remapped to the cloned session
+         */
+        public ExtendedEntitiesState remap(Map<MetaClass, MetaClass> metaClassMap) {
+            Map<Class<?>, MetaClass> remapped = new LinkedHashMap<>();
+            for (Map.Entry<Class<?>, MetaClass> entry : replacedMetaClasses.entrySet()) {
+                remapped.put(entry.getKey(), metaClassMap.get(entry.getValue()));
+            }
+            return new ExtendedEntitiesState(remapped);
+        }
     }
 }

@@ -18,9 +18,9 @@ package io.jmix.securityflowui.view.resetpassword;
 
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.progressbar.ProgressBar;
@@ -40,6 +40,7 @@ import io.jmix.flowui.backgroundtask.BackgroundTaskHandler;
 import io.jmix.flowui.backgroundtask.BackgroundWorker;
 import io.jmix.flowui.backgroundtask.TaskLifeCycle;
 import io.jmix.flowui.component.UiComponentUtils;
+import io.jmix.flowui.component.checkbox.JmixCheckbox;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.textfield.JmixPasswordField;
 import io.jmix.flowui.icon.Icons;
@@ -49,6 +50,7 @@ import io.jmix.flowui.kit.icon.JmixFontIcon;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.util.UnknownOperationResult;
 import io.jmix.flowui.view.*;
+import io.jmix.security.user.PasswordChangeRequiredSupport;
 import io.jmix.securityflowui.view.resetpassword.model.UserPasswordValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,6 +69,8 @@ public class ResetPasswordView extends StandardView {
     private static final Logger log = LoggerFactory.getLogger(ResetPasswordView.class);
 
     protected static final String RESET_PASSWORD_FIELD_CLASS_NAME = "reset-password-field";
+    protected static final String COPY_BUTTON_CLASS_NAME = "copy-button";
+    protected static final String COPY_BUTTON_COPIED_CLASS_NAME = COPY_BUTTON_CLASS_NAME + "-copied";
 
     protected static final String PASSWORD_FIELD_ID = "passwordField";
     protected static final String BUTTON_ID = "copyButton";
@@ -77,6 +81,8 @@ public class ResetPasswordView extends StandardView {
     protected DataManager dataManager;
     @Autowired
     protected ApplicationEventPublisher applicationEventPublisher;
+    @Autowired
+    protected PasswordChangeRequiredSupport passwordChangeRequiredSupport;
     @Autowired
     protected UiAsyncTasks uiAsyncTasks;
     @Autowired
@@ -107,6 +113,8 @@ public class ResetPasswordView extends StandardView {
     protected DataGrid<UserPasswordValue> passwordsDataGrid;
     @ViewComponent
     protected JmixButton closeBtn;
+    @ViewComponent
+    protected JmixCheckbox requireChangeAtNextLogonField;
 
     @ViewComponent
     protected VerticalLayout progressBarLayout;
@@ -128,6 +136,7 @@ public class ResetPasswordView extends StandardView {
 
     protected Set<? extends UserDetails> users;
     protected Dialog cancelDialog;
+    protected boolean requireChangeAtNextLogon = true;
 
     @Subscribe
     public void onInit(InitEvent event) {
@@ -139,6 +148,18 @@ public class ResetPasswordView extends StandardView {
         if (!isSingleSelected()) {
             updateMultiSelectComponentsLabels();
         }
+
+        updateRequireChangeAtNextLogonFieldVisibility();
+    }
+
+    protected void updateRequireChangeAtNextLogonFieldVisibility() {
+        if (users == null || users.isEmpty()) {
+            return;
+        }
+
+        Class<?> userClass = users.iterator().next().getClass();
+        boolean supported = passwordChangeRequiredSupport.findFlagProperty(userClass) != null;
+        requireChangeAtNextLogonField.setVisible(supported);
     }
 
     @Subscribe
@@ -196,6 +217,7 @@ public class ResetPasswordView extends StandardView {
 
     @Subscribe("generateBtn")
     protected void onGenerateBtnClick(ClickEvent<JmixButton> event) {
+        requireChangeAtNextLogon = Boolean.TRUE.equals(requireChangeAtNextLogonField.getValue());
         configureComponentsBeforeGeneration();
 
         generationTaskHandler = backgroundWorker.handle(createBackgroundTask());
@@ -257,22 +279,23 @@ public class ResetPasswordView extends StandardView {
 
     protected HorizontalLayout passwordLayoutFactory() {
         HorizontalLayout layout = uiComponents.create(HorizontalLayout.class);
+        layout.setAlignItems(FlexComponent.Alignment.CENTER);
         layout.setWidthFull();
         layout.setPadding(false);
         layout.setSpacing(false);
 
         JmixPasswordField passwordField = uiComponents.create(JmixPasswordField.class);
         passwordField.setId(PASSWORD_FIELD_ID);
-        passwordField.addClassName(RESET_PASSWORD_FIELD_CLASS_NAME);
+        passwordField.setClassName(RESET_PASSWORD_FIELD_CLASS_NAME);
         passwordField.setReadOnly(true);
 
-        JmixButton button = uiComponents.create(JmixButton.class);
-        button.setId(BUTTON_ID);
-        button.addThemeVariants(ButtonVariant.LUMO_TERTIARY, ButtonVariant.LUMO_ICON, ButtonVariant.LUMO_CONTRAST);
-        button.setTooltipText(messageBundle.getMessage("resetPasswordView.copyButton.tooltip"));
-        button.setIcon(icons.get(JmixFontIcon.COPY));
+        JmixButton copyButton = uiComponents.create(JmixButton.class);
+        copyButton.setId(BUTTON_ID);
+        copyButton.setClassName(COPY_BUTTON_CLASS_NAME);
+        copyButton.setTooltipText(messageBundle.getMessage("resetPasswordView.copyButton.tooltip"));
+        copyButton.setIcon(icons.get(JmixFontIcon.COPY));
 
-        layout.add(passwordField, button);
+        layout.add(passwordField, copyButton);
 
         return layout;
     }
@@ -297,14 +320,12 @@ public class ResetPasswordView extends StandardView {
     }
 
     protected void applyCopyButtonSuccessStyles(JmixButton button) {
-        button.removeThemeVariants(ButtonVariant.LUMO_CONTRAST);
-        button.addThemeVariants(ButtonVariant.LUMO_SUCCESS);
+        button.addClassName(COPY_BUTTON_COPIED_CLASS_NAME);
         button.setIcon(icons.get(JmixFontIcon.CHECK));
     }
 
     protected void applyCopyButtonDefaultStyles(JmixButton button) {
-        button.removeThemeVariants(ButtonVariant.LUMO_SUCCESS);
-        button.addThemeVariants(ButtonVariant.LUMO_CONTRAST);
+        button.removeClassName(COPY_BUTTON_COPIED_CLASS_NAME);
         button.setIcon(icons.get(JmixFontIcon.COPY));
     }
 
@@ -359,15 +380,16 @@ public class ResetPasswordView extends StandardView {
             int i = 0;
 
             for (UserDetails userDetails : users) {
-                Map<UserDetails, String> userPasswordMap =
-                        userManager.resetPasswords(Collections.singleton(userDetails), false);
+                Map<UserDetails, String> userPasswordMap = userManager.resetPasswords(
+                        Collections.singleton(userDetails), false, requireChangeAtNextLogon);
                 Map.Entry<UserDetails, String> userPassword = userPasswordMap.entrySet().iterator().next();
 
-                String username = userPassword.getKey().getUsername();
+                UserDetails refreshedUser = userPassword.getKey();
+                String username = refreshedUser.getUsername();
                 String password = userPassword.getValue();
 
                 usernamePasswordMap.put(username, password);
-                saveContext.saving(userPassword.getKey());
+                saveContext.saving(refreshedUser);
                 result.add(createPasswordValue(username, password));
 
                 taskLifeCycle.publish(++i);

@@ -14,7 +14,4 @@
  * limitations under the License.
  */
 
-@NonNullApi
 package io.jmix.core.metamodel.model;
-
-import org.springframework.lang.NonNullApi;

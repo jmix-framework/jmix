@@ -21,12 +21,12 @@ import com.vaadin.flow.component.DetachEvent;
 import io.jmix.flowui.component.details.JmixDetails;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.facet.settings.UiComponentSettings;
-import io.jmix.flowui.facet.settings.ViewSettings;
 import io.jmix.flowui.facet.settings.component.binder.ComponentSettingsBinder;
 import io.jmix.flowui.view.View;
 import io.jmix.flowui.view.View.BeforeShowEvent;
 import io.jmix.flowui.view.View.ReadyEvent;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Set;
@@ -41,6 +41,7 @@ import java.util.function.Consumer;
  * Note, facet works with components that contain an id and have {@link ComponentSettingsBinder}.
  * Otherwise, it cannot match saved settings with a component.
  */
+@NullMarked
 public interface SettingsFacet<S extends UiComponentSettings<S>> extends Facet {
 
     /**
@@ -216,19 +217,6 @@ public interface SettingsFacet<S extends UiComponentSettings<S>> extends Facet {
          */
         public Collection<Component> getComponents() {
             return components;
-        }
-
-        /**
-         * @return {@link View} settings
-         * @deprecated use {@link #getSettings()} instead
-         */
-        @Deprecated(since = "3.0", forRemoval = true)
-        public ViewSettings getViewSettings() {
-            if (settings instanceof ViewSettings viewSettings) {
-                return viewSettings;
-            }
-
-            throw new IllegalStateException("Settings are not of %s type".formatted(ViewSettings.class.getSimpleName()));
         }
 
         /**

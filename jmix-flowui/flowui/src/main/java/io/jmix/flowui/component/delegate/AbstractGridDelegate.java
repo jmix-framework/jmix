@@ -17,7 +17,6 @@
 package io.jmix.flowui.component.delegate;
 
 import com.google.common.base.Strings;
-import com.google.common.primitives.Booleans;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.grid.*;
 import com.vaadin.flow.component.grid.editor.Editor;
@@ -32,9 +31,7 @@ import com.vaadin.flow.data.selection.SelectionListener;
 import com.vaadin.flow.data.selection.SelectionModel;
 import com.vaadin.flow.function.ValueProvider;
 import com.vaadin.flow.shared.Registration;
-import io.jmix.core.AccessManager;
-import io.jmix.core.MessageTools;
-import io.jmix.core.MetadataTools;
+import io.jmix.core.*;
 import io.jmix.core.accesscontext.EntityAttributeContext;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
@@ -50,18 +47,16 @@ import io.jmix.flowui.component.AggregationInfo;
 import io.jmix.flowui.component.ListDataComponent;
 import io.jmix.flowui.component.SupportsEnterPress.EnterPressEvent;
 import io.jmix.flowui.component.UiComponentUtils;
-import io.jmix.flowui.component.grid.DataGridColumn;
-import io.jmix.flowui.component.grid.DataGridDataProviderChangeObserver;
-import io.jmix.flowui.component.grid.EnhancedDataGrid;
+import io.jmix.flowui.component.grid.*;
 import io.jmix.flowui.component.grid.editor.DataGridEditor;
 import io.jmix.flowui.component.grid.editor.DataGridEditorImpl;
+import io.jmix.flowui.component.grid.sort.*;
 import io.jmix.flowui.data.BindingState;
 import io.jmix.flowui.data.EntityDataUnit;
 import io.jmix.flowui.data.aggregation.Aggregation;
 import io.jmix.flowui.data.aggregation.Aggregations;
 import io.jmix.flowui.data.aggregation.impl.AggregatableDelegate;
-import io.jmix.flowui.data.grid.ContainerDataGridItems;
-import io.jmix.flowui.data.grid.DataGridItems;
+import io.jmix.flowui.data.grid.*;
 import io.jmix.flowui.data.provider.StringPresentationValueProvider;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.HasActions;
@@ -73,11 +68,12 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent<E> & EnhancedDataGrid<E> & HasActions,
@@ -115,12 +111,16 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
     protected Consumer<Component> componentEmptyStateComponentDelegate;
     protected Registration emptyStateByPermissionRegistration;
 
+    protected String headerFilterApplyShortcut;
+
     protected boolean aggregatable;
     protected EnhancedDataGrid.AggregationPosition aggregationPosition = EnhancedDataGrid.AggregationPosition.BOTTOM;
     protected Map<Grid.Column<E>, AggregationInfo> aggregationMap = new LinkedHashMap<>();
 
     protected HeaderRow aggregationHeader;
     protected FooterRow aggregationFooter;
+
+    protected Function<DataGridSortContext<E>, DataGridSort> sortBuilderDelegate;
 
     /**
      * Columns that are bounded with data container (loaded from descriptor or
@@ -716,23 +716,10 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
         List<GridSortOrder<E>> sortOrders = event.getSortOrder();
         if (sortOrders.isEmpty()) {
             dataProvider.resetSortOrder();
+        } else if (sortBuilderDelegate != null) {
+            dataProvider.sort(sortBuilderDelegate.apply(createDataGridSortContext(sortOrders)));
         } else {
-            Map<Object, Boolean> sortedColumnMap = new LinkedHashMap<>();
-
-            for (GridSortOrder<E> sortOrder : sortOrders) {
-                Grid.Column<E> column = sortOrder.getSorted();
-
-                if (column != null) {
-                    MetaPropertyPath mpp = propertyColumns.get(column);
-
-                    if (mpp != null) {
-                        boolean ascending = SortDirection.ASCENDING.equals(sortOrder.getDirection());
-                        sortedColumnMap.put(mpp, ascending);
-                    }
-                }
-            }
-
-            dataProvider.sort(sortedColumnMap.keySet().toArray(), Booleans.toArray(sortedColumnMap.values()));
+            dataProvider.sort(DataGridSortBuilder.create(createDataGridSortContext(sortOrders)).build());
         }
     }
 
@@ -932,11 +919,42 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
             return;
         }
 
-        if (item != null) {
-            // have to select clicked item to make action work, otherwise
-            // consecutive clicks on the same item deselect it
-            // selection from client is mandatory due to programmatic selection ignores selectableProvider
-            component.getSelectionModel().selectFromClient(item);
+        if (item != null && !(getSelectionModel() instanceof GridNoneSelectionModel)) {
+            // First call selectFromClient to honor the selectableProvider — it updates only
+            // the server side; if the item is not selectable, it is a no-op.
+            GridSelectionModel<E> selectionModel = getSelectionModel();
+            selectionModel.selectFromClient(item);
+
+            if (selectionModel.isSelected(item)) {
+                // The item is selectable. Push the selection to the client (selectFromClient
+                // does not) and ensure exactly one selected item so that actions which require
+                // a single selection — like EditAction — can apply.
+                if (isMultiSelect()) {
+                    //noinspection unchecked
+                    SelectionModel.Multi<Grid<E>, E> multi =
+                            (SelectionModel.Multi<Grid<E>, E>) selectionModel;
+                    Set<E> toDeselect = new LinkedHashSet<>(multi.getSelectedItems());
+                    toDeselect.remove(item);
+
+                    if (toDeselect.isEmpty()) {
+                        // updateSelection would early-return because the item is already in
+                        // the selection and there is nothing to remove, leaving the client
+                        // out of sync. Force a push via the same dance as single-selection.
+                        selectionModel.deselectFromClient(item);
+                        selectionModel.select(item);
+                    } else {
+                        // updateSelection pushes both the addition and the deselections
+                        // of the previously selected items to the client.
+                        multi.updateSelection(Collections.singleton(item), toDeselect);
+                    }
+                } else {
+                    // For single selection, force a client-side update: deselectFromClient
+                    // resets the server state without touching the client; select() then
+                    // re-selects and pushes the new state to the client.
+                    selectionModel.deselectFromClient(item);
+                    selectionModel.select(item);
+                }
+            }
         }
 
         if (enterPressHandler != null) {
@@ -972,6 +990,15 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
         return null;
     }
 
+    @Nullable
+    public Function<DataGridSortContext<E>, DataGridSort> getSortBuilderDelegate() {
+        return sortBuilderDelegate;
+    }
+
+    public void setSortBuilderDelegate(@Nullable Function<DataGridSortContext<E>, DataGridSort> sortBuilderDelegate) {
+        this.sortBuilderDelegate = sortBuilderDelegate;
+    }
+
     public DataGridEditorImpl<E> createEditor() {
         DataGridEditorImpl<E> editor = new DataGridEditorImpl<>(component, applicationContext);
         editor.addCloseListener(this::onGridEditorClose);
@@ -980,6 +1007,31 @@ public abstract class AbstractGridDelegate<C extends Grid<E> & ListDataComponent
 
     protected void onGridEditorClose(EditorCloseEvent<E> eEditorCloseEvent) {
         updateAggregationRow();
+    }
+
+    public void setHeaderFilterApplyShortcut(@Nullable String headerFilterApplyShortcut) {
+        this.headerFilterApplyShortcut = headerFilterApplyShortcut;
+    }
+
+    @Nullable
+    public String getHeaderFilterApplyShortcut() {
+        return headerFilterApplyShortcut;
+    }
+
+    protected DataGridSortContext<E> createDataGridSortContext(List<GridSortOrder<E>> sortOrders) {
+        List<ColumnSortInfo<E>> columnSortInfo = new ArrayList<>();
+        for (GridSortOrder<E> sortOrder : sortOrders) {
+            Grid.Column<E> column = sortOrder.getSorted();
+            if (column == null) {
+                continue;
+            }
+
+            boolean ascending = SortDirection.ASCENDING.equals(sortOrder.getDirection());
+            MetaPropertyPath mpp = propertyColumns.get(column);
+
+            columnSortInfo.add(new ColumnSortInfoImpl<>((DataGridColumn<E>) column, ascending, mpp));
+        }
+        return new DataGridSortContext<>(component, columnSortInfo);
     }
 
     public static class ColumnSecurityContext<E> {

@@ -1,4 +1,6 @@
-archivesBaseName = '${module_name}'
+base {
+    archivesName = '${module_name}'
+}
 
 dependencies {
     implementation 'io.jmix.core:jmix-core-starter'
@@ -15,7 +17,7 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-web'
 
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-    testRuntimeOnly 'com.h2database:h2'
+    testRuntimeOnly 'org.hsqldb:hsqldb'
 }
 
 configurations.implementation {

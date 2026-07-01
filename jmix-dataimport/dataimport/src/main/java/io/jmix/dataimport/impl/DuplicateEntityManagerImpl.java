@@ -25,13 +25,14 @@ import io.jmix.dataimport.DuplicateEntityManager;
 import io.jmix.dataimport.configuration.UniqueEntityConfiguration;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.Map;
 
 @Component("datimp_DuplicateEntityManager")
+
 public class DuplicateEntityManagerImpl implements DuplicateEntityManager {
     @Autowired
     protected DataManager dataManager;

@@ -18,9 +18,6 @@ package io.jmix.flowui.xml.facet.loader;
 
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.facet.Timer;
-import io.jmix.flowui.impl.FacetsImpl;
-import io.jmix.flowui.xml.facet.FacetProvider;
-import io.jmix.flowui.xml.layout.ComponentLoader;
 import org.dom4j.Element;
 
 import java.util.Objects;
@@ -34,16 +31,6 @@ public class TimerFacetLoader extends AbstractFacetLoader<Timer> {
 
     @Override
     public void loadFacet() {
-        // for backward compatibility, should be removed in future releases
-        if (facets instanceof FacetsImpl facetsImpl) {
-            FacetProvider<Timer> provider = facetsImpl.getProvider(Timer.class);
-
-            if (provider != null && context instanceof ComponentLoader.ComponentContext componentContext) {
-                provider.loadFromXml(resultFacet, element, componentContext);
-                return;
-            }
-        }
-
         loadId(element);
         loadDelay(element);
 

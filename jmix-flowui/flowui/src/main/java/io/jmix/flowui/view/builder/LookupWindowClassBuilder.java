@@ -26,7 +26,7 @@ import io.jmix.flowui.view.DialogWindow.AfterCloseEvent;
 import io.jmix.flowui.view.DialogWindow.AfterOpenEvent;
 import io.jmix.flowui.view.LookupView;
 import io.jmix.flowui.view.View;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -103,7 +103,7 @@ public class LookupWindowClassBuilder<E, V extends View<?> & LookupView<E>> exte
     }
 
     @Override
-    public LookupWindowClassBuilder<E, V> withLookupComponentMultiSelect(boolean lookupComponentMultiSelect) {
+    public LookupWindowClassBuilder<E, V> withLookupComponentMultiSelect(@Nullable Boolean lookupComponentMultiSelect) {
         super.withLookupComponentMultiSelect(lookupComponentMultiSelect);
         return this;
     }

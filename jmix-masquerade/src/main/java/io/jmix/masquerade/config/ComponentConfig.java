@@ -17,6 +17,7 @@
 package io.jmix.masquerade.config;
 
 import io.jmix.masquerade.JComponents;
+import org.jspecify.annotations.NullMarked;
 import org.openqa.selenium.By;
 
 import java.util.Map;
@@ -38,6 +39,7 @@ import java.util.function.Function;
  * }</code></pre>
  * }</pre>
  */
+@NullMarked
 public interface ComponentConfig {
 
     /**

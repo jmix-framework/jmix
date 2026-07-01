@@ -16,13 +16,15 @@
 
 import grapesjs from 'grapesjs';
 import {ElementMixin} from '@vaadin/component-base/src/element-mixin.js';
+import {PolylitMixin} from '@vaadin/component-base/src/polylit-mixin.js';
 import {defineCustomElement} from '@vaadin/component-base/src/define.js';
 import {ResizeMixin} from '@vaadin/component-base/src/resize-mixin.js';
-import {PolymerElement} from '@polymer/polymer/polymer-element.js';
+import {LitElement} from 'lit';
+import {LumoInjectionMixin} from '@vaadin/vaadin-themable-mixin/lumo-injection-mixin.js';
 import {ThemableMixin} from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
 import {Iconset} from '@vaadin/icon/vaadin-iconset.js';
 
-class JmixGrapesJs extends ResizeMixin(ThemableMixin(ElementMixin(PolymerElement))) {
+export class JmixGrapesJs extends ResizeMixin(ThemableMixin(ElementMixin(PolylitMixin(LumoInjectionMixin(LitElement))))) {
 
     _plugins = [];
 
@@ -39,6 +41,10 @@ class JmixGrapesJs extends ResizeMixin(ThemableMixin(ElementMixin(PolymerElement
                 notify: true
             }
         }
+    }
+
+    createRenderRoot() {
+        return this;
     }
 
     /** @private */
@@ -345,5 +351,3 @@ class JmixGrapesJs extends ResizeMixin(ThemableMixin(ElementMixin(PolymerElement
 }
 
 defineCustomElement(JmixGrapesJs);
-
-export {JmixGrapesJs};

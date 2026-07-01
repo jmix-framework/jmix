@@ -52,7 +52,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.core.env.Environment;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.time.ZoneId;
 import java.util.*;
@@ -85,7 +85,7 @@ public class JmixEclipseLinkQuery<E> implements JmixQuery<E> {
     protected List<AdditionalCriteriaProvider> additionalCriteriaProviders;
     protected QueryParamValuesManager queryParamValuesManager;
 
-    protected JpaQuery query;
+    protected JpaQuery<E> query;
     protected boolean isNative;
     protected String queryString;
     protected String transformedQueryString;

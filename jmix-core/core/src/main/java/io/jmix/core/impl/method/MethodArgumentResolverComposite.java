@@ -16,7 +16,7 @@
 
 package io.jmix.core.impl.method;
 
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.LinkedList;

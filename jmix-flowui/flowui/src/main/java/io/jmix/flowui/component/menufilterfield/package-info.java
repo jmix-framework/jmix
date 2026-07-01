@@ -14,7 +14,4 @@
  * limitations under the License.
  */
 
-@NonNullApi
 package io.jmix.flowui.component.menufilterfield;
-
-import org.springframework.lang.NonNullApi;

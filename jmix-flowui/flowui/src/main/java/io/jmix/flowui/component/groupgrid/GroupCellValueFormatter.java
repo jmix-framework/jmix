@@ -17,6 +17,7 @@
 package io.jmix.flowui.component.groupgrid;
 
 import io.jmix.core.annotation.Experimental;
+import org.jspecify.annotations.NullMarked;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -49,6 +50,7 @@ import java.util.Collection;
  */
 @Experimental
 @FunctionalInterface
+@NullMarked
 public interface GroupCellValueFormatter<E> extends Serializable {
 
     /**

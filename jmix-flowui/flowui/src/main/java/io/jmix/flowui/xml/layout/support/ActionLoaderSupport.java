@@ -118,7 +118,7 @@ public class ActionLoaderSupport implements ApplicationContextAware {
     protected Action loadDeclarativeActionDefault(Element element) {
         String id = loadActionId(element);
 
-        Action targetAction = new SecuredBaseAction(id);
+        Action targetAction = new SecuredBaseAction<>(id);
 
         initAction(element, targetAction);
 
@@ -152,7 +152,7 @@ public class ActionLoaderSupport implements ApplicationContextAware {
         loaderSupport.loadEnum(element, ActionVariant.class, "actionVariant",
                 ((Action) targetAction)::setVariant);
 
-        iconLoaderSupport().loadIcon(element, targetAction::setIconComponent);
+        iconLoaderSupport().loadIcon(element, targetAction::setIcon);
 
         Element shortcutCombinationElement = element.element("shortcutCombination");
         // shortcutCombination element takes precedence over the attribute

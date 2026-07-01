@@ -19,6 +19,7 @@ package io.jmix.reports.yarg.formatters.impl.doc.connector;
 import io.jmix.reports.yarg.formatters.impl.doc.connector.JavaProcessManager;
 import io.jmix.reports.yarg.formatters.impl.doc.connector.ProcessManager;
 import org.apache.commons.io.IOUtils;
+import org.jspecify.annotations.NullMarked;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -27,6 +28,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@NullMarked
 public class LinuxProcessManager extends JavaProcessManager implements ProcessManager {
     protected static final Pattern PS_OUTPUT_LINE = Pattern.compile("^\\s*(\\d+)\\s+(.*)$");
 

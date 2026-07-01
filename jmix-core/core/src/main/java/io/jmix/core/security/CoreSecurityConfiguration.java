@@ -18,6 +18,7 @@ package io.jmix.core.security;
 
 import io.jmix.core.CoreProperties;
 import io.jmix.core.JmixSecurityFilterChainOrder;
+import io.jmix.core.security.impl.JmixDaoAuthenticationProvider;
 import io.jmix.core.security.impl.SubstitutedUserAuthenticationProvider;
 import io.jmix.core.security.impl.SystemAuthenticationProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -27,6 +28,8 @@ import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.*;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 
 import java.util.ArrayList;
@@ -68,7 +71,9 @@ public class CoreSecurityConfiguration {
                 )
                 .logout(logout -> logout.logoutSuccessUrl("/#login"))
                 .csrf(csrf -> csrf.disable())
-                .headers(headers -> headers.frameOptions().sameOrigin());
+                .headers(headers ->
+                        headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
+                );
         return http.build();
     }
 
@@ -82,8 +87,7 @@ public class CoreSecurityConfiguration {
         providers.add(new SystemAuthenticationProvider(userRepository));
         providers.add(new SubstitutedUserAuthenticationProvider(userRepository));
 
-        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
-        daoAuthenticationProvider.setUserDetailsService(userRepository);
+        DaoAuthenticationProvider daoAuthenticationProvider = new JmixDaoAuthenticationProvider(userRepository);
         daoAuthenticationProvider.setPreAuthenticationChecks(preAuthenticationChecks);
         daoAuthenticationProvider.setPostAuthenticationChecks(postAuthenticationChecks);
 

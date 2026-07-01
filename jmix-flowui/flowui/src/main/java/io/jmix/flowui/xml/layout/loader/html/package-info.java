@@ -14,7 +14,4 @@
  * limitations under the License.
  */
 
-@NonNullApi
 package io.jmix.flowui.xml.layout.loader.html;
-
-import org.springframework.lang.NonNullApi;

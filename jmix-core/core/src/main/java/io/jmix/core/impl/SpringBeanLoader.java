@@ -17,6 +17,7 @@
 package io.jmix.core.impl;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
@@ -27,7 +28,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 
-import jakarta.annotation.Nonnull;
 import java.util.Collection;
 
 @Component("core_SpringBeanLoader")
@@ -36,7 +36,7 @@ public class SpringBeanLoader implements BeanFactoryAware {
     protected DefaultListableBeanFactory beanFactory;
 
     @Override
-    public void setBeanFactory(@Nonnull BeanFactory beanFactory) throws BeansException {
+    public void setBeanFactory(@NonNull BeanFactory beanFactory) throws BeansException {
         if (beanFactory instanceof DefaultListableBeanFactory) {
             this.beanFactory = (DefaultListableBeanFactory) beanFactory;
         }

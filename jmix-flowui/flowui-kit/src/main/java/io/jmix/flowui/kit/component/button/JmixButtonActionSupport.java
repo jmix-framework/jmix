@@ -24,7 +24,7 @@ import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionVariant;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.beans.PropertyChangeEvent;
 import java.util.Objects;
@@ -99,13 +99,13 @@ public class JmixButtonActionSupport {
     protected void addActionVariant(JmixButton component, ActionVariant actionVariant) {
         switch (actionVariant) {
             case PRIMARY:
-                component.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+                component.addThemeVariants(ButtonVariant.PRIMARY);
                 break;
             case DANGER:
-                component.addThemeVariants(ButtonVariant.LUMO_ERROR);
+                component.addThemeVariants(ButtonVariant.ERROR);
                 break;
             case SUCCESS:
-                component.addThemeVariants(ButtonVariant.LUMO_SUCCESS);
+                component.addThemeVariants(ButtonVariant.SUCCESS);
                 break;
             default:
         }
@@ -114,13 +114,13 @@ public class JmixButtonActionSupport {
     protected void removeActionVariant(JmixButton component, ActionVariant actionVariant) {
         switch (actionVariant) {
             case PRIMARY:
-                component.removeThemeVariants(ButtonVariant.LUMO_PRIMARY);
+                component.removeThemeVariants(ButtonVariant.PRIMARY);
                 break;
             case DANGER:
-                component.removeThemeVariants(ButtonVariant.LUMO_ERROR);
+                component.removeThemeVariants(ButtonVariant.ERROR);
                 break;
             case SUCCESS:
-                component.removeThemeVariants(ButtonVariant.LUMO_SUCCESS);
+                component.removeThemeVariants(ButtonVariant.SUCCESS);
                 break;
             default:
         }

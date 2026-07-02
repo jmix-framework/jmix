@@ -1,5 +1,5 @@
 @import '../../../../shared/src/addons/aichat/ai-chat.css';
 
-.ai-chat {
+.jmix-ai-chat {
   gap: var(--lumo-space-m);
 }

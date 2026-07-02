@@ -42,19 +42,19 @@
     inline-size: var(--lumo-icon-size-m);
     block-size: var(--lumo-icon-size-m);
     background: currentColor;
-    mask-image: var(--ai-message-input-icon-send);
+    mask-image: var(--jmix-ai-message-input-icon-send);
     mask-repeat: no-repeat;
     mask-position: center;
     mask-size: contain;
-    -webkit-mask-image: var(--ai-message-input-icon-send);
+    -webkit-mask-image: var(--jmix-ai-message-input-icon-send);
     -webkit-mask-repeat: no-repeat;
     -webkit-mask-position: center;
     -webkit-mask-size: contain;
   }
 
   :host([generating]) [part='label'] {
-    mask-image: var(--ai-message-input-icon-stop);
-    -webkit-mask-image: var(--ai-message-input-icon-stop);
+    mask-image: var(--jmix-ai-message-input-icon-stop);
+    -webkit-mask-image: var(--jmix-ai-message-input-icon-stop);
   }
 
   :host::before,

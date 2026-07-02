@@ -1,4 +1,4 @@
 :where(:root) {
-  --_ai-code-block-color-success-default: var(--aura-green);
-  --_ai-code-block-action-icon-size-default: var(--aura-font-size-l);
+  --_jmix-ai-code-block-color-success-default: var(--aura-green);
+  --_jmix-ai-code-block-action-icon-size-default: var(--aura-font-size-l);
 }

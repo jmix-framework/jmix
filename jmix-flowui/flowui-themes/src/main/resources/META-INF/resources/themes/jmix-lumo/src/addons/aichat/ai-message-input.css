@@ -5,19 +5,19 @@
     flex-wrap: wrap;
     align-items: center;
     justify-content: flex-end;
-    gap: var(--ai-message-input-gap, var(--lumo-space-m));
+    gap: var(--jmix-ai-message-input-gap, var(--lumo-space-m));
     width: 100%;
-    max-width: var(--ai-message-input-max-width);
+    max-width: var(--jmix-ai-message-input-max-width);
     margin-inline: auto;
     max-height: 50vh;
     flex-shrink: 0;
-    padding: var(--ai-message-input-padding, var(--lumo-space-s));
-    background: var(--ai-message-input-background, var(--lumo-base-color));
+    padding: var(--jmix-ai-message-input-padding, var(--lumo-space-s));
+    background: var(--jmix-ai-message-input-background, var(--lumo-base-color));
     box-shadow: inset 0 0 0 var(--vaadin-input-field-border-width, 1px)
       var(--vaadin-input-field-border-color, var(--lumo-contrast-30pct));
     border-radius: var(--vaadin-input-field-border-radius, var(--lumo-border-radius-l));
-    --ai-message-input-icon-send: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M12 19V5'/><path d='m5 12 7-7 7 7'/></svg>");
-    --ai-message-input-icon-stop: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='currentColor'><rect x='6' y='6' width='12' height='12' rx='2'/></svg>");
+    --jmix-ai-message-input-icon-send: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M12 19V5'/><path d='m5 12 7-7 7 7'/></svg>");
+    --jmix-ai-message-input-icon-stop: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='currentColor'><rect x='6' y='6' width='12' height='12' rx='2'/></svg>");
   }
 
   :host([hidden]) {
@@ -30,7 +30,7 @@
   }
 
   :host([disabled]) {
-    --ai-message-input-background: var(--lumo-contrast-5pct);
+    --jmix-ai-message-input-background: var(--lumo-contrast-5pct);
     box-shadow: none;
   }
 

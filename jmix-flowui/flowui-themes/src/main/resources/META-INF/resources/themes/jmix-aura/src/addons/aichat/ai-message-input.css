@@ -1,5 +1,5 @@
 :is(jmix-ai-message-input) {
-  background: var(--ai-message-input-background, var(--aura-surface-color));
+  background: var(--jmix-ai-message-input-background, var(--aura-surface-color));
   --aura-surface-level: 4;
   --aura-surface-opacity: 0.7;
   background-clip: padding-box;

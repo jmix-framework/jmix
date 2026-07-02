@@ -28,6 +28,14 @@
     overflow: auto;
 }
 
+.bpmn-modeler-view .bpm-modeler-bpmn-panel {
+    margin-inline-end: var(--lumo-space-s);
+}
+
+.bpmn-modeler-view jmix-bpmn-modeler {
+    border-radius: var(--lumo-border-radius-m);
+}
+
 .bpm-modeler-properties-panel {
     --lumo-font-size: 1rem;
     --lumo-font-size-xxxl: 1.375rem;

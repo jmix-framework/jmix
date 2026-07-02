@@ -70,6 +70,7 @@ public final class StudioXmlElements {
     public static final String CALLBACK_DATA_PROVIDER = "callbackDataProvider";
     public static final String CANCEL_BUTTON = "cancelButton";
     public static final String CANDLESTICK = "candlestick";
+    public static final String CAPABILITIES = "capabilities";
     public static final String CARD = "card";
     public static final String CHART = "chart";
     public static final String CHECKBOX = "checkbox";
@@ -140,6 +141,7 @@ public final class StudioXmlElements {
     public static final String DETAIL = "detail";
     public static final String DETAILS = "details";
     public static final String DIGITS = "digits";
+    public static final String DIMENSIONS = "dimensions";
     public static final String DISPLAY_MODE = "displayMode";
     public static final String DISPLAY_MODE_PROPERTIES = "displayModeProperties";
     public static final String DIV = "div";
@@ -330,6 +332,8 @@ public final class StudioXmlElements {
     public static final String ON_FRAGMENT_EVENT = "onFragmentEvent";
     public static final String ON_VIEW_EVENT = "onViewEvent";
     public static final String ORDERED_LIST = "orderedList";
+    public static final String ORIGIN = "origin";
+    public static final String ORIGINS = "origins";
     public static final String OSM_SOURCE = "osmSource";
     public static final String OUT_OF_BRUSH = "outOfBrush";
     public static final String OUT_RANGE = "outRange";
@@ -408,6 +412,7 @@ public final class StudioXmlElements {
     public static final String SINGLE = "single";
     public static final String SINGLE_POINT_LINE = "singlePointLine";
     public static final String SIZE = "size";
+    public static final String SIZES = "sizes";
     public static final String SLIDER_DATA_ZOOM = "sliderDataZoom";
     public static final String SORTERS_FUNCTION = "sortersFunction";
     public static final String SORT_FUNCTION = "sortFunction";
@@ -439,7 +444,9 @@ public final class StudioXmlElements {
     public static final String TEXT_ITEM = "textItem";
     public static final String TEXT_STYLE = "textStyle";
     public static final String TILE = "tile";
+    public static final String TILE_GRID = "tileGrid";
     public static final String TILE_SIZE = "tileSize";
+    public static final String TILE_SIZES = "tileSizes";
     public static final String TILE_WMS_SOURCE = "tileWmsSource";
     public static final String TIMER = "timer";
     public static final String TIME_GRID_DAY = "timeGridDay";
@@ -471,6 +478,8 @@ public final class StudioXmlElements {
     public static final String WEBDAV_DOCUMENT_LINK = "webdavDocumentLink";
     public static final String WEBDAV_DOCUMENT_UPLOAD = "webdavDocumentUpload";
     public static final String WEBDAV_DOCUMENT_VERSION_LINK = "webdavDocumentVersionLink";
+    public static final String WEB_MERCATOR_TILE_GRID = "webMercatorTileGrid";
+    public static final String WMTS_SOURCE = "wmtsSource";
     public static final String WORK_AREA = "workArea";
     public static final String WORLD_EXTENT = "worldExtent";
     public static final String XYZ_SOURCE = "xyzSource";

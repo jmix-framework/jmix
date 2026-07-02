@@ -225,6 +225,13 @@ public class MetaModelLoader {
             if (name == null)
                 return null;
 
+            MetaClass existingMetaClass = session.findClass(name);
+            if (existingMetaClass != null && !javaClass.equals(existingMetaClass.getJavaClass())) {
+                throw new IllegalStateException(String.format(
+                        "Duplicate entity name '%s' for classes %s and %s",
+                        name, existingMetaClass.getJavaClass().getName(), javaClass.getName()));
+            }
+
             metaClass = new MetaClassImpl(session, name);
             metaClass.setJavaClass(javaClass);
             ((SessionImplementation) session).registerClass(metaClass);

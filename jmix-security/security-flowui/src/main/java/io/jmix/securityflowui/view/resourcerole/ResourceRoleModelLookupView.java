@@ -101,7 +101,7 @@ public class ResourceRoleModelLookupView extends StandardListView<ResourceRoleMo
     }
 
     protected void loadRoles(@Nullable RoleFilterChangeEvent event) {
-        List<ResourceRoleModel> roleModels = roleRepository.getAllRoles().stream()
+        List<ResourceRoleModel> roleModels = roleRepository.getAllRoles(false).stream()
                 .filter(role -> (event == null || event.matches(role))
                         && !excludedRolesCodes.contains(role.getCode())
                 )
@@ -123,7 +123,7 @@ public class ResourceRoleModelLookupView extends StandardListView<ResourceRoleMo
                     }
                     return allowed;
                 })
-                .map(roleModelConverter::createResourceRoleModel)
+                .map(role -> roleModelConverter.createResourceRoleModel(role, false))
                 .sorted(Comparator.comparing(ResourceRoleModel::getName))
                 .collect(Collectors.toList());
 

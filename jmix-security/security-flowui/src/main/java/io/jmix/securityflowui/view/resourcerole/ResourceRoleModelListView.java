@@ -123,9 +123,9 @@ public class ResourceRoleModelListView extends StandardListView<ResourceRoleMode
     }
 
     private void loadRoles(@Nullable RoleFilterChangeEvent event) {
-        List<ResourceRoleModel> roleModels = roleRepository.getAllRoles().stream()
+        List<ResourceRoleModel> roleModels = roleRepository.getAllRoles(false).stream()
                 .filter(role -> event == null || event.matches(role))
-                .map(roleModelConverter::createResourceRoleModel)
+                .map(role -> roleModelConverter.createResourceRoleModel(role, false))
                 .sorted(Comparator.comparing(ResourceRoleModel::getName))
                 .collect(Collectors.toList());
         roleModelsDc.setItems(roleModels);

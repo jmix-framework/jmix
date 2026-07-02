@@ -44,12 +44,18 @@ public abstract class BaseDatabaseRoleProvider<T extends BaseRole> implements Ro
     @Override
     @NonNull
     public Collection<T> getAllRoles() {
+        return getAllRoles(true);
+    }
+
+    @Override
+    @NonNull
+    public Collection<T> getAllRoles(boolean includePolicies) {
         return dataManager.load(getRoleClass())
                 .all()
-                .fetchPlan(this::buildFetchPlan)
+                .fetchPlan(fetchPlanBuilder -> buildFetchPlan(fetchPlanBuilder, includePolicies))
                 .list()
                 .stream()
-                .map(this::buildRole)
+                .map(entity -> buildRole(entity, includePolicies))
                 .collect(Collectors.toList());
     }
 
@@ -102,9 +108,17 @@ public abstract class BaseDatabaseRoleProvider<T extends BaseRole> implements Ro
 
     protected abstract T buildRole(Object entity);
 
+    protected T buildRole(Object entity, boolean includePolicies) {
+        return buildRole(entity);
+    }
+
     protected abstract Class<?> getRoleClass();
 
     protected abstract void buildFetchPlan(FetchPlanBuilder fetchPlanBuilder);
+
+    protected void buildFetchPlan(FetchPlanBuilder fetchPlanBuilder, boolean includePolicies) {
+        buildFetchPlan(fetchPlanBuilder);
+    }
 
     protected String buildFindByCodeQuery() {
         return "where e.code = :code";

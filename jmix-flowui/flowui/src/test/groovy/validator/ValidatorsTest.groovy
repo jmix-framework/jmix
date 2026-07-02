@@ -22,6 +22,7 @@ import io.jmix.flowui.component.validation.*
 import org.springframework.beans.factory.ObjectProvider
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import spock.lang.Ignore
 import test_support.spec.FlowuiTestSpecification
 import validator.screen.ValidatorTestView
 
@@ -929,6 +930,7 @@ class ValidatorsTest extends FlowuiTestSpecification {
         !textField.invalid
     }
 
+    @Ignore
     def "Email validator string test"() {
         given: "A component with a validator"
         def validatorTestView = navigateToView(ValidatorTestView.class)

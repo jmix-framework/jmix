@@ -500,6 +500,7 @@ public final class StudioXmlAttributes {
     public static final String LABEL_WIDTH = "labelWidth";
     public static final String LARGE = "large";
     public static final String LARGE_THRESHOLD = "largeThreshold";
+    public static final String LAYER = "layer";
     public static final String LAYOUT = "layout";
     public static final String LAZY = "lazy";
     public static final String LEFT = "left";
@@ -529,6 +530,8 @@ public final class StudioXmlAttributes {
     public static final String MANUAL = "manual";
     public static final String MARGIN = "margin";
     public static final String MARKDOWN = "markdown";
+    public static final String MATRIX_IDS = "matrixIds";
+    public static final String MATRIX_SET = "matrixSet";
     public static final String MAX = "max";
     public static final String MAXIMUM_COLUMN_COUNT = "maximumColumnCount";
     public static final String MAXIMUM_COLUMN_WIDTH = "maximumColumnWidth";
@@ -626,6 +629,7 @@ public final class StudioXmlAttributes {
     public static final String NUMBER = "number";
     public static final String NUMBERING_TYPE = "numberingType";
     public static final String NUMBER_COORDINATE = "numberCoordinate";
+    public static final String NUMERIC_MATRIX_IDS = "numericMatrixIds";
     public static final String OFFSET = "offset";
     public static final String OFFSET_CENTER = "offsetCenter";
     public static final String ON_ZERO = "onZero";
@@ -725,10 +729,12 @@ public final class StudioXmlAttributes {
     public static final String REORDERABLE = "reorderable";
     public static final String REPEATING = "repeating";
     public static final String REPORT_STYLE = "reportStyle";
+    public static final String REQUEST_ENCODING = "requestEncoding";
     public static final String REQUIRED = "required";
     public static final String REQUIRED_MESSAGE = "requiredMessage";
     public static final String RESET_FOCUS_ON_ACTIVE_ELEMENT = "resetFocusOnActiveElement";
     public static final String RESIZABLE = "resizable";
+    public static final String RESOLUTIONS = "resolutions";
     public static final String RESOURCE = "resource";
     public static final String RESOURCE_DOC = "resourceDoc";
     public static final String REVEAL_BUTTON_VISIBLE = "revealButtonVisible";
@@ -859,6 +865,7 @@ public final class StudioXmlAttributes {
     public static final String STORE = "store";
     public static final String STRATEGY_CLASS = "strategyClass";
     public static final String STRING_COORDINATE = "stringCoordinate";
+    public static final String STYLE = "style";
     public static final String SUBLINK = "sublink";
     public static final String SUBMIT = "submit";
     public static final String SUBTARGET = "subtarget";
@@ -919,6 +926,7 @@ public final class StudioXmlAttributes {
     public static final String THROTTLE_DELAY = "throttleDelay";
     public static final String THROTTLE_TYPE = "throttleType";
     public static final String TILED = "tiled";
+    public static final String TILE_SIZE = "tileSize";
     public static final String TIME_HINT = "timeHint";
     public static final String TIME_PLACEHOLDER = "timePlaceholder";
     public static final String TITLE = "title";
@@ -972,6 +980,7 @@ public final class StudioXmlAttributes {
     public static final String VALUE_FORMATTER = "valueFormatter";
     public static final String VALUE_FORMATTER_FUNCTION = "valueFormatterFunction";
     public static final String VALUE_INDEX = "valueIndex";
+    public static final String VERSION = "version";
     public static final String VERSION_MODIFIABLE = "versionModifiable";
     public static final String VERTICAL_ALIGN = "verticalAlign";
     public static final String VIEW_CLASS = "viewClass";

@@ -95,6 +95,7 @@ dependencies {
         api 'de.bytestore:swagger-ui-starter:2.8.0'
         api 'com.glebfox.jmix.locstr:jmix-localized-string-datatype:1.1.0'
         api 'com.glebfox.jmix.locstr:jmix-localized-string-datatype-starter:1.1.0'
+        api 'io.github.justwezzz:jmix-magic-addons-minio-starter:0.0.1'
         // end community add-ons
 
         api "io.jmix.appsettings:jmix-appsettings:$freeVersion"

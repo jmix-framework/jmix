@@ -16,6 +16,7 @@
 
 package io.jmix.saml.mapper.user;
 
+import com.google.common.base.Strings;
 import com.google.common.util.concurrent.Striped;
 import io.jmix.saml.SamlProperties;
 import io.jmix.saml.user.HasSamlPrincipalDelegate;
@@ -24,8 +25,11 @@ import io.jmix.saml.util.SamlAssertionUtils;
 import jakarta.annotation.PostConstruct;
 import org.jspecify.annotations.NullMarked;
 import org.opensaml.saml.saml2.core.Assertion;
+import org.opensaml.saml.saml2.core.NameID;
+import org.opensaml.saml.saml2.core.NameIDType;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.saml2.Saml2Exception;
 import org.springframework.security.saml2.provider.service.authentication.DefaultSaml2AuthenticatedPrincipal;
 import org.springframework.security.saml2.provider.service.authentication.OpenSaml5AuthenticationProvider;
 
@@ -83,15 +87,38 @@ public abstract class BaseSamlUserMapper<T extends JmixSamlUserDetails> implemen
     }
 
     /**
-     * Extracts username from SAML assertion.
+     * Extracts username from SAML assertion. By default, the username is taken from the subject NameID. If the
+     * {@code jmix.saml.username-attribute} property is set, the username is taken from that assertion attribute
+     * instead.
      *
      * @param assertion SAML assertion
      * @return username
+     * @throws Saml2Exception if the assertion contains neither a plain subject {@code NameID} nor the configured
+     *                        username attribute
      */
     protected String getSamlUsername(Assertion assertion) {
-        String username = SamlAssertionUtils.getUsername(assertion);
+        String usernameAttribute = samlProperties.getUsernameAttribute();
+        if (!Strings.isNullOrEmpty(usernameAttribute)) {
+            String username = SamlAssertionUtils.getFirstAttributeValue(assertion, usernameAttribute);
+            if (username == null) {
+                throw new Saml2Exception("SAML assertion doesn't contain the '" + usernameAttribute
+                        + "' attribute configured in the 'jmix.saml.username-attribute' property");
+            }
+            return username;
+        }
+
+        NameID nameId = SamlAssertionUtils.getNameId(assertion);
+        String username = nameId == null ? null : nameId.getValue();
         if (username == null) {
-            throw new IllegalStateException("SAML assertion doesn't contain username");
+            throw new Saml2Exception("SAML assertion doesn't contain a plain subject NameID (it may be missing "
+                    + "or encrypted). Configure the identity provider to release a plain NameID or override "
+                    + "getSamlUsername() to derive the username from assertion attributes");
+        }
+        if (NameIDType.TRANSIENT.equals(nameId.getFormat())) {
+            log.warn("The subject NameID of the SAML assertion has the 'transient' format, so its value changes "
+                    + "on every login and user synchronization would create a new user per login. Configure the "
+                    + "identity provider to release a persistent NameID or set the 'jmix.saml.username-attribute' "
+                    + "property to derive the username from an assertion attribute");
         }
         return username;
     }
@@ -136,7 +163,9 @@ public abstract class BaseSamlUserMapper<T extends JmixSamlUserDetails> implemen
         if (jmixUser instanceof HasSamlPrincipalDelegate) {
             String username = getSamlUsername(assertion);
             Map<String, List<Object>> attributes = SamlAssertionUtils.getAssertionAttributes(assertion);
-            DefaultSaml2AuthenticatedPrincipal delegatePrincipal = new DefaultSaml2AuthenticatedPrincipal(username, attributes);
+            List<String> sessionIndexes = SamlAssertionUtils.getSessionIndexes(assertion);
+            DefaultSaml2AuthenticatedPrincipal delegatePrincipal =
+                    new DefaultSaml2AuthenticatedPrincipal(username, attributes, sessionIndexes);
             String registrationId = responseToken.getToken().getRelyingPartyRegistration().getRegistrationId();
             delegatePrincipal.setRelyingPartyRegistrationId(registrationId);
             ((HasSamlPrincipalDelegate) jmixUser).setDelegate(delegatePrincipal);

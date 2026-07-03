@@ -67,7 +67,7 @@ javaPlatform {
 }
 
 dependencies {
-    api platform("org.springframework.boot:spring-boot-dependencies:4.0.6")
+    api platform("org.springframework.boot:spring-boot-dependencies:4.1.0")
     api platform('org.springframework.ai:spring-ai-bom:2.0.0')
     api platform('software.amazon.awssdk:bom:2.25.60')
     api platform("io.netty:netty-bom:4.2.15.Final")
@@ -482,6 +482,8 @@ dependencies {
         api 'com.hazelcast:hazelcast:5.6.0'
 
         api 'org.postgresql:postgresql:42.7.11'
+
+        api 'org.latencyutils:LatencyUtils:2.0.3'
     }
 }
 

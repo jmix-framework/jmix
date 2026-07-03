@@ -28,11 +28,11 @@ import java.util.concurrent.TimeUnit
  * Two related concerns guarded here:
  *
  * <ol>
- *   <li><b>Micrometer behavior:</b> under a single Prometheus metric name only one set of tag keys can be
- *   registered. The first registration wins; later attempts with a different key set are denied with a
- *   single WARN per process. {@code UiObservationSupport}'s wrap order (Observation outer, legacy inner)
- *   relies on this as defense-in-depth. If Micrometer ever drops the check (already gone on its
- *   {@code main} branch), the {@code Micrometer guard} cases below will fail and warn us.</li>
+ *   <li><b>Micrometer behavior:</b> as of Micrometer 1.17 the registry no longer denies a second
+ *   registration under the same Prometheus metric name with a different tag key set — both series are
+ *   kept. (Earlier versions denied the conflicting key set with a single WARN per process.) This means
+ *   the registry provides no defense-in-depth for {@code UiObservationSupport}'s wrap order; the cases
+ *   below pin the current behavior so a future change back is noticed.</li>
  *
  *   <li><b>Our {@code MeterFilter}:</b> in legacy mode
  *   {@code UiObservationSupport.suppressObservationMetersInLegacyMode} installs a {@link MeterFilter}
@@ -41,10 +41,9 @@ import java.util.concurrent.TimeUnit
  *   what we expect.</li>
  * </ol>
  *
- * Both sets must pass on the pinned Micrometer version. If only the Micrometer-guard set fails, the
- * registry's conflict behavior changed but our explicit filter still does the work — legacy mode keeps
- * producing the right output. If the MeterFilter set fails, our filter logic broke (tag name renamed,
- * predicate altered) and legacy-schema dashboards would silently get contaminated by modern series.
+ * Because the registry no longer dedups conflicting series, the explicit {@code MeterFilter} is the sole
+ * guard keeping legacy-schema dashboards from being contaminated by modern series. If the MeterFilter set
+ * fails, our filter logic broke (tag name renamed, predicate altered) and that contamination would return.
  */
 class JmixUiMeterRegistrationTest extends Specification {
 
@@ -54,14 +53,14 @@ class JmixUiMeterRegistrationTest extends Specification {
         registry = new PrometheusMeterRegistry(PrometheusConfig.DEFAULT)
     }
 
-    // -------- Micrometer behavior guard --------
+    // -------- Micrometer behavior (registry no longer dedups conflicting tag keys since 1.17) --------
 
-    def "Micrometer guard: legacy registered first wins, modern schema is silently dropped"() {
+    def "Micrometer: legacy and modern schema both register under the same metric name"() {
         when: "legacy schema timer registers first"
         registry.timer("jmix.ui.views", "view", "MyView", "lifeCycle", "ready")
                 .record(10, TimeUnit.MILLISECONDS)
 
-        and: "modern schema timer attempts to register second under the same metric name"
+        and: "modern schema timer registers second under the same metric name"
         registry.timer("jmix.ui.views",
                 "view.id", "MyView",
                 "view.class", "com.foo.MyView",
@@ -69,14 +68,14 @@ class JmixUiMeterRegistrationTest extends Specification {
                 "error", "none")
                 .record(20, TimeUnit.MILLISECONDS)
 
-        then: "only the legacy schema appears in scrape; modern schema is denied by the registry"
+        then: "as of Micrometer 1.17 the registry no longer denies the conflicting key set - both appear"
         String scrape = registry.scrape()
         scrape.contains('jmix_ui_views_seconds_count{lifeCycle="ready",view="MyView"}')
-        !scrape.contains('lifecycle_name="ready"')
-        !scrape.contains('view_id="MyView"')
+        scrape.contains('lifecycle_name="ready"')
+        scrape.contains('view_id="MyView"')
     }
 
-    def "Micrometer guard: modern registered first wins, legacy schema is silently dropped"() {
+    def "Micrometer: registration order does not drop either schema"() {
         when: "modern schema timer registers first"
         registry.timer("jmix.ui.views",
                 "view.id", "MyView",
@@ -85,15 +84,15 @@ class JmixUiMeterRegistrationTest extends Specification {
                 "error", "none")
                 .record(20, TimeUnit.MILLISECONDS)
 
-        and: "legacy schema timer attempts to register second under the same metric name"
+        and: "legacy schema timer registers second under the same metric name"
         registry.timer("jmix.ui.views", "view", "MyView", "lifeCycle", "ready")
                 .record(10, TimeUnit.MILLISECONDS)
 
-        then: "only the modern schema appears in scrape; legacy schema is denied by the registry"
+        then: "both schemas appear regardless of order"
         String scrape = registry.scrape()
         scrape.contains('view_id="MyView"')
         scrape.contains('lifecycle_name="ready"')
-        !scrape.contains('jmix_ui_views_seconds_count{lifeCycle="ready",view="MyView"}')
+        scrape.contains('jmix_ui_views_seconds_count{lifeCycle="ready",view="MyView"}')
     }
 
     // -------- MeterFilter guard --------

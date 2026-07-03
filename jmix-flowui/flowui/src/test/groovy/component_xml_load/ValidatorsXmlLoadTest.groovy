@@ -20,7 +20,6 @@ import component_xml_load.screen.ValidatorView
 import io.jmix.core.metamodel.datatype.DatatypeRegistry
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import spock.lang.Ignore
 import test_support.spec.FlowuiTestSpecification
 
 @SpringBootTest
@@ -127,7 +126,6 @@ class ValidatorsXmlLoadTest extends FlowuiTestSpecification {
         !doubleField.invalid
     }
 
-    @Ignore
     def "Load emailValidator from XML"() {
         given: "A component with a emailValidator"
         def validatorView = navigateToView(ValidatorView.class)

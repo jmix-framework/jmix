@@ -56,7 +56,7 @@ public abstract class BaseSamlUserMapper<T extends JmixSamlUserDetails> implemen
 
     @PostConstruct
     protected void initLocks() {
-        this.locks = Striped.lock(samlProperties.getMaxConcurrentUserMapping());
+        this.locks = Striped.lock(samlProperties.getUserMappingLockStripes());
     }
 
     /**

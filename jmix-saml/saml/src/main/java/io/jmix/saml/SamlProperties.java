@@ -33,9 +33,13 @@ public class SamlProperties {
      */
     boolean forceRedirectBindingLogout;
     /**
-     * Maximum number of concurrent user mapping processes within {@link io.jmix.saml.mapper.user.BaseSamlUserMapper}.
+     * Number of lock stripes used by {@link io.jmix.saml.mapper.user.BaseSamlUserMapper} to serialize concurrent
+     * mapping of the same username within this JVM. Mappings of the same username always share one lock; mappings
+     * of different usernames may occasionally share a stripe and briefly wait for each other. The locks do not
+     * work across cluster nodes — the unique database constraint on the username is the actual guard against
+     * duplicate user creation.
      */
-    int maxConcurrentUserMapping;
+    int userMappingLockStripes;
 
     /**
      * URL to redirect to when SAML single logout completes or cannot be performed.
@@ -67,14 +71,14 @@ public class SamlProperties {
     FilterChain filterChain;
 
     public SamlProperties(@DefaultValue("true") boolean forceRedirectBindingLogout,
-                          @DefaultValue("128") int maxConcurrentUserMapping,
+                          @DefaultValue("128") int userMappingLockStripes,
                           @DefaultValue("/") String logoutSuccessUrl,
                           @DefaultValue("true") boolean exposeMetadata,
                           @Nullable String usernameAttribute,
                           @DefaultValue DefaultSamlAssertionRolesMapperConfig defaultSamlAssertionRolesMapper,
                           @DefaultValue FilterChain filterChain) {
         this.forceRedirectBindingLogout = forceRedirectBindingLogout;
-        this.maxConcurrentUserMapping = maxConcurrentUserMapping;
+        this.userMappingLockStripes = userMappingLockStripes;
         this.logoutSuccessUrl = logoutSuccessUrl;
         this.exposeMetadata = exposeMetadata;
         this.usernameAttribute = usernameAttribute;
@@ -91,10 +95,10 @@ public class SamlProperties {
     }
 
     /**
-     * @see #maxConcurrentUserMapping
+     * @see #userMappingLockStripes
      */
-    public int getMaxConcurrentUserMapping() {
-        return maxConcurrentUserMapping;
+    public int getUserMappingLockStripes() {
+        return userMappingLockStripes;
     }
 
     /**

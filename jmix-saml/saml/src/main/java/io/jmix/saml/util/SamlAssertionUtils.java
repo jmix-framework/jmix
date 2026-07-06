@@ -5,6 +5,7 @@ import org.opensaml.core.xml.schema.*;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.Attribute;
 import org.opensaml.saml.saml2.core.AttributeStatement;
+import org.opensaml.saml.saml2.core.AuthnStatement;
 import org.springframework.lang.Nullable;
 
 import java.util.ArrayList;
@@ -39,6 +40,24 @@ public class SamlAssertionUtils {
             }
         }
         return attributeMap;
+    }
+
+    /**
+     * Extracts session indexes from authentication statements of the assertion. Session indexes identify the user
+     * session on the identity provider and must be sent back in the {@code LogoutRequest} during single logout.
+     *
+     * @param assertion SAML assertion
+     * @return list of session indexes
+     */
+    public static List<String> getSessionIndexes(Assertion assertion) {
+        List<String> sessionIndexes = new ArrayList<>();
+        for (AuthnStatement authnStatement : assertion.getAuthnStatements()) {
+            String sessionIndex = authnStatement.getSessionIndex();
+            if (sessionIndex != null) {
+                sessionIndexes.add(sessionIndex);
+            }
+        }
+        return sessionIndexes;
     }
 
     /**

@@ -19,6 +19,7 @@ package io.jmix.saml;
 import com.vaadin.flow.spring.security.VaadinWebSecurity;
 import io.jmix.saml.config.SamlHttpSecurityConfigurer;
 import io.jmix.saml.converter.SamlResponseAuthenticationConverter;
+import io.jmix.saml.logout.SamlVaadinLogoutSuccessHandler;
 import io.jmix.saml.mapper.user.SamlUserMapper;
 import io.jmix.saml.user.JmixSamlUserDetails;
 import io.jmix.security.util.JmixHttpSecurityUtils;
@@ -35,7 +36,7 @@ import org.springframework.security.saml2.provider.service.registration.RelyingP
 import org.springframework.security.saml2.provider.service.registration.RelyingPartyRegistrationRepository;
 import org.springframework.security.saml2.provider.service.registration.Saml2MessageBinding;
 import org.springframework.security.saml2.provider.service.web.authentication.logout.OpenSaml4LogoutRequestResolver;
-import org.springframework.security.saml2.provider.service.web.authentication.logout.Saml2RelyingPartyInitiatedLogoutSuccessHandler;
+import org.springframework.security.saml2.provider.service.web.authentication.logout.Saml2LogoutRequestResolver;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 
 import java.util.Collections;
@@ -68,9 +69,15 @@ public class SamlVaadinWebSecurity extends VaadinWebSecurity {
         JmixHttpSecurityUtils.configureSessionManagement(http);
         JmixHttpSecurityUtils.configureFrameOptions(http);
 
+        // The same resolver configuration is used for both logout paths: the direct 'POST /logout' handled
+        // by Saml2RelyingPartyInitiatedLogoutFilter and the Vaadin AuthenticationContext.logout() path
+        // handled by the logout success handler, so the logout binding policy stays consistent.
+        Saml2LogoutRequestResolver logoutRequestResolver = createSamlLogoutRequestResolver();
         http
                 .saml2Login(withDefaults())
-                .saml2Logout(withDefaults())
+                .saml2Logout(logout -> logout
+                        .logoutRequest(request -> request.logoutRequestResolver(logoutRequestResolver))
+                )
                 .logout(logout -> logout
                         .logoutSuccessHandler(createSamlLogoutSuccessHandler())
                 )
@@ -90,7 +97,13 @@ public class SamlVaadinWebSecurity extends VaadinWebSecurity {
         return authenticationProvider;
     }
 
-    protected LogoutSuccessHandler createSamlLogoutSuccessHandler() {
+    /**
+     * Creates a resolver that generates SAML LogoutRequests for relying-party-initiated logout. If
+     * {@link SamlProperties#isForceRedirectBindingLogout()} is enabled, the logout binding is overridden to
+     * REDIRECT because it is the only binding that can be delivered from a Vaadin UI request (the POST binding
+     * requires rendering an HTML page which is not possible in a UIDL response).
+     */
+    protected Saml2LogoutRequestResolver createSamlLogoutRequestResolver() {
         if (relyingPartyRegistrationRepository == null) {
             throw new Saml2Exception("RelyingPartyRegistrationRepository is not available");
         }
@@ -103,10 +116,22 @@ public class SamlVaadinWebSecurity extends VaadinWebSecurity {
             effectiveRepository = relyingPartyRegistrationRepository;
         }
 
-        OpenSaml4LogoutRequestResolver resolver = new OpenSaml4LogoutRequestResolver(effectiveRepository);
-        return new Saml2RelyingPartyInitiatedLogoutSuccessHandler(resolver);
+        return new OpenSaml4LogoutRequestResolver(effectiveRepository);
     }
 
+    protected LogoutSuccessHandler createSamlLogoutSuccessHandler() {
+        SamlVaadinLogoutSuccessHandler handler = new SamlVaadinLogoutSuccessHandler(createSamlLogoutRequestResolver());
+        handler.setLogoutSuccessUrl(samlProperties.getLogoutSuccessUrl());
+        return handler;
+    }
+
+    /**
+     * Wraps the repository so that resolved registrations use the REDIRECT binding for single logout. The
+     * SingleLogoutService location is kept as is, which is correct for identity providers declaring both
+     * bindings on the same URL (e.g. Keycloak). If the identity provider uses a separate URL for the redirect
+     * binding, configure the {@code single-logout} URL and binding of the registration explicitly and disable
+     * {@code jmix.saml.force-redirect-binding-logout}.
+     */
     protected RelyingPartyRegistrationRepository createRelyingPartyRegistrationRepositoryWrapperWithRedirectBinding(
             RelyingPartyRegistrationRepository originalRepository
     ) {
@@ -114,24 +139,29 @@ public class SamlVaadinWebSecurity extends VaadinWebSecurity {
             @Override
             @Nullable
             public RelyingPartyRegistration findByRegistrationId(String registrationId) {
-                RelyingPartyRegistration original = originalRepository.findByRegistrationId(registrationId);
+                return overrideLogoutBinding(originalRepository.findByRegistrationId(registrationId));
+            }
+
+            @Override
+            @Nullable
+            public RelyingPartyRegistration findUniqueByAssertingPartyEntityId(String entityId) {
+                return overrideLogoutBinding(originalRepository.findUniqueByAssertingPartyEntityId(entityId));
+            }
+
+            @Nullable
+            private RelyingPartyRegistration overrideLogoutBinding(@Nullable RelyingPartyRegistration original) {
                 if (original == null) {
                     return null;
                 }
 
                 // Clone registration and override SingleLogoutService binding to REDIRECT
-                log.debug("Overriding SAML logout binding to REDIRECT for registration: {}", registrationId);
+                log.debug("Overriding SAML logout binding to REDIRECT for registration: {}",
+                        original.getRegistrationId());
 
                 RelyingPartyRegistration.Builder builder = original.mutate();
-                RelyingPartyRegistration result = builder.assertingPartyMetadata(party -> party
+                return builder.assertingPartyMetadata(party -> party
                         .singleLogoutServiceBinding(Saml2MessageBinding.REDIRECT)
                 ).build();
-                return result;
-            }
-
-            @Override
-            public RelyingPartyRegistration findUniqueByAssertingPartyEntityId(String entityId) {
-                return originalRepository.findUniqueByAssertingPartyEntityId(entityId);
             }
         };
     }

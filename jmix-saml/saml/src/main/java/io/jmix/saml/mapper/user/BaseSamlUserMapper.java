@@ -134,7 +134,9 @@ public abstract class BaseSamlUserMapper<T extends JmixSamlUserDetails> implemen
         if (jmixUser instanceof HasSamlPrincipalDelegate) {
             String username = getSamlUsername(assertion);
             Map<String, List<Object>> attributes = SamlAssertionUtils.getAssertionAttributes(assertion);
-            DefaultSaml2AuthenticatedPrincipal delegatePrincipal = new DefaultSaml2AuthenticatedPrincipal(username, attributes);
+            List<String> sessionIndexes = SamlAssertionUtils.getSessionIndexes(assertion);
+            DefaultSaml2AuthenticatedPrincipal delegatePrincipal =
+                    new DefaultSaml2AuthenticatedPrincipal(username, attributes, sessionIndexes);
             String registrationId = responseToken.getToken().getRelyingPartyRegistration().getRegistrationId();
             delegatePrincipal.setRelyingPartyRegistrationId(registrationId);
             ((HasSamlPrincipalDelegate) jmixUser).setDelegate(delegatePrincipal);

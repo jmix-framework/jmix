@@ -59,4 +59,9 @@ public class DefaultJmixSamlUserDetails implements JmixSamlUserDetails, HasSamlP
     public String getRelyingPartyRegistrationId() {
         return delegate.getRelyingPartyRegistrationId();
     }
+
+    @Override
+    public List<String> getSessionIndexes() {
+        return delegate.getSessionIndexes();
+    }
 }

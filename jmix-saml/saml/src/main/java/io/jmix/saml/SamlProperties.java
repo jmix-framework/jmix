@@ -37,6 +37,11 @@ public class SamlProperties {
     int maxConcurrentUserMapping;
 
     /**
+     * URL to redirect to when SAML single logout completes or cannot be performed.
+     */
+    String logoutSuccessUrl;
+
+    /**
      * DefaultSamlAssertionRolesMapper configuration.
      */
     DefaultSamlAssertionRolesMapperConfig defaultSamlAssertionRolesMapper;
@@ -48,10 +53,12 @@ public class SamlProperties {
 
     public SamlProperties(@DefaultValue("true") boolean forceRedirectBindingLogout,
                           @DefaultValue("128") int maxConcurrentUserMapping,
+                          @DefaultValue("/") String logoutSuccessUrl,
                           @DefaultValue DefaultSamlAssertionRolesMapperConfig defaultSamlAssertionRolesMapper,
                           @DefaultValue FilterChain filterChain) {
         this.forceRedirectBindingLogout = forceRedirectBindingLogout;
         this.maxConcurrentUserMapping = maxConcurrentUserMapping;
+        this.logoutSuccessUrl = logoutSuccessUrl;
 
         this.defaultSamlAssertionRolesMapper = defaultSamlAssertionRolesMapper;
         this.filterChain = filterChain;
@@ -69,6 +76,13 @@ public class SamlProperties {
      */
     public int getMaxConcurrentUserMapping() {
         return maxConcurrentUserMapping;
+    }
+
+    /**
+     * @see #logoutSuccessUrl
+     */
+    public String getLogoutSuccessUrl() {
+        return logoutSuccessUrl;
     }
 
     /**

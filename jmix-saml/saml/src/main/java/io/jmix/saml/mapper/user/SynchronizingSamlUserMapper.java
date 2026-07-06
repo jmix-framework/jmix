@@ -50,6 +50,12 @@ import static org.slf4j.LoggerFactory.getLogger;
 /**
  * Implementation of the {@link SamlUserMapper} that maps the external user object to the persistent user
  * and also stores the user and optionally their role assignment to the database.
+ * <p>
+ * If role assignment synchronization is enabled (see {@link #setSynchronizeRoleAssignments(boolean)}), the
+ * identity provider owns <b>all</b> role assignments of the synchronized user: on every login the stored
+ * assignments are replaced with the roles derived from the SAML assertion. Role assignments granted manually
+ * (e.g. by an administrator in the UI) are removed by the next login and therefore must not be combined with
+ * the synchronization mode.
  *
  * @param <T> class of Jmix user
  */
@@ -234,6 +240,12 @@ public abstract class SynchronizingSamlUserMapper<T extends JmixSamlUserDetails>
 
     /**
      * Enables role assignment synchronization. If true then role assignment entities will be stored to the database.
+     * <p>
+     * When enabled, the identity provider becomes the single source of truth for <b>all</b> role assignments of
+     * the user: on every login the assignments stored in the database are replaced with the roles derived from
+     * the SAML assertion. Any assignment granted through other means (e.g. manually by an administrator) is
+     * removed, because the {@code SEC_ROLE_ASSIGNMENT} table has no marker distinguishing the origin of an
+     * assignment. Do not assign roles manually to users synchronized with this mode.
      */
     public void setSynchronizeRoleAssignments(boolean synchronizeRoleAssignments) {
         this.synchronizeRoleAssignments = synchronizeRoleAssignments;

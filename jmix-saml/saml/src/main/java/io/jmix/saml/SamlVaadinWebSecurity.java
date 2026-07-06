@@ -76,14 +76,17 @@ public class SamlVaadinWebSecurity extends AbstractFlowuiWebSecurity {
         // handled by the logout success handler, so the logout binding policy stays consistent.
         Saml2LogoutRequestResolver logoutRequestResolver = createSamlLogoutRequestResolver();
         http
-                .saml2Login(Customizer.withDefaults())
+                // The authentication manager is scoped to the SAML login filter so that other
+                // authentication mechanisms of this chain keep working with the default manager
+                .saml2Login(saml2 -> saml2
+                        .authenticationManager(new ProviderManager(authenticationProvider))
+                )
                 .saml2Logout(logout -> logout
                         .logoutRequest(request -> request.logoutRequestResolver(logoutRequestResolver))
                 )
                 .logout(logout -> logout
                         .logoutSuccessHandler(createSamlLogoutSuccessHandler())
-                )
-                .authenticationManager(new ProviderManager(authenticationProvider));
+                );
 
         if (samlProperties.isExposeMetadata()) {
             // Expose the service provider metadata XML used to configure the identity provider

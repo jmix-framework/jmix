@@ -19,6 +19,7 @@ package io.jmix.saml;
 import org.apache.commons.collections4.ListUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
+import org.springframework.lang.Nullable;
 
 import java.util.List;
 
@@ -42,6 +43,20 @@ public class SamlProperties {
     String logoutSuccessUrl;
 
     /**
+     * Whether to expose the SAML service provider metadata endpoint ('/saml2/metadata' and
+     * '/saml2/metadata/{registrationId}'). The metadata XML is used to configure the identity provider.
+     */
+    boolean exposeMetadata;
+
+    /**
+     * Name of the SAML assertion attribute to take the username from. By default, the username is taken from
+     * the subject NameID. Set this property when the identity provider releases a 'transient' NameID (its value
+     * changes on every login, which breaks user synchronization) or when a specific attribute (e.g. email)
+     * should identify the user.
+     */
+    String usernameAttribute;
+
+    /**
      * DefaultSamlAssertionRolesMapper configuration.
      */
     DefaultSamlAssertionRolesMapperConfig defaultSamlAssertionRolesMapper;
@@ -54,11 +69,15 @@ public class SamlProperties {
     public SamlProperties(@DefaultValue("true") boolean forceRedirectBindingLogout,
                           @DefaultValue("128") int maxConcurrentUserMapping,
                           @DefaultValue("/") String logoutSuccessUrl,
+                          @DefaultValue("true") boolean exposeMetadata,
+                          @Nullable String usernameAttribute,
                           @DefaultValue DefaultSamlAssertionRolesMapperConfig defaultSamlAssertionRolesMapper,
                           @DefaultValue FilterChain filterChain) {
         this.forceRedirectBindingLogout = forceRedirectBindingLogout;
         this.maxConcurrentUserMapping = maxConcurrentUserMapping;
         this.logoutSuccessUrl = logoutSuccessUrl;
+        this.exposeMetadata = exposeMetadata;
+        this.usernameAttribute = usernameAttribute;
 
         this.defaultSamlAssertionRolesMapper = defaultSamlAssertionRolesMapper;
         this.filterChain = filterChain;
@@ -83,6 +102,21 @@ public class SamlProperties {
      */
     public String getLogoutSuccessUrl() {
         return logoutSuccessUrl;
+    }
+
+    /**
+     * @see #exposeMetadata
+     */
+    public boolean isExposeMetadata() {
+        return exposeMetadata;
+    }
+
+    /**
+     * @see #usernameAttribute
+     */
+    @Nullable
+    public String getUsernameAttribute() {
+        return usernameAttribute;
     }
 
     /**

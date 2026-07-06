@@ -83,6 +83,11 @@ public class SamlVaadinWebSecurity extends VaadinWebSecurity {
                 )
                 .authenticationManager(new ProviderManager(authenticationProvider));
 
+        if (samlProperties.isExposeMetadata()) {
+            // Expose the service provider metadata XML used to configure the identity provider
+            http.saml2Metadata(withDefaults());
+        }
+
         for (SamlHttpSecurityConfigurer configurer : additionalConfigurers) {
             log.debug("Applying additional security configurer: {}", configurer);
             configurer.configure(http);

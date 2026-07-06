@@ -416,7 +416,8 @@ public class DataContextImpl implements DataContextInternal {
         for (MetaProperty property : metaClass.getProperties()) {
             String propertyName = property.getName();
             if (property.getRange().isClass() && !metadataTools.isMethodBased(property)
-                    && !srcNew && !entityStates.isLoaded(srcEntity, propertyName)) {
+                    && !srcNew && !entityStates.isLoaded(srcEntity, propertyName)
+                    && !entityStates.isLoaded(dstEntity, propertyName)) {
                 entitySystemStateSupport.mergeLazyLoadingState((Entity) srcEntity, (Entity) dstEntity, property,
                         collection -> wrapLazyValueIntoObservableCollection(collection, dstEntity));
             }

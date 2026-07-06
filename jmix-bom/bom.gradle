@@ -94,6 +94,7 @@ dependencies {
         api "gr.netmechanics.jmix:jmix-multilingual-field-starter:3.0.0"
         api "gr.netmechanics.jmix:jmix-google-place:3.0.0"
         api "gr.netmechanics.jmix:jmix-google-place-starter:3.0.0"
+        api "ru.kavlab:dataimportaddon-starter:0.9.5"
         // end community add-ons
 
         api "io.jmix.aitools:jmix-aitools:$freeVersion"

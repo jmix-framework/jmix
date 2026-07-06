@@ -41,7 +41,7 @@
 
     /* Lumo specific styles */
 
-    :host([focus-ring]) [part='focus-ring'] {
+    :host(:focus-within) [part='focus-ring'] {
         box-shadow: inset 0 0 0 var(--vaadin-focus-ring-width, 2px) var(--jmix-bpmn-modeler-focus-ring-color, var(--vaadin-focus-ring-color, var(--lumo-primary-color-50pct)));
     }
 }

@@ -36,6 +36,14 @@
     border-radius: var(--lumo-border-radius-m);
 }
 
+/*
+ * The canvas SVG is focusable and draws the native browser focus outline.
+ * The modeler renders its own focus-ring, so the native should be hidden.
+ */
+jmix-bpmn-modeler .djs-container svg:focus {
+    outline: none;
+}
+
 .bpm-modeler-properties-panel {
     --lumo-font-size: 1rem;
     --lumo-font-size-xxxl: 1.375rem;

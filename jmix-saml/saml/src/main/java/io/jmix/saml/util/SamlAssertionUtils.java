@@ -22,12 +22,15 @@ import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.Attribute;
 import org.opensaml.saml.saml2.core.AttributeStatement;
 import org.opensaml.saml.saml2.core.AuthnStatement;
+import org.opensaml.saml.saml2.core.NameID;
+import org.opensaml.saml.saml2.core.Subject;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Utility class that provides some methods for working with SAML assertions.
@@ -77,14 +80,44 @@ public class SamlAssertionUtils {
     }
 
     /**
-     * Returns username from the assertion.
+     * Returns username from the assertion. The username is taken from the plain {@code NameID} of the assertion
+     * subject.
      *
      * @param assertion SAML assertion
-     * @return username
+     * @return username, or null if the assertion contains no subject, no plain {@code NameID} (e.g. the identity
+     * provider releases an {@code EncryptedID}), or the {@code NameID} has no value
      */
     @Nullable
     public static String getUsername(Assertion assertion) {
-        return assertion.getSubject().getNameID().getValue();
+        return Optional.ofNullable(getNameId(assertion))
+                .map(NameID::getValue)
+                .orElse(null);
+    }
+
+    /**
+     * Returns the plain {@code NameID} of the assertion subject.
+     *
+     * @param assertion SAML assertion
+     * @return NameID, or null if the assertion contains no subject or no plain {@code NameID}
+     */
+    @Nullable
+    public static NameID getNameId(Assertion assertion) {
+        return Optional.ofNullable(assertion.getSubject())
+                .map(Subject::getNameID)
+                .orElse(null);
+    }
+
+    /**
+     * Returns the first value of the given assertion attribute.
+     *
+     * @param assertion     SAML assertion
+     * @param attributeName name of the assertion attribute
+     * @return first attribute value converted to string, or null if the attribute is absent or has no values
+     */
+    @Nullable
+    public static String getFirstAttributeValue(Assertion assertion, String attributeName) {
+        List<Object> values = getAssertionAttributes(assertion).get(attributeName);
+        return (values == null || values.isEmpty()) ? null : values.get(0).toString();
     }
 
     @Nullable

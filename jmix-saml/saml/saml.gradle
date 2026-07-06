@@ -41,6 +41,12 @@ dependencies {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
     testImplementation 'org.springframework.boot:spring-boot-starter-web'
+    // Entity classes are weaved with EclipseLink interfaces during build, so tests touching them
+    // need EclipseLink on the classpath
+    testImplementation 'org.eclipse.persistence:org.eclipse.persistence.core'
+    // SynchronizingSamlUserMapper references RoleAssignmentEntity, so tests loading the class need
+    // security-data at runtime
+    testImplementation project(':security-data')
 
     testRuntimeOnly 'org.hsqldb:hsqldb'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'

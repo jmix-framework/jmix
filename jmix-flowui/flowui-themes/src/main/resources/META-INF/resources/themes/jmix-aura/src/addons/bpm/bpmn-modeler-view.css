@@ -40,6 +40,14 @@
     border-radius: var(--vaadin-radius-m);
 }
 
+/*
+ * The canvas SVG is focusable and draws the native browser focus outline.
+ * The modeler renders its own focus-ring, so the native should be hidden.
+ */
+jmix-bpmn-modeler .djs-container svg:focus {
+    outline: none;
+}
+
 .bpm-modeler-properties-panel {
     --aura-base-size: 12;
     --aura-base-font-size: 13;

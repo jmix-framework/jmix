@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-jmix-bpmn-modeler[focus-ring]::part(focus-ring) {
+jmix-bpmn-modeler:focus-within::part(focus-ring) {
     outline: var(--vaadin-focus-ring-width, 2px) solid var(--jmix-bpmn-modeler-focus-ring-color, var(--vaadin-focus-ring-color));
     outline-offset: calc(var(--vaadin-focus-ring-width, 2px) * -1);
 }

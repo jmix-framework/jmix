@@ -19,6 +19,7 @@ package io.jmix.saml.mapper.user;
 import com.google.common.base.Strings;
 import io.jmix.core.SaveContext;
 import io.jmix.core.UnconstrainedDataManager;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.security.UserRepository;
 import io.jmix.data.PersistenceHints;
 import io.jmix.saml.SamlProperties;
@@ -32,7 +33,9 @@ import org.opensaml.saml.saml2.core.Assertion;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.saml2.Saml2Exception;
 import org.springframework.security.saml2.provider.service.authentication.OpenSaml4AuthenticationProvider;
 
 import java.util.ArrayList;
@@ -72,14 +75,43 @@ public abstract class SynchronizingSamlUserMapper<T extends JmixSamlUserDetails>
     @Override
     protected T initJmixUser(Assertion assertion) {
         String username = getSamlUsername(assertion);
+        checkUsernameIsNotReserved(username);
         T jmixUserDetails;
         try {
-            jmixUserDetails = (T) userRepository.loadUserByUsername(username);
+            UserDetails userDetails = userRepository.loadUserByUsername(username);
+            Class<T> applicationUserClass = getApplicationUserClass();
+            if (!applicationUserClass.isInstance(userDetails)) {
+                throw new Saml2Exception("User '" + username + "' loaded from the user repository is an instance "
+                        + "of " + userDetails.getClass().getName() + " which is not compatible with the application "
+                        + "user class " + applicationUserClass.getName());
+            }
+            jmixUserDetails = applicationUserClass.cast(userDetails);
         } catch (UsernameNotFoundException e) {
             log.debug("User with login {} wasn't found in user repository", username);
             jmixUserDetails = dataManager.create(getApplicationUserClass());
+            setUsernameToNewUser(jmixUserDetails, username);
         }
         return jmixUserDetails;
+    }
+
+    /**
+     * Throws an exception if the given username belongs to the built-in system or anonymous user. Otherwise, an
+     * identity provider asserting such a username would map the external user onto a built-in one and persist it.
+     */
+    protected void checkUsernameIsNotReserved(String username) {
+        if (username.equals(userRepository.getSystemUser().getUsername())
+                || username.equals(userRepository.getAnonymousUser().getUsername())) {
+            throw new Saml2Exception("Username '" + username + "' asserted by the identity provider is reserved "
+                    + "for a built-in user");
+        }
+    }
+
+    /**
+     * Sets the username to a newly created user instance. The default implementation writes the {@code username}
+     * entity attribute. Override this method if the application user class stores the login differently.
+     */
+    protected void setUsernameToNewUser(T jmixUser, String username) {
+        EntityValues.setValue(jmixUser, "username", username);
     }
 
     @Override

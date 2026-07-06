@@ -18,8 +18,8 @@ package io.jmix.saml.converter;
 
 import io.jmix.saml.mapper.user.SamlUserMapper;
 import io.jmix.saml.user.JmixSamlUserDetails;
+import io.jmix.saml.util.SamlAssertionUtils;
 import org.opensaml.saml.saml2.core.Assertion;
-import org.opensaml.saml.saml2.core.Response;
 import org.slf4j.Logger;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.lang.Nullable;
@@ -34,7 +34,7 @@ import org.springframework.security.saml2.provider.service.authentication.Saml2A
 import org.springframework.util.CollectionUtils;
 
 import java.util.Collection;
-import java.util.Optional;
+import java.util.Objects;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -46,11 +46,11 @@ public class SamlResponseAuthenticationConverter implements Converter<OpenSaml4A
 
     private static final Logger log = getLogger(SamlResponseAuthenticationConverter.class);
 
-    protected final SamlUserMapper samlUserMapper;
+    protected final SamlUserMapper<? extends JmixSamlUserDetails> samlUserMapper;
 
     protected UserDetailsChecker userDetailsChecker = new AccountStatusUserDetailsChecker();
 
-    public SamlResponseAuthenticationConverter(SamlUserMapper samlUserMapper) {
+    public SamlResponseAuthenticationConverter(SamlUserMapper<? extends JmixSamlUserDetails> samlUserMapper) {
         this.samlUserMapper = samlUserMapper;
     }
 
@@ -68,24 +68,17 @@ public class SamlResponseAuthenticationConverter implements Converter<OpenSaml4A
 
         try {
             Saml2AuthenticationToken token = responseToken.getToken();
-            Response response = responseToken.getResponse();
 
-            // Check for encrypted assertions
-            if (!response.getEncryptedAssertions().isEmpty()) {
-                log.debug("Response contains {} encrypted assertions", response.getEncryptedAssertions().size());
-                // Note: Decryption is handled by OpenSaml4AuthenticationProvider if decryption credentials are configured
-            }
-
+            // Encrypted assertions have already been decrypted and added to the response by
+            // OpenSaml4AuthenticationProvider before this converter is invoked, and a response without
+            // assertions has already failed validation, so the null check below is purely defensive.
             Assertion assertion = getAssertion(responseToken);
             if (assertion == null) {
-                throw new IllegalStateException("SAML response doesn't contain assertions");
+                throw new Saml2Exception("SAML response doesn't contain assertions");
             }
 
-            log.debug("Processing assertion for subject: {}", Optional.ofNullable(assertion.getSubject())
-                    .map(s -> s.getNameID())
-                    .map(name -> name.getValue())
-                    .orElse("unknown")
-            );
+            log.debug("Processing assertion for subject: {}",
+                    Objects.requireNonNullElse(SamlAssertionUtils.getUsername(assertion), "unknown"));
 
             JmixSamlUserDetails principal = samlUserMapper.toJmixUser(assertion, responseToken);
             log.debug("Successfully converted SAML assertion to Jmix user: {}", principal.getUsername());
@@ -115,24 +108,11 @@ public class SamlResponseAuthenticationConverter implements Converter<OpenSaml4A
     }
 
     /**
-     * Extracts assertion from SAML response, handling both plain and encrypted assertions.
+     * Extracts the assertion the user is mapped from. The default implementation takes the first assertion
+     * of the response, like the default converter of {@code OpenSaml4AuthenticationProvider} does.
      */
     @Nullable
     protected Assertion getAssertion(OpenSaml4AuthenticationProvider.ResponseToken responseToken) {
-        Response response = responseToken.getResponse();
-
-        // First try to get plain assertions
-        Assertion assertion = CollectionUtils.firstElement(response.getAssertions());
-
-        if (assertion == null && !response.getEncryptedAssertions().isEmpty()) {
-            log.warn("Only encrypted assertions found. Ensure decryption credentials are properly configured.");
-            // OpenSaml4AuthenticationProvider should have already decrypted if credentials are configured
-            throw new IllegalStateException(
-                    "Response contains only encrypted assertions but they were not decrypted. " +
-                            "Please configure decryption credentials in application.properties"
-            );
-        }
-
-        return assertion;
+        return CollectionUtils.firstElement(responseToken.getResponse().getAssertions());
     }
 }

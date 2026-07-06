@@ -33,7 +33,11 @@ public class SamlProperties {
      */
     boolean forceRedirectBindingLogout;
     /**
-     * Maximum number of concurrent user mapping processes within {@link io.jmix.saml.mapper.user.BaseSamlUserMapper}.
+     * Number of lock stripes used by {@link io.jmix.saml.mapper.user.BaseSamlUserMapper} to serialize concurrent
+     * mapping of the same username within this JVM. Mappings of the same username always share one lock; mappings
+     * of different usernames may occasionally share a stripe and briefly wait for each other. The locks do not
+     * work across cluster nodes — the unique database constraint on the username is the actual guard against
+     * duplicate user creation.
      */
     int maxConcurrentUserMapping;
 

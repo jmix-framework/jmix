@@ -124,9 +124,8 @@ public class UiObservationSupport {
      * Sentinel value placed into low-cardinality tags ({@link #VIEW_ID_TAG}, {@link #FRAGMENT_ID_TAG},
      * {@link #TARGET_ID_TAG}) when the underlying id cannot be resolved (view/fragment/target absent
      * or without an explicit id). The tag is added unconditionally so the Prometheus meter for a given
-     * metric name always carries the same set of tag keys — otherwise conditionally-added tags make
-     * {@code PrometheusMeterRegistry} reject one of the registrations and silently drop a slice
-     * of the data.
+     * metric name always carries the same set of tag keys - otherwise conditionally-added tags would
+     * split the metric into series with different tag key sets, breaking aggregation.
      */
     public static final String NOT_AVAILABLE = "N/A";
 

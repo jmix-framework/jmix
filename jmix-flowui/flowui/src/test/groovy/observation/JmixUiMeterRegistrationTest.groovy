@@ -35,13 +35,13 @@ import java.util.concurrent.TimeUnit
  *   below pin the current behavior so a future change back is noticed.</li>
  *
  *   <li><b>Our {@code MeterFilter}:</b> in legacy mode
- *   {@code UiObservationSupport.suppressObservationMetersInLegacyMode} installs a {@link MeterFilter}
+ *   {@code LegacyUiTimerSupport.suppressObservationMetersInLegacyMode} installs a {@link MeterFilter}
  *   that denies registrations of {@code jmix.ui.*} meters carrying the modern-schema marker tag
  *   {@code lifecycle.name}. The {@code MeterFilter} cases below mimic that filter and verify it does
  *   what we expect.</li>
  * </ol>
  *
- * Because the registry no longer dedups conflicting series, the explicit {@code MeterFilter} is the sole
+ * Because the registry no longer denies/rejects conflicting series, the explicit {@code MeterFilter} is the sole
  * guard keeping legacy-schema dashboards from being contaminated by modern series. If the MeterFilter set
  * fails, our filter logic broke (tag name renamed, predicate altered) and that contamination would return.
  */
@@ -53,7 +53,7 @@ class JmixUiMeterRegistrationTest extends Specification {
         registry = new PrometheusMeterRegistry(PrometheusConfig.DEFAULT)
     }
 
-    // -------- Micrometer behavior (registry no longer dedups conflicting tag keys since 1.17) --------
+    // -------- Micrometer behavior (registry no longer denies/rejects conflicting tag keys since 1.17) --------
 
     def "Micrometer: legacy and modern schema both register under the same metric name"() {
         when: "legacy schema timer registers first"

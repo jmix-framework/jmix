@@ -21,8 +21,12 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.AuthnStatement;
+import org.opensaml.saml.saml2.core.NameID;
+import org.opensaml.saml.saml2.core.Subject;
 import org.opensaml.saml.saml2.core.impl.AssertionBuilder;
 import org.opensaml.saml.saml2.core.impl.AuthnStatementBuilder;
+import org.opensaml.saml.saml2.core.impl.NameIDBuilder;
+import org.opensaml.saml.saml2.core.impl.SubjectBuilder;
 import org.springframework.security.saml2.core.OpenSamlInitializationService;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -51,6 +55,39 @@ class SamlAssertionUtilsTest {
         Assertion assertion = new AssertionBuilder().buildObject();
 
         assertThat(SamlAssertionUtils.getSessionIndexes(assertion)).isEmpty();
+    }
+
+    @Test
+    void testGetUsernameReturnsNameIdValue() {
+        Assertion assertion = new AssertionBuilder().buildObject();
+        assertion.setSubject(subject("john"));
+
+        assertThat(SamlAssertionUtils.getUsername(assertion)).isEqualTo("john");
+    }
+
+    @Test
+    void testGetUsernameReturnsNullWhenSubjectIsMissing() {
+        // Subject is schema-optional; the utility must not throw NPE
+        Assertion assertion = new AssertionBuilder().buildObject();
+
+        assertThat(SamlAssertionUtils.getUsername(assertion)).isNull();
+    }
+
+    @Test
+    void testGetUsernameReturnsNullWhenNameIdIsMissing() {
+        // E.g. the identity provider releases an EncryptedID instead of a plain NameID
+        Assertion assertion = new AssertionBuilder().buildObject();
+        assertion.setSubject(new SubjectBuilder().buildObject());
+
+        assertThat(SamlAssertionUtils.getUsername(assertion)).isNull();
+    }
+
+    private Subject subject(String username) {
+        NameID nameId = new NameIDBuilder().buildObject();
+        nameId.setValue(username);
+        Subject subject = new SubjectBuilder().buildObject();
+        subject.setNameID(nameId);
+        return subject;
     }
 
     private AuthnStatement authnStatement(@Nullable String sessionIndex) {

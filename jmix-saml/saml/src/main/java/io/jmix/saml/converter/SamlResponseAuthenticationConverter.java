@@ -23,7 +23,10 @@ import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.Response;
 import org.slf4j.Logger;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.security.authentication.AccountStatusUserDetailsChecker;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetailsChecker;
 import org.springframework.security.saml2.Saml2Exception;
 import org.springframework.security.saml2.provider.service.authentication.OpenSaml5AuthenticationProvider;
 import org.springframework.security.saml2.provider.service.authentication.Saml2Authentication;
@@ -45,8 +48,18 @@ public class SamlResponseAuthenticationConverter implements Converter<OpenSaml5A
 
     protected final SamlUserMapper samlUserMapper;
 
+    protected UserDetailsChecker userDetailsChecker = new AccountStatusUserDetailsChecker();
+
     public SamlResponseAuthenticationConverter(SamlUserMapper samlUserMapper) {
         this.samlUserMapper = samlUserMapper;
+    }
+
+    /**
+     * Sets the checker used to validate the account status of the mapped user. By default, disabled, locked and
+     * expired users are rejected.
+     */
+    public void setUserDetailsChecker(UserDetailsChecker userDetailsChecker) {
+        this.userDetailsChecker = userDetailsChecker;
     }
 
     @Override
@@ -77,13 +90,28 @@ public class SamlResponseAuthenticationConverter implements Converter<OpenSaml5A
             JmixSamlUserDetails principal = samlUserMapper.toJmixUser(assertion, responseToken);
             log.debug("Successfully converted SAML assertion to Jmix user: {}", principal.getUsername());
 
+            checkUserDetails(principal);
+
             Collection<? extends GrantedAuthority> authorities = principal.getAuthorities();
             log.debug("User granted {} authorities", authorities.size());
 
             return new Saml2Authentication(principal, token.getSaml2Response(), authorities);
+        } catch (AuthenticationException e) {
+            // Account status failures (disabled/locked/expired user) must keep their type and message
+            throw e;
         } catch (Exception e) {
             throw new Saml2Exception("Failed to convert SAML response", e);
         }
+    }
+
+    /**
+     * Validates the account status of the mapped user. Even though the identity provider has authenticated the
+     * user successfully, a user that is disabled, locked or expired in the Jmix application must not log in.
+     *
+     * @throws org.springframework.security.authentication.AccountStatusException if the user must not log in
+     */
+    protected void checkUserDetails(JmixSamlUserDetails userDetails) {
+        userDetailsChecker.check(userDetails);
     }
 
     /**

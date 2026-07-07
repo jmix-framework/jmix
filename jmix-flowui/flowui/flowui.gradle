@@ -36,10 +36,6 @@ dependencies {
     implementation 'org.freemarker:freemarker'
     implementation 'net.bytebuddy:byte-buddy'
 
-    // Optional Micrometer dependency used by AbstractTimer for ClockDriftPauseDetector support.
-    // Micrometer 1.17 dropped it from micrometer-core's POM, so keep it on the runtime classpath.
-    runtimeOnly 'org.latencyutils:LatencyUtils'
-
     testImplementation 'org.spockframework:spock-core'
     testImplementation 'org.spockframework:spock-spring'
     testImplementation 'org.springframework.boot:spring-boot-test'

@@ -66,6 +66,10 @@ dependencies {
 
     compileOnly 'org.springframework.boot:spring-boot-web-server'
 
+    // Optional Micrometer dependency used by AbstractTimer for ClockDriftPauseDetector support.
+    // Micrometer 1.17 dropped it from micrometer-core's POM, so keep it on the runtime classpath.
+    runtimeOnly 'org.latencyutils:LatencyUtils'
+
     testImplementation 'org.junit.jupiter:junit-jupiter-api'
     testImplementation 'org.springframework:spring-test'
     testImplementation "org.spockframework:spock-core"

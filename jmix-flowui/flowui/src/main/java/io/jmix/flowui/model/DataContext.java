@@ -183,6 +183,15 @@ public interface DataContext {
     Set<Object> getModified();
 
     /**
+     * Returns the names of attributes of the given managed entity that were modified by the user
+     * and not yet saved. Empty for unknown or unmodified instances, and for instances registered
+     * only via {@link #setModified(Object, boolean)}.
+     */
+    default Set<String> getModifiedAttributes(Object entity) {
+        return Set.of();
+    }
+
+    /**
      * Returns true if the context has registered removal of the given entity.
      */
     boolean isRemoved(Object entity);

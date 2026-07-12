@@ -43,8 +43,19 @@ public class NoopDataContext implements DataContext {
 
     protected ApplicationContext applicationContext;
 
+    private boolean mergeReported;
+
     public NoopDataContext(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
+    }
+
+    private void reportMergeOnce() {
+        // the flag is set only when the notice actually reaches the log, so enabling the
+        // diagnostics category after the first merge still gets the notice on the next one
+        if (!mergeReported && DataContextDiagnostics.log.isDebugEnabled()) {
+            mergeReported = true;
+            DataContextDiagnostics.log.debug(DataContextDiagnostics.readOnlyContextMerge());
+        }
     }
 
     @Nullable
@@ -65,21 +76,25 @@ public class NoopDataContext implements DataContext {
 
     @Override
     public <T> T merge(T entity, MergeOptions options) {
+        reportMergeOnce();
         return entity;
     }
 
     @Override
     public <T> T merge(T entity) {
+        reportMergeOnce();
         return entity;
     }
 
     @Override
     public EntitySet merge(Collection entities, MergeOptions options) {
+        reportMergeOnce();
         return EntitySet.of(entities);
     }
 
     @Override
     public EntitySet merge(Collection entities) {
+        reportMergeOnce();
         return EntitySet.of(entities);
     }
 

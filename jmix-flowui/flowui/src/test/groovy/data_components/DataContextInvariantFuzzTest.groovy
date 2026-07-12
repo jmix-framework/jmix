@@ -50,6 +50,10 @@ import test_support.spec.DataContextSpec
  * The run always passes; it prints a violation report. Reproduce a scenario by its printed seed.
  * <p>
  * Slow test: excluded from the regular suite, run with {@code -PincludeSlowTests=true}.
+ * <p>
+ * Oracle mirrors the 3.1 attribute-level tracking merge semantics as of increment 02: non-fresh
+ * merges never overwrite a dirty attribute, and fresh merges keep the user's value but rebaseline
+ * it (the attribute un-dirties only if the incoming value equals the user's value).
  */
 @IgnoreIf({ env["slowTests"] != 'true' })
 @IgnoreIf({ Boolean.valueOf(System.getenv("JMIX_ECLIPSELINK_DISABLELAZYLOADING")) })
@@ -105,6 +109,10 @@ class DataContextInvariantFuzzTest extends DataContextSpec {
         Map<String, Set<Object>> membership = [:].withDefault { new HashSet<>() }
         // keys of entities the user edited (must be dirty)
         Set<String> editedKeys = new HashSet<>()
+        // subset of editedKeys whose dirt comes (at least partly) from a collection-membership
+        // change rather than a scalar/reference attribute edit; a fresh merge's per-attribute
+        // rebaseline must not evict these from editedKeys just because userEdits emptied out
+        Set<String> collectionEditedKeys = new HashSet<>()
         // phantom-dirty entities already reported (count once)
         Set<String> phantomSeen = new HashSet<>()
         // dedup for I2/I4: same broken fact reported once per scenario
@@ -169,10 +177,11 @@ class DataContextInvariantFuzzTest extends DataContextSpec {
                         def plan = ORDER_PLANS[rnd.nextInt(ORDER_PLANS.size())]
                         def loaded = dataManager.load(Id.of(order)).fetchPlan { it.addAll(plan as String[]) }.one()
                         def managed = context.merge(loaded, new MergeOptions().setFresh(true))
-                        // by current design a fresh merge resets incoming loaded attrs to DB state:
-                        // drop oracle expectations for attrs the plan covered, so I1 counts only
-                        // non-fresh clobbering (the bug class) — fresh clobbering is design-intended
-                        forgetEditsCoveredByPlan(oracle, managed, plan)
+                        // 3.1 semantics: a fresh merge keeps the user's value but rebases the
+                        // baseline to the incoming (DB) value — the attribute un-dirties only if
+                        // that incoming value equals what the user already had. Edits the fresh
+                        // value doesn't match keep being expected (I1 checks unchanged).
+                        rebaselineOnFreshMerge(oracle, managed, loaded, plan)
                         break
                     case 1:
                         opType = 'merge-stale-order'
@@ -235,6 +244,7 @@ class DataContextInvariantFuzzTest extends DataContextSpec {
                             if (!managedOrder.orderLines.contains(managedLine)) {
                                 managedOrder.orderLines.add(managedLine)
                                 oracle.editedKeys << key(managedOrder)
+                                oracle.collectionEditedKeys << key(managedOrder)
                             }
                             oracle.membership[key(managedOrder)] << EntityValues.getId(managedLine)
                         }
@@ -278,11 +288,31 @@ class DataContextInvariantFuzzTest extends DataContextSpec {
         }
     }
 
-    void forgetEditsCoveredByPlan(Oracle oracle, Object managed, List<String> plan) {
+    // Fresh-merge rebaseline (3.1 semantics): for each recorded scalar/reference edit whose
+    // attribute the fetch plan covered, compare against the freshly loaded (DB) value. Equal ->
+    // the edit legitimately un-dirtied (drop the expectation; drop the entity from editedKeys too,
+    // but only if nothing else — e.g. a collection-membership change — still keeps it dirty).
+    // Not equal -> keep expecting the user's value; I1 still checks it on every subsequent op.
+    // Collection membership (orderLines) is untouched here: the merge rule keeps the user's
+    // collection contents on a fresh merge too, so oracle.membership expectations stand.
+    void rebaselineOnFreshMerge(Oracle oracle, Object managed, Object loaded, List<String> plan) {
+        String entityKey = key(managed)
+        def edits = oracle.userEdits[entityKey]
+        if (edits.isEmpty()) return
         def rootAttrs = plan.collect { it.split('\\.')[0] }.toSet()
-        oracle.userEdits[key(managed)]?.keySet()?.removeAll(rootAttrs)
-        if (rootAttrs.contains('orderLines')) {
-            oracle.membership.remove(key(managed))
+        rootAttrs.each { attr ->
+            if (!edits.containsKey(attr)) return
+            if (!entityStates.isLoaded(loaded, attr)) return
+            def dbValue = EntityValues.getValue(loaded, attr)
+            if (attr in ['customer', 'order']) {
+                dbValue = dbValue == null ? null : EntityValues.getId(dbValue)
+            }
+            if (dbValue == edits[attr]) {
+                edits.remove(attr)
+            }
+        }
+        if (edits.isEmpty() && !(entityKey in oracle.collectionEditedKeys)) {
+            oracle.editedKeys.remove(entityKey)
         }
     }
 

@@ -21,6 +21,7 @@ import io.jmix.core.*;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.entity.*;
+import io.jmix.core.impl.CachingLoadedPropertiesInfo;
 import io.jmix.core.metamodel.datatype.EnumClass;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -196,7 +197,7 @@ public class DataContextImpl implements DataContextInternal {
             Object managed = entityMap.get(makeKey(nullIdEntity));
             if (managed != null) {
                 mergedMap.put(entity, managed);
-                mergeState(entity, managed, mergedMap, isRoot, options);
+                mergeState(entity, managed, mergedMap, isRoot, options, true);
                 return managed;
             } else {
                 throw new IllegalStateException("No managed instance for " + nullIdEntity);
@@ -219,7 +220,7 @@ public class DataContextImpl implements DataContextInternal {
             entityMap.put(makeKey(managed), managed);
             mergedMap.put(entity, managed);
 
-            mergeState(entity, managed, mergedMap, isRoot, options);
+            mergeState(entity, managed, mergedMap, isRoot, options, false);
 
             EntitySystemAccess.addPropertyChangeListener(managed, propertyChangeListener);
 
@@ -230,7 +231,7 @@ public class DataContextImpl implements DataContextInternal {
         } else {
             mergedMap.put(entity, managed);
             if (managed != entity) {
-                mergeState(entity, managed, mergedMap, isRoot, options);
+                mergeState(entity, managed, mergedMap, isRoot, options, true);
             }
         }
         return managed;
@@ -255,6 +256,11 @@ public class DataContextImpl implements DataContextInternal {
 
     protected void mergeState(Object srcEntity, Object dstEntity, Map<Object, Object> mergedMap,
                               boolean isRoot, MergeOptions options) {
+        mergeState(srcEntity, dstEntity, mergedMap, isRoot, options, false);
+    }
+
+    protected void mergeState(Object srcEntity, Object dstEntity, Map<Object, Object> mergedMap,
+                              boolean isRoot, MergeOptions options, boolean dstExisted) {
         boolean srcNew = entityStates.isNew(srcEntity);
         boolean dstNew = entityStates.isNew(dstEntity);
 
@@ -339,7 +345,7 @@ public class DataContextImpl implements DataContextInternal {
             }
         }
 
-        mergeLoadedPropertiesInfo(srcEntity, dstEntity, isRoot, options);
+        mergeLoadedPropertiesInfo(srcEntity, dstEntity, isRoot, options, dstExisted);
 
         mergeLazyLoadingState(srcEntity, dstEntity);
     }
@@ -395,10 +401,22 @@ public class DataContextImpl implements DataContextInternal {
     }
 
     protected void mergeLoadedPropertiesInfo(Object srcEntity, Object dstEntity, boolean isRoot, MergeOptions options) {
+        mergeLoadedPropertiesInfo(srcEntity, dstEntity, isRoot, options, false);
+    }
+
+    protected void mergeLoadedPropertiesInfo(Object srcEntity, Object dstEntity, boolean isRoot, MergeOptions options,
+                                             boolean dstExisted) {
         if (isRoot || options.isFresh()) {
             EntityEntry srcEntityEntry = EntitySystemAccess.getEntityEntry(srcEntity);
             EntityEntry dstEntityEntry = EntitySystemAccess.getEntityEntry(dstEntity);
-            if (srcEntityEntry.getLoadedPropertiesInfo() == null) {
+            if (dstExisted && !options.isFresh()
+                    && dstEntityEntry.getLoadedPropertiesInfo() instanceof CachingLoadedPropertiesInfo) {
+                // The source's cached answers are relative to the source instance and may be wrong for a managed
+                // instance that already carries more loaded state (its fetch group was unioned with the source's
+                // in mergeSystemState). Reset to an empty cache so the loaded state is recomputed from the managed
+                // instance's own fetch group and value holders, which reflect its real state at this point.
+                dstEntityEntry.setLoadedPropertiesInfo(new CachingLoadedPropertiesInfo());
+            } else if (srcEntityEntry.getLoadedPropertiesInfo() == null) {
                 dstEntityEntry.setLoadedPropertiesInfo(null);
             } else {
                 dstEntityEntry.setLoadedPropertiesInfo(srcEntityEntry.getLoadedPropertiesInfo().copy());

@@ -17,3 +17,8 @@
 .notification-edit .body-header {
     gap: var(--lumo-space-xs);
 }
+
+.notification-edit .form-scroller,
+.notification-edit .actions-panel {
+    padding: 0 var(--lumo-space-xs);
+}

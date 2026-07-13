@@ -17,3 +17,11 @@
 .notification-edit .body-header {
     margin-bottom: 0;
 }
+
+.notification-edit .form-scroller {
+    padding: 0 var(--vaadin-padding-xs) var(--vaadin-padding-xs) var(--vaadin-padding-xs);
+}
+
+.notification-edit .actions-panel {
+    padding: 0 var(--vaadin-padding-xs);
+}

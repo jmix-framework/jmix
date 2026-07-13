@@ -165,6 +165,11 @@ public class ReportsProperties {
      */
     boolean groovyEnabled;
 
+    /**
+     * Streaming XLSX engine tuning.
+     */
+    Streaming streaming;
+
     public ReportsProperties(@DefaultValue("/") String officePath,
                              @DefaultValue({"8100", "8101", "8102", "8103"}) List<Integer> officePorts,
                              @DefaultValue("20") int docFormatterTimeout,
@@ -191,7 +196,8 @@ public class ReportsProperties {
                              @DefaultValue("false") boolean multilineStringsProcessingEnabled,
                              @DefaultValue("false") boolean useLegacyDateTimeTypes,
                              @DefaultValue("true") boolean groovyEnabled,
-                             @DefaultValue({"htm", "html", "jpg", "png", "jpeg", "pdf"}) List<String> viewFileExtensions) {
+                             @DefaultValue({"htm", "html", "jpg", "png", "jpeg", "pdf"}) List<String> viewFileExtensions,
+                             @DefaultValue Streaming streaming) {
         this.officePath = officePath;
         this.officePorts = officePorts;
         this.docFormatterTimeout = docFormatterTimeout;
@@ -219,6 +225,71 @@ public class ReportsProperties {
         this.useLegacyDateTimeTypes = useLegacyDateTimeTypes;
         this.groovyEnabled = groovyEnabled;
         this.viewFileExtensions = viewFileExtensions;
+        this.streaming = streaming;
+    }
+
+    /**
+     * @see #streaming
+     */
+    public Streaming getStreaming() {
+        return streaming;
+    }
+
+    public static class Streaming {
+
+        /**
+         * JDBC fetch size for the streaming data cursor (SQL and JPQL loaders).
+         */
+        int fetchSize;
+
+        /**
+         * Release EclipseLink cursor buffers and clear the persistence context every N rows (JPQL loader).
+         */
+        int cursorClearInterval;
+
+        /**
+         * SXSSF sliding window: rows kept in memory before flushing to the spool file.
+         */
+        int rowAccessWindowSize;
+
+        public Streaming(@DefaultValue("1000") int fetchSize,
+                         @DefaultValue("1000") int cursorClearInterval,
+                         @DefaultValue("100") int rowAccessWindowSize) {
+            // A zero or negative value is never valid and would break streaming in non-obvious ways:
+            // cursorClearInterval is a modulus divisor (ArithmeticException), fetchSize drives the JDBC
+            // cursor, rowAccessWindowSize sizes the SXSSF window. Fail fast at startup instead.
+            if (fetchSize <= 0 || cursorClearInterval <= 0 || rowAccessWindowSize <= 0) {
+                throw new IllegalArgumentException(String.format(
+                        "jmix.reports.streaming knobs must be positive: fetch-size=%d, "
+                                + "cursor-clear-interval=%d, row-access-window-size=%d",
+                        fetchSize, cursorClearInterval, rowAccessWindowSize));
+            }
+
+            this.fetchSize = fetchSize;
+            this.cursorClearInterval = cursorClearInterval;
+            this.rowAccessWindowSize = rowAccessWindowSize;
+        }
+
+        /**
+         * @see #fetchSize
+         */
+        public int getFetchSize() {
+            return fetchSize;
+        }
+
+        /**
+         * @see #cursorClearInterval
+         */
+        public int getCursorClearInterval() {
+            return cursorClearInterval;
+        }
+
+        /**
+         * @see #rowAccessWindowSize
+         */
+        public int getRowAccessWindowSize() {
+            return rowAccessWindowSize;
+        }
     }
 
     /**

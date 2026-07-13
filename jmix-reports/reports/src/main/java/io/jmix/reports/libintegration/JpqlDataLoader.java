@@ -17,7 +17,9 @@
 package io.jmix.reports.libintegration;
 
 import io.jmix.reports.yarg.exception.DataLoadingException;
+import io.jmix.reports.yarg.exception.ReportingException;
 import io.jmix.reports.yarg.loaders.ReportDataLoader;
+import io.jmix.reports.yarg.loaders.StreamingReportDataLoader;
 import io.jmix.reports.yarg.loaders.impl.AbstractDbDataLoader;
 import io.jmix.reports.yarg.structure.BandData;
 import io.jmix.reports.yarg.structure.ReportQuery;
@@ -26,29 +28,34 @@ import io.jmix.data.StoreAwareLocator;
 import io.jmix.reports.app.EntityMap;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.persistence.jpa.JpaQuery;
+import org.eclipse.persistence.queries.CursoredStream;
+import org.eclipse.persistence.queries.ReadAllQuery;
 import org.jspecify.annotations.NullMarked;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import org.jspecify.annotations.Nullable;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
+
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @NullMarked
-public class JpqlDataLoader extends AbstractDbDataLoader implements ReportDataLoader {
+public class JpqlDataLoader extends AbstractDbDataLoader implements ReportDataLoader, StreamingReportDataLoader {
 
     @Autowired
-    protected TransactionTemplate transaction;
-
-    @Autowired
-    private BeanFactory beanFactory;
+    protected BeanFactory beanFactory;
 
     @Autowired
     protected DataManager dataManager;
@@ -59,10 +66,28 @@ public class JpqlDataLoader extends AbstractDbDataLoader implements ReportDataLo
     @Autowired
     protected ReportsGroovyFeatureSupport groovyFeatureSupport;
 
+    /**
+     * JDBC fetch size for the streaming cursor.
+     */
+    protected int streamingFetchSize = 1000;
+    /**
+     * Release EclipseLink's internal row references every N rows.
+     */
+    protected int cursorClearInterval = 1000;
+
     private static final String QUERY_END = "%%END%%";
     private static final String ALIAS_PATTERN = "as\\s+\"?([\\w|\\d|_|\\.]+)\"?\\s*";
     private static final Pattern OUTPUT_PARAMS_PATTERN =
             Pattern.compile("(?i)" + ALIAS_PATTERN + "[,|from|" + QUERY_END + "]", Pattern.CASE_INSENSITIVE);
+
+
+    public void setStreamingFetchSize(int streamingFetchSize) {
+        this.streamingFetchSize = streamingFetchSize;
+    }
+
+    public void setCursorClearInterval(int cursorClearInterval) {
+        this.cursorClearInterval = cursorClearInterval;
+    }
 
     protected List<OutputValue> parseQueryOutputParametersNames(String query) {
         List<OutputValue> result = new ArrayList<>();
@@ -84,16 +109,10 @@ public class JpqlDataLoader extends AbstractDbDataLoader implements ReportDataLo
             return Collections.emptyList();
         }
         try {
-            if (Boolean.TRUE.equals(reportQuery.getProcessTemplate())) {
-                query = processQueryTemplate(query, parentBand, params);
-            }
+            PreparedJpqlQuery prepared = prepareJpqlQuery(query, parentBand, params,
+                    Boolean.TRUE.equals(reportQuery.getProcessTemplate()));
 
-            List<OutputValue> outputParameters = parseQueryOutputParametersNames(query);
-
-            query = query.replaceAll("(?i)" + ALIAS_PATTERN + ",", ",");//replaces [as alias_name], entries except last
-            query = query.replaceAll("(?i)" + ALIAS_PATTERN, " ");//replaces last [as alias_name] entry
-
-            List queryResult = executeQuery(parentBand, params, storeName, query);
+            List queryResult = executeQuery(parentBand, params, storeName, prepared.query());
             if (CollectionUtils.isNotEmpty(queryResult) && queryResult.get(0) instanceof Entity) {
                 List<Map<String, Object>> wrappedResults = new ArrayList<>();
                 for (Object theResult : queryResult) {
@@ -101,10 +120,80 @@ public class JpqlDataLoader extends AbstractDbDataLoader implements ReportDataLo
                 }
                 return wrappedResults;
             } else {
-                return fillOutputData(queryResult, outputParameters);
+                return fillOutputData(queryResult, prepared.outputValues());
             }
         } catch (Throwable e) {
             throw new DataLoadingException(String.format("An error occurred while loading data for data set [%s]", reportQuery.getName()), e);
+        }
+    }
+
+    /**
+     * Strips {@code as "alias"} entries from the JPQL text, capturing them as output value names.
+     */
+    protected PreparedJpqlQuery prepareJpqlQuery(String query, @Nullable BandData parentBand,
+                                                 Map<String, Object> params, boolean processTemplate) {
+        if (processTemplate) {
+            query = processQueryTemplate(query, parentBand, params);
+        }
+        List<OutputValue> outputValues = parseQueryOutputParametersNames(query);
+        query = query.replaceAll("(?i)" + ALIAS_PATTERN + ",", ",");//replaces [as alias_name], entries except last
+        query = query.replaceAll("(?i)" + ALIAS_PATTERN, " ");//replaces last [as alias_name] entry
+        return new PreparedJpqlQuery(query, outputValues);
+    }
+
+    /**
+     * Streams rows from an EclipseLink cursor. The whole callback runs inside the store's transaction,
+     * keeping the cursor and lazy {@code EntityMap} attribute access valid for the entire render.
+     */
+    @Override
+    public <T> T loadDataStreaming(ReportQuery reportQuery, @Nullable BandData parentBand,
+                                   Map<String, Object> params, Function<Iterator<Map<String, Object>>, T> work) {
+        String storeName = StoreUtils.getStoreName(reportQuery);
+        String rawQuery = reportQuery.getScript();
+        if (StringUtils.isBlank(rawQuery)) {
+            return work.apply(Collections.emptyIterator());
+        }
+
+        try {
+            PreparedJpqlQuery prepared = prepareJpqlQuery(rawQuery, parentBand, params,
+                    Boolean.TRUE.equals(reportQuery.getProcessTemplate()));
+            List<OutputValue> outputParameters = prepared.outputValues();
+            String finalQuery = prepared.query();
+
+            // A streaming report holds this cursor open for the whole render and periodically calls
+            // entityManager.clear(). Run it in a dedicated (REQUIRES_NEW) transaction so that clear() never
+            // detaches entities from a caller's ambient transaction — e.g. when the report is launched from
+            // inside a @Transactional service method, whose persistence context must not be wiped.
+            TransactionTemplate streamingTransaction =
+                    new TransactionTemplate(storeAwareLocator.getTransactionManager(storeName));
+            streamingTransaction.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+
+            return streamingTransaction.execute(transactionStatus -> {
+                Query select = insertParameters(trimQuery(finalQuery), storeName, parentBand, params);
+                // Configure the cursor on the native EclipseLink query: hints set on the JPA wrapper
+                // are not propagated, and getSingleResult() enforces exactly-one-result semantics.
+                JpaQuery<?> jpaQuery = select.unwrap(JpaQuery.class);
+
+                ReadAllQuery readAllQuery = (ReadAllQuery) jpaQuery.getDatabaseQuery();
+                readAllQuery.useCursoredStream(streamingFetchSize, streamingFetchSize);
+                readAllQuery.setFetchSize(streamingFetchSize);
+
+                // Obtain the EntityManager before opening the cursor: if this throws, no cursor is leaked.
+                EntityManager entityManager = storeAwareLocator.getEntityManager(storeName);
+                CursoredStream cursor = (CursoredStream) jpaQuery.getResultCursor();
+                try {
+                    return work.apply(new JpqlRowIterator(cursor, entityManager, outputParameters));
+                } finally {
+                    cursor.close();
+                }
+            });
+        } catch (ReportingException e) {
+            // DataLoadingException, ReportingInterruptedException (user cancel) and formatter errors
+            // must keep their type: runReport routes them differently from data loading failures.
+            throw e;
+        } catch (Throwable e) {
+            throw new DataLoadingException(
+                    String.format("An error occurred while streaming data for data set [%s]", reportQuery.getName()), e);
         }
     }
 
@@ -157,6 +246,68 @@ public class JpqlDataLoader extends AbstractDbDataLoader implements ReportDataLo
             return query.substring(0, query.length() - 1);
         } else {
             return query;
+        }
+    }
+
+    protected record PreparedJpqlQuery(String query, List<OutputValue> outputValues) {
+    }
+
+    /**
+     * Lazy iterator over an EclipseLink CursoredStream; wraps entities into EntityMap, scalars via OutputValue.
+     */
+    protected class JpqlRowIterator implements Iterator<Map<String, Object>> {
+
+        protected final CursoredStream cursor;
+        protected final EntityManager entityManager;
+        protected final List<OutputValue> outputParameters;
+        protected long rowsRead = 0;
+        /**
+         * Entity-vs-scalar shape, decided once from the first row like the batch {@link #loadData}.
+         */
+        @Nullable
+        protected Boolean entityRows;
+
+        protected JpqlRowIterator(CursoredStream cursor, EntityManager entityManager,
+                                  List<OutputValue> outputParameters) {
+            this.cursor = cursor;
+            this.entityManager = entityManager;
+            this.outputParameters = outputParameters;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return cursor.hasMoreElements();
+        }
+
+        @Override
+        public Map<String, Object> next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+
+            if (rowsRead > 0 && rowsRead % cursorClearInterval == 0) {
+                // Release rows consumed so far BEFORE reading the next one, so the row just returned
+                // to the caller is never detached mid-render: cursor.clear() drops the stream's own
+                // buffer, entityManager.clear() evicts the managed clones from the persistence context
+                // (otherwise the UnitOfWork grows O(rows) and defeats streaming).
+                cursor.clear();
+                entityManager.clear();
+            }
+
+            Object element = cursor.nextElement();
+            rowsRead++;
+            // Decide the row shape once, from the first row, exactly like the batch loadData (which keys
+            // off queryResult.get(0)). Deciding per row would make a nullable entity projection mix
+            // EntityMap and scalar rows in the same result, so the template fields resolve inconsistently.
+            if (entityRows == null) {
+                entityRows = element instanceof Entity;
+            }
+
+            if (entityRows) {
+                return new EntityMap((Entity) element, beanFactory);
+            }
+
+            return fillOutputRow(element, outputParameters);
         }
     }
 }

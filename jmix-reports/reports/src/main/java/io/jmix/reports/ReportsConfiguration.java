@@ -107,6 +107,7 @@ public class ReportsConfiguration {
     public JmixSqlDataLoader sqlDataLoader(SqlParametersConverter converter) {
         JmixSqlDataLoader sqlDataLoader = new JmixSqlDataLoader(dataSource);
         sqlDataLoader.setParametersConverter(converter);
+        sqlDataLoader.setStreamingFetchSize(reportsProperties.getStreaming().getFetchSize());
         return sqlDataLoader;
     }
 
@@ -127,7 +128,10 @@ public class ReportsConfiguration {
 
     @Bean("report_JpqlDataLoader")
     public JpqlDataLoader jpqlDataLoader() {
-        return new JpqlDataLoader();
+        JpqlDataLoader jpqlDataLoader = new JpqlDataLoader();
+        jpqlDataLoader.setStreamingFetchSize(reportsProperties.getStreaming().getFetchSize());
+        jpqlDataLoader.setCursorClearInterval(reportsProperties.getStreaming().getCursorClearInterval());
+        return jpqlDataLoader;
     }
 
     @Bean("report_JsonDataLoader")

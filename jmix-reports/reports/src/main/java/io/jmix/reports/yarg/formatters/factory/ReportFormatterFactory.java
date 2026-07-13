@@ -26,4 +26,13 @@ public interface ReportFormatterFactory {
 
     ReportFormatter createFormatter(FormatterFactoryInput factoryInput);
 
+    /**
+     * Whether {@link #createFormatter(FormatterFactoryInput)} returns a
+     * {@link io.jmix.reports.yarg.formatters.StreamingReportFormatter} for the given template extension
+     * when the factory input is marked as streaming. Reports with a streaming band fall back to the
+     * regular materialized rendering for templates whose formatter cannot stream.
+     */
+    default boolean supportsStreaming(String templateExtension) {
+        return false;
+    }
 }

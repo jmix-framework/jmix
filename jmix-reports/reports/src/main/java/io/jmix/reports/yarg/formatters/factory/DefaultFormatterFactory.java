@@ -99,6 +99,13 @@ public class DefaultFormatterFactory implements ReportFormatterFactory {
             return docxFormatter;
         });
         FormatterCreator xlsxCreator = factoryInput -> {
+            if (factoryInput.isStreaming()) {
+                StreamingXlsxFormatter streamingFormatter = new StreamingXlsxFormatter(factoryInput);
+                streamingFormatter.setDefaultFormatProvider(defaultFormatProvider);
+                streamingFormatter.setDocumentConverter(documentConverter);
+                streamingFormatter.setScripting(scripting);
+                return streamingFormatter;
+            }
             XlsxFormatter xlsxFormatter = new XlsxFormatter(factoryInput);
             xlsxFormatter.setDefaultFormatProvider(defaultFormatProvider);
             xlsxFormatter.setDocumentConverter(documentConverter);
@@ -191,6 +198,11 @@ public class DefaultFormatterFactory implements ReportFormatterFactory {
         return reportFormatter;
     }
 
+    @Override
+    public boolean supportsStreaming(String templateExtension) {
+        return "xlsx".equalsIgnoreCase(templateExtension);
+    }
+
     protected void setDefaultInlinersProvider() {
         inlinersProvider = new DefaultInlinersProvider();
     }
@@ -213,7 +225,7 @@ public class DefaultFormatterFactory implements ReportFormatterFactory {
     }
 
     @NullMarked
-    protected static interface FormatterCreator {
+    protected interface FormatterCreator {
         ReportFormatter create(FormatterFactoryInput formatterFactoryInput);
     }
 }

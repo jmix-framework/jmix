@@ -19,7 +19,7 @@ package io.jmix.flowui.kit.meta.component.preview;
 import java.io.StringReader;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.Set;
@@ -27,11 +27,13 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Predicate;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import com.vaadin.flow.component.Component;
+import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.meta.StudioAPI;
 import org.jspecify.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
@@ -60,9 +62,13 @@ import static org.apache.commons.lang3.StringUtils.isNoneBlank;
 @SuppressWarnings("unused")
 final class StudioPreviewComponentProvider {
 
-    private static final Set<StudioPreviewComponentLoader> loaders = new HashSet<>();
+    private static final Set<StudioPreviewComponentLoader> loaders = new LinkedHashSet<>();
     private static final Lock loaderInitializationLock = new ReentrantLock();
     private static final Condition lockCondition = loaderInitializationLock.newCondition();
+
+    private static final Set<StudioPreviewComponentProcessor> processors = new LinkedHashSet<>();
+    private static final Lock processorInitializationLock = new ReentrantLock();
+    private static final Condition processorLockCondition = processorInitializationLock.newCondition();
 
     /**
      * Used in Studio.
@@ -75,6 +81,123 @@ final class StudioPreviewComponentProvider {
     }
 
     /**
+     * Used in Studio. Attaches {@code child} to {@code parent} using the first registered
+     * {@link StudioPreviewChildProcessor} that supports {@code parent}'s type.
+     *
+     * @param index target index, or a negative value to append
+     * @return {@code true} if a processor handled the attachment; {@code false} if none did
+     */
+    public static boolean addPreviewChild(Component parent, Component child, int index) {
+        return findChildProcessor(parent)
+                .map(processor -> processor.addChild(parent, child, index))
+                .orElse(false);
+    }
+
+    /**
+     * Used in Studio. Detaches {@code child} from {@code parent} using the first registered
+     * {@link StudioPreviewChildProcessor} that supports {@code parent}'s type.
+     *
+     * @return {@code true} if a processor handled the detachment; {@code false} if none did
+     */
+    public static boolean removePreviewChild(Component parent, Component child) {
+        return findChildProcessor(parent)
+                .map(processor -> processor.removeChild(parent, child))
+                .orElse(false);
+    }
+
+    /**
+     * Used in Studio. Attaches {@code child} to {@code parent}'s {@code slotHint} slot (e.g.
+     * {@code "prefix"}, {@code "navbar"}); distinct-arity overload of
+     * {@link #addPreviewChild(Component, Component, int)} for slots a parent+child type pair alone
+     * cannot disambiguate.
+     *
+     * @return {@code true} if a processor handled the attachment; {@code false} if none did
+     */
+    public static boolean addPreviewChild(Component parent, Component child, int index, String slotHint) {
+        return dispatch(StudioPreviewSlotProcessor.class,
+                processor -> processor.addToSlot(parent, child, index, slotHint));
+    }
+
+    /**
+     * Used in Studio. Detaches {@code child} from {@code parent}'s {@code slotHint} slot;
+     * distinct-arity overload of {@link #removePreviewChild(Component, Component)}.
+     *
+     * @return {@code true} if a processor handled the detachment; {@code false} if none did
+     */
+    public static boolean removePreviewChild(Component parent, Component child, String slotHint) {
+        return dispatch(StudioPreviewSlotProcessor.class,
+                processor -> processor.removeFromSlot(parent, child, slotHint));
+    }
+
+    /**
+     * Used in Studio. Attaches {@code action} to a keyed action container (e.g. {@code HasActions})
+     * at {@code index}. {@code action} is declared as {@code Object} because this frozen
+     * reflection-ABI static may only declare JDK/Vaadin-typed parameters.
+     *
+     * @return {@code true} if a processor handled the attachment; {@code false} if none did
+     *         (including when {@code action} is not actually a kit {@code Action})
+     */
+    public static boolean addPreviewAction(Component parent, Object action, int index) {
+        return action instanceof Action realAction
+                && dispatch(StudioPreviewActionProcessor.class,
+                        processor -> processor.addAction(parent, realAction, index));
+    }
+
+    /**
+     * Used in Studio. Detaches {@code action} from a keyed action container.
+     *
+     * @return {@code true} if a processor handled the detachment; {@code false} if none did
+     */
+    public static boolean removePreviewAction(Component parent, Object action) {
+        return action instanceof Action realAction
+                && dispatch(StudioPreviewActionProcessor.class,
+                        processor -> processor.removeAction(parent, realAction));
+    }
+
+    /**
+     * Used in Studio. Attaches {@code tab} (paired with its {@code content}) to a
+     * {@code TabSheet}-like container at {@code index}.
+     *
+     * @return {@code true} if a processor handled the attachment; {@code false} if none did
+     */
+    public static boolean addPreviewTab(Component parent, Component tab, Component content, int index) {
+        return dispatch(StudioPreviewTabProcessor.class,
+                processor -> processor.addTab(parent, tab, content, index));
+    }
+
+    /**
+     * Used in Studio. Detaches {@code tab} (and its paired content) from a {@code TabSheet}-like
+     * container.
+     *
+     * @return {@code true} if a processor handled the detachment; {@code false} if none did
+     */
+    public static boolean removePreviewTab(Component parent, Component tab) {
+        return dispatch(StudioPreviewTabProcessor.class, processor -> processor.removeTab(parent, tab));
+    }
+
+    /**
+     * Used in Studio. Creates (or reuses, if already materialized at load time) the column
+     * identified by {@code key} on a {@code Grid}-like container, placed at {@code index}. Studio
+     * re-resolves the resulting column afterwards via {@code Grid#getColumnByKey(String)}.
+     *
+     * @return {@code true} if a processor handled the creation; {@code false} if none did
+     */
+    public static boolean addPreviewColumn(Component parent, String key, int index) {
+        return dispatch(StudioPreviewColumnProcessor.class,
+                processor -> processor.addColumn(parent, key, index));
+    }
+
+    /**
+     * Used in Studio. Removes the column identified by {@code key} from a {@code Grid}-like
+     * container.
+     *
+     * @return {@code true} if a processor handled the removal; {@code false} if none did
+     */
+    public static boolean removePreviewColumn(Component parent, String key) {
+        return dispatch(StudioPreviewColumnProcessor.class, processor -> processor.removeColumn(parent, key));
+    }
+
+    /**
      * Used in Studio.
      * <p>
      *     Creates a preview component from {@link ComponentCreationContext creationContext}.
@@ -83,15 +206,40 @@ final class StudioPreviewComponentProvider {
     @Nullable
     @SuppressWarnings("DataFlowIssue")
     static Component createComponent(ComponentCreationContext creationContext) {
+        return createComponentResult(creationContext).component();
+    }
+
+    /**
+     * Used in Studio.
+     * <p>
+     *     Creates a preview component from {@link ComponentCreationContext creationContext},
+     *     along with the set of XML aspects the loader consumed itself.
+     * </p>
+     */
+    static ComponentCreationResult createComponentResult(ComponentCreationContext creationContext) {
         Element viewElement = getElement(creationContext.viewXml());
         if (hasQualifiedName(viewElement)) {
             Element componentElement = getComponentElement(viewElement, creationContext.componentPath());
             Optional<StudioPreviewComponentLoader> loader = findComponentLoader(componentElement);
             if (loader.isPresent()) {
-                return loader.get().load(componentElement, viewElement);
+                StudioPreviewEnvironment environment = unwrapEnvironment(creationContext.environment());
+                Component component = loader.get().load(componentElement, viewElement, environment);
+                // Old-Studio compatibility: without an environment handshake (2-arg context, no
+                // environment) the caller has no bind-by-key guard and would duplicate any columns
+                // the loader claims ownership of, so only surface ownedAspects for callers that
+                // passed a real environment.
+                return new ComponentCreationResult(component,
+                        component != null && creationContext.environment() != null
+                                ? loader.get().ownedAspects(componentElement) : Set.of());
             }
         }
-        return null;
+        return new ComponentCreationResult(null, Set.of());
+    }
+
+    private static StudioPreviewEnvironment unwrapEnvironment(@Nullable Object environment) {
+        return environment instanceof StudioPreviewEnvironment studioPreviewEnvironment
+                ? studioPreviewEnvironment
+                : StudioPreviewEnvironment.NOOP;
     }
 
     @Nullable
@@ -101,6 +249,26 @@ final class StudioPreviewComponentProvider {
 
     private static Optional<StudioPreviewComponentLoader> findComponentLoader(final Element element) {
         return getLoaderServices().stream().filter(loader -> loader.isSupported(element)).findFirst();
+    }
+
+    private static Optional<StudioPreviewChildProcessor> findChildProcessor(final Component parent) {
+        return getProcessorServices().stream()
+                .filter(StudioPreviewChildProcessor.class::isInstance)
+                .map(StudioPreviewChildProcessor.class::cast)
+                .filter(processor -> processor.isSupported(parent))
+                .findFirst();
+    }
+
+    /**
+     * Tries {@code action} on every registered processor implementing {@code role}, first {@code true} wins.
+     */
+    private static <P extends StudioPreviewComponentProcessor> boolean dispatch(Class<P> role, Predicate<P> action) {
+        for (StudioPreviewComponentProcessor processor : getProcessorServices()) {
+            if (role.isInstance(processor) && action.test(role.cast(processor))) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static Collection<StudioPreviewComponentLoader> getLoaderServices() {
@@ -114,11 +282,11 @@ final class StudioPreviewComponentProvider {
         if (loaderInitializationLock.tryLock()) {
             try {
                 loaders.clear();
-                loaders.add(new StudioStandardComponentsPreviewLoader());
                 ClassLoader classLoader = StudioPreviewComponentProvider.class.getClassLoader();
                 ServiceLoader.load(StudioPreviewComponentLoader.class, classLoader).stream()
                         .map(ServiceLoader.Provider::get)
                         .forEach(loaders::add);
+                loaders.add(new StudioStandardComponentsPreviewLoader());
             } finally {
                 lockCondition.signalAll();
                 loaderInitializationLock.unlock();
@@ -128,6 +296,34 @@ final class StudioPreviewComponentProvider {
                 lockCondition.await(5, TimeUnit.SECONDS);
             } catch (InterruptedException e) {
                 console("Exception when waiting loaders initialization", e);
+            }
+        }
+    }
+
+    private static Collection<StudioPreviewComponentProcessor> getProcessorServices() {
+        if (processors.isEmpty()) {
+            initProcessorServices();
+        }
+        return processors;
+    }
+
+    private static void initProcessorServices() {
+        if (processorInitializationLock.tryLock()) {
+            try {
+                processors.clear();
+                ClassLoader classLoader = StudioPreviewComponentProvider.class.getClassLoader();
+                ServiceLoader.load(StudioPreviewComponentProcessor.class, classLoader).stream()
+                        .map(ServiceLoader.Provider::get)
+                        .forEach(processors::add);
+            } finally {
+                processorLockCondition.signalAll();
+                processorInitializationLock.unlock();
+            }
+        } else {
+            try {
+                processorLockCondition.await(5, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+                console("Exception when waiting processors initialization", e);
             }
         }
     }
@@ -159,10 +355,16 @@ final class StudioPreviewComponentProvider {
     private static final class ComponentCreationContext {
         private final String viewXml;
         private final String componentPath;
+        private final Object environment;
 
         public ComponentCreationContext(String viewXml, String componentPath) {
+            this(viewXml, componentPath, null);
+        }
+
+        public ComponentCreationContext(String viewXml, String componentPath, @Nullable Object environment) {
             this.viewXml = viewXml;
             this.componentPath = componentPath;
+            this.environment = environment;
         }
 
         /**
@@ -177,6 +379,15 @@ final class StudioPreviewComponentProvider {
          */
         public String componentPath() {
             return componentPath;
+        }
+
+        /**
+         * Studio-side environment, expected to be a {@link StudioPreviewEnvironment}
+         * (typed as {@code Object} so this constructor's lookup never depends on that interface class).
+         */
+        @Nullable
+        public Object environment() {
+            return environment;
         }
     }
 

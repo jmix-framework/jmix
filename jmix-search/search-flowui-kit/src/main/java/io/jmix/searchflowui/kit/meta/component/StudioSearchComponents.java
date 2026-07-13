@@ -23,7 +23,7 @@ import io.jmix.flowui.kit.meta.StudioPropertyGroups;
 import io.jmix.flowui.kit.meta.StudioUiKit;
 import io.jmix.flowui.kit.meta.StudioXmlElements;
 
-@StudioUiKit
+@StudioUiKit(studioClassloaderDependencies = "io.jmix.search:jmix-search-flowui-kit")
 public interface StudioSearchComponents {
 
     @StudioComponent(

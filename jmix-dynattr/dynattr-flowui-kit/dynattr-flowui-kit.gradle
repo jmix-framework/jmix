@@ -8,4 +8,7 @@ base {
 
 dependencies {
     api project(':flowui-kit')
+
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }

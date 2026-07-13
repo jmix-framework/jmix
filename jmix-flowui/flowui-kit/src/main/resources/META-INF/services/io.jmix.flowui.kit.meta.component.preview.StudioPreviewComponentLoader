@@ -1,0 +1,6 @@
+io.jmix.flowui.kit.meta.component.preview.loader.StudioHtmlPreviewLoader
+io.jmix.flowui.kit.meta.component.preview.loader.StudioFlowuiComponentsPreviewLoader
+io.jmix.flowui.kit.meta.component.preview.loader.StudioGridPreviewLoader
+io.jmix.flowui.kit.meta.component.preview.loader.StudioDropdownButtonPreviewLoader
+io.jmix.flowui.kit.meta.component.preview.loader.StudioGridColumnVisibilityPreviewLoader
+io.jmix.flowui.kit.meta.component.preview.loader.StudioMainViewComponentsPreviewLoader

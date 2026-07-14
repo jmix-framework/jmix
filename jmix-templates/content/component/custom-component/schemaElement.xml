@@ -1,0 +1,11 @@
+    <xs:element name="${xmlElement}">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="layout:baseComponent">
+                    <!-- TODO declare your component's XML attributes here -->
+                    <!--<xs:attribute name="value" type="xs:string"/>-->
+                    <xs:attributeGroup ref="layout:hasClassNames"/>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>

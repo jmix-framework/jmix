@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<xs:schema xmlns="${namespace}"
+           elementFormDefault="qualified"
+           targetNamespace="${namespace}"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:layout="http://jmix.io/schema/flowui/layout">
+
+    <xs:element name="${xmlElement}">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="layout:baseComponent">
+                    <!-- TODO declare your component's XML attributes here -->
+                    <!--<xs:attribute name="value" type="xs:string"/>-->
+                    <xs:attributeGroup ref="layout:hasClassNames"/>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+
+</xs:schema>

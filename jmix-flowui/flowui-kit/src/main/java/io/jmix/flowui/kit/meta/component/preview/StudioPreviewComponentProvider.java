@@ -212,36 +212,17 @@ final class StudioPreviewComponentProvider {
      * </p>
      */
     @Nullable
-    @SuppressWarnings("DataFlowIssue")
     static Component createComponent(ComponentCreationContext creationContext) {
-        return createComponentResult(creationContext).component();
-    }
-
-    /**
-     * Used in Studio.
-     * <p>
-     *     Creates a preview component from {@link ComponentCreationContext creationContext},
-     *     along with the set of XML aspects the loader consumed itself.
-     * </p>
-     */
-    static ComponentCreationResult createComponentResult(ComponentCreationContext creationContext) {
         Element viewElement = getElement(creationContext.viewXml());
         if (hasQualifiedName(viewElement)) {
             Element componentElement = getComponentElement(viewElement, creationContext.componentPath());
             Optional<StudioPreviewComponentLoader> loader = findComponentLoader(componentElement);
             if (loader.isPresent()) {
                 StudioPreviewEnvironment environment = unwrapEnvironment(creationContext.environment());
-                Component component = loader.get().load(componentElement, viewElement, environment);
-                // Old-Studio compatibility: without an environment handshake (2-arg context, no
-                // environment) the caller has no bind-by-key guard and would duplicate any columns
-                // the loader claims ownership of, so only surface ownedAspects for callers that
-                // passed a real environment.
-                return new ComponentCreationResult(component,
-                        component != null && creationContext.environment() != null
-                                ? loader.get().ownedAspects(componentElement) : Set.of());
+                return loader.get().load(componentElement, viewElement, environment);
             }
         }
-        return new ComponentCreationResult(null, Set.of());
+        return null;
     }
 
     private static StudioPreviewEnvironment unwrapEnvironment(@Nullable Object environment) {

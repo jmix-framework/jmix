@@ -17,14 +17,12 @@
 package io.jmix.flowui.kit.meta.component.preview.loader;
 
 import java.util.Optional;
-import java.util.Set;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
 import io.jmix.flowui.kit.component.grid.JmixGrid;
 import io.jmix.flowui.kit.component.grid.JmixTreeGrid;
-import io.jmix.flowui.kit.meta.component.preview.ComponentCreationResult;
 import io.jmix.flowui.kit.meta.component.preview.StudioPreviewComponentLoader;
 import io.jmix.flowui.kit.meta.component.preview.StudioPreviewEnvironment;
 import org.jspecify.annotations.Nullable;
@@ -49,8 +47,8 @@ import org.dom4j.Element;
  * <ul>
  *     <li>{@code includeAll="true"} cannot be expanded from a fetch plan (there is no entity
  *     metadata here); only explicitly declared {@code column} children are loaded. The loader
- *     still claims {@link ComponentCreationResult#COLUMNS} in that case, since Studio itself
- *     only models the explicitly declared tags too.</li>
+ *     still builds the column skeleton in that case, since Studio itself only models the
+ *     explicitly declared tags too.</li>
  *     <li>{@code editorActionsColumn} cell buttons (save/cancel/close/edit) are not built,
  *     since cells never render without data — only the header/width is visible in preview.</li>
  *     <li>{@code treeDataGrid} columns are added as plain columns; there is no hierarchy
@@ -103,13 +101,6 @@ public class StudioGridPreviewLoader implements StudioPreviewComponentLoader {
         }
 
         return grid;
-    }
-
-    @Override
-    public Set<String> ownedAspects(Element componentElement) {
-        return componentElement.element(COLUMNS_ELEMENT) != null
-                ? Set.of(ComponentCreationResult.COLUMNS)
-                : Set.of();
     }
 
     protected void loadGridAttributes(Grid<Object> grid, Element gridElement) {

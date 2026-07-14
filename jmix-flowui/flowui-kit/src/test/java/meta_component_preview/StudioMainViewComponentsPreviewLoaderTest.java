@@ -89,8 +89,4 @@ class StudioMainViewComponentsPreviewLoaderTest {
         assertTrue(((VerticalLayout) component).hasClassName("styled"));
     }
 
-    @Test
-    void testOwnedAspectsIsEmpty() {
-        assertTrue(loader.ownedAspects(element("appLayout", MAIN_VIEW_NS)).isEmpty());
-    }
 }

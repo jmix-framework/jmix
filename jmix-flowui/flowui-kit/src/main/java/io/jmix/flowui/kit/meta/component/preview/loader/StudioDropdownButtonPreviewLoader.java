@@ -16,13 +16,10 @@
 
 package io.jmix.flowui.kit.meta.component.preview.loader;
 
-import java.util.Set;
-
 import com.vaadin.flow.component.Component;
 import io.jmix.flowui.kit.component.combobutton.ComboButton;
 import io.jmix.flowui.kit.component.dropdownbutton.AbstractDropdownButton;
 import io.jmix.flowui.kit.component.dropdownbutton.DropdownButton;
-import io.jmix.flowui.kit.meta.component.preview.ComponentCreationResult;
 import io.jmix.flowui.kit.meta.component.preview.StudioPreviewComponentLoader;
 import io.jmix.flowui.kit.meta.component.preview.StudioPreviewEnvironment;
 import io.jmix.flowui.kit.xml.layout.support.BaseComponentLoaderSupport;
@@ -104,13 +101,6 @@ public class StudioDropdownButtonPreviewLoader implements StudioPreviewComponent
         }
 
         return button;
-    }
-
-    @Override
-    public Set<String> ownedAspects(Element componentElement) {
-        return componentElement.element(ITEMS_ELEMENT) != null
-                ? Set.of(ComponentCreationResult.ITEMS)
-                : Set.of();
     }
 
     /**

@@ -16,20 +16,15 @@
 
 package meta_component_preview;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
 import io.jmix.flowui.kit.component.grid.JmixGrid;
 import io.jmix.flowui.kit.component.grid.JmixTreeGrid;
-import io.jmix.flowui.kit.meta.component.preview.ComponentCreationResult;
 import io.jmix.flowui.kit.meta.component.preview.StudioPreviewEnvironment;
 import io.jmix.flowui.kit.meta.component.preview.loader.StudioFlowuiComponentsPreviewLoader;
 import io.jmix.flowui.kit.meta.component.preview.loader.StudioGridPreviewLoader;
@@ -244,19 +239,8 @@ class StudioGridPreviewLoaderTest {
         assertEquals(1, grid.getColumns().size());
     }
 
-    @Test
-    void testOwnedAspectsWithColumnsElement() {
-        Element columns = columnsElement(withAttributes(element("column"), "key", "name"));
-        assertEquals(Set.of(ComponentCreationResult.COLUMNS), loader.ownedAspects(gridElement("dataGrid", columns)));
-    }
-
-    @Test
-    void testOwnedAspectsWithoutColumnsElement() {
-        assertEquals(Set.of(), loader.ownedAspects(element("dataGrid")));
-    }
-
     /**
-     * Compatibility test (a): released Studio (&ge; 2.3.0) calls the 2-arg {@code load} entry
+     * Compatibility test: released Studio (&ge; 2.3.0) calls the 2-arg {@code load} entry
      * point, which routes to {@link StudioPreviewEnvironment#NOOP}. Without a real environment
      * handshake there is no bind-by-key guard on the caller side, so the loader must not build
      * any columns — old Studio builds its own on top of whatever the loader returns, and any
@@ -270,47 +254,6 @@ class StudioGridPreviewLoaderTest {
 
         Grid<?> grid = (Grid<?>) component;
         assertEquals(0, grid.getColumns().size());
-    }
-
-    /**
-     * Compatibility test (b): the provider-level gate. A 2-arg
-     * {@code ComponentCreationContext} (old Studio, no environment argument at all) must come
-     * back with empty {@code ownedAspects} even though the component itself is created
-     * successfully, mirroring the reflection style of {@code ProviderResultAbiTest} since
-     * {@code StudioPreviewComponentProvider} and its nested context are package-private.
-     */
-    @Test
-    void testProviderWithTwoArgContextReturnsEmptyOwnedAspectsForDataGridWithColumns() throws Exception {
-        String viewXml = """
-                <view xmlns="http://jmix.io/schema/flowui/view">
-                    <layout>
-                        <dataGrid id="grid">
-                            <columns>
-                                <column key="name"/>
-                            </columns>
-                        </dataGrid>
-                    </layout>
-                </view>""";
-        // Unprefixed path steps never match namespaced elements under XPath 1.0 semantics
-        // (the default xmlns on <view> does not apply to unprefixed name tests), so match by local-name().
-        String dataGridXPath =
-                "/*[local-name()='view']/*[local-name()='layout']/*[local-name()='dataGrid']";
-
-        Class<?> providerClass =
-                Class.forName("io.jmix.flowui.kit.meta.component.preview.StudioPreviewComponentProvider");
-        Class<?> contextClass = Class.forName(providerClass.getName() + "$ComponentCreationContext");
-        Constructor<?> constructor = contextClass.getConstructor(String.class, String.class);
-        constructor.trySetAccessible();
-        Object context = constructor.newInstance(viewXml, dataGridXPath);
-
-        Method createComponentResult = Arrays.stream(providerClass.getDeclaredMethods())
-                .filter(candidate -> candidate.getName().equals("createComponentResult"))
-                .findFirst().orElseThrow();
-        createComponentResult.trySetAccessible();
-        ComponentCreationResult result = (ComponentCreationResult) createComponentResult.invoke(null, context);
-
-        assertNotNull(result.component());
-        assertTrue(result.ownedAspects().isEmpty());
     }
 
     @Test

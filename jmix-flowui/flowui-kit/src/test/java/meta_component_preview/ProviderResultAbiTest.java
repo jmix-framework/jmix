@@ -17,7 +17,6 @@
 package meta_component_preview;
 
 import com.vaadin.flow.component.Component;
-import io.jmix.flowui.kit.meta.component.preview.ComponentCreationResult;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Constructor;
@@ -67,12 +66,19 @@ class ProviderResultAbiTest {
     }
 
     @Test
-    void testCreateComponentResultWithNullEnvironment() throws Exception {
-        Object result = providerMethod("createComponentResult")
+    void testThreeArgContextWithNullEnvironmentStillCreatesComponent() throws Exception {
+        Object component = providerMethod("createComponent")
                 .invoke(null, newContext(VIEW_XML, BUTTON_XPATH, null));
-        assertInstanceOf(ComponentCreationResult.class, result);
-        assertNotNull(((ComponentCreationResult) result).component());
-        assertTrue(((ComponentCreationResult) result).ownedAspects().isEmpty());
+        assertInstanceOf(Component.class, component);
+    }
+
+    @Test
+    void testCreateComponentIsStaticSingleArgReturningComponent() throws Exception {
+        Method method = providerMethod("createComponent");
+        assertTrue(Modifier.isStatic(method.getModifiers()));
+        assertEquals(Component.class, method.getReturnType());
+        assertEquals(1, method.getParameterCount());
+        assertEquals(CONTEXT, method.getParameterTypes()[0].getName());
     }
 
     @Test

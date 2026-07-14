@@ -89,11 +89,8 @@ class ProcessorProviderAbiTest {
                 .filter(method -> method.getName().equals("createComponent")).count();
         long canCreateCount = Arrays.stream(Class.forName(PROVIDER).getDeclaredMethods())
                 .filter(method -> method.getName().equals("canCreateComponent")).count();
-        long createComponentResultCount = Arrays.stream(Class.forName(PROVIDER).getDeclaredMethods())
-                .filter(method -> method.getName().equals("createComponentResult")).count();
         assertEquals(1, createComponentCount);
         assertEquals(1, canCreateCount);
-        assertEquals(1, createComponentResultCount);
     }
 
     private long countDeclaredMethods(String name) {
@@ -127,7 +124,6 @@ class ProcessorProviderAbiTest {
         assertEquals(2, countDeclaredMethods("removePreviewChild"));
         assertEquals(1, countDeclaredMethods("createComponent"));
         assertEquals(1, countDeclaredMethods("canCreateComponent"));
-        assertEquals(1, countDeclaredMethods("createComponentResult"));
     }
 
     /**

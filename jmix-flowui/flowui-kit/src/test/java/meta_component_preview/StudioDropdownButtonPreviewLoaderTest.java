@@ -19,7 +19,6 @@ package meta_component_preview;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.icon.Icon;
@@ -29,7 +28,6 @@ import io.jmix.flowui.kit.component.dropdownbutton.ActionItem;
 import io.jmix.flowui.kit.component.dropdownbutton.DropdownButton;
 import io.jmix.flowui.kit.component.dropdownbutton.DropdownButtonItem;
 import io.jmix.flowui.kit.component.dropdownbutton.TextItem;
-import io.jmix.flowui.kit.meta.component.preview.ComponentCreationResult;
 import io.jmix.flowui.kit.meta.component.preview.StudioPreviewEnvironment;
 import io.jmix.flowui.kit.meta.component.preview.loader.StudioDropdownButtonPreviewLoader;
 import org.dom4j.Element;
@@ -244,15 +242,4 @@ class StudioDropdownButtonPreviewLoaderTest {
         assertTrue(result.isOpenOnHover());
     }
 
-    @Test
-    void testOwnedAspectsWithItemsElement() {
-        Element items = itemsElement(withAttributes(element("textItem"), "id", "item1", "text", "Text"));
-        assertEquals(Set.of(ComponentCreationResult.ITEMS),
-                loader.ownedAspects(buttonElement("dropdownButton", items)));
-    }
-
-    @Test
-    void testOwnedAspectsWithoutItemsElement() {
-        assertEquals(Set.of(), loader.ownedAspects(element("dropdownButton")));
-    }
 }

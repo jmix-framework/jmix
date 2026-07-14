@@ -19,7 +19,6 @@ package meta_component_preview;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.html.Image;
@@ -29,7 +28,6 @@ import io.jmix.flowui.kit.component.usermenu.ActionUserMenuItem;
 import io.jmix.flowui.kit.component.usermenu.JmixUserMenu;
 import io.jmix.flowui.kit.component.usermenu.TextUserMenuItem;
 import io.jmix.flowui.kit.component.usermenu.UserMenuItem;
-import io.jmix.flowui.kit.meta.component.preview.ComponentCreationResult;
 import io.jmix.flowui.kit.meta.component.preview.StudioPreviewEnvironment;
 import io.jmix.flowui.kit.meta.component.preview.StudioStandardComponentsPreviewLoader;
 import org.dom4j.Element;
@@ -341,21 +339,4 @@ class StudioStandardComponentsPreviewLoaderTest {
         assertEquals("second", menuItems.get(1).getId());
     }
 
-    // ---- ownedAspects ----
-
-    @Test
-    void testOwnedAspectsWithItemsElement() {
-        Element items = itemsElement(withAttributes(element("textItem"), "id", "item1", "text", "Text"));
-        assertEquals(Set.of(ComponentCreationResult.ITEMS), loader.ownedAspects(userMenuElement(items)));
-    }
-
-    @Test
-    void testOwnedAspectsWithoutItemsElement() {
-        assertEquals(Set.of(), loader.ownedAspects(element("userMenu")));
-    }
-
-    @Test
-    void testOwnedAspectsForFragmentIsEmpty() {
-        assertEquals(Set.of(), loader.ownedAspects(element("fragment", FRAGMENT_NS)));
-    }
 }

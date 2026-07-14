@@ -19,13 +19,11 @@ package meta_component_preview;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.contextmenu.MenuItem;
 import io.jmix.flowui.kit.component.menubar.JmixMenuBar;
 import io.jmix.flowui.kit.component.menubar.JmixMenuItem;
-import io.jmix.flowui.kit.meta.component.preview.ComponentCreationResult;
 import io.jmix.flowui.kit.meta.component.preview.StudioPreviewEnvironment;
 import io.jmix.flowui.kit.meta.component.preview.loader.StudioGridColumnVisibilityPreviewLoader;
 import org.dom4j.Element;
@@ -356,10 +354,10 @@ class StudioGridColumnVisibilityPreviewLoaderTest {
     }
 
     /**
-     * Pins the build gate to the ownedAspects condition: without a {@code dataGrid} attribute
-     * (normal transient state while typing the XML) no ITEMS ownership is claimed, Studio's
-     * postInitHasMenuItems is NOT skipped and adds its own root — so the loader must build
-     * nothing even with a real environment, or the preview would show two dropdown roots.
+     * Pins the build gate to a missing/empty {@code dataGrid} attribute (normal transient state
+     * while typing the XML): Studio's postInitHasMenuItems is NOT skipped and adds its own root —
+     * so the loader must build nothing even with a real environment, or the preview would show
+     * two dropdown roots.
      */
     @Test
     void testFakeEnvWithoutDataGridAttributeBuildsNoItems() {
@@ -388,13 +386,4 @@ class StudioGridColumnVisibilityPreviewLoaderTest {
         assertEquals(0, rootItem(component).getSubMenu().getItems().size());
     }
 
-    @Test
-    void testOwnedAspectsWithDataGridAttribute() {
-        assertEquals(Set.of(ComponentCreationResult.ITEMS), loader.ownedAspects(visibilityElement("grid1")));
-    }
-
-    @Test
-    void testOwnedAspectsWithoutDataGridAttribute() {
-        assertEquals(Set.of(), loader.ownedAspects(element("gridColumnVisibility")));
-    }
 }

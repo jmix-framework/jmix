@@ -18,7 +18,6 @@ package io.jmix.flowui.kit.meta.component.preview;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.Consumer;
 
 import com.vaadin.flow.component.Component;
@@ -86,14 +85,6 @@ public interface StudioPreviewComponentLoader {
     @Nullable
     default Component load(Element componentElement, Element viewElement, StudioPreviewEnvironment environment) {
         return load(componentElement, viewElement);
-    }
-
-    /**
-     * XML aspects of {@code componentElement} that this loader already handled itself,
-     * so that Studio skips its own handling of them (e.g. {@link ComponentCreationResult#COLUMNS}).
-     */
-    default Set<String> ownedAspects(Element componentElement) {
-        return Set.of();
     }
 
     default Optional<String> loadString(Element element, String attributeName) {

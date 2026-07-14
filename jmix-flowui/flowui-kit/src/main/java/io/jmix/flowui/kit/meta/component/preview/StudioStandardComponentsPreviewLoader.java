@@ -108,13 +108,6 @@ public final class StudioStandardComponentsPreviewLoader implements StudioPrevie
         }
     }
 
-    @Override
-    public Set<String> ownedAspects(Element componentElement) {
-        return isUserMenu(componentElement) && componentElement.element(ITEMS_ELEMENT) != null
-                ? Set.of(ComponentCreationResult.ITEMS)
-                : Set.of();
-    }
-
     private boolean isFragment(Element element) {
         return hasViewOrFragmentSchema(element)
                 && "fragment".equals(element.getName());

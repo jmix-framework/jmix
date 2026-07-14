@@ -23,7 +23,6 @@ import java.util.Set;
 import com.vaadin.flow.component.Component;
 import io.jmix.flowui.kit.component.menubar.JmixMenuBar;
 import io.jmix.flowui.kit.component.menubar.JmixMenuItem;
-import io.jmix.flowui.kit.meta.component.preview.ComponentCreationResult;
 import io.jmix.flowui.kit.meta.component.preview.StudioPreviewComponentLoader;
 import io.jmix.flowui.kit.meta.component.preview.StudioPreviewEnvironment;
 import io.jmix.flowui.kit.xml.layout.support.BaseComponentLoaderSupport;
@@ -116,22 +115,11 @@ public class StudioGridColumnVisibilityPreviewLoader implements StudioPreviewCom
         return menuBar;
     }
 
-    @Override
-    public Set<String> ownedAspects(Element componentElement) {
-        // Aspects only reach Studio through the env-carrying provider path anyway (same surfacing
-        // gate as StudioGridPreviewLoader's COLUMNS), so this only needs to key on the dataGrid
-        // attribute's presence, not on the environment.
-        return loadString(componentElement, DATA_GRID_ATTRIBUTE).isPresent()
-                ? Set.of(ComponentCreationResult.ITEMS)
-                : Set.of();
-    }
-
     protected void buildMenu(JmixMenuBar menuBar, Element componentElement, Element viewElement,
                              StudioPreviewEnvironment environment) {
-        // Must match the ownedAspects condition exactly: with a missing/empty dataGrid attribute
-        // (normal transient state while typing the XML) no ITEMS ownership is claimed, so Studio's
-        // postInitHasMenuItems still runs and adds its own root — building one here too would
-        // produce two dropdown roots. Bail out before the root item, not just before the entries.
+        // With a missing/empty dataGrid attribute (normal transient state while typing the XML),
+        // Studio's postInitHasMenuItems still runs and adds its own root — building one here too
+        // would produce two dropdown roots. Bail out before the root item, not just before the entries.
         String gridId = loadString(componentElement, DATA_GRID_ATTRIBUTE).orElse(null);
         if (gridId == null) {
             return;

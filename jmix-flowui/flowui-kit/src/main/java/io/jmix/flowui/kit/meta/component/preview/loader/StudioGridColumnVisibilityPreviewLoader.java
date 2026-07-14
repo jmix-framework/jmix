@@ -117,11 +117,11 @@ public class StudioGridColumnVisibilityPreviewLoader implements StudioPreviewCom
 
     protected void buildMenu(JmixMenuBar menuBar, Element componentElement, Element viewElement,
                              StudioPreviewEnvironment environment) {
-        // With a missing/empty dataGrid attribute (normal transient state while typing the XML),
-        // Studio's postInitHasMenuItems still runs and adds its own root — building one here too
-        // would produce two dropdown roots. Bail out before the root item, not just before the entries.
+        // Missing/empty dataGrid attribute (normal transient state while typing the XML): mirrors
+        // Studio's old postInitHasMenuItems placeholder so Studio itself can stay silent.
         String gridId = loadString(componentElement, DATA_GRID_ATTRIBUTE).orElse(null);
         if (gridId == null) {
+            buildPlaceholderMenu(menuBar, componentElement, environment);
             return;
         }
 
@@ -138,6 +138,14 @@ public class StudioGridColumnVisibilityPreviewLoader implements StudioPreviewCom
         }
 
         loadSubMenuEntries(rootItem, componentElement, columnsElement, gridElement, environment);
+    }
+
+    protected void buildPlaceholderMenu(JmixMenuBar menuBar, Element componentElement,
+                                        StudioPreviewEnvironment environment) {
+        JmixMenuItem rootItem = loadRootItem(menuBar, componentElement, environment);
+        for (int i = 0; i < 5; i++) {
+            rootItem.getSubMenu().addItem("Menu item " + i);
+        }
     }
 
     /**

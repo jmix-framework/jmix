@@ -65,9 +65,10 @@ import static io.jmix.flowui.kit.component.usermenu.JmixUserMenu.BUTTON_CONTENT_
  *     (via {@link TextUserMenuItem#getSubMenu()}): a further-nested {@code <items>} inside one of
  *     those sub-items is not built. {@code actionItem}/{@code viewItem} never declare nested
  *     {@code <items>} per the layout XSD, so nesting only applies to {@code textItem}.</li>
- *     <li>If {@code <items>} is present but has no child the preview can render (e.g. only
- *     {@code componentItem} children, or none at all), the loader falls back to the 3 hardcoded
- *     placeholder items rather than showing an empty menu.</li>
+ *     <li>If there are no renderable items (e.g. {@code <items>} absent, or present but only
+ *     with unrenderable children like {@code componentItem}), the loader falls back to 5
+ *     hardcoded placeholder items when {@code environment} is real; with {@code NOOP} (old
+ *     Studio) nothing extra is built, as old Studio adds its own compat placeholder.</li>
  * </ul>
  */
 // TODO: minimal support for generic component preview?
@@ -133,10 +134,12 @@ public final class StudioStandardComponentsPreviewLoader implements StudioPrevie
         Element itemsElement = userMenuElement.element(ITEMS_ELEMENT);
         if (hasRenderableItem(itemsElement)) {
             loadItems(userMenu, itemsElement, viewElement, environment, true);
-        } else {
-            userMenu.addTextItem("i1", "Item #1");
-            userMenu.addTextItem("i2", "Item #2");
-            userMenu.addTextItem("i3", "Item #3");
+        } else if (environment != StudioPreviewEnvironment.NOOP) {
+            // No renderable items: mirrors Studio's old postInitHasMenuItems placeholder so
+            // Studio itself can stay silent. Old Studio (NOOP) still adds its own, so skipped then.
+            for (int i = 0; i < 5; i++) {
+                userMenu.addTextItem("menuItem" + i, "Menu item " + i);
+            }
         }
 
         userMenu.setButtonRenderer(user -> {

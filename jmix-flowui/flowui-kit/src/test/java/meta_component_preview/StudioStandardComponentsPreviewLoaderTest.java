@@ -110,18 +110,26 @@ class StudioStandardComponentsPreviewLoaderTest {
     // ---- userMenu: fallback items / setUser ----
 
     @Test
-    void testUserMenuWithoutItemsElementUsesHardcodedFallbackItems() {
+    void testUserMenuWithoutItemsElementUsesPlaceholderItemsWithRealEnv() {
         JmixUserMenu<String> userMenu = loadUserMenu(element("userMenu"), element("view"), new FakeEnv());
 
         List<UserMenuItem> items = userMenu.getItems();
-        assertEquals(3, items.size());
-        assertEquals("Item #1", ((TextUserMenuItem) items.get(0)).getText());
-        assertEquals("Item #2", ((TextUserMenuItem) items.get(1)).getText());
-        assertEquals("Item #3", ((TextUserMenuItem) items.get(2)).getText());
+        assertEquals(5, items.size());
+        for (int i = 0; i < 5; i++) {
+            assertEquals("Menu item " + i, ((TextUserMenuItem) items.get(i)).getText());
+        }
     }
 
     @Test
-    void testUserMenuWithOnlyUnsupportedItemsChildUsesHardcodedFallbackItems() {
+    void testUserMenuWithoutItemsElementBuildsNoItemsWithNoopEnv() {
+        // 2-arg load: routes through StudioPreviewEnvironment.NOOP.
+        Component component = loader.load(element("userMenu"), element("view"));
+
+        assertTrue(((JmixUserMenu<?>) component).getItems().isEmpty());
+    }
+
+    @Test
+    void testUserMenuWithOnlyUnsupportedItemsChildUsesPlaceholderItemsWithRealEnv() {
         // <items> present but its only child (componentItem) is never rendered in preview:
         // falling back to placeholders beats showing an empty menu.
         Element componentItem = withAttributes(element("componentItem"), "id", "item1");
@@ -130,7 +138,7 @@ class StudioStandardComponentsPreviewLoaderTest {
 
         JmixUserMenu<String> userMenu = loadUserMenu(userMenuElement(items), element("view"), new FakeEnv());
 
-        assertEquals(3, userMenu.getItems().size());
+        assertEquals(5, userMenu.getItems().size());
     }
 
     @Test

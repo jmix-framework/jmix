@@ -354,17 +354,31 @@ class StudioGridColumnVisibilityPreviewLoaderTest {
     }
 
     /**
-     * Pins the build gate to a missing/empty {@code dataGrid} attribute (normal transient state
-     * while typing the XML): Studio's postInitHasMenuItems is NOT skipped and adds its own root —
-     * so the loader must build nothing even with a real environment, or the preview would show
-     * two dropdown roots.
+     * Missing/empty {@code dataGrid} attribute (normal transient state while typing the XML) with
+     * a real environment: mirrors Studio's old {@code postInitHasMenuItems} placeholder — one root
+     * item whose submenu has 5 fake entries — so Studio itself can stay silent.
      */
     @Test
-    void testFakeEnvWithoutDataGridAttributeBuildsNoItems() {
+    void testFakeEnvWithoutDataGridAttributeBuildsPlaceholderMenu() {
         Component component = loader.load(element("gridColumnVisibility"), element("view"), new FakeEnv());
 
-        assertEquals(0, ((JmixMenuBar) component).getItems().size());
+        JmixMenuBar menuBar = (JmixMenuBar) component;
+        assertEquals(1, menuBar.getItems().size());
+        List<MenuItem> subItems = rootItem(menuBar).getSubMenu().getItems();
+        assertEquals(5, subItems.size());
+        for (int i = 0; i < 5; i++) {
+            assertEquals("Menu item " + i, subItems.get(i).getText());
+        }
         assertEquals("jmix-grid-column-visibility", component.getElement().getAttribute("jmix-role"));
+    }
+
+    /** With a NOOP environment (old Studio), no placeholder is built: old Studio adds its own. */
+    @Test
+    void testNoopEnvironmentWithoutDataGridAttributeBuildsNoItems() {
+        // 2-arg load: routes through StudioPreviewEnvironment.NOOP.
+        Component component = loader.load(element("gridColumnVisibility"), element("view"));
+
+        assertEquals(0, ((JmixMenuBar) component).getItems().size());
     }
 
     @Test

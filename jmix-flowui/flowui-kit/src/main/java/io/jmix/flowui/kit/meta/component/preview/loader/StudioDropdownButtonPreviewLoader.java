@@ -31,14 +31,19 @@ import org.jspecify.annotations.Nullable;
  * component and builds its declared {@code items} (text/action items, separators) so the
  * designer preview shows the menu instead of an empty overlay.
  * <p>
- * Unlike {@link StudioGridPreviewLoader}, items here are built <b>unconditionally</b>, without a
- * {@link StudioPreviewEnvironment} handshake gate: Studio's designer has never rendered dropdown
+ * Unlike {@link StudioGridPreviewLoader}, declared items are built <b>unconditionally</b>, without
+ * a {@link StudioPreviewEnvironment} handshake gate: Studio's designer has never rendered dropdown
  * items on any released version (item tags model as plain elements with no live Vaadin instance
  * attached, and the designer's menu-item post-init only targets the {@code JmixMenuBar} family,
  * not {@link AbstractDropdownButton}), so no Studio version can double-add items built here. The
- * environment is only used to improve {@code msg://} text resolution; without it (old Studio,
- * routed through the 2-arg {@link #load(Element, Element)} to {@link StudioPreviewEnvironment#NOOP
- * NOOP}) the raw message key is shown as-is, which is still strictly better than an empty menu.
+ * environment is otherwise only used to improve {@code msg://} text resolution; without it (old
+ * Studio, routed through the 2-arg {@link #load(Element, Element)} to
+ * {@link StudioPreviewEnvironment#NOOP NOOP}) the raw message key is shown as-is, which is still
+ * strictly better than an empty menu.
+ * <p>
+ * When {@code <items>} is absent, a real environment gets 5 placeholder items (mirrors Studio's
+ * old {@code postInitHasMenuItems} fallback, moved here so Studio can stay silent); {@code NOOP}
+ * gets none, since old Studio still adds its own compat placeholder in that case.
  * <p>
  * Limitations inherent to a data/context-less preview:
  * <ul>
@@ -98,9 +103,21 @@ public class StudioDropdownButtonPreviewLoader implements StudioPreviewComponent
         Element itemsElement = componentElement.element(ITEMS_ELEMENT);
         if (itemsElement != null) {
             loadItems(button, itemsElement, viewElement, environment);
+        } else if (environment != StudioPreviewEnvironment.NOOP) {
+            loadPlaceholderItems(button);
         }
 
         return button;
+    }
+
+    /**
+     * No {@code <items>} declared: mirrors Studio's old {@code postInitHasMenuItems} placeholder
+     * so Studio itself can stay silent. Old Studio (NOOP) still adds its own, so this is skipped then.
+     */
+    protected void loadPlaceholderItems(AbstractDropdownButton button) {
+        for (int i = 0; i < 5; i++) {
+            button.addItem("menuItem" + i, "Menu item " + i);
+        }
     }
 
     /**

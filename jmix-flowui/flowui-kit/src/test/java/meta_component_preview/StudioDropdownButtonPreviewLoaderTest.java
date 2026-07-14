@@ -202,6 +202,27 @@ class StudioDropdownButtonPreviewLoaderTest {
     }
 
     @Test
+    void testNoItemsElementWithRealEnvBuildsPlaceholderItems() {
+        AbstractDropdownButton button = (AbstractDropdownButton)
+                loader.load(element("dropdownButton"), element("view"), new FakeEnv());
+
+        List<DropdownButtonItem> items = button.getItems();
+        assertEquals(5, items.size());
+        for (int i = 0; i < 5; i++) {
+            assertEquals("Menu item " + i, ((TextItem) items.get(i)).getText());
+        }
+    }
+
+    @Test
+    void testNoItemsElementWithNoopEnvBuildsNoItems() {
+        // 2-arg load: routes through StudioPreviewEnvironment.NOOP.
+        AbstractDropdownButton button =
+                (AbstractDropdownButton) loader.load(element("dropdownButton"), element("view"));
+
+        assertEquals(0, button.getItems().size());
+    }
+
+    @Test
     void testItemCountAndOrder() {
         Element items = itemsElement(
                 withAttributes(element("textItem"), "id", "first", "text", "First"),

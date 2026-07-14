@@ -20,6 +20,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import io.jmix.flowui.kit.meta.StudioXmlElements;
 import io.jmix.flowui.kit.meta.component.preview.StudioPreviewComponentLoader;
 import org.jspecify.annotations.Nullable;
 import org.dom4j.Element;
@@ -36,11 +37,11 @@ import java.util.function.Supplier;
 public class StudioMainViewComponentsPreviewLoader implements StudioPreviewComponentLoader {
 
     protected static final Map<String, Supplier<Component>> FACTORIES = Map.of(
-            "appLayout", AppLayout::new,
-            "initialLayout", VerticalLayout::new,
-            "navigationBar", Div::new,
-            "drawerLayout", Div::new,
-            "layout", VerticalLayout::new
+            StudioXmlElements.APP_LAYOUT, AppLayout::new,
+            StudioXmlElements.INITIAL_LAYOUT, VerticalLayout::new,
+            StudioXmlElements.NAVIGATION_BAR, Div::new,
+            StudioXmlElements.DRAWER_LAYOUT, Div::new,
+            StudioXmlElements.LAYOUT, VerticalLayout::new
     );
 
     @Override

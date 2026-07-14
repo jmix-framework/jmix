@@ -20,6 +20,7 @@ import com.vaadin.flow.component.Component;
 import io.jmix.flowui.kit.component.combobutton.ComboButton;
 import io.jmix.flowui.kit.component.dropdownbutton.AbstractDropdownButton;
 import io.jmix.flowui.kit.component.dropdownbutton.DropdownButton;
+import io.jmix.flowui.kit.meta.StudioXmlElements;
 import io.jmix.flowui.kit.meta.component.preview.StudioPreviewComponentLoader;
 import io.jmix.flowui.kit.meta.component.preview.StudioPreviewEnvironment;
 import io.jmix.flowui.kit.xml.layout.support.BaseComponentLoaderSupport;
@@ -62,21 +63,11 @@ import org.jspecify.annotations.Nullable;
  */
 public class StudioDropdownButtonPreviewLoader implements StudioPreviewComponentLoader {
 
-    protected static final String DROPDOWN_BUTTON_ELEMENT = "dropdownButton";
-    protected static final String COMBO_BUTTON_ELEMENT = "comboButton";
-
-    protected static final String ITEMS_ELEMENT = "items";
-    protected static final String TEXT_ITEM_ELEMENT = "textItem";
-    protected static final String ACTION_ITEM_ELEMENT = "actionItem";
-    protected static final String SEPARATOR_ELEMENT = "separator";
-    protected static final String COMPONENT_ITEM_ELEMENT = "componentItem";
-    protected static final String ACTION_ELEMENT = "action";
-
     @Override
     public boolean isSupported(Element element) {
         return hasViewOrFragmentSchema(element)
-                && (DROPDOWN_BUTTON_ELEMENT.equals(element.getName())
-                        || COMBO_BUTTON_ELEMENT.equals(element.getName()));
+                && (StudioXmlElements.DROPDOWN_BUTTON.equals(element.getName())
+                        || StudioXmlElements.COMBO_BUTTON.equals(element.getName()));
     }
 
     @Nullable
@@ -88,7 +79,7 @@ public class StudioDropdownButtonPreviewLoader implements StudioPreviewComponent
     @Nullable
     @Override
     public Component load(Element componentElement, Element viewElement, StudioPreviewEnvironment environment) {
-        AbstractDropdownButton button = COMBO_BUTTON_ELEMENT.equals(componentElement.getName())
+        AbstractDropdownButton button = StudioXmlElements.COMBO_BUTTON.equals(componentElement.getName())
                 ? new ComboButton()
                 : new DropdownButton();
 
@@ -100,7 +91,7 @@ public class StudioDropdownButtonPreviewLoader implements StudioPreviewComponent
                     .ifPresent(comboButton::setDropdownIcon);
         }
 
-        Element itemsElement = componentElement.element(ITEMS_ELEMENT);
+        Element itemsElement = componentElement.element(StudioXmlElements.ITEMS);
         if (itemsElement != null) {
             loadItems(button, itemsElement, viewElement, environment);
         } else if (environment != StudioPreviewEnvironment.NOOP) {
@@ -127,10 +118,10 @@ public class StudioDropdownButtonPreviewLoader implements StudioPreviewComponent
                              StudioPreviewEnvironment environment) {
         for (Element childElement : itemsElement.elements()) {
             switch (childElement.getName()) {
-                case TEXT_ITEM_ELEMENT -> loadTextItem(button, childElement, environment);
-                case ACTION_ITEM_ELEMENT -> loadActionItem(button, childElement, viewElement, environment);
-                case SEPARATOR_ELEMENT -> button.addSeparator();
-                case COMPONENT_ITEM_ELEMENT -> {
+                case StudioXmlElements.TEXT_ITEM -> loadTextItem(button, childElement, environment);
+                case StudioXmlElements.ACTION_ITEM -> loadActionItem(button, childElement, viewElement, environment);
+                case StudioXmlElements.SEPARATOR -> button.addSeparator();
+                case StudioXmlElements.COMPONENT_ITEM -> {
                     // componentItem needs the runtime LayoutLoader to build nested content:
                     // not available to a spring-free kit loader, so skipped in preview.
                 }
@@ -163,7 +154,7 @@ public class StudioDropdownButtonPreviewLoader implements StudioPreviewComponent
             return;
         }
 
-        Element actionElement = itemElement.element(ACTION_ELEMENT);
+        Element actionElement = itemElement.element(StudioXmlElements.ACTION);
         if (actionElement != null) {
             button.addItem(id, PreviewActionSupport.buildAction(actionElement, id, environment));
             return;

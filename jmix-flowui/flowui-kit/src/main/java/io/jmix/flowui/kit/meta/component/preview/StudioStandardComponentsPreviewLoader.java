@@ -28,6 +28,7 @@ import io.jmix.flowui.kit.component.usermenu.HasActionMenuItems;
 import io.jmix.flowui.kit.component.usermenu.HasTextMenuItems;
 import io.jmix.flowui.kit.component.usermenu.JmixUserMenu;
 import io.jmix.flowui.kit.component.usermenu.TextUserMenuItem;
+import io.jmix.flowui.kit.meta.StudioXmlElements;
 import io.jmix.flowui.kit.meta.component.preview.loader.PreviewActionSupport;
 import io.jmix.flowui.kit.xml.layout.support.BaseComponentLoaderSupport;
 import org.jspecify.annotations.Nullable;
@@ -74,17 +75,10 @@ import static io.jmix.flowui.kit.component.usermenu.JmixUserMenu.BUTTON_CONTENT_
 // TODO: minimal support for generic component preview?
 public final class StudioStandardComponentsPreviewLoader implements StudioPreviewComponentLoader {
 
-    private static final String ITEMS_ELEMENT = "items";
-    private static final String TEXT_ITEM_ELEMENT = "textItem";
-    private static final String ACTION_ITEM_ELEMENT = "actionItem";
-    private static final String VIEW_ITEM_ELEMENT = "viewItem";
-    private static final String SEPARATOR_ELEMENT = "separator";
-    private static final String COMPONENT_ITEM_ELEMENT = "componentItem";
-    private static final String ACTION_ELEMENT = "action";
-
     /** Item tags the preview can actually render; used to decide XML items vs. fallback placeholders. */
-    private static final Set<String> RENDERABLE_ITEM_NAMES =
-            Set.of(TEXT_ITEM_ELEMENT, ACTION_ITEM_ELEMENT, VIEW_ITEM_ELEMENT, SEPARATOR_ELEMENT);
+    private static final Set<String> RENDERABLE_ITEM_NAMES = Set.of(
+            StudioXmlElements.TEXT_ITEM, StudioXmlElements.ACTION_ITEM,
+            StudioXmlElements.VIEW_ITEM, StudioXmlElements.SEPARATOR);
 
     @Override
     public boolean isSupported(Element element) {
@@ -111,7 +105,7 @@ public final class StudioStandardComponentsPreviewLoader implements StudioPrevie
 
     private boolean isFragment(Element element) {
         return hasViewOrFragmentSchema(element)
-                && "fragment".equals(element.getName());
+                && StudioXmlElements.FRAGMENT.equals(element.getName());
     }
 
     private Component loadFragment(Element fragment) {
@@ -124,14 +118,14 @@ public final class StudioStandardComponentsPreviewLoader implements StudioPrevie
 
     private boolean isUserMenu(Element element) {
         return hasViewOrFragmentSchema(element)
-                && "userMenu".equals(element.getName());
+                && StudioXmlElements.USER_MENU.equals(element.getName());
     }
 
     private Component loadUserMenu(Element userMenuElement, Element viewElement, StudioPreviewEnvironment environment) {
         JmixUserMenu<String> userMenu = new JmixUserMenu<>();
         userMenu.setUser("admin");
 
-        Element itemsElement = userMenuElement.element(ITEMS_ELEMENT);
+        Element itemsElement = userMenuElement.element(StudioXmlElements.ITEMS);
         if (hasRenderableItem(itemsElement)) {
             loadItems(userMenu, itemsElement, viewElement, environment, true);
         } else if (environment != StudioPreviewEnvironment.NOOP) {
@@ -185,11 +179,12 @@ public final class StudioStandardComponentsPreviewLoader implements StudioPrevie
             boolean nestingAllowed) {
         for (Element childElement : itemsElement.elements()) {
             switch (childElement.getName()) {
-                case TEXT_ITEM_ELEMENT -> loadTextItem(menu, childElement, viewElement, environment, nestingAllowed);
-                case ACTION_ITEM_ELEMENT -> loadActionItem(menu, childElement, viewElement, environment);
-                case VIEW_ITEM_ELEMENT -> loadViewItem(menu, childElement, environment);
-                case SEPARATOR_ELEMENT -> menu.addSeparator();
-                case COMPONENT_ITEM_ELEMENT -> {
+                case StudioXmlElements.TEXT_ITEM ->
+                        loadTextItem(menu, childElement, viewElement, environment, nestingAllowed);
+                case StudioXmlElements.ACTION_ITEM -> loadActionItem(menu, childElement, viewElement, environment);
+                case StudioXmlElements.VIEW_ITEM -> loadViewItem(menu, childElement, environment);
+                case StudioXmlElements.SEPARATOR -> menu.addSeparator();
+                case StudioXmlElements.COMPONENT_ITEM -> {
                     // componentItem needs the runtime LayoutLoader to build nested content:
                     // not available to a spring-free kit loader, so skipped in preview.
                 }
@@ -223,7 +218,7 @@ public final class StudioStandardComponentsPreviewLoader implements StudioPrevie
                 .orElseGet(() -> menu.addTextItem(id, text));
 
         if (nestingAllowed) {
-            Element nestedItemsElement = itemElement.element(ITEMS_ELEMENT);
+            Element nestedItemsElement = itemElement.element(StudioXmlElements.ITEMS);
             if (hasRenderableItem(nestedItemsElement)) {
                 loadItems(item.getSubMenu(), nestedItemsElement, viewElement, environment, false);
             }
@@ -238,7 +233,7 @@ public final class StudioStandardComponentsPreviewLoader implements StudioPrevie
             return;
         }
 
-        Element actionElement = itemElement.element(ACTION_ELEMENT);
+        Element actionElement = itemElement.element(StudioXmlElements.ACTION);
         if (actionElement != null) {
             menu.addActionItem(id, PreviewActionSupport.buildAction(actionElement, id, environment));
             return;

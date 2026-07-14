@@ -82,6 +82,7 @@ import io.jmix.flowui.kit.component.upload.JmixFileStorageUploadField;
 import io.jmix.flowui.kit.component.upload.JmixFileUploadField;
 import io.jmix.flowui.kit.component.valuepicker.MultiValuePicker;
 import io.jmix.flowui.kit.component.valuepicker.ValuePicker;
+import io.jmix.flowui.kit.meta.StudioXmlElements;
 import io.jmix.flowui.kit.meta.component.preview.StudioPreviewComponentLoader;
 import io.jmix.flowui.kit.meta.component.preview.StudioPreviewEnvironment;
 import io.jmix.flowui.kit.xml.layout.support.BaseComponentLoaderSupport;
@@ -111,92 +112,93 @@ public class StudioFlowuiComponentsPreviewLoader implements StudioPreviewCompone
 
     protected static final Map<String, Supplier<Component>> FACTORIES = Map.ofEntries(
             // containers
-            Map.entry("hbox", HorizontalLayout::new),
-            Map.entry("vbox", VerticalLayout::new),
-            Map.entry("flexLayout", FlexLayout::new),
-            Map.entry("scroller", Scroller::new),
-            Map.entry("accordion", Accordion::new),
-            Map.entry("accordionPanel", AccordionPanel::new),
-            Map.entry("tabSheet", TabSheet::new),
-            Map.entry("tabs", Tabs::new),
-            Map.entry("tab", Tab::new),
-            Map.entry("details", Details::new),
-            Map.entry("split", SplitLayout::new),
-            Map.entry("formLayout", FormLayout::new),
-            Map.entry("formItem", FormLayout.FormItem::new),
-            Map.entry("formRow", FormLayout.FormRow::new),
-            Map.entry("card", Card::new),
-            Map.entry("gridLayout", JmixGridLayout::new),
-            Map.entry("sidePanelLayout", JmixSidePanelLayout::new),
-            Map.entry("sidePanelLayoutCloser", JmixSidePanelLayoutCloser::new),
+            Map.entry(StudioXmlElements.HBOX, HorizontalLayout::new),
+            Map.entry(StudioXmlElements.VBOX, VerticalLayout::new),
+            Map.entry(StudioXmlElements.FLEX_LAYOUT, FlexLayout::new),
+            Map.entry(StudioXmlElements.SCROLLER, Scroller::new),
+            Map.entry(StudioXmlElements.ACCORDION, Accordion::new),
+            Map.entry(StudioXmlElements.ACCORDION_PANEL, AccordionPanel::new),
+            Map.entry(StudioXmlElements.TAB_SHEET, TabSheet::new),
+            Map.entry(StudioXmlElements.TABS, Tabs::new),
+            Map.entry(StudioXmlElements.TAB, Tab::new),
+            Map.entry(StudioXmlElements.DETAILS, Details::new),
+            Map.entry(StudioXmlElements.SPLIT, SplitLayout::new),
+            Map.entry(StudioXmlElements.FORM_LAYOUT, FormLayout::new),
+            Map.entry(StudioXmlElements.FORM_ITEM, FormLayout.FormItem::new),
+            Map.entry(StudioXmlElements.FORM_ROW, FormLayout.FormRow::new),
+            Map.entry(StudioXmlElements.CARD, Card::new),
+            Map.entry(StudioXmlElements.GRID_LAYOUT, JmixGridLayout::new),
+            Map.entry(StudioXmlElements.SIDE_PANEL_LAYOUT, JmixSidePanelLayout::new),
+            Map.entry(StudioXmlElements.SIDE_PANEL_LAYOUT_CLOSER, JmixSidePanelLayoutCloser::new),
             // buttons
-            Map.entry("button", JmixButton::new),
+            Map.entry(StudioXmlElements.BUTTON, JmixButton::new),
             // fields
-            Map.entry("textField", TextField::new),
-            Map.entry("emailField", EmailField::new),
-            Map.entry("numberField", NumberField::new),
-            Map.entry("passwordField", PasswordField::new),
-            Map.entry("bigDecimalField", BigDecimalField::new),
-            Map.entry("integerField", IntegerField::new),
-            Map.entry("textArea", TextArea::new),
-            Map.entry("checkbox", Checkbox::new),
-            Map.entry("switch", JmixSwitch::new),
-            Map.entry("checkboxGroup", CheckboxGroup::new),
-            Map.entry("radioButtonGroup", RadioButtonGroup::new),
-            Map.entry("listBox", ListBox::new),
-            Map.entry("multiSelectListBox", MultiSelectListBox::new),
-            Map.entry("comboBox", ComboBox::new),
-            Map.entry("multiSelectComboBox", MultiSelectComboBox::new),
-            Map.entry("multiSelectComboBoxPicker", MultiSelectComboBoxPicker::new),
-            Map.entry("select", Select::new),
-            Map.entry("timePicker", TimePicker::new),
-            Map.entry("datePicker", DatePicker::new),
-            Map.entry("dateTimePicker", DateTimePicker::new),
-            Map.entry("valuePicker", ValuePicker::new),
-            Map.entry("entityPicker", ValuePicker::new),
-            Map.entry("multiValuePicker", MultiValuePicker::new),
+            Map.entry(StudioXmlElements.TEXT_FIELD, TextField::new),
+            Map.entry(StudioXmlElements.EMAIL_FIELD, EmailField::new),
+            Map.entry(StudioXmlElements.NUMBER_FIELD, NumberField::new),
+            Map.entry(StudioXmlElements.PASSWORD_FIELD, PasswordField::new),
+            Map.entry(StudioXmlElements.BIG_DECIMAL_FIELD, BigDecimalField::new),
+            Map.entry(StudioXmlElements.INTEGER_FIELD, IntegerField::new),
+            Map.entry(StudioXmlElements.TEXT_AREA, TextArea::new),
+            Map.entry(StudioXmlElements.CHECKBOX, Checkbox::new),
+            Map.entry(StudioXmlElements.SWITCH, JmixSwitch::new),
+            Map.entry(StudioXmlElements.CHECKBOX_GROUP, CheckboxGroup::new),
+            Map.entry(StudioXmlElements.RADIO_BUTTON_GROUP, RadioButtonGroup::new),
+            Map.entry(StudioXmlElements.LIST_BOX, ListBox::new),
+            Map.entry(StudioXmlElements.MULTI_SELECT_LIST_BOX, MultiSelectListBox::new),
+            Map.entry(StudioXmlElements.COMBO_BOX, ComboBox::new),
+            Map.entry(StudioXmlElements.MULTI_SELECT_COMBO_BOX, MultiSelectComboBox::new),
+            Map.entry(StudioXmlElements.MULTI_SELECT_COMBO_BOX_PICKER, MultiSelectComboBoxPicker::new),
+            Map.entry(StudioXmlElements.SELECT, Select::new),
+            Map.entry(StudioXmlElements.TIME_PICKER, TimePicker::new),
+            Map.entry(StudioXmlElements.DATE_PICKER, DatePicker::new),
+            Map.entry(StudioXmlElements.DATE_TIME_PICKER, DateTimePicker::new),
+            Map.entry(StudioXmlElements.VALUE_PICKER, ValuePicker::new),
+            Map.entry(StudioXmlElements.ENTITY_PICKER, ValuePicker::new),
+            Map.entry(StudioXmlElements.MULTI_VALUE_PICKER, MultiValuePicker::new),
+            // comboBoxPicker: no matching StudioXmlElements constant, kept as a local literal.
             Map.entry("comboBoxPicker", ComboBoxPicker::new),
-            Map.entry("entityComboBox", ComboBoxPicker::new),
+            Map.entry(StudioXmlElements.ENTITY_COMBO_BOX, ComboBoxPicker::new),
             // misc display
-            Map.entry("avatar", Avatar::new),
-            Map.entry("progressBar", ProgressBar::new),
-            Map.entry("drawerToggle", DrawerToggle::new),
-            Map.entry("listMenu", ListMenu::new),
-            Map.entry("userIndicator", UserIndicator::new),
+            Map.entry(StudioXmlElements.AVATAR, Avatar::new),
+            Map.entry(StudioXmlElements.PROGRESS_BAR, ProgressBar::new),
+            Map.entry(StudioXmlElements.DRAWER_TOGGLE, DrawerToggle::new),
+            Map.entry(StudioXmlElements.LIST_MENU, ListMenu::new),
+            Map.entry(StudioXmlElements.USER_INDICATOR, UserIndicator::new),
             // grids
-            Map.entry("virtualList", VirtualList::new),
+            Map.entry(StudioXmlElements.VIRTUAL_LIST, VirtualList::new),
             // login
-            Map.entry("loginForm", EnhancedLoginForm::new),
-            Map.entry("loginOverlay", LoginOverlay::new),
+            Map.entry(StudioXmlElements.LOGIN_FORM, EnhancedLoginForm::new),
+            Map.entry(StudioXmlElements.LOGIN_OVERLAY, LoginOverlay::new),
             // pagination / upload / editors
-            Map.entry("simplePagination", JmixSimplePagination::new),
-            Map.entry("fileUploadField", JmixFileUploadField::new),
-            Map.entry("fileStorageUploadField", JmixFileStorageUploadField::new),
-            Map.entry("upload", Upload::new),
-            Map.entry("codeEditor", JmixCodeEditor::new),
-            Map.entry("richTextEditor", JmixRichTextEditor::new),
-            Map.entry("markdownEditor", JmixMarkdownEditor::new),
-            Map.entry("twinColumn", JmixTwinColumn::new),
-            Map.entry("horizontalMenu", JmixMenuBar::new),
+            Map.entry(StudioXmlElements.SIMPLE_PAGINATION, JmixSimplePagination::new),
+            Map.entry(StudioXmlElements.FILE_UPLOAD_FIELD, JmixFileUploadField::new),
+            Map.entry(StudioXmlElements.FILE_STORAGE_UPLOAD_FIELD, JmixFileStorageUploadField::new),
+            Map.entry(StudioXmlElements.UPLOAD, Upload::new),
+            Map.entry(StudioXmlElements.CODE_EDITOR, JmixCodeEditor::new),
+            Map.entry(StudioXmlElements.RICH_TEXT_EDITOR, JmixRichTextEditor::new),
+            Map.entry(StudioXmlElements.MARKDOWN_EDITOR, JmixMarkdownEditor::new),
+            Map.entry(StudioXmlElements.TWIN_COLUMN, JmixTwinColumn::new),
+            Map.entry(StudioXmlElements.HORIZONTAL_MENU, JmixMenuBar::new),
             // structural placeholders (spring composites / UI.getCurrent()-touching components)
-            Map.entry("menuFilterField", TextField::new),
-            Map.entry("propertyFilter", TextField::new),
-            Map.entry("jpqlFilter", TextField::new),
-            Map.entry("groupFilter", VerticalLayout::new),
-            Map.entry("genericFilter", Details::new)
+            Map.entry(StudioXmlElements.MENU_FILTER_FIELD, TextField::new),
+            Map.entry(StudioXmlElements.PROPERTY_FILTER, TextField::new),
+            Map.entry(StudioXmlElements.JPQL_FILTER, TextField::new),
+            Map.entry(StudioXmlElements.GROUP_FILTER, VerticalLayout::new),
+            Map.entry(StudioXmlElements.GENERIC_FILTER, Details::new)
     );
 
     /** Elements needing extra attribute handling on top of the common ones. */
     protected static final Map<String, Function<Element, Component>> SPECIALS = Map.of(
-            "icon", element -> BaseComponentLoaderSupport.loadIconSetIcon(element).orElseGet(Icon::new),
-            "svgIcon", element -> {
+            StudioXmlElements.ICON, element -> BaseComponentLoaderSupport.loadIconSetIcon(element).orElseGet(Icon::new),
+            StudioXmlElements.SVG_ICON, element -> {
                 SvgIcon svgIcon = new SvgIcon();
                 BaseLoaderSupport.loadString(element, "src", svgIcon::setSrc);
                 return svgIcon;
             },
-            "fontIcon", element -> new FontIcon(),
-            "markdown", element -> new Markdown(inlineContent(element).orElse("")),
-            "image", element -> {
+            StudioXmlElements.FONT_ICON, element -> new FontIcon(),
+            StudioXmlElements.MARKDOWN, element -> new Markdown(inlineContent(element).orElse("")),
+            StudioXmlElements.IMAGE, element -> {
                 Image image = new Image();
                 BaseLoaderSupport.loadString(element, "src")
                         .filter(src -> src.startsWith("http"))
@@ -257,7 +259,7 @@ public class StudioFlowuiComponentsPreviewLoader implements StudioPreviewCompone
 
     protected static Optional<String> inlineContent(Element element) {
         return element.elements().stream()
-                .filter(child -> "content".equals(child.getName()))
+                .filter(child -> StudioXmlElements.CONTENT.equals(child.getName()))
                 .findFirst()
                 .map(child -> child.getText().trim());
     }

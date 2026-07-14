@@ -24,6 +24,7 @@ import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
 import io.jmix.flowui.kit.component.grid.JmixGrid;
 import io.jmix.flowui.kit.component.grid.JmixTreeGrid;
+import io.jmix.flowui.kit.meta.StudioXmlElements;
 import io.jmix.flowui.kit.meta.component.preview.StudioPreviewComponentLoader;
 import io.jmix.flowui.kit.meta.component.preview.StudioPreviewEnvironment;
 import org.jspecify.annotations.Nullable;
@@ -58,12 +59,6 @@ import org.dom4j.Element;
  */
 public class StudioGridPreviewLoader implements StudioPreviewComponentLoader {
 
-    protected static final String DATA_GRID_ELEMENT = "dataGrid";
-    protected static final String TREE_DATA_GRID_ELEMENT = "treeDataGrid";
-
-    protected static final String COLUMNS_ELEMENT = "columns";
-    protected static final String COLUMN_ELEMENT = "column";
-    protected static final String EDITOR_ACTIONS_COLUMN_ELEMENT = "editorActionsColumn";
     protected static final String EDITOR_ACTIONS_COLUMN_DEFAULT_KEY = "editorActionsColumn";
 
     protected static final String MESSAGE_REF_PREFIX = "msg://";
@@ -71,7 +66,8 @@ public class StudioGridPreviewLoader implements StudioPreviewComponentLoader {
     @Override
     public boolean isSupported(Element element) {
         return hasViewOrFragmentSchema(element)
-                && (DATA_GRID_ELEMENT.equals(element.getName()) || TREE_DATA_GRID_ELEMENT.equals(element.getName()));
+                && (StudioXmlElements.DATA_GRID.equals(element.getName())
+                        || StudioXmlElements.TREE_DATA_GRID.equals(element.getName()));
     }
 
     @Nullable
@@ -84,7 +80,7 @@ public class StudioGridPreviewLoader implements StudioPreviewComponentLoader {
     @Override
     public Component load(Element componentElement, Element viewElement, StudioPreviewEnvironment environment) {
         Grid<Object> grid;
-        if (TREE_DATA_GRID_ELEMENT.equals(componentElement.getName())) {
+        if (StudioXmlElements.TREE_DATA_GRID.equals(componentElement.getName())) {
             grid = new JmixTreeGrid<>();
         } else {
             grid = new JmixGrid<>();
@@ -96,7 +92,7 @@ public class StudioGridPreviewLoader implements StudioPreviewComponentLoader {
         // Old-Studio compatibility (no environment handshake): without an environment the caller
         // cannot bind to loader-built columns, so it adds its own on top and every column gets
         // duplicated. Only build columns when a real environment was passed.
-        Element columnsElement = componentElement.element(COLUMNS_ELEMENT);
+        Element columnsElement = componentElement.element(StudioXmlElements.COLUMNS);
         if (columnsElement != null && environment != StudioPreviewEnvironment.NOOP) {
             loadColumns(grid, columnsElement, componentElement, environment);
         }
@@ -129,9 +125,9 @@ public class StudioGridPreviewLoader implements StudioPreviewComponentLoader {
 
         for (Element childElement : columnsElement.elements()) {
             switch (childElement.getName()) {
-                case COLUMN_ELEMENT ->
+                case StudioXmlElements.COLUMN ->
                         loadColumn(grid, childElement, gridElement, environment, columnsSortable, columnsResizable);
-                case EDITOR_ACTIONS_COLUMN_ELEMENT -> loadEditorActionsColumn(grid, childElement, environment);
+                case StudioXmlElements.EDITOR_ACTIONS_COLUMN -> loadEditorActionsColumn(grid, childElement, environment);
                 default -> {
                     // unknown columns' child (e.g. groupColumn): skipped silently in preview
                 }

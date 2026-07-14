@@ -23,6 +23,7 @@ import java.util.Set;
 import com.vaadin.flow.component.Component;
 import io.jmix.flowui.kit.component.menubar.JmixMenuBar;
 import io.jmix.flowui.kit.component.menubar.JmixMenuItem;
+import io.jmix.flowui.kit.meta.StudioXmlElements;
 import io.jmix.flowui.kit.meta.component.preview.StudioPreviewComponentLoader;
 import io.jmix.flowui.kit.meta.component.preview.StudioPreviewEnvironment;
 import io.jmix.flowui.kit.xml.layout.support.BaseComponentLoaderSupport;
@@ -64,8 +65,6 @@ import org.jspecify.annotations.Nullable;
  */
 public class StudioGridColumnVisibilityPreviewLoader implements StudioPreviewComponentLoader {
 
-    protected static final String GRID_COLUMN_VISIBILITY_ELEMENT = "gridColumnVisibility";
-
     protected static final String DATA_GRID_ATTRIBUTE = "dataGrid";
     protected static final String INCLUDE_ATTRIBUTE = "include";
     protected static final String EXCLUDE_ATTRIBUTE = "exclude";
@@ -77,11 +76,6 @@ public class StudioGridColumnVisibilityPreviewLoader implements StudioPreviewCom
     protected static final String DATA_CONTAINER_ATTRIBUTE = "dataContainer";
     protected static final String META_CLASS_ATTRIBUTE = "metaClass";
 
-    protected static final String DATA_GRID_ELEMENT = "dataGrid";
-    protected static final String TREE_DATA_GRID_ELEMENT = "treeDataGrid";
-    protected static final String COLUMNS_ELEMENT = "columns";
-    protected static final String COLUMN_ELEMENT = "column";
-    protected static final String MENU_ITEM_ELEMENT = "menuItem";
     protected static final String REF_COLUMN_ATTRIBUTE = "refColumn";
 
     protected static final String ATTRIBUTE_JMIX_ROLE_NAME = "jmix-role";
@@ -89,7 +83,8 @@ public class StudioGridColumnVisibilityPreviewLoader implements StudioPreviewCom
 
     @Override
     public boolean isSupported(Element element) {
-        return hasViewOrFragmentSchema(element) && GRID_COLUMN_VISIBILITY_ELEMENT.equals(element.getName());
+        return hasViewOrFragmentSchema(element)
+                && StudioXmlElements.GRID_COLUMN_VISIBILITY.equals(element.getName());
     }
 
     @Nullable
@@ -132,7 +127,7 @@ public class StudioGridColumnVisibilityPreviewLoader implements StudioPreviewCom
             return;
         }
 
-        Element columnsElement = gridElement.element(COLUMNS_ELEMENT);
+        Element columnsElement = gridElement.element(StudioXmlElements.COLUMNS);
         if (columnsElement == null) {
             return;
         }
@@ -176,7 +171,7 @@ public class StudioGridColumnVisibilityPreviewLoader implements StudioPreviewCom
         Set<String> includeKeys = loadKeys(componentElement, INCLUDE_ATTRIBUTE);
         Set<String> excludeKeys = loadKeys(componentElement, EXCLUDE_ATTRIBUTE);
 
-        for (Element columnElement : columnsElement.elements(COLUMN_ELEMENT)) {
+        for (Element columnElement : columnsElement.elements(StudioXmlElements.COLUMN)) {
             String property = loadString(columnElement, PROPERTY_ATTRIBUTE).orElse(null);
             String key = loadString(columnElement, KEY_ATTRIBUTE).orElse(property);
             if (key == null) {
@@ -196,7 +191,7 @@ public class StudioGridColumnVisibilityPreviewLoader implements StudioPreviewCom
 
     protected Map<String, String> loadMenuItemTexts(Element componentElement) {
         Map<String, String> texts = new HashMap<>();
-        for (Element menuItemElement : componentElement.elements(MENU_ITEM_ELEMENT)) {
+        for (Element menuItemElement : componentElement.elements(StudioXmlElements.MENU_ITEM)) {
             loadString(menuItemElement, REF_COLUMN_ATTRIBUTE).ifPresent(refColumn ->
                     loadString(menuItemElement, TEXT_ATTRIBUTE)
                             .ifPresent(text -> texts.put(refColumn, text)));
@@ -247,7 +242,8 @@ public class StudioGridColumnVisibilityPreviewLoader implements StudioPreviewCom
     @Nullable
     protected Element findGridElement(Element parent, String gridId) {
         for (Element child : parent.elements()) {
-            boolean isGrid = DATA_GRID_ELEMENT.equals(child.getName()) || TREE_DATA_GRID_ELEMENT.equals(child.getName());
+            boolean isGrid = StudioXmlElements.DATA_GRID.equals(child.getName())
+                    || StudioXmlElements.TREE_DATA_GRID.equals(child.getName());
             if (isGrid && gridId.equals(child.attributeValue(ID_ATTRIBUTE))) {
                 return child;
             }

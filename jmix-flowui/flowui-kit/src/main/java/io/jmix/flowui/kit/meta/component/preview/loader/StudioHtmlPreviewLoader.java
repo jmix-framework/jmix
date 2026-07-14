@@ -19,6 +19,7 @@ package io.jmix.flowui.kit.meta.component.preview.loader;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.html.*;
+import io.jmix.flowui.kit.meta.StudioXmlElements;
 import io.jmix.flowui.kit.meta.component.preview.StudioPreviewComponentLoader;
 import org.jspecify.annotations.Nullable;
 import org.dom4j.Element;
@@ -34,54 +35,54 @@ public class StudioHtmlPreviewLoader implements StudioPreviewComponentLoader {
     protected static final String DEFAULT_HTML_CONTENT = "<span></span>";
 
     protected static final Map<String, Supplier<Component>> FACTORIES = Map.ofEntries(
-            Map.entry("div", Div::new),
-            Map.entry("span", Span::new),
-            Map.entry("h1", H1::new),
-            Map.entry("h2", H2::new),
-            Map.entry("h3", H3::new),
-            Map.entry("h4", H4::new),
-            Map.entry("h5", H5::new),
-            Map.entry("h6", H6::new),
-            Map.entry("p", Paragraph::new),
-            Map.entry("pre", Pre::new),
-            Map.entry("code", Code::new),
-            Map.entry("emphasis", Emphasis::new),
-            Map.entry("hr", Hr::new),
-            Map.entry("anchor", Anchor::new),
-            Map.entry("iframe", IFrame::new),
-            Map.entry("input", Input::new),
-            Map.entry("rangeInput", RangeInput::new),
-            Map.entry("listItem", ListItem::new),
-            Map.entry("unorderedList", UnorderedList::new),
-            Map.entry("orderedList", OrderedList::new),
-            Map.entry("fieldSet", FieldSet::new),
-            Map.entry("descriptionList", DescriptionList::new),
-            Map.entry("term", DescriptionList.Term::new),
-            Map.entry("description", DescriptionList.Description::new),
-            Map.entry("section", Section::new),
-            Map.entry("nav", Nav::new),
-            Map.entry("main", Main::new),
-            Map.entry("footer", Footer::new),
-            Map.entry("aside", Aside::new),
-            Map.entry("article", Article::new),
-            Map.entry("header", Header::new),
-            Map.entry("htmlObject", HtmlObject::new),
-            Map.entry("param", Param::new),
-            Map.entry("nativeLabel", NativeLabel::new),
-            Map.entry("nativeButton", NativeButton::new),
-            Map.entry("nativeDetails", NativeDetails::new)
+            Map.entry(StudioXmlElements.DIV, Div::new),
+            Map.entry(StudioXmlElements.SPAN, Span::new),
+            Map.entry(StudioXmlElements.H1, H1::new),
+            Map.entry(StudioXmlElements.H2, H2::new),
+            Map.entry(StudioXmlElements.H3, H3::new),
+            Map.entry(StudioXmlElements.H4, H4::new),
+            Map.entry(StudioXmlElements.H5, H5::new),
+            Map.entry(StudioXmlElements.H6, H6::new),
+            Map.entry(StudioXmlElements.P, Paragraph::new),
+            Map.entry(StudioXmlElements.PRE, Pre::new),
+            Map.entry(StudioXmlElements.CODE, Code::new),
+            Map.entry(StudioXmlElements.EMPHASIS, Emphasis::new),
+            Map.entry(StudioXmlElements.HR, Hr::new),
+            Map.entry(StudioXmlElements.ANCHOR, Anchor::new),
+            Map.entry(StudioXmlElements.IFRAME, IFrame::new),
+            Map.entry(StudioXmlElements.INPUT, Input::new),
+            Map.entry(StudioXmlElements.RANGE_INPUT, RangeInput::new),
+            Map.entry(StudioXmlElements.LIST_ITEM, ListItem::new),
+            Map.entry(StudioXmlElements.UNORDERED_LIST, UnorderedList::new),
+            Map.entry(StudioXmlElements.ORDERED_LIST, OrderedList::new),
+            Map.entry(StudioXmlElements.FIELD_SET, FieldSet::new),
+            Map.entry(StudioXmlElements.DESCRIPTION_LIST, DescriptionList::new),
+            Map.entry(StudioXmlElements.TERM, DescriptionList.Term::new),
+            Map.entry(StudioXmlElements.DESCRIPTION, DescriptionList.Description::new),
+            Map.entry(StudioXmlElements.SECTION, Section::new),
+            Map.entry(StudioXmlElements.NAV, Nav::new),
+            Map.entry(StudioXmlElements.MAIN, Main::new),
+            Map.entry(StudioXmlElements.FOOTER, Footer::new),
+            Map.entry(StudioXmlElements.ASIDE, Aside::new),
+            Map.entry(StudioXmlElements.ARTICLE, Article::new),
+            Map.entry(StudioXmlElements.HEADER, Header::new),
+            Map.entry(StudioXmlElements.HTML_OBJECT, HtmlObject::new),
+            Map.entry(StudioXmlElements.PARAM, Param::new),
+            Map.entry(StudioXmlElements.NATIVE_LABEL, NativeLabel::new),
+            Map.entry(StudioXmlElements.NATIVE_BUTTON, NativeButton::new),
+            Map.entry(StudioXmlElements.NATIVE_DETAILS, NativeDetails::new)
     );
 
     @Override
     public boolean isSupported(Element element) {
         return hasViewOrFragmentSchema(element)
-                && ("html".equals(element.getName()) || FACTORIES.containsKey(element.getName()));
+                && (StudioXmlElements.HTML.equals(element.getName()) || FACTORIES.containsKey(element.getName()));
     }
 
     @Nullable
     @Override
     public Component load(Element componentElement, Element viewElement) {
-        Component component = "html".equals(componentElement.getName())
+        Component component = StudioXmlElements.HTML.equals(componentElement.getName())
                 ? loadHtml(componentElement)
                 : FACTORIES.get(componentElement.getName()).get();
         loadComponentBaseAttributes(component, componentElement);
@@ -90,7 +91,7 @@ public class StudioHtmlPreviewLoader implements StudioPreviewComponentLoader {
 
     protected Component loadHtml(Element element) {
         String content = element.elements().stream()
-                .filter(child -> "content".equals(child.getName()))
+                .filter(child -> StudioXmlElements.CONTENT.equals(child.getName()))
                 .findFirst()
                 .map(Element::getText)
                 .or(() -> loadString(element, "content"))

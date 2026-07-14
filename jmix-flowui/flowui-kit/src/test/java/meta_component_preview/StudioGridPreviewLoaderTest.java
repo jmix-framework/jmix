@@ -257,6 +257,25 @@ class StudioGridPreviewLoaderTest {
     }
 
     @Test
+    void testDataGridWithRealEnvironmentGetsThreePlaceholderRows() {
+        Grid<?> grid = (Grid<?>) loader.load(element("dataGrid"), element("view"), new FakeEnv());
+
+        assertEquals(3, grid.getListDataView().getItemCount());
+    }
+
+    @Test
+    void testDataGridWithNoopEnvironmentGetsNoPlaceholderRows() {
+        Grid<?> grid = (Grid<?>) loader.load(element("dataGrid"), element("view"), StudioPreviewEnvironment.NOOP);
+
+        assertEquals(0, grid.getListDataView().getItemCount());
+    }
+
+    @Test
+    void testTreeDataGridWithRealEnvironmentDoesNotThrow() {
+        assertNotNull(loader.load(element("treeDataGrid"), element("view"), new FakeEnv()));
+    }
+
+    @Test
     void testFlowuiComponentsLoaderNoLongerSupportsDataGridOrTreeDataGrid() {
         StudioFlowuiComponentsPreviewLoader flowuiLoader = new StudioFlowuiComponentsPreviewLoader();
         assertFalse(flowuiLoader.isSupported(element("dataGrid")));

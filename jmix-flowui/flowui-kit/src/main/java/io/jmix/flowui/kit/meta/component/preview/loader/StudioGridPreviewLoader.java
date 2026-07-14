@@ -16,6 +16,7 @@
 
 package io.jmix.flowui.kit.meta.component.preview.loader;
 
+import java.util.List;
 import java.util.Optional;
 
 import com.vaadin.flow.component.Component;
@@ -98,6 +99,11 @@ public class StudioGridPreviewLoader implements StudioPreviewComponentLoader {
         Element columnsElement = componentElement.element(COLUMNS_ELEMENT);
         if (columnsElement != null && environment != StudioPreviewEnvironment.NOOP) {
             loadColumns(grid, columnsElement, componentElement, environment);
+        }
+
+        // Placeholder rows so columns are visible in preview; tree grids reject setItems(Collection).
+        if (environment != StudioPreviewEnvironment.NOOP && !(grid instanceof JmixTreeGrid)) {
+            grid.setItems(List.of("Item 1", "Item 2", "Item 3"));
         }
 
         return grid;

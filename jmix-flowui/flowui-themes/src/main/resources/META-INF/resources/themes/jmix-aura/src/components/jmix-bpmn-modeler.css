@@ -18,3 +18,20 @@ jmix-bpmn-modeler:focus-within::part(focus-ring) {
     outline: var(--vaadin-focus-ring-width, 2px) solid var(--jmix-bpmn-modeler-focus-ring-color, var(--vaadin-focus-ring-color));
     outline-offset: calc(var(--vaadin-focus-ring-width, 2px) * -1);
 }
+
+/*
+ * Popup-menu icon for the "Send Notification" service task. The modeler renders
+ * its diagram-js content (incl. the replace popup) in the light DOM, so this is
+ * a plain global rule. bpmn-font ships no bell glyph, so the bell is rendered as
+ * a CSS mask painted with currentColor - it follows the entry's color (incl.
+ * hover/selected) and scales with font-size like the built-in font glyphs. The
+ * class name contains the "icon" substring on purpose, so the diagram-js popup
+ * rules size and space it for free. The bell path matches
+ * BpmRenderer#_drawSendNotificationTask on the canvas.
+ */
+.djs-popup .jmix-icon-send-notification::before {
+    content: '';
+    background-color: currentColor;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='5 5 18 18'%3E%3Cpath d='M 14 6.5 c -3.2 0 -5.2 2.3 -5.2 5.5 l 0 3.6 l -1.6 2.2 l 13.6 0 l -1.6 -2.2 l 0 -3.6 c 0 -3.2 -2 -5.5 -5.2 -5.5 z M 12.2 19.4 a 1.8 1.8 0 0 0 3.6 0'/%3E%3C/svg%3E") center / contain no-repeat;
+            mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='5 5 18 18'%3E%3Cpath d='M 14 6.5 c -3.2 0 -5.2 2.3 -5.2 5.5 l 0 3.6 l -1.6 2.2 l 13.6 0 l -1.6 -2.2 l 0 -3.6 c 0 -3.2 -2 -5.5 -5.2 -5.5 z M 12.2 19.4 a 1.8 1.8 0 0 0 3.6 0'/%3E%3C/svg%3E") center / contain no-repeat;
+}

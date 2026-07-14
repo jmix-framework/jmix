@@ -22,3 +22,23 @@
     --_lumo-jmix-bpmn-modeler-inject-modules:
             lumo_components_jmix-bpmn-modeler;
 }
+
+/*
+ * Popup-menu icon for the "Send Notification" service task. Kept OUTSIDE the
+ * lumo_components injection block on purpose: that block is injected into the
+ * component's shadow DOM, but the modeler renders its diagram-js content (incl.
+ * the replace popup) in the light DOM, so the rule must stay global (this file
+ * is imported globally by ../../components/jmix-bpmn-modeler.css).
+ *
+ * bpmn-font ships no bell glyph, so the bell is rendered as a CSS mask painted
+ * with currentColor - it follows the entry's color (incl. hover/selected) and
+ * scales with font-size like the built-in font glyphs. The class name contains
+ * the "icon" substring on purpose, so the diagram-js popup rules size and space
+ * it for free. The bell path matches BpmRenderer#_drawSendNotificationTask.
+ */
+.djs-popup .jmix-icon-send-notification::before {
+    content: '';
+    background-color: currentColor;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='5 5 18 18'%3E%3Cpath d='M 14 6.5 c -3.2 0 -5.2 2.3 -5.2 5.5 l 0 3.6 l -1.6 2.2 l 13.6 0 l -1.6 -2.2 l 0 -3.6 c 0 -3.2 -2 -5.5 -5.2 -5.5 z M 12.2 19.4 a 1.8 1.8 0 0 0 3.6 0'/%3E%3C/svg%3E") center / contain no-repeat;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='5 5 18 18'%3E%3Cpath d='M 14 6.5 c -3.2 0 -5.2 2.3 -5.2 5.5 l 0 3.6 l -1.6 2.2 l 13.6 0 l -1.6 -2.2 l 0 -3.6 c 0 -3.2 -2 -5.5 -5.2 -5.5 z M 12.2 19.4 a 1.8 1.8 0 0 0 3.6 0'/%3E%3C/svg%3E") center / contain no-repeat;
+}

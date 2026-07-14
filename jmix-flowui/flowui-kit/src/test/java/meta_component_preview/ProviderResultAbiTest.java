@@ -22,6 +22,7 @@ import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -82,5 +83,15 @@ class ProviderResultAbiTest {
                 .filter(method -> method.getName().equals("canCreateComponent")).count();
         assertEquals(1, createComponentCount);
         assertEquals(1, canCreateCount);
+    }
+
+    @Test
+    public void buildsFullPreviewContent_isPublicStaticNoArgTrue() throws Exception {
+        Method m = Class.forName(PROVIDER).getMethod("buildsFullPreviewContent");
+        m.trySetAccessible();
+        assertTrue(Modifier.isPublic(m.getModifiers()) && Modifier.isStatic(m.getModifiers()));
+        assertEquals(0, m.getParameterCount());
+        assertEquals(Boolean.TYPE, m.getReturnType());
+        assertEquals(Boolean.TRUE, m.invoke(null));
     }
 }

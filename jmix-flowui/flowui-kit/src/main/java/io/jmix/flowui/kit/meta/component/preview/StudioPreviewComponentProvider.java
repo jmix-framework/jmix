@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -195,6 +195,14 @@ final class StudioPreviewComponentProvider {
      */
     public static boolean removePreviewColumn(Component parent, String key) {
         return dispatch(StudioPreviewColumnProcessor.class, processor -> processor.removeColumn(parent, key));
+    }
+
+    /**
+     * True when this framework builds full preview content (structure + placeholders) itself,
+     * so Studio skips its own structural postInit. Absent on pre-capability frameworks.
+     */
+    public static boolean buildsFullPreviewContent() {
+        return true;
     }
 
     /**

@@ -19,7 +19,6 @@ package meta_chart_preview;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ServiceLoader;
-import java.util.Set;
 
 import com.vaadin.flow.component.Component;
 import io.jmix.chartsflowui.kit.component.ChartRenderer;
@@ -161,11 +160,6 @@ class StudioChartsPreviewLoaderTest {
         JmixChart chart = (JmixChart) loader.load(chartElement(), chartElement());
 
         assertNull(chart.getTitle());
-    }
-
-    @Test
-    void testOwnedAspectsIsEmpty() {
-        assertEquals(Set.of(), loader.ownedAspects(chartElement()));
     }
 
     @Test

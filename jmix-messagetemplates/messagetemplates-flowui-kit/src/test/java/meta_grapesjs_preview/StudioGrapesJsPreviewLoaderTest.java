@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
-import java.util.Set;
 
 import com.vaadin.flow.component.Component;
 import io.jmix.flowui.kit.meta.component.preview.StudioPreviewComponentLoader;
@@ -226,11 +225,6 @@ class StudioGrapesJsPreviewLoaderTest {
         GrapesJs grapesJs = (GrapesJs) loader.load(element, element);
 
         assertEquals("msg://unresolved.label", grapesJs.getBlocks().get(0).getLabel());
-    }
-
-    @Test
-    void testOwnedAspectsIsEmpty() {
-        assertEquals(Set.of(), loader.ownedAspects(grapesJsElement()));
     }
 
     @Test

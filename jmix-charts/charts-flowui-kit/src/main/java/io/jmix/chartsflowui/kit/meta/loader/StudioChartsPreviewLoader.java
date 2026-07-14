@@ -40,7 +40,7 @@ import org.jspecify.annotations.Nullable;
  * Studio has no chart-specific post-processing for any of the skipped sub-elements, so building
  * only the base attributes and title unconditionally (no {@link StudioPreviewEnvironment}
  * handshake gate, unlike {@code StudioGridPreviewLoader}'s columns) is safe: there's nothing for
- * Studio to double-add, hence the default (empty) {@link #ownedAspects(Element)}.
+ * Studio to double-add.
  */
 public class StudioChartsPreviewLoader implements StudioPreviewComponentLoader {
 

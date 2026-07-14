@@ -38,7 +38,7 @@ import org.jspecify.annotations.Nullable;
  * <p>
  * Studio has no block-specific post-processing to duplicate, so blocks are built unconditionally
  * (no {@link StudioPreviewEnvironment} handshake gate, unlike {@code StudioGridPreviewLoader}'s
- * columns), hence the default (empty) {@link #ownedAspects(Element)}.
+ * columns).
  */
 public class StudioGrapesJsPreviewLoader implements StudioPreviewComponentLoader {
 

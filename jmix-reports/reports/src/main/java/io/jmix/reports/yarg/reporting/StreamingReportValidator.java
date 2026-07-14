@@ -88,7 +88,7 @@ public class StreamingReportValidator {
     }
 
     protected void collectStreamingBands(ReportBand band, List<ReportBand> streamingBands) {
-        if (band.isStreaming()) {
+        if (Boolean.TRUE.equals(band.getStreaming())) {
             streamingBands.add(band);
         }
 

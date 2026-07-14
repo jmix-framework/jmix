@@ -123,7 +123,7 @@ import org.w3c.dom.NodeList;
  * template is read with XSSF (templates are small); result rows are created through
  * {@link SXSSFWorkbook} and flushed to disk outside the sliding window, so the heap footprint of the
  * output document stays bounded regardless of the row count. The engine is selected for reports that
- * mark a band as {@code streaming} (see {@code ReportBand#isStreaming()}); the non-streaming
+ * mark a band as {@code streaming} (see {@code ReportBand#getStreaming()}); the non-streaming
  * {@link XlsxFormatter} remains the default.
  *
  * <p><b>Supported</b> (everything computable at the moment a row is written):

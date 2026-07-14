@@ -180,7 +180,7 @@ public class Reporting implements ReportingAPI {
             return null;
         }
 
-        if (band.isStreaming()) {
+        if (Boolean.TRUE.equals(band.getStreaming())) {
             return band;
         }
 

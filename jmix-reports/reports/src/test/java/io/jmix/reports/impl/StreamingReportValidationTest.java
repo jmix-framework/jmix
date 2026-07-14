@@ -163,6 +163,15 @@ public class StreamingReportValidationTest {
         assertThat(violations).extracting(Violation::type).contains(ViolationType.NOT_SINGLE_QUERY);
     }
 
+    @Test
+    void testStreamingIsWritableMetaProperty() {
+        io.jmix.core.metamodel.model.MetaProperty mp =
+                metadata.getClass(BandDefinition.class).getProperty("streaming");
+        assertThat(mp.isReadOnly())
+                .as("streaming meta-property must be writable for the report editor checkbox binding")
+                .isFalse();
+    }
+
     protected Report report() {
         Report report = metadata.create(Report.class);
         report.setName("validation");

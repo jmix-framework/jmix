@@ -152,16 +152,12 @@ public class BandDefinition implements ReportBand {
         this.multiDataSet = multiDataSet;
     }
 
+    @Override
     public Boolean getStreaming() {
         return streaming;
     }
 
     public void setStreaming(Boolean streaming) {
         this.streaming = streaming;
-    }
-
-    @Override
-    public boolean isStreaming() {
-        return Boolean.TRUE.equals(streaming);
     }
 }

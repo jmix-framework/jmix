@@ -73,12 +73,12 @@ public class BandDefinitionStreamingFlagTest {
                 .findFirst()
                 .orElseThrow();
         assertThat(restoredData.getStreaming()).isTrue();
-        assertThat(restoredData.isStreaming()).isTrue();
+        assertThat(restoredData.getStreaming()).isTrue();
 
         BandDefinition restoredRoot = restored.getBands().stream()
                 .filter(band -> "Root".equals(band.getName()))
                 .findFirst()
                 .orElseThrow();
-        assertThat(restoredRoot.isStreaming()).isFalse();
+        assertThat(restoredRoot.getStreaming()).isFalse();
     }
 }

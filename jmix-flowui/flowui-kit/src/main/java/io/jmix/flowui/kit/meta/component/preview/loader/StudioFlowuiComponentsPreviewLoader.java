@@ -30,6 +30,7 @@ import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.datetimepicker.DateTimePicker;
 import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.icon.FontIcon;
 import com.vaadin.flow.component.icon.Icon;
@@ -59,6 +60,7 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.timepicker.TimePicker;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.virtuallist.VirtualList;
+import com.vaadin.flow.data.provider.HasListDataView;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.component.checkbox.JmixSwitch;
 import io.jmix.flowui.kit.component.codeeditor.JmixCodeEditor;
@@ -68,6 +70,7 @@ import io.jmix.flowui.kit.component.loginform.EnhancedLoginForm;
 import io.jmix.flowui.kit.component.main.ListMenu;
 import io.jmix.flowui.kit.component.main.UserIndicator;
 import io.jmix.flowui.kit.component.markdowneditor.JmixMarkdownEditor;
+import io.jmix.flowui.kit.component.menubar.HasMenuItemsEnhanced;
 import io.jmix.flowui.kit.component.menubar.JmixMenuBar;
 import io.jmix.flowui.kit.component.multiselectcomboboxpicker.MultiSelectComboBoxPicker;
 import io.jmix.flowui.kit.component.pagination.JmixSimplePagination;
@@ -80,12 +83,14 @@ import io.jmix.flowui.kit.component.upload.JmixFileUploadField;
 import io.jmix.flowui.kit.component.valuepicker.MultiValuePicker;
 import io.jmix.flowui.kit.component.valuepicker.ValuePicker;
 import io.jmix.flowui.kit.meta.component.preview.StudioPreviewComponentLoader;
+import io.jmix.flowui.kit.meta.component.preview.StudioPreviewEnvironment;
 import io.jmix.flowui.kit.xml.layout.support.BaseComponentLoaderSupport;
 import io.jmix.flowui.kit.xml.layout.support.BaseLoaderSupport;
 import org.dom4j.Element;
 import org.jspecify.annotations.Nullable;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -94,6 +99,13 @@ import java.util.function.Supplier;
 
 /**
  * Studio preview loader for the core flowui components: containers, fields, buttons, grids and misc elements.
+ * <p>
+ * With a real {@link StudioPreviewEnvironment} (Studio now gates its own structural post-init on it),
+ * this loader fills the same placeholders Studio used to add itself: 3 rows for any
+ * {@link HasListDataView} (comboBox, listBox, checkboxGroup, virtualList, etc. — not grids, which
+ * route to {@link StudioGridPreviewLoader}), and 5 items for {@code horizontalMenu}
+ * ({@link HasMenuItemsEnhanced}). {@link StudioPreviewEnvironment#NOOP} (old Studio, via the 2-arg
+ * {@link #load(Element, Element) load}) gets none, since old Studio still adds its own.
  */
 public class StudioFlowuiComponentsPreviewLoader implements StudioPreviewComponentLoader {
 
@@ -215,6 +227,32 @@ public class StudioFlowuiComponentsPreviewLoader implements StudioPreviewCompone
                 : FACTORIES.get(name).get();
         loadComponentBaseAttributes(component, componentElement);
         return component;
+    }
+
+    @Nullable
+    @Override
+    public Component load(Element componentElement, Element viewElement, StudioPreviewEnvironment environment) {
+        Component component = load(componentElement, viewElement);
+        if (component != null && environment != StudioPreviewEnvironment.NOOP) {
+            fillPlaceholders(component);
+        }
+        return component;
+    }
+
+    /**
+     * Mirrors Studio's old {@code postInitHasListDataView}/{@code postInitHasMenuItems}: since
+     * Studio now gates those on the framework-owns-content probe, this loader builds the same
+     * placeholders itself so a real environment still sees live content.
+     */
+    @SuppressWarnings("unchecked")
+    protected void fillPlaceholders(Component component) {
+        if (component instanceof HasListDataView && !(component instanceof Grid)) {
+            ((HasListDataView<Object, ?>) component).setItems(List.of("Item 1", "Item 2", "Item 3"));
+        } else if (component instanceof HasMenuItemsEnhanced menuItems) {
+            for (int i = 0; i < 5; i++) {
+                menuItems.addItem("Menu item " + i);
+            }
+        }
     }
 
     protected static Optional<String> inlineContent(Element element) {

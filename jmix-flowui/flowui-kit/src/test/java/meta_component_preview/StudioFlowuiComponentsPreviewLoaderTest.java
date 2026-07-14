@@ -17,10 +17,14 @@
 package meta_component_preview;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.listbox.ListBox;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import io.jmix.flowui.kit.component.button.JmixButton;
+import io.jmix.flowui.kit.component.menubar.JmixMenuBar;
+import io.jmix.flowui.kit.meta.component.preview.StudioPreviewEnvironment;
 import io.jmix.flowui.kit.meta.component.preview.loader.StudioFlowuiComponentsPreviewLoader;
 import org.dom4j.Namespace;
 import org.dom4j.tree.BaseElement;
@@ -31,6 +35,19 @@ import static org.junit.jupiter.api.Assertions.*;
 class StudioFlowuiComponentsPreviewLoaderTest {
 
     static final Namespace VIEW_NS = Namespace.get("http://jmix.io/schema/flowui/view");
+
+    /** Fake env; only needs to be non-NOOP to exercise the placeholder-fill gate. */
+    static class FakeEnv implements StudioPreviewEnvironment {
+        @Override
+        public String resolveMessage(String messageKey) {
+            return null;
+        }
+
+        @Override
+        public String propertyCaption(String dataContainerId, String metaClass, String propertyPath) {
+            return null;
+        }
+    }
 
     final StudioFlowuiComponentsPreviewLoader loader = new StudioFlowuiComponentsPreviewLoader();
 
@@ -97,5 +114,40 @@ class StudioFlowuiComponentsPreviewLoaderTest {
     @Test
     void testNoLongerSupportsGridColumnVisibility() {
         assertFalse(loader.isSupported(element("gridColumnVisibility")));
+    }
+
+    @Test
+    void testHasListDataViewComponentGetsThreePlaceholderItemsWithRealEnvironment() {
+        ComboBox<?> comboBox = (ComboBox<?>) loader.load(element("comboBox"), element("view"), new FakeEnv());
+        assertEquals(3, comboBox.getListDataView().getItemCount());
+
+        ListBox<?> listBox = (ListBox<?>) loader.load(element("listBox"), element("view"), new FakeEnv());
+        assertEquals(3, listBox.getListDataView().getItemCount());
+    }
+
+    @Test
+    void testHasListDataViewComponentGetsNoPlaceholderItemsWithNoopEnvironment() {
+        ComboBox<?> comboBox = (ComboBox<?>) loader.load(element("comboBox"), element("view"),
+                StudioPreviewEnvironment.NOOP);
+        assertEquals(0, comboBox.getListDataView().getItemCount());
+    }
+
+    @Test
+    void testHorizontalMenuGetsFivePlaceholderItemsWithRealEnvironment() {
+        JmixMenuBar menuBar = (JmixMenuBar) loader.load(element("horizontalMenu"), element("view"), new FakeEnv());
+        assertEquals(5, menuBar.getItems().size());
+    }
+
+    @Test
+    void testHorizontalMenuGetsNoPlaceholderItemsWithNoopEnvironment() {
+        JmixMenuBar menuBar = (JmixMenuBar) loader.load(element("horizontalMenu"), element("view"),
+                StudioPreviewEnvironment.NOOP);
+        assertEquals(0, menuBar.getItems().size());
+    }
+
+    @Test
+    void testPlainComponentUnaffectedByPlaceholderFill() {
+        Component component = loader.load(element("textField"), element("view"), new FakeEnv());
+        assertInstanceOf(TextField.class, component);
     }
 }

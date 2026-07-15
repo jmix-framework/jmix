@@ -18,13 +18,12 @@ package io.jmix.flowui.xml.layout.support;
 
 import com.google.common.base.Strings;
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.data.provider.Query;
 import io.jmix.core.*;
-import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.impl.FetchPlanLoader;
 import io.jmix.flowui.component.HasDataComponents;
 import io.jmix.flowui.component.SupportsItemsFetchCallback;
+import io.jmix.flowui.component.factory.ItemsFetchCallbackSupport;
 import io.jmix.flowui.data.SupportsItemsContainer;
 import io.jmix.flowui.data.SupportsItemsEnum;
 import io.jmix.flowui.data.SupportsValueSource;
@@ -32,7 +31,6 @@ import io.jmix.flowui.data.value.ContainerValueSource;
 import io.jmix.flowui.exception.GuiDevelopmentException;
 import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.InstanceContainer;
-import io.jmix.flowui.sys.substitutor.StringSubstitutor;
 import io.jmix.flowui.xml.layout.ComponentLoader.Context;
 import io.jmix.flowui.xml.layout.LoaderResolver;
 import org.dom4j.Element;
@@ -54,7 +52,6 @@ public class DataLoaderSupport implements ApplicationContextAware {
     private static final Logger log = LoggerFactory.getLogger(DataLoaderSupport.class);
 
     protected static final String ITEMS_QUERY_ELEMENT = "itemsQuery";
-    protected static final String VALUE_PARAMETER = "value";
 
     protected Context context;
     protected ApplicationContext applicationContext;
@@ -200,21 +197,9 @@ public class DataLoaderSupport implements ApplicationContextAware {
 
         FetchPlan fetchPlan = loadFetchPlan(itemsElement, entityClass);
 
-        DataManager dataManager = applicationContext.getBean(DataManager.class);
-        component.setItemsFetchCallback(query -> {
-            String searchString = getSearchString(query, searchStringFormat, escapeValue);
-
-            FluentLoader.ByQuery loader = dataManager.load(entityClass)
-                    .query(queryString)
-                    .parameter("searchString", searchString)
-                    .firstResult(query.getOffset())
-                    .maxResults(query.getLimit());
-            if (fetchPlan != null) {
-                loader.fetchPlan(fetchPlan);
-            }
-
-            return loader.list().stream();
-        });
+        ItemsFetchCallbackSupport callbackSupport = applicationContext.getBean(ItemsFetchCallbackSupport.class);
+        component.setItemsFetchCallback((SupportsItemsFetchCallback.FetchCallback) callbackSupport
+                .createEntityFetchCallback(entityClass, queryString, searchStringFormat, escapeValue, fetchPlan));
     }
 
     /**
@@ -234,24 +219,16 @@ public class DataLoaderSupport implements ApplicationContextAware {
         loadValueItemsQueryInternal(component, itemsElement);
     }
 
+    @SuppressWarnings("unchecked")
     protected void loadValueItemsQueryInternal(SupportsItemsFetchCallback<?, String> component,
                                                Element itemsElement) {
         String queryString = loadQuery((Component) component, itemsElement);
         String searchStringFormat = loadSearchStringFormat(itemsElement);
         boolean escapeValue = loadEscapeValueForLike(itemsElement);
 
-        DataManager dataManager = applicationContext.getBean(DataManager.class);
-        component.setItemsFetchCallback(query -> {
-            String searchString = getSearchString(query, searchStringFormat, escapeValue);
-
-            return dataManager.loadValues(queryString)
-                    .properties(VALUE_PARAMETER)
-                    .parameter("searchString", searchString)
-                    .firstResult(query.getOffset())
-                    .maxResults(query.getLimit())
-                    .list().stream()
-                    .map(entity -> entity.getValue(VALUE_PARAMETER));
-        });
+        ItemsFetchCallbackSupport callbackSupport = applicationContext.getBean(ItemsFetchCallbackSupport.class);
+        ((SupportsItemsFetchCallback<Object, String>) component).setItemsFetchCallback(
+                callbackSupport.createValuesFetchCallback(queryString, searchStringFormat, escapeValue));
     }
 
     protected String loadQuery(Component component, Element itemsElement) {
@@ -303,21 +280,6 @@ public class DataLoaderSupport implements ApplicationContextAware {
                         fetchPlanRepository.getFetchPlan(metaClass, fetchPlanName));
 
         return builder.build();
-    }
-
-    protected String getSearchString(Query<?, String> query,
-                                     @Nullable String searchStringFormat, boolean escapeValue) {
-        String searchString = query.getFilter().orElse("");
-        if (escapeValue) {
-            searchString = QueryUtils.escapeForLike(searchString);
-        }
-
-        if (!Strings.isNullOrEmpty(searchStringFormat)) {
-            StringSubstitutor substitutor = applicationContext.getBean(StringSubstitutor.class);
-            searchString = substitutor.substitute(searchStringFormat, ParamsMap.of("inputString", searchString));
-        }
-
-        return searchString;
     }
 
     public <E> void loadItemsContainer(SupportsItemsContainer<E> component, Element element) {

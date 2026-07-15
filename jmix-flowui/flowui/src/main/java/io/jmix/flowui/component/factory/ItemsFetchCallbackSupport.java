@@ -21,15 +21,21 @@ import com.vaadin.flow.data.provider.Query;
 import io.jmix.core.DataManager;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.FluentLoader;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.QueryUtils;
 import io.jmix.core.Sort;
 import io.jmix.core.common.util.ParamsMap;
+import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.querycondition.Condition;
+import io.jmix.core.querycondition.LogicalCondition;
+import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.flowui.component.SupportsItemsFetchCallback;
 import io.jmix.flowui.sys.substitutor.StringSubstitutor;
 import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.function.Function;
 
 /**
@@ -45,10 +51,13 @@ public class ItemsFetchCallbackSupport {
 
     protected final DataManager dataManager;
     protected final StringSubstitutor stringSubstitutor;
+    protected final MetadataTools metadataTools;
 
-    public ItemsFetchCallbackSupport(DataManager dataManager, StringSubstitutor stringSubstitutor) {
+    public ItemsFetchCallbackSupport(DataManager dataManager, StringSubstitutor stringSubstitutor,
+                                     MetadataTools metadataTools) {
         this.dataManager = dataManager;
         this.stringSubstitutor = stringSubstitutor;
+        this.metadataTools = metadataTools;
     }
 
     public <E> SupportsItemsFetchCallback.FetchCallback<E, String> createEntityFetchCallback(
@@ -119,5 +128,43 @@ public class ItemsFetchCallbackSupport {
         }
 
         return searchString;
+    }
+
+    /**
+     * Returns names of string-typed instance-name-related properties of the given metaClass,
+     * used as the search properties for a byInstanceName condition.
+     */
+    public List<String> resolveInstanceNameSearchProperties(MetaClass metaClass) {
+        return metadataTools.getInstanceNameRelatedProperties(metaClass, true)
+                .stream()
+                .filter(property -> property.getRange().isDatatype()
+                        && String.class.equals(property.getRange().asDatatype().getJavaClass()))
+                .map(MetaProperty::getName)
+                .toList();
+    }
+
+    /**
+     * Builds a case-insensitive substring-match condition over the given search properties,
+     * combined with "or" if there are several.
+     */
+    public Condition buildInstanceNameCondition(List<String> searchProperties, String searchString) {
+        String escaped = QueryUtils.escapeForLike(searchString);
+        if (searchProperties.size() == 1) {
+            return PropertyCondition.contains(searchProperties.get(0), escaped);
+        }
+        return LogicalCondition.or(searchProperties.stream()
+                .map(property -> (Condition) PropertyCondition.contains(property, escaped))
+                .toArray(Condition[]::new));
+    }
+
+    /**
+     * Returns ascending sort orders over the non-class instance-name-related properties.
+     */
+    public List<Sort.Order> getInstanceNameSortOrders(MetaClass metaClass) {
+        return metadataTools.getInstanceNameRelatedProperties(metaClass, true)
+                .stream()
+                .filter(metaProperty -> !metaProperty.getRange().isClass())
+                .map(metaProperty -> Sort.Order.asc(metaProperty.getName()))
+                .toList();
     }
 }

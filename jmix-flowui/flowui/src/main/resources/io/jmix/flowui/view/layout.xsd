@@ -3031,7 +3031,7 @@
 
     <xs:complexType name="baseComboBoxItemsQueryType">
         <xs:sequence>
-            <xs:element name="query"/>
+            <xs:element name="query" minOccurs="0"/>
         </xs:sequence>
         <xs:attribute name="searchStringFormat" type="xs:string"/>
         <xs:attribute name="escapeValueForLike" type="xs:boolean"/>
@@ -3051,6 +3051,7 @@
                 </xs:sequence>
                 <xs:attribute name="class" type="xs:string" use="required"/>
                 <xs:attribute name="fetchPlan" type="xs:string"/>
+                <xs:attribute name="byInstanceName" type="xs:boolean"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

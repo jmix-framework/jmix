@@ -54,6 +54,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import test_support.FlowuiTestConfiguration;
 import test_support.entity.viewtemplate.ViewTemplateBindingsEntity;
 import test_support.entity.viewtemplate.ViewTemplateFilteringEntity;
+import test_support.entity.viewtemplate.ViewTemplateLookupEntity;
 import test_support.entity.viewtemplate.ViewTemplateParamsEntity;
 import test_support.entity.viewtemplate.ViewTemplateTestEntity;
 
@@ -82,6 +83,7 @@ public class ViewTemplateIntegrationTest {
     protected static final String LINE_DETAIL_VIEW_ID = "test_ViewTemplateLineEntity.detail";
     protected static final String MSG_TITLE_LIST_VIEW_ID = "test_ViewTemplateMsgTitleEntity.list";
     protected static final String MSG_TITLE_DETAIL_VIEW_ID = "test_ViewTemplateMsgTitleEntity.detail";
+    protected static final String LOOKUP_DETAIL_VIEW_ID = "test_ViewTemplateLookupEntity.edit";
     protected static final String LIST_VIEW_ROUTE = "templates/view-template/list";
     protected static final String DETAIL_VIEW_BASE_ROUTE = "templates/view-template/detail";
     protected static final String DETAIL_VIEW_ROUTE = DETAIL_VIEW_BASE_ROUTE + "/:id";
@@ -348,6 +350,20 @@ public class ViewTemplateIntegrationTest {
 
         assertFalse(detailDescriptor.contains("<tabSheet"));
         assertTrue(detailDescriptor.contains("<formLayout id=\"form\" dataContainer=\"entityDc\""));
+    }
+
+    @Test
+    void testDetailTemplateRendersLookupFieldAnnotatedReferenceAsEntityComboBox() {
+        String detailDescriptor = getDescriptor(LOOKUP_DETAIL_VIEW_ID);
+
+        // LfProduct carries a class-level @LookupField(type = DROPDOWN,
+        // itemsQuery = @LookupItemsQuery(byInstanceName = true)), so the template-generated
+        // field for the "product" reference must be an entityComboBox with a byInstanceName
+        // itemsQuery, not the default entityPicker.
+        assertTrue(detailDescriptor.contains("id=\"productField\""));
+        assertTrue(detailDescriptor.contains("<entityComboBox"));
+        assertTrue(detailDescriptor.contains("byInstanceName=\"true\""));
+        assertFalse(detailDescriptor.contains("<entityPicker"));
     }
 
     @Test

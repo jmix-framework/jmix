@@ -33,6 +33,7 @@ import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.xml.layout.ComponentLoader.Context;
 import io.jmix.flowui.xml.layout.LoaderResolver;
+import io.jmix.core.metamodel.model.MetaClass;
 import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +44,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Scope;
 import org.jspecify.annotations.Nullable;
 
+import java.util.List;
 import java.util.Optional;
 
 @org.springframework.stereotype.Component("flowui_DataLoaderSupport")
@@ -191,15 +193,51 @@ public class DataLoaderSupport implements ApplicationContextAware {
     @SuppressWarnings({"rawtypes", "unchecked"})
     protected void loadEntityItemsQueryInternal(SupportsItemsFetchCallback<?, String> component,
                                                 Element itemsElement, Class<?> entityClass) {
+        ItemsFetchCallbackSupport callbackSupport = applicationContext.getBean(ItemsFetchCallbackSupport.class);
+        boolean byInstanceName = loaderSupport.loadBoolean(itemsElement, "byInstanceName").orElse(false);
+
+        if (byInstanceName) {
+            loadByInstanceNameItemsQuery(component, itemsElement, entityClass, callbackSupport);
+            return;
+        }
+
         String queryString = loadQuery((Component) component, itemsElement);
         String searchStringFormat = loadSearchStringFormat(itemsElement);
         boolean escapeValue = loadEscapeValueForLike(itemsElement);
-
         FetchPlan fetchPlan = loadFetchPlan(itemsElement, entityClass);
 
-        ItemsFetchCallbackSupport callbackSupport = applicationContext.getBean(ItemsFetchCallbackSupport.class);
         component.setItemsFetchCallback((SupportsItemsFetchCallback.FetchCallback) callbackSupport
                 .createEntityFetchCallback(entityClass, queryString, searchStringFormat, escapeValue, fetchPlan));
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    protected void loadByInstanceNameItemsQuery(SupportsItemsFetchCallback<?, String> component,
+                                                Element itemsElement, Class<?> entityClass,
+                                                ItemsFetchCallbackSupport callbackSupport) {
+        if (loadSearchStringFormat(itemsElement) != null || loadEscapeValueForLike(itemsElement)) {
+            log.warn("'searchStringFormat' and 'escapeValueForLike' are ignored for a byInstanceName " +
+                    "itemsQuery of component '{}'", ((Component) component).getId().orElse("null"));
+        }
+
+        MetaClass metaClass = metadata.getClass(entityClass);
+        List<String> searchProperties = callbackSupport.resolveInstanceNameSearchProperties(metaClass);
+        if (searchProperties.isEmpty()) {
+            log.warn("byInstanceName itemsQuery of component '{}' for entity '{}' has no string " +
+                    "instance-name properties, items are not loaded lazily",
+                    ((Component) component).getId().orElse("null"), metaClass.getName());
+            return;
+        }
+
+        FetchPlan fetchPlan = loadFetchPlan(itemsElement, entityClass);
+        if (fetchPlan == null) {
+            fetchPlan = fetchPlanRepository.getFetchPlan(metaClass, FetchPlan.INSTANCE_NAME);
+        }
+        Sort sort = Sort.by(callbackSupport.getInstanceNameSortOrders(metaClass));
+
+        component.setItemsFetchCallback((SupportsItemsFetchCallback.FetchCallback) callbackSupport
+                .createEntityFetchCallback(entityClass,
+                        searchString -> callbackSupport.buildInstanceNameCondition(searchProperties, searchString),
+                        sort, fetchPlan));
     }
 
     /**

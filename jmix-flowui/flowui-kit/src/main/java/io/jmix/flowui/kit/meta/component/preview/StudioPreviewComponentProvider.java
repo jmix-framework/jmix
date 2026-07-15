@@ -20,6 +20,7 @@ import java.io.StringReader;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.Set;
@@ -273,7 +274,8 @@ final class StudioPreviewComponentProvider {
                 loaders.clear();
                 ClassLoader classLoader = StudioPreviewComponentProvider.class.getClassLoader();
                 ServiceLoader.load(StudioPreviewComponentLoader.class, classLoader).stream()
-                        .map(ServiceLoader.Provider::get)
+                        .map(StudioPreviewComponentProvider::instantiateSafely)
+                        .filter(Objects::nonNull)
                         .forEach(loaders::add);
                 loaders.add(new StudioStandardComponentsPreviewLoader());
             } finally {
@@ -302,7 +304,8 @@ final class StudioPreviewComponentProvider {
                 processors.clear();
                 ClassLoader classLoader = StudioPreviewComponentProvider.class.getClassLoader();
                 ServiceLoader.load(StudioPreviewComponentProcessor.class, classLoader).stream()
-                        .map(ServiceLoader.Provider::get)
+                        .map(StudioPreviewComponentProvider::instantiateSafely)
+                        .filter(Objects::nonNull)
                         .forEach(processors::add);
             } finally {
                 processorLockCondition.signalAll();
@@ -314,6 +317,18 @@ final class StudioPreviewComponentProvider {
             } catch (InterruptedException e) {
                 console("Exception when waiting processors initialization", e);
             }
+        }
+    }
+
+    // A preview loader/processor from an outdated or incompatible add-on on the preview classloader
+    // must not abort the whole preview; skip it (logged) and keep the rest.
+    @Nullable
+    static <T> T instantiateSafely(ServiceLoader.Provider<T> provider) {
+        try {
+            return provider.get();
+        } catch (Throwable t) {
+            console("Skipping preview SPI service that could not be instantiated", t);
+            return null;
         }
     }
 

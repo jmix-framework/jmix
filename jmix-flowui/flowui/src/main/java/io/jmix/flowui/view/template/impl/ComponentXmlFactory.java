@@ -17,6 +17,7 @@
 package io.jmix.flowui.view.template.impl;
 
 import io.jmix.core.FileRef;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.Stores;
 import io.jmix.core.entity.annotation.LookupType;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -46,6 +47,7 @@ import java.time.OffsetTime;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * Factory for creating XML representations of UI components based on entity metadata properties.
@@ -59,11 +61,14 @@ public class ComponentXmlFactory {
 
     protected final LookupFieldSupport lookupFieldSupport;
     protected final ItemsFetchCallbackSupport itemsFetchCallbackSupport;
+    protected final MetadataTools metadataTools;
 
     public ComponentXmlFactory(LookupFieldSupport lookupFieldSupport,
-                                ItemsFetchCallbackSupport itemsFetchCallbackSupport) {
+                                ItemsFetchCallbackSupport itemsFetchCallbackSupport,
+                                MetadataTools metadataTools) {
         this.lookupFieldSupport = lookupFieldSupport;
         this.itemsFetchCallbackSupport = itemsFetchCallbackSupport;
+        this.metadataTools = metadataTools;
     }
 
     /**
@@ -71,8 +76,9 @@ public class ComponentXmlFactory {
      * <p>
      * The component type is determined based on the property's range and type. For entity properties,
      * the effective {@code @LookupField} configuration is resolved and used to choose between an
-     * {@code entityComboBox} (with an {@code itemsQuery}) and an {@code entityPicker}, with actions
-     * added accordingly.
+     * {@code entityComboBox} and an {@code entityPicker}, with actions added accordingly. An eager
+     * {@code entityComboBox} is bound to a data container via {@code itemsContainer} (see
+     * {@link #createItemsContainerXml(MetaProperty)}); a lazy one carries an {@code itemsQuery}.
      *
      * @param metaProperty    the entity property for which to create a component
      * @param dataContainerId optional data container identifier for data binding, may be null
@@ -107,7 +113,11 @@ public class ComponentXmlFactory {
         if (isDropdown(config, referencedEntity)) {
             Element element = DocumentHelper.createElement("entityComboBox");
             initDataBinding(element, metaProperty, dataContainerId);
-            addItemsQuery(element, config, referencedEntity);
+            if (config.itemsMode() == ItemsMode.EAGER) {
+                element.addAttribute("itemsContainer", itemsContainerId(metaProperty));
+            } else {
+                addItemsQuery(element, config, referencedEntity);
+            }
             addResolvedActions(element, config.actions());
             return element.asXML();
         }
@@ -124,8 +134,8 @@ public class ComponentXmlFactory {
 
     /**
      * A DROPDOWN renders as a combobox only when it can source items in XML: the entity must have a
-     * usable store and (for the eager/byInstanceName modes) string instance-name properties. Otherwise
-     * it degrades to a view lookup.
+     * usable store and, for the byInstanceName mode, string instance-name properties. Otherwise it
+     * degrades to a view lookup.
      */
     protected boolean isDropdown(EffectiveLookupConfig config, MetaClass referencedEntity) {
         if (config.componentType() != LookupType.DROPDOWN) {
@@ -136,13 +146,65 @@ public class ComponentXmlFactory {
                     "the entity has no data store to load items from", referencedEntity.getName());
             return false;
         }
-        if (config.itemsMode() != ItemsMode.QUERY
+        if (config.itemsMode() == ItemsMode.BY_INSTANCE_NAME
                 && itemsFetchCallbackSupport.resolveInstanceNameSearchProperties(referencedEntity).isEmpty()) {
-            log.warn("@LookupField DROPDOWN for entity '{}' degraded to a view lookup in a generated view: " +
-                    "its instance name is not based on string attributes for lazy loading", referencedEntity.getName());
+            log.warn("@LookupField byInstanceName DROPDOWN for entity '{}' degraded to a view lookup in a " +
+                    "generated view: its instance name is not based on string attributes", referencedEntity.getName());
             return false;
         }
         return true;
+    }
+
+    protected boolean isEagerDropdown(EffectiveLookupConfig config, MetaClass referencedEntity) {
+        return config.itemsMode() == ItemsMode.EAGER && isDropdown(config, referencedEntity);
+    }
+
+    protected String itemsContainerId(MetaProperty metaProperty) {
+        return metaProperty.getName() + "ItemsDc";
+    }
+
+    /**
+     * Creates the top-level {@code collection} data container XML that backs an eager
+     * {@code entityComboBox} generated for the given reference property, or an empty string if the
+     * property is not an eager dropdown. For JPA entities the loader carries a JPQL query ordered by the
+     * instance name; for non-JPA entities the query is omitted and the store loads all instances.
+     *
+     * @param metaProperty a single-value entity reference property
+     * @return the {@code <collection>} XML, or {@code ""} if not an eager dropdown
+     */
+    public String createItemsContainerXml(MetaProperty metaProperty) {
+        Range range = metaProperty.getRange();
+        if (!range.isClass()) {
+            return "";
+        }
+        MetaClass referencedEntity = range.asClass();
+        EffectiveLookupConfig config = lookupFieldSupport.resolve(metaProperty, referencedEntity);
+        if (!isEagerDropdown(config, referencedEntity)) {
+            return "";
+        }
+
+        String containerId = itemsContainerId(metaProperty);
+        Element collection = DocumentHelper.createElement("collection");
+        collection.addAttribute("id", containerId);
+        collection.addAttribute("class", referencedEntity.getJavaClass().getName());
+        collection.addElement("fetchPlan").addAttribute("extends", "_instance_name");
+
+        Element loader = collection.addElement("loader");
+        loader.addAttribute("id", metaProperty.getName() + "ItemsDl");
+        loader.addAttribute("readOnly", Boolean.TRUE.toString());
+
+        if (metadataTools.isJpaEntity(referencedEntity)) {
+            loader.addElement("query").addCDATA(buildItemsQuery(referencedEntity));
+        }
+        return collection.asXML();
+    }
+
+    protected String buildItemsQuery(MetaClass referencedEntity) {
+        String orderBy = itemsFetchCallbackSupport.getInstanceNameSortOrders(referencedEntity).stream()
+                .map(order -> "e." + order.getProperty())
+                .collect(Collectors.joining(", "));
+        String query = "select e from " + referencedEntity.getName() + " e";
+        return orderBy.isEmpty() ? query : query + " order by " + orderBy;
     }
 
     protected void addItemsQuery(Element element, EffectiveLookupConfig config, MetaClass referencedEntity) {
@@ -161,7 +223,7 @@ public class ComponentXmlFactory {
             }
             itemsQuery.addElement("query").addCDATA(config.query());
         } else {
-            // EAGER and BY_INSTANCE_NAME both render as an instance-name lazy query
+            // BY_INSTANCE_NAME
             itemsQuery.addAttribute("byInstanceName", Boolean.TRUE.toString());
         }
     }

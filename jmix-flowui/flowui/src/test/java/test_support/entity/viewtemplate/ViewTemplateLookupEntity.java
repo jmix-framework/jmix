@@ -25,6 +25,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import test_support.entity.TestBaseEntity;
+import test_support.entity.lookup_field.LfCountry;
 import test_support.entity.lookup_field.LfProduct;
 
 /**
@@ -32,6 +33,9 @@ import test_support.entity.lookup_field.LfProduct;
  * {@code @LookupField}-annotated reference ({@link LfProduct}, which carries a class-level
  * {@code @LookupField(type = DROPDOWN, itemsQuery = @LookupItemsQuery(byInstanceName = true))})
  * as an {@code entityComboBox} with a {@code byInstanceName} {@code itemsQuery}, end to end.
+ * It also references {@link LfCountry}, which carries a class-level
+ * {@code @LookupField(type = DROPDOWN)} (eager, query-based), to verify that the template
+ * generates and binds an eager items container for such a reference.
  */
 @JmixEntity
 @Table(name = "TEST_VIEW_TEMPLATE_LOOKUP_ENTITY")
@@ -49,6 +53,10 @@ public class ViewTemplateLookupEntity extends TestBaseEntity {
     @JoinColumn(name = "PRODUCT_ID")
     protected LfProduct product;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "COUNTRY_ID")
+    protected LfCountry country;
+
     public String getName() {
         return name;
     }
@@ -63,5 +71,13 @@ public class ViewTemplateLookupEntity extends TestBaseEntity {
 
     public void setProduct(LfProduct product) {
         this.product = product;
+    }
+
+    public LfCountry getCountry() {
+        return country;
+    }
+
+    public void setCountry(LfCountry country) {
+        this.country = country;
     }
 }

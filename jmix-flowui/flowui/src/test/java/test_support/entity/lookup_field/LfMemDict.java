@@ -16,20 +16,31 @@
 
 package test_support.entity.lookup_field;
 
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.JmixId;
+import io.jmix.core.entity.annotation.LookupField;
+import io.jmix.core.entity.annotation.LookupType;
+import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.Store;
 
 import java.util.UUID;
 
-@JmixEntity(name = "test_LfMemNoteHolder")
-public class LfMemNoteHolder {
+/**
+ * Non-persistent DTO in the {@code mem1} store with an eager DROPDOWN {@code @LookupField},
+ * used to verify that a generated items container omits the JPQL query for non-JPA entities.
+ */
+@LookupField(type = LookupType.DROPDOWN)
+@Store(name = "mem1")
+@JmixEntity(name = "test_LfMemDict")
+public class LfMemDict {
 
     @JmixId
+    @JmixGeneratedValue
     private UUID id;
 
-    private LfMemNote note;
-
-    private LfMemDict dict;
+    @InstanceName
+    private String name;
 
     public UUID getId() {
         return id;
@@ -39,19 +50,11 @@ public class LfMemNoteHolder {
         this.id = id;
     }
 
-    public LfMemNote getNote() {
-        return note;
+    public String getName() {
+        return name;
     }
 
-    public void setNote(LfMemNote note) {
-        this.note = note;
-    }
-
-    public LfMemDict getDict() {
-        return dict;
-    }
-
-    public void setDict(LfMemDict dict) {
-        this.dict = dict;
+    public void setName(String name) {
+        this.name = name;
     }
 }

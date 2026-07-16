@@ -364,6 +364,13 @@ public class ViewTemplateIntegrationTest {
         assertTrue(detailDescriptor.contains("<entityComboBox"));
         assertTrue(detailDescriptor.contains("byInstanceName=\"true\""));
         assertFalse(detailDescriptor.contains("<entityPicker"));
+
+        // LfCountry carries a class-level @LookupField(type = DROPDOWN) (eager, query-based),
+        // so the template must also generate a top-level items container for the "country"
+        // reference and bind the entityComboBox to it via itemsContainer.
+        assertTrue(detailDescriptor.contains("<collection id=\"countryItemsDc\""));
+        assertTrue(detailDescriptor.contains("select e from test_LfCountry e"));
+        assertTrue(detailDescriptor.contains("itemsContainer=\"countryItemsDc\""));
     }
 
     @Test

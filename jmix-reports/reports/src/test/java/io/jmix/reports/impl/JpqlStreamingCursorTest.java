@@ -35,6 +35,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDate;
@@ -89,6 +90,26 @@ public class JpqlStreamingCursorTest {
         assertThat(count).isEqualTo(25);
         assertThat(collected.get(0).get("pubName")).isEqualTo("P00");
         assertThat(collected.get(24).get("pubName")).isEqualTo("P24");
+    }
+
+    @Test
+    void testStreamingRunsInReadOnlyTransaction() {
+        Publisher publisher = metadata.create(Publisher.class);
+        publisher.setName("RO");
+        dataManager.unconstrained().save(publisher);
+
+        DataSet query = dataSet("select p.name as \"pubName\" from Publisher p");
+
+        Boolean[] readOnly = new Boolean[1];
+        List<Map<String, Object>> collected = new ArrayList<>();
+        jpqlDataLoader.loadDataStreaming(query, null, Map.of(), rows -> {
+            readOnly[0] = TransactionSynchronizationManager.isCurrentTransactionReadOnly();
+            rows.forEachRemaining(collected::add);
+            return null;
+        });
+
+        assertThat(readOnly[0]).as("streaming render runs in a read-only transaction").isTrue();
+        assertThat(collected).hasSize(1);
     }
 
     @Test

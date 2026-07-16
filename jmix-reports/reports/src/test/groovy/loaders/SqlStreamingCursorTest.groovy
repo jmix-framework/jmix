@@ -259,6 +259,41 @@ class SqlStreamingCursorTest extends Specification {
         thrown(ReportingInterruptedException)
     }
 
+    def "streaming switches the connection to read-only and restores its previous state"() {
+        given:
+        def statement = Mock(PreparedStatement)
+        def resultSetMetaData = Mock(java.sql.ResultSetMetaData) { getColumnCount() >> 0 }
+        def resultSet = Mock(ResultSet) {
+            next() >> false
+            getMetaData() >> resultSetMetaData
+        }
+        def metaData = Mock(DatabaseMetaData) { getDatabaseProductName() >> "PostgreSQL" }
+        def connection = Mock(Connection) {
+            getAutoCommit() >> true
+            isReadOnly() >> false
+            prepareStatement(_, _, _) >> statement
+            getMetaData() >> metaData
+        }
+        def dataSource = Mock(DataSource) { getConnection() >> connection }
+        statement.executeQuery() >> resultSet
+
+        def loader = new SqlDataLoader(dataSource)
+        def query = Mock(ReportQuery) {
+            getScript() >> 'select id as "id" from t'
+            getName() >> "q"
+            getProcessTemplate() >> false
+        }
+
+        when:
+        loader.loadDataStreaming(query, null, [:]) { rows -> rows.hasNext() }
+
+        then: "the connection is switched to read-only for the streaming read"
+        1 * connection.setReadOnly(true)
+
+        then: "and restored to its previous state afterwards so the pooled connection is not left read-only"
+        1 * connection.setReadOnly(false)
+    }
+
     def "empty result yields an empty iterator (empty-row semantics live in the feed, not the loader)"() {
         given:
         def dataSource = new DriverManagerDataSource("jdbc:hsqldb:mem:sqlcursor2", "SA", "")

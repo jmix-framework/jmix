@@ -161,6 +161,11 @@ public class SqlDataLoader extends AbstractDbDataLoader implements StreamingRepo
         }
 
         try (Connection connection = resolveDataSource(reportQuery).getConnection()) {
+            // Set read-only before autoCommit(false) so it is applied outside a transaction (PostgreSQL
+            // requires that). The whole streaming read only selects, so a read-only connection lets the
+            // database take a lighter path on this render-long connection. Restored in the finally block.
+            boolean previousReadOnly = connection.isReadOnly();
+            connection.setReadOnly(true);
             boolean previousAutoCommit = connection.getAutoCommit();
             connection.setAutoCommit(false);
 
@@ -221,6 +226,15 @@ public class SqlDataLoader extends AbstractDbDataLoader implements StreamingRepo
                     connection.setAutoCommit(previousAutoCommit);
                 } catch (SQLException e) {
                     log.warn("Failed to restore autoCommit on the streaming connection after data set [{}]",
+                            reportQuery.getName(), e);
+                }
+                try {
+                    // Restore after autoCommit is back (transaction ended by the rollback above), so the
+                    // read-only flag is toggled outside a transaction — otherwise the pooled connection
+                    // would return read-only and break a later borrower that needs to write.
+                    connection.setReadOnly(previousReadOnly);
+                } catch (SQLException e) {
+                    log.warn("Failed to restore the read-only flag on the streaming connection after data set [{}]",
                             reportQuery.getName(), e);
                 }
             }

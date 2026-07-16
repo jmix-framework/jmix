@@ -179,6 +179,9 @@ public class JpqlDataLoader extends AbstractDbDataLoader implements ReportDataLo
             TransactionTemplate streamingTransaction =
                     new TransactionTemplate(storeAwareLocator.getTransactionManager(storeName));
             streamingTransaction.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+            // The whole render only reads: a read-only transaction lets the database skip change tracking and
+            // (on PostgreSQL) take a lighter snapshot, easing the pressure of this render-long transaction.
+            streamingTransaction.setReadOnly(true);
 
             // Resolve the JDBC fetch size (a metadata lookup that borrows a pooled connection) BEFORE the
             // streaming transaction opens, so it does not contend for a second connection while the cursor's

@@ -28,5 +28,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-mail'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'com.microsoft.azure:msal4j'
+    testImplementation 'com.google.auth:google-auth-library-oauth2-http'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     testRuntimeOnly 'org.hsqldb:hsqldb'
 }

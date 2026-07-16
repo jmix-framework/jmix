@@ -16,10 +16,11 @@
 
 package io.jmix.email.authentication.impl;
 
-import io.jmix.core.DataManager;
+import io.jmix.core.UnconstrainedDataManager;
 import io.jmix.email.EmailerProperties;
 import io.jmix.email.authentication.EmailRefreshTokenManager;
 import io.jmix.email.entity.RefreshToken;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.jspecify.annotations.Nullable;
@@ -35,10 +36,10 @@ public class EmailRefreshTokenManagerImpl implements EmailRefreshTokenManager {
     protected static final UUID DEFAULT_REFRESH_TOKEN_ID = UUID.fromString("0198c7b9-4abc-77b6-9088-fb080c13200b");
     protected static final String DEFAULT_REFRESH_TOKEN_REGISTRATION_ID = "email_default";
 
-    protected final DataManager dataManager;
+    protected final UnconstrainedDataManager dataManager;
     protected final EmailerProperties emailerProperties;
 
-    public EmailRefreshTokenManagerImpl(DataManager dataManager,
+    public EmailRefreshTokenManagerImpl(UnconstrainedDataManager dataManager,
                                         EmailerProperties emailerProperties) {
         this.dataManager = dataManager;
         this.emailerProperties = emailerProperties;
@@ -67,8 +68,14 @@ public class EmailRefreshTokenManagerImpl implements EmailRefreshTokenManager {
             return refreshToken.getTokenValue();
         }
 
-        log.debug("Refresh token was not found in database. Using value from properties");
-        return emailerProperties.getOAuth2().getRefreshToken();
+        String initialValue = emailerProperties.getOAuth2().getRefreshToken();
+        if (StringUtils.isNotBlank(initialValue)) {
+            log.debug("Refresh token was not found in database. Using initial value from application properties");
+            return initialValue;
+        }
+
+        throw new IllegalStateException("No refresh token available. Store it using the email token view" +
+                " or set the 'jmix.email.oauth2.refresh-token' application property as an initial value");
     }
 
     @Nullable

@@ -26,11 +26,14 @@ import io.jmix.email.authentication.OAuth2TokenProvider;
 import io.jmix.email.authentication.impl.GoogleOAuth2TokenProvider;
 import io.jmix.email.authentication.impl.MicrosoftOAuth2TokenProvider;
 import jakarta.mail.Session;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBooleanProperty;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -42,6 +45,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.Map;
@@ -56,41 +60,110 @@ public class EmailAutoConfiguration {
 
     @Configuration(proxyBeanMethods = false)
     @ConditionalOnBooleanProperty(name = "jmix.email.oauth2.enabled")
-    public static class OAuth2Configuration {
+    public static class OAuth2Configuration implements BeanClassLoaderAware {
+
+        protected static final String MSAL_CLASS = "com.microsoft.aad.msal4j.ConfidentialClientApplication";
+        protected static final String GOOGLE_AUTH_CLASS = "com.google.auth.oauth2.UserCredentials";
+
+        protected ClassLoader beanClassLoader;
+
+        @Override
+        public void setBeanClassLoader(ClassLoader classLoader) {
+            this.beanClassLoader = classLoader;
+        }
 
         @Bean("email_MicrosoftOAuth2TokenProvider")
         @ConditionalOnProperty(name = "jmix.email.oauth2.provider", havingValue = "microsoft")
+        @ConditionalOnClass(name = MSAL_CLASS)
         @ConditionalOnMissingBean(OAuth2TokenProvider.class)
         public OAuth2TokenProvider microsoftOAuth2TokenProvider(EmailerProperties emailerProperties,
                                                                 EmailRefreshTokenManager refreshTokenManager) {
             log.debug("Create MicrosoftOAuth2TokenProvider");
+            validateCredentialProperties(emailerProperties);
             return new MicrosoftOAuth2TokenProvider(emailerProperties, refreshTokenManager);
         }
 
         @Bean("email_GoogleOAuth2TokenProvider")
         @ConditionalOnProperty(name = "jmix.email.oauth2.provider", havingValue = "google")
+        @ConditionalOnClass(name = GOOGLE_AUTH_CLASS)
         @ConditionalOnMissingBean(OAuth2TokenProvider.class)
         public OAuth2TokenProvider googleOAuth2TokenProvider(EmailerProperties emailerProperties,
                                                              EmailRefreshTokenManager refreshTokenManager) {
             log.debug("Create GoogleOAuth2TokenProvider");
+            validateCredentialProperties(emailerProperties);
             return new GoogleOAuth2TokenProvider(emailerProperties, refreshTokenManager);
         }
 
         @Bean("email_JavaMailSender")
         public JavaMailSender javaMailSender(MailProperties mailProperties,
-                                             OAuth2TokenProvider tokenProvider,
+                                             ObjectProvider<OAuth2TokenProvider> tokenProviders,
+                                             EmailerProperties emailerProperties,
                                              ObjectProvider<SslBundles> sslBundles) {
+            OAuth2TokenProvider tokenProvider = tokenProviders.getIfAvailable();
+            if (tokenProvider == null) {
+                throw new IllegalStateException(
+                        buildMissingTokenProviderMessage(emailerProperties.getOAuth2().getProvider()));
+            }
+            if (!StringUtils.hasText(mailProperties.getUsername())) {
+                throw new IllegalStateException("'spring.mail.username' must be set when OAuth2 authentication" +
+                        " is enabled. It is used as the identity for SMTP XOAUTH2 authentication");
+            }
+
             log.debug("Create JavaMailSender with OAuth2 support");
 
             JavaMailSenderImpl sender = new JavaMailSenderImpl();
             applyProperties(sender, mailProperties, sslBundles.getIfAvailable());
 
+            Properties javaMailProperties = sender.getJavaMailProperties();
+            String protocol = StringUtils.hasLength(mailProperties.getProtocol())
+                    ? mailProperties.getProtocol()
+                    : "smtp";
+            // The XOAUTH2 SASL mechanism is not included in the Jakarta Mail defaults,
+            // so enable it unless explicitly configured by the application.
+            javaMailProperties.putIfAbsent("mail." + protocol + ".auth", "true");
+            javaMailProperties.putIfAbsent("mail." + protocol + ".auth.mechanisms", "XOAUTH2");
+
             OAuth2Authenticator authenticator = new OAuth2Authenticator(mailProperties.getUsername(), tokenProvider);
 
-            Session session = Session.getInstance(sender.getJavaMailProperties(), authenticator);
+            Session session = Session.getInstance(javaMailProperties, authenticator);
             sender.setSession(session);
 
             return sender;
+        }
+
+        protected void validateCredentialProperties(EmailerProperties emailerProperties) {
+            EmailerProperties.OAuth2 oauth2 = emailerProperties.getOAuth2();
+            if (!StringUtils.hasText(oauth2.getClientId())) {
+                throw new IllegalStateException(
+                        "'jmix.email.oauth2.client-id' must be set when OAuth2 authentication is enabled");
+            }
+            if (!StringUtils.hasText(oauth2.getSecret())) {
+                throw new IllegalStateException(
+                        "'jmix.email.oauth2.secret' must be set when OAuth2 authentication is enabled");
+            }
+        }
+
+        protected String buildMissingTokenProviderMessage(@Nullable String provider) {
+            String baseMessage = "OAuth2 authentication is enabled ('jmix.email.oauth2.enabled=true')" +
+                    " but no OAuth2TokenProvider is available. ";
+            if (!StringUtils.hasText(provider)) {
+                return baseMessage + "Set 'jmix.email.oauth2.provider' to 'google' or 'microsoft'," +
+                        " or define a custom OAuth2TokenProvider bean";
+            }
+            return switch (provider) {
+                case "microsoft" -> baseMessage + (isClassMissing(MSAL_CLASS)
+                        ? "Add the 'com.microsoft.azure:msal4j' dependency to the application"
+                        : "Check the 'jmix.email.oauth2' configuration");
+                case "google" -> baseMessage + (isClassMissing(GOOGLE_AUTH_CLASS)
+                        ? "Add the 'com.google.auth:google-auth-library-oauth2-http' dependency to the application"
+                        : "Check the 'jmix.email.oauth2' configuration");
+                default -> baseMessage + "Unknown provider '" + provider + "'." +
+                        " Supported values: 'google', 'microsoft'; or define a custom OAuth2TokenProvider bean";
+            };
+        }
+
+        protected boolean isClassMissing(String className) {
+            return !ClassUtils.isPresent(className, beanClassLoader);
         }
 
         protected void applyProperties(JavaMailSenderImpl sender, MailProperties properties, SslBundles sslBundles) {
@@ -99,7 +172,9 @@ public class EmailAutoConfiguration {
                 sender.setPort(properties.getPort());
             }
             sender.setUsername(properties.getUsername());
-            sender.setPassword(properties.getPassword());
+            if (properties.getPassword() != null) {
+                log.warn("'spring.mail.password' is ignored because OAuth2 authentication is enabled");
+            }
             sender.setProtocol(properties.getProtocol());
             if (properties.getDefaultEncoding() != null) {
                 sender.setDefaultEncoding(properties.getDefaultEncoding().name());

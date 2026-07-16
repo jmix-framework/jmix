@@ -39,8 +39,10 @@ public interface EmailRefreshTokenManager {
     /**
      * Gets current value of refresh token.
      *
-     * @return token value stored in database.
-     * If no token value is stored - return token value from application property 'jmix.email.oauth2.refreshToken'
+     * @return token value stored in database. If no token value is stored, the initial value from
+     * the 'jmix.email.oauth2.refresh-token' application property is returned. Once a token is stored
+     * in the database, the stored value always takes precedence over the property.
+     * @throws IllegalStateException if no token is stored and the application property is not set
      */
     String getRefreshTokenValue();
 

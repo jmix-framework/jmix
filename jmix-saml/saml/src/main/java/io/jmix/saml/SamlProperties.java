@@ -27,9 +27,15 @@ import java.util.List;
 public class SamlProperties {
 
     /**
-     * Whether to force 'redirect' binding for logout requests.
-     * If true, logout requests will always use the 'redirect' binding. Otherwise, the binding will be determined
-     * based on the RelyingPartyRegistration
+     * Whether to force the 'redirect' binding for the outgoing SAML LogoutRequest. If true, the LogoutRequest
+     * sent to the asserting party always uses the 'redirect' binding, regardless of the binding declared in the
+     * asserting party metadata. Otherwise, the binding is determined by the {@code RelyingPartyRegistration}.
+     * <p>
+     * Only the outgoing LogoutRequest is affected. The binding of the service provider's own single logout
+     * endpoint, which receives the LogoutResponse from the asserting party, is configured separately with the
+     * standard {@code spring.security.saml2.relyingparty.registration.<id>.singlelogout.binding} property and
+     * defaults to POST. If the asserting party returns the LogoutResponse via the 'redirect' binding, set that
+     * property to {@code redirect}, otherwise the return from the asserting party fails with HTTP 401.
      */
     boolean forceRedirectBindingLogout;
     /**

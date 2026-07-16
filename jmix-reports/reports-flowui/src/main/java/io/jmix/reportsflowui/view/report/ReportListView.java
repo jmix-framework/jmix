@@ -145,7 +145,8 @@ public class ReportListView extends StandardListView<Report> {
         initOutputTypeList();
         initOutputTypeColumn();
 
-        openInSpreadsheetAction.setVisible(spreadsheetViewSupport != null);
+        openInSpreadsheetAction.setVisible(
+                spreadsheetViewSupport != null && spreadsheetViewSupport.isSpreadsheetViewAccessible());
 
         codeFilter.addTypedValueChangeListener(e -> onFilterFieldValueChange());
         nameFilter.addTypedValueChangeListener(e -> onFilterFieldValueChange());

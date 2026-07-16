@@ -88,7 +88,8 @@ public class ReportExecutionListView extends StandardListView<ReportExecution> {
     @Subscribe
     public void onBeforeShow(final BeforeShowEvent event) {
         createExcelButton();
-        openInSpreadsheetAction.setVisible(spreadsheetViewSupport != null);
+        openInSpreadsheetAction.setVisible(
+                spreadsheetViewSupport != null && spreadsheetViewSupport.isSpreadsheetViewAccessible());
     }
 
     protected void createExcelButton() {

@@ -284,6 +284,26 @@ class StreamingXlsxFormulaTest extends StreamingBaseXlsxRenderTest {
         e.message.toLowerCase().contains("below it")
     }
 
+    def "an outer formula referencing a static row laid out below it is rejected"() {
+        given: "a header formula =A3 references a static footer BELOW a band whose rows are written later"
+        def template = buildTemplate { wb ->
+            def sheet = sheet(wb)
+            formulaCell(sheet, 0, 0, 'A3')
+            cell(sheet, 1, 0, '${v}')
+            cell(sheet, 2, 0, 'TOTAL')
+            defineBand(wb, "Data", 1, 0, 1, 0)
+        }
+        def root = rootBand("Data")
+        (1..3).each { addBand(root, "Data", [v: it]) }
+
+        when: "forward-only rendering writes the footer after the band, so its shifted position is unknown"
+        render(template, root)
+
+        then: "rejected up front, not silently kept as the template row (which would point into band data)"
+        def e = thrown(ReportFormattingException)
+        e.message.toLowerCase().contains("below it")
+    }
+
     def "a whole-column outer formula above a band is not rejected"() {
         given: "a grand total ABOVE the data using a whole-column reference, which always covers the rendered rows"
         def template = buildTemplate { wb ->

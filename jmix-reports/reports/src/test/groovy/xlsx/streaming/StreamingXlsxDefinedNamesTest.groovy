@@ -103,4 +103,27 @@ class StreamingXlsxDefinedNamesTest extends StreamingBaseXlsxRenderTest {
         stringValue(result, 0, 0) == "r1"
         stringValue(result, 1, 0) == "r2"
     }
+
+    def "same-named workbook-scoped and sheet-scoped defined names both survive"() {
+        given: "Excel allows a workbook name and a same-named one scoped to a sheet"
+        def template = buildTemplate { wb ->
+            cell(sheet(wb), 0, 0, '${value}')
+            defineBand(wb, "Data", 0, 0, 0, 0)
+            def wbScoped = wb.createName()
+            wbScoped.setNameName("Rate")
+            wbScoped.setRefersToFormula("0.1")
+            def sheetScoped = wb.createName()
+            sheetScoped.setSheetIndex(0)
+            sheetScoped.setNameName("Rate")
+            sheetScoped.setRefersToFormula("0.2")
+        }
+        def root = rootBand("Data")
+        addBand(root, "Data", [value: "x"])
+
+        when: "rendering must not fail with 'workbook already contains this name'"
+        def workbook = read(render(template, root))
+
+        then: "both scopes are preserved instead of being flattened to one workbook name"
+        workbook.getNames("Rate").size() == 2
+    }
 }

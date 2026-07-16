@@ -16,6 +16,7 @@
 
 package xlsx.streaming
 
+import org.apache.poi.ss.util.CellRangeAddress
 import org.apache.poi.ss.util.CellRangeAddressList
 import xlsx.StreamingBaseXlsxRenderTest
 
@@ -201,5 +202,107 @@ class StreamingXlsxTemplateSettingsTest extends StreamingBaseXlsxRenderTest {
 
         then:
         workbook.getPrintArea(0) != null
+    }
+
+    def "band row height is carried to every rendered instance"() {
+        given: "the band's template row has a custom height"
+        def template = buildTemplate { wb ->
+            def s = sheet(wb)
+            def row = s.createRow(0)
+            row.setHeightInPoints(42f)
+            row.createCell(0).setCellValue('${v}')
+            defineBand(wb, "Data", 0, 0, 0, 0)
+        }
+        def root = rootBand("Data")
+        addBand(root, "Data", [v: "x"])
+        addBand(root, "Data", [v: "y"])
+
+        when:
+        def sheet = renderAndReadFirstSheet(template, root)
+
+        then: "each rendered band instance keeps the template row height, not the sheet default"
+        sheet.getRow(0).getHeightInPoints() == 42f
+        sheet.getRow(1).getHeightInPoints() == 42f
+    }
+
+    def "a hidden static template row stays hidden in the output"() {
+        given: "a static footer row below the band is hidden in the template"
+        def template = buildTemplate { wb ->
+            def s = sheet(wb)
+            s.createRow(0).createCell(0).setCellValue('${v}')
+            def footer = s.createRow(1)
+            footer.setZeroHeight(true)
+            footer.createCell(0).setCellValue('footer')
+            defineBand(wb, "Data", 0, 0, 0, 0)
+        }
+        def root = rootBand("Data")
+        addBand(root, "Data", [v: "x"])
+
+        when:
+        def sheet = renderAndReadFirstSheet(template, root)
+
+        then: "the static footer row keeps its hidden flag instead of becoming visible"
+        sheet.getRow(1).getZeroHeight()
+    }
+
+    def "page header and footer placeholders are substituted from band data"() {
+        given:
+        def template = buildTemplate { wb ->
+            def s = sheet(wb)
+            cell(s, 0, 0, '${v}')
+            s.header.center = 'Report ${Root.title}'
+            s.footer.right = 'Page for ${Root.title}'
+            defineBand(wb, "Data", 0, 0, 0, 0)
+        }
+        def root = rootBand("Data")
+        root.setData([title: "Q3"])
+        addBand(root, "Data", [v: 1])
+
+        when:
+        def sheet = renderAndReadFirstSheet(template, root)
+
+        then: "the \${...} aliases in the page header/footer are resolved, not printed literally"
+        sheet.header.center == "Report Q3"
+        sheet.footer.right == "Page for Q3"
+    }
+
+    def "repeating rows (print titles) are carried to the output"() {
+        given:
+        def template = buildTemplate { wb ->
+            def s = sheet(wb)
+            cell(s, 0, 0, 'Header')
+            cell(s, 1, 0, '${v}')
+            defineBand(wb, "Data", 1, 0, 1, 0)
+            s.setRepeatingRows(CellRangeAddress.valueOf("1:1"))
+        }
+        def root = rootBand("Data")
+        addBand(root, "Data", [v: 1])
+
+        when:
+        def sheet = renderAndReadFirstSheet(template, root)
+
+        then: "the print-titles repeating rows survive instead of being dropped"
+        sheet.getRepeatingRows() != null
+        sheet.getRepeatingRows().formatAsString() == "1:1"
+    }
+
+    def "print centering flags are carried to the output"() {
+        given:
+        def template = buildTemplate { wb ->
+            def s = sheet(wb)
+            cell(s, 0, 0, '${v}')
+            s.setHorizontallyCenter(true)
+            s.setVerticallyCenter(true)
+            defineBand(wb, "Data", 0, 0, 0, 0)
+        }
+        def root = rootBand("Data")
+        addBand(root, "Data", [v: 1])
+
+        when:
+        def sheet = renderAndReadFirstSheet(template, root)
+
+        then:
+        sheet.getHorizontallyCenter()
+        sheet.getVerticallyCenter()
     }
 }

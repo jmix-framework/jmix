@@ -136,10 +136,20 @@ public class SqlDataLoader extends AbstractDbDataLoader implements StreamingRepo
             return work.apply(Collections.emptyIterator());
         }
 
-        if (Boolean.TRUE.equals(reportQuery.getProcessTemplate())) {
-            query = processQueryTemplate(query, parentBand, params);
+        // Wrap query preprocessing so a Groovy template error surfaces as DataLoadingException, the same as
+        // the batch path (loadData) and the JPQL streaming path — otherwise it would escape raw from here.
+        QueryPack pack;
+        try {
+            if (Boolean.TRUE.equals(reportQuery.getProcessTemplate())) {
+                query = processQueryTemplate(query, parentBand, params);
+            }
+            pack = prepareQuery(query, parentBand, params);
+        } catch (ReportingException e) {
+            throw e;
+        } catch (Throwable e) {
+            throw new DataLoadingException(String.format(
+                    "An error occurred while streaming data for data set [%s]", reportQuery.getName()), e);
         }
-        QueryPack pack = prepareQuery(query, parentBand, params);
 
         List<Object> resultingParams = new ArrayList<>();
         for (QueryParameter queryParameter : pack.getParams()) {
@@ -168,8 +178,31 @@ public class SqlDataLoader extends AbstractDbDataLoader implements StreamingRepo
                         statement.setObject(i + 1, value);
                     }
                 }
-                try (ResultSet resultSet = statement.executeQuery()) {
+                // The ResultSet is deliberately NOT a try-with-resources: on cancellation cancel() must run
+                // BEFORE the close. On MySQL in row-streaming mode (Integer.MIN_VALUE) closing an unexhausted
+                // streaming ResultSet makes Connector/J read and discard every remaining row to free the
+                // wire, hanging a cancel for minutes while holding the pooled connection; cancel() aborts the
+                // query first so the close is cheap. A try-with-resources would close the ResultSet before
+                // the catch runs, so cancel() would arrive after the draining close and be useless.
+                ResultSet resultSet = statement.executeQuery();
+                //noinspection TryFinallyCanBeTryWithResources
+                try {
                     return work.apply(new SqlRowIterator(resultSet, pack.getQuery()));
+                } catch (Throwable e) {
+                    try {
+                        statement.cancel();
+                    } catch (SQLException cancelError) {
+                        log.warn("Failed to cancel the streaming statement after data set [{}]",
+                                reportQuery.getName(), cancelError);
+                    }
+                    throw e;
+                } finally {
+                    try {
+                        resultSet.close();
+                    } catch (SQLException closeError) {
+                        log.warn("Failed to close the streaming result set after data set [{}]",
+                                reportQuery.getName(), closeError);
+                    }
                 }
 
             } finally {

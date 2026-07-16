@@ -26,6 +26,7 @@ import io.jmix.reports.yarg.formatters.impl.xls.DocumentConverter;
 import io.jmix.reports.yarg.structure.BandData;
 import io.jmix.reports.yarg.structure.BandOrientation;
 import io.jmix.reports.yarg.structure.ReportOutputType;
+import org.apache.commons.io.IOUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataValidation;
@@ -164,6 +165,10 @@ import org.w3c.dom.NodeList;
  *     <li>content inliners ({@code ${bitmap:WxH}}, {@code ${image:WxH}}, {@code ${html}}) — rejected
  *     with an error;</li>
  *     <li>hyperlinks (SXSSF does not carry them over from the template);</li>
+ *     <li>theme-palette colors: a template that paints cells with Office <i>theme</i> colors (the top row
+ *     of Excel's colour picker) loses them — the streamed result workbook has no theme part, so Excel falls
+ *     back to the default Office palette. Use explicit RGB or indexed colors in the template, or the
+ *     non-streaming engine, to preserve brand theme colors (RGB and indexed colors are unaffected);</li>
  *     <li>charts and pivot tables.</li>
  * </ul>
  *
@@ -356,6 +361,16 @@ public class StreamingXlsxFormatter extends AbstractFormatter implements Streami
         } catch (IOException e) {
             throw new ReportFormattingException("Error writing streaming XLSX document", e);
         } finally {
+            // Flush and close the output stream (parity with the non-streaming engine, which always
+            // flushed + closeQuietly). SXSSFWorkbook.write() does not flush the target stream, so a
+            // buffered caller stream would otherwise keep the zip tail buffered and produce a truncated
+            // file. The document bytes are already written, so a flush failure must not mask the result.
+            try {
+                outputStream.flush();
+            } catch (IOException e) {
+                // Ignored: the rendered bytes are already written to the stream.
+            }
+            IOUtils.closeQuietly(outputStream);
             disposeResultWorkbook();
         }
     }
@@ -652,7 +667,7 @@ public class StreamingXlsxFormatter extends AbstractFormatter implements Streami
         for (Name name : templateWorkbook.getAllNames()) {
             String definedName = name.getNameName();
             if (definedName.startsWith(STYLE_HINT_PREFIX)) {
-                styleHints.add(toHintRange(name, definedName.substring(STYLE_HINT_PREFIX.length())));
+                styleHints.add(toHintRange(name, styleHintParamName(definedName)));
                 continue;
             }
             if (definedName.equals(ROW_AUTO_HEIGHT_HINT) || definedName.startsWith(ROW_AUTO_HEIGHT_HINT + "_")) {
@@ -675,6 +690,18 @@ public class StreamingXlsxFormatter extends AbstractFormatter implements Streami
             templateBands.put(definedName, new TemplateBand(
                     definedName, first.getRow(), last.getRow(), first.getCol(), last.getCol()));
         }
+    }
+
+    /**
+     * The style parameter from a {@code hint_style_<param>} defined name: the first underscore-separated
+     * segment after the prefix. A trailing {@code _<n>} that only makes the defined name unique (Excel
+     * forbids duplicate names, e.g. {@code hint_style_col_2}) is not part of the parameter. Mirrors the
+     * non-streaming {@code CustomCellStyleXlsxHint}, which splits on {@code _} and takes the first segment.
+     */
+    protected String styleHintParamName(String definedName) {
+        String suffix = definedName.substring(STYLE_HINT_PREFIX.length());
+        int underscore = suffix.indexOf('_');
+        return underscore >= 0 ? suffix.substring(0, underscore) : suffix;
     }
 
     protected HintRange toHintRange(Name name, String param) {
@@ -970,12 +997,30 @@ public class StreamingXlsxFormatter extends AbstractFormatter implements Streami
         for (PageMargin margin : PageMargin.values()) {
             to.setMargin(margin, from.getMargin(margin));
         }
-        to.getHeader().setLeft(from.getHeader().getLeft());
-        to.getHeader().setCenter(from.getHeader().getCenter());
-        to.getHeader().setRight(from.getHeader().getRight());
-        to.getFooter().setLeft(from.getFooter().getLeft());
-        to.getFooter().setCenter(from.getFooter().getCenter());
-        to.getFooter().setRight(from.getFooter().getRight());
+        // Substitute ${...} aliases in the page header/footer segments, matching the non-streaming engine's
+        // updateHeaderAndFooter (they would otherwise print literally on every page).
+        to.getHeader().setLeft(insertPrintText(from.getHeader().getLeft()));
+        to.getHeader().setCenter(insertPrintText(from.getHeader().getCenter()));
+        to.getHeader().setRight(insertPrintText(from.getHeader().getRight()));
+        to.getFooter().setLeft(insertPrintText(from.getFooter().getLeft()));
+        to.getFooter().setCenter(insertPrintText(from.getFooter().getCenter()));
+        to.getFooter().setRight(insertPrintText(from.getFooter().getRight()));
+        // Repeating rows/columns (Print_Titles) and print centering are not part of the field-by-field
+        // PrintSetup copy above; the non-streaming engine keeps them via the template copy, so carry them
+        // over explicitly (Print_Titles is skipped by copyDefinedNames as an Excel built-in name).
+        if (from.getRepeatingRows() != null) {
+            to.setRepeatingRows(from.getRepeatingRows());
+        }
+        if (from.getRepeatingColumns() != null) {
+            to.setRepeatingColumns(from.getRepeatingColumns());
+        }
+        to.setHorizontallyCenter(from.getHorizontallyCenter());
+        to.setVerticallyCenter(from.getVerticallyCenter());
+    }
+
+    /** Substitutes {@code ${...}} aliases in a page header/footer segment, tolerating a null/empty segment. */
+    protected @Nullable String insertPrintText(@Nullable String text) {
+        return (text == null || text.isEmpty()) ? text : insertBandDataToStringByPath(text);
     }
 
     /**
@@ -994,6 +1039,13 @@ public class StreamingXlsxFormatter extends AbstractFormatter implements Streami
                 continue;
             }
             Name copy = resultWorkbook.createName();
+            // Preserve the name's scope: a sheet-scoped name (sheetIndex >= 0) and a same-named
+            // workbook-scoped name may legally coexist; flattening both to workbook scope would make the
+            // second setNameName fail with "workbook already contains this name". Set the scope before the
+            // name so the uniqueness check runs within the correct scope.
+            if (name.getSheetIndex() >= 0) {
+                copy.setSheetIndex(name.getSheetIndex());
+            }
             copy.setNameName(definedName);
             copy.setRefersToFormula(name.getRefersToFormula());
         }
@@ -1068,6 +1120,7 @@ public class StreamingXlsxFormatter extends AbstractFormatter implements Streami
                 if (preparedRow.outlineLevel > 0) {
                     resultSheet.setRowOutlineLevel(outRowIdx, preparedRow.outlineLevel);
                 }
+                applyRowHeightAndHidden(preparedRow.heightTwips, preparedRow.zeroHeight, out);
                 for (PreparedCell prepared : preparedRow.cells) {
                     Cell outCell = out.createCell(prepared.col);
                     outCell.setCellStyle(prepared.baseStyle);
@@ -1151,7 +1204,8 @@ public class StreamingXlsxFormatter extends AbstractFormatter implements Streami
                 layout.rows.add(PreparedRow.absentRow());
                 continue;
             }
-            PreparedRow row = new PreparedRow(templateRow.getOutlineLevel());
+            PreparedRow row = new PreparedRow(templateRow.getOutlineLevel(),
+                    customRowHeight(templateRow, templateSheet), templateRow.getZeroHeight());
             for (int c = band.firstCol; c <= band.lastCol; c++) {
                 XSSFCell templateCell = templateRow.getCell(c);
                 if (templateCell == null) {
@@ -1660,6 +1714,26 @@ public class StreamingXlsxFormatter extends AbstractFormatter implements Streami
         }
     }
 
+    /** Custom height of a template row in twips, or {@code -1} when it uses the sheet default. */
+    protected short customRowHeight(XSSFRow templateRow, XSSFSheet templateSheet) {
+        return templateRow.getHeight() != templateSheet.getDefaultRowHeight()
+                ? templateRow.getHeight() : (short) -1;
+    }
+
+    /**
+     * Carries a row's custom height and hidden flag onto the rendered row. Without this a tall header row
+     * would collapse to the sheet default and a hidden template row would become visible (the non-streaming
+     * engine keeps them because it renders on a template copy). {@code heightTwips < 0} keeps the default.
+     */
+    protected void applyRowHeightAndHidden(short heightTwips, boolean zeroHeight, Row outRow) {
+        if (heightTwips >= 0) {
+            outRow.setHeight(heightTwips);
+        }
+        if (zeroHeight) {
+            outRow.setZeroHeight(true);
+        }
+    }
+
     /**
      * The template bands that are actual child bands of the given one, in row order. Children are decided
      * by the {@link BandData} tree (not by mere row position), so an unrelated sibling band laid out below
@@ -1688,6 +1762,7 @@ public class StreamingXlsxFormatter extends AbstractFormatter implements Streami
         }
         SXSSFRow out = createResultRow(resultSheet, outRowIdx);
         copyRowOutlineLevel(templateRow, resultSheet, outRowIdx);
+        applyRowHeightAndHidden(customRowHeight(templateRow, templateSheet), templateRow.getZeroHeight(), out);
         for (int c = templateRow.getFirstCellNum(); c >= 0 && c < templateRow.getLastCellNum(); c++) {
             XSSFCell templateCell = templateRow.getCell(c);
             if (templateCell == null) {
@@ -1726,7 +1801,7 @@ public class StreamingXlsxFormatter extends AbstractFormatter implements Streami
      */
     protected void writeOuterFormula(XSSFCell templateCell, Cell out) {
         String formula = insertBandDataToStringByPath(templateCell.getCellFormula());
-        rejectForwardBandReference(formula, templateCell.getRowIndex());
+        rejectForwardReference(formula, templateCell.getRowIndex());
         String grown = growOuterFormula(formula);
         if (grown == null) {
             out.setCellValue("ERROR: Formula references to empty range");
@@ -1736,33 +1811,37 @@ public class StreamingXlsxFormatter extends AbstractFormatter implements Streami
     }
 
     /**
-     * A formula outside band ranges may reference a band ABOVE it (a running total below the data), but a
-     * reference to a band laid out BELOW the formula cannot be resolved forward-only: the band's rows are
-     * written after the formula, so the reference would otherwise silently render the empty-range error
-     * text (as if the band had no data). Reject it up front with a clear message instead.
+     * A formula outside band ranges may reference a band or a static row ABOVE it (a running total below
+     * the data), but a reference to a band OR a static row laid out BELOW the formula cannot be resolved
+     * forward-only: those rows are written after the formula, so the reference would otherwise be handled
+     * wrongly (a below-formula band silently renders the empty-range error text; a below-formula static row
+     * is silently kept as the template row and ends up pointing into the band data). Reject both up front
+     * with a clear message instead.
      */
-    protected void rejectForwardBandReference(String formula, int formulaTemplateRow) {
+    protected void rejectForwardReference(String formula, int formulaTemplateRow) {
         for (Ptg ptg : parseFormula(formula)) {
             if (ptg instanceof Ref3DPxg || ptg instanceof Area3DPxg) {
                 continue;
             }
             if (ptg instanceof RefPtgBase ref) {
-                rejectIfBandBelow(ref.getRow(), formulaTemplateRow, formula);
+                rejectIfReferencedRowBelow(ref.getRow(), formulaTemplateRow, formula);
             } else if (ptg instanceof AreaPtgBase area) {
-                rejectIfBandBelow(area.getFirstRow(), formulaTemplateRow, formula);
-                rejectIfBandBelow(area.getLastRow(), formulaTemplateRow, formula);
+                rejectIfReferencedRowBelow(area.getFirstRow(), formulaTemplateRow, formula);
+                rejectIfReferencedRowBelow(area.getLastRow(), formulaTemplateRow, formula);
             }
         }
     }
 
     /**
-     * Rejects only when an area/single-reference ENDPOINT lands inside a band positioned below the formula
-     * — the case that truly cannot be resolved forward-only, where {@link #growOuterFormula} would try to
-     * grow the reference onto rows the band has not written yet and emit the misleading empty-range error.
-     * A wide or whole-column reference (e.g. {@code SUM(A:A)}) whose endpoints do not fall on a
-     * below-formula band is left as authored: it needs no growth and Excel computes it on open.
+     * Rejects an endpoint that lands below the formula on a row whose output position cannot be resolved
+     * forward-only: either inside a band positioned below the formula (where {@link #growOuterFormula} would
+     * grow the reference onto rows the band has not written yet and emit the misleading empty-range error),
+     * or on a static template row below the formula (which {@link #resolveOuterAreaRow} would silently keep
+     * at its template number, pointing into the shifted band data). A wide or whole-column reference (e.g.
+     * {@code SUM(A:A)}) is left as authored: its far endpoint is not a real template row, so it does not
+     * match either case; it needs no growth and Excel computes it on open.
      */
-    protected void rejectIfBandBelow(int referencedRow, int formulaTemplateRow, String formula) {
+    protected void rejectIfReferencedRowBelow(int referencedRow, int formulaTemplateRow, String formula) {
         TemplateBand band = bandContainingTemplateRow(referencedRow);
         if (band != null && band.firstRow > formulaTemplateRow) {
             throw wrapWithReportingException(String.format(
@@ -1771,6 +1850,16 @@ public class StreamingXlsxFormatter extends AbstractFormatter implements Streami
                             + "Forward-only rendering cannot resolve a total placed above its data; move the "
                             + "formula below the band or clear the band's streaming flag.",
                     formula, formulaTemplateRow + 1, band.name, band.firstRow + 1, band.lastRow + 1));
+        }
+        if (band == null
+                && referencedRow > formulaTemplateRow
+                && templateWorkbook.getSheetAt(0).getRow(referencedRow) != null) {
+            throw wrapWithReportingException(String.format(
+                    "The streaming XLSX formatter does not support a formula that references a static row "
+                            + "laid out below it (formula [%s] at row %d references row %d). Forward-only "
+                            + "rendering cannot resolve a reference to a row written after the formula; move "
+                            + "the formula below that row or clear the band's streaming flag.",
+                    formula, formulaTemplateRow + 1, referencedRow + 1));
         }
     }
 
@@ -1977,20 +2066,29 @@ public class StreamingXlsxFormatter extends AbstractFormatter implements Streami
         }
     }
 
-    /** One template row of a band: outline level and the prepared cells (absent rows render empty). */
+    /**
+     * One template row of a band: outline level, custom height ({@code -1} = sheet default), the hidden
+     * flag and the prepared cells (absent rows render empty).
+     */
     protected static class PreparedRow {
         protected final boolean absent;
         protected final int outlineLevel;
+        protected final short heightTwips;
+        protected final boolean zeroHeight;
         protected final List<PreparedCell> cells = new ArrayList<>();
 
-        protected PreparedRow(int outlineLevel) {
+        protected PreparedRow(int outlineLevel, short heightTwips, boolean zeroHeight) {
             this.absent = false;
             this.outlineLevel = outlineLevel;
+            this.heightTwips = heightTwips;
+            this.zeroHeight = zeroHeight;
         }
 
         private PreparedRow() {
             this.absent = true;
             this.outlineLevel = 0;
+            this.heightTwips = -1;
+            this.zeroHeight = false;
         }
 
         protected static PreparedRow absentRow() {

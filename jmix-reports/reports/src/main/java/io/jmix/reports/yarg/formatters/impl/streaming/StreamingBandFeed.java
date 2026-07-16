@@ -102,8 +102,17 @@ public class StreamingBandFeed {
             // copy materializes attribute values from the managed entity, so output-file-name patterns
             // referencing this band keep working after the connection is released. The rendered band
             // keeps the original map to preserve lazy path-alias semantics.
+            //
+            // The copy iterates entrySet() explicitly instead of new HashMap<>(row): a lazy EntityMap
+            // reports size()==0 until it is materialized, and HashMap(Map)/putAll skip entrySet() when
+            // size()==0, which would leave the copy empty. Reading entrySet() forces the load.
+            Map<String, Object> materialized = new HashMap<>();
+            for (Map.Entry<String, Object> entry : row.entrySet()) {
+                //noinspection UseBulkOperation
+                materialized.put(entry.getKey(), entry.getValue());
+            }
             BandData copy = new BandData(bandName, rootBand);
-            copy.setData(new HashMap<>(row));
+            copy.setData(materialized);
             firstRow = copy;
         }
         return band;

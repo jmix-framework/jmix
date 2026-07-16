@@ -44,6 +44,10 @@ public class StreamingStyleCache {
         }
         return byTemplateIndex.computeIfAbsent(templateStyle.getIndex(), i -> {
             CellStyle copy = resultWorkbook.createCellStyle();
+            // cloneStyleFrom copies theme-based colors (theme="N") verbatim, but the result SXSSF workbook
+            // has no theme part, so Excel renders them with the default Office palette rather than the
+            // template's theme colors (a documented limitation in StreamingXlsxFormatter). RGB and indexed
+            // colors are unaffected.
             copy.cloneStyleFrom(templateStyle);
             return copy;
         });

@@ -54,6 +54,30 @@ class StreamingXlsxHintTest extends StreamingBaseXlsxRenderTest {
         workbook.getFontAt(cell.cellStyle.fontIndex).bold
     }
 
+    def "hint_style takes the parameter from the first suffix segment, ignoring a uniquifying suffix"() {
+        given: "the defined name carries a trailing _<n> for uniqueness that is NOT part of the parameter"
+        int boldFontId = 0
+        def template = buildTemplate { wb ->
+            def font = wb.createFont()
+            font.bold = true
+            boldFontId = font.index
+            def sheet = sheet(wb)
+            cell(sheet, 0, 0, '${v}')
+            defineBand(wb, "Data", 0, 0, 0, 0)
+            defineBand(wb, "hint_style_rowStyle_2", 0, 0, 0, 0)
+        }
+        template = injectNamedStyle(template, "highlight", boldFontId)
+        def root = rootBand("Data")
+        addBand(root, "Data", [v: "x", rowStyle: "highlight"])
+
+        when:
+        def workbook = read(render(template, root))
+        def cell = workbook.getSheetAt(0).getRow(0).getCell(0)
+
+        then: "the parameter is 'rowStyle' (first segment), not 'rowStyle_2', so the named style applies"
+        workbook.getFontAt(cell.cellStyle.fontIndex).bold
+    }
+
     def "hint_style preserves each cell's own border, not the first rendered cell's"() {
         given: "two cells share one hint_style range but carry different top borders"
         int boldFontId = 0

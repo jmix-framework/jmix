@@ -17,6 +17,8 @@ package io.jmix.reports.yarg.formatters.impl.streaming;
 
 import com.opencsv.CSVWriter;
 import io.jmix.reports.yarg.exception.ReportFormattingException;
+import io.jmix.reports.yarg.exception.ReportingException;
+import io.jmix.reports.yarg.exception.ReportingInterruptedException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.ss.util.CellReference;
@@ -69,7 +71,16 @@ public class StreamingXlsxToCsvWriter {
                 parser.parse(new InputSource(sheetStream));
             }
             writer.flush();
+        } catch (ReportingException e) {
+            // Keep ReportingInterruptedException (cancellation) and other reporting exceptions typed so
+            // runReport routes them correctly instead of masking them as a formatting error.
+            throw e;
         } catch (Exception e) {
+            Throwable cause = e.getCause();
+            if (cause instanceof ReportingException reportingException) {
+                // SAX may wrap a handler's runtime exception; unwrap the cancellation so its type survives.
+                throw reportingException;
+            }
             throw new ReportFormattingException("An error occurred while converting streamed XLSX to CSV", e);
         }
     }
@@ -94,6 +105,11 @@ public class StreamingXlsxToCsvWriter {
         public void startElement(String uri, String localName, String qName, Attributes attributes) {
             switch (qName) {
                 case "row":
+                    // The SAX pass is a long phase for huge exports; react to cancellation per row, like the
+                    // non-streaming saveXlsxAsCsv checked per cell. Thread.interrupted() also clears the flag.
+                    if (Thread.interrupted()) {
+                        throw new ReportingInterruptedException("Streaming CSV conversion interrupted");
+                    }
                     currentRow.clear();
                     break;
                 case "c":

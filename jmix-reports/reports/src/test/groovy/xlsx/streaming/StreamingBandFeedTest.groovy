@@ -65,6 +65,19 @@ class StreamingBandFeedTest extends Specification {
         feed.firstRow.data instanceof HashMap
     }
 
+    def "first-row copy materializes a lazy EntityMap-like source whose size() is 0 until entrySet()"() {
+        given: "a source that reports size()==0 until entrySet() lazily materializes it (mimics EntityMap)"
+        def source = new LazyRow([a: 1, b: "x"])
+        def root = new BandData(BandData.ROOT_BAND_NAME)
+        def feed = new StreamingBandFeed("Data", [source].iterator(), root, true)
+
+        when: "the feed is consumed (the render sees the lazy map; the first-row copy is taken eagerly)"
+        feed.iterator().each { it }
+
+        then: "the retained copy is fully materialized, not an empty map"
+        feed.firstRow.data == [a: 1, b: "x"]
+    }
+
     def "empty source yields exactly one empty row (putEmptyRowIfNoDataSelected semantics)"() {
         given:
         def feed = new StreamingBandFeed("Data", [].iterator(), new BandData(BandData.ROOT_BAND_NAME))
@@ -99,5 +112,39 @@ class StreamingBandFeedTest extends Specification {
 
         then:
         thrown(IllegalStateException)
+    }
+
+    /**
+     * Mimics {@code io.jmix.reports.app.EntityMap}: {@code size()} stays 0 until {@code entrySet()}
+     * (or another materializing accessor) is called, and {@code isEmpty()} is hardcoded to false.
+     * A plain {@code new HashMap<>(this)} therefore copies nothing, because {@code HashMap(Map)}
+     * checks {@code size()} and skips {@code entrySet()} when it is 0.
+     */
+    static class LazyRow extends HashMap<String, Object> {
+        private final Map<String, Object> pending
+        private boolean loaded = false
+
+        LazyRow(Map<String, Object> pending) {
+            this.pending = pending
+        }
+
+        @Override
+        int size() {
+            return loaded ? super.size() : 0
+        }
+
+        @Override
+        boolean isEmpty() {
+            return false
+        }
+
+        @Override
+        Set<Map.Entry<String, Object>> entrySet() {
+            if (!loaded) {
+                super.putAll(pending)
+                loaded = true
+            }
+            return super.entrySet()
+        }
     }
 }

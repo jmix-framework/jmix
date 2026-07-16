@@ -178,6 +178,28 @@ class StreamingXlsxOutputTypesTest extends StreamingBaseXlsxRenderTest {
         e.message.toLowerCase().contains("office")
     }
 
+    def "xlsx output flushes a caller-owned buffered stream so the file is not truncated"() {
+        given: "a caller-owned BufferedOutputStream that the caller does NOT flush/close itself"
+        def template = simpleTemplate()
+        def root = rootBand("Data")
+        addBand(root, "Data", [v: 1])
+        addBand(root, "Data", [v: 2])
+
+        def bytes = new ByteArrayOutputStream()
+        def buffered = new BufferedOutputStream(bytes)
+        def reportTemplate = new ReportTemplate()
+        reportTemplate.setContent(template)
+        def input = new FormatterFactoryInput("xlsx", root, reportTemplate, ReportOutputType.xlsx, buffered)
+
+        when: "the formatter renders; the caller relies on the legacy contract that the formatter flushes"
+        new StreamingXlsxFormatter(input).renderDocument()
+
+        then: "the emitted bytes are a complete, readable xlsx package (zip central directory present)"
+        def produced = bytes.toByteArray()
+        def pkg = org.apache.poi.openxml4j.opc.OPCPackage.open(new ByteArrayInputStream(produced))
+        pkg.close()
+    }
+
     private byte[] simpleTemplate() {
         return buildTemplate { wb ->
             def sheet = sheet(wb)

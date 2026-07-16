@@ -34,25 +34,37 @@ import org.eclipse.persistence.queries.ReadAllQuery;
 import org.jspecify.annotations.NullMarked;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import org.jspecify.annotations.Nullable;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
+import javax.sql.DataSource;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @NullMarked
 public class JpqlDataLoader extends AbstractDbDataLoader implements ReportDataLoader, StreamingReportDataLoader {
+
+    private static final Logger log = LoggerFactory.getLogger(JpqlDataLoader.class);
+
+    /** Cached JDBC streaming fetch size per data store — the database product does not change at runtime. */
+    protected final Map<String, Integer> streamingFetchSizeByStore = new ConcurrentHashMap<>();
 
     @Autowired
     protected BeanFactory beanFactory;
@@ -168,6 +180,11 @@ public class JpqlDataLoader extends AbstractDbDataLoader implements ReportDataLo
                     new TransactionTemplate(storeAwareLocator.getTransactionManager(storeName));
             streamingTransaction.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
 
+            // Resolve the JDBC fetch size (a metadata lookup that borrows a pooled connection) BEFORE the
+            // streaming transaction opens, so it does not contend for a second connection while the cursor's
+            // REQUIRES_NEW transaction already holds one.
+            int jdbcFetchSize = resolveStreamingFetchSize(storeName);
+
             return streamingTransaction.execute(transactionStatus -> {
                 Query select = insertParameters(trimQuery(finalQuery), storeName, parentBand, params);
                 // Configure the cursor on the native EclipseLink query: hints set on the JPA wrapper
@@ -175,8 +192,12 @@ public class JpqlDataLoader extends AbstractDbDataLoader implements ReportDataLo
                 JpaQuery<?> jpaQuery = select.unwrap(JpaQuery.class);
 
                 ReadAllQuery readAllQuery = (ReadAllQuery) jpaQuery.getDatabaseQuery();
+                // useCursoredStream() sizes EclipseLink's own forward-only cursor reads (keep it positive);
+                // setFetchSize() maps to the JDBC statement fetch size, which must be Integer.MIN_VALUE on
+                // MySQL/MariaDB to switch the driver into row streaming instead of buffering the whole
+                // result set client-side (same handling as SqlDataLoader).
                 readAllQuery.useCursoredStream(streamingFetchSize, streamingFetchSize);
-                readAllQuery.setFetchSize(streamingFetchSize);
+                readAllQuery.setFetchSize(jdbcFetchSize);
 
                 // Obtain the EntityManager before opening the cursor: if this throws, no cursor is leaked.
                 EntityManager entityManager = storeAwareLocator.getEntityManager(storeName);
@@ -184,7 +205,11 @@ public class JpqlDataLoader extends AbstractDbDataLoader implements ReportDataLo
                 try {
                     return work.apply(new JpqlRowIterator(cursor, entityManager, outputParameters));
                 } finally {
-                    cursor.close();
+                    // Never let a cursor-close failure replace the in-flight exception (a user cancel or a
+                    // formatter error whose ReportingException type runReport routes on): a broken connection
+                    // can make close() throw, which would otherwise mask the original and get repackaged as
+                    // DataLoadingException by the catch below (parity with the SqlDataLoader teardown).
+                    closeCursorQuietly(cursor, reportQuery.getName());
                 }
             });
         } catch (ReportingException e) {
@@ -194,6 +219,64 @@ public class JpqlDataLoader extends AbstractDbDataLoader implements ReportDataLo
         } catch (Throwable e) {
             throw new DataLoadingException(
                     String.format("An error occurred while streaming data for data set [%s]", reportQuery.getName()), e);
+        }
+    }
+
+    /**
+     * Cached per store (the database product is stable, so the metadata connection runs once per store).
+     * A transient detection failure is NOT cached: it falls back to the default for this call but lets the
+     * next report retry, so a one-off failure (e.g. a pool spike) does not pin MySQL to a buffering fetch
+     * size forever.
+     */
+    protected int resolveStreamingFetchSize(String storeName) {
+        Integer cached = streamingFetchSizeByStore.get(storeName);
+        if (cached != null) {
+            return cached;
+        }
+        Integer detected = detectStreamingFetchSize(storeName);
+        if (detected == null) {
+            return streamingFetchSize;
+        }
+        streamingFetchSizeByStore.put(storeName, detected);
+        return detected;
+    }
+
+    /**
+     * MySQL Connector/J ignores a positive fetch size and buffers the whole result set client-side;
+     * {@code Integer.MIN_VALUE} switches it (and MariaDB Connector/J) to row streaming. The EclipseLink
+     * cursor consumes rows forward-only, so the driver's row-streaming mode fits it. Mirrors
+     * {@code SqlDataLoader#resolveStreamingFetchSize}. Returns {@code null} on a transient failure so the
+     * caller can fall back without caching.
+     */
+    protected @Nullable Integer detectStreamingFetchSize(String storeName) {
+        DataSource dataSource = storeAwareLocator.getDataSource(storeName);
+        try (Connection connection = dataSource.getConnection()) {
+            String productName = connection.getMetaData().getDatabaseProductName();
+            if (productName != null) {
+                String lower = productName.toLowerCase(Locale.ROOT);
+                if (lower.contains("mysql") || lower.contains("mariadb")) {
+                    return Integer.MIN_VALUE;
+                }
+            }
+            return streamingFetchSize;
+        } catch (SQLException e) {
+            log.warn("Could not resolve the database product for the JPQL streaming fetch size of store [{}]; "
+                    + "using the default fetch size", storeName, e);
+            return null;
+        }
+    }
+
+    /**
+     * Closes the EclipseLink cursor without letting a close failure escape: on a broken connection close()
+     * can throw, and in a {@code finally} that would replace the in-flight exception (masking a user cancel
+     * or formatter error and stripping the ReportingException type runReport routes on). Mirrors the
+     * SqlDataLoader teardown, which guards rollback/setAutoCommit the same way.
+     */
+    protected void closeCursorQuietly(CursoredStream cursor, String dataSetName) {
+        try {
+            cursor.close();
+        } catch (RuntimeException e) {
+            log.warn("Failed to close the streaming cursor after data set [{}]", dataSetName, e);
         }
     }
 

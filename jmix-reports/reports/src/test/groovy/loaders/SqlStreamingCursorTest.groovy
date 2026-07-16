@@ -16,6 +16,7 @@
 
 package loaders
 
+import io.jmix.reports.yarg.exception.DataLoadingException
 import io.jmix.reports.yarg.exception.ReportingInterruptedException
 import io.jmix.reports.yarg.loaders.impl.SqlDataLoader
 import io.jmix.reports.yarg.structure.BandData
@@ -64,6 +65,22 @@ class SqlStreamingCursorTest extends Specification {
         collected.first()["num"] == 11
         collected.first()["text"] == "v11"
         collected.last()["num"] == 50
+    }
+
+    def "a Groovy template error in the SQL streaming query surfaces as DataLoadingException"() {
+        given:
+        def loader = new SqlDataLoader(Mock(DataSource))
+        def query = Mock(ReportQuery) {
+            getScript() >> 'select * from t where x = ${missing.bad}'
+            getName() >> "q"
+            getProcessTemplate() >> true
+        }
+
+        when: "the Groovy template references an undefined binding, failing during preprocessing"
+        loader.loadDataStreaming(query, null, [:]) { rows -> rows.hasNext() }
+
+        then: "the raw Groovy error is wrapped, matching the batch path and JPQL streaming"
+        thrown(DataLoadingException)
     }
 
     def "reporting exceptions thrown by the render callback propagate unwrapped"() {
@@ -206,6 +223,40 @@ class SqlStreamingCursorTest extends Specification {
         "MariaDB"               | Integer.MIN_VALUE
         "PostgreSQL"            | 1000
         "HSQL Database Engine"  | 1000
+    }
+
+    def "cancels the running statement before closing the cursor when the render is interrupted"() {
+        given:
+        def statement = Mock(PreparedStatement)
+        def resultSetMetaData = Mock(java.sql.ResultSetMetaData) { getColumnCount() >> 0 }
+        def resultSet = Mock(ResultSet) { getMetaData() >> resultSetMetaData }
+        def metaData = Mock(DatabaseMetaData) { getDatabaseProductName() >> "MySQL" }
+        def connection = Mock(Connection) {
+            getAutoCommit() >> true
+            prepareStatement(_, _, _) >> statement
+            getMetaData() >> metaData
+        }
+        def dataSource = Mock(DataSource) { getConnection() >> connection }
+        statement.executeQuery() >> resultSet
+
+        def loader = new SqlDataLoader(dataSource)
+        def query = Mock(ReportQuery) {
+            getScript() >> 'select id as "id" from t'
+            getName() >> "q"
+            getProcessTemplate() >> false
+        }
+
+        when: "the render callback is interrupted (throws) before consuming the whole cursor"
+        loader.loadDataStreaming(query, null, [:]) { rows -> throw new ReportingInterruptedException("cancel") }
+
+        then: "cancel() is issued BEFORE the ResultSet is closed (otherwise close drains the remaining rows)"
+        1 * statement.cancel()
+
+        then: "only after cancel is the cursor closed"
+        1 * resultSet.close()
+
+        then: "and the cancellation propagates with its type"
+        thrown(ReportingInterruptedException)
     }
 
     def "empty result yields an empty iterator (empty-row semantics live in the feed, not the loader)"() {

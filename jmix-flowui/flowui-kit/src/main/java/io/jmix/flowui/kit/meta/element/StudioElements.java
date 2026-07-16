@@ -700,6 +700,10 @@ interface StudioElements {
                     StudioPropertyGroups.RequiredEntityClass.class,
                     StudioPropertyGroups.BaseComboBoxItemsQuery.class,
                     StudioPropertyGroups.FetchPlan.class
+            },
+            properties = {
+                    @StudioProperty(xmlAttribute = "byInstanceName", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false", category = StudioProperty.Category.GENERAL)
             })
     void entityItemsQuery();
 

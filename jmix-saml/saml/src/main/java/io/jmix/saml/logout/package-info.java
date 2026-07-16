@@ -14,13 +14,7 @@
  * limitations under the License.
  */
 
-@import './bpmn-modeler-view.css';
-@import './bpmn-viewer-fragment.css';
-@import './entity-data-task-properties-fragment.css';
-@import './form-outcome-detail-view.css';
-@import './misc.css';
-@import './notification-edit.css';
-@import './process-draft-list-view.css';
-@import './process-instance-detail-view.css';
-@import './send-email-task-properties-fragment.css';
-@import './service-task-properties-fragment.css';
+@Experimental
+package io.jmix.saml.logout;
+
+import io.jmix.core.annotation.Experimental;

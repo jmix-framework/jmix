@@ -487,6 +487,7 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
             BandDefinition band = metadata.create(BandDefinition.class);
             band.setName(annotation.name());
             band.setOrientation(annotation.orientation());
+            band.setStreaming(annotation.streaming());
             band.setPosition(position++);
             band.setReport(report);
 

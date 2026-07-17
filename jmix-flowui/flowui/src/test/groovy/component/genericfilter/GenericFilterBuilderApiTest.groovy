@@ -624,6 +624,20 @@ class GenericFilterBuilderApiTest extends FlowuiTestSpecification {
         thrown(IllegalStateException)
     }
 
+    def "RunTimeConfigurationBuilder.buildAndRegister() throws when id is the reserved empty-configuration id"() {
+        given: "A DataLoader-bound filter"
+        GenericFilter filter = filterWithLoader()
+
+        when: "Registering a configuration whose id equals the reserved empty-configuration id"
+        filter.runtimeConfigurationBuilder()
+                .id(filter.getEmptyConfiguration().getId())
+                .name("With reserved id")
+                .buildAndRegister()
+
+        then:
+        thrown(IllegalStateException)
+    }
+
     def "RunTimeConfigurationBuilder.buildAndRegister() throws when called twice on the same instance"() {
         given: "A DataLoader-bound filter so the first build succeeds and sets the one-shot flag"
         GenericFilter filter = filterWithLoader()

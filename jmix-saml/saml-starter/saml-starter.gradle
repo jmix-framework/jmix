@@ -19,7 +19,7 @@ archivesBaseName = 'jmix-saml-starter'
 
 repositories {
     maven {
-        url 'https://build.shibboleth.net/nexus/content/repositories/releases' //todo for org.opensaml
+        url 'https://build.shibboleth.net/nexus/content/repositories/releases' // for org.opensaml
     }
 }
 
@@ -30,4 +30,12 @@ dependencies {
     implementation project(':security-starter')
 
     implementation 'org.springframework.boot:spring-boot-autoconfigure'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-web'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+test {
+    useJUnitPlatform()
 }

@@ -6,6 +6,7 @@ import org.springframework.security.saml2.provider.service.authentication.Saml2A
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Default implementation of {@link JmixSamlUserDetails} that delegates some method invocations to the
@@ -58,5 +59,26 @@ public class DefaultJmixSamlUserDetails implements JmixSamlUserDetails, HasSamlP
     @Override
     public String getRelyingPartyRegistrationId() {
         return delegate.getRelyingPartyRegistrationId();
+    }
+
+    @Override
+    public List<String> getSessionIndexes() {
+        return delegate.getSessionIndexes();
+    }
+
+    /**
+     * Equality is based on the username, like in the Spring Security {@code User} class. It is required for
+     * {@code SessionRegistryImpl} to group sessions of the same user, otherwise the maximum sessions per user
+     * limit is not enforced.
+     */
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof DefaultJmixSamlUserDetails other
+                && Objects.equals(getUsername(), other.getUsername());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getUsername());
     }
 }

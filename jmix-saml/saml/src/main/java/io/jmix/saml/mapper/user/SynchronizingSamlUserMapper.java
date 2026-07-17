@@ -19,6 +19,7 @@ package io.jmix.saml.mapper.user;
 import com.google.common.base.Strings;
 import io.jmix.core.SaveContext;
 import io.jmix.core.UnconstrainedDataManager;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.security.UserRepository;
 import io.jmix.data.PersistenceHints;
 import io.jmix.saml.SamlProperties;
@@ -32,7 +33,9 @@ import org.opensaml.saml.saml2.core.Assertion;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.saml2.Saml2Exception;
 import org.springframework.security.saml2.provider.service.authentication.OpenSaml4AuthenticationProvider;
 
 import java.util.ArrayList;
@@ -46,6 +49,12 @@ import static org.slf4j.LoggerFactory.getLogger;
 /**
  * Implementation of the {@link SamlUserMapper} that maps the external user object to the persistent user
  * and also stores the user and optionally their role assignment to the database.
+ * <p>
+ * If role assignment synchronization is enabled (see {@link #setSynchronizeRoleAssignments(boolean)}), the
+ * identity provider owns <b>all</b> role assignments of the synchronized user: on every login the stored
+ * assignments are replaced with the roles derived from the SAML assertion. Role assignments granted manually
+ * (e.g. by an administrator in the UI) are removed by the next login and therefore must not be combined with
+ * the synchronization mode.
  *
  * @param <T> class of Jmix user
  */
@@ -72,14 +81,43 @@ public abstract class SynchronizingSamlUserMapper<T extends JmixSamlUserDetails>
     @Override
     protected T initJmixUser(Assertion assertion) {
         String username = getSamlUsername(assertion);
+        checkUsernameIsNotReserved(username);
         T jmixUserDetails;
         try {
-            jmixUserDetails = (T) userRepository.loadUserByUsername(username);
+            UserDetails userDetails = userRepository.loadUserByUsername(username);
+            Class<T> applicationUserClass = getApplicationUserClass();
+            if (!applicationUserClass.isInstance(userDetails)) {
+                throw new Saml2Exception("User '" + username + "' loaded from the user repository is an instance "
+                        + "of " + userDetails.getClass().getName() + " which is not compatible with the application "
+                        + "user class " + applicationUserClass.getName());
+            }
+            jmixUserDetails = applicationUserClass.cast(userDetails);
         } catch (UsernameNotFoundException e) {
             log.debug("User with login {} wasn't found in user repository", username);
             jmixUserDetails = dataManager.create(getApplicationUserClass());
+            setUsernameToNewUser(jmixUserDetails, username);
         }
         return jmixUserDetails;
+    }
+
+    /**
+     * Throws an exception if the given username belongs to the built-in system or anonymous user. Otherwise, an
+     * identity provider asserting such a username would map the external user onto a built-in one and persist it.
+     */
+    protected void checkUsernameIsNotReserved(String username) {
+        if (username.equals(userRepository.getSystemUser().getUsername())
+                || username.equals(userRepository.getAnonymousUser().getUsername())) {
+            throw new Saml2Exception("Username '" + username + "' asserted by the identity provider is reserved "
+                    + "for a built-in user");
+        }
+    }
+
+    /**
+     * Sets the username to a newly created user instance. The default implementation writes the {@code username}
+     * entity attribute. Override this method if the application user class stores the login differently.
+     */
+    protected void setUsernameToNewUser(T jmixUser, String username) {
+        EntityValues.setValue(jmixUser, "username", username);
     }
 
     @Override
@@ -200,6 +238,12 @@ public abstract class SynchronizingSamlUserMapper<T extends JmixSamlUserDetails>
 
     /**
      * Enables role assignment synchronization. If true then role assignment entities will be stored to the database.
+     * <p>
+     * When enabled, the identity provider becomes the single source of truth for <b>all</b> role assignments of
+     * the user: on every login the assignments stored in the database are replaced with the roles derived from
+     * the SAML assertion. Any assignment granted through other means (e.g. manually by an administrator) is
+     * removed, because the {@code SEC_ROLE_ASSIGNMENT} table has no marker distinguishing the origin of an
+     * assignment. Do not assign roles manually to users synchronized with this mode.
      */
     public void setSynchronizeRoleAssignments(boolean synchronizeRoleAssignments) {
         this.synchronizeRoleAssignments = synchronizeRoleAssignments;

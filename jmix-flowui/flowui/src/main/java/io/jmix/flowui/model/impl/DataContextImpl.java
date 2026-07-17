@@ -457,9 +457,26 @@ public class DataContextImpl implements DataContextInternal {
                             (Collection<Object>) value, dstEntity, propertyName);
                     setPropertyValue(dstEntity, property, installed);
                 }
+                // a non-null value is now present in memory; reflect it in the loaded-state info
+                markLoaded(dstEntity, propertyName);
             } else {
                 setPropertyValue(dstEntity, property, value);
+                if (value != null) {
+                    markLoaded(dstEntity, propertyName);
+                }
             }
+        }
+    }
+
+    /**
+     * Marks an attribute as loaded on the entity's loaded-state info, so {@code isLoaded} reflects a value
+     * that is present in memory because it was set (a user edit) or installed by a merge, rather than lazily
+     * materialized. No-op for entities without a {@link LoadedPropertiesInfo} (e.g. DTOs).
+     */
+    protected void markLoaded(Object entity, String propertyName) {
+        LoadedPropertiesInfo info = EntitySystemAccess.getEntityEntry(entity).getLoadedPropertiesInfo();
+        if (info != null) {
+            info.registerProperty(propertyName, true);
         }
     }
 
@@ -1315,6 +1332,9 @@ public class DataContextImpl implements DataContextInternal {
                     boolean reference = changedProperty != null && changedProperty.getRange().isClass()
                             && !changedProperty.getRange().getCardinality().isMany();
                     changeTracker.trackChange(e.getItem(), e.getProperty(), e.getPrevValue(), e.getValue(), reference);
+                    // a user set makes the attribute authoritative and present in memory (even a set to null),
+                    // so it is loaded regardless of whether it was fetched
+                    markLoaded(e.getItem(), e.getProperty());
                 }
                 fireChangeListener(e.getItem());
             }

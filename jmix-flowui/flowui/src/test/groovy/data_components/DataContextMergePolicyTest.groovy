@@ -3,6 +3,8 @@ package data_components
 import io.jmix.core.DataManager
 import io.jmix.core.EntityStates
 import io.jmix.core.Id
+import io.jmix.core.FetchPlans
+import test_support.entity.sales.OrderLineParam
 import io.jmix.flowui.model.DataComponents
 import io.jmix.flowui.model.DataContext
 import org.springframework.beans.factory.annotation.Autowired
@@ -25,6 +27,8 @@ class DataContextMergePolicyTest extends DataContextSpec {
     EntityStates entityStates
     @Autowired
     DataManager dataManager
+    @Autowired
+    FetchPlans fetchPlans
 
     @IgnoreIf({Boolean.valueOf(System.getenv("JMIX_ECLIPSELINK_DISABLELAZYLOADING"))})
     def "mutating a transplanted collection marks the owner modified"() {
@@ -483,6 +487,136 @@ class DataContextMergePolicyTest extends DataContextSpec {
 
         cleanup:
         dataManager.remove(order, customer)
+    }
+
+    @IgnoreIf({Boolean.valueOf(System.getenv("JMIX_ECLIPSELINK_DISABLELAZYLOADING"))})
+    def "setting a value on an unfetched reference marks it loaded"() {
+        given: "a managed order line whose 'order' reference was not fetched"
+        DataContext context = factory.createDataContext()
+        Customer customer = dataManager.save(new Customer(name: 'c1', address: new Address()))
+        Order order1 = dataManager.save(new Order(number: 'o1', customer: customer))
+        Order order2 = dataManager.save(new Order(number: 'o2', customer: customer))
+        OrderLine line = dataManager.save(new OrderLine(quantity: 1, order: order1))
+
+        Order managedOrder2 = context.merge(dataManager.load(Id.of(order2)).fetchPlan { it.add('number') }.one())
+        OrderLine managedLine = context.merge(dataManager.load(Id.of(line)).fetchPlan { it.add('quantity') }.one())
+
+        expect: "'order' is not loaded on the managed line"
+        !entityStates.isLoaded(managedLine, 'order')
+
+        when: "the user sets the reference to a DIFFERENT order through the managed instance"
+        // set to order2 (not the line's existing order1): the enhanced setter reads the old value to build
+        // the change event, which lazily materializes order1; a same-id set would not be a change, so the
+        // new value must differ for the edit to be both loaded and dirty
+        managedLine.order = managedOrder2
+
+        then: "the attribute is now reported loaded and tracked dirty"
+        entityStates.isLoaded(managedLine, 'order')
+        'order' in context.getModifiedAttributes(managedLine)
+
+        cleanup:
+        dataManager.remove(line, order1, order2, customer)
+    }
+
+    @IgnoreIf({Boolean.valueOf(System.getenv("JMIX_ECLIPSELINK_DISABLELAZYLOADING"))})
+    def "child save reaching a line non-root marks its deeper collection loaded on the parent"() {
+        given: "a parent holding an order whose lines are loaded WITHOUT their 'params' collection (#4906)"
+        DataContext parent = factory.createDataContext()
+        Customer customer = dataManager.save(new Customer(name: 'c1', address: new Address()))
+        Order order = dataManager.save(new Order(number: 'o1', customer: customer))
+        OrderLine line = dataManager.save(new OrderLine(quantity: 1, order: order))
+        OrderLineParam param = dataManager.save(new OrderLineParam(name: 'p1', value: 'v1', orderLine: line))
+
+        def shallowPlan = fetchPlans.builder(Order)
+                .addFetchPlan('_local')
+                .add('customer', '_local')
+                .add('orderLines', '_local')
+                .build()
+        Order parentOrder = parent.merge(dataManager.load(Id.of(order)).fetchPlan(shallowPlan).one())
+        OrderLine parentLine = parentOrder.orderLines[0]
+
+        def lineEditorPlan = fetchPlans.builder(OrderLine)
+                .addFetchPlan('_local')
+                .add('params', '_local')
+                .build()
+
+        expect: "the line editor's fetch plan is not satisfied on the parent line - 'params' is unloaded"
+        !entityStates.isLoaded(parentLine, 'params')
+        !entityStates.isLoadedWithFetchPlan(parentLine, lineEditorPlan)
+
+        when: "a child loads the order with a fuller nested plan (lines WITH params), edits the order, and saves back"
+        // editing the order (not the line) makes the ORDER the merge root, so each line is reached NON-ROOT
+        // on the child->parent merge - that is the path (mergeUnloadedOrNullReference) where the fix must mark
+        // the installed collection loaded. Editing the line itself would merge the line as root, where the
+        // root mergeLoadedPropertiesInfo copy (from the #5445 fix) already carries loaded-state and hides the gap.
+        def fullerPlan = fetchPlans.builder(Order)
+                .addFetchPlan('_local')
+                .add('customer', '_local')
+                .add('orderLines', { builder -> builder.addFetchPlan('_local').add('params', '_local') })
+                .build()
+        DataContext child = factory.createDataContext()
+        child.setParent(parent)
+        Order childOrder = child.merge(dataManager.load(Id.of(order)).fetchPlan(fullerPlan).one())
+        childOrder.number = 'o2'
+        child.save()
+
+        then: "the deeper 'params' attribute is now loaded on the (non-root) parent line, so the reopen gate passes"
+        entityStates.isLoaded(parentLine, 'params')
+        entityStates.isLoadedWithFetchPlan(parentLine, lineEditorPlan)
+
+        cleanup:
+        dataManager.remove(param, line, order, customer)
+    }
+
+    @IgnoreIf({Boolean.valueOf(System.getenv("JMIX_ECLIPSELINK_DISABLELAZYLOADING"))})
+    def "reopening a line editor after a deep nested save keeps the edit instead of losing it to a stale reload (#4907)"() {
+        given: "a parent holding an order whose lines are loaded WITHOUT their 'params' collection"
+        DataContext parent = factory.createDataContext()
+        Customer customer = dataManager.save(new Customer(name: 'c1', address: new Address()))
+        Order order = dataManager.save(new Order(number: 'o1', customer: customer))
+        OrderLine line = dataManager.save(new OrderLine(quantity: 1, order: order))
+        OrderLineParam param = dataManager.save(new OrderLineParam(name: 'p1', value: 'v1', orderLine: line))
+
+        def shallowPlan = fetchPlans.builder(Order)
+                .addFetchPlan('_local')
+                .add('customer', '_local')
+                .add('orderLines', '_local')
+                .build()
+        Order parentOrder = parent.merge(dataManager.load(Id.of(order)).fetchPlan(shallowPlan).one())
+        OrderLine parentLine = parentOrder.orderLines[0]
+
+        def lineEditorPlan = fetchPlans.builder(OrderLine)
+                .addFetchPlan('_local')
+                .add('params', '_local')
+                .build()
+
+        when: "a child (the line editor) loads the deeper 3-level graph, edits both the order and the nested param, and saves back"
+        def deepPlan = fetchPlans.builder(Order)
+                .addFetchPlan('_local')
+                .add('customer', '_local')
+                .add('orderLines', { b -> b.addFetchPlan('_local').add('params', '_local') })
+                .build()
+        DataContext child = factory.createDataContext()
+        child.setParent(parent)
+        Order childOrder = child.merge(dataManager.load(Id.of(order)).fetchPlan(deepPlan).one())
+        childOrder.number = 'o2'
+        childOrder.orderLines[0].params[0].value = 'v2'
+        child.save()
+
+        then: "the reopen gate is now satisfied on the parent's line"
+        entityStates.isLoadedWithFetchPlan(parentLine, lineEditorPlan)
+
+        when: "a second child 'reopens' the line editor - since the gate passed, it merges the parent's in-memory " +
+                "line directly instead of reloading a stale copy from the database"
+        DataContext reopenedChild = factory.createDataContext()
+        reopenedChild.setParent(parent)
+        OrderLine reopenedLine = reopenedChild.merge(parentLine)
+
+        then: "the nested edit survives the reopen"
+        reopenedLine.params[0].value == 'v2'
+
+        cleanup:
+        dataManager.remove(param, line, order, customer)
     }
 
     @PendingFeature(reason = """

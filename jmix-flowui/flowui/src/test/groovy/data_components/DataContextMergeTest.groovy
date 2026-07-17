@@ -1044,6 +1044,59 @@ class DataContextMergeTest extends DataContextSpec {
         dataManager.remove(order1, customer1, customer2)
     }
 
+    @IgnoreIf({Boolean.valueOf(System.getenv("JMIX_ECLIPSELINK_DISABLELAZYLOADING"))})
+    def "root non-fresh merge of a fuller copy applies newly loaded datatype values"() {
+        DataContext context = factory.createDataContext()
+
+        given: "an order first merged from a slim copy that loads only 'number'"
+        Customer customer1 = dataManager.save(new Customer(name: 'c1', address: new Address()))
+        Order order1 = dataManager.save(new Order(number: '1', description: 'd1', customer: customer1))
+
+        def orderSlim = dataManager.load(Id.of(order1)).fetchPlan { it.add('number') }.one()
+        Order managedOrder = context.merge(orderSlim)
+
+        expect: "'description' is not loaded on the managed instance yet"
+        !entityStates.isLoaded(managedOrder, 'description')
+
+        when: "a fuller copy that also loads 'description' is merged as root, non-fresh"
+        def orderFull = dataManager.load(Id.of(order1)).fetchPlan { it.addAll('number', 'description') }.one()
+        context.merge(orderFull)
+
+        then: "the newly loaded value is applied - not left null while reporting loaded"
+        entityStates.isLoaded(managedOrder, 'description')
+        managedOrder.description == 'd1'
+
+        cleanup:
+        dataManager.remove(order1, customer1)
+    }
+
+    @IgnoreIf({Boolean.valueOf(System.getenv("JMIX_ECLIPSELINK_DISABLELAZYLOADING"))})
+    def "root non-fresh merge does not let a later save null out a newly loaded value"() {
+        DataContext context = factory.createDataContext()
+
+        given: "an order merged from a slim copy (only 'number'), then a fuller copy (adds 'description')"
+        Customer customer1 = dataManager.save(new Customer(name: 'c1', address: new Address()))
+        Order order1 = dataManager.save(new Order(number: '1', description: 'd1', customer: customer1))
+
+        def orderSlim = dataManager.load(Id.of(order1)).fetchPlan { it.add('number') }.one()
+        Order managedOrder = context.merge(orderSlim)
+
+        def orderFull = dataManager.load(Id.of(order1)).fetchPlan { it.addAll('number', 'description') }.one()
+        context.merge(orderFull)
+
+        when: "the user edits another attribute and saves"
+        managedOrder.number = '2'
+        context.save()
+
+        then: "the untouched 'description' keeps its real database value (not overwritten with null)"
+        def reloaded = dataManager.load(Id.of(order1)).fetchPlan { it.addAll('number', 'description') }.one()
+        reloaded.number == '2'
+        reloaded.description == 'd1'
+
+        cleanup:
+        dataManager.remove(reloaded, customer1)
+    }
+
     private UUID uuid(int val) {
         new UUID(val, 0)
     }

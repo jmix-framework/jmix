@@ -272,13 +272,17 @@ public class DataContextImpl implements DataContextInternal {
 
         mergeSystemState(srcEntity, dstEntity, isRoot, options);
 
+        boolean coldReset = isColdResetTarget(dstEntity, isRoot, options, dstExisted);
+
+        resetLoadedInfoBeforeCopy(dstEntity, coldReset);
+
         MetaClass metaClass = getEntityMetaClass(srcEntity);
 
         mergeDatatypeProperties(srcEntity, dstEntity, metaClass, srcNew, dstNew, isRoot, options);
 
         mergeReferenceProperties(srcEntity, dstEntity, metaClass, srcNew, isRoot, options, mergedMap);
 
-        mergeLoadedPropertiesInfo(srcEntity, dstEntity, isRoot, options, dstExisted);
+        mergeLoadedPropertiesInfo(srcEntity, dstEntity, isRoot, options, coldReset);
 
         mergeLazyLoadingState(srcEntity, dstEntity);
     }
@@ -585,19 +589,39 @@ public class DataContextImpl implements DataContextInternal {
         }
     }
 
+    /**
+     * Whether this is a root non-fresh merge onto a pre-existing managed instance whose loaded-state
+     * info is the caching kind. Such an instance carries source-relative negatives cached at earlier
+     * merges (its creation merge caches every attribute outside its fetch plan as unloaded), and its
+     * fetch group was just unioned with the source's in {@link #mergeSystemState}.
+     */
+    protected boolean isColdResetTarget(Object dstEntity, boolean isRoot, MergeOptions options, boolean dstExisted) {
+        return isRoot && !options.isFresh() && dstExisted
+                && EntitySystemAccess.getEntityEntry(dstEntity).getLoadedPropertiesInfo() instanceof CachingLoadedPropertiesInfo;
+    }
+
+    protected void resetLoadedInfoBeforeCopy(Object dstEntity, boolean coldReset) {
+        if (coldReset) {
+            // Reset before the copy loops so their isLoaded(dstEntity, ...) checks recompute from the
+            // fetch group just unioned in mergeSystemState. Otherwise a stale cached negative suppresses
+            // the copy of a newly available value, and the end-of-merge reset then makes that attribute
+            // report loaded while holding a default - a later save writes null over real data.
+            // (see specs/limitations.md cluster 2)
+            EntitySystemAccess.getEntityEntry(dstEntity).setLoadedPropertiesInfo(new CachingLoadedPropertiesInfo());
+        }
+    }
+
     protected void mergeLoadedPropertiesInfo(Object srcEntity, Object dstEntity, boolean isRoot, MergeOptions options,
-                                             boolean dstExisted) {
+                                             boolean coldReset) {
         if (isRoot || options.isFresh()) {
+            if (coldReset) {
+                // already reset before the copy loops (resetLoadedInfoBeforeCopy); the loops repopulated
+                // correct answers into the fresh cache from the unioned fetch group, so leave it as is
+                return;
+            }
             EntityEntry srcEntityEntry = EntitySystemAccess.getEntityEntry(srcEntity);
             EntityEntry dstEntityEntry = EntitySystemAccess.getEntityEntry(dstEntity);
-            if (dstExisted && !options.isFresh()
-                    && dstEntityEntry.getLoadedPropertiesInfo() instanceof CachingLoadedPropertiesInfo) {
-                // The source's cached answers are relative to the source instance and may be wrong for a managed
-                // instance that already carries more loaded state (its fetch group was unioned with the source's
-                // in mergeSystemState). Reset to an empty cache so the loaded state is recomputed from the managed
-                // instance's own fetch group and value holders, which reflect its real state at this point.
-                dstEntityEntry.setLoadedPropertiesInfo(new CachingLoadedPropertiesInfo());
-            } else if (srcEntityEntry.getLoadedPropertiesInfo() == null) {
+            if (srcEntityEntry.getLoadedPropertiesInfo() == null) {
                 dstEntityEntry.setLoadedPropertiesInfo(null);
             } else {
                 dstEntityEntry.setLoadedPropertiesInfo(srcEntityEntry.getLoadedPropertiesInfo().copy());
@@ -1059,27 +1083,13 @@ public class DataContextImpl implements DataContextInternal {
         Object managed = find(entity);
         Map<String, Object> preMergeValues = new HashMap<>();
         if (managed != null) {
-            // probe against a disposable copy of the loaded-properties info: isLoaded caches its
-            // answers in the instance's CachingLoadedPropertiesInfo, and a 'false' cached here
-            // (pre fetch-group union) would poison the merge's own isLoaded checks, suppressing
-            // the copy of child values unloaded on this instance
-            EntityEntry entry = EntitySystemAccess.getEntityEntry(managed);
-            LoadedPropertiesInfo original = entry.getLoadedPropertiesInfo();
-            entry.setLoadedPropertiesInfo(original == null ? null : original.copy());
-            try {
-                for (String attribute : childDirtyAttributes) {
-                    if (entityStates.isLoaded(managed, rootSegment(attribute))) {
-                        preMergeValues.put(attribute, valueForBaseline(managed, attribute));
-                    }
+            // the merge below resets this instance's loaded-state cache before its copy loops
+            // (resetLoadedInfoBeforeCopy, same condition as this managed root), so probing isLoaded
+            // here cannot poison the merge's own checks - no disposable-copy guard is needed
+            for (String attribute : childDirtyAttributes) {
+                if (entityStates.isLoaded(managed, rootSegment(attribute))) {
+                    preMergeValues.put(attribute, valueForBaseline(managed, attribute));
                 }
-            } finally {
-                // the instance may also carry stale 'false' answers cached by earlier merges
-                // (its creation merge caches every attribute outside its fetch plan as unloaded);
-                // install a fresh cache so the merge below recomputes loaded state after the
-                // fetch-group union - mergeLoadedPropertiesInfo resets it again at merge end
-                entry.setLoadedPropertiesInfo(original instanceof CachingLoadedPropertiesInfo
-                        ? new CachingLoadedPropertiesInfo()
-                        : original);
             }
         }
         overridingAttributes = childDirtyAttributes; // consulted by the merge-rule checks

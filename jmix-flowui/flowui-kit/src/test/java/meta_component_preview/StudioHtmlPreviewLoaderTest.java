@@ -111,6 +111,17 @@ class StudioHtmlPreviewLoaderTest {
     }
 
     @Test
+    void testHtmlElementWithMultiRootContentDoesNotThrow() {
+        BaseElement element = element("html");
+        // Raw `new Html(...)` requires a single root; two siblings would throw.
+        assertThrows(IllegalArgumentException.class, () -> new com.vaadin.flow.component.Html("<p>a</p><p>b</p>"));
+        element.addAttribute("content", "<p>a</p><p>b</p>");
+
+        Component component = loader.load(element, element("view"));
+        assertNotNull(component);
+    }
+
+    @Test
     void testHtmlElementWithInlineContentAndFileUsesInlineContent() {
         BaseElement element = element("html");
         element.addAttribute("file", "content/page.html");

@@ -102,7 +102,7 @@ public class StudioHtmlPreviewLoader implements StudioPreviewComponentLoader {
                 .filter(c -> c.trim().startsWith("<"))
                 .orElse(null);
         if (content != null) {
-            return new Html(content.trim());
+            return htmlOrDefault(content.trim());
         }
         // No usable inline content. A `file` attribute points at a project resource that a
         // spring-free kit loader can't read - decline so Studio's PSI-based fallback resolves it.
@@ -110,5 +110,21 @@ public class StudioHtmlPreviewLoader implements StudioPreviewComponentLoader {
             return null;
         }
         return new Html(DEFAULT_HTML_CONTENT);
+    }
+
+    /**
+     * {@link Html} requires a single root element; multi-root or unparseable markup throws.
+     * Wrap-and-retry, then fall back to a blank span, so user markup never breaks the preview.
+     */
+    protected Component htmlOrDefault(String content) {
+        try {
+            return new Html(content);
+        } catch (IllegalArgumentException multiRoot) {
+            try {
+                return new Html("<div>" + content + "</div>");
+            } catch (IllegalArgumentException unparseable) {
+                return new Html(DEFAULT_HTML_CONTENT);
+            }
+        }
     }
 }

@@ -58,6 +58,7 @@ public abstract class BaseLoaderConfig {
         loaders.put("sidePanelLayout", SidePanelLayoutLoader.class);
 
         /* Components */
+        loaders.put("badge", BadgeLoader.class);
         loaders.put("button", ButtonLoader.class);
         loaders.put("textField", TextFieldLoader.class);
         loaders.put("emailField", EmailFieldLoader.class);

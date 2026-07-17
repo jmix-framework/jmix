@@ -54,6 +54,7 @@ public final class StudioXmlElements {
     public static final String AXIS_POINTER = "axisPointer";
     public static final String AXIS_TICK = "axisTick";
     public static final String BACKGROUND_STYLE = "backgroundStyle";
+    public static final String BADGE = "badge";
     public static final String BAR = "bar";
     public static final String BIG_DECIMAL_FIELD = "bigDecimalField";
     public static final String BLOCK = "block";

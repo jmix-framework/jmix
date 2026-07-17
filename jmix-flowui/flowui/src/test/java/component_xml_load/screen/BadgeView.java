@@ -14,14 +14,21 @@
  * limitations under the License.
  */
 
-.jmix-font-icon,
-vaadin-badge > vaadin-icon.jmix-font-icon.jmix-font-icon-lumo[slot="icon"] {
-    /* Fixes Safari browser bug which incorrectly handle '100cqh' */
-    --vaadin-icon-visual-size: 1em;
-}
+package component_xml_load.screen;
 
-.jmix-font-icon.jmix-font-icon-lumo,
-jmix-notifications-indicator > vaadin-icon[icon-class~="jmix-font-icon"][slot="icon"]:not([icon-class~="jmix-font-icon-lumo"]) {
-    /* Fixes Safari browser bug which incorrectly handle '100cqh' */
-    --vaadin-icon-visual-size: 1.5em; /* 24px, Lumo icons are based on a 24x24 grid with 16x16 icon inside) */
+import com.vaadin.flow.component.badge.Badge;
+import com.vaadin.flow.router.Route;
+import io.jmix.flowui.view.*;
+
+@Route(value = "badge-view")
+@ViewController("BadgeView")
+@ViewDescriptor("badge-view.xml")
+public class BadgeView extends StandardView {
+
+    @ViewComponent
+    public Badge badge;
+    @ViewComponent
+    public Badge badgeIconSlot;
+    @ViewComponent
+    public Badge badgeIconAttribute;
 }

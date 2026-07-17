@@ -739,6 +739,7 @@ public final class StudioXmlAttributes {
     public static final String RESOURCE_DOC = "resourceDoc";
     public static final String REVEAL_BUTTON_VISIBLE = "revealButtonVisible";
     public static final String RIGHT = "right";
+    public static final String ROLE = "role";
     public static final String ROOT_HEADING_LEVEL = "rootHeadingLevel";
     public static final String ROSE_TYPE = "roseType";
     public static final String ROTATE = "rotate";

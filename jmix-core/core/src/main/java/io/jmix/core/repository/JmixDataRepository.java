@@ -59,7 +59,7 @@ public interface JmixDataRepository<T, ID> extends ListPagingAndSortingRepositor
      * @param id must not be {@literal null}.
      * @return the entity with the given id or {@literal Optional#empty()} if none found.
      */
-    Optional<T> findById(ID id, FetchPlan fetchPlan);
+    Optional<T> findById(ID id, @Nullable FetchPlan fetchPlan);
 
     /**
      * Loads an entity by its {@code id} using hints and fetch plan from the given {@link JmixDataRepositoryContext context}.
@@ -94,7 +94,7 @@ public interface JmixDataRepository<T, ID> extends ListPagingAndSortingRepositor
      *
      * @return all entities
      */
-    List<T> findAll(FetchPlan fetchPlan);
+    List<T> findAll(@Nullable FetchPlan fetchPlan);
 
     /**
      * Returns all instances of the type {@code T} loaded by {@code context}

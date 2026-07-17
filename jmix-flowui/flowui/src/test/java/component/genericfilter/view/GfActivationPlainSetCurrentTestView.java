@@ -29,9 +29,9 @@ import io.jmix.flowui.view.*;
  * corresponding test is {@code @PendingFeature} until the core hardening lands.
  */
 @Route(value = "gf-activation-plain-setcurrent-view")
-@ViewController("GfActivationPlainSetCurrentView")
+@ViewController("GfActivationPlainSetCurrentTestView")
 @ViewDescriptor("gf-activation-nodlc-view.xml")
-public class GfActivationPlainSetCurrentView extends StandardView {
+public class GfActivationPlainSetCurrentTestView extends StandardView {
 
     @ViewComponent
     public GenericFilter genericFilter;

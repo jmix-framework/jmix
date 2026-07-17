@@ -64,8 +64,9 @@ public class PropertyFilterUrlQueryParametersBinder extends AbstractUrlQueryPara
     protected ApplicationContext applicationContext;
     protected UrlParamSerializer urlParamSerializer;
     protected FilterUrlQueryParametersSupport filterUrlQueryParametersSupport;
+    protected SingleFilterComponentStateSupport singleFilterComponentStateSupport;
 
-    protected InitialState initialState;
+    protected SingleFilterComponentStateSupport.State initialState;
 
     public PropertyFilterUrlQueryParametersBinder(PropertyFilter<?> filter,
                                                   UrlParamSerializer urlParamSerializer,
@@ -80,6 +81,7 @@ public class PropertyFilterUrlQueryParametersBinder extends AbstractUrlQueryPara
 
     protected void autowireDependencies() {
         filterUrlQueryParametersSupport = applicationContext.getBean(FilterUrlQueryParametersSupport.class);
+        singleFilterComponentStateSupport = applicationContext.getBean(SingleFilterComponentStateSupport.class);
     }
 
     protected void initComponent(PropertyFilter<?> filter) {
@@ -89,7 +91,7 @@ public class PropertyFilterUrlQueryParametersBinder extends AbstractUrlQueryPara
 
     @Override
     public void saveInitialState() {
-        initialState = new InitialState(filter.getOperation(), filter.getValue());
+        initialState = singleFilterComponentStateSupport.capture(filter);
     }
 
     @SuppressWarnings("rawtypes")
@@ -118,8 +120,7 @@ public class PropertyFilterUrlQueryParametersBinder extends AbstractUrlQueryPara
     @SuppressWarnings("unchecked")
     @Override
     public void applyInitialState() {
-        filter.setOperation(initialState.operation);
-        filter.setValue(initialState.value);
+        singleFilterComponentStateSupport.restore(filter, initialState);
     }
 
     @Override
@@ -200,12 +201,4 @@ public class PropertyFilterUrlQueryParametersBinder extends AbstractUrlQueryPara
         return filter;
     }
 
-    /**
-     * A POJO class for storing properties of the {@link PropertyFilter}'s initial state.
-     *
-     * @param operation the value of {@code operation} at initialization
-     * @param value     the value of {@code value} at initialization
-     */
-    protected record InitialState(Operation operation, Object value) {
-    }
 }

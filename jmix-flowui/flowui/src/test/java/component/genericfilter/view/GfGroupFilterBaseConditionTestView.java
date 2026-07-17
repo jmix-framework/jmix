@@ -25,9 +25,9 @@ import io.jmix.flowui.view.*;
  * A standalone {@code GroupFilter} with a base condition set on its data loader in {@code onInit}.
  */
 @Route(value = "gf-group-filter-base-condition-view")
-@ViewController("GfGroupFilterBaseConditionView")
+@ViewController("GfGroupFilterBaseConditionTestView")
 @ViewDescriptor("gf-group-filter-base-condition-view.xml")
-public class GfGroupFilterBaseConditionView extends StandardView {
+public class GfGroupFilterBaseConditionTestView extends StandardView {
 
     @ViewComponent
     public GroupFilter groupFilter;

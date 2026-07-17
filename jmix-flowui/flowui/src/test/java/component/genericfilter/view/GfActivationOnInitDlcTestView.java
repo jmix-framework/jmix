@@ -19,23 +19,30 @@ package component.genericfilter.view;
 import com.vaadin.flow.router.Route;
 import io.jmix.flowui.component.genericfilter.GenericFilter;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter;
+import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.view.*;
+import test_support.entity.sales.Order;
 
 /**
- * Activates a configuration via {@code makeCurrent()} in {@code BeforeShowEvent}, i.e. when the filter
- * is already attached — the synchronous activation path. Switching afterwards must apply only the new
- * configuration's condition (the baseline was captured before, so it stays clean).
+ * Same as {@link GfActivationOnInitNoDlcTestView} but WITH a {@code DataLoadCoordinator}: the configuration
+ * activated via {@code makeCurrent()} in {@code onInit} must yield exactly one filtered load on open.
  */
-@Route(value = "gf-activation-beforeshow-view")
-@ViewController("GfActivationBeforeShowView")
-@ViewDescriptor("gf-activation-nodlc-view.xml")
-public class GfActivationBeforeShowView extends StandardView {
+@Route(value = "gf-activation-oninit-dlc-view")
+@ViewController("GfActivationOnInitDlcTestView")
+@ViewDescriptor("gf-activation-dlc-view.xml")
+public class GfActivationOnInitDlcTestView extends StandardView {
 
     @ViewComponent
     public GenericFilter genericFilter;
+    @ViewComponent
+    private CollectionLoader<Order> ordersDl;
+
+    public int loadCount;
 
     @Subscribe
-    public void onBeforeShow(final BeforeShowEvent event) {
+    public void onInit(final InitEvent event) {
+        ordersDl.addPostLoadListener(e -> loadCount++);
+
         PropertyFilter<String> number1 = genericFilter.filterComponentBuilder()
                 .<String>propertyFilter()
                 .property("number")
@@ -58,9 +65,5 @@ public class GfActivationBeforeShowView extends StandardView {
                 .name("C2")
                 .add(number2, "n2")
                 .buildAndRegister();
-    }
-
-    public void switchTo(String configurationId) {
-        genericFilter.setCurrentConfiguration(genericFilter.getConfiguration(configurationId));
     }
 }

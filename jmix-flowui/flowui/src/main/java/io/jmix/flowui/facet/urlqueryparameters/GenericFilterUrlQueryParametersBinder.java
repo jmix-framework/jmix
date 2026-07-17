@@ -25,6 +25,7 @@ import com.vaadin.flow.shared.Registration;
 import io.jmix.core.AccessManager;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.accesscontext.EntityAttributeContext;
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
@@ -35,6 +36,7 @@ import io.jmix.core.querycondition.PropertyConditionUtils;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.filter.FilterComponent;
+import io.jmix.flowui.component.filter.SingleFilterComponentBase;
 import io.jmix.flowui.component.genericfilter.Configuration;
 import io.jmix.flowui.component.genericfilter.FilterUtils;
 import io.jmix.flowui.component.genericfilter.GenericFilter;
@@ -83,6 +85,7 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
     protected ApplicationContext applicationContext;
     protected UrlParamSerializer urlParamSerializer;
     protected UiComponents uiComponents;
+    protected SingleFilterComponentStateSupport singleFilterComponentStateSupport;
     protected SingleFilterSupport singleFilterSupport;
     protected MetadataTools metadataTools;
     protected FilterUrlQueryParametersSupport filterUrlQueryParametersSupport;
@@ -105,6 +108,7 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
 
     protected void autowireDependencies() {
         uiComponents = applicationContext.getBean(UiComponents.class);
+        singleFilterComponentStateSupport = applicationContext.getBean(SingleFilterComponentStateSupport.class);
         filterUrlQueryParametersSupport = applicationContext.getBean(FilterUrlQueryParametersSupport.class);
         accessManager = applicationContext.getBean(AccessManager.class);
     }
@@ -117,7 +121,61 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
 
     @Override
     public void saveInitialState() {
-        initialState = new InitialState(filter.getCurrentConfiguration());
+        Configuration configuration = filter.getCurrentConfiguration();
+        LogicalFilterComponent<?> rootLogicalFilterComponent = configuration.getRootLogicalFilterComponent();
+        initialState = new InitialState(configuration,
+                captureStructure(configuration, rootLogicalFilterComponent),
+                captureInitialStates(rootLogicalFilterComponent),
+                captureInitialDefaultValues(configuration, rootLogicalFilterComponent));
+    }
+
+    protected List<ComponentNode> captureStructure(Configuration configuration,
+                                                   LogicalFilterComponent<?> logicalFilterComponent) {
+        List<ComponentNode> nodes = new ArrayList<>();
+        for (FilterComponent component : logicalFilterComponent.getOwnFilterComponents()) {
+            List<ComponentNode> children = component instanceof LogicalFilterComponent<?> nestedComponent
+                    ? captureStructure(configuration, nestedComponent)
+                    : List.of();
+            nodes.add(new ComponentNode(component,
+                    configuration.isFilterComponentModified(component),
+                    children));
+        }
+        return nodes;
+    }
+
+    protected Map<String, Object> captureInitialDefaultValues(Configuration configuration,
+                                                              LogicalFilterComponent<?> rootLogicalFilterComponent) {
+        Map<String, Object> defaultValues = new HashMap<>();
+        for (FilterComponent component : rootLogicalFilterComponent.getFilterComponents()) {
+            if (component instanceof SingleFilterComponentBase<?> singleFilterComponent) {
+                String parameterName = singleFilterComponent.getParameterName();
+                if (parameterName != null) {
+                    Object defaultValue = configuration.getFilterComponentDefaultValue(parameterName);
+                    if (defaultValue != null) {
+                        defaultValues.put(parameterName, defaultValue);
+                    }
+                }
+            }
+        }
+        return defaultValues;
+    }
+
+    protected Map<SingleFilterComponentBase<?>, SingleFilterComponentStateSupport.State> captureInitialStates(
+            LogicalFilterComponent<?> rootLogicalFilterComponent) {
+        Map<SingleFilterComponentBase<?>, SingleFilterComponentStateSupport.State> states = new IdentityHashMap<>();
+        collectInitialStates(rootLogicalFilterComponent.getOwnFilterComponents(), states);
+        return states;
+    }
+
+    protected void collectInitialStates(Collection<FilterComponent> components,
+                                        Map<SingleFilterComponentBase<?>, SingleFilterComponentStateSupport.State> states) {
+        for (FilterComponent component : components) {
+            if (component instanceof SingleFilterComponentBase<?> singleFilterComponent) {
+                states.put(singleFilterComponent, singleFilterComponentStateSupport.capture(singleFilterComponent));
+            } else if (component instanceof LogicalFilterComponent<?> logicalFilterComponent) {
+                collectInitialStates(logicalFilterComponent.getOwnFilterComponents(), states);
+            }
+        }
     }
 
     protected void bindDataLoaderListener(GenericFilter filter) {
@@ -205,11 +263,64 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
 
     @Override
     public void applyInitialState() {
-        if (initialState.configuration instanceof RunTimeConfiguration runTimeConfiguration) {
-            runTimeConfiguration.getRootLogicalFilterComponent().removeAll();
+        // The reconciliation performs many add/remove operations; each would otherwise fire a
+        // FilterComponentsChangeEvent and trigger a full updateQueryParameters(). Suppress that
+        // storm by unbinding the listener for the duration and rebinding once afterwards.
+        unbindFilterComponentsChange();
+        try {
+            // Structural restore and default-value re-registration apply only to runtime
+            // configurations; a design-time configuration has no such user/URL-driven changes.
+            if (initialState.configuration instanceof RunTimeConfiguration runTimeConfiguration) {
+                restoreStructure(runTimeConfiguration,
+                        runTimeConfiguration.getRootLogicalFilterComponent(),
+                        initialState.structure);
+                restoreInitialDefaultValues(runTimeConfiguration);
+            }
+            // A value or operation changed via the URL must be reset for any configuration type,
+            // including a design-time configuration, whose captured state is restored here too.
+            restoreInitialStates();
+        } finally {
+            bindFilterComponentsChangeListener(filter);
         }
 
         filter.setCurrentConfiguration(initialState.configuration);
+    }
+
+    protected void restoreStructure(Configuration configuration,
+                                    LogicalFilterComponent<?> logicalFilterComponent,
+                                    List<ComponentNode> structure) {
+        // Reconcile this logical component's own children to their initial set, in the original order:
+        // drop components added after initialization (e.g. from the URL) and restore those the user
+        // removed, recursing into nested groups so the whole configuration tree is rebuilt exactly.
+        // Component instances are preserved, so references handed to application code stay valid.
+        // For the empty configuration the initial structure is empty, so this clears the root.
+        for (FilterComponent component : List.copyOf(logicalFilterComponent.getOwnFilterComponents())) {
+            logicalFilterComponent.remove(component);
+            configuration.setFilterComponentModified(component, false);
+        }
+        for (ComponentNode node : structure) {
+            logicalFilterComponent.add(node.component());
+            configuration.setFilterComponentModified(node.component(), node.modified());
+            if (node.component() instanceof LogicalFilterComponent<?> nestedComponent) {
+                restoreStructure(configuration, nestedComponent, node.children());
+            }
+        }
+    }
+
+    protected void restoreInitialDefaultValues(RunTimeConfiguration configuration) {
+        // The condition remove button and URL-driven operation changes reset registered default
+        // values; re-register the initial ones so a later configuration switch restores them
+        // instead of falling back to null.
+        configuration.resetAllDefaultValues();
+        initialState.defaultValues.forEach(configuration::setFilterComponentDefaultValue);
+    }
+
+    protected void restoreInitialStates() {
+        // The resettable fields (operation + value) and their restore order are defined in
+        // SingleFilterComponentStateSupport. A surviving baseline component can be mutated in place
+        // only by #updatePropertyCondition; keep the captured fields in sync if the reconciliation in
+        // #updateFilterComponent is extended to JpqlFilter/GroupFilter.
+        initialState.states.forEach(singleFilterComponentStateSupport::restore);
     }
 
     @Override
@@ -509,10 +620,38 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
     }
 
     /**
-     * A POJO class for storing configuration of the {@link GenericFilter}'s initial state.
+     * A POJO class for storing the {@link GenericFilter}'s initial state.
      *
-     * @param configuration the value of {@code configuration} at initialization
+     * @param configuration the current configuration at initialization
+     * @param structure     the configuration's initial component tree — each root child in order,
+     *                      recursively including nested groups' own children — that a restore
+     *                      reconstructs (re-adding user-removed components, dropping URL-added ones),
+     *                      carrying each component's {@code modified} flag (controls its remove button)
+     * @param states        the initial state (operation and value) of the baseline single filter
+     *                      components, keyed by identity, used to reset components whose operation or
+     *                      value was changed via the URL
+     * @param defaultValues the initial default values registered for the configuration, keyed by
+     *                      parameter name, re-registered on restore so a later configuration switch
+     *                      keeps them instead of falling back to null
      */
-    protected record InitialState(Configuration configuration) {
+    @Internal
+    protected record InitialState(Configuration configuration,
+                                  List<ComponentNode> structure,
+                                  Map<SingleFilterComponentBase<?>, SingleFilterComponentStateSupport.State> states,
+                                  Map<String, Object> defaultValues) {
+    }
+
+    /**
+     * A node of the captured configuration structure: a filter component, its initial {@code modified}
+     * flag, and, for a nested {@link LogicalFilterComponent}, its own ordered child nodes.
+     *
+     * @param component the filter component
+     * @param modified  the component's {@code modified} flag at initialization
+     * @param children  the ordered child nodes for a nested logical component, empty otherwise
+     */
+    @Internal
+    protected record ComponentNode(FilterComponent component,
+                                   boolean modified,
+                                   List<ComponentNode> children) {
     }
 }

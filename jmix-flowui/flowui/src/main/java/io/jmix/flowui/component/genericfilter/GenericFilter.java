@@ -46,6 +46,7 @@ import io.jmix.flowui.app.filter.condition.AddConditionView;
 import io.jmix.flowui.component.SupportsResponsiveSteps;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.details.JmixDetails;
+import io.jmix.flowui.component.filter.BaseConditionSupport;
 import io.jmix.flowui.component.filter.FilterComponent;
 import io.jmix.flowui.component.filter.SingleFilterComponent;
 import io.jmix.flowui.component.filter.SingleFilterComponentBase;
@@ -836,33 +837,19 @@ public class GenericFilter extends Composite<JmixDetails>
     }
 
     protected void updateDataLoaderCondition() {
-        if (dataLoader != null) {
-            Condition currentCondition = dataLoader.getCondition();
-            // Re-capture the loader's own condition only when it was replaced externally (a different
-            // object than the filter's last output); the filter never adopts its own output.
-            if (!initialDataLoaderConditionInitialized
-                    || (lastConditionSetByFilter != null && currentCondition != lastConditionSetByFilter)) {
-                initialDataLoaderCondition = copy(currentCondition);
-                initialDataLoaderConditionInitialized = true;
-            }
-            LogicalFilterComponent<?> logicalFilterComponent = getCurrentConfiguration().getRootLogicalFilterComponent();
-            LogicalCondition filterCondition = logicalFilterComponent.getQueryCondition();
-
-            LogicalCondition resultCondition;
-            if (initialDataLoaderCondition instanceof LogicalCondition initialLogicalCondition) {
-                resultCondition = ((LogicalCondition) copy(initialLogicalCondition));
-                Objects.requireNonNull(resultCondition).add(filterCondition);
-            } else if (initialDataLoaderCondition != null) {
-                resultCondition = LogicalCondition.and()
-                        .add(initialDataLoaderCondition)
-                        .add(filterCondition);
-            } else {
-                resultCondition = filterCondition;
-            }
-
-            dataLoader.setCondition(resultCondition);
-            lastConditionSetByFilter = resultCondition;
+        if (dataLoader == null) {
+            return;
         }
+        // The base-condition capture heuristic and the base-AND-output composition are shared with
+        // GroupFilter.updateDataLoaderCondition via BaseConditionSupport; keep the two in sync there.
+        LogicalCondition filterCondition = getCurrentConfiguration().getRootLogicalFilterComponent().getQueryCondition();
+        BaseConditionSupport.Result result = BaseConditionSupport.recompose(dataLoader.getCondition(),
+                initialDataLoaderCondition, initialDataLoaderConditionInitialized, lastConditionSetByFilter,
+                filterCondition, this::copy);
+        initialDataLoaderCondition = result.baseCondition();
+        initialDataLoaderConditionInitialized = true;
+        dataLoader.setCondition(result.loaderCondition());
+        lastConditionSetByFilter = result.loaderCondition();
     }
 
     /**

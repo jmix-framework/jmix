@@ -21,6 +21,7 @@ import com.google.common.collect.ImmutableMap;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.router.QueryParameters;
+import io.jmix.core.annotation.Internal;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.grid.DataGridColumn;
@@ -62,6 +63,7 @@ public class DataGridFilterUrlQueryParametersBinder extends AbstractUrlQueryPara
     protected UrlParamSerializer urlParamSerializer;
     protected FilterUrlQueryParametersSupport filterUrlQueryParametersSupport;
     protected RouteSupport routeSupport;
+    protected SingleFilterComponentStateSupport singleFilterComponentStateSupport;
 
     protected List<InitialState> initialStates = new ArrayList<>();
 
@@ -79,6 +81,7 @@ public class DataGridFilterUrlQueryParametersBinder extends AbstractUrlQueryPara
     protected void autowireDependencies() {
         filterUrlQueryParametersSupport = applicationContext.getBean(FilterUrlQueryParametersSupport.class);
         routeSupport = applicationContext.getBean(RouteSupport.class);
+        singleFilterComponentStateSupport = applicationContext.getBean(SingleFilterComponentStateSupport.class);
     }
 
     protected void initComponent(Grid<?> grid) {
@@ -102,8 +105,7 @@ public class DataGridFilterUrlQueryParametersBinder extends AbstractUrlQueryPara
                         new InitialState(
                                 dataGridColumn.getKey(),
                                 Objects.requireNonNull(propertyFilter.getProperty()),
-                                propertyFilter.getOperation(),
-                                propertyFilter.getValue()
+                                singleFilterComponentStateSupport.capture(propertyFilter)
                         )
                 );
             }
@@ -163,8 +165,7 @@ public class DataGridFilterUrlQueryParametersBinder extends AbstractUrlQueryPara
                     && initialState.property.equals(headerFilter.getPropertyFilter().getProperty())) {
                 PropertyFilter propertyFilter = headerFilter.getPropertyFilter();
 
-                propertyFilter.setOperation(initialState.operation);
-                propertyFilter.setValue(initialState.value);
+                singleFilterComponentStateSupport.restore(propertyFilter, initialState.state());
                 headerFilter.apply();
             }
         }
@@ -293,11 +294,11 @@ public class DataGridFilterUrlQueryParametersBinder extends AbstractUrlQueryPara
     /**
      * A POJO class for storing properties of the {@link DataGridHeaderFilter}'s initial state.
      *
-     * @param key       the value of {@code key} of the filter
-     * @param property  the value of {@code property} of the filter
-     * @param operation the value of {@code operation} at initialization
-     * @param value     the value of {@code value} at initialization
+     * @param key      the value of {@code key} of the filter
+     * @param property the value of {@code property} of the filter
+     * @param state    the captured runtime-editable state (operation and value) at initialization
      */
-    protected record InitialState(String key, String property, PropertyFilter.Operation operation, Object value) {
+    @Internal
+    protected record InitialState(String key, String property, SingleFilterComponentStateSupport.State state) {
     }
 }

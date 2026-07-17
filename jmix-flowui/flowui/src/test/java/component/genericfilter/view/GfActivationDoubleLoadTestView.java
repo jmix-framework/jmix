@@ -17,50 +17,58 @@
 package component.genericfilter.view;
 
 import com.vaadin.flow.router.Route;
-import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.flowui.component.genericfilter.GenericFilter;
 import io.jmix.flowui.component.genericfilter.configuration.RunTimeConfiguration;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter;
+import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.view.*;
+import test_support.entity.sales.Order;
 
 /**
- * Sets a base condition, activates a configuration, then revises the base condition, all in
- * {@code onInit}.
+ * No {@code DataLoadCoordinator}. A configuration with a value is made current synchronously in
+ * {@code onInit} (so {@code applyFilterIfNeeded} loads it once), and a second configuration is
+ * activated via the builder's deferred {@code makeCurrent()}. The deferred activation must NOT add a
+ * second load — exactly one load is expected on open.
  */
-@Route(value = "gf-base-revise-view")
-@ViewController("GfBaseConditionReviseView")
+@Route(value = "gf-activation-double-load-view")
+@ViewController("GfActivationDoubleLoadTestView")
 @ViewDescriptor("gf-activation-nodlc-view.xml")
-public class GfBaseConditionReviseView extends StandardView {
+public class GfActivationDoubleLoadTestView extends StandardView {
 
     @ViewComponent
     public GenericFilter genericFilter;
+    @ViewComponent
+    private CollectionLoader<Order> ordersDl;
+
+    public int loadCount;
 
     @Subscribe
     public void onInit(final InitEvent event) {
-        PropertyFilter<String> number1 = genericFilter.filterComponentBuilder()
+        ordersDl.addPostLoadListener(e -> loadCount++);
+
+        PropertyFilter<String> declValue = genericFilter.filterComponentBuilder()
                 .<String>propertyFilter()
                 .property("number")
                 .operation(PropertyFilter.Operation.EQUAL)
                 .build();
-        RunTimeConfiguration c1 = genericFilter.runtimeConfigurationBuilder()
-                .id("c1")
-                .name("C1")
-                .add(number1, "n1")
+        RunTimeConfiguration declConfiguration = genericFilter.runtimeConfigurationBuilder()
+                .id("decl")
+                .name("Declarative-like default")
+                .add(declValue, "d1")
                 .buildAndRegister();
+        // Make it current synchronously, emulating a default configuration that applyFilterIfNeeded loads.
+        genericFilter.setCurrentConfiguration(declConfiguration);
 
-        PropertyFilter<String> number2 = genericFilter.filterComponentBuilder()
+        PropertyFilter<String> runtimeValue = genericFilter.filterComponentBuilder()
                 .<String>propertyFilter()
                 .property("number")
                 .operation(PropertyFilter.Operation.EQUAL)
                 .build();
         genericFilter.runtimeConfigurationBuilder()
-                .id("c2")
-                .name("C2")
-                .add(number2, "n2")
+                .id("rt")
+                .name("Runtime")
+                .add(runtimeValue, "n1")
+                .makeCurrent()
                 .buildAndRegister();
-
-        genericFilter.getDataLoader().setCondition(PropertyCondition.greater("amount", 0));
-        genericFilter.setCurrentConfiguration(c1);
-        genericFilter.getDataLoader().setCondition(PropertyCondition.greater("total", 0));
     }
 }

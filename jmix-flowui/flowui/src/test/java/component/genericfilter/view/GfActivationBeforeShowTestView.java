@@ -22,18 +22,20 @@ import io.jmix.flowui.component.propertyfilter.PropertyFilter;
 import io.jmix.flowui.view.*;
 
 /**
- * Builds a configuration but does not activate it in {@code onInit}.
+ * Activates a configuration via {@code makeCurrent()} in {@code BeforeShowEvent}, i.e. when the filter
+ * is already attached — the synchronous activation path. Switching afterwards must apply only the new
+ * configuration's condition (the baseline was captured before, so it stays clean).
  */
-@Route(value = "gf-configs-no-activation-view")
-@ViewController("GfConfigsNoActivationView")
+@Route(value = "gf-activation-beforeshow-view")
+@ViewController("GfActivationBeforeShowTestView")
 @ViewDescriptor("gf-activation-nodlc-view.xml")
-public class GfConfigsNoActivationView extends StandardView {
+public class GfActivationBeforeShowTestView extends StandardView {
 
     @ViewComponent
     public GenericFilter genericFilter;
 
     @Subscribe
-    public void onInit(final InitEvent event) {
+    public void onBeforeShow(final BeforeShowEvent event) {
         PropertyFilter<String> number1 = genericFilter.filterComponentBuilder()
                 .<String>propertyFilter()
                 .property("number")
@@ -43,6 +45,22 @@ public class GfConfigsNoActivationView extends StandardView {
                 .id("c1")
                 .name("C1")
                 .add(number1, "n1")
+                .makeCurrent()
                 .buildAndRegister();
+
+        PropertyFilter<String> number2 = genericFilter.filterComponentBuilder()
+                .<String>propertyFilter()
+                .property("number")
+                .operation(PropertyFilter.Operation.EQUAL)
+                .build();
+        genericFilter.runtimeConfigurationBuilder()
+                .id("c2")
+                .name("C2")
+                .add(number2, "n2")
+                .buildAndRegister();
+    }
+
+    public void switchTo(String configurationId) {
+        genericFilter.setCurrentConfiguration(genericFilter.getConfiguration(configurationId));
     }
 }

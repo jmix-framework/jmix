@@ -93,7 +93,9 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
 
     protected Registration filterComponentsChangeRegistration;
 
-    protected InitialState initialState;
+    protected final List<InitialState> initialStates = new ArrayList<>();
+
+    protected Configuration entryConfiguration;
 
     public GenericFilterUrlQueryParametersBinder(GenericFilter filter,
                                                  UrlParamSerializer urlParamSerializer,
@@ -121,12 +123,25 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
 
     @Override
     public void saveInitialState() {
-        Configuration configuration = filter.getCurrentConfiguration();
-        LogicalFilterComponent<?> rootLogicalFilterComponent = configuration.getRootLogicalFilterComponent();
-        initialState = new InitialState(configuration,
-                captureStructure(configuration, rootLogicalFilterComponent),
-                captureInitialStates(rootLogicalFilterComponent),
-                captureInitialDefaultValues(configuration, rootLogicalFilterComponent));
+        // Snapshot every configuration, not only the entry one, so a clean re-navigation can restore
+        // each configuration the user or the URL touched during the session (not just the current one).
+        initialStates.clear();
+        entryConfiguration = filter.getCurrentConfiguration();
+        for (Configuration configuration : collectConfigurations()) {
+            LogicalFilterComponent<?> rootLogicalFilterComponent = configuration.getRootLogicalFilterComponent();
+            initialStates.add(new InitialState(configuration,
+                    captureStructure(configuration, rootLogicalFilterComponent),
+                    captureInitialStates(rootLogicalFilterComponent),
+                    captureInitialDefaultValues(configuration, rootLogicalFilterComponent)));
+        }
+    }
+
+    protected List<Configuration> collectConfigurations() {
+        List<Configuration> configurations = new ArrayList<>(filter.getConfigurations());
+        if (!configurations.contains(filter.getEmptyConfiguration())) {
+            configurations.add(filter.getEmptyConfiguration());
+        }
+        return configurations;
     }
 
     protected List<ComponentNode> captureStructure(Configuration configuration,
@@ -268,22 +283,26 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
         // storm by unbinding the listener for the duration and rebinding once afterwards.
         unbindFilterComponentsChange();
         try {
-            // Structural restore and default-value re-registration apply only to runtime
-            // configurations; a design-time configuration has no such user/URL-driven changes.
-            if (initialState.configuration instanceof RunTimeConfiguration runTimeConfiguration) {
-                restoreStructure(runTimeConfiguration,
-                        runTimeConfiguration.getRootLogicalFilterComponent(),
-                        initialState.structure);
-                restoreInitialDefaultValues(runTimeConfiguration);
+            // Restore every snapshotted configuration, not only the entry one, so changes made to
+            // other configurations during the session are reverted as well.
+            for (InitialState state : initialStates) {
+                // Structural restore and default-value re-registration apply only to runtime
+                // configurations; a design-time configuration has no such user/URL-driven changes.
+                if (state.configuration instanceof RunTimeConfiguration runTimeConfiguration) {
+                    restoreStructure(runTimeConfiguration,
+                            runTimeConfiguration.getRootLogicalFilterComponent(),
+                            state.structure);
+                    restoreInitialDefaultValues(runTimeConfiguration, state);
+                }
+                // A value or operation changed via the URL must be reset for any configuration type,
+                // including a design-time configuration, whose captured state is restored here too.
+                restoreInitialStates(state);
             }
-            // A value or operation changed via the URL must be reset for any configuration type,
-            // including a design-time configuration, whose captured state is restored here too.
-            restoreInitialStates();
         } finally {
             bindFilterComponentsChangeListener(filter);
         }
 
-        filter.setCurrentConfiguration(initialState.configuration);
+        filter.setCurrentConfiguration(entryConfiguration);
     }
 
     protected void restoreStructure(Configuration configuration,
@@ -307,20 +326,20 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
         }
     }
 
-    protected void restoreInitialDefaultValues(RunTimeConfiguration configuration) {
+    protected void restoreInitialDefaultValues(RunTimeConfiguration configuration, InitialState state) {
         // The condition remove button and URL-driven operation changes reset registered default
         // values; re-register the initial ones so a later configuration switch restores them
         // instead of falling back to null.
         configuration.resetAllDefaultValues();
-        initialState.defaultValues.forEach(configuration::setFilterComponentDefaultValue);
+        state.defaultValues.forEach(configuration::setFilterComponentDefaultValue);
     }
 
-    protected void restoreInitialStates() {
+    protected void restoreInitialStates(InitialState state) {
         // The resettable fields (operation + value) and their restore order are defined in
         // SingleFilterComponentStateSupport. A surviving baseline component can be mutated in place
         // only by #updatePropertyCondition; keep the captured fields in sync if the reconciliation in
         // #updateFilterComponent is extended to JpqlFilter/GroupFilter.
-        initialState.states.forEach(singleFilterComponentStateSupport::restore);
+        state.states.forEach(singleFilterComponentStateSupport::restore);
     }
 
     @Override

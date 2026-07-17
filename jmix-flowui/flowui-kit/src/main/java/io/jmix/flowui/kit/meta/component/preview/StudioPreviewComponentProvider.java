@@ -19,13 +19,12 @@ package io.jmix.flowui.kit.meta.component.preview;
 import java.io.StringReader;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
-import java.util.Objects;
 import java.util.Optional;
+import java.util.ServiceConfigurationError;
 import java.util.ServiceLoader;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Predicate;
@@ -65,11 +64,11 @@ final class StudioPreviewComponentProvider {
 
     private static final Set<StudioPreviewComponentLoader> loaders = new LinkedHashSet<>();
     private static final Lock loaderInitializationLock = new ReentrantLock();
-    private static final Condition lockCondition = loaderInitializationLock.newCondition();
+    private static boolean loadersInitialized;
 
     private static final Set<StudioPreviewComponentProcessor> processors = new LinkedHashSet<>();
     private static final Lock processorInitializationLock = new ReentrantLock();
-    private static final Condition processorLockCondition = processorInitializationLock.newCondition();
+    private static boolean processorsInitialized;
 
     /**
      * Used in Studio.
@@ -262,73 +261,49 @@ final class StudioPreviewComponentProvider {
     }
 
     private static Collection<StudioPreviewComponentLoader> getLoaderServices() {
-        if (loaders.isEmpty()) {
-            initLoaderServices();
-        }
-        return loaders;
-    }
-
-    private static void initLoaderServices() {
-        if (loaderInitializationLock.tryLock()) {
-            try {
-                loaders.clear();
-                ClassLoader classLoader = StudioPreviewComponentProvider.class.getClassLoader();
-                ServiceLoader.load(StudioPreviewComponentLoader.class, classLoader).stream()
-                        .map(StudioPreviewComponentProvider::instantiateSafely)
-                        .filter(Objects::nonNull)
-                        .forEach(loaders::add);
+        loaderInitializationLock.lock();
+        try {
+            if (!loadersInitialized) {
+                addServicesResiliently(ServiceLoader.load(StudioPreviewComponentLoader.class,
+                        StudioPreviewComponentProvider.class.getClassLoader()).iterator(), loaders);
                 loaders.add(new StudioStandardComponentsPreviewLoader());
-            } finally {
-                lockCondition.signalAll();
-                loaderInitializationLock.unlock();
+                loadersInitialized = true;
             }
-        } else {
-            try {
-                lockCondition.await(5, TimeUnit.SECONDS);
-            } catch (InterruptedException e) {
-                console("Exception when waiting loaders initialization", e);
-            }
+            return loaders;
+        } finally {
+            loaderInitializationLock.unlock();
         }
     }
 
     private static Collection<StudioPreviewComponentProcessor> getProcessorServices() {
-        if (processors.isEmpty()) {
-            initProcessorServices();
-        }
-        return processors;
-    }
-
-    private static void initProcessorServices() {
-        if (processorInitializationLock.tryLock()) {
-            try {
-                processors.clear();
-                ClassLoader classLoader = StudioPreviewComponentProvider.class.getClassLoader();
-                ServiceLoader.load(StudioPreviewComponentProcessor.class, classLoader).stream()
-                        .map(StudioPreviewComponentProvider::instantiateSafely)
-                        .filter(Objects::nonNull)
-                        .forEach(processors::add);
-            } finally {
-                processorLockCondition.signalAll();
-                processorInitializationLock.unlock();
-            }
-        } else {
-            try {
-                processorLockCondition.await(5, TimeUnit.SECONDS);
-            } catch (InterruptedException e) {
-                console("Exception when waiting processors initialization", e);
-            }
-        }
-    }
-
-    // A preview loader/processor from an outdated or incompatible add-on on the preview classloader
-    // must not abort the whole preview; skip it (logged) and keep the rest.
-    @Nullable
-    static <T> T instantiateSafely(ServiceLoader.Provider<T> provider) {
+        processorInitializationLock.lock();
         try {
-            return provider.get();
-        } catch (Throwable t) {
-            console("Skipping preview SPI service that could not be instantiated", t);
-            return null;
+            if (!processorsInitialized) {
+                addServicesResiliently(ServiceLoader.load(StudioPreviewComponentProcessor.class,
+                        StudioPreviewComponentProvider.class.getClassLoader()).iterator(), processors);
+                processorsInitialized = true;
+            }
+            return processors;
+        } finally {
+            processorInitializationLock.unlock();
+        }
+    }
+
+    // A loader/processor from an outdated or incompatible add-on on the preview classloader must not
+    // abort the whole preview. ServiceLoader throws ServiceConfigurationError (wrapping e.g.
+    // NoClassDefFoundError) when a service can't be loaded or instantiated - during either advancement
+    // (hasNext) or instantiation (next); log it, skip it, and keep going (the iterator makes a best
+    // effort to reach the next provider).
+    static <T> void addServicesResiliently(Iterator<T> serviceIterator, Set<? super T> target) {
+        while (true) {
+            try {
+                if (!serviceIterator.hasNext()) {
+                    break;
+                }
+                target.add(serviceIterator.next());
+            } catch (ServiceConfigurationError e) {
+                console("Skipping preview SPI service that could not be loaded", e);
+            }
         }
     }
 

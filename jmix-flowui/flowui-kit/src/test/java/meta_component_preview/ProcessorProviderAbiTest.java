@@ -33,6 +33,7 @@ import org.junit.jupiter.api.Test;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -81,6 +82,36 @@ class ProcessorProviderAbiTest {
     void testOriginalHintLessOverloadsKeepTheirExactSignature() throws Exception {
         assertEquals(3, providerMethod("addPreviewChild", 3).getParameterCount());
         assertEquals(2, providerMethod("removePreviewChild", 2).getParameterCount());
+    }
+
+    /**
+     * Studio resolves these statics by name AND exact parameter types
+     * ({@code FlowReflectionUtils.findMethod}), so a parameter-type drift silently breaks Studio
+     * while every count-based pin above stays green. Pin the exact types.
+     */
+    @Test
+    void testFrozenStaticsKeepExactParameterTypes() throws Exception {
+        Class<?> component = Class.forName("com.vaadin.flow.component.Component");
+        Class<?> context = Class.forName(PROVIDER + "$ComponentCreationContext");
+
+        assertParameterTypes(providerMethod("addPreviewChild", 3), component, component, int.class);
+        assertParameterTypes(providerMethod("addPreviewChild", 4), component, component, int.class, String.class);
+        assertParameterTypes(providerMethod("removePreviewChild", 2), component, component);
+        assertParameterTypes(providerMethod("removePreviewChild", 3), component, component, String.class);
+        assertParameterTypes(providerMethod("addPreviewAction", 3), component, Object.class, int.class);
+        assertParameterTypes(providerMethod("removePreviewAction", 2), component, Object.class);
+        assertParameterTypes(providerMethod("addPreviewTab", 4), component, component, component, int.class);
+        assertParameterTypes(providerMethod("removePreviewTab", 2), component, component);
+        assertParameterTypes(providerMethod("addPreviewColumn", 3), component, String.class, int.class);
+        assertParameterTypes(providerMethod("removePreviewColumn", 2), component, String.class);
+        assertParameterTypes(providerMethod("createComponent", 1), context);
+        assertParameterTypes(providerMethod("canCreateComponent", 2), String.class, String.class);
+        assertParameterTypes(providerMethod("buildsFullPreviewContent", 0));
+    }
+
+    private static void assertParameterTypes(Method method, Class<?>... expected) {
+        assertArrayEquals(expected, method.getParameterTypes(),
+                method.getName() + " parameter types drifted from the frozen ABI Studio resolves by");
     }
 
     @Test

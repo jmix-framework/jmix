@@ -197,7 +197,9 @@ public class StudioFlowuiComponentsPreviewLoader implements StudioPreviewCompone
                 return svgIcon;
             },
             StudioXmlElements.FONT_ICON, element -> new FontIcon(),
-            StudioXmlElements.MARKDOWN, element -> new Markdown(inlineContent(element).orElse("")),
+            StudioXmlElements.MARKDOWN, element -> new Markdown(inlineContent(element)
+                    .or(() -> BaseLoaderSupport.loadString(element, StudioXmlElements.CONTENT))
+                    .orElse("")),
             StudioXmlElements.IMAGE, element -> {
                 Image image = new Image();
                 BaseLoaderSupport.loadString(element, "src")

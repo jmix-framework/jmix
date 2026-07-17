@@ -68,8 +68,8 @@ import static io.jmix.flowui.kit.component.usermenu.JmixUserMenu.BUTTON_CONTENT_
  *     {@code <items>} per the layout XSD, so nesting only applies to {@code textItem}.</li>
  *     <li>If there are no renderable items (e.g. {@code <items>} absent, or present but only
  *     with unrenderable children like {@code componentItem}), the loader falls back to 5
- *     hardcoded placeholder items when {@code environment} is real; with {@code NOOP} (old
- *     Studio) nothing extra is built, as old Studio adds its own compat placeholder.</li>
+ *     hardcoded placeholder items, unconditionally (no Studio version builds userMenu items,
+ *     so there is no double-add to guard against).</li>
  * </ul>
  */
 // TODO: minimal support for generic component preview?
@@ -128,9 +128,10 @@ public final class StudioStandardComponentsPreviewLoader implements StudioPrevie
         Element itemsElement = userMenuElement.element(StudioXmlElements.ITEMS);
         if (hasRenderableItem(itemsElement)) {
             loadItems(userMenu, itemsElement, viewElement, environment, true);
-        } else if (environment != StudioPreviewEnvironment.NOOP) {
-            // No renderable items: mirrors Studio's old postInitHasMenuItems placeholder so
-            // Studio itself can stay silent. Old Studio (NOOP) still adds its own, so skipped then.
+        } else {
+            // No renderable items: show placeholder items. Built unconditionally (NOT env-gated):
+            // JmixUserMenu is a Composite<JmixMenuBar>, not HasMenuItemsEnhanced, so no Studio
+            // version ever injects userMenu items - this loader is the only builder, no double-add.
             for (int i = 0; i < 5; i++) {
                 userMenu.addTextItem("menuItem" + i, "Menu item " + i);
             }

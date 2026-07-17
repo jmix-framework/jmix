@@ -18,43 +18,74 @@ package io.jmix.flowui.kit.meta.component.preview;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.ServiceLoader;
-import java.util.function.Supplier;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.ServiceConfigurationError;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 class StudioPreviewComponentProviderResilienceTest {
 
+    // A step that makes the fake iterator's next() throw, mirroring the timesheets failure:
+    // an outdated add-on loader links against a class absent from the spring-free preview
+    // classloader -> ServiceLoader wraps the NoClassDefFoundError in ServiceConfigurationError.
+    private static final Object FAIL = new Object();
+
     @Test
-    void returnsValueWhenProviderSucceeds() {
-        assertEquals("ok", StudioPreviewComponentProvider.instantiateSafely(provider(() -> "ok")));
+    void skipsServicesThatFailToLoadAndKeepsTheRest() {
+        Set<String> target = new LinkedHashSet<>();
+
+        StudioPreviewComponentProvider.addServicesResiliently(steps("a", FAIL, "b"), target);
+
+        assertEquals(List.of("a", "b"), new ArrayList<>(target));
     }
 
     @Test
-    void skipsProviderThrowingLinkageError() {
-        // Mirrors the timesheets failure: an outdated add-on loader links against a class absent
-        // from the spring-free preview classloader -> NoClassDefFoundError on instantiation.
-        assertNull(StudioPreviewComponentProvider.instantiateSafely(
-                provider(() -> { throw new NoClassDefFoundError("io/jmix/flowui/component/ComponentContainer"); })));
+    void addsAllServicesWhenNoneFail() {
+        Set<String> target = new LinkedHashSet<>();
+
+        StudioPreviewComponentProvider.addServicesResiliently(steps("a", "b"), target);
+
+        assertEquals(List.of("a", "b"), new ArrayList<>(target));
     }
 
     @Test
-    void skipsProviderThrowingRuntimeException() {
-        assertNull(StudioPreviewComponentProvider.instantiateSafely(
-                provider(() -> { throw new RuntimeException("boom"); })));
+    void yieldsEmptyWhenEveryServiceFails() {
+        Set<String> target = new LinkedHashSet<>();
+
+        StudioPreviewComponentProvider.addServicesResiliently(steps(FAIL, FAIL), target);
+
+        assertEquals(List.of(), new ArrayList<>(target));
     }
 
-    private static ServiceLoader.Provider<String> provider(Supplier<String> get) {
-        return new ServiceLoader.Provider<>() {
+    /**
+     * Fake {@link Iterator} yielding each step; a {@link #FAIL} step makes {@code next()} throw
+     * {@link ServiceConfigurationError} (and is consumed, so iteration continues) - the best-effort
+     * recovery contract {@code addServicesResiliently} relies on.
+     */
+    private static Iterator<String> steps(Object... steps) {
+        return new Iterator<>() {
+            private int i = 0;
+
             @Override
-            public Class<? extends String> type() {
-                return String.class;
+            public boolean hasNext() {
+                return i < steps.length;
             }
 
             @Override
-            public String get() {
-                return get.get();
+            public String next() {
+                if (i >= steps.length) {
+                    throw new NoSuchElementException();
+                }
+                Object step = steps[i++];
+                if (step == FAIL) {
+                    throw new ServiceConfigurationError("boom", new NoClassDefFoundError("Missing"));
+                }
+                return (String) step;
             }
         };
     }

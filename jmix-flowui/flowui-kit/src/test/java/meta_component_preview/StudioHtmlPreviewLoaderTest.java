@@ -100,4 +100,26 @@ class StudioHtmlPreviewLoaderTest {
         assertNotNull(component);
         assertEquals("span", component.getElement().getTag());
     }
+
+    @Test
+    void testHtmlElementWithFileAttributeDeclinesSoStudioResolvesTheFile() {
+        BaseElement element = element("html");
+        element.addAttribute("file", "content/page.html");
+
+        // A spring-free kit loader can't read the project file: decline (null) so Studio's fallback resolves it.
+        assertNull(loader.load(element, element("view")));
+    }
+
+    @Test
+    void testHtmlElementWithInlineContentAndFileUsesInlineContent() {
+        BaseElement element = element("html");
+        element.addAttribute("file", "content/page.html");
+        BaseElement content = new BaseElement("content", VIEW_NS);
+        content.setText("<b>bold</b>");
+        element.add(content);
+
+        Component component = loader.load(element, element("view"));
+        assertNotNull(component);
+        assertEquals("b", component.getElement().getTag());
+    }
 }

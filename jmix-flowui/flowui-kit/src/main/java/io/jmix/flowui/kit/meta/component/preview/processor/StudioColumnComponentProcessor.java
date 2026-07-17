@@ -61,13 +61,12 @@ public class StudioColumnComponentProcessor implements StudioPreviewColumnProces
 
     @Override
     public boolean removeColumn(Component parent, String key) {
-        if (!(parent instanceof Grid<?> grid)) {
+        // Report handled only when a matching column was actually removed; otherwise return false
+        // so Studio falls back to its own removal (removeColumnByKey also throws for an unknown key).
+        if (!(parent instanceof Grid<?> grid) || grid.getColumnByKey(key) == null) {
             return false;
         }
-        // removeColumnByKey throws for an unknown key: guard so this stays idempotent.
-        if (grid.getColumnByKey(key) != null) {
-            grid.removeColumnByKey(key);
-        }
+        grid.removeColumnByKey(key);
         return true;
     }
 }

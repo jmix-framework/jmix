@@ -57,15 +57,15 @@ class StudioColumnComponentProcessorTest {
     }
 
     @Test
-    void testRemoveColumnRemovesByKeyAndIsIdempotentWhenAlreadyAbsent() {
+    void testRemoveColumnRemovesByKeyAndReportsUnhandledWhenAbsent() {
         JmixGrid<Object> grid = new JmixGrid<>();
         grid.addColumn(item -> "").setKey("name");
 
         assertTrue(processor.removeColumn(grid, "name"));
         assertNull(grid.getColumnByKey("name"));
 
-        // calling again for an already-removed key must not throw
-        assertTrue(processor.removeColumn(grid, "name"));
+        // No column matches now: must not throw, and must report false so Studio's fallback runs.
+        assertFalse(processor.removeColumn(grid, "name"));
     }
 
     @Test

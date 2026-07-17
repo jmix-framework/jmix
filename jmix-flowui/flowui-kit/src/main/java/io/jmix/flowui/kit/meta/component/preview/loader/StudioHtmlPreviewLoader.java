@@ -85,20 +85,30 @@ public class StudioHtmlPreviewLoader implements StudioPreviewComponentLoader {
         Component component = StudioXmlElements.HTML.equals(componentElement.getName())
                 ? loadHtml(componentElement)
                 : FACTORIES.get(componentElement.getName()).get();
+        if (component == null) {
+            return null;
+        }
         loadComponentBaseAttributes(component, componentElement);
         return component;
     }
 
+    @Nullable
     protected Component loadHtml(Element element) {
         String content = element.elements().stream()
                 .filter(child -> StudioXmlElements.CONTENT.equals(child.getName()))
                 .findFirst()
                 .map(Element::getText)
                 .or(() -> loadString(element, "content"))
-                .orElse(DEFAULT_HTML_CONTENT);
-        if (!content.trim().startsWith("<")) {
-            content = DEFAULT_HTML_CONTENT;
+                .filter(c -> c.trim().startsWith("<"))
+                .orElse(null);
+        if (content != null) {
+            return new Html(content.trim());
         }
-        return new Html(content.trim());
+        // No usable inline content. A `file` attribute points at a project resource that a
+        // spring-free kit loader can't read - decline so Studio's PSI-based fallback resolves it.
+        if (loadString(element, "file").isPresent()) {
+            return null;
+        }
+        return new Html(DEFAULT_HTML_CONTENT);
     }
 }

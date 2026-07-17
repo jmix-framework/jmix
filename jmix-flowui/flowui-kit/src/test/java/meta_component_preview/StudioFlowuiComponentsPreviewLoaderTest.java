@@ -20,6 +20,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.listbox.ListBox;
+import com.vaadin.flow.component.markdown.Markdown;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import io.jmix.flowui.kit.component.button.JmixButton;
@@ -149,5 +150,15 @@ class StudioFlowuiComponentsPreviewLoaderTest {
     void testPlainComponentUnaffectedByPlaceholderFill() {
         Component component = loader.load(element("textField"), element("view"), new FakeEnv());
         assertInstanceOf(TextField.class, component);
+    }
+
+    @Test
+    void testMarkdownReadsContentAttribute() {
+        BaseElement element = element("markdown");
+        element.addAttribute("content", "# Title");
+
+        Component component = loader.load(element, element("view"));
+        assertInstanceOf(Markdown.class, component);
+        assertEquals("# Title", ((Markdown) component).getContent());
     }
 }

@@ -121,11 +121,12 @@ class StudioStandardComponentsPreviewLoaderTest {
     }
 
     @Test
-    void testUserMenuWithoutItemsElementBuildsNoItemsWithNoopEnv() {
-        // 2-arg load: routes through StudioPreviewEnvironment.NOOP.
+    void testUserMenuWithoutItemsElementUsesPlaceholderItemsWithNoopEnv() {
+        // 2-arg load routes through NOOP. userMenu placeholders are built unconditionally (no
+        // Studio version injects userMenu items), so NOOP still yields the 5 placeholders.
         Component component = loader.load(element("userMenu"), element("view"));
 
-        assertTrue(((JmixUserMenu<?>) component).getItems().isEmpty());
+        assertEquals(5, ((JmixUserMenu<?>) component).getItems().size());
     }
 
     @Test

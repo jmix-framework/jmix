@@ -815,7 +815,9 @@ interface StudioElements {
 
                     "io.jmix.flowui.kit.component.button.JmixButton",
                     "io.jmix.flowui.kit.component.combobutton.ComboButton",
-                    "io.jmix.flowui.kit.component.dropdownbutton.DropdownButton"},
+                    "io.jmix.flowui.kit.component.dropdownbutton.DropdownButton",
+
+                    "com.vaadin.flow.component.badge.Badge"},
             unlimitedCount = false,
             isInjectable = false,
             injectionIdentifier = StudioComponent.EMPTY_INJECTION_IDENTIFIER,

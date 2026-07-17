@@ -19,6 +19,7 @@ package io.jmix.flowui.kit.meta.component;
 import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.avatar.Avatar;
+import com.vaadin.flow.component.badge.Badge;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.checkbox.CheckboxGroup;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -144,6 +145,16 @@ interface StudioComponents {
                     StudioPropertyGroups.FontIconDefaultProperties.class
             })
     FontIcon fontIcon();
+
+    @StudioComponent(
+            name = "Badge",
+            classFqn = "com.vaadin.flow.component.badge.Badge",
+            category = "Components",
+            xmlElement = StudioXmlElements.BADGE,
+            icon = "io/jmix/flowui/kit/meta/icon/component/badge.svg",
+            documentationLink = "%VERSION%/flow-ui/vc/components/badge.html",
+            propertyGroups = StudioPropertyGroups.BadgeComponent.class)
+    Badge badge();
 
     @StudioComponent(
             name = "BigDecimalField",

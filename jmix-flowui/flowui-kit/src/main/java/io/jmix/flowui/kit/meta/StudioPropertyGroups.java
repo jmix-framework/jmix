@@ -2978,6 +2978,27 @@ public final class StudioPropertyGroups {
     @StudioPropertyGroup(
             properties = {
                     @StudioProperty(
+                            xmlAttribute = StudioXmlAttributes.NUMBER,
+                            type = StudioPropertyType.INTEGER,
+                            category = StudioProperty.Category.GENERAL),
+                    @StudioProperty(
+                            xmlAttribute = StudioXmlAttributes.ROLE,
+                            type = StudioPropertyType.STRING,
+                            category = StudioProperty.Category.GENERAL),
+                    @StudioProperty(
+                            xmlAttribute = StudioXmlAttributes.THEME_NAMES,
+                            type = StudioPropertyType.VALUES_LIST,
+                            category = StudioProperty.Category.LOOK_AND_FEEL,
+                            options = {"contrast", "dot", "error", "filled", "icon-only", "number-only", "success",
+                                    "warning", "small"})
+            }
+    )
+    public interface BadgeComponent extends BaseSizedComponentWithClassNames, TextAttributes, Icon {
+    }
+
+    @StudioPropertyGroup(
+            properties = {
+                    @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.DISABLE_ON_CLICK,
                             type = StudioPropertyType.BOOLEAN,
                             category = StudioProperty.Category.LOOK_AND_FEEL,

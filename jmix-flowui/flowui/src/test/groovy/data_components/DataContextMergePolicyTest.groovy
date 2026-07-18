@@ -618,6 +618,45 @@ class DataContextMergePolicyTest extends DataContextSpec {
         dataManager.remove(param, line, order, customer)
     }
 
+    def "a deep composition edit marks the intermediate owner modified in the parent (#4907 half ii)"() {
+        given: "a parent context holding an order whose lines are loaded WITHOUT their params"
+        DataContext parent = factory.createDataContext()
+        Customer customer = dataManager.save(new Customer(name: 'c1', address: new Address()))
+        Order order = dataManager.save(new Order(number: 'o1', customer: customer))
+        OrderLine line = dataManager.save(new OrderLine(quantity: 1, order: order))
+        OrderLineParam param = dataManager.save(new OrderLineParam(name: 'p1', value: 'v1', orderLine: line))
+
+        def shallowPlan = fetchPlans.builder(Order)
+                .addFetchPlan('_local')
+                .add('customer', '_local')
+                .add('orderLines', '_local')
+                .build()
+        Order parentOrder = parent.merge(dataManager.load(Id.of(order)).fetchPlan(shallowPlan).one())
+        OrderLine parentLine = parentOrder.orderLines[0]
+
+        when: "a child edits ONLY the nested param (not the line, not the order) and saves back"
+        def deepPlan = fetchPlans.builder(Order)
+                .addFetchPlan('_local')
+                .add('customer', '_local')
+                .add('orderLines', { b -> b
+                        .addFetchPlan('_local')
+                        .add('order', '_local')
+                        .add('params', { p -> p.addFetchPlan('_local').add('orderLine', '_local') }) })
+                .build()
+        DataContext child = factory.createDataContext()
+        child.setParent(parent)
+        Order childOrder = child.merge(dataManager.load(Id.of(order)).fetchPlan(deepPlan).one())
+        childOrder.orderLines[0].params[0].value = 'v2'
+        child.save()
+
+        then: "the intermediate owner (the line) is marked modified in the parent, and so is the root order"
+        parent.isModified(parentLine)
+        parent.isModified(parentOrder)
+
+        cleanup:
+        dataManager.remove(param, line, order, customer)
+    }
+
     def "merge bidirectional graph with two java instances of same id does not duplicate collection (#5331)"() {
         given: "two java instances of the same user id, joined by a bidirectional user <-> userRoles graph"
         DataContext context = factory.createDataContext()

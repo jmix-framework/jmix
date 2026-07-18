@@ -84,6 +84,11 @@ public class DataContextImpl implements DataContextInternal {
 
     protected Set<Object> manuallyModified = new HashSet<>();
 
+    // Composition owners marked modified only to protect an intermediate editor from a stale reload:
+    // the reopen gate reads isModified, but these owners have no change of their own
+    // and must NOT be persisted, so they are kept out of modifiedInstances and the save set.
+    protected Set<Object> compositionModifiedOwners = new HashSet<>();
+
     // Non-empty only inside mergeFromChild: attributes of the merge root whose incoming (child)
     // values must overwrite this context's own unsaved edits. Scoped to the single merge call
     // via try/finally; safe as a plain field because a context never re-enters its own merge
@@ -852,6 +857,7 @@ public class DataContextImpl implements DataContextInternal {
         checkNotNullArgument(entity, "entity is null");
 
         modifiedInstances.remove(entity);
+        compositionModifiedOwners.remove(entity);
         if (!entityStates.isNew(entity) || parentContext != null) {
             removedInstances.add(entity);
         }
@@ -911,6 +917,7 @@ public class DataContextImpl implements DataContextInternal {
             }
             modifiedInstances.remove(entity);
             removedInstances.remove(entity);
+            compositionModifiedOwners.remove(entity);
         }
     }
 
@@ -966,11 +973,12 @@ public class DataContextImpl implements DataContextInternal {
         removedInstances.clear();
         changeTracker.clear();
         manuallyModified.clear();
+        compositionModifiedOwners.clear();
     }
 
     @Override
     public boolean isModified(Object entity) {
-        return modifiedInstances.contains(entity);
+        return modifiedInstances.contains(entity) || compositionModifiedOwners.contains(entity);
     }
 
     @Override
@@ -985,6 +993,7 @@ public class DataContextImpl implements DataContextInternal {
         } else {
             manuallyModified.remove(merged);
             modifiedInstances.remove(merged);
+            compositionModifiedOwners.remove(merged);
             changeTracker.drop(merged);
         }
     }
@@ -1057,6 +1066,7 @@ public class DataContextImpl implements DataContextInternal {
         removedInstances.clear();
         changeTracker.clear();
         manuallyModified.clear();
+        compositionModifiedOwners.clear();
 
         return savedAndMerged;
     }
@@ -1176,6 +1186,7 @@ public class DataContextImpl implements DataContextInternal {
             }
             changeTracker.markDirty(result, attribute, preMergeValues.get(attribute));
         }
+        markCompositionOwnersModified(result);
         return result;
     }
 
@@ -1210,6 +1221,77 @@ public class DataContextImpl implements DataContextInternal {
     protected static String rootSegment(String attribute) {
         int dotIndex = attribute.indexOf('.');
         return dotIndex < 0 ? attribute : attribute.substring(0, dotIndex);
+    }
+
+    /**
+     * Marks the composition owner chain of a just-merged composition child for reopen protection in
+     * this (parent) context. A deep-composition edit propagated from a child context dirties only the
+     * edited leaf; the intermediate owners the child never marked would otherwise stay clean, so
+     * reopening an intermediate editor reloads a stale instance and loses the unsaved deeper edit.
+     * Owners go into compositionModifiedOwners (consulted by isModified), NOT into
+     * modifiedInstances, so they are never persisted - saving an aggregate must still persist only
+     * the entities that actually changed.
+     */
+    protected void markCompositionOwnersModified(Object entity) {
+        Set<Object> visited = Collections.newSetFromMap(new IdentityHashMap<>());
+        Object current = entity;
+        while (current != null && visited.add(current)) {
+            Object owner = findCompositionOwner(current);
+            if (owner != null) {
+                compositionModifiedOwners.add(owner);
+            }
+            current = owner;
+        }
+    }
+
+    /**
+     * Resolves the composition owner of a managed instance in this context. Inverse first: a
+     * reference whose inverse is a composition points back to the owner. Scan fallback (when no
+     * loaded inverse owner is found): a managed instance whose composition property references
+     * {@code entity}. Returns the managed owner instance, or {@code null} if none is found.
+     */
+    @Nullable
+    protected Object findCompositionOwner(Object entity) {
+        MetaClass metaClass = getEntityMetaClass(entity);
+        for (MetaProperty property : metaClass.getProperties()) {
+            MetaProperty inverse = property.getInverse();
+            if (property.getRange().isClass()
+                    && inverse != null && inverse.getType() == MetaProperty.Type.COMPOSITION
+                    && entityStates.isLoaded(entity, property.getName())) {
+                Object owner = EntityValues.getValue(entity, property.getName());
+                if (owner != null) {
+                    Object managedOwner = find(owner);
+                    if (managedOwner != null) {
+                        return managedOwner;
+                    }
+                }
+            }
+        }
+        for (Map<Object, Object> entityMap : content.values()) {
+            for (Object candidate : entityMap.values()) {
+                if (candidate == entity) {
+                    continue;
+                }
+                for (MetaProperty property : getEntityMetaClass(candidate).getProperties()) {
+                    if (property.getType() == MetaProperty.Type.COMPOSITION
+                            && entityStates.isLoaded(candidate, property.getName())) {
+                        Object value = EntityValues.getValue(candidate, property.getName());
+                        if (value == null) {
+                            continue;
+                        }
+                        if (property.getRange().getCardinality().isMany()) {
+                            if (value instanceof Collection<?> collection
+                                    && collection.stream().anyMatch(e -> e == entity)) {
+                                return candidate;
+                            }
+                        } else if (value == entity) {
+                            return candidate;
+                        }
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     protected Set<Object> saveToParentContext() {

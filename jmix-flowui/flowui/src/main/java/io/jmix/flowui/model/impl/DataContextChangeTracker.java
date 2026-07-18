@@ -37,6 +37,13 @@ class DataContextChangeTracker {
     // (e.g. a collection snapshot taken before mutation) without being dirty yet.
     private final Map<Object, Set<String>> dirtyAttrs = new IdentityHashMap<>();
 
+    // entity -> attributes made loaded by a user set or a non-null merge-install (increment 04's markLoaded).
+    // A fresh merge of a narrower copy replaces the loaded-state cache with the source's, whose negative for
+    // such an attribute shadows the (correct) fetch-group state; this registry lets reapplySetLoaded restore it
+    // afterwards (DataContextImpl.reapplySetLoaded). Dropped when an entity leaves the context (drop), NOT by
+    // clear(): clear() resets dirty state (clearChanges, and inside save()) while the value stays present.
+    private final Map<Object, Set<String>> setLoadedAttrs = new IdentityHashMap<>();
+
     private final Consumer<Object> onEntityDirty;
     private final Consumer<Object> onEntityClean;
 
@@ -147,8 +154,17 @@ class DataContextChangeTracker {
         putDirty(entity, attribute, baseline);
     }
 
+    void markSetLoaded(Object entity, String attribute) {
+        setLoadedAttrs.computeIfAbsent(entity, e -> new HashSet<>()).add(attribute);
+    }
+
+    Set<String> setLoadedAttributes(Object entity) {
+        return setLoadedAttrs.getOrDefault(entity, Collections.emptySet());
+    }
+
     void drop(Object entity) {
         baselines.remove(entity);
+        setLoadedAttrs.remove(entity);
         Set<String> dirty = dirtyAttrs.remove(entity);
         if (dirty != null && !dirty.isEmpty()) {
             onEntityClean.accept(entity);

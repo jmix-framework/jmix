@@ -710,4 +710,36 @@ class DataContextMergePolicyTest extends DataContextSpec {
         mergedUser.userRoles.size() == 2
         mergedUser.userRoles.unique().size() == 2
     }
+
+    @IgnoreIf({Boolean.valueOf(System.getenv("JMIX_ECLIPSELINK_DISABLELAZYLOADING"))})
+    def "a set reference stays loaded after a fresh merge of a narrower copy"() {
+        given: "a managed order line whose 'order' reference was not fetched, then set by the user"
+        DataContext context = factory.createDataContext()
+        Customer customer = dataManager.save(new Customer(name: 'c1', address: new Address()))
+        Order order1 = dataManager.save(new Order(number: 'o1', customer: customer))
+        Order order2 = dataManager.save(new Order(number: 'o2', customer: customer))
+        OrderLine line = dataManager.save(new OrderLine(quantity: 1, order: order1))
+
+        Order managedOrder2 = context.merge(dataManager.load(Id.of(order2)).fetchPlan { it.add('number') }.one())
+        OrderLine managedLine = context.merge(dataManager.load(Id.of(line)).fetchPlan { it.add('quantity') }.one())
+        // set 'order' to a DIFFERENT managed order so the change fires and marks 'order' loaded (increment 04);
+        // a same-id set would be a no-op change and would neither track dirty nor mark loaded
+        managedLine.order = managedOrder2
+
+        expect: "the set makes 'order' loaded"
+        entityStates.isLoaded(managedLine, 'order')
+
+        when: "a FRESH merge brings a narrower copy of the same line (no 'order' in its fetch plan)"
+        // fresh + root -> mergeLoadedPropertiesInfo copies the narrow source's loaded-info wholesale onto the
+        // managed line, reverting the set-loaded flag unless it is re-applied from the marker registry
+        context.merge(dataManager.load(Id.of(line)).fetchPlan { it.add('quantity') }.one(),
+                new io.jmix.flowui.model.MergeOptions().setFresh(true))
+
+        then: "'order' stays loaded and keeps the user's value"
+        entityStates.isLoaded(managedLine, 'order')
+        managedLine.order == managedOrder2
+
+        cleanup:
+        dataManager.remove(line, order1, order2, customer)
+    }
 }

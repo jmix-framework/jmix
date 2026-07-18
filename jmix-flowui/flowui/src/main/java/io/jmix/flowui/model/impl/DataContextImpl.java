@@ -298,6 +298,8 @@ public class DataContextImpl implements DataContextInternal {
 
         mergeLoadedPropertiesInfo(srcEntity, dstEntity, isRoot, options, coldReset);
 
+        reapplySetLoaded(dstEntity);
+
         mergeLazyLoadingState(srcEntity, dstEntity);
     }
 
@@ -491,6 +493,26 @@ public class DataContextImpl implements DataContextInternal {
         LoadedPropertiesInfo info = EntitySystemAccess.getEntityEntry(entity).getLoadedPropertiesInfo();
         if (info != null) {
             info.registerProperty(propertyName, true);
+            changeTracker.markSetLoaded(entity, propertyName);
+        }
+    }
+
+    /**
+     * Re-asserts the set-loaded markers of an entity into its current {@link LoadedPropertiesInfo}, so a value
+     * that is present in memory because it was set or merge-installed keeps reporting loaded after a fresh merge
+     * replaces the loaded-state cache with a narrower source's (in {@link #mergeLoadedPropertiesInfo}), whose
+     * negative for the attribute would otherwise shadow the fetch-group state. Writes only positive entries for
+     * recorded attributes, so it can never turn a genuinely-unloaded attribute loaded. No-op for entities
+     * without a cache. Runs after every merge, not only fresh ones; on the cold-reset path (which recomputes
+     * loaded-state from the fetch group) it re-affirms the same markers, safe by that positive-only invariant
+     * rather than by being inert.
+     */
+    protected void reapplySetLoaded(Object dstEntity) {
+        LoadedPropertiesInfo info = EntitySystemAccess.getEntityEntry(dstEntity).getLoadedPropertiesInfo();
+        if (info != null) {
+            for (String attribute : changeTracker.setLoadedAttributes(dstEntity)) {
+                info.registerProperty(attribute, true);
+            }
         }
     }
 

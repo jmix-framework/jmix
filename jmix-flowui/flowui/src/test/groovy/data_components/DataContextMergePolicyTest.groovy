@@ -9,7 +9,6 @@ import io.jmix.flowui.model.DataComponents
 import io.jmix.flowui.model.DataContext
 import org.springframework.beans.factory.annotation.Autowired
 import spock.lang.IgnoreIf
-import spock.lang.PendingFeature
 import test_support.entity.sales.Address
 import test_support.entity.sales.Customer
 import test_support.entity.sales.Order
@@ -619,11 +618,33 @@ class DataContextMergePolicyTest extends DataContextSpec {
         dataManager.remove(param, line, order, customer)
     }
 
-    @PendingFeature(reason = """
-                        #5331 is not fixed on this branch: re-entrant mergeList duplicates the owner collection (4 elements instead of 2). 
-                        The fix lives on a separate branch (commit ff17359559), not merged here. 
-                        Remove this annotation when #5331 is fixed. See docs/features/data-context/issues.md.
-                        """)
+    def "merge bidirectional graph with two java instances of same id does not duplicate collection (#5331)"() {
+        given: "two java instances of the same user id, joined by a bidirectional user <-> userRoles graph"
+        DataContext context = factory.createDataContext()
+        User user1 = new User(login: 'u1', name: 'User 1')
+        User user1Dup = new User(id: user1.id, login: 'u1', name: 'User 1')
+
+        Role role1 = new Role(name: 'Role 1')
+        Role role2 = new Role(name: 'Role 2')
+
+        UserRole ur1 = new UserRole(user: user1Dup, role: role1)
+        UserRole ur2 = new UserRole(user: user1Dup, role: role2)
+
+        user1.userRoles = [ur1, ur2]
+        user1Dup.userRoles = [ur1, ur2]
+
+        when: "a root UserRole pulls user1 in as a NON-ROOT reference, so the owner collection merges with replace=false"
+        Role rootRole = new Role(name: 'Root Role')
+        UserRole rootUr = new UserRole(user: user1, role: rootRole)
+
+        UserRole mergedRoot = context.merge(rootUr)
+        User mergedUser = mergedRoot.user
+
+        then: "the re-entrant merge does not duplicate the owner collection"
+        mergedUser.userRoles.size() == 2
+        mergedUser.userRoles.unique().size() == 2
+    }
+
     def "merge of a bidirectional graph with two java instances of the same id does not duplicate the owner collection"() {
         given: "two java instances of the same user id, with a bidirectional user <-> userRoles graph (#5331)"
         DataContext context = factory.createDataContext()

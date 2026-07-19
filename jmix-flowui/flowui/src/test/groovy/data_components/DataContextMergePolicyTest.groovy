@@ -742,4 +742,62 @@ class DataContextMergePolicyTest extends DataContextSpec {
         cleanup:
         dataManager.remove(line, order1, order2, customer)
     }
+
+    @IgnoreIf({Boolean.valueOf(System.getenv("JMIX_ECLIPSELINK_DISABLELAZYLOADING"))})
+    def "a fetched reference stays loaded after a fresh merge of a narrower copy"() {
+        given: "an order merged with 'customer' fetched wide"
+        DataContext context = factory.createDataContext()
+        Customer customer = dataManager.save(new Customer(name: 'c1', address: new Address()))
+        Order order1 = dataManager.save(new Order(number: 'o1', customer: customer))
+
+        Order managedWide = context.merge(
+                dataManager.load(Id.of(order1)).fetchPlan { it.addAll('number', 'customer.name') }.one())
+
+        expect: "'customer' is loaded and present"
+        entityStates.isLoaded(managedWide, 'customer')
+        managedWide.customer != null
+
+        when: "a FRESH merge brings a narrower copy of the same order (no 'customer' in its fetch plan)"
+        // fresh + pre-existing managed instance: mergeLoadedPropertiesInfo copies the narrow source's loaded-info
+        // wholesale onto the managed order, and its source-relative negative for 'customer' shadows the unioned
+        // fetch group, reverting the flag - unless the cold-reset recompute is generalized to the fresh path
+        context.merge(dataManager.load(Id.of(order1)).fetchPlan { it.add('number') }.one(),
+                new io.jmix.flowui.model.MergeOptions().setFresh(true))
+
+        then: "'customer' stays loaded and keeps its value"
+        entityStates.isLoaded(managedWide, 'customer')
+        managedWide.customer != null
+        managedWide.customer.name == 'c1'
+
+        cleanup:
+        dataManager.remove(order1, customer)
+    }
+
+    @IgnoreIf({Boolean.valueOf(System.getenv("JMIX_ECLIPSELINK_DISABLELAZYLOADING"))})
+    def "a fresh narrower merge then save does not null out a fetched reference"() {
+        given: "an order merged with 'customer' fetched wide"
+        DataContext context = factory.createDataContext()
+        Customer customer = dataManager.save(new Customer(name: 'c1', address: new Address()))
+        Order order1 = dataManager.save(new Order(number: 'o1', customer: customer))
+
+        Order managed = context.merge(
+                dataManager.load(Id.of(order1)).fetchPlan { it.addAll('number', 'customer.name') }.one())
+
+        when: "a FRESH narrower merge (no 'customer'), then a datatype edit and a save"
+        context.merge(dataManager.load(Id.of(order1)).fetchPlan { it.add('number') }.one(),
+                new io.jmix.flowui.model.MergeOptions().setFresh(true))
+        managed.number = 'o1-edited'
+        context.save()
+
+        then: "the DB round-trip proves the customer FK survived (not nulled by the save)"
+        def reloaded = dataManager.load(Id.of(order1)).fetchPlan { it.addAll('number', 'customer.name') }.one()
+        reloaded.number == 'o1-edited'
+        reloaded.customer != null
+        reloaded.customer.name == 'c1'
+
+        cleanup:
+        // remove the post-save reference: context.save() bumped order1's DB version, so the pre-save
+        // 'order1' object is stale and would fail the optimistic-lock check on delete
+        dataManager.remove(reloaded, customer)
+    }
 }

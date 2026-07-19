@@ -643,13 +643,15 @@ public class DataContextImpl implements DataContextInternal {
     }
 
     /**
-     * Whether this is a root non-fresh merge onto a pre-existing managed instance whose loaded-state
-     * info is the caching kind. Such an instance carries source-relative negatives cached at earlier
-     * merges (its creation merge caches every attribute outside its fetch plan as unloaded), and its
-     * fetch group was just unioned with the source's in {@link #mergeSystemState}.
+     * Whether this is a root non-fresh or a fresh merge onto a pre-existing managed instance whose
+     * loaded-state info is the caching kind. Such an instance carries source-relative negatives cached
+     * at earlier merges, and its fetch group was just unioned with the source's in {@link #mergeSystemState}.
+     * In both cases the loaded-state cache is recomputed from that unioned fetch group (blanked before the
+     * copy loops in {@link #resetLoadedInfoBeforeCopy}) instead of being replaced with the source's, so a
+     * fetched attribute the narrower source omits is not reverted to unloaded by a copied source negative.
      */
     protected boolean isColdResetTarget(Object dstEntity, boolean isRoot, MergeOptions options, boolean dstExisted) {
-        return isRoot && !options.isFresh() && dstExisted
+        return (isRoot || options.isFresh()) && dstExisted
                 && EntitySystemAccess.getEntityEntry(dstEntity).getLoadedPropertiesInfo() instanceof CachingLoadedPropertiesInfo;
     }
 

@@ -102,7 +102,18 @@ public class DataContextImpl implements DataContextInternal {
 
     protected PropertyChangeListener propertyChangeListener = new PropertyChangeListener();
 
-    protected boolean disableListeners;
+    // Depth of nested merge() calls. "In a merge" is mergeDepth > 0. A counter (not a boolean)
+    // so a ChangeEvent listener that re-enters merge() cannot corrupt an outer merge's state.
+    protected int mergeDepth;
+
+    // Entities to fire a ChangeEvent for once the outermost merge unwinds. Insertion-ordered,
+    // deduplicated by managed identity (one event per entity per merge).
+    protected Set<Object> deferredChangeEntities = new LinkedHashSet<>();
+
+    // (entity identity -> attribute names) the merge itself wrote during the active merge. A property
+    // or collection change during the merge whose (entity, attribute) is NOT here is a listener-injected
+    // user edit and must be tracked. Cleared when the outermost merge unwinds.
+    protected Map<Object, Set<String>> mergeApplied = new IdentityHashMap<>();
 
     protected DataContextInternal parentContext;
 
@@ -138,6 +149,28 @@ public class DataContextImpl implements DataContextInternal {
         events.publish(ChangeEvent.class, new ChangeEvent(this, entity));
     }
 
+    protected void flushDeferredChangeEvents() {
+        if (deferredChangeEntities.isEmpty()) {
+            return;
+        }
+        List<Object> toFire = new ArrayList<>(deferredChangeEntities);
+        deferredChangeEntities.clear();
+        for (Object entity : toFire) {
+            fireChangeListener(entity);
+        }
+    }
+
+    protected void recordMergeApplied(Object entity, String attribute) {
+        if (mergeDepth > 0) {
+            mergeApplied.computeIfAbsent(entity, e -> new HashSet<>()).add(attribute);
+        }
+    }
+
+    protected boolean isMergeApplied(Object entity, String attribute) {
+        Set<String> attrs = mergeApplied.get(entity);
+        return attrs != null && attrs.contains(attribute);
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     @Nullable
@@ -169,15 +202,19 @@ public class DataContextImpl implements DataContextInternal {
         checkNotNullArgument(entity, "entity is null");
         checkNotNullArgument(entity, "options object is null");
 
-        disableListeners = true;
+        mergeDepth++;
         mergeCollectionInProgress = new IdentityHashMap<>();
         T result;
         try {
             Map<Object, Object> merged = new IdentityHashMap<>();
             result = (T) internalMerge(entity, merged, true, options);
         } finally {
-            disableListeners = false;
             mergeCollectionInProgress = null;
+            mergeDepth--;
+            if (mergeDepth == 0) {
+                mergeApplied.clear();
+                flushDeferredChangeEvents();
+            }
         }
         return result;
     }
@@ -193,7 +230,7 @@ public class DataContextImpl implements DataContextInternal {
         checkNotNullArgument(entities, "options object is null");
 
         List<Object> managedList = new ArrayList<>(entities.size());
-        disableListeners = true;
+        mergeDepth++;
         mergeCollectionInProgress = new IdentityHashMap<>();
         try {
             Map<Object, Object> merged = new IdentityHashMap<>();
@@ -203,8 +240,12 @@ public class DataContextImpl implements DataContextInternal {
                 managedList.add(managed);
             }
         } finally {
-            disableListeners = false;
             mergeCollectionInProgress = null;
+            mergeDepth--;
+            if (mergeDepth == 0) {
+                mergeApplied.clear();
+                flushDeferredChangeEvents();
+            }
         }
         return EntitySet.of(managedList);
     }
@@ -251,7 +292,7 @@ public class DataContextImpl implements DataContextInternal {
 
             if (entityStates.isNew(managed)) {
                 modifiedInstances.add(managed);
-                fireChangeListener(managed);
+                deferredChangeEntities.add(managed);
             }
         } else {
             mergedMap.put(entity, managed);
@@ -598,6 +639,7 @@ public class DataContextImpl implements DataContextInternal {
 
     protected void setPropertyValue(Object entity, MetaProperty property, @Nullable Object value, boolean checkEquals) {
         EntityPreconditions.checkEntityType(entity);
+        recordMergeApplied(entity, property.getName());
         if (!property.isReadOnly()) {
             EntityValues.setValue(entity, property.getName(), value, checkEquals);
         } else {
@@ -709,6 +751,7 @@ public class DataContextImpl implements DataContextInternal {
         if (!beginMergeCollection(managedEntity, propertyName)) {
             return;
         }
+        recordMergeApplied(managedEntity, propertyName);
         try {
             if (replace) {
                 List<Object> managedRefs = new ArrayList<>(list.size());
@@ -759,6 +802,7 @@ public class DataContextImpl implements DataContextInternal {
         if (!beginMergeCollection(managedEntity, propertyName)) {
             return;
         }
+        recordMergeApplied(managedEntity, propertyName);
         try {
             if (replace) {
                 Set<Object> managedRefs = new LinkedHashSet<>(set.size());
@@ -855,7 +899,9 @@ public class DataContextImpl implements DataContextInternal {
     }
 
     protected void collectionChanged(Object entity, @Nullable String property) {
-        if (disableListeners) {
+        if (mergeDepth > 0 && (property == null || isMergeApplied(entity, property))) {
+            // the merge's own collection change: skip the tracker, defer the ChangeEvent
+            deferredChangeEntities.add(entity);
             return;
         }
         // Unconditional mark-and-notify first, matching the scalar PropertyChangeListener's semantics:
@@ -863,7 +909,7 @@ public class DataContextImpl implements DataContextInternal {
         // tracked attribute becomes clean (e.g. a collection mutation reverted to its baseline). Calling
         // the tracker before this unconditional marking would let this marking immediately undo a
         // just-computed clean transition.
-        modified(entity);
+        modifiedInstances.add(entity);
         if (property != null) {
             MetaProperty metaProperty = metadata.getClass(entity).findProperty(property);
             if (metaProperty != null && metaProperty.getRange().isClass()) {
@@ -873,6 +919,11 @@ public class DataContextImpl implements DataContextInternal {
                     changeTracker.trackCollectionChange(entity, property, current);
                 }
             }
+        }
+        if (mergeDepth > 0) {
+            deferredChangeEntities.add(entity);
+        } else {
+            fireChangeListener(entity);
         }
     }
 
@@ -1371,13 +1422,6 @@ public class DataContextImpl implements DataContextInternal {
         return resultList;
     }
 
-    protected void modified(Object entity) {
-        if (!disableListeners) {
-            modifiedInstances.add(entity);
-            fireChangeListener(entity);
-        }
-    }
-
     public String printContent() {
         StringBuilder sb = new StringBuilder();
         for (Map.Entry<Class<?>, Map<Object, Object>> entry : content.entrySet()) {
@@ -1464,27 +1508,35 @@ public class DataContextImpl implements DataContextInternal {
                 }
             }
 
-            if (!disableListeners) {
-                // Unconditional add preserves today's semantics for to-many and unclassifiable properties;
-                // the tracker's transition callback below may remove the entity again once the tracked
-                // attributes are all clean (e.g. a scalar/reference edit reverted to its baseline).
-                modifiedInstances.add(e.getItem());
+            if (mergeDepth > 0 && isMergeApplied(e.getItem(), e.getProperty())) {
+                // the merge's own write: skip the tracker (the merge does its own baseline
+                // bookkeeping) and defer the ChangeEvent to the flush
+                deferredChangeEntities.add(e.getItem());
+                return;
+            }
 
-                MetaProperty changedProperty = metadata.getClass(e.getItem()).findProperty(e.getProperty());
-                if (changedProperty != null && changedProperty.getRange().isClass()
-                        && changedProperty.getRange().getCardinality().isMany()) {
-                    // to-many properties are handled by the observable collection wrappers; skip the tracker here
-                } else if (e.getProperty().equals(primaryKeyPropertyName)) {
-                    // an id change is identity bookkeeping (e.g. setId() in a saveDelegate),
-                    // not a user attribute edit; skip the tracker
-                } else {
-                    boolean reference = changedProperty != null && changedProperty.getRange().isClass()
-                            && !changedProperty.getRange().getCardinality().isMany();
-                    changeTracker.trackChange(e.getItem(), e.getProperty(), e.getPrevValue(), e.getValue(), reference);
-                    // a user set makes the attribute authoritative and present in memory (even a set to null),
-                    // so it is loaded regardless of whether it was fetched
-                    markLoaded(e.getItem(), e.getProperty());
-                }
+            // off-merge edit, OR a listener-injected edit during a merge (#1258): track it as usual
+            modifiedInstances.add(e.getItem());
+
+            MetaProperty changedProperty = metadata.getClass(e.getItem()).findProperty(e.getProperty());
+            if (changedProperty != null && changedProperty.getRange().isClass()
+                    && changedProperty.getRange().getCardinality().isMany()) {
+                // to-many properties are handled by the observable collection wrappers; skip the tracker here
+            } else if (e.getProperty().equals(primaryKeyPropertyName)) {
+                // an id change is identity bookkeeping (e.g. setId() in a saveDelegate),
+                // not a user attribute edit; skip the tracker
+            } else {
+                boolean reference = changedProperty != null && changedProperty.getRange().isClass()
+                        && !changedProperty.getRange().getCardinality().isMany();
+                changeTracker.trackChange(e.getItem(), e.getProperty(), e.getPrevValue(), e.getValue(), reference);
+                // a user set makes the attribute authoritative and present in memory (even a set to null),
+                // so it is loaded regardless of whether it was fetched
+                markLoaded(e.getItem(), e.getProperty());
+            }
+
+            if (mergeDepth > 0) {
+                deferredChangeEntities.add(e.getItem());
+            } else {
                 fireChangeListener(e.getItem());
             }
         }
@@ -1503,17 +1555,25 @@ public class DataContextImpl implements DataContextInternal {
 
         @Override
         public void propertyChanged(EntityPropertyChangeEvent e) {
-            if (!disableListeners) {
-                modifiedInstances.add(entity);
+            if (mergeDepth > 0 && isMergeApplied(e.getItem(), e.getProperty())) {
+                deferredChangeEntities.add(entity);
+                return;
+            }
 
-                MetaProperty changedProperty = metadata.getClass(e.getItem()).findProperty(e.getProperty());
-                if (changedProperty != null && changedProperty.getRange().isClass()
-                        && changedProperty.getRange().getCardinality().isMany()) {
-                    // to-many properties are handled by the observable collection wrappers; skip the tracker here
-                } else {
-                    changeTracker.trackChange(entity, embeddedPropertyName + '.' + e.getProperty(),
-                            e.getPrevValue(), e.getValue(), false);
-                }
+            modifiedInstances.add(entity);
+
+            MetaProperty changedProperty = metadata.getClass(e.getItem()).findProperty(e.getProperty());
+            if (changedProperty != null && changedProperty.getRange().isClass()
+                    && changedProperty.getRange().getCardinality().isMany()) {
+                // to-many properties are handled by the observable collection wrappers; skip the tracker here
+            } else {
+                changeTracker.trackChange(entity, embeddedPropertyName + '.' + e.getProperty(),
+                        e.getPrevValue(), e.getValue(), false);
+            }
+
+            if (mergeDepth > 0) {
+                deferredChangeEntities.add(entity);
+            } else {
                 fireChangeListener(entity);
             }
         }

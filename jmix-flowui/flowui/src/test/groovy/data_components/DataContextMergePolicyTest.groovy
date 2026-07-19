@@ -4,15 +4,20 @@ import io.jmix.core.DataManager
 import io.jmix.core.EntityStates
 import io.jmix.core.Id
 import io.jmix.core.FetchPlans
+import io.jmix.core.entity.EntityPropertyChangeEvent
+import io.jmix.core.entity.EntityPropertyChangeListener
+import io.jmix.core.entity.EntitySystemAccess
 import test_support.entity.sales.OrderLineParam
 import io.jmix.flowui.model.DataComponents
 import io.jmix.flowui.model.DataContext
+import io.jmix.flowui.model.MergeOptions
 import org.springframework.beans.factory.annotation.Autowired
 import spock.lang.IgnoreIf
 import test_support.entity.sales.Address
 import test_support.entity.sales.Customer
 import test_support.entity.sales.Order
 import test_support.entity.sales.OrderLine
+import test_support.entity.sales.Status
 import test_support.entity.sec.Role
 import test_support.entity.sec.User
 import test_support.entity.sec.UserRole
@@ -799,5 +804,139 @@ class DataContextMergePolicyTest extends DataContextSpec {
         // remove the post-save reference: context.save() bumped order1's DB version, so the pre-save
         // 'order1' object is stale and would fail the optimistic-lock check on delete
         dataManager.remove(reloaded, customer)
+    }
+
+    def "a merge that changes a managed instance scalar fires a ChangeEvent (#4071)"() {
+        given:
+        DataContext context = factory.createDataContext()
+        Customer customer = dataManager.save(new Customer(name: 'c1', address: new Address()))
+        Customer managed = context.merge(dataManager.load(Id.of(customer)).fetchPlan { it.add('name') }.one())
+
+        and: "a change listener recording the entities it is notified about"
+        def events = []
+        context.addChangeListener { events << it.entity }
+
+        when: "a fresh merge brings a changed value for the same managed instance"
+        def reloaded = dataManager.load(Id.of(customer)).fetchPlan { it.add('name') }.one()
+        reloaded.name = 'changed'
+        context.merge(reloaded, new MergeOptions().setFresh(true))
+
+        then: "exactly one ChangeEvent fires, for the managed instance"
+        managed.name == 'changed'
+        events == [managed]
+
+        cleanup:
+        dataManager.remove(customer)
+    }
+
+    def "a plain merge of unchanged data fires no ChangeEvent; a new instance fires once after the merge"() {
+        given:
+        DataContext context = factory.createDataContext()
+        Customer customer = dataManager.save(new Customer(name: 'c1', address: new Address()))
+        context.merge(dataManager.load(Id.of(customer)).fetchPlan { it.add('name') }.one())
+
+        def events = []
+        context.addChangeListener { events << it.entity }
+
+        when: "the same unchanged data is merged again"
+        context.merge(dataManager.load(Id.of(customer)).fetchPlan { it.add('name') }.one())
+
+        then: "nothing fires (no value actually changed)"
+        events.isEmpty()
+
+        when: "a brand-new instance is merged"
+        def created = context.merge(new Customer(name: 'c2', address: new Address()))
+
+        then: "exactly one ChangeEvent fires, for the new instance"
+        events == [created]
+
+        cleanup:
+        dataManager.remove(customer)
+    }
+
+    def "an edit made by a listener during a merge is tracked without setModified (#1258)"() {
+        given:
+        DataContext context = factory.createDataContext()
+        Customer customer = dataManager.save(new Customer(name: 'c1', status: Status.OK, address: new Address()))
+        // 'status' is fetched here so the managed instance can be read/set directly (detached entities
+        // cannot lazily fetch a plain scalar); the fresh merge below deliberately omits it from ITS fetch
+        // plan, which is what keeps the merge from ever writing it (see the 'when' block).
+        Customer managed = context.merge(dataManager.load(Id.of(customer)).fetchPlan { it.addAll('name', 'status') }.one())
+
+        and: "a listener on the managed instance that, when name changes, also edits status"
+        EntitySystemAccess.addPropertyChangeListener(managed, new EntityPropertyChangeListener() {
+            @Override
+            void propertyChanged(EntityPropertyChangeEvent e) {
+                if (e.property == 'name') {
+                    managed.status = Status.NOT_OK
+                }
+            }
+        })
+
+        when: "a fresh merge changes name, firing the listener mid-merge"
+        def reloaded = dataManager.load(Id.of(customer)).fetchPlan { it.add('name') }.one()
+        reloaded.name = 'changed'
+        context.merge(reloaded, new MergeOptions().setFresh(true))
+
+        then: "the listener's status edit is tracked as a modification, with no manual setModified"
+        managed.status == Status.NOT_OK
+        context.isModified(managed)
+        'status' in context.getModifiedAttributes(managed)
+
+        cleanup:
+        dataManager.remove(customer)
+    }
+
+    def "a listener-injected edit is tracked even after an earlier merge's flush listener threw"() {
+        given: "a managed instance with name and email loaded"
+        DataContext context = factory.createDataContext()
+        Customer customer = dataManager.save(new Customer(name: 'c1', email: 'e1@x.com', address: new Address()))
+        Customer managed = context.merge(dataManager.load(Id.of(customer)).fetchPlan { it.addAll('name', 'email') }.one())
+
+        and: "a change listener that throws on its first invocation only, then goes inert"
+        boolean thrown = false
+        context.addChangeListener {
+            if (!thrown) {
+                thrown = true
+                throw new RuntimeException('boom')
+            }
+        }
+
+        when: "a fresh merge changes name; its post-merge flush fires the throwing listener"
+        def reloaded1 = dataManager.load(Id.of(customer)).fetchPlan { it.addAll('name', 'email') }.one()
+        reloaded1.name = 'changed1'
+        try {
+            context.merge(reloaded1, new MergeOptions().setFresh(true))
+        } catch (RuntimeException ignored) {
+            // expected: the flush listener throws; this must not stop mergeApplied.clear() from
+            // having already run for this merge (see the fix ordering in DataContextImpl)
+        }
+
+        then: "the merge itself did apply, regardless of the listener exception"
+        managed.name == 'changed1'
+
+        and: "a listener on the managed instance that, when email changes, also edits name (listener-injected edit)"
+        EntitySystemAccess.addPropertyChangeListener(managed, new EntityPropertyChangeListener() {
+            @Override
+            void propertyChanged(EntityPropertyChangeEvent e) {
+                if (e.property == 'email') {
+                    managed.name = 'injected'
+                }
+            }
+        })
+
+        when: "a second fresh merge changes email only; name is NOT in this merge's fetch plan, so the merge itself never writes it"
+        def reloaded2 = dataManager.load(Id.of(customer)).fetchPlan { it.add('email') }.one()
+        reloaded2.email = 'changed2@x.com'
+        context.merge(reloaded2, new MergeOptions().setFresh(true))
+
+        then: "the injected name edit is tracked as a modification - proof that mergeApplied from the" +
+                " earlier (throwing) merge was cleared and did not leak into this merge"
+        managed.name == 'injected'
+        context.isModified(managed)
+        'name' in context.getModifiedAttributes(managed)
+
+        cleanup:
+        dataManager.remove(customer)
     }
 }

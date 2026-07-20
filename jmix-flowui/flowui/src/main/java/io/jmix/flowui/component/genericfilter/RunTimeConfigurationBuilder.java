@@ -214,6 +214,10 @@ public class RunTimeConfigurationBuilder {
             throw new IllegalStateException(
                     "RunTimeConfigurationBuilder: 'id' is required — call .id(\"...\") before .buildAndRegister()");
         }
+        if (id.equals(filter.getEmptyConfiguration().getId())) {
+            throw new IllegalStateException(String.format(
+                    "RunTimeConfigurationBuilder: 'id' must not be the reserved empty-configuration id '%s'", id));
+        }
         if (filter.getConfiguration(id) != null) {
             throw new IllegalStateException(String.format(
                     "RunTimeConfigurationBuilder: a configuration with id '%s' is already registered in this filter", id));

@@ -18,7 +18,9 @@ package component.upload;
 
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.server.Command;
+import com.vaadin.flow.server.VaadinRequest;
 import com.vaadin.flow.server.streams.UploadEvent;
+import io.jmix.flowui.backgroundtask.ThreadLocalVaadinRequestHolder;
 import io.jmix.flowui.component.upload.handler.FileTemporaryStorageUploadHandler;
 import io.jmix.flowui.upload.TemporaryStorage;
 import io.jmix.flowui.upload.TemporaryStorage.FileInfo;
@@ -34,8 +36,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -80,7 +85,42 @@ class FileTemporaryStorageUploadHandlerTest {
         assertEquals(idB, receivedIdsByFileName.get("b.txt"));
     }
 
+    @Test
+    void testUploadRequestIsAvailableInSuccessCallbackAndClearedAfter() throws IOException {
+        TemporaryStorage temporaryStorage = mock(TemporaryStorage.class);
+
+        File file = Files.createTempFile("upload", ".tmp").toFile();
+        file.deleteOnExit();
+        when(temporaryStorage.createFile()).thenReturn(new FileInfo(file, UUID.randomUUID()));
+
+        FileTemporaryStorageUploadHandler handler = new FileTemporaryStorageUploadHandler(temporaryStorage);
+
+        VaadinRequest request = mock(VaadinRequest.class);
+        AtomicReference<VaadinRequest> requestDuringCallback = new AtomicReference<>();
+        handler.setUploadSuccessHandler(context ->
+                requestDuringCallback.set(ThreadLocalVaadinRequestHolder.getRequest()));
+
+        List<Command> deferredCommands = new ArrayList<>();
+        UI ui = mock(UI.class);
+        when(ui.access(any())).thenAnswer(invocation -> {
+            deferredCommands.add(invocation.getArgument(0));
+            return null;
+        });
+
+        handler.handleUploadRequest(uploadEvent("a.txt", "AAA", ui, request));
+        deferredCommands.forEach(Command::execute);
+
+        // The upload request must be available while the success callback runs...
+        assertSame(request, requestDuringCallback.get());
+        // ...and cleared afterwards, so it does not leak to the pooled thread.
+        assertNull(ThreadLocalVaadinRequestHolder.getRequest());
+    }
+
     private UploadEvent uploadEvent(String fileName, String content, UI ui) {
+        return uploadEvent(fileName, content, ui, mock(VaadinRequest.class));
+    }
+
+    private UploadEvent uploadEvent(String fileName, String content, UI ui, VaadinRequest request) {
         byte[] bytes = content.getBytes(StandardCharsets.UTF_8);
 
         UploadEvent event = mock(UploadEvent.class);
@@ -89,6 +129,7 @@ class FileTemporaryStorageUploadHandlerTest {
         when(event.getFileSize()).thenReturn((long) bytes.length);
         when(event.getInputStream()).thenReturn(new ByteArrayInputStream(bytes));
         when(event.getUI()).thenReturn(ui);
+        when(event.getRequest()).thenReturn(request);
         return event;
     }
 }

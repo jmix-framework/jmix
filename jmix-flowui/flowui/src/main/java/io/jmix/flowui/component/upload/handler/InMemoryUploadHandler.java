@@ -16,9 +16,11 @@
 
 package io.jmix.flowui.component.upload.handler;
 
+import com.vaadin.flow.server.VaadinRequest;
 import com.vaadin.flow.server.communication.TransferUtil;
 import com.vaadin.flow.server.streams.*;
 import com.vaadin.flow.shared.Registration;
+import io.jmix.flowui.backgroundtask.ThreadLocalVaadinRequestHolder;
 import io.jmix.flowui.kit.component.streams.TransferProgressNotifier;
 import io.jmix.flowui.kit.component.upload.handler.SupportUploadSuccessHandler;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -61,12 +63,22 @@ public class InMemoryUploadHandler
             notifyError(event, e);
             throw e;
         }
+        // The success callback runs via UI.access() from the upload handler thread, without an active
+        // VaadinServletRequest. Provide the upload request through the thread-local holder so that opening
+        // a view-based dialog or window from the success handler can perform the view access check, which
+        // requires a request. See UiAccessChecker#isViewPermitted.
+        VaadinRequest request = event.getRequest();
         event.getUI().access(() -> {
             try {
                 if (successHandler != null) {
-                    successHandler.complete(new UploadSuccessContext<>(
-                            new UploadMetadata(event.getFileName(), event.getContentType(), event.getFileSize()),
-                            data));
+                    ThreadLocalVaadinRequestHolder.setRequest(request);
+                    try {
+                        successHandler.complete(new UploadSuccessContext<>(
+                                new UploadMetadata(event.getFileName(), event.getContentType(), event.getFileSize()),
+                                data));
+                    } finally {
+                        ThreadLocalVaadinRequestHolder.clear();
+                    }
                 }
 
             } catch (IOException e) {

@@ -52,12 +52,11 @@ public class FileTemporaryStorageUploadHandler
         // CAUTION: copied from com.vaadin.flow.server.streams.AbstractFileUploadHandler [last update Vaadin 25.2.1]
         UploadMetadata metadata = new UploadMetadata(event.getFileName(),
                 event.getContentType(), event.getFileSize());
-        File file;
+        TemporaryStorage.FileInfo uploadedFileInfo = createFile(metadata);
         try {
-            file = createFile(metadata);
             try (InputStream inputStream = event.getInputStream();
                  FileOutputStream outputStream = new FileOutputStream(
-                         file)) {
+                         uploadedFileInfo.getFile())) {
                 TransferUtil.transfer(inputStream, outputStream,
                         getTransferContext(event), getListeners());
             }
@@ -68,7 +67,7 @@ public class FileTemporaryStorageUploadHandler
         event.getUI().access(() -> {
             try {
                 if (successCallback != null) {
-                    successCallback.complete(new UploadSuccessContext<>(metadata, fileInfo));
+                    successCallback.complete(new UploadSuccessContext<>(metadata, uploadedFileInfo));
                 }
             } catch (IOException e) {
                 throw new UncheckedIOException("Error in file upload callback", e);
@@ -90,9 +89,10 @@ public class FileTemporaryStorageUploadHandler
         return fileInfo;
     }
 
-    protected File createFile(UploadMetadata metadata) {
-        fileInfo = temporaryStorage.createFile();
-        return fileInfo.getFile();
+    protected TemporaryStorage.FileInfo createFile(UploadMetadata metadata) {
+        TemporaryStorage.FileInfo created = temporaryStorage.createFile();
+        fileInfo = created;
+        return created;
     }
 
     @Override

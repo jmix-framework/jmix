@@ -150,7 +150,7 @@ public class MessageTemplatesGeneratorImpl implements MessageTemplatesGenerator,
         try {
             htmlTemplate = configuration.getTemplate(templateCode);
         } catch (IOException e) {
-            throw new IllegalStateException("Unable to load message template with code '%s'".formatted(templateCode));
+            throw new IllegalStateException("Unable to load message template with code '%s'".formatted(templateCode), e);
         }
 
         htmlTemplate.setObjectWrapper(wrapper);

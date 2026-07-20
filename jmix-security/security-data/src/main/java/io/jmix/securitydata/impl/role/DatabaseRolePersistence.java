@@ -16,7 +16,6 @@
 
 package io.jmix.securitydata.impl.role;
 
-import com.google.common.base.Strings;
 import io.jmix.core.*;
 import io.jmix.data.QueryTransformer;
 import io.jmix.data.QueryTransformerFactory;
@@ -24,13 +23,14 @@ import io.jmix.data.impl.jpql.ErrorRec;
 import io.jmix.data.impl.jpql.JpqlSyntaxException;
 import io.jmix.security.model.*;
 import io.jmix.security.role.RolePersistence;
+import io.jmix.security.role.assignment.RoleAssignmentRoleType;
 import io.jmix.securitydata.entity.*;
 import io.jmix.securitydata.impl.role.provider.DatabaseRowLevelRoleProvider;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.jspecify.annotations.NullMarked;
-import org.springframework.context.ApplicationContext;
 import org.jspecify.annotations.Nullable;
+import org.springframework.context.ApplicationContext;
 import org.springframework.scripting.ScriptCompilationException;
 import org.springframework.stereotype.Component;
 
@@ -184,16 +184,28 @@ public class DatabaseRolePersistence implements RolePersistence {
                                 rowLevelRoleModelToEntity((RowLevelRoleModel) model))
                 .collect(Collectors.toCollection(ArrayList::new));
 
-        List<RoleAssignmentEntity> roleAssignments = dataManager.load(RoleAssignmentEntity.class)
-                .query("e.roleCode IN :codes")
-                .parameter("codes", roleModels.stream()
-                        .map(BaseRoleModel::getCode)
-                        .collect(Collectors.toList()))
-                .list();
+        // Role assignments are identified by both role code and role type, so a resource role and a
+        // row-level role may share the same code. Filter assignments by type to avoid removing an
+        // assignment of a same-code role of another type.
+        Map<String, List<String>> codesByRoleType = roleModels.stream()
+                .collect(Collectors.groupingBy(
+                        this::getRoleType,
+                        Collectors.mapping(BaseRoleModel::getCode, Collectors.toList())));
 
-        entitiesToRemove.addAll(roleAssignments);
+        codesByRoleType.forEach((roleType, codes) -> entitiesToRemove.addAll(
+                dataManager.load(RoleAssignmentEntity.class)
+                        .query("e.roleCode in :codes and e.roleType = :roleType")
+                        .parameter("codes", codes)
+                        .parameter("roleType", roleType)
+                        .list()));
 
         dataManager.remove(entitiesToRemove);
+    }
+
+    private String getRoleType(BaseRoleModel model) {
+        return model instanceof ResourceRoleModel
+                ? RoleAssignmentRoleType.RESOURCE
+                : RoleAssignmentRoleType.ROW_LEVEL;
     }
 
     @Override

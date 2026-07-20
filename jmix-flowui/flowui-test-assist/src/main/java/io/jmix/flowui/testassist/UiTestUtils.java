@@ -16,15 +16,19 @@
 
 package io.jmix.flowui.testassist;
 
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.UI;
 import io.jmix.core.annotation.Internal;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.validation.ValidationErrors;
+import io.jmix.flowui.Dialogs;
+import io.jmix.flowui.OpenedDialogWindows;
 import io.jmix.flowui.testassist.dialog.DialogInfo;
 import io.jmix.flowui.testassist.dialog.OpenedDialogs;
 import io.jmix.flowui.testassist.notification.NotificationInfo;
 import io.jmix.flowui.testassist.notification.OpenedNotifications;
+import io.jmix.flowui.view.OpenMode;
 import io.jmix.flowui.view.StandardDetailView;
 import io.jmix.flowui.view.View;
 import org.apache.commons.collections4.CollectionUtils;
@@ -129,6 +133,10 @@ public final class UiTestUtils {
     /**
      * Returns an immutable list of {@link DialogInfo} objects in the order they were opened.
      * <p>
+     * This method covers <i>component</i> {@link Dialog}s created via {@link Dialogs}
+     * (message, option, background-task and side dialogs). Views shown as dialogs (e.g. {@code InputDialog}
+     * or any view opened in {@link OpenMode#DIALOG}) are not included here — use {@link #getOpenedViewDialogs()}.
+     * <p>
      * Example of the order in which dialogs are stored:
      * <ul>
      *     <li>first opened dialog has index {@code 0}</li>
@@ -143,10 +151,56 @@ public final class UiTestUtils {
     }
 
     /**
+     * Returns the most recently opened <i>component</i> {@link Dialog} created via
+     * {@link Dialogs}. For views shown as dialogs (e.g. {@code InputDialog}) use
+     * {@link #getLastOpenedViewDialog()}.
+     *
      * @return the most recent opened {@link DialogInfo} or {@code null} if no opened dialogs
      */
     @Nullable
     public static DialogInfo getLastOpenedDialog() {
         return applicationContext.getBean(OpenedDialogs.class).getLastDialog();
+    }
+
+    /**
+     * Returns an immutable list of {@link View}s shown as dialogs (i.e. opened in {@link OpenMode#DIALOG}),
+     * in the order they were opened. This includes any lookup or detail view opened as a dialog, as well as
+     * the framework {@code InputDialog}.
+     * <p>
+     * Example of the order in which view dialogs are stored:
+     * <ul>
+     *     <li>first opened view dialog has index {@code 0}</li>
+     *     <li>second opened view dialog has index {@code 1}</li>
+     *     <li>last opened view dialog has index {@code openedViewDialogs.size() - 1}</li>
+     * </ul>
+     * <p>
+     * For <i>component</i> dialogs created via {@link Dialogs} (message, option, background-task and side
+     * dialogs) use {@link #getOpenedDialogs()} instead.
+     *
+     * @return immutable list of {@link View}s shown as dialogs, in order of opening
+     */
+    public static List<View<?>> getOpenedViewDialogs() {
+        return applicationContext.getBean(OpenedDialogWindows.class).getDialogs();
+    }
+
+    /**
+     * Returns the most recently opened {@link View} shown as a dialog, i.e. the topmost view opened in
+     * {@link OpenMode#DIALOG} (a lookup or detail view, a custom view, etc.). Usage example:
+     * <pre>
+     * // open a view as a dialog (e.g. via DialogWindows or OpenMode.DIALOG), then:
+     * CustomerDetailView view = UiTestUtils.getLastOpenedViewDialog();
+     * </pre>
+     * <p>
+     * Note: the framework {@code InputDialog} is also a view dialog and can be obtained the same way.
+     *
+     * @param <T> expected type of the view
+     * @return the most recently opened view dialog, or {@code null} if there are no opened view dialogs
+     */
+    @SuppressWarnings("unchecked")
+    @Nullable
+    public static <T extends View<?>> T getLastOpenedViewDialog() {
+        return (T) applicationContext.getBean(OpenedDialogWindows.class)
+                .getCurrentDialog()
+                .orElse(null);
     }
 }

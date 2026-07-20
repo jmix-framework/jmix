@@ -55,12 +55,24 @@ public class DatabaseRowLevelRoleProvider extends BaseDatabaseRoleProvider<RowLe
 
     @Override
     protected void buildFetchPlan(FetchPlanBuilder fetchPlanBuilder) {
-        fetchPlanBuilder
-                .addAll("name", "code", "description", "childRoles", "sysTenantId")
-                .add("rowLevelPolicies", FetchPlan.BASE);
+        buildFetchPlan(fetchPlanBuilder, true);
     }
 
+    @Override
+    protected void buildFetchPlan(FetchPlanBuilder fetchPlanBuilder, boolean includePolicies) {
+        fetchPlanBuilder.addAll("name", "code", "description", "childRoles", "sysTenantId");
+        if (includePolicies) {
+            fetchPlanBuilder.add("rowLevelPolicies", FetchPlan.BASE);
+        }
+    }
+
+    @Override
     protected RowLevelRole buildRole(Object entity) {
+        return buildRole(entity, true);
+    }
+
+    @Override
+    protected RowLevelRole buildRole(Object entity, boolean includePolicies) {
         RowLevelRoleEntity roleEntity = (RowLevelRoleEntity) entity;
 
         RowLevelRole role = new RowLevelRole();
@@ -72,32 +84,34 @@ public class DatabaseRowLevelRoleProvider extends BaseDatabaseRoleProvider<RowLe
         role.getCustomProperties().put("databaseId", roleEntity.getId().toString());
         role.setTenantId(roleEntity.getSysTenantId());
 
-        List<RowLevelPolicyEntity> rowLevelPolicyEntities = roleEntity.getRowLevelPolicies();
-        if (rowLevelPolicyEntities != null) {
-            List<RowLevelPolicy> rowLevelPolicies = rowLevelPolicyEntities.stream()
-                    .map(policyEntity -> {
-                                String id = policyEntity.getId().toString();
-                                Map<String, String> customProperties = new HashMap<>();
-                                customProperties.put("databaseId", id);
-                                switch (policyEntity.getType()) {
-                                    case JPQL:
-                                        return new RowLevelPolicy(policyEntity.getEntityName(),
-                                                policyEntity.getWhereClause(),
-                                                policyEntity.getJoinClause(),
-                                                customProperties);
-                                    case PREDICATE:
-                                        return new RowLevelPolicy(policyEntity.getEntityName(),
-                                                policyEntity.getAction(),
-                                                policyEntity.getScript(),
-                                                createPredicateFromScript(policyEntity.getScript()),
-                                                customProperties);
-                                    default:
-                                        throw new RuntimeException("Unknown row level policy type " + policyEntity.getType());
+        if (includePolicies) {
+            List<RowLevelPolicyEntity> rowLevelPolicyEntities = roleEntity.getRowLevelPolicies();
+            if (rowLevelPolicyEntities != null) {
+                List<RowLevelPolicy> rowLevelPolicies = rowLevelPolicyEntities.stream()
+                        .map(policyEntity -> {
+                                    String id = policyEntity.getId().toString();
+                                    Map<String, String> customProperties = new HashMap<>();
+                                    customProperties.put("databaseId", id);
+                                    switch (policyEntity.getType()) {
+                                        case JPQL:
+                                            return new RowLevelPolicy(policyEntity.getEntityName(),
+                                                    policyEntity.getWhereClause(),
+                                                    policyEntity.getJoinClause(),
+                                                    customProperties);
+                                        case PREDICATE:
+                                            return new RowLevelPolicy(policyEntity.getEntityName(),
+                                                    policyEntity.getAction(),
+                                                    policyEntity.getScript(),
+                                                    createPredicateFromScript(policyEntity.getScript()),
+                                                    customProperties);
+                                        default:
+                                            throw new RuntimeException("Unknown row level policy type " + policyEntity.getType());
+                                    }
                                 }
-                            }
-                    )
-                    .collect(Collectors.toList());
-            role.setRowLevelPolicies(rowLevelPolicies);
+                        )
+                        .collect(Collectors.toList());
+                role.setRowLevelPolicies(rowLevelPolicies);
+            }
         }
         return role;
     }

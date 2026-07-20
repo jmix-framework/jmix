@@ -101,7 +101,7 @@ public class RowLevelRoleModelLookupView extends StandardListView<RowLevelRoleMo
     }
 
     private void loadRoles(@Nullable RoleFilterChangeEvent event) {
-        List<RowLevelRoleModel> roleModels = roleRepository.getAllRoles().stream()
+        List<RowLevelRoleModel> roleModels = roleRepository.getAllRoles(false).stream()
                 .filter(role -> (event == null || event.matches(role))
                         && !excludedRolesCodes.contains(role.getCode())
                 )
@@ -123,7 +123,7 @@ public class RowLevelRoleModelLookupView extends StandardListView<RowLevelRoleMo
                     }
                     return allowed;
                 })
-                .map(roleModelConverter::createRowLevelRoleModel)
+                .map(role -> roleModelConverter.createRowLevelRoleModel(role, false))
                 .sorted(Comparator.comparing(RowLevelRoleModel::getName))
                 .collect(Collectors.toList());
         roleModelsDc.setItems(roleModels);

@@ -34,7 +34,6 @@ import io.jmix.core.LoadContext;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Metadata;
 import io.jmix.core.entity.EntityValues;
-import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Range;
@@ -59,6 +58,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.quartz.JobKey;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 
 import java.text.SimpleDateFormat;
 import java.util.Collections;
@@ -82,6 +82,8 @@ public class JobModelListView extends StandardListView<JobModel> {
     public static final String JOB_GROUP_URL_PARAM = "jobGroup";
     public static final String JOB_CLASS_URL_PARAM = "jobClass";
     public static final String JOB_STATE_URL_PARAM = "jobState";
+
+    protected static final String JOB_SCHEDULE_DESCRIPTION_COLUMN_KEY = "jobScheduleDescription";
 
     @ViewComponent
     protected DataGrid<JobModel> jobModelsTable;
@@ -198,41 +200,57 @@ public class JobModelListView extends StandardListView<JobModel> {
 
     protected Comparator<JobModel> createJobModelComparator(List<GridSortOrder<JobModel>> sorting) {
         Comparator<JobModel> jobModelComparator = null;
-        if (sorting.isEmpty()) {
+
+        // Keep user sorting, ignoring columns that cannot be sorted (see isSortableColumnKey)
+        MetaClass jobModelMetaClass = metadata.getClass(JobModel.class);
+        for (GridSortOrder<JobModel> sortOrder : sorting) {
+            Grid.Column<JobModel> column = sortOrder.getSorted();
+            String key = column.getKey();
+            if (!isSortableColumnKey(jobModelMetaClass, key)) {
+                continue;
+            }
+            SortDirection direction = sortOrder.getDirection();
+
+            Comparator<?> comparator = createSortOrderComparator(jobModelMetaClass, key, direction);
+
+            if (jobModelComparator == null) {
+                jobModelComparator = comparing(jobModel -> getSortValue(jobModel, key), nullsLast(comparator));
+            } else {
+                jobModelComparator = jobModelComparator.thenComparing(jobModel -> getSortValue(jobModel, key), nullsLast(comparator));
+            }
+        }
+
+        if (jobModelComparator == null) {
             // Default sorting
             jobModelComparator = comparing(JobModel::getJobState, nullsLast(naturalOrder()))
                     .thenComparing(JobModel::getJobName, String.CASE_INSENSITIVE_ORDER);
-        } else {
-            // Keep user sorting
-            MetaClass jobModelMetaClass = metadata.getClass(JobModel.class);
-            for (GridSortOrder<JobModel> sortOrder : sorting) {
-                Grid.Column<JobModel> column = sortOrder.getSorted();
-                SortDirection direction = sortOrder.getDirection();
-                String key = column.getKey();
-
-                Comparator<?> comparator = createSortOrderComparator(jobModelMetaClass, key, direction);
-
-                if (jobModelComparator == null) {
-                    jobModelComparator = comparing(jobModel -> EntityValues.getValue(jobModel, key), nullsLast(comparator));
-                } else {
-                    jobModelComparator = jobModelComparator.thenComparing(jobModel -> EntityValues.getValue(jobModel, key), nullsLast(comparator));
-                }
-            }
         }
         return jobModelComparator;
     }
 
+    protected boolean isSortableColumnKey(MetaClass jobModelMetaClass, String key) {
+        return JOB_SCHEDULE_DESCRIPTION_COLUMN_KEY.equals(key)
+                || jobModelMetaClass.findProperty(key) != null;
+    }
+
+    @Nullable
+    @SuppressWarnings("unchecked")
+    protected <T> T getSortValue(JobModel jobModel, String key) {
+        if (JOB_SCHEDULE_DESCRIPTION_COLUMN_KEY.equals(key)) {
+            return (T) scheduleDescriptionProvider.getScheduleDescription(jobModel);
+        }
+        return EntityValues.getValue(jobModel, key);
+    }
+
     protected Comparator<?> createSortOrderComparator(MetaClass jobModelMetaClass, String propertyKey, SortDirection direction) {
-        MetaProperty property = jobModelMetaClass.getProperty(propertyKey);
-        Range range = property.getRange();
-        boolean isDatatype = range.isDatatype();
-        boolean isStringValue = false;
-        if (isDatatype) {
-            Datatype<Object> datatype = range.asDatatype();
-            String datatypeId = datatype.getId();
-            if ("string".equals(datatypeId)) {
-                isStringValue = true;
-            }
+        boolean isStringValue;
+        if (JOB_SCHEDULE_DESCRIPTION_COLUMN_KEY.equals(propertyKey)) {
+            // Computed UI column without a meta property; its value is a localized String
+            isStringValue = true;
+        } else {
+            MetaProperty property = jobModelMetaClass.getProperty(propertyKey);
+            Range range = property.getRange();
+            isStringValue = range.isDatatype() && "string".equals(range.asDatatype().getId());
         }
 
         Comparator<?> comparator;

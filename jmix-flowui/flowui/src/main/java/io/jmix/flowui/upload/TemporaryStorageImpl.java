@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -69,11 +70,7 @@ public class TemporaryStorageImpl implements TemporaryStorage {
         checkNotNullArgument(data, "No file content");
 
         UUID uuid = UuidProvider.createUuid();
-        File dir = new File(tempDir);
-        if (!dir.exists() && !dir.mkdirs()) {
-            throw new FileStorageException(FileStorageException.Type.IO_EXCEPTION,
-                    "Cannot create temp directory: " + dir.getAbsolutePath());
-        }
+        File dir = prepareTempDir();
         File file = new File(dir, uuid.toString());
         try {
             if (file.exists()) {
@@ -96,11 +93,7 @@ public class TemporaryStorageImpl implements TemporaryStorage {
         checkNotNullArgument(stream, "Null input stream for save file");
 
         UUID uuid = UuidProvider.createUuid();
-        File dir = new File(tempDir);
-        if (!dir.exists() && !dir.mkdirs()) {
-            throw new FileStorageException(FileStorageException.Type.IO_EXCEPTION,
-                    "Cannot create temp directory: " + dir.getAbsolutePath());
-        }
+        File dir = prepareTempDir();
         File file = new File(dir, uuid.toString());
         if (file.exists()) {
             throw new FileStorageException(FileStorageException.Type.FILE_ALREADY_EXISTS, file.getAbsolutePath());
@@ -138,11 +131,7 @@ public class TemporaryStorageImpl implements TemporaryStorage {
 
     protected FileInfo createFileInternal() {
         UUID uuid = UuidProvider.createUuid();
-        File dir = new File(tempDir);
-        if (!dir.exists() && !dir.mkdirs()) {
-            throw new FileStorageException(FileStorageException.Type.IO_EXCEPTION,
-                    "Cannot create temp directory: " + dir.getAbsolutePath());
-        }
+        File dir = prepareTempDir();
         File file = new File(dir, uuid.toString());
 
         if (file.exists()) {
@@ -264,5 +253,26 @@ public class TemporaryStorageImpl implements TemporaryStorage {
             builder.append(formatter.format(lastModified)).append("\n");
         }
         return builder.toString();
+    }
+
+    /**
+     * Returns the temporary directory, creating it if necessary.
+     * <p>
+     * Uses {@link Files#createDirectories} so that concurrent uploads racing to create
+     * a not-yet-existing directory do not fail: unlike a {@code !exists() && !mkdirs()}
+     * check, this call is idempotent and does not throw when the directory already exists.
+     *
+     * @return the existing temporary directory
+     * @throws FileStorageException if the directory does not exist and cannot be created
+     */
+    protected File prepareTempDir() {
+        File dir = new File(tempDir);
+        try {
+            Files.createDirectories(dir.toPath());
+        } catch (IOException e) {
+            throw new FileStorageException(FileStorageException.Type.IO_EXCEPTION,
+                    "Cannot create temp directory: " + dir.getAbsolutePath(), e);
+        }
+        return dir;
     }
 }

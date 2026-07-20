@@ -417,7 +417,7 @@ public class DataContextImpl implements DataContextInternal {
                 }
 
                 if (value == null || !entityStates.isLoaded(dstEntity, propertyName)) {
-                    mergeUnloadedOrNullReference(srcEntity, dstEntity, property, value);
+                    mergeUnloadedOrNullReference(srcEntity, dstEntity, property, value, mergedMap, options);
                     continue;
                 }
 
@@ -497,32 +497,48 @@ public class DataContextImpl implements DataContextInternal {
     }
 
     protected void mergeUnloadedOrNullReference(Object srcEntity, Object dstEntity, MetaProperty property,
-                                                @Nullable Object value) {
-        if (property.getType() != MetaProperty.Type.EMBEDDED) {//dstEntity property value will be lazy loaded and replaced by srcEntity property value
-            String propertyName = property.getName();
-            if (value instanceof Collection) {
-                // a to-many value installed on an unloaded dst property must notify the
-                // context on mutation like every other merge-installed collection
-                boolean[] wrappedLazy = new boolean[1];
-                entitySystemStateSupport.mergeLazyLoadingState((Entity) srcEntity, (Entity) dstEntity, property,
-                        collection -> {
-                            wrappedLazy[0] = true;
-                            return wrapLazyValueIntoObservableCollection(collection, dstEntity, propertyName);
-                        });
-                if (!wrappedLazy[0]) {
-                    Collection<Object> installed = wrapLazyValueIntoObservableCollection(
-                            (Collection<Object>) value, dstEntity, propertyName);
-                    setPropertyValue(dstEntity, property, installed);
-                }
-                // a non-null value is now present in memory; reflect it in the loaded-state info
-                markLoaded(dstEntity, propertyName);
-            } else {
-                setPropertyValue(dstEntity, property, value);
-                if (value != null) {
-                    markLoaded(dstEntity, propertyName);
-                }
-            }
+                                                @Nullable Object value, Map<Object, Object> mergedMap,
+                                                MergeOptions options) {
+        if (property.getType() == MetaProperty.Type.EMBEDDED) {
+            // embedded values are not lazy-loaded and are handled by the loaded-destination path
+            return;
         }
+        String propertyName = property.getName();
+
+        if (value == null) {
+            setPropertyValue(dstEntity, property, null);
+            return;
+        }
+
+        // The source property is loaded (caller guard: srcNew || isLoaded(srcEntity, ...)), so its
+        // value is materialized: merge the reached node(s) into the context so the installed value
+        // holds managed instances (the identity map), exactly as the loaded-destination path
+        // (internalMerge / mergeList) does. The both-sides-unloaded lazy holder is handled elsewhere
+        // (mergeLazyLoadingState) and is out of scope here.
+        Object installed;
+        if (value instanceof Collection<?> srcCollection) {
+            Collection<Object> managedRefs;
+            if (value instanceof List) {
+                managedRefs = new ArrayList<>();
+            } else if (value instanceof Set) {
+                managedRefs = new LinkedHashSet<>();
+            } else {
+                throw new UnsupportedOperationException("Unsupported collection type: " + value.getClass().getName());
+            }
+            for (Object srcRef : srcCollection) {
+                managedRefs.add(internalMerge(srcRef, mergedMap, false, options));
+            }
+            // makes it observable AND snapshots the tracker baseline, so mutating it later marks the
+            // owner modified like every merged collection
+            installed = wrapLazyValueIntoObservableCollection(managedRefs, dstEntity, propertyName);
+        } else {
+            installed = internalMerge(value, mergedMap, false, options);
+        }
+        // checkEquals=false: always install the merged value, matching the loaded-destination
+        // merge-install convention (mergeReferenceProperties) and never skipping the set because a
+        // lazily materialized destination value happens to compare equal
+        setPropertyValue(dstEntity, property, installed, false);
+        markLoaded(dstEntity, propertyName);
     }
 
     /**

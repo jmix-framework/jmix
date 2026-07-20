@@ -7,6 +7,7 @@ import io.jmix.core.FetchPlans
 import io.jmix.core.entity.EntityPropertyChangeEvent
 import io.jmix.core.entity.EntityPropertyChangeListener
 import io.jmix.core.entity.EntitySystemAccess
+import io.jmix.core.entity.EntityValues
 import test_support.entity.sales.OrderLineParam
 import io.jmix.flowui.model.DataComponents
 import io.jmix.flowui.model.DataContext
@@ -938,5 +939,61 @@ class DataContextMergePolicyTest extends DataContextSpec {
 
         cleanup:
         dataManager.remove(customer)
+    }
+
+    @IgnoreIf({Boolean.valueOf(System.getenv("JMIX_ECLIPSELINK_DISABLELAZYLOADING"))})
+    def "root merge of a wider copy merges a transplanted to-one reference into the context (#418)"() {
+        DataContext context = factory.createDataContext()
+
+        given: "an order merged with customer unloaded, then a wider copy carrying customer"
+        Customer customer1 = dataManager.save(new Customer(name: 'c1', address: new Address()))
+        Order order1 = dataManager.save(new Order(number: '1', customer: customer1))
+
+        Order managed = context.merge(
+                dataManager.load(Id.of(order1)).fetchPlan { it.add('number') }.one())
+
+        expect:
+        !entityStates.isLoaded(managed, 'customer')
+
+        when:
+        context.merge(dataManager.load(Id.of(order1))
+                .fetchPlan { it.addAll('number', 'customer.name') }.one())
+
+        then: "the reached customer is THE managed instance of its id, not a transplanted copy"
+        entityStates.isLoaded(managed, 'customer')
+        managed.customer != null
+        context.find(Customer, customer1.id).is(managed.customer)
+
+        cleanup:
+        dataManager.remove(order1, customer1)
+    }
+
+    @IgnoreIf({Boolean.valueOf(System.getenv("JMIX_ECLIPSELINK_DISABLELAZYLOADING"))})
+    def "non-root graph merge merges transplanted collection elements into the context"() {
+        DataContext context = factory.createDataContext()
+
+        given: "an order managed with orderLines unloaded"
+        Customer customer1 = dataManager.save(new Customer(name: 'c1', address: new Address()))
+        Order order1 = dataManager.save(new Order(number: '1', customer: customer1))
+        OrderLine line1 = dataManager.save(new OrderLine(quantity: 1, order: order1))
+
+        Order managed = context.merge(
+                dataManager.load(Id.of(order1)).fetchPlan { it.add('number') }.one())
+
+        expect:
+        !entityStates.isLoaded(managed, 'orderLines')
+
+        when: "a line carrying order.orderLines is merged — order is reached non-root"
+        def loadedLine = dataManager.load(Id.of(line1))
+                .fetchPlan { it.addAll('quantity', 'order.number', 'order.orderLines.quantity') }.one()
+        context.merge(loadedLine)
+
+        then: "each element of the transplanted collection is THE managed instance of its id"
+        entityStates.isLoaded(managed, 'orderLines')
+        managed.orderLines.size() == 1
+        managed.orderLines.every { context.find(OrderLine, EntityValues.getId(it)).is(it) }
+
+        cleanup:
+        dataManager.remove(line1, order1, customer1)
     }
 }

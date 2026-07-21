@@ -32,9 +32,9 @@ class DataContextDiagnosticsTest extends DataContextSpec {
         Customer customer = metadata.create(Customer)
 
         expect:
-        DataContextDiagnostics.attributeDirtied(customer, 'name', 'a', 'b')
+        DataContextDiagnostics.attributeDirtied(customer, 'name', 'a')
                 .contains("Customer-${customer.id}")
-        DataContextDiagnostics.attributeDirtied(customer, 'name', 'a', 'b').contains("'a' -> 'b'")
+        DataContextDiagnostics.attributeDirtied(customer, 'name', 'a').contains("baseline 'a'")
         DataContextDiagnostics.attributeReverted(customer, 'name').contains('reverted')
         DataContextDiagnostics.mergeSkippedDirty(customer, 'name').contains('kept user value')
         DataContextDiagnostics.formatEntity(null) == 'null'

@@ -1,12 +1,17 @@
 package data_components
 
+import io.jmix.core.DataManager
+import io.jmix.core.Id
+import io.jmix.core.Metadata
+import io.jmix.flowui.model.DataComponents
 import io.jmix.flowui.model.impl.DataContextChangeTracker
+import org.springframework.beans.factory.annotation.Autowired
+import test_support.entity.TestNullableIdEntity
+import test_support.entity.sales.Address
 import test_support.entity.sales.Customer
 import test_support.entity.sales.Order
+import test_support.entity.sales.OrderLine
 import test_support.spec.DataContextSpec
-import org.springframework.beans.factory.annotation.Autowired
-import io.jmix.core.DataManager
-import io.jmix.core.Metadata
 
 class DataContextChangeTrackerTest extends DataContextSpec {
 
@@ -17,7 +22,7 @@ class DataContextChangeTrackerTest extends DataContextSpec {
     DataManager dataManager
 
     @Autowired
-    io.jmix.flowui.model.DataComponents factory
+    DataComponents factory
 
     def dirty = [], clean = []
     def tracker = new DataContextChangeTracker({ e -> dirty << e }, { e -> clean << e })
@@ -73,8 +78,8 @@ class DataContextChangeTrackerTest extends DataContextSpec {
     def "collection dirty follows membership, not order or instance"() {
         given:
         Order order = metadata.create(Order)
-        def l1 = metadata.create(test_support.entity.sales.OrderLine)
-        def l2 = metadata.create(test_support.entity.sales.OrderLine)
+        def l1 = metadata.create(OrderLine)
+        def l2 = metadata.create(OrderLine)
         tracker.snapshotCollectionBaseline(order, 'orderLines', [l1, l2])
 
         when: "same membership in different order is clean"
@@ -99,8 +104,8 @@ class DataContextChangeTrackerTest extends DataContextSpec {
     def "collection rebaseline keeps the new baseline usable after un-dirtying"() {
         given:
         Order order = metadata.create(Order)
-        def l1 = metadata.create(test_support.entity.sales.OrderLine)
-        def l2 = metadata.create(test_support.entity.sales.OrderLine)
+        def l1 = metadata.create(OrderLine)
+        def l2 = metadata.create(OrderLine)
         tracker.snapshotCollectionBaseline(order, 'orderLines', [l1])
 
         when: "adding an element dirties"
@@ -195,7 +200,7 @@ class DataContextChangeTrackerTest extends DataContextSpec {
     def "getModifiedAttributes reflects user edits through the context"() {
         given:
         def context = factory.createDataContext()
-        Customer customer = dataManager.save(new Customer(name: 'c1', address: new test_support.entity.sales.Address()))
+        Customer customer = dataManager.save(new Customer(name: 'c1', address: new Address()))
         Customer managed = context.merge(customer)
 
         expect:
@@ -222,7 +227,7 @@ class DataContextChangeTrackerTest extends DataContextSpec {
     def "setModified manual flag survives tracker transitions"() {
         given:
         def context = factory.createDataContext()
-        Customer customer = dataManager.save(new Customer(name: 'c1', address: new test_support.entity.sales.Address()))
+        Customer customer = dataManager.save(new Customer(name: 'c1', address: new Address()))
         Customer managed = context.merge(customer)
         context.setModified(managed, true)
 
@@ -248,9 +253,9 @@ class DataContextChangeTrackerTest extends DataContextSpec {
         given:
         def context = factory.createDataContext()
         Customer customer = dataManager.save(new Customer(name: 'c1',
-                address: new test_support.entity.sales.Address(city: 'Rome')))
+                address: new Address(city: 'Rome')))
         Customer managed = context.merge(
-                dataManager.load(io.jmix.core.Id.of(customer)).fetchPlan { it.addAll('name', 'address') }.one())
+                dataManager.load(Id.of(customer)).fetchPlan { it.addAll('name', 'address') }.one())
 
         when:
         managed.address.city = 'Pisa'
@@ -271,7 +276,7 @@ class DataContextChangeTrackerTest extends DataContextSpec {
     def "lifecycle drops tracker state"() {
         given:
         def context = factory.createDataContext()
-        Customer customer = dataManager.save(new Customer(name: 'c1', address: new test_support.entity.sales.Address()))
+        Customer customer = dataManager.save(new Customer(name: 'c1', address: new Address()))
         Customer managed = context.merge(customer)
         managed.name = 'x'
 
@@ -295,7 +300,7 @@ class DataContextChangeTrackerTest extends DataContextSpec {
     def "primary key changes are not tracked as attribute modifications"() {
         given:
         def context = factory.createDataContext()
-        def entity = context.merge(metadata.create(test_support.entity.TestNullableIdEntity))
+        def entity = context.merge(metadata.create(TestNullableIdEntity))
 
         when: "id is assigned like the saveDelegate DTO pattern does"
         entity.id = 10L
@@ -313,7 +318,7 @@ class DataContextChangeTrackerTest extends DataContextSpec {
     def "successful save clears attribute state"() {
         given:
         def context = factory.createDataContext()
-        Customer customer = dataManager.save(new Customer(name: 'c1', address: new test_support.entity.sales.Address()))
+        Customer customer = dataManager.save(new Customer(name: 'c1', address: new Address()))
         Customer managed = context.merge(customer)
         managed.name = 'c2'
 
@@ -331,11 +336,11 @@ class DataContextChangeTrackerTest extends DataContextSpec {
     def "collection mutation dirties the attribute and revert un-dirties it"() {
         given:
         def context = factory.createDataContext()
-        Customer customer = dataManager.save(new Customer(name: 'c1', address: new test_support.entity.sales.Address()))
+        Customer customer = dataManager.save(new Customer(name: 'c1', address: new Address()))
         Order order = dataManager.save(new Order(number: 'o1', customer: customer))
-        def line = dataManager.save(new test_support.entity.sales.OrderLine(quantity: 1, order: order))
+        def line = dataManager.save(new OrderLine(quantity: 1, order: order))
 
-        Order managed = context.merge(dataManager.load(io.jmix.core.Id.of(order))
+        Order managed = context.merge(dataManager.load(Id.of(order))
                 .fetchPlan { it.addAll('number', 'orderLines.quantity') }.one())
         def managedLine = managed.orderLines[0]
 

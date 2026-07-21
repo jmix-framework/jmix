@@ -28,7 +28,7 @@ import java.util.function.Consumer;
  * Baselines exist only for dirty attributes; an attribute whose current value returns to its
  * baseline is removed. Entity-level dirty membership is signalled through the two callbacks.
  */
-class DataContextChangeTracker {
+public class DataContextChangeTracker {
 
     // entity -> attribute -> baseline (scalar value, reference id, or membership bag for collections)
     private final Map<Object, Map<String, Object>> baselines = new IdentityHashMap<>();
@@ -37,11 +37,9 @@ class DataContextChangeTracker {
     // (e.g. a collection snapshot taken before mutation) without being dirty yet.
     private final Map<Object, Set<String>> dirtyAttrs = new IdentityHashMap<>();
 
-    // entity -> attributes made loaded by a user set or a non-null merge-install (increment 04's markLoaded).
-    // A fresh merge of a narrower copy replaces the loaded-state cache with the source's, whose negative for
-    // such an attribute shadows the (correct) fetch-group state; this registry lets reapplySetLoaded restore it
-    // afterwards (DataContextImpl.reapplySetLoaded). Dropped when an entity leaves the context (drop), NOT by
-    // clear(): clear() resets dirty state (clearChanges, and inside save()) while the value stays present.
+    // entity -> attributes made loaded by a user set or a non-null merge-install. Lets
+    // DataContextImpl.reapplySetLoaded restore the loaded flag after a fresh merge installs a narrower
+    // loaded-state cache. Dropped when an entity leaves the context (drop), but NOT by clear().
     private final Map<Object, Set<String>> setLoadedAttrs = new IdentityHashMap<>();
 
     private final Consumer<Object> onEntityDirty;
@@ -71,14 +69,10 @@ class DataContextChangeTracker {
 
     void snapshotCollectionBaseline(Object entity, String attribute, Collection<?> baselineContents) {
         if (!isAttributeDirty(entity, attribute)) {
-            // A clean attribute's baseline must always track what merge just installed: merge
-            // legitimately replaces a clean collection's contents (e.g. a fresh reload bringing in
-            // DB-side changes), so if the baseline were left stale, later mutations would be
-            // compared against membership that no longer reflects reality (spurious dirty, or a
-            // false clean when a removed-then-re-added item happens to restore the stale bag).
-            // A dirty attribute keeps its existing baseline: mergeFromChild relies on the child's
-            // own baseline surviving the merge (see isOverriding), and putDirty overwrites it
-            // anyway whenever the tracked value actually changes.
+            // A clean attribute's baseline must track what merge just installed (merge legitimately
+            // replaces a clean collection's contents), otherwise later mutations would be compared
+            // against stale membership. A dirty attribute keeps its baseline: mergeFromChild relies on
+            // the child's baseline surviving, and putDirty overwrites it when the value actually changes.
             baselines.computeIfAbsent(entity, e -> new HashMap<>())
                     .put(attribute, membershipBag(baselineContents));
         }
@@ -135,19 +129,6 @@ class DataContextChangeTracker {
         } else if (DataContextDiagnostics.log.isDebugEnabled()) {
             DataContextDiagnostics.log.debug(DataContextDiagnostics.baselineRebased(entity, attribute, bag));
         }
-    }
-
-    Map<String, Object> dirtyBaselines(Object entity) {
-        Map<String, Object> entityBaselines = baselines.get(entity);
-        Set<String> dirty = dirtyAttrs.get(entity);
-        if (entityBaselines == null || dirty == null || dirty.isEmpty()) {
-            return Collections.emptyMap();
-        }
-        Map<String, Object> result = new LinkedHashMap<>();
-        for (String attribute : dirty) {
-            result.put(attribute, entityBaselines.get(attribute));
-        }
-        return result;
     }
 
     void markDirty(Object entity, String attribute, @Nullable Object baseline) {

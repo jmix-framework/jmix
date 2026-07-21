@@ -23,6 +23,7 @@ import io.jmix.core.entity.EntityValues
 import io.jmix.flowui.model.DataComponents
 import io.jmix.flowui.model.DataContext
 import io.jmix.flowui.model.MergeOptions
+import io.jmix.flowui.model.impl.DataContextImpl
 import org.springframework.beans.factory.annotation.Autowired
 import spock.lang.IgnoreIf
 import test_support.entity.sales.Address
@@ -329,7 +330,7 @@ class DataContextInvariantFuzzTest extends DataContextSpec {
                 violation('EX-op-threw', opType, seed, op, t.class.simpleName + ': ' + String.valueOf(t.message).take(120))
             }
             if (TRACE) {
-                def impl = (io.jmix.flowui.model.impl.DataContextImpl) context
+                def impl = (DataContextImpl) context
                 println "TRACE seed=$seed op=$op $opType"
                 println "  edited=${oracle.editedKeys}"
                 println "  modified=${impl.modifiedInstances.collect { key(it) }}"
@@ -344,7 +345,7 @@ class DataContextInvariantFuzzTest extends DataContextSpec {
         // sorted by scenario-creation index so op targets are deterministic per seed across
         // JVM runs (sorting by key(it) is stable within a run but keyed to per-run random
         // UUIDs, which reshuffles which entity a given rnd index picks between runs)
-        def all = ((io.jmix.flowui.model.impl.DataContextImpl) context).all.toList().sort {
+        def all = ((DataContextImpl) context).all.toList().sort {
             creationOrder.indexOf(EntityValues.getId(it))
         }
         all.empty ? null : all[rnd.nextInt(all.size())]
@@ -395,7 +396,7 @@ class DataContextInvariantFuzzTest extends DataContextSpec {
 
     Map<String, Set<String>> snapshotLoaded(DataContext context) {
         Map<String, Set<String>> result = [:]
-        for (Object entity : ((io.jmix.flowui.model.impl.DataContextImpl) context).all) {
+        for (Object entity : ((DataContextImpl) context).all) {
             def loaded = (localAttrs(entity) + refAttrs(entity)).findAll {
                 entityStates.isLoaded(entity, it)
             } as Set
@@ -414,7 +415,7 @@ class DataContextInvariantFuzzTest extends DataContextSpec {
 
     void checkInvariants(DataContext context, Oracle oracle, Map<String, Set<String>> loadedBefore,
                          long seed, int op, String opType) {
-        def impl = (io.jmix.flowui.model.impl.DataContextImpl) context
+        def impl = (DataContextImpl) context
         def all = impl.all.toList()
         def byKey = all.collectEntries { [(key(it)): it] }
 

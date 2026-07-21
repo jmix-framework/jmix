@@ -84,20 +84,17 @@ public class DataContextImpl implements DataContextInternal {
 
     protected Set<Object> manuallyModified = new HashSet<>();
 
-    // Composition owners marked modified only to protect an intermediate editor from a stale reload:
-    // the reopen gate reads isModified, but these owners have no change of their own
-    // and must NOT be persisted, so they are kept out of modifiedInstances and the save set.
+    // Composition owners marked modified only to protect an intermediate editor from a stale reload
+    // (consulted by isModified). They have no change of their own and are kept out of the save set.
     protected Set<Object> compositionModifiedOwners = new HashSet<>();
 
-    // Non-empty only inside mergeFromChild: attributes of the merge root whose incoming (child)
-    // values must overwrite this context's own unsaved edits. Scoped to the single merge call
-    // via try/finally; safe as a plain field because a context never re-enters its own merge
-    // from within mergeFromChild (a parent's save into a grandparent runs on another instance).
+    // Non-empty only inside mergeFromChild: attributes of the merge root whose incoming (child) values
+    // must overwrite this context's own unsaved edits. Scoped to the single merge call via try/finally.
     protected Set<String> overridingAttributes = Set.of();
 
     // (managedEntity identity -> property names) whose collection is being merged within the active
-    // merge() call. Guards against re-entering mergeList/mergeSet for the same owner collection when
-    // the source graph holds multiple java instances of the same id joined by a bidirectional reference.
+    // merge() call. Guards against re-entering mergeList/mergeSet for the same owner collection when the
+    // source graph holds multiple java instances of the same id joined by a bidirectional reference.
     protected Map<Object, Set<String>> mergeCollectionInProgress;
 
     protected PropertyChangeListener propertyChangeListener = new PropertyChangeListener();
@@ -362,13 +359,9 @@ public class DataContextImpl implements DataContextInternal {
 
                 if (changeTracker.isAttributeDirty(dstEntity, propertyName)
                         && !(isRoot && isOverriding(propertyName))) {
-                    // dirty-aware merge rule: the destination attribute carries an unsaved user
-                    // edit and is never overwritten; a fresh merge rebaselines the edit against
-                    // the incoming value instead (un-dirtying it if now equal). Reading the
-                    // current value is safe: a dirty attribute was written by the user through
-                    // the managed instance, so it is loaded on the destination.
-                    // Exception: during mergeFromChild the child's dirty attributes of the merge
-                    // root override this context's own edits (see isOverriding).
+                    // dirty-aware merge rule: a destination attribute with an unsaved user edit is never
+                    // overwritten; a fresh merge rebaselines the edit against the incoming value instead
+                    // (un-dirtying it if now equal). isOverriding is the mergeFromChild exception.
                     if (options.isFresh()) {
                         changeTracker.rebaseline(dstEntity, propertyName, value,
                                 EntityValues.getValue(dstEntity, propertyName), false);
@@ -384,9 +377,9 @@ public class DataContextImpl implements DataContextInternal {
                     // datatype values; do not snapshot a collection baseline for them - their elements
                     // are not entities and cannot be used as a tracker refKey
                     if (value instanceof List) {
-                        value = createObservableList(new ArrayList<>((Collection<Object>) srcCollection), dstEntity, propertyName);
+                        value = createObservableList(new ArrayList<>(srcCollection), dstEntity, propertyName);
                     } else if (value instanceof Set) {
-                        value = createObservableSet(new HashSet<>((Collection<Object>) srcCollection), dstEntity, propertyName);
+                        value = createObservableSet(new HashSet<>(srcCollection), dstEntity, propertyName);
                     } else {
                         throw new UnsupportedOperationException("Unsupported collection type: " + value.getClass().getName());
                     }
@@ -417,7 +410,7 @@ public class DataContextImpl implements DataContextInternal {
                 }
 
                 if (value == null || !entityStates.isLoaded(dstEntity, propertyName)) {
-                    mergeUnloadedOrNullReference(srcEntity, dstEntity, property, value, mergedMap, options);
+                    mergeUnloadedOrNullReference(dstEntity, property, value, mergedMap, options);
                     continue;
                 }
 
@@ -480,7 +473,7 @@ public class DataContextImpl implements DataContextInternal {
                 // destination (references hold a managed instance or null; collections
                 // hold the observable wrapper)
                 if (value instanceof Collection<?> incoming) {
-                    Collection<?> current = (Collection<?>) EntityValues.getValue(dstEntity, propertyName);
+                    Collection<?> current = EntityValues.getValue(dstEntity, propertyName);
                     changeTracker.rebaselineCollection(dstEntity, propertyName, incoming, current);
                 } else if (embedded) {
                     rebaselineEmbedded(dstEntity, propertyName, value, dirtyEmbeddedPaths);
@@ -496,7 +489,7 @@ public class DataContextImpl implements DataContextInternal {
         return false;
     }
 
-    protected void mergeUnloadedOrNullReference(Object srcEntity, Object dstEntity, MetaProperty property,
+    protected void mergeUnloadedOrNullReference(Object dstEntity, MetaProperty property,
                                                 @Nullable Object value, Map<Object, Object> mergedMap,
                                                 MergeOptions options) {
         if (property.getType() == MetaProperty.Type.EMBEDDED) {
@@ -510,11 +503,9 @@ public class DataContextImpl implements DataContextInternal {
             return;
         }
 
-        // The source property is loaded (caller guard: srcNew || isLoaded(srcEntity, ...)), so its
-        // value is materialized: merge the reached node(s) into the context so the installed value
-        // holds managed instances (the identity map), exactly as the loaded-destination path
-        // (internalMerge / mergeList) does. The both-sides-unloaded lazy holder is handled elsewhere
-        // (mergeLazyLoadingState) and is out of scope here.
+        // The source property is loaded (caller guard), so its value is materialized: merge the reached
+        // node(s) so the installed value holds managed instances, like the loaded-destination path does.
+        // The both-sides-unloaded lazy holder is handled elsewhere (mergeLazyLoadingState).
         Object installed;
         if (value instanceof Collection<?> srcCollection) {
             Collection<Object> managedRefs;
@@ -555,14 +546,11 @@ public class DataContextImpl implements DataContextInternal {
     }
 
     /**
-     * Re-asserts the set-loaded markers of an entity into its current {@link LoadedPropertiesInfo}, so a value
-     * that is present in memory because it was set or merge-installed keeps reporting loaded after a fresh merge
-     * replaces the loaded-state cache with a narrower source's (in {@link #mergeLoadedPropertiesInfo}), whose
-     * negative for the attribute would otherwise shadow the fetch-group state. Writes only positive entries for
-     * recorded attributes, so it can never turn a genuinely-unloaded attribute loaded. No-op for entities
-     * without a cache. Runs after every merge, not only fresh ones; on the cold-reset path (which recomputes
-     * loaded-state from the fetch group) it re-affirms the same markers, safe by that positive-only invariant
-     * rather than by being inert.
+     * Re-asserts the set-loaded markers of an entity into its current {@link LoadedPropertiesInfo}, so a
+     * value present in memory because it was set or merge-installed keeps reporting loaded after a fresh
+     * merge replaces the loaded-state cache with a narrower source's (see {@link #mergeLoadedPropertiesInfo}).
+     * Writes only positive entries, so it can never turn a genuinely-unloaded attribute loaded. No-op for
+     * entities without a cache.
      */
     protected void reapplySetLoaded(Object dstEntity) {
         LoadedPropertiesInfo info = EntitySystemAccess.getEntityEntry(dstEntity).getLoadedPropertiesInfo();
@@ -1245,8 +1233,7 @@ public class DataContextImpl implements DataContextInternal {
         Map<String, Object> preMergeValues = new HashMap<>();
         if (managed != null) {
             // the merge below resets this instance's loaded-state cache before its copy loops
-            // (resetLoadedInfoBeforeCopy, same condition as this managed root), so probing isLoaded
-            // here cannot poison the merge's own checks - no disposable-copy guard is needed
+            // (resetLoadedInfoBeforeCopy), so probing isLoaded here cannot poison the merge's own checks
             for (String attribute : childDirtyAttributes) {
                 if (entityStates.isLoaded(managed, rootSegment(attribute))) {
                     preMergeValues.put(attribute, valueForBaseline(managed, attribute));
@@ -1267,10 +1254,8 @@ public class DataContextImpl implements DataContextInternal {
                 continue;
             }
             if (!entityStates.isLoaded(result, rootSegment(attribute))) {
-                // edge guard for the dirty-implies-loaded invariant: after the merge the child's
-                // dirty attributes are normally loaded here (the fetch groups were unioned and the
-                // child's values copied), so this fires only in unusual states; never register
-                // dirt for an unloaded attribute (rebaseline reads would hit unfetched state)
+                // edge guard: never register dirt for an unloaded attribute (later rebaseline reads
+                // would hit unfetched state). After the merge these are normally loaded, so this is rare.
                 log.debug("Skipping dirty union of '{}' from child context: not loaded on the parent instance {}",
                         attribute, result);
                 continue;
@@ -1531,22 +1516,19 @@ public class DataContextImpl implements DataContextInternal {
                 return;
             }
 
-            // off-merge edit, OR a listener-injected edit during a merge (#1258): track it as usual
+            // off-merge edit, or a listener-injected edit during a merge (#1258): track it as usual
             modifiedInstances.add(e.getItem());
 
             MetaProperty changedProperty = metadata.getClass(e.getItem()).findProperty(e.getProperty());
-            if (changedProperty != null && changedProperty.getRange().isClass()
-                    && changedProperty.getRange().getCardinality().isMany()) {
-                // to-many properties are handled by the observable collection wrappers; skip the tracker here
-            } else if (e.getProperty().equals(primaryKeyPropertyName)) {
-                // an id change is identity bookkeeping (e.g. setId() in a saveDelegate),
-                // not a user attribute edit; skip the tracker
-            } else {
-                boolean reference = changedProperty != null && changedProperty.getRange().isClass()
-                        && !changedProperty.getRange().getCardinality().isMany();
+            boolean toMany = changedProperty != null && changedProperty.getRange().isClass()
+                    && changedProperty.getRange().getCardinality().isMany();
+            boolean idChange = e.getProperty().equals(primaryKeyPropertyName);
+            // to-many properties are tracked via the observable collection wrappers; an id change is
+            // identity bookkeeping (e.g. setId() in a saveDelegate), not a user edit - skip both
+            if (!toMany && !idChange) {
+                boolean reference = changedProperty != null && changedProperty.getRange().isClass();
                 changeTracker.trackChange(e.getItem(), e.getProperty(), e.getPrevValue(), e.getValue(), reference);
-                // a user set makes the attribute authoritative and present in memory (even a set to null),
-                // so it is loaded regardless of whether it was fetched
+                // a user set makes the attribute present in memory (even a set to null), so mark it loaded
                 markLoaded(e.getItem(), e.getProperty());
             }
 
@@ -1579,10 +1561,10 @@ public class DataContextImpl implements DataContextInternal {
             modifiedInstances.add(entity);
 
             MetaProperty changedProperty = metadata.getClass(e.getItem()).findProperty(e.getProperty());
-            if (changedProperty != null && changedProperty.getRange().isClass()
-                    && changedProperty.getRange().getCardinality().isMany()) {
-                // to-many properties are handled by the observable collection wrappers; skip the tracker here
-            } else {
+            boolean toMany = changedProperty != null && changedProperty.getRange().isClass()
+                    && changedProperty.getRange().getCardinality().isMany();
+            // to-many properties are tracked via the observable collection wrappers; skip the tracker here
+            if (!toMany) {
                 changeTracker.trackChange(entity, embeddedPropertyName + '.' + e.getProperty(),
                         e.getPrevValue(), e.getValue(), false);
             }

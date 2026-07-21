@@ -33,21 +33,13 @@ import java.util.Map;
  * instance-name resolution over unfetched attributes); entities are rendered as
  * {@code ClassName-id} via {@link #formatEntity(Object)} instead.
  */
-class DataContextDiagnostics {
+public class DataContextDiagnostics {
 
     static final Logger log = LoggerFactory.getLogger("io.jmix.flowui.datacontext.diagnostics");
 
     private DataContextDiagnostics() {
     }
 
-    static String attributeDirtied(Object entity, String attribute, @Nullable Object baseline, @Nullable Object value) {
-        return "Attribute dirtied: " + formatEntity(entity) + "." + attribute
-                + ": '" + formatEntity(baseline) + "' -> '" + formatEntity(value) + "'";
-    }
-
-    /**
-     * Variant used where the new value is not available at the call site (only the baseline is).
-     */
     static String attributeDirtied(Object entity, String attribute, @Nullable Object baseline) {
         return "Attribute dirtied: " + formatEntity(entity) + "." + attribute
                 + " (baseline '" + formatEntity(baseline) + "')";
@@ -80,6 +72,7 @@ class DataContextDiagnostics {
             return "null";
         }
         if (value instanceof Map) {
+            // a collection baseline is stored as a membership bag (Map, see DataContextChangeTracker.membershipBag)
             return "<collection>";
         }
         if (EntityValues.isEntity(value)) {

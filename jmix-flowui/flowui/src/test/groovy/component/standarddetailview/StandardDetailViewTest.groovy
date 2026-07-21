@@ -25,6 +25,7 @@ import io.jmix.core.DataManager
 import io.jmix.core.Metadata
 import io.jmix.flowui.DialogWindows
 import io.jmix.flowui.ViewNavigators
+import io.jmix.flowui.model.DataContext
 import io.jmix.flowui.testassist.UiTestUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -38,7 +39,7 @@ class StandardDetailViewTest extends FlowuiTestSpecification {
     @Autowired
     protected ViewNavigators navigators
     @Autowired
-    protected DialogWindows dialogWindows;
+    protected DialogWindows dialogWindows
 
     @Autowired
     protected Metadata metadata
@@ -201,7 +202,7 @@ class StandardDetailViewTest extends FlowuiTestSpecification {
                 .navigate()
         OrderDetailTestView view = UiTestUtils.getCurrentView()
         Order edited = view.getEditedEntity()
-        io.jmix.flowui.model.DataContext dataContext = view.getViewData().getDataContext()
+        DataContext dataContext = view.getViewData().getDataContext()
 
         when: "an edit sets the modifiedAfterOpen latch and is then reverted (which un-tracks the attribute), but the new entity is explicitly kept modified with no tracked attributes"
         def original = edited.number

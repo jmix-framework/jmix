@@ -45,7 +45,7 @@ class DataContextMergePolicyTest extends DataContextSpec {
 
         Order managed = context.merge(dataManager.load(Id.of(order)).fetchPlan { it.add('number') }.one())
         context.merge(dataManager.load(Id.of(order)).fetchPlan { it.addAll('number', 'orderLines.quantity') }.one(),
-                new io.jmix.flowui.model.MergeOptions().setFresh(true))
+                new MergeOptions().setFresh(true))
         context.setModified(managed, false) // start clean
 
         when: "the user mutates the (transplanted) collection"
@@ -91,7 +91,7 @@ class DataContextMergePolicyTest extends DataContextSpec {
         Customer freshCopy = dataManager.load(Id.of(customer)).fetchPlan { it.add('name') }.one()
         freshCopy.name = 'db-new'
         makeDetached(freshCopy, ['name'])
-        context.merge(freshCopy, new io.jmix.flowui.model.MergeOptions().setFresh(true))
+        context.merge(freshCopy, new MergeOptions().setFresh(true))
 
         then: "user's value survives, still dirty (against the new baseline)"
         managed.name == 'edited'
@@ -101,7 +101,7 @@ class DataContextMergePolicyTest extends DataContextSpec {
         Customer equalCopy = dataManager.load(Id.of(customer)).fetchPlan { it.add('name') }.one()
         equalCopy.name = 'edited'
         makeDetached(equalCopy, ['name'])
-        context.merge(equalCopy, new io.jmix.flowui.model.MergeOptions().setFresh(true))
+        context.merge(equalCopy, new MergeOptions().setFresh(true))
 
         then:
         managed.name == 'edited'
@@ -362,7 +362,7 @@ class DataContextMergePolicyTest extends DataContextSpec {
 
         when: "the database has moved on (still c1) and a fresh copy arrives"
         Order freshCopy = dataManager.load(Id.of(order)).fetchPlan { it.addAll('number', 'customer.name') }.one()
-        context.merge(freshCopy, new io.jmix.flowui.model.MergeOptions().setFresh(true))
+        context.merge(freshCopy, new MergeOptions().setFresh(true))
 
         then: "user's reference survives, still dirty (against the new baseline, still c1)"
         managed.customer.is(managedC2)
@@ -373,7 +373,7 @@ class DataContextMergePolicyTest extends DataContextSpec {
         dbOrder.customer = c2
         dbOrder = dataManager.save(dbOrder)
         Order equalCopy = dataManager.load(Id.of(order)).fetchPlan { it.addAll('number', 'customer.name') }.one()
-        context.merge(equalCopy, new io.jmix.flowui.model.MergeOptions().setFresh(true))
+        context.merge(equalCopy, new MergeOptions().setFresh(true))
 
         then: "the reference un-dirties (ids equal)"
         managed.customer.is(managedC2)
@@ -401,7 +401,7 @@ class DataContextMergePolicyTest extends DataContextSpec {
         when: "the database has moved on (still [l1, l2]) and a fresh copy arrives"
         context.merge(dataManager.load(Id.of(order))
                 .fetchPlan { it.addAll('number', 'orderLines.quantity') }.one(),
-                new io.jmix.flowui.model.MergeOptions().setFresh(true))
+                new MergeOptions().setFresh(true))
 
         then: "user's emptied-of-l2 contents survive, still dirty (membership differs from the new baseline)"
         managed.orderLines*.id == [l1.id]
@@ -427,7 +427,7 @@ class DataContextMergePolicyTest extends DataContextSpec {
 
         when: "the database has moved on (still 'Rome') and a fresh copy arrives"
         context.merge(dataManager.load(Id.of(customer)).fetchPlan { it.addAll('name', 'address') }.one(),
-                new io.jmix.flowui.model.MergeOptions().setFresh(true))
+                new MergeOptions().setFresh(true))
 
         then: "user's value survives, still dirty (against the new baseline, still 'Rome')"
         managed.address.city == 'Pisa'
@@ -437,7 +437,7 @@ class DataContextMergePolicyTest extends DataContextSpec {
         Customer equalCopy = dataManager.load(Id.of(customer)).fetchPlan { it.addAll('name', 'address') }.one()
         equalCopy.address.city = 'Pisa'
         makeDetached(equalCopy, ['name', 'address'])
-        context.merge(equalCopy, new io.jmix.flowui.model.MergeOptions().setFresh(true))
+        context.merge(equalCopy, new MergeOptions().setFresh(true))
 
         then: "the path un-dirties"
         managed.address.city == 'Pisa'
@@ -466,7 +466,7 @@ class DataContextMergePolicyTest extends DataContextSpec {
         dataManager.remove(l2)
         context.merge(dataManager.load(Id.of(order))
                 .fetchPlan { it.addAll('number', 'orderLines.quantity') }.one(),
-                new io.jmix.flowui.model.MergeOptions().setFresh(true))
+                new MergeOptions().setFresh(true))
 
         then: "the managed collection reflects the DB and stays clean -- merge legitimately changed a clean collection"
         managed.orderLines*.id == [l1.id]
@@ -739,7 +739,7 @@ class DataContextMergePolicyTest extends DataContextSpec {
         // fresh + root -> mergeLoadedPropertiesInfo copies the narrow source's loaded-info wholesale onto the
         // managed line, reverting the set-loaded flag unless it is re-applied from the marker registry
         context.merge(dataManager.load(Id.of(line)).fetchPlan { it.add('quantity') }.one(),
-                new io.jmix.flowui.model.MergeOptions().setFresh(true))
+                new MergeOptions().setFresh(true))
 
         then: "'order' stays loaded and keeps the user's value"
         entityStates.isLoaded(managedLine, 'order')
@@ -768,7 +768,7 @@ class DataContextMergePolicyTest extends DataContextSpec {
         // wholesale onto the managed order, and its source-relative negative for 'customer' shadows the unioned
         // fetch group, reverting the flag - unless the cold-reset recompute is generalized to the fresh path
         context.merge(dataManager.load(Id.of(order1)).fetchPlan { it.add('number') }.one(),
-                new io.jmix.flowui.model.MergeOptions().setFresh(true))
+                new MergeOptions().setFresh(true))
 
         then: "'customer' stays loaded and keeps its value"
         entityStates.isLoaded(managedWide, 'customer')
@@ -791,7 +791,7 @@ class DataContextMergePolicyTest extends DataContextSpec {
 
         when: "a FRESH narrower merge (no 'customer'), then a datatype edit and a save"
         context.merge(dataManager.load(Id.of(order1)).fetchPlan { it.add('number') }.one(),
-                new io.jmix.flowui.model.MergeOptions().setFresh(true))
+                new MergeOptions().setFresh(true))
         managed.number = 'o1-edited'
         context.save()
 

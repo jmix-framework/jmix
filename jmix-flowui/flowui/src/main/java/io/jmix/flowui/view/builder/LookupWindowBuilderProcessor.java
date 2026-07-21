@@ -199,12 +199,17 @@ public class LookupWindowBuilderProcessor extends AbstractWindowBuilderProcessor
                     item = dataManager.load(Id.of(item)).fetchPlan(viewForCollectionContainer).one();
                 }
                 // track changes in the related instance
-                E mergedItem = dataContext.merge(item);
-                if (initializeMasterReference) {
-                    // change reference, now it will be marked as modified
-                    EntityValues.setValue(mergedItem, inverseMetaProperty.getName(), masterItem);
-                }
-                mergedItems.add(mergedItem);
+                mergedItems.add(dataContext.merge(item));
+            }
+        }
+
+        if (initializeMasterReference) {
+            // Set the master reference only after all selected items are merged. If selected items reference
+            // each other (e.g. hierarchically linked entities), merging an item re-merges the referenced items
+            // present in its object graph and would overwrite a reference set before that merge.
+            for (E mergedItem : mergedItems) {
+                // change reference, now it will be marked as modified
+                EntityValues.setValue(mergedItem, inverseMetaProperty.getName(), masterItem);
             }
         }
 

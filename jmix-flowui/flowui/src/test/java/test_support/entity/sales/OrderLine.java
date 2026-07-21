@@ -25,6 +25,14 @@ import test_support.entity.TestBaseEntity;
 import jakarta.persistence.*;
 import java.util.List;
 
+/**
+ * Used by {@code data_components.DataContextInvariantFuzzTest}, whose deterministic regression
+ * baseline depends on this entity's persistent attribute set and setter shape (the harness
+ * enumerates attributes). Adding, removing, or renaming attributes here — or changing a setter
+ * between void and fluent — shifts the fuzz violation counts and can break the gate. If such a
+ * change is unavoidable, re-run the fuzz test with {@code -PincludeSlowTests=true} and update the
+ * baseline in {@code docs/features/data-context/tests/coverage.md}.
+ */
 @Table(name = "TEST_ORDER_LINE")
 @Entity(name = "test_OrderLine")
 @JmixEntity

@@ -32,7 +32,7 @@ import test_support.entity.sales.OrderLine
 import test_support.spec.DataContextSpec
 
 /**
- * Measurement harness, not a regression suite: generates random scenarios of
+ * Measurement harness and regression gate: generates random scenarios of
  * loads-with-random-fetch-plans, merges (fresh and stale) and user edits against a DataContext,
  * and counts violations of proposed merge invariants instead of failing on the first one.
  *
@@ -47,7 +47,12 @@ import test_support.spec.DataContextSpec
  *  I7  membership-preserved — a line added to an order's collection is still there
  *  EX  exception            — an operation threw
  *
- * The run always passes; it prints a violation report. Reproduce a scenario by its printed seed.
+ * It prints a violation report and then applies a tiered regression gate (see {@code then:}):
+ * the closed invariants (I1, I2, I3, I6, I7, exceptions) must stay at zero at any scenario count,
+ * and the known residuals (I4-ref-not-in-context, I4-ref-not-identical, I5) must stay at or below
+ * their calibrated upper bounds when run at the canonical config (200 scenarios, default seed).
+ * Improvements below a bound keep the gate green and are only logged. Reproduce a scenario by its
+ * printed seed; the baseline lives in {@code docs/features/data-context/tests/coverage.md}.
  * <p>
  * Slow test: excluded from the regular suite, run with {@code -PincludeSlowTests=true}.
  * <p>
@@ -141,8 +146,78 @@ class DataContextInvariantFuzzTest extends DataContextSpec {
         }
         printReport(scenariosRun)
 
-        then:
+        then: 'tiered regression gate — see docs/features/data-context/tests/coverage.md'
         scenariosRun == SCENARIOS
+
+        and:
+        Map<String, Integer> totals = totalsByInvariant()
+        List<String> breaches = []
+
+        // closed invariants: must stay at zero at any scenario count
+        CLOSED_INVARIANTS.each { String inv ->
+            int actual = totals[inv] ?: 0
+            if (actual != 0) {
+                breaches << "$inv = $actual, expected 0".toString()
+            }
+        }
+        int exceptions = (totals['EX-scenario-abort'] ?: 0) + (totals['EX-op-threw'] ?: 0)
+        if (exceptions != 0) {
+            breaches << "exceptions = $exceptions, expected 0".toString()
+        }
+
+        // known residuals: upper bounds, enforced only at the config they were calibrated for
+        boolean canonical = SCENARIOS == 200 && BASE_SEED == 20260710L
+        if (canonical) {
+            RESIDUAL_BOUNDS.each { String inv, int bound ->
+                int actual = totals[inv] ?: 0
+                if (actual > bound) {
+                    breaches << "$inv = $actual, exceeds bound $bound".toString()
+                } else if (actual < bound) {
+                    println "NOTE: $inv = $actual < bound $bound — residual improved; the baseline in coverage.md can be tightened"
+                }
+            }
+        } else {
+            println "NOTE: non-canonical config (scenarios=$SCENARIOS, baseSeed=$BASE_SEED); " +
+                    "residual upper bounds not enforced, only the zero-invariants are checked"
+        }
+
+        assert breaches.isEmpty(), gateFailureMessage(breaches)
+    }
+
+    // ---- regression gate -----------------------------------------------------------------------
+
+    // Closed invariants: fully fixed, must stay at zero at any scenario count.
+    static final List<String> CLOSED_INVARIANTS = [
+            'I1-edit-clobbered', 'I2-loaded-regressed', 'I3-collection-dups',
+            'I6-dirty-phantom', 'I7-membership-lost',
+    ]
+
+    // Known residuals: upper bounds calibrated to the canonical config (200 scenarios, default
+    // seed). I4 is the deferred both-sides-unloaded lazy-holder defect (limitations cluster 7);
+    // I5 = 9 are fuzz-oracle false positives. See tests/coverage.md for the full baseline note.
+    static final Map<String, Integer> RESIDUAL_BOUNDS = [
+            'I4-ref-not-in-context': 90,
+            'I4-ref-not-identical' : 64,
+            'I5-dirty-missed'      : 9,
+    ]
+
+    // Sum the per-op violation counts (keyed "invariant|opType") into per-invariant totals that
+    // match the granularity of the tests/coverage.md baseline table.
+    Map<String, Integer> totalsByInvariant() {
+        Map<String, Integer> totals = [:].withDefault { 0 }
+        violationCounts.each { String k, int v ->
+            String inv = k.split('\\|')[0]
+            totals[inv] = totals[inv] + v
+        }
+        totals
+    }
+
+    static String gateFailureMessage(List<String> breaches) {
+        'DataContext fuzz regression gate failed:\n  ' + breaches.join('\n  ') +
+                '\n\nThe full violation report is printed above. A rise may be a real regression ' +
+                'OR fuzz-config drift\n(a change to the sales test entities or the op mix ' +
+                're-shuffles the counts). Reproduce any\nlisted scenario by its printed seed. ' +
+                'Baseline table: docs/features/data-context/tests/coverage.md.'
     }
 
     void runScenario(long seed) {

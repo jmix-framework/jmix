@@ -24,6 +24,7 @@ import io.jmix.core.metamodel.annotation.Comment;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.aitools.dataload.introspection.introspector.MetaPropertyIntrospector;
+import io.jmix.aitools.dataload.introspection.model.EmbeddedPropertyDescriptor;
 import io.jmix.aitools.dataload.introspection.model.EntityDescriptor;
 import io.jmix.aitools.dataload.introspection.model.EntityPropertyDescriptor;
 import io.jmix.aitools.dataload.introspection.model.RelationPropertyDescriptor;
@@ -242,8 +243,10 @@ public class JpaDomainModelIntrospector {
 
             if (propertyDescriptor instanceof RelationPropertyDescriptor relationPropertyDescriptor) {
                 currentEntityName = relationPropertyDescriptor.getTargetEntityName();
+            } else if (propertyDescriptor instanceof EmbeddedPropertyDescriptor embeddedPropertyDescriptor) {
+                currentEntityName = embeddedPropertyDescriptor.getJavaType();
             } else if (i < segments.length - 1) {
-                // A non-relation property (datatype/enum/embedded) may only appear as the last segment.
+                // A non-relation, non-embedded property (datatype/enum) may only appear as the last segment.
                 return null;
             }
         }

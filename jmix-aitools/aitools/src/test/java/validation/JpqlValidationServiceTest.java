@@ -71,6 +71,57 @@ class JpqlValidationServiceTest {
     }
 
     @Test
+    @DisplayName("Does not treat write keywords inside a string literal as a write operation")
+    void testIgnoresWriteKeywordInStringLiteral() {
+        GeneratedJpqlResult result = new GeneratedJpqlResult(
+                "select e.number as n from aitls_Order e where e.number = 'please update this record'",
+                List.of(),
+                "String literal that contains a write keyword",
+                List.of()
+        );
+
+        JpqlValidationResult validationResult = jpqlValidationService.validate(result);
+
+        assertTrue(validationResult.isValid());
+        assertTrue(validationResult.getIssues().stream()
+                .noneMatch(issue -> issue.getCode().equals(JPQL_WRITE_OPERATION_CODE)));
+    }
+
+    @Test
+    @DisplayName("Does not treat SQL pagination keywords inside a string literal as SQL pagination")
+    void testIgnoresPaginationKeywordInStringLiteral() {
+        GeneratedJpqlResult result = new GeneratedJpqlResult(
+                "select e.number as n from aitls_Order e where e.number = 'no limit applies'",
+                List.of(),
+                "String literal that contains a pagination keyword",
+                List.of()
+        );
+
+        JpqlValidationResult validationResult = jpqlValidationService.validate(result);
+
+        assertTrue(validationResult.isValid());
+        assertTrue(validationResult.getIssues().stream()
+                .noneMatch(issue -> issue.getCode().equals(SQL_PAGINATION_CODE)));
+    }
+
+    @Test
+    @DisplayName("Accepts property paths into embedded attributes")
+    void testAcceptsEmbeddedPropertyPath() {
+        GeneratedJpqlResult result = new GeneratedJpqlResult(
+                "select e from aitls_Order e where e.address.city = :city",
+                List.of(new GeneratedJpqlParameter("city", "String", "Springfield")),
+                "Orders by embedded address city",
+                List.of()
+        );
+
+        JpqlValidationResult validationResult = jpqlValidationService.validate(result);
+
+        assertTrue(validationResult.isValid());
+        assertTrue(validationResult.getIssues().stream()
+                .noneMatch(issue -> issue.getCode().equals(PROPERTY_PATH_INVALID_CODE)));
+    }
+
+    @Test
     @DisplayName("Rejects non-select and write JPQL")
     void testRejectsNonSelectAndWriteJpql() {
         GeneratedJpqlResult result = new GeneratedJpqlResult(
@@ -283,6 +334,23 @@ class JpqlValidationServiceTest {
         assertFalse(validationResult.isValid());
         assertTrue(validationResult.getIssues().stream()
                 .anyMatch(issue -> issue.getCode().equals(UNSUPPORTED_MACRO_CODE)));
+    }
+
+    @Test
+    @DisplayName("Does not treat a macro-like string literal as an unsupported Jmix query macro")
+    void testIgnoresMacroLikeStringLiteral() {
+        GeneratedJpqlResult result = new GeneratedJpqlResult(
+                "select e.number as n from aitls_Order e where e.number = '@unknownMacro(x)'",
+                List.of(),
+                "String literal that looks like a Jmix query macro",
+                List.of()
+        );
+
+        JpqlValidationResult validationResult = jpqlValidationService.validate(result);
+
+        assertTrue(validationResult.isValid());
+        assertTrue(validationResult.getIssues().stream()
+                .noneMatch(issue -> issue.getCode().equals(UNSUPPORTED_MACRO_CODE)));
     }
 
     @Test

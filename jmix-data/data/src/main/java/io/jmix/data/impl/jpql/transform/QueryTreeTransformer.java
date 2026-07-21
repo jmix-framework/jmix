@@ -286,6 +286,21 @@ public class QueryTreeTransformer {
                     }
                 }
             }
+            // A condition on an element collection references the collection element via a bare
+            // identification variable (join alias) instead of a path expression. EclipseLink does
+            // not accept LOWER() applied to such a variable, so the FUNCTION('lower', ...) form is
+            // used instead.
+            if (pathNodes.isEmpty() && condition.getChildCount() > 0
+                    && condition.getChild(0).getType() == JPA2Lexer.WORD) {
+                Tree operandNode = condition.getChild(0);
+                CommonTree loweredNode = new CommonTree();
+                loweredNode.addChild(createFunctionStart());
+                loweredNode.addChild(createStringLiteral("lower"));
+                loweredNode.addChild(createComma());
+                loweredNode.addChild(operandNode);
+                loweredNode.addChild(createRPAREN());
+                condition.replaceChildren(0, 0, loweredNode);
+            }
             condition.freshenParentAndChildIndexes();
         }
     }

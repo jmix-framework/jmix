@@ -24,6 +24,7 @@ import com.vaadin.flow.router.Route;
 import io.jmix.aitoolsflowui.model.AiConversation;
 import io.jmix.aitoolsflowui.service.AiConversationService;
 import io.jmix.aitoolsflowui.view.chathub.AiChatHubView;
+import io.jmix.core.annotation.Internal;
 import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.Dialogs;
 import io.jmix.flowui.ViewNavigators;
@@ -101,6 +102,13 @@ public class AiChatView extends StandardView {
     public void beforeEnter(BeforeEnterEvent event) {
         loadConversationFromRouteParameters(event);
         super.beforeEnter(event);
+    }
+
+    @Internal
+    @Override
+    protected void processBeforeEnterInternal(BeforeEnterEvent event) {
+        super.processBeforeEnterInternal(event);
+        loadConversationFromRouteParameters(event);
     }
 
     @Subscribe

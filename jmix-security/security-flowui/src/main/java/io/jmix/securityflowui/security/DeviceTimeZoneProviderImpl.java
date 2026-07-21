@@ -17,6 +17,7 @@
 package io.jmix.securityflowui.security;
 
 import com.google.common.base.Strings;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.page.ExtendedClientDetails;
 import io.jmix.core.security.DeviceTimeZoneProvider;
 import io.jmix.flowui.sys.ExtendedClientDetailsProvider;
@@ -36,6 +37,11 @@ public class DeviceTimeZoneProviderImpl implements DeviceTimeZoneProvider {
 
     @Override
     public TimeZone getDeviceTimeZone() {
+        if (UI.getCurrent() == null) {
+            // No UI is bound to the current thread (e.g. a scheduler, a Quartz job or an
+            // asynchronous call), so the device time zone cannot be determined.
+            return null;
+        }
         ExtendedClientDetails clientDetails = clientDetailsProvider.getExtendedClientDetails();
         return clientDetails != null ? detectTimeZone(clientDetails) : null;
     }

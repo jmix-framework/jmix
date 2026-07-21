@@ -18,7 +18,7 @@
     <data>
         <instance id="orderDc"
                   class="test_support.entity.sales.Order">
-            <fetchPlan extends="_instance_name"/>
+            <fetchPlan extends="_base"/>
             <loader id="orderDl"/>
         </instance>
     </data>

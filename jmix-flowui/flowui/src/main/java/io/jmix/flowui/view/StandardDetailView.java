@@ -517,7 +517,15 @@ public class StandardDetailView<T> extends StandardView implements DetailView<T>
 
         // if only new entities are registered as modified in DataContext,
         // check whether they were modified after opening the view
-        return isModifiedAfterOpen();
+        if (!isModifiedAfterOpen()) {
+            return false;
+        }
+        // modifiedAfterOpen latches true on any ChangeEvent and is never lowered on revert, so it
+        // cannot be trusted alone. Attribute-level tracking removes an entity from the modified set
+        // when its edits are reverted to their baseline, so an empty modified set here means every
+        // edit made after opening was reverted and there is nothing to save. A non-empty set
+        // still means a pending change (including a new entity that save() would persist).
+        return !dataContext.getModified().isEmpty();
     }
 
     @Override

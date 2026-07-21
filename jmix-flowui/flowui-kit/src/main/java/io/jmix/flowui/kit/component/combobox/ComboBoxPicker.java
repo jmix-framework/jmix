@@ -46,8 +46,8 @@ public class ComboBoxPicker<V> extends ComboBox<V>
 
     @Override
     public void setValueFromClient(@Nullable V value) {
-        setPresentationValue(value);
         setModelValue(value, true);
+        setPresentationValue(value);
     }
 
     @Override

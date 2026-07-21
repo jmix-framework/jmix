@@ -19,6 +19,7 @@ package test_id_generation.view;
 import com.vaadin.flow.router.Route;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.textfield.TypedTextField;
+import io.jmix.flowui.component.usermenu.UserMenu;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.view.*;
@@ -41,6 +42,8 @@ public class TestIdGenerationView extends StandardView {
     public TypedTextField<String> textField_3;
     @ViewComponent
     public DataGrid<Order> dataGrid;
+    @ViewComponent
+    public UserMenu userMenu;
 
     @ViewComponent
     public Action actionId;

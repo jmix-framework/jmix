@@ -16,6 +16,7 @@
 
 package io.jmix.aitools.dataload.tool;
 
+import io.jmix.aitools.dataload.execution.EnumCaptionResultLocalizer;
 import io.jmix.aitools.dataload.execution.JpqlExecutionRequest;
 import io.jmix.aitools.dataload.execution.JpqlExecutionResult;
 import io.jmix.aitools.dataload.execution.JpqlExecutionService;
@@ -33,6 +34,10 @@ import org.springframework.stereotype.Component;
 /**
  * Spring AI tool that validates, repairs if needed and executes a read-only JPQL query through
  * {@link JpqlExecutionService}, returning the fetched rows.
+ * <p>
+ * Enum values in the returned rows are replaced with their localized captions (see
+ * {@link EnumCaptionResultLocalizer}) so the conversational response shows human-readable labels
+ * rather than raw enum constants.
  */
 @Component("aitls_JpqlExecutorTool")
 public class JpqlExecutorTool implements DataLoadAiTool {
@@ -43,6 +48,8 @@ public class JpqlExecutorTool implements DataLoadAiTool {
 
     @Autowired
     protected JpqlExecutionService jpqlExecutionService;
+    @Autowired
+    protected EnumCaptionResultLocalizer enumCaptionResultLocalizer;
 
     @Autowired
     protected AiToolStatusPublisher toolStatusPublisher;
@@ -245,7 +252,8 @@ public class JpqlExecutorTool implements DataLoadAiTool {
 
         JpqlExecutionResult executionResult;
         try {
-            executionResult = jpqlExecutionService.execute(request);
+            executionResult = enumCaptionResultLocalizer.localize(
+                    jpqlExecutionService.execute(request), request.getResultProperties());
         } catch (RuntimeException e) {
             toolStatusPublisher.complete(startStatus,
                     messages.formatMessage("", "JpqlExecutorTool.executeQuery.failStatus", e.getMessage()), toolContext);

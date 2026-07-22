@@ -25,22 +25,33 @@ import io.jmix.aitoolsflowuidata.service.impl.AiConversationDataService;
 import io.jmix.aitoolsflowuidata.service.impl.AiChatMessageDataService;
 import io.jmix.aitoolsflowuidata.service.prompt.AiChatSystemPromptProvider;
 import io.jmix.aitoolsflowuidata.service.prompt.impl.DefaultAiChatSystemPromptProvider;
-import io.jmix.autoconfigure.aitoolsflowui.AiToolsFlowuiAutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBooleanProperty;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 
 /**
- * Activates the AI Tools FlowUI data module, providing persistent implementations of the chat UI
- * services. Each implementation is registered with {@link ConditionalOnMissingBean} so an
- * application can override any of them with its own bean. Configured before
- * {@link AiToolsFlowuiAutoConfiguration} so these implementations take precedence over its
- * no-op fallbacks. Can be disabled with the {@code jmix.aitools.ui.data.enabled=false} property.
+ * Provides the persistent implementations of the AI chat UI services. This starter is a pure
+ * implementations provider: it does not bootstrap the FlowUI layer on its own - the application is
+ * expected to add {@code jmix-aitools-flowui-starter} (chat UI) and {@code jmix-aitools-starter}
+ * (core AI Tools beans) itself.
+ * <p>
+ * The persistent implementations depend on the core AI Tools beans, which are contributed by
+ * {@code jmix-aitools-starter}. <strong>That starter is a required prerequisite of this one</strong>
+ * - add it to the application alongside {@code jmix-aitools-flowui-data-starter}.
+ * <p>
+ * The whole configuration is gated on it being on the classpath (via {@code AiToolsAutoConfiguration},
+ * referenced by name because this module does not depend on the core starter): when the core starter
+ * is absent nothing is registered and the context still starts cleanly instead of failing with an
+ * opaque missing-bean error, but persistent AI chat will not work until it is added.
  */
-@AutoConfiguration(before = AiToolsFlowuiAutoConfiguration.class)
+@AutoConfiguration(
+        afterName = "io.jmix.autoconfigure.aitools.AiToolsAutoConfiguration",
+        beforeName = "io.jmix.autoconfigure.aitoolsflowui.AiToolsFlowuiAutoConfiguration")
 @ConditionalOnBooleanProperty(value = "jmix.aitools.ui.data.enabled", matchIfMissing = true)
+@ConditionalOnClass(name = "io.jmix.autoconfigure.aitools.AiToolsAutoConfiguration")
 @Import(AiToolsFlowuiDataConfiguration.class)
 public class AiToolsFlowuiDataAutoConfiguration {
 

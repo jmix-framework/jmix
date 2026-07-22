@@ -21,7 +21,10 @@ base {
 
 dependencies {
     api project(":aitools-flowui-data")
-    api project(":aitools-flowui-starter")
 
     api 'org.springframework.boot:spring-boot-autoconfigure'
+
+    testImplementation project(":aitools-starter")
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }

@@ -18,9 +18,11 @@ package io.jmix.aitools.dataload.introspection.impl;
 
 import io.jmix.aitools.dataload.introspection.AvailableEntityFilter;
 import io.jmix.aitools.dataload.introspection.model.EntityDescriptor;
+import io.jmix.aitools.dataload.introspection.model.EntityPropertyDescriptor;
 import io.jmix.core.AccessManager;
 import io.jmix.core.Metadata;
 import io.jmix.core.accesscontext.CrudEntityContext;
+import io.jmix.core.accesscontext.EntityAttributeContext;
 import io.jmix.core.metamodel.model.MetaClass;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -29,7 +31,8 @@ import java.util.List;
 
 /**
  * Default {@link AvailableEntityFilter} that keeps only entities the current user is allowed to read,
- * based on Jmix CRUD access constraints
+ * based on Jmix CRUD access constraints. Within each permitted entity, keeps only attributes the user
+ * is allowed to view, based on entity attribute access constraints.
  */
 public class DefaultAvailableEntityFilter implements AvailableEntityFilter {
 
@@ -46,22 +49,41 @@ public class DefaultAvailableEntityFilter implements AvailableEntityFilter {
 
         List<EntityDescriptor> filtered = new ArrayList<>(entityDescriptors.size());
         for (EntityDescriptor entityDescriptor : entityDescriptors) {
-            if (isPermitted(entityDescriptor.getName())) {
-                filtered.add(entityDescriptor);
+            MetaClass metaClass = metadata.findClass(entityDescriptor.getName());
+            if (metaClass != null && isReadPermitted(metaClass)) {
+                filtered.add(filterProperties(entityDescriptor, metaClass));
             }
         }
 
         return List.copyOf(filtered);
     }
 
-    protected boolean isPermitted(String entityName) {
-        MetaClass metaClass = metadata.findClass(entityName);
-        if (metaClass == null) {
-            return false;
-        }
-
+    protected boolean isReadPermitted(MetaClass metaClass) {
         CrudEntityContext context = new CrudEntityContext(metaClass);
         accessManager.applyRegisteredConstraints(context);
         return context.isReadPermitted();
+    }
+
+    protected EntityDescriptor filterProperties(EntityDescriptor entityDescriptor, MetaClass metaClass) {
+        List<EntityPropertyDescriptor> properties = entityDescriptor.getProperties();
+        List<EntityPropertyDescriptor> permitted = new ArrayList<>(properties.size());
+        for (EntityPropertyDescriptor property : properties) {
+            if (isViewPermitted(metaClass, property.getName())) {
+                permitted.add(property);
+            }
+        }
+
+        // Descriptors are shared cached instances, so a narrowed copy is created instead of mutation.
+        if (permitted.size() == properties.size()) {
+            return entityDescriptor;
+        }
+        return new EntityDescriptor(entityDescriptor.getName(), entityDescriptor.getLocalizedNames(),
+                List.copyOf(permitted), entityDescriptor.getComment());
+    }
+
+    protected boolean isViewPermitted(MetaClass metaClass, String propertyName) {
+        EntityAttributeContext context = new EntityAttributeContext(metaClass, propertyName);
+        accessManager.applyRegisteredConstraints(context);
+        return context.canView();
     }
 }

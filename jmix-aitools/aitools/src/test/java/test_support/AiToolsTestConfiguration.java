@@ -24,6 +24,7 @@ import io.jmix.aitools.service.prompt.AiAssistantSystemPromptProvider;
 import io.jmix.aitools.service.prompt.impl.DefaultAiAssistantSystemPromptProvider;
 import io.jmix.aitools.tool.AiToolDescriptorProvider;
 import io.jmix.aitools.tool.impl.AiToolDescriptorProviderImpl;
+import io.jmix.core.AccessConstraintsRegistry;
 import io.jmix.core.CoreConfiguration;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.annotation.MessageSourceBasenames;
@@ -81,5 +82,13 @@ public class AiToolsTestConfiguration {
     @Bean
     AiToolDescriptorProvider aiToolDescriptorProvider() {
         return new AiToolDescriptorProviderImpl();
+    }
+
+    @Bean
+    TestEntityAttributeViewConstraint testEntityAttributeViewConstraint(
+            AccessConstraintsRegistry accessConstraintsRegistry) {
+        TestEntityAttributeViewConstraint constraint = new TestEntityAttributeViewConstraint();
+        accessConstraintsRegistry.register(constraint);
+        return constraint;
     }
 }

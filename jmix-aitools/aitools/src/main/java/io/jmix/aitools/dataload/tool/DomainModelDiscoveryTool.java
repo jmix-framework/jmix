@@ -59,7 +59,7 @@ public class DomainModelDiscoveryTool implements DataLoadAiTool, EntityDataLoadA
     @Tool(name = AVAILABLE_ENTITIES_TOOL, description = """
             Returns compact metadata for all entities currently available to the user.
             Each item contains entity name, localized names, property names and property localized names.
-            Entities hidden by application filtering or security are not returned.
+            Entities and attributes hidden by application filtering or security are not returned.
             The result may be empty when the user has no available entities.
             
             Use this to:
@@ -91,7 +91,7 @@ public class DomainModelDiscoveryTool implements DataLoadAiTool, EntityDataLoadA
      */
     @Tool(name = DOMAIN_MODEL_FOR_ENTITIES_TOOL, description = """
             Returns detailed domain model metadata for the specified entity names that are currently available to the user.
-            Entities hidden by application filtering or security are omitted from the result.
+            Entities and attributes hidden by application filtering or security are omitted from the result.
             The result may be empty if none of the requested entities are available.
             
             MANDATORY: You MUST call this function for the entities you intend to query BEFORE any executeQuery() calls.

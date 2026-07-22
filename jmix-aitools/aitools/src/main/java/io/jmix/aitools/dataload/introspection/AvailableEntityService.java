@@ -29,11 +29,11 @@ import java.util.*;
  * Provides the subset of introspected domain-model entities that is currently available to the user.
  * <p>
  * Availability is resolved through an {@link AvailableEntityFilter}. By default, the filter checks
- * read access for entities using Jmix security constraints. Applications may replace that behavior
- * by registering a custom {@code AvailableEntityFilter} bean.
+ * read access for entities and view access for their attributes using Jmix security constraints.
+ * Applications may replace that behavior by registering a custom {@code AvailableEntityFilter} bean.
  * <p>
- * This service is intended for LLM-facing metadata discovery. It hides entities that are not
- * available to the current user before they are exposed through tool calls.
+ * This service is intended for LLM-facing metadata discovery. It hides entities and attributes that
+ * are not available to the current user before they are exposed through tool calls.
  */
 @Component("aitls_AvailableEntityService")
 public class AvailableEntityService {

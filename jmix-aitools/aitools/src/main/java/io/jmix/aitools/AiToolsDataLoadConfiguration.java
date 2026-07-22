@@ -16,18 +16,18 @@
 
 package io.jmix.aitools;
 
-import io.jmix.core.CoreConfiguration;
-import io.jmix.core.annotation.JmixModule;
-import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.FilterType;
 
+/**
+ * Registers the beans of the data-load subsystem: its services, validators and AI tools.
+ * <p>
+ * The {@code io.jmix.aitools.dataload} package is excluded from the {@link AiToolsConfiguration}
+ * component scan, and this configuration — which scans that package explicitly — is imported by the
+ * starter autoconfiguration only when the {@code jmix.aitools.dataload.enabled} property is not set
+ * to {@code false}, so the whole feature can be switched off as a single unit.
+ */
 @Configuration
-@ComponentScan(excludeFilters = {
-        @ComponentScan.Filter(type = FilterType.REGEX, pattern = "io\\.jmix\\.aitools\\.dataload\\..*"),
-        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = AiToolsDataLoadConfiguration.class)})
-@JmixModule(dependsOn = CoreConfiguration.class)
-@ConfigurationPropertiesScan
-public class AiToolsConfiguration {
+@ComponentScan("io.jmix.aitools.dataload")
+public class AiToolsDataLoadConfiguration {
 }

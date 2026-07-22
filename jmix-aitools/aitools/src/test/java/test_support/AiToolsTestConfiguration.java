@@ -31,6 +31,7 @@ import io.jmix.core.annotation.MessageSourceBasenames;
 import io.jmix.data.DataConfiguration;
 import io.jmix.testsupport.config.CommonCoreTestConfiguration;
 import io.jmix.aitools.AiToolsConfiguration;
+import io.jmix.aitools.AiToolsDataLoadConfiguration;
 import io.jmix.aitools.dataload.introspection.JpaDomainModelIntrospector;
 import io.jmix.testsupport.config.CoreSecurityTestConfiguration;
 import io.micrometer.observation.ObservationRegistry;
@@ -42,8 +43,8 @@ import org.springframework.context.annotation.Import;
 import repair.test_support.StubChatModel;
 
 @Configuration
-@Import({CoreConfiguration.class, AiToolsConfiguration.class, CommonCoreTestConfiguration.class,
-        DataConfiguration.class, CoreSecurityTestConfiguration.class})
+@Import({CoreConfiguration.class, AiToolsConfiguration.class, AiToolsDataLoadConfiguration.class,
+        CommonCoreTestConfiguration.class, DataConfiguration.class, CoreSecurityTestConfiguration.class})
 @JmixModule
 @MessageSourceBasenames("test_support/messages")
 public class AiToolsTestConfiguration {

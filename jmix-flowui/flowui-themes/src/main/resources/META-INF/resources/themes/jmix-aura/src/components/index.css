@@ -43,6 +43,7 @@
 @import './jmix-view-layout.css';
 @import './jmix-bpmn-modeler.css';
 
+@import './vaadin-app-layout.css';
 @import './vaadin-details.css';
 @import './vaadin-form-layout.css';
 @import './vaadin-grid.css';

@@ -25,13 +25,13 @@ vaadin-app-layout.jmix-main-view-app-layout:not([primary-section='navbar'])::par
     padding var(--vaadin-app-layout-transition-duration);
 }
 
-vaadin-app-layout.jmix-main-view-app-layout[has-navbar]:not([primary-section='navbar']) > :nth-child(1 of :not([slot])):nth-last-child(1 of :not([slot])) {
+vaadin-app-layout.jmix-main-view-app-layout[has-navbar]:not([primary-section='navbar']) > :nth-child(1 of :not([slot]):not(jmix-timer)):nth-last-child(1 of :not([slot]):not(jmix-timer)) {
     border-top-width: 0;
     border-start-start-radius: 0;
     border-start-end-radius: 0;
 }
 
-vaadin-app-layout.jmix-main-view-app-layout[has-navbar][has-drawer][drawer-opened]:not([overlay]):not([primary-section='navbar']) > :nth-child(1 of :not([slot])):nth-last-child(1 of :not([slot])) {
+vaadin-app-layout.jmix-main-view-app-layout[has-navbar][has-drawer][drawer-opened]:not([overlay]):not([primary-section='navbar']) > :nth-child(1 of :not([slot]):not(jmix-timer)):nth-last-child(1 of :not([slot]):not(jmix-timer)) {
     border-start-start-radius: 0;
 }
 

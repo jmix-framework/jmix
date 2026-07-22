@@ -1,0 +1,57 @@
+/*
+ * Copyright 2026 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
+ * The Aura theme styles the App Layout work area with the sole non-slotted child selector
+ * ':nth-child(1 of :not([slot])):nth-last-child(1 of :not([slot]))'. The element of a Timer
+ * facet is appended as an additional non-slotted child of the App Layout, so that selector
+ * no longer matches and the work area loses its background, border and radius. The rules
+ * below reapply the Aura work area styles to the content view while ignoring <jmix-timer>,
+ * so the selector keeps matching regardless of whether the timer element is present and
+ * regardless of its position among the children (the content view may be added after the
+ * timer when navigating between views).
+ * Vaadin fixed this upstream in 25.2.0 by styling ::part(content), which is not exposed by
+ * the App Layout of the Vaadin version used here.
+ */
+
+vaadin-app-layout > :nth-child(1 of :not([slot]):not(jmix-timer)):nth-last-child(1 of :not([slot]):not(jmix-timer)) {
+  background: linear-gradient(var(--aura-surface-color), var(--aura-surface-color)), var(--aura-app-background);
+  background-clip: padding-box;
+  background-origin: border-box;
+  border: var(--aura-app-layout-border-width) solid var(--vaadin-border-color-secondary);
+  border-block-width: min(var(--aura-app-layout-inset), var(--aura-app-layout-border-width));
+  border-inline-width: min(var(--aura-app-layout-inset), var(--aura-app-layout-border-width));
+  border-radius: var(--_app-layout-radius);
+  box-sizing: border-box;
+  color: var(--vaadin-text-color);
+  color-scheme: var(--aura-content-color-scheme);
+  min-height: 100%;
+}
+
+vaadin-app-layout[has-drawer][drawer-opened]:not([overlay])
+  > :nth-child(1 of :not([slot]):not(jmix-timer)):nth-last-child(1 of :not([slot]):not(jmix-timer)) {
+  border-inline-start-width: var(--aura-app-layout-border-width);
+}
+
+vaadin-app-layout[has-navbar][has-drawer][drawer-opened]:not([overlay])
+  > :nth-child(1 of :not([slot]):not(jmix-timer)):nth-last-child(1 of :not([slot]):not(jmix-timer)) {
+  border-start-start-radius: var(--aura-app-layout-radius);
+}
+
+vaadin-app-layout[has-navbar]
+  > :nth-child(1 of :not([slot]):not(jmix-timer)):nth-last-child(1 of :not([slot]):not(jmix-timer)) {
+  border-top-width: var(--aura-app-layout-border-width);
+}

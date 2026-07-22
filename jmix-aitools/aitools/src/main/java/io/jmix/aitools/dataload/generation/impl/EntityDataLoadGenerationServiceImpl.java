@@ -25,6 +25,7 @@ import io.jmix.aitools.dataload.execution.GeneratedJpqlParameter;
 import io.jmix.aitools.dataload.generation.EntityDataLoadGenerationService;
 import io.jmix.aitools.dataload.generation.EntityDataLoadQueryPayload;
 import io.jmix.aitools.dataload.prompt.EntityDataLoadPromptProvider;
+import io.jmix.aitools.dataload.repair.impl.EmptyObjectAsEmptyCollectionHandler;
 import io.jmix.aitools.dataload.repair.impl.GeneratedJpqlParameterPayload;
 import io.jmix.aitools.dataload.tool.EntityDataLoadAiTool;
 import io.jmix.aitools.tool.AiToolRegistry;
@@ -152,6 +153,7 @@ public class EntityDataLoadGenerationServiceImpl implements EntityDataLoadGenera
     }
 
     protected ObjectMapper createObjectMapper() {
-        return new ObjectMapper();
+        return new ObjectMapper()
+                .addHandler(new EmptyObjectAsEmptyCollectionHandler());
     }
 }

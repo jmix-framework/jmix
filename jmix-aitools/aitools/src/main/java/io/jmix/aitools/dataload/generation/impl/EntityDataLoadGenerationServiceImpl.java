@@ -16,8 +16,6 @@
 
 package io.jmix.aitools.dataload.generation.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jmix.aitools.ChatClientFactory;
 import io.jmix.aitools.ResponseLanguageProvider;
 import io.jmix.aitools.dataload.EntityDataLoadQuery;
@@ -25,7 +23,6 @@ import io.jmix.aitools.dataload.execution.GeneratedJpqlParameter;
 import io.jmix.aitools.dataload.generation.EntityDataLoadGenerationService;
 import io.jmix.aitools.dataload.generation.EntityDataLoadQueryPayload;
 import io.jmix.aitools.dataload.prompt.EntityDataLoadPromptProvider;
-import io.jmix.aitools.dataload.repair.impl.EmptyObjectAsEmptyCollectionHandler;
 import io.jmix.aitools.dataload.repair.impl.GeneratedJpqlParameterPayload;
 import io.jmix.aitools.dataload.tool.EntityDataLoadAiTool;
 import io.jmix.aitools.tool.AiToolRegistry;
@@ -37,6 +34,9 @@ import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.util.Collections;
 import java.util.List;
@@ -82,7 +82,7 @@ public class EntityDataLoadGenerationServiceImpl implements EntityDataLoadGenera
         EntityDataLoadQueryPayload payload;
         try {
             payload = objectMapper.readValue(content, EntityDataLoadQueryPayload.class);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             throw new IllegalStateException("Cannot parse LLM response as JSON: " + content, e);
         }
 
@@ -153,7 +153,6 @@ public class EntityDataLoadGenerationServiceImpl implements EntityDataLoadGenera
     }
 
     protected ObjectMapper createObjectMapper() {
-        return new ObjectMapper()
-                .addHandler(new EmptyObjectAsEmptyCollectionHandler());
+        return JsonMapper.builder().build();
     }
 }

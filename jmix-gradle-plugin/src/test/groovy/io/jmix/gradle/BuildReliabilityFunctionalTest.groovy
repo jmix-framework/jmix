@@ -191,6 +191,40 @@ class BuildReliabilityFunctionalTest {
 
     @Test
     @Tag('slowTests')
+    void kotlinTestSourcesCompileAgainstEnhancedMainOutput() {
+        copyFixture('single-project-enhancing-kotlin', testProjectDir)
+
+        // The fixture's main set declares a top-level Kotlin extension function and a test source calls it.
+        // sourceSets.main.output is redirected to the enhanced output dir, so the test compiler resolves
+        // main's top-level declarations only if the enhanced dir also carries the Kotlin module metadata
+        // (META-INF/*.kotlin_module). Without mirroring it, compilation fails with "Unresolved reference".
+        def result = runner('clean', 'compileTestKotlin').build()
+
+        assertEquals(TaskOutcome.SUCCESS, result.task(':compileTestKotlin').outcome,
+                "Kotlin test sources must compile against the enhanced main output")
+    }
+
+    @Test
+    @Tag('slowTests')
+    void kotlinModuleMetadataMirroredIntoEnhancedDir() {
+        copyFixture('single-project-enhancing-kotlin', testProjectDir)
+
+        runner('clean', 'classes').build()
+
+        // The Kotlin module metadata file is the mechanism behind top-level-declaration resolution.
+        // Enhancement mirrors the compiled classes into a separate output dir that replaces
+        // sourceSets.main.output, so the metadata must be mirrored alongside the classes.
+        Path metaInf = testProjectDir.resolve('build/classes/jmix/main/META-INF')
+        boolean hasModuleMetadata = Files.exists(metaInf) &&
+                Files.list(metaInf).withCloseable { stream ->
+                    stream.anyMatch { it.fileName.toString().endsWith('.kotlin_module') }
+                }
+        assertTrue(hasModuleMetadata,
+                "Kotlin module metadata (*.kotlin_module) must be mirrored into the enhanced output dir")
+    }
+
+    @Test
+    @Tag('slowTests')
     void enhancedDirSelfHealsWhenClearedWithChecksumKept() {
         copyFixture('single-project-enhancing', testProjectDir)
 

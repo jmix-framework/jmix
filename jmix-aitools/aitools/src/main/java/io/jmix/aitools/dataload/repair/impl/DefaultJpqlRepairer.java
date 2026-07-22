@@ -169,7 +169,8 @@ public class DefaultJpqlRepairer implements JpqlRepairer, InitializingBean {
     }
 
     protected ObjectMapper createObjectMapper() {
-        return new ObjectMapper();
+        return new ObjectMapper()
+                .addHandler(new EmptyObjectAsEmptyCollectionHandler());
     }
 
     protected String toJson(Object object) {

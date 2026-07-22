@@ -118,13 +118,17 @@ public class JpqlParameterConversionService {
      * Converts a single scalar value to the target type, leaving it unchanged when it is already an
      * instance of the target type or cannot be coerced.
      *
-     * @param value       scalar value to convert
+     * @param value       scalar value to convert, or {@code null}
      * @param targetClass type to convert the value to
-     * @return the converted value
+     * @return the converted value, or {@code null} if {@code value} is {@code null}
      * @throws IllegalArgumentException if the value cannot be parsed as the target type
      */
     @Nullable
-    protected Object convertScalar(Object value, Class<?> targetClass) {
+    protected Object convertScalar(@Nullable Object value, Class<?> targetClass) {
+        if (value == null) {
+            return null;
+        }
+
         if (targetClass.isInstance(value)) {
             return value;
         }
@@ -145,17 +149,31 @@ public class JpqlParameterConversionService {
     }
 
     /**
-     * Converts every element of a collection parameter to the target type, preserving order and
-     * {@code null} elements.
+     * Converts every element of a collection parameter to the target type, preserving order.
+     * <p>
+     * A {@code null} element is kept as {@code null} — that is an explicit {@code null} in the source
+     * (e.g. produced by the LLM), and it is legitimate to bind it. If a non-{@code null} element
+     * instead converts to {@code null} — i.e. the conversion silently lost the value — this is treated
+     * as a conversion failure and reported, so it cannot quietly become a {@code NULL} operand that
+     * never matches in the {@code IN} clause.
      *
      * @param values      collection values to convert (e.g. the operands of an {@code IN} clause)
      * @param targetClass type to convert each element to
-     * @return a list of converted elements
+     * @return a list of converted elements; an element is {@code null} only if it was {@code null} to
+     * begin with
+     * @throws IllegalArgumentException if a non-{@code null} element converts to {@code null}, or if an
+     *                                  element cannot be parsed as the target type
      */
-    protected List<Object> convertCollection(Collection<?> values, Class<?> targetClass) {
-        List<Object> converted = new ArrayList<>(values.size());
+    protected List<@Nullable Object> convertCollection(Collection<?> values, Class<?> targetClass) {
+        List<@Nullable Object> converted = new ArrayList<>(values.size());
         for (Object element : values) {
-            converted.add(element == null ? null : convertScalar(element, targetClass));
+            Object convertedElement = convertScalar(element, targetClass);
+            if (element != null && convertedElement == null) {
+                throw new IllegalArgumentException("Query parameter collection element '" + element
+                        + "' converted to null for type " + targetClass.getSimpleName()
+                        + "; refusing to bind it as a NULL operand of the IN clause");
+            }
+            converted.add(convertedElement);
         }
         return converted;
     }
@@ -281,16 +299,25 @@ public class JpqlParameterConversionService {
             case "LocalTime", "java.time.LocalTime" -> LocalTime.class;
             case "OffsetDateTime", "java.time.OffsetDateTime" -> OffsetDateTime.class;
             case "Instant", "java.time.Instant" -> Instant.class;
-            default -> resolveJavaClassByName(type);
+            default -> resolveRegisteredDatatypeClass(type);
         };
     }
 
+    /**
+     * Resolves a type name against the {@link DatatypeRegistry}, matching a registered datatype by
+     * its Java class name (simple or fully qualified).
+     *
+     * @param type declared type name (a Java class simple name or fully qualified name)
+     * @return the matching registered datatype's Java class, or {@code null} if none matches
+     */
     @Nullable
-    protected Class<?> resolveJavaClassByName(String type) {
-        try {
-            return Class.forName(type);
-        } catch (ClassNotFoundException e) {
-            return null;
+    protected Class<?> resolveRegisteredDatatypeClass(String type) {
+        for (String id : datatypeRegistry.getIds()) {
+            Class<?> javaClass = datatypeRegistry.get(id).getJavaClass();
+            if (type.equals(javaClass.getName()) || type.equals(javaClass.getSimpleName())) {
+                return javaClass;
+            }
         }
+        return null;
     }
 }

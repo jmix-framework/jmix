@@ -16,8 +16,6 @@
 
 package io.jmix.aitools.dataload.repair.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jmix.aitools.ChatClientFactory;
 import io.jmix.aitools.dataload.execution.GeneratedJpqlParameter;
 import io.jmix.aitools.dataload.execution.GeneratedJpqlResult;
@@ -30,6 +28,9 @@ import org.jspecify.annotations.Nullable;
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -119,7 +120,7 @@ public class DefaultJpqlRepairer implements JpqlRepairer, InitializingBean {
         GeneratedJpqlPayload payload;
         try {
             payload = objectMapper.readValue(content, GeneratedJpqlPayload.class);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             throw new IllegalStateException("Cannot parse LLM response as JSON: " + content, e);
         }
 
@@ -169,14 +170,13 @@ public class DefaultJpqlRepairer implements JpqlRepairer, InitializingBean {
     }
 
     protected ObjectMapper createObjectMapper() {
-        return new ObjectMapper()
-                .addHandler(new EmptyObjectAsEmptyCollectionHandler());
+        return JsonMapper.builder().build();
     }
 
     protected String toJson(Object object) {
         try {
             return objectMapper.writeValueAsString(object);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             throw new IllegalStateException("Cannot serialize object to JSON", e);
         }
     }

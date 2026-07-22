@@ -17,8 +17,10 @@
 package io.jmix.aitools.dataload.generation;
 
 import io.jmix.aitools.dataload.EntityDataLoadQuery;
+import io.jmix.aitools.dataload.json.EmptyObjectTolerantListDeserializer;
 import io.jmix.aitools.dataload.repair.impl.GeneratedJpqlParameterPayload;
 import org.jspecify.annotations.Nullable;
+import tools.jackson.databind.annotation.JsonDeserialize;
 
 import java.util.Collections;
 import java.util.List;
@@ -35,13 +37,16 @@ public class EntityDataLoadQueryPayload {
     @Nullable
     protected String jpql;
     @Nullable
+    @JsonDeserialize(using = EmptyObjectTolerantListDeserializer.class)
     protected List<GeneratedJpqlParameterPayload> parameters = Collections.emptyList();
     @Nullable
+    @JsonDeserialize(using = EmptyObjectTolerantListDeserializer.class)
     protected List<String> resultProperties = Collections.emptyList();
 
     @Nullable
     protected String explanation;
     @Nullable
+    @JsonDeserialize(using = EmptyObjectTolerantListDeserializer.class)
     protected List<String> warnings;
 
     @Nullable

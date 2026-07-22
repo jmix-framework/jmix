@@ -36,7 +36,7 @@ public class AiChatEmptyService implements AiChatService {
     public AiChatEmptyService() {
         // Active only as the no-persistence fallback; warn once so a missing data module is noticed.
         log.warn("AI chat is running in no-op mode: no persistence implementation found. " +
-                        "Add the 'jmix-aitoolsflowui-data-starter', or provide your own {}, " +
+                        "Add the 'jmix-aitools-flowui-data-starter', or provide your own {}, " +
                         "{} and {} beans, to enable AI chat.",
                 AiChatService.class.getSimpleName(),
                 AiConversationService.class.getSimpleName(),

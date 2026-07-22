@@ -26,11 +26,13 @@ import io.jmix.reports.entity.Report;
 import io.jmix.reports.impl.AnnotatedReportHolder;
 import io.jmix.reports.impl.AnnotatedReportScanner;
 import io.jmix.reportsrest.controller.ReportRestController;
+import io.jmix.reportsrest.controller.RestAPIException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -49,6 +51,7 @@ public class ReportRestControllerTest {
     static final String FIXTURE_PATH = "classpath:test_support/rt-test-1.zip";
     static final String REPORT_CODE = "rt-test-1";
     static final String DESIGN_TIME_REPORT_CODE = "dt-test-1";
+    static final String NON_REST_ACCESSIBLE_REPORT_CODE = "dt-non-rest-1";
 
     @Autowired
     ReportRestController reportRestController;
@@ -195,6 +198,68 @@ public class ReportRestControllerTest {
         assertTrue(contentType.contains("application/csv"));
         assertTrue(response.getContentAsString().contains("value1"));
         assertTrue(response.getContentAsString().contains("value2"));
+    }
+
+    @Test
+    void testRunReportByCodeReturnsCsvContentAndHeaders() throws Exception {
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        reportRestController.runReportByCode(REPORT_CODE, "{}", response);
+
+        String contentDisposition = response.getHeader("Content-Disposition");
+        String contentType = response.getHeader("Content-Type");
+
+        assertEquals("no-cache", response.getHeader("Cache-Control"));
+        assertNotNull(contentDisposition);
+        assertNotNull(contentType);
+        assertTrue(contentDisposition.startsWith("inline;"));
+        assertTrue(contentDisposition.contains("filename=\"rt-test-1.csv\""));
+        assertTrue(contentType.contains("application/csv"));
+        assertTrue(response.getContentAsString().contains("val1"));
+        assertTrue(response.getContentAsString().contains("val2"));
+    }
+
+    @Test
+    void testRunDesignTimeReportByCodeReturnsCsvContentAndHeaders() throws Exception {
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        reportRestController.runReportByCode(DESIGN_TIME_REPORT_CODE, "{}", response);
+
+        String contentDisposition = response.getHeader("Content-Disposition");
+        String contentType = response.getHeader("Content-Type");
+
+        assertEquals("no-cache", response.getHeader("Cache-Control"));
+        assertNotNull(contentDisposition);
+        assertNotNull(contentType);
+        assertTrue(contentDisposition.startsWith("inline;"));
+        assertTrue(contentDisposition.contains("filename=\"dt-test-1.csv\""));
+        assertTrue(contentType.contains("application/csv"));
+        assertTrue(response.getContentAsString().contains("value1"));
+        assertTrue(response.getContentAsString().contains("value2"));
+    }
+
+    @Test
+    void testRunReportByNonExistingCodeThrowsNotFound() {
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        RestAPIException exception = assertThrows(RestAPIException.class,
+                () -> reportRestController.runReportByCode("non-existing-code", "{}", response));
+
+        assertEquals(HttpStatus.NOT_FOUND, exception.getHttpStatus());
+    }
+
+    @Test
+    void testRunNonRestAccessibleReportByCodeThrowsNotFound() {
+        // The report exists but is not available through the REST API, so running it by code must be
+        // rejected with 404 - the code path must not bypass the restAccessible filter applied to the id path.
+        assertNotNull(annotatedReportHolder.getByCode(NON_REST_ACCESSIBLE_REPORT_CODE));
+
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        RestAPIException exception = assertThrows(RestAPIException.class,
+                () -> reportRestController.runReportByCode(NON_REST_ACCESSIBLE_REPORT_CODE, "{}", response));
+
+        assertEquals(HttpStatus.NOT_FOUND, exception.getHttpStatus());
     }
 
     JsonNode findReportByCode(JsonNode reports) {

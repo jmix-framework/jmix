@@ -109,6 +109,15 @@ public class ReportRestControllerManager {
 
     public ReportRestResult runReport(String entityId, String bodyJson) {
         Report report = loadReportInternal(entityId);
+        return runReportInternal(report, bodyJson, entityId);
+    }
+
+    public ReportRestResult runReportByCode(String code, String bodyJson) {
+        Report report = loadReportByCodeInternal(code);
+        return runReportInternal(report, bodyJson, code);
+    }
+
+    protected ReportRestResult runReportInternal(Report report, String bodyJson, String reportRef) {
         final ReportRunRestBody body;
         try {
             body = Optional.ofNullable(createGson().fromJson(bodyJson, ReportRunRestBody.class))
@@ -124,7 +133,7 @@ public class ReportRestControllerManager {
                     .filter(t -> Objects.equals(t.getCode(), body.template))
                     .findFirst()
                     .orElseThrow(() -> new RestAPIException("Template not found",
-                            String.format("Template with code %s not found for report %s", body.template, entityId), HttpStatus.BAD_REQUEST));
+                            String.format("Template with code %s not found for report %s", body.template, reportRef), HttpStatus.BAD_REQUEST));
             checkReportOutputType(reportTemplate);
         } else {
             checkReportOutputType(report.getDefaultTemplate());
@@ -161,6 +170,14 @@ public class ReportRestControllerManager {
         UUID reportId = getReportIdFromString(entityId);
         Report report = findAccessibleReportById(reportId);
         checkEntityIsNotNull(metadata.getClass(Report.class).getName(), entityId, report);
+        assert report != null;
+        return reportRepository.reloadForRunning(report);
+    }
+
+    protected Report loadReportByCodeInternal(String code) {
+        checkCanReadEntity(metadata.getClass(Report.class));
+        Report report = findAccessibleReportByCode(code);
+        checkEntityIsNotNull(metadata.getClass(Report.class).getName(), code, report);
         assert report != null;
         return reportRepository.reloadForRunning(report);
     }
@@ -331,6 +348,14 @@ public class ReportRestControllerManager {
     protected Report findAccessibleReportById(UUID reportId) {
         return loadAccessibleReports().stream()
                 .filter(report -> Objects.equals(report.getId(), reportId))
+                .findFirst()
+                .orElse(null);
+    }
+
+    @Nullable
+    protected Report findAccessibleReportByCode(String code) {
+        return loadAccessibleReports().stream()
+                .filter(report -> Objects.equals(report.getCode(), code))
                 .findFirst()
                 .orElse(null);
     }

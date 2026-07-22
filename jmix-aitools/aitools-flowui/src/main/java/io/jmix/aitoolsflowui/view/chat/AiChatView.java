@@ -158,7 +158,12 @@ public class AiChatView extends StandardView {
         if (rawId.isEmpty()) {
             return;
         }
-        UUID id = urlParamSerializer.deserialize(UUID.class, rawId.get());
+        UUID id = parseConversationId(rawId.get());
+        if (id == null) {
+            this.conversation = null;
+            this.conversationNotFound = true;
+            return;
+        }
         if (conversation != null && id.equals(conversation.getId())) {
             return;
         }
@@ -267,5 +272,15 @@ public class AiChatView extends StandardView {
                 ui,
                 AiChatView.class,
                 routeSupport.createRouteParameters(ROUTE_PARAM_ID, conversation.getId())));
+    }
+
+    @Nullable
+    protected UUID parseConversationId(String rawId) {
+        try {
+            return urlParamSerializer.deserialize(UUID.class, rawId);
+        } catch (RuntimeException e) {
+            log.warn("Malformed AI conversation id '{}' in the chat route", rawId);
+            return null;
+        }
     }
 }

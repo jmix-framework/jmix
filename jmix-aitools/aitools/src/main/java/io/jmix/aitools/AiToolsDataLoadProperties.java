@@ -25,7 +25,7 @@ import java.util.List;
 public class AiToolsDataLoadProperties {
 
     /**
-     * Whether the data-load autoconfiguration is enabled.
+     * Whether the data-load feature (its services, validators and AI tools) is enabled.
      */
     Boolean enabled;
 

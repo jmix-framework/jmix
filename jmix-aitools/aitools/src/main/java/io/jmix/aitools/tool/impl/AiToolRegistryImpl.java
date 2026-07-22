@@ -71,8 +71,8 @@ public class AiToolRegistryImpl implements AiToolRegistry, InitializingBean {
 
     private static final Logger log = LoggerFactory.getLogger(AiToolRegistryImpl.class);
 
-    @Autowired
-    protected List<JmixAiTool> aiTools;
+    @Autowired(required = false)
+    protected List<JmixAiTool> aiTools = List.of();
 
     @Autowired
     protected AiToolDescriptorProvider aiToolDescriptorProvider;

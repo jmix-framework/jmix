@@ -67,7 +67,7 @@ javaPlatform {
 }
 
 dependencies {
-    api platform("org.springframework.boot:spring-boot-dependencies:3.5.14")
+    api platform("org.springframework.boot:spring-boot-dependencies:3.5.16")
     api platform('software.amazon.awssdk:bom:2.25.70')
     api platform("io.netty:netty-bom:4.1.134.Final")
 

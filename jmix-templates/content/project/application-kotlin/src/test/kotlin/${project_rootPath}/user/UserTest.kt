@@ -36,7 +36,8 @@ class UserTest {
     fun  test_saveAndLoad() {
         // Create and save a new User
         val user = dataManager.create(User::class.java)
-        user.username = "test-user-" + System.currentTimeMillis()
+        val username = "test-user-" + System.currentTimeMillis()
+        user.username = username
         user.password = passwordEncoder.encode("test-passwd")
         savedUser = dataManager.save(user)
 
@@ -45,13 +46,12 @@ class UserTest {
         assertThat(loadedUser).isEqualTo(user)
 
         // Check the new user is available through UserRepository
-        val userDetails = userRepository.loadUserByUsername(user.username)
+        val userDetails = userRepository.loadUserByUsername(username)
         assertThat(userDetails).isEqualTo(user)
     }
 
     @AfterEach
     fun tearDown() {
-        if (savedUser != null)
-            dataManager.remove(savedUser)
+        savedUser?.let { dataManager.remove(it) }
     }
 }

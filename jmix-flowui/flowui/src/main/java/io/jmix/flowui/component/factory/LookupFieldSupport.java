@@ -18,7 +18,6 @@ package io.jmix.flowui.component.factory;
 import com.google.common.base.Strings;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.annotation.LookupField;
-import io.jmix.core.entity.annotation.LookupItemsQuery;
 import io.jmix.core.entity.annotation.LookupType;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -85,7 +84,7 @@ public class LookupFieldSupport {
         return resolveDropdown(componentSettings.itemsQuery, referencedEntityClass, fieldLevel, actions);
     }
 
-    protected EffectiveLookupConfig resolveDropdown(@Nullable LookupItemsQuery itemsQuery,
+    protected EffectiveLookupConfig resolveDropdown(@Nullable ItemsQuerySettings itemsQuery,
                                                     MetaClass metaClass, boolean fieldLevel,
                                                     List<String> actions) {
         if (itemsQuery == null || !isItemsQueryConfigured(itemsQuery)) {
@@ -145,7 +144,7 @@ public class LookupFieldSupport {
         return List.of();
     }
 
-    protected boolean isItemsQueryConfigured(@Nullable LookupItemsQuery itemsQuery) {
+    protected boolean isItemsQueryConfigured(@Nullable ItemsQuerySettings itemsQuery) {
         return itemsQuery != null && (itemsQuery.byInstanceName() || !itemsQuery.query().isEmpty());
     }
 
@@ -157,8 +156,25 @@ public class LookupFieldSupport {
         }
         LookupType type = (LookupType) attributes.get("type");
         String[] actions = (String[]) attributes.get("actions");
-        LookupItemsQuery itemsQuery = (LookupItemsQuery) attributes.get("itemsQuery");
+        ItemsQuerySettings itemsQuery = readItemsQuery(attributes.get("itemsQuery"));
         return new LookupFieldSettings(type, actions != null ? List.of(actions) : List.of(), itemsQuery);
+    }
+
+    @Nullable
+    protected ItemsQuerySettings readItemsQuery(@Nullable Object raw) {
+        if (!(raw instanceof Map<?, ?> map)) {
+            return null;
+        }
+        return new ItemsQuerySettings(
+                Boolean.TRUE.equals(map.get("byInstanceName")),
+                asString(map.get("query")),
+                asString(map.get("searchStringFormat")),
+                Boolean.TRUE.equals(map.get("escapeValueForLike")),
+                asString(map.get("fetchPlan")));
+    }
+
+    private static String asString(@Nullable Object value) {
+        return value instanceof String s ? s : "";
     }
 
     protected static class LookupFieldSettings {
@@ -166,12 +182,16 @@ public class LookupFieldSupport {
         protected final LookupType type;
         protected final List<String> actions;
         @Nullable
-        protected final LookupItemsQuery itemsQuery;
+        protected final ItemsQuerySettings itemsQuery;
 
-        public LookupFieldSettings(LookupType type, List<String> actions, @Nullable LookupItemsQuery itemsQuery) {
+        public LookupFieldSettings(LookupType type, List<String> actions, @Nullable ItemsQuerySettings itemsQuery) {
             this.type = type;
             this.actions = actions;
             this.itemsQuery = itemsQuery;
         }
+    }
+
+    protected record ItemsQuerySettings(boolean byInstanceName, String query, String searchStringFormat,
+                                        boolean escapeValueForLike, String fetchPlan) {
     }
 }

@@ -33,6 +33,8 @@ public class AiToolsFlowuiDataProperties {
 
     /**
      * Maximum number of most recent conversation messages kept as chat memory and sent with each request.
+     * A non-positive value is treated as "no history": only the current user message is sent, so the
+     * assistant is never invoked with an empty request.
      */
     Integer chatMemoryMaxMessages;
 

@@ -37,9 +37,10 @@ RESULT PROPERTIES AND ALIASES:
 - The application will expect resultProperties in the same order as select expressions, so make the select list stable and explicit.
 
 PAGINATION RULES:
-- If the user asks for a row limit or offset, put them into maxResults and firstResult instead of JPQL.
+- maxResults = how many rows to return; firstResult = 0-based offset (rows to skip), not a count.
+- "show 5 customers" means maxResults = 5, firstResult = null. Never put the requested count into firstResult.
 - Never use LIMIT or OFFSET inside JPQL.
-- If the user does not specify pagination, set maxResults and firstResult to null.
+- If pagination is not requested, set maxResults and firstResult to null.
 
 ENTITY AND ATTRIBUTE RULES:
 - Use exact entity names from tool responses.

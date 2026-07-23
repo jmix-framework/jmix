@@ -84,4 +84,40 @@ class DefaultJpqlRepairerTest {
 
         assertEquals("select e from aitls_Order e where e.customer.name like :customerName", repaired.getJpql());
     }
+
+    @Test
+    @DisplayName("Tolerates empty object emitted instead of empty array for parameters")
+    void testToleratesEmptyObjectForParameters() {
+        String content = """
+                {
+                  "jpql": "select c from aitls_Customer c",
+                  "parameters": {},
+                  "explanation": "All customers",
+                  "warnings": {}
+                }
+                """;
+
+        stubChatModel.setContent(content);
+
+        JpqlExecutionRequest executionRequest = new JpqlExecutionRequest();
+        executionRequest.setUserText("all customers");
+
+        GeneratedJpqlResult repaired = repairer.repair(new JpqlRepairRequest(
+                executionRequest,
+                new GeneratedJpqlResult(
+                        "select c from aitls_Customer c where c.missing = :p",
+                        List.of(new GeneratedJpqlParameter("p", "String", "x")),
+                        "Broken query",
+                        List.of()
+                ),
+                new JpqlValidationResult(false, List.of(
+                        new JpqlValidationIssue(PROPERTY_PATH_INVALID_CODE, "Unknown property path: missing")
+                )),
+                1
+        ));
+
+        assertEquals("select c from aitls_Customer c", repaired.getJpql());
+        assertEquals(List.of(), repaired.getParameters());
+        assertEquals(List.of(), repaired.getWarnings());
+    }
 }

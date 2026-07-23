@@ -31,6 +31,12 @@ import java.util.UUID;
 @JmixEntity(name = "aitls_AiConversation")
 public class AiConversation {
 
+    /**
+     * Maximum supported length of a conversation {@link #title}. Persistence implementations
+     * size the stored column to match, and the UI validates against it before saving.
+     */
+    public static final int TITLE_MAX_LENGTH = 255;
+
     @JmixGeneratedValue
     @JmixId
     private UUID id;

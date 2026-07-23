@@ -1992,6 +1992,27 @@
         </xs:union>
     </xs:simpleType>
 
+    <xs:simpleType name="badgeComponentThemeNames">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="contrast"/>
+                    <xs:enumeration value="dot"/>
+                    <xs:enumeration value="error"/>
+                    <xs:enumeration value="filled"/>
+                    <xs:enumeration value="icon-only"/>
+                    <xs:enumeration value="number-only"/>
+                    <xs:enumeration value="success"/>
+                    <xs:enumeration value="warning"/>
+                    <xs:enumeration value="small"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+
     <xs:simpleType name="textFieldThemeNames">
         <xs:union>
             <xs:simpleType>
@@ -3031,7 +3052,7 @@
 
     <xs:complexType name="baseComboBoxItemsQueryType">
         <xs:sequence>
-            <xs:element name="query"/>
+            <xs:element name="query" minOccurs="0"/>
         </xs:sequence>
         <xs:attribute name="searchStringFormat" type="xs:string"/>
         <xs:attribute name="escapeValueForLike" type="xs:boolean"/>
@@ -3051,6 +3072,7 @@
                 </xs:sequence>
                 <xs:attribute name="class" type="xs:string" use="required"/>
                 <xs:attribute name="fetchPlan" type="xs:string"/>
+                <xs:attribute name="byInstanceName" type="xs:boolean"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -3934,6 +3956,26 @@
                 <xs:attributeGroup ref="hasRequired"/>
                 <xs:attributeGroup ref="hasFocusableAttributes"/>
                 <xs:attributeGroup ref="hasAriaLabel"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- Badge-->
+    <xs:complexType name="badgeComponent">
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+                <xs:sequence>
+                    <xs:element name="icon" type="iconComponentElement" minOccurs="0"/>
+                </xs:sequence>
+
+                <xs:attribute name="number" type="xs:int"/>
+                <xs:attribute name="role" type="xs:string"/>
+                <xs:attribute name="themeNames" type="badgeComponentThemeNames"/>
+
+                <xs:attributeGroup ref="hasText"/>
+                <xs:attributeGroup ref="hasIcon"/>
+                <xs:attributeGroup ref="hasSize"/>
+                <xs:attributeGroup ref="hasClassNames"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -5582,6 +5624,7 @@
                 <xs:element name="checkboxGroup" type="checkboxGroupComponent"/>
                 <xs:element name="listBox" type="listBoxComponent"/>
                 <xs:element name="multiSelectListBox" type="multiSelectListBoxComponent"/>
+                <xs:element name="badge" type="badgeComponent"/>
                 <xs:element name="progressBar" type="progressBarComponent"/>
                 <xs:element name="dataGrid" type="dataGridComponent"/>
                 <xs:element name="treeDataGrid" type="treeDataGridComponent"/>

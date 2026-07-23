@@ -34,8 +34,10 @@ import io.jmix.flowui.Dialogs;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.app.inputdialog.DialogActions;
 import io.jmix.flowui.app.inputdialog.DialogOutcome;
+import io.jmix.flowui.app.inputdialog.InputDialog;
 import io.jmix.flowui.app.inputdialog.InputParameter;
 import io.jmix.flowui.component.UiComponentUtils;
+import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.component.virtuallist.JmixVirtualList;
 import io.jmix.flowui.fragment.Fragment;
 import io.jmix.flowui.fragment.FragmentDescriptor;
@@ -543,6 +545,7 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
                                 .withRequired(true)
                                 .withDefaultValue(currentTitle)
                 )
+                .withValidator(this::validateTitle)
                 .withActions(DialogActions.OK_CANCEL)
                 .withCloseListener(closeEvent -> {
                     if (!closeEvent.closedWith(DialogOutcome.OK)) {
@@ -565,4 +568,12 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
                 .open();
     }
 
+    protected ValidationErrors validateTitle(InputDialog.ValidationContext context) {
+        String title = context.getValue("title");
+        if (title != null && title.trim().length() > AiConversation.TITLE_MAX_LENGTH) {
+            return ValidationErrors.of(messageBundle.formatMessage(
+                    "aiChatFragment.editConversationTitleDialog.titleTooLong", AiConversation.TITLE_MAX_LENGTH));
+        }
+        return ValidationErrors.none();
+    }
 }

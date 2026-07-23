@@ -29,6 +29,7 @@ import java.util.Locale;
 
 import static io.jmix.aitools.dataload.validation.validator.JpqlValidatorSupport.containsFunctionCall;
 import static io.jmix.aitools.dataload.validation.validator.JpqlValidatorSupport.containsWord;
+import static io.jmix.aitools.dataload.validation.validator.JpqlValidatorSupport.stripStringLiterals;
 
 /**
  * Checks that the query is a read-only select, rejecting non-select queries and write operations
@@ -57,7 +58,9 @@ public class ReadOnlyQueryValidator implements JpqlResultValidator, Ordered {
             return List.of();
         }
 
-        String normalizedJpql = jpql.trim().toLowerCase(Locale.ROOT);
+        // Empty string literals so keywords inside them (e.g. 'please update this record') are not
+        // mistaken for write operations or native function calls.
+        String normalizedJpql = stripStringLiterals(jpql).trim().toLowerCase(Locale.ROOT);
         if (!normalizedJpql.startsWith("select ")) {
             issues.add(new JpqlValidationIssue(JPQL_NOT_SELECT_CODE, "Only read-only select JPQL is supported",
                     JPQL_NOT_SELECT_GUIDANCE));

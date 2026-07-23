@@ -22,6 +22,7 @@ import io.jmix.aitoolsflowui.model.AiConversation;
 import io.jmix.aitoolsflowuidata.entity.AiChatMessageEntity;
 import io.jmix.aitoolsflowuidata.entity.AiChatMessageEntityType;
 import io.jmix.core.Metadata;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -55,7 +56,13 @@ public class AiChatMessageConverter {
         return models;
     }
 
-    public AiChatMessageType convertToModelType(AiChatMessageEntityType entityType) {
+    public AiChatMessageType convertToModelType(@Nullable AiChatMessageEntityType entityType) {
+        if (entityType == null) {
+            // The stored type value is not one of the known types (e.g. data written by a
+            // newer version or corrupted). Fall back to SYSTEM so the conversation still
+            // loads instead of failing with an NPE.
+            return AiChatMessageType.SYSTEM;
+        }
         return switch (entityType) {
             case USER -> AiChatMessageType.USER;
             case ASSISTANT -> AiChatMessageType.ASSISTANT;

@@ -16,8 +16,11 @@
 
 package io.jmix.messagetemplatesflowui.view.messagetemplatepreview;
 
+import com.google.common.base.Strings;
+import io.jmix.core.Messages;
 import io.jmix.core.annotation.Internal;
 import io.jmix.flowui.DialogWindows;
+import io.jmix.flowui.Notifications;
 import io.jmix.flowui.view.StandardOutcome;
 import io.jmix.flowui.view.View;
 import io.jmix.messagetemplates.MessageTemplatesGenerator;
@@ -46,9 +49,15 @@ public class MessageTemplatesPreviewer {
     protected MessageTemplatesGenerator messageTemplatesGenerator;
     @Autowired
     protected DialogWindows dialogWindows;
+    @Autowired
+    protected Notifications notifications;
+    @Autowired
+    protected Messages messages;
 
     /**
      * Opens a preview for the specified message template.
+     * <p>
+     * If the template code or content is empty, a notification is shown and no preview is opened.
      * <p>
      * If the template contains parameters, a dialog for parameter input is shown first.
      * After confirmation, the template is generated and the result is displayed.
@@ -58,6 +67,14 @@ public class MessageTemplatesPreviewer {
      */
     public void showPreview(View<?> origin, MessageTemplate messageTemplate) {
         if (messageTemplate == null) {
+            return;
+        }
+
+        if (Strings.isNullOrEmpty(messageTemplate.getCode())
+                || Strings.isNullOrEmpty(messageTemplate.getContent())) {
+            notifications.create(messages.getMessage(getClass(), "emptyTemplateNotification.text"))
+                    .withType(Notifications.Type.WARNING)
+                    .show();
             return;
         }
 

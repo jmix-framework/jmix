@@ -216,6 +216,7 @@ public final class StudioXmlAttributes {
     public static final String CONNECT_NULLS = "connectNulls";
     public static final String CONSTRAINT = "constraint";
     public static final String CONSTRAINT_ENTITY_OP = "constraintEntityOp";
+    public static final String CONSTRAIN_ONLY_CENTER = "constrainOnlyCenter";
     public static final String CONTAINER = "container";
     public static final String CONTAINER_PREFIX = "containerPrefix";
     public static final String CONTAIN_LABEL = "containLabel";
@@ -739,6 +740,7 @@ public final class StudioXmlAttributes {
     public static final String RESOURCE_DOC = "resourceDoc";
     public static final String REVEAL_BUTTON_VISIBLE = "revealButtonVisible";
     public static final String RIGHT = "right";
+    public static final String ROLE = "role";
     public static final String ROOT_HEADING_LEVEL = "rootHeadingLevel";
     public static final String ROSE_TYPE = "roseType";
     public static final String ROTATE = "rotate";
@@ -806,6 +808,7 @@ public final class StudioXmlAttributes {
     public static final String SHOW_DETAIL = "showDetail";
     public static final String SHOW_EFFECT_ON = "showEffectOn";
     public static final String SHOW_EMPTY_CIRCLE = "showEmptyCircle";
+    public static final String SHOW_FULL_EXTENT = "showFullExtent";
     public static final String SHOW_GUTTER = "showGutter";
     public static final String SHOW_IN_CONTEXT_MENU_ENABLED = "showInContextMenuEnabled";
     public static final String SHOW_LABEL = "showLabel";
@@ -839,6 +842,7 @@ public final class StudioXmlAttributes {
     public static final String SLOT_MAX_TIME = "slotMaxTime";
     public static final String SLOT_MIN_TIME = "slotMinTime";
     public static final String SMOOTH = "smooth";
+    public static final String SMOOTH_EXTENT_CONSTRAINT = "smoothExtentConstraint";
     public static final String SMOOTH_MONOTONE = "smoothMonotone";
     public static final String SNAP = "snap";
     public static final String SNAP_DURATION = "snapDuration";

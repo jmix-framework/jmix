@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-.jmix-font-icon {
+.jmix-font-icon,
+vaadin-badge > vaadin-icon.jmix-font-icon.jmix-font-icon-lumo[slot="icon"] {
     /* Fixes Safari browser bug which incorrectly handle '100cqh' */
     --vaadin-icon-visual-size: 1em;
 }

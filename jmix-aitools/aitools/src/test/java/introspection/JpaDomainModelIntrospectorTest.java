@@ -302,6 +302,22 @@ class JpaDomainModelIntrospectorTest {
     }
 
     @Test
+    @DisplayName("Resolves property paths into embedded attributes")
+    void testResolvesEmbeddedPropertyPaths() {
+        List<EntityPropertyDescriptor> path = introspector.resolvePropertyPath("aitls_Order", "address.city");
+        assertNotNull(path);
+        assertEquals(2, path.size());
+        assertEquals("address", path.get(0).getName());
+        assertInstanceOf(EmbeddedPropertyDescriptor.class, path.get(0));
+        assertEquals("city", path.get(1).getName());
+
+        assertTrue(introspector.containsPropertyPath("aitls_Order", "address.city"));
+        assertTrue(introspector.containsPropertyPath("aitls_Order", "address.zip"));
+        // An unknown sub-attribute of an embedded property is still rejected.
+        assertFalse(introspector.containsPropertyPath("aitls_Order", "address.unknown"));
+    }
+
+    @Test
     @DisplayName("Rejects invalid property paths")
     void testRejectsInvalidPropertyPaths() {
         assertNull(introspector.resolvePropertyPath("aitls_Order", "number.value"));

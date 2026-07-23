@@ -19,8 +19,16 @@
     --vaadin-icon-visual-size: round(var(--aura-line-height-m) * .8, 1px);
 }
 
+vaadin-badge > vaadin-icon[icon-class~="jmix-font-icon"][slot="icon"]:not([icon-class~="jmix-font-icon-lumo"]) {
+    --vaadin-icon-visual-size: 80%;
+}
+
 .jmix-font-icon.jmix-font-icon-lumo,
 jmix-notifications-indicator > vaadin-icon[icon-class~="jmix-font-icon"][slot="icon"]:not([icon-class~="jmix-font-icon-lumo"]) {
     /* Fixes Safari browser bug which incorrectly handle '100cqh' */
     --vaadin-icon-visual-size: var(--aura-line-height-m);
+}
+
+vaadin-badge > vaadin-icon.jmix-font-icon.jmix-font-icon-lumo[slot="icon"] {
+    --vaadin-icon-visual-size: 100%;
 }

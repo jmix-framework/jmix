@@ -170,6 +170,54 @@ paths:
               schema:
                 $ref: '#/components/schemas/error'
       x-codegen-request-body-name: runObject
+  /run/code/{code}:
+    post:
+      tags:
+        - Run report
+      summary: Run report by code
+      description: |
+        Runs a report identified by its unique code and returns the report document. Unlike the identifier, the code
+        is stable across application restarts, which is particularly useful for reports defined in code. The method
+        expects a JSON with selected parameters and report template in the request body. The code must be URL-encoded
+        if it contains special characters
+      parameters:
+        - name: code
+          in: path
+          description: Report code
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/runObjectWithSingleParameter'
+                - $ref: '#/components/schemas/runObjectWithArrayParameter'
+        required: false
+      responses:
+        200:
+          description: Success. The file contents is returned in the response body.
+          content: {}
+        400:
+          description: Bad request. For example, the condition value cannot be parsed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+        403:
+          description: Forbidden. The user doesn't have permissions to read the report
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+        404:
+          description: Not Found. No report with this code was found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+      x-codegen-request-body-name: runObject
   /docs/openapi.{format}:
     get:
       tags:

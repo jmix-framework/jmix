@@ -53,5 +53,13 @@
                 <column property="number"/>
             </columns>
         </dataGrid>
+        <userMenu id="userMenu">
+            <items>
+                <textItem id="textItem" text="Text Item"/>
+                <actionItem id="actionItem">
+                    <action id="userMenuAction" text="Action"/>
+                </actionItem>
+            </items>
+        </userMenu>
     </layout>
 </view>

@@ -24,12 +24,14 @@ import io.jmix.aitools.service.prompt.AiAssistantSystemPromptProvider;
 import io.jmix.aitools.service.prompt.impl.DefaultAiAssistantSystemPromptProvider;
 import io.jmix.aitools.tool.AiToolDescriptorProvider;
 import io.jmix.aitools.tool.impl.AiToolDescriptorProviderImpl;
+import io.jmix.core.AccessConstraintsRegistry;
 import io.jmix.core.CoreConfiguration;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.annotation.MessageSourceBasenames;
 import io.jmix.data.DataConfiguration;
 import io.jmix.testsupport.config.CommonCoreTestConfiguration;
 import io.jmix.aitools.AiToolsConfiguration;
+import io.jmix.aitools.AiToolsDataLoadConfiguration;
 import io.jmix.aitools.dataload.introspection.JpaDomainModelIntrospector;
 import io.jmix.testsupport.config.CoreSecurityTestConfiguration;
 import io.micrometer.observation.ObservationRegistry;
@@ -41,8 +43,8 @@ import org.springframework.context.annotation.Import;
 import repair.test_support.StubChatModel;
 
 @Configuration
-@Import({CoreConfiguration.class, AiToolsConfiguration.class, CommonCoreTestConfiguration.class,
-        DataConfiguration.class, CoreSecurityTestConfiguration.class})
+@Import({CoreConfiguration.class, AiToolsConfiguration.class, AiToolsDataLoadConfiguration.class,
+        CommonCoreTestConfiguration.class, DataConfiguration.class, CoreSecurityTestConfiguration.class})
 @JmixModule
 @MessageSourceBasenames("test_support/messages")
 public class AiToolsTestConfiguration {
@@ -81,5 +83,13 @@ public class AiToolsTestConfiguration {
     @Bean
     AiToolDescriptorProvider aiToolDescriptorProvider() {
         return new AiToolDescriptorProviderImpl();
+    }
+
+    @Bean
+    TestEntityAttributeViewConstraint testEntityAttributeViewConstraint(
+            AccessConstraintsRegistry accessConstraintsRegistry) {
+        TestEntityAttributeViewConstraint constraint = new TestEntityAttributeViewConstraint();
+        accessConstraintsRegistry.register(constraint);
+        return constraint;
     }
 }

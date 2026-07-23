@@ -24,6 +24,7 @@ import com.vaadin.flow.router.Route;
 import io.jmix.aitoolsflowui.model.AiConversation;
 import io.jmix.aitoolsflowui.service.AiConversationService;
 import io.jmix.aitoolsflowui.view.chathub.AiChatHubView;
+import io.jmix.core.annotation.Internal;
 import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.Dialogs;
 import io.jmix.flowui.ViewNavigators;
@@ -103,6 +104,13 @@ public class AiChatView extends StandardView {
         super.beforeEnter(event);
     }
 
+    @Internal
+    @Override
+    protected void processBeforeEnterInternal(BeforeEnterEvent event) {
+        super.processBeforeEnterInternal(event);
+        loadConversationFromRouteParameters(event);
+    }
+
     @Subscribe
     public void onReady(final ReadyEvent event) {
         contentInitialized = true;
@@ -150,7 +158,12 @@ public class AiChatView extends StandardView {
         if (rawId.isEmpty()) {
             return;
         }
-        UUID id = urlParamSerializer.deserialize(UUID.class, rawId.get());
+        UUID id = parseConversationId(rawId.get());
+        if (id == null) {
+            this.conversation = null;
+            this.conversationNotFound = true;
+            return;
+        }
         if (conversation != null && id.equals(conversation.getId())) {
             return;
         }
@@ -259,5 +272,15 @@ public class AiChatView extends StandardView {
                 ui,
                 AiChatView.class,
                 routeSupport.createRouteParameters(ROUTE_PARAM_ID, conversation.getId())));
+    }
+
+    @Nullable
+    protected UUID parseConversationId(String rawId) {
+        try {
+            return urlParamSerializer.deserialize(UUID.class, rawId);
+        } catch (RuntimeException e) {
+            log.warn("Malformed AI conversation id '{}' in the chat route", rawId);
+            return null;
+        }
     }
 }

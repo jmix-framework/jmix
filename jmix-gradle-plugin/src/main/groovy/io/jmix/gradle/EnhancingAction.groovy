@@ -100,12 +100,18 @@ class EnhancingAction implements Action<Task> {
      * Reconciles the enhanced output directory against the compiled (input) directory:
      * <ul>
      *     <li>removes stale {@code *.class} files in {@code enhancedDir} whose <em>outer</em> class has no
-     *         counterpart in {@code compiledDir};</li>
-     *     <li>copies every non-enhanced class (not in {@code enhancedClassNames}) from {@code compiledDir} to {@code enhancedDir}.</li>
+     *         counterpart in {@code compiledDir}, and stale non-class files with no counterpart at all;</li>
+     *     <li>copies every non-enhanced artifact (classes not in {@code enhancedClassNames}, plus non-class
+     *         files such as Kotlin module metadata) from {@code compiledDir} to {@code enhancedDir}.</li>
      * </ul>
      * Staleness is keyed on the outer class so that classes the enhancer <em>generates</em> (e.g.
      * {@code SomeEntity$JmixEntityEntry}), which have no compiled counterpart of their own, are kept as long
      * as their entity is still compiled, yet a removed class drops all of its (inner and generated) artifacts.
+     * <p>
+     * Non-class files are mirrored because the enhanced dir replaces {@code sourceSets.<set>.output}: in
+     * particular {@code META-INF/*.kotlin_module} carries the mapping the Kotlin compiler uses to resolve a
+     * module's top-level declarations (extension functions, top-level {@code fun}/{@code val}, typealiases).
+     * Dropping it makes those declarations unresolvable from test sources and from consumers of the jar.
      */
     protected void reconcileEnhancedDir(Project project, String compiledDir, String enhancedDir, Set<String> enhancedClassNames) {
         File compiledRoot = new File(compiledDir)
@@ -115,26 +121,29 @@ class EnhancingAction implements Action<Task> {
 
         if (enhancedRoot.exists()) {
             project.fileTree(enhancedRoot).each { File file ->
+                String relativePath = enhancedRoot.toPath().relativize(file.toPath()).toString().replace(File.separator, '/')
                 if (file.name.endsWith('.class')) {
-                    String relativePath = enhancedRoot.toPath().relativize(file.toPath()).toString().replace(File.separator, '/')
                     File compiledOuterClass = new File(compiledRoot, outerClassFile(relativePath))
                     if (!compiledOuterClass.exists()) {
                         project.logger.info "Removing stale enhanced class: $relativePath"
                         file.delete()
                     }
+                } else if (!new File(compiledRoot, relativePath).exists()) {
+                    project.logger.info "Removing stale enhanced file: $relativePath"
+                    file.delete()
                 }
             }
         }
 
         if (compiledRoot.exists()) {
             project.fileTree(compiledRoot).each { File file ->
-                if (file.name.endsWith('.class')) {
-                    String relativePath = compiledRoot.toPath().relativize(file.toPath()).toString().replace(File.separator, '/')
-                    if (!enhancedRelativePaths.contains(relativePath)) {
-                        File target = new File(enhancedRoot, relativePath)
-                        target.getParentFile().mkdirs()
-                        Files.copy(file.toPath(), target.toPath(), StandardCopyOption.REPLACE_EXISTING)
-                    }
+                String relativePath = compiledRoot.toPath().relativize(file.toPath()).toString().replace(File.separator, '/')
+                // Enhanced entity classes are (re-)written by the weaver via copyClasses/runJmixEnhancing;
+                // everything else (plain classes and non-class files like *.kotlin_module) is mirrored as-is.
+                if (!enhancedRelativePaths.contains(relativePath)) {
+                    File target = new File(enhancedRoot, relativePath)
+                    target.getParentFile().mkdirs()
+                    Files.copy(file.toPath(), target.toPath(), StandardCopyOption.REPLACE_EXISTING)
                 }
             }
         }

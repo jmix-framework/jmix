@@ -333,6 +333,36 @@ public class ElementCollectionTest {
     }
 
     @Test
+    void testLoadWithCaseInsensitiveConditions() {
+        EcAlpha alpha = dataManager.create(EcAlpha.class);
+        alpha.setName("a1");
+        alpha.setTags(List.of("Admin", "User"));
+        dataManager.saveWithoutReload(alpha);
+
+        List<EcAlpha> alphaList;
+
+        alphaList = dataManager.load(EcAlpha.class)
+                .condition(PropertyCondition.contains("tags", "adm"))
+                .list();
+        assertThat(alphaList).containsExactly(alpha);
+
+        alphaList = dataManager.load(EcAlpha.class)
+                .condition(PropertyCondition.startsWith("tags", "adm"))
+                .list();
+        assertThat(alphaList).containsExactly(alpha);
+
+        alphaList = dataManager.load(EcAlpha.class)
+                .condition(PropertyCondition.endsWith("tags", "MIN"))
+                .list();
+        assertThat(alphaList).containsExactly(alpha);
+
+        alphaList = dataManager.load(EcAlpha.class)
+                .condition(PropertyCondition.create("tags", PropertyCondition.Operation.NOT_CONTAINS, "adm"))
+                .list();
+        assertThat(alphaList).isEmpty();
+    }
+
+    @Test
     void testDuplication() {
         Betas betas = createBetas();
         Alphas alphas = createAlphas(betas);

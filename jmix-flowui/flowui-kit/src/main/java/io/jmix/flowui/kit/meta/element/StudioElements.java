@@ -700,6 +700,10 @@ interface StudioElements {
                     StudioPropertyGroups.RequiredEntityClass.class,
                     StudioPropertyGroups.BaseComboBoxItemsQuery.class,
                     StudioPropertyGroups.FetchPlan.class
+            },
+            properties = {
+                    @StudioProperty(xmlAttribute = "byInstanceName", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false", category = StudioProperty.Category.GENERAL)
             })
     void entityItemsQuery();
 
@@ -815,7 +819,9 @@ interface StudioElements {
 
                     "io.jmix.flowui.kit.component.button.JmixButton",
                     "io.jmix.flowui.kit.component.combobutton.ComboButton",
-                    "io.jmix.flowui.kit.component.dropdownbutton.DropdownButton"},
+                    "io.jmix.flowui.kit.component.dropdownbutton.DropdownButton",
+
+                    "com.vaadin.flow.component.badge.Badge"},
             unlimitedCount = false,
             isInjectable = false,
             injectionIdentifier = StudioComponent.EMPTY_INJECTION_IDENTIFIER,

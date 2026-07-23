@@ -21,9 +21,12 @@ import io.jmix.core.annotation.JmixModule;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.FilterType;
 
 @Configuration
-@ComponentScan
+@ComponentScan(excludeFilters = {
+        @ComponentScan.Filter(type = FilterType.REGEX, pattern = "io\\.jmix\\.aitools\\.dataload\\..*"),
+        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = AiToolsDataLoadConfiguration.class)})
 @JmixModule(dependsOn = CoreConfiguration.class)
 @ConfigurationPropertiesScan
 public class AiToolsConfiguration {

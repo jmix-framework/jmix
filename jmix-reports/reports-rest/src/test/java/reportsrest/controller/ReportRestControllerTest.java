@@ -37,6 +37,9 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import test_support.ReportsRestTestConfiguration;
+import test_support.report.DateDefaultValidatedTestReport;
+import test_support.report.DefaultValueValidatedTestReport;
+import test_support.report.ValidatedTestReport;
 
 import java.io.IOException;
 import java.util.List;
@@ -52,6 +55,9 @@ public class ReportRestControllerTest {
     static final String REPORT_CODE = "rt-test-1";
     static final String DESIGN_TIME_REPORT_CODE = "dt-test-1";
     static final String NON_REST_ACCESSIBLE_REPORT_CODE = "dt-non-rest-1";
+    static final String VALIDATED_REPORT_CODE = "dt-validated-1";
+    static final String VALIDATED_DEFAULT_REPORT_CODE = "dt-validated-default";
+    static final String VALIDATED_DATE_REPORT_CODE = "dt-validated-date";
 
     @Autowired
     ReportRestController reportRestController;
@@ -71,6 +77,9 @@ public class ReportRestControllerTest {
     ObjectMapper objectMapper = new ObjectMapper();
     UUID reportId;
     UUID designTimeReportId;
+    UUID validatedReportId;
+    UUID validatedDefaultReportId;
+    UUID validatedDateReportId;
 
     @BeforeEach
     void setUp() throws IOException {
@@ -90,6 +99,18 @@ public class ReportRestControllerTest {
         Report designTimeReport = annotatedReportHolder.getByCode(DESIGN_TIME_REPORT_CODE);
         assertNotNull(designTimeReport);
         designTimeReportId = designTimeReport.getId();
+
+        Report validatedReport = annotatedReportHolder.getByCode(VALIDATED_REPORT_CODE);
+        assertNotNull(validatedReport);
+        validatedReportId = validatedReport.getId();
+
+        Report validatedDefaultReport = annotatedReportHolder.getByCode(VALIDATED_DEFAULT_REPORT_CODE);
+        assertNotNull(validatedDefaultReport);
+        validatedDefaultReportId = validatedDefaultReport.getId();
+
+        Report validatedDateReport = annotatedReportHolder.getByCode(VALIDATED_DATE_REPORT_CODE);
+        assertNotNull(validatedDateReport);
+        validatedDateReportId = validatedDateReport.getId();
     }
 
     @AfterEach
@@ -260,6 +281,99 @@ public class ReportRestControllerTest {
                 () -> reportRestController.runReportByCode(NON_REST_ACCESSIBLE_REPORT_CODE, "{}", response));
 
         assertEquals(HttpStatus.NOT_FOUND, exception.getHttpStatus());
+    }
+
+    @Test
+    void testRunReportWithInvalidParameterValueThrowsBadRequest() {
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        String body = String.format("{\"parameters\":[{\"name\":\"%s\",\"value\":\"%s\"}]}",
+                ValidatedTestReport.PARAM_1, ValidatedTestReport.INVALID_PARAM_VALUE);
+
+        RestAPIException exception = assertThrows(RestAPIException.class,
+                () -> reportRestController.runReport(validatedReportId.toString(), body, response));
+
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getHttpStatus());
+        assertTrue(exception.getDetails().contains(ValidatedTestReport.PARAM_VALIDATION_MESSAGE));
+    }
+
+    @Test
+    void testRunReportWithFailingCrossValidationThrowsBadRequest() {
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        String body = String.format("{\"parameters\":[{\"name\":\"%s\",\"value\":\"%s\"}]}",
+                ValidatedTestReport.PARAM_2, ValidatedTestReport.INVALID_CROSS_VALUE);
+
+        RestAPIException exception = assertThrows(RestAPIException.class,
+                () -> reportRestController.runReport(validatedReportId.toString(), body, response));
+
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getHttpStatus());
+        assertTrue(exception.getDetails().contains(ValidatedTestReport.CROSS_VALIDATION_MESSAGE));
+    }
+
+    @Test
+    void testRunReportWithValidParametersSucceeds() throws Exception {
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        String body = String.format("{\"parameters\":[{\"name\":\"%s\",\"value\":\"ok\"},{\"name\":\"%s\",\"value\":\"ok\"}]}",
+                ValidatedTestReport.PARAM_1, ValidatedTestReport.PARAM_2);
+
+        reportRestController.runReport(validatedReportId.toString(), body, response);
+
+        assertTrue(response.getContentAsString().contains("value1"));
+        assertTrue(response.getContentAsString().contains("value2"));
+    }
+
+    @Test
+    void testRunReportValidatesDefaultParameterValue() {
+        // The parameter is not passed, so its default value is substituted. That default value must still be validated
+        // (as it is in the UI), so running the report must fail instead of silently using the invalid default.
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        RestAPIException exception = assertThrows(RestAPIException.class,
+                () -> reportRestController.runReport(validatedDefaultReportId.toString(), "{}", response));
+
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getHttpStatus());
+        assertTrue(exception.getDetails().contains(DefaultValueValidatedTestReport.VALIDATION_MESSAGE));
+    }
+
+    @Test
+    void testRunReportWithValidValueOverridingInvalidDefaultSucceeds() throws Exception {
+        // A passed value takes precedence over the (invalid) default, so validation passes and the report runs.
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        String body = String.format("{\"parameters\":[{\"name\":\"%s\",\"value\":\"ok\"}]}",
+                DefaultValueValidatedTestReport.PARAM);
+
+        reportRestController.runReport(validatedDefaultReportId.toString(), body, response);
+
+        assertTrue(response.getContentAsString().contains("value1"));
+        assertTrue(response.getContentAsString().contains("value2"));
+    }
+
+    @Test
+    void testRunReportValidatesDefaultDateParameterValueAsCanonicalType() {
+        // The DATE parameter is not passed, so its string default is substituted. It must be validated as the canonical
+        // parameter type (LocalDate) - the type the engine and the UI use - so a LocalDate-typed validator delegate
+        // runs correctly instead of failing on the REST wire type (java.sql.Date).
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        RestAPIException exception = assertThrows(RestAPIException.class,
+                () -> reportRestController.runReport(validatedDateReportId.toString(), "{}", response));
+
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getHttpStatus());
+        assertTrue(exception.getDetails().contains(DateDefaultValidatedTestReport.VALIDATION_MESSAGE));
+    }
+
+    @Test
+    void testRunReportValidatesPassedDateParameterValueAsCanonicalType() {
+        // A passed DATE value must be validated as the canonical type (LocalDate), not the REST wire type
+        // (java.sql.Date), so a LocalDate-typed validator delegate runs correctly instead of failing with a CCE.
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        String body = String.format("{\"parameters\":[{\"name\":\"%s\",\"value\":\"2099-06-15\"}]}",
+                DateDefaultValidatedTestReport.PARAM);
+
+        RestAPIException exception = assertThrows(RestAPIException.class,
+                () -> reportRestController.runReport(validatedDateReportId.toString(), body, response));
+
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getHttpStatus());
+        assertTrue(exception.getDetails().contains(DateDefaultValidatedTestReport.VALIDATION_MESSAGE));
     }
 
     JsonNode findReportByCode(JsonNode reports) {

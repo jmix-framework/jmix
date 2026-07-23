@@ -34,6 +34,7 @@ import io.jmix.reports.exception.FailedToConnectToOpenOfficeException;
 import io.jmix.reports.exception.NoOpenOfficeFreePortsException;
 import io.jmix.reports.exception.ReportParametersValidationException;
 import io.jmix.reports.exception.ReportingException;
+import io.jmix.reports.runner.ReportInputParameterValidator;
 import io.jmix.reports.runner.ReportRunContext;
 import io.jmix.reports.runner.ReportRunner;
 import io.jmix.reports.yarg.reporting.ReportOutputDocument;
@@ -59,6 +60,8 @@ public class ReportRestControllerManager {
     protected ReportGroupRepository reportGroupRepository;
     @Autowired
     protected ReportRunner reportRunner;
+    @Autowired
+    protected ReportInputParameterValidator reportInputParameterValidator;
     @Autowired
     protected ObjectToStringConverter objectToStringConverter;
     @Autowired
@@ -140,6 +143,7 @@ public class ReportRestControllerManager {
         }
         Map<String, Object> preparedValues = prepareValues(report, body.parameters);
         try {
+            validateReportParameters(report, body.parameters, preparedValues);
             if (body.template != null) {
                 ReportOutputDocument document = reportRunner.byReportEntity(report)
                         .withTemplateCode(body.template)
@@ -180,6 +184,93 @@ public class ReportRestControllerManager {
         checkEntityIsNotNull(metadata.getClass(Report.class).getName(), code, report);
         assert report != null;
         return reportRepository.reloadForRunning(report);
+    }
+
+    /**
+     * Validates report input parameters the same way the UI does before running: single-parameter validators
+     * (delegate and Groovy script) for parameters with validation turned on, then report-level cross-parameter
+     * validation. Values are validated in the canonical parameter class (e.g. {@code LocalDate}) - the type the UI
+     * and the reporting engine use - and include default values of parameters the caller did not pass. A
+     * {@link ReportParametersValidationException} thrown here is translated into a {@code 400 Bad Request} response by
+     * the caller instead of running the report with invalid input. The report itself still runs with
+     * {@code preparedValues}; the collected values are used for validation only.
+     */
+    protected void validateReportParameters(Report report, @Nullable List<ParameterValueInfo> paramValues,
+                                            Map<String, Object> preparedValues) {
+        Map<String, Object> valuesToValidate = collectValuesToValidate(report, paramValues, preparedValues);
+        if (report.getInputParameters() != null) {
+            for (ReportInputParameter inputParameter : report.getInputParameters()) {
+                if (Boolean.TRUE.equals(inputParameter.getValidationOn())) {
+                    Object value = valuesToValidate.get(inputParameter.getAlias());
+                    if (value != null) {
+                        reportInputParameterValidator.validateParameterValue(inputParameter, value);
+                    }
+                }
+            }
+        }
+
+        if (Boolean.TRUE.equals(report.getValidationOn())) {
+            reportInputParameterValidator.crossValidateParameters(report, valuesToValidate);
+        }
+    }
+
+    /**
+     * Collects the values to validate, in the canonical parameter class the UI and the reporting engine use: a passed
+     * scalar is parsed from its string value into that class (not the {@code java.sql.*} wire class used to run the
+     * report); a passed entity reuses the instance already loaded for the run; a parameter the caller did not pass
+     * falls back to its default value. This mirrors what the UI validates and keeps typed validator delegates from
+     * receiving an unexpected value type.
+     */
+    protected Map<String, Object> collectValuesToValidate(Report report, @Nullable List<ParameterValueInfo> paramValues,
+                                                          Map<String, Object> preparedValues) {
+        Map<String, Object> values = new HashMap<>();
+        if (report.getInputParameters() != null) {
+            for (ReportInputParameter inputParameter : report.getInputParameters()) {
+                Object value = resolveValueToValidate(inputParameter, paramValues, preparedValues);
+                if (value != null) {
+                    values.put(inputParameter.getAlias(), value);
+                }
+            }
+        }
+        return values;
+    }
+
+    @Nullable
+    protected Object resolveValueToValidate(ReportInputParameter inputParameter,
+                                            @Nullable List<ParameterValueInfo> paramValues,
+                                            Map<String, Object> preparedValues) {
+        ParameterType parameterType = inputParameter.getType();
+        // Entities are loaded once for the run; reuse the same instances instead of loading them again.
+        if (parameterType == ParameterType.ENTITY || parameterType == ParameterType.ENTITY_LIST) {
+            return preparedValues.get(inputParameter.getAlias());
+        }
+        ParameterValueInfo paramValue = paramValues == null ? null : paramValues.stream()
+                .filter(pv -> Objects.equals(pv.name, inputParameter.getAlias()))
+                .findFirst()
+                .orElse(null);
+        if (paramValue != null && paramValue.value != null) {
+            Class parameterClass = parameterClassResolver.resolveClass(inputParameter);
+            return parameterClass != null
+                    ? objectToStringConverter.convertFromString(parameterClass, paramValue.value)
+                    : null;
+        }
+        return resolveDefaultValue(inputParameter);
+    }
+
+    @Nullable
+    protected Object resolveDefaultValue(ReportInputParameter inputParameter) {
+        if (inputParameter.getDefaultValueProvider() != null) {
+            return inputParameter.getDefaultValueProvider().getDefaultValue(inputParameter);
+        }
+        if (inputParameter.getDefaultValue() != null) {
+            // Parse the string default into the canonical parameter class (e.g. LocalDate/LocalTime, not java.sql.*),
+            // matching what the reporting engine substitutes at run time and what a typed validator delegate expects.
+            Class parameterClass = parameterClassResolver.resolveClass(inputParameter);
+            if (parameterClass != null) {
+                return objectToStringConverter.convertFromString(parameterClass, inputParameter.getDefaultValue());
+            }
+        }
+        return null;
     }
 
     protected Map<String, Object> prepareValues(Report report, List<ParameterValueInfo> paramValues) {

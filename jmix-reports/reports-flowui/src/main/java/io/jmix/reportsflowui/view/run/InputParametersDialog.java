@@ -34,7 +34,7 @@ import io.jmix.reportsflowui.runner.ParametersDialogShowMode;
 import io.jmix.reportsflowui.runner.ReportExecutionPresentationIds;
 import io.jmix.reportsflowui.runner.ReportPresentationRegistry;
 import io.jmix.reportsflowui.runner.UiReportRunner;
-import io.jmix.reportsflowui.view.ReportParameterValidator;
+import io.jmix.reports.runner.ReportInputParameterValidator;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.jspecify.annotations.Nullable;
@@ -56,7 +56,7 @@ public class InputParametersDialog extends StandardView {
     @Autowired
     protected UiReportRunner uiReportRunner;
     @Autowired
-    protected ReportParameterValidator reportParameterValidator;
+    protected ReportInputParameterValidator reportParameterValidator;
     @Autowired
     protected ViewValidation viewValidation;
     @Autowired

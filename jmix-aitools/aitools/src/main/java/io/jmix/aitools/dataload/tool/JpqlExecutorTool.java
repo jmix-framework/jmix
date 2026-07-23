@@ -17,12 +17,15 @@
 package io.jmix.aitools.dataload.tool;
 
 import io.jmix.aitools.dataload.execution.EnumCaptionResultLocalizer;
+import io.jmix.aitools.dataload.execution.GeneratedJpqlResult;
 import io.jmix.aitools.dataload.execution.JpqlExecutionRequest;
 import io.jmix.aitools.dataload.execution.JpqlExecutionResult;
 import io.jmix.aitools.dataload.execution.JpqlExecutionService;
+import io.jmix.aitools.dataload.validation.JpqlValidationIssue;
+import io.jmix.aitools.dataload.validation.JpqlValidationResult;
 import io.jmix.aitools.tool.AiToolStatusPublisher;
 import io.jmix.core.Messages;
-import io.jmix.core.common.util.Preconditions;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.model.ToolContext;
@@ -30,6 +33,8 @@ import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.ai.tool.annotation.ToolParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 /**
  * Spring AI tool that validates, repairs if needed and executes a read-only JPQL query through
@@ -91,11 +96,11 @@ public class JpqlExecutorTool implements DataLoadAiTool {
             - You may select properties of the root entity, properties reached through joins, and aggregate expressions
             
             PAGINATION RULES:
-            - Results are limited to 20 rows by default.
-            - If the result contains 'hasMore: true', more data is available in the database.
-            - To fetch the next set of results, call this tool again with an increased "firstResult".
-            - if the user asks for a row limit or offset, put them into "maxResults" and "firstResult" instead.
-            - Use server-side aggregation (COUNT, SUM, AVG) whenever possible instead of fetching all rows.
+            - Default limit is 20 rows.
+            - "maxResults" = how many rows to return. "firstResult" = 0-based offset (rows to skip), not a count; default 0.
+            - "show 5 customers" means maxResults=5, firstResult=0. Never put the requested count into firstResult.
+            - If 'hasMore: true', fetch the next page with firstResult increased by maxResults.
+            - Prefer aggregation (COUNT, SUM, AVG) over fetching all rows.
             
             ALIAS REQUIREMENT:
             ✓ CORRECT: SELECT c.name AS clientName, COUNT(o) AS orderCount FROM Client c LEFT JOIN c.orders o GROUP BY c
@@ -242,33 +247,61 @@ public class JpqlExecutorTool implements DataLoadAiTool {
             """)
     public JpqlExecutionResult executeQuery(
             @ToolParam(description = "Structured request containing the original user text and the JPQL draft to execute.")
-            JpqlExecutionRequest request,
+            @Nullable JpqlExecutionRequest request,
             ToolContext toolContext) {
-        Preconditions.checkNotNullArgument(request, "request is null");
-        log.debug("LLM tool call: executeQuery(jpql={})", request.getJpql());
-
         String startStatus = messages.getMessage("JpqlExecutorTool.executeQuery.startStatus");
         toolStatusPublisher.update(startStatus, toolContext);
+
+        if (request == null) {
+            // A smaller model can call the tool with malformed or empty arguments that Spring AI maps
+            // to a null request. Do not throw a raw precondition (its message would leak to both the
+            // model and the UI): return a structured, guiding failure so the model can retry correctly.
+            log.warn("executeQuery tool called with a null request (malformed tool arguments)");
+            toolStatusPublisher.complete(startStatus,
+                    messages.getMessage("JpqlExecutorTool.executeQuery.invalidQueryStatus"), toolContext);
+            return emptyRequestResult();
+        }
+
+        log.debug("LLM tool call: executeQuery(jpql={})", request.getJpql());
 
         JpqlExecutionResult executionResult;
         try {
             executionResult = enumCaptionResultLocalizer.localize(
                     jpqlExecutionService.execute(request), request.getResultProperties());
         } catch (RuntimeException e) {
+            // Publish a generic status only: the raw exception message must never surface in the
+            // user-facing status indicator. The technical details are kept in the server log.
+            log.error("Failed to execute JPQL query for tool call", e);
             toolStatusPublisher.complete(startStatus,
-                    messages.formatMessage("", "JpqlExecutorTool.executeQuery.failStatus", e.getMessage()), toolContext);
+                    messages.getMessage("JpqlExecutorTool.executeQuery.failStatus"), toolContext);
             throw e;
         }
 
-        String snippet;
-        if (executionResult.getExecutionError() == null) {
-            snippet = messages.formatMessage("", "JpqlExecutorTool.executeQuery.successStatus", executionResult.getRows().size());
-        } else {
-            snippet = messages.formatMessage("", "JpqlExecutorTool.executeQuery.failStatus", executionResult.getExecutionError());
-        }
-
-        toolStatusPublisher.complete(startStatus, snippet, toolContext);
+        toolStatusPublisher.complete(startStatus, resolveStatusSnippet(executionResult), toolContext);
 
         return executionResult;
+    }
+
+    protected String resolveStatusSnippet(JpqlExecutionResult executionResult) {
+        if (executionResult.getExecutionError() != null) {
+            log.warn("JPQL query execution reported an error: {}", executionResult.getExecutionError());
+            return messages.getMessage("JpqlExecutorTool.executeQuery.failStatus");
+        }
+        if (!executionResult.getValidationResult().isValid()) {
+            log.warn("JPQL query did not pass validation: {}", executionResult.getValidationResult().getIssues());
+            return messages.getMessage("JpqlExecutorTool.executeQuery.invalidQueryStatus");
+        }
+        return messages.formatMessage("", "JpqlExecutorTool.executeQuery.successStatus",
+                executionResult.getRows().size());
+    }
+
+    protected JpqlExecutionResult emptyRequestResult() {
+        GeneratedJpqlResult emptyDraft = new GeneratedJpqlResult("", List.of(), "", List.of());
+        JpqlValidationResult validationResult = new JpqlValidationResult(false, List.of(
+                new JpqlValidationIssue("request.empty",
+                        "The execution request was empty.",
+                        "Call the tool again with a single request object that contains jpql, parameters, " +
+                                "resultProperties, maxResults and firstResult.")));
+        return JpqlExecutionResult.failed(emptyDraft, validationResult, false);
     }
 }

@@ -41,6 +41,7 @@ import org.dom4j.Element;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
@@ -83,6 +84,13 @@ public class ViewSupport {
         this.autowireManager = autowireManager;
         this.routeSupport = routeSupport;
         this.uiObservationSupport = uiObservationSupport;
+    }
+
+    protected List<ViewInitListener> viewInitListeners = List.of();
+
+    @Autowired(required = false)
+    public void setViewInitListeners(List<ViewInitListener> viewInitListeners) {
+        this.viewInitListeners = viewInitListeners;
     }
 
     public void initView(View<?> view) {
@@ -131,6 +139,10 @@ public class ViewSupport {
         componentLoaderContext.executeAutowireTasks();
 
         fireViewInitEvent(view);
+
+        for (ViewInitListener viewInitListener : viewInitListeners) {
+            viewInitListener.onViewInit(view);
+        }
 
         // InitTasks must be executed after View.InitEvent
         // in case something was replaced, e.g. actions

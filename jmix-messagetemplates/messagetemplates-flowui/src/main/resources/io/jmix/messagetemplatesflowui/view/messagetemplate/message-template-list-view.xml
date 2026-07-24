@@ -100,7 +100,7 @@
                     <column property="group"/>
                 </columns>
             </dataGrid>
-            <vbox id="previewLayout" height="100%">
+            <vbox id="previewLayout" width="100%" height="100%" alignItems="STRETCH" css="overflow: auto;">
                 <textArea id="plainTextAreaPreview" width="100%"
                           height="100%"
                           minHeight="20em"

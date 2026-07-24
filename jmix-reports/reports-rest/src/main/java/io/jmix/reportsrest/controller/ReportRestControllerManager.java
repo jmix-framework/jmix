@@ -181,7 +181,7 @@ public class ReportRestControllerManager {
     protected Report loadReportByCodeInternal(String code) {
         checkCanReadEntity(metadata.getClass(Report.class));
         Report report = findAccessibleReportByCode(code);
-        checkEntityIsNotNull(metadata.getClass(Report.class).getName(), code, report);
+        checkEntityIsNotNull(metadata.getClass(Report.class).getName(), "code", code, report);
         assert report != null;
         return reportRepository.reloadForRunning(report);
     }
@@ -487,9 +487,13 @@ public class ReportRestControllerManager {
     }
 
     protected void checkEntityIsNotNull(String entityName, String entityId, @Nullable Object entity) {
+        checkEntityIsNotNull(entityName, "id", entityId, entity);
+    }
+
+    protected void checkEntityIsNotNull(String entityName, String identifierName, String identifierValue, @Nullable Object entity) {
         if (entity == null) {
             throw new RestAPIException("Entity not found",
-                    String.format("Entity %s with id %s not found", entityName, entityId),
+                    String.format("Entity %s with %s %s not found", entityName, identifierName, identifierValue),
                     HttpStatus.NOT_FOUND);
         }
     }

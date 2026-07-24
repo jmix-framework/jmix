@@ -267,6 +267,8 @@ public class ReportRestControllerTest {
                 () -> reportRestController.runReportByCode("non-existing-code", "{}", response));
 
         assertEquals(HttpStatus.NOT_FOUND, exception.getHttpStatus());
+        assertTrue(exception.getDetails().contains("with code non-existing-code"));
+        assertFalse(exception.getDetails().contains("with id"));
     }
 
     @Test
@@ -281,6 +283,7 @@ public class ReportRestControllerTest {
                 () -> reportRestController.runReportByCode(NON_REST_ACCESSIBLE_REPORT_CODE, "{}", response));
 
         assertEquals(HttpStatus.NOT_FOUND, exception.getHttpStatus());
+        assertTrue(exception.getDetails().contains("with code " + NON_REST_ACCESSIBLE_REPORT_CODE));
     }
 
     @Test

@@ -46,6 +46,7 @@ import io.jmix.flowui.app.filter.condition.AddConditionView;
 import io.jmix.flowui.component.SupportsResponsiveSteps;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.details.JmixDetails;
+import io.jmix.flowui.component.filter.BaseConditionSupport;
 import io.jmix.flowui.component.filter.FilterComponent;
 import io.jmix.flowui.component.filter.SingleFilterComponent;
 import io.jmix.flowui.component.filter.SingleFilterComponentBase;
@@ -127,6 +128,7 @@ public class GenericFilter extends Composite<JmixDetails>
     protected DropdownButton settingsButton;
     protected List<ResponsiveStep> responsiveSteps;
     protected Registration openedChangeRegistration;
+    protected final List<Registration> conditionOperationChangeRegistrations = new ArrayList<>();
 
     protected LogicalFilterComponent<?> rootLogicalFilterComponent;
     protected Configuration emptyConfiguration;
@@ -714,6 +716,11 @@ public class GenericFilter extends Composite<JmixDetails>
 
         rootLogicalFilterComponent.setAutoApply(isAutoApply());
 
+        // This method runs on every configuration refresh (e.g. each re-navigation); detach the
+        // condition listeners registered on the previous run so they don't accumulate.
+        conditionOperationChangeRegistrations.forEach(Registration::remove);
+        conditionOperationChangeRegistrations.clear();
+
         if (!(getCurrentConfiguration() instanceof DesignTimeConfiguration)) {
             for (FilterComponent filterComponent : rootLogicalFilterComponent.getFilterComponents()) {
                 if (filterComponent instanceof SingleFilterComponentBase) {
@@ -723,10 +730,12 @@ public class GenericFilter extends Composite<JmixDetails>
                 }
 
                 if (filterComponent instanceof PropertyFilter<?> propertyFilter) {
-                    propertyFilter.addOperationChangeListener(operationChangeEvent -> {
-                        updateSingleConditionRemoveButton(propertyFilter);
-                        resetFilterComponentDefaultValue(propertyFilter);
-                    });
+                    Registration operationChangeRegistration =
+                            propertyFilter.addOperationChangeListener(operationChangeEvent -> {
+                                updateSingleConditionRemoveButton(propertyFilter);
+                                resetFilterComponentDefaultValue(propertyFilter);
+                            });
+                    conditionOperationChangeRegistrations.add(operationChangeRegistration);
                 }
             }
         }
@@ -836,33 +845,19 @@ public class GenericFilter extends Composite<JmixDetails>
     }
 
     protected void updateDataLoaderCondition() {
-        if (dataLoader != null) {
-            Condition currentCondition = dataLoader.getCondition();
-            // Re-capture the loader's own condition only when it was replaced externally (a different
-            // object than the filter's last output); the filter never adopts its own output.
-            if (!initialDataLoaderConditionInitialized
-                    || (lastConditionSetByFilter != null && currentCondition != lastConditionSetByFilter)) {
-                initialDataLoaderCondition = copy(currentCondition);
-                initialDataLoaderConditionInitialized = true;
-            }
-            LogicalFilterComponent<?> logicalFilterComponent = getCurrentConfiguration().getRootLogicalFilterComponent();
-            LogicalCondition filterCondition = logicalFilterComponent.getQueryCondition();
-
-            LogicalCondition resultCondition;
-            if (initialDataLoaderCondition instanceof LogicalCondition initialLogicalCondition) {
-                resultCondition = ((LogicalCondition) copy(initialLogicalCondition));
-                Objects.requireNonNull(resultCondition).add(filterCondition);
-            } else if (initialDataLoaderCondition != null) {
-                resultCondition = LogicalCondition.and()
-                        .add(initialDataLoaderCondition)
-                        .add(filterCondition);
-            } else {
-                resultCondition = filterCondition;
-            }
-
-            dataLoader.setCondition(resultCondition);
-            lastConditionSetByFilter = resultCondition;
+        if (dataLoader == null) {
+            return;
         }
+        // The base-condition capture heuristic and the base-AND-output composition are shared with
+        // GroupFilter.updateDataLoaderCondition via BaseConditionSupport; keep the two in sync there.
+        LogicalCondition filterCondition = getCurrentConfiguration().getRootLogicalFilterComponent().getQueryCondition();
+        BaseConditionSupport.Result result = BaseConditionSupport.recompose(dataLoader.getCondition(),
+                initialDataLoaderCondition, initialDataLoaderConditionInitialized, lastConditionSetByFilter,
+                filterCondition, this::copy);
+        initialDataLoaderCondition = result.baseCondition();
+        initialDataLoaderConditionInitialized = true;
+        dataLoader.setCondition(result.loaderCondition());
+        lastConditionSetByFilter = result.loaderCondition();
     }
 
     /**

@@ -17,19 +17,21 @@
 package component.genericfilter.view;
 
 import com.vaadin.flow.router.Route;
-import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.flowui.component.genericfilter.GenericFilter;
 import io.jmix.flowui.component.genericfilter.configuration.RunTimeConfiguration;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter;
 import io.jmix.flowui.view.*;
 
 /**
- * Sets a base condition on the data loader after activating a configuration in {@code onInit}.
+ * Activates a configuration via the base-API {@code setCurrentConfiguration()} (NOT the builder's
+ * deferred {@code makeCurrent()}) during {@code onInit}. This is the latent base-API issue: the
+ * initial-condition baseline is polluted, so switching configurations later stacks them. The
+ * corresponding test is {@code @PendingFeature} until the core hardening lands.
  */
-@Route(value = "gf-base-after-activation-view")
-@ViewController("GfBaseConditionAfterActivationView")
+@Route(value = "gf-activation-plain-setcurrent-view")
+@ViewController("GfActivationPlainSetCurrentTestView")
 @ViewDescriptor("gf-activation-nodlc-view.xml")
-public class GfBaseConditionAfterActivationView extends StandardView {
+public class GfActivationPlainSetCurrentTestView extends StandardView {
 
     @ViewComponent
     public GenericFilter genericFilter;
@@ -58,7 +60,7 @@ public class GfBaseConditionAfterActivationView extends StandardView {
                 .add(number2, "n2")
                 .buildAndRegister();
 
+        // Base-API activation during onInit (no builder makeCurrent): pollutes the baseline.
         genericFilter.setCurrentConfiguration(c1);
-        genericFilter.getDataLoader().setCondition(PropertyCondition.greater("amount", 0));
     }
 }

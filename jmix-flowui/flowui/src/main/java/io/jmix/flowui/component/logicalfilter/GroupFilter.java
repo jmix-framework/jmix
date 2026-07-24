@@ -32,6 +32,7 @@ import io.jmix.flowui.UiComponentProperties;
 import io.jmix.flowui.UiComponents;
 import io.jmix.flowui.component.SupportsResponsiveSteps;
 import io.jmix.flowui.component.WrapperUtils;
+import io.jmix.flowui.component.filter.BaseConditionSupport;
 import io.jmix.flowui.component.filter.FilterComponent;
 import io.jmix.flowui.component.filter.SingleFilterComponent;
 import io.jmix.flowui.component.filter.SingleFilterComponentBase;
@@ -84,6 +85,7 @@ public class GroupFilter extends Composite<VerticalLayout>
 
     protected FormLayout conditionsLayout;
     protected Map<FilterComponent, FormLayout.FormItem> filterComponentFormItemMap;
+    protected Map<FilterComponent, Registration> operationChangeRegistrations = new HashMap<>();
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -212,29 +214,15 @@ public class GroupFilter extends Composite<VerticalLayout>
             return;
         }
 
-        Condition currentCondition = dataLoader.getCondition();
-        // Re-capture the loader's own condition only when it was replaced externally (a different
-        // object than the filter's last output); the filter never adopts its own output.
-        if (!initialDataLoaderConditionInitialized
-                || (lastConditionSetByFilter != null && currentCondition != lastConditionSetByFilter)) {
-            initialDataLoaderCondition = copy(currentCondition);
-            initialDataLoaderConditionInitialized = true;
-        }
-
-        LogicalCondition resultCondition;
-        if (initialDataLoaderCondition instanceof LogicalCondition initialLogicalCondition) {
-            resultCondition = ((LogicalCondition) copy(initialLogicalCondition));
-            Objects.requireNonNull(resultCondition).add(getQueryCondition());
-        } else if (initialDataLoaderCondition != null) {
-            resultCondition = LogicalCondition.and()
-                    .add(initialDataLoaderCondition)
-                    .add(getQueryCondition());
-        } else {
-            resultCondition = getQueryCondition();
-        }
-
-        dataLoader.setCondition(resultCondition);
-        lastConditionSetByFilter = resultCondition;
+        // The base-condition capture heuristic and the base-AND-output composition are shared with
+        // GenericFilter.updateDataLoaderCondition via BaseConditionSupport; keep the two in sync there.
+        BaseConditionSupport.Result result = BaseConditionSupport.recompose(dataLoader.getCondition(),
+                initialDataLoaderCondition, initialDataLoaderConditionInitialized, lastConditionSetByFilter,
+                getQueryCondition(), this::copy);
+        initialDataLoaderCondition = result.baseCondition();
+        initialDataLoaderConditionInitialized = true;
+        dataLoader.setCondition(result.loaderCondition());
+        lastConditionSetByFilter = result.loaderCondition();
     }
 
     @Override
@@ -293,7 +281,11 @@ public class GroupFilter extends Composite<VerticalLayout>
         addFilterComponentToConditionsLayout(conditionsLayout, filterComponent);
 
         if (filterComponent instanceof PropertyFilter) {
-            ((PropertyFilter<?>) filterComponent).addOperationChangeListener(operationChangeEvent -> apply());
+            // Keep the registration so remove() can detach it; otherwise re-adding a component
+            // (e.g. on a filter re-navigation restore) would accumulate stale apply() listeners.
+            Registration operationChangeRegistration = ((PropertyFilter<?>) filterComponent)
+                    .addOperationChangeListener(operationChangeEvent -> apply());
+            operationChangeRegistrations.put(filterComponent, operationChangeRegistration);
         }
 
         if (!isConditionModificationDelegated()) {
@@ -322,6 +314,11 @@ public class GroupFilter extends Composite<VerticalLayout>
 
             if (ownFilterComponentsOrder.isEmpty()) {
                 ownFilterComponentsOrder = null;
+            }
+
+            Registration operationChangeRegistration = operationChangeRegistrations.remove(filterComponent);
+            if (operationChangeRegistration != null) {
+                operationChangeRegistration.remove();
             }
 
             FormLayout.FormItem formItem = null;
@@ -354,6 +351,10 @@ public class GroupFilter extends Composite<VerticalLayout>
     @Override
     public void removeAll() {
         ownFilterComponentsOrder = null;
+
+        operationChangeRegistrations.values().forEach(Registration::remove);
+        operationChangeRegistrations.clear();
+
         updateConditionsLayout();
 
         if (!isConditionModificationDelegated()) {

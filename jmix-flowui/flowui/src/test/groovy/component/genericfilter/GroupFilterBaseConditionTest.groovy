@@ -16,14 +16,15 @@
 
 package component.genericfilter
 
-import component.genericfilter.view.GfGroupFilterBaseConditionView
-import io.jmix.core.querycondition.Condition
+import component.genericfilter.view.GfGroupFilterBaseConditionTestView
 import io.jmix.core.querycondition.LogicalCondition
 import io.jmix.core.querycondition.PropertyCondition
 import io.jmix.flowui.component.logicalfilter.GroupFilter
 import io.jmix.flowui.component.logicalfilter.LogicalFilterComponent
 import org.springframework.boot.test.context.SpringBootTest
 import test_support.spec.FlowuiTestSpecification
+
+import static component.genericfilter.TestFilterConditions.hasPropertyConditionOn
 
 /**
  * A base condition set on the data loader of a standalone {@code GroupFilter} in {@code onInit}
@@ -38,7 +39,7 @@ class GroupFilterBaseConditionTest extends FlowuiTestSpecification {
 
     def "base condition set in onInit on a standalone GroupFilter survives a structural rebuild"() {
         when: "the view opens: standalone GroupFilter with a base condition on 'amount' set in onInit"
-        GroupFilter groupFilter = navigateToView(GfGroupFilterBaseConditionView).groupFilter
+        GroupFilter groupFilter = navigateToView(GfGroupFilterBaseConditionTestView).groupFilter
 
         and: "a structural change (operation switch) forces the loader condition to be rebuilt"
         groupFilter.setOperation(LogicalFilterComponent.Operation.OR)
@@ -49,7 +50,7 @@ class GroupFilterBaseConditionTest extends FlowuiTestSpecification {
 
     def "a logical base condition on a standalone GroupFilter is preserved on a structural rebuild"() {
         given: "the view opens with a standalone GroupFilter"
-        GroupFilter groupFilter = navigateToView(GfGroupFilterBaseConditionView).groupFilter
+        GroupFilter groupFilter = navigateToView(GfGroupFilterBaseConditionTestView).groupFilter
 
         and: "the loader has a logical base condition with two properties"
         groupFilter.dataLoader.setCondition(LogicalCondition.and(
@@ -64,13 +65,4 @@ class GroupFilterBaseConditionTest extends FlowuiTestSpecification {
         hasPropertyConditionOn(groupFilter.dataLoader.condition, "total")
     }
 
-    protected static boolean hasPropertyConditionOn(Condition condition, String property) {
-        if (condition instanceof PropertyCondition) {
-            return property == condition.property
-        }
-        if (condition instanceof LogicalCondition) {
-            return condition.conditions.any { hasPropertyConditionOn(it, property) }
-        }
-        return false
-    }
 }

@@ -29,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.annotation.Order;
 import test_support.FlowuiTestConfiguration;
 import view_init_listener.view.ViewInitListenerTestView;
 
@@ -44,10 +45,21 @@ public class ViewInitListenerTest {
     ViewNavigationSupport navigationSupport;
     @Autowired
     TestViewInitListener testViewInitListener;
+    @Autowired
+    TestThrowingViewInitListener testThrowingViewInitListener;
 
     @TestConfiguration
     static class TestConfig {
+        // The throwing listener is ordered before the recording one so that a failing sibling
+        // cannot prevent the later listener from running.
         @Bean
+        @Order(1)
+        TestThrowingViewInitListener testThrowingViewInitListener() {
+            return new TestThrowingViewInitListener();
+        }
+
+        @Bean
+        @Order(2)
         TestViewInitListener testViewInitListener() {
             return new TestViewInitListener();
         }
@@ -62,15 +74,37 @@ public class ViewInitListenerTest {
         }
     }
 
+    static class TestThrowingViewInitListener implements ViewInitListener {
+        boolean invoked = false;
+
+        @Override
+        public void onViewInit(View<?> view) {
+            invoked = true;
+            throw new RuntimeException("Deliberate failure in view init listener");
+        }
+    }
+
     @BeforeEach
     void setUp() {
         testViewInitListener.initializedViews.clear();
+        testThrowingViewInitListener.invoked = false;
     }
 
     @Test
     void testListenerInvokedOnViewInit() {
         navigationSupport.navigate(ViewInitListenerTestView.class);
         View<?> currentView = UiTestUtils.getCurrentView();
+        Assertions.assertTrue(testViewInitListener.initializedViews.contains(currentView));
+    }
+
+    @Test
+    void testThrowingListenerDoesNotBreakViewInit() {
+        navigationSupport.navigate(ViewInitListenerTestView.class);
+        View<?> currentView = UiTestUtils.getCurrentView();
+
+        // The throwing listener ran, but the view still initialized and the second listener still ran.
+        Assertions.assertTrue(testThrowingViewInitListener.invoked);
+        Assertions.assertNotNull(currentView);
         Assertions.assertTrue(testViewInitListener.initializedViews.contains(currentView));
     }
 }

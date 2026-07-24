@@ -141,7 +141,12 @@ public class ViewSupport {
         fireViewInitEvent(view);
 
         for (ViewInitListener viewInitListener : viewInitListeners) {
-            viewInitListener.onViewInit(view);
+            try {
+                viewInitListener.onViewInit(view);
+            } catch (Exception e) {
+                log.error("Error in view init listener '{}' for view '{}'",
+                        viewInitListener.getClass().getName(), viewId, e);
+            }
         }
 
         // InitTasks must be executed after View.InitEvent

@@ -16,16 +16,17 @@
 
 package component.genericfilter
 
-import component.genericfilter.view.GfBaseConditionAfterActivationView
-import component.genericfilter.view.GfBaseConditionReviseView
-import component.genericfilter.view.GfConfigsNoActivationView
-import io.jmix.core.querycondition.Condition
+import component.genericfilter.view.GfBaseConditionAfterActivationTestView
+import component.genericfilter.view.GfBaseConditionReviseTestView
+import component.genericfilter.view.GfConfigsNoActivationTestView
 import io.jmix.core.querycondition.LogicalCondition
 import io.jmix.core.querycondition.PropertyCondition
 import io.jmix.flowui.component.genericfilter.FilterUtils
 import io.jmix.flowui.component.genericfilter.GenericFilter
 import org.springframework.boot.test.context.SpringBootTest
 import test_support.spec.FlowuiTestSpecification
+
+import static component.genericfilter.TestFilterConditions.hasPropertyConditionOn
 
 /**
  * A base condition set on the data loader after a configuration is activated in {@code onInit}
@@ -40,7 +41,7 @@ class GenericFilterBaseConditionAfterActivationTest extends FlowuiTestSpecificat
 
     def "base condition set after activation in onInit survives a configuration switch"() {
         when: "the view opens: c1 activated in onInit, then a base condition on 'amount' set on the loader"
-        GenericFilter filter = navigateToView(GfBaseConditionAfterActivationView).genericFilter
+        GenericFilter filter = navigateToView(GfBaseConditionAfterActivationTestView).genericFilter
 
         and: "switching to c2"
         filter.setCurrentConfiguration(filter.getConfiguration("c2"))
@@ -51,7 +52,7 @@ class GenericFilterBaseConditionAfterActivationTest extends FlowuiTestSpecificat
 
     def "base condition revised after activation in onInit is the one preserved on switch"() {
         when: "the view opens: base on 'amount', activate c1, then base revised to 'total' — all in onInit"
-        GenericFilter filter = navigateToView(GfBaseConditionReviseView).genericFilter
+        GenericFilter filter = navigateToView(GfBaseConditionReviseTestView).genericFilter
 
         and: "switching to c2"
         filter.setCurrentConfiguration(filter.getConfiguration("c2"))
@@ -62,7 +63,7 @@ class GenericFilterBaseConditionAfterActivationTest extends FlowuiTestSpecificat
 
     def "explicitly set initial condition is preserved when a configuration is later activated"() {
         given: "the view opens with a configuration built but not activated (filter has not contributed yet)"
-        GenericFilter filter = navigateToView(GfConfigsNoActivationView).genericFilter
+        GenericFilter filter = navigateToView(GfConfigsNoActivationTestView).genericFilter
 
         and: "the loader already holds some condition, and a DIFFERENT initial condition is set explicitly"
         filter.dataLoader.setCondition(PropertyCondition.equal("number", "X"))
@@ -77,7 +78,7 @@ class GenericFilterBaseConditionAfterActivationTest extends FlowuiTestSpecificat
 
     def "a logical base condition is preserved and combined with the active configuration"() {
         given: "the view opens with a configuration built but not activated"
-        GenericFilter filter = navigateToView(GfConfigsNoActivationView).genericFilter
+        GenericFilter filter = navigateToView(GfConfigsNoActivationTestView).genericFilter
 
         and: "the loader has a logical base condition with two properties"
         filter.dataLoader.setCondition(LogicalCondition.and(
@@ -92,13 +93,4 @@ class GenericFilterBaseConditionAfterActivationTest extends FlowuiTestSpecificat
         hasPropertyConditionOn(filter.dataLoader.condition, "total")
     }
 
-    protected static boolean hasPropertyConditionOn(Condition condition, String property) {
-        if (condition instanceof PropertyCondition) {
-            return property == condition.property
-        }
-        if (condition instanceof LogicalCondition) {
-            return condition.conditions.any { hasPropertyConditionOn(it, property) }
-        }
-        return false
-    }
 }

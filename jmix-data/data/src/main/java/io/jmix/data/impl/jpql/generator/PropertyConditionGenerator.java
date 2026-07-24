@@ -239,11 +239,22 @@ public class PropertyConditionGenerator implements ConditionGenerator<PropertyCo
                                 property,
                                 propertyCondition.getParameterName());
             } else if (PropertyConditionUtils.isMemberOfCollectionOperation(propertyCondition)) {
-                return String.format(":%s %s %s.%s",
-                        propertyCondition.getParameterName(),
-                        PropertyConditionUtils.getJpqlOperation(propertyCondition),
+                // EclipseLink implements 'member of' as a join whose correlation predicate is placed
+                // at the top level of the WHERE clause, so inside OR it drops rows with an empty
+                // collection and duplicates rows whose collection has several elements. 'Not member of'
+                // works for a direct collection property but fails to compile with a ClassCastException
+                // for a nested property path ('reference.collection'), whose collection path is rooted
+                // at a generated join alias rather than at the entity alias.
+                // An equivalent self-contained '[not] exists' subquery is generated instead.
+                String subqueryAlias = joinAliasPrefix + propertyCondition.getParameterName();
+                boolean negative = PropertyCondition.Operation.NOT_MEMBER_OF_COLLECTION
+                        .equals(propertyCondition.getOperation());
+                return String.format("%1$s (select %2$s from %3$s.%4$s %2$s where %2$s = :%5$s)",
+                        negative ? "not exists" : "exists",
+                        subqueryAlias,
                         entityAlias,
-                        property);
+                        property,
+                        propertyCondition.getParameterName());
             } else {
                 return String.format("%s.%s %s :%s%s",
                         entityAlias,

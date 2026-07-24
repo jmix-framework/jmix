@@ -22,15 +22,32 @@ import org.eclipse.persistence.internal.sessions.AbstractSession;
 import org.eclipse.persistence.mappings.converters.Converter;
 import org.eclipse.persistence.platform.database.FirebirdPlatform;
 import org.eclipse.persistence.queries.Call;
+import org.eclipse.persistence.tools.schemaframework.FieldDefinition;
 
 import java.io.Writer;
 import java.sql.CallableStatement;
+import java.sql.Clob;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.time.OffsetDateTime;
+import java.time.OffsetTime;
+import java.util.Map;
 import java.util.UUID;
 
 public class JmixFirebirdPlatform extends FirebirdPlatform implements UuidMappingInfo {
+
+    // TODO: remove when fixed in EclipseLink https://github.com/eclipse-ee4j/eclipselink/issues/2788
+    @Override
+    protected Map<Class<?>, FieldDefinition.DatabaseType> buildDatabaseTypes() {
+        Map<Class<?>, FieldDefinition.DatabaseType> types = super.buildDatabaseTypes();
+        types.put(Clob.class, new FieldDefinition.DatabaseType("BLOB SUB_TYPE TEXT", false));
+        types.put(Character[].class, new FieldDefinition.DatabaseType("BLOB SUB_TYPE TEXT", false));
+        types.put(char[].class, new FieldDefinition.DatabaseType("BLOB SUB_TYPE TEXT", false));
+        types.put(OffsetDateTime.class, new FieldDefinition.DatabaseType("TIMESTAMP WITH TIME ZONE", false));
+        types.put(OffsetTime.class, new FieldDefinition.DatabaseType("TIME WITH TIME ZONE", false));
+        return types;
+    }
 
     @Override
     public int appendParameterInternal(Call call, Writer writer, Object parameter) {

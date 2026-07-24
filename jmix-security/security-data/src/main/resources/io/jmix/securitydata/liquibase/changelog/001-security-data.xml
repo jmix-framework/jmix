@@ -206,7 +206,7 @@
         </rollback>
     </changeSet>
 
-    <changeSet id="2-another-db" author="security-data" dbms="mssql, hsqldb, h2">
+    <changeSet id="2-another-db" author="security-data" dbms="mssql, hsqldb, h2, firebird">
         <createIndex tableName="SEC_RESOURCE_ROLE" indexName="IDX_RESOURCE_ROLE_UN_C">
             <column name="CODE"/>
             <column name="DELETE_TS"/>
@@ -252,7 +252,7 @@
         </rollback>
     </changeSet>
 
-    <changeSet id="3-another-db" author="security-data" dbms="mssql, hsqldb, h2">
+    <changeSet id="3-another-db" author="security-data" dbms="mssql, hsqldb, h2, firebird">
         <createIndex tableName="SEC_ROW_LEVEL_ROLE" indexName="IDX_ROW_LEVEL_ROLE_UN_C">
             <column name="CODE"/>
             <column name="DELETE_TS"/>

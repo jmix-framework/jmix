@@ -84,7 +84,7 @@
         </rollback>
     </changeSet>
 
-    <changeSet author="multitenancy" id="2-another-db" context="!cuba" dbms="mssql, hsqldb, h2, oracle">
+    <changeSet author="multitenancy" id="2-another-db" context="!cuba" dbms="mssql, hsqldb, h2, oracle, firebird">
         <createIndex tableName="MTEN_TENANT" indexName="IDX_MTEN_TENANT_UNIQ_TENANT_ID" unique="true">
             <column name="TENANT_ID"/>
             <column name="DELETE_TS"/>
@@ -107,7 +107,7 @@
         </createIndex>
     </changeSet>
 
-    <changeSet author="multitenancy" id="4-another-db" context="!cuba" dbms="mssql, hsqldb, h2, oracle">
+    <changeSet author="multitenancy" id="4-another-db" context="!cuba" dbms="mssql, hsqldb, h2, oracle, firebird">
         <createIndex tableName="MTEN_TENANT" indexName="IDX_MTEN_TENANT_UNIQ_NAME" unique="true">
             <column name="NAME"/>
             <column name="DELETE_TS"/>

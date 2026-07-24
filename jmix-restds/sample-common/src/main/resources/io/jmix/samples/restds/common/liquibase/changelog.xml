@@ -26,6 +26,7 @@
     <property name="uuid.type" dbms="oracle" value="varchar2(32)"/>
     <property name="uuid.type" dbms="mariadb" value="char(36)"/>
     <property name="uuid.type" dbms="postgresql, mysql, mssql, hsqldb, h2" value="uuid"/>
+    <property name="uuid.type" dbms="firebird" value="varchar(36)"/>
 
     <include file="/io/jmix/data/liquibase/changelog.xml" contextFilter="@jmix-addon"/>
 

@@ -25,6 +25,18 @@
         <modifyDataType tableName="REPORT_GROUP" columnName="LOCALE_NAMES" newDataType="varchar(4000)"/>
     </changeSet>
 
+    <changeSet author="reports" id="1-firebird" context="!cuba" dbms="firebird">
+        <addColumn tableName="REPORT_GROUP">
+            <column name="LOCALE_NAMES_TMP" type="varchar(4000)"/>
+        </addColumn>
+        <update tableName="REPORT_GROUP">
+            <column name="LOCALE_NAMES_TMP" valueComputed="cast(LOCALE_NAMES as varchar(4000))"/>
+        </update>
+        <dropColumn tableName="REPORT_GROUP" columnName="LOCALE_NAMES"/>
+        <renameColumn tableName="REPORT_GROUP" oldColumnName="LOCALE_NAMES_TMP" newColumnName="LOCALE_NAMES"
+                      columnDataType="varchar(4000)"/>
+    </changeSet>
+
     <changeSet author="reports" id="1-oracle" context="!cuba" dbms="oracle">
         <addColumn tableName="REPORT_GROUP">
             <column name="LOCALE_NAMES_TMP" type="varchar(4000)"/>

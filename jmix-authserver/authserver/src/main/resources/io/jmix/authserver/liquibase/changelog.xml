@@ -42,6 +42,9 @@
     <property name="authserver.data.type"
               value="BLOB"
               dbms="h2"/>
+    <property name="authserver.data.type"
+              value="BLOB SUB_TYPE TEXT"
+              dbms="firebird"/>
     <include file="/io/jmix/authserver/liquibase/changelog/001-authserver.xml"/>
 
 </databaseChangeLog>

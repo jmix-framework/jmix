@@ -17,48 +17,36 @@
 package component.genericfilter.view;
 
 import com.vaadin.flow.router.Route;
-import io.jmix.flowui.component.genericfilter.Configuration;
+import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.flowui.component.genericfilter.GenericFilter;
+import io.jmix.flowui.component.genericfilter.configuration.RunTimeConfiguration;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter;
-import io.jmix.flowui.model.CollectionLoader;
 import io.jmix.flowui.view.*;
-import test_support.entity.sales.Order;
 
 /**
- * No {@code DataLoadCoordinator}. Two configurations on {@code number}; the first is activated via the
- * builder's {@code makeCurrent()} during {@code onInit} (deferred-to-attach path).
+ * Sets a base condition, activates a configuration, then revises the base condition, all in
+ * {@code onInit}.
  */
-@Route(value = "gf-activation-oninit-nodlc-view")
-@ViewController("GfActivationOnInitNoDlcView")
+@Route(value = "gf-base-revise-view")
+@ViewController("GfBaseConditionReviseTestView")
 @ViewDescriptor("gf-activation-nodlc-view.xml")
-public class GfActivationOnInitNoDlcView extends StandardView {
+public class GfBaseConditionReviseTestView extends StandardView {
 
     @ViewComponent
     public GenericFilter genericFilter;
-    @ViewComponent
-    private CollectionLoader<Order> ordersDl;
-
-    public int loadCount;
-    public Configuration currentRightAfterMakeCurrent;
 
     @Subscribe
     public void onInit(final InitEvent event) {
-        ordersDl.addPostLoadListener(e -> loadCount++);
-
         PropertyFilter<String> number1 = genericFilter.filterComponentBuilder()
                 .<String>propertyFilter()
                 .property("number")
                 .operation(PropertyFilter.Operation.EQUAL)
                 .build();
-        genericFilter.runtimeConfigurationBuilder()
+        RunTimeConfiguration c1 = genericFilter.runtimeConfigurationBuilder()
                 .id("c1")
                 .name("C1")
                 .add(number1, "n1")
-                .makeCurrent()
                 .buildAndRegister();
-
-        // Captured during onInit: activation is deferred, so this must still be the empty configuration.
-        currentRightAfterMakeCurrent = genericFilter.getCurrentConfiguration();
 
         PropertyFilter<String> number2 = genericFilter.filterComponentBuilder()
                 .<String>propertyFilter()
@@ -70,5 +58,9 @@ public class GfActivationOnInitNoDlcView extends StandardView {
                 .name("C2")
                 .add(number2, "n2")
                 .buildAndRegister();
+
+        genericFilter.getDataLoader().setCondition(PropertyCondition.greater("amount", 0));
+        genericFilter.setCurrentConfiguration(c1);
+        genericFilter.getDataLoader().setCondition(PropertyCondition.greater("total", 0));
     }
 }

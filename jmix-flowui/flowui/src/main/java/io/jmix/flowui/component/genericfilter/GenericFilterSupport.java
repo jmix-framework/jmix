@@ -365,6 +365,12 @@ public class GenericFilterSupport {
         if (configurationModel == null) {
             configurationModel = metadata.create(FilterConfigurationModel.class);
             configurationModel.setUsername(currentUserSubstitution.getEffectiveUser().getUsername());
+            // Carry id and name from an existing but unpersisted configuration, so the editor
+            // pre-fills the name and a later save updates it by id instead of creating a duplicate.
+            if (!isNewConfiguration) {
+                configurationModel.setConfigurationId(currentConfiguration.getId());
+                configurationModel.setName(currentConfiguration.getName());
+            }
         }
 
         return configurationModel;

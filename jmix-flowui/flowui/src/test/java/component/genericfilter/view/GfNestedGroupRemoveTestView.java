@@ -18,31 +18,44 @@ package component.genericfilter.view;
 
 import com.vaadin.flow.router.Route;
 import io.jmix.flowui.component.genericfilter.GenericFilter;
+import io.jmix.flowui.component.logicalfilter.GroupFilter;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter;
 import io.jmix.flowui.view.*;
 
 /**
- * Builds a configuration but does not activate it in {@code onInit}.
+ * A run-time configuration whose root contains a nested group with a single property condition,
+ * used to reproduce the removal behaviour of a condition nested inside a group.
  */
-@Route(value = "gf-configs-no-activation-view")
-@ViewController("GfConfigsNoActivationView")
-@ViewDescriptor("gf-activation-nodlc-view.xml")
-public class GfConfigsNoActivationView extends StandardView {
+@Route(value = "gf-nested-group-remove-test-view")
+@ViewController("GfNestedGroupRemoveTestView")
+@ViewDescriptor("gf-nested-group-remove-test-view.xml")
+public class GfNestedGroupRemoveTestView extends StandardView {
 
     @ViewComponent
     public GenericFilter genericFilter;
 
+    public GroupFilter nestedGroup;
+    public PropertyFilter<String> nestedCondition;
+
     @Subscribe
     public void onInit(final InitEvent event) {
-        PropertyFilter<String> number1 = genericFilter.filterComponentBuilder()
+        nestedCondition = genericFilter.filterComponentBuilder()
                 .<String>propertyFilter()
                 .property("number")
                 .operation(PropertyFilter.Operation.EQUAL)
                 .build();
+        nestedCondition.setValue("n1");
+
+        nestedGroup = genericFilter.filterComponentBuilder()
+                .groupFilter()
+                .add(nestedCondition)
+                .build();
+
         genericFilter.runtimeConfigurationBuilder()
                 .id("c1")
                 .name("C1")
-                .add(number1, "n1")
+                .add(nestedGroup)
+                .makeCurrent()
                 .buildAndRegister();
     }
 }

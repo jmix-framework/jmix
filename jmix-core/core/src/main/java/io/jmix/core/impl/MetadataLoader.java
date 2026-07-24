@@ -146,7 +146,8 @@ public class MetadataLoader {
                 String name = annotation.annotationType().getName();
 
                 Map<String, Object> attributes = new LinkedHashMap<>(
-                        AnnotationUtils.getAnnotationAttributes(metaClass.getJavaClass(), annotation));
+                        AnnotationUtils.getAnnotationAttributes(metaClass.getJavaClass(), annotation,
+                                /*classValuesAsString*/ false, /*nestedAnnotationsAsMap*/ true));
                 metaClass.getAnnotations().put(name, attributes);
 
                 Object propagateToSubclasses = attributes.get("propagateToSubclasses");

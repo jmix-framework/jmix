@@ -18,35 +18,34 @@ package component.genericfilter.view;
 
 import com.vaadin.flow.router.Route;
 import io.jmix.flowui.component.genericfilter.GenericFilter;
-import io.jmix.flowui.component.genericfilter.configuration.RunTimeConfiguration;
 import io.jmix.flowui.component.propertyfilter.PropertyFilter;
 import io.jmix.flowui.view.*;
 
 /**
- * Activates a configuration via the base-API {@code setCurrentConfiguration()} (NOT the builder's
- * deferred {@code makeCurrent()}) during {@code onInit}. This is the latent base-API issue: the
- * initial-condition baseline is polluted, so switching configurations later stacks them. The
- * corresponding test is {@code @PendingFeature} until the core hardening lands.
+ * Activates a configuration via {@code makeCurrent()} in {@code BeforeShowEvent}, i.e. when the filter
+ * is already attached — the synchronous activation path. Switching afterwards must apply only the new
+ * configuration's condition (the baseline was captured before, so it stays clean).
  */
-@Route(value = "gf-activation-plain-setcurrent-view")
-@ViewController("GfActivationPlainSetCurrentView")
+@Route(value = "gf-activation-beforeshow-view")
+@ViewController("GfActivationBeforeShowTestView")
 @ViewDescriptor("gf-activation-nodlc-view.xml")
-public class GfActivationPlainSetCurrentView extends StandardView {
+public class GfActivationBeforeShowTestView extends StandardView {
 
     @ViewComponent
     public GenericFilter genericFilter;
 
     @Subscribe
-    public void onInit(final InitEvent event) {
+    public void onBeforeShow(final BeforeShowEvent event) {
         PropertyFilter<String> number1 = genericFilter.filterComponentBuilder()
                 .<String>propertyFilter()
                 .property("number")
                 .operation(PropertyFilter.Operation.EQUAL)
                 .build();
-        RunTimeConfiguration c1 = genericFilter.runtimeConfigurationBuilder()
+        genericFilter.runtimeConfigurationBuilder()
                 .id("c1")
                 .name("C1")
                 .add(number1, "n1")
+                .makeCurrent()
                 .buildAndRegister();
 
         PropertyFilter<String> number2 = genericFilter.filterComponentBuilder()
@@ -59,8 +58,9 @@ public class GfActivationPlainSetCurrentView extends StandardView {
                 .name("C2")
                 .add(number2, "n2")
                 .buildAndRegister();
+    }
 
-        // Base-API activation during onInit (no builder makeCurrent): pollutes the baseline.
-        genericFilter.setCurrentConfiguration(c1);
+    public void switchTo(String configurationId) {
+        genericFilter.setCurrentConfiguration(genericFilter.getConfiguration(configurationId));
     }
 }

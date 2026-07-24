@@ -20,6 +20,7 @@ import io.jmix.reports.yarg.structure.Report;
 import org.jspecify.annotations.NullMarked;
 
 import java.util.Map;
+import java.util.Set;
 
 /**
  * This class should load data using ReportQuery objects, convert data onto BandData object and build BandData object tree (link children and parent bands)
@@ -31,6 +32,28 @@ import java.util.Map;
 public interface DataExtractor {
 
     void extractData(Report report, Map<String, Object> params, BandData rootBand);
+
+    /**
+     * Same as {@link #extractData(Report, Map, BandData)}, but bands whose names are in
+     * {@code excludedBandNames} are not extracted (their data is supplied by other means, e.g. a
+     * streaming cursor). Their names are still registered as first-level definitions.
+     *
+     * <p>The default implementation supports only an empty exclusion set and throws otherwise:
+     * silently extracting an excluded band would load the streaming band's whole dataset into memory
+     * and run its query twice. Implementations that should work with streaming reports must override
+     * this method (see {@link DataExtractorImpl}).
+     */
+    default void extractData(Report report, Map<String, Object> params, BandData rootBand,
+                             Set<String> excludedBandNames) {
+        if (!excludedBandNames.isEmpty()) {
+            throw new UnsupportedOperationException(String.format(
+                    "DataExtractor [%s] does not support band exclusion required for streaming reports; "
+                            + "override extractData(Report, Map, BandData, Set)",
+                    getClass().getName()));
+        }
+
+        extractData(report, params, rootBand);
+    }
 
     default boolean getPutEmptyRowIfNoDataSelected() { return true; }
 

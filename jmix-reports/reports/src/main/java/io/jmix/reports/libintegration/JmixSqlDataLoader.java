@@ -50,6 +50,11 @@ public class JmixSqlDataLoader extends SqlDataLoader {
     }
 
     @Override
+    protected DataSource resolveDataSource(ReportQuery reportQuery) {
+        return storeAwareLocator.getDataSource(StoreUtils.getStoreName(reportQuery));
+    }
+
+    @Override
     protected String processQueryTemplate(String query, @Nullable BandData parentBand, Map<String, Object> reportParams) {
         if (!groovyFeatureSupport.isGroovyEnabled()) {
             return groovyFeatureSupport.getDisabledQueryTemplateResult("sql", query);

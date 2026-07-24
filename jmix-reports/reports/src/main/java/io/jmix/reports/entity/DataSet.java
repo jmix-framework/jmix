@@ -24,6 +24,7 @@ import io.jmix.core.FetchPlan;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.JmixEntity;
+import org.jspecify.annotations.Nullable;
 import io.jmix.core.metamodel.annotation.JmixProperty;
 
 import jakarta.persistence.Id;
@@ -209,8 +210,10 @@ public class DataSet implements ReportQuery, CopyingSystemState<DataSet> {
     }
 
     @Override
+    @Nullable
     public String getLoaderType() {
-        return getType().getCode();
+        DataSetType type = getType();
+        return type != null ? type.getCode() : null;
     }
 
     public JsonSourceType getJsonSourceType() {

@@ -1,0 +1,85 @@
+/*
+ * Copyright 2026 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.jmix.data.impl.dbms;
+
+import io.jmix.data.persistence.DbTypeConverter;
+import org.jspecify.annotations.Nullable;
+import org.springframework.stereotype.Component;
+
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.sql.Types;
+import java.util.Date;
+import java.util.UUID;
+
+@Component("firebirdDbTypeConverter")
+public class FirebirdDbTypeConverter implements DbTypeConverter {
+
+    @Nullable
+    @Override
+    public Object getJavaObject(ResultSet resultSet, int columnIndex) {
+        Object value;
+
+        try {
+            ResultSetMetaData metaData = resultSet.getMetaData();
+
+            if ((columnIndex > metaData.getColumnCount()) || (columnIndex <= 0))
+                throw new IndexOutOfBoundsException("Column index out of bound");
+
+            value = resultSet.getObject(columnIndex);
+
+            return value;
+        } catch (SQLException e) {
+            throw new RuntimeException("Error converting database value", e);
+        }
+    }
+
+    @Override
+    public Object getSqlObject(Object value) {
+        if (value instanceof Date)
+            return new Timestamp(((Date) value).getTime());
+        if (value instanceof UUID)
+            return value.toString();
+        if (value instanceof Boolean)
+            return ((Boolean) value) ? 1 : 0;
+        return value;
+    }
+
+    @Override
+    public int getSqlType(Class<?> javaClass) {
+        if (javaClass == Date.class)
+            return Types.TIMESTAMP;
+        else if (javaClass == UUID.class)
+            return Types.VARCHAR;
+        else if (javaClass == Boolean.class)
+            return Types.SMALLINT;
+        else if (javaClass == String.class)
+            return Types.VARCHAR;
+        else if (javaClass == Integer.class)
+            return Types.INTEGER;
+        else if (javaClass == Long.class)
+            return Types.BIGINT;
+        return Types.OTHER;
+    }
+
+    @Override
+    public String getTypeAndVersion() {
+        return "firebird";
+    }
+}

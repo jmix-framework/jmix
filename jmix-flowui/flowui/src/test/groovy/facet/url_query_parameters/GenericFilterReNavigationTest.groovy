@@ -336,7 +336,7 @@ class GenericFilterReNavigationTest extends FlowuiTestSpecification {
         propertyFilterOn(active, "name").value == "John"
     }
 
-    def "a condition added to a non-entry configuration survives re-navigation; only the entry config is restored (no URL)"() {
+    def "a condition added to a non-entry configuration is also restored on re-navigation (no URL)"() {
         given:
         def screen = navigateToView(GenericFilterConfigsTestView)
         def binder = getBinder(screen)
@@ -362,8 +362,35 @@ class GenericFilterReNavigationTest extends FlowuiTestSpecification {
         screen.ownersFilter.currentConfiguration.is(active)
         hasPropertyConditionOn(active, "name")
 
-        and: "the user's own addition on the non-entry config remains (it is outside the restore scope)"
-        hasPropertyConditionOn(other, "name")
+        and: "the non-entry config is ALSO restored: the user's addition is gone, its baseline remains"
+        !hasPropertyConditionOn(other, "name")
+        hasPropertyConditionOn(other, "email")
+    }
+
+    def "a condition removed from a non-entry configuration is restored on re-navigation (no URL)"() {
+        given:
+        def screen = navigateToView(GenericFilterConfigsTestView)
+        def binder = getBinder(screen)
+        Configuration active = screen.ownersFilter.getConfiguration("active")
+        Configuration other = screen.ownersFilter.getConfiguration("other")
+
+        when: "the user switches to 'other' and removes its baseline 'email' condition, then switches back"
+        screen.ownersFilter.setCurrentConfiguration(other)
+        def emailFilter = propertyFilterOn(other, "email")
+        other.rootLogicalFilterComponent.remove(emailFilter)
+        ((RunTimeConfiguration) other).setFilterComponentModified(emailFilter, false)
+        screen.ownersFilter.setCurrentConfiguration(active)
+
+        then: "the condition is gone from 'other'"
+        !hasPropertyConditionOn(other, "email")
+
+        when: "a clean re-navigation happens"
+        binder.applyInitialState()
+        binder.updateState(QueryParameters.empty())
+
+        then: "the entry config is restored, and 'other' is restored too: its baseline condition is back"
+        screen.ownersFilter.currentConfiguration.is(active)
+        hasPropertyConditionOn(active, "name")
         hasPropertyConditionOn(other, "email")
     }
 

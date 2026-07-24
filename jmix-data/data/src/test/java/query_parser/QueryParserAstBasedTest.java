@@ -279,6 +279,32 @@ public class QueryParserAstBasedTest {
     }
 
     @Test
+    public void testHasConditionOnAttribute() throws Exception {
+        DomainModel model = prepareDomainModel();
+        QueryParserAstBased parser = new QueryParserAstBased(model, "select h from sec_GroupHierarchy h");
+        assertFalse(parser.hasConditionOnAttribute("group"));
+
+        parser = new QueryParserAstBased(model, "select h from sec_GroupHierarchy h where h.group = ?1");
+        assertTrue(parser.hasConditionOnAttribute("group"));
+
+        parser = new QueryParserAstBased(model, "select h from sec_GroupHierarchy h where h.group = :group or h.createdBy = :createdBy");
+        assertTrue(parser.hasConditionOnAttribute("group"));
+
+        parser = new QueryParserAstBased(model, "select h from sec_GroupHierarchy h where h.group is null");
+        assertTrue(parser.hasConditionOnAttribute("group"));
+
+        parser = new QueryParserAstBased(model, "select h from sec_GroupHierarchy h where h.createdBy = :createdBy");
+        assertFalse(parser.hasConditionOnAttribute("group"));
+
+        parser = new QueryParserAstBased(model, "select h from sec_GroupHierarchy h where h.group.name = :name");
+        assertFalse(parser.hasConditionOnAttribute("group"));
+        assertTrue(parser.hasConditionOnAttribute("group.name"));
+
+        parser = new QueryParserAstBased(model, "select h from sec_GroupHierarchy h left join h.group g where g.name = :name");
+        assertFalse(parser.hasConditionOnAttribute("group"));
+    }
+
+    @Test
     public void testNewKeyword() {
         DomainModel model = prepareDomainModel();
         QueryParserAstBased parser = new QueryParserAstBased(model,

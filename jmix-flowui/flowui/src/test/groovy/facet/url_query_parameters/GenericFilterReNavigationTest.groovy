@@ -544,6 +544,26 @@ class GenericFilterReNavigationTest extends FlowuiTestSpecification {
         loadCount.get() == 1
     }
 
+    def "re-navigation does not accumulate GenericFilter's per-condition operation-change listener"() {
+        given:
+        def screen = navigateToView(GenericFilterConfigsTestView)
+        def binder = getBinder(screen)
+        Configuration active = screen.ownersFilter.getConfiguration("active")
+        def nameFilter = propertyFilterOn(active, "name")
+
+        and: "the number of operation-change listeners on the baseline condition right after init"
+        int initialListeners = operationChangeListenerCount(nameFilter)
+
+        when: "several clean re-navigations happen (each re-activates the configuration)"
+        3.times {
+            binder.applyInitialState()
+            binder.updateState(QueryParameters.empty())
+        }
+
+        then: "the listener count did not grow — the per-condition listener is not re-registered on every restore"
+        operationChangeListenerCount(nameFilter) == initialListeners
+    }
+
     // --- helpers ---
 
     static GenericFilterUrlQueryParametersBinder getBinder(screen) {
@@ -573,5 +593,9 @@ class GenericFilterReNavigationTest extends FlowuiTestSpecification {
         return group.ownFilterComponents
                 .findAll { it instanceof PropertyFilter }
                 .collect { ((PropertyFilter) it).property }
+    }
+
+    static int operationChangeListenerCount(PropertyFilter<?> filter) {
+        return filter.getEventBus().getListeners(PropertyFilter.OperationChangeEvent).size()
     }
 }

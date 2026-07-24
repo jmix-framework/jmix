@@ -128,6 +128,7 @@ public class GenericFilter extends Composite<JmixDetails>
     protected DropdownButton settingsButton;
     protected List<ResponsiveStep> responsiveSteps;
     protected Registration openedChangeRegistration;
+    protected final List<Registration> conditionOperationChangeRegistrations = new ArrayList<>();
 
     protected LogicalFilterComponent<?> rootLogicalFilterComponent;
     protected Configuration emptyConfiguration;
@@ -715,6 +716,11 @@ public class GenericFilter extends Composite<JmixDetails>
 
         rootLogicalFilterComponent.setAutoApply(isAutoApply());
 
+        // This method runs on every configuration refresh (e.g. each re-navigation); detach the
+        // condition listeners registered on the previous run so they don't accumulate.
+        conditionOperationChangeRegistrations.forEach(Registration::remove);
+        conditionOperationChangeRegistrations.clear();
+
         if (!(getCurrentConfiguration() instanceof DesignTimeConfiguration)) {
             for (FilterComponent filterComponent : rootLogicalFilterComponent.getFilterComponents()) {
                 if (filterComponent instanceof SingleFilterComponentBase) {
@@ -724,10 +730,12 @@ public class GenericFilter extends Composite<JmixDetails>
                 }
 
                 if (filterComponent instanceof PropertyFilter<?> propertyFilter) {
-                    propertyFilter.addOperationChangeListener(operationChangeEvent -> {
-                        updateSingleConditionRemoveButton(propertyFilter);
-                        resetFilterComponentDefaultValue(propertyFilter);
-                    });
+                    Registration operationChangeRegistration =
+                            propertyFilter.addOperationChangeListener(operationChangeEvent -> {
+                                updateSingleConditionRemoveButton(propertyFilter);
+                                resetFilterComponentDefaultValue(propertyFilter);
+                            });
+                    conditionOperationChangeRegistrations.add(operationChangeRegistration);
                 }
             }
         }

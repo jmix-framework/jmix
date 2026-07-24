@@ -25,6 +25,8 @@ import io.jmix.core.DataManager
 import io.jmix.core.Metadata
 import io.jmix.flowui.DialogWindows
 import io.jmix.flowui.ViewNavigators
+import io.jmix.flowui.model.DataContext
+import io.jmix.flowui.testassist.UiTestUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import test_support.entity.TestCopyingSystemStateEntity
@@ -37,7 +39,7 @@ class StandardDetailViewTest extends FlowuiTestSpecification {
     @Autowired
     protected ViewNavigators navigators
     @Autowired
-    protected DialogWindows dialogWindows;
+    protected DialogWindows dialogWindows
 
     @Autowired
     protected Metadata metadata
@@ -118,5 +120,99 @@ class StandardDetailViewTest extends FlowuiTestSpecification {
               """
 
         noExceptionThrown()
+    }
+
+    def "existing entity: editing then reverting a scalar clears the unsaved-changes prompt (#1409)"() {
+        given: "an Order detail view opened on an existing entity"
+        def origin = navigateToView(BlankTestView)
+        navigators.detailView(origin, Order)
+                .editEntity(orderToEdit)
+                .withViewClass(OrderDetailTestView)
+                .withBackwardNavigation(false)
+                .navigate()
+        OrderDetailTestView view = UiTestUtils.getCurrentView()
+        Order edited = view.getEditedEntity()
+        def original = edited.number
+
+        when: "a scalar is edited and then set back to its original value"
+        edited.number = 'temp-changed'
+        edited.number = original
+
+        then: "the edit reverted, so the view reports no unsaved changes"
+        !view.hasUnsavedChanges()
+    }
+
+    def "existing entity: an outstanding scalar edit still reports unsaved changes"() {
+        given: "an Order detail view opened on an existing entity"
+        def origin = navigateToView(BlankTestView)
+        navigators.detailView(origin, Order)
+                .editEntity(orderToEdit)
+                .withViewClass(OrderDetailTestView)
+                .withBackwardNavigation(false)
+                .navigate()
+        OrderDetailTestView view = UiTestUtils.getCurrentView()
+        Order edited = view.getEditedEntity()
+
+        when: "a scalar is edited and left changed"
+        edited.number = 'temp-changed'
+
+        then: "the outstanding edit still reports unsaved changes"
+        view.hasUnsavedChanges()
+    }
+
+    def "create view: an untouched new entity reports no unsaved changes"() {
+        given: "an Order detail view opened to create a new entity"
+        def origin = navigateToView(BlankTestView)
+        navigators.detailView(origin, Order)
+                .newEntity()
+                .withViewClass(OrderDetailTestView)
+                .withBackwardNavigation(false)
+                .navigate()
+        OrderDetailTestView view = UiTestUtils.getCurrentView()
+
+        expect: "nothing was edited after opening, so there are no unsaved changes"
+        !view.hasUnsavedChanges()
+    }
+
+    def "create view: editing the new entity reports unsaved changes"() {
+        given: "an Order detail view opened to create a new entity"
+        def origin = navigateToView(BlankTestView)
+        navigators.detailView(origin, Order)
+                .newEntity()
+                .withViewClass(OrderDetailTestView)
+                .withBackwardNavigation(false)
+                .navigate()
+        OrderDetailTestView view = UiTestUtils.getCurrentView()
+        Order edited = view.getEditedEntity()
+
+        when: "a scalar of the new entity is edited"
+        edited.number = 'n1'
+
+        then: "the view reports unsaved changes"
+        view.hasUnsavedChanges()
+    }
+
+    def "create view: a new entity kept in the modified set with no attribute edits still reports unsaved changes"() {
+        given: "an Order detail view opened to create a new entity"
+        def origin = navigateToView(BlankTestView)
+        navigators.detailView(origin, Order)
+                .newEntity()
+                .withViewClass(OrderDetailTestView)
+                .withBackwardNavigation(false)
+                .navigate()
+        OrderDetailTestView view = UiTestUtils.getCurrentView()
+        Order edited = view.getEditedEntity()
+        DataContext dataContext = view.getViewData().getDataContext()
+
+        when: "an edit sets the modifiedAfterOpen latch and is then reverted (which un-tracks the attribute), but the new entity is explicitly kept modified with no tracked attributes"
+        def original = edited.number
+        edited.number = 'temp-changed'
+        edited.number = original
+        dataContext.setModified(edited, true)
+
+        then: "the new entity is in the modified set with no modified attributes, and the view still reports unsaved changes (save() would persist it)"
+        dataContext.getModifiedAttributes(edited).isEmpty()
+        !dataContext.getModified().isEmpty()
+        view.hasUnsavedChanges()
     }
 }

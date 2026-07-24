@@ -21,6 +21,14 @@ import io.jmix.core.metamodel.annotation.JmixEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 
+/**
+ * Used by {@code data_components.DataContextInvariantFuzzTest} (embedded in {@link Customer} and
+ * part of each scenario's persisted baseline), whose deterministic regression baseline depends on
+ * this entity's persistent attribute set. Adding, removing, or renaming attributes here shifts the
+ * fuzz violation counts and can break the gate. If such a change is unavoidable, re-run the fuzz
+ * test with {@code -PincludeSlowTests=true} and update the baseline in
+ * {@code docs/features/data-context/tests/coverage.md}.
+ */
 @Embeddable
 @JmixEntity(name = "test_Address")
 public class Address {

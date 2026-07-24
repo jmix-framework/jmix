@@ -249,6 +249,24 @@ public class FetchGroupManager {
                 }
             }
 
+            // If a to-one attribute is present in a query condition (e.g. 'e.customer = :param'), Eclipselink
+            // reuses the expression created for the condition when processing the left join fetch hint for the
+            // same attribute. Such expression implies an inner join, so entities with null reference would be
+            // filtered out of the result. Use batch fetching instead of join fetching for these attributes.
+            List<FetchGroupField> conditionFields = joinFields.stream()
+                    .filter(f -> f.fetchMode == FetchMode.AUTO && parser.hasConditionOnAttribute(f.path()))
+                    .collect(Collectors.toList());
+            if (!conditionFields.isEmpty()) {
+                for (Iterator<FetchGroupField> fieldIt = joinFields.iterator(); fieldIt.hasNext(); ) {
+                    FetchGroupField joinField = fieldIt.next();
+                    boolean conditionField = conditionFields.stream()
+                            .anyMatch(f -> joinField == f || joinField.metaPropertyPath.startsWith(f.metaPropertyPath));
+                    if (conditionField) {
+                        fieldIt.remove();
+                        batchFields.add(joinField);
+                    }
+                }
+            }
 
             long toManyCount = refFields.stream()
                     .filter(f -> f.metaProperty.getRange().getCardinality().isMany()).count();

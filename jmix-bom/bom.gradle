@@ -70,7 +70,7 @@ dependencies {
     api platform("org.springframework.boot:spring-boot-dependencies:4.0.7")
     api platform('org.springframework.ai:spring-ai-bom:2.0.0')
     api platform('software.amazon.awssdk:bom:2.25.60')
-    api platform("io.netty:netty-bom:4.2.15.Final")
+    api platform("io.netty:netty-bom:4.2.16.Final")
     api platform('io.opentelemetry:opentelemetry-bom:1.62.0')
     api platform('io.rest-assured:rest-assured-bom:6.0.0')
 
@@ -491,7 +491,7 @@ dependencies {
         api 'com.hazelcast.spring:hazelcast-spring-session:4.0.0'
         api 'com.hazelcast:hazelcast:5.6.0'
 
-        api 'org.postgresql:postgresql:42.7.11'
+        api 'org.postgresql:postgresql:42.7.13'
     }
 }
 

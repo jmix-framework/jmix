@@ -780,7 +780,8 @@ public class MetaModelLoader {
         for (Annotation annotation : annotatedElement.getAnnotations()) {
             MetaAnnotation metaAnnotation = AnnotationUtils.findAnnotation(annotation.getClass(), MetaAnnotation.class);
             if (metaAnnotation != null) {
-                Map<String, Object> attributes = new LinkedHashMap<>(AnnotationUtils.getAnnotationAttributes(annotatedElement, annotation));
+                Map<String, Object> attributes = new LinkedHashMap<>(AnnotationUtils.getAnnotationAttributes(
+                        annotatedElement, annotation, /*classValuesAsString*/ false, /*nestedAnnotationsAsMap*/ true));
                 metaProperty.getAnnotations().put(annotation.annotationType().getName(), attributes);
             }
         }

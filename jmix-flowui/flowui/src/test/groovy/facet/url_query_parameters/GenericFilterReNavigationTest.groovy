@@ -27,6 +27,7 @@ import io.jmix.flowui.component.logicalfilter.GroupFilter
 import io.jmix.flowui.component.propertyfilter.PropertyFilter
 import io.jmix.flowui.facet.UrlQueryParametersFacet
 import io.jmix.flowui.facet.urlqueryparameters.GenericFilterUrlQueryParametersBinder
+import io.jmix.flowui.model.CollectionLoader
 import io.jmix.flowui.view.View
 import io.jmix.flowui.view.ViewControllerUtils
 import org.springframework.boot.test.context.SpringBootTest
@@ -487,6 +488,60 @@ class GenericFilterReNavigationTest extends FlowuiTestSpecification {
 
         cleanup:
         registration.remove()
+    }
+
+    // --- Listener leak: re-navigation must not accumulate a baseline's operation-change listener ---
+
+    def "re-navigation does not accumulate a baseline condition's operation-change listener"() {
+        given:
+        def screen = navigateToView(GenericFilterConfigsTestView)
+        def binder = getBinder(screen)
+        Configuration active = screen.ownersFilter.getConfiguration("active")
+        def nameFilter = propertyFilterOn(active, "name")
+
+        and: "auto-apply is on, so every apply() hits the loader, and each load is counted"
+        active.rootLogicalFilterComponent.autoApply = true
+        def loadCount = new AtomicInteger(0)
+        (screen.ownersFilter.dataLoader as CollectionLoader).addPostLoadListener { loadCount.incrementAndGet() }
+
+        when: "several clean re-navigations rebuild the configuration structure"
+        3.times {
+            binder.applyInitialState()
+            binder.updateState(QueryParameters.empty())
+        }
+
+        and: "the user changes the baseline operation once"
+        loadCount.set(0)
+        nameFilter.setOperation(PropertyFilter.Operation.CONTAINS)
+
+        then: "the loader is loaded exactly once — not once per accumulated (leaked) listener"
+        loadCount.get() == 1
+    }
+
+    def "removeAll on a group detaches operation-change listeners so re-adding does not accumulate them"() {
+        given:
+        def screen = navigateToView(GenericFilterConfigsTestView)
+        Configuration active = screen.ownersFilter.getConfiguration("active")
+        def rootGroup = active.rootLogicalFilterComponent
+        def nameFilter = propertyFilterOn(active, "name")
+
+        and: "auto-apply is on, so every apply() hits the loader, and each load is counted"
+        rootGroup.autoApply = true
+        def loadCount = new AtomicInteger(0)
+        (screen.ownersFilter.dataLoader as CollectionLoader).addPostLoadListener { loadCount.incrementAndGet() }
+
+        when: "the group is cleared via removeAll and the same condition is re-added several times"
+        3.times {
+            rootGroup.removeAll()
+            rootGroup.add(nameFilter)
+        }
+
+        and: "the user changes the baseline operation once"
+        loadCount.set(0)
+        nameFilter.setOperation(PropertyFilter.Operation.CONTAINS)
+
+        then: "the loader is loaded exactly once — removeAll detached the stale listeners"
+        loadCount.get() == 1
     }
 
     // --- helpers ---

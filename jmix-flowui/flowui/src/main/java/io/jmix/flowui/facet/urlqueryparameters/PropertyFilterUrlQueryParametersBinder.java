@@ -117,7 +117,6 @@ public class PropertyFilterUrlQueryParametersBinder extends AbstractUrlQueryPara
         fireQueryParametersChanged(new UrlQueryParametersChangeEvent(this, queryParameters));
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void applyInitialState() {
         singleFilterComponentStateSupport.restore(filter, initialState);

@@ -153,7 +153,7 @@ public class DataGridFilterUrlQueryParametersBinder extends AbstractUrlQueryPara
                 parameterValue;
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SuppressWarnings({"rawtypes"})
     @Override
     public void applyInitialState() {
         for (InitialState initialState : initialStates) {

@@ -35,30 +35,51 @@ import java.util.Map;
  */
 public class DataContextDiagnostics {
 
-    static final Logger log = LoggerFactory.getLogger("io.jmix.flowui.datacontext.diagnostics");
+    protected static final Logger log = LoggerFactory.getLogger("io.jmix.flowui.datacontext.diagnostics");
 
-    private DataContextDiagnostics() {
+    /**
+     * Not meant to be instantiated directly; {@code protected} only so the class can be subclassed to add
+     * or reuse message formats.
+     */
+    protected DataContextDiagnostics() {
     }
 
-    static String attributeDirtied(Object entity, String attribute, @Nullable Object baseline) {
+    /**
+     * Message for an attribute that just became dirty, showing the baseline its future changes are
+     * measured against.
+     */
+    public static String attributeDirtied(Object entity, String attribute, @Nullable Object baseline) {
         return "Attribute dirtied: " + formatEntity(entity) + "." + attribute
                 + " (baseline '" + formatEntity(baseline) + "')";
     }
 
-    static String attributeReverted(Object entity, String attribute) {
+    /**
+     * Message for an attribute whose value returned to its baseline and is therefore no longer dirty.
+     */
+    public static String attributeReverted(Object entity, String attribute) {
         return "Attribute reverted to baseline: " + formatEntity(entity) + "." + attribute;
     }
 
-    static String mergeSkippedDirty(Object entity, String attribute) {
+    /**
+     * Message for a non-fresh merge that left a dirty attribute untouched, keeping the user's unsaved value.
+     */
+    public static String mergeSkippedDirty(Object entity, String attribute) {
         return "Merge skipped dirty attribute (kept user value): " + formatEntity(entity) + "." + attribute;
     }
 
-    static String baselineRebased(Object entity, String attribute, @Nullable Object newBaseline) {
+    /**
+     * Message for a dirty attribute whose baseline was moved to an incoming (merged) value by a fresh merge.
+     */
+    public static String baselineRebased(Object entity, String attribute, @Nullable Object newBaseline) {
         return "Baseline rebased for dirty attribute: " + formatEntity(entity) + "." + attribute
                 + " -> '" + formatEntity(newBaseline) + "'";
     }
 
-    static String readOnlyContextMerge() {
+    /**
+     * Message warning that {@code merge()} was called on a read-only {@code NoopDataContext}, so the change
+     * is neither tracked nor saved.
+     */
+    public static String readOnlyContextMerge() {
         return "merge() called on a read-only DataContext (NoopDataContext); changes are not tracked or saved";
     }
 
@@ -67,7 +88,7 @@ public class DataContextDiagnostics {
      * "<collection>"} for a membership bag (used as a collection baseline), {@code "null"} for
      * null, and {@code String.valueOf} otherwise. Never calls {@code toString()} on an entity.
      */
-    static String formatEntity(@Nullable Object value) {
+    public static String formatEntity(@Nullable Object value) {
         if (value == null) {
             return "null";
         }

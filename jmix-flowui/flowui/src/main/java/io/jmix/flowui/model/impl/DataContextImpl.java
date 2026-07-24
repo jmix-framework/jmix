@@ -146,6 +146,11 @@ public class DataContextImpl implements DataContextInternal {
         events.publish(ChangeEvent.class, new ChangeEvent(this, entity));
     }
 
+    /**
+     * Fires a single {@code ChangeEvent} for each entity queued in {@link #deferredChangeEntities} during a
+     * merge, then clears the queue. Called when the outermost merge unwinds so listeners see one event per
+     * entity, after all of the merge's writes are in place.
+     */
     protected void flushDeferredChangeEvents() {
         if (deferredChangeEntities.isEmpty()) {
             return;
@@ -157,12 +162,21 @@ public class DataContextImpl implements DataContextInternal {
         }
     }
 
+    /**
+     * Records that the merge itself wrote the given (entity, attribute) during the active merge. A change
+     * event for an (entity, attribute) that is <em>not</em> recorded is a listener-injected user edit and
+     * must be tracked; see {@link #isMergeApplied}. No-op outside a merge.
+     */
     protected void recordMergeApplied(Object entity, String attribute) {
         if (mergeDepth > 0) {
             mergeApplied.computeIfAbsent(entity, e -> new HashSet<>()).add(attribute);
         }
     }
 
+    /**
+     * Whether the merge itself wrote the given (entity, attribute) during the active merge (see
+     * {@link #recordMergeApplied}). Used to tell the merge's own writes from listener-injected user edits.
+     */
     protected boolean isMergeApplied(Object entity, String attribute) {
         Set<String> attrs = mergeApplied.get(entity);
         return attrs != null && attrs.contains(attribute);
@@ -341,6 +355,12 @@ public class DataContextImpl implements DataContextInternal {
         mergeLazyLoadingState(srcEntity, dstEntity);
     }
 
+    /**
+     * Copies the loaded datatype and element-collection properties from the source to the destination
+     * instance, honouring the dirty-aware merge rule (a destination attribute with an unsaved user edit is
+     * never overwritten; a fresh merge rebaselines it instead). Element collections are wrapped in an
+     * observable collection so later mutations are tracked.
+     */
     protected void mergeDatatypeProperties(Object srcEntity, Object dstEntity, MetaClass metaClass,
                                            boolean srcNew, boolean dstNew, boolean isRoot, MergeOptions options) {
         for (MetaProperty property : metaClass.getProperties()) {
@@ -390,6 +410,12 @@ public class DataContextImpl implements DataContextInternal {
         }
     }
 
+    /**
+     * Copies the loaded reference and to-many properties from the source to the destination instance,
+     * recursively merging each reached node into the context graph. Delegates the dirty-aware special
+     * cases to {@link #skipOrRebaselineDirtyReference} and {@link #mergeUnloadedOrNullReference}, and
+     * collections to {@code mergeList}/{@code mergeSet}. Embedded references get a change listener installed.
+     */
     protected void mergeReferenceProperties(Object srcEntity, Object dstEntity, MetaClass metaClass,
                                             boolean srcNew, boolean isRoot, MergeOptions options,
                                             Map<Object, Object> mergedMap) {
@@ -445,6 +471,13 @@ public class DataContextImpl implements DataContextInternal {
         }
     }
 
+    /**
+     * Applies the dirty-aware merge rule to a reference or to-many property: when the destination attribute
+     * carries an unsaved user edit (including a dirty dotted path under an embedded reference), the incoming
+     * value is not installed. Returns {@code true} to tell {@link #mergeReferenceProperties} to skip the
+     * property. A fresh merge still rebaselines the edit against the incoming value, and any skipped incoming
+     * node is still merged into the context graph.
+     */
     protected boolean skipOrRebaselineDirtyReference(Object dstEntity, MetaProperty property, @Nullable Object value,
                                                      boolean isRoot, MergeOptions options,
                                                      Map<Object, Object> mergedMap) {
@@ -489,6 +522,13 @@ public class DataContextImpl implements DataContextInternal {
         return false;
     }
 
+    /**
+     * Installs a reference/to-many value when the source side is loaded but the destination side is not yet
+     * loaded (or the incoming value is null). A null value is set directly; otherwise the reached node(s)
+     * are merged so the installed value holds managed instances, a collection is wrapped observable with a
+     * tracker baseline, and the attribute is marked loaded. Embedded properties are handled by the
+     * loaded-destination path, not here.
+     */
     protected void mergeUnloadedOrNullReference(Object dstEntity, MetaProperty property,
                                                 @Nullable Object value, Map<Object, Object> mergedMap,
                                                 MergeOptions options) {
@@ -701,6 +741,11 @@ public class DataContextImpl implements DataContextInternal {
                 && EntitySystemAccess.getEntityEntry(dstEntity).getLoadedPropertiesInfo() instanceof CachingLoadedPropertiesInfo;
     }
 
+    /**
+     * Blanks the destination's caching loaded-state info before the copy loops when {@code coldReset} is
+     * set (see {@link #isColdResetTarget}), so their {@code isLoaded} checks recompute from the fetch group
+     * just unioned in {@link #mergeSystemState} rather than from a stale cached negative. No-op otherwise.
+     */
     protected void resetLoadedInfoBeforeCopy(Object dstEntity, boolean coldReset) {
         if (coldReset) {
             // Reset before the copy loops so their isLoaded(dstEntity, ...) checks recompute from the
@@ -860,6 +905,10 @@ public class DataContextImpl implements DataContextInternal {
         return mergeCollectionInProgress.computeIfAbsent(managedEntity, k -> new HashSet<>()).add(propertyName);
     }
 
+    /**
+     * Clears the in-progress marker set by {@link #beginMergeCollection} for the owner's collection
+     * property, once its merge finishes.
+     */
     protected void endMergeCollection(Object managedEntity, String propertyName) {
         Set<String> props = mergeCollectionInProgress.get(managedEntity);
         if (props != null) {
@@ -870,6 +919,11 @@ public class DataContextImpl implements DataContextInternal {
         }
     }
 
+    /**
+     * Wraps a collection in an observable list/set that notifies {@link #collectionChanged} on mutation and,
+     * when a property is given, snapshots the tracker baseline so a later mutation marks the owner modified.
+     * Returns the collection unchanged if it is neither a list nor a set.
+     */
     protected Collection<Object> wrapLazyValueIntoObservableCollection(Collection<Object> collection, Object notifiedEntity,
                                                                         @Nullable String property) {
         if (collection instanceof List) {
@@ -902,6 +956,11 @@ public class DataContextImpl implements DataContextInternal {
         return new ObservableSet<>(set, (changeType, changes) -> collectionChanged(notifiedEntity, property));
     }
 
+    /**
+     * Mutation callback for the observable collection wrappers. The merge's own collection writes skip the
+     * tracker and defer their {@code ChangeEvent}; any other mutation marks the owner modified, updates the
+     * tracker's to-many dirty state, and fires (or, inside a merge, defers) a {@code ChangeEvent}.
+     */
     protected void collectionChanged(Object entity, @Nullable String property) {
         if (mergeDepth > 0 && (property == null || isMergeApplied(entity, property))) {
             // the merge's own collection change: skip the tracker, defer the ChangeEvent
@@ -1091,10 +1150,18 @@ public class DataContextImpl implements DataContextInternal {
         return changeTracker.getModifiedAttributes(managed);
     }
 
+    /**
+     * Change-tracker callback: an entity gained its first dirty attribute, so it joins
+     * {@link #modifiedInstances}.
+     */
     protected void entityBecameDirty(Object entity) {
         modifiedInstances.add(entity);
     }
 
+    /**
+     * Change-tracker callback: an entity lost its last dirty attribute, so it leaves
+     * {@link #modifiedInstances} unless it was pinned modified via {@link #setModified} ({@code manuallyModified}).
+     */
     protected void entityBecameClean(Object entity) {
         if (!manuallyModified.contains(entity)) {
             modifiedInstances.remove(entity);
@@ -1294,6 +1361,11 @@ public class DataContextImpl implements DataContextInternal {
         return value;
     }
 
+    /**
+     * The first segment of a possibly-dotted attribute path: {@code 'address'} for {@code 'address.city'},
+     * or the whole string when it has no dot. Used to check the loaded state of the top-level property a
+     * dotted (embedded) path belongs to.
+     */
     protected static String rootSegment(String attribute) {
         int dotIndex = attribute.indexOf('.');
         return dotIndex < 0 ? attribute : attribute.substring(0, dotIndex);

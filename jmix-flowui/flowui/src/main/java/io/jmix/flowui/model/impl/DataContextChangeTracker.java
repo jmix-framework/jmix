@@ -45,12 +45,24 @@ public class DataContextChangeTracker {
     private final Consumer<Object> onEntityDirty;
     private final Consumer<Object> onEntityClean;
 
-    DataContextChangeTracker(Consumer<Object> onEntityDirty, Consumer<Object> onEntityClean) {
+    /**
+     * @param onEntityDirty callback invoked when an entity becomes dirty (gains its first dirty attribute)
+     * @param onEntityClean callback invoked when an entity becomes clean again (loses its last dirty attribute)
+     */
+    public DataContextChangeTracker(Consumer<Object> onEntityDirty, Consumer<Object> onEntityClean) {
         this.onEntityDirty = onEntityDirty;
         this.onEntityClean = onEntityClean;
     }
 
-    void trackChange(Object entity, String attribute, @Nullable Object prevValue,
+    /**
+     * Records a scalar or single-reference attribute change against its baseline. If a baseline already
+     * exists for the attribute, the change is measured against it: the attribute is un-dirtied when the
+     * current value returns to the baseline, and nothing else happens otherwise. With no baseline yet,
+     * the attribute becomes dirty (with {@code prevValue} as baseline) only when the value actually changed.
+     *
+     * @param reference {@code true} to compare by entity id / identity rather than by value
+     */
+    public void trackChange(Object entity, String attribute, @Nullable Object prevValue,
                       @Nullable Object newValue, boolean reference) {
         Object prev = reference ? refKey(prevValue) : prevValue;
         Object curr = reference ? refKey(newValue) : newValue;
@@ -67,7 +79,13 @@ public class DataContextChangeTracker {
         putDirty(entity, attribute, prev);
     }
 
-    void snapshotCollectionBaseline(Object entity, String attribute, Collection<?> baselineContents) {
+    /**
+     * Snapshots the membership of a to-many attribute as its baseline, so a later mutation can be
+     * compared against it (see {@link #trackCollectionChange}). Called by the merge when it installs a
+     * collection. Only a clean attribute's baseline is (re)snapshotted; a dirty attribute keeps its
+     * existing baseline so an unsaved user edit is not measured against freshly merged contents.
+     */
+    public void snapshotCollectionBaseline(Object entity, String attribute, Collection<?> baselineContents) {
         if (!isAttributeDirty(entity, attribute)) {
             // A clean attribute's baseline must track what merge just installed (merge legitimately
             // replaces a clean collection's contents), otherwise later mutations would be compared
@@ -78,7 +96,13 @@ public class DataContextChangeTracker {
         }
     }
 
-    void trackCollectionChange(Object entity, String attribute, Collection<?> current) {
+    /**
+     * Records the current membership of a to-many attribute against its snapshotted baseline: the
+     * attribute is un-dirtied when the membership matches the baseline again, and marked dirty when it
+     * differs. When no baseline was snapshotted the attribute is marked dirty conservatively (the change
+     * cannot be reconstructed). Called from the observable-collection mutation callback.
+     */
+    public void trackCollectionChange(Object entity, String attribute, Collection<?> current) {
         Map<String, Object> entityBaselines = baselines.get(entity);
         Object baseline = entityBaselines == null ? null : entityBaselines.get(attribute);
         if (baseline == null) {
@@ -96,16 +120,31 @@ public class DataContextChangeTracker {
         }
     }
 
-    boolean isAttributeDirty(Object entity, String attribute) {
+    /**
+     * Whether the given attribute of the entity currently carries an unsaved change.
+     */
+    public boolean isAttributeDirty(Object entity, String attribute) {
         return dirtyAttributes(entity).contains(attribute);
     }
 
-    Set<String> getModifiedAttributes(Object entity) {
+    /**
+     * The names of the entity's currently-dirty attributes (embedded sub-attributes as dotted paths),
+     * as an unmodifiable snapshot; empty if the entity is clean.
+     */
+    public Set<String> getModifiedAttributes(Object entity) {
         Set<String> attrs = dirtyAttrs.get(entity);
         return attrs == null || attrs.isEmpty() ? Collections.emptySet() : Collections.unmodifiableSet(new LinkedHashSet<>(attrs));
     }
 
-    void rebaseline(Object entity, String attribute, @Nullable Object incomingValue,
+    /**
+     * Moves a dirty scalar or single-reference attribute's baseline to an incoming (merged) value, so the
+     * user's edit is henceforth measured against it; the attribute is un-dirtied if it now equals that
+     * value. No-op when the attribute is not dirty. Used by a fresh merge, which rebaselines protected
+     * user edits rather than overwriting them.
+     *
+     * @param reference {@code true} to compare by entity id / identity rather than by value
+     */
+    public void rebaseline(Object entity, String attribute, @Nullable Object incomingValue,
                      @Nullable Object currentValue, boolean reference) {
         if (!isAttributeDirty(entity, attribute)) return;
         Object incoming = reference ? refKey(incomingValue) : incomingValue;
@@ -118,7 +157,12 @@ public class DataContextChangeTracker {
         }
     }
 
-    void rebaselineCollection(Object entity, String attribute, Collection<?> incoming, Collection<?> current) {
+    /**
+     * The to-many counterpart of {@link #rebaseline}: moves a dirty collection attribute's baseline to the
+     * membership of an incoming (merged) collection, un-dirtying it if the current membership now matches.
+     * No-op when the attribute is not dirty.
+     */
+    public void rebaselineCollection(Object entity, String attribute, Collection<?> incoming, Collection<?> current) {
         if (!isAttributeDirty(entity, attribute)) return;
         Map<Object, Integer> bag = membershipBag(incoming);
         baselines.get(entity).put(attribute, bag);
@@ -131,19 +175,36 @@ public class DataContextChangeTracker {
         }
     }
 
-    void markDirty(Object entity, String attribute, @Nullable Object baseline) {
+    /**
+     * Marks an attribute dirty with an explicit baseline, without a value comparison. Used to import
+     * dirty state from a child context (see {@code DataContextImpl.mergeFromChild}).
+     */
+    public void markDirty(Object entity, String attribute, @Nullable Object baseline) {
         putDirty(entity, attribute, baseline);
     }
 
-    void markSetLoaded(Object entity, String attribute) {
+    /**
+     * Remembers that an attribute was made loaded by a user set or a non-null merge-install, so the loaded
+     * flag can be re-asserted after a fresh merge installs a narrower loaded-state cache (see
+     * {@link #setLoadedAttributes} and {@code DataContextImpl.reapplySetLoaded}).
+     */
+    public void markSetLoaded(Object entity, String attribute) {
         setLoadedAttrs.computeIfAbsent(entity, e -> new HashSet<>()).add(attribute);
     }
 
-    Set<String> setLoadedAttributes(Object entity) {
+    /**
+     * The attributes previously recorded by {@link #markSetLoaded} for the entity; empty if none. Survives
+     * {@link #clear}, and is dropped only when the entity leaves the context (see {@link #drop}).
+     */
+    public Set<String> setLoadedAttributes(Object entity) {
         return setLoadedAttrs.getOrDefault(entity, Collections.emptySet());
     }
 
-    void drop(Object entity) {
+    /**
+     * Forgets all tracked state (baselines, dirty attributes and set-loaded markers) for an entity that is
+     * leaving the context, firing the clean callback if it was dirty.
+     */
+    public void drop(Object entity) {
         baselines.remove(entity);
         setLoadedAttrs.remove(entity);
         Set<String> dirty = dirtyAttrs.remove(entity);
@@ -152,22 +213,26 @@ public class DataContextChangeTracker {
         }
     }
 
-    void clear() {
+    /**
+     * Drops all baselines and dirty attributes for every entity (e.g. on save or clear-changes). Set-loaded
+     * markers are intentionally kept, unlike {@link #drop}.
+     */
+    public void clear() {
         baselines.clear();
         dirtyAttrs.clear();
     }
 
-    private Set<String> dirtyAttributes(Object entity) {
+    protected Set<String> dirtyAttributes(Object entity) {
         Set<String> attrs = dirtyAttrs.get(entity);
         return attrs == null ? Collections.emptySet() : attrs;
     }
 
-    private void putDirty(Object entity, String attribute, @Nullable Object baseline) {
+    protected void putDirty(Object entity, String attribute, @Nullable Object baseline) {
         baselines.computeIfAbsent(entity, e -> new HashMap<>()).put(attribute, baseline);
         markAttributeDirty(entity, attribute);
     }
 
-    private void markAttributeDirty(Object entity, String attribute) {
+    protected void markAttributeDirty(Object entity, String attribute) {
         Set<String> attrs = dirtyAttrs.computeIfAbsent(entity, e -> new HashSet<>());
         boolean wasEmpty = attrs.isEmpty();
         boolean newlyDirtied = attrs.add(attribute);
@@ -184,7 +249,7 @@ public class DataContextChangeTracker {
         }
     }
 
-    private void removeDirty(Object entity, String attribute) {
+    protected void removeDirty(Object entity, String attribute) {
         Map<String, Object> entityBaselines = baselines.get(entity);
         if (entityBaselines != null) {
             entityBaselines.remove(attribute);
@@ -195,7 +260,7 @@ public class DataContextChangeTracker {
         removeDirtyKeepBaseline(entity, attribute);
     }
 
-    private void removeDirtyKeepBaseline(Object entity, String attribute) {
+    protected void removeDirtyKeepBaseline(Object entity, String attribute) {
         Set<String> attrs = dirtyAttrs.get(entity);
         if (attrs == null) {
             return;
@@ -211,13 +276,17 @@ public class DataContextChangeTracker {
     }
 
     @Nullable
-    private static Object refKey(@Nullable Object refOrId) {
+    protected static Object refKey(@Nullable Object refOrId) {
         if (refOrId == null) return null;
         Object id = EntityValues.getId(refOrId);
         return id != null ? id : new IdentityKey(refOrId);
     }
 
-    static Map<Object, Integer> membershipBag(Collection<?> collection) {
+    /**
+     * The membership bag (element key {@code ->} count) of a collection, used as a to-many attribute's
+     * baseline. Each element is keyed by its entity id, or by identity when it has none.
+     */
+    public static Map<Object, Integer> membershipBag(Collection<?> collection) {
         Map<Object, Integer> bag = new HashMap<>();
         for (Object e : collection) {
             bag.merge(refKey(e), 1, Integer::sum);

@@ -38,7 +38,7 @@
                       spacing="false"
                       alignItems="CENTER"
                       classNames="chat-title-layout">
-                    <h3 id="conversationTitle"/>
+                    <h3 id="conversationTitle" classNames="chat-title"/>
                     <button id="editConversationTitleBtn"
                             icon="PENCIL"
                             themeNames="tertiary icon small"

@@ -20,6 +20,7 @@ import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.shared.Tooltip;
 import com.vaadin.flow.function.SerializableSupplier;
 import io.jmix.aitoolsflowui.model.*;
 import io.jmix.aitoolsflowui.service.*;
@@ -105,6 +106,9 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
 
     @ViewComponent
     protected AiChatInputFragment composerFragment;
+
+    @Nullable
+    protected Tooltip conversationTitleTooltip;
 
     @Nullable
     protected AiConversation conversation;
@@ -367,13 +371,23 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
     }
 
     protected void refreshAll() {
-        conversationTitle.setText(conversation != null ? conversation.getTitle() : "");
+        applyConversationTitleText(conversation != null ? conversation.getTitle() : null);
 
         timelineItemsDc.setItems(timelineItemFactory.buildTimelineItems(loadMessages()));
         scrollToBottom();
 
         refreshComposerVisibility();
         warnIfAiUnavailable();
+    }
+
+    protected void applyConversationTitleText(@Nullable String title) {
+        String text = title != null ? title : "";
+        conversationTitle.setText(text);
+        if (conversationTitleTooltip == null) {
+            conversationTitleTooltip = Tooltip.forComponent(conversationTitle);
+        }
+        // An empty tooltip text is not displayed, so a cleared header shows none.
+        conversationTitleTooltip.setText(text);
     }
 
     protected void warnIfAiUnavailable() {
@@ -563,7 +577,7 @@ public class AiChatFragment extends Fragment<VerticalLayout> {
                     // Reloading conversation while awaiting LLM answer
                     // may break UI.
                     conversation = conversationService.save(conversation);
-                    conversationTitle.setText(Objects.requireNonNull(conversation).getTitle());
+                    applyConversationTitleText(Objects.requireNonNull(conversation).getTitle());
                 })
                 .open();
     }

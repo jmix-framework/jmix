@@ -95,6 +95,8 @@ dependencies {
         api "gr.netmechanics.jmix:jmix-google-place:3.0.0"
         api "gr.netmechanics.jmix:jmix-google-place-starter:3.0.0"
         api "ru.kavlab:dataimportaddon-starter:0.9.5"
+        api "de.bytestore:plugin-starter:3.0.0"
+        api "de.bytestore:swagger-ui-starter:3.0.0"
         // end community add-ons
 
         api "io.jmix.aitools:jmix-aitools:$freeVersion"

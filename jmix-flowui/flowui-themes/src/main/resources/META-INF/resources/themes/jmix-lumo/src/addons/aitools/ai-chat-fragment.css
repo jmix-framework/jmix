@@ -42,6 +42,16 @@
         box-sizing: border-box;
         padding-bottom: var(--lumo-space-s);
         gap: var(--lumo-space-s);
+        /* Let the title shrink and ellipsize instead of pushing the row wider. */
+        min-width: 0;
+    }
+
+    .chat-title {
+        flex: 1 1 auto;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     .chat-content-layout {

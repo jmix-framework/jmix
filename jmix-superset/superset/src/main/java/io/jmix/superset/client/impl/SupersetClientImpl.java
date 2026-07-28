@@ -66,7 +66,7 @@ public class SupersetClientImpl implements SupersetClient {
         return login(new LoginBody()
                 .withUsername(properties.getUsername())
                 .withPassword(properties.getPassword())
-                .withProvider("db")
+                .withProvider(properties.getProvider())
                 .withRefresh(true));
     }
 

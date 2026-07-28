@@ -1,0 +1,5 @@
+io.jmix.flowui.kit.meta.component.preview.processor.StudioSlotComponentProcessor
+io.jmix.flowui.kit.meta.component.preview.processor.StudioLayoutComponentProcessor
+io.jmix.flowui.kit.meta.component.preview.processor.StudioActionComponentProcessor
+io.jmix.flowui.kit.meta.component.preview.processor.StudioTabComponentProcessor
+io.jmix.flowui.kit.meta.component.preview.processor.StudioColumnComponentProcessor

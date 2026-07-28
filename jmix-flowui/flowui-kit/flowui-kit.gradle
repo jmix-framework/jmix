@@ -31,4 +31,10 @@ dependencies {
     api 'org.apache.commons:commons-lang3'
     api 'commons-io:commons-io'
 
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+test {
+    useJUnitPlatform()
 }

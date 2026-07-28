@@ -18,6 +18,7 @@ package io.jmix.flowui.xml.layout.support;
 
 import com.google.common.base.Strings;
 import io.jmix.core.MessageTools;
+import io.jmix.flowui.kit.xml.layout.support.BaseLoaderSupport;
 import org.dom4j.Element;
 import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
@@ -49,7 +50,7 @@ public class LoaderSupport {
      * specified attribute exists in the element, otherwise an empty {@link Optional}
      */
     public Optional<String> loadString(Element element, String attributeName) {
-        return loadString(element, attributeName, true);
+        return BaseLoaderSupport.loadString(element, attributeName);
     }
 
     /**
@@ -64,8 +65,7 @@ public class LoaderSupport {
      * specified attribute exists in the element, otherwise an empty {@link Optional}
      */
     public Optional<String> loadString(Element element, String attributeName, boolean emptyToNull) {
-        String attributeValue = element.attributeValue(attributeName);
-        return Optional.ofNullable(emptyToNull ? Strings.emptyToNull(attributeValue) : attributeValue);
+        return BaseLoaderSupport.loadString(element, attributeName, emptyToNull);
     }
 
     /**
@@ -79,8 +79,7 @@ public class LoaderSupport {
      * specified attribute exists in the element, otherwise an empty {@link Optional}
      */
     public Optional<Boolean> loadBoolean(Element element, String attributeName) {
-        return loadString(element, attributeName)
-                .map(Boolean::parseBoolean);
+        return BaseLoaderSupport.loadBoolean(element, attributeName);
     }
 
     /**
@@ -94,8 +93,7 @@ public class LoaderSupport {
      * specified attribute exists in the element, otherwise an empty {@link Optional}
      */
     public Optional<Integer> loadInteger(Element element, String attributeName) {
-        return loadString(element, attributeName)
-                .map(Integer::parseInt);
+        return BaseLoaderSupport.loadInteger(element, attributeName);
     }
 
     /**
@@ -109,8 +107,7 @@ public class LoaderSupport {
      * specified attribute exists in the element, otherwise an empty {@link Optional}
      */
     public Optional<Double> loadDouble(Element element, String attributeName) {
-        return loadString(element, attributeName)
-                .map(Double::parseDouble);
+        return BaseLoaderSupport.loadDouble(element, attributeName);
     }
 
     /**
@@ -125,8 +122,7 @@ public class LoaderSupport {
      * specified attribute exists in the element, otherwise an empty {@link Optional}
      */
     public <T extends Enum<T>> Optional<T> loadEnum(Element element, Class<T> type, String attributeName) {
-        return loadString(element, attributeName)
-                .map(stringValue -> Enum.valueOf(type, stringValue));
+        return BaseLoaderSupport.loadEnum(element, type, attributeName);
     }
 
     /**
@@ -164,29 +160,24 @@ public class LoaderSupport {
     }
 
     public void loadString(Element element, String attributeName, Consumer<String> setter) {
-        loadString(element, attributeName)
-                .ifPresent(setter);
+        BaseLoaderSupport.loadString(element, attributeName, setter);
     }
 
     public void loadBoolean(Element element, String attributeName, Consumer<Boolean> setter) {
-        loadBoolean(element, attributeName)
-                .ifPresent(setter);
+        BaseLoaderSupport.loadBoolean(element, attributeName, setter);
     }
 
     public void loadInteger(Element element, String attributeName, Consumer<Integer> setter) {
-        loadInteger(element, attributeName)
-                .ifPresent(setter);
+        BaseLoaderSupport.loadInteger(element, attributeName, setter);
     }
 
     public void loadDouble(Element element, String attributeName, Consumer<Double> setter) {
-        loadDouble(element, attributeName)
-                .ifPresent(setter);
+        BaseLoaderSupport.loadDouble(element, attributeName, setter);
     }
 
     public <T extends Enum<T>> void loadEnum(Element element, Class<T> type, String attributeName,
                                              Consumer<T> setter) {
-        loadEnum(element, type, attributeName)
-                .ifPresent(setter);
+        BaseLoaderSupport.loadEnum(element, type, attributeName, setter);
     }
 
     public void loadResourceString(Element element, String attributeName, String messageGroup, Consumer<String> setter) {

@@ -29,32 +29,26 @@ import io.jmix.flowui.kit.meta.component.preview.StudioPreviewSlotProcessor;
  */
 public class StudioSlotComponentProcessor implements StudioPreviewSlotProcessor {
 
-    static final String PREFIX = "prefix";
-    static final String SUFFIX = "suffix";
-    static final String NAVBAR = "navbar";
-    static final String DRAWER = "drawer";
-    static final String CONTENT = "content";
-
     @Override
     public boolean addToSlot(Component parent, Component child, int index, String slotHint) {
-        if (parent instanceof HasPrefix hasPrefix && PREFIX.equals(slotHint)) {
+        if (parent instanceof HasPrefix hasPrefix && PREFIX_SLOT.equals(slotHint)) {
             hasPrefix.setPrefixComponent(child);
             return true;
         }
-        if (parent instanceof HasSuffix hasSuffix && SUFFIX.equals(slotHint)) {
+        if (parent instanceof HasSuffix hasSuffix && SUFFIX_SLOT.equals(slotHint)) {
             hasSuffix.setSuffixComponent(child);
             return true;
         }
         if (parent instanceof AppLayout appLayout) {
-            if (NAVBAR.equals(slotHint)) {
+            if (NAVBAR_SLOT.equals(slotHint)) {
                 appLayout.addToNavbar(child);
                 return true;
             }
-            if (DRAWER.equals(slotHint)) {
+            if (DRAWER_SLOT.equals(slotHint)) {
                 appLayout.addToDrawer(child);
                 return true;
             }
-            if (CONTENT.equals(slotHint)) {
+            if (CONTENT_SLOT.equals(slotHint)) {
                 appLayout.setContent(child);
                 return true;
             }
@@ -64,11 +58,11 @@ public class StudioSlotComponentProcessor implements StudioPreviewSlotProcessor 
 
     @Override
     public boolean removeFromSlot(Component parent, Component child, String slotHint) {
-        if (parent instanceof HasPrefix hasPrefix && PREFIX.equals(slotHint)) {
+        if (parent instanceof HasPrefix hasPrefix && PREFIX_SLOT.equals(slotHint)) {
             hasPrefix.setPrefixComponent(null);
             return true;
         }
-        if (parent instanceof HasSuffix hasSuffix && SUFFIX.equals(slotHint)) {
+        if (parent instanceof HasSuffix hasSuffix && SUFFIX_SLOT.equals(slotHint)) {
             hasSuffix.setSuffixComponent(null);
             return true;
         }

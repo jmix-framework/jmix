@@ -108,9 +108,7 @@ public class StudioGridColumnVisibilityPreviewLoader implements StudioPreviewCom
     protected void buildPlaceholderMenu(JmixMenuBar menuBar, Element componentElement,
                                         StudioPreviewEnvironment environment) {
         JmixMenuItem rootItem = loadRootItem(menuBar, componentElement, environment);
-        for (int i = 0; i < 5; i++) {
-            rootItem.getSubMenu().addItem("Menu item " + i);
-        }
+        PreviewActionSupport.addPlaceholderItems((id, text) -> rootItem.getSubMenu().addItem(text));
     }
 
     /**

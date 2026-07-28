@@ -38,6 +38,7 @@ import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.grid.Grid;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.meta.StudioAPI;
+import io.jmix.flowui.kit.meta.StudioXmlElements;
 import org.jspecify.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Document;
@@ -94,25 +95,11 @@ final class StudioPreviewComponentProvider {
 
     private static final String CAPABILITY_FULL_CONTENT = "fullContent";
 
-    // Attribute names and tag names the mutation classifier understands.
+    // Attribute names the mutation classifier understands; the tag names it matches come from
+    // StudioXmlElements and the slot names it returns from StudioPreviewSlotProcessor.
     private static final String ATTRIBUTE_KEY = "key";
     private static final String ATTRIBUTE_PROPERTY = "property";
     private static final String ATTRIBUTE_TOUCH_OPTIMIZED = "touchOptimized";
-    private static final String TAG_EDITOR_ACTIONS_COLUMN = "editorActionsColumn";
-    private static final String TAG_TAB = "tab";
-    private static final String TAG_PREFIX = "prefix";
-    private static final String TAG_SUFFIX = "suffix";
-    private static final String TAG_NAVIGATION_BAR = "navigationBar";
-    private static final String TAG_DRAWER_LAYOUT = "drawerLayout";
-    private static final String TAG_INITIAL_LAYOUT = "initialLayout";
-    private static final String TAG_LAYOUT = "layout";
-    private static final String TAG_WORK_AREA = "workArea";
-
-    private static final String SLOT_PREFIX = "prefix";
-    private static final String SLOT_SUFFIX = "suffix";
-    private static final String SLOT_NAVBAR = "navbar";
-    private static final String SLOT_DRAWER = "drawer";
-    private static final String SLOT_CONTENT = "content";
 
     /**
      * Used in Studio.
@@ -278,7 +265,7 @@ final class StudioPreviewComponentProvider {
         if (!(mutation.child instanceof Component)) {
             return MutationKind.NONE;
         }
-        if (TAG_TAB.equals(mutation.tag)) {
+        if (StudioXmlElements.TAB.equals(mutation.tag)) {
             return MutationKind.TAB;
         }
         return mutation.removalSlot() != null ? MutationKind.SLOT : MutationKind.CHILD;
@@ -339,7 +326,8 @@ final class StudioPreviewComponentProvider {
             if (property instanceof String stringProperty && !stringProperty.isBlank()) {
                 return stringProperty;
             }
-            return TAG_EDITOR_ACTIONS_COLUMN.equals(tag) ? TAG_EDITOR_ACTIONS_COLUMN : null;
+            return StudioXmlElements.EDITOR_ACTIONS_COLUMN.equals(tag)
+                    ? StudioXmlElements.EDITOR_ACTIONS_COLUMN : null;
         }
 
         /**
@@ -354,14 +342,14 @@ final class StudioPreviewComponentProvider {
                 return null;
             }
             return switch (tag) {
-                case TAG_PREFIX -> SLOT_PREFIX;
-                case TAG_SUFFIX -> SLOT_SUFFIX;
-                case TAG_NAVIGATION_BAR ->
+                case StudioXmlElements.PREFIX -> StudioPreviewSlotProcessor.PREFIX_SLOT;
+                case StudioXmlElements.SUFFIX -> StudioPreviewSlotProcessor.SUFFIX_SLOT;
+                case StudioXmlElements.NAVIGATION_BAR ->
                         Boolean.parseBoolean(String.valueOf(attributes.get(ATTRIBUTE_TOUCH_OPTIMIZED)))
-                                ? null : SLOT_NAVBAR;
-                case TAG_DRAWER_LAYOUT -> SLOT_DRAWER;
-                case TAG_INITIAL_LAYOUT, TAG_LAYOUT, TAG_WORK_AREA ->
-                        target instanceof AppLayout ? SLOT_CONTENT : null;
+                                ? null : StudioPreviewSlotProcessor.NAVBAR_SLOT;
+                case StudioXmlElements.DRAWER_LAYOUT -> StudioPreviewSlotProcessor.DRAWER_SLOT;
+                case StudioXmlElements.INITIAL_LAYOUT, StudioXmlElements.LAYOUT, StudioXmlElements.WORK_AREA ->
+                        target instanceof AppLayout ? StudioPreviewSlotProcessor.CONTENT_SLOT : null;
                 default -> null;
             };
         }
@@ -378,7 +366,7 @@ final class StudioPreviewComponentProvider {
             if (slot != null) {
                 return slot;
             }
-            return tag == null && target instanceof AppLayout ? SLOT_CONTENT : null;
+            return tag == null && target instanceof AppLayout ? StudioPreviewSlotProcessor.CONTENT_SLOT : null;
         }
     }
 

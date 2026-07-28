@@ -17,19 +17,22 @@
 package io.jmix.flowui.kit.meta.component.preview.loader;
 
 import io.jmix.flowui.kit.action.BaseAction;
+import io.jmix.flowui.kit.meta.StudioXmlElements;
 import io.jmix.flowui.kit.meta.component.preview.StudioPreviewEnvironment;
 import io.jmix.flowui.kit.xml.layout.support.BaseComponentLoaderSupport;
 import io.jmix.flowui.kit.xml.layout.support.BaseLoaderSupport;
 import org.dom4j.Element;
 import org.jspecify.annotations.Nullable;
 
+import java.util.function.BiConsumer;
+
 /**
- * Shared helpers for preview loaders that build {@code action}-backed menu items from XML.
+ * Shared helpers for preview loaders that build menu items from XML.
  */
 public final class PreviewActionSupport {
 
     private static final String MESSAGE_REF_PREFIX = "msg://";
-    private static final String ACTION_ELEMENT = "action";
+    private static final int PLACEHOLDER_ITEM_COUNT = 5;
 
     private PreviewActionSupport() {
     }
@@ -73,7 +76,7 @@ public final class PreviewActionSupport {
     @Nullable
     public static Element findDescendantAction(Element parent, String actionId) {
         for (Element child : parent.elements()) {
-            if (ACTION_ELEMENT.equals(child.getName()) && actionId.equals(child.attributeValue("id"))) {
+            if (StudioXmlElements.ACTION.equals(child.getName()) && actionId.equals(child.attributeValue("id"))) {
                 return child;
             }
             Element found = findDescendantAction(child, actionId);
@@ -82,5 +85,40 @@ public final class PreviewActionSupport {
             }
         }
         return null;
+    }
+
+    public static void loadActionItem(Element itemElement, Element viewElement, StudioPreviewEnvironment environment,
+                                      BiConsumer<String, BaseAction<?>> actionItemAdder,
+                                      BiConsumer<String, String> textItemAdder) {
+        String id = BaseLoaderSupport.loadString(itemElement, "id").orElse(null);
+        if (id == null) {
+            // Runtime throws without an id, preview skips silently.
+            return;
+        }
+
+        Element actionElement = itemElement.element(StudioXmlElements.ACTION);
+        if (actionElement != null) {
+            actionItemAdder.accept(id, buildAction(actionElement, id, environment));
+            return;
+        }
+
+        String ref = BaseLoaderSupport.loadString(itemElement, "ref").orElse(null);
+        if (ref == null) {
+            // Neither an inline action nor a ref: runtime throws, preview skips silently.
+            return;
+        }
+
+        Element refActionElement = findDescendantAction(viewElement, ref);
+        if (refActionElement != null) {
+            actionItemAdder.accept(id, buildAction(refActionElement, ref, environment));
+        } else {
+            textItemAdder.accept(id, id);
+        }
+    }
+
+    public static void addPlaceholderItems(BiConsumer<String, String> itemAdder) {
+        for (int i = 0; i < PLACEHOLDER_ITEM_COUNT; i++) {
+            itemAdder.accept("menuItem" + i, "Menu item " + i);
+        }
     }
 }

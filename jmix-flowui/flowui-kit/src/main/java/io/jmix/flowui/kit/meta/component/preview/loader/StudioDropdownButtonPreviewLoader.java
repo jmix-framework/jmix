@@ -74,9 +74,7 @@ public class StudioDropdownButtonPreviewLoader implements StudioPreviewComponent
      * so Studio itself can stay silent. Old Studio (NOOP) still adds its own, so this is skipped then.
      */
     protected void loadPlaceholderItems(AbstractDropdownButton button) {
-        for (int i = 0; i < 5; i++) {
-            button.addItem("menuItem" + i, "Menu item " + i);
-        }
+        PreviewActionSupport.addPlaceholderItems(button::addItem);
     }
 
     /**
@@ -116,31 +114,7 @@ public class StudioDropdownButtonPreviewLoader implements StudioPreviewComponent
 
     protected void loadActionItem(AbstractDropdownButton button, Element itemElement, Element viewElement,
                                   StudioPreviewEnvironment environment) {
-        String id = loadString(itemElement, "id").orElse(null);
-        if (id == null) {
-            // Runtime throws without an id, preview skips silently.
-            return;
-        }
-
-        Element actionElement = itemElement.element(StudioXmlElements.ACTION);
-        if (actionElement != null) {
-            button.addItem(id, PreviewActionSupport.buildAction(actionElement, id, environment));
-            return;
-        }
-
-        String ref = loadString(itemElement, "ref").orElse(null);
-        if (ref == null) {
-            // Neither an inline action nor a ref: runtime throws, preview skips silently.
-            return;
-        }
-
-        Element refActionElement = PreviewActionSupport.findDescendantAction(viewElement, ref);
-        if (refActionElement != null) {
-            button.addItem(id, PreviewActionSupport.buildAction(refActionElement, ref, environment));
-        } else {
-            // Reference can't be resolved in preview (e.g. wired some other way): fall back to
-            // the id as visible text so the menu still shows something for this item.
-            button.addItem(id, id);
-        }
+        PreviewActionSupport.loadActionItem(itemElement, viewElement, environment,
+                button::addItem, button::addItem);
     }
 }

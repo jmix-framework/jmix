@@ -35,10 +35,6 @@ import org.dom4j.Element;
  */
 public class StudioGridPreviewLoader implements StudioPreviewComponentLoader {
 
-    protected static final String EDITOR_ACTIONS_COLUMN_DEFAULT_KEY = "editorActionsColumn";
-
-    protected static final String MESSAGE_REF_PREFIX = "msg://";
-
     @Override
     public boolean isSupported(Element element) {
         return hasViewOrFragmentSchema(element)
@@ -135,14 +131,14 @@ public class StudioGridPreviewLoader implements StudioPreviewComponentLoader {
 
         loadColumnHeader(columnElement, gridElement, environment, property, column);
         loadString(columnElement, "footer")
-                .ifPresent(footer -> column.setFooter(resolveText(environment, footer)));
+                .ifPresent(footer -> column.setFooter(PreviewActionSupport.resolveText(environment, footer)));
     }
 
     protected void loadColumnHeader(Element columnElement, Element gridElement, StudioPreviewEnvironment environment,
                                     @Nullable String property, Grid.Column<Object> column) {
         Optional<String> header = loadString(columnElement, "header");
         if (header.isPresent()) {
-            column.setHeader(resolveText(environment, header.get()));
+            column.setHeader(PreviewActionSupport.resolveText(environment, header.get()));
         } else if (property != null) {
             String dataContainerId = loadString(gridElement, "dataContainer").orElse(null);
             String metaClass = loadString(gridElement, "metaClass").orElse(null);
@@ -153,28 +149,17 @@ public class StudioGridPreviewLoader implements StudioPreviewComponentLoader {
 
     protected void loadEditorActionsColumn(Grid<Object> grid, Element columnElement,
                                            StudioPreviewEnvironment environment) {
-        String key = loadString(columnElement, "key").orElse(EDITOR_ACTIONS_COLUMN_DEFAULT_KEY);
+        String key = loadString(columnElement, "key").orElse(StudioXmlElements.EDITOR_ACTIONS_COLUMN);
         Grid.Column<Object> column = grid.addColumn(item -> "").setKey(key);
 
         loadString(columnElement, "width", column::setWidth);
         loadBoolean(columnElement, "autoWidth", column::setAutoWidth);
         loadBoolean(columnElement, "resizable", column::setResizable);
         loadInteger(columnElement, "flexGrow", column::setFlexGrow);
-        loadString(columnElement, "header").ifPresent(header -> column.setHeader(resolveText(environment, header)));
-        loadString(columnElement, "footer").ifPresent(footer -> column.setFooter(resolveText(environment, footer)));
+        loadString(columnElement, "header")
+                .ifPresent(header -> column.setHeader(PreviewActionSupport.resolveText(environment, header)));
+        loadString(columnElement, "footer")
+                .ifPresent(footer -> column.setFooter(PreviewActionSupport.resolveText(environment, footer)));
         loadBoolean(columnElement, "visible", column::setVisible);
-    }
-
-    /**
-     * Resolves a {@code msg://} message reference through the environment, falling back to
-     * the raw value when the reference isn't a message key or the environment can't resolve it
-     * (e.g. {@link StudioPreviewEnvironment#NOOP}).
-     */
-    protected String resolveText(StudioPreviewEnvironment environment, String value) {
-        if (!value.startsWith(MESSAGE_REF_PREFIX)) {
-            return value;
-        }
-        String resolved = environment.resolveMessage(value);
-        return resolved != null ? resolved : value;
     }
 }

@@ -24,6 +24,12 @@ import com.vaadin.flow.component.Component;
  */
 public interface StudioPreviewSlotProcessor extends StudioPreviewComponentProcessor {
 
+    String PREFIX_SLOT = "prefix";
+    String SUFFIX_SLOT = "suffix";
+    String NAVBAR_SLOT = "navbar";
+    String DRAWER_SLOT = "drawer";
+    String CONTENT_SLOT = "content";
+
     /**
      * Attaches {@code child} to {@code parent}'s {@code slotHint} slot.
      *

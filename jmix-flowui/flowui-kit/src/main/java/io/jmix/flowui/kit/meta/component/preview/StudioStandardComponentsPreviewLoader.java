@@ -92,9 +92,7 @@ public final class StudioStandardComponentsPreviewLoader implements StudioPrevie
         if (hasRenderableItem(itemsElement)) {
             loadItems(userMenu, itemsElement, viewElement, environment, true);
         } else {
-            for (int i = 0; i < 5; i++) {
-                userMenu.addTextItem("menuItem" + i, "Menu item " + i);
-            }
+            PreviewActionSupport.addPlaceholderItems(userMenu::addTextItem);
         }
 
         userMenu.setButtonRenderer(user -> {
@@ -181,32 +179,8 @@ public final class StudioStandardComponentsPreviewLoader implements StudioPrevie
 
     private <M extends HasTextMenuItems & HasActionMenuItems> void loadActionItem(
             M menu, Element itemElement, Element viewElement, StudioPreviewEnvironment environment) {
-        String id = loadString(itemElement, "id").orElse(null);
-        if (id == null) {
-            // Runtime throws without an id, preview skips silently.
-            return;
-        }
-
-        Element actionElement = itemElement.element(StudioXmlElements.ACTION);
-        if (actionElement != null) {
-            menu.addActionItem(id, PreviewActionSupport.buildAction(actionElement, id, environment));
-            return;
-        }
-
-        String ref = loadString(itemElement, "ref").orElse(null);
-        if (ref == null) {
-            // Neither an inline action nor a ref: runtime throws, preview skips silently.
-            return;
-        }
-
-        Element refActionElement = PreviewActionSupport.findDescendantAction(viewElement, ref);
-        if (refActionElement != null) {
-            menu.addActionItem(id, PreviewActionSupport.buildAction(refActionElement, ref, environment));
-        } else {
-            // Reference can't be resolved in preview (e.g. wired some other way): fall back to
-            // the id as visible text so the menu still shows something for this item.
-            menu.addTextItem(id, id);
-        }
+        PreviewActionSupport.loadActionItem(itemElement, viewElement, environment,
+                menu::addActionItem, menu::addTextItem);
     }
 
     private <M extends HasTextMenuItems> void loadViewItem(M menu, Element itemElement,

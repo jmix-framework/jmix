@@ -30,6 +30,7 @@ import io.jmix.flowui.kit.action.BaseAction;
 import io.jmix.flowui.kit.component.grid.JmixGrid;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
@@ -149,6 +150,9 @@ class ProcessorProviderAbiTest {
         // Released Studio versions still call these two directly.
         assertParameterTypes(providerMethod("createComponent"), context);
         assertParameterTypes(providerMethod("canCreateComponent"), String.class, String.class);
+        assertEquals(Component.class, providerMethod("createComponent").getReturnType());
+        assertTrue(Modifier.isStatic(providerMethod("createComponent").getModifiers()));
+        assertTrue(Modifier.isStatic(providerMethod("canCreateComponent").getModifiers()));
     }
 
     @Test
@@ -182,6 +186,27 @@ class ProcessorProviderAbiTest {
     void testFrozenCreationStaticsUntouched() {
         assertEquals(1, countDeclaredMethods("createComponent"));
         assertEquals(1, countDeclaredMethods("canCreateComponent"));
+    }
+
+    @Test
+    void testLegacyTwoArgContextStillCreatesComponent() throws Exception {
+        assertInstanceOf(Component.class,
+                providerMethod("createComponent").invoke(null, newContext(VIEW_XML, BUTTON_XPATH)));
+    }
+
+    @Test
+    void testThreeArgContextWithNullEnvironmentStillCreatesComponent() throws Exception {
+        assertInstanceOf(Component.class,
+                providerMethod("createComponent").invoke(null, newContext(VIEW_XML, BUTTON_XPATH, null)));
+    }
+
+    private Object newContext(Object... args) throws Exception {
+        Class<?>[] types = args.length == 2
+                ? new Class<?>[]{String.class, String.class}
+                : new Class<?>[]{String.class, String.class, Object.class};
+        Constructor<?> constructor = Class.forName(PROVIDER + "$ComponentCreationContext").getConstructor(types);
+        constructor.trySetAccessible();
+        return constructor.newInstance(args);
     }
 
     /**

@@ -243,9 +243,7 @@ public class StudioFlowuiComponentsPreviewLoader implements StudioPreviewCompone
         if (component instanceof HasListDataView && !(component instanceof Grid)) {
             ((HasListDataView<Object, ?>) component).setItems(List.of("Item 1", "Item 2", "Item 3"));
         } else if (component instanceof HasMenuItemsEnhanced menuItems) {
-            for (int i = 0; i < 5; i++) {
-                menuItems.addItem("Menu item " + i);
-            }
+            PreviewActionSupport.addPlaceholderItems((id, text) -> menuItems.addItem(text));
         }
     }
 

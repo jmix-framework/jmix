@@ -23,18 +23,7 @@ import org.dom4j.Element;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Studio preview loader for the dynattr add-on's {@code dynattr:dynamicAttributesPanel}
- * component. There is no spring-free way to render the real thing: the runtime
- * {@code io.jmix.dynattrflowui.panel.DynamicAttributesPanel} needs five Spring beans
- * (UiComponentsGenerator, UiComponents, Messages, DynAttrMetadata, ViewValidation) plus a live
- * data container and the category/attribute metadata stored in the database - none of which exist
- * at design time, and the kit ships no spring-free variant to fall back to.
- * <p>
- * This loader instead renders an empty {@link FormLayout} - close in spirit to the panel's actual
- * generated-field layout, but empty since there is no metadata to generate fields from. The
- * pure-XML attributes {@code fieldWidth} and {@code categoryFieldVisible} only affect those
- * generated fields, so they're meaningless on this empty placeholder and intentionally unsupported;
- * likewise {@code dataContainer}, which is a runtime data binding.
+ * Studio preview loader for the dynattr add-on's {@code dynattr:dynamicAttributesPanel} component.
  */
 public class StudioDynamicAttributesPanelPreviewLoader implements StudioPreviewComponentLoader {
 

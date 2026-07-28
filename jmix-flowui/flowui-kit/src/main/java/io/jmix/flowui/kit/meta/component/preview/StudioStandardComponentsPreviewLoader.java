@@ -36,43 +36,6 @@ import org.dom4j.Element;
 
 import static io.jmix.flowui.kit.component.usermenu.JmixUserMenu.BUTTON_CONTENT_CLASS_NAME;
 
-/**
- * Studio preview loader for the standard {@code fragment} placeholder and for {@code userMenu}:
- * instantiates a {@link JmixUserMenu} and builds its declared {@code items} (text/action/view
- * items, separators) so the designer preview shows the real menu instead of hardcoded placeholders.
- * <p>
- * Unlike {@link io.jmix.flowui.kit.meta.component.preview.loader.StudioGridPreviewLoader}, items
- * here are built <b>unconditionally</b>, without a {@link StudioPreviewEnvironment} handshake gate:
- * {@link JmixUserMenu} is a {@code Composite<JmixMenuBar>} that is neither {@code HasComponents} nor
- * {@code HasMenuItemsEnhanced}, so Studio's designer has never grafted or injected items onto a
- * userMenu preview on any released version (verified: no {@code userMenu} handling anywhere in
- * Studio's designer sources) — no Studio version can double-add items built here. The environment
- * is only used to improve {@code msg://} text resolution; without it (old Studio, routed through
- * the 2-arg {@link #load(Element, Element)} to {@link StudioPreviewEnvironment#NOOP NOOP}) the raw
- * message key is shown as-is, which is still strictly better than a placeholder.
- * <p>
- * Limitations inherent to a data/context-less preview:
- * <ul>
- *     <li>{@code componentItem} is skipped: building its nested component needs the runtime
- *     {@code LayoutLoader}, which isn't available to a spring-free kit loader.</li>
- *     <li>{@code viewItem} is approximated as a plain text item (resolved {@code text}, else
- *     {@code viewId}, else the item's {@code id}) plus its {@code icon} attribute: opening the
- *     referenced view isn't meaningful in a static preview.</li>
- *     <li>{@code actionItem ref} is resolved by a best-effort search for a matching
- *     {@code <action id="...">} declared anywhere in the view XML (e.g. under an {@code <actions>}
- *     block); if the reference can't be found there, the item falls back to showing its id as
- *     plain text so the menu still renders something.</li>
- *     <li>Nested {@code <items>} under a {@code textItem} are built <b>one level deep only</b>
- *     (via {@link TextUserMenuItem#getSubMenu()}): a further-nested {@code <items>} inside one of
- *     those sub-items is not built. {@code actionItem}/{@code viewItem} never declare nested
- *     {@code <items>} per the layout XSD, so nesting only applies to {@code textItem}.</li>
- *     <li>If there are no renderable items (e.g. {@code <items>} absent, or present but only
- *     with unrenderable children like {@code componentItem}), the loader falls back to 5
- *     hardcoded placeholder items, unconditionally (no Studio version builds userMenu items,
- *     so there is no double-add to guard against).</li>
- * </ul>
- */
-// TODO: minimal support for generic component preview?
 public final class StudioStandardComponentsPreviewLoader implements StudioPreviewComponentLoader {
 
     /** Item tags the preview can actually render; used to decide XML items vs. fallback placeholders. */
@@ -129,9 +92,6 @@ public final class StudioStandardComponentsPreviewLoader implements StudioPrevie
         if (hasRenderableItem(itemsElement)) {
             loadItems(userMenu, itemsElement, viewElement, environment, true);
         } else {
-            // No renderable items: show placeholder items. Built unconditionally (NOT env-gated):
-            // JmixUserMenu is a Composite<JmixMenuBar>, not HasMenuItemsEnhanced, so no Studio
-            // version ever injects userMenu items - this loader is the only builder, no double-add.
             for (int i = 0; i < 5; i++) {
                 userMenu.addTextItem("menuItem" + i, "Menu item " + i);
             }
@@ -169,12 +129,6 @@ public final class StudioStandardComponentsPreviewLoader implements StudioPrevie
         return false;
     }
 
-    /**
-     * Builds one user menu item per {@code items} child, in document order. {@code nestingAllowed}
-     * caps sub-item building to one level: a {@code textItem}'s own nested {@code <items>} is only
-     * built when {@code true}, and the recursive call for that sub-level passes {@code false} so a
-     * further-nested {@code <items>} is not built.
-     */
     private <M extends HasTextMenuItems & HasActionMenuItems> void loadItems(
             M menu, Element itemsElement, Element viewElement, StudioPreviewEnvironment environment,
             boolean nestingAllowed) {
@@ -186,8 +140,7 @@ public final class StudioStandardComponentsPreviewLoader implements StudioPrevie
                 case StudioXmlElements.VIEW_ITEM -> loadViewItem(menu, childElement, environment);
                 case StudioXmlElements.SEPARATOR -> menu.addSeparator();
                 case StudioXmlElements.COMPONENT_ITEM -> {
-                    // componentItem needs the runtime LayoutLoader to build nested content:
-                    // not available to a spring-free kit loader, so skipped in preview.
+
                 }
                 default -> {
                     // unknown items child: skipped silently in preview
@@ -256,11 +209,6 @@ public final class StudioStandardComponentsPreviewLoader implements StudioPrevie
         }
     }
 
-    /**
-     * Approximates {@code viewItem} as a plain text item: {@code text} (resolved), else
-     * {@code viewId}, else the item's {@code id}, plus its {@code icon} attribute. Opening the
-     * referenced view isn't meaningful in a static preview, so only the visible label is built.
-     */
     private <M extends HasTextMenuItems> void loadViewItem(M menu, Element itemElement,
                                                            StudioPreviewEnvironment environment) {
         String id = loadString(itemElement, "id").orElse(null);

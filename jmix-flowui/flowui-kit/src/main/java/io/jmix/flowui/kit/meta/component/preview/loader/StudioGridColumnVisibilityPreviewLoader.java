@@ -31,37 +31,7 @@ import org.dom4j.Element;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Studio preview loader for {@code gridColumnVisibility}: instantiates a {@link JmixMenuBar}
- * styled as the runtime component and, when a real environment is available, builds the root
- * dropdown item and its submenu entries from the referenced grid's declared columns, so the
- * designer preview shows the real column list instead of 5 fake placeholder entries.
- * <p>
- * <b>Env-gated</b>, like {@link StudioGridPreviewLoader} and unlike
- * {@link StudioDropdownButtonPreviewLoader}: Studio's designer special-cases
- * {@code gridColumnVisibility} in its generic {@code HasMenuItemsEnhanced} post-init (every
- * released version, since {@link JmixMenuBar} is one), adding its own empty root item plus 5 fake
- * submenu entries. Without an environment handshake (old Studio, routed through the 2-arg
- * {@link #load(Element, Element)} to {@link StudioPreviewEnvironment#NOOP NOOP}) there is no
- * bind-by-key guard on the caller side, so a loader-built root here would stack on top of old
- * Studio's own root, giving the preview two dropdown roots. So when {@code environment} is
- * {@code NOOP}, the loader returns a bare {@link JmixMenuBar} with only the base attributes and
- * the {@code jmix-role} styling attribute applied (mirrors Studio's post-init styling hook) and
- * builds neither the root item nor any submenu entries, leaving old Studio's own post-init to
- * build them exactly as it does today.
- * <p>
- * Limitations inherent to a data-less preview:
- * <ul>
- *     <li>Only explicitly declared {@code column} children of the referenced grid's
- *     {@code columns} element are considered; other {@code columns} children (e.g.
- *     {@code editorActionsColumn}) are not meaningful visibility toggles and are skipped.</li>
- *     <li>The root item shows either its {@code icon} attribute (via
- *     {@link BaseComponentLoaderSupport#loadIconSetIcon(Element)}) or its {@code text} attribute,
- *     never both — a nested {@code <icon>} component element is not built (would need the
- *     runtime {@code LayoutLoader}, unavailable to a spring-free kit loader), matching the
- *     dropdown loader's same limitation.</li>
- *     <li>{@code showAllEnabled}/{@code hideAllEnabled} header items are not built: they are
- *     click-driven runtime behavior with no meaningful static representation.</li>
- * </ul>
+ * Studio preview loader for {@code gridColumnVisibility}
  */
 public class StudioGridColumnVisibilityPreviewLoader implements StudioPreviewComponentLoader {
 

@@ -28,19 +28,7 @@ import org.dom4j.Element;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Studio preview loader for the {@code charts:chart} component: instantiates an empty
- * {@link JmixChart} with its pure-XML visual attributes and {@code <title>} applied, instead of
- * the reflection-fallback placeholder.
- * <p>
- * Data-driven or heavy sub-elements are intentionally skipped, so the preview is an honest empty
- * chart canvas rather than a guess at data that isn't available at design time:
- * {@code dataSet}/{@code series}/axes/{@code legend}/{@code toolbox} and the rest of the option
- * tree need the runtime data model or are heavy to reproduce here.
- * <p>
- * Studio has no chart-specific post-processing for any of the skipped sub-elements, so building
- * only the base attributes and title unconditionally (no {@link StudioPreviewEnvironment}
- * handshake gate, unlike {@code StudioGridPreviewLoader}'s columns) is safe: there's nothing for
- * Studio to double-add.
+ * Studio preview loader for the {@code charts:chart} component.
  */
 public class StudioChartsPreviewLoader implements StudioPreviewComponentLoader {
 

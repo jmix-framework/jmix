@@ -100,17 +100,10 @@ import java.util.function.Supplier;
 
 /**
  * Studio preview loader for the core flowui components: containers, fields, buttons, grids and misc elements.
- * <p>
- * With a real {@link StudioPreviewEnvironment} (Studio now gates its own structural post-init on it),
- * this loader fills the same placeholders Studio used to add itself: 3 rows for any
- * {@link HasListDataView} (comboBox, listBox, checkboxGroup, virtualList, etc. — not grids, which
- * route to {@link StudioGridPreviewLoader}), and 5 items for {@code horizontalMenu}
- * ({@link HasMenuItemsEnhanced}). {@link StudioPreviewEnvironment#NOOP} (old Studio, via the 2-arg
- * {@link #load(Element, Element) load}) gets none, since old Studio still adds its own.
  */
 public class StudioFlowuiComponentsPreviewLoader implements StudioPreviewComponentLoader {
 
-    protected static final Map<String, Supplier<Component>> FACTORIES = Map.ofEntries(
+    protected static final Map<String, Supplier<Component>> FACTORIES = Map.<String, Supplier<Component>>ofEntries(
             // containers
             Map.entry(StudioXmlElements.HBOX, HorizontalLayout::new),
             Map.entry(StudioXmlElements.VBOX, VerticalLayout::new),
@@ -130,8 +123,7 @@ public class StudioFlowuiComponentsPreviewLoader implements StudioPreviewCompone
             Map.entry(StudioXmlElements.GRID_LAYOUT, JmixGridLayout::new),
             Map.entry(StudioXmlElements.SIDE_PANEL_LAYOUT, JmixSidePanelLayout::new),
             Map.entry(StudioXmlElements.SIDE_PANEL_LAYOUT_CLOSER, JmixSidePanelLayoutCloser::new),
-            // buttons
-            Map.entry(StudioXmlElements.BUTTON, JmixButton::new),
+
             // fields
             Map.entry(StudioXmlElements.TEXT_FIELD, TextField::new),
             Map.entry(StudioXmlElements.EMAIL_FIELD, EmailField::new),
@@ -156,21 +148,20 @@ public class StudioFlowuiComponentsPreviewLoader implements StudioPreviewCompone
             Map.entry(StudioXmlElements.VALUE_PICKER, ValuePicker::new),
             Map.entry(StudioXmlElements.ENTITY_PICKER, ValuePicker::new),
             Map.entry(StudioXmlElements.MULTI_VALUE_PICKER, MultiValuePicker::new),
-            // comboBoxPicker: no matching StudioXmlElements constant, kept as a local literal.
-            Map.entry("comboBoxPicker", ComboBoxPicker::new),
             Map.entry(StudioXmlElements.ENTITY_COMBO_BOX, ComboBoxPicker::new),
-            // misc display
+            Map.entry("comboBoxPicker", ComboBoxPicker::new),
+
             Map.entry(StudioXmlElements.AVATAR, Avatar::new),
+            Map.entry(StudioXmlElements.BUTTON, JmixButton::new),
             Map.entry(StudioXmlElements.PROGRESS_BAR, ProgressBar::new),
             Map.entry(StudioXmlElements.DRAWER_TOGGLE, DrawerToggle::new),
             Map.entry(StudioXmlElements.LIST_MENU, ListMenu::new),
             Map.entry(StudioXmlElements.USER_INDICATOR, UserIndicator::new),
-            // grids
             Map.entry(StudioXmlElements.VIRTUAL_LIST, VirtualList::new),
-            // login
+
             Map.entry(StudioXmlElements.LOGIN_FORM, EnhancedLoginForm::new),
             Map.entry(StudioXmlElements.LOGIN_OVERLAY, LoginOverlay::new),
-            // pagination / upload / editors
+
             Map.entry(StudioXmlElements.SIMPLE_PAGINATION, JmixSimplePagination::new),
             Map.entry(StudioXmlElements.FILE_UPLOAD_FIELD, JmixFileUploadField::new),
             Map.entry(StudioXmlElements.FILE_STORAGE_UPLOAD_FIELD, JmixFileStorageUploadField::new),
@@ -180,7 +171,7 @@ public class StudioFlowuiComponentsPreviewLoader implements StudioPreviewCompone
             Map.entry(StudioXmlElements.MARKDOWN_EDITOR, JmixMarkdownEditor::new),
             Map.entry(StudioXmlElements.TWIN_COLUMN, JmixTwinColumn::new),
             Map.entry(StudioXmlElements.HORIZONTAL_MENU, JmixMenuBar::new),
-            // structural placeholders (spring composites / UI.getCurrent()-touching components)
+
             Map.entry(StudioXmlElements.MENU_FILTER_FIELD, TextField::new),
             Map.entry(StudioXmlElements.PROPERTY_FILTER, TextField::new),
             Map.entry(StudioXmlElements.JPQL_FILTER, TextField::new),
@@ -188,7 +179,9 @@ public class StudioFlowuiComponentsPreviewLoader implements StudioPreviewCompone
             Map.entry(StudioXmlElements.GENERIC_FILTER, Details::new)
     );
 
-    /** Elements needing extra attribute handling on top of the common ones. */
+    /**
+     * Elements needing extra attribute handling on top of the common ones.
+     */
     protected static final Map<String, Function<Element, Component>> SPECIALS = Map.of(
             StudioXmlElements.ICON, element -> BaseComponentLoaderSupport.loadIconSetIcon(element).orElseGet(Icon::new),
             StudioXmlElements.SVG_ICON, element -> {
@@ -209,7 +202,9 @@ public class StudioFlowuiComponentsPreviewLoader implements StudioPreviewCompone
             }
     );
 
-    /** Used by tests to iterate the full supported set. */
+    /**
+     * Used by tests to iterate the full supported set.
+     */
     public static Set<String> supportedElements() {
         Set<String> names = new HashSet<>(FACTORIES.keySet());
         names.addAll(SPECIALS.keySet());
@@ -243,11 +238,6 @@ public class StudioFlowuiComponentsPreviewLoader implements StudioPreviewCompone
         return component;
     }
 
-    /**
-     * Mirrors Studio's old {@code postInitHasListDataView}/{@code postInitHasMenuItems}: since
-     * Studio now gates those on the framework-owns-content probe, this loader builds the same
-     * placeholders itself so a real environment still sees live content.
-     */
     @SuppressWarnings("unchecked")
     protected void fillPlaceholders(Component component) {
         if (component instanceof HasListDataView && !(component instanceof Grid)) {

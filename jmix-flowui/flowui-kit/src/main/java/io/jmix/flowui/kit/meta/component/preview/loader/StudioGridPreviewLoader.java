@@ -31,31 +31,7 @@ import org.jspecify.annotations.Nullable;
 import org.dom4j.Element;
 
 /**
- * Studio preview loader for {@code dataGrid} and {@code treeDataGrid}: instantiates the grid
- * and builds its column skeleton (keys, widths, resolved headers/footers) so the designer
- * preview reflects the declared layout without requiring live data.
- * <p>
- * Column building is gated on the {@link StudioPreviewEnvironment} handshake: released Studio
- * versions (&ge; 2.3.0) call the old 2-arg {@link #load(Element, Element) load} entry point and
- * have no bind-by-key guard, so they add their own columns on top of whatever the loader
- * returns — without an environment there is no way for the caller to bind to loader-built
- * columns, and every column would be duplicated in the designer. So when {@code environment} is
- * {@link StudioPreviewEnvironment#NOOP NOOP} (the 2-arg entry point routes here), the loader
- * returns a bare grid with only the base/grid-level attributes applied (phase-1 behavior) and
- * lets old Studio build columns itself. Only callers that pass a real environment through the
- * 3-arg entry point get the populated column skeleton.
- * <p>
- * Limitations inherent to a data-less preview:
- * <ul>
- *     <li>{@code includeAll="true"} cannot be expanded from a fetch plan (there is no entity
- *     metadata here); only explicitly declared {@code column} children are loaded. The loader
- *     still builds the column skeleton in that case, since Studio itself only models the
- *     explicitly declared tags too.</li>
- *     <li>{@code editorActionsColumn} cell buttons (save/cancel/close/edit) are not built,
- *     since cells never render without data — only the header/width is visible in preview.</li>
- *     <li>{@code treeDataGrid} columns are added as plain columns; there is no hierarchy
- *     column to build without rows to indent.</li>
- * </ul>
+ * Studio preview loader for {@code dataGrid} and {@code treeDataGrid}
  */
 public class StudioGridPreviewLoader implements StudioPreviewComponentLoader {
 
@@ -67,7 +43,7 @@ public class StudioGridPreviewLoader implements StudioPreviewComponentLoader {
     public boolean isSupported(Element element) {
         return hasViewOrFragmentSchema(element)
                 && (StudioXmlElements.DATA_GRID.equals(element.getName())
-                        || StudioXmlElements.TREE_DATA_GRID.equals(element.getName()));
+                || StudioXmlElements.TREE_DATA_GRID.equals(element.getName()));
     }
 
     @Nullable
@@ -127,7 +103,8 @@ public class StudioGridPreviewLoader implements StudioPreviewComponentLoader {
             switch (childElement.getName()) {
                 case StudioXmlElements.COLUMN ->
                         loadColumn(grid, childElement, gridElement, environment, columnsSortable, columnsResizable);
-                case StudioXmlElements.EDITOR_ACTIONS_COLUMN -> loadEditorActionsColumn(grid, childElement, environment);
+                case StudioXmlElements.EDITOR_ACTIONS_COLUMN ->
+                        loadEditorActionsColumn(grid, childElement, environment);
                 default -> {
                     // unknown columns' child (e.g. groupColumn): skipped silently in preview
                 }

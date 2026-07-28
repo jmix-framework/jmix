@@ -24,15 +24,7 @@ import org.dom4j.Element;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Shared helpers for preview loaders that build {@code action}-backed menu items from XML:
- * {@code msg://} text resolution, {@link BaseAction} construction from a declarative
- * {@code <action>} element, and best-effort {@code ref} resolution against an
- * {@code <action id="...">} declared elsewhere in the view.
- * <p>
- * Extracted from {@link StudioDropdownButtonPreviewLoader}. Public only so it is visible to
- * {@code StudioStandardComponentsPreviewLoader}, which lives in the parent
- * {@code io.jmix.flowui.kit.meta.component.preview} package where package-private statics here
- * would not be reachable; internal to preview loaders, not part of the public preview loader API.
+ * Shared helpers for preview loaders that build {@code action}-backed menu items from XML.
  */
 public final class PreviewActionSupport {
 
@@ -62,9 +54,9 @@ public final class PreviewActionSupport {
      * {@code icon} (via {@link BaseComponentLoaderSupport#loadIconSetIcon(Element)}), and
      * {@code enabled}.
      */
-    public static BaseAction buildAction(Element actionElement, String fallbackId, StudioPreviewEnvironment environment) {
+    public static BaseAction<?> buildAction(Element actionElement, String fallbackId, StudioPreviewEnvironment environment) {
         String actionId = BaseLoaderSupport.loadString(actionElement, "id").orElse(fallbackId);
-        BaseAction action = new BaseAction(actionId);
+        BaseAction<?> action = new BaseAction<>(actionId);
         BaseLoaderSupport.loadString(actionElement, "text")
                 .ifPresent(text -> action.withText(resolveText(environment, text)));
         BaseComponentLoaderSupport.loadIconSetIcon(actionElement).ifPresent(action::setIcon);

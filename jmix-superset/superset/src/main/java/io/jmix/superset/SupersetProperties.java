@@ -26,6 +26,12 @@ public class SupersetProperties {
     String password;
 
     /**
+     * The authentication provider that will be used in login request, e.g. {@code "db"} or {@code "ldap"}.
+     * The default value is {@code "db"}.
+     */
+    String provider;
+
+    /**
      * The schedule delay that is used for monitoring whether access token is expired. The default value is 1 minute.
      */
     Duration accessTokenRefreshSchedule;
@@ -59,6 +65,7 @@ public class SupersetProperties {
     public SupersetProperties(String url,
                               String username,
                               String password,
+                              @DefaultValue("db") String provider,
                               @DefaultValue("1m") Duration accessTokenRefreshSchedule,
                               @DefaultValue("true") boolean csrfProtectionEnabled,
                               @DefaultValue("1m") Duration csrfTokenRefreshSchedule,
@@ -67,6 +74,7 @@ public class SupersetProperties {
         this.url = url;
         this.username = username;
         this.password = password;
+        this.provider = provider;
         this.accessTokenRefreshSchedule = accessTokenRefreshSchedule;
         this.csrfProtectionEnabled = csrfProtectionEnabled;
         this.csrfTokenRefreshSchedule = csrfTokenRefreshSchedule;
@@ -99,6 +107,14 @@ public class SupersetProperties {
     @Nullable
     public String getPassword() {
         return password;
+    }
+
+    /**
+     * @return authentication provider used in login request
+     * @see #provider
+     */
+    public String getProvider() {
+        return provider;
     }
 
     /**

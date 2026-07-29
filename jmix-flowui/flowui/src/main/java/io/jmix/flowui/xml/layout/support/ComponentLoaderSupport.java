@@ -602,18 +602,10 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
         return null;
     }
 
-    /**
-     * @deprecated use {@link BaseLoaderSupport#split(String, Consumer)} instead
-     */
-    @Deprecated(since = "3.1", forRemoval = true)
     protected void split(String names, Consumer<String> setter) {
         BaseLoaderSupport.split(names, setter);
     }
 
-    /**
-     * @deprecated use {@link BaseLoaderSupport#split(String)} instead
-     */
-    @Deprecated(since = "3.1", forRemoval = true)
     protected List<String> split(String names) {
         return BaseLoaderSupport.split(names);
     }

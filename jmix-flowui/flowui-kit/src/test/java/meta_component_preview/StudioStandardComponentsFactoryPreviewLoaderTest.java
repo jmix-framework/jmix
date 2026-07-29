@@ -26,14 +26,14 @@ import com.vaadin.flow.component.textfield.TextField;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.component.menubar.JmixMenuBar;
 import io.jmix.flowui.kit.meta.component.preview.StudioPreviewEnvironment;
-import io.jmix.flowui.kit.meta.component.preview.loader.StudioFlowuiComponentsPreviewLoader;
+import io.jmix.flowui.kit.meta.component.preview.StudioStandardComponentsPreviewLoader;
 import org.dom4j.Namespace;
 import org.dom4j.tree.BaseElement;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class StudioFlowuiComponentsPreviewLoaderTest {
+class StudioStandardComponentsFactoryPreviewLoaderTest {
 
     static final Namespace VIEW_NS = Namespace.get("http://jmix.io/schema/flowui/view");
 
@@ -50,22 +50,20 @@ class StudioFlowuiComponentsPreviewLoaderTest {
         }
     }
 
-    final StudioFlowuiComponentsPreviewLoader loader = new StudioFlowuiComponentsPreviewLoader();
+    final StudioStandardComponentsPreviewLoader loader = new StudioStandardComponentsPreviewLoader();
 
     BaseElement element(String name) {
         return new BaseElement(name, VIEW_NS);
     }
 
     @Test
-    void testDoesNotClaimStandardOrHtmlElements() {
-        assertFalse(loader.isSupported(element("fragment")));
-        assertFalse(loader.isSupported(element("userMenu")));
+    void testDoesNotClaimHtmlElements() {
         assertFalse(loader.isSupported(element("div")));
     }
 
     @Test
     void testEveryFactoryElementInstantiates() {
-        for (String name : StudioFlowuiComponentsPreviewLoader.supportedElements()) {
+        for (String name : StudioStandardComponentsPreviewLoader.supportedElements()) {
             BaseElement element = element(name);
             assertTrue(loader.isSupported(element), name);
             assertNotNull(loader.load(element, element("view")), name);

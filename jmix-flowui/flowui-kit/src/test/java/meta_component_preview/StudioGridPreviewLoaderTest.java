@@ -26,7 +26,7 @@ import com.vaadin.flow.component.grid.Grid;
 import io.jmix.flowui.kit.component.grid.JmixGrid;
 import io.jmix.flowui.kit.component.grid.JmixTreeGrid;
 import io.jmix.flowui.kit.meta.component.preview.StudioPreviewEnvironment;
-import io.jmix.flowui.kit.meta.component.preview.loader.StudioFlowuiComponentsPreviewLoader;
+import io.jmix.flowui.kit.meta.component.preview.StudioStandardComponentsPreviewLoader;
 import io.jmix.flowui.kit.meta.component.preview.loader.StudioGridPreviewLoader;
 import org.dom4j.Element;
 import org.dom4j.Namespace;
@@ -276,9 +276,9 @@ class StudioGridPreviewLoaderTest {
     }
 
     @Test
-    void testFlowuiComponentsLoaderNoLongerSupportsDataGridOrTreeDataGrid() {
-        StudioFlowuiComponentsPreviewLoader flowuiLoader = new StudioFlowuiComponentsPreviewLoader();
-        assertFalse(flowuiLoader.isSupported(element("dataGrid")));
-        assertFalse(flowuiLoader.isSupported(element("treeDataGrid")));
+    void testStandardComponentsLoaderNoLongerSupportsDataGridOrTreeDataGrid() {
+        StudioStandardComponentsPreviewLoader standardLoader = new StudioStandardComponentsPreviewLoader();
+        assertFalse(standardLoader.isSupported(element("dataGrid")));
+        assertFalse(standardLoader.isSupported(element("treeDataGrid")));
     }
 }

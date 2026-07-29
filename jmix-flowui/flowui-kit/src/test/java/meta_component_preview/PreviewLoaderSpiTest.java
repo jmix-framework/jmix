@@ -18,7 +18,6 @@ package meta_component_preview;
 
 import io.jmix.flowui.kit.meta.component.preview.StudioPreviewComponentLoader;
 import io.jmix.flowui.kit.meta.component.preview.loader.StudioDropdownButtonPreviewLoader;
-import io.jmix.flowui.kit.meta.component.preview.loader.StudioFlowuiComponentsPreviewLoader;
 import io.jmix.flowui.kit.meta.component.preview.loader.StudioGridColumnVisibilityPreviewLoader;
 import io.jmix.flowui.kit.meta.component.preview.loader.StudioGridPreviewLoader;
 import io.jmix.flowui.kit.meta.component.preview.loader.StudioHtmlPreviewLoader;
@@ -40,11 +39,12 @@ class PreviewLoaderSpiTest {
                 .toList();
 
         assertTrue(loaded.contains(StudioHtmlPreviewLoader.class));
-        assertTrue(loaded.contains(StudioFlowuiComponentsPreviewLoader.class));
         assertTrue(loaded.contains(StudioGridPreviewLoader.class));
         assertTrue(loaded.contains(StudioDropdownButtonPreviewLoader.class));
         assertTrue(loaded.contains(StudioGridColumnVisibilityPreviewLoader.class));
         assertTrue(loaded.contains(StudioMainViewComponentsPreviewLoader.class));
-        assertEquals(6, loaded.size());
+        // StudioStandardComponentsPreviewLoader is not registered here: the provider instantiates it
+        // directly as the last-resort loader.
+        assertEquals(5, loaded.size());
     }
 }

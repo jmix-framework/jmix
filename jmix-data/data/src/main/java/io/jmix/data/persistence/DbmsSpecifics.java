@@ -107,6 +107,10 @@ public class DbmsSpecifics {
                 bean = (T) applicationContext.getBean(name);
             }
         }
+        if (bean == null) {
+            throw new IllegalStateException(String.format("Unsupported DBMS '%s': no %s implementation found",
+                    dbmsType, intf.getSimpleName()));
+        }
         return bean;
     }
 

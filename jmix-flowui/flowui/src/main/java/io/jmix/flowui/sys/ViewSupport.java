@@ -25,6 +25,7 @@ import com.vaadin.flow.server.VaadinSession;
 import io.jmix.core.MessageTools;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.security.CurrentAuthentication;
+import io.jmix.flowui.event.view.ViewInitializedEvent;
 import io.jmix.flowui.model.ViewData;
 import io.jmix.flowui.observation.UiObservationSupport;
 import io.jmix.flowui.observation.ViewLifecycle;
@@ -131,6 +132,8 @@ public class ViewSupport {
         componentLoaderContext.executeAutowireTasks();
 
         fireViewInitEvent(view);
+
+        applicationContext.publishEvent(new ViewInitializedEvent(view));
 
         // InitTasks must be executed after View.InitEvent
         // in case something was replaced, e.g. actions

@@ -62,3 +62,11 @@
         align-self: stretch;
     }
 }
+
+.dynamic-view-handler-model-detail-view .component-id-renderer {
+    gap: var(--lumo-space-xs);
+}
+
+.dynamic-view-handler-model-detail-view .component-id-renderer-tag {
+    color: var(--lumo-secondary-text-color);
+}

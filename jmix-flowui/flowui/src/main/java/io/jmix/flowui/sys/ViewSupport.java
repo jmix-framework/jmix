@@ -25,6 +25,7 @@ import com.vaadin.flow.server.VaadinSession;
 import io.jmix.core.MessageTools;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.security.CurrentAuthentication;
+import io.jmix.flowui.event.view.ViewInitializedEvent;
 import io.jmix.flowui.model.ViewData;
 import io.jmix.flowui.observation.UiObservationSupport;
 import io.jmix.flowui.observation.ViewLifecycle;
@@ -41,7 +42,6 @@ import org.dom4j.Element;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
@@ -84,13 +84,6 @@ public class ViewSupport {
         this.autowireManager = autowireManager;
         this.routeSupport = routeSupport;
         this.uiObservationSupport = uiObservationSupport;
-    }
-
-    protected List<ViewInitListener> viewInitListeners = List.of();
-
-    @Autowired(required = false)
-    public void setViewInitListeners(List<ViewInitListener> viewInitListeners) {
-        this.viewInitListeners = viewInitListeners;
     }
 
     public void initView(View<?> view) {
@@ -140,14 +133,7 @@ public class ViewSupport {
 
         fireViewInitEvent(view);
 
-        for (ViewInitListener viewInitListener : viewInitListeners) {
-            try {
-                viewInitListener.onViewInit(view);
-            } catch (Exception e) {
-                log.error("Error in view init listener '{}' for view '{}'",
-                        viewInitListener.getClass().getName(), viewId, e);
-            }
-        }
+        applicationContext.publishEvent(new ViewInitializedEvent(view));
 
         // InitTasks must be executed after View.InitEvent
         // in case something was replaced, e.g. actions

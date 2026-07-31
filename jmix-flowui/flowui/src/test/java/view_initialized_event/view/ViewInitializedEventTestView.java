@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package view_init_listener.view;
+package view_initialized_event.view;
 
 import com.vaadin.flow.router.Route;
 import io.jmix.flowui.view.StandardView;
 import io.jmix.flowui.view.ViewController;
 
-@Route("ViewInitListenerTestView")
-@ViewController("flowui_ViewInitListenerTestView")
-public class ViewInitListenerTestView extends StandardView {
+@Route("ViewInitializedEventTestView")
+@ViewController("flowui_ViewInitializedEventTestView")
+public class ViewInitializedEventTestView extends StandardView {
 }

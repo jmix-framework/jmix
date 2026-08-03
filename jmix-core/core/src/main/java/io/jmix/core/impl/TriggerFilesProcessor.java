@@ -66,7 +66,7 @@ public class TriggerFilesProcessor implements ApplicationContextAware {
                 try {
                     Files.delete(path);
                 } catch (IOException e) {
-                    log.error("Unable to delete trigger file {}", path);
+                    logUnableToDeleteTriggerFile(path);
                 }
             }
         }
@@ -89,16 +89,20 @@ public class TriggerFilesProcessor implements ApplicationContextAware {
                 try {
                     processFile(fileName.toString());
                 } catch (Exception e) {
-                    log.error("Trigger file {} processing error: {}", path, e);
+                    log.error("Trigger file {} processing error: {}", path, e.getLocalizedMessage(), e);
                 }
 
                 try {
                     Files.delete(path);
                 } catch (IOException e) {
-                    log.error("Unable to delete trigger file {}", path);
+                    logUnableToDeleteTriggerFile(path);
                 }
             }
         }
+    }
+
+    private void logUnableToDeleteTriggerFile(Path path) {
+        log.error("Unable to delete trigger file {}", path);
     }
 
     protected void processFile(String fileName) throws Exception {
@@ -132,11 +136,13 @@ public class TriggerFilesProcessor implements ApplicationContextAware {
                     beanClass.getMethod(methodName) :
                     beanClass.getMethod(methodName, typesArray);
 
-            log.info("Calling {}", fileName);
+            log.debug("Processing trigger file {}", fileName);
 
             Object result = paramsArray == null ?
                     method.invoke(bean) :
                     method.invoke(bean, (Object[]) paramsArray);
+
+            log.info("Calling {}", fileName);
             log.debug("Result {}", result);
         }
     }

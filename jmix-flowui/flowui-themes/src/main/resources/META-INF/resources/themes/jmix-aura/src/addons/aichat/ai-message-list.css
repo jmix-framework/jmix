@@ -1,0 +1,64 @@
+:is(jmix-ai-message-list)::part(error) {
+  background: var(--aura-surface-color);
+  --aura-surface-level: 4;
+  --aura-surface-opacity: 0.7;
+}
+
+:is(jmix-ai-message-list)::part(error-icon) {
+  background: var(--aura-red);
+}
+
+:is(jmix-ai-message-list)::part(retry-button) {
+  position: relative;
+  box-shadow: var(--vaadin-button-shadow);
+  outline-offset: calc(var(--vaadin-button-border-width, 1px) * -1);
+  transition: scale 180ms;
+}
+
+:is(jmix-ai-message-list)::part(retry-button)::before {
+  content: '';
+  position: absolute;
+  inset: calc(var(--vaadin-button-border-width, 1px) * -1);
+  pointer-events: none;
+  border-radius: inherit;
+  background-color: currentColor;
+  opacity: 0;
+  transition:
+          opacity 100ms,
+          background-color 100ms;
+}
+
+@supports (color: hsl(0 0 0)) {
+  :is(jmix-ai-message-list)::part(retry-button)::before {
+    background-color: oklch(from currentColor calc(l + 0.4 - c) c h / calc(1 - l / 2));
+  }
+}
+
+@media (any-hover: hover) {
+  :is(jmix-ai-message-list)::part(retry-button):hover::before {
+    opacity: 0.03;
+  }
+}
+
+@media (min-resolution: 2x) {
+  /* prettier-ignore */
+  :is(jmix-ai-message-list)::part(retry-button):active {
+    scale: 0.98;
+    transition-duration: 50ms;
+  }
+}
+
+:is(jmix-ai-message-list)::part(retry-button):active {
+  box-shadow: none;
+}
+
+:is(jmix-ai-message-list)::part(retry-button):active::before {
+  transition-duration: 0s;
+  opacity: 0.08;
+  background: oklch(from currentColor min(c, 1 - l + c) calc(c * 0.9) h);
+}
+
+:is(jmix-ai-message-list)::part(scroll-to-bottom-button) {
+  box-shadow: var(--aura-shadow-s);
+  outline-offset: calc(var(--vaadin-button-border-width, 1px) * -1);
+}

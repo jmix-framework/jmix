@@ -21,10 +21,15 @@ import io.jmix.reports.yarg.exception.ReportingException;
 import io.jmix.reports.yarg.exception.ReportingInterruptedException;
 import io.jmix.reports.yarg.exception.ValidationException;
 import io.jmix.reports.yarg.formatters.ReportFormatter;
+import io.jmix.reports.yarg.formatters.StreamingReportFormatter;
 import io.jmix.reports.yarg.formatters.factory.FormatterFactoryInput;
 import io.jmix.reports.yarg.formatters.factory.ReportFormatterFactory;
+import io.jmix.reports.yarg.formatters.impl.streaming.StreamingBandFeed;
+import io.jmix.reports.yarg.loaders.ReportDataLoader;
+import io.jmix.reports.yarg.loaders.StreamingReportDataLoader;
 import io.jmix.reports.yarg.loaders.factory.ReportLoaderFactory;
 import io.jmix.reports.yarg.structure.*;
+import org.jspecify.annotations.Nullable;
 import io.jmix.reports.yarg.util.converter.ObjectToStringConverter;
 import io.jmix.reports.yarg.util.converter.ObjectToStringConverterImpl;
 import org.apache.commons.io.IOUtils;
@@ -38,9 +43,12 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 
@@ -48,6 +56,8 @@ public class Reporting implements ReportingAPI {
 
     protected ReportFormatterFactory formatterFactory;
     protected DataExtractor dataExtractor;
+    protected ReportLoaderFactory loaderFactory;
+    protected StreamingReportValidator streamingValidator = new StreamingReportValidator();
 
     protected ObjectToStringConverter objectToStringConverter = new ObjectToStringConverterImpl();
 
@@ -58,6 +68,7 @@ public class Reporting implements ReportingAPI {
     }
 
     public void setLoaderFactory(ReportLoaderFactory loaderFactory) {
+        this.loaderFactory = loaderFactory;
         if (loaderFactory != null && dataExtractor == null) {
             dataExtractor = new DataExtractorImpl(loaderFactory);
         }
@@ -89,8 +100,34 @@ public class Reporting implements ReportingAPI {
             logReport("Started report [%s] with parameters [%s]", report, handledParams);
 
             ReportOutputType finalOutputType = (outputType != null) ? outputType : reportTemplate.getOutputType();
-            BandData rootBand = loadBandData(report, handledParams);
-            generateReport(report, reportTemplate, finalOutputType, outputStream, handledParams, rootBand);
+            ReportBand streamingBand = findStreamingBand(report.getRootBand());
+            String templateExtension = StringUtils.substringAfterLast(reportTemplate.getDocumentName(), ".");
+            BandData rootBand = null;
+            if (streamingBand != null && !reportTemplate.isCustom()
+                    && formatterFactory.supportsStreaming(templateExtension)) {
+                rootBand = runStreamingReport(report, reportTemplate, finalOutputType, outputStream,
+                        handledParams, streamingBand);
+            } else if (streamingBand != null) {
+                // The streaming flag is set, but this template cannot be streamed (e.g. a custom template
+                // or a non-xlsx type such as .xlsm, whose macros the SXSSF engine cannot preserve). Fall
+                // back to fully materialized rendering, but do not do it silently: for the large data sets
+                // streaming targets, materialization can exhaust the heap.
+                logger.warn("Report [{}] has a streaming band [{}] but its template [{}] cannot be rendered "
+                                + "by the streaming engine ({}); FALLING BACK to fully materialized band data — "
+                                + "the streaming flag is IGNORED and memory usage is NOT bounded, so a large data "
+                                + "set may exhaust the heap (OutOfMemoryError). To keep memory bounded, use a "
+                                + "non-custom .xlsx template.",
+                        report.getName(), streamingBand.getName(), reportTemplate.getDocumentName(),
+                        reportTemplate.isCustom()
+                                ? "custom template"
+                                : "unsupported template type [" + templateExtension + "]");
+            }
+            if (rootBand == null) {
+                // Streaming not applicable (non-streaming template or formatter, custom template,
+                // no streaming flag): render with fully materialized band data.
+                rootBand = loadBandData(report, handledParams);
+                generateReport(report, reportTemplate, finalOutputType, outputStream, handledParams, rootBand);
+            }
 
             logReport("Finished report [%s] with parameters [%s]", report, handledParams);
 
@@ -130,10 +167,123 @@ public class Reporting implements ReportingAPI {
                 throw new ReportingException(format("An error occurred while processing custom template [%s].", reportTemplate.getDocumentName()), e);
             }
         } else {
-            FormatterFactoryInput factoryInput = new FormatterFactoryInput(extension, rootBand, reportTemplate, outputType, outputStream);
+            FormatterFactoryInput factoryInput =
+                    new FormatterFactoryInput(extension, rootBand, reportTemplate, outputType, outputStream);
             ReportFormatter formatter = formatterFactory.createFormatter(factoryInput);
             formatter.renderDocument();
         }
+    }
+
+    @Nullable
+    protected ReportBand findStreamingBand(@Nullable ReportBand band) {
+        if (band == null) {
+            return null;
+        }
+
+        if (Boolean.TRUE.equals(band.getStreaming())) {
+            return band;
+        }
+
+        for (ReportBand child : band.getChildren()) {
+            ReportBand found = findStreamingBand(child);
+            if (found != null) {
+                return found;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Streaming run path: small bands are extracted as usual (the streaming band excluded), then the
+     * render runs inside the streaming loader's callback, pulling the hot band's rows from a live cursor.
+     * The loader owns the transaction/connection for the whole render.
+     *
+     * <p>Returns {@code null} when the formatter factory claims streaming support for the template but
+     * actually created a non-streaming formatter (a customized factory): the caller then falls back to
+     * the materialized rendering path.
+     */
+    @Nullable
+    protected BandData runStreamingReport(Report report, ReportTemplate reportTemplate,
+                                          ReportOutputType outputType, OutputStream outputStream,
+                                          Map<String, Object> handledParams, ReportBand streamingBand) {
+        BandData rootBand = new BandData(BandData.ROOT_BAND_NAME);
+        rootBand.setData(new HashMap<>(handledParams));
+        rootBand.addReportFieldFormats(report.getReportFieldFormats());
+        rootBand.setFirstLevelBandDefinitionNames(new HashSet<>());
+
+        String extension = StringUtils.substringAfterLast(reportTemplate.getDocumentName(), ".");
+        FormatterFactoryInput factoryInput =
+                new FormatterFactoryInput(extension, rootBand, reportTemplate, outputType, outputStream, true);
+        ReportFormatter formatter = formatterFactory.createFormatter(factoryInput);
+
+        if (!(formatter instanceof StreamingReportFormatter streamingFormatter)) {
+            logger.warn("Report formatter factory declared streaming support for the [{}] template of report [{}] "
+                            + "but created a non-streaming formatter [{}]; falling back to materialized rendering — "
+                            + "the streaming flag is ignored and memory usage is not bounded",
+                    extension, report.getName(), formatter.getClass().getName());
+            return null;
+        }
+
+        Preconditions.checkNotNull(loaderFactory,
+                "Report [%s] has a streaming band but no loader factory is configured; "
+                        + "call Reporting.setLoaderFactory before running streaming reports", report.getName());
+
+        List<StreamingReportValidator.Violation> violations =
+                streamingValidator.validate(report.getRootBand(), loaderFactory);
+        if (!violations.isEmpty()) {
+            String details = violations.stream()
+                    .map(StreamingReportValidator.Violation::describe)
+                    .collect(Collectors.joining("; "));
+            throw new ReportingException(
+                    "Report cannot be rendered by the streaming XLSX engine: " + details);
+        }
+        streamingFormatter.setReportBandNames(collectReportBandNames(report.getRootBand()));
+
+        ReportQuery query = streamingBand.getReportQueries().get(0);
+        ReportDataLoader loader = loaderFactory.createDataLoader(query.getLoaderType());
+        if (!(loader instanceof StreamingReportDataLoader streamingLoader)) {
+            throw new ReportingException(format(
+                    "Streaming band [%s] uses loader type [%s] which does not support streaming; use sql or jpql",
+                    streamingBand.getName(), query.getLoaderType()));
+        }
+
+        dataExtractor.extractData(report, handledParams, rootBand, Set.of(streamingBand.getName()));
+
+        // The connection is held only while the feed is consumed; the result is written after
+        // the loader releases the cursor.
+        StreamingBandFeed feed;
+        try {
+            feed = streamingLoader.loadDataStreaming(query, rootBand, handledParams, rows -> {
+                StreamingBandFeed bandFeed = new StreamingBandFeed(
+                        streamingBand.getName(), rows, rootBand, dataExtractor.getPutEmptyRowIfNoDataSelected());
+                streamingFormatter.setStreamingBandFeed(bandFeed);
+                streamingFormatter.consumeData();
+                return bandFeed;
+            });
+        } catch (RuntimeException | Error e) {
+            // The loader may fail in teardown after a successful render; drop the spooled result
+            // so gigabytes of SXSSF temp files do not outlive the run.
+            streamingFormatter.discard();
+            throw e;
+        }
+
+        streamingFormatter.completeRendering();
+        // The fed rows are never attached to the band tree; keep just the first one so that
+        // output file name patterns referencing the streaming band still resolve.
+        if (feed != null && feed.getFirstRow() != null) {
+            rootBand.addChild(feed.getFirstRow());
+        }
+
+        return rootBand;
+    }
+
+    protected Set<String> collectReportBandNames(ReportBand band) {
+        Set<String> names = new HashSet<>();
+        names.add(band.getName());
+        for (ReportBand child : band.getChildren()) {
+            names.addAll(collectReportBandNames(child));
+        }
+        return names;
     }
 
     protected BandData loadBandData(Report report, Map<String, Object> handledParams) {

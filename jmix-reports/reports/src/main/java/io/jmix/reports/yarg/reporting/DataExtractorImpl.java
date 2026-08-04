@@ -17,10 +17,9 @@
 package io.jmix.reports.yarg.reporting;
 
 
-import io.jmix.reports.entity.BandDefinition;
+import io.jmix.reports.yarg.loaders.factory.ReportLoaderFactory;
 import io.jmix.reports.yarg.reporting.extraction.DefaultExtractionContextFactory;
 import io.jmix.reports.yarg.reporting.extraction.DefaultExtractionControllerFactory;
-import io.jmix.reports.yarg.loaders.factory.ReportLoaderFactory;
 import io.jmix.reports.yarg.reporting.extraction.ExtractionContextFactory;
 import io.jmix.reports.yarg.reporting.extraction.ExtractionControllerFactory;
 import io.jmix.reports.yarg.structure.BandData;
@@ -29,9 +28,7 @@ import io.jmix.reports.yarg.structure.ReportBand;
 import org.apache.commons.collections4.CollectionUtils;
 import org.jspecify.annotations.NullMarked;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -61,7 +58,21 @@ public class DataExtractorImpl implements DataExtractor {
         return new DefaultExtractionControllerFactory(loaderFactory);
     }
 
+    /**
+     * Extracts all band data of the report into {@code rootBand}.
+     *
+     * <p>Note for subclasses: this method delegates to
+     * {@link #extractData(Report, Map, BandData, Set)}, which is the canonical override point.
+     * An override of only this 3-arg method is NOT invoked on the streaming report path (the engine
+     * calls the 4-arg variant directly) — override the 4-arg method to customize both paths.
+     */
     public void extractData(Report report, Map<String, Object> params, BandData rootBand) {
+        extractData(report, params, rootBand, Collections.emptySet());
+    }
+
+    @Override
+    public void extractData(Report report, Map<String, Object> params, BandData rootBand,
+                            Set<String> excludedBandNames) {
         List<Map<String, Object>> rootBandData = controllerFactory.defaultController().extractData(
                 contextFactory.context(report.getRootBand(), null, params)
         );
@@ -70,13 +81,16 @@ public class DataExtractorImpl implements DataExtractor {
         }
 
         List<ReportBand> firstLevelBands = report.getRootBand().getChildren().stream()
-                .sorted((b1, b2) -> b1.getPosition() - b2.getPosition()).toList();
-        if (firstLevelBands != null) {
-            for (ReportBand definition : firstLevelBands) {
-                List<BandData> bands = createBands(definition, rootBand, params);
-                rootBand.addChildren(bands);
-                rootBand.getFirstLevelBandDefinitionNames().add(definition.getName());
+                .sorted(Comparator.comparingInt(ReportBand::getPosition))
+                .toList();
+
+        for (ReportBand definition : firstLevelBands) {
+            rootBand.getFirstLevelBandDefinitionNames().add(definition.getName());
+            if (excludedBandNames.contains(definition.getName())) {
+                continue;
             }
+            List<BandData> bands = createBands(definition, rootBand, params);
+            rootBand.addChildren(bands);
         }
     }
 

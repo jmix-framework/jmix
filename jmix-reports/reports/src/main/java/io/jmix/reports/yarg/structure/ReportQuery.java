@@ -42,9 +42,10 @@ public interface ReportQuery extends Serializable {
     String getLinkParameterName();
 
     /**
-     * @return loader code.
+     * @return loader code, or {@code null} when the dataset has no type yet.
      * See io.jmix.reports.yarg.loaders.factory.ReportLoaderFactory implementations and io.jmix.reports.yarg.loaders.factory.DefaultLoaderFactory for default values.
      */
+    @Nullable
     String getLoaderType();
 
     Boolean getProcessTemplate();

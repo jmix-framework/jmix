@@ -129,6 +129,22 @@ public class AnnotatedReportBuilderTest {
         assertThat(valueFormat.getFormatString()).isEqualTo("dd.MM.yyyy HH:mm:ss");
     }
 
+    @Test
+    public void testStreamingBandFlagIsMapped() {
+        // given
+        StreamingBandReport definition = new StreamingBandReport();
+
+        // when
+        Report report = annotatedReportBuilder.createReportFromDefinition(definition);
+
+        // then: the @BandDef(streaming = true) is carried into the band definition
+        var dataBand = report.getRootBandDefinition().getChildrenBandDefinitions().get(0);
+        assertThat(dataBand.getName()).isEqualTo("Data");
+        assertThat(dataBand.getStreaming()).isTrue();
+        // and a band that doesn't declare it stays non-streaming
+        assertThat(report.getRootBandDefinition().getStreaming()).isFalse();
+    }
+
     @ParameterizedTest
     @CsvSource({"en,After", "fr,Apres"})
     public void testInputParameterLocalization(String localeCode, String expectedCaption) {

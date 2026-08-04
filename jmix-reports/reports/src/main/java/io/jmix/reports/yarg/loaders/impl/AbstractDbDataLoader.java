@@ -33,31 +33,41 @@ public abstract class AbstractDbDataLoader extends AbstractDataLoader {
 
     protected List<Map<String, Object>> fillOutputData(List resList, List<OutputValue> parametersNames) {
         List<Map<String, Object>> outputData = new ArrayList<>();
-
         for (Object resultRecordObject : resList) {
-            Map<String, Object> outputValues = new HashMap<>();
-            if (resultRecordObject instanceof Object[]) {
-                Object[] resultRecord = (Object[]) resultRecordObject;
-
-                if (resultRecord.length != parametersNames.size()) {
-                    throw new DataLoadingException(String.format("Please specify aliases for all output fields of the query.\nDetails: result set size [%d] does not match output fields count [%s]. Detected output fields %s", resultRecord.length, parametersNames.size(), parametersNames));
-                }
-
-                for (Integer i = 0; i < resultRecord.length; i++) {
-                    OutputValue outputValue = parametersNames.get(i);
-                    Object value = resultRecord[i];
-                    putValue(outputValues, outputValue, value);
-                }
-            } else {
-                if (parametersNames.isEmpty()) {
-                    throw new DataLoadingException("Please specify aliases for all output fields of the query.\nDetails: result set size 1 does not match output fields count 0.");
-                }
-                OutputValue outputValue = parametersNames.get(0);
-                putValue(outputValues, outputValue, resultRecordObject);
-            }
-            outputData.add(outputValues);
+            outputData.add(fillOutputRow(resultRecordObject, parametersNames));
         }
         return outputData;
+    }
+
+    /**
+     * Maps a single result record (an {@code Object[]} of column values, or a scalar) into an output row
+     * map. Used both by the batch {@link #fillOutputData} and by the streaming cursors, which shape one
+     * row at a time and must not allocate a throwaway list per row.
+     */
+    protected Map<String, Object> fillOutputRow(Object resultRecordObject, List<OutputValue> parametersNames) {
+        Map<String, Object> outputValues = new HashMap<>();
+        if (resultRecordObject instanceof Object[] resultRecord) {
+
+            if (resultRecord.length != parametersNames.size()) {
+                throw new DataLoadingException(String.format("Please specify aliases for all output fields " +
+                        "of the query.\nDetails: result set size [%d] does not match output fields count [%s]." +
+                        " Detected output fields %s", resultRecord.length, parametersNames.size(), parametersNames));
+            }
+
+            for (int i = 0; i < resultRecord.length; i++) {
+                OutputValue outputValue = parametersNames.get(i);
+                Object value = resultRecord[i];
+                putValue(outputValues, outputValue, value);
+            }
+        } else {
+            if (parametersNames.isEmpty()) {
+                throw new DataLoadingException("Please specify aliases for all output fields of the query.\n" +
+                        "Details: result set size 1 does not match output fields count 0.");
+            }
+            OutputValue outputValue = parametersNames.get(0);
+            putValue(outputValues, outputValue, resultRecordObject);
+        }
+        return outputValues;
     }
 
     private void putValue(Map<String, Object> outputData, OutputValue outputValue, Object value) {

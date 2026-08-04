@@ -74,7 +74,9 @@ import io.jmix.reports.app.EntityTree;
 import io.jmix.reports.entity.*;
 import io.jmix.reports.entity.wizard.ReportData;
 import io.jmix.reports.entity.wizard.ReportRegion;
+import io.jmix.reports.impl.StreamingReportValidationSupport;
 import io.jmix.reports.util.DataSetFactory;
+import io.jmix.reports.yarg.reporting.StreamingReportValidator;
 import io.jmix.reports.yarg.structure.BandOrientation;
 import io.jmix.reportsflowui.ReportsClientProperties;
 import io.jmix.reportsflowui.constant.ReportStyleConstants;
@@ -135,6 +137,8 @@ public class ReportDetailView extends StandardDetailView<Report> {
     protected EntityComboBox<BandDefinition> parentBandField;
     @ViewComponent
     protected JmixCheckbox multiDataSetField;
+    @ViewComponent
+    protected JmixCheckbox streamingField;
     @ViewComponent
     protected FlexLayout multiDataSetLayout;
     @ViewComponent
@@ -280,6 +284,8 @@ public class ReportDetailView extends StandardDetailView<Report> {
     protected ReportRepository reportRepository;
     @Autowired
     protected OutputTypeHelper outputTypeHelper;
+    @Autowired
+    protected StreamingReportValidationSupport streamingReportValidationSupport;
 
     protected JmixComboBoxBinder<String> entityParamFieldBinder;
     protected JmixComboBoxBinder<String> entitiesParamFieldBinder;
@@ -539,7 +545,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
 
         bandNameField.setReadOnly(fieldReadOnly);
         parentBandField.setReadOnly(fieldReadOnly);
-        multiDataSetField.setEnabled(bandsDc.getItemOrNull() != null && dataSetsDc.getItems().size() <= 1);
+        updateStreamingRelatedFields();
 
         updateBandFieldRequiredIndicators(item);
         selectFirstDataSet();
@@ -613,6 +619,10 @@ public class ReportDetailView extends StandardDetailView<Report> {
     protected void onDataSetsDcItemPropertyChange(InstanceContainer.ItemPropertyChangeEvent<DataSet> event) {
         applyVisibilityRules(event.getItem());
 
+        if ("type".equals(event.getProperty())) {
+            updateStreamingRelatedFields();
+        }
+
         if ("entityParamName".equals(event.getProperty())) {
             setupEntityParamFieldValue(event.getItem());
         }
@@ -636,7 +646,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
 
     @Subscribe(id = "dataSetsDc", target = Target.DATA_CONTAINER)
     protected void onDataSetsDcCollectionChange(CollectionContainer.CollectionChangeEvent<DataSet> event) {
-        multiDataSetField.setEnabled(bandsDc.getItemOrNull() != null && event.getSource().getItems().size() <= 1);
+        updateStreamingRelatedFields();
     }
 
     @Subscribe(id = "templatesDc", target = Target.DATA_CONTAINER)
@@ -735,6 +745,46 @@ public class ReportDetailView extends StandardDetailView<Report> {
     @Subscribe("multiDataSetField")
     protected void onMultiDataSetFieldComponentValueChange(ComponentValueChangeEvent<Checkbox, Boolean> event) {
         updateDataSetsLayout(event.getValue());
+        updateStreamingRelatedFields();
+    }
+
+    @Subscribe("streamingField")
+    protected void onStreamingFieldComponentValueChange(ComponentValueChangeEvent<Checkbox, Boolean> event) {
+        updateStreamingRelatedFields();
+    }
+
+    /**
+     * The streaming flag and multiple datasets are mutually exclusive, and streaming applies only to
+     * first-level bands. This method owns the enablement of both checkboxes so that toggling either
+     * one recomputes the full state. Detailed structural rules are checked on save in {@code validateBand}.
+     */
+    protected void updateStreamingRelatedFields() {
+        BandDefinition item = bandsDc.getItemOrNull();
+        boolean firstLevelBandSelected = item != null && item.getParent() != null
+                && item.getParent().getParent() == null;
+        boolean canEnableStreaming = firstLevelBandSelected
+                && !Boolean.TRUE.equals(item.getMultiDataSet())
+                && isStreamingCapableDataSet();
+
+        // Keep the checkbox enabled when the flag is already set, even on a band that no longer satisfies
+        // the structural rules (e.g. an imported report): otherwise the user cannot clear an invalid flag
+        // that the save-time validation rejects.
+        streamingField.setEnabled(item != null && (canEnableStreaming || Boolean.TRUE.equals(item.getStreaming())));
+        multiDataSetField.setEnabled(item != null
+                && dataSetsDc.getItems().size() <= 1
+                && !Boolean.TRUE.equals(item.getStreaming()));
+    }
+
+    /**
+     * Streaming reads rows from a database cursor, so it applies only to a single SQL or JPQL dataset.
+     * A band with no dataset, several datasets, or a groovy/json/entity dataset cannot stream.
+     */
+    protected boolean isStreamingCapableDataSet() {
+        if (dataSetsDc.getItems().size() != 1) {
+            return false;
+        }
+        DataSetType type = dataSetsDc.getItems().get(0).getType();
+        return type == DataSetType.SQL || type == DataSetType.JPQL;
     }
 
     @Subscribe("orientationField")
@@ -1014,16 +1064,44 @@ public class ReportDetailView extends StandardDetailView<Report> {
         if (getEditedEntity().getRootBand() == null) {
             validationErrors.add(messageBundle.getMessage("validation.error.rootBandNull"));
         }
-        if (CollectionUtils.isNotEmpty(getEditedEntity().getRootBandDefinition().getChildrenBandDefinitions())) {
-            Multimap<String, BandDefinition> names = ArrayListMultimap.create();
-            names.put(getEditedEntity().getRootBandDefinition().getName(), getEditedEntity().getRootBandDefinition());
 
-            for (BandDefinition band : getEditedEntity().getRootBandDefinition().getChildrenBandDefinitions()) {
+        BandDefinition rootBandDefinition = getEditedEntity().getRootBandDefinition();
+        if (rootBandDefinition == null) {
+            return;
+        }
+
+        if (CollectionUtils.isNotEmpty(rootBandDefinition.getChildrenBandDefinitions())) {
+            Multimap<String, BandDefinition> names = ArrayListMultimap.create();
+            names.put(rootBandDefinition.getName(), rootBandDefinition);
+
+            for (BandDefinition band : rootBandDefinition.getChildrenBandDefinitions()) {
                 validateBand(validationErrors, band, names);
             }
 
             checkForNameDuplication(validationErrors, names);
         }
+
+        // Runs regardless of whether the root has children: a streaming flag on the root band (or any
+        // structurally invalid streaming setup) must be rejected at save time with the exact runtime
+        // rules, not only at render time. The support returns no violations when there is no streaming band.
+        for (StreamingReportValidator.Violation violation
+                : streamingReportValidationSupport.validate(rootBandDefinition)) {
+            validationErrors.add(streamingViolationMessage(violation));
+        }
+    }
+
+    protected String streamingViolationMessage(StreamingReportValidator.Violation violation) {
+        String key = switch (violation.type()) {
+            case MULTIPLE_STREAMING_BANDS -> "validation.error.streamingBandSingle";
+            case NOT_FIRST_LEVEL -> "validation.error.streamingBandFirstLevel";
+            case NOT_HORIZONTAL -> "validation.error.streamingBandHorizontal";
+            case HAS_CHILDREN -> "validation.error.streamingBandChildren";
+            case NOT_SINGLE_QUERY -> "validation.error.streamingBandSingleDataSet";
+            case LOADER_NOT_STREAMING -> "validation.error.streamingBandLoaderType";
+            case NON_HORIZONTAL_BAND_IN_REPORT -> "validation.error.streamingReportNonHorizontalBand";
+        };
+
+        return messageBundle.formatMessage(key, violation.bandName());
     }
 
     protected void checkForNameDuplication(ValidationErrors errors, Multimap<String, BandDefinition> names) {
@@ -1044,6 +1122,13 @@ public class ReportDetailView extends StandardDetailView<Report> {
 
         if (band.getBandOrientation() == BandOrientation.UNDEFINED) {
             errors.add(messageBundle.formatMessage("validation.error.bandOrientationNull", band.getName()));
+        }
+
+        if (Boolean.TRUE.equals(band.getStreaming()) && Boolean.TRUE.equals(band.getMultiDataSet())) {
+            // Multi-dataset mode is a designer-level concept the shared validator cannot see:
+            // it only observes the resulting dataset list. Name the real cause (the multi-dataset flag)
+            // rather than reusing the generic "must have exactly one dataset" message.
+            errors.add(messageBundle.formatMessage("validation.error.streamingBandMultiDataSet", band.getName()));
         }
 
         if (CollectionUtils.isNotEmpty(band.getDataSets())) {
@@ -1206,7 +1291,6 @@ public class ReportDetailView extends StandardDetailView<Report> {
         parentBandField.setEnabled(enabled);
         orientationField.setEnabled(enabled);
         bandNameField.setEnabled(enabled);
-        multiDataSetField.setEnabled(enabled);
     }
 
     protected void selectFirstDataSet() {

@@ -55,6 +55,15 @@ public @interface BandDef {
     Orientation orientation() default Orientation.HORIZONTAL;
 
     /**
+     * Renders the band in streaming mode — rows are read one by one from a database cursor, so memory stays
+     * bounded regardless of the row count. Applies only to a first-level horizontal band with a single SQL or
+     * JPQL dataset and an XLSX/CSV output; the restrictions are enforced by the streaming engine at run time.
+     *
+     * @return {@code true} to enable streaming for this band
+     */
+    boolean streaming() default false;
+
+    /**
      * Datasets of the band. May be empty if the band has no data.
      */
     DataSetDef[] dataSets() default {};

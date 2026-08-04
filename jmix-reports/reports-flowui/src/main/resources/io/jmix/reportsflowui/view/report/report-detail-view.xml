@@ -110,6 +110,10 @@
                                             itemsContainer="availableParentBandsDc"/>
                             <checkbox id="multiDataSetField" property="multiDataSet"
                                       label="msg://bandsTab.multiDataSetField.label"/>
+                            <checkbox id="streamingField" property="streaming"
+                                      label="msg://bandsTab.streamingField.label">
+                                <tooltip text="msg://bandsTab.streamingField.helperText"/>
+                            </checkbox>
                             <select id="singleDataSetTypeField" dataContainer="dataSetsDc" property="type"
                                     label="msg://bandsTab.singleDataSetTypeField.label"/>
                             <responsiveSteps>

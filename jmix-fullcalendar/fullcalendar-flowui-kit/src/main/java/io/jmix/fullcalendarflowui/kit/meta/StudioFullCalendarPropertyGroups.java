@@ -554,6 +554,10 @@ final class StudioFullCalendarPropertyGroups {
                             type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true"),
                     @StudioProperty(
+                            xmlAttribute = StudioXmlAttributes.EQUAL_ROW_HEIGHT,
+                            type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
+                    @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.EVENT_BACKGROUND_COLOR,
                             type = StudioPropertyType.OPTIONS,
                             category = StudioProperty.Category.LOOK_AND_FEEL,

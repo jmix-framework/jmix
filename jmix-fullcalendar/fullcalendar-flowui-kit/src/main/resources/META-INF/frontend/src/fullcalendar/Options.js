@@ -42,8 +42,8 @@ const BUSINESS_HOURS = 'businessHours';
 const SELECT_CONSTRAINT = 'selectConstraint';
 const SELECT_ALLOW = 'selectAllow';
 const VIEWS = 'views';
-const DAY_MAX_EVENT_ROWS = 'dayMaxEventRows';
-const DAY_MAX_EVENTS = 'dayMaxEvents';
+export const DAY_MAX_EVENT_ROWS = 'dayMaxEventRows';
+export const DAY_MAX_EVENTS = 'dayMaxEvents';
 const EVENT_ORDER = 'eventOrder';
 
 /**

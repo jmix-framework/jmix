@@ -42,7 +42,9 @@ import Options, {
     CURRENT_DATE,
     CURRENT_SELECTION,
     CURRENT_VIEW,
-    SLOT_LABEL_CLASS_NAMES, NOW_INDICATOR_CLASS_NAMES, NAV_LINK_DAY_CLICK, NAV_LINK_WEEK_CLICK, DAY_CELL_BOTTOM_TEXT
+    SLOT_LABEL_CLASS_NAMES, NOW_INDICATOR_CLASS_NAMES, NAV_LINK_DAY_CLICK, NAV_LINK_WEEK_CLICK, DAY_CELL_BOTTOM_TEXT,
+    DAY_MAX_EVENTS as DAY_MAX_EVENTS_OPTION,
+    DAY_MAX_EVENT_ROWS as DAY_MAX_EVENT_ROWS_OPTION
 } from './Options.js';
 
 const FC_NON_BUSINESS_CLASS_NAME = 'fc-non-business';
@@ -55,9 +57,14 @@ const FC_TIMEGRID_NOW_INDICATOR_ARROW = 'fc-timegrid-now-indicator-arrow';
 const FC_TIMEGRID_NOW_INDICATOR_LINE = 'fc-timegrid-now-indicator-line';
 const FC_POPOVER = 'fc-popover';
 const FC_DAYGRID_DAY_FRAME = 'fc-daygrid-day-frame';
+const FC_DAYGRID_DAY_EVENTS = 'fc-daygrid-day-events';
+const FC_DAYGRID_EVENT_HARNESS = 'fc-daygrid-event-harness';
 
 const JMIX_DAY_CELL_BOTTOM_TEXT = 'jmix-day-cell-bottom-text';
 const JMIX_HAS_BOTTOM_TEXT = 'jmix-has-bottom-text';
+const EQUAL_ROW_HEIGHT_ATTRIBUTE = 'equal-row-height';
+const REQUIRED_CELL_HEIGHT_PROPERTY = '--_jmix-full-calendar-required-cell-height';
+const BOTTOM_TEXT_HEIGHT_PROPERTY = '--_jmix-full-calendar-bottom-text-height';
 
 const DAY_GRID_DAY = "dayGridDay";
 const DAY_GRID_WEEK = "dayGridWeek";
@@ -139,6 +146,36 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolylitMixin(LumoInjec
         this.renderCalendar();
 
         this._setupResizeListener();
+        this._setupEqualRowHeightObserver();
+        this._setupVisibilityListener();
+    }
+
+    /**
+     * @Override
+     */
+    connectedCallback() {
+        super.connectedCallback();
+
+        // The listener is removed on detach, so a reattached component has to get it back. Adding the same
+        // listener twice is a no-op, which keeps this safe regardless of the callback order.
+        if (this.visibilityChangeListener) {
+            document.addEventListener('visibilitychange', this.visibilityChangeListener);
+        }
+    }
+
+    /**
+     * @Override
+     */
+    disconnectedCallback() {
+        super.disconnectedCallback();
+
+        if (this.visibilityChangeListener) {
+            document.removeEventListener('visibilitychange', this.visibilityChangeListener);
+        }
+        if (this.requiredCellHeightUpdateId) {
+            clearTimeout(this.requiredCellHeightUpdateId);
+            this.requiredCellHeightUpdateId = null;
+        }
     }
 
     _setupResizeListener() {
@@ -154,6 +191,159 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolylitMixin(LumoInjec
         }
 
         new ResizeObserver(onResize.bind(this)).observe(this.calendarElement);
+    }
+
+    /**
+     * Schedules a recomputation of the required day cell height, so that measurements run after FullCalendar
+     * has laid out its DOM. Repeated calls within one timeout collapse into one.
+     * <p>
+     * Uses a timer rather than an animation frame on purpose: animation frames never fire while the tab is
+     * hidden, which would leave the scheduled flag set forever and silently drop every later recomputation.
+     * @private
+     */
+    _scheduleRequiredCellHeightUpdate() {
+        if (this.requiredCellHeightUpdateId) {
+            return;
+        }
+        this.requiredCellHeightUpdateId = setTimeout(() => {
+            this.requiredCellHeightUpdateId = null;
+            this._updateRequiredCellHeight();
+        });
+    }
+
+    /**
+     * Publishes the height a day cell needs to keep the declared event limit satisfied, so that the
+     * equal-row-height CSS can use it as a floor. Publishes nothing when the feature is off, the month
+     * display mode is not shown, or the height cannot be derived.
+     * @private
+     */
+    _updateRequiredCellHeight() {
+        const view = this.hasAttribute(EQUAL_ROW_HEIGHT_ATTRIBUTE)
+            ? this.querySelector(`.fc-${DAY_GRID_MONTH}-view`)
+            : null;
+
+        // Reserve room for the day cell bottom text first: the reserve is padding inside the event container,
+        // so it is already part of the container's height that the required height is measured from below.
+        this._setBottomTextHeight(view ? this._computeBottomTextHeight(view) : null);
+        this._setRequiredCellHeight(view ? this._computeRequiredCellHeight(view) : null);
+    }
+
+    /**
+     * Measures the room the day cell bottom text needs, so that events and the "more" link can be kept above
+     * it. The text is a sibling of the day frame anchored to the bottom of the cell, so without a reserve the
+     * compressed cell puts the "more" link on the same line as the text.
+     * @param view the month display mode root element
+     * @return the height in pixels, or <code>null</code> if there is no bottom text
+     * @private
+     */
+    _computeBottomTextHeight(view) {
+        const texts = view.getElementsByClassName(JMIX_DAY_CELL_BOTTOM_TEXT);
+        if (!texts.length) {
+            return null;
+        }
+
+        return Math.max(...Array.from(texts).map(text => text.offsetHeight));
+    }
+
+    /**
+     * @param valuePx the height to reserve in pixels, or <code>null</code> to reserve nothing
+     * @private
+     */
+    _setBottomTextHeight(valuePx) {
+        const value = valuePx === null ? '' : `${valuePx}px`;
+        if (this.style.getPropertyValue(BOTTOM_TEXT_HEIGHT_PROPERTY) === value) {
+            return;
+        }
+
+        if (value) {
+            this.style.setProperty(BOTTOM_TEXT_HEIGHT_PROPERTY, value);
+        } else {
+            this.style.removeProperty(BOTTOM_TEXT_HEIGHT_PROPERTY);
+        }
+    }
+
+    /**
+     * Computes the required day cell height by measuring what FullCalendar rendered, rather than by
+     * summing up theme metrics: the event container is positioned absolutely by the equal-row-height CSS,
+     * so its height is its content height and does not depend on the current cell height.
+     * @param view the month display mode root element
+     * @return the required height in pixels, or <code>null</code> if it cannot be derived
+     * @private
+     */
+    _computeRequiredCellHeight(view) {
+        const dayMaxEvents = this.jmixOptions.getOption(DAY_MAX_EVENTS_OPTION);
+        const dayMaxEventRows = this.jmixOptions.getOption(DAY_MAX_EVENT_ROWS_OPTION);
+
+        // With a boolean limit FullCalendar derives the event count from the row height, so deriving the
+        // row height from the events would close a feedback loop. Its balanced mode already equalizes rows.
+        if (dayMaxEvents === true || dayMaxEventRows === true) {
+            return null;
+        }
+
+        const boxes = Array.from(view.getElementsByClassName(FC_DAYGRID_DAY_EVENTS))
+            .filter(box => box.getElementsByClassName(FC_DAYGRID_EVENT_HARNESS).length > 0);
+        if (!boxes.length) {
+            return null;
+        }
+
+        const hasIntegerLimit = typeof dayMaxEvents === 'number' || typeof dayMaxEventRows === 'number';
+        if (hasIntegerLimit) {
+            return Math.max(...boxes.map(box => box.offsetTop + box.offsetHeight));
+        }
+
+        // No limit at all: equal rows and full visibility are incompatible, so guarantee one event row.
+        // Maximised over cells like the branch above: day cells are not uniform — a month-start cell has a
+        // taller day number — and the published value applies to every cell.
+        return Math.max(...boxes.map(box =>
+            box.offsetTop + box.getElementsByClassName(FC_DAYGRID_EVENT_HARNESS)[0].offsetHeight));
+    }
+
+    /**
+     * @param valuePx the required height in pixels, or <code>null</code> to publish nothing
+     * @private
+     */
+    _setRequiredCellHeight(valuePx) {
+        const value = valuePx === null ? '' : `${valuePx}px`;
+        if (this.style.getPropertyValue(REQUIRED_CELL_HEIGHT_PROPERTY) === value) {
+            return;
+        }
+
+        if (value) {
+            this.style.setProperty(REQUIRED_CELL_HEIGHT_PROPERTY, value);
+        } else {
+            this.style.removeProperty(REQUIRED_CELL_HEIGHT_PROPERTY);
+        }
+
+        // The floor changes the grid height, so the scroll grid has to re-measure its scroller.
+        this.calendar.updateSize();
+    }
+
+    /**
+     * Recomputes the required day cell height when the equal-row-height attribute is toggled, since
+     * setting an attribute on the host fires no FullCalendar event.
+     * @private
+     */
+    _setupEqualRowHeightObserver() {
+        new MutationObserver(() => this._scheduleRequiredCellHeightUpdate())
+            .observe(this, {attributes: true, attributeFilter: [EQUAL_ROW_HEIGHT_ATTRIBUTE]});
+    }
+
+    /**
+     * Recomputes the required day cell height when the page becomes visible again: a measurement taken while
+     * the tab was hidden can be based on a not yet laid out DOM.
+     * <p>
+     * The listener lives on the document, so it is removed when the element is detached — otherwise the
+     * document would keep every detached calendar instance alive.
+     * @private
+     */
+    _setupVisibilityListener() {
+        this.visibilityChangeListener = () => {
+            if (document.visibilityState === 'visible') {
+                this._scheduleRequiredCellHeightUpdate();
+            }
+        };
+
+        document.addEventListener('visibilitychange', this.visibilityChangeListener);
     }
 
     _restoreState() {
@@ -198,6 +388,7 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolylitMixin(LumoInjec
             eventDrop: (e) => this._onEventDrop(e),
             eventResize: (e) => this._onEventResize(e),
             datesSet: (e) => this._onDatesSet(e),
+            eventsSet: () => this._scheduleRequiredCellHeightUpdate(),
             dateClick: (e) => this._onDateClick(e),
             select: (e) => this._onSelect(e),
             unselect: (e) => this._onUnselect(e),
@@ -217,6 +408,7 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolylitMixin(LumoInjec
      */
     updateOptions(options) {
         this.jmixOptions.updateOptions(options);
+        this._scheduleRequiredCellHeightUpdate();
     }
 
     /**
@@ -226,6 +418,7 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolylitMixin(LumoInjec
      */
     updateOption(name, value) {
         this.jmixOptions.updateOption(name, value);
+        this._scheduleRequiredCellHeightUpdate();
     }
 
     /**
@@ -640,6 +833,7 @@ class JmixFullCalendar extends ElementMixin(ThemableMixin(PolylitMixin(LumoInjec
 
         this._clearNotInRangeDayCellContexts();
         this._postponeUpdatingBottomTextFromFetch();
+        this._scheduleRequiredCellHeightUpdate();
     }
 
     _onDateClick(e) {

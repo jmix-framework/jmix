@@ -62,6 +62,7 @@
                            displayEventTime="false"
                            dragRevertDuration="1"
                            dragScroll="false"
+                           equalRowHeight="true"
                            eventBackgroundColor="green"
                            eventBorderColor="green"
                            eventConstraintGroupId="eventConstraintGroupId"

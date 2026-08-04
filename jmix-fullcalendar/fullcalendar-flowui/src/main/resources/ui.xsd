@@ -54,6 +54,7 @@
                     <xs:attribute name="displayEventTime" type="xs:boolean"/>
                     <xs:attribute name="dragRevertDuration" type="xs:integer"/>
                     <xs:attribute name="dragScroll" type="xs:boolean"/>
+                    <xs:attribute name="equalRowHeight" type="xs:boolean"/>
                     <xs:attribute name="eventBackgroundColor" type="colorType"/>
                     <xs:attribute name="eventBorderColor" type="colorType"/>
                     <xs:attribute name="eventConstraintGroupId" type="xs:string"/>

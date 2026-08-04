@@ -331,6 +331,7 @@ public final class StudioXmlAttributes {
     public static final String ENTITIES = "entities";
     public static final String ENTITY_NAME = "entityName";
     public static final String ENUM_CLASS = "enumClass";
+    public static final String EQUAL_ROW_HEIGHT = "equalRowHeight";
     public static final String ERROR_MESSAGE = "errorMessage";
     public static final String ESCAPE_VALUE_FOR_LIKE = "escapeValueForLike";
     public static final String EVENT_BACKGROUND_COLOR = "eventBackgroundColor";

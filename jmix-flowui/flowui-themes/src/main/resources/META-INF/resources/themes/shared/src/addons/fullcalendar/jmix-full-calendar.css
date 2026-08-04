@@ -1,0 +1,47 @@
+/*
+ * Copyright 2026 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/* Equal height of week rows in the month display mode.
+   Taking the event container out of the flow makes the height of a day cell independent of the number of
+   events in it, so all rows get the same natural height and the browser splits the height of the grid
+   table evenly between them. */
+
+/* FullCalendar marks the body `fc-daygrid-body-natural` when the height is auto or while printing; there
+   rows are content-sized, so equalizing them would clip events out of the output. */
+jmix-full-calendar[equal-row-height] .fc-dayGridMonth-view .fc-daygrid-body:not(.fc-daygrid-body-natural) .fc-daygrid-day-frame {
+    /* FullCalendar makes the frame `position: static` under `fc-liquid-hack`, which would break the
+       containing block of the absolutely positioned event container below */
+    position: relative;
+    /* FullCalendar's own `min-height: 100%` must be kept — the frame has to fill the row — so the floor is
+       raised instead of replaced. The private property carries the height the web component measured as
+       necessary to keep the declared event limit satisfied; the public one lets an application reserve extra
+       room on top of it, and `6em` only covers the first frame, before the first measurement arrives. */
+    min-height: max(100%,
+                    var(--jmix-full-calendar-day-cell-min-height, 6em),
+                    var(--_jmix-full-calendar-required-cell-height, 0px));
+    overflow-y: auto;
+}
+
+jmix-full-calendar[equal-row-height] .fc-dayGridMonth-view .fc-daygrid-body:not(.fc-daygrid-body-natural) .fc-daygrid-day-events {
+    position: absolute;
+    left: 0;
+    right: 0;
+    min-height: 0;
+    /* Room for the day cell bottom text, which is anchored to the bottom of the cell outside this container.
+       The padding sits inside the container, so events and the "more" link end above the text while the
+       reserve is still counted in the container's height — and therefore in the measured cell height. */
+    padding-bottom: var(--_jmix-full-calendar-bottom-text-height, 0px);
+}

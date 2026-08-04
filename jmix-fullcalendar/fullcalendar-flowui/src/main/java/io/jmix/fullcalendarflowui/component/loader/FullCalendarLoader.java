@@ -94,6 +94,7 @@ public class FullCalendarLoader extends AbstractComponentLoader<FullCalendar> {
         loadInteger(element, "dragRevertDuration", resultComponent::setDragRevertDuration);
         loadBoolean(element, "dragScroll", resultComponent::setDragScroll);
 
+        loadBoolean(element, "equalRowHeight", resultComponent::setEqualRowHeight);
         loadString(element, "eventBackgroundColor", resultComponent::setEventBackgroundColor);
         loadString(element, "eventBorderColor", resultComponent::setEventBorderColor);
         loadString(element, "eventConstraintGroupId", resultComponent::setEventConstraintGroupId);

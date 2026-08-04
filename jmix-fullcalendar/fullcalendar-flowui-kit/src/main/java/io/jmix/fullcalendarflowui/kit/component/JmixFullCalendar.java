@@ -52,6 +52,8 @@ import java.util.*;
 @JsModule("./src/fullcalendar/jmix-full-calendar.js")
 public class JmixFullCalendar extends Component implements HasSize, HasStyle {
 
+    protected static final String EQUAL_ROW_HEIGHT_ATTRIBUTE_NAME = "equal-row-height";
+
     protected JmixFullCalendarSerializer serializer;
     protected JmixFullCalendarDeserializer deserializer;
     protected JmixFullCalendarOptions options;
@@ -567,6 +569,9 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
      * This property is applied for day-grid display modes and in all-day cells.
      * <p>
      * The default value {@code false}.
+     * <p>
+     * See also {@link #setEqualRowHeight(boolean)} if week rows should have the same height regardless of
+     * the number of events in a day cell.
      *
      * @param enabled whether to limit the number of events
      */
@@ -589,6 +594,9 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
      * will be shown.
      * <p>
      * Takes precedence over the {@link #setDefaultDayMaxEventRowsEnabled(boolean)}.
+     * <p>
+     * See also {@link #setEqualRowHeight(boolean)} if week rows should have the same height regardless of
+     * the number of events in a day cell.
      *
      * @param maxEventRows maximum value of event rows in cell
      */
@@ -616,6 +624,9 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
      * This property is applied for day-grid display modes and in all-day cells.
      * <p>
      * The default value {@code false}.
+     * <p>
+     * See also {@link #setEqualRowHeight(boolean)} if week rows should have the same height regardless of
+     * the number of events in a day cell.
      *
      * @param enabled whether to limit the number of events
      */
@@ -638,11 +649,43 @@ public class JmixFullCalendar extends Component implements HasSize, HasStyle {
      * one event and the "more" row will be shown.
      * <p>
      * Takes precedence over the {@link #setDefaultDayMaxEventsEnabled(boolean)}.
+     * <p>
+     * See also {@link #setEqualRowHeight(boolean)} if week rows should have the same height regardless of
+     * the number of events in a day cell.
      *
      * @param maxRows maximum value of event rows in cell excluding "more" row
      */
     public void setDayMaxEvents(@Nullable Integer maxRows) {
         options.getDayMaxEvents().setMax(maxRows);
+    }
+
+    /**
+     * Returns whether week rows of the month display mode are kept at the same height.
+     *
+     * @return {@code true} if all week rows in the month display mode have the same height
+     */
+    public boolean isEqualRowHeight() {
+        return getElement().hasAttribute(EQUAL_ROW_HEIGHT_ATTRIBUTE_NAME);
+    }
+
+    /**
+     * Makes all week rows of the {@link CalendarDisplayModes#DAY_GRID_MONTH} display mode have the same
+     * height, so that a row no longer grows with the number of events stacked in its day cells. Custom display
+     * modes based on {@link CalendarDisplayModes#DAY_GRID_MONTH} are not supported.
+     * <p>
+     * Use it together with an event limit ({@link #setDayMaxEvents(Integer)},
+     * {@link #setDayMaxEventRows(Integer)}): with an integer limit the component keeps a day cell tall enough
+     * for the declared events, and the grid scrolls when the component is not tall enough. With no limit only
+     * one event row is guaranteed, and the rest are reachable by scrolling the day cell.
+     * <p>
+     * The {@code --jmix-full-calendar-day-cell-min-height} CSS custom property raises the minimum cell height.
+     * <p>
+     * The default value is {@code false}.
+     *
+     * @param equalRowHeight whether week rows should have the same height
+     */
+    public void setEqualRowHeight(boolean equalRowHeight) {
+        getElement().setAttribute(EQUAL_ROW_HEIGHT_ATTRIBUTE_NAME, equalRowHeight);
     }
 
     /**

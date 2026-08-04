@@ -88,6 +88,7 @@ public class StudioFullCalendarPreviewLoader implements StudioPreviewComponentLo
         loadInteger(element, "dragRevertDuration", resultComponent::setDragRevertDuration);
         loadBoolean(element, "dragScroll", resultComponent::setDragScroll);
 
+        loadBoolean(element, "equalRowHeight", resultComponent::setEqualRowHeight);
         loadString(element, "eventBackgroundColor", resultComponent::setEventBackgroundColor);
         loadString(element, "eventBorderColor", resultComponent::setEventBorderColor);
         // Ignore eventConstraintGroupId

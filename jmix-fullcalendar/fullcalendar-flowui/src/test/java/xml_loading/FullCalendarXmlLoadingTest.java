@@ -103,6 +103,7 @@ public class FullCalendarXmlLoadingTest {
                 () -> assertTrue(calendar.isEventResizableFromStart()),
                 () -> assertTrue(calendar.isEventStartEditable()),
                 () -> assertEquals("green", calendar.getEventTextColor()),
+                () -> assertTrue(calendar.isEqualRowHeight()),
                 () -> assertTrue(calendar.isExpandRows()),
                 () -> assertTrue(calendar.isForceEventDuration()),
                 () -> assertEquals(LocalDate.of(2024, 9, 1), calendar.getInitialDate()),
@@ -302,6 +303,25 @@ public class FullCalendarXmlLoadingTest {
                 () -> assertEquals(LocalDateTimeEvent.class, calendarDataRetriever.getEntityClass()),
                 () -> assertNotNull(calendarDataRetriever.getFetchPlan()),
                 () -> assertNotNull(calendarDataRetriever.getQueryString())
+        );
+    }
+
+    @Test
+    @DisplayName("equalRowHeight toggles the host element attribute")
+    public void equalRowHeightTogglesHostAttribute() {
+        viewNavigators.view(UiTestUtils.getCurrentView(), FullCalendarXmlLoadingTestView.class)
+                .navigate();
+
+        FullCalendarXmlLoadingTestView testView = UiTestUtils.getCurrentView();
+        var calendar = testView.calendar;
+
+        assertTrue(calendar.getElement().hasAttribute("equal-row-height"));
+
+        calendar.setEqualRowHeight(false);
+
+        assertAll(
+                () -> assertFalse(calendar.getElement().hasAttribute("equal-row-height")),
+                () -> assertFalse(calendar.isEqualRowHeight())
         );
     }
 

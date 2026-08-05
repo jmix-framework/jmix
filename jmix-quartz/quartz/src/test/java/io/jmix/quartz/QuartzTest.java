@@ -204,4 +204,40 @@ public class QuartzTest {
         Assertions.assertNull(testJobModel);
     }
 
+    @Test
+    public void testRemovingAllTriggers() throws Exception {
+        JobModel jobModel = dataManager.create(JobModel.class);
+        jobModel.setJobName("removeTriggersJobName");
+        jobModel.setJobGroup("testJobGroup");
+        jobModel.setJobClass(QuartTestApplication.MyQuartzJob.class.getName());
+
+        List<TriggerModel> triggerModels = new ArrayList<>();
+        TriggerModel cronTriggerModel = dataManager.create(TriggerModel.class);
+        cronTriggerModel.setTriggerName("removeTriggersCronTriggerName");
+        cronTriggerModel.setTriggerGroup("testTriggerGroup");
+        cronTriggerModel.setScheduleType(ScheduleType.CRON_EXPRESSION);
+        cronTriggerModel.setCronExpression("0 0 0 * * ?");
+        triggerModels.add(cronTriggerModel);
+
+        TriggerModel simpleTriggerModel = dataManager.create(TriggerModel.class);
+        simpleTriggerModel.setTriggerName("removeTriggersSimpleTriggerName");
+        simpleTriggerModel.setTriggerGroup("testTriggerGroup");
+        simpleTriggerModel.setScheduleType(ScheduleType.SIMPLE);
+        simpleTriggerModel.setRepeatCount(100);
+        simpleTriggerModel.setRepeatInterval(10000L);
+        triggerModels.add(simpleTriggerModel);
+
+        quartzService.updateQuartzJob(jobModel, new ArrayList<>(), triggerModels, false);
+
+        JobKey jobKey = JobKey.jobKey(jobModel.getJobName(), jobModel.getJobGroup());
+        Assertions.assertEquals(2, scheduler.getTriggersOfJob(jobKey).size());
+
+        quartzService.updateQuartzJob(jobModel, new ArrayList<>(), new ArrayList<>(), true);
+
+        Assertions.assertTrue(scheduler.getTriggersOfJob(jobKey).isEmpty());
+
+        //cleanup
+        scheduler.deleteJob(jobKey);
+    }
+
 }

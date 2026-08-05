@@ -274,7 +274,8 @@ public class QuartzService {
      *
      * @param jobModel               job to edit
      * @param jobDataParameterModels parameters for job
-     * @param triggerModels          triggers for job
+     * @param triggerModels          triggers for job; existing triggers of the job are replaced with provided ones,
+     *                               empty list removes all triggers of the job
      * @param replaceJobIfExists     replace if job with the same name already exists
      */
     @SuppressWarnings("unchecked")
@@ -289,12 +290,12 @@ public class QuartzService {
             JobDetail jobDetail = buildJobDetail(jobModel, scheduler.getJobDetail(jobKey), jobDataParameterModels);
             scheduler.addJob(jobDetail, replaceJobIfExists);
 
+            //remove obsolete triggers
+            for (Trigger trigger : scheduler.getTriggersOfJob(jobKey)) {
+                scheduler.unscheduleJob(trigger.getKey());
+            }
+            //recreate triggers
             if (!CollectionUtils.isEmpty(triggerModels)) {
-                //remove obsolete triggers
-                for (Trigger trigger : scheduler.getTriggersOfJob(jobKey)) {
-                    scheduler.unscheduleJob(trigger.getKey());
-                }
-                //recreate triggers
                 for (TriggerModel triggerModel : triggerModels) {
                     Trigger trigger = buildTrigger(jobDetail, triggerModel);
                     scheduler.scheduleJob(trigger);

@@ -47,25 +47,25 @@ import java.util.Optional;
  * Shared by the runtime component loaders in the flowui module
  * and the Studio preview component loaders in flowui-kit.
  */
-public final class BaseComponentLoaderSupport {
+public final class ComponentLoaderUtils {
 
-    private BaseComponentLoaderSupport() {
+    private ComponentLoaderUtils() {
     }
 
     public static void loadSpacing(ThemableLayout layout, Element element) {
-        BaseLoaderSupport.loadBoolean(element, "spacing", layout::setSpacing);
+        LoaderUtils.loadBoolean(element, "spacing", layout::setSpacing);
     }
 
     public static void loadMargin(ThemableLayout layout, Element element) {
-        BaseLoaderSupport.loadBoolean(element, "margin", layout::setMargin);
+        LoaderUtils.loadBoolean(element, "margin", layout::setMargin);
     }
 
     public static void loadPadding(ThemableLayout layout, Element element) {
-        BaseLoaderSupport.loadBoolean(element, "padding", layout::setPadding);
+        LoaderUtils.loadBoolean(element, "padding", layout::setPadding);
     }
 
     public static void loadBoxSizing(ThemableLayout layout, Element element) {
-        BaseLoaderSupport.loadEnum(element, BoxSizing.class, "boxSizing", layout::setBoxSizing);
+        LoaderUtils.loadEnum(element, BoxSizing.class, "boxSizing", layout::setBoxSizing);
     }
 
     public static void loadThemableAttributes(ThemableLayout layout, Element element) {
@@ -76,11 +76,11 @@ public final class BaseComponentLoaderSupport {
     }
 
     public static void loadAlignItems(FlexComponent component, Element element) {
-        BaseLoaderSupport.loadEnum(element, FlexComponent.Alignment.class, "alignItems", component::setAlignItems);
+        LoaderUtils.loadEnum(element, FlexComponent.Alignment.class, "alignItems", component::setAlignItems);
     }
 
     public static void loadJustifyContent(FlexComponent component, Element element) {
-        BaseLoaderSupport.loadEnum(element, FlexComponent.JustifyContentMode.class, "justifyContent", component::setJustifyContentMode);
+        LoaderUtils.loadEnum(element, FlexComponent.JustifyContentMode.class, "justifyContent", component::setJustifyContentMode);
     }
 
     public static void loadFlexibleAttributes(FlexComponent component, Element element) {
@@ -92,80 +92,80 @@ public final class BaseComponentLoaderSupport {
     }
 
     public static void loadValueChangeMode(HasValueChangeMode component, Element element) {
-        BaseLoaderSupport.loadEnum(element, ValueChangeMode.class, "valueChangeMode", component::setValueChangeMode);
-        BaseLoaderSupport.loadInteger(element, "valueChangeTimeout", component::setValueChangeTimeout);
+        LoaderUtils.loadEnum(element, ValueChangeMode.class, "valueChangeMode", component::setValueChangeMode);
+        LoaderUtils.loadInteger(element, "valueChangeTimeout", component::setValueChangeTimeout);
     }
 
     public static void loadThemeNames(HasTheme component, Element element) {
-        BaseLoaderSupport.loadString(element, "themeNames")
-                .ifPresent(themesString -> BaseLoaderSupport.split(themesString, component::addThemeName));
+        LoaderUtils.loadString(element, "themeNames")
+                .ifPresent(themesString -> LoaderUtils.split(themesString, component::addThemeName));
     }
 
     public static void loadClassNames(HasStyle component, Element element) {
-        BaseLoaderSupport.loadString(element, "classNames")
-                .ifPresent(classNamesString -> BaseLoaderSupport.split(classNamesString, component::addClassName));
+        LoaderUtils.loadString(element, "classNames")
+                .ifPresent(classNamesString -> LoaderUtils.split(classNamesString, component::addClassName));
     }
 
     public static void loadThemeList(Component component, Element element) {
-        BaseLoaderSupport.loadString(element, "themeNames")
-                .ifPresent(themeNamesString -> BaseLoaderSupport.split(themeNamesString, component.getElement().getThemeList()::add));
+        LoaderUtils.loadString(element, "themeNames")
+                .ifPresent(themeNamesString -> LoaderUtils.split(themeNamesString, component.getElement().getThemeList()::add));
     }
 
     public static void loadValueAndElementAttributes(HasValueAndElement<?, ?> component, Element element) {
-        BaseLoaderSupport.loadBoolean(element, "readOnly", component::setReadOnly);
+        LoaderUtils.loadBoolean(element, "readOnly", component::setReadOnly);
     }
 
     public static void loadAutofocus(HasAutofocus component, Element element) {
-        BaseLoaderSupport.loadBoolean(element, "autofocus", component::setAutofocus);
+        LoaderUtils.loadBoolean(element, "autofocus", component::setAutofocus);
     }
 
     public static void loadAutocomplete(HasAutocomplete component, Element element) {
-        BaseLoaderSupport.loadEnum(element, Autocomplete.class, "autocomplete", component::setAutocomplete);
+        LoaderUtils.loadEnum(element, Autocomplete.class, "autocomplete", component::setAutocomplete);
     }
 
     public static void loadAutocapitalize(HasAutocapitalize component, Element element) {
-        BaseLoaderSupport.loadEnum(element, Autocapitalize.class, "autocapitalize", component::setAutocapitalize);
+        LoaderUtils.loadEnum(element, Autocapitalize.class, "autocapitalize", component::setAutocapitalize);
     }
 
     public static void loadAutocorrect(HasAutocorrect component, Element element) {
-        BaseLoaderSupport.loadBoolean(element, "autocorrect", component::setAutocorrect);
+        LoaderUtils.loadBoolean(element, "autocorrect", component::setAutocorrect);
     }
 
     public static void loadEnabled(HasEnabled component, Element element) {
-        BaseLoaderSupport.loadBoolean(element, "enabled", component::setEnabled);
+        LoaderUtils.loadBoolean(element, "enabled", component::setEnabled);
     }
 
     public static void loadWhiteSpace(HasText component, Element element) {
-        BaseLoaderSupport.loadEnum(element, HasText.WhiteSpace.class, "whiteSpace", component::setWhiteSpace);
+        LoaderUtils.loadEnum(element, HasText.WhiteSpace.class, "whiteSpace", component::setWhiteSpace);
     }
 
     public static void loadWidth(HasSize component, Element element) {
-        BaseLoaderSupport.loadString(element, "width")
+        LoaderUtils.loadString(element, "width")
                 .ifPresent(component::setWidth);
     }
 
     public static void loadMaxWidth(HasSize component, Element element) {
-        BaseLoaderSupport.loadString(element, "maxWidth")
+        LoaderUtils.loadString(element, "maxWidth")
                 .ifPresent(component::setMaxWidth);
     }
 
     public static void loadMinWidth(HasSize component, Element element) {
-        BaseLoaderSupport.loadString(element, "minWidth")
+        LoaderUtils.loadString(element, "minWidth")
                 .ifPresent(component::setMinWidth);
     }
 
     public static void loadHeight(HasSize component, Element element) {
-        BaseLoaderSupport.loadString(element, "height")
+        LoaderUtils.loadString(element, "height")
                 .ifPresent(component::setHeight);
     }
 
     public static void loadMaxHeight(HasSize component, Element element) {
-        BaseLoaderSupport.loadString(element, "maxHeight")
+        LoaderUtils.loadString(element, "maxHeight")
                 .ifPresent(component::setMaxHeight);
     }
 
     public static void loadMinHeight(HasSize component, Element element) {
-        BaseLoaderSupport.loadString(element, "minHeight")
+        LoaderUtils.loadString(element, "minHeight")
                 .ifPresent(component::setMinHeight);
     }
 
@@ -179,7 +179,7 @@ public final class BaseComponentLoaderSupport {
     }
 
     public static Optional<Duration> loadDuration(Element element, String attributeName) {
-        return BaseLoaderSupport.loadString(element, attributeName)
+        return LoaderUtils.loadString(element, attributeName)
                 .map(stepString -> {
                     Duration step;
 
@@ -220,7 +220,7 @@ public final class BaseComponentLoaderSupport {
      * attribute value is present and valid, or an empty {@link Optional} otherwise
      */
     public static Optional<Icon> loadIconSetIcon(Element element, String attributeName) {
-        return BaseLoaderSupport.loadString(element, attributeName)
+        return LoaderUtils.loadString(element, attributeName)
                 .map(ComponentUtils::parseIcon);
     }
 }

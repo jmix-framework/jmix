@@ -23,7 +23,7 @@ import io.jmix.flowui.kit.component.dropdownbutton.DropdownButton;
 import io.jmix.flowui.kit.meta.StudioXmlElements;
 import io.jmix.flowui.kit.meta.component.preview.StudioPreviewComponentLoader;
 import io.jmix.flowui.kit.meta.component.preview.StudioPreviewEnvironment;
-import io.jmix.flowui.kit.xml.layout.support.BaseComponentLoaderSupport;
+import io.jmix.flowui.kit.xml.layout.support.ComponentLoaderUtils;
 import org.dom4j.Element;
 import org.jspecify.annotations.Nullable;
 
@@ -53,9 +53,9 @@ public class StudioDropdownButtonPreviewLoader implements StudioPreviewComponent
 
         loadComponentBaseAttributes(button, componentElement);
         loadBoolean(componentElement, "openOnHover", button::setOpenOnHover);
-        BaseComponentLoaderSupport.loadIconSetIcon(componentElement).ifPresent(button::setIcon);
+        ComponentLoaderUtils.loadIconSetIcon(componentElement).ifPresent(button::setIcon);
         if (button instanceof ComboButton comboButton) {
-            BaseComponentLoaderSupport.loadIconSetIcon(componentElement, "dropdownIcon")
+            ComponentLoaderUtils.loadIconSetIcon(componentElement, "dropdownIcon")
                     .ifPresent(comboButton::setDropdownIcon);
         }
 

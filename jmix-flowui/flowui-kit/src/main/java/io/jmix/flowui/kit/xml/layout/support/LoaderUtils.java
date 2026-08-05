@@ -29,9 +29,9 @@ import java.util.function.Consumer;
  * Shared by the runtime component loaders in the flowui module
  * and the Studio preview component loaders in flowui-kit.
  */
-public final class BaseLoaderSupport {
+public final class LoaderUtils {
 
-    private BaseLoaderSupport() {
+    private LoaderUtils() {
     }
 
     public static Optional<String> loadString(Element element, String attributeName) {

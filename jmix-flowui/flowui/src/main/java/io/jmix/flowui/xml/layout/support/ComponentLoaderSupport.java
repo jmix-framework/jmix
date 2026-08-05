@@ -43,8 +43,8 @@ import io.jmix.flowui.fragment.FragmentOwner;
 import io.jmix.flowui.fragmentrenderer.FragmentRenderer;
 import io.jmix.flowui.kit.component.*;
 import io.jmix.flowui.kit.component.formatter.Formatter;
-import io.jmix.flowui.kit.xml.layout.support.BaseComponentLoaderSupport;
-import io.jmix.flowui.kit.xml.layout.support.BaseLoaderSupport;
+import io.jmix.flowui.kit.xml.layout.support.ComponentLoaderUtils;
+import io.jmix.flowui.kit.xml.layout.support.LoaderUtils;
 import io.jmix.flowui.xml.layout.ComponentLoader.Context;
 import io.jmix.flowui.xml.layout.loader.PropertiesLoaderSupport;
 import io.jmix.flowui.xml.layout.loader.PropertyShortcutCombinationLoader;
@@ -124,23 +124,23 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
     }
 
     public void loadSpacing(ThemableLayout layout, Element element) {
-        BaseComponentLoaderSupport.loadSpacing(layout, element);
+        ComponentLoaderUtils.loadSpacing(layout, element);
     }
 
     public void loadMargin(ThemableLayout layout, Element element) {
-        BaseComponentLoaderSupport.loadMargin(layout, element);
+        ComponentLoaderUtils.loadMargin(layout, element);
     }
 
     public void loadPadding(ThemableLayout layout, Element element) {
-        BaseComponentLoaderSupport.loadPadding(layout, element);
+        ComponentLoaderUtils.loadPadding(layout, element);
     }
 
     public void loadBoxSizing(ThemableLayout layout, Element element) {
-        BaseComponentLoaderSupport.loadBoxSizing(layout, element);
+        ComponentLoaderUtils.loadBoxSizing(layout, element);
     }
 
     public void loadThemableAttributes(ThemableLayout layout, Element element) {
-        BaseComponentLoaderSupport.loadThemableAttributes(layout, element);
+        ComponentLoaderUtils.loadThemableAttributes(layout, element);
     }
 
     public void loadTooltip(HasTooltip component, Element element) {
@@ -203,15 +203,15 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
     }
 
     public void loadAlignItems(FlexComponent component, Element element) {
-        BaseComponentLoaderSupport.loadAlignItems(component, element);
+        ComponentLoaderUtils.loadAlignItems(component, element);
     }
 
     public void loadJustifyContent(FlexComponent component, Element element) {
-        BaseComponentLoaderSupport.loadJustifyContent(component, element);
+        ComponentLoaderUtils.loadJustifyContent(component, element);
     }
 
     public void loadFlexibleAttributes(FlexComponent component, Element element) {
-        BaseComponentLoaderSupport.loadFlexibleAttributes(component, element);
+        ComponentLoaderUtils.loadFlexibleAttributes(component, element);
     }
 
     public void loadText(HasText component, Element element) {
@@ -236,7 +236,7 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
     }
 
     public void loadValueChangeMode(HasValueChangeMode component, Element element) {
-        BaseComponentLoaderSupport.loadValueChangeMode(component, element);
+        ComponentLoaderUtils.loadValueChangeMode(component, element);
     }
 
     public void loadClickNotifierAttributes(ClickNotifier<?> component, Element element) {
@@ -259,19 +259,19 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
     }
 
     public void loadThemeNames(HasTheme component, Element element) {
-        BaseComponentLoaderSupport.loadThemeNames(component, element);
+        ComponentLoaderUtils.loadThemeNames(component, element);
     }
 
     public void loadClassNames(HasStyle component, Element element) {
-        BaseComponentLoaderSupport.loadClassNames(component, element);
+        ComponentLoaderUtils.loadClassNames(component, element);
     }
 
     public void loadThemeList(com.vaadin.flow.component.Component component, Element element) {
-        BaseComponentLoaderSupport.loadThemeList(component, element);
+        ComponentLoaderUtils.loadThemeList(component, element);
     }
 
     public void loadValueAndElementAttributes(HasValueAndElement<?, ?> component, Element element) {
-        BaseComponentLoaderSupport.loadValueAndElementAttributes(component, element);
+        ComponentLoaderUtils.loadValueAndElementAttributes(component, element);
     }
 
     public void loadValidationAttributes(HasValidation component, Element element, Context context) {
@@ -298,23 +298,23 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
     }
 
     public void loadAutofocus(HasAutofocus component, Element element) {
-        BaseComponentLoaderSupport.loadAutofocus(component, element);
+        ComponentLoaderUtils.loadAutofocus(component, element);
     }
 
     public void loadAutocomplete(HasAutocomplete component, Element element) {
-        BaseComponentLoaderSupport.loadAutocomplete(component, element);
+        ComponentLoaderUtils.loadAutocomplete(component, element);
     }
 
     public void loadAutocapitalize(HasAutocapitalize component, Element element) {
-        BaseComponentLoaderSupport.loadAutocapitalize(component, element);
+        ComponentLoaderUtils.loadAutocapitalize(component, element);
     }
 
     public void loadAutocorrect(HasAutocorrect component, Element element) {
-        BaseComponentLoaderSupport.loadAutocorrect(component, element);
+        ComponentLoaderUtils.loadAutocorrect(component, element);
     }
 
     public void loadEnabled(HasEnabled component, Element element) {
-        BaseComponentLoaderSupport.loadEnabled(component, element);
+        ComponentLoaderUtils.loadEnabled(component, element);
     }
 
     public void loadAriaLabel(HasAriaLabel component, Element element) {
@@ -327,35 +327,35 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
     }
 
     public void loadWhiteSpace(HasText component, Element element) {
-        BaseComponentLoaderSupport.loadWhiteSpace(component, element);
+        ComponentLoaderUtils.loadWhiteSpace(component, element);
     }
 
     public void loadWidth(HasSize component, Element element) {
-        BaseComponentLoaderSupport.loadWidth(component, element);
+        ComponentLoaderUtils.loadWidth(component, element);
     }
 
     public void loadMaxWidth(HasSize component, Element element) {
-        BaseComponentLoaderSupport.loadMaxWidth(component, element);
+        ComponentLoaderUtils.loadMaxWidth(component, element);
     }
 
     public void loadMinWidth(HasSize component, Element element) {
-        BaseComponentLoaderSupport.loadMinWidth(component, element);
+        ComponentLoaderUtils.loadMinWidth(component, element);
     }
 
     public void loadHeight(HasSize component, Element element) {
-        BaseComponentLoaderSupport.loadHeight(component, element);
+        ComponentLoaderUtils.loadHeight(component, element);
     }
 
     public void loadMaxHeight(HasSize component, Element element) {
-        BaseComponentLoaderSupport.loadMaxHeight(component, element);
+        ComponentLoaderUtils.loadMaxHeight(component, element);
     }
 
     public void loadMinHeight(HasSize component, Element element) {
-        BaseComponentLoaderSupport.loadMinHeight(component, element);
+        ComponentLoaderUtils.loadMinHeight(component, element);
     }
 
     public void loadSizeAttributes(HasSize component, Element element) {
-        BaseComponentLoaderSupport.loadSizeAttributes(component, element);
+        ComponentLoaderUtils.loadSizeAttributes(component, element);
     }
 
     public void loadAllowedCharPattern(HasAllowedCharPattern component, Element element, Context context) {
@@ -364,7 +364,7 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
     }
 
     public Optional<Duration> loadDuration(Element element, String attributeName) {
-        return BaseComponentLoaderSupport.loadDuration(element, attributeName);
+        return ComponentLoaderUtils.loadDuration(element, attributeName);
     }
 
     /**
@@ -377,7 +377,7 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
      * is present and valid, or an empty {@link Optional} otherwise
      */
     public Optional<Icon> loadIconSetIcon(Element element) {
-        return BaseComponentLoaderSupport.loadIconSetIcon(element);
+        return ComponentLoaderUtils.loadIconSetIcon(element);
     }
 
     /**
@@ -390,7 +390,7 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
      * attribute value is present and valid, or an empty {@link Optional} otherwise
      */
     public Optional<Icon> loadIconSetIcon(Element element, String attributeName) {
-        return BaseComponentLoaderSupport.loadIconSetIcon(element, attributeName);
+        return ComponentLoaderUtils.loadIconSetIcon(element, attributeName);
     }
 
     public Optional<String> loadShortcutCombination(Element element) {
@@ -492,7 +492,7 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
     protected void loadDateFormat(DatePicker.DatePickerI18n datePickerI18n, Element element) {
         loaderSupport.loadResourceString(element, "dateFormat", context.getMessageGroup())
                 .ifPresent(dateFormatString -> {
-                    List<String> dateFormatList = BaseLoaderSupport.split(dateFormatString);
+                    List<String> dateFormatList = LoaderUtils.split(dateFormatString);
 
                     if (dateFormatList.size() == 1) {
                         datePickerI18n.setDateFormat(dateFormatList.get(0));
@@ -603,11 +603,11 @@ public class ComponentLoaderSupport implements ApplicationContextAware {
     }
 
     protected void split(String names, Consumer<String> setter) {
-        BaseLoaderSupport.split(names, setter);
+        LoaderUtils.split(names, setter);
     }
 
     protected List<String> split(String names) {
-        return BaseLoaderSupport.split(names);
+        return LoaderUtils.split(names);
     }
 
     protected Optional<Formatter<?>> loadFormatter(Element element) {

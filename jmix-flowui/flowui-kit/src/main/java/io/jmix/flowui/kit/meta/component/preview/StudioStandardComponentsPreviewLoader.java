@@ -98,8 +98,8 @@ import io.jmix.flowui.kit.component.valuepicker.MultiValuePicker;
 import io.jmix.flowui.kit.component.valuepicker.ValuePicker;
 import io.jmix.flowui.kit.meta.StudioXmlElements;
 import io.jmix.flowui.kit.meta.component.preview.loader.PreviewActionSupport;
-import io.jmix.flowui.kit.xml.layout.support.BaseComponentLoaderSupport;
-import io.jmix.flowui.kit.xml.layout.support.BaseLoaderSupport;
+import io.jmix.flowui.kit.xml.layout.support.ComponentLoaderUtils;
+import io.jmix.flowui.kit.xml.layout.support.LoaderUtils;
 import org.jspecify.annotations.Nullable;
 import org.dom4j.Element;
 
@@ -192,19 +192,19 @@ public final class StudioStandardComponentsPreviewLoader implements StudioPrevie
      * Elements needing extra attribute handling on top of the common ones.
      */
     private static final Map<String, Function<Element, Component>> SPECIALS = Map.of(
-            StudioXmlElements.ICON, element -> BaseComponentLoaderSupport.loadIconSetIcon(element).orElseGet(Icon::new),
+            StudioXmlElements.ICON, element -> ComponentLoaderUtils.loadIconSetIcon(element).orElseGet(Icon::new),
             StudioXmlElements.SVG_ICON, element -> {
                 SvgIcon svgIcon = new SvgIcon();
-                BaseLoaderSupport.loadString(element, "src", svgIcon::setSrc);
+                LoaderUtils.loadString(element, "src", svgIcon::setSrc);
                 return svgIcon;
             },
             StudioXmlElements.FONT_ICON, element -> new FontIcon(),
             StudioXmlElements.MARKDOWN, element -> new Markdown(inlineContent(element)
-                    .or(() -> BaseLoaderSupport.loadString(element, StudioXmlElements.CONTENT))
+                    .or(() -> LoaderUtils.loadString(element, StudioXmlElements.CONTENT))
                     .orElse("")),
             StudioXmlElements.IMAGE, element -> {
                 Image image = new Image();
-                BaseLoaderSupport.loadString(element, "src")
+                LoaderUtils.loadString(element, "src")
                         .filter(src -> src.startsWith("http"))
                         .ifPresent(image::setSrc);
                 return image;
@@ -378,7 +378,7 @@ public final class StudioStandardComponentsPreviewLoader implements StudioPrevie
             return;
         }
 
-        TextUserMenuItem item = BaseComponentLoaderSupport.loadIconSetIcon(itemElement)
+        TextUserMenuItem item = ComponentLoaderUtils.loadIconSetIcon(itemElement)
                 .<TextUserMenuItem>map(icon -> menu.addTextItem(id, text, icon))
                 .orElseGet(() -> menu.addTextItem(id, text));
 
@@ -409,7 +409,7 @@ public final class StudioStandardComponentsPreviewLoader implements StudioPrevie
                 .or(() -> loadString(itemElement, "viewId"))
                 .orElse(id);
 
-        BaseComponentLoaderSupport.loadIconSetIcon(itemElement)
+        ComponentLoaderUtils.loadIconSetIcon(itemElement)
                 .ifPresentOrElse(
                         icon -> menu.addTextItem(id, text, icon),
                         () -> menu.addTextItem(id, text));

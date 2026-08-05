@@ -26,7 +26,7 @@ import io.jmix.flowui.kit.component.menubar.JmixMenuItem;
 import io.jmix.flowui.kit.meta.StudioXmlElements;
 import io.jmix.flowui.kit.meta.component.preview.StudioPreviewComponentLoader;
 import io.jmix.flowui.kit.meta.component.preview.StudioPreviewEnvironment;
-import io.jmix.flowui.kit.xml.layout.support.BaseComponentLoaderSupport;
+import io.jmix.flowui.kit.xml.layout.support.ComponentLoaderUtils;
 import org.dom4j.Element;
 import org.jspecify.annotations.Nullable;
 
@@ -118,7 +118,7 @@ public class StudioGridColumnVisibilityPreviewLoader implements StudioPreviewCom
      */
     protected JmixMenuItem loadRootItem(JmixMenuBar menuBar, Element componentElement,
                                         StudioPreviewEnvironment environment) {
-        return BaseComponentLoaderSupport.loadIconSetIcon(componentElement)
+        return ComponentLoaderUtils.loadIconSetIcon(componentElement)
                 .<JmixMenuItem>map(menuBar::addItem)
                 .orElseGet(() -> loadString(componentElement, TEXT_ATTRIBUTE)
                         .map(text -> menuBar.addItem(PreviewActionSupport.resolveText(environment, text)))

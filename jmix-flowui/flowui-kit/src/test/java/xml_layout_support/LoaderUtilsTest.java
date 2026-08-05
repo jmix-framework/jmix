@@ -16,7 +16,7 @@
 
 package xml_layout_support;
 
-import io.jmix.flowui.kit.xml.layout.support.BaseLoaderSupport;
+import io.jmix.flowui.kit.xml.layout.support.LoaderUtils;
 import org.dom4j.tree.BaseElement;
 import org.junit.jupiter.api.Test;
 
@@ -26,7 +26,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class BaseLoaderSupportTest {
+class LoaderUtilsTest {
 
     enum Sample {FIRST, SECOND}
 
@@ -38,33 +38,33 @@ class BaseLoaderSupportTest {
 
     @Test
     void testLoadStringEmptyToNullByDefault() {
-        assertEquals(Optional.of("ok"), BaseLoaderSupport.loadString(element("text", "ok"), "text"));
-        assertEquals(Optional.empty(), BaseLoaderSupport.loadString(element("text", ""), "text"));
-        assertEquals(Optional.empty(), BaseLoaderSupport.loadString(new BaseElement("button"), "text"));
-        assertEquals(Optional.of(""), BaseLoaderSupport.loadString(element("text", ""), "text", false));
+        assertEquals(Optional.of("ok"), LoaderUtils.loadString(element("text", "ok"), "text"));
+        assertEquals(Optional.empty(), LoaderUtils.loadString(element("text", ""), "text"));
+        assertEquals(Optional.empty(), LoaderUtils.loadString(new BaseElement("button"), "text"));
+        assertEquals(Optional.of(""), LoaderUtils.loadString(element("text", ""), "text", false));
     }
 
     @Test
     void testTypedLoads() {
-        assertEquals(Optional.of(true), BaseLoaderSupport.loadBoolean(element("enabled", "true"), "enabled"));
-        assertEquals(Optional.of(42), BaseLoaderSupport.loadInteger(element("tabIndex", "42"), "tabIndex"));
-        assertEquals(Optional.of(1.5d), BaseLoaderSupport.loadDouble(element("min", "1.5"), "min"));
+        assertEquals(Optional.of(true), LoaderUtils.loadBoolean(element("enabled", "true"), "enabled"));
+        assertEquals(Optional.of(42), LoaderUtils.loadInteger(element("tabIndex", "42"), "tabIndex"));
+        assertEquals(Optional.of(1.5d), LoaderUtils.loadDouble(element("min", "1.5"), "min"));
         assertEquals(Optional.of(Sample.SECOND),
-                BaseLoaderSupport.loadEnum(element("mode", "SECOND"), Sample.class, "mode"));
+                LoaderUtils.loadEnum(element("mode", "SECOND"), Sample.class, "mode"));
     }
 
     @Test
     void testConsumerOverloadSkipsAbsentAttribute() {
         AtomicReference<String> holder = new AtomicReference<>("untouched");
-        BaseLoaderSupport.loadString(new BaseElement("button"), "text", holder::set);
+        LoaderUtils.loadString(new BaseElement("button"), "text", holder::set);
         assertEquals("untouched", holder.get());
-        BaseLoaderSupport.loadString(element("text", "ok"), "text", holder::set);
+        LoaderUtils.loadString(element("text", "ok"), "text", holder::set);
         assertEquals("ok", holder.get());
     }
 
     @Test
     void testSplitByWhitespaceAndCommas() {
-        assertEquals(List.of("a", "b", "c"), BaseLoaderSupport.split("a b,c"));
-        assertEquals(List.of(), BaseLoaderSupport.split("  ,  "));
+        assertEquals(List.of("a", "b", "c"), LoaderUtils.split("a b,c"));
+        assertEquals(List.of(), LoaderUtils.split("  ,  "));
     }
 }

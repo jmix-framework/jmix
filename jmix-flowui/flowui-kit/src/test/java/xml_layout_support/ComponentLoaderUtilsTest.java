@@ -19,13 +19,13 @@ package xml_layout_support;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import io.jmix.flowui.kit.xml.layout.support.BaseComponentLoaderSupport;
+import io.jmix.flowui.kit.xml.layout.support.ComponentLoaderUtils;
 import org.dom4j.tree.BaseElement;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class BaseComponentLoaderSupportTest {
+class ComponentLoaderUtilsTest {
 
     @Test
     void testLoadSizeAttributes() {
@@ -34,7 +34,7 @@ class BaseComponentLoaderSupportTest {
         element.addAttribute("maxHeight", "5em");
 
         Button button = new Button();
-        BaseComponentLoaderSupport.loadSizeAttributes(button, element);
+        ComponentLoaderUtils.loadSizeAttributes(button, element);
 
         assertEquals("10em", button.getWidth());
         assertEquals("5em", button.getMaxHeight());
@@ -49,9 +49,9 @@ class BaseComponentLoaderSupportTest {
         element.addAttribute("themeNames", "primary small");
 
         Button button = new Button();
-        BaseComponentLoaderSupport.loadEnabled(button, element);
-        BaseComponentLoaderSupport.loadClassNames(button, element);
-        BaseComponentLoaderSupport.loadThemeNames(button, element);
+        ComponentLoaderUtils.loadEnabled(button, element);
+        ComponentLoaderUtils.loadClassNames(button, element);
+        ComponentLoaderUtils.loadThemeNames(button, element);
 
         assertFalse(button.isEnabled());
         assertTrue(button.hasClassName("cls-a"));
@@ -66,7 +66,7 @@ class BaseComponentLoaderSupportTest {
         element.addAttribute("padding", "false");
 
         VerticalLayout layout = new VerticalLayout();
-        BaseComponentLoaderSupport.loadThemableAttributes(layout, element);
+        ComponentLoaderUtils.loadThemableAttributes(layout, element);
 
         assertTrue(layout.isMargin());
         assertFalse(layout.isPadding());
@@ -77,7 +77,7 @@ class BaseComponentLoaderSupportTest {
         BaseElement element = new BaseElement("button");
         element.addAttribute("icon", "CHECK");
 
-        java.util.Optional<Icon> icon = BaseComponentLoaderSupport.loadIconSetIcon(element);
+        java.util.Optional<Icon> icon = ComponentLoaderUtils.loadIconSetIcon(element);
         assertTrue(icon.isPresent());
     }
 }

@@ -27,8 +27,8 @@ import com.vaadin.flow.component.HasStyle;
 import com.vaadin.flow.component.HasTheme;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.ThemableLayout;
-import io.jmix.flowui.kit.xml.layout.support.BaseComponentLoaderSupport;
-import io.jmix.flowui.kit.xml.layout.support.BaseLoaderSupport;
+import io.jmix.flowui.kit.xml.layout.support.ComponentLoaderUtils;
+import io.jmix.flowui.kit.xml.layout.support.LoaderUtils;
 import org.jspecify.annotations.Nullable;
 import org.dom4j.Element;
 
@@ -88,95 +88,95 @@ public interface StudioPreviewComponentLoader {
     }
 
     default Optional<String> loadString(Element element, String attributeName) {
-        return BaseLoaderSupport.loadString(element, attributeName);
+        return LoaderUtils.loadString(element, attributeName);
     }
 
     default Optional<String> loadString(Element element, String attributeName, boolean emptyToNull) {
-        return BaseLoaderSupport.loadString(element, attributeName, emptyToNull);
+        return LoaderUtils.loadString(element, attributeName, emptyToNull);
     }
 
     default Optional<Boolean> loadBoolean(Element element, String attributeName) {
-        return BaseLoaderSupport.loadBoolean(element, attributeName);
+        return LoaderUtils.loadBoolean(element, attributeName);
     }
 
     default Optional<Integer> loadInteger(Element element, String attributeName) {
-        return BaseLoaderSupport.loadInteger(element, attributeName);
+        return LoaderUtils.loadInteger(element, attributeName);
     }
 
     default Optional<Double> loadDouble(Element element, String attributeName) {
-        return BaseLoaderSupport.loadDouble(element, attributeName);
+        return LoaderUtils.loadDouble(element, attributeName);
     }
 
     default <T extends Enum<T>> Optional<T> loadEnum(Element element, Class<T> type, String attributeName) {
-        return BaseLoaderSupport.loadEnum(element, type, attributeName);
+        return LoaderUtils.loadEnum(element, type, attributeName);
     }
 
     default void loadString(Element element, String attributeName, Consumer<String> setter) {
-        BaseLoaderSupport.loadString(element, attributeName, setter);
+        LoaderUtils.loadString(element, attributeName, setter);
     }
 
     default void loadBoolean(Element element, String attributeName, Consumer<Boolean> setter) {
-        BaseLoaderSupport.loadBoolean(element, attributeName, setter);
+        LoaderUtils.loadBoolean(element, attributeName, setter);
     }
 
     default void loadInteger(Element element, String attributeName, Consumer<Integer> setter) {
-        BaseLoaderSupport.loadInteger(element, attributeName, setter);
+        LoaderUtils.loadInteger(element, attributeName, setter);
     }
 
     default void loadDouble(Element element, String attributeName, Consumer<Double> setter) {
-        BaseLoaderSupport.loadDouble(element, attributeName, setter);
+        LoaderUtils.loadDouble(element, attributeName, setter);
     }
 
     default <T extends Enum<T>> void loadEnum(Element element, Class<T> type, String attributeName, Consumer<T> setter) {
-        BaseLoaderSupport.loadEnum(element, type, attributeName, setter);
+        LoaderUtils.loadEnum(element, type, attributeName, setter);
     }
 
     default void loadWidth(HasSize component, Element element) {
-        BaseComponentLoaderSupport.loadWidth(component, element);
+        ComponentLoaderUtils.loadWidth(component, element);
     }
 
     default void loadMaxWidth(HasSize component, Element element) {
-        BaseComponentLoaderSupport.loadMaxWidth(component, element);
+        ComponentLoaderUtils.loadMaxWidth(component, element);
     }
 
     default void loadMinWidth(HasSize component, Element element) {
-        BaseComponentLoaderSupport.loadMinWidth(component, element);
+        ComponentLoaderUtils.loadMinWidth(component, element);
     }
 
     default void loadHeight(HasSize component, Element element) {
-        BaseComponentLoaderSupport.loadHeight(component, element);
+        ComponentLoaderUtils.loadHeight(component, element);
     }
 
     default void loadMaxHeight(HasSize component, Element element) {
-        BaseComponentLoaderSupport.loadMaxHeight(component, element);
+        ComponentLoaderUtils.loadMaxHeight(component, element);
     }
 
     default void loadMinHeight(HasSize component, Element element) {
-        BaseComponentLoaderSupport.loadMinHeight(component, element);
+        ComponentLoaderUtils.loadMinHeight(component, element);
     }
 
     default void loadSizeAttributes(HasSize component, Element element) {
-        BaseComponentLoaderSupport.loadSizeAttributes(component, element);
+        ComponentLoaderUtils.loadSizeAttributes(component, element);
     }
 
     default void loadEnabled(HasEnabled component, Element element) {
-        BaseComponentLoaderSupport.loadEnabled(component, element);
+        ComponentLoaderUtils.loadEnabled(component, element);
     }
 
     default void loadClassNames(HasStyle component, Element element) {
-        BaseComponentLoaderSupport.loadClassNames(component, element);
+        ComponentLoaderUtils.loadClassNames(component, element);
     }
 
     default void loadThemeNames(HasTheme component, Element element) {
-        BaseComponentLoaderSupport.loadThemeNames(component, element);
+        ComponentLoaderUtils.loadThemeNames(component, element);
     }
 
     default void split(String names, Consumer<String> setter) {
-        BaseLoaderSupport.split(names, setter);
+        LoaderUtils.split(names, setter);
     }
 
     default List<String> split(String names) {
-        return BaseLoaderSupport.split(names);
+        return LoaderUtils.split(names);
     }
 
     /**
@@ -184,23 +184,23 @@ public interface StudioPreviewComponentLoader {
      * based on the interfaces implemented by the {@code component}.
      */
     default void loadComponentBaseAttributes(Component component, Element element) {
-        BaseLoaderSupport.loadBoolean(element, "visible", component::setVisible);
+        LoaderUtils.loadBoolean(element, "visible", component::setVisible);
         if (component instanceof HasSize hasSize) {
-            BaseComponentLoaderSupport.loadSizeAttributes(hasSize, element);
+            ComponentLoaderUtils.loadSizeAttributes(hasSize, element);
         }
         if (component instanceof HasEnabled hasEnabled) {
-            BaseComponentLoaderSupport.loadEnabled(hasEnabled, element);
+            ComponentLoaderUtils.loadEnabled(hasEnabled, element);
         }
         // Component implements HasStyle, so class names are loaded unconditionally.
-        BaseComponentLoaderSupport.loadClassNames(component, element);
+        ComponentLoaderUtils.loadClassNames(component, element);
         if (component instanceof HasTheme hasTheme) {
-            BaseComponentLoaderSupport.loadThemeNames(hasTheme, element);
+            ComponentLoaderUtils.loadThemeNames(hasTheme, element);
         }
         if (component instanceof ThemableLayout themableLayout) {
-            BaseComponentLoaderSupport.loadThemableAttributes(themableLayout, element);
+            ComponentLoaderUtils.loadThemableAttributes(themableLayout, element);
         }
         if (component instanceof FlexComponent flexComponent) {
-            BaseComponentLoaderSupport.loadFlexibleAttributes(flexComponent, element);
+            ComponentLoaderUtils.loadFlexibleAttributes(flexComponent, element);
         }
     }
 }

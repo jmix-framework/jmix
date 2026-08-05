@@ -19,8 +19,8 @@ package io.jmix.flowui.kit.meta.component.preview.loader;
 import io.jmix.flowui.kit.action.BaseAction;
 import io.jmix.flowui.kit.meta.StudioXmlElements;
 import io.jmix.flowui.kit.meta.component.preview.StudioPreviewEnvironment;
-import io.jmix.flowui.kit.xml.layout.support.BaseComponentLoaderSupport;
-import io.jmix.flowui.kit.xml.layout.support.BaseLoaderSupport;
+import io.jmix.flowui.kit.xml.layout.support.ComponentLoaderUtils;
+import io.jmix.flowui.kit.xml.layout.support.LoaderUtils;
 import org.dom4j.Element;
 import org.jspecify.annotations.Nullable;
 
@@ -54,16 +54,16 @@ public final class PreviewActionSupport {
     /**
      * Builds a {@link BaseAction} from a declarative {@code <action>} element: {@code id} attribute
      * (falling back to {@code fallbackId}), {@code text} (resolved via {@link #resolveText}),
-     * {@code icon} (via {@link BaseComponentLoaderSupport#loadIconSetIcon(Element)}), and
+     * {@code icon} (via {@link ComponentLoaderUtils#loadIconSetIcon(Element)}), and
      * {@code enabled}.
      */
     public static BaseAction<?> buildAction(Element actionElement, String fallbackId, StudioPreviewEnvironment environment) {
-        String actionId = BaseLoaderSupport.loadString(actionElement, "id").orElse(fallbackId);
+        String actionId = LoaderUtils.loadString(actionElement, "id").orElse(fallbackId);
         BaseAction<?> action = new BaseAction<>(actionId);
-        BaseLoaderSupport.loadString(actionElement, "text")
+        LoaderUtils.loadString(actionElement, "text")
                 .ifPresent(text -> action.withText(resolveText(environment, text)));
-        BaseComponentLoaderSupport.loadIconSetIcon(actionElement).ifPresent(action::setIcon);
-        BaseLoaderSupport.loadBoolean(actionElement, "enabled", action::setEnabled);
+        ComponentLoaderUtils.loadIconSetIcon(actionElement).ifPresent(action::setIcon);
+        LoaderUtils.loadBoolean(actionElement, "enabled", action::setEnabled);
         return action;
     }
 
@@ -90,7 +90,7 @@ public final class PreviewActionSupport {
     public static void loadActionItem(Element itemElement, Element viewElement, StudioPreviewEnvironment environment,
                                       BiConsumer<String, BaseAction<?>> actionItemAdder,
                                       BiConsumer<String, String> textItemAdder) {
-        String id = BaseLoaderSupport.loadString(itemElement, "id").orElse(null);
+        String id = LoaderUtils.loadString(itemElement, "id").orElse(null);
         if (id == null) {
             // Runtime throws without an id, preview skips silently.
             return;
@@ -102,7 +102,7 @@ public final class PreviewActionSupport {
             return;
         }
 
-        String ref = BaseLoaderSupport.loadString(itemElement, "ref").orElse(null);
+        String ref = LoaderUtils.loadString(itemElement, "ref").orElse(null);
         if (ref == null) {
             // Neither an inline action nor a ref: runtime throws, preview skips silently.
             return;

@@ -17,211 +17,44 @@
 package xlsx
 
 import org.apache.poi.ss.usermodel.CellType
-import org.apache.poi.ss.usermodel.DateUtil
-
-import java.text.DecimalFormat
-import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
-import java.time.ZoneId
 
 /**
- * Verifies that a single {@code ${alias}} placeholder is rendered with the correct Excel cell type and value
- * for every supported Java type, and that value formats are applied.
+ * Runs the {@link BaseXlsxCellValueTest} cell-value contract against the in-memory {@code XlsxFormatter}
+ * (the default {@link BaseXlsxRenderTest#createFormatter}). The scenarios live in the base spec because the
+ * streaming engine must satisfy the same ones — see {@code StreamingXlsxCellValueTest}.
+ *
+ * <p>Add a scenario here only when it is specific to the in-memory engine; anything both engines must do
+ * belongs in the base spec.
  */
-class XlsxCellValueTest extends BaseXlsxRenderTest {
+class XlsxCellValueTest extends BaseXlsxCellValueTest {
 
-    def "string value is written as a text cell"() {
-        given:
+    /**
+     * Pins a structural difference between the engines, so it cannot silently change: this engine builds the
+     * result from band ranges only, so a template row that no named range covers is not emitted at all and
+     * the band moves up to take its place. The streaming engine copies such rows through (see
+     * {@code StreamingXlsxCellValueTest} and the streaming structure spec), which means the same template can
+     * render differently on the two engines — worth knowing when migrating a report to streaming.
+     */
+    def "a template row outside every band range is not emitted by this engine"() {
+        given: "row 0 is covered by no named range and holds a numeric and a boolean literal"
             def template = buildTemplate { wb ->
                 def sheet = sheet(wb)
-                cell(sheet, 0, 0, '${name}')
-                defineBand(wb, "Data", 0, 0, 0, 0)
+                numericCell(sheet, 0, 0, 2026d)
+                booleanCell(sheet, 0, 1, false)
+                cell(sheet, 1, 0, '${name}')
+                defineBand(wb, "Data", 1, 0, 1, 0)
             }
             def root = rootBand("Data")
-            addBand(root, "Data", [name: "Hello world"])
+            addBand(root, "Data", [name: "a"])
 
         when:
             def sheet = renderAndReadFirstSheet(template, root)
 
-        then:
-            stringValue(sheet, 0, 0) == "Hello world"
-    }
+        then: "the band renders at the very top — the out-of-band row above it is gone, literals and all"
+            stringValue(sheet, 0, 0) == "a"
+            cellOrNull(sheet, 0, 1) == null
 
-    def "integer and double values are written as numeric cells"() {
-        given:
-            def template = buildTemplate { wb ->
-                def sheet = sheet(wb)
-                cell(sheet, 0, 0, '${count}')
-                cell(sheet, 0, 1, '${price}')
-                defineBand(wb, "Data", 0, 0, 0, 1)
-            }
-            def root = rootBand("Data")
-            addBand(root, "Data", [count: 42, price: 3.5d])
-
-        when:
-            def sheet = renderAndReadFirstSheet(template, root)
-
-        then:
-            requireCell(sheet, 0, 0).cellType == CellType.NUMERIC
-            numericValue(sheet, 0, 0) == 42.0d
-            numericValue(sheet, 0, 1) == 3.5d
-    }
-
-    def "boolean values are written as boolean cells"() {
-        given:
-            def template = buildTemplate { wb ->
-                def sheet = sheet(wb)
-                cell(sheet, 0, 0, '${yes}')
-                cell(sheet, 0, 1, '${no}')
-                defineBand(wb, "Data", 0, 0, 0, 1)
-            }
-            def root = rootBand("Data")
-            addBand(root, "Data", [yes: true, no: false])
-
-        when:
-            def sheet = renderAndReadFirstSheet(template, root)
-
-        then:
-            requireCell(sheet, 0, 0).cellType == CellType.BOOLEAN
-            booleanValue(sheet, 0, 0)
-            !booleanValue(sheet, 0, 1)
-    }
-
-    def "LocalTime is written as an Excel time fraction"() {
-        given:
-            def template = buildTemplate { wb ->
-                def sheet = sheet(wb)
-                cell(sheet, 0, 0, '${time}')
-                defineBand(wb, "Data", 0, 0, 0, 0)
-            }
-            def root = rootBand("Data")
-            addBand(root, "Data", [time: LocalTime.NOON])
-
-        when:
-            def sheet = renderAndReadFirstSheet(template, root)
-
-        then:
-            numericValue(sheet, 0, 0) == 0.5d
-    }
-
-    def "java.util.Date, LocalDate and LocalDateTime are written as Excel serial dates"() {
-        given:
-            def localDate = LocalDate.of(2025, 1, 15)
-            def localDateTime = LocalDateTime.of(2025, 1, 15, 10, 30)
-            def utilDate = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant())
-
-            def template = buildTemplate { wb ->
-                def sheet = sheet(wb)
-                cell(sheet, 0, 0, '${utilDate}')
-                cell(sheet, 0, 1, '${localDate}')
-                cell(sheet, 0, 2, '${localDateTime}')
-                defineBand(wb, "Data", 0, 0, 0, 2)
-            }
-            def root = rootBand("Data")
-            addBand(root, "Data", [utilDate: utilDate, localDate: localDate, localDateTime: localDateTime])
-
-        when:
-            def sheet = renderAndReadFirstSheet(template, root)
-
-        then:
-            numericValue(sheet, 0, 0) == DateUtil.getExcelDate(utilDate)
-            numericValue(sheet, 0, 1) == DateUtil.getExcelDate(localDate)
-            numericValue(sheet, 0, 2) == DateUtil.getExcelDate(localDateTime)
-    }
-
-    def "missing value replaces the placeholder with an empty cell"() {
-        given:
-            def template = buildTemplate { wb ->
-                def sheet = sheet(wb)
-                cell(sheet, 0, 0, '${missing}')
-                defineBand(wb, "Data", 0, 0, 0, 0)
-            }
-            def root = rootBand("Data")
-            addBand(root, "Data", [present: "x"])
-
-        when:
-            def sheet = renderAndReadFirstSheet(template, root)
-
-        then: "the literal placeholder is not left in the output"
-            def c = cellOrNull(sheet, 0, 0)
-            c == null || c.cellType == CellType.BLANK ||
-                    (c.cellType == CellType.STRING && c.stringCellValue.isEmpty())
-    }
-
-    def "a cell with several placeholders is rendered as concatenated text"() {
-        given:
-            def template = buildTemplate { wb ->
-                def sheet = sheet(wb)
-                cell(sheet, 0, 0, '${first} ${last}')
-                defineBand(wb, "Data", 0, 0, 0, 0)
-            }
-            def root = rootBand("Data")
-            addBand(root, "Data", [first: "John", last: "Doe"])
-
-        when:
-            def sheet = renderAndReadFirstSheet(template, root)
-
-        then:
-            stringValue(sheet, 0, 0) == "John Doe"
-    }
-
-    def "static text without placeholders is preserved"() {
-        given:
-            def template = buildTemplate { wb ->
-                def sheet = sheet(wb)
-                cell(sheet, 0, 0, "Total:")
-                cell(sheet, 0, 1, '${value}')
-                defineBand(wb, "Data", 0, 0, 0, 1)
-            }
-            def root = rootBand("Data")
-            addBand(root, "Data", [value: "42"])
-
-        when:
-            def sheet = renderAndReadFirstSheet(template, root)
-
-        then:
-            stringValue(sheet, 0, 0) == "Total:"
-            stringValue(sheet, 0, 1) == "42"
-    }
-
-    def "a numeric value format is applied and produces a formatted text cell"() {
-        given:
-            def template = buildTemplate { wb ->
-                def sheet = sheet(wb)
-                cell(sheet, 0, 0, '${amount}')
-                defineBand(wb, "Data", 0, 0, 0, 0)
-            }
-            def root = rootBand("Data")
-            withFieldFormats(root, fieldFormat("Data.amount", "#,##0.00"))
-            addBand(root, "Data", [amount: 1234.5d])
-
-        when:
-            def sheet = renderAndReadFirstSheet(template, root)
-
-        then: "compared against the same DecimalFormat the formatter uses, so the test is locale-independent"
-            stringValue(sheet, 0, 0) == new DecimalFormat("#,##0.00").format(1234.5d)
-    }
-
-    def "a date value format is applied and produces a formatted text cell"() {
-        given:
-            def localDateTime = LocalDateTime.of(2025, 1, 15, 10, 30)
-            def utilDate = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant())
-
-            def template = buildTemplate { wb ->
-                def sheet = sheet(wb)
-                cell(sheet, 0, 0, '${date}')
-                defineBand(wb, "Data", 0, 0, 0, 0)
-            }
-            def root = rootBand("Data")
-            withFieldFormats(root, fieldFormat("Data.date", "dd.MM.yyyy"))
-            addBand(root, "Data", [date: utilDate])
-
-        when:
-            def sheet = renderAndReadFirstSheet(template, root)
-
-        then:
-            stringValue(sheet, 0, 0) == new SimpleDateFormat("dd.MM.yyyy").format(utilDate)
+        and: "and nothing else is emitted"
+            sheet.getPhysicalNumberOfRows() == 1
     }
 }

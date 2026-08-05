@@ -16,43 +16,20 @@
 
 package xlsx
 
-import org.apache.poi.ss.usermodel.Cell
-import org.apache.poi.ss.usermodel.CellType
-import org.apache.poi.ss.usermodel.Sheet
-
 /**
- * Verifies the formula post-processing pass: in-row ("inner") formulas are shifted for every repetition of
- * their band, and aggregate ("outer") formulas referencing another band grow to cover all of its rows.
+ * Runs the {@link BaseXlsxFormulaTest} formula contract against the in-memory {@code XlsxFormatter}, plus the
+ * empty-band case, where the two engines deliberately differ: this one leaves the formula pointing at the
+ * template range, while the streaming engine writes the {@code "ERROR: Formula references to empty range"}
+ * text (asserted in {@code StreamingXlsxFormulaTest}).
  */
-class XlsxFormulaTest extends BaseXlsxRenderTest {
+class XlsxFormulaTest extends BaseXlsxFormulaTest {
 
-    def "an in-row formula is shifted down for every band row"() {
-        given:
-            def template = buildTemplate { wb ->
-                def sheet = sheet(wb)
-                cell(sheet, 0, 0, '${qty}')
-                cell(sheet, 0, 1, '${price}')
-                formulaCell(sheet, 0, 2, "A1*B1")
-                defineBand(wb, "Data", 0, 0, 0, 2)
-            }
-            def root = rootBand("Data")
-            addBand(root, "Data", [qty: 2, price: 10])
-            addBand(root, "Data", [qty: 3, price: 20])
-            addBand(root, "Data", [qty: 4, price: 30])
-
-        when:
-            def sheet = renderAndReadFirstSheet(template, root)
-
-        then: "each rendered row keeps its own references"
-            formula(sheet, 0, 2) == "A1*B1"
-            formula(sheet, 1, 2) == "A2*B2"
-            formula(sheet, 2, 2) == "A3*B3"
-        and: "input columns hold the data"
-            numericValue(sheet, 0, 0) == 2.0d
-            numericValue(sheet, 2, 1) == 30.0d
-    }
-
-    def "an aggregate formula grows to cover all rows of the referenced band"() {
+    /**
+     * The idiomatic placement for this engine: the aggregate lives in a totals band. It cannot go on a row
+     * outside every band, because this engine emits band ranges only. The streaming engine is the exact
+     * opposite — see {@code StreamingXlsxFormulaTest}.
+     */
+    def "an aggregate formula in a totals band grows to cover all rows of the referenced band"() {
         given:
             def template = buildTemplate { wb ->
                 def sheet = sheet(wb)
@@ -96,16 +73,5 @@ class XlsxFormulaTest extends BaseXlsxRenderTest {
             def total = findFormulaCell(sheet)
             total != null
             total.cellFormula == "SUM(B1:B1)"
-    }
-
-    protected Cell findFormulaCell(Sheet sheet) {
-        for (def row : sheet) {
-            for (def c : row) {
-                if (c.cellType == CellType.FORMULA) {
-                    return c
-                }
-            }
-        }
-        return null
     }
 }

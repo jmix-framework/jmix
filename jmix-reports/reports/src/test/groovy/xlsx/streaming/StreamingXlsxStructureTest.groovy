@@ -518,6 +518,42 @@ class StreamingXlsxStructureTest extends StreamingBaseXlsxRenderTest {
         e.message.toLowerCase().contains("limit")
     }
 
+    def "discard deletes the spooled sheet data instead of leaving temp files behind"() {
+        given: "more rows than the sliding window, so SXSSF really spools flushed rows to disk"
+        def template = buildTemplate { wb ->
+            cell(sheet(wb), 0, 0, '${v}')
+            defineBand(wb, "Data", 0, 0, 0, 0)
+        }
+        def root = rootBand("Data")
+        (1..150).each { addBand(root, "Data", [v: "v$it"]) }
+        def reportTemplate = new ReportTemplate()
+        reportTemplate.setContent(template)
+        def formatter = new StreamingXlsxFormatter(new FormatterFactoryInput(
+                "xlsx", root, reportTemplate, ReportOutputType.xlsx, new ByteArrayOutputStream()))
+        def before = poiSpoolFiles()
+
+        when: "the document is built but never written"
+        formatter.consumeData()
+
+        then: """the render did spool to disk — asserted so the check below cannot pass vacuously on a run
+                 that never created a temp file in the first place"""
+        !(poiSpoolFiles() - before).isEmpty()
+
+        when: "the partially built result is discarded (the engine does this when a loader fails after the render)"
+        formatter.discard()
+
+        then: """nothing is left in the temp directory. SXSSF spool files are not deleteOnExit, so a leak here
+                 outlives the report run — for a large report that is gigabytes of dead files, which is the
+                 whole reason discard() exists."""
+        (poiSpoolFiles() - before).isEmpty()
+    }
+
+    /** POI spools SXSSF sheet data into {@code ${java.io.tmpdir}/poifiles} as {@code poi-sxssf-sheet*} files. */
+    protected static Set<File> poiSpoolFiles() {
+        def files = new File(System.getProperty("java.io.tmpdir"), "poifiles").listFiles()
+        return files == null ? [] as Set<File> : files.findAll { it.name.startsWith("poi-sxssf-sheet") } as Set<File>
+    }
+
     def "discard is idempotent and safe in any phase"() {
         given:
         def template = buildTemplate { wb ->

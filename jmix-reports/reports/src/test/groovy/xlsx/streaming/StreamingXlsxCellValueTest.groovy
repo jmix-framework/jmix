@@ -16,10 +16,13 @@
 
 package xlsx.streaming
 
+import io.jmix.reports.yarg.formatters.ReportFormatter
+import io.jmix.reports.yarg.formatters.factory.FormatterFactoryInput
+import io.jmix.reports.yarg.formatters.impl.StreamingXlsxFormatter
 import org.apache.poi.ss.usermodel.CellType
 import org.apache.poi.ss.usermodel.DateUtil
 import org.apache.poi.ss.usermodel.Sheet
-import xlsx.StreamingBaseXlsxRenderTest
+import xlsx.BaseXlsxCellValueTest
 
 import java.text.DecimalFormat
 import java.time.LocalDate
@@ -27,11 +30,50 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 
 /**
- * Value typing of the streaming XLSX formatter — must be byte-compatible with the non-streaming
- * engine (see {@code XlsxCellValueTest}): text stays text, numbers/dates become numeric cells,
- * booleans become boolean cells, formatted values become formatted text.
+ * Value typing of the streaming XLSX formatter.
+ *
+ * <p>Typing parity with the in-memory engine is a documented promise, so this spec extends
+ * {@link BaseXlsxCellValueTest} and re-runs every scenario of that shared contract through
+ * {@link StreamingXlsxFormatter} — the promise is measured, not restated. The scenarios below add what is
+ * specific to this engine: types the shared contract does not cover, and the two documented divergences
+ * (an integer beyond a double's exact range, and a Float's shortest decimal).
  */
-class StreamingXlsxCellValueTest extends StreamingBaseXlsxRenderTest {
+class StreamingXlsxCellValueTest extends BaseXlsxCellValueTest {
+
+    @Override
+    protected ReportFormatter createFormatter(FormatterFactoryInput input) {
+        return new StreamingXlsxFormatter(input)
+    }
+
+    /**
+     * Covers {@code writeStaticCellValue}'s numeric and boolean branches. Not part of the shared contract
+     * because the in-memory engine does NOT manage this: it renders the numeric literal as text and drops the
+     * boolean one (pinned in {@code XlsxCellValueTest}). This engine is the more faithful of the two here.
+     */
+    def "numeric and boolean literals on a static row keep their types"() {
+        given: "row 0 is static (no band covers it); the band starts at row 1"
+        def template = buildTemplate { wb ->
+            def s = sheet(wb)
+            numericCell(s, 0, 0, 2026d)
+            booleanCell(s, 0, 1, false)
+            cell(s, 1, 0, '${name}')
+            defineBand(wb, "Data", 1, 0, 1, 0)
+        }
+        def root = rootBand("Data")
+        addBand(root, "Data", [name: "a"])
+
+        when:
+        def sheet = renderAndReadFirstSheet(template, root)
+
+        then: "static literals are carried over with their types, not turned into text"
+        requireCell(sheet, 0, 0).cellType == CellType.NUMERIC
+        numericValue(sheet, 0, 0) == 2026d
+        requireCell(sheet, 0, 1).cellType == CellType.BOOLEAN
+        !booleanValue(sheet, 0, 1)
+
+        and: "the band still renders below the static row"
+        stringValue(sheet, 1, 0) == "a"
+    }
 
     private Sheet renderSingle(Object value, String format = null) {
         def template = buildTemplate { wb ->

@@ -38,10 +38,11 @@ import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicLong
 
 /**
- * Contrast case for {@link LargeXlsxReportGenerationTest}: the same 200x500k single-sheet report that
- * exhausts the heap on the in-memory engine must complete on {@link StreamingXlsxFormatter} with the
- * retained heap staying bounded, because rendered rows are flushed to disk instead of being kept as a
- * document tree.
+ * Contrast case for {@link LargeXlsxReportGenerationTest}: a 200x500k single-sheet report must complete on
+ * {@link StreamingXlsxFormatter} with the retained heap staying bounded, because rendered rows are flushed to
+ * disk instead of being kept as a document tree. For scale, on the same 2 GB test heap the in-memory engine
+ * exhausts it at roughly 85k of those rows — so that test measures its baseline at a scale it survives, and
+ * this one runs about six times past where it dies.
  *
  * <p>The band tree still shares one data map across all rows (input stays cheap); the streamed output
  * goes to a temp file so the measurement is not skewed by an in-memory output buffer. Verification uses
@@ -73,7 +74,7 @@ class StreamingLargeXlsxReportGenerationTest extends Specification {
     }
 
     def "streams a large xlsx report within a bounded heap"() {
-        given: "the same single-band template and shared-row band tree as the in-memory limit reproducer"
+        given: "the same single-band template and shared-row band tree as the in-memory baseline test"
             log.info("Streaming XLSX: {} columns x {} rows = {} cells, heap bound {} MB",
                     COLUMNS, ROWS, ((long) COLUMNS) * ROWS, HEAP_BOUND_MB)
 
@@ -188,18 +189,21 @@ class StreamingLargeXlsxReportGenerationTest extends Specification {
                 def handler = new DefaultHandler() {
                     @Override
                     void startElement(String uri, String localName, String qName, Attributes attributes) {
-                        if (qName == "row") {
+                        // localName, not qName — see LargeXlsxReportGenerationTest.elementName: qName carries
+                        // the writer's namespace prefix, and comparing it silently counts zero rows.
+                        def name = LargeXlsxReportGenerationTest.elementName(localName, qName)
+                        if (name == "row") {
                             inRow[0] = true
                             currentRowCells[0] = 0
                             rowCount[0]++
-                        } else if (qName == "c" && inRow[0]) {
+                        } else if (name == "c" && inRow[0]) {
                             currentRowCells[0]++
                         }
                     }
 
                     @Override
                     void endElement(String uri, String localName, String qName) {
-                        if (qName == "row") {
+                        if (LargeXlsxReportGenerationTest.elementName(localName, qName) == "row") {
                             if (firstRowCells[0] < 0) {
                                 firstRowCells[0] = currentRowCells[0]
                             }

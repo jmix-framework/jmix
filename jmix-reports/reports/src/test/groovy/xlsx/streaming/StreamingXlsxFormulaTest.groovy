@@ -17,14 +17,63 @@
 package xlsx.streaming
 
 import io.jmix.reports.yarg.exception.ReportFormattingException
-import xlsx.StreamingBaseXlsxRenderTest
+import io.jmix.reports.yarg.formatters.ReportFormatter
+import io.jmix.reports.yarg.formatters.factory.FormatterFactoryInput
+import io.jmix.reports.yarg.formatters.impl.StreamingXlsxFormatter
+import xlsx.BaseXlsxFormulaTest
 
 /**
  * Formula handling of the streaming XLSX formatter, computed at row-write time: in-row ("inner")
  * formulas shift with each band instance; trailing aggregate ("outer") formulas below the data grow
  * to cover all rendered band rows.
+ *
+ * <p>Extends {@link BaseXlsxFormulaTest} so the rewriting rules both engines share are measured against this
+ * engine too, instead of being restated. The scenarios below are the ones only this engine has: layouts it
+ * must reject, absolute anchors, sheet-qualified references, and the empty-band error text.
  */
-class StreamingXlsxFormulaTest extends StreamingBaseXlsxRenderTest {
+class StreamingXlsxFormulaTest extends BaseXlsxFormulaTest {
+
+    @Override
+    protected ReportFormatter createFormatter(FormatterFactoryInput input) {
+        return new StreamingXlsxFormatter(input)
+    }
+
+    /**
+     * KNOWN DEFECT, pinned so it stays visible rather than being discovered in a delivered report: an
+     * aggregate placed inside a totals BAND is not grown — it keeps pointing at its template range, so the
+     * total is silently wrong (one cell instead of every rendered row). No error is raised.
+     *
+     * <p>Cause: growth happens in {@code growOuterFormula}, which only runs for formulas on rows outside every
+     * band ({@code copyStaticRow}). A formula inside a band goes through {@code prepareFormula}, which shifts
+     * references within its own band and re-bases ones on static rows, but leaves a reference into ANOTHER
+     * band at its template row.
+     *
+     * <p>This matters for migration: a totals band is the idiomatic placement for the in-memory engine (it
+     * emits no rows outside bands at all — see {@code XlsxFormulaTest}), so an existing report moved to
+     * streaming loses its totals. Placing the aggregate on a static row works — see the "outer SUM below the
+     * band grows" scenarios below. Update this test when the engine is fixed.
+     */
+    def "an aggregate inside a totals band is NOT grown (known defect: silently wrong total)"() {
+        given: 'the legacy-idiomatic layout — SUM(B1:B1) inside a Total band below the Data band'
+        def template = buildTemplate { wb ->
+            def sheet = sheet(wb)
+            cell(sheet, 0, 1, '${price}')
+            formulaCell(sheet, 1, 1, "SUM(B1:B1)")
+            defineBand(wb, "Data", 0, 1, 0, 1)
+            defineBand(wb, "Total", 1, 1, 1, 1)
+        }
+        def root = rootBand("Data", "Total")
+        addBand(root, "Data", [price: 10])
+        addBand(root, "Data", [price: 20])
+        addBand(root, "Data", [price: 30])
+        addBand(root, "Total", [:])
+
+        when:
+        def sheet = renderAndReadFirstSheet(template, root)
+
+        then: 'the range is left at the template row instead of growing to SUM(B1:B3) as the in-memory engine does'
+        findFormulaCell(sheet).cellFormula == "SUM(B1:B1)"
+    }
 
     def "inner formula shifts per band instance"() {
         given:

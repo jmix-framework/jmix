@@ -22,6 +22,8 @@ import io.jmix.reports.yarg.formatters.impl.XlsxFormatter
 import io.jmix.reports.yarg.structure.BandData
 import io.jmix.reports.yarg.structure.ReportOutputType
 import org.apache.poi.openxml4j.opc.OPCPackage
+import org.apache.poi.openxml4j.opc.PackageAccess
+import org.apache.poi.openxml4j.util.ZipSecureFile
 import org.apache.poi.ss.util.CellReference
 import org.apache.poi.util.XMLHelper
 import org.apache.poi.xssf.eventusermodel.XSSFReader
@@ -42,25 +44,30 @@ import java.util.zip.ZipInputStream
 import java.util.zip.ZipOutputStream
 
 /**
- * Stress test that generates an XLSX report with 200 columns and 500 000 rows (100 000 000 cells)
- * directly through {@link XlsxFormatter}.
+ * Baseline measurement of the in-memory XLSX engine ({@link XlsxFormatter}), and the contrast case for
+ * {@link StreamingLargeXlsxReportGenerationTest}. It renders a 200-column report directly through the
+ * formatter and logs what the render costs — rows written, elapsed time, peak heap, output size — so the
+ * streaming engine's numbers can be read against a measured reference rather than a guess.
  *
- * <p>It is a deliberate <b>limit reproducer</b>: the XLSX engine (docx4j {@code SpreadsheetMLPackage})
- * builds the whole result document in memory as a JAXB tree, with no streaming/SXSSF path. At the default
- * scale every cell is a live object, so the render is expected to exhaust the heap ({@code OutOfMemoryError})
- * or degrade badly on a regular JVM. It logs a progress line (rows written so far and heap usage) every
- * second, so even when the render runs out of memory the last logged line shows how many rows were written
- * and how much heap it took — both while rows are being written and during the final serialization.
+ * <p>The engine (docx4j {@code SpreadsheetMLPackage}) builds the whole result document in memory as a JAXB
+ * tree, with no streaming/SXSSF path: every cell is a live object, so heap grows with the cell count and the
+ * render dies at a few million cells on an ordinary JVM. The default scale is therefore deliberately modest
+ * (10 000 rows x 200 columns = 2 000 000 cells, about a third of the 2 GB test heap) so this test
+ * <b>passes</b> and measures; it does not try to reach the breaking point. Driving a shared test JVM into
+ * {@code OutOfMemoryError} on purpose is not a usable pipeline test: the error can surface on any thread,
+ * and once the heap is exhausted every other test in the same worker is collateral damage.
  *
  * <p>The band tree intentionally shares a single data map across all rows, so heap pressure comes from the
  * formatter's output document rather than from constructing the input data.
  *
  * <p>The test is gated with {@code @IgnoreIf} and runs only with {@code -PincludeSlowTests=true} (the build
  * then sets the {@code slowTests} environment variable that the condition checks). To probe where the engine
- * actually breaks, dial the scale down. Gradle forks the test JVM and inherits environment variables but not
+ * actually breaks, dial the scale up. Gradle forks the test JVM and inherits environment variables but not
  * command-line {@code -D} properties, so via Gradle use
- * {@code REPORT_STRESS_ROWS=50000 ./gradlew :reports:test -PincludeSlowTests=true}; from an IDE run
- * configuration the system property {@code -Dreport.stress.rows=50000} works too.
+ * {@code REPORT_STRESS_ROWS=500000 ./gradlew :reports:test -PincludeSlowTests=true}; from an IDE run
+ * configuration the system property {@code -Dreport.stress.rows=500000} works too. At such a scale the heap
+ * watchdog in the sampler thread aborts the render (the engine checks {@code Thread.interrupted()} per cell)
+ * and the test fails with the row count it reached — a clean, informative failure instead of a dead JVM.
  */
 @IgnoreIf({ env['slowTests'] != 'true' })
 class LargeXlsxReportGenerationTest extends Specification {
@@ -70,11 +77,25 @@ class LargeXlsxReportGenerationTest extends Specification {
     private static final String SHEET_NAME = "Sheet1"
     private static final String BAND_NAME = "Data"
 
+    /**
+     * Fits the 2 GB test heap with room to spare (measured at 200 columns: ~650-700 MB peak, ~10 s render,
+     * 7 MB output). The in-memory engine cannot go much further — see the class javadoc.
+     */
+    protected static final int DEFAULT_ROWS = 10_000
+
     // Configurable so the breaking point can be probed without editing the test.
     // Read from a system property (IDE run) or an environment variable (Gradle forks the test JVM
     // and inherits environment variables, but does not forward command-line -D properties by default).
     private static final int COLUMNS = resolveInt("report.stress.columns", "REPORT_STRESS_COLUMNS", 200)
-    private static final int ROWS = resolveInt("report.stress.rows", "REPORT_STRESS_ROWS", 500_000)
+    private static final int ROWS = resolveInt("report.stress.rows", "REPORT_STRESS_ROWS", DEFAULT_ROWS)
+
+    /** The watchdog aborts the render when used heap stays above this fraction of the max heap. */
+    private static final double HEAP_ABORT_FRACTION = 0.9d
+    /**
+     * ...for this many consecutive samples (200 ms each, so ~5 s). Sustained near-max usage means the GC
+     * death spiral; a single spike only means the collector has not run yet and must not trip the abort.
+     */
+    private static final int HEAP_ABORT_SAMPLES = 25
 
     private static int resolveInt(String systemProperty, String environmentVariable, int defaultValue) {
         def value = System.getProperty(systemProperty) ?: System.getenv(environmentVariable)
@@ -122,36 +143,68 @@ class LargeXlsxReportGenerationTest extends Specification {
             def runtime = Runtime.runtime
             def peakHeap = new AtomicLong(0L)
             def sampling = new AtomicBoolean(true)
+            def abortedAtRow = new AtomicLong(-1L)
+            def renderThread = Thread.currentThread()
+            long abortThreshold = (long) (runtime.maxMemory() * HEAP_ABORT_FRACTION)
             long startNanos = System.nanoTime()
 
             // Sample heap every 200 ms (to catch the peak) and log a progress line every second. The line
-            // reports both rows-so-far and heap, so if renderDocument() runs out of memory the last logged
-            // line shows how far it got — during the band-writing loop and the final serialization alike.
+            // reports both rows-so-far and heap, so the trail shows how far the render got — during the
+            // band-writing loop and the final serialization alike.
             def sampler = new Thread({
                 long lastLogNanos = 0L
+                int sustainedNearMax = 0
                 while (sampling.get()) {
-                    long used = runtime.totalMemory() - runtime.freeMemory()
-                    peakHeap.set(Math.max(peakHeap.get(), used))
-                    long now = System.nanoTime()
-                    if (now - lastLogNanos >= 1_000_000_000L) {
-                        lastLogNanos = now
-                        log.info("progress: {} / {} rows, usedHeap={} MB, peakHeap={} MB, elapsed={} s",
-                                rowsWritten.get(), ROWS, used >> 20, peakHeap.get() >> 20,
-                                (now - startNanos).intdiv(1_000_000_000L))
-                    }
                     try {
+                        long used = runtime.totalMemory() - runtime.freeMemory()
+                        peakHeap.set(Math.max(peakHeap.get(), used))
+                        long now = System.nanoTime()
+                        if (now - lastLogNanos >= 1_000_000_000L) {
+                            lastLogNanos = now
+                            log.info("progress: {} / {} rows, usedHeap={} MB, peakHeap={} MB, elapsed={} s",
+                                    rowsWritten.get(), ROWS, used >> 20, peakHeap.get() >> 20,
+                                    (now - startNanos).intdiv(1_000_000_000L))
+                        }
+
+                        // Stop the render before the heap is actually exhausted. An OutOfMemoryError raised
+                        // here (this thread allocates while logging) would escape uncaught and kill the whole
+                        // Gradle test worker, failing every other test in the JVM instead of just this one.
+                        // The engine calls checkThreadInterrupted() per template cell, so the interrupt turns
+                        // into a ReportingInterruptedException almost immediately.
+                        sustainedNearMax = used > abortThreshold ? sustainedNearMax + 1 : 0
+                        if (sustainedNearMax >= HEAP_ABORT_SAMPLES && abortedAtRow.get() < 0) {
+                            abortedAtRow.set(rowsWritten.get())
+                            log.error("Used heap stayed above {} MB ({}% of {} MB) for {} s; aborting the render"
+                                            + " at {} / {} rows to keep the test JVM alive",
+                                    abortThreshold >> 20, (int) (HEAP_ABORT_FRACTION * 100),
+                                    runtime.maxMemory() >> 20, (HEAP_ABORT_SAMPLES * 200).intdiv(1000),
+                                    abortedAtRow.get(), ROWS)
+                            renderThread.interrupt()
+                        }
+
                         Thread.sleep(200L)
                     } catch (InterruptedException ignored) {
+                        return
+                    } catch (Throwable ignored) {
+                        // Never let this thread's own failure escape: an uncaught error (typically
+                        // OutOfMemoryError while logging) takes the test JVM down with it. Give up sampling;
+                        // the render either finishes or fails on its own thread, where it is reported.
                         return
                     }
                 }
             })
             sampler.daemon = true
+            // Outer safety net for what the in-loop catch cannot cover: under memory pressure the error can
+            // also be raised while Groovy links a call site, i.e. before the try block is entered. An
+            // uncaught Throwable here reaches the default handler and takes the test worker down.
+            sampler.setUncaughtExceptionHandler { Thread t, Throwable e -> sampling.set(false) }
             sampler.start()
 
+            Throwable renderFailure = null
             try {
                 formatter.renderDocument()
             } catch (Throwable t) {
+                renderFailure = t
                 try {
                     log.error("Render failed after {} / {} rows, usedHeap={} MB, peakHeap={} MB",
                             rowsWritten.get(), ROWS,
@@ -159,11 +212,23 @@ class LargeXlsxReportGenerationTest extends Specification {
                 } catch (Throwable ignored) {
                     // Logging under OutOfMemoryError may itself fail; the periodic progress log already captured the trail.
                 }
-                throw t
             }
             long elapsedMs = (System.nanoTime() - startNanos).intdiv(1_000_000L)
 
-            sampling.set(false)
+            stopSampler(sampling, sampler)
+
+            if (renderFailure != null) {
+                if (abortedAtRow.get() >= 0) {
+                    throw new AssertionError("The in-memory XLSX engine ran out of heap at "
+                            + abortedAtRow.get() + " / " + ROWS + " rows x " + COLUMNS + " columns "
+                            + "(max heap " + (runtime.maxMemory() >> 20) + " MB). This engine keeps the whole "
+                            + "result document in memory, so it cannot render this scale — that is the very "
+                            + "limitation the streaming engine addresses. Lower REPORT_STRESS_ROWS (default "
+                            + DEFAULT_ROWS + ") or use StreamingXlsxFormatter.", renderFailure)
+                }
+                throw renderFailure
+            }
+
             byte[] bytes = output.toByteArray()
 
             log.info("Rendered: {} rows, elapsed={} ms, peakHeap={} MB, maxHeap={} MB, output={} MB",
@@ -235,11 +300,64 @@ class LargeXlsxReportGenerationTest extends Specification {
     }
 
     /**
+     * Stops the sampler thread and clears a pending interrupt. The heap watchdog interrupts the render
+     * thread, and the flag survives when the render finished before the engine consumed it — a stray
+     * interrupt would then break the verification below, or leak into the next test in this JVM.
+     */
+    protected static void stopSampler(AtomicBoolean sampling, Thread sampler) {
+        sampling.set(false)
+        sampler.interrupt()
+        sampler.join(1_000L)
+        Thread.interrupted()
+    }
+
+    /**
      * Counts rows and the number of cells in the first row of the first sheet using streaming SAX parsing,
      * so verification does not load the whole (potentially huge) workbook into memory.
+     *
+     * <p>The bytes are spooled to a temp file and the package is opened read-only <b>by path</b> instead of
+     * from a {@code ByteArrayInputStream}: the stream-based {@code OPCPackage.open} inflates every zip entry
+     * into a byte array up front, which trips POI's 100 MB per-entry {@code IOUtils} cap on the uncompressed
+     * sheet XML (reached already at a couple of million cells) and would defeat the streaming read anyway.
      */
     protected static Map<String, Object> countRowsAndFirstRowCells(byte[] xlsx) {
-        def pkg = OPCPackage.open(new ByteArrayInputStream(xlsx))
+        def spool = File.createTempFile("large-report-verify", ".xlsx")
+        long previousMaxEntrySize = ZipSecureFile.getMaxEntrySize()
+        try {
+            spool.bytes = xlsx
+            // The uncompressed sheet XML legitimately exceeds POI's default zip-bomb threshold at scale.
+            ZipSecureFile.setMaxEntrySize(16L * 1024 * 1024 * 1024)
+            def counts = countRowsAndFirstRowCells(spool)
+            // A zero row count means the verification itself went wrong (the parse saw no <row> at all),
+            // not that the engine produced an empty sheet — the render logged the rows it wrote. Fail with
+            // the state that distinguishes the two instead of an opaque "0 != 10000" further down.
+            assert counts.rows > 0: "verification read no rows from the rendered workbook: " +
+                    "spool=${spool.length()} bytes (source ${xlsx.length} bytes), counts=${counts}"
+            return counts
+        } finally {
+            ZipSecureFile.setMaxEntrySize(previousMaxEntrySize)
+            spool.delete()
+        }
+    }
+
+    /**
+     * The element's local name — the only prefix-independent identity available to a namespace-aware parser,
+     * which is what {@code XMLHelper.newXMLReader()} gives us.
+     *
+     * <p>Matching {@code qName} instead is a trap: it carries whatever prefix the writer chose. docx4j maps
+     * the spreadsheetml namespace to the default (empty) prefix only while it manages to install its own
+     * {@code NamespacePrefixMapper} into the JAXB marshaller; that probe result is cached in static state, so
+     * depending on what initialized JAXB earlier in the same JVM the very same render emits either
+     * {@code <row>} or {@code <ns2:row>}. A qName comparison then counts zero rows — silently, and only in
+     * some test orders. Falls back to qName for a parser configured without namespace awareness, where
+     * localName is empty.
+     */
+    protected static String elementName(String localName, String qName) {
+        return localName ? localName : qName
+    }
+
+    protected static Map<String, Object> countRowsAndFirstRowCells(File xlsx) {
+        def pkg = OPCPackage.open(xlsx.path, PackageAccess.READ)
         try {
             def reader = new XSSFReader(pkg)
             def sheets = reader.getSheetsData()
@@ -249,22 +367,27 @@ class LargeXlsxReportGenerationTest extends Specification {
                 int[] firstRowCells = [-1]
                 int[] currentRowCells = [0]
                 boolean[] inRow = [false]
+                def seenElements = []
 
                 def handler = new DefaultHandler() {
                     @Override
                     void startElement(String uri, String localName, String qName, Attributes attributes) {
-                        if (qName == "row") {
+                        if (seenElements.size() < 5) {
+                            seenElements << "localName='$localName' qName='$qName'"
+                        }
+                        def name = elementName(localName, qName)
+                        if (name == "row") {
                             inRow[0] = true
                             currentRowCells[0] = 0
                             rowCount[0]++
-                        } else if (qName == "c" && inRow[0]) {
+                        } else if (name == "c" && inRow[0]) {
                             currentRowCells[0]++
                         }
                     }
 
                     @Override
                     void endElement(String uri, String localName, String qName) {
-                        if (qName == "row") {
+                        if (elementName(localName, qName) == "row") {
                             if (firstRowCells[0] < 0) {
                                 firstRowCells[0] = currentRowCells[0]
                             }
@@ -277,7 +400,7 @@ class LargeXlsxReportGenerationTest extends Specification {
                 parser.setContentHandler(handler)
                 parser.parse(new InputSource(sheetStream))
 
-                return [rows: rowCount[0], firstRowCells: firstRowCells[0]]
+                return [rows: rowCount[0], firstRowCells: firstRowCells[0], firstElements: seenElements]
             } finally {
                 sheetStream.close()
             }

@@ -1868,8 +1868,8 @@ public class StreamingXlsxFormatter extends AbstractFormatter implements Streami
      * band rendered; single references into a band re-base onto the same offset within the band's LAST
      * rendered instance (the "totals below the data" convention); references to static template rows
      * re-base onto the row's actual output position. A forward reference to a band laid out below the
-     * formula is rejected up front (see {@link #rejectForwardBandReference}); a forward reference to a
-     * static row not written yet is kept as in the template. Returns {@code null} when a
+     * formula is rejected up front (see {@link #rejectForwardReference(String, int)}); a forward reference
+     * to a static row not written yet is kept as in the template. Returns {@code null} when a
      * referenced band produced no rows.
      */
     @Nullable

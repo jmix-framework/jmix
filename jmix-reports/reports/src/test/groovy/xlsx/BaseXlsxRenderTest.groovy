@@ -85,6 +85,22 @@ abstract class BaseXlsxRenderTest extends Specification {
     }
 
     /**
+     * A numeric literal template cell (not a {@code ${alias}} string). Real templates carry these — a
+     * constant column, a year in a caption — and they take a different path through both engines than a
+     * string cell does, so they need their own coverage.
+     */
+    protected void numericCell(Sheet sheet, int row, int col, double value) {
+        def r = sheet.getRow(row) ?: sheet.createRow(row)
+        r.createCell(col).setCellValue(value)
+    }
+
+    /** A boolean literal template cell. See {@link #numericCell} for why literals are covered separately. */
+    protected void booleanCell(Sheet sheet, int row, int col, boolean value) {
+        def r = sheet.getRow(row) ?: sheet.createRow(row)
+        r.createCell(col).setCellValue(value)
+    }
+
+    /**
      * Registers a named range covering the rectangle {@code (r1,c1)-(r2,c2)} (0-based, inclusive) on the
      * given sheet. The range name must match the {@link BandData} name the formatter renders into it.
      */

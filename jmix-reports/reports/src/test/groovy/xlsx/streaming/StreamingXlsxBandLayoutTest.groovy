@@ -17,103 +17,25 @@
 package xlsx.streaming
 
 import io.jmix.reports.yarg.exception.ReportFormattingException
-import xlsx.StreamingBaseXlsxRenderTest
+import io.jmix.reports.yarg.formatters.ReportFormatter
+import io.jmix.reports.yarg.formatters.factory.FormatterFactoryInput
+import io.jmix.reports.yarg.formatters.impl.StreamingXlsxFormatter
+import xlsx.BaseXlsxBandLayoutTest
 
 /**
- * Band layout of the streaming XLSX formatter: horizontal bands repeat top-to-bottom,
- * nested bands render under their parent instance, empty bands produce no rows.
+ * Band layout of the streaming XLSX formatter.
+ *
+ * <p>The layout rules themselves are the shared {@link BaseXlsxBandLayoutTest} contract, re-run here through
+ * {@link StreamingXlsxFormatter}: the streaming engine must lay bands out exactly like the in-memory one.
+ * What is specific to this engine are the layouts it must REJECT — forward-only writing emits each template
+ * row once, so a layout that would need a row revisited is refused up front instead of silently dropping or
+ * reordering data.
  */
-class StreamingXlsxBandLayoutTest extends StreamingBaseXlsxRenderTest {
+class StreamingXlsxBandLayoutTest extends BaseXlsxBandLayoutTest {
 
-    def "horizontal band repeats one row per instance, top to bottom"() {
-        given:
-        def template = buildTemplate { wb ->
-            def sheet = sheet(wb)
-            cell(sheet, 0, 0, '${n}')
-            defineBand(wb, "Data", 0, 0, 0, 0)
-        }
-        def root = rootBand("Data")
-        addBand(root, "Data", [n: "A"])
-        addBand(root, "Data", [n: "B"])
-        addBand(root, "Data", [n: "C"])
-
-        when:
-        def sheet = renderAndReadFirstSheet(template, root)
-
-        then:
-        stringValue(sheet, 0, 0) == "A"
-        stringValue(sheet, 1, 0) == "B"
-        stringValue(sheet, 2, 0) == "C"
-    }
-
-    def "multi-row band block repeats as a whole"() {
-        given:
-        def template = buildTemplate { wb ->
-            def sheet = sheet(wb)
-            cell(sheet, 0, 0, '${n}')
-            cell(sheet, 1, 0, 'sub ${n}')
-            defineBand(wb, "Data", 0, 0, 1, 0)
-        }
-        def root = rootBand("Data")
-        addBand(root, "Data", [n: "A"])
-        addBand(root, "Data", [n: "B"])
-
-        when:
-        def sheet = renderAndReadFirstSheet(template, root)
-
-        then:
-        stringValue(sheet, 0, 0) == "A"
-        stringValue(sheet, 1, 0) == "sub A"
-        stringValue(sheet, 2, 0) == "B"
-        stringValue(sheet, 3, 0) == "sub B"
-    }
-
-    def "nested band renders under its parent instance in order"() {
-        given:
-        def template = buildTemplate { wb ->
-            def sheet = sheet(wb)
-            cell(sheet, 0, 0, '${userName}')
-            defineBand(wb, "Users", 0, 0, 0, 0)
-            cell(sheet, 1, 0, '${gameName}')
-            defineBand(wb, "Games", 1, 0, 1, 0)
-        }
-        def root = rootBand("Users")
-        def alice = addBand(root, "Users", [userName: "Alice"])
-        addBand(alice, "Games", [gameName: "Chess"])
-        addBand(alice, "Games", [gameName: "Go"])
-        def bob = addBand(root, "Users", [userName: "Bob"])
-        addBand(bob, "Games", [gameName: "Poker"])
-
-        when:
-        def sheet = renderAndReadFirstSheet(template, root)
-
-        then:
-        stringValue(sheet, 0, 0) == "Alice"
-        stringValue(sheet, 1, 0) == "Chess"
-        stringValue(sheet, 2, 0) == "Go"
-        stringValue(sheet, 3, 0) == "Bob"
-        stringValue(sheet, 4, 0) == "Poker"
-    }
-
-    def "sibling first-level bands render in template order"() {
-        given:
-        def template = buildTemplate { wb ->
-            def sheet = sheet(wb)
-            cell(sheet, 0, 0, '${a}')
-            defineBand(wb, "First", 0, 0, 0, 0)
-            cell(sheet, 1, 0, '${b}')
-            defineBand(wb, "Second", 1, 0, 1, 0)
-        }
-        def root = rootBand("First", "Second")
-        addBand(root, "First", [a: "one"])
-        addBand(root, "Second", [b: "two"])
-
-        when:
-        def sheet = renderAndReadFirstSheet(template, root)
-
-        then:
-        stringValue(sheet, 0, 0) == "one"
-        stringValue(sheet, 1, 0) == "two"
+    @Override
+    protected ReportFormatter createFormatter(FormatterFactoryInput input) {
+        return new StreamingXlsxFormatter(input)
     }
 
     def "a sibling band between a parent and its child is rejected instead of silently reordering"() {
@@ -154,21 +76,5 @@ class StreamingXlsxBandLayoutTest extends StreamingBaseXlsxRenderTest {
         then: "rejected up front instead of silently dropping one band's data"
         def e = thrown(ReportFormattingException)
         e.message.toLowerCase().contains("overlap")
-    }
-
-    def "empty band yields no rows"() {
-        given:
-        def template = buildTemplate { wb ->
-            def sheet = sheet(wb)
-            cell(sheet, 0, 0, '${n}')
-            defineBand(wb, "Data", 0, 0, 0, 0)
-        }
-        def root = rootBand("Data")
-
-        when:
-        def sheet = renderAndReadFirstSheet(template, root)
-
-        then: "no rows are created at all, not merely an empty cell at (0,0)"
-        sheet.getPhysicalNumberOfRows() == 0
     }
 }

@@ -53,8 +53,9 @@ public class QuartzTest {
     @Test
     public void testFindQuartzJobClasses() {
         List<String> classNames = quartzJobClassFinder.getQuartzJobClassNames();
-        Assertions.assertEquals(1, classNames.size());
-        Assertions.assertEquals("io.jmix.quartz.QuartTestApplication$MyQuartzJob", classNames.get(0));
+        Assertions.assertEquals(2, classNames.size());
+        Assertions.assertTrue(classNames.contains("io.jmix.quartz.QuartTestApplication$MyQuartzJob"));
+        Assertions.assertTrue(classNames.contains("io.jmix.quartz.QuartTestApplication$MyAnotherQuartzJob"));
     }
 
     @Test
@@ -211,12 +212,14 @@ public class QuartzTest {
         jobModel.setJobGroup("testJobGroup");
         jobModel.setJobClass(QuartTestApplication.MyQuartzJob.class.getName());
 
+        //start dates are in the future so that triggers do not fire during the test
         List<TriggerModel> triggerModels = new ArrayList<>();
         TriggerModel cronTriggerModel = dataManager.create(TriggerModel.class);
         cronTriggerModel.setTriggerName("removeTriggersCronTriggerName");
         cronTriggerModel.setTriggerGroup("testTriggerGroup");
         cronTriggerModel.setScheduleType(ScheduleType.CRON_EXPRESSION);
         cronTriggerModel.setCronExpression("0 0 0 * * ?");
+        cronTriggerModel.setStartDate(Date.from(LocalDateTime.now().plus(1, ChronoUnit.HOURS).atZone(ZoneId.systemDefault()).toInstant()));
         triggerModels.add(cronTriggerModel);
 
         TriggerModel simpleTriggerModel = dataManager.create(TriggerModel.class);
@@ -225,6 +228,7 @@ public class QuartzTest {
         simpleTriggerModel.setScheduleType(ScheduleType.SIMPLE);
         simpleTriggerModel.setRepeatCount(100);
         simpleTriggerModel.setRepeatInterval(10000L);
+        simpleTriggerModel.setStartDate(Date.from(LocalDateTime.now().plus(1, ChronoUnit.HOURS).atZone(ZoneId.systemDefault()).toInstant()));
         triggerModels.add(simpleTriggerModel);
 
         quartzService.updateQuartzJob(jobModel, new ArrayList<>(), triggerModels, false);
@@ -235,6 +239,33 @@ public class QuartzTest {
         quartzService.updateQuartzJob(jobModel, new ArrayList<>(), new ArrayList<>(), true);
 
         Assertions.assertTrue(scheduler.getTriggersOfJob(jobKey).isEmpty());
+
+        //cleanup
+        scheduler.deleteJob(jobKey);
+    }
+
+    @Test
+    public void testChangingJobClass() throws Exception {
+        JobModel jobModel = dataManager.create(JobModel.class);
+        jobModel.setJobName("changeClassJobName");
+        jobModel.setJobGroup("testJobGroup");
+        jobModel.setJobClass(QuartTestApplication.MyQuartzJob.class.getName());
+
+        quartzService.updateQuartzJob(jobModel, new ArrayList<>(), new ArrayList<>(), false);
+
+        JobKey jobKey = JobKey.jobKey(jobModel.getJobName(), jobModel.getJobGroup());
+        Assertions.assertEquals(QuartTestApplication.MyQuartzJob.class, scheduler.getJobDetail(jobKey).getJobClass());
+
+        jobModel.setJobClass(QuartTestApplication.MyAnotherQuartzJob.class.getName());
+        quartzService.updateQuartzJob(jobModel, new ArrayList<>(), new ArrayList<>(), true);
+
+        Assertions.assertEquals(QuartTestApplication.MyAnotherQuartzJob.class, scheduler.getJobDetail(jobKey).getJobClass());
+
+        //class that is not allowed as a Job class must be rejected and the job must stay unchanged
+        jobModel.setJobClass("java.lang.String");
+        Assertions.assertThrows(QuartzJobSaveException.class,
+                () -> quartzService.updateQuartzJob(jobModel, new ArrayList<>(), new ArrayList<>(), true));
+        Assertions.assertEquals(QuartTestApplication.MyAnotherQuartzJob.class, scheduler.getJobDetail(jobKey).getJobClass());
 
         //cleanup
         scheduler.deleteJob(jobKey);

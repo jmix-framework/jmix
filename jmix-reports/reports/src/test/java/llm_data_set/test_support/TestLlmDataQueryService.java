@@ -20,7 +20,6 @@ import io.jmix.reports.llm.LlmDataQuery;
 import io.jmix.reports.llm.LlmDataQueryService;
 import io.jmix.reports.llm.LlmQueryExecutionRequest;
 import io.jmix.reports.llm.LlmQueryGenerationRequest;
-import io.jmix.reports.llm.LlmQueryParameter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,20 +62,12 @@ public class TestLlmDataQueryService implements LlmDataQueryService {
         return generationRequests;
     }
 
-    public List<LlmQueryExecutionRequest> getExecutionRequests() {
-        return executionRequests;
-    }
-
     public LlmQueryGenerationRequest getLastGenerationRequest() {
         return generationRequests.get(generationRequests.size() - 1);
     }
 
     public LlmQueryExecutionRequest getLastExecutionRequest() {
         return executionRequests.get(executionRequests.size() - 1);
-    }
-
-    public void setQueryToGenerate(LlmDataQuery queryToGenerate) {
-        this.queryToGenerate = queryToGenerate;
     }
 
     public void setRows(List<Map<String, Object>> rows) {

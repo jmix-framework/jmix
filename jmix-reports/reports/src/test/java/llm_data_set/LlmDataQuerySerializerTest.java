@@ -68,7 +68,9 @@ class LlmDataQuerySerializerTest {
         String json = serializer.toJson(query);
 
         assertThat(json).doesNotContain("2026-08-05");
-        assertThat(serializer.fromJson(json).getParameters().get(0).getValue()).isNull();
+        LlmDataQuery restored = serializer.fromJson(json);
+        assertThat(restored).isNotNull();
+        assertThat(restored.getParameters().get(0).getValue()).isNull();
     }
 
     @Test

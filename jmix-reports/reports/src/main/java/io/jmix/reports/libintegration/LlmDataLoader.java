@@ -77,7 +77,7 @@ public class LlmDataLoader implements ReportDataLoader {
 
         Map<String, Object> additionalParams = reportQuery.getAdditionalParams();
         Integer maxResults = (Integer) additionalParams.get(DataSet.LLM_MAX_RESULTS);
-        Map<String, LlmQueryParameter> availableParameters = collectAvailableParameters(params);
+        Map<String, LlmQueryParameter> availableParameters = collectAvailableParameters(params, parentBand);
 
         try {
             LlmDataQuery query = resolveQuery(reportQuery, prompt, additionalParams, maxResults, availableParameters);
@@ -119,10 +119,12 @@ public class LlmDataLoader implements ReportDataLoader {
     }
 
     /**
-     * Collects the parameters the query may reference, keyed by name. A parameter with no value is left out:
-     * its type is unknown, and the add-on binds no value for it, which would fail the query anyway.
+     * Collects the parameters the query may reference, keyed by name: the run parameters first, then the fields
+     * of every parent row up the band hierarchy. A parameter with no value is left out — its type is unknown,
+     * and the add-on binds no value for it, which would fail the query anyway.
      */
-    protected Map<String, LlmQueryParameter> collectAvailableParameters(Map<String, Object> params) {
+    protected Map<String, LlmQueryParameter> collectAvailableParameters(Map<String, Object> params,
+                                                                       @Nullable BandData parentBand) {
         Map<String, LlmQueryParameter> availableParameters = new LinkedHashMap<>();
 
         for (Map.Entry<String, Object> param : params.entrySet()) {
@@ -137,7 +139,43 @@ public class LlmDataLoader implements ReportDataLoader {
                     new LlmQueryParameter(param.getKey(), value.getClass().getName(), value));
         }
 
+        for (BandData band = parentBand; band != null; band = band.getParentBand()) {
+            addParentBandFields(band, availableParameters);
+        }
+
         return availableParameters;
+    }
+
+    /**
+     * Offers the fields of one parent row under names flattened to {@code <band>_<field>}, because a JPQL
+     * parameter name cannot contain the dot that SQL and JPQL data sets use in {@code ${Band.field}}.
+     * <p>
+     * A name already taken is kept as it is: a run parameter outranks a band field, and a nearer parent
+     * outranks a more distant one. Skipping a field whose flattened name is not an identifier is deliberate —
+     * sanitizing the name would let two different bands collapse onto one parameter.
+     */
+    protected void addParentBandFields(BandData band, Map<String, LlmQueryParameter> availableParameters) {
+        Map<String, Object> row = band.getData();
+        if (row == null) {
+            return;
+        }
+
+        for (Map.Entry<String, Object> field : row.entrySet()) {
+            Object value = field.getValue();
+            String name = band.getName() + "_" + field.getKey();
+            //noinspection ConstantValue
+            if (value == null || !PARAMETER_NAME_PATTERN.matcher(name).matches()) {
+                continue;
+            }
+
+            LlmQueryParameter present = availableParameters.putIfAbsent(name,
+                    new LlmQueryParameter(name, value.getClass().getName(), value));
+            if (present != null) {
+                log.warn("Parameter [{}] is already available, so the field [{}] of band [{}] is not offered "
+                        + "to the query; rename one of them to make both usable",
+                        name, field.getKey(), band.getName());
+            }
+        }
     }
 
     /**

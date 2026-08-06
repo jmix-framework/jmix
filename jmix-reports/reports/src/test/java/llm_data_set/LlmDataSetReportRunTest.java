@@ -26,6 +26,8 @@ import io.jmix.reports.entity.Orientation;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportOutputType;
 import io.jmix.reports.entity.ReportTemplate;
+import io.jmix.reports.llm.LlmQueryExecutionRequest;
+import io.jmix.reports.llm.LlmQueryParameter;
 import io.jmix.reports.runner.ReportRunner;
 import io.jmix.reports.test_support.AuthenticatedAsSystem;
 import io.jmix.reports.yarg.reporting.ReportOutputDocument;
@@ -44,6 +46,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 
 @ExtendWith({SpringExtension.class, AuthenticatedAsSystem.class})
 @ContextConfiguration(classes = {ReportsTestConfiguration.class, LlmDataSetTestConfiguration.class})
@@ -80,6 +83,83 @@ class LlmDataSetReportRunTest {
                 .contains("\"A-2\",\"80\"");
     }
 
+    @Test
+    void testNestedLlmBandIsExecutedPerParentRowWithItsParentField() {
+        ReportOutputDocument document = reportRunner.byReportEntity(createReportWithNestedLlmBand()).run();
+
+        assertThat(new String(document.getContent(), StandardCharsets.UTF_8)).contains("\"A-1\"");
+        assertThat(queryService.getExecutionRequests()).hasSize(2);
+        assertThat(queryService.getExecutionRequests())
+                .flatExtracting(LlmQueryExecutionRequest::getArguments)
+                .extracting(LlmQueryParameter::getName, LlmQueryParameter::getValue)
+                .containsExactly(tuple("Orders_number", "A-1"), tuple("Orders_number", "A-2"));
+    }
+
+    protected Report createReportWithNestedLlmBand() {
+        Report report = metadata.create(Report.class);
+        report.setName("Nested LLM band report");
+
+        BandDefinition rootBand = metadata.create(BandDefinition.class);
+        rootBand.setReport(report);
+        rootBand.setName("Root");
+        rootBand.setOrientation(Orientation.HORIZONTAL);
+        rootBand.setMultiDataSet(false);
+        rootBand.setPosition(0);
+
+        BandDefinition ordersBand = metadata.create(BandDefinition.class);
+        ordersBand.setReport(report);
+        ordersBand.setName("Orders");
+        ordersBand.setOrientation(Orientation.HORIZONTAL);
+        ordersBand.setMultiDataSet(false);
+        ordersBand.setPosition(0);
+        ordersBand.setParentBandDefinition(rootBand);
+        rootBand.getChildrenBandDefinitions().add(ordersBand);
+
+        DataSet ordersDataSet = metadata.create(DataSet.class);
+        ordersDataSet.setName("Orders");
+        ordersDataSet.setBandDefinition(ordersBand);
+        ordersDataSet.setType(DataSetType.GROOVY);
+        ordersDataSet.setText("return [[\"number\": \"A-1\"], [\"number\": \"A-2\"]]");
+        ordersBand.setDataSets(List.of(ordersDataSet));
+
+        BandDefinition linesBand = metadata.create(BandDefinition.class);
+        linesBand.setReport(report);
+        linesBand.setName("Lines");
+        linesBand.setOrientation(Orientation.HORIZONTAL);
+        linesBand.setMultiDataSet(false);
+        linesBand.setPosition(0);
+        linesBand.setParentBandDefinition(ordersBand);
+        ordersBand.getChildrenBandDefinitions().add(linesBand);
+
+        DataSet linesDataSet = metadata.create(DataSet.class);
+        linesDataSet.setName("Lines");
+        linesDataSet.setBandDefinition(linesBand);
+        linesDataSet.setType(DataSetType.LLM);
+        linesDataSet.setText("Lines of the order");
+        linesDataSet.setLlmGeneratedQuery("""
+                {"jpql":"select l.product as product from sales_OrderLine l where l.order.number = :Orders_number",\
+                "resultProperties":["product"],\
+                "parameters":[{"name":"Orders_number","javaType":"java.lang.String"}]}""");
+        linesBand.setDataSets(List.of(linesDataSet));
+
+        report.setBands(Set.of(rootBand, ordersBand, linesBand));
+        report.setTemplates(List.of(csvTemplate(report, "Number\n${number}\n")));
+        report.setDefaultTemplate(report.getTemplates().get(0));
+
+        report.setXml(reportsSerialization.convertToString(report));
+        return report;
+    }
+
+    protected ReportTemplate csvTemplate(Report report, String content) {
+        ReportTemplate template = metadata.create(ReportTemplate.class);
+        template.setReport(report);
+        template.setCode("default");
+        template.setReportOutputType(ReportOutputType.CSV);
+        template.setName("LlmReport.csv");
+        template.setContent(content.getBytes(StandardCharsets.UTF_8));
+        return template;
+    }
+
     protected Report createReport() {
         Report report = metadata.create(Report.class);
         report.setName("LLM band report");
@@ -112,15 +192,7 @@ class LlmDataSetReportRunTest {
         ordersBand.setDataSets(List.of(dataSet));
         report.setBands(Set.of(rootBand, ordersBand));
 
-        ReportTemplate template = metadata.create(ReportTemplate.class);
-        template.setReport(report);
-        template.setCode("default");
-        template.setReportOutputType(ReportOutputType.CSV);
-        template.setName("LlmReport.csv");
-        template.setContent("""
-                Number,Amount
-                ${orderNumber},${amount}
-                """.getBytes(StandardCharsets.UTF_8));
+        ReportTemplate template = csvTemplate(report, "Number,Amount\n${orderNumber},${amount}\n");
         report.setTemplates(List.of(template));
         report.setDefaultTemplate(template);
 

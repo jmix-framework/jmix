@@ -27,6 +27,8 @@ import io.jmix.reports.llm.impl.LlmDataQuerySerializer;
 import io.jmix.reports.yarg.exception.DataLoadingException;
 import io.jmix.reports.yarg.loaders.ReportDataLoader;
 import io.jmix.reports.yarg.loaders.factory.ReportLoaderFactory;
+import io.jmix.reports.yarg.structure.BandData;
+import io.jmix.reports.yarg.structure.BandOrientation;
 import llm_data_set.test_support.LlmDataSetTestConfiguration;
 import llm_data_set.test_support.TestLlmDataQueryService;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,6 +46,7 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.tuple;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {ReportsTestConfiguration.class, LlmDataSetTestConfiguration.class})
@@ -167,6 +170,70 @@ class LlmDataLoaderTest {
     }
 
     @Test
+    void testParentBandFieldIsOfferedAndBoundUnderItsFlattenedName() {
+        DataSet dataSet = llmDataSet(PROMPT, storedQuery(List.of(parameter("Orders_number", "java.lang.String"))),
+                false, null);
+        BandData ordersBand = band("Orders", null, Map.of("number", "A-1"));
+
+        loader().loadData(dataSet, ordersBand, Map.of());
+
+        assertThat(queryService.getLastExecutionRequest().getArguments())
+                .extracting(LlmQueryParameter::getName, LlmQueryParameter::getValue)
+                .containsExactly(tuple("Orders_number", "A-1"));
+    }
+
+    @Test
+    void testGrandparentBandFieldIsOfferedToGeneration() {
+        DataSet dataSet = llmDataSet(PROMPT, null, false, null);
+        BandData customersBand = band("Customers", null, Map.of("customerId", 42L));
+        BandData ordersBand = band("Orders", customersBand, Map.of("number", "A-1"));
+
+        loader().loadData(dataSet, ordersBand, Map.of());
+
+        assertThat(queryService.getLastGenerationRequest().getAvailableParameters())
+                .extracting(LlmQueryParameter::getName)
+                .contains("Orders_number", "Customers_customerId");
+    }
+
+    @Test
+    void testRunParameterWinsOverAParentBandFieldOfTheSameName() {
+        DataSet dataSet = llmDataSet(PROMPT, storedQuery(List.of(parameter("Orders_number", "java.lang.String"))),
+                false, null);
+        BandData ordersBand = band("Orders", null, Map.of("number", "from band"));
+
+        loader().loadData(dataSet, ordersBand, Map.of("Orders_number", "from run parameters"));
+
+        assertThat(queryService.getLastExecutionRequest().getArguments())
+                .extracting(LlmQueryParameter::getValue)
+                .containsExactly("from run parameters");
+    }
+
+    @Test
+    void testBandWhoseNameIsNotAnIdentifierContributesNothing() {
+        DataSet dataSet = llmDataSet(PROMPT, null, false, null);
+        BandData ordersBand = band("Order Details", null, Map.of("number", "A-1"));
+
+        loader().loadData(dataSet, ordersBand, Map.of());
+
+        assertThat(queryService.getLastGenerationRequest().getAvailableParameters()).isEmpty();
+    }
+
+    @Test
+    void testNullValuedParentBandFieldIsSkipped() {
+        DataSet dataSet = llmDataSet(PROMPT, null, false, null);
+        Map<String, Object> bandRow = new HashMap<>();
+        bandRow.put("number", "A-1");
+        bandRow.put("comment", null);
+        BandData ordersBand = band("Orders", null, bandRow);
+
+        loader().loadData(dataSet, ordersBand, Map.of());
+
+        assertThat(queryService.getLastGenerationRequest().getAvailableParameters())
+                .extracting(LlmQueryParameter::getName)
+                .containsExactly("Orders_number");
+    }
+
+    @Test
     void testDataSetRowLimitReachesExecution() {
         DataSet dataSet = llmDataSet(PROMPT, storedQuery(List.of()), false, 700);
 
@@ -205,6 +272,12 @@ class LlmDataLoaderTest {
 
     protected ReportDataLoader loader() {
         return loaderFactory.createDataLoader(DataSetType.LLM.getCode());
+    }
+
+    protected BandData band(String name, @Nullable BandData parentBand, Map<String, Object> row) {
+        BandData band = new BandData(name, parentBand, BandOrientation.HORIZONTAL);
+        band.setData(row);
+        return band;
     }
 
     protected LlmQueryParameter parameter(String name, String javaType) {

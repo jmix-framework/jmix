@@ -62,6 +62,10 @@ public class TestLlmDataQueryService implements LlmDataQueryService {
         return generationRequests;
     }
 
+    public List<LlmQueryExecutionRequest> getExecutionRequests() {
+        return executionRequests;
+    }
+
     public LlmQueryGenerationRequest getLastGenerationRequest() {
         return generationRequests.get(generationRequests.size() - 1);
     }

@@ -1,0 +1,146 @@
+/*
+ * Copyright 2026 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package llm_data_set;
+
+import io.jmix.reports.llm.LlmDataQuery;
+import io.jmix.reports.llm.LlmDataQueryException;
+import io.jmix.reports.llm.LlmQueryParameter;
+import io.jmix.reports.llm.impl.LlmDataQuerySerializer;
+import org.junit.jupiter.api.Test;
+
+import java.time.LocalDate;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+class LlmDataQuerySerializerTest {
+
+    protected final LlmDataQuerySerializer serializer = new LlmDataQuerySerializer();
+
+    @Test
+    void testQuerySurvivesRoundTrip() {
+        LlmDataQuery query = new LlmDataQuery(
+                "select o.number as orderNumber from sales_Order o where o.date >= :dateFrom",
+                List.of("orderNumber"),
+                List.of(new LlmQueryParameter("dateFrom", "java.time.LocalDate", null)),
+                "Orders from the given date",
+                List.of("Time zone is not taken into account"),
+                200);
+
+        LlmDataQuery restored = serializer.fromJson(serializer.toJson(query));
+
+        assertThat(restored).isNotNull();
+        assertThat(restored.getJpql()).isEqualTo(query.getJpql());
+        assertThat(restored.getResultProperties()).containsExactly("orderNumber");
+        assertThat(restored.getParameters()).hasSize(1);
+        assertThat(restored.getParameters().get(0).getName()).isEqualTo("dateFrom");
+        assertThat(restored.getParameters().get(0).getJavaType()).isEqualTo("java.time.LocalDate");
+        assertThat(restored.getExplanation()).isEqualTo("Orders from the given date");
+        assertThat(restored.getWarnings()).containsExactly("Time zone is not taken into account");
+        assertThat(restored.getMaxResults()).isEqualTo(200);
+    }
+
+    @Test
+    void testParameterValuesAreNotStored() {
+        LlmDataQuery query = new LlmDataQuery(
+                "select o.number as orderNumber from sales_Order o where o.date >= :dateFrom",
+                List.of("orderNumber"),
+                List.of(new LlmQueryParameter("dateFrom", "java.time.LocalDate", LocalDate.of(2026, 8, 5))),
+                null,
+                List.of(),
+                null);
+
+        String json = serializer.toJson(query);
+
+        assertThat(json).doesNotContain("2026-08-05");
+        assertThat(serializer.fromJson(json).getParameters().get(0).getValue()).isNull();
+    }
+
+    @Test
+    void testBlankDocumentMeansNoCachedQuery() {
+        assertThat(serializer.fromJson(null)).isNull();
+        assertThat(serializer.fromJson("")).isNull();
+        assertThat(serializer.fromJson("   ")).isNull();
+    }
+
+    @Test
+    void testDocumentWithoutOptionalFieldsReadsWithEmptyCollections() {
+        LlmDataQuery restored = serializer.fromJson("{\"jpql\":\"select o.number as n from sales_Order o\"}");
+
+        assertThat(restored).isNotNull();
+        assertThat(restored.getResultProperties()).isEmpty();
+        assertThat(restored.getParameters()).isEmpty();
+        assertThat(restored.getWarnings()).isEmpty();
+        assertThat(restored.getExplanation()).isNull();
+        assertThat(restored.getMaxResults()).isNull();
+    }
+
+    @Test
+    void testNullLiteralDocumentFailsWithRegenerationHint() {
+        assertThatThrownBy(() -> serializer.fromJson("null"))
+                .isInstanceOf(LlmDataQueryException.class)
+                .hasMessageContaining("regenerate");
+    }
+
+    @Test
+    void testNonObjectDocumentFailsWithRegenerationHint() {
+        assertThatThrownBy(() -> serializer.fromJson("[1, 2]"))
+                .isInstanceOf(LlmDataQueryException.class)
+                .hasMessageContaining("regenerate");
+    }
+
+    @Test
+    void testParameterWithoutNameIsDropped() {
+        LlmDataQuery restored = serializer.fromJson("""
+                {"jpql":"select o.number as n from sales_Order o where o.id = :id",\
+                "parameters":[{"javaType":"java.lang.String"},{"name":"id","javaType":"java.util.UUID"}]}""");
+
+        assertThat(restored).isNotNull();
+        assertThat(restored.getParameters())
+                .extracting(LlmQueryParameter::getName)
+                .containsExactly("id");
+    }
+
+    @Test
+    void testNullElementsOfStoredListsAreDropped() {
+        LlmDataQuery restored = serializer.fromJson("""
+                {"jpql":"select o.number as n from sales_Order o",\
+                "resultProperties":["n",null],\
+                "parameters":[null],\
+                "warnings":[null,"approximated"]}""");
+
+        assertThat(restored).isNotNull();
+        assertThat(restored.getResultProperties()).containsExactly("n");
+        assertThat(restored.getParameters()).isEmpty();
+        assertThat(restored.getWarnings()).containsExactly("approximated");
+    }
+
+    @Test
+    void testMalformedDocumentFailsWithRegenerationHint() {
+        assertThatThrownBy(() -> serializer.fromJson("{\"jpql\": "))
+                .isInstanceOf(LlmDataQueryException.class)
+                .hasMessageContaining("regenerate");
+    }
+
+    @Test
+    void testDocumentWithoutQueryTextFailsWithRegenerationHint() {
+        assertThatThrownBy(() -> serializer.fromJson("{\"resultProperties\":[\"n\"]}"))
+                .isInstanceOf(LlmDataQueryException.class)
+                .hasMessageContaining("regenerate");
+    }
+}

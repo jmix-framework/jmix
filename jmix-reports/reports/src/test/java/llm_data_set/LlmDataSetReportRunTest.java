@@ -1,0 +1,130 @@
+/*
+ * Copyright 2026 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package llm_data_set;
+
+import io.jmix.core.Metadata;
+import io.jmix.reports.ReportsSerialization;
+import io.jmix.reports.ReportsTestConfiguration;
+import io.jmix.reports.entity.BandDefinition;
+import io.jmix.reports.entity.DataSet;
+import io.jmix.reports.entity.DataSetType;
+import io.jmix.reports.entity.Orientation;
+import io.jmix.reports.entity.Report;
+import io.jmix.reports.entity.ReportOutputType;
+import io.jmix.reports.entity.ReportTemplate;
+import io.jmix.reports.runner.ReportRunner;
+import io.jmix.reports.test_support.AuthenticatedAsSystem;
+import io.jmix.reports.yarg.reporting.ReportOutputDocument;
+import llm_data_set.test_support.LlmDataSetTestConfiguration;
+import llm_data_set.test_support.TestLlmDataQueryService;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+@ExtendWith({SpringExtension.class, AuthenticatedAsSystem.class})
+@ContextConfiguration(classes = {ReportsTestConfiguration.class, LlmDataSetTestConfiguration.class})
+class LlmDataSetReportRunTest {
+
+    @Autowired
+    protected ReportRunner reportRunner;
+
+    @Autowired
+    protected ReportsSerialization reportsSerialization;
+
+    @Autowired
+    protected TestLlmDataQueryService queryService;
+
+    @Autowired
+    protected Metadata metadata;
+
+    @BeforeEach
+    void setUp() {
+        queryService.reset();
+    }
+
+    @Test
+    void testReportWithLlmBandRendersRowsOfTheStoredQuery() {
+        queryService.setRows(List.of(
+                Map.of("orderNumber", "A-1", "amount", "120"),
+                Map.of("orderNumber", "A-2", "amount", "80")));
+
+        ReportOutputDocument document = reportRunner.byReportEntity(createReport()).run();
+
+        String content = new String(document.getContent(), StandardCharsets.UTF_8);
+        assertThat(content)
+                .contains("\"A-1\",\"120\"")
+                .contains("\"A-2\",\"80\"");
+    }
+
+    protected Report createReport() {
+        Report report = metadata.create(Report.class);
+        report.setName("LLM band report");
+
+        BandDefinition rootBand = metadata.create(BandDefinition.class);
+        rootBand.setReport(report);
+        rootBand.setName("Root");
+        rootBand.setOrientation(Orientation.HORIZONTAL);
+        rootBand.setMultiDataSet(false);
+        rootBand.setPosition(0);
+
+        // The CSV formatter takes its rows from the root band's children, so the data set lives on a child.
+        BandDefinition ordersBand = metadata.create(BandDefinition.class);
+        ordersBand.setReport(report);
+        ordersBand.setName("Orders");
+        ordersBand.setOrientation(Orientation.HORIZONTAL);
+        ordersBand.setMultiDataSet(false);
+        ordersBand.setPosition(0);
+        ordersBand.setParentBandDefinition(rootBand);
+        rootBand.getChildrenBandDefinitions().add(ordersBand);
+
+        DataSet dataSet = metadata.create(DataSet.class);
+        dataSet.setName("Orders");
+        dataSet.setBandDefinition(ordersBand);
+        dataSet.setType(DataSetType.LLM);
+        dataSet.setText("Order numbers with their amounts");
+        dataSet.setLlmGeneratedQuery("""
+                {"jpql":"select o.number as orderNumber, o.amount as amount from sales_Order o",\
+                "resultProperties":["orderNumber","amount"]}""");
+        ordersBand.setDataSets(List.of(dataSet));
+        report.setBands(Set.of(rootBand, ordersBand));
+
+        ReportTemplate template = metadata.create(ReportTemplate.class);
+        template.setReport(report);
+        template.setCode("default");
+        template.setReportOutputType(ReportOutputType.CSV);
+        template.setName("LlmReport.csv");
+        template.setContent("""
+                Number,Amount
+                ${orderNumber},${amount}
+                """.getBytes(StandardCharsets.UTF_8));
+        report.setTemplates(List.of(template));
+        report.setDefaultTemplate(template);
+
+        report.setXml(reportsSerialization.convertToString(report));
+        return report;
+    }
+}

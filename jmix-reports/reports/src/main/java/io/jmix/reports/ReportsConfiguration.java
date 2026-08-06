@@ -20,6 +20,7 @@ import io.jmix.core.CoreProperties;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.data.DataConfiguration;
 import io.jmix.eclipselink.EclipselinkConfiguration;
+import io.jmix.reports.entity.DataSetType;
 import io.jmix.reports.libintegration.*;
 import io.jmix.reports.yarg.formatters.impl.docx.MultilineTextProcessor;
 import io.jmix.reports.yarg.formatters.impl.docx.MultilineTextProcessorImpl;
@@ -35,6 +36,7 @@ import io.jmix.reports.yarg.reporting.extraction.controller.CrossTabExtractionCo
 import io.jmix.reports.yarg.reporting.extraction.preprocessor.SqlCrosstabPreprocessor;
 import io.jmix.reports.yarg.structure.BandOrientation;
 import io.jmix.reports.yarg.util.groovy.Scripting;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
@@ -89,7 +91,8 @@ public class ReportsConfiguration {
                                              JmixJsonDataLoader jsonDataLoader,
                                              SingleEntityDataLoader singleEntityDataLoader,
                                              MultiEntityDataLoader multiEntityDataLoader,
-                                             DelegatingDataLoader delegatingDataLoader) {
+                                             DelegatingDataLoader delegatingDataLoader,
+                                             ObjectProvider<LlmDataLoader> llmDataLoader) {
         DefaultLoaderFactory loaderFactory = new DefaultLoaderFactory();
         Map<String, ReportDataLoader> dataLoaders = new HashMap<>();
         dataLoaders.put("sql", sqlDataLoader);
@@ -99,6 +102,9 @@ public class ReportsConfiguration {
         dataLoaders.put("single", singleEntityDataLoader);
         dataLoaders.put("multi", multiEntityDataLoader);
         dataLoaders.put("delegate", delegatingDataLoader);
+        // The LLM loader is defined only when the AI Tools add-on is on board, so it is resolved optionally:
+        // without it the "llm" loader type stays unsupported.
+        llmDataLoader.ifAvailable(loader -> dataLoaders.put(DataSetType.LLM.getCode(), loader));
         loaderFactory.setDataLoaders(dataLoaders);
         return loaderFactory;
     }

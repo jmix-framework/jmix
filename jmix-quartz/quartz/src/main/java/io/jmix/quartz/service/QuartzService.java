@@ -340,11 +340,11 @@ public class QuartzService {
         jobModel.setJobSource(jobDetailsKeys.contains(jobKey) ? JobSource.PREDEFINED : JobSource.USER_DEFINED);
 
         List<? extends Trigger> jobTriggers = scheduler.getTriggersOfJob(jobKey);
+        boolean active = false;
+        boolean hasBlockedTrigger = false;
         if (!CollectionUtils.isEmpty(jobTriggers)) {
             Date now = new Date();
             List<TriggerModel> triggerModels = new ArrayList<>();
-            boolean active = false;
-            boolean hasBlockedTrigger = false;
             for (Trigger trigger : jobTriggers) {
                 triggerModels.add(createTriggerModel(trigger, now));
                 Trigger.TriggerState triggerState = scheduler.getTriggerState(trigger.getKey());
@@ -358,8 +358,9 @@ public class QuartzService {
                 }
             }
             jobModel.setTriggers(triggerModels);
-            jobModel.setJobState(resolveJobState(jobKey, jobDetail, active, hasBlockedTrigger));
         }
+        //resolve the state even for a job without triggers, e.g. to detect the invalid state
+        jobModel.setJobState(resolveJobState(jobKey, jobDetail, active, hasBlockedTrigger));
 
         return jobModel;
     }

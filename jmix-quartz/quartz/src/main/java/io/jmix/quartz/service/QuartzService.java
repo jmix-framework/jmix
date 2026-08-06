@@ -437,25 +437,19 @@ public class QuartzService {
         return misfireInstructionId;
     }
 
-    @SuppressWarnings("unchecked")
     protected JobDetail buildJobDetail(JobModel jobModel, @Nullable JobDetail existedJobDetail, List<JobDataParameterModel> jobDataParameterModels)
             throws ClassNotFoundException {
         JobBuilder jobBuilder;
         if (existedJobDetail != null) {
             jobBuilder = existedJobDetail.getJobBuilder();
-        } else {
             String jobClassName = jobModel.getJobClass();
-            List<String> existedJobsClassNames = quartzJobClassFinder.getQuartzJobClassNames();
-            boolean allowed = existedJobsClassNames.stream().anyMatch(existingClass -> existingClass.equals(jobClassName));
-            if (!allowed) {
-                log.error("Attempt to use non-Job class as for a Job");
-                throw new QuartzJobSaveException("Class " + jobClassName + " is not allowed as a Job class");
+            if (jobClassName != null && !jobClassName.equals(existedJobDetail.getJobClass().getName())) {
+                jobBuilder.ofType(resolveJobClass(jobClassName));
             }
-
-            Class<? extends Job> jobClass = (Class<? extends Job>) Class.forName(jobClassName);
+        } else {
             jobBuilder = JobBuilder.newJob()
                     .withIdentity(jobModel.getJobName(), jobModel.getJobGroup())
-                    .ofType(jobClass)
+                    .ofType(resolveJobClass(jobModel.getJobClass()))
                     .storeDurably();
         }
 
@@ -468,6 +462,20 @@ public class QuartzService {
         }
 
         return jobBuilder.build();
+    }
+
+    /**
+     * Validates that the given class name is allowed as a Job class and loads it. The allow-list check
+     * is performed before class loading to prevent execution of static initializers of arbitrary classes.
+     */
+    @SuppressWarnings("unchecked")
+    protected Class<? extends Job> resolveJobClass(String jobClassName) throws ClassNotFoundException {
+        List<String> existedJobsClassNames = quartzJobClassFinder.getQuartzJobClassNames();
+        if (!existedJobsClassNames.contains(jobClassName)) {
+            log.error("Attempt to use non-Job class as for a Job");
+            throw new QuartzJobSaveException("Class " + jobClassName + " is not allowed as a Job class");
+        }
+        return (Class<? extends Job>) Class.forName(jobClassName);
     }
 
     protected Trigger buildTrigger(JobDetail jobDetail, TriggerModel triggerModel) {

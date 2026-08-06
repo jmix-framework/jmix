@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,15 @@
  * limitations under the License.
  */
 
-apply plugin: 'groovy'
-apply plugin: 'io.jmix'
+package test_support;
 
-group = 'io.jmix.quartz'
-base {
-    archivesName = 'jmix-quartz-flowui'
-}
+import org.quartz.Job;
+import org.quartz.JobExecutionContext;
 
-dependencies {
-    api project(':quartz')
-    api project(':flowui')
+public class TestJob implements Job {
 
-    compileOnly project(':security-flowui')
-
-    testImplementation project(':flowui-test-assist')
-    testImplementation project(':framework-test-support')
-    testImplementation project(':eclipselink')
-    testRuntimeOnly 'org.hsqldb:hsqldb'
+    @Override
+    public void execute(JobExecutionContext context) {
+        //do nothing
+    }
 }

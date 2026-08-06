@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Haulmont.
+ * Copyright 2026 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,15 @@
  * limitations under the License.
  */
 
-apply plugin: 'groovy'
-apply plugin: 'io.jmix'
+package test_support.view;
 
-group = 'io.jmix.quartz'
-base {
-    archivesName = 'jmix-quartz-flowui'
-}
+import com.vaadin.flow.router.Route;
+import io.jmix.flowui.app.main.StandardMainView;
+import io.jmix.flowui.view.ViewController;
+import io.jmix.flowui.view.ViewDescriptor;
 
-dependencies {
-    api project(':quartz')
-    api project(':flowui')
-
-    compileOnly project(':security-flowui')
-
-    testImplementation project(':flowui-test-assist')
-    testImplementation project(':framework-test-support')
-    testImplementation project(':eclipselink')
-    testRuntimeOnly 'org.hsqldb:hsqldb'
+@Route
+@ViewController
+@ViewDescriptor("test-main-view.xml")
+public class TestMainView extends StandardMainView {
 }

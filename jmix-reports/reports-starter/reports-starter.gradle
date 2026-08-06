@@ -23,4 +23,14 @@ dependencies {
     api project(':reports')
 
     api 'org.springframework.boot:spring-boot-autoconfigure'
+
+    // The AI Tools add-on is an optional dependency: the beans of the 'llm' data set type are declared only
+    // if an application adds that add-on explicitly.
+    compileOnly project(':aitools')
+
+    testImplementation project(':aitools-starter')
+    testImplementation project(':eclipselink-starter')
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.hsqldb:hsqldb'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }

@@ -98,6 +98,14 @@ public class QuartTestApplication {
         }
     }
 
+    static class MyAnotherQuartzJob implements Job {
+
+        @Override
+        public void execute(JobExecutionContext context) throws JobExecutionException {
+            //do nothing
+        }
+    }
+
     @Bean
     public JobDetail testJob() {
         return JobBuilder.newJob()

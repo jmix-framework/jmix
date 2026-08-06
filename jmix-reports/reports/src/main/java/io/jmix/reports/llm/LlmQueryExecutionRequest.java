@@ -29,20 +29,34 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
  */
 public class LlmQueryExecutionRequest {
 
+    protected String prompt;
     protected LlmDataQuery query;
     protected List<LlmQueryParameter> arguments;
 
     @Nullable
     protected Integer maxResults;
 
-    public LlmQueryExecutionRequest(LlmDataQuery query,
+    public LlmQueryExecutionRequest(String prompt,
+                                    LlmDataQuery query,
                                     @Nullable List<LlmQueryParameter> arguments,
                                     @Nullable Integer maxResults) {
+        checkNotNullArgument(prompt, "prompt is null");
         checkNotNullArgument(query, "query is null");
 
+        this.prompt = prompt;
         this.query = query;
         this.arguments = arguments == null ? List.of() : List.copyOf(arguments);
         this.maxResults = maxResults;
+    }
+
+    /**
+     * Returns the data set prompt the query was generated from. The query is not regenerated here, but the
+     * add-on repairs an invalid query against the original request, so it needs to know what was asked for.
+     *
+     * @return the data set prompt
+     */
+    public String getPrompt() {
+        return prompt;
     }
 
     /**

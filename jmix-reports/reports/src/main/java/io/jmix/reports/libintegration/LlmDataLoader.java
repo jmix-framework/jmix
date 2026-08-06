@@ -83,7 +83,7 @@ public class LlmDataLoader implements ReportDataLoader {
             LlmDataQuery query = resolveQuery(reportQuery, prompt, additionalParams, maxResults, availableParameters);
 
             log.debug("Executing the query of data set [{}]: {}", reportQuery.getName(), query.getJpql());
-            return llmDataQueryService.execute(new LlmQueryExecutionRequest(query,
+            return llmDataQueryService.execute(new LlmQueryExecutionRequest(prompt, query,
                     resolveArguments(reportQuery, query, availableParameters), maxResults));
         } catch (LlmDataQueryException e) {
             throw new DataLoadingException(

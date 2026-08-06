@@ -89,9 +89,9 @@ public class QuartzService {
 
                 List<TriggerModel> triggerModels = new ArrayList<>();
                 List<? extends Trigger> jobTriggers = scheduler.getTriggersOfJob(jobKey);
+                boolean isActive = false;
+                boolean hasBlockedTrigger = false;
                 if (!CollectionUtils.isEmpty(jobTriggers)) {
-                    boolean isActive = false;
-                    boolean hasBlockedTrigger = false;
                     for (Trigger trigger : scheduler.getTriggersOfJob(jobKey)) {
                         TriggerModel triggerModel = dataManager.create(TriggerModel.class);
                         triggerModel.setTriggerName(trigger.getKey().getName());
@@ -132,18 +132,19 @@ public class QuartzService {
                         }
                     }
                     jobModel.setTriggers(triggerModels);
-                    if (jobDetail instanceof InvalidJobDetail) {
-                        jobModel.setJobState(JobState.INVALID);
+                }
+                //resolve the state even for a job without triggers, e.g. to detect the invalid state
+                if (jobDetail instanceof InvalidJobDetail) {
+                    jobModel.setJobState(JobState.INVALID);
+                } else {
+                    if (hasBlockedTrigger) {
+                        // Some trigger is currently running in blocked mode (job class has @DisallowConcurrentExecution)
+                        jobModel.setJobState(JobState.RUNNING);
+                    } else if (isJobRunning(jobKey)) {
+                        // Job is running according to Scheduler/Cache
+                        jobModel.setJobState(JobState.RUNNING);
                     } else {
-                        if (hasBlockedTrigger) {
-                            // Some trigger is currently running in blocked mode (job class has @DisallowConcurrentExecution)
-                            jobModel.setJobState(JobState.RUNNING);
-                        } else if (isJobRunning(jobKey)) {
-                            // Job is running according to Scheduler/Cache
-                            jobModel.setJobState(JobState.RUNNING);
-                        } else {
-                            jobModel.setJobState(isActive ? JobState.NORMAL : JobState.PAUSED);
-                        }
+                        jobModel.setJobState(isActive ? JobState.NORMAL : JobState.PAUSED);
                     }
                 }
 

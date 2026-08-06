@@ -261,6 +261,25 @@ public class QuartzTest {
     }
 
     @Test
+    public void testJobStateOfJobWithoutTriggers() throws Exception {
+        JobDetail testJob = JobBuilder.newJob()
+                .withIdentity("noTriggersJobName", "testJobGroup")
+                .ofType(QuartTestApplication.MyQuartzJob.class)
+                .storeDurably()
+                .build();
+        scheduler.addJob(testJob, true);
+
+        JobModel jobModel = quartzService.getAllJobs().stream()
+                .filter(jm -> "noTriggersJobName".equals(jm.getJobName()))
+                .findFirst().orElse(null);
+        Assertions.assertNotNull(jobModel);
+        Assertions.assertEquals(JobState.PAUSED, jobModel.getJobState());
+
+        //cleanup
+        scheduler.deleteJob(JobKey.jobKey("noTriggersJobName", "testJobGroup"));
+    }
+
+    @Test
     public void testChangingJobClass() throws Exception {
         JobModel jobModel = dataManager.create(JobModel.class);
         jobModel.setJobName("changeClassJobName");

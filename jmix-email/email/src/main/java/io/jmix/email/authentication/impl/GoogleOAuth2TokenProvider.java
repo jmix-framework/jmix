@@ -17,19 +17,31 @@
 package io.jmix.email.authentication.impl;
 
 import com.google.auth.oauth2.AccessToken;
-import com.google.auth.oauth2.GoogleCredentials;
 import com.google.auth.oauth2.UserCredentials;
 import io.jmix.email.EmailerProperties;
 import io.jmix.email.authentication.EmailRefreshTokenManager;
-import io.jmix.email.authentication.OAuth2TokenProvider;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
+@NullMarked
 public class GoogleOAuth2TokenProvider extends AbstractOAuth2TokenProvider {
 
     private static final Logger log = LoggerFactory.getLogger(GoogleOAuth2TokenProvider.class);
+
+    @Nullable
+    protected UserCredentials credentials;
+
+    /**
+     * Refresh token value the current {@link #credentials} instance was built with. It is used to detect
+     * external token updates (via the email token view or another application node) that require
+     * re-initialization of the credentials.
+     */
+    @Nullable
+    protected String currentRefreshToken;
 
     public GoogleOAuth2TokenProvider(EmailerProperties emailerProperties,
                                      EmailRefreshTokenManager refreshTokenManager) {
@@ -37,10 +49,16 @@ public class GoogleOAuth2TokenProvider extends AbstractOAuth2TokenProvider {
     }
 
     @Override
-    public String getAccessToken() {
-        GoogleCredentials credentials = createUserCredentials();
+    public synchronized String getAccessToken() {
+        String storedRefreshToken = getRefreshToken();
+        if (credentials == null || !storedRefreshToken.equals(currentRefreshToken)) {
+            log.debug("Initializing Google user credentials");
+            credentials = createUserCredentials();
+            currentRefreshToken = storedRefreshToken;
+        }
 
         try {
+            // UserCredentials caches the access token internally and refreshes it only when it is close to expiry.
             credentials.refreshIfExpired();
         } catch (IOException e) {
             throw new RuntimeException("Unable to refresh access token", e);

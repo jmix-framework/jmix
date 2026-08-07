@@ -19,7 +19,9 @@ package io.jmix.email.authentication.impl;
 import io.jmix.email.EmailerProperties;
 import io.jmix.email.authentication.EmailRefreshTokenManager;
 import io.jmix.email.authentication.OAuth2TokenProvider;
+import org.jspecify.annotations.NullMarked;
 
+@NullMarked
 public abstract class AbstractOAuth2TokenProvider implements OAuth2TokenProvider {
 
     protected final EmailerProperties emailerProperties;

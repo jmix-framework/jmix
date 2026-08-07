@@ -26,10 +26,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class TestFileStorage implements FileStorage {
 
     private Map<FileRef, byte[]> files = new HashMap<>();
+
+    private final AtomicInteger openStreamCount = new AtomicInteger();
 
     @Override
     public String getStorageName() {
@@ -53,7 +56,30 @@ public class TestFileStorage implements FileStorage {
     @Override
     public InputStream openStream(FileRef reference) {
         byte[] bytes = files.get(reference);
-        return new ByteArrayInputStream(bytes);
+        openStreamCount.incrementAndGet();
+        return new ByteArrayInputStream(bytes) {
+            private boolean closed;
+
+            @Override
+            public void close() throws IOException {
+                if (!closed) {
+                    closed = true;
+                    openStreamCount.decrementAndGet();
+                }
+                super.close();
+            }
+        };
+    }
+
+    /**
+     * @return number of streams opened via {@link #openStream(FileRef)} and not closed yet
+     */
+    public int getOpenStreamCount() {
+        return openStreamCount.get();
+    }
+
+    public void resetOpenStreamCount() {
+        openStreamCount.set(0);
     }
 
     @Override

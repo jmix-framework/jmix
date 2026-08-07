@@ -24,6 +24,7 @@ import io.jmix.reports.llm.LlmDataQueryService;
 import io.jmix.reports.llm.LlmQueryExecutionRequest;
 import io.jmix.reports.llm.LlmQueryGenerationRequest;
 import io.jmix.reports.llm.LlmQueryParameter;
+import io.jmix.reports.llm.LlmQueryParameterNames;
 import io.jmix.reports.llm.impl.LlmDataQuerySerializer;
 import io.jmix.reports.yarg.exception.DataLoadingException;
 import io.jmix.reports.yarg.loaders.ReportDataLoader;
@@ -40,7 +41,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 /**
  * Loads band data for the {@link DataSetType#LLM} data set type: executes the query
@@ -53,12 +53,6 @@ import java.util.regex.Pattern;
 public class LlmDataLoader implements ReportDataLoader {
 
     private static final Logger log = LoggerFactory.getLogger(LlmDataLoader.class);
-
-    /**
-     * JPQL parameter names are identifiers, so a report parameter whose alias is not one cannot be offered
-     * to query generation.
-     */
-    protected static final Pattern PARAMETER_NAME_PATTERN = Pattern.compile("[A-Za-z_][A-Za-z0-9_]*");
 
     @Autowired
     protected LlmDataQueryService llmDataQueryService;
@@ -131,7 +125,7 @@ public class LlmDataLoader implements ReportDataLoader {
             Object value = param.getValue();
             // A report parameter left unfilled arrives as a null value, whatever the map's declared type says.
             //noinspection ConstantValue
-            if (value == null || !PARAMETER_NAME_PATTERN.matcher(param.getKey()).matches()) {
+            if (value == null || !LlmQueryParameterNames.isValid(param.getKey())) {
                 continue;
             }
 
@@ -162,9 +156,9 @@ public class LlmDataLoader implements ReportDataLoader {
 
         for (Map.Entry<String, Object> field : row.entrySet()) {
             Object value = field.getValue();
-            String name = band.getName() + "_" + field.getKey();
+            String name = LlmQueryParameterNames.ofBandField(band.getName(), field.getKey());
             //noinspection ConstantValue
-            if (value == null || !PARAMETER_NAME_PATTERN.matcher(name).matches()) {
+            if (value == null || !LlmQueryParameterNames.isValid(name)) {
                 continue;
             }
 

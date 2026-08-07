@@ -24,9 +24,13 @@ import org.springframework.ai.chat.prompt.ChatOptions;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.model.tool.ToolCallingChatOptions;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.List;
 
 public class StubChatModel implements ChatModel {
+
+    protected final Deque<ChatResponse> enqueuedResponses = new ArrayDeque<>();
 
     protected String content;
     protected Prompt lastPrompt;
@@ -48,9 +52,35 @@ public class StubChatModel implements ChatModel {
         return lastPrompt;
     }
 
+    /**
+     * Enqueues a response asking the caller to call the given tool. Enqueued responses are returned
+     * by {@link #call(Prompt)} before the plain {@link #getContent()} one, which lets a test drive a
+     * tool-calling round trip.
+     *
+     * @param toolName  name of the tool the model asks for
+     * @param arguments tool arguments as JSON
+     */
+    public void enqueueToolCall(String toolName, String arguments) {
+        AssistantMessage message = AssistantMessage.builder()
+                .content("")
+                .toolCalls(List.of(new AssistantMessage.ToolCall(
+                        "call-" + enqueuedResponses.size(), "function", toolName, arguments)))
+                .build();
+
+        enqueuedResponses.add(ChatResponse.builder()
+                .generations(List.of(new Generation(message)))
+                .build());
+    }
+
     @Override
     public ChatResponse call(Prompt prompt) {
         this.lastPrompt = prompt;
+
+        ChatResponse enqueuedResponse = enqueuedResponses.poll();
+        if (enqueuedResponse != null) {
+            return enqueuedResponse;
+        }
+
         return ChatResponse.builder()
                 .generations(List.of(new Generation(new AssistantMessage(content))))
                 .build();

@@ -15,8 +15,6 @@
  */
 
 @NullMarked
-@Experimental
-package io.jmix.reports.llm;
+package llm_designer.test_support;
 
-import io.jmix.core.annotation.Experimental;
 import org.jspecify.annotations.NullMarked;

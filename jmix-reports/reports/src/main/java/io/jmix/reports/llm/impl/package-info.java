@@ -15,6 +15,8 @@
  */
 
 @NullMarked
+@Internal
 package io.jmix.reports.llm.impl;
 
+import io.jmix.core.annotation.Internal;
 import org.jspecify.annotations.NullMarked;

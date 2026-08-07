@@ -36,6 +36,12 @@ public class ReportsClientProperties {
     long backgroundReportProcessingTimeoutMs;
 
     /**
+     * Defines the timeout in milliseconds for generating the query of an LLM data set in the report editor.
+     * Generation calls an LLM, so it takes noticeably longer than an ordinary request.
+     */
+    long llmQueryGenerationTimeoutMs;
+
+    /**
      * Whether Script fields in report editor should handle TAB key as \t symbol instead of focus navigation.
      */
     boolean enableTabSymbolInDataSetEditor;
@@ -61,12 +67,14 @@ public class ReportsClientProperties {
 
     public ReportsClientProperties(@DefaultValue("false") boolean useBackgroundReportProcessing,
                                    @DefaultValue("10000") long backgroundReportProcessingTimeoutMs,
+                                   @DefaultValue("120000") long llmQueryGenerationTimeoutMs,
                                    @DefaultValue("false") boolean enableTabSymbolInDataSetEditor,
                                    @DefaultValue("false") boolean useMultiSelectComboBoxPickerForListOfEntitiesParameterComponent,
                                    @DefaultValue("false") boolean showReportTableViewInMenu,
                                    @DefaultValue("DIALOG") OpenMode tableOutputOpenMode) {
         this.useBackgroundReportProcessing = useBackgroundReportProcessing;
         this.backgroundReportProcessingTimeoutMs = backgroundReportProcessingTimeoutMs;
+        this.llmQueryGenerationTimeoutMs = llmQueryGenerationTimeoutMs;
         this.enableTabSymbolInDataSetEditor = enableTabSymbolInDataSetEditor;
         this.useMultiSelectComboBoxPickerForListOfEntitiesParameterComponent = useMultiSelectComboBoxPickerForListOfEntitiesParameterComponent;
         this.showReportTableViewInMenu = showReportTableViewInMenu;
@@ -85,6 +93,13 @@ public class ReportsClientProperties {
      */
     public long getBackgroundReportProcessingTimeoutMs() {
         return backgroundReportProcessingTimeoutMs;
+    }
+
+    /**
+     * @see #llmQueryGenerationTimeoutMs
+     */
+    public long getLlmQueryGenerationTimeoutMs() {
+        return llmQueryGenerationTimeoutMs;
     }
 
     /**

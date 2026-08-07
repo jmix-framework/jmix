@@ -18,8 +18,6 @@ package io.jmix.reportsflowui.view.report;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.BiMap;
-import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.Multimap;
 import com.vaadin.flow.component.AbstractField.ComponentValueChangeEvent;
 import com.vaadin.flow.component.ClickEvent;
@@ -30,6 +28,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.NativeLabel;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.FontIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
@@ -48,6 +47,8 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.security.AccessDeniedException;
 import io.jmix.flowui.*;
+import io.jmix.flowui.backgroundtask.BackgroundTask;
+import io.jmix.flowui.backgroundtask.TaskLifeCycle;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.checkbox.JmixCheckbox;
 import io.jmix.flowui.component.codeeditor.CodeEditor;
@@ -60,6 +61,7 @@ import io.jmix.flowui.component.tabsheet.JmixTabSheet;
 import io.jmix.flowui.component.textarea.JmixTextArea;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.component.validation.ValidationErrors;
+import io.jmix.flowui.icon.Icons;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.ActionPerformedEvent;
 import io.jmix.flowui.kit.component.ComponentUtils;
@@ -75,6 +77,10 @@ import io.jmix.reports.entity.*;
 import io.jmix.reports.entity.wizard.ReportData;
 import io.jmix.reports.entity.wizard.ReportRegion;
 import io.jmix.reports.impl.StreamingReportValidationSupport;
+import io.jmix.reports.llm.LlmDataQuery;
+import io.jmix.reports.llm.LlmDataQueryException;
+import io.jmix.reports.llm.LlmQueryGenerationRequest;
+import io.jmix.reports.llm.impl.LlmDataQuerySerializer;
 import io.jmix.reports.util.DataSetFactory;
 import io.jmix.reports.yarg.reporting.StreamingReportValidator;
 import io.jmix.reports.yarg.structure.BandOrientation;
@@ -83,6 +89,7 @@ import io.jmix.reportsflowui.constant.ReportStyleConstants;
 import io.jmix.reportsflowui.helper.OutputTypeHelper;
 import io.jmix.reportsflowui.helper.ReportScriptEditor;
 import io.jmix.reportsflowui.support.CrossTabDataGridSupport;
+import io.jmix.reportsflowui.support.LlmDataSetGenerationSupport;
 import io.jmix.reportsflowui.view.region.ReportRegionWizardDetailView;
 import io.jmix.reportsflowui.view.reportwizard.ReportWizard;
 import io.jmix.reportsflowui.view.run.InputParametersDialog;
@@ -95,10 +102,11 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.jspecify.annotations.Nullable;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @RouteAlias(value = "reports/:id", layout = DefaultMainViewParent.class)
@@ -167,6 +175,22 @@ public class ReportDetailView extends StandardDetailView<Report> {
     protected VerticalLayout commonEntityGrid;
     @ViewComponent
     protected VerticalLayout jsonDataSetTypeVBox;
+    @ViewComponent
+    protected VerticalLayout llmDataSetTypeBox;
+    @ViewComponent
+    protected CodeEditor llmPromptCodeEditor;
+    @ViewComponent
+    protected JmixButton llmGenerateBtn;
+    @ViewComponent
+    protected CodeEditor llmGeneratedQueryCodeEditor;
+    @ViewComponent
+    protected Span llmStaleQueryNotice;
+    @ViewComponent
+    protected Span llmGeneratedColumnsSpan;
+    @ViewComponent
+    protected Span llmGeneratedExplanationSpan;
+    @ViewComponent
+    protected Span llmGeneratedWarningsSpan;
     @ViewComponent
     protected VerticalLayout dataSetScriptBox;
     @ViewComponent
@@ -286,6 +310,12 @@ public class ReportDetailView extends StandardDetailView<Report> {
     protected OutputTypeHelper outputTypeHelper;
     @Autowired
     protected StreamingReportValidationSupport streamingReportValidationSupport;
+    @Autowired
+    protected LlmDataSetGenerationSupport llmDataSetGenerationSupport;
+    @Autowired
+    protected LlmDataQuerySerializer llmDataQuerySerializer;
+    @Autowired
+    protected Icons icons;
 
     protected JmixComboBoxBinder<String> entityParamFieldBinder;
     protected JmixComboBoxBinder<String> entitiesParamFieldBinder;
@@ -302,6 +332,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
 
         initDataStoreField();
         initJsonPathQueryTextAreaField();
+        initLlmDataSetComponents();
 
         initEntitiesParamField();
         initEntityParamField();
@@ -594,12 +625,15 @@ public class ReportDetailView extends StandardDetailView<Report> {
     protected void onDataSetsDcItemChange(InstanceContainer.ItemChangeEvent<DataSet> event) {
         DataSet dataSet = event.getItem();
 
+        llmStaleQueryNotice.setVisible(false);
+
         if (dataSet == null) {
             hideAllDataSetEditComponents();
             return;
         }
 
         applyVisibilityRules(event.getItem());
+        refreshLlmPanelIfShown(dataSet);
 
         setupEntityParamFieldValue(dataSet);
         setupEntitiesParamFieldValue(dataSet);
@@ -621,6 +655,12 @@ public class ReportDetailView extends StandardDetailView<Report> {
 
         if ("type".equals(event.getProperty())) {
             updateStreamingRelatedFields();
+            refreshLlmPanelIfShown(event.getItem());
+        }
+
+        if ("text".equals(event.getProperty())) {
+            // The prompt was edited, so a query generated earlier answers the previous wording.
+            llmStaleQueryNotice.setVisible(StringUtils.isNotBlank(event.getItem().getLlmGeneratedQuery()));
         }
 
         if ("entityParamName".equals(event.getProperty())) {
@@ -1154,6 +1194,12 @@ public class ReportDetailView extends StandardDetailView<Report> {
                         errors.add(messageBundle.formatMessage(
                                 "validation.error.jsonDataSetScriptNull", dataSet.getName()));
                     }
+                } else if (dataSet.getType() == DataSetType.LLM) {
+                    // A stored query is not required: without one a run generates it, which the panel says.
+                    if (StringUtils.isBlank(dataSet.getText())) {
+                        errors.add(messageBundle.formatMessage(
+                                "validation.error.llmDataSetPromptNull", dataSet.getName()));
+                    }
                 }
             }
         }
@@ -1337,6 +1383,11 @@ public class ReportDetailView extends StandardDetailView<Report> {
     protected List<DataSetType> getDataSetTypeOptions() {
         ArrayList<DataSetType> options = new ArrayList<>(Arrays.asList(DataSetType.values()));
         options.remove(DataSetType.DELEGATE); // can't set it up in runtime editor
+        if (!llmDataSetGenerationSupport.isAvailable()) {
+            // The type needs the AI Tools add-on: without it a data set of this type cannot be generated or run.
+            options.remove(DataSetType.LLM);
+        }
+
         return options;
     }
 
@@ -1410,6 +1461,9 @@ public class ReportDetailView extends StandardDetailView<Report> {
                     initJsonDataSetOptions(dataSet);
                     jsonDataSetTypeVBox.setVisible(true);
                     break;
+                case LLM:
+                    llmDataSetTypeBox.setVisible(true);
+                    break;
                 default:
                     break;
             }
@@ -1455,6 +1509,65 @@ public class ReportDetailView extends StandardDetailView<Report> {
         dataSetScriptBox.setVisible(false);
         commonEntityGrid.setVisible(false);
         jsonDataSetTypeVBox.setVisible(false);
+        llmDataSetTypeBox.setVisible(false);
+    }
+    
+    /**
+     * Puts the icon in front of the stale-query notice's text, once: its text comes from the descriptor and is
+     * never reset, so the icon stays.
+     */
+    protected void initLlmDataSetComponents() {
+        llmStaleQueryNotice.addComponentAsFirst(icons.get(JmixFontIcon.WARNING));
+    }
+
+    /**
+     * Refreshes the panel when it is the one on screen. Called where the shown query can actually change — the
+     * selected data set, its type, a freshly generated query — and not on every property change, since reading
+     * the stored query parses it.
+     */
+    protected void refreshLlmPanelIfShown(DataSet dataSet) {
+        if (dataSet.getType() == DataSetType.LLM) {
+            initLlmDataSetOptions(dataSet);
+        }
+    }
+
+    /**
+     * Fills the panel from the data set: the stored query and what is known about it.
+     */
+    protected void initLlmDataSetOptions(DataSet dataSet) {
+        LlmDataQuery storedQuery = readStoredLlmQuery(dataSet);
+        List<String> warnings = storedQuery != null ? storedQuery.getWarnings() : List.of();
+
+        llmGeneratedQueryCodeEditor.setValue(storedQuery != null ? storedQuery.getJpql() : "");
+        llmGeneratedColumnsSpan.setText(storedQuery == null || storedQuery.getResultProperties().isEmpty()
+                ? ""
+                : messageBundle.formatMessage("bandsTab.dataSetTypeLayout.llmGeneratedColumnsSpan.text",
+                        String.join(", ", storedQuery.getResultProperties())));
+        llmGeneratedExplanationSpan.setText(storedQuery != null
+                ? StringUtils.defaultString(storedQuery.getExplanation())
+                : "");
+
+        // A badge with no text would still paint its background, hence the visibility. The icon goes in after the
+        // text, because setting the text of an HTML container drops whatever it contained.
+        boolean warningsExists = !warnings.isEmpty();
+        llmGeneratedWarningsSpan.setVisible(warningsExists);
+        if (warningsExists) {
+            llmGeneratedWarningsSpan.setText(String.join("; ", warnings));
+            llmGeneratedWarningsSpan.addComponentAsFirst(icons.get(JmixFontIcon.WARNING));
+        }
+    }
+
+    /**
+     * Reads the stored query for the preview, tolerating a document this version cannot parse: the designer must
+     * still open such a data set so that its query can be generated anew.
+     */
+    @Nullable
+    protected LlmDataQuery readStoredLlmQuery(DataSet dataSet) {
+        try {
+            return llmDataQuerySerializer.fromJson(dataSet.getLlmGeneratedQuery());
+        } catch (LlmDataQueryException e) {
+            return null;
+        }
     }
 
     protected void applyVisibilityRulesForEntityType(DataSet item) {
@@ -1560,6 +1673,71 @@ public class ReportDetailView extends StandardDetailView<Report> {
     @Subscribe("dataSetScriptFullScreenBtn")
     protected void onDataSetScriptFullScreenBtnClick(ClickEvent<Button> event) {
         onDataSetScriptFieldExpandIconClick();
+    }
+
+    @Subscribe("llmGenerateBtn")
+    public void onLlmGenerateBtnClick(ClickEvent<Button> event) {
+        DataSet dataSet = dataSetsDc.getItemOrNull();
+        if (dataSet == null) {
+            return;
+        }
+
+        if (StringUtils.isBlank(dataSet.getText())) {
+            notifications.create(messageBundle.getMessage("bandsTab.dataSetTypeLayout.llmPromptRequired"))
+                    .withType(Notifications.Type.WARNING)
+                    .show();
+            return;
+        }
+
+        LlmQueryGenerationRequest request = llmDataSetGenerationSupport.createGenerationRequest(dataSet);
+        BackgroundTask<Integer, LlmDataQuery> task = getTask(request, dataSet);
+
+        dialogs.createBackgroundTaskDialog(task)
+                .withHeader(messageBundle.getMessage("bandsTab.dataSetTypeLayout.llmGenerationDialog.header"))
+                .withText(messageBundle.getMessage("bandsTab.dataSetTypeLayout.llmGenerationDialog.text"))
+                .withCancelAllowed(true)
+                .open();
+    }
+
+    protected BackgroundTask<Integer, LlmDataQuery> getTask(LlmQueryGenerationRequest request, DataSet dataSet) {
+        long timeoutMs = reportsClientProperties.getLlmQueryGenerationTimeoutMs();
+
+        return new BackgroundTask<>(timeoutMs, TimeUnit.MILLISECONDS, ReportDetailView.this) {
+
+            @Override
+            public LlmDataQuery run(TaskLifeCycle<Integer> taskLifeCycle) {
+                return llmDataSetGenerationSupport.generate(request);
+            }
+
+            @Override
+            public void done(LlmDataQuery generatedQuery) {
+                // A failed generation never reaches this point, so the previously stored query stays as it was.
+                llmDataSetGenerationSupport.storeGeneratedQuery(dataSet, generatedQuery);
+
+                // Generation is long enough for another data set to be selected meanwhile. The query belongs to
+                // the data set it was requested for, but the panel must only be refreshed if that one is still
+                // shown — otherwise it would describe someone else's data set.
+                if (dataSetsDc.getItemOrNull() == dataSet) {
+                    initLlmDataSetOptions(dataSet);
+                    llmStaleQueryNotice.setVisible(false);
+                }
+            }
+        };
+    }
+
+    @Subscribe("llmPromptFullScreenBtn")
+    public void onLlmPromptFullScreenBtnClick(ClickEvent<Button> event) {
+        DataSet dataSet = dataSetsDc.getItemOrNull();
+        if (dataSet == null) {
+            return;
+        }
+
+        reportScriptEditor.create(this)
+                .withTitle(messageBundle.getMessage("bandsTab.dataSetTypeLayout.llmPromptCodeEditor.label"))
+                .withValue(dataSet.getText())
+                .withEditorMode(CodeEditorMode.TEXT)
+                .withCloseOnClick(dataSet::setText)
+                .open();
     }
 
     @Subscribe("dataSetScriptCodeEditorHelpBtn")

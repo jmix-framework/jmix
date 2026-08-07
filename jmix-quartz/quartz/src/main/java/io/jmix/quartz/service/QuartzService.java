@@ -46,6 +46,8 @@ import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
 @Service("quartz_QuartzService")
 public class QuartzService {
 
+    protected static final long DEFAULT_REPEAT_INTERVAL_MILLIS = 60000L;
+
     private static final Logger log = LoggerFactory.getLogger(QuartzService.class);
 
     @Autowired
@@ -96,8 +98,9 @@ public class QuartzService {
      *
      * @param jobModel               job to edit
      * @param jobDataParameterModels parameters for job
-     * @param triggerModels          triggers for job; existing triggers of the job are replaced with provided ones,
-     *                               empty list removes all triggers of the job
+     * @param triggerModels          triggers for job; existing triggers of the job are synchronized with provided
+     *                               ones: unchanged triggers are kept with their execution state, changed ones are
+     *                               rescheduled, obsolete ones are removed, empty list removes all triggers
      * @param replaceJobIfExists     replace if job with the same name already exists
      */
     @SuppressWarnings("unchecked")
@@ -112,17 +115,7 @@ public class QuartzService {
             JobDetail jobDetail = buildJobDetail(jobModel, scheduler.getJobDetail(jobKey), jobDataParameterModels);
             scheduler.addJob(jobDetail, replaceJobIfExists);
 
-            //remove obsolete triggers
-            for (Trigger trigger : scheduler.getTriggersOfJob(jobKey)) {
-                scheduler.unscheduleJob(trigger.getKey());
-            }
-            //recreate triggers
-            if (!CollectionUtils.isEmpty(triggerModels)) {
-                for (TriggerModel triggerModel : triggerModels) {
-                    Trigger trigger = buildTrigger(jobDetail, triggerModel);
-                    scheduler.scheduleJob(trigger);
-                }
-            }
+            updateTriggers(jobDetail, triggerModels);
         } catch (SchedulerException e) {
             log.warn("Unable to update job with name {} and group {}", jobModel.getJobName(), jobModel.getJobGroup(), e);
             throw new QuartzJobSaveException(e.getMessage());
@@ -479,6 +472,109 @@ public class QuartzService {
         return (Class<? extends Job>) Class.forName(jobClassName);
     }
 
+    /**
+     * Synchronizes triggers of the job with the provided models: unchanged triggers are left untouched, so they
+     * keep their execution state and pause state, changed ones are rescheduled, missing ones are scheduled
+     * and obsolete ones are unscheduled.
+     */
+    protected void updateTriggers(JobDetail jobDetail, List<TriggerModel> triggerModels) throws SchedulerException {
+        Map<TriggerKey, Trigger> existingTriggers = new HashMap<>();
+        for (Trigger trigger : scheduler.getTriggersOfJob(jobDetail.getKey())) {
+            existingTriggers.put(trigger.getKey(), trigger);
+        }
+
+        Set<TriggerKey> keysToKeep = new HashSet<>();
+        if (!CollectionUtils.isEmpty(triggerModels)) {
+            for (TriggerModel triggerModel : triggerModels) {
+                Trigger newTrigger = buildTrigger(jobDetail, triggerModel);
+                Trigger existingTrigger = existingTriggers.get(newTrigger.getKey());
+                if (existingTrigger == null) {
+                    scheduler.scheduleJob(newTrigger);
+                } else {
+                    keysToKeep.add(newTrigger.getKey());
+                    if (isTriggerChanged(existingTrigger, triggerModel)) {
+                        Trigger.TriggerState oldTriggerState = scheduler.getTriggerState(existingTrigger.getKey());
+                        scheduler.rescheduleJob(newTrigger.getKey(), newTrigger);
+                        if (oldTriggerState == Trigger.TriggerState.PAUSED) {
+                            //replacing a trigger resets its individual pause state - restore it
+                            scheduler.pauseTrigger(newTrigger.getKey());
+                        }
+                    }
+                }
+            }
+        }
+        //remove obsolete triggers
+        for (TriggerKey existingTriggerKey : existingTriggers.keySet()) {
+            if (!keysToKeep.contains(existingTriggerKey)) {
+                scheduler.unscheduleJob(existingTriggerKey);
+            }
+        }
+    }
+
+    /**
+     * Defines whether the trigger registered in the scheduler differs from the submitted model,
+     * which means the trigger must be rescheduled.
+     */
+    protected boolean isTriggerChanged(Trigger trigger, TriggerModel triggerModel) {
+        if (isScheduleChanged(trigger, triggerModel)) {
+            return true;
+        }
+        /*
+        Null start date in the model matches a start time in the past because past start times
+        are cleared when the trigger is loaded into the model (see createTriggerModel).
+        */
+        Date modelStartDate = triggerModel.getStartDate();
+        if (modelStartDate == null) {
+            if (trigger.getStartTime() != null && trigger.getStartTime().after(new Date())) {
+                return true;
+            }
+        } else if (!modelStartDate.equals(trigger.getStartTime())) {
+            return true;
+        }
+        if (!Objects.equals(trigger.getEndTime(), triggerModel.getEndDate())) {
+            return true;
+        }
+        return !resolveMisfireInstructionId(trigger).equals(resolveModelMisfireInstructionId(trigger, triggerModel));
+    }
+
+    protected boolean isScheduleChanged(Trigger trigger, TriggerModel triggerModel) {
+        if (trigger instanceof CronTrigger cronTrigger) {
+            if (triggerModel.getScheduleType() != ScheduleType.CRON_EXPRESSION) {
+                return true;
+            }
+            String modelTimeZoneId = triggerModel.getTimeZoneId() != null
+                    ? triggerModel.getTimeZoneId()
+                    : TimeZone.getDefault().getID();
+            return !Objects.equals(cronTrigger.getCronExpression(), triggerModel.getCronExpression())
+                    || !cronTrigger.getTimeZone().getID().equals(modelTimeZoneId);
+        }
+        if (trigger instanceof SimpleTrigger simpleTrigger) {
+            if (triggerModel.getScheduleType() != ScheduleType.SIMPLE) {
+                return true;
+            }
+            long modelRepeatInterval = triggerModel.getRepeatInterval() != null
+                    ? triggerModel.getRepeatInterval()
+                    : DEFAULT_REPEAT_INTERVAL_MILLIS;
+            int modelRepeatCount = triggerModel.getRepeatCount() != null && triggerModel.getRepeatCount() >= 0
+                    ? triggerModel.getRepeatCount()
+                    : SimpleTrigger.REPEAT_INDEFINITELY;
+            return simpleTrigger.getRepeatInterval() != modelRepeatInterval
+                    || simpleTrigger.getRepeatCount() != modelRepeatCount;
+        }
+        //unsupported trigger type - reschedule to be safe
+        return true;
+    }
+
+    protected String resolveModelMisfireInstructionId(Trigger trigger, TriggerModel triggerModel) {
+        String misfireInstructionId = triggerModel.getMisfireInstructionId();
+        if (misfireInstructionId != null) {
+            return misfireInstructionId;
+        }
+        return trigger instanceof SimpleTrigger
+                ? SimpleTriggerMisfireInstruction.SMART_POLICY.getId()
+                : CronTriggerMisfireInstruction.SMART_POLICY.getId();
+    }
+
     protected Trigger buildTrigger(JobDetail jobDetail, TriggerModel triggerModel) {
         TriggerBuilder<Trigger> triggerBuilder = TriggerBuilder.newTrigger()
                 .forJob(jobDetail);
@@ -539,8 +635,7 @@ public class QuartzService {
     protected SimpleScheduleBuilder buildSimpleSchedule(TriggerModel triggerModel) {
         Long repeatInterval = triggerModel.getRepeatInterval();
         if (Objects.isNull(repeatInterval)) {
-            // 1 minute
-            repeatInterval = 60000L;
+            repeatInterval = DEFAULT_REPEAT_INTERVAL_MILLIS;
         }
 
         SimpleScheduleBuilder simpleScheduleBuilder = simpleSchedule()

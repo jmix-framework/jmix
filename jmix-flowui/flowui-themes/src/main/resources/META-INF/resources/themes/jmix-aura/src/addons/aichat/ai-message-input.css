@@ -75,3 +75,22 @@
   opacity: 0.16;
   background: oklch(from var(--vaadin-button-text-color) min(c, 1 - l + c) calc(c * 0.9) h);
 }
+
+/* --- Attachments (Stage 3) --- */
+
+/* The base styles already place the paperclip (flex:none, centered) and the
+   chips tray (own full-width row, bounded to the composer width, with the
+   file list's THUMBNAILS wrapping), so Aura only layers the appearance the
+   base does not carry: keep the paperclip a quiet, icon-only square so the
+   accent-filled send button stays the single primary action. The tray surface
+   is left to the base plus the upload component's own Aura theme. */
+:is(jmix-ai-message-input) > [slot='attach'] {
+  box-sizing: border-box;
+  min-width: 0;
+  aspect-ratio: 1;
+  box-shadow: none;
+  --vaadin-button-padding: 0;
+  --vaadin-button-background: transparent;
+  --vaadin-button-border-color: transparent;
+  --vaadin-button-text-color: var(--vaadin-text-color-secondary);
+}

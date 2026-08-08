@@ -34,6 +34,13 @@
     box-shadow: none;
   }
 
+  /* Drop highlight while files are dragged over the composer (Stage 3). Mirror
+     of the base rule so it survives Lumo's adoptedStyleSheets replacement. */
+  :host([dragover]) {
+    outline: 2px dashed var(--vaadin-border-color-strong, var(--lumo-contrast-50pct));
+    outline-offset: -2px;
+  }
+
   @media (forced-colors: active) {
     :host {
       border: 1px solid CanvasText;
@@ -58,6 +65,45 @@
 
   :host([expanded]) ::slotted([slot='prefix']),
   :host([theme~='fixed-toolbar']) ::slotted([slot='prefix']) {
+    margin-inline-end: auto;
+  }
+
+  /* --- Attachments (Stage 3) --- */
+
+  /* Mirror of the base layout so it survives Lumo's adoptedStyleSheets
+     replacement: the chips tray takes its own full-width row bounded to the
+     composer width. The chips themselves wrap inside the file list's THUMBNAILS
+     variant, which the upload component's own Lumo theme owns. */
+  ::slotted([slot='attachments']) {
+    order: -2;
+    flex-basis: 100%;
+    max-width: 100%;
+  }
+
+  /* Paperclip: an icon-only, quiet square matching the send button's footprint
+     (the same --lumo-size-m box, driven through the inherited --vaadin-button-*
+     custom properties the slotted vaadin-upload-button reads). The send button
+     stays the filled primary action, so the paperclip is transparent rather
+     than primary-filled. */
+  ::slotted([slot='attach']) {
+    flex: none;
+    align-self: center;
+    box-sizing: border-box;
+    min-width: 0;
+    inline-size: var(--lumo-size-m);
+    block-size: var(--lumo-size-m);
+    --vaadin-button-height: var(--lumo-size-m);
+    --vaadin-button-margin: 0;
+    --vaadin-button-padding: 0;
+    --vaadin-button-background: transparent;
+    --vaadin-button-border-color: transparent;
+    --vaadin-button-text-color: var(--lumo-secondary-text-color);
+  }
+
+  /* Toolbar layout: keep the paperclip on the left next to the pushed-left
+     prefix (mirror of the base rule). */
+  :host([expanded]) ::slotted([slot='attach']),
+  :host([theme~='fixed-toolbar']) ::slotted([slot='attach']) {
     margin-inline-end: auto;
   }
 }

@@ -41,7 +41,6 @@
     <source fileExt="kt" name="registration"/>
 
     <source fileExt="java" name="studioMetadata"/>
-    <source fileExt="kt" name="studioMetadata"/>
 
     <source fileExt="xsd" name="schema"/>
 

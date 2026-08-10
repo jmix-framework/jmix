@@ -39,13 +39,24 @@ public class LlmQueryParameter {
     @Nullable
     protected transient Object value;
 
+    /**
+     * Transient for the same reason as the value: it describes what the run offers, not what the stored
+     * query declares, and must not become part of the stored document.
+     */
+    protected transient boolean multiValued;
+
     public LlmQueryParameter(String name, String javaType, @Nullable Object value) {
+        this(name, javaType, value, false);
+    }
+
+    public LlmQueryParameter(String name, String javaType, @Nullable Object value, boolean multiValued) {
         checkNotNullArgument(name, "name is null");
         checkNotNullArgument(javaType, "javaType is null");
 
         this.name = name;
         this.javaType = javaType;
         this.value = value;
+        this.multiValued = multiValued;
     }
 
     /**
@@ -68,6 +79,18 @@ public class LlmQueryParameter {
     @Nullable
     public Object getValue() {
         return value;
+    }
+
+    /**
+     * Tells a parameter that carries several values of {@link #getJavaType()} — the values of one cross-tab
+     * axis — from an ordinary single-valued one, so that a query can match it with {@code IN}. Stated
+     * explicitly rather than inferred from the value, because query generation is offered parameters whose
+     * value is not known yet.
+     *
+     * @return {@code true} if the value is a collection of {@link #getJavaType()}
+     */
+    public boolean isMultiValued() {
+        return multiValued;
     }
 
     @Override

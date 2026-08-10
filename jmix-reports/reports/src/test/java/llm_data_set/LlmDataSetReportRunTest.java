@@ -26,6 +26,7 @@ import io.jmix.reports.entity.Orientation;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportOutputType;
 import io.jmix.reports.entity.ReportTemplate;
+import io.jmix.reports.llm.LlmDataQuery;
 import io.jmix.reports.llm.LlmQueryExecutionRequest;
 import io.jmix.reports.llm.LlmQueryParameter;
 import io.jmix.reports.runner.ReportRunner;
@@ -33,6 +34,11 @@ import io.jmix.reports.test_support.AuthenticatedAsSystem;
 import io.jmix.reports.yarg.reporting.ReportOutputDocument;
 import llm_data_set.test_support.LlmDataSetTestConfiguration;
 import llm_data_set.test_support.TestLlmDataQueryService;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -40,9 +46,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -93,6 +104,129 @@ class LlmDataSetReportRunTest {
                 .flatExtracting(LlmQueryExecutionRequest::getArguments)
                 .extracting(LlmQueryParameter::getName, LlmQueryParameter::getValue)
                 .containsExactly(tuple("Orders_number", "A-1"), tuple("Orders_number", "A-2"));
+    }
+
+    @Test
+    void testCrossTabBandBuildsItsMatrixFromAnLlmCellDataSet() {
+        queryService.setRows(List.of(
+                Map.of("revenue_dynamic_header_month", 3, "revenue_master_data_publisherId", 1, "amount", 10.0),
+                Map.of("revenue_dynamic_header_month", 4, "revenue_master_data_publisherId", 2, "amount", 20.0)));
+
+        ReportOutputDocument document = reportRunner.byReportEntity(createCrossTabReport()).run();
+
+        Sheet sheet = readFirstSheet(document.getContent());
+        assertThat(cellValue(sheet, 0, 1)).isEqualTo("March");
+        assertThat(cellValue(sheet, 0, 2)).isEqualTo("April");
+        assertThat(cellValue(sheet, 1, 0)).isEqualTo("Nintendo");
+        assertThat(cellValue(sheet, 1, 1)).isEqualTo(10.0);
+        assertThat(cellValue(sheet, 2, 0)).isEqualTo("Ubisoft");
+        assertThat(cellValue(sheet, 2, 2)).isEqualTo(20.0);
+    }
+
+    @Test
+    void testCrossTabAxisValuesReachTheCellDataSetAsLists() {
+        queryService.setRows(List.of());
+        queryService.setQueryToGenerate(new LlmDataQuery("select 1 as amount from sales_Order o",
+                List.of("revenue_dynamic_header_month", "revenue_master_data_publisherId", "amount"),
+                List.of(), "Revenue matrix", List.of(), null));
+
+        reportRunner.byReportEntity(createCrossTabReport(true)).run();
+
+        assertThat(queryService.getLastGenerationRequest().getAvailableParameters())
+                .extracting(LlmQueryParameter::getName, LlmQueryParameter::getValue)
+                .contains(tuple("revenue_dynamic_header_month", List.of(3, 4)),
+                        tuple("revenue_master_data_publisherId", List.of(1, 2)));
+    }
+
+    /**
+     * Root → a cross-tab band whose axes are Groovy data sets and whose cells come from an LLM one. Reuses the
+     * template of the annotated cross-tab report, whose named ranges are what the controller renders into.
+     */
+    protected Report createCrossTabReport() {
+        return createCrossTabReport(false);
+    }
+
+    protected Report createCrossTabReport(boolean regenerateOnRun) {
+        Report report = metadata.create(Report.class);
+        report.setName("Cross-tab LLM report");
+
+        BandDefinition rootBand = metadata.create(BandDefinition.class);
+        rootBand.setReport(report);
+        rootBand.setName("Root");
+        rootBand.setOrientation(Orientation.HORIZONTAL);
+        rootBand.setMultiDataSet(false);
+        rootBand.setPosition(0);
+
+        BandDefinition revenueBand = metadata.create(BandDefinition.class);
+        revenueBand.setReport(report);
+        revenueBand.setName("revenue");
+        revenueBand.setOrientation(Orientation.CROSS);
+        revenueBand.setMultiDataSet(false);
+        revenueBand.setPosition(0);
+        revenueBand.setParentBandDefinition(rootBand);
+        rootBand.getChildrenBandDefinitions().add(revenueBand);
+
+        DataSet header = metadata.create(DataSet.class);
+        header.setName("revenue_dynamic_header");
+        header.setBandDefinition(revenueBand);
+        header.setType(DataSetType.GROOVY);
+        header.setText("""
+                return [["month": 3, "month_caption": "March"], ["month": 4, "month_caption": "April"]]""");
+
+        DataSet masterData = metadata.create(DataSet.class);
+        masterData.setName("revenue_master_data");
+        masterData.setBandDefinition(revenueBand);
+        masterData.setType(DataSetType.GROOVY);
+        masterData.setText("""
+                return [["publisherId": 1, "publisher_name": "Nintendo"],\
+                 ["publisherId": 2, "publisher_name": "Ubisoft"]]""");
+
+        DataSet cells = metadata.create(DataSet.class);
+        cells.setName("revenue");
+        cells.setBandDefinition(revenueBand);
+        cells.setType(DataSetType.LLM);
+        cells.setText("Revenue per publisher and month");
+        cells.setLlmGeneratedQuery("""
+                {"jpql":"select 1 as amount from sales_Order o",\
+                "resultProperties":["revenue_dynamic_header_month","revenue_master_data_publisherId","amount"]}""");
+        cells.setLlmRegenerateOnRun(regenerateOnRun);
+
+        revenueBand.setDataSets(List.of(header, masterData, cells));
+        report.setBands(Set.of(rootBand, revenueBand));
+
+        ReportTemplate template = metadata.create(ReportTemplate.class);
+        template.setReport(report);
+        template.setCode("default");
+        template.setReportOutputType(ReportOutputType.XLSX);
+        template.setName("RevenueByPublisher.xlsx");
+        template.setContent(readCrossTabTemplate());
+        report.setTemplates(List.of(template));
+        report.setDefaultTemplate(template);
+
+        report.setXml(reportsSerialization.convertToString(report));
+        return report;
+    }
+
+    protected byte[] readCrossTabTemplate() {
+        try (InputStream stream = getClass().getClassLoader()
+                .getResourceAsStream("io/jmix/reports/test_support/report/RevenueByPublisher.xlsx")) {
+            return Objects.requireNonNull(stream, "The cross-tab template is missing").readAllBytes();
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    protected Sheet readFirstSheet(byte[] content) {
+        try (Workbook workbook = WorkbookFactory.create(new ByteArrayInputStream(content))) {
+            return workbook.getSheetAt(0);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    protected Object cellValue(Sheet sheet, int row, int column) {
+        Cell cell = sheet.getRow(row).getCell(column);
+        return cell.getCellType() == CellType.NUMERIC ? cell.getNumericCellValue() : cell.getStringCellValue();
     }
 
     protected Report createReportWithNestedLlmBand() {

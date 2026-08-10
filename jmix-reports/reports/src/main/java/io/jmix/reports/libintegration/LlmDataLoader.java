@@ -75,6 +75,7 @@ public class LlmDataLoader implements ReportDataLoader {
 
         try {
             LlmDataQuery query = resolveQuery(reportQuery, prompt, additionalParams, maxResults, availableParameters);
+            checkCrossTabAxesAreLinkable(reportQuery, query, params, availableParameters);
 
             log.debug("Executing the query of data set [{}]: {}", reportQuery.getName(), query.getJpql());
             return llmDataQueryService.execute(new LlmQueryExecutionRequest(prompt, query,
@@ -114,18 +115,26 @@ public class LlmDataLoader implements ReportDataLoader {
 
     /**
      * Collects the parameters the query may reference, keyed by name: the run parameters first, then the fields
-     * of every parent row up the band hierarchy. A parameter with no value is left out — its type is unknown,
-     * and the add-on binds no value for it, which would fail the query anyway.
+     * of every parent row up the band hierarchy, then the values of the cross-tab axes this band is built from.
+     * A parameter with no value is left out — its type is unknown, and the add-on binds no value for it, which
+     * would fail the query anyway.
      */
     protected Map<String, LlmQueryParameter> collectAvailableParameters(Map<String, Object> params,
                                                                        @Nullable BandData parentBand) {
         Map<String, LlmQueryParameter> availableParameters = new LinkedHashMap<>();
+        Map<String, List<?>> crossTabAxes = new LinkedHashMap<>();
 
         for (Map.Entry<String, Object> param : params.entrySet()) {
             Object value = param.getValue();
             // A report parameter left unfilled arrives as a null value, whatever the map's declared type says.
             //noinspection ConstantValue
             if (value == null || !LlmQueryParameterNames.isValid(param.getKey())) {
+                continue;
+            }
+
+            // An axis holds the rows of another data set, so it is offered field by field rather than as it is.
+            if (LlmQueryParameterNames.isCrossTabAxis(param.getKey()) && isAxisRows(value)) {
+                crossTabAxes.put(param.getKey(), (List<?>) value);
                 continue;
             }
 
@@ -136,6 +145,8 @@ public class LlmDataLoader implements ReportDataLoader {
         for (BandData band = parentBand; band != null; band = band.getParentBand()) {
             addParentBandFields(band, availableParameters);
         }
+
+        crossTabAxes.forEach((dataSetName, rows) -> addCrossTabAxisValues(dataSetName, rows, availableParameters));
 
         return availableParameters;
     }
@@ -168,6 +179,90 @@ public class LlmDataLoader implements ReportDataLoader {
                 log.warn("Parameter [{}] is already available, so the field [{}] of band [{}] is not offered "
                         + "to the query; rename one of them to make both usable",
                         name, field.getKey(), band.getName());
+            }
+        }
+    }
+
+    /**
+     * Fails a query that cannot be placed into the matrix of a cross-tab band.
+     * <p>
+     * {@code CrossTabExtractionController} links a cell to its column and to its row by looking for a result
+     * column whose name starts with the axis data set's name; without one, every cell is dropped and the band
+     * renders empty with no error at all. Failing here turns that silence into a message.
+     */
+    protected void checkCrossTabAxesAreLinkable(ReportQuery reportQuery, LlmDataQuery query,
+                                                Map<String, Object> params,
+                                                Map<String, LlmQueryParameter> availableParameters) {
+        for (String name : params.keySet()) {
+            if (!LlmQueryParameterNames.isCrossTabAxis(name) || !isAxisRows(params.get(name))) {
+                continue;
+            }
+
+            String prefix = name + "_";
+            // An axis that produced no value has no columns either, so there is nothing to link a cell to.
+            if (availableParameters.keySet().stream().noneMatch(parameter -> parameter.startsWith(prefix))) {
+                continue;
+            }
+
+            boolean linkable = query.getResultProperties().stream().anyMatch(property -> property.startsWith(prefix));
+            if (!linkable) {
+                throw new DataLoadingException(String.format(
+                        "The query of data set [%s] returns no column named [%s<field>], so its rows cannot be "
+                                + "linked to the cross-tab axis [%s]; it returns %s",
+                        reportQuery.getName(), prefix, name, query.getResultProperties()));
+            }
+        }
+    }
+
+    /**
+     * Tells the rows of a cross-tab axis from an ordinary parameter that merely happens to be named like one:
+     * an axis holds rows, so it is a list of maps, and an empty list is the axis that produced nothing. A list
+     * of anything else belongs to the report run and stays a parameter of its own.
+     */
+    protected boolean isAxisRows(Object value) {
+        return value instanceof List<?> rows && (rows.isEmpty() || rows.get(0) instanceof Map);
+    }
+
+    /**
+     * Offers the values of one cross-tab axis, one parameter per field of its rows, so that a cell query can
+     * narrow itself to the columns and rows the matrix actually has. The value is the whole list — the add-on
+     * converts a collection element by element — and the type is the element's, not the list's.
+     * <p>
+     * A field contributes nothing when every row leaves it empty, and the same naming rules as for band fields
+     * apply: a name that is not an identifier is skipped, and a name already taken is kept.
+     */
+    protected void addCrossTabAxisValues(String dataSetName, List<?> rows,
+                                         Map<String, LlmQueryParameter> availableParameters) {
+        Map<String, List<Object>> valuesByField = new LinkedHashMap<>();
+        for (Object row : rows) {
+            if (!(row instanceof Map<?, ?> fields)) {
+                continue;
+            }
+
+            for (Map.Entry<?, ?> field : fields.entrySet()) {
+                Object value = field.getValue();
+                if (value == null) {
+                    continue;
+                }
+
+                valuesByField.computeIfAbsent(String.valueOf(field.getKey()), name -> new ArrayList<>())
+                        .add(value);
+            }
+        }
+
+        for (Map.Entry<String, List<Object>> field : valuesByField.entrySet()) {
+            String name = LlmQueryParameterNames.ofCrossTabValue(dataSetName, field.getKey());
+            if (!LlmQueryParameterNames.isValid(name)) {
+                continue;
+            }
+
+            List<Object> values = field.getValue();
+            LlmQueryParameter present = availableParameters.putIfAbsent(name,
+                    new LlmQueryParameter(name, values.get(0).getClass().getName(), values, true));
+            if (present != null) {
+                log.warn("Parameter [{}] is already available, so the field [{}] of the cross-tab axis [{}] is "
+                        + "not offered to the query; rename one of them to make both usable",
+                        name, field.getKey(), dataSetName);
             }
         }
     }

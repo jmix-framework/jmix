@@ -78,6 +78,10 @@ public class TestLlmDataQueryService implements LlmDataQueryService {
         this.rows = rows;
     }
 
+    public void setQueryToGenerate(LlmDataQuery queryToGenerate) {
+        this.queryToGenerate = queryToGenerate;
+    }
+
     protected LlmDataQuery defaultGeneratedQuery() {
         return new LlmDataQuery(GENERATED_JPQL, List.of("orderNumber"), List.of(),
                 "All order numbers", List.of(), null);

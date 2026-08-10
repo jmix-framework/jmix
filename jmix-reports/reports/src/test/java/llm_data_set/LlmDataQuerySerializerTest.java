@@ -74,6 +74,15 @@ class LlmDataQuerySerializerTest {
     }
 
     @Test
+    void testStoredDocumentCarriesNothingButTheQueryContract() {
+        String json = serializer.toJson(new LlmDataQuery("select o.id as id from sales_Order o", List.of("id"),
+                List.of(new LlmQueryParameter("years", "java.lang.Integer", List.of(2025), true)),
+                null, List.of(), null));
+
+        assertThat(json).doesNotContain("multiValued");
+    }
+
+    @Test
     void testBlankDocumentMeansNoCachedQuery() {
         assertThat(serializer.fromJson(null)).isNull();
         assertThat(serializer.fromJson("")).isNull();

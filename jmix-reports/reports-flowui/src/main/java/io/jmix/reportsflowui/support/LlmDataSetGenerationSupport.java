@@ -20,6 +20,7 @@ import io.jmix.reports.ParameterClassResolver;
 import io.jmix.reports.entity.BandDefinition;
 import io.jmix.reports.entity.DataSet;
 import io.jmix.reports.entity.DataSetType;
+import io.jmix.reports.entity.Orientation;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportInputParameter;
 import io.jmix.reports.llm.LlmDataQuery;
@@ -80,6 +81,7 @@ public class LlmDataSetGenerationSupport {
         Map<String, LlmQueryParameter> parameters = new LinkedHashMap<>();
         collectReportParameters(dataSet, parameters);
         collectParentBandColumns(dataSet, parameters);
+        collectCrossTabAxisColumns(dataSet, parameters);
 
         return new LlmQueryGenerationRequest(StringUtils.defaultString(dataSet.getText()),
                 List.copyOf(parameters.values()), dataSet.getLlmMaxResults());
@@ -153,6 +155,34 @@ public class LlmDataSetGenerationSupport {
         }
     }
 
+    /**
+     * Offers the columns of the axes of a cross-tab band, so that a cell query can filter itself by them and
+     * alias its own columns accordingly. Only an axis that is an LLM data set with a stored query states its
+     * columns; against a JPQL or SQL axis they exist only once it has run.
+     */
+    protected void collectCrossTabAxisColumns(DataSet dataSet, Map<String, LlmQueryParameter> parameters) {
+        BandDefinition band = dataSet.getBandDefinition();
+        if (band == null || band.getOrientation() != Orientation.CROSS || band.getDataSets() == null) {
+            return;
+        }
+
+        for (DataSet axis : band.getDataSets()) {
+            String axisName = axis.getName();
+            if (axis == dataSet || axisName == null || !LlmQueryParameterNames.isCrossTabAxis(axisName)) {
+                continue;
+            }
+
+            for (String column : storedColumnsOf(axis)) {
+                String name = LlmQueryParameterNames.ofCrossTabValue(axisName, column);
+                if (!LlmQueryParameterNames.isValid(name)) {
+                    continue;
+                }
+                // The type is unknown until the axis runs, as for a parent band column.
+                parameters.putIfAbsent(name, new LlmQueryParameter(name, Object.class.getName(), null, true));
+            }
+        }
+    }
+
     protected List<String> storedColumnsOf(BandDefinition band) {
         if (band.getDataSets() == null) {
             return List.of();
@@ -160,15 +190,18 @@ public class LlmDataSetGenerationSupport {
 
         List<String> columns = new ArrayList<>();
         for (DataSet dataSet : band.getDataSets()) {
-            if (dataSet.getType() != DataSetType.LLM || StringUtils.isBlank(dataSet.getLlmGeneratedQuery())) {
-                continue;
-            }
-            LlmDataQuery storedQuery = readStoredQuery(dataSet);
-            if (storedQuery != null) {
-                columns.addAll(storedQuery.getResultProperties());
-            }
+            columns.addAll(storedColumnsOf(dataSet));
         }
         return columns;
+    }
+
+    protected List<String> storedColumnsOf(DataSet dataSet) {
+        if (dataSet.getType() != DataSetType.LLM || StringUtils.isBlank(dataSet.getLlmGeneratedQuery())) {
+            return List.of();
+        }
+
+        LlmDataQuery storedQuery = readStoredQuery(dataSet);
+        return storedQuery != null ? storedQuery.getResultProperties() : List.of();
     }
 
     @Nullable

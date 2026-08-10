@@ -107,12 +107,20 @@ public class AiToolsLlmDataQueryService implements LlmDataQueryService {
             userText.append("\n\nAVAILABLE REPORT PARAMETERS:");
             for (LlmQueryParameter parameter : request.getAvailableParameters()) {
                 userText.append("\n- :").append(parameter.getName())
-                        .append(" (").append(parameter.getJavaType()).append(')');
+                        .append(" (").append(parameter.getJavaType());
+                // A cross-tab axis holds every value of its column, so the query has to match it with IN.
+                if (parameter.isMultiValued()) {
+                    userText.append(", several values of this type, matched with IN and no parentheses "
+                            + "around the parameter name");
+                }
+                userText.append(')');
             }
             userText.append("\n\nPARAMETER RULES:")
                     .append("\n- Reference these as JPQL named parameters, never inline their values.")
                     .append("\n- Declare in \"parameters\" only the ones the query actually references.")
                     .append("\n- Use a parameter only where the request calls for it; ignore the rest.");
+
+            appendCrossTabRules(userText, request);
         }
 
         if (request.getMaxResults() != null) {
@@ -120,6 +128,32 @@ public class AiToolsLlmDataQueryService implements LlmDataQueryService {
         }
 
         return userText.toString();
+    }
+
+    /**
+     * States what a cross-tab cell query must return. The axis values arrive as multi-valued parameters, and
+     * every one of them has to come back as a result column of the same name — that is how the extraction
+     * controller places a row in the matrix. Stated as an explicit list of required aliases rather than as a
+     * rule about parameters: told the rule, models alias the columns after the attributes instead
+     * (`username`, `active`), and the report then renders an empty matrix.
+     */
+    protected void appendCrossTabRules(StringBuilder userText, LlmQueryGenerationRequest request) {
+        List<String> axisNames = request.getAvailableParameters().stream()
+                .filter(LlmQueryParameter::isMultiValued)
+                .map(LlmQueryParameter::getName)
+                .toList();
+        if (axisNames.isEmpty()) {
+            return;
+        }
+
+        userText.append("\n\nREQUIRED RESULT COLUMNS: this band is a cross-tab, so the query MUST select and "
+                + "alias one column per name below, holding the value of that row for it:");
+        for (String axisName : axisNames) {
+            userText.append("\n- ").append(axisName);
+        }
+        userText.append("\nUse these exact aliases in addition to the value columns the request asks for. "
+                + "Narrow the query to the matrix by matching each of these parameters with IN, and write no "
+                + "parentheses around the parameter name, because parentheses make JPQL expect a single value.");
     }
 
     /**

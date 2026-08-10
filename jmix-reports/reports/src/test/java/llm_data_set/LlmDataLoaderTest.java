@@ -234,6 +234,132 @@ class LlmDataLoaderTest {
     }
 
     @Test
+    void testCrossTabAxisValuesAreOfferedAsListParameters() {
+        DataSet dataSet = llmDataSet(PROMPT, null, false, null);
+        queryService.setQueryToGenerate(linkableCrossTabQuery());
+
+        loader().loadData(dataSet, null, crossTabParams());
+
+        assertThat(queryService.getLastGenerationRequest().getAvailableParameters())
+                .extracting(LlmQueryParameter::getName, LlmQueryParameter::getValue)
+                .contains(tuple("revenue_dynamic_header_year", List.of(2025, 2025)),
+                        tuple("revenue_dynamic_header_month", List.of(3, 4)),
+                        tuple("revenue_master_data_publisherId", List.of("Nintendo", "Ubisoft")));
+    }
+
+    @Test
+    void testCrossTabAxisItselfIsNotOfferedAsAParameter() {
+        DataSet dataSet = llmDataSet(PROMPT, null, false, null);
+        queryService.setQueryToGenerate(linkableCrossTabQuery());
+
+        loader().loadData(dataSet, null, crossTabParams());
+
+        assertThat(queryService.getLastGenerationRequest().getAvailableParameters())
+                .extracting(LlmQueryParameter::getName)
+                .doesNotContain("revenue_dynamic_header", "revenue_master_data");
+    }
+
+    @Test
+    void testCrossTabAxisParameterIsTypedByItsElement() {
+        DataSet dataSet = llmDataSet(PROMPT, null, false, null);
+        queryService.setQueryToGenerate(linkableCrossTabQuery());
+
+        loader().loadData(dataSet, null, crossTabParams());
+
+        assertThat(queryService.getLastGenerationRequest().getAvailableParameters())
+                .filteredOn(parameter -> parameter.getName().equals("revenue_dynamic_header_year"))
+                .extracting(LlmQueryParameter::getJavaType)
+                .containsExactly("java.lang.Integer");
+    }
+
+    @Test
+    void testNullValuesInsideACrossTabAxisAreDropped() {
+        DataSet dataSet = llmDataSet(PROMPT, null, false, null);
+        queryService.setQueryToGenerate(linkableCrossTabQuery());
+        Map<String, Object> rowWithNull = new HashMap<>();
+        rowWithNull.put("year", null);
+        Map<String, Object> params = Map.of("revenue_dynamic_header",
+                List.of(Map.of("year", 2025), rowWithNull));
+
+        loader().loadData(dataSet, null, params);
+
+        assertThat(queryService.getLastGenerationRequest().getAvailableParameters())
+                .extracting(LlmQueryParameter::getName, LlmQueryParameter::getValue)
+                .containsExactly(tuple("revenue_dynamic_header_year", List.of(2025)));
+    }
+
+    @Test
+    void testCrossTabAxisWithoutValuesContributesNothing() {
+        DataSet dataSet = llmDataSet(PROMPT, null, false, null);
+        Map<String, Object> rowWithNull = new HashMap<>();
+        rowWithNull.put("year", null);
+        Map<String, Object> params = Map.of("revenue_dynamic_header", List.of(rowWithNull),
+                "revenue_master_data", List.of());
+
+        loader().loadData(dataSet, null, params);
+
+        assertThat(queryService.getLastGenerationRequest().getAvailableParameters()).isEmpty();
+    }
+
+    @Test
+    void testCrossTabAxisFieldWhoseNameIsNotAnIdentifierIsSkipped() {
+        DataSet dataSet = llmDataSet(PROMPT, null, false, null);
+        queryService.setQueryToGenerate(linkableCrossTabQuery());
+        Map<String, Object> params = Map.of("revenue_dynamic_header",
+                List.of(Map.of("year of sale", 2025, "year", 2025)));
+
+        loader().loadData(dataSet, null, params);
+
+        assertThat(queryService.getLastGenerationRequest().getAvailableParameters())
+                .extracting(LlmQueryParameter::getName)
+                .containsExactly("revenue_dynamic_header_year");
+    }
+
+    @Test
+    void testCrossTabAxisListIsBoundAsAWholeAtExecution() {
+        DataSet dataSet = llmDataSet(PROMPT, serializer.toJson(linkableCrossTabQuery(
+                List.of(parameter("revenue_dynamic_header_year", "java.lang.String")))), false, null);
+
+        loader().loadData(dataSet, null, crossTabParams());
+
+        assertThat(queryService.getLastExecutionRequest().getArguments())
+                .extracting(LlmQueryParameter::getName, LlmQueryParameter::getValue)
+                .containsExactly(tuple("revenue_dynamic_header_year", List.of(2025, 2025)));
+    }
+
+    @Test
+    void testParameterNamedLikeAnAxisButHoldingPlainValuesStaysAParameter() {
+        DataSet dataSet = llmDataSet(PROMPT, null, false, null);
+        Map<String, Object> params = Map.of("selected_master_data", List.of("A-1", "A-2"));
+
+        loader().loadData(dataSet, null, params);
+
+        assertThat(queryService.getLastGenerationRequest().getAvailableParameters())
+                .extracting(LlmQueryParameter::getName, LlmQueryParameter::isMultiValued)
+                .containsExactly(tuple("selected_master_data", false));
+    }
+
+    @Test
+    void testQueryThatCannotBeLinkedToACrossTabAxisFails() {
+        DataSet dataSet = llmDataSet(PROMPT, storedQuery(List.of()), false, null);
+        Map<String, Object> params = Map.of("revenue_dynamic_header", List.of(Map.of("year", 2025)));
+
+        assertThatThrownBy(() -> loader().loadData(dataSet, null, params))
+                .isInstanceOf(DataLoadingException.class)
+                .hasMessageContaining("revenue_dynamic_header")
+                .hasMessageContaining("orderNumber");
+    }
+
+    @Test
+    void testQueryLinkedToEveryCrossTabAxisIsExecuted() {
+        DataSet dataSet = llmDataSet(PROMPT, serializer.toJson(linkableCrossTabQuery()), false, null);
+
+        loader().loadData(dataSet, null, crossTabParams());
+
+        assertThat(queryService.getLastExecutionRequest()).isNotNull();
+    }
+
+    @Test
     void testDataSetRowLimitReachesExecution() {
         DataSet dataSet = llmDataSet(PROMPT, storedQuery(List.of()), false, 700);
 
@@ -272,6 +398,29 @@ class LlmDataLoaderTest {
 
     protected ReportDataLoader loader() {
         return loaderFactory.createDataLoader(DataSetType.LLM.getCode());
+    }
+
+    /**
+     * A query a cross-tab band can place into its matrix: it returns one column per axis, named after that axis.
+     */
+    protected LlmDataQuery linkableCrossTabQuery() {
+        return linkableCrossTabQuery(List.of());
+    }
+
+    protected LlmDataQuery linkableCrossTabQuery(List<LlmQueryParameter> parameters) {
+        return new LlmDataQuery(CACHED_JPQL,
+                List.of("revenue_dynamic_header_year", "revenue_master_data_publisherId", "amount"),
+                parameters, "Revenue per publisher and year", List.of(), null);
+    }
+
+    /**
+     * The params a cross-tab band puts in place before the cell data set runs: one entry per axis, each holding
+     * the rows that axis produced.
+     */
+    protected Map<String, Object> crossTabParams() {
+        return Map.of(
+                "revenue_dynamic_header", List.of(Map.of("year", 2025, "month", 3), Map.of("year", 2025, "month", 4)),
+                "revenue_master_data", List.of(Map.of("publisherId", "Nintendo"), Map.of("publisherId", "Ubisoft")));
     }
 
     protected BandData band(String name, @Nullable BandData parentBand, Map<String, Object> row) {

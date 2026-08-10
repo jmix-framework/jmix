@@ -25,6 +25,7 @@ import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportInputParameter;
 import io.jmix.reports.llm.LlmDataQuery;
 import io.jmix.reports.llm.LlmQueryGenerationRequest;
+import io.jmix.reports.entity.Orientation;
 import io.jmix.reports.llm.LlmQueryParameter;
 import io.jmix.reports.llm.impl.LlmDataQuerySerializer;
 import io.jmix.reportsflowui.support.LlmDataSetGenerationSupport;
@@ -39,6 +40,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 
 /**
  * What the designer offers to query generation, and how a generated query is stored back into the data set.
@@ -189,6 +191,16 @@ public class LlmDataSetGenerationSupportTest {
         band.setDataSets(new ArrayList<>());
         report.getBands().add(band);
         return band;
+    }
+
+    protected DataSet axisDataSet(BandDefinition band, String name, @Nullable String storedQuery) {
+        DataSet dataSet = metadata.create(DataSet.class);
+        dataSet.setName(name);
+        dataSet.setBandDefinition(band);
+        dataSet.setType(DataSetType.LLM);
+        dataSet.setLlmGeneratedQuery(storedQuery);
+        band.getDataSets().add(dataSet);
+        return dataSet;
     }
 
     protected DataSet llmDataSet(Report report) {

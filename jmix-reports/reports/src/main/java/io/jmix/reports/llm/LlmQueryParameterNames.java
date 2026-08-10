@@ -17,6 +17,7 @@
 package io.jmix.reports.llm;
 
 import io.jmix.core.annotation.Internal;
+import io.jmix.reports.yarg.reporting.extraction.controller.CrossTabExtractionController;
 
 import java.util.regex.Pattern;
 
@@ -49,6 +50,31 @@ public final class LlmQueryParameterNames {
      */
     public static String ofBandField(String bandName, String fieldName) {
         return bandName + "_" + fieldName;
+    }
+
+    /**
+     * Returns the name the values of one cross-tab axis field are referenced by. The form matches what
+     * {@code SqlCrosstabPreprocessor} produces out of the {@code <dataSet>@<field>} reference SQL and JPQL data
+     * sets use, so the same query reads the same for either type.
+     *
+     * @param dataSetName name of the axis data set, i.e. {@code <band>_dynamic_header} or {@code <band>_master_data}
+     * @param fieldName   name of the field within that axis' rows
+     * @return the parameter name, which still has to be checked with {@link #isValid(String)}
+     */
+    public static String ofCrossTabValue(String dataSetName, String fieldName) {
+        return dataSetName + "_" + fieldName;
+    }
+
+    /**
+     * Tells an axis of a cross-tab band from an ordinary run parameter by the suffix
+     * {@link CrossTabExtractionController} recognises its data sets by.
+     *
+     * @param name name of a run parameter, which for an axis is the axis data set's own name
+     * @return {@code true} if the parameter holds the rows of a cross-tab axis
+     */
+    public static boolean isCrossTabAxis(String name) {
+        return name.endsWith(CrossTabExtractionController.HORIZONTAL_BAND)
+                || name.endsWith(CrossTabExtractionController.VERTICAL_BAND);
     }
 
     /**

@@ -73,6 +73,21 @@ class AiToolsLlmDataQueryServiceTest {
     }
 
     @Test
+    void testListValuedParameterIsDescribedAsAListToUseWithIn() {
+        service.generate(new LlmQueryGenerationRequest(PROMPT, List.of(
+                new LlmQueryParameter("revenue_dynamic_header_year", "java.lang.Integer", List.of(2025, 2026), true),
+                new LlmQueryParameter("dateFrom", "java.time.LocalDate", LocalDate.of(2026, 8, 1))), null));
+
+        String userText = generationService.getLastUserText();
+        assertThat(userText).contains("several values of this type, matched with IN");
+        assertThat(userText).contains("no parentheses around the parameter name");
+        assertThat(userText).containsPattern(":dateFrom \\(java\\.time\\.LocalDate\\)");
+        assertThat(userText).contains("REQUIRED RESULT COLUMNS");
+        assertThat(userText).contains("\n- revenue_dynamic_header_year");
+        assertThat(userText).doesNotContain("\n- dateFrom");
+    }
+
+    @Test
     void testGeneratedQueryIsMappedToTheSeamType() {
         generationService.setJpql("select o.number as orderNumber from sales_Order o where o.date >= :dateFrom");
         generationService.setParameters(List.of(new GeneratedJpqlParameter("dateFrom", "java.lang.String", "x")));

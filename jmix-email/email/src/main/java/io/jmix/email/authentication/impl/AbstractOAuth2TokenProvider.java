@@ -19,7 +19,9 @@ package io.jmix.email.authentication.impl;
 import io.jmix.email.EmailerProperties;
 import io.jmix.email.authentication.EmailRefreshTokenManager;
 import io.jmix.email.authentication.OAuth2TokenProvider;
+import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 @NullMarked
 public abstract class AbstractOAuth2TokenProvider implements OAuth2TokenProvider {
@@ -38,10 +40,18 @@ public abstract class AbstractOAuth2TokenProvider implements OAuth2TokenProvider
     }
 
     protected String getClientId() {
-        return emailerProperties.getOAuth2().getClientId();
+        return getRequiredProperty(emailerProperties.getOAuth2().getClientId(), "jmix.email.oauth2.client-id");
     }
 
     protected String getSecret() {
-        return emailerProperties.getOAuth2().getSecret();
+        return getRequiredProperty(emailerProperties.getOAuth2().getSecret(), "jmix.email.oauth2.secret");
+    }
+
+    protected String getRequiredProperty(@Nullable String value, String propertyName) {
+        if (StringUtils.isBlank(value)) {
+            throw new IllegalStateException(
+                    "'%s' must be set when OAuth2 authentication is enabled".formatted(propertyName));
+        }
+        return value;
     }
 }

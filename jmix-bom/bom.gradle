@@ -204,6 +204,11 @@ dependencies {
         api "io.jmix.maps:jmix-maps-flowui:$premiumVersion"
         api "io.jmix.maps:jmix-maps-flowui-kit:$premiumVersion"
         api "io.jmix.maps:jmix-maps-flowui-starter:$premiumVersion"
+        api "io.jmix.maps:jmix-maps-data-eclipselink:$premiumVersion"
+        api "io.jmix.maps:jmix-maps-data-postgis:$premiumVersion"
+        api "io.jmix.maps:jmix-maps-data-postgis-starter:$premiumVersion"
+        api "io.jmix.maps:jmix-maps-data-postgis-flowui:$premiumVersion"
+        api "io.jmix.maps:jmix-maps-data-postgis-flowui-starter:$premiumVersion"
 
         api "io.jmix.multitenancy:jmix-multitenancy:$freeVersion"
         api "io.jmix.multitenancy:jmix-multitenancy-flowui:$freeVersion"

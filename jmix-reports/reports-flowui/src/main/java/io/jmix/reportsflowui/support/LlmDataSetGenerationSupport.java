@@ -204,8 +204,15 @@ public class LlmDataSetGenerationSupport {
         return storedQuery != null ? storedQuery.getResultProperties() : List.of();
     }
 
+    /**
+     * Reads the query stored in a data set, or returns {@code null} when there is none or the stored document
+     * cannot be read — a panel showing it has nothing better to do than show nothing.
+     *
+     * @param dataSet data set to read the stored query of
+     * @return the stored query, or {@code null}
+     */
     @Nullable
-    protected LlmDataQuery readStoredQuery(DataSet dataSet) {
+    public LlmDataQuery readStoredQuery(DataSet dataSet) {
         try {
             return llmDataQuerySerializer.fromJson(dataSet.getLlmGeneratedQuery());
         } catch (LlmDataQueryException e) {

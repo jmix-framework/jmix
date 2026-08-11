@@ -78,9 +78,7 @@ import io.jmix.reports.entity.wizard.ReportData;
 import io.jmix.reports.entity.wizard.ReportRegion;
 import io.jmix.reports.impl.StreamingReportValidationSupport;
 import io.jmix.reports.llm.LlmDataQuery;
-import io.jmix.reports.llm.LlmDataQueryException;
 import io.jmix.reports.llm.LlmQueryGenerationRequest;
-import io.jmix.reports.llm.impl.LlmDataQuerySerializer;
 import io.jmix.reports.util.DataSetFactory;
 import io.jmix.reports.yarg.reporting.StreamingReportValidator;
 import io.jmix.reports.yarg.structure.BandOrientation;
@@ -312,8 +310,6 @@ public class ReportDetailView extends StandardDetailView<Report> {
     protected StreamingReportValidationSupport streamingReportValidationSupport;
     @Autowired
     protected LlmDataSetGenerationSupport llmDataSetGenerationSupport;
-    @Autowired
-    protected LlmDataQuerySerializer llmDataQuerySerializer;
     @Autowired
     protected Icons icons;
 
@@ -1535,7 +1531,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
      * Fills the panel from the data set: the stored query and what is known about it.
      */
     protected void initLlmDataSetOptions(DataSet dataSet) {
-        LlmDataQuery storedQuery = readStoredLlmQuery(dataSet);
+        LlmDataQuery storedQuery = llmDataSetGenerationSupport.readStoredQuery(dataSet);
         List<String> warnings = storedQuery != null ? storedQuery.getWarnings() : List.of();
 
         llmGeneratedQueryCodeEditor.setValue(storedQuery != null ? storedQuery.getJpql() : "");
@@ -1554,19 +1550,6 @@ public class ReportDetailView extends StandardDetailView<Report> {
         if (warningsExists) {
             llmGeneratedWarningsSpan.setText(String.join("; ", warnings));
             llmGeneratedWarningsSpan.addComponentAsFirst(icons.get(JmixFontIcon.WARNING));
-        }
-    }
-
-    /**
-     * Reads the stored query for the preview, tolerating a document this version cannot parse: the designer must
-     * still open such a data set so that its query can be generated anew.
-     */
-    @Nullable
-    protected LlmDataQuery readStoredLlmQuery(DataSet dataSet) {
-        try {
-            return llmDataQuerySerializer.fromJson(dataSet.getLlmGeneratedQuery());
-        } catch (LlmDataQueryException e) {
-            return null;
         }
     }
 

@@ -79,33 +79,6 @@
     flex-basis: 100%;
     max-width: 100%;
   }
-
-  /* Paperclip: an icon-only, quiet square matching the send button's footprint
-     (the same --lumo-size-m box, driven through the inherited --vaadin-button-*
-     custom properties the slotted vaadin-upload-button reads). The send button
-     stays the filled primary action, so the paperclip is transparent rather
-     than primary-filled. */
-  ::slotted([slot='attach']) {
-    flex: none;
-    align-self: center;
-    box-sizing: border-box;
-    min-width: 0;
-    inline-size: var(--lumo-size-m);
-    block-size: var(--lumo-size-m);
-    --vaadin-button-height: var(--lumo-size-m);
-    --vaadin-button-margin: 0;
-    --vaadin-button-padding: 0;
-    --vaadin-button-background: transparent;
-    --vaadin-button-border-color: transparent;
-    --vaadin-button-text-color: var(--lumo-secondary-text-color);
-  }
-
-  /* Toolbar layout: keep the paperclip on the left next to the pushed-left
-     prefix (mirror of the base rule). */
-  :host([expanded]) ::slotted([slot='attach']),
-  :host([theme~='fixed-toolbar']) ::slotted([slot='attach']) {
-    margin-inline-end: auto;
-  }
 }
 
 jmix-ai-message-input > vaadin-text-area::part(input-field) {

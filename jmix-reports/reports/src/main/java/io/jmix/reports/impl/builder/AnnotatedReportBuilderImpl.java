@@ -33,6 +33,7 @@ import io.jmix.reports.yarg.structure.CustomValueFormatter;
 import io.jmix.reports.yarg.structure.DefaultValueProvider;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.pdfbox.io.IOUtils;
 import org.jspecify.annotations.NullMarked;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -589,6 +590,13 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
                 extractEntityDataSetParameters(annotation, report, dataSet, annotation.entity());
             }
 
+            if (annotation.type() == DataSetType.LLM) {
+                extractLlmDataSetParameters(annotation, dataSet, annotation.llm());
+            } else if (isLlmDataSetParametersSet(annotation.llm())) {
+                throw new InvalidReportDefinitionException("LLM parameters are set for a data set of type "
+                        + annotation.type() + ", where nothing reads them: " + dataSet.getName());
+            }
+
             dataSet.setBandDefinition(bandDefinition);
             dataSets.add(dataSet);
         }
@@ -619,6 +627,49 @@ public class AnnotatedReportBuilderImpl implements AnnotatedReportBuilder {
             }
             dataSet.setJsonSourceText(jsonAnnotation.url());
         }
+    }
+
+    /**
+     * Maps what an LLM data set is described by: the prompt into the same property a query would occupy, and
+     * the row limit if one is stated.
+     * <p>
+     * Regeneration is set here rather than taken from the annotation: a report defined in code keeps no
+     * generated query — it is rebuilt from the annotations at every startup and has no designer to generate in
+     * — so every run generates one, and saying so keeps the loader from reporting a missing stored query as an
+     * oversight on every run.
+     */
+    protected void extractLlmDataSetParameters(DataSetDef annotation, DataSet dataSet,
+                                               LlmDataSetParameters llmAnnotation) {
+        if (StringUtils.isBlank(llmAnnotation.prompt())) {
+            throw new InvalidReportDefinitionException("Prompt is required for an LLM data set: " + dataSet.getName());
+        }
+        if (!annotation.query().isEmpty()) {
+            throw new InvalidReportDefinitionException("An LLM data set is described by a prompt, not by a query: "
+                    + dataSet.getName());
+        }
+        if (!annotation.dataStore().isEmpty()) {
+            throw new InvalidReportDefinitionException("An LLM data set is executed through the main data store, "
+                    + "so another data store cannot be set: " + dataSet.getName());
+        }
+        if (annotation.processTemplate()) {
+            throw new InvalidReportDefinitionException("A prompt is not processed as a Groovy template, so template "
+                    + "processing cannot be set for an LLM data set: " + dataSet.getName());
+        }
+        if (llmAnnotation.maxResults() < 0) {
+            throw new InvalidReportDefinitionException("Row limit of an LLM data set cannot be negative, and 0 leaves "
+                    + "it unset: " + dataSet.getName());
+        }
+
+        dataSet.setText(llmAnnotation.prompt());
+        dataSet.setLlmRegenerateOnRun(true);
+
+        if (llmAnnotation.maxResults() > 0) {
+            dataSet.setLlmMaxResults(llmAnnotation.maxResults());
+        }
+    }
+
+    protected boolean isLlmDataSetParametersSet(LlmDataSetParameters llmAnnotation) {
+        return !llmAnnotation.prompt().isEmpty() || llmAnnotation.maxResults() != 0;
     }
 
     protected void extractEntityDataSetParameters(DataSetDef annotation, Report report, DataSet dataSet, EntityDataSetDef entityAnnotation) {

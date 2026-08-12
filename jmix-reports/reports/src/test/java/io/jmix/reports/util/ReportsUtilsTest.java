@@ -19,6 +19,7 @@ package io.jmix.reports.util;
 import io.jmix.reports.ReportsPersistence;
 import io.jmix.reports.ReportsTestConfiguration;
 import io.jmix.reports.entity.Report;
+import io.jmix.reports.impl.AnnotatedReportHolder;
 import io.jmix.reports.impl.AnnotatedReportScanner;
 import io.jmix.reports.test_support.AuthenticatedAsSystem;
 import io.jmix.reports.test_support.RuntimeReportUtil;
@@ -44,6 +45,8 @@ class ReportsUtilsTest {
     RuntimeReportUtil runtimeReportUtil;
     @Autowired
     AnnotatedReportScanner annotatedReportScanner;
+    @Autowired
+    AnnotatedReportHolder annotatedReportHolder;
 
     @AfterEach
     void tearDown() {
@@ -68,7 +71,10 @@ class ReportsUtilsTest {
 
     @Test
     void testGenerateReportCodeChecksDesignTimeReports() {
-        annotatedReportScanner.importReportDefinitions();
+        // Importing twice into the same context fails on a duplicate report code, and the context is shared.
+        if (annotatedReportHolder.getAllReports().isEmpty()) {
+            annotatedReportScanner.importReportDefinitions();
+        }
 
         assertThat(reportsUtils.generateReportCode(GameCriticScoresReport.CODE))
                 .isEqualTo(GameCriticScoresReport.CODE + "-1");

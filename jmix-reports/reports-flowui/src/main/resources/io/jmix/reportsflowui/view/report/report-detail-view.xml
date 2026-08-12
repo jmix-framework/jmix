@@ -277,6 +277,9 @@
                                             <textField id="llmMaxResultsField"
                                                        property="llmMaxResults"
                                                        label="msg://bandsTab.dataSetTypeLayout.llmMaxResultsField.label">
+                                                <validators>
+                                                    <positive/>
+                                                </validators>
                                                 <tooltip
                                                         text="msg://bandsTab.dataSetTypeLayout.llmMaxResultsField.tooltip"/>
                                             </textField>

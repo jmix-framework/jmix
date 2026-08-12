@@ -1,0 +1,145 @@
+/*
+ * Copyright 2026 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.jmix.flowui.kit.meta.component.preview.loader;
+
+import io.jmix.flowui.kit.action.BaseAction;
+import io.jmix.flowui.kit.meta.StudioXmlElements;
+import io.jmix.flowui.kit.meta.component.preview.StudioPreviewEnvironment;
+import io.jmix.flowui.kit.xml.layout.support.ComponentLoaderUtils;
+import io.jmix.flowui.kit.xml.layout.support.LoaderUtils;
+import org.dom4j.Element;
+import org.jspecify.annotations.Nullable;
+
+import java.util.Set;
+import java.util.function.BiConsumer;
+
+/**
+ * Shared helpers for preview loaders that build menu items from XML.
+ */
+public final class PreviewActionSupport {
+
+    private static final String MESSAGE_REF_PREFIX = "msg://";
+    private static final int PLACEHOLDER_ITEM_COUNT = 5;
+
+    private PreviewActionSupport() {
+    }
+
+    /**
+     * Resolves a {@code msg://} message reference through the environment, falling back to
+     * the raw value when the reference isn't a message key or the environment can't resolve it
+     * (e.g. {@link StudioPreviewEnvironment#NOOP}). Null-safe: a {@code null} value passes through.
+     */
+    @Nullable
+    public static String resolveText(StudioPreviewEnvironment environment, @Nullable String value) {
+        if (value == null || !value.startsWith(MESSAGE_REF_PREFIX)) {
+            return value;
+        }
+        String resolved = environment.resolveMessage(value);
+        return resolved != null ? resolved : value;
+    }
+
+    /**
+     * Builds a {@link BaseAction} from a declarative {@code <action>} element: {@code id} attribute
+     * (falling back to {@code fallbackId}), {@code text} (resolved via {@link #resolveText}),
+     * {@code icon} (via {@link ComponentLoaderUtils#loadIconSetIcon(Element)}), and
+     * {@code enabled}.
+     */
+    public static BaseAction<?> buildAction(Element actionElement, String fallbackId, StudioPreviewEnvironment environment) {
+        String actionId = LoaderUtils.loadString(actionElement, "id").orElse(fallbackId);
+        BaseAction<?> action = new BaseAction<>(actionId);
+        LoaderUtils.loadString(actionElement, "text")
+                .ifPresent(text -> action.withText(resolveText(environment, text)));
+        ComponentLoaderUtils.loadIconSetIcon(actionElement).ifPresent(action::setIcon);
+        LoaderUtils.loadBoolean(actionElement, "enabled", action::setEnabled);
+        return action;
+    }
+
+    /**
+     * Recursively searches {@code parent}'s descendants for an {@code <action id="...">} element
+     * matching {@code actionId} (covers e.g. an {@code <actions>} block declared in the view).
+     *
+     * @return the matching element, or {@code null} if none is found
+     */
+    @Nullable
+    public static Element findDescendantAction(Element parent, String actionId) {
+        for (Element child : parent.elements()) {
+            if (StudioXmlElements.ACTION.equals(child.getName()) && actionId.equals(child.attributeValue("id"))) {
+                return child;
+            }
+            Element found = findDescendantAction(child, actionId);
+            if (found != null) {
+                return found;
+            }
+        }
+        return null;
+    }
+
+    public static void loadActionItem(Element itemElement, Element viewElement, StudioPreviewEnvironment environment,
+                                      BiConsumer<String, BaseAction<?>> actionItemAdder,
+                                      BiConsumer<String, String> textItemAdder) {
+        String id = LoaderUtils.loadString(itemElement, "id").orElse(null);
+        if (id == null) {
+            // Runtime throws without an id, preview skips silently.
+            return;
+        }
+
+        Element actionElement = itemElement.element(StudioXmlElements.ACTION);
+        if (actionElement != null) {
+            actionItemAdder.accept(id, buildAction(actionElement, id, environment));
+            return;
+        }
+
+        String ref = LoaderUtils.loadString(itemElement, "ref").orElse(null);
+        if (ref == null) {
+            // Neither an inline action nor a ref: runtime throws, preview skips silently.
+            return;
+        }
+
+        Element refActionElement = findDescendantAction(viewElement, ref);
+        if (refActionElement != null) {
+            actionItemAdder.accept(id, buildAction(refActionElement, ref, environment));
+        } else {
+            textItemAdder.accept(id, id);
+        }
+    }
+
+    public static void addPlaceholderItems(BiConsumer<String, String> itemAdder) {
+        for (int i = 0; i < PLACEHOLDER_ITEM_COUNT; i++) {
+            itemAdder.accept("menuItem" + i, "Menu item " + i);
+        }
+    }
+
+    /**
+     * Whether {@code itemsElement} holds at least one child the caller can actually render.
+     * An {@code <items>} block of only non-renderable children (e.g. {@code componentItem}, which
+     * needs the runtime {@code LayoutLoader}) would otherwise preview as an empty menu, so callers
+     * use this to fall back to {@link #addPlaceholderItems} instead.
+     *
+     * @param renderableNames item tag names the calling loader renders
+     */
+    public static boolean hasRenderableItem(@Nullable Element itemsElement, Set<String> renderableNames) {
+        if (itemsElement == null) {
+            return false;
+        }
+        for (Element child : itemsElement.elements()) {
+            if (renderableNames.contains(child.getName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+}

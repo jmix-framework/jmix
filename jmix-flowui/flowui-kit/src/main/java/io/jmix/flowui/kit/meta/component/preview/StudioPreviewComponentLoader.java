@@ -16,17 +16,19 @@
 
 package io.jmix.flowui.kit.meta.component.preview;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-import com.google.common.base.Strings;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasEnabled;
 import com.vaadin.flow.component.HasSize;
 import com.vaadin.flow.component.HasStyle;
 import com.vaadin.flow.component.HasTheme;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.orderedlayout.ThemableLayout;
+import io.jmix.flowui.kit.xml.layout.support.ComponentLoaderUtils;
+import io.jmix.flowui.kit.xml.layout.support.LoaderUtils;
 import org.jspecify.annotations.Nullable;
 import org.dom4j.Element;
 
@@ -71,105 +73,134 @@ public interface StudioPreviewComponentLoader {
     @Nullable
     Component load(Element componentElement, Element viewElement);
 
+    /**
+     * Create vaadin component from component xml element, with access to Studio-resolved context
+     * (e.g. localized messages, entity property captions).
+     *
+     * @param componentElement xml element of component
+     * @param viewElement      xml element of view containing {@code componentElement}
+     * @param environment      Studio-side environment; {@link StudioPreviewEnvironment#NOOP} when unavailable
+     * @see Element
+     */
+    @Nullable
+    default Component load(Element componentElement, Element viewElement, StudioPreviewEnvironment environment) {
+        return load(componentElement, viewElement);
+    }
+
     default Optional<String> loadString(Element element, String attributeName) {
-        return loadString(element, attributeName, true);
+        return LoaderUtils.loadString(element, attributeName);
     }
 
     default Optional<String> loadString(Element element, String attributeName, boolean emptyToNull) {
-        String attributeValue = element.attributeValue(attributeName);
-        return Optional.ofNullable(emptyToNull ? Strings.emptyToNull(attributeValue) : attributeValue);
+        return LoaderUtils.loadString(element, attributeName, emptyToNull);
     }
 
     default Optional<Boolean> loadBoolean(Element element, String attributeName) {
-        return loadString(element, attributeName).map(Boolean::parseBoolean);
+        return LoaderUtils.loadBoolean(element, attributeName);
     }
 
     default Optional<Integer> loadInteger(Element element, String attributeName) {
-        return loadString(element, attributeName).map(Integer::parseInt);
+        return LoaderUtils.loadInteger(element, attributeName);
     }
 
     default Optional<Double> loadDouble(Element element, String attributeName) {
-        return loadString(element, attributeName).map(Double::parseDouble);
+        return LoaderUtils.loadDouble(element, attributeName);
     }
 
     default <T extends Enum<T>> Optional<T> loadEnum(Element element, Class<T> type, String attributeName) {
-        return loadString(element, attributeName).map(stringValue -> Enum.valueOf(type, stringValue));
+        return LoaderUtils.loadEnum(element, type, attributeName);
     }
 
     default void loadString(Element element, String attributeName, Consumer<String> setter) {
-        loadString(element, attributeName).ifPresent(setter);
+        LoaderUtils.loadString(element, attributeName, setter);
     }
 
     default void loadBoolean(Element element, String attributeName, Consumer<Boolean> setter) {
-        loadBoolean(element, attributeName).ifPresent(setter);
+        LoaderUtils.loadBoolean(element, attributeName, setter);
     }
 
     default void loadInteger(Element element, String attributeName, Consumer<Integer> setter) {
-        loadInteger(element, attributeName).ifPresent(setter);
+        LoaderUtils.loadInteger(element, attributeName, setter);
     }
 
     default void loadDouble(Element element, String attributeName, Consumer<Double> setter) {
-        loadDouble(element, attributeName).ifPresent(setter);
+        LoaderUtils.loadDouble(element, attributeName, setter);
     }
 
     default <T extends Enum<T>> void loadEnum(Element element, Class<T> type, String attributeName, Consumer<T> setter) {
-        loadEnum(element, type, attributeName).ifPresent(setter);
+        LoaderUtils.loadEnum(element, type, attributeName, setter);
     }
 
     default void loadWidth(HasSize component, Element element) {
-        loadString(element, "width").ifPresent(component::setWidth);
+        ComponentLoaderUtils.loadWidth(component, element);
     }
 
     default void loadMaxWidth(HasSize component, Element element) {
-        loadString(element, "maxWidth").ifPresent(component::setMaxWidth);
+        ComponentLoaderUtils.loadMaxWidth(component, element);
     }
 
     default void loadMinWidth(HasSize component, Element element) {
-        loadString(element, "minWidth").ifPresent(component::setMinWidth);
+        ComponentLoaderUtils.loadMinWidth(component, element);
     }
 
     default void loadHeight(HasSize component, Element element) {
-        loadString(element, "height").ifPresent(component::setHeight);
+        ComponentLoaderUtils.loadHeight(component, element);
     }
 
     default void loadMaxHeight(HasSize component, Element element) {
-        loadString(element, "maxHeight").ifPresent(component::setMaxHeight);
+        ComponentLoaderUtils.loadMaxHeight(component, element);
     }
 
     default void loadMinHeight(HasSize component, Element element) {
-        loadString(element, "minHeight").ifPresent(component::setMinHeight);
+        ComponentLoaderUtils.loadMinHeight(component, element);
     }
 
     default void loadSizeAttributes(HasSize component, Element element) {
-        loadWidth(component, element);
-        loadMaxWidth(component, element);
-        loadMinWidth(component, element);
-        loadHeight(component, element);
-        loadMaxHeight(component, element);
-        loadMinHeight(component, element);
+        ComponentLoaderUtils.loadSizeAttributes(component, element);
     }
 
     default void loadEnabled(HasEnabled component, Element element) {
-        loadBoolean(element, "enabled", component::setEnabled);
+        ComponentLoaderUtils.loadEnabled(component, element);
     }
 
     default void loadClassNames(HasStyle component, Element element) {
-        loadString(element, "classNames")
-                .ifPresent(classNamesString -> split(classNamesString, component::addClassName));
+        ComponentLoaderUtils.loadClassNames(component, element);
     }
 
     default void loadThemeNames(HasTheme component, Element element) {
-        loadString(element, "themeNames")
-                .ifPresent(themesString -> split(themesString, component::addThemeName));
+        ComponentLoaderUtils.loadThemeNames(component, element);
     }
 
     default void split(String names, Consumer<String> setter) {
-        split(names).forEach(setter);
+        LoaderUtils.split(names, setter);
     }
 
     default List<String> split(String names) {
-        return Arrays.stream(names.split("[\\s,]+"))
-                .filter(split -> !Strings.isNullOrEmpty(split))
-                .toList();
+        return LoaderUtils.split(names);
+    }
+
+    /**
+     * Applies the attributes that are common to all preview components,
+     * based on the interfaces implemented by the {@code component}.
+     */
+    default void loadComponentBaseAttributes(Component component, Element element) {
+        LoaderUtils.loadBoolean(element, "visible", component::setVisible);
+        if (component instanceof HasSize hasSize) {
+            ComponentLoaderUtils.loadSizeAttributes(hasSize, element);
+        }
+        if (component instanceof HasEnabled hasEnabled) {
+            ComponentLoaderUtils.loadEnabled(hasEnabled, element);
+        }
+        // Component implements HasStyle, so class names are loaded unconditionally.
+        ComponentLoaderUtils.loadClassNames(component, element);
+        if (component instanceof HasTheme hasTheme) {
+            ComponentLoaderUtils.loadThemeNames(hasTheme, element);
+        }
+        if (component instanceof ThemableLayout themableLayout) {
+            ComponentLoaderUtils.loadThemableAttributes(themableLayout, element);
+        }
+        if (component instanceof FlexComponent flexComponent) {
+            ComponentLoaderUtils.loadFlexibleAttributes(flexComponent, element);
+        }
     }
 }

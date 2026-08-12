@@ -1,0 +1,65 @@
+/*
+ * Copyright 2026 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.jmix.flowui.kit.meta.component.preview.loader;
+
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.applayout.AppLayout;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import io.jmix.flowui.kit.meta.StudioXmlElements;
+import io.jmix.flowui.kit.meta.component.preview.StudioPreviewComponentLoader;
+import org.jspecify.annotations.Nullable;
+import org.dom4j.Element;
+
+import java.util.Map;
+import java.util.function.Supplier;
+
+/**
+ * Studio preview loader for the plain-Vaadin structural elements of a view or main view layout,
+ * including the {@code view}/{@code mainView} roots.
+ * <p>
+ * The roots' runtime classes are Spring-managed and out of reach here, so they preview as the same
+ * {@link VerticalLayout} stand-in the Studio meta declares for them ({@code StudioComponents.view()},
+ * {@code StudioMainViewComponents.mainView()}). The root must be built by some loader: Studio hangs
+ * the whole preview tree off it, so a declined root renders nothing at all.
+ */
+public class StudioMainViewComponentsPreviewLoader implements StudioPreviewComponentLoader {
+
+    protected static final Map<String, Supplier<Component>> FACTORIES = Map.of(
+            StudioXmlElements.VIEW, VerticalLayout::new,
+            StudioXmlElements.MAIN_VIEW, VerticalLayout::new,
+            StudioXmlElements.APP_LAYOUT, AppLayout::new,
+            StudioXmlElements.INITIAL_LAYOUT, VerticalLayout::new,
+            StudioXmlElements.NAVIGATION_BAR, Div::new,
+            StudioXmlElements.DRAWER_LAYOUT, Div::new,
+            StudioXmlElements.LAYOUT, VerticalLayout::new
+    );
+
+    @Override
+    public boolean isSupported(Element element) {
+        return hasViewOrFragmentSchema(element)
+                && FACTORIES.containsKey(element.getName());
+    }
+
+    @Nullable
+    @Override
+    public Component load(Element componentElement, Element viewElement) {
+        Component component = FACTORIES.get(componentElement.getName()).get();
+        loadComponentBaseAttributes(component, componentElement);
+        return component;
+    }
+}

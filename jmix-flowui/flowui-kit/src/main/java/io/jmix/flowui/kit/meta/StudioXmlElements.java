@@ -36,6 +36,7 @@ public final class StudioXmlElements {
     public static final String AGGREGATIONS = "aggregations";
     public static final String AGGREGATION_PROPERTIES = "aggregationProperties";
     public static final String ANCHOR = "anchor";
+    public static final String AND = "and";
     public static final String ANGLE_AXIS = "angleAxis";
     public static final String ANIMATION_DELAY_FUNCTION = "animationDelayFunction";
     public static final String ANIMATION_DELAY_UPDATE_FUNCTION = "animationDelayUpdateFunction";
@@ -175,7 +176,9 @@ public final class StudioXmlElements {
     public static final String ERROR_MESSAGE = "errorMessage";
     public static final String EXCLUSIONS = "exclusions";
     public static final String EXTENT = "extent";
+    public static final String FACETS = "facets";
     public static final String FEATURES = "features";
+    public static final String FETCH_PLAN = "fetchPlan";
     public static final String FIELD_SET = "fieldSet";
     public static final String FILE_STORAGE_UPLOAD_FIELD = "fileStorageUploadField";
     public static final String FILE_UPLOAD_FIELD = "fileUploadField";
@@ -332,6 +335,7 @@ public final class StudioXmlElements {
     public static final String ON_CONTAINER_ITEM_CHANGED = "onContainerItemChanged";
     public static final String ON_FRAGMENT_EVENT = "onFragmentEvent";
     public static final String ON_VIEW_EVENT = "onViewEvent";
+    public static final String OR = "or";
     public static final String ORDERED_LIST = "orderedList";
     public static final String ORIGIN = "origin";
     public static final String ORIGINS = "origins";
@@ -372,6 +376,7 @@ public final class StudioXmlElements {
     public static final String PROPERTIES_MAPPING = "propertiesMapping";
     public static final String PROPERTY = "property";
     public static final String PROPERTY_FILTER = "propertyFilter";
+    public static final String QUERY = "query";
     public static final String RADAR = "radar";
     public static final String RADIO_BUTTON_GROUP = "radioButtonGroup";
     public static final String RADIUS_AXIS = "radiusAxis";

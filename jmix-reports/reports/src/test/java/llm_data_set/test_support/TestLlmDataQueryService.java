@@ -17,9 +17,11 @@
 package llm_data_set.test_support;
 
 import io.jmix.reports.llm.LlmDataQuery;
+import io.jmix.reports.llm.LlmDataQueryException;
 import io.jmix.reports.llm.LlmDataQueryService;
 import io.jmix.reports.llm.LlmQueryExecutionRequest;
 import io.jmix.reports.llm.LlmQueryGenerationRequest;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +41,9 @@ public class TestLlmDataQueryService implements LlmDataQueryService {
     protected LlmDataQuery queryToGenerate = defaultGeneratedQuery();
     protected List<Map<String, Object>> rows = List.of(Map.of("orderNumber", "A-1"));
 
+    @Nullable
+    protected LlmDataQueryException executionFailure;
+
     @Override
     public LlmDataQuery generate(LlmQueryGenerationRequest request) {
         generationRequests.add(request);
@@ -48,6 +53,9 @@ public class TestLlmDataQueryService implements LlmDataQueryService {
     @Override
     public List<Map<String, Object>> execute(LlmQueryExecutionRequest request) {
         executionRequests.add(request);
+        if (executionFailure != null) {
+            throw executionFailure;
+        }
         return rows;
     }
 
@@ -56,6 +64,7 @@ public class TestLlmDataQueryService implements LlmDataQueryService {
         executionRequests.clear();
         queryToGenerate = defaultGeneratedQuery();
         rows = List.of(Map.of("orderNumber", "A-1"));
+        executionFailure = null;
     }
 
     public List<LlmQueryGenerationRequest> getGenerationRequests() {
@@ -80,6 +89,13 @@ public class TestLlmDataQueryService implements LlmDataQueryService {
 
     public void setQueryToGenerate(LlmDataQuery queryToGenerate) {
         this.queryToGenerate = queryToGenerate;
+    }
+
+    /**
+     * Makes execution fail the way the add-on fails a query its validation rejects.
+     */
+    public void setExecutionFailure(@Nullable LlmDataQueryException executionFailure) {
+        this.executionFailure = executionFailure;
     }
 
     protected LlmDataQuery defaultGeneratedQuery() {

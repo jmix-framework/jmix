@@ -165,6 +165,89 @@ public class LlmDataSetGenerationSupportTest {
         assertThat(generated.getJpql()).contains("select o.number");
     }
 
+    @Test
+    public void testEditedQueryIsStoredAsAReadableDocument() {
+        DataSet dataSet = llmDataSet(reportWithParameters());
+        generationSupport.storeGeneratedQuery(dataSet,
+                new LlmDataQuery("select o.number as orderNumber from sales_Order o", List.of("orderNumber"),
+                        List.of(), "All order numbers", List.of("Amounts are not converted"), 200));
+
+        generationSupport.storeEditedQuery(dataSet,
+                "select o.number as num from sales_Order o where o.customer = :customerName", List.of("num"));
+
+        LlmDataQuery stored = serializer.fromJson(dataSet.getLlmGeneratedQuery());
+        assertThat(stored).isNotNull();
+        assertThat(stored.getJpql()).contains(":customerName");
+        assertThat(stored.getResultProperties()).containsExactly("num");
+        assertThat(stored.getParameters()).extracting(LlmQueryParameter::getName).containsExactly("customerName");
+        assertThat(stored.getExplanation()).isEqualTo("All order numbers");
+        assertThat(stored.getWarnings()).containsExactly("Amounts are not converted");
+    }
+
+    @Test
+    public void testQueryWrittenByHandIsStoredWithoutAPreviousOne() {
+        DataSet dataSet = llmDataSet(reportWithParameters());
+
+        generationSupport.storeEditedQuery(dataSet, "select o.number as num from sales_Order o", List.of("num"));
+
+        LlmDataQuery stored = serializer.fromJson(dataSet.getLlmGeneratedQuery());
+        assertThat(stored).isNotNull();
+        assertThat(stored.getResultProperties()).containsExactly("num");
+        assertThat(stored.getExplanation()).isNull();
+    }
+
+    @Test
+    public void testBlankQueryTextLeavesTheDataSetWithoutAStoredQuery() {
+        DataSet dataSet = llmDataSet(reportWithParameters());
+        generationSupport.storeGeneratedQuery(dataSet,
+                new LlmDataQuery("select o.number as orderNumber from sales_Order o", List.of("orderNumber"),
+                        List.of(), null, List.of(), null));
+
+        generationSupport.storeEditedQuery(dataSet, "   ", List.of("orderNumber"));
+
+        assertThat(dataSet.getLlmGeneratedQuery()).isNull();
+    }
+
+    @Test
+    public void testRegeneratedColumnsThatDifferAreReportedAsAddedAndDisappeared() {
+        LlmDataSetGenerationSupport.ColumnsChange change = generationSupport.compareColumns(
+                List.of("orderNumber", "total"), List.of("orderNumber", "amount"));
+
+        assertThat(change.isEmpty()).isFalse();
+        assertThat(change.added()).containsExactly("amount");
+        assertThat(change.disappeared()).containsExactly("total");
+    }
+
+    @Test
+    public void testTheSameColumnsAreNoChange() {
+        assertThat(generationSupport.compareColumns(List.of("orderNumber", "total"),
+                List.of("orderNumber", "total")).isEmpty()).isTrue();
+    }
+
+    @Test
+    public void testTheSameColumnsInAnotherOrderAreNoChange() {
+        // A template refers to a column by name, so a different order breaks nothing.
+        assertThat(generationSupport.compareColumns(List.of("orderNumber", "total"),
+                List.of("total", "orderNumber")).isEmpty()).isTrue();
+    }
+
+    @Test
+    public void testAFirstGenerationIsNoChange() {
+        assertThat(generationSupport.compareColumns(List.of(), List.of("orderNumber")).isEmpty()).isTrue();
+    }
+
+    @Test
+    public void testColumnNamesAreStoredWithoutSurroundingSpaces() {
+        DataSet dataSet = llmDataSet(reportWithParameters());
+
+        generationSupport.storeEditedQuery(dataSet, "select o.number as num from sales_Order o",
+                List.of("  num  "));
+
+        LlmDataQuery stored = serializer.fromJson(dataSet.getLlmGeneratedQuery());
+        assertThat(stored).isNotNull();
+        assertThat(stored.getResultProperties()).containsExactly("num");
+    }
+
     protected Report reportWithParameters() {
         Report report = metadata.create(Report.class);
         report.setName("LLM designer report");

@@ -107,6 +107,22 @@ class LlmDataSetReportRunTest {
     }
 
     @Test
+    void testLlmRowsAreMergedWithTheOtherDataSetOfTheBandByTheLinkParameter() {
+        queryService.setRows(List.of(
+                Map.of("orderNumber", "A-2", "amount", "80"),
+                Map.of("orderNumber", "A-1", "amount", "120")));
+
+        ReportOutputDocument document = reportRunner.byReportEntity(createReportWithLinkedDataSets()).run();
+
+        // The Groovy rows carry the customer, the LLM rows the amount; the link field pairs them up, and the
+        // order of the LLM rows does not matter.
+        String content = new String(document.getContent(), StandardCharsets.UTF_8);
+        assertThat(content)
+                .contains("\"A-1\",\"Acme\",\"120\"")
+                .contains("\"A-2\",\"Globex\",\"80\"");
+    }
+
+    @Test
     void testCrossTabBandBuildsItsMatrixFromAnLlmCellDataSet() {
         queryService.setRows(List.of(
                 Map.of("revenue_dynamic_header_month", 3, "revenue_master_data_publisherId", 1, "amount", 10.0),
@@ -279,6 +295,57 @@ class LlmDataSetReportRunTest {
         report.setBands(Set.of(rootBand, ordersBand, linesBand));
         report.setTemplates(List.of(csvTemplate(report, "Number\n${number}\n")));
         report.setDefaultTemplate(report.getTemplates().get(0));
+
+        report.setXml(reportsSerialization.convertToString(report));
+        return report;
+    }
+
+    /**
+     * Root → a band fed by two data sets: a Groovy one and an LLM one that links to it by the order number.
+     */
+    protected Report createReportWithLinkedDataSets() {
+        Report report = metadata.create(Report.class);
+        report.setName("Linked data sets report");
+
+        BandDefinition rootBand = metadata.create(BandDefinition.class);
+        rootBand.setReport(report);
+        rootBand.setName("Root");
+        rootBand.setOrientation(Orientation.HORIZONTAL);
+        rootBand.setMultiDataSet(false);
+        rootBand.setPosition(0);
+
+        BandDefinition ordersBand = metadata.create(BandDefinition.class);
+        ordersBand.setReport(report);
+        ordersBand.setName("Orders");
+        ordersBand.setOrientation(Orientation.HORIZONTAL);
+        ordersBand.setMultiDataSet(true);
+        ordersBand.setPosition(0);
+        ordersBand.setParentBandDefinition(rootBand);
+        rootBand.getChildrenBandDefinitions().add(ordersBand);
+
+        DataSet orders = metadata.create(DataSet.class);
+        orders.setName("Orders");
+        orders.setBandDefinition(ordersBand);
+        orders.setType(DataSetType.GROOVY);
+        orders.setText("""
+                return [["orderNumber": "A-1", "customer": "Acme"], ["orderNumber": "A-2", "customer": "Globex"]]""");
+
+        DataSet amounts = metadata.create(DataSet.class);
+        amounts.setName("Amounts");
+        amounts.setBandDefinition(ordersBand);
+        amounts.setType(DataSetType.LLM);
+        amounts.setText("Amount of every order");
+        amounts.setLinkParameterName("orderNumber");
+        amounts.setLlmGeneratedQuery("""
+                {"jpql":"select o.number as orderNumber, o.amount as amount from sales_Order o",\
+                "resultProperties":["orderNumber","amount"]}""");
+
+        ordersBand.setDataSets(List.of(orders, amounts));
+        report.setBands(Set.of(rootBand, ordersBand));
+
+        ReportTemplate template = csvTemplate(report, "Number,Customer,Amount\n${orderNumber},${customer},${amount}\n");
+        report.setTemplates(List.of(template));
+        report.setDefaultTemplate(template);
 
         report.setXml(reportsSerialization.convertToString(report));
         return report;

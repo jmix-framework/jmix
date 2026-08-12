@@ -17,18 +17,8 @@
 package io.jmix.reportsflowui.support;
 
 import io.jmix.reports.ParameterClassResolver;
-import io.jmix.reports.entity.BandDefinition;
-import io.jmix.reports.entity.DataSet;
-import io.jmix.reports.entity.DataSetType;
-import io.jmix.reports.entity.Orientation;
-import io.jmix.reports.entity.Report;
-import io.jmix.reports.entity.ReportInputParameter;
-import io.jmix.reports.llm.LlmDataQuery;
-import io.jmix.reports.llm.LlmDataQueryException;
-import io.jmix.reports.llm.LlmDataQueryService;
-import io.jmix.reports.llm.LlmQueryGenerationRequest;
-import io.jmix.reports.llm.LlmQueryParameter;
-import io.jmix.reports.llm.LlmQueryParameterNames;
+import io.jmix.reports.entity.*;
+import io.jmix.reports.llm.*;
 import io.jmix.reports.llm.impl.LlmDataQuerySerializer;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NullMarked;
@@ -38,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -114,6 +105,32 @@ public class LlmDataSetGenerationSupport {
     }
 
     /**
+     * Stores a query edited by hand, assembling the document out of the text and the column names as the author
+     * left them. The parameters are re-derived from the text and the previous document's explanation and
+     * warnings are carried over (see {@link LlmDataQuerySerializer#assemble}).
+     * <p>
+     * An empty query text means the data set has no stored query and runs by generating one, so it clears the
+     * document instead of storing an empty one.
+     *
+     * @param dataSet          data set to store the query in
+     * @param jpql             query text as edited
+     * @param resultProperties column names in select-clause order
+     */
+    public void storeEditedQuery(DataSet dataSet, String jpql, List<String> resultProperties) {
+        if (StringUtils.isBlank(jpql)) {
+            dataSet.setLlmGeneratedQuery(null);
+            return;
+        }
+
+        List<String> columns = resultProperties.stream()
+                .map(StringUtils::trimToEmpty)
+                .toList();
+
+        LlmDataQuery edited = llmDataQuerySerializer.assemble(jpql, columns, readStoredQuery(dataSet));
+        dataSet.setLlmGeneratedQuery(llmDataQuerySerializer.toJson(edited));
+    }
+
+    /**
      * Offers the report's input parameters under their aliases, typed as the report itself types them.
      */
     protected void collectReportParameters(DataSet dataSet, Map<String, LlmQueryParameter> parameters) {
@@ -185,7 +202,7 @@ public class LlmDataSetGenerationSupport {
 
     protected List<String> storedColumnsOf(BandDefinition band) {
         if (band.getDataSets() == null) {
-            return List.of();
+            return Collections.emptyList();
         }
 
         List<String> columns = new ArrayList<>();
@@ -197,11 +214,11 @@ public class LlmDataSetGenerationSupport {
 
     protected List<String> storedColumnsOf(DataSet dataSet) {
         if (dataSet.getType() != DataSetType.LLM || StringUtils.isBlank(dataSet.getLlmGeneratedQuery())) {
-            return List.of();
+            return Collections.emptyList();
         }
 
         LlmDataQuery storedQuery = readStoredQuery(dataSet);
-        return storedQuery != null ? storedQuery.getResultProperties() : List.of();
+        return storedQuery != null ? storedQuery.getResultProperties() : Collections.emptyList();
     }
 
     /**
@@ -223,5 +240,39 @@ public class LlmDataSetGenerationSupport {
     protected String resolveJavaType(ReportInputParameter inputParameter) {
         Class<?> parameterClass = parameterClassResolver.resolveClass(inputParameter);
         return parameterClass != null ? parameterClass.getName() : Object.class.getName();
+    }
+
+    /**
+     * Tells what a regenerated query changed about the columns of the one it replaced, so that a report whose
+     * template prints a column that is no longer produced can be noticed while the author is still there.
+     * <p>
+     * Compared as sets: a template refers to a column by name, so the same names in another order break
+     * nothing. A first generation reports no change, having nothing to compare against.
+     *
+     * @param previous columns of the query being replaced
+     * @param current  columns of the generated query
+     * @return what was added and what disappeared
+     */
+    public ColumnsChange compareColumns(List<String> previous, List<String> current) {
+        if (previous.isEmpty()) {
+            return new ColumnsChange(Collections.emptyList(), Collections.emptyList());
+        }
+
+        return new ColumnsChange(
+                current.stream().filter(column -> !previous.contains(column)).toList(),
+                previous.stream().filter(column -> !current.contains(column)).toList());
+    }
+
+    /**
+     * What a regeneration did to the columns of the query it replaced.
+     *
+     * @param added       columns the new query returns and the previous one did not
+     * @param disappeared columns the previous query returned and the new one does not
+     */
+    public record ColumnsChange(List<String> added, List<String> disappeared) {
+
+        public boolean isEmpty() {
+            return added.isEmpty() && disappeared.isEmpty();
+        }
     }
 }

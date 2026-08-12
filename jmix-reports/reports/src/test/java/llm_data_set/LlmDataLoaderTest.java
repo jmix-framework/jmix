@@ -21,6 +21,7 @@ import io.jmix.reports.ReportsTestConfiguration;
 import io.jmix.reports.entity.DataSet;
 import io.jmix.reports.entity.DataSetType;
 import io.jmix.reports.llm.LlmDataQuery;
+import io.jmix.reports.llm.LlmDataQueryException;
 import io.jmix.reports.llm.LlmQueryExecutionRequest;
 import io.jmix.reports.llm.LlmQueryParameter;
 import io.jmix.reports.llm.impl.LlmDataQuerySerializer;
@@ -384,6 +385,20 @@ class LlmDataLoaderTest {
 
         assertThatThrownBy(() -> loader().loadData(dataSet, null, Map.of()))
                 .isInstanceOf(DataLoadingException.class);
+    }
+
+    @Test
+    void testStoredQueryTheAddOnRejectsFailsWithItsValidationIssues() {
+        // What an imported report meets when its stored query no longer matches the domain model.
+        queryService.setExecutionFailure(new LlmDataQueryException(
+                "The query is invalid: Unknown attribute [o.number] of entity [sales_Order]"));
+        DataSet dataSet = llmDataSet(PROMPT, storedQuery(List.of()), false, null);
+
+        assertThatThrownBy(() -> loader().loadData(dataSet, null, Map.of()))
+                .isInstanceOf(DataLoadingException.class)
+                .hasMessageContaining("Data")
+                .cause()
+                .hasMessageContaining("Unknown attribute [o.number]");
     }
 
     @Test

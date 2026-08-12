@@ -26,8 +26,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Reads and writes the document a generated query is stored as in {@link DataSet#getLlmGeneratedQuery()}.
@@ -37,6 +43,12 @@ import java.util.Objects;
  */
 @Component("report_LlmDataQuerySerializer")
 public class LlmDataQuerySerializer {
+
+    /**
+     * Named parameters as the add-on's {@code ParametersValidator} finds them, so both sides agree on what a
+     * query references.
+     */
+    protected static final Pattern PARAMETER_PATTERN = Pattern.compile(":([A-Za-z_][A-Za-z0-9_]*)");
 
     protected static final String REGENERATE_HINT = "the stored query is unreadable, regenerate it";
 
@@ -91,7 +103,7 @@ public class LlmDataQuerySerializer {
     protected <T> List<T> retainNonNull(@Nullable List<T> values) {
         // A stored JSON array may hold nulls, whatever the element type claims.
         //noinspection ConstantValue
-        return values == null ? List.of() : values.stream().filter(Objects::nonNull).toList();
+        return values == null ? Collections.emptyList() : values.stream().filter(Objects::nonNull).toList();
     }
 
     /**
@@ -103,5 +115,41 @@ public class LlmDataQuerySerializer {
                 .map(parameter -> new LlmQueryParameter(parameter.getName(),
                         StringUtils.defaultString(parameter.getJavaType()), null))
                 .toList();
+    }
+
+    /**
+     * Assembles the document of a query edited by hand out of its text and its columns.
+     * <p>
+     * The parameters are not edited but re-derived from the text with the pattern the add-on validates queries
+     * by, so a hand-written {@code :name} is declared by the act of writing it and a removed one disappears;
+     * their types are irrelevant here, because the loader types every argument from the run's own dictionary.
+     * The explanation and the warnings of the query being replaced are carried over: they describe what the
+     * model produced, and an edit does not make them false, only incomplete.
+     *
+     * @param jpql             query text as edited
+     * @param resultProperties column names in select-clause order
+     * @param previous         query being replaced, or {@code null} if there is none
+     * @return the assembled query, ready to be stored with {@link #toJson(LlmDataQuery)}
+     */
+    public LlmDataQuery assemble(String jpql, List<String> resultProperties, @Nullable LlmDataQuery previous) {
+        List<LlmQueryParameter> parameters = new ArrayList<>();
+        for (String name : parameterNamesOf(jpql)) {
+            parameters.add(new LlmQueryParameter(name, "", null));
+        }
+
+        return new LlmDataQuery(jpql, resultProperties, parameters,
+                previous != null ? previous.getExplanation() : null,
+                previous != null ? previous.getWarnings() : Collections.emptyList(),
+                previous != null ? previous.getMaxResults() : null);
+    }
+
+    protected Set<String> parameterNamesOf(String jpql) {
+        Set<String> names = new LinkedHashSet<>();
+        Matcher matcher = PARAMETER_PATTERN.matcher(jpql);
+
+        while (matcher.find()) {
+            names.add(matcher.group(1));
+        }
+        return names;
     }
 }

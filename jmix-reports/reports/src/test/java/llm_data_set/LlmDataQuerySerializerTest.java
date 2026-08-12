@@ -83,6 +83,33 @@ class LlmDataQuerySerializerTest {
     }
 
     @Test
+    void testEditedQueryKeepsItsTextColumnsAndDerivedParameters() {
+        LlmDataQuery previous = new LlmDataQuery("select o.id as id from sales_Order o", List.of("id"),
+                List.of(), "Orders", List.of("Amounts are not converted"), 200);
+
+        LlmDataQuery edited = serializer.assemble(
+                "select o.number as num from sales_Order o where o.date >= :dateFrom and o.amount > :minAmount",
+                List.of("num"), previous);
+
+        assertThat(edited.getJpql()).contains(":dateFrom");
+        assertThat(edited.getResultProperties()).containsExactly("num");
+        assertThat(edited.getParameters())
+                .extracting(LlmQueryParameter::getName)
+                .containsExactly("dateFrom", "minAmount");
+        assertThat(edited.getExplanation()).isEqualTo("Orders");
+        assertThat(edited.getWarnings()).containsExactly("Amounts are not converted");
+        assertThat(edited.getMaxResults()).isEqualTo(200);
+    }
+
+    @Test
+    void testEditedQueryDropsAParameterRemovedFromTheText() {
+        LlmDataQuery edited = serializer.assemble("select o.id as id from sales_Order o", List.of("id"), null);
+
+        assertThat(edited.getParameters()).isEmpty();
+        assertThat(edited.getExplanation()).isNull();
+    }
+
+    @Test
     void testBlankDocumentMeansNoCachedQuery() {
         assertThat(serializer.fromJson(null)).isNull();
         assertThat(serializer.fromJson("")).isNull();

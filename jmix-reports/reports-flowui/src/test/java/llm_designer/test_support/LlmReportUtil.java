@@ -48,8 +48,8 @@ public class LlmReportUtil {
     public static final String PROMPT = "Order numbers of this month";
 
     public static final String STORED_QUERY = """
-            {"jpql":"select o.number as orderNumber from sales_Order o",\
-            "resultProperties":["orderNumber"],\
+            {"jpql":"select o.number as orderNumber, o.customer as customerName from sales_Order o",\
+            "resultProperties":["orderNumber","customerName"],\
             "explanation":"All order numbers"}""";
 
     @Autowired
@@ -72,6 +72,18 @@ public class LlmReportUtil {
      * Reads the prompt back from the database, to tell a saved report from one validation refused to save.
      */
     public String loadStoredPrompt() {
+        return loadDataSet().getText();
+    }
+
+    /**
+     * Reads the stored query document back from the database, to tell what the designer wrote into the data set.
+     */
+    @Nullable
+    public String loadStoredQuery() {
+        return loadDataSet().getLlmGeneratedQuery();
+    }
+
+    protected DataSet loadDataSet() {
         Report saved = unconstrainedDataManager.load(Report.class)
                 .query("select r from report_Report r where r.name = :name")
                 .parameter("name", REPORT_NAME)
@@ -83,8 +95,7 @@ public class LlmReportUtil {
                 .findFirst()
                 .orElseThrow()
                 .getDataSets()
-                .get(0)
-                .getText();
+                .get(0);
     }
 
     public Report createAndSaveReportWithLlmDataSet() {

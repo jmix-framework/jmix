@@ -2328,7 +2328,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
 
     protected CodeEditorMode getCodeEditorMode(DataSet dataSet) {
         return switch (dataSet.getType()) {
-            case SQL -> CodeEditorMode.SQL;
+            case SQL, JPQL -> CodeEditorMode.SQL;
             case GROOVY -> CodeEditorMode.GROOVY;
             default -> CodeEditorMode.TEXT;
         };

@@ -16,7 +16,7 @@
 
 package llm_designer;
 
-import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.badge.Badge;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.component.UiComponentUtils;
@@ -264,7 +264,7 @@ public class LlmDataSetPanelUiTest {
     @Test
     public void testEditingThePromptMarksTheStoredQueryStale() {
         View<?> view = openDesignerOnLlmDataSet();
-        Span notice = findComponent(view, "llmStaleQueryNotice");
+        Badge notice = findComponent(view, "llmStaleQueryNotice");
 
         assertThat(notice.isVisible()).isFalse();
 

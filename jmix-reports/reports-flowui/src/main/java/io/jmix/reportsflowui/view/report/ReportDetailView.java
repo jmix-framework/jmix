@@ -28,6 +28,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.NativeLabel;
+import com.vaadin.flow.component.badge.Badge;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.FontIcon;
 import com.vaadin.flow.component.notification.Notification;
@@ -185,9 +186,9 @@ public class ReportDetailView extends StandardDetailView<Report> {
     @ViewComponent
     protected CodeEditor llmGeneratedQueryCodeEditor;
     @ViewComponent
-    protected Span llmStaleQueryNotice;
+    protected Badge llmStaleQueryNotice;
     @ViewComponent
-    protected Span llmColumnsChangedNotice;
+    protected Badge llmColumnsChangedNotice;
     @ViewComponent
     protected DataGrid<LlmQueryColumn> llmGeneratedColumnsDataGrid;
     @ViewComponent
@@ -197,7 +198,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
     @ViewComponent
     protected Span llmGeneratedExplanationSpan;
     @ViewComponent
-    protected Span llmGeneratedWarningsSpan;
+    protected Badge llmGeneratedWarningsBadge;
     @ViewComponent
     protected VerticalLayout dataSetScriptBox;
     @ViewComponent
@@ -1531,8 +1532,6 @@ public class ReportDetailView extends StandardDetailView<Report> {
     }
 
     protected void initLlmDataSetComponents() {
-        llmStaleQueryNotice.addComponentAsFirst(icons.get(JmixFontIcon.WARNING));
-
         // A locked panel shows the columns as plain text, and the fields appear only while the query is
         // unlocked, so the declarative renderer is kept to switch back to.
         llmColumnNameRenderer = llmGeneratedColumnsDataGrid.getColumnByKey("name").getRenderer();
@@ -1619,13 +1618,11 @@ public class ReportDetailView extends StandardDetailView<Report> {
                 ? StringUtils.defaultString(storedQuery.getExplanation())
                 : "");
 
-        // A badge with no text would still paint its background, hence the visibility. The icon goes in after the
-        // text, because setting the text of an HTML container drops whatever it contained.
+        // A badge with no text would still paint its background and its icon, hence the visibility.
         boolean warningsExists = !warnings.isEmpty();
-        llmGeneratedWarningsSpan.setVisible(warningsExists);
+        llmGeneratedWarningsBadge.setVisible(warningsExists);
         if (warningsExists) {
-            llmGeneratedWarningsSpan.setText(String.join("; ", warnings));
-            llmGeneratedWarningsSpan.addComponentAsFirst(icons.get(JmixFontIcon.WARNING));
+            llmGeneratedWarningsBadge.setText(String.join("; ", warnings));
         }
     }
 
@@ -1648,9 +1645,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
                     String.join(", ", change.disappeared())));
         }
 
-        // The icon goes in after the text, because setting the text of an HTML container drops what it held.
         llmColumnsChangedNotice.setText(String.join("; ", parts));
-        llmColumnsChangedNotice.addComponentAsFirst(icons.get(JmixFontIcon.WARNING));
     }
 
     protected LlmQueryColumn createLlmQueryColumn(String name) {

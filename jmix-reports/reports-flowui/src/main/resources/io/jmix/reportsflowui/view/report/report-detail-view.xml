@@ -294,10 +294,11 @@
                                                     text="msg://bandsTab.dataSetTypeLayout.llmGenerateBtn.text"
                                                     themeNames="primary"/>
                                             <button id="llmEditQueryBtn" themeNames="icon"/>
-                                            <span id="llmStaleQueryNotice"
-                                                  text="msg://bandsTab.dataSetTypeLayout.llmStaleQueryNotice.text"
-                                                  themeNames="badge warning"/>
-                                            <span id="llmColumnsChangedNotice" themeNames="badge warning"/>
+                                            <badge id="llmStaleQueryNotice"
+                                                   text="msg://bandsTab.dataSetTypeLayout.llmStaleQueryNotice.text"
+                                                   themeNames="warning" icon="WARNING" role="status"/>
+                                            <badge id="llmColumnsChangedNotice"
+                                                   themeNames="warning" icon="WARNING" role="status"/>
                                         </hbox>
                                         <flexLayout id="llmGeneratedQueryBox" classNames="flex-layout llm-editor-block"
                                                     width="100%" expand="llmGeneratedQueryEditorBox">
@@ -354,7 +355,8 @@
                                         <vbox id="llmGeneratedQueryNotesBox" padding="false" spacing="false"
                                               width="100%">
                                             <span id="llmGeneratedExplanationSpan"/>
-                                            <span id="llmGeneratedWarningsSpan" themeNames="badge warning"/>
+                                            <badge id="llmGeneratedWarningsBadge"
+                                                   themeNames="warning" icon="WARNING" role="status"/>
                                         </vbox>
                                     </vbox>
                                 </div>

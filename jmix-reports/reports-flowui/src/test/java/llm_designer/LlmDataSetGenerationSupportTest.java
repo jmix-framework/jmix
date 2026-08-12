@@ -124,6 +124,41 @@ public class LlmDataSetGenerationSupportTest {
     }
 
     @Test
+    public void testCrossTabAxisColumnsAreOfferedAsMultiValuedParameters() {
+        Report report = reportWithParameters();
+        BandDefinition crossBand = band(report, "Revenue", null);
+        crossBand.setOrientation(Orientation.CROSS);
+        axisDataSet(crossBand, "Revenue_dynamic_header", serializer.toJson(new LlmDataQuery(
+                "select year(o.date) as year from sales_Order o", List.of("year"), List.of(),
+                null, List.of(), null)));
+        DataSet cellDataSet = llmDataSet(crossBand);
+
+        List<LlmQueryParameter> parameters = generationSupport.createGenerationRequest(cellDataSet)
+                .getAvailableParameters();
+
+        assertThat(parameters)
+                .filteredOn(parameter -> "Revenue_dynamic_header_year".equals(parameter.getName()))
+                .singleElement()
+                .extracting(LlmQueryParameter::isMultiValued)
+                .isEqualTo(true);
+    }
+
+    @Test
+    public void testCrossTabAxisWithoutAStoredQueryOffersNothing() {
+        Report report = reportWithParameters();
+        BandDefinition crossBand = band(report, "Revenue", null);
+        crossBand.setOrientation(Orientation.CROSS);
+        axisDataSet(crossBand, "Revenue_dynamic_header", null);
+        DataSet cellDataSet = llmDataSet(crossBand);
+
+        List<LlmQueryParameter> parameters = generationSupport.createGenerationRequest(cellDataSet)
+                .getAvailableParameters();
+
+        assertThat(parameters).extracting(LlmQueryParameter::getName)
+                .doesNotContain("Revenue_dynamic_header_year");
+    }
+
+    @Test
     public void testColumnsOfABandWhoseNameIsNotAnIdentifierAreNotOffered() {
         Report report = reportWithParameters();
         BandDefinition parentBand = band(report, "Order Details", null);

@@ -1,0 +1,14 @@
+@media lumo_components_jmix-ai-upload-trigger {
+  :host([theme~='menuitem']) {
+    width: 100%;
+    justify-content: flex-start;
+    --vaadin-button-background: transparent;
+    --vaadin-button-border-color: transparent;
+  }
+}
+
+:root,
+:host {
+  --_lumo-jmix-ai-upload-trigger-inject: 1;
+  --_lumo-jmix-ai-upload-trigger-inject-modules: lumo_components_button, lumo_components_jmix-ai-upload-trigger;
+}

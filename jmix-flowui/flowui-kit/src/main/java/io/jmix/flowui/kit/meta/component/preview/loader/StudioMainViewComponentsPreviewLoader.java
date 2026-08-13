@@ -19,6 +19,7 @@ package io.jmix.flowui.kit.meta.component.preview.loader;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import io.jmix.flowui.kit.meta.StudioXmlElements;
 import io.jmix.flowui.kit.meta.component.preview.StudioPreviewComponentLoader;
@@ -40,14 +41,22 @@ import java.util.function.Supplier;
 public class StudioMainViewComponentsPreviewLoader implements StudioPreviewComponentLoader {
 
     protected static final Map<String, Supplier<Component>> FACTORIES = Map.of(
-            StudioXmlElements.VIEW, VerticalLayout::new,
-            StudioXmlElements.MAIN_VIEW, VerticalLayout::new,
+            StudioXmlElements.VIEW, StudioMainViewComponentsPreviewLoader::createViewRoot,
+            StudioXmlElements.MAIN_VIEW, StudioMainViewComponentsPreviewLoader::createViewRoot,
             StudioXmlElements.APP_LAYOUT, AppLayout::new,
             StudioXmlElements.INITIAL_LAYOUT, VerticalLayout::new,
             StudioXmlElements.NAVIGATION_BAR, Div::new,
             StudioXmlElements.DRAWER_LAYOUT, Div::new,
             StudioXmlElements.LAYOUT, VerticalLayout::new
     );
+
+    private static VerticalLayout createViewRoot() {
+        VerticalLayout root = new VerticalLayout();
+        root.setPadding(false);
+        root.setSpacing(false);
+        root.setAlignItems(FlexComponent.Alignment.STRETCH);
+        return root;
+    }
 
     @Override
     public boolean isSupported(Element element) {

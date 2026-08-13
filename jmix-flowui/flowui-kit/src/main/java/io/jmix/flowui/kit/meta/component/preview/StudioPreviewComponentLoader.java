@@ -17,6 +17,7 @@
 package io.jmix.flowui.kit.meta.component.preview;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -27,6 +28,7 @@ import com.vaadin.flow.component.HasStyle;
 import com.vaadin.flow.component.HasTheme;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.ThemableLayout;
+import io.jmix.flowui.kit.meta.component.preview.loader.PreviewActionSupport;
 import io.jmix.flowui.kit.xml.layout.support.ComponentLoaderUtils;
 import io.jmix.flowui.kit.xml.layout.support.LoaderUtils;
 import org.jspecify.annotations.Nullable;
@@ -127,6 +129,13 @@ public interface StudioPreviewComponentLoader {
         LoaderUtils.loadDouble(element, attributeName, setter);
     }
 
+    default void loadLocalizedString(Element element, String attributeName,
+                                     StudioPreviewEnvironment environment, Consumer<String> setter) {
+        LoaderUtils.loadString(element, attributeName)
+                .map(value -> PreviewActionSupport.resolveText(environment, value))
+                .ifPresent(setter);
+    }
+
     default <T extends Enum<T>> void loadEnum(Element element, Class<T> type, String attributeName, Consumer<T> setter) {
         LoaderUtils.loadEnum(element, type, attributeName, setter);
     }
@@ -184,7 +193,11 @@ public interface StudioPreviewComponentLoader {
      * based on the interfaces implemented by the {@code component}.
      */
     default void loadComponentBaseAttributes(Component component, Element element) {
+        LoaderUtils.loadString(element, "id", component::setId);
         LoaderUtils.loadBoolean(element, "visible", component::setVisible);
+        loadCss(component, element);
+        loadSelfAlignment(component, element, "alignSelf", "align-self");
+        loadSelfAlignment(component, element, "justifySelf", "justify-self");
         if (component instanceof HasSize hasSize) {
             ComponentLoaderUtils.loadSizeAttributes(hasSize, element);
         }
@@ -202,5 +215,28 @@ public interface StudioPreviewComponentLoader {
         if (component instanceof FlexComponent flexComponent) {
             ComponentLoaderUtils.loadFlexibleAttributes(flexComponent, element);
         }
+    }
+
+    private static void loadCss(Component component, Element element) {
+        LoaderUtils.loadString(element, "css").ifPresent(css -> {
+            for (String statement : css.split(";")) {
+                int separator = statement.indexOf(':');
+                if (separator <= 0) {
+                    continue;
+                }
+                String name = statement.substring(0, separator).trim();
+                String value = statement.substring(separator + 1).trim();
+                if (!name.isEmpty()) {
+                    component.getStyle().set(name, value);
+                }
+            }
+        });
+    }
+
+    private static void loadSelfAlignment(Component component, Element element,
+                                          String attributeName, String cssProperty) {
+        LoaderUtils.loadString(element, attributeName)
+                .map(value -> value.trim().replace('_', '-').toLowerCase(Locale.ROOT))
+                .ifPresent(value -> component.getStyle().set(cssProperty, value));
     }
 }

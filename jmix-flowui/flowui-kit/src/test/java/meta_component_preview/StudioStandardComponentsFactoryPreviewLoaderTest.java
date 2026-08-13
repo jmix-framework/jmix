@@ -25,7 +25,9 @@ import com.vaadin.flow.component.icon.SvgIcon;
 import com.vaadin.flow.component.listbox.ListBox;
 import com.vaadin.flow.component.markdown.Markdown;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.timepicker.TimePicker;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.component.menubar.JmixMenuBar;
 import io.jmix.flowui.kit.meta.component.preview.StudioPreviewEnvironment;
@@ -33,6 +35,10 @@ import io.jmix.flowui.kit.meta.component.preview.StudioStandardComponentsPreview
 import org.dom4j.Namespace;
 import org.dom4j.tree.BaseElement;
 import org.junit.jupiter.api.Test;
+
+import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -42,9 +48,11 @@ class StudioStandardComponentsFactoryPreviewLoaderTest {
 
     /** Fake env; only needs to be non-NOOP to exercise the placeholder-fill gate. */
     static class FakeEnv implements StudioPreviewEnvironment {
+        final Map<String, String> messages = new HashMap<>();
+
         @Override
         public String resolveMessage(String messageKey) {
-            return null;
+            return messages.get(messageKey);
         }
 
         @Override
@@ -111,14 +119,59 @@ class StudioStandardComponentsFactoryPreviewLoaderTest {
     @Test
     void testButtonWithAttributes() {
         BaseElement element = element("button");
+        element.addAttribute("id", "saveBtn");
+        element.addAttribute("text", "msg://save");
+        element.addAttribute("icon", "CHECK");
         element.addAttribute("width", "12em");
         element.addAttribute("enabled", "false");
+        element.addAttribute("alignSelf", "CENTER");
+        element.addAttribute("css", "color: red");
 
-        Component component = loader.load(element, element("view"));
+        FakeEnv environment = new FakeEnv();
+        environment.messages.put("msg://save", "Save");
+
+        Component component = loader.load(element, element("view"), environment);
 
         assertInstanceOf(JmixButton.class, component);
-        assertEquals("12em", ((JmixButton) component).getWidth());
-        assertFalse(((JmixButton) component).isEnabled());
+        JmixButton button = (JmixButton) component;
+        assertEquals("saveBtn", button.getId().orElse(null));
+        assertEquals("Save", button.getText());
+        assertNotNull(button.getIcon());
+        assertEquals("12em", button.getWidth());
+        assertFalse(button.isEnabled());
+        assertEquals("center", button.getStyle().get("align-self"));
+        assertEquals("red", button.getStyle().get("color"));
+    }
+
+    @Test
+    void testTextFieldAttributesAreLoadedExplicitly() {
+        BaseElement element = element("textField");
+        element.addAttribute("label", "Name");
+        element.addAttribute("placeholder", "Enter a name");
+        element.addAttribute("required", "true");
+        element.addAttribute("clearButtonVisible", "true");
+        element.addAttribute("maxLength", "40");
+
+        TextField field = (TextField) loader.load(element, element("view"), new FakeEnv());
+
+        assertEquals("Name", field.getLabel());
+        assertEquals("Enter a name", field.getPlaceholder());
+        assertTrue(field.isRequired());
+        assertTrue(field.isClearButtonVisible());
+        assertEquals(40, field.getMaxLength());
+    }
+
+    @Test
+    void testTimePickerAndScrollerTypedAttributes() {
+        BaseElement timePickerElement = element("timePicker");
+        timePickerElement.addAttribute("step", "5m");
+        TimePicker timePicker = (TimePicker) loader.load(timePickerElement, element("view"), new FakeEnv());
+        assertEquals(Duration.ofMinutes(5), timePicker.getStep());
+
+        BaseElement scrollerElement = element("scroller");
+        scrollerElement.addAttribute("scrollBarsDirection", "BOTH");
+        Scroller scroller = (Scroller) loader.load(scrollerElement, element("view"), new FakeEnv());
+        assertEquals(Scroller.ScrollDirection.BOTH, scroller.getScrollDirection());
     }
 
     @Test

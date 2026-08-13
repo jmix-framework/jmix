@@ -73,6 +73,16 @@ class StudioMainViewComponentsPreviewLoaderTest {
     }
 
     @Test
+    void testViewRootDoesNotAffectPreviewLayout() {
+        VerticalLayout root = assertInstanceOf(VerticalLayout.class,
+                loader.load(element("view", VIEW_NS), element("view", VIEW_NS)));
+
+        assertFalse(root.isPadding());
+        assertFalse(root.isSpacing());
+        assertEquals(VerticalLayout.Alignment.STRETCH, root.getAlignItems());
+    }
+
+    @Test
     void testLoadsAppLayout() {
         Component component = loader.load(element("appLayout", MAIN_VIEW_NS), element("mainView", MAIN_VIEW_NS));
         assertInstanceOf(AppLayout.class, component);

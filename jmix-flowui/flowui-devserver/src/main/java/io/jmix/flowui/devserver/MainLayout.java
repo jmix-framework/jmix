@@ -17,6 +17,7 @@
 package io.jmix.flowui.devserver;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.UI;
@@ -47,30 +48,32 @@ public class MainLayout extends Div implements RouterLayout {
     protected void onAttach(AttachEvent attachEvent) {
         super.onAttach(attachEvent);
         UI ui = attachEvent.getUI();
-        addProjectStyleSheets(ui);
-        addLegacyThemeStyleSheets(ui);
+        addStyleSheets(ui);
     }
 
-    private static void addProjectStyleSheets(UI ui) {
-        Object attr = getServletContextAttribute(PROJECT_STYLE_SHEETS_ATTRIBUTE);
-        if (!(attr instanceof List<?> list)) {
-            return;
-        }
-        for (Object item : list) {
-            if (item instanceof String path && !path.isBlank()) {
-                ui.getPage().addStyleSheet(path);
-                log.debug("Added project stylesheet: {}", path);
-            }
+    private static void addStyleSheets(UI ui) {
+        Object projectStyleSheets = getServletContextAttribute(PROJECT_STYLE_SHEETS_ATTRIBUTE);
+        for (String path : selectStyleSheets(projectStyleSheets, LegacyThemeStyleSheets.getStyleSheets())) {
+            ui.getPage().addStyleSheet(path);
+            log.debug("Added stylesheet: {}", path);
         }
     }
 
-    private static void addLegacyThemeStyleSheets(UI ui) {
-        for (String path : LegacyThemeStyleSheets.getStyleSheets()) {
-            if (path != null && !path.isBlank()) {
-                ui.getPage().addStyleSheet(path);
-                log.debug("Added legacy theme stylesheet: {}", path);
-            }
-        }
+    static List<String> selectStyleSheets(Object projectStyleSheets, List<String> legacyStyleSheets) {
+        List<String> projectPaths = projectStyleSheets instanceof List<?> list
+                ? validStyleSheets(list.stream())
+                : List.of();
+        return projectPaths.isEmpty()
+                ? validStyleSheets(legacyStyleSheets.stream())
+                : projectPaths;
+    }
+
+    private static List<String> validStyleSheets(Stream<?> styleSheets) {
+        return styleSheets
+                .filter(String.class::isInstance)
+                .map(String.class::cast)
+                .filter(path -> !path.isBlank())
+                .toList();
     }
 
     private static Object getServletContextAttribute(String name) {

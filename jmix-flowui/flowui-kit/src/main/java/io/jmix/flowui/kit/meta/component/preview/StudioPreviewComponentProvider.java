@@ -126,8 +126,9 @@ final class StudioPreviewComponentProvider {
      *       {@link Component}, or {@code null} when no loader claimed it</li>
      *   <li>{@code "capabilities"} — no arguments; returns a {@link Map} describing this
      *       implementation. Key {@code "fullContent"} ({@link Boolean}): loaders build all live
-     *       preview content (real structure and placeholders) themselves, so Studio skips its own
-     *       structural postInit. An older Studio ignores keys it doesn't know</li>
+     *       preview content (supported XML properties, real structure and placeholders) themselves,
+     *       so Studio does not mutate the created Vaadin components. An older Studio ignores keys
+     *       it doesn't know</li>
      *   <li>{@code "componentAdded"} / {@code "componentRemoved"} — Studio reports the designer
      *       change without classifying it; this side decides whether it is a plain child, a slot, an
      *       action, a tab or a column (see {@link #classifyAdded}). Keys: {@code target}
@@ -405,10 +406,11 @@ final class StudioPreviewComponentProvider {
         Element viewElement = getElement(creationContext.viewXml());
         if (viewElement != null && hasQualifiedName(viewElement)) {
             Element componentElement = getComponentElement(viewElement, creationContext.componentPath());
-            Optional<StudioPreviewComponentLoader> loader = findComponentLoader(componentElement);
-            if (loader.isPresent()) {
+            Optional<StudioPreviewComponentLoader> loaderOpt = findComponentLoader(componentElement);
+            if (loaderOpt.isPresent()) {
                 StudioPreviewEnvironment environment = unwrapEnvironment(creationContext.environment());
-                return loader.get().load(componentElement, viewElement, environment);
+                StudioPreviewComponentLoader loader = loaderOpt.get();
+                return loader.load(componentElement, viewElement, environment);
             }
         }
         return null;

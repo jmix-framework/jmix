@@ -58,6 +58,7 @@ public class StudioDropdownButtonPreviewLoader implements StudioPreviewComponent
                 ? new ComboButton() : new DropdownButton();
 
         loadComponentBaseAttributes(button, componentElement);
+        loadLocalizedString(componentElement, "text", environment, button::setText);
         loadBoolean(componentElement, "openOnHover", button::setOpenOnHover);
         ComponentLoaderUtils.loadIconSetIcon(componentElement).ifPresent(button::setIcon);
         if (button instanceof ComboButton comboButton) {

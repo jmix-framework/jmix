@@ -21,18 +21,24 @@ import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.TabSheet;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.timepicker.TimePicker;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.action.BaseAction;
+import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.component.grid.JmixGrid;
+import io.jmix.flowui.kit.meta.component.preview.StudioPreviewEnvironment;
 import org.junit.jupiter.api.Test;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -68,6 +74,30 @@ class ProcessorProviderAbiTest {
     // Unprefixed path steps never match namespaced elements under XPath 1.0, so match by local-name().
     static final String BUTTON_XPATH =
             "/*[local-name()='view']/*[local-name()='layout']/*[local-name()='button']";
+
+    static final String TEXT_FIELD_XPATH =
+            "/*[local-name()='view']/*[local-name()='layout']/*[local-name()='textField']";
+
+    static final String TIME_PICKER_XPATH =
+            "/*[local-name()='view']/*[local-name()='layout']/*[local-name()='timePicker']";
+
+    static final String SCROLLER_XPATH =
+            "/*[local-name()='view']/*[local-name()='layout']/*[local-name()='scroller']";
+
+    static final StudioPreviewEnvironment ENVIRONMENT = new StudioPreviewEnvironment() {
+        @Nullable
+        @Override
+        public String resolveMessage(String messageKey) {
+            return "msg://buttonText".equals(messageKey) ? "Localized button" : null;
+        }
+
+        @Nullable
+        @Override
+        public String propertyCaption(@Nullable String dataContainerId, @Nullable String metaClass,
+                                      String propertyPath) {
+            return null;
+        }
+    };
 
     private Method providerMethod(String name) throws Exception {
         Method method = Arrays.stream(providerDeclaredMethods())
@@ -165,6 +195,60 @@ class ProcessorProviderAbiTest {
         Object component = perform("createComponent", params(
                 "viewXml", VIEW_XML, "componentPath", BUTTON_XPATH, "environment", null));
         assertInstanceOf(Component.class, component);
+    }
+
+    @Test
+    void testFullContentCreationAppliesXmlProperties() throws Exception {
+        String viewXml = """
+                <view xmlns="http://jmix.io/schema/flowui/view">
+                    <layout>
+                        <button id="okBtn" text="msg://buttonText" icon="vaadin:check"
+                                width="10em" enabled="false" themeNames="primary"
+                                alignSelf="CENTER" css="color: red"/>
+                    </layout>
+                </view>""";
+
+        JmixButton button = assertInstanceOf(JmixButton.class, perform("createComponent", params(
+                "viewXml", viewXml, "componentPath", BUTTON_XPATH, "environment", ENVIRONMENT)));
+
+        assertEquals("okBtn", button.getId().orElse(null));
+        assertEquals("Localized button", button.getText());
+        assertNotNull(button.getIcon());
+        assertEquals("10em", button.getWidth());
+        assertFalse(button.isEnabled());
+        assertTrue(button.getThemeNames().contains("primary"));
+        assertEquals("center", button.getStyle().get("align-self"));
+        assertEquals("red", button.getStyle().get("color"));
+    }
+
+    @Test
+    void testFullContentCreationConvertsTypedProperties() throws Exception {
+        String viewXml = """
+                <view xmlns="http://jmix.io/schema/flowui/view">
+                    <layout>
+                        <textField label="Name" placeholder="Enter a name" required="true"
+                                   clearButtonVisible="true" maxLength="40"/>
+                        <timePicker step="5m"/>
+                        <scroller scrollBarsDirection="BOTH"/>
+                    </layout>
+                </view>""";
+
+        TextField field = assertInstanceOf(TextField.class, perform("createComponent", params(
+                "viewXml", viewXml, "componentPath", TEXT_FIELD_XPATH, "environment", null)));
+
+        assertEquals("Name", field.getLabel());
+        assertEquals("Enter a name", field.getPlaceholder());
+        assertTrue(field.isRequired());
+        assertTrue(field.isClearButtonVisible());
+        assertEquals(40, field.getMaxLength());
+
+        TimePicker timePicker = assertInstanceOf(TimePicker.class, perform("createComponent", params(
+                "viewXml", viewXml, "componentPath", TIME_PICKER_XPATH, "environment", null)));
+        assertEquals(Duration.ofMinutes(5), timePicker.getStep());
+
+        Scroller scroller = assertInstanceOf(Scroller.class, perform("createComponent", params(
+                "viewXml", viewXml, "componentPath", SCROLLER_XPATH, "environment", null)));
+        assertEquals(Scroller.ScrollDirection.BOTH, scroller.getScrollDirection());
     }
 
     @Test

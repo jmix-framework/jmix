@@ -126,6 +126,17 @@ class StudioDropdownButtonPreviewLoaderTest {
     }
 
     @Test
+    void testButtonTextIsLoadedExplicitly() {
+        FakeEnv environment = new FakeEnv();
+        environment.messages.put("msg://menu", "Menu");
+        Element buttonElement = withAttributes(element("dropdownButton"), "text", "msg://menu");
+
+        AbstractDropdownButton button = load(buttonElement, element("view"), environment);
+
+        assertEquals("Menu", button.getText());
+    }
+
+    @Test
     void testItemsBuiltInDocumentOrderWithSeparator() {
         Element items = itemsElement(
                 withAttributes(element("textItem"), "id", "item1", "text", "Hello"),

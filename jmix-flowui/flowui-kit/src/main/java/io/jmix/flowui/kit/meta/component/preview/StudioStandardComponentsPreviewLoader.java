@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -67,6 +68,7 @@ import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.textfield.TextFieldBase;
 import com.vaadin.flow.component.timepicker.TimePicker;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.virtuallist.VirtualList;
@@ -246,7 +248,7 @@ public final class StudioStandardComponentsPreviewLoader implements StudioPrevie
         if (isFragment(componentElement)) {
             return loadFragment(componentElement);
         } else if (isGenericComponent(componentElement)) {
-            return loadGenericComponent();
+            return loadGenericComponent(componentElement);
         } else if (isUserMenu(componentElement)) {
             return loadUserMenu(componentElement, viewElement, environment);
         } else if (isFactoryElement(componentElement)) {
@@ -268,10 +270,110 @@ public final class StudioStandardComponentsPreviewLoader implements StudioPrevie
                 : FACTORIES.get(name).get();
 
         loadComponentBaseAttributes(component, componentElement);
+        loadFactoryComponentAttributes(name, component, componentElement, environment);
         if (environment != StudioPreviewEnvironment.NOOP) {
             fillPlaceholders(component);
         }
         return component;
+    }
+
+    private void loadFactoryComponentAttributes(String name, Component component, Element element,
+                                                StudioPreviewEnvironment environment) {
+        switch (name) {
+            case StudioXmlElements.BUTTON -> loadButtonAttributes((JmixButton) component, element, environment);
+            case StudioXmlElements.SPAN ->
+                    loadLocalizedString(element, "text", environment, ((Span) component)::setText);
+            case StudioXmlElements.TEXT_FIELD ->
+                    loadStringFieldAttributes((TextField) component, element, environment);
+            case StudioXmlElements.EMAIL_FIELD ->
+                    loadStringFieldAttributes((EmailField) component, element, environment);
+            case StudioXmlElements.PASSWORD_FIELD ->
+                    loadPasswordFieldAttributes((PasswordField) component, element, environment);
+            case StudioXmlElements.TEXT_AREA ->
+                    loadStringFieldAttributes((TextArea) component, element, environment);
+            case StudioXmlElements.TIME_PICKER ->
+                    loadTimePickerAttributes((TimePicker) component, element, environment);
+            case StudioXmlElements.SCROLLER ->
+                    loadEnum(element, Scroller.ScrollDirection.class, "scrollBarsDirection",
+                            ((Scroller) component)::setScrollDirection);
+            case StudioXmlElements.FLEX_LAYOUT -> loadFlexLayoutAttributes((FlexLayout) component, element);
+            case StudioXmlElements.CHECKBOX ->
+                    loadLocalizedString(element, "label", environment, ((Checkbox) component)::setLabel);
+            case StudioXmlElements.SWITCH ->
+                    loadLocalizedString(element, "label", environment, ((JmixSwitch) component)::setLabel);
+            default -> {
+                // No additional attributes are loaded for this component yet.
+            }
+        }
+    }
+
+    private void loadButtonAttributes(JmixButton button, Element element, StudioPreviewEnvironment environment) {
+        loadLocalizedString(element, "text", environment, button::setText);
+        loadLocalizedString(element, "title", environment, button::setTitle);
+        loadBoolean(element, "autofocus", button::setAutofocus);
+        loadBoolean(element, "iconAfterText", button::setIconAfterText);
+        loadBoolean(element, "disableOnClick", button::setDisableOnClick);
+        ComponentLoaderUtils.loadWhiteSpace(button, element);
+        ComponentLoaderUtils.loadIconSetIcon(element).ifPresent(button::setIcon);
+    }
+
+    private void loadStringFieldAttributes(TextFieldBase<?, String> field, Element element,
+                                           StudioPreviewEnvironment environment) {
+        loadLocalizedString(element, "label", environment, field::setLabel);
+        loadLocalizedString(element, "placeholder", environment, field::setPlaceholder);
+        loadLocalizedString(element, "title", environment, field::setTitle);
+        loadString(element, "value", field::setValue);
+        loadBoolean(element, "required", field::setRequired);
+        loadBoolean(element, "clearButtonVisible", field::setClearButtonVisible);
+        loadBoolean(element, "autofocus", field::setAutofocus);
+        loadBoolean(element, "autoselect", field::setAutoselect);
+        ComponentLoaderUtils.loadValueChangeMode(field, element);
+        ComponentLoaderUtils.loadAutocomplete(field, element);
+        ComponentLoaderUtils.loadAutocapitalize(field, element);
+        ComponentLoaderUtils.loadAutocorrect(field, element);
+
+        if (field instanceof TextField textField) {
+            loadTextLengthAndPattern(element,
+                    textField::setMaxLength, textField::setMinLength, textField::setPattern);
+        } else if (field instanceof EmailField emailField) {
+            loadTextLengthAndPattern(element,
+                    emailField::setMaxLength, emailField::setMinLength, emailField::setPattern);
+        } else if (field instanceof PasswordField passwordField) {
+            loadTextLengthAndPattern(element,
+                    passwordField::setMaxLength, passwordField::setMinLength, passwordField::setPattern);
+        } else if (field instanceof TextArea textArea) {
+            loadTextLengthAndPattern(element,
+                    textArea::setMaxLength, textArea::setMinLength, textArea::setPattern);
+        }
+    }
+
+    private void loadPasswordFieldAttributes(PasswordField field, Element element,
+                                             StudioPreviewEnvironment environment) {
+        loadStringFieldAttributes(field, element, environment);
+        loadBoolean(element, "revealButtonVisible", field::setRevealButtonVisible);
+    }
+
+    private void loadTextLengthAndPattern(Element element, Consumer<Integer> maxLengthSetter,
+                                          Consumer<Integer> minLengthSetter, Consumer<String> patternSetter) {
+        loadInteger(element, "maxLength", maxLengthSetter);
+        loadInteger(element, "minLength", minLengthSetter);
+        loadString(element, "pattern", patternSetter);
+    }
+
+    private void loadTimePickerAttributes(TimePicker timePicker, Element element,
+                                          StudioPreviewEnvironment environment) {
+        loadLocalizedString(element, "label", environment, timePicker::setLabel);
+        loadLocalizedString(element, "placeholder", environment, timePicker::setPlaceholder);
+        loadBoolean(element, "required", timePicker::setRequired);
+        loadBoolean(element, "clearButtonVisible", timePicker::setClearButtonVisible);
+        loadBoolean(element, "autoOpen", timePicker::setAutoOpen);
+        ComponentLoaderUtils.loadDuration(element, "step").ifPresent(timePicker::setStep);
+    }
+
+    private void loadFlexLayoutAttributes(FlexLayout layout, Element element) {
+        loadEnum(element, FlexLayout.ContentAlignment.class, "contentAlignment", layout::setAlignContent);
+        loadEnum(element, FlexLayout.FlexDirection.class, "flexDirection", layout::setFlexDirection);
+        loadEnum(element, FlexLayout.FlexWrap.class, "flexWrap", layout::setFlexWrap);
     }
 
     @SuppressWarnings("unchecked")
@@ -296,11 +398,14 @@ public final class StudioStandardComponentsPreviewLoader implements StudioPrevie
     }
 
     private Component loadFragment(Element fragment) {
+        Component component;
         if (FRAGMENT_SCHEMA.equals(fragment.getNamespaceURI())) {
-            return new VerticalLayout();
+            component = new VerticalLayout();
         } else {
-            return new Image("icons/studio-fragment-preview.svg", "FRAGMENT");
+            component = new Image("icons/studio-fragment-preview.svg", "FRAGMENT");
         }
+        loadComponentBaseAttributes(component, fragment);
+        return component;
     }
 
     private boolean isGenericComponent(Element element) {
@@ -313,8 +418,10 @@ public final class StudioStandardComponentsPreviewLoader implements StudioPrevie
      * cannot instantiate, so it previews as a labelled placeholder - the same treatment
      * {@link #loadFragment} gives a fragment declared outside a fragment descriptor.
      */
-    private Component loadGenericComponent() {
-        return new Image("icons/studio-generic-component-preview.svg", "COMPONENT");
+    private Component loadGenericComponent(Element element) {
+        Image component = new Image("icons/studio-generic-component-preview.svg", "COMPONENT");
+        loadComponentBaseAttributes(component, element);
+        return component;
     }
 
     private boolean isUserMenu(Element element) {
@@ -324,6 +431,7 @@ public final class StudioStandardComponentsPreviewLoader implements StudioPrevie
 
     private Component loadUserMenu(Element userMenuElement, Element viewElement, StudioPreviewEnvironment environment) {
         JmixUserMenu<String> userMenu = new JmixUserMenu<>();
+        loadComponentBaseAttributes(userMenu, userMenuElement);
         userMenu.setUser("admin");
 
         Element itemsElement = userMenuElement.element(StudioXmlElements.ITEMS);

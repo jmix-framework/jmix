@@ -17,10 +17,12 @@
 package io.jmix.flowui.kit.meta.component.preview.loader;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.HasText;
 import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.html.*;
 import io.jmix.flowui.kit.meta.StudioXmlElements;
 import io.jmix.flowui.kit.meta.component.preview.StudioPreviewComponentLoader;
+import io.jmix.flowui.kit.meta.component.preview.StudioPreviewEnvironment;
 import org.jspecify.annotations.Nullable;
 import org.dom4j.Element;
 
@@ -83,6 +85,12 @@ public class StudioHtmlPreviewLoader implements StudioPreviewComponentLoader {
     @Nullable
     @Override
     public Component load(Element componentElement, Element viewElement) {
+        return load(componentElement, viewElement, StudioPreviewEnvironment.NOOP);
+    }
+
+    @Nullable
+    @Override
+    public Component load(Element componentElement, Element viewElement, StudioPreviewEnvironment environment) {
         Component component = StudioXmlElements.HTML.equals(componentElement.getName())
                 ? loadHtml(componentElement)
                 : FACTORIES.get(componentElement.getName()).get();
@@ -90,6 +98,9 @@ public class StudioHtmlPreviewLoader implements StudioPreviewComponentLoader {
             return null;
         }
         loadComponentBaseAttributes(component, componentElement);
+        if (component instanceof HasText hasText) {
+            loadLocalizedString(componentElement, "text", environment, hasText::setText);
+        }
         return component;
     }
 

@@ -19,6 +19,9 @@ package meta_component_preview;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.html.Paragraph;
+import com.vaadin.flow.component.html.Span;
+import io.jmix.flowui.kit.meta.component.preview.StudioPreviewEnvironment;
 import io.jmix.flowui.kit.meta.component.preview.loader.StudioHtmlPreviewLoader;
 import org.dom4j.Namespace;
 import org.dom4j.tree.BaseElement;
@@ -34,6 +37,20 @@ class StudioHtmlPreviewLoaderTest {
 
     BaseElement element(String name) {
         return new BaseElement(name, VIEW_NS);
+    }
+
+    StudioPreviewEnvironment environment(String resolvedMessage) {
+        return new StudioPreviewEnvironment() {
+            @Override
+            public String resolveMessage(String messageKey) {
+                return resolvedMessage;
+            }
+
+            @Override
+            public String propertyCaption(String dataContainerId, String metaClass, String propertyPath) {
+                return null;
+            }
+        };
     }
 
     @Test
@@ -60,6 +77,39 @@ class StudioHtmlPreviewLoaderTest {
     @Test
     void testLoadsHeadings() {
         assertInstanceOf(H1.class, loader.load(element("h1"), element("view")));
+    }
+
+    @Test
+    void testLoadsLiteralText() {
+        BaseElement element = element("p");
+        element.addAttribute("text", "About Jmix");
+
+        Component component = loader.load(element, element("view"));
+
+        assertInstanceOf(Paragraph.class, component);
+        assertEquals("About Jmix", ((Paragraph) component).getText());
+    }
+
+    @Test
+    void testLoadsLocalizedText() {
+        BaseElement element = element("h1");
+        element.addAttribute("text", "msg://about.title");
+
+        Component component = loader.load(element, element("view"), environment("About application"));
+
+        assertInstanceOf(H1.class, component);
+        assertEquals("About application", ((H1) component).getText());
+    }
+
+    @Test
+    void testLoadsLocalizedSpanText() {
+        BaseElement element = element("span");
+        element.addAttribute("text", "msg://product.name");
+
+        Component component = loader.load(element, element("view"), environment("B2B CRM"));
+
+        assertInstanceOf(Span.class, component);
+        assertEquals("B2B CRM", ((Span) component).getText());
     }
 
     @Test

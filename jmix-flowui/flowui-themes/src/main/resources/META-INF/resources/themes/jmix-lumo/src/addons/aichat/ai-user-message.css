@@ -17,6 +17,8 @@
 @media lumo_components_jmix-ai-user-message {
   :host {
     align-items: flex-end;
+    /* Redefine the chevron — injection replaced the base styles that carry it. */
+    --jmix-ai-user-message-icon-chevron: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='m6 9 6 6 6-6'/></svg>");
   }
 
   :host [part='content'] {
@@ -29,6 +31,77 @@
   :host [part='message'] {
     white-space: pre-wrap;
     overflow-wrap: anywhere;
+  }
+
+  /* Collapse — mirrors the base styles (which Lumo injection replaces). */
+  :host(:not([expanded])) [part='message'] {
+    max-height: var(--jmix-ai-user-message-collapsed-max-height, 12rem);
+    overflow: hidden;
+  }
+
+  :host([collapsible]:not([expanded])) [part='message'] {
+    -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 2.5rem), transparent);
+    mask-image: linear-gradient(to bottom, #000 calc(100% - 2.5rem), transparent);
+  }
+
+  :host [part='collapse-toggle'] {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--lumo-space-xs);
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: var(--lumo-secondary-text-color);
+    font: inherit;
+    cursor: var(--lumo-clickable-cursor, pointer);
+  }
+
+  :host [part='collapse-toggle']:hover {
+    color: var(--lumo-body-text-color);
+  }
+
+  /* Keyboard-only box-shadow ring (Lumo convention; --_focus-ring-* come from
+     the co-injected lumo_components_jmix-ai-message-shared module). */
+  :host [part='collapse-toggle']:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 var(--_focus-ring-width) var(--_focus-ring-color);
+  }
+
+  :host [part='collapse-toggle']::after {
+    content: '';
+    width: 1em;
+    height: 1em;
+    background: currentColor;
+    -webkit-mask: var(--jmix-ai-user-message-icon-chevron) center / contain no-repeat;
+    mask: var(--jmix-ai-user-message-icon-chevron) center / contain no-repeat;
+    transition: transform 0.12s ease-in-out;
+  }
+
+  :host([expanded]) [part='collapse-toggle']::after {
+    transform: rotate(180deg);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :host [part='collapse-toggle']::after {
+      transition: none;
+    }
+  }
+
+  @media (forced-colors: active) {
+    :host([collapsible]:not([expanded])) [part='message'] {
+      -webkit-mask-image: none;
+      mask-image: none;
+    }
+
+    :host [part='collapse-toggle']:focus-visible {
+      outline: 2px solid;
+    }
+
+    :host [part='collapse-toggle']::after {
+      forced-color-adjust: none;
+      background: ButtonText;
+    }
   }
 }
 

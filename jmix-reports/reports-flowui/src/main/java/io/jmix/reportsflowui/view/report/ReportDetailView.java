@@ -39,6 +39,7 @@ import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.Renderer;
+import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
 import com.vaadin.flow.shared.Registration;
@@ -1550,6 +1551,11 @@ public class ReportDetailView extends StandardDetailView<Report> {
         TypedTextField<String> field = uiComponents.create(TypedTextField.class);
         field.setWidthFull();
 
+        // A name typed into the last field must reach the stored document even if editing ends on the button
+        // right away: the default mode would only send it once the field loses focus, and finishing the mode
+        // removes the field before that happens.
+        field.setValueChangeMode(ValueChangeMode.EAGER);
+
         field.setValue(StringUtils.defaultString(column.getName()));
         field.addTypedValueChangeListener(event -> column.setName(event.getValue()));
 
@@ -1848,12 +1854,22 @@ public class ReportDetailView extends StandardDetailView<Report> {
 
     @Subscribe("llmEditQueryBtn")
     public void onLlmEditQueryBtnClick(ClickEvent<Button> event) {
-        if (llmQueryEditing) {
-            // Still in the mode, so removing writes the shortened list through to the data set the panel shows.
-            removeBlankLlmQueryColumns();
+        if (!llmQueryEditing) {
+            setLlmQueryEditing(true);
+            return;
         }
 
-        setLlmQueryEditing(!llmQueryEditing);
+        // Still in the mode, so removing writes the shortened list through to the data set the panel shows.
+        removeBlankLlmQueryColumns();
+
+        DataSet dataSet = dataSetsDc.getItemOrNull();
+        if (dataSet != null && dataSet.getType() == DataSetType.LLM) {
+            // A locked panel describes the stored query, so finishing shows what the data set now holds rather
+            // than what was typed: blank text clears the stored query altogether, and a name is stored trimmed.
+            initLlmDataSetOptions(dataSet);
+        } else {
+            setLlmQueryEditing(false);
+        }
     }
 
     /**

@@ -36,14 +36,20 @@
     </actions>
     <layout>
         <vbox width="60em">
-            <passwordField id="refreshTokenValueField" dataContainer="refreshTokenDc" property="tokenValue"
-                           label="msg://refreshTokenValueField.label"
-                           clearButtonVisible="false" readOnly="true"
-                           width="100%"/>
+            <textField id="refreshTokenValueField"
+                       label="msg://refreshTokenValueField.label"
+                       readOnly="true"
+                       width="100%"/>
             <textField id="lastModifiedDateField" dataContainer="refreshTokenDc" property="lastModifiedDate"
                        label="msg://io.jmix.email.entity/RefreshToken.lastModifiedDate"
                        readOnly="true" width="13em"/>
-            <button id="updateRefreshTokenButton" action="updateRefreshTokenAction"/>
+            <hbox id="connectButtonsBox">
+                <button id="authCodeConnectButton" text="msg://authCodeConnectButton.text"
+                        enabled="false"/>
+                <button id="deviceCodeConnectButton" text="msg://deviceCodeConnectButton.text"
+                        enabled="false"/>
+                <button id="updateRefreshTokenButton" action="updateRefreshTokenAction"/>
+            </hbox>
         </vbox>
     </layout>
 </view>

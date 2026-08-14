@@ -31,7 +31,7 @@ public interface EmailTokenManagerRole {
     String CODE = "email-token-manager";
 
     @MenuPolicy(menuIds = "email_tokenView")
-    @ViewPolicy(viewIds = "email_tokenView")
+    @ViewPolicy(viewIds = {"email_tokenView", "email_oauth2CallbackView"})
     void views();
 
     @EntityAttributePolicy(entityClass = RefreshToken.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)

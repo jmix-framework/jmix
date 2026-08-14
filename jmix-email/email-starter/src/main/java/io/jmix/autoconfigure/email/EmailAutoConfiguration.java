@@ -17,13 +17,19 @@
 package io.jmix.autoconfigure.email;
 
 import io.jmix.core.CoreConfiguration;
+import io.jmix.core.security.SystemAuthenticator;
 import io.jmix.data.DataConfiguration;
 import io.jmix.email.EmailConfiguration;
 import io.jmix.email.EmailerProperties;
 import io.jmix.email.authentication.EmailRefreshTokenManager;
 import io.jmix.email.authentication.OAuth2Authenticator;
+import io.jmix.email.authentication.OAuth2AuthorizationCodeFlow;
+import io.jmix.email.authentication.OAuth2DeviceCodeFlow;
 import io.jmix.email.authentication.OAuth2TokenProvider;
+import io.jmix.email.authentication.impl.GoogleOAuth2AuthorizationCodeFlow;
 import io.jmix.email.authentication.impl.GoogleOAuth2TokenProvider;
+import io.jmix.email.authentication.impl.MicrosoftOAuth2AuthorizationCodeFlow;
+import io.jmix.email.authentication.impl.MicrosoftOAuth2DeviceCodeFlow;
 import io.jmix.email.authentication.impl.MicrosoftOAuth2TokenProvider;
 import jakarta.mail.Session;
 import org.jspecify.annotations.NonNull;
@@ -94,6 +100,36 @@ public class EmailAutoConfiguration {
             log.debug("Create GoogleOAuth2TokenProvider");
             validateCredentialProperties(emailerProperties);
             return new GoogleOAuth2TokenProvider(emailerProperties, refreshTokenManager);
+        }
+
+        @Bean("email_MicrosoftOAuth2DeviceCodeFlow")
+        @ConditionalOnProperty(name = "jmix.email.oauth2.provider", havingValue = "microsoft")
+        @ConditionalOnClass(name = MSAL_CLASS)
+        @ConditionalOnMissingBean(OAuth2DeviceCodeFlow.class)
+        public OAuth2DeviceCodeFlow microsoftOAuth2DeviceCodeFlow(EmailerProperties emailerProperties,
+                                                                  EmailRefreshTokenManager refreshTokenManager,
+                                                                  SystemAuthenticator systemAuthenticator) {
+            log.debug("Create MicrosoftOAuth2DeviceCodeFlow");
+            return new MicrosoftOAuth2DeviceCodeFlow(emailerProperties, refreshTokenManager, systemAuthenticator);
+        }
+
+        @Bean("email_MicrosoftOAuth2AuthorizationCodeFlow")
+        @ConditionalOnProperty(name = "jmix.email.oauth2.provider", havingValue = "microsoft")
+        @ConditionalOnClass(name = MSAL_CLASS)
+        @ConditionalOnMissingBean(OAuth2AuthorizationCodeFlow.class)
+        public OAuth2AuthorizationCodeFlow microsoftOAuth2AuthorizationCodeFlow(EmailerProperties emailerProperties,
+                                                                                EmailRefreshTokenManager refreshTokenManager) {
+            log.debug("Create MicrosoftOAuth2AuthorizationCodeFlow");
+            return new MicrosoftOAuth2AuthorizationCodeFlow(emailerProperties, refreshTokenManager);
+        }
+
+        @Bean("email_GoogleOAuth2AuthorizationCodeFlow")
+        @ConditionalOnProperty(name = "jmix.email.oauth2.provider", havingValue = "google")
+        @ConditionalOnMissingBean(OAuth2AuthorizationCodeFlow.class)
+        public OAuth2AuthorizationCodeFlow googleOAuth2AuthorizationCodeFlow(EmailerProperties emailerProperties,
+                                                                             EmailRefreshTokenManager refreshTokenManager) {
+            log.debug("Create GoogleOAuth2AuthorizationCodeFlow");
+            return new GoogleOAuth2AuthorizationCodeFlow(emailerProperties, refreshTokenManager);
         }
 
         @Bean("email_JavaMailSender")

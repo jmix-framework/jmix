@@ -40,7 +40,7 @@ class MicrosoftOAuth2TokenProviderTest {
     TestEmailRefreshTokenManager tokenManager = new TestEmailRefreshTokenManager("initial-rt");
     TestMicrosoftOAuth2TokenProvider provider = new TestMicrosoftOAuth2TokenProvider(
             TestEmailerProperties.create(new EmailerProperties.OAuth2(
-                    true, "microsoft", "test-client", "test-secret", null, "test-tenant")),
+                    true, "microsoft", "test-client", "test-secret", null, "test-tenant", null)),
             tokenManager);
 
     @Test

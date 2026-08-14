@@ -312,18 +312,28 @@ public class EmailerProperties {
          */
         protected final String tenantId;
 
+        /**
+         * Redirect URI used by the authorization code flow when connecting a mailbox account.
+         * If not set, the URI is derived from the current request. Set it explicitly when the
+         * application is behind a reverse proxy and the derived URI is wrong. The value must be
+         * registered as a redirect URI of the OAuth client.
+         */
+        protected final String redirectUri;
+
         public OAuth2(@DefaultValue("false") boolean enabled,
                       @Nullable String provider,
                       @Nullable String clientId,
                       @Nullable String secret,
                       @Nullable String refreshToken,
-                      @DefaultValue("common") String tenantId) {
+                      @DefaultValue("common") String tenantId,
+                      @Nullable String redirectUri) {
             this.enabled = enabled;
             this.provider = provider;
             this.clientId = clientId;
             this.secret = secret;
             this.refreshToken = refreshToken;
             this.tenantId = tenantId;
+            this.redirectUri = redirectUri;
         }
 
         /**
@@ -370,6 +380,14 @@ public class EmailerProperties {
          */
         public String getTenantId() {
             return tenantId;
+        }
+
+        /**
+         * @see #redirectUri
+         */
+        @Nullable
+        public String getRedirectUri() {
+            return redirectUri;
         }
     }
 }

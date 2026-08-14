@@ -16,9 +16,6 @@
 
 package io.jmix.email.authentication.impl;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.microsoft.aad.msal4j.*;
 import io.jmix.email.EmailerProperties;
 import io.jmix.email.authentication.EmailRefreshTokenManager;
@@ -29,9 +26,7 @@ import org.slf4j.Logger;
 import java.net.MalformedURLException;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -177,44 +172,4 @@ public class MicrosoftOAuth2TokenProvider extends AbstractOAuth2TokenProvider {
         return emailerProperties.getOAuth2().getTenantId();
     }
 
-    /**
-     * Captures the latest refresh token from the MSAL token cache. The cache itself is kept in memory
-     * within the client application instance, so nothing is loaded on {@code beforeCacheAccess}.
-     */
-    protected static class RefreshTokenCapturingCacheAspect implements ITokenCacheAccessAspect {
-
-        protected final AtomicReference<String> latestRefreshToken = new AtomicReference<>();
-
-        @Override
-        public void beforeCacheAccess(ITokenCacheAccessContext context) {
-        }
-
-        @Override
-        public void afterCacheAccess(ITokenCacheAccessContext context) {
-            if (!context.hasCacheChanged()) {
-                return;
-            }
-            try {
-                JsonObject root = JsonParser.parseString(context.tokenCache().serialize()).getAsJsonObject();
-                JsonElement refreshTokens = root.get("RefreshToken");
-                if (refreshTokens == null || !refreshTokens.isJsonObject()) {
-                    return;
-                }
-                for (Map.Entry<String, JsonElement> entry : refreshTokens.getAsJsonObject().entrySet()) {
-                    JsonElement tokenValue = entry.getValue().getAsJsonObject().get("secret");
-                    if (tokenValue != null && !tokenValue.getAsString().isEmpty()) {
-                        latestRefreshToken.set(tokenValue.getAsString());
-                        return;
-                    }
-                }
-            } catch (Exception e) {
-                log.warn("Unable to extract refresh token from MSAL token cache", e);
-            }
-        }
-
-        @Nullable
-        public String getLatestRefreshToken() {
-            return latestRefreshToken.get();
-        }
-    }
 }

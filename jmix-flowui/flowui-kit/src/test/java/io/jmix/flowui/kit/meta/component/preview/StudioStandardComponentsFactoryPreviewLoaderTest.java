@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package meta_component_preview;
+package io.jmix.flowui.kit.meta.component.preview;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -30,8 +30,6 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.timepicker.TimePicker;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.kit.component.menubar.JmixMenuBar;
-import io.jmix.flowui.kit.meta.component.preview.StudioPreviewEnvironment;
-import io.jmix.flowui.kit.meta.component.preview.StudioStandardComponentsPreviewLoader;
 import org.dom4j.Namespace;
 import org.dom4j.tree.BaseElement;
 import org.junit.jupiter.api.Test;

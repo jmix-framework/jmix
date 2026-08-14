@@ -38,7 +38,7 @@ import java.util.function.Supplier;
  * {@code StudioMainViewComponents.mainView()}). The root must be built by some loader: Studio hangs
  * the whole preview tree off it, so a declined root renders nothing at all.
  */
-public class StudioMainViewComponentsPreviewLoader implements StudioPreviewComponentLoader {
+class StudioMainViewComponentsPreviewLoader implements StudioPreviewComponentLoader {
 
     protected static final Map<String, Supplier<Component>> FACTORIES = Map.of(
             StudioXmlElements.VIEW, StudioMainViewComponentsPreviewLoader::createViewRoot,

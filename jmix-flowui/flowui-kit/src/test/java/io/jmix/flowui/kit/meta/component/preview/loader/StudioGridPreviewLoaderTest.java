@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package meta_component_preview;
+package io.jmix.flowui.kit.meta.component.preview.loader;
 
 import java.util.HashMap;
 import java.util.List;
@@ -25,9 +25,9 @@ import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
 import io.jmix.flowui.kit.component.grid.JmixGrid;
 import io.jmix.flowui.kit.component.grid.JmixTreeGrid;
+import io.jmix.flowui.kit.meta.component.preview.StandardComponentsLoaderAccess;
+import io.jmix.flowui.kit.meta.component.preview.StudioPreviewComponentLoader;
 import io.jmix.flowui.kit.meta.component.preview.StudioPreviewEnvironment;
-import io.jmix.flowui.kit.meta.component.preview.StudioStandardComponentsPreviewLoader;
-import io.jmix.flowui.kit.meta.component.preview.loader.StudioGridPreviewLoader;
 import org.dom4j.Element;
 import org.dom4j.Namespace;
 import org.dom4j.tree.BaseElement;
@@ -277,7 +277,7 @@ class StudioGridPreviewLoaderTest {
 
     @Test
     void testStandardComponentsLoaderNoLongerSupportsDataGridOrTreeDataGrid() {
-        StudioStandardComponentsPreviewLoader standardLoader = new StudioStandardComponentsPreviewLoader();
+        StudioPreviewComponentLoader standardLoader = StandardComponentsLoaderAccess.loader();
         assertFalse(standardLoader.isSupported(element("dataGrid")));
         assertFalse(standardLoader.isSupported(element("treeDataGrid")));
     }

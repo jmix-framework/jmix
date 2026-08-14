@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package meta_component_preview;
+package io.jmix.flowui.kit.meta.component.preview.loader;
 
 import java.util.HashMap;
 import java.util.List;
@@ -33,7 +33,6 @@ import io.jmix.flowui.kit.component.dropdownbutton.TextItem;
 import io.jmix.flowui.kit.component.menubar.JmixMenuItem;
 import io.jmix.flowui.kit.component.menubar.JmixSubMenu;
 import io.jmix.flowui.kit.meta.component.preview.StudioPreviewEnvironment;
-import io.jmix.flowui.kit.meta.component.preview.loader.StudioDropdownButtonPreviewLoader;
 import org.dom4j.Element;
 import org.dom4j.Namespace;
 import org.dom4j.tree.BaseElement;

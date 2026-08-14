@@ -61,9 +61,7 @@ public class StudioFullCalendarPreviewLoader implements StudioPreviewComponentLo
         JmixFullCalendar resultComponent = new JmixFullCalendar();
         resultComponent.addAttachListener(event -> loadOnAttach(element, resultComponent));
 
-        loadBoolean(element, "visible", resultComponent::setVisible);
-        loadSizeAttributes(resultComponent, element);
-        loadClassNames(resultComponent, element);
+        loadComponentBaseAttributes(resultComponent, element);
 
         loadBoolean(element, "allDayMaintainDurationEnabled",
                 resultComponent::setAllDayMaintainDurationEnabled);

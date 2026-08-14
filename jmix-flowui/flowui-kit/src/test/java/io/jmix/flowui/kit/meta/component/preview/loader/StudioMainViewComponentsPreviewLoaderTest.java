@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package meta_component_preview;
+package io.jmix.flowui.kit.meta.component.preview.loader;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import io.jmix.flowui.kit.meta.component.preview.loader.StudioMainViewComponentsPreviewLoader;
 import org.dom4j.Namespace;
 import org.dom4j.tree.BaseElement;
 import org.junit.jupiter.api.Test;

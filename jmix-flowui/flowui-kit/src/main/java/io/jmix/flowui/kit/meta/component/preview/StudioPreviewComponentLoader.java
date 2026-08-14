@@ -23,11 +23,17 @@ import java.util.function.Consumer;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasEnabled;
+import com.vaadin.flow.component.HasHelper;
+import com.vaadin.flow.component.HasLabel;
+import com.vaadin.flow.component.HasPlaceholder;
 import com.vaadin.flow.component.HasSize;
 import com.vaadin.flow.component.HasStyle;
 import com.vaadin.flow.component.HasTheme;
+import com.vaadin.flow.component.HasValueAndElement;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.ThemableLayout;
+import com.vaadin.flow.component.shared.HasTooltip;
+import com.vaadin.flow.component.shared.Tooltip;
 import io.jmix.flowui.kit.meta.component.preview.loader.PreviewActionSupport;
 import io.jmix.flowui.kit.xml.layout.support.ComponentLoaderUtils;
 import io.jmix.flowui.kit.xml.layout.support.LoaderUtils;
@@ -215,6 +221,66 @@ public interface StudioPreviewComponentLoader {
         if (component instanceof FlexComponent flexComponent) {
             ComponentLoaderUtils.loadFlexibleAttributes(flexComponent, element);
         }
+    }
+
+    /**
+     * Applies the input-field attributes shared by all field-like components, based on the
+     * interfaces the {@code component} implements: {@code label} (falling back to the entity
+     * property caption for data-bound fields), {@code placeholder}, {@code helperText},
+     * {@code readOnly}, {@code required} and the {@code <tooltip>} sub-element.
+     */
+    default void loadFieldAttributes(Component component, Element element, StudioPreviewEnvironment environment) {
+        if (component instanceof HasLabel hasLabel) {
+            loadLocalizedString(element, "label", environment, hasLabel::setLabel);
+            if (hasLabel.getLabel() == null) {
+                propertyCaption(element, environment).ifPresent(hasLabel::setLabel);
+            }
+        }
+        if (component instanceof HasPlaceholder hasPlaceholder) {
+            loadLocalizedString(element, "placeholder", environment, hasPlaceholder::setPlaceholder);
+        }
+        if (component instanceof HasHelper hasHelper) {
+            loadLocalizedString(element, "helperText", environment, hasHelper::setHelperText);
+        }
+        if (component instanceof HasValueAndElement<?, ?> hasValue) {
+            loadBoolean(element, "readOnly", hasValue::setReadOnly);
+            loadBoolean(element, "required", hasValue::setRequiredIndicatorVisible);
+        }
+        if (component instanceof HasTooltip hasTooltip) {
+            loadTooltip(hasTooltip, element, environment);
+        }
+    }
+
+    default void loadTooltip(HasTooltip component, Element element, StudioPreviewEnvironment environment) {
+        Element tooltipElement = element.element("tooltip");
+        if (tooltipElement == null) {
+            return;
+        }
+        LoaderUtils.loadString(tooltipElement, "text")
+                .map(text -> PreviewActionSupport.resolveText(environment, text))
+                .ifPresent(text -> {
+                    Tooltip tooltip = component.setTooltipText(text);
+                    LoaderUtils.loadEnum(tooltipElement, Tooltip.TooltipPosition.class, "position")
+                            .ifPresent(tooltip::setPosition);
+                });
+    }
+
+    /**
+     * Resolves the display caption of a data-bound component (one with a {@code property}
+     * attribute) via {@link StudioPreviewEnvironment#propertyCaption}. The {@code dataContainer}
+     * is looked up on the element itself and then up the ancestor chain, mirroring how the
+     * runtime inherits it (e.g. from an enclosing {@code formLayout}).
+     */
+    default Optional<String> propertyCaption(Element element, StudioPreviewEnvironment environment) {
+        return LoaderUtils.loadString(element, "property")
+                .map(property -> {
+                    String dataContainer = PreviewActionSupport.resolveDataContainer(element);
+                    String metaClass = LoaderUtils.loadString(element, "metaClass")
+                            // fragments: their containers are invisible to Studio (it only sees the
+                            // host descriptor), so pass the entity class from the local <data> section
+                            .orElseGet(() -> PreviewActionSupport.containerEntityClass(element, dataContainer));
+                    return environment.propertyCaption(dataContainer, metaClass, property);
+                });
     }
 
     private static void loadCss(Component component, Element element) {

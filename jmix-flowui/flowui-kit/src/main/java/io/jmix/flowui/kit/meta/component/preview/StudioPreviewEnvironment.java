@@ -16,6 +16,8 @@
 
 package io.jmix.flowui.kit.meta.component.preview;
 
+import java.util.Map;
+
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -62,6 +64,89 @@ public interface StudioPreviewEnvironment {
      */
     @Nullable
     default String studioVersion() {
+        return null;
+    }
+
+    /**
+     * Resolves a project static resource (Spring conventions: resource root, {@code META-INF/resources},
+     * {@code static}, {@code public}) to a {@code data:<mime>;base64,...} URL usable as an image/svg src.
+     */
+    @Nullable
+    default String resolveStaticResource(String path) {
+        return null;
+    }
+
+    /**
+     * The descriptor XML text of the fragment declared by the given controller class,
+     * for rendering fragment content inline.
+     */
+    @Nullable
+    default String resolveFragmentDescriptor(String fragmentClassFqn) {
+        return null;
+    }
+
+    /**
+     * The project's main menu (menu.xml) as a JSON array, recursive:
+     * {@code [{"id": "...", "title": "<localized>", "icon": "<icon attr or null>", "items": [...]}]}.
+     */
+    @Nullable
+    default String mainMenuItems() {
+        return null;
+    }
+
+    /**
+     * Attributes of the entity behind a data container / meta class as a JSON array:
+     * {@code [{"name": "...", "caption": "<localized>", "type": "<java or enum fqn>"}]}.
+     * Same resolution rules as {@link #propertyCaption}.
+     */
+    @Nullable
+    default String entityProperties(@Nullable String dataContainerId, @Nullable String metaClass) {
+        return null;
+    }
+
+    /**
+     * A single application property value ({@code application.properties} merged the way Studio sees it).
+     */
+    @Nullable
+    default String applicationProperty(String key) {
+        return null;
+    }
+
+    /**
+     * All application properties as a key-value map. Prefer this over repeated
+     * {@link #applicationProperty} calls when several keys are needed — every environment call
+     * crosses the classloader boundary into a Studio read action.
+     */
+    @Nullable
+    default Map<String, String> applicationProperties() {
+        return null;
+    }
+
+    /**
+     * Constants of a project enum class as a JSON array:
+     * {@code [{"name": "...", "caption": "<localized or natural>"}]}.
+     * Project enums are not on the preview classloader, so only Studio can enumerate them.
+     */
+    @Nullable
+    default String enumItems(String enumClassFqn) {
+        return null;
+    }
+
+    /**
+     * The localized title of a view identified by view id or controller class FQN.
+     */
+    @Nullable
+    default String viewTitle(String viewIdOrClassFqn) {
+        return null;
+    }
+
+    /**
+     * SVG of an icon from a project custom icon set (an {@code IconFactory} + {@code @JsModule}
+     * iconset invisible to the preview classloader), as a {@code data:image/svg+xml;base64,...} URL.
+     * {@code null} for standard/unknown icons.
+     */
+    @Nullable
+    default String resolveIconSvg(String icon) {
         return null;
     }
 }

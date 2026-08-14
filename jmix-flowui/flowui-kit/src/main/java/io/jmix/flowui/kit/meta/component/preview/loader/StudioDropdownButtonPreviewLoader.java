@@ -32,7 +32,7 @@ import java.util.Set;
 /**
  * Studio preview loader for {@code dropdownButton} and {@code comboButton}
  */
-public class StudioDropdownButtonPreviewLoader implements StudioPreviewComponentLoader {
+class StudioDropdownButtonPreviewLoader implements StudioPreviewComponentLoader {
 
     /** Item tags this loader renders; the rest fall back to placeholders. {@code componentItem} is not one. */
     private static final Set<String> RENDERABLE_ITEM_NAMES = Set.of(

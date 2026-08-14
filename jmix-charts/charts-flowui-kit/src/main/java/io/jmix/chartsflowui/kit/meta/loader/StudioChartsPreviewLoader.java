@@ -17,8 +17,23 @@
 package io.jmix.chartsflowui.kit.meta.loader;
 
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.Span;
+import io.jmix.chartsflowui.kit.component.JmixChart;
+import io.jmix.chartsflowui.kit.component.model.Title;
+import io.jmix.chartsflowui.kit.component.model.axis.AxisType;
+import io.jmix.chartsflowui.kit.component.model.axis.XAxis;
+import io.jmix.chartsflowui.kit.component.model.axis.YAxis;
+import io.jmix.chartsflowui.kit.component.model.legend.Legend;
+import io.jmix.chartsflowui.kit.component.model.series.AbstractSeries;
+import io.jmix.chartsflowui.kit.component.model.series.BarSeries;
+import io.jmix.chartsflowui.kit.component.model.series.BoxplotSeries;
+import io.jmix.chartsflowui.kit.component.model.series.CandlestickSeries;
+import io.jmix.chartsflowui.kit.component.model.series.EffectScatterSeries;
+import io.jmix.chartsflowui.kit.component.model.series.FunnelSeries;
+import io.jmix.chartsflowui.kit.component.model.series.GaugeSeries;
+import io.jmix.chartsflowui.kit.component.model.series.LineSeries;
+import io.jmix.chartsflowui.kit.component.model.series.PieSeries;
+import io.jmix.chartsflowui.kit.component.model.series.RadarSeries;
+import io.jmix.chartsflowui.kit.component.model.series.ScatterSeries;
 import io.jmix.flowui.kit.meta.component.preview.StudioPreviewComponentLoader;
 import io.jmix.flowui.kit.meta.component.preview.StudioPreviewEnvironment;
 import io.jmix.flowui.kit.meta.component.preview.loader.PreviewActionSupport;
@@ -28,17 +43,15 @@ import org.jspecify.annotations.Nullable;
 /**
  * Studio preview loader for the {@code charts:chart} component.
  * <p>
- * A chart has no data at design time and ECharts draws nothing into an empty canvas, so a real
- * {@code JmixChart} previews as a blank area. An image stand-in is no good either: this module's
- * {@code META-INF/resources} is not on the dev server's static resource path, so its icon never loads.
- * The preview is therefore built from core components only - a bordered box carrying the declared title.
+ * A real {@link JmixChart} is used: even without data ECharts draws the declared title, legend
+ * and axes, which is exactly what the runtime shows for an empty chart. Only the visual skeleton
+ * of the options is mapped (title text, legend, axis types, series names) — data bindings and the
+ * rest of the extensive options model stay design-time-irrelevant.
  */
 public class StudioChartsPreviewLoader implements StudioPreviewComponentLoader {
 
     protected static final String CHARTS_SCHEMA = "http://jmix.io/schema/charts/ui";
     protected static final String CHART_ELEMENT = "chart";
-    protected static final String TITLE_ELEMENT = "title";
-    protected static final String DEFAULT_LABEL = "Chart";
 
     @Override
     public boolean isSupported(Element element) {
@@ -55,29 +68,79 @@ public class StudioChartsPreviewLoader implements StudioPreviewComponentLoader {
     @Nullable
     @Override
     public Component load(Element componentElement, Element viewElement, StudioPreviewEnvironment environment) {
-        Div preview = new Div();
+        JmixChart chart = new JmixChart();
 
-        loadComponentBaseAttributes(preview, componentElement);
+        loadComponentBaseAttributes(chart, componentElement);
 
-        preview.getStyle()
-                .set("display", "flex")
-                .set("align-items", "center")
-                .set("justify-content", "center")
-                .set("border", "1px dashed var(--lumo-contrast-30pct)")
-                .set("border-radius", "var(--lumo-border-radius-m)")
-                .set("color", "var(--lumo-secondary-text-color)");
-        preview.add(new Span(loadLabel(componentElement, environment)));
+        loadTitle(componentElement, environment, chart);
+        if (componentElement.element("legend") != null) {
+            chart.setLegend(new Legend());
+        }
+        loadAxes(componentElement, chart);
+        loadSeries(componentElement, chart);
 
-        return preview;
+        return chart;
     }
 
-    protected String loadLabel(Element componentElement, StudioPreviewEnvironment environment) {
-        Element titleElement = componentElement.element(TITLE_ELEMENT);
+    protected void loadTitle(Element componentElement, StudioPreviewEnvironment environment, JmixChart chart) {
+        Element titleElement = componentElement.element("title");
         if (titleElement == null) {
-            return DEFAULT_LABEL;
+            return;
         }
-        return loadString(titleElement, "text")
-                .map(text -> PreviewActionSupport.resolveText(environment, text))
-                .orElse(DEFAULT_LABEL);
+        loadString(titleElement, "text").ifPresent(text -> {
+            Title title = new Title();
+            title.setText(PreviewActionSupport.resolveText(environment, text));
+            chart.setTitle(title);
+        });
+    }
+
+    protected void loadAxes(Element componentElement, JmixChart chart) {
+        Element xAxes = componentElement.element("xAxes");
+        if (xAxes != null) {
+            for (Element axisElement : xAxes.elements("xAxis")) {
+                XAxis axis = new XAxis();
+                loadEnum(axisElement, AxisType.class, "type", axis::setType);
+                chart.addXAxis(axis);
+            }
+        }
+        Element yAxes = componentElement.element("yAxes");
+        if (yAxes != null) {
+            for (Element axisElement : yAxes.elements("yAxis")) {
+                YAxis axis = new YAxis();
+                loadEnum(axisElement, AxisType.class, "type", axis::setType);
+                chart.addYAxis(axis);
+            }
+        }
+    }
+
+    protected void loadSeries(Element componentElement, JmixChart chart) {
+        Element seriesElement = componentElement.element("series");
+        if (seriesElement == null) {
+            return;
+        }
+        for (Element series : seriesElement.elements()) {
+            AbstractSeries<?> created = createSeries(series.getName());
+            if (created != null) {
+                loadString(series, "name", created::setName);
+                chart.addSeries(created);
+            }
+        }
+    }
+
+    @Nullable
+    protected AbstractSeries<?> createSeries(String tagName) {
+        return switch (tagName) {
+            case "bar" -> new BarSeries();
+            case "line" -> new LineSeries();
+            case "pie" -> new PieSeries();
+            case "scatter" -> new ScatterSeries();
+            case "effectScatter" -> new EffectScatterSeries();
+            case "funnel" -> new FunnelSeries();
+            case "gauge" -> new GaugeSeries();
+            case "radar" -> new RadarSeries();
+            case "boxplot" -> new BoxplotSeries();
+            case "candlestick" -> new CandlestickSeries();
+            default -> null;
+        };
     }
 }

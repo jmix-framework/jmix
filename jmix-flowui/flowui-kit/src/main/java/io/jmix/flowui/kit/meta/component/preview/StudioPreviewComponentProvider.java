@@ -39,6 +39,7 @@ import com.vaadin.flow.component.grid.Grid;
 import io.jmix.flowui.kit.action.Action;
 import io.jmix.flowui.kit.meta.StudioAPI;
 import io.jmix.flowui.kit.meta.StudioXmlElements;
+import io.jmix.flowui.kit.meta.component.preview.loader.StudioPreviewKitLoaders;
 import org.jspecify.annotations.Nullable;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -431,6 +432,27 @@ final class StudioPreviewComponentProvider {
         return getLoaderServices().stream().filter(loader -> loader.isSupported(element)).findFirst();
     }
 
+    /**
+     * Builds a single component for {@code componentElement} through the registered loaders,
+     * for kit-internal static subtree rendering (e.g. fragment content). {@code null} when no
+     * loader claims the element.
+     */
+    @Nullable
+    static Component loadSingleComponent(Element componentElement, Element viewElement,
+                                         StudioPreviewEnvironment environment) {
+        return findComponentLoader(componentElement)
+                .map(loader -> loader.load(componentElement, viewElement, environment))
+                .orElse(null);
+    }
+
+    /**
+     * Parses an XML document the same hardened way the provider parses view descriptors.
+     */
+    @Nullable
+    static Element parseXmlRoot(@Nullable String xml) {
+        return getElement(xml);
+    }
+
     private static Optional<StudioPreviewChildProcessor> findChildProcessor(final Component parent) {
         return getProcessorServices().stream()
                 .filter(StudioPreviewChildProcessor.class::isInstance)
@@ -455,8 +477,12 @@ final class StudioPreviewComponentProvider {
         loaderInitializationLock.lock();
         try {
             if (!loadersInitialized) {
+                // add-on kits register via META-INF/services (their loaders must be public for the
+                // classpath ServiceLoader); this module's own loaders are package-private and come
+                // from the registry, the standard loader last as the catch-all
                 addServicesResiliently(ServiceLoader.load(StudioPreviewComponentLoader.class,
                         StudioPreviewComponentProvider.class.getClassLoader()).iterator(), loaders);
+                loaders.addAll(StudioPreviewKitLoaders.loaders());
                 loaders.add(new StudioStandardComponentsPreviewLoader());
                 loadersInitialized = true;
             }
@@ -626,6 +652,7 @@ final class StudioPreviewComponentProvider {
     private static void console(String text, @Nullable Throwable throwable) {
         // toString() carries the exception class and message: for a skipped SPI service that is the
         // only place naming the failing loader and the class it couldn't link against.
-        System.out.println(text + ": " + throwable + " " + Arrays.toString(throwable.getStackTrace()));
+        System.out.println(text + ": " + throwable + " "
+                + (throwable != null ? Arrays.toString(throwable.getStackTrace()) : ""));
     }
 }

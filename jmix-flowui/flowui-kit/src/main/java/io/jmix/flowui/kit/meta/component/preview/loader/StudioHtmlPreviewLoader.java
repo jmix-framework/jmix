@@ -18,6 +18,7 @@ package io.jmix.flowui.kit.meta.component.preview.loader;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasText;
+import com.vaadin.flow.component.HasTheme;
 import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.html.*;
 import io.jmix.flowui.kit.meta.StudioXmlElements;
@@ -32,7 +33,7 @@ import java.util.function.Supplier;
 /**
  * Studio preview loader for the HTML components of the flowui module.
  */
-public class StudioHtmlPreviewLoader implements StudioPreviewComponentLoader {
+class StudioHtmlPreviewLoader implements StudioPreviewComponentLoader {
 
     protected static final String DEFAULT_HTML_CONTENT = "<span></span>";
 
@@ -98,8 +99,22 @@ public class StudioHtmlPreviewLoader implements StudioPreviewComponentLoader {
             return null;
         }
         loadComponentBaseAttributes(component, componentElement);
+        loadFieldAttributes(component, componentElement, environment);
+        if (!(component instanceof HasTheme)) {
+            // The runtime applies themeNames to plain html components too (span badge styling etc.),
+            // while loadComponentBaseAttributes only covers HasTheme implementors.
+            loadString(componentElement, "themeNames").ifPresent(themeNames ->
+                    split(themeNames).forEach(theme -> component.getElement().getThemeList().add(theme)));
+        }
         if (component instanceof HasText hasText) {
             loadLocalizedString(componentElement, "text", environment, hasText::setText);
+        }
+        if (component instanceof FieldSet fieldSet) {
+            loadLocalizedString(componentElement, "legendText", environment, fieldSet::setLegendText);
+        }
+        if (component instanceof NativeDetails nativeDetails) {
+            loadLocalizedString(componentElement, "summaryText", environment, nativeDetails::setSummaryText);
+            loadBoolean(componentElement, "open", nativeDetails::setOpen);
         }
         return component;
     }

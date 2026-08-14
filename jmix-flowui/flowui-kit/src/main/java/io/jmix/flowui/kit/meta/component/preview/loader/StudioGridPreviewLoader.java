@@ -17,11 +17,14 @@
 package io.jmix.flowui.kit.meta.component.preview.loader;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.data.provider.hierarchy.TreeData;
 import io.jmix.flowui.kit.component.grid.JmixGrid;
 import io.jmix.flowui.kit.component.grid.JmixTreeGrid;
 import io.jmix.flowui.kit.meta.StudioXmlElements;
@@ -33,7 +36,7 @@ import org.dom4j.Element;
 /**
  * Studio preview loader for {@code dataGrid} and {@code treeDataGrid}
  */
-public class StudioGridPreviewLoader implements StudioPreviewComponentLoader {
+class StudioGridPreviewLoader implements StudioPreviewComponentLoader {
 
     @Override
     public boolean isSupported(Element element) {
@@ -66,9 +69,16 @@ public class StudioGridPreviewLoader implements StudioPreviewComponentLoader {
             loadColumns(grid, columnsElement, componentElement, environment);
         }
 
-        // Placeholder rows so columns are visible in preview; tree grids reject setItems(Collection).
-        if (environment != StudioPreviewEnvironment.NOOP && !(grid instanceof JmixTreeGrid)) {
-            grid.setItems(List.of("Item 1", "Item 2", "Item 3"));
+        // Placeholder rows so columns are visible and evenly laid out in preview;
+        // tree grids reject setItems(Collection) and get TreeData instead.
+        if (environment != StudioPreviewEnvironment.NOOP) {
+            if (grid instanceof JmixTreeGrid<Object> treeGrid) {
+                TreeData<Object> treeData = new TreeData<>();
+                treeData.addItems(null, List.of("Item 1", "Item 2", "Item 3"));
+                treeGrid.setTreeData(treeData);
+            } else {
+                grid.setItems(List.of("Item 1", "Item 2", "Item 3"));
+            }
         }
 
         return grid;
@@ -84,8 +94,8 @@ public class StudioGridPreviewLoader implements StudioPreviewComponentLoader {
 
     /**
      * Loads the {@code columns} child of a grid element, one column per declared child.
-     * {@code includeAll} is intentionally ignored: expanding it needs a fetch plan/metaClass
-     * that a data-less preview does not have, so only explicitly declared children are built.
+     * {@code includeAll} is expanded through {@link StudioPreviewEnvironment#entityProperties}
+     * (Studio resolves the entity metadata the data-less preview cannot see).
      */
     protected void loadColumns(Grid<Object> grid, Element columnsElement, Element gridElement,
                                StudioPreviewEnvironment environment) {
@@ -102,6 +112,42 @@ public class StudioGridPreviewLoader implements StudioPreviewComponentLoader {
                     // unknown columns' child (e.g. groupColumn): skipped silently in preview
                 }
             }
+        }
+
+        if (loadBoolean(columnsElement, "includeAll").orElse(false)) {
+            loadIncludedColumns(grid, columnsElement, gridElement, environment, columnsSortable, columnsResizable);
+        }
+    }
+
+    /**
+     * Expands {@code includeAll="true"}: adds a column per entity attribute that is not excluded
+     * and not already declared explicitly.
+     */
+    protected void loadIncludedColumns(Grid<Object> grid, Element columnsElement, Element gridElement,
+                                       StudioPreviewEnvironment environment,
+                                       boolean columnsSortable, boolean columnsResizable) {
+        String dataContainerId = loadString(gridElement, "dataContainer").orElse(null);
+        String metaClass = loadString(gridElement, "metaClass").orElse(null);
+        List<Map<String, String>> properties = PreviewActionSupport.parseObjectArray(
+                environment.entityProperties(dataContainerId, metaClass));
+        if (properties.isEmpty()) {
+            return;
+        }
+
+        Set<String> excluded = loadString(columnsElement, "exclude")
+                .map(value -> Set.copyOf(split(value)))
+                .orElse(Set.of());
+
+        for (Map<String, String> property : properties) {
+            String name = property.get("name");
+            if (name == null || excluded.contains(name) || grid.getColumnByKey(name) != null) {
+                continue;
+            }
+            Grid.Column<Object> column = grid.addColumn(item -> "").setKey(name);
+            column.setSortable(columnsSortable);
+            column.setResizable(columnsResizable);
+            String caption = property.get("caption");
+            column.setHeader(caption != null && !caption.isBlank() ? caption : name);
         }
     }
 

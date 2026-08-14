@@ -33,7 +33,7 @@ import org.jspecify.annotations.Nullable;
 /**
  * Studio preview loader for {@code gridColumnVisibility}
  */
-public class StudioGridColumnVisibilityPreviewLoader implements StudioPreviewComponentLoader {
+class StudioGridColumnVisibilityPreviewLoader implements StudioPreviewComponentLoader {
 
     protected static final String DATA_GRID_ATTRIBUTE = "dataGrid";
     protected static final String INCLUDE_ATTRIBUTE = "include";

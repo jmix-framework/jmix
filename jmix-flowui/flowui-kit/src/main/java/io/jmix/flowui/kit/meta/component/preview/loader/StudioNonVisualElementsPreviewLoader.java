@@ -39,7 +39,7 @@ import java.util.Set;
  * children) and {@code component} (also a {@code settings} child). Actions and grid columns are
  * excluded too - they are objects rather than components and have their own SPI roles.
  */
-public class StudioNonVisualElementsPreviewLoader implements StudioPreviewComponentLoader {
+class StudioNonVisualElementsPreviewLoader implements StudioPreviewComponentLoader {
 
     protected static final Set<String> ELEMENTS = Set.of(
             // data

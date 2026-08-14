@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package meta_component_preview;
+package io.jmix.flowui.kit.meta.component.preview.loader;
 
 import com.vaadin.flow.component.Component;
-import io.jmix.flowui.kit.meta.component.preview.StudioStandardComponentsPreviewLoader;
-import io.jmix.flowui.kit.meta.component.preview.loader.StudioNonVisualElementsPreviewLoader;
+import io.jmix.flowui.kit.meta.component.preview.StandardComponentsLoaderAccess;
+import io.jmix.flowui.kit.meta.component.preview.StudioPreviewComponentLoader;
 import org.dom4j.Namespace;
 import org.dom4j.tree.BaseElement;
 import org.junit.jupiter.api.Test;
@@ -30,7 +30,7 @@ class StudioNonVisualElementsPreviewLoaderTest {
     static final Namespace VIEW_NS = Namespace.get("http://jmix.io/schema/flowui/view");
 
     final StudioNonVisualElementsPreviewLoader loader = new StudioNonVisualElementsPreviewLoader();
-    final StudioStandardComponentsPreviewLoader componentsLoader = new StudioStandardComponentsPreviewLoader();
+    final StudioPreviewComponentLoader componentsLoader = StandardComponentsLoaderAccess.loader();
 
     BaseElement element(String name) {
         return new BaseElement(name, VIEW_NS);

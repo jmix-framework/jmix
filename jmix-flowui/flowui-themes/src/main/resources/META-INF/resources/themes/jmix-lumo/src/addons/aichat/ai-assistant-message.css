@@ -14,14 +14,28 @@
  * limitations under the License.
  */
 
-@import './ai-chat.css';
-@import './ai-code-block.css';
-@import './ai-markdown.css';
-@import './ai-message.css';
-@import './ai-message-shared.css';
-@import './ai-user-message.css';
-@import './ai-assistant-message.css';
-@import './ai-message-input.css';
-@import './ai-message-input-button.css';
-@import './ai-upload-trigger.css';
-@import './ai-message-list.css';
+@media lumo_components_jmix-ai-assistant-message {
+  :host [part='content'] {
+    max-width: 100%;
+  }
+
+  ::slotted(jmix-ai-markdown) {
+    display: block;
+    white-space: normal;
+  }
+
+  :host([message-last-assistant]) [part='actions'] {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  :host([message-state='generating']) [part='actions'] {
+    display: none;
+  }
+}
+
+:root,
+:host {
+  --_lumo-jmix-ai-assistant-message-inject: 1;
+  --_lumo-jmix-ai-assistant-message-inject-modules: lumo_components_jmix-ai-message-shared, lumo_components_jmix-ai-assistant-message;
+}

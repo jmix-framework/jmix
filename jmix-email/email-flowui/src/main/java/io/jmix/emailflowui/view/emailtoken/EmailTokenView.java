@@ -32,6 +32,7 @@ import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.shared.Registration;
 import io.jmix.core.LoadContext;
 import io.jmix.core.Messages;
+import io.jmix.email.EmailConnectionTester;
 import io.jmix.email.EmailerProperties;
 import io.jmix.email.authentication.EmailRefreshTokenManager;
 import io.jmix.email.authentication.OAuth2AuthorizationCodeFlow;
@@ -40,6 +41,8 @@ import io.jmix.email.authentication.OAuth2DeviceCodeSession;
 import io.jmix.email.entity.RefreshToken;
 import io.jmix.flowui.Dialogs;
 import io.jmix.flowui.Notifications;
+import io.jmix.flowui.backgroundtask.BackgroundTask;
+import io.jmix.flowui.backgroundtask.TaskLifeCycle;
 import io.jmix.flowui.app.inputdialog.DialogActions;
 import io.jmix.flowui.app.inputdialog.DialogOutcome;
 import io.jmix.flowui.app.inputdialog.InputParameter;
@@ -50,6 +53,7 @@ import io.jmix.flowui.model.InstanceContainer;
 import io.jmix.flowui.model.InstanceLoader;
 import io.jmix.flowui.view.*;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
@@ -66,6 +70,8 @@ public class EmailTokenView extends StandardView {
     private static final Logger log = LoggerFactory.getLogger(EmailTokenView.class);
 
     protected static final int DEVICE_CODE_POLL_INTERVAL_MS = 2000;
+    // Covers the connect (20 s) and read (60 s) timeouts of the underlying transport.
+    protected static final int TEST_CONNECTION_TIMEOUT_SEC = 90;
 
     // The stored token value must never reach the page as a whole: browsers offer to save the
     // content of password inputs, and any real value in the DOM is exposed to the client.
@@ -89,6 +95,8 @@ public class EmailTokenView extends StandardView {
     protected Notifications notifications;
     @Autowired
     protected EmailRefreshTokenManager emailRefreshTokenManager;
+    @Autowired
+    protected EmailConnectionTester emailConnectionTester;
     @Autowired
     protected Messages messages;
     @Autowired
@@ -162,6 +170,52 @@ public class EmailTokenView extends StandardView {
                 })
                 .withHeader(messages.getMessage(getClass(), "updateRefreshTokenDialog.header"))
                 .open();
+    }
+
+    @Subscribe("testConnectionButton")
+    public void onTestConnectionButtonClick(final ClickEvent<JmixButton> event) {
+        dialogs.createBackgroundTaskDialog(createTestConnectionTask())
+                .withHeader(messages.getMessage(getClass(), "testConnectionDialog.header"))
+                .withText(messages.getMessage(getClass(), "testConnectionDialog.text"))
+                .withCancelAllowed(true)
+                .open();
+    }
+
+    protected BackgroundTask<Integer, Void> createTestConnectionTask() {
+        return new BackgroundTask<>(TEST_CONNECTION_TIMEOUT_SEC, this) {
+            @Override
+            public Void run(TaskLifeCycle<Integer> taskLifeCycle) throws Exception {
+                emailConnectionTester.testConnection();
+                return null;
+            }
+
+            @Override
+            public void done(Void result) {
+                notifications.create(messages.getMessage(EmailTokenView.class,
+                                "testConnectionSuccessNotification.text"))
+                        .withType(Notifications.Type.SUCCESS)
+                        .show();
+            }
+
+            @Override
+            public boolean handleException(Exception ex) {
+                log.warn("Mail server connection test failed", ex);
+                notifications.create(messages.formatMessage(EmailTokenView.class,
+                                "testConnectionFailedNotification.text", ExceptionUtils.getRootCauseMessage(ex)))
+                        .withType(Notifications.Type.ERROR)
+                        .show();
+                return true;
+            }
+
+            @Override
+            public boolean handleTimeoutException() {
+                notifications.create(messages.getMessage(EmailTokenView.class,
+                                "testConnectionTimeoutNotification.text"))
+                        .withType(Notifications.Type.ERROR)
+                        .show();
+                return true;
+            }
+        };
     }
 
     @Subscribe(id = "refreshTokenDc", target = Target.DATA_CONTAINER)

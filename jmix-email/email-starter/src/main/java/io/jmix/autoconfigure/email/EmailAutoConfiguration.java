@@ -22,16 +22,15 @@ import io.jmix.data.DataConfiguration;
 import io.jmix.email.EmailConfiguration;
 import io.jmix.email.EmailerProperties;
 import io.jmix.email.authentication.EmailRefreshTokenManager;
-import io.jmix.email.authentication.OAuth2Authenticator;
 import io.jmix.email.authentication.OAuth2AuthorizationCodeFlow;
 import io.jmix.email.authentication.OAuth2DeviceCodeFlow;
+import io.jmix.email.authentication.OAuth2JavaMailSender;
 import io.jmix.email.authentication.OAuth2TokenProvider;
 import io.jmix.email.authentication.impl.GoogleOAuth2AuthorizationCodeFlow;
 import io.jmix.email.authentication.impl.GoogleOAuth2TokenProvider;
 import io.jmix.email.authentication.impl.MicrosoftOAuth2AuthorizationCodeFlow;
 import io.jmix.email.authentication.impl.MicrosoftOAuth2DeviceCodeFlow;
 import io.jmix.email.authentication.impl.MicrosoftOAuth2TokenProvider;
-import jakarta.mail.Session;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
@@ -149,7 +148,10 @@ public class EmailAutoConfiguration {
 
             log.debug("Create JavaMailSender with OAuth2 support");
 
-            JavaMailSenderImpl sender = new JavaMailSenderImpl();
+            // The access token is passed as the connection password on every connect instead of
+            // using an Authenticator: jakarta.mail.Session caches password authentication and
+            // would reuse the first token for the session lifetime.
+            OAuth2JavaMailSender sender = new OAuth2JavaMailSender(tokenProvider);
             applyProperties(sender, mailProperties, sslBundles.getIfAvailable());
 
             Properties javaMailProperties = sender.getJavaMailProperties();
@@ -160,11 +162,7 @@ public class EmailAutoConfiguration {
             // so enable it unless explicitly configured by the application.
             javaMailProperties.putIfAbsent("mail." + protocol + ".auth", "true");
             javaMailProperties.putIfAbsent("mail." + protocol + ".auth.mechanisms", "XOAUTH2");
-
-            OAuth2Authenticator authenticator = new OAuth2Authenticator(mailProperties.getUsername(), tokenProvider);
-
-            Session session = Session.getInstance(javaMailProperties, authenticator);
-            sender.setSession(session);
+            sender.setJavaMailProperties(javaMailProperties);
 
             return sender;
         }

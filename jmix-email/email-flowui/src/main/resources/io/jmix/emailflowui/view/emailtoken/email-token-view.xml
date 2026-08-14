@@ -49,6 +49,7 @@
                 <button id="deviceCodeConnectButton" text="msg://deviceCodeConnectButton.text"
                         enabled="false"/>
                 <button id="updateRefreshTokenButton" action="updateRefreshTokenAction"/>
+                <button id="testConnectionButton" text="msg://testConnectionButton.text"/>
             </hbox>
         </vbox>
     </layout>

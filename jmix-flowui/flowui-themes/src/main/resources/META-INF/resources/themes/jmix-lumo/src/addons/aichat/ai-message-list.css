@@ -27,7 +27,7 @@
     scrollbar-color: var(--jmix-ai-message-list-scrollbar-color, var(--lumo-contrast-30pct)) transparent;
   }
 
-  ::slotted(jmix-ai-message) {
+  ::slotted(:is(jmix-ai-user-message, jmix-ai-assistant-message)) {
     box-sizing: border-box;
     width: 100%;
     max-width: var(--jmix-ai-message-list-max-width);

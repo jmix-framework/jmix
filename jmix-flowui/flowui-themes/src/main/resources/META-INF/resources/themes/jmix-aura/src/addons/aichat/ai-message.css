@@ -1,4 +1,4 @@
-:is(jmix-ai-message) {
+:is(jmix-ai-user-message, jmix-ai-assistant-message) {
   --_jmix-ai-message-success-color-default: var(--aura-green);
   --_jmix-ai-message-action-icon-size-default: var(--aura-font-size-l);
 }

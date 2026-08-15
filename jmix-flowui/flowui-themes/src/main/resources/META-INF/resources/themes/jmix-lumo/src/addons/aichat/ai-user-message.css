@@ -34,7 +34,7 @@
   }
 
   /* Collapse — mirrors the base styles (which Lumo injection replaces). */
-  :host(:not([expanded])) [part='message'] {
+  :host([collapsible]:not([expanded])) [part='message'] {
     max-height: var(--jmix-ai-user-message-collapsed-max-height, 12rem);
     overflow: hidden;
   }

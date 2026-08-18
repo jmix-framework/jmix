@@ -1008,12 +1008,6 @@ final class StudioChartsPropertyGroups {
 
     @StudioPropertyGroup(properties = @StudioProperty(
             xmlAttribute = StudioXmlAttributes.RIGHT,
-            type = StudioPropertyType.INTEGER))
-    public interface IntegerRight {
-    }
-
-    @StudioPropertyGroup(properties = @StudioProperty(
-            xmlAttribute = StudioXmlAttributes.RIGHT,
             type = StudioPropertyType.STRING))
     public interface StringRight {
     }
@@ -1389,12 +1383,6 @@ final class StudioChartsPropertyGroups {
             xmlAttribute = StudioXmlAttributes.THROTTLE,
             type = StudioPropertyType.INTEGER))
     public interface Throttle {
-    }
-
-    @StudioPropertyGroup(properties = @StudioProperty(
-            xmlAttribute = StudioXmlAttributes.TOP,
-            type = StudioPropertyType.INTEGER))
-    public interface IntegerTop {
     }
 
     @StudioPropertyGroup(properties = @StudioProperty(
@@ -2141,32 +2129,16 @@ final class StudioChartsPropertyGroups {
             PositionCoordinates, ValueFormatterFunction, StudioPropertyGroups.HideDelay {
     }
 
-    @StudioPropertyGroup(
-            properties = {
-                    @StudioProperty(
-                            xmlAttribute = StudioXmlAttributes.LEFT,
-                            type = StudioPropertyType.INTEGER),
-                    @StudioProperty(
-                            xmlAttribute = StudioXmlAttributes.BOTTOM,
-                            type = StudioPropertyType.INTEGER),
-                    @StudioProperty(
-                            xmlAttribute = StudioXmlAttributes.CONTAIN_LABEL,
-                            type = StudioPropertyType.BOOLEAN)
-            }
-    )
-    public interface GridItemComponent extends Show, IntegerZ, ShadowBlur, IntegerTop, ShadowColor, BorderColor,
-            IntegerRight, ShadowOffsetY, ShadowOffsetX, IntegerZLevel, IntegerHeight, BackgroundColor,
-            IntegerBorderWidth, StudioPropertyGroups.Id, StudioPropertyGroups.WidthWithIntegerType {
+    @StudioPropertyGroup(properties = @StudioProperty(
+            xmlAttribute = StudioXmlAttributes.CONTAIN_LABEL,
+            type = StudioPropertyType.BOOLEAN))
+    public interface GridItemComponent extends Show, Left, Width, Bottom, IntegerZ, StringTop, ShadowBlur,
+            ShadowColor, BorderColor, StringRight, StringHeight, ShadowOffsetY, ShadowOffsetX, IntegerZLevel,
+            BackgroundColor, IntegerBorderWidth, StudioPropertyGroups.Id {
     }
 
     @StudioPropertyGroup(
             properties = {
-                    @StudioProperty(
-                            xmlAttribute = StudioXmlAttributes.LEFT,
-                            type = StudioPropertyType.INTEGER),
-                    @StudioProperty(
-                            xmlAttribute = StudioXmlAttributes.BOTTOM,
-                            type = StudioPropertyType.INTEGER),
                     @StudioProperty(
                             xmlAttribute = StudioXmlAttributes.SCROLL_DATA_INDEX,
                             type = StudioPropertyType.INTEGER),
@@ -2248,32 +2220,22 @@ final class StudioChartsPropertyGroups {
                             type = StudioPropertyType.INTEGER)
             }
     )
-    public interface ScrollableLegendComponent extends Show, StudioPropertyGroups.IconString, Padding, ItemGap,
-            Selector, IntegerZ, Formatter, Animation, ShadowBlur, IntegerTop, ShadowColor, Orientation, LegendAlign,
-            BorderColor, SymbolRotate, SelectedMode, IntegerRight, BorderRadius, ShadowOffsetY, ShadowOffsetX,
-            IntegerZLevel, IntegerHeight, InactiveColor, SelectorItemGap, BackgroundColor, UnselectedSeries,
-            SelectorPosition, IntegerItemWidth, SelectorButtonGap, IntegerItemHeight, FormatterFunction,
-            IntegerBorderWidth, InactiveBorderWidth, InactiveBorderColor, AnimationDurationUpdate,
-            StudioPropertyGroups.Id, StudioPropertyGroups.WidthWithIntegerType {
+    public interface ScrollableLegendComponent extends Show, Left, Width, Bottom, StudioPropertyGroups.IconString,
+            Padding, ItemGap, Selector, IntegerZ, Formatter, Animation, StringTop, ShadowBlur, ShadowColor,
+            Orientation, LegendAlign, BorderColor, StringRight, SymbolRotate, SelectedMode, BorderRadius,
+            StringHeight, ShadowOffsetY, ShadowOffsetX, IntegerZLevel, InactiveColor, SelectorItemGap,
+            BackgroundColor, UnselectedSeries, SelectorPosition, IntegerItemWidth, SelectorButtonGap,
+            IntegerItemHeight, FormatterFunction, IntegerBorderWidth, InactiveBorderWidth, InactiveBorderColor,
+            AnimationDurationUpdate, StudioPropertyGroups.Id {
     }
 
-    @StudioPropertyGroup(
-            properties = {
-                    @StudioProperty(
-                            xmlAttribute = StudioXmlAttributes.LEFT,
-                            type = StudioPropertyType.INTEGER),
-                    @StudioProperty(
-                            xmlAttribute = StudioXmlAttributes.BOTTOM,
-                            type = StudioPropertyType.INTEGER)
-            }
-    )
-    public interface LegendComponent extends Show, StudioPropertyGroups.IconString, Padding, ItemGap, Selector,
-            IntegerZ, Formatter, ShadowBlur, IntegerTop, ShadowColor, Orientation, LegendAlign, BorderColor,
-            SymbolRotate, SelectedMode, IntegerRight, BorderRadius, ShadowOffsetY, ShadowOffsetX, IntegerZLevel,
-            IntegerHeight, InactiveColor, SelectorItemGap, BackgroundColor, UnselectedSeries, SelectorPosition,
-            IntegerItemWidth, SelectorButtonGap, IntegerItemHeight, FormatterFunction, IntegerBorderWidth,
-            InactiveBorderWidth, InactiveBorderColor, StudioPropertyGroups.Id,
-            StudioPropertyGroups.WidthWithIntegerType {
+    @StudioPropertyGroup
+    public interface LegendComponent extends Show, Left, Width, Bottom, StudioPropertyGroups.IconString, Padding,
+            ItemGap, Selector, IntegerZ, Formatter, StringTop, ShadowBlur, ShadowColor, Orientation, LegendAlign,
+            BorderColor, StringRight, SymbolRotate, SelectedMode, BorderRadius, StringHeight, ShadowOffsetY,
+            ShadowOffsetX, IntegerZLevel, InactiveColor, SelectorItemGap, BackgroundColor, UnselectedSeries,
+            SelectorPosition, IntegerItemWidth, SelectorButtonGap, IntegerItemHeight, FormatterFunction,
+            IntegerBorderWidth, InactiveBorderWidth, InactiveBorderColor, StudioPropertyGroups.Id {
     }
 
     @StudioPropertyGroup(properties = @StudioProperty(

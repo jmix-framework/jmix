@@ -102,8 +102,6 @@ public class ReportsConfiguration {
         dataLoaders.put("single", singleEntityDataLoader);
         dataLoaders.put("multi", multiEntityDataLoader);
         dataLoaders.put("delegate", delegatingDataLoader);
-        // The LLM loader is defined only when the AI Tools add-on is on board, so it is resolved optionally:
-        // without it the "llm" loader type stays unsupported.
         llmDataLoader.ifAvailable(loader -> dataLoaders.put(DataSetType.LLM.getCode(), loader));
         loaderFactory.setDataLoaders(dataLoaders);
         return loaderFactory;

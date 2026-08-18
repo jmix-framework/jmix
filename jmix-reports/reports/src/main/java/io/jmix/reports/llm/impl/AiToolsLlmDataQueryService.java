@@ -16,6 +16,7 @@
 
 package io.jmix.reports.llm.impl;
 
+import io.jmix.aitools.ChatClientFactory;
 import io.jmix.aitools.dataload.EntityDataLoadQuery;
 import io.jmix.aitools.dataload.execution.GeneratedJpqlParameter;
 import io.jmix.aitools.dataload.execution.JpqlExecutionParameter;
@@ -25,6 +26,7 @@ import io.jmix.aitools.dataload.execution.JpqlExecutionService;
 import io.jmix.aitools.dataload.generation.EntityDataLoadGenerationService;
 import io.jmix.aitools.dataload.validation.JpqlValidationIssue;
 import io.jmix.aitools.dataload.validation.JpqlValidationResult;
+import io.jmix.core.security.AccessDeniedException;
 import io.jmix.reports.llm.LlmDataQuery;
 import io.jmix.reports.llm.LlmDataQueryException;
 import io.jmix.reports.llm.LlmDataQueryService;
@@ -32,11 +34,13 @@ import io.jmix.reports.llm.LlmQueryExecutionRequest;
 import io.jmix.reports.llm.LlmQueryGenerationRequest;
 import io.jmix.reports.llm.LlmQueryParameter;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -55,6 +59,19 @@ public class AiToolsLlmDataQueryService implements LlmDataQueryService {
     @Autowired
     protected JpqlExecutionService jpqlExecutionService;
 
+    @Autowired
+    protected ChatClientFactory chatClientFactory;
+
+    /**
+     * The add-on's data-load beans are declared on properties alone, so they are there even when no model is
+     * configured for the application. Generation then fails on the first call, which the designer has no reason
+     * to find out by trying.
+     */
+    @Override
+    public boolean isGenerationAvailable() {
+        return chatClientFactory.isConfigured();
+    }
+
     @Override
     public LlmDataQuery generate(LlmQueryGenerationRequest request) {
         EntityDataLoadQuery generatedQuery;
@@ -68,29 +85,52 @@ public class AiToolsLlmDataQueryService implements LlmDataQueryService {
             throw new LlmDataQueryException("Query generation produced no query text");
         }
 
-        return new LlmDataQuery(generatedQuery.getJpql(), generatedQuery.getResultProperties(),
+        // A model answers with the lists it likes, and nothing between here and the model rejects a null
+        // element in them, so they are cleaned before the query is built out of them.
+        return new LlmDataQuery(generatedQuery.getJpql(), retainNonNull(generatedQuery.getResultProperties()),
                 toQueryParameters(generatedQuery.getParameters()), generatedQuery.getExplanation(),
-                generatedQuery.getWarnings(), generatedQuery.getMaxResults());
+                retainNonNull(generatedQuery.getWarnings()), generatedQuery.getMaxResults());
     }
 
     @Override
-    public List<Map<String, Object>> execute(LlmQueryExecutionRequest request) {
+    public List<Map<String, @Nullable Object>> execute(LlmQueryExecutionRequest request) {
         LlmDataQuery query = request.getQuery();
         Integer maxResults = request.getMaxResults() != null ? request.getMaxResults() : query.getMaxResults();
 
-        JpqlExecutionResult result = jpqlExecutionService.execute(new JpqlExecutionRequest(
-                request.getPrompt(),
-                query.getJpql(),
-                toExecutionParameters(request.getArguments()),
-                query.getResultProperties(),
-                maxResults,
-                null));
+        JpqlExecutionResult result;
+        try {
+            result = jpqlExecutionService.execute(new JpqlExecutionRequest(
+                    request.getPrompt(),
+                    query.getJpql(),
+                    toExecutionParameters(request.getArguments()),
+                    query.getResultProperties(),
+                    maxResults,
+                    null));
+        } catch (AccessDeniedException e) {
+            // Being refused the data is not a failure of this seam: the caller reports it as what it is.
+            throw e;
+        } catch (RuntimeException e) {
+            // The add-on validates, repairs and converts before its own error handling starts, so a failure
+            // there would otherwise leave the seam as an exception of an unrelated kind.
+            throw new LlmDataQueryException("Cannot execute the query of the data set", e);
+        }
 
         if (!result.isExecuted()) {
             throw new LlmDataQueryException(describeFailure(result));
         }
 
         return result.getRows();
+    }
+
+    protected <T> List<T> retainNonNull(@Nullable List<T> values) {
+        //noinspection ConstantValue
+        if (values == null) {
+            return List.of();
+        }
+
+        return values.stream()
+                .filter(Objects::nonNull)
+                .toList();
     }
 
     /**
@@ -108,7 +148,7 @@ public class AiToolsLlmDataQueryService implements LlmDataQueryService {
             for (LlmQueryParameter parameter : request.getAvailableParameters()) {
                 userText.append("\n- :").append(parameter.getName())
                         .append(" (").append(parameter.getJavaType());
-                // A cross-tab axis holds every value of its column, so the query has to match it with IN.
+                // A collection parameter is bound as a whole, so the query has to match it with IN.
                 if (parameter.isMultiValued()) {
                     userText.append(", several values of this type, matched with IN and no parentheses "
                             + "around the parameter name");
@@ -119,9 +159,9 @@ public class AiToolsLlmDataQueryService implements LlmDataQueryService {
                     .append("\n- Reference these as JPQL named parameters, never inline their values.")
                     .append("\n- Declare in \"parameters\" only the ones the query actually references.")
                     .append("\n- Use a parameter only where the request calls for it; ignore the rest.");
-
-            appendCrossTabRules(userText, request);
         }
+
+        appendCrossTabRules(userText, request);
 
         if (request.getMaxResults() != null) {
             userText.append("\n\nROW LIMIT: return at most ").append(request.getMaxResults()).append(" rows.");
@@ -131,17 +171,14 @@ public class AiToolsLlmDataQueryService implements LlmDataQueryService {
     }
 
     /**
-     * States what a cross-tab cell query must return. The axis values arrive as multi-valued parameters, and
-     * every one of them has to come back as a result column of the same name — that is how the extraction
-     * controller places a row in the matrix. Stated as an explicit list of required aliases rather than as a
-     * rule about parameters: told the rule, models alias the columns after the attributes instead
-     * (`username`, `active`), and the report then renders an empty matrix.
+     * States what a cross-tab cell query must return. Every required axis value has to come back as a result
+     * column of the same name — that is how the extraction controller places a row in the matrix. Stated as an
+     * explicit list of required aliases rather than inferred from multi-valued parameters: an ordinary report
+     * parameter may be a collection too, while told only a generic rule, models alias axis columns after their
+     * attributes instead (`username`, `active`) and the report then renders an empty matrix.
      */
     protected void appendCrossTabRules(StringBuilder userText, LlmQueryGenerationRequest request) {
-        List<String> axisNames = request.getAvailableParameters().stream()
-                .filter(LlmQueryParameter::isMultiValued)
-                .map(LlmQueryParameter::getName)
-                .toList();
+        List<String> axisNames = request.getRequiredResultProperties();
         if (axisNames.isEmpty()) {
             return;
         }
@@ -151,9 +188,17 @@ public class AiToolsLlmDataQueryService implements LlmDataQueryService {
         for (String axisName : axisNames) {
             userText.append("\n- ").append(axisName);
         }
-        userText.append("\nUse these exact aliases in addition to the value columns the request asks for. "
-                + "Narrow the query to the matrix by matching each of these parameters with IN, and write no "
-                + "parentheses around the parameter name, because parentheses make JPQL expect a single value.");
+        userText.append("\nUse these exact aliases in addition to the value columns the request asks for.");
+
+        boolean hasMultiValuedAxisParameter = request.getAvailableParameters().stream()
+                .filter(LlmQueryParameter::isMultiValued)
+                .map(LlmQueryParameter::getName)
+                .anyMatch(axisNames::contains);
+        if (hasMultiValuedAxisParameter) {
+            userText.append(" When a required column is also listed as a multi-valued available parameter, narrow "
+                    + "the query to the matrix by matching that parameter with IN, and write no parentheses around "
+                    + "the parameter name, because parentheses make JPQL expect a single value.");
+        }
     }
 
     /**

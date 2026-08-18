@@ -32,13 +32,16 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Serves the designer's side of the {@link DataSetType#LLM} data set type: whether the type is usable at all,
  * what a query may be generated from, and how a generated query is stored.
  * <p>
- * The UI module needs no dependency on the AI Tools add-on for this: the type works exactly when the
- * {@link LlmDataQueryService} bean exists, which happens when the add-on is present.
+ * The UI module needs no dependency on the AI Tools add-on for this: the type works when an
+ * {@link LlmDataQueryService} bean exists and reports generation as available. Reports auto-configuration
+ * supplies the default bean on top of the add-on's data-load services, and an application may substitute another
+ * implementation of the seam.
  */
 @NullMarked
 @Component("report_LlmDataSetGenerationSupport")
@@ -54,11 +57,15 @@ public class LlmDataSetGenerationSupport {
     protected ParameterClassResolver parameterClassResolver;
 
     /**
-     * @return {@code true} if queries can be generated, that is if the data set type is usable in this
-     * application
+     * Tells whether the data set type can generate queries in this application: an implementation of the seam has
+     * to be there and report generation as available. Reports may auto-configure the default implementation when
+     * the add-on's data-load beans exist even though the model needed by generation is not configured.
+     *
+     * @return {@code true} if queries can be generated
      */
     public boolean isAvailable() {
-        return llmDataQueryServiceProvider.getIfAvailable() != null;
+        LlmDataQueryService service = llmDataQueryServiceProvider.getIfAvailable();
+        return service != null && service.isGenerationAvailable();
     }
 
     /**
@@ -70,12 +77,46 @@ public class LlmDataSetGenerationSupport {
      */
     public LlmQueryGenerationRequest createGenerationRequest(DataSet dataSet) {
         Map<String, LlmQueryParameter> parameters = new LinkedHashMap<>();
+        List<String> requiredResultProperties = new ArrayList<>();
         collectReportParameters(dataSet, parameters);
         collectParentBandColumns(dataSet, parameters);
-        collectCrossTabAxisColumns(dataSet, parameters);
+        collectCrossTabAxisColumns(dataSet, parameters, requiredResultProperties);
 
         return new LlmQueryGenerationRequest(StringUtils.defaultString(dataSet.getText()),
-                List.copyOf(parameters.values()), dataSet.getLlmMaxResults());
+                List.copyOf(parameters.values()), requiredResultProperties, dataSet.getLlmMaxResults());
+    }
+
+    /**
+     * Checks whether the inputs from which a request was built still describe the data set. Parameter values
+     * are deliberately ignored: the designer only exposes their names, types and cardinality to generation.
+     *
+     * @param dataSet data set whose current generation inputs are checked
+     * @param request request captured when generation started
+     * @return {@code true} if completing the request would still answer the current data set state
+     */
+    public boolean isGenerationRequestCurrent(DataSet dataSet, LlmQueryGenerationRequest request) {
+        LlmQueryGenerationRequest current = createGenerationRequest(dataSet);
+        return Objects.equals(current.getPrompt(), request.getPrompt())
+                && Objects.equals(current.getMaxResults(), request.getMaxResults())
+                && current.getRequiredResultProperties().equals(request.getRequiredResultProperties())
+                && sameParameterDeclarations(current.getAvailableParameters(), request.getAvailableParameters());
+    }
+
+    protected boolean sameParameterDeclarations(List<LlmQueryParameter> left, List<LlmQueryParameter> right) {
+        if (left.size() != right.size()) {
+            return false;
+        }
+
+        for (int i = 0; i < left.size(); i++) {
+            LlmQueryParameter leftParameter = left.get(i);
+            LlmQueryParameter rightParameter = right.get(i);
+            if (!leftParameter.getName().equals(rightParameter.getName())
+                    || !leftParameter.getJavaType().equals(rightParameter.getJavaType())
+                    || leftParameter.isMultiValued() != rightParameter.isMultiValued()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -105,12 +146,13 @@ public class LlmDataSetGenerationSupport {
     }
 
     /**
-     * Stores a query edited by hand, assembling the document out of the text and the column names as the author
-     * left them. The parameters are re-derived from the text and the previous document's explanation and
+     * Stores a query being edited by hand, assembling the document out of the text and the column names as the
+     * author left them. The parameters are re-derived from the text and the previous document's explanation and
      * warnings are carried over (see {@link LlmDataQuerySerializer#assemble}).
      * <p>
-     * An empty query text means the data set has no stored query and runs by generating one, so it clears the
-     * document instead of storing an empty one.
+     * Blank text is left alone here: while editing, an empty editor is a query on its way to being retyped, and
+     * clearing the document would take the explanation, the warnings and the row limit with it. Dropping a
+     * query is what {@link #finishEditedQuery(DataSet, String, List)} does.
      *
      * @param dataSet          data set to store the query in
      * @param jpql             query text as edited
@@ -118,7 +160,6 @@ public class LlmDataSetGenerationSupport {
      */
     public void storeEditedQuery(DataSet dataSet, String jpql, List<String> resultProperties) {
         if (StringUtils.isBlank(jpql)) {
-            dataSet.setLlmGeneratedQuery(null);
             return;
         }
 
@@ -128,6 +169,23 @@ public class LlmDataSetGenerationSupport {
 
         LlmDataQuery edited = llmDataQuerySerializer.assemble(jpql, columns, readStoredQuery(dataSet));
         dataSet.setLlmGeneratedQuery(llmDataQuerySerializer.toJson(edited));
+    }
+
+    /**
+     * Stores the query as the author finally left it. An empty query text means the data set has no stored
+     * query and runs by generating one, so the document is cleared instead of being stored empty.
+     *
+     * @param dataSet          data set to store the query in
+     * @param jpql             query text as edited
+     * @param resultProperties column names in select-clause order
+     */
+    public void finishEditedQuery(DataSet dataSet, String jpql, List<String> resultProperties) {
+        if (StringUtils.isBlank(jpql)) {
+            dataSet.setLlmGeneratedQuery(null);
+            return;
+        }
+
+        storeEditedQuery(dataSet, jpql, resultProperties);
     }
 
     /**
@@ -146,7 +204,11 @@ public class LlmDataSetGenerationSupport {
             if (StringUtils.isBlank(alias) || !LlmQueryParameterNames.isValid(alias)) {
                 continue;
             }
-            parameters.put(alias, new LlmQueryParameter(alias, resolveJavaType(inputParameter), null));
+            // A parameter holding several values arrives as a collection of its declared type, so it is offered
+            // as multi-valued and matched with IN, as the loader binds it.
+            boolean multiValued = inputParameter.getType() == ParameterType.ENTITY_LIST;
+            parameters.put(alias,
+                    new LlmQueryParameter(alias, resolveJavaType(inputParameter), null, multiValued));
         }
     }
 
@@ -177,7 +239,8 @@ public class LlmDataSetGenerationSupport {
      * alias its own columns accordingly. Only an axis that is an LLM data set with a stored query states its
      * columns; against a JPQL or SQL axis they exist only once it has run.
      */
-    protected void collectCrossTabAxisColumns(DataSet dataSet, Map<String, LlmQueryParameter> parameters) {
+    protected void collectCrossTabAxisColumns(DataSet dataSet, Map<String, LlmQueryParameter> parameters,
+                                              List<String> requiredResultProperties) {
         BandDefinition band = dataSet.getBandDefinition();
         if (band == null || band.getOrientation() != Orientation.CROSS || band.getDataSets() == null) {
             return;
@@ -196,6 +259,7 @@ public class LlmDataSetGenerationSupport {
                 }
                 // The type is unknown until the axis runs, as for a parent band column.
                 parameters.putIfAbsent(name, new LlmQueryParameter(name, Object.class.getName(), null, true));
+                requiredResultProperties.add(name);
             }
         }
     }
@@ -223,7 +287,8 @@ public class LlmDataSetGenerationSupport {
 
     /**
      * Reads the query stored in a data set, or returns {@code null} when there is none or the stored document
-     * cannot be read — a panel showing it has nothing better to do than show nothing.
+     * cannot be read — for a caller that only wants the columns of another data set and has nothing to say
+     * about a document that is broken.
      *
      * @param dataSet data set to read the stored query of
      * @return the stored query, or {@code null}
@@ -231,10 +296,23 @@ public class LlmDataSetGenerationSupport {
     @Nullable
     public LlmDataQuery readStoredQuery(DataSet dataSet) {
         try {
-            return llmDataQuerySerializer.fromJson(dataSet.getLlmGeneratedQuery());
+            return readStoredQueryOrFail(dataSet);
         } catch (LlmDataQueryException e) {
             return null;
         }
+    }
+
+    /**
+     * Reads the query stored in a data set, reporting an unreadable document instead of hiding it: a panel that
+     * showed nothing would let the author save a report that fails on the first run.
+     *
+     * @param dataSet data set to read the stored query of
+     * @return the stored query, or {@code null} if none is stored yet
+     * @throws LlmDataQueryException if the stored document cannot be read
+     */
+    @Nullable
+    public LlmDataQuery readStoredQueryOrFail(DataSet dataSet) {
+        return llmDataQuerySerializer.fromJson(dataSet.getLlmGeneratedQuery());
     }
 
     protected String resolveJavaType(ReportInputParameter inputParameter) {

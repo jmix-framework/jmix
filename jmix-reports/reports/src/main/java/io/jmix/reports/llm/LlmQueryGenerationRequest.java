@@ -31,6 +31,7 @@ public class LlmQueryGenerationRequest {
 
     protected String prompt;
     protected List<LlmQueryParameter> availableParameters;
+    protected List<String> requiredResultProperties;
 
     @Nullable
     protected Integer maxResults;
@@ -38,10 +39,20 @@ public class LlmQueryGenerationRequest {
     public LlmQueryGenerationRequest(String prompt,
                                      @Nullable List<LlmQueryParameter> availableParameters,
                                      @Nullable Integer maxResults) {
+        this(prompt, availableParameters, null, maxResults);
+    }
+
+    public LlmQueryGenerationRequest(String prompt,
+                                     @Nullable List<LlmQueryParameter> availableParameters,
+                                     @Nullable List<String> requiredResultProperties,
+                                     @Nullable Integer maxResults) {
         checkNotNullArgument(prompt, "prompt is null");
 
         this.prompt = prompt;
         this.availableParameters = availableParameters == null ? List.of() : List.copyOf(availableParameters);
+        this.requiredResultProperties = requiredResultProperties == null
+                ? List.of()
+                : List.copyOf(requiredResultProperties);
         this.maxResults = maxResults;
     }
 
@@ -60,6 +71,16 @@ public class LlmQueryGenerationRequest {
      */
     public List<LlmQueryParameter> getAvailableParameters() {
         return availableParameters;
+    }
+
+    /**
+     * Returns the result aliases the generated query has to select. A cross-tab cell query uses them to link
+     * each row to its axes; an ordinary band requires none.
+     *
+     * @return result aliases required by the data set context
+     */
+    public List<String> getRequiredResultProperties() {
+        return requiredResultProperties;
     }
 
     /**

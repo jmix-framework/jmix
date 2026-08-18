@@ -82,10 +82,10 @@ public class LlmQueryParameter {
     }
 
     /**
-     * Tells a parameter that carries several values of {@link #getJavaType()} — the values of one cross-tab
-     * axis — from an ordinary single-valued one, so that a query can match it with {@code IN}. Stated
-     * explicitly rather than inferred from the value, because query generation is offered parameters whose
-     * value is not known yet.
+     * Tells a parameter that carries several values of {@link #getJavaType()} from an ordinary single-valued
+     * one, so that a query can match it with {@code IN}. This may be a collection-valued report parameter or
+     * the values of one cross-tab axis. Stated explicitly rather than inferred from the value, because query
+     * generation is offered parameters whose value is not known yet.
      *
      * @return {@code true} if the value is a collection of {@link #getJavaType()}
      */

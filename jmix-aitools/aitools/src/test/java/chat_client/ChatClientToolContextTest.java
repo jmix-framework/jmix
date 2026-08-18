@@ -23,6 +23,7 @@ import io.jmix.aitools.tool.AiToolStatusPublisher;
 import io.jmix.aitools.tool.AiToolStatusUpdate;
 import io.jmix.core.security.SystemAuthenticator;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.ai.chat.client.ChatClient;
@@ -51,6 +52,11 @@ class ChatClientToolContextTest {
 
     @Autowired
     StubChatModel stubChatModel;
+
+    @BeforeEach
+    void resetChatModel() {
+        stubChatModel.reset();
+    }
 
     @Autowired
     SystemAuthenticator systemAuthenticator;

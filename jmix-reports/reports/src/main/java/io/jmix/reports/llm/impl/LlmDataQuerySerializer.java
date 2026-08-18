@@ -50,6 +50,12 @@ public class LlmDataQuerySerializer {
      */
     protected static final Pattern PARAMETER_PATTERN = Pattern.compile(":([A-Za-z_][A-Za-z0-9_]*)");
 
+    /**
+     * JPQL string literals, quoted with {@code '} and escaping a quote by doubling it. A colon inside one is
+     * part of the text and not a parameter, which is how the add-on's validator reads a query too.
+     */
+    protected static final Pattern STRING_LITERAL_PATTERN = Pattern.compile("'(?:''|[^'])*'");
+
     protected static final String REGENERATE_HINT = "the stored query is unreadable, regenerate it";
 
     protected final Gson gson = new Gson();
@@ -145,11 +151,22 @@ public class LlmDataQuerySerializer {
 
     protected Set<String> parameterNamesOf(String jpql) {
         Set<String> names = new LinkedHashSet<>();
-        Matcher matcher = PARAMETER_PATTERN.matcher(jpql);
+        Matcher matcher = PARAMETER_PATTERN.matcher(stripStringLiterals(jpql));
 
         while (matcher.find()) {
             names.add(matcher.group(1));
         }
         return names;
+    }
+
+    /**
+     * Blanks out the string literals of a query, so that {@code like 'urn:isbn%'} declares no parameter named
+     * {@code isbn} — one the run could never bind, which would leave the query unrunnable after an edit that
+     * only touched its text. Every literal is replaced by spaces of the same length to leave the rest of the
+     * text where it was.
+     */
+    protected String stripStringLiterals(String jpql) {
+        return STRING_LITERAL_PATTERN.matcher(jpql)
+                .replaceAll(literal -> " ".repeat(literal.group().length()));
     }
 }

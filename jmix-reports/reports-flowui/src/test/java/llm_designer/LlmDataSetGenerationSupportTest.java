@@ -24,12 +24,15 @@ import io.jmix.reports.entity.ParameterType;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportInputParameter;
 import io.jmix.reports.llm.LlmDataQuery;
+import io.jmix.reports.llm.LlmDataQueryException;
+import io.jmix.reports.llm.LlmDataQueryService;
 import io.jmix.reports.llm.LlmQueryGenerationRequest;
 import io.jmix.reports.entity.Orientation;
 import io.jmix.reports.llm.LlmQueryParameter;
 import io.jmix.reports.llm.impl.LlmDataQuerySerializer;
 import io.jmix.reportsflowui.support.LlmDataSetGenerationSupport;
 import llm_designer.test_support.LlmDesignerTestConfiguration;
+import llm_designer.test_support.TestLlmDataQueryService;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +43,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.tuple;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * What the designer offers to query generation, and how a generated query is stored back into the data set.
@@ -55,6 +58,9 @@ public class LlmDataSetGenerationSupportTest {
 
     @Autowired
     protected LlmDataQuerySerializer serializer;
+
+    @Autowired
+    protected LlmDataQueryService queryService;
 
     @Autowired
     protected Metadata metadata;
@@ -133,14 +139,15 @@ public class LlmDataSetGenerationSupportTest {
                 null, List.of(), null)));
         DataSet cellDataSet = llmDataSet(crossBand);
 
-        List<LlmQueryParameter> parameters = generationSupport.createGenerationRequest(cellDataSet)
-                .getAvailableParameters();
+        LlmQueryGenerationRequest request = generationSupport.createGenerationRequest(cellDataSet);
+        List<LlmQueryParameter> parameters = request.getAvailableParameters();
 
         assertThat(parameters)
                 .filteredOn(parameter -> "Revenue_dynamic_header_year".equals(parameter.getName()))
                 .singleElement()
                 .extracting(LlmQueryParameter::isMultiValued)
                 .isEqualTo(true);
+        assertThat(request.getRequiredResultProperties()).containsExactly("Revenue_dynamic_header_year");
     }
 
     @Test
@@ -232,15 +239,72 @@ public class LlmDataSetGenerationSupportTest {
     }
 
     @Test
-    public void testBlankQueryTextLeavesTheDataSetWithoutAStoredQuery() {
+    public void testBlankQueryTextLeavesTheDataSetWithoutAStoredQueryOnceEditingEnds() {
         DataSet dataSet = llmDataSet(reportWithParameters());
-        generationSupport.storeGeneratedQuery(dataSet,
-                new LlmDataQuery("select o.number as orderNumber from sales_Order o", List.of("orderNumber"),
-                        List.of(), null, List.of(), null));
+        generationSupport.storeGeneratedQuery(dataSet, storedQueryWithNotes());
 
-        generationSupport.storeEditedQuery(dataSet, "   ", List.of("orderNumber"));
+        generationSupport.finishEditedQuery(dataSet, "   ", List.of("orderNumber"));
 
         assertThat(dataSet.getLlmGeneratedQuery()).isNull();
+    }
+
+    @Test
+    public void testBlankQueryTextWhileEditingKeepsWhatTheDocumentDescribes() {
+        // The editor sends its value on blur, so a cut-and-paste passes through an empty text; dropping the
+        // document there would take the explanation, the warnings and the row limit with it.
+        DataSet dataSet = llmDataSet(reportWithParameters());
+        generationSupport.storeGeneratedQuery(dataSet, storedQueryWithNotes());
+
+        generationSupport.storeEditedQuery(dataSet, "", List.of("orderNumber"));
+
+        LlmDataQuery stored = generationSupport.readStoredQuery(dataSet);
+        assertThat(stored).isNotNull();
+        assertThat(stored.getExplanation()).isEqualTo("All order numbers");
+        assertThat(stored.getWarnings()).containsExactly("Time zone ignored");
+        assertThat(stored.getMaxResults()).isEqualTo(150);
+    }
+
+    @Test
+    public void testUnreadableStoredDocumentIsReportedRatherThanHidden() {
+        DataSet dataSet = llmDataSet(reportWithParameters());
+        dataSet.setLlmGeneratedQuery("{\"jpql\": ");
+
+        assertThat(generationSupport.readStoredQuery(dataSet)).isNull();
+        assertThatThrownBy(() -> generationSupport.readStoredQueryOrFail(dataSet))
+                .isInstanceOf(LlmDataQueryException.class);
+    }
+
+    @Test
+    public void testListOfEntitiesParameterIsOfferedAsMultiValued() {
+        Report report = reportWithParameters();
+        report.getInputParameters().add(inputParameter("customers", ParameterType.ENTITY_LIST));
+        DataSet dataSet = llmDataSet(report);
+
+        LlmQueryGenerationRequest request = generationSupport.createGenerationRequest(dataSet);
+        List<LlmQueryParameter> parameters = request.getAvailableParameters();
+
+        assertThat(parameters)
+                .filteredOn(parameter -> "customers".equals(parameter.getName()))
+                .singleElement()
+                .extracting(LlmQueryParameter::isMultiValued)
+                .isEqualTo(true);
+        assertThat(request.getRequiredResultProperties()).isEmpty();
+    }
+
+    @Test
+    public void testTypeIsUnavailableWhenGenerationCannotRun() {
+        TestLlmDataQueryService service = (TestLlmDataQueryService) queryService;
+        service.setGenerationAvailable(false);
+        try {
+            assertThat(generationSupport.isAvailable()).isFalse();
+        } finally {
+            service.setGenerationAvailable(true);
+        }
+    }
+
+    protected LlmDataQuery storedQueryWithNotes() {
+        return new LlmDataQuery("select o.number as orderNumber from sales_Order o", List.of("orderNumber"),
+                List.of(), "All order numbers", List.of("Time zone ignored"), 150);
     }
 
     @Test

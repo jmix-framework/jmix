@@ -25,12 +25,26 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Stands in for the add-on-backed service, so the designer can be tested without an LLM: its presence in the
- * context is what makes the LLM data set type available.
+ * Stands in for the add-on-backed service, so the designer can be tested without an LLM. It reports generation as
+ * available by default; tests may keep the bean present while switching that capability off.
  */
 public class TestLlmDataQueryService implements LlmDataQueryService {
 
     public static final String GENERATED_JPQL = "select o.number as orderNumber from sales_Order o";
+
+    protected boolean generationAvailable = true;
+
+    @Override
+    public boolean isGenerationAvailable() {
+        return generationAvailable;
+    }
+
+    /**
+     * Stands in for an add-on whose beans are there while the model they talk to is not configured.
+     */
+    public void setGenerationAvailable(boolean generationAvailable) {
+        this.generationAvailable = generationAvailable;
+    }
 
     @Override
     public LlmDataQuery generate(LlmQueryGenerationRequest request) {

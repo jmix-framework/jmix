@@ -31,6 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,7 +67,7 @@ public class EnumCaptionResultLocalizer {
     public JpqlExecutionResult localize(JpqlExecutionResult result, List<String> resultProperties) {
         Preconditions.checkNotNullArgument(result, "result is null");
 
-        List<Map<String, Object>> rows = result.getRows();
+        List<Map<String, @Nullable Object>> rows = result.getRows();
         if (rows.isEmpty()) {
             return result;
         }
@@ -74,7 +75,7 @@ public class EnumCaptionResultLocalizer {
         Map<String, Class<? extends Enum<?>>> enumColumns =
                 resolveEnumColumns(result.getGeneratedJpqlResult().getJpql(), resultProperties);
 
-        List<Map<String, Object>> localizedRows = localizeRows(rows, enumColumns);
+        List<Map<String, @Nullable Object>> localizedRows = localizeRows(rows, enumColumns);
 
         return new JpqlExecutionResult(
                 result.getGeneratedJpqlResult(),
@@ -137,20 +138,21 @@ public class EnumCaptionResultLocalizer {
         return (Class<? extends Enum<?>>) javaType;
     }
 
-    protected List<Map<String, Object>> localizeRows(List<Map<String, Object>> rows,
-                                                     Map<String, Class<? extends Enum<?>>> enumColumns) {
-        List<Map<String, Object>> localizedRows = new ArrayList<>(rows.size());
-        for (Map<String, Object> row : rows) {
-            Map<String, Object> localizedRow = new LinkedHashMap<>();
-            for (Map.Entry<String, Object> entry : row.entrySet()) {
+    protected List<Map<String, @Nullable Object>> localizeRows(List<Map<String, @Nullable Object>> rows,
+                                                               Map<String, Class<? extends Enum<?>>> enumColumns) {
+        List<Map<String, @Nullable Object>> localizedRows = new ArrayList<>(rows.size());
+        for (Map<String, @Nullable Object> row : rows) {
+            Map<String, @Nullable Object> localizedRow = new LinkedHashMap<>();
+            for (Map.Entry<String, @Nullable Object> entry : row.entrySet()) {
                 localizedRow.put(entry.getKey(), localizeValue(entry.getValue(), enumColumns.get(entry.getKey())));
             }
-            localizedRows.add(Map.copyOf(localizedRow));
+            localizedRows.add(Collections.unmodifiableMap(localizedRow));
         }
         return List.copyOf(localizedRows);
     }
 
-    protected Object localizeValue(Object value, @Nullable Class<? extends Enum<?>> enumType) {
+    @Nullable
+    protected Object localizeValue(@Nullable Object value, @Nullable Class<? extends Enum<?>> enumType) {
         if (value instanceof Enum<?> enumValue) {
             return messages.getMessage(enumValue);
         }
@@ -172,7 +174,7 @@ public class EnumCaptionResultLocalizer {
      * @return the matching constant, or {@code null} if none matches
      */
     @Nullable
-    protected Enum<?> findConstantByStoredValue(Class<? extends Enum<?>> enumType, Object storedValue) {
+    protected Enum<?> findConstantByStoredValue(Class<? extends Enum<?>> enumType, @Nullable Object storedValue) {
         for (Enum<?> constant : enumType.getEnumConstants()) {
             if (constant instanceof EnumClass<?> enumClass) {
                 Object id = enumClass.getId();

@@ -72,6 +72,16 @@ public class StubChatModel implements ChatModel {
                 .build());
     }
 
+    /**
+     * Forgets what a test left behind. The stub is a bean of a context shared by several test classes, so a
+     * response enqueued and never consumed would otherwise be answered to the next test that asks.
+     */
+    public void reset() {
+        enqueuedResponses.clear();
+        content = null;
+        lastPrompt = null;
+    }
+
     @Override
     public ChatResponse call(Prompt prompt) {
         this.lastPrompt = prompt;

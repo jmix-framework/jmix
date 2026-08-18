@@ -102,6 +102,26 @@ class LlmDataQuerySerializerTest {
     }
 
     @Test
+    void testColonInsideAStringLiteralIsNoParameter() {
+        // A phantom parameter no run could bind would make an otherwise valid query unrunnable.
+        LlmDataQuery edited = serializer.assemble(
+                "select o.number as num from sales_Order o where o.code like 'urn:isbn%' and o.date >= :dateFrom",
+                List.of("num"), null);
+
+        assertThat(edited.getParameters())
+                .extracting(LlmQueryParameter::getName)
+                .containsExactly("dateFrom");
+    }
+
+    @Test
+    void testDoubledQuoteInsideAStringLiteralDoesNotEndIt() {
+        LlmDataQuery edited = serializer.assemble(
+                "select o.number as num from sales_Order o where o.note = 'it''s a:label'", List.of("num"), null);
+
+        assertThat(edited.getParameters()).isEmpty();
+    }
+
+    @Test
     void testEditedQueryDropsAParameterRemovedFromTheText() {
         LlmDataQuery edited = serializer.assemble("select o.id as id from sales_Order o", List.of("id"), null);
 

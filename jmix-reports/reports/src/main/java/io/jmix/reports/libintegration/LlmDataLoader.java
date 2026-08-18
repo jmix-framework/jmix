@@ -37,10 +37,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Supplier;
 
 /**
  * Loads band data for the {@link DataSetType#LLM} data set type: executes the query
@@ -60,6 +67,12 @@ public class LlmDataLoader implements ReportDataLoader {
     @Autowired
     protected LlmDataQuerySerializer llmDataQuerySerializer;
 
+    /**
+     * Holds what one report run has already generated and already warned about. Bound to the thread the run
+     * executes on and discarded as soon as another run reaches it, so nothing outlives the run it belongs to.
+     */
+    protected final ThreadLocal<RunScope> runScope = ThreadLocal.withInitial(RunScope::new);
+
     @Override
     public List<Map<String, Object>> loadData(ReportQuery reportQuery, @Nullable BandData parentBand,
                                               Map<String, Object> params) {
@@ -69,48 +82,135 @@ public class LlmDataLoader implements ReportDataLoader {
                     String.format("A prompt is required for data set [%s]", reportQuery.getName()));
         }
 
+        RunScope scope = runScopeOf(parentBand);
         Map<String, Object> additionalParams = reportQuery.getAdditionalParams();
-        Integer maxResults = (Integer) additionalParams.get(DataSet.LLM_MAX_RESULTS);
-        Map<String, LlmQueryParameter> availableParameters = collectAvailableParameters(params, parentBand);
+        Integer maxResults = toMaxResults(additionalParams.get(DataSet.LLM_MAX_RESULTS));
+        CollectedParameters collectedParameters = collectAvailableParameters(params, parentBand, scope);
+        Map<String, LlmQueryParameter> availableParameters = collectedParameters.availableParameters();
 
         try {
-            LlmDataQuery query = resolveQuery(reportQuery, prompt, additionalParams, maxResults, availableParameters);
+            LlmDataQuery query = resolveQuery(reportQuery, prompt, additionalParams, maxResults,
+                    availableParameters, collectedParameters.requiredResultProperties(), scope);
             checkCrossTabAxesAreLinkable(reportQuery, query, params, availableParameters);
 
             log.debug("Executing the query of data set [{}]: {}", reportQuery.getName(), query.getJpql());
-            return llmDataQueryService.execute(new LlmQueryExecutionRequest(prompt, query,
+            List<Map<String, @Nullable Object>> rows = llmDataQueryService.execute(new LlmQueryExecutionRequest(prompt, query,
                     resolveArguments(reportQuery, query, availableParameters), maxResults));
+
+            return toBandRows(rows, query.getResultProperties());
         } catch (LlmDataQueryException e) {
             throw new DataLoadingException(
                     String.format("An error occurred while loading data for data set [%s]", reportQuery.getName()), e);
         }
     }
 
+    /**
+     * Repackages the rows into what the report engine expects. The add-on returns immutable maps in an
+     * unspecified order; a band row must be mutable ({@link ReportDataLoader} states so, and merging several
+     * data sets of one band writes into it) and must follow the select clause (a cross-tab links its cells by
+     * the first matching column). Values, including null and an empty string, are preserved as distinct values.
+     */
+    protected List<Map<String, Object>> toBandRows(List<Map<String, @Nullable Object>> rows,
+                                                   List<String> resultProperties) {
+        List<Map<String, Object>> bandRows = new ArrayList<>(rows.size());
+
+        for (Map<String, @Nullable Object> row : rows) {
+            Map<String, Object> bandRow = new LinkedHashMap<>();
+            for (String property : resultProperties) {
+                if (row.containsKey(property)) {
+                    bandRow.put(property, row.get(property));
+                }
+            }
+
+            // A column the query returned but the stored document does not name still belongs to the row.
+            for (Map.Entry<String, @Nullable Object> column : row.entrySet()) {
+                bandRow.putIfAbsent(column.getKey(), column.getValue());
+            }
+            bandRows.add(bandRow);
+        }
+
+        return bandRows;
+    }
+
+    /**
+     * Reads the row limit stored with the data set. Taken as a number rather than cast, so a value restored as
+     * another numeric type is a limit and not a failure of the run.
+     */
+    @Nullable
+    protected Integer toMaxResults(@Nullable Object value) {
+        return value instanceof Number number ? number.intValue() : null;
+    }
+
     protected LlmDataQuery resolveQuery(ReportQuery reportQuery, String prompt,
                                         Map<String, Object> additionalParams, @Nullable Integer maxResults,
-                                        Map<String, LlmQueryParameter> availableParameters) {
+                                        Map<String, LlmQueryParameter> availableParameters,
+                                        List<String> requiredResultProperties, RunScope scope) {
         boolean regenerateOnRun = Boolean.TRUE.equals(additionalParams.get(DataSet.LLM_REGENERATE_ON_RUN));
-        LlmDataQuery storedQuery = regenerateOnRun
+        String storedDocument = (String) additionalParams.get(DataSet.LLM_GENERATED_QUERY);
+        LlmDataQuery storedQuery = regenerateOnRun || storedDocument == null
                 ? null
-                : llmDataQuerySerializer.fromJson((String) additionalParams.get(DataSet.LLM_GENERATED_QUERY));
+                : scope.storedQuery(storedDocument, () -> llmDataQuerySerializer.fromJson(storedDocument));
         if (storedQuery != null) {
             return storedQuery;
         }
 
         if (!regenerateOnRun) {
-            log.warn("Data set [{}] has no generated query stored, so it is generated for this run; "
-                    + "generate and review it in the report designer to make runs reproducible",
-                    reportQuery.getName());
+            scope.warnOnce("missing-query:" + reportQuery.getName(),
+                    () -> log.warn("Data set [{}] has no generated query stored, so it is generated for this run; "
+                            + "generate and review it in the report designer to make runs reproducible",
+                            reportQuery.getName()));
         }
 
-        LlmDataQuery generatedQuery = llmDataQueryService.generate(new LlmQueryGenerationRequest(prompt,
-                List.copyOf(availableParameters.values()), maxResults));
-        if (!generatedQuery.getWarnings().isEmpty()) {
-            log.warn("The query generated for data set [{}] comes with warnings: {}",
-                    reportQuery.getName(), generatedQuery.getWarnings());
+        LlmQueryGenerationRequest request = new LlmQueryGenerationRequest(prompt,
+                List.copyOf(availableParameters.values()), requiredResultProperties, maxResults);
+
+        // A band under a parent is loaded once per parent row, and generation is offered parameter names and
+        // types rather than values, so every row would ask the model the very same question. Asking once per run
+        // keeps the rows of one band shaped alike and the run billed once.
+        return scope.generatedQuery(generationKey(reportQuery, request), () -> {
+            LlmDataQuery query = llmDataQueryService.generate(request);
+            if (!query.getWarnings().isEmpty()) {
+                log.warn("The query generated for data set [{}] comes with warnings: {}",
+                        reportQuery.getName(), query.getWarnings());
+            }
+            return query;
+        });
+    }
+
+    /**
+     * Identifies a generation within one run: the same data set asked the same question with the same
+     * parameters offered gets the same query, whatever parent row it is loaded for.
+     */
+    protected String generationKey(ReportQuery reportQuery, LlmQueryGenerationRequest request) {
+        StringBuilder key = new StringBuilder(reportQuery.getName())
+                .append('|').append(request.getPrompt())
+                .append('|').append(request.getMaxResults());
+
+        for (LlmQueryParameter parameter : request.getAvailableParameters()) {
+            key.append('|').append(parameter.getName())
+                    .append(':').append(parameter.getJavaType())
+                    .append(':').append(parameter.isMultiValued());
+        }
+        for (String requiredResultProperty : request.getRequiredResultProperties()) {
+            key.append("|required:").append(requiredResultProperty);
         }
 
-        return generatedQuery;
+        return key.toString();
+    }
+
+    /**
+     * Returns what the run this call belongs to has already generated. Runs are told apart by the band data the
+     * hierarchy is rooted at, which is created once per run and shared by every band of it.
+     */
+    protected RunScope runScopeOf(@Nullable BandData parentBand) {
+        BandData rootBand = parentBand;
+        while (rootBand != null && rootBand.getParentBand() != null) {
+            rootBand = rootBand.getParentBand();
+        }
+
+        RunScope scope = runScope.get();
+        scope.rootedAt(rootBand);
+        return scope;
     }
 
     /**
@@ -119,10 +219,12 @@ public class LlmDataLoader implements ReportDataLoader {
      * A parameter with no value is left out — its type is unknown, and the add-on binds no value for it, which
      * would fail the query anyway.
      */
-    protected Map<String, LlmQueryParameter> collectAvailableParameters(Map<String, Object> params,
-                                                                       @Nullable BandData parentBand) {
+    protected CollectedParameters collectAvailableParameters(Map<String, Object> params,
+                                                             @Nullable BandData parentBand,
+                                                             RunScope scope) {
         Map<String, LlmQueryParameter> availableParameters = new LinkedHashMap<>();
         Map<String, List<?>> crossTabAxes = new LinkedHashMap<>();
+        List<String> requiredResultProperties = new ArrayList<>();
 
         for (Map.Entry<String, Object> param : params.entrySet()) {
             Object value = param.getValue();
@@ -138,17 +240,43 @@ public class LlmDataLoader implements ReportDataLoader {
                 continue;
             }
 
-            availableParameters.put(param.getKey(),
-                    new LlmQueryParameter(param.getKey(), value.getClass().getName(), value));
+            LlmQueryParameter parameter = toParameter(param.getKey(), value);
+            if (parameter != null) {
+                availableParameters.put(param.getKey(), parameter);
+            }
         }
 
         for (BandData band = parentBand; band != null; band = band.getParentBand()) {
-            addParentBandFields(band, availableParameters);
+            addParentBandFields(band, availableParameters, scope);
         }
 
-        crossTabAxes.forEach((dataSetName, rows) -> addCrossTabAxisValues(dataSetName, rows, availableParameters));
+        crossTabAxes.forEach((dataSetName, rows) ->
+                addCrossTabAxisValues(dataSetName, rows, availableParameters, requiredResultProperties, scope));
 
-        return availableParameters;
+        return new CollectedParameters(availableParameters, List.copyOf(requiredResultProperties));
+    }
+
+    /**
+     * Describes one run parameter. A parameter holding several values — a "list of entities" parameter, for
+     * instance — is offered as multi-valued and typed by its elements, so that a query matches it with
+     * {@code IN} instead of comparing a collection for equality. A collection with nothing in it is left out:
+     * there is no value to match and no type to state.
+     */
+    @Nullable
+    protected LlmQueryParameter toParameter(String name, Object value) {
+        if (!(value instanceof Collection<?> values)) {
+            return new LlmQueryParameter(name, value.getClass().getName(), value);
+        }
+
+        Object element = values.stream()
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElse(null);
+        if (element == null) {
+            return null;
+        }
+
+        return new LlmQueryParameter(name, element.getClass().getName(), value, true);
     }
 
     /**
@@ -159,7 +287,8 @@ public class LlmDataLoader implements ReportDataLoader {
      * outranks a more distant one. Skipping a field whose flattened name is not an identifier is deliberate —
      * sanitizing the name would let two different bands collapse onto one parameter.
      */
-    protected void addParentBandFields(BandData band, Map<String, LlmQueryParameter> availableParameters) {
+    protected void addParentBandFields(BandData band, Map<String, LlmQueryParameter> availableParameters,
+                                       RunScope scope) {
         Map<String, Object> row = band.getData();
         if (row == null) {
             return;
@@ -173,12 +302,18 @@ public class LlmDataLoader implements ReportDataLoader {
                 continue;
             }
 
-            LlmQueryParameter present = availableParameters.putIfAbsent(name,
-                    new LlmQueryParameter(name, value.getClass().getName(), value));
+            LlmQueryParameter parameter = toParameter(name, value);
+            if (parameter == null) {
+                continue;
+            }
+
+            LlmQueryParameter present = availableParameters.putIfAbsent(name, parameter);
             if (present != null) {
-                log.warn("Parameter [{}] is already available, so the field [{}] of band [{}] is not offered "
-                        + "to the query; rename one of them to make both usable",
-                        name, field.getKey(), band.getName());
+                // The band is loaded once per parent row, and the collision is the same every time.
+                scope.warnOnce("shadowed-band-field:" + name,
+                        () -> log.warn("Parameter [{}] is already available, so the field [{}] of band [{}] is not "
+                                + "offered to the query; rename one of them to make both usable",
+                                name, field.getKey(), band.getName()));
             }
         }
     }
@@ -232,7 +367,8 @@ public class LlmDataLoader implements ReportDataLoader {
      * apply: a name that is not an identifier is skipped, and a name already taken is kept.
      */
     protected void addCrossTabAxisValues(String dataSetName, List<?> rows,
-                                         Map<String, LlmQueryParameter> availableParameters) {
+                                         Map<String, LlmQueryParameter> availableParameters,
+                                         List<String> requiredResultProperties, RunScope scope) {
         Map<String, List<Object>> valuesByField = new LinkedHashMap<>();
         for (Object row : rows) {
             if (!(row instanceof Map<?, ?> fields)) {
@@ -257,12 +393,14 @@ public class LlmDataLoader implements ReportDataLoader {
             }
 
             List<Object> values = field.getValue();
+            requiredResultProperties.add(name);
             LlmQueryParameter present = availableParameters.putIfAbsent(name,
                     new LlmQueryParameter(name, values.get(0).getClass().getName(), values, true));
             if (present != null) {
-                log.warn("Parameter [{}] is already available, so the field [{}] of the cross-tab axis [{}] is "
-                        + "not offered to the query; rename one of them to make both usable",
-                        name, field.getKey(), dataSetName);
+                scope.warnOnce("shadowed-axis-field:" + name,
+                        () -> log.warn("Parameter [{}] is already available, so the field [{}] of the cross-tab "
+                                + "axis [{}] is not offered to the query; rename one of them to make both usable",
+                                name, field.getKey(), dataSetName));
             }
         }
     }
@@ -288,5 +426,61 @@ public class LlmDataLoader implements ReportDataLoader {
         }
 
         return arguments;
+    }
+
+    protected record CollectedParameters(Map<String, LlmQueryParameter> availableParameters,
+                                         List<String> requiredResultProperties) {
+    }
+
+    /**
+     * What one report run has already done, so that loading a band once per parent row does not repeat it: the
+     * queries generated within the run and the warnings already written for it.
+     * <p>
+     * A run is recognised by the band data its hierarchy is rooted at. Reaching a different root means another
+     * run has started on this thread, and everything remembered for the previous one is dropped — which is also
+     * what keeps the scope from outliving the run on a pooled thread.
+     */
+    protected static class RunScope {
+
+        protected WeakReference<@Nullable BandData> rootBand = new WeakReference<>(null);
+        protected Map<String, LlmDataQuery> generatedQueries = new LinkedHashMap<>();
+        protected Map<String, Optional<LlmDataQuery>> storedQueries = new LinkedHashMap<>();
+        protected Set<String> warnings = new LinkedHashSet<>();
+
+        protected void rootedAt(@Nullable BandData rootBand) {
+            if (this.rootBand.get() == rootBand && rootBand != null) {
+                return;
+            }
+
+            this.rootBand = new WeakReference<>(rootBand);
+            generatedQueries = new LinkedHashMap<>();
+            storedQueries = new LinkedHashMap<>();
+            warnings = new LinkedHashSet<>();
+        }
+
+        protected LlmDataQuery generatedQuery(String key, Supplier<LlmDataQuery> generation) {
+            LlmDataQuery generated = generatedQueries.get(key);
+            if (generated == null) {
+                generated = generation.get();
+                generatedQueries.put(key, generated);
+            }
+            return generated;
+        }
+
+        /**
+         * Returns what a stored document reads as, reading each document once. A band under a parent is loaded
+         * once per parent row, and the document does not change while the run reads it, so parsing it again per
+         * row is work the run does not need. A document that reads as nothing is remembered as such.
+         */
+        @Nullable
+        protected LlmDataQuery storedQuery(String document, Supplier<@Nullable LlmDataQuery> reading) {
+            return storedQueries.computeIfAbsent(document, key -> Optional.ofNullable(reading.get())).orElse(null);
+        }
+
+        protected void warnOnce(String key, Runnable warning) {
+            if (warnings.add(key)) {
+                warning.run();
+            }
+        }
     }
 }

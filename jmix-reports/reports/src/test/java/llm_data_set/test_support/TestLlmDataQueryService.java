@@ -45,6 +45,11 @@ public class TestLlmDataQueryService implements LlmDataQueryService {
     protected LlmDataQueryException executionFailure;
 
     @Override
+    public boolean isGenerationAvailable() {
+        return true;
+    }
+
+    @Override
     public LlmDataQuery generate(LlmQueryGenerationRequest request) {
         generationRequests.add(request);
         return queryToGenerate;

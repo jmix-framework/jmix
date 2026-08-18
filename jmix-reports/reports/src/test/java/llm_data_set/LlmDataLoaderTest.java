@@ -38,6 +38,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDate;
@@ -246,6 +247,9 @@ class LlmDataLoaderTest {
                 .contains(tuple("revenue_dynamic_header_year", List.of(2025, 2025)),
                         tuple("revenue_dynamic_header_month", List.of(3, 4)),
                         tuple("revenue_master_data_publisherId", List.of("Nintendo", "Ubisoft")));
+        assertThat(queryService.getLastGenerationRequest().getRequiredResultProperties())
+                .containsExactlyInAnyOrder("revenue_dynamic_header_year", "revenue_dynamic_header_month",
+                        "revenue_master_data_publisherId");
     }
 
     @Test
@@ -335,9 +339,11 @@ class LlmDataLoaderTest {
 
         loader().loadData(dataSet, null, params);
 
+        // Offered under its own name rather than broken into <axis>_<field> parameters, and — holding several
+        // values — as one a query matches with IN.
         assertThat(queryService.getLastGenerationRequest().getAvailableParameters())
                 .extracting(LlmQueryParameter::getName, LlmQueryParameter::isMultiValued)
-                .containsExactly(tuple("selected_master_data", false));
+                .containsExactly(tuple("selected_master_data", true));
     }
 
     @Test
@@ -411,6 +417,110 @@ class LlmDataLoaderTest {
                 .hasMessageContaining("dateFrom");
     }
 
+    @Test
+    void testRowsAreMutableAndFollowTheSelectClause() {
+        // The add-on hands out immutable maps in an order of its own; a band row is written into by the engine
+        // and read positionally by a cross-tab.
+        queryService.setRows(List.of(Map.copyOf(Map.of("amount", 10, "orderNumber", "A-1"))));
+        DataSet dataSet = llmDataSet(PROMPT, storedQuery(List.of("orderNumber", "amount"), List.of()), false, null);
+
+        List<Map<String, Object>> rows = loader().loadData(dataSet, null, Map.of());
+
+        assertThat(rows.get(0).keySet()).containsExactly("orderNumber", "amount");
+        rows.get(0).put("addedByTheEngine", "value");
+        rows.add(new HashMap<>());
+    }
+
+    @Test
+    void testNullAndEmptyStringResultValuesRemainDistinct() {
+        Map<String, Object> executionRow = new HashMap<>();
+        executionRow.put("missingNumber", null);
+        executionRow.put("emptyNumber", "");
+        queryService.setRows(List.of(executionRow));
+        DataSet dataSet = llmDataSet(PROMPT,
+                storedQuery(List.of("missingNumber", "emptyNumber"), List.of()), false, null);
+
+        List<Map<String, Object>> rows = loader().loadData(dataSet, null, Map.of());
+
+        assertThat(rows.get(0))
+                .containsEntry("missingNumber", null)
+                .containsEntry("emptyNumber", "");
+
+        DataSet childDataSet = llmDataSet(PROMPT,
+                storedQuery(List.of(parameter("Orders_emptyNumber", "java.lang.String"))), false, null);
+        loader().loadData(childDataSet, band("Orders", null, rows.get(0)), Map.of());
+
+        assertThat(queryService.getLastExecutionRequest().getArguments())
+                .extracting(LlmQueryParameter::getName, LlmQueryParameter::getValue)
+                .containsExactly(tuple("Orders_emptyNumber", ""));
+    }
+
+    @Test
+    void testQueryIsGeneratedOnceForTheWholeRun() {
+        // A band under a parent is loaded once per parent row, and every row would ask the same question.
+        DataSet dataSet = llmDataSet(PROMPT, null, true, null);
+        BandData rootBand = band("Root", null, Map.of());
+
+        loader().loadData(dataSet, band("Orders", rootBand, Map.of("orderNumber", "A-1")), Map.of());
+        loader().loadData(dataSet, band("Orders", rootBand, Map.of("orderNumber", "A-2")), Map.of());
+
+        assertThat(queryService.getGenerationRequests()).hasSize(1);
+        assertThat(queryService.getExecutionRequests()).hasSize(2);
+    }
+
+    @Test
+    void testStoredQueryIsReadOnceForTheWholeRun() {
+        // The document does not change while the run reads it, so a parent row does not pay for reading it again.
+        DataSet dataSet = llmDataSet(PROMPT, storedQuery(List.of()), false, null);
+        BandData rootBand = band("Root", null, Map.of());
+        ReportDataLoader loader = loader();
+        CountingSerializer counting = new CountingSerializer();
+        ReflectionTestUtils.setField(loader, "llmDataQuerySerializer", counting);
+
+        try {
+            loader.loadData(dataSet, band("Orders", rootBand, Map.of("orderNumber", "A-1")), Map.of());
+            loader.loadData(dataSet, band("Orders", rootBand, Map.of("orderNumber", "A-2")), Map.of());
+        } finally {
+            ReflectionTestUtils.setField(loader, "llmDataQuerySerializer", serializer);
+        }
+
+        assertThat(counting.reads).isEqualTo(1);
+        assertThat(queryService.getExecutionRequests()).hasSize(2);
+    }
+
+    @Test
+    void testAnotherRunGeneratesItsOwnQuery() {
+        DataSet dataSet = llmDataSet(PROMPT, null, true, null);
+
+        loader().loadData(dataSet, band("Orders", band("Root", null, Map.of()), Map.of()), Map.of());
+        loader().loadData(dataSet, band("Orders", band("Root", null, Map.of()), Map.of()), Map.of());
+
+        assertThat(queryService.getGenerationRequests()).hasSize(2);
+    }
+
+    @Test
+    void testListParameterIsOfferedAsMultiValuedOfItsElementType() {
+        DataSet dataSet = llmDataSet(PROMPT, null, true, null);
+
+        loader().loadData(dataSet, null, Map.of("orderNumbers", List.of("A-1", "A-2")));
+
+        assertThat(queryService.getLastGenerationRequest().getAvailableParameters())
+                .extracting(LlmQueryParameter::getName, LlmQueryParameter::getJavaType,
+                        LlmQueryParameter::isMultiValued)
+                .containsExactly(tuple("orderNumbers", "java.lang.String", true));
+        assertThat(queryService.getLastGenerationRequest().getRequiredResultProperties()).isEmpty();
+    }
+
+    @Test
+    void testEmptyListParameterIsNotOffered() {
+        // Nothing to match with IN and no type to state.
+        DataSet dataSet = llmDataSet(PROMPT, null, true, null);
+
+        loader().loadData(dataSet, null, Map.of("orderNumbers", List.of()));
+
+        assertThat(queryService.getLastGenerationRequest().getAvailableParameters()).isEmpty();
+    }
+
     protected ReportDataLoader loader() {
         return loaderFactory.createDataLoader(DataSetType.LLM.getCode());
     }
@@ -438,6 +548,21 @@ class LlmDataLoaderTest {
                 "revenue_master_data", List.of(Map.of("publisherId", "Nintendo"), Map.of("publisherId", "Ubisoft")));
     }
 
+    /**
+     * Counts how often a stored document is read back.
+     */
+    static class CountingSerializer extends LlmDataQuerySerializer {
+
+        int reads;
+
+        @Nullable
+        @Override
+        public LlmDataQuery fromJson(@Nullable String json) {
+            reads++;
+            return super.fromJson(json);
+        }
+    }
+
     protected BandData band(String name, @Nullable BandData parentBand, Map<String, Object> row) {
         BandData band = new BandData(name, parentBand, BandOrientation.HORIZONTAL);
         band.setData(row);
@@ -449,7 +574,11 @@ class LlmDataLoaderTest {
     }
 
     protected String storedQuery(List<LlmQueryParameter> parameters) {
-        return serializer.toJson(new LlmDataQuery(CACHED_JPQL, List.of("orderNumber"), parameters,
+        return storedQuery(List.of("orderNumber"), parameters);
+    }
+
+    protected String storedQuery(List<String> resultProperties, List<LlmQueryParameter> parameters) {
+        return serializer.toJson(new LlmDataQuery(CACHED_JPQL, resultProperties, parameters,
                 "Orders since the given date", List.of(), null));
     }
 

@@ -21,6 +21,7 @@ import io.jmix.aitools.dataload.generation.EntityDataLoadGenerationService;
 import io.jmix.aitools.dataload.tool.DomainModelDiscoveryTool;
 import io.jmix.core.security.SystemAuthenticator;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.ai.chat.messages.Message;
@@ -43,6 +44,11 @@ class EntityDataLoadGenerationServiceTest {
 
     @Autowired
     StubChatModel stubChatModel;
+
+    @BeforeEach
+    void resetChatModel() {
+        stubChatModel.reset();
+    }
 
     @Autowired
     SystemAuthenticator systemAuthenticator;

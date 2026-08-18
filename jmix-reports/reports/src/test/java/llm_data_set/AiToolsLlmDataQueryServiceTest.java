@@ -19,6 +19,7 @@ package llm_data_set;
 import io.jmix.aitools.dataload.execution.GeneratedJpqlParameter;
 import io.jmix.aitools.dataload.execution.JpqlExecutionParameter;
 import io.jmix.aitools.dataload.execution.JpqlExecutionRequest;
+import io.jmix.core.security.AccessDeniedException;
 import io.jmix.reports.llm.LlmDataQuery;
 import io.jmix.reports.llm.LlmDataQueryException;
 import io.jmix.reports.llm.LlmQueryExecutionRequest;
@@ -32,6 +33,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -73,18 +75,52 @@ class AiToolsLlmDataQueryServiceTest {
     }
 
     @Test
-    void testListValuedParameterIsDescribedAsAListToUseWithIn() {
+    void testListValuedParameterUsesInWithoutBecomingACrossTabAxis() {
         service.generate(new LlmQueryGenerationRequest(PROMPT, List.of(
-                new LlmQueryParameter("revenue_dynamic_header_year", "java.lang.Integer", List.of(2025, 2026), true),
+                new LlmQueryParameter("customerIds", "java.util.UUID", List.of("1", "2"), true),
                 new LlmQueryParameter("dateFrom", "java.time.LocalDate", LocalDate.of(2026, 8, 1))), null));
 
         String userText = generationService.getLastUserText();
         assertThat(userText).contains("several values of this type, matched with IN");
         assertThat(userText).contains("no parentheses around the parameter name");
         assertThat(userText).containsPattern(":dateFrom \\(java\\.time\\.LocalDate\\)");
+        assertThat(userText).doesNotContain("REQUIRED RESULT COLUMNS");
+    }
+
+    @Test
+    void testCrossTabRequiredResultColumnsAreDescribedExplicitly() {
+        service.generate(new LlmQueryGenerationRequest(PROMPT, List.of(
+                new LlmQueryParameter("revenue_dynamic_header_year", "java.lang.Integer",
+                        List.of(2025, 2026), true)),
+                List.of("revenue_dynamic_header_year"), null));
+
+        String userText = generationService.getLastUserText();
         assertThat(userText).contains("REQUIRED RESULT COLUMNS");
         assertThat(userText).contains("\n- revenue_dynamic_header_year");
-        assertThat(userText).doesNotContain("\n- dateFrom");
+        assertThat(userText).contains("matching that parameter with IN");
+    }
+
+    @Test
+    void testScalarParameterShadowingRequiredColumnDoesNotUseIn() {
+        service.generate(new LlmQueryGenerationRequest(PROMPT, List.of(
+                new LlmQueryParameter("revenue_dynamic_header_year", "java.lang.Integer", 2026)),
+                List.of("revenue_dynamic_header_year"), null));
+
+        String userText = generationService.getLastUserText();
+        assertThat(userText).contains("REQUIRED RESULT COLUMNS");
+        assertThat(userText).contains("\n- revenue_dynamic_header_year");
+        assertThat(userText).doesNotContain("matching that parameter with IN");
+    }
+
+    @Test
+    void testRequiredResultColumnsDoNotDependOnAvailableParameters() {
+        service.generate(new LlmQueryGenerationRequest(PROMPT, List.of(),
+                List.of("revenue_dynamic_header_year"), null));
+
+        String userText = generationService.getLastUserText();
+        assertThat(userText).doesNotContain("AVAILABLE REPORT PARAMETERS");
+        assertThat(userText).contains("REQUIRED RESULT COLUMNS");
+        assertThat(userText).contains("\n- revenue_dynamic_header_year");
     }
 
     @Test
@@ -180,6 +216,39 @@ class AiToolsLlmDataQueryServiceTest {
         assertThatThrownBy(() -> service.execute(new LlmQueryExecutionRequest(PROMPT, storedQuery(), List.of(), null)))
                 .isInstanceOf(LlmDataQueryException.class)
                 .hasMessageContaining("dateFrom");
+    }
+
+    @Test
+    void testFailureBeforeTheAddOnsOwnHandlingBecomesLlmDataQueryException() {
+        // The add-on validates, repairs and converts parameters outside its own try block, so a failure there
+        // would otherwise leave the seam as an exception of an unrelated kind.
+        executionService.setFailure(new IllegalStateException("LLM returned an empty response"));
+
+        assertThatThrownBy(() -> service.execute(new LlmQueryExecutionRequest(PROMPT, storedQuery(), List.of(), null)))
+                .isInstanceOf(LlmDataQueryException.class)
+                .cause()
+                .hasMessageContaining("empty response");
+    }
+
+    @Test
+    void testAccessDeniedIsReportedAsItIs() {
+        // Being refused the data is not a failure of the seam, and the run says so in its own words.
+        executionService.setFailure(new AccessDeniedException("entity", "sales_Order"));
+
+        assertThatThrownBy(() -> service.execute(new LlmQueryExecutionRequest(PROMPT, storedQuery(), List.of(), null)))
+                .isInstanceOf(AccessDeniedException.class);
+    }
+
+    @Test
+    void testNullElementsOfAGeneratedListAreDropped() {
+        // Nothing between the model and the query rejects a null element, and the query itself refuses one.
+        generationService.setResultProperties(Arrays.asList("orderNumber", null));
+        generationService.setWarnings(Arrays.asList(null, "Amounts are not converted"));
+
+        LlmDataQuery query = service.generate(new LlmQueryGenerationRequest(PROMPT, List.of(), null));
+
+        assertThat(query.getResultProperties()).containsExactly("orderNumber");
+        assertThat(query.getWarnings()).containsExactly("Amounts are not converted");
     }
 
     protected LlmDataQuery storedQuery() {

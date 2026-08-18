@@ -29,7 +29,6 @@ import io.jmix.reports.entity.ReportTemplate;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -39,8 +38,7 @@ import java.util.Set;
  * Builds a saved report whose data band is fed by an LLM data set with a stored query, so the designer can be
  * opened on it.
  */
-@Component
-public class LlmReportUtil {
+public class TestLlmReportUtil {
 
     public static final String REPORT_NAME = "LLM data set report";
     public static final String REPORT_CODE = "llm-data-set-report";
@@ -65,7 +63,7 @@ public class LlmReportUtil {
      * The same report, but with nothing generated yet — a data set a report author has only written a prompt for.
      */
     public Report createAndSaveReportWithoutStoredQuery() {
-        return createAndSaveReportWithLlmDataSet(null);
+        return createAndSaveReportWithLlmDataSet(null, false);
     }
 
     /**
@@ -99,10 +97,14 @@ public class LlmReportUtil {
     }
 
     public Report createAndSaveReportWithLlmDataSet() {
-        return createAndSaveReportWithLlmDataSet(STORED_QUERY);
+        return createAndSaveReportWithLlmDataSet(STORED_QUERY, false);
     }
 
-    protected Report createAndSaveReportWithLlmDataSet(@Nullable String storedQuery) {
+    public Report createAndSaveReportWithLlmAndJpqlDataSets() {
+        return createAndSaveReportWithLlmDataSet(STORED_QUERY, true);
+    }
+
+    protected Report createAndSaveReportWithLlmDataSet(@Nullable String storedQuery, boolean includeJpqlDataSet) {
         Report report = unconstrainedDataManager.create(Report.class);
         report.setName(REPORT_NAME);
         // The designer refuses to save a report without a code, so the fixture has one.
@@ -119,7 +121,7 @@ public class LlmReportUtil {
         dataBand.setReport(report);
         dataBand.setName(DATA_BAND_NAME);
         dataBand.setOrientation(Orientation.HORIZONTAL);
-        dataBand.setMultiDataSet(false);
+        dataBand.setMultiDataSet(includeJpqlDataSet);
         dataBand.setPosition(0);
         dataBand.setParentBandDefinition(rootBand);
         rootBand.getChildrenBandDefinitions().add(dataBand);
@@ -130,7 +132,16 @@ public class LlmReportUtil {
         dataSet.setType(DataSetType.LLM);
         dataSet.setText(PROMPT);
         dataSet.setLlmGeneratedQuery(storedQuery);
-        dataBand.setDataSets(List.of(dataSet));
+        if (includeJpqlDataSet) {
+            DataSet jpqlDataSet = unconstrainedDataManager.create(DataSet.class);
+            jpqlDataSet.setName("anotherDataSet");
+            jpqlDataSet.setBandDefinition(dataBand);
+            jpqlDataSet.setType(DataSetType.JPQL);
+            jpqlDataSet.setText("select o.number from sales_Order o");
+            dataBand.setDataSets(List.of(dataSet, jpqlDataSet));
+        } else {
+            dataBand.setDataSets(List.of(dataSet));
+        }
 
         report.setBands(Set.of(rootBand, dataBand));
 

@@ -45,9 +45,16 @@ public class TestJpqlExecutionService extends JpqlExecutionService {
     @Nullable
     protected String issueMessage;
 
+    @Nullable
+    protected RuntimeException failure;
+
     @Override
     public JpqlExecutionResult execute(JpqlExecutionRequest request) {
         lastRequest = request;
+
+        if (failure != null) {
+            throw failure;
+        }
 
         GeneratedJpqlResult generatedResult = new GeneratedJpqlResult(request.getJpql(), List.of(), "", List.of(),
                 request.getMaxResults(), request.getFirstResult());
@@ -81,5 +88,13 @@ public class TestJpqlExecutionService extends JpqlExecutionService {
 
     public void setIssueMessage(String issueMessage) {
         this.issueMessage = issueMessage;
+    }
+
+    /**
+     * Makes execution fail the way the add-on does before its own error handling starts: validation, repair and
+     * parameter conversion all run outside the try block of the real service.
+     */
+    public void setFailure(@Nullable RuntimeException failure) {
+        this.failure = failure;
     }
 }

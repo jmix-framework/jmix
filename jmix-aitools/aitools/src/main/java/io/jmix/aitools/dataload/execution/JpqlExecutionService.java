@@ -37,6 +37,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -105,7 +106,7 @@ public class JpqlExecutionService {
             ExecutionRows executionRows = executeQuery(request, generatedResult, executionParameters,
                     effectiveMaxResults, generatedResult.getFirstResult());
 
-            List<Map<String, Object>> rows = retainProperties(executionRows.rows(),
+            List<Map<String, @Nullable Object>> rows = retainProperties(executionRows.rows(),
                     request.getResultProperties(), retainedProperties);
 
             return new JpqlExecutionResult(generatedResult, validationResult, rows,
@@ -188,27 +189,28 @@ public class JpqlExecutionService {
     }
 
     /**
-     * Rebuilds each row keeping only the retained properties, in their original order.
+     * Rebuilds each row keeping only the retained properties, in their original order. Null values are kept
+     * distinct from empty strings.
      *
      * @param rows               fetched rows keyed by all result properties
      * @param resultProperties   all result property names the rows are keyed by
      * @param retainedProperties property names to keep in the output rows
      * @return rows containing only the retained properties, or the original rows if nothing is dropped
      */
-    protected List<Map<String, Object>> retainProperties(List<Map<String, Object>> rows,
+    protected List<Map<String, @Nullable Object>> retainProperties(List<Map<String, @Nullable Object>> rows,
                                                          List<String> resultProperties,
                                                          List<String> retainedProperties) {
         if (retainedProperties.size() == resultProperties.size()) {
             return rows;
         }
 
-        List<Map<String, Object>> retainedRows = new ArrayList<>(rows.size());
-        for (Map<String, Object> row : rows) {
-            Map<String, Object> retainedRow = new LinkedHashMap<>();
+        List<Map<String, @Nullable Object>> retainedRows = new ArrayList<>(rows.size());
+        for (Map<String, @Nullable Object> row : rows) {
+            Map<String, @Nullable Object> retainedRow = new LinkedHashMap<>();
             for (String property : retainedProperties) {
-                retainedRow.put(property, row.getOrDefault(property, ""));
+                retainedRow.put(property, row.get(property));
             }
-            retainedRows.add(Map.copyOf(retainedRow));
+            retainedRows.add(Collections.unmodifiableMap(retainedRow));
         }
         return List.copyOf(retainedRows);
     }
@@ -232,7 +234,7 @@ public class JpqlExecutionService {
         boolean hasMore = loadedRows.size() > maxResults;
         int rowCount = hasMore ? maxResults : loadedRows.size();
 
-        List<Map<String, Object>> rows = new ArrayList<>(rowCount);
+        List<Map<String, @Nullable Object>> rows = new ArrayList<>(rowCount);
         for (int i = 0; i < rowCount; i++) {
             KeyValueEntity entity = loadedRows.get(i);
             Map<String, Object> valueRow = toValueRow(entity, request.getResultProperties());
@@ -242,13 +244,12 @@ public class JpqlExecutionService {
         return createExecutionRows(List.copyOf(rows), hasMore);
     }
 
-    protected Map<String, Object> toValueRow(KeyValueEntity keyValueEntity, List<String> resultProperties) {
-        Map<String, Object> row = new LinkedHashMap<>();
+    protected Map<String, @Nullable Object> toValueRow(KeyValueEntity keyValueEntity, List<String> resultProperties) {
+        Map<String, @Nullable Object> row = new LinkedHashMap<>();
         for (String property : resultProperties) {
-            Object value = keyValueEntity.getValue(property);
-            row.put(property, value == null ? "" : value);
+            row.put(property, keyValueEntity.getValue(property));
         }
-        return Map.copyOf(row);
+        return Collections.unmodifiableMap(row);
     }
 
     protected Integer getEffectiveMaxResult(@Nullable Integer maxResults) {
@@ -262,7 +263,7 @@ public class JpqlExecutionService {
         return requested;
     }
 
-    protected ExecutionRows createExecutionRows(List<Map<String, Object>> rows, boolean hasMore) {
+    protected ExecutionRows createExecutionRows(List<Map<String, @Nullable Object>> rows, boolean hasMore) {
         return new ExecutionRows(rows, hasMore);
     }
 
@@ -272,6 +273,6 @@ public class JpqlExecutionService {
      * @param rows    the fetched rows
      * @param hasMore {@code true} if more rows are available beyond {@code rows}
      */
-    protected record ExecutionRows(List<Map<String, Object>> rows, boolean hasMore) {
+    protected record ExecutionRows(List<Map<String, @Nullable Object>> rows, boolean hasMore) {
     }
 }

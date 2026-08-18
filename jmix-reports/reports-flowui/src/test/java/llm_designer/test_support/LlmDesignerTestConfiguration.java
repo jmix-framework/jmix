@@ -36,7 +36,7 @@ public class LlmDesignerTestConfiguration {
     }
 
     @Bean
-    public LlmReportUtil llmReportUtil() {
-        return new LlmReportUtil();
+    public TestLlmReportUtil llmReportUtil() {
+        return new TestLlmReportUtil();
     }
 }

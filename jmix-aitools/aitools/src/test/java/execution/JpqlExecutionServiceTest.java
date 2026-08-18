@@ -22,6 +22,7 @@ import io.jmix.aitools.dataload.execution.JpqlValidationAndRepairService.Operati
 import io.jmix.aitools.dataload.repair.JpqlRepairResult;
 import io.jmix.aitools.dataload.validation.JpqlValidationIssue;
 import io.jmix.aitools.dataload.validation.JpqlValidationResult;
+import io.jmix.core.entity.KeyValueEntity;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,6 +36,7 @@ import java.util.Map;
 import static io.jmix.aitools.dataload.validation.validator.UsedPropertyPathsValidator.PROPERTY_PATH_INVALID_CODE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
@@ -249,7 +251,23 @@ class JpqlExecutionServiceTest {
                 0));
 
         assertTrue(result.isExecuted());
-        assertEquals(200, result.getMaxResults().intValue());
+        assertEquals(Integer.valueOf(200), result.getMaxResults());
+    }
+
+    @Test
+    @DisplayName("Preserves null and empty-string result values")
+    void testPreservesNullAndEmptyStringResultValues() {
+        TestJpqlExecutionService executionService = createService();
+        KeyValueEntity loadedRow = new KeyValueEntity();
+        loadedRow.setValue("empty", "");
+
+        Map<String, Object> fetchedRow = executionService.valueRow(loadedRow, List.of("missing", "empty"));
+        Map<String, Object> retainedRow = executionService.retainRows(List.of(fetchedRow),
+                List.of("missing", "empty", "denied"), List.of("missing", "empty")).get(0);
+
+        assertTrue(retainedRow.containsKey("missing"));
+        assertNull(retainedRow.get("missing"));
+        assertEquals("", retainedRow.get("empty"));
     }
 
     TestJpqlExecutionService createService() {
@@ -269,6 +287,16 @@ class JpqlExecutionServiceTest {
         void stubRows(List<Map<String, Object>> rows, boolean hasMore) {
             this.stubbedRows = rows;
             this.stubbedHasMore = hasMore;
+        }
+
+        Map<String, Object> valueRow(KeyValueEntity entity, List<String> resultProperties) {
+            return toValueRow(entity, resultProperties);
+        }
+
+        List<Map<String, Object>> retainRows(List<Map<String, Object>> rows,
+                                             List<String> resultProperties,
+                                             List<String> retainedProperties) {
+            return retainProperties(rows, resultProperties, retainedProperties);
         }
 
         @Override

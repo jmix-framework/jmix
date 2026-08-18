@@ -11,6 +11,7 @@
     --jmix-ai-message-list-icon-scroll-down: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='m6 9 6 6 6-6'/></svg>");
     --jmix-ai-message-list-icon-error: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='12' r='10'/><line x1='12' x2='12' y1='8' y2='12'/><line x1='12' x2='12.01' y1='16' y2='16'/></svg>");
     --jmix-ai-message-list-icon-retry: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8'/><path d='M21 3v5h-5'/><path d='M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16'/><path d='M3 21v-5h5'/></svg>");
+    --jmix-ai-message-list-icon-check: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M20 6 9 17l-5-5'/></svg>");
   }
 
   :host([hidden]) {
@@ -36,14 +37,23 @@
 
   [part='thinking'] {
     display: flex;
-    align-items: center;
-    gap: var(--lumo-space-s);
+    flex-direction: column;
+    align-items: stretch;
+    /* No gap here — the status list is always rendered (so its aria-live
+       container exists before the first status lands) and would otherwise open
+       a gap while empty. It carries its own bottom margin when non-empty. */
     box-sizing: border-box;
     width: 100%;
     max-width: var(--jmix-ai-message-list-max-width);
     margin-inline: auto;
     padding: var(--jmix-ai-message-padding, var(--lumo-space-s) var(--lumo-space-m));
     color: var(--jmix-ai-thinking-indicator-color, currentColor);
+  }
+
+  [part='thinking-current'] {
+    display: flex;
+    align-items: center;
+    gap: var(--lumo-space-s);
   }
 
   [part='thinking'][hidden] {
@@ -56,6 +66,85 @@
 
   [part='thinking-label']:empty {
     display: none;
+  }
+
+  [part='thinking-status-list'] {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--lumo-space-s) / 2);
+    max-height: var(--jmix-ai-thinking-status-max-height, 7.5rem);
+    overflow-y: auto;
+    /* Fade the top edge so a clipped list reads as clipped; the scroll behind it
+       is what actually makes older statuses reachable. The padding keeps the
+       oldest visible row out of the fade once scrolled to the top — mask-image
+       masks the box, not the content, so it does not scroll away. */
+    padding-block-start: 1.5rem;
+    mask-image: linear-gradient(to bottom, transparent 0, black 1.5rem);
+  }
+
+  /* No justify-content: flex-end here, however tempting: in a scrolling flex
+     column, content pushed past the start edge by alignment cannot be scrolled
+     back to. Staying pinned to the newest status is done in JS instead — see
+     __thinkingStatusesChanged in the mixin. */
+
+  [part='thinking-status-list']:not(:empty) {
+    margin-block-end: var(--lumo-space-s);
+  }
+
+  [part='thinking-status'] {
+    display: flex;
+    align-items: baseline;
+    gap: calc(var(--lumo-space-s) / 2);
+    font-size: var(--lumo-font-size-s);
+  }
+
+  [part='thinking-status-icon'] {
+    flex: none;
+    align-self: center;
+    width: 0.875em;
+    height: 0.875em;
+    border: 1.5px solid currentColor;
+    border-radius: 50%;
+    border-inline-end-color: transparent;
+    animation: jmix-ai-thinking-status-spin 0.9s linear infinite;
+  }
+
+  [part='thinking-status'][completed] [part='thinking-status-icon'] {
+    border: none;
+    border-radius: 0;
+    animation: none;
+    background: currentColor;
+    -webkit-mask: var(--jmix-ai-message-list-icon-check) center / contain no-repeat;
+    mask: var(--jmix-ai-message-list-icon-check) center / contain no-repeat;
+  }
+
+  [part='thinking-status-detail'] {
+    color: var(--lumo-secondary-text-color);
+  }
+
+  @keyframes jmix-ai-thinking-status-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [part='thinking-status-icon'] {
+      animation: none;
+    }
+  }
+
+  @media (forced-colors: active) {
+    [part='thinking-status-icon'] {
+      forced-color-adjust: none;
+      border-color: CanvasText;
+      border-inline-end-color: transparent;
+    }
+
+    [part='thinking-status'][completed] [part='thinking-status-icon'] {
+      forced-color-adjust: none;
+      background: CanvasText;
+    }
   }
 
   [part='scroll-to-bottom-button'] {

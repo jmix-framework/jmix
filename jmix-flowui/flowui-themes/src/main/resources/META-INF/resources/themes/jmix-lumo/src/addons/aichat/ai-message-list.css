@@ -69,6 +69,9 @@
   }
 
   [part='thinking-status-list'] {
+    /* border-box so the fade padding stays inside the cap: the knob names a
+       max-height, and a consumer setting 7.5rem must get 7.5rem, not 9rem. */
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
     gap: calc(var(--lumo-space-s) / 2);

@@ -27,7 +27,13 @@ import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportOutputType;
 import io.jmix.reports.entity.ReportTemplate;
 import io.jmix.reports.exception.ReportingException;
+import io.jmix.reports.libintegration.JmixGroovyDataLoader;
+import io.jmix.reports.libintegration.JmixJsonDataLoader;
+import io.jmix.reports.libintegration.JmixSqlDataLoader;
+import io.jmix.reports.libintegration.JpqlDataLoader;
 import io.jmix.reports.libintegration.LlmDataLoader;
+import io.jmix.reports.libintegration.MultiEntityDataLoader;
+import io.jmix.reports.libintegration.SingleEntityDataLoader;
 import io.jmix.reports.runner.ReportRunner;
 import io.jmix.reports.test_support.AuthenticatedAsSystem;
 import io.jmix.reports.yarg.exception.UnsupportedLoaderException;
@@ -94,10 +100,14 @@ class LlmLoaderRegistrationTest {
 
         @Test
         void testBuiltInLoaderTypesKeepWorking() {
-            assertThat(loaderFactory.createDataLoader("jpql")).isNotNull();
-            assertThat(loaderFactory.createDataLoader("sql")).isNotNull();
-            assertThat(loaderFactory.createDataLoader("groovy")).isNotNull();
-            assertThat(loaderFactory.createDataLoader("json")).isNotNull();
+            // Registering the LLM loader rebuilt the factory's map, so each built-in type must still reach its
+            // own loader rather than merely resolve to something.
+            assertThat(loaderFactory.createDataLoader("jpql")).isInstanceOf(JpqlDataLoader.class);
+            assertThat(loaderFactory.createDataLoader("sql")).isInstanceOf(JmixSqlDataLoader.class);
+            assertThat(loaderFactory.createDataLoader("groovy")).isInstanceOf(JmixGroovyDataLoader.class);
+            assertThat(loaderFactory.createDataLoader("json")).isInstanceOf(JmixJsonDataLoader.class);
+            assertThat(loaderFactory.createDataLoader("single")).isInstanceOf(SingleEntityDataLoader.class);
+            assertThat(loaderFactory.createDataLoader("multi")).isInstanceOf(MultiEntityDataLoader.class);
         }
 
         @Test

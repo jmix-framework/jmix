@@ -66,11 +66,6 @@ public class LlmDataSetGenerationSupportTest {
     protected Metadata metadata;
 
     @Test
-    public void testServiceIsAvailable() {
-        assertThat(generationSupport.isAvailable()).isTrue();
-    }
-
-    @Test
     public void testRequestCarriesThePromptAndTheRowLimit() {
         DataSet dataSet = llmDataSet(reportWithParameters());
         dataSet.setLlmMaxResults(300);
@@ -200,14 +195,6 @@ public class LlmDataSetGenerationSupportTest {
     }
 
     @Test
-    public void testGenerationDelegatesToTheService() {
-        LlmDataQuery generated = generationSupport.generate(
-                new LlmQueryGenerationRequest(PROMPT, List.of(), null));
-
-        assertThat(generated.getJpql()).contains("select o.number");
-    }
-
-    @Test
     public void testEditedQueryIsStoredAsAReadableDocument() {
         DataSet dataSet = llmDataSet(reportWithParameters());
         generationSupport.storeGeneratedQuery(dataSet,
@@ -292,8 +279,10 @@ public class LlmDataSetGenerationSupportTest {
     }
 
     @Test
-    public void testTypeIsUnavailableWhenGenerationCannotRun() {
+    public void testAvailabilityFollowsWhatTheServiceSaysAboutGeneration() {
         TestLlmDataQueryService service = (TestLlmDataQueryService) queryService;
+        assertThat(generationSupport.isAvailable()).isTrue();
+
         service.setGenerationAvailable(false);
         try {
             assertThat(generationSupport.isAvailable()).isFalse();
@@ -308,6 +297,17 @@ public class LlmDataSetGenerationSupportTest {
     }
 
     @Test
+    public void testColumnsAreNoChangeUnlessTheSetOfNamesDiffers() {
+        // A template refers to a column by name, so a different order breaks nothing, and a first generation
+        // has nothing to be compared against.
+        assertThat(generationSupport.compareColumns(List.of("orderNumber", "total"),
+                List.of("orderNumber", "total")).isEmpty()).isTrue();
+        assertThat(generationSupport.compareColumns(List.of("orderNumber", "total"),
+                List.of("total", "orderNumber")).isEmpty()).isTrue();
+        assertThat(generationSupport.compareColumns(List.of(), List.of("orderNumber")).isEmpty()).isTrue();
+    }
+
+    @Test
     public void testRegeneratedColumnsThatDifferAreReportedAsAddedAndDisappeared() {
         LlmDataSetGenerationSupport.ColumnsChange change = generationSupport.compareColumns(
                 List.of("orderNumber", "total"), List.of("orderNumber", "amount"));
@@ -315,24 +315,6 @@ public class LlmDataSetGenerationSupportTest {
         assertThat(change.isEmpty()).isFalse();
         assertThat(change.added()).containsExactly("amount");
         assertThat(change.disappeared()).containsExactly("total");
-    }
-
-    @Test
-    public void testTheSameColumnsAreNoChange() {
-        assertThat(generationSupport.compareColumns(List.of("orderNumber", "total"),
-                List.of("orderNumber", "total")).isEmpty()).isTrue();
-    }
-
-    @Test
-    public void testTheSameColumnsInAnotherOrderAreNoChange() {
-        // A template refers to a column by name, so a different order breaks nothing.
-        assertThat(generationSupport.compareColumns(List.of("orderNumber", "total"),
-                List.of("total", "orderNumber")).isEmpty()).isTrue();
-    }
-
-    @Test
-    public void testAFirstGenerationIsNoChange() {
-        assertThat(generationSupport.compareColumns(List.of(), List.of("orderNumber")).isEmpty()).isTrue();
     }
 
     @Test

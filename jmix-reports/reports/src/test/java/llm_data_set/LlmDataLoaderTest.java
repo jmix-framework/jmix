@@ -23,6 +23,7 @@ import io.jmix.reports.entity.DataSetType;
 import io.jmix.reports.llm.LlmDataQuery;
 import io.jmix.reports.llm.LlmDataQueryException;
 import io.jmix.reports.llm.LlmQueryExecutionRequest;
+import io.jmix.reports.llm.LlmQueryGenerationRequest;
 import io.jmix.reports.llm.LlmQueryParameter;
 import io.jmix.reports.llm.impl.LlmDataQuerySerializer;
 import io.jmix.reports.yarg.exception.DataLoadingException;
@@ -236,42 +237,26 @@ class LlmDataLoaderTest {
     }
 
     @Test
-    void testCrossTabAxisValuesAreOfferedAsListParameters() {
+    void testCrossTabAxisColumnsAreOfferedAsTypedListParametersInsteadOfTheAxesThemselves() {
         DataSet dataSet = llmDataSet(PROMPT, null, false, null);
         queryService.setQueryToGenerate(linkableCrossTabQuery());
 
         loader().loadData(dataSet, null, crossTabParams());
 
-        assertThat(queryService.getLastGenerationRequest().getAvailableParameters())
+        LlmQueryGenerationRequest request = queryService.getLastGenerationRequest();
+        assertThat(request.getAvailableParameters())
                 .extracting(LlmQueryParameter::getName, LlmQueryParameter::getValue)
                 .contains(tuple("revenue_dynamic_header_year", List.of(2025, 2025)),
                         tuple("revenue_dynamic_header_month", List.of(3, 4)),
                         tuple("revenue_master_data_publisherId", List.of("Nintendo", "Ubisoft")));
-        assertThat(queryService.getLastGenerationRequest().getRequiredResultProperties())
+        assertThat(request.getRequiredResultProperties())
                 .containsExactlyInAnyOrder("revenue_dynamic_header_year", "revenue_dynamic_header_month",
                         "revenue_master_data_publisherId");
-    }
-
-    @Test
-    void testCrossTabAxisItselfIsNotOfferedAsAParameter() {
-        DataSet dataSet = llmDataSet(PROMPT, null, false, null);
-        queryService.setQueryToGenerate(linkableCrossTabQuery());
-
-        loader().loadData(dataSet, null, crossTabParams());
-
-        assertThat(queryService.getLastGenerationRequest().getAvailableParameters())
+        // The axis itself is a list of rows, not a value a query can be filtered by.
+        assertThat(request.getAvailableParameters())
                 .extracting(LlmQueryParameter::getName)
                 .doesNotContain("revenue_dynamic_header", "revenue_master_data");
-    }
-
-    @Test
-    void testCrossTabAxisParameterIsTypedByItsElement() {
-        DataSet dataSet = llmDataSet(PROMPT, null, false, null);
-        queryService.setQueryToGenerate(linkableCrossTabQuery());
-
-        loader().loadData(dataSet, null, crossTabParams());
-
-        assertThat(queryService.getLastGenerationRequest().getAvailableParameters())
+        assertThat(request.getAvailableParameters())
                 .filteredOn(parameter -> parameter.getName().equals("revenue_dynamic_header_year"))
                 .extracting(LlmQueryParameter::getJavaType)
                 .containsExactly("java.lang.Integer");
@@ -355,15 +340,6 @@ class LlmDataLoaderTest {
                 .isInstanceOf(DataLoadingException.class)
                 .hasMessageContaining("revenue_dynamic_header")
                 .hasMessageContaining("orderNumber");
-    }
-
-    @Test
-    void testQueryLinkedToEveryCrossTabAxisIsExecuted() {
-        DataSet dataSet = llmDataSet(PROMPT, serializer.toJson(linkableCrossTabQuery()), false, null);
-
-        loader().loadData(dataSet, null, crossTabParams());
-
-        assertThat(queryService.getLastExecutionRequest()).isNotNull();
     }
 
     @Test

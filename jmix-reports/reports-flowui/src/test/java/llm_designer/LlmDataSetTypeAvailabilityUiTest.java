@@ -52,14 +52,9 @@ public class LlmDataSetTypeAvailabilityUiTest {
         List<DataSetType> types = dataSetTypeOptions();
 
         assertThat(types).contains(DataSetType.LLM);
-    }
-
-    @Test
-    public void testDelegateTypeStaysHidden() {
-        List<DataSetType> types = dataSetTypeOptions();
-
-        assertThat(types).doesNotContain(DataSetType.DELEGATE);
         assertThat(types).contains(DataSetType.JPQL, DataSetType.SQL, DataSetType.GROOVY, DataSetType.JSON);
+        // DELEGATE cannot be set up in the runtime editor, and offering LLM did not bring it back.
+        assertThat(types).doesNotContain(DataSetType.DELEGATE);
     }
 
     @SuppressWarnings("unchecked")

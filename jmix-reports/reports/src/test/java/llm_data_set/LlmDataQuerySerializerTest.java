@@ -21,6 +21,8 @@ import io.jmix.reports.llm.LlmDataQueryException;
 import io.jmix.reports.llm.LlmQueryParameter;
 import io.jmix.reports.llm.impl.LlmDataQuerySerializer;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -148,16 +150,19 @@ class LlmDataQuerySerializerTest {
         assertThat(restored.getMaxResults()).isNull();
     }
 
-    @Test
-    void testNullLiteralDocumentFailsWithRegenerationHint() {
-        assertThatThrownBy(() -> serializer.fromJson("null"))
-                .isInstanceOf(LlmDataQueryException.class)
-                .hasMessageContaining("regenerate");
-    }
-
-    @Test
-    void testNonObjectDocumentFailsWithRegenerationHint() {
-        assertThatThrownBy(() -> serializer.fromJson("[1, 2]"))
+    /**
+     * A document that carries no usable query — whatever is wrong with it — is rejected the same way, because
+     * the author can do only one thing about any of them.
+     */
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "null",
+            "[1, 2]",
+            "{\"jpql\": ",
+            "{\"resultProperties\":[\"n\"]}"
+    })
+    void testUnreadableDocumentFailsWithRegenerationHint(String document) {
+        assertThatThrownBy(() -> serializer.fromJson(document))
                 .isInstanceOf(LlmDataQueryException.class)
                 .hasMessageContaining("regenerate");
     }
@@ -186,19 +191,5 @@ class LlmDataQuerySerializerTest {
         assertThat(restored.getResultProperties()).containsExactly("n");
         assertThat(restored.getParameters()).isEmpty();
         assertThat(restored.getWarnings()).containsExactly("approximated");
-    }
-
-    @Test
-    void testMalformedDocumentFailsWithRegenerationHint() {
-        assertThatThrownBy(() -> serializer.fromJson("{\"jpql\": "))
-                .isInstanceOf(LlmDataQueryException.class)
-                .hasMessageContaining("regenerate");
-    }
-
-    @Test
-    void testDocumentWithoutQueryTextFailsWithRegenerationHint() {
-        assertThatThrownBy(() -> serializer.fromJson("{\"resultProperties\":[\"n\"]}"))
-                .isInstanceOf(LlmDataQueryException.class)
-                .hasMessageContaining("regenerate");
     }
 }

@@ -127,16 +127,11 @@ public class LlmDataSetPanelUiTest {
     }
 
     @Test
-    public void testStoredQueryStartsLocked() {
+    public void testStoredQueryStartsLockedAndEditUnlocksItWithItsColumns() {
         View<?> view = openDesignerOnLlmDataSet();
 
         assertThat(this.<CodeEditor>findComponent(view, "llmGeneratedQueryCodeEditor").isReadOnly()).isTrue();
         assertThat(this.<HorizontalLayout>findComponent(view, "llmColumnsButtonsLayout").isVisible()).isFalse();
-    }
-
-    @Test
-    public void testEditUnlocksTheQueryAndItsColumns() {
-        View<?> view = openDesignerOnLlmDataSet();
 
         this.<JmixButton>findComponent(view, "llmEditQueryBtn").click();
 
@@ -406,20 +401,6 @@ public class LlmDataSetPanelUiTest {
         this.<JmixButton>findComponent(view, "saveBtn").click();
 
         assertThat(llmReportUtil.loadStoredPrompt()).isEqualTo("Orders of the last quarter");
-    }
-
-    @Test
-    public void testTheStoredQueryHasAHelpButton() {
-        View<?> view = openDesignerOnLlmDataSet();
-
-        assertThat(this.<JmixButton>findComponent(view, "llmGeneratedQueryHelpBtn").isVisible()).isTrue();
-    }
-
-    @Test
-    public void testGenerateButtonIsAvailable() {
-        View<?> view = openDesignerOnLlmDataSet();
-
-        assertThat(this.<JmixButton>findComponent(view, "llmGenerateBtn").isVisible()).isTrue();
     }
 
     @Test

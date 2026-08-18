@@ -44,6 +44,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -249,9 +250,10 @@ class LlmDataLoaderTest {
                 .contains(tuple("revenue_dynamic_header_year", List.of(2025, 2025)),
                         tuple("revenue_dynamic_header_month", List.of(3, 4)),
                         tuple("revenue_master_data_publisherId", List.of("Nintendo", "Ubisoft")));
+        // A cross-tab links a cell by the first column named after the axis, so exactly one column per axis is
+        // required — the axis's own first field.
         assertThat(request.getRequiredResultProperties())
-                .containsExactlyInAnyOrder("revenue_dynamic_header_year", "revenue_dynamic_header_month",
-                        "revenue_master_data_publisherId");
+                .containsExactly("revenue_dynamic_header_year", "revenue_master_data_publisherId");
         // The axis itself is a list of rows, not a value a query can be filtered by.
         assertThat(request.getAvailableParameters())
                 .extracting(LlmQueryParameter::getName)
@@ -329,6 +331,52 @@ class LlmDataLoaderTest {
         assertThat(queryService.getLastGenerationRequest().getAvailableParameters())
                 .extracting(LlmQueryParameter::getName, LlmQueryParameter::isMultiValued)
                 .containsExactly(tuple("selected_master_data", true));
+    }
+
+    @Test
+    void testOnlyTheFirstFieldOfACrossTabAxisIsRequiredBack() {
+        // A caption field travels with an axis and holds text no cell row has; requiring it back would let the
+        // matrix be linked by the caption instead of by the value.
+        DataSet dataSet = llmDataSet(PROMPT, null, false, null);
+        queryService.setQueryToGenerate(linkableCrossTabQuery());
+        Map<String, Object> params = new LinkedHashMap<>();
+        params.put("revenue_dynamic_header", List.of(axisRow("year", 2025, "year_caption", "2025")));
+        params.put("revenue_master_data", List.of(axisRow("publisherId", "Nintendo")));
+
+        loader().loadData(dataSet, null, params);
+
+        LlmQueryGenerationRequest request = queryService.getLastGenerationRequest();
+        assertThat(request.getRequiredResultProperties())
+                .containsExactly("revenue_dynamic_header_year", "revenue_master_data_publisherId");
+        assertThat(request.getAvailableParameters())
+                .extracting(LlmQueryParameter::getName)
+                .contains("revenue_dynamic_header_year_caption");
+    }
+
+    @Test
+    void testQueryThatLinksACrossTabAxisByAnotherFieldFails() {
+        LlmDataQuery query = new LlmDataQuery(CACHED_JPQL,
+                List.of("revenue_dynamic_header_year_caption", "revenue_dynamic_header_year",
+                        "revenue_master_data_publisherId", "amount"),
+                List.of(), "Revenue per publisher and year", List.of(), null);
+        DataSet dataSet = llmDataSet(PROMPT, serializer.toJson(query), false, null);
+        Map<String, Object> params = new LinkedHashMap<>();
+        params.put("revenue_dynamic_header", List.of(axisRow("year", 2025, "year_caption", "2025")));
+        params.put("revenue_master_data", List.of(axisRow("publisherId", "Nintendo")));
+
+        assertThatThrownBy(() -> loader().loadData(dataSet, null, params))
+                .isInstanceOf(DataLoadingException.class)
+                .hasMessageContaining("revenue_dynamic_header_year_caption")
+                .hasMessageContaining("revenue_dynamic_header_year");
+    }
+
+    @Test
+    void testNonPositiveRowLimitIsNotALimit() {
+        DataSet dataSet = llmDataSet(PROMPT, storedQuery(List.of()), false, 0);
+
+        loader().loadData(dataSet, null, Map.of());
+
+        assertThat(queryService.getLastExecutionRequest().getMaxResults()).isNull();
     }
 
     @Test
@@ -519,9 +567,26 @@ class LlmDataLoaderTest {
      * the rows that axis produced.
      */
     protected Map<String, Object> crossTabParams() {
-        return Map.of(
-                "revenue_dynamic_header", List.of(Map.of("year", 2025, "month", 3), Map.of("year", 2025, "month", 4)),
-                "revenue_master_data", List.of(Map.of("publisherId", "Nintendo"), Map.of("publisherId", "Ubisoft")));
+        // The rows of an axis keep the order of the query that produced them, and the loader requires the first
+        // field back as the column a cross-tab links by, so the fixture states that order.
+        Map<String, Object> params = new LinkedHashMap<>();
+        params.put("revenue_dynamic_header", List.of(axisRow("year", 2025, "month", 3),
+                axisRow("year", 2025, "month", 4)));
+        params.put("revenue_master_data", List.of(axisRow("publisherId", "Nintendo"),
+                axisRow("publisherId", "Ubisoft")));
+        return params;
+    }
+
+    protected Map<String, Object> axisRow(String name, Object value) {
+        Map<String, Object> row = new LinkedHashMap<>();
+        row.put(name, value);
+        return row;
+    }
+
+    protected Map<String, Object> axisRow(String firstName, Object firstValue, String secondName, Object secondValue) {
+        Map<String, Object> row = axisRow(firstName, firstValue);
+        row.put(secondName, secondValue);
+        return row;
     }
 
     /**

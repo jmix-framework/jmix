@@ -28,8 +28,10 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -128,7 +130,8 @@ public class LlmDataQuerySerializer {
      * <p>
      * The parameters are not edited but re-derived from the text with the pattern the add-on validates queries
      * by, so a hand-written {@code :name} is declared by the act of writing it and a removed one disappears;
-     * their types are irrelevant here, because the loader types every argument from the run's own dictionary.
+     * a parameter the previous document declared keeps its Java type, and one that appears with the edit has
+     * none to keep — the loader types every argument from the run's own dictionary anyway.
      * The explanation and the warnings of the query being replaced are carried over: they describe what the
      * model produced, and an edit does not make them false, only incomplete.
      *
@@ -138,9 +141,16 @@ public class LlmDataQuerySerializer {
      * @return the assembled query, ready to be stored with {@link #toJson(LlmDataQuery)}
      */
     public LlmDataQuery assemble(String jpql, List<String> resultProperties, @Nullable LlmDataQuery previous) {
+        Map<String, String> typesOfPrevious = new LinkedHashMap<>();
+        if (previous != null) {
+            for (LlmQueryParameter parameter : previous.getParameters()) {
+                typesOfPrevious.put(parameter.getName(), parameter.getJavaType());
+            }
+        }
+
         List<LlmQueryParameter> parameters = new ArrayList<>();
         for (String name : parameterNamesOf(jpql)) {
-            parameters.add(new LlmQueryParameter(name, "", null));
+            parameters.add(new LlmQueryParameter(name, typesOfPrevious.getOrDefault(name, ""), null));
         }
 
         return new LlmDataQuery(jpql, resultProperties, parameters,

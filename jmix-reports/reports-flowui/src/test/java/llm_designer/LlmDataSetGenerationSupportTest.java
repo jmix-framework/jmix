@@ -146,6 +146,26 @@ public class LlmDataSetGenerationSupportTest {
     }
 
     @Test
+    public void testOnlyTheFirstColumnOfACrossTabAxisIsRequiredBack() {
+        // A caption column belongs to the axis but holds text no cell row has, and a cross-tab links a cell by
+        // the first column named after the axis.
+        Report report = reportWithParameters();
+        BandDefinition crossBand = band(report, "Revenue", null);
+        crossBand.setOrientation(Orientation.CROSS);
+        axisDataSet(crossBand, "Revenue_dynamic_header", serializer.toJson(new LlmDataQuery(
+                "select year(o.date) as year, cast(year(o.date) as string) as year_caption from sales_Order o",
+                List.of("year", "year_caption"), List.of(), null, List.of(), null)));
+        DataSet cellDataSet = llmDataSet(crossBand);
+
+        LlmQueryGenerationRequest request = generationSupport.createGenerationRequest(cellDataSet);
+
+        assertThat(request.getRequiredResultProperties()).containsExactly("Revenue_dynamic_header_year");
+        assertThat(request.getAvailableParameters())
+                .extracting(LlmQueryParameter::getName)
+                .contains("Revenue_dynamic_header_year", "Revenue_dynamic_header_year_caption");
+    }
+
+    @Test
     public void testCrossTabAxisWithoutAStoredQueryOffersNothing() {
         Report report = reportWithParameters();
         BandDefinition crossBand = band(report, "Revenue", null);

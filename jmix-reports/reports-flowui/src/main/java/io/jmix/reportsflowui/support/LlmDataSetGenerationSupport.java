@@ -238,6 +238,10 @@ public class LlmDataSetGenerationSupport {
      * Offers the columns of the axes of a cross-tab band, so that a cell query can filter itself by them and
      * alias its own columns accordingly. Only an axis that is an LLM data set with a stored query states its
      * columns; against a JPQL or SQL axis they exist only once it has run.
+     * <p>
+     * One column per axis is required back — its first one. A cross-tab links a cell to its axis by the first
+     * returned column named after that axis, so requiring every column would let a caption come first and the
+     * matrix be linked by the caption text, as the loader's own collection explains.
      */
     protected void collectCrossTabAxisColumns(DataSet dataSet, Map<String, LlmQueryParameter> parameters,
                                               List<String> requiredResultProperties) {
@@ -252,6 +256,7 @@ public class LlmDataSetGenerationSupport {
                 continue;
             }
 
+            String axisPrefix = axisName + "_";
             for (String column : storedColumnsOf(axis)) {
                 String name = LlmQueryParameterNames.ofCrossTabValue(axisName, column);
                 if (!LlmQueryParameterNames.isValid(name)) {
@@ -259,7 +264,9 @@ public class LlmDataSetGenerationSupport {
                 }
                 // The type is unknown until the axis runs, as for a parent band column.
                 parameters.putIfAbsent(name, new LlmQueryParameter(name, Object.class.getName(), null, true));
-                requiredResultProperties.add(name);
+                if (requiredResultProperties.stream().noneMatch(required -> required.startsWith(axisPrefix))) {
+                    requiredResultProperties.add(name);
+                }
             }
         }
     }

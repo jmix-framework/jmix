@@ -84,14 +84,15 @@ public class LlmDataLoader implements ReportDataLoader {
 
         RunScope scope = runScopeOf(parentBand);
         Map<String, Object> additionalParams = reportQuery.getAdditionalParams();
-        Integer maxResults = toMaxResults(additionalParams.get(DataSet.LLM_MAX_RESULTS));
+        Integer maxResults = toMaxResults(additionalParams.get(DataSet.LLM_MAX_RESULTS), reportQuery, scope);
         CollectedParameters collectedParameters = collectAvailableParameters(params, parentBand, scope);
         Map<String, LlmQueryParameter> availableParameters = collectedParameters.availableParameters();
 
         try {
             LlmDataQuery query = resolveQuery(reportQuery, prompt, additionalParams, maxResults,
                     availableParameters, collectedParameters.requiredResultProperties(), scope);
-            checkCrossTabAxesAreLinkable(reportQuery, query, params, availableParameters);
+            checkCrossTabAxesAreLinkable(reportQuery, query, params, availableParameters,
+                    collectedParameters.requiredResultProperties());
 
             log.debug("Executing the query of data set [{}]: {}", reportQuery.getName(), query.getJpql());
             List<Map<String, @Nullable Object>> rows = llmDataQueryService.execute(new LlmQueryExecutionRequest(prompt, query,
@@ -112,10 +113,10 @@ public class LlmDataLoader implements ReportDataLoader {
      */
     protected List<Map<String, Object>> toBandRows(List<Map<String, @Nullable Object>> rows,
                                                    List<String> resultProperties) {
-        List<Map<String, Object>> bandRows = new ArrayList<>(rows.size());
+        List<Map<String, @Nullable Object>> bandRows = new ArrayList<>(rows.size());
 
         for (Map<String, @Nullable Object> row : rows) {
-            Map<String, Object> bandRow = new LinkedHashMap<>();
+            Map<String, @Nullable Object> bandRow = new LinkedHashMap<>();
             for (String property : resultProperties) {
                 if (row.containsKey(property)) {
                     bandRow.put(property, row.get(property));
@@ -129,16 +130,33 @@ public class LlmDataLoader implements ReportDataLoader {
             bandRows.add(bandRow);
         }
 
+        //noinspection NullableProblems
         return bandRows;
     }
 
     /**
      * Reads the row limit stored with the data set. Taken as a number rather than cast, so a value restored as
      * another numeric type is a limit and not a failure of the run.
+     * <p>
+     * Only a positive limit is a limit. The designer and the annotated-report builder reject anything else, but
+     * an imported document can carry it: zero would silently produce an empty band and a negative number an
+     * error from deep inside the add-on, so such a value is dropped and the run goes on without a limit.
      */
     @Nullable
-    protected Integer toMaxResults(@Nullable Object value) {
-        return value instanceof Number number ? number.intValue() : null;
+    protected Integer toMaxResults(@Nullable Object value, ReportQuery reportQuery, RunScope scope) {
+        if (!(value instanceof Number number)) {
+            return null;
+        }
+
+        int maxResults = number.intValue();
+        if (maxResults > 0) {
+            return maxResults;
+        }
+
+        scope.warnOnce("row-limit:" + reportQuery.getName(),
+                () -> log.warn("Data set [{}] stores a row limit of [{}], which is not a number of rows; "
+                        + "the query runs without a limit of its own", reportQuery.getName(), maxResults));
+        return null;
     }
 
     protected LlmDataQuery resolveQuery(ReportQuery reportQuery, String prompt,
@@ -327,7 +345,8 @@ public class LlmDataLoader implements ReportDataLoader {
      */
     protected void checkCrossTabAxesAreLinkable(ReportQuery reportQuery, LlmDataQuery query,
                                                 Map<String, Object> params,
-                                                Map<String, LlmQueryParameter> availableParameters) {
+                                                Map<String, LlmQueryParameter> availableParameters,
+                                                List<String> requiredResultProperties) {
         for (String name : params.keySet()) {
             if (!LlmQueryParameterNames.isCrossTabAxis(name) || !isAxisRows(params.get(name))) {
                 continue;
@@ -339,14 +358,31 @@ public class LlmDataLoader implements ReportDataLoader {
                 continue;
             }
 
-            boolean linkable = query.getResultProperties().stream().anyMatch(property -> property.startsWith(prefix));
-            if (!linkable) {
+            String returned = firstWithPrefix(query.getResultProperties(), prefix);
+            if (returned == null) {
                 throw new DataLoadingException(String.format(
                         "The query of data set [%s] returns no column named [%s<field>], so its rows cannot be "
                                 + "linked to the cross-tab axis [%s]; it returns %s",
                         reportQuery.getName(), prefix, name, query.getResultProperties()));
             }
+
+            // A cross-tab links a cell by the first column of the axis prefix, so a query that puts another
+            // field of the axis first would link the matrix by that field — a caption, for instance — and lose
+            // the cells whose value differs from it.
+            String required = firstWithPrefix(requiredResultProperties, prefix);
+            if (required != null && !required.equals(returned)) {
+                throw new DataLoadingException(String.format(
+                        "The query of data set [%s] returns [%s] before [%s], so the cross-tab axis [%s] would be "
+                                + "linked by the wrong field; a cross-tab links a cell by the first column named "
+                                + "after the axis. The query returns %s",
+                        reportQuery.getName(), returned, required, name, query.getResultProperties()));
+            }
         }
+    }
+
+    @Nullable
+    protected String firstWithPrefix(List<String> names, String prefix) {
+        return names.stream().filter(name -> name.startsWith(prefix)).findFirst().orElse(null);
     }
 
     /**
@@ -362,6 +398,11 @@ public class LlmDataLoader implements ReportDataLoader {
      * Offers the values of one cross-tab axis, one parameter per field of its rows, so that a cell query can
      * narrow itself to the columns and rows the matrix actually has. The value is the whole list — the add-on
      * converts a collection element by element — and the type is the element's, not the list's.
+     * <p>
+     * Exactly one of those names is required back as a result column: a cross-tab links a cell to its axis by
+     * the first returned column whose name starts with the axis prefix, so requiring every field would let a
+     * caption column come first and the matrix link by the caption text. The required one is the axis's first
+     * usable field, which is the order the axis itself describes.
      * <p>
      * A field contributes nothing when every row leaves it empty, and the same naming rules as for band fields
      * apply: a name that is not an identifier is skipped, and a name already taken is kept.
@@ -393,13 +434,18 @@ public class LlmDataLoader implements ReportDataLoader {
             }
 
             List<Object> values = field.getValue();
-            requiredResultProperties.add(name);
+            String axisPrefix = dataSetName + "_";
+            if (requiredResultProperties.stream().noneMatch(required -> required.startsWith(axisPrefix))) {
+                requiredResultProperties.add(name);
+            }
+
             LlmQueryParameter present = availableParameters.putIfAbsent(name,
                     new LlmQueryParameter(name, values.get(0).getClass().getName(), values, true));
             if (present != null) {
                 scope.warnOnce("shadowed-axis-field:" + name,
-                        () -> log.warn("Parameter [{}] is already available, so the field [{}] of the cross-tab "
-                                + "axis [{}] is not offered to the query; rename one of them to make both usable",
+                        () -> log.warn("Parameter [{}] is already available, so the values of the field [{}] of "
+                                + "the cross-tab axis [{}] are not offered to the query, while the column of that "
+                                + "name may still be required back; rename one of them to make both usable",
                                 name, field.getKey(), dataSetName));
             }
         }

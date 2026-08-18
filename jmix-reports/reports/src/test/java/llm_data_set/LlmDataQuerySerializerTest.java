@@ -29,6 +29,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.tuple;
 
 class LlmDataQuerySerializerTest {
 
@@ -121,6 +122,22 @@ class LlmDataQuerySerializerTest {
                 "select o.number as num from sales_Order o where o.note = 'it''s a:label'", List.of("num"), null);
 
         assertThat(edited.getParameters()).isEmpty();
+    }
+
+    @Test
+    void testEditedQueryKeepsTheJavaTypeOfAParameterThePreviousDocumentDeclared() {
+        LlmDataQuery previous = new LlmDataQuery("select o.number as orderNumber from sales_Order o where o.date >= :dateFrom",
+                List.of("orderNumber"),
+                List.of(new LlmQueryParameter("dateFrom", "java.time.LocalDate", null)),
+                "Orders since the given date", List.of(), null);
+
+        LlmDataQuery assembled = serializer.assemble(
+                "select o.number as orderNumber from sales_Order o where o.date >= :dateFrom and o.number like :numberPart",
+                List.of("orderNumber"), previous);
+
+        assertThat(assembled.getParameters())
+                .extracting(LlmQueryParameter::getName, LlmQueryParameter::getJavaType)
+                .containsExactly(tuple("dateFrom", "java.time.LocalDate"), tuple("numberPart", ""));
     }
 
     @Test

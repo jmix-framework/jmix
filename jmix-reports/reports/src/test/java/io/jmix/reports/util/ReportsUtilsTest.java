@@ -51,6 +51,9 @@ class ReportsUtilsTest {
     @AfterEach
     void tearDown() {
         runtimeReportUtil.cleanupDatabaseReports();
+        // The holder is a bean of the shared context, so what this class imports must not reach whatever runs
+        // after it.
+        annotatedReportHolder.clear();
     }
 
     @Test
@@ -71,10 +74,10 @@ class ReportsUtilsTest {
 
     @Test
     void testGenerateReportCodeChecksDesignTimeReports() {
-        // Importing twice into the same context fails on a duplicate report code, and the context is shared.
-        if (annotatedReportHolder.getAllReports().isEmpty()) {
-            annotatedReportScanner.importReportDefinitions();
-        }
+        // Importing twice into the same context fails on a duplicate report code, so the test starts from an
+        // empty holder rather than from whatever another test left in it.
+        annotatedReportHolder.clear();
+        annotatedReportScanner.importReportDefinitions();
 
         assertThat(reportsUtils.generateReportCode(GameCriticScoresReport.CODE))
                 .isEqualTo(GameCriticScoresReport.CODE + "-1");

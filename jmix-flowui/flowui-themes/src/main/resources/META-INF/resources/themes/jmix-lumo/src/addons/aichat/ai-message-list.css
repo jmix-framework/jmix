@@ -77,6 +77,11 @@
     gap: calc(var(--lumo-space-s) / 2);
     max-height: var(--jmix-ai-thinking-status-max-height, 7.5rem);
     overflow-y: auto;
+    /* Scroll anchoring would compensate for a row resizing above the scroll
+       position by shifting scrollTop, which is exactly the movement the JS
+       follow arithmetic assumes never happens. Off, so a push leaves scrollTop
+       untouched and the growth it measures is the whole story. */
+    overflow-anchor: none;
     /* Fade the top edge so a clipped list reads as clipped; the scroll behind it
        is what actually makes older statuses reachable. The padding keeps the
        oldest visible row out of the fade once scrolled to the top — mask-image

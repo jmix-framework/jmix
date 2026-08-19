@@ -55,38 +55,58 @@
   }
 
   [part='controls'] {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
     align-items: center;
-    justify-content: flex-end;
     gap: var(--jmix-ai-message-input-gap, var(--lumo-space-m));
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: 'textarea trailing';
+  }
+
+  :host([has-prefix]) [part='controls'] {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-areas: 'prefix textarea trailing';
+  }
+
+  /*
+   * Expanded / fixed-toolbar layout: the textarea takes the whole first row and
+   * the controls form a toolbar row beneath it. The empty cell is a real 1fr
+   * spacer, so the prefix sits left and the trailing group right with no
+   * auto-margin.
+   */
+  :host(:is([expanded], [theme~='fixed-toolbar'])) [part='controls'] {
+    grid-template-areas:
+      'textarea textarea'
+      '.        trailing';
+  }
+
+  :host(:is([expanded], [theme~='fixed-toolbar'])[has-prefix]) [part='controls'] {
+    grid-template-areas:
+      'textarea textarea textarea'
+      'prefix   .        trailing';
   }
 
   [part='trailing'] {
+    grid-area: trailing;
     display: flex;
     align-items: center;
     gap: var(--jmix-ai-message-input-gap, var(--lumo-space-m));
   }
 
+  /* One element per slot: placing by grid-area gives every assigned element the
+     same cell, so two would overlap. HasPrefix guarantees one; the textarea is
+     client-created. The suffix is unconstrained — [part='trailing'] is a flex row. */
+  ::slotted([slot='prefix']) {
+    grid-area: prefix;
+  }
+
   ::slotted([slot='textarea']) {
-    flex: 1 1 auto;
+    grid-area: textarea;
+    /* a grid item's default min-width: auto can still overflow a minmax(0, 1fr) track */
     min-width: 0;
-    align-self: center;
     --vaadin-input-field-border-width: 0 !important;
     --vaadin-focus-ring-width: 0;
     --vaadin-input-field-background: transparent !important;
     --vaadin-input-field-hover-highlight: transparent !important;
-  }
-
-  :host([expanded]) ::slotted([slot='textarea']),
-  :host([theme~='fixed-toolbar']) ::slotted([slot='textarea']) {
-    order: -1;
-    flex-basis: 100%;
-  }
-
-  :host([expanded]) ::slotted([slot='prefix']),
-  :host([theme~='fixed-toolbar']) ::slotted([slot='prefix']) {
-    margin-inline-end: auto;
   }
 
   /* --- Attachments (Stage 3) --- */

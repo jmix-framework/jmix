@@ -1395,6 +1395,13 @@ public class DataContextImpl implements DataContextInternal {
         return result;
     }
 
+    @Override
+    public Object mergeCompositionOwnerFromChild(Object owner) {
+        Object merged = merge(owner);
+        compositionModifiedOwners.add(merged);
+        return merged;
+    }
+
     /**
      * Baseline-shaped current value of the given attribute of a managed instance, in the form
      * {@link DataContextChangeTracker} compares against: a scalar value as is, a reference as
@@ -1504,12 +1511,41 @@ public class DataContextImpl implements DataContextInternal {
         return null;
     }
 
+    /**
+     * Merges the composition owner chain of a modified instance into the parent context, so the parent's
+     * owner instances reference the propagated child. A deep-composition edit dirties only the edited leaf,
+     * and detail views normally fetch a nested composition collection without the back-reference to its
+     * owner, so merging the leaf alone leaves it unreachable from the parent's owner instance: the parent
+     * cannot tell that the owner's subtree changed, and reopening an intermediate editor reloads a stale
+     * instance and loses the edit. The chain is resolved in this (child) context, the only place where the
+     * composition path from the owner down to the edited leaf is known.
+     * <p>
+     * The merged owners are marked for reopen protection only ({@link #compositionModifiedOwners}) and never
+     * added to {@link #modifiedInstances}, so an untouched owner is still never persisted.
+     */
+    protected void propagateCompositionOwnersToParent(Object entity) {
+        Set<Object> visited = Collections.newSetFromMap(new IdentityHashMap<>());
+        Object current = entity;
+        while (current != null && visited.add(current)) {
+            Object owner = findCompositionOwner(current);
+            if (owner != null) {
+                parentContext.mergeCompositionOwnerFromChild(owner);
+            }
+            current = owner;
+        }
+    }
+
     protected Set<Object> saveToParentContext() {
         Set<Object> savedEntities = new HashSet<>();
         for (Object entity : modifiedInstances) {
             Object merged = parentContext.mergeFromChild(entity, changeTracker.getModifiedAttributes(entity));
             parentContext.getModifiedInstances().add(merged);
             savedEntities.add(merged);
+        }
+        // Runs after every modified instance has been merged: their dirty attributes are registered in
+        // the parent by now, so the owner merges below cannot overwrite them.
+        for (Object entity : modifiedInstances) {
+            propagateCompositionOwnersToParent(entity);
         }
         for (Object entity : removedInstances) {
             parentContext.remove(entity);

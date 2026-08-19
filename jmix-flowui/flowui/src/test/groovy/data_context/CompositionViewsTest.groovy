@@ -19,6 +19,7 @@ package data_context
 import com.vaadin.flow.component.UI
 import data_context.view.OrderView
 import io.jmix.core.DataManager
+import io.jmix.core.Id
 import io.jmix.core.Metadata
 import io.jmix.flowui.ViewNavigators
 import io.jmix.flowui.view.navigation.UrlParamSerializer
@@ -30,6 +31,7 @@ import spock.lang.Unroll
 import test_support.entity.sales.Order
 import test_support.entity.sales.OrderLine
 import test_support.entity.sales.OrderLineParam
+import test_support.entity.sales.OrderLineParamNote
 import test_support.spec.FlowuiTestSpecification
 
 @SuppressWarnings("GroovyAssignabilityCheck")
@@ -58,6 +60,7 @@ class CompositionViewsTest extends FlowuiTestSpecification {
 
     @Override
     void cleanup() {
+        jdbcTemplate.update("delete from TEST_ORDER_LINE_PARAM_NOTE")
         jdbcTemplate.update("delete from TEST_ORDER_LINE_PARAM")
         jdbcTemplate.update("delete from TEST_ORDER_LINE")
         jdbcTemplate.update("delete from TEST_ORDER")
@@ -105,6 +108,70 @@ class CompositionViewsTest extends FlowuiTestSpecification {
         where:
 
         explicitParentDc << [true, false]
+    }
+
+    def "a deep composition edit survives reopening the intermediate editor (#4907)"() {
+
+        given: "an order with a line and a param, opened in the order view"
+
+        def order = dataManager.save(new Order(number: '1', orderLines: []))
+        def orderLine = dataManager.save(new OrderLine(quantity: 1, params: [], order: order))
+        dataManager.save(new OrderLineParam(name: 'p1', value: 'v1', orderLine: orderLine))
+
+        navigationSupport.navigate(OrderView, urlParamSerializer.serialize(order.id))
+        OrderView orderView = UI.getCurrent().getInternals().getActiveRouterTargetsChain().get(0)
+
+        when: "the param is edited two levels down, then the param and line editors are saved while the " +
+                "order view stays open"
+
+        def lineView = orderView.buildLineScreenForEdit(false)
+        def paramView = lineView.buildParamViewForEdit()
+        paramView.changeValueSaveAndClose('v2')
+        lineView.closeWithSave()
+
+        then: "reopening the line editor shows the edited param instead of a stale copy from the database"
+
+        def reopenedLineView = orderView.buildLineScreenForEdit(false)
+        reopenedLineView.paramsDc.items.size() == 1
+        reopenedLineView.paramsDc.items[0].value == 'v2'
+    }
+
+    def "a deep composition edit survives reopening editors two levels up (#4907)"() {
+
+        given: "an order with a line, a param and a note, opened in the order view"
+
+        def order = dataManager.save(new Order(number: '1', orderLines: []))
+        def orderLine = dataManager.save(new OrderLine(quantity: 1, params: [], order: order))
+        def lineParam = dataManager.save(
+                new OrderLineParam(name: 'p1', value: 'v1', orderLine: orderLine, notes: []))
+        def note = dataManager.save(new OrderLineParamNote(text: 't1', param: lineParam))
+
+        navigationSupport.navigate(OrderView, urlParamSerializer.serialize(order.id))
+        OrderView orderView = UI.getCurrent().getInternals().getActiveRouterTargetsChain().get(0)
+
+        when: "the note is edited three levels down, then every editor but the order view is saved"
+
+        def lineView = orderView.buildLineScreenForEdit(false)
+        def paramView = lineView.buildParamViewForEdit()
+        def noteView = paramView.buildNoteViewForEdit()
+        noteView.changeTextSaveAndClose('t2')
+        paramView.closeWithSave()
+        lineView.closeWithSave()
+
+        then: "reopening the line editor and the param editor in it shows the edited note"
+
+        def reopenedLineView = orderView.buildLineScreenForEdit(false)
+        def reopenedParamView = reopenedLineView.buildParamViewForEdit()
+        reopenedParamView.notesDc.items.size() == 1
+        reopenedParamView.notesDc.items[0].text == 't2'
+
+        when: "the order view saves the aggregate"
+
+        orderView.viewData.dataContext.save()
+
+        then: "the deep edit reaches the database"
+
+        dataManager.load(Id.of(note)).one().text == 't2'
     }
 
     def "remove nested instance on 2nd level"() {

@@ -16,10 +16,12 @@
 
 package test_support.entity.sales;
 
+import io.jmix.core.metamodel.annotation.Composition;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import test_support.entity.TestBaseEntity;
 
 import jakarta.persistence.*;
+import java.util.List;
 
 @Table(name = "TEST_ORDER_LINE_PARAM")
 @Entity(name = "test_OrderLineParam")
@@ -37,6 +39,10 @@ public class OrderLineParam extends TestBaseEntity {
     @JoinColumn(name = "ORDER_LINE_ID")
     protected OrderLine orderLine;
 
+    @Composition
+    @OneToMany(mappedBy = "param")
+    protected List<OrderLineParamNote> notes;
+
     public String getName() {
         return name;
     }
@@ -51,6 +57,14 @@ public class OrderLineParam extends TestBaseEntity {
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    public List<OrderLineParamNote> getNotes() {
+        return notes;
+    }
+
+    public void setNotes(List<OrderLineParamNote> notes) {
+        this.notes = notes;
     }
 
     public OrderLine getOrderLine() {

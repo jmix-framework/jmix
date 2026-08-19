@@ -43,4 +43,18 @@ public interface DataContextInternal extends DataContext, DataContextChanges {
     default Object mergeFromChild(Object entity, Set<String> childDirtyAttributes) {
         return merge(entity);
     }
+
+    /**
+     * Merges an entity owning a composition child that a child context saved into this (parent) context.
+     * <p>
+     * Unlike a plain {@link #merge(Object)}, the owner is also marked as changed for {@link #isModified(Object)},
+     * so a reopened editor of the owner keeps this context's instance instead of reloading a stale copy. The
+     * owner does not enter {@link #getModified()} and is never persisted on its own.
+     *
+     * @param owner the owner instance of the child context
+     * @return the managed instance of this context
+     */
+    default Object mergeCompositionOwnerFromChild(Object owner) {
+        return merge(owner);
+    }
 }

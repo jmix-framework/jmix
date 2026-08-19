@@ -16,6 +16,7 @@
 
 package data_context.view;
 
+import io.jmix.flowui.DialogWindows;
 import io.jmix.flowui.component.grid.DataGrid;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.model.*;
@@ -38,6 +39,9 @@ public class LineView extends StandardDetailView<OrderLine> {
 
     @Autowired
     private DataComponents dataComponents;
+
+    @Autowired
+    private DialogWindows dialogWindows;
 
     @ViewComponent
     public DataGrid<OrderLineParam> paramsDataGrid;
@@ -64,5 +68,13 @@ public class LineView extends StandardDetailView<OrderLine> {
     public void changeSaveAndClose(int quantity) {
         qtyField.setTypedValue(quantity);
         closeWithSave();
+    }
+
+    public ParamView buildParamViewForEdit() {
+        paramsDataGrid.select(paramsDc.getItems().get(0));
+        return dialogWindows.detail(paramsDataGrid)
+                .withViewClass(ParamView.class)
+                .open()
+                .getView();
     }
 }

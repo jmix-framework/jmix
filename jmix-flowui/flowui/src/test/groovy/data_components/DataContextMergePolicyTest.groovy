@@ -744,6 +744,58 @@ class DataContextMergePolicyTest extends DataContextSpec {
         dataManager.remove(param, line, order, customer)
     }
 
+    @IgnoreIf({Boolean.valueOf(System.getenv("JMIX_ECLIPSELINK_DISABLELAZYLOADING"))})
+    def "a deep composition edit reaches the root context when no back-references are fetched (#4907)"() {
+        given: "an order, a line and a param, and the three editor fetch plans a Studio-generated view chain uses"
+        Customer customer = dataManager.save(new Customer(name: 'c1', address: new Address()))
+        Order order = dataManager.save(new Order(number: 'o1', customer: customer))
+        OrderLine line = dataManager.save(new OrderLine(quantity: 1, order: order))
+        OrderLineParam param = dataManager.save(new OrderLineParam(name: 'p1', value: 'v1', orderLine: line))
+
+        def orderEditorPlan = fetchPlans.builder(Order)
+                .addFetchPlan('_local')
+                .add('orderLines', '_local')
+                .build()
+        def lineEditorPlan = fetchPlans.builder(OrderLine)
+                .addFetchPlan('_local')
+                .add('params', '_local')
+                .build()
+        def paramEditorPlan = fetchPlans.builder(OrderLineParam)
+                .addFetchPlan('_local')
+                .build()
+
+        and: "the root context holds the order with its lines shallow"
+        DataContext rootContext = factory.createDataContext()
+        Order rootOrder = rootContext.merge(dataManager.load(Id.of(order)).fetchPlan(orderEditorPlan).one())
+        OrderLine rootLine = rootOrder.orderLines[0]
+
+        when: "the line editor loads the line with its params, the param editor edits only the param, and both save"
+        DataContext lineContext = factory.createDataContext()
+        lineContext.setParent(rootContext)
+        lineContext.merge(dataManager.load(Id.of(line)).fetchPlan(lineEditorPlan).one())
+
+        DataContext paramContext = factory.createDataContext()
+        paramContext.setParent(lineContext)
+        OrderLineParam editedParam = paramContext.merge(dataManager.load(Id.of(param)).fetchPlan(paramEditorPlan).one())
+        editedParam.value = 'v2'
+        paramContext.save()
+        lineContext.save()
+
+        then: "the root's line satisfies the line editor's fetch plan, so reopening it keeps the in-context " +
+                "instance instead of reloading a stale copy"
+        entityStates.isLoadedWithFetchPlan(rootLine, lineEditorPlan)
+
+        and: "the edit is reachable from the root's line"
+        rootLine.params.size() == 1
+        rootLine.params[0].value == 'v2'
+
+        and: "the root context reports the line as modified"
+        rootContext.isModified(rootLine)
+
+        cleanup:
+        dataManager.remove(param, line, order, customer)
+    }
+
     def "merge bidirectional graph with two java instances of same id does not duplicate collection (#5331)"() {
         given: "two java instances of the same user id, joined by a bidirectional user <-> userRoles graph"
         DataContext context = factory.createDataContext()

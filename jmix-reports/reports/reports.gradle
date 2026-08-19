@@ -29,9 +29,6 @@ dependencies {
     api project(':eclipselink')
 
     compileOnly project(':dynattr')
-
-    // The AI Tools add-on is an optional dependency: the 'llm' data set type works only if an application
-    // adds that add-on explicitly.
     compileOnly project(':aitools')
 
     api 'org.apache.groovy:groovy-templates'

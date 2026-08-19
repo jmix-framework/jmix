@@ -349,6 +349,12 @@ public class ReportDetailView extends StandardDetailView<Report> {
     protected final Map<DataSet, Long> latestLlmGeneration = new IdentityHashMap<>();
     protected final Map<DataSet, Long> llmQueryDraftRevisions = new IdentityHashMap<>();
 
+    /**
+     * The data set types the designer offers, computed once: they do not change while the view is open, and
+     * the inline selector of a multi-data-set band would otherwise rebuild them for every rendered row.
+     */
+    protected List<DataSetType> dataSetTypeOptions;
+
     @Subscribe
     public void onInit(InitEvent event) {
         dataSetsDataGridLayout.setWidth(null);
@@ -647,6 +653,9 @@ public class ReportDetailView extends StandardDetailView<Report> {
         if (event.getChangeType() == CollectionChangeType.REFRESH) {
             bandsTreeDataGrid.expand(event.getSource().getItems());
         }
+
+        // A band takes its data sets with it, and they never reach the data set container to be removed there.
+        forgetDataSetsOutsideTheReport();
     }
 
     @Subscribe(id = "dataSetsDc", target = Target.DATA_CONTAINER)
@@ -719,13 +728,24 @@ public class ReportDetailView extends StandardDetailView<Report> {
     protected void onDataSetsDcCollectionChange(CollectionContainer.CollectionChangeEvent<DataSet> event) {
         updateStreamingRelatedFields();
 
-        if (event.getChangeType() == CollectionChangeType.REMOVE_ITEMS) {
-            // A data set removed from the report is never shown again, so what is remembered about it goes with it.
-            for (DataSet removed : event.getChanges()) {
-                latestLlmGeneration.remove(removed);
-                llmQueryDraftRevisions.remove(removed);
+        forgetDataSetsOutsideTheReport();
+    }
+
+    /**
+     * Drops what is remembered about data sets the report no longer holds. Removing a data set, removing the
+     * band that owned it and switching to another band all reach the view differently, so the maps are pruned
+     * against the report itself rather than against one collection event.
+     */
+    protected void forgetDataSetsOutsideTheReport() {
+        Set<DataSet> present = Collections.newSetFromMap(new IdentityHashMap<>());
+        for (BandDefinition band : bandsDc.getItems()) {
+            if (band.getDataSets() != null) {
+                present.addAll(band.getDataSets());
             }
         }
+
+        latestLlmGeneration.keySet().removeIf(dataSet -> !present.contains(dataSet));
+        llmQueryDraftRevisions.keySet().removeIf(dataSet -> !present.contains(dataSet));
     }
 
     @Subscribe(id = "llmQueryColumnsDc", target = Target.DATA_CONTAINER)
@@ -1467,11 +1487,13 @@ public class ReportDetailView extends StandardDetailView<Report> {
         field.setStatusChangeHandler(typedTextFieldStatusContext -> {/*do nothing*/});
         field.setWidthFull();
         field.addValueChangeListener(event -> {
-            // Finish any draft owned by the previously selected row before this item's property event can refresh
-            // the details panel as if it were already current.
+            // The type is set first, so the item-change handler that follows sees the type the row now has and
+            // rebuilds the fields that depend on it. A property change of a row that is not the shown one
+            // leaves the details panel alone, which is what makes this order safe.
+            item.setType(event.getValue());
+            // Avoiding bug with not selected edited row
             dataSetsDc.setItem(item);
             dataSetsDataGrid.select(item);
-            item.setType(event.getValue());
         });
         return field;
     }
@@ -1482,6 +1504,14 @@ public class ReportDetailView extends StandardDetailView<Report> {
      * the data set.
      */
     protected List<DataSetType> getDataSetTypeOptions() {
+        if (dataSetTypeOptions == null) {
+            dataSetTypeOptions = buildDataSetTypeOptions();
+        }
+
+        return dataSetTypeOptions;
+    }
+
+    protected List<DataSetType> buildDataSetTypeOptions() {
         ArrayList<DataSetType> options = new ArrayList<>(Arrays.asList(DataSetType.values()));
         options.remove(DataSetType.DELEGATE); // can't set it up in runtime editor
 
@@ -1646,6 +1676,19 @@ public class ReportDetailView extends StandardDetailView<Report> {
         return field;
     }
 
+    /**
+     * Renders a column name as a field that survives its own edit. A name typed into it renames the column,
+     * which refreshes the row it is in; a renderer that can only create would answer that refresh with a new
+     * field, and the one being typed into would leave the grid, taking the focus and the caret with it.
+     * <p>
+     * Keeping the field as it is shows the current name all the same: while the panel is unlocked, that field is
+     * the only thing that renames its column, and every other change to the list — filling it, dropping the
+     * nameless rows, locking the panel again — replaces the items or the renderer and re-renders the grid.
+     */
+    protected Renderer<LlmQueryColumn> createLlmColumnNameRenderer() {
+        return new ComponentRenderer<>(this::createLlmColumnNameField, (field, column) -> field);
+    }
+
     protected void setLlmQueryEditing(boolean editing) {
         if (editing && !isLlmPanelEditable()) {
             return;
@@ -1678,7 +1721,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
                 : "bandsTab.dataSetTypeLayout.llmEditQueryBtn.editTooltip"));
 
         llmGeneratedColumnsDataGrid.getColumnByKey("name").setRenderer(editorEditable
-                ? new ComponentRenderer<>(this::createLlmColumnNameField)
+                ? createLlmColumnNameRenderer()
                 : llmColumnNameRenderer);
     }
 
@@ -1736,6 +1779,28 @@ public class ReportDetailView extends StandardDetailView<Report> {
         removeBlankLlmQueryColumns();
         llmDataSetGenerationSupport.finishEditedQuery(dataSet, llmGeneratedQueryCodeEditor.getValue(),
                 editedLlmQueryColumns());
+        showLlmQueryProblems(llmDataSetGenerationSupport.readStoredQuery(dataSet));
+    }
+
+    /**
+     * Says what would make the stored query fail a report run, right after it is stored. A query is checked
+     * without running it and without asking the model anything, so an author learns of a broken query while
+     * the panel that produced it is still open, instead of on the next run of the report.
+     */
+    protected void showLlmQueryProblems(@Nullable LlmDataQuery query) {
+        if (query == null) {
+            return;
+        }
+
+        List<String> problems = llmDataSetGenerationSupport.validate(query);
+        if (problems.isEmpty()) {
+            return;
+        }
+
+        notifications.create(messageBundle.formatMessage("bandsTab.dataSetTypeLayout.llmQueryProblems",
+                        String.join("; ", problems)))
+                .withType(Notifications.Type.WARNING)
+                .show();
     }
 
     /**
@@ -1763,6 +1828,10 @@ public class ReportDetailView extends StandardDetailView<Report> {
     }
 
     protected void refreshLlmPanelIfShown(DataSet dataSet) {
+        if (dataSet != dataSetsDc.getItemOrNull()) {
+            return;
+        }
+
         if (dataSet.getType() == DataSetType.LLM) {
             initLlmDataSetOptions(dataSet);
         } else {
@@ -1775,6 +1844,9 @@ public class ReportDetailView extends StandardDetailView<Report> {
         setLlmQueryEditing(false);
         // What the last generation changed is said about the query the panel is leaving, not about this one.
         llmColumnsChangedNotice.setVisible(false);
+        // The stale notice talks about a stored query; without one there is nothing for it to be stale about.
+        llmStaleQueryNotice.setVisible(llmStaleQueryNotice.isVisible()
+                && StringUtils.isNotBlank(dataSet.getLlmGeneratedQuery()));
         updateLlmPanelAvailability();
 
         LlmDataQuery storedQuery;
@@ -1823,7 +1895,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
     }
 
     @Subscribe
-    protected void onReadOnlyChangeEvent(ReadOnlyTracker.ReadOnlyChangeEvent event) {
+    public void onReadOnlyChangeEvent(ReadOnlyTracker.ReadOnlyChangeEvent event) {
         if (event.isReadOnly()) {
             // An attempt started with editing rights must not become applicable again if the view is later
             // switched back to writable before its response arrives.
@@ -2026,7 +2098,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
         }
 
         LlmQueryGenerationRequest request = llmDataSetGenerationSupport.createGenerationRequest(dataSet);
-        BackgroundTask<Integer, LlmDataQuery> task = getTask(request, dataSet);
+        BackgroundTask<Integer, LlmDataQuery> task = createLlmGenerationTask(request, dataSet);
 
         dialogs.createBackgroundTaskDialog(task)
                 .withHeader(messageBundle.getMessage("bandsTab.dataSetTypeLayout.llmGenerationDialog.header"))
@@ -2035,7 +2107,12 @@ public class ReportDetailView extends StandardDetailView<Report> {
                 .open();
     }
 
-    protected BackgroundTask<Integer, LlmDataQuery> getTask(LlmQueryGenerationRequest request, DataSet dataSet) {
+    /**
+     * Creates the task that generates a query for the data set, and issues the token that makes it the current
+     * attempt for that data set: a task created later supersedes whatever was created before it.
+     */
+    protected BackgroundTask<Integer, LlmDataQuery> createLlmGenerationTask(LlmQueryGenerationRequest request,
+                                                                           DataSet dataSet) {
         long timeoutMs = reportsClientProperties.getLlmQueryGenerationTimeoutMs();
         long generationToken = ++llmGenerationSequence;
         latestLlmGeneration.put(dataSet, generationToken);
@@ -2069,6 +2146,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
                     showLlmColumnsChangedNotice(
                             previousQuery != null ? previousQuery.getResultProperties() : Collections.emptyList(),
                             generatedQuery.getResultProperties());
+                    showLlmQueryProblems(generatedQuery);
                 }
             }
 
@@ -2101,7 +2179,10 @@ public class ReportDetailView extends StandardDetailView<Report> {
     }
 
     protected void forgetLlmGenerationAttempt(LlmGenerationAttempt attempt) {
-        latestLlmGeneration.remove(attempt.dataSet(), attempt.token());
+        Long latestToken = latestLlmGeneration.get(attempt.dataSet());
+        if (latestToken != null && latestToken == attempt.token()) {
+            latestLlmGeneration.remove(attempt.dataSet());
+        }
     }
 
     /**

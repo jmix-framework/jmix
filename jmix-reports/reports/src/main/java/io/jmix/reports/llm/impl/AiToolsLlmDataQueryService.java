@@ -18,26 +18,19 @@ package io.jmix.reports.llm.impl;
 
 import io.jmix.aitools.ChatClientFactory;
 import io.jmix.aitools.dataload.EntityDataLoadQuery;
-import io.jmix.aitools.dataload.execution.GeneratedJpqlParameter;
-import io.jmix.aitools.dataload.execution.JpqlExecutionParameter;
-import io.jmix.aitools.dataload.execution.JpqlExecutionRequest;
-import io.jmix.aitools.dataload.execution.JpqlExecutionResult;
-import io.jmix.aitools.dataload.execution.JpqlExecutionService;
+import io.jmix.aitools.dataload.execution.*;
 import io.jmix.aitools.dataload.generation.EntityDataLoadGenerationService;
 import io.jmix.aitools.dataload.validation.JpqlValidationIssue;
 import io.jmix.aitools.dataload.validation.JpqlValidationResult;
+import io.jmix.aitools.dataload.validation.JpqlValidationService;
 import io.jmix.core.security.AccessDeniedException;
-import io.jmix.reports.llm.LlmDataQuery;
-import io.jmix.reports.llm.LlmDataQueryException;
-import io.jmix.reports.llm.LlmDataQueryService;
-import io.jmix.reports.llm.LlmQueryExecutionRequest;
-import io.jmix.reports.llm.LlmQueryGenerationRequest;
-import io.jmix.reports.llm.LlmQueryParameter;
+import io.jmix.reports.llm.*;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -58,6 +51,9 @@ public class AiToolsLlmDataQueryService implements LlmDataQueryService {
 
     @Autowired
     protected JpqlExecutionService jpqlExecutionService;
+
+    @Autowired
+    protected JpqlValidationService jpqlValidationService;
 
     @Autowired
     protected ChatClientFactory chatClientFactory;
@@ -88,12 +84,25 @@ public class AiToolsLlmDataQueryService implements LlmDataQueryService {
         // A model answers with the lists it likes, and nothing between here and the model rejects a null
         // element in them, so they are cleaned before the query is built out of them.
         return new LlmDataQuery(generatedQuery.getJpql(), retainNonNull(generatedQuery.getResultProperties()),
-                toQueryParameters(generatedQuery.getParameters()), generatedQuery.getExplanation(),
-                retainNonNull(generatedQuery.getWarnings()), generatedQuery.getMaxResults());
+                toQueryParameters(generatedQuery.getJpql(), generatedQuery.getParameters()),
+                generatedQuery.getExplanation(), retainNonNull(generatedQuery.getWarnings()),
+                generatedQuery.getMaxResults());
     }
 
     @Override
-    public List<Map<String, @Nullable Object>> execute(LlmQueryExecutionRequest request) {
+    public List<String> validate(LlmDataQuery query) {
+        JpqlValidationResult validationResult = jpqlValidationService.validate(toGeneratedResult(query));
+        if (validationResult.isValid()) {
+            return List.of();
+        }
+
+        return validationResult.getIssues().stream()
+                .map(JpqlValidationIssue::getMessage)
+                .toList();
+    }
+
+    @Override
+    public LlmQueryExecutionResult execute(LlmQueryExecutionRequest request) {
         LlmDataQuery query = request.getQuery();
         Integer maxResults = request.getMaxResults() != null ? request.getMaxResults() : query.getMaxResults();
 
@@ -119,11 +128,10 @@ public class AiToolsLlmDataQueryService implements LlmDataQueryService {
             throw new LlmDataQueryException(describeFailure(result));
         }
 
-        return result.getRows();
+        return new LlmQueryExecutionResult(result.getRows(), result.isHasMore());
     }
 
     protected <T> List<T> retainNonNull(@Nullable List<T> values) {
-        //noinspection ConstantValue
         if (values == null) {
             return List.of();
         }
@@ -202,16 +210,42 @@ public class AiToolsLlmDataQueryService implements LlmDataQueryService {
     }
 
     /**
-     * Keeps the names and types of the generated parameters and drops their values: the values a model
-     * invents belong to the request it was generated for, while the query is stored and reused.
+     * Declares the parameters the generated text references, and nothing else. The model's own list only
+     * supplies the Java types: a list that says anything else than the text does is what the add-on rejects a
+     * query for, and a query stored with such a list fails on every run instead of once here.
+     * <p>
+     * The values are dropped along the way: the values a model invents belong to the request it was generated
+     * for, while the query is stored and reused.
      */
-    protected List<LlmQueryParameter> toQueryParameters(List<GeneratedJpqlParameter> generatedParameters) {
-        List<LlmQueryParameter> parameters = new ArrayList<>(generatedParameters.size());
+    protected List<LlmQueryParameter> toQueryParameters(String jpql,
+                                                        List<GeneratedJpqlParameter> generatedParameters) {
+        Map<String, String> declaredTypes = new LinkedHashMap<>();
         for (GeneratedJpqlParameter generatedParameter : generatedParameters) {
-            parameters.add(new LlmQueryParameter(generatedParameter.getName(),
-                    StringUtils.defaultString(generatedParameter.getType()), null));
+            if (StringUtils.isNotBlank(generatedParameter.getName())) {
+                declaredTypes.put(generatedParameter.getName(),
+                        StringUtils.defaultString(generatedParameter.getType()));
+            }
+        }
+
+        List<LlmQueryParameter> parameters = new ArrayList<>();
+        for (String name : LlmQueryParameterNames.referencedIn(jpql)) {
+            parameters.add(new LlmQueryParameter(name, declaredTypes.getOrDefault(name, ""), null));
         }
         return parameters;
+    }
+
+    /**
+     * Describes a query the way the add-on's validation reads one. Neither the arguments nor the row limit are
+     * part of it: a check is about the query alone, and both are decided per run.
+     */
+    protected GeneratedJpqlResult toGeneratedResult(LlmDataQuery query) {
+        List<GeneratedJpqlParameter> parameters = new ArrayList<>(query.getParameters().size());
+        for (LlmQueryParameter parameter : query.getParameters()) {
+            parameters.add(new GeneratedJpqlParameter(parameter.getName(), parameter.getJavaType(), null));
+        }
+
+        return new GeneratedJpqlResult(query.getJpql(), parameters, StringUtils.defaultString(query.getExplanation()),
+                query.getWarnings());
     }
 
     protected List<JpqlExecutionParameter> toExecutionParameters(List<LlmQueryParameter> arguments) {
@@ -236,6 +270,6 @@ public class AiToolsLlmDataQueryService implements LlmDataQueryService {
                     .collect(Collectors.joining("; "));
         }
 
-        return "The query was not executed";
+        return "The query was not executed: the current user may read none of the columns it selects";
     }
 }

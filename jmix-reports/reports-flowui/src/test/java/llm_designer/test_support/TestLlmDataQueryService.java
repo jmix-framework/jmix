@@ -16,13 +16,9 @@
 
 package llm_designer.test_support;
 
-import io.jmix.reports.llm.LlmDataQuery;
-import io.jmix.reports.llm.LlmDataQueryService;
-import io.jmix.reports.llm.LlmQueryExecutionRequest;
-import io.jmix.reports.llm.LlmQueryGenerationRequest;
+import io.jmix.reports.llm.*;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Stands in for the add-on-backed service, so the designer can be tested without an LLM. It reports generation as
@@ -33,6 +29,8 @@ public class TestLlmDataQueryService implements LlmDataQueryService {
     public static final String GENERATED_JPQL = "select o.number as orderNumber from sales_Order o";
 
     protected boolean generationAvailable = true;
+
+    protected List<String> problems = List.of();
 
     @Override
     public boolean isGenerationAvailable() {
@@ -47,13 +45,25 @@ public class TestLlmDataQueryService implements LlmDataQueryService {
     }
 
     @Override
+    public List<String> validate(LlmDataQuery query) {
+        return problems;
+    }
+
+    /**
+     * Stands in for a query the add-on's validation rejects, whatever its text says.
+     */
+    public void setProblems(List<String> problems) {
+        this.problems = problems;
+    }
+
+    @Override
     public LlmDataQuery generate(LlmQueryGenerationRequest request) {
         return new LlmDataQuery(GENERATED_JPQL, List.of("orderNumber"), List.of(), "All order numbers",
                 List.of(), null);
     }
 
     @Override
-    public List<Map<String, Object>> execute(LlmQueryExecutionRequest request) {
-        return List.of();
+    public LlmQueryExecutionResult execute(LlmQueryExecutionRequest request) {
+        return new LlmQueryExecutionResult(List.of(), false);
     }
 }

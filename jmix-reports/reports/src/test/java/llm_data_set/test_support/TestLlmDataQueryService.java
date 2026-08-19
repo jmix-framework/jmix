@@ -20,6 +20,7 @@ import io.jmix.reports.llm.LlmDataQuery;
 import io.jmix.reports.llm.LlmDataQueryException;
 import io.jmix.reports.llm.LlmDataQueryService;
 import io.jmix.reports.llm.LlmQueryExecutionRequest;
+import io.jmix.reports.llm.LlmQueryExecutionResult;
 import io.jmix.reports.llm.LlmQueryGenerationRequest;
 import org.jspecify.annotations.Nullable;
 
@@ -37,12 +38,17 @@ public class TestLlmDataQueryService implements LlmDataQueryService {
 
     protected final List<LlmQueryGenerationRequest> generationRequests = new ArrayList<>();
     protected final List<LlmQueryExecutionRequest> executionRequests = new ArrayList<>();
+    protected final List<LlmDataQuery> validatedQueries = new ArrayList<>();
+
+    protected List<String> problems = List.of();
 
     protected LlmDataQuery queryToGenerate = defaultGeneratedQuery();
     protected List<Map<String, Object>> rows = List.of(Map.of("orderNumber", "A-1"));
 
     @Nullable
     protected LlmDataQueryException executionFailure;
+
+    protected boolean truncated;
 
     @Override
     public boolean isGenerationAvailable() {
@@ -56,17 +62,41 @@ public class TestLlmDataQueryService implements LlmDataQueryService {
     }
 
     @Override
-    public List<Map<String, Object>> execute(LlmQueryExecutionRequest request) {
+    public List<String> validate(LlmDataQuery query) {
+        validatedQueries.add(query);
+        return problems;
+    }
+
+    /**
+     * Stands in for a query the add-on's validation rejects, whatever its text says.
+     */
+    public void setProblems(List<String> problems) {
+        this.problems = problems;
+    }
+
+    public List<LlmDataQuery> getValidatedQueries() {
+        return validatedQueries;
+    }
+
+    public void setTruncated(boolean truncated) {
+        this.truncated = truncated;
+    }
+
+    @Override
+    public LlmQueryExecutionResult execute(LlmQueryExecutionRequest request) {
         executionRequests.add(request);
         if (executionFailure != null) {
             throw executionFailure;
         }
-        return rows;
+        return new LlmQueryExecutionResult(rows, truncated);
     }
 
     public void reset() {
+        truncated = false;
+        problems = List.of();
         generationRequests.clear();
         executionRequests.clear();
+        validatedQueries.clear();
         queryToGenerate = defaultGeneratedQuery();
         rows = List.of(Map.of("orderNumber", "A-1"));
         executionFailure = null;

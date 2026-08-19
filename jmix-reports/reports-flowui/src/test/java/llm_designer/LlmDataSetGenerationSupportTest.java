@@ -94,7 +94,7 @@ public class LlmDataSetGenerationSupportTest {
     @Test
     public void testParentBandColumnsAreOfferedWhenTheParentIsAnLlmDataSet() {
         Report report = reportWithParameters();
-        BandDefinition parentBand = band(report, "Orders", null);
+        BandDefinition parentBand = band(report, "Orders", rootBand(report));
         DataSet parentDataSet = llmDataSet(parentBand);
         parentDataSet.setLlmGeneratedQuery(serializer.toJson(new LlmDataQuery(
                 "select o.number as orderNumber from sales_Order o", List.of("orderNumber"), List.of(),
@@ -110,9 +110,28 @@ public class LlmDataSetGenerationSupportTest {
     }
 
     @Test
+    public void testRootBandColumnsAreNotOffered() {
+        // A run offers no Root_<field> name — the loader stops the walk short of the root band — so offering one
+        // here would have generation reference a parameter nothing could bind, failing every run of the report.
+        Report report = reportWithParameters();
+        BandDefinition rootBand = rootBand(report);
+        DataSet rootDataSet = llmDataSet(rootBand);
+        rootDataSet.setLlmGeneratedQuery(serializer.toJson(new LlmDataQuery(
+                "select max(o.date) as reportedUntil from sales_Order o", List.of("reportedUntil"), List.of(),
+                null, List.of(), null)));
+
+        DataSet ordersDataSet = llmDataSet(band(report, "Orders", rootBand));
+
+        List<LlmQueryParameter> parameters = generationSupport.createGenerationRequest(ordersDataSet)
+                .getAvailableParameters();
+
+        assertThat(parameters).extracting(LlmQueryParameter::getName).doesNotContain("Root_reportedUntil");
+    }
+
+    @Test
     public void testParentBandColumnsAreNotOfferedWithoutAStoredQuery() {
         Report report = reportWithParameters();
-        BandDefinition parentBand = band(report, "Orders", null);
+        BandDefinition parentBand = band(report, "Orders", rootBand(report));
         llmDataSet(parentBand);
 
         BandDefinition linesBand = band(report, "Lines", parentBand);
@@ -183,7 +202,7 @@ public class LlmDataSetGenerationSupportTest {
     @Test
     public void testColumnsOfABandWhoseNameIsNotAnIdentifierAreNotOffered() {
         Report report = reportWithParameters();
-        BandDefinition parentBand = band(report, "Order Details", null);
+        BandDefinition parentBand = band(report, "Order Details", rootBand(report));
         DataSet parentDataSet = llmDataSet(parentBand);
         parentDataSet.setLlmGeneratedQuery(serializer.toJson(new LlmDataQuery(
                 "select o.number as orderNumber from sales_Order o", List.of("orderNumber"), List.of(),
@@ -243,6 +262,25 @@ public class LlmDataSetGenerationSupportTest {
         assertThat(stored).isNotNull();
         assertThat(stored.getResultProperties()).containsExactly("num");
         assertThat(stored.getExplanation()).isNull();
+    }
+
+    @Test
+    public void testStoringAQueryNothingChangedAboutLeavesTheDocumentAsItIs() {
+        // Opening the editor and closing it again re-assembles the same query; writing the result back would
+        // reorder its parameters and mark the report changed for a change nobody made.
+        DataSet dataSet = llmDataSet(reportWithParameters());
+        LlmDataQuery generated = new LlmDataQuery(
+                "select o.number as orderNumber from sales_Order o where o.date between :dateTo and :dateFrom",
+                List.of("orderNumber"),
+                List.of(new LlmQueryParameter("dateTo", "java.time.LocalDate", null),
+                        new LlmQueryParameter("dateFrom", "java.time.LocalDate", null)),
+                "Orders of the period", List.of(), null);
+        String stored = serializer.toJson(generated);
+        dataSet.setLlmGeneratedQuery(stored);
+
+        generationSupport.storeEditedQuery(dataSet, generated.getJpql(), generated.getResultProperties());
+
+        assertThat(dataSet.getLlmGeneratedQuery()).isEqualTo(stored);
     }
 
     @Test
@@ -365,6 +403,13 @@ public class LlmDataSetGenerationSupportTest {
         parameter.setName(alias);
         parameter.setType(type);
         return parameter;
+    }
+
+    /**
+     * The band every other band of a report descends from, as the designer creates it.
+     */
+    protected BandDefinition rootBand(Report report) {
+        return band(report, "Root", null);
     }
 
     protected BandDefinition band(Report report, String name, @Nullable BandDefinition parent) {

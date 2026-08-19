@@ -16,10 +16,8 @@
 
 package io.jmix.reports.llm;
 
-import org.jspecify.annotations.Nullable;
-
 import java.util.List;
-import java.util.Map;
+
 
 /**
  * Turns a data set prompt into a JPQL query and executes it. This is the Reports-side integration seam: Reports
@@ -48,15 +46,27 @@ public interface LlmDataQueryService {
     LlmDataQuery generate(LlmQueryGenerationRequest request);
 
     /**
-     * Executes a generated query and returns its rows.
+     * Reports what makes a query unrunnable, without running it and without asking a model anything. The
+     * designer asks after a query is generated or edited, so that an author learns of a broken query while
+     * looking at it rather than on the next report run.
+     *
+     * @param query query to check
+     * @return one message per problem, in no particular order, or an empty list if the query is runnable
+     */
+    List<String> validate(LlmDataQuery query);
+
+    /**
+     * Executes a query already found runnable and returns its rows, together with whether the row limit cut
+     * them short. The caller checks the query with {@link #validate(LlmDataQuery)} first — a report run does it
+     * once and then executes the query for every row of the band's parent — so an implementation is not
+     * expected to check it again.
      * <p>
      * Data access constraints of the current user apply, so the rows may be narrower or shorter than the
      * query alone would suggest.
      *
      * @param request query, arguments and row limit
-     * @return rows keyed by {@link LlmDataQuery#getResultProperties()}; a value is {@code null} when the query
-     * returned no value for that column, which an empty string does not stand for
+     * @return the rows and whether more of them were left behind
      * @throws LlmDataQueryException if the query is rejected as invalid or its execution fails
      */
-    List<Map<String, @Nullable Object>> execute(LlmQueryExecutionRequest request);
+    LlmQueryExecutionResult execute(LlmQueryExecutionRequest request);
 }

@@ -22,6 +22,7 @@ import io.jmix.reports.llm.LlmDataQuery;
 import io.jmix.reports.llm.LlmDataQueryException;
 import io.jmix.reports.llm.LlmDataQueryService;
 import io.jmix.reports.llm.LlmQueryExecutionRequest;
+import io.jmix.reports.llm.LlmQueryExecutionResult;
 import io.jmix.reports.llm.LlmQueryGenerationRequest;
 import io.jmix.reports.llm.LlmQueryParameter;
 import io.jmix.reports.llm.LlmQueryParameterNames;
@@ -37,9 +38,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.lang.ref.SoftReference;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -47,6 +50,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.WeakHashMap;
 import java.util.function.Supplier;
 
 /**
@@ -69,9 +73,12 @@ public class LlmDataLoader implements ReportDataLoader {
 
     /**
      * Holds what one report run has already generated and already warned about. Bound to the thread the run
-     * executes on and discarded as soon as another run reaches it, so nothing outlives the run it belongs to.
+     * executes on: the next run reaching that thread replaces its contents, and the reference is soft, so what
+     * the last run left there is reclaimed under memory pressure instead of sitting on a pooled thread for the
+     * lifetime of the process.
      */
-    protected final ThreadLocal<RunScope> runScope = ThreadLocal.withInitial(RunScope::new);
+    protected final ThreadLocal<SoftReference<RunScope>> runScope =
+            ThreadLocal.withInitial(() -> new SoftReference<>(new RunScope()));
 
     @Override
     public List<Map<String, Object>> loadData(ReportQuery reportQuery, @Nullable BandData parentBand,
@@ -85,7 +92,19 @@ public class LlmDataLoader implements ReportDataLoader {
         RunScope scope = runScopeOf(parentBand);
         Map<String, Object> additionalParams = reportQuery.getAdditionalParams();
         Integer maxResults = toMaxResults(additionalParams.get(DataSet.LLM_MAX_RESULTS), reportQuery, scope);
-        CollectedParameters collectedParameters = collectAvailableParameters(params, parentBand, scope);
+
+        String emptyAxis = firstEmptyCrossTabAxis(params);
+        if (emptyAxis != null) {
+            // A cross-tab has no cells along an axis that produced no values, so there is nothing for this
+            // query to return — and its parameters, which name that axis, have no values to bind either.
+            scope.warnOnce(reportQuery, "empty-axis:" + emptyAxis,
+                    () -> log.debug("The cross-tab axis [{}] produced no values, so data set [{}] is not executed",
+                            emptyAxis, reportQuery.getName()));
+            return List.of();
+        }
+
+        CollectedParameters collectedParameters =
+                collectAvailableParameters(reportQuery, params, parentBand, scope);
         Map<String, LlmQueryParameter> availableParameters = collectedParameters.availableParameters();
 
         try {
@@ -93,12 +112,23 @@ public class LlmDataLoader implements ReportDataLoader {
                     availableParameters, collectedParameters.requiredResultProperties(), scope);
             checkCrossTabAxesAreLinkable(reportQuery, query, params, availableParameters,
                     collectedParameters.requiredResultProperties());
+            checkQueryIsRunnable(query, scope);
 
             log.debug("Executing the query of data set [{}]: {}", reportQuery.getName(), query.getJpql());
-            List<Map<String, @Nullable Object>> rows = llmDataQueryService.execute(new LlmQueryExecutionRequest(prompt, query,
+            LlmQueryExecutionResult result = llmDataQueryService.execute(new LlmQueryExecutionRequest(prompt, query,
                     resolveArguments(reportQuery, query, availableParameters), maxResults));
 
-            return toBandRows(rows, query.getResultProperties());
+            if (result.isTruncated()) {
+                // A band built from a cut-short result looks complete, and the limits that cut it are the
+                // add-on's own properties, which the data set cannot raise on its own.
+                scope.warnOnce(reportQuery, "truncated",
+                        () -> log.warn("The query of data set [{}] returned more rows than the limit in force, so "
+                                + "the band shows only the first [{}] of them; raise the row limit of the data set "
+                                + "and the add-on's jmix.aitools.dataload.jpql-execution-max-result properties to "
+                                + "print the rest", reportQuery.getName(), result.getRows().size()));
+            }
+
+            return toBandRows(result.getRows(), query.getResultProperties());
         } catch (LlmDataQueryException e) {
             throw new DataLoadingException(
                     String.format("An error occurred while loading data for data set [%s]", reportQuery.getName()), e);
@@ -153,7 +183,7 @@ public class LlmDataLoader implements ReportDataLoader {
             return maxResults;
         }
 
-        scope.warnOnce("row-limit:" + reportQuery.getName(),
+        scope.warnOnce(reportQuery, "row-limit",
                 () -> log.warn("Data set [{}] stores a row limit of [{}], which is not a number of rows; "
                         + "the query runs without a limit of its own", reportQuery.getName(), maxResults));
         return null;
@@ -173,7 +203,7 @@ public class LlmDataLoader implements ReportDataLoader {
         }
 
         if (!regenerateOnRun) {
-            scope.warnOnce("missing-query:" + reportQuery.getName(),
+            scope.warnOnce(reportQuery, "missing-query",
                     () -> log.warn("Data set [{}] has no generated query stored, so it is generated for this run; "
                             + "generate and review it in the report designer to make runs reproducible",
                             reportQuery.getName()));
@@ -193,6 +223,25 @@ public class LlmDataLoader implements ReportDataLoader {
             }
             return query;
         });
+    }
+
+    /**
+     * Fails the data set with what makes its query unrunnable, before execution is ever given it.
+     * <p>
+     * Checked here rather than left to execution, because the add-on answers an invalid query by asking a model
+     * to repair it — which spends tokens on a report run, sends this run's arguments to the model, and then
+     * binds the values the model answers with instead of the ones the run computed. A run executes the query it
+     * was given or fails saying why. See {@code decisions/0013-a-run-never-asks-the-model.md}.
+     * <p>
+     * Checked once per query per run: a check parses the text and resolves it against the data model, and the
+     * query does not change while the run executes it, so a band loaded once per parent row would otherwise
+     * pay for the very same verdict on every row.
+     */
+    protected void checkQueryIsRunnable(LlmDataQuery query, RunScope scope) {
+        List<String> problems = scope.validated(query, () -> llmDataQueryService.validate(query));
+        if (!problems.isEmpty()) {
+            throw new LlmDataQueryException("The query was rejected as invalid: " + String.join("; ", problems));
+        }
     }
 
     /**
@@ -226,7 +275,12 @@ public class LlmDataLoader implements ReportDataLoader {
             rootBand = rootBand.getParentBand();
         }
 
-        RunScope scope = runScope.get();
+        RunScope scope = runScope.get().get();
+        if (scope == null) {
+            scope = new RunScope();
+            runScope.set(new SoftReference<>(scope));
+        }
+
         scope.rootedAt(rootBand);
         return scope;
     }
@@ -237,7 +291,8 @@ public class LlmDataLoader implements ReportDataLoader {
      * A parameter with no value is left out — its type is unknown, and the add-on binds no value for it, which
      * would fail the query anyway.
      */
-    protected CollectedParameters collectAvailableParameters(Map<String, Object> params,
+    protected CollectedParameters collectAvailableParameters(ReportQuery reportQuery,
+                                                             Map<String, Object> params,
                                                              @Nullable BandData parentBand,
                                                              RunScope scope) {
         Map<String, LlmQueryParameter> availableParameters = new LinkedHashMap<>();
@@ -264,12 +319,16 @@ public class LlmDataLoader implements ReportDataLoader {
             }
         }
 
-        for (BandData band = parentBand; band != null; band = band.getParentBand()) {
-            addParentBandFields(band, availableParameters, scope);
+        // The walk stops short of the root band: its data is the run parameters, which are already offered
+        // under their own names, and offering them a second time as Root_<name> would double every parameter
+        // and describe a dictionary the designer never shows.
+        for (BandData band = parentBand; band != null && !BandData.ROOT_BAND_NAME.equals(band.getName());
+             band = band.getParentBand()) {
+            addParentBandFields(reportQuery, band, availableParameters, scope);
         }
 
-        crossTabAxes.forEach((dataSetName, rows) ->
-                addCrossTabAxisValues(dataSetName, rows, availableParameters, requiredResultProperties, scope));
+        crossTabAxes.forEach((dataSetName, rows) -> addCrossTabAxisValues(reportQuery, dataSetName, rows,
+                availableParameters, requiredResultProperties, scope));
 
         return new CollectedParameters(availableParameters, List.copyOf(requiredResultProperties));
     }
@@ -305,8 +364,8 @@ public class LlmDataLoader implements ReportDataLoader {
      * outranks a more distant one. Skipping a field whose flattened name is not an identifier is deliberate —
      * sanitizing the name would let two different bands collapse onto one parameter.
      */
-    protected void addParentBandFields(BandData band, Map<String, LlmQueryParameter> availableParameters,
-                                       RunScope scope) {
+    protected void addParentBandFields(ReportQuery reportQuery, BandData band,
+                                       Map<String, LlmQueryParameter> availableParameters, RunScope scope) {
         Map<String, Object> row = band.getData();
         if (row == null) {
             return;
@@ -328,7 +387,7 @@ public class LlmDataLoader implements ReportDataLoader {
             LlmQueryParameter present = availableParameters.putIfAbsent(name, parameter);
             if (present != null) {
                 // The band is loaded once per parent row, and the collision is the same every time.
-                scope.warnOnce("shadowed-band-field:" + name,
+                scope.warnOnce(reportQuery, "shadowed-band-field:" + name,
                         () -> log.warn("Parameter [{}] is already available, so the field [{}] of band [{}] is not "
                                 + "offered to the query; rename one of them to make both usable",
                                 name, field.getKey(), band.getName()));
@@ -352,13 +411,16 @@ public class LlmDataLoader implements ReportDataLoader {
                 continue;
             }
 
-            String prefix = name + "_";
+            String prefix = LlmQueryParameterNames.ofCrossTabAxisPrefix(name);
             // An axis that produced no value has no columns either, so there is nothing to link a cell to.
             if (availableParameters.keySet().stream().noneMatch(parameter -> parameter.startsWith(prefix))) {
                 continue;
             }
 
-            String returned = firstWithPrefix(query.getResultProperties(), prefix);
+            // The controller links by the first column starting with the axis name — not with the axis name and
+            // an underscore — and then cuts one character more, so a column named after the axis without the
+            // separator would be linked by a truncated field. Reading the query the same way here catches it.
+            String returned = firstWithPrefix(query.getResultProperties(), name);
             if (returned == null) {
                 throw new DataLoadingException(String.format(
                         "The query of data set [%s] returns no column named [%s<field>], so its rows cannot be "
@@ -386,11 +448,29 @@ public class LlmDataLoader implements ReportDataLoader {
     }
 
     /**
+     * Returns the name of the first cross-tab axis of this band that produced no values, or {@code null} when
+     * every axis has some. An axis is put into the params by the controller whether it produced rows or not.
+     */
+    @Nullable
+    protected String firstEmptyCrossTabAxis(Map<String, Object> params) {
+        for (Map.Entry<String, Object> param : params.entrySet()) {
+            if (LlmQueryParameterNames.isCrossTabAxis(param.getKey())
+                    && param.getValue() instanceof List<?> rows && rows.isEmpty()) {
+                return param.getKey();
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Tells the rows of a cross-tab axis from an ordinary parameter that merely happens to be named like one:
      * an axis holds rows, so it is a list of maps, and an empty list is the axis that produced nothing. A list
      * of anything else belongs to the report run and stays a parameter of its own.
+     *
+     * @param value value of a run parameter, which is {@code null} for a parameter left unfilled
      */
-    protected boolean isAxisRows(Object value) {
+    protected boolean isAxisRows(@Nullable Object value) {
         return value instanceof List<?> rows && (rows.isEmpty() || rows.get(0) instanceof Map);
     }
 
@@ -402,14 +482,20 @@ public class LlmDataLoader implements ReportDataLoader {
      * Exactly one of those names is required back as a result column: a cross-tab links a cell to its axis by
      * the first returned column whose name starts with the axis prefix, so requiring every field would let a
      * caption column come first and the matrix link by the caption text. The required one is the axis's first
-     * usable field, which is the order the axis itself describes.
+     * referenceable field, which is the order the axis itself describes — the same field on every run, so that
+     * a query generated once keeps answering the requirement.
      * <p>
-     * A field contributes nothing when every row leaves it empty, and the same naming rules as for band fields
-     * apply: a name that is not an identifier is skipped, and a name already taken is kept.
+     * A field with no values in it is required back all the same, but offered no parameter: there is nothing
+     * to match and no type to state. The same naming rules as for band fields apply: a name that is not an
+     * identifier is skipped, and a name already taken is kept.
      */
-    protected void addCrossTabAxisValues(String dataSetName, List<?> rows,
+    protected void addCrossTabAxisValues(ReportQuery reportQuery, String dataSetName, List<?> rows,
                                          Map<String, LlmQueryParameter> availableParameters,
                                          List<String> requiredResultProperties, RunScope scope) {
+        // Keyed by every field the axis has, in the order its rows describe them, and holding the values that
+        // are there: a field is a field of the axis whether this run left it empty or not, so which one comes
+        // first does not change with the data — the required column would otherwise move between runs and stop
+        // matching the stored query.
         Map<String, List<Object>> valuesByField = new LinkedHashMap<>();
         for (Object row : rows) {
             if (!(row instanceof Map<?, ?> fields)) {
@@ -417,13 +503,12 @@ public class LlmDataLoader implements ReportDataLoader {
             }
 
             for (Map.Entry<?, ?> field : fields.entrySet()) {
+                List<Object> values = valuesByField.computeIfAbsent(String.valueOf(field.getKey()),
+                        name -> new ArrayList<>());
                 Object value = field.getValue();
-                if (value == null) {
-                    continue;
+                if (value != null) {
+                    values.add(value);
                 }
-
-                valuesByField.computeIfAbsent(String.valueOf(field.getKey()), name -> new ArrayList<>())
-                        .add(value);
             }
         }
 
@@ -433,16 +518,22 @@ public class LlmDataLoader implements ReportDataLoader {
                 continue;
             }
 
-            List<Object> values = field.getValue();
-            String axisPrefix = dataSetName + "_";
+            String axisPrefix = LlmQueryParameterNames.ofCrossTabAxisPrefix(dataSetName);
             if (requiredResultProperties.stream().noneMatch(required -> required.startsWith(axisPrefix))) {
                 requiredResultProperties.add(name);
+            }
+
+            List<Object> values = field.getValue();
+            if (values.isEmpty()) {
+                // The column is still required — the axis has this field, and which field links the matrix is
+                // decided by the axis, not by this run — but there is no value to offer and no type to state.
+                continue;
             }
 
             LlmQueryParameter present = availableParameters.putIfAbsent(name,
                     new LlmQueryParameter(name, values.get(0).getClass().getName(), values, true));
             if (present != null) {
-                scope.warnOnce("shadowed-axis-field:" + name,
+                scope.warnOnce(reportQuery, "shadowed-axis-field:" + name,
                         () -> log.warn("Parameter [{}] is already available, so the values of the field [{}] of "
                                 + "the cross-tab axis [{}] are not offered to the query, while the column of that "
                                 + "name may still be required back; rename one of them to make both usable",
@@ -491,7 +582,13 @@ public class LlmDataLoader implements ReportDataLoader {
         protected WeakReference<@Nullable BandData> rootBand = new WeakReference<>(null);
         protected Map<String, LlmDataQuery> generatedQueries = new LinkedHashMap<>();
         protected Map<String, Optional<LlmDataQuery>> storedQueries = new LinkedHashMap<>();
-        protected Set<String> warnings = new LinkedHashSet<>();
+        protected Map<LlmDataQuery, List<String>> validatedQueries = new IdentityHashMap<>();
+        /**
+         * Held weakly, as the root band is and for the same reason: a data set belongs to a report, whose bands,
+         * parameters and templates — the content of a template included — would otherwise stay reachable from a
+         * pooled thread until another run replaces the scope.
+         */
+        protected Map<ReportQuery, Set<String>> warnings = new WeakHashMap<>();
 
         protected void rootedAt(@Nullable BandData rootBand) {
             if (this.rootBand.get() == rootBand && rootBand != null) {
@@ -501,7 +598,8 @@ public class LlmDataLoader implements ReportDataLoader {
             this.rootBand = new WeakReference<>(rootBand);
             generatedQueries = new LinkedHashMap<>();
             storedQueries = new LinkedHashMap<>();
-            warnings = new LinkedHashSet<>();
+            validatedQueries = new IdentityHashMap<>();
+            warnings = new WeakHashMap<>();
         }
 
         protected LlmDataQuery generatedQuery(String key, Supplier<LlmDataQuery> generation) {
@@ -523,8 +621,22 @@ public class LlmDataLoader implements ReportDataLoader {
             return storedQueries.computeIfAbsent(document, key -> Optional.ofNullable(reading.get())).orElse(null);
         }
 
-        protected void warnOnce(String key, Runnable warning) {
-            if (warnings.add(key)) {
+        /**
+         * Returns what a query was found wrong with, asking about each query once. The queries of a run are the
+         * memoized ones above, so the same instance arrives here on every parent row and is checked on the first.
+         */
+        protected List<String> validated(LlmDataQuery query, Supplier<List<String>> validation) {
+            return validatedQueries.computeIfAbsent(query, key -> validation.get());
+        }
+
+        /**
+         * Writes a warning the first time this data set runs into it. Remembered per data set rather than per
+         * name: a data set name is unique only within its band, so two bands can each hold a {@code dataSet1},
+         * and what one of them has already said must not silence the other. The data set is the one the engine
+         * is loading, so it stays reachable for as long as the run needs the entry.
+         */
+        protected void warnOnce(ReportQuery reportQuery, String reason, Runnable warning) {
+            if (warnings.computeIfAbsent(reportQuery, query -> new LinkedHashSet<>()).add(reason)) {
                 warning.run();
             }
         }

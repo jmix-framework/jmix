@@ -136,6 +136,19 @@ public class LlmDataSetGenerationSupport {
     }
 
     /**
+     * Reports what makes a query unrunnable, so that an author is told about a broken query while looking at
+     * it. Nothing is reported when the AI Tools add-on is absent: there is nothing to check the query with,
+     * and nothing to run it with either.
+     *
+     * @param query query to check
+     * @return one message per problem, or an empty list if the query is runnable
+     */
+    public List<String> validate(LlmDataQuery query) {
+        LlmDataQueryService service = llmDataQueryServiceProvider.getIfAvailable();
+        return service != null ? service.validate(query) : List.of();
+    }
+
+    /**
      * Stores a generated query in the data set, so that report runs execute it instead of generating anew.
      *
      * @param dataSet data set to store the query in
@@ -167,7 +180,12 @@ public class LlmDataSetGenerationSupport {
                 .map(StringUtils::trimToEmpty)
                 .toList();
 
-        LlmDataQuery edited = llmDataQuerySerializer.assemble(jpql, columns, readStoredQuery(dataSet));
+        LlmDataQuery previous = readStoredQuery(dataSet);
+        if (previous != null && previous.getJpql().equals(jpql) && previous.getResultProperties().equals(columns)) {
+            return;
+        }
+
+        LlmDataQuery edited = llmDataQuerySerializer.assemble(jpql, columns, previous);
         dataSet.setLlmGeneratedQuery(llmDataQuerySerializer.toJson(edited));
     }
 
@@ -216,11 +234,16 @@ public class LlmDataSetGenerationSupport {
      * Offers the columns of the parent bands under the flattened names the loader binds them by. Only an LLM
      * parent with a stored query is known here: a JPQL or SQL parent states its columns as aliases inside the
      * query text, and reading them out of there is not worth it — such a parameter is written by hand.
+     * <p>
+     * The walk stops short of the root band — the one band without a parent — because the loader stops there
+     * too: a run offers no {@code Root_<field>} name, so offering one here would have generation reference a
+     * parameter nothing could ever bind. Every report has a data set on its root band, and it may well be an
+     * LLM one. See {@code decisions/0004-parent-band-fields-flattened.md}.
      */
     protected void collectParentBandColumns(DataSet dataSet, Map<String, LlmQueryParameter> parameters) {
         BandDefinition band = dataSet.getBandDefinition();
         for (BandDefinition parentBand = band != null ? band.getParentBandDefinition() : null;
-             parentBand != null;
+             parentBand != null && parentBand.getParentBandDefinition() != null;
              parentBand = parentBand.getParentBandDefinition()) {
 
             for (String column : storedColumnsOf(parentBand)) {
@@ -256,7 +279,7 @@ public class LlmDataSetGenerationSupport {
                 continue;
             }
 
-            String axisPrefix = axisName + "_";
+            String axisPrefix = LlmQueryParameterNames.ofCrossTabAxisPrefix(axisName);
             for (String column : storedColumnsOf(axis)) {
                 String name = LlmQueryParameterNames.ofCrossTabValue(axisName, column);
                 if (!LlmQueryParameterNames.isValid(name)) {

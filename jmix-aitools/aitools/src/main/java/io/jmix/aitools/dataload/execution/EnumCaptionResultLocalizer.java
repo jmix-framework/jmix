@@ -153,6 +153,10 @@ public class EnumCaptionResultLocalizer {
 
     @Nullable
     protected Object localizeValue(@Nullable Object value, @Nullable Class<? extends Enum<?>> enumType) {
+        if (value == null) {
+            return null;
+        }
+
         if (value instanceof Enum<?> enumValue) {
             return messages.getMessage(enumValue);
         }

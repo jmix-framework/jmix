@@ -50,8 +50,10 @@ public class LlmQueryExecutionRequest {
     }
 
     /**
-     * Returns the data set prompt the query was generated from. The query is not regenerated here, but the
-     * add-on repairs an invalid query against the original request, so it needs to know what was asked for.
+     * Returns the data set prompt the query was generated from. Nothing is regenerated here: the add-on's own
+     * execution request carries the text a query answers, and Reports passes on the one the data set states
+     * rather than inventing another. The text never reaches the model on a run — an invalid query fails the
+     * data set instead of being repaired against it.
      *
      * @return the data set prompt
      */

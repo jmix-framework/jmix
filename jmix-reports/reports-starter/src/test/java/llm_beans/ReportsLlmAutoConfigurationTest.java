@@ -26,6 +26,7 @@ import io.jmix.core.cluster.LocalApplicationEventChannelSupplier;
 import io.jmix.reports.libintegration.LlmDataLoader;
 import io.jmix.reports.llm.LlmDataQuery;
 import io.jmix.reports.llm.LlmQueryExecutionRequest;
+import io.jmix.reports.llm.LlmQueryExecutionResult;
 import io.jmix.reports.llm.LlmQueryGenerationRequest;
 import io.jmix.reports.llm.LlmDataQueryService;
 import io.jmix.reports.llm.impl.LlmDataQuerySerializer;
@@ -132,8 +133,13 @@ public class ReportsLlmAutoConfigurationTest {
                 }
 
                 @Override
-                public List<Map<String, Object>> execute(LlmQueryExecutionRequest request) {
+                public List<String> validate(LlmDataQuery query) {
                     return List.of();
+                }
+
+                @Override
+                public LlmQueryExecutionResult execute(LlmQueryExecutionRequest request) {
+                    return new LlmQueryExecutionResult(List.of(), false);
                 }
             };
         }

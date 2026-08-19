@@ -17,11 +17,13 @@
 package io.jmix.reports.llm.impl;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
 import io.jmix.reports.entity.DataSet;
 import io.jmix.reports.llm.LlmDataQuery;
 import io.jmix.reports.llm.LlmDataQueryException;
 import io.jmix.reports.llm.LlmQueryParameter;
+import io.jmix.reports.llm.LlmQueryParameterNames;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
@@ -29,13 +31,9 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Reads and writes the document a generated query is stored as in {@link DataSet#getLlmGeneratedQuery()}.
@@ -46,21 +44,16 @@ import java.util.regex.Pattern;
 @Component("report_LlmDataQuerySerializer")
 public class LlmDataQuerySerializer {
 
-    /**
-     * Named parameters as the add-on's {@code ParametersValidator} finds them, so both sides agree on what a
-     * query references.
-     */
-    protected static final Pattern PARAMETER_PATTERN = Pattern.compile(":([A-Za-z_][A-Za-z0-9_]*)");
-
-    /**
-     * JPQL string literals, quoted with {@code '} and escaping a quote by doubling it. A colon inside one is
-     * part of the text and not a parameter, which is how the add-on's validator reads a query too.
-     */
-    protected static final Pattern STRING_LITERAL_PATTERN = Pattern.compile("'(?:''|[^'])*'");
-
     protected static final String REGENERATE_HINT = "the stored query is unreadable, regenerate it";
 
-    protected final Gson gson = new Gson();
+    /**
+     * HTML escaping is off: a query is full of {@code >}, {@code <} and {@code =}, which Gson escapes by
+     * default, writing them as unicode escapes into the document the report XML carries. Nothing reads them
+     * that way except the people looking at an exported report or at its diff.
+     */
+    protected final Gson gson = new GsonBuilder()
+            .disableHtmlEscaping()
+            .create();
 
     /**
      * @param query query to store
@@ -128,8 +121,9 @@ public class LlmDataQuerySerializer {
     /**
      * Assembles the document of a query edited by hand out of its text and its columns.
      * <p>
-     * The parameters are not edited but re-derived from the text with the pattern the add-on validates queries
-     * by, so a hand-written {@code :name} is declared by the act of writing it and a removed one disappears;
+     * The parameters are not edited but re-derived from the text the way the add-on validates queries by
+     * ({@link LlmQueryParameterNames#referencedIn}), so a hand-written {@code :name} is declared by the act of
+     * writing it and a removed one disappears;
      * a parameter the previous document declared keeps its Java type, and one that appears with the edit has
      * none to keep — the loader types every argument from the run's own dictionary anyway.
      * The explanation and the warnings of the query being replaced are carried over: they describe what the
@@ -149,7 +143,7 @@ public class LlmDataQuerySerializer {
         }
 
         List<LlmQueryParameter> parameters = new ArrayList<>();
-        for (String name : parameterNamesOf(jpql)) {
+        for (String name : LlmQueryParameterNames.referencedIn(jpql)) {
             parameters.add(new LlmQueryParameter(name, typesOfPrevious.getOrDefault(name, ""), null));
         }
 
@@ -157,26 +151,5 @@ public class LlmDataQuerySerializer {
                 previous != null ? previous.getExplanation() : null,
                 previous != null ? previous.getWarnings() : Collections.emptyList(),
                 previous != null ? previous.getMaxResults() : null);
-    }
-
-    protected Set<String> parameterNamesOf(String jpql) {
-        Set<String> names = new LinkedHashSet<>();
-        Matcher matcher = PARAMETER_PATTERN.matcher(stripStringLiterals(jpql));
-
-        while (matcher.find()) {
-            names.add(matcher.group(1));
-        }
-        return names;
-    }
-
-    /**
-     * Blanks out the string literals of a query, so that {@code like 'urn:isbn%'} declares no parameter named
-     * {@code isbn} — one the run could never bind, which would leave the query unrunnable after an edit that
-     * only touched its text. Every literal is replaced by spaces of the same length to leave the rest of the
-     * text where it was.
-     */
-    protected String stripStringLiterals(String jpql) {
-        return STRING_LITERAL_PATTERN.matcher(jpql)
-                .replaceAll(literal -> " ".repeat(literal.group().length()));
     }
 }

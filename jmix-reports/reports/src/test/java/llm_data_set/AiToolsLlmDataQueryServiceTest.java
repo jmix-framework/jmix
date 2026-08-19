@@ -23,11 +23,13 @@ import io.jmix.core.security.AccessDeniedException;
 import io.jmix.reports.llm.LlmDataQuery;
 import io.jmix.reports.llm.LlmDataQueryException;
 import io.jmix.reports.llm.LlmQueryExecutionRequest;
+import io.jmix.reports.llm.LlmQueryExecutionResult;
 import io.jmix.reports.llm.LlmQueryGenerationRequest;
 import io.jmix.reports.llm.LlmQueryParameter;
 import io.jmix.reports.llm.impl.AiToolsLlmDataQueryService;
 import llm_data_set.test_support.TestEntityDataLoadGenerationService;
 import llm_data_set.test_support.TestJpqlExecutionService;
+import llm_data_set.test_support.TestJpqlValidationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -50,15 +52,18 @@ class AiToolsLlmDataQueryServiceTest {
 
     protected TestEntityDataLoadGenerationService generationService;
     protected TestJpqlExecutionService executionService;
+    protected TestJpqlValidationService validationService;
     protected AiToolsLlmDataQueryService service;
 
     @BeforeEach
     void setUp() {
         generationService = new TestEntityDataLoadGenerationService();
         executionService = new TestJpqlExecutionService();
+        validationService = new TestJpqlValidationService();
         service = new AiToolsLlmDataQueryService();
         ReflectionTestUtils.setField(service, "entityDataLoadGenerationService", generationService);
         ReflectionTestUtils.setField(service, "jpqlExecutionService", executionService);
+        ReflectionTestUtils.setField(service, "jpqlValidationService", validationService);
     }
 
     @Test
@@ -191,10 +196,22 @@ class AiToolsLlmDataQueryServiceTest {
     void testFetchedRowsAreReturned() {
         executionService.setRows(List.of(Map.of("orderNumber", "A-1")));
 
-        List<Map<String, Object>> rows = service.execute(
+        LlmQueryExecutionResult result = service.execute(
                 new LlmQueryExecutionRequest(PROMPT, storedQuery(), List.of(), null));
 
-        assertThat(rows).containsExactly(Map.of("orderNumber", "A-1"));
+        assertThat(result.getRows()).containsExactly(Map.of("orderNumber", "A-1"));
+        assertThat(result.isTruncated()).isFalse();
+    }
+
+    @Test
+    void testRowsCutShortByTheLimitAreReportedAsTruncated() {
+        executionService.setRows(List.of(Map.of("orderNumber", "A-1")));
+        executionService.setHasMore(true);
+
+        LlmQueryExecutionResult result = service.execute(
+                new LlmQueryExecutionRequest(PROMPT, storedQuery(), List.of(), null));
+
+        assertThat(result.isTruncated()).isTrue();
     }
 
     @Test
@@ -249,6 +266,72 @@ class AiToolsLlmDataQueryServiceTest {
 
         assertThat(query.getResultProperties()).containsExactly("orderNumber");
         assertThat(query.getWarnings()).containsExactly("Amounts are not converted");
+    }
+
+    @Test
+    void testGeneratedQueryDeclaresTheParametersItsTextReferences() {
+        // The add-on rejects a query whose declared parameters differ from the ones its text uses, and a stored
+        // query is rejected on every run rather than once here.
+        generationService.setJpql("select o.number as orderNumber from sales_Order o "
+                + "where o.date >= :dateFrom and o.date < :dateTo");
+        generationService.setParameters(List.of(
+                new GeneratedJpqlParameter("dateFrom", "java.time.LocalDate", LocalDate.of(2026, 8, 1)),
+                new GeneratedJpqlParameter("customerName", "java.lang.String", "Acme")));
+
+        LlmDataQuery query = service.generate(new LlmQueryGenerationRequest(PROMPT, List.of(), null));
+
+        assertThat(query.getParameters())
+                .extracting(LlmQueryParameter::getName, LlmQueryParameter::getJavaType)
+                .containsExactly(tuple("dateFrom", "java.time.LocalDate"), tuple("dateTo", ""));
+    }
+
+    @Test
+    void testAColonInAGeneratedLiteralDeclaresNoParameter() {
+        generationService.setJpql("select o.number as orderNumber from sales_Order o where o.code like 'urn:isbn%'");
+        generationService.setParameters(List.of());
+
+        LlmDataQuery query = service.generate(new LlmQueryGenerationRequest(PROMPT, List.of(), null));
+
+        assertThat(query.getParameters()).isEmpty();
+    }
+
+    @Test
+    void testExecutionDoesNotCheckTheQueryAgain() {
+        // A query is checked once per run, by LlmDataLoader, and executing it for every row of a parent band
+        // must not repeat a check that parses the text and resolves it against the data model.
+        service.execute(new LlmQueryExecutionRequest(PROMPT, storedQuery(), List.of(), null));
+
+        assertThat(validationService.getValidations()).isZero();
+    }
+
+    @Test
+    void testCheckingAQueryTellsItsProblemsWithoutRunningIt() {
+        validationService.setIssueMessages(List.of("Unknown entity: sales_Ordr"));
+
+        assertThat(service.validate(storedQuery())).containsExactly("Unknown entity: sales_Ordr");
+        assertThat(validationService.getLastValidated().getJpql()).isEqualTo(storedQuery().getJpql());
+        assertThat(executionService.getLastRequest().getJpql()).isNull();
+    }
+
+    @Test
+    void testCheckedQueryCarriesNoArgumentValues() {
+        service.validate(new LlmDataQuery(storedQuery().getJpql(), List.of("orderNumber"),
+                List.of(new LlmQueryParameter("dateFrom", "java.time.LocalDate", LocalDate.of(2026, 8, 1))),
+                null, List.of(), null));
+
+        assertThat(validationService.getLastValidated().getParameters())
+                .extracting(GeneratedJpqlParameter::getName, GeneratedJpqlParameter::getValue)
+                .containsExactly(tuple("dateFrom", null));
+    }
+
+    @Test
+    void testAQueryOfColumnsTheUserMayNotReadSaysSo() {
+        // The add-on reports this one by executing nothing at all: valid, no error, nothing returned.
+        executionService.setExecuted(false);
+
+        assertThatThrownBy(() -> service.execute(new LlmQueryExecutionRequest(PROMPT, storedQuery(), List.of(), null)))
+                .isInstanceOf(LlmDataQueryException.class)
+                .hasMessageContaining("read none of the columns");
     }
 
     protected LlmDataQuery storedQuery() {

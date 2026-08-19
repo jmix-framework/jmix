@@ -86,6 +86,17 @@ class LlmDataQuerySerializerTest {
     }
 
     @Test
+    void testStoredDocumentKeepsTheQueryReadable() {
+        // The document travels in the report XML, which people export, diff and fix by hand; Gson escapes the
+        // comparison operators of a query as unicode escapes unless told not to.
+        String jpql = "select o.number as n from sales_Order o where o.date >= :dateFrom and o.amount < 100";
+
+        String json = serializer.toJson(new LlmDataQuery(jpql, List.of("n"), List.of(), null, List.of(), null));
+
+        assertThat(json).contains(jpql);
+    }
+
+    @Test
     void testEditedQueryKeepsItsTextColumnsAndDerivedParameters() {
         LlmDataQuery previous = new LlmDataQuery("select o.id as id from sales_Order o", List.of("id"),
                 List.of(), "Orders", List.of("Amounts are not converted"), 200);
@@ -182,6 +193,19 @@ class LlmDataQuerySerializerTest {
         assertThatThrownBy(() -> serializer.fromJson(document))
                 .isInstanceOf(LlmDataQueryException.class)
                 .hasMessageContaining("regenerate");
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {0, -1})
+    void testNonPositiveStoredRowLimitIsNoLimit(int storedLimit) {
+        // A limit is a number of rows: a model writes zero for "no limit", and either value would otherwise
+        // reach the add-on, which fetches one row more than the limit and then keeps that many.
+        LlmDataQuery restored = serializer.fromJson(
+                "{\"jpql\":\"select o.number as n from sales_Order o\",\"resultProperties\":[\"n\"],"
+                        + "\"maxResults\":" + storedLimit + "}");
+
+        assertThat(restored).isNotNull();
+        assertThat(restored.getMaxResults()).isNull();
     }
 
     @Test

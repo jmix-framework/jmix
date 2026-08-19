@@ -34,6 +34,7 @@ import io.jmix.flowui.component.grid.TreeDataGrid;
 import io.jmix.flowui.component.tabsheet.JmixTabSheet;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.kit.component.button.JmixButton;
+import io.jmix.flowui.model.CollectionContainer;
 import io.jmix.flowui.model.CollectionPropertyContainer;
 import io.jmix.flowui.testassist.UiTest;
 import io.jmix.flowui.testassist.UiTestUtils;
@@ -101,6 +102,9 @@ public class LlmDataSetPanelUiTest {
     @AfterEach
     public void tearDown() {
         llmReportUtil.cleanupDatabaseReports();
+        // The service is one bean for the whole class, so a test that made it reject queries must not leave it
+        // rejecting them for the next one.
+        ((TestLlmDataQueryService) queryService).setProblems(List.of());
     }
 
     @Test
@@ -335,6 +339,33 @@ public class LlmDataSetPanelUiTest {
     }
 
     @Test
+    public void testStaleNoticeGoesAwayWithTheQueryItTalksAbout() {
+        ReportDetailView view = openReportDesignerOnLlmDataSet();
+        this.<JmixTextArea>findComponent(view, "llmPromptField").setValue("A newer prompt");
+        Badge notice = findComponent(view, "llmStaleQueryNotice");
+        assertThat(notice.isVisible()).isTrue();
+
+        this.<JmixButton>findComponent(view, "llmEditQueryBtn").click();
+        this.<CodeEditor>findComponent(view, "llmGeneratedQueryCodeEditor").setValue("");
+        this.<JmixButton>findComponent(view, "llmEditQueryBtn").click();
+
+        assertThat(selectedDataSet(view).getLlmGeneratedQuery()).isNull();
+        assertThat(notice.isVisible()).isFalse();
+    }
+
+    @Test
+    public void testCancelledGenerationIsForgotten() {
+        // The token is a boxed long in an identity map, so forgetting it cannot rely on value equality.
+        ReportDetailView view = openReportDesignerOnLlmDataSet();
+        DataSet dataSet = selectedDataSet(view);
+        BackgroundTask<Integer, LlmDataQuery> task = generationTask(view, dataSet);
+
+        task.canceled();
+
+        assertThat(latestGenerations(view)).doesNotContainKey(dataSet);
+    }
+
+    @Test
     public void testRemovingADataSetForgetsWhatIsRememberedAboutIt() {
         ReportDetailView view = openReportDesignerOnLlmDataSet();
         DataSet dataSet = selectedDataSet(view);
@@ -346,6 +377,24 @@ public class LlmDataSetPanelUiTest {
         assertThat(draftRevisions(view)).containsKey(dataSet);
 
         dataSetsContainer(view).getMutableItems().remove(dataSet);
+
+        assertThat(draftRevisions(view)).doesNotContainKey(dataSet);
+    }
+
+    @Test
+    public void testRemovingABandForgetsWhatIsRememberedAboutItsDataSets() {
+        // A band takes its data sets with it, and they are never removed from the data set container.
+        ReportDetailView view = openReportDesignerOnLlmDataSet();
+        DataSet dataSet = selectedDataSet(view);
+
+        this.<JmixButton>findComponent(view, "llmEditQueryBtn").click();
+        this.<CodeEditor>findComponent(view, "llmGeneratedQueryCodeEditor")
+                .setValue("select o.number as orderNumber from sales_Order o");
+
+        assertThat(draftRevisions(view)).containsKey(dataSet);
+
+        BandDefinition band = dataSet.getBandDefinition();
+        bandsContainer(view).getMutableItems().remove(band);
 
         assertThat(draftRevisions(view)).doesNotContainKey(dataSet);
     }
@@ -363,6 +412,38 @@ public class LlmDataSetPanelUiTest {
         assertThat(notification).isNotNull();
         assertThat(notification.getText()).isEqualTo(messages.getMessage("io.jmix.reportsflowui.view.report",
                 "bandsTab.dataSetTypeLayout.llmGenerationDiscarded"));
+    }
+
+    @Test
+    public void testAQueryThatWouldNotRunIsReportedAsSoonAsItIsGenerated() {
+        // Nothing checks a stored query before a run, so an author who is not told here finds out by running
+        // the report — after the model has already been paid for the query.
+        ReportDetailView view = openReportDesignerOnLlmDataSet();
+        DataSet dataSet = selectedDataSet(view);
+        BackgroundTask<Integer, LlmDataQuery> task = generationTask(view, dataSet);
+        ((TestLlmDataQueryService) queryService).setProblems(List.of("Unknown entity: sales_Ordr"));
+
+        task.done(generatedQuery("orderNumber"));
+
+        NotificationInfo notification = UiTestUtils.getLastOpenedNotification();
+        assertThat(notification).isNotNull();
+        assertThat(notification.getText()).contains("Unknown entity: sales_Ordr");
+    }
+
+    @Test
+    public void testAQueryEditedIntoSomethingThatWouldNotRunIsReportedToo() {
+        ReportDetailView view = openReportDesignerOnLlmDataSet();
+        ((TestLlmDataQueryService) queryService).setProblems(List.of("Unknown entity: sales_Ordr"));
+
+        JmixButton editButton = findComponent(view, "llmEditQueryBtn");
+        editButton.click();
+        this.<CodeEditor>findComponent(view, "llmGeneratedQueryCodeEditor")
+                .setValue("select o.number as orderNumber from sales_Ordr o");
+        editButton.click();
+
+        NotificationInfo notification = UiTestUtils.getLastOpenedNotification();
+        assertThat(notification).isNotNull();
+        assertThat(notification.getText()).contains("Unknown entity: sales_Ordr");
     }
 
     @Test
@@ -628,6 +709,18 @@ public class LlmDataSetPanelUiTest {
     }
 
     @SuppressWarnings("unchecked")
+    protected CollectionContainer<BandDefinition> bandsContainer(ReportDetailView view) {
+        return Objects.requireNonNull((CollectionContainer<BandDefinition>)
+                ReflectionTestUtils.getField(view, "bandsDc"));
+    }
+
+    @SuppressWarnings("unchecked")
+    protected Map<DataSet, Long> latestGenerations(ReportDetailView view) {
+        return Objects.requireNonNull((Map<DataSet, Long>)
+                ReflectionTestUtils.getField(view, "latestLlmGeneration"));
+    }
+
+    @SuppressWarnings("unchecked")
     protected Map<DataSet, Long> draftRevisions(ReportDetailView view) {
         return Objects.requireNonNull((Map<DataSet, Long>)
                 ReflectionTestUtils.getField(view, "llmQueryDraftRevisions"));
@@ -641,7 +734,7 @@ public class LlmDataSetPanelUiTest {
 
     protected BackgroundTask<Integer, LlmDataQuery> generationTask(ReportDetailView view, DataSet dataSet) {
         LlmQueryGenerationRequest request = generationSupport.createGenerationRequest(dataSet);
-        return Objects.requireNonNull(ReflectionTestUtils.invokeMethod(view, "getTask", request, dataSet));
+        return Objects.requireNonNull(ReflectionTestUtils.invokeMethod(view, "createLlmGenerationTask", request, dataSet));
     }
 
     protected LlmDataQuery generatedQuery(String alias) {

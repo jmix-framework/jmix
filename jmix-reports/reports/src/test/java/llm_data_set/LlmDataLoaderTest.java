@@ -16,10 +16,14 @@
 
 package llm_data_set;
 
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.read.ListAppender;
 import io.jmix.core.Metadata;
 import io.jmix.reports.ReportsTestConfiguration;
 import io.jmix.reports.entity.DataSet;
 import io.jmix.reports.entity.DataSetType;
+import io.jmix.reports.libintegration.LlmDataLoader;
 import io.jmix.reports.llm.LlmDataQuery;
 import io.jmix.reports.llm.LlmDataQueryException;
 import io.jmix.reports.llm.LlmQueryExecutionRequest;
@@ -37,12 +41,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.jspecify.annotations.Nullable;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -200,6 +206,22 @@ class LlmDataLoaderTest {
     }
 
     @Test
+    void testRunParametersAreNotOfferedASecondTimeUnderTheRootBand() {
+        // The root band's data is the run parameters themselves, so walking into it would offer every parameter
+        // twice — once as customerName and once as Root_customerName — and describe a dictionary the designer
+        // never shows.
+        DataSet dataSet = llmDataSet(PROMPT, null, false, null);
+        BandData rootBand = band("Root", null, Map.of("customerName", "Acme"));
+
+        loader().loadData(dataSet, band("Orders", rootBand, Map.of("number", "A-1")),
+                Map.of("customerName", "Acme"));
+
+        assertThat(queryService.getLastGenerationRequest().getAvailableParameters())
+                .extracting(LlmQueryParameter::getName)
+                .containsExactly("customerName", "Orders_number");
+    }
+
+    @Test
     void testRunParameterWinsOverAParentBandFieldOfTheSameName() {
         DataSet dataSet = llmDataSet(PROMPT, storedQuery(List.of(parameter("Orders_number", "java.lang.String"))),
                 false, null);
@@ -281,16 +303,63 @@ class LlmDataLoaderTest {
     }
 
     @Test
-    void testCrossTabAxisWithoutValuesContributesNothing() {
+    void testAxisIsLinkedByItsFirstFieldEvenWhenTheFirstRowLeavesItEmpty() {
+        // Which field links the matrix follows from the axis's own shape. Deciding it by the first field that
+        // happens to hold a value would move the required column between runs, and a query generated for one
+        // of them would be refused on the next run as returning the columns in the wrong order.
         DataSet dataSet = llmDataSet(PROMPT, null, false, null);
-        Map<String, Object> rowWithNull = new HashMap<>();
-        rowWithNull.put("year", null);
-        Map<String, Object> params = Map.of("revenue_dynamic_header", List.of(rowWithNull),
-                "revenue_master_data", List.of());
+        queryService.setQueryToGenerate(linkableCrossTabQuery());
+        // Ordered the way a data set's own rows are: the axis describes year first, whatever this row holds.
+        Map<String, Object> firstRow = new LinkedHashMap<>();
+        firstRow.put("year", null);
+        firstRow.put("month", 3);
+        Map<String, Object> params = new LinkedHashMap<>();
+        params.put("revenue_dynamic_header", Arrays.asList(firstRow, axisRow("year", 2025, "month", 4)));
+        params.put("revenue_master_data", List.of(axisRow("publisherId", "Nintendo")));
 
         loader().loadData(dataSet, null, params);
 
-        assertThat(queryService.getLastGenerationRequest().getAvailableParameters()).isEmpty();
+        assertThat(queryService.getLastGenerationRequest().getRequiredResultProperties())
+                .containsExactly("revenue_dynamic_header_year", "revenue_master_data_publisherId");
+        assertThat(queryService.getLastGenerationRequest().getAvailableParameters())
+                .filteredOn(parameter -> parameter.getName().equals("revenue_dynamic_header_year"))
+                .extracting(LlmQueryParameter::getValue)
+                .containsExactly(List.of(2025));
+    }
+
+    @Test
+    void testAxisFieldWithoutValuesIsStillRequiredBack() {
+        // Nothing can be said about a field this run left empty, but the axis still has it, and the column that
+        // links the matrix must be the same one the stored query was generated for.
+        DataSet dataSet = llmDataSet(PROMPT, null, false, null);
+        queryService.setQueryToGenerate(linkableCrossTabQuery());
+        Map<String, Object> rowWithNull = new HashMap<>();
+        rowWithNull.put("year", null);
+        Map<String, Object> params = new LinkedHashMap<>();
+        params.put("revenue_dynamic_header", List.of(rowWithNull));
+        params.put("revenue_master_data", List.of(axisRow("publisherId", "Nintendo")));
+
+        loader().loadData(dataSet, null, params);
+
+        assertThat(queryService.getLastGenerationRequest().getRequiredResultProperties())
+                .containsExactly("revenue_dynamic_header_year", "revenue_master_data_publisherId");
+    }
+
+    @Test
+    void testCrossTabAxisFieldEmptyInEveryRowContributesNothing() {
+        DataSet dataSet = llmDataSet(PROMPT, null, false, null);
+        queryService.setQueryToGenerate(linkableCrossTabQuery());
+        Map<String, Object> rowWithNull = new HashMap<>();
+        rowWithNull.put("year", null);
+        Map<String, Object> params = new LinkedHashMap<>();
+        params.put("revenue_dynamic_header", List.of(rowWithNull));
+        params.put("revenue_master_data", List.of(axisRow("publisherId", "Nintendo")));
+
+        loader().loadData(dataSet, null, params);
+
+        assertThat(queryService.getLastGenerationRequest().getAvailableParameters())
+                .extracting(LlmQueryParameter::getName)
+                .containsExactly("revenue_master_data_publisherId");
     }
 
     @Test
@@ -371,12 +440,40 @@ class LlmDataLoaderTest {
     }
 
     @Test
+    void testRowsCutShortByTheLimitStillReachTheBand() {
+        // The run says so in the log rather than failing: a band of the first rows is what the limit asked for.
+        DataSet dataSet = llmDataSet(PROMPT, storedQuery(List.of()), false, 1);
+        queryService.setRows(List.of(Map.of("orderNumber", "A-1")));
+        queryService.setTruncated(true);
+
+        List<Map<String, Object>> rows = loader().loadData(dataSet, null, Map.of());
+
+        assertThat(rows).containsExactly(Map.of("orderNumber", "A-1"));
+    }
+
+    @Test
     void testNonPositiveRowLimitIsNotALimit() {
         DataSet dataSet = llmDataSet(PROMPT, storedQuery(List.of()), false, 0);
 
         loader().loadData(dataSet, null, Map.of());
 
         assertThat(queryService.getLastExecutionRequest().getMaxResults()).isNull();
+    }
+
+    @Test
+    void testEmptyCrossTabAxisProducesNoRowsInsteadOfFailing() {
+        // A period with no data leaves an axis empty; the matrix then has no cells, and the stored query that
+        // filters by that axis has nothing to bind.
+        DataSet dataSet = llmDataSet(PROMPT, serializer.toJson(linkableCrossTabQuery(
+                List.of(parameter("revenue_dynamic_header_year", "java.lang.Integer")))), false, null);
+        Map<String, Object> params = new LinkedHashMap<>();
+        params.put("revenue_dynamic_header", List.of());
+        params.put("revenue_master_data", List.of(axisRow("publisherId", "Nintendo")));
+
+        List<Map<String, Object>> rows = loader().loadData(dataSet, null, params);
+
+        assertThat(rows).isEmpty();
+        assertThat(queryService.getExecutionRequests()).isEmpty();
     }
 
     @Test
@@ -480,6 +577,56 @@ class LlmDataLoaderTest {
     }
 
     @Test
+    void testInvalidQueryFailsTheDataSetBeforeItIsExecuted() {
+        // Execution answers an invalid query by asking a model to repair it, which would spend tokens on a run,
+        // send this run's arguments to the model and bind the values the model replies with.
+        DataSet dataSet = llmDataSet(PROMPT, storedQuery(List.of()), false, null);
+        queryService.setProblems(List.of("DTO parameter is not used in JPQL: dateFrom"));
+
+        assertThatThrownBy(() -> loader().loadData(dataSet, null, Map.of()))
+                .isInstanceOf(DataLoadingException.class)
+                .hasMessageContaining("Data")
+                .hasRootCauseMessage("The query was rejected as invalid: DTO parameter is not used in JPQL: dateFrom");
+
+        assertThat(queryService.getExecutionRequests()).isEmpty();
+    }
+
+    @Test
+    void testQueryIsCheckedOnceForTheWholeRun() {
+        // A check parses the query and resolves it against the data model, and the query does not change while
+        // the run executes it, so a band loaded once per parent row must not pay for the same verdict twice.
+        DataSet dataSet = llmDataSet(PROMPT, storedQuery(List.of()), false, null);
+        BandData rootBand = band("Root", null, Map.of());
+
+        loader().loadData(dataSet, band("Orders", rootBand, Map.of("orderNumber", "A-1")), Map.of());
+        loader().loadData(dataSet, band("Orders", rootBand, Map.of("orderNumber", "A-2")), Map.of());
+
+        assertThat(queryService.getValidatedQueries()).hasSize(1);
+        assertThat(queryService.getExecutionRequests()).hasSize(2);
+    }
+
+    @Test
+    void testWarningOfOneDataSetDoesNotSilenceAnotherOfTheSameName() {
+        // Data set names are unique within a band, so every band's first data set is called the same by default.
+        DataSet first = llmDataSet(PROMPT, storedQuery(List.of()), false, 0);
+        DataSet second = llmDataSet(PROMPT, storedQuery(List.of()), false, 0);
+        assertThat(first.getName()).isEqualTo(second.getName());
+        BandData rootBand = band("Root", null, Map.of());
+        ListAppender<ILoggingEvent> logged = captureLoaderLog();
+
+        try {
+            loader().loadData(first, band("Orders", rootBand, Map.of()), Map.of());
+            loader().loadData(second, band("Customers", rootBand, Map.of()), Map.of());
+        } finally {
+            releaseLoaderLog(logged);
+        }
+
+        assertThat(logged.list)
+                .filteredOn(event -> event.getFormattedMessage().contains("which is not a number of rows"))
+                .hasSize(2);
+    }
+
+    @Test
     void testQueryIsGeneratedOnceForTheWholeRun() {
         // A band under a parent is loaded once per parent row, and every row would ask the same question.
         DataSet dataSet = llmDataSet(PROMPT, null, true, null);
@@ -547,6 +694,21 @@ class LlmDataLoaderTest {
 
     protected ReportDataLoader loader() {
         return loaderFactory.createDataLoader(DataSetType.LLM.getCode());
+    }
+
+    /**
+     * Collects what the loader logs. A warning written once per run is only observable there.
+     */
+    protected ListAppender<ILoggingEvent> captureLoaderLog() {
+        ListAppender<ILoggingEvent> appender = new ListAppender<>();
+        appender.start();
+        ((Logger) LoggerFactory.getLogger(LlmDataLoader.class)).addAppender(appender);
+        return appender;
+    }
+
+    protected void releaseLoaderLog(ListAppender<ILoggingEvent> appender) {
+        ((Logger) LoggerFactory.getLogger(LlmDataLoader.class)).detachAppender(appender);
+        appender.stop();
     }
 
     /**

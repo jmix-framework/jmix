@@ -38,6 +38,7 @@ public class TestJpqlExecutionService extends JpqlExecutionService {
     protected List<Map<String, Object>> rows = List.of();
     protected boolean executed = true;
     protected boolean valid = true;
+    protected boolean hasMore;
 
     @Nullable
     protected String executionError;
@@ -63,7 +64,7 @@ public class TestJpqlExecutionService extends JpqlExecutionService {
                 : List.of(new JpqlValidationIssue("test.issue", issueMessage));
 
         return new JpqlExecutionResult(generatedResult, new JpqlValidationResult(valid, issues), rows,
-                request.getMaxResults(), request.getFirstResult(), false, false, executed, executionError);
+                request.getMaxResults(), request.getFirstResult(), hasMore, false, executed, executionError);
     }
 
     public JpqlExecutionRequest getLastRequest() {
@@ -72,6 +73,14 @@ public class TestJpqlExecutionService extends JpqlExecutionService {
 
     public void setRows(List<Map<String, Object>> rows) {
         this.rows = rows;
+    }
+
+    /**
+     * Tells the result that the row limit stopped the query short, as the add-on does when it fetches one row
+     * more than the limit and finds it.
+     */
+    public void setHasMore(boolean hasMore) {
+        this.hasMore = hasMore;
     }
 
     public void setExecuted(boolean executed) {

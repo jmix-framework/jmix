@@ -19,6 +19,9 @@ package io.jmix.reports.llm;
 import io.jmix.core.annotation.Internal;
 import io.jmix.reports.yarg.reporting.extraction.controller.CrossTabExtractionController;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -36,6 +39,17 @@ public final class LlmQueryParameterNames {
      * be referenced by a query at all.
      */
     private static final Pattern VALID_NAME = Pattern.compile("[A-Za-z_][A-Za-z0-9_]*");
+
+    /**
+     * How a query refers to a parameter, which is the pattern the add-on reads a query's parameters by too:
+     * the two must agree, or a query the add-on considers to declare the wrong parameters is stored.
+     */
+    private static final Pattern REFERENCE = Pattern.compile(":([A-Za-z_][A-Za-z0-9_]*)");
+
+    /**
+     * A string literal, whose content is text rather than query syntax.
+     */
+    private static final Pattern STRING_LITERAL = Pattern.compile("'(?:[^']|'')*'");
 
     private LlmQueryParameterNames() {
     }
@@ -66,6 +80,19 @@ public final class LlmQueryParameterNames {
     }
 
     /**
+     * Returns what every name of one cross-tab axis starts with. {@code CrossTabExtractionController} links a
+     * cell to its axis by the first result column starting with the axis data set's name, so both sides of the
+     * seam — the loader that builds the dictionary from real rows and the designer that builds one from stored
+     * queries — decide by this prefix which axis a name belongs to.
+     *
+     * @param dataSetName name of the axis data set
+     * @return the prefix the axis's names share
+     */
+    public static String ofCrossTabAxisPrefix(String dataSetName) {
+        return dataSetName + "_";
+    }
+
+    /**
      * Tells an axis of a cross-tab band from an ordinary run parameter by the suffix
      * {@link CrossTabExtractionController} recognises its data sets by.
      *
@@ -75,6 +102,36 @@ public final class LlmQueryParameterNames {
     public static boolean isCrossTabAxis(String name) {
         return name.endsWith(CrossTabExtractionController.HORIZONTAL_BAND)
                 || name.endsWith(CrossTabExtractionController.VERTICAL_BAND);
+    }
+
+    /**
+     * Returns the parameters a query text references, in the order it references them. This is what a query
+     * declares by being written: the add-on validates a query against the very same reading, so a document
+     * whose parameters say anything else is rejected on every run.
+     *
+     * @param jpql query text
+     * @return names of the referenced parameters
+     */
+    public static Set<String> referencedIn(String jpql) {
+        Set<String> names = new LinkedHashSet<>();
+        Matcher matcher = REFERENCE.matcher(stripStringLiterals(jpql));
+
+        while (matcher.find()) {
+            names.add(matcher.group(1));
+        }
+        return names;
+    }
+
+    /**
+     * Blanks out the string literals of a query, so that {@code like 'urn:isbn%'} references no parameter named
+     * {@code isbn} — one nothing could ever bind. Every literal is replaced by spaces of the same length to
+     * leave the rest of the text where it was.
+     *
+     * @param jpql query text
+     * @return the same text with the content of its literals blanked out
+     */
+    public static String stripStringLiterals(String jpql) {
+        return STRING_LITERAL.matcher(jpql).replaceAll(literal -> " ".repeat(literal.group().length()));
     }
 
     /**

@@ -118,6 +118,14 @@
   ::slotted([slot='attachments']) {
     max-width: 100%;
   }
+
+  /* Mirror of the base rule: has-attachments is height-based (see the
+     mixin's __updateHasAttachments), and suppresses only the phantom row gap
+     an enabled-but-empty tray would otherwise draw as a flex item with
+     nothing rendered. */
+  :host(:not([has-attachments])) [part='input-container'] {
+    row-gap: 0;
+  }
 }
 
 jmix-ai-message-input > vaadin-text-area::part(input-field) {

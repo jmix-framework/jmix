@@ -92,6 +92,12 @@ public class DataContextImpl implements DataContextInternal {
     // must overwrite this context's own unsaved edits. Scoped to the single merge call via try/finally.
     protected Set<String> overridingAttributes = Set.of();
 
+    // Non-null only inside mergeFromChild, from the moment the merge root's managed instance is resolved:
+    // that instance. Its overridingAttributes are written once, by the root visit; later visits of the same
+    // instance within the same merge must leave them alone. Scoped together with overridingAttributes.
+    @Nullable
+    protected Object overridingRoot;
+
     // (managedEntity identity -> property names) whose collection is being merged within the active
     // merge() call. Guards against re-entering mergeList/mergeSet for the same owner collection when the
     // source graph holds multiple java instances of the same id joined by a bidirectional reference.
@@ -336,6 +342,12 @@ public class DataContextImpl implements DataContextInternal {
         boolean srcNew = entityStates.isNew(srcEntity);
         boolean dstNew = entityStates.isNew(dstEntity);
 
+        if (isRoot && !overridingAttributes.isEmpty()) {
+            // the copy loops below write the child's values into this instance; from now on it is
+            // protected against a second write within the same merge (see isOverridingApplied)
+            overridingRoot = dstEntity;
+        }
+
         mergeSystemState(srcEntity, dstEntity, isRoot, options);
 
         boolean coldReset = isColdResetTarget(dstEntity, isRoot, options, dstExisted);
@@ -374,6 +386,13 @@ public class DataContextImpl implements DataContextInternal {
 
                 // ignore null values in non-root source entities
                 if (!isRoot && !options.isFresh() && value == null) {
+                    continue;
+                }
+
+                if (isOverridingApplied(dstEntity, propertyName, isRoot)) {
+                    if (DataContextDiagnostics.log.isDebugEnabled()) {
+                        DataContextDiagnostics.log.debug(DataContextDiagnostics.mergeSkippedDirty(dstEntity, propertyName));
+                    }
                     continue;
                 }
 
@@ -482,6 +501,18 @@ public class DataContextImpl implements DataContextInternal {
                                                      boolean isRoot, MergeOptions options,
                                                      Map<Object, Object> mergedMap) {
         String propertyName = property.getName();
+
+        if (isOverridingApplied(dstEntity, propertyName, isRoot)) {
+            if (property.getType() != MetaProperty.Type.EMBEDDED
+                    && value != null && !(value instanceof Collection) && !mergedMap.containsKey(value)) {
+                // as in the dirty-skip path below: the skipped incoming node still enters the context graph
+                internalMerge(value, mergedMap, false, options);
+            }
+            if (DataContextDiagnostics.log.isDebugEnabled()) {
+                DataContextDiagnostics.log.debug(DataContextDiagnostics.mergeSkippedDirty(dstEntity, propertyName));
+            }
+            return true;
+        }
 
         // dirty-aware merge rule: a destination attribute carrying an unsaved user edit
         // is never overwritten (this must also shield it from the lazy-state transplant
@@ -599,6 +630,19 @@ public class DataContextImpl implements DataContextInternal {
                 info.registerProperty(attribute, true);
             }
         }
+    }
+
+    /**
+     * Whether the given property of the given instance was already written from the child by the root
+     * visit of the active {@link #mergeFromChild(Object, Set)} call, so this later visit must not write
+     * it again. The source graph can hold another java instance of the same entity - a collection
+     * materialized outside this context, for example - carrying the value from before the child's edit;
+     * merging that instance onto the same managed instance would silently revert the edit. The parent
+     * context's own dirty-skip rule does not cover these attributes: they are marked dirty here only
+     * once the merge has finished.
+     */
+    protected boolean isOverridingApplied(Object dstEntity, String propertyName, boolean isRoot) {
+        return !isRoot && overridingRoot == dstEntity && isOverriding(propertyName);
     }
 
     /**
@@ -787,8 +831,12 @@ public class DataContextImpl implements DataContextInternal {
             if (property.getRange().isClass() && !metadataTools.isMethodBased(property)
                     && !srcNew && !entityStates.isLoaded(srcEntity, propertyName)
                     && !entityStates.isLoaded(dstEntity, propertyName)) {
+                // snapshotBaseline=false: the transplanted collection is an unmaterialized lazy holder, and
+                // reading it to snapshot a baseline would trigger a lazy load right here. Its contents would
+                // then be instances loaded outside this context, which later merges of the same graph would
+                // copy over the managed ones - reverting unsaved edits.
                 entitySystemStateSupport.mergeLazyLoadingState((Entity) srcEntity, (Entity) dstEntity, property,
-                        collection -> wrapLazyValueIntoObservableCollection(collection, dstEntity, propertyName));
+                        collection -> wrapLazyValueIntoObservableCollection(collection, dstEntity, propertyName, false));
             }
         }
 
@@ -926,13 +974,26 @@ public class DataContextImpl implements DataContextInternal {
      */
     protected Collection<Object> wrapLazyValueIntoObservableCollection(Collection<Object> collection, Object notifiedEntity,
                                                                         @Nullable String property) {
+        return wrapLazyValueIntoObservableCollection(collection, notifiedEntity, property, true);
+    }
+
+    /**
+     * Same as {@link #wrapLazyValueIntoObservableCollection(Collection, Object, String)}, with control over the
+     * baseline snapshot. Snapshotting reads the collection's contents, so it must be suppressed when the
+     * collection is an unmaterialized lazy holder: reading it would trigger a lazy load whose contents bypass
+     * this context (see {@link #mergeLazyLoadingState}). Without a baseline a later mutation is tracked
+     * conservatively as a change of the attribute, which is the correct answer for a collection whose
+     * pre-mutation contents were never known here.
+     */
+    protected Collection<Object> wrapLazyValueIntoObservableCollection(Collection<Object> collection, Object notifiedEntity,
+                                                                        @Nullable String property, boolean snapshotBaseline) {
         if (collection instanceof List) {
-            if (property != null) {
+            if (property != null && snapshotBaseline) {
                 changeTracker.snapshotCollectionBaseline(notifiedEntity, property, collection);
             }
             return createObservableList((List<Object>) collection, notifiedEntity, property);
         } else if (collection instanceof Set) {
-            if (property != null) {
+            if (property != null && snapshotBaseline) {
                 changeTracker.snapshotCollectionBaseline(notifiedEntity, property, collection);
             }
             return createObservableSet((Set<Object>) collection, notifiedEntity, property);
@@ -1313,6 +1374,7 @@ public class DataContextImpl implements DataContextInternal {
             result = merge(entity);
         } finally {
             overridingAttributes = Set.of();
+            overridingRoot = null;
         }
         for (String attribute : childDirtyAttributes) {
             if (changeTracker.isAttributeDirty(result, attribute)) {

@@ -332,6 +332,87 @@ class DataContextMergePolicyTest extends DataContextSpec {
         dataManager.remove(customer)
     }
 
+    @IgnoreIf({ Boolean.valueOf(System.getenv("JMIX_ECLIPSELINK_DISABLELAZYLOADING")) })
+    def "merge does not materialize a transplanted lazy collection"() {
+        given: "a managed order whose orderLines is an unmaterialized lazy holder"
+        DataContext context = factory.createDataContext()
+        Customer customer = dataManager.save(new Customer(name: 'c1', address: new Address()))
+        Order order = dataManager.save(new Order(number: 'o1', customer: customer))
+        OrderLine line = dataManager.save(new OrderLine(quantity: 10, order: order))
+        Order managed = context.merge(dataManager.load(Id.of(order)).fetchPlan { it.add('number') }.one())
+
+        when: "another copy without orderLines is merged over it"
+        context.merge(dataManager.load(Id.of(order)).fetchPlan { it.add('number') }.one(),
+                new MergeOptions().setFresh(true))
+
+        then: "the collection is still not loaded - the merge did not read it"
+        !entityStates.isLoaded(managed, 'orderLines')
+
+        cleanup:
+        dataManager.remove(line, order, customer)
+    }
+
+    @IgnoreIf({ Boolean.valueOf(System.getenv("JMIX_ECLIPSELINK_DISABLELAZYLOADING")) })
+    def "child edit of a composition item survives a fresh merge of its master in the child context"() {
+        given: "the master's detail view holds the item; the item's detail view is a child context"
+        DataContext parent = factory.createDataContext()
+        DataContext child = factory.createDataContext()
+        child.setParent(parent)
+        Customer customer = dataManager.save(new Customer(name: 'c1', address: new Address()))
+        Order order = dataManager.save(new Order(number: 'o1', customer: customer))
+        OrderLine line = dataManager.save(new OrderLine(quantity: 10, order: order))
+        Order parentOrder = parent.merge(dataManager.load(Id.of(order))
+                .fetchPlan { it.addAll('number', 'orderLines.quantity') }.one())
+        OrderLine parentLine = parentOrder.orderLines[0]
+
+        when: "the child edits the item, then its own items loader fresh-merges the master"
+        OrderLine childLine = child.merge(dataManager.load(Id.of(line))
+                .fetchPlan { it.addAll('quantity', 'order.number') }.one())
+        childLine.quantity = 101
+        child.merge(dataManager.load(Order).all().fetchPlan { it.add('number') }.list(),
+                new MergeOptions().setFresh(true))
+        child.save()
+
+        then: "the edit landed in the parent and is dirty there"
+        parentLine.quantity == 101
+        'quantity' in parent.getModifiedAttributes(parentLine)
+
+        cleanup:
+        dataManager.remove(line, order, customer)
+    }
+
+    def "child save is not reverted by a stale duplicate reachable in the child graph"() {
+        given:
+        DataContext parent = factory.createDataContext()
+        DataContext child = factory.createDataContext()
+        child.setParent(parent)
+        Customer customer = dataManager.save(new Customer(name: 'c1', address: new Address()))
+        Order order = dataManager.save(new Order(number: 'o1', customer: customer))
+        OrderLine line = dataManager.save(new OrderLine(quantity: 10, order: order))
+        Order parentOrder = parent.merge(dataManager.load(Id.of(order))
+                .fetchPlan { it.addAll('number', 'orderLines.quantity') }.one())
+        OrderLine parentLine = parentOrder.orderLines[0]
+
+        when: "the child edits the line, and its order holds instances loaded outside the context"
+        OrderLine childLine = child.merge(dataManager.load(Id.of(line))
+                .fetchPlan { it.addAll('quantity', 'order.number') }.one())
+        childLine.quantity = 101
+        Order childOrder = childLine.order
+        Order outsideOrder = dataManager.load(Id.of(order))
+                .fetchPlan { it.addAll('number', 'orderLines.quantity') }.one()
+        EntityValues.setValue(childOrder, 'orderLines', outsideOrder.orderLines)
+        EntitySystemAccess.getEntityEntry(childOrder).getLoadedPropertiesInfo()
+                .registerProperty('orderLines', true)
+        child.save()
+
+        then: "merging the pre-edit duplicate does not overwrite the child's value"
+        parentLine.quantity == 101
+        'quantity' in parent.getModifiedAttributes(parentLine)
+
+        cleanup:
+        dataManager.remove(line, order, customer)
+    }
+
     def "non-fresh merge does not overwrite a dirty embedded sub-attribute"() {
         given:
         DataContext context = factory.createDataContext()

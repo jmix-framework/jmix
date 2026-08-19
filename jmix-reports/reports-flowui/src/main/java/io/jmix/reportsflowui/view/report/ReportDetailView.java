@@ -699,8 +699,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
         }
 
         if ("text".equals(event.getProperty())) {
-            // The prompt was edited, so a query generated earlier answers the previous wording.
-            llmStaleQueryNotice.setVisible(StringUtils.isNotBlank(event.getItem().getLlmGeneratedQuery()));
+            updateLlmStaleQueryNotice(event.getItem());
         }
 
         if ("entityParamName".equals(event.getProperty())) {
@@ -1801,6 +1800,22 @@ public class ReportDetailView extends StandardDetailView<Report> {
                         String.join("; ", problems)))
                 .withType(Notifications.Type.WARNING)
                 .show();
+    }
+
+    /**
+     * Says whether the stored query of the data set on screen answers a prompt that has since been edited.
+     * <p>
+     * Only that data set: the container reports a property change of every data set of the band, while the
+     * notice belongs to the panel, so a prompt edited elsewhere must leave it as it is — the same reason the
+     * type branch refreshes the panel only for the data set it shows.
+     */
+    protected void updateLlmStaleQueryNotice(DataSet dataSet) {
+        if (dataSet != dataSetsDc.getItemOrNull() || dataSet.getType() != DataSetType.LLM) {
+            return;
+        }
+
+        // The prompt was edited, so a query generated earlier answers the previous wording.
+        llmStaleQueryNotice.setVisible(StringUtils.isNotBlank(dataSet.getLlmGeneratedQuery()));
     }
 
     /**

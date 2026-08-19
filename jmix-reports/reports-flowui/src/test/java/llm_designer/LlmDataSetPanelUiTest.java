@@ -293,6 +293,25 @@ public class LlmDataSetPanelUiTest {
     }
 
     @Test
+    public void testEditingThePromptOfAnotherDataSetLeavesTheNoticeAlone() {
+        // The container reports a property change of every data set of the band, while the notice describes the
+        // stored query of the one the panel shows.
+        ReportDetailView view = (ReportDetailView) openDesigner(
+                llmReportUtil.createAndSaveReportWithLlmAndJpqlDataSets());
+        Badge notice = findComponent(view, "llmStaleQueryNotice");
+        // The other data set is made one the notice could speak about, or it would say nothing either way.
+        DataSet another = dataSetsContainer(view).getItems().get(1);
+        another.setType(DataSetType.LLM);
+        another.setLlmGeneratedQuery(TestLlmReportUtil.STORED_QUERY);
+        assertThat(another).isNotSameAs(selectedDataSet(view));
+        assertThat(notice.isVisible()).isFalse();
+
+        another.setText("A newer prompt");
+
+        assertThat(notice.isVisible()).isFalse();
+    }
+
+    @Test
     public void testGenerationResultIsDiscardedWhenThePromptHasChanged() {
         ReportDetailView view = openReportDesignerOnLlmDataSet();
         DataSet dataSet = selectedDataSet(view);

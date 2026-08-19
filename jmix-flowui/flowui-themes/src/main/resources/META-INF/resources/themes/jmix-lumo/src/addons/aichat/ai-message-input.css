@@ -114,9 +114,14 @@
   /* Mirror of the base layout so it survives Lumo's adoptedStyleSheets
      replacement: the chips tray is the box's first row. The chips themselves
      wrap inside the file list's THUMBNAILS variant, which the upload
-     component's own Lumo theme owns. */
+     component's own Lumo theme owns. flex-shrink: 0 stops the tray from
+     being the row that collapses to zero height once the column saturates
+     the height cap (its overflow: auto gives it an automatic minimum size of
+     0, CSS Flexbox §4.5) — the textarea is what is meant to absorb height
+     pressure, not the tray. */
   ::slotted([slot='attachments']) {
     max-width: 100%;
+    flex-shrink: 0;
   }
 
   /* Mirror of the base rule: has-attachments is height-based (see the

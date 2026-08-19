@@ -35,6 +35,9 @@ public class ConditionGenerationContext {
     protected String joinAlias;
     protected String joinProperty;
     protected MetaClass joinMetaClass;
+    protected String collectionPath;
+    protected String collectionAlias;
+    protected String collectionFrom;
     protected List<String> valueProperties;
     protected List<String> selectedExpressions;
     protected boolean elementCollection;
@@ -120,6 +123,46 @@ public class ConditionGenerationContext {
 
     public void setJoinMetaClass(@Nullable MetaClass joinMetaClass) {
         this.joinMetaClass = joinMetaClass;
+    }
+
+    /**
+     * @return path to the to-many collection property whose condition is generated as an 'exists' subquery
+     * (e.g. {@code e.tags}), or null if the condition is not generated as a subquery
+     */
+    @Nullable
+    public String getCollectionPath() {
+        return collectionPath;
+    }
+
+    public void setCollectionPath(@Nullable String collectionPath) {
+        this.collectionPath = collectionPath;
+    }
+
+    /**
+     * @return identification variable of the 'exists' subquery correlated with the collection property path
+     * by a 'member of' condition, or null if the condition is not generated as a subquery
+     */
+    @Nullable
+    public String getCollectionAlias() {
+        return collectionAlias;
+    }
+
+    public void setCollectionAlias(@Nullable String collectionAlias) {
+        this.collectionAlias = collectionAlias;
+    }
+
+    /**
+     * @return content of the 'from' clause of the 'exists' subquery generated for a condition on a to-many
+     * collection property path (e.g. {@code test_Tag cje_0 left join cje_0.category cje_1}), or null if
+     * the condition is not generated as a subquery
+     */
+    @Nullable
+    public String getCollectionFrom() {
+        return collectionFrom;
+    }
+
+    public void setCollectionFrom(@Nullable String collectionFrom) {
+        this.collectionFrom = collectionFrom;
     }
 
     @Nullable

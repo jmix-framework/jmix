@@ -710,6 +710,10 @@ class DataManagerPropertyConditionTest extends DataSpec {
         propertyConditionGenerator.generateWhere(context).contains("cje_0.name =")
     }
 
+    // A condition on a path crossing a to-many association is generated as a self-contained 'exists'
+    // subquery instead of a top-level join, so the main query does not require 'select distinct'
+    // which fails on Oracle if the entity contains a LOB attribute (ORA-00932).
+
     def "PropertyCondition generator join to many test"() {
         when:
 
@@ -717,11 +721,14 @@ class DataManagerPropertyConditionTest extends DataSpec {
         def context = new ConditionGenerationContext(property)
         context.entityName = "test_TestAppEntity"
         context.entityAlias = "e"
+        def joinClause = propertyConditionGenerator.generateJoin(context)
+        def whereClause = propertyConditionGenerator.generateWhere(context)
 
         then:
 
-        propertyConditionGenerator.generateJoin(context).contains("join e.items ")
-        propertyConditionGenerator.generateWhere(context).contains(context.joinAlias + ".name =")
+        joinClause == ""
+        whereClause.startsWith("exists (select 1 from test_TestAppEntityItem cje_0 where cje_0 member of e.items and ")
+        whereClause.contains("cje_0.name =")
     }
 
     def "PropertyCondition generator join to one and many test"() {
@@ -731,11 +738,14 @@ class DataManagerPropertyConditionTest extends DataSpec {
         def context = new ConditionGenerationContext(property)
         context.entityName = "test_TestAppEntityItem"
         context.entityAlias = "e"
+        def joinClause = propertyConditionGenerator.generateJoin(context)
+        def whereClause = propertyConditionGenerator.generateWhere(context)
 
-        then:
+        then: "the to-one prefix is joined at the top level, the collection goes into the subquery"
 
-        propertyConditionGenerator.generateJoin(context).contains(" left join e.appEntity cje_0 left join cje_0.items cje_1")
-        propertyConditionGenerator.generateWhere(context).contains(context.joinAlias + ".name =")
+        joinClause == " left join e.appEntity cje_0"
+        whereClause.startsWith("exists (select 1 from test_TestAppEntityItem cje_1 where cje_1 member of cje_0.items and ")
+        whereClause.contains("cje_1.name =")
     }
 
 
@@ -746,11 +756,16 @@ class DataManagerPropertyConditionTest extends DataSpec {
         def context = new ConditionGenerationContext(property)
         context.entityName = "test_TestAppEntity"
         context.entityAlias = "e"
+        def joinClause = propertyConditionGenerator.generateJoin(context)
+        def whereClause = propertyConditionGenerator.generateWhere(context)
 
-        then:
+        then: "all joins following the first to-many property are inside the subquery"
 
-        propertyConditionGenerator.generateJoin(context).count("join ") == 3
-        propertyConditionGenerator.generateWhere(context).contains(context.joinAlias + ".name =")
+        joinClause == ""
+        whereClause.startsWith("exists (select 1 from test_TestAppEntityItem cje_0" +
+                " left join cje_0.appEntity cje_1 left join cje_1.items cje_2" +
+                " where cje_0 member of e.items and ")
+        whereClause.contains("cje_2.name =")
     }
 
     def "PropertyCondition generator multiple join to one and many test"() {
@@ -765,9 +780,11 @@ class DataManagerPropertyConditionTest extends DataSpec {
 
         then:
 
-        joinClause.count("join ") == 4
-        joinClause.count("left join cje_") == 3
-        whereClause.contains(context.joinAlias + ".name =")
+        joinClause == " left join e.appEntity cje_0"
+        whereClause.startsWith("exists (select 1 from test_TestAppEntityItem cje_1" +
+                " left join cje_1.appEntity cje_2 left join cje_2.items cje_3" +
+                " where cje_1 member of cje_0.items and ")
+        whereClause.contains("cje_3.name =")
     }
 
     def "basic outer join generation test"() {

@@ -87,25 +87,48 @@ public class PropertyConditionGenerator implements ConditionGenerator<PropertyCo
         StringBuilder joinPropertyBuilder = new StringBuilder(context.entityAlias);
         MetaClass metaClass = metadata.getClass(context.getEntityName());
 
+        // A join to a to-many collection multiplies rows of the main query, which requires 'select distinct'
+        // failing on Oracle if the entity contains a LOB attribute. Such a condition is generated as
+        // a self-contained 'exists' subquery instead: joins starting from the first to-many property go into
+        // the subquery 'from' clause and the condition itself is wrapped in 'exists' in generateWhere().
+        boolean collectionAsSubquery = !useInnerJoinInCondition && isGeneratedAsSubquery(metaClass, propertyName);
+        StringBuilder subqueryFromBuilder = null;
+
         while (propertyName.contains(".")) {
             String baseProperty = StringUtils.substringBefore(propertyName, ".");
             String childProperty = StringUtils.substringAfter(propertyName, ".");
 
             MetaProperty metaProperty = metaClass.getProperty(baseProperty);
 
-            if ((useInnerJoinInCondition && metaProperty.getRange().getCardinality().isMany()) ||
+            if (collectionAsSubquery && subqueryFromBuilder == null
+                    && (metaProperty.getType() == ASSOCIATION || metaProperty.getType() == COMPOSITION)
+                    && metaProperty.getRange().getCardinality().isMany()) {
+                MetaClass collectionMetaClass = metaProperty.getRange().asClass();
+                String joinAlias = joinAliasPrefix + context.generateNextJoinIndex();
+
+                context.setJoinAlias(joinAlias);
+                context.setJoinProperty(childProperty);
+                context.setJoinMetaClass(collectionMetaClass);
+                context.setCollectionPath(joinPropertyBuilder + "." + baseProperty);
+                context.setCollectionAlias(joinAlias);
+                // the subquery declares an entity variable correlated with the collection path
+                // by a 'member of' condition, so joins to it can be added inside the subquery
+                subqueryFromBuilder = new StringBuilder(collectionMetaClass.getName()).append(" ").append(joinAlias);
+                joinPropertyBuilder = new StringBuilder(joinAlias);
+            } else if ((useInnerJoinInCondition && metaProperty.getRange().getCardinality().isMany()) ||
                     (metaProperty.getType() == ASSOCIATION || metaProperty.getType() == COMPOSITION)) {
                 String joinAlias = joinAliasPrefix + context.generateNextJoinIndex();
 
                 context.setJoinAlias(joinAlias);
                 context.setJoinProperty(childProperty);
                 context.setJoinMetaClass(metaProperty.getRange().asClass());
+                StringBuilder targetBuilder = subqueryFromBuilder != null ? subqueryFromBuilder : joinBuilder;
                 if (useInnerJoinInCondition) {
-                    joinBuilder.append(" join ");
+                    targetBuilder.append(" join ");
                 } else {
-                    joinBuilder.append(" left join ");
+                    targetBuilder.append(" left join ");
                 }
-                joinBuilder.append(joinPropertyBuilder + "." + baseProperty + " " + joinAlias);
+                targetBuilder.append(joinPropertyBuilder + "." + baseProperty + " " + joinAlias);
                 joinPropertyBuilder = new StringBuilder(joinAlias);
             } else {
                 joinPropertyBuilder.append(".").append(baseProperty);
@@ -117,6 +140,10 @@ public class PropertyConditionGenerator implements ConditionGenerator<PropertyCo
             }
 
             propertyName = childProperty;
+        }
+
+        if (subqueryFromBuilder != null) {
+            context.setCollectionFrom(subqueryFromBuilder.toString());
         }
 
         // the property may not exist in the metaClass in case of a dynamic attributes
@@ -146,12 +173,26 @@ public class PropertyConditionGenerator implements ConditionGenerator<PropertyCo
 
         if (context.getJoinAlias() != null && context.getJoinProperty() != null) {
             MetaClass joinMetaClass = context.getJoinMetaClass();
+            String where;
             if (joinMetaClass != null) {
                 String property = getProperty(context.getJoinProperty(), joinMetaClass.getName());
-                return generateWhere(propertyCondition, context.getJoinAlias(), property, context.isElementCollection());
+                where = generateWhere(propertyCondition, context.getJoinAlias(), property, context.isElementCollection());
             } else { // case of ElementCollection
-                return generateWhere(propertyCondition, context.getJoinAlias(), null, context.isElementCollection());
+                where = generateWhere(propertyCondition, context.getJoinAlias(), null, context.isElementCollection());
             }
+            if (context.getCollectionPath() != null) {
+                where = String.format("exists (select 1 from %s where %s member of %s and %s)",
+                        context.getCollectionFrom(),
+                        context.getCollectionAlias(),
+                        context.getCollectionPath(),
+                        where);
+                if (isMatchingEmptyCollection(propertyCondition)) {
+                    // with join-based generation an entity with an empty collection produces an all-null
+                    // left-joined row satisfying these operations, so it must match the subquery form too
+                    where = String.format("(%s is empty or %s)", context.getCollectionPath(), where);
+                }
+            }
+            return where;
         } else {
             String entityAlias = context.getEntityAlias();
             String property = getProperty(propertyCondition.getProperty(), context.getEntityName());
@@ -300,6 +341,48 @@ public class PropertyConditionGenerator implements ConditionGenerator<PropertyCo
                     propertyCondition.getParameterName(),
                     getLikeEscapeClause(propertyCondition));
         }
+    }
+
+    /**
+     * Returns true if the condition on the given property path is generated as a self-contained
+     * 'exists' subquery instead of a top-level join. This is the case for a path crossing a to-many
+     * association or composition (e.g. {@code tags.name}): a top-level join would multiply rows of
+     * the main query. Paths ending with an element collection keep join-based generation, as well as
+     * paths not resolvable in the static metadata (e.g. containing a dynamic attribute).
+     */
+    protected boolean isGeneratedAsSubquery(MetaClass metaClass, String property) {
+        if (!property.contains(".")) {
+            return false;
+        }
+        MetaPropertyPath propertyPath = metaClass.getPropertyPath(property);
+        if (propertyPath == null
+                || metadataTools.isElementCollection(propertyPath.getMetaProperty())) {
+            return false;
+        }
+        MetaProperty[] metaProperties = propertyPath.getMetaProperties();
+        for (int i = 0; i < metaProperties.length - 1; i++) {
+            MetaProperty metaProperty = metaProperties[i];
+            if ((metaProperty.getType() == ASSOCIATION || metaProperty.getType() == COMPOSITION)
+                    && metaProperty.getRange().getCardinality().isMany()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Returns true if the condition must match entities whose to-many collection is empty. With join-based
+     * generation such entities produce an all-null left-joined row that satisfies these operations.
+     */
+    protected boolean isMatchingEmptyCollection(PropertyCondition propertyCondition) {
+        String operation = propertyCondition.getOperation();
+        if (PropertyCondition.Operation.IS_SET.equals(operation)) {
+            return !Boolean.TRUE.equals(propertyCondition.getParameterValue());
+        }
+        if (PropertyCondition.Operation.IS_COLLECTION_EMPTY.equals(operation)) {
+            return Boolean.TRUE.equals(propertyCondition.getParameterValue());
+        }
+        return PropertyCondition.Operation.NOT_MEMBER_OF_COLLECTION.equals(operation);
     }
 
     /**

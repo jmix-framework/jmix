@@ -2,20 +2,11 @@
   :host {
     box-sizing: border-box;
     display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: flex-end;
-    gap: var(--jmix-ai-message-input-gap, var(--lumo-space-m));
+    flex-direction: column;
     width: 100%;
     max-width: var(--jmix-ai-message-input-max-width);
     margin-inline: auto;
-    max-height: 50vh;
     flex-shrink: 0;
-    padding: var(--jmix-ai-message-input-padding, var(--lumo-space-s));
-    background: var(--jmix-ai-message-input-background, var(--lumo-base-color));
-    box-shadow: inset 0 0 0 var(--vaadin-input-field-border-width, 1px)
-      var(--vaadin-input-field-border-color, var(--lumo-contrast-30pct));
-    border-radius: var(--vaadin-input-field-border-radius, var(--lumo-border-radius-l));
     --jmix-ai-message-input-icon-send: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M12 19V5'/><path d='m5 12 7-7 7 7'/></svg>");
     --jmix-ai-message-input-icon-stop: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='currentColor'><rect x='6' y='6' width='12' height='12' rx='2'/></svg>");
   }
@@ -24,27 +15,57 @@
     display: none !important;
   }
 
-  :host([focus-ring]) {
+  [part='input-container'] {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: var(--jmix-ai-message-input-gap, var(--lumo-space-m));
+    max-height: 50vh;
+    padding: var(--jmix-ai-message-input-padding, var(--lumo-space-s));
+    background: var(--jmix-ai-message-input-background, var(--lumo-base-color));
+    box-shadow: inset 0 0 0 var(--vaadin-input-field-border-width, 1px)
+      var(--vaadin-input-field-border-color, var(--lumo-contrast-30pct));
+    border-radius: var(--vaadin-input-field-border-radius, var(--lumo-border-radius-l));
+  }
+
+  :host([focus-ring]) [part='input-container'] {
     box-shadow: 0 0 0 var(--vaadin-focus-ring-width, 2px)
       var(--vaadin-focus-ring-color, var(--lumo-primary-color-50pct));
   }
 
   :host([disabled]) {
     --jmix-ai-message-input-background: var(--lumo-contrast-5pct);
+  }
+
+  :host([disabled]) [part='input-container'] {
     box-shadow: none;
   }
 
   /* Drop highlight while files are dragged over the composer (Stage 3). Mirror
      of the base rule so it survives Lumo's adoptedStyleSheets replacement. */
-  :host([dragover]) {
+  :host([dragover]) [part='input-container'] {
     outline: 2px dashed var(--vaadin-border-color-strong, var(--lumo-contrast-50pct));
     outline-offset: -2px;
   }
 
   @media (forced-colors: active) {
-    :host {
+    [part='input-container'] {
       border: 1px solid CanvasText;
     }
+  }
+
+  [part='controls'] {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--jmix-ai-message-input-gap, var(--lumo-space-m));
+  }
+
+  [part='trailing'] {
+    display: flex;
+    align-items: center;
+    gap: var(--jmix-ai-message-input-gap, var(--lumo-space-m));
   }
 
   ::slotted([slot='textarea']) {
@@ -71,12 +92,10 @@
   /* --- Attachments (Stage 3) --- */
 
   /* Mirror of the base layout so it survives Lumo's adoptedStyleSheets
-     replacement: the chips tray takes its own full-width row bounded to the
-     composer width. The chips themselves wrap inside the file list's THUMBNAILS
-     variant, which the upload component's own Lumo theme owns. */
+     replacement: the chips tray is the box's first row. The chips themselves
+     wrap inside the file list's THUMBNAILS variant, which the upload
+     component's own Lumo theme owns. */
   ::slotted([slot='attachments']) {
-    order: -2;
-    flex-basis: 100%;
     max-width: 100%;
   }
 }

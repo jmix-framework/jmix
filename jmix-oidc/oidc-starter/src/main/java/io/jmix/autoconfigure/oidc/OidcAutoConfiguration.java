@@ -16,6 +16,7 @@
 
 package io.jmix.autoconfigure.oidc;
 
+import io.jmix.core.JmixOrder;
 import io.jmix.core.JmixSecurityFilterChainOrder;
 import io.jmix.oidc.OidcConfiguration;
 import io.jmix.oidc.OidcProperties;
@@ -25,6 +26,7 @@ import io.jmix.oidc.claimsmapper.DefaultClaimsRolesMapper;
 import io.jmix.oidc.filter.OidcResourceServerSecurityFilterChainCustomizer;
 import io.jmix.oidc.filter.OidcVaadinSecurityFilterChainCustomizer;
 import io.jmix.oidc.jwt.JmixJwtAuthenticationConverter;
+import io.jmix.oidc.jwt.JmixOidcIdTokenDecoderFactory;
 import io.jmix.oidc.resourceserver.OidcResourceServerEventSecurityFilter;
 import io.jmix.oidc.user.JmixOidcUser;
 import io.jmix.oidc.userinfo.DefaultJmixOidcUserService;
@@ -39,22 +41,30 @@ import io.jmix.security.role.RowLevelRoleRepository;
 import io.jmix.security.util.ClientDetailsSourceSupport;
 import io.jmix.security.util.JmixHttpSecurityUtils;
 import io.jmix.securityresourceserver.requestmatcher.CompositeResourceServerRequestMatcherProvider;
+import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.security.oauth2.server.resource.autoconfigure.servlet.JwkSetUriJwtDecoderBuilderCustomizer;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.oauth2.jwt.JwtDecoderFactory;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.AuthorizationFilter;
 import org.springframework.security.web.util.matcher.OrRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
+import org.springframework.web.client.RestOperations;
+import org.springframework.web.client.RestTemplate;
 
 @AutoConfiguration(
         afterName = "org.springframework.boot.security.oauth2.client.autoconfigure.OAuth2ClientAutoConfiguration",
@@ -88,6 +98,45 @@ public class OidcAutoConfiguration {
     @ConditionalOnMissingBean(OidcUserMapper.class)
     public OidcUserMapper userMapper(ClaimsRolesMapper claimsRolesMapper) {
         return new DefaultOidcUserMapper(claimsRolesMapper);
+    }
+
+    /**
+     * Verifies ID token signatures during OIDC login. Since Spring Security 7 the standard
+     * {@link org.springframework.security.oauth2.client.oidc.authentication.OidcIdTokenDecoderFactory} loads
+     * the JWK Set with non-configurable 500 ms timeouts, which is often not enough for a remote provider,
+     * so a factory with timeouts taken from {@code jmix.oidc.jwks.*} properties is provided instead.
+     */
+    @Bean
+    @ConditionalOnMissingBean(JwtDecoderFactory.class)
+    public JwtDecoderFactory<ClientRegistration> oidcIdTokenDecoderFactory(OidcProperties oidcProperties) {
+        return new JmixOidcIdTokenDecoderFactory(createJwksRestOperations(oidcProperties));
+    }
+
+    private static RestOperations createJwksRestOperations(OidcProperties oidcProperties) {
+        SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
+        requestFactory.setConnectTimeout(oidcProperties.getJwks().getConnectTimeout());
+        requestFactory.setReadTimeout(oidcProperties.getJwks().getReadTimeout());
+        return new RestTemplate(requestFactory);
+    }
+
+    /**
+     * Customizes the {@code JwtDecoder} auto-configured by Spring Boot for the OAuth2 resource server:
+     * the JWK Set is loaded with timeouts taken from {@code jmix.oidc.jwks.*} properties instead of the
+     * non-configurable 500 ms Spring Security defaults.
+     */
+    @Configuration(proxyBeanMethods = false)
+    @ConditionalOnClass(name = "org.springframework.boot.security.oauth2.server.resource.autoconfigure.servlet.JwkSetUriJwtDecoderBuilderCustomizer")
+    public static class OidcResourceServerJwtDecoderConfiguration {
+
+        /**
+         * Ordered early, so that customizers defined by the application run later and can override
+         * the settings applied here.
+         */
+        @Bean
+        @Order(JmixOrder.HIGHEST_PRECEDENCE)
+        public JwkSetUriJwtDecoderBuilderCustomizer oidcJwkSetUriJwtDecoderBuilderCustomizer(OidcProperties oidcProperties) {
+            return builder -> builder.restOperations(createJwksRestOperations(oidcProperties));
+        }
     }
 
     /**

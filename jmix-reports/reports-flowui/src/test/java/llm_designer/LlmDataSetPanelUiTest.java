@@ -27,11 +27,11 @@ import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.checkbox.JmixCheckbox;
 import io.jmix.flowui.component.codeeditor.CodeEditor;
 import io.jmix.flowui.component.combobox.JmixComboBox;
-import io.jmix.flowui.component.textarea.JmixTextArea;
 import io.jmix.flowui.component.grid.DataGrid;
-import io.jmix.flowui.component.select.JmixSelect;
 import io.jmix.flowui.component.grid.TreeDataGrid;
+import io.jmix.flowui.component.select.JmixSelect;
 import io.jmix.flowui.component.tabsheet.JmixTabSheet;
+import io.jmix.flowui.component.textarea.JmixTextArea;
 import io.jmix.flowui.component.textfield.TypedTextField;
 import io.jmix.flowui.kit.component.button.JmixButton;
 import io.jmix.flowui.model.CollectionContainer;
@@ -49,8 +49,8 @@ import io.jmix.reports.llm.LlmDataQueryService;
 import io.jmix.reports.llm.LlmQueryGenerationRequest;
 import io.jmix.reports.llm.LlmQueryParameter;
 import io.jmix.reports.llm.impl.LlmDataQuerySerializer;
-import io.jmix.reportsflowui.test_support.AuthenticatedAsAdmin;
 import io.jmix.reportsflowui.support.LlmDataSetGenerationSupport;
+import io.jmix.reportsflowui.test_support.AuthenticatedAsAdmin;
 import io.jmix.reportsflowui.view.report.ReportDetailView;
 import io.jmix.reportsflowui.view.report.model.LlmQueryColumn;
 import llm_designer.test_support.LlmDesignerTestConfiguration;
@@ -753,7 +753,8 @@ public class LlmDataSetPanelUiTest {
 
     protected BackgroundTask<Integer, LlmDataQuery> generationTask(ReportDetailView view, DataSet dataSet) {
         LlmQueryGenerationRequest request = generationSupport.createGenerationRequest(dataSet);
-        return Objects.requireNonNull(ReflectionTestUtils.invokeMethod(view, "createLlmGenerationTask", request, dataSet));
+        return Objects.requireNonNull(
+                ReflectionTestUtils.invokeMethod(view, "createLlmGenerationTask", request, dataSet));
     }
 
     protected LlmDataQuery generatedQuery(String alias) {

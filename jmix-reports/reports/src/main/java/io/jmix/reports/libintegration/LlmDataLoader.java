@@ -118,21 +118,30 @@ public class LlmDataLoader implements ReportDataLoader {
             LlmQueryExecutionResult result = llmDataQueryService.execute(new LlmQueryExecutionRequest(prompt, query,
                     resolveArguments(reportQuery, query, availableParameters), maxResults));
 
-            if (result.isTruncated()) {
-                // A band built from a cut-short result looks complete, and the limits that cut it are the
-                // add-on's own properties, which the data set cannot raise on its own.
-                scope.warnOnce(reportQuery, "truncated",
-                        () -> log.warn("The query of data set [{}] returned more rows than the limit in force, so "
-                                + "the band shows only the first [{}] of them; raise the row limit of the data set "
-                                + "and the add-on's jmix.aitools.dataload.jpql-execution-max-result properties to "
-                                + "print the rest", reportQuery.getName(), result.getRows().size()));
-            }
+            warnIfTruncated(reportQuery, result, scope);
 
             return toBandRows(result.getRows(), query.getResultProperties());
         } catch (LlmDataQueryException e) {
             throw new DataLoadingException(
                     String.format("An error occurred while loading data for data set [%s]", reportQuery.getName()), e);
         }
+    }
+
+    /**
+     * Says in the log that the row limit cut the result short. A band built from a cut-short result looks
+     * complete, and the limits that cut it are the add-on's own properties, which the data set cannot raise on
+     * its own.
+     */
+    protected void warnIfTruncated(ReportQuery reportQuery, LlmQueryExecutionResult result, RunScope scope) {
+        if (!result.isTruncated()) {
+            return;
+        }
+
+        scope.warnOnce(reportQuery, "truncated",
+                () -> log.warn("The query of data set [{}] returned more rows than the limit in force, so the band "
+                        + "shows only the first [{}] of them; raise the row limit of the data set and the add-on's "
+                        + "jmix.aitools.dataload.jpql-execution-max-result properties to print the rest",
+                        reportQuery.getName(), result.getRows().size()));
     }
 
     /**
@@ -492,27 +501,7 @@ public class LlmDataLoader implements ReportDataLoader {
     protected void addCrossTabAxisValues(ReportQuery reportQuery, String dataSetName, List<?> rows,
                                          Map<String, LlmQueryParameter> availableParameters,
                                          List<String> requiredResultProperties, RunScope scope) {
-        // Keyed by every field the axis has, in the order its rows describe them, and holding the values that
-        // are there: a field is a field of the axis whether this run left it empty or not, so which one comes
-        // first does not change with the data — the required column would otherwise move between runs and stop
-        // matching the stored query.
-        Map<String, List<Object>> valuesByField = new LinkedHashMap<>();
-        for (Object row : rows) {
-            if (!(row instanceof Map<?, ?> fields)) {
-                continue;
-            }
-
-            for (Map.Entry<?, ?> field : fields.entrySet()) {
-                List<Object> values = valuesByField.computeIfAbsent(String.valueOf(field.getKey()),
-                        name -> new ArrayList<>());
-                Object value = field.getValue();
-                if (value != null) {
-                    values.add(value);
-                }
-            }
-        }
-
-        for (Map.Entry<String, List<Object>> field : valuesByField.entrySet()) {
+        for (Map.Entry<String, List<Object>> field : axisValuesByField(rows).entrySet()) {
             String name = LlmQueryParameterNames.ofCrossTabValue(dataSetName, field.getKey());
             if (!LlmQueryParameterNames.isValid(name)) {
                 continue;
@@ -540,6 +529,34 @@ public class LlmDataLoader implements ReportDataLoader {
                                 name, field.getKey(), dataSetName));
             }
         }
+    }
+
+    /**
+     * Groups the values of one cross-tab axis by the field they belong to, keyed by every field the axis has, in
+     * the order its rows describe them: a field is a field of the axis whether this run left it empty or not, so
+     * which one comes first does not change with the data — the required column would otherwise move between
+     * runs and stop matching the stored query. A row that is not a row and a field without a value contribute
+     * nothing.
+     */
+    protected Map<String, List<Object>> axisValuesByField(List<?> rows) {
+        Map<String, List<Object>> valuesByField = new LinkedHashMap<>();
+
+        for (Object row : rows) {
+            if (!(row instanceof Map<?, ?> fields)) {
+                continue;
+            }
+
+            for (Map.Entry<?, ?> field : fields.entrySet()) {
+                List<Object> values = valuesByField.computeIfAbsent(String.valueOf(field.getKey()),
+                        name -> new ArrayList<>());
+                Object value = field.getValue();
+                if (value != null) {
+                    values.add(value);
+                }
+            }
+        }
+
+        return valuesByField;
     }
 
     /**

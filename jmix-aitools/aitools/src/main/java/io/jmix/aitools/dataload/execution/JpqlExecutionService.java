@@ -198,8 +198,8 @@ public class JpqlExecutionService {
      * @return rows containing only the retained properties, or the original rows if nothing is dropped
      */
     protected List<Map<String, @Nullable Object>> retainProperties(List<Map<String, @Nullable Object>> rows,
-                                                         List<String> resultProperties,
-                                                         List<String> retainedProperties) {
+                                                                   List<String> resultProperties,
+                                                                   List<String> retainedProperties) {
         if (retainedProperties.size() == resultProperties.size()) {
             return rows;
         }

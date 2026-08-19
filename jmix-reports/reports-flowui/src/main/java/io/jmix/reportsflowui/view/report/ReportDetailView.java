@@ -24,11 +24,12 @@ import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasValue.ValueChangeListener;
 import com.vaadin.flow.component.Html;
+import com.vaadin.flow.component.badge.Badge;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
+import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.NativeLabel;
-import com.vaadin.flow.component.badge.Badge;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.FontIcon;
 import com.vaadin.flow.component.notification.Notification;
@@ -91,8 +92,8 @@ import io.jmix.reportsflowui.helper.OutputTypeHelper;
 import io.jmix.reportsflowui.helper.ReportScriptEditor;
 import io.jmix.reportsflowui.support.CrossTabDataGridSupport;
 import io.jmix.reportsflowui.support.LlmDataSetGenerationSupport;
-import io.jmix.reportsflowui.view.report.model.LlmQueryColumn;
 import io.jmix.reportsflowui.view.region.ReportRegionWizardDetailView;
+import io.jmix.reportsflowui.view.report.model.LlmQueryColumn;
 import io.jmix.reportsflowui.view.reportwizard.ReportWizard;
 import io.jmix.reportsflowui.view.run.InputParametersDialog;
 import io.jmix.reportsflowui.view.template.ReportTemplateDetailView;
@@ -119,6 +120,11 @@ import java.util.stream.Collectors;
 public class ReportDetailView extends StandardDetailView<Report> {
 
     public static final String ROOT_BAND = "Root";
+
+    /**
+     * Key of the only column of the LLM query column list, as {@code report-detail-view.xml} declares it.
+     */
+    protected static final String LLM_COLUMN_NAME_KEY = "name";
 
     @ViewComponent
     protected DataContext dataContext;
@@ -1228,6 +1234,18 @@ public class ReportDetailView extends StandardDetailView<Report> {
     }
 
     /**
+     * Refuses an LLM data set a run could not use: one without a prompt, and one whose stored query is unusable.
+     * A stored query itself is not required — without one a run generates it, which the panel says.
+     */
+    protected void validateLlmDataSet(ValidationErrors errors, DataSet dataSet) {
+        if (StringUtils.isBlank(dataSet.getText())) {
+            errors.add(messageBundle.formatMessage("validation.error.llmDataSetPromptNull", dataSet.getName()));
+        }
+
+        validateLlmStoredQuery(errors, dataSet);
+    }
+
+    /**
      * Refuses a stored query the data set could not run: one whose document is unreadable, and one left without
      * columns — the add-on names the selected values by them, so it rejects a query that has none.
      */
@@ -1308,12 +1326,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
                                 "validation.error.jsonDataSetScriptNull", dataSet.getName()));
                     }
                 } else if (dataSet.getType() == DataSetType.LLM) {
-                    // A stored query is not required: without one a run generates it, which the panel says.
-                    if (StringUtils.isBlank(dataSet.getText())) {
-                        errors.add(messageBundle.formatMessage(
-                                "validation.error.llmDataSetPromptNull", dataSet.getName()));
-                    }
-                    validateLlmStoredQuery(errors, dataSet);
+                    validateLlmDataSet(errors, dataSet);
                 }
             }
         }
@@ -1646,7 +1659,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
     protected void initLlmDataSetComponents() {
         // A locked panel shows the columns as plain text, and the fields appear only while the query is
         // unlocked, so the declarative renderer is kept to switch back to.
-        llmColumnNameRenderer = llmGeneratedColumnsDataGrid.getColumnByKey("name").getRenderer();
+        llmColumnNameRenderer = llmColumnNameColumn().getRenderer();
         llmGeneratedColumnsDataGrid.addSelectionListener(event ->
                 llmRemoveColumnBtn.setEnabled(isLlmQueryEditorEditable()
                         && event.getFirstSelectedItem().isPresent()));
@@ -1673,6 +1686,14 @@ public class ReportDetailView extends StandardDetailView<Report> {
 
         field.addFocusListener(event -> llmGeneratedColumnsDataGrid.select(column));
         return field;
+    }
+
+    /**
+     * @return the column the names of an LLM data set's query columns are shown in
+     */
+    protected Grid.Column<LlmQueryColumn> llmColumnNameColumn() {
+        return Objects.requireNonNull(llmGeneratedColumnsDataGrid.getColumnByKey(LLM_COLUMN_NAME_KEY),
+                "The column list of an LLM data set has no [" + LLM_COLUMN_NAME_KEY + "] column");
     }
 
     /**
@@ -1719,7 +1740,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
                 ? "bandsTab.dataSetTypeLayout.llmEditQueryBtn.doneTooltip"
                 : "bandsTab.dataSetTypeLayout.llmEditQueryBtn.editTooltip"));
 
-        llmGeneratedColumnsDataGrid.getColumnByKey("name").setRenderer(editorEditable
+        llmColumnNameColumn().setRenderer(editorEditable
                 ? createLlmColumnNameRenderer()
                 : llmColumnNameRenderer);
     }
@@ -2143,26 +2164,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
 
             @Override
             public void done(LlmDataQuery generatedQuery) {
-                if (!isLlmGenerationAttemptCurrent(attempt)) {
-                    discardLlmGenerationAttempt(attempt);
-                    return;
-                }
-                LlmDataQuery previousQuery = llmDataSetGenerationSupport.readStoredQuery(dataSet);
-
-                // A failed generation never reaches this point, so the previously stored query stays as it was.
-                llmDataSetGenerationSupport.storeGeneratedQuery(dataSet, generatedQuery);
-
-                // Generation is long enough for another data set to be selected meanwhile. The query belongs to
-                // the data set it was requested for, but the panel must only be refreshed if that one is still
-                // shown — otherwise it would describe someone else's data set.
-                if (dataSetsDc.getItemOrNull() == dataSet) {
-                    initLlmDataSetOptions(dataSet);
-                    llmStaleQueryNotice.setVisible(false);
-                    showLlmColumnsChangedNotice(
-                            previousQuery != null ? previousQuery.getResultProperties() : Collections.emptyList(),
-                            generatedQuery.getResultProperties());
-                    showLlmQueryProblems(generatedQuery);
-                }
+                applyLlmGeneratedQuery(attempt, generatedQuery);
             }
 
             @Override
@@ -2182,6 +2184,35 @@ public class ReportDetailView extends StandardDetailView<Report> {
                 return false;
             }
         };
+    }
+
+    /**
+     * Stores the query a finished generation produced and brings the panel up to date with it. An attempt the
+     * data set has moved on from is discarded instead.
+     */
+    protected void applyLlmGeneratedQuery(LlmGenerationAttempt attempt, LlmDataQuery generatedQuery) {
+        if (!isLlmGenerationAttemptCurrent(attempt)) {
+            discardLlmGenerationAttempt(attempt);
+            return;
+        }
+
+        DataSet dataSet = attempt.dataSet();
+        LlmDataQuery previousQuery = llmDataSetGenerationSupport.readStoredQuery(dataSet);
+
+        // A failed generation never reaches this point, so the previously stored query stays as it was.
+        llmDataSetGenerationSupport.storeGeneratedQuery(dataSet, generatedQuery);
+
+        // Generation is long enough for another data set to be selected meanwhile. The query belongs to the data
+        // set it was requested for, but the panel must only be refreshed if that one is still shown — otherwise
+        // it would describe someone else's data set.
+        if (dataSetsDc.getItemOrNull() == dataSet) {
+            initLlmDataSetOptions(dataSet);
+            llmStaleQueryNotice.setVisible(false);
+            showLlmColumnsChangedNotice(
+                    previousQuery != null ? previousQuery.getResultProperties() : Collections.emptyList(),
+                    generatedQuery.getResultProperties());
+            showLlmQueryProblems(generatedQuery);
+        }
     }
 
     protected boolean isLlmGenerationAttemptCurrent(LlmGenerationAttempt attempt) {

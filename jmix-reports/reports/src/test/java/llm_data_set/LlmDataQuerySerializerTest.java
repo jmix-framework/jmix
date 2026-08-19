@@ -137,13 +137,15 @@ class LlmDataQuerySerializerTest {
 
     @Test
     void testEditedQueryKeepsTheJavaTypeOfAParameterThePreviousDocumentDeclared() {
-        LlmDataQuery previous = new LlmDataQuery("select o.number as orderNumber from sales_Order o where o.date >= :dateFrom",
+        LlmDataQuery previous = new LlmDataQuery(
+                "select o.number as orderNumber from sales_Order o where o.date >= :dateFrom",
                 List.of("orderNumber"),
                 List.of(new LlmQueryParameter("dateFrom", "java.time.LocalDate", null)),
                 "Orders since the given date", List.of(), null);
 
         LlmDataQuery assembled = serializer.assemble(
-                "select o.number as orderNumber from sales_Order o where o.date >= :dateFrom and o.number like :numberPart",
+                "select o.number as orderNumber from sales_Order o "
+                        + "where o.date >= :dateFrom and o.number like :numberPart",
                 List.of("orderNumber"), previous);
 
         assertThat(assembled.getParameters())

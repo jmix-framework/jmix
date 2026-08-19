@@ -259,7 +259,9 @@ class AiToolsLlmDataQueryServiceTest {
     @Test
     void testNullElementsOfAGeneratedListAreDropped() {
         // Nothing between the model and the query rejects a null element, and the query itself refuses one.
+        //noinspection NullableProblems
         generationService.setResultProperties(Arrays.asList("orderNumber", null));
+        //noinspection NullableProblems
         generationService.setWarnings(Arrays.asList(null, "Amounts are not converted"));
 
         LlmDataQuery query = service.generate(new LlmQueryGenerationRequest(PROMPT, List.of(), null));

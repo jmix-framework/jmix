@@ -25,10 +25,10 @@ import io.jmix.core.cluster.ClusterApplicationEventChannelSupplier;
 import io.jmix.core.cluster.LocalApplicationEventChannelSupplier;
 import io.jmix.reports.libintegration.LlmDataLoader;
 import io.jmix.reports.llm.LlmDataQuery;
+import io.jmix.reports.llm.LlmDataQueryService;
 import io.jmix.reports.llm.LlmQueryExecutionRequest;
 import io.jmix.reports.llm.LlmQueryExecutionResult;
 import io.jmix.reports.llm.LlmQueryGenerationRequest;
-import io.jmix.reports.llm.LlmDataQueryService;
 import io.jmix.reports.llm.impl.LlmDataQuerySerializer;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
@@ -40,7 +40,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
-import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

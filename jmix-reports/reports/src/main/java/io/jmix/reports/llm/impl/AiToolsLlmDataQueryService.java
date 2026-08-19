@@ -136,6 +136,7 @@ public class AiToolsLlmDataQueryService implements LlmDataQueryService {
             return List.of();
         }
 
+        //noinspection ConstantValue
         return values.stream()
                 .filter(Objects::nonNull)
                 .toList();
@@ -158,8 +159,8 @@ public class AiToolsLlmDataQueryService implements LlmDataQueryService {
                         .append(" (").append(parameter.getJavaType());
                 // A collection parameter is bound as a whole, so the query has to match it with IN.
                 if (parameter.isMultiValued()) {
-                    userText.append(", several values of this type, matched with IN and no parentheses "
-                            + "around the parameter name");
+                    userText.append(", several values of this type, matched with IN and no parentheses ")
+                            .append("around the parameter name");
                 }
                 userText.append(')');
             }
@@ -191,8 +192,8 @@ public class AiToolsLlmDataQueryService implements LlmDataQueryService {
             return;
         }
 
-        userText.append("\n\nREQUIRED RESULT COLUMNS: this band is a cross-tab, so the query MUST select and "
-                + "alias one column per name below, holding the value of that row for it:");
+        userText.append("\n\nREQUIRED RESULT COLUMNS: this band is a cross-tab, so the query MUST select and ")
+                .append("alias one column per name below, holding the value of that row for it:");
         for (String axisName : axisNames) {
             userText.append("\n- ").append(axisName);
         }
@@ -203,9 +204,9 @@ public class AiToolsLlmDataQueryService implements LlmDataQueryService {
                 .map(LlmQueryParameter::getName)
                 .anyMatch(axisNames::contains);
         if (hasMultiValuedAxisParameter) {
-            userText.append(" When a required column is also listed as a multi-valued available parameter, narrow "
-                    + "the query to the matrix by matching that parameter with IN, and write no parentheses around "
-                    + "the parameter name, because parentheses make JPQL expect a single value.");
+            userText.append(" When a required column is also listed as a multi-valued available parameter, narrow ")
+                    .append("the query to the matrix by matching that parameter with IN, and write no parentheses ")
+                    .append("around the parameter name, because parentheses make JPQL expect a single value.");
         }
     }
 

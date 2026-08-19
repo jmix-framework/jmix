@@ -16,13 +16,13 @@
 
 package llm_data_set;
 
+import io.jmix.outside_reports.OrderNumbersLlmReport;
 import io.jmix.reports.ReportsTestConfiguration;
 import io.jmix.reports.impl.AnnotatedReportHolder;
 import io.jmix.reports.impl.AnnotatedReportScanner;
 import io.jmix.reports.llm.LlmQueryGenerationRequest;
 import io.jmix.reports.runner.ReportRunner;
 import io.jmix.reports.test_support.AuthenticatedAsSystem;
-import io.jmix.outside_reports.OrderNumbersLlmReport;
 import io.jmix.reports.yarg.reporting.ReportOutputDocument;
 import llm_data_set.test_support.LlmDataSetTestConfiguration;
 import llm_data_set.test_support.TestLlmDataQueryService;

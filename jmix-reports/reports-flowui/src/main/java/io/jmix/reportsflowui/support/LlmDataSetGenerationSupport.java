@@ -39,10 +39,9 @@ import java.util.Objects;
  * what a query may be generated from, and how a generated query is stored.
  * <p>
  * The UI module needs no dependency on the AI Tools add-on for this: the type works when an
- * {@link LlmDataQueryService} bean exists, and its query can be generated when that bean also reports
- * generation as available. Reports auto-configuration
- * supplies the default bean on top of the add-on's data-load services, and an application may substitute another
- * implementation of the seam.
+ * {@link LlmDataQueryService} bean exists, and its query can be generated when that bean also reports generation
+ * as available. Reports auto-configuration supplies the default bean on top of the add-on's data-load services,
+ * and an application may substitute another implementation of the seam.
  */
 @NullMarked
 @Component("report_LlmDataSetGenerationSupport")
@@ -282,7 +281,8 @@ public class LlmDataSetGenerationSupport {
     protected void collectCrossTabAxisColumns(DataSet dataSet, Map<String, LlmQueryParameter> parameters,
                                               List<String> requiredResultProperties) {
         BandDefinition band = dataSet.getBandDefinition();
-        if (band == null || band.getOrientation() != Orientation.CROSS || band.getDataSets() == null) {
+        if (band == null || band.getOrientation() != Orientation.CROSS || band.getDataSets() == null
+                || isCrossTabAxis(dataSet)) {
             return;
         }
 
@@ -333,7 +333,8 @@ public class LlmDataSetGenerationSupport {
             }
         }
 
-        if (band != null && band.getOrientation() == Orientation.CROSS && band.getDataSets() != null) {
+        if (band != null && band.getOrientation() == Orientation.CROSS && band.getDataSets() != null
+                && !isCrossTabAxis(dataSet)) {
             for (DataSet axis : band.getDataSets()) {
                 String axisName = axis.getName();
                 if (axis != dataSet && axisName != null && LlmQueryParameterNames.isCrossTabAxis(axisName)
@@ -344,6 +345,17 @@ public class LlmDataSetGenerationSupport {
         }
 
         return sources;
+    }
+
+    /**
+     * Tells an axis data set of a cross-tab band from the cell data set of that band, by the name the extraction
+     * controller recognises its axes by. Only a cell query is given the columns of the axes: a run of an axis
+     * itself receives no axis rows at all, so a query generated for one against another axis would reference a
+     * parameter the run has nothing to bind.
+     */
+    protected boolean isCrossTabAxis(DataSet dataSet) {
+        String name = dataSet.getName();
+        return name != null && LlmQueryParameterNames.isCrossTabAxis(name);
     }
 
     protected List<String> storedColumnsOf(BandDefinition band) {

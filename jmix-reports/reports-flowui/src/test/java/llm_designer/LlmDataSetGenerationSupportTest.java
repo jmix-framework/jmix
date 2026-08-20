@@ -200,6 +200,29 @@ public class LlmDataSetGenerationSupportTest {
     }
 
     @Test
+    public void testGeneratingForAnAxisIsOfferedNoColumnsOfTheOtherAxis() {
+        Report report = reportWithParameters();
+        BandDefinition crossBand = band(report, "Revenue", rootBand(report));
+        crossBand.setOrientation(Orientation.CROSS);
+        axisDataSet(crossBand, "Revenue_dynamic_header", serializer.toJson(new LlmDataQuery(
+                "select o.date as period from sales_Order o", List.of("period"), List.of(), null, List.of(),
+                null)));
+
+        DataSet otherAxis = llmDataSet(crossBand);
+        otherAxis.setName("Revenue_master_data");
+
+        // Only a cell query is linked to the axes. A run of an axis data set receives no axis rows, so a query
+        // generated for it against another axis would reference a parameter with nothing to bind.
+        LlmQueryGenerationRequest request = generationSupport.createGenerationRequest(otherAxis);
+
+        assertThat(request.getAvailableParameters())
+                .extracting(LlmQueryParameter::getName)
+                .noneMatch(name -> name.startsWith("Revenue_dynamic_header"));
+        assertThat(request.getRequiredResultProperties()).isEmpty();
+        assertThat(generationSupport.sourcesWithUndeclaredColumns(otherAxis)).isEmpty();
+    }
+
+    @Test
     public void testCrossTabAxisColumnsAreOfferedAsMultiValuedParameters() {
         Report report = reportWithParameters();
         BandDefinition crossBand = band(report, "Revenue", null);

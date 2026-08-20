@@ -2152,10 +2152,6 @@ public class ReportDetailView extends StandardDetailView<Report> {
     }
 
     /**
-     * Creates the task that generates a query for the data set, and issues the token that makes it the current
-     * attempt for that data set: a task created later supersedes whatever was created before it.
-     */
-    /**
      * Says which bands and axes the query being generated will not be able to reference, because their own data
      * sets do not declare their columns. Said before generation rather than after, so that an author who meant
      * the query to filter by a master row can stop and write the reference by hand instead.
@@ -2172,15 +2168,19 @@ public class ReportDetailView extends StandardDetailView<Report> {
                 .show();
     }
 
+    /**
+     * Creates the task that generates a query for the data set, and issues the token that makes it the current
+     * attempt for that data set: a task created later supersedes whatever was created before it.
+     */
     protected BackgroundTask<Integer, LlmDataQuery> createLlmGenerationTask(LlmQueryGenerationRequest request,
                                                                            DataSet dataSet) {
-        long timeoutSeconds = reportsClientProperties.getLlmQueryGenerationTimeout().toSeconds();
+        long timeoutMs = reportsClientProperties.getLlmQueryGenerationTimeout().toMillis();
         long generationToken = ++llmGenerationSequence;
         latestLlmGeneration.put(dataSet, generationToken);
         LlmGenerationAttempt attempt = new LlmGenerationAttempt(dataSet, request,
                 dataSet.getLlmGeneratedQuery(), getLlmQueryDraftRevision(dataSet), generationToken);
 
-        return new BackgroundTask<>(timeoutSeconds, TimeUnit.SECONDS, ReportDetailView.this) {
+        return new BackgroundTask<>(timeoutMs, TimeUnit.MILLISECONDS, ReportDetailView.this) {
 
             @Override
             public LlmDataQuery run(TaskLifeCycle<Integer> taskLifeCycle) {

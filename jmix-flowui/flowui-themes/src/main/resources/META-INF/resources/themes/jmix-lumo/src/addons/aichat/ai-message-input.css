@@ -48,6 +48,12 @@
     outline-offset: -2px;
   }
 
+  /* Mirror of the base rule: suppress the vaadin-upload-drop-zone's own
+     dragover overlay so the dashed outline is the only highlight. */
+  [part='input-container'][dragover]::after {
+    content: none;
+  }
+
   @media (forced-colors: active) {
     [part='input-container'] {
       border: 1px solid CanvasText;

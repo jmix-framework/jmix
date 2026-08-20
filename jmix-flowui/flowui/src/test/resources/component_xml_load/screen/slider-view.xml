@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2026 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<view xmlns="http://jmix.io/schema/flowui/view">
+    <data>
+        <instance id="orderLineDc"
+                  class="test_support.entity.sales.OrderLine">
+            <fetchPlan extends="_base"/>
+            <loader id="orderLineDl">
+                <query>
+                    <![CDATA[select e from test_OrderLine e]]>
+                </query>
+            </loader>
+        </instance>
+        <instance id="orderDc"
+                  class="test_support.entity.sales.Order">
+            <fetchPlan extends="_base"/>
+            <loader id="orderDl">
+                <query>
+                    <![CDATA[select e from test_Order e]]>
+                </query>
+            </loader>
+        </instance>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <layout>
+        <integerSlider
+                id="integerSliderId"
+                ariaLabel="ariaLabelString"
+                ariaLabelledBy="ariaLabelledByString"
+                classNames="cssClassName1, cssClassName2"
+                css="color: red;"
+                enabled="true"
+                errorMessage="errorMessageString"
+                height="50px"
+                helperText="helperTextString"
+                label="labelString"
+                max="500"
+                maxHeight="55px"
+                maxWidth="120px"
+                min="-500"
+                minHeight="40px"
+                minWidth="80px"
+                minMaxVisible="true"
+                readOnly="true"
+                required="true"
+                requiredMessage="requiredMessageString"
+                step="10"
+                tabIndex="3"
+                value="50"
+                valueAlwaysVisible="true"
+                valueChangeMode="ON_CHANGE"
+                valueChangeTimeout="50"
+                visible="true"
+                width="100px">
+            <tooltip text="tooltipText"
+                     focusDelay="1"
+                     hideDelay="2"
+                     hoverDelay="3"
+                     manual="true"
+                     opened="true"
+                     position="BOTTOM"
+            />
+        </integerSlider>
+
+        <decimalSlider
+                id="decimalSliderId"
+                ariaLabel="ariaLabelString"
+                ariaLabelledBy="ariaLabelledByString"
+                classNames="cssClassName1, cssClassName2"
+                css="color: red;"
+                enabled="true"
+                errorMessage="errorMessageString"
+                height="50px"
+                helperText="helperTextString"
+                label="labelString"
+                max="10.5"
+                maxHeight="55px"
+                maxWidth="120px"
+                min="0.5"
+                minHeight="40px"
+                minWidth="80px"
+                minMaxVisible="true"
+                readOnly="true"
+                required="true"
+                requiredMessage="requiredMessageString"
+                step="0.5"
+                tabIndex="3"
+                value="2.5"
+                valueAlwaysVisible="true"
+                valueChangeMode="ON_CHANGE"
+                valueChangeTimeout="50"
+                visible="true"
+                width="100px">
+            <tooltip text="tooltipText"
+                     focusDelay="1"
+                     hideDelay="2"
+                     hoverDelay="3"
+                     manual="true"
+                     opened="true"
+                     position="BOTTOM"
+            />
+        </decimalSlider>
+
+        <integerSlider id="integerSliderWithValidatorsId" min="0" max="100">
+            <validators>
+                <positive message="errorMessageStringForPositive"/>
+            </validators>
+        </integerSlider>
+
+        <decimalSlider id="decimalSliderWithValidatorsId" min="0" max="100">
+            <validators>
+                <positive message="errorMessageStringForPositive"/>
+            </validators>
+        </decimalSlider>
+
+        <integerSlider id="integerSliderWithValueId" dataContainer="orderLineDc" property="quantity"/>
+
+        <decimalSlider id="decimalSliderWithValueId" dataContainer="orderDc" property="total"/>
+    </layout>
+</view>

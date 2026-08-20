@@ -50,6 +50,12 @@ import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.NativeLabel;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.shared.SlotUtils;
+import com.vaadin.flow.component.slider.DecimalRangeSlider;
+import com.vaadin.flow.component.slider.DecimalRangeSliderValue;
+import com.vaadin.flow.component.slider.DecimalSlider;
+import com.vaadin.flow.component.slider.IntegerRangeSlider;
+import com.vaadin.flow.component.slider.IntegerRangeSliderValue;
+import com.vaadin.flow.component.slider.IntegerSlider;
 import com.vaadin.flow.component.icon.FontIcon;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.SvgIcon;
@@ -156,6 +162,10 @@ final class StudioStandardComponentsPreviewLoader implements StudioPreviewCompon
             Map.entry(StudioXmlElements.PASSWORD_FIELD, PasswordField::new),
             Map.entry(StudioXmlElements.BIG_DECIMAL_FIELD, BigDecimalField::new),
             Map.entry(StudioXmlElements.INTEGER_FIELD, IntegerField::new),
+            Map.entry(StudioXmlElements.INTEGER_SLIDER, IntegerSlider::new),
+            Map.entry(StudioXmlElements.DECIMAL_SLIDER, DecimalSlider::new),
+            Map.entry(StudioXmlElements.INTEGER_RANGE_SLIDER, IntegerRangeSlider::new),
+            Map.entry(StudioXmlElements.DECIMAL_RANGE_SLIDER, DecimalRangeSlider::new),
             Map.entry(StudioXmlElements.TEXT_AREA, TextArea::new),
             Map.entry(StudioXmlElements.CHECKBOX, Checkbox::new),
             Map.entry(StudioXmlElements.SWITCH, JmixSwitch::new),
@@ -362,6 +372,14 @@ final class StudioStandardComponentsPreviewLoader implements StudioPreviewCompon
             case StudioXmlElements.PROGRESS_BAR -> loadProgressBarAttributes((ProgressBar) component, element);
             case StudioXmlElements.NUMBER_FIELD -> loadNumberFieldAttributes((NumberField) component, element);
             case StudioXmlElements.INTEGER_FIELD -> loadIntegerFieldAttributes((IntegerField) component, element);
+            case StudioXmlElements.INTEGER_SLIDER -> loadIntegerSliderAttributes((IntegerSlider) component,
+                    element);
+            case StudioXmlElements.DECIMAL_SLIDER -> loadDecimalSliderAttributes((DecimalSlider) component,
+                    element);
+            case StudioXmlElements.INTEGER_RANGE_SLIDER ->
+                    loadIntegerRangeSliderAttributes((IntegerRangeSlider) component, element, environment);
+            case StudioXmlElements.DECIMAL_RANGE_SLIDER ->
+                    loadDecimalRangeSliderAttributes((DecimalRangeSlider) component, element, environment);
             case StudioXmlElements.BIG_DECIMAL_FIELD ->
                     loadString(element, "value").ifPresent(value ->
                             parse(value, BigDecimal::new, ((BigDecimalField) component)::setValue));
@@ -493,6 +511,76 @@ final class StudioStandardComponentsPreviewLoader implements StudioPreviewCompon
         loadInteger(element, "max", field::setMax);
         loadInteger(element, "step", field::setStep);
         loadBoolean(element, "stepButtonsVisible", field::setStepButtonsVisible);
+    }
+
+    private void loadIntegerSliderAttributes(IntegerSlider slider, Element element) {
+        loadInteger(element, "min", slider::setMin);
+        loadInteger(element, "max", slider::setMax);
+        loadInteger(element, "step").filter(step -> step > 0).ifPresent(slider::setStep);
+        loadInteger(element, "value", slider::setValue);
+        loadSliderAppearanceAttributes(element, slider::setValueAlwaysVisible, slider::setMinMaxVisible);
+    }
+
+    private void loadDecimalSliderAttributes(DecimalSlider slider, Element element) {
+        loadDouble(element, "min", slider::setMin);
+        loadDouble(element, "max", slider::setMax);
+        loadDouble(element, "step").filter(step -> step > 0).ifPresent(slider::setStep);
+        loadDouble(element, "value", slider::setValue);
+        loadSliderAppearanceAttributes(element, slider::setValueAlwaysVisible, slider::setMinMaxVisible);
+    }
+
+    private void loadIntegerRangeSliderAttributes(IntegerRangeSlider slider, Element element,
+                                                  StudioPreviewEnvironment environment) {
+        loadInteger(element, "min", slider::setMin);
+        loadInteger(element, "max", slider::setMax);
+        loadInteger(element, "step").filter(step -> step > 0).ifPresent(slider::setStep);
+
+        Optional<Integer> startValue = loadInteger(element, "startValue");
+        Optional<Integer> endValue = loadInteger(element, "endValue");
+        if (startValue.isPresent() || endValue.isPresent()) {
+            int start = startValue.orElseGet(slider::getMin);
+            int end = endValue.orElseGet(slider::getMax);
+            if (start <= end) {
+                slider.setValue(new IntegerRangeSliderValue(start, end));
+            }
+        }
+
+        loadSliderAppearanceAttributes(element, slider::setValueAlwaysVisible, slider::setMinMaxVisible);
+        loadRangeSliderAccessibleNames(element, environment, slider::setAccessibleNameStart,
+                slider::setAccessibleNameEnd);
+    }
+
+    private void loadDecimalRangeSliderAttributes(DecimalRangeSlider slider, Element element,
+                                                  StudioPreviewEnvironment environment) {
+        loadDouble(element, "min", slider::setMin);
+        loadDouble(element, "max", slider::setMax);
+        loadDouble(element, "step").filter(step -> step > 0).ifPresent(slider::setStep);
+
+        Optional<Double> startValue = loadDouble(element, "startValue");
+        Optional<Double> endValue = loadDouble(element, "endValue");
+        if (startValue.isPresent() || endValue.isPresent()) {
+            double start = startValue.orElseGet(slider::getMin);
+            double end = endValue.orElseGet(slider::getMax);
+            if (start <= end) {
+                slider.setValue(new DecimalRangeSliderValue(start, end));
+            }
+        }
+
+        loadSliderAppearanceAttributes(element, slider::setValueAlwaysVisible, slider::setMinMaxVisible);
+        loadRangeSliderAccessibleNames(element, environment, slider::setAccessibleNameStart,
+                slider::setAccessibleNameEnd);
+    }
+
+    private void loadSliderAppearanceAttributes(Element element, Consumer<Boolean> valueAlwaysVisibleSetter,
+                                                Consumer<Boolean> minMaxVisibleSetter) {
+        loadBoolean(element, "valueAlwaysVisible", valueAlwaysVisibleSetter);
+        loadBoolean(element, "minMaxVisible", minMaxVisibleSetter);
+    }
+
+    private void loadRangeSliderAccessibleNames(Element element, StudioPreviewEnvironment environment,
+                                                Consumer<String> startSetter, Consumer<String> endSetter) {
+        loadLocalizedString(element, "accessibleNameStart", environment, startSetter);
+        loadLocalizedString(element, "accessibleNameEnd", environment, endSetter);
     }
 
     private void loadDatePickerAttributes(DatePicker datePicker, Element element) {

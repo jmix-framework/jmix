@@ -26,6 +26,9 @@ import com.vaadin.flow.component.listbox.ListBox;
 import com.vaadin.flow.component.markdown.Markdown;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.Scroller;
+import com.vaadin.flow.component.slider.DecimalSlider;
+import com.vaadin.flow.component.slider.IntegerRangeSlider;
+import com.vaadin.flow.component.slider.IntegerSlider;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.timepicker.TimePicker;
 import io.jmix.flowui.kit.component.button.JmixButton;
@@ -287,5 +290,92 @@ class StudioStandardComponentsFactoryPreviewLoaderTest {
         Component component = loader.load(element, element("view"));
         assertInstanceOf(Markdown.class, component);
         assertEquals("# Title", ((Markdown) component).getContent());
+    }
+
+    @Test
+    void testIntegerSliderAttributes() {
+        BaseElement element = element("integerSlider");
+        element.addAttribute("label", "Quantity");
+        element.addAttribute("min", "10");
+        element.addAttribute("max", "90");
+        element.addAttribute("step", "5");
+        element.addAttribute("value", "20");
+        element.addAttribute("valueAlwaysVisible", "true");
+        element.addAttribute("minMaxVisible", "true");
+
+        Component component = loader.load(element, element("view"), new FakeEnv());
+
+        assertInstanceOf(IntegerSlider.class, component);
+        IntegerSlider slider = (IntegerSlider) component;
+        assertEquals("Quantity", slider.getLabel());
+        assertEquals(10, slider.getMin());
+        assertEquals(90, slider.getMax());
+        assertEquals(5, slider.getStep());
+        assertEquals(20, slider.getValue());
+        assertTrue(slider.isValueAlwaysVisible());
+        assertTrue(slider.isMinMaxVisible());
+    }
+
+    @Test
+    void testDecimalSliderAttributes() {
+        BaseElement element = element("decimalSlider");
+        element.addAttribute("min", "0.5");
+        element.addAttribute("max", "10.5");
+        element.addAttribute("step", "0.5");
+        element.addAttribute("value", "2.5");
+
+        Component component = loader.load(element, element("view"), new FakeEnv());
+
+        assertInstanceOf(DecimalSlider.class, component);
+        DecimalSlider slider = (DecimalSlider) component;
+        assertEquals(0.5, slider.getMin());
+        assertEquals(10.5, slider.getMax());
+        assertEquals(0.5, slider.getStep());
+        assertEquals(2.5, slider.getValue());
+    }
+
+    @Test
+    void testIntegerRangeSliderValueAndAccessibleNames() {
+        BaseElement element = element("integerRangeSlider");
+        element.addAttribute("min", "0");
+        element.addAttribute("max", "100");
+        element.addAttribute("startValue", "20");
+        element.addAttribute("accessibleNameStart", "msg://from");
+
+        FakeEnv environment = new FakeEnv();
+        environment.messages.put("msg://from", "From");
+
+        Component component = loader.load(element, element("view"), environment);
+
+        assertInstanceOf(IntegerRangeSlider.class, component);
+        IntegerRangeSlider slider = (IntegerRangeSlider) component;
+        assertEquals(20, slider.getValue().start());
+        // The end value falls back to the max value, as in the runtime loader
+        assertEquals(100, slider.getValue().end());
+        assertEquals("From", slider.getAccessibleNameStart().orElse(null));
+    }
+
+    /**
+     * A descriptor being edited is invalid most of the time: the component rejects a non-positive step
+     * and a range that starts after it ends, so the preview keeps the defaults instead of throwing.
+     */
+    @Test
+    void testSliderWithInvalidValuesRendersAnyway() {
+        BaseElement sliderElement = element("integerSlider");
+        sliderElement.addAttribute("step", "0");
+
+        IntegerSlider slider = (IntegerSlider) loader.load(sliderElement, element("view"), new FakeEnv());
+        assertNotNull(slider);
+        assertEquals(1, slider.getStep());
+
+        BaseElement rangeSliderElement = element("integerRangeSlider");
+        rangeSliderElement.addAttribute("startValue", "80");
+        rangeSliderElement.addAttribute("endValue", "20");
+
+        IntegerRangeSlider rangeSlider =
+                (IntegerRangeSlider) loader.load(rangeSliderElement, element("view"), new FakeEnv());
+        assertNotNull(rangeSlider);
+        assertEquals(0, rangeSlider.getValue().start());
+        assertEquals(100, rangeSlider.getValue().end());
     }
 }

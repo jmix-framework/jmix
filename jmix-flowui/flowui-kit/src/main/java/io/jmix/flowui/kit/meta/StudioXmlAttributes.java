@@ -29,6 +29,8 @@ import java.util.Map;
 public final class StudioXmlAttributes {
     public static final String ABBREVIATION = "abbreviation";
     public static final String ACCEPTED_FILE_EXTENSIONS = "acceptedFileExtensions";
+    public static final String ACCESSIBLE_NAME_END = "accessibleNameEnd";
+    public static final String ACCESSIBLE_NAME_START = "accessibleNameStart";
     public static final String ACCEPTED_FILE_TYPES = "acceptedFileTypes";
     public static final String ACCEPTED_MIME_TYPES = "acceptedMimeTypes";
     public static final String ACTION = "action";
@@ -581,6 +583,7 @@ public final class StudioXmlAttributes {
     public static final String MIN_HEIGHT = "minHeight";
     public static final String MIN_INTERVAL = "minInterval";
     public static final String MIN_LENGTH = "minLength";
+    public static final String MIN_MAX_VISIBLE = "minMaxVisible";
     public static final String MIN_OPEN = "minOpen";
     public static final String MIN_ROWS = "minRows";
     public static final String MIN_SHOW_LABEL_ANGLE = "minShowLabelAngle";
@@ -976,6 +979,7 @@ public final class StudioXmlAttributes {
     public static final String USE_USER_TIMEZONE = "useUserTimezone";
     public static final String USE_UTC = "useUtc";
     public static final String VALUE = "value";
+    public static final String VALUE_ALWAYS_VISIBLE = "valueAlwaysVisible";
     public static final String VALUE_ANIMATION = "valueAnimation";
     public static final String VALUE_CHANGE_MODE = "valueChangeMode";
     public static final String VALUE_CHANGE_TIMEOUT = "valueChangeTimeout";

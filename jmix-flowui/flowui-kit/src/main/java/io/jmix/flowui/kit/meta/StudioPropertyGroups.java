@@ -304,6 +304,18 @@ public final class StudioPropertyGroups {
     }
 
     @StudioPropertyGroup(properties = @StudioProperty(
+            xmlAttribute = StudioXmlAttributes.ACCESSIBLE_NAME_START,
+            type = StudioPropertyType.LOCALIZED_STRING))
+    public interface AccessibleNameStart {
+    }
+
+    @StudioPropertyGroup(properties = @StudioProperty(
+            xmlAttribute = StudioXmlAttributes.ACCESSIBLE_NAME_END,
+            type = StudioPropertyType.LOCALIZED_STRING))
+    public interface AccessibleNameEnd {
+    }
+
+    @StudioPropertyGroup(properties = @StudioProperty(
             xmlAttribute = StudioXmlAttributes.TAB_INDEX,
             type = StudioPropertyType.INTEGER))
     public interface TabIndex {
@@ -1304,6 +1316,14 @@ public final class StudioPropertyGroups {
     }
 
     @StudioPropertyGroup(properties = @StudioProperty(
+            xmlAttribute = StudioXmlAttributes.MIN_MAX_VISIBLE,
+            type = StudioPropertyType.BOOLEAN,
+            category = StudioProperty.Category.LOOK_AND_FEEL,
+            defaultValue = "false"))
+    public interface MinMaxVisible {
+    }
+
+    @StudioPropertyGroup(properties = @StudioProperty(
             xmlAttribute = StudioXmlAttributes.MIN,
             type = StudioPropertyType.STRING,
             category = StudioProperty.Category.VALIDATION))
@@ -1673,6 +1693,14 @@ public final class StudioPropertyGroups {
 
     @StudioPropertyGroup(properties = @StudioProperty(
             xmlAttribute = StudioXmlAttributes.STEP,
+            type = StudioPropertyType.INTEGER,
+            category = StudioProperty.Category.GENERAL,
+            defaultValue = "1"))
+    public interface IntegerStep {
+    }
+
+    @StudioPropertyGroup(properties = @StudioProperty(
+            xmlAttribute = StudioXmlAttributes.STEP,
             type = StudioPropertyType.STRING,
             category = StudioProperty.Category.GENERAL,
             options = {"900s", "15m", "20m", "30m", "2h", "3h", "4h", "6h", "8h", "12h"}))
@@ -1885,6 +1913,14 @@ public final class StudioPropertyGroups {
             type = StudioPropertyType.LOCALIZED_STRING,
             category = StudioProperty.Category.GENERAL))
     public interface Username {
+    }
+
+    @StudioPropertyGroup(properties = @StudioProperty(
+            xmlAttribute = StudioXmlAttributes.VALUE_ALWAYS_VISIBLE,
+            type = StudioPropertyType.BOOLEAN,
+            category = StudioProperty.Category.LOOK_AND_FEEL,
+            defaultValue = "false"))
+    public interface ValueAlwaysVisible {
     }
 
     @StudioPropertyGroup(properties = @StudioProperty(
@@ -3180,6 +3216,58 @@ public final class StudioPropertyGroups {
             category = StudioProperty.Category.GENERAL))
     public interface IntegerFieldComponent extends TextInputFieldDefaultProperties, Property,
             ValidationIntegerMin, ValidationIntegerMax, StepButtonsVisible {
+    }
+
+    @StudioPropertyGroup
+    public interface SliderDefaultProperties extends FieldDefaultProperties, Property,
+            ValueChangeModeAttributes, MinMaxVisible, ValueAlwaysVisible {
+    }
+
+    @StudioPropertyGroup(properties = @StudioProperty(
+            xmlAttribute = StudioXmlAttributes.VALUE,
+            type = StudioPropertyType.INTEGER,
+            category = StudioProperty.Category.GENERAL))
+    public interface IntegerSliderComponent extends SliderDefaultProperties, IntegerMin, IntegerMax, IntegerStep {
+    }
+
+    @StudioPropertyGroup(properties = @StudioProperty(
+            xmlAttribute = StudioXmlAttributes.VALUE,
+            type = StudioPropertyType.DOUBLE,
+            category = StudioProperty.Category.GENERAL))
+    public interface DecimalSliderComponent extends SliderDefaultProperties, DoubleMinWithGeneralCategory,
+            DoubleMaxWithGeneralCategory, Step {
+    }
+
+    @StudioPropertyGroup
+    public interface RangeSliderDefaultProperties extends BaseSizedEnabledComponentWithClassName,
+            HasFocusableAttributes, AccessibleNameStart, AccessibleNameEnd, ErrorMessage, HelperText, Label,
+            ReadOnly, Required, ValueChangeModeAttributes, MinMaxVisible, ValueAlwaysVisible {
+    }
+
+    @StudioPropertyGroup(properties = {
+            @StudioProperty(
+                    xmlAttribute = StudioXmlAttributes.START_VALUE,
+                    type = StudioPropertyType.INTEGER,
+                    category = StudioProperty.Category.GENERAL),
+            @StudioProperty(
+                    xmlAttribute = StudioXmlAttributes.END_VALUE,
+                    type = StudioPropertyType.INTEGER,
+                    category = StudioProperty.Category.GENERAL)})
+    public interface IntegerRangeSliderComponent extends RangeSliderDefaultProperties, IntegerMin, IntegerMax,
+            IntegerStep {
+    }
+
+    @StudioPropertyGroup(properties = {
+            @StudioProperty(
+                    xmlAttribute = StudioXmlAttributes.START_VALUE,
+                    type = StudioPropertyType.DOUBLE,
+                    category = StudioProperty.Category.GENERAL),
+            @StudioProperty(
+                    xmlAttribute = StudioXmlAttributes.END_VALUE,
+                    type = StudioPropertyType.DOUBLE,
+                    category = StudioProperty.Category.GENERAL)})
+    public interface DecimalRangeSliderComponent extends RangeSliderDefaultProperties,
+            DoubleMinWithGeneralCategory, DoubleMaxWithGeneralCategory, Step {
     }
 
     @StudioPropertyGroup(properties = @StudioProperty(

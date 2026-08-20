@@ -2786,6 +2786,43 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <xs:complexType name="baseSliderComponent">
+        <xs:complexContent>
+            <xs:extension base="baseFieldComponent">
+                <xs:attribute name="valueAlwaysVisible" type="xs:boolean"/>
+                <xs:attribute name="minMaxVisible" type="xs:boolean"/>
+
+                <xs:attributeGroup ref="hasRequired"/>
+                <xs:attributeGroup ref="hasAriaLabel"/>
+                <xs:attributeGroup ref="hasValidation"/>
+                <xs:attributeGroup ref="hasValueChangeMode"/>
+                <xs:attributeGroup ref="hasFocusableAttributes"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="baseRangeSliderComponent">
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+                <xs:attribute name="valueAlwaysVisible" type="xs:boolean"/>
+                <xs:attribute name="minMaxVisible" type="xs:boolean"/>
+                <xs:attribute name="accessibleNameStart" type="resourceString"/>
+                <xs:attribute name="accessibleNameEnd" type="resourceString"/>
+                <xs:attribute name="required" type="xs:boolean"/>
+
+                <xs:attributeGroup ref="hasSize"/>
+                <xs:attributeGroup ref="hasLabel"/>
+                <xs:attributeGroup ref="hasEnabled"/>
+                <xs:attributeGroup ref="hasClassNames"/>
+                <xs:attributeGroup ref="hasHelperText"/>
+                <xs:attributeGroup ref="hasValidation"/>
+                <xs:attributeGroup ref="hasValueAndElement"/>
+                <xs:attributeGroup ref="hasValueChangeMode"/>
+                <xs:attributeGroup ref="hasFocusableAttributes"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
     <xs:complexType name="baseComboBoxPickerComponent">
         <xs:complexContent>
             <xs:extension base="baseComponent">
@@ -3606,6 +3643,74 @@
                 <xs:attribute name="stepButtonsVisible" type="xs:boolean"/>
 
                 <xs:attributeGroup ref="hasRequired"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- IntegerSlider-->
+    <xs:complexType name="integerSliderComponent">
+        <xs:complexContent>
+            <xs:extension base="baseSliderComponent">
+                <xs:sequence>
+                    <xs:element name="validators" minOccurs="0" type="integerFieldValidatorType"/>
+                    <xs:element name="tooltip" minOccurs="0" type="tooltipElement"/>
+                </xs:sequence>
+
+                <xs:attribute name="max" type="xs:integer"/>
+                <xs:attribute name="min" type="xs:integer"/>
+                <xs:attribute name="step" type="xs:integer"/>
+                <xs:attribute name="value" type="xs:integer"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- DecimalSlider-->
+    <xs:complexType name="decimalSliderComponent">
+        <xs:complexContent>
+            <xs:extension base="baseSliderComponent">
+                <xs:sequence>
+                    <xs:element name="validators" minOccurs="0" type="numberFieldValidatorType"/>
+                    <xs:element name="tooltip" minOccurs="0" type="tooltipElement"/>
+                </xs:sequence>
+
+                <xs:attribute name="max" type="xs:double"/>
+                <xs:attribute name="min" type="xs:double"/>
+                <xs:attribute name="step" type="xs:double"/>
+                <xs:attribute name="value" type="xs:double"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- IntegerRangeSlider-->
+    <xs:complexType name="integerRangeSliderComponent">
+        <xs:complexContent>
+            <xs:extension base="baseRangeSliderComponent">
+                <xs:sequence>
+                    <xs:element name="tooltip" minOccurs="0" type="tooltipElement"/>
+                </xs:sequence>
+
+                <xs:attribute name="max" type="xs:integer"/>
+                <xs:attribute name="min" type="xs:integer"/>
+                <xs:attribute name="step" type="xs:integer"/>
+                <xs:attribute name="startValue" type="xs:integer"/>
+                <xs:attribute name="endValue" type="xs:integer"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- DecimalRangeSlider-->
+    <xs:complexType name="decimalRangeSliderComponent">
+        <xs:complexContent>
+            <xs:extension base="baseRangeSliderComponent">
+                <xs:sequence>
+                    <xs:element name="tooltip" minOccurs="0" type="tooltipElement"/>
+                </xs:sequence>
+
+                <xs:attribute name="max" type="xs:double"/>
+                <xs:attribute name="min" type="xs:double"/>
+                <xs:attribute name="step" type="xs:double"/>
+                <xs:attribute name="startValue" type="xs:double"/>
+                <xs:attribute name="endValue" type="xs:double"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -5652,6 +5757,10 @@
                 <xs:element name="markdownEditor" type="markdownEditorComponent"/>
                 <xs:element name="sidePanelLayout" type="sidePanelLayoutComponent"/>
                 <xs:element name="sidePanelLayoutCloser" type="sidePanelLayoutCloserComponent"/>
+                <xs:element name="integerSlider" type="integerSliderComponent"/>
+                <xs:element name="decimalSlider" type="decimalSliderComponent"/>
+                <xs:element name="integerRangeSlider" type="integerRangeSliderComponent"/>
+                <xs:element name="decimalRangeSlider" type="decimalRangeSliderComponent"/>
             </xs:choice>
         </xs:sequence>
     </xs:group>

@@ -136,6 +136,8 @@ public final class StudioXmlElements {
     public static final String DECALS = "decals";
     public static final String DECIMAL_MAX = "decimalMax";
     public static final String DECIMAL_MIN = "decimalMin";
+    public static final String DECIMAL_RANGE_SLIDER = "decimalRangeSlider";
+    public static final String DECIMAL_SLIDER = "decimalSlider";
     public static final String DERIVED_PROPERTIES = "derivedProperties";
     public static final String DERIVED_PROPERTY = "derivedProperty";
     public static final String DESCRIPTION = "description";
@@ -254,6 +256,8 @@ public final class StudioXmlElements {
     public static final String INSIDE_DATA_ZOOM = "insideDataZoom";
     public static final String INSTANCE = "instance";
     public static final String INTEGER_FIELD = "integerField";
+    public static final String INTEGER_RANGE_SLIDER = "integerRangeSlider";
+    public static final String INTEGER_SLIDER = "integerSlider";
     public static final String INTERVAL_FUNCTION = "intervalFunction";
     public static final String IN_BRUSH = "inBrush";
     public static final String IN_RANGE = "inRange";

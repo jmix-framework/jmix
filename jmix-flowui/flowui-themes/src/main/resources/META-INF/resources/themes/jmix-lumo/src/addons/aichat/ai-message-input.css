@@ -3,6 +3,7 @@
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
+    gap: var(--jmix-ai-message-input-gap, var(--lumo-space-m));
     width: 100%;
     max-width: var(--jmix-ai-message-input-max-width);
     margin-inline: auto;
@@ -28,7 +29,7 @@
     border-radius: var(--vaadin-input-field-border-radius, var(--lumo-border-radius-l));
   }
 
-  :host([focus-ring]) [part='input-container'] {
+  :host([focus-ring]:not([disabled])) [part='input-container']:focus-within {
     box-shadow: 0 0 0 var(--vaadin-focus-ring-width, 2px)
       var(--vaadin-focus-ring-color, var(--lumo-primary-color-50pct));
   }

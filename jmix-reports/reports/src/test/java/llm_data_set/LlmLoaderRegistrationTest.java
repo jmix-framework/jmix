@@ -34,9 +34,9 @@ import io.jmix.reports.libintegration.JpqlDataLoader;
 import io.jmix.reports.libintegration.LlmDataLoader;
 import io.jmix.reports.libintegration.MultiEntityDataLoader;
 import io.jmix.reports.libintegration.SingleEntityDataLoader;
+import io.jmix.reports.libintegration.UnavailableLlmDataLoader;
 import io.jmix.reports.runner.ReportRunner;
 import io.jmix.reports.test_support.AuthenticatedAsSystem;
-import io.jmix.reports.yarg.exception.UnsupportedLoaderException;
 import io.jmix.reports.yarg.loaders.factory.ReportLoaderFactory;
 import llm_data_set.test_support.LlmDataSetTestConfiguration;
 import org.junit.jupiter.api.Nested;
@@ -54,7 +54,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
- * The LLM loader reaches the loader factory only when the AI Tools add-on provides the beans it needs.
+ * The loader factory serves the LLM data set type either way: with the AI Tools add-on by the loader that runs
+ * such a data set, and without it by the one that says the add-on is missing.
  */
 class LlmLoaderRegistrationTest {
 
@@ -93,9 +94,11 @@ class LlmLoaderRegistrationTest {
         protected Metadata metadata;
 
         @Test
-        void testLlmLoaderTypeIsUnsupported() {
-            assertThatThrownBy(() -> loaderFactory.createDataLoader(DataSetType.LLM.getCode()))
-                    .isInstanceOf(UnsupportedLoaderException.class);
+        void testLlmLoaderTypeIsServedByTheLoaderThatNamesTheAddOn() {
+            // The type is registered either way: an application without the add-on must learn what is missing
+            // from the run of a report it did not author, not from a message about an unknown loader type.
+            assertThat(loaderFactory.createDataLoader(DataSetType.LLM.getCode()))
+                    .isInstanceOf(UnavailableLlmDataLoader.class);
         }
 
         @Test
@@ -111,14 +114,14 @@ class LlmLoaderRegistrationTest {
         }
 
         @Test
-        void testRunningAReportWithAnLlmBandFailsNamingTheTypeAndTheBand() {
+        void testRunningAReportWithAnLlmBandFailsNamingTheAddOnAndTheDataSet() {
             // A report authored elsewhere keeps its data set type: the designer can only hide the type from the
             // combo, so the run is where an application without the add-on finds out.
             // The runner folds the loader's failure into the message of a ReportingException instead of keeping
             // it as a cause, so what an application shows is that message.
             assertThatThrownBy(() -> reportRunner.byReportEntity(reportWithLlmBand()).run())
                     .isInstanceOf(ReportingException.class)
-                    .hasMessageContainingAll("Orders", "Unsupported loader type", DataSetType.LLM.getCode());
+                    .hasMessageContainingAll("Orders", "AI Tools", DataSetType.LLM.getCode());
         }
 
         protected Report reportWithLlmBand() {

@@ -129,6 +129,62 @@ public class LlmDataSetGenerationSupportTest {
     }
 
     @Test
+    public void testUndeclaredParentBandIsNamedSoTheAuthorHearsAboutIt() {
+        Report report = reportWithParameters();
+        BandDefinition parentBand = band(report, "Orders", rootBand(report));
+        DataSet parentDataSet = metadata.create(DataSet.class);
+        parentDataSet.setName("Orders");
+        parentDataSet.setBandDefinition(parentBand);
+        parentDataSet.setType(DataSetType.JPQL);
+        parentDataSet.setText("select o.number from sales_Order o");
+        parentBand.getDataSets().add(parentDataSet);
+
+        BandDefinition linesBand = band(report, "Lines", parentBand);
+        DataSet linesDataSet = llmDataSet(linesBand);
+
+        // A JPQL master states its columns inside its own text, so generation is offered no Orders_<field> name
+        // and the query it produces cannot filter the detail band by its master row.
+        assertThat(generationSupport.createGenerationRequest(linesDataSet).getAvailableParameters())
+                .extracting(LlmQueryParameter::getName)
+                .noneMatch(name -> name.startsWith("Orders_"));
+        assertThat(generationSupport.sourcesWithUndeclaredColumns(linesDataSet)).containsExactly("Orders");
+    }
+
+    @Test
+    public void testParentBandDeclaringItsColumnsIsNotNamed() {
+        Report report = reportWithParameters();
+        BandDefinition parentBand = band(report, "Orders", rootBand(report));
+        DataSet parentDataSet = llmDataSet(parentBand);
+        parentDataSet.setLlmGeneratedQuery(serializer.toJson(new LlmDataQuery(
+                "select o.number as orderNumber from sales_Order o", List.of("orderNumber"), List.of(),
+                null, List.of(), null)));
+
+        DataSet linesDataSet = llmDataSet(band(report, "Lines", parentBand));
+
+        assertThat(generationSupport.sourcesWithUndeclaredColumns(linesDataSet)).isEmpty();
+    }
+
+    @Test
+    public void testUndeclaredCrossTabAxisIsNamed() {
+        Report report = reportWithParameters();
+        BandDefinition crossBand = band(report, "Revenue", rootBand(report));
+        crossBand.setOrientation(Orientation.CROSS);
+
+        DataSet axis = metadata.create(DataSet.class);
+        axis.setName("Revenue_dynamic_header");
+        axis.setBandDefinition(crossBand);
+        axis.setType(DataSetType.JPQL);
+        axis.setText("select o.date as period from sales_Order o");
+        crossBand.getDataSets().add(axis);
+
+        DataSet cellDataSet = llmDataSet(crossBand);
+        cellDataSet.setName("Revenue");
+
+        assertThat(generationSupport.sourcesWithUndeclaredColumns(cellDataSet))
+                .containsExactly("Revenue_dynamic_header");
+    }
+
+    @Test
     public void testParentBandColumnsAreNotOfferedWithoutAStoredQuery() {
         Report report = reportWithParameters();
         BandDefinition parentBand = band(report, "Orders", rootBand(report));
@@ -337,13 +393,29 @@ public class LlmDataSetGenerationSupportTest {
     }
 
     @Test
-    public void testAvailabilityFollowsWhatTheServiceSaysAboutGeneration() {
+    public void testGenerationAvailabilityFollowsWhatTheServiceSaysAboutIt() {
         TestLlmDataQueryService service = (TestLlmDataQueryService) queryService;
-        assertThat(generationSupport.isAvailable()).isTrue();
+        assertThat(generationSupport.isGenerationAvailable()).isTrue();
 
         service.setGenerationAvailable(false);
         try {
-            assertThat(generationSupport.isAvailable()).isFalse();
+            assertThat(generationSupport.isGenerationAvailable()).isFalse();
+        } finally {
+            service.setGenerationAvailable(true);
+        }
+    }
+
+    @Test
+    public void testTypeStaysSupportedWhileGenerationIsNot() {
+        // A data set whose query is already stored is edited, checked and run without a model behind it, so the
+        // type does not stop being supported when the service says it cannot generate.
+        TestLlmDataQueryService service = (TestLlmDataQueryService) queryService;
+        assertThat(generationSupport.isTypeSupported()).isTrue();
+
+        service.setGenerationAvailable(false);
+        try {
+            assertThat(generationSupport.isTypeSupported()).isTrue();
+            assertThat(generationSupport.isGenerationAvailable()).isFalse();
         } finally {
             service.setGenerationAvailable(true);
         }

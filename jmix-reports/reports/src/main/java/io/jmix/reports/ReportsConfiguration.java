@@ -102,7 +102,12 @@ public class ReportsConfiguration {
         dataLoaders.put("single", singleEntityDataLoader);
         dataLoaders.put("multi", multiEntityDataLoader);
         dataLoaders.put("delegate", delegatingDataLoader);
-        llmDataLoader.ifAvailable(loader -> dataLoaders.put(DataSetType.LLM.getCode(), loader));
+
+        LlmDataLoader availableLlmDataLoader = llmDataLoader.getIfAvailable();
+        dataLoaders.put(DataSetType.LLM.getCode(), availableLlmDataLoader != null
+                ? availableLlmDataLoader
+                : new UnavailableLlmDataLoader());
+
         loaderFactory.setDataLoaders(dataLoaders);
         return loaderFactory;
     }

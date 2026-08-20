@@ -39,7 +39,8 @@ import java.util.Objects;
  * what a query may be generated from, and how a generated query is stored.
  * <p>
  * The UI module needs no dependency on the AI Tools add-on for this: the type works when an
- * {@link LlmDataQueryService} bean exists and reports generation as available. Reports auto-configuration
+ * {@link LlmDataQueryService} bean exists, and its query can be generated when that bean also reports
+ * generation as available. Reports auto-configuration
  * supplies the default bean on top of the add-on's data-load services, and an application may substitute another
  * implementation of the seam.
  */
@@ -57,13 +58,25 @@ public class LlmDataSetGenerationSupport {
     protected ParameterClassResolver parameterClassResolver;
 
     /**
-     * Tells whether the data set type can generate queries in this application: an implementation of the seam has
-     * to be there and report generation as available. Reports may auto-configure the default implementation when
-     * the add-on's data-load beans exist even though the model needed by generation is not configured.
+     * Tells whether the data set type works in this application at all, which is what an implementation of the
+     * seam being there means: such a data set can be authored, checked and run. Generating its query needs more
+     * than that — see {@link #isGenerationAvailable()}.
+     *
+     * @return {@code true} if the data set type is supported
+     */
+    public boolean isTypeSupported() {
+        return llmDataQueryServiceProvider.getIfAvailable() != null;
+    }
+
+    /**
+     * Tells whether a query can be generated in this application: an implementation of the seam has to be there
+     * and report generation as available. Reports may auto-configure the default implementation when the add-on's
+     * data-load beans exist even though the model needed by generation is not configured — a data set can then
+     * still be edited and run, but not generated anew.
      *
      * @return {@code true} if queries can be generated
      */
-    public boolean isAvailable() {
+    public boolean isGenerationAvailable() {
         LlmDataQueryService service = llmDataQueryServiceProvider.getIfAvailable();
         return service != null && service.isGenerationAvailable();
     }
@@ -238,7 +251,7 @@ public class LlmDataSetGenerationSupport {
      * The walk stops short of the root band — the one band without a parent — because the loader stops there
      * too: a run offers no {@code Root_<field>} name, so offering one here would have generation reference a
      * parameter nothing could ever bind. Every report has a data set on its root band, and it may well be an
-     * LLM one. See {@code decisions/0004-parent-band-fields-flattened.md}.
+     * LLM one.
      */
     protected void collectParentBandColumns(DataSet dataSet, Map<String, LlmQueryParameter> parameters) {
         BandDefinition band = dataSet.getBandDefinition();
@@ -292,6 +305,45 @@ public class LlmDataSetGenerationSupport {
                 }
             }
         }
+    }
+
+    /**
+     * Names the data sets around this one whose columns generation is not told about: the fields of a parent band
+     * and the columns of a cross-tab axis are known here only from a stored LLM query, while a JPQL, SQL or
+     * Groovy data set states its columns as aliases inside its own text, and an LLM one states them once its
+     * query is generated.
+     * <p>
+     * A query generated without them references neither, and the two cases fail differently: a detail band then
+     * prints the same rows under every master row, silently, while a cross-tab cell fails the run because it
+     * cannot be linked to its axis. Both are worth saying out loud before a query is generated.
+     *
+     * @param dataSet data set a query is about to be generated for
+     * @return names of the bands and axes whose columns stay unknown, in the order they are met
+     */
+    public List<String> sourcesWithUndeclaredColumns(DataSet dataSet) {
+        List<String> sources = new ArrayList<>();
+
+        BandDefinition band = dataSet.getBandDefinition();
+        for (BandDefinition parentBand = band != null ? band.getParentBandDefinition() : null;
+             parentBand != null && parentBand.getParentBandDefinition() != null;
+             parentBand = parentBand.getParentBandDefinition()) {
+
+            if (storedColumnsOf(parentBand).isEmpty()) {
+                sources.add(parentBand.getName());
+            }
+        }
+
+        if (band != null && band.getOrientation() == Orientation.CROSS && band.getDataSets() != null) {
+            for (DataSet axis : band.getDataSets()) {
+                String axisName = axis.getName();
+                if (axis != dataSet && axisName != null && LlmQueryParameterNames.isCrossTabAxis(axisName)
+                        && storedColumnsOf(axis).isEmpty()) {
+                    sources.add(axisName);
+                }
+            }
+        }
+
+        return sources;
     }
 
     protected List<String> storedColumnsOf(BandDefinition band) {

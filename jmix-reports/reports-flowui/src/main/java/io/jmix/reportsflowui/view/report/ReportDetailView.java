@@ -696,7 +696,9 @@ public class ReportDetailView extends StandardDetailView<Report> {
 
     @Subscribe(id = "dataSetsDc", target = Target.DATA_CONTAINER)
     protected void onDataSetsDcItemPropertyChange(InstanceContainer.ItemPropertyChangeEvent<DataSet> event) {
-        applyVisibilityRules(event.getItem());
+        if (!DataSet.LLM_GENERATED_QUERY.equals(event.getProperty())) {
+            applyVisibilityRules(event.getItem());
+        }
 
         if ("type".equals(event.getProperty())) {
             updateStreamingRelatedFields();
@@ -1527,8 +1529,10 @@ public class ReportDetailView extends StandardDetailView<Report> {
         ArrayList<DataSetType> options = new ArrayList<>(Arrays.asList(DataSetType.values()));
         options.remove(DataSetType.DELEGATE); // can't set it up in runtime editor
 
-        if (!llmDataSetGenerationSupport.isAvailable()) {
-            // The type needs the AI Tools add-on: without it a data set of this type cannot be generated or run.
+        if (!llmDataSetGenerationSupport.isTypeSupported()) {
+            // The type needs the AI Tools add-on: without it a data set of this type cannot be run at all. A
+            // model that generation needs is a separate matter — a data set whose query is already stored is
+            // edited and run without one, so the type stays on offer.
             options.remove(DataSetType.LLM);
         }
 
@@ -1918,7 +1922,9 @@ public class ReportDetailView extends StandardDetailView<Report> {
     protected void updateLlmPanelAvailability() {
         boolean editable = isLlmPanelEditable();
 
-        llmGenerateBtn.setEnabled(editable);
+        // Everything but generation works without a model behind it: a stored query is edited by hand, checked
+        // and run, so only the button that calls the model follows generation availability.
+        llmGenerateBtn.setEnabled(editable && llmDataSetGenerationSupport.isGenerationAvailable());
         llmEditQueryBtn.setEnabled(editable);
         llmPromptField.setReadOnly(!editable);
         llmRegenerateOnRunField.setReadOnly(!editable);
@@ -1927,7 +1933,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
     }
 
     protected boolean isLlmPanelEditable() {
-        return !isReadOnly() && llmDataSetGenerationSupport.isAvailable();
+        return !isReadOnly() && llmDataSetGenerationSupport.isTypeSupported();
     }
 
     @Subscribe
@@ -2122,7 +2128,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
     @Subscribe("llmGenerateBtn")
     public void onLlmGenerateBtnClick(ClickEvent<Button> event) {
         DataSet dataSet = dataSetsDc.getItemOrNull();
-        if (dataSet == null || !isLlmPanelEditable()) {
+        if (dataSet == null || !isLlmPanelEditable() || !llmDataSetGenerationSupport.isGenerationAvailable()) {
             return;
         }
 
@@ -2132,6 +2138,8 @@ public class ReportDetailView extends StandardDetailView<Report> {
                     .show();
             return;
         }
+
+        warnAboutUndeclaredColumns(dataSet);
 
         LlmQueryGenerationRequest request = llmDataSetGenerationSupport.createGenerationRequest(dataSet);
         BackgroundTask<Integer, LlmDataQuery> task = createLlmGenerationTask(request, dataSet);
@@ -2147,15 +2155,32 @@ public class ReportDetailView extends StandardDetailView<Report> {
      * Creates the task that generates a query for the data set, and issues the token that makes it the current
      * attempt for that data set: a task created later supersedes whatever was created before it.
      */
+    /**
+     * Says which bands and axes the query being generated will not be able to reference, because their own data
+     * sets do not declare their columns. Said before generation rather than after, so that an author who meant
+     * the query to filter by a master row can stop and write the reference by hand instead.
+     */
+    protected void warnAboutUndeclaredColumns(DataSet dataSet) {
+        List<String> sources = llmDataSetGenerationSupport.sourcesWithUndeclaredColumns(dataSet);
+        if (sources.isEmpty()) {
+            return;
+        }
+
+        notifications.create(messageBundle.formatMessage(
+                        "bandsTab.dataSetTypeLayout.llmUndeclaredColumns", String.join(", ", sources)))
+                .withType(Notifications.Type.WARNING)
+                .show();
+    }
+
     protected BackgroundTask<Integer, LlmDataQuery> createLlmGenerationTask(LlmQueryGenerationRequest request,
                                                                            DataSet dataSet) {
-        long timeoutMs = reportsClientProperties.getLlmQueryGenerationTimeoutMs();
+        long timeoutSeconds = reportsClientProperties.getLlmQueryGenerationTimeout().toSeconds();
         long generationToken = ++llmGenerationSequence;
         latestLlmGeneration.put(dataSet, generationToken);
         LlmGenerationAttempt attempt = new LlmGenerationAttempt(dataSet, request,
                 dataSet.getLlmGeneratedQuery(), getLlmQueryDraftRevision(dataSet), generationToken);
 
-        return new BackgroundTask<>(timeoutMs, TimeUnit.MILLISECONDS, ReportDetailView.this) {
+        return new BackgroundTask<>(timeoutSeconds, TimeUnit.SECONDS, ReportDetailView.this) {
 
             @Override
             public LlmDataQuery run(TaskLifeCycle<Integer> taskLifeCycle) {

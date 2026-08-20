@@ -102,9 +102,10 @@ public class LlmDataSetPanelUiTest {
     @AfterEach
     public void tearDown() {
         llmReportUtil.cleanupDatabaseReports();
-        // The service is one bean for the whole class, so a test that made it reject queries must not leave it
-        // rejecting them for the next one.
+        // The service is one bean for the whole class, so a test that made it reject queries or report generation
+        // as unavailable must not leave it that way for the next one.
         ((TestLlmDataQueryService) queryService).setProblems(List.of());
+        ((TestLlmDataQueryService) queryService).setGenerationAvailable(true);
     }
 
     @Test
@@ -519,28 +520,6 @@ public class LlmDataSetPanelUiTest {
     }
 
     @Test
-    public void testExistingLlmDataSetIsShownReadOnlyWhenGenerationIsUnavailable() {
-        TestLlmDataQueryService service = (TestLlmDataQueryService) queryService;
-        service.setGenerationAvailable(false);
-        try {
-            ReportDetailView view = openReportDesignerOnLlmDataSet();
-            DataSet dataSet = selectedDataSet(view);
-            JmixSelect<DataSetType> typeField = findComponent(view, "singleDataSetTypeField");
-
-            // The offered types are fixed for the lifetime of the view, so a type that is no longer offered has
-            // no option to display. Opening such a report must still leave the stored data set untouched.
-            assertThat(typeField.getListDataView().getItems()).doesNotContain(DataSetType.LLM);
-            assertThat(dataSet.getType()).isEqualTo(DataSetType.LLM);
-            assertThat(dataSet.getLlmGeneratedQuery()).isNotBlank();
-
-            assertThat(this.<VerticalLayout>findComponent(view, "llmDataSetTypeBox").isVisible()).isTrue();
-            assertThat(this.<JmixTextArea>findComponent(view, "llmPromptField").isReadOnly()).isTrue();
-        } finally {
-            service.setGenerationAvailable(true);
-        }
-    }
-
-    @Test
     public void testChangingTheViewToReadOnlyLocksAnEditedLlmQuery() {
         ReportDetailView view = openReportDesignerOnLlmDataSet();
         this.<JmixButton>findComponent(view, "llmEditQueryBtn").click();
@@ -679,6 +658,27 @@ public class LlmDataSetPanelUiTest {
 
         this.<JmixButton>findComponent(view, "saveBtn").click();
         assertThat(llmReportUtil.loadStoredQuery()).isNull();
+    }
+
+    @Test
+    public void testExistingDataSetKeepsItsTypeAndItsEditorWhenGenerationIsUnavailable() {
+        // An application whose model is not configured still has the add-on: such a report is opened, its stored
+        // query edited by hand and the report run. Only generating a new query is out of reach.
+        ((TestLlmDataQueryService) queryService).setGenerationAvailable(false);
+
+        ReportDetailView view = openReportDesignerOnLlmDataSet();
+        DataSet dataSet = selectedDataSet(view);
+
+        JmixSelect<DataSetType> typeField = findComponent(view, "singleDataSetTypeField");
+        assertThat(typeField.getListDataView().getItems().toList()).contains(DataSetType.LLM);
+        assertThat(typeField.getValue()).isEqualTo(DataSetType.LLM);
+        assertThat(dataSet.getType()).isEqualTo(DataSetType.LLM);
+        assertThat(dataSet.getLlmGeneratedQuery()).isNotBlank();
+
+        assertThat(this.<VerticalLayout>findComponent(view, "llmDataSetTypeBox").isVisible()).isTrue();
+        assertThat(this.<JmixButton>findComponent(view, "llmGenerateBtn").isEnabled()).isFalse();
+        assertThat(this.<JmixButton>findComponent(view, "llmEditQueryBtn").isEnabled()).isTrue();
+        assertThat(this.<JmixTextArea>findComponent(view, "llmPromptField").isReadOnly()).isFalse();
     }
 
     protected View<?> openDesignerOnLlmDataSet() {

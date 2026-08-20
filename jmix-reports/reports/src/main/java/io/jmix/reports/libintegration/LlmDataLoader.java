@@ -116,7 +116,7 @@ public class LlmDataLoader implements ReportDataLoader {
 
             log.debug("Executing the query of data set [{}]: {}", reportQuery.getName(), query.getJpql());
             LlmQueryExecutionResult result = llmDataQueryService.execute(new LlmQueryExecutionRequest(prompt, query,
-                    resolveArguments(reportQuery, query, availableParameters), maxResults));
+                    resolveArguments(reportQuery, query, availableParameters, params), maxResults));
 
             warnIfTruncated(reportQuery, result, scope);
 
@@ -240,7 +240,7 @@ public class LlmDataLoader implements ReportDataLoader {
      * Checked here rather than left to execution, because the add-on answers an invalid query by asking a model
      * to repair it — which spends tokens on a report run, sends this run's arguments to the model, and then
      * binds the values the model answers with instead of the ones the run computed. A run executes the query it
-     * was given or fails saying why. See {@code decisions/0013-a-run-never-asks-the-model.md}.
+     * was given or fails saying why.
      * <p>
      * Checked once per query per run: a check parses the text and resolves it against the data model, and the
      * query does not change while the run executes it, so a band loaded once per parent row would otherwise
@@ -565,21 +565,37 @@ public class LlmDataLoader implements ReportDataLoader {
      * model guessed wrong would corrupt the value.
      */
     protected List<LlmQueryParameter> resolveArguments(ReportQuery reportQuery, LlmDataQuery query,
-                                                       Map<String, LlmQueryParameter> availableParameters) {
+                                                       Map<String, LlmQueryParameter> availableParameters,
+                                                       Map<String, Object> params) {
         List<LlmQueryParameter> arguments = new ArrayList<>(query.getParameters().size());
 
         for (LlmQueryParameter parameter : query.getParameters()) {
             LlmQueryParameter available = availableParameters.get(parameter.getName());
             if (available == null) {
-                throw new DataLoadingException(String.format(
-                        "The query of data set [%s] references parameter [%s], but the report run provides no "
-                                + "value for it", reportQuery.getName(), parameter.getName()));
+                throw new DataLoadingException(describeMissingArgument(reportQuery, parameter.getName(), params));
             }
 
             arguments.add(available);
         }
 
         return arguments;
+    }
+
+    /**
+     * Says why a parameter the query references cannot be bound. A parameter the run knows but left empty is a
+     * different matter from one the run has never heard of: an unfilled optional report parameter is the common
+     * case, and it says so, because a query is generated once and binds every parameter it references — unlike a
+     * JPQL or SQL data set, which drops the condition an empty parameter is used in.
+     */
+    protected String describeMissingArgument(ReportQuery reportQuery, String name, Map<String, Object> params) {
+        if (params.containsKey(name)) {
+            return String.format("The query of data set [%s] references parameter [%s], which this run left "
+                    + "empty. The query binds every parameter it references, so fill the parameter in or "
+                    + "regenerate the query without it", reportQuery.getName(), name);
+        }
+
+        return String.format("The query of data set [%s] references parameter [%s], but the report run provides "
+                + "no value for it", reportQuery.getName(), name);
     }
 
     protected record CollectedParameters(Map<String, LlmQueryParameter> availableParameters,

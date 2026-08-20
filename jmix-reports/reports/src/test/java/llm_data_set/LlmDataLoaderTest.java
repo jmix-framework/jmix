@@ -539,6 +539,25 @@ class LlmDataLoaderTest {
     }
 
     @Test
+    void testFailureNamesAnEmptyReportParameterAsEmptyRatherThanAsUnknown() {
+        // An optional report parameter left unfilled arrives with a null value. It is the common way a run meets
+        // an unbindable parameter, and the author has to hear which one it is and that filling it in is the fix.
+        DataSet dataSet = llmDataSet(PROMPT, storedQuery(List.of(parameter("dateFrom", "java.time.LocalDate"))),
+                false, null);
+        Map<String, Object> params = new HashMap<>();
+        params.put("dateFrom", null);
+
+        assertThatThrownBy(() -> loader().loadData(dataSet, null, params))
+                .isInstanceOf(DataLoadingException.class)
+                .hasMessageContainingAll("dateFrom", "left empty", "fill the parameter in");
+
+        // A name the run never heard of stays a different message: nothing to fill in there.
+        assertThatThrownBy(() -> loader().loadData(dataSet, null, Map.of()))
+                .isInstanceOf(DataLoadingException.class)
+                .hasMessageContaining("provides no value for it");
+    }
+
+    @Test
     void testRowsAreMutableAndFollowTheSelectClause() {
         // The add-on hands out immutable maps in an order of its own; a band row is written into by the engine
         // and read positionally by a cross-tab.

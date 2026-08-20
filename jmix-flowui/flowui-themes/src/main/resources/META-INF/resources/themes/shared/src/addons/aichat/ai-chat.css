@@ -29,6 +29,14 @@
   display: none;
 }
 
+.jmix-ai-chat[empty]:not([theme~='input-header-component-always-visible']) jmix-ai-message-input::part(header) {
+  display: none;
+}
+
+.jmix-ai-chat[empty]:not([theme~='input-footer-component-always-visible']) jmix-ai-message-input::part(footer) {
+  display: none;
+}
+
 .jmix-ai-chat:not([empty]) .jmix-ai-chat-empty-header,
 .jmix-ai-chat:not([empty]) .jmix-ai-chat-empty-footer {
   display: none;

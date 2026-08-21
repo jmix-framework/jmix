@@ -19,9 +19,10 @@ package io.jmix.core;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import io.jmix.core.annotation.Internal;
-import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -40,9 +41,19 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.UUID;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
+/**
+ * Provides information about the running application (host, port, active profiles, etc.) and stores it
+ * to the {@code app-info.json} file in the conf directory for development tools.
+ * <p>
+ * The file is created on application startup and removed on shutdown. It is not created if the JVM is
+ * bootstrapped by a test framework, because tests may run from the same directory as a normally running
+ * application instance and must not affect its file. On shutdown, the file is removed only if it still
+ * belongs to this application instance.
+ */
 @Internal
 @Component("core_ApplicationInfoProvider")
 @ConditionalOnClass(WebServerApplicationContext.class)
@@ -52,11 +63,27 @@ public class ApplicationInfoProvider {
 
     protected static final String APP_INFO_DIR_NAME = "/app-info";
     protected static final String APP_INFO_FILE_NAME = "app-info.json";
+    protected static final String INSTANCE_ID_PROPERTY = "instanceId";
+
+    /**
+     * Stack trace prefixes of test framework launchers. Same approach as in Spring Boot DevTools
+     * ({@code DevToolsEnablementDeducer}): if the application is bootstrapped by a test framework,
+     * the application info file must not be created or removed, because such a JVM may share the
+     * conf directory with a normally running application instance.
+     */
+    protected static final List<String> TEST_LAUNCHER_STACK_PREFIXES = List.of(
+            "org.junit.runners.",
+            "org.junit.platform.",
+            "org.springframework.boot.test.",
+            "org.testng.",
+            "cucumber.runtime.");
 
     @Autowired
     protected Environment environment;
     @Autowired
     protected CoreProperties coreProperties;
+
+    protected String instanceId = UUID.randomUUID().toString();
 
     protected String host;
     protected int port;
@@ -70,7 +97,11 @@ public class ApplicationInfoProvider {
     public void onApplicationReady(ApplicationReadyEvent event) {
         initValues(event.getApplicationContext());
         if (coreProperties.isApplicationInfoFileEnabled()) {
-            createAppInfoFile();
+            if (isLaunchedFromTest()) {
+                log.debug("Application is launched from a test, application info file is not created");
+            } else {
+                createAppInfoFile();
+            }
         }
         log.debug("ApplicationInfoProvider initialization is completed");
     }
@@ -159,7 +190,9 @@ public class ApplicationInfoProvider {
         log.debug("Application info: {}", content);
 
         Path fileLocation = resolveAppInfoFileLocation();
-        writeFile(fileLocation, content);
+        if (writeFile(fileLocation, content)) {
+            registerShutdownHook();
+        }
     }
 
     protected JsonObject createJson() {
@@ -174,12 +207,13 @@ public class ApplicationInfoProvider {
         general.addProperty("startupTime", startupTime != null ? startupTime.toString() : null);
 
         JsonObject root = new JsonObject();
+        root.addProperty(INSTANCE_ID_PROPERTY, instanceId);
         root.add("general", general);
 
         return root;
     }
 
-    protected void writeFile(Path fileLocation, JsonObject json) {
+    protected boolean writeFile(Path fileLocation, JsonObject json) {
         try {
             Path parent = fileLocation.getParent();
             if (parent != null) {
@@ -199,8 +233,14 @@ public class ApplicationInfoProvider {
             );
 
             log.info("Application info stored to file: {}", fileLocation.toAbsolutePath());
+            return true;
         } catch (IOException e) {
-            log.warn("Failed to store application info to file: {}", fileLocation.toAbsolutePath(), e);
+            // The file is a development-time helper, its absence must not alarm production logs.
+            // Output is split into short and detailed forms.
+            // e.toString() is intentional: a trailing Throwable argument would be printed with the stack trace.
+            log.info("Application info file is not stored: {}", e.toString());
+            log.debug("Failed to store application info to file: {}", fileLocation.toAbsolutePath(), e);
+            return false;
         }
     }
 
@@ -225,17 +265,58 @@ public class ApplicationInfoProvider {
     protected void removeAppInfoFile() {
         Path fileLocation = resolveAppInfoFileLocation();
 
+        if (!isOwnAppInfoFile(fileLocation)) {
+            log.debug("Application info file is absent or created by another application instance, " +
+                    "skipping removal: {}", fileLocation.toAbsolutePath());
+            return;
+        }
+
         try {
             Files.deleteIfExists(fileLocation);
             log.debug("Application info file removed: {}", fileLocation.toAbsolutePath());
         } catch (IOException e) {
-            log.warn("Failed to remove application info file: {}", fileLocation.toAbsolutePath(), e);
+            log.info("Application info file is not removed: {}", e.toString());
+            log.debug("Failed to remove application info file: {}", fileLocation.toAbsolutePath(), e);
         }
     }
 
-    @PostConstruct
-    public void init() {
+    /**
+     * Checks that the file was created by this application instance. The file may have been overwritten
+     * by another instance launched from the same directory, then it must not be removed on shutdown.
+     */
+    protected boolean isOwnAppInfoFile(Path fileLocation) {
+        try {
+            if (!Files.exists(fileLocation)) {
+                return false;
+            }
+            String content = Files.readString(fileLocation, StandardCharsets.UTF_8);
+            JsonElement fileInstanceId = JsonParser.parseString(content)
+                    .getAsJsonObject()
+                    .get(INSTANCE_ID_PROPERTY);
+            return fileInstanceId != null && fileInstanceId.isJsonPrimitive()
+                    && instanceId.equals(fileInstanceId.getAsString());
+        } catch (IOException | RuntimeException e) {
+            log.debug("Unable to read application info file: {}", fileLocation.toAbsolutePath(), e);
+            return false;
+        }
+    }
+
+    protected void registerShutdownHook() {
         Runtime.getRuntime().addShutdownHook(new Thread(
                 () -> shutdownHookOperation(), "application-info-provider-shutdown-hook"));
+    }
+
+    /**
+     * Detects that the JVM was bootstrapped by a test framework by inspecting the current thread's stack trace.
+     */
+    protected boolean isLaunchedFromTest() {
+        for (StackTraceElement element : Thread.currentThread().getStackTrace()) {
+            for (String prefix : TEST_LAUNCHER_STACK_PREFIXES) {
+                if (element.getClassName().startsWith(prefix)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

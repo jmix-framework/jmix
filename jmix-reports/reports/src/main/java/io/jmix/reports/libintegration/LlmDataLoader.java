@@ -52,6 +52,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.function.Supplier;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Loads band data for the {@link DataSetType#LLM} data set type: executes the query stored in the data set.
@@ -64,6 +66,22 @@ import java.util.function.Supplier;
 public class LlmDataLoader implements ReportDataLoader {
 
     private static final Logger log = LoggerFactory.getLogger(LlmDataLoader.class);
+
+    /**
+     * A single-quoted JPQL string literal, doubled quotes included.
+     */
+    protected static final Pattern STRING_LITERAL_PATTERN = Pattern.compile("'(?:''|[^'])*'");
+
+    /**
+     * The calls with which an EclipseLink JPQL select reaches past the query language: {@code SQL} inlines
+     * database SQL, {@code FUNCTION}, {@code FUNC} and {@code OPERATOR} call a database function, and
+     * {@code COLUMN} and {@code TABLE} read a column or a table the entity model does not map at all.
+     * <p>
+     * {@code CAST}, {@code EXTRACT}, {@code TREAT} and {@code REGEXP} — the rest of what the EclipseLink
+     * grammar adds — stay within the model and are left alone.
+     */
+    protected static final Pattern NATIVE_ESCAPE_PATTERN = Pattern.compile(
+            "\\b(sql|function|func|operator|column|table)\\s*\\(", Pattern.CASE_INSENSITIVE);
 
     @Autowired
     protected DataManager dataManager;
@@ -103,7 +121,6 @@ public class LlmDataLoader implements ReportDataLoader {
         LlmDataQuery query = resolveQuery(reportQuery, additionalParams, scope);
         checkCrossTabAxesAreLinkable(reportQuery, query, params, availableParameters,
                 collectedParameters.requiredResultProperties());
-        checkQueryOnlyReads(reportQuery, query);
 
         List<LlmQueryParameter> arguments = resolveArguments(reportQuery, query, availableParameters, params);
         log.debug("Executing the query of data set [{}]: {}", reportQuery.getName(), query.getJpql());
@@ -157,14 +174,32 @@ public class LlmDataLoader implements ReportDataLoader {
     }
 
     /**
-     * Refuses a stored query that is not a select. The designer checks a query when it is generated or edited,
-     * but a report also arrives by import, which brings whatever text the file holds — and this loader binds
-     * values into that text and runs it.
+     * Refuses a stored query that does more than read the entity model through {@code DataManager}: one that is
+     * not a select, and one that reaches past JPQL into the database itself, whose text this loader would
+     * otherwise hand over as it stands. See {@link #NATIVE_ESCAPE_PATTERN} for what counts as reaching past.
+     * <p>
+     * The designer checks a query the add-on generated or the author edited, and refuses some of this. A report
+     * also arrives by import, though, bringing whatever text the file holds and no add-on to check it with — so
+     * what a run promises about a query, a run has to establish itself.
+     * <p>
+     * Write keywords are not looked for: a JPQL query is a single statement, so {@code update} or {@code delete}
+     * inside a select is a word rather than an operation, and refusing a query for the name of an attribute
+     * would cost more than it saves.
      */
     protected void checkQueryOnlyReads(ReportQuery reportQuery, LlmDataQuery query) {
-        if (!Strings.CI.startsWith(query.getJpql().stripLeading(), "select")) {
+        String jpql = query.getJpql();
+        if (!Strings.CI.startsWith(jpql.stripLeading(), "select")) {
             throw new DataLoadingException(String.format(
                     "The stored query of data set [%s] is not a select, so it is not executed", reportQuery.getName()));
+        }
+
+        // Emptied of literals, so that a call spelled inside one is read as the text it is.
+        Matcher nativeEscape = NATIVE_ESCAPE_PATTERN.matcher(STRING_LITERAL_PATTERN.matcher(jpql).replaceAll("''"));
+        if (nativeEscape.find()) {
+            throw new DataLoadingException(String.format(
+                    "The stored query of data set [%s] calls [%s], which reaches the database directly and would "
+                            + "leave the data access constraints of the current user behind, so it is not executed",
+                    reportQuery.getName(), nativeEscape.group(1)));
         }
     }
 
@@ -204,7 +239,9 @@ public class LlmDataLoader implements ReportDataLoader {
      * rather than quietly asking a model for one.
      * <p>
      * Read once per document per run: the same data set is loaded once per row of its parent band, and parsing
-     * the same JSON for every row would be work done to reach the same result.
+     * the same JSON for every row would be work done to reach the same result. A query read here is also a query
+     * found fit to execute — {@link #checkQueryOnlyReads} judges the text, which no row of a parent band
+     * changes, so it is judged where the text is read.
      */
     protected LlmDataQuery resolveQuery(ReportQuery reportQuery, Map<String, Object> additionalParams,
                                         RunScope scope) {
@@ -217,7 +254,13 @@ public class LlmDataLoader implements ReportDataLoader {
 
         LlmDataQuery storedQuery;
         try {
-            storedQuery = scope.storedQuery(storedDocument, () -> llmDataQuerySerializer.fromJson(storedDocument));
+            storedQuery = scope.storedQuery(storedDocument, () -> {
+                LlmDataQuery read = llmDataQuerySerializer.fromJson(storedDocument);
+                if (read != null) {
+                    checkQueryOnlyReads(reportQuery, read);
+                }
+                return read;
+            });
         } catch (LlmDataQueryException e) {
             throw new DataLoadingException(String.format(
                     "The stored query of data set [%s] cannot be read: generate it again in the report designer",

@@ -37,6 +37,8 @@ import llm_data_set.test_support.TestLlmDataLoader;
 import llm_data_set.test_support.TestLlmDataQueryService;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.LoggerFactory;
@@ -112,6 +114,74 @@ class LlmDataLoaderTest {
                 .hasMessageContainingAll("Data", "not a select");
 
         assertThat(dataLoader.getExecutions()).isEmpty();
+    }
+
+    /**
+     * Every EclipseLink construct with which a select reaches past JPQL: {@code SQL} inlines database SQL,
+     * {@code FUNCTION}, {@code FUNC} and {@code OPERATOR} call a database function, and {@code COLUMN} and
+     * {@code TABLE} read what the entity model does not map — so none of them can be executed by a data set
+     * whose promise is reading the model under the permissions of the current user.
+     */
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "select o.number as orderNumber from sales_Order o where sql('1 = 1')",
+            "select FUNCTION('YEAR', o.date) as orderNumber from sales_Order o",
+            "select FUNC('YEAR', o.date) as orderNumber from sales_Order o",
+            "select OPERATOR('Trim', o.number) as orderNumber from sales_Order o",
+            "select COLUMN('SECRET_CODE', o) as orderNumber from sales_Order o",
+            "select o.number as orderNumber from TABLE('SALES_ORDER') o"})
+    void testQueryReachingPastJpqlIsRefused(String jpql) {
+        DataSet dataSet = llmDataSet(PROMPT, serializer.toJson(
+                new LlmDataQuery(jpql, List.of("orderNumber"), List.of(), null, List.of())));
+
+        assertThatThrownBy(() -> loader().loadData(dataSet, null, Map.of()))
+                .isInstanceOf(DataLoadingException.class)
+                .hasMessageContainingAll("Data", "not executed");
+
+        assertThat(dataLoader.getExecutions()).isEmpty();
+    }
+
+    /**
+     * The rest of what the EclipseLink grammar adds stays within the entity model, so a query using it is
+     * executed like any other.
+     */
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "select CAST(o.number as CHAR) as orderNumber from sales_Order o",
+            "select EXTRACT(YEAR from o.date) as orderNumber from sales_Order o",
+            "select TREAT(o.customer as sales_VipCustomer).name as orderNumber from sales_Order o"})
+    void testQueryStayingWithinTheModelIsExecuted(String jpql) {
+        DataSet dataSet = llmDataSet(PROMPT, serializer.toJson(
+                new LlmDataQuery(jpql, List.of("orderNumber"), List.of(), null, List.of())));
+
+        loader().loadData(dataSet, null, Map.of());
+
+        assertThat(dataLoader.getExecutions()).hasSize(1);
+    }
+
+    @Test
+    void testSuchACallSpelledInsideAStringLiteralIsJustText() {
+        LlmDataQuery withLiteral = new LlmDataQuery(
+                "select o.number as orderNumber from sales_Order o where o.note = 'sql(1 = 1)'",
+                List.of("orderNumber"), List.of(), null, List.of());
+        DataSet dataSet = llmDataSet(PROMPT, serializer.toJson(withLiteral));
+
+        loader().loadData(dataSet, null, Map.of());
+
+        assertThat(dataLoader.getLastExecution().jpql()).contains("'sql(1 = 1)'");
+    }
+
+    @Test
+    void testANameThatMerelyEndsWithSuchACallIsNotTakenForOne() {
+        // The call has to stand on its own: a word ending in one is a name, and a name is not an escape.
+        LlmDataQuery ordinary = new LlmDataQuery(
+                "select o.number as orderNumber from sales_Order o where o.total = mysql(o.amount)",
+                List.of("orderNumber"), List.of(), null, List.of());
+        DataSet dataSet = llmDataSet(PROMPT, serializer.toJson(ordinary));
+
+        loader().loadData(dataSet, null, Map.of());
+
+        assertThat(dataLoader.getExecutions()).hasSize(1);
     }
 
     @Test

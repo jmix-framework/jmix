@@ -177,6 +177,20 @@ class LlmQueryExecutionTest {
                 .hasMessageContainingAll("Data", "failed", "Generate it again");
     }
 
+    @Test
+    void testAQueryReachingTheDatabaseDirectlyIsNeverHandedToIt() {
+        // The promise of this data set type is that a run reads through DataManager, under the permissions of
+        // the current user; a native escape would step around that, so it does not reach the database at all.
+        publisher("Nintendo");
+        DataSet dataSet = llmDataSet(new LlmDataQuery(
+                "select p.name as publisherName from Publisher p where sql('1 = 1')",
+                List.of("publisherName"), List.of(), null, List.of()));
+
+        assertThatThrownBy(() -> loader().loadData(dataSet, null, Map.of()))
+                .isInstanceOf(DataLoadingException.class)
+                .hasMessageContainingAll("sql", "not executed");
+    }
+
     protected Publisher publisher(String name) {
         Publisher publisher = metadata.create(Publisher.class);
         publisher.setName(OWN + name);

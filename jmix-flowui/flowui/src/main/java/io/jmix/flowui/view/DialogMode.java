@@ -130,6 +130,14 @@ public @interface DialogMode {
     boolean resizable() default false;
 
     /**
+     * Specifies whether the dialog window can be maximized to the whole viewport by the user.
+     * When enabled, a toggle button is shown in the dialog header next to the close button.
+     *
+     * @return {@code true} if the dialog is maximizable, otherwise {@code false}
+     */
+    boolean maximizable() default false;
+
+    /**
      * Specifies whether the dialog should close when a click is detected outside of it.
      *
      * @return {@code true} if the dialog should close on outside click, otherwise {@code false}

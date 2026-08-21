@@ -63,6 +63,43 @@ class AiToolsLlmDataQueryServiceTest {
     }
 
     @Test
+    void testColumnsOfARepairedQueryWithAnUnderscoreAliasAreReadWhole() {
+        // The letters "from" inside an alias are part of the name, not the query's own from.
+        validationAndRepairService.setRepairedResult(new GeneratedJpqlResult(
+                "select o.number as orderNo, o.date as valid_from from sales_Order o",
+                List.of(), "", List.of()));
+
+        LlmDataQuery query = service.generate(generationRequest());
+
+        assertThat(query.getResultProperties()).containsExactly("orderNo", "valid_from");
+    }
+
+    @Test
+    void testRepairedQueryThatNamesOnlySomeOfItsValuesIsNotUsed() {
+        // Columns are bound by position, so a partial list would put values under the wrong names — and the
+        // generated columns do not describe the repaired text either, so the repair is dropped whole.
+        validationAndRepairService.setRepairedResult(new GeneratedJpqlResult(
+                "select o.number, o.amount as total from sales_Order o",
+                List.of(), "", List.of()));
+
+        LlmDataQuery query = service.generate(generationRequest());
+
+        assertThat(query.getJpql()).isEqualTo(generationService.getJpql());
+        assertThat(query.getResultProperties()).containsExactly("orderNumber");
+    }
+
+    @Test
+    void testCommasInsideACallDoNotCountAsSelectedValues() {
+        validationAndRepairService.setRepairedResult(new GeneratedJpqlResult(
+                "select concat(o.number, '-', o.suffix) as orderNo, o.amount as total from sales_Order o",
+                List.of(), "", List.of()));
+
+        LlmDataQuery query = service.generate(generationRequest());
+
+        assertThat(query.getResultProperties()).containsExactly("orderNo", "total");
+    }
+
+    @Test
     void testGeneratedQueryIsOfferedForRepairWithTheRequestItAnswers() {
         service.generate(new LlmQueryGenerationRequest(PROMPT,
                 List.of(new LlmQueryParameter("dateFrom", "java.time.LocalDate", null)), List.of()));
@@ -126,12 +163,13 @@ class AiToolsLlmDataQueryServiceTest {
     }
 
     @Test
-    void testRepairedQueryWithoutColumnsKeepsTheGeneratedOnes() {
+    void testRepairedQueryWithoutColumnsIsNotUsedEither() {
         validationAndRepairService.setRepairedResult(new GeneratedJpqlResult(
                 "select o.number from sales_Order o", List.of(), "", List.of()));
 
         LlmDataQuery query = service.generate(generationRequest());
 
+        assertThat(query.getJpql()).isEqualTo(generationService.getJpql());
         assertThat(query.getResultProperties()).containsExactly("orderNumber");
     }
 

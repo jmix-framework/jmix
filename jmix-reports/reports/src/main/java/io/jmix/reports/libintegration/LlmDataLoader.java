@@ -101,8 +101,11 @@ public class LlmDataLoader implements ReportDataLoader {
                                               Map<String, Object> params) {
         RunScope scope = runScopeOf(parentBand);
         Map<String, Object> additionalParams = reportQuery.getAdditionalParams();
+        // The params of a run are one map shared by every band of it, so the axes of a cross-tab band stay in
+        // them for every band extracted afterwards; what belongs to this band is told by its name.
+        String bandName = (String) additionalParams.get(DataSet.BAND_NAME);
 
-        String emptyAxis = LlmCrossTabAxes.firstEmptyAxis(params);
+        String emptyAxis = LlmCrossTabAxes.firstEmptyAxis(params, bandName);
         if (emptyAxis != null) {
             // A cross-tab has no cells along an axis that produced no values, so there is nothing for this
             // query to return — and its parameters, which name that axis, have no values to bind either.
@@ -113,12 +116,12 @@ public class LlmDataLoader implements ReportDataLoader {
         }
 
         CollectedParameters collectedParameters =
-                collectAvailableParameters(reportQuery, params, parentBand, scope);
+                collectAvailableParameters(reportQuery, params, parentBand, bandName, scope);
         Map<String, Object> availableParameters = collectedParameters.availableParameters();
 
         LlmDataQuery query = resolveQuery(reportQuery, additionalParams, scope);
-        LlmCrossTabAxes.checkAxesAreLinkable(reportQuery.getName(), query, availableParameters, params,
-                collectedParameters.requiredResultProperties());
+        LlmCrossTabAxes.checkAxesAreLinkable(reportQuery.getName(), query, params,
+                collectedParameters.requiredResultProperties(), bandName);
 
         Map<String, Object> arguments = resolveArguments(reportQuery, query, availableParameters, params);
         log.debug("Executing the query of data set [{}]: {}", reportQuery.getName(), query.getJpql());
@@ -279,6 +282,7 @@ public class LlmDataLoader implements ReportDataLoader {
     protected CollectedParameters collectAvailableParameters(ReportQuery reportQuery,
                                                              Map<String, Object> params,
                                                              @Nullable BandData parentBand,
+                                                             @Nullable String bandName,
                                                              RunScope scope) {
         Map<String, Object> availableParameters = new LinkedHashMap<>();
         Map<String, List<?>> crossTabAxes = new LinkedHashMap<>();
@@ -292,9 +296,12 @@ public class LlmDataLoader implements ReportDataLoader {
                 continue;
             }
 
-            // An axis holds the rows of another data set, so it is offered field by field rather than as it is.
+            // An axis of this band holds the rows of another data set, so it is offered field by field rather
+            // than as it is. An axis of another band is not this band's business at all.
             if (LlmQueryParameterNames.isCrossTabAxis(param.getKey()) && LlmCrossTabAxes.isAxisRows(value)) {
-                crossTabAxes.put(param.getKey(), (List<?>) value);
+                if (LlmCrossTabAxes.isAxisOf(param.getKey(), bandName)) {
+                    crossTabAxes.put(param.getKey(), (List<?>) value);
+                }
                 continue;
             }
 

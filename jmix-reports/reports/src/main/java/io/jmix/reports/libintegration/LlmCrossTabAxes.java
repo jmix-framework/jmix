@@ -53,17 +53,42 @@ public final class LlmCrossTabAxes {
     /**
      * Returns the name of the first cross-tab axis of this band that produced no values, or {@code null} when
      * every axis has some. An axis is put into the params by the controller whether it produced rows or not.
+     *
+     * @param bandName name of the band the data set belongs to, or {@code null} when it is unknown
      */
     @Nullable
-    public static String firstEmptyAxis(Map<String, Object> params) {
+    public static String firstEmptyAxis(Map<String, Object> params, @Nullable String bandName) {
         for (Map.Entry<String, Object> param : params.entrySet()) {
-            if (LlmQueryParameterNames.isCrossTabAxis(param.getKey())
+            if (isAxisOf(param.getKey(), bandName)
                     && param.getValue() instanceof List<?> rows && rows.isEmpty()) {
                 return param.getKey();
             }
         }
 
         return null;
+    }
+
+    /**
+     * Tells whether a params entry is an axis of this band rather than of another one.
+     * <p>
+     * The params of a run are one mutable map shared by every band of it: {@code ExtractionContextImpl} hands
+     * the same map to every band and {@code CrossTabExtractionController} adds its axes to it, so the axes of a
+     * cross-tab band stay in the params of every band extracted afterwards. An axis is named
+     * {@code <band>_master_data} or {@code <band>_dynamic_header}, which is what tells whose it is.
+     * <p>
+     * A data set whose band is unknown claims every axis, as it did before the band name was published: without
+     * a name there is nothing to compare, and a cross-tab cell that stopped seeing its own axes would be worse
+     * than one seeing a foreign one.
+     *
+     * @param name     params entry name
+     * @param bandName name of the band the data set belongs to, or {@code null} when it is unknown
+     */
+    public static boolean isAxisOf(String name, @Nullable String bandName) {
+        if (!LlmQueryParameterNames.isCrossTabAxis(name)) {
+            return false;
+        }
+
+        return bandName == null || LlmQueryParameterNames.isCrossTabAxisOf(name, bandName);
     }
 
     /**
@@ -108,7 +133,8 @@ public final class LlmCrossTabAxes {
             }
 
             String axisPrefix = LlmQueryParameterNames.ofCrossTabAxisPrefix(axisName);
-            if (requiredResultProperties.stream().noneMatch(required -> required.startsWith(axisPrefix))) {
+            if (fieldsAreOrdered(rows)
+                    && requiredResultProperties.stream().noneMatch(required -> required.startsWith(axisPrefix))) {
                 requiredResultProperties.add(name);
             }
 
@@ -133,26 +159,30 @@ public final class LlmCrossTabAxes {
      * Fails a query that cannot be placed into the matrix of a cross-tab band, because the controller drops
      * every cell it cannot link and the band then renders empty with no error at all. Failing here turns that
      * silence into a message.
+     * <p>
+     * An axis holding rows is checked whether or not it holds any value: a field that is empty in every row
+     * offers nothing to bind, but the matrix still has that column, and a cell query that cannot be linked would
+     * otherwise render an empty matrix with nothing said.
      *
      * @param dataSetName              data set the query belongs to, named in a failure
      * @param query                    query whose columns are read
-     * @param availableValues          values the query may bind, which say whether an axis holds anything
      * @param params                   parameters of the run, which is where the axes arrive
      * @param requiredResultProperties columns the axes require the query to return
+     * @param bandName                 name of the band the data set belongs to, or {@code null} when unknown
      */
     public static void checkAxesAreLinkable(String dataSetName, LlmDataQuery query,
-                                            Map<String, Object> availableValues, Map<String, Object> params,
-                                            List<String> requiredResultProperties) {
-        for (String name : params.keySet()) {
-            if (!LlmQueryParameterNames.isCrossTabAxis(name) || !isAxisRows(params.get(name))) {
+                                            Map<String, Object> params, List<String> requiredResultProperties,
+                                            @Nullable String bandName) {
+        for (Map.Entry<String, Object> param : params.entrySet()) {
+            String name = param.getKey();
+            // Entries of other bands are not this one's business; an axis that produced no rows renders no
+            // columns, so there is nothing to link a cell to, and such a band is not executed at all.
+            if (!isAxisOf(name, bandName) || !isAxisRows(param.getValue())
+                    || ((List<?>) param.getValue()).isEmpty()) {
                 continue;
             }
 
             String prefix = LlmQueryParameterNames.ofCrossTabAxisPrefix(name);
-            // An axis that produced no value has no columns either, so there is nothing to link a cell to.
-            if (availableValues.keySet().stream().noneMatch(parameter -> parameter.startsWith(prefix))) {
-                continue;
-            }
 
             // The controller links by the first column starting with the axis name — not with the axis name and
             // an underscore — and then cuts one character more, so a column named after the axis without the
@@ -177,6 +207,25 @@ public final class LlmCrossTabAxes {
                         dataSetName, returned, required, name, query.getResultProperties()));
             }
         }
+    }
+
+    /**
+     * Tells whether the fields of an axis row come in an order that means anything. A data set that names its
+     * columns keeps them in a {@code LinkedHashMap} — an LLM data set builds its rows in select-clause order —
+     * while {@code AbstractDbDataLoader} builds the rows of a JPQL or SQL data set as a plain {@code HashMap},
+     * where "the first field" is a hash order that changes between runs of the JVM. A map of any other kind is
+     * taken for unordered: requiring a column on the strength of an order that may not be one is the mistake
+     * this guards against.
+     * <p>
+     * Nothing may be required of a query on the strength of such an order: the same stored query would be
+     * accepted on one run and refused on the next.
+     */
+    private static boolean fieldsAreOrdered(List<?> rows) {
+        return rows.stream()
+                .filter(Map.class::isInstance)
+                .findFirst()
+                .map(LinkedHashMap.class::isInstance)
+                .orElse(false);
     }
 
     /**

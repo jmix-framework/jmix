@@ -105,6 +105,19 @@ public final class LlmQueryParameterNames {
     }
 
     /**
+     * Returns whether this is the name of an axis of that very band. Compared whole: a band named
+     * {@code revenue} would otherwise recognise {@code revenue_extra_master_data} — the axis of a band named
+     * {@code revenue_extra} — as its own.
+     *
+     * @param name     candidate axis name
+     * @param bandName name of the band the axis would belong to
+     */
+    public static boolean isCrossTabAxisOf(String name, String bandName) {
+        return name.equals(bandName + "_" + CrossTabExtractionController.HORIZONTAL_BAND)
+                || name.equals(bandName + "_" + CrossTabExtractionController.VERTICAL_BAND);
+    }
+
+    /**
      * Returns the parameters a query text references, in the order it references them. This is what a query
      * declares by being written: the add-on validates a query against the very same reading, so a document
      * whose parameters say anything else is rejected on every run.

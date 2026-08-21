@@ -128,8 +128,15 @@ public class AiToolsLlmDataQueryService implements LlmDataQueryService {
             return query;
         }
 
+        List<String> resultProperties = resultPropertiesOf(repaired.getJpql());
+        if (resultProperties == null) {
+            // Its columns cannot be read, and the generated ones do not describe this text: keeping the query
+            // as generated is the only answer that leaves nothing mismatched.
+            return query;
+        }
+
         log.debug("The generated query was repaired: {}", repaired.getJpql());
-        return new LlmDataQuery(repaired.getJpql(), resultPropertiesOf(repaired.getJpql(), query),
+        return new LlmDataQuery(repaired.getJpql(), resultProperties,
                 toQueryParameters(repaired.getJpql(), repaired.getParameters()),
                 StringUtils.defaultIfBlank(repaired.getExplanation(), query.getExplanation()),
                 retainNonNull(repaired.getWarnings()));
@@ -150,19 +157,56 @@ public class AiToolsLlmDataQueryService implements LlmDataQueryService {
      * Reads the columns of a repaired query off its select clause. Repair answers with a query text alone —
      * the add-on carries the columns beside it, unchanged — while a repair can well rename them, which is
      * what it does with an alias that turned out to be a reserved word.
+     * <p>
+     * Columns are handed to the query by position, so a list naming fewer values than the query selects would
+     * put values under the wrong names, silently. A repair is asked to alias every selected value; when it did
+     * not, its columns are unreadable and the repair is not used at all — pairing its text with the columns of
+     * the generated query would be the same mismatch by another route.
      *
-     * @param jpql     the repaired query
-     * @param previous the query as it was generated, whose columns are kept if none can be read
-     * @return the columns the repaired query returns, in select-clause order
+     * @param jpql the repaired query
+     * @return the columns the repaired query returns in select-clause order, or {@code null} when they cannot
+     *         be read from it
      */
-    protected List<String> resultPropertiesOf(String jpql, LlmDataQuery previous) {
-        List<String> aliases = JpqlValidatorSupport.extractAliases(selectClauseOf(jpql));
+    @Nullable
+    protected List<String> resultPropertiesOf(String jpql) {
+        String selectClause = selectClauseOf(jpql);
+        List<String> aliases = JpqlValidatorSupport.extractAliases(selectClause);
         if (aliases.isEmpty()) {
-            log.warn("The repaired query declares no column, keeping the columns of the generated one");
-            return previous.getResultProperties();
+            log.warn("The repaired query names none of its selected values, so it is not used");
+            return null;
+        }
+
+        int selected = selectedExpressionCount(selectClause);
+        if (aliases.size() != selected) {
+            log.warn("The repaired query names {} of its {} selected values, so it is not used",
+                    aliases.size(), selected);
+            return null;
         }
 
         return aliases;
+    }
+
+    /**
+     * Counts the values a select clause selects: its top-level commas plus one. A comma inside a function call
+     * or a subquery separates arguments rather than selected values, and a comma inside a string literal is
+     * text.
+     */
+    protected int selectedExpressionCount(String selectClause) {
+        String text = LlmQueryParameterNames.stripStringLiterals(selectClause);
+        int depth = 0;
+        int count = 1;
+        for (int i = 0; i < text.length(); i++) {
+            char character = text.charAt(i);
+            if (character == '(') {
+                depth++;
+            } else if (character == ')') {
+                depth--;
+            } else if (character == ',' && depth == 0) {
+                count++;
+            }
+        }
+
+        return count;
     }
 
     /**
@@ -187,8 +231,18 @@ public class AiToolsLlmDataQueryService implements LlmDataQueryService {
         return text;
     }
 
+    /**
+     * Whether the character at this index ends a word. An underscore does not: an alias like {@code valid_from}
+     * carries the letters {@code from} inside it, and taking that for the query's own {@code from} would cut the
+     * select clause in the middle of a name.
+     */
     protected boolean isWordBoundary(String text, int index) {
-        return index < 0 || index >= text.length() || !Character.isLetterOrDigit(text.charAt(index));
+        if (index < 0 || index >= text.length()) {
+            return true;
+        }
+
+        char character = text.charAt(index);
+        return !Character.isLetterOrDigit(character) && character != '_';
     }
 
     @Override

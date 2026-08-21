@@ -46,6 +46,14 @@ public class DataSet implements ReportQuery, CopyingSystemState<DataSet> {
     public static final String JSON_INPUT_PARAMETER = "jsonSourceInputParameter";
     public static final String LLM_GENERATED_QUERY = "llmGeneratedQuery";
 
+    /**
+     * Name of the band this data set belongs to, published so that a loader can tell what belongs to its own
+     * band. A loader is given a {@code ReportQuery} and the params of the run, and the params of a run are one
+     * mutable map shared by every band of it ({@code ExtractionContextImpl#extendParams}), so an entry named
+     * after another band is indistinguishable from one's own by name alone.
+     */
+    public static final String BAND_NAME = "bandName";
+
     private static final long serialVersionUID = -3706206933129963303L;
 
     protected FetchPlan fetchPlan;
@@ -293,6 +301,7 @@ public class DataSet implements ReportQuery, CopyingSystemState<DataSet> {
         params.put(JSON_INPUT_PARAMETER, jsonSourceInputParameter);
         params.put(JSON_INPUT_PROVIDER, jsonInputProvider);
         params.put(LLM_GENERATED_QUERY, llmGeneratedQuery);
+        params.put(BAND_NAME, bandDefinition != null ? bandDefinition.getName() : null);
 
         return params;
     }

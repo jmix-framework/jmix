@@ -351,6 +351,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
     protected JmixComboBoxBinder<String> fetchPlanNameFieldBinder;
 
     protected boolean llmQueryEditing;
+    @Nullable
     protected Renderer<LlmQueryColumn> llmColumnNameRenderer;
     protected DataSet llmEditedDataSet;
     protected long llmGenerationSequence;
@@ -1677,7 +1678,8 @@ public class ReportDetailView extends StandardDetailView<Report> {
     protected void initLlmDataSetComponents() {
         // A locked panel shows the columns as plain text, and the fields appear only while the query is
         // unlocked, so the declarative renderer is kept to switch back to.
-        llmColumnNameRenderer = llmColumnNameColumn().getRenderer();
+        Grid.Column<LlmQueryColumn> nameColumn = llmColumnNameColumn();
+        llmColumnNameRenderer = nameColumn != null ? nameColumn.getRenderer() : null;
         llmGeneratedColumnsDataGrid.addSelectionListener(event ->
                 llmRemoveColumnBtn.setEnabled(isLlmQueryEditorEditable()
                         && event.getFirstSelectedItem().isPresent()));
@@ -1707,11 +1709,14 @@ public class ReportDetailView extends StandardDetailView<Report> {
     }
 
     /**
-     * @return the column the names of an LLM data set's query columns are shown in
+     * Returns the column the names of an LLM data set's query columns are shown in, or {@code null} when the
+     * grid has none. FlowUI removes a column whose attribute the current user may not read, and
+     * {@link LlmQueryColumn} is an entity like any other: a role written by hand, without a policy for it,
+     * leaves this grid without its only column. The panel is then read-only for the columns rather than broken —
+     * a missing policy must not take the report designer down with it.
      */
-    protected Grid.Column<LlmQueryColumn> llmColumnNameColumn() {
-        return Objects.requireNonNull(llmGeneratedColumnsDataGrid.getColumnByKey(LLM_COLUMN_NAME_KEY),
-                "The column list of an LLM data set has no [" + LLM_COLUMN_NAME_KEY + "] column");
+    protected Grid.@Nullable Column<LlmQueryColumn> llmColumnNameColumn() {
+        return llmGeneratedColumnsDataGrid.getColumnByKey(LLM_COLUMN_NAME_KEY);
     }
 
     /**
@@ -1758,9 +1763,10 @@ public class ReportDetailView extends StandardDetailView<Report> {
                 ? "bandsTab.dataSetTypeLayout.llmEditQueryBtn.doneTooltip"
                 : "bandsTab.dataSetTypeLayout.llmEditQueryBtn.editTooltip"));
 
-        llmColumnNameColumn().setRenderer(editorEditable
-                ? createLlmColumnNameRenderer()
-                : llmColumnNameRenderer);
+        Grid.Column<LlmQueryColumn> nameColumn = llmColumnNameColumn();
+        if (nameColumn != null && llmColumnNameRenderer != null) {
+            nameColumn.setRenderer(editorEditable ? createLlmColumnNameRenderer() : llmColumnNameRenderer);
+        }
     }
 
     protected boolean isLlmQueryEditorEditable() {

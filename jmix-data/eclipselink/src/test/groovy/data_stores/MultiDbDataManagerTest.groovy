@@ -294,6 +294,73 @@ class MultiDbDataManagerTest extends DataSpec {
         report2.db1Order != null
     }
 
+    void testCrossDatastoreReferenceIdNotClearedOnNewEntity() {
+        Db1Order order = metadata.create(Db1Order)
+        order.setOrderDate(new Date())
+        order = dataManager.save(order)
+
+        when: "saving a new entity with the reference id column set directly"
+        MainReport report = metadata.create(MainReport)
+        report.setName("test")
+        report.setDb1OrderId(order.id)
+        report = dataManager.save(report)
+
+        then: "the reference id column is not cleared"
+        def report1 = dataManager.load(MainReport)
+                .id(report.id)
+                .fetchPlan(FetchPlan.BASE)
+                .one()
+
+        report1.db1OrderId == order.id
+    }
+
+    void testCrossDatastoreReferenceIdNotClearedOnNewEntityForCustomStore() {
+        Mem1Customer customer = metadata.create(Mem1Customer)
+        customer.setName("John Doe")
+        customer = dataManager.save(customer)
+
+        when: "saving a new entity with the reference id column set directly"
+        Db1Order order = metadata.create(Db1Order)
+        order.setOrderDate(new Date())
+        order.setMem1CustomerId(customer.id)
+        order = dataManager.save(order)
+
+        then: "the reference id column is not cleared"
+        def order1 = dataManager.load(Db1Order)
+                .id(order.id)
+                .fetchPlan(FetchPlan.BASE)
+                .one()
+
+        order1.mem1CustomerId == customer.id
+    }
+
+    void testCrossDatastoreReferenceIdNotClearedWhenLoadedWithoutFetchPlan() {
+        Db1Order order = metadata.create(Db1Order)
+        order.setOrderDate(new Date())
+        dataManager.save(order)
+
+        MainReport report = metadata.create(MainReport)
+        report.setDb1Order(order)
+        report.setName("test")
+        report = dataManager.save(report)
+
+        when: "loading entity without explicit fetch plan and then saving changes"
+        def report1 = dataManager.load(MainReport)
+                .id(report.id)
+                .one()
+
+        report1.setName('changed')
+        dataManager.save(report1)
+
+        then: "the reference is not cleared"
+        def report2 = dataManager.load(MainReport)
+                .id(report.id)
+                .fetchPlan({ builder -> builder.addFetchPlan(FetchPlan.BASE).add('db1Order') })
+                .one()
+
+        report2.db1Order != null
+    }
+
     @SpringBean
     NoopDataStore noopDataStore = Stub() {
         save(_) >> { throw new RuntimeException("Invoked NoopDataStore save()") }

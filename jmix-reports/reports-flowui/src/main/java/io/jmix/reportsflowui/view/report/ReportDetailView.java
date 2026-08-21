@@ -1243,8 +1243,10 @@ public class ReportDetailView extends StandardDetailView<Report> {
     }
 
     /**
-     * Refuses an LLM data set a run could not use: one without a prompt, and one whose stored query is unusable.
-     * A stored query itself is not required — without one a run generates it, which the panel says.
+     * Refuses an LLM data set a run could not use: one without a prompt, and one without a usable query. The
+     * query is required because a run executes that very query and generates nothing — like the script of a
+     * JPQL data set, which the designer requires for the same reason. The prompt is required because it is what
+     * the query can be generated from again.
      */
     protected void validateLlmDataSet(ValidationErrors errors, DataSet dataSet) {
         if (StringUtils.isBlank(dataSet.getText())) {
@@ -1255,25 +1257,29 @@ public class ReportDetailView extends StandardDetailView<Report> {
     }
 
     /**
-     * Refuses a stored query the data set could not run: one whose document is unreadable, and one left without
-     * columns — the add-on names the selected values by them, so it rejects a query that has none.
+     * Refuses a query the data set could not run: a missing one, one whose document is unreadable, and one left
+     * without columns — the band rows are keyed by those, so a query that names none returns nothing a template
+     * could print.
      */
     protected void validateLlmStoredQuery(ValidationErrors errors, DataSet dataSet) {
-        if (llmQueryEditing && dataSet == llmEditedDataSet) {
-            // Validation observes the effective draft but does not finish it. A blank text means that a
-            // successful save will remove the stored query; unnamed rows are ignored just as they will be
-            // when the draft is normalized.
-            if (StringUtils.isBlank(llmGeneratedQueryCodeEditor.getValue())) {
-                return;
-            }
+        // Validation observes the draft of an unfinished edit but does not finish it, so what it judges is the
+        // query the data set is about to be saved with: the text on screen while it is being edited, and the
+        // stored document otherwise.
+        boolean editing = llmQueryEditing && dataSet == llmEditedDataSet;
+        String query = editing ? llmGeneratedQueryCodeEditor.getValue() : dataSet.getLlmGeneratedQuery();
+
+        if (StringUtils.isBlank(query)) {
+            errors.add(messageBundle.formatMessage(
+                    "validation.error.llmDataSetStoredQueryNull", dataSet.getName()));
+            return;
+        }
+
+        if (editing) {
+            // Rows nobody named are ignored just as they will be when the draft is normalized.
             if (editedLlmQueryColumns().stream().noneMatch(StringUtils::isNotBlank)) {
                 errors.add(messageBundle.formatMessage(
                         "validation.error.llmDataSetColumnsEmpty", dataSet.getName()));
             }
-            return;
-        }
-
-        if (StringUtils.isBlank(dataSet.getLlmGeneratedQuery())) {
             return;
         }
 

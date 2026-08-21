@@ -201,8 +201,9 @@ public class LlmDataSetGenerationSupport {
     }
 
     /**
-     * Stores the query as the author finally left it. An empty query text means the data set has no stored
-     * query and runs by generating one, so the document is cleared instead of being stored empty.
+     * Stores the query as the author finally left it. An empty query text means the author took the query away,
+     * so the document is cleared rather than stored empty — and the data set is then one the designer refuses
+     * to save, because a run has nothing to execute without it.
      *
      * @param dataSet          data set to store the query in
      * @param jpql             query text as edited

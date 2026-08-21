@@ -24,6 +24,7 @@ import io.jmix.core.Messages;
 import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.backgroundtask.BackgroundTask;
+import io.jmix.flowui.component.validation.ValidationErrors;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.codeeditor.CodeEditor;
 import io.jmix.flowui.component.combobox.JmixComboBox;
@@ -254,14 +255,30 @@ public class LlmDataSetPanelUiTest {
     }
 
     @Test
-    public void testClearingTheQueryTextLeavesTheDataSetWithoutAStoredQuery() {
+    public void testTheRefusalToSaveNamesTheMissingQueryRatherThanSomethingElse() {
+        // A data set has more than one way to be unusable, and the author has to be told which one this is.
+        ReportDetailView view = openReportDesignerOnLlmDataSet();
+        DataSet dataSet = selectedDataSet(view);
+        dataSet.setLlmGeneratedQuery(null);
+        ValidationErrors errors = new ValidationErrors();
+
+        ReflectionTestUtils.invokeMethod(view, "validateLlmDataSet", errors, dataSet);
+
+        assertThat(errors.getAll()).extracting(ValidationErrors.Item::getDescription)
+                .containsExactly(messages.formatMessage("io.jmix.reportsflowui.view.report",
+                        "validation.error.llmDataSetStoredQueryNull", TestLlmReportUtil.DATA_BAND_NAME));
+    }
+
+    @Test
+    public void testClearingTheQueryTextPreventsSaving() {
+        // Saving would finish the edit and remove the stored query, leaving a data set a run cannot execute.
         View<?> view = openDesignerOnLlmDataSet();
         this.<JmixButton>findComponent(view, "llmEditQueryBtn").click();
 
         this.<CodeEditor>findComponent(view, "llmGeneratedQueryCodeEditor").setValue("");
 
         this.<JmixButton>findComponent(view, "saveBtn").click();
-        assertThat(llmReportUtil.loadStoredQuery()).isNull();
+        assertThat(llmReportUtil.loadStoredQuery()).isEqualTo(TestLlmReportUtil.STORED_QUERY);
     }
 
     @Test
@@ -547,13 +564,15 @@ public class LlmDataSetPanelUiTest {
     }
 
     @Test
-    public void testDataSetWithoutAStoredQuerySavesAnyway() {
+    public void testDataSetWithoutAStoredQueryPreventsSaving() {
+        // A run executes the stored query and generates nothing, so a data set without one could never run —
+        // the same reason the designer requires the script of a JPQL data set.
         View<?> view = openDesigner(llmReportUtil.createAndSaveReportWithoutStoredQuery());
         this.<JmixTextArea>findComponent(view, "llmPromptField").setValue("Orders of the last quarter");
 
         this.<JmixButton>findComponent(view, "saveBtn").click();
 
-        assertThat(llmReportUtil.loadStoredPrompt()).isEqualTo("Orders of the last quarter");
+        assertThat(llmReportUtil.loadStoredPrompt()).isEqualTo(TestLlmReportUtil.PROMPT);
     }
 
     @Test
@@ -600,7 +619,7 @@ public class LlmDataSetPanelUiTest {
     public void testReadOnlyCycleKeepsTheOpenDraftUntilItIsSaved() {
         ReportDetailView view = openReportDesignerOnLlmDataSet();
         this.<JmixButton>findComponent(view, "llmEditQueryBtn").click();
-        this.<CodeEditor>findComponent(view, "llmGeneratedQueryCodeEditor").setValue("");
+        this.<CodeEditor>findComponent(view, "llmGeneratedQueryCodeEditor").setValue(EDITED_JPQL);
 
         view.setReadOnly(true);
         view.setReadOnly(false);
@@ -609,7 +628,9 @@ public class LlmDataSetPanelUiTest {
         assertThat(this.<HorizontalLayout>findComponent(view, "llmColumnsButtonsLayout").isVisible()).isTrue();
 
         this.<JmixButton>findComponent(view, "saveBtn").click();
-        assertThat(llmReportUtil.loadStoredQuery()).isNull();
+        LlmDataQuery stored = serializer.fromJson(llmReportUtil.loadStoredQuery());
+        assertThat(stored).isNotNull();
+        assertThat(stored.getJpql()).isEqualTo(EDITED_JPQL);
     }
 
     @Test

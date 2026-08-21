@@ -262,7 +262,7 @@
                                                   requiredMessage="msg://bandsTab.dataSetTypeLayout.jsonSourceURLTextArea.requiredMessage"/>
                                     </vbox>
                                     <vbox id="llmDataSetTypeBox" padding="false" width="100%" height="100%">
-                                        <textArea id="llmPromptField" width="100%" height="100%" minHeight="6em"
+                                        <textArea id="llmPromptField" width="100%" height="100%" minHeight="14em"
                                                   classNames="llm-editor-block"
                                                   label="msg://bandsTab.dataSetTypeLayout.llmPromptField.label"
                                                   dataContainer="dataSetsDc"
@@ -301,6 +301,7 @@
                                                    themeNames="warning" icon="WARNING" role="status"/>
                                         </hbox>
                                         <flexLayout id="llmGeneratedQueryBox" classNames="flex-layout llm-editor-block"
+                                                    minHeight="14em"
                                                     width="100%" expand="llmGeneratedQueryEditorBox">
                                             <vbox id="llmGeneratedQueryEditorBox" padding="false" spacing="false"
                                                   height="100%" minWidth="15em"

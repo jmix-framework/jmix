@@ -24,7 +24,6 @@ import io.jmix.core.Messages;
 import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.backgroundtask.BackgroundTask;
 import io.jmix.flowui.component.UiComponentUtils;
-import io.jmix.flowui.component.checkbox.JmixCheckbox;
 import io.jmix.flowui.component.codeeditor.CodeEditor;
 import io.jmix.flowui.component.combobox.JmixComboBox;
 import io.jmix.flowui.component.grid.DataGrid;
@@ -125,7 +124,6 @@ public class LlmDataSetPanelUiTest {
 
         assertThat(this.<JmixTextArea>findComponent(view, "llmPromptField").getValue())
                 .isEqualTo(TestLlmReportUtil.PROMPT);
-        assertThat(this.<JmixCheckbox>findComponent(view, "llmRegenerateOnRunField").getValue()).isFalse();
         assertThat(this.<CodeEditor>findComponent(view, "llmGeneratedQueryCodeEditor").getValue())
                 .contains("select o.number");
         assertThat(columnNames(view)).containsExactly("orderNumber", "customerName");
@@ -513,7 +511,6 @@ public class LlmDataSetPanelUiTest {
         selectBand(view, TestLlmReportUtil.DATA_BAND_NAME);
 
         assertThat(this.<JmixTextArea>findComponent(view, "llmPromptField").isReadOnly()).isTrue();
-        assertThat(this.<JmixCheckbox>findComponent(view, "llmRegenerateOnRunField").isReadOnly()).isTrue();
         assertThat(this.<TypedTextField<Integer>>findComponent(view, "llmMaxResultsField").isReadOnly()).isTrue();
         assertThat(this.<JmixButton>findComponent(view, "llmGenerateBtn").isEnabled()).isFalse();
         assertThat(this.<JmixButton>findComponent(view, "llmEditQueryBtn").isEnabled()).isFalse();

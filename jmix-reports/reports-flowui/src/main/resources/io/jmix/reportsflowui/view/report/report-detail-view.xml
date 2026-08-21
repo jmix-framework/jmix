@@ -268,12 +268,6 @@
                                                   dataContainer="dataSetsDc"
                                                   property="text"/>
                                         <formLayout id="llmParamsForm" dataContainer="dataSetsDc" width="100%">
-                                            <checkbox id="llmRegenerateOnRunField"
-                                                      property="llmRegenerateOnRun"
-                                                      label="msg://bandsTab.dataSetTypeLayout.llmRegenerateOnRunField.label">
-                                                <tooltip
-                                                        text="msg://bandsTab.dataSetTypeLayout.llmRegenerateOnRunField.tooltip"/>
-                                            </checkbox>
                                             <textField id="llmMaxResultsField"
                                                        property="llmMaxResults"
                                                        label="msg://bandsTab.dataSetTypeLayout.llmMaxResultsField.label">

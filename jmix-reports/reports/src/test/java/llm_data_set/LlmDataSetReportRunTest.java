@@ -142,13 +142,12 @@ class LlmDataSetReportRunTest {
     @Test
     void testCrossTabAxisValuesReachTheCellDataSetAsLists() {
         queryService.setRows(List.of());
-        queryService.setQueryToGenerate(new LlmDataQuery("select 1 as amount from sales_Order o",
-                List.of("revenue_dynamic_header_month", "revenue_master_data_publisherId", "amount"),
-                List.of(), "Revenue matrix", List.of(), null));
 
-        reportRunner.byReportEntity(createCrossTabReport(true)).run();
+        reportRunner.byReportEntity(createCrossTabReport()).run();
 
-        assertThat(queryService.getLastGenerationRequest().getAvailableParameters())
+        // The stored query of the cell data set references both axis columns, and the run binds each as the whole
+        // list of values that axis produced.
+        assertThat(queryService.getLastExecutionRequest().getArguments())
                 .extracting(LlmQueryParameter::getName, LlmQueryParameter::getValue)
                 .contains(tuple("revenue_dynamic_header_month", List.of(3, 4)),
                         tuple("revenue_master_data_publisherId", List.of(1, 2)));
@@ -159,10 +158,6 @@ class LlmDataSetReportRunTest {
      * template of the annotated cross-tab report, whose named ranges are what the controller renders into.
      */
     protected Report createCrossTabReport() {
-        return createCrossTabReport(false);
-    }
-
-    protected Report createCrossTabReport(boolean regenerateOnRun) {
         Report report = metadata.create(Report.class);
         report.setName("Cross-tab LLM report");
 
@@ -202,10 +197,12 @@ class LlmDataSetReportRunTest {
         cells.setBandDefinition(revenueBand);
         cells.setType(DataSetType.LLM);
         cells.setText("Revenue per publisher and month");
+        // The stored query declares both axis columns as parameters, which is what a run binds the axis values by.
         cells.setLlmGeneratedQuery("""
                 {"jpql":"select 1 as amount from sales_Order o",\
-                "resultProperties":["revenue_dynamic_header_month","revenue_master_data_publisherId","amount"]}""");
-        cells.setLlmRegenerateOnRun(regenerateOnRun);
+                "resultProperties":["revenue_dynamic_header_month","revenue_master_data_publisherId","amount"],\
+                "parameters":[{"name":"revenue_dynamic_header_month","javaType":"java.lang.Integer"},\
+                {"name":"revenue_master_data_publisherId","javaType":"java.lang.Integer"}]}""");
 
         revenueBand.setDataSets(List.of(header, masterData, cells));
         report.setBands(Set.of(rootBand, revenueBand));

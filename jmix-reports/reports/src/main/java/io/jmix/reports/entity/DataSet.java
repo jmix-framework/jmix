@@ -45,7 +45,6 @@ public class DataSet implements ReportQuery, CopyingSystemState<DataSet> {
     public static final String JSON_PATH_QUERY = "jsonPathQuery";
     public static final String JSON_INPUT_PARAMETER = "jsonSourceInputParameter";
     public static final String LLM_GENERATED_QUERY = "llmGeneratedQuery";
-    public static final String LLM_REGENERATE_ON_RUN = "llmRegenerateOnRun";
     public static final String LLM_MAX_RESULTS = "llmMaxResults";
 
     private static final long serialVersionUID = -3706206933129963303L;
@@ -81,8 +80,6 @@ public class DataSet implements ReportQuery, CopyingSystemState<DataSet> {
     protected ReportInputParameter jsonSourceInputParameter;
     @JmixProperty
     protected String llmGeneratedQuery;
-    @JmixProperty
-    protected Boolean llmRegenerateOnRun = false;
     @JmixProperty
     protected Integer llmMaxResults;
     @JmixProperty
@@ -271,19 +268,6 @@ public class DataSet implements ReportQuery, CopyingSystemState<DataSet> {
     }
 
     /**
-     * @return {@code true} if the {@link DataSetType#LLM} query is generated anew on every report run
-     * instead of using {@link #getLlmGeneratedQuery()}
-     */
-    @Nullable
-    public Boolean getLlmRegenerateOnRun() {
-        return llmRegenerateOnRun;
-    }
-
-    public void setLlmRegenerateOnRun(@Nullable Boolean llmRegenerateOnRun) {
-        this.llmRegenerateOnRun = llmRegenerateOnRun;
-    }
-
-    /**
      * @return maximum number of rows the {@link DataSetType#LLM} query may return, or {@code null} to
      * apply the add-on's default limit
      */
@@ -325,9 +309,6 @@ public class DataSet implements ReportQuery, CopyingSystemState<DataSet> {
         params.put(JSON_INPUT_PARAMETER, jsonSourceInputParameter);
         params.put(JSON_INPUT_PROVIDER, jsonInputProvider);
         params.put(LLM_GENERATED_QUERY, llmGeneratedQuery);
-        // Deserialization bypasses field initializers, so a report saved before this property existed
-        // restores it as null. Normalize here to keep the loader free of that check.
-        params.put(LLM_REGENERATE_ON_RUN, Boolean.TRUE.equals(llmRegenerateOnRun));
         params.put(LLM_MAX_RESULTS, llmMaxResults);
 
         return params;

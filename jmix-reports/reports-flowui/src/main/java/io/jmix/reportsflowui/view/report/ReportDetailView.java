@@ -190,8 +190,6 @@ public class ReportDetailView extends StandardDetailView<Report> {
     @ViewComponent
     protected JmixTextArea llmPromptField;
     @ViewComponent
-    protected JmixCheckbox llmRegenerateOnRunField;
-    @ViewComponent
     protected TypedTextField<Integer> llmMaxResultsField;
     @ViewComponent
     protected JmixButton llmGenerateBtn;
@@ -1856,7 +1854,6 @@ public class ReportDetailView extends StandardDetailView<Report> {
 
         dataSet.setLlmGeneratedQuery(null);
         dataSet.setLlmMaxResults(null);
-        dataSet.setLlmRegenerateOnRun(false);
     }
 
     protected void fillLlmQueryColumns(@Nullable LlmDataQuery storedQuery) {
@@ -1927,7 +1924,6 @@ public class ReportDetailView extends StandardDetailView<Report> {
         llmGenerateBtn.setEnabled(editable && llmDataSetGenerationSupport.isGenerationAvailable());
         llmEditQueryBtn.setEnabled(editable);
         llmPromptField.setReadOnly(!editable);
-        llmRegenerateOnRunField.setReadOnly(!editable);
         llmMaxResultsField.setReadOnly(!editable);
         updateLlmQueryEditingControls();
     }

@@ -23,7 +23,6 @@ import io.jmix.reports.llm.LlmDataQueryException;
 import io.jmix.reports.llm.LlmDataQueryService;
 import io.jmix.reports.llm.LlmQueryExecutionRequest;
 import io.jmix.reports.llm.LlmQueryExecutionResult;
-import io.jmix.reports.llm.LlmQueryGenerationRequest;
 import io.jmix.reports.llm.LlmQueryParameter;
 import io.jmix.reports.llm.LlmQueryParameterNames;
 import io.jmix.reports.llm.impl.LlmDataQuerySerializer;
@@ -108,8 +107,7 @@ public class LlmDataLoader implements ReportDataLoader {
         Map<String, LlmQueryParameter> availableParameters = collectedParameters.availableParameters();
 
         try {
-            LlmDataQuery query = resolveQuery(reportQuery, prompt, additionalParams, maxResults,
-                    availableParameters, collectedParameters.requiredResultProperties(), scope);
+            LlmDataQuery query = resolveQuery(reportQuery, additionalParams, scope);
             checkCrossTabAxesAreLinkable(reportQuery, query, params, availableParameters,
                     collectedParameters.requiredResultProperties());
             checkQueryIsRunnable(query, scope);
@@ -198,40 +196,33 @@ public class LlmDataLoader implements ReportDataLoader {
         return null;
     }
 
-    protected LlmDataQuery resolveQuery(ReportQuery reportQuery, String prompt,
-                                        Map<String, Object> additionalParams, @Nullable Integer maxResults,
-                                        Map<String, LlmQueryParameter> availableParameters,
-                                        List<String> requiredResultProperties, RunScope scope) {
-        boolean regenerateOnRun = Boolean.TRUE.equals(additionalParams.get(DataSet.LLM_REGENERATE_ON_RUN));
+    /**
+     * Reads the query stored with the data set. A run never generates one: the query is generated in the report
+     * designer of a running application and stored with the report, which is what makes a run reproducible and
+     * free of model calls. A data set without a stored query therefore has nothing to execute, and says so
+     * rather than quietly asking a model for one.
+     * <p>
+     * Read once per document per run: the same data set is loaded once per row of its parent band, and parsing
+     * the same JSON for every row would be work done to reach the same result.
+     */
+    protected LlmDataQuery resolveQuery(ReportQuery reportQuery, Map<String, Object> additionalParams,
+                                        RunScope scope) {
         String storedDocument = (String) additionalParams.get(DataSet.LLM_GENERATED_QUERY);
-        LlmDataQuery storedQuery = regenerateOnRun || storedDocument == null
-                ? null
-                : scope.storedQuery(storedDocument, () -> llmDataQuerySerializer.fromJson(storedDocument));
-        if (storedQuery != null) {
-            return storedQuery;
+        if (StringUtils.isBlank(storedDocument)) {
+            throw new DataLoadingException(String.format(
+                    "Data set [%s] has no generated query stored: generate it in the report designer",
+                    reportQuery.getName()));
         }
 
-        if (!regenerateOnRun) {
-            scope.warnOnce(reportQuery, "missing-query",
-                    () -> log.warn("Data set [{}] has no generated query stored, so it is generated for this run; "
-                            + "generate and review it in the report designer to make runs reproducible",
-                            reportQuery.getName()));
+        LlmDataQuery storedQuery =
+                scope.storedQuery(storedDocument, () -> llmDataQuerySerializer.fromJson(storedDocument));
+        if (storedQuery == null) {
+            throw new DataLoadingException(String.format(
+                    "The stored query of data set [%s] cannot be read: generate it again in the report designer",
+                    reportQuery.getName()));
         }
 
-        LlmQueryGenerationRequest request = new LlmQueryGenerationRequest(prompt,
-                List.copyOf(availableParameters.values()), requiredResultProperties, maxResults);
-
-        // A band under a parent is loaded once per parent row, and generation is offered parameter names and
-        // types rather than values, so every row would ask the model the very same question. Asking once per run
-        // keeps the rows of one band shaped alike and the run billed once.
-        return scope.generatedQuery(generationKey(reportQuery, request), () -> {
-            LlmDataQuery query = llmDataQueryService.generate(request);
-            if (!query.getWarnings().isEmpty()) {
-                log.warn("The query generated for data set [{}] comes with warnings: {}",
-                        reportQuery.getName(), query.getWarnings());
-            }
-            return query;
-        });
+        return storedQuery;
     }
 
     /**
@@ -257,23 +248,6 @@ public class LlmDataLoader implements ReportDataLoader {
      * Identifies a generation within one run: the same data set asked the same question with the same
      * parameters offered gets the same query, whatever parent row it is loaded for.
      */
-    protected String generationKey(ReportQuery reportQuery, LlmQueryGenerationRequest request) {
-        StringBuilder key = new StringBuilder(reportQuery.getName())
-                .append('|').append(request.getPrompt())
-                .append('|').append(request.getMaxResults());
-
-        for (LlmQueryParameter parameter : request.getAvailableParameters()) {
-            key.append('|').append(parameter.getName())
-                    .append(':').append(parameter.getJavaType())
-                    .append(':').append(parameter.isMultiValued());
-        }
-        for (String requiredResultProperty : request.getRequiredResultProperties()) {
-            key.append("|required:").append(requiredResultProperty);
-        }
-
-        return key.toString();
-    }
-
     /**
      * Returns what the run this call belongs to has already generated. Runs are told apart by the band data the
      * hierarchy is rooted at, which is created once per run and shared by every band of it.
@@ -613,7 +587,6 @@ public class LlmDataLoader implements ReportDataLoader {
     protected static class RunScope {
 
         protected WeakReference<@Nullable BandData> rootBand = new WeakReference<>(null);
-        protected Map<String, LlmDataQuery> generatedQueries = new LinkedHashMap<>();
         protected Map<String, Optional<LlmDataQuery>> storedQueries = new LinkedHashMap<>();
         protected Map<LlmDataQuery, List<String>> validatedQueries = new IdentityHashMap<>();
         /**
@@ -629,19 +602,9 @@ public class LlmDataLoader implements ReportDataLoader {
             }
 
             this.rootBand = new WeakReference<>(rootBand);
-            generatedQueries = new LinkedHashMap<>();
             storedQueries = new LinkedHashMap<>();
             validatedQueries = new IdentityHashMap<>();
             warnings = new WeakHashMap<>();
-        }
-
-        protected LlmDataQuery generatedQuery(String key, Supplier<LlmDataQuery> generation) {
-            LlmDataQuery generated = generatedQueries.get(key);
-            if (generated == null) {
-                generated = generation.get();
-                generatedQueries.put(key, generated);
-            }
-            return generated;
         }
 
         /**

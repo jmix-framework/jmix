@@ -530,6 +530,11 @@ public class GenericFilterUrlQueryParametersBinder extends AbstractUrlQueryParam
         propertyFilter.setOperationEditable(true);
 
         propertyFilter.setParameterName(PropertyConditionUtils.generateParameterName(property));
+        // The component is a throwaway carrier of the URL value: either the value is copied onto a
+        // condition the configuration already owns, or the configuration's root group takes over its
+        // condition. In both cases its own contribution to the data loader condition would be left
+        // behind, so suppress it as AbstractFilterComponentConverter does.
+        propertyFilter.setConditionModificationDelegated(true);
         propertyFilter.setDataLoader(dataLoader);
 
         propertyFilter.setValueComponent(generatePropertyFilterValueComponent(propertyFilter));

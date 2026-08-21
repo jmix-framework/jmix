@@ -211,6 +211,11 @@ public class TestCoreProperties extends CoreProperties {
             return this;
         }
 
+        public Builder setApplicationInfoFileEnabled(boolean applicationInfoFileEnabled) {
+            this.applicationInfoFileEnabled = applicationInfoFileEnabled;
+            return this;
+        }
+
         public TestCoreProperties build() {
             return new TestCoreProperties(
                     this.webHostName,

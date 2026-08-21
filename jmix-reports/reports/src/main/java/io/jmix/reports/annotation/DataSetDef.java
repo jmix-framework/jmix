@@ -63,11 +63,6 @@ public @interface DataSetDef {
     EntityDataSetDef entity() default @EntityDataSetDef();
 
     /**
-     * Additional parameters for {@link DataSetType#LLM} type.
-     */
-    LlmDataSetParameters llm() default @LlmDataSetParameters();
-
-    /**
      * Name of the band field used to merge data from multiple datasets inside one band.
      */
     String linkParameterName() default "";
@@ -84,10 +79,6 @@ public @interface DataSetDef {
 
     /**
      * Query text for {@link DataSetType#SQL} and {@link DataSetType#JPQL} types.
-     * <br/>
-     * A {@link DataSetType#LLM} data set is described in plain language instead — see
-     * {@link LlmDataSetParameters#prompt()} — and setting both is rejected, since they are one property of the
-     * data set.
      */
     String query() default "";
 }

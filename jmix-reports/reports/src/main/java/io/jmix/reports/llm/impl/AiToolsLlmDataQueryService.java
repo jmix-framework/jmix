@@ -230,8 +230,8 @@ public class AiToolsLlmDataQueryService implements LlmDataQueryService {
     }
 
     /**
-     * Describes a query the way the add-on's validation reads one. Neither the arguments nor the row limit are
-     * part of it: a check is about the query alone, and both are decided per run.
+     * Describes a query the way the add-on's validation reads one. The arguments are not part of it: a check
+     * is about the query alone, while the values it is run with are decided per run.
      */
     protected GeneratedJpqlResult toGeneratedResult(LlmDataQuery query) {
         List<GeneratedJpqlParameter> parameters = new ArrayList<>(query.getParameters().size());

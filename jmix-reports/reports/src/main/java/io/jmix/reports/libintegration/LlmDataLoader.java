@@ -53,11 +53,11 @@ import java.util.WeakHashMap;
 import java.util.function.Supplier;
 
 /**
- * Loads band data for the {@link DataSetType#LLM} data set type: executes the query
- * stored in the data set, or generates one first when the data set says so.
+ * Loads band data for the {@link DataSetType#LLM} data set type: executes the query stored in the data set.
  * <p>
- * A generation performed here is not stored back into the data set — a report run must not modify the
- * report it runs. Storing a generated query is the report designer's job.
+ * A run never generates a query. The query is generated in the report designer of a running application and
+ * stored with the report, which is what makes a run reproducible, free of model calls and independent of
+ * whether a model is reachable at all.
  */
 @NullMarked
 public class LlmDataLoader implements ReportDataLoader {

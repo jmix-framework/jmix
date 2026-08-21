@@ -81,8 +81,8 @@ public class LlmDataSetGenerationSupport {
     }
 
     /**
-     * Describes what a query for this data set may be generated from: its prompt, the row limit, and the
-     * parameters the query is allowed to reference.
+     * Describes what a query for this data set may be generated from: its prompt and the parameters the query
+     * is allowed to reference.
      *
      * @param dataSet data set whose prompt is being turned into a query
      * @return the request to pass to {@link #generate(LlmQueryGenerationRequest)}
@@ -175,8 +175,8 @@ public class LlmDataSetGenerationSupport {
      * warnings are carried over (see {@link LlmDataQuerySerializer#assemble}).
      * <p>
      * Blank text is left alone here: while editing, an empty editor is a query on its way to being retyped, and
-     * clearing the document would take the explanation, the warnings and the row limit with it. Dropping a
-     * query is what {@link #finishEditedQuery(DataSet, String, List)} does.
+     * clearing the document would take the explanation and the warnings with it. Dropping a query is what
+     * {@link #finishEditedQuery(DataSet, String, List)} does.
      *
      * @param dataSet          data set to store the query in
      * @param jpql             query text as edited

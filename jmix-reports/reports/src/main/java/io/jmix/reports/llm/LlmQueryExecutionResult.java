@@ -24,7 +24,8 @@ import java.util.Map;
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 /**
- * What executing a generated query produced: the rows and whether the row limit cut them short.
+ * What executing a generated query produced: the rows and whether the add-on's own row cap cut them
+ * short.
  *
  * @see LlmDataQueryService#execute(LlmQueryExecutionRequest)
  */
@@ -51,8 +52,8 @@ public class LlmQueryExecutionResult {
     }
 
     /**
-     * Tells whether the query had more rows to give and the row limit stopped it. A band built from a truncated
-     * result looks complete, so a run says so in the log rather than leaving the author to count the rows.
+     * Tells whether the query had more rows to give and the add-on's own cap stopped it. A data set states no
+     * row limit of its own, so this reports what the add-on's properties did.
      *
      * @return {@code true} if rows were left behind
      */

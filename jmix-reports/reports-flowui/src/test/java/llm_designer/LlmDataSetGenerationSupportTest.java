@@ -371,7 +371,7 @@ public class LlmDataSetGenerationSupportTest {
     @Test
     public void testBlankQueryTextWhileEditingKeepsWhatTheDocumentDescribes() {
         // The editor sends its value on blur, so a cut-and-paste passes through an empty text; dropping the
-        // document there would take the explanation, the warnings and the row limit with it.
+        // document there would take the explanation and the warnings with it.
         DataSet dataSet = llmDataSet(reportWithParameters());
         generationSupport.storeGeneratedQuery(dataSet, storedQueryWithNotes());
 

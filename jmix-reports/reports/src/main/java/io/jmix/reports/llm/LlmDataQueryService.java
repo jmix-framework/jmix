@@ -56,15 +56,14 @@ public interface LlmDataQueryService {
     List<String> validate(LlmDataQuery query);
 
     /**
-     * Executes a query already found runnable and returns its rows, together with whether the row limit cut
-     * them short. The caller checks the query with {@link #validate(LlmDataQuery)} first — a report run does it
+     * Executes a query already found runnable and returns its rows. The caller checks the query with {@link #validate(LlmDataQuery)} first — a report run does it
      * once and then executes the query for every row of the band's parent — so an implementation is not
      * expected to check it again.
      * <p>
      * Data access constraints of the current user apply, so the rows may be narrower or shorter than the
      * query alone would suggest.
      *
-     * @param request query, arguments and row limit
+     * @param request query and the arguments to bind
      * @return the rows and whether more of them were left behind
      * @throws LlmDataQueryException if the query is rejected as invalid or its execution fails
      */

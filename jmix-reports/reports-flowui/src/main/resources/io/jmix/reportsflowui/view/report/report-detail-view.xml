@@ -267,12 +267,6 @@
                                                   label="msg://bandsTab.dataSetTypeLayout.llmPromptField.label"
                                                   dataContainer="dataSetsDc"
                                                   property="text"/>
-                                        <formLayout id="llmParamsForm" dataContainer="dataSetsDc" width="100%">
-                                            <responsiveSteps>
-                                                <responsiveStep minWidth="0" columns="1"/>
-                                                <responsiveStep minWidth="30em" columns="2"/>
-                                            </responsiveSteps>
-                                        </formLayout>
                                         <hbox id="llmGenerateLayout" padding="false" alignItems="CENTER"
                                               wrap="true">
                                             <button id="llmGenerateBtn"

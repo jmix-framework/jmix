@@ -52,6 +52,10 @@ public class TestEntityDataLoadGenerationService implements EntityDataLoadGenera
         return lastUserText;
     }
 
+    public String getJpql() {
+        return jpql;
+    }
+
     public void setJpql(String jpql) {
         this.jpql = jpql;
     }

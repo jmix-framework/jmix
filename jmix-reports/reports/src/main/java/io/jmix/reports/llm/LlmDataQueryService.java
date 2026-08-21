@@ -39,7 +39,9 @@ public interface LlmDataQueryService {
     boolean isGenerationAvailable();
 
     /**
-     * Generates a query for the given prompt.
+     * Generates a query for the given prompt. An implementation may correct a query it finds faulty before
+     * answering with it — a generated query is the model's, and no one is waiting to be told about a mistake
+     * only the model made.
      *
      * @param request prompt together with the parameters the query may reference
      * @return the generated query
@@ -48,9 +50,10 @@ public interface LlmDataQueryService {
     LlmDataQuery generate(LlmQueryGenerationRequest request);
 
     /**
-     * Reports what makes a query unrunnable, without running it and without asking a model anything. The
-     * designer asks after a query is generated or edited, so that an author learns of a broken query while
-     * looking at it rather than on the next report run.
+     * Reports what makes a query unrunnable, without running it, without asking a model anything and without
+     * correcting anything: a query checked here belongs to whoever wrote it. The designer asks after a query is
+     * generated or edited, so that an author learns of a broken query while looking at it rather than on the
+     * next report run.
      *
      * @param query query to check
      * @return one message per problem, in no particular order, or an empty list if the query is runnable

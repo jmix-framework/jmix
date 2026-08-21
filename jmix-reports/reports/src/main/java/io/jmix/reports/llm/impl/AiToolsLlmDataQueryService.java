@@ -23,9 +23,12 @@ import io.jmix.aitools.dataload.generation.EntityDataLoadGenerationService;
 import io.jmix.aitools.dataload.validation.JpqlValidationIssue;
 import io.jmix.aitools.dataload.validation.JpqlValidationResult;
 import io.jmix.aitools.dataload.validation.JpqlValidationService;
+import io.jmix.aitools.dataload.validation.validator.JpqlValidatorSupport;
 import io.jmix.reports.llm.*;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
@@ -35,16 +38,22 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * Implements the Reports-side seam on top of the AI Tools data-load subsystem: it turns a prompt into a query
- * and checks a query, both of which happen while a report is authored in the designer.
+ * Implements the Reports-side seam on top of the AI Tools data-load subsystem: it turns a prompt into a query,
+ * gives a faulty generated query one chance to be corrected, and checks a query — all of which happen while a
+ * report is authored in the designer.
  * <p>
  * The only class in Reports that depends on the AI Tools add-on, and therefore the only one that must not
  * be loaded when the add-on is absent — its bean is declared by a conditional auto-configuration.
  */
 public class AiToolsLlmDataQueryService implements LlmDataQueryService {
 
+    private static final Logger log = LoggerFactory.getLogger(AiToolsLlmDataQueryService.class);
+
     @Autowired
     protected EntityDataLoadGenerationService entityDataLoadGenerationService;
+
+    @Autowired
+    protected JpqlValidationAndRepairService jpqlValidationAndRepairService;
 
     @Autowired
     protected JpqlValidationService jpqlValidationService;
@@ -64,9 +73,11 @@ public class AiToolsLlmDataQueryService implements LlmDataQueryService {
 
     @Override
     public LlmDataQuery generate(LlmQueryGenerationRequest request) {
+        String userText = composeUserText(request);
+
         EntityDataLoadQuery generatedQuery;
         try {
-            generatedQuery = entityDataLoadGenerationService.generate(composeUserText(request));
+            generatedQuery = entityDataLoadGenerationService.generate(userText);
         } catch (RuntimeException e) {
             throw new LlmDataQueryException("Cannot generate a query for the data set prompt", e);
         }
@@ -77,9 +88,107 @@ public class AiToolsLlmDataQueryService implements LlmDataQueryService {
 
         // A model answers with the lists it likes, and nothing between here and the model rejects a null
         // element in them, so they are cleaned before the query is built out of them.
-        return new LlmDataQuery(generatedQuery.getJpql(), retainNonNull(generatedQuery.getResultProperties()),
+        LlmDataQuery query = new LlmDataQuery(generatedQuery.getJpql(),
+                retainNonNull(generatedQuery.getResultProperties()),
                 toQueryParameters(generatedQuery.getJpql(), generatedQuery.getParameters()),
                 generatedQuery.getExplanation(), retainNonNull(generatedQuery.getWarnings()));
+
+        return repairIfNeeded(userText, query);
+    }
+
+    /**
+     * Gives a query the add-on found faulty one chance to be corrected, which is what the add-on's own
+     * generation path does. Repair belongs to generation alone: a query the author then edits by hand is theirs,
+     * and a report run has no model to ask.
+     * <p>
+     * Best effort — a query that is still faulty afterwards, and a repair that could not be carried out at all,
+     * are both answered with a query rather than with a failure: the designer says what is wrong with it, and an
+     * author can correct by hand what a model could not.
+     *
+     * @param userText the request the query was generated from, which repair is told to satisfy
+     * @param query    the generated query
+     * @return the repaired query, or the generated one when repair did not happen or did not help
+     */
+    protected LlmDataQuery repairIfNeeded(String userText, LlmDataQuery query) {
+        JpqlValidationAndRepairService.OperationResult outcome;
+        try {
+            outcome = jpqlValidationAndRepairService.validateAndRepair(toExecutionRequest(userText, query));
+        } catch (RuntimeException e) {
+            log.warn("Cannot repair the generated query, keeping it as generated", e);
+            return query;
+        }
+
+        if (!outcome.isRepaired()) {
+            return query;
+        }
+
+        GeneratedJpqlResult repaired = outcome.getGeneratedResult();
+        if (StringUtils.isBlank(repaired.getJpql())) {
+            log.warn("Repair of the generated query produced no query text, keeping it as generated");
+            return query;
+        }
+
+        log.debug("The generated query was repaired: {}", repaired.getJpql());
+        return new LlmDataQuery(repaired.getJpql(), resultPropertiesOf(repaired.getJpql(), query),
+                toQueryParameters(repaired.getJpql(), repaired.getParameters()),
+                StringUtils.defaultIfBlank(repaired.getExplanation(), query.getExplanation()),
+                retainNonNull(repaired.getWarnings()));
+    }
+
+    protected JpqlExecutionRequest toExecutionRequest(String userText, LlmDataQuery query) {
+        List<JpqlExecutionParameter> parameters = new ArrayList<>(query.getParameters().size());
+        for (LlmQueryParameter parameter : query.getParameters()) {
+            parameters.add(new JpqlExecutionParameter(parameter.getName(), parameter.getJavaType(), null));
+        }
+
+        // No paging: the report executes the query itself and takes every row the query returns.
+        return new JpqlExecutionRequest(userText, query.getJpql(), parameters, query.getResultProperties(),
+                null, null);
+    }
+
+    /**
+     * Reads the columns of a repaired query off its select clause. Repair answers with a query text alone —
+     * the add-on carries the columns beside it, unchanged — while a repair can well rename them, which is
+     * what it does with an alias that turned out to be a reserved word.
+     *
+     * @param jpql     the repaired query
+     * @param previous the query as it was generated, whose columns are kept if none can be read
+     * @return the columns the repaired query returns, in select-clause order
+     */
+    protected List<String> resultPropertiesOf(String jpql, LlmDataQuery previous) {
+        List<String> aliases = JpqlValidatorSupport.extractAliases(selectClauseOf(jpql));
+        if (aliases.isEmpty()) {
+            log.warn("The repaired query declares no column, keeping the columns of the generated one");
+            return previous.getResultProperties();
+        }
+
+        return aliases;
+    }
+
+    /**
+     * Returns the part of the query before its own {@code from}, which is where the columns are named. A
+     * {@code from} of a subquery is inside parentheses, so only the depth-zero one ends the select clause.
+     */
+    protected String selectClauseOf(String jpql) {
+        String text = JpqlValidatorSupport.stripStringLiterals(jpql);
+        int depth = 0;
+        for (int i = 0; i < text.length(); i++) {
+            char character = text.charAt(i);
+            if (character == '(') {
+                depth++;
+            } else if (character == ')') {
+                depth--;
+            } else if (depth == 0 && text.regionMatches(true, i, "from", 0, 4)
+                    && isWordBoundary(text, i - 1) && isWordBoundary(text, i + 4)) {
+                return text.substring(0, i);
+            }
+        }
+
+        return text;
+    }
+
+    protected boolean isWordBoundary(String text, int index) {
+        return index < 0 || index >= text.length() || !Character.isLetterOrDigit(text.charAt(index));
     }
 
     @Override

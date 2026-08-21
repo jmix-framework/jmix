@@ -105,7 +105,10 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.jspecify.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
@@ -119,12 +122,20 @@ import java.util.stream.Collectors;
 @EditedEntityContainer("reportDc")
 public class ReportDetailView extends StandardDetailView<Report> {
 
+    private static final Logger log = LoggerFactory.getLogger(ReportDetailView.class);
+
     public static final String ROOT_BAND = "Root";
 
     /**
      * Key of the only column of the LLM query column list, as {@code report-detail-view.xml} declares it.
      */
     protected static final String LLM_COLUMN_NAME_KEY = "name";
+
+    /**
+     * How much of a generation failure is shown. A model's answer quoted back by a parsing failure is
+     * unbounded, and a notification is not a log.
+     */
+    protected static final int LLM_FAILURE_MESSAGE_LIMIT = 400;
 
     @ViewComponent
     protected DataContext dataContext;
@@ -1799,7 +1810,23 @@ public class ReportDetailView extends StandardDetailView<Report> {
         removeBlankLlmQueryColumns();
         llmDataSetGenerationSupport.finishEditedQuery(dataSet, llmGeneratedQueryCodeEditor.getValue(),
                 editedLlmQueryColumns());
-        showLlmQueryProblems(llmDataSetGenerationSupport.readStoredQuery(dataSet));
+        showEditedQueryProblems(llmDataSetGenerationSupport.readStoredQuery(dataSet));
+    }
+
+    /**
+     * Says what would make a freshly generated query fail a report run. Generation already gave it one chance
+     * to be corrected, so what is left is what the model could not fix and the author now can.
+     */
+    protected void showGeneratedQueryProblems(@Nullable LlmDataQuery query) {
+        showLlmQueryProblems(query, "bandsTab.dataSetTypeLayout.llmGeneratedQueryProblems");
+    }
+
+    /**
+     * Says what would make a hand-edited query fail a report run. Nothing corrects such a query — it is the
+     * author's — so this is only ever a report of what is wrong with it.
+     */
+    protected void showEditedQueryProblems(@Nullable LlmDataQuery query) {
+        showLlmQueryProblems(query, "bandsTab.dataSetTypeLayout.llmQueryProblems");
     }
 
     /**
@@ -1807,7 +1834,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
      * without running it and without asking the model anything, so an author learns of a broken query while
      * the panel that produced it is still open, instead of on the next run of the report.
      */
-    protected void showLlmQueryProblems(@Nullable LlmDataQuery query) {
+    protected void showLlmQueryProblems(@Nullable LlmDataQuery query, String messageKey) {
         if (query == null) {
             return;
         }
@@ -1817,8 +1844,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
             return;
         }
 
-        notifications.create(messageBundle.formatMessage("bandsTab.dataSetTypeLayout.llmQueryProblems",
-                        String.join("; ", problems)))
+        notifications.create(messageBundle.formatMessage(messageKey, String.join("; ", problems)))
                 .withType(Notifications.Type.WARNING)
                 .show();
     }
@@ -2192,15 +2218,56 @@ public class ReportDetailView extends StandardDetailView<Report> {
             @Override
             public boolean handleTimeoutException() {
                 forgetLlmGenerationAttempt(attempt);
-                return false;
+                showLlmGenerationTimeout();
+                return true;
             }
 
             @Override
             public boolean handleException(Exception ex) {
                 forgetLlmGenerationAttempt(attempt);
-                return false;
+                showLlmGenerationFailure(ex);
+                return true;
             }
         };
+    }
+
+    /**
+     * Says that generation ran out of the time it was given. Left unhandled it would be said to no one, as a
+     * failure would.
+     */
+    protected void showLlmGenerationTimeout() {
+        notifications.create(messageBundle.getMessage("bandsTab.dataSetTypeLayout.llmGenerationTimedOut"))
+                .withType(Notifications.Type.ERROR)
+                .show();
+    }
+
+    /**
+     * Says that generation failed, and why. Nothing in the platform reports an unhandled failure of a
+     * background task to the person who started it, so without this a failed generation would leave the author
+     * with a closed dialog and no query.
+     */
+    protected void showLlmGenerationFailure(Exception exception) {
+        log.error("Cannot generate the query of an LLM data set", exception);
+
+        notifications.create(messageBundle.getMessage("bandsTab.dataSetTypeLayout.llmGenerationFailed"),
+                        describeLlmGenerationFailure(exception))
+                .withType(Notifications.Type.ERROR)
+                .show();
+    }
+
+    /**
+     * Describes a failed generation in the words of what actually went wrong. The innermost cause carries that:
+     * the layers above it say no more than the notice already does. Overly long text — a model's answer quoted
+     * back in a parsing failure, say — is cut, and the log keeps all of it.
+     */
+    protected String describeLlmGenerationFailure(Exception exception) {
+        String message = ExceptionUtils.getThrowableList(exception).reversed().stream()
+                .map(Throwable::getMessage)
+                .filter(StringUtils::isNotBlank)
+                .findFirst()
+                .orElseGet(() -> exception.getClass().getSimpleName());
+
+        return StringUtils.abbreviate(message, LLM_FAILURE_MESSAGE_LIMIT);
     }
 
     /**
@@ -2228,7 +2295,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
             showLlmColumnsChangedNotice(
                     previousQuery != null ? previousQuery.getResultProperties() : Collections.emptyList(),
                     generatedQuery.getResultProperties());
-            showLlmQueryProblems(generatedQuery);
+            showGeneratedQueryProblems(generatedQuery);
         }
     }
 

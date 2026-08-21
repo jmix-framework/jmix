@@ -22,6 +22,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import io.jmix.core.Messages;
 import io.jmix.flowui.ViewNavigators;
+import io.jmix.flowui.Notifications;
 import io.jmix.flowui.backgroundtask.BackgroundTask;
 import io.jmix.flowui.component.UiComponentUtils;
 import io.jmix.flowui.component.codeeditor.CodeEditor;
@@ -42,6 +43,7 @@ import io.jmix.reports.entity.BandDefinition;
 import io.jmix.reports.entity.DataSet;
 import io.jmix.reports.entity.DataSetType;
 import io.jmix.reports.entity.Report;
+import io.jmix.reports.llm.LlmDataQueryException;
 import io.jmix.reports.llm.LlmDataQuery;
 import io.jmix.reports.llm.LlmDataQueryService;
 import io.jmix.reports.llm.LlmQueryGenerationRequest;
@@ -444,7 +446,59 @@ public class LlmDataSetPanelUiTest {
 
         NotificationInfo notification = UiTestUtils.getLastOpenedNotification();
         assertThat(notification).isNotNull();
-        assertThat(notification.getText()).contains("Unknown entity: sales_Ordr");
+        assertThat(notification.getText()).isEqualTo(messages.formatMessage("io.jmix.reportsflowui.view.report",
+                "bandsTab.dataSetTypeLayout.llmGeneratedQueryProblems", "Unknown entity: sales_Ordr"));
+    }
+
+    @Test
+    public void testFailedGenerationSaysWhatWentWrong() {
+        // Nothing in the platform reports an unhandled failure of a background task, so without this the
+        // author is left with a closed dialog and no query.
+        ReportDetailView view = openReportDesignerOnLlmDataSet();
+        DataSet dataSet = selectedDataSet(view);
+        BackgroundTask<Integer, LlmDataQuery> task = generationTask(view, dataSet);
+
+        boolean handled = task.handleException(new LlmDataQueryException(
+                "Cannot generate a query for the data set prompt",
+                new IllegalStateException("LLM returned an empty response")));
+
+        assertThat(handled).isTrue();
+        NotificationInfo notification = UiTestUtils.getLastOpenedNotification();
+        assertThat(notification).isNotNull();
+        assertThat(notification.getType()).isEqualTo(Notifications.Type.ERROR);
+        assertThat(notification.getTitle()).isEqualTo(messages.getMessage("io.jmix.reportsflowui.view.report",
+                "bandsTab.dataSetTypeLayout.llmGenerationFailed"));
+        // The innermost cause is what says something: the layers above it repeat the notice itself.
+        assertThat(notification.getMessage()).isEqualTo("LLM returned an empty response");
+    }
+
+    @Test
+    public void testFailureTooLongToShowIsCut() {
+        ReportDetailView view = openReportDesignerOnLlmDataSet();
+        DataSet dataSet = selectedDataSet(view);
+        BackgroundTask<Integer, LlmDataQuery> task = generationTask(view, dataSet);
+
+        task.handleException(new IllegalStateException(
+                "Cannot parse LLM response as JSON: " + "x".repeat(1000)));
+
+        NotificationInfo notification = UiTestUtils.getLastOpenedNotification();
+        assertThat(notification).isNotNull();
+        assertThat(notification.getMessage()).hasSizeLessThan(500).endsWith("...");
+    }
+
+    @Test
+    public void testGenerationThatRanOutOfTimeIsSaidToo() {
+        ReportDetailView view = openReportDesignerOnLlmDataSet();
+        DataSet dataSet = selectedDataSet(view);
+        BackgroundTask<Integer, LlmDataQuery> task = generationTask(view, dataSet);
+
+        boolean handled = task.handleTimeoutException();
+
+        assertThat(handled).isTrue();
+        NotificationInfo notification = UiTestUtils.getLastOpenedNotification();
+        assertThat(notification).isNotNull();
+        assertThat(notification.getText()).isEqualTo(messages.getMessage("io.jmix.reportsflowui.view.report",
+                "bandsTab.dataSetTypeLayout.llmGenerationTimedOut"));
     }
 
     @Test
@@ -460,7 +514,8 @@ public class LlmDataSetPanelUiTest {
 
         NotificationInfo notification = UiTestUtils.getLastOpenedNotification();
         assertThat(notification).isNotNull();
-        assertThat(notification.getText()).contains("Unknown entity: sales_Ordr");
+        assertThat(notification.getText()).isEqualTo(messages.formatMessage("io.jmix.reportsflowui.view.report",
+                "bandsTab.dataSetTypeLayout.llmQueryProblems", "Unknown entity: sales_Ordr"));
     }
 
     @Test

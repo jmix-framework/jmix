@@ -17,12 +17,15 @@
 package llm_data_set;
 
 import io.jmix.aitools.dataload.execution.GeneratedJpqlParameter;
+import io.jmix.aitools.dataload.execution.GeneratedJpqlResult;
+import io.jmix.aitools.dataload.execution.JpqlExecutionRequest;
 import io.jmix.reports.llm.LlmDataQuery;
 import io.jmix.reports.llm.LlmDataQueryException;
 import io.jmix.reports.llm.LlmQueryGenerationRequest;
 import io.jmix.reports.llm.LlmQueryParameter;
 import io.jmix.reports.llm.impl.AiToolsLlmDataQueryService;
 import llm_data_set.test_support.TestEntityDataLoadGenerationService;
+import llm_data_set.test_support.TestJpqlValidationAndRepairService;
 import llm_data_set.test_support.TestJpqlValidationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -45,15 +48,116 @@ class AiToolsLlmDataQueryServiceTest {
 
     protected TestEntityDataLoadGenerationService generationService;
     protected TestJpqlValidationService validationService;
+    protected TestJpqlValidationAndRepairService validationAndRepairService;
     protected AiToolsLlmDataQueryService service;
 
     @BeforeEach
     void setUp() {
         generationService = new TestEntityDataLoadGenerationService();
         validationService = new TestJpqlValidationService();
+        validationAndRepairService = new TestJpqlValidationAndRepairService();
         service = new AiToolsLlmDataQueryService();
         ReflectionTestUtils.setField(service, "entityDataLoadGenerationService", generationService);
         ReflectionTestUtils.setField(service, "jpqlValidationService", validationService);
+        ReflectionTestUtils.setField(service, "jpqlValidationAndRepairService", validationAndRepairService);
+    }
+
+    @Test
+    void testGeneratedQueryIsOfferedForRepairWithTheRequestItAnswers() {
+        service.generate(new LlmQueryGenerationRequest(PROMPT,
+                List.of(new LlmQueryParameter("dateFrom", "java.time.LocalDate", null)), List.of()));
+
+        JpqlExecutionRequest offered = validationAndRepairService.getLastRequest();
+        // Repair rewrites the query to satisfy the request it was generated from, so it is given both.
+        assertThat(offered.getUserText()).contains(PROMPT);
+        assertThat(offered.getJpql()).isEqualTo(generationService.getJpql());
+        assertThat(offered.getResultProperties()).containsExactly("orderNumber");
+        assertThat(offered.getMaxResults()).isNull();
+    }
+
+    @Test
+    void testQueryThatNeededNoRepairIsReturnedAsGenerated() {
+        LlmDataQuery query = service.generate(generationRequest());
+
+        assertThat(query.getJpql()).isEqualTo(generationService.getJpql());
+        assertThat(query.getResultProperties()).containsExactly("orderNumber");
+    }
+
+    @Test
+    void testRepairedQueryReplacesTheGeneratedOne() {
+        validationAndRepairService.setRepairedResult(new GeneratedJpqlResult(
+                "select o.number as orderNumber from sales_Order o where o.date >= :dateFrom",
+                List.of(new GeneratedJpqlParameter("dateFrom", "java.time.LocalDate", null)),
+                "Order numbers since the given date", List.of("the date is compared as a date")));
+
+        LlmDataQuery query = service.generate(generationRequest());
+
+        assertThat(query.getJpql()).contains(":dateFrom");
+        assertThat(query.getParameters())
+                .extracting(LlmQueryParameter::getName, LlmQueryParameter::getJavaType)
+                .containsExactly(tuple("dateFrom", "java.time.LocalDate"));
+        assertThat(query.getExplanation()).isEqualTo("Order numbers since the given date");
+        assertThat(query.getWarnings()).containsExactly("the date is compared as a date");
+    }
+
+    @Test
+    void testColumnsOfARepairedQueryAreReadOffItsSelectClause() {
+        // Repair answers with a query text alone, and renaming a column is exactly what it does with an alias
+        // that turned out to be a reserved word.
+        validationAndRepairService.setRepairedResult(new GeneratedJpqlResult(
+                "select o.number as orderNo, o.amount as amount from sales_Order o",
+                List.of(), "", List.of()));
+
+        LlmDataQuery query = service.generate(generationRequest());
+
+        assertThat(query.getResultProperties()).containsExactly("orderNo", "amount");
+    }
+
+    @Test
+    void testColumnsOfASubqueryAreNotTakenForColumnsOfTheQuery() {
+        validationAndRepairService.setRepairedResult(new GeneratedJpqlResult(
+                "select o.number as orderNo from sales_Order o where o.amount > "
+                        + "(select avg(p.amount) as average from sales_Order p)",
+                List.of(), "", List.of()));
+
+        LlmDataQuery query = service.generate(generationRequest());
+
+        assertThat(query.getResultProperties()).containsExactly("orderNo");
+    }
+
+    @Test
+    void testRepairedQueryWithoutColumnsKeepsTheGeneratedOnes() {
+        validationAndRepairService.setRepairedResult(new GeneratedJpqlResult(
+                "select o.number from sales_Order o", List.of(), "", List.of()));
+
+        LlmDataQuery query = service.generate(generationRequest());
+
+        assertThat(query.getResultProperties()).containsExactly("orderNumber");
+    }
+
+    @Test
+    void testRepairThatCannotBeCarriedOutLeavesTheGeneratedQuery() {
+        // Repair asks the model too, and a query an author can correct by hand is worth more than a failure.
+        validationAndRepairService.setFailure(new IllegalStateException("LLM returned an empty response"));
+
+        LlmDataQuery query = service.generate(generationRequest());
+
+        assertThat(query.getJpql()).isEqualTo(generationService.getJpql());
+    }
+
+    @Test
+    void testQueryStillFaultyAfterRepairIsReturnedForTheDesignerToReportOn() {
+        validationAndRepairService.setRemainingIssues(List.of("usedEntities.unknown: unknown entity"));
+        validationAndRepairService.setRepairedResult(new GeneratedJpqlResult(
+                "select o.number as orderNo from sales_Order o", List.of(), "", List.of()));
+
+        LlmDataQuery query = service.generate(generationRequest());
+
+        assertThat(query.getResultProperties()).containsExactly("orderNo");
+    }
+
+    protected LlmQueryGenerationRequest generationRequest() {
+        return new LlmQueryGenerationRequest(PROMPT, List.of(), List.of());
     }
 
     @Test

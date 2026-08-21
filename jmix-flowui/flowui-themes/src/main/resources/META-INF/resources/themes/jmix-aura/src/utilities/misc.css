@@ -25,14 +25,16 @@
 }
 
 vaadin-button.link-button,
-vaadin-button.dialog-close-button {
+vaadin-button.dialog-close-button,
+vaadin-button.dialog-header-button {
   padding: 0;
 
   font-size: inherit;
   line-height: inherit;
 }
 
-vaadin-button.dialog-close-button {
+vaadin-button.dialog-close-button,
+vaadin-button.dialog-header-button {
   color: var(--vaadin-text-color);
 }
 

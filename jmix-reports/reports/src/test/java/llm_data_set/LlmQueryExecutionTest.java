@@ -150,6 +150,26 @@ class LlmQueryExecutionTest {
     }
 
     @Test
+    void testCollectionIsBoundWholeAndMatchedWithIn() {
+        // What a cross-tab cell query does with the values of its axes, and what a "list of entities" report
+        // parameter does: one name, every value, matched with IN.
+        publisher("Nintendo");
+        publisher("Ubisoft");
+        publisher("Activision");
+        DataSet dataSet = llmDataSet(new LlmDataQuery(
+                "select p.name as publisherName from Publisher p where p.name in :names order by p.name",
+                List.of("publisherName"), List.of(new LlmQueryParameter("names", "java.lang.String", null)),
+                null, List.of()));
+
+        List<Map<String, Object>> rows = loader().loadData(dataSet, null,
+                Map.of("names", List.of(OWN + "Ubisoft", OWN + "Nintendo")));
+
+        assertThat(rows).containsExactly(
+                Map.of("publisherName", OWN + "Nintendo"),
+                Map.of("publisherName", OWN + "Ubisoft"));
+    }
+
+    @Test
     void testAttributeTheUserMayNotReadComesBackAsNull() {
         // The band keeps the column, so a template printing it renders an empty value instead of failing on a
         // field the report says it has.

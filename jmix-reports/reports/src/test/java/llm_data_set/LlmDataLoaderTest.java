@@ -664,7 +664,7 @@ class LlmDataLoaderTest {
     }
 
     @Test
-    void testListParameterIsBoundAsMultiValuedOfItsElementType() {
+    void testListParameterIsBoundAsTheWholeList() {
         DataSet dataSet = llmDataSet(PROMPT,
                 storedQuery(List.of(parameter("orderNumbers", "java.lang.String"))));
 

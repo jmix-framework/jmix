@@ -37,9 +37,6 @@ public class TestEntityDataLoadGenerationService implements EntityDataLoadGenera
     protected List<String> warnings = List.of();
 
     @Nullable
-    protected Integer maxResults;
-
-    @Nullable
     protected RuntimeException failure;
 
     @Override
@@ -48,7 +45,7 @@ public class TestEntityDataLoadGenerationService implements EntityDataLoadGenera
         if (failure != null) {
             throw failure;
         }
-        return new EntityDataLoadQuery(jpql, parameters, resultProperties, explanation, warnings, maxResults, null);
+        return new EntityDataLoadQuery(jpql, parameters, resultProperties, explanation, warnings, null, null);
     }
 
     public String getLastUserText() {
@@ -73,10 +70,6 @@ public class TestEntityDataLoadGenerationService implements EntityDataLoadGenera
 
     public void setWarnings(List<String> warnings) {
         this.warnings = warnings;
-    }
-
-    public void setMaxResults(@Nullable Integer maxResults) {
-        this.maxResults = maxResults;
     }
 
     public void setFailure(RuntimeException failure) {

@@ -33,19 +33,9 @@ public class LlmQueryGenerationRequest {
     protected List<LlmQueryParameter> availableParameters;
     protected List<String> requiredResultProperties;
 
-    @Nullable
-    protected Integer maxResults;
-
     public LlmQueryGenerationRequest(String prompt,
                                      @Nullable List<LlmQueryParameter> availableParameters,
-                                     @Nullable Integer maxResults) {
-        this(prompt, availableParameters, null, maxResults);
-    }
-
-    public LlmQueryGenerationRequest(String prompt,
-                                     @Nullable List<LlmQueryParameter> availableParameters,
-                                     @Nullable List<String> requiredResultProperties,
-                                     @Nullable Integer maxResults) {
+                                     @Nullable List<String> requiredResultProperties) {
         checkNotNullArgument(prompt, "prompt is null");
 
         this.prompt = prompt;
@@ -53,7 +43,6 @@ public class LlmQueryGenerationRequest {
         this.requiredResultProperties = requiredResultProperties == null
                 ? List.of()
                 : List.copyOf(requiredResultProperties);
-        this.maxResults = maxResults;
     }
 
     /**
@@ -81,13 +70,5 @@ public class LlmQueryGenerationRequest {
      */
     public List<String> getRequiredResultProperties() {
         return requiredResultProperties;
-    }
-
-    /**
-     * @return row limit to aim for, or {@code null} to let generation decide
-     */
-    @Nullable
-    public Integer getMaxResults() {
-        return maxResults;
     }
 }

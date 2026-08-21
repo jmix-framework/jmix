@@ -42,8 +42,7 @@ class LlmDataQuerySerializerTest {
                 List.of("orderNumber"),
                 List.of(new LlmQueryParameter("dateFrom", "java.time.LocalDate", null)),
                 "Orders from the given date",
-                List.of("Time zone is not taken into account"),
-                200);
+                List.of("Time zone is not taken into account"));
 
         LlmDataQuery restored = serializer.fromJson(serializer.toJson(query));
 
@@ -55,7 +54,6 @@ class LlmDataQuerySerializerTest {
         assertThat(restored.getParameters().get(0).getJavaType()).isEqualTo("java.time.LocalDate");
         assertThat(restored.getExplanation()).isEqualTo("Orders from the given date");
         assertThat(restored.getWarnings()).containsExactly("Time zone is not taken into account");
-        assertThat(restored.getMaxResults()).isEqualTo(200);
     }
 
     @Test
@@ -65,8 +63,7 @@ class LlmDataQuerySerializerTest {
                 List.of("orderNumber"),
                 List.of(new LlmQueryParameter("dateFrom", "java.time.LocalDate", LocalDate.of(2026, 8, 5))),
                 null,
-                List.of(),
-                null);
+                List.of());
 
         String json = serializer.toJson(query);
 
@@ -80,7 +77,7 @@ class LlmDataQuerySerializerTest {
     void testStoredDocumentCarriesNothingButTheQueryContract() {
         String json = serializer.toJson(new LlmDataQuery("select o.id as id from sales_Order o", List.of("id"),
                 List.of(new LlmQueryParameter("years", "java.lang.Integer", List.of(2025), true)),
-                null, List.of(), null));
+                null, List.of()));
 
         assertThat(json).doesNotContain("multiValued");
     }
@@ -91,7 +88,7 @@ class LlmDataQuerySerializerTest {
         // comparison operators of a query as unicode escapes unless told not to.
         String jpql = "select o.number as n from sales_Order o where o.date >= :dateFrom and o.amount < 100";
 
-        String json = serializer.toJson(new LlmDataQuery(jpql, List.of("n"), List.of(), null, List.of(), null));
+        String json = serializer.toJson(new LlmDataQuery(jpql, List.of("n"), List.of(), null, List.of()));
 
         assertThat(json).contains(jpql);
     }
@@ -99,7 +96,7 @@ class LlmDataQuerySerializerTest {
     @Test
     void testEditedQueryKeepsItsTextColumnsAndDerivedParameters() {
         LlmDataQuery previous = new LlmDataQuery("select o.id as id from sales_Order o", List.of("id"),
-                List.of(), "Orders", List.of("Amounts are not converted"), 200);
+                List.of(), "Orders", List.of("Amounts are not converted"));
 
         LlmDataQuery edited = serializer.assemble(
                 "select o.number as num from sales_Order o where o.date >= :dateFrom and o.amount > :minAmount",
@@ -112,7 +109,6 @@ class LlmDataQuerySerializerTest {
                 .containsExactly("dateFrom", "minAmount");
         assertThat(edited.getExplanation()).isEqualTo("Orders");
         assertThat(edited.getWarnings()).containsExactly("Amounts are not converted");
-        assertThat(edited.getMaxResults()).isEqualTo(200);
     }
 
     @Test
@@ -141,7 +137,7 @@ class LlmDataQuerySerializerTest {
                 "select o.number as orderNumber from sales_Order o where o.date >= :dateFrom",
                 List.of("orderNumber"),
                 List.of(new LlmQueryParameter("dateFrom", "java.time.LocalDate", null)),
-                "Orders since the given date", List.of(), null);
+                "Orders since the given date", List.of());
 
         LlmDataQuery assembled = serializer.assemble(
                 "select o.number as orderNumber from sales_Order o "
@@ -177,7 +173,6 @@ class LlmDataQuerySerializerTest {
         assertThat(restored.getParameters()).isEmpty();
         assertThat(restored.getWarnings()).isEmpty();
         assertThat(restored.getExplanation()).isNull();
-        assertThat(restored.getMaxResults()).isNull();
     }
 
     /**
@@ -195,19 +190,6 @@ class LlmDataQuerySerializerTest {
         assertThatThrownBy(() -> serializer.fromJson(document))
                 .isInstanceOf(LlmDataQueryException.class)
                 .hasMessageContaining("regenerate");
-    }
-
-    @ParameterizedTest
-    @ValueSource(ints = {0, -1})
-    void testNonPositiveStoredRowLimitIsNoLimit(int storedLimit) {
-        // A limit is a number of rows: a model writes zero for "no limit", and either value would otherwise
-        // reach the add-on, which fetches one row more than the limit and then keeps that many.
-        LlmDataQuery restored = serializer.fromJson(
-                "{\"jpql\":\"select o.number as n from sales_Order o\",\"resultProperties\":[\"n\"],"
-                        + "\"maxResults\":" + storedLimit + "}");
-
-        assertThat(restored).isNotNull();
-        assertThat(restored.getMaxResults()).isNull();
     }
 
     @Test

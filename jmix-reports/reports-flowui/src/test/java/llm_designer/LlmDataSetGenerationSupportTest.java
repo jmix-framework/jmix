@@ -66,14 +66,12 @@ public class LlmDataSetGenerationSupportTest {
     protected Metadata metadata;
 
     @Test
-    public void testRequestCarriesThePromptAndTheRowLimit() {
+    public void testRequestCarriesThePrompt() {
         DataSet dataSet = llmDataSet(reportWithParameters());
-        dataSet.setLlmMaxResults(300);
 
         LlmQueryGenerationRequest request = generationSupport.createGenerationRequest(dataSet);
 
         assertThat(request.getPrompt()).isEqualTo(PROMPT);
-        assertThat(request.getMaxResults()).isEqualTo(300);
     }
 
     @Test
@@ -98,7 +96,7 @@ public class LlmDataSetGenerationSupportTest {
         DataSet parentDataSet = llmDataSet(parentBand);
         parentDataSet.setLlmGeneratedQuery(serializer.toJson(new LlmDataQuery(
                 "select o.number as orderNumber from sales_Order o", List.of("orderNumber"), List.of(),
-                null, List.of(), null)));
+                null, List.of())));
 
         BandDefinition linesBand = band(report, "Lines", parentBand);
         DataSet linesDataSet = llmDataSet(linesBand);
@@ -118,7 +116,7 @@ public class LlmDataSetGenerationSupportTest {
         DataSet rootDataSet = llmDataSet(rootBand);
         rootDataSet.setLlmGeneratedQuery(serializer.toJson(new LlmDataQuery(
                 "select max(o.date) as reportedUntil from sales_Order o", List.of("reportedUntil"), List.of(),
-                null, List.of(), null)));
+                null, List.of())));
 
         DataSet ordersDataSet = llmDataSet(band(report, "Orders", rootBand));
 
@@ -157,7 +155,7 @@ public class LlmDataSetGenerationSupportTest {
         DataSet parentDataSet = llmDataSet(parentBand);
         parentDataSet.setLlmGeneratedQuery(serializer.toJson(new LlmDataQuery(
                 "select o.number as orderNumber from sales_Order o", List.of("orderNumber"), List.of(),
-                null, List.of(), null)));
+                null, List.of())));
 
         DataSet linesDataSet = llmDataSet(band(report, "Lines", parentBand));
 
@@ -205,8 +203,7 @@ public class LlmDataSetGenerationSupportTest {
         BandDefinition crossBand = band(report, "Revenue", rootBand(report));
         crossBand.setOrientation(Orientation.CROSS);
         axisDataSet(crossBand, "Revenue_dynamic_header", serializer.toJson(new LlmDataQuery(
-                "select o.date as period from sales_Order o", List.of("period"), List.of(), null, List.of(),
-                null)));
+                "select o.date as period from sales_Order o", List.of("period"), List.of(), null, List.of())));
 
         DataSet otherAxis = llmDataSet(crossBand);
         otherAxis.setName("Revenue_master_data");
@@ -229,7 +226,7 @@ public class LlmDataSetGenerationSupportTest {
         crossBand.setOrientation(Orientation.CROSS);
         axisDataSet(crossBand, "Revenue_dynamic_header", serializer.toJson(new LlmDataQuery(
                 "select year(o.date) as year from sales_Order o", List.of("year"), List.of(),
-                null, List.of(), null)));
+                null, List.of())));
         DataSet cellDataSet = llmDataSet(crossBand);
 
         LlmQueryGenerationRequest request = generationSupport.createGenerationRequest(cellDataSet);
@@ -252,7 +249,7 @@ public class LlmDataSetGenerationSupportTest {
         crossBand.setOrientation(Orientation.CROSS);
         axisDataSet(crossBand, "Revenue_dynamic_header", serializer.toJson(new LlmDataQuery(
                 "select year(o.date) as year, cast(year(o.date) as string) as year_caption from sales_Order o",
-                List.of("year", "year_caption"), List.of(), null, List.of(), null)));
+                List.of("year", "year_caption"), List.of(), null, List.of())));
         DataSet cellDataSet = llmDataSet(crossBand);
 
         LlmQueryGenerationRequest request = generationSupport.createGenerationRequest(cellDataSet);
@@ -285,7 +282,7 @@ public class LlmDataSetGenerationSupportTest {
         DataSet parentDataSet = llmDataSet(parentBand);
         parentDataSet.setLlmGeneratedQuery(serializer.toJson(new LlmDataQuery(
                 "select o.number as orderNumber from sales_Order o", List.of("orderNumber"), List.of(),
-                null, List.of(), null)));
+                null, List.of())));
 
         DataSet linesDataSet = llmDataSet(band(report, "Lines", parentBand));
 
@@ -300,7 +297,7 @@ public class LlmDataSetGenerationSupportTest {
     public void testGeneratedQueryIsStoredAsAReadableDocument() {
         DataSet dataSet = llmDataSet(reportWithParameters());
         LlmDataQuery query = new LlmDataQuery("select o.number as orderNumber from sales_Order o",
-                List.of("orderNumber"), List.of(), "All order numbers", List.of(), 200);
+                List.of("orderNumber"), List.of(), "All order numbers", List.of());
 
         generationSupport.storeGeneratedQuery(dataSet, query);
 
@@ -309,7 +306,6 @@ public class LlmDataSetGenerationSupportTest {
         assertThat(stored).isNotNull();
         assertThat(stored.getJpql()).isEqualTo(query.getJpql());
         assertThat(stored.getResultProperties()).containsExactly("orderNumber");
-        assertThat(stored.getMaxResults()).isEqualTo(200);
     }
 
     @Test
@@ -317,7 +313,7 @@ public class LlmDataSetGenerationSupportTest {
         DataSet dataSet = llmDataSet(reportWithParameters());
         generationSupport.storeGeneratedQuery(dataSet,
                 new LlmDataQuery("select o.number as orderNumber from sales_Order o", List.of("orderNumber"),
-                        List.of(), "All order numbers", List.of("Amounts are not converted"), 200));
+                        List.of(), "All order numbers", List.of("Amounts are not converted")));
 
         generationSupport.storeEditedQuery(dataSet,
                 "select o.number as num from sales_Order o where o.customer = :customerName", List.of("num"));
@@ -353,7 +349,7 @@ public class LlmDataSetGenerationSupportTest {
                 List.of("orderNumber"),
                 List.of(new LlmQueryParameter("dateTo", "java.time.LocalDate", null),
                         new LlmQueryParameter("dateFrom", "java.time.LocalDate", null)),
-                "Orders of the period", List.of(), null);
+                "Orders of the period", List.of());
         String stored = serializer.toJson(generated);
         dataSet.setLlmGeneratedQuery(stored);
 
@@ -385,7 +381,6 @@ public class LlmDataSetGenerationSupportTest {
         assertThat(stored).isNotNull();
         assertThat(stored.getExplanation()).isEqualTo("All order numbers");
         assertThat(stored.getWarnings()).containsExactly("Time zone ignored");
-        assertThat(stored.getMaxResults()).isEqualTo(150);
     }
 
     @Test
@@ -446,7 +441,7 @@ public class LlmDataSetGenerationSupportTest {
 
     protected LlmDataQuery storedQueryWithNotes() {
         return new LlmDataQuery("select o.number as orderNumber from sales_Order o", List.of("orderNumber"),
-                List.of(), "All order numbers", List.of("Time zone ignored"), 150);
+                List.of(), "All order numbers", List.of("Time zone ignored"));
     }
 
     @Test

@@ -84,7 +84,7 @@ class LlmDataLoaderTest {
 
     @Test
     void testStoredQueryIsExecutedWithoutGeneration() {
-        DataSet dataSet = llmDataSet(PROMPT, storedQuery(List.of()), null);
+        DataSet dataSet = llmDataSet(PROMPT, storedQuery(List.of()));
 
         List<Map<String, Object>> rows = loader().loadData(dataSet, null, Map.of());
 
@@ -97,7 +97,7 @@ class LlmDataLoaderTest {
     void testMissingStoredQueryFails() {
         // A run never generates a query: it is generated in the report designer and stored with the report, so a
         // data set without one has nothing to execute.
-        DataSet dataSet = llmDataSet(PROMPT, null, null);
+        DataSet dataSet = llmDataSet(PROMPT, null);
 
         assertThatThrownBy(() -> loader().loadData(dataSet, null, Map.of()))
                 .isInstanceOf(DataLoadingException.class)
@@ -106,8 +106,7 @@ class LlmDataLoaderTest {
 
     @Test
     void testReportParameterValueIsBoundToTheQueryParameter() {
-        DataSet dataSet = llmDataSet(PROMPT, storedQuery(List.of(parameter("dateFrom", "java.time.LocalDate"))),
-                null);
+        DataSet dataSet = llmDataSet(PROMPT, storedQuery(List.of(parameter("dateFrom", "java.time.LocalDate"))));
         LocalDate dateFrom = LocalDate.of(2026, 8, 1);
 
         loader().loadData(dataSet, null, Map.of("dateFrom", dateFrom));
@@ -120,8 +119,7 @@ class LlmDataLoaderTest {
 
     @Test
     void testArgumentTypeComesFromTheReportParameterNotFromTheStoredQuery() {
-        DataSet dataSet = llmDataSet(PROMPT, storedQuery(List.of(parameter("dateFrom", "java.lang.String"))),
-                null);
+        DataSet dataSet = llmDataSet(PROMPT, storedQuery(List.of(parameter("dateFrom", "java.lang.String"))));
 
         loader().loadData(dataSet, null, Map.of("dateFrom", LocalDate.of(2026, 8, 1)));
 
@@ -131,8 +129,7 @@ class LlmDataLoaderTest {
 
     @Test
     void testParametersTheQueryDoesNotReferenceAreNotBound() {
-        DataSet dataSet = llmDataSet(PROMPT, storedQuery(List.of(parameter("dateFrom", "java.time.LocalDate"))),
-                null);
+        DataSet dataSet = llmDataSet(PROMPT, storedQuery(List.of(parameter("dateFrom", "java.time.LocalDate"))));
 
         loader().loadData(dataSet, null, Map.of("dateFrom", LocalDate.of(2026, 8, 1), "unusedParam", "value"));
 
@@ -145,7 +142,7 @@ class LlmDataLoaderTest {
     void testEmptyStringParameterIsBoundLikeAnyOtherValue() {
         // An empty string is a value the run provides, unlike a parameter left unfilled, which arrives as null.
         DataSet dataSet = llmDataSet(PROMPT, storedQuery(List.of(parameter("dateFrom", "java.time.LocalDate"),
-                parameter("blank", "java.lang.String"))), null);
+                parameter("blank", "java.lang.String"))));
 
         loader().loadData(dataSet, null, Map.of("dateFrom", LocalDate.of(2026, 8, 1), "blank", ""));
 
@@ -156,8 +153,7 @@ class LlmDataLoaderTest {
 
     @Test
     void testParentBandFieldIsOfferedAndBoundUnderItsFlattenedName() {
-        DataSet dataSet = llmDataSet(PROMPT, storedQuery(List.of(parameter("Orders_number", "java.lang.String"))),
-                null);
+        DataSet dataSet = llmDataSet(PROMPT, storedQuery(List.of(parameter("Orders_number", "java.lang.String"))));
         BandData ordersBand = band("Orders", null, Map.of("number", "A-1"));
 
         loader().loadData(dataSet, ordersBand, Map.of());
@@ -170,7 +166,7 @@ class LlmDataLoaderTest {
     @Test
     void testGrandparentBandFieldIsBoundUnderItsFlattenedName() {
         DataSet dataSet = llmDataSet(PROMPT, storedQuery(List.of(parameter("Orders_number", "java.lang.String"),
-                parameter("Customers_customerId", "java.lang.Long"))), null);
+                parameter("Customers_customerId", "java.lang.Long"))));
         BandData customersBand = band("Customers", null, Map.of("customerId", 42L));
         BandData ordersBand = band("Orders", customersBand, Map.of("number", "A-1"));
 
@@ -189,14 +185,14 @@ class LlmDataLoaderTest {
         BandData ordersBand = band("Orders", rootBand, Map.of("number", "A-1"));
 
         DataSet byOwnName = llmDataSet(PROMPT,
-                storedQuery(List.of(parameter("customerName", "java.lang.String"))), null);
+                storedQuery(List.of(parameter("customerName", "java.lang.String"))));
         loader().loadData(byOwnName, ordersBand, Map.of("customerName", "Acme"));
         assertThat(queryService.getLastExecutionRequest().getArguments())
                 .extracting(LlmQueryParameter::getName, LlmQueryParameter::getValue)
                 .containsExactly(tuple("customerName", "Acme"));
 
         DataSet underRoot = llmDataSet(PROMPT,
-                storedQuery(List.of(parameter("Root_customerName", "java.lang.String"))), null);
+                storedQuery(List.of(parameter("Root_customerName", "java.lang.String"))));
         assertThatThrownBy(() -> loader().loadData(underRoot, ordersBand, Map.of("customerName", "Acme")))
                 .isInstanceOf(DataLoadingException.class)
                 .hasMessageContaining("Root_customerName");
@@ -204,8 +200,7 @@ class LlmDataLoaderTest {
 
     @Test
     void testRunParameterWinsOverAParentBandFieldOfTheSameName() {
-        DataSet dataSet = llmDataSet(PROMPT, storedQuery(List.of(parameter("Orders_number", "java.lang.String"))),
-                null);
+        DataSet dataSet = llmDataSet(PROMPT, storedQuery(List.of(parameter("Orders_number", "java.lang.String"))));
         BandData ordersBand = band("Orders", null, Map.of("number", "from band"));
 
         loader().loadData(dataSet, ordersBand, Map.of("Orders_number", "from run parameters"));
@@ -220,7 +215,7 @@ class LlmDataLoaderTest {
         // A JPQL parameter name is an identifier, so a band named with a space contributes nothing — and its
         // fields are not offered under a name made up by replacing that space either.
         DataSet dataSet = llmDataSet(PROMPT,
-                storedQuery(List.of(parameter("Order_Details_number", "java.lang.String"))), null);
+                storedQuery(List.of(parameter("Order_Details_number", "java.lang.String"))));
         BandData ordersBand = band("Order Details", null, Map.of("number", "A-1"));
 
         assertThatThrownBy(() -> loader().loadData(dataSet, ordersBand, Map.of()))
@@ -236,14 +231,14 @@ class LlmDataLoaderTest {
         BandData ordersBand = band("Orders", null, bandRow);
 
         DataSet withValue = llmDataSet(PROMPT,
-                storedQuery(List.of(parameter("Orders_number", "java.lang.String"))), null);
+                storedQuery(List.of(parameter("Orders_number", "java.lang.String"))));
         loader().loadData(withValue, ordersBand, Map.of());
         assertThat(queryService.getLastExecutionRequest().getArguments())
                 .extracting(LlmQueryParameter::getName)
                 .containsExactly("Orders_number");
 
         DataSet withNull = llmDataSet(PROMPT,
-                storedQuery(List.of(parameter("Orders_comment", "java.lang.String"))), null);
+                storedQuery(List.of(parameter("Orders_comment", "java.lang.String"))));
         assertThatThrownBy(() -> loader().loadData(withNull, ordersBand, Map.of()))
                 .isInstanceOf(DataLoadingException.class)
                 .hasMessageContaining("Orders_comment");
@@ -253,7 +248,7 @@ class LlmDataLoaderTest {
     void testCrossTabAxisFieldsAreBoundAsTypedListsInsteadOfTheAxesThemselves() {
         DataSet dataSet = llmDataSet(PROMPT, serializer.toJson(linkableCrossTabQuery(List.of(
                 parameter("revenue_dynamic_header_year", "java.lang.String"),
-                parameter("revenue_master_data_publisherId", "java.lang.String")))), null);
+                parameter("revenue_master_data_publisherId", "java.lang.String")))));
 
         loader().loadData(dataSet, null, crossTabParams());
 
@@ -269,7 +264,7 @@ class LlmDataLoaderTest {
 
         // The axis itself is a list of rows, not a value a query can be filtered by.
         DataSet byTheAxisItself = llmDataSet(PROMPT, serializer.toJson(linkableCrossTabQuery(
-                List.of(parameter("revenue_dynamic_header", "java.lang.String")))), null);
+                List.of(parameter("revenue_dynamic_header", "java.lang.String")))));
         assertThatThrownBy(() -> loader().loadData(byTheAxisItself, null, crossTabParams()))
                 .isInstanceOf(DataLoadingException.class)
                 .hasMessageContaining("revenue_dynamic_header");
@@ -278,7 +273,7 @@ class LlmDataLoaderTest {
     @Test
     void testNullValuesInsideACrossTabAxisAreDropped() {
         DataSet dataSet = llmDataSet(PROMPT, serializer.toJson(linkableCrossTabQuery(
-                List.of(parameter("revenue_dynamic_header_year", "java.lang.String")))), null);
+                List.of(parameter("revenue_dynamic_header_year", "java.lang.String")))));
         Map<String, Object> rowWithNull = new HashMap<>();
         rowWithNull.put("year", null);
         Map<String, Object> params = new LinkedHashMap<>();
@@ -298,7 +293,7 @@ class LlmDataLoaderTest {
         // happens to hold a value would move the required column between runs, and a stored query would be
         // refused on the run where the shape came out differently.
         DataSet dataSet = llmDataSet(PROMPT, serializer.toJson(linkableCrossTabQuery(
-                List.of(parameter("revenue_dynamic_header_year", "java.lang.String")))), null);
+                List.of(parameter("revenue_dynamic_header_year", "java.lang.String")))));
         // Ordered the way a data set's own rows are: the axis describes year first, whatever this row holds.
         Map<String, Object> firstRow = new LinkedHashMap<>();
         firstRow.put("year", null);
@@ -325,13 +320,13 @@ class LlmDataLoaderTest {
                 axisRow("year", null, "month", 4)));
         params.put("revenue_master_data", List.of(axisRow("publisherId", "Nintendo")));
 
-        DataSet byTheFirstField = llmDataSet(PROMPT, serializer.toJson(linkableCrossTabQuery()), null);
+        DataSet byTheFirstField = llmDataSet(PROMPT, serializer.toJson(linkableCrossTabQuery()));
         loader().loadData(byTheFirstField, null, params);
 
         LlmDataQuery byTheFieldWithValues = new LlmDataQuery(CACHED_JPQL,
                 List.of("revenue_dynamic_header_month", "revenue_master_data_publisherId", "amount"),
-                List.of(), "Revenue per publisher and month", List.of(), null);
-        DataSet dataSet = llmDataSet(PROMPT, serializer.toJson(byTheFieldWithValues), null);
+                List.of(), "Revenue per publisher and month", List.of());
+        DataSet dataSet = llmDataSet(PROMPT, serializer.toJson(byTheFieldWithValues));
 
         assertThatThrownBy(() -> loader().loadData(dataSet, null, params))
                 .isInstanceOf(DataLoadingException.class)
@@ -342,7 +337,7 @@ class LlmDataLoaderTest {
     void testCrossTabAxisFieldEmptyInEveryRowCannotBeBound() {
         // The field is required back all the same, but there is nothing to bind under it and no type to state.
         DataSet dataSet = llmDataSet(PROMPT, serializer.toJson(linkableCrossTabQuery(
-                List.of(parameter("revenue_dynamic_header_year", "java.lang.String")))), null);
+                List.of(parameter("revenue_dynamic_header_year", "java.lang.String")))));
         Map<String, Object> rowWithNull = new HashMap<>();
         rowWithNull.put("year", null);
         Map<String, Object> params = new LinkedHashMap<>();
@@ -357,7 +352,7 @@ class LlmDataLoaderTest {
     @Test
     void testCrossTabAxisFieldWhoseNameIsNotAnIdentifierIsSkipped() {
         DataSet dataSet = llmDataSet(PROMPT, serializer.toJson(linkableCrossTabQuery(
-                List.of(parameter("revenue_dynamic_header_year", "java.lang.String")))), null);
+                List.of(parameter("revenue_dynamic_header_year", "java.lang.String")))));
         Map<String, Object> params = new LinkedHashMap<>();
         params.put("revenue_dynamic_header", List.of(axisRow("year of sale", 2025, "year", 2025)));
         params.put("revenue_master_data", List.of(axisRow("publisherId", "Nintendo")));
@@ -373,7 +368,7 @@ class LlmDataLoaderTest {
     @Test
     void testCrossTabAxisListIsBoundAsAWholeAtExecution() {
         DataSet dataSet = llmDataSet(PROMPT, serializer.toJson(linkableCrossTabQuery(
-                List.of(parameter("revenue_dynamic_header_year", "java.lang.String")))), null);
+                List.of(parameter("revenue_dynamic_header_year", "java.lang.String")))));
 
         loader().loadData(dataSet, null, crossTabParams());
 
@@ -387,7 +382,7 @@ class LlmDataLoaderTest {
         // Bound under its own name rather than broken into <axis>_<field> parameters, and — holding several
         // values — as one a query matches with IN.
         DataSet dataSet = llmDataSet(PROMPT,
-                storedQuery(List.of(parameter("selected_master_data", "java.lang.String"))), null);
+                storedQuery(List.of(parameter("selected_master_data", "java.lang.String"))));
 
         loader().loadData(dataSet, null, Map.of("selected_master_data", List.of("A-1", "A-2")));
 
@@ -402,8 +397,8 @@ class LlmDataLoaderTest {
         LlmDataQuery query = new LlmDataQuery(CACHED_JPQL,
                 List.of("revenue_dynamic_header_year_caption", "revenue_dynamic_header_year",
                         "revenue_master_data_publisherId", "amount"),
-                List.of(), "Revenue per publisher and year", List.of(), null);
-        DataSet dataSet = llmDataSet(PROMPT, serializer.toJson(query), null);
+                List.of(), "Revenue per publisher and year", List.of());
+        DataSet dataSet = llmDataSet(PROMPT, serializer.toJson(query));
         Map<String, Object> params = new LinkedHashMap<>();
         params.put("revenue_dynamic_header", List.of(axisRow("year", 2025, "year_caption", "2025")));
         params.put("revenue_master_data", List.of(axisRow("publisherId", "Nintendo")));
@@ -417,7 +412,7 @@ class LlmDataLoaderTest {
     @Test
     void testRowsCutShortByTheLimitStillReachTheBand() {
         // The run says so in the log rather than failing: a band of the first rows is what the limit asked for.
-        DataSet dataSet = llmDataSet(PROMPT, storedQuery(List.of()), 1);
+        DataSet dataSet = llmDataSet(PROMPT, storedQuery(List.of()));
         queryService.setRows(List.of(Map.of("orderNumber", "A-1")));
         queryService.setTruncated(true);
 
@@ -427,20 +422,11 @@ class LlmDataLoaderTest {
     }
 
     @Test
-    void testNonPositiveRowLimitIsNotALimit() {
-        DataSet dataSet = llmDataSet(PROMPT, storedQuery(List.of()), 0);
-
-        loader().loadData(dataSet, null, Map.of());
-
-        assertThat(queryService.getLastExecutionRequest().getMaxResults()).isNull();
-    }
-
-    @Test
     void testEmptyCrossTabAxisProducesNoRowsInsteadOfFailing() {
         // A period with no data leaves an axis empty; the matrix then has no cells, and the stored query that
         // filters by that axis has nothing to bind.
         DataSet dataSet = llmDataSet(PROMPT, serializer.toJson(linkableCrossTabQuery(
-                List.of(parameter("revenue_dynamic_header_year", "java.lang.Integer")))), null);
+                List.of(parameter("revenue_dynamic_header_year", "java.lang.Integer")))));
         Map<String, Object> params = new LinkedHashMap<>();
         params.put("revenue_dynamic_header", List.of());
         params.put("revenue_master_data", List.of(axisRow("publisherId", "Nintendo")));
@@ -453,7 +439,7 @@ class LlmDataLoaderTest {
 
     @Test
     void testQueryThatCannotBeLinkedToACrossTabAxisFails() {
-        DataSet dataSet = llmDataSet(PROMPT, storedQuery(List.of()), null);
+        DataSet dataSet = llmDataSet(PROMPT, storedQuery(List.of()));
         Map<String, Object> params = Map.of("revenue_dynamic_header", List.of(Map.of("year", 2025)));
 
         assertThatThrownBy(() -> loader().loadData(dataSet, null, params))
@@ -463,18 +449,8 @@ class LlmDataLoaderTest {
     }
 
     @Test
-    void testDataSetRowLimitReachesExecution() {
-        DataSet dataSet = llmDataSet(PROMPT, storedQuery(List.of()), 700);
-
-        loader().loadData(dataSet, null, Map.of());
-
-        LlmQueryExecutionRequest request = queryService.getLastExecutionRequest();
-        assertThat(request.getMaxResults()).isEqualTo(700);
-    }
-
-    @Test
     void testBlankPromptFails() {
-        DataSet dataSet = llmDataSet("  ", storedQuery(List.of()), null);
+        DataSet dataSet = llmDataSet("  ", storedQuery(List.of()));
 
         assertThatThrownBy(() -> loader().loadData(dataSet, null, Map.of()))
                 .isInstanceOf(DataLoadingException.class)
@@ -483,7 +459,7 @@ class LlmDataLoaderTest {
 
     @Test
     void testUnreadableStoredQueryFails() {
-        DataSet dataSet = llmDataSet(PROMPT, "{\"jpql\": ", null);
+        DataSet dataSet = llmDataSet(PROMPT, "{\"jpql\": ");
 
         assertThatThrownBy(() -> loader().loadData(dataSet, null, Map.of()))
                 .isInstanceOf(DataLoadingException.class);
@@ -494,7 +470,7 @@ class LlmDataLoaderTest {
         // What an imported report meets when its stored query no longer matches the domain model.
         queryService.setExecutionFailure(new LlmDataQueryException(
                 "The query is invalid: Unknown attribute [o.number] of entity [sales_Order]"));
-        DataSet dataSet = llmDataSet(PROMPT, storedQuery(List.of()), null);
+        DataSet dataSet = llmDataSet(PROMPT, storedQuery(List.of()));
 
         assertThatThrownBy(() -> loader().loadData(dataSet, null, Map.of()))
                 .isInstanceOf(DataLoadingException.class)
@@ -505,8 +481,7 @@ class LlmDataLoaderTest {
 
     @Test
     void testQueryParameterWithoutAValueFails() {
-        DataSet dataSet = llmDataSet(PROMPT, storedQuery(List.of(parameter("dateFrom", "java.time.LocalDate"))),
-                null);
+        DataSet dataSet = llmDataSet(PROMPT, storedQuery(List.of(parameter("dateFrom", "java.time.LocalDate"))));
 
         assertThatThrownBy(() -> loader().loadData(dataSet, null, Map.of()))
                 .isInstanceOf(DataLoadingException.class)
@@ -517,8 +492,7 @@ class LlmDataLoaderTest {
     void testFailureNamesAnEmptyReportParameterAsEmptyRatherThanAsUnknown() {
         // An optional report parameter left unfilled arrives with a null value. It is the common way a run meets
         // an unbindable parameter, and the author has to hear which one it is and that filling it in is the fix.
-        DataSet dataSet = llmDataSet(PROMPT, storedQuery(List.of(parameter("dateFrom", "java.time.LocalDate"))),
-                null);
+        DataSet dataSet = llmDataSet(PROMPT, storedQuery(List.of(parameter("dateFrom", "java.time.LocalDate"))));
         Map<String, Object> params = new HashMap<>();
         params.put("dateFrom", null);
 
@@ -537,7 +511,7 @@ class LlmDataLoaderTest {
         // The add-on hands out immutable maps in an order of its own; a band row is written into by the engine
         // and read positionally by a cross-tab.
         queryService.setRows(List.of(Map.copyOf(Map.of("amount", 10, "orderNumber", "A-1"))));
-        DataSet dataSet = llmDataSet(PROMPT, storedQuery(List.of("orderNumber", "amount"), List.of()), null);
+        DataSet dataSet = llmDataSet(PROMPT, storedQuery(List.of("orderNumber", "amount"), List.of()));
 
         List<Map<String, Object>> rows = loader().loadData(dataSet, null, Map.of());
 
@@ -553,7 +527,7 @@ class LlmDataLoaderTest {
         executionRow.put("emptyNumber", "");
         queryService.setRows(List.of(executionRow));
         DataSet dataSet = llmDataSet(PROMPT,
-                storedQuery(List.of("missingNumber", "emptyNumber"), List.of()), null);
+                storedQuery(List.of("missingNumber", "emptyNumber"), List.of()));
 
         List<Map<String, Object>> rows = loader().loadData(dataSet, null, Map.of());
 
@@ -562,7 +536,7 @@ class LlmDataLoaderTest {
                 .containsEntry("emptyNumber", "");
 
         DataSet childDataSet = llmDataSet(PROMPT,
-                storedQuery(List.of(parameter("Orders_emptyNumber", "java.lang.String"))), null);
+                storedQuery(List.of(parameter("Orders_emptyNumber", "java.lang.String"))));
         loader().loadData(childDataSet, band("Orders", null, rows.get(0)), Map.of());
 
         assertThat(queryService.getLastExecutionRequest().getArguments())
@@ -574,7 +548,7 @@ class LlmDataLoaderTest {
     void testInvalidQueryFailsTheDataSetBeforeItIsExecuted() {
         // Execution answers an invalid query by asking a model to repair it, which would spend tokens on a run,
         // send this run's arguments to the model and bind the values the model replies with.
-        DataSet dataSet = llmDataSet(PROMPT, storedQuery(List.of()), null);
+        DataSet dataSet = llmDataSet(PROMPT, storedQuery(List.of()));
         queryService.setProblems(List.of("DTO parameter is not used in JPQL: dateFrom"));
 
         assertThatThrownBy(() -> loader().loadData(dataSet, null, Map.of()))
@@ -589,7 +563,7 @@ class LlmDataLoaderTest {
     void testQueryIsCheckedOnceForTheWholeRun() {
         // A check parses the query and resolves it against the data model, and the query does not change while
         // the run executes it, so a band loaded once per parent row must not pay for the same verdict twice.
-        DataSet dataSet = llmDataSet(PROMPT, storedQuery(List.of()), null);
+        DataSet dataSet = llmDataSet(PROMPT, storedQuery(List.of()));
         BandData rootBand = band("Root", null, Map.of());
 
         loader().loadData(dataSet, band("Orders", rootBand, Map.of("orderNumber", "A-1")), Map.of());
@@ -602,28 +576,33 @@ class LlmDataLoaderTest {
     @Test
     void testWarningOfOneDataSetDoesNotSilenceAnotherOfTheSameName() {
         // Data set names are unique within a band, so every band's first data set is called the same by default.
-        DataSet first = llmDataSet(PROMPT, storedQuery(List.of()), 0);
-        DataSet second = llmDataSet(PROMPT, storedQuery(List.of()), 0);
+        // A warning remembered for one of them must not silence the other.
+        DataSet first = llmDataSet(PROMPT, storedQuery(List.of(parameter("Orders_number", "java.lang.String"))));
+        DataSet second = llmDataSet(PROMPT, storedQuery(List.of(parameter("Orders_number", "java.lang.String"))));
         assertThat(first.getName()).isEqualTo(second.getName());
         BandData rootBand = band("Root", null, Map.of());
         ListAppender<ILoggingEvent> logged = captureLoaderLog();
 
         try {
-            loader().loadData(first, band("Orders", rootBand, Map.of()), Map.of());
-            loader().loadData(second, band("Customers", rootBand, Map.of()), Map.of());
+            // A run parameter named like the flattened band field shadows that field, which is what the loader
+            // warns about — once per data set, so twice here.
+            loader().loadData(first, band("Orders", rootBand, Map.of("number", "A-1")),
+                    Map.of("Orders_number", "P-1"));
+            loader().loadData(second, band("Orders", rootBand, Map.of("number", "A-2")),
+                    Map.of("Orders_number", "P-1"));
         } finally {
             releaseLoaderLog(logged);
         }
 
         assertThat(logged.list)
-                .filteredOn(event -> event.getFormattedMessage().contains("which is not a number of rows"))
+                .filteredOn(event -> event.getFormattedMessage().contains("is not offered to the query"))
                 .hasSize(2);
     }
 
     @Test
     void testStoredQueryIsReadOnceForTheWholeRun() {
         // The document does not change while the run reads it, so a parent row does not pay for reading it again.
-        DataSet dataSet = llmDataSet(PROMPT, storedQuery(List.of()), null);
+        DataSet dataSet = llmDataSet(PROMPT, storedQuery(List.of()));
         BandData rootBand = band("Root", null, Map.of());
         ReportDataLoader loader = loader();
         CountingSerializer counting = new CountingSerializer();
@@ -643,7 +622,7 @@ class LlmDataLoaderTest {
     @Test
     void testListParameterIsBoundAsMultiValuedOfItsElementType() {
         DataSet dataSet = llmDataSet(PROMPT,
-                storedQuery(List.of(parameter("orderNumbers", "java.lang.String"))), null);
+                storedQuery(List.of(parameter("orderNumbers", "java.lang.String"))));
 
         loader().loadData(dataSet, null, Map.of("orderNumbers", List.of("A-1", "A-2")));
 
@@ -657,7 +636,7 @@ class LlmDataLoaderTest {
     void testEmptyListParameterCannotBeBound() {
         // Nothing to match with IN and no type to state.
         DataSet dataSet = llmDataSet(PROMPT,
-                storedQuery(List.of(parameter("orderNumbers", "java.lang.String"))), null);
+                storedQuery(List.of(parameter("orderNumbers", "java.lang.String"))));
 
         assertThatThrownBy(() -> loader().loadData(dataSet, null, Map.of("orderNumbers", List.of())))
                 .isInstanceOf(DataLoadingException.class)
@@ -693,7 +672,7 @@ class LlmDataLoaderTest {
     protected LlmDataQuery linkableCrossTabQuery(List<LlmQueryParameter> parameters) {
         return new LlmDataQuery(CACHED_JPQL,
                 List.of("revenue_dynamic_header_year", "revenue_master_data_publisherId", "amount"),
-                parameters, "Revenue per publisher and year", List.of(), null);
+                parameters, "Revenue per publisher and year", List.of());
     }
 
     /**
@@ -754,18 +733,15 @@ class LlmDataLoaderTest {
 
     protected String storedQuery(List<String> resultProperties, List<LlmQueryParameter> parameters) {
         return serializer.toJson(new LlmDataQuery(CACHED_JPQL, resultProperties, parameters,
-                "Orders since the given date", List.of(), null));
+                "Orders since the given date", List.of()));
     }
 
-    protected DataSet llmDataSet(String prompt,
-                                 @Nullable String storedQuery,
-                                 @Nullable Integer maxResults) {
+    protected DataSet llmDataSet(String prompt, @Nullable String storedQuery) {
         DataSet dataSet = metadata.create(DataSet.class);
         dataSet.setName("Data");
         dataSet.setType(DataSetType.LLM);
         dataSet.setText(prompt);
         dataSet.setLlmGeneratedQuery(storedQuery);
-        dataSet.setLlmMaxResults(maxResults);
         return dataSet;
     }
 }

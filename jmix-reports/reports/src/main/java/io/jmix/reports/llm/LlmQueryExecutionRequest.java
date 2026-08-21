@@ -33,20 +33,15 @@ public class LlmQueryExecutionRequest {
     protected LlmDataQuery query;
     protected List<LlmQueryParameter> arguments;
 
-    @Nullable
-    protected Integer maxResults;
-
     public LlmQueryExecutionRequest(String prompt,
                                     LlmDataQuery query,
-                                    @Nullable List<LlmQueryParameter> arguments,
-                                    @Nullable Integer maxResults) {
+                                    @Nullable List<LlmQueryParameter> arguments) {
         checkNotNullArgument(prompt, "prompt is null");
         checkNotNullArgument(query, "query is null");
 
         this.prompt = prompt;
         this.query = query;
         this.arguments = arguments == null ? List.of() : List.copyOf(arguments);
-        this.maxResults = maxResults;
     }
 
     /**
@@ -76,14 +71,5 @@ public class LlmQueryExecutionRequest {
      */
     public List<LlmQueryParameter> getArguments() {
         return arguments;
-    }
-
-    /**
-     * @return row limit for this execution, or {@code null} to fall back to the query's own limit and
-     * then to the add-on's default
-     */
-    @Nullable
-    public Integer getMaxResults() {
-        return maxResults;
     }
 }

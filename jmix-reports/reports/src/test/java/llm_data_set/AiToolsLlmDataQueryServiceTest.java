@@ -69,21 +69,20 @@ class AiToolsLlmDataQueryServiceTest {
     @Test
     void testPromptAndAvailableParametersReachGeneration() {
         service.generate(new LlmQueryGenerationRequest(PROMPT,
-                List.of(new LlmQueryParameter("dateFrom", "java.time.LocalDate", null)), 300));
+                List.of(new LlmQueryParameter("dateFrom", "java.time.LocalDate", null)), List.of()));
 
         String userText = generationService.getLastUserText();
         assertThat(userText).contains(PROMPT);
         assertThat(userText).contains("dateFrom");
         assertThat(userText).contains("java.time.LocalDate");
         assertThat(userText).contains(":dateFrom");
-        assertThat(userText).contains("300");
     }
 
     @Test
     void testListValuedParameterUsesInWithoutBecomingACrossTabAxis() {
         service.generate(new LlmQueryGenerationRequest(PROMPT, List.of(
                 new LlmQueryParameter("customerIds", "java.util.UUID", List.of("1", "2"), true),
-                new LlmQueryParameter("dateFrom", "java.time.LocalDate", LocalDate.of(2026, 8, 1))), null));
+                new LlmQueryParameter("dateFrom", "java.time.LocalDate", LocalDate.of(2026, 8, 1))), List.of()));
 
         String userText = generationService.getLastUserText();
         assertThat(userText).contains("several values of this type, matched with IN");
@@ -97,7 +96,7 @@ class AiToolsLlmDataQueryServiceTest {
         service.generate(new LlmQueryGenerationRequest(PROMPT, List.of(
                 new LlmQueryParameter("revenue_dynamic_header_year", "java.lang.Integer",
                         List.of(2025, 2026), true)),
-                List.of("revenue_dynamic_header_year"), null));
+                List.of("revenue_dynamic_header_year")));
 
         String userText = generationService.getLastUserText();
         assertThat(userText).contains("REQUIRED RESULT COLUMNS");
@@ -109,7 +108,7 @@ class AiToolsLlmDataQueryServiceTest {
     void testScalarParameterShadowingRequiredColumnDoesNotUseIn() {
         service.generate(new LlmQueryGenerationRequest(PROMPT, List.of(
                 new LlmQueryParameter("revenue_dynamic_header_year", "java.lang.Integer", 2026)),
-                List.of("revenue_dynamic_header_year"), null));
+                List.of("revenue_dynamic_header_year")));
 
         String userText = generationService.getLastUserText();
         assertThat(userText).contains("REQUIRED RESULT COLUMNS");
@@ -120,7 +119,7 @@ class AiToolsLlmDataQueryServiceTest {
     @Test
     void testRequiredResultColumnsDoNotDependOnAvailableParameters() {
         service.generate(new LlmQueryGenerationRequest(PROMPT, List.of(),
-                List.of("revenue_dynamic_header_year"), null));
+                List.of("revenue_dynamic_header_year")));
 
         String userText = generationService.getLastUserText();
         assertThat(userText).doesNotContain("AVAILABLE REPORT PARAMETERS");
@@ -135,9 +134,8 @@ class AiToolsLlmDataQueryServiceTest {
         generationService.setResultProperties(List.of("orderNumber"));
         generationService.setExplanation("Orders since the given date");
         generationService.setWarnings(List.of("Time zone ignored"));
-        generationService.setMaxResults(120);
 
-        LlmDataQuery query = service.generate(new LlmQueryGenerationRequest(PROMPT, List.of(), null));
+        LlmDataQuery query = service.generate(new LlmQueryGenerationRequest(PROMPT, List.of(), List.of()));
 
         assertThat(query.getJpql()).contains("select o.number as orderNumber");
         assertThat(query.getResultProperties()).containsExactly("orderNumber");
@@ -147,14 +145,13 @@ class AiToolsLlmDataQueryServiceTest {
         assertThat(query.getParameters().get(0).getValue()).isNull();
         assertThat(query.getExplanation()).isEqualTo("Orders since the given date");
         assertThat(query.getWarnings()).containsExactly("Time zone ignored");
-        assertThat(query.getMaxResults()).isEqualTo(120);
     }
 
     @Test
     void testGenerationFailureBecomesLlmDataQueryException() {
         generationService.setFailure(new IllegalStateException("LLM is not configured"));
 
-        assertThatThrownBy(() -> service.generate(new LlmQueryGenerationRequest(PROMPT, List.of(), null)))
+        assertThatThrownBy(() -> service.generate(new LlmQueryGenerationRequest(PROMPT, List.of(), List.of())))
                 .isInstanceOf(LlmDataQueryException.class)
                 .hasMessageContaining("generate");
     }
@@ -163,7 +160,7 @@ class AiToolsLlmDataQueryServiceTest {
     void testBlankGeneratedQueryBecomesLlmDataQueryException() {
         generationService.setJpql("  ");
 
-        assertThatThrownBy(() -> service.generate(new LlmQueryGenerationRequest(PROMPT, List.of(), null)))
+        assertThatThrownBy(() -> service.generate(new LlmQueryGenerationRequest(PROMPT, List.of(), List.of())))
                 .isInstanceOf(LlmDataQueryException.class);
     }
 
@@ -172,13 +169,12 @@ class AiToolsLlmDataQueryServiceTest {
         LocalDate dateFrom = LocalDate.of(2026, 8, 1);
 
         service.execute(new LlmQueryExecutionRequest(PROMPT, storedQuery(),
-                List.of(new LlmQueryParameter("dateFrom", "java.time.LocalDate", dateFrom)), 700));
+                List.of(new LlmQueryParameter("dateFrom", "java.time.LocalDate", dateFrom))));
 
         JpqlExecutionRequest request = executionService.getLastRequest();
         assertThat(request.getUserText()).isEqualTo(PROMPT);
         assertThat(request.getJpql()).isEqualTo(storedQuery().getJpql());
         assertThat(request.getResultProperties()).containsExactly("orderNumber");
-        assertThat(request.getMaxResults()).isEqualTo(700);
         assertThat(request.getParameters())
                 .extracting(JpqlExecutionParameter::getName, JpqlExecutionParameter::getType,
                         JpqlExecutionParameter::getValue)
@@ -186,18 +182,11 @@ class AiToolsLlmDataQueryServiceTest {
     }
 
     @Test
-    void testRowLimitFallsBackToTheQueryLimit() {
-        service.execute(new LlmQueryExecutionRequest(PROMPT, storedQuery(), List.of(), null));
-
-        assertThat(executionService.getLastRequest().getMaxResults()).isEqualTo(150);
-    }
-
-    @Test
     void testFetchedRowsAreReturned() {
         executionService.setRows(List.of(Map.of("orderNumber", "A-1")));
 
         LlmQueryExecutionResult result = service.execute(
-                new LlmQueryExecutionRequest(PROMPT, storedQuery(), List.of(), null));
+                new LlmQueryExecutionRequest(PROMPT, storedQuery(), List.of()));
 
         assertThat(result.getRows()).containsExactly(Map.of("orderNumber", "A-1"));
         assertThat(result.isTruncated()).isFalse();
@@ -209,7 +198,7 @@ class AiToolsLlmDataQueryServiceTest {
         executionService.setHasMore(true);
 
         LlmQueryExecutionResult result = service.execute(
-                new LlmQueryExecutionRequest(PROMPT, storedQuery(), List.of(), null));
+                new LlmQueryExecutionRequest(PROMPT, storedQuery(), List.of()));
 
         assertThat(result.isTruncated()).isTrue();
     }
@@ -219,7 +208,7 @@ class AiToolsLlmDataQueryServiceTest {
         executionService.setExecuted(false);
         executionService.setExecutionError("table not found");
 
-        assertThatThrownBy(() -> service.execute(new LlmQueryExecutionRequest(PROMPT, storedQuery(), List.of(), null)))
+        assertThatThrownBy(() -> service.execute(new LlmQueryExecutionRequest(PROMPT, storedQuery(), List.of())))
                 .isInstanceOf(LlmDataQueryException.class)
                 .hasMessageContaining("table not found");
     }
@@ -230,7 +219,7 @@ class AiToolsLlmDataQueryServiceTest {
         executionService.setValid(false);
         executionService.setIssueMessage("parameter.missingInDto: dateFrom");
 
-        assertThatThrownBy(() -> service.execute(new LlmQueryExecutionRequest(PROMPT, storedQuery(), List.of(), null)))
+        assertThatThrownBy(() -> service.execute(new LlmQueryExecutionRequest(PROMPT, storedQuery(), List.of())))
                 .isInstanceOf(LlmDataQueryException.class)
                 .hasMessageContaining("dateFrom");
     }
@@ -241,7 +230,7 @@ class AiToolsLlmDataQueryServiceTest {
         // would otherwise leave the seam as an exception of an unrelated kind.
         executionService.setFailure(new IllegalStateException("LLM returned an empty response"));
 
-        assertThatThrownBy(() -> service.execute(new LlmQueryExecutionRequest(PROMPT, storedQuery(), List.of(), null)))
+        assertThatThrownBy(() -> service.execute(new LlmQueryExecutionRequest(PROMPT, storedQuery(), List.of())))
                 .isInstanceOf(LlmDataQueryException.class)
                 .cause()
                 .hasMessageContaining("empty response");
@@ -252,7 +241,7 @@ class AiToolsLlmDataQueryServiceTest {
         // Being refused the data is not a failure of the seam, and the run says so in its own words.
         executionService.setFailure(new AccessDeniedException("entity", "sales_Order"));
 
-        assertThatThrownBy(() -> service.execute(new LlmQueryExecutionRequest(PROMPT, storedQuery(), List.of(), null)))
+        assertThatThrownBy(() -> service.execute(new LlmQueryExecutionRequest(PROMPT, storedQuery(), List.of())))
                 .isInstanceOf(AccessDeniedException.class);
     }
 
@@ -264,7 +253,7 @@ class AiToolsLlmDataQueryServiceTest {
         //noinspection NullableProblems
         generationService.setWarnings(Arrays.asList(null, "Amounts are not converted"));
 
-        LlmDataQuery query = service.generate(new LlmQueryGenerationRequest(PROMPT, List.of(), null));
+        LlmDataQuery query = service.generate(new LlmQueryGenerationRequest(PROMPT, List.of(), List.of()));
 
         assertThat(query.getResultProperties()).containsExactly("orderNumber");
         assertThat(query.getWarnings()).containsExactly("Amounts are not converted");
@@ -280,7 +269,7 @@ class AiToolsLlmDataQueryServiceTest {
                 new GeneratedJpqlParameter("dateFrom", "java.time.LocalDate", LocalDate.of(2026, 8, 1)),
                 new GeneratedJpqlParameter("customerName", "java.lang.String", "Acme")));
 
-        LlmDataQuery query = service.generate(new LlmQueryGenerationRequest(PROMPT, List.of(), null));
+        LlmDataQuery query = service.generate(new LlmQueryGenerationRequest(PROMPT, List.of(), List.of()));
 
         assertThat(query.getParameters())
                 .extracting(LlmQueryParameter::getName, LlmQueryParameter::getJavaType)
@@ -292,7 +281,7 @@ class AiToolsLlmDataQueryServiceTest {
         generationService.setJpql("select o.number as orderNumber from sales_Order o where o.code like 'urn:isbn%'");
         generationService.setParameters(List.of());
 
-        LlmDataQuery query = service.generate(new LlmQueryGenerationRequest(PROMPT, List.of(), null));
+        LlmDataQuery query = service.generate(new LlmQueryGenerationRequest(PROMPT, List.of(), List.of()));
 
         assertThat(query.getParameters()).isEmpty();
     }
@@ -301,7 +290,7 @@ class AiToolsLlmDataQueryServiceTest {
     void testExecutionDoesNotCheckTheQueryAgain() {
         // A query is checked once per run, by LlmDataLoader, and executing it for every row of a parent band
         // must not repeat a check that parses the text and resolves it against the data model.
-        service.execute(new LlmQueryExecutionRequest(PROMPT, storedQuery(), List.of(), null));
+        service.execute(new LlmQueryExecutionRequest(PROMPT, storedQuery(), List.of()));
 
         assertThat(validationService.getValidations()).isZero();
     }
@@ -319,7 +308,7 @@ class AiToolsLlmDataQueryServiceTest {
     void testCheckedQueryCarriesNoArgumentValues() {
         service.validate(new LlmDataQuery(storedQuery().getJpql(), List.of("orderNumber"),
                 List.of(new LlmQueryParameter("dateFrom", "java.time.LocalDate", LocalDate.of(2026, 8, 1))),
-                null, List.of(), null));
+                null, List.of()));
 
         assertThat(validationService.getLastValidated().getParameters())
                 .extracting(GeneratedJpqlParameter::getName, GeneratedJpqlParameter::getValue)
@@ -331,7 +320,7 @@ class AiToolsLlmDataQueryServiceTest {
         // The add-on reports this one by executing nothing at all: valid, no error, nothing returned.
         executionService.setExecuted(false);
 
-        assertThatThrownBy(() -> service.execute(new LlmQueryExecutionRequest(PROMPT, storedQuery(), List.of(), null)))
+        assertThatThrownBy(() -> service.execute(new LlmQueryExecutionRequest(PROMPT, storedQuery(), List.of())))
                 .isInstanceOf(LlmDataQueryException.class)
                 .hasMessageContaining("read none of the columns");
     }
@@ -340,6 +329,6 @@ class AiToolsLlmDataQueryServiceTest {
         return new LlmDataQuery("select o.number as orderNumber from sales_Order o where o.date >= :dateFrom",
                 List.of("orderNumber"),
                 List.of(new LlmQueryParameter("dateFrom", "java.time.LocalDate", null)),
-                "Orders since the given date", List.of(), 150);
+                "Orders since the given date", List.of());
     }
 }

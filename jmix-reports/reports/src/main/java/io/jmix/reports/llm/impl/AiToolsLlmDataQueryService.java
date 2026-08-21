@@ -85,8 +85,7 @@ public class AiToolsLlmDataQueryService implements LlmDataQueryService {
         // element in them, so they are cleaned before the query is built out of them.
         return new LlmDataQuery(generatedQuery.getJpql(), retainNonNull(generatedQuery.getResultProperties()),
                 toQueryParameters(generatedQuery.getJpql(), generatedQuery.getParameters()),
-                generatedQuery.getExplanation(), retainNonNull(generatedQuery.getWarnings()),
-                generatedQuery.getMaxResults());
+                generatedQuery.getExplanation(), retainNonNull(generatedQuery.getWarnings()));
     }
 
     @Override
@@ -104,7 +103,6 @@ public class AiToolsLlmDataQueryService implements LlmDataQueryService {
     @Override
     public LlmQueryExecutionResult execute(LlmQueryExecutionRequest request) {
         LlmDataQuery query = request.getQuery();
-        Integer maxResults = request.getMaxResults() != null ? request.getMaxResults() : query.getMaxResults();
 
         JpqlExecutionResult result;
         try {
@@ -113,7 +111,7 @@ public class AiToolsLlmDataQueryService implements LlmDataQueryService {
                     query.getJpql(),
                     toExecutionParameters(request.getArguments()),
                     query.getResultProperties(),
-                    maxResults,
+                    null,
                     null));
         } catch (AccessDeniedException e) {
             // Being refused the data is not a failure of this seam: the caller reports it as what it is.
@@ -171,10 +169,6 @@ public class AiToolsLlmDataQueryService implements LlmDataQueryService {
         }
 
         appendCrossTabRules(userText, request);
-
-        if (request.getMaxResults() != null) {
-            userText.append("\n\nROW LIMIT: return at most ").append(request.getMaxResults()).append(" rows.");
-        }
 
         return userText.toString();
     }

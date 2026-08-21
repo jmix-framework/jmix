@@ -268,15 +268,6 @@
                                                   dataContainer="dataSetsDc"
                                                   property="text"/>
                                         <formLayout id="llmParamsForm" dataContainer="dataSetsDc" width="100%">
-                                            <textField id="llmMaxResultsField"
-                                                       property="llmMaxResults"
-                                                       label="msg://bandsTab.dataSetTypeLayout.llmMaxResultsField.label">
-                                                <validators>
-                                                    <positive/>
-                                                </validators>
-                                                <tooltip
-                                                        text="msg://bandsTab.dataSetTypeLayout.llmMaxResultsField.tooltip"/>
-                                            </textField>
                                             <responsiveSteps>
                                                 <responsiveStep minWidth="0" columns="1"/>
                                                 <responsiveStep minWidth="30em" columns="2"/>

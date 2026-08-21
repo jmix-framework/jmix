@@ -41,15 +41,11 @@ public class LlmDataQuery {
 
     protected List<String> warnings;
 
-    @Nullable
-    protected Integer maxResults;
-
     public LlmDataQuery(String jpql,
                         @Nullable List<String> resultProperties,
                         @Nullable List<LlmQueryParameter> parameters,
                         @Nullable String explanation,
-                        @Nullable List<String> warnings,
-                        @Nullable Integer maxResults) {
+                        @Nullable List<String> warnings) {
         checkNotNullArgument(jpql, "jpql is null");
 
         this.jpql = jpql;
@@ -57,7 +53,6 @@ public class LlmDataQuery {
         this.parameters = parameters == null ? List.of() : List.copyOf(parameters);
         this.explanation = explanation;
         this.warnings = warnings == null ? List.of() : List.copyOf(warnings);
-        this.maxResults = maxResults != null && maxResults > 0 ? maxResults : null;
     }
 
     /**
@@ -97,14 +92,5 @@ public class LlmDataQuery {
      */
     public List<String> getWarnings() {
         return warnings;
-    }
-
-    /**
-     * @return row limit proposed when the query was generated, or {@code null} if none was proposed — which is
-     * also what a stored zero or a negative number reads as, since a limit is a number of rows
-     */
-    @Nullable
-    public Integer getMaxResults() {
-        return maxResults;
     }
 }

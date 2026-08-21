@@ -65,7 +65,6 @@ public class LlmDataSetSerializationTest {
         assertThat(restoredDataSet.getType()).isEqualTo(DataSetType.LLM);
         assertThat(restoredDataSet.getText()).isEqualTo(PROMPT);
         assertThat(restoredDataSet.getLlmGeneratedQuery()).isEqualTo(GENERATED_QUERY);
-        assertThat(restoredDataSet.getLlmMaxResults()).isEqualTo(500);
     }
 
     @Test
@@ -74,8 +73,7 @@ public class LlmDataSetSerializationTest {
 
         Map<String, Object> additionalParams = dataSet.getAdditionalParams();
         assertThat(additionalParams)
-                .containsEntry(DataSet.LLM_GENERATED_QUERY, GENERATED_QUERY)
-                .containsEntry(DataSet.LLM_MAX_RESULTS, 500);
+                .containsEntry(DataSet.LLM_GENERATED_QUERY, GENERATED_QUERY);
     }
 
     @Test
@@ -105,7 +103,6 @@ public class LlmDataSetSerializationTest {
         dataSet.setType(DataSetType.LLM);
         dataSet.setText(PROMPT);
         dataSet.setLlmGeneratedQuery(GENERATED_QUERY);
-        dataSet.setLlmMaxResults(500);
         dataBand.setDataSets(List.of(dataSet));
 
         Set<BandDefinition> bands = new LinkedHashSet<>();

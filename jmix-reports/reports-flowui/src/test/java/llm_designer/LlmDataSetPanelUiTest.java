@@ -511,7 +511,6 @@ public class LlmDataSetPanelUiTest {
         selectBand(view, TestLlmReportUtil.DATA_BAND_NAME);
 
         assertThat(this.<JmixTextArea>findComponent(view, "llmPromptField").isReadOnly()).isTrue();
-        assertThat(this.<TypedTextField<Integer>>findComponent(view, "llmMaxResultsField").isReadOnly()).isTrue();
         assertThat(this.<JmixButton>findComponent(view, "llmGenerateBtn").isEnabled()).isFalse();
         assertThat(this.<JmixButton>findComponent(view, "llmEditQueryBtn").isEnabled()).isFalse();
     }
@@ -592,7 +591,7 @@ public class LlmDataSetPanelUiTest {
         ReportDetailView view = openReportDesignerOnLlmDataSet();
         DataSet dataSet = selectedDataSet(view);
         dataSet.setLlmGeneratedQuery(serializer.toJson(new LlmDataQuery(
-                "select o.number from sales_Order o", List.of("", "  "), List.of(), null, List.of(), null)));
+                "select o.number from sales_Order o", List.of("", "  "), List.of(), null, List.of())));
 
         this.<JmixButton>findComponent(view, "saveBtn").click();
 
@@ -756,7 +755,7 @@ public class LlmDataSetPanelUiTest {
 
     protected LlmDataQuery generatedQuery(String alias) {
         return new LlmDataQuery("select o.number as " + alias + " from sales_Order o", List.of(alias),
-                List.of(), null, List.of(), null);
+                List.of(), null, List.of());
     }
 
     /**

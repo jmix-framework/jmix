@@ -90,7 +90,6 @@ public class LlmDataLoader implements ReportDataLoader {
 
         RunScope scope = runScopeOf(parentBand);
         Map<String, Object> additionalParams = reportQuery.getAdditionalParams();
-        Integer maxResults = toMaxResults(additionalParams.get(DataSet.LLM_MAX_RESULTS), reportQuery, scope);
 
         String emptyAxis = firstEmptyCrossTabAxis(params);
         if (emptyAxis != null) {
@@ -114,32 +113,13 @@ public class LlmDataLoader implements ReportDataLoader {
 
             log.debug("Executing the query of data set [{}]: {}", reportQuery.getName(), query.getJpql());
             LlmQueryExecutionResult result = llmDataQueryService.execute(new LlmQueryExecutionRequest(prompt, query,
-                    resolveArguments(reportQuery, query, availableParameters, params), maxResults));
-
-            warnIfTruncated(reportQuery, result, scope);
+                    resolveArguments(reportQuery, query, availableParameters, params)));
 
             return toBandRows(result.getRows(), query.getResultProperties());
         } catch (LlmDataQueryException e) {
             throw new DataLoadingException(
                     String.format("An error occurred while loading data for data set [%s]", reportQuery.getName()), e);
         }
-    }
-
-    /**
-     * Says in the log that the row limit cut the result short. A band built from a cut-short result looks
-     * complete, and the limits that cut it are the add-on's own properties, which the data set cannot raise on
-     * its own.
-     */
-    protected void warnIfTruncated(ReportQuery reportQuery, LlmQueryExecutionResult result, RunScope scope) {
-        if (!result.isTruncated()) {
-            return;
-        }
-
-        scope.warnOnce(reportQuery, "truncated",
-                () -> log.warn("The query of data set [{}] returned more rows than the limit in force, so the band "
-                        + "shows only the first [{}] of them; raise the row limit of the data set and the add-on's "
-                        + "jmix.aitools.dataload.jpql-execution-max-result properties to print the rest",
-                        reportQuery.getName(), result.getRows().size()));
     }
 
     /**
@@ -169,31 +149,6 @@ public class LlmDataLoader implements ReportDataLoader {
 
         //noinspection NullableProblems
         return bandRows;
-    }
-
-    /**
-     * Reads the row limit stored with the data set. Taken as a number rather than cast, so a value restored as
-     * another numeric type is a limit and not a failure of the run.
-     * <p>
-     * Only a positive limit is a limit. The designer and the annotated-report builder reject anything else, but
-     * an imported document can carry it: zero would silently produce an empty band and a negative number an
-     * error from deep inside the add-on, so such a value is dropped and the run goes on without a limit.
-     */
-    @Nullable
-    protected Integer toMaxResults(@Nullable Object value, ReportQuery reportQuery, RunScope scope) {
-        if (!(value instanceof Number number)) {
-            return null;
-        }
-
-        int maxResults = number.intValue();
-        if (maxResults > 0) {
-            return maxResults;
-        }
-
-        scope.warnOnce(reportQuery, "row-limit",
-                () -> log.warn("Data set [{}] stores a row limit of [{}], which is not a number of rows; "
-                        + "the query runs without a limit of its own", reportQuery.getName(), maxResults));
-        return null;
     }
 
     /**

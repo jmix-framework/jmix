@@ -95,7 +95,7 @@ public class LlmDataSetGenerationSupport {
         collectCrossTabAxisColumns(dataSet, parameters, requiredResultProperties);
 
         return new LlmQueryGenerationRequest(StringUtils.defaultString(dataSet.getText()),
-                List.copyOf(parameters.values()), requiredResultProperties, dataSet.getLlmMaxResults());
+                List.copyOf(parameters.values()), requiredResultProperties);
     }
 
     /**
@@ -109,7 +109,6 @@ public class LlmDataSetGenerationSupport {
     public boolean isGenerationRequestCurrent(DataSet dataSet, LlmQueryGenerationRequest request) {
         LlmQueryGenerationRequest current = createGenerationRequest(dataSet);
         return Objects.equals(current.getPrompt(), request.getPrompt())
-                && Objects.equals(current.getMaxResults(), request.getMaxResults())
                 && current.getRequiredResultProperties().equals(request.getRequiredResultProperties())
                 && sameParameterDeclarations(current.getAvailableParameters(), request.getAvailableParameters());
     }

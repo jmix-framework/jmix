@@ -45,7 +45,6 @@ public class DataSet implements ReportQuery, CopyingSystemState<DataSet> {
     public static final String JSON_PATH_QUERY = "jsonPathQuery";
     public static final String JSON_INPUT_PARAMETER = "jsonSourceInputParameter";
     public static final String LLM_GENERATED_QUERY = "llmGeneratedQuery";
-    public static final String LLM_MAX_RESULTS = "llmMaxResults";
 
     private static final long serialVersionUID = -3706206933129963303L;
 
@@ -80,8 +79,6 @@ public class DataSet implements ReportQuery, CopyingSystemState<DataSet> {
     protected ReportInputParameter jsonSourceInputParameter;
     @JmixProperty
     protected String llmGeneratedQuery;
-    @JmixProperty
-    protected Integer llmMaxResults;
     @JmixProperty
     protected String entityParamName;
     @JmixProperty
@@ -267,19 +264,6 @@ public class DataSet implements ReportQuery, CopyingSystemState<DataSet> {
         this.llmGeneratedQuery = llmGeneratedQuery;
     }
 
-    /**
-     * @return maximum number of rows the {@link DataSetType#LLM} query may return, or {@code null} to
-     * apply the add-on's default limit
-     */
-    @Nullable
-    public Integer getLlmMaxResults() {
-        return llmMaxResults;
-    }
-
-    public void setLlmMaxResults(@Nullable Integer llmMaxResults) {
-        this.llmMaxResults = llmMaxResults;
-    }
-
     public JsonInputProvider getJsonInputProvider() {
         return jsonInputProvider;
     }
@@ -309,7 +293,6 @@ public class DataSet implements ReportQuery, CopyingSystemState<DataSet> {
         params.put(JSON_INPUT_PARAMETER, jsonSourceInputParameter);
         params.put(JSON_INPUT_PROVIDER, jsonInputProvider);
         params.put(LLM_GENERATED_QUERY, llmGeneratedQuery);
-        params.put(LLM_MAX_RESULTS, llmMaxResults);
 
         return params;
     }

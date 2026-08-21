@@ -135,6 +135,6 @@ public class TestLlmDataQueryService implements LlmDataQueryService {
 
     protected LlmDataQuery defaultGeneratedQuery() {
         return new LlmDataQuery(GENERATED_JPQL, List.of("orderNumber"), List.of(),
-                "All order numbers", List.of(), null);
+                "All order numbers", List.of());
     }
 }

@@ -80,6 +80,9 @@ public class UnconstrainedDataManagerImpl implements UnconstrainedDataManager {
     protected ObjectProvider<CrossDataStoreReferenceLoader> crossDataStoreReferenceLoaderProvider;
 
     @Autowired
+    protected FetchPlanRepository fetchPlanRepository;
+
+    @Autowired
     protected ExtendedEntities extendedEntities;
 
     @Autowired
@@ -399,7 +402,11 @@ public class UnconstrainedDataManagerImpl implements UnconstrainedDataManager {
                     if (entityStates.isLoaded(entity, relatedPropertyName)) {
                         Object refEntity = EntityValues.getValue(entity, property.getName());
                         if (refEntity == null) {
-                            EntityValues.setValue(entity, relatedPropertyName, null);
+                            // A new entity has no stale reference to clear: its null reference means
+                            // "never resolved", and the related property value may have been set directly.
+                            if (!entityStates.isNew(entity)) {
+                                EntityValues.setValue(entity, relatedPropertyName, null);
+                            }
                         } else {
                             Object refEntityId = EntityValues.getId(refEntity);
                             MetaClass refEntityMetaClass = metadata.getClass(refEntity);
@@ -428,10 +435,16 @@ public class UnconstrainedDataManagerImpl implements UnconstrainedDataManager {
         return repeatRequired;
     }
 
-    protected void readCrossDataStoreReferences(Collection<?> entities, FetchPlan fetchPlan, MetaClass metaClass,
+    protected void readCrossDataStoreReferences(Collection<?> entities, @Nullable FetchPlan fetchPlan, MetaClass metaClass,
                                                 boolean joinTransaction) {
-        if (stores.getAdditional().isEmpty() || entities.isEmpty() || fetchPlan == null)
+        if (stores.getAdditional().isEmpty() || entities.isEmpty())
             return;
+
+        if (fetchPlan == null) {
+            // Data stores load with the base fetch plan when it is not specified explicitly,
+            // so process cross-datastore references against the same plan.
+            fetchPlan = fetchPlanRepository.getFetchPlan(metaClass, FetchPlan.BASE);
+        }
 
         CrossDataStoreReferenceLoader crossDataStoreReferenceLoader = crossDataStoreReferenceLoaderProvider.getObject(
                 metaClass, fetchPlan, joinTransaction);

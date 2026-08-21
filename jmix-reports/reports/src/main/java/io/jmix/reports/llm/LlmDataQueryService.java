@@ -20,8 +20,10 @@ import java.util.List;
 
 
 /**
- * Turns a data set prompt into a JPQL query and executes it. This is the Reports-side integration seam: Reports
- * auto-configuration supplies the default AI Tools-backed implementation, while applications may substitute one.
+ * Turns a data set prompt into a JPQL query and says whether that query would run. This is the Reports-side
+ * integration seam, used while a report is authored in the designer; a report run executes the stored query
+ * itself and asks nothing of this service. Reports auto-configuration supplies the default AI Tools-backed
+ * implementation, while applications may substitute one.
  */
 public interface LlmDataQueryService {
 
@@ -54,18 +56,4 @@ public interface LlmDataQueryService {
      * @return one message per problem, in no particular order, or an empty list if the query is runnable
      */
     List<String> validate(LlmDataQuery query);
-
-    /**
-     * Executes a query already found runnable and returns its rows. The caller checks the query with {@link #validate(LlmDataQuery)} first — a report run does it
-     * once and then executes the query for every row of the band's parent — so an implementation is not
-     * expected to check it again.
-     * <p>
-     * Data access constraints of the current user apply, so the rows may be narrower or shorter than the
-     * query alone would suggest.
-     *
-     * @param request query and the arguments to bind
-     * @return the rows and whether more of them were left behind
-     * @throws LlmDataQueryException if the query is rejected as invalid or its execution fails
-     */
-    LlmQueryExecutionResult execute(LlmQueryExecutionRequest request);
 }

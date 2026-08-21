@@ -16,29 +16,21 @@
 
 package llm_data_set.test_support;
 
+import io.jmix.core.AccessConstraintsRegistry;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 
 /**
- * Wires the LLM data set support the way an application does, but on top of {@link TestLlmDataQueryService} for
- * generation and of {@link TestLlmDataLoader} for the one step that would reach a database.
+ * Leaves the loader Reports declares in place — a test on this configuration executes queries for real — and
+ * adds a constraint a test can use to narrow what the current user may read.
  */
 @Configuration
-public class LlmDataSetTestConfiguration {
+public class LlmQueryExecutionTestConfiguration {
 
     @Bean
-    public TestLlmDataQueryService testLlmDataQueryService() {
-        return new TestLlmDataQueryService();
-    }
-
-    /**
-     * Replaces the loader Reports declares. Marked primary because the loader is an ordinary Reports bean now:
-     * the factory injects it by type, and this one has to win.
-     */
-    @Bean
-    @Primary
-    public TestLlmDataLoader testLlmDataLoader() {
-        return new TestLlmDataLoader();
+    public DenyingLoadValuesConstraint denyingLoadValuesConstraint(AccessConstraintsRegistry registry) {
+        DenyingLoadValuesConstraint constraint = new DenyingLoadValuesConstraint();
+        registry.register(constraint);
+        return constraint;
     }
 }

@@ -16,6 +16,7 @@
 
 package llm_data_set;
 
+import io.jmix.core.DataManager;
 import io.jmix.core.Metadata;
 import io.jmix.reports.ReportsSerialization;
 import io.jmix.reports.ReportsTestConfiguration;
@@ -26,7 +27,6 @@ import io.jmix.reports.entity.Orientation;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportOutputType;
 import io.jmix.reports.entity.ReportTemplate;
-import io.jmix.reports.exception.ReportingException;
 import io.jmix.reports.libintegration.JmixGroovyDataLoader;
 import io.jmix.reports.libintegration.JmixJsonDataLoader;
 import io.jmix.reports.libintegration.JmixSqlDataLoader;
@@ -34,14 +34,17 @@ import io.jmix.reports.libintegration.JpqlDataLoader;
 import io.jmix.reports.libintegration.LlmDataLoader;
 import io.jmix.reports.libintegration.MultiEntityDataLoader;
 import io.jmix.reports.libintegration.SingleEntityDataLoader;
-import io.jmix.reports.libintegration.UnavailableLlmDataLoader;
 import io.jmix.reports.runner.ReportRunner;
+import io.jmix.reports.yarg.reporting.ReportOutputDocument;
+import io.jmix.reports.test_support.entity.Publisher;
 import io.jmix.reports.test_support.AuthenticatedAsSystem;
 import io.jmix.reports.yarg.loaders.factory.ReportLoaderFactory;
 import llm_data_set.test_support.LlmDataSetTestConfiguration;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -51,13 +54,18 @@ import java.util.List;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
- * The loader factory serves the LLM data set type either way: with the AI Tools add-on by the loader that runs
- * such a data set, and without it by the one that says the add-on is missing.
+ * The loader of the LLM data set type is an ordinary Reports bean: a run executes the query stored with the
+ * report and asks nothing of the AI Tools add-on, so such a report runs whether the add-on is there or not.
  */
 class LlmLoaderRegistrationTest {
+
+    /**
+     * Names this test's own row. The module's tests share one database and other classes fill this table too,
+     * so the report selects its own row and the cleanup deletes only that one.
+     */
+    protected static final String OWN_PUBLISHER = "LlmLoaderRegistration publisher";
 
     @Nested
     @ExtendWith(SpringExtension.class)
@@ -93,12 +101,21 @@ class LlmLoaderRegistrationTest {
         @Autowired
         protected Metadata metadata;
 
+        @Autowired
+        protected DataManager dataManager;
+
+        @Autowired
+        protected JdbcTemplate jdbcTemplate;
+
+        @AfterEach
+        void cleanup() {
+            jdbcTemplate.update("delete from PUBLISHER where NAME = ?", OWN_PUBLISHER);
+        }
+
         @Test
-        void testLlmLoaderTypeIsServedByTheLoaderThatNamesTheAddOn() {
-            // The type is registered either way: an application without the add-on must learn what is missing
-            // from the run of a report it did not author, not from a message about an unknown loader type.
+        void testLlmLoaderTypeIsServedWithoutTheAddOn() {
             assertThat(loaderFactory.createDataLoader(DataSetType.LLM.getCode()))
-                    .isInstanceOf(UnavailableLlmDataLoader.class);
+                    .isInstanceOf(LlmDataLoader.class);
         }
 
         @Test
@@ -114,14 +131,16 @@ class LlmLoaderRegistrationTest {
         }
 
         @Test
-        void testRunningAReportWithAnLlmBandFailsNamingTheAddOnAndTheDataSet() {
-            // A report authored elsewhere keeps its data set type: the designer can only hide the type from the
-            // combo, so the run is where an application without the add-on finds out.
-            // The runner folds the loader's failure into the message of a ReportingException instead of keeping
-            // it as a cause, so what an application shows is that message.
-            assertThatThrownBy(() -> reportRunner.byReportEntity(reportWithLlmBand()).run())
-                    .isInstanceOf(ReportingException.class)
-                    .hasMessageContainingAll("Orders", "AI Tools", DataSetType.LLM.getCode());
+        void testReportWithAnLlmBandRunsWithoutTheAddOn() {
+            // The whole point of executing the stored query here: a report authored where the add-on is present
+            // runs where it is absent, because nothing on this path needs a model or the add-on's services.
+            Publisher publisher = metadata.create(Publisher.class);
+            publisher.setName(OWN_PUBLISHER);
+            dataManager.unconstrained().save(publisher);
+
+            ReportOutputDocument document = reportRunner.byReportEntity(reportWithLlmBand()).run();
+
+            assertThat(new String(document.getContent(), StandardCharsets.UTF_8)).contains(OWN_PUBLISHER);
         }
 
         protected Report reportWithLlmBand() {
@@ -136,20 +155,21 @@ class LlmLoaderRegistrationTest {
 
             BandDefinition ordersBand = metadata.create(BandDefinition.class);
             ordersBand.setReport(report);
-            ordersBand.setName("Orders");
+            ordersBand.setName("Publishers");
             ordersBand.setOrientation(Orientation.HORIZONTAL);
             ordersBand.setPosition(0);
             ordersBand.setParentBandDefinition(rootBand);
             rootBand.getChildrenBandDefinitions().add(ordersBand);
 
             DataSet dataSet = metadata.create(DataSet.class);
-            dataSet.setName("Orders");
+            dataSet.setName("Publishers");
             dataSet.setBandDefinition(ordersBand);
             dataSet.setType(DataSetType.LLM);
-            dataSet.setText("Order numbers of this month");
+            dataSet.setText("Names of the publishers");
             dataSet.setLlmGeneratedQuery("""
-                    {"jpql":"select o.number as orderNumber from sales_Order o",\
-                    "resultProperties":["orderNumber"]}""");
+                    {"jpql":"select p.name as publisherName from Publisher p \
+                    where p.name = 'LlmLoaderRegistration publisher'",\
+                    "resultProperties":["publisherName"]}""");
             ordersBand.setDataSets(List.of(dataSet));
             report.setBands(Set.of(rootBand, ordersBand));
 
@@ -158,7 +178,7 @@ class LlmLoaderRegistrationTest {
             template.setCode("default");
             template.setReportOutputType(ReportOutputType.CSV);
             template.setName("LlmReport.csv");
-            template.setContent("Number\n${orderNumber}\n".getBytes(StandardCharsets.UTF_8));
+            template.setContent("Publisher\n${publisherName}\n".getBytes(StandardCharsets.UTF_8));
             report.setTemplates(List.of(template));
             report.setDefaultTemplate(template);
 

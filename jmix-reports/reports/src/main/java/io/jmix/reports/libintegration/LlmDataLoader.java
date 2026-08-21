@@ -16,13 +16,14 @@
 
 package io.jmix.reports.libintegration;
 
+import io.jmix.core.DataManager;
+import io.jmix.core.FluentValuesLoader;
+import io.jmix.core.entity.KeyValueEntity;
+import io.jmix.core.security.AccessDeniedException;
 import io.jmix.reports.entity.DataSet;
 import io.jmix.reports.entity.DataSetType;
 import io.jmix.reports.llm.LlmDataQuery;
 import io.jmix.reports.llm.LlmDataQueryException;
-import io.jmix.reports.llm.LlmDataQueryService;
-import io.jmix.reports.llm.LlmQueryExecutionRequest;
-import io.jmix.reports.llm.LlmQueryExecutionResult;
 import io.jmix.reports.llm.LlmQueryParameter;
 import io.jmix.reports.llm.LlmQueryParameterNames;
 import io.jmix.reports.llm.impl.LlmDataQuerySerializer;
@@ -31,6 +32,7 @@ import io.jmix.reports.yarg.loaders.ReportDataLoader;
 import io.jmix.reports.yarg.structure.BandData;
 import io.jmix.reports.yarg.structure.ReportQuery;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
@@ -41,7 +43,6 @@ import java.lang.ref.SoftReference;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -65,7 +66,7 @@ public class LlmDataLoader implements ReportDataLoader {
     private static final Logger log = LoggerFactory.getLogger(LlmDataLoader.class);
 
     @Autowired
-    protected LlmDataQueryService llmDataQueryService;
+    protected DataManager dataManager;
 
     @Autowired
     protected LlmDataQuerySerializer llmDataQuerySerializer;
@@ -82,12 +83,6 @@ public class LlmDataLoader implements ReportDataLoader {
     @Override
     public List<Map<String, Object>> loadData(ReportQuery reportQuery, @Nullable BandData parentBand,
                                               Map<String, Object> params) {
-        String prompt = reportQuery.getScript();
-        if (StringUtils.isBlank(prompt)) {
-            throw new DataLoadingException(
-                    String.format("A prompt is required for data set [%s]", reportQuery.getName()));
-        }
-
         RunScope scope = runScopeOf(parentBand);
         Map<String, Object> additionalParams = reportQuery.getAdditionalParams();
 
@@ -105,20 +100,71 @@ public class LlmDataLoader implements ReportDataLoader {
                 collectAvailableParameters(reportQuery, params, parentBand, scope);
         Map<String, LlmQueryParameter> availableParameters = collectedParameters.availableParameters();
 
+        LlmDataQuery query = resolveQuery(reportQuery, additionalParams, scope);
+        checkCrossTabAxesAreLinkable(reportQuery, query, params, availableParameters,
+                collectedParameters.requiredResultProperties());
+        checkQueryOnlyReads(reportQuery, query);
+
+        List<LlmQueryParameter> arguments = resolveArguments(reportQuery, query, availableParameters, params);
+        log.debug("Executing the query of data set [{}]: {}", reportQuery.getName(), query.getJpql());
+
+        List<Map<String, @Nullable Object>> rows;
         try {
-            LlmDataQuery query = resolveQuery(reportQuery, additionalParams, scope);
-            checkCrossTabAxesAreLinkable(reportQuery, query, params, availableParameters,
-                    collectedParameters.requiredResultProperties());
-            checkQueryIsRunnable(query, scope);
+            rows = executeQuery(query, arguments);
+        } catch (AccessDeniedException e) {
+            // Being refused the data is not a failure of this data set: the engine reports it as what it is.
+            throw e;
+        } catch (RuntimeException e) {
+            // A query written against the data model of another moment is the likely reason a run fails here,
+            // and the report tells its author where such a query is fixed.
+            throw new DataLoadingException(String.format(
+                    "The stored query of data set [%s] failed: %s. Generate it again in the report designer if it "
+                            + "no longer fits the data model", reportQuery.getName(), e.getMessage()), e);
+        }
 
-            log.debug("Executing the query of data set [{}]: {}", reportQuery.getName(), query.getJpql());
-            LlmQueryExecutionResult result = llmDataQueryService.execute(new LlmQueryExecutionRequest(prompt, query,
-                    resolveArguments(reportQuery, query, availableParameters, params)));
+        return toBandRows(rows, query.getResultProperties());
+    }
 
-            return toBandRows(result.getRows(), query.getResultProperties());
-        } catch (LlmDataQueryException e) {
-            throw new DataLoadingException(
-                    String.format("An error occurred while loading data for data set [%s]", reportQuery.getName()), e);
+    /**
+     * Executes the stored query through {@code DataManager}, so that the entity and attribute permissions of the
+     * current user and the row-level policies of the query's root entity apply as they do to any other data set.
+     * An attribute the user may not read comes back as {@code null}.
+     * <p>
+     * Values are bound as named JPQL parameters, never inlined into the text: the query is written once and run
+     * with whatever the report parameters and the parent band hold this time.
+     *
+     * @param query     stored query to execute
+     * @param arguments values to bind, one per parameter the query references
+     * @return the rows as the query returned them, keyed by the query's result properties
+     */
+    protected List<Map<String, @Nullable Object>> executeQuery(LlmDataQuery query,
+                                                               List<LlmQueryParameter> arguments) {
+        FluentValuesLoader valuesLoader = dataManager.loadValues(query.getJpql())
+                .properties(query.getResultProperties());
+        for (LlmQueryParameter argument : arguments) {
+            valuesLoader.parameter(argument.getName(), argument.getValue());
+        }
+
+        List<Map<String, @Nullable Object>> rows = new ArrayList<>();
+        for (KeyValueEntity row : valuesLoader.list()) {
+            Map<String, @Nullable Object> values = new LinkedHashMap<>();
+            for (String property : query.getResultProperties()) {
+                values.put(property, row.getValue(property));
+            }
+            rows.add(values);
+        }
+        return rows;
+    }
+
+    /**
+     * Refuses a stored query that is not a select. The designer checks a query when it is generated or edited,
+     * but a report also arrives by import, which brings whatever text the file holds — and this loader binds
+     * values into that text and runs it.
+     */
+    protected void checkQueryOnlyReads(ReportQuery reportQuery, LlmDataQuery query) {
+        if (!Strings.CI.startsWith(query.getJpql().stripLeading(), "select")) {
+            throw new DataLoadingException(String.format(
+                    "The stored query of data set [%s] is not a select, so it is not executed", reportQuery.getName()));
         }
     }
 
@@ -169,8 +215,14 @@ public class LlmDataLoader implements ReportDataLoader {
                     reportQuery.getName()));
         }
 
-        LlmDataQuery storedQuery =
-                scope.storedQuery(storedDocument, () -> llmDataQuerySerializer.fromJson(storedDocument));
+        LlmDataQuery storedQuery;
+        try {
+            storedQuery = scope.storedQuery(storedDocument, () -> llmDataQuerySerializer.fromJson(storedDocument));
+        } catch (LlmDataQueryException e) {
+            throw new DataLoadingException(String.format(
+                    "The stored query of data set [%s] cannot be read: generate it again in the report designer",
+                    reportQuery.getName()), e);
+        }
         if (storedQuery == null) {
             throw new DataLoadingException(String.format(
                     "The stored query of data set [%s] cannot be read: generate it again in the report designer",
@@ -181,30 +233,7 @@ public class LlmDataLoader implements ReportDataLoader {
     }
 
     /**
-     * Fails the data set with what makes its query unrunnable, before execution is ever given it.
-     * <p>
-     * Checked here rather than left to execution, because the add-on answers an invalid query by asking a model
-     * to repair it — which spends tokens on a report run, sends this run's arguments to the model, and then
-     * binds the values the model answers with instead of the ones the run computed. A run executes the query it
-     * was given or fails saying why.
-     * <p>
-     * Checked once per query per run: a check parses the text and resolves it against the data model, and the
-     * query does not change while the run executes it, so a band loaded once per parent row would otherwise
-     * pay for the very same verdict on every row.
-     */
-    protected void checkQueryIsRunnable(LlmDataQuery query, RunScope scope) {
-        List<String> problems = scope.validated(query, () -> llmDataQueryService.validate(query));
-        if (!problems.isEmpty()) {
-            throw new LlmDataQueryException("The query was rejected as invalid: " + String.join("; ", problems));
-        }
-    }
-
-    /**
-     * Identifies a generation within one run: the same data set asked the same question with the same
-     * parameters offered gets the same query, whatever parent row it is loaded for.
-     */
-    /**
-     * Returns what the run this call belongs to has already generated. Runs are told apart by the band data the
+     * Returns what the run this call belongs to has already resolved. Runs are told apart by the band data the
      * hierarchy is rooted at, which is created once per run and shared by every band of it.
      */
     protected RunScope runScopeOf(@Nullable BandData parentBand) {
@@ -543,7 +572,6 @@ public class LlmDataLoader implements ReportDataLoader {
 
         protected WeakReference<@Nullable BandData> rootBand = new WeakReference<>(null);
         protected Map<String, Optional<LlmDataQuery>> storedQueries = new LinkedHashMap<>();
-        protected Map<LlmDataQuery, List<String>> validatedQueries = new IdentityHashMap<>();
         /**
          * Held weakly, as the root band is and for the same reason: a data set belongs to a report, whose bands,
          * parameters and templates — the content of a template included — would otherwise stay reachable from a
@@ -558,7 +586,6 @@ public class LlmDataLoader implements ReportDataLoader {
 
             this.rootBand = new WeakReference<>(rootBand);
             storedQueries = new LinkedHashMap<>();
-            validatedQueries = new IdentityHashMap<>();
             warnings = new WeakHashMap<>();
         }
 
@@ -570,14 +597,6 @@ public class LlmDataLoader implements ReportDataLoader {
         @Nullable
         protected LlmDataQuery storedQuery(String document, Supplier<@Nullable LlmDataQuery> reading) {
             return storedQueries.computeIfAbsent(document, key -> Optional.ofNullable(reading.get())).orElse(null);
-        }
-
-        /**
-         * Returns what a query was found wrong with, asking about each query once. The queries of a run are the
-         * memoized ones above, so the same instance arrives here on every parent row and is checked on the first.
-         */
-        protected List<String> validated(LlmDataQuery query, Supplier<List<String>> validation) {
-            return validatedQueries.computeIfAbsent(query, key -> validation.get());
         }
 
         /**

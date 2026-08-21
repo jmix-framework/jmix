@@ -61,9 +61,4 @@ public class TestLlmDataQueryService implements LlmDataQueryService {
         return new LlmDataQuery(GENERATED_JPQL, List.of("orderNumber"), List.of(), "All order numbers",
                 List.of());
     }
-
-    @Override
-    public LlmQueryExecutionResult execute(LlmQueryExecutionRequest request) {
-        return new LlmQueryExecutionResult(List.of(), false);
-    }
 }

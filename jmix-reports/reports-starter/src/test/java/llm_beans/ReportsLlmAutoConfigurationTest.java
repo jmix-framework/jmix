@@ -23,11 +23,8 @@ import io.jmix.autoconfigure.eclipselink.EclipselinkAutoConfiguration;
 import io.jmix.autoconfigure.reports.ReportsLlmAutoConfiguration;
 import io.jmix.core.cluster.ClusterApplicationEventChannelSupplier;
 import io.jmix.core.cluster.LocalApplicationEventChannelSupplier;
-import io.jmix.reports.libintegration.LlmDataLoader;
 import io.jmix.reports.llm.LlmDataQuery;
 import io.jmix.reports.llm.LlmDataQueryService;
-import io.jmix.reports.llm.LlmQueryExecutionRequest;
-import io.jmix.reports.llm.LlmQueryExecutionResult;
 import io.jmix.reports.llm.LlmQueryGenerationRequest;
 import io.jmix.reports.llm.impl.LlmDataQuerySerializer;
 import org.junit.jupiter.api.Test;
@@ -44,7 +41,9 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * The LLM data set beans exist only while the AI Tools data-load subsystem does.
+ * The generation service exists only while the AI Tools data-load subsystem does. It is the only bean this
+ * auto-configuration contributes: the loader of the data set type is an ordinary Reports bean, because a report
+ * run executes the query stored with the report and needs nothing of the add-on.
  */
 public class ReportsLlmAutoConfigurationTest {
 
@@ -59,36 +58,33 @@ public class ReportsLlmAutoConfigurationTest {
             .withUserConfiguration(UserConfiguration.class);
 
     @Test
-    void testLlmBeansPresentWhenTheAddOnIsOnBoard() {
+    void testServiceIsPresentWhenTheAddOnIsOnBoard() {
         contextRunner.run(context -> {
             assertThat(context).hasNotFailed();
             assertThat(context).hasSingleBean(LlmDataQueryService.class);
-            assertThat(context).hasSingleBean(LlmDataLoader.class);
         });
     }
 
     @Test
-    void testNoLlmBeansWhenTheDataLoadSubsystemIsDisabled() {
+    void testNoServiceWhenTheDataLoadSubsystemIsDisabled() {
         contextRunner.withPropertyValues("jmix.aitools.dataload.enabled=false")
                 .run(context -> {
                     assertThat(context).hasNotFailed();
                     assertThat(context).doesNotHaveBean(LlmDataQueryService.class);
-                    assertThat(context).doesNotHaveBean(LlmDataLoader.class);
                 });
     }
 
     @Test
-    void testNoLlmBeansWhenTheWholeAddOnIsDisabled() {
+    void testNoServiceWhenTheWholeAddOnIsDisabled() {
         contextRunner.withPropertyValues("jmix.aitools.enabled=false")
                 .run(context -> {
                     assertThat(context).hasNotFailed();
                     assertThat(context).doesNotHaveBean(LlmDataQueryService.class);
-                    assertThat(context).doesNotHaveBean(LlmDataLoader.class);
                 });
     }
 
     @Test
-    void testNoLlmBeansWhenTheAddOnIsNotOnTheClasspath() {
+    void testNoServiceWhenTheAddOnIsNotOnTheClasspath() {
         new ApplicationContextRunner()
                 .withConfiguration(AutoConfigurations.of(ReportsLlmAutoConfiguration.class))
                 .withClassLoader(new FilteredClassLoader(EntityDataLoadGenerationService.class))
@@ -96,13 +92,13 @@ public class ReportsLlmAutoConfigurationTest {
                 .run(context -> {
                     assertThat(context).hasNotFailed();
                     assertThat(context).doesNotHaveBean(LlmDataQueryService.class);
-                    assertThat(context).doesNotHaveBean(LlmDataLoader.class);
                 });
     }
 
     @Test
-    void testLoaderIsDeclaredForAServiceAnApplicationSubstitutes() {
-        // The seam is meant to be replaceable, and a data set type the designer offers has to be one that runs.
+    void testServiceOfAnApplicationIsLeftInPlace() {
+        // The seam is meant to be replaceable: an application can generate queries its own way, with or without
+        // the add-on on the classpath.
         new ApplicationContextRunner()
                 .withConfiguration(AutoConfigurations.of(ReportsLlmAutoConfiguration.class))
                 .withClassLoader(new FilteredClassLoader(EntityDataLoadGenerationService.class))
@@ -110,7 +106,7 @@ public class ReportsLlmAutoConfigurationTest {
                 .run(context -> {
                     assertThat(context).hasNotFailed();
                     assertThat(context).hasSingleBean(LlmDataQueryService.class);
-                    assertThat(context).hasSingleBean(LlmDataLoader.class);
+                    assertThat(context.getBean(LlmDataQueryService.class).isGenerationAvailable()).isTrue();
                 });
     }
 
@@ -134,11 +130,6 @@ public class ReportsLlmAutoConfigurationTest {
                 @Override
                 public List<String> validate(LlmDataQuery query) {
                     return List.of();
-                }
-
-                @Override
-                public LlmQueryExecutionResult execute(LlmQueryExecutionRequest request) {
-                    return new LlmQueryExecutionResult(List.of(), false);
                 }
             };
         }

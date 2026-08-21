@@ -18,7 +18,6 @@ package io.jmix.autoconfigure.reports;
 
 import io.jmix.aitools.dataload.generation.EntityDataLoadGenerationService;
 import io.jmix.reports.entity.DataSetType;
-import io.jmix.reports.libintegration.LlmDataLoader;
 import io.jmix.reports.llm.LlmDataQueryService;
 import io.jmix.reports.llm.impl.AiToolsLlmDataQueryService;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -28,12 +27,12 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean;
 
 /**
- * Declares the beans of the {@link DataSetType#LLM} data set type.
+ * Declares the service that turns the prompt of a {@link DataSetType#LLM} data set into a query and checks it.
  * <p>
- * The service is provided on top of the AI Tools add-on, so it exists only when the add-on provides its
- * data-load subsystem — the add-on is an optional dependency of Reports, and its data-load part can also be
- * switched off by a property. The loader is declared for whichever service is around, the one below or the one
- * an application substitutes for it, so that the type runs exactly where the designer offers it.
+ * It is provided on top of the AI Tools add-on, so it exists only when the add-on provides its data-load
+ * subsystem — the add-on is an optional dependency of Reports, and its data-load part can also be switched off
+ * by a property. Only the report designer needs it: a report run executes the stored query itself, so the
+ * loader is an ordinary Reports bean and a report runs whether this service is there or not.
  * <p>
  * {@code afterName} keeps this starter free of a dependency on the AI Tools starter while still letting the
  * add-on's beans be defined before {@link ConditionalOnBean} is evaluated.
@@ -47,12 +46,5 @@ public class ReportsLlmAutoConfiguration {
     @ConditionalOnMissingBean(LlmDataQueryService.class)
     public LlmDataQueryService llmDataQueryService() {
         return new AiToolsLlmDataQueryService();
-    }
-
-    @Bean("report_LlmDataLoader")
-    @ConditionalOnBean(LlmDataQueryService.class)
-    @ConditionalOnMissingBean(LlmDataLoader.class)
-    public LlmDataLoader llmDataLoader() {
-        return new LlmDataLoader();
     }
 }

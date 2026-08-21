@@ -36,7 +36,6 @@ import io.jmix.reports.yarg.reporting.extraction.controller.CrossTabExtractionCo
 import io.jmix.reports.yarg.reporting.extraction.preprocessor.SqlCrosstabPreprocessor;
 import io.jmix.reports.yarg.structure.BandOrientation;
 import io.jmix.reports.yarg.util.groovy.Scripting;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
@@ -92,7 +91,7 @@ public class ReportsConfiguration {
                                              SingleEntityDataLoader singleEntityDataLoader,
                                              MultiEntityDataLoader multiEntityDataLoader,
                                              DelegatingDataLoader delegatingDataLoader,
-                                             ObjectProvider<LlmDataLoader> llmDataLoader) {
+                                             LlmDataLoader llmDataLoader) {
         DefaultLoaderFactory loaderFactory = new DefaultLoaderFactory();
         Map<String, ReportDataLoader> dataLoaders = new HashMap<>();
         dataLoaders.put("sql", sqlDataLoader);
@@ -102,12 +101,7 @@ public class ReportsConfiguration {
         dataLoaders.put("single", singleEntityDataLoader);
         dataLoaders.put("multi", multiEntityDataLoader);
         dataLoaders.put("delegate", delegatingDataLoader);
-
-        LlmDataLoader availableLlmDataLoader = llmDataLoader.getIfAvailable();
-        dataLoaders.put(DataSetType.LLM.getCode(), availableLlmDataLoader != null
-                ? availableLlmDataLoader
-                : new UnavailableLlmDataLoader());
-
+        dataLoaders.put(DataSetType.LLM.getCode(), llmDataLoader);
         loaderFactory.setDataLoaders(dataLoaders);
         return loaderFactory;
     }
@@ -133,6 +127,16 @@ public class ReportsConfiguration {
     @Bean("report_DelegatingDataLoader")
     public DelegatingDataLoader delegatingDataLoader() {
         return new DelegatingDataLoader();
+    }
+
+    /**
+     * The loader of the {@link DataSetType#LLM} data set type. It needs nothing of the AI Tools add-on: a run
+     * executes the query stored with the report through {@code DataManager}, so a report authored where the
+     * add-on is present runs where it is not.
+     */
+    @Bean("report_LlmDataLoader")
+    public LlmDataLoader llmDataLoader() {
+        return new LlmDataLoader();
     }
 
     @Bean("report_JpqlDataLoader")

@@ -33,7 +33,6 @@ import io.jmix.reports.yarg.structure.CustomValueFormatter;
 import io.jmix.reports.yarg.structure.DefaultValueProvider;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.pdfbox.io.IOUtils;
 import org.jspecify.annotations.NullMarked;
 import org.springframework.beans.factory.annotation.Autowired;

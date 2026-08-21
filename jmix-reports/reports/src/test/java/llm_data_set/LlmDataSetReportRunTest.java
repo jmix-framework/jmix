@@ -26,13 +26,12 @@ import io.jmix.reports.entity.Orientation;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportOutputType;
 import io.jmix.reports.entity.ReportTemplate;
-import io.jmix.reports.llm.LlmDataQuery;
-import io.jmix.reports.llm.LlmQueryExecutionRequest;
 import io.jmix.reports.llm.LlmQueryParameter;
 import io.jmix.reports.runner.ReportRunner;
 import io.jmix.reports.test_support.AuthenticatedAsSystem;
 import io.jmix.reports.yarg.reporting.ReportOutputDocument;
 import llm_data_set.test_support.LlmDataSetTestConfiguration;
+import llm_data_set.test_support.TestLlmDataLoader;
 import llm_data_set.test_support.TestLlmDataQueryService;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
@@ -73,16 +72,20 @@ class LlmDataSetReportRunTest {
     protected TestLlmDataQueryService queryService;
 
     @Autowired
+    protected TestLlmDataLoader dataLoader;
+
+    @Autowired
     protected Metadata metadata;
 
     @BeforeEach
     void setUp() {
         queryService.reset();
+        dataLoader.reset();
     }
 
     @Test
     void testReportWithLlmBandRendersRowsOfTheStoredQuery() {
-        queryService.setRows(List.of(
+        dataLoader.setRows(List.of(
                 Map.of("orderNumber", "A-1", "amount", "120"),
                 Map.of("orderNumber", "A-2", "amount", "80")));
 
@@ -99,16 +102,16 @@ class LlmDataSetReportRunTest {
         ReportOutputDocument document = reportRunner.byReportEntity(createReportWithNestedLlmBand()).run();
 
         assertThat(new String(document.getContent(), StandardCharsets.UTF_8)).contains("\"A-1\"");
-        assertThat(queryService.getExecutionRequests()).hasSize(2);
-        assertThat(queryService.getExecutionRequests())
-                .flatExtracting(LlmQueryExecutionRequest::getArguments)
+        assertThat(dataLoader.getExecutions()).hasSize(2);
+        assertThat(dataLoader.getExecutions())
+                .flatExtracting(TestLlmDataLoader.Execution::arguments)
                 .extracting(LlmQueryParameter::getName, LlmQueryParameter::getValue)
                 .containsExactly(tuple("Orders_number", "A-1"), tuple("Orders_number", "A-2"));
     }
 
     @Test
     void testLlmRowsAreMergedWithTheOtherDataSetOfTheBandByTheLinkParameter() {
-        queryService.setRows(List.of(
+        dataLoader.setRows(List.of(
                 Map.of("orderNumber", "A-2", "amount", "80"),
                 Map.of("orderNumber", "A-1", "amount", "120")));
 
@@ -124,7 +127,7 @@ class LlmDataSetReportRunTest {
 
     @Test
     void testCrossTabBandBuildsItsMatrixFromAnLlmCellDataSet() {
-        queryService.setRows(List.of(
+        dataLoader.setRows(List.of(
                 Map.of("revenue_dynamic_header_month", 3, "revenue_master_data_publisherId", 1, "amount", 10.0),
                 Map.of("revenue_dynamic_header_month", 4, "revenue_master_data_publisherId", 2, "amount", 20.0)));
 
@@ -141,13 +144,13 @@ class LlmDataSetReportRunTest {
 
     @Test
     void testCrossTabAxisValuesReachTheCellDataSetAsLists() {
-        queryService.setRows(List.of());
+        dataLoader.setRows(List.of());
 
         reportRunner.byReportEntity(createCrossTabReport()).run();
 
         // The stored query of the cell data set references both axis columns, and the run binds each as the whole
         // list of values that axis produced.
-        assertThat(queryService.getLastExecutionRequest().getArguments())
+        assertThat(dataLoader.getLastExecution().arguments())
                 .extracting(LlmQueryParameter::getName, LlmQueryParameter::getValue)
                 .contains(tuple("revenue_dynamic_header_month", List.of(3, 4)),
                         tuple("revenue_master_data_publisherId", List.of(1, 2)));

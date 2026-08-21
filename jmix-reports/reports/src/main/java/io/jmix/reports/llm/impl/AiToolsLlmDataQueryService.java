@@ -23,7 +23,6 @@ import io.jmix.aitools.dataload.generation.EntityDataLoadGenerationService;
 import io.jmix.aitools.dataload.validation.JpqlValidationIssue;
 import io.jmix.aitools.dataload.validation.JpqlValidationResult;
 import io.jmix.aitools.dataload.validation.JpqlValidationService;
-import io.jmix.core.security.AccessDeniedException;
 import io.jmix.reports.llm.*;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
@@ -34,12 +33,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
- * Implements the Reports-side seam on top of the AI Tools data-load subsystem: generation produces the
- * query, and execution runs it through {@code DataManager}, which is what applies the current user's data
- * access constraints.
+ * Implements the Reports-side seam on top of the AI Tools data-load subsystem: it turns a prompt into a query
+ * and checks a query, both of which happen while a report is authored in the designer.
  * <p>
  * The only class in Reports that depends on the AI Tools add-on, and therefore the only one that must not
  * be loaded when the add-on is absent — its bean is declared by a conditional auto-configuration.
@@ -48,9 +45,6 @@ public class AiToolsLlmDataQueryService implements LlmDataQueryService {
 
     @Autowired
     protected EntityDataLoadGenerationService entityDataLoadGenerationService;
-
-    @Autowired
-    protected JpqlExecutionService jpqlExecutionService;
 
     @Autowired
     protected JpqlValidationService jpqlValidationService;
@@ -98,35 +92,6 @@ public class AiToolsLlmDataQueryService implements LlmDataQueryService {
         return validationResult.getIssues().stream()
                 .map(JpqlValidationIssue::getMessage)
                 .toList();
-    }
-
-    @Override
-    public LlmQueryExecutionResult execute(LlmQueryExecutionRequest request) {
-        LlmDataQuery query = request.getQuery();
-
-        JpqlExecutionResult result;
-        try {
-            result = jpqlExecutionService.execute(new JpqlExecutionRequest(
-                    request.getPrompt(),
-                    query.getJpql(),
-                    toExecutionParameters(request.getArguments()),
-                    query.getResultProperties(),
-                    null,
-                    null));
-        } catch (AccessDeniedException e) {
-            // Being refused the data is not a failure of this seam: the caller reports it as what it is.
-            throw e;
-        } catch (RuntimeException e) {
-            // The add-on validates, repairs and converts before its own error handling starts, so a failure
-            // there would otherwise leave the seam as an exception of an unrelated kind.
-            throw new LlmDataQueryException("Cannot execute the query of the data set", e);
-        }
-
-        if (!result.isExecuted()) {
-            throw new LlmDataQueryException(describeFailure(result));
-        }
-
-        return new LlmQueryExecutionResult(result.getRows(), result.isHasMore());
     }
 
     protected <T> List<T> retainNonNull(@Nullable List<T> values) {
@@ -243,28 +208,4 @@ public class AiToolsLlmDataQueryService implements LlmDataQueryService {
                 query.getWarnings());
     }
 
-    protected List<JpqlExecutionParameter> toExecutionParameters(List<LlmQueryParameter> arguments) {
-        List<JpqlExecutionParameter> parameters = new ArrayList<>(arguments.size());
-        for (LlmQueryParameter argument : arguments) {
-            parameters.add(new JpqlExecutionParameter(argument.getName(), argument.getJavaType(),
-                    argument.getValue()));
-        }
-        return parameters;
-    }
-
-    protected String describeFailure(JpqlExecutionResult result) {
-        String executionError = result.getExecutionError();
-        if (StringUtils.isNotBlank(executionError)) {
-            return "Cannot execute the query: " + executionError;
-        }
-
-        JpqlValidationResult validationResult = result.getValidationResult();
-        if (!validationResult.isValid()) {
-            return "The query was rejected as invalid: " + validationResult.getIssues().stream()
-                    .map(JpqlValidationIssue::getMessage)
-                    .collect(Collectors.joining("; "));
-        }
-
-        return "The query was not executed: the current user may read none of the columns it selects";
-    }
 }

@@ -44,6 +44,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -108,6 +109,24 @@ class LlmQueryExecutionTest {
         assertThat(rows).containsExactly(
                 Map.of("publisherName", OWN + "Nintendo"),
                 Map.of("publisherName", OWN + "Ubisoft"));
+    }
+
+    @Test
+    void testBandRowsFollowTheSelectClauseAndCanBeWrittenInto() {
+        // What the report engine needs of a band row: the columns positioned as the select clause puts them,
+        // because a cross-tab links its cells by the first matching one, and a row it can write into, because
+        // merging several data sets of one band does exactly that.
+        publisher("Nintendo");
+        DataSet dataSet = llmDataSet(new LlmDataQuery(
+                "select p.name as publisherName, p.id as publisherId from Publisher p where p.name like :name",
+                List.of("publisherName", "publisherId"),
+                List.of(new LlmQueryParameter("name", "java.lang.String", null)), null, List.of()));
+
+        List<Map<String, Object>> rows = loader().loadData(dataSet, null, Map.of("name", OWN + "%"));
+
+        assertThat(rows.get(0).keySet()).containsExactly("publisherName", "publisherId");
+        rows.get(0).put("addedByTheEngine", "value");
+        rows.add(new LinkedHashMap<>());
     }
 
     @Test

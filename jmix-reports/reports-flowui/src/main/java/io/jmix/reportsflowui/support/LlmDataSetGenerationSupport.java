@@ -35,13 +35,13 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * Serves the designer's side of the {@link DataSetType#LLM} data set type: whether the type is usable at all,
- * what a query may be generated from, and how a generated query is stored.
+ * Serves the designer's side of the {@link DataSetType#LLM} data set type: whether the type can be authored
+ * here, what a query may be generated from, and how a query is stored.
  * <p>
- * The UI module needs no dependency on the AI Tools add-on for this: the type works when an
+ * The UI module needs no dependency on the AI Tools add-on for this: the type can be authored when an
  * {@link LlmDataQueryService} bean exists, and its query can be generated when that bean also reports generation
  * as available. Reports auto-configuration supplies the default bean on top of the add-on's data-load services,
- * and an application may substitute another implementation of the seam.
+ * and an application may substitute another implementation of the seam. Running a data set needs neither.
  */
 @NullMarked
 @Component("report_LlmDataSetGenerationSupport")
@@ -57,11 +57,12 @@ public class LlmDataSetGenerationSupport {
     protected ParameterClassResolver parameterClassResolver;
 
     /**
-     * Tells whether the data set type works in this application at all, which is what an implementation of the
-     * seam being there means: such a data set can be authored, checked and run. Generating its query needs more
-     * than that — see {@link #isGenerationAvailable()}.
+     * Tells whether this application is one where such a data set can be authored: an implementation of the
+     * seam has to be there to turn a prompt into a query and to check one. Running a data set needs none of
+     * that — a report authored elsewhere runs here either way — and generating a query needs more than that,
+     * see {@link #isGenerationAvailable()}.
      *
-     * @return {@code true} if the data set type is supported
+     * @return {@code true} if the data set type can be authored in this application
      */
     public boolean isTypeSupported() {
         return llmDataQueryServiceProvider.getIfAvailable() != null;

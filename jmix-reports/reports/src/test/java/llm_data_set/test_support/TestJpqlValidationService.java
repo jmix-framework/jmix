@@ -33,12 +33,9 @@ public class TestJpqlValidationService extends JpqlValidationService {
 
     protected GeneratedJpqlResult lastValidated = new GeneratedJpqlResult("", List.of(), "", List.of());
 
-    protected int validations;
-
     @Override
     public JpqlValidationResult validate(GeneratedJpqlResult generatedJpqlResult) {
         lastValidated = generatedJpqlResult;
-        validations++;
 
         if (issueMessages.isEmpty()) {
             return new JpqlValidationResult(true, List.of());
@@ -54,13 +51,6 @@ public class TestJpqlValidationService extends JpqlValidationService {
      */
     public void setIssueMessages(List<String> issueMessages) {
         this.issueMessages = issueMessages;
-    }
-
-    /**
-     * @return how often a query was checked, which tells a check that happened from one that was avoided
-     */
-    public int getValidations() {
-        return validations;
     }
 
     public GeneratedJpqlResult getLastValidated() {

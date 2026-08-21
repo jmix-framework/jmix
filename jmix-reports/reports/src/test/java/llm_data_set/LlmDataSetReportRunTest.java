@@ -26,7 +26,6 @@ import io.jmix.reports.entity.Orientation;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportOutputType;
 import io.jmix.reports.entity.ReportTemplate;
-import io.jmix.reports.llm.LlmQueryParameter;
 import io.jmix.reports.runner.ReportRunner;
 import io.jmix.reports.test_support.AuthenticatedAsSystem;
 import io.jmix.reports.yarg.reporting.ReportOutputDocument;
@@ -56,7 +55,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.tuple;
+import static org.assertj.core.api.Assertions.entry;
 
 @ExtendWith({SpringExtension.class, AuthenticatedAsSystem.class})
 @ContextConfiguration(classes = {ReportsTestConfiguration.class, LlmDataSetTestConfiguration.class})
@@ -104,9 +103,8 @@ class LlmDataSetReportRunTest {
         assertThat(new String(document.getContent(), StandardCharsets.UTF_8)).contains("\"A-1\"");
         assertThat(dataLoader.getExecutions()).hasSize(2);
         assertThat(dataLoader.getExecutions())
-                .flatExtracting(TestLlmDataLoader.Execution::arguments)
-                .extracting(LlmQueryParameter::getName, LlmQueryParameter::getValue)
-                .containsExactly(tuple("Orders_number", "A-1"), tuple("Orders_number", "A-2"));
+                .extracting(TestLlmDataLoader.Execution::arguments)
+                .containsExactly(Map.of("Orders_number", "A-1"), Map.of("Orders_number", "A-2"));
     }
 
     @Test
@@ -151,9 +149,8 @@ class LlmDataSetReportRunTest {
         // The stored query of the cell data set references both axis columns, and the run binds each as the whole
         // list of values that axis produced.
         assertThat(dataLoader.getLastExecution().arguments())
-                .extracting(LlmQueryParameter::getName, LlmQueryParameter::getValue)
-                .contains(tuple("revenue_dynamic_header_month", List.of(3, 4)),
-                        tuple("revenue_master_data_publisherId", List.of(1, 2)));
+                .contains(entry("revenue_dynamic_header_month", List.of(3, 4)),
+                        entry("revenue_master_data_publisherId", List.of(1, 2)));
     }
 
     /**

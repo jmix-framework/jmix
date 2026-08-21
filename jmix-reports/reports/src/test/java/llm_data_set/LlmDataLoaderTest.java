@@ -23,6 +23,7 @@ import io.jmix.core.Metadata;
 import io.jmix.reports.ReportsTestConfiguration;
 import io.jmix.reports.entity.DataSet;
 import io.jmix.reports.entity.DataSetType;
+import io.jmix.reports.libintegration.LlmCrossTabAxes;
 import io.jmix.reports.libintegration.LlmDataLoader;
 import io.jmix.reports.llm.LlmDataQuery;
 import io.jmix.reports.llm.LlmQueryParameter;
@@ -55,8 +56,8 @@ import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.entry;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.Assertions.tuple;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {ReportsTestConfiguration.class, LlmDataSetTestConfiguration.class})
@@ -202,20 +203,19 @@ class LlmDataLoaderTest {
 
         loader().loadData(dataSet, null, Map.of("dateFrom", dateFrom));
 
-        List<LlmQueryParameter> arguments = dataLoader.getLastExecution().arguments();
-        assertThat(arguments).hasSize(1);
-        assertThat(arguments.get(0).getName()).isEqualTo("dateFrom");
-        assertThat(arguments.get(0).getValue()).isEqualTo(dateFrom);
+        assertThat(dataLoader.getLastExecution().arguments()).containsExactly(entry("dateFrom", dateFrom));
     }
 
     @Test
-    void testArgumentTypeComesFromTheReportParameterNotFromTheStoredQuery() {
+    void testValueIsBoundAsTheRunHoldsItWhateverTheQueryDeclares() {
+        // The type in the stored query was written to tell a model what the value would be; binding uses the
+        // value itself, so a type the model guessed wrong changes nothing here.
         DataSet dataSet = llmDataSet(PROMPT, storedQuery(List.of(parameter("dateFrom", "java.lang.String"))));
+        LocalDate dateFrom = LocalDate.of(2026, 8, 1);
 
-        loader().loadData(dataSet, null, Map.of("dateFrom", LocalDate.of(2026, 8, 1)));
+        loader().loadData(dataSet, null, Map.of("dateFrom", dateFrom));
 
-        assertThat(dataLoader.getLastExecution().arguments().get(0).getJavaType())
-                .isEqualTo("java.time.LocalDate");
+        assertThat(dataLoader.getLastExecution().arguments()).containsExactly(entry("dateFrom", dateFrom));
     }
 
     @Test
@@ -225,8 +225,7 @@ class LlmDataLoaderTest {
         loader().loadData(dataSet, null, Map.of("dateFrom", LocalDate.of(2026, 8, 1), "unusedParam", "value"));
 
         assertThat(dataLoader.getLastExecution().arguments())
-                .extracting(LlmQueryParameter::getName)
-                .containsExactly("dateFrom");
+                .containsOnlyKeys("dateFrom");
     }
 
     @Test
@@ -238,8 +237,7 @@ class LlmDataLoaderTest {
         loader().loadData(dataSet, null, Map.of("dateFrom", LocalDate.of(2026, 8, 1), "blank", ""));
 
         assertThat(dataLoader.getLastExecution().arguments())
-                .extracting(LlmQueryParameter::getName, LlmQueryParameter::getValue)
-                .containsExactly(tuple("dateFrom", LocalDate.of(2026, 8, 1)), tuple("blank", ""));
+                .containsExactly(entry("dateFrom", LocalDate.of(2026, 8, 1)), entry("blank", ""));
     }
 
     @Test
@@ -250,8 +248,7 @@ class LlmDataLoaderTest {
         loader().loadData(dataSet, ordersBand, Map.of());
 
         assertThat(dataLoader.getLastExecution().arguments())
-                .extracting(LlmQueryParameter::getName, LlmQueryParameter::getValue)
-                .containsExactly(tuple("Orders_number", "A-1"));
+                .containsExactly(entry("Orders_number", "A-1"));
     }
 
     @Test
@@ -264,8 +261,7 @@ class LlmDataLoaderTest {
         loader().loadData(dataSet, ordersBand, Map.of());
 
         assertThat(dataLoader.getLastExecution().arguments())
-                .extracting(LlmQueryParameter::getName, LlmQueryParameter::getValue)
-                .containsExactly(tuple("Orders_number", "A-1"), tuple("Customers_customerId", 42L));
+                .containsExactly(entry("Orders_number", "A-1"), entry("Customers_customerId", 42L));
     }
 
     @Test
@@ -279,8 +275,7 @@ class LlmDataLoaderTest {
                 storedQuery(List.of(parameter("customerName", "java.lang.String"))));
         loader().loadData(byOwnName, ordersBand, Map.of("customerName", "Acme"));
         assertThat(dataLoader.getLastExecution().arguments())
-                .extracting(LlmQueryParameter::getName, LlmQueryParameter::getValue)
-                .containsExactly(tuple("customerName", "Acme"));
+                .containsExactly(entry("customerName", "Acme"));
 
         DataSet underRoot = llmDataSet(PROMPT,
                 storedQuery(List.of(parameter("Root_customerName", "java.lang.String"))));
@@ -297,8 +292,8 @@ class LlmDataLoaderTest {
         loader().loadData(dataSet, ordersBand, Map.of("Orders_number", "from run parameters"));
 
         assertThat(dataLoader.getLastExecution().arguments())
-                .extracting(LlmQueryParameter::getValue)
-                .containsExactly("from run parameters");
+                .containsOnlyKeys("Orders_number")
+                .containsValue("from run parameters");
     }
 
     @Test
@@ -325,8 +320,7 @@ class LlmDataLoaderTest {
                 storedQuery(List.of(parameter("Orders_number", "java.lang.String"))));
         loader().loadData(withValue, ordersBand, Map.of());
         assertThat(dataLoader.getLastExecution().arguments())
-                .extracting(LlmQueryParameter::getName)
-                .containsExactly("Orders_number");
+                .containsOnlyKeys("Orders_number");
 
         DataSet withNull = llmDataSet(PROMPT,
                 storedQuery(List.of(parameter("Orders_comment", "java.lang.String"))));
@@ -336,22 +330,17 @@ class LlmDataLoaderTest {
     }
 
     @Test
-    void testCrossTabAxisFieldsAreBoundAsTypedListsInsteadOfTheAxesThemselves() {
+    void testCrossTabAxisFieldsAreBoundAsListsInsteadOfTheAxesThemselves() {
         DataSet dataSet = llmDataSet(PROMPT, serializer.toJson(linkableCrossTabQuery(List.of(
                 parameter("revenue_dynamic_header_year", "java.lang.String"),
                 parameter("revenue_master_data_publisherId", "java.lang.String")))));
 
         loader().loadData(dataSet, null, crossTabParams());
 
-        // The value is the whole list — the add-on converts a collection element by element — and the type is
-        // the element's, not the list's.
-        assertThat(dataLoader.getLastExecution().arguments())
-                .extracting(LlmQueryParameter::getName, LlmQueryParameter::getValue,
-                        LlmQueryParameter::getJavaType, LlmQueryParameter::isMultiValued)
-                .containsExactly(
-                        tuple("revenue_dynamic_header_year", List.of(2025, 2025), "java.lang.Integer", true),
-                        tuple("revenue_master_data_publisherId", List.of("Nintendo", "Ubisoft"),
-                                "java.lang.String", true));
+        // Every value the axis has for that field, as the list a query matches with IN.
+        assertThat(dataLoader.getLastExecution().arguments()).containsExactly(
+                entry("revenue_dynamic_header_year", List.of(2025, 2025)),
+                entry("revenue_master_data_publisherId", List.of("Nintendo", "Ubisoft")));
 
         // The axis itself is a list of rows, not a value a query can be filtered by.
         DataSet byTheAxisItself = llmDataSet(PROMPT, serializer.toJson(linkableCrossTabQuery(
@@ -374,8 +363,7 @@ class LlmDataLoaderTest {
         loader().loadData(dataSet, null, params);
 
         assertThat(dataLoader.getLastExecution().arguments())
-                .extracting(LlmQueryParameter::getName, LlmQueryParameter::getValue)
-                .containsExactly(tuple("revenue_dynamic_header_year", List.of(2025)));
+                .containsExactly(entry("revenue_dynamic_header_year", List.of(2025)));
     }
 
     @Test
@@ -397,8 +385,7 @@ class LlmDataLoaderTest {
 
         // The query links by year — the axis's first field — and binds the values that field does have.
         assertThat(dataLoader.getLastExecution().arguments())
-                .extracting(LlmQueryParameter::getName, LlmQueryParameter::getValue)
-                .containsExactly(tuple("revenue_dynamic_header_year", List.of(2025)));
+                .containsExactly(entry("revenue_dynamic_header_year", List.of(2025)));
     }
 
     @Test
@@ -452,8 +439,7 @@ class LlmDataLoaderTest {
 
         // The field named with spaces contributes nothing, while the one that is an identifier binds.
         assertThat(dataLoader.getLastExecution().arguments())
-                .extracting(LlmQueryParameter::getName)
-                .containsExactly("revenue_dynamic_header_year");
+                .containsOnlyKeys("revenue_dynamic_header_year");
     }
 
     @Test
@@ -464,8 +450,7 @@ class LlmDataLoaderTest {
         loader().loadData(dataSet, null, crossTabParams());
 
         assertThat(dataLoader.getLastExecution().arguments())
-                .extracting(LlmQueryParameter::getName, LlmQueryParameter::getValue)
-                .containsExactly(tuple("revenue_dynamic_header_year", List.of(2025, 2025)));
+                .containsExactly(entry("revenue_dynamic_header_year", List.of(2025, 2025)));
     }
 
     @Test
@@ -478,9 +463,7 @@ class LlmDataLoaderTest {
         loader().loadData(dataSet, null, Map.of("selected_master_data", List.of("A-1", "A-2")));
 
         assertThat(dataLoader.getLastExecution().arguments())
-                .extracting(LlmQueryParameter::getName, LlmQueryParameter::isMultiValued,
-                        LlmQueryParameter::getValue)
-                .containsExactly(tuple("selected_master_data", true, List.of("A-1", "A-2")));
+                .containsExactly(entry("selected_master_data", List.of("A-1", "A-2")));
     }
 
     @Test
@@ -586,20 +569,6 @@ class LlmDataLoaderTest {
     }
 
     @Test
-    void testRowsAreMutableAndFollowTheSelectClause() {
-        // The add-on hands out immutable maps in an order of its own; a band row is written into by the engine
-        // and read positionally by a cross-tab.
-        dataLoader.setRows(List.of(Map.copyOf(Map.of("amount", 10, "orderNumber", "A-1"))));
-        DataSet dataSet = llmDataSet(PROMPT, storedQuery(List.of("orderNumber", "amount"), List.of()));
-
-        List<Map<String, Object>> rows = loader().loadData(dataSet, null, Map.of());
-
-        assertThat(rows.get(0).keySet()).containsExactly("orderNumber", "amount");
-        rows.get(0).put("addedByTheEngine", "value");
-        rows.add(new HashMap<>());
-    }
-
-    @Test
     void testNullAndEmptyStringResultValuesRemainDistinct() {
         Map<String, Object> executionRow = new HashMap<>();
         executionRow.put("missingNumber", null);
@@ -619,8 +588,7 @@ class LlmDataLoaderTest {
         loader().loadData(childDataSet, band("Orders", null, rows.get(0)), Map.of());
 
         assertThat(dataLoader.getLastExecution().arguments())
-                .extracting(LlmQueryParameter::getName, LlmQueryParameter::getValue)
-                .containsExactly(tuple("Orders_emptyNumber", ""));
+                .containsExactly(entry("Orders_emptyNumber", ""));
     }
 
     @Test
@@ -647,6 +615,32 @@ class LlmDataLoaderTest {
         assertThat(logged.list)
                 .filteredOn(event -> event.getFormattedMessage().contains("is not offered to the query"))
                 .hasSize(2);
+    }
+
+    @Test
+    void testAxisFieldShadowedByARunParameterIsSaidOnceAndTheColumnStillRequired() {
+        // The run parameter wins the name, so the axis values are not offered — but the column named after the
+        // axis is still required back, or the cross-tab would have nothing to link its cells by.
+        DataSet dataSet = llmDataSet(PROMPT, serializer.toJson(linkableCrossTabQuery(
+                List.of(parameter("revenue_dynamic_header_year", "java.lang.String")))));
+        Map<String, Object> params = new LinkedHashMap<>(crossTabParams());
+        params.put("revenue_dynamic_header_year", 2024);
+        // One run, told by the band hierarchy it is rooted at, so that "once per run" is what is observed.
+        BandData cells = band("Cells", band("Root", null, Map.of()), Map.of());
+        ListAppender<ILoggingEvent> logged = captureCrossTabLog();
+
+        try {
+            loader().loadData(dataSet, cells, params);
+            loader().loadData(dataSet, cells, params);
+        } finally {
+            releaseCrossTabLog(logged);
+        }
+
+        assertThat(dataLoader.getLastExecution().arguments())
+                .containsEntry("revenue_dynamic_header_year", 2024);
+        assertThat(logged.list)
+                .filteredOn(event -> event.getFormattedMessage().contains("cross-tab axis"))
+                .hasSize(1);
     }
 
     @Test
@@ -677,14 +671,12 @@ class LlmDataLoaderTest {
         loader().loadData(dataSet, null, Map.of("orderNumbers", List.of("A-1", "A-2")));
 
         assertThat(dataLoader.getLastExecution().arguments())
-                .extracting(LlmQueryParameter::getName, LlmQueryParameter::getJavaType,
-                        LlmQueryParameter::isMultiValued)
-                .containsExactly(tuple("orderNumbers", "java.lang.String", true));
+                .containsExactly(entry("orderNumbers", List.of("A-1", "A-2")));
     }
 
     @Test
     void testEmptyListParameterCannotBeBound() {
-        // Nothing to match with IN and no type to state.
+        // A collection with nothing to match is not a value, so the parameter has none and the query says so.
         DataSet dataSet = llmDataSet(PROMPT,
                 storedQuery(List.of(parameter("orderNumbers", "java.lang.String"))));
 
@@ -705,6 +697,21 @@ class LlmDataLoaderTest {
         appender.start();
         ((Logger) LoggerFactory.getLogger(LlmDataLoader.class)).addAppender(appender);
         return appender;
+    }
+
+    /**
+     * Collects what the cross-tab rules log, which is a logger of their own.
+     */
+    protected ListAppender<ILoggingEvent> captureCrossTabLog() {
+        ListAppender<ILoggingEvent> appender = new ListAppender<>();
+        appender.start();
+        ((Logger) LoggerFactory.getLogger(LlmCrossTabAxes.class)).addAppender(appender);
+        return appender;
+    }
+
+    protected void releaseCrossTabLog(ListAppender<ILoggingEvent> appender) {
+        ((Logger) LoggerFactory.getLogger(LlmCrossTabAxes.class)).detachAppender(appender);
+        appender.stop();
     }
 
     protected void releaseLoaderLog(ListAppender<ILoggingEvent> appender) {

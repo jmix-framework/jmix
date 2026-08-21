@@ -18,10 +18,10 @@ package llm_data_set.test_support;
 
 import io.jmix.reports.libintegration.LlmDataLoader;
 import io.jmix.reports.llm.LlmDataQuery;
-import io.jmix.reports.llm.LlmQueryParameter;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -45,17 +45,19 @@ public class TestLlmDataLoader extends LlmDataLoader {
     /**
      * What one call of the query would have executed.
      */
-    public record Execution(String jpql, List<String> resultProperties, List<LlmQueryParameter> arguments) {
+    public record Execution(String jpql, List<String> resultProperties, Map<String, Object> arguments) {
     }
 
     @Override
     protected List<Map<String, @Nullable Object>> executeQuery(LlmDataQuery query,
-                                                               List<LlmQueryParameter> arguments) {
+                                                               Map<String, Object> arguments) {
         executions.add(new Execution(query.getJpql(), query.getResultProperties(), arguments));
         if (failure != null) {
             throw failure;
         }
-        return List.copyOf(rows);
+
+        // Copied the way the real execution builds them: a band row is written into by the report engine.
+        return rows.stream().map(row -> (Map<String, @Nullable Object>) new LinkedHashMap<>(row)).toList();
     }
 
     public Execution getLastExecution() {

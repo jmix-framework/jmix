@@ -21,12 +21,13 @@ import org.jspecify.annotations.Nullable;
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 /**
- * A named parameter of an {@link LlmDataQuery}: the name used in the JPQL text, the Java type its value
- * must be bound as, and the value itself when it is known.
+ * A named parameter of an {@link LlmDataQuery}: the name used in the JPQL text, the Java type of the value it
+ * stands for, and the value itself when it is known.
  * <p>
- * The same class describes a parameter offered to query generation (where the value is irrelevant) and
- * an argument bound at execution time. The value is never persisted with the generated query, so one
- * generated query serves any set of arguments.
+ * The type is what a model is told the value will be, and what the stored query keeps saying about it; a run
+ * binds the value it holds as it is. The same class describes a parameter offered to query generation (where
+ * the value is irrelevant) and an argument bound at execution time. The value is never persisted with the
+ * query, so one query serves any set of arguments.
  */
 public class LlmQueryParameter {
 

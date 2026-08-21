@@ -52,6 +52,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 public class LlmDataSetGenerationSupportTest {
 
     protected static final String PROMPT = "Orders of the given customer";
+    protected static final String AXIS_NAME = "Revenue_dynamic_header";
 
     @Autowired
     protected LlmDataSetGenerationSupport generationSupport;
@@ -169,7 +170,7 @@ public class LlmDataSetGenerationSupportTest {
         crossBand.setOrientation(Orientation.CROSS);
 
         DataSet axis = metadata.create(DataSet.class);
-        axis.setName("Revenue_dynamic_header");
+        axis.setName(AXIS_NAME);
         axis.setBandDefinition(crossBand);
         axis.setType(DataSetType.JPQL);
         axis.setText("select o.date as period from sales_Order o");
@@ -179,7 +180,7 @@ public class LlmDataSetGenerationSupportTest {
         cellDataSet.setName("Revenue");
 
         assertThat(generationSupport.sourcesWithUndeclaredColumns(cellDataSet))
-                .containsExactly("Revenue_dynamic_header");
+                .containsExactly(AXIS_NAME);
     }
 
     @Test
@@ -202,7 +203,7 @@ public class LlmDataSetGenerationSupportTest {
         Report report = reportWithParameters();
         BandDefinition crossBand = band(report, "Revenue", rootBand(report));
         crossBand.setOrientation(Orientation.CROSS);
-        axisDataSet(crossBand, "Revenue_dynamic_header", serializer.toJson(new LlmDataQuery(
+        axisDataSet(crossBand, serializer.toJson(new LlmDataQuery(
                 "select o.date as period from sales_Order o", List.of("period"), List.of(), null, List.of())));
 
         DataSet otherAxis = llmDataSet(crossBand);
@@ -214,7 +215,7 @@ public class LlmDataSetGenerationSupportTest {
 
         assertThat(request.getAvailableParameters())
                 .extracting(LlmQueryParameter::getName)
-                .noneMatch(name -> name.startsWith("Revenue_dynamic_header"));
+                .noneMatch(name -> name.startsWith(AXIS_NAME));
         assertThat(request.getRequiredResultProperties()).isEmpty();
         assertThat(generationSupport.sourcesWithUndeclaredColumns(otherAxis)).isEmpty();
     }
@@ -224,7 +225,7 @@ public class LlmDataSetGenerationSupportTest {
         Report report = reportWithParameters();
         BandDefinition crossBand = band(report, "Revenue", null);
         crossBand.setOrientation(Orientation.CROSS);
-        axisDataSet(crossBand, "Revenue_dynamic_header", serializer.toJson(new LlmDataQuery(
+        axisDataSet(crossBand, serializer.toJson(new LlmDataQuery(
                 "select year(o.date) as year from sales_Order o", List.of("year"), List.of(),
                 null, List.of())));
         DataSet cellDataSet = llmDataSet(crossBand);
@@ -247,7 +248,7 @@ public class LlmDataSetGenerationSupportTest {
         Report report = reportWithParameters();
         BandDefinition crossBand = band(report, "Revenue", null);
         crossBand.setOrientation(Orientation.CROSS);
-        axisDataSet(crossBand, "Revenue_dynamic_header", serializer.toJson(new LlmDataQuery(
+        axisDataSet(crossBand, serializer.toJson(new LlmDataQuery(
                 "select year(o.date) as year, cast(year(o.date) as string) as year_caption from sales_Order o",
                 List.of("year", "year_caption"), List.of(), null, List.of())));
         DataSet cellDataSet = llmDataSet(crossBand);
@@ -265,7 +266,7 @@ public class LlmDataSetGenerationSupportTest {
         Report report = reportWithParameters();
         BandDefinition crossBand = band(report, "Revenue", null);
         crossBand.setOrientation(Orientation.CROSS);
-        axisDataSet(crossBand, "Revenue_dynamic_header", null);
+        axisDataSet(crossBand, null);
         DataSet cellDataSet = llmDataSet(crossBand);
 
         List<LlmQueryParameter> parameters = generationSupport.createGenerationRequest(cellDataSet)
@@ -512,14 +513,13 @@ public class LlmDataSetGenerationSupportTest {
         return band;
     }
 
-    protected DataSet axisDataSet(BandDefinition band, String name, @Nullable String storedQuery) {
+    protected void axisDataSet(BandDefinition band, @Nullable String storedQuery) {
         DataSet dataSet = metadata.create(DataSet.class);
-        dataSet.setName(name);
+        dataSet.setName(AXIS_NAME);
         dataSet.setBandDefinition(band);
         dataSet.setType(DataSetType.LLM);
         dataSet.setLlmGeneratedQuery(storedQuery);
         band.getDataSets().add(dataSet);
-        return dataSet;
     }
 
     protected DataSet llmDataSet(Report report) {

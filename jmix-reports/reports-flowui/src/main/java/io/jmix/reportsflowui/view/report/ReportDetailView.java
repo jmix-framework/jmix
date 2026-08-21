@@ -1543,9 +1543,10 @@ public class ReportDetailView extends StandardDetailView<Report> {
         options.remove(DataSetType.DELEGATE); // can't set it up in runtime editor
 
         if (!llmDataSetGenerationSupport.isTypeSupported()) {
-            // The type needs the AI Tools add-on: without it a data set of this type cannot be run at all. A
-            // model that generation needs is a separate matter — a data set whose query is already stored is
-            // edited and run without one, so the type stays on offer.
+            // Authoring such a data set needs the AI Tools add-on: its query is required and there would be
+            // nothing here to produce one. A run is a separate matter — a report authored elsewhere runs
+            // without the add-on — and so is a model, which only generating a query needs: a data set whose
+            // query is already stored is edited without one, so the type stays on offer.
             options.remove(DataSetType.LLM);
         }
 

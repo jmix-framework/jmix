@@ -20,6 +20,7 @@ import io.jmix.core.annotation.Internal;
 import io.jmix.reports.llm.LlmDataQuery;
 import io.jmix.reports.llm.LlmQueryParameterNames;
 import io.jmix.reports.yarg.exception.DataLoadingException;
+import io.jmix.reports.yarg.structure.BandOrientation;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
@@ -89,6 +90,26 @@ public final class LlmCrossTabAxes {
         }
 
         return bandName == null || LlmQueryParameterNames.isCrossTabAxisOf(name, bandName);
+    }
+
+    /**
+     * Tells whether the axes a run put into its params are this data set's to read. Only a cell of a cross-tab
+     * band sits between axes: a band of another orientation is never handed any, and a data set named after an
+     * axis builds one instead of filling the matrix.
+     * <p>
+     * Both halves matter because the params of a run are one map shared by every band of it. A band that is not
+     * a cross-tab would otherwise read a report parameter that happens to be named like an axis as one, and an
+     * axis data set of a cross-tab band under a multi-row parent would find the axes of the row extracted before
+     * it — its own among them — and be taken for a cell of the matrix it builds.
+     *
+     * @param dataSetName     name of the data set being loaded, which is what tells an axis from a cell:
+     *                        {@code CrossTabExtractionController} recognises an axis by its data set's name
+     * @param bandOrientation orientation of the band the data set belongs to, or {@code null} when it is
+     *                        unknown, which claims the axes as before the orientation was published
+     */
+    public static boolean areReadBy(String dataSetName, @Nullable BandOrientation bandOrientation) {
+        return !LlmQueryParameterNames.isCrossTabAxis(dataSetName)
+                && (bandOrientation == null || bandOrientation == BandOrientation.CROSS);
     }
 
     /**
@@ -185,14 +206,26 @@ public final class LlmCrossTabAxes {
             String prefix = LlmQueryParameterNames.ofCrossTabAxisPrefix(name);
 
             // The controller links by the first column starting with the axis name — not with the axis name and
-            // an underscore — and then cuts one character more, so a column named after the axis without the
-            // separator would be linked by a truncated field. Reading the query the same way here catches it.
+            // an underscore — and then cuts one character more. Reading the query the same way here is what
+            // makes a column it would stumble over this loader's failure instead of the engine's.
             String returned = firstWithPrefix(query.getResultProperties(), name);
             if (returned == null) {
                 throw new DataLoadingException(String.format(
                         "The query of data set [%s] returns no column named [%s<field>], so its rows cannot be "
                                 + "linked to the cross-tab axis [%s]; it returns %s",
                         dataSetName, prefix, name, query.getResultProperties()));
+            }
+
+            // A column named after the axis with no field name after it. The controller cuts one character past
+            // the axis name — which such a column has not got, so the run dies inside the engine with nothing
+            // said about which query is at fault — or, with the separator alone, links the matrix by a field
+            // named by the empty string, which no row has, and the matrix comes out empty in silence.
+            if (returned.length() <= prefix.length() || !returned.startsWith(prefix)) {
+                throw new DataLoadingException(String.format(
+                        "The query of data set [%s] returns the column [%s], which is named after the cross-tab "
+                                + "axis [%s] without a field name after it, so its rows cannot be linked to that "
+                                + "axis; return a column named [%s<field>] instead",
+                        dataSetName, returned, name, prefix));
             }
 
             // A cross-tab links a cell by the first column of the axis prefix, so a query that puts another

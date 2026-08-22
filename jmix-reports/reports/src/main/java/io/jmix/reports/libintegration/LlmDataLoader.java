@@ -30,6 +30,7 @@ import io.jmix.reports.llm.impl.LlmDataQuerySerializer;
 import io.jmix.reports.yarg.exception.DataLoadingException;
 import io.jmix.reports.yarg.loaders.ReportDataLoader;
 import io.jmix.reports.yarg.structure.BandData;
+import io.jmix.reports.yarg.structure.BandOrientation;
 import io.jmix.reports.yarg.structure.ReportQuery;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
@@ -81,6 +82,14 @@ public class LlmDataLoader implements ReportDataLoader {
     protected static final Pattern NATIVE_ESCAPE_PATTERN = Pattern.compile(
             "\\b(sql|function|func|operator|column|table)\\s*\\(", Pattern.CASE_INSENSITIVE);
 
+    /**
+     * The marker with which ordinary Jmix JPQL asks for a parameter to be matched case-insensitively, as in
+     * {@code e.name like :(?i)name}. A stored query cannot use it: the parameters of a query are read from its
+     * text by name, and a name written like this is not one — neither this loader nor the add-on's validator
+     * recognises it, so nothing would ever be bound to it.
+     */
+    protected static final Pattern CASE_INSENSITIVE_PARAMETER_PATTERN = Pattern.compile(":\\(\\?i\\)");
+
     @Autowired
     protected DataManager dataManager;
 
@@ -102,10 +111,13 @@ public class LlmDataLoader implements ReportDataLoader {
         RunScope scope = runScopeOf(parentBand);
         Map<String, Object> additionalParams = reportQuery.getAdditionalParams();
         // The params of a run are one map shared by every band of it, so the axes of a cross-tab band stay in
-        // them for every band extracted afterwards; what belongs to this band is told by its name.
+        // them for every band extracted afterwards — and for its own next extraction. Which of them this data
+        // set reads, if any, follows from the band it serves: its orientation and its own name.
         String bandName = (String) additionalParams.get(DataSet.BAND_NAME);
+        boolean readsAxes = LlmCrossTabAxes.areReadBy(reportQuery.getName(),
+                (BandOrientation) additionalParams.get(DataSet.BAND_ORIENTATION));
 
-        String emptyAxis = LlmCrossTabAxes.firstEmptyAxis(params, bandName);
+        String emptyAxis = readsAxes ? LlmCrossTabAxes.firstEmptyAxis(params, bandName) : null;
         if (emptyAxis != null) {
             // A cross-tab has no cells along an axis that produced no values, so there is nothing for this
             // query to return — and its parameters, which name that axis, have no values to bind either.
@@ -116,12 +128,14 @@ public class LlmDataLoader implements ReportDataLoader {
         }
 
         CollectedParameters collectedParameters =
-                collectAvailableParameters(reportQuery, params, parentBand, bandName, scope);
+                collectAvailableParameters(reportQuery, params, parentBand, bandName, readsAxes, scope);
         Map<String, Object> availableParameters = collectedParameters.availableParameters();
 
         LlmDataQuery query = resolveQuery(reportQuery, additionalParams, scope);
-        LlmCrossTabAxes.checkAxesAreLinkable(reportQuery.getName(), query, params,
-                collectedParameters.requiredResultProperties(), bandName);
+        if (readsAxes) {
+            LlmCrossTabAxes.checkAxesAreLinkable(reportQuery.getName(), query, params,
+                    collectedParameters.requiredResultProperties(), bandName);
+        }
 
         Map<String, Object> arguments = resolveArguments(reportQuery, query, availableParameters, params);
         log.debug("Executing the query of data set [{}]: {}", reportQuery.getName(), query.getJpql());
@@ -179,33 +193,82 @@ public class LlmDataLoader implements ReportDataLoader {
     }
 
     /**
-     * Refuses a stored query that does more than read the entity model through {@code DataManager}: one that is
-     * not a select, and one that reaches past JPQL into the database itself, whose text this loader would
-     * otherwise hand over as it stands. See {@link #NATIVE_ESCAPE_PATTERN} for what counts as reaching past.
+     * Refuses a stored query a run will not execute, before it executes anything: one that does more than read
+     * the entity model through {@code DataManager}, one whose parameters could not be bound, and one that names
+     * no column to key its rows by.
      * <p>
      * The designer checks a query the add-on generated or the author edited, and refuses some of this. A report
      * also arrives by import, though, bringing whatever text the file holds and no add-on to check it with — so
      * what a run promises about a query, a run has to establish itself.
+     */
+    protected void checkQueryIsFitToExecute(ReportQuery reportQuery, LlmDataQuery query) {
+        // Blanked of literals once, so that a call or a marker spelled inside one is read as the text it is.
+        String withoutLiterals = LlmQueryParameterNames.stripStringLiterals(query.getJpql());
+
+        checkQueryOnlyReads(reportQuery, query, withoutLiterals);
+        checkParametersCanBeBound(reportQuery, withoutLiterals);
+        checkQueryReturnsColumns(reportQuery, query);
+    }
+
+    /**
+     * Refuses a stored query that does more than read the entity model through {@code DataManager}: one that is
+     * not a select, and one that reaches past JPQL into the database itself, whose text this loader would
+     * otherwise hand over as it stands. See {@link #NATIVE_ESCAPE_PATTERN} for what counts as reaching past.
      * <p>
      * Write keywords are not looked for: a JPQL query is a single statement, so {@code update} or {@code delete}
      * inside a select is a word rather than an operation, and refusing a query for the name of an attribute
      * would cost more than it saves.
+     *
+     * @param withoutLiterals the query text with its string literals blanked
      */
-    protected void checkQueryOnlyReads(ReportQuery reportQuery, LlmDataQuery query) {
-        String jpql = query.getJpql();
-        if (!Strings.CI.startsWith(jpql.stripLeading(), "select")) {
+    protected void checkQueryOnlyReads(ReportQuery reportQuery, LlmDataQuery query, String withoutLiterals) {
+        if (!Strings.CI.startsWith(query.getJpql().stripLeading(), "select")) {
             throw new DataLoadingException(String.format(
                     "The stored query of data set [%s] is not a select, so it is not executed", reportQuery.getName()));
         }
 
-        // Blanked of literals, so that a call spelled inside one is read as the text it is.
-        Matcher nativeEscape =
-                NATIVE_ESCAPE_PATTERN.matcher(LlmQueryParameterNames.stripStringLiterals(jpql));
+        Matcher nativeEscape = NATIVE_ESCAPE_PATTERN.matcher(withoutLiterals);
         if (nativeEscape.find()) {
             throw new DataLoadingException(String.format(
                     "The stored query of data set [%s] calls [%s], which reaches the database directly and would "
                             + "leave the data access constraints of the current user behind, so it is not executed",
                     reportQuery.getName(), nativeEscape.group(1)));
+        }
+    }
+
+    /**
+     * Refuses a stored query holding a parameter marker this data set type cannot read at all. See
+     * {@link #CASE_INSENSITIVE_PARAMETER_PATTERN} for the one there is.
+     * <p>
+     * A parameter the text references and the document does not declare is left to the JPA provider, which
+     * fails on it: the run then reports that failure the way it reports any other, naming the data set and the
+     * way out. Refusing it here would demand of every stored document that its parameters match its text
+     * exactly, which is a promise the format does not make.
+     *
+     * @param withoutLiterals the query text with its string literals blanked
+     */
+    protected void checkParametersCanBeBound(ReportQuery reportQuery, String withoutLiterals) {
+        if (CASE_INSENSITIVE_PARAMETER_PATTERN.matcher(withoutLiterals).find()) {
+            throw new DataLoadingException(String.format(
+                    "The stored query of data set [%s] uses the case-insensitive parameter marker [:(?i)], whose "
+                            + "parameter cannot be bound; write [lower(...) like :name] and generate the query "
+                            + "again in the report designer", reportQuery.getName()));
+        }
+    }
+
+    /**
+     * Refuses a stored query that names no result column, or names one no row can be keyed by: a row of a band
+     * is built from the columns a query declares, so a query naming none — or naming a blank one — would produce
+     * rows a template cannot print and a band that renders blank with nothing said. The designer refuses to save
+     * a data set in either state; a report also arrives by import, bringing whatever the file holds.
+     */
+    protected void checkQueryReturnsColumns(ReportQuery reportQuery, LlmDataQuery query) {
+        List<String> columns = query.getResultProperties();
+        if (columns.isEmpty() || columns.stream().anyMatch(StringUtils::isBlank)) {
+            throw new DataLoadingException(String.format(
+                    "The stored query of data set [%s] names no result columns, so it would return empty rows: "
+                            + "generate it again in the report designer. It names %s",
+                    reportQuery.getName(), columns));
         }
     }
 
@@ -217,8 +280,8 @@ public class LlmDataLoader implements ReportDataLoader {
      * <p>
      * Read once per document per run: the same data set is loaded once per row of its parent band, and parsing
      * the same JSON for every row would be work done to reach the same result. A query read here is also a query
-     * found fit to execute — {@link #checkQueryOnlyReads} judges the text, which no row of a parent band
-     * changes, so it is judged where the text is read.
+     * found fit to execute — {@link #checkQueryIsFitToExecute} judges the document, which no row of a parent band
+     * changes, so it is judged where the document is read.
      */
     protected LlmDataQuery resolveQuery(ReportQuery reportQuery, Map<String, Object> additionalParams,
                                         RunScope scope) {
@@ -234,7 +297,7 @@ public class LlmDataLoader implements ReportDataLoader {
             storedQuery = scope.storedQuery(storedDocument, () -> {
                 LlmDataQuery read = llmDataQuerySerializer.fromJson(storedDocument);
                 if (read != null) {
-                    checkQueryOnlyReads(reportQuery, read);
+                    checkQueryIsFitToExecute(reportQuery, read);
                 }
                 return read;
             });
@@ -283,6 +346,7 @@ public class LlmDataLoader implements ReportDataLoader {
                                                              Map<String, Object> params,
                                                              @Nullable BandData parentBand,
                                                              @Nullable String bandName,
+                                                             boolean readsAxes,
                                                              RunScope scope) {
         Map<String, Object> availableParameters = new LinkedHashMap<>();
         Map<String, List<?>> crossTabAxes = new LinkedHashMap<>();
@@ -296,10 +360,12 @@ public class LlmDataLoader implements ReportDataLoader {
                 continue;
             }
 
-            // An axis of this band holds the rows of another data set, so it is offered field by field rather
-            // than as it is. An axis of another band is not this band's business at all.
+            // An entry that is named like an axis and shaped like one holds the rows of another data set: rows
+            // are no value to bind, whoever is reading. What it is instead depends on the reader — an axis of
+            // this band is offered field by field, an axis of another band is none of this band's business, and
+            // a data set that reads no axes at all leaves it alone.
             if (LlmQueryParameterNames.isCrossTabAxis(param.getKey()) && LlmCrossTabAxes.isAxisRows(value)) {
-                if (LlmCrossTabAxes.isAxisOf(param.getKey(), bandName)) {
+                if (readsAxes && LlmCrossTabAxes.isAxisOf(param.getKey(), bandName)) {
                     crossTabAxes.put(param.getKey(), (List<?>) value);
                 }
                 continue;

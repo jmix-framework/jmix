@@ -2641,6 +2641,7 @@ public class ReportDetailView extends StandardDetailView<Report> {
 
     protected void initSingleDataSetTypeField() {
         singleDataSetTypeField.setItems(getDataSetTypeOptions());
+        // The same indicator the type editor of the data sets grid carries: one property, edited in two places.
         singleDataSetTypeField.setRequired(true);
     }
 

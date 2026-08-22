@@ -24,6 +24,7 @@ import io.jmix.reports.ReportsTestConfiguration;
 import io.jmix.reports.entity.BandDefinition;
 import io.jmix.reports.entity.DataSet;
 import io.jmix.reports.entity.DataSetType;
+import io.jmix.reports.entity.Orientation;
 import io.jmix.reports.libintegration.LlmCrossTabAxes;
 import io.jmix.reports.libintegration.LlmDataLoader;
 import io.jmix.reports.llm.LlmDataQuery;
@@ -516,7 +517,7 @@ class LlmDataLoaderTest {
         // The params of a run are one map shared by every band of it, and a cross-tab band leaves its axes in
         // them, so an ordinary band extracted afterwards sees axes that are none of its business.
         dataLoader.setRows(List.of(Map.of("orderNumber", "A-1")));
-        DataSet dataSet = llmDataSetOfBand("Orders", storedQuery(List.of()));
+        DataSet dataSet = llmDataSetOfCrossTabBand("Orders", storedQuery(List.of()));
 
         List<Map<String, Object>> rows = loader().loadData(dataSet, null, crossTabParams());
 
@@ -528,7 +529,7 @@ class LlmDataLoaderTest {
     void testEmptyAxisOfAnotherBandDoesNotEmptyThisBand() {
         // The worst of the two: an empty foreign axis used to make the band render empty with a debug line.
         dataLoader.setRows(List.of(Map.of("orderNumber", "A-1")));
-        DataSet dataSet = llmDataSetOfBand("Orders", storedQuery(List.of()));
+        DataSet dataSet = llmDataSetOfCrossTabBand("Orders", storedQuery(List.of()));
         Map<String, Object> params = new LinkedHashMap<>();
         params.put("revenue_dynamic_header", List.of());
 
@@ -541,7 +542,7 @@ class LlmDataLoaderTest {
     void testAxisOfABandWhoseNameStartsLikeThisOneIsNotOwn() {
         // Band names share prefixes: "revenue" must not claim the axis of "revenue_extra".
         dataLoader.setRows(List.of(Map.of("orderNumber", "A-1")));
-        DataSet dataSet = llmDataSetOfBand("revenue", storedQuery(List.of()));
+        DataSet dataSet = llmDataSetOfCrossTabBand("revenue", storedQuery(List.of()));
         Map<String, Object> params = new LinkedHashMap<>();
         params.put("revenue_extra_dynamic_header", List.of(axisRow("year", 2025)));
 
@@ -553,7 +554,7 @@ class LlmDataLoaderTest {
 
     @Test
     void testOwnAxisIsStillTheBandsBusiness() {
-        DataSet dataSet = llmDataSetOfBand("revenue", serializer.toJson(linkableCrossTabQuery(
+        DataSet dataSet = llmDataSetOfCrossTabBand("revenue", serializer.toJson(linkableCrossTabQuery(
                 List.of(parameter("revenue_dynamic_header_year", "java.lang.String")))));
 
         loader().loadData(dataSet, null, crossTabParams());
@@ -566,7 +567,7 @@ class LlmDataLoaderTest {
     void testAxisWhoseEveryValueIsNullStillHasToBeLinkable() {
         // The axis has rows, so the matrix has that column; a cell query that cannot be linked to it would
         // otherwise render an empty matrix with nothing said.
-        DataSet dataSet = llmDataSetOfBand("revenue", storedQuery(List.of()));
+        DataSet dataSet = llmDataSetOfCrossTabBand("revenue", storedQuery(List.of()));
         Map<String, Object> params = new LinkedHashMap<>();
         params.put("revenue_dynamic_header", List.of(axisRow("year", null), axisRow("year", null)));
 
@@ -587,7 +588,7 @@ class LlmDataLoaderTest {
         LlmDataQuery byTheSecondField = new LlmDataQuery(CACHED_JPQL,
                 List.of("revenue_dynamic_header_caption", "revenue_master_data_publisherId", "amount"),
                 List.of(), null, List.of());
-        DataSet dataSet = llmDataSetOfBand("revenue", serializer.toJson(byTheSecondField));
+        DataSet dataSet = llmDataSetOfCrossTabBand("revenue", serializer.toJson(byTheSecondField));
         Map<String, Object> params = new LinkedHashMap<>();
         params.put("revenue_dynamic_header", List.of(unordered));
         params.put("revenue_master_data", List.of(axisRow("publisherId", "Nintendo")));
@@ -603,7 +604,7 @@ class LlmDataLoaderTest {
                 List.of("revenue_dynamic_header_year_caption", "revenue_dynamic_header_year",
                         "revenue_master_data_publisherId", "amount"),
                 List.of(), null, List.of());
-        DataSet dataSet = llmDataSetOfBand("revenue", serializer.toJson(byTheSecondField));
+        DataSet dataSet = llmDataSetOfCrossTabBand("revenue", serializer.toJson(byTheSecondField));
         Map<String, Object> params = new LinkedHashMap<>();
         params.put("revenue_dynamic_header", List.of(axisRow("year", 2025, "year_caption", "2025")));
         params.put("revenue_master_data", List.of(axisRow("publisherId", "Nintendo")));
@@ -611,6 +612,168 @@ class LlmDataLoaderTest {
         assertThatThrownBy(() -> loader().loadData(dataSet, null, params))
                 .isInstanceOf(DataLoadingException.class)
                 .hasMessageContaining("revenue_dynamic_header_year");
+    }
+
+    @Test
+    void testAxisDataSetIsNotReadAsACellOfItsOwnBand() {
+        // The params of a run keep the axes of the parent row extracted before this one, so an axis data set of
+        // a cross-tab band under a multi-row parent finds them — its own among them — on every row but the
+        // first. It builds the matrix rather than filling it, so none of them is its business.
+        dataLoader.setRows(List.of(Map.of("orderNumber", "A-1")));
+        DataSet dataSet = llmAxisDataSet("revenue", "revenue_master_data", storedQuery(List.of()));
+
+        List<Map<String, Object>> rows = loader().loadData(dataSet, null, crossTabParams());
+
+        assertThat(rows).containsExactly(Map.of("orderNumber", "A-1"));
+        // Its own query, executed as stored: no column of an axis was demanded of it.
+        assertThat(dataLoader.getLastExecution().jpql()).isEqualTo(CACHED_JPQL);
+    }
+
+    @Test
+    void testEmptyAxisLeftByThePreviousParentRowDoesNotEmptyTheAxisDataSet() {
+        // The worst of the two: an axis that produced nothing for the previous parent row used to make the axis
+        // data set skip every row after it, leaving a permanently empty matrix and a debug line.
+        dataLoader.setRows(List.of(Map.of("orderNumber", "A-1")));
+        DataSet dataSet = llmAxisDataSet("revenue", "revenue_dynamic_header", storedQuery(List.of()));
+        Map<String, Object> params = new LinkedHashMap<>();
+        params.put("revenue_dynamic_header", List.of());
+
+        List<Map<String, Object>> rows = loader().loadData(dataSet, null, params);
+
+        assertThat(rows).containsExactly(Map.of("orderNumber", "A-1"));
+    }
+
+    @Test
+    void testBandThatIsNotACrossTabReadsNoAxes() {
+        // A report parameter may legally be named like an axis, and only a cross-tab band is ever handed axes:
+        // an ordinary band must not have such a parameter read as one.
+        dataLoader.setRows(List.of(Map.of("orderNumber", "A-1")));
+        DataSet dataSet = llmDataSetOfBand("sales", Orientation.VERTICAL, storedQuery(List.of()));
+        Map<String, Object> params = new LinkedHashMap<>();
+        params.put("sales_master_data", List.of(axisRow("publisherId", "Nintendo")));
+
+        List<Map<String, Object>> rows = loader().loadData(dataSet, null, params);
+
+        assertThat(rows).containsExactly(Map.of("orderNumber", "A-1"));
+    }
+
+    @Test
+    void testEmptyParameterNamedLikeAnAxisDoesNotEmptyABandThatIsNotACrossTab() {
+        dataLoader.setRows(List.of(Map.of("orderNumber", "A-1")));
+        DataSet dataSet = llmDataSetOfBand("sales", Orientation.VERTICAL, storedQuery(List.of()));
+        Map<String, Object> params = new LinkedHashMap<>();
+        params.put("sales_master_data", List.of());
+
+        List<Map<String, Object>> rows = loader().loadData(dataSet, null, params);
+
+        assertThat(rows).containsExactly(Map.of("orderNumber", "A-1"));
+    }
+
+    @Test
+    void testRowsOfAnAxisAreNoValueToBindEvenWhereAxesAreNotRead() {
+        // The value of such an entry is the rows of another data set. A band that is not a cross-tab does not
+        // read it as an axis, and it is still not something a query can be given: a parameter of that name is
+        // reported as having no value rather than bound to a list of rows.
+        DataSet dataSet = llmDataSetOfBand("sales", Orientation.VERTICAL,
+                storedQuery(List.of(parameter("sales_master_data", "java.lang.Object"))));
+        Map<String, Object> params = new LinkedHashMap<>();
+        params.put("sales_master_data", List.of(axisRow("publisherId", "Nintendo")));
+
+        assertThatThrownBy(() -> loader().loadData(dataSet, null, params))
+                .isInstanceOf(DataLoadingException.class)
+                .hasMessageContaining("sales_master_data");
+
+        assertThat(dataLoader.getExecutions()).isEmpty();
+    }
+
+    @Test
+    void testColumnNamedExactlyAfterAnAxisIsRefused() {
+        // The controller cuts one character past the axis name to learn the field it links by, which a column
+        // named after the axis and nothing else has not got: the run would die inside the engine.
+        Map<String, Object> unordered = new HashMap<>();
+        unordered.put("publisherId", "Nintendo");
+        LlmDataQuery namedAfterTheAxis = new LlmDataQuery(CACHED_JPQL,
+                List.of("revenue_master_data", "amount"), List.of(), null, List.of());
+        DataSet dataSet = llmDataSetOfCrossTabBand("revenue", serializer.toJson(namedAfterTheAxis));
+        Map<String, Object> params = new LinkedHashMap<>();
+        params.put("revenue_master_data", List.of(unordered));
+
+        assertThatThrownBy(() -> loader().loadData(dataSet, null, params))
+                .isInstanceOf(DataLoadingException.class)
+                .hasMessageContaining("revenue_master_data")
+                .hasMessageContaining("without a field name");
+
+        assertThat(dataLoader.getExecutions()).isEmpty();
+    }
+
+    @Test
+    void testColumnNamedAfterAnAxisWithTheSeparatorAloneIsRefused() {
+        // With the separator and nothing after it the controller links the matrix by a field named by the empty
+        // string, which no row has, so the matrix comes out empty in silence.
+        LlmDataQuery separatorOnly = new LlmDataQuery(CACHED_JPQL,
+                List.of("revenue_master_data_", "amount"), List.of(), null, List.of());
+        DataSet dataSet = llmDataSetOfCrossTabBand("revenue", serializer.toJson(separatorOnly));
+        Map<String, Object> params = new LinkedHashMap<>();
+        params.put("revenue_master_data", List.of(axisRow("publisherId", "Nintendo")));
+
+        assertThatThrownBy(() -> loader().loadData(dataSet, null, params))
+                .isInstanceOf(DataLoadingException.class)
+                .hasMessageContaining("without a field name");
+
+        assertThat(dataLoader.getExecutions()).isEmpty();
+    }
+
+    @Test
+    void testQueryNamingABlankResultColumnIsRefused() {
+        // Columns key the rows of a band: a blank one names a value no template could print.
+        DataSet dataSet = llmDataSet(PROMPT, storedQuery(List.of("orderNumber", " "), List.of()));
+
+        assertThatThrownBy(() -> loader().loadData(dataSet, null, Map.of()))
+                .isInstanceOf(DataLoadingException.class)
+                .hasMessageContaining("names no result columns");
+
+        assertThat(dataLoader.getExecutions()).isEmpty();
+    }
+
+    @Test
+    void testQueryNamingNoResultColumnsIsRefused() {
+        // A report arrives by import, carrying whatever the file holds: a query with no columns would return one
+        // empty row per row it selected, and the band would render blank with nothing said.
+        DataSet dataSet = llmDataSet(PROMPT, storedQuery(List.of(), List.of()));
+
+        assertThatThrownBy(() -> loader().loadData(dataSet, null, Map.of()))
+                .isInstanceOf(DataLoadingException.class)
+                .hasMessageContaining("names no result columns");
+
+        assertThat(dataLoader.getExecutions()).isEmpty();
+    }
+
+    @Test
+    void testCaseInsensitiveParameterMarkerIsRefused() {
+        // Ordinary Jmix JPQL accepts ":(?i)name"; the parameters of a stored query are read from its text by
+        // name, and that is not a name, so nothing would ever be bound to it.
+        LlmDataQuery caseInsensitive = new LlmDataQuery(
+                "select o.number as orderNumber from sales_Order o where lower(o.number) like :(?i)number",
+                List.of("orderNumber"), List.of(), null, List.of());
+        DataSet dataSet = llmDataSet(PROMPT, serializer.toJson(caseInsensitive));
+
+        assertThatThrownBy(() -> loader().loadData(dataSet, null, Map.of()))
+                .isInstanceOf(DataLoadingException.class)
+                .hasMessageContaining(":(?i)");
+
+        assertThat(dataLoader.getExecutions()).isEmpty();
+    }
+
+    @Test
+    void testCaseInsensitiveMarkerInsideALiteralIsNotAParameter() {
+        LlmDataQuery literal = new LlmDataQuery(
+                "select o.number as orderNumber from sales_Order o where o.number = ':(?i)number'",
+                List.of("orderNumber"), List.of(), null, List.of());
+        DataSet dataSet = llmDataSet(PROMPT, serializer.toJson(literal));
+
+        loader().loadData(dataSet, null, Map.of());
+
+        assertThat(dataLoader.getExecutions()).hasSize(1);
     }
 
     @Test
@@ -906,13 +1069,34 @@ class LlmDataLoaderTest {
     }
 
     /**
-     * A data set of a named band, which is how a run tells the axes of one cross-tab band from those of another.
+     * A data set of a cross-tab band, which is the band an axis reaches: its name is how a run tells the axes of
+     * one cross-tab band from those of another.
      */
-    protected DataSet llmDataSetOfBand(String bandName, @Nullable String storedQuery) {
+    protected DataSet llmDataSetOfCrossTabBand(String bandName, @Nullable String storedQuery) {
+        return llmDataSetOfBand(bandName, Orientation.CROSS, storedQuery);
+    }
+
+    /**
+     * A data set of a named band of the given orientation. Only a cross-tab band is handed the values of its
+     * axes, so the orientation is what says whether the axes in the params of a run are this band's to read.
+     */
+    protected DataSet llmDataSetOfBand(String bandName, @Nullable Orientation orientation,
+                                       @Nullable String storedQuery) {
         DataSet dataSet = llmDataSet(PROMPT, storedQuery);
         BandDefinition band = metadata.create(BandDefinition.class);
         band.setName(bandName);
+        band.setOrientation(orientation);
         dataSet.setBandDefinition(band);
+        return dataSet;
+    }
+
+    /**
+     * A data set that is itself one of the axes of its cross-tab band: {@code CrossTabExtractionController}
+     * recognises an axis by the name of its data set.
+     */
+    protected DataSet llmAxisDataSet(String bandName, String axisName, @Nullable String storedQuery) {
+        DataSet dataSet = llmDataSetOfCrossTabBand(bandName, storedQuery);
+        dataSet.setName(axisName);
         return dataSet;
     }
 }

@@ -54,6 +54,13 @@ public class DataSet implements ReportQuery, CopyingSystemState<DataSet> {
      */
     public static final String BAND_NAME = "bandName";
 
+    /**
+     * Orientation of the band this data set belongs to, published for the same reason as {@link #BAND_NAME}:
+     * only a cross-tab band is handed the values of its axes, so a loader that reads them has to know whether
+     * its own band is one.
+     */
+    public static final String BAND_ORIENTATION = "bandOrientation";
+
     private static final long serialVersionUID = -3706206933129963303L;
 
     protected FetchPlan fetchPlan;
@@ -302,6 +309,7 @@ public class DataSet implements ReportQuery, CopyingSystemState<DataSet> {
         params.put(JSON_INPUT_PROVIDER, jsonInputProvider);
         params.put(LLM_GENERATED_QUERY, llmGeneratedQuery);
         params.put(BAND_NAME, bandDefinition != null ? bandDefinition.getName() : null);
+        params.put(BAND_ORIENTATION, bandDefinition != null ? bandDefinition.getBandOrientation() : null);
 
         return params;
     }

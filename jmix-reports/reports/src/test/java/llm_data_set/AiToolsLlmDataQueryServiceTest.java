@@ -163,6 +163,22 @@ class AiToolsLlmDataQueryServiceTest {
     }
 
     @Test
+    void testColumnsOfARepairedQueryWithACaseExpressionAreRead() {
+        // A conditional column is one of the shapes a select clause is read by counting its top-level commas
+        // rather than by parsing it: the platform's own JPQL parser hands back a CASE and everything after it
+        // as a single selected expression, which would make these two columns look like one and drop the
+        // repair. See decisions/0020.
+        validationAndRepairService.setRepairedResult(new GeneratedJpqlResult(
+                "select case when o.amount > 100 then 'large' else 'small' end as size, "
+                        + "o.number as orderNo from sales_Order o",
+                List.of(), "", List.of()));
+
+        LlmDataQuery query = service.generate(generationRequest());
+
+        assertThat(query.getResultProperties()).containsExactly("size", "orderNo");
+    }
+
+    @Test
     void testRepairedQueryWithoutColumnsIsNotUsedEither() {
         validationAndRepairService.setRepairedResult(new GeneratedJpqlResult(
                 "select o.number from sales_Order o", List.of(), "", List.of()));

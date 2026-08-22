@@ -119,8 +119,9 @@ public final class LlmQueryParameterNames {
 
     /**
      * Returns the parameters a query text references, in the order it references them. This is what a query
-     * declares by being written: the add-on validates a query against the very same reading, so a document
-     * whose parameters say anything else is rejected on every run.
+     * declares by being written, and what the parameters of a stored document are derived from every time a
+     * query is stored: the add-on's validator reads a query the same way, so a document the designer wrote and
+     * a document the designer validated agree.
      *
      * @param jpql query text
      * @return names of the referenced parameters

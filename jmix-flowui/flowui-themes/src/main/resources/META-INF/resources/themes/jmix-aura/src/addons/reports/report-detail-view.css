@@ -61,3 +61,13 @@
     flex-grow: 1;
     flex-basis: 30em;
 }
+
+.report-detail-view .field-label {
+    color: var(--vaadin-input-field-label-color, var(--vaadin-text-color));
+    font-weight: var(--vaadin-input-field-label-font-weight, 500);
+    font-size: var(--vaadin-input-field-label-font-size, inherit);
+}
+
+.report-detail-view .llm-editor-block {
+    flex: 1 1 0;
+}

@@ -92,7 +92,7 @@ public class ReportRepositoryTest {
     public void testSuccessfulGetAllReports() {
         // Before adding to repository
         assertThat(reportRepository.getAllReports().size()).isEqualTo(0);
-        annotatedReportScanner.importReportDefinitions();
+        importAnnotatedReportsOnce();
 
         Report runtimeReport = runtimeReportUtil.constructSimpleRuntimeReport();
         reportRepository.save(runtimeReport);
@@ -140,7 +140,7 @@ public class ReportRepositoryTest {
 
     @Test
     public void testExistsReportByCode() {
-        annotatedReportScanner.importReportDefinitions();
+        importAnnotatedReportsOnce();
         Report report = runtimeReportUtil.constructSimpleRuntimeReport();
         report.setCode("runtime_code");
         reportRepository.save(report);
@@ -211,7 +211,7 @@ public class ReportRepositoryTest {
     @Test
     public void testGetTotalCount() {
         ReportFilter reportFilter = new ReportFilter();
-        annotatedReportScanner.importReportDefinitions();
+        importAnnotatedReportsOnce();
         String reportName2 = "Simple runtime report 2";
         String reportCode1 = "report-code-1";
         String reportCode2 = "report-code-2";
@@ -247,7 +247,7 @@ public class ReportRepositoryTest {
     @Test
     public void testGetTotalCountWithoutRights() {
         ReportFilter reportFilter = new ReportFilter();
-        annotatedReportScanner.importReportDefinitions();
+        importAnnotatedReportsOnce();
 
         assertThat(systemAuthenticator.withUser("with-no-access-user", () -> reportRepository.getTotalCount(reportFilter)))
                 .isEqualTo(0);
@@ -259,7 +259,7 @@ public class ReportRepositoryTest {
         String runtimeReportCode = "report-code-1";
 
         runtimeReport.setCode(runtimeReportCode);
-        annotatedReportScanner.importReportDefinitions();
+        importAnnotatedReportsOnce();
 
         // before saving runtime report to repository
         assertThat(reportRepository.loadForRunningByCode(runtimeReportCode)).isNull();
@@ -278,7 +278,7 @@ public class ReportRepositoryTest {
         String runtimeReportCode = "report-code-1";
 
         runtimeReport.setCode(runtimeReportCode);
-        annotatedReportScanner.importReportDefinitions();
+        importAnnotatedReportsOnce();
 
         // before saving runtime report to repository
         assertThat(systemAuthenticator.withUser("with-no-access-user", () -> reportRepository.loadForRunningByCode(runtimeReportCode)))
@@ -330,7 +330,7 @@ public class ReportRepositoryTest {
     public void testReloadForRunning() {
         Report savedRuntimeReport = runtimeReportUtil.createAndSaveSimpleRuntimeReport();
         annotatedReportHolder.clear();
-        annotatedReportScanner.importReportDefinitions();
+        importAnnotatedReportsOnce();
 
         List<Report> annotatedReportsList = annotatedReportHolder.getAllReports().stream().toList();
         Optional<Report> annotatedReport = annotatedReportsList.stream()
@@ -418,5 +418,15 @@ public class ReportRepositoryTest {
         // Should return only 1 report even if multiple templates match
         assertThat(reports).hasSize(1);
         assertThat(reports.get(0).getCode()).isEqualTo("report-multiple-templates");
+    }
+
+    /**
+     * Importing twice into the same context fails on a duplicate report code, and the context is shared with
+     * every other test declaring it — so import only when nothing has yet.
+     */
+    protected void importAnnotatedReportsOnce() {
+        if (annotatedReportHolder.getAllReports().isEmpty()) {
+            annotatedReportScanner.importReportDefinitions();
+        }
     }
 }

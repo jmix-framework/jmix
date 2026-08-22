@@ -30,6 +30,7 @@ import io.jmix.reports.entity.wizard.EntityTreeNode;
 import io.jmix.reports.entity.wizard.RegionProperty;
 import io.jmix.reports.entity.wizard.ReportData;
 import io.jmix.reports.entity.wizard.ReportRegion;
+import io.jmix.reportsflowui.view.report.model.LlmQueryColumn;
 import io.jmix.security.model.EntityAttributePolicyAction;
 import io.jmix.security.model.EntityPolicyAction;
 import io.jmix.security.model.SecurityScope;
@@ -99,6 +100,7 @@ public interface ReportsFullAccessRole {
 	@EntityPolicy(entityClass = ReportScreen.class, actions = EntityPolicyAction.ALL)
 	@EntityPolicy(entityClass = ReportValueFormat.class, actions = EntityPolicyAction.ALL)
 	@EntityPolicy(entityClass = ReportRole.class, actions = EntityPolicyAction.ALL)
+	@EntityPolicy(entityClass = LlmQueryColumn.class, actions = EntityPolicyAction.ALL)
 	void entityPolicy();
 
 	@EntityAttributePolicy(entityClass = Report.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
@@ -124,5 +126,6 @@ public interface ReportsFullAccessRole {
 	@EntityAttributePolicy(entityClass = ReportScreen.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
 	@EntityAttributePolicy(entityClass = ReportValueFormat.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
 	@EntityAttributePolicy(entityClass = ReportRole.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
+	@EntityAttributePolicy(entityClass = LlmQueryColumn.class, attributes = "*", action = EntityAttributePolicyAction.MODIFY)
 	void entityAttributePolicy();
 }

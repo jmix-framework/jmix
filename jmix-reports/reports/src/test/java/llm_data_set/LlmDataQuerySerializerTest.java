@@ -1,0 +1,220 @@
+/*
+ * Copyright 2026 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package llm_data_set;
+
+import io.jmix.reports.llm.LlmDataQuery;
+import io.jmix.reports.llm.LlmDataQueryException;
+import io.jmix.reports.llm.LlmQueryParameter;
+import io.jmix.reports.llm.impl.LlmDataQuerySerializer;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+
+import java.time.LocalDate;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.tuple;
+
+class LlmDataQuerySerializerTest {
+
+    protected final LlmDataQuerySerializer serializer = new LlmDataQuerySerializer();
+
+    @Test
+    void testQuerySurvivesRoundTrip() {
+        LlmDataQuery query = new LlmDataQuery(
+                "select o.number as orderNumber from sales_Order o where o.date >= :dateFrom",
+                List.of("orderNumber"),
+                List.of(new LlmQueryParameter("dateFrom", "java.time.LocalDate", null)),
+                "Orders from the given date",
+                List.of("Time zone is not taken into account"));
+
+        LlmDataQuery restored = serializer.fromJson(serializer.toJson(query));
+
+        assertThat(restored).isNotNull();
+        assertThat(restored.getJpql()).isEqualTo(query.getJpql());
+        assertThat(restored.getResultProperties()).containsExactly("orderNumber");
+        assertThat(restored.getParameters()).hasSize(1);
+        assertThat(restored.getParameters().get(0).getName()).isEqualTo("dateFrom");
+        assertThat(restored.getParameters().get(0).getJavaType()).isEqualTo("java.time.LocalDate");
+        assertThat(restored.getExplanation()).isEqualTo("Orders from the given date");
+        assertThat(restored.getWarnings()).containsExactly("Time zone is not taken into account");
+    }
+
+    @Test
+    void testParameterValuesAreNotStored() {
+        LlmDataQuery query = new LlmDataQuery(
+                "select o.number as orderNumber from sales_Order o where o.date >= :dateFrom",
+                List.of("orderNumber"),
+                List.of(new LlmQueryParameter("dateFrom", "java.time.LocalDate", LocalDate.of(2026, 8, 5))),
+                null,
+                List.of());
+
+        String json = serializer.toJson(query);
+
+        assertThat(json).doesNotContain("2026-08-05");
+        LlmDataQuery restored = serializer.fromJson(json);
+        assertThat(restored).isNotNull();
+        assertThat(restored.getParameters().get(0).getValue()).isNull();
+    }
+
+    @Test
+    void testStoredDocumentCarriesNothingButTheQueryContract() {
+        String json = serializer.toJson(new LlmDataQuery("select o.id as id from sales_Order o", List.of("id"),
+                List.of(new LlmQueryParameter("years", "java.lang.Integer", List.of(2025), true)),
+                null, List.of()));
+
+        assertThat(json).doesNotContain("multiValued");
+    }
+
+    @Test
+    void testStoredDocumentKeepsTheQueryReadable() {
+        // The document travels in the report XML, which people export, diff and fix by hand; Gson escapes the
+        // comparison operators of a query as unicode escapes unless told not to.
+        String jpql = "select o.number as n from sales_Order o where o.date >= :dateFrom and o.amount < 100";
+
+        String json = serializer.toJson(new LlmDataQuery(jpql, List.of("n"), List.of(), null, List.of()));
+
+        assertThat(json).contains(jpql);
+    }
+
+    @Test
+    void testEditedQueryKeepsItsTextColumnsAndDerivedParameters() {
+        LlmDataQuery previous = new LlmDataQuery("select o.id as id from sales_Order o", List.of("id"),
+                List.of(), "Orders", List.of("Amounts are not converted"));
+
+        LlmDataQuery edited = serializer.assemble(
+                "select o.number as num from sales_Order o where o.date >= :dateFrom and o.amount > :minAmount",
+                List.of("num"), previous);
+
+        assertThat(edited.getJpql()).contains(":dateFrom");
+        assertThat(edited.getResultProperties()).containsExactly("num");
+        assertThat(edited.getParameters())
+                .extracting(LlmQueryParameter::getName)
+                .containsExactly("dateFrom", "minAmount");
+        assertThat(edited.getExplanation()).isEqualTo("Orders");
+        assertThat(edited.getWarnings()).containsExactly("Amounts are not converted");
+    }
+
+    @Test
+    void testColonInsideAStringLiteralIsNoParameter() {
+        // A phantom parameter no run could bind would make an otherwise valid query unrunnable.
+        LlmDataQuery edited = serializer.assemble(
+                "select o.number as num from sales_Order o where o.code like 'urn:isbn%' and o.date >= :dateFrom",
+                List.of("num"), null);
+
+        assertThat(edited.getParameters())
+                .extracting(LlmQueryParameter::getName)
+                .containsExactly("dateFrom");
+    }
+
+    @Test
+    void testDoubledQuoteInsideAStringLiteralDoesNotEndIt() {
+        LlmDataQuery edited = serializer.assemble(
+                "select o.number as num from sales_Order o where o.note = 'it''s a:label'", List.of("num"), null);
+
+        assertThat(edited.getParameters()).isEmpty();
+    }
+
+    @Test
+    void testEditedQueryKeepsTheJavaTypeOfAParameterThePreviousDocumentDeclared() {
+        LlmDataQuery previous = new LlmDataQuery(
+                "select o.number as orderNumber from sales_Order o where o.date >= :dateFrom",
+                List.of("orderNumber"),
+                List.of(new LlmQueryParameter("dateFrom", "java.time.LocalDate", null)),
+                "Orders since the given date", List.of());
+
+        LlmDataQuery assembled = serializer.assemble(
+                "select o.number as orderNumber from sales_Order o "
+                        + "where o.date >= :dateFrom and o.number like :numberPart",
+                List.of("orderNumber"), previous);
+
+        assertThat(assembled.getParameters())
+                .extracting(LlmQueryParameter::getName, LlmQueryParameter::getJavaType)
+                .containsExactly(tuple("dateFrom", "java.time.LocalDate"), tuple("numberPart", ""));
+    }
+
+    @Test
+    void testEditedQueryDropsAParameterRemovedFromTheText() {
+        LlmDataQuery edited = serializer.assemble("select o.id as id from sales_Order o", List.of("id"), null);
+
+        assertThat(edited.getParameters()).isEmpty();
+        assertThat(edited.getExplanation()).isNull();
+    }
+
+    @Test
+    void testBlankDocumentMeansNoCachedQuery() {
+        assertThat(serializer.fromJson(null)).isNull();
+        assertThat(serializer.fromJson("")).isNull();
+        assertThat(serializer.fromJson("   ")).isNull();
+    }
+
+    @Test
+    void testDocumentWithoutOptionalFieldsReadsWithEmptyCollections() {
+        LlmDataQuery restored = serializer.fromJson("{\"jpql\":\"select o.number as n from sales_Order o\"}");
+
+        assertThat(restored).isNotNull();
+        assertThat(restored.getResultProperties()).isEmpty();
+        assertThat(restored.getParameters()).isEmpty();
+        assertThat(restored.getWarnings()).isEmpty();
+        assertThat(restored.getExplanation()).isNull();
+    }
+
+    /**
+     * A document that carries no usable query — whatever is wrong with it — is rejected the same way, because
+     * the author can do only one thing about any of them.
+     */
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "null",
+            "[1, 2]",
+            "{\"jpql\": ",
+            "{\"resultProperties\":[\"n\"]}"
+    })
+    void testUnreadableDocumentFailsWithRegenerationHint(String document) {
+        assertThatThrownBy(() -> serializer.fromJson(document))
+                .isInstanceOf(LlmDataQueryException.class)
+                .hasMessageContaining("regenerate");
+    }
+
+    @Test
+    void testParameterWithoutNameIsDropped() {
+        LlmDataQuery restored = serializer.fromJson("""
+                {"jpql":"select o.number as n from sales_Order o where o.id = :id",\
+                "parameters":[{"javaType":"java.lang.String"},{"name":"id","javaType":"java.util.UUID"}]}""");
+
+        assertThat(restored).isNotNull();
+        assertThat(restored.getParameters())
+                .extracting(LlmQueryParameter::getName)
+                .containsExactly("id");
+    }
+
+    @Test
+    void testNullElementsOfStoredListsAreDropped() {
+        LlmDataQuery restored = serializer.fromJson("""
+                {"jpql":"select o.number as n from sales_Order o",\
+                "resultProperties":["n",null],\
+                "parameters":[null],\
+                "warnings":[null,"approximated"]}""");
+
+        assertThat(restored).isNotNull();
+        assertThat(restored.getResultProperties()).containsExactly("n");
+        assertThat(restored.getParameters()).isEmpty();
+        assertThat(restored.getWarnings()).containsExactly("approximated");
+    }
+}

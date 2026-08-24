@@ -105,6 +105,7 @@ public class GenericFilter extends Composite<JmixDetails>
     protected GroupFilterSupport groupFilterSupport;
     protected Icons icons;
 
+    protected boolean addConditionDialogResizable;
     protected boolean autoApply;
     protected String applyShortcut;
     protected int propertyHierarchyDepth;
@@ -397,6 +398,22 @@ public class GenericFilter extends Composite<JmixDetails>
             updateApplyButtonText(autoApply);
             updateCurrentConfigurationAutoApply(autoApply);
         }
+    }
+
+    /**
+     * @return whether the dialog for adding filter conditions can be resized by the user
+     */
+    public boolean isAddConditionDialogResizable() {
+        return addConditionDialogResizable;
+    }
+
+    /**
+     * Sets whether the dialog for adding filter conditions can be resized by the user.
+     *
+     * @param addConditionDialogResizable whether the dialog can be resized
+     */
+    public void setAddConditionDialogResizable(boolean addConditionDialogResizable) {
+        this.addConditionDialogResizable = addConditionDialogResizable;
     }
 
     /**

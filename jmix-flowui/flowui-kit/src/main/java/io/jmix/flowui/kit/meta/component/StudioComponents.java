@@ -3074,6 +3074,8 @@ interface StudioComponents {
                             classFqn = "io.jmix.flowui.kit.component.Alignment",
                             defaultValue = "AUTO",
                             options = {"START", "END", "CENTER", "STRETCH", "BASELINE", "AUTO"}),
+                    @StudioProperty(xmlAttribute = "addConditionDialogResizable", type = StudioPropertyType.BOOLEAN,
+                            defaultValue = "false"),
                     @StudioProperty(xmlAttribute = "autoApply", type = StudioPropertyType.BOOLEAN,
                             defaultValue = "true", defaultValueRef = "application_property:jmix.ui.component.filter-auto-apply"),
                     @StudioProperty(xmlAttribute = "applyShortcut", type = StudioPropertyType.STRING),

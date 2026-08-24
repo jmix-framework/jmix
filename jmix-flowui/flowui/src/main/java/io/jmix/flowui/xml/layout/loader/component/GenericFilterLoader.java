@@ -60,6 +60,8 @@ public class GenericFilterLoader extends AbstractComponentLoader<GenericFilter> 
         componentLoader().loadTooltip(resultComponent, element);
 
         getLoaderSupport().loadBoolean(element, "opened", resultComponent::setOpened);
+        getLoaderSupport().loadBoolean(element, "addConditionDialogResizable",
+                resultComponent::setAddConditionDialogResizable);
         getLoaderSupport().loadBoolean(element, "autoApply", resultComponent::setAutoApply);
         getLoaderSupport().loadInteger(element, "propertyHierarchyDepth",
                 resultComponent::setPropertyHierarchyDepth);

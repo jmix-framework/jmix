@@ -408,6 +408,7 @@ public final class StudioXmlAttributes {
     public static final String FORMATTER_FUNCTION = "formatterFunction";
     public static final String FRACTION = "fraction";
     public static final String FROZEN = "frozen";
+    public static final String FROZEN_TO_END = "frozenToEnd";
     public static final String FUNCTION_BAR_VISIBLE = "functionBarVisible";
     public static final String FUNNEL_ALIGN = "funnelAlign";
     public static final String GAP = "gap";

@@ -3459,6 +3459,7 @@
         <xs:attribute name="header" type="resourceString"/>
         <xs:attribute name="footer" type="resourceString"/>
         <xs:attribute name="frozen" type="xs:boolean"/>
+        <xs:attribute name="frozenToEnd" type="xs:boolean"/>
         <xs:attribute name="property" type="xs:string"/>
         <xs:attribute name="sortable" type="xs:boolean"/>
         <xs:attribute name="filterable" type="xs:boolean"/>

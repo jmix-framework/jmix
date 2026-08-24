@@ -169,7 +169,7 @@ class StudioGridPreviewLoaderTest {
     void testColumnWidthAutoWidthFlexGrowFrozenTextAlign() {
         Element columns = columnsElement(withAttributes(element("column"), "key", "name",
                 "width", "200px", "autoWidth", "true", "flexGrow", "2", "frozen", "true",
-                "textAlign", "CENTER"));
+                "frozenToEnd", "true", "textAlign", "CENTER"));
         Grid<?> grid = (Grid<?>) loader.load(gridElement("dataGrid", columns), element("view"), new FakeEnv());
 
         Grid.Column<?> column = grid.getColumnByKey("name");
@@ -177,6 +177,7 @@ class StudioGridPreviewLoaderTest {
         assertTrue(column.isAutoWidth());
         assertEquals(2, column.getFlexGrow());
         assertTrue(column.isFrozen());
+        assertTrue(column.isFrozenToEnd());
         assertEquals(ColumnTextAlign.CENTER, column.getTextAlign());
     }
 

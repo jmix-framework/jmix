@@ -167,6 +167,7 @@ class StudioGridPreviewLoader implements StudioPreviewComponentLoader {
         loadBoolean(columnElement, "autoWidth", column::setAutoWidth);
         loadInteger(columnElement, "flexGrow", column::setFlexGrow);
         loadBoolean(columnElement, "frozen", column::setFrozen);
+        loadBoolean(columnElement, "frozenToEnd", column::setFrozenToEnd);
         loadEnum(columnElement, ColumnTextAlign.class, "textAlign", column::setTextAlign);
         column.setSortable(loadBoolean(columnElement, "sortable").orElse(columnsSortable));
         column.setResizable(loadBoolean(columnElement, "resizable").orElse(columnsResizable));

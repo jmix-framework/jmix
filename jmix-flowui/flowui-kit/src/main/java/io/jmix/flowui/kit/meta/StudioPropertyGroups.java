@@ -947,6 +947,14 @@ public final class StudioPropertyGroups {
     }
 
     @StudioPropertyGroup(properties = @StudioProperty(
+            xmlAttribute = StudioXmlAttributes.FROZEN_TO_END,
+            type = StudioPropertyType.BOOLEAN,
+            category = StudioProperty.Category.POSITION,
+            defaultValue = "false"))
+    public interface FrozenToEnd {
+    }
+
+    @StudioPropertyGroup(properties = @StudioProperty(
             xmlAttribute = StudioXmlAttributes.GAP,
             type = StudioPropertyType.STRING,
             category = StudioProperty.Category.LOOK_AND_FEEL))
@@ -2398,7 +2406,7 @@ public final class StudioPropertyGroups {
     }
 
     @StudioPropertyGroup
-    public interface GridColumnDefaultProperties extends AutoWidth, FlexGrow, Footer, Frozen, Header, Key,
+    public interface GridColumnDefaultProperties extends AutoWidth, FlexGrow, Footer, Frozen, FrozenToEnd, Header, Key,
             ResizableWithParentDefaultValueRef, ColumnSortable, Visible, WidthWithDefaultValueUndefined {
     }
 

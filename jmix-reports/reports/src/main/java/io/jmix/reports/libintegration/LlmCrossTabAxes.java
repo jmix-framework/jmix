@@ -147,14 +147,17 @@ public final class LlmCrossTabAxes {
     public static void addAxisValues(String axisName, List<?> rows, Map<String, Object> availableValues,
                                      List<String> requiredResultProperties,
                                      BiConsumer<String, Runnable> warnOnce) {
+        // Neither changes between the fields of one axis, and telling the order means scanning the rows.
+        String axisPrefix = LlmQueryParameterNames.ofCrossTabAxisPrefix(axisName);
+        boolean fieldsAreOrdered = fieldsAreOrdered(rows);
+
         for (Map.Entry<String, List<Object>> field : valuesByField(rows).entrySet()) {
             String name = LlmQueryParameterNames.ofCrossTabValue(axisName, field.getKey());
             if (!LlmQueryParameterNames.isValid(name)) {
                 continue;
             }
 
-            String axisPrefix = LlmQueryParameterNames.ofCrossTabAxisPrefix(axisName);
-            if (fieldsAreOrdered(rows)
+            if (fieldsAreOrdered
                     && requiredResultProperties.stream().noneMatch(required -> required.startsWith(axisPrefix))) {
                 requiredResultProperties.add(name);
             }

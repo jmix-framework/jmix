@@ -189,10 +189,10 @@ public class AiToolsLlmDataQueryService implements LlmDataQueryService {
     /**
      * Counts the values a select clause selects: its top-level commas plus one. A comma inside a function call
      * or a subquery separates arguments rather than selected values, and a comma inside a string literal is
-     * text.
+     * text — the clause arrives with its literals already blanked by {@link #selectClauseOf}.
      */
     protected int selectedExpressionCount(String selectClause) {
-        String text = LlmQueryParameterNames.stripStringLiterals(selectClause);
+        String text = selectClause;
         int depth = 0;
         int count = 1;
         for (int i = 0; i < text.length(); i++) {

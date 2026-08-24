@@ -269,6 +269,70 @@ class LlmQueryExecutionTest {
     }
 
     @Test
+    void testDeniedRootEntityIsCaughtEvenWhenAJoinedAttributeIsSelected() {
+        // The obvious hole in judging by the selected paths alone: what the query selects belongs to the joined
+        // entity, so nothing about the root — the entity the query actually reads from — is looked at. The check
+        // asks about every entity the query graph names.
+        Publisher publisher = publisher("Nintendo");
+        game("Tetris", new BigDecimal("5"), publisher);
+        denyingConstraint.denyEntity("GameTitle");
+        DataSet dataSet = llmDataSet(new LlmDataQuery(
+                "select p.name as publisherName from GameTitle g join g.publisher p where p.name like :name",
+                List.of("publisherName"), List.of(new LlmQueryParameter("name", "java.lang.String")),
+                null, List.of()));
+
+        assertThatThrownBy(() -> loader().loadData(dataSet, null, Map.of("name", OWN + "%")))
+                .isInstanceOf(AccessDeniedException.class);
+    }
+
+    @Test
+    void testDeniedEntityIsCaughtWhenTheQuerySelectsNoAttributeOfIt() {
+        // The other one: a query selecting a constant has no selected entity at all, so judging by selected
+        // paths would find nothing to check.
+        publisher("Nintendo");
+        denyingConstraint.denyEntity("Publisher");
+        DataSet dataSet = llmDataSet(new LlmDataQuery(
+                "select 1 as marker from Publisher p where p.name like :name",
+                List.of("marker"), List.of(new LlmQueryParameter("name", "java.lang.String")),
+                null, List.of()));
+
+        assertThatThrownBy(() -> loader().loadData(dataSet, null, Map.of("name", OWN + "%")))
+                .isInstanceOf(AccessDeniedException.class);
+    }
+
+    @Test
+    void testDeniedEntityInsideASubqueryIsCaughtToo() {
+        // The query graph reaches into subqueries, and so must the check: a denied entity read only there would
+        // otherwise pass, the same way a denied root did while judging by the selected paths.
+        Publisher publisher = publisher("Nintendo");
+        game("Tetris", new BigDecimal("5"), publisher);
+        denyingConstraint.denyEntity("GameTitle");
+        DataSet dataSet = llmDataSet(new LlmDataQuery(
+                "select p.name as publisherName from Publisher p where p.name like :name "
+                        + "and exists (select g from GameTitle g where g.publisher = p)",
+                List.of("publisherName"), List.of(new LlmQueryParameter("name", "java.lang.String")),
+                null, List.of()));
+
+        assertThatThrownBy(() -> loader().loadData(dataSet, null, Map.of("name", OWN + "%")))
+                .isInstanceOf(AccessDeniedException.class);
+    }
+
+    @Test
+    void testSelectingAJoinedEntityWholeIsRefusedToo() {
+        // The joined half of the whole-entity refusal: asking the parser whether this is an "entity select"
+        // answers about the root only, so a joined alias selected whole used to pass.
+        Publisher publisher = publisher("Nintendo");
+        game("Tetris", new BigDecimal("5"), publisher);
+        DataSet dataSet = llmDataSet(new LlmDataQuery(
+                "select p as publisher from GameTitle g join g.publisher p",
+                List.of("publisher"), List.of(), null, List.of()));
+
+        assertThatThrownBy(() -> loader().loadData(dataSet, null, Map.of()))
+                .isInstanceOf(DataLoadingException.class)
+                .hasMessageContainingAll("selects the entities", "Publisher");
+    }
+
+    @Test
     void testSelectingAnEntityItselfIsRefusedBecauseMaskingCannotReachIt() {
         // Measured before it was refused: attribute permissions are applied by masking selected columns, so an
         // entity handed back whole carried the very attribute masking would have hidden — `select p` returned a
@@ -281,7 +345,7 @@ class LlmQueryExecutionTest {
 
         assertThatThrownBy(() -> loader().loadData(dataSet, null, Map.of()))
                 .isInstanceOf(DataLoadingException.class)
-                .hasMessageContainingAll("selects the entity", "Publisher");
+                .hasMessageContainingAll("selects the entities", "Publisher");
     }
 
     @Test

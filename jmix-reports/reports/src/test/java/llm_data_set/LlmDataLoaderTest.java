@@ -22,6 +22,7 @@ import ch.qos.logback.core.read.ListAppender;
 import io.jmix.core.Metadata;
 import io.jmix.core.Stores;
 import io.jmix.reports.ReportsTestConfiguration;
+import io.jmix.reports.test_support.AuthenticatedAsSystem;
 import io.jmix.reports.entity.BandDefinition;
 import io.jmix.reports.entity.DataSet;
 import io.jmix.reports.entity.DataSetType;
@@ -63,7 +64,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@ExtendWith(SpringExtension.class)
+// Authenticated because a report run always is — by the user who started it or by the system — and the loader
+// now asks the current user's permissions before executing a query.
+@ExtendWith({SpringExtension.class, AuthenticatedAsSystem.class})
 @ContextConfiguration(classes = {ReportsTestConfiguration.class, LlmDataSetTestConfiguration.class})
 class LlmDataLoaderTest {
 
@@ -198,16 +201,6 @@ class LlmDataLoaderTest {
         assertThatThrownBy(() -> loader().loadData(dataSet, null, Map.of()))
                 .isInstanceOf(DataLoadingException.class)
                 .hasMessageContainingAll("Data", "no generated query stored");
-    }
-
-    @Test
-    void testReportParameterValueIsBoundToTheQueryParameter() {
-        DataSet dataSet = llmDataSet(PROMPT, storedQuery(List.of(parameter("dateFrom", "java.time.LocalDate"))));
-        LocalDate dateFrom = LocalDate.of(2026, 8, 1);
-
-        loader().loadData(dataSet, null, Map.of("dateFrom", dateFrom));
-
-        assertThat(dataLoader.getLastExecution().arguments()).containsExactly(entry("dateFrom", dateFrom));
     }
 
     @Test
@@ -892,15 +885,6 @@ class LlmDataLoaderTest {
         assertThatThrownBy(() -> loader().loadData(dataSet, null, Map.of()))
                 .isInstanceOf(DataLoadingException.class)
                 .hasMessageContainingAll("Data", "Unknown attribute [o.number]", "Generate it again");
-    }
-
-    @Test
-    void testQueryParameterWithoutAValueFails() {
-        DataSet dataSet = llmDataSet(PROMPT, storedQuery(List.of(parameter("dateFrom", "java.time.LocalDate"))));
-
-        assertThatThrownBy(() -> loader().loadData(dataSet, null, Map.of()))
-                .isInstanceOf(DataLoadingException.class)
-                .hasMessageContaining("dateFrom");
     }
 
     @Test

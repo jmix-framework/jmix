@@ -31,6 +31,9 @@ public class LlmQueryExecutionTestConfiguration {
     public DenyingLoadValuesConstraint denyingLoadValuesConstraint(AccessConstraintsRegistry registry) {
         DenyingLoadValuesConstraint constraint = new DenyingLoadValuesConstraint();
         registry.register(constraint);
+        // Entity READ is decided by CrudEntityContext, which the value-load constraint above cannot answer, so
+        // both halves are registered and driven by the same denied set.
+        registry.register(new CrudEntityDenial(constraint));
         return constraint;
     }
 }

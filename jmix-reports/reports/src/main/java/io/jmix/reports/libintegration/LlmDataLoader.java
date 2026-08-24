@@ -21,14 +21,13 @@ import io.jmix.core.DataManager;
 import io.jmix.core.FluentValuesLoader;
 import io.jmix.core.Metadata;
 import io.jmix.core.Stores;
+import io.jmix.core.accesscontext.CrudEntityContext;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.metamodel.model.MetadataObject;
 import io.jmix.core.security.AccessDeniedException;
 import io.jmix.core.security.EntityOp;
 import io.jmix.data.QueryParser;
 import io.jmix.data.QueryTransformerFactory;
-import io.jmix.data.accesscontext.LoadValuesAccessContext;
 import io.jmix.reports.entity.DataSet;
 import io.jmix.reports.entity.DataSetType;
 import io.jmix.reports.llm.LlmDataQuery;
@@ -65,7 +64,6 @@ import java.util.WeakHashMap;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * Loads band data for the {@link DataSetType#LLM} data set type: reads the query stored in the data set, binds
@@ -199,9 +197,10 @@ public class LlmDataLoader implements ReportDataLoader {
     }
 
     /**
-     * Executes the stored query through {@code DataManager}, so that the entity and attribute permissions of the
-     * current user and the row-level policies of the query's root entity apply as they do to any other data set.
-     * An attribute the user may not read comes back as {@code null}.
+     * Executes the stored query through {@code DataManager}, so that the attribute permissions of the current
+     * user and the row-level policies of the query's root entity apply as they do to any other data set: an
+     * attribute the user may not read comes back as {@code null}. Entity READ is checked before this, by
+     * {@link #checkEntityReadPermitted}, because the platform does not act on it for a value load.
      * <p>
      * The query runs in the store of the entity it reads, which {@link #resolveStoreName} works out from the
      * query itself.
@@ -240,8 +239,8 @@ public class LlmDataLoader implements ReportDataLoader {
 
     /**
      * Refuses a stored query a run will not execute, before it executes anything: one that does more than read
-     * the entity model through {@code DataManager}, one whose parameters could not be bound, and one that names
-     * no column to key its rows by.
+     * the entity model through {@code DataManager}, one whose parameters could not be bound, one that names no
+     * column to key its rows by, and one that selects an entity rather than its attributes.
      * <p>
      * The designer checks a query the add-on generated or the author edited, and refuses some of this. A report
      * also arrives by import, though, bringing whatever text the file holds and no add-on to check it with — so
@@ -423,8 +422,11 @@ public class LlmDataLoader implements ReportDataLoader {
      * Collects the values a query may bind, keyed by the name it would reference them by: the run parameters
      * first, then the fields of every parent row up the band hierarchy, then the values of the cross-tab axes
      * this band is built from.
-     * A parameter with no value is left out: there is nothing to bind, and a query that references it fails
-     * saying so, which is more use than a query that binds null.
+     * <p>
+     * A run parameter the report knows is offered even when this run left it empty, so that a query guarding its
+     * condition with {@code (:name is null or …)} has a {@code null} to switch on. A collection with nothing in it
+     * is the exception, and so are a {@code null} parent-band field and an axis value: see
+     * {@code decisions/0016}.
      */
     protected CollectedParameters collectAvailableParameters(ReportQuery reportQuery,
                                                              Map<String, Object> params,
@@ -497,66 +499,98 @@ public class LlmDataLoader implements ReportDataLoader {
      * hand edit can still carry in.
      */
     protected void checkQuerySelectsValues(ReportQuery reportQuery, LlmDataQuery query) {
-        String entityName;
+        List<String> selectedEntities;
         try {
-            QueryParser parser = queryTransformerFactory.parser(query.getJpql());
-            // The parser reads the text lazily, so both calls belong inside: a text it cannot read fails on its
+            // The parser reads the text lazily, so the walk belongs inside: a text it cannot read fails on its
             // own terms when it executes, naming the data set, which says more than a parse error here would.
-            entityName = parser.isEntitySelect(parser.getEntityName()) ? parser.getEntityName() : null;
+            selectedEntities = selectedEntitiesOf(queryTransformerFactory.parser(query.getJpql()));
         } catch (RuntimeException e) {
             log.debug("The selected values of [{}] cannot be told, so they are not checked", query.getJpql(), e);
             return;
         }
 
-        if (entityName != null) {
+        if (!selectedEntities.isEmpty()) {
             throw new DataLoadingException(String.format(
-                    "The stored query of data set [%s] selects the entity [%s] itself rather than its attributes. "
-                            + "A band prints values, and an entity would also carry the attributes the current "
-                            + "user may not read: select the attributes the report needs",
-                    reportQuery.getName(), entityName));
+                    "The stored query of data set [%s] selects the entities %s themselves rather than their "
+                            + "attributes. A band prints values, and an entity would also carry the attributes "
+                            + "the current user may not read: select the attributes the report needs",
+                    reportQuery.getName(), selectedEntities));
         }
     }
 
     /**
-     * Refuses a query over an entity the current user may not read.
+     * Names the entities a query selects whole, root or joined.
      * <p>
-     * {@code DataManager.loadValues} attaches the current user's constraints, and {@code LoadValuesConstraint}
-     * calls {@code setDenied()} for an entity without READ — but nothing in the platform reads
-     * {@code isPermitted()} on that path: {@code DataStoreCrudValuesListener} consumes only the denied
-     * *columns*. A user without READ would therefore still get every attribute the query selects, and
-     * {@code select e} would hand back the entity itself, unmasked. Since this type promises that a run reads
-     * no more than its user may, the check belongs here rather than in a note about the platform.
+     * Told apart by the selected path itself: {@code select p.name} gives a path whose property is the attribute
+     * {@code name}, while {@code select p} gives one whose property is the variable's own alias {@code p}. So a
+     * selected path whose property *is* its variable is the entity — which holds for a joined alias exactly as
+     * for the root one, where asking the parser whether this is an "entity select" only ever answers about the
+     * root.
      * <p>
-     * Modelled on the add-on's own `JpqlExecutionService#resolveDeniedSelectedIndexes`, so a query refused
-     * there is refused here for the same reason and with the same exception. Denied *columns* are left to the
-     * platform, which masks them.
+     * Deliberately not "a property the entity does not have": that would also catch
+     * {@code select p.noSuchAttribute}, a query written against another data model, which has its own and better
+     * failure. A constant or an aggregate ({@code select 1}, {@code select count(p)}) contributes no selected
+     * path at all, so neither is mistaken for an entity.
+     */
+    protected List<String> selectedEntitiesOf(QueryParser parser) {
+        List<String> selected = new ArrayList<>();
+        for (QueryParser.QueryPath path : parser.getQueryPaths()) {
+            if (path.isSelectedPath() && path.getPropertyPath().equals(path.getVariableName())
+                    && !selected.contains(path.getEntityName())) {
+                selected.add(path.getEntityName());
+            }
+        }
+        return selected;
+    }
+
+    /**
+     * Refuses a query that reads an entity the current user may not read — every entity in it, not only the one
+     * whose attributes it selects.
+     * <p>
+     * The platform leaves this open twice over. {@code DataStoreCrudValuesListener} consumes only the denied
+     * *columns* of a value load and never reads {@code isPermitted()}, so a denied entity does not stop the
+     * query; and {@code LoadValuesAccessContext#getEntityClasses()} — what the platform's own constraint judges
+     * by — is built from the *selected* paths alone, so it sees neither the root of
+     * {@code select p.name from GameTitle g join g.publisher p} nor any entity of
+     * {@code select 1 as marker from Publisher p}.
+     * <p>
+     * So the question is asked here, of every entity the query graph names
+     * ({@code QueryParser#getAllEntityNames}, which reaches into subqueries as well), through the platform's own
+     * {@code CrudEntityContext} — the context entity READ is actually decided by. Denied *columns* are still left to the platform, which masks
+     * them.
      */
     protected void checkEntityReadPermitted(LlmDataQuery query) {
+        Set<String> entityNames;
         try {
-            LoadValuesAccessContext context =
-                    new LoadValuesAccessContext(query.getJpql(), queryTransformerFactory, metadata);
-            accessManager.applyRegisteredConstraints(context);
-
-            if (!context.isPermitted()) {
-                String entityNames = context.getEntityClasses().stream()
-                        .map(MetadataObject::getName)
-                        .sorted()
-                        .collect(Collectors.joining(","));
-                throw new AccessDeniedException("entity",
-                        entityNames.isBlank() ? query.getJpql() : entityNames, EntityOp.READ.getId());
-            }
-        } catch (AccessDeniedException e) {
-            // Being refused — here or by a constraint that refuses outright — is the answer, not a failure of
-            // the check.
-            throw e;
+            entityNames = queryTransformerFactory.parser(query.getJpql()).getAllEntityNames();
         } catch (RuntimeException e) {
-            // The check has to know which entities the query reads, and a query written against another data
-            // model tells it nothing: the platform's own constraint asks the metadata for an entity it does not
-            // have. Such a query cannot execute either, and it fails on its own terms with a message naming the
-            // data set and pointing at the designer — which says more than a failure about permissions would.
-            // Nothing is let through that would not have been: the query is about to fail.
+            // A query written against another data model tells the check nothing, cannot execute either, and
+            // fails on its own terms with a message naming the data set. Nothing is let through that would not
+            // have been: the query is about to fail.
             log.debug("The entities read by [{}] cannot be told, so the entity read check is skipped",
                     query.getJpql(), e);
+            return;
+        }
+
+        // Sorted, and without the nulls the parser leaves for a name it could not resolve: which of several
+        // denied entities a message blames should not depend on hashing.
+        // The parser honours no nullness contract: a name it could not resolve arrives as null, which sorting
+        // would trip over, whatever the declared element type says.
+        //noinspection ConstantValue
+        List<String> named = entityNames.stream().filter(Objects::nonNull).sorted().toList();
+
+        for (String entityName : named) {
+            MetaClass entity = metadata.findClass(entityName);
+            if (entity == null) {
+                // A name the model does not know: the query cannot execute either, and says so itself.
+                continue;
+            }
+
+            CrudEntityContext entityContext = new CrudEntityContext(entity);
+            accessManager.applyRegisteredConstraints(entityContext);
+            if (!entityContext.isReadPermitted()) {
+                throw new AccessDeniedException("entity", entity.getName(), EntityOp.READ.getId());
+            }
         }
     }
 
@@ -618,12 +652,6 @@ public class LlmDataLoader implements ReportDataLoader {
         }
     }
 
-
-
-
-
-
-
     /**
      * Collects the value to bind for every parameter the query references. The type the query declares for a
      * parameter is not consulted: it was written to tell a model what the value would be, and a value is bound
@@ -658,10 +686,10 @@ public class LlmDataLoader implements ReportDataLoader {
     }
 
     /**
-     * Says why a parameter the query references cannot be bound. A parameter the run knows but left empty is a
-     * different matter from one the run has never heard of: an unfilled optional report parameter is the common
-     * case, and it says so, because a query is generated once and binds every parameter it references — unlike a
-     * JPQL or SQL data set, which drops the condition an empty parameter is used in.
+     * Says why a parameter the query references cannot be bound, telling two cases apart. A name the run has
+     * never heard of means a query that does not match its report. A name the run knows reaches here only when
+     * its value cannot be bound as it stands — a collection with nothing to match, above all — since an empty
+     * value the report knows is otherwise bound as {@code null} for a guarded condition to switch off.
      */
     protected String describeMissingArgument(ReportQuery reportQuery, String name, Map<String, Object> params) {
         if (params.containsKey(name)) {
@@ -744,9 +772,14 @@ public class LlmDataLoader implements ReportDataLoader {
          * rows of a parent band, and the check parses the query to find the entities it reads.
          */
         protected void entityReadChecked(String jpql, Runnable check) {
-            if (entityReadChecked.add(jpql)) {
-                check.run();
+            if (entityReadChecked.contains(jpql)) {
+                return;
             }
+
+            // Remembered only once it has passed: a refusal must be raised again for every data set and every
+            // parent row that reaches this query, not swallowed because the first attempt already ran.
+            check.run();
+            entityReadChecked.add(jpql);
         }
 
         /**

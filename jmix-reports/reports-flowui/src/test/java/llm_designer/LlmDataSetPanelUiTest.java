@@ -21,6 +21,7 @@ import com.vaadin.flow.component.badge.Badge;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import io.jmix.core.Messages;
+import io.jmix.core.Metadata;
 import io.jmix.flowui.ViewNavigators;
 import io.jmix.flowui.Notifications;
 import io.jmix.flowui.backgroundtask.BackgroundTask;
@@ -43,7 +44,9 @@ import io.jmix.flowui.view.View;
 import io.jmix.reports.entity.BandDefinition;
 import io.jmix.reports.entity.DataSet;
 import io.jmix.reports.entity.DataSetType;
+import io.jmix.reports.entity.ParameterType;
 import io.jmix.reports.entity.Report;
+import io.jmix.reports.entity.ReportInputParameter;
 import io.jmix.reports.llm.LlmDataQueryException;
 import io.jmix.reports.llm.LlmDataQuery;
 import io.jmix.reports.llm.LlmDataQueryService;
@@ -94,6 +97,9 @@ public class LlmDataSetPanelUiTest {
 
     @Autowired
     protected Messages messages;
+
+    @Autowired
+    protected Metadata metadata;
 
     @Autowired
     protected LlmDataSetGenerationSupport generationSupport;
@@ -448,6 +454,39 @@ public class LlmDataSetPanelUiTest {
         assertThat(notification).isNotNull();
         assertThat(notification.getText()).isEqualTo(messages.getMessage("io.jmix.reportsflowui.view.report",
                 "bandsTab.dataSetTypeLayout.llmGenerationDiscarded"));
+    }
+
+    @Test
+    void testUnguardedOptionalParameterIsReportedOnSave() {
+        // The route no other check catches: the query is untouched and the report changes around it — a
+        // parameter becomes optional, and the comparison written for a required one now matches nothing when the
+        // parameter is left empty. Save is where every stored query of the report is read back.
+        ReportDetailView view = openReportDesignerOnLlmDataSet();
+        DataSet dataSet = selectedDataSet(view);
+
+        ReportInputParameter parameter = metadata.create(ReportInputParameter.class);
+        parameter.setReport(view.getEditedEntity());
+        parameter.setName("City");
+        parameter.setAlias("city");
+        parameter.setType(ParameterType.TEXT);
+        parameter.setRequired(false);
+        parameter.setPosition(0);
+        view.getEditedEntity().setInputParameters(new ArrayList<>(List.of(parameter)));
+
+        dataSet.setLlmGeneratedQuery(serializer.toJson(new LlmDataQuery(
+                "select o.number as orderNumber from sales_Order o where o.city = :city",
+                List.of("orderNumber"), List.of(new LlmQueryParameter("city", "java.lang.String")),
+                null, List.of())));
+
+        this.<JmixButton>findComponent(view, "saveBtn").click();
+
+        // Among all of them: the save itself reports success afterwards, and the warning is the one that stays
+        // on screen until it is dismissed.
+        assertThat(UiTestUtils.getOpenedNotifications())
+                .extracting(NotificationInfo::getText)
+                .contains(messages.formatMessage("io.jmix.reportsflowui.view.report",
+                        "bandsTab.dataSetTypeLayout.llmUnguardedOptionalParametersInReport",
+                        dataSet.getName() + " (city)"));
     }
 
     @Test

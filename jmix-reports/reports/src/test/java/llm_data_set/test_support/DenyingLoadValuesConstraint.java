@@ -52,12 +52,17 @@ public class DenyingLoadValuesConstraint implements EntityOperationConstraint<Lo
     }
 
     /**
-     * Denies READ on the entity itself, the way {@code LoadValuesConstraint} does for a user without that
-     * permission: by calling {@code setDenied()} on the context and nothing more. Nothing in the platform reads
-     * that flag for a value load, so a test using this sees exactly what the loader does about it.
+     * Denies READ on the entity itself. Two things answer that question, and a test needs both: the platform's
+     * value-load context, which calls {@code setDenied()} and is then ignored by the platform, and
+     * {@code CrudEntityContext}, which is what entity READ is actually decided by and what the loader asks.
+     * {@link CrudEntityDenial} carries the second half.
      */
     public void denyEntity(String entityName) {
         deniedEntities.add(entityName);
+    }
+
+    public Set<String> getDeniedEntities() {
+        return deniedEntities;
     }
 
     public void reset() {

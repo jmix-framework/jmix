@@ -102,7 +102,7 @@ class AiToolsLlmDataQueryServiceTest {
     @Test
     void testGeneratedQueryIsOfferedForRepairWithTheRequestItAnswers() {
         service.generate(new LlmQueryGenerationRequest(PROMPT,
-                List.of(new LlmQueryParameter("dateFrom", "java.time.LocalDate", null)), List.of()));
+                List.of(new LlmQueryParameter("dateFrom", "java.time.LocalDate")), List.of()));
 
         JpqlExecutionRequest offered = validationAndRepairService.getLastRequest();
         // Repair rewrites the query to satisfy the request it was generated from, so it is given both.
@@ -217,7 +217,7 @@ class AiToolsLlmDataQueryServiceTest {
     @Test
     void testPromptAndAvailableParametersReachGeneration() {
         service.generate(new LlmQueryGenerationRequest(PROMPT,
-                List.of(new LlmQueryParameter("dateFrom", "java.time.LocalDate", null)), List.of()));
+                List.of(new LlmQueryParameter("dateFrom", "java.time.LocalDate")), List.of()));
 
         String userText = generationService.getLastUserText();
         assertThat(userText).contains(PROMPT);
@@ -229,8 +229,8 @@ class AiToolsLlmDataQueryServiceTest {
     @Test
     void testListValuedParameterUsesInWithoutBecomingACrossTabAxis() {
         service.generate(new LlmQueryGenerationRequest(PROMPT, List.of(
-                new LlmQueryParameter("customerIds", "java.util.UUID", List.of("1", "2"), true),
-                new LlmQueryParameter("dateFrom", "java.time.LocalDate", LocalDate.of(2026, 8, 1))), List.of()));
+                new LlmQueryParameter("customerIds", "java.util.UUID", true),
+                new LlmQueryParameter("dateFrom", "java.time.LocalDate")), List.of()));
 
         String userText = generationService.getLastUserText();
         assertThat(userText).contains("several values of this type, matched with IN");
@@ -242,8 +242,7 @@ class AiToolsLlmDataQueryServiceTest {
     @Test
     void testCrossTabRequiredResultColumnsAreDescribedExplicitly() {
         service.generate(new LlmQueryGenerationRequest(PROMPT, List.of(
-                new LlmQueryParameter("revenue_dynamic_header_year", "java.lang.Integer",
-                        List.of(2025, 2026), true)),
+                new LlmQueryParameter("revenue_dynamic_header_year", "java.lang.Integer", true)),
                 List.of("revenue_dynamic_header_year")));
 
         String userText = generationService.getLastUserText();
@@ -255,7 +254,7 @@ class AiToolsLlmDataQueryServiceTest {
     @Test
     void testScalarParameterShadowingRequiredColumnDoesNotUseIn() {
         service.generate(new LlmQueryGenerationRequest(PROMPT, List.of(
-                new LlmQueryParameter("revenue_dynamic_header_year", "java.lang.Integer", 2026)),
+                new LlmQueryParameter("revenue_dynamic_header_year", "java.lang.Integer")),
                 List.of("revenue_dynamic_header_year")));
 
         String userText = generationService.getLastUserText();
@@ -290,7 +289,6 @@ class AiToolsLlmDataQueryServiceTest {
         assertThat(query.getParameters())
                 .extracting(LlmQueryParameter::getName, LlmQueryParameter::getJavaType)
                 .containsExactly(tuple("dateFrom", "java.lang.String"));
-        assertThat(query.getParameters().get(0).getValue()).isNull();
         assertThat(query.getExplanation()).isEqualTo("Orders since the given date");
         assertThat(query.getWarnings()).containsExactly("Time zone ignored");
     }
@@ -361,21 +359,10 @@ class AiToolsLlmDataQueryServiceTest {
         assertThat(validationService.getLastValidated().getJpql()).isEqualTo(storedQuery().getJpql());
     }
 
-    @Test
-    void testCheckedQueryCarriesNoArgumentValues() {
-        service.validate(new LlmDataQuery(storedQuery().getJpql(), List.of("orderNumber"),
-                List.of(new LlmQueryParameter("dateFrom", "java.time.LocalDate", LocalDate.of(2026, 8, 1))),
-                null, List.of()));
-
-        assertThat(validationService.getLastValidated().getParameters())
-                .extracting(GeneratedJpqlParameter::getName, GeneratedJpqlParameter::getValue)
-                .containsExactly(tuple("dateFrom", null));
-    }
-
     protected LlmDataQuery storedQuery() {
         return new LlmDataQuery("select o.number as orderNumber from sales_Order o where o.date >= :dateFrom",
                 List.of("orderNumber"),
-                List.of(new LlmQueryParameter("dateFrom", "java.time.LocalDate", null)),
+                List.of(new LlmQueryParameter("dateFrom", "java.time.LocalDate")),
                 "Orders since the given date", List.of());
     }
 }

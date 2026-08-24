@@ -239,7 +239,7 @@ public class LlmDataSetGenerationSupport {
             // as multi-valued and matched with IN, as the loader binds it.
             boolean multiValued = inputParameter.getType() == ParameterType.ENTITY_LIST;
             parameters.put(alias,
-                    new LlmQueryParameter(alias, resolveJavaType(inputParameter), null, multiValued));
+                    new LlmQueryParameter(alias, resolveJavaType(inputParameter), multiValued));
         }
     }
 
@@ -265,7 +265,7 @@ public class LlmDataSetGenerationSupport {
                     continue;
                 }
                 // A run parameter of the same name outranks a band column, as it does in the loader.
-                parameters.putIfAbsent(name, new LlmQueryParameter(name, Object.class.getName(), null));
+                parameters.putIfAbsent(name, new LlmQueryParameter(name, Object.class.getName()));
             }
         }
     }
@@ -300,7 +300,7 @@ public class LlmDataSetGenerationSupport {
                     continue;
                 }
                 // The type is unknown until the axis runs, as for a parent band column.
-                parameters.putIfAbsent(name, new LlmQueryParameter(name, Object.class.getName(), null, true));
+                parameters.putIfAbsent(name, new LlmQueryParameter(name, Object.class.getName(), true));
                 if (requiredResultProperties.stream().noneMatch(required -> required.startsWith(axisPrefix))) {
                     requiredResultProperties.add(name);
                 }

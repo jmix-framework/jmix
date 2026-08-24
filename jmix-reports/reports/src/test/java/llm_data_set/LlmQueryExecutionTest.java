@@ -101,7 +101,7 @@ class LlmQueryExecutionTest {
         publisher("Ubisoft");
         DataSet dataSet = llmDataSet(new LlmDataQuery(
                 "select p.name as publisherName from Publisher p where p.name like :name order by p.name",
-                List.of("publisherName"), List.of(new LlmQueryParameter("name", "java.lang.String", null)),
+                List.of("publisherName"), List.of(new LlmQueryParameter("name", "java.lang.String")),
                 null, List.of()));
 
         List<Map<String, Object>> rows = loader().loadData(dataSet, null, Map.of("name", OWN + "%"));
@@ -120,7 +120,7 @@ class LlmQueryExecutionTest {
         DataSet dataSet = llmDataSet(new LlmDataQuery(
                 "select p.name as publisherName, p.id as publisherId from Publisher p where p.name like :name",
                 List.of("publisherName", "publisherId"),
-                List.of(new LlmQueryParameter("name", "java.lang.String", null)), null, List.of()));
+                List.of(new LlmQueryParameter("name", "java.lang.String")), null, List.of()));
 
         List<Map<String, Object>> rows = loader().loadData(dataSet, null, Map.of("name", OWN + "%"));
 
@@ -139,8 +139,8 @@ class LlmQueryExecutionTest {
         DataSet dataSet = llmDataSet(new LlmDataQuery(
                 "select g.name as gameName from GameTitle g where g.name like :name and g.price >= :minPrice "
                         + "order by g.name",
-                List.of("gameName"), List.of(new LlmQueryParameter("name", "java.lang.String", null),
-                new LlmQueryParameter("minPrice", "java.math.BigDecimal", null)),
+                List.of("gameName"), List.of(new LlmQueryParameter("name", "java.lang.String"),
+                new LlmQueryParameter("minPrice", "java.math.BigDecimal")),
                 null, List.of()));
 
         List<Map<String, Object>> rows = loader().loadData(dataSet, null,
@@ -158,7 +158,7 @@ class LlmQueryExecutionTest {
         publisher("Activision");
         DataSet dataSet = llmDataSet(new LlmDataQuery(
                 "select p.name as publisherName from Publisher p where p.name in :names order by p.name",
-                List.of("publisherName"), List.of(new LlmQueryParameter("names", "java.lang.String", null)),
+                List.of("publisherName"), List.of(new LlmQueryParameter("names", "java.lang.String")),
                 null, List.of()));
 
         List<Map<String, Object>> rows = loader().loadData(dataSet, null,
@@ -178,7 +178,7 @@ class LlmQueryExecutionTest {
         denyingConstraint.denySelectedPath("name");
         DataSet dataSet = llmDataSet(new LlmDataQuery(
                 "select g.name as gameName, g.price as price from GameTitle g where g.id = :id",
-                List.of("gameName", "price"), List.of(new LlmQueryParameter("id", "java.util.UUID", null)),
+                List.of("gameName", "price"), List.of(new LlmQueryParameter("id", "java.util.UUID")),
                 null, List.of()));
 
         List<Map<String, Object>> rows = loader().loadData(dataSet, null, Map.of("id", tetris.getId()));
@@ -198,7 +198,7 @@ class LlmQueryExecutionTest {
         denyingConstraint.denyFilterPath("price");
         DataSet dataSet = llmDataSet(new LlmDataQuery(
                 "select g.name as gameName from GameTitle g where g.price >= :minPrice",
-                List.of("gameName"), List.of(new LlmQueryParameter("minPrice", "java.math.BigDecimal", null)),
+                List.of("gameName"), List.of(new LlmQueryParameter("minPrice", "java.math.BigDecimal")),
                 null, List.of()));
 
         assertThatThrownBy(() -> loader().loadData(dataSet, null, Map.of("minPrice", new BigDecimal("1"))))

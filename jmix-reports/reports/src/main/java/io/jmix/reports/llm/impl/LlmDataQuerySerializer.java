@@ -107,13 +107,14 @@ public class LlmDataQuerySerializer {
     }
 
     /**
-     * Keeps the parameters that can actually be bound: a stored parameter without a name is useless.
+     * Keeps the parameters that can actually be bound — a stored parameter without a name is useless — and gives
+     * one whose type the document omitted an empty type rather than none, which the constructor rejects.
      */
     protected List<LlmQueryParameter> retainNamedParameters(@Nullable List<LlmQueryParameter> parameters) {
         return retainNonNull(parameters).stream()
                 .filter(parameter -> StringUtils.isNotBlank(parameter.getName()))
                 .map(parameter -> new LlmQueryParameter(parameter.getName(),
-                        StringUtils.defaultString(parameter.getJavaType()), null))
+                        StringUtils.defaultString(parameter.getJavaType())))
                 .toList();
     }
 
@@ -143,7 +144,7 @@ public class LlmDataQuerySerializer {
 
         List<LlmQueryParameter> parameters = new ArrayList<>();
         for (String name : LlmQueryParameterNames.referencedIn(jpql)) {
-            parameters.add(new LlmQueryParameter(name, typesOfPrevious.getOrDefault(name, ""), null));
+            parameters.add(new LlmQueryParameter(name, typesOfPrevious.getOrDefault(name, "")));
         }
 
         return new LlmDataQuery(jpql, resultProperties, parameters,

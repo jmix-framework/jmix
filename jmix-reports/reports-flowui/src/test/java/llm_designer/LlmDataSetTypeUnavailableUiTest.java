@@ -50,7 +50,7 @@ public class LlmDataSetTypeUnavailableUiTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void testLlmTypeIsNotOfferedAmongDataSetTypes() {
+    void testLlmTypeIsNotOfferedAmongDataSetTypes() {
         viewNavigators.detailView(UiTestUtils.getCurrentView(), Report.class)
                 .withViewClass(ReportDetailView.class)
                 .newEntity()

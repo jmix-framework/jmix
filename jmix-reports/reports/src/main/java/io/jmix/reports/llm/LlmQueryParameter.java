@@ -16,18 +16,17 @@
 
 package io.jmix.reports.llm;
 
-import org.jspecify.annotations.Nullable;
-
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 /**
- * A named parameter of an {@link LlmDataQuery}: the name used in the JPQL text, the Java type of the value it
- * stands for, and the value itself when it is known.
+ * A named parameter of an {@link LlmDataQuery}: the name used in the JPQL text and the Java type of the value it
+ * stands for. A parameter declares itself; it does not carry a value. The value a run binds comes from the run
+ * — the report parameters, the rows of the parent bands, the cross-tab axes — which is what lets one stored
+ * query serve every run of the report.
  * <p>
  * The type is what a model is told the value will be, and what the stored query keeps saying about it; a run
- * binds the value it holds as it is. The same class describes a parameter offered to query generation (where
- * the value is irrelevant) and an argument bound at execution time. The value is never persisted with the
- * query, so one query serves any set of arguments.
+ * binds the value it holds as it is, without consulting the declared type. The same class describes a parameter
+ * offered to query generation and one declared by a stored query.
  */
 public class LlmQueryParameter {
 
@@ -35,28 +34,21 @@ public class LlmQueryParameter {
     protected String javaType;
 
     /**
-     * Transient on purpose: the value must not become part of the stored query document.
-     */
-    @Nullable
-    protected transient Object value;
-
-    /**
-     * Transient for the same reason as the value: it describes what the run offers, not what the stored
-     * query declares, and must not become part of the stored document.
+     * Transient on purpose: it describes what the run offers, not what the stored query declares, and must not
+     * become part of the stored document.
      */
     protected transient boolean multiValued;
 
-    public LlmQueryParameter(String name, String javaType, @Nullable Object value) {
-        this(name, javaType, value, false);
+    public LlmQueryParameter(String name, String javaType) {
+        this(name, javaType, false);
     }
 
-    public LlmQueryParameter(String name, String javaType, @Nullable Object value, boolean multiValued) {
+    public LlmQueryParameter(String name, String javaType, boolean multiValued) {
         checkNotNullArgument(name, "name is null");
         checkNotNullArgument(javaType, "javaType is null");
 
         this.name = name;
         this.javaType = javaType;
-        this.value = value;
         this.multiValued = multiValued;
     }
 
@@ -75,18 +67,10 @@ public class LlmQueryParameter {
     }
 
     /**
-     * @return the value to bind, or {@code null} if this parameter only declares a name and a type
-     */
-    @Nullable
-    public Object getValue() {
-        return value;
-    }
-
-    /**
      * Tells a parameter that carries several values of {@link #getJavaType()} from an ordinary single-valued
      * one, so that a query can match it with {@code IN}. This may be a collection-valued report parameter or
-     * the values of one cross-tab axis. Stated explicitly rather than inferred from the value, because query
-     * generation is offered parameters whose value is not known yet.
+     * the values of one cross-tab axis. Stated by whoever offers the parameter, since a parameter carries no
+     * value to infer it from.
      *
      * @return {@code true} if the value is a collection of {@link #getJavaType()}
      */

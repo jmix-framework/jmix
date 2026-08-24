@@ -20,6 +20,7 @@ import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
 import io.jmix.core.Metadata;
+import io.jmix.core.Stores;
 import io.jmix.reports.ReportsTestConfiguration;
 import io.jmix.reports.entity.BandDefinition;
 import io.jmix.reports.entity.DataSet;
@@ -30,6 +31,7 @@ import io.jmix.reports.libintegration.LlmDataLoader;
 import io.jmix.reports.llm.LlmDataQuery;
 import io.jmix.reports.llm.LlmQueryParameter;
 import io.jmix.reports.llm.impl.LlmDataQuerySerializer;
+import io.jmix.reports.test_support.entity.Publisher;
 import io.jmix.reports.yarg.exception.DataLoadingException;
 import io.jmix.reports.yarg.loaders.ReportDataLoader;
 import io.jmix.reports.yarg.loaders.factory.ReportLoaderFactory;
@@ -400,13 +402,13 @@ class LlmDataLoaderTest {
                 axisRow("year", null, "month", 4)));
         params.put("revenue_master_data", List.of(axisRow("publisherId", "Nintendo")));
 
-        DataSet byTheFirstField = llmDataSet(PROMPT, serializer.toJson(linkableCrossTabQuery()));
+        DataSet byTheFirstField = llmDataSetOfCrossTabBand("revenue", serializer.toJson(linkableCrossTabQuery()));
         loader().loadData(byTheFirstField, null, params);
 
         LlmDataQuery byTheFieldWithValues = new LlmDataQuery(CACHED_JPQL,
                 List.of("revenue_dynamic_header_month", "revenue_master_data_publisherId", "amount"),
                 List.of(), "Revenue per publisher and month", List.of());
-        DataSet dataSet = llmDataSet(PROMPT, serializer.toJson(byTheFieldWithValues));
+        DataSet dataSet = llmDataSetOfCrossTabBand("revenue", serializer.toJson(byTheFieldWithValues));
 
         assertThatThrownBy(() -> loader().loadData(dataSet, null, params))
                 .isInstanceOf(DataLoadingException.class)
@@ -474,7 +476,7 @@ class LlmDataLoaderTest {
                 List.of("revenue_dynamic_header_year_caption", "revenue_dynamic_header_year",
                         "revenue_master_data_publisherId", "amount"),
                 List.of(), "Revenue per publisher and year", List.of());
-        DataSet dataSet = llmDataSet(PROMPT, serializer.toJson(query));
+        DataSet dataSet = llmDataSetOfCrossTabBand("revenue", serializer.toJson(query));
         Map<String, Object> params = new LinkedHashMap<>();
         params.put("revenue_dynamic_header", List.of(axisRow("year", 2025, "year_caption", "2025")));
         params.put("revenue_master_data", List.of(axisRow("publisherId", "Nintendo")));
@@ -489,7 +491,7 @@ class LlmDataLoaderTest {
     void testEmptyCrossTabAxisProducesNoRowsInsteadOfFailing() {
         // A period with no data leaves an axis empty; the matrix then has no cells, and the stored query that
         // filters by that axis has nothing to bind.
-        DataSet dataSet = llmDataSet(PROMPT, serializer.toJson(linkableCrossTabQuery(
+        DataSet dataSet = llmDataSetOfCrossTabBand("revenue", serializer.toJson(linkableCrossTabQuery(
                 List.of(parameter("revenue_dynamic_header_year", "java.lang.Integer")))));
         Map<String, Object> params = new LinkedHashMap<>();
         params.put("revenue_dynamic_header", List.of());
@@ -503,7 +505,7 @@ class LlmDataLoaderTest {
 
     @Test
     void testQueryThatCannotBeLinkedToACrossTabAxisFails() {
-        DataSet dataSet = llmDataSet(PROMPT, storedQuery(List.of()));
+        DataSet dataSet = llmDataSetOfCrossTabBand("revenue", storedQuery(List.of()));
         Map<String, Object> params = Map.of("revenue_dynamic_header", List.of(Map.of("year", 2025)));
 
         assertThatThrownBy(() -> loader().loadData(dataSet, null, params))
@@ -612,6 +614,35 @@ class LlmDataLoaderTest {
         assertThatThrownBy(() -> loader().loadData(dataSet, null, params))
                 .isInstanceOf(DataLoadingException.class)
                 .hasMessageContaining("revenue_dynamic_header_year");
+    }
+
+    @Test
+    void testAxisValuesAreOfferedButNothingIsDemandedWhenTheBandIsUnknown() {
+        // A report assembled in code may leave a data set unaware of its band — the band holds the data set and
+        // the back reference is never set — and then no axis is more this band's than any other's. The values
+        // are still offered, so a cross-tab cell of such a report works, and nothing is demanded of the query.
+        LlmDataQuery withoutAxisColumns = new LlmDataQuery(CACHED_JPQL, List.of("orderNumber"),
+                List.of(parameter("revenue_dynamic_header_year", "java.lang.Integer")), null, List.of());
+        DataSet dataSet = llmDataSet(PROMPT, serializer.toJson(withoutAxisColumns));
+
+        loader().loadData(dataSet, null, crossTabParams());
+
+        assertThat(dataLoader.getLastExecution().arguments())
+                .containsEntry("revenue_dynamic_header_year", List.of(2025, 2025));
+    }
+
+    @Test
+    void testEmptyAxisDoesNotEmptyABandWhoseOwnBandIsUnknown() {
+        // The silent half of the same case: an axis of some other band left empty used to make such a band
+        // render empty with a debug line, on the strength of a name that says nothing here.
+        dataLoader.setRows(List.of(Map.of("orderNumber", "A-1")));
+        DataSet dataSet = llmDataSet(PROMPT, storedQuery(List.of()));
+        Map<String, Object> params = new LinkedHashMap<>();
+        params.put("revenue_dynamic_header", List.of());
+
+        List<Map<String, Object>> rows = loader().loadData(dataSet, null, params);
+
+        assertThat(rows).containsExactly(Map.of("orderNumber", "A-1"));
     }
 
     @Test
@@ -736,6 +767,19 @@ class LlmDataLoaderTest {
     }
 
     @Test
+    void testQueryNamingTheSameResultColumnTwiceIsRefused() {
+        // A row is a map keyed by the columns and KeyValueEntity holds one value per property, so a duplicate
+        // name drops one of the selected values — and shifts which column a cross-tab links by.
+        DataSet dataSet = llmDataSet(PROMPT, storedQuery(List.of("name", "name"), List.of()));
+
+        assertThatThrownBy(() -> loader().loadData(dataSet, null, Map.of()))
+                .isInstanceOf(DataLoadingException.class)
+                .hasMessageContaining("same result column twice");
+
+        assertThat(dataLoader.getExecutions()).isEmpty();
+    }
+
+    @Test
     void testQueryNamingNoResultColumnsIsRefused() {
         // A report arrives by import, carrying whatever the file holds: a query with no columns would return one
         // empty row per row it selected, and the band would render blank with nothing said.
@@ -774,6 +818,49 @@ class LlmDataLoaderTest {
         loader().loadData(dataSet, null, Map.of());
 
         assertThat(dataLoader.getExecutions()).hasSize(1);
+    }
+
+    @Test
+    void testQueryRunsInTheStoreOfTheEntityItReads() {
+        // Query generation is offered the whole entity model, additional stores included, so a stored query may
+        // read an entity of another store — and then only that store can execute it. Nothing asks the author:
+        // the entity says which store it is.
+        dataLoader.setRows(List.of(Map.of("publisherName", "Nintendo")));
+        LlmDataQuery overAMainStoreEntity = new LlmDataQuery(
+                "select p.name as publisherName from Publisher p", List.of("publisherName"),
+                List.of(), null, List.of());
+        DataSet dataSet = llmDataSet(PROMPT, serializer.toJson(overAMainStoreEntity));
+
+        loader().loadData(dataSet, null, Map.of());
+
+        assertThat(dataLoader.getLastExecution().storeName())
+                .isEqualTo(metadata.getClass(Publisher.class).getStore().getName());
+    }
+
+    @Test
+    void testQueryWhoseEntityCannotBeToldRunsInTheMainStore() {
+        // The fixture query reads sales_Order, which this module's model does not have: a query that cannot be
+        // placed fails on its own terms, which says more than a failure about a store would.
+        dataLoader.setRows(List.of(Map.of("orderNumber", "A-1")));
+        DataSet dataSet = llmDataSet(PROMPT, storedQuery(List.of()));
+
+        loader().loadData(dataSet, null, Map.of());
+
+        assertThat(dataLoader.getLastExecution().storeName()).isEqualTo(Stores.MAIN);
+    }
+
+    @Test
+    void testTheStoreIsWorkedOutOncePerQueryPerRun() {
+        // Telling the store means parsing the query, and a band under a parent is loaded once per parent row.
+        DataSet dataSet = llmDataSet(PROMPT, storedQuery(List.of()));
+        BandData rootBand = band("Root", null, Map.of());
+        ReportDataLoader loader = loader();
+
+        loader.loadData(dataSet, band("Orders", rootBand, Map.of("orderNumber", "A-1")), Map.of());
+        loader.loadData(dataSet, band("Orders", rootBand, Map.of("orderNumber", "A-2")), Map.of());
+
+        assertThat(dataLoader.getExecutions()).hasSize(2);
+        assertThat(dataLoader.getStoreResolutions()).isEqualTo(1);
     }
 
     @Test
@@ -1047,7 +1134,7 @@ class LlmDataLoaderTest {
     }
 
     protected LlmQueryParameter parameter(String name, String javaType) {
-        return new LlmQueryParameter(name, javaType, null);
+        return new LlmQueryParameter(name, javaType);
     }
 
     protected String storedQuery(List<LlmQueryParameter> parameters) {

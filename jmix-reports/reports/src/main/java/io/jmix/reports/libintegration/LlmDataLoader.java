@@ -18,8 +18,12 @@ package io.jmix.reports.libintegration;
 
 import io.jmix.core.DataManager;
 import io.jmix.core.FluentValuesLoader;
+import io.jmix.core.Metadata;
+import io.jmix.core.Stores;
 import io.jmix.core.entity.KeyValueEntity;
+import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.AccessDeniedException;
+import io.jmix.data.QueryTransformerFactory;
 import io.jmix.reports.entity.DataSet;
 import io.jmix.reports.entity.DataSetType;
 import io.jmix.reports.llm.LlmDataQuery;
@@ -44,6 +48,7 @@ import java.lang.ref.SoftReference;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -96,6 +101,12 @@ public class LlmDataLoader implements ReportDataLoader {
     @Autowired
     protected LlmDataQuerySerializer llmDataQuerySerializer;
 
+    @Autowired
+    protected QueryTransformerFactory queryTransformerFactory;
+
+    @Autowired
+    protected Metadata metadata;
+
     /**
      * Holds what one report run has already generated and already warned about. Bound to the thread the run
      * executes on: the next run reaching that thread replaces its contents, and the reference is soft, so what
@@ -116,8 +127,12 @@ public class LlmDataLoader implements ReportDataLoader {
         String bandName = (String) additionalParams.get(DataSet.BAND_NAME);
         boolean readsAxes = LlmCrossTabAxes.areReadBy(reportQuery.getName(),
                 (BandOrientation) additionalParams.get(DataSet.BAND_ORIENTATION));
+        // Values are offered on the strength of a name; nothing is demanded of a query, and no band is left
+        // unexecuted, unless the band those axes belong to is known to be this one. A report assembled in code
+        // may leave a data set unaware of its band, and an axis is then no more this band's than any other's.
+        boolean enforcesAxes = readsAxes && bandName != null;
 
-        String emptyAxis = readsAxes ? LlmCrossTabAxes.firstEmptyAxis(params, bandName) : null;
+        String emptyAxis = enforcesAxes ? LlmCrossTabAxes.firstEmptyAxis(params, bandName) : null;
         if (emptyAxis != null) {
             // A cross-tab has no cells along an axis that produced no values, so there is nothing for this
             // query to return — and its parameters, which name that axis, have no values to bind either.
@@ -132,17 +147,19 @@ public class LlmDataLoader implements ReportDataLoader {
         Map<String, Object> availableParameters = collectedParameters.availableParameters();
 
         LlmDataQuery query = resolveQuery(reportQuery, additionalParams, scope);
-        if (readsAxes) {
+        if (enforcesAxes) {
             LlmCrossTabAxes.checkAxesAreLinkable(reportQuery.getName(), query, params,
                     collectedParameters.requiredResultProperties(), bandName);
         }
 
         Map<String, Object> arguments = resolveArguments(reportQuery, query, availableParameters, params);
-        log.debug("Executing the query of data set [{}]: {}", reportQuery.getName(), query.getJpql());
+        String storeName = scope.storeName(query.getJpql(), () -> resolveStoreName(query));
+        log.debug("Executing the query of data set [{}] in store [{}]: {}",
+                reportQuery.getName(), storeName, query.getJpql());
 
         List<Map<String, @Nullable Object>> rows;
         try {
-            rows = executeQuery(query, arguments);
+            rows = executeQuery(query, arguments, storeName);
         } catch (AccessDeniedException e) {
             // Being refused the data is not a failure of this data set: the engine reports it as what it is.
             throw e;
@@ -163,6 +180,9 @@ public class LlmDataLoader implements ReportDataLoader {
      * current user and the row-level policies of the query's root entity apply as they do to any other data set.
      * An attribute the user may not read comes back as {@code null}.
      * <p>
+     * The query runs in the store of the entity it reads, which {@link #resolveStoreName} works out from the
+     * query itself.
+     * <p>
      * Values are bound as named JPQL parameters, never inlined into the text: the query is written once and run
      * with whatever the report parameters and the parent band hold this time.
      * <p>
@@ -173,11 +193,14 @@ public class LlmDataLoader implements ReportDataLoader {
      *
      * @param query     stored query to execute
      * @param arguments value to bind per parameter the query references
+     * @param storeName data store to execute in, the one the query's entity belongs to
      * @return one row per row the query returned
      */
     protected List<Map<String, @Nullable Object>> executeQuery(LlmDataQuery query,
-                                                               Map<String, Object> arguments) {
+                                                               Map<String, Object> arguments,
+                                                               String storeName) {
         FluentValuesLoader valuesLoader = dataManager.loadValues(query.getJpql())
+                .store(storeName)
                 .properties(query.getResultProperties());
         arguments.forEach(valuesLoader::parameter);
 
@@ -257,10 +280,14 @@ public class LlmDataLoader implements ReportDataLoader {
     }
 
     /**
-     * Refuses a stored query that names no result column, or names one no row can be keyed by: a row of a band
-     * is built from the columns a query declares, so a query naming none — or naming a blank one — would produce
-     * rows a template cannot print and a band that renders blank with nothing said. The designer refuses to save
-     * a data set in either state; a report also arrives by import, bringing whatever the file holds.
+     * Refuses a stored query whose columns cannot key the rows of a band: one naming no column at all, one
+     * naming a blank column, and one naming the same column twice.
+     * <p>
+     * A row of a band is a map keyed by those columns, and {@code KeyValueEntity} holds one value per property,
+     * so a duplicate name loses one of the values the query selected — and, in a cross-tab cell, shifts which
+     * column the matrix is linked by. None of it is reported by anything downstream: the band simply prints
+     * something else than the query asked for. The designer refuses to save a data set in any of these states; a
+     * report also arrives by import, bringing whatever the file holds.
      */
     protected void checkQueryReturnsColumns(ReportQuery reportQuery, LlmDataQuery query) {
         List<String> columns = query.getResultProperties();
@@ -268,6 +295,13 @@ public class LlmDataLoader implements ReportDataLoader {
             throw new DataLoadingException(String.format(
                     "The stored query of data set [%s] names no result columns, so it would return empty rows: "
                             + "generate it again in the report designer. It names %s",
+                    reportQuery.getName(), columns));
+        }
+
+        if (new HashSet<>(columns).size() != columns.size()) {
+            throw new DataLoadingException(String.format(
+                    "The stored query of data set [%s] names the same result column twice, so a value it selects "
+                            + "would be lost: generate it again in the report designer. It names %s",
                     reportQuery.getName(), columns));
         }
     }
@@ -313,6 +347,32 @@ public class LlmDataLoader implements ReportDataLoader {
         }
 
         return storedQuery;
+    }
+
+    /**
+     * Returns the data store the stored query has to run in: the one the entity it reads from belongs to.
+     * <p>
+     * Query generation is offered the whole entity model — {@code JpaDomainModelIntrospector} keeps every JPA
+     * entity, whichever store it belongs to — so a stored query may well read an entity of an additional store,
+     * and only that store can execute it. Nothing asks the author which store that is: the entity says so, and
+     * the data set's own {@code dataStore} is not offered for this type.
+     * <p>
+     * The store is worked out once per query text per run ({@link RunScope#storeName}), so a band under a parent
+     * pays for it once rather than per row. A text the platform's parser cannot read, or an entity name the
+     * model does not know, leaves the main store — the query then fails on its own terms, saying what is wrong
+     * with it, which is more use than a failure about a store.
+     */
+    protected String resolveStoreName(LlmDataQuery query) {
+        String entityName;
+        try {
+            entityName = queryTransformerFactory.parser(query.getJpql()).getEntityName();
+        } catch (RuntimeException e) {
+            log.debug("The store of [{}] cannot be told from the query, so the main one is used", query.getJpql(), e);
+            return Stores.MAIN;
+        }
+
+        MetaClass entity = metadata.findClass(entityName);
+        return entity == null ? Stores.MAIN : entity.getStore().getName();
     }
 
     /**
@@ -505,6 +565,7 @@ public class LlmDataLoader implements ReportDataLoader {
 
         protected WeakReference<@Nullable BandData> rootBand = new WeakReference<>(null);
         protected Map<String, Optional<LlmDataQuery>> storedQueries = new LinkedHashMap<>();
+        protected Map<String, String> storeNames = new LinkedHashMap<>();
         /**
          * Held weakly, as the root band is and for the same reason: a data set belongs to a report, whose bands,
          * parameters and templates — the content of a template included — would otherwise stay reachable from a
@@ -519,6 +580,7 @@ public class LlmDataLoader implements ReportDataLoader {
 
             this.rootBand = new WeakReference<>(rootBand);
             storedQueries = new LinkedHashMap<>();
+            storeNames = new LinkedHashMap<>();
             warnings = new WeakHashMap<>();
         }
 
@@ -530,6 +592,14 @@ public class LlmDataLoader implements ReportDataLoader {
         @Nullable
         protected LlmDataQuery storedQuery(String document, Supplier<@Nullable LlmDataQuery> read) {
             return storedQueries.computeIfAbsent(document, key -> Optional.ofNullable(read.get())).orElse(null);
+        }
+
+        /**
+         * Returns the store a query text runs in, working it out once per text: telling the store means parsing
+         * the query, and a band under a parent is loaded once per parent row.
+         */
+        protected String storeName(String jpql, Supplier<String> resolve) {
+            return storeNames.computeIfAbsent(jpql, key -> resolve.get());
         }
 
         /**

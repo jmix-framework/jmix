@@ -352,7 +352,7 @@ public class AiToolsLlmDataQueryService implements LlmDataQueryService {
 
         List<LlmQueryParameter> parameters = new ArrayList<>();
         for (String name : LlmQueryParameterNames.referencedIn(jpql)) {
-            parameters.add(new LlmQueryParameter(name, declaredTypes.getOrDefault(name, ""), null));
+            parameters.add(new LlmQueryParameter(name, declaredTypes.getOrDefault(name, "")));
         }
         return parameters;
     }

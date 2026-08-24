@@ -48,7 +48,7 @@ public class LlmDataSetTypeAvailabilityUiTest {
     protected ViewNavigators viewNavigators;
 
     @Test
-    public void testLlmTypeIsOfferedAmongDataSetTypes() {
+    void testLlmTypeIsOfferedAmongDataSetTypes() {
         List<DataSetType> types = dataSetTypeOptions();
 
         assertThat(types).contains(DataSetType.LLM);

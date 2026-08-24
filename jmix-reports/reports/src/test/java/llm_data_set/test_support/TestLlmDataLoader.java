@@ -39,19 +39,32 @@ public class TestLlmDataLoader extends LlmDataLoader {
 
     protected List<Map<String, Object>> rows = List.of();
 
+    protected int storeResolutions;
+
     @Nullable
     protected RuntimeException failure;
 
     /**
      * What one call of the query would have executed.
      */
-    public record Execution(String jpql, List<String> resultProperties, Map<String, Object> arguments) {
+    public record Execution(String jpql, List<String> resultProperties, Map<String, Object> arguments,
+                            String storeName) {
+    }
+
+    /**
+     * Counts how often the store of a query had to be worked out, which the run remembers per query text.
+     */
+    @Override
+    protected String resolveStoreName(LlmDataQuery query) {
+        storeResolutions++;
+        return super.resolveStoreName(query);
     }
 
     @Override
     protected List<Map<String, @Nullable Object>> executeQuery(LlmDataQuery query,
-                                                               Map<String, Object> arguments) {
-        executions.add(new Execution(query.getJpql(), query.getResultProperties(), arguments));
+                                                               Map<String, Object> arguments,
+                                                               String storeName) {
+        executions.add(new Execution(query.getJpql(), query.getResultProperties(), arguments, storeName));
         if (failure != null) {
             throw failure;
         }
@@ -71,6 +84,10 @@ public class TestLlmDataLoader extends LlmDataLoader {
         return executions;
     }
 
+    public int getStoreResolutions() {
+        return storeResolutions;
+    }
+
     public void setRows(List<Map<String, Object>> rows) {
         this.rows = rows;
     }
@@ -83,5 +100,6 @@ public class TestLlmDataLoader extends LlmDataLoader {
         executions.clear();
         rows = List.of();
         failure = null;
+        storeResolutions = 0;
     }
 }

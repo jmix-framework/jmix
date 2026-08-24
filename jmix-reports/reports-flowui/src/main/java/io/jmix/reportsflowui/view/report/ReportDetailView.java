@@ -1277,9 +1277,13 @@ public class ReportDetailView extends StandardDetailView<Report> {
 
         if (editing) {
             // Rows nobody named are ignored just as they will be when the draft is normalized.
-            if (editedLlmQueryColumns().stream().noneMatch(StringUtils::isNotBlank)) {
+            List<String> named = editedLlmQueryColumns().stream().filter(StringUtils::isNotBlank).toList();
+            if (named.isEmpty()) {
                 errors.add(messageBundle.formatMessage(
                         "validation.error.llmDataSetColumnsEmpty", dataSet.getName()));
+            } else if (hasDuplicates(named)) {
+                errors.add(messageBundle.formatMessage(
+                        "validation.error.llmDataSetColumnsDuplicate", dataSet.getName()));
             }
             return;
         }
@@ -1293,11 +1297,24 @@ public class ReportDetailView extends StandardDetailView<Report> {
             return;
         }
 
-        if (storedQuery != null
-                && storedQuery.getResultProperties().stream().noneMatch(StringUtils::isNotBlank)) {
+        if (storedQuery == null) {
+            return;
+        }
+
+        List<String> named = storedQuery.getResultProperties().stream().filter(StringUtils::isNotBlank).toList();
+        if (named.isEmpty()) {
             errors.add(messageBundle.formatMessage(
                     "validation.error.llmDataSetColumnsEmpty", dataSet.getName()));
+        } else if (hasDuplicates(named)) {
+            // A row of a band is keyed by these names, so a duplicate loses one of the values the query
+            // selects — silently, which is why a run refuses such a query outright.
+            errors.add(messageBundle.formatMessage(
+                    "validation.error.llmDataSetColumnsDuplicate", dataSet.getName()));
         }
+    }
+
+    protected boolean hasDuplicates(List<String> names) {
+        return new HashSet<>(names).size() != names.size();
     }
 
     protected void validateBand(ValidationErrors errors, BandDefinition band, Multimap<String, BandDefinition> names) {

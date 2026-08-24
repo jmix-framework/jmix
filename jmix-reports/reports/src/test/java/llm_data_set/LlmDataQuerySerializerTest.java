@@ -24,7 +24,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -40,7 +39,7 @@ class LlmDataQuerySerializerTest {
         LlmDataQuery query = new LlmDataQuery(
                 "select o.number as orderNumber from sales_Order o where o.date >= :dateFrom",
                 List.of("orderNumber"),
-                List.of(new LlmQueryParameter("dateFrom", "java.time.LocalDate", null)),
+                List.of(new LlmQueryParameter("dateFrom", "java.time.LocalDate")),
                 "Orders from the given date",
                 List.of("Time zone is not taken into account"));
 
@@ -57,26 +56,9 @@ class LlmDataQuerySerializerTest {
     }
 
     @Test
-    void testParameterValuesAreNotStored() {
-        LlmDataQuery query = new LlmDataQuery(
-                "select o.number as orderNumber from sales_Order o where o.date >= :dateFrom",
-                List.of("orderNumber"),
-                List.of(new LlmQueryParameter("dateFrom", "java.time.LocalDate", LocalDate.of(2026, 8, 5))),
-                null,
-                List.of());
-
-        String json = serializer.toJson(query);
-
-        assertThat(json).doesNotContain("2026-08-05");
-        LlmDataQuery restored = serializer.fromJson(json);
-        assertThat(restored).isNotNull();
-        assertThat(restored.getParameters().get(0).getValue()).isNull();
-    }
-
-    @Test
     void testStoredDocumentCarriesNothingButTheQueryContract() {
         String json = serializer.toJson(new LlmDataQuery("select o.id as id from sales_Order o", List.of("id"),
-                List.of(new LlmQueryParameter("years", "java.lang.Integer", List.of(2025), true)),
+                List.of(new LlmQueryParameter("years", "java.lang.Integer", true)),
                 null, List.of()));
 
         assertThat(json).doesNotContain("multiValued");
@@ -136,7 +118,7 @@ class LlmDataQuerySerializerTest {
         LlmDataQuery previous = new LlmDataQuery(
                 "select o.number as orderNumber from sales_Order o where o.date >= :dateFrom",
                 List.of("orderNumber"),
-                List.of(new LlmQueryParameter("dateFrom", "java.time.LocalDate", null)),
+                List.of(new LlmQueryParameter("dateFrom", "java.time.LocalDate")),
                 "Orders since the given date", List.of());
 
         LlmDataQuery assembled = serializer.assemble(

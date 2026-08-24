@@ -101,7 +101,7 @@ public class LlmDataSetPanelUiTest {
     protected LlmDataQueryService queryService;
 
     @AfterEach
-    public void tearDown() {
+    void tearDown() {
         llmReportUtil.cleanupDatabaseReports();
         // The service is one bean for the whole class, so a test that made it reject queries or report generation
         // as unavailable must not leave it that way for the next one.
@@ -110,7 +110,7 @@ public class LlmDataSetPanelUiTest {
     }
 
     @Test
-    public void testLlmPanelIsShownAndOtherPanelsAreHidden() {
+    void testLlmPanelIsShownAndOtherPanelsAreHidden() {
         View<?> view = openDesignerOnLlmDataSet();
 
         assertThat(this.<JmixTextArea>findComponent(view, "llmPromptField").isVisible()).isTrue();
@@ -121,7 +121,7 @@ public class LlmDataSetPanelUiTest {
     }
 
     @Test
-    public void testPanelShowsTheDataSetProperties() {
+    void testPanelShowsTheDataSetProperties() {
         View<?> view = openDesignerOnLlmDataSet();
 
         assertThat(this.<JmixTextArea>findComponent(view, "llmPromptField").getValue())
@@ -132,7 +132,7 @@ public class LlmDataSetPanelUiTest {
     }
 
     @Test
-    public void testStoredQueryStartsLockedAndEditUnlocksItWithItsColumns() {
+    void testStoredQueryStartsLockedAndEditUnlocksItWithItsColumns() {
         View<?> view = openDesignerOnLlmDataSet();
 
         assertThat(this.<CodeEditor>findComponent(view, "llmGeneratedQueryCodeEditor").isReadOnly()).isTrue();
@@ -145,7 +145,7 @@ public class LlmDataSetPanelUiTest {
     }
 
     @Test
-    public void testEditedQueryTextIsStoredAndSurvivesASave() {
+    void testEditedQueryTextIsStoredAndSurvivesASave() {
         View<?> view = openDesignerOnLlmDataSet();
         this.<JmixButton>findComponent(view, "llmEditQueryBtn").click();
 
@@ -159,7 +159,7 @@ public class LlmDataSetPanelUiTest {
     }
 
     @Test
-    public void testEditIsInTheDataSetBeforeAnythingIsSavedOrConfirmed() {
+    void testEditIsInTheDataSetBeforeAnythingIsSavedOrConfirmed() {
         View<?> view = openDesignerOnLlmDataSet();
         this.<JmixButton>findComponent(view, "llmEditQueryBtn").click();
         this.<CodeEditor>findComponent(view, "llmGeneratedQueryCodeEditor").setValue(EDITED_JPQL);
@@ -174,7 +174,7 @@ public class LlmDataSetPanelUiTest {
     }
 
     @Test
-    public void testRenamedColumnIsStored() {
+    void testRenamedColumnIsStored() {
         View<?> view = openDesignerOnLlmDataSet();
         this.<JmixButton>findComponent(view, "llmEditQueryBtn").click();
 
@@ -186,7 +186,7 @@ public class LlmDataSetPanelUiTest {
     }
 
     @Test
-    public void testColumnsAreNotWrittenBackWhileLocked() {
+    void testColumnsAreNotWrittenBackWhileLocked() {
         View<?> view = openDesignerOnLlmDataSet();
 
         columnRows(view).get(1).setName("customer");
@@ -197,7 +197,7 @@ public class LlmDataSetPanelUiTest {
     }
 
     @Test
-    public void testColumnIsAddedAfterTheSelectedRow() {
+    void testColumnIsAddedAfterTheSelectedRow() {
         View<?> view = openDesignerOnLlmDataSet();
         this.<JmixButton>findComponent(view, "llmEditQueryBtn").click();
         this.<DataGrid<LlmQueryColumn>>findComponent(view, "llmGeneratedColumnsDataGrid")
@@ -212,7 +212,7 @@ public class LlmDataSetPanelUiTest {
     }
 
     @Test
-    public void testAColumnLeftWithoutANameIsDroppedWhenEditingEnds() {
+    void testAColumnLeftWithoutANameIsDroppedWhenEditingEnds() {
         View<?> view = openDesignerOnLlmDataSet();
         this.<JmixButton>findComponent(view, "llmEditQueryBtn").click();
 
@@ -229,7 +229,7 @@ public class LlmDataSetPanelUiTest {
     }
 
     @Test
-    public void testRemovedColumnDisappearsFromTheStoredQuery() {
+    void testRemovedColumnDisappearsFromTheStoredQuery() {
         View<?> view = openDesignerOnLlmDataSet();
         this.<JmixButton>findComponent(view, "llmEditQueryBtn").click();
         this.<DataGrid<LlmQueryColumn>>findComponent(view, "llmGeneratedColumnsDataGrid")
@@ -243,7 +243,7 @@ public class LlmDataSetPanelUiTest {
     }
 
     @Test
-    public void testSelectingAnotherDataSetLocksTheQueryAgain() {
+    void testSelectingAnotherDataSetLocksTheQueryAgain() {
         View<?> view = openDesignerOnLlmDataSet();
         this.<JmixButton>findComponent(view, "llmEditQueryBtn").click();
 
@@ -255,7 +255,7 @@ public class LlmDataSetPanelUiTest {
     }
 
     @Test
-    public void testTheRefusalToSaveNamesTheMissingQueryRatherThanSomethingElse() {
+    void testTheRefusalToSaveNamesTheMissingQueryRatherThanSomethingElse() {
         // A data set has more than one way to be unusable, and the author has to be told which one this is.
         ReportDetailView view = openReportDesignerOnLlmDataSet();
         DataSet dataSet = selectedDataSet(view);
@@ -270,7 +270,7 @@ public class LlmDataSetPanelUiTest {
     }
 
     @Test
-    public void testClearingTheQueryTextPreventsSaving() {
+    void testClearingTheQueryTextPreventsSaving() {
         // Saving would finish the edit and remove the stored query, leaving a data set a run cannot execute.
         View<?> view = openDesignerOnLlmDataSet();
         this.<JmixButton>findComponent(view, "llmEditQueryBtn").click();
@@ -282,7 +282,7 @@ public class LlmDataSetPanelUiTest {
     }
 
     @Test
-    public void testQueryWrittenByHandBecomesTheStoredQuery() {
+    void testQueryWrittenByHandBecomesTheStoredQuery() {
         View<?> view = openDesigner(llmReportUtil.createAndSaveReportWithoutStoredQuery());
         this.<JmixButton>findComponent(view, "llmEditQueryBtn").click();
 
@@ -298,7 +298,7 @@ public class LlmDataSetPanelUiTest {
     }
 
     @Test
-    public void testEditingThePromptMarksTheStoredQueryStale() {
+    void testEditingThePromptMarksTheStoredQueryStale() {
         View<?> view = openDesignerOnLlmDataSet();
         Badge notice = findComponent(view, "llmStaleQueryNotice");
 
@@ -310,7 +310,7 @@ public class LlmDataSetPanelUiTest {
     }
 
     @Test
-    public void testEditingThePromptOfAnotherDataSetLeavesTheNoticeAlone() {
+    void testEditingThePromptOfAnotherDataSetLeavesTheNoticeAlone() {
         // The container reports a property change of every data set of the band, while the notice describes the
         // stored query of the one the panel shows.
         ReportDetailView view = (ReportDetailView) openDesigner(
@@ -329,7 +329,7 @@ public class LlmDataSetPanelUiTest {
     }
 
     @Test
-    public void testGenerationResultIsDiscardedWhenThePromptHasChanged() {
+    void testGenerationResultIsDiscardedWhenThePromptHasChanged() {
         ReportDetailView view = openReportDesignerOnLlmDataSet();
         DataSet dataSet = selectedDataSet(view);
         String storedBeforeGeneration = dataSet.getLlmGeneratedQuery();
@@ -343,7 +343,7 @@ public class LlmDataSetPanelUiTest {
     }
 
     @Test
-    public void testGenerationResultDoesNotOverwriteANewerManualDraft() {
+    void testGenerationResultDoesNotOverwriteANewerManualDraft() {
         ReportDetailView view = openReportDesignerOnLlmDataSet();
         DataSet dataSet = selectedDataSet(view);
         String storedBeforeGeneration = dataSet.getLlmGeneratedQuery();
@@ -359,7 +359,7 @@ public class LlmDataSetPanelUiTest {
     }
 
     @Test
-    public void testOlderGenerationCannotOverwriteANewerOne() {
+    void testOlderGenerationCannotOverwriteANewerOne() {
         ReportDetailView view = openReportDesignerOnLlmDataSet();
         DataSet dataSet = selectedDataSet(view);
         BackgroundTask<Integer, LlmDataQuery> olderTask = generationTask(view, dataSet);
@@ -375,7 +375,7 @@ public class LlmDataSetPanelUiTest {
     }
 
     @Test
-    public void testStaleNoticeGoesAwayWithTheQueryItTalksAbout() {
+    void testStaleNoticeGoesAwayWithTheQueryItTalksAbout() {
         ReportDetailView view = openReportDesignerOnLlmDataSet();
         this.<JmixTextArea>findComponent(view, "llmPromptField").setValue("A newer prompt");
         Badge notice = findComponent(view, "llmStaleQueryNotice");
@@ -390,7 +390,7 @@ public class LlmDataSetPanelUiTest {
     }
 
     @Test
-    public void testCancelledGenerationIsForgotten() {
+    void testCancelledGenerationIsForgotten() {
         // The token is a boxed long in an identity map, so forgetting it cannot rely on value equality.
         ReportDetailView view = openReportDesignerOnLlmDataSet();
         DataSet dataSet = selectedDataSet(view);
@@ -402,7 +402,7 @@ public class LlmDataSetPanelUiTest {
     }
 
     @Test
-    public void testRemovingADataSetForgetsWhatIsRememberedAboutIt() {
+    void testRemovingADataSetForgetsWhatIsRememberedAboutIt() {
         ReportDetailView view = openReportDesignerOnLlmDataSet();
         DataSet dataSet = selectedDataSet(view);
 
@@ -418,7 +418,7 @@ public class LlmDataSetPanelUiTest {
     }
 
     @Test
-    public void testRemovingABandForgetsWhatIsRememberedAboutItsDataSets() {
+    void testRemovingABandForgetsWhatIsRememberedAboutItsDataSets() {
         // A band takes its data sets with it, and they are never removed from the data set container.
         ReportDetailView view = openReportDesignerOnLlmDataSet();
         DataSet dataSet = selectedDataSet(view);
@@ -436,7 +436,7 @@ public class LlmDataSetPanelUiTest {
     }
 
     @Test
-    public void testDiscardedGenerationTellsTheAuthorThatNothingChanged() {
+    void testDiscardedGenerationTellsTheAuthorThatNothingChanged() {
         ReportDetailView view = openReportDesignerOnLlmDataSet();
         DataSet dataSet = selectedDataSet(view);
         BackgroundTask<Integer, LlmDataQuery> task = generationTask(view, dataSet);
@@ -451,7 +451,7 @@ public class LlmDataSetPanelUiTest {
     }
 
     @Test
-    public void testAQueryThatWouldNotRunIsReportedAsSoonAsItIsGenerated() {
+    void testAQueryThatWouldNotRunIsReportedAsSoonAsItIsGenerated() {
         // Nothing checks a stored query before a run, so an author who is not told here finds out by running
         // the report — after the model has already been paid for the query.
         ReportDetailView view = openReportDesignerOnLlmDataSet();
@@ -468,7 +468,7 @@ public class LlmDataSetPanelUiTest {
     }
 
     @Test
-    public void testFailedGenerationSaysWhatWentWrong() {
+    void testFailedGenerationSaysWhatWentWrong() {
         // Nothing in the platform reports an unhandled failure of a background task, so without this the
         // author is left with a closed dialog and no query.
         ReportDetailView view = openReportDesignerOnLlmDataSet();
@@ -490,7 +490,7 @@ public class LlmDataSetPanelUiTest {
     }
 
     @Test
-    public void testFailureTooLongToShowIsCut() {
+    void testFailureTooLongToShowIsCut() {
         ReportDetailView view = openReportDesignerOnLlmDataSet();
         DataSet dataSet = selectedDataSet(view);
         BackgroundTask<Integer, LlmDataQuery> task = generationTask(view, dataSet);
@@ -504,7 +504,7 @@ public class LlmDataSetPanelUiTest {
     }
 
     @Test
-    public void testGenerationThatRanOutOfTimeIsSaidToo() {
+    void testGenerationThatRanOutOfTimeIsSaidToo() {
         ReportDetailView view = openReportDesignerOnLlmDataSet();
         DataSet dataSet = selectedDataSet(view);
         BackgroundTask<Integer, LlmDataQuery> task = generationTask(view, dataSet);
@@ -519,7 +519,7 @@ public class LlmDataSetPanelUiTest {
     }
 
     @Test
-    public void testAQueryEditedIntoSomethingThatWouldNotRunIsReportedToo() {
+    void testAQueryEditedIntoSomethingThatWouldNotRunIsReportedToo() {
         ReportDetailView view = openReportDesignerOnLlmDataSet();
         ((TestLlmDataQueryService) queryService).setProblems(List.of("Unknown entity: sales_Ordr"));
 
@@ -536,7 +536,7 @@ public class LlmDataSetPanelUiTest {
     }
 
     @Test
-    public void testBlankPromptPreventsSaving() {
+    void testBlankPromptPreventsSaving() {
         View<?> view = openDesignerOnLlmDataSet();
         this.<JmixTextArea>findComponent(view, "llmPromptField").setValue("");
 
@@ -546,7 +546,7 @@ public class LlmDataSetPanelUiTest {
     }
 
     @Test
-    public void testFailedValidationDoesNotFinishTheLlmQueryDraft() {
+    void testFailedValidationDoesNotFinishTheLlmQueryDraft() {
         ReportDetailView view = openReportDesignerOnLlmDataSet();
         DataSet dataSet = selectedDataSet(view);
         this.<JmixButton>findComponent(view, "llmEditQueryBtn").click();
@@ -564,7 +564,7 @@ public class LlmDataSetPanelUiTest {
     }
 
     @Test
-    public void testDataSetWithoutAStoredQueryPreventsSaving() {
+    void testDataSetWithoutAStoredQueryPreventsSaving() {
         // A run executes the stored query and generates nothing, so a data set without one could never run —
         // the same reason the designer requires the script of a JPQL data set.
         View<?> view = openDesigner(llmReportUtil.createAndSaveReportWithoutStoredQuery());
@@ -576,7 +576,7 @@ public class LlmDataSetPanelUiTest {
     }
 
     @Test
-    public void testReadOnlyViewKeepsTheLlmPanelReadOnlyAfterItIsRefreshed() {
+    void testReadOnlyViewKeepsTheLlmPanelReadOnlyAfterItIsRefreshed() {
         ReportDetailView view = openReportDesignerOnLlmDataSet();
         view.setReadOnly(true);
 
@@ -589,7 +589,7 @@ public class LlmDataSetPanelUiTest {
     }
 
     @Test
-    public void testChangingTheViewToReadOnlyLocksAnEditedLlmQuery() {
+    void testChangingTheViewToReadOnlyLocksAnEditedLlmQuery() {
         ReportDetailView view = openReportDesignerOnLlmDataSet();
         this.<JmixButton>findComponent(view, "llmEditQueryBtn").click();
 
@@ -602,7 +602,7 @@ public class LlmDataSetPanelUiTest {
     }
 
     @Test
-    public void testGenerationStartedBeforeReadOnlyDoesNotMutateTheDataSet() {
+    void testGenerationStartedBeforeReadOnlyDoesNotMutateTheDataSet() {
         ReportDetailView view = openReportDesignerOnLlmDataSet();
         DataSet dataSet = selectedDataSet(view);
         String storedBeforeGeneration = dataSet.getLlmGeneratedQuery();
@@ -616,7 +616,7 @@ public class LlmDataSetPanelUiTest {
     }
 
     @Test
-    public void testReadOnlyCycleKeepsTheOpenDraftUntilItIsSaved() {
+    void testReadOnlyCycleKeepsTheOpenDraftUntilItIsSaved() {
         ReportDetailView view = openReportDesignerOnLlmDataSet();
         this.<JmixButton>findComponent(view, "llmEditQueryBtn").click();
         this.<CodeEditor>findComponent(view, "llmGeneratedQueryCodeEditor").setValue(EDITED_JPQL);
@@ -634,7 +634,7 @@ public class LlmDataSetPanelUiTest {
     }
 
     @Test
-    public void testReadOnlyAddColumnButtonIsDisabledAndInert() {
+    void testReadOnlyAddColumnButtonIsDisabledAndInert() {
         ReportDetailView view = openReportDesignerOnLlmDataSet();
         this.<JmixButton>findComponent(view, "llmEditQueryBtn").click();
         view.setReadOnly(true);
@@ -647,7 +647,7 @@ public class LlmDataSetPanelUiTest {
     }
 
     @Test
-    public void testReadOnlyRemoveColumnButtonIsDisabledAndInert() {
+    void testReadOnlyRemoveColumnButtonIsDisabledAndInert() {
         ReportDetailView view = openReportDesignerOnLlmDataSet();
         this.<JmixButton>findComponent(view, "llmEditQueryBtn").click();
         DataGrid<LlmQueryColumn> columnsGrid = findComponent(view, "llmGeneratedColumnsDataGrid");
@@ -662,7 +662,7 @@ public class LlmDataSetPanelUiTest {
     }
 
     @Test
-    public void testStoredQueryWithoutNamedColumnsPreventsSaving() {
+    void testStoredQueryWithoutNamedColumnsPreventsSaving() {
         ReportDetailView view = openReportDesignerOnLlmDataSet();
         DataSet dataSet = selectedDataSet(view);
         dataSet.setLlmGeneratedQuery(serializer.toJson(new LlmDataQuery(
@@ -674,7 +674,34 @@ public class LlmDataSetPanelUiTest {
     }
 
     @Test
-    public void testAColumnLeftWithoutANameIsDroppedWhenAnotherDataSetIsSelected() {
+    void testStoredQueryNamingTheSameColumnTwicePreventsSaving() {
+        // A row of a band is keyed by these names, so a duplicate loses one of the selected values; a run
+        // refuses such a query, and the designer must not hand one out.
+        ReportDetailView view = openReportDesignerOnLlmDataSet();
+        DataSet dataSet = selectedDataSet(view);
+        dataSet.setLlmGeneratedQuery(serializer.toJson(new LlmDataQuery(
+                "select o.number as name, o.customer as name from sales_Order o",
+                List.of("name", "name"), List.of(), null, List.of())));
+
+        this.<JmixButton>findComponent(view, "saveBtn").click();
+
+        assertThat(llmReportUtil.loadStoredQuery()).isEqualTo(TestLlmReportUtil.STORED_QUERY);
+    }
+
+    @Test
+    void testEditedColumnsNamedTheSameTwicePreventSaving() {
+        View<?> view = openDesignerOnLlmDataSet();
+        this.<JmixButton>findComponent(view, "llmEditQueryBtn").click();
+        List<LlmQueryColumn> columns = columnRows(view);
+        columns.get(1).setName(columns.get(0).getName());
+
+        this.<JmixButton>findComponent(view, "saveBtn").click();
+
+        assertThat(llmReportUtil.loadStoredQuery()).isEqualTo(TestLlmReportUtil.STORED_QUERY);
+    }
+
+    @Test
+    void testAColumnLeftWithoutANameIsDroppedWhenAnotherDataSetIsSelected() {
         // Editing ends whichever way it ends, so a row nobody named never reaches the stored document.
         View<?> view = openDesignerOnLlmDataSet();
         this.<JmixButton>findComponent(view, "llmEditQueryBtn").click();
@@ -688,7 +715,7 @@ public class LlmDataSetPanelUiTest {
     }
 
     @Test
-    public void testChangingTheTypeOfAnotherRowFinalizesTheSelectedLlmDraft() {
+    void testChangingTheTypeOfAnotherRowFinalizesTheSelectedLlmDraft() {
         ReportDetailView view = (ReportDetailView) openDesigner(
                 llmReportUtil.createAndSaveReportWithLlmAndJpqlDataSets());
         DataSet llmDataSet = selectedDataSet(view);
@@ -706,7 +733,7 @@ public class LlmDataSetPanelUiTest {
     }
 
     @Test
-    public void testClearingTheQueryTextIsUndoneWhileEditingContinues() {
+    void testClearingTheQueryTextIsUndoneWhileEditingContinues() {
         // The editor sends its value on blur, so a cut-and-paste passes through an empty text.
         View<?> view = openDesignerOnLlmDataSet();
         this.<JmixButton>findComponent(view, "llmEditQueryBtn").click();
@@ -722,7 +749,7 @@ public class LlmDataSetPanelUiTest {
     }
 
     @Test
-    public void testChangingTheTypeAwayFromLlmDropsTheStoredQuery() {
+    void testChangingTheTypeAwayFromLlmDropsTheStoredQuery() {
         View<?> view = openDesignerOnLlmDataSet();
 
         this.<JmixSelect<DataSetType>>findComponent(view, "singleDataSetTypeField").setValue(DataSetType.JPQL);
@@ -732,7 +759,7 @@ public class LlmDataSetPanelUiTest {
     }
 
     @Test
-    public void testExistingDataSetKeepsItsTypeAndItsEditorWhenGenerationIsUnavailable() {
+    void testExistingDataSetKeepsItsTypeAndItsEditorWhenGenerationIsUnavailable() {
         // An application whose model is not configured still has the add-on: such a report is opened, its stored
         // query edited by hand and the report run. Only generating a new query is out of reach.
         ((TestLlmDataQueryService) queryService).setGenerationAvailable(false);

@@ -67,7 +67,7 @@ public class LlmDataSetGenerationSupportTest {
     protected Metadata metadata;
 
     @Test
-    public void testRequestCarriesThePrompt() {
+    void testRequestCarriesThePrompt() {
         DataSet dataSet = llmDataSet(reportWithParameters());
 
         LlmQueryGenerationRequest request = generationSupport.createGenerationRequest(dataSet);
@@ -76,7 +76,7 @@ public class LlmDataSetGenerationSupportTest {
     }
 
     @Test
-    public void testReportInputParametersAreOfferedWithTheirTypes() {
+    void testReportInputParametersAreOfferedWithTheirTypes() {
         DataSet dataSet = llmDataSet(reportWithParameters());
 
         List<LlmQueryParameter> parameters = generationSupport.createGenerationRequest(dataSet)
@@ -91,7 +91,7 @@ public class LlmDataSetGenerationSupportTest {
     }
 
     @Test
-    public void testParentBandColumnsAreOfferedWhenTheParentIsAnLlmDataSet() {
+    void testParentBandColumnsAreOfferedWhenTheParentIsAnLlmDataSet() {
         Report report = reportWithParameters();
         BandDefinition parentBand = band(report, "Orders", rootBand(report));
         DataSet parentDataSet = llmDataSet(parentBand);
@@ -109,7 +109,7 @@ public class LlmDataSetGenerationSupportTest {
     }
 
     @Test
-    public void testRootBandColumnsAreNotOffered() {
+    void testRootBandColumnsAreNotOffered() {
         // A run offers no Root_<field> name — the loader stops the walk short of the root band — so offering one
         // here would have generation reference a parameter nothing could bind, failing every run of the report.
         Report report = reportWithParameters();
@@ -128,7 +128,7 @@ public class LlmDataSetGenerationSupportTest {
     }
 
     @Test
-    public void testUndeclaredParentBandIsNamedSoTheAuthorHearsAboutIt() {
+    void testUndeclaredParentBandIsNamedSoTheAuthorHearsAboutIt() {
         Report report = reportWithParameters();
         BandDefinition parentBand = band(report, "Orders", rootBand(report));
         DataSet parentDataSet = metadata.create(DataSet.class);
@@ -150,7 +150,7 @@ public class LlmDataSetGenerationSupportTest {
     }
 
     @Test
-    public void testParentBandDeclaringItsColumnsIsNotNamed() {
+    void testParentBandDeclaringItsColumnsIsNotNamed() {
         Report report = reportWithParameters();
         BandDefinition parentBand = band(report, "Orders", rootBand(report));
         DataSet parentDataSet = llmDataSet(parentBand);
@@ -164,7 +164,7 @@ public class LlmDataSetGenerationSupportTest {
     }
 
     @Test
-    public void testUndeclaredCrossTabAxisIsNamed() {
+    void testUndeclaredCrossTabAxisIsNamed() {
         Report report = reportWithParameters();
         BandDefinition crossBand = band(report, "Revenue", rootBand(report));
         crossBand.setOrientation(Orientation.CROSS);
@@ -184,7 +184,7 @@ public class LlmDataSetGenerationSupportTest {
     }
 
     @Test
-    public void testParentBandColumnsAreNotOfferedWithoutAStoredQuery() {
+    void testParentBandColumnsAreNotOfferedWithoutAStoredQuery() {
         Report report = reportWithParameters();
         BandDefinition parentBand = band(report, "Orders", rootBand(report));
         llmDataSet(parentBand);
@@ -199,7 +199,7 @@ public class LlmDataSetGenerationSupportTest {
     }
 
     @Test
-    public void testGeneratingForAnAxisIsOfferedNoColumnsOfTheOtherAxis() {
+    void testGeneratingForAnAxisIsOfferedNoColumnsOfTheOtherAxis() {
         Report report = reportWithParameters();
         BandDefinition crossBand = band(report, "Revenue", rootBand(report));
         crossBand.setOrientation(Orientation.CROSS);
@@ -221,7 +221,7 @@ public class LlmDataSetGenerationSupportTest {
     }
 
     @Test
-    public void testCrossTabAxisColumnsAreOfferedAsMultiValuedParameters() {
+    void testCrossTabAxisColumnsAreOfferedAsMultiValuedParameters() {
         Report report = reportWithParameters();
         BandDefinition crossBand = band(report, "Revenue", null);
         crossBand.setOrientation(Orientation.CROSS);
@@ -242,7 +242,7 @@ public class LlmDataSetGenerationSupportTest {
     }
 
     @Test
-    public void testOnlyTheFirstColumnOfACrossTabAxisIsRequiredBack() {
+    void testOnlyTheFirstColumnOfACrossTabAxisIsRequiredBack() {
         // A caption column belongs to the axis but holds text no cell row has, and a cross-tab links a cell by
         // the first column named after the axis.
         Report report = reportWithParameters();
@@ -262,7 +262,7 @@ public class LlmDataSetGenerationSupportTest {
     }
 
     @Test
-    public void testCrossTabAxisWithoutAStoredQueryOffersNothing() {
+    void testCrossTabAxisWithoutAStoredQueryOffersNothing() {
         Report report = reportWithParameters();
         BandDefinition crossBand = band(report, "Revenue", null);
         crossBand.setOrientation(Orientation.CROSS);
@@ -277,7 +277,7 @@ public class LlmDataSetGenerationSupportTest {
     }
 
     @Test
-    public void testColumnsOfABandWhoseNameIsNotAnIdentifierAreNotOffered() {
+    void testColumnsOfABandWhoseNameIsNotAnIdentifierAreNotOffered() {
         Report report = reportWithParameters();
         BandDefinition parentBand = band(report, "Order Details", rootBand(report));
         DataSet parentDataSet = llmDataSet(parentBand);
@@ -295,7 +295,7 @@ public class LlmDataSetGenerationSupportTest {
     }
 
     @Test
-    public void testGeneratedQueryIsStoredAsAReadableDocument() {
+    void testGeneratedQueryIsStoredAsAReadableDocument() {
         DataSet dataSet = llmDataSet(reportWithParameters());
         LlmDataQuery query = new LlmDataQuery("select o.number as orderNumber from sales_Order o",
                 List.of("orderNumber"), List.of(), "All order numbers", List.of());
@@ -310,7 +310,7 @@ public class LlmDataSetGenerationSupportTest {
     }
 
     @Test
-    public void testEditedQueryIsStoredAsAReadableDocument() {
+    void testEditedQueryIsStoredAsAReadableDocument() {
         DataSet dataSet = llmDataSet(reportWithParameters());
         generationSupport.storeGeneratedQuery(dataSet,
                 new LlmDataQuery("select o.number as orderNumber from sales_Order o", List.of("orderNumber"),
@@ -329,7 +329,7 @@ public class LlmDataSetGenerationSupportTest {
     }
 
     @Test
-    public void testQueryWrittenByHandIsStoredWithoutAPreviousOne() {
+    void testQueryWrittenByHandIsStoredWithoutAPreviousOne() {
         DataSet dataSet = llmDataSet(reportWithParameters());
 
         generationSupport.storeEditedQuery(dataSet, "select o.number as num from sales_Order o", List.of("num"));
@@ -341,15 +341,15 @@ public class LlmDataSetGenerationSupportTest {
     }
 
     @Test
-    public void testStoringAQueryNothingChangedAboutLeavesTheDocumentAsItIs() {
+    void testStoringAQueryNothingChangedAboutLeavesTheDocumentAsItIs() {
         // Opening the editor and closing it again re-assembles the same query; writing the result back would
         // reorder its parameters and mark the report changed for a change nobody made.
         DataSet dataSet = llmDataSet(reportWithParameters());
         LlmDataQuery generated = new LlmDataQuery(
                 "select o.number as orderNumber from sales_Order o where o.date between :dateTo and :dateFrom",
                 List.of("orderNumber"),
-                List.of(new LlmQueryParameter("dateTo", "java.time.LocalDate", null),
-                        new LlmQueryParameter("dateFrom", "java.time.LocalDate", null)),
+                List.of(new LlmQueryParameter("dateTo", "java.time.LocalDate"),
+                        new LlmQueryParameter("dateFrom", "java.time.LocalDate")),
                 "Orders of the period", List.of());
         String stored = serializer.toJson(generated);
         dataSet.setLlmGeneratedQuery(stored);
@@ -360,7 +360,7 @@ public class LlmDataSetGenerationSupportTest {
     }
 
     @Test
-    public void testBlankQueryTextLeavesTheDataSetWithoutAStoredQueryOnceEditingEnds() {
+    void testBlankQueryTextLeavesTheDataSetWithoutAStoredQueryOnceEditingEnds() {
         DataSet dataSet = llmDataSet(reportWithParameters());
         generationSupport.storeGeneratedQuery(dataSet, storedQueryWithNotes());
 
@@ -370,7 +370,7 @@ public class LlmDataSetGenerationSupportTest {
     }
 
     @Test
-    public void testBlankQueryTextWhileEditingKeepsWhatTheDocumentDescribes() {
+    void testBlankQueryTextWhileEditingKeepsWhatTheDocumentDescribes() {
         // The editor sends its value on blur, so a cut-and-paste passes through an empty text; dropping the
         // document there would take the explanation and the warnings with it.
         DataSet dataSet = llmDataSet(reportWithParameters());
@@ -385,7 +385,7 @@ public class LlmDataSetGenerationSupportTest {
     }
 
     @Test
-    public void testUnreadableStoredDocumentIsReportedRatherThanHidden() {
+    void testUnreadableStoredDocumentIsReportedRatherThanHidden() {
         DataSet dataSet = llmDataSet(reportWithParameters());
         dataSet.setLlmGeneratedQuery("{\"jpql\": ");
 
@@ -395,7 +395,7 @@ public class LlmDataSetGenerationSupportTest {
     }
 
     @Test
-    public void testListOfEntitiesParameterIsOfferedAsMultiValued() {
+    void testListOfEntitiesParameterIsOfferedAsMultiValued() {
         Report report = reportWithParameters();
         report.getInputParameters().add(inputParameter("customers", ParameterType.ENTITY_LIST));
         DataSet dataSet = llmDataSet(report);
@@ -412,7 +412,7 @@ public class LlmDataSetGenerationSupportTest {
     }
 
     @Test
-    public void testGenerationAvailabilityFollowsWhatTheServiceSaysAboutIt() {
+    void testGenerationAvailabilityFollowsWhatTheServiceSaysAboutIt() {
         TestLlmDataQueryService service = (TestLlmDataQueryService) queryService;
         assertThat(generationSupport.isGenerationAvailable()).isTrue();
 
@@ -425,7 +425,7 @@ public class LlmDataSetGenerationSupportTest {
     }
 
     @Test
-    public void testTypeStaysSupportedWhileGenerationIsNot() {
+    void testTypeStaysSupportedWhileGenerationIsNot() {
         // A data set whose query is already stored is edited, checked and run without a model behind it, so the
         // type does not stop being supported when the service says it cannot generate.
         TestLlmDataQueryService service = (TestLlmDataQueryService) queryService;
@@ -446,7 +446,7 @@ public class LlmDataSetGenerationSupportTest {
     }
 
     @Test
-    public void testColumnsAreNoChangeUnlessTheSetOfNamesDiffers() {
+    void testColumnsAreNoChangeUnlessTheSetOfNamesDiffers() {
         // A template refers to a column by name, so a different order breaks nothing, and a first generation
         // has nothing to be compared against.
         assertThat(generationSupport.compareColumns(List.of("orderNumber", "total"),
@@ -457,7 +457,7 @@ public class LlmDataSetGenerationSupportTest {
     }
 
     @Test
-    public void testRegeneratedColumnsThatDifferAreReportedAsAddedAndDisappeared() {
+    void testRegeneratedColumnsThatDifferAreReportedAsAddedAndDisappeared() {
         LlmDataSetGenerationSupport.ColumnsChange change = generationSupport.compareColumns(
                 List.of("orderNumber", "total"), List.of("orderNumber", "amount"));
 
@@ -467,7 +467,7 @@ public class LlmDataSetGenerationSupportTest {
     }
 
     @Test
-    public void testColumnNamesAreStoredWithoutSurroundingSpaces() {
+    void testColumnNamesAreStoredWithoutSurroundingSpaces() {
         DataSet dataSet = llmDataSet(reportWithParameters());
 
         generationSupport.storeEditedQuery(dataSet, "select o.number as num from sales_Order o",

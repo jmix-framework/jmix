@@ -5183,6 +5183,7 @@
                 </xs:sequence>
 
                 <xs:attribute name="dataLoader" type="xs:string" use="required"/>
+                <xs:attribute name="addConditionDialogResizable" type="xs:boolean"/>
                 <xs:attribute name="autoApply" type="xs:boolean"/>
                 <xs:attribute name="applyShortcut" type="xs:string"/>
                 <xs:attribute name="summaryText" type="resourceString"/>

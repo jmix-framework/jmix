@@ -16,15 +16,22 @@
 
 package component_xml_load
 
+import com.vaadin.flow.component.dialog.Dialog
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.shared.Tooltip
 import component_xml_load.screen.GenericFilterView
+import io.jmix.flowui.OpenedDialogWindows
+import io.jmix.flowui.action.genericfilter.GenericFilterAddConditionAction
 import io.jmix.flowui.action.genericfilter.GenericFilterCopyAction
 import io.jmix.flowui.component.SupportsResponsiveSteps
+import io.jmix.flowui.component.UiComponentUtils
+import io.jmix.flowui.component.genericfilter.GenericFilter
 import io.jmix.flowui.component.genericfilter.inspector.FilterPropertiesInspector
 import io.jmix.flowui.component.jpqlfilter.JpqlFilter
 import io.jmix.flowui.component.logicalfilter.GroupFilter
 import io.jmix.flowui.component.logicalfilter.LogicalFilterComponent
 import io.jmix.flowui.component.propertyfilter.PropertyFilter
+import io.jmix.flowui.kit.component.button.JmixButton
 import io.jmix.flowui.kit.component.KeyCombination
 import io.jmix.flowui.view.ViewControllerUtils
 import org.springframework.boot.test.context.SpringBootTest
@@ -34,7 +41,7 @@ import test_support.spec.FlowuiTestSpecification
 class GenericFilterXmlLoadTest extends FlowuiTestSpecification {
 
     void setup() {
-        registerViewBasePackages("component_xml_load.screen")
+        registerViewBasePackages("component_xml_load.screen", "io.jmix.flowui.app")
     }
 
     def "Load GenericFilter component from XML"() {
@@ -64,6 +71,24 @@ class GenericFilterXmlLoadTest extends FlowuiTestSpecification {
             propertyHierarchyDepth == 5
             actions.size() == 3
         }
+    }
+
+    def "Add condition dialog resizable setting is applied"() {
+        when: "Open the GenericFilterView"
+        def genericFilterView = navigateToView(GenericFilterView)
+
+        and: "Open an add condition dialog without the setting"
+        getAddConditionAction(genericFilterView.genericFilterWithInnerElementsId).execute()
+
+        then: "The dialog is not resizable by default"
+        !getCurrentDialog().resizable
+
+        when: "Open an add condition dialog with the setting enabled"
+        getCurrentDialog().close()
+        getAddConditionAction(genericFilterView.genericFilterId).execute()
+
+        then: "The dialog is resizable"
+        getCurrentDialog().resizable
     }
 
     def "Load GenericFilter inner elements from XML"() {
@@ -153,5 +178,19 @@ class GenericFilterXmlLoadTest extends FlowuiTestSpecification {
             configurations.get(1).rootLogicalFilterComponent.operation == LogicalFilterComponent.Operation.AND
             configurations.get(1).rootLogicalFilterComponent.filterComponents.get(0) instanceof GroupFilter
         }
+    }
+
+    protected GenericFilterAddConditionAction getAddConditionAction(GenericFilter genericFilter) {
+        return (genericFilter.controlsLayout as HorizontalLayout).children
+                .filter { it instanceof JmixButton }
+                .map { (it as JmixButton).action }
+                .filter { it instanceof GenericFilterAddConditionAction }
+                .findFirst()
+                .orElseThrow() as GenericFilterAddConditionAction
+    }
+
+    protected Dialog getCurrentDialog() {
+        def currentDialogView = applicationContext.getBean(OpenedDialogWindows).currentDialog.orElseThrow()
+        return UiComponentUtils.findDialog(currentDialogView)
     }
 }

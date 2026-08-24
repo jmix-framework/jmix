@@ -33,6 +33,7 @@ public final class StudioXmlAttributes {
     public static final String ACTION_VARIANT = "actionVariant";
     public static final String ACTIVE_SHEET_INDEX = "activeSheetIndex";
     public static final String ACTIVE_SHEET_WITH_POI_INDEX = "activeSheetWithPOIIndex";
+    public static final String ADD_CONDITION_DIALOG_RESIZABLE = "addConditionDialogResizable";
     public static final String ADDITIONAL_PROPERTIES = "additionalProperties";
     public static final String AGGREGATABLE = "aggregatable";
     public static final String AGGREGATION_POSITION = "aggregationPosition";

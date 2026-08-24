@@ -48,6 +48,7 @@ import java.util.LinkedHashMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -222,6 +223,65 @@ class LlmQueryExecutionTest {
         assertThat(rows).containsExactly(
                 Map.of("publisherName", OWN + "Nintendo"),
                 Map.of("publisherName", OWN + "Ubisoft"));
+    }
+
+    @Test
+    void testEntityTheUserMayNotReadStopsTheRun() {
+        // The platform does not act on a denied entity in a value load — DataStoreCrudValuesListener consumes
+        // only the denied columns — so a user without READ would otherwise still get every attribute the query
+        // selects. This type promises a run reads no more than its user may, so it checks that itself.
+        publisher("Nintendo");
+        denyingConstraint.denyEntity("Publisher");
+        DataSet dataSet = llmDataSet(new LlmDataQuery(
+                "select p.name as publisherName from Publisher p where p.name like :name",
+                List.of("publisherName"), List.of(new LlmQueryParameter("name", "java.lang.String")),
+                null, List.of()));
+
+        assertThatThrownBy(() -> loader().loadData(dataSet, null, Map.of("name", OWN + "%")))
+                .isInstanceOf(AccessDeniedException.class);
+    }
+
+    @Test
+    void testEntityDenialAlsoCoversAQuerySelectingAttributes() {
+        // The denial is about the entity, so it does not matter which of its attributes a query selects.
+        publisher("Nintendo");
+        denyingConstraint.denyEntity("Publisher");
+        DataSet dataSet = llmDataSet(new LlmDataQuery(
+                "select p.name as publisherName, p.id as publisherId from Publisher p where p.name like :name",
+                List.of("publisherName", "publisherId"),
+                List.of(new LlmQueryParameter("name", "java.lang.String")), null, List.of()));
+
+        assertThatThrownBy(() -> loader().loadData(dataSet, null, Map.of("name", OWN + "%")))
+                .isInstanceOf(AccessDeniedException.class);
+    }
+
+    @Test
+    void testEntityTheUserMayReadIsNotStopped() {
+        // The control: nothing is denied, so the same query runs.
+        publisher("Nintendo");
+        DataSet dataSet = llmDataSet(new LlmDataQuery(
+                "select p.name as publisherName from Publisher p where p.name like :name",
+                List.of("publisherName"), List.of(new LlmQueryParameter("name", "java.lang.String")),
+                null, List.of()));
+
+        assertThat(loader().loadData(dataSet, null, Map.of("name", OWN + "%")))
+                .containsExactly(Map.of("publisherName", OWN + "Nintendo"));
+    }
+
+    @Test
+    void testSelectingAnEntityItselfIsRefusedBecauseMaskingCannotReachIt() {
+        // Measured before it was refused: attribute permissions are applied by masking selected columns, so an
+        // entity handed back whole carried the very attribute masking would have hidden — `select p` returned a
+        // Publisher whose denied name was readable. A band prints values, so this is refused outright.
+        publisher("Nintendo");
+        denyingConstraint.denySelectedPath("name");
+        DataSet dataSet = llmDataSet(new LlmDataQuery(
+                "select p as publisher from Publisher p where p.id is not null",
+                List.of("publisher"), List.of(), null, List.of()));
+
+        assertThatThrownBy(() -> loader().loadData(dataSet, null, Map.of()))
+                .isInstanceOf(DataLoadingException.class)
+                .hasMessageContainingAll("selects the entity", "Publisher");
     }
 
     @Test

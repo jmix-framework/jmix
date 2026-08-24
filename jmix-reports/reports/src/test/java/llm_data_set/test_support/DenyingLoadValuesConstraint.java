@@ -18,6 +18,7 @@ package llm_data_set.test_support;
 
 import io.jmix.core.constraint.EntityOperationConstraint;
 import io.jmix.core.security.AccessDeniedException;
+import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.data.accesscontext.LoadValuesAccessContext;
 
@@ -33,6 +34,7 @@ public class DenyingLoadValuesConstraint implements EntityOperationConstraint<Lo
 
     protected final Set<String> deniedSelectedPaths = new HashSet<>();
     protected final Set<String> deniedFilterPaths = new HashSet<>();
+    protected final Set<String> deniedEntities = new HashSet<>();
 
     /**
      * Denies reading the selected attribute with this property path, as it appears in the select clause.
@@ -49,9 +51,19 @@ public class DenyingLoadValuesConstraint implements EntityOperationConstraint<Lo
         deniedFilterPaths.add(propertyPath);
     }
 
+    /**
+     * Denies READ on the entity itself, the way {@code LoadValuesConstraint} does for a user without that
+     * permission: by calling {@code setDenied()} on the context and nothing more. Nothing in the platform reads
+     * that flag for a value load, so a test using this sees exactly what the loader does about it.
+     */
+    public void denyEntity(String entityName) {
+        deniedEntities.add(entityName);
+    }
+
     public void reset() {
         deniedSelectedPaths.clear();
         deniedFilterPaths.clear();
+        deniedEntities.clear();
     }
 
     @Override
@@ -61,6 +73,12 @@ public class DenyingLoadValuesConstraint implements EntityOperationConstraint<Lo
 
     @Override
     public void applyTo(LoadValuesAccessContext context) {
+        for (MetaClass entityClass : context.getEntityClasses()) {
+            if (entityClass != null && deniedEntities.contains(entityClass.getName())) {
+                context.setDenied();
+            }
+        }
+
         for (MetaPropertyPath propertyPath : context.getAllPropertyPaths()) {
             if (propertyPath != null && deniedFilterPaths.contains(propertyPath.toPathString())) {
                 throw new AccessDeniedException("attribute",

@@ -16,14 +16,19 @@
 
 package io.jmix.reports.libintegration;
 
+import io.jmix.core.AccessManager;
 import io.jmix.core.DataManager;
 import io.jmix.core.FluentValuesLoader;
 import io.jmix.core.Metadata;
 import io.jmix.core.Stores;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetadataObject;
 import io.jmix.core.security.AccessDeniedException;
+import io.jmix.core.security.EntityOp;
+import io.jmix.data.QueryParser;
 import io.jmix.data.QueryTransformerFactory;
+import io.jmix.data.accesscontext.LoadValuesAccessContext;
 import io.jmix.reports.entity.DataSet;
 import io.jmix.reports.entity.DataSetType;
 import io.jmix.reports.llm.LlmDataQuery;
@@ -60,6 +65,7 @@ import java.util.WeakHashMap;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Loads band data for the {@link DataSetType#LLM} data set type: reads the query stored in the data set, binds
@@ -115,6 +121,9 @@ public class LlmDataLoader implements ReportDataLoader {
     @Autowired
     protected Metadata metadata;
 
+    @Autowired
+    protected AccessManager accessManager;
+
     /**
      * Holds what one report run has already generated and already warned about. Bound to the thread the run
      * executes on: the next run reaching that thread replaces its contents, and the reference is soft, so what
@@ -155,6 +164,11 @@ public class LlmDataLoader implements ReportDataLoader {
         Map<String, Object> availableParameters = collectedParameters.availableParameters();
 
         LlmDataQuery query = resolveQuery(reportQuery, additionalParams, scope);
+        // Permission first, before anything about this query is judged or reported: the platform does not stop a
+        // value load over an entity the current user may not read, so this type checks it itself. Read once per
+        // query text per run — the permissions of a run do not change between the rows of a parent band.
+        scope.entityReadChecked(query.getJpql(), () -> checkEntityReadPermitted(query));
+
         if (enforcesAxes) {
             LlmCrossTabAxes.checkAxesAreLinkable(reportQuery.getName(), query, params,
                     collectedParameters.requiredResultProperties(), bandName);
@@ -240,6 +254,7 @@ public class LlmDataLoader implements ReportDataLoader {
         checkQueryOnlyReads(reportQuery, query, withoutLiterals);
         checkParametersCanBeBound(reportQuery, withoutLiterals);
         checkQueryReturnsColumns(reportQuery, query);
+        checkQuerySelectsValues(reportQuery, query);
     }
 
     /**
@@ -469,6 +484,83 @@ public class LlmDataLoader implements ReportDataLoader {
     }
 
     /**
+     * Refuses a query that selects an entity itself rather than its attributes.
+     * <p>
+     * Two reasons, and either alone would be enough. A band row is a tabular value — a template prints it, and an
+     * entity prints as whatever its {@code toString} says. And, measured: the attribute permissions of the
+     * current user are applied by masking *selected columns*, so an entity handed back whole carries the
+     * attributes that masking would have hidden. Selecting {@code p} where {@code p.name} is denied really does
+     * return the name.
+     * <p>
+     * The add-on's own generation prompt says the same ("Do not return the root entity alias itself as the
+     * selected value"), so this refuses what generation was already told not to produce — and what an import or a
+     * hand edit can still carry in.
+     */
+    protected void checkQuerySelectsValues(ReportQuery reportQuery, LlmDataQuery query) {
+        String entityName;
+        try {
+            QueryParser parser = queryTransformerFactory.parser(query.getJpql());
+            // The parser reads the text lazily, so both calls belong inside: a text it cannot read fails on its
+            // own terms when it executes, naming the data set, which says more than a parse error here would.
+            entityName = parser.isEntitySelect(parser.getEntityName()) ? parser.getEntityName() : null;
+        } catch (RuntimeException e) {
+            log.debug("The selected values of [{}] cannot be told, so they are not checked", query.getJpql(), e);
+            return;
+        }
+
+        if (entityName != null) {
+            throw new DataLoadingException(String.format(
+                    "The stored query of data set [%s] selects the entity [%s] itself rather than its attributes. "
+                            + "A band prints values, and an entity would also carry the attributes the current "
+                            + "user may not read: select the attributes the report needs",
+                    reportQuery.getName(), entityName));
+        }
+    }
+
+    /**
+     * Refuses a query over an entity the current user may not read.
+     * <p>
+     * {@code DataManager.loadValues} attaches the current user's constraints, and {@code LoadValuesConstraint}
+     * calls {@code setDenied()} for an entity without READ — but nothing in the platform reads
+     * {@code isPermitted()} on that path: {@code DataStoreCrudValuesListener} consumes only the denied
+     * *columns*. A user without READ would therefore still get every attribute the query selects, and
+     * {@code select e} would hand back the entity itself, unmasked. Since this type promises that a run reads
+     * no more than its user may, the check belongs here rather than in a note about the platform.
+     * <p>
+     * Modelled on the add-on's own `JpqlExecutionService#resolveDeniedSelectedIndexes`, so a query refused
+     * there is refused here for the same reason and with the same exception. Denied *columns* are left to the
+     * platform, which masks them.
+     */
+    protected void checkEntityReadPermitted(LlmDataQuery query) {
+        try {
+            LoadValuesAccessContext context =
+                    new LoadValuesAccessContext(query.getJpql(), queryTransformerFactory, metadata);
+            accessManager.applyRegisteredConstraints(context);
+
+            if (!context.isPermitted()) {
+                String entityNames = context.getEntityClasses().stream()
+                        .map(MetadataObject::getName)
+                        .sorted()
+                        .collect(Collectors.joining(","));
+                throw new AccessDeniedException("entity",
+                        entityNames.isBlank() ? query.getJpql() : entityNames, EntityOp.READ.getId());
+            }
+        } catch (AccessDeniedException e) {
+            // Being refused — here or by a constraint that refuses outright — is the answer, not a failure of
+            // the check.
+            throw e;
+        } catch (RuntimeException e) {
+            // The check has to know which entities the query reads, and a query written against another data
+            // model tells it nothing: the platform's own constraint asks the metadata for an entity it does not
+            // have. Such a query cannot execute either, and it fails on its own terms with a message naming the
+            // data set and pointing at the designer — which says more than a failure about permissions would.
+            // Nothing is let through that would not have been: the query is about to fail.
+            log.debug("The entities read by [{}] cannot be told, so the entity read check is skipped",
+                    query.getJpql(), e);
+        }
+    }
+
+    /**
      * Names the parameters the query matches with {@code IN}, which is what makes an empty value unusable for
      * them. Read off the text because nothing else can say it: a collection parameter left empty reaches a run
      * as {@code null}, indistinguishable from an empty scalar, and the stored document declares no cardinality.
@@ -600,6 +692,7 @@ public class LlmDataLoader implements ReportDataLoader {
         protected Map<String, Optional<LlmDataQuery>> storedQueries = new LinkedHashMap<>();
         protected Map<String, String> storeNames = new LinkedHashMap<>();
         protected Map<String, Set<String>> inParameters = new LinkedHashMap<>();
+        protected Set<String> entityReadChecked = new LinkedHashSet<>();
         /**
          * Held weakly, as the root band is and for the same reason: a data set belongs to a report, whose bands,
          * parameters and templates — the content of a template included — would otherwise stay reachable from a
@@ -616,6 +709,7 @@ public class LlmDataLoader implements ReportDataLoader {
             storedQueries = new LinkedHashMap<>();
             storeNames = new LinkedHashMap<>();
             inParameters = new LinkedHashMap<>();
+            entityReadChecked = new LinkedHashSet<>();
             warnings = new WeakHashMap<>();
         }
 
@@ -643,6 +737,16 @@ public class LlmDataLoader implements ReportDataLoader {
          */
         protected Set<String> parametersMatchedWithIn(String jpql, Supplier<Set<String>> read) {
             return inParameters.computeIfAbsent(jpql, key -> read.get());
+        }
+
+        /**
+         * Runs the entity-read check once per query text: the permissions of a run do not change between the
+         * rows of a parent band, and the check parses the query to find the entities it reads.
+         */
+        protected void entityReadChecked(String jpql, Runnable check) {
+            if (entityReadChecked.add(jpql)) {
+                check.run();
+            }
         }
 
         /**

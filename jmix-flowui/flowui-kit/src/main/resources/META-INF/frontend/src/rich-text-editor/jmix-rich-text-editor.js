@@ -516,6 +516,17 @@ class RichTextEditor extends ElementMixin(FocusMixin(LabelMixin(ThemableMixin(Po
             return;
         }
 
+        if (!this.__hasResolvedStyle()) {
+            // Quill detects block-level elements by their computed 'display' value. Firefox returns
+            // an empty computed style for elements that don't generate a box, e.g. for light DOM
+            // children of a host that doesn't slot them, which is the case for a dialog content
+            // until the dialog is opened. Converting HTML in this state silently drops all block
+            // formatting, so postpone the conversion until the component is laid out.
+            this.__unresolvedHtmlValue = htmlValue;
+            this.__observeStyleResolution();
+            return;
+        }
+
         const whitespaceCharacters = {
             '\t': '__RICH_TEXT_EDITOR_TAB',
             '  ': '__RICH_TEXT_EDITOR_DOUBLE_SPACE',
@@ -537,6 +548,48 @@ class RichTextEditor extends ElementMixin(FocusMixin(LabelMixin(ThemableMixin(Po
         });
 
         this._editor.setContents(deltaFromHtml, SOURCE.API);
+    }
+
+    /**
+     * Returns whether the browser resolved styles for this component, i.e. whether
+     * the component participates in the layout.
+     * @private
+     */
+    __hasResolvedStyle() {
+        return getComputedStyle(this).display !== '';
+    }
+
+    /**
+     * Starts observing the component to re-apply the postponed HTML value
+     * as soon as the component is laid out.
+     * @private
+     */
+    __observeStyleResolution() {
+        if (this.__styleResolutionObserver) {
+            return;
+        }
+
+        this.__styleResolutionObserver = new ResizeObserver(() => {
+            if (!this.__hasResolvedStyle()) {
+                return;
+            }
+
+            const htmlValue = this.__unresolvedHtmlValue;
+
+            this.__unobserveStyleResolution();
+            this.setHtmlValueInternal(htmlValue);
+        });
+        this.__styleResolutionObserver.observe(this);
+    }
+
+    /** @private */
+    __unobserveStyleResolution() {
+        this.__unresolvedHtmlValue = undefined;
+
+        if (this.__styleResolutionObserver) {
+            this.__styleResolutionObserver.disconnect();
+            this.__styleResolutionObserver = undefined;
+        }
     }
 
     /** @private */
